@@ -143,7 +143,7 @@ separate_debug_file_exists (const char *name, unsigned long crc)
 {
     unsigned long file_crc = 0;
     int fd;
-    char buffer[8*1024];
+    guchar buffer[8*1024];
     int count;
     
     fd = open (name, O_RDONLY);
@@ -280,8 +280,6 @@ read_symbols (BinFile *bf)
     int i;
     bfd *bfd;
     GArray *symbols;
-    asection *sec;
-    ulong load_address;
 
     bf->symbols = NULL;
     bf->n_symbols = 0;
@@ -295,6 +293,9 @@ read_symbols (BinFile *bf)
     {
 	bfd_close (bfd);
 	bfd = open_bfd (separate_debug_file);
+#if 0
+	g_print ("bfd for %s is %s\n", bf->filename, separate_debug_file);
+#endif
 	if (!bfd)
 	    return;
     }
@@ -304,16 +305,6 @@ read_symbols (BinFile *bf)
     if (!bfd_symbols)
 	return;
     
-    load_address = 0xffffffff;
-    for (sec = bfd->sections; sec != NULL; sec = sec->next)
-    {
-	if (sec->flags & SEC_LOAD)
-	{
-	    if ((gulong)sec->vma < load_address)
-	      load_address = sec->vma & ~4095;
-	}
-    }
-
     text_section = bfd_get_section_by_name (bfd, ".text");
     if (!text_section)
 	return;
@@ -330,21 +321,37 @@ read_symbols (BinFile *bf)
 	    (bfd_symbols[i]->section == text_section))
 	{
 	    char *name;
-	    
-	    symbol.address = bfd_asymbol_value (bfd_symbols[i]) - load_address;
+
+	    /* Store the address in file coordinates:
+	     *    - all addresses are already offset by  section->vma
+	     *    - the section is positioned at         section->filepos
+	     */
+	    symbol.address = bfd_asymbol_value (bfd_symbols[i]) - text_section->vma + text_section->filepos;
 	    name = demangle (bfd, bfd_asymbol_name (bfd_symbols[i]));
+
 #if 0
 	    symbol.name = g_strdup_printf ("%s (%s)", name, bf->filename);
 #endif
 	    symbol.name = g_strdup (name);
-	    free (name);
+#if 0
+	    g_print ("symbol: %s (%s) %p\n", name, bf->filename, symbol.address);
+#endif
 	    
+	    free (name);
+
 	    g_array_append_vals (symbols, &symbol, 1);
 	}
     }
 
     if (n_symbols)
 	free (bfd_symbols);
+
+#if 0
+    if (!n_symbols)
+	g_print ("no symbols found for %s\n", bf->filename);
+    else
+	g_print ("symbols found for %s\n", bf->filename);
+#endif
     
     /* Sort the symbols by address */
     qsort (symbols->data, symbols->len, sizeof(Symbol), compare_address);
@@ -382,6 +389,14 @@ bin_file_free (BinFile *bf)
     g_free (bf);
 }
 
+/**
+ * bin_file_lookup_symbol:
+ * @bf: A BinFile
+ * @address: The address to lookup
+ * 
+ * Look up a symbol. @address should be in file coordinates
+ * 
+ **/
 const Symbol *
 bin_file_lookup_symbol (BinFile    *bf,
 			gulong     address)
@@ -432,12 +447,12 @@ bin_file_lookup_symbol (BinFile    *bf,
      */
     if (strcmp (result->name, "call_gmon_start") == 0)
 	return &(bf->undefined);
-#if 0
     else if (strncmp (result->name, "__do_global_ctors_aux", strlen ("__do_global_ctors_aux")) == 0)
     {
+#if 0
 	g_print ("ctors: %p, pos: %p\n", address, result->address);
-    }
 #endif
+    }
     
     return result;
 }

@@ -23,7 +23,9 @@ struct Map
     gulong	start;
     gulong	end;
     gulong      offset;
+#if 0
     gboolean	do_offset;
+#endif
     
     BinFile *	bin_file;
 };
@@ -46,28 +48,6 @@ initialize (void)
 	processes_by_cmdline = g_hash_table_new (g_str_hash, g_str_equal);
 	processes_by_pid = g_hash_table_new (g_direct_hash, g_direct_equal);
     }
-}
-
-static gboolean
-should_offset (const char *filename, int pid)
-{
-    return FALSE;
-
-    gboolean result = TRUE;
-    
-    struct stat stat1, stat2;
-    char *progname = g_strdup_printf ("/proc/%d/exe", pid);
-    
-    if (stat (filename, &stat1) == 0)
-    {
-	if (stat (progname, &stat2) == 0)
-	    result = !(stat1.st_ino == stat2.st_ino &&
-		       stat1.st_dev == stat2.st_dev);
-    }
-
-    g_free (progname);
-
-    return result;
 }
 
 static GList *
@@ -119,6 +99,12 @@ read_maps (int pid)
 	    
 	    result = g_list_prepend (result, map);
 	}
+#if 0
+	else
+	{
+	    g_print ("scanf\n");
+	}
+#endif
     }
     
     g_free (name);
@@ -202,6 +188,7 @@ void
 process_ensure_map (Process *process, int pid, gulong addr)
 {
     /* Round down to closest page */
+
     addr = (addr - addr % PAGE_SIZE);
 
     if (process_has_page (process, addr))
@@ -209,7 +196,7 @@ process_ensure_map (Process *process, int pid, gulong addr)
     
     if (g_list_find (process->bad_pages, (gpointer)addr))
 	return;
-    
+
     /* a map containing addr was not found */
     if (process->maps)
 	process_free_maps (process);
@@ -217,7 +204,12 @@ process_ensure_map (Process *process, int pid, gulong addr)
     process->maps = read_maps (pid);
     
     if (!process_has_page (process, addr))
+    {
+#if 0
+	g_print ("Bad page: %p\n", addr);
+#endif
 	process->bad_pages = g_list_prepend (process->bad_pages, (gpointer)addr);
+    }
 }
 
 static gboolean
@@ -246,7 +238,7 @@ get_cmdline (int pid)
 	{
 	    g_free (cmdline);
 	    return NULL;
-	}
+ 	}
 	return cmdline;
     }
 
@@ -337,35 +329,31 @@ process_lookup_symbol (Process *process, gulong address)
 	undefined.name = g_strdup_printf ("??? %s", process->cmdline);
 	undefined.address = 0xBABE0001;
 
+#if 0
+	g_print ("no map for %p (%s)\n", address, process->cmdline);
+#endif
+	
 	return &undefined;
     }
+
+#if 0
+    g_print ("has map: %s\n", process->cmdline);
+#endif
     
 /*     if (map->do_offset) */
 /*       address -= map->start; */
 
+    /* convert address to file coordinates */
     address -= map->start;
     address += map->offset;
 
     if (!map->bin_file)
 	map->bin_file = bin_file_new (map->filename);
     
-#if 0
-    /* FIXME - this seems to work with prelinked binaries, but is
-     * it correct? IE., will normal binaries always have a preferred_addres of 0?
-     */
-     address = address - map->start + map->offset + bin_file_get_load_address (map->bin_file); 
-     address -= map->start; 
-     address += map->offset; 
-     address += bin_file_get_load_address (map->bin_file); 
-#endif
-
 /*     g_print ("%s: start: %p, load: %p\n", */
 /* 	     map->filename, map->start, bin_file_get_load_address (map->bin_file)); */
-
-     if (should_offset (map->filename, process->pid))
-	address -= map->start;
     
-    result = bin_file_lookup_symbol (map->bin_file, address);
+     result = bin_file_lookup_symbol (map->bin_file, address);
 
 /*     g_print ("(%x) %x %x name; %s\n", address, map->start, map->offset, result->name); */
 

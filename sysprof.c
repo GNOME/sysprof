@@ -291,8 +291,9 @@ on_read (gpointer data)
     
     if (rd == -1 && errno == EWOULDBLOCK)
 	return;
-    
+
 #if 0
+    int i;
     g_print ("pid: %d\n", trace.pid);
     for (i=0; i < trace.n_addresses; ++i)
 	g_print ("rd: %08x\n", trace.addresses[i]);

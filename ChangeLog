@@ -1,3 +1,20 @@
+Tue Apr  5 20:13:44 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* process.c (process_ensure_map): Add commented out debug spew.
+
+	* process.c (process_lookup_symbol): Remove all should_offset()
+	function and all references to it.
+
+	* binfile.c (bin_file_lookup_symbol): Document that address must
+	be in file coordinates.
+
+	* binfile.c (read_symbols): Remove misguided code that tried to
+	guess the load address of the file. Instead, do all computations
+	in "file coordinates". Also fix a memory leak. Add commented out
+	debug spew.
+
+	* binfile.c (separate_debug_file_exists): Fix signedness
+
 Tue Apr  5 14:34:43 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof-module.c (x_access_process_vm): Make it compile with

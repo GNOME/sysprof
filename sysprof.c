@@ -944,8 +944,6 @@ really_goto_object (Application *app, ProfileObject *object)
 	
 	gtk_tree_view_set_cursor (app->object_view, path, 0, FALSE);
     }
-    
-    gtk_widget_grab_focus (GTK_WIDGET (app->object_view));
 }
 
 static void
@@ -976,7 +974,11 @@ on_descendants_row_activated (GtkTreeView *tree_view,
 			      GtkTreeViewColumn *column,
 			      gpointer data)
 {
-    goto_object (data, tree_view, path, DESCENDANTS_OBJECT);
+    Application *app = data;
+    
+    goto_object (app, tree_view, path, DESCENDANTS_OBJECT);
+    
+    gtk_widget_grab_focus (GTK_WIDGET (app->descendants_view));
 }
 
 static void
@@ -985,7 +987,11 @@ on_callers_row_activated (GtkTreeView *tree_view,
 			  GtkTreeViewColumn *column,
 			  gpointer data)
 {
-    goto_object (data, tree_view, path, CALLERS_OBJECT);
+    Application *app = data;
+    
+    goto_object (app, tree_view, path, CALLERS_OBJECT);
+
+    gtk_widget_grab_focus (GTK_WIDGET (app->object_view));
 }
 
 static void
@@ -1108,9 +1114,9 @@ build_gui (Application *app)
     
     /* object view */
     app->object_view = (GtkTreeView *)glade_xml_get_widget (xml, "object_view");
-    col = add_plain_text_column (app->object_view, _("Functions"), OBJECT_NAME);
-    add_double_format_column (app->object_view, _("Self"), OBJECT_SELF, "%.2f");
-    add_double_format_column (app->object_view, _("Total"), OBJECT_TOTAL, "%.2f");
+%   col = add_plain_text_column (app->object_view, _("Functions"), OBJECT_NAME);
+    add_double_format_column (app->object_view, _("Self"), OBJECT_SELF, "%.2f ");
+    add_double_format_column (app->object_view, _("Total"), OBJECT_TOTAL, "%.2f ");
     selection = gtk_tree_view_get_selection (app->object_view);
     g_signal_connect (selection, "changed", G_CALLBACK (on_object_selection_changed), app);
     
@@ -1119,8 +1125,8 @@ build_gui (Application *app)
     /* callers view */
     app->callers_view = (GtkTreeView *)glade_xml_get_widget (xml, "callers_view");
     col = add_plain_text_column (app->callers_view, _("Callers"), CALLERS_NAME);
-    add_double_format_column (app->callers_view, _("Self"), CALLERS_SELF, "%.2f");
-    add_double_format_column (app->callers_view, _("Total"), CALLERS_TOTAL, "%.2f");
+    add_double_format_column (app->callers_view, _("Self"), CALLERS_SELF, "%.2f ");
+    add_double_format_column (app->callers_view, _("Total"), CALLERS_TOTAL, "%.2f ");
     g_signal_connect (app->callers_view, "row-activated",
 		      G_CALLBACK (on_callers_row_activated), app);
     
@@ -1129,8 +1135,8 @@ build_gui (Application *app)
     /* descendants view */
     app->descendants_view = (GtkTreeView *)glade_xml_get_widget (xml, "descendants_view");
     col = add_plain_text_column (app->descendants_view, _("Descendants"), DESCENDANTS_NAME);
-    add_double_format_column (app->descendants_view, _("Self"), DESCENDANTS_SELF, "%.2f");
-    add_double_format_column (app->descendants_view, _("Cumulative"), DESCENDANTS_NON_RECURSE, "%.2f");
+    add_double_format_column (app->descendants_view, _("Self"), DESCENDANTS_SELF, "%.2f ");
+    add_double_format_column (app->descendants_view, _("Cumulative"), DESCENDANTS_NON_RECURSE, "%.2f ");
     g_signal_connect (app->descendants_view, "row-activated",
 		      G_CALLBACK (on_descendants_row_activated), app);
 

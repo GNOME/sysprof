@@ -1,3 +1,14 @@
+Thu Mar 31 21:18:13 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* treeviewutils.c (add_double_format_column): Right justify numbers
+
+	* sysprof.c (build_gui): Add a space after the numbers
+
+	* sysprof.c (on_callers_row_activated): Focus object view
+
+	* sysprof.c (on_descendants_row_activated): Focus new descendants
+	tree. 
+
 Thu Mar 31 19:51:51 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof-module.c (do_generate): Walk all threads, not just all

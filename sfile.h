@@ -44,17 +44,29 @@ void         sfile_loader_free     (SFileLoader  *loader);
 #endif
 
 /* - Writing - */
+
+/* FIXME: see if we can't get rid of the names. It should be
+ * possible to pass NULL to state_transition_check() and
+ * have it interprete that as "whatever"
+ */
+
 SFileOutput *  sfile_output_mew (SFormat       *format);
 void     sfile_begin_add_record (SFileOutput       *file,
+				 const char *name,
 				 gpointer     id);
 void     sfile_begin_add_list   (SFileOutput       *file,
+				 const char *name,
 				 gpointer     id);
-void     sfile_end_add          (SFileOutput       *file);
+void     sfile_end_add          (SFileOutput       *file,
+				 const char *name);
 void     sfile_add_string       (SFileOutput       *file,
+				 const char *name,
 				 const char  *string);
 void     sfile_add_integer      (SFileOutput       *file,
+				 const char *name,
 				 int          integer);
 void     sfile_add_pointer      (SFileOutput       *file,
+				 const char *name,
 				 gpointer     pointer);
 gboolean sfile_save             (SFileOutput       *sfile,
 				 const char  *filename,

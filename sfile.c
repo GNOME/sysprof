@@ -1,23 +1,5 @@
 /* -*- c-basic-offset: 4 indent-tabs-mode: nil -*- */
 
-/*  Lac - Library for asynchronous communication
- *  Copyright (C) 2004  Søren Sandmann (sandmann@daimi.au.dk)
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public
- *  License along with this library; if not, write to the 
- *  Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA  02111-1307, USA.
- */
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -86,12 +68,12 @@ struct Action
         struct
         {
         } begin_record;
-
+        
         struct
         {
             int n_items;
         } begin_list;
-
+        
         struct
         {
             int id;
@@ -101,12 +83,12 @@ struct Action
         {
             gpointer *location;
         } pointer;
-
+        
         struct
         {
             int value;
         } integer;
-
+        
         struct
         {
             char *value;
@@ -121,9 +103,9 @@ set_error (GError **err, gint code, const char *format, va_list args)
     
     if (!err)
         return;
-
+    
     msg = g_strdup_vprintf (format, args);
-
+    
     if (*err == NULL)
     {
         *err = g_error_new_literal (G_MARKUP_ERROR, code, msg);
@@ -136,7 +118,7 @@ set_error (GError **err, gint code, const char *format, va_list args)
                    "The overwriting error message was: %s",
                    msg);
     }
-
+    
     g_free (msg);
 }
 
@@ -179,14 +161,14 @@ static Transition *
 transition_new (const char *element, TransitionType type, State *from, State *to)
 {
     Transition *t = g_new (Transition, 1);
-
+    
     t->element = element? g_strdup (element) : NULL;
     t->type = type;
     t->to = to;
-
+    
     if (from)
         g_queue_push_tail (from->transitions, t);
-
+    
     return t;
 }
 
@@ -195,13 +177,13 @@ sformat_new (gpointer f)
 {
     SFormat *sformat = g_new0 (SFormat, 1);
     Fragment *fragment = f;
-
+    
     sformat->begin = state_new ();
     sformat->end = state_new ();
-
+    
     g_queue_push_tail (sformat->begin->transitions, fragment->enter);
     fragment->exit->to = sformat->end;
-
+    
     g_free (fragment);
     
     return sformat;
@@ -220,7 +202,7 @@ fragment_queue (va_list args)
 	fragment = va_arg (args, Fragment *);
     }
     va_end (args);
-
+    
     return fragments;
 }
 
@@ -264,41 +246,41 @@ sformat_new_union (const char *name,
     Transition *enter, *exit;
     State *begin;
     State *end;
-
+    
     va_start (args, content1);
-
+    
     fragments = fragment_queue (args);
     
     va_end (args);
-
+    
     begin = state_new ();
     end = state_new ();
-
+    
     enter = transition_new (name, TRANSITION_BEGIN_UNION, NULL, begin);
     exit = transition_new (name, TRANSITION_END_UNION, end, NULL);
     
     for (list = fragments->head; list; list = list->next)
     {
         Fragment *fragment = list->data;
-
+        
         g_queue_push_tail (begin->transitions, fragment->enter);
     }
-
+    
     for (list = fragments->head; list; list = list->next)
     {
         fragment = list->data;
-
+        
         fragment->exit->to = end;
-
+        
         g_free (fragment);
     }
-
+    
     g_queue_free (fragments);
-
+    
     fragment = g_new (Fragment, 1);
     fragment->enter = enter;
     fragment->exit = exit;
-
+    
     return fragment;
 }
 #endif
@@ -314,12 +296,12 @@ sformat_new_record  (const char *     name,
     State *begin, *state;
     Fragment *fragment;
     GList *list;
-
+    
     /* Build queue of fragments */
     va_start (args, content1);
     
     fragments = fragment_queue (args);
-
+    
     va_end (args);
     
     /* chain fragments together */
@@ -327,7 +309,7 @@ sformat_new_record  (const char *     name,
     enter = transition_new (name, BEGIN_RECORD, NULL, begin);
     
     state = begin;
-
+    
     for (list = fragments->head; list != NULL; list = list->next)
     {
         /* At each point in the iteration we need,
@@ -335,13 +317,13 @@ sformat_new_record  (const char *     name,
          *    - a state that will lead into that machine (in state)
          */
         fragment = list->data;
-
+        
         g_queue_push_tail (state->transitions, fragment->enter);
-
+        
         state = state_new ();
         fragment->exit->to = state;
     }
-
+    
     /* Return resulting fragment */
     fragment = g_new (Fragment, 1);
     fragment->enter = enter;
@@ -357,7 +339,7 @@ sformat_new_list (const char *name,
     Fragment *m = content;
     State *list_state;
     Transition *enter, *exit;
-
+    
     list_state = state_new ();
     
     enter = transition_new (name, BEGIN_LIST, NULL, list_state);
@@ -365,10 +347,10 @@ sformat_new_list (const char *name,
     
     g_queue_push_tail (list_state->transitions, m->enter);
     m->exit->to = list_state;
-
+    
     m->enter = enter;
     m->exit = exit;
-
+    
     return m;
 }
 
@@ -378,10 +360,10 @@ sformat_new_value (const char *name, TransitionType type)
     Fragment *m = g_new (Fragment, 1);
     State *before, *after;
     Transition *value;
-
+    
     before = state_new ();
     after = state_new ();
-
+    
     m->enter = transition_new (name, type, NULL, before);
     m->exit  = transition_new (name, type, after, NULL);
     value = transition_new (NULL, type, before, after);
@@ -425,7 +407,7 @@ state_transition_check (const State *state, const char *element,
                         TransitionType *type, GError **err)
 {
     GList *list;
-
+    
     for (list = state->transitions->head; list; list = list->next)
     {
         Transition *transition;
@@ -438,7 +420,7 @@ state_transition_check (const State *state, const char *element,
             return transition->to;
         }
     }
-
+    
     set_unknown_element_error (err, "<%s> or </%s> unexpected here", element, element);
     
     return NULL;
@@ -463,15 +445,14 @@ state_transition_end (const State *state, const char *element,
 }
 
 static const State *
-state_transition_text (const State *state, const char *text,
-                       TransitionType *type, GError **err)
+state_transition_text (const State *state, TransitionType *type, GError **err)
 {
     GList *list;
-
+    
     for (list = state->transitions->head; list; list = list->next)
     {
         Transition *transition = list->data;
-
+        
         /* There will never be more than one allowed value transition for
          * a given state
          */
@@ -483,8 +464,8 @@ state_transition_text (const State *state, const char *text,
             return transition->to;
         }
     }
-
-    set_invalid_content_error (err, "Unexpected text data unexpected (%s)", text);
+    
+    set_invalid_content_error (err, "Unexpected text data");
     return NULL;
 }
 
@@ -496,8 +477,7 @@ struct BuildContext
 {
     const State *state;
     
-    Action *actions;
-    int n_actions;
+    GArray *actions;
 };
 
 struct ParseNode
@@ -507,7 +487,7 @@ struct ParseNode
     gpointer id;
     GPtrArray *children;
     GString *text;
-
+    
     SFormat *format;
 };
 
@@ -544,7 +524,7 @@ void
 sfile_begin_get_record (SFileInput *file, const char *name)
 {
     Action *action = file->current_action++;
-
+    
     g_return_if_fail (action->type == BEGIN_RECORD &&
                       strcmp (action->name, name) == 0);
 }
@@ -554,10 +534,10 @@ sfile_begin_get_list   (SFileInput       *file,
                         const char   *name)
 {
     Action *action = file->current_action++;
-
+    
     g_return_val_if_fail (action->type == BEGIN_LIST &&
                           strcmp (action->name, name) == 0, 0);
-
+    
     return action->u.begin_list.n_items;
 }
 
@@ -569,9 +549,9 @@ sfile_get_pointer      (SFileInput  *file,
     Action *action = file->current_action++;
     g_return_if_fail (action->type == POINTER &&
                       strcmp (action->name, name) == 0);
-
+    
     action->u.pointer.location = location;
-
+    
     if (location)
     {
         if (g_hash_table_lookup (file->actions_by_location, location))
@@ -589,7 +569,7 @@ sfile_get_integer      (SFileInput  *file,
     Action *action = file->current_action++;
     g_return_if_fail (action->type == INTEGER &&
                       strcmp (action->name, name) == 0);
-
+    
     if (integer)
         *integer = action->u.integer.value;
 }
@@ -602,7 +582,7 @@ sfile_get_string       (SFileInput  *file,
     Action *action = file->current_action++;
     g_return_if_fail (action->type == STRING &&
                       strcmp (action->name, name) == 0);
-
+    
     if (string)
         *string = g_strdup (action->u.string.value);
 }
@@ -617,7 +597,7 @@ sfile_end_get          (SFileInput  *file,
     g_return_if_fail ((action->type == END_LIST ||
                        action->type == END_RECORD) &&
                       strcmp (action->name, name) == 0);
-
+    
     if (action->u.end.id)
         g_hash_table_insert (file->objects_by_id,
                              GINT_TO_POINTER (action->u.end.id), object);
@@ -636,7 +616,7 @@ get_id (const char **names, const char **values, GError **err)
             set_unknown_attribute_error (err, "Unknown attribute: %s", names[i]);
 	    return -1;
 	}
-
+        
         if (id_string)
         {
             set_invalid_content_error (err, "Attribute 'id' defined twice");
@@ -645,7 +625,7 @@ get_id (const char **names, const char **values, GError **err)
         
         id_string = values[i];
     }
-
+    
     if (!id_string)
         return 0;
     
@@ -654,7 +634,7 @@ get_id (const char **names, const char **values, GError **err)
         set_invalid_content_error (err, "Bad attribute value for attribute 'id' (must be >= 1)\n");
         return -1;
     }
-
+    
     return id;
 }
 
@@ -669,18 +649,19 @@ handle_begin_element (GMarkupParseContext *parse_context,
     BuildContext *build = user_data;
     Action action;
     int id;
-
+    
     /* Check for id */
     id = get_id (attribute_names, attribute_values, err);
-
+    
     if (id == -1)
         return;
-
-    build->state = state_transition_begin (build->state, element_name, &action.type, err);
-
-    /* FIXME create action/add to list */
-}
     
+    build->state = state_transition_begin (build->state, element_name, &action.type, err);
+    
+    /* FIXME create action/add to list */
+    /* FIXME figure out how to best count the number of items if action.type is a list */
+}
+
 static void
 handle_end_element (GMarkupParseContext *context,
 		    const gchar *element_name,
@@ -689,9 +670,9 @@ handle_end_element (GMarkupParseContext *context,
 {
     BuildContext *build = user_data;
     Action action;
-
+    
     build->state = state_transition_end (build->state, element_name, &action.type, err);
-
+    
     /* FIXME create action/add to list */
 }
 
@@ -704,15 +685,30 @@ handle_text (GMarkupParseContext *context,
 {
     BuildContext *build = user_data;
     Action action;
-
-    build->state = state_transition_text (build->state, text, &action.type, err);
-
+    
+    build->state = state_transition_text (build->state, &action.type, err);
+    
     /* FIXME create acxtion/add to list */
+    /* FIXME check that the text makes sense according to action.type */
 }
 
 static void
 free_actions (Action *actions, int n_actions)
 {
+    int i;
+    
+    for (i = 0; i < n_actions; ++i)
+    {
+        Action *action = &(actions[i]);
+        
+        if (action->name)
+            g_free (action->name);
+        
+        if (action->type == STRING)
+            g_free (action->u.string.value);
+    }
+    
+    g_free (actions);
 }
 
 static Action *
@@ -728,24 +724,25 @@ build_actions (const char *contents, SFormat *format, int *n_actions, GError **e
 	NULL, /* passthrough */
 	NULL, /* error */
     };
-
+    
     build.state = sformat_get_start_state (format);
     parse_context = g_markup_parse_context_new (&parser, 0, &build, NULL);
     if (!sformat_is_end_state (format, build.state))
     {
         set_invalid_content_error (err, "Unexpected end of file\n");
-
-        free_actions (build.actions, build.n_actions);
+        
+        free_actions ((Action *)build.actions->data, build.actions->len);
         return NULL;
     }
-
+    
     if (!g_markup_parse_context_parse (parse_context, contents, -1, err))
     {
-        free_actions (build.actions, build.n_actions);
+        free_actions ((Action *)build.actions->data, build.actions->len);
 	return NULL;
     }
-
-    return build.actions;
+    
+    *n_actions = build.actions->len;
+    return (Action *)g_array_free (build.actions, FALSE);
 }
 
 SFileInput *
@@ -759,19 +756,132 @@ sfile_load (const char  *filename,
     
     if (!g_file_get_contents (filename, &contents, &length, err))
 	return NULL;
-
+    
     input = g_new (SFileInput, 1);
     
     input->actions = build_actions (contents, format, &input->n_actions, err);
-
+    
     if (!input->actions)
     {
         g_free (input);
         g_free (contents);
         return NULL;
     }
-
+    
     g_free (contents);
     
     return input;
+}
+
+/* Writing */
+
+struct SFileOutput
+{
+    SFormat *format;
+    const State *state;
+};
+
+
+SFileOutput *
+sfile_output_mew (SFormat       *format)
+{
+    SFileOutput *output = g_new (SFileOutput, 1);
+    
+    output->format = format;
+    output->state = sformat_get_start_state (format);
+
+    return output;
+}
+
+void
+sfile_begin_add_record (SFileOutput       *file,
+                        const char *name,
+                        gpointer     id)
+{
+    TransitionType type;
+    
+    file->state = state_transition_begin (file->state, name, &type, NULL);
+
+    g_return_if_fail (file->state && type == BEGIN_RECORD);
+    
+    /* FIXME: add action including id */
+}
+
+void
+sfile_begin_add_list   (SFileOutput       *file,
+                        const char *name,
+                        gpointer     id)
+{
+    TransitionType type;
+
+    file->state = state_transition_begin (file->state, name, &type, NULL);
+
+    g_return_if_fail (file->state && type == BEGIN_LIST);
+
+    /* FIXME */
+}
+
+void
+sfile_end_add          (SFileOutput       *file,
+                        const char *name)
+{
+    TransitionType type;
+
+    file->state = state_transition_end (file->state, name, &type, NULL);
+
+    g_return_if_fail (file->state && (type == END_RECORD || type == END_LIST));
+
+    /* FIXME */
+}
+
+void
+sfile_add_string       (SFileOutput       *file,
+                        const char *name,
+                        const char  *string)
+{
+    TransitionType type;
+
+    file->state = state_transition_begin (file->state, name, &type, NULL);
+
+    g_return_if_fail (file->state && type == BEGIN_STRING);
+
+    file->state = state_transition_text (file->state, &type, NULL);
+
+    g_return_if_fail (file->state && type == STRING);
+
+    file->state = state_transition_end (file->state, name, &type, NULL);
+
+    g_return_if_fail (file->state && type == END_STRING);
+}
+
+void
+sfile_add_integer      (SFileOutput       *file,
+                        const        char *name,
+                        int          integer)
+{
+    TransitionType type;
+
+    /* FIXME: check intermediate states */
+    
+    file->state = state_transition_begin (file->state, name, &type, NULL);
+
+    file->state = state_transition_text (file->state, &type, NULL);
+
+    file->state = state_transition_end (file->state, name, &type, NULL);
+}
+
+void
+sfile_add_pointer      (SFileOutput       *file,
+                        const char *name,
+                        gpointer     pointer)
+{
+    /* FIMXE */
+}
+
+gboolean
+sfile_save             (SFileOutput       *sfile,
+                        const char  *filename,
+                        GError     **err)
+{
+    return FALSE; /* FIXME */
 }

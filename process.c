@@ -196,7 +196,7 @@ process_has_page (Process *process, gulong addr)
 void
 process_ensure_map (Process *process, int pid, gulong addr)
 {
-    /* Round don to closest page */
+    /* Round down to closest page */
     addr = (addr - addr % PAGE_SIZE);
     
     if (process_has_page (process, addr))

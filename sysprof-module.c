@@ -21,7 +21,7 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
-#define SAMPLES_PER_SECOND (100)
+#define SAMPLES_PER_SECOND (30)
 #define INTERVAL (HZ / SAMPLES_PER_SECOND)
 #define N_TRACES 256
 
@@ -108,7 +108,7 @@ read_user_space (userspace_reader *reader,
 		reader->page = page;
 	}
 
-	if (__get_user (res, (int *)(reader->kernel_page + (address - user_page))) != 0)
+	if (get_user (res, (int *)(reader->kernel_page + (address - user_page))) != 0)
 		return 0;
 
 	*result = res;

@@ -6,9 +6,11 @@
 
 - loading and saving
 
-- Non-GUI version that can save in a format the GUI could understand.
+- Non-GUI version that can save in a format the GUI can understand.
   Could be used for profiling startup etc. Should be able to dump the
   data to a network socket.
+
+- Port to GtkAction
 
 DONE:
 

@@ -32,12 +32,12 @@ struct Application
     int			input_fd;
     State		state;
     StackStash *	stash;
-
+    
     GtkTreeView *	object_view;
     GtkTreeView *	callers_view;
     GtkTreeView *	descendants_view;
     GtkStatusbar *	statusbar;
-
+    
     GtkWidget *		start_button;
     GtkWidget *		profile_button;
     GtkWidget *		reset_button;
@@ -52,9 +52,9 @@ struct Application
     Profile *		profile;
     ProfileDescendant * descendants;
     ProfileCaller *	callers;
-
+    
     int			n_samples;
-
+    
     int			timeout_id;
     int			generating_profile;
 };
@@ -66,6 +66,41 @@ disaster (const char *what)
     exit (1);
 }
 
+static gboolean
+show_samples_timeout (gpointer data)
+{
+    Application *app = data;
+    char *label;
+    
+    switch (app->state)
+    {
+    case INITIAL:
+	label = g_strdup ("");
+	break;
+	
+    case PROFILING:
+    case DISPLAYING:
+	label = g_strdup_printf ("Samples: %d", app->n_samples);
+	break;
+    }
+    
+    gtk_statusbar_pop (app->statusbar, 0);
+    gtk_statusbar_push (app->statusbar, 0, label);
+    
+    g_free (label);
+    
+    app->timeout_id = 0;
+    
+    return FALSE;
+}
+
+static void
+queue_show_samples (Application *app)
+{
+    if (!app->timeout_id)
+	app->timeout_id = g_timeout_add (225, show_samples_timeout, app);
+}
+
 static void
 update_sensitivity (Application *app)
 {
@@ -73,9 +108,9 @@ update_sensitivity (Application *app)
     gboolean sensitive_save_as_button;
     gboolean sensitive_start_button;
     gboolean sensitive_tree_views;
-
+    
     GtkWidget *active_radio_button;
-
+    
     switch (app->state)
     {
     case INITIAL:
@@ -85,7 +120,7 @@ update_sensitivity (Application *app)
 	sensitive_tree_views = FALSE;
 	active_radio_button = app->dummy_button;
 	break;
-
+	
     case PROFILING:
 	sensitive_profile_button = (app->n_samples > 0);
 	sensitive_save_as_button = (app->n_samples > 0);
@@ -93,7 +128,7 @@ update_sensitivity (Application *app)
 	sensitive_tree_views = FALSE;
 	active_radio_button = app->start_button;
 	break;
-
+	
     case DISPLAYING:
 	sensitive_profile_button = TRUE;
 	sensitive_save_as_button = TRUE;
@@ -102,21 +137,23 @@ update_sensitivity (Application *app)
 	active_radio_button = app->profile_button;
 	break;
     }
-
+    
     gtk_widget_set_sensitive (GTK_WIDGET (app->profile_button),
 			      sensitive_profile_button);
-
+    
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (active_radio_button), TRUE);
-
+    
     gtk_widget_set_sensitive (GTK_WIDGET (app->save_as_button),
 			      sensitive_save_as_button);
-
+    
     gtk_widget_set_sensitive (GTK_WIDGET (app->start_button),
 			      sensitive_start_button);
-
+    
     gtk_widget_set_sensitive (GTK_WIDGET (app->object_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->callers_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->descendants_view), sensitive_tree_views);
+    
+    queue_show_samples (app);
 }
 
 #if 0
@@ -133,30 +170,6 @@ get_name (pid_t pid)
 }
 #endif
 
-static gboolean
-really_show_samples (gpointer data)
-{
-    Application *app = data;
-    char *label;
-    
-    label = g_strdup_printf ("Samples: %d", app->n_samples);
-
-    gtk_statusbar_pop (app->statusbar, 0);
-    gtk_statusbar_push (app->statusbar, 0, label);
-
-    g_free (label);
-
-    app->timeout_id = 0;
-    return FALSE;
-}
-
-static void
-show_samples (Application *app)
-{
-    if (!app->timeout_id)
-	app->timeout_id = g_timeout_add (300, really_show_samples, app);
-}
-
 static void
 on_read (gpointer data)
 {
@@ -165,7 +178,7 @@ on_read (gpointer data)
     int rd;
     
     rd = read (app->input_fd, &trace, sizeof (trace));
-
+    
     if (app->state != PROFILING)
 	return;
     
@@ -178,13 +191,13 @@ on_read (gpointer data)
 	g_print ("rd: %08x\n", trace.addresses[i]);
     g_print ("-=-\n");
 #endif
-
+    
     if (rd > 0  && !app->generating_profile)
     {
 	Process *process = process_get_from_pid (trace.pid);
 	int i;
 /* 	char *filename = NULL; */
-
+	
 /* 	if (*trace.filename) */
 /* 	    filename = trace.filename; */
 	
@@ -192,15 +205,14 @@ on_read (gpointer data)
 	    process_ensure_map (process, trace.pid, 
 				(gulong)trace.addresses[i]);
 	g_assert (!app->generating_profile);
-
+	
 	stack_stash_add_trace (
 	    app->stash, process,
 	    (gulong *)trace.addresses, trace.n_addresses, 1);
 	
 	app->n_samples++;
-	show_samples (app);
     }
-
+    
     update_sensitivity (app);
 }
 
@@ -211,25 +223,25 @@ delete_data (Application *app)
     {
 	profile_free (app->profile);
 	app->profile = NULL;
-
+	
 	gtk_tree_view_set_model (GTK_TREE_VIEW (app->object_view), NULL);
 	gtk_tree_view_set_model (GTK_TREE_VIEW (app->callers_view), NULL);
 	gtk_tree_view_set_model (GTK_TREE_VIEW (app->descendants_view), NULL);
     }
-
+    
     if (app->stash)
 	stack_stash_free (app->stash);
     app->stash = stack_stash_new ();
     process_flush_caches ();
     app->n_samples = 0;
-    show_samples (app);
+    queue_show_samples (app);
 }
 
 static void
 on_start_toggled (GtkToggleToolButton *tool_button, gpointer data)
 {
     Application *app = data;
-
+    
     if (!gtk_toggle_tool_button_get_active (tool_button))
 	return;
     
@@ -295,11 +307,11 @@ fill_main_list (Application *app)
 				OBJECT_OBJECT, object,
 				-1);
 	}
-
+	
 	sort_state = save_sort_state (app->object_view);
 	
 	gtk_tree_view_set_model (app->object_view, GTK_TREE_MODEL (list_store));
-
+	
 	if (sort_state)
 	{
 	    restore_sort_state (app->object_view, sort_state);
@@ -319,24 +331,24 @@ static void
 on_profile_toggled (gpointer widget, gpointer data)
 {
     Application *app = data;
-
+    
     if (app->generating_profile || !gtk_toggle_tool_button_get_active (widget))
 	return;
-
+    
     if (app->profile)
 	profile_free (app->profile);
-
+    
     /* take care of reentrancy */
     app->generating_profile = TRUE;
     
     app->profile = profile_new (app->stash);
-
+    
     app->generating_profile = FALSE;
     
     fill_main_list (app);
-
+    
     app->state = DISPLAYING;
-
+    
 #if 0
     gtk_tree_view_columns_autosize (app->object_view);
     gtk_tree_view_columns_autosize (app->callers_view);
@@ -351,24 +363,24 @@ sorry (GtkWidget *parent_window,
        const gchar *format,
        ...)
 {
-	va_list args;
-	char *message;
-	GtkWidget *dialog;
-
-	va_start (args, format);
-	g_vasprintf (&message, format, args);
-	va_end (args);
-
-	dialog = gtk_message_dialog_new (parent_window ? GTK_WINDOW (parent_window) : NULL,
-					 GTK_DIALOG_DESTROY_WITH_PARENT,
-					 GTK_MESSAGE_WARNING,
-					 GTK_BUTTONS_OK, message);
-	free (message);
-
-	gtk_window_set_title (GTK_WINDOW (dialog), "System Profiler Warning");
-
-	gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
+    va_list args;
+    char *message;
+    GtkWidget *dialog;
+    
+    va_start (args, format);
+    g_vasprintf (&message, format, args);
+    va_end (args);
+    
+    dialog = gtk_message_dialog_new (parent_window ? GTK_WINDOW (parent_window) : NULL,
+				     GTK_DIALOG_DESTROY_WITH_PARENT,
+				     GTK_MESSAGE_WARNING,
+				     GTK_BUTTONS_OK, message);
+    free (message);
+    
+    gtk_window_set_title (GTK_WINDOW (dialog), "System Profiler Warning");
+    
+    gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_destroy (dialog);
 }
 
 static void
@@ -381,9 +393,9 @@ static void
 on_reset_clicked (gpointer widget, gpointer data)
 {
     Application *app = data;
-
+    
     delete_data (app);
-
+    
     if (app->state == DISPLAYING)
 	app->state = INITIAL;
     
@@ -394,7 +406,7 @@ static void
 on_save_as_clicked (gpointer widget, gpointer data)
 {
     Application *app = data;
-
+    
     sorry (NULL, "Saving profiles is not yet implemented.");
     
     if (app)
@@ -415,12 +427,12 @@ add_node (GtkTreeStore      *store,
 	  ProfileDescendant *node)
 {
     GtkTreeIter iter;
-
+    
     if (!node)
 	return;
     
     gtk_tree_store_insert (store, &iter, (GtkTreeIter *)parent, 0);
-
+    
     gtk_tree_store_set (store, &iter,
 			DESCENDANTS_NAME, node->object->name,
 			DESCENDANTS_SELF, 100 * (node->self)/(double)size,
@@ -428,7 +440,7 @@ add_node (GtkTreeStore      *store,
 			DESCENDANTS_TOTAL, 100 * (node->total)/(double)size,
 			DESCENDANTS_OBJECT, node->object,
 			-1);
-
+    
     add_node (store, size, parent, node->siblings);
     add_node (store, size, &iter, node->children);
 }
@@ -440,7 +452,7 @@ get_current_object (Application *app)
     GtkTreeModel *model;
     GtkTreeIter selected;
     ProfileObject *object;
-
+    
     selection = gtk_tree_view_get_selection (app->object_view);
     
     gtk_tree_selection_get_selected (selection, &model, &selected);
@@ -448,7 +460,7 @@ get_current_object (Application *app)
     gtk_tree_model_get (model, &selected,
 			OBJECT_OBJECT, &object,
 			-1);
-
+    
     return object;
 }
 
@@ -473,7 +485,7 @@ fill_descendants_tree (Application *app)
 			    G_TYPE_DOUBLE,
 			    G_TYPE_DOUBLE,
 			    G_TYPE_POINTER);
-
+    
     if (app->profile)
     {
 	ProfileObject *object = get_current_object (app);
@@ -485,10 +497,10 @@ fill_descendants_tree (Application *app)
 		      profile_get_size (app->profile), NULL, app->descendants);
 	}
     }
-
+    
     gtk_tree_view_set_model (
 	app->descendants_view, GTK_TREE_MODEL (tree_store));
-
+    
     g_object_unref (G_OBJECT (tree_store));
     
     if (!sort_state)
@@ -518,7 +530,7 @@ add_callers (GtkListStore *list_store,
 	    name = callers->object->name;
 	else
 	    name = "<spontaneous>";
-
+	
 	gtk_list_store_append (list_store, &iter);
 	gtk_list_store_set (
 	    list_store, &iter,
@@ -527,7 +539,7 @@ add_callers (GtkListStore *list_store,
 	    CALLERS_TOTAL, 100.0 * callers->total / profile_size,
 	    CALLERS_OBJECT, callers->object,
 	    -1);
-
+	
 	callers = callers->next;
     }
 }
@@ -545,14 +557,14 @@ fill_callers_list (Application *app)
 	profile_caller_free (app->callers);
 	app->callers = NULL;
     }
-
+    
     list_store =
 	gtk_list_store_new (4,
 			    G_TYPE_STRING,
 			    G_TYPE_DOUBLE,
 			    G_TYPE_DOUBLE,
 			    G_TYPE_POINTER);
-
+    
     if (app->profile)
     {
 	ProfileObject *object = get_current_object (app);
@@ -562,7 +574,7 @@ fill_callers_list (Application *app)
 	    add_callers (list_store, app->profile, app->callers);
 	}
     }
-
+    
     gtk_tree_view_set_model (
 	app->callers_view, GTK_TREE_MODEL (list_store));
     
@@ -588,7 +600,7 @@ on_object_selection_changed (GtkTreeSelection *selection, gpointer data)
     
     fill_descendants_tree (app);
     fill_callers_list (app);
-
+    
     /* Expand the toplevel of the descendant tree so we see the immediate
      * descendants.
      */
@@ -606,7 +618,7 @@ really_goto_object (Application *app, ProfileObject *object)
     gboolean found = FALSE;
     
     profile_objects = gtk_tree_view_get_model (app->object_view);
-
+    
     if (gtk_tree_model_get_iter_first (profile_objects, &iter))
     {
 	do
@@ -646,15 +658,15 @@ goto_object (Application *app,
     GtkTreeIter iter;
     GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
     ProfileObject *object;
-
+    
     if (!gtk_tree_model_get_iter (model, &iter, path))
 	return;
-
+    
     gtk_tree_model_get (model, &iter, column, &object, -1);
-
+    
     if (!object)
 	return;
-
+    
     really_goto_object (app, object);
     
 }
@@ -695,9 +707,9 @@ set_sizes (GtkWindow *window,
     
     width = monitor.width * 3 / 4;
     height = monitor.height * 3 / 4;
-
+    
     gtk_window_resize (window, width, height);
-
+    
     gtk_paned_set_position (GTK_PANED (vpaned), height / 2);
     gtk_paned_set_position (GTK_PANED (hpaned), width / 2);
 }
@@ -711,21 +723,21 @@ build_gui (Application *app)
     GtkTreeViewColumn *col;
     
     xml = glade_xml_new ("./sysprof.glade", NULL, NULL);
-
+    
     /* Main Window */
     main_window = glade_xml_get_widget (xml, "main_window");
     
     g_signal_connect (G_OBJECT (main_window), "delete_event",
 		      G_CALLBACK (on_delete), NULL);
-
+    
     gtk_widget_show_all (main_window);
-
+    
     /* Menu items */
     app->start_item = glade_xml_get_widget (xml, "start_item");
     app->profile_item = glade_xml_get_widget (xml, "profile_item");
     app->open_item = glade_xml_get_widget (xml, "open_item");
     app->save_as_item = glade_xml_get_widget (xml, "save_as_item");
-
+    
     g_assert (app->start_item);
     g_assert (app->profile_item);
     g_assert (app->save_as_item);
@@ -733,7 +745,7 @@ build_gui (Application *app)
     
     g_signal_connect (G_OBJECT (app->start_item), "activate",
 		      G_CALLBACK (on_start_toggled), app);
-
+    
     g_signal_connect (G_OBJECT (app->profile_item), "activate",
 		      G_CALLBACK (on_profile_toggled), app);
     
@@ -742,7 +754,7 @@ build_gui (Application *app)
     
     g_signal_connect (G_OBJECT (app->save_as_item), "activate",
 		      G_CALLBACK (on_save_as_clicked), app);
-
+    
     /* quit */
     g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit_item")), "activate",
 		      G_CALLBACK (on_delete), NULL);
@@ -754,7 +766,7 @@ build_gui (Application *app)
     app->reset_button = glade_xml_get_widget (xml, "reset_button");
     app->save_as_button = glade_xml_get_widget (xml, "save_as_button");
     app->dummy_button = glade_xml_get_widget (xml, "dummy_button");
-
+    
     gtk_widget_hide (app->dummy_button);
     
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (
@@ -762,13 +774,13 @@ build_gui (Application *app)
     
     g_signal_connect (G_OBJECT (app->start_button), "toggled",
 		      G_CALLBACK (on_start_toggled), app);
-
+    
     g_signal_connect (G_OBJECT (app->profile_button), "toggled",
 		      G_CALLBACK (on_profile_toggled), app);
-
+    
     g_signal_connect (G_OBJECT (app->reset_button), "clicked",
 		      G_CALLBACK (on_reset_clicked), app);
-
+    
     g_signal_connect (G_OBJECT (app->save_as_button), "clicked",
 		      G_CALLBACK (on_save_as_clicked), app);
     
@@ -779,7 +791,7 @@ build_gui (Application *app)
     
     
     /* TreeViews */
-
+    
     /* object view */
     app->object_view = (GtkTreeView *)glade_xml_get_widget (xml, "object_view");
     col = add_plain_text_column (app->object_view, _("Name"), OBJECT_NAME);
@@ -797,7 +809,7 @@ build_gui (Application *app)
     add_double_format_column (app->callers_view, _("Total"), CALLERS_TOTAL, "%.2f");
     g_signal_connect (app->callers_view, "row-activated",
 		      G_CALLBACK (on_callers_row_activated), app);
-
+    
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* descendants view */
@@ -807,12 +819,12 @@ build_gui (Application *app)
     add_double_format_column (app->descendants_view, _("Cummulative"), DESCENDANTS_NON_RECURSE, "%.2f");
     g_signal_connect (app->descendants_view, "row-activated",
 		      G_CALLBACK (on_descendants_row_activated), app);
-
+    
     gtk_tree_view_column_set_expand (col, TRUE);
-
+    
     /* Statusbar */
     app->statusbar = (GtkStatusbar *)glade_xml_get_widget (xml, "statusbar");
-    show_samples (app);
+    queue_show_samples (app);
 }
 
 static Application *
@@ -849,14 +861,14 @@ main (int argc, char **argv)
 		  "       insmod sysprof-module.ko\n"
 		  "\n");
     }
-
+    
     fd_add_watch (app->input_fd, app);
     fd_set_read_callback (app->input_fd, on_read);
     
     build_gui (app);
-
+    
     update_sensitivity (app);
-
+    
     gtk_main ();
     
     return 0;

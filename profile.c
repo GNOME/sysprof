@@ -22,7 +22,7 @@ update()
 static guint
 direct_hash_no_null (gconstpointer v)
 {
-    g_assert (v);
+    g_assert (v != NULL);
     return GPOINTER_TO_UINT (v);
 }
 
@@ -78,7 +78,9 @@ create_format (void)
 		    sformat_new_pointer ("siblings", &node_type),
 		    sformat_new_pointer ("children", &node_type),
 		    sformat_new_pointer ("parent", &node_type),
-		    sformat_new_pointer ("next", &node_type),
+		    sformat_new_integer ("total"),
+		    sformat_new_integer ("self"),
+		    sformat_new_integer ("toplevel"),
 		    NULL)),
 	    NULL));
 }
@@ -109,7 +111,9 @@ serialize_call_tree (Node *node, SFileOutput *output)
     sfile_add_pointer (output, "siblings", node->siblings);
     sfile_add_pointer (output, "children", node->children);
     sfile_add_pointer (output, "parent", node->parent);
-    sfile_add_pointer (output, "next", node->next);
+    sfile_add_integer (output, "total", node->total);
+    sfile_add_integer (output, "self", node->self);
+    sfile_add_integer (output, "toplevel", node->toplevel);
     sfile_end_add (output, "node", node);
 
     serialize_call_tree (node->siblings, output);
@@ -148,6 +152,25 @@ profile_save (Profile		 *profile,
     return result;
 }
 
+static void
+make_hash_table (Node *node, GHashTable *table)
+{
+    if (!node)
+	return;
+
+    g_assert (node->object);
+    
+    node->next = g_hash_table_lookup (table, node->object);
+    g_hash_table_insert (table, node->object, node);
+
+    g_print ("added %s\n", node->object->name);
+    
+    g_assert (node->siblings != 0x11);
+    
+    make_hash_table (node->siblings, table);
+    make_hash_table (node->children, table);
+}
+
 Profile *
 profile_load (const char *filename, GError **err)
 {
@@ -164,6 +187,9 @@ profile_load (const char *filename, GError **err)
     
     profile = g_new (Profile, 1);
 
+    profile->nodes_by_object =
+	g_hash_table_new (direct_hash_no_null, g_direct_equal);
+    
     sfile_begin_get_record (input, "profile");
 
     sfile_get_integer (input, "size", &profile->size);
@@ -178,11 +204,12 @@ profile_load (const char *filename, GError **err)
 	sfile_get_string (input, "name", &obj->name);
 	sfile_get_integer (input, "total", &obj->total);
 	sfile_get_integer (input, "self", &obj->self);
-
+	
 	sfile_end_get (input, "object", obj);
     }
     sfile_end_get (input, "objects", NULL);
 
+    profile->call_tree = NULL;
     n = sfile_begin_get_list (input, "nodes");
     for (i = 0; i < n; ++i)
     {
@@ -194,16 +221,27 @@ profile_load (const char *filename, GError **err)
 	sfile_get_pointer (input, "siblings", (gpointer *)&node->siblings);
 	sfile_get_pointer (input, "children", (gpointer *)&node->children);
 	sfile_get_pointer (input, "parent", (gpointer *)&node->parent);
-	sfile_get_pointer (input, "next", (gpointer *)&node->next);
+	sfile_get_integer (input, "total", &node->total);
+	sfile_get_integer (input, "self", &node->self);
+	sfile_get_integer (input, "toplevel", &node->toplevel);
 	
 	sfile_end_get (input, "node", node);
 
-	if (!node->parent)
+	if (!profile->call_tree)
 	    profile->call_tree = node;
+	
+	g_assert (node->siblings != 0x11);
     }
     sfile_end_get (input, "nodes", NULL);
+    sfile_end_get (input, "profile", NULL);
     
     sformat_free (format);
+
+    /* FIXME: why don't we just store the root node? */
+    while (profile->call_tree && profile->call_tree->parent)
+	profile->call_tree = profile->call_tree->parent;
+    
+    make_hash_table (profile->call_tree, profile->nodes_by_object);
 
     return profile;
 }

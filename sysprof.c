@@ -56,6 +56,22 @@ struct Application
     
     int			timeout_id;
     int			generating_profile;
+
+    gboolean		profile_from_file; /* FIXME: This is a kludge. Figure out how
+					    * to maintain the application model properly
+					    *
+					    * The fundamental issue is that the state of
+					    * widgets is controlled by two different
+					    * entities:
+					    *
+					    *   The user clicks on them, changing their
+					    *   state.
+					    *
+					    *   The application model changes, changing their
+					    *   state.
+					    *
+					    * Model/View/Controller is a possibility.
+					    */
 };
 
 static void
@@ -290,6 +306,7 @@ delete_data (Application *app)
     process_flush_caches ();
     app->n_samples = 0;
     queue_show_samples (app);
+    app->profile_from_file = FALSE;
 }
 
 static void
@@ -349,6 +366,7 @@ fill_main_list (Application *app)
 					 G_TYPE_POINTER);
 
 	objects = profile_get_objects (profile);
+	g_print ("got %d objects\n", g_list_length (objects));
 	for (list = objects; list != NULL; list = list->next)
 	{
 	    ProfileObject *object = list->data;
@@ -414,12 +432,12 @@ on_profile_toggled (gpointer widget, gpointer data)
     
     if (gtk_toggle_tool_button_get_active (widget))
     {
-	if (app->profile)
+	if (app->profile && !app->profile_from_file)
 	{
 	    profile_free (app->profile);
 	    app->profile = NULL;
 	}
-	
+
 	ensure_profile (app);
     }
 }
@@ -486,7 +504,27 @@ on_save_as_clicked (gpointer widget, gpointer data)
 static void
 on_open_clicked (gpointer widget, gpointer data)
 {
+#if 0
     sorry (NULL, "Open is not implemented yet. (Fortunately, neither is saving),");
+#endif
+    Application *app = data;
+    GError *err = NULL;
+    Profile *profile = profile_load ("name.profile", &err);
+    if (!profile)
+	sorry (NULL, "Could not open: %s\n", err->message);
+    else
+    {
+	delete_data (app);
+    
+	app->state = DISPLAYING;
+    	
+	app->profile = profile;
+	app->profile_from_file = TRUE;
+    
+	fill_main_list (app);
+	
+	update_sensitivity (app);
+    }
 }
 
 static void

@@ -1,3 +1,41 @@
+Wed Mar 23 00:04:07 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	Primitive loading and saving.
+	
+	* sysprof.c (on_open_clicked): Hook up loading.
+
+	* sfile.c: Add a copy of g_file_replace() from glib CVS HEAD.
+
+	* sfile.c (add_string): Escape and quote the string
+
+	* sfile.c (sfile_load): Initialize current_instruction and
+	instructions_by_location
+
+	* sfile.c (post_process_instructions_recurse): Handle NULL
+	pointers properly.
+
+	* sfile.c (handle_begin_element, handle_end_element, handle_text):
+	Move error handling here from state_transition_begin/text/end.
+
+	* sfile.c (handle_text): Discard whitespace-only strings
+
+	* sfile.c (sfile_get_pointer, sfile_get_integer,
+	sfile_get_string): expect both begin, value, and end transitions.
+
+	* sfile.c (hook_up_pointers): Only treat instructions as pointer
+	values when they are. Handle NULL targets properly. 
+
+	* sfile.c (get_number): Fix a few read-freed-data bugs
+
+	* profile.c (profile_load): Call sfile_end_get() for the profile;
+	build the nodes_by_objects hash table. Build the call tree.
+
+	* profile.c (create_format): Don't store next pointer, but do
+	store total, self and toplevel.
+
+	* profile.c (make_hash_table): New function to build
+	nodes_by_object hashtable from loaded data
+
 Sat Mar 12 11:05:19 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof-module.c: Fix small bug in add_timeout()

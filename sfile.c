@@ -210,6 +210,7 @@ fragment_queue (Fragment *fragment1, va_list args)
  * floating point values. How do we store those portably
  *     without losing precision? Gnumeric may know.
  * enums, stored as strings
+ * booleans
  */
 gpointer
 sformat_new_union (const char *name,
@@ -400,11 +401,10 @@ static const State *
 state_transition_check (const State *state,
                         const char *element,
                         TransitionKind kind,
-                        SType *type,
-                        GError **err)
+                        SType *type)
 {
     GList *list;
-    
+
     for (list = state->transitions->head; list; list = list->next)
     {
         Transition *transition = list->data;
@@ -417,27 +417,23 @@ state_transition_check (const State *state,
         }
     }
     
-    set_unknown_element_error (err, "<%s> or </%s> unexpected here", element, element);
-    
     return NULL;
 }
 
 static const State *
-state_transition_begin (const State *state, const char *element,
-                        SType *type, GError **err)
+state_transition_begin (const State *state, const char *element, SType *type)
 {
-    return state_transition_check (state, element, BEGIN, type, err);
+    return state_transition_check (state, element, BEGIN, type);
 }
 
 static const State *
-state_transition_end (const State *state, const char *element,
-                      SType *type, GError **err)
+state_transition_end (const State *state, const char *element, SType *type)
 {
-    return state_transition_check (state, element, END, type, err);
+    return state_transition_check (state, element, END, type);
 }
 
 static const State *
-state_transition_text (const State *state, SType *type, GError **err)
+state_transition_text (const State *state, SType *type)
 {
     GList *list;
     
@@ -454,9 +450,12 @@ state_transition_text (const State *state, SType *type, GError **err)
              */
             return transition->to;
         }
+#if 0
+        else
+            g_print ("transition: %d (%s)\n", transition->kind, transition->element);
+#endif
     }
     
-    set_invalid_content_error (err, "Unexpected text data");
     return NULL;
 }
 
@@ -518,18 +517,19 @@ get_number (const char *text, int *number)
     char *end;
     int result;
     char *stripped;
-    
+    gboolean retval;
+
     stripped = g_strstrip (g_strdup (text));
     result = strtol (stripped, &end, 10);
+
+    retval = (*end == '\0');
+
+    if (retval && number)
+        *number = result;
+    
     g_free (stripped);
     
-    if (*end != '\0')
-	return FALSE;
-    
-    if (number)
-	*number = result;
-    
-    return TRUE;
+    return retval;
 }
 
 struct SFileInput
@@ -582,9 +582,14 @@ sfile_get_pointer (SFileInput  *file,
                    const char *name,
                    gpointer    *location)
 {
-    Instruction *instruction = file->current_instruction++;
+    Instruction *instruction;
+
+    instruction = file->current_instruction++;
     g_return_if_fail (instruction->type == TYPE_POINTER &&
                       strcmp (instruction->name, name) == 0);
+    
+    instruction = file->current_instruction++;
+    g_return_if_fail (instruction->type == TYPE_POINTER);
     
     instruction->u.pointer.location = location;
 
@@ -597,6 +602,11 @@ sfile_get_pointer (SFileInput  *file,
         
         g_hash_table_insert (file->instructions_by_location, location, instruction);
     }
+
+    instruction = file->current_instruction++;
+    g_return_if_fail (instruction->type == TYPE_POINTER &&
+                      strcmp (instruction->name, name) == 0);
+    
 }
 
 void
@@ -604,12 +614,21 @@ sfile_get_integer      (SFileInput  *file,
                         const char  *name,
                         int         *integer)
 {
-    Instruction *instruction = file->current_instruction++;
+    Instruction *instruction;
+
+    instruction = file->current_instruction++;
     g_return_if_fail (instruction->type == TYPE_INTEGER &&
                       strcmp (instruction->name, name) == 0);
     
+    instruction = file->current_instruction++;
+    g_return_if_fail (instruction->type == TYPE_INTEGER);
+    
     if (integer)
         *integer = instruction->u.integer.value;
+
+    instruction = file->current_instruction++;
+    g_return_if_fail (instruction->type == TYPE_INTEGER &&
+                      strcmp (instruction->name, name) == 0);
 }
 
 void
@@ -617,28 +636,52 @@ sfile_get_string       (SFileInput  *file,
                         const char  *name,
                         char       **string)
 {
-    Instruction *instruction = file->current_instruction++;
+    Instruction *instruction;
+
+    instruction = file->current_instruction++;
     g_return_if_fail (instruction->type == TYPE_STRING &&
                       strcmp (instruction->name, name) == 0);
     
+    instruction = file->current_instruction++;
+    g_return_if_fail (instruction->type == TYPE_STRING);
+    
     if (string)
         *string = g_strdup (instruction->u.string.value);
+
+    instruction = file->current_instruction++;
+    g_return_if_fail (instruction->type == TYPE_STRING &&
+                      strcmp (instruction->name, name) == 0);
 }
 
 static void
 hook_up_pointers (SFileInput *file)
 {
     int i;
-
+ 
+#if 0
+    g_print ("emfle\n");
+#endif
     for (i = 0; i < file->n_instructions; ++i)
     {
         Instruction *instruction = &(file->instructions[i]);
 
-        if (instruction->type == TYPE_POINTER)
+        if (instruction->kind == VALUE &&
+            instruction->type == TYPE_POINTER)
         {
-            gpointer target_object =
-                instruction->u.pointer.target_instruction->u.begin.end_instruction->u.end.object;
+            gpointer target_object;
+            Instruction *target_instruction;
 
+            target_instruction = instruction->u.pointer.target_instruction;
+
+            if (target_instruction)
+                target_object = target_instruction->u.begin.end_instruction->u.end.object;
+            else
+                target_object = NULL;
+
+#if 0
+            g_print ("target object: %p\n", target_object);
+#endif
+            
             *(instruction->u.pointer.location) = target_object;
         }
     }
@@ -705,16 +748,22 @@ handle_begin_element (GMarkupParseContext *parse_context,
 {
     BuildContext *build = user_data;
     Instruction instruction;
-    
+
     instruction.u.begin.id = get_id (attribute_names, attribute_values, err);
 
     if (instruction.u.begin.id == -1)
         return;
 
-    build->state = state_transition_begin (build->state, element_name, &instruction.type, err);
+    build->state = state_transition_begin (build->state, element_name, &instruction.type);
+    if (!build->state)
+    {
+        set_unknown_element_error (err, "<%s> unexpected here", element_name);
+        return;
+    }
+
+    /* FIXME: is there really a reason to add begin/end instructions for values? */
     instruction.name = g_strdup (element_name);
     instruction.kind = BEGIN;
-    
     g_array_append_val (build->instructions, instruction);
 }
 
@@ -727,7 +776,12 @@ handle_end_element (GMarkupParseContext *context,
     BuildContext *build = user_data;
     Instruction instruction;
     
-    build->state = state_transition_end (build->state, element_name, &instruction.type, err);
+    build->state = state_transition_end (build->state, element_name, &instruction.type);
+    if (!build->state)
+    {
+        set_unknown_element_error (err, "</%s> unexpected here", element_name);
+        return;
+    }
 
     instruction.name = g_strdup (element_name);
     instruction.kind = END;
@@ -739,7 +793,7 @@ static gboolean
 decode_text (const char *text, char **decoded)
 {
     int length = strlen (text);
-    
+
     if (length < 2)
         return FALSE;
 
@@ -761,11 +815,28 @@ handle_text (GMarkupParseContext *context,
 {
     BuildContext *build = user_data;
     Instruction instruction;
-    
-    build->state = state_transition_text (build->state, &instruction.type, err);
+    char *free_me;
 
+    text = free_me = g_strstrip (g_strdup (text));
+
+    if (strlen (text) == 0)
+        goto out;
+        
+    build->state = state_transition_text (build->state, &instruction.type);
+    if (!build->state)
+    {
+        int line, ch;
+        g_markup_parse_context_get_position (context, &line, &ch);
+#if 0
+        g_print ("line: %d char: %d\n", line, ch);
+#endif
+        set_invalid_content_error (err, "Unexpected text data");
+        goto out;
+    }
+        
     instruction.name = NULL;
     instruction.kind = VALUE;
+    instruction.u.string.value = 0x01;
     
     switch (instruction.type)
     {
@@ -773,47 +844,50 @@ handle_text (GMarkupParseContext *context,
         if (!get_number (text, &instruction.u.pointer.target_id))
         {
             set_invalid_content_error (err, "Contents '%s' of pointer element is not a number", text);
-            return;
+            goto out;
         }
         break;
-
+        
     case TYPE_INTEGER:
         if (!get_number (text, &instruction.u.integer.value))
         {
             set_invalid_content_error (err, "Contents '%s' of integer element not a number", text);
-            return;
+            goto out;
         }
         break;
-
+        
     case TYPE_STRING:
         if (!decode_text (text, &instruction.u.string.value))
         {
             set_invalid_content_error (err, "Contents '%s' of text element is illformed", text);
-            return;
+            goto out;
         }
         break;
-
+        
     default:
         g_assert_not_reached();
         break;
     }
-
+    
     g_array_append_val (build->instructions, instruction);
+
+ out:
+    g_free (free_me);
 }
 
 static void
 free_instructions (Instruction *instructions, int n_instructions)
 {
     int i;
-    
+
     for (i = 0; i < n_instructions; ++i)
     {
         Instruction *instruction = &(instructions[i]);
         
         if (instruction->name)
             g_free (instruction->name);
-        
-        if (instruction->type == TYPE_STRING)
+
+        if (instruction->kind == VALUE && instruction->type == TYPE_STRING)
             g_free (instruction->u.string.value);
     }
     
@@ -928,19 +1002,31 @@ post_process_read_instructions (Instruction *instructions, int n_instructions, G
     {
         Instruction *instruction = &(instructions[i]);
 
-        if (instruction->type == TYPE_POINTER)
+        if (instruction->kind == VALUE &&
+            instruction->type == TYPE_POINTER)
         {
             int target_id = instruction->u.pointer.target_id;
-            
-            Instruction *target = g_hash_table_lookup (instructions_by_id,
-                                                       GINT_TO_POINTER (target_id));
 
-            if (!target)
+            if (target_id)
             {
-                set_invalid_content_error (err, "Id %d doesn't reference any record or list\n",
-                                           instruction->u.pointer.target_id);
-                retval = FALSE;
-                break;
+                Instruction *target = g_hash_table_lookup (instructions_by_id,
+                                                           GINT_TO_POINTER (target_id));
+                
+                if (target)
+                {
+                    instruction->u.pointer.target_instruction = target;
+                }
+                else
+                {
+                    set_invalid_content_error (err, "Id %d doesn't reference any record or list\n",
+                                               instruction->u.pointer.target_id);
+                    retval = FALSE;
+                    break;
+                }
+            }
+            else
+            {
+                instruction->u.pointer.target_instruction = NULL;
             }
         }
     }
@@ -1018,6 +1104,9 @@ sfile_load (const char  *filename,
     }
     
     g_free (contents);
+
+    input->current_instruction = input->instructions;
+    input->instructions_by_location = g_hash_table_new (g_direct_hash, g_direct_equal);
     
     return input;
 }
@@ -1050,8 +1139,7 @@ sfile_begin_add_record (SFileOutput       *file,
 {
     Instruction instruction;
     
-    file->state = state_transition_begin (
-        file->state, name, &instruction.type, NULL);
+    file->state = state_transition_begin (file->state, name, &instruction.type);
 
     g_return_if_fail (file->state);
     g_return_if_fail (is_record_type (instruction.type));
@@ -1068,8 +1156,7 @@ sfile_begin_add_list   (SFileOutput *file,
 {
     Instruction instruction;
 
-    file->state = state_transition_begin (
-        file->state, name, &instruction.type, NULL);
+    file->state = state_transition_begin (file->state, name, &instruction.type);
 
     g_return_if_fail (file->state);
     g_return_if_fail (is_list_type (instruction.type));
@@ -1093,8 +1180,7 @@ sfile_end_add (SFileOutput       *file,
         return;
     }
     
-    file->state = state_transition_end (
-        file->state, name, &instruction.type, NULL);
+    file->state = state_transition_end (file->state, name, &instruction.type);
 
     if (!file->state)
     {
@@ -1119,13 +1205,13 @@ sfile_check_value (SFileOutput *file,
 {
     SType tmp_type;
     
-    file->state = state_transition_begin (file->state, name, &tmp_type, NULL);
+    file->state = state_transition_begin (file->state, name, &tmp_type);
     g_return_if_fail (file->state && tmp_type == type);
 
-    file->state = state_transition_text (file->state, &type, NULL);
+    file->state = state_transition_text (file->state, &type);
     g_return_if_fail (file->state && tmp_type == type);
     
-    file->state = state_transition_end (file->state, name, &type, NULL);
+    file->state = state_transition_end (file->state, name, &type);
     g_return_if_fail (file->state && tmp_type == type);
 }
 
@@ -1238,7 +1324,7 @@ post_process_write_instructions (SFileOutput *sfile)
                 
                 if (target->u.end.begin_instruction->u.begin.id == -1)
                     target->u.end.begin_instruction->u.begin.id = id++;
-                
+
                 instruction->u.pointer.target_id = 
                     target->u.end.begin_instruction->u.begin.id;
             }
@@ -1269,7 +1355,27 @@ add_integer (GString *output, int value)
 static void
 add_string (GString *output, const char *str)
 {
+#if 0
+    /* FIXME: strings need to be encoded so that special
+     * xml characters can be added, and so they don't get
+     * confused with the deletion of whitespace-only
+     * text entries
+     */
     g_string_append_printf (output, "%s", str);
+#endif
+
+    int i;
+    g_string_append_c (output, '\"');
+    for (i = 0; str[i] != '\0'; ++i)
+    {
+        if (str[i] == '\"')
+            g_string_append_printf (output, "%s", "\\\"");
+        else if (str[i] == '\\')
+            g_string_append_printf (output, "\\\\");
+        else
+            g_string_append_c (output, str[i]);
+    }
+    g_string_append_c (output, '\"');
 }
 
 static void
@@ -1295,6 +1401,12 @@ add_nl (GString *output)
 {
     g_string_append_c (output, '\n');
 }
+
+static gboolean
+file_replace (const gchar *filename,
+              const gchar *contents,
+              gssize	     length,
+              GError	   **error);
 
 gboolean
 sfile_output_save (SFileOutput  *sfile,
@@ -1359,13 +1471,13 @@ sfile_output_save (SFileOutput  *sfile,
     /* FIXME: don't dump this to stdout */
     g_print (output->str);
     
-#if 0
     /* FIXME, cut-and-paste the g_file_write() implementation
      * as long as it isn't in glib
      */
-    retval = g_file_write (filename, output->str, - 1, err);
-#endif
+    retval = file_replace (filename, output->str, - 1, err);
+#if 0
     retval = TRUE;
+#endif
     
     g_string_free (output, TRUE);
 
@@ -1377,4 +1489,334 @@ void
 sfile_output_free (SFileOutput *sfile)
 {
     /* FIXME */
+}
+
+
+
+
+
+
+
+
+
+
+/* A copy of g_file_replace() because I don't want to depend on
+ * GLib HEAD
+ */
+#include <errno.h>
+#include <sys/wait.h>
+#include <glib/gstdio.h>
+#include <unistd.h>
+
+static gboolean
+rename_file (const char *old_name,
+	     const char *new_name,
+	     GError **err)
+{
+  errno = 0;
+  if (g_rename (old_name, new_name) == -1)
+    {
+      int save_errno = errno;
+      gchar *display_old_name = g_filename_display_name (old_name);
+      gchar *display_new_name = g_filename_display_name (new_name);
+
+      g_set_error (err,
+		   G_FILE_ERROR,
+		   g_file_error_from_errno (save_errno),
+		   "Failed to rename file '%s' to '%s': g_rename() failed: %s",
+		   display_old_name,
+		   display_new_name,
+		   g_strerror (save_errno));
+
+      g_free (display_old_name);
+      g_free (display_new_name);
+      
+      return FALSE;
+    }
+  
+  return TRUE;
+}
+
+static gboolean
+set_umask_permissions (int	     fd,
+		       GError      **err)
+{
+#ifdef G_OS_WIN32
+
+  return TRUE;
+
+#else
+
+  /* All of this function is just to work around the fact that
+   * there is no way to get the umask without changing it.
+   *
+   * We can't just change-and-reset the umask because that would
+   * lead to a race condition if another thread tried to change
+   * the umask in between the getting and the setting of the umask.
+   * So we have to do the whole thing in a child process.
+   */
+  
+  pid_t pid = fork ();
+
+  if (pid == -1)
+    {
+      g_set_error (err,
+		   G_FILE_ERROR,
+		   g_file_error_from_errno (errno),
+		   "Could not change file mode: fork() failed: %s",
+		   g_strerror (errno));
+      
+      return FALSE;
+    }
+  else if (pid == 0)
+    {
+      /* child */
+      mode_t mask = umask (0666);
+
+      errno = 0;
+      if (fchmod (fd, 0666 & ~mask) == -1)
+	_exit (errno);
+      else
+	_exit (0);
+
+      return TRUE; /* To quiet gcc */
+    }
+  else
+    { 
+      /* parent */
+      int status;
+      
+      waitpid (pid, &status, 0);
+
+      if (WIFEXITED (status))
+	{
+	  int chmod_errno = WEXITSTATUS (status);
+
+	  if (chmod_errno == 0)
+	    {
+	      return TRUE;
+	    }
+	  else
+	    {
+	      g_set_error (err,
+			   G_FILE_ERROR,
+			   g_file_error_from_errno (chmod_errno),
+			   "Could not change file mode: chmod() failed: %s",
+			   g_strerror (chmod_errno));
+      
+	      return FALSE;
+	    }
+	}
+      else if (WIFSIGNALED (status))
+	{
+	  g_set_error (err,
+		       G_FILE_ERROR,
+		       G_FILE_ERROR_FAILED,
+		       "Could not change file mode: Child terminated by signal: %s",
+		       g_strsignal (WTERMSIG (status)));
+		       
+	  return FALSE;
+	}
+      else
+	{
+	  /* This shouldn't happen */
+	  g_set_error (err,
+		       G_FILE_ERROR,
+		       G_FILE_ERROR_FAILED,
+		       "Could not change file mode: Child terminated abnormally");
+	  return FALSE;
+	}
+    }
+#endif
+}
+
+static gchar *
+write_to_temp_file (const gchar *contents,
+		    gssize length,
+		    const gchar *template,
+		    GError **err)
+{
+  gchar *tmp_name;
+  gchar *display_name;
+  gchar *retval;
+  FILE *file;
+  gint fd;
+  int save_errno;
+
+  retval = NULL;
+  
+  tmp_name = g_strdup_printf ("%s.XXXXXX", template);
+
+  errno = 0;
+  fd = g_mkstemp (tmp_name);
+  save_errno = errno;
+  display_name = g_filename_display_name (tmp_name);
+      
+  if (fd == -1)
+    {
+      g_set_error (err,
+		   G_FILE_ERROR,
+		   g_file_error_from_errno (save_errno),
+		   "Failed to create file '%s': %s",
+		   display_name, g_strerror (save_errno));
+      
+      goto out;
+    }
+
+  if (!set_umask_permissions (fd, err))
+    {
+      close (fd);
+      g_unlink (tmp_name);
+
+      goto out;
+    }
+  
+  errno = 0;
+  file = fdopen (fd, "wb");
+  if (!file)
+    {
+      g_set_error (err,
+		   G_FILE_ERROR,
+		   g_file_error_from_errno (errno),
+		   "Failed to open file '%s' for writing: fdopen() failed: %s",
+		   display_name,
+		   g_strerror (errno));
+
+      close (fd);
+      g_unlink (tmp_name);
+      
+      goto out;
+    }
+
+  if (length > 0)
+    {
+      size_t n_written;
+      
+      errno = 0;
+
+      n_written = fwrite (contents, 1, length, file);
+      
+      if (n_written < length)
+	{
+ 	  g_set_error (err,
+		       G_FILE_ERROR,
+		       g_file_error_from_errno (errno),
+		       "Failed to write file '%s': fwrite() failed: %s",
+		       display_name,
+		       g_strerror (errno));
+
+	  fclose (file);
+	  g_unlink (tmp_name);
+	  
+	  goto out;
+	}
+    }
+   
+  errno = 0;
+  if (fclose (file) == EOF)
+    {
+      g_set_error (err,
+		   G_FILE_ERROR,
+		   g_file_error_from_errno (errno),
+		   "Failed to close file '%s': fclose() failed: %s",
+		   display_name, 
+		   g_strerror (errno));
+
+      g_unlink (tmp_name);
+      
+      goto out;
+    }
+
+  retval = g_strdup (tmp_name);
+  
+ out:
+  g_free (tmp_name);
+  g_free (display_name);
+  
+  return retval;
+}
+
+static gboolean
+file_replace (const gchar *filename,
+              const gchar *contents,
+              gssize	     length,
+              GError	   **error)
+{
+  gchar *tmp_filename;
+  gboolean retval;
+  GError *rename_error = NULL;
+  
+  g_return_val_if_fail (filename != NULL, FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (contents != NULL || length == 0, FALSE);
+  g_return_val_if_fail (length >= -1, FALSE);
+  
+  if (length == -1)
+    length = strlen (contents);
+
+  tmp_filename = write_to_temp_file (contents, length, filename, error);
+  
+  if (!tmp_filename)
+    {
+      retval = FALSE;
+      goto out;
+    }
+
+  if (!rename_file (tmp_filename, filename, &rename_error))
+    {
+#ifndef G_OS_WIN32
+
+      g_unlink (tmp_filename);
+      g_propagate_error (error, rename_error);
+      retval = FALSE;
+      goto out;
+
+#else /* G_OS_WIN32 */
+      
+      /* Renaming failed, but on Windows this may just mean
+       * the file already exists. So if the target file
+       * exists, try deleting it and do the rename again.
+       */
+      if (!g_file_test (filename, G_FILE_TEST_EXISTS))
+	{
+	  g_unlink (tmp_filename);
+	  g_propagate_error (error, rename_error);
+	  retval = FALSE;
+	  goto out;
+	}
+
+      g_error_free (rename_error);
+      
+      if (g_unlink (filename) == -1)
+	{
+          gchar *display_filename = g_filename_display_name (filename);
+
+	  g_set_error (error,
+		       G_FILE_ERROR,
+		       g_file_error_from_errno (errno),
+		       "Existing file '%s' could not be removed: g_unlink() failed: %s",
+		       display_filename,
+		       g_strerror (errno));
+
+	  g_free (display_filename);
+	  g_unlink (tmp_filename);
+	  retval = FALSE;
+	  goto out;
+	}
+      
+      if (!rename_file (tmp_filename, filename, error))
+	{
+	  g_unlink (tmp_filename);
+	  retval = FALSE;
+	  goto out;
+	}
+
+#endif
+    }
+
+  retval = TRUE;
+  
+ out:
+  g_free (tmp_filename);
+  return retval;
 }

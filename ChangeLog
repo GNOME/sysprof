@@ -1,3 +1,24 @@
+Fri Mar 25 19:39:24 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Remove "loading and saving"
+
+	* sysprof.glade: Add ellipsises to Open and Save menu items.
+
+	* sysprof.c (overwrite_file): Add this function, cutted-and-pasted
+	from evince.
+
+	* sysprof.c (on_save_as_clicked, on_open_clicked): Use
+	GtkFileChoosers to pick the names.
+
+	* sysprof.c: Various GUI updates.
+
+Fri Mar 25 19:36:28 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sfile.c (bz2_compress): Add this function  Don't actually make
+	any produce use of it.
+
+	* profile.c (make_hash_table): Get rid of warning
+
 Thu Mar 24 19:09:33 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c: Various GUI updates 

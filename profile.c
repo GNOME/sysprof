@@ -163,9 +163,7 @@ make_hash_table (Node *node, GHashTable *table)
     node->next = g_hash_table_lookup (table, node->object);
     g_hash_table_insert (table, node->object, node);
 
-    g_print ("added %s\n", node->object->name);
-    
-    g_assert (node->siblings != 0x11);
+    g_assert (node->siblings != (void *)0x11);
     
     make_hash_table (node->siblings, table);
     make_hash_table (node->children, table);
@@ -230,7 +228,7 @@ profile_load (const char *filename, GError **err)
 	if (!profile->call_tree)
 	    profile->call_tree = node;
 	
-	g_assert (node->siblings != 0x11);
+	g_assert (node->siblings != (void *)0x11);
     }
     sfile_end_get (input, "nodes", NULL);
     sfile_end_get (input, "profile", NULL);

@@ -30,8 +30,6 @@
 - kernel module should put process to sleep before sampling. Should get us
   more accurate data
 
-- loading and saving
-
 - make profile.c more agnostic to processes and functions etc. Ideally
   it should just take a set of stack traces containing "presentation
   objects" and do something sensible with it.
@@ -50,6 +48,8 @@
   consider bad.
 
 DONE:
+
+- loading and saving
 
 - consider making ProfileObject more of an object.
 

@@ -6,8 +6,8 @@ CFLAGS += $(MODCFLAGS) -DKERNEL26
 else
 
 CFLAGS    := $(shell pkg-config --cflags gtk+-2.0 libglade-2.0) -Wall -g
-LIBS      := $(shell pkg-config --libs gtk+-2.0 libglade-2.0) -lbfd -liberty
-C_FILES := sysprof.c binfile.c stackstash.c watch.c process.c	\
+LIBS      := $(shell pkg-config --libs gtk+-2.0 libglade-2.0) -lbfd -liberty -lbz2
+C_FILES	:= sysprof.c binfile.c stackstash.c watch.c process.c	\
 profile.c treeviewutils.c sfile.c
 OBJS	  := $(addsuffix .o, $(basename $(C_FILES)))
 BINARY    := sysprof

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
+#include <bzlib.h>
 #include "sfile.h"
 
 typedef struct State State;
@@ -850,7 +851,6 @@ handle_text (GMarkupParseContext *context,
         
     instruction.name = NULL;
     instruction.kind = VALUE;
-    instruction.u.string.value = 0x01;
     
     switch (instruction.type)
     {
@@ -1422,6 +1422,71 @@ file_replace (const gchar *filename,
               gssize	     length,
               GError	   **error);
 
+static void
+disaster (int status)
+{
+    const char *error;
+    switch (status)
+    {
+    case BZ_PARAM_ERROR:
+	error = "BZ_PARAM_ERROR";
+	break;
+	
+    case BZ_MEM_ERROR:
+	error = "BZ_MEM_ERROR";
+	break;
+	
+    case BZ_OUTBUFF_FULL:
+	error = "BZ_OUTBUFF_FULL";
+	break;
+	
+    default:
+	error = "Unknown error";
+	break;
+    }
+    
+    g_error ("Failed to compress file: %s\n", error);
+}
+
+#include <bzlib.h>
+
+static void
+bz2_compress (const guchar *input, int input_length,
+	      guchar **output, int *output_length)
+{
+    size_t compressed_size;
+    guchar *compressed_data;
+    int status;
+    
+    g_return_if_fail (input != NULL);
+    
+    /* The bzip2 manual says:
+     *
+     * To guarantee that the compressed data will fit in its buffer,
+     * allocate an output buffer of size 1% larger than the uncompressed
+     * data, plus six hundred extra bytes.
+     */
+    compressed_size = (size_t)(1.02 * input_length + 600);
+    compressed_data = g_malloc (compressed_size);
+    
+    status = BZ2_bzBuffToBuffCompress (compressed_data, &compressed_size,
+                                       (guchar *)input, input_length,
+                                       9 /* block size */,
+                                       0 /* verbosity */,
+                                       0 /* workfactor */);
+    
+    if (status != BZ_OK)
+	disaster (status);
+    
+    if (output)
+	*output = compressed_data;
+    else
+	g_free (compressed_data);
+
+    if (output_length)
+	*output_length = compressed_size;
+}
+
 gboolean
 sfile_output_save (SFileOutput  *sfile,
                    const char   *filename,
@@ -1432,6 +1497,8 @@ sfile_output_save (SFileOutput  *sfile,
     GString *output;
     int indent;
     gboolean retval;
+    guchar *compressed;
+    size_t compressed_size;
 
     g_return_val_if_fail (sfile != NULL, FALSE);
 
@@ -1482,16 +1549,23 @@ sfile_output_save (SFileOutput  *sfile,
         }
     }
 
-    /* FIXME: don't dump this to stdout */
+#if 0
     g_print (output->str);
+#endif
+
+    /* FIMXE: bz2 compressing the output is probably
+     * interesting at some point. For now just make sure
+     * it works without actually using it.
+     */
+    bz2_compress (output->str, output->len,
+                  &compressed, &compressed_size);
+
+    g_free (compressed);
     
     /* FIXME, cut-and-paste the g_file_write() implementation
      * as long as it isn't in glib
      */
     retval = file_replace (filename, output->str, - 1, err);
-#if 0
-    retval = TRUE;
-#endif
     
     g_string_free (output, TRUE);
 
@@ -1504,6 +1578,9 @@ sfile_output_free (SFileOutput *sfile)
 {
     /* FIXME */
 }
+
+
+
 
 
 
@@ -1834,3 +1911,4 @@ file_replace (const gchar *filename,
   g_free (tmp_filename);
   return retval;
 }
+

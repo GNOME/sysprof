@@ -1053,13 +1053,8 @@ sfile_add_value (SFileOutput *file,
     TransitionType type;
     
     file->state = state_transition_begin (file->state, name, &tmp_type, NULL);
-    g_return_if_fail (file->state && tmp_type == begin);
-
     file->state = state_transition_text (file->state, &type, NULL);
-    g_return_if_fail (file->state && type == value);
-    
     file->state = state_transition_end (file->state, name, &tmp_type, NULL);
-    g_return_if_fail (file->state && tmp_type == end);
 
     return type;
 }

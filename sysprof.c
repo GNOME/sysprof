@@ -1114,7 +1114,7 @@ build_gui (Application *app)
     
     /* object view */
     app->object_view = (GtkTreeView *)glade_xml_get_widget (xml, "object_view");
-%   col = add_plain_text_column (app->object_view, _("Functions"), OBJECT_NAME);
+    col = add_plain_text_column (app->object_view, _("Functions"), OBJECT_NAME);
     add_double_format_column (app->object_view, _("Self"), OBJECT_SELF, "%.2f ");
     add_double_format_column (app->object_view, _("Total"), OBJECT_TOTAL, "%.2f ");
     selection = gtk_tree_view_get_selection (app->object_view);

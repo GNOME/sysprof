@@ -1,3 +1,7 @@
+Thu Mar 31 23:09:09 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (build_gui): Remove stray %
+
 Thu Mar 31 21:18:13 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* treeviewutils.c (add_double_format_column): Right justify numbers

@@ -37,87 +37,90 @@ static void on_timer(unsigned long);
 /*
  * Wrappers to cover up kernel differences in timer handling
  */
-#ifdef KERNEL24
-static struct tq_struct timer_task =
-{
-	{ NULL, NULL },
-	0,
-	on_timer,
-	NULL
-};
-
-int exiting = 0;
-#else
-
 static struct timer_list timer;
-
-#endif
 
 static void
 init_timeout (void)
 {
-#ifdef KERNEL24
-	/* no setup needed */
-#else
 	init_timer(&timer);
 	timer.function = on_timer;
-#endif
 }
 
 static void
 remove_timeout(void)
 {
-#ifdef KERNEL24
-	exiting = 1;
-	sleep_on (&wait_for_exit);
-#else
 	del_timer (&timer);
-#endif
 }
 
 static void
 add_timeout(unsigned int interval,
 	    TimeoutFunc  f)
 {
-#ifdef KERNEL24
-	queue_task(&timer_task, &tq_timer);
-#else
 	mod_timer(&timer, jiffies + INTERVAL);
-#endif
 }
 
-/*
- * The portable part of the driver starts here
- */
+typedef struct userspace_reader userspace_reader;
+struct userspace_reader
+{
+	struct task_struct *task;
+	unsigned long user_page;
+	unsigned long kernel_page;
+	struct page *page;
+};
+
+static void
+init_userspace_reader (userspace_reader *reader,
+		       struct task_struct *task)
+{
+	reader->task = task;
+	reader->user_page = 0;
+	reader->kernel_page = 0;
+	reader->page = NULL;
+}
 
 static int
-read_task_address (struct task_struct *task, unsigned long address, int *result)
+read_user_space (userspace_reader *reader,
+		 unsigned long address,
+		 unsigned long *result)
 {
-	unsigned long page_addr = (address & PAGE_MASK);
-	int found;
-	struct page *page;
-	void *kaddr;
+	unsigned long user_page = (address & PAGE_MASK);
 	int res;
 
-	if (!task || !task->mm)
-		return 0;
-
-	found = get_user_pages (task, task->mm, page_addr, 1, 0, 0, &page, NULL);
-	if (!found)
+	if (user_page == 0)
 		return 0;
 	
-	kaddr = kmap_atomic (page, KM_SOFTIRQ0);
+	if (!reader->user_page || user_page != reader->user_page) {
+		int found;
+		struct page *page;
+		
+		if (reader->user_page)
+			kunmap (reader->page);
 
-	if (get_user (res, (int *)kaddr + (address - page_addr) / 4)) {
-		kunmap_atomic (page, KM_SOFTIRQ0);
-		return 0;
+		reader->user_page = user_page;
+
+		found = get_user_pages (reader->task, reader->task->mm, user_page,
+					1, 0, 0, &page, NULL);
+
+		if (!found)
+			return 0;
+
+		reader->kernel_page = (unsigned long)kmap (page);
+		reader->page = page;
 	}
-	       
-	kunmap_atomic (page, KM_SOFTIRQ0);
-	
+
+	if (__get_user (res, (int *)(reader->kernel_page + (address - user_page))) != 0)
+		return 0;
+
 	*result = res;
 	
 	return 1;
+}
+
+static void
+done_userspace_reader (userspace_reader *reader)
+{
+	if (reader->user_page)
+		kunmap (reader->page);
 }
 
 typedef struct StackFrame StackFrame;
@@ -127,7 +130,7 @@ struct StackFrame {
 };
 
 static int
-read_frame (struct task_struct *task, unsigned long addr, StackFrame *frame)
+read_frame (userspace_reader *reader, unsigned long addr, StackFrame *frame)
 {
 	if (!addr || !frame)
 		return 0;
@@ -135,10 +138,10 @@ read_frame (struct task_struct *task, unsigned long addr, StackFrame *frame)
 	frame->next = 0;
 	frame->return_address = 0;
 	
-	if (!read_task_address (task, addr, (int *)&(frame->next)))
+	if (!read_user_space (reader, addr, &(frame->next)))
 		return 0;
 
-	if (!read_task_address (task, addr + 4, (int *)&(frame->return_address)))
+	if (!read_user_space (reader, addr + 4, &(frame->return_address)))
 		return 0;
 
 	return 1;
@@ -156,6 +159,7 @@ generate_stack_trace(struct task_struct *task,
 	struct pt_regs *regs = ((struct pt_regs *) (THREAD_SIZE + (unsigned long) task->thread_info)) - 1;
 	StackFrame frame;
 	unsigned long addr;
+	userspace_reader reader;
 	int i;
 	
 	memset(trace, 0, sizeof (SysprofStackTrace));
@@ -169,55 +173,13 @@ generate_stack_trace(struct task_struct *task,
 
 	addr = regs->ebp;
 
-#if 0
-	printk (KERN_ALERT "in generate\n");
-#endif
-#if 0
-	read_frame (task, addr, &frame);
-#endif
-	while (i < SYSPROF_MAX_ADDRESSES && read_frame (task, addr, &frame)) {
+	init_userspace_reader (&reader, task);
+	while (i < SYSPROF_MAX_ADDRESSES && read_frame (&reader, addr, &frame)  &&
+	       addr < START_OF_STACK && addr >= regs->esp) {
 		trace->addresses[i++] = (void *)frame.return_address;
-		
 		addr = frame.next;
 	}
-
-#if 0
-	printk (KERN_ALERT "done (frame.next = %p)\n", frame.next);
-#endif
-	       
-#if 0
-	
-	read_frame (task, regs->ebp, &frame);
-	
-	while (i < SYSPROF_MAX_ADDRESSES &&
-	       (long)frame < (long)START_OF_STACK &&
-	       (long)frame >= regs->esp) {
-		void *next = NULL;
-
-		printk(KERN_ALERT "esp: %lx\n", regs->esp);
-		printk(KERN_ALERT "ebp: %lx\n", regs->ebp);
-		
-		if (verify_area(VERIFY_READ, frame, sizeof(StackFrame)) == 0) {
-			void *return_address;
-			
-			read_task_address (task, (unsigned long)return_address, (int *)&(frame->return_address));
-			read_task_address (task, (unsigned long)next, (int *)&(frame->next));
-					   
-			trace->addresses[i++] = return_address;
-			
-			if ((long)next <= (long)frame)
-				next = NULL;
-			else
-				printk(KERN_ALERT "bad next\n");
-		}
-		else
-			printk(KERN_ALERT "couldn't verify\n");
-		
-		frame = next;
-		if (frame == NULL)
-			printk(KERN_ALERT "frame %d is null\n", i);
-	}
-#endif
+	done_userspace_reader (&reader);
 	
 	trace->n_addresses = i;
 	if (i == SYSPROF_MAX_ADDRESSES)
@@ -269,29 +231,10 @@ on_timer(unsigned long dong)
 {
 	static int n_ticks = 0;
 
-#ifdef KERNEL24
-	if (exiting) {
-		wake_up (&wait_for_exit);
-		return;
-	}
-#endif
-	
 	++n_ticks;
 
-	if (
-#ifdef KERNEL24
-		current && current->pid != 0 &&
-		(n_ticks % (HZ / SAMPLES_PER_SECOND)) == 0
-#else
-		current && current->pid != 0
-#endif
-		)
+	if (current && current->pid != 0)
 	{
-		
-#ifdef KERNEL24
-		struct pt_regs *regs = (struct pt_regs *)(
-			(long)current + THREAD_SIZE - sizeof (struct pt_regs));
-#endif
 		queue_stack (current);
 	}
 	
@@ -306,10 +249,6 @@ procfile_read(char *buffer,
 	      int *eof,
 	      void *data)
 {
-#if 0
-	if (buffer_len < sizeof (SysprofStackTrace)) 
-		return -ENOMEM;
-#endif
 	wait_event_interruptible (wait_for_trace, head != tail);
 	*buffer_location = (char *)tail;
 	if (tail++ == &stack_traces[N_TRACES - 1])

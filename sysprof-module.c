@@ -304,7 +304,7 @@ on_timer(unsigned long dong)
 {
 	struct task_struct *p;
 
-	static const int cpu_profiler = 1; /* set to 0 to profile disk */
+	static const int cpu_profiler = 0; /* set to 0 to profile disk */
 	
 	for_each_process (p) {
 		if (p->state == (cpu_profiler? TASK_RUNNING : TASK_UNINTERRUPTIBLE)) {

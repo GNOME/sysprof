@@ -9,7 +9,6 @@
 typedef struct State State;
 typedef struct Transition Transition;
 typedef struct Fragment Fragment;
-typedef struct Action Action;
 
 struct SFormat
 {
@@ -58,44 +57,6 @@ struct State
 struct Fragment
 {
     Transition *enter, *exit;
-};
-
-struct Action
-{
-    TransitionType type;
-    
-    char *name;
-    union
-    {
-        struct
-        {
-            int n_items;
-            int id;
-            Action *end_action;
-        } begin;
-        
-        struct
-        {
-            gpointer object;
-        } end;
-        
-        struct
-        {
-            int target_id;
-            Action *target_action;
-            gpointer *location;
-        } pointer;
-        
-        struct
-        {
-            int value;
-        } integer;
-        
-        struct
-        {
-            char *value;
-        } string;
-    } u; 
 };
 
 static void
@@ -476,13 +437,51 @@ state_transition_text (const State *state, TransitionType *type, GError **err)
 
 /* reading */
 typedef struct BuildContext BuildContext;
-typedef struct ParseNode ParseNode;
+typedef struct ReadItem ReadItem;
+
+struct ReadItem
+{
+    TransitionType type;
+    
+    char *name;
+    union
+    {
+        struct
+        {
+            int n_items;
+            int id;
+            ReadItem *end_item;
+        } begin;
+        
+        struct
+        {
+            gpointer object;
+        } end;
+        
+        struct
+        {
+            int target_id;
+            ReadItem *target_item;
+            gpointer *location;
+        } pointer;
+        
+        struct
+        {
+            int value;
+        } integer;
+        
+        struct
+        {
+            char *value;
+        } string;
+    } u; 
+};
 
 struct BuildContext
 {
     const State *state;
 
-    GArray *actions;
+    GArray *items;
 };
 
 static gboolean
@@ -507,32 +506,32 @@ get_number (const char *text, int *number)
 
 struct SFileInput
 {
-    int n_actions;
-    Action *actions;
-    Action *current_action;
-    GHashTable *actions_by_location;
+    int n_items;
+    ReadItem *items;
+    ReadItem *current_item;
+    GHashTable *items_by_location;
     GHashTable *objects_by_id;
 };
 
 void
 sfile_begin_get_record (SFileInput *file, const char *name)
 {
-    Action *action = file->current_action++;
+    ReadItem *item = file->current_item++;
     
-    g_return_if_fail (action->type == BEGIN_RECORD &&
-                      strcmp (action->name, name) == 0);
+    g_return_if_fail (item->type == BEGIN_RECORD &&
+                      strcmp (item->name, name) == 0);
 }
 
 int
 sfile_begin_get_list   (SFileInput       *file,
                         const char   *name)
 {
-    Action *action = file->current_action++;
+    ReadItem *item = file->current_item++;
     
-    g_return_val_if_fail (action->type == BEGIN_LIST &&
-                          strcmp (action->name, name) == 0, 0);
+    g_return_val_if_fail (item->type == BEGIN_LIST &&
+                          strcmp (item->name, name) == 0, 0);
     
-    return action->u.begin.n_items;
+    return item->u.begin.n_items;
 }
 
 void
@@ -540,20 +539,20 @@ sfile_get_pointer (SFileInput  *file,
                    const char *name,
                    gpointer    *location)
 {
-    Action *action = file->current_action++;
-    g_return_if_fail (action->type == POINTER &&
-                      strcmp (action->name, name) == 0);
+    ReadItem *item = file->current_item++;
+    g_return_if_fail (item->type == POINTER &&
+                      strcmp (item->name, name) == 0);
     
-    action->u.pointer.location = location;
+    item->u.pointer.location = location;
 
     *location = (gpointer) 0xFedeAbe;
 
     if (location)
     {
-        if (g_hash_table_lookup (file->actions_by_location, location))
+        if (g_hash_table_lookup (file->items_by_location, location))
             g_warning ("Reading into the same location twice\n");
         
-        g_hash_table_insert (file->actions_by_location, location, action);
+        g_hash_table_insert (file->items_by_location, location, item);
     }
 }
 
@@ -562,12 +561,12 @@ sfile_get_integer      (SFileInput  *file,
                         const char  *name,
                         int         *integer)
 {
-    Action *action = file->current_action++;
-    g_return_if_fail (action->type == INTEGER &&
-                      strcmp (action->name, name) == 0);
+    ReadItem *item = file->current_item++;
+    g_return_if_fail (item->type == INTEGER &&
+                      strcmp (item->name, name) == 0);
     
     if (integer)
-        *integer = action->u.integer.value;
+        *integer = item->u.integer.value;
 }
 
 void
@@ -575,12 +574,12 @@ sfile_get_string       (SFileInput  *file,
                         const char  *name,
                         char       **string)
 {
-    Action *action = file->current_action++;
-    g_return_if_fail (action->type == STRING &&
-                      strcmp (action->name, name) == 0);
+    ReadItem *item = file->current_item++;
+    g_return_if_fail (item->type == STRING &&
+                      strcmp (item->name, name) == 0);
     
     if (string)
-        *string = g_strdup (action->u.string.value);
+        *string = g_strdup (item->u.string.value);
 }
 
 static void
@@ -588,16 +587,16 @@ hook_up_pointers (SFileInput *file)
 {
     int i;
 
-    for (i = 0; i < file->n_actions; ++i)
+    for (i = 0; i < file->n_items; ++i)
     {
-        Action *action = &(file->actions[i]);
+        ReadItem *item = &(file->items[i]);
 
-        if (action->type == POINTER)
+        if (item->type == POINTER)
         {
             gpointer target_object =
-                action->u.pointer.target_action->u.begin.end_action->u.end.object;
+                item->u.pointer.target_item->u.begin.end_item->u.end.object;
 
-            *(action->u.pointer.location) = target_object;
+            *(item->u.pointer.location) = target_object;
         }
     }
 }
@@ -607,15 +606,15 @@ sfile_end_get          (SFileInput  *file,
                         const char  *name,
                         gpointer     object)
 {
-    Action *action = file->current_action++;
+    ReadItem *item = file->current_item++;
     
-    g_return_if_fail ((action->type == END_LIST ||
-                       action->type == END_RECORD) &&
-                      strcmp (action->name, name) == 0);
+    g_return_if_fail ((item->type == END_LIST ||
+                       item->type == END_RECORD) &&
+                      strcmp (item->name, name) == 0);
 
-    action->u.end.object = object;
+    item->u.end.object = object;
 
-    if (file->current_action == file->actions + file->n_actions)
+    if (file->current_item == file->items + file->n_items)
         hook_up_pointers (file);
 }
 
@@ -663,17 +662,17 @@ handle_begin_element (GMarkupParseContext *parse_context,
 		      GError **err)
 {
     BuildContext *build = user_data;
-    Action action;
+    ReadItem item;
     
-    action.u.begin.id = get_id (attribute_names, attribute_values, err);
+    item.u.begin.id = get_id (attribute_names, attribute_values, err);
 
-    if (action.u.begin.id == -1)
+    if (item.u.begin.id == -1)
         return;
 
-    build->state = state_transition_begin (build->state, element_name, &action.type, err);
-    action.name = g_strdup (element_name);
+    build->state = state_transition_begin (build->state, element_name, &item.type, err);
+    item.name = g_strdup (element_name);
     
-    g_array_append_val (build->actions, action);
+    g_array_append_val (build->items, item);
 }
 
 static void
@@ -683,13 +682,13 @@ handle_end_element (GMarkupParseContext *context,
 		    GError **err)
 {
     BuildContext *build = user_data;
-    Action action;
+    ReadItem item;
     
-    build->state = state_transition_end (build->state, element_name, &action.type, err);
+    build->state = state_transition_end (build->state, element_name, &item.type, err);
 
-    action.name = g_strdup (element_name);
+    item.name = g_strdup (element_name);
 
-    g_array_append_val (build->actions, action);
+    g_array_append_val (build->items, item);
 }
 
 static gboolean
@@ -717,16 +716,16 @@ handle_text (GMarkupParseContext *context,
 	     GError **err)
 {
     BuildContext *build = user_data;
-    Action action;
+    ReadItem item;
     
-    build->state = state_transition_text (build->state, &action.type, err);
+    build->state = state_transition_text (build->state, &item.type, err);
 
-    action.name = NULL;
+    item.name = NULL;
 
-    switch (action.type)
+    switch (item.type)
     {
     case POINTER:
-        if (!get_number (text, &action.u.pointer.target_id))
+        if (!get_number (text, &item.u.pointer.target_id))
         {
             set_invalid_content_error (err, "Contents '%s' of pointer element is not a number", text);
             return;
@@ -734,7 +733,7 @@ handle_text (GMarkupParseContext *context,
         break;
 
     case INTEGER:
-        if (!get_number (text, &action.u.integer.value))
+        if (!get_number (text, &item.u.integer.value))
         {
             set_invalid_content_error (err, "Contents '%s' of integer element not a number", text);
             return;
@@ -742,7 +741,7 @@ handle_text (GMarkupParseContext *context,
         break;
 
     case STRING:
-        if (!decode_text (text, &action.u.string.value))
+        if (!decode_text (text, &item.u.string.value))
         {
             set_invalid_content_error (err, "Contents '%s' of text element is illformed", text);
             return;
@@ -754,117 +753,117 @@ handle_text (GMarkupParseContext *context,
         break;
     }
 
-    g_array_append_val (build->actions, action);
+    g_array_append_val (build->items, item);
 }
 
 static void
-free_actions (Action *actions, int n_actions)
+free_items (ReadItem *items, int n_items)
 {
     int i;
     
-    for (i = 0; i < n_actions; ++i)
+    for (i = 0; i < n_items; ++i)
     {
-        Action *action = &(actions[i]);
+        ReadItem *item = &(items[i]);
         
-        if (action->name)
-            g_free (action->name);
+        if (item->name)
+            g_free (item->name);
         
-        if (action->type == STRING)
-            g_free (action->u.string.value);
+        if (item->type == STRING)
+            g_free (item->u.string.value);
     }
     
-    g_free (actions);
+    g_free (items);
 }
 
-/* This functions counts the number of items in a list, and
+/* This functions counts the number of items in each list, and
  * matches up pointers with the lists/records they point to.
  * FIMXE: think of a better name
  */
-static Action *
-post_process_actions_recurse (Action *first, GHashTable *actions_by_id, GError **err)
+static ReadItem *
+post_process_items_recurse (ReadItem *first, GHashTable *items_by_id, GError **err)
 {
-    Action *action;
+    ReadItem *item;
     int n_items;
 
     g_assert (first->type >= FIRST_BEGIN_TRANSITION &&
               first->type <= LAST_BEGIN_TRANSITION);
     
-    action = first + 1;
+    item = first + 1;
 
     n_items = 0;
-    while (action->type < FIRST_END_TRANSITION ||
-           action->type > LAST_END_TRANSITION)
+    while (item->type < FIRST_END_TRANSITION ||
+           item->type > LAST_END_TRANSITION)
     {
-        if (action->type >= FIRST_BEGIN_TRANSITION &&
-            action->type <= LAST_BEGIN_TRANSITION)
+        if (item->type >= FIRST_BEGIN_TRANSITION &&
+            item->type <= LAST_BEGIN_TRANSITION)
         {
-            action = post_process_actions_recurse (action, actions_by_id, err);
-            if (!action)
+            item = post_process_items_recurse (item, items_by_id, err);
+            if (!item)
                 return NULL;
         }
         else
         {
-            if (action->type == POINTER)
+            if (item->type == POINTER)
             {
-                int target_id = action->u.pointer.target_id;
-                Action *target = g_hash_table_lookup (actions_by_id, GINT_TO_POINTER (target_id));
+                int target_id = item->u.pointer.target_id;
+                ReadItem *target = g_hash_table_lookup (items_by_id, GINT_TO_POINTER (target_id));
 
                 if (!target)
                 {
                     set_invalid_content_error (err, "Id %d doesn't reference any record or list\n",
-                                               action->u.pointer.target_id);
+                                               item->u.pointer.target_id);
                     return NULL;
                 }
 
-                action->u.pointer.target_action = target;
+                item->u.pointer.target_item = target;
             }
             
-            action++;
+            item++;
         }
         
         n_items++;
     }
 
     first->u.begin.n_items = n_items;
-    first->u.begin.end_action = action;
+    first->u.begin.end_item = item;
 
-    return action + 1;
+    return item + 1;
 }
         
 static gboolean
-post_process_actions (Action *actions, int n_actions, GError **err)
+post_process_items (ReadItem *items, int n_items, GError **err)
 {
     gboolean retval = TRUE;
-    GHashTable *actions_by_id;
+    GHashTable *items_by_id;
     int i;
 
-    /* Build id->action map */
-    actions_by_id = g_hash_table_new (g_direct_hash, g_direct_equal);
-    for (i = 0; i < n_actions; ++i)
+    /* Build id->item map */
+    items_by_id = g_hash_table_new (g_direct_hash, g_direct_equal);
+    for (i = 0; i < n_items; ++i)
     {
-        Action *action = &(actions[i]);
+        ReadItem *item = &(items[i]);
 
-        if (action->type >= FIRST_BEGIN_TRANSITION &&
-            action->type <= LAST_BEGIN_TRANSITION)
+        if (item->type >= FIRST_BEGIN_TRANSITION &&
+            item->type <= LAST_BEGIN_TRANSITION)
         {
-            int id = action->u.begin.id;
+            int id = item->u.begin.id;
 
             if (id)
-                g_hash_table_insert (actions_by_id, GINT_TO_POINTER (id), action);
+                g_hash_table_insert (items_by_id, GINT_TO_POINTER (id), item);
         }
     }
 
     /* count list items, check pointers */
-    if (!post_process_actions_recurse (actions, actions_by_id, err))
+    if (!post_process_items_recurse (items, items_by_id, err))
         retval = FALSE;
     
-    g_hash_table_destroy (actions_by_id);
+    g_hash_table_destroy (items_by_id);
 
     return retval;
 }
 
-static Action *
-build_actions (const char *contents, SFormat *format, int *n_actions, GError **err)
+static ReadItem *
+build_items (const char *contents, SFormat *format, int *n_items, GError **err)
 {
     BuildContext build;
     GMarkupParseContext *parse_context;
@@ -878,30 +877,31 @@ build_actions (const char *contents, SFormat *format, int *n_actions, GError **e
     };
     
     build.state = sformat_get_start_state (format);
+    build.items = g_array_new (TRUE, TRUE, sizeof (ReadItem));
     
     parse_context = g_markup_parse_context_new (&parser, 0, &build, NULL);
     if (!sformat_is_end_state (format, build.state))
     {
         set_invalid_content_error (err, "Unexpected end of file\n");
 
-        free_actions ((Action *)build.actions->data, build.actions->len);
+        free_items ((ReadItem *)build.items->data, build.items->len);
         return NULL;
     }
     
     if (!g_markup_parse_context_parse (parse_context, contents, -1, err))
     {
-        free_actions ((Action *)build.actions->data, build.actions->len);
+        free_items ((ReadItem *)build.items->data, build.items->len);
 	return NULL;
     }
 
-    if (!post_process_actions ((Action *)build.actions->data, build.actions->len, err))
+    if (!post_process_items ((ReadItem *)build.items->data, build.items->len, err))
     {
-        free_actions ((Action *)build.actions->data, build.actions->len);
+        free_items ((ReadItem *)build.items->data, build.items->len);
         return NULL;
     }
         
-    *n_actions = build.actions->len;
-    return (Action *)g_array_free (build.actions, FALSE);
+    *n_items = build.items->len;
+    return (ReadItem *)g_array_free (build.items, FALSE);
 }
 
 SFileInput *
@@ -918,9 +918,9 @@ sfile_load (const char  *filename,
     
     input = g_new (SFileInput, 1);
     
-    input->actions = build_actions (contents, format, &input->n_actions, err);
+    input->items = build_items (contents, format, &input->n_items, err);
     
-    if (!input->actions)
+    if (!input->items)
     {
         g_free (input);
         g_free (contents);
@@ -933,10 +933,48 @@ sfile_load (const char  *filename,
 }
 
 /* Writing */
+typedef struct WriteItem WriteItem;
+
+struct WriteItem
+{
+    TransitionType type;
+    union
+    {
+        struct
+        {
+            char *name;
+            int id;
+        } begin;
+
+        struct
+        {
+            char *name;
+        } end;
+
+        struct
+        {
+            char *name;
+            gpointer object;
+        } pointer;
+
+        struct
+        {
+            char *name;
+            int value;
+        } integer;
+
+        struct
+        {
+            char *name;
+            char *value;
+        } string;
+    } u;
+};
 
 struct SFileOutput
 {
     SFormat *format;
+    GArray *items;
     const State *state;
 };
 
@@ -947,6 +985,7 @@ sfile_output_mew (SFormat       *format)
     SFileOutput *output = g_new (SFileOutput, 1);
     
     output->format = format;
+    output->items = g_array_new (TRUE, TRUE, sizeof (WriteItem));
     output->state = sformat_get_start_state (format);
 
     return output;
@@ -956,28 +995,33 @@ void
 sfile_begin_add_record (SFileOutput       *file,
                         const char        *name)
 {
-    Action action;
-    TransitionType type;
+    WriteItem item;
     
-    file->state = state_transition_begin (file->state, name, &type, NULL);
+    file->state = state_transition_begin (
+        file->state, name, &item.type, NULL);
 
-    g_return_if_fail (file->state && type == BEGIN_RECORD);
-    
-    /* FIXME: add action */
+    g_return_if_fail (file->state && item.type == BEGIN_RECORD);
+
+    item.u.begin.name = g_strdup (name);
+
+    g_array_append_val (file->items, item);
 }
 
 void
 sfile_begin_add_list   (SFileOutput *file,
                         const char  *name)
 {
-    Action action;
+    WriteItem item;
     TransitionType type;
 
-    file->state = state_transition_begin (file->state, name, &action.type, NULL);
+    file->state = state_transition_begin (
+        file->state, name, &item.type, NULL);
 
     g_return_if_fail (file->state && type == BEGIN_LIST);
 
-    /* FIXME */
+    item.u.begin.name = g_strdup (name);
+
+    g_array_append_val (file->items, item);
 }
 
 void
@@ -985,13 +1029,39 @@ sfile_end_add          (SFileOutput       *file,
                         const char        *name,
                         gpointer           object)
 {
+    WriteItem item;
+
+    file->state = state_transition_end (
+        file->state, name, &item.type, NULL);
+
+    g_return_if_fail (file->state &&
+                      (item.type == END_RECORD || item.type == END_LIST));
+
+    item.u.end.name = g_strdup (name);
+
+    g_array_append_val (file->items, item);
+}
+
+static TransitionType
+sfile_add_value (SFileOutput *file,
+                 const char *name,
+                 TransitionType begin,
+                 TransitionType value,
+                 TransitionType end)
+{
+    TransitionType tmp_type;
     TransitionType type;
-
-    file->state = state_transition_end (file->state, name, &type, NULL);
-
-    g_return_if_fail (file->state && (type == END_RECORD || type == END_LIST));
     
-    /* FIXME */
+    file->state = state_transition_begin (file->state, name, &tmp_type, NULL);
+    g_return_if_fail (file->state && tmp_type == begin);
+
+    file->state = state_transition_text (file->state, &type, NULL);
+    g_return_if_fail (file->state && type == value);
+    
+    file->state = state_transition_end (file->state, name, &tmp_type, NULL);
+    g_return_if_fail (file->state && tmp_type == end);
+
+    return type;
 }
 
 void
@@ -999,22 +1069,7 @@ sfile_add_string       (SFileOutput       *file,
                         const char *name,
                         const char  *string)
 {
-    TransitionType type;
-
-    /* Strings must be utf-8 */
-    g_return_if_fail (g_utf8_validate (string, -1, NULL));
-    
-    file->state = state_transition_begin (file->state, name, &type, NULL);
-
-    g_return_if_fail (file->state && type == BEGIN_STRING);
-
-    file->state = state_transition_text (file->state, &type, NULL);
-
-    g_return_if_fail (file->state && type == STRING);
-
-    file->state = state_transition_end (file->state, name, &type, NULL);
-
-    g_return_if_fail (file->state && type == END_STRING);
+    sfile_add_value (file, name, BEGIN_STRING, STRING, END_STRING);
 }
 
 void
@@ -1022,15 +1077,7 @@ sfile_add_integer      (SFileOutput       *file,
                         const        char *name,
                         int          integer)
 {
-    TransitionType type;
-
-    /* FIXME: check intermediate states */
-    
-    file->state = state_transition_begin (file->state, name, &type, NULL);
-
-    file->state = state_transition_text (file->state, &type, NULL);
-
-    file->state = state_transition_end (file->state, name, &type, NULL);
+    sfile_add_value (file, name, BEGIN_INTEGER, INTEGER, END_INTEGER);
 }
 
 void
@@ -1038,7 +1085,7 @@ sfile_add_pointer      (SFileOutput *file,
                         const char  *name,
                         gpointer     pointer)
 {
-    /* FIMXE */
+    sfile_add_value (file, name, BEGIN_POINTER, POINTER, END_POINTER);
 }
 
 gboolean

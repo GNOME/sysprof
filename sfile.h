@@ -47,7 +47,8 @@ void         sfile_loader_free     (SFileLoader  *loader);
 
 /* FIXME: see if we can't get rid of the names. It should be
 = * possible to pass NULL to state_transition_check() and
- * have it interprete that as "whatever"
+ * have it interprete that as "whatever". We would need
+ * a way to get the name back then, though.
  */
 
 SFileOutput *  sfile_output_mew (SFormat       *format);

@@ -263,68 +263,38 @@ generate_stack_trace(struct task_struct *task,
 struct work_struct work;
 static int in_queue;
 
-static task_t *trace_tasks[256];
-
 static void
 do_generate (void *data)
 {
+	struct task_struct *task = data;
 	struct task_struct *p;
-	int i, target;
 
-	/* Mark all trace tasks that still exists */
-	for_each_process (p) {
-		for (i = 0; i < 256; ++i) {
-			if (!trace_tasks[i])
-				goto next_process;
-		
-			if (trace_tasks[i] == p) {
-				trace_tasks[i] = (task_t *)((long)trace_tasks[i] | 0x01);
-			}
-		}
-	next_process:
-		;
-	}
-
-	target = 0;
-	for (i = 0; i < 256; ++i) {
-		if (trace_tasks[i] == NULL) {
-			break;
-		}
-		else if ((int)(trace_tasks[i]) & 0x01) {
-			trace_tasks[target++] = (task_t *)((int)trace_tasks[i] & ~0x01);
-		}
-		else {
-			trace_tasks[i] = NULL;
-		}
-	}
-
-	/* Generate the stack traces */
-	for (i = 0; i < 256; ++i) {
-		if (!trace_tasks[i])
-			break;
-		
-		generate_stack_trace(trace_tasks[i], head);
-		
-		if (head++ == &stack_traces[N_TRACES - 1])
-			head = &stack_traces[0];
-		
-		wake_up (&wait_for_trace);
-		
-		trace_tasks[i] = NULL;
-	}
-	
 	in_queue = 0;
+
+	/* Make sure the task still exists */
+	for_each_process (p) {
+		if (p == task) {
+			generate_stack_trace(task, head);
+
+			if (head++ == &stack_traces[N_TRACES - 1])
+				head = &stack_traces[0];
+			
+			wake_up (&wait_for_trace);
+			
+			return;
+		}
+	}
 }
 
 static void
-queue_generate_stack_trace (void)
+queue_generate_stack_trace (struct task_struct *cur)
 {
 	if (in_queue)
 		return;
 
 	in_queue = 1;
 	
-	INIT_WORK (&work, do_generate, NULL);
+	INIT_WORK (&work, do_generate, cur);
 
 	schedule_work (&work);
 }
@@ -333,19 +303,14 @@ static void
 on_timer(unsigned long dong)
 {
 	struct task_struct *p;
-	int i;
 
 	static const int cpu_profiler = 1; /* set to 0 to profile disk */
-
-	i = 0;
+	
 	for_each_process (p) {
 		if (p->state == (cpu_profiler? TASK_RUNNING : TASK_UNINTERRUPTIBLE)) {
-			trace_tasks[i++] = p;
+			queue_generate_stack_trace (p);
 		}
 	}
-
-	if (i)
-		queue_generate_stack_trace ();
 	
 	add_timeout (INTERVAL, on_timer);
 }
@@ -368,7 +333,6 @@ procfile_read(char *buffer,
 }
 
 struct proc_dir_entry *trace_proc_file;
-
 static unsigned int
 procfile_poll(struct file *filp, poll_table *poll_table)
 {

@@ -21,7 +21,7 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
-#define SAMPLES_PER_SECOND (10)
+#define SAMPLES_PER_SECOND (100)
 #define INTERVAL (HZ / SAMPLES_PER_SECOND)
 #define N_TRACES 256
 
@@ -93,7 +93,7 @@ add_timeout(unsigned int interval,
 static int
 read_task_address (struct task_struct *task, unsigned long address, int *result)
 {
-	unsigned long page_addr = address & PAGE_MASK;
+	unsigned long page_addr = (address & PAGE_MASK);
 	int found;
 	struct page *page;
 	void *kaddr;
@@ -103,14 +103,16 @@ read_task_address (struct task_struct *task, unsigned long address, int *result)
 		return 0;
 
 	found = get_user_pages (task, task->mm, page_addr, 1, 0, 0, &page, NULL);
-
 	if (!found)
 		return 0;
-
-	kaddr = kmap_atomic (page, KM_SOFTIRQ0);
 	
-	res = ((int *)kaddr)[(address - page_addr) / 4];
+	kaddr = kmap_atomic (page, KM_SOFTIRQ0);
 
+	if (get_user (res, (int *)kaddr + (address - page_addr) / 4)) {
+		kunmap_atomic (page, KM_SOFTIRQ0);
+		return 0;
+	}
+	       
 	kunmap_atomic (page, KM_SOFTIRQ0);
 	
 	*result = res;

@@ -303,12 +303,11 @@ static void
 on_timer(unsigned long dong)
 {
 	struct task_struct *p;
+
+	static const int cpu_profiler = 1; /* set to 0 to profile disk */
 	
 	for_each_process (p) {
-		/* Change TASK_RUNNING to TASK_UNINTERRUPTIABLE to
-		 * profile (synchronous) disk access
-		 */
-		if (p->state == TASK_RUNNING)
+		if (p->state == cpu_profiler? TASK_RUNNING : TASK_UNINTERRUPTIBLE)
 			queue_generate_stack_trace (p);
 	}
 	

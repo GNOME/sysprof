@@ -1,3 +1,7 @@
+Fri Mar  4 13:47:13 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c: Remove include of non-existing tracing.h
+
 Thu Mar  3 23:48:13 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* profile.c (profile_load): Write this function.

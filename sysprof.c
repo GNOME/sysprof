@@ -13,7 +13,6 @@
 #include "stackstash.h"
 #include "profile.h"
 #include "treeviewutils.h"
-#include "tracing.h"
 
 /* FIXME */
 #define _(a) a

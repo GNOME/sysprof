@@ -333,7 +333,7 @@ read_symbols (BinFile *bf)
 #if 0
 	    symbol.name = g_strdup_printf ("%s (%s)", name, bf->filename);
 #endif
-	    symbol.name = g_strdup ("%s", name);
+	    symbol.name = g_strdup (name);
 	    free (name);
 	    
 	    g_array_append_vals (symbols, &symbol, 1);

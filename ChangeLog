@@ -1,3 +1,9 @@
+Sat Mar 12 11:05:19 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-module.c: Fix small bug in add_timeout()
+	* sysprof.c (build_gui): More descriptive tree labels
+	* TODO: update
+
 Thu Mar 10 16:37:52 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (build_gui): s/Cummulative/Cumulative/. Pointed out by

@@ -1,6 +1,5 @@
 - crashes when you ctrl-click the selected item in the top left pane
    <ian__> ssp: looks like it doesn't handle the none-selected case
-   <ian__> Better labels would be useful
 
 - consider caching [filename => bin_file]
 - Have kernel modulereport the file the symbol was found in
@@ -8,7 +7,7 @@
 - grep FIXME
 - hide internal stuff in ProfileDescendant
 - add an 'everything' object. It _is_ really needed for a lot of things
-
+- in timer, put process to sleep. Should get us more accurate data
 - loading and saving
 
 - make profile.c more agnostic to processes and functions etc. Ideally

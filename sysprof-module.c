@@ -42,7 +42,6 @@ static struct timer_list timer;
 static void
 init_timeout (void)
 {
-	timer.function = on_timer;
 	init_timer(&timer);
 }
 
@@ -56,6 +55,7 @@ static void
 add_timeout(unsigned int interval,
 	    TimeoutFunc  f)
 {
+	timer.function = f;
 	mod_timer(&timer, jiffies + INTERVAL);
 }
 
@@ -79,7 +79,7 @@ init_userspace_reader (userspace_reader *reader,
 }
 
 /* This is mostly cutted and pasted from ptrace.c
- * I removed some locking and other stuff though. I hope it
+ * I removed some locking and stuff though. I hope it
  * wasn't important.
  */
 
@@ -303,22 +303,14 @@ static void
 on_timer(unsigned long dong)
 {
 #if 0
-	struct task_struct *p;
-#endif
-
 	static const int cpu_profiler = 1; /* set to 0 to profile disk */
 
-	if (current && current->pid != 0) {
-#if 0
-	
-	for_each_process (p) {
-		if (p->state == (cpu_profiler? TASK_RUNNING : TASK_UNINTERRUPTIBLE)) {
+	if (p->state == (cpu_profiler? TASK_RUNNING : TASK_UNINTERRUPTIBLE))
+		;
 #endif
-			queue_generate_stack_trace (current);
-#if 0
-		}
-#endif
-	}
+
+	if (current && current->pid != 0)
+		queue_generate_stack_trace (current);
 	
 	add_timeout (INTERVAL, on_timer);
 }

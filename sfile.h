@@ -19,6 +19,13 @@ typedef guint SType;
  * serializer_write_int ();
  * serializer_end_write (..., GError **err);
  *
+ *
+ *  For formats consider:
+ *
+ *   Format *format_new (void);
+ *   void format_new_record (Format *f, Record *r);
+ *   
+ *   
  */
 
 /* - Describing Types - */

@@ -18,6 +18,7 @@ struct SFormat
 
 enum
 {
+    TYPE_UNDEFINED = 0,
     TYPE_POINTER,
     TYPE_STRING,
     TYPE_INTEGER,

@@ -72,6 +72,40 @@ struct Fragment
 
 struct Action
 {
+    TransitionType type;
+    char *name;
+    
+    union
+    {
+        struct
+        {
+        } begin_record;
+
+        struct
+        {
+            int n_items;
+        } begin_list;
+
+        struct
+        {
+            int id;
+        } end;
+        
+        struct
+        {
+            gpointer *location;
+        } pointer;
+
+        struct
+        {
+            int value;
+        } integer;
+
+        struct
+        {
+            char *value;
+        } string;
+    } u; 
 };
 
 static State *
@@ -426,9 +460,9 @@ typedef struct ParseNode ParseNode;
 
 struct BuildContext
 {
-    ParseNode *root;
-    ParseNode *current_node;
-    GHashTable *nodes_by_id;
+    State *state;
+    Action *actions;
+    int n_actions;
 };
 
 struct ParseNode
@@ -441,42 +475,6 @@ struct ParseNode
 
     SFormat *format;
 };
-
-void
-sfile_begin_get_record (SFileInput       *file)
-{
-}
-
-int
-sfile_begin_get_list   (SFileInput       *file)
-{
-    return -1; /* FIXME */
-}
-
-void
-sfile_get_pointer      (SFileInput       *file,
-                        gpointer    *pointer)
-{
-    
-}
-
-void
-sfile_get_integer      (SFileInput       *file,
-                        int         *integer)
-{
-}
-
-void
-sfile_get_string       (SFileInput       *file,
-                        char       **string)
-{
-}
-
-void
-sfile_end_get          (SFileInput       *file,
-                        gpointer     object)
-{
-}
 
 static gboolean
 get_number (const char *text, int *number)
@@ -496,6 +494,98 @@ get_number (const char *text, int *number)
 	*number = result;
     
     return TRUE;
+}
+
+struct SFileInput
+{
+    int n_actions;
+    Action *actions;
+    Action *current_action;
+    GHashTable *actions_by_location;
+    GHashTable *objects_by_id;
+};
+
+void
+sfile_begin_get_record (SFileInput *file, const char *name)
+{
+    Action *action = file->current_action++;
+
+    g_return_if_fail (action->type == BEGIN_RECORD &&
+                      strcmp (action->name, name) == 0);
+}
+
+int
+sfile_begin_get_list   (SFileInput       *file,
+                        const char   *name)
+{
+    Action *action = file->current_action++;
+
+    g_return_val_if_fail (action->type == BEGIN_LIST &&
+                          strcmp (action->name, name) == 0, 0);
+
+    return action->u.begin_list.n_items;
+}
+
+void
+sfile_get_pointer      (SFileInput  *file,
+                        const char *name,
+                        gpointer    *location)
+{
+    Action *action = file->current_action++;
+    g_return_if_fail (action->type == POINTER &&
+                      strcmp (action->name, name) == 0);
+
+    action->u.pointer.location = location;
+
+    if (location)
+    {
+        if (g_hash_table_lookup (file->actions_by_location, location))
+            g_warning ("Reading into the same location twice\n");
+        
+        g_hash_table_insert (file->actions_by_location, location, action);
+    }
+}
+
+void
+sfile_get_integer      (SFileInput  *file,
+                        const char  *name,
+                        int         *integer)
+{
+    Action *action = file->current_action++;
+    g_return_if_fail (action->type == INTEGER &&
+                      strcmp (action->name, name) == 0);
+
+    if (integer)
+        *integer = action->u.integer.value;
+}
+
+void
+sfile_get_string       (SFileInput  *file,
+                        const char  *name,
+                        char       **string)
+{
+    Action *action = file->current_action++;
+    g_return_if_fail (action->type == STRING &&
+                      strcmp (action->name, name) == 0);
+
+    if (string)
+        *string = g_strdup (action->u.string.value);
+}
+
+void
+sfile_end_get          (SFileInput  *file,
+                        const char  *name,
+                        gpointer     object)
+{
+    Action *action = file->current_action++;
+    
+    g_return_if_fail ((action->type == END_LIST ||
+                       action->type == END_RECORD) &&
+                      strcmp (action->name, name) == 0);
+
+    if (action->u.end.id)
+        g_hash_table_insert (file->objects_by_id,
+                             GINT_TO_POINTER (action->u.end.id), object);
 }
 
 static ParseNode *
@@ -526,7 +616,7 @@ handle_begin_element (GMarkupParseContext *parse_context,
 {
     BuildContext *build = user_data;
     const char *id_string;
-    ParseNode *node;
+    Action action;
     int id;
     int i;
 
@@ -559,24 +649,10 @@ handle_begin_element (GMarkupParseContext *parse_context,
 	}
     }
 
-    if (build->current_node->text->len > 0)
-    {
-        /* FIXME: mixing children and text */
-        return;
-    }
-    
-    node = parse_node_new (build->current_node, element_name);
+    /* */
 
-    if (id_string)
-    {
-        node->id = GINT_TO_POINTER (id);
-        g_hash_table_insert (build->nodes_by_id, node->id, node);
-    }
-
-    build->current_node = node;
-
-    if (!build->root)
-        build->root = node;
+    if (!state_transition_begin (build->state, element_name, &action.type, err)) {
+    };
 }
     
 static void
@@ -586,8 +662,6 @@ handle_end_element (GMarkupParseContext *context,
 		    GError **err)
 {
     BuildContext *build = user_data;
-
-    build->current_node = build->current_node->parent;
 }
 
 static void
@@ -598,20 +672,10 @@ handle_text (GMarkupParseContext *context,
 	     GError **err)
 {
     BuildContext *build = user_data;
-
-    if (build->current_node->children->len > 0)
-    {
-        /* FIXME: set error: mixing children and text */
-        return;
-    }
-    
-    g_string_append (build->current_node->text, text);
 }
 
-static ParseNode *
-build_tree (const char *text,
-	    GHashTable *nodes_by_id,
-	    GError **err)
+static Action *
+build_actions (const char *contents, int *n_actions, GError **err)
 {
     BuildContext build;
     GMarkupParseContext *parse_context;
@@ -624,41 +688,15 @@ build_tree (const char *text,
 	NULL, /* error */
     };
 
-    build.root = NULL;
-    build.current_node = NULL;
-    build.nodes_by_id = nodes_by_id;
-    
     parse_context = g_markup_parse_context_new (&parser, 0, &build, NULL);
 
-    if (!g_markup_parse_context_parse (parse_context, text, -1, err))
+    if (!g_markup_parse_context_parse (parse_context, contents, -1, err))
     {
 	/* FIXME: free stuff */
 	return NULL;
     }
 
-    if (!build.root)
-    {
-        /* FIXME: empty document not allowed */
-        /* FIXME: free stuff */
-        return NULL;
-    }
-    
-    return build.root;
-}
-
-static gboolean check_structure (ParseNode *node, SFormat *format, GHashTable *nodes_by_id, GError **err);
-
-
-struct SFileInput
-{
-    int n_actions;
-    Action *actions;
-};
-
-static Action *
-build_actions (const char *contents, int *n_actions, GError **err)
-{
-    return NULL; /* FIXME */
+    return build.actions;
 }
 
 SFileInput *
@@ -668,9 +706,6 @@ sfile_load (const char  *filename,
 {
     gchar *contents;
     gsize length;
-    ParseNode *tree;
-    GHashTable *nodes_by_id;
-    GArray *read_list;
     SFileInput *input;
     
     if (!g_file_get_contents (filename, &contents, &length, err))

@@ -78,13 +78,16 @@ init_userspace_reader (userspace_reader *reader,
 	reader->page = NULL;
 }
 
+/* This is mostly cutted and pasted from ptrace.c
+ * I removed some locking and other stuff though. I hope it
+ * wasn't important.
+ */
+
 /* Access another process' address space.
  * Source/target buffer must be kernel space, 
  * Do not walk the page table directly, use get_user_pages
  */
-
-
-
+ 
 static int x_access_process_vm(struct task_struct *tsk, unsigned long addr, void *buf, int len, int write)
 {
 	struct mm_struct *mm;
@@ -244,6 +247,7 @@ generate_stack_trace(struct task_struct *task,
 	init_userspace_reader (&reader, task);
 	while (i < SYSPROF_MAX_ADDRESSES && read_frame (&reader, addr, &frame)  &&
 	       addr < START_OF_STACK && addr >= regs->esp) {
+		
 		trace->addresses[i++] = (void *)frame.return_address;
 		addr = frame.next;
 	}

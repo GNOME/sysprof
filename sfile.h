@@ -17,15 +17,19 @@ gpointer sformat_new_string (const char  *name);
 SFileInput *  sfile_load        (const char  *filename,
 				 SFormat       *format,
 				 GError     **err);
-void     sfile_begin_get_record (SFileInput  *file);
-int      sfile_begin_get_list   (SFileInput  *file);
+void     sfile_begin_get_record (SFileInput  *file, const char *name);
+int      sfile_begin_get_list   (SFileInput  *file, const char *name);
 void     sfile_get_pointer      (SFileInput  *file,
+				 const char *name,
 				 gpointer    *pointer);
 void     sfile_get_integer      (SFileInput  *file,
+				 const char *name,
 				 int         *integer);
 void     sfile_get_string       (SFileInput  *file,
+				 const char *name,
 				 char       **string);
 void     sfile_end_get          (SFileInput  *file,
+				 const char *name,
 				 gpointer     object);
 
 #if 0

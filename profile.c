@@ -190,6 +190,7 @@ get_number (const char *input_name,
     return -1;
 }
 
+#if 0
 static Node *
 create_node (const char **names,
 	     const char **values,
@@ -345,6 +346,7 @@ profile_load (const char	 *filename,
     
     return result;
 }
+#endif
 
 static void
 profile_object_free (ProfileObject *obj)

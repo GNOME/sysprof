@@ -1,14 +1,15 @@
 - consider caching [filename => bin_file]
 - Have kernel modulereport the file the symbol was found in
-	Should avoid a lot of potential brokenness with dlopen etc.
+	Should avoid a lot of potential broken/raciness with dlopen etc.
 - grep FIXME
 - hide internal stuff in ProfileDescendant
 
 - loading and saving
 
 - Non-GUI version that can save in a format the GUI can understand.
-  Could be used for profiling startup etc. Should be able to dump the
-  data to a network socket.
+  Could be used for profiling startup etc. Would preferably be able to
+  dump the data to a network socket. Should be able to react to eg.
+  SIGUSR1 by dumping the data.
 
 - Port to GtkAction
 

@@ -189,7 +189,6 @@ update_sensitivity (Application *app)
     queue_show_samples (app);
 }
 
-#if 0
 static void
 set_busy (Application *app, gboolean busy)
 {
@@ -199,13 +198,14 @@ set_busy (Application *app, gboolean busy)
 	cursor = gdk_cursor_new (GDK_WATCH);
     else
 	cursor = NULL;
-    
+
     gdk_window_set_cursor (app->main_window->window, cursor);
     
     if (cursor)
 	gdk_cursor_unref (cursor);
+
+    gdk_flush ();
 }
-#endif
 
 #if 0
 static gchar *
@@ -682,9 +682,7 @@ on_profile_toggled (GtkWidget *widget, gpointer data)
     
     if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (app->profile_button)))
     {
-#if 0
 	set_busy (app, TRUE);
-#endif
 	if (app->profile && !app->profile_from_file)
 	{
 	    profile_free (app->profile);
@@ -692,9 +690,7 @@ on_profile_toggled (GtkWidget *widget, gpointer data)
 	}
 	
 	ensure_profile (app);
-#if 0
 	set_busy (app, FALSE);
-#endif
     }
 }
 
@@ -894,6 +890,10 @@ on_object_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
     Application *app = data;
     GtkTreePath *path;
+
+    set_busy (app, TRUE);
+
+    gdk_window_process_all_updates ();
     
     fill_descendants_tree (app);
     fill_callers_list (app);
@@ -905,6 +905,8 @@ on_object_selection_changed (GtkTreeSelection *selection, gpointer data)
     gtk_tree_view_expand_row (
 	GTK_TREE_VIEW (app->descendants_view), path, FALSE);
     gtk_tree_path_free (path);
+    
+    set_busy (app, FALSE);
 }
 
 static void

@@ -1,3 +1,14 @@
+Thu Mar 31 00:19:47 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (set_busy): Make this function work
+
+	* sysprof.c (on_profile_toggled): Use it here
+
+	* sysprof.c (on_object_selection_changed): And here
+
+	* profile.c (add_trace_to_tree): Use GPtrArrays instead of
+	GHashTable and GList.
+
 Mon Mar 28 11:09:02 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: updates

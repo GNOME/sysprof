@@ -525,12 +525,12 @@ static void
 add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 {
     GList *list;
-    GList *nodes_to_unmark = NULL;
-    GList *nodes_to_unmark_recursive = NULL;
+    GPtrArray *nodes_to_unmark = g_ptr_array_new ();
+    GPtrArray *nodes_to_unmark_recursive = g_ptr_array_new ();
     ProfileDescendant *parent = NULL;
+    int i, len;
     
-    GHashTable *seen_objects =
-	g_hash_table_new (direct_hash_no_null, g_direct_equal);
+    GPtrArray *seen_objects = g_ptr_array_new ();
     
     for (list = trace; list != NULL; list = list->next)
     {
@@ -550,8 +550,14 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	    ProfileDescendant *seen_tree_node;
 	    
 	    /* Have we seen this object further up the tree? */
-	    seen_tree_node = g_hash_table_lookup (seen_objects, node->object);
-	    
+	    seen_tree_node = NULL;
+	    for (i = 0; i < seen_objects->len; ++i)
+	    {
+		ProfileDescendant *n = seen_objects->pdata[i];
+		if (n->object == node->object)
+		    seen_tree_node = n;
+	    }
+		    
 	    if (seen_tree_node)
 	    {
 		ProfileDescendant *node;
@@ -566,12 +572,9 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 		
 		match = seen_tree_node;
 		
-		g_hash_table_destroy (seen_objects);
-		seen_objects =
-		    g_hash_table_new (direct_hash_no_null, g_direct_equal);
-		
+		g_ptr_array_remove_range (seen_objects, 0, seen_objects->len);
 		for (node = match; node != NULL; node = node->parent)
-		    g_hash_table_insert (seen_objects, node->object, node);
+		    g_ptr_array_add (seen_objects, node);
 	    }
 	}
 	
@@ -594,15 +597,14 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	
 	if (!match->marked_non_recursive)
 	{
-	    nodes_to_unmark = g_list_prepend (nodes_to_unmark, match);
+	    g_ptr_array_add (nodes_to_unmark, match);
 	    match->non_recursion += size;
 	    ++match->marked_non_recursive;
 	}
 	
 	if (!match->marked_total)
 	{
-	    nodes_to_unmark_recursive = g_list_prepend (
-		nodes_to_unmark_recursive, match);
+	    g_ptr_array_add (nodes_to_unmark_recursive, match);
 	    
 	    match->total += size;
 	    match->marked_total = TRUE;
@@ -610,30 +612,33 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	
 	if (!list->next)
 	    match->self += size;
-	
-	g_hash_table_insert (seen_objects, node->object, match);
+
+	g_ptr_array_add (seen_objects, match);
 	
 	tree = &(match->children);
 	parent = match;
     }
-    
-    g_hash_table_destroy (seen_objects);
-    
-    for (list = nodes_to_unmark; list != NULL; list = list->next)
+
+    g_ptr_array_free (seen_objects, TRUE);
+
+    len = nodes_to_unmark->len;
+    for (i = 0; i < len; ++i)
     {
-	ProfileDescendant *tree_node = list->data;
+	ProfileDescendant *tree_node = nodes_to_unmark->pdata[i];
 	
 	tree_node->marked_non_recursive = 0;
     }
-    
-    for (list = nodes_to_unmark_recursive; list != NULL; list = list->next)
+
+    len = nodes_to_unmark_recursive->len;
+    for (i = 0; i < len; ++i)
     {
-	ProfileDescendant *tree_node = list->data;
+	ProfileDescendant *tree_node = nodes_to_unmark_recursive->pdata[i];
 	
 	tree_node->marked_total = FALSE;
     }
-    
-    g_list_free (nodes_to_unmark);
+
+    g_ptr_array_free (nodes_to_unmark, TRUE);
+    g_ptr_array_free (nodes_to_unmark_recursive, TRUE);
 }
 
 static void

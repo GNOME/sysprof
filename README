@@ -2,25 +2,45 @@ This is a sampling profiler that uses a kernel module, sysprof-module,
 to generate stacktraces which are then interpreted by the userspace
 program "sysprof".
 
-- The profiler uses a kernel module, so it is Linux specifc
+- There is no auto* stuff. Just type "make" and hope for the best
 
-- There is no auto* stuff. Just type "make" and hope for the best.
+- You need gtk+ 2.4.0 or better. If you are using gtk+ 2.5 or greater,
+  you also need libglade cvs HEAD.
 
-- You need gtk+ 2.4.0 or better, and you need libglade from CVS.
-
-- You need a 2.6 non-SMP kernel
+- You need a 2.6 kernel
 
 - The programs you want to profile should have debugging symbols, or
-  you won't get much useful information.
+  you won't get much usable information. On a Fedora Core system,
+  installing the relevant -debuginfo packages should do the trick.
 
-- To get symbols from the X server, run sysprof as root (go figure).
+- To get usable data on the X server:
 
-- It may be broken on SMP kernels.
+  (1) Compile the X server to use ".so" modules:
 
-Søren
+	- Uncomment the line "MakeDllModules	Yes" in 
+	  xc/config/cf/xorgsite.def
 
+	- "make World"
 
+  (2) Install the X server making sure it can't see any ".a" files. If
+      You install on top of an existing installation, just do
+
+	  find /usr/X11R6/lib/"*.a" | sudo xargs rm
+
+      and install the newly compiled X server. If a ".so" X server
+      finds .a files in its module path it will try to load those 
+      in preference to .so files and this causes symbol resolution
+      problems
+
+  (3) Run your new X server
+
+  (4) Run sysprof as root. This is necessary because the X server binary 
+      for security reasons is not readable by regular users. I could tell
+      you why this is so, but then I'd have to kill you.
 
 Credits:
-	Kristian Høgsberg for the first port to 2.6
+	Kristian Høgsberg for the first port to kernel 2.6
+	Owen Taylor for the symbol lookup code in memprof
+	
 
+Søren

@@ -261,8 +261,6 @@ generate_stack_trace(struct task_struct *task,
 }
 
 struct work_struct work;
-static int in_queue;
-static int saved_state;
 
 DECLARE_WAIT_QUEUE_HEAD (wait_to_be_scanned);
 
@@ -271,8 +269,11 @@ do_generate (void *data)
 {
 	struct task_struct *task = data;
 	struct task_struct *g, *p;
-	
+
 	/* Make sure the thread still exists */
+	/* FIXME: this is probably not necessary anymore, now that
+	 * we make the process sleep
+	 */
 	do_each_thread (g, p) {
 		if (p == task) {
 			generate_stack_trace(task, head);
@@ -281,34 +282,14 @@ do_generate (void *data)
 				head = &stack_traces[0];
 			
 			wake_up (&wait_for_trace);
-			
+			wake_up_process (task);
+
 			goto out;
 		}
 	} while_each_thread (g, p);
 
  out:
-	wake_up_process (task);
-	in_queue = 0;
-}
-
-static void
-queue_generate_stack_trace (struct task_struct *cur)
-{
-	if (in_queue)
-		return;
-
-#if 0
-	printk(KERN_ALERT "qst: current: %d\n", current? current->pid : -1);
-#endif
-	
-	INIT_WORK (&work, do_generate, cur);
-
-	in_queue = 1;
-	
-	schedule_work (&work);
-
-	saved_state = cur->state;
-	set_task_state (cur, TASK_UNINTERRUPTIBLE);
+	add_timeout (INTERVAL, on_timer);
 }
 
 static void
@@ -321,21 +302,16 @@ on_timer(unsigned long dong)
 		;
 #endif
 
-	if (current && current->pid != 0) {
-#if 0
-		printk(KERN_ALERT "current: %d\n", current->pid);
-#endif
-		queue_generate_stack_trace (current);
-	}
-#if 0
-	else if (!current)
-		printk(KERN_ALERT "no current\n");
-	else 
-		printk(KERN_ALERT "current is 0\n");
-#endif
+	if (current && current->state == TASK_RUNNING && current->pid != 0) {
+		INIT_WORK (&work, do_generate, current);
 		
-	
-	add_timeout (INTERVAL, on_timer);
+		set_current_state (TASK_UNINTERRUPTIBLE);
+		
+		schedule_work (&work);
+	}
+	else {
+		add_timeout (INTERVAL, on_timer);
+	}
 }
 
 static int

@@ -1,6 +1,7 @@
 Before 1.0:
 
 - grep FIXME
+- When the module is unloaded, kill all processes blocking in read
 - Need to make "make install" work (how do you know where to install
   kernel modules?)
 - Find out what distributions it actually works on
@@ -18,7 +19,7 @@ Before 1.0:
 - hook up menu items view/start etc (or possibly get rid of them or move
   them)
 - give profiles on the command line
-- autoconfuscate?
+- auto*?
 - .desktop file
 - Consider expanding a few more levels of a new descendants tree 
 
@@ -80,10 +81,6 @@ Before 1.2:
   SIGUSR1 by dumping the data.
 
 - hide internal stuff in ProfileDescendant
-
-- kernel module should put process to sleep before sampling. Should get us
-  more accurate data
-
 
 Later:
 
@@ -153,6 +150,9 @@ Later:
    but not for long ones).
 
 DONE:
+
+- kernel module should put process to sleep before sampling. Should get us
+  more accurate data
 
 - Make sure samples label shows correct nunber after Open
 

@@ -1,3 +1,11 @@
+Sun Apr  3 23:28:45 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-module.c (do_generate): Re-schedule the timeout here
+	instead of in on_timer().
+	
+	* sysprof-module.c (on_timer): Only block tasks in the
+	TASK_RUNNING state. 
+
 Sun Apr  3 17:03:33 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof-module.c (queue_generate_stack_trace): Put current

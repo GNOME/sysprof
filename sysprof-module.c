@@ -18,6 +18,7 @@
 
 #include "sysprof-module.h"
 
+
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
@@ -42,8 +43,9 @@ static struct timer_list timer;
 static void
 init_timeout (void)
 {
-	init_timer(&timer);
+	printk (KERN_ALERT "init timeout\n");
 	timer.function = on_timer;
+	init_timer(&timer);
 }
 
 static void
@@ -88,6 +90,9 @@ read_user_space (userspace_reader *reader,
 
 	if (user_page == 0)
 		return 0;
+
+	printk (KERN_ALERT "locking\n");
+	spin_lock(&reader->task->mm->page_table_lock);
 	
 	if (!reader->user_page || user_page != reader->user_page) {
 		int found;
@@ -102,12 +107,19 @@ read_user_space (userspace_reader *reader,
 					1, 0, 0, &page, NULL);
 
 		if (!found)
+		{
+			printk (KERN_ALERT "unlocking\n");
+			spin_unlock(&reader->task->mm->page_table_lock);
 			return 0;
+		}
 
 		reader->kernel_page = (unsigned long)kmap (page);
 		reader->page = page;
 	}
 
+	printk (KERN_ALERT "unlocking\n");
+	spin_unlock(&reader->task->mm->page_table_lock);
+	
 	if (get_user (res, (int *)(reader->kernel_page + (address - user_page))) != 0)
 		return 0;
 
@@ -198,15 +210,18 @@ do_generate (void *data)
 	struct task_struct *p;
 
 	in_queue = 0;
+
+	printk (KERN_ALERT "do_generate\n");
 	
 	/* Make sure the task still exists */
 	for_each_process (p)
 		if (p == task)
 			goto go_ahead;
 	return;
-	
+
  go_ahead:
 	generate_stack_trace(task, head);
+	printk (KERN_ALERT "generated stack\n");
 	if (head++ == &stack_traces[N_TRACES - 1])
 		head = &stack_traces[0];
 			     
@@ -214,7 +229,7 @@ do_generate (void *data)
 }
 
 static void
-queue_stack (struct task_struct *cur)
+queue_generate_stack_trace (struct task_struct *cur)
 {
 	if (in_queue)
 		return;
@@ -230,13 +245,14 @@ static void
 on_timer(unsigned long dong)
 {
 	static int n_ticks = 0;
+	task_t *task = current;
 
 	++n_ticks;
 
-	if (current && current->pid != 0)
-	{
-		queue_stack (current);
-	}
+	printk (KERN_ALERT "on timer\n");
+
+	if (task && task->pid != 0)
+		queue_generate_stack_trace (task);
 	
 	add_timeout (INTERVAL, on_timer);
 }

@@ -12,6 +12,7 @@ gpointer sformat_new_list (const char  *name,
 gpointer sformat_new_pointer (const char  *name);
 gpointer sformat_new_integer (const char  *name);
 gpointer sformat_new_string (const char  *name);
+void sformat_free (SFormat *format);
 
 /* - Reading - */
 SFileInput *  sfile_load        (const char  *filename,
@@ -51,7 +52,7 @@ void         sfile_loader_free     (SFileLoader  *loader);
  * a way to get the name back then, though.
  */
 
-SFileOutput *  sfile_output_mew (SFormat       *format);
+SFileOutput *  sfile_output_new (SFormat       *format);
 void     sfile_begin_add_record (SFileOutput       *file,
 				 const char *name);
 void     sfile_begin_add_list   (SFileOutput       *file,
@@ -68,8 +69,8 @@ void     sfile_add_integer      (SFileOutput       *file,
 void     sfile_add_pointer      (SFileOutput       *file,
 				 const char *name,
 				 gpointer     pointer);
-gboolean sfile_save             (SFileOutput       *sfile,
+gboolean sfile_output_save      (SFileOutput       *sfile,
 				 const char  *filename,
 				 GError     **err);
 
-
+void sfile_output_free (SFileOutput *sfile);

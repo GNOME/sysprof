@@ -200,7 +200,7 @@ process_ensure_map (Process *process, int pid, gulong addr)
 {
     /* Round down to closest page */
     addr = (addr - addr % PAGE_SIZE);
-    
+
     if (process_has_page (process, addr))
 	return;
     
@@ -214,7 +214,7 @@ process_ensure_map (Process *process, int pid, gulong addr)
     process->maps = read_maps (pid);
     
     if (!process_has_page (process, addr))
-	g_list_prepend (process->bad_pages, (gpointer)addr);
+	process->bad_pages = g_list_prepend (process->bad_pages, (gpointer)addr);
 }
 
 static gboolean

@@ -13,7 +13,7 @@
 #include "stackstash.h"
 #include "profile.h"
 #include "treeviewutils.h"
-
+#include "tracing.h"
 
 /* FIXME */
 #define _(a) a
@@ -167,6 +167,62 @@ get_name (pid_t pid)
 	return cmdline;
     else
 	return g_strdup ("<unknown>");
+}
+#endif
+
+#if 0
+static void
+on_timeout (gpointer data)
+{
+    Application *app = data;
+    GList *pids, *list;
+    int mypid = getpid();
+
+    pids = list_processes ();
+
+    for (list = pids; list != NULL; list = list->next)
+    {
+	int pid = GPOINTER_TO_INT (list->data);
+
+	if (pid == mypid)
+	    continue;
+	
+	if (get_process_state (pid) == PROCESS_RUNNING)
+	{
+	    Process *process;
+	    SysprofStackTrace trace;
+	    int i;
+
+	    if (!generate_stack_trace (pid, &trace))
+	    {
+		continue;
+	    }
+
+	    process = process_get_from_pid (pid);
+	    
+#if 0
+	    process_ensure_map (process, trace.pid, 
+				(gulong)trace.addresses[i]);
+#endif
+
+	    g_print ("n addr: %d\n", trace.n_addresses);
+	    for (i = 0; i < trace.n_addresses; ++i)
+		process_ensure_map (process, trace.pid, 
+				    (gulong)trace.addresses[i]);
+	    g_assert (!app->generating_profile);
+	    
+	    stack_stash_add_trace (
+		app->stash, process,
+		(gulong *)trace.addresses, trace.n_addresses, 1);
+	
+	    app->n_samples++;
+	}
+    }
+
+    update_sensitivity (app);
+    g_list_free (pids);
+
+    return TRUE;
 }
 #endif
 
@@ -413,8 +469,9 @@ on_save_as_clicked (gpointer widget, gpointer data)
     Application *app = data;
 
     ensure_profile (app);
-    
-    if (!profile_save (app->profile, NULL))
+
+    /* FIXME */
+    if (!profile_save (app->profile, "name.profile", NULL))
 	sorry (NULL, "Couldn't save\n");
     
 #if 0
@@ -880,6 +937,11 @@ main (int argc, char **argv)
     
     fd_add_watch (app->input_fd, app);
     fd_set_read_callback (app->input_fd, on_read);
+
+#if 0
+    nice (-19);
+    g_timeout_add (10, on_timeout, app);
+#endif
     
     build_gui (app);
     

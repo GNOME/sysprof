@@ -391,7 +391,7 @@ generate_presentation_name (Process *process, gulong address)
 }
 
 static void
-ensure_profile_node (GHashTable *profile_objects, Process *process, gulong address)
+ensure_profile_object (GHashTable *profile_objects, Process *process, gulong address)
 {
     char *key = generate_key (process, address);
     
@@ -434,12 +434,12 @@ generate_object_table (Process *process, GSList *trace, gint size, gpointer data
     Info *info = data;
     GSList *list;
     
-    ensure_profile_node (info->profile_objects, process, 0);
+    ensure_profile_object (info->profile_objects, process, 0);
     
     for (list = trace; list != NULL; list = list->next)
     {
 	update ();
-	ensure_profile_node (info->profile_objects, process, (gulong)list->data);
+	ensure_profile_object (info->profile_objects, process, (gulong)list->data);
     }
     
     info->profile->size += size;
@@ -592,29 +592,27 @@ compute_object_total (gpointer key, gpointer value, gpointer data)
 Profile *
 profile_new (StackStash *stash)
 {
-    Profile *profile = g_new (Profile, 1);
     Info info;
-    
-    profile->call_tree = NULL;
-    
-    profile->nodes_by_object =
+
+    info.profile = g_new (Profile, 1);
+    info.profile->call_tree = NULL;
+    info.profile->nodes_by_object =
 	g_hash_table_new (direct_hash_no_null, g_direct_equal);
-    
-    profile->size = 0;
-    
-    info.profile = profile;
+    info.profile->size = 0;
+
+    /* profile objects */
     info.profile_objects = g_hash_table_new_full (g_str_hash, g_str_equal,
 						  g_free, NULL);
     
     stack_stash_foreach (stash, generate_object_table, &info);
     stack_stash_foreach (stash, generate_call_tree, &info);
-    link_parents (profile->call_tree, NULL);
+    link_parents (info.profile->call_tree, NULL);
     
-    g_hash_table_foreach (profile->nodes_by_object, compute_object_total, NULL);
+    g_hash_table_foreach (info.profile->nodes_by_object, compute_object_total, NULL);
     
     g_hash_table_destroy (info.profile_objects);
     
-    return profile;
+    return info.profile;
 }
 
 static void

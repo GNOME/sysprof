@@ -217,44 +217,106 @@ process_ensure_map (Process *process, int pid, gulong addr)
 	g_list_prepend (process->bad_pages, (gpointer)addr);
 }
 
+static gboolean
+do_idle_free (gpointer d)
+{
+    g_free (d);
+    return FALSE;
+}
+
+static char *
+idle_free (char *d)
+{
+    g_idle_add (do_idle_free, d);
+    return d;
+}
+
+static char *
+get_cmdline (int pid)
+{
+    char *cmdline;
+    char *filename = idle_free (g_strdup_printf ("/proc/%d/cmdline", pid));
+
+    if (g_file_get_contents (filename, &cmdline, NULL, NULL))
+    {
+	if (*cmdline == '\0')
+	{
+	    g_free (cmdline);
+	    return NULL;
+	}
+	return cmdline;
+    }
+
+    return NULL;
+}
+
+static char *
+get_statname (int pid)
+{
+    char *stat;
+    char *filename = idle_free (g_strdup_printf ("/proc/%d/stat", pid));
+
+#if 0
+    g_print ("stat %d\n", pid);
+#endif
+    
+    if (g_file_get_contents (filename, &stat, NULL, NULL))
+    {
+	char result[200];
+	
+	idle_free (stat);
+
+	if (sscanf (stat, "%*d %200s %*s", result) == 1)
+	    return g_strndup (result, 200);
+    }
+#if 0
+    g_print ("return null\n");
+#endif
+    
+    return NULL;
+}
+
+static char *
+get_pidname (int pid)
+{
+    return g_strdup_printf ("[pid %d]", pid);
+}
+
+static char *
+get_name (int pid)
+{
+    char *cmdline = NULL;
+
+    if ((cmdline = get_cmdline (pid)))
+	return cmdline;
+
+    if ((cmdline = get_statname (pid)))
+	return cmdline;
+
+    return get_pidname (pid);
+}
+
 Process *
 process_get_from_pid (int pid)
 {
     Process *p;
-    gchar *filename = NULL;
     gchar *cmdline = NULL;
     
     initialize();
-    
-    p = g_hash_table_lookup (processes_by_pid, GINT_TO_POINTER (pid));
-    if (p)
-	goto out;
-    
-    filename = g_strdup_printf ("/proc/%d/cmdline", pid);
-    
-    if (g_file_get_contents (filename, &cmdline, NULL, NULL))
-    {
-	p = g_hash_table_lookup (processes_by_cmdline, cmdline);
-	if (p)
-	    goto out;
-    }
-    else
-    {
-	cmdline = g_strdup_printf ("[pid %d]", pid);
-    }
-    
-    p = create_process (cmdline, pid);
-    
-out:
-    if (cmdline)
-	g_free (cmdline);
-    
-    if (filename)
-	g_free (filename);
-    
-    return p;
-}
 
+    p = g_hash_table_lookup (processes_by_pid, GINT_TO_POINTER (pid));
+
+    if (p)
+	return p;
+    
+    cmdline = get_name (pid);
+
+    p = g_hash_table_lookup (processes_by_cmdline, cmdline);
+    if (p)
+	return p;
+    else
+	return create_process (idle_free (cmdline), pid);
+}
 
 const Symbol *
 process_lookup_symbol (Process *process, gulong address)

@@ -727,17 +727,26 @@ handle_text (GMarkupParseContext *context,
     {
     case POINTER:
         if (!get_number (text, &action.u.pointer.target_id))
-            /* FIXME: set error */;
+        {
+            set_invalid_content_error (err, "Contents '%s' of pointer element is not a number", text);
+            return;
+        }
         break;
 
     case INTEGER:
         if (!get_number (text, &action.u.integer.value))
-            /* FIXME: set error */;
+        {
+            set_invalid_content_error (err, "Contents '%s' of integer element not a number", text);
+            return;
+        }
         break;
 
     case STRING:
         if (!decode_text (text, &action.u.string.value))
-            /* FIXME: set error */
+        {
+            set_invalid_content_error (err, "Contents '%s' of text element is illformed", text);
+            return;
+        }
         break;
 
     default:
@@ -947,6 +956,7 @@ void
 sfile_begin_add_record (SFileOutput       *file,
                         const char        *name)
 {
+    Action action;
     TransitionType type;
     
     file->state = state_transition_begin (file->state, name, &type, NULL);
@@ -960,9 +970,10 @@ void
 sfile_begin_add_list   (SFileOutput *file,
                         const char  *name)
 {
+    Action action;
     TransitionType type;
 
-    file->state = state_transition_begin (file->state, name, &type, NULL);
+    file->state = state_transition_begin (file->state, name, &action.type, NULL);
 
     g_return_if_fail (file->state && type == BEGIN_LIST);
 

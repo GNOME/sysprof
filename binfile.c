@@ -154,6 +154,9 @@ separate_debug_file_exists (const char *name, unsigned long crc)
 	file_crc = calc_crc32 (file_crc, buffer, count);
     
     close (fd);
+
+    if (crc != file_crc)
+	g_print ("warning: %s has wrong crc\n", name);
     
     return crc == file_crc;
 }

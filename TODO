@@ -3,6 +3,7 @@
 	Should avoid a lot of potential broken/raciness with dlopen etc.
 - grep FIXME
 - hide internal stuff in ProfileDescendant
+- add an 'everything' object. It _is_ really needed for a lot of things
 
 - loading and saving
 
@@ -12,8 +13,6 @@
   SIGUSR1 by dumping the data.
 
 - Port to GtkAction
-
-- If we can't get a name, look in /proc/<pid>/status 
 
 - Charge 'self' properly to processes that don't get any stack trace at all 
 

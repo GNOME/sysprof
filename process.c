@@ -300,6 +300,7 @@ process_lookup_symbol (Process *process, gulong address)
     return result;
 }
 
+#if 0
 const Symbol *
 process_lookup_symbol_with_filename (Process *process,
 				     int pid,
@@ -324,6 +325,7 @@ process_lookup_symbol_with_filename (Process *process,
 
     return result;
 }
+#endif
 
 const char *
 process_get_cmdline (Process *process)

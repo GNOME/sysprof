@@ -110,12 +110,10 @@ on_read (gpointer data)
     
     rd = read (app->input_fd, &trace, sizeof (trace));
 
-#if 0
     g_print ("pid: %d\n", trace.pid);
     for (i=0; i < trace.n_addresses; ++i)
 	g_print ("rd: %08x\n", trace.addresses[i]);
     g_print ("-=-\n");
-#endif
 
     if (rd > 0 && app->profiling && !app->generating_profile)
     {

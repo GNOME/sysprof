@@ -94,17 +94,16 @@ read_user_space (userspace_reader *reader,
 		int found;
 		struct page *page;
 		
-		if (reader->user_page)
-			kunmap (reader->page);
-
-		reader->user_page = user_page;
-
 		found = get_user_pages (reader->task, reader->task->mm, user_page,
 					1, 0, 0, &page, NULL);
 
 		if (!found)
 			return 0;
 
+		if (reader->user_page)
+			kunmap (reader->page);
+
+		reader->user_page = user_page;
 		reader->kernel_page = (unsigned long)kmap (page);
 		reader->page = page;
 	}

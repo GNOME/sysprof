@@ -1,3 +1,5 @@
+- Get this TODO file more organized
+
 - Figure out what's needed before 1.0
 
 - Consider adding KDE-style nested callgraph view
@@ -8,6 +10,19 @@
   to get eaten.
 
 - hook up about box
+
+- Need an icon
+
+- Add busy cursors,
+
+	- when you hit "Profile"
+	- when you click something in the main list and we don't respond within 50ms
+		(or perhaps when we expect to not be able to do so (can we know the size in
+		 advance?))
+
+- Need to make "make install" work (how do you know where to install kernel modules?)
+
+- Sould just install the kernel module if it running as root, pop up a dialog if not.
 
 - hook up menu items view/start etc (or possibly get rid of them or move them)
 

@@ -4,8 +4,7 @@ program "sysprof".
 
 - There is no auto* stuff. Just type "make" and hope for the best
 
-- You need gtk+ 2.4.0 or better. If you are using gtk+ 2.6 or newer
-  you also need libglade cvs HEAD.
+- You need gtk+ 2.6.0 or better.
 
 - You need a 2.6 kernel. On SMP kernels the module produces unreliable data.
 

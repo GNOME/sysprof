@@ -2,6 +2,15 @@
 
 - Figure out what's needed before 1.0
 
+- Consider what it would take to take stacktraces of other languages
+
+	- perl, 
+	- python
+	- java
+	- bash
+
+- Add support for line numbers within functions
+
 - Consider adding KDE-style nested callgraph view
 
 - Find out what distributions it actually works on

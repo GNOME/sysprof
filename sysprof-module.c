@@ -272,17 +272,18 @@ do_generate (void *data)
 	in_queue = 0;
 
 	/* Make sure the task still exists */
-	for_each_process (p)
-		if (p == task)
-			goto go_ahead;
-	return;
+	for_each_process (p) {
+		if (p == task) {
+			generate_stack_trace(task, head);
 
- go_ahead:
-	generate_stack_trace(task, head);
-	if (head++ == &stack_traces[N_TRACES - 1])
-		head = &stack_traces[0];
-			     
-	wake_up (&wait_for_trace);
+			if (head++ == &stack_traces[N_TRACES - 1])
+				head = &stack_traces[0];
+			
+			wake_up (&wait_for_trace);
+			
+			return;
+		}
+	}
 }
 
 static void
@@ -301,13 +302,12 @@ queue_generate_stack_trace (struct task_struct *cur)
 static void
 on_timer(unsigned long dong)
 {
-	static int n_ticks = 0;
-	task_t *task = current;
-
-	++n_ticks;
-
-	if (task && task->pid != 0)
-		queue_generate_stack_trace (task);
+	struct task_struct *p;
+	
+	for_each_process (p) {
+		if (p->state == TASK_RUNNING)
+			queue_generate_stack_trace (p);
+	}
 	
 	add_timeout (INTERVAL, on_timer);
 }

@@ -302,14 +302,22 @@ queue_generate_stack_trace (struct task_struct *cur)
 static void
 on_timer(unsigned long dong)
 {
+#if 0
 	struct task_struct *p;
+#endif
 
 	static const int cpu_profiler = 1; /* set to 0 to profile disk */
+
+	if (current && current->pid != 0) {
+#if 0
 	
 	for_each_process (p) {
 		if (p->state == (cpu_profiler? TASK_RUNNING : TASK_UNINTERRUPTIBLE)) {
-			queue_generate_stack_trace (p);
+#endif
+			queue_generate_stack_trace (current);
+#if 0
 		}
+#endif
 	}
 	
 	add_timeout (INTERVAL, on_timer);

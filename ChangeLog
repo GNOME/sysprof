@@ -1,0 +1,8 @@
+Fri Jan 21 11:23:54 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* README: Some updates - add note about SMP kernels.
+
+	* sysprof-module.c: Go back to just sampling the current
+	process.
+
+	* ChangeLog: I guess these do make sense, so start one.

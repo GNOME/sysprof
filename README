@@ -4,10 +4,11 @@ program "sysprof".
 
 - There is no auto* stuff. Just type "make" and hope for the best
 
-- You need gtk+ 2.4.0 or better. If you are using gtk+ 2.5 or greater,
+- You need gtk+ 2.4.0 or better. If you are using gtk+ 2.5 or newer
   you also need libglade cvs HEAD.
 
-- You need a 2.6 kernel
+- You need a 2.6 kernel. On SMP kernels the module seems to crash the system
+  from time to time, so you might want to stick with UP kernels.
 
 - The programs you want to profile should have debugging symbols, or
   you won't get much usable information. On a Fedora Core system,

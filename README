@@ -1,0 +1,14 @@
+This is a sampling profiler that uses a kernel module, sysprof-module,
+to generate stacktraces which are then interpreted by the userspace
+program "sysprof".
+
+- The profiler uses a kernel module, so it is Linux specifc
+
+- There is no auto* stuff. Just type "make" and hope for the best.
+
+- It does not work on Linux 2.6. Feel free to port it and send me the
+  patch.
+
+- You need gtk+ 2.4.0 or better, and you need libglade
+
+Søren

@@ -1,0 +1,81 @@
+- make presentation strings nicer
+
+  four different kinds of symbols:
+
+       a) I know exactly what this is
+       b) I know in what library this is
+       c) I know only the process that did this
+       d) I know the name, but there is another similarly named one
+
+  (a) is easy,  (b) should be <in ...>    (c) should just become "???" 
+  (d) not sure
+
+- grep FIXME
+- make an "everything" object
+       maybe not necessary -- there is a libc_ctors_something()
+- consider making ProfileObject more of an object.
+- hide internal stuff in ProfileDescendant
+- consider caching [filename->bin_file]
+
+DONE:
+
+- processes with a cmdline of "" should get a [pid = %d] instead.
+
+- Kernel module should report the file the symbol was found in
+
+- make an "n samples" label
+Process stuff:
+
+- make threads be reported together 
+  (simply report pids with similar command lines together)
+  (note: it seems separating by pid is way too slow (uses too much memory),
+  so it has to be like this)
+
+- stack stash should allow different pids to refer to the same root
+  (ie. there is no need to create a new tree for each pid)
+   The *leaves* should contain the pid, not the root. You could even imagine
+   a set of processes, each referring to a set of leaves. 
+
+- when we see a new pid, immediately capture its mappings
+
+Road map:
+     - new object Process
+       - hashable by pointer
+       - contains list of maps
+       - process_from_pid (pid_t pid, gboolean join_threads)
+       	 - new processes are gets their maps immediately
+	 - resulting pointer must be unref()ed, but it is possible it
+	   just points to an existing process
+	 - processes with identical cmdlines are taken together
+       - method lookup_symbol()
+       - method get_name()
+       - ref/unref
+     - StackStash stores map from process to leaves
+     - Profile is called with processes
+
+It is possible that we simply need a better concept of Process:
+
+     If two pids have the same command line, consider them the same, period.
+     This should save considerable amounts of memory.
+
+     The assumptions: 
+
+     	 "No pids are reused during a profiling run"
+	 "Two processes with the same command line have the same mappings"
+
+     are somewhat dubious, but probably necessary.
+
+     (More complex kernel:
+
+     	   have the module report
+	   	
+		- new pid arrived (along with mappings)
+		- mapping changed for pid
+		- stacktrace)
+
+- make symbols in executable work
+- the hashtables used in profile.c should not accept NULL as the key
+- make callers work
+- autoexpand descendant tree
+- make double clicks work
+- fix leaks

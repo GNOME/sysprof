@@ -1,13 +1,14 @@
 typedef struct SFormat SFormat;
-typedef struct SFile SFile;
+typedef struct SFileInput SFileInput;
+typedef struct SFileOutput SFileOutput;
 
 /* - Describing Types - */
 SFormat *sformat_new (gpointer f);
 gpointer sformat_new_record (const char  *name,
-			     SFormat     *content,
+			     gpointer     content,
 			     ...);
 gpointer sformat_new_list (const char  *name,
-			   SFormat       *content);
+			   gpointer	content);
 gpointer sformat_new_pointer (const char  *name);
 gpointer sformat_new_integer (const char  *name);
 gpointer sformat_new_string (const char  *name);
@@ -40,18 +41,18 @@ void         sfile_loader_free     (SFileLoader  *loader);
 
 /* - Writing - */
 SFileOutput *  sfile_output_mew (SFormat       *format);
-void     sfile_begin_add_record (SFile       *file,
+void     sfile_begin_add_record (SFileOutput       *file,
 				 gpointer     id);
-void     sfile_begin_add_list   (SFile       *file,
+void     sfile_begin_add_list   (SFileOutput       *file,
 				 gpointer     id);
-void     sfile_end_add          (SFile       *file);
-void     sfile_add_string       (SFile       *file,
+void     sfile_end_add          (SFileOutput       *file);
+void     sfile_add_string       (SFileOutput       *file,
 				 const char  *string);
-void     sfile_add_integer      (SFile       *file,
+void     sfile_add_integer      (SFileOutput       *file,
 				 int          integer);
-void     sfile_add_pointer      (SFile       *file,
+void     sfile_add_pointer      (SFileOutput       *file,
 				 gpointer     pointer);
-gboolean sfile_save             (SFile       *sfile,
+gboolean sfile_save             (SFileOutput       *sfile,
 				 const char  *filename,
 				 GError     **err);
 

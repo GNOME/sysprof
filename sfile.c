@@ -24,6 +24,11 @@
 #include <glib.h>
 #include "sfile.h"
 
+typedef struct State State;
+typedef struct Transition Transition;
+typedef struct Fragment Fragment;
+typedef struct Action Action;
+
 struct SFormat
 {
     State *begin;
@@ -31,10 +36,6 @@ struct SFormat
 };
 
 /* defining types */
-typedef struct State State;
-typedef struct Transition Transition;
-typedef struct Fragment Fragment;
-
 typedef enum
 {
     BEGIN_RECORD,
@@ -46,7 +47,7 @@ typedef enum
     BEGIN_INTEGER,
     END_INTEGER,
     BEGIN_STRING,
-    END_STRING
+    END_STRING,
     POINTER,
     INTEGER,
     STRING
@@ -69,6 +70,108 @@ struct Fragment
     Transition *enter, *exit;
 };
 
+struct Action
+{
+};
+
+static State *
+state_new (void)
+{
+    State *state = g_new (State, 1);
+    state->transitions = g_queue_new ();
+    return state;
+}
+
+static Transition *
+transition_new_begin_union (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_end_union (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_begin_record (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_end_record (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_begin_pointer (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_end_pointer (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_begin_integer (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_end_integer (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_begin_string (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_end_string (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_begin_list (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_end_list (const char *name, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_begin_value (const char *name, TransitionType type, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_end_value (const char *name, TransitionType type, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
+static Transition *
+transition_new_value (TransitionType type, State *from, State *to)
+{
+    return NULL; /* FIXME */
+}
+
 SFormat *
 sformat_new (gpointer f)
 {
@@ -78,8 +181,8 @@ sformat_new (gpointer f)
     sformat->begin = state_new ();
     sformat->end = state_new ();
 
-    g_queue_push_tail (sformat->begin->transitions, f->enter);
-    f->exit->to = sformat->end;
+    g_queue_push_tail (sformat->begin->transitions, fragment->enter);
+    fragment->exit->to = sformat->end;
 
     g_free (fragment);
     
@@ -87,19 +190,20 @@ sformat_new (gpointer f)
 }
 
 static GQueue *
-format_queue (va_list formats)
+fragment_queue (va_list args)
 {
-    GQueue *formats = g_queue_new ();
+    GQueue *fragments = g_queue_new ();
+    Fragment *fragment;
     
-    format = va_arg (args, SFormat *);
-    while (format)
+    fragment = va_arg (args, Fragment *);
+    while (fragment)
     {
-	g_queue_push_tail (formats, format);
-	format = va_arg (args, SFormat *);
+	g_queue_push_tail (fragments, fragment);
+	fragment = va_arg (args, Fragment *);
     }
     va_end (args);
 
-    return formats;
+    return fragments;
 }
 
 /* Consider adding unions at some point
@@ -144,7 +248,7 @@ sformat_new_union (const char *name,
 
     va_start (args, content1);
 
-    fragments = format_queue (args);
+    fragments = fragment_queue (args);
     
     va_end (args);
 
@@ -158,14 +262,14 @@ sformat_new_union (const char *name,
     {
         Fragment *fragment = list->data;
 
-        g_queue_push_tail (begin, fragment->enter);
+        g_queue_push_tail (begin->transitions, fragment->enter);
     }
 
     for (list = fragments->head; list; list = list->next)
     {
         fragment = list->data;
 
-        m->exit->to = end;
+        fragment->exit->to = end;
 
         g_free (fragment);
     }
@@ -186,14 +290,15 @@ sformat_new_record  (const char *     name,
 {
     va_list args;
     GQueue *fragments;
-    Transition *enter, *exit;
-    State *begin, *end, *state;
+    Transition *enter;
+    State *begin, *state;
     Fragment *fragment;
+    GList *list;
 
     /* Build queue of fragments */
     va_start (args, content1);
 
-    fragments = format_queue (args);
+    fragments = fragment_queue (args);
 
     va_end (args);
     
@@ -234,10 +339,8 @@ sformat_new_list (const char *name,
     Transition *enter, *exit;
 
     list_state = state_new ();
-    begin_state = state_new ();
-    end_state = state_new ();
     
-    enter = transition_new_begin_list (name, NJLL, list_state);
+    enter = transition_new_begin_list (name, NULL, list_state);
     exit = transition_new_end_list (name, list_state, NULL);
     
     g_queue_push_tail (list_state->transitions, m->enter);
@@ -254,14 +357,14 @@ sformat_new_value (const char *name, TransitionType type)
 {
     Fragment *m = g_new (Fragment, 1);
     State *before, *after;
-    Transition *enter, *exit, *value;
+    Transition *value;
 
     before = state_new ();
     after = state_new ();
 
     m->enter = transition_new_begin_value (name, type, NULL, before);
     m->exit  = transition_new_end_value   (name, type, after, NULL);
-    value = transition_new_text           (type, before, after);
+    value = transition_new_value          (type, before, after);
     
     return m;
 }
@@ -287,31 +390,34 @@ sformat_new_string (const char *name)
 static const State *
 sformat_get_start_state (SFormat *format)
 {
-    return format->start_state;
+    return format->begin;
 }
 
 static gboolean
 sformat_is_end_state (SFormat *format, const State *state)
 {
-    return format->end_state == state;
+    return format->end == state;
 }
 
 static const State *
 state_transition_begin (const State *state, const char *element,
-                        TranstionType *type, GError **err)
+                        TransitionType *type, GError **err)
 {
+    return NULL; /* FIXME */
 }
 
 static const State *
 state_transition_end (const State *state, const char *element,
                       TransitionType *type, GError **err)
 {
+    return NULL; /* FIXME */
 }
 
 static const State *
 state_transition_text (const State *state, const char *element,
                        TransitionType *type, GError **err)
 {
+    return NULL; /* FIXME */
 }
 
 /* reading */
@@ -337,87 +443,39 @@ struct ParseNode
 };
 
 void
-sfile_begin_get_record (SFile       *file)
+sfile_begin_get_record (SFileInput       *file)
 {
-    ReadItem *item = file->current_item++;
-
-    g_return_if_fail (file->current_item - file->items < file->n_items);
-    g_return_if_fail (item->action == BEGIN_RECORD);
 }
 
 int
-sfile_begin_get_list   (SFile       *file)
+sfile_begin_get_list   (SFileInput       *file)
 {
-    ReadItem *item = file->current_item++;
-
-    g_return_val_if_fail (file->current_item - file->items < file->n_items, -1);
-    g_return_val_if_fail (item->action == BEGIN_LIST, -1);
-
-    return item->u.read_list.n_items;
+    return -1; /* FIXME */
 }
 
 void
-sfile_get_pointer      (SFile       *file,
+sfile_get_pointer      (SFileInput       *file,
                         gpointer    *pointer)
 {
-    ReadItem *item = file->current_item++;
-
-    g_return_if_fail (file->current_item - file->items < file->n_items);
-    g_return_if_fail (item->action == READ_POINTER);
-
-    g_hash_table_insert (file->locations_by_id, GINT_TO_POINTER (item->u.read_pointer.id), pointer);
+    
 }
 
 void
-sfile_get_integer      (SFile       *file,
+sfile_get_integer      (SFileInput       *file,
                         int         *integer)
 {
-    ReadItem *item = file->current_item++;
-
-    g_return_if_fail (file->current_item - file->items < file->n_items);
-    g_return_if_fail (item->action == READ_INTEGER);
-
-    *integer = item->u.read_integer.value;
 }
 
 void
-sfile_get_string       (SFile       *file,
+sfile_get_string       (SFileInput       *file,
                         char       **string)
 {
-    ReadItem *item = file->current_item++;
-
-    g_return_if_fail (file->current_item - file->items < file->n_items);
-    g_return_if_fail (item->action == READ_STRING);
-
-    *string = g_strdup (item->u.read_string.value);
-}
-
-static void
-fixup_pointers (gpointer key, gpointer value, gpointer data)
-{
-    SFile *file = data;
-    int id = GPOINTER_TO_INT (key);
-    gpointer *location = value;
-
-    *location = g_hash_table_lookup (file->objects_by_id, GINT_TO_POINTER (id));
 }
 
 void
-sfile_end_get          (SFile       *file,
+sfile_end_get          (SFileInput       *file,
                         gpointer     object)
 {
-    ReadItem *item = file->current_item++;
-
-    g_return_if_fail (file->current_item - file->items < file->n_items);
-    g_return_if_fail (item->action == END);
-
-    g_hash_table_insert (file->objects_by_id, GINT_TO_POINTER (item->u.end.id), object);
-
-    if (file->current_item - file->items == file->n_items)
-    {
-        /* Nothing else to read. Fix up pointers */
-        g_hash_table_foreach (file->locations_by_id, fixup_pointers, file);
-    }
 }
 
 static gboolean
@@ -590,209 +648,20 @@ build_tree (const char *text,
 
 static gboolean check_structure (ParseNode *node, SFormat *format, GHashTable *nodes_by_id, GError **err);
 
-static gboolean
-check_list_node (ParseNode *list_node, SFormat *format, GHashTable *nodes_by_id, GError **err)
-{
-    SFormat *content = format->u.list.content;
-    int i;
-    
-    for (i = 0; i < list_node->children->len; ++i)
-    {
-        ParseNode *child = list_node->children->pdata[i];
-        
-        if (!check_structure (child, content, nodes_by_id, err))
-            return FALSE;
-    }
 
-    return TRUE;
+struct SFileInput
+{
+    int n_actions;
+    Action *actions;
+};
+
+static Action *
+build_actions (const char *contents, int *n_actions, GError **err)
+{
+    return NULL; /* FIXME */
 }
 
-static gboolean
-check_pointer_node (ParseNode *pointer_node, SFormat *format, GHashTable *nodes_by_id, GError **err)
-{
-    int ref_id;
-
-    if (!get_number (pointer_node->text->str, &ref_id))
-    {
-        /* Expected number */
-        return FALSE;
-    }
-
-    if (g_hash_table_lookup (nodes_by_id, GINT_TO_POINTER (ref_id)))
-    {
-        /* Dangling pointer */
-        return FALSE;
-    }
-
-    return TRUE;
-}
-
-static gboolean
-check_integer_node (ParseNode *integer_node, SFormat *format, GHashTable *nodes_by_id, GError **err)
-{
-    if (!get_number (integer_node->text->str, NULL))
-    {
-        /* Expected number */
-        return FALSE;
-    }
-
-    return TRUE;
-}
-
-static gboolean
-check_string_node (ParseNode *parse_node, SFormat *format, GHashTable *nodes_by_id, GError **err)
-{
-    char *text = g_strdup (parse_node->text->str);
-
-    g_strstrip (text);
-
-    if (strlen (text) < 2)
-    {
-        /* FIXME: syntax error */
-        return FALSE;
-    }
-    
-    if (text[0] != '\"' || text[strlen (text) - 1] != '\"')
-    {
-        /* FIMXE: string not quoted */
-        return FALSE;
-    }
-
-    g_free (text);
-
-    return TRUE;
-}
-
-static gboolean
-check_record_node (ParseNode *parse_node, SFormat *format, GHashTable *nodes_by_id, GError **err)
-{
-    GList *list;
-    int i;
-    
-    if (parse_node->children->len != g_queue_get_length (format->u.record.fields))
-    {
-        /* FIXME: Set error: incorrect number of fields */
-        return FALSE;
-    }
-
-    list = format->u.record.fields->head;
-    for (i = 0; i < parse_node->children->len; ++i)
-    {
-        SFormat *field = list->data;
-        ParseNode *child = parse_node->children->pdata[i];
-
-        if (!check_structure (child, field, nodes_by_id, err))
-            return FALSE;
-
-        list = list->next;
-    }
-
-    return TRUE;
-}
-
-static gboolean
-check_structure (ParseNode *parse_node, SFormat *format, GHashTable *nodes_by_id, GError **err)
-{
-    if (strcmp (parse_node->name, format->name) != 0)
-    {
-        /* FIXME: format->name expected */
-        return FALSE;
-    }
-
-    parse_node->format = format;
-    
-    switch (format->type)
-    {
-    case LIST:
-        return check_list_node (parse_node, format, nodes_by_id, err);
-	break;
-	
-    case POINTER:
-        return check_pointer_node (parse_node, format, nodes_by_id, err);
-        break;
-        
-    case INTEGER:
-        return check_integer_node (parse_node, format, nodes_by_id, err);
-        break;
-        
-    case STRING:
-        return check_string_node (parse_node, format, nodes_by_id, err);
-	break;
-	
-    case RECORD:
-        return check_record_node (parse_node, format, nodes_by_id, err);
-        break;
-
-    default:
-        g_assert_not_reached ();
-        return TRUE; /* quiet gcc */
-    }
-}
-
-static void
-create_read_list (ParseNode *tree, GArray *read_list)
-{
-    ReadItem item;
-    int i;
-
-    switch (tree->format->type)
-    {
-    case RECORD:
-        item.action = BEGIN_RECORD;
-        g_array_append_val (read_list, item);
-
-        for (i = 0; i < tree->children->len; ++i)
-            create_read_list (tree, read_list);
-
-        item.action = END;
-        g_array_append_val (read_list, item);
-        break;
-        
-    case LIST:
-        item.action = BEGIN_LIST;
-        g_array_append_val (read_list, item);
-        
-        for (i = 0; i < tree->children->len; ++i)
-            create_read_list (tree, read_list);
-
-        item.action = END;
-        g_array_append_val (read_list, item);
-        break;
-
-    case POINTER:
-        item.action = READ_POINTER;
-        get_number (tree->text->str, &item.u.read_pointer.id);
-        break;
-
-    case INTEGER:
-        item.action = READ_INTEGER;
-        get_number (tree->text->str, &item.u.read_integer.value);
-        break;
-
-    case STRING:
-        item.action = READ_STRING;
-        /* Copy string without quotation marks */
-        item.u.read_string.value =
-            g_strndup (tree->text->str + 1, strlen (tree->text->str) - 2);
-        break;
-    }
-}
-
-static void
-parse_node_free (ParseNode *node)
-{
-    int i;
-
-    for (i = 0; i < node->children->len; ++i)
-        parse_node_free (node);
-    
-    g_free (node->name);
-    g_ptr_array_free (node->children, TRUE);
-    g_string_free (node->text, TRUE);
-    
-}
-
-SFile *
+SFileInput *
 sfile_load (const char  *filename,
 	    SFormat       *format,
 	    GError     **err)
@@ -802,37 +671,23 @@ sfile_load (const char  *filename,
     ParseNode *tree;
     GHashTable *nodes_by_id;
     GArray *read_list;
-    SFile *sfile = g_new0 (SFile, 1);
+    SFileInput *input;
     
     if (!g_file_get_contents (filename, &contents, &length, err))
 	return NULL;
-    
-    nodes_by_id = g_hash_table_new (g_direct_hash, g_direct_equal);
 
-    tree = build_tree (contents, nodes_by_id, err);
-    if (!tree)
+    input = g_new (SFileInput, 1);
+    
+    input->actions = build_actions (contents, &input->n_actions, err);
+
+    if (!input->actions)
     {
-	/* FIXME: free stuff */
-	return NULL;
+        g_free (input);
+        g_free (contents);
+        return NULL;
     }
 
-    if (!check_structure (tree, format, nodes_by_id, err))
-    {
-	/* FIXME: free stuff */
-	return NULL;
-    }
-
-    read_list = g_array_new (TRUE, TRUE, sizeof (ReadItem));
+    g_free (contents);
     
-    create_read_list (tree, read_list);
-
-    sfile->n_items = read_list->len;
-    sfile->items = (ReadItem *)g_array_free (read_list, FALSE);
-    sfile->current_item = sfile->items;
-    sfile->objects_by_id = g_hash_table_new (g_direct_hash, g_direct_equal);
-    sfile->locations_by_id = g_hash_table_new (g_direct_hash, g_direct_equal);
-
-    parse_node_free (tree);
-    
-    return sfile;
+    return input;
 }

@@ -305,6 +305,9 @@ on_timer(unsigned long dong)
 	struct task_struct *p;
 	
 	for_each_process (p) {
+		/* Change TASK_RUNNING to TASK_UNINTERRUPTIABLE to
+		 * profile (synchronous) disk access
+		 */
 		if (p->state == TASK_RUNNING)
 			queue_generate_stack_trace (p);
 	}

@@ -44,9 +44,7 @@ struct Node
 struct Profile
 {
     gint		size;
-    GList *		objects;
     Node *		call_tree;
-    GHashTable *	profile_objects;
     GHashTable *	nodes_by_object;
 };
 
@@ -88,7 +86,7 @@ profile_object_free (ProfileObject *obj)
 }
 
 static char *
-generate_key (Profile *profile, Process *process, gulong address)
+generate_key (Process *process, gulong address)
 {
     if (address)
     {
@@ -103,7 +101,7 @@ generate_key (Profile *profile, Process *process, gulong address)
 }
 
 static char *
-generate_presentation_name (Profile *profile, Process *process, gulong address)
+generate_presentation_name (Process *process, gulong address)
 {
     /* FIXME using 0 to indicate "process" is broken */
     if (address)
@@ -123,18 +121,18 @@ generate_presentation_name (Profile *profile, Process *process, gulong address)
 }
 
 static void
-ensure_profile_node (Profile *profile, Process *process, gulong address)
+ensure_profile_node (GHashTable *profile_objects, Process *process, gulong address)
 {
-    char *key = generate_key (profile, process, address);
+    char *key = generate_key (process, address);
 
-    if (!g_hash_table_lookup (profile->profile_objects, key))
+    if (!g_hash_table_lookup (profile_objects, key))
     {
 	ProfileObject *object;
 
 	object = profile_object_new ();
-	object->name = generate_presentation_name (profile, process, address);
+	object->name = generate_presentation_name (process, address);
 
-	g_hash_table_insert (profile->profile_objects, key, object);
+	g_hash_table_insert (profile_objects, key, object);
     }
     else
     {
@@ -143,31 +141,38 @@ ensure_profile_node (Profile *profile, Process *process, gulong address)
 }
 
 static ProfileObject *
-lookup_profile_object (Profile *profile, Process *process, gulong address)
+lookup_profile_object (GHashTable *profile_objects, Process *process, gulong address)
 {
     ProfileObject *object;
-    char *key = generate_key (profile, process, address);
-    object = g_hash_table_lookup (profile->profile_objects, key);
+    char *key = generate_key (process, address);
+    object = g_hash_table_lookup (profile_objects, key);
     g_free (key);
     g_assert (object);
     return object;
 }
 
+typedef struct Info Info;
+struct Info
+{
+    Profile *profile;
+    GHashTable *profile_objects;
+};
+
 static void
 generate_object_table (Process *process, GSList *trace, gint size, gpointer data)
 {
-    Profile *profile = data;
+    Info *info = data;
     GSList *list;
-
-    ensure_profile_node (profile, process, 0);
+    
+    ensure_profile_node (info->profile_objects, process, 0);
 
     for (list = trace; list != NULL; list = list->next)
     {
 	update ();
-	ensure_profile_node (profile, process, (gulong)list->data);
+	ensure_profile_node (info->profile_objects, process, (gulong)list->data);
     }
 
-    profile->size += size;
+    info->profile->size += size;
 }
 
 static Node *
@@ -186,7 +191,7 @@ node_new ()
 }
 
 static Node *
-node_add_trace (Profile *profile, Node *node, Process *process,
+node_add_trace (Profile *profile, GHashTable *profile_objects, Node *node, Process *process,
 		GSList *trace, gint size,
 		GHashTable *seen_objects)
 {
@@ -196,7 +201,7 @@ node_add_trace (Profile *profile, Node *node, Process *process,
     if (!trace)
 	return node;
     
-    object = lookup_profile_object (profile, process, (gulong)trace->data);
+    object = lookup_profile_object (profile_objects, process, (gulong)trace->data);
     for (match = node; match != NULL; match = match->siblings)
     {
 	if (match->object == object)
@@ -228,7 +233,7 @@ node_add_trace (Profile *profile, Node *node, Process *process,
     if (!trace->next)
 	match->self += size;
     
-    match->children = node_add_trace (profile, match->children, process, trace->next, size,
+    match->children = node_add_trace (profile, profile_objects, match->children, process, trace->next, size,
 				      seen_objects);
     
     return node;
@@ -247,16 +252,16 @@ dump_trace (GSList *trace)
     g_print ("\n\n");
 }
 #endif
- 
+
 static void
 generate_call_tree (Process *process, GSList *trace, gint size, gpointer data)
 {
-    Profile *profile = data;
+    Info *info = data;
     Node *match = NULL;
-    ProfileObject *proc = lookup_profile_object (profile, process, 0);
+    ProfileObject *proc = lookup_profile_object (info->profile_objects, process, 0);
     GHashTable *seen_objects;
 
-    for (match = profile->call_tree; match; match = match->siblings)
+    for (match = info->profile->call_tree; match; match = match->siblings)
     {
 	if (match->object == proc)
 	    break;
@@ -266,12 +271,12 @@ generate_call_tree (Process *process, GSList *trace, gint size, gpointer data)
     {
 	match = node_new ();
 	match->object = proc;
-	match->siblings = profile->call_tree;
-	profile->call_tree = match;
+	match->siblings = info->profile->call_tree;
+	info->profile->call_tree = match;
 	match->toplevel = TRUE;
     }
 
-    g_hash_table_insert (profile->nodes_by_object, proc, match);
+    g_hash_table_insert (info->profile->nodes_by_object, proc, match);
 
     match->total += size;
     if (!trace)
@@ -282,7 +287,7 @@ generate_call_tree (Process *process, GSList *trace, gint size, gpointer data)
     g_hash_table_insert (seen_objects, proc, GINT_TO_POINTER (1));
 
     update ();
-    match->children = node_add_trace (profile, match->children, process,
+    match->children = node_add_trace (info->profile, info->profile_objects, match->children, process,
 				      trace, size, seen_objects);
     
     g_hash_table_destroy (seen_objects);
@@ -323,10 +328,7 @@ Profile *
 profile_new (StackStash *stash)
 {
     Profile *profile = g_new (Profile, 1);
-
-    profile->profile_objects =
-	g_hash_table_new_full (g_str_hash, g_str_equal,
-			       g_free, (GDestroyNotify)profile_object_free);
+    Info info;
 
     profile->call_tree = NULL;
 
@@ -336,12 +338,18 @@ profile_new (StackStash *stash)
 
     profile->size = 0;
 
-    stack_stash_foreach (stash, generate_object_table, profile);
-    stack_stash_foreach (stash, generate_call_tree, profile);
+    info.profile = profile;
+    info.profile_objects = g_hash_table_new_full (g_str_hash, g_str_equal,
+						  g_free, NULL);
+    
+    stack_stash_foreach (stash, generate_object_table, &info);
+    stack_stash_foreach (stash, generate_call_tree, &info);
     link_parents (profile->call_tree, NULL);
     
     g_hash_table_foreach (profile->nodes_by_object, build_object_list, profile);
 
+    g_hash_table_destroy (info.profile_objects);
+    
     return profile;
 }
 
@@ -619,9 +627,8 @@ node_free (Node *node)
 void
 profile_free (Profile *profile)
 {
+    g_list_foreach (profile->objects, (GFunc)profile_object_free, NULL);
     g_list_free (profile->objects);
-
-    g_hash_table_destroy (profile->profile_objects);
 
     node_free (profile->call_tree);
 

@@ -14,13 +14,14 @@
 #include <linux/proc_fs.h>
 #include <asm/uaccess.h>
 #include <linux/poll.h>
+#include <linux/highmem.h>
 
 #include "sysprof-module.h"
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
-#define SAMPLES_PER_SECOND (100)
+#define SAMPLES_PER_SECOND (10)
 #define INTERVAL (HZ / SAMPLES_PER_SECOND)
 #define N_TRACES 256
 
@@ -89,49 +90,132 @@ add_timeout(unsigned int interval,
  * The portable part of the driver starts here
  */
 
+static int
+read_task_address (struct task_struct *task, unsigned long address, int *result)
+{
+	unsigned long page_addr = address & PAGE_MASK;
+	int found;
+	struct page *page;
+	void *kaddr;
+	int res;
+
+	if (!task || !task->mm)
+		return 0;
+
+	found = get_user_pages (task, task->mm, page_addr, 1, 0, 0, &page, NULL);
+
+	if (!found)
+		return 0;
+
+	kaddr = kmap_atomic (page, KM_SOFTIRQ0);
+	
+	res = ((int *)kaddr)[(address - page_addr) / 4];
+
+	kunmap_atomic (page, KM_SOFTIRQ0);
+	
+	*result = res;
+	
+	return 1;
+}
+
+typedef struct StackFrame StackFrame;
+struct StackFrame {
+	unsigned long next;
+	unsigned long return_address;
+};
+
+static int
+read_frame (struct task_struct *task, unsigned long addr, StackFrame *frame)
+{
+	if (!addr || !frame)
+		return 0;
+
+	frame->next = 0;
+	frame->return_address = 0;
+	
+	if (!read_task_address (task, addr, (int *)&(frame->next)))
+		return 0;
+
+	if (!read_task_address (task, addr + 4, (int *)&(frame->return_address)))
+		return 0;
+
+	return 1;
+}
+
 static void
 generate_stack_trace(struct task_struct *task,
 		     SysprofStackTrace *trace)
 {
-#define START_OF_STACK 0xBFFFFFFF 
-	
-	typedef struct StackFrame StackFrame;
-	struct StackFrame {
-		StackFrame *next;
-		void *return_address;
-	};
-	
-	StackFrame *frame;
+#ifdef NOT_ON_4G4G	/* FIXME: What is the symbol really called? */
+#  define START_OF_STACK 0xBFFFFFFF
+#else
+#  define START_OF_STACK 0xFF000000
+#endif
+	struct pt_regs *regs = ((struct pt_regs *) (THREAD_SIZE + (unsigned long) task->thread_info)) - 1;
+	StackFrame frame;
+	unsigned long addr;
 	int i;
 	
-	struct pt_regs *regs = ((struct pt_regs *) (THREAD_SIZE + (unsigned long) task->thread_info)) - 1;
 	memset(trace, 0, sizeof (SysprofStackTrace));
 	
 	trace->pid = task->pid;
 	trace->truncated = 0;
 	
 	trace->addresses[0] = (void *)regs->eip;
+
 	i = 1;
-	frame = (StackFrame *)regs->ebp;
+
+	addr = regs->ebp;
+
+#if 0
+	printk (KERN_ALERT "in generate\n");
+#endif
+#if 0
+	read_frame (task, addr, &frame);
+#endif
+	while (i < SYSPROF_MAX_ADDRESSES && read_frame (task, addr, &frame)) {
+		trace->addresses[i++] = (void *)frame.return_address;
+		
+		addr = frame.next;
+	}
+
+#if 0
+	printk (KERN_ALERT "done (frame.next = %p)\n", frame.next);
+#endif
+	       
+#if 0
 	
-	while (frame && i < SYSPROF_MAX_ADDRESSES &&
+	read_frame (task, regs->ebp, &frame);
+	
+	while (i < SYSPROF_MAX_ADDRESSES &&
 	       (long)frame < (long)START_OF_STACK &&
 	       (long)frame >= regs->esp) {
 		void *next = NULL;
+
+		printk(KERN_ALERT "esp: %lx\n", regs->esp);
+		printk(KERN_ALERT "ebp: %lx\n", regs->ebp);
 		
 		if (verify_area(VERIFY_READ, frame, sizeof(StackFrame)) == 0) {
 			void *return_address;
 			
-			__get_user (return_address, &(frame->return_address));
-			__get_user (next, &(frame->next));
+			read_task_address (task, (unsigned long)return_address, (int *)&(frame->return_address));
+			read_task_address (task, (unsigned long)next, (int *)&(frame->next));
+					   
 			trace->addresses[i++] = return_address;
 			
 			if ((long)next <= (long)frame)
 				next = NULL;
+			else
+				printk(KERN_ALERT "bad next\n");
 		}
+		else
+			printk(KERN_ALERT "couldn't verify\n");
 		
 		frame = next;
+		if (frame == NULL)
+			printk(KERN_ALERT "frame %d is null\n", i);
 	}
+#endif
 	
 	trace->n_addresses = i;
 	if (i == SYSPROF_MAX_ADDRESSES)
@@ -155,13 +239,13 @@ do_generate (void *data)
 	for_each_process (p)
 		if (p == task)
 			goto go_ahead;
-
-go_ahead:
-	generate_stack_trace (task, head);
-
+	return;
+	
+ go_ahead:
+	generate_stack_trace(task, head);
 	if (head++ == &stack_traces[N_TRACES - 1])
 		head = &stack_traces[0];
-	
+			     
 	wake_up (&wait_for_trace);
 }
 
@@ -220,9 +304,10 @@ procfile_read(char *buffer,
 	      int *eof,
 	      void *data)
 {
+#if 0
 	if (buffer_len < sizeof (SysprofStackTrace)) 
 		return -ENOMEM;
-	
+#endif
 	wait_event_interruptible (wait_for_trace, head != tail);
 	*buffer_location = (char *)tail;
 	if (tail++ == &stack_traces[N_TRACES - 1])

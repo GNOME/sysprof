@@ -1,3 +1,8 @@
+Thu Mar 10 16:37:52 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (build_gui): s/Cummulative/Cumulative/. Pointed out by
+	Ian McIntosh.
+
 Mon Mar  7 14:47:09 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* README: Add note that you need to compile the module with

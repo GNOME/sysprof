@@ -891,7 +891,7 @@ build_gui (Application *app)
     app->descendants_view = (GtkTreeView *)glade_xml_get_widget (xml, "descendants_view");
     col = add_plain_text_column (app->descendants_view, _("Name"), DESCENDANTS_NAME);
     add_double_format_column (app->descendants_view, _("Self"), DESCENDANTS_SELF, "%.2f");
-    add_double_format_column (app->descendants_view, _("Cummulative"), DESCENDANTS_NON_RECURSE, "%.2f");
+    add_double_format_column (app->descendants_view, _("Cumulative"), DESCENDANTS_NON_RECURSE, "%.2f");
     g_signal_connect (app->descendants_view, "row-activated",
 		      G_CALLBACK (on_descendants_row_activated), app);
     

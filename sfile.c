@@ -24,156 +24,294 @@
 #include <glib.h>
 #include "sfile.h"
 
-typedef struct ReadItem ReadItem;
+struct SFormat
+{
+    State *begin;
+    State *end;
+};
+
+/* defining types */
+typedef struct State State;
+typedef struct Transition Transition;
+typedef struct Fragment Fragment;
 
 typedef enum
 {
     BEGIN_RECORD,
     BEGIN_LIST,
-    END,
-    READ_POINTER,
-    READ_INTEGER,
-    READ_STRING
-} ReadAction;
-
-typedef enum
-{
-    RECORD,
-    LIST,
+    END_RECORD,
+    END_LIST,
+    BEGIN_POINTER,
+    END_POINTER,
+    BEGIN_INTEGER,
+    END_INTEGER,
+    BEGIN_STRING,
+    END_STRING
     POINTER,
     INTEGER,
     STRING
-} SFormatType;
+} TransitionType;
 
-struct SFormat
+struct Transition
 {
-    SFormatType type;
-
-    char *name;
-    
-    union
-    {
-	struct
-	{
-	    GQueue *fields;
-	} record;
-	
-	struct
-	{
-	    SFormat *content;
-	} list;
-    } u;
+    TransitionType type;
+    State *to;
+    char *element;              /* for begin/end transitions */
 };
 
-struct ReadItem
+struct State
 {
-    ReadAction action;
-
-    union
-    {
-        struct
-        {
-            int         id;
-            gpointer    pointer;        /* Points to the user created object */
-        } end;
-        
-        struct
-        {
-            int         id;
-        } read_pointer;
-
-        struct
-        {
-            int         n_items;
-        } read_list;
-        
-        struct
-        {
-            int         value;
-        } read_integer;
-        
-        struct
-        {
-            char *      value;
-        } read_string;
-    } u;
+    GQueue *transitions;
 };
 
-struct SFile
+struct Fragment
 {
-    int n_items;
-    ReadItem *items;
-    ReadItem *current_item;
-    GHashTable *locations_by_id;
-    GHashTable *objects_by_id;
+    Transition *enter, *exit;
 };
 
-/* defining types */
-
-static SFormat *
-create_sformat (const char *name,
-                SFormatType type)
+SFormat *
+sformat_new (gpointer f)
 {
     SFormat *sformat = g_new0 (SFormat, 1);
+    Fragment *fragment = f;
 
-    sformat->name = g_strdup (name);
-    sformat->type = type;
+    sformat->begin = state_new ();
+    sformat->end = state_new ();
 
+    g_queue_push_tail (sformat->begin->transitions, f->enter);
+    f->exit->to = sformat->end;
+
+    g_free (fragment);
+    
     return sformat;
 }
 
-SFormat *
+static GQueue *
+format_queue (va_list formats)
+{
+    GQueue *formats = g_queue_new ();
+    
+    format = va_arg (args, SFormat *);
+    while (format)
+    {
+	g_queue_push_tail (formats, format);
+	format = va_arg (args, SFormat *);
+    }
+    va_end (args);
+
+    return formats;
+}
+
+/* Consider adding unions at some point
+ *
+ * To be useful they should probably be anonymous, so that
+ * the union itself doesn't have a representation in the
+ * xml file.
+ *
+ *     API:
+ *            sformat_new_union (gpointer content1, ...);
+ *
+ *            char *content = begin_get_union ();
+ *            if (strcmp (content, ...) == 0)
+ *                      get_pointer ();
+ *            else if (strcmp (content, ...) == 0)
+ *
+ *               ;
+ *
+ * Annoying though, that we then won't have the nice one-to-one
+ * correspondence between begin()/end() calls and <element></element>s
+ * Actually, we will probably have to have <union>asdlfkj</union>
+ * elements. That will make things a lot easier, and unions are
+ * still pretty useful if you put big things like lists in them.
+ * 
+ * We may also consider adding anonymous records. These will
+ * not be able to have pointers associated with them though
+ * (because there wouldn't be a natural place 
+ */
+
+gpointer
+sformat_new_union (const char *name,
+                   gpointer content1,
+                   ...)
+{
+    va_list args;
+    GQueue *fragments;
+    GList *list;
+    Fragment *fragment;
+    Transition *enter, *exit;
+    State *begin;
+    State *end;
+
+    va_start (args, content1);
+
+    fragments = format_queue (args);
+    
+    va_end (args);
+
+    begin = state_new ();
+    end = state_new ();
+
+    enter = transition_new_begin_union (name, NULL, begin);
+    exit = transition_new_end_union (name, end, NULL);
+    
+    for (list = fragments->head; list; list = list->next)
+    {
+        Fragment *fragment = list->data;
+
+        g_queue_push_tail (begin, fragment->enter);
+    }
+
+    for (list = fragments->head; list; list = list->next)
+    {
+        fragment = list->data;
+
+        m->exit->to = end;
+
+        g_free (fragment);
+    }
+
+    g_queue_free (fragments);
+
+    fragment = g_new (Fragment, 1);
+    fragment->enter = enter;
+    fragment->exit = exit;
+
+    return fragment;
+}
+
+gpointer
 sformat_new_record  (const char *     name,
-                     SFormat      *content1,
+                     gpointer         content1,
                      ...)
 {
     va_list args;
-    SFormat *sformat = create_sformat (name, RECORD);
-    SFormat *field;
-    GQueue *fields = g_queue_new ();
-    
+    GQueue *fragments;
+    Transition *enter, *exit;
+    State *begin, *end, *state;
+    Fragment *fragment;
+
+    /* Build queue of fragments */
     va_start (args, content1);
-    field = va_arg (args, SFormat *);
-    while (field)
-    {
-	g_queue_push_tail (fields, field);
-	field = va_arg (args, SFormat *);
-    }
+
+    fragments = format_queue (args);
+
     va_end (args);
     
-    sformat->u.record.fields = fields;
+    /* chain fragments together */
+    begin = state_new ();
+    enter = transition_new_begin_record (name, NULL, begin);
     
-    return sformat;
+    state = begin;
+
+    for (list = fragments->head; list != NULL; list = list->next)
+    {
+        /* At each point in the iteration we need,
+         *    - a target machine (in list->data)
+         *    - a state that will lead into that machine (in state)
+         */
+        fragment = list->data;
+
+        g_queue_push_tail (state->transitions, fragment->enter);
+
+        state = state_new ();
+        fragment->exit->to = state;
+    }
+
+    /* Return resulting fragment */
+    fragment = g_new (Fragment, 1);
+    fragment->enter = enter;
+    fragment->exit = transition_new_end_record (name, state, NULL);
+    
+    return fragment;
 }
 
-SFormat *
+gpointer
 sformat_new_list (const char *name,
-                  SFormat *content)
+                  gpointer content)
 {
-    SFormat *sformat = create_sformat (name, LIST);
-    sformat->u.list.content = content;
-    return sformat;
+    Fragment *m = content;
+    State *list_state;
+    Transition *enter, *exit;
+
+    list_state = state_new ();
+    begin_state = state_new ();
+    end_state = state_new ();
+    
+    enter = transition_new_begin_list (name, NJLL, list_state);
+    exit = transition_new_end_list (name, list_state, NULL);
+    
+    g_queue_push_tail (list_state->transitions, m->enter);
+    m->exit->to = list_state;
+
+    m->enter = enter;
+    m->exit = exit;
+
+    return m;
 }
 
-SFormat *
+gpointer
+sformat_new_value (const char *name, TransitionType type)
+{
+    Fragment *m = g_new (Fragment, 1);
+    State *before, *after;
+    Transition *enter, *exit, *value;
+
+    before = state_new ();
+    after = state_new ();
+
+    m->enter = transition_new_begin_value (name, type, NULL, before);
+    m->exit  = transition_new_end_value   (name, type, after, NULL);
+    value = transition_new_text           (type, before, after);
+    
+    return m;
+}
+
+gpointer
 sformat_new_pointer (const char *name)
 {
-    SFormat *sformat = create_sformat (name, POINTER);
-    return sformat;
+    return sformat_new_value (name, POINTER);
 }
 
-SFormat *
+gpointer
 sformat_new_integer (const char *name)
 {
-    SFormat *sformat = create_sformat (name, INTEGER);
-    return sformat;
+    return sformat_new_value (name, INTEGER);
 }
 
-SFormat *
+gpointer
 sformat_new_string (const char *name)
 {
-    SFormat *sformat = create_sformat (name, STRING);
-    return sformat;
+    return sformat_new_value (name, STRING);
+}
+
+static const State *
+sformat_get_start_state (SFormat *format)
+{
+    return format->start_state;
+}
+
+static gboolean
+sformat_is_end_state (SFormat *format, const State *state)
+{
+    return format->end_state == state;
+}
+
+static const State *
+state_transition_begin (const State *state, const char *element,
+                        TranstionType *type, GError **err)
+{
+}
+
+static const State *
+state_transition_end (const State *state, const char *element,
+                      TransitionType *type, GError **err)
+{
+}
+
+static const State *
+state_transition_text (const State *state, const char *element,
+                       TransitionType *type, GError **err)
+{
 }
 
 /* reading */
@@ -697,91 +835,4 @@ sfile_load (const char  *filename,
     parse_node_free (tree);
     
     return sfile;
-}
-
-/* A transisition can start or end in the 'external state'.
- * This state just represents something outside the machine.
- * There is one transition *from* the external state, and
- * one transition *to* the external state.
- */
-
-#define EXTERNAL_STATE  (-1)
-
-struct Transition
-{
-    int from, to;
-    
-    enum { BEGIN, END, TEXT } type;
-    char *element;
-};
-
-struct StateMachine
-{
-    int n_transitions;
-    Transition *transitions;
-};
-
-static void
-get_machine_info (StateMachine *machine,
-                  Transition **enter,
-                  Transition **exit,
-                  int *n_states)
-{
-    
-}
-
-static void
-make_list_machine (State *external, State *content, )
-{
-    int n_transitions = content->n_transitions;
-    int n_states, new_state;
-    Transition *enter_trans;
-    Transition *exit_trans;
-
-    get_machine_info (content, &n_states, &enter_trans, &exit_trans);
-
-    new_state = n_states;
-    
-    content->transitions = g_renew (Transition, content->transitions, n_transitions + 2);
-
-    content->transitions[n_transitions].from = EXTERNAL_STATE;
-    content->transitions[n_transitions].to = n_states;
-    content->transitions[n_transitions].type = BEGIN;
-    content->transitions[n_transitions].element = g_strdup ("froot");
-
-    content->transitions[n_transitions + 1].to = EXTERNAL_STATE;
-    content->transitions[n_transitions + 1].from = n_states;
-    content->transitions[n_transitions + 1].type = END;
-    content->transitions[n_transitions + 1].element = g_strdup ("froot");
-    
-    enter_trans->from = new_state;
-    exit_trans->to = new_state;
-}
-
-static void
-chain_machines (GList *machines, int *enter_state, int *exit_state)
-{
-}
-
-static void
-make_record_machine (GQueue *fields)
-{
-    Transition *enter_trans;
-    int from = EXTERNAL_STATE;
-    GQueue *state_chain = g_queue_new ();
-
-    g_queue_push_tail (state_chain, EXTERNAL_STATEA);
-
-    for (list = fields->head; list; list = list->next)
-    {
-        StateMachine *machine = list->data;
-        Transition *enter_trans;
-        Transition *exit_trans;
-
-        get_machine_info (machine, NULL, &enter_trans, &exit_trans);
-        enter_trans->from = from;
-
-        if (list->next)
-            get_machine_info (list->next->data, NULL, NULL, next_enterenter_trans->to = to;
-    }
 }

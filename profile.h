@@ -68,8 +68,7 @@ ProfileCaller *	   profile_list_callers       (Profile		 *profile,
 					       ProfileObject     *callee);
 void		   profile_caller_free	      (ProfileCaller     *caller);
 void               profile_descendant_free    (ProfileDescendant *descendant);
+
 gboolean	   profile_save		      (Profile		 *profile,
-					       const char	 *file_name,
-					       GError		**err);
-Profile *	   profile_load		      (const char	 *filename,
-					       GError           **err);
+					       const char	 *file_name);
+Profile *	   profile_load		      (const char	 *filename);

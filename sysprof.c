@@ -395,12 +395,6 @@ sorry (GtkWidget *parent_window,
 }
 
 static void
-on_open_clicked (gpointer widget, gpointer data)
-{
-    sorry (NULL, "Open is not implemented yet. (Fortunately, neither is saving),");
-}
-
-static void
 on_reset_clicked (gpointer widget, gpointer data)
 {
     Application *app = data;
@@ -420,7 +414,8 @@ on_save_as_clicked (gpointer widget, gpointer data)
 
     ensure_profile (app);
     
-    profile_save (app->profile, NULL, NULL);
+    if (!profile_save (app->profile, NULL))
+	sorry (NULL, "Couldn't save\n");
     
 #if 0
     sorry (NULL, "Saving profiles is not yet implemented.");
@@ -429,6 +424,12 @@ on_save_as_clicked (gpointer widget, gpointer data)
     if (app)
 	;
     /* FIXME */
+}
+
+static void
+on_open_clicked (gpointer widget, gpointer data)
+{
+    sorry (NULL, "Open is not implemented yet. (Fortunately, neither is saving),");
 }
 
 static void
@@ -869,13 +870,11 @@ main (int argc, char **argv)
     if (app->input_fd < 0)
     {
 	disaster ("Can't open /proc/sysprof-trace. You need to insert\n"
-		  "the sysprof kernel module. As root type\n"
-		  "\n"
-		  "       insmod sysprof-module.o\n"
-		  "\n"
-		  "or if you are using a 2.6 kernel:\n"
+		  "the sysprof kernel module. Type \n"
 		  "\n"
 		  "       insmod sysprof-module.ko\n"
+		  "\n"
+		  "as root.\n"
 		  "\n");
     }
     

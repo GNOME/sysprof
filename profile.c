@@ -117,7 +117,8 @@ serialize_call_tree (Node *node, SaveContext *context)
 	return;
     
     g_string_append_printf (context->str,
-			    "        <node id=\"%d\" object=\"%d\" siblings=\"%d\" children=\"%d\" parent=\"%d\" next=\"%d\" total=\"%d\" self=\"%d\">\n",
+			    "        <node id=\"%d\" object=\"%d\" siblings=\"%d\" children=\"%d\" "
+			    "parent=\"%d\" next=\"%d\" total=\"%d\" self=\"%d\" toplevel=\"%d\">\n",
 			    get_id (context, node),
 			    get_id (context, node->object),
 			    get_id (context, node->siblings),
@@ -125,7 +126,8 @@ serialize_call_tree (Node *node, SaveContext *context)
 			    get_id (context, node->parent),
 			    get_id (context, node->next),
 			    node->total,
-			    node->self);
+			    node->self,
+			    node->toplevel);
 
     serialize_call_tree (node->siblings, context);
     serialize_call_tree (node->children, context);
@@ -133,8 +135,7 @@ serialize_call_tree (Node *node, SaveContext *context)
 
 gboolean
 profile_save (Profile		 *profile,
-	      const char	 *file_name,
-	      GError		**err)
+	      const char	 *file_name)
 {
     SaveContext context;
 
@@ -156,14 +157,13 @@ profile_save (Profile		 *profile,
     g_hash_table_destroy (context.id_by_pointer);
     g_hash_table_destroy (context.pointer_by_id);
 
+    /* FIXME - write it to disk, not screen */
+    
     g_print (context.str->str);
     
     g_string_free (context.str, TRUE);
-    
-    /* Actually the way to fix this is probably to save StackStashes instead
-     * of profiles
-     */
-    return FALSE;
+
+    return TRUE;
 }
 
 typedef struct LoadContext LoadContext;
@@ -175,27 +175,62 @@ struct LoadContext
 };
 
 static int
-get_number (const char *s, GError **err)
+get_number (const char *input_name,
+	    const char *target_name,
+	    const char *value)
 {
-    char *end;
-    
-    int r = strtol (s, &end, 10);
-    if (*end != '\0')
+    if (strcmp (input_name, target_name) == 0)
     {
-	/* FIXME: set error to something appropriate */
+	char *end;
+	int r = strtol (value, &end, 10);
+	if (*end == '\0')
+	    return r;
     }
 
-    return r;
+    return -1;
 }
 
 static Node *
-create_node (const char **attribute_names, const char **attribute_values, int *id, GError **error)
+create_node (const char **names,
+	     const char **values,
+	     int *id)
 {
     int i;
+
+    int object		= -1;
+    int siblings	= -1;
+    int children        = -1;
+    int parent		= -1;
+    int next		= -1;
+    int total		= -1;
+    int self		= -1;
+
+    Node *node = node_new ();
+    
+    for (i = 0; names[i] != NULL; ++i)
+    {
+	*id            = get_number (names[i], "id", values[i]);
+	node->object   = GINT_TO_POINTER (get_number (names[i], "object", values[i]));
+	node->siblings = GINT_TO_POITNER (get_number (names[i], "siblings", values[i]));
+	node->children = GINT_TO_POINTER (get_number (names[i], "children", values[i]));
+	node->parent   = GINT_TO_POINTER (get_number (names[i], "parent", values[i]));
+	node->next     = GINT_TO_POINTER (get_number (names[i], "next", values[i]));
+	node->total    = get_number (names[i], "total", values[i]);
+	node->self     = get_number (names[i], "self", values[i]);
+    }
+			       
+    if (id == -1 || object == -1 || siblings == -1 ||
+	children == -1 || parent == -1 || next == -1 ||
+	total == -1 || self == -1)
+    {
+	return NULL;
+    }
+
+    node->object = GINT_TO_POINTER (object);
+    node->siblings = GINT_TO_POINTER (siblings);
+    
     
     i = 0;
-    while (attribute_names[i])
-    {
 	const char *name = attribute_names[i];
 	const char *value = attribute_values[i];
 
@@ -241,7 +276,6 @@ parse_start_element (GMarkupParseContext *context,
 {
     int id;
     LoadContext *lc = user_data;
-
     
     if (strcmp (element_name, "object") == 0)
     {

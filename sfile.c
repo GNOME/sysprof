@@ -35,10 +35,12 @@ typedef enum
     END_INTEGER,
     END_STRING,
 #define LAST_END_TRANSITION END_STRING
-    
+
+#define FIRST_VALUE_TRANSITION POINTER
     POINTER,
     INTEGER,
     STRING
+#define LAST_VALUE_TRANSITION STRING
 } TransitionType;
 
 struct Transition
@@ -67,20 +69,20 @@ struct Action
     {
         struct
         {
-        } begin_record;
-        
-        struct
-        {
             int n_items;
-        } begin_list;
+            int id;
+            Action *end_action;
+        } begin;
         
         struct
         {
-            int id;
+            gpointer object;
         } end;
         
         struct
         {
+            int target_id;
+            Action *target_action;
             gpointer *location;
         } pointer;
         
@@ -232,8 +234,15 @@ fragment_queue (va_list args)
  * We may also consider adding anonymous records. These will
  * not be able to have pointers associated with them though
  * (because there wouldn't be a natural place 
+ *
+ *
+ * Also consider adding the following data types:
+ *
+ * Binary blobs of data, stored as base64 perhaps
+ * floating point values. How do we store those portably
+ *     without losing precision?
+ * enums, stored as strings
  */
-
 gpointer
 sformat_new_union (const char *name,
                    gpointer content1,
@@ -292,7 +301,6 @@ sformat_new_record  (const char *     name,
 {
     va_list args;
     GQueue *fragments;
-    Transition *enter;
     State *begin, *state;
     Fragment *fragment;
     GList *list;
@@ -305,17 +313,10 @@ sformat_new_record  (const char *     name,
     va_end (args);
     
     /* chain fragments together */
-    begin = state_new ();
-    enter = transition_new (name, BEGIN_RECORD, NULL, begin);
-    
-    state = begin;
+    state = begin = state_new ();
     
     for (list = fragments->head; list != NULL; list = list->next)
     {
-        /* At each point in the iteration we need,
-         *    - a target machine (in list->data)
-         *    - a state that will lead into that machine (in state)
-         */
         fragment = list->data;
         
         g_queue_push_tail (state->transitions, fragment->enter);
@@ -326,7 +327,7 @@ sformat_new_record  (const char *     name,
     
     /* Return resulting fragment */
     fragment = g_new (Fragment, 1);
-    fragment->enter = enter;
+    fragment->enter = transition_new (name, BEGIN_RECORD, NULL, begin);
     fragment->exit = transition_new (name, END_RECORD, state, NULL);
     
     return fragment;
@@ -355,7 +356,10 @@ sformat_new_list (const char *name,
 }
 
 static gpointer
-sformat_new_value (const char *name, TransitionType type)
+sformat_new_value (const char *name,
+                   TransitionType enter,
+                   TransitionType type,
+                   TransitionType exit)
 {
     Fragment *m = g_new (Fragment, 1);
     State *before, *after;
@@ -364,9 +368,9 @@ sformat_new_value (const char *name, TransitionType type)
     before = state_new ();
     after = state_new ();
     
-    m->enter = transition_new (name, type, NULL, before);
+    m->enter = transition_new (name, enter, NULL, before);
     m->exit  = transition_new (name, type, after, NULL);
-    value = transition_new (NULL, type, before, after);
+    value = transition_new (NULL, exit, before, after);
     
     return m;
 }
@@ -374,19 +378,19 @@ sformat_new_value (const char *name, TransitionType type)
 gpointer
 sformat_new_pointer (const char *name)
 {
-    return sformat_new_value (name, POINTER);
+    return sformat_new_value (name, BEGIN_POINTER, POINTER, END_POINTER);
 }
 
 gpointer
 sformat_new_integer (const char *name)
 {
-    return sformat_new_value (name, INTEGER);
+    return sformat_new_value (name, BEGIN_INTEGER, INTEGER, END_INTEGER);
 }
 
 gpointer
 sformat_new_string (const char *name)
 {
-    return sformat_new_value (name, STRING);
+    return sformat_new_value (name, BEGIN_STRING, STRING, END_STRING);
 }
 
 static const State *
@@ -453,14 +457,15 @@ state_transition_text (const State *state, TransitionType *type, GError **err)
     {
         Transition *transition = list->data;
         
-        /* There will never be more than one allowed value transition for
-         * a given state
-         */
         if (transition->type == POINTER ||
             transition->type == INTEGER ||
             transition->type == STRING)
         {
             *type = transition->type;
+
+            /* There will never be more than one allowed value transition for
+             * a given state
+             */
             return transition->to;
         }
     }
@@ -476,19 +481,8 @@ typedef struct ParseNode ParseNode;
 struct BuildContext
 {
     const State *state;
-    
-    GArray *actions;
-};
 
-struct ParseNode
-{
-    ParseNode *parent;
-    char *name;
-    gpointer id;
-    GPtrArray *children;
-    GString *text;
-    
-    SFormat *format;
+    GArray *actions;
 };
 
 static gboolean
@@ -538,20 +532,22 @@ sfile_begin_get_list   (SFileInput       *file,
     g_return_val_if_fail (action->type == BEGIN_LIST &&
                           strcmp (action->name, name) == 0, 0);
     
-    return action->u.begin_list.n_items;
+    return action->u.begin.n_items;
 }
 
 void
-sfile_get_pointer      (SFileInput  *file,
-                        const char *name,
-                        gpointer    *location)
+sfile_get_pointer (SFileInput  *file,
+                   const char *name,
+                   gpointer    *location)
 {
     Action *action = file->current_action++;
     g_return_if_fail (action->type == POINTER &&
                       strcmp (action->name, name) == 0);
     
     action->u.pointer.location = location;
-    
+
+    *location = (gpointer) 0xFedeAbe;
+
     if (location)
     {
         if (g_hash_table_lookup (file->actions_by_location, location))
@@ -587,6 +583,25 @@ sfile_get_string       (SFileInput  *file,
         *string = g_strdup (action->u.string.value);
 }
 
+static void
+hook_up_pointers (SFileInput *file)
+{
+    int i;
+
+    for (i = 0; i < file->n_actions; ++i)
+    {
+        Action *action = &(file->actions[i]);
+
+        if (action->type == POINTER)
+        {
+            gpointer target_object =
+                action->u.pointer.target_action->u.begin.end_action->u.end.object;
+
+            *(action->u.pointer.location) = target_object;
+        }
+    }
+}
+
 void
 sfile_end_get          (SFileInput  *file,
                         const char  *name,
@@ -597,10 +612,11 @@ sfile_end_get          (SFileInput  *file,
     g_return_if_fail ((action->type == END_LIST ||
                        action->type == END_RECORD) &&
                       strcmp (action->name, name) == 0);
-    
-    if (action->u.end.id)
-        g_hash_table_insert (file->objects_by_id,
-                             GINT_TO_POINTER (action->u.end.id), object);
+
+    action->u.end.object = object;
+
+    if (file->current_action == file->actions + file->n_actions)
+        hook_up_pointers (file);
 }
 
 static int
@@ -648,18 +664,16 @@ handle_begin_element (GMarkupParseContext *parse_context,
 {
     BuildContext *build = user_data;
     Action action;
-    int id;
     
-    /* Check for id */
-    id = get_id (attribute_names, attribute_values, err);
-    
-    if (id == -1)
+    action.u.begin.id = get_id (attribute_names, attribute_values, err);
+
+    if (action.u.begin.id == -1)
         return;
-    
+
     build->state = state_transition_begin (build->state, element_name, &action.type, err);
+    action.name = g_strdup (element_name);
     
-    /* FIXME create action/add to list */
-    /* FIXME figure out how to best count the number of items if action.type is a list */
+    g_array_append_val (build->actions, action);
 }
 
 static void
@@ -672,8 +686,27 @@ handle_end_element (GMarkupParseContext *context,
     Action action;
     
     build->state = state_transition_end (build->state, element_name, &action.type, err);
+
+    action.name = g_strdup (element_name);
+
+    g_array_append_val (build->actions, action);
+}
+
+static gboolean
+decode_text (const char *text, char **decoded)
+{
+    int length = strlen (text);
     
-    /* FIXME create action/add to list */
+    if (length < 2)
+        return FALSE;
+
+    if (text[0] != '\"' || text[length - 1] != '\"')
+        return FALSE;
+
+    if (decoded)
+        *decoded = g_strndup (text + 1, length - 2);
+    
+    return TRUE;
 }
 
 static void
@@ -687,9 +720,32 @@ handle_text (GMarkupParseContext *context,
     Action action;
     
     build->state = state_transition_text (build->state, &action.type, err);
-    
-    /* FIXME create acxtion/add to list */
-    /* FIXME check that the text makes sense according to action.type */
+
+    action.name = NULL;
+
+    switch (action.type)
+    {
+    case POINTER:
+        if (!get_number (text, &action.u.pointer.target_id))
+            /* FIXME: set error */;
+        break;
+
+    case INTEGER:
+        if (!get_number (text, &action.u.integer.value))
+            /* FIXME: set error */;
+        break;
+
+    case STRING:
+        if (!decode_text (text, &action.u.string.value))
+            /* FIXME: set error */
+        break;
+
+    default:
+        g_assert_not_reached();
+        break;
+    }
+
+    g_array_append_val (build->actions, action);
 }
 
 static void
@@ -711,6 +767,93 @@ free_actions (Action *actions, int n_actions)
     g_free (actions);
 }
 
+/* This functions counts the number of items in a list, and
+ * matches up pointers with the lists/records they point to.
+ * FIMXE: think of a better name
+ */
+static Action *
+post_process_actions_recurse (Action *first, GHashTable *actions_by_id, GError **err)
+{
+    Action *action;
+    int n_items;
+
+    g_assert (first->type >= FIRST_BEGIN_TRANSITION &&
+              first->type <= LAST_BEGIN_TRANSITION);
+    
+    action = first + 1;
+
+    n_items = 0;
+    while (action->type < FIRST_END_TRANSITION ||
+           action->type > LAST_END_TRANSITION)
+    {
+        if (action->type >= FIRST_BEGIN_TRANSITION &&
+            action->type <= LAST_BEGIN_TRANSITION)
+        {
+            action = post_process_actions_recurse (action, actions_by_id, err);
+            if (!action)
+                return NULL;
+        }
+        else
+        {
+            if (action->type == POINTER)
+            {
+                int target_id = action->u.pointer.target_id;
+                Action *target = g_hash_table_lookup (actions_by_id, GINT_TO_POINTER (target_id));
+
+                if (!target)
+                {
+                    set_invalid_content_error (err, "Id %d doesn't reference any record or list\n",
+                                               action->u.pointer.target_id);
+                    return NULL;
+                }
+
+                action->u.pointer.target_action = target;
+            }
+            
+            action++;
+        }
+        
+        n_items++;
+    }
+
+    first->u.begin.n_items = n_items;
+    first->u.begin.end_action = action;
+
+    return action + 1;
+}
+        
+static gboolean
+post_process_actions (Action *actions, int n_actions, GError **err)
+{
+    gboolean retval = TRUE;
+    GHashTable *actions_by_id;
+    int i;
+
+    /* Build id->action map */
+    actions_by_id = g_hash_table_new (g_direct_hash, g_direct_equal);
+    for (i = 0; i < n_actions; ++i)
+    {
+        Action *action = &(actions[i]);
+
+        if (action->type >= FIRST_BEGIN_TRANSITION &&
+            action->type <= LAST_BEGIN_TRANSITION)
+        {
+            int id = action->u.begin.id;
+
+            if (id)
+                g_hash_table_insert (actions_by_id, GINT_TO_POINTER (id), action);
+        }
+    }
+
+    /* count list items, check pointers */
+    if (!post_process_actions_recurse (actions, actions_by_id, err))
+        retval = FALSE;
+    
+    g_hash_table_destroy (actions_by_id);
+
+    return retval;
+}
+
 static Action *
 build_actions (const char *contents, SFormat *format, int *n_actions, GError **err)
 {
@@ -726,11 +869,12 @@ build_actions (const char *contents, SFormat *format, int *n_actions, GError **e
     };
     
     build.state = sformat_get_start_state (format);
+    
     parse_context = g_markup_parse_context_new (&parser, 0, &build, NULL);
     if (!sformat_is_end_state (format, build.state))
     {
         set_invalid_content_error (err, "Unexpected end of file\n");
-        
+
         free_actions ((Action *)build.actions->data, build.actions->len);
         return NULL;
     }
@@ -740,7 +884,13 @@ build_actions (const char *contents, SFormat *format, int *n_actions, GError **e
         free_actions ((Action *)build.actions->data, build.actions->len);
 	return NULL;
     }
-    
+
+    if (!post_process_actions ((Action *)build.actions->data, build.actions->len, err))
+    {
+        free_actions ((Action *)build.actions->data, build.actions->len);
+        return NULL;
+    }
+        
     *n_actions = build.actions->len;
     return (Action *)g_array_free (build.actions, FALSE);
 }
@@ -795,8 +945,7 @@ sfile_output_mew (SFormat       *format)
 
 void
 sfile_begin_add_record (SFileOutput       *file,
-                        const char *name,
-                        gpointer     id)
+                        const char        *name)
 {
     TransitionType type;
     
@@ -804,13 +953,12 @@ sfile_begin_add_record (SFileOutput       *file,
 
     g_return_if_fail (file->state && type == BEGIN_RECORD);
     
-    /* FIXME: add action including id */
+    /* FIXME: add action */
 }
 
 void
-sfile_begin_add_list   (SFileOutput       *file,
-                        const char *name,
-                        gpointer     id)
+sfile_begin_add_list   (SFileOutput *file,
+                        const char  *name)
 {
     TransitionType type;
 
@@ -823,14 +971,15 @@ sfile_begin_add_list   (SFileOutput       *file,
 
 void
 sfile_end_add          (SFileOutput       *file,
-                        const char *name)
+                        const char        *name,
+                        gpointer           object)
 {
     TransitionType type;
 
     file->state = state_transition_end (file->state, name, &type, NULL);
 
     g_return_if_fail (file->state && (type == END_RECORD || type == END_LIST));
-
+    
     /* FIXME */
 }
 
@@ -841,6 +990,9 @@ sfile_add_string       (SFileOutput       *file,
 {
     TransitionType type;
 
+    /* Strings must be utf-8 */
+    g_return_if_fail (g_utf8_validate (string, -1, NULL));
+    
     file->state = state_transition_begin (file->state, name, &type, NULL);
 
     g_return_if_fail (file->state && type == BEGIN_STRING);
@@ -871,17 +1023,17 @@ sfile_add_integer      (SFileOutput       *file,
 }
 
 void
-sfile_add_pointer      (SFileOutput       *file,
-                        const char *name,
+sfile_add_pointer      (SFileOutput *file,
+                        const char  *name,
                         gpointer     pointer)
 {
     /* FIMXE */
 }
 
 gboolean
-sfile_save             (SFileOutput       *sfile,
-                        const char  *filename,
-                        GError     **err)
+sfile_save             (SFileOutput  *sfile,
+                        const char   *filename,
+                        GError      **err)
 {
     return FALSE; /* FIXME */
 }

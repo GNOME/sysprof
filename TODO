@@ -17,6 +17,13 @@
 
 - Charge 'self' properly to processes that don't get any stack trace at all 
 
+- figure out a way to deal with both disk and CPU. Need to make sure that
+  things that are UNINTERRUPTIBLE while there are RUNNING tasks is not
+  consider bad.
+
+- Make sure we don't overcharge when many processes are "RUNNING". We should
+  probably divide each sample with the number of runnable processes
+
 DONE:
 
 - consider making ProfileObject more of an object.

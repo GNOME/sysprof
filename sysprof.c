@@ -109,7 +109,7 @@ on_read (gpointer data)
     
     rd = read (app->input_fd, &trace, sizeof (trace));
 
-    if (app->profiling && !app->generating_profile)
+    if (rd > 0 && app->profiling && !app->generating_profile)
     {
 	Process *process = process_get_from_pid (trace.pid);
 	int i;
@@ -122,7 +122,7 @@ on_read (gpointer data)
 	    process_ensure_map (process, trace.pid, 
 				(gulong)trace.addresses[i]);
 	g_assert (!app->generating_profile);
-	
+
 	stack_stash_add_trace (
 	    app->stash, process,
 	    (gulong *)trace.addresses, trace.n_addresses, 1);
@@ -693,11 +693,14 @@ main (int argc, char **argv)
     if (app->input_fd < 0)
     {
 	disaster ("Can't open /proc/sysprof-trace. You need to insert\n"
-		  "the sysprof kernel module. Type\n"
+		  "the sysprof kernel module. As root type\n"
 		  "\n"
 		  "       insmod sysprof-module.o\n"
 		  "\n"
-		  "as root\n");
+		  "or if you are using a 2.6 kernel:\n"
+		  "\n"
+		  "       insmod sysprof-module.ko\n"
+		  "\n");
     }
     
     fd_add_watch (app->input_fd, app);

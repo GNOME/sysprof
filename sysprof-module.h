@@ -3,7 +3,7 @@
 
 typedef struct SysprofStackTrace SysprofStackTrace;
 
-#define SYSPROF_MAX_ADDRESSES 1024
+#define SYSPROF_MAX_ADDRESSES 512
 
 struct SysprofStackTrace
 {
@@ -13,9 +13,6 @@ struct SysprofStackTrace
 			 * with -fomit-frame-pointer or is otherwise weird
 			 */
     void *addresses[SYSPROF_MAX_ADDRESSES];
-
-    char filename[8192];
-    int map_start;
 };
 
 #endif

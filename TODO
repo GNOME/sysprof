@@ -7,6 +7,10 @@
 
 - loading and saving
 
+- make profile.c more agnostic to processes and functions etc. Ideally
+  it should just take a set of stack traces containing "presentation
+  objects" and do something sensible with it.
+
 - Non-GUI version that can save in a format the GUI can understand.
   Could be used for profiling startup etc. Would preferably be able to
   dump the data to a network socket. Should be able to react to eg.

@@ -265,7 +265,7 @@ process_lookup_symbol (Process *process, gulong address)
     {
 	if (undefined.name)
 	    g_free (undefined.name);
-	undefined.name = g_strdup_printf ("??? (%s)", process->cmdline);
+	undefined.name = g_strdup_printf ("??? %s", process->cmdline);
 	undefined.address = 0xBABE0001;
 
 	return &undefined;

@@ -331,22 +331,13 @@ fill_main_list (Application *app)
 }
 
 static void
-on_profile_toggled (gpointer widget, gpointer data)
+ensure_profile (Application *app)
 {
-    Application *app = data;
-    
-    if (app->generating_profile || !gtk_toggle_tool_button_get_active (widget))
+    if (app->profile)
 	return;
     
-    if (app->profile)
-	profile_free (app->profile);
-    
     /* take care of reentrancy */
-    app->generating_profile = TRUE;
-    
     app->profile = profile_new (app->stash);
-    
-    app->generating_profile = FALSE;
     
     fill_main_list (app);
     
@@ -359,6 +350,23 @@ on_profile_toggled (gpointer widget, gpointer data)
 #endif
     
     update_sensitivity (app);
+}
+
+static void
+on_profile_toggled (gpointer widget, gpointer data)
+{
+    Application *app = data;
+    
+    if (gtk_toggle_tool_button_get_active (widget))
+    {
+	if (app->profile)
+	{
+	    profile_free (app->profile);
+	    app->profile = NULL;
+	}
+	
+	ensure_profile (app);
+    }
 }
 
 static void
@@ -409,8 +417,14 @@ static void
 on_save_as_clicked (gpointer widget, gpointer data)
 {
     Application *app = data;
+
+    ensure_profile (app);
     
+    profile_save (app->profile, NULL, NULL);
+    
+#if 0
     sorry (NULL, "Saving profiles is not yet implemented.");
+#endif
     
     if (app)
 	;

@@ -17,28 +17,41 @@
 
 typedef struct Application Application;
 
+typedef enum
+{
+    INITIAL,
+    DISPLAYING,
+    PROFILING
+} State;
+
 struct Application
 {
     int			input_fd;
+    State		state;
     StackStash *	stash;
-    GList *		page_faults;
+
     GtkTreeView *	object_view;
     GtkTreeView *	callers_view;
     GtkTreeView *	descendants_view;
     GtkStatusbar *	statusbar;
 
-    GtkToolItem *	profile_button;
-    GtkToolItem *	reset_button;
+    GtkWidget *		start_button;
+    GtkWidget *		profile_button;
+    GtkWidget *		open_button;
+    GtkWidget *		save_as_button;
+    
+    GtkWidget *		start_item;
+    GtkWidget *		profile_item;
+    GtkWidget *		open_item;
+    GtkWidget *		save_as_item;
     
     Profile *		profile;
     ProfileDescendant * descendants;
     ProfileCaller *	callers;
 
     int			n_samples;
-    gboolean		profiling;
 
     int			timeout_id;
-
     int			generating_profile;
 };
 
@@ -52,14 +65,46 @@ disaster (const char *what)
 static void
 update_sensitivity (Application *app)
 {
-    gboolean sensitive_profile_button = (app->n_samples != 0);
+    gboolean sensitive_profile_button;
+    gboolean sensitive_save_as_button;
+    gboolean sensitive_start_button;
+    gboolean active_profile_button;
+
+    switch (app->state)
+    {
+    case INITIAL:
+	sensitive_profile_button = FALSE;
+	sensitive_save_as_button = FALSE;
+	sensitive_start_button = TRUE;
+	active_profile_button = FALSE;
+	break;
+
+    case PROFILING:
+	sensitive_profile_button = (app->n_samples > 0);
+	sensitive_save_as_button = (app->n_samples > 0);
+	sensitive_start_button = TRUE;
+	active_profile_button = FALSE;
+	break;
+
+    case DISPLAYING:
+	sensitive_profile_button = FALSE;
+	sensitive_save_as_button = TRUE;
+	sensitive_start_button = TRUE;
+	active_profile_button = TRUE;
+	break;
+    }
 
     gtk_widget_set_sensitive (GTK_WIDGET (app->profile_button),
 			      sensitive_profile_button);
-#if 0
-    gtk_widget_set_sensitive (GTK_WIDGET (app->reset_button),
-			      sensitive_profile_button);
-#endif
+
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (app->profile_button),
+				       active_profile_button);
+
+    gtk_widget_set_sensitive (GTK_WIDGET (app->save_as_button),
+			      sensitive_save_as_button);
+
+    gtk_widget_set_sensitive (GTK_WIDGET (app->start_button),
+			      sensitive_start_button);
 }
 
 #if 0
@@ -106,10 +151,12 @@ on_read (gpointer data)
     Application *app = data;
     SysprofStackTrace trace;
     int rd;
-    int i;
     
     rd = read (app->input_fd, &trace, sizeof (trace));
 
+    if (app->state != PROFILING)
+	return;
+    
 #if 0
     g_print ("pid: %d\n", trace.pid);
     for (i=0; i < trace.n_addresses; ++i)
@@ -117,7 +164,7 @@ on_read (gpointer data)
     g_print ("-=-\n");
 #endif
 
-    if (rd > 0 && app->profiling && !app->generating_profile)
+    if (rd > 0  && !app->generating_profile)
     {
 	Process *process = process_get_from_pid (trace.pid);
 	int i;
@@ -143,7 +190,7 @@ on_read (gpointer data)
 }
 
 static void
-on_reset (GtkWidget *widget, gpointer data)
+on_start_clicked (GtkToggleToolButton *tool_button, gpointer data)
 {
     Application *app = data;
 
@@ -163,6 +210,8 @@ on_reset (GtkWidget *widget, gpointer data)
     process_flush_caches ();
     app->n_samples = 0;
     show_samples (app);
+
+    app->state = PROFILING;
     update_sensitivity (app);
 }
 
@@ -243,13 +292,13 @@ fill_main_list (Application *app)
 }
 
 static void
-on_profile (gpointer widget, gpointer data)
+on_profile_toggled (gpointer widget, gpointer data)
 {
     Application *app = data;
 
-    if (app->generating_profile)
+    if (app->generating_profile || !gtk_toggle_tool_button_get_active (widget))
 	return;
-    
+
     if (app->profile)
 	profile_free (app->profile);
 
@@ -261,22 +310,37 @@ on_profile (gpointer widget, gpointer data)
     app->generating_profile = FALSE;
     
     fill_main_list (app);
+
+    app->state = DISPLAYING;
+    
+    update_sensitivity (app);
+}
+
+static void
+on_open_clicked (gpointer widget, gpointer data)
+{
+    Application *app = data;
+
+    if (app)
+	;
+    /* FIXME */
+}
+
+static void
+on_save_as_clicked (gpointer widget, gpointer data)
+{
+    Application *app = data;
+
+
+    if (app)
+	;
+    /* FIXME */
 }
 
 static void
 on_delete (GtkWidget *window)
 {
     gtk_main_quit ();
-}
-
-static void
-on_start_toggled (GtkToggleToolButton *tool_button, gpointer data)
-{
-    Application *app = data;
-
-    app->profiling = gtk_toggle_tool_button_get_active (tool_button);
-
-    update_sensitivity (app);
 }
 
 static void
@@ -548,27 +612,13 @@ on_callers_row_activated (GtkTreeView *tree_view,
 }
 
 static void
-add_stock (const char *stock_id,
-	   const char *label, guint size, const guint8 *data)
+get_default_size (int *w, int *h)
 {
-    GdkPixbuf *pixbuf;
-    GtkIconSet *icon_set;
-    GtkIconFactory *icon_factory;
-    GtkStockItem stock_item;
-
-    pixbuf = gdk_pixbuf_new_from_inline (size, data, FALSE, NULL);
-    icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
-    icon_factory = gtk_icon_factory_new ();
-    gtk_icon_factory_add (icon_factory, stock_id, icon_set);
-    gtk_icon_factory_add_default (icon_factory);
-    g_object_unref (G_OBJECT (icon_factory));
-    gtk_icon_set_unref (icon_set);
-    stock_item.stock_id = (char *)stock_id;
-    stock_item.label = (char *)label;
-    stock_item.modifier = 0;
-    stock_item.keyval = 0;
-    stock_item.translation_domain = NULL;
-    gtk_stock_add (&stock_item, 1);
+    /* FIXME, this should really be some percentage of the screen,
+     * and the window size should be stored in gconf etc.
+     */
+    *w = 700;
+    *h = 480;
 }
 
 static void
@@ -576,78 +626,74 @@ build_gui (Application *app)
 {
     GladeXML *xml;
     GtkWidget *main_window;
-    GtkWidget *main_vbox;
-    GtkWidget *toolbar;
-    GtkToolItem *item;
     GtkTreeSelection *selection;
+    int w, h;
     
     xml = glade_xml_new ("./sysprof.glade", NULL, NULL);
-    
+
     /* Main Window */
     main_window = glade_xml_get_widget (xml, "main_window");
     
     g_signal_connect (G_OBJECT (main_window), "delete_event",
 		      G_CALLBACK (on_delete), NULL);
-    gtk_window_set_default_size (GTK_WINDOW (main_window), 640, 400);
+
     gtk_widget_show_all (main_window);
+
+    /* Menu items */
+    app->start_item = glade_xml_get_widget (xml, "start_item");
+    app->profile_item = glade_xml_get_widget (xml, "profile_item");
+    app->open_item = glade_xml_get_widget (xml, "open_item");
+    app->save_as_item = glade_xml_get_widget (xml, "save_as_item");
+
+    g_assert (app->start_item);
+    g_assert (app->profile_item);
+    g_assert (app->save_as_item);
+    g_assert (app->open_item);
     
-    /* Toolbar */
-    main_vbox = glade_xml_get_widget (xml, "main_vbox");
-    toolbar = gtk_toolbar_new ();
+    g_signal_connect (G_OBJECT (app->start_item), "activate",
+		      G_CALLBACK (on_start_clicked), app);
 
-    /* Stock Items */
-#include "pixbufs.c"
-    add_stock ("sysprof-start-profiling", "Star_t",
-	       sizeof (start_profiling), start_profiling);
-    add_stock ("sysprof-stop-profiling", "Sto_p",
-	       sizeof (stop_profiling), stop_profiling);
-
-    /* Stop */
-    item = gtk_radio_tool_button_new_from_stock (
-	NULL, "sysprof-stop-profiling");
-    gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -11);
+    g_signal_connect (G_OBJECT (app->profile_item), "activate",
+		      G_CALLBACK (on_profile_toggled), app);
     
-    /* Start */
-    item = gtk_radio_tool_button_new_with_stock_from_widget (
-	GTK_RADIO_TOOL_BUTTON (item), "sysprof-start-profiling");
-    gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, 0);
-    g_signal_connect (G_OBJECT (item), "toggled",
-		      G_CALLBACK (on_start_toggled), app);
-
-    /* Reset */
-    item = gtk_tool_button_new_from_stock (GTK_STOCK_CLEAR);
-    gtk_tool_button_set_label (GTK_TOOL_BUTTON (item), "_Reset");
-    gtk_tool_button_set_use_underline (GTK_TOOL_BUTTON (item), TRUE);
-    gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
-    g_signal_connect (G_OBJECT (item), "clicked",
-		      G_CALLBACK (on_reset), app);
-
-    app->reset_button = item;
-
-    /* Separator */
-    item = gtk_separator_tool_item_new ();
-    gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
+    g_signal_connect (G_OBJECT (app->open_item), "activate",
+		      G_CALLBACK (on_open_clicked), app);
     
-    /* Profile */
-    item = gtk_tool_button_new_from_stock (GTK_STOCK_JUSTIFY_LEFT);
-    gtk_tool_button_set_label (GTK_TOOL_BUTTON (item), "_Profile");
-    gtk_tool_button_set_use_underline (GTK_TOOL_BUTTON (item), TRUE);
-    gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
-    g_signal_connect (G_OBJECT (item), "clicked",
-		      G_CALLBACK (on_profile), app);
+    g_signal_connect (G_OBJECT (app->save_as_item), "activate",
+		      G_CALLBACK (on_save_as_clicked), app);
 
-    app->profile_button = item;
-
-    /* Show toolbar */
-    gtk_widget_show_all (GTK_WIDGET (toolbar));
+    /* quit */
+    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit_item")), "activate",
+		      G_CALLBACK (on_delete), NULL);
     
-    /* Add toolbar to vbox */
-    gtk_container_add (GTK_CONTAINER (main_vbox), toolbar);
-    gtk_box_reorder_child (GTK_BOX (main_vbox), toolbar, 1);
-    gtk_box_set_child_packing (GTK_BOX (main_vbox), toolbar,
-			       FALSE, TRUE, 0, GTK_PACK_START);
+    /* Tool items */
+    
+    app->start_button = glade_xml_get_widget (xml, "start_button");
+    app->profile_button = glade_xml_get_widget (xml, "profile_button");
+    app->open_button = glade_xml_get_widget (xml, "open_button");
+    app->save_as_button = glade_xml_get_widget (xml, "save_as_button");
+
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (
+					   app->profile_button), FALSE);
+    
+    g_signal_connect (G_OBJECT (app->start_button), "clicked",
+		      G_CALLBACK (on_start_clicked), app);
+
+    g_signal_connect (G_OBJECT (app->profile_button), "toggled",
+		      G_CALLBACK (on_profile_toggled), app);
+
+    g_signal_connect (G_OBJECT (app->open_button), "clicked",
+		      G_CALLBACK (on_open_clicked), app);
+
+    g_signal_connect (G_OBJECT (app->save_as_button), "clicked",
+		      G_CALLBACK (on_save_as_clicked), app);
+    
+    get_default_size (&w, &h);
+    
+    gtk_window_set_default_size (GTK_WINDOW (main_window), w, h);
     
     /* TreeViews */
+
     /* object view */
     app->object_view = (GtkTreeView *)glade_xml_get_widget (xml, "object_view");
     add_plain_text_column (app->object_view, _("Name"), OBJECT_NAME);
@@ -684,6 +730,7 @@ application_new (void)
     
     app->stash = stack_stash_new ();
     app->input_fd = -1;
+    app->state = INITIAL;
     
     return app;
 }
@@ -710,7 +757,7 @@ main (int argc, char **argv)
 		  "       insmod sysprof-module.ko\n"
 		  "\n");
     }
-    
+
     fd_add_watch (app->input_fd, app);
     fd_set_read_callback (app->input_fd, on_read);
     

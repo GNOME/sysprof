@@ -237,7 +237,7 @@ generate_stack_trace(struct task_struct *task,
 	
 	trace->pid = task->pid;
 	trace->truncated = 0;
-	
+
 	trace->addresses[0] = (void *)regs->eip;
 
 	i = 1;
@@ -262,15 +262,16 @@ generate_stack_trace(struct task_struct *task,
 
 struct work_struct work;
 static int in_queue;
+static int saved_state;
+
+DECLARE_WAIT_QUEUE_HEAD (wait_to_be_scanned);
 
 static void
 do_generate (void *data)
 {
 	struct task_struct *task = data;
 	struct task_struct *g, *p;
-
-	in_queue = 0;
-
+	
 	/* Make sure the thread still exists */
 	do_each_thread (g, p) {
 		if (p == task) {
@@ -281,9 +282,13 @@ do_generate (void *data)
 			
 			wake_up (&wait_for_trace);
 			
-			return;
+			goto out;
 		}
 	} while_each_thread (g, p);
+
+ out:
+	wake_up_process (task);
+	in_queue = 0;
 }
 
 static void
@@ -292,11 +297,18 @@ queue_generate_stack_trace (struct task_struct *cur)
 	if (in_queue)
 		return;
 
-	in_queue = 1;
+#if 0
+	printk(KERN_ALERT "qst: current: %d\n", current? current->pid : -1);
+#endif
 	
 	INIT_WORK (&work, do_generate, cur);
 
+	in_queue = 1;
+	
 	schedule_work (&work);
+
+	saved_state = cur->state;
+	set_task_state (cur, TASK_UNINTERRUPTIBLE);
 }
 
 static void

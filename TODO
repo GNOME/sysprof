@@ -42,8 +42,22 @@ Before 1.2:
 
 		- Send each stack trace to the profile module, along with
 		  presentation objects
+
 - Charge 'self' properly to processes that don't get any stack trace at all 
 	(probably we get that for free with stackstash reorganisation)
+
+- Add ability to show more than one function at a time. Algorithm:
+	Find all relevant nodes;
+	For each relevant node
+		best_so_far = relevant node
+		walk towards root
+			if node is relevant,
+				best_so_far = relevant
+	        add best_so_far to interesting
+	for each interesting
+		list leaves
+		for each leaf
+			add trace to tree (leaf, interesting)
 - Consider adding KDE-style nested callgraph view
 - Add support for line numbers within functions
 - consider caching [filename => bin_file]
@@ -72,6 +86,9 @@ Before 1.2:
 
 Later:
 
+- Figure out how Google's pprof script works. Then add real call graph 
+  drawing.
+
 - Find out how to hack around gtk+ bug causing multiple double clicks 
   to get eaten.
 
@@ -84,11 +101,55 @@ Later:
 	- java
 	- bash
 
+  Possible solution is for the script binaries to have a function
+  called something like 
+
+	__sysprof__generate_stacktrace (char **functions, int n_functions);
+
+  that the sysprof kernel module could call (and make return to the kernel).
+
+  This function would behave essentially like a signal handler: couldn't
+  call malloc(), couldn't call printf(), etc. 
+  
 - figure out a way to deal with both disk and CPU. Need to make sure that
   things that are UNINTERRUPTIBLE while there are RUNNING tasks is not
   consider bad.
 
+  Not entirely clear that the sysprof visualization is right for disk.
 
+  Maybe assign a size of n to traces with n *unique* disk access (ie. 
+  disk accesses that are not made by any other stack trace).
+
+  Or assign values to nodes in the calltree based on how many diskaccesses
+  are contained in that tree. Ie., if I get rid of this branch, how many
+  disk accesses would that get rid of.
+
+  Or turn it around and look at individual disk accesses and see what it
+  would take to get rid of it. Ie., a number of traces are associated with
+  any given diskaccess. Just show those. 
+
+  Or for a given tree with contained disk accesses, figure out what *other*
+  traces has the same diskaccesses.
+
+  Or visualize a set of squares with a color that is more saturated depending
+  on the number of unique stack traces that access it. The look for the
+  lightly saturated ones. 
+
+  The input to the profiler would basically be
+
+	(stack trace, badness, cookie)
+
+   For CPU:     badness=10ms,					      cookie=<a new one always>
+   For Disk:    badness=<calculated based on previous disk accesses>, cookie=<the accessed disk block>
+
+   For Memory:  badness=<cache line size not in cache>,		      cookie=<the address>
+
+   Cookies are use to figure out whether an access is really the same, ie., for two identical
+   cookies, the size is still just one, however 
+   
+   Memory is different from disk because you can't reasonably assume that stuff that has
+   been read will stay in cache (for short profile runs you can assume that with disk,
+   but not for long ones).
 
 DONE:
 

@@ -267,12 +267,12 @@ static void
 do_generate (void *data)
 {
 	struct task_struct *task = data;
-	struct task_struct *p;
+	struct task_struct *g, *p;
 
 	in_queue = 0;
 
-	/* Make sure the task still exists */
-	for_each_process (p) {
+	/* Make sure the thread still exists */
+	do_each_thread (g, p) {
 		if (p == task) {
 			generate_stack_trace(task, head);
 
@@ -283,7 +283,7 @@ do_generate (void *data)
 			
 			return;
 		}
-	}
+	} while_each_thread (g, p);
 }
 
 static void
@@ -309,8 +309,19 @@ on_timer(unsigned long dong)
 		;
 #endif
 
-	if (current && current->pid != 0)
+	if (current && current->pid != 0) {
+#if 0
+		printk(KERN_ALERT "current: %d\n", current->pid);
+#endif
 		queue_generate_stack_trace (current);
+	}
+#if 0
+	else if (!current)
+		printk(KERN_ALERT "no current\n");
+	else 
+		printk(KERN_ALERT "current is 0\n");
+#endif
+		
 	
 	add_timeout (INTERVAL, on_timer);
 }

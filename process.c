@@ -81,6 +81,9 @@ read_maps (int pid)
     in = fopen (name, "r");
     if (!in)
     {
+#if 0
+	g_print ("could not open %d: %s\n", pid, g_strerror (errno));
+#endif
 	g_free (name);
 	return NULL;
     }

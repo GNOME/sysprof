@@ -1,3 +1,10 @@
+Thu Mar 31 19:51:51 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-module.c (do_generate): Walk all threads, not just all
+	processes.
+
+	* TODO: Add disk profiling ideas
+
 Thu Mar 31 00:19:47 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (set_busy): Make this function work

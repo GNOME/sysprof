@@ -225,7 +225,7 @@
 	  <child>
 	    <widget class="GtkToolButton" id="reset_button">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes"></property>
+	      <property name="label" translatable="yes">_Reset</property>
 	      <property name="use_underline">True</property>
 	      <property name="stock_id">gtk-clear</property>
 	      <property name="visible_horizontal">True</property>
@@ -279,7 +279,6 @@
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">dummy</property>
 	      <property name="use_underline">True</property>
-	      <property name="stock_id">gtk-about</property>
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">False</property>

@@ -549,6 +549,7 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	{
 	    ProfileDescendant *seen_tree_node;
 	    
+	    /* Have we seen this object further up the tree? */
 	    seen_tree_node = g_hash_table_lookup (seen_objects, node->object);
 	    
 	    if (seen_tree_node)

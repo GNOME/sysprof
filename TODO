@@ -1,39 +1,27 @@
-- Get this TODO file more organized
+Before 1.0:
 
-- Figure out what's needed before 1.0
-
-- Consider what it would take to take stacktraces of other languages
-
-	- perl, 
-	- python
-	- java
-	- bash
-
-- Add support for line numbers within functions
-
-- Consider adding KDE-style nested callgraph view
-
+- grep FIXME
+- Need to make "make install" work (how do you know where to install
+  kernel modules?)
 - Find out what distributions it actually works on
-
-- Find out how to hack around gtk+ bug causing multiple double clicks 
-  to get eaten.
-
+	(ask for sucess stories in 0.9.x releases)
 - hook up about box
-
 - Need an icon
-
 - Add busy cursors,
-
 	- when you hit "Profile"
 	- when you click something in the main list and we don't respond
 		within 50ms (or perhaps when we expect to not be able to do
 		so (can we know the size in advance?))
-
-- Need to make "make install" work (how do you know where to install
-  kernel modules?)
-
 - Sould just install the kernel module if it running as root, pop up
-  a dialog if not.
+  a dialog if not. Note we must be able to start without module now, since
+  it is useful to just load profiles from disk.
+- hook up menu items view/start etc (or possibly get rid of them or move
+  them)
+- give profiles on the command line
+- autoconfuscate?
+- .desktop file
+
+Before 1.2:
 
 - Reorganise stackstash and profile
 
@@ -54,24 +42,19 @@
 
 		- Send each stack trace to the profile module, along with
 		  presentation objects
-
-- hook up menu items view/start etc (or possibly get rid of them or move
-  them)
-
+- Charge 'self' properly to processes that don't get any stack trace at all 
+	(probably we get that for free with stackstash reorganisation)
+- Consider adding KDE-style nested callgraph view
+- Add support for line numbers within functions
 - consider caching [filename => bin_file]
 
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.
-
-- grep FIXME
-
-- hide internal stuff in ProfileDescendant
-
+- Make things faster
+	- Can I get it to profile itself?
+	- speedprof seems to report that lots of time is spent in 
+	  stack_stash_foreach() and also in generate_key()
 - add an 'everything' object. It is really needed for a lot of things
-
-- kernel module should put process to sleep before sampling. Should get us
-  more accurate data
-
 - make profile.c more agnostic to processes and functions etc. Ideally
   it should just take a set of stack traces containing "presentation
   objects" and do something sensible with it.
@@ -81,18 +64,31 @@
   dump the data to a network socket. Should be able to react to eg.
   SIGUSR1 by dumping the data.
 
-- Port to GtkAction
+- hide internal stuff in ProfileDescendant
 
-- Charge 'self' properly to processes that don't get any stack trace at all 
+- kernel module should put process to sleep before sampling. Should get us
+  more accurate data
+
+
+Later:
+
+- Find out how to hack around gtk+ bug causing multiple double clicks 
+  to get eaten.
+
+- Figure out what a 'disk profiler' is.
+
+- Consider what it would take to take stacktraces of other languages
+
+	- perl, 
+	- python
+	- java
+	- bash
 
 - figure out a way to deal with both disk and CPU. Need to make sure that
   things that are UNINTERRUPTIBLE while there are RUNNING tasks is not
   consider bad.
 
-- Make things faster
-	- Can I get it to profile itself?
-	- speedprof seems to report that lots of time is spent in 
-	  stack_stash_foreach() and also in generate_key()
+
 
 DONE:
 

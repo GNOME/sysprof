@@ -1020,6 +1020,7 @@ set_shadows (GladeXML *xml)
 	"{ "
 	"   GtkToolbar::shadow_type = none "
 	"   GtkMenuBar::shadow_type = none "
+	"   GtkMenuBar::internal_padding = 2 "
 	"} "
 	"widget \"*toolbar\" style : rc \"blah\"\n"
 	"widget \"*menubar\" style : rc \"blah\"\n"
@@ -1067,7 +1068,7 @@ build_gui (Application *app)
 		      G_CALLBACK (on_save_as_clicked), app);
     
     /* quit */
-    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit_item")), "activate",
+    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit")), "activate",
 		      G_CALLBACK (on_delete), NULL);
     
     /* Tool items */

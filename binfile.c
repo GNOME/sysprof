@@ -330,7 +330,7 @@ read_symbols (BinFile *bf)
 	    
 	    symbol.address = bfd_asymbol_value (bfd_symbols[i]) - load_address;
 	    name = demangle (bfd, bfd_asymbol_name (bfd_symbols[i]));
-	    symbol.name = g_strdup (name);
+	    symbol.name = g_strdup_printf ("%s (%s)", name, bf->filename);
 	    free (name);
 	    
 	    g_array_append_vals (symbols, &symbol, 1);
@@ -418,6 +418,10 @@ bin_file_lookup_symbol (BinFile    *bf,
      */
     if (strcmp (result->name, "call_gmon_start") == 0)
 	return &(bf->undefined);
+    else if (strncmp (result->name, "__do_global_ctors_aux", strlen ("__do_global_ctors_aux")) == 0)
+    {
+	g_print ("ctors: %p, pos: %p\n", address, result->address);
+    }
     
     return result;
 }

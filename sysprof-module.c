@@ -70,7 +70,7 @@ generate_stack_trace (struct task_struct *task,
 
     frame = (StackFrame *)regs->ebp;
 
-    while (frame && i < SYSPROF_MAX_ADDRESSES &&
+    while (frame && i < SYSPROF_MAX_ADDRESSES - 1 &&
 	   (long)frame < (long)START_OF_STACK &&
 	   (long)frame >= regs->esp)
     {
@@ -155,19 +155,24 @@ hijacked_nopage (struct vm_area_struct * area,
     
     result = filemap_nopage (area, address, unused);
 
-    if (current && current->pid != 0 && disk)
+    if (current && disk)
     {
-#if 0
 	generate_stack_trace (current, head);
-#endif
 
+#if 0
 	memset (head, 0, sizeof (SysprofStackTrace));
     
  	head->pid = current->pid;
  	head->addresses[0] = (void *)address;
 	head->truncated = 0;
 	head->n_addresses = 1;
+#endif
 
+	memmove (&(head->addresses[1]), &(head->addresses[0]),
+		 head->n_addresses * 4);
+	head->n_addresses++;
+	head->addresses[0] = address;
+	
 	if (area->vm_file)
 	{
 	    char *line = d_path (area->vm_file->f_dentry,
@@ -332,12 +337,14 @@ on_timer_interrupt (void *data)
     
     if (exiting)
     {
+#if 0
 	if (!cpu_profiler)
 	{
 	    restore_mmaps();
 	    
 	    clean_hijacked_nopages ();
 	}
+#endif
 	wake_up (&wait_for_exit);
 	return;
     }
@@ -418,6 +425,7 @@ init_module (void)
     trace_proc_file->proc_fops->poll = procfile_poll;
     trace_proc_file->size = sizeof (SysprofStackTrace);
 
+#if 0
     if (!cpu_profiler)
     {
 	hijack_mmaps ();
@@ -427,6 +435,7 @@ init_module (void)
 		hijack_nopages (task);
 	    }
     }
+#endif
     
     queue_task(&timer_task, &tq_timer);
     

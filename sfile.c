@@ -152,6 +152,18 @@ sformat_new (gpointer f)
     return sformat;
 }
 
+#if 0
+SFormat *
+sformat_new_optional (gpointer f)
+{
+    SFormat *sformat = g_new0 (SFormat, 1);
+    Fragment *fragment = f;
+
+    sformat->begin = state_new ();
+    sformat->end = state_new ();
+}
+#endif
+
 void
 sformat_free (SFormat *format)
 {
@@ -657,7 +669,9 @@ static void
 hook_up_pointers (SFileInput *file)
 {
     int i;
- 
+
+    /* FIXME: we need to check the types here */
+    
 #if 0
     g_print ("emfle\n");
 #endif

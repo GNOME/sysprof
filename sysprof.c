@@ -35,7 +35,6 @@ struct Application
     GtkTreeView *	object_view;
     GtkTreeView *	callers_view;
     GtkTreeView *	descendants_view;
-    GtkStatusbar *	statusbar;
     
     GtkWidget *		start_button;
     GtkWidget *		profile_button;
@@ -47,6 +46,7 @@ struct Application
     GtkWidget *		profile_item;
     GtkWidget *		open_item;
     GtkWidget *		save_as_item;
+    GtkWidget *		samples_label;
     
     Profile *		profile;
     ProfileDescendant * descendants;
@@ -90,7 +90,7 @@ show_samples_timeout (gpointer data)
     switch (app->state)
     {
     case INITIAL:
-	label = g_strdup ("");
+	label = g_strdup ("Samples: 0");
 	break;
 	
     case PROFILING:
@@ -98,9 +98,8 @@ show_samples_timeout (gpointer data)
 	label = g_strdup_printf ("Samples: %d", app->n_samples);
 	break;
     }
-    
-    gtk_statusbar_pop (app->statusbar, 0);
-    gtk_statusbar_push (app->statusbar, 0, label);
+
+    gtk_label_set_label (GTK_LABEL (app->samples_label), label);
     
     g_free (label);
     
@@ -123,6 +122,8 @@ update_sensitivity (Application *app)
     gboolean sensitive_save_as_button;
     gboolean sensitive_start_button;
     gboolean sensitive_tree_views;
+    gboolean sensitive_samples_label;
+    gboolean sensitive_reset_button;
     
     GtkWidget *active_radio_button;
     
@@ -132,15 +133,19 @@ update_sensitivity (Application *app)
 	sensitive_profile_button = FALSE;
 	sensitive_save_as_button = FALSE;
 	sensitive_start_button = TRUE;
+	sensitive_reset_button = FALSE;
 	sensitive_tree_views = FALSE;
+	sensitive_samples_label = FALSE;
 	active_radio_button = app->dummy_button;
 	break;
 	
     case PROFILING:
 	sensitive_profile_button = (app->n_samples > 0);
 	sensitive_save_as_button = (app->n_samples > 0);
+	sensitive_reset_button = (app->n_samples > 0);
 	sensitive_start_button = TRUE;
 	sensitive_tree_views = FALSE;
+	sensitive_samples_label = TRUE;
 	active_radio_button = app->start_button;
 	break;
 	
@@ -149,6 +154,8 @@ update_sensitivity (Application *app)
 	sensitive_save_as_button = TRUE;
 	sensitive_start_button = TRUE;
 	sensitive_tree_views = TRUE;
+	sensitive_reset_button = TRUE;
+	sensitive_samples_label = FALSE;
 	active_radio_button = app->profile_button;
 	break;
     }
@@ -162,11 +169,15 @@ update_sensitivity (Application *app)
 			      sensitive_save_as_button);
     
     gtk_widget_set_sensitive (GTK_WIDGET (app->start_button),
-			      sensitive_start_button);
-    
+			      sensitive_start_button); 
+
+    gtk_widget_set_sensitive (GTK_WIDGET (app->reset_button),
+			      sensitive_reset_button);
+   
     gtk_widget_set_sensitive (GTK_WIDGET (app->object_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->callers_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->descendants_view), sensitive_tree_views);
+    gtk_widget_set_sensitive (GTK_WIDGET (app->samples_label), sensitive_samples_label);
     
     queue_show_samples (app);
 }
@@ -896,6 +907,8 @@ build_gui (Application *app)
     
     g_signal_connect (G_OBJECT (app->save_as_button), "clicked",
 		      G_CALLBACK (on_save_as_clicked), app);
+
+    app->samples_label = glade_xml_get_widget (xml, "samples_label");
     
     gtk_widget_realize (GTK_WIDGET (main_window));
     set_sizes (GTK_WINDOW (main_window),
@@ -936,7 +949,6 @@ build_gui (Application *app)
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* Statusbar */
-    app->statusbar = (GtkStatusbar *)glade_xml_get_widget (xml, "statusbar");
     queue_show_samples (app);
 }
 

@@ -25,7 +25,13 @@ typedef guint SType;
  *   Format *format_new (void);
  *   void format_new_record (Format *f, Record *r);
  *   
- *   
+ *
+ * Consider adding optional elements:
+ *
+ *         sformat_new_optional (gpointer content)
+ *
+ * enums, optionals, selections, empties
+ *
  */
 
 /* - Describing Types - */

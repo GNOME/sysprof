@@ -1,13 +1,35 @@
+- Figure out what's needed before 1.0
+
+- Consider adding KDE-style nested callgraph view
+
+- Find out what distributions it actually works on
+
+- Find out how to hack around gtk+ bug causing multiple double clicks 
+  to get eaten.
+
+- hook up about box
+
+- hook up menu items view/start etc (or possibly get rid of them or move them)
+
 - crashes when you ctrl-click the selected item in the top left pane
    <ian__> ssp: looks like it doesn't handle the none-selected case
 
+- Move "samples" label to the toolbar, then get rid of statusbar.
+
 - consider caching [filename => bin_file]
-- Have kernel modulereport the file the symbol was found in
+
+- Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.
+
 - grep FIXME
+
 - hide internal stuff in ProfileDescendant
-- add an 'everything' object. It _is_ really needed for a lot of things
-- in timer, put process to sleep. Should get us more accurate data
+
+- add an 'everything' object. It is really needed for a lot of things
+
+- kernel module should put process to sleep before sampling. Should get us
+  more accurate data
+
 - loading and saving
 
 - make profile.c more agnostic to processes and functions etc. Ideally
@@ -26,9 +48,6 @@
 - figure out a way to deal with both disk and CPU. Need to make sure that
   things that are UNINTERRUPTIBLE while there are RUNNING tasks is not
   consider bad.
-
-- Make sure we don't overcharge when many processes are "RUNNING". We should
-  probably divide each sample with the number of runnable processes
 
 DONE:
 

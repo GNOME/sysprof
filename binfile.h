@@ -12,7 +12,6 @@ BinFile *     bin_file_new           (const char *filename);
 void          bin_file_free          (BinFile    *bin_file);
 const Symbol *bin_file_lookup_symbol (BinFile    *bin_file,
 				      gulong      address);
-gulong        bin_file_get_load_address (BinFile *bf);
 
 /* Symbol */
 struct Symbol

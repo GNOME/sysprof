@@ -22,6 +22,7 @@ struct Map
     char *	filename;
     gulong	start;
     gulong	end;
+  gulong      offset;
     gboolean	do_offset;
     
     BinFile *	bin_file;
@@ -97,10 +98,12 @@ read_maps (int pid)
 	int count;
 	guint start;
 	guint end;
+	guint offset;
 	
 	count = sscanf (
-	    buffer, "%x-%x %*15s %*x %*u:%*u %*u %255s", &start, &end, file);
-	if (count == 3)
+	    buffer, "%x-%x %*15s %x %*u:%*u %*u %255s", 
+	    &start, &end, &offset, file);
+	if (count == 4)
 	{
 	    Map *map;
 	    
@@ -110,7 +113,7 @@ read_maps (int pid)
 	    map->start = start;
 	    map->end = end;
 	    
-	    map->do_offset = check_do_offset (map, pid);
+	    map->offset = offset; //check_do_offset (map, pid);
 	    
 	    map->bin_file = NULL;
 	    
@@ -257,6 +260,8 @@ process_lookup_symbol (Process *process, gulong address)
     static Symbol undefined;
     const Symbol *result;
     Map *map = process_locate_map (process, address);
+
+/*     g_print ("addr: %x\n", address); */
     
     if (!map)
     {
@@ -268,9 +273,11 @@ process_lookup_symbol (Process *process, gulong address)
 	return &undefined;
     }
     
-    /* if (map->do_offset)
-	address -= map->start;
-    */
+/*     if (map->do_offset) */
+/*       address -= map->start; */
+
+    address -= map->start;
+    address += map->offset;
 
     if (!map->bin_file)
 	map->bin_file = bin_file_new (map->filename);
@@ -278,10 +285,18 @@ process_lookup_symbol (Process *process, gulong address)
     /* FIXME - this seems to work with prelinked binaries, but is
      * it correct? IE., will normal binaries always have a preferred_addres of 0?
      */
-    address -= map->start;
-    address += bin_file_get_load_address (map->bin_file);
+/*     address = address - map->start + map->offset + bin_file_get_load_address (map->bin_file); */
+/*     address -= map->start; */
+/*     address += map->offset; */
+/*     address += bin_file_get_load_address (map->bin_file); */
+
+/*     g_print ("%s: start: %p, load: %p\n", */
+/* 	     map->filename, map->start, bin_file_get_load_address (map->bin_file)); */
 
     result = bin_file_lookup_symbol (map->bin_file, address);
+
+/*     g_print ("(%x) %x %x name; %s\n", address, map->start, map->offset, result->name); */
+
     return result;
 }
 

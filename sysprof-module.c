@@ -10,6 +10,8 @@
 #include <linux/proc_fs.h>
 #include <asm/uaccess.h>
 #include <linux/poll.h>
+#include <asm/unistd.h>
+#include <linux/pagemap.h>
 
 #include "sysprof-module.h"
 
@@ -18,7 +20,7 @@ MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
 #define SAMPLES_PER_SECOND 50   /* must divide HZ */
 
-static const int cpu_profiler = 1; /* 0: page faults, 1: cpu */
+static const int cpu_profiler = 0; /* 0: page faults, 1: cpu */
 
 static void on_timer_interrupt (void *);
 
@@ -96,26 +98,70 @@ generate_stack_trace (struct task_struct *task,
 	trace->truncated = 0;
 }
 
+static int
+disk_access (struct vm_area_struct *area,
+	     unsigned long address)
+{
+    struct file *file = area->vm_file;
+    struct address_space *mapping = file->f_dentry->d_inode->i_mapping;
+    struct inode *inode = mapping->host;
+    struct page *page, **hash;
+    unsigned long size, pgoff, endoff;
+    int disk_access = 1;
+    
+    pgoff = ((address - area->vm_start) >> PAGE_CACHE_SHIFT) + area->vm_pgoff;
+    endoff = ((area->vm_end - area->vm_start) >> PAGE_CACHE_SHIFT) + area->vm_pgoff;
+    
+    /*
+     * An external ptracer can access pages that normally aren't
+     * accessible..
+     */
+    size = (inode->i_size + PAGE_CACHE_SIZE - 1) >> PAGE_CACHE_SHIFT;
+    if ((pgoff >= size) && (area->vm_mm == current->mm))
+	return 0;
+    
+    /* The "size" of the file, as far as mmap is concerned, isn't bigger than the mapping */
+    if (size > endoff)
+	size = endoff;
+    
+    /*
+     * Do we have something in the page cache already?
+     */
+    hash = page_hash(mapping, pgoff);
+    
+    page = __find_get_page(mapping, pgoff, hash);
+    if (page)
+	/*
+	 * Ok, found a page in the page cache, now we need to check
+	 * that it's up-to-date.
+	 */
+	if (Page_Uptodate(page))
+	    disk_access = 0;
+
+    return disk_access;
+}
+
 struct page *
 hijacked_nopage (struct vm_area_struct * area,
 		 unsigned long address,
 		 int unused)
 {
-    if (current && current->pid != 0)
+    struct page *result;
+    int disk;
+
+    disk = disk_access (area, address);
+
+    printk (KERN_ALERT "disk access: %d\n", disk);
+    
+    result = filemap_nopage (area, address, unused);
+
+    if (current && current->pid != 0 && disk)
     {
-#if 0
 	generate_stack_trace (current, head);
-	if (head++ == &stack_traces[N_TRACES - 1])
-	    head = &stack_traces[0];
 
-	wake_up (&wait_for_trace);
-#endif
-	memset (head, 0, sizeof (SysprofStackTrace));
-
-	head->n_addresses = 1;
-	head->pid = current->pid;
-	head->addresses[0] = (void *)address;
-	head->truncated = 0;
+/* 	head->pid = current->pid; */
+/* 	head->addresses[0] = (void *)address; */
+/* 	head->truncated = 0; */
 
 	if (area->vm_file)
 	{
@@ -141,8 +187,15 @@ hijacked_nopage (struct vm_area_struct * area,
 
 	wake_up (&wait_for_trace);
     }
-    
-    return filemap_nopage (area, address, unused);   
+
+    return result;
+}
+
+static void
+hijack_nopage (struct vm_area_struct *vma)
+{
+    if (vma->vm_ops && vma->vm_ops->nopage == filemap_nopage)
+	vma->vm_ops->nopage = hijacked_nopage;
 }
 
 static void
@@ -155,10 +208,7 @@ hijack_nopages (struct task_struct *task)
 	return;
 
     for (vma = mm->mmap; vma != NULL; vma = vma->vm_next)
-    {
-	if (vma->vm_ops && vma->vm_ops->nopage == filemap_nopage)
-	    vma->vm_ops->nopage = hijacked_nopage;
-    }
+	hijack_nopage (vma);
 }
 
 static void
@@ -183,6 +233,93 @@ clean_hijacked_nopages (void)
     }
 }
 
+struct mmap_arg_struct {
+	unsigned long addr;
+	unsigned long len;
+	unsigned long prot;
+	unsigned long flags;
+	unsigned long fd;
+	unsigned long offset;
+};
+
+typedef asmlinkage int (* old_mmap_func) (struct mmap_arg_struct *arg);
+typedef asmlinkage long (* mmap2_func) (
+    unsigned long addr, unsigned long len,
+    unsigned long prot, unsigned long flags,
+    unsigned long fd, unsigned long pgoff);
+
+static mmap2_func orig_mmap2;
+static old_mmap_func orig_mmap;
+
+static void
+after_mmap (long res, unsigned long len)
+{
+    struct vm_area_struct *vma;
+    unsigned long start;
+
+    if (res == -1 || !current || current->pid == 0)
+	return;
+
+    start = res;
+    
+    vma = find_vma (current->mm, start);
+
+    if (vma && vma->vm_end >= start + len)
+	hijack_nopage (vma);
+#if 0
+    else if (vma)
+    {
+	printk (KERN_ALERT "nope: vm_start: %x, vm_end: %x\n"
+		"start: %p, len: %x, start + len: %x\n",
+		vma->vm_start, vma->vm_end, start, len, start + len);
+    }
+    else
+	printk (KERN_ALERT "no vma\n");
+#endif
+    
+}
+
+static long
+new_mmap2 (unsigned long addr, unsigned long len,
+	   unsigned long prot, unsigned long flags,
+	   unsigned long fd,   unsigned long pgoff)
+{
+    int res = orig_mmap2 (addr, len, prot, flags, fd, pgoff);
+
+    after_mmap (res, len);
+
+    return res;
+}
+
+static int
+new_mmap (struct mmap_arg_struct *arg)
+{
+    int res = orig_mmap (arg);
+
+    after_mmap (res, arg->len);
+
+    return res;
+}
+
+void **sys_call_table = (void **)0xc0347df0;
+
+static void
+hijack_mmaps (void)
+{
+    orig_mmap2 = sys_call_table[__NR_mmap2];
+    sys_call_table[__NR_mmap2] = new_mmap2;
+    
+    orig_mmap = sys_call_table[__NR_mmap];
+    sys_call_table[__NR_mmap] = new_mmap;
+}
+
+static void
+restore_mmaps (void)
+{
+    sys_call_table[__NR_mmap2] = orig_mmap2;
+    sys_call_table[__NR_mmap] = orig_mmap;
+}
+
 static void
 on_timer_interrupt (void *data)
 {
@@ -190,7 +327,12 @@ on_timer_interrupt (void *data)
     
     if (exiting)
     {
-	clean_hijacked_nopages ();
+	if (!cpu_profiler)
+	{
+	    restore_mmaps();
+	    
+	    clean_hijacked_nopages ();
+	}
 	wake_up (&wait_for_exit);
 	return;
     }
@@ -211,7 +353,9 @@ on_timer_interrupt (void *data)
 	}
 	else
 	{
+#if 0
 	    hijack_nopages (current);
+#endif
 	}
     }
     
@@ -258,6 +402,7 @@ procfile_poll (struct file *filp, poll_table *poll_table)
 int
 init_module (void)
 {
+    struct task_struct *task;
     trace_proc_file =
 	create_proc_entry ("sysprof-trace", S_IFREG | S_IRUGO, &proc_root);
     
@@ -267,6 +412,16 @@ init_module (void)
     trace_proc_file->read_proc = procfile_read;
     trace_proc_file->proc_fops->poll = procfile_poll;
     trace_proc_file->size = sizeof (SysprofStackTrace);
+
+    if (!cpu_profiler)
+    {
+	hijack_mmaps ();
+	
+	for_each_process (task)
+	    {
+		hijack_nopages (task);
+	    }
+    }
     
     queue_task(&timer_task, &tq_timer);
     

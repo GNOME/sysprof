@@ -113,10 +113,10 @@ on_read (gpointer data)
     {
 	Process *process = process_get_from_pid (trace.pid);
 	int i;
-	char *filename = NULL;
+/* 	char *filename = NULL; */
 
-	if (*trace.filename)
-	    filename = trace.filename;
+/* 	if (*trace.filename) */
+/* 	    filename = trace.filename; */
 	
 	for (i = 0; i < trace.n_addresses; ++i)
 	    process_ensure_map (process, trace.pid, 

@@ -24,7 +24,6 @@ struct BinFile
     int         n_symbols;
     Symbol     *symbols;
     Symbol	undefined;
-    gulong      address;
 };
 
 static bfd *
@@ -279,6 +278,7 @@ read_symbols (BinFile *bf)
     bfd *bfd;
     GArray *symbols;
     asection *sec;
+    ulong load_address;
 
     bf->symbols = NULL;
     bf->n_symbols = 0;
@@ -301,13 +301,13 @@ read_symbols (BinFile *bf)
     if (!bfd_symbols)
 	return;
     
-    bf->address = 0xffffffff;
+    load_address = 0xffffffff;
     for (sec = bfd->sections; sec != NULL; sec = sec->next)
     {
 	if (sec->flags & SEC_LOAD)
 	{
-	    if ((gulong)sec->vma < bf->address)
-		bf->address = sec->vma & ~4095;
+	    if ((gulong)sec->vma < load_address)
+	      load_address = sec->vma & ~4095;
 	}
     }
 
@@ -316,6 +316,8 @@ read_symbols (BinFile *bf)
 	return;
 
     symbols = g_array_new (FALSE, FALSE, sizeof (Symbol));
+
+/*     g_print ("%s: text vma: %x\n", bf->filename, text_section->vma); */
 
     for (i = 0; i < n_symbols; i++)
     {
@@ -326,7 +328,7 @@ read_symbols (BinFile *bf)
 	{
 	    char *name;
 	    
-	    symbol.address = bfd_asymbol_value (bfd_symbols[i]);
+	    symbol.address = bfd_asymbol_value (bfd_symbols[i]) - load_address;
 	    name = demangle (bfd, bfd_asymbol_name (bfd_symbols[i]));
 	    symbol.name = g_strdup (name);
 	    free (name);
@@ -372,12 +374,6 @@ bin_file_free (BinFile *bf)
     g_free (bf->symbols);
     g_free (bf->undefined.name);
     g_free (bf);
-}
-
-gulong
-bin_file_get_load_address (BinFile *bf)
-{
-  return bf->address;
 }
 
 const Symbol *

@@ -18,7 +18,7 @@ MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
 #define SAMPLES_PER_SECOND 50   /* must divide HZ */
 
-static const int cpu_profiler = 0; /* 0: page faults, 1: cpu */
+static const int cpu_profiler = 1; /* 0: page faults, 1: cpu */
 
 static void on_timer_interrupt (void *);
 

@@ -20,7 +20,7 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
-#define SAMPLES_PER_SECOND (50)
+#define SAMPLES_PER_SECOND (20)
 #define INTERVAL (HZ / SAMPLES_PER_SECOND)
 #define N_TRACES 256
 
@@ -187,16 +187,13 @@ procfile_read(char *buffer,
 	      int *eof,
 	      void *data)
 {
-	wait_event_interruptible(wait_for_trace, head != tail);
-
 	if (buffer_len < sizeof (SysprofStackTrace)) 
 		return -ENOMEM;
 	
-	memcpy (buffer, (char *)tail, sizeof (SysprofStackTrace));
+	wait_event_interruptible (wait_for_trace, head != tail);
+	*buffer_location = (char *)tail;
 	if (tail++ == &stack_traces[N_TRACES - 1])
 		tail = &stack_traces[0];
-	*buffer_location = buffer;
-	
 	return sizeof (SysprofStackTrace);
 }
 
@@ -204,6 +201,9 @@ struct proc_dir_entry *trace_proc_file;
 static unsigned int
 procfile_poll(struct file *filp, poll_table *poll_table)
 {
+	if (head != tail) {
+		return POLLIN | POLLRDNORM;
+	}
 	poll_wait(filp, &wait_for_trace, poll_table);
 	if (head != tail) {
 		return POLLIN | POLLRDNORM;

@@ -190,7 +190,7 @@ update_sensitivity (Application *app)
 }
 
 static void
-set_busy (Application *app, gboolean busy)
+set_busy (GtkWidget *widget, gboolean busy)
 {
     GdkCursor *cursor;
     
@@ -199,7 +199,7 @@ set_busy (Application *app, gboolean busy)
     else
 	cursor = NULL;
 
-    gdk_window_set_cursor (app->main_window->window, cursor);
+    gdk_window_set_cursor (widget->window, cursor);
     
     if (cursor)
 	gdk_cursor_unref (cursor);
@@ -682,7 +682,7 @@ on_profile_toggled (GtkWidget *widget, gpointer data)
     
     if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (app->profile_button)))
     {
-	set_busy (app, TRUE);
+	set_busy (app->main_window, TRUE);
 	if (app->profile && !app->profile_from_file)
 	{
 	    profile_free (app->profile);
@@ -690,7 +690,7 @@ on_profile_toggled (GtkWidget *widget, gpointer data)
 	}
 	
 	ensure_profile (app);
-	set_busy (app, FALSE);
+	set_busy (app->main_window, FALSE);
     }
 }
 
@@ -723,6 +723,8 @@ static void
 on_reset_clicked (gpointer widget, gpointer data)
 {
     Application *app = data;
+
+    set_busy (app->main_window, TRUE);
     
     delete_data (app);
     
@@ -730,6 +732,8 @@ on_reset_clicked (gpointer widget, gpointer data)
 	app->state = INITIAL;
     
     update_sensitivity (app);
+
+    set_busy (app->main_window, FALSE);
 }
 
 static gboolean
@@ -783,6 +787,8 @@ on_save_as_clicked (gpointer widget, gpointer data)
     
     ensure_profile (app);
     
+    set_busy (app->main_window, TRUE);
+    
     dialog = gtk_file_chooser_dialog_new ("Save As",
 					  GTK_WINDOW (app->main_window),
 					  GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -792,6 +798,8 @@ on_save_as_clicked (gpointer widget, gpointer data)
     
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
     gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+    
+    set_busy (app->main_window, FALSE);
     
  retry:
     if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
@@ -808,15 +816,17 @@ on_save_as_clicked (gpointer widget, gpointer data)
 	    goto retry;
 	}
 	
+	set_busy (dialog, TRUE);
 	if (!profile_save (app->profile, filename, &err))
 	{
 	    sorry (app->main_window, "Could not save %s: %s",
 		   filename, err->message);
-	    
+
+	    set_busy (dialog, FALSE);
 	    g_free (filename);
 	    goto retry;
 	}
-	
+	set_busy (dialog, FALSE);
 	g_free (filename);
     }
     
@@ -829,6 +839,8 @@ on_open_clicked (gpointer widget, gpointer data)
     Application *app = data;
     Profile *profile = NULL;
     GtkWidget *dialog;
+
+    set_busy (app->main_window, TRUE);
     
     dialog = gtk_file_chooser_dialog_new ("Open",
 					  GTK_WINDOW (app->main_window),
@@ -838,6 +850,8 @@ on_open_clicked (gpointer widget, gpointer data)
 					  NULL);
     
     gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+
+    set_busy (app->main_window, FALSE);
     
  retry:
     if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
@@ -846,10 +860,15 @@ on_open_clicked (gpointer widget, gpointer data)
 	gchar *filename;
 	
 	filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+
+	set_busy (dialog, TRUE);
+
 	profile = profile_load (filename, &err);
 	
 	if (!profile)
 	{
+	    set_busy (dialog, FALSE);
+	    
 	    sorry (app->main_window, "Could not open %s: %s",
 		   filename, err->message);
 	    
@@ -857,10 +876,14 @@ on_open_clicked (gpointer widget, gpointer data)
 	    goto retry;
 	}
 	
+	set_busy (dialog, FALSE);
+	
 	g_free (filename);
     }
     
     gtk_widget_destroy (dialog);
+
+    set_busy (app->main_window, TRUE);
     
     if (profile)
     {
@@ -872,11 +895,13 @@ on_open_clicked (gpointer widget, gpointer data)
 	
 	app->profile = profile;
 	app->profile_from_file = TRUE;
-	
+
 	fill_lists (app);
-	
+
 	update_sensitivity (app);
     }
+    
+    set_busy (app->main_window, FALSE);
 }
 
 static void
@@ -891,7 +916,7 @@ on_object_selection_changed (GtkTreeSelection *selection, gpointer data)
     Application *app = data;
     GtkTreePath *path;
 
-    set_busy (app, TRUE);
+    set_busy (app->main_window, TRUE);
 
     gdk_window_process_all_updates ();
     
@@ -906,7 +931,7 @@ on_object_selection_changed (GtkTreeSelection *selection, gpointer data)
 	GTK_TREE_VIEW (app->descendants_view), path, FALSE);
     gtk_tree_path_free (path);
     
-    set_busy (app, FALSE);
+    set_busy (app->main_window, FALSE);
 }
 
 static void

@@ -1,4 +1,6 @@
 #include <glib.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "binfile.h"
 #include "process.h"
@@ -101,7 +103,7 @@ serialize_object (gpointer key, gpointer value, gpointer data)
     SaveContext *context = data;
     ProfileObject *object = key;
     
-    g_string_append_printf (context->str, "        <object id=%d name=\"%s\" total=%d self=%d/>\n",
+    g_string_append_printf (context->str, "        <object id=\"%d\" name=\"%s\" total=\"%d\" self=\"%d\"/>\n",
 			    get_id (context, object),
 			    object->name,
 			    object->total,
@@ -115,7 +117,7 @@ serialize_call_tree (Node *node, SaveContext *context)
 	return;
     
     g_string_append_printf (context->str,
-			    "        <node id=%d object=%d siblings=%d children=%d parent=%d next=%d total=%d self=%d>\n",
+			    "        <node id=\"%d\" object=\"%d\" siblings=\"%d\" children=\"%d\" parent=\"%d\" next=\"%d\" total=\"%d\" self=\"%d\">\n",
 			    get_id (context, node),
 			    get_id (context, node->object),
 			    get_id (context, node->siblings),
@@ -164,12 +166,150 @@ profile_save (Profile		 *profile,
     return FALSE;
 }
 
+typedef struct LoadContext LoadContext;
+struct LoadContext
+{
+    GHashTable *objects_by_id;
+    GHashTable *nodes_by_id;
+    
+};
+
+static int
+get_number (const char *s, GError **err)
+{
+    char *end;
+    
+    int r = strtol (s, &end, 10);
+    if (*end != '\0')
+    {
+	/* FIXME: set error to something appropriate */
+    }
+
+    return r;
+}
+
+static Node *
+create_node (const char **attribute_names, const char **attribute_values, int *id, GError **error)
+{
+    int i;
+    
+    i = 0;
+    while (attribute_names[i])
+    {
+	const char *name = attribute_names[i];
+	const char *value = attribute_values[i];
+
+	if (strcmp (name, "id") == 0)
+	{
+	}
+	else if (strcmp (name, "sibling") == 0)
+	{
+	    
+	}
+
+	i++;
+    }
+    return NULL;
+}
+
+static ProfileObject *
+create_object (const char **attribute_names, const char **attribute_values, int *id, GError **err)
+{
+    int i;
+
+    i = 0; 
+    while (attribute_names[i])
+    {
+	const char *name = attribute_names[i];
+	const char *value = attribute_values[i];
+	
+
+	
+	
+	i++;
+    }
+    return NULL;
+}
+	
+static void
+parse_start_element (GMarkupParseContext *context,
+		     const char *element_name,
+		     const char **attribute_names,
+		     const char **attribute_values,
+		     gpointer user_data,
+		     GError **err)
+{
+    int id;
+    LoadContext *lc = user_data;
+
+    
+    if (strcmp (element_name, "object") == 0)
+    {
+	ProfileObject *object = create_object (attribute_names, attribute_values, &id, err);
+
+	if (object)
+	    g_hash_table_insert (lc->objects_by_id, GINT_TO_POINTER (id), object);
+    }
+    else if (strcmp (element_name, "node") == 0)
+    {
+	Node *node = create_node (attribute_names, attribute_values, &id, err);
+
+	if (node)
+	    g_hash_table_insert (lc->nodes_by_id, GINT_TO_POINTER (id), node);
+    }
+    else
+    {
+	/* ignore anything but object and node */
+    }
+}
+
+static void
+parse_end_element (GMarkupParseContext *context,
+		   const char *element_name,
+		   gpointer user_data,
+		   GError **error)
+{
+    
+}
+
+static void
+parse_error (GMarkupParseContext *context,
+	     GError **error,
+	     gpointer user_data)
+{
+}
+
 Profile *
 profile_load (const char	 *filename,
 	      GError           **err)
 {
-    /* FIXME */
-    return NULL;
+    char *input = NULL;
+    Profile *result = NULL;
+    
+    GMarkupParser parser = {
+	parse_start_element, parse_end_element, NULL, NULL, NULL,
+    };
+
+    LoadContext load_context;
+    GMarkupParseContext *parse_context;
+
+    if (!g_file_get_contents (filename, &input, NULL, err))
+	return NULL;
+
+    parse_context = g_markup_parse_context_new (&parser, 0, NULL, NULL);
+
+    if (!g_markup_parse_context_parse (parse_context, input, -1, err))
+	goto out;
+    
+    if (!g_markup_parse_context_end_parse (parse_context, err))
+	goto out;
+    
+    g_markup_parse_context_free (parse_context);
+
+ out:
+    g_free (input);
+    
+    return result;
 }
 
 static void

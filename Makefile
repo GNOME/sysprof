@@ -43,7 +43,7 @@ $(MODULE).o: $(MODULE).c
 	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
 else
 
-MODCFLAGS += KERNEL24
+MODCFLAGS += -DKERNEL24
 
 $(MODULE).o: $(MODULE).c
 	gcc $(MODCFLAGS) $(MODULE).c -c -o$(MODULE).o

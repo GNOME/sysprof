@@ -45,6 +45,7 @@ static struct tq_struct timer_task =
 	NULL
 };
 
+int exiting = 0;
 #else
 
 static struct timer_list timer;
@@ -162,12 +163,12 @@ on_timer(unsigned long dong)
 		)
 	{
 
-		struct pt_regs *regs = ((struct pt_regs *) (THREAD_SIZE + (unsigned long) current->thread_info)) - 1;
-#if 0
+#ifdef KERNEL24
 	struct pt_regs *regs = (struct pt_regs *)(
-			(long)current + THREAD_SIZE - sizeof (struct pt_regs));
+		(long)current + THREAD_SIZE - sizeof (struct pt_regs));
+#else
+	struct pt_regs *regs = ((struct pt_regs *) (THREAD_SIZE + (unsigned long) current->thread_info)) - 1;
 #endif
-		
 		generate_stack_trace (regs, head);
 		
 		if (head++ == &stack_traces[N_TRACES - 1])

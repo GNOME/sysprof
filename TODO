@@ -1,3 +1,22 @@
+- consider caching [filename => bin_file]
+- Have kernel modulereport the file the symbol was found in
+	Should avoid a lot of potential brokenness with dlopen etc.
+- grep FIXME
+- hide internal stuff in ProfileDescendant
+
+- loading and saving
+
+- Non-GUI version that can save in a format the GUI could understand.
+  Could be used for profiling startup etc. Should be able to dump the
+  data to a network socket.
+
+DONE:
+
+- consider making ProfileObject more of an object.
+
+- make an "everything" object
+       maybe not necessary -- there is a libc_ctors_something()
+
 - make presentation strings nicer
 
   four different kinds of symbols:
@@ -10,18 +29,7 @@
   (a) is easy,  (b) should be <in ...>    (c) should just become "???" 
   (d) not sure
 
-- grep FIXME
-- make an "everything" object
-       maybe not necessary -- there is a libc_ctors_something()
-- consider making ProfileObject more of an object.
-- hide internal stuff in ProfileDescendant
-- consider caching [filename->bin_file]
-
-DONE:
-
 - processes with a cmdline of "" should get a [pid = %d] instead.
-
-- Kernel module should report the file the symbol was found in
 
 - make an "n samples" label
 Process stuff:

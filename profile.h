@@ -49,12 +49,6 @@ struct ProfileDescendant
     int			marked_total;
 };
 
-struct Profile
-{
-    gint		profile_size;
-    GList *		objects;
-};
-
 struct ProfileCaller
 {
     ProfileObject *	object;		/* can be NULL */
@@ -66,9 +60,16 @@ struct ProfileCaller
 
 Profile *          profile_new                (StackStash        *stash);
 void               profile_free               (Profile           *profile);
+gint		   profile_get_size	      (Profile           *profile);
+GList *		   profile_get_objects	      (Profile		 *profile);
 ProfileDescendant *profile_create_descendants (Profile           *prf,
 					       ProfileObject     *object);
 ProfileCaller *	   profile_list_callers       (Profile		 *profile,
 					       ProfileObject     *callee);
 void		   profile_caller_free	      (ProfileCaller     *caller);
 void               profile_descendant_free    (ProfileDescendant *descendant);
+gboolean	   profile_save		      (Profile		 *profile,
+					       const char	 *file_name,
+					       GError		**err);
+Profile *	   profile_load		      (const char	 *filename,
+					       GError           **err);

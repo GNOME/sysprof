@@ -23,24 +23,26 @@ program "sysprof".
 	- "make World"
 
   (2) Install the X server making sure it can't see any ".a" files. If
-      You install on top of an existing installation, just do
+      you install on top of an existing installation, just do
 
 	  find /usr/X11R6/lib/"*.a" | sudo xargs rm
 
-      and install the newly compiled X server. If a ".so" X server
-      finds .a files in its module path it will try to load those 
-      in preference to .so files and this causes symbol resolution
-      problems
+      and install the newly compiled X server. 
+
+      If a ".so" X server finds .a files in its module path it will
+      try to load those in preference to .so files and this causes
+      symbol resolution problems
 
   (3) Run your new X server
 
   (4) Run sysprof as root. This is necessary because the X server binary 
       for security reasons is not readable by regular users. I could tell
-      you why this is so, but then I'd have to kill you.
+      you why, but then I'd have to kill you.
+
 
 Credits:
-	Kristian Høgsberg for the first port to kernel 2.6
-	Owen Taylor for the symbol lookup code in memprof
+      Kristian Høgsberg for the first port to the 2.6 kernel.
+      Owen Taylor for the symbol lookup code in memprof
 	
 
 Søren

@@ -219,10 +219,10 @@ static void
 generate_stack_trace(struct task_struct *task,
 		     SysprofStackTrace *trace)
 {
-#ifdef NOT_ON_4G4G	/* FIXME: What is the symbol really called? */
-#  define START_OF_STACK 0xBFFFFFFF
-#else
+#ifdef CONFIG_HIGHMEM
 #  define START_OF_STACK 0xFF000000
+#else
+#  define START_OF_STACK 0xBFFFFFFF
 #endif
 	struct pt_regs *regs = ((struct pt_regs *) (THREAD_SIZE + (unsigned long) task->thread_info)) - 1;
 	StackFrame frame;

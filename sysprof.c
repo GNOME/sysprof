@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <glade/glade.h>
 #include <errno.h>
+#include <glib/gprintf.h>
 
 #include "binfile.h"
 #include "watch.h"
@@ -12,6 +13,7 @@
 #include "stackstash.h"
 #include "profile.h"
 #include "treeviewutils.h"
+
 
 /* FIXME */
 #define _(a) a
@@ -278,17 +280,18 @@ fill_main_list (Application *app)
 					 G_TYPE_DOUBLE,
 					 G_TYPE_POINTER);
 	
-	for (list = profile->objects; list != NULL; list = list->next)
+	for (list = profile_get_objects (profile); list != NULL; list = list->next)
 	{
 	    ProfileObject *object = list->data;
 	    GtkTreeIter iter;
+	    double profile_size = profile_get_size (profile);
 	    
 	    gtk_list_store_append (list_store, &iter);
 	    
 	    gtk_list_store_set (list_store, &iter,
 				OBJECT_NAME, object->name,
-				OBJECT_SELF, 100.0 * object->self/(double)profile->profile_size,
-				OBJECT_TOTAL, 100.0 * object->total/(double)profile->profile_size,
+				OBJECT_SELF, 100.0 * object->self / profile_size,
+				OBJECT_TOTAL, 100.0 * object->total / profile_size,
 				OBJECT_OBJECT, object,
 				-1);
 	}
@@ -344,9 +347,34 @@ on_profile_toggled (gpointer widget, gpointer data)
 }
 
 static void
+sorry (GtkWidget *parent_window,
+       const gchar *format,
+       ...)
+{
+	va_list args;
+	char *message;
+	GtkWidget *dialog;
+
+	va_start (args, format);
+	g_vasprintf (&message, format, args);
+	va_end (args);
+
+	dialog = gtk_message_dialog_new (parent_window ? GTK_WINDOW (parent_window) : NULL,
+					 GTK_DIALOG_DESTROY_WITH_PARENT,
+					 GTK_MESSAGE_WARNING,
+					 GTK_BUTTONS_OK, message);
+	free (message);
+
+	gtk_window_set_title (GTK_WINDOW (dialog), "System Profiler Warning");
+
+	gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+}
+
+static void
 on_open_clicked (gpointer widget, gpointer data)
 {
-    
+    sorry (NULL, "Open is not implemented yet. (Fortunately, neither is saving),");
 }
 
 static void
@@ -367,7 +395,8 @@ on_save_as_clicked (gpointer widget, gpointer data)
 {
     Application *app = data;
 
-
+    sorry (NULL, "Saving profiles is not yet implemented.");
+    
     if (app)
 	;
     /* FIXME */
@@ -453,7 +482,7 @@ fill_descendants_tree (Application *app)
 	    app->descendants =
 		profile_create_descendants (app->profile, object);
 	    add_node (tree_store,
-		      app->profile->profile_size, NULL, app->descendants);
+		      profile_get_size (app->profile), NULL, app->descendants);
 	}
     }
 
@@ -483,6 +512,7 @@ add_callers (GtkListStore *list_store,
     {
 	gchar *name;
 	GtkTreeIter iter;
+	double profile_size = profile_get_size (profile);
 	
 	if (callers->object)
 	    name = callers->object->name;
@@ -493,8 +523,8 @@ add_callers (GtkListStore *list_store,
 	gtk_list_store_set (
 	    list_store, &iter,
 	    CALLERS_NAME, name,
-	    CALLERS_SELF, 100.0 * callers->self/(double)profile->profile_size,
-	    CALLERS_TOTAL, 100.0 * callers->total/(double)profile->profile_size,
+	    CALLERS_SELF, 100.0 * callers->self / profile_size,
+	    CALLERS_TOTAL, 100.0 * callers->total / profile_size,
 	    CALLERS_OBJECT, callers->object,
 	    -1);
 

@@ -317,7 +317,7 @@ read_symbols (BinFile *bf)
 
     symbols = g_array_new (FALSE, FALSE, sizeof (Symbol));
 
-/*     g_print ("%s: text vma: %x\n", bf->filename, text_section->vma); */
+/* g_print ("%s: text vma: %x\n", bf->filename, text_section->vma); */
 
     for (i = 0; i < n_symbols; i++)
     {
@@ -393,6 +393,8 @@ bin_file_lookup_symbol (BinFile    *bf,
 	return &(bf->undefined);
     
     data = bf->symbols;
+
+    g_print ("looking up %p in %s ", address, bf->filename);
     
     if (address < data[last].address)
     {
@@ -416,6 +418,8 @@ bin_file_lookup_symbol (BinFile    *bf,
 	result = &data[last];
     }
 
+    g_print ("-> %s\n", result->name);
+    
     /* If the name is "call_gmon_start", the file probably doesn't
      * have any other symbols
      */

@@ -79,8 +79,8 @@ struct Fragment
 struct Action
 {
     TransitionType type;
-    char *name;
     
+    char *name;
     union
     {
         struct
@@ -114,6 +114,59 @@ struct Action
     } u; 
 };
 
+static void
+set_error (GError **err, gint code, const char *format, va_list args)
+{
+    char *msg;
+    
+    if (!err)
+        return;
+
+    msg = g_strdup_vprintf (format, args);
+
+    if (*err == NULL)
+    {
+        *err = g_error_new_literal (G_MARKUP_ERROR, code, msg);
+    }
+    else
+    {
+        /* Warning text from GLib */
+        g_warning ("GError set over the top of a previous GError or uninitialized memory.\n" 
+                   "This indicates a bug in someone's code. You must ensure an error is NULL before it's set.\n"
+                   "The overwriting error message was: %s",
+                   msg);
+    }
+
+    g_free (msg);
+}
+
+static void
+set_unknown_element_error (GError **err, const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    set_error (err, G_MARKUP_ERROR_UNKNOWN_ELEMENT, format, args);
+    va_end (args);
+}
+
+static void
+set_unknown_attribute_error (GError **err, const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    set_error (err, G_MARKUP_ERROR_UNKNOWN_ATTRIBUTE, format, args);
+    va_end (args);
+}
+
+static void
+set_invalid_content_error (GError **err, const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    set_error (err, G_MARKUP_ERROR_INVALID_CONTENT, format, args);
+    va_end (args);
+}
+
 static State *
 state_new (void)
 {
@@ -123,93 +176,18 @@ state_new (void)
 }
 
 static Transition *
-transition_new_begin_union (const char *name, State *from, State *to)
+transition_new (const char *element, TransitionType type, State *from, State *to)
 {
-    return NULL; /* FIXME */
-}
+    Transition *t = g_new (Transition, 1);
 
-static Transition *
-transition_new_end_union (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
+    t->element = element? g_strdup (element) : NULL;
+    t->type = type;
+    t->to = to;
 
-static Transition *
-transition_new_begin_record (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
+    if (from)
+        g_queue_push_tail (from->transitions, t);
 
-static Transition *
-transition_new_end_record (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_begin_pointer (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_end_pointer (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_begin_integer (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_end_integer (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_begin_string (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_end_string (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_begin_list (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_end_list (const char *name, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_begin_value (const char *name, TransitionType type, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_end_value (const char *name, TransitionType type, State *from, State *to)
-{
-    return NULL; /* FIXME */
-}
-
-static Transition *
-transition_new_value (TransitionType type, State *from, State *to)
-{
-    return NULL; /* FIXME */
+    return t;
 }
 
 SFormat *
@@ -246,6 +224,7 @@ fragment_queue (va_list args)
     return fragments;
 }
 
+#if 0
 /* Consider adding unions at some point
  *
  * To be useful they should probably be anonymous, so that
@@ -295,8 +274,8 @@ sformat_new_union (const char *name,
     begin = state_new ();
     end = state_new ();
 
-    enter = transition_new_begin_union (name, NULL, begin);
-    exit = transition_new_end_union (name, end, NULL);
+    enter = transition_new (name, TRANSITION_BEGIN_UNION, NULL, begin);
+    exit = transition_new (name, TRANSITION_END_UNION, end, NULL);
     
     for (list = fragments->head; list; list = list->next)
     {
@@ -322,6 +301,7 @@ sformat_new_union (const char *name,
 
     return fragment;
 }
+#endif
 
 gpointer
 sformat_new_record  (const char *     name,
@@ -337,14 +317,14 @@ sformat_new_record  (const char *     name,
 
     /* Build queue of fragments */
     va_start (args, content1);
-
+    
     fragments = fragment_queue (args);
 
     va_end (args);
     
     /* chain fragments together */
     begin = state_new ();
-    enter = transition_new_begin_record (name, NULL, begin);
+    enter = transition_new (name, BEGIN_RECORD, NULL, begin);
     
     state = begin;
 
@@ -365,7 +345,7 @@ sformat_new_record  (const char *     name,
     /* Return resulting fragment */
     fragment = g_new (Fragment, 1);
     fragment->enter = enter;
-    fragment->exit = transition_new_end_record (name, state, NULL);
+    fragment->exit = transition_new (name, END_RECORD, state, NULL);
     
     return fragment;
 }
@@ -380,8 +360,8 @@ sformat_new_list (const char *name,
 
     list_state = state_new ();
     
-    enter = transition_new_begin_list (name, NULL, list_state);
-    exit = transition_new_end_list (name, list_state, NULL);
+    enter = transition_new (name, BEGIN_LIST, NULL, list_state);
+    exit = transition_new (name, END_LIST, list_state, NULL);
     
     g_queue_push_tail (list_state->transitions, m->enter);
     m->exit->to = list_state;
@@ -392,7 +372,7 @@ sformat_new_list (const char *name,
     return m;
 }
 
-gpointer
+static gpointer
 sformat_new_value (const char *name, TransitionType type)
 {
     Fragment *m = g_new (Fragment, 1);
@@ -402,9 +382,9 @@ sformat_new_value (const char *name, TransitionType type)
     before = state_new ();
     after = state_new ();
 
-    m->enter = transition_new_begin_value (name, type, NULL, before);
-    m->exit  = transition_new_end_value   (name, type, after, NULL);
-    value = transition_new_value          (type, before, after);
+    m->enter = transition_new (name, type, NULL, before);
+    m->exit  = transition_new (name, type, after, NULL);
+    value = transition_new (NULL, type, before, after);
     
     return m;
 }
@@ -459,7 +439,8 @@ state_transition_check (const State *state, const char *element,
         }
     }
 
-    /* FIXME: generate appropriate error */
+    set_unknown_element_error (err, "<%s> or </%s> unexpected here", element, element);
+    
     return NULL;
 }
 
@@ -491,27 +472,20 @@ state_transition_text (const State *state, const char *text,
     {
         Transition *transition = list->data;
 
-        if ((transition->type >= FIRST_BEGIN_TRANSITION &&
-             transition->type <= LAST_BEGIN_TRANSITION) ||
-            (transition->type >= FIRST_END_TRANSITION   &&
-             transition->type <= LAST_END_TRANSITION))
+        /* There will never be more than one allowed value transition for
+         * a given state
+         */
+        if (transition->type == POINTER ||
+            transition->type == INTEGER ||
+            transition->type == STRING)
         {
-            continue;
-        }
-
-        if (transition->type == POINTER)
-        {
-            
-        }
-        else if (transition->type == INTEGER)
-        {
-            
-        }
-        else if (transition->type == STRING)
-        {
-            
+            *type = transition->type;
+            return transition->to;
         }
     }
+
+    set_invalid_content_error (err, "Unexpected text data unexpected (%s)", text);
+    return NULL;
 }
 
 /* reading */
@@ -520,7 +494,8 @@ typedef struct ParseNode ParseNode;
 
 struct BuildContext
 {
-    State *state;
+    const State *state;
+    
     Action *actions;
     int n_actions;
 };
@@ -648,22 +623,39 @@ sfile_end_get          (SFileInput  *file,
                              GINT_TO_POINTER (action->u.end.id), object);
 }
 
-static ParseNode *
-parse_node_new (ParseNode *parent,
-                const char *name)
+static int
+get_id (const char **names, const char **values, GError **err)
 {
-    ParseNode *node = g_new0 (ParseNode, 1);
-
-    node->parent = parent;
-    node->name = g_strdup (name);
-    node->id = NULL;
-    node->children = g_ptr_array_new ();
-    node->text = g_string_new ("");
-
-    if (parent)
-        g_ptr_array_add (parent->children, node);
+    const char *id_string = NULL;
+    int id, i;
     
-    return node;
+    for (i = 0; names[i] != NULL; ++i)
+    {
+	if (strcmp (names[i], "id") != 0)
+	{
+            set_unknown_attribute_error (err, "Unknown attribute: %s", names[i]);
+	    return -1;
+	}
+
+        if (id_string)
+        {
+            set_invalid_content_error (err, "Attribute 'id' defined twice");
+            return -1;
+        }
+        
+        id_string = values[i];
+    }
+
+    if (!id_string)
+        return 0;
+    
+    if (!get_number (id_string, &id) || id < 1)
+    {
+        set_invalid_content_error (err, "Bad attribute value for attribute 'id' (must be >= 1)\n");
+        return -1;
+    }
+
+    return id;
 }
 
 static void
@@ -675,46 +667,18 @@ handle_begin_element (GMarkupParseContext *parse_context,
 		      GError **err)
 {
     BuildContext *build = user_data;
-    const char *id_string;
     Action action;
     int id;
-    int i;
 
     /* Check for id */
-    id_string = NULL;
-    for (i = 0; attribute_names[i] != NULL; ++i)
-    {
-	if (strcmp (attribute_names[i], "id") == 0)
-	{
-	    if (id_string)
-	    {
-		/* FIXME: error: id defined twice */
-		return;
-	    }
-	    else
-	    {
-		id_string = attribute_values[i];
-                
-                if (!get_number (id_string, &id) || id < 1)
-                {
-                    /* FIXME: bad attribute value for attribute 'id' */
-                    return;
-                }
-	    }
-	}
-	else
-	{
-	    /* FIXME: unknown attribute */
-	    return;
-	}
-    }
+    id = get_id (attribute_names, attribute_values, err);
 
-    /* */
+    if (id == -1)
+        return;
 
-    if (!state_transition_begin (build->state, element_name, &action.type, err))
-    {
-        /* FIXME: report error */
-    };
+    build->state = state_transition_begin (build->state, element_name, &action.type, err);
+
+    /* FIXME create action/add to list */
 }
     
 static void
@@ -724,6 +688,11 @@ handle_end_element (GMarkupParseContext *context,
 		    GError **err)
 {
     BuildContext *build = user_data;
+    Action action;
+
+    build->state = state_transition_end (build->state, element_name, &action.type, err);
+
+    /* FIXME create action/add to list */
 }
 
 static void
@@ -734,10 +703,20 @@ handle_text (GMarkupParseContext *context,
 	     GError **err)
 {
     BuildContext *build = user_data;
+    Action action;
+
+    build->state = state_transition_text (build->state, text, &action.type, err);
+
+    /* FIXME create acxtion/add to list */
+}
+
+static void
+free_actions (Action *actions, int n_actions)
+{
 }
 
 static Action *
-build_actions (const char *contents, int *n_actions, GError **err)
+build_actions (const char *contents, SFormat *format, int *n_actions, GError **err)
 {
     BuildContext build;
     GMarkupParseContext *parse_context;
@@ -750,11 +729,19 @@ build_actions (const char *contents, int *n_actions, GError **err)
 	NULL, /* error */
     };
 
+    build.state = sformat_get_start_state (format);
     parse_context = g_markup_parse_context_new (&parser, 0, &build, NULL);
+    if (!sformat_is_end_state (format, build.state))
+    {
+        set_invalid_content_error (err, "Unexpected end of file\n");
+
+        free_actions (build.actions, build.n_actions);
+        return NULL;
+    }
 
     if (!g_markup_parse_context_parse (parse_context, contents, -1, err))
     {
-	/* FIXME: free stuff */
+        free_actions (build.actions, build.n_actions);
 	return NULL;
     }
 
@@ -775,7 +762,7 @@ sfile_load (const char  *filename,
 
     input = g_new (SFileInput, 1);
     
-    input->actions = build_actions (contents, &input->n_actions, err);
+    input->actions = build_actions (contents, format, &input->n_actions, err);
 
     if (!input->actions)
     {

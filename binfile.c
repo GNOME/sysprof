@@ -24,6 +24,7 @@ struct BinFile
     int         n_symbols;
     Symbol     *symbols;
     Symbol	undefined;
+    gulong      address;
 };
 
 static bfd *
@@ -277,6 +278,7 @@ read_symbols (BinFile *bf)
     int i;
     bfd *bfd;
     GArray *symbols;
+    asection *sec;
 
     bf->symbols = NULL;
     bf->n_symbols = 0;
@@ -299,6 +301,16 @@ read_symbols (BinFile *bf)
     if (!bfd_symbols)
 	return;
     
+    bf->address = 0xffffffff;
+    for (sec = bfd->sections; sec != NULL; sec = sec->next)
+    {
+	if (sec->flags & SEC_LOAD)
+	{
+	    if ((gulong)sec->vma < bf->address)
+		bf->address = sec->vma & ~4095;
+	}
+    }
+
     text_section = bfd_get_section_by_name (bfd, ".text");
     if (!text_section)
 	return;
@@ -360,6 +372,12 @@ bin_file_free (BinFile *bf)
     g_free (bf->symbols);
     g_free (bf->undefined.name);
     g_free (bf);
+}
+
+gulong
+bin_file_get_load_address (BinFile *bf)
+{
+  return bf->address;
 }
 
 const Symbol *

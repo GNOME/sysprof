@@ -48,6 +48,8 @@ initialize (void)
 static gboolean
 should_offset (const char *filename, int pid)
 {
+    return FALSE;
+
     gboolean result = TRUE;
     
     struct stat stat1, stat2;
@@ -266,11 +268,18 @@ process_lookup_symbol (Process *process, gulong address)
 	return &undefined;
     }
     
+    /* if (map->do_offset)
+	address -= map->start;
+    */
+
     if (!map->bin_file)
 	map->bin_file = bin_file_new (map->filename);
     
-    if (map->do_offset)
-	address -= map->start;
+    /* FIXME - this seems to work with prelinked binaries, but is
+     * it correct? IE., will normal binaries always have a preferred_addres of 0?
+     */
+    address -= map->start;
+    address += bin_file_get_load_address (map->bin_file);
 
     result = bin_file_lookup_symbol (map->bin_file, address);
     return result;

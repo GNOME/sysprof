@@ -119,7 +119,8 @@ on_read (gpointer data)
 	    filename = trace.filename;
 	
 	for (i = 0; i < trace.n_addresses; ++i)
-	    process_ensure_map (process, trace.pid, (gulong)trace.addresses[i]);
+	    process_ensure_map (process, trace.pid, 
+				(gulong)trace.addresses[i]);
 	g_assert (!app->generating_profile);
 	
 	stack_stash_add_trace (

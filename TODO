@@ -1,3 +1,7 @@
+- crashes when you ctrl-click the selected item in the top left pane
+   <ian__> ssp: looks like it doesn't handle the none-selected case
+   <ian__> Better labels would be useful
+
 - consider caching [filename => bin_file]
 - Have kernel modulereport the file the symbol was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.

@@ -38,16 +38,22 @@ struct SFormat
 /* defining types */
 typedef enum
 {
+#define FIRST_BEGIN_TRANSITION BEGIN_RECORD
     BEGIN_RECORD,
     BEGIN_LIST,
+    BEGIN_POINTER,
+    BEGIN_INTEGER,
+    BEGIN_STRING,
+#define LAST_BEGIN_TRANSITION BEGIN_STRING
+    
+#define FIRST_END_TRANSITION END_RECORD
     END_RECORD,
     END_LIST,
-    BEGIN_POINTER,
     END_POINTER,
-    BEGIN_INTEGER,
     END_INTEGER,
-    BEGIN_STRING,
     END_STRING,
+#define LAST_END_TRANSITION END_STRING
+    
     POINTER,
     INTEGER,
     STRING
@@ -434,24 +440,78 @@ sformat_is_end_state (SFormat *format, const State *state)
 }
 
 static const State *
+state_transition_check (const State *state, const char *element,
+                        TransitionType first, TransitionType last,
+                        TransitionType *type, GError **err)
+{
+    GList *list;
+
+    for (list = state->transitions->head; list; list = list->next)
+    {
+        Transition *transition;
+        
+        if (transition->type >= first                   &&
+            transition->type <= last                    &&
+            strcmp (element, transition->element) == 0)
+        {
+            *type = transition->type;
+            return transition->to;
+        }
+    }
+
+    /* FIXME: generate appropriate error */
+    return NULL;
+}
+
+static const State *
 state_transition_begin (const State *state, const char *element,
                         TransitionType *type, GError **err)
 {
-    return NULL; /* FIXME */
+    return state_transition_check (state, element,
+                                   FIRST_BEGIN_TRANSITION, LAST_BEGIN_TRANSITION,
+                                   type, err);
 }
 
 static const State *
 state_transition_end (const State *state, const char *element,
                       TransitionType *type, GError **err)
 {
-    return NULL; /* FIXME */
+    return state_transition_check (state, element,
+                                   FIRST_END_TRANSITION, LAST_END_TRANSITION,
+                                   type, err);
 }
 
 static const State *
-state_transition_text (const State *state, const char *element,
+state_transition_text (const State *state, const char *text,
                        TransitionType *type, GError **err)
 {
-    return NULL; /* FIXME */
+    GList *list;
+
+    for (list = state->transitions->head; list; list = list->next)
+    {
+        Transition *transition = list->data;
+
+        if ((transition->type >= FIRST_BEGIN_TRANSITION &&
+             transition->type <= LAST_BEGIN_TRANSITION) ||
+            (transition->type >= FIRST_END_TRANSITION   &&
+             transition->type <= LAST_END_TRANSITION))
+        {
+            continue;
+        }
+
+        if (transition->type == POINTER)
+        {
+            
+        }
+        else if (transition->type == INTEGER)
+        {
+            
+        }
+        else if (transition->type == STRING)
+        {
+            
+        }
+    }
 }
 
 /* reading */
@@ -651,7 +711,9 @@ handle_begin_element (GMarkupParseContext *parse_context,
 
     /* */
 
-    if (!state_transition_begin (build->state, element_name, &action.type, err)) {
+    if (!state_transition_begin (build->state, element_name, &action.type, err))
+    {
+        /* FIXME: report error */
     };
 }
     

@@ -130,8 +130,12 @@ create_process (const char *cmdline, int pid)
     Process *p;
     
     p = g_new (Process, 1);
-    
-    p->cmdline = g_strdup_printf ("[%s]", cmdline);
+
+    if (*cmdline != '\0')
+	p->cmdline = g_strdup_printf ("[%s]", cmdline);
+    else
+	p->cmdline = g_strdup_printf ("[pid %d]", pid);
+
     p->bad_pages = NULL;
     p->maps = NULL;
     p->pid = pid;

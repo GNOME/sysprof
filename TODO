@@ -13,6 +13,10 @@
 
 - Port to GtkAction
 
+- If we can't get a name, look in /proc/<pid>/status 
+
+- Charge 'self' properly to processes that don't get any stack trace at all 
+
 DONE:
 
 - consider making ProfileObject more of an object.

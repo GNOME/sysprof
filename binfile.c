@@ -280,6 +280,8 @@ read_symbols (BinFile *bf)
     int i;
     bfd *bfd;
     GArray *symbols;
+    guint load_address;
+    struct bfd_section *sec;
 
     bf->symbols = NULL;
     bf->n_symbols = 0;
@@ -305,6 +307,16 @@ read_symbols (BinFile *bf)
     if (!bfd_symbols)
 	return;
     
+    load_address = 0xffffffff;
+    for (sec = bfd->sections; sec != NULL; sec = sec->next)
+    {
+	if (sec->flags & SEC_ALLOC)
+	{
+	    if ((gulong)sec->vma < load_address)
+		load_address = sec->vma & ~4095;
+	}
+    }
+    
     text_section = bfd_get_section_by_name (bfd, ".text");
     if (!text_section)
 	return;
@@ -326,7 +338,13 @@ read_symbols (BinFile *bf)
 	     *    - all addresses are already offset by  section->vma
 	     *    - the section is positioned at         section->filepos
 	     */
-	    symbol.address = bfd_asymbol_value (bfd_symbols[i]) - text_section->vma + text_section->filepos;
+#if 0
+	    g_print ("file: %s\n", bf->filename);
+	    g_print ("vma: %p\n", text_section->vma);
+	    g_print ("vma: %p\n", text_section->filepos);
+#endif
+	    
+	    symbol.address = bfd_asymbol_value (bfd_symbols[i]) - load_address;
 	    name = demangle (bfd, bfd_asymbol_name (bfd_symbols[i]));
 
 #if 0

@@ -335,6 +335,9 @@ process_lookup_symbol (Process *process, gulong address)
 	
 	return &undefined;
     }
+#if 0
+    g_print ("has map: %s\n", process->cmdline);
+#endif
 
 #if 0
     g_print ("has map: %s\n", process->cmdline);
@@ -343,7 +346,11 @@ process_lookup_symbol (Process *process, gulong address)
 /*     if (map->do_offset) */
 /*       address -= map->start; */
 
+#if 0
     /* convert address to file coordinates */
+    g_print ("looking up %p  ", address);
+#endif
+    
     address -= map->start;
     address += map->offset;
 
@@ -352,40 +359,17 @@ process_lookup_symbol (Process *process, gulong address)
     
 /*     g_print ("%s: start: %p, load: %p\n", */
 /* 	     map->filename, map->start, bin_file_get_load_address (map->bin_file)); */
-    
+
      result = bin_file_lookup_symbol (map->bin_file, address);
 
+#if 0
+     g_print (" ---> %s\n", result->name);
+#endif
+     
 /*     g_print ("(%x) %x %x name; %s\n", address, map->start, map->offset, result->name); */
 
     return result;
 }
-
-#if 0
-const Symbol *
-process_lookup_symbol_with_filename (Process *process,
-				     int pid,
-				     gulong map_start,
-				     const char *filename,
-				     gulong address)
-{
-    const Symbol *result;
-    BinFile *bin_file;
-
-    if (!filename)
-	return process_lookup_symbol (process, address);
-
-    bin_file = bin_file_new (filename);
-
-    if (should_offset (filename, pid))
-	address -= map_start;
-    
-    result = bin_file_lookup_symbol (bin_file, address);
-
-    bin_file_free (bin_file);
-
-    return result;
-}
-#endif
 
 const char *
 process_get_cmdline (Process *process)

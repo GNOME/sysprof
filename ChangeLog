@@ -1,3 +1,9 @@
+Tue Apr  5 23:01:02 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* binfile.c (read_symbols): Put back the weird loop, and stop
+	pretending I understand this. This time use SEC_ALLOC instead of
+	SEC_LOAD.
+
 Tue Apr  5 20:13:44 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* process.c (process_ensure_map): Add commented out debug spew.

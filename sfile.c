@@ -473,7 +473,7 @@ struct Instruction
     {
         struct
         {
-            int n_instructions;
+            int n_elements;
             int id;
             Instruction *end_instruction;
         } begin;
@@ -488,8 +488,8 @@ struct Instruction
         {
             int target_id;
             Instruction *target_instruction;
+            gpointer target_object;
             gpointer *location;
-            gpointer object;
         } pointer;
         
         struct
@@ -573,7 +573,7 @@ sfile_begin_get_list   (SFileInput       *file,
     g_return_val_if_fail (strcmp (instruction->name, name) == 0, 0);
     g_return_val_if_fail (is_list_type (instruction->type), 0);
     
-    return instruction->u.begin.n_instructions;
+    return instruction->u.begin.n_elements;
 }
 
 void
@@ -712,6 +712,7 @@ handle_begin_element (GMarkupParseContext *parse_context,
 
     build->state = state_transition_begin (build->state, element_name, &instruction.type, err);
     instruction.name = g_strdup (element_name);
+    instruction.kind = BEGIN;
     
     g_array_append_val (build->instructions, instruction);
 }
@@ -728,6 +729,7 @@ handle_end_element (GMarkupParseContext *context,
     build->state = state_transition_end (build->state, element_name, &instruction.type, err);
 
     instruction.name = g_strdup (element_name);
+    instruction.kind = END;
 
     g_array_append_val (build->instructions, instruction);
 }
@@ -762,7 +764,8 @@ handle_text (GMarkupParseContext *context,
     build->state = state_transition_text (build->state, &instruction.type, err);
 
     instruction.name = NULL;
-
+    instruction.kind = VALUE;
+    
     switch (instruction.type)
     {
     case TYPE_POINTER:
@@ -824,13 +827,13 @@ static Instruction *
 post_process_instructions_recurse (Instruction *first, GHashTable *instructions_by_id, GError **err)
 {
     Instruction *instruction;
-    int n_instructions;
+    int n_elements;
 
     g_assert (first->kind == BEGIN);
     
     instruction = first + 1;
 
-    n_instructions = 0;
+    n_elements = 0;
     while (instruction->kind != END)
     {
         if (instruction->kind == BEGIN)
@@ -841,28 +844,52 @@ post_process_instructions_recurse (Instruction *first, GHashTable *instructions_
         }
         else
         {
-            if (instruction->type == TYPE_POINTER)
-            {
-                int target_id = instruction->u.pointer.target_id;
-                Instruction *target = g_hash_table_lookup (instructions_by_id, GINT_TO_POINTER (target_id));
-
-                if (!target)
-                {
-                    set_invalid_content_error (err, "Id %d doesn't reference any record or list\n",
-                                               instruction->u.pointer.target_id);
-                    return NULL;
-                }
-
-                instruction->u.pointer.target_instruction = target;
-            }
-            
             instruction++;
         }
         
-        n_instructions++;
+        n_elements++;
     }
 
-    first->u.begin.n_instructions = n_instructions;
+    first->u.begin.n_elements = n_elements;
+    first->u.begin.end_instruction = instruction;
+
+    instruction->u.end.begin_instruction = first;
+    
+    return instruction + 1;
+}
+        
+/* This functions makes end instructions point to the corresponding
+ * begin instructions, and counts the number of instructions
+ * contained in a begin/end pair
+ */
+static Instruction *
+process_instruction_pairs (Instruction *first)
+{
+    Instruction *instruction;
+    int n_elements;
+
+    g_assert (first->kind == BEGIN);
+    
+    instruction = first + 1;
+
+    n_elements = 0;
+    while (instruction->kind != END)
+    {
+        if (instruction->kind == BEGIN)
+        {
+            instruction = process_instruction_pairs (instruction);
+            if (!instruction)
+                return NULL;
+        }
+        else
+        {
+            instruction++;
+        }
+        
+        n_elements++;
+    }
+
+    first->u.begin.n_elements = n_elements;
     first->u.begin.end_instruction = instruction;
 
     instruction->u.end.begin_instruction = first;
@@ -877,6 +904,9 @@ post_process_read_instructions (Instruction *instructions, int n_instructions, G
     GHashTable *instructions_by_id;
     int i;
 
+    /* count list instructions, check pointers */
+    process_instruction_pairs (instructions);
+    
     /* Build id->instruction map */
     instructions_by_id = g_hash_table_new (g_direct_hash, g_direct_equal);
     for (i = 0; i < n_instructions; ++i)
@@ -892,9 +922,27 @@ post_process_read_instructions (Instruction *instructions, int n_instructions, G
         }
     }
 
-    /* count list instructions, check pointers */
-    if (!post_process_instructions_recurse (instructions, instructions_by_id, err))
-        retval = FALSE;
+    /* Make pointer instructions point to the corresponding element */
+    for (i = 0; i < n_instructions; ++i)
+    {
+        Instruction *instruction = &(instructions[i]);
+
+        if (instruction->type == TYPE_POINTER)
+        {
+            int target_id = instruction->u.pointer.target_id;
+            
+            Instruction *target = g_hash_table_lookup (instructions_by_id,
+                                                       GINT_TO_POINTER (target_id));
+
+            if (!target)
+            {
+                set_invalid_content_error (err, "Id %d doesn't reference any record or list\n",
+                                           instruction->u.pointer.target_id);
+                retval = FALSE;
+                break;
+            }
+        }
+    }
     
     g_hash_table_destroy (instructions_by_id);
 
@@ -934,7 +982,8 @@ build_instructions (const char *contents, SFormat *format, int *n_instructions, 
         return NULL;
     }
 
-    if (!post_process_read_instructions ((Instruction *)build.instructions->data, build.instructions->len, err))
+    if (!post_process_read_instructions ((Instruction *)build.instructions->data,
+                                         build.instructions->len, err))
     {
         free_instructions ((Instruction *)build.instructions->data, build.instructions->len);
         return NULL;
@@ -977,9 +1026,9 @@ struct SFileOutput
 {
     SFormat *format;
     GArray *instructions;
+    GHashTable *objects;
     const State *state;
 };
-
 
 SFileOutput *
 sfile_output_new (SFormat       *format)
@@ -989,6 +1038,7 @@ sfile_output_new (SFormat       *format)
     output->format = format;
     output->instructions = g_array_new (TRUE, TRUE, sizeof (Instruction));
     output->state = sformat_get_start_state (format);
+    output->objects = g_hash_table_new (g_direct_hash, g_direct_equal);
 
     return output;
 }
@@ -1036,16 +1086,29 @@ sfile_end_add (SFileOutput       *file,
 {
     Instruction instruction;
 
+    if (object && g_hash_table_lookup (file->objects, object))
+    {
+        g_warning ("Adding the same object (%p) twice", object);
+        return;
+    }
+    
     file->state = state_transition_end (
         file->state, name, &instruction.type, NULL);
 
-    g_return_if_fail (file->state);
+    if (!file->state)
+    {
+        g_warning ("invalid call of sfile_end_add()");
+        return;
+    }
 
     instruction.kind = END;
     instruction.name = g_strdup (name);
     instruction.u.end.object = object;
 
     g_array_append_val (file->instructions, instruction);
+
+    if (object)
+        g_hash_table_insert (file->objects, object, object);
 }
 
 static void
@@ -1113,9 +1176,78 @@ sfile_add_pointer      (SFileOutput *file,
     instruction.kind = VALUE;
     instruction.type = TYPE_POINTER;
     instruction.name = g_strdup (name);
-    instruction.u.pointer.object = pointer;
+    instruction.u.pointer.target_object = pointer;
 
     g_array_append_val (file->instructions, instruction);
+}
+
+static void
+post_process_write_instructions (SFileOutput *sfile)
+{
+    int i;
+    Instruction *instructions = (Instruction *)sfile->instructions->data;
+    int n_instructions = sfile->instructions->len;
+    int id;
+    GHashTable *instructions_by_object;
+    
+    process_instruction_pairs (instructions);
+
+    /* Set all id's to -1 and create map from objects to instructions */
+
+    instructions_by_object = g_hash_table_new (g_direct_hash, g_direct_equal);
+    
+    for (i = 0; i < n_instructions; ++i)
+    {
+        Instruction *instruction = &(instructions[i]);
+
+        if (instruction->kind == BEGIN)
+        {
+            instruction->u.begin.id = -1;
+        }
+        else if (instruction->kind == END && instruction->u.end.object)
+        {
+            g_hash_table_insert (instructions_by_object,
+                                 instruction->u.end.object, instruction);
+        }
+    }
+
+    /* Assign an id to all pointed-to instructions */
+    id = 1;
+    for (i = 0; i < n_instructions; ++i)
+    {
+        Instruction *instruction = &(instructions[i]);
+
+        if (instruction->type == TYPE_POINTER)
+        {
+            if (instruction->u.pointer.target_object)
+            {
+                Instruction *target;
+
+                target =
+                    g_hash_table_lookup (instructions_by_object,
+                                         instruction->u.pointer.target_object);
+                
+                if (!target)
+                {
+                    g_warning ("pointer has unknown target\n");
+                    return;
+                }
+                
+                g_assert (target->kind == END);
+                
+                if (target->u.end.begin_instruction->u.begin.id == -1)
+                    target->u.end.begin_instruction->u.begin.id = id++;
+                
+                instruction->u.pointer.target_id = 
+                    target->u.end.begin_instruction->u.begin.id;
+            }
+            else
+            {
+                instruction->u.pointer.target_id = 0;
+            }
+        }
+    }
+    
 }
 
 static void
@@ -1140,10 +1272,14 @@ add_string (GString *output, const char *str)
 }
 
 static void
-add_begin_tag (GString *output, int indent, const char *name)
+add_begin_tag (GString *output, int indent, const char *name, int id)
 {
     add_indent (output, indent);
-    g_string_append_printf (output, "<%s>", name);
+
+    if (id != -1)
+        g_string_append_printf (output, "<%s id=\"%d\">", name, id);
+    else
+        g_string_append_printf (output, "<%s>", name);
 }
 
 static void
@@ -1168,11 +1304,14 @@ sfile_output_save (SFileOutput  *sfile,
     Instruction *instructions;
     GString *output;
     int indent;
+    gboolean retval;
 
     g_return_val_if_fail (sfile != NULL, FALSE);
 
     instructions = (Instruction *)sfile->instructions->data;
 
+    post_process_write_instructions (sfile);
+    
     indent = 0;
     output = g_string_new ("");
     for (i = 0; i < sfile->instructions->len; ++i)
@@ -1182,7 +1321,8 @@ sfile_output_save (SFileOutput  *sfile,
         switch (instruction->kind)
         {
         case BEGIN:
-            add_begin_tag (output, indent, instruction->name);
+            add_begin_tag (output, indent, instruction->name,
+                           instruction->u.begin.id);
             add_nl (output);
             indent += 4;
             break;
@@ -1194,7 +1334,7 @@ sfile_output_save (SFileOutput  *sfile,
             break;
 
         case VALUE:
-            add_begin_tag (output, indent, instruction->name);
+            add_begin_tag (output, indent, instruction->name, -1);
             switch (instruction->type)
             {
             case TYPE_INTEGER:
@@ -1215,12 +1355,20 @@ sfile_output_save (SFileOutput  *sfile,
         }
     }
 
-    /* FIXME: write to disk */
+    /* FIXME: don't dump this to stdout */
     g_print (output->str);
-
-    g_string_free (output, TRUE);
     
-    return TRUE; /* FIXME */
+#if 0
+    /* FIXME, cut-and-paste the g_file_write() implementation
+     * as long as it isn't in glib
+     */
+    retval = g_file_write (filename, output->str, - 1, err);
+#endif
+    retval = TRUE;
+    
+    g_string_free (output, TRUE);
+
+    return retval;
 }
 
 

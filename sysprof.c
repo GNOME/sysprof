@@ -465,13 +465,14 @@ on_reset_clicked (gpointer widget, gpointer data)
 static void
 on_save_as_clicked (gpointer widget, gpointer data)
 {
+    GError *err = NULL;
     Application *app = data;
 
     ensure_profile (app);
 
     /* FIXME */
-    if (!profile_save (app->profile, "name.profile", NULL))
-	sorry (NULL, "Couldn't save\n");
+    if (!profile_save (app->profile, "name.profile", &err))
+	sorry (NULL, "Couldn't save: %s\n", err->message);
     
 #if 0
     sorry (NULL, "Saving profiles is not yet implemented.");

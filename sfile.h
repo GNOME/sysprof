@@ -3,6 +3,24 @@ typedef struct SFileInput SFileInput;
 typedef struct SFileOutput SFileOutput;
 typedef guint SType;
 
+
+/* A possibly better API/naming scheme
+ *
+ * Serializer *serializer_new (SerializerFormat *format);
+ *
+ * SerializerReadContext *serializer_begin_read (serializer *serialize,
+ *						 const char *filename,
+ *                                               GError *err);
+ * serializer_get_blah (SerializerReadContext *);
+ * void serialzier_end_read (...);
+ *
+ * SerializerWritecontext *...;
+ * serializer_begin_write (context);
+ * serializer_write_int ();
+ * serializer_end_write (..., GError **err);
+ *
+ */
+
 /* - Describing Types - */
 SFormat *sformat_new (gpointer f);
 gpointer sformat_new_record (const char  *name,

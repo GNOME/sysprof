@@ -25,7 +25,7 @@
       <property name="spacing">0</property>
 
       <child>
-	<widget class="GtkMenuBar" id="menubar1">
+	<widget class="GtkMenuBar" id="menubar">
 	  <property name="visible">True</property>
 
 	  <child>
@@ -206,13 +206,24 @@
       </child>
 
       <child>
+	<widget class="GtkHSeparator" id="hseparator1">
+	  <property name="visible">True</property>
+	</widget>
+	<packing>
+	  <property name="padding">2</property>
+	  <property name="expand">False</property>
+	  <property name="fill">True</property>
+	</packing>
+      </child>
+
+      <child>
 	<widget class="GtkHBox" id="hbox1">
 	  <property name="visible">True</property>
 	  <property name="homogeneous">False</property>
 	  <property name="spacing">0</property>
 
 	  <child>
-	    <widget class="GtkToolbar" id="toolbar1">
+	    <widget class="GtkToolbar" id="toolbar">
 	      <property name="visible">True</property>
 	      <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
 	      <property name="tooltips">True</property>
@@ -330,7 +341,7 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkToolbar" id="toolbar2">
+	    <widget class="GtkToolbar" id="samples-toolbar">
 	      <property name="visible">True</property>
 	      <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
 	      <property name="toolbar_style">GTK_TOOLBAR_BOTH_HORIZ</property>

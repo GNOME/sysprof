@@ -172,7 +172,7 @@ update_sensitivity (Application *app)
     
     gtk_widget_set_sensitive (GTK_WIDGET (app->start_button),
 			      sensitive_start_button); 
-
+    
 #if 0
     /* FIXME: gtk+ doesn't handle changes in sensitivity in response
      * to a click on the same button very well
@@ -194,14 +194,14 @@ static void
 set_busy (Application *app, gboolean busy)
 {
     GdkCursor *cursor;
-
+    
     if (busy)
 	cursor = gdk_cursor_new (GDK_WATCH);
     else
 	cursor = NULL;
     
     gdk_window_set_cursor (app->main_window->window, cursor);
-
+    
     if (cursor)
 	gdk_cursor_unref (cursor);
 }
@@ -350,7 +350,7 @@ empty_file_descriptor (Application *app)
 {
     int rd;
     SysprofStackTrace trace;
-
+    
     do
     {
 	rd = read (app->input_fd, &trace, sizeof (trace));
@@ -362,16 +362,16 @@ static gboolean
 start_profiling (gpointer data)
 {
     Application *app = data;
-
+    
     app->state = PROFILING;
-
+    
     update_sensitivity (app);
     
     /* Make sure samples generated between 'start clicked' and now
      * are deleted
      */
     empty_file_descriptor (app);
-
+    
     return FALSE;
 }
 
@@ -385,7 +385,7 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	return;
     
     delete_data (app);
-
+    
     g_idle_add_full (G_PRIORITY_LOW, start_profiling, app, NULL);
 }
 
@@ -413,6 +413,29 @@ enum
     DESCENDANTS_TOTAL,
     DESCENDANTS_OBJECT
 };
+
+static ProfileObject *
+get_current_object (Application *app)
+{
+    GtkTreeSelection *selection;
+    GtkTreeModel *model;
+    GtkTreeIter selected;
+    ProfileObject *object;
+    
+    selection = gtk_tree_view_get_selection (app->object_view);
+    
+    if (gtk_tree_selection_get_selected (selection, &model, &selected))
+    {
+	gtk_tree_model_get (model, &selected,
+			    OBJECT_OBJECT, &object,
+			    -1);
+	return object;
+    }
+    else
+    {
+	return NULL;
+    }
+}
 
 static void
 fill_main_list (Application *app)
@@ -467,8 +490,173 @@ fill_main_list (Application *app)
 	
 	g_object_unref (G_OBJECT (list_store));
     }
-
+    
     gtk_tree_view_columns_autosize (app->object_view);
+}
+
+static void
+add_node (GtkTreeStore      *store,
+	  int                size,
+	  const GtkTreeIter *parent,
+	  ProfileDescendant *node)
+{
+    GtkTreeIter iter;
+    
+    if (!node)
+	return;
+    
+    gtk_tree_store_insert (store, &iter, (GtkTreeIter *)parent, 0);
+    
+    gtk_tree_store_set (store, &iter,
+			DESCENDANTS_NAME, node->object->name,
+			DESCENDANTS_SELF, 100 * (node->self)/(double)size,
+			DESCENDANTS_NON_RECURSE, 100 * (node->non_recursion)/(double)size,
+			DESCENDANTS_TOTAL, 100 * (node->total)/(double)size,
+			DESCENDANTS_OBJECT, node->object,
+			-1);
+    
+    add_node (store, size, parent, node->siblings);
+    add_node (store, size, &iter, node->children);
+}
+
+static void
+fill_descendants_tree (Application *app)
+{
+    GtkTreeStore *tree_store;
+    gpointer sort_state;
+    
+    sort_state = save_sort_state (app->descendants_view);
+    
+    if (app->descendants)
+    {
+	profile_descendant_free (app->descendants);
+	app->descendants = NULL;
+    }
+    
+    tree_store =
+	gtk_tree_store_new (5,
+			    G_TYPE_STRING,
+			    G_TYPE_DOUBLE,
+			    G_TYPE_DOUBLE,
+			    G_TYPE_DOUBLE,
+			    G_TYPE_POINTER);
+    
+    if (app->profile)
+    {
+	ProfileObject *object = get_current_object (app);
+	if (object)
+	{
+	    app->descendants =
+		profile_create_descendants (app->profile, object);
+	    add_node (tree_store,
+		      profile_get_size (app->profile), NULL, app->descendants);
+	}
+    }
+    
+    gtk_tree_view_set_model (
+	app->descendants_view, GTK_TREE_MODEL (tree_store));
+    
+    g_object_unref (G_OBJECT (tree_store));
+    
+    if (!sort_state)
+    {
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (tree_store),
+					      DESCENDANTS_NON_RECURSE,
+					      GTK_SORT_DESCENDING);
+    }
+    else
+    {
+	restore_sort_state (app->descendants_view, sort_state);
+    }
+    
+    gtk_tree_view_columns_autosize (app->descendants_view);
+}
+
+static void
+add_callers (GtkListStore *list_store,
+	     Profile *profile,
+	     ProfileCaller *callers)
+{
+    while (callers)
+    {
+	gchar *name;
+	GtkTreeIter iter;
+	double profile_size = profile_get_size (profile);
+	
+	if (callers->object)
+	    name = callers->object->name;
+	else
+	    name = "<spontaneous>";
+	
+	gtk_list_store_append (list_store, &iter);
+	gtk_list_store_set (
+	    list_store, &iter,
+	    CALLERS_NAME, name,
+	    CALLERS_SELF, 100.0 * callers->self / profile_size,
+	    CALLERS_TOTAL, 100.0 * callers->total / profile_size,
+	    CALLERS_OBJECT, callers->object,
+	    -1);
+	
+	callers = callers->next;
+    }
+}
+
+static void
+fill_callers_list (Application *app)
+{
+    GtkListStore *list_store;
+    gpointer sort_state;
+    
+    sort_state = save_sort_state (app->descendants_view);
+    
+    if (app->callers)
+    {
+	profile_caller_free (app->callers);
+	app->callers = NULL;
+    }
+    
+    list_store =
+	gtk_list_store_new (4,
+			    G_TYPE_STRING,
+			    G_TYPE_DOUBLE,
+			    G_TYPE_DOUBLE,
+			    G_TYPE_POINTER);
+    
+    if (app->profile)
+    {
+	ProfileObject *object = get_current_object (app);
+	if (object)
+	{
+	    app->callers = profile_list_callers (app->profile, object);
+	    add_callers (list_store, app->profile, app->callers);
+	}
+    }
+    
+    gtk_tree_view_set_model (
+	app->callers_view, GTK_TREE_MODEL (list_store));
+    
+    g_object_unref (G_OBJECT (list_store));
+    
+    if (!sort_state)
+    {
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store),
+					      CALLERS_TOTAL,
+					      GTK_SORT_DESCENDING);
+    }
+    else
+    {
+	restore_sort_state (app->callers_view, sort_state);
+    }
+    
+    gtk_tree_view_columns_autosize (app->callers_view);
+}
+
+static void
+fill_lists (Application *app)
+{
+    fill_main_list (app);
+    fill_callers_list (app);
+    fill_descendants_tree (app);
 }
 
 static void
@@ -480,7 +668,7 @@ ensure_profile (Application *app)
     /* take care of reentrancy */
     app->profile = profile_new (app->stash);
     
-    fill_main_list (app);
+    fill_lists (app);
     
     app->state = DISPLAYING;
     
@@ -608,7 +796,7 @@ on_save_as_clicked (gpointer widget, gpointer data)
     
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
     gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
-
+    
  retry:
     if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
@@ -616,14 +804,14 @@ on_save_as_clicked (gpointer widget, gpointer data)
 	gchar *filename;
 	
 	filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-
+	
 	if (g_file_test (filename, G_FILE_TEST_EXISTS)		&&
 	    !overwrite_file (GTK_WINDOW (app->main_window), filename))
 	{
 	    g_free (filename);
 	    goto retry;
 	}
-
+	
 	if (!profile_save (app->profile, filename, &err))
 	{
 	    sorry (app->main_window, "Could not save %s: %s",
@@ -632,7 +820,7 @@ on_save_as_clicked (gpointer widget, gpointer data)
 	    g_free (filename);
 	    goto retry;
 	}
-
+	
 	g_free (filename);
     }
     
@@ -654,7 +842,7 @@ on_open_clicked (gpointer widget, gpointer data)
 					  NULL);
     
     gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
-
+    
  retry:
     if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
@@ -663,16 +851,16 @@ on_open_clicked (gpointer widget, gpointer data)
 	
 	filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 	profile = profile_load (filename, &err);
-
+	
 	if (!profile)
 	{
 	    sorry (app->main_window, "Could not open %s: %s",
 		   filename, err->message);
-	
+	    
 	    g_free (filename);
 	    goto retry;
 	}
-
+	
 	g_free (filename);
     }
     
@@ -683,11 +871,13 @@ on_open_clicked (gpointer widget, gpointer data)
 	delete_data (app);
 	
 	app->state = DISPLAYING;
-    	
+	
+	app->n_samples = profile_get_size (profile);
+	
 	app->profile = profile;
 	app->profile_from_file = TRUE;
 	
-	fill_main_list (app);
+	fill_lists (app);
 	
 	update_sensitivity (app);
     }
@@ -697,186 +887,6 @@ static void
 on_delete (GtkWidget *window)
 {
     gtk_main_quit ();
-}
-
-static void
-add_node (GtkTreeStore      *store,
-	  int                size,
-	  const GtkTreeIter *parent,
-	  ProfileDescendant *node)
-{
-    GtkTreeIter iter;
-    
-    if (!node)
-	return;
-    
-    gtk_tree_store_insert (store, &iter, (GtkTreeIter *)parent, 0);
-    
-    gtk_tree_store_set (store, &iter,
-			DESCENDANTS_NAME, node->object->name,
-			DESCENDANTS_SELF, 100 * (node->self)/(double)size,
-			DESCENDANTS_NON_RECURSE, 100 * (node->non_recursion)/(double)size,
-			DESCENDANTS_TOTAL, 100 * (node->total)/(double)size,
-			DESCENDANTS_OBJECT, node->object,
-			-1);
-    
-    add_node (store, size, parent, node->siblings);
-    add_node (store, size, &iter, node->children);
-}
-
-static ProfileObject *
-get_current_object (Application *app)
-{
-    GtkTreeSelection *selection;
-    GtkTreeModel *model;
-    GtkTreeIter selected;
-    ProfileObject *object;
-    
-    selection = gtk_tree_view_get_selection (app->object_view);
-    
-    if (gtk_tree_selection_get_selected (selection, &model, &selected))
-    {
-	gtk_tree_model_get (model, &selected,
-			    OBJECT_OBJECT, &object,
-			    -1);
-	return object;
-    }
-    else
-    {
-	return NULL;
-    }
-}
-
-static void
-fill_descendants_tree (Application *app)
-{
-    GtkTreeStore *tree_store;
-    gpointer sort_state;
-    
-    sort_state = save_sort_state (app->descendants_view);
-    
-    if (app->descendants)
-    {
-	profile_descendant_free (app->descendants);
-	app->descendants = NULL;
-    }
-    
-    tree_store =
-	gtk_tree_store_new (5,
-			    G_TYPE_STRING,
-			    G_TYPE_DOUBLE,
-			    G_TYPE_DOUBLE,
-			    G_TYPE_DOUBLE,
-			    G_TYPE_POINTER);
-    
-    if (app->profile)
-    {
-	ProfileObject *object = get_current_object (app);
-	if (object)
-	{
-	    app->descendants =
-		profile_create_descendants (app->profile, object);
-	    add_node (tree_store,
-		      profile_get_size (app->profile), NULL, app->descendants);
-	}
-    }
-    
-    gtk_tree_view_set_model (
-	app->descendants_view, GTK_TREE_MODEL (tree_store));
-    
-    g_object_unref (G_OBJECT (tree_store));
-    
-    if (!sort_state)
-    {
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (tree_store),
-					      DESCENDANTS_NON_RECURSE,
-					      GTK_SORT_DESCENDING);
-    }
-    else
-    {
-	restore_sort_state (app->descendants_view, sort_state);
-    }
-
-    gtk_tree_view_columns_autosize (app->descendants_view);
-}
-
-static void
-add_callers (GtkListStore *list_store,
-	     Profile *profile,
-	     ProfileCaller *callers)
-{
-    while (callers)
-    {
-	gchar *name;
-	GtkTreeIter iter;
-	double profile_size = profile_get_size (profile);
-	
-	if (callers->object)
-	    name = callers->object->name;
-	else
-	    name = "<spontaneous>";
-	
-	gtk_list_store_append (list_store, &iter);
-	gtk_list_store_set (
-	    list_store, &iter,
-	    CALLERS_NAME, name,
-	    CALLERS_SELF, 100.0 * callers->self / profile_size,
-	    CALLERS_TOTAL, 100.0 * callers->total / profile_size,
-	    CALLERS_OBJECT, callers->object,
-	    -1);
-	
-	callers = callers->next;
-    }
-}
-
-static void
-fill_callers_list (Application *app)
-{
-    GtkListStore *list_store;
-    gpointer sort_state;
-    
-    sort_state = save_sort_state (app->descendants_view);
-    
-    if (app->callers)
-    {
-	profile_caller_free (app->callers);
-	app->callers = NULL;
-    }
-    
-    list_store =
-	gtk_list_store_new (4,
-			    G_TYPE_STRING,
-			    G_TYPE_DOUBLE,
-			    G_TYPE_DOUBLE,
-			    G_TYPE_POINTER);
-    
-    if (app->profile)
-    {
-	ProfileObject *object = get_current_object (app);
-	if (object)
-	{
-	    app->callers = profile_list_callers (app->profile, object);
-	    add_callers (list_store, app->profile, app->callers);
-	}
-    }
-    
-    gtk_tree_view_set_model (
-	app->callers_view, GTK_TREE_MODEL (list_store));
-    
-    g_object_unref (G_OBJECT (list_store));
-    
-    if (!sort_state)
-    {
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store),
-					      CALLERS_TOTAL,
-					      GTK_SORT_DESCENDING);
-    }
-    else
-    {
-	restore_sort_state (app->callers_view, sort_state);
-    }
-
-    gtk_tree_view_columns_autosize (app->callers_view);
 }
 
 static void
@@ -1002,11 +1012,28 @@ set_sizes (GtkWindow *window,
 }
 
 static void
+set_shadows (GladeXML *xml)
+{
+    /* Get rid of motif out-bevels */
+    gtk_rc_parse_string (
+	"style \"blah\" "
+	"{ "
+	"   GtkToolbar::shadow_type = none "
+	"   GtkMenuBar::shadow_type = none "
+	"} "
+	"widget \"*toolbar\" style : rc \"blah\"\n"
+	"widget \"*menubar\" style : rc \"blah\"\n"
+	);
+}
+
+static void
 build_gui (Application *app)
 {
     GladeXML *xml;
     GtkTreeSelection *selection;
     GtkTreeViewColumn *col;
+    
+    set_shadows (xml);
     
     xml = glade_xml_new ("./sysprof.glade", NULL, NULL);
     
@@ -1015,7 +1042,7 @@ build_gui (Application *app)
     
     g_signal_connect (G_OBJECT (app->main_window), "delete_event",
 		      G_CALLBACK (on_delete), NULL);
-
+    
     /* Menu items */
     app->start_item = glade_xml_get_widget (xml, "start_item");
     app->profile_item = glade_xml_get_widget (xml, "profile_item");
@@ -1103,13 +1130,13 @@ build_gui (Application *app)
     add_double_format_column (app->descendants_view, _("Cumulative"), DESCENDANTS_NON_RECURSE, "%.2f");
     g_signal_connect (app->descendants_view, "row-activated",
 		      G_CALLBACK (on_descendants_row_activated), app);
-    
+
     gtk_tree_view_column_set_expand (col, TRUE);
     
     gtk_widget_grab_focus (GTK_WIDGET (app->object_view));
     gtk_widget_show_all (app->main_window);
     gtk_widget_hide (app->dummy_button);
-        
+    
     /* Statusbar */
     queue_show_samples (app);
 }

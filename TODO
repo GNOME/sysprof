@@ -60,8 +60,6 @@
 
 - consider caching [filename => bin_file]
 
-- Make sure samples label shows correct nunber after Open
-
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.
 
@@ -97,6 +95,8 @@
 	  stack_stash_foreach() and also in generate_key()
 
 DONE:
+
+- Make sure samples label shows correct nunber after Open
 
 - Move "samples" label to the toolbar, then get rid of statusbar.
 

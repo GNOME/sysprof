@@ -27,6 +27,11 @@ Before 1.0:
 
 Before 1.2:
 
+- Make busy cursors more intelligent
+	- when you click something in the main list and we don't respond
+		within 50ms (or perhaps when we expect to not be able to do
+		so (can we know the size in advance?))
+	- instead of as we do now: set the busy cursor unconditionally
 - Reorganise stackstash and profile
 
 	- stackstash should just take traces of addresses without knowing
@@ -116,13 +121,13 @@ Later:
   call malloc(), couldn't call printf(), etc. 
   
 - figure out a way to deal with both disk and CPU. Need to make sure that
-  things that are UNINTERRUPTIBLE while there are RUNNING tasks is not
-  consider bad.
+  things that are UNINTERRUPTIBLE while there are RUNNING tasks are not
+  considered bad.
 
   Not entirely clear that the sysprof visualization is right for disk.
 
   Maybe assign a size of n to traces with n *unique* disk access (ie. 
-  disk accesses that are not made by any other stack trace).
+  disk accesses that are not required by any other stack trace).
 
   Or assign values to nodes in the calltree based on how many diskaccesses
   are contained in that tree. Ie., if I get rid of this branch, how many

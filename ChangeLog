@@ -1,3 +1,10 @@
+Tue Apr  5 14:34:43 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-module.c (x_access_process_vm): Make it compile with
+	kernel 2.6.11
+
+	* TODO: updates
+
 Mon Apr  4 00:57:11 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c: Busy cursors in many more places.

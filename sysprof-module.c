@@ -17,6 +17,7 @@
 
 #include "sysprof-module.h"
 
+#include <linux/version.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
@@ -115,8 +116,12 @@ static int x_access_process_vm(struct task_struct *tsk, unsigned long addr, void
 		if (bytes > PAGE_SIZE-offset)
 			bytes = PAGE_SIZE-offset;
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
+		
 		flush_cache_page(vma, addr);
 
+#endif
+		
 		maddr = kmap(page);
 		if (write) {
 			copy_to_user_page(vma, page, addr,

@@ -1369,27 +1369,11 @@ add_integer (GString *output, int value)
 static void
 add_string (GString *output, const char *str)
 {
-#if 0
-    /* FIXME: strings need to be encoded so that special
-     * xml characters can be added, and so they don't get
-     * confused with the deletion of whitespace-only
-     * text entries
-     */
-    g_string_append_printf (output, "%s", str);
-#endif
-
-    int i;
+    char *escaped = g_markup_escape_text (str, -1);
     g_string_append_c (output, '\"');
-    for (i = 0; str[i] != '\0'; ++i)
-    {
-        if (str[i] == '\"')
-            g_string_append_printf (output, "%s", "\\\"");
-        else if (str[i] == '\\')
-            g_string_append_printf (output, "\\\\");
-        else
-            g_string_append_c (output, str[i]);
-    }
+    g_string_append (output, escaped);
     g_string_append_c (output, '\"');
+    g_free (escaped);
 }
 
 static void

@@ -1,3 +1,14 @@
+Sat Mar 26 11:26:00 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
+	* sfile.c (add_string): Use g_markup_escape_text() to escape the
+	string before adding it to the file.
+
+	* sysprof.c (empty_file_descriptor): New function to make sure 
+	samples generated before profiling started are ignored. 
+	(set_busy): New commented out function to set a busy cursor.
+
 Fri Mar 25 21:31:08 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (update_sensitivity): Comment out sensitivity of reset button.

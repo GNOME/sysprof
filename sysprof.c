@@ -190,6 +190,24 @@ update_sensitivity (Application *app)
 }
 
 #if 0
+static void
+set_busy (Application *app, gboolean busy)
+{
+    GdkCursor *cursor;
+
+    if (busy)
+	cursor = gdk_cursor_new (GDK_WATCH);
+    else
+	cursor = NULL;
+    
+    gdk_window_set_cursor (app->main_window->window, cursor);
+
+    if (cursor)
+	gdk_cursor_unref (cursor);
+}
+#endif
+
+#if 0
 static gchar *
 get_name (pid_t pid)
 {
@@ -328,6 +346,36 @@ delete_data (Application *app)
 }
 
 static void
+empty_file_descriptor (Application *app)
+{
+    int rd;
+    SysprofStackTrace trace;
+
+    do
+    {
+	rd = read (app->input_fd, &trace, sizeof (trace));
+	
+    } while (rd != -1); /* until EWOULDBLOCK */
+}
+
+static gboolean
+start_profiling (gpointer data)
+{
+    Application *app = data;
+
+    app->state = PROFILING;
+
+    update_sensitivity (app);
+    
+    /* Make sure samples generated between 'start clicked' and now
+     * are deleted
+     */
+    empty_file_descriptor (app);
+
+    return FALSE;
+}
+
+static void
 on_start_toggled (GtkWidget *widget, gpointer data)
 {
     Application *app = data;
@@ -337,8 +385,8 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	return;
     
     delete_data (app);
-    app->state = PROFILING;
-    update_sensitivity (app);
+
+    g_idle_add_full (G_PRIORITY_LOW, start_profiling, app, NULL);
 }
 
 enum
@@ -446,6 +494,9 @@ on_profile_toggled (GtkWidget *widget, gpointer data)
     
     if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (app->profile_button)))
     {
+#if 0
+	set_busy (app, TRUE);
+#endif
 	if (app->profile && !app->profile_from_file)
 	{
 	    profile_free (app->profile);
@@ -453,6 +504,9 @@ on_profile_toggled (GtkWidget *widget, gpointer data)
 	}
 	
 	ensure_profile (app);
+#if 0
+	set_busy (app, FALSE);
+#endif
     }
 }
 

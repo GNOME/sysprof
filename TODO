@@ -25,19 +25,42 @@
 - Add busy cursors,
 
 	- when you hit "Profile"
-	- when you click something in the main list and we don't respond within 50ms
-		(or perhaps when we expect to not be able to do so (can we know the size in
-		 advance?))
+	- when you click something in the main list and we don't respond
+		within 50ms (or perhaps when we expect to not be able to do
+		so (can we know the size in advance?))
 
-- Need to make "make install" work (how do you know where to install kernel modules?)
+- Need to make "make install" work (how do you know where to install
+  kernel modules?)
 
-- Sould just install the kernel module if it running as root, pop up a dialog if not.
+- Sould just install the kernel module if it running as root, pop up
+  a dialog if not.
 
-- hook up menu items view/start etc (or possibly get rid of them or move them)
+- Reorganise stackstash and profile
 
-- Move "samples" label to the toolbar, then get rid of statusbar.
+	- stackstash should just take traces of addresses without knowing
+	  anything about what those addresses mean
+
+	- stacktraces should then begin with a process
+
+	- profile should take traces of pointers to presentation
+	  objects without knowing anything about these presentation
+	  objects.
+
+	- Creating a profile is then
+
+		- For each stack node, compute a presentation object
+			(probably need to export opaque stacknode objects
+			  with set/get_user_data)
+
+		- Send each stack trace to the profile module, along with
+		  presentation objects
+
+- hook up menu items view/start etc (or possibly get rid of them or move
+  them)
 
 - consider caching [filename => bin_file]
+
+- Make sure samples label shows correct nunber after Open
 
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.
@@ -68,7 +91,14 @@
   things that are UNINTERRUPTIBLE while there are RUNNING tasks is not
   consider bad.
 
+- Make things faster
+	- Can I get it to profile itself?
+	- speedprof seems to report that lots of time is spent in 
+	  stack_stash_foreach() and also in generate_key()
+
 DONE:
+
+- Move "samples" label to the toolbar, then get rid of statusbar.
 
 - crashes when you ctrl-click the selected item in the top left pane
    <ian__> ssp: looks like it doesn't handle the none-selected case

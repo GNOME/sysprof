@@ -1,3 +1,8 @@
+Fri Mar 25 21:25:31 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (get_current_object): Return NULL if nothing is
+	selected.
+
 Fri Mar 25 20:54:08 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: More updates

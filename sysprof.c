@@ -675,13 +675,17 @@ get_current_object (Application *app)
     
     selection = gtk_tree_view_get_selection (app->object_view);
     
-    gtk_tree_selection_get_selected (selection, &model, &selected);
-    
-    gtk_tree_model_get (model, &selected,
-			OBJECT_OBJECT, &object,
-			-1);
-    
-    return object;
+    if (gtk_tree_selection_get_selected (selection, &model, &selected))
+    {
+	gtk_tree_model_get (model, &selected,
+			    OBJECT_OBJECT, &object,
+			    -1);
+	return object;
+    }
+    else
+    {
+	return NULL;
+    }
 }
 
 static void

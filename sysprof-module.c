@@ -43,7 +43,6 @@ static struct timer_list timer;
 static void
 init_timeout (void)
 {
-	printk (KERN_ALERT "init timeout\n");
 	timer.function = on_timer;
 	init_timer(&timer);
 }
@@ -91,9 +90,6 @@ read_user_space (userspace_reader *reader,
 	if (user_page == 0)
 		return 0;
 
-	printk (KERN_ALERT "locking\n");
-	spin_lock(&reader->task->mm->page_table_lock);
-	
 	if (!reader->user_page || user_page != reader->user_page) {
 		int found;
 		struct page *page;
@@ -107,19 +103,12 @@ read_user_space (userspace_reader *reader,
 					1, 0, 0, &page, NULL);
 
 		if (!found)
-		{
-			printk (KERN_ALERT "unlocking\n");
-			spin_unlock(&reader->task->mm->page_table_lock);
 			return 0;
-		}
 
 		reader->kernel_page = (unsigned long)kmap (page);
 		reader->page = page;
 	}
 
-	printk (KERN_ALERT "unlocking\n");
-	spin_unlock(&reader->task->mm->page_table_lock);
-	
 	if (get_user (res, (int *)(reader->kernel_page + (address - user_page))) != 0)
 		return 0;
 
@@ -211,8 +200,6 @@ do_generate (void *data)
 
 	in_queue = 0;
 
-	printk (KERN_ALERT "do_generate\n");
-	
 	/* Make sure the task still exists */
 	for_each_process (p)
 		if (p == task)
@@ -221,7 +208,6 @@ do_generate (void *data)
 
  go_ahead:
 	generate_stack_trace(task, head);
-	printk (KERN_ALERT "generated stack\n");
 	if (head++ == &stack_traces[N_TRACES - 1])
 		head = &stack_traces[0];
 			     
@@ -248,8 +234,6 @@ on_timer(unsigned long dong)
 	task_t *task = current;
 
 	++n_ticks;
-
-	printk (KERN_ALERT "on timer\n");
 
 	if (task && task->pid != 0)
 		queue_generate_stack_trace (task);

@@ -8,6 +8,19 @@ program "sysprof".
 
 - You need gtk+ 2.4.0 or better, and you need libglade
 
-- Thanks to Kristian Høgsberg, it now works on the 2.6 kernel.
+- You need a 2.6 non-SMP kernel
+
+- It is known to be broken on SMP kernels. Patches gladly accepted.
+
+- The programs you want to profile should have debugging symbols, or
+  you won't get much useful information.
+
+- To get symbols from the X server, run sysprof as root (go figure).
 
 Søren
+
+
+
+Credits:
+	Kristian Høgsberg for the first port to 2.6
+

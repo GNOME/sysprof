@@ -45,7 +45,18 @@ struct Profile
 {
     gint		size;
     Node *		call_tree;
+
+    /* This table is really a cache. We can build it from the call_tree */
     GHashTable *	nodes_by_object;
+};
+
+typedef struct SaveContext SaveContext;
+struct SaveContext
+{
+    GString *str;
+    GHashTable *id_by_pointer;
+    GHashTable *pointer_by_id;
+    int last_id; 
 };
 
 static ProfileObject *
@@ -58,12 +69,53 @@ profile_object_new (void)
     return obj;
 }
 
+static void
+insert (SaveContext *context, int id, gpointer pointer)
+{
+    g_hash_table_insert (context->id_by_pointer, pointer, GINT_TO_POINTER (id));
+    g_hash_table_insert (context->pointer_by_id, GINT_TO_POINTER (id), pointer);
+}
+
+static int
+get_id (SaveContext *context, gpointer pointer)
+{
+    int id = GPOINTER_TO_INT (g_hash_table_lookup (context->id_by_pointer, pointer));
+
+    if (!id)
+    {
+	id = ++context->last_id;
+	insert (context, id, pointer);
+    }
+
+    return id;
+}
+
+static void
+serialize_object (gpointer key, gpointer value, gpointer data)
+{
+    SaveContext *context = data;
+    ProfileObject *object = key;
+    
+    g_string_append_printf (context->str, "<object id=%d name=%s total=%d self=%d/>\n",
+			    get_id (context, object),
+			    object->name,
+			    object->total,
+			    object->self);
+}
+
 gboolean
 profile_save (Profile		 *profile,
 	      const char	 *file_name,
 	      GError		**err)
 {
+    GString *str = g_string_new ("");
+
+    g_string_append_printf (str, "<profile>\n");
+
+    g_hash_table_foreach (profile->nodes_by_object, serialize_object, str);
+    g_string_append_printf (str, "</profile>\n");
     /* FIXME */
+    
     /* Actually the way to fix this is probably to save StackStashes instead
      * of profiles
      */
@@ -294,25 +346,6 @@ generate_call_tree (Process *process, GSList *trace, gint size, gpointer data)
 }
 
 static void
-build_object_list (gpointer key, gpointer value, gpointer data)
-{
-    Profile *profile = data;
-    Node *node = value;
-    ProfileObject *object = key;
-
-    while (node)
-    {
-	object->self += node->self;
-	if (node->toplevel)
-	    object->total += node->total;
-
-	node = node->next;
-    }
-    
-    profile->objects = g_list_prepend (profile->objects, object);
-}
-
-static void
 link_parents (Node *node, Node *parent)
 {
     if (!node)
@@ -322,6 +355,20 @@ link_parents (Node *node, Node *parent)
     
     link_parents (node->siblings, parent);
     link_parents (node->children, node);
+}
+
+static void
+compute_object_total (gpointer key, gpointer value, gpointer data)
+{
+    Node *node;
+    ProfileObject *object = key;
+
+    for (node = value; node != NULL; node = node->next)
+    {
+	object->self += node->self;
+	if (node->toplevel)
+	    object->total += node->total;
+    }
 }
 
 Profile *
@@ -334,7 +381,6 @@ profile_new (StackStash *stash)
 
     profile->nodes_by_object =
 	g_hash_table_new (direct_hash_no_null, g_direct_equal);
-    profile->objects = NULL;
 
     profile->size = 0;
 
@@ -345,9 +391,9 @@ profile_new (StackStash *stash)
     stack_stash_foreach (stash, generate_object_table, &info);
     stack_stash_foreach (stash, generate_call_tree, &info);
     link_parents (profile->call_tree, NULL);
-    
-    g_hash_table_foreach (profile->nodes_by_object, build_object_list, profile);
 
+    g_hash_table_foreach (profile->nodes_by_object, compute_object_total, NULL);
+    
     g_hash_table_destroy (info.profile_objects);
     
     return profile;
@@ -624,16 +670,21 @@ node_free (Node *node)
     g_free (node);
 }
 
+static void
+free_object (gpointer key, gpointer value, gpointer data)
+{
+    profile_object_free (key);
+}
+
 void
 profile_free (Profile *profile)
 {
-    g_list_foreach (profile->objects, (GFunc)profile_object_free, NULL);
-    g_list_free (profile->objects);
+    g_hash_table_foreach (profile->nodes_by_object, free_object, NULL);
 
     node_free (profile->call_tree);
-
+    
     g_hash_table_destroy (profile->nodes_by_object);
-
+    
     g_free (profile);
 }
 
@@ -659,10 +710,23 @@ profile_caller_free (ProfileCaller *caller)
     g_free (caller);
 }
 
+static void
+build_object_list (gpointer key, gpointer value, gpointer data)
+{
+    ProfileObject *object = key;
+    GList **objects = data;
+
+    *objects = g_list_prepend (*objects, object);
+}
+
 GList *
 profile_get_objects (Profile *profile)
 {
-    return profile->objects;
+    GList *objects = NULL;
+	
+    g_hash_table_foreach (profile->nodes_by_object, build_object_list, &objects);
+
+    return objects;
 }
 
 gint

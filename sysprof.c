@@ -281,6 +281,7 @@ fill_main_list (Application *app)
     GList *list;
     GtkListStore *list_store;
     Profile *profile = app->profile;
+    GList *objects;
     
     if (profile)
     {
@@ -291,8 +292,9 @@ fill_main_list (Application *app)
 					 G_TYPE_DOUBLE,
 					 G_TYPE_DOUBLE,
 					 G_TYPE_POINTER);
-	
-	for (list = profile_get_objects (profile); list != NULL; list = list->next)
+
+	objects = profile_get_objects (profile);
+	for (list = objects; list != NULL; list = list->next)
 	{
 	    ProfileObject *object = list->data;
 	    GtkTreeIter iter;
@@ -307,6 +309,7 @@ fill_main_list (Application *app)
 				OBJECT_OBJECT, object,
 				-1);
 	}
+	g_list_free (objects);
 	
 	sort_state = save_sort_state (app->object_view);
 	

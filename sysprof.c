@@ -172,9 +172,14 @@ update_sensitivity (Application *app)
     
     gtk_widget_set_sensitive (GTK_WIDGET (app->start_button),
 			      sensitive_start_button); 
-    
+
+#if 0
+    /* FIXME: gtk+ doesn't handle changes in sensitivity in response
+     * to a click on the same button very well
+     */
     gtk_widget_set_sensitive (GTK_WIDGET (app->reset_button),
 			      sensitive_reset_button);
+#endif
     
     gtk_widget_set_sensitive (GTK_WIDGET (app->object_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->callers_view), sensitive_tree_views);

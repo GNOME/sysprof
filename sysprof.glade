@@ -91,7 +91,7 @@
 		      <signal name="activate" handler="on_start1_activate" last_modification_time="Thu, 04 Nov 2004 18:51:54 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image8">
+			<widget class="GtkImage" id="image10">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-media-play</property>
 			  <property name="icon_size">1</property>
@@ -112,9 +112,30 @@
 		      <signal name="activate" handler="on_profile1_activate" last_modification_time="Thu, 04 Nov 2004 18:51:54 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image9">
+			<widget class="GtkImage" id="image11">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-justify-left</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="reset_item">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">_Reset</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_reset_item_activate" last_modification_time="Fri, 05 Nov 2004 15:34:30 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image12">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
 			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
@@ -167,7 +188,7 @@
 	  <property name="show_arrow">True</property>
 
 	  <child>
-	    <widget class="GtkToolButton" id="start_button">
+	    <widget class="GtkRadioToolButton" id="start_button">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">S_tart</property>
 	      <property name="use_underline">True</property>
@@ -175,6 +196,7 @@
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">True</property>
+	      <property name="active">False</property>
 	    </widget>
 	    <packing>
 	      <property name="expand">False</property>
@@ -183,7 +205,7 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkToggleToolButton" id="profile_button">
+	    <widget class="GtkRadioToolButton" id="profile_button">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">_Profile</property>
 	      <property name="use_underline">True</property>
@@ -192,6 +214,23 @@
 	      <property name="visible_vertical">True</property>
 	      <property name="is_important">True</property>
 	      <property name="active">False</property>
+	      <property name="group">start_button</property>
+	    </widget>
+	    <packing>
+	      <property name="expand">False</property>
+	      <property name="homogeneous">True</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkToolButton" id="reset_button">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes"></property>
+	      <property name="use_underline">True</property>
+	      <property name="stock_id">gtk-clear</property>
+	      <property name="visible_horizontal">True</property>
+	      <property name="visible_vertical">True</property>
+	      <property name="is_important">False</property>
 	    </widget>
 	    <packing>
 	      <property name="expand">False</property>
@@ -222,12 +261,12 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkToolButton" id="open_button">
+	    <widget class="GtkToolButton" id="save_as_button">
 	      <property name="visible">True</property>
-	      <property name="stock_id">gtk-open</property>
+	      <property name="stock_id">gtk-save-as</property>
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
-	      <property name="is_important">False</property>
+	      <property name="is_important">True</property>
 	    </widget>
 	    <packing>
 	      <property name="expand">False</property>
@@ -236,12 +275,16 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkToolButton" id="save_as_button">
+	    <widget class="GtkRadioToolButton" id="dummy_button">
 	      <property name="visible">True</property>
-	      <property name="stock_id">gtk-save-as</property>
+	      <property name="label" translatable="yes">dummy</property>
+	      <property name="use_underline">True</property>
+	      <property name="stock_id">gtk-about</property>
 	      <property name="visible_horizontal">True</property>
 	      <property name="visible_vertical">True</property>
-	      <property name="is_important">True</property>
+	      <property name="is_important">False</property>
+	      <property name="active">False</property>
+	      <property name="group">start_button</property>
 	    </widget>
 	    <packing>
 	      <property name="expand">False</property>
@@ -263,17 +306,15 @@
 	  <property name="spacing">0</property>
 
 	  <child>
-	    <widget class="GtkHPaned" id="hpaned1">
+	    <widget class="GtkHPaned" id="hpaned">
 	      <property name="border_width">3</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="position">773</property>
 
 	      <child>
-		<widget class="GtkVPaned" id="vpaned1">
+		<widget class="GtkVPaned" id="vpaned">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
-		  <property name="position">0</property>
 
 		  <child>
 		    <widget class="GtkScrolledWindow" id="scrolledwindow1">

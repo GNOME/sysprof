@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <glade/glade.h>
+#include <errno.h>
 
 #include "binfile.h"
 #include "watch.h"
@@ -37,8 +38,9 @@ struct Application
 
     GtkWidget *		start_button;
     GtkWidget *		profile_button;
-    GtkWidget *		open_button;
+    GtkWidget *		reset_button;
     GtkWidget *		save_as_button;
+    GtkWidget *		dummy_button;
     
     GtkWidget *		start_item;
     GtkWidget *		profile_item;
@@ -68,7 +70,9 @@ update_sensitivity (Application *app)
     gboolean sensitive_profile_button;
     gboolean sensitive_save_as_button;
     gboolean sensitive_start_button;
-    gboolean active_profile_button;
+    gboolean sensitive_tree_views;
+
+    GtkWidget *active_radio_button;
 
     switch (app->state)
     {
@@ -76,35 +80,41 @@ update_sensitivity (Application *app)
 	sensitive_profile_button = FALSE;
 	sensitive_save_as_button = FALSE;
 	sensitive_start_button = TRUE;
-	active_profile_button = FALSE;
+	sensitive_tree_views = FALSE;
+	active_radio_button = app->dummy_button;
 	break;
 
     case PROFILING:
 	sensitive_profile_button = (app->n_samples > 0);
 	sensitive_save_as_button = (app->n_samples > 0);
 	sensitive_start_button = TRUE;
-	active_profile_button = FALSE;
+	sensitive_tree_views = FALSE;
+	active_radio_button = app->start_button;
 	break;
 
     case DISPLAYING:
-	sensitive_profile_button = FALSE;
+	sensitive_profile_button = TRUE;
 	sensitive_save_as_button = TRUE;
 	sensitive_start_button = TRUE;
-	active_profile_button = TRUE;
+	sensitive_tree_views = TRUE;
+	active_radio_button = app->profile_button;
 	break;
     }
 
     gtk_widget_set_sensitive (GTK_WIDGET (app->profile_button),
 			      sensitive_profile_button);
 
-    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (app->profile_button),
-				       active_profile_button);
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (active_radio_button), TRUE);
 
     gtk_widget_set_sensitive (GTK_WIDGET (app->save_as_button),
 			      sensitive_save_as_button);
 
     gtk_widget_set_sensitive (GTK_WIDGET (app->start_button),
 			      sensitive_start_button);
+
+    gtk_widget_set_sensitive (GTK_WIDGET (app->object_view), sensitive_tree_views);
+    gtk_widget_set_sensitive (GTK_WIDGET (app->callers_view), sensitive_tree_views);
+    gtk_widget_set_sensitive (GTK_WIDGET (app->descendants_view), sensitive_tree_views);
 }
 
 #if 0
@@ -157,6 +167,9 @@ on_read (gpointer data)
     if (app->state != PROFILING)
 	return;
     
+    if (rd == -1 && errno == EWOULDBLOCK)
+	return;
+    
 #if 0
     g_print ("pid: %d\n", trace.pid);
     for (i=0; i < trace.n_addresses; ++i)
@@ -190,10 +203,8 @@ on_read (gpointer data)
 }
 
 static void
-on_start_clicked (GtkToggleToolButton *tool_button, gpointer data)
+delete_data (Application *app)
 {
-    Application *app = data;
-
     if (app->profile)
     {
 	profile_free (app->profile);
@@ -210,7 +221,17 @@ on_start_clicked (GtkToggleToolButton *tool_button, gpointer data)
     process_flush_caches ();
     app->n_samples = 0;
     show_samples (app);
+}
 
+static void
+on_start_toggled (GtkToggleToolButton *tool_button, gpointer data)
+{
+    Application *app = data;
+
+    if (!gtk_toggle_tool_button_get_active (tool_button))
+	return;
+    
+    delete_data (app);
     app->state = PROFILING;
     update_sensitivity (app);
 }
@@ -312,6 +333,12 @@ on_profile_toggled (gpointer widget, gpointer data)
     fill_main_list (app);
 
     app->state = DISPLAYING;
+
+#if 0
+    gtk_tree_view_columns_autosize (app->object_view);
+    gtk_tree_view_columns_autosize (app->callers_view);
+    gtk_tree_view_columns_autosize (app->descendants_view);
+#endif
     
     update_sensitivity (app);
 }
@@ -319,11 +346,20 @@ on_profile_toggled (gpointer widget, gpointer data)
 static void
 on_open_clicked (gpointer widget, gpointer data)
 {
+    
+}
+
+static void
+on_reset_clicked (gpointer widget, gpointer data)
+{
     Application *app = data;
 
-    if (app)
-	;
-    /* FIXME */
+    delete_data (app);
+
+    if (app->state == DISPLAYING)
+	app->state = INITIAL;
+    
+    update_sensitivity (app);
 }
 
 static void
@@ -612,13 +648,28 @@ on_callers_row_activated (GtkTreeView *tree_view,
 }
 
 static void
-get_default_size (int *w, int *h)
+set_sizes (GtkWindow *window,
+	   GtkWidget *hpaned,
+	   GtkWidget *vpaned)
 {
-    /* FIXME, this should really be some percentage of the screen,
-     * and the window size should be stored in gconf etc.
-     */
-    *w = 700;
-    *h = 480;
+    GdkScreen *screen;
+    int monitor_num;
+    GdkRectangle monitor;
+    int width, height;
+    GtkWidget *widget = GTK_WIDGET (window);
+    
+    screen = gtk_widget_get_screen (widget);
+    monitor_num = gdk_screen_get_monitor_at_window (screen, widget->window);
+    
+    gdk_screen_get_monitor_geometry (screen, monitor_num, &monitor);
+    
+    width = monitor.width * 3 / 4;
+    height = monitor.height * 3 / 4;
+
+    gtk_window_resize (window, width, height);
+
+    gtk_paned_set_position (GTK_PANED (vpaned), height / 2);
+    gtk_paned_set_position (GTK_PANED (hpaned), width / 2);
 }
 
 static void
@@ -627,7 +678,7 @@ build_gui (Application *app)
     GladeXML *xml;
     GtkWidget *main_window;
     GtkTreeSelection *selection;
-    int w, h;
+    GtkTreeViewColumn *col;
     
     xml = glade_xml_new ("./sysprof.glade", NULL, NULL);
 
@@ -651,7 +702,7 @@ build_gui (Application *app)
     g_assert (app->open_item);
     
     g_signal_connect (G_OBJECT (app->start_item), "activate",
-		      G_CALLBACK (on_start_clicked), app);
+		      G_CALLBACK (on_start_toggled), app);
 
     g_signal_connect (G_OBJECT (app->profile_item), "activate",
 		      G_CALLBACK (on_profile_toggled), app);
@@ -670,53 +721,64 @@ build_gui (Application *app)
     
     app->start_button = glade_xml_get_widget (xml, "start_button");
     app->profile_button = glade_xml_get_widget (xml, "profile_button");
-    app->open_button = glade_xml_get_widget (xml, "open_button");
+    app->reset_button = glade_xml_get_widget (xml, "reset_button");
     app->save_as_button = glade_xml_get_widget (xml, "save_as_button");
+    app->dummy_button = glade_xml_get_widget (xml, "dummy_button");
 
+    gtk_widget_hide (app->dummy_button);
+    
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (
 					   app->profile_button), FALSE);
     
-    g_signal_connect (G_OBJECT (app->start_button), "clicked",
-		      G_CALLBACK (on_start_clicked), app);
+    g_signal_connect (G_OBJECT (app->start_button), "toggled",
+		      G_CALLBACK (on_start_toggled), app);
 
     g_signal_connect (G_OBJECT (app->profile_button), "toggled",
 		      G_CALLBACK (on_profile_toggled), app);
 
-    g_signal_connect (G_OBJECT (app->open_button), "clicked",
-		      G_CALLBACK (on_open_clicked), app);
+    g_signal_connect (G_OBJECT (app->reset_button), "clicked",
+		      G_CALLBACK (on_reset_clicked), app);
 
     g_signal_connect (G_OBJECT (app->save_as_button), "clicked",
 		      G_CALLBACK (on_save_as_clicked), app);
     
-    get_default_size (&w, &h);
+    gtk_widget_realize (GTK_WIDGET (main_window));
+    set_sizes (GTK_WINDOW (main_window),
+	       glade_xml_get_widget (xml, "hpaned"),
+	       glade_xml_get_widget (xml, "vpaned"));
     
-    gtk_window_set_default_size (GTK_WINDOW (main_window), w, h);
     
     /* TreeViews */
 
     /* object view */
     app->object_view = (GtkTreeView *)glade_xml_get_widget (xml, "object_view");
-    add_plain_text_column (app->object_view, _("Name"), OBJECT_NAME);
+    col = add_plain_text_column (app->object_view, _("Name"), OBJECT_NAME);
     add_double_format_column (app->object_view, _("Self"), OBJECT_SELF, "%.2f");
     add_double_format_column (app->object_view, _("Total"), OBJECT_TOTAL, "%.2f");
     selection = gtk_tree_view_get_selection (app->object_view);
     g_signal_connect (selection, "changed", G_CALLBACK (on_object_selection_changed), app);
     
+    gtk_tree_view_column_set_expand (col, TRUE);
+    
     /* callers view */
     app->callers_view = (GtkTreeView *)glade_xml_get_widget (xml, "callers_view");
-    add_plain_text_column (app->callers_view, _("Name"), CALLERS_NAME);
+    col = add_plain_text_column (app->callers_view, _("Name"), CALLERS_NAME);
     add_double_format_column (app->callers_view, _("Self"), CALLERS_SELF, "%.2f");
     add_double_format_column (app->callers_view, _("Total"), CALLERS_TOTAL, "%.2f");
     g_signal_connect (app->callers_view, "row-activated",
 		      G_CALLBACK (on_callers_row_activated), app);
+
+    gtk_tree_view_column_set_expand (col, TRUE);
     
     /* descendants view */
     app->descendants_view = (GtkTreeView *)glade_xml_get_widget (xml, "descendants_view");
-    add_plain_text_column (app->descendants_view, _("Name"), DESCENDANTS_NAME);
+    col = add_plain_text_column (app->descendants_view, _("Name"), DESCENDANTS_NAME);
     add_double_format_column (app->descendants_view, _("Self"), DESCENDANTS_SELF, "%.2f");
     add_double_format_column (app->descendants_view, _("Cummulative"), DESCENDANTS_NON_RECURSE, "%.2f");
     g_signal_connect (app->descendants_view, "row-activated",
 		      G_CALLBACK (on_descendants_row_activated), app);
+
+    gtk_tree_view_column_set_expand (col, TRUE);
 
     /* Statusbar */
     app->statusbar = (GtkStatusbar *)glade_xml_get_widget (xml, "statusbar");

@@ -21,7 +21,7 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
-#define SAMPLES_PER_SECOND (30)
+#define SAMPLES_PER_SECOND (100)
 #define INTERVAL (HZ / SAMPLES_PER_SECOND)
 #define N_TRACES 256
 
@@ -316,6 +316,8 @@ procfile_read(char *buffer,
 	      int *eof,
 	      void *data)
 {
+	if (head == tail)
+		return -EWOULDBLOCK;
 	wait_event_interruptible (wait_for_trace, head != tail);
 	*buffer_location = (char *)tail;
 	if (tail++ == &stack_traces[N_TRACES - 1])

@@ -1,14 +1,23 @@
-This is a sampling profiler that uses a kernel module, sysprof-module,
+Sysprof is a sampling profiler that uses a kernel module, sysprof-module.ko,
 to generate stacktraces which are then interpreted by the userspace
 program "sysprof".
 
 - There is no auto* stuff. Just type "make" and hope for the best
 
-- You need gtk+ 2.4.0 or better. If you are using gtk+ 2.5 or newer
+- You need gtk+ 2.4.0 or better. If you are using gtk+ 2.6 or newer
   you also need libglade cvs HEAD.
 
-- You need a 2.6 kernel. On SMP kernels the module seems to crash the system
-  from time to time, so you might want to stick with UP kernels.
+- You need a 2.6 kernel. On SMP kernels the module produces unreliable data.
+
+- The module must be compiled with the same compiler that compiled the 
+  kernel it is going to be used with. For most systems that is just
+  the system compiler, but if you have upgraded your kernel it is
+  possible the one was compiled with a difference compiler.
+
+  In that case, "insmod sysprof-module.ko" will produce this 
+  error message:
+
+    insmod: error inserting './sysprof-module.o': -1 Invalid module format
 
 - The programs you want to profile should have debugging symbols, or
   you won't get much usable information. On a Fedora Core system,

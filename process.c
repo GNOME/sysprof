@@ -22,7 +22,7 @@ struct Map
     char *	filename;
     gulong	start;
     gulong	end;
-  gulong      offset;
+    gulong      offset;
     gboolean	do_offset;
     
     BinFile *	bin_file;
@@ -34,6 +34,8 @@ struct Process
     
     GList *maps;
     GList *bad_pages;
+
+    int pid;
 };
 
 static void
@@ -68,15 +70,6 @@ should_offset (const char *filename, int pid)
     return result;
 }
 
-static gboolean
-check_do_offset (const Map *map, int pid)
-{
-    if (map->filename)
-	return should_offset (map->filename, pid);
-    else
-	return TRUE;
-}
-
 static GList *
 read_maps (int pid)
 {
@@ -99,21 +92,25 @@ read_maps (int pid)
 	guint start;
 	guint end;
 	guint offset;
+
+#if 0
+	g_print ("buffer: %s\n", buffer);
+#endif
 	
 	count = sscanf (
-	    buffer, "%x-%x %*15s %x %*u:%*u %*u %255s", 
+	    buffer, "%x-%x %*15s %x %*x:%*x %*u %255s", 
 	    &start, &end, &offset, file);
 	if (count == 4)
 	{
 	    Map *map;
-	    
+
 	    map = g_new (Map, 1);
 	    
 	    map->filename = g_strdup (file);
 	    map->start = start;
 	    map->end = end;
 	    
-	    map->offset = offset; //check_do_offset (map, pid);
+	    map->offset = offset;
 	    
 	    map->bin_file = NULL;
 	    
@@ -137,6 +134,7 @@ create_process (const char *cmdline, int pid)
     p->cmdline = g_strdup_printf ("[%s]", cmdline);
     p->bad_pages = NULL;
     p->maps = NULL;
+    p->pid = pid;
     
     g_assert (!g_hash_table_lookup (processes_by_pid, GINT_TO_POINTER (pid)));
     g_assert (!g_hash_table_lookup (processes_by_cmdline, cmdline));
@@ -269,7 +267,7 @@ process_lookup_symbol (Process *process, gulong address)
 	    g_free (undefined.name);
 	undefined.name = g_strdup_printf ("??? (%s)", process->cmdline);
 	undefined.address = 0xBABE0001;
-	
+
 	return &undefined;
     }
     
@@ -282,17 +280,22 @@ process_lookup_symbol (Process *process, gulong address)
     if (!map->bin_file)
 	map->bin_file = bin_file_new (map->filename);
     
+#if 0
     /* FIXME - this seems to work with prelinked binaries, but is
      * it correct? IE., will normal binaries always have a preferred_addres of 0?
      */
-/*     address = address - map->start + map->offset + bin_file_get_load_address (map->bin_file); */
-/*     address -= map->start; */
-/*     address += map->offset; */
-/*     address += bin_file_get_load_address (map->bin_file); */
+     address = address - map->start + map->offset + bin_file_get_load_address (map->bin_file); 
+     address -= map->start; 
+     address += map->offset; 
+     address += bin_file_get_load_address (map->bin_file); 
+#endif
 
 /*     g_print ("%s: start: %p, load: %p\n", */
 /* 	     map->filename, map->start, bin_file_get_load_address (map->bin_file)); */
 
+     if (should_offset (map->filename, process->pid))
+	address -= map->start;
+    
     result = bin_file_lookup_symbol (map->bin_file, address);
 
 /*     g_print ("(%x) %x %x name; %s\n", address, map->start, map->offset, result->name); */

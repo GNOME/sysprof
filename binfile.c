@@ -394,7 +394,9 @@ bin_file_lookup_symbol (BinFile    *bf,
     
     data = bf->symbols;
 
+#if 0
     g_print ("looking up %p in %s ", address, bf->filename);
+#endif
     
     if (address < data[last].address)
     {
@@ -418,7 +420,9 @@ bin_file_lookup_symbol (BinFile    *bf,
 	result = &data[last];
     }
 
+#if 0
     g_print ("-> %s\n", result->name);
+#endif
     
     /* If the name is "call_gmon_start", the file probably doesn't
      * have any other symbols

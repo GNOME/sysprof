@@ -7,14 +7,13 @@
 #include <asm/atomic.h>
 #include <linux/kernel.h>  /* Needed for KERN_ALERT */
 #include <linux/module.h>  /* Needed by all modules */
-#ifdef KERNEL24
-#  include <linux/tqueue.h>
-#endif
 #include <linux/sched.h>
+
 #include <linux/proc_fs.h>
 #include <asm/uaccess.h>
 #include <linux/poll.h>
 #include <linux/highmem.h>
+#include <linux/pagemap.h>
 
 #include "sysprof-module.h"
 
@@ -79,13 +78,76 @@ init_userspace_reader (userspace_reader *reader,
 	reader->page = NULL;
 }
 
+/* Access another process' address space.
+ * Source/target buffer must be kernel space, 
+ * Do not walk the page table directly, use get_user_pages
+ */
+
+
+
+static int x_access_process_vm(struct task_struct *tsk, unsigned long addr, void *buf, int len, int write)
+{
+	struct mm_struct *mm;
+	struct vm_area_struct *vma;
+	struct page *page;
+	void *old_buf = buf;
+
+	mm = tsk->mm;
+	if (!mm)
+		return 0;
+
+	down_read(&mm->mmap_sem);
+	/* ignore errors, just check how much was sucessfully transfered */
+	while (len) {
+		int bytes, ret, offset;
+		void *maddr;
+
+		ret = get_user_pages(tsk, mm, addr, 1,
+				write, 1, &page, &vma);
+		if (ret <= 0)
+			break;
+
+		bytes = len;
+		offset = addr & (PAGE_SIZE-1);
+		if (bytes > PAGE_SIZE-offset)
+			bytes = PAGE_SIZE-offset;
+
+		flush_cache_page(vma, addr);
+
+		maddr = kmap(page);
+		if (write) {
+			copy_to_user_page(vma, page, addr,
+					  maddr + offset, buf, bytes);
+			set_page_dirty_lock(page);
+		} else {
+			copy_from_user_page(vma, page, addr,
+					    buf, maddr + offset, bytes);
+		}
+		kunmap(page);
+		page_cache_release(page);
+		len -= bytes;
+		buf += bytes;
+		addr += bytes;
+	}
+	up_read(&mm->mmap_sem);
+	
+	return buf - old_buf;
+}
+
 static int
 read_user_space (userspace_reader *reader,
 		 unsigned long address,
 		 unsigned long *result)
 {
+#if 0
 	unsigned long user_page = (address & PAGE_MASK);
 	int res;
+#endif
+
+	return x_access_process_vm(reader->task, address, result, 4, 0);
+}
+#if 0
+	struct task_struct *tsk, unsigned long addr, void *buf, int len, int write);
 
 	if (user_page == 0)
 		return 0;
@@ -93,19 +155,24 @@ read_user_space (userspace_reader *reader,
 	if (!reader->user_page || user_page != reader->user_page) {
 		int found;
 		struct page *page;
+		pte_t pte;
 		
-		found = get_user_pages (reader->task, reader->task->mm, user_page,
-					1, 0, 0, &page, NULL);
+		found = get_user_pages (reader->task, reader->task->mm,
+					user_page, 1, 0, 0, &page, NULL);
 
 		if (!found)
 			return 0;
 
+		if (!pte_present (page))
+			return 0;
+		
 		if (reader->user_page)
 			kunmap (reader->page);
 
-		reader->user_page = user_page;
 		reader->kernel_page = (unsigned long)kmap (page);
+		reader->user_page = user_page;
 		reader->page = page;
+		
 	}
 
 	if (get_user (res, (int *)(reader->kernel_page + (address - user_page))) != 0)
@@ -115,6 +182,7 @@ read_user_space (userspace_reader *reader,
 	
 	return 1;
 }
+#endif
 
 static void
 done_userspace_reader (userspace_reader *reader)

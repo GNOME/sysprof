@@ -157,11 +157,16 @@ hijacked_nopage (struct vm_area_struct * area,
 
     if (current && current->pid != 0 && disk)
     {
+#if 0
 	generate_stack_trace (current, head);
+#endif
 
-/* 	head->pid = current->pid; */
-/* 	head->addresses[0] = (void *)address; */
-/* 	head->truncated = 0; */
+	memset (head, 0, sizeof (SysprofStackTrace));
+    
+ 	head->pid = current->pid;
+ 	head->addresses[0] = (void *)address;
+	head->truncated = 0;
+	head->n_addresses = 1;
 
 	if (area->vm_file)
 	{

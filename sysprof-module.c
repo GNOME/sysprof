@@ -20,7 +20,7 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
-#define SAMPLES_PER_SECOND (50)
+#define SAMPLES_PER_SECOND (100)
 #define INTERVAL (HZ / SAMPLES_PER_SECOND)
 #define N_TRACES 256
 
@@ -90,7 +90,7 @@ add_timeout(unsigned int interval,
  */
 
 static void
-generate_stack_trace(struct pt_regs *regs,
+generate_stack_trace(struct task_struct *task,
 		     SysprofStackTrace *trace)
 {
 #define START_OF_STACK 0xBFFFFFFF 
@@ -104,9 +104,10 @@ generate_stack_trace(struct pt_regs *regs,
 	StackFrame *frame;
 	int i;
 	
+	struct pt_regs *regs = ((struct pt_regs *) (THREAD_SIZE + (unsigned long) task->thread_info)) - 1;
 	memset(trace, 0, sizeof (SysprofStackTrace));
 	
-	trace->pid = current->pid;
+	trace->pid = task->pid;
 	trace->truncated = 0;
 	
 	trace->addresses[0] = (void *)regs->eip;
@@ -139,6 +140,44 @@ generate_stack_trace(struct pt_regs *regs,
 		trace->truncated = 0;
 }
 
+struct work_struct work;
+static int in_queue;
+
+static void
+do_generate (void *data)
+{
+	struct task_struct *task = data;
+	struct task_struct *p;
+
+	in_queue = 0;
+	
+	/* Make sure the task still exists */
+	for_each_process (p)
+		if (p == task)
+			goto go_ahead;
+
+go_ahead:
+	generate_stack_trace (task, head);
+
+	if (head++ == &stack_traces[N_TRACES - 1])
+		head = &stack_traces[0];
+	
+	wake_up (&wait_for_trace);
+}
+
+static void
+queue_stack (struct task_struct *cur)
+{
+	if (in_queue)
+		return;
+
+	in_queue = 1;
+	
+	INIT_WORK (&work, do_generate, cur);
+
+	schedule_work (&work);
+}
+
 static void
 on_timer(unsigned long dong)
 {
@@ -162,19 +201,12 @@ on_timer(unsigned long dong)
 #endif
 		)
 	{
-
+		
 #ifdef KERNEL24
-	struct pt_regs *regs = (struct pt_regs *)(
-		(long)current + THREAD_SIZE - sizeof (struct pt_regs));
-#else
-	struct pt_regs *regs = ((struct pt_regs *) (THREAD_SIZE + (unsigned long) current->thread_info)) - 1;
+		struct pt_regs *regs = (struct pt_regs *)(
+			(long)current + THREAD_SIZE - sizeof (struct pt_regs));
 #endif
-		generate_stack_trace (regs, head);
-		
-		if (head++ == &stack_traces[N_TRACES - 1])
-			head = &stack_traces[0];
-		
-		wake_up (&wait_for_trace);
+		queue_stack (current);
 	}
 	
 	add_timeout (INTERVAL, on_timer);

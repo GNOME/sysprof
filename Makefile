@@ -20,7 +20,7 @@ MODULE    := sysprof-module
 all: $(BINARY) $(MODULE).o
 
 $(BINARY): $(OBJS) depend
-	gcc $(OBJS) $(LIBS) -o$(BINARY)
+	$(CC) $(OBJS) $(LIBS) -o$(BINARY)
 clean:
 	rm -f $(OBJS) $(BINARY) $(MODULE).o *~ core* depend.mk
 
@@ -47,7 +47,7 @@ else
 MODCFLAGS += -DKERNEL24
 
 $(MODULE).o: $(MODULE).c
-	gcc $(MODCFLAGS) $(MODULE).c -c -o$(MODULE).o
+	$(CC) $(MODCFLAGS) $(MODULE).c -c -o$(MODULE).o
 
 
 endif

@@ -120,8 +120,11 @@ transition_new (const char *element,
                 State *to)
 {
     Transition *t = g_new (Transition, 1);
+
+    g_assert (element || kind == VALUE);
     
     t->element = element? g_strdup (element) : NULL;
+    t->kind = kind;
     t->type = type;
     t->to = to;
     
@@ -155,10 +158,12 @@ sformat_free (SFormat *format)
 }
 
 static GQueue *
-fragment_queue (va_list args)
+fragment_queue (Fragment *fragment1, va_list args)
 {
     GQueue *fragments = g_queue_new ();
     Fragment *fragment;
+
+    g_queue_push_tail (fragments, fragment1);
     
     fragment = va_arg (args, Fragment *);
     while (fragment)
@@ -166,7 +171,6 @@ fragment_queue (va_list args)
 	g_queue_push_tail (fragments, fragment);
 	fragment = va_arg (args, Fragment *);
     }
-    va_end (args);
     
     return fragments;
 }
@@ -289,7 +293,7 @@ sformat_new_record  (const char *     name,
     /* Build queue of fragments */
     va_start (args, content1);
     
-    fragments = fragment_queue (args);
+    fragments = fragment_queue (content1, args);
     
     va_end (args);
     
@@ -402,7 +406,7 @@ state_transition_check (const State *state,
     
     for (list = state->transitions->head; list; list = list->next)
     {
-        Transition *transition;
+        Transition *transition = list->data;
 
         if (transition->kind == kind                    &&
             strcmp (element, transition->element) == 0)
@@ -546,7 +550,7 @@ static gboolean
 is_list_type (SType type)
 {
     /* FIXME */
-    return FALSE;
+    return TRUE;
 }
 
 void
@@ -915,18 +919,19 @@ build_instructions (const char *contents, SFormat *format, int *n_instructions, 
     build.instructions = g_array_new (TRUE, TRUE, sizeof (Instruction));
     
     parse_context = g_markup_parse_context_new (&parser, 0, &build, NULL);
-    if (!sformat_is_end_state (format, build.state))
-    {
-        set_invalid_content_error (err, "Unexpected end of file\n");
-
-        free_instructions ((Instruction *)build.instructions->data, build.instructions->len);
-        return NULL;
-    }
     
     if (!g_markup_parse_context_parse (parse_context, contents, -1, err))
     {
         free_instructions ((Instruction *)build.instructions->data, build.instructions->len);
 	return NULL;
+    }
+
+    if (!sformat_is_end_state (format, build.state))
+    {
+        set_invalid_content_error (err, "Premature end of file\n");
+
+        free_instructions ((Instruction *)build.instructions->data, build.instructions->len);
+        return NULL;
     }
 
     if (!post_process_read_instructions ((Instruction *)build.instructions->data, build.instructions->len, err))
@@ -1034,7 +1039,7 @@ sfile_end_add (SFileOutput       *file,
     file->state = state_transition_end (
         file->state, name, &instruction.type, NULL);
 
-    g_return_if_fail (file->state && instruction.kind == END);
+    g_return_if_fail (file->state);
 
     instruction.kind = END;
     instruction.name = g_strdup (name);
@@ -1073,6 +1078,7 @@ sfile_add_string       (SFileOutput       *file,
 
     instruction.kind = VALUE;
     instruction.type = TYPE_STRING;
+    instruction.name = g_strdup (name);
     instruction.u.string.value = g_strdup (string);
 
     g_array_append_val (file->instructions, instruction);
@@ -1112,13 +1118,109 @@ sfile_add_pointer      (SFileOutput *file,
     g_array_append_val (file->instructions, instruction);
 }
 
+static void
+add_indent (GString *output, int indent)
+{
+    int i;
+
+    for (i = 0; i < indent; ++i)
+        g_string_append_c (output, ' ');
+}
+
+static void
+add_integer (GString *output, int value)
+{
+    g_string_append_printf (output, "%d", value);
+}
+
+static void
+add_string (GString *output, const char *str)
+{
+    g_string_append_printf (output, "%s", str);
+}
+
+static void
+add_begin_tag (GString *output, int indent, const char *name)
+{
+    add_indent (output, indent);
+    g_string_append_printf (output, "<%s>", name);
+}
+
+static void
+add_end_tag (GString *output, int indent, const char *name)
+{
+    add_indent (output, indent);
+    g_string_append_printf (output, "</%s>", name);
+}
+
+static void
+add_nl (GString *output)
+{
+    g_string_append_c (output, '\n');
+}
+
 gboolean
 sfile_output_save (SFileOutput  *sfile,
                    const char   *filename,
                    GError      **err)
 {
+    int i;
+    Instruction *instructions;
+    GString *output;
+    int indent;
+
+    g_return_val_if_fail (sfile != NULL, FALSE);
+
+    instructions = (Instruction *)sfile->instructions->data;
+
+    indent = 0;
+    output = g_string_new ("");
+    for (i = 0; i < sfile->instructions->len; ++i)
+    {
+        Instruction *instruction = &(instructions[i]);
+
+        switch (instruction->kind)
+        {
+        case BEGIN:
+            add_begin_tag (output, indent, instruction->name);
+            add_nl (output);
+            indent += 4;
+            break;
+            
+        case END:
+            indent -= 4;
+            add_end_tag (output, indent, instruction->name);
+            add_nl (output);
+            break;
+
+        case VALUE:
+            add_begin_tag (output, indent, instruction->name);
+            switch (instruction->type)
+            {
+            case TYPE_INTEGER:
+                add_integer (output, instruction->u.integer.value);
+                break;
+
+            case TYPE_POINTER:
+                add_integer (output, instruction->u.pointer.target_id);
+                break;
+
+            case TYPE_STRING:
+                add_string (output, instruction->u.string.value);
+                break;
+            }
+            add_end_tag (output, 0, instruction->name);
+            add_nl (output);
+            break;
+        }
+    }
+
+    /* FIXME: write to disk */
+    g_print (output->str);
+
+    g_string_free (output, TRUE);
     
-    return FALSE; /* FIXME */
+    return TRUE; /* FIXME */
 }
 
 

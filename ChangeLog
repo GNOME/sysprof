@@ -1,3 +1,7 @@
+Sat Mar  5 01:09:33 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sfile.c: Bug fixes. Add actual generation.
+
 Fri Mar  4 13:47:13 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c: Remove include of non-existing tracing.h

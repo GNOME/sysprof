@@ -60,7 +60,7 @@ create_format (void)
     
     return sformat_new (
 	sformat_new_record (
-	    "profile",
+	    "profile", NULL,
 	    sformat_new_integer ("size"),
 	    sformat_new_list (
 		"objects", NULL,

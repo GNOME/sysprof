@@ -16,37 +16,29 @@ struct SFormat
     State *end;
 };
 
-/* defining types */
+enum
+{
+    TYPE_POINTER,
+    TYPE_STRING,
+    TYPE_INTEGER,
+    TYPE_GENERIC_RECORD,
+    TYPE_GENERIC_LIST,
+    N_BUILTIN_TYPES,
+};
+
 typedef enum
 {
-#define FIRST_BEGIN_TRANSITION BEGIN_RECORD
-    BEGIN_RECORD,
-    BEGIN_LIST,
-    BEGIN_POINTER,
-    BEGIN_INTEGER,
-    BEGIN_STRING,
-#define LAST_BEGIN_TRANSITION BEGIN_STRING
-    
-#define FIRST_END_TRANSITION END_RECORD
-    END_RECORD,
-    END_LIST,
-    END_POINTER,
-    END_INTEGER,
-    END_STRING,
-#define LAST_END_TRANSITION END_STRING
-
-#define FIRST_VALUE_TRANSITION POINTER
-    POINTER,
-    INTEGER,
-    STRING
-#define LAST_VALUE_TRANSITION STRING
-} TransitionType;
+    BEGIN,
+    VALUE,
+    END
+} TransitionKind;
 
 struct Transition
 {
-    TransitionType type;
+    SType type;
+    TransitionKind kind;
     State *to;
-    char *element;              /* for begin/end transitions */
+    char *element;         /* for begin/end transitions */
 };
 
 struct State
@@ -121,7 +113,11 @@ state_new (void)
 }
 
 static Transition *
-transition_new (const char *element, TransitionType type, State *from, State *to)
+transition_new (const char *element,
+                TransitionKind kind,
+                SType type,
+                State *from,
+                State *to)
 {
     Transition *t = g_new (Transition, 1);
     
@@ -153,7 +149,7 @@ sformat_new (gpointer f)
 }
 
 void
-sformat_destroy (SFormat *format)
+sformat_free (SFormat *format)
 {
     /* FIXME */
 }
@@ -207,7 +203,7 @@ fragment_queue (va_list args)
  *
  * Binary blobs of data, stored as base64 perhaps
  * floating point values. How do we store those portably
- *     without losing precision?
+ *     without losing precision? Gnumeric may know.
  * enums, stored as strings
  */
 gpointer
@@ -261,8 +257,25 @@ sformat_new_union (const char *name,
 }
 #endif
 
+static SType
+define_type (SType *type, SType fallback)
+{
+    static SType type_ids = N_BUILTIN_TYPES;
+    
+    if (type)
+    {
+        if (*type == 0)
+            *type = type_ids++;
+        
+        return *type;
+    }
+    
+    return fallback;
+}
+
 gpointer
 sformat_new_record  (const char *     name,
+                     SType           *type,
                      gpointer         content1,
                      ...)
 {
@@ -271,7 +284,8 @@ sformat_new_record  (const char *     name,
     State *begin, *state;
     Fragment *fragment;
     GList *list;
-    
+    SType real_type;
+
     /* Build queue of fragments */
     va_start (args, content1);
     
@@ -291,27 +305,33 @@ sformat_new_record  (const char *     name,
         state = state_new ();
         fragment->exit->to = state;
     }
+
+    real_type = define_type (type, TYPE_GENERIC_RECORD);
     
     /* Return resulting fragment */
     fragment = g_new (Fragment, 1);
-    fragment->enter = transition_new (name, BEGIN_RECORD, NULL, begin);
-    fragment->exit = transition_new (name, END_RECORD, state, NULL);
+    fragment->enter = transition_new (name, BEGIN, real_type, NULL, begin);
+    fragment->exit = transition_new (name, END, real_type, state, NULL);
     
     return fragment;
 }
 
 gpointer
 sformat_new_list (const char *name,
+                  SType *type,
                   gpointer content)
 {
     Fragment *m = content;
     State *list_state;
     Transition *enter, *exit;
+    SType real_type;
     
     list_state = state_new ();
+
+    real_type = define_type (type, TYPE_GENERIC_LIST);
     
-    enter = transition_new (name, BEGIN_LIST, NULL, list_state);
-    exit = transition_new (name, END_LIST, list_state, NULL);
+    enter = transition_new (name, BEGIN, real_type, NULL, list_state);
+    exit = transition_new (name, END, real_type, list_state, NULL);
     
     g_queue_push_tail (list_state->transitions, m->enter);
     m->exit->to = list_state;
@@ -324,9 +344,7 @@ sformat_new_list (const char *name,
 
 static gpointer
 sformat_new_value (const char *name,
-                   TransitionType enter,
-                   TransitionType type,
-                   TransitionType exit)
+                   SType type)
 {
     Fragment *m = g_new (Fragment, 1);
     State *before, *after;
@@ -335,29 +353,30 @@ sformat_new_value (const char *name,
     before = state_new ();
     after = state_new ();
     
-    m->enter = transition_new (name, enter, NULL, before);
-    m->exit  = transition_new (name, type, after, NULL);
-    value = transition_new (NULL, exit, before, after);
+    m->enter = transition_new (name, BEGIN, type, NULL, before);
+    m->exit  = transition_new (name, END, type, after, NULL);
+    value = transition_new (NULL, VALUE, type, before, after);
     
     return m;
 }
 
 gpointer
-sformat_new_pointer (const char *name)
+sformat_new_pointer (const char *name,
+                     SType      *target_type)
 {
-    return sformat_new_value (name, BEGIN_POINTER, POINTER, END_POINTER);
+    return sformat_new_value (name, TYPE_POINTER);
 }
 
 gpointer
 sformat_new_integer (const char *name)
 {
-    return sformat_new_value (name, BEGIN_INTEGER, INTEGER, END_INTEGER);
+    return sformat_new_value (name, TYPE_INTEGER);
 }
 
 gpointer
 sformat_new_string (const char *name)
 {
-    return sformat_new_value (name, BEGIN_STRING, STRING, END_STRING);
+    return sformat_new_value (name, TYPE_STRING);
 }
 
 static const State *
@@ -373,18 +392,19 @@ sformat_is_end_state (SFormat *format, const State *state)
 }
 
 static const State *
-state_transition_check (const State *state, const char *element,
-                        TransitionType first, TransitionType last,
-                        TransitionType *type, GError **err)
+state_transition_check (const State *state,
+                        const char *element,
+                        TransitionKind kind,
+                        SType *type,
+                        GError **err)
 {
     GList *list;
     
     for (list = state->transitions->head; list; list = list->next)
     {
         Transition *transition;
-        
-        if (transition->type >= first                   &&
-            transition->type <= last                    &&
+
+        if (transition->kind == kind                    &&
             strcmp (element, transition->element) == 0)
         {
             *type = transition->type;
@@ -399,24 +419,20 @@ state_transition_check (const State *state, const char *element,
 
 static const State *
 state_transition_begin (const State *state, const char *element,
-                        TransitionType *type, GError **err)
+                        SType *type, GError **err)
 {
-    return state_transition_check (state, element,
-                                   FIRST_BEGIN_TRANSITION, LAST_BEGIN_TRANSITION,
-                                   type, err);
+    return state_transition_check (state, element, BEGIN, type, err);
 }
 
 static const State *
 state_transition_end (const State *state, const char *element,
-                      TransitionType *type, GError **err)
+                      SType *type, GError **err)
 {
-    return state_transition_check (state, element,
-                                   FIRST_END_TRANSITION, LAST_END_TRANSITION,
-                                   type, err);
+    return state_transition_check (state, element, END, type, err);
 }
 
 static const State *
-state_transition_text (const State *state, TransitionType *type, GError **err)
+state_transition_text (const State *state, SType *type, GError **err)
 {
     GList *list;
     
@@ -424,9 +440,7 @@ state_transition_text (const State *state, TransitionType *type, GError **err)
     {
         Transition *transition = list->data;
         
-        if (transition->type == POINTER ||
-            transition->type == INTEGER ||
-            transition->type == STRING)
+        if (transition->kind == VALUE)
         {
             *type = transition->type;
 
@@ -447,7 +461,8 @@ typedef struct Instruction Instruction;
 
 struct Instruction
 {
-    TransitionType type;
+    TransitionKind kind;
+    SType type;
     
     char *name;
     union
@@ -518,16 +533,30 @@ struct SFileInput
     Instruction *instructions;
     Instruction *current_instruction;
     GHashTable *instructions_by_location;
-    GHashTable *objects_by_id;
 };
+
+static gboolean
+is_record_type (SType type)
+{
+    /* FIXME */
+    return TRUE;
+}
+
+static gboolean
+is_list_type (SType type)
+{
+    /* FIXME */
+    return FALSE;
+}
 
 void
 sfile_begin_get_record (SFileInput *file, const char *name)
 {
     Instruction *instruction = file->current_instruction++;
-    
-    g_return_if_fail (instruction->type == BEGIN_RECORD &&
-                      strcmp (instruction->name, name) == 0);
+
+    g_return_if_fail (instruction->kind == BEGIN);
+    g_return_if_fail (strcmp (instruction->name, name) == 0);
+    g_return_if_fail (is_record_type (instruction->type));
 }
 
 int
@@ -536,8 +565,9 @@ sfile_begin_get_list   (SFileInput       *file,
 {
     Instruction *instruction = file->current_instruction++;
     
-    g_return_val_if_fail (instruction->type == BEGIN_LIST &&
-                          strcmp (instruction->name, name) == 0, 0);
+    g_return_val_if_fail (instruction->kind == BEGIN, 0);
+    g_return_val_if_fail (strcmp (instruction->name, name) == 0, 0);
+    g_return_val_if_fail (is_list_type (instruction->type), 0);
     
     return instruction->u.begin.n_instructions;
 }
@@ -548,7 +578,7 @@ sfile_get_pointer (SFileInput  *file,
                    gpointer    *location)
 {
     Instruction *instruction = file->current_instruction++;
-    g_return_if_fail (instruction->type == POINTER &&
+    g_return_if_fail (instruction->type == TYPE_POINTER &&
                       strcmp (instruction->name, name) == 0);
     
     instruction->u.pointer.location = location;
@@ -570,7 +600,7 @@ sfile_get_integer      (SFileInput  *file,
                         int         *integer)
 {
     Instruction *instruction = file->current_instruction++;
-    g_return_if_fail (instruction->type == INTEGER &&
+    g_return_if_fail (instruction->type == TYPE_INTEGER &&
                       strcmp (instruction->name, name) == 0);
     
     if (integer)
@@ -583,7 +613,7 @@ sfile_get_string       (SFileInput  *file,
                         char       **string)
 {
     Instruction *instruction = file->current_instruction++;
-    g_return_if_fail (instruction->type == STRING &&
+    g_return_if_fail (instruction->type == TYPE_STRING &&
                       strcmp (instruction->name, name) == 0);
     
     if (string)
@@ -599,7 +629,7 @@ hook_up_pointers (SFileInput *file)
     {
         Instruction *instruction = &(file->instructions[i]);
 
-        if (instruction->type == POINTER)
+        if (instruction->type == TYPE_POINTER)
         {
             gpointer target_object =
                 instruction->u.pointer.target_instruction->u.begin.end_instruction->u.end.object;
@@ -616,8 +646,7 @@ sfile_end_get          (SFileInput  *file,
 {
     Instruction *instruction = file->current_instruction++;
     
-    g_return_if_fail ((instruction->type == END_LIST ||
-                       instruction->type == END_RECORD) &&
+    g_return_if_fail (instruction->kind == END &&
                       strcmp (instruction->name, name) == 0);
 
     instruction->u.end.object = object;
@@ -732,7 +761,7 @@ handle_text (GMarkupParseContext *context,
 
     switch (instruction.type)
     {
-    case POINTER:
+    case TYPE_POINTER:
         if (!get_number (text, &instruction.u.pointer.target_id))
         {
             set_invalid_content_error (err, "Contents '%s' of pointer element is not a number", text);
@@ -740,7 +769,7 @@ handle_text (GMarkupParseContext *context,
         }
         break;
 
-    case INTEGER:
+    case TYPE_INTEGER:
         if (!get_number (text, &instruction.u.integer.value))
         {
             set_invalid_content_error (err, "Contents '%s' of integer element not a number", text);
@@ -748,7 +777,7 @@ handle_text (GMarkupParseContext *context,
         }
         break;
 
-    case STRING:
+    case TYPE_STRING:
         if (!decode_text (text, &instruction.u.string.value))
         {
             set_invalid_content_error (err, "Contents '%s' of text element is illformed", text);
@@ -776,7 +805,7 @@ free_instructions (Instruction *instructions, int n_instructions)
         if (instruction->name)
             g_free (instruction->name);
         
-        if (instruction->type == STRING)
+        if (instruction->type == TYPE_STRING)
             g_free (instruction->u.string.value);
     }
     
@@ -793,17 +822,14 @@ post_process_instructions_recurse (Instruction *first, GHashTable *instructions_
     Instruction *instruction;
     int n_instructions;
 
-    g_assert (first->type >= FIRST_BEGIN_TRANSITION &&
-              first->type <= LAST_BEGIN_TRANSITION);
+    g_assert (first->kind == BEGIN);
     
     instruction = first + 1;
 
     n_instructions = 0;
-    while (instruction->type < FIRST_END_TRANSITION ||
-           instruction->type > LAST_END_TRANSITION)
+    while (instruction->kind != END)
     {
-        if (instruction->type >= FIRST_BEGIN_TRANSITION &&
-            instruction->type <= LAST_BEGIN_TRANSITION)
+        if (instruction->kind == BEGIN)
         {
             instruction = post_process_instructions_recurse (instruction, instructions_by_id, err);
             if (!instruction)
@@ -811,7 +837,7 @@ post_process_instructions_recurse (Instruction *first, GHashTable *instructions_
         }
         else
         {
-            if (instruction->type == POINTER)
+            if (instruction->type == TYPE_POINTER)
             {
                 int target_id = instruction->u.pointer.target_id;
                 Instruction *target = g_hash_table_lookup (instructions_by_id, GINT_TO_POINTER (target_id));
@@ -853,8 +879,7 @@ post_process_read_instructions (Instruction *instructions, int n_instructions, G
     {
         Instruction *instruction = &(instructions[i]);
 
-        if (instruction->type >= FIRST_BEGIN_TRANSITION &&
-            instruction->type <= LAST_BEGIN_TRANSITION)
+        if (instruction->kind == BEGIN)
         {
             int id = instruction->u.begin.id;
 
@@ -952,7 +977,7 @@ struct SFileOutput
 
 
 SFileOutput *
-sfile_output_mew (SFormat       *format)
+sfile_output_new (SFormat       *format)
 {
     SFileOutput *output = g_new (SFileOutput, 1);
     
@@ -972,8 +997,10 @@ sfile_begin_add_record (SFileOutput       *file,
     file->state = state_transition_begin (
         file->state, name, &instruction.type, NULL);
 
-    g_return_if_fail (file->state && instruction.type == BEGIN_RECORD);
-
+    g_return_if_fail (file->state);
+    g_return_if_fail (is_record_type (instruction.type));
+    
+    instruction.kind = BEGIN;    
     instruction.name = g_strdup (name);
 
     g_array_append_val (file->instructions, instruction);
@@ -984,13 +1011,14 @@ sfile_begin_add_list   (SFileOutput *file,
                         const char  *name)
 {
     Instruction instruction;
-    TransitionType type;
 
     file->state = state_transition_begin (
         file->state, name, &instruction.type, NULL);
 
-    g_return_if_fail (file->state && type == BEGIN_LIST);
+    g_return_if_fail (file->state);
+    g_return_if_fail (is_list_type (instruction.type));
 
+    instruction.kind = BEGIN;
     instruction.name = g_strdup (name);
 
     g_array_append_val (file->instructions, instruction);
@@ -1006,9 +1034,9 @@ sfile_end_add (SFileOutput       *file,
     file->state = state_transition_end (
         file->state, name, &instruction.type, NULL);
 
-    g_return_if_fail (file->state &&
-                      (instruction.type == END_RECORD || instruction.type == END_LIST));
+    g_return_if_fail (file->state && instruction.kind == END);
 
+    instruction.kind = END;
     instruction.name = g_strdup (name);
     instruction.u.end.object = object;
 
@@ -1018,20 +1046,18 @@ sfile_end_add (SFileOutput       *file,
 static void
 sfile_check_value (SFileOutput *file,
                    const char *name,
-                   TransitionType begin,
-                   TransitionType value,
-                   TransitionType end)
+                   SType type)
 {
-    TransitionType type;
+    SType tmp_type;
     
-    file->state = state_transition_begin (file->state, name, &type, NULL);
-    g_return_if_fail (file->state && type == begin);
+    file->state = state_transition_begin (file->state, name, &tmp_type, NULL);
+    g_return_if_fail (file->state && tmp_type == type);
 
     file->state = state_transition_text (file->state, &type, NULL);
-    g_return_if_fail (file->state && type == value);
+    g_return_if_fail (file->state && tmp_type == type);
     
     file->state = state_transition_end (file->state, name, &type, NULL);
-    g_return_if_fail (file->state && type == end);
+    g_return_if_fail (file->state && tmp_type == type);
 }
 
 void
@@ -1043,9 +1069,10 @@ sfile_add_string       (SFileOutput       *file,
 
     g_return_if_fail (g_utf8_validate (string, -1, NULL));
     
-    sfile_check_value (file, name, BEGIN_STRING, STRING, END_STRING);
+    sfile_check_value (file, name, TYPE_STRING);
 
-    instruction.type = STRING;
+    instruction.kind = VALUE;
+    instruction.type = TYPE_STRING;
     instruction.u.string.value = g_strdup (string);
 
     g_array_append_val (file->instructions, instruction);
@@ -1058,9 +1085,10 @@ sfile_add_integer      (SFileOutput *file,
 {
     Instruction instruction;
     
-    sfile_check_value (file, name, BEGIN_INTEGER, INTEGER, END_INTEGER);
+    sfile_check_value (file, name, TYPE_INTEGER);
 
-    instruction.type = INTEGER;
+    instruction.kind = VALUE;
+    instruction.type = TYPE_INTEGER;
     instruction.name = g_strdup (name);
     instruction.u.integer.value = integer;
 
@@ -1074,9 +1102,10 @@ sfile_add_pointer      (SFileOutput *file,
 {
     Instruction instruction;
     
-    sfile_check_value (file, name, BEGIN_POINTER, POINTER, END_POINTER);
+    sfile_check_value (file, name, TYPE_POINTER);
 
-    instruction.type = POINTER;
+    instruction.kind = VALUE;
+    instruction.type = TYPE_POINTER;
     instruction.name = g_strdup (name);
     instruction.u.pointer.object = pointer;
 
@@ -1090,4 +1119,11 @@ sfile_output_save (SFileOutput  *sfile,
 {
     
     return FALSE; /* FIXME */
+}
+
+
+void
+sfile_output_free (SFileOutput *sfile)
+{
+    /* FIXME */
 }

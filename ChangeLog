@@ -1,3 +1,10 @@
+Thu Mar  3 23:48:13 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (profile_load): Write this function.
+
+	* sfile.c: Add support for user defined record and list types.
+	Simplify logic a lot.
+
 Wed Mar  2 23:39:50 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* profile.[ch], sfile.[ch]: Experiment with a

@@ -1,15 +1,19 @@
 typedef struct SFormat SFormat;
 typedef struct SFileInput SFileInput;
 typedef struct SFileOutput SFileOutput;
+typedef guint SType;
 
 /* - Describing Types - */
 SFormat *sformat_new (gpointer f);
 gpointer sformat_new_record (const char  *name,
+			     SType	 *type,
 			     gpointer     content,
 			     ...);
 gpointer sformat_new_list (const char  *name,
+			   SType       *type,
 			   gpointer	content);
-gpointer sformat_new_pointer (const char  *name);
+gpointer sformat_new_pointer (const char  *name,
+			      SType	  *target_type);
 gpointer sformat_new_integer (const char  *name);
 gpointer sformat_new_string (const char  *name);
 void sformat_free (SFormat *format);

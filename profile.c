@@ -55,21 +55,20 @@ struct Profile
 static SFormat *
 create_format (void)
 {
-#if 0
     SType object_type = 0;
     SType node_type = 0;
     
     return sformat_new (
 	sformat_new_record (
 	    "profile",
-	    sformat_new_integer ("size", NULL),
+	    sformat_new_integer ("size"),
 	    sformat_new_list (
 		"objects", NULL,
 		sformat_new_record (
 		    "object", &object_type,
-		    sformat_new_string ("name", NULL),
-		    sformat_new_integer ("total", NULL),
-		    sformat_new_integer ("self", NULL),
+		    sformat_new_string ("name"),
+		    sformat_new_integer ("total"),
+		    sformat_new_integer ("self"),
 		    NULL)),
 	    sformat_new_list (
 		"nodes", NULL,
@@ -82,7 +81,6 @@ create_format (void)
 		    sformat_new_pointer ("next", &node_type),
 		    NULL)),
 	    NULL));
-#endif
 }
 
 static void
@@ -103,6 +101,9 @@ add_object (gpointer key, gpointer value, gpointer data)
 static void
 serialize_call_tree (Node *node, SFileOutput *output)
 {
+    if (!node)
+	return;
+    
     sfile_begin_add_record (output, "node");
     sfile_add_pointer (output, "object", node->object);
     sfile_add_pointer (output, "siblings", node->siblings);
@@ -123,8 +124,8 @@ profile_save (Profile		 *profile,
     gboolean result;
     
     SFormat *format = create_format ();
-#if 0
     SFileOutput *output = sfile_output_new (format);
+
     sfile_begin_add_record (output, "profile");
 
     sfile_add_integer (output, "size", profile->size);
@@ -144,25 +145,67 @@ profile_save (Profile		 *profile,
     sformat_free (format);
     sfile_output_free (output);
 
-#endif
     return result;
 }
 
 Profile *
 profile_load (const char *filename, GError **err)
 {
-    SFormat *format = create_format ();
+    SFormat *format;
     SFileInput *input;
-
+    Profile *profile;
+    int n, i;
+    
+    format = create_format ();
     input = sfile_load (filename, format, err);
 
+    if (!input)
+	return NULL;
     
-    
-#if 0
-    sformat_free (format);
-#endif
+    profile = g_new (Profile, 1);
 
+    sfile_begin_get_record (input, "profile");
+
+    sfile_get_integer (input, "size", &profile->size);
+
+    n = sfile_begin_get_list (input, "objects");
+    for (i = 0; i < n; ++i)
+    {
+	ProfileObject *obj = g_new (ProfileObject, 1);
+	
+	sfile_begin_get_record (input, "object");
+
+	sfile_get_string (input, "name", &obj->name);
+	sfile_get_integer (input, "total", &obj->total);
+	sfile_get_integer (input, "self", &obj->self);
+
+	sfile_end_get (input, "object", obj);
+    }
+    sfile_end_get (input, "objects", NULL);
+
+    n = sfile_begin_get_list (input, "nodes");
+    for (i = 0; i < n; ++i)
+    {
+	Node *node = g_new (Node, 1);
+
+	sfile_begin_get_record (input, "node");
+
+	sfile_get_pointer (input, "object", (gpointer *)&node->object);
+	sfile_get_pointer (input, "siblings", (gpointer *)&node->siblings);
+	sfile_get_pointer (input, "children", (gpointer *)&node->children);
+	sfile_get_pointer (input, "parent", (gpointer *)&node->parent);
+	sfile_get_pointer (input, "next", (gpointer *)&node->next);
+	
+	sfile_end_get (input, "node", node);
+
+	if (!node->parent)
+	    profile->call_tree = node;
+    }
+    sfile_end_get (input, "nodes", NULL);
     
+    sformat_free (format);
+
+    return profile;
 }
 
 static ProfileObject *

@@ -3,6 +3,7 @@ Before 1.0:
 * Correctness
 	- grep FIXME
 	- When the module is unloaded, kill all processes blocking in read
+		- or block unloading until all processes have exited
 
 * Interface
 	- If the current profile has a name, display it in the title bar
@@ -17,6 +18,9 @@ Before 1.0:
 * Build system
 	- Need to make "make install" work (how do you know where to install
 	  kernel modules?)
+		- in /lib/modules/`uname -r`/kernel/drivers/
+		- need to run depmod as root after that
+		- Then modprobe run as root should correctly find it.
 	- Find out what distributions it actually works on
 	    (ask for sucess/failure-stories in 0.9.x releases)
 	- auto*?

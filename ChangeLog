@@ -1,3 +1,7 @@
+Fri Apr  8 21:30:02 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* TODO: More updates
+
 Fri Apr  8 20:48:58 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (build_gui): Load the icon, hook up "about"

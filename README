@@ -50,6 +50,7 @@ program "sysprof".
 
 
 Credits:
+      Diana Fong for the icon
       Kristian Høgsberg for the first port to the 2.6 kernel.
       Owen Taylor for the symbol lookup code in memprof
 	

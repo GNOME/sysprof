@@ -5,8 +5,6 @@ Before 1.0:
 	- When the module is unloaded, kill all processes blocking in read
 
 * Interface
-	- hook up about box
-	- Need an icon
 	- If the current profile has a name, display it in the title bar
 	- Sould just install the kernel module if it running as root, pop up
 	  a dialog if not. Note we must be able to start without module now, 
@@ -23,7 +21,7 @@ Before 1.0:
 	    (ask for sucess/failure-stories in 0.9.x releases)
 	- auto*?
 	- .desktop file
-	- translations
+	- translation should be hooked up 
 
 Before 1.2:
 
@@ -161,6 +159,10 @@ Later:
    but not for long ones).
 
 DONE:
+
+- Need an icon
+
+- hook up about box
 
 - Add busy cursors,
 	- when you hit "Profile"

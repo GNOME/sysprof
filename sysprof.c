@@ -17,6 +17,8 @@
 /* FIXME */
 #define _(a) a
 
+#define APPLICATION_NAME "System Profiler"
+
 typedef struct Application Application;
 
 typedef enum
@@ -33,6 +35,7 @@ struct Application
     StackStash *	stash;
     
     GtkWidget *		main_window;
+    GdkPixbuf *		icon;
     
     GtkTreeView *	object_view;
     GtkTreeView *	callers_view;
@@ -677,6 +680,23 @@ ensure_profile (Application *app)
 }
 
 static void
+on_about_activated (GtkWidget *widget, gpointer data)
+{
+#define OSLASH "\303\270"
+    Application *app = data;
+    const char *artist[] = { "Diana Fong", NULL } ;
+
+    gtk_show_about_dialog (GTK_WINDOW (app->main_window),
+			   "logo", app->icon,
+			   "name", APPLICATION_NAME,
+#if 0
+			   "copyright", "Copyright S"OSLASH"ren Sandmann",
+#endif
+			   "comments", "FIXME, write something informative here",
+			   NULL);
+}
+
+static void
 on_profile_toggled (GtkWidget *widget, gpointer data)
 {
     Application *app = data;
@@ -714,7 +734,7 @@ sorry (GtkWidget *parent_window,
 				     GTK_BUTTONS_OK, message);
     free (message);
     
-    gtk_window_set_title (GTK_WINDOW (dialog), "System Profiler Warning");
+    gtk_window_set_title (GTK_WINDOW (dialog), APPLICATION_NAME " Warning");
     
     gtk_dialog_run (GTK_DIALOG (dialog));
     gtk_widget_destroy (dialog);
@@ -1074,6 +1094,9 @@ build_gui (Application *app)
     
     /* Main Window */
     app->main_window = glade_xml_get_widget (xml, "main_window");
+    app->icon = gdk_pixbuf_new_from_file ("sysprof-icon.png", NULL);
+
+    gtk_window_set_icon (GTK_WINDOW (app->main_window), app->icon);
     
     g_signal_connect (G_OBJECT (app->main_window), "delete_event",
 		      G_CALLBACK (on_delete), NULL);
@@ -1104,6 +1127,9 @@ build_gui (Application *app)
     /* quit */
     g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit")), "activate",
 		      G_CALLBACK (on_delete), NULL);
+
+    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "about")), "activate",
+		      G_CALLBACK (on_about_activated), app);
     
     /* Tool items */
     

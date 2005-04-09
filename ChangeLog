@@ -1,3 +1,17 @@
+Fri Apr  8 20:48:58 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (build_gui): Load the icon, hook up "about"
+	activation.
+
+	* sysprof.c (on_about_activated): New function. Show an about
+	dialog.
+
+	* sysprof.c (struct Application): Add an icon field
+
+	* TODO: Updates
+	
+	* sysprof-icon.png: Icon, drawn by Diana Fong
+
 Tue Apr  5 23:01:02 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* binfile.c (read_symbols): Put back the weird loop, and stop

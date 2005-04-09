@@ -39,7 +39,7 @@ ifeq ($(shell (uname -r | grep 2.6) > /dev/null ; echo -n $$?),0)
 
 # if kernel 2.6
 $(MODULE).o: $(MODULE).c
-	echo birnan $(MODCFLAGS)
+#	echo modcflags $(MODCFLAGS)
 
 	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
 else

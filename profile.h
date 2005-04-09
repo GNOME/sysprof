@@ -1,5 +1,6 @@
-/* MemProf -- memory profiler and leak detector
- * Copyright 2002, Soeren Sandmann (sandmann@daimi.au.dk)
+/* Sysprof -- Sampling, systemwide CPU profiler
+ * Copyright 2004, Red Hat, Inc.
+ * Copyright 2004, 2005, Soeren Sandmann
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-/*====*/
 
 #include <glib.h>
 #include "binfile.h"

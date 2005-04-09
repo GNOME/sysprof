@@ -1,3 +1,9 @@
+Sat Apr  9 17:04:50 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* Makefile: Remove debug spew
+
+	* *: Add copyright notices
+
 Fri Apr  8 21:30:02 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: More updates

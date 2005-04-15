@@ -1,3 +1,12 @@
+Fri Apr 15 16:37:45 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: updates
+
+	* sysprof.c (sorry): If you hit profile when the module isn't
+	loaded, pop up an annoying dialog.
+
+	* sysprof-module.c: Clean-ups, remove various unused abstractions.
+
 Sat Apr  9 17:49:13 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* COPYING: Add a copy of the GPL

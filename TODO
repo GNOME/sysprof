@@ -103,8 +103,6 @@ Later:
 - Find out how to hack around gtk+ bug causing multiple double clicks 
   to get eaten.
 
-- Figure out what a 'disk profiler' is.
-
 - Consider what it would take to take stacktraces of other languages
 
 	- perl, 
@@ -121,7 +119,33 @@ Later:
 
   This function would behave essentially like a signal handler: couldn't
   call malloc(), couldn't call printf(), etc. 
-  
+
+- Consider this usecase:
+	Someone is considering replacing malloc()/free() with a freelist
+	for a certain data structure. All use of this data structure is 
+	confined to one function, foo(). It is now interesting to know
+	how much time that particular function spends on malloc() and free()
+	combined.
+
+	Possible UI:
+
+		- Select foo(), 
+		- find an instance of malloc()
+		- shift-click on it,
+		-       all traces with malloc are removed
+		- 	a new item "..." appears immeidately below foo()
+		-       malloc is added below "..."
+  		- same for free
+		- at this point, the desired data can be read at comulative
+		  for "..." 
+
+	Actually, with this UI, you could potentially get rid of the
+	caller list: Just present the call tree under an <everything> root, 
+	and use ... to  single out the stuff you are interested in.
+
+	Maybe also get rid of 'callers' by having a new "show details"
+	dialog or something.
+		
 - figure out a way to deal with both disk and CPU. Need to make sure that
   things that are UNINTERRUPTIBLE while there are RUNNING tasks are not
   considered bad.
@@ -143,7 +167,7 @@ Later:
   traces has the same diskaccesses.
 
   Or visualize a set of squares with a color that is more saturated depending
-  on the number of unique stack traces that access it. The look for the
+  on the number of unique stack traces that access it. Then look for the
   lightly saturated ones. 
 
   The input to the profiler would basically be

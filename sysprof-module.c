@@ -37,6 +37,7 @@
 #include "sysprof-module.h"
 
 #include <linux/version.h>
+#include <linux/kallsyms.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
@@ -51,33 +52,10 @@ static SysprofStackTrace *	tail = &stack_traces[0];
 DECLARE_WAIT_QUEUE_HEAD (wait_for_trace);
 DECLARE_WAIT_QUEUE_HEAD (wait_for_exit);
 
-typedef void (* TimeoutFunc)(unsigned long data);
+static int exiting;
+
 static void on_timer(unsigned long);
-
-/*
- * Wrappers to cover up kernel differences in timer handling
- */
 static struct timer_list timer;
-
-static void
-init_timeout (void)
-{
-	init_timer(&timer);
-}
-
-static void
-remove_timeout(void)
-{
-	del_timer (&timer);
-}
-
-static void
-add_timeout(unsigned int interval,
-	    TimeoutFunc  f)
-{
-	timer.function = f;
-	mod_timer(&timer, jiffies + INTERVAL);
-}
 
 typedef struct userspace_reader userspace_reader;
 struct userspace_reader
@@ -108,7 +86,8 @@ init_userspace_reader (userspace_reader *reader,
  * Do not walk the page table directly, use get_user_pages
  */
  
-static int x_access_process_vm(struct task_struct *tsk, unsigned long addr, void *buf, int len, int write)
+static int
+x_access_process_vm(struct task_struct *tsk, unsigned long addr, void *buf, int len, int write)
 {
 	struct mm_struct *mm;
 	struct vm_area_struct *vma;
@@ -166,50 +145,8 @@ read_user_space (userspace_reader *reader,
 		 unsigned long address,
 		 unsigned long *result)
 {
-#if 0
-	unsigned long user_page = (address & PAGE_MASK);
-	int res;
-#endif
-
 	return x_access_process_vm(reader->task, address, result, 4, 0);
 }
-#if 0
-	struct task_struct *tsk, unsigned long addr, void *buf, int len, int write);
-
-	if (user_page == 0)
-		return 0;
-
-	if (!reader->user_page || user_page != reader->user_page) {
-		int found;
-		struct page *page;
-		pte_t pte;
-		
-		found = get_user_pages (reader->task, reader->task->mm,
-					user_page, 1, 0, 0, &page, NULL);
-
-		if (!found)
-			return 0;
-
-		if (!pte_present (page))
-			return 0;
-		
-		if (reader->user_page)
-			kunmap (reader->page);
-
-		reader->kernel_page = (unsigned long)kmap (page);
-		reader->user_page = user_page;
-		reader->page = page;
-		
-	}
-
-	if (get_user (res, (int *)(reader->kernel_page + (address - user_page))) != 0)
-		return 0;
-
-	*result = res;
-	
-	return 1;
-}
-#endif
 
 static void
 done_userspace_reader (userspace_reader *reader)
@@ -256,7 +193,7 @@ generate_stack_trace(struct task_struct *task,
 	unsigned long addr;
 	userspace_reader reader;
 	int i;
-	
+
 	memset(trace, 0, sizeof (SysprofStackTrace));
 	
 	trace->pid = task->pid;
@@ -292,49 +229,32 @@ static void
 do_generate (void *data)
 {
 	struct task_struct *task = data;
-	struct task_struct *g, *p;
+	
+	generate_stack_trace(task, head);
+	wake_up_process (task);
+		
+	if (head++ == &stack_traces[N_TRACES - 1])
+		head = &stack_traces[0];
+	
+	wake_up (&wait_for_trace);
 
-	/* Make sure the thread still exists */
-	/* FIXME: this is probably not necessary anymore, now that
-	 * we make the process sleep
-	 */
-	do_each_thread (g, p) {
-		if (p == task) {
-			generate_stack_trace(task, head);
-
-			if (head++ == &stack_traces[N_TRACES - 1])
-				head = &stack_traces[0];
-			
-			wake_up (&wait_for_trace);
-			wake_up_process (task);
-
-			goto out;
-		}
-	} while_each_thread (g, p);
-
- out:
-	add_timeout (INTERVAL, on_timer);
+	mod_timer(&timer, jiffies + INTERVAL);
 }
 
 static void
 on_timer(unsigned long dong)
 {
-#if 0
-	static const int cpu_profiler = 1; /* set to 0 to profile disk */
-
-	if (p->state == (cpu_profiler? TASK_RUNNING : TASK_UNINTERRUPTIBLE))
-		;
-#endif
-
-	if (current && current->state == TASK_RUNNING && current->pid != 0) {
-		INIT_WORK (&work, do_generate, current);
-		
+	if (current && current->state == TASK_RUNNING && current->pid != 0)
+	{
 		set_current_state (TASK_UNINTERRUPTIBLE);
+		
+		INIT_WORK (&work, do_generate, current);
 		
 		schedule_work (&work);
 	}
-	else {
-		add_timeout (INTERVAL, on_timer);
+	else
+	{
+		mod_timer(&timer, jiffies + INTERVAL);
 	}
 }
 
@@ -382,9 +302,9 @@ init_module(void)
 	trace_proc_file->proc_fops->poll = procfile_poll;
 	trace_proc_file->size = sizeof (SysprofStackTrace);
 	
-	init_timeout();
-	
-	add_timeout(INTERVAL, on_timer);
+	init_timer(&timer);
+	timer.function = on_timer;
+	mod_timer(&timer, jiffies + INTERVAL);
 	
 	printk(KERN_ALERT "starting sysprof module\n");
 	
@@ -394,8 +314,10 @@ init_module(void)
 void
 cleanup_module(void)
 {
-	remove_timeout();
-	
+	exiting = 1;
+
+	del_timer (&timer);
+
 	remove_proc_entry("sysprof-trace", &proc_root);
 	
 	printk(KERN_ALERT "stopping sysprof module\n");

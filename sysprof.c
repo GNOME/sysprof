@@ -98,13 +98,6 @@ struct Application
 					    */
 };
 
-static void
-disaster (const char *what)
-{
-    fprintf (stderr, what);
-    exit (1);
-}
-
 static gboolean
 show_samples_timeout (gpointer data)
 {
@@ -332,8 +325,10 @@ on_read (gpointer data)
 /* 	    filename = trace.filename; */
 	
 	for (i = 0; i < trace.n_addresses; ++i)
+	{
 	    process_ensure_map (process, trace.pid, 
 				(gulong)trace.addresses[i]);
+	}
 	g_assert (!app->generating_profile);
 	
 	stack_stash_add_trace (
@@ -399,6 +394,31 @@ start_profiling (gpointer data)
 }
 
 static void
+sorry (GtkWidget *parent_window,
+       const gchar *format,
+       ...)
+{
+    va_list args;
+    char *message;
+    GtkWidget *dialog;
+    
+    va_start (args, format);
+    g_vasprintf (&message, format, args);
+    va_end (args);
+    
+    dialog = gtk_message_dialog_new (parent_window ? GTK_WINDOW (parent_window) : NULL,
+				     GTK_DIALOG_DESTROY_WITH_PARENT,
+				     GTK_MESSAGE_WARNING,
+				     GTK_BUTTONS_OK, message);
+    g_free (message);
+    
+    gtk_window_set_title (GTK_WINDOW (dialog), APPLICATION_NAME " Warning");
+    
+    gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_destroy (dialog);
+}
+
+static void
 on_start_toggled (GtkWidget *widget, gpointer data)
 {
     Application *app = data;
@@ -406,6 +426,29 @@ on_start_toggled (GtkWidget *widget, gpointer data)
     if (!gtk_toggle_tool_button_get_active (
 	    GTK_TOGGLE_TOOL_BUTTON (app->start_button)))
 	return;
+
+    if (app->input_fd == -1)
+    {
+	int fd = open ("/proc/sysprof-trace", O_RDONLY);
+	if (fd < 0)
+	{
+	    sorry (app->main_window,
+		   "Can't open /proc/sysprof-trace. You need to insert\n"
+		   "the sysprof kernel module. Type \n"
+		   "\n"
+		   "       insmod sysprof-module.ko\n"
+		   "\n"
+		   "as root.");
+
+	    update_sensitivity (app);
+	    return;
+	}
+
+	app->input_fd = fd;
+	fd_add_watch (app->input_fd, app);
+    }
+    
+    fd_set_read_callback (app->input_fd, on_read);
     
     delete_data (app);
     
@@ -688,9 +731,8 @@ ensure_profile (Application *app)
     if (app->profile)
 	return;
     
-    /* take care of reentrancy */
     app->profile = profile_new (app->stash);
-    
+
     fill_lists (app);
     
     app->state = DISPLAYING;
@@ -732,31 +774,6 @@ on_profile_toggled (GtkWidget *widget, gpointer data)
 	ensure_profile (app);
 	set_busy (app->main_window, FALSE);
     }
-}
-
-static void
-sorry (GtkWidget *parent_window,
-       const gchar *format,
-       ...)
-{
-    va_list args;
-    char *message;
-    GtkWidget *dialog;
-    
-    va_start (args, format);
-    g_vasprintf (&message, format, args);
-    va_end (args);
-    
-    dialog = gtk_message_dialog_new (parent_window ? GTK_WINDOW (parent_window) : NULL,
-				     GTK_DIALOG_DESTROY_WITH_PARENT,
-				     GTK_MESSAGE_WARNING,
-				     GTK_BUTTONS_OK, message);
-    free (message);
-    
-    gtk_window_set_title (GTK_WINDOW (dialog), APPLICATION_NAME " Warning");
-    
-    gtk_dialog_run (GTK_DIALOG (dialog));
-    gtk_widget_destroy (dialog);
 }
 
 static void
@@ -1241,21 +1258,6 @@ main (int argc, char **argv)
     gtk_init (&argc, &argv);
     
     app = application_new ();
-    
-    app->input_fd = open ("/proc/sysprof-trace", O_RDONLY);
-    if (app->input_fd < 0)
-    {
-	disaster ("Can't open /proc/sysprof-trace. You need to insert\n"
-		  "the sysprof kernel module. Type \n"
-		  "\n"
-		  "       insmod sysprof-module.ko\n"
-		  "\n"
-		  "as root.\n"
-		  "\n");
-    }
-    
-    fd_add_watch (app->input_fd, app);
-    fd_set_read_callback (app->input_fd, on_read);
     
 #if 0
     nice (-19);

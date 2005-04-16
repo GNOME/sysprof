@@ -1,3 +1,7 @@
+Sat Apr 16 01:54:18 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Add backtrace for kernel oops.
+
 Fri Apr 15 16:37:45 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: updates

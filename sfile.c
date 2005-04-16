@@ -402,7 +402,9 @@ gpointer
 sformat_new_pointer (const char *name,
                      SType      *target_type)
 {
-    return sformat_new_value (name, TYPE_POINTER);
+    Fragment *fragment = sformat_new_value (name, TYPE_POINTER);
+    /* FIXME: store the target type in the fragment */
+    return fragment;
 }
 
 gpointer
@@ -1442,7 +1444,7 @@ disaster (int status)
     case BZ_OUTBUFF_FULL:
 	error = "BZ_OUTBUFF_FULL";
 	break;
-	
+
     default:
 	error = "Unknown error";
 	break;
@@ -1450,8 +1452,6 @@ disaster (int status)
     
     g_error ("Failed to compress file: %s\n", error);
 }
-
-#include <bzlib.h>
 
 static void
 bz2_compress (const guchar *input, int input_length,
@@ -1565,9 +1565,6 @@ sfile_output_save (SFileOutput  *sfile,
 
     g_free (compressed);
     
-    /* FIXME, cut-and-paste the g_file_write() implementation
-     * as long as it isn't in glib
-     */
     retval = file_replace (filename, output->str, - 1, err);
     
     g_string_free (output, TRUE);

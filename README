@@ -11,7 +11,7 @@ program "sysprof".
 - The module must be compiled with the same compiler that compiled the 
   kernel it is going to be used with. For most systems that is just
   the system compiler, but if you have upgraded your kernel it is
-  possible the one was compiled with a difference compiler.
+  possible the one was compiled with a different compiler.
 
   In that case, "insmod sysprof-module.ko" will produce this 
   error message:

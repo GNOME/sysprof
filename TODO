@@ -6,54 +6,11 @@ Before 1.0:
 		- or block unloading until all processes have exited
 	- Find out what happened here:
 
-[ Try and reproduce by having a ptraced process malloc/mmap a page of memory, then have the
-  ptracing process read a byte from it. 
-]
-
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: Unable to handle kernel NULL pointer dereference at virtual address 000001b8
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel:  printing eip:
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: c017342c
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: *pde = 00000000
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: Oops: 0000 [#1]
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: Modules linked in: sysprof_module(U) i2c_algo_bit md5 ipv6 parport_pc lp parport autofs4 sunrpc video button battery ac ohci1394 ieee1394 uhci_hcd ehci_hcd hw_random tpm_atmel tpm i2c_i801 i2c_core snd_intel8x0 snd_ac97_codec snd_pcm_oss snd_mixer_oss snd_pcm snd_timer snd soundcore snd_page_alloc e1000 floppy dm_snapshot dm_zero dm_mirror ext3 jbd dm_mod ata_piix libata sd_mod scsi_mod
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: CPU:    0
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: EIP:    0060:[<c017342c>]    Not tainted VLI
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: EFLAGS: 00010287   (2.6.11-1.1225_FC4)
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: EIP is at grab_swap_token+0x35/0x21f
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: eax: 0bd48023   ebx: d831d028   ecx: 00000282   edx: 00000000
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: esi: c1b72934   edi: c1045820   ebp: c1b703f0   esp: c18dbdd8
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: ds: 007b   es: 007b   ss: 0068
-Apr 11 15:42:08 great-sage-equal-to-heaven kernel: Process events/0 (pid: 3, threadinfo=c18db000 task=f7e62000)
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel: Stack: 000011a8 00000000 000011a8 c1b703f0 c0151731 c016f58f 000011a8 c1b72934
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:        000011a8 c0166415 c1b72934 c1b72934 c0163768 ee7ccc38 f459fbf8 bf92e7b8
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:        f6c6a934 c0103b92 bfdaba18 c1b703f0 00000001 c1b81bfc c1b72934 bfdaba18
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel: Call Trace:
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0151731>] find_get_page+0x9/0x24
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c016f58f>] read_swap_cache_async+0x32/0x83Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0166415>] do_swap_page+0x262/0x600
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0163768>] pte_alloc_map+0xc6/0x1e6
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0103b92>] common_interrupt+0x1a/0x20
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c01673f0>] handle_mm_fault+0x1da/0x31d
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c016488e>] __follow_page+0xa2/0x10d
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0164a6f>] get_user_pages+0x145/0x6ee
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0161f66>] kmap_high+0x52/0x44e
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0103b92>] common_interrupt+0x1a/0x20
-Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<f8cbb19d>] x_access_process_vm+0x111/0x1a5 [sysprof_module]
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<f8cbb24a>] read_user_space+0x19/0x1d [sysprof_module]
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<f8cbb293>] read_frame+0x35/0x51 [sysprof_module]
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<f8cbb33a>] generate_stack_trace+0x8b/0xb4
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<f8cbb3a2>] do_generate+0x3f/0xa0 [sysprof_module]
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c0138d7a>] worker_thread+0x1b0/0x450
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c0379ccd>] schedule+0x30d/0x780
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c011bdb6>] __wake_up_common+0x39/0x59
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<f8cbb363>] do_generate+0x0/0xa0 [sysprof_module]
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c011bd71>] default_wake_function+0x0/0xc
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c0138bca>] worker_thread+0x0/0x450
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c013f3cb>] kthread+0x87/0x8b
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c013f344>] kthread+0x0/0x8b
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c0101275>] kernel_thread_helper+0x5/0xb
-Apr 11 15:42:10 great-sage-equal-to-heaven kernel: Code: e0 8b 00 8b 50 74 8b 1d c4 55 3d c0 39
-da 0f 84 9b 01 00 00 a1 60 fc 3c c0 39 05 30 ec 48 c0 78 05 83 c4 20 5b c3 a1 60 fc 3c c0 <3b> 82 b8 01 00 00 78 ee 81 3d ac 55 3d c0 3c 4b 24 1d 0f 85 78
-
+	- Hopefully the oops at the end of this file is gone now that
+	  we use mmput/get_task_mm.  For older kernels those symbols
+	  are not exported though, so we will probably have to either
+          use the old way (directly accessing the mm's) or just not
+          support those kernels.
 
 * Interface
 	- If the current profile has a name, display it in the title bar
@@ -338,3 +295,49 @@ It is possible that we simply need a better concept of Process:
 - autoexpand descendant tree
 - make double clicks work
 - fix leaks
+
+
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: Unable to handle kernel NULL pointer dereference at virtual address 000001b8
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel:  printing eip:
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: c017342c
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: *pde = 00000000
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: Oops: 0000 [#1]
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: Modules linked in: sysprof_module(U) i2c_algo_bit md5 ipv6 parport_pc lp parport autofs4 sunrpc video button battery ac ohci1394 ieee1394 uhci_hcd ehci_hcd hw_random tpm_atmel tpm i2c_i801 i2c_core snd_intel8x0 snd_ac97_codec snd_pcm_oss snd_mixer_oss snd_pcm snd_timer snd soundcore snd_page_alloc e1000 floppy dm_snapshot dm_zero dm_mirror ext3 jbd dm_mod ata_piix libata sd_mod scsi_mod
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: CPU:    0
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: EIP:    0060:[<c017342c>]    Not tainted VLI
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: EFLAGS: 00010287   (2.6.11-1.1225_FC4)
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: EIP is at grab_swap_token+0x35/0x21f
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: eax: 0bd48023   ebx: d831d028   ecx: 00000282   edx: 00000000
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: esi: c1b72934   edi: c1045820   ebp: c1b703f0   esp: c18dbdd8
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: ds: 007b   es: 007b   ss: 0068
+Apr 11 15:42:08 great-sage-equal-to-heaven kernel: Process events/0 (pid: 3, threadinfo=c18db000 task=f7e62000)
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel: Stack: 000011a8 00000000 000011a8 c1b703f0 c0151731 c016f58f 000011a8 c1b72934
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:        000011a8 c0166415 c1b72934 c1b72934 c0163768 ee7ccc38 f459fbf8 bf92e7b8
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:        f6c6a934 c0103b92 bfdaba18 c1b703f0 00000001 c1b81bfc c1b72934 bfdaba18
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel: Call Trace:
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0151731>] find_get_page+0x9/0x24
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c016f58f>] read_swap_cache_async+0x32/0x83Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0166415>] do_swap_page+0x262/0x600
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0163768>] pte_alloc_map+0xc6/0x1e6
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0103b92>] common_interrupt+0x1a/0x20
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c01673f0>] handle_mm_fault+0x1da/0x31d
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c016488e>] __follow_page+0xa2/0x10d
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0164a6f>] get_user_pages+0x145/0x6ee
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0161f66>] kmap_high+0x52/0x44e
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<c0103b92>] common_interrupt+0x1a/0x20
+Apr 11 15:42:09 great-sage-equal-to-heaven kernel:  [<f8cbb19d>] x_access_process_vm+0x111/0x1a5 [sysprof_module]
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<f8cbb24a>] read_user_space+0x19/0x1d [sysprof_module]
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<f8cbb293>] read_frame+0x35/0x51 [sysprof_module]
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<f8cbb33a>] generate_stack_trace+0x8b/0xb4
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<f8cbb3a2>] do_generate+0x3f/0xa0 [sysprof_module]
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c0138d7a>] worker_thread+0x1b0/0x450
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c0379ccd>] schedule+0x30d/0x780
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c011bdb6>] __wake_up_common+0x39/0x59
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<f8cbb363>] do_generate+0x0/0xa0 [sysprof_module]
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c011bd71>] default_wake_function+0x0/0xc
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c0138bca>] worker_thread+0x0/0x450
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c013f3cb>] kthread+0x87/0x8b
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c013f344>] kthread+0x0/0x8b
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel:  [<c0101275>] kernel_thread_helper+0x5/0xb
+Apr 11 15:42:10 great-sage-equal-to-heaven kernel: Code: e0 8b 00 8b 50 74 8b 1d c4 55 3d c0 39
+da 0f 84 9b 01 00 00 a1 60 fc 3c c0 39 05 30 ec 48 c0 78 05 83 c4 20 5b c3 a1 60 fc 3c c0 <3b> 82 b8 01 00 00 78 ee 81 3d ac 55 3d c0 3c 4b 24 1d 0f 85 78
+

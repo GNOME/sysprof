@@ -76,9 +76,7 @@ init_userspace_reader (userspace_reader *reader,
 	reader->page = NULL;
 }
 
-/* This is mostly cutted and pasted from ptrace.c
- * I removed some locking and stuff though. I hope it
- * wasn't important.
+/* This function was mostly cutted and pasted from ptrace.c
  */
 
 /* Access another process' address space.
@@ -94,7 +92,14 @@ x_access_process_vm(struct task_struct *tsk, unsigned long addr, void *buf, int 
 	struct page *page;
 	void *old_buf = buf;
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,9)
+	task_lock (tsk);
 	mm = tsk->mm;
+	task_unlock (tsk);
+#else
+	mm = get_task_mm (tsk);
+#endif
+	
 	if (!mm)
 		return 0;
 
@@ -115,7 +120,7 @@ x_access_process_vm(struct task_struct *tsk, unsigned long addr, void *buf, int 
 			bytes = PAGE_SIZE-offset;
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-		
+
 		flush_cache_page(vma, addr);
 
 #endif
@@ -136,6 +141,10 @@ x_access_process_vm(struct task_struct *tsk, unsigned long addr, void *buf, int 
 		addr += bytes;
 	}
 	up_read(&mm->mmap_sem);
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,9)
+	mmput(mm);
+#endif
 	
 	return buf - old_buf;
 }

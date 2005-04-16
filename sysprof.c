@@ -745,7 +745,6 @@ on_about_activated (GtkWidget *widget, gpointer data)
 {
 #define OSLASH "\303\270"
     Application *app = data;
-    const char *artist[] = { "Diana Fong", NULL } ;
 
     gtk_show_about_dialog (GTK_WINDOW (app->main_window),
 			   "logo", app->icon,

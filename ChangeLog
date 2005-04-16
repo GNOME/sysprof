@@ -1,3 +1,11 @@
+Sat Apr 16 14:15:55 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Update
+	
+	* sysprof-module.c (x_access_process_vm): On kernel 2.6.9 and
+	later use get_task_mm()/mmput() instead of directly accessing
+	task->mm.
+
 Sat Apr 16 01:54:18 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Add backtrace for kernel oops.

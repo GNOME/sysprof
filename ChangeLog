@@ -1,3 +1,7 @@
+Sat Apr 16 19:51:48 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-module.c (read_user_space): Read a whole page at a time.
+
 Sat Apr 16 14:15:55 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Update

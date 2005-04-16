@@ -61,20 +61,9 @@ typedef struct userspace_reader userspace_reader;
 struct userspace_reader
 {
 	struct task_struct *task;
-	unsigned long user_page;
-	unsigned long kernel_page;
-	struct page *page;
+	unsigned long cache_address;
+	unsigned long *cache;
 };
-
-static void
-init_userspace_reader (userspace_reader *reader,
-		       struct task_struct *task)
-{
-	reader->task = task;
-	reader->user_page = 0;
-	reader->kernel_page = 0;
-	reader->page = NULL;
-}
 
 /* This function was mostly cutted and pasted from ptrace.c
  */
@@ -150,18 +139,47 @@ x_access_process_vm(struct task_struct *tsk, unsigned long addr, void *buf, int 
 }
 
 static int
+init_userspace_reader (userspace_reader *reader,
+		       struct task_struct *task)
+{
+	reader->task = task;
+	reader->cache = kmalloc (PAGE_SIZE, GFP_KERNEL);
+	if (!reader->cache)
+		return 0;
+	reader->cache_address = 0x0;
+	return 1;
+}
+
+static int
 read_user_space (userspace_reader *reader,
 		 unsigned long address,
 		 unsigned long *result)
 {
-	return x_access_process_vm(reader->task, address, result, 4, 0);
+	unsigned long cache_address = reader->cache_address;
+	int index, r;
+	
+	if (!cache_address || cache_address != (address & PAGE_MASK)) {
+		cache_address = address & PAGE_MASK;
+
+		r = x_access_process_vm (reader->task, cache_address,
+					 reader->cache, PAGE_SIZE, 0);
+
+		if (r != PAGE_SIZE)
+			return 0;
+
+		reader->cache_address = cache_address;
+	}
+
+	index = (address - cache_address) / sizeof (unsigned long);
+	
+	*result = reader->cache[index];
+	return 1;
 }
 
 static void
 done_userspace_reader (userspace_reader *reader)
 {
-	if (reader->user_page)
-		kunmap (reader->page);
+	kfree (reader->cache);
 }
 
 typedef struct StackFrame StackFrame;
@@ -214,23 +232,25 @@ generate_stack_trace(struct task_struct *task,
 
 	addr = regs->ebp;
 
-	init_userspace_reader (&reader, task);
-	while (i < SYSPROF_MAX_ADDRESSES && read_frame (&reader, addr, &frame)  &&
-	       addr < START_OF_STACK && addr >= regs->esp) {
+	if (init_userspace_reader (&reader, task))
+	{
+		while (i < SYSPROF_MAX_ADDRESSES &&
+		       read_frame (&reader, addr, &frame)  &&
+		       addr < START_OF_STACK && addr >= regs->esp)
+		{
+			trace->addresses[i++] = (void *)frame.return_address;
+			addr = frame.next;
+		}
 		
-		trace->addresses[i++] = (void *)frame.return_address;
-		addr = frame.next;
+		done_userspace_reader (&reader);
 	}
-	done_userspace_reader (&reader);
-	
+
 	trace->n_addresses = i;
 	if (i == SYSPROF_MAX_ADDRESSES)
 		trace->truncated = 1;
 	else
 		trace->truncated = 0;
 }
-
-struct work_struct work;
 
 DECLARE_WAIT_QUEUE_HEAD (wait_to_be_scanned);
 
@@ -249,6 +269,8 @@ do_generate (void *data)
 
 	mod_timer(&timer, jiffies + INTERVAL);
 }
+
+struct work_struct work;
 
 static void
 on_timer(unsigned long dong)

@@ -68,8 +68,10 @@ struct Application
     
     GtkWidget *		start_item;
     GtkWidget *		profile_item;
-    GtkWidget *		open_item;
+    GtkWidget *		reset_item;
     GtkWidget *		save_as_item;
+    GtkWidget *		open_item;
+    
     GtkWidget *		samples_label;
     
     Profile *		profile;
@@ -177,22 +179,32 @@ update_sensitivity (Application *app)
 	break;
     }
     
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (active_radio_button), TRUE);
+
+    /* "profile" widgets */
     gtk_widget_set_sensitive (GTK_WIDGET (app->profile_button),
 			      sensitive_profile_button);
+    gtk_widget_set_sensitive (GTK_WIDGET (app->profile_item),
+			      sensitive_profile_button);
     
-    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (active_radio_button), TRUE);
-    
+    /* "save as" widgets */
     gtk_widget_set_sensitive (GTK_WIDGET (app->save_as_button),
 			      sensitive_save_as_button);
-    
+    gtk_widget_set_sensitive (app->save_as_item, sensitive_save_as_button);
+
+    /* "start" widgets */
     gtk_widget_set_sensitive (GTK_WIDGET (app->start_button),
-			      sensitive_start_button); 
+			      sensitive_start_button);
+    gtk_widget_set_sensitive (GTK_WIDGET (app->start_item),
+			      sensitive_start_button);
     
 #if 0
     /* FIXME: gtk+ doesn't handle changes in sensitivity in response
      * to a click on the same button very well
      */
     gtk_widget_set_sensitive (GTK_WIDGET (app->reset_button),
+			      sensitive_reset_button);
+    gtk_widget_set_sensitive (GTK_WIDGET (app->reset_item),
 			      sensitive_reset_button);
 #endif
     
@@ -749,10 +761,7 @@ on_about_activated (GtkWidget *widget, gpointer data)
     gtk_show_about_dialog (GTK_WINDOW (app->main_window),
 			   "logo", app->icon,
 			   "name", APPLICATION_NAME,
-#if 0
-			   "copyright", "Copyright S"OSLASH"ren Sandmann",
-#endif
-			   "comments", "FIXME, write something informative here",
+			   "copyright", "Copyright 2004-2005, S"OSLASH"ren Sandmann",
 			   NULL);
 }
 
@@ -836,7 +845,8 @@ overwrite_file (GtkWindow *window,
 }
 
 static void
-on_save_as_clicked (gpointer widget, gpointer data)
+on_save_as_clicked (gpointer widget,
+		    gpointer data)
 {
     Application *app = data;
     GtkWidget *dialog;
@@ -890,9 +900,48 @@ on_save_as_clicked (gpointer widget, gpointer data)
 }
 
 static void
-on_open_clicked (gpointer widget, gpointer data)
+set_loaded_profile (Application *app,
+		    const char  *name,
+		    Profile     *profile)
+{
+    g_return_if_fail (name != NULL);
+    g_return_if_fail (profile != NULL);
+    
+    set_busy (app->main_window, TRUE);
+    
+    delete_data (app);
+	
+    app->state = DISPLAYING;
+    
+    app->n_samples = profile_get_size (profile);
+    
+    app->profile = profile;
+    app->profile_from_file = TRUE;
+    
+    fill_lists (app);
+    
+    update_sensitivity (app);
+    
+    set_busy (app->main_window, FALSE);
+}
+
+static void
+show_could_not_open (Application *app,
+		     const char *filename,
+		     GError *err)
+{
+    sorry (app->main_window,
+	   "Could not open %s: %s",
+	   filename,
+	   err->message);
+}
+	    
+static void
+on_open_clicked (gpointer widget,
+		 gpointer data)
 {
     Application *app = data;
+    gchar *filename = NULL;
     Profile *profile = NULL;
     GtkWidget *dialog;
 
@@ -913,7 +962,6 @@ on_open_clicked (gpointer widget, gpointer data)
     if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
 	GError *err = NULL;
-	gchar *filename;
 	
 	filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 
@@ -924,40 +972,27 @@ on_open_clicked (gpointer widget, gpointer data)
 	if (!profile)
 	{
 	    set_busy (dialog, FALSE);
-	    
-	    sorry (app->main_window, "Could not open %s: %s",
-		   filename, err->message);
-	    
+
+	    show_could_not_open (app, filename, err);
+	    g_error_free (err);
 	    g_free (filename);
+	    
+	    filename = NULL;
 	    goto retry;
 	}
 	
 	set_busy (dialog, FALSE);
-	
-	g_free (filename);
     }
-    
+
     gtk_widget_destroy (dialog);
 
-    set_busy (app->main_window, TRUE);
-    
     if (profile)
     {
-	delete_data (app);
-	
-	app->state = DISPLAYING;
-	
-	app->n_samples = profile_get_size (profile);
-	
-	app->profile = profile;
-	app->profile_from_file = TRUE;
-
-	fill_lists (app);
-
-	update_sensitivity (app);
-    }
+	g_assert (filename);
+	set_loaded_profile (app, filename, profile);
     
-    set_busy (app->main_window, FALSE);
+	g_free (filename);
+    }
 }
 
 static void
@@ -967,7 +1002,8 @@ on_delete (GtkWidget *window)
 }
 
 static void
-on_object_selection_changed (GtkTreeSelection *selection, gpointer data)
+on_object_selection_changed (GtkTreeSelection *selection,
+			     gpointer data)
 {
     Application *app = data;
     GtkTreePath *path;
@@ -991,7 +1027,8 @@ on_object_selection_changed (GtkTreeSelection *selection, gpointer data)
 }
 
 static void
-really_goto_object (Application *app, ProfileObject *object)
+really_goto_object (Application *app,
+		    ProfileObject *object)
 {
     GtkTreeModel *profile_objects;
     GtkTreeIter iter;
@@ -1139,6 +1176,7 @@ build_gui (Application *app)
     /* Menu items */
     app->start_item = glade_xml_get_widget (xml, "start_item");
     app->profile_item = glade_xml_get_widget (xml, "profile_item");
+    app->reset_item = glade_xml_get_widget (xml, "reset_item");
     app->open_item = glade_xml_get_widget (xml, "open_item");
     app->save_as_item = glade_xml_get_widget (xml, "save_as_item");
     
@@ -1147,18 +1185,23 @@ build_gui (Application *app)
     g_assert (app->save_as_item);
     g_assert (app->open_item);
     
+#if 0
     g_signal_connect (G_OBJECT (app->start_item), "activate",
-		      G_CALLBACK (on_start_toggled), app);
+		      G_CALLBACK (toggle_start_button), app);
     
     g_signal_connect (G_OBJECT (app->profile_item), "activate",
 		      G_CALLBACK (on_profile_toggled), app);
     
+    g_signal_connect (G_OBJECT (app->reset_item), "activate",
+		      G_CALLBACK (on_reset_clicked), app);
+#endif
+
     g_signal_connect (G_OBJECT (app->open_item), "activate",
 		      G_CALLBACK (on_open_clicked), app);
     
     g_signal_connect (G_OBJECT (app->save_as_item), "activate",
 		      G_CALLBACK (on_save_as_clicked), app);
-    
+
     /* quit */
     g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit")), "activate",
 		      G_CALLBACK (on_delete), NULL);
@@ -1249,6 +1292,40 @@ application_new (void)
     return app;
 }
 
+typedef struct
+{
+    const char *filename;
+    Application *app;
+} FileOpenData;
+
+static gboolean
+load_file (gpointer data)
+{
+    FileOpenData *file_open_data = data;
+    const char *filename = file_open_data->filename;
+    Application *app = file_open_data->app;
+    GError *err = NULL;
+    Profile *profile;
+
+    set_busy (app->main_window, TRUE);
+    
+    profile = profile_load (filename, &err);
+    
+    set_busy (app->main_window, FALSE);
+    
+    if (profile)
+    {
+	set_loaded_profile (app, filename, profile);
+    }
+    else
+    {
+	show_could_not_open (app, filename, err);
+	g_error_free (err);
+    }
+
+    return FALSE;
+}
+
 int
 main (int argc, char **argv)
 {
@@ -1266,6 +1343,16 @@ main (int argc, char **argv)
     build_gui (app);
     
     update_sensitivity (app);
+
+    if (argc > 1)
+    {
+	FileOpenData *file_open_data = g_new0 (FileOpenData, 1);
+
+file_open_data->filename = argv[1];
+	file_open_data->app = app;
+
+	g_idle_add (load_file, file_open_data);
+    }
     
     gtk_main ();
     

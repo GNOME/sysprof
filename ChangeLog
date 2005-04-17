@@ -1,3 +1,18 @@
+Sun Apr 17 00:20:41 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (on_open_clicked): Factor out some stuff in their own
+	functions.
+
+	* sysprof.c (load_file): Idle handler to load files given on the
+	command line.
+
+	* sysprof.c (main): If a filename is passed on the command line,
+	load it in an idle handler.
+
+Sun Apr 17 00:19:03 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
 Sat Apr 16 19:51:48 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof-module.c (read_user_space): Read a whole page at a time.

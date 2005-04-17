@@ -4,23 +4,18 @@ Before 1.0:
 	- grep FIXME
 	- When the module is unloaded, kill all processes blocking in read
 		- or block unloading until all processes have exited
-	- Find out what happened here:
-
-	- Hopefully the oops at the end of this file is gone now that
-	  we use mmput/get_task_mm.  For older kernels those symbols
-	  are not exported though, so we will probably have to either
-          use the old way (directly accessing the mm's) or just not
-          support those kernels.
 
 * Interface
 	- If the current profile has a name, display it in the title bar
 	- Sould just install the kernel module if it running as root, pop up
 	  a dialog if not. Note we must be able to start without module now, 
 	  since it is useful to just load profiles from disk.
+		- Is there a portable way of asking for the root password?
+		- Install a small suid program that only inserts the module?
+			(instant security hole ..)
         - hook up menu items view/start etc (or possibly get rid of them or
 	  move them)
 	- Consider expanding a few more levels of a new descendants tree 
-	- give profiles on the command line
 
 * Build system
 	- Need to make "make install" work (how do you know where to install
@@ -33,6 +28,10 @@ Before 1.0:
 	- auto*?
 	- .desktop file
 	- translation should be hooked up 
+
+
+
+
 
 Before 1.2:
 
@@ -91,9 +90,6 @@ Before 1.2:
 	- speedprof seems to report that lots of time is spent in 
 	  stack_stash_foreach() and also in generate_key()
 - add an 'everything' object. It is really needed for a lot of things
-- make profile.c more agnostic to processes and functions etc. Ideally
-  it should just take a set of stack traces containing "presentation
-  objects" and do something sensible with it.
 
 - Non-GUI version that can save in a format the GUI can understand.
   Could be used for profiling startup etc. Would preferably be able to
@@ -107,6 +103,9 @@ Before 1.2:
 
 - possibly add dependency on glib 2.8 if it is released at that point.
   (g_file_replace())
+
+
+
 
 Later:
 
@@ -196,7 +195,18 @@ Later:
    been read will stay in cache (for short profile runs you can assume that with disk,
    but not for long ones).
 
+
+
+
 DONE:
+
+- give profiles on the command line
+
+- Hopefully the oops at the end of this file is gone now that
+  we use mmput/get_task_mm.  For older kernels those symbols
+  are not exported though, so we will probably have to either
+  use the old way (directly accessing the mm's) or just not
+  support those kernels.
 
 - Need an icon
 
@@ -296,6 +306,8 @@ It is possible that we simply need a better concept of Process:
 - make double clicks work
 - fix leaks
 
+
+- Find out what happened here:
 
 Apr 11 15:42:08 great-sage-equal-to-heaven kernel: Unable to handle kernel NULL pointer dereference at virtual address 000001b8
 Apr 11 15:42:08 great-sage-equal-to-heaven kernel:  printing eip:

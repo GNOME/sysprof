@@ -12,12 +12,18 @@ profile.c treeviewutils.c sfile.c
 OBJS	  := $(addsuffix .o, $(basename $(C_FILES)))
 BINARY    := sysprof
 MODULE    := sysprof-module
-INCLUDE   := -isystem /lib/modules/`uname -r`/build/include
-MODCFLAGS := -O2 -DMODULE -D__KERNEL__ -Wall ${INCLUDE}
 KDIR      := /lib/modules/$(shell uname -r)/build
+INCLUDE   := -isystem $(KDIR)/include
+MODCFLAGS := -O2 -DMODULE -D__KERNEL__ -Wall ${INCLUDE}
 MODULE    := sysprof-module
 
-all: $(BINARY) $(MODULE).o
+all: check $(BINARY) $(MODULE).o
+
+check:
+	pkg-config gtk+-2.0 libglade-2.0
+	@[ -r $(KDIR)/include/linux/kernel.h ] || (echo No kernel headers found; exit 1)
+	@[ -r /usr/include/bzlib.h ] || (echo bzip2 header file not found; exit 1)
+	touch check
 
 $(BINARY): $(OBJS) depend
 	$(CC) $(OBJS) $(LIBS) -o$(BINARY)

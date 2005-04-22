@@ -157,8 +157,13 @@ read_user_space (userspace_reader *reader,
 {
 	unsigned long cache_address = reader->cache_address;
 	int index, r;
-	
+
 	if (!cache_address || cache_address != (address & PAGE_MASK)) {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION (2,6,11)
+		if (!check_user_page_readable (reader->task->mm, address))
+			return 0;
+#endif
+		
 		cache_address = address & PAGE_MASK;
 
 		r = x_access_process_vm (reader->task, cache_address,
@@ -258,7 +263,7 @@ static void
 do_generate (void *data)
 {
 	struct task_struct *task = data;
-	
+
 	generate_stack_trace(task, head);
 	wake_up_process (task);
 		

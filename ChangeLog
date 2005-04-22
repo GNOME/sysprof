@@ -1,3 +1,8 @@
+Fri Apr 22 00:09:16 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-module.c (read_user_space): On >= 2.6.11 check that the
+	pages are present and readable before reading them.
+
 Tue Apr 19 23:26:45 2005  Kristian Høgsberg  <krh@bitplanet.net>
 
 	* Makefile (check): Add simple check target that runs a sanity

@@ -39,7 +39,8 @@ Before 1.2:
 	- when you click something in the main list and we don't respond
 		within 50ms (or perhaps when we expect to not be able to do
 		so (can we know the size in advance?))
-	- instead of as we do now: set the busy cursor unconditionally
+	- instead of what we do now: set the busy cursor unconditionally
+	
 - Reorganise stackstash and profile
 
 	- stackstash should just take traces of addresses without knowing
@@ -82,6 +83,7 @@ Before 1.2:
 - Consider adding KDE-style nested callgraph view
 - Add support for line numbers within functions
 - consider caching [filename => bin_file]
+- rethink caller list, not terribly useful at the moment.
 
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.

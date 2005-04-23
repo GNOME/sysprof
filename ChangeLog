@@ -1,3 +1,9 @@
+Sat Apr 23 18:38:46 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sfile.c (post_process_read_instructions): Check pointer types
+
+	* sfile.c (post_process_instructions_recurse): Delete this unused function
+
 Sat Apr 23 17:49:33 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof-module.c (page_readable): New function to check if the

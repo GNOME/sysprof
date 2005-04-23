@@ -44,6 +44,7 @@ enum
     TYPE_INTEGER,
     TYPE_GENERIC_RECORD,
     TYPE_GENERIC_LIST,
+    TYPE_VOID,
     N_BUILTIN_TYPES,
 };
 
@@ -60,11 +61,13 @@ struct Transition
     TransitionKind kind;
     State *to;
     char *element;         /* for begin/end transitions */
+    SType target_type;	   /* for pointer transitions */
 };
 
 struct State
 {
     GQueue *transitions;
+    guint marked : 1;	   /* Used by sformat_free */
 };
 
 struct Fragment
@@ -148,6 +151,7 @@ transition_new (const char *element,
     t->kind = kind;
     t->type = type;
     t->to = to;
+    t->target_type = TYPE_UNDEFINED;
     
     if (from)
         g_queue_push_tail (from->transitions, t);
@@ -403,7 +407,12 @@ sformat_new_pointer (const char *name,
                      SType      *target_type)
 {
     Fragment *fragment = sformat_new_value (name, TYPE_POINTER);
-    /* FIXME: store the target type in the fragment */
+    Transition *value;
+
+    /* store the target type in the value transition */ 
+    value = fragment->enter->to->transitions->head->data;
+    value->target_type = define_type (target_type, TYPE_VOID);
+    
     return fragment;
 }
 
@@ -467,7 +476,7 @@ state_transition_end (const State *state, const char *element, SType *type)
 }
 
 static const State *
-state_transition_text (const State *state, SType *type)
+state_transition_text (const State *state, SType *type, SType *target_type)
 {
     GList *list;
     
@@ -479,6 +488,9 @@ state_transition_text (const State *state, SType *type)
         {
             *type = transition->type;
 
+	    if (*type == TYPE_POINTER && target_type)
+		*target_type = transition->target_type;
+	    
             /* There will never be more than one allowed value transition for
              * a given state
              */
@@ -520,6 +532,7 @@ struct Instruction
         
         struct
         {
+	    SType target_type;
             int target_id;
             Instruction *target_instruction;
             gpointer target_object;
@@ -692,8 +705,6 @@ hook_up_pointers (SFileInput *file)
 {
     int i;
 
-    /* FIXME: we need to check the types here */
-    
 #if 0
     g_print ("emfle\n");
 #endif
@@ -852,13 +863,14 @@ handle_text (GMarkupParseContext *context,
     BuildContext *build = user_data;
     Instruction instruction;
     char *free_me;
+    SType target_type;
 
     text = free_me = g_strstrip (g_strdup (text));
 
     if (strlen (text) == 0)
         goto out;
         
-    build->state = state_transition_text (build->state, &instruction.type);
+    build->state = state_transition_text (build->state, &instruction.type, &target_type);
     if (!build->state)
     {
         int line, ch;
@@ -876,6 +888,7 @@ handle_text (GMarkupParseContext *context,
     switch (instruction.type)
     {
     case TYPE_POINTER:
+	instruction.u.pointer.target_type = target_type;
         if (!get_number (text, &instruction.u.pointer.target_id))
         {
             set_invalid_content_error (err, "Contents '%s' of pointer element is not a number", text);
@@ -929,45 +942,6 @@ free_instructions (Instruction *instructions, int n_instructions)
     g_free (instructions);
 }
 
-/* This functions counts the number of instructions in each list, and
- * matches up pointers with the lists/records they point to.
- * FIMXE: think of a better name
- */
-static Instruction *
-post_process_instructions_recurse (Instruction *first, GHashTable *instructions_by_id, GError **err)
-{
-    Instruction *instruction;
-    int n_elements;
-
-    g_assert (first->kind == BEGIN);
-    
-    instruction = first + 1;
-
-    n_elements = 0;
-    while (instruction->kind != END)
-    {
-        if (instruction->kind == BEGIN)
-        {
-            instruction = post_process_instructions_recurse (instruction, instructions_by_id, err);
-            if (!instruction)
-                return NULL;
-        }
-        else
-        {
-            instruction++;
-        }
-        
-        n_elements++;
-    }
-
-    first->u.begin.n_elements = n_elements;
-    first->u.begin.end_instruction = instruction;
-
-    instruction->u.end.begin_instruction = first;
-    
-    return instruction + 1;
-}
-        
 /* This functions makes end instructions point to the corresponding
  * begin instructions, and counts the number of instructions
  * contained in a begin/end pair
@@ -979,7 +953,7 @@ process_instruction_pairs (Instruction *first)
     int n_elements;
 
     g_assert (first->kind == BEGIN);
-    
+
     instruction = first + 1;
 
     n_elements = 0;
@@ -995,7 +969,7 @@ process_instruction_pairs (Instruction *first)
         {
             instruction++;
         }
-        
+
         n_elements++;
     }
 
@@ -1003,10 +977,10 @@ process_instruction_pairs (Instruction *first)
     first->u.begin.end_instruction = instruction;
 
     instruction->u.end.begin_instruction = first;
-    
+
     return instruction + 1;
 }
-        
+      
 static gboolean
 post_process_read_instructions (Instruction *instructions, int n_instructions, GError **err)
 {
@@ -1049,11 +1023,21 @@ post_process_read_instructions (Instruction *instructions, int n_instructions, G
                 
                 if (target)
                 {
-                    instruction->u.pointer.target_instruction = target;
+		    if (instruction->u.pointer.target_type == target->type)
+		    {
+			instruction->u.pointer.target_instruction = target;
+		    }
+		    else
+		    {
+			set_invalid_content_error (err, "Id %d references an element of the wrong type",
+						   instruction->u.pointer.target_id);
+			retval = FALSE;
+			break;
+		    }
                 }
                 else
                 {
-                    set_invalid_content_error (err, "Id %d doesn't reference any record or list\n",
+                    set_invalid_content_error (err, "Id %d doesn't reference any record or list",
                                                instruction->u.pointer.target_id);
                     retval = FALSE;
                     break;
@@ -1243,7 +1227,7 @@ sfile_check_value (SFileOutput *file,
     file->state = state_transition_begin (file->state, name, &tmp_type);
     g_return_if_fail (file->state && tmp_type == type);
 
-    file->state = state_transition_text (file->state, &type);
+    file->state = state_transition_text (file->state, &type, NULL);
     g_return_if_fail (file->state && tmp_type == type);
     
     file->state = state_transition_end (file->state, name, &type);
@@ -1551,10 +1535,6 @@ sfile_output_save (SFileOutput  *sfile,
             break;
         }
     }
-
-#if 0
-    g_print (output->str);
-#endif
 
     /* FIMXE: bz2 compressing the output is probably
      * interesting at some point. For now just make sure

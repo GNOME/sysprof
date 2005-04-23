@@ -42,7 +42,10 @@ typedef guint SType;
  *  For formats consider:
  *
  *   Format *format_new (void);
- *   void format_new_record (Format *f, Record *r);
+ *   void format_set_record (Format *f, Content *r);
+ *   Content *new_record (Content *c1, ...);
+ *
+ *   List *format_new_list (Format *f
  *   
  *
  * Consider adding optional elements:

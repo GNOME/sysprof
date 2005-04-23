@@ -72,29 +72,50 @@ struct userspace_reader
  * Source/target buffer must be kernel space, 
  * Do not walk the page table directly, use get_user_pages
  */
- 
+
+static struct mm_struct *
+get_mm (struct task_struct *tsk)
+{
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,9)
+	struct mm_struct *mm;
+	
+	task_lock (tsk);
+	mm = tsk->mm;
+	task_unlock (tsk);
+
+	return mm;
+#else
+	return get_task_mm (tsk);
+#endif
+}
+
+static void
+put_mm (struct mm_struct *mm)
+{
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,9)
+	mmput(mm);
+#endif
+}
+
 static int
-x_access_process_vm(struct task_struct *tsk, unsigned long addr, void *buf, int len, int write)
+x_access_process_vm (struct task_struct *tsk,
+		     unsigned long addr,
+		     void *buf, int len, int write)
 {
 	struct mm_struct *mm;
 	struct vm_area_struct *vma;
 	struct page *page;
 	void *old_buf = buf;
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,9)
-	task_lock (tsk);
-	mm = tsk->mm;
-	task_unlock (tsk);
-#else
-	mm = get_task_mm (tsk);
-#endif
+	mm = get_mm (tsk);
 	
 	if (!mm)
 		return 0;
 
 	down_read(&mm->mmap_sem);
 	/* ignore errors, just check how much was sucessfully transfered */
-	while (len) {
+	while (len)
+	{
 		int bytes, ret, offset;
 		void *maddr;
 
@@ -131,9 +152,7 @@ x_access_process_vm(struct task_struct *tsk, unsigned long addr, void *buf, int 
 	}
 	up_read(&mm->mmap_sem);
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,9)
-	mmput(mm);
-#endif
+	put_mm (mm);
 	
 	return buf - old_buf;
 }
@@ -151,6 +170,27 @@ init_userspace_reader (userspace_reader *reader,
 }
 
 static int
+page_readable (userspace_reader *reader, unsigned long address)
+{
+#if LINUX_VERSION_CODE >= KERNEL_VERSION (2,6,11)
+		struct mm_struct *mm;
+		int result = 1;
+
+		mm = get_mm (reader->task);
+
+		if (!mm)
+			return 0;
+		
+		if (!check_user_page_readable (reader->task->mm, address))
+			result = 0;
+
+		put_mm (mm);
+
+		return result;
+#endif
+}
+
+static int
 read_user_space (userspace_reader *reader,
 		 unsigned long address,
 		 unsigned long *result)
@@ -158,11 +198,10 @@ read_user_space (userspace_reader *reader,
 	unsigned long cache_address = reader->cache_address;
 	int index, r;
 
-	if (!cache_address || cache_address != (address & PAGE_MASK)) {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION (2,6,11)
-		if (!check_user_page_readable (reader->task->mm, address))
+	if (!cache_address || cache_address != (address & PAGE_MASK))
+	{
+		if (!page_readable (reader, address))
 			return 0;
-#endif
 		
 		cache_address = address & PAGE_MASK;
 
@@ -240,7 +279,7 @@ generate_stack_trace(struct task_struct *task,
 	if (init_userspace_reader (&reader, task))
 	{
 		while (i < SYSPROF_MAX_ADDRESSES &&
-		       read_frame (&reader, addr, &frame)  &&
+		       read_frame (&reader, addr, &frame) &&
 		       addr < START_OF_STACK && addr >= regs->esp)
 		{
 			trace->addresses[i++] = (void *)frame.return_address;

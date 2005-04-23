@@ -1,3 +1,16 @@
+Sat Apr 23 17:49:33 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-module.c (page_readable): New function to check if the
+	page is readable before reading. Noop on kernel <= 2.6.11
+
+	* sysprof-module.c (get_mm, put_mm): New functions to confine
+	#ifdefs. 
+
+Sat Apr 23 17:48:22 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* Makefile (MODCFLAGS): Disable optimization as I suspect
+	the oops is related to miscompilation.
+
 Fri Apr 22 00:09:16 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof-module.c (read_user_space): On >= 2.6.11 check that the

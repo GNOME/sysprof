@@ -14,7 +14,7 @@ BINARY    := sysprof
 MODULE    := sysprof-module
 KDIR      := /lib/modules/$(shell uname -r)/build
 INCLUDE   := -isystem $(KDIR)/include
-MODCFLAGS := -O2 -DMODULE -D__KERNEL__ -Wall ${INCLUDE}
+MODCFLAGS := -DMODULE -D__KERNEL__ -Wall ${INCLUDE}
 MODULE    := sysprof-module
 
 all: check $(BINARY) $(MODULE).o

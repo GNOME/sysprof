@@ -1,3 +1,11 @@
+Sat Apr 23 19:12:52 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* profile.c: Store a pointer to the root of the call tree
+
+	* profile.c (profile_load): Call sfile_input_free()
+
+	* sfile.c (sformat_free): Implement this function
+
 Sat Apr 23 18:38:46 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sfile.c (post_process_read_instructions): Check pointer types

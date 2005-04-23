@@ -81,6 +81,7 @@ create_format (void)
 	sformat_new_record (
 	    "profile", NULL,
 	    sformat_new_integer ("size"),
+	    sformat_new_pointer ("call_tree", &node_type),
 	    sformat_new_list (
 		"objects", NULL,
 		sformat_new_record (
@@ -152,6 +153,7 @@ profile_save (Profile		 *profile,
     sfile_begin_add_record (output, "profile");
 
     sfile_add_integer (output, "size", profile->size);
+    sfile_add_pointer (output, "call_tree", profile->call_tree);
     
     sfile_begin_add_list (output, "objects");
     g_hash_table_foreach (profile->nodes_by_object, add_object, output);
@@ -210,6 +212,7 @@ profile_load (const char *filename, GError **err)
     sfile_begin_get_record (input, "profile");
 
     sfile_get_integer (input, "size", &profile->size);
+    sfile_get_pointer (input, "call_tree", &profile->call_tree);
 
     n = sfile_begin_get_list (input, "objects");
     for (i = 0; i < n; ++i)
@@ -244,19 +247,13 @@ profile_load (const char *filename, GError **err)
 	
 	sfile_end_get (input, "node", node);
 
-	if (!profile->call_tree)
-	    profile->call_tree = node;
-	
 	g_assert (node->siblings != (void *)0x11);
     }
     sfile_end_get (input, "nodes", NULL);
     sfile_end_get (input, "profile", NULL);
     
     sformat_free (format);
-
-    /* FIXME: why don't we just store the root node? */
-    while (profile->call_tree && profile->call_tree->parent)
-	profile->call_tree = profile->call_tree->parent;
+    sfile_input_free (input);
     
     make_hash_table (profile->call_tree, profile->nodes_by_object);
 

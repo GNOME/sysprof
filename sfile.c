@@ -67,7 +67,6 @@ struct Transition
 struct State
 {
     GQueue *transitions;
-    guint marked : 1;	   /* Used by sformat_free */
 };
 
 struct Fragment
@@ -128,14 +127,6 @@ set_invalid_content_error (GError **err, const char *format, ...)
     va_end (args);
 }
 
-static State *
-state_new (void)
-{
-    State *state = g_new (State, 1);
-    state->transitions = g_queue_new ();
-    return state;
-}
-
 static Transition *
 transition_new (const char *element,
                 TransitionKind kind,
@@ -157,6 +148,38 @@ transition_new (const char *element,
         g_queue_push_tail (from->transitions, t);
     
     return t;
+}
+
+static void
+transition_free (Transition *transition)
+{
+    if (transition->element)
+	g_free (transition->element);
+    g_free (transition);
+}
+
+static State *
+state_new (void)
+{
+    State *state = g_new (State, 1);
+    state->transitions = g_queue_new ();
+    return state;
+}
+
+static void
+state_free (State *state)
+{
+    GList *list;
+    
+    for (list = state->transitions->head; list; list = list->next)
+    {
+	Transition *transition = list->data;
+
+	transition_free (transition);
+    }
+    
+    g_queue_free (state->transitions);
+    g_free (state);
 }
 
 SFormat *
@@ -188,10 +211,41 @@ sformat_new_optional (gpointer f)
 }
 #endif
 
+static void
+add_state (State *state, GHashTable *seen_states, GQueue *todo_list)
+{
+    if (!g_hash_table_lookup (seen_states, state))
+    {
+	g_hash_table_insert (seen_states, state, state);
+	g_queue_push_tail (todo_list, state);
+    }
+}
+
 void
 sformat_free (SFormat *format)
 {
-    /* FIXME */
+    GHashTable *seen_states = g_hash_table_new (g_direct_hash, g_direct_equal);
+    GQueue *todo_list = g_queue_new ();
+    
+    add_state (format->begin, seen_states, todo_list);
+    add_state (format->end, seen_states, todo_list);
+
+    while (!g_queue_is_empty (todo_list))
+    {
+	GList *list;
+	State *state = g_queue_pop_head (todo_list);
+
+	for (list = state->transitions->head; list != NULL; list = list->next)
+	{
+	    Transition *transition = list->data;
+	    add_state (transition->to, seen_states, todo_list);
+	}
+
+	state_free (state);
+    }
+    
+    g_hash_table_destroy (seen_states);
+    g_queue_free (todo_list);
 }
 
 static GQueue *
@@ -1552,6 +1606,12 @@ sfile_output_save (SFileOutput  *sfile,
     return retval;
 }
 
+
+void
+sfile_input_free	(SFileInput  *file)
+{
+    /* FIXME */
+}
 
 void
 sfile_output_free (SFileOutput *sfile)

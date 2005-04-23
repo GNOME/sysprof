@@ -54,22 +54,29 @@ typedef guint SType;
  *
  * enums, optionals, selections, empties
  *
+ *
+ *==============================================
+ * Also think about versioning - apps will want to be able to read and write
+ * different versions of the format, and they want to be able to sniff the
+ * format + version
+ *
  */
 
 /* - Describing Types - */
-SFormat *sformat_new (gpointer f);
-gpointer sformat_new_record (const char  *name,
-			     SType	 *type,
-			     gpointer     content,
-			     ...);
-gpointer sformat_new_list (const char  *name,
-			   SType       *type,
-			   gpointer	content);
-gpointer sformat_new_pointer (const char  *name,
-			      SType	  *target_type);
-gpointer sformat_new_integer (const char  *name);
-gpointer sformat_new_string (const char  *name);
-void sformat_free (SFormat *format);
+SFormat *sformat_new         (gpointer    f);
+gpointer sformat_new_record  (const char *name,
+			      SType      *type,
+			      gpointer    content,
+			      ...);
+gpointer sformat_new_list    (const char *name,
+			      SType      *type,
+			      gpointer    content);
+gpointer sformat_new_pointer (const char *name,
+			      SType      *target_type);
+gpointer sformat_new_integer (const char *name);
+gpointer sformat_new_string  (const char *name);
+void     sformat_free        (SFormat    *format);
+
 
 /* - Reading - */
 SFileInput *  sfile_load        (const char  *filename,
@@ -89,6 +96,7 @@ void     sfile_get_string       (SFileInput  *file,
 void     sfile_end_get          (SFileInput  *file,
 				 const char *name,
 				 gpointer     object);
+void	 sfile_input_free	(SFileInput  *file);
 
 #if 0
 /* incremental loading (worth considering at least) */

@@ -106,7 +106,8 @@ Before 1.2:
 - possibly add dependency on glib 2.8 if it is released at that point.
   (g_file_replace())
 
-
+- Find out how gdb does backtraces; they may have a better way. Also
+  find out what dwarf2 is and how to use it.
 
 
 Later:

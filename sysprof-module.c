@@ -121,9 +121,9 @@ x_access_process_vm (struct task_struct *tsk,
 
 		ret = get_user_pages(tsk, mm, addr, 1,
 				write, 1, &page, &vma);
-		if (ret <= 0)
+		if (ret <= 0) {
 			break;
-
+		}
 		bytes = len;
 		offset = addr & (PAGE_SIZE-1);
 		if (bytes > PAGE_SIZE-offset)
@@ -188,6 +188,8 @@ page_readable (userspace_reader *reader, unsigned long address)
 
 		return result;
 #endif
+		
+		return 1;
 }
 
 static int
@@ -208,8 +210,9 @@ read_user_space (userspace_reader *reader,
 		r = x_access_process_vm (reader->task, cache_address,
 					 reader->cache, PAGE_SIZE, 0);
 
-		if (r != PAGE_SIZE)
+		if (r != PAGE_SIZE) {
 			return 0;
+		}
 
 		reader->cache_address = cache_address;
 	}
@@ -250,6 +253,25 @@ read_frame (userspace_reader *reader, unsigned long addr, StackFrame *frame)
 	return 1;
 }
 
+static struct pt_regs *
+get_regs (struct task_struct *task)
+{
+	/* This seems to work in Linux 2.6.11 */
+        void *stack_top = (void *)task->thread.esp0;
+        return stack_top - sizeof(struct pt_regs);
+
+#if 0
+	/* This used to work, but doesn't anymore */
+	return ((struct pt_regs *) (THREAD_SIZE + (unsigned long) task->thread_info)) - 1;
+#endif
+
+#if 0
+	/* One might suspect that this would work, but it doesn't
+	 */
+	return task_pt_regs (task);
+#endif
+}
+
 static void
 generate_stack_trace(struct task_struct *task,
 		     SysprofStackTrace *trace)
@@ -259,7 +281,8 @@ generate_stack_trace(struct task_struct *task,
 #else
 #  define START_OF_STACK 0xBFFFFFFF
 #endif
-	struct pt_regs *regs = ((struct pt_regs *) (THREAD_SIZE + (unsigned long) task->thread_info)) - 1;
+	struct pt_regs *regs = get_regs (task);  // task->thread.regs;
+	
 	StackFrame frame;
 	unsigned long addr;
 	userspace_reader reader;
@@ -276,6 +299,10 @@ generate_stack_trace(struct task_struct *task,
 
 	addr = regs->ebp;
 
+#if 0
+	printk (KERN_ALERT "ebp: %p\n", regs->ebp);
+#endif
+	
 	if (init_userspace_reader (&reader, task))
 	{
 		while (i < SYSPROF_MAX_ADDRESSES &&

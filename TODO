@@ -112,6 +112,9 @@ Before 1.2:
 
 Later:
 
+- Applications should be able to say "start profiling", "stop profiling"
+  so that you can limit the profiling to specific areas.
+
 - Find out how to hack around gtk+ bug causing multiple double clicks 
   to get eaten.
 

@@ -1,3 +1,10 @@
+Sat Apr 30 15:44:12 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
+	* sysprof-module.c (get_regs): Change the way we get registers for
+	a task so that it works with 2.6.11
+
 Sat Apr 23 19:17:18 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Updates

@@ -862,7 +862,7 @@ handle_begin_element (GMarkupParseContext *parse_context,
         return;
     }
 
-    /* FIXME: is there really a reason to add begin/end instructions for values? */
+    /* FIXME - not10: is there really a reason to add begin/end instructions for values? */
     instruction.name = g_strdup (element_name);
     instruction.kind = BEGIN;
     g_array_append_val (build->instructions, instruction);

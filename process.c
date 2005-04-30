@@ -24,12 +24,12 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include "process.h"
 #include "binfile.h"
 
-/* FIXME: this should  be done with getpagesize() */
-#define PAGE_SIZE 4096
+#define PAGE_SIZE (getpagesize())
 
 static GHashTable *processes_by_cmdline;
 static GHashTable *processes_by_pid;

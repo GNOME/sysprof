@@ -1,3 +1,9 @@
+Sat Apr 30 16:57:23 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* process.c (PAGE_SIZE): Use getpagesize()
+
+	* TODO: More updates
+
 Sat Apr 30 15:44:12 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Updates

@@ -33,7 +33,7 @@
 #include "profile.h"
 #include "treeviewutils.h"
 
-/* FIXME */
+/* FIXME - not10 */
 #define _(a) a
 
 #define APPLICATION_NAME "System Profiler"
@@ -83,7 +83,7 @@ struct Application
     int			timeout_id;
     int			generating_profile;
     
-    gboolean		profile_from_file; /* FIXME: This is a kludge. Figure out how
+    gboolean		profile_from_file; /* FIXME - not10: This is a kludge. Figure out how
 					    * to maintain the application model properly
 					    *
 					    * The fundamental issue is that the state of
@@ -199,7 +199,7 @@ update_sensitivity (Application *app)
 			      sensitive_start_button);
     
 #if 0
-    /* FIXME: gtk+ doesn't handle changes in sensitivity in response
+    /* FIXME - not10: gtk+ doesn't handle changes in sensitivity in response 
      * to a click on the same button very well
      */
     gtk_widget_set_sensitive (GTK_WIDGET (app->reset_button),

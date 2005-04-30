@@ -27,13 +27,62 @@ Before 1.0:
 	    (ask for sucess/failure-stories in 0.9.x releases)
 	- auto*?
 	- .desktop file
-	- translation should be hooked up 
-
-
-
-
 
 Before 1.2:
+
+- translation should be hooked up 
+- Fixing the oops in kernels < 2.6.11
+
+	- Make the process waiting in poll() responsible for extracting
+	  the backtrace. Give a copy of the entire stack rather than doing
+	  the walk inside the kernel. That would allow us to do more complex 
+	  algorithms in userspace.
+
+		New model:
+			- Two arrays, 
+				one of actual scanned stacks
+				one of tasks that need to be scanned
+			  One wait queue,
+				wait for data
+
+			- in read() wait for stack data:
+				scan_tasks()
+				if (!stack_data)
+					return -EWOULDBLOCK;
+
+			  in poll()
+				while (!stack data) {
+					wait_for_data();
+					scan_tasks();
+				}
+				return READABLE;
+
+			  scan_tasks() is a function that converts waiting
+			  tasks into data, and wakes them up.
+
+			- in timer interrupt:
+
+				if (someone waiting in poll() &&
+				    current && current != that_someone &&
+				    current is runnable)
+				{
+					stop current;
+					add current to queue;
+					wake wait_for_data;
+				}
+
+			This way, we will have a real userspace process
+			that can take the page faults.
+
+- Find out how gdb does backtraces; they may have a better way. Also
+  find out what dwarf2 is and how to use it. Look into libunwind.
+  It seems gdb is capable of doing backtraces of code that neither has
+  a framepointer nor has debug info. It appears gdb uses the contents
+  of the ".eh_frame" section. There is also an ".eh_frame_hdr" section.
+
+http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
+
+  look in dwarf2-frame.[ch] in the gdb distribution. 
 
 - Make busy cursors more intelligent
 	- when you click something in the main list and we don't respond
@@ -105,9 +154,6 @@ Before 1.2:
 
 - possibly add dependency on glib 2.8 if it is released at that point.
   (g_file_replace())
-
-- Find out how gdb does backtraces; they may have a better way. Also
-  find out what dwarf2 is and how to use it.
 
 
 Later:

@@ -212,7 +212,7 @@ profile_load (const char *filename, GError **err)
     sfile_begin_get_record (input, "profile");
 
     sfile_get_integer (input, "size", &profile->size);
-    sfile_get_pointer (input, "call_tree", &profile->call_tree);
+    sfile_get_pointer (input, "call_tree", (void **)&profile->call_tree);
 
     n = sfile_begin_get_list (input, "objects");
     for (i = 0; i < n; ++i)
@@ -295,7 +295,7 @@ generate_key (Process *process, gulong address)
 static char *
 generate_presentation_name (Process *process, gulong address)
 {
-    /* FIXME using 0 to indicate "process" is broken */
+    /* FIXME - not10 - using 0 to indicate "process" is broken */
     if (address)
     {
 	const Symbol *symbol = process_lookup_symbol (process, address);
@@ -306,10 +306,6 @@ generate_presentation_name (Process *process, gulong address)
     {
 	return g_strdup_printf ("%s", process_get_cmdline (process));
     }
-#if 0
-    /* FIXME - don't return addresses and stuff */
-    return generate_key (profile, process, address);
-#endif
 }
 
 static void

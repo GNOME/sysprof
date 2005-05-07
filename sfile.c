@@ -353,6 +353,9 @@ sformat_new_union (const char *name,
 }
 #endif
 
+#define RECORD_SHIFT	(sizeof (SType) * 8 - 1)
+#define LIST_SHIFT	(sizeof (SType) * 8 - 2)
+    
 static SType
 define_type (SType *type, SType fallback)
 {
@@ -367,6 +370,20 @@ define_type (SType *type, SType fallback)
     }
     
     return fallback;
+}
+
+static gboolean
+is_record_type (SType type)
+{
+    /* FIMXE - not10 */
+    return TRUE;
+}
+
+static gboolean
+is_list_type (SType type)
+{
+    /* FIXME - not10 */
+    return TRUE;
 }
 
 gpointer
@@ -640,20 +657,6 @@ struct SFileInput
     Instruction *current_instruction;
     GHashTable *instructions_by_location;
 };
-
-static gboolean
-is_record_type (SType type)
-{
-    /* FIXME */
-    return TRUE;
-}
-
-static gboolean
-is_list_type (SType type)
-{
-    /* FIXME */
-    return TRUE;
-}
 
 void
 sfile_begin_get_record (SFileInput *file, const char *name)
@@ -1610,13 +1613,26 @@ sfile_output_save (SFileOutput  *sfile,
 void
 sfile_input_free	(SFileInput  *file)
 {
-    /* FIXME */
+    free_instructions (file->instructions, file->n_instructions);
+
+    g_hash_table_destroy (file->instructions_by_location);
+
+    g_free (file);
 }
 
 void
 sfile_output_free (SFileOutput *sfile)
 {
-    /* FIXME */
+    Instruction *instructions;
+    int n_instructions;
+
+    n_instructions = sfile->instructions->len;
+    instructions = g_array_free (sfile->instructions, FALSE);
+
+    free_instructions (instructions, n_instructions);
+
+    g_hash_table_destroy (sfile->objects);
+    g_free (sfile);
 }
 
 

@@ -27,9 +27,9 @@ typedef guint SType;
  *
  * Serializer *serializer_new (SerializerFormat *format);
  *
- * SerializerReadContext *serializer_begin_read (serializer *serialize,
- *						 const char *filename,
- *                                               GError *err);
+ * SerializerReadContext *serializer_begin_read_filename (serializer *serialize,
+ *						          const char *filename,
+ *                                                        GError *err);
  * serializer_get_blah (SerializerReadContext *);
  * void serialzier_end_read (...);
  *
@@ -82,8 +82,10 @@ void     sformat_free        (SFormat    *format);
 SFileInput *  sfile_load        (const char  *filename,
 				 SFormat       *format,
 				 GError     **err);
-void     sfile_begin_get_record (SFileInput  *file, const char *name);
-int      sfile_begin_get_list   (SFileInput  *file, const char *name);
+void     sfile_begin_get_record (SFileInput  *file,
+				 const char *name);
+int      sfile_begin_get_list   (SFileInput  *file,
+				 const char *name);
 void     sfile_get_pointer      (SFileInput  *file,
 				 const char *name,
 				 gpointer    *pointer);
@@ -111,9 +113,9 @@ void         sfile_loader_free     (SFileLoader  *loader);
 
 /* - Writing - */
 
-/* FIXME: see if we can't get rid of the names. It should be
-= * possible to pass NULL to state_transition_check() and
- * have it interprete that as "whatever". We would need
+/* FIXME - not10: see if we can't get rid of the names. It
+ * should be possible to pass NULL to state_transition_check()
+ * and have it interprete that as "whatever". We would need
  * a way to get the name back then, though.
  */
 

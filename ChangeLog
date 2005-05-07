@@ -1,3 +1,9 @@
+Sat May  7 13:57:17 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sfile.c (sfile_output_free): Implement this function
+	
+	* sfile.c (sfile_input_free): Implement this function
+
 Fri May  6 23:38:48 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof-module.c (do_generate): Another desparate hack to try

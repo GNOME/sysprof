@@ -180,7 +180,7 @@ separate_debug_file_exists (const char *name, unsigned long crc)
     return crc == file_crc;
 }
 
-/* FIXME: this should be detected by config.h */
+/* FIXME - not10: this should probably be detected by config.h -- find out what gdb does*/
 static const char *debug_file_directory = "/usr/lib/debug";
 
 static char *

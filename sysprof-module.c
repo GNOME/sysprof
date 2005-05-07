@@ -335,9 +335,17 @@ do_generate (void *data)
 		
 	if (head++ == &stack_traces[N_TRACES - 1])
 		head = &stack_traces[0];
-	
-	wake_up (&wait_for_trace);
 
+	/* This is crack, what we actually want is "put_task_struct()",
+	 * but that macros uses __put_task_struct() which is not exported.
+	 *
+	 * It does look to me like the worst that will happen is a rare
+	 * leak, which is certainly better than an oops.
+	 */
+	if (atomic_dec_and_test(&(task)->usage)) {
+		free_task (task);
+	}
+	
 	mod_timer(&timer, jiffies + INTERVAL);
 }
 
@@ -348,7 +356,7 @@ on_timer(unsigned long dong)
 {
 	if (current && current->state == TASK_RUNNING && current->pid != 0)
 	{
-		set_current_state (TASK_UNINTERRUPTIBLE);
+		get_task_struct (current);
 		
 		INIT_WORK (&work, do_generate, current);
 		

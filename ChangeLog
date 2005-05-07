@@ -1,3 +1,8 @@
+Fri May  6 23:38:48 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-module.c (do_generate): Another desparate hack to try
+	and prevent the oops.
+
 Sat Apr 30 16:57:23 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* process.c (PAGE_SIZE): Use getpagesize()

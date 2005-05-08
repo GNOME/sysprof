@@ -6,26 +6,16 @@ Before 1.0:
 
 * Interface
 	- If the current profile has a name, display it in the title bar
-	- Sould just install the kernel module if it running as root, pop up
-	  a dialog if not. Note we must be able to start without module now, 
-	  since it is useful to just load profiles from disk.
-		- Is there a portable way of asking for the root password?
-		- Install a small suid program that only inserts the module?
-			(instant security hole ..)
         - hook up menu items view/start etc (or possibly get rid of them or
 	  move them)
 	- Consider expanding a few more levels of a new descendants tree 
 
 * Build system
-	- Need to make "make install" work (how do you know where to install
-	  kernel modules?)
-		- in /lib/modules/`uname -r`/kernel/drivers/
-		- need to run depmod as root after that
-		- Then modprobe run as root should correctly find it.
+	- Find out if that PREFIX business in Makefile was really such
+	  a great idea.
 	- Find out what distributions it actually works on
 	    (ask for sucess/failure-stories in 0.9.x releases)
 	- auto*?
-	- .desktop file
 
 Before 1.2:
 
@@ -158,6 +148,9 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 
 Later:
 
+- .desktop file
+	[Is this worth it? You will often want to start it as root, 
+	 and you will need to insert the module from the command line]
 - Applications should be able to say "start profiling", "stop profiling"
   so that you can limit the profiling to specific areas.
 
@@ -251,6 +244,18 @@ Later:
 
 
 DONE:
+
+- Sould just install the kernel module if it running as root, pop up
+  a dialog if not. Note we must be able to start without module now, 
+  since it is useful to just load profiles from disk.
+	- Is there a portable way of asking for the root password?
+	- Install a small suid program that only inserts the module?
+		(instant security hole ..)
+- Need to make "make install" work (how do you know where to install
+  kernel modules?)
+	- in /lib/modules/`uname -r`/kernel/drivers/
+	- need to run depmod as root after that
+	- Then modprobe run as root should correctly find it.
 
 - grep FIXME
 

@@ -430,6 +430,15 @@ sorry (GtkWidget *parent_window,
     gtk_widget_destroy (dialog);
 }
 
+
+static gboolean
+load_module (void)
+{
+    int retval = system ("/sbin/modprobe sysprof-module");
+
+    return (retval == 0);
+}
+
 static void
 on_start_toggled (GtkWidget *widget, gpointer data)
 {
@@ -441,19 +450,28 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 
     if (app->input_fd == -1)
     {
-	int fd = open ("/proc/sysprof-trace", O_RDONLY);
+	int fd;
+
+	fd = open ("/proc/sysprof-trace", O_RDONLY);
 	if (fd < 0)
 	{
-	    sorry (app->main_window,
-		   "Can't open /proc/sysprof-trace. You need to insert\n"
-		   "the sysprof kernel module. Type\n"
-		   "\n"
-		   "       modprobe sysprof-module\n"
-		   "\n"
-		   "as root.");
+	    load_module();
 
-	    update_sensitivity (app);
-	    return;
+	    fd = open ("/proc/sysprof-trace", O_RDONLY);
+
+	    if (fd < 0)
+	    {
+		sorry (app->main_window,
+		       "Can't open /proc/sysprof-trace. You need to insert\n"
+		       "the sysprof kernel module. Run\n"
+		       "\n"
+		       "       modprobe sysprof-module\n"
+		       "\n"
+		       "as root.");
+		
+		update_sensitivity (app);
+		return;
+	    }
 	}
 
 	app->input_fd = fd;

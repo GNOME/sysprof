@@ -23,7 +23,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
+#if 0
 #include <bzlib.h>
+#endif
 #include "sfile.h"
 
 typedef struct State State;
@@ -1468,6 +1470,7 @@ file_replace (const gchar *filename,
               gssize	     length,
               GError	   **error);
 
+#if 0
 static void
 disaster (int status)
 {
@@ -1530,6 +1533,7 @@ bz2_compress (const guchar *input, int input_length,
     if (output_length)
 	*output_length = compressed_size;
 }
+#endif
 
 gboolean
 sfile_output_save (SFileOutput  *sfile,
@@ -1593,12 +1597,14 @@ sfile_output_save (SFileOutput  *sfile,
         }
     }
 
-    /* FIMXE: bz2 compressing the output is probably
+#if 0
+    /* FIXME - not10: bz2 compressing the output is probably
      * interesting at some point. For now just make sure
      * it works without actually using it.
      */
     bz2_compress (output->str, output->len,
                   &compressed, &compressed_size);
+#endif
 
     g_free (compressed);
     

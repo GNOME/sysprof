@@ -331,20 +331,17 @@ do_generate (void *data)
 	struct task_struct *task = data;
 
 	generate_stack_trace(task, head);
-	wake_up_process (task);
 		
 	if (head++ == &stack_traces[N_TRACES - 1])
 		head = &stack_traces[0];
 
-	/* This is crack, what we actually want is "put_task_struct()",
-	 * but that macros uses __put_task_struct() which is not exported.
-	 *
-	 * It does look to me like the worst that will happen is a rare
-	 * leak, which is certainly better than an oops.
+	wake_up (&wait_for_trace);
+
+	/* If a task dies between the time we see it in on_timer and
+	 * the time we get here, it will be leaked. If __put_task_struct9)
+	 * was exported, then we could do this properly
 	 */
-	if (atomic_dec_and_test(&(task)->usage)) {
-		free_task (task);
-	}
+	atomic_dec (&(task)->usage);
 	
 	mod_timer(&timer, jiffies + INTERVAL);
 }
@@ -357,7 +354,7 @@ on_timer(unsigned long dong)
 	if (current && current->state == TASK_RUNNING && current->pid != 0)
 	{
 		get_task_struct (current);
-		
+
 		INIT_WORK (&work, do_generate, current);
 		
 		schedule_work (&work);

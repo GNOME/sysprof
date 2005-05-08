@@ -105,7 +105,7 @@ show_samples_timeout (gpointer data)
 {
     Application *app = data;
     char *label;
-    
+
     switch (app->state)
     {
     case INITIAL:
@@ -446,9 +446,9 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	{
 	    sorry (app->main_window,
 		   "Can't open /proc/sysprof-trace. You need to insert\n"
-		   "the sysprof kernel module. Type \n"
+		   "the sysprof kernel module. Type\n"
 		   "\n"
-		   "       insmod sysprof-module.ko\n"
+		   "       modprobe sysprof-module\n"
 		   "\n"
 		   "as root.");
 
@@ -1162,11 +1162,11 @@ build_gui (Application *app)
     
     set_shadows (xml);
     
-    xml = glade_xml_new ("./sysprof.glade", NULL, NULL);
+    xml = glade_xml_new (GLADE_DIR "/sysprof.glade", NULL, NULL);
     
     /* Main Window */
     app->main_window = glade_xml_get_widget (xml, "main_window");
-    app->icon = gdk_pixbuf_new_from_file ("sysprof-icon.png", NULL);
+    app->icon = gdk_pixbuf_new_from_file (PIXMAP_DIR "/sysprof-icon.png", NULL);
 
     gtk_window_set_icon (GTK_WINDOW (app->main_window), app->icon);
     

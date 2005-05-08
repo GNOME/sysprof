@@ -1,7 +1,6 @@
 Before 1.0:
 
 * Correctness
-	- grep FIXME
 	- When the module is unloaded, kill all processes blocking in read
 		- or block unloading until all processes have exited
 
@@ -30,6 +29,7 @@ Before 1.0:
 
 Before 1.2:
 
+- grep FIXME - not10
 - translation should be hooked up 
 - Fixing the oops in kernels < 2.6.11
 
@@ -251,6 +251,8 @@ Later:
 
 
 DONE:
+
+- grep FIXME
 
 - give profiles on the command line
 

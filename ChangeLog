@@ -1,3 +1,15 @@
+Sun May  8 15:45:08 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-module.c (do_generate): Restore lost wake_up().
+
+	* sfile.c: Comment out use of bz2.
+
+	* Makefile: Add an install target. Add GLADE_DIR and PIXMAP_DIR
+
+	* sysprof.c (build_gui): use GLADE_DIR and PIXMAP_DIR here.
+
+	* TODO: Updates.
+
 Sat May  7 13:57:17 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sfile.c (sfile_output_free): Implement this function

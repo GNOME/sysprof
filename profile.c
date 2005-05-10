@@ -295,7 +295,9 @@ generate_key (Process *process, gulong address)
 static char *
 generate_presentation_name (Process *process, gulong address)
 {
-    /* FIXME - not10 - using 0 to indicate "process" is broken */
+    /* FIXME - not10
+     * using 0 to indicate "process" is broken
+     */
     if (address)
     {
 	const Symbol *symbol = process_lookup_symbol (process, address);

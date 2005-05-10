@@ -190,7 +190,8 @@ update_sensitivity (Application *app)
     /* "save as" widgets */
     gtk_widget_set_sensitive (GTK_WIDGET (app->save_as_button),
 			      sensitive_save_as_button);
-    gtk_widget_set_sensitive (app->save_as_item, sensitive_save_as_button);
+    gtk_widget_set_sensitive (app->save_as_item,
+			      sensitive_save_as_button);
 
     /* "start" widgets */
     gtk_widget_set_sensitive (GTK_WIDGET (app->start_button),
@@ -1366,7 +1367,7 @@ main (int argc, char **argv)
     {
 	FileOpenData *file_open_data = g_new0 (FileOpenData, 1);
 
-file_open_data->filename = argv[1];
+	file_open_data->filename = argv[1];
 	file_open_data->app = app;
 
 	g_idle_add (load_file, file_open_data);

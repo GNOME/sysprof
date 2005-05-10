@@ -367,7 +367,7 @@ define_type (SType *type, SType fallback)
     {
         if (*type == 0)
             *type = type_ids++;
-        
+
         return *type;
     }
     
@@ -592,6 +592,8 @@ struct Instruction
     {
         struct
         {
+	    gboolean is_list;
+	    gboolean is_record;
             int n_elements;
             int id;
             Instruction *end_instruction;
@@ -800,8 +802,8 @@ sfile_end_get          (SFileInput  *file,
 {
     Instruction *instruction = file->current_instruction++;
     
-    g_return_if_fail (instruction->kind == END &&
-                      strcmp (instruction->name, name) == 0);
+    g_return_if_fail (instruction->kind == END);
+    g_return_if_fail (strcmp (instruction->name, name) == 0);
 
     instruction->u.end.object = object;
 

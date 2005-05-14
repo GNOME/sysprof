@@ -1547,8 +1547,10 @@ sfile_output_save (SFileOutput  *sfile,
     GString *output;
     int indent;
     gboolean retval;
+#if 0
     guchar *compressed;
     size_t compressed_size;
+#endif
 
     g_return_val_if_fail (sfile != NULL, FALSE);
 
@@ -1606,9 +1608,9 @@ sfile_output_save (SFileOutput  *sfile,
      */
     bz2_compress (output->str, output->len,
                   &compressed, &compressed_size);
-#endif
 
     g_free (compressed);
+#endif
     
     retval = file_replace (filename, output->str, - 1, err);
     
@@ -1635,7 +1637,7 @@ sfile_output_free (SFileOutput *sfile)
     int n_instructions;
 
     n_instructions = sfile->instructions->len;
-    instructions = g_array_free (sfile->instructions, FALSE);
+    instructions = (Instruction *)g_array_free (sfile->instructions, FALSE);
 
     free_instructions (instructions, n_instructions);
 

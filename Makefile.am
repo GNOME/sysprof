@@ -24,7 +24,7 @@ sysprof_LDADD = $(DEP_LIBS)
 INCLUDES = 					   \
 	$(DEP_CFLAGS)				   \
 	-DDATADIR=\"$(pkgdatadir)\"		   \
-	-DPKGLIBDIR=\"$(pkglibdir)\"
+	-DPIXMAPDIR=\"$(datadir)/pixmaps\"
 
 #	memprof.desktop		
 #	memprof.spec.in

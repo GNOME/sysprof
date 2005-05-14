@@ -217,10 +217,9 @@ void
 restore_sort_state (GtkTreeView *view, gpointer st)
 {
 	SortState *state = st;
-	GtkTreeModel *model;
+	GtkTreeModel *model = gtk_tree_view_get_model (view);
 
 	if (state) {
-		model = gtk_tree_view_get_model (view);
 		if (state->is_sorted && model && GTK_IS_TREE_SORTABLE (model)) {
 			gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model),
 							      state->sort_column,

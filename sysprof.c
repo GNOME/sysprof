@@ -84,6 +84,8 @@ struct Application
     
     int			timeout_id;
     int			generating_profile;
+
+    char *		loaded_profile;
     
     gboolean		profile_from_file; /* FIXME - not10: This is a kludge. Figure out how
 					    * to maintain the application model properly
@@ -117,6 +119,10 @@ show_samples_timeout (gpointer data)
     case PROFILING:
     case DISPLAYING:
 	label = g_strdup_printf ("Samples: %d", app->n_samples);
+	break;
+
+    default:
+	g_assert_not_reached();
 	break;
     }
     
@@ -179,6 +185,10 @@ update_sensitivity (Application *app)
 	sensitive_samples_label = FALSE;
 	active_radio_button = app->profile_button;
 	break;
+
+    default:
+	g_assert_not_reached();
+	break;
     }
     
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (active_radio_button), TRUE);
@@ -215,7 +225,7 @@ update_sensitivity (Application *app)
     gtk_widget_set_sensitive (GTK_WIDGET (app->callers_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->descendants_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->samples_label), sensitive_samples_label);
-    
+
     queue_show_samples (app);
 }
 
@@ -357,6 +367,33 @@ on_read (gpointer data)
 }
 
 static void
+set_application_title (Application *app,
+		       const char * name)
+{
+    char *new_name;
+    if (name)
+	new_name = g_path_get_basename (name);
+    else
+	new_name = NULL;
+    
+    if (app->loaded_profile)
+	g_free (app->loaded_profile);
+
+    app->loaded_profile = new_name;
+    
+    if (app->loaded_profile)
+    {
+	gtk_window_set_title (GTK_WINDOW (app->main_window),
+			      app->loaded_profile);
+    }
+    else
+    {
+	gtk_window_set_title (GTK_WINDOW (app->main_window),
+			      "System Profiler");
+    }
+}
+
+static void
 delete_data (Application *app)
 {
     if (app->profile)
@@ -376,6 +413,7 @@ delete_data (Application *app)
     app->n_samples = 0;
     queue_show_samples (app);
     app->profile_from_file = FALSE;
+    set_application_title (app, NULL);
 }
 
 static void
@@ -913,6 +951,7 @@ on_save_as_clicked (gpointer widget,
 	    g_free (filename);
 	    goto retry;
 	}
+	set_application_title (app, filename);
 	set_busy (dialog, FALSE);
 	g_free (filename);
     }
@@ -940,6 +979,8 @@ set_loaded_profile (Application *app,
     app->profile_from_file = TRUE;
     
     fill_lists (app);
+
+    set_application_title (app, name);
     
     update_sensitivity (app);
     
@@ -1159,7 +1200,7 @@ set_sizes (GtkWindow *window,
 }
 
 static void
-set_shadows (GladeXML *xml)
+set_shadows (void)
 {
     /* Get rid of motif out-bevels */
     gtk_rc_parse_string (
@@ -1180,14 +1221,14 @@ build_gui (Application *app)
     GladeXML *xml;
     GtkTreeSelection *selection;
     GtkTreeViewColumn *col;
-    
-    set_shadows (xml);
+
+    set_shadows ();
     
     xml = glade_xml_new (DATADIR "/sysprof.glade", NULL, NULL);
     
     /* Main Window */
     app->main_window = glade_xml_get_widget (xml, "main_window");
-    app->icon = gdk_pixbuf_new_from_file (DATADIR"/pixmaps" "/sysprof-icon.png", NULL);
+    app->icon = gdk_pixbuf_new_from_file (PIXMAPDIR "/sysprof-icon.png", NULL);
 
     gtk_window_set_icon (GTK_WINDOW (app->main_window), app->icon);
     

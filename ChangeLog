@@ -1,3 +1,28 @@
+Sat May 14 16:36:32 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (set_application_title): Update the title bar on
+	load/save
+
+	* treeviewutils.c, sfile.c: Fix compiler warnings
+
+	* Makefile.am: define PIXMAPDIR
+	
+Sat May 14 15:49:52 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	Auto*ify.
+	
+	* TODO: updates
+
+	* AUTHORS, INSTALL, Makefile.am, NEWS, configure.ac: New files
+
+	* module/Makefile: New file
+
+	* module/sysprof-module.c, module/sysprof-module.h: Move these
+	files to their own directy, as the kernel build system does not
+	work very well with auto*.
+
+	* sysprof.c, autogen.sh: Some auto* changes.
+	
 Sun May  8 16:31:32 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: more updates

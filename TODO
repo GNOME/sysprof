@@ -5,17 +5,15 @@ Before 1.0:
 		- or block unloading until all processes have exited
 
 * Interface
-	- If the current profile has a name, display it in the title bar
         - hook up menu items view/start etc (or possibly get rid of them or
 	  move them)
 	- Consider expanding a few more levels of a new descendants tree 
 
 * Build system
-	- Find out if that PREFIX business in Makefile was really such
-	  a great idea.
+	- need to run depmod on install
+	- add an "install-module" target
 	- Find out what distributions it actually works on
 	    (ask for sucess/failure-stories in 0.9.x releases)
-	- auto*?
 
 Before 1.2:
 
@@ -266,6 +264,10 @@ Later:
 
 DONE:
 
+- If the current profile has a name, display it in the title bar
+- auto*?	
+- Find out if that PREFIX business in Makefile was really such
+  a great idea.
 - Sould just install the kernel module if it running as root, pop up
   a dialog if not. Note we must be able to start without module now, 
   since it is useful to just load profiles from disk.

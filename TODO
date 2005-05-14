@@ -21,7 +21,12 @@ Before 1.2:
 
 - grep FIXME - not10
 - translation should be hooked up 
+- Consider adding "at least 5% inclusive cost" filter
+- Ability to generate "screenshots" suitable for mail/blog/etc
 - Fixing the oops in kernels < 2.6.11
+
+	- Oops should be fixed in 1.0, but the stuff below may still
+	  be worth thinking about.
 
 	- Make the process waiting in poll() responsible for extracting
 	  the backtrace. Give a copy of the entire stack rather than doing
@@ -120,7 +125,11 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 		for each leaf
 			add trace to tree (leaf, interesting)
 - Consider adding KDE-style nested callgraph view
+	- probably need a dependency on gtk+ 2.8 for this.
 - Add support for line numbers within functions
+	- Possibly a special "view details" mode, assuming that 
+	  the details of a function are not that interesting 
+	  together with a tree.
 - consider caching [filename => bin_file]
 - rethink caller list, not terribly useful at the moment.
 
@@ -131,6 +140,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	- speedprof seems to report that lots of time is spent in 
 	  stack_stash_foreach() and also in generate_key()
 - add an 'everything' object. It is really needed for a lot of things
+	- should be easy to do with stackstash reorganization.
 
 - Non-GUI version that can save in a format the GUI can understand.
   Could be used for profiling startup etc. Would preferably be able to
@@ -145,6 +155,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 - possibly add dependency on glib 2.8 if it is released at that point.
   (g_file_replace())
 
+- somehow get access to VSEnterprise profiler and see how it works.
 
 Later:
 
@@ -167,7 +178,7 @@ Later:
   Possible solution is for the script binaries to have a function
   called something like 
 
-	__sysprof__generate_stacktrace (char **functions, int n_functions);
+	__sysprof__generate_stacktrace (char **functions, int *n_functions);
 
   that the sysprof kernel module could call (and make return to the kernel).
 
@@ -199,6 +210,13 @@ Later:
 
 	Maybe also get rid of 'callers' by having a new "show details"
 	dialog or something.
+
+	The complete solution here degenerates into "expressions":
+
+		"foo" and ("malloc" or "free")
+
+	Having that would also take care of the "multiple functions"
+	above. Noone would understand it, though.
 		
 - figure out a way to deal with both disk and CPU. Need to make sure that
   things that are UNINTERRUPTIBLE while there are RUNNING tasks are not
@@ -239,6 +257,9 @@ Later:
    Memory is different from disk because you can't reasonably assume that stuff that has
    been read will stay in cache (for short profile runs you can assume that with disk,
    but not for long ones).
+
+
+
 
 
 

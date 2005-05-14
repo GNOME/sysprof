@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include <config.h>
+
 #include <stdio.h>
 #include <gtk/gtk.h>
 #include <stdlib.h>
@@ -28,7 +30,7 @@
 
 #include "binfile.h"
 #include "watch.h"
-#include "sysprof-module.h"
+#include "module/sysprof-module.h"
 #include "stackstash.h"
 #include "profile.h"
 #include "treeviewutils.h"
@@ -1181,11 +1183,11 @@ build_gui (Application *app)
     
     set_shadows (xml);
     
-    xml = glade_xml_new (GLADE_DIR "/sysprof.glade", NULL, NULL);
+    xml = glade_xml_new (DATADIR "/sysprof.glade", NULL, NULL);
     
     /* Main Window */
     app->main_window = glade_xml_get_widget (xml, "main_window");
-    app->icon = gdk_pixbuf_new_from_file (PIXMAP_DIR "/sysprof-icon.png", NULL);
+    app->icon = gdk_pixbuf_new_from_file (DATADIR"/pixmaps" "/sysprof-icon.png", NULL);
 
     gtk_window_set_icon (GTK_WINDOW (app->main_window), app->icon);
     

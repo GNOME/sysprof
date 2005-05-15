@@ -31,4 +31,42 @@ endif
 $(MODULE).o: $(MODULE).c
 	$(KMAKE) modules
 
+
+# Automake rules, as per "Third-Party Makefiles" in the automake manual
+
+all: $(MODULE).o
+
+distdir:
+	cp sysprof-module.c $(distdir)
+	cp sysprof-module.h $(distdir)
+	cp Makefile $(distdir)
+
+install:
+	$(KMAKE) modules_install
+	depmod
+
+install-data:
+install-exec:
+uninstall:
+
+install-info:
+installdirs:
+check:
+installcheck:
+mostlyclean:
+clean:
+	rm -f sysprof-module.ko
+	rm -f sysprof-module.o
+	rm -f sysprof-module.mod.o
+	rm -f sysprof-module.mod.c
+distclean: clean
+maintainer-clean:
+dvi:
+pdf:
+info:
+html:
+tags:
+ctags:
+
 endif
+

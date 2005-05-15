@@ -47,7 +47,7 @@
 		      <accelerator key="o" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image68">
+			<widget class="GtkImage" id="image80">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -69,7 +69,7 @@
 		      <accelerator key="s" modifiers="GDK_CONTROL_MASK | GDK_SHIFT_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image69">
+			<widget class="GtkImage" id="image81">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -97,7 +97,7 @@
 		      <accelerator key="q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image70">
+			<widget class="GtkImage" id="image82">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
@@ -126,12 +126,12 @@
 		  <child>
 		    <widget class="GtkImageMenuItem" id="start_item">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">S_tart</property>
+		      <property name="label" translatable="yes">_Start</property>
 		      <property name="use_underline">True</property>
 		      <signal name="activate" handler="on_start1_activate" last_modification_time="Thu, 04 Nov 2004 18:51:54 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image71">
+			<widget class="GtkImage" id="image83">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-media-play</property>
 			  <property name="icon_size">1</property>
@@ -152,7 +152,7 @@
 		      <signal name="activate" handler="on_profile1_activate" last_modification_time="Thu, 04 Nov 2004 18:51:54 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image72">
+			<widget class="GtkImage" id="image84">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-justify-left</property>
 			  <property name="icon_size">1</property>
@@ -173,7 +173,7 @@
 		      <signal name="activate" handler="on_reset_item_activate" last_modification_time="Fri, 05 Nov 2004 15:34:30 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image73">
+			<widget class="GtkImage" id="image85">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
@@ -207,7 +207,7 @@
 		      <signal name="activate" handler="on_about_activate" last_modification_time="Wed, 31 Dec 2003 20:44:40 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image74">
+			<widget class="GtkImage" id="image86">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>

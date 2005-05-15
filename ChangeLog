@@ -1,3 +1,8 @@
+Sun May 15 10:24:09 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* Makefile.am, module/Makefile: Do more-or-less what the automake
+	manual suggests about foreign subdirectories.
+
 Sat May 14 16:36:32 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (set_application_title): Update the title bar on

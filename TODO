@@ -10,13 +10,12 @@ Before 1.0:
 	- Consider expanding a few more levels of a new descendants tree 
 
 * Build system
-	- need to run depmod on install
-	- add an "install-module" target
 	- Find out what distributions it actually works on
 	    (ask for sucess/failure-stories in 0.9.x releases)
 
 Before 1.2:
 
+- See if there is a way to make it distcheck
 - grep FIXME - not10
 - translation should be hooked up 
 - Consider adding "at least 5% inclusive cost" filter
@@ -264,6 +263,10 @@ Later:
 
 DONE:
 
+- Should do as suggested in the automake manual in the 
+  chapter "when automake is not enough"
+- add an "insert-module" target
+- need to run depmod on install
 - If the current profile has a name, display it in the title bar
 - auto*?	
 - Find out if that PREFIX business in Makefile was really such

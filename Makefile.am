@@ -1,3 +1,6 @@
+SUBDIRS = module
+DIST_SUBDIRS = module
+
 bin_PROGRAMS = sysprof
 pkgdata_DATA = sysprof.glade sysprof-icon.png
 
@@ -12,7 +15,7 @@ sysprof_SOURCES =	        \
 	sfile.c			\
 	stackstash.h		\
 	stackstash.c		\
-	sysprof-module.h	\
+	module/sysprof-module.h	\
 	sysprof.c		\
 	treeviewutils.h		\
 	treeviewutils.c		\
@@ -31,20 +34,14 @@ INCLUDES = 					   \
 
 EXTRA_DIST =			\
 	sysprof.glade	  	\
-	sysprof-icon.png
+	sysprof-icon.png	\
+	module/sysprof-module.c \
+	module/sysprof-module.h	\
+	module/Makefile
 
 pixmapsdir = $(datadir)/pixmaps
 pixmaps_DATA = sysprof-icon.png
 
-modulesdir = /lib/modules/`uname -r`/kernel/drivers
-modules_DATA = module/sysprof-module.ko
-
-CLEANFILES =				\
-	module/sysprof-module.mod.c	\
-	module/sysprof-module.mod.h	\
-	module/sysprof-module.mod.o	\
-	module/sysprof-module.o		\
-	module/sysprof-module.ko
-
-module/sysprof-module.ko:
-	(cd module && $(MAKE))
+insert-module:
+	modprobe -r sysprof-module
+	modprobe sysprof-module

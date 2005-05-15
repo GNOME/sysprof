@@ -1,3 +1,8 @@
+Sun May 15 11:56:30 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c: First attempt at making module robust
+	agains unloading when in use.
+
 Sun May 15 10:24:09 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* Makefile.am, module/Makefile: Do more-or-less what the automake

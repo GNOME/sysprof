@@ -1,4 +1,4 @@
-Before 1.0:
+Before 0.9
 
 * Correctness
 	- When the module is unloaded, kill all processes blocking in read
@@ -8,6 +8,8 @@ Before 1.0:
         - hook up menu items view/start etc (or possibly get rid of them or
 	  move them)
 	- Consider expanding a few more levels of a new descendants tree 
+
+Before 1.0:
 
 * Build system
 	- Find out what distributions it actually works on

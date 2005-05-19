@@ -27,6 +27,8 @@
 #include <glade/glade.h>
 #include <errno.h>
 #include <glib/gprintf.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 
 #include "binfile.h"
 #include "watch.h"
@@ -471,13 +473,25 @@ sorry (GtkWidget *parent_window,
     gtk_widget_destroy (dialog);
 }
 
-
 static gboolean
 load_module (void)
 {
-    int retval = system ("/sbin/modprobe sysprof-module");
+    int exit_status = -1;
+    char *dummy1, *dummy2;
 
-    return (retval == 0);
+    if (g_spawn_command_line_sync ("/sbin/modprobe sysprof-module",
+				   &dummy1, &dummy2,
+				   &exit_status,
+				   NULL))
+    {
+	if (WIFEXITED (exit_status))
+	    exit_status = WEXITSTATUS (exit_status);
+
+	g_free (dummy1);
+	g_free (dummy2);
+    }
+
+    return (exit_status == 0);
 }
 
 static void

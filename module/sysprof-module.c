@@ -52,8 +52,6 @@ static SysprofStackTrace *	tail = &stack_traces[0];
 DECLARE_WAIT_QUEUE_HEAD (wait_for_trace);
 DECLARE_WAIT_QUEUE_HEAD (wait_for_exit);
 
-static int exiting;
-
 static void on_timer(unsigned long);
 static struct timer_list timer;
 
@@ -72,22 +70,6 @@ struct userspace_reader
  * Source/target buffer must be kernel space, 
  * Do not walk the page table directly, use get_user_pages
 */
-
-static atomic_t ref_count;
-static void ref(void)
-{
-	atomic_inc (&ref_count);
-}
-static void unref(void)
-{
-	atomic_dec (&ref_count);
-	wake_up_interruptible (&wait_for_exit);
-}
-static int refcount(void)
-{
-	return atomic_read (&ref_count);
-}
-
 static struct mm_struct *
 get_mm (struct task_struct *tsk)
 {
@@ -354,11 +336,10 @@ do_generate (void *data)
 	 * the time we get here, it will be leaked. If __put_task_struct9)
 	 * was exported, then we could do this properly
 	 */
+
 	atomic_dec (&(task)->usage);
 	
 	mod_timer(&timer, jiffies + INTERVAL);
-
-	unref();
 }
 
 struct work_struct work;
@@ -366,16 +347,12 @@ struct work_struct work;
 static void
 on_timer(unsigned long dong)
 {
-	if (exiting)
-		return;
-	
 	if (current && current->state == TASK_RUNNING && current->pid != 0)
 	{
 		get_task_struct (current);
 
 		INIT_WORK (&work, do_generate, current);
 
-		ref();
 		schedule_work (&work);
 	}
 	else
@@ -392,19 +369,14 @@ procfile_read(char *buffer,
 	      int *eof,
 	      void *data)
 {
-	if (exiting)
-		return -EBUSY;
-	
-	ref();
-	if (head == tail) {
-		unref();
+	if (head == tail)
 		return -EWOULDBLOCK;
-	}
-	wait_event_interruptible (wait_for_trace, head != tail);
+	
 	*buffer_location = (char *)tail;
+	
 	if (tail++ == &stack_traces[N_TRACES - 1])
 		tail = &stack_traces[0];
-	unref();
+	
 	return sizeof (SysprofStackTrace);
 }
 
@@ -412,28 +384,20 @@ struct proc_dir_entry *trace_proc_file;
 static unsigned int
 procfile_poll(struct file *filp, poll_table *poll_table)
 {
-	if (exiting)
-		return -EBUSY;
-
-	ref();
-	if (head != tail) {
-		unref();
+	if (head != tail)
 		return POLLIN | POLLRDNORM;
-	}
+	
 	poll_wait(filp, &wait_for_trace, poll_table);
-	if (head != tail) {
-		unref();
+
+	if (head != tail)
 		return POLLIN | POLLRDNORM;
-	}
-	unref();
+	
 	return 0;
 }
 
 int
 init_module(void)
 {
-	ref();
-	
 	trace_proc_file =
 		create_proc_entry ("sysprof-trace", S_IFREG | S_IRUGO, &proc_root);
 	
@@ -456,18 +420,9 @@ init_module(void)
 void
 cleanup_module(void)
 {
-	exiting = 1;
-	
-	unref();
-
-	wait_event_interruptible (wait_for_exit, (refcount() == 0));
-
 	del_timer (&timer);
 
 	remove_proc_entry("sysprof-trace", &proc_root);
-
-	printk(KERN_ALERT "stopping sysprof module (refcount: %d)\n",
-	       refcount());
 }
 
 module_init (init_module);

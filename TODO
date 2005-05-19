@@ -1,9 +1,5 @@
 Before 0.9
 
-* Correctness
-	- When the module is unloaded, kill all processes blocking in read
-		- or block unloading until all processes have exited
-
 * Interface
         - hook up menu items view/start etc (or possibly get rid of them or
 	  move them)
@@ -16,6 +12,20 @@ Before 1.0:
 	    (ask for sucess/failure-stories in 0.9.x releases)
 
 Before 1.2:
+
+* Correctness
+	- When the module is unloaded, kill all processes blocking in read
+		- or block unloading until all processes have exited
+	  Unfortunately this is basically impossible to do with a /proc
+	  file (no open() notification). So, for 1.0 this will have to be
+	  a dont-do-that-then. For 1.2, we should do it with a sysfs
+	  file instead.
+
+	- When the module is unloaded, can we somehow *guarantee* that no
+	  kernel thread is active? Doesn't look like it; however we can
+	  get very close by decreasing a ref count just before returning
+	  from the module. (There may still be return instructions etc.
+	  that will get run).
 
 - See if there is a way to make it distcheck
 - grep FIXME - not10

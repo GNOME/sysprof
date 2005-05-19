@@ -1,3 +1,11 @@
+Wed May 18 22:21:52 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c: Remove ref-counting since it didn't
+	actually do any good.
+
+	* sysprof.c (load_module): Use g_spawn_command_line_sync() instaed
+	of system().
+
 Sun May 15 11:56:30 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c: First attempt at making module robust

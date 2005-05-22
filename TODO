@@ -2,11 +2,6 @@ Before 0.9
 
 * Get account on people.redhat.com
 
-* Interface
-        - hook up menu items view/start etc (or possibly get rid of them or
-	  move them)
-	- Consider expanding a few more levels of a new descendants tree 
-
 * Web page containing
 
 	- Screen shots
@@ -15,6 +10,9 @@ Before 0.9
 	- Bug reporting
 	- Contact info
 	- Ask for sucess/failure reports
+
+* Interface
+	- Consider expanding a few more levels of a new descendants tree 
 
 Before 1.0:
 
@@ -44,9 +42,6 @@ Before 1.2:
 - Consider adding "at least 5% inclusive cost" filter
 - Ability to generate "screenshots" suitable for mail/blog/etc
 - Fixing the oops in kernels < 2.6.11
-
-	- Oops should be fixed in 1.0, but the stuff below may still
-	  be worth thinking about.
 
 	- Make the process waiting in poll() responsible for extracting
 	  the backtrace. Give a copy of the entire stack rather than doing
@@ -88,6 +83,32 @@ Before 1.2:
 
 			This way, we will have a real userspace process
 			that can take the page faults.
+
+		
+		- Different approach:
+
+			pollable file where a regular userspace process
+			can read a pid. Any pid returned is guaranteed to be 
+			UNINTERRUPTIBLE. Userspace process is required to
+			start it again when it is done with it.
+
+			Also provide interface to read arbitrary memory of
+			that process.
+
+			ptrace() could in principle do all this, but 
+			unfortunately it sucks to continuously 
+			ptrace() processes.
+
+		- Yet another
+
+			Userspace process can register itself as "profiler"
+			and pass in a filedescriptor where all sorts of
+			information is sent. 
+
+				- could tie lifetime of module to profiler
+				- could send "module going away" information
+				- Can we map filedescriptors to files in
+				  a module?
 
 - Find out how gdb does backtraces; they may have a better way. Also
   find out what dwarf2 is and how to use it. Look into libunwind.
@@ -286,6 +307,8 @@ Later:
 
 DONE:
 
+- hook up menu items view/start etc (or possibly get rid of them or
+  move them)
 - Should do as suggested in the automake manual in the 
   chapter "when automake is not enough"
 - add an "insert-module" target

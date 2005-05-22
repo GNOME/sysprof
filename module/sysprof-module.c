@@ -425,5 +425,3 @@ cleanup_module(void)
 	remove_proc_entry("sysprof-trace", &proc_root);
 }
 
-module_init (init_module);
-module_exit (cleanup_module);

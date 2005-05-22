@@ -495,10 +495,19 @@ load_module (void)
 }
 
 static void
+on_menu_item_activated (GtkWidget *menu_item, GtkWidget *tool_button)
+{
+    GtkToggleToolButton *button = GTK_TOGGLE_TOOL_BUTTON (tool_button);
+
+    if (!gtk_toggle_tool_button_get_active (button))
+	gtk_toggle_tool_button_set_active (button, TRUE);
+}
+
+static void
 on_start_toggled (GtkWidget *widget, gpointer data)
 {
     Application *app = data;
-    
+
     if (!gtk_toggle_tool_button_get_active (
 	    GTK_TOGGLE_TOOL_BUTTON (app->start_button)))
 	return;
@@ -842,7 +851,7 @@ static void
 on_profile_toggled (GtkWidget *widget, gpointer data)
 {
     Application *app = data;
-    
+
     if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (app->profile_button)))
     {
 	set_busy (app->main_window, TRUE);
@@ -1249,41 +1258,10 @@ build_gui (Application *app)
     g_signal_connect (G_OBJECT (app->main_window), "delete_event",
 		      G_CALLBACK (on_delete), NULL);
     
-    /* Menu items */
-    app->start_item = glade_xml_get_widget (xml, "start_item");
-    app->profile_item = glade_xml_get_widget (xml, "profile_item");
-    app->reset_item = glade_xml_get_widget (xml, "reset_item");
-    app->open_item = glade_xml_get_widget (xml, "open_item");
-    app->save_as_item = glade_xml_get_widget (xml, "save_as_item");
-    
-    g_assert (app->start_item);
-    g_assert (app->profile_item);
-    g_assert (app->save_as_item);
-    g_assert (app->open_item);
-    
-#if 0
-    g_signal_connect (G_OBJECT (app->start_item), "activate",
-		      G_CALLBACK (toggle_start_button), app);
-    
-    g_signal_connect (G_OBJECT (app->profile_item), "activate",
-		      G_CALLBACK (on_profile_toggled), app);
-    
-    g_signal_connect (G_OBJECT (app->reset_item), "activate",
-		      G_CALLBACK (on_reset_clicked), app);
-#endif
-
-    g_signal_connect (G_OBJECT (app->open_item), "activate",
-		      G_CALLBACK (on_open_clicked), app);
-    
-    g_signal_connect (G_OBJECT (app->save_as_item), "activate",
-		      G_CALLBACK (on_save_as_clicked), app);
-
-    /* quit */
-    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit")), "activate",
-		      G_CALLBACK (on_delete), NULL);
-
-    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "about")), "activate",
-		      G_CALLBACK (on_about_activated), app);
+    gtk_widget_realize (GTK_WIDGET (app->main_window));
+    set_sizes (GTK_WINDOW (app->main_window),
+	       glade_xml_get_widget (xml, "hpaned"),
+	       glade_xml_get_widget (xml, "vpaned"));
     
     /* Tool items */
     
@@ -1307,14 +1285,42 @@ build_gui (Application *app)
     
     g_signal_connect (G_OBJECT (app->save_as_button), "clicked",
 		      G_CALLBACK (on_save_as_clicked), app);
+
     
     app->samples_label = glade_xml_get_widget (xml, "samples_label");
     
-    gtk_widget_realize (GTK_WIDGET (app->main_window));
-    set_sizes (GTK_WINDOW (app->main_window),
-	       glade_xml_get_widget (xml, "hpaned"),
-	       glade_xml_get_widget (xml, "vpaned"));
+    /* Menu items */
+    app->start_item = glade_xml_get_widget (xml, "start_item");
+    app->profile_item = glade_xml_get_widget (xml, "profile_item");
+    app->reset_item = glade_xml_get_widget (xml, "reset_item");
+    app->open_item = glade_xml_get_widget (xml, "open_item");
+    app->save_as_item = glade_xml_get_widget (xml, "save_as_item");
     
+    g_assert (app->start_item);
+    g_assert (app->profile_item);
+    g_assert (app->save_as_item);
+    g_assert (app->open_item);
+    
+    g_signal_connect (G_OBJECT (app->start_item), "activate",
+		      G_CALLBACK (on_menu_item_activated), app->start_button);
+    
+    g_signal_connect (G_OBJECT (app->profile_item), "activate",
+		      G_CALLBACK (on_menu_item_activated), app->profile_button);
+    
+    g_signal_connect (G_OBJECT (app->reset_item), "activate",
+		      G_CALLBACK (on_reset_clicked), app);
+
+    g_signal_connect (G_OBJECT (app->open_item), "activate",
+		      G_CALLBACK (on_open_clicked), app);
+    
+    g_signal_connect (G_OBJECT (app->save_as_item), "activate",
+		      G_CALLBACK (on_save_as_clicked), app);
+
+    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit")), "activate",
+		      G_CALLBACK (on_delete), NULL);
+
+    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "about")), "activate",
+		      G_CALLBACK (on_about_activated), app);
     
     /* TreeViews */
     

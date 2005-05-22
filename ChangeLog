@@ -1,3 +1,14 @@
+Sat May 21 20:58:59 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: update
+	
+	* sysprof.c (on_menu_item_activated): New function. 
+
+	* sysprof.c (build_gui): Hook up menu items.
+
+	* module/sysprof-module.c (init_module): Remove module_init/exit
+	as they cause build failure on kernels < 2.6.11.
+
 Sat May 21 00:59:38 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: update

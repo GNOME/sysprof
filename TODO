@@ -1,20 +1,7 @@
-Before 0.9
-
-* Get account on people.redhat.com
-
-* Web page containing
-
-	- Screen shots
-	- Explanation of what it is
-	- Download
-	- Bug reporting
-	- Contact info
-	- Ask for sucess/failure reports
+Before 1.0:
 
 * Interface
 	- Consider expanding a few more levels of a new descendants tree 
-
-Before 1.0:
 
 * Build system
 	- Find out what distributions it actually works on
@@ -307,6 +294,14 @@ Later:
 
 DONE:
 
+* Web page containing
+
+	- Screen shots
+	- Explanation of what it is
+	- Download
+	- Bug reporting
+	- Contact info
+	- Ask for sucess/failure reports
 - hook up menu items view/start etc (or possibly get rid of them or
   move them)
 - Should do as suggested in the automake manual in the 

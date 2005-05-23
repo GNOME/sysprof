@@ -1,3 +1,9 @@
+Mon May 23 01:37:26 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* README: Remove comment about auto* stuff, link to
+
+		http://www.daimi.au.dk/~sandmann/sysprof/
+
 Sun May 22 21:06:36 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Updates

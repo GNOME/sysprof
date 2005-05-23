@@ -2,7 +2,7 @@ Sysprof is a sampling profiler that uses a kernel module, sysprof-module.ko,
 to generate stacktraces which are then interpreted by the userspace
 program "sysprof".
 
-- There is no auto* stuff. Just type "make" and hope for the best
+See http://www.daimi.au.dk/~sandmann/sysprof/ for more information
 
 - You need gtk+ 2.6.0 or better.
 

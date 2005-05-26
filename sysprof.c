@@ -104,6 +104,7 @@ struct Application
 					    *
 					    * Model/View/Controller is a possibility.
 					    */
+    GTimeVal		latest_reset;
 };
 
 static gboolean
@@ -319,11 +320,30 @@ on_timeout (gpointer data)
 }
 #endif
 
+static double
+timeval_to_ms (const GTimeVal *timeval)
+{
+  return (timeval->tv_sec * G_USEC_PER_SEC + timeval->tv_usec) / 1000.0;
+}
+
+static double
+time_diff (const GTimeVal *first,
+	   const GTimeVal *second)
+{
+  double first_ms = timeval_to_ms (first);
+  double second_ms = timeval_to_ms (second);
+
+  return first_ms - second_ms;
+}
+
+#define RESET_DEAD_PERIOD 25
+
 static void
 on_read (gpointer data)
 {
     Application *app = data;
     SysprofStackTrace trace;
+    GTimeVal now;
     int rd;
     
     rd = read (app->input_fd, &trace, sizeof (trace));
@@ -334,6 +354,14 @@ on_read (gpointer data)
     if (rd == -1 && errno == EWOULDBLOCK)
 	return;
 
+    g_get_current_time (&now);
+
+    /* After a reset we ignore samples for a short period so that
+     * a reset will actually cause 'samples' to become 0
+     */
+    if (time_diff (&now, &app->latest_reset) < RESET_DEAD_PERIOD)
+	return;
+    
 #if 0
     int i;
     g_print ("pid: %d\n", trace.pid);
@@ -416,6 +444,7 @@ delete_data (Application *app)
     queue_show_samples (app);
     app->profile_from_file = FALSE;
     set_application_title (app, NULL);
+    g_get_current_time (&app->latest_reset);
 }
 
 static void
@@ -1194,7 +1223,7 @@ on_callers_row_activated (GtkTreeView *tree_view,
     
     goto_object (app, tree_view, path, CALLERS_OBJECT);
 
-    gtk_widget_grab_focus (GTK_WIDGET (app->object_view));
+    gtk_widget_grab_focus (GTK_WIDGET (app->callers_view));
 }
 
 static void
@@ -1370,6 +1399,8 @@ application_new (void)
     app->stash = stack_stash_new ();
     app->input_fd = -1;
     app->state = INITIAL;
+
+    g_get_current_time (&app->latest_reset);
     
     return app;
 }

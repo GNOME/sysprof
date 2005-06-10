@@ -2,11 +2,27 @@ Before 1.0:
 
 * Interface
 	- Consider expanding a few more levels of a new descendants tree 
+		- Algorithm should be expand in proportion to the
+		  "total" percentage. Basically consider 'total' the
+		  likelyhood that the user is going to look at it.
+		- Maybe just; keep expanding the biggest total until 
+		  there is no more room or we run out of things to expand.
 
 * Build system
 	- Find out what distributions it actually works on
 	    (ask for sucess/failure-stories in 0.9.x releases)
 
+	- Check the kernel we are building against, if it is SMP or
+	  less than 2.6.11, print a warning and suggest upgrading.
+
+* after 1.0:
+	- announce on
+		- advogato
+		- gnomefiles
+		- freshmeat
+		- gnome-announce list
+		- gnomedesktop
+	
 Before 1.2:
 
 * Correctness
@@ -28,6 +44,9 @@ Before 1.2:
 - translation should be hooked up 
 - Consider adding "at least 5% inclusive cost" filter
 - Ability to generate "screenshots" suitable for mail/blog/etc
+	UI: "generate screenshot" menu item pops up a window with
+	a text area + a radio buttons "text/html". When you flick
+	them, the text area is automatically updated.
 - Fixing the oops in kernels < 2.6.11
 
 	- Make the process waiting in poll() responsible for extracting

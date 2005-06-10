@@ -175,9 +175,14 @@ separate_debug_file_exists (const char *name, unsigned long crc)
     close (fd);
 
     if (crc != file_crc)
+    {
 	g_print ("warning: %s has wrong crc\n", name);
-    
-    return crc == file_crc;
+	return FALSE;
+    }
+    else
+    {
+	return TRUE;
+    }
 }
 
 /* FIXME - not10: this should probably be detected by config.h -- find out what gdb does*/

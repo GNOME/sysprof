@@ -9,19 +9,18 @@ Before 1.0:
 		  there is no more room or we run out of things to expand.
 
 * Build system
-	- Find out what distributions it actually works on
-	    (ask for sucess/failure-stories in 0.9.x releases)
+   - Find out what distributions it actually works on
+       (ask for sucess/failure-stories in 0.9.x releases)
 
-	- Check the kernel we are building against, if it is SMP or
-	  less than 2.6.11, print a warning and suggest upgrading.
+ - After 1.0:
+   - Announce on Freshmeat
+   - Announce on Advogato
+   - Announce on gnome-announce
+   - Announce on devtools (?)
+   - Announce on Gnomefiles
 
-* after 1.0:
-	- announce on
-		- advogato
-		- gnomefiles
-		- freshmeat
-		- gnome-announce list
-		- gnomedesktop
+   - Check the kernel we are building against, if it is SMP or 
+     less than 2.6.11, print a warning and suggest upgrading.
 	
 Before 1.2:
 
@@ -52,7 +51,8 @@ Before 1.2:
 	- Make the process waiting in poll() responsible for extracting
 	  the backtrace. Give a copy of the entire stack rather than doing
 	  the walk inside the kernel. That would allow us to do more complex 
-	  algorithms in userspace.
+	  algorithms in userspace (though we'd lose the ability to do non-racy
+	  file naming).
 
 		New model:
 			- Two arrays, 
@@ -298,7 +298,7 @@ Later:
 
    For Memory:  badness=<cache line size not in cache>,		      cookie=<the address>
 
-   Cookies are use to figure out whether an access is really the same, ie., for two identical
+   Cookies are used to figure out whether an access is really the same, ie., for two identical
    cookies, the size is still just one, however 
    
    Memory is different from disk because you can't reasonably assume that stuff that has
@@ -307,9 +307,49 @@ Later:
 
 
 
+   - Perhaps show a timeline with CPU in one color and disk in one color. Allow people to
+     look at at subintervals of this timeline.
 
+   - The existing sysprof visualization is not terribly bad, the "self" column is
+     more useful now. 
 
+   - See what files are accessed so that you can get a getter idea of what
+     the system is doing. 
 
+   - Optimization usecases:
+
+	- A lot of stuff is read synchronously, but it is possible to read it asynchronously.
+
+	- What function is doing all the synchronous reading, and what files/offsets is
+	  it reading. Visualization: lots of reads across different files out of one 
+	  function
+
+	- A piece of the program is doing disk I/O. We can drop that entire piece of
+  	  code. Sysprof visualization is ok, although seeing the files accessed is useful
+ 	  so that we can tell if those files are not just going to be used in
+	  other places. (Gnumeric plugin_init()).
+
+	- A function is reading a file synchronously, but there is other (CPU/disk) stuff
+	  that could be done at the same time. Visualization: A piece of the timeline 
+	  is diskbound with little or no CPU used.
+
+	- Want to improve code locality of library or binary. Visualization: no GUI, just
+	  produce a list of functions that should be put first in the file. Then run the
+	  program again until the list converges. (Valgrind may be more useful here).
+
+	- Nautilus reads a ton of files, icons + all the files in the homedirectory.
+	  Normal sysprof visualization is probably useful enough.
+
+	- Profiling a login session. 
+
+    - Need to report stat() as well. (Where do inode data end up? In the buffer-cache?)
+
+    - To generate the timeline we need to know when a disk request is issued and when it
+      is completed. This way we can assign blame to all applications that have issued a
+      disk request at a given point in time. 
+
+	The disk timeline should probably vary in intensity with the number of outstanding
+	disk requests.
 
 DONE:
 

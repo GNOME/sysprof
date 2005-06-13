@@ -1,3 +1,13 @@
+Sun Jun 12 20:30:37 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (build_gui): Disable type-ahead search for all the
+	tree views.
+	
+	* sysprof.c (on_object_selection_changed): Call it from here
+
+	* sysprof.c (expand_descendants_tree): New function that
+	determines what nodes to expand in the descendatns view. 
+
 Sun Jun 12 13:37:15 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Updates

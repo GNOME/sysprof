@@ -1116,11 +1116,101 @@ on_delete (GtkWidget *window)
 }
 
 static void
+expand_descendants_tree (Application *app)
+{
+    GtkTreeModel *model = gtk_tree_view_get_model (app->descendants_view);
+    GtkTreeIter iter;
+    GList *all_paths = NULL;
+    int n_rows;
+    int max_rows = 40; /* FIXME */
+    double top_value = 0.0;
+    GtkTreePath *first_path;
+    GList *list;
+
+    first_path = gtk_tree_path_new_first();
+
+    all_paths = g_list_prepend (all_paths, first_path);
+
+    n_rows = 1;
+
+    gtk_tree_model_get_iter (model, &iter, first_path);
+    gtk_tree_model_get (model, &iter,
+			OBJECT_TOTAL, &top_value,
+			-1);
+    
+    while (all_paths && n_rows < max_rows)
+    {
+	GtkTreeIter best_iter;
+	GtkTreePath *best_path;
+	double best_value;
+	int n_children;
+	int i;
+
+	best_value = 0.0;
+	best_path = NULL;
+
+	for (list = all_paths; list != NULL; list = list->next)
+	{
+	    GtkTreePath *path = list->data;
+	    GtkTreeIter iter;
+	    double value;
+	    g_assert (path != NULL);
+	    if (gtk_tree_model_get_iter (model, &iter, path))
+	    {
+		gtk_tree_model_get (model, &iter,
+				    OBJECT_TOTAL, &value,
+				    -1);
+	    }
+	    if (value >= best_value)
+	    {
+		best_value = value;
+		best_path = path;
+
+		gtk_tree_model_get_iter (model, &best_iter, path);
+	    }
+	}
+
+	gtk_tree_model_get_iter (model, &iter, best_path);
+
+	n_children = gtk_tree_model_iter_n_children (model, &best_iter);
+	
+	if (n_children && (best_value / top_value) > 0.04 &&
+	    (n_children + gtk_tree_path_get_depth (best_path)) / (double)max_rows < (best_value / top_value) )
+	{
+	    gtk_tree_view_expand_row (GTK_TREE_VIEW (app->descendants_view), best_path, FALSE);
+	    n_rows += n_children;
+
+	    if (gtk_tree_path_get_depth (best_path) < 4)
+	    {
+		GtkTreePath *path = gtk_tree_path_copy (best_path);
+		gtk_tree_path_down (path);
+
+		for (i = 0; i < n_children; ++i)
+		{
+		    all_paths = g_list_prepend (all_paths, path);
+
+		    path = gtk_tree_path_copy (path);
+		    gtk_tree_path_next (path);
+		}
+		gtk_tree_path_free (path);
+	    }
+	}
+
+	all_paths = g_list_remove (all_paths, best_path);
+	gtk_tree_path_free (best_path);
+    }
+
+    for (list = all_paths; list != NULL; list = list->next)
+	gtk_tree_path_free (list->data);
+    
+    g_list_free (all_paths);
+}
+
+static void
 on_object_selection_changed (GtkTreeSelection *selection,
 			     gpointer data)
 {
     Application *app = data;
-    GtkTreePath *path;
 
     set_busy (app->main_window, TRUE);
 
@@ -1128,14 +1218,9 @@ on_object_selection_changed (GtkTreeSelection *selection,
     
     fill_descendants_tree (app);
     fill_callers_list (app);
-    
-    /* Expand the toplevel of the descendant tree so we see the immediate
-     * descendants.
-     */
-    path = gtk_tree_path_new_from_indices (0, -1);
-    gtk_tree_view_expand_row (
-	GTK_TREE_VIEW (app->descendants_view), path, FALSE);
-    gtk_tree_path_free (path);
+
+    if (get_current_object (app))
+	expand_descendants_tree (app);
     
     set_busy (app->main_window, FALSE);
 }
@@ -1355,32 +1440,32 @@ build_gui (Application *app)
     
     /* object view */
     app->object_view = (GtkTreeView *)glade_xml_get_widget (xml, "object_view");
+    gtk_tree_view_set_enable_search (app->object_view, FALSE);
     col = add_plain_text_column (app->object_view, _("Functions"), OBJECT_NAME);
     add_double_format_column (app->object_view, _("Self"), OBJECT_SELF, "%.2f ");
     add_double_format_column (app->object_view, _("Total"), OBJECT_TOTAL, "%.2f ");
     selection = gtk_tree_view_get_selection (app->object_view);
     g_signal_connect (selection, "changed", G_CALLBACK (on_object_selection_changed), app);
-    
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* callers view */
     app->callers_view = (GtkTreeView *)glade_xml_get_widget (xml, "callers_view");
+    gtk_tree_view_set_enable_search (app->callers_view, FALSE);
     col = add_plain_text_column (app->callers_view, _("Callers"), CALLERS_NAME);
     add_double_format_column (app->callers_view, _("Self"), CALLERS_SELF, "%.2f ");
     add_double_format_column (app->callers_view, _("Total"), CALLERS_TOTAL, "%.2f ");
     g_signal_connect (app->callers_view, "row-activated",
 		      G_CALLBACK (on_callers_row_activated), app);
-    
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* descendants view */
     app->descendants_view = (GtkTreeView *)glade_xml_get_widget (xml, "descendants_view");
+    gtk_tree_view_set_enable_search (app->descendants_view, FALSE);
     col = add_plain_text_column (app->descendants_view, _("Descendants"), DESCENDANTS_NAME);
     add_double_format_column (app->descendants_view, _("Self"), DESCENDANTS_SELF, "%.2f ");
     add_double_format_column (app->descendants_view, _("Cumulative"), DESCENDANTS_NON_RECURSE, "%.2f ");
     g_signal_connect (app->descendants_view, "row-activated",
 		      G_CALLBACK (on_descendants_row_activated), app);
-
     gtk_tree_view_column_set_expand (col, TRUE);
     
     gtk_widget_grab_focus (GTK_WIDGET (app->object_view));

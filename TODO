@@ -1,28 +1,23 @@
 Before 1.0:
 
-* Interface
-	- Consider expanding a few more levels of a new descendants tree 
-		- Algorithm should be expand in proportion to the
-		  "total" percentage. Basically consider 'total' the
-		  likelyhood that the user is going to look at it.
-		- Maybe just; keep expanding the biggest total until 
-		  there is no more room or we run out of things to expand.
-
 * Build system
    - Find out what distributions it actually works on
        (ask for sucess/failure-stories in 0.9.x releases)
 
+   - Check the kernel we are building against, if it is SMP or 
+     less than 2.6.11, print a warning and suggest upgrading.
+
  - After 1.0:
+   - Announce on news.gnome.org
+   - Announce on Gnomefiles
    - Announce on Freshmeat
    - Announce on Advogato
    - Announce on gnome-announce
-   - Announce on devtools (?)
-   - Announce on Gnomefiles
-
-   - Check the kernel we are building against, if it is SMP or 
-     less than 2.6.11, print a warning and suggest upgrading.
+   - Announce on devtools list (?)
 	
 Before 1.2:
+
+* See if the auto-expanding can be made more intelligent
 
 * Correctness
 	- When the module is unloaded, kill all processes blocking in read
@@ -352,6 +347,14 @@ Later:
 	disk requests.
 
 DONE:
+
+* Interface
+	- Consider expanding a few more levels of a new descendants tree 
+		- Algorithm should be expand in proportion to the
+		  "total" percentage. Basically consider 'total' the
+		  likelyhood that the user is going to look at it.
+		- Maybe just; keep expanding the biggest total until 
+		  there is no more room or we run out of things to expand.
 
 * Web page containing
 

@@ -873,6 +873,7 @@ on_about_activated (GtkWidget *widget, gpointer data)
 			   "logo", app->icon,
 			   "name", APPLICATION_NAME,
 			   "copyright", "Copyright 2004-2005, S"OSLASH"ren Sandmann",
+			   "version", PACKAGE_VERSION,
 			   NULL);
 }
 

@@ -1,3 +1,13 @@
+Sun Jun 19 15:42:34 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (SAMPLES_PER_SECOND): Set to 200.
+
+	* sysprof.c (on_about_activated): Add version information
+
+	* configure.ac: Bump version to 0.91
+	
+	* README: Updates
+
 Sat Jun 18 22:45:04 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Updates

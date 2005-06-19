@@ -1,33 +1,70 @@
-Sysprof is a sampling profiler that uses a kernel module, sysprof-module.ko,
-to generate stacktraces which are then interpreted by the userspace
-program "sysprof".
+Sysprof is a sampling profiler that uses a kernel module to generate
+stacktraces which are then interpreted by the userspace program
+"sysprof".
 
-See http://www.daimi.au.dk/~sandmann/sysprof/ for more information
+See the Sysprof homepage:
 
-- You need gtk+ 2.6.0 or better.
+	http://www.daimi.au.dk/~sandmann/sysprof/
 
-- You need at least Linux 2.6.11
+for more information
 
-- The module must be compiled with the same compiler that compiled the 
-  kernel it is going to be used with. For most systems that is just
-  the system compiler, but if you have upgraded your kernel it is
-  possible the one was compiled with a different compiler.
+Please mail bug reports to
 
-  In that case, "insmod sysprof-module.ko" will produce this 
+	Soren Sandmann  (sandmann@daimi.au.dk)
+
+Also information about whether it works or doesn't work on your distribution
+would be appreciated.
+
+
+
+
+Requirements:
+
+- A Linux kernel version 2.6.11 or newer is required.
+  Unlike Sysprof 0.9, version 0.91 should work fine on SMP systems.
+
+- GTK+ 2.6.0 or newer is required
+
+
+
+Compiling:
+
+- Sysprof must be compiled with the same compiler that compiled the 
+  kernel it is going to be used with. Usually this is just the the
+  system compiler, but if you have upgraded your kernel it is
+  possible that the new kernel was compiled with a different compiler
+
+  In that case, "modprobe sysprof-module" will produce this 
   error message:
 
     insmod: error inserting './sysprof-module.o': -1 Invalid module format
 
+
+
+Debugging symbols
+
 - The programs you want to profile should have debugging symbols, or
   you won't get much usable information. On a Fedora Core system,
-  installing the relevant -debuginfo packages should do the trick.
+  installing the relevant -debuginfo package should be sufficient.
 
-- To get usable data on the X server:
+
+- X server.
+
+  The X server as shipped by most distributions uses its own home-rolled
+  module loading system and Sysprof has no way to deal with that, so if you
+  run sysprof with your normal X serverr you won't get any information about
+  how time is spent inside the X server.
+
+  To fix this you have to compile your own X server:
 
   (1) Compile the X server to use ".so" modules:
 
 	- Uncomment the line "MakeDllModules	Yes" in 
-	  xc/config/cf/xorgsite.def
+	  xc/config/cf/xorgsite.def. 
+
+	  If you are compiling the CVS version of the X server
+	  (the one that will eventually become 7.0), then this is
+	  already the default.
 
 	- "make World"
 
@@ -47,6 +84,8 @@ See http://www.daimi.au.dk/~sandmann/sysprof/ for more information
   (4) Run sysprof as root. This is necessary because the X server binary 
       for security reasons is not readable by regular users. I could tell
       you why, but then I'd have to kill you.
+
+
 
 
 Credits:

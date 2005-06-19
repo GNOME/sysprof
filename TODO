@@ -4,9 +4,6 @@ Before 1.0:
    - Find out what distributions it actually works on
        (ask for sucess/failure-stories in 0.9.x releases)
 
-   - Check the kernel we are building against, if it is SMP or 
-     less than 2.6.11, print a warning and suggest upgrading.
-
  - After 1.0:
    - Announce on news.gnome.org
    - Announce on Gnomefiles
@@ -360,6 +357,9 @@ Later:
 	disk requests.
 
 DONE:
+
+* Check the kernel we are building against, if it is SMP or 
+  less than 2.6.11, print a warning and suggest upgrading.
 
 * Timer interrupt based
 

@@ -61,6 +61,7 @@ AC_CHECK_LIB(bfd, bfd_get_error, [DEP_LIBS="$DEP_LIBS -lbfd -liberty"],
   AC_MSG_ERROR([libbfd is required to compile sysprof]),
   -liberty)
 
+
 # emit files
 
 AC_SUBST(DEP_LIBS)
@@ -68,5 +69,20 @@ AC_SUBST(DEP_LIBS)
 AC_CONFIG_FILES([
 Makefile
 ])
+
+# Kernel version
+
+KMAJOR=`uname -r | cut -d"." -f 1`
+KMINOR=`uname -r | cut -d"." -f 2`
+KMICRO=`uname -r | cut -d"." -f 3 | cut -d"-" -f 1`
+
+if [[ $KMICRO -lt 11 ]] ; then
+   if [[ $KMICRO -gt 8 ]]; then
+      echo
+      echo Linux \>= 2.6.11 is required
+      echo
+      exit 1
+   fi
+fi
 
 AC_OUTPUT

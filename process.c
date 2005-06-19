@@ -292,7 +292,10 @@ get_statname (int pid)
 static char *
 get_pidname (int pid)
 {
-    return g_strdup_printf ("[pid %d]", pid);
+    if (pid == -1)
+	return g_strdup_printf ("kernel", pid);
+    else
+	return g_strdup_printf ("pid %d", pid);
 }
 
 static char *

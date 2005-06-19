@@ -6,7 +6,7 @@ See http://www.daimi.au.dk/~sandmann/sysprof/ for more information
 
 - You need gtk+ 2.6.0 or better.
 
-- You need a 2.6 kernel. On SMP kernels the module produces unreliable data.
+- You need at least Linux 2.6.11
 
 - The module must be compiled with the same compiler that compiled the 
   kernel it is going to be used with. For most systems that is just

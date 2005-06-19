@@ -26,7 +26,7 @@ typedef struct SysprofStackTrace SysprofStackTrace;
 
 struct SysprofStackTrace
 {
-    int	pid;
+    int	pid;		/* -1 if in kernel */
     int truncated;
     int n_addresses;	/* note: this can be 1 if the process was compiled
 			 * with -fomit-frame-pointer or is otherwise weird

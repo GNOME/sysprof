@@ -42,7 +42,7 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
-#define SAMPLES_PER_SECOND (100)
+#define SAMPLES_PER_SECOND (256)
 #define INTERVAL (HZ / SAMPLES_PER_SECOND)
 #define N_TRACES 256
 
@@ -52,8 +52,12 @@ static SysprofStackTrace *	tail = &stack_traces[0];
 DECLARE_WAIT_QUEUE_HEAD (wait_for_trace);
 DECLARE_WAIT_QUEUE_HEAD (wait_for_exit);
 
+#if 0
 static void on_timer(unsigned long);
+#endif
+#if 0
 static struct timer_list timer;
+#endif
 
 typedef struct userspace_reader userspace_reader;
 struct userspace_reader
@@ -63,6 +67,7 @@ struct userspace_reader
 	unsigned long *cache;
 };
 
+#if 0
 /* This function was mostly cutted and pasted from ptrace.c
  */
 
@@ -93,7 +98,9 @@ put_mm (struct mm_struct *mm)
 	mmput(mm);
 #endif
 }
+#endif
 
+#if 0
 static int
 x_access_process_vm (struct task_struct *tsk,
 		     unsigned long addr,
@@ -153,7 +160,9 @@ x_access_process_vm (struct task_struct *tsk,
 	
 	return buf - old_buf;
 }
+#endif
 
+#if 0
 static int
 init_userspace_reader (userspace_reader *reader,
 		       struct task_struct *task)
@@ -165,7 +174,9 @@ init_userspace_reader (userspace_reader *reader,
 	reader->cache_address = 0x0;
 	return 1;
 }
+#endif
 
+#if 0
 static int
 page_readable (userspace_reader *reader, unsigned long address)
 {
@@ -188,7 +199,9 @@ page_readable (userspace_reader *reader, unsigned long address)
 		
 		return 1;
 }
+#endif
 
+#if 0
 static int
 read_user_space (userspace_reader *reader,
 		 unsigned long address,
@@ -219,12 +232,15 @@ read_user_space (userspace_reader *reader,
 	*result = reader->cache[index];
 	return 1;
 }
+#endif
 
+#if 0
 static void
 done_userspace_reader (userspace_reader *reader)
 {
 	kfree (reader->cache);
 }
+#endif
 
 typedef struct StackFrame StackFrame;
 struct StackFrame {
@@ -232,6 +248,7 @@ struct StackFrame {
 	unsigned long return_address;
 };
 
+#if 0
 static int
 read_frame (userspace_reader *reader, unsigned long addr, StackFrame *frame)
 {
@@ -249,7 +266,9 @@ read_frame (userspace_reader *reader, unsigned long addr, StackFrame *frame)
 
 	return 1;
 }
+#endif
 
+#if 0
 static struct pt_regs *
 get_regs (struct task_struct *task)
 {
@@ -268,16 +287,13 @@ get_regs (struct task_struct *task)
 	return task_pt_regs (task);
 #endif
 }
+#endif
 
+#if 0
 static void
 generate_stack_trace(struct task_struct *task,
 		     SysprofStackTrace *trace)
 {
-#ifdef CONFIG_HIGHMEM
-#  define START_OF_STACK 0xFF000000
-#else
-#  define START_OF_STACK 0xBFFFFFFF
-#endif
 	struct pt_regs *regs = get_regs (task);  // task->thread.regs;
 	
 	StackFrame frame;
@@ -319,14 +335,16 @@ generate_stack_trace(struct task_struct *task,
 	else
 		trace->truncated = 0;
 }
+#endif
 
+#if 0
 static void
 do_generate (void *data)
 {
 	struct task_struct *task = data;
 
 	generate_stack_trace(task, head);
-		
+			
 	if (head++ == &stack_traces[N_TRACES - 1])
 		head = &stack_traces[0];
 
@@ -341,9 +359,11 @@ do_generate (void *data)
 	
 	mod_timer(&timer, jiffies + INTERVAL);
 }
+#endif
 
 struct work_struct work;
 
+#if 0
 static void
 on_timer(unsigned long dong)
 {
@@ -359,6 +379,110 @@ on_timer(unsigned long dong)
 	{
 		mod_timer(&timer, jiffies + INTERVAL);
 	}
+}
+#endif
+
+/**
+ * pages_present() from OProfile
+ *
+ * Copyright 2002 OProfile authors
+ *
+ * author John Levon
+ * author David Smith
+ */
+
+#ifdef CONFIG_X86_4G
+/* With a 4G kernel/user split, user pages are not directly
+ * accessible from the kernel, so don't try
+ */
+static int pages_present(StackFrame * head)
+{
+	return 0;
+}
+#else
+/* check that the page(s) containing the frame head are present */
+static int pages_present(StackFrame * head)
+{
+	struct mm_struct * mm = current->mm;
+
+	/* FIXME: only necessary once per page */
+	if (!check_user_page_readable(mm, (unsigned long)head))
+		return 0;
+
+	return check_user_page_readable(mm, (unsigned long)(head + 1));
+}
+#endif /* CONFIG_X86_4G */
+
+static int
+timer_notify (struct pt_regs *regs)
+{
+#ifdef CONFIG_HIGHMEM
+#  define START_OF_STACK 0xFF000000
+#else
+#  define START_OF_STACK 0xBFFFFFFF
+#endif
+	StackFrame *frame;
+	static int n_samples;
+	SysprofStackTrace *trace = head;
+	int i;
+	int is_user;
+
+	if ((n_samples++ % INTERVAL) != 0)
+		return 0;
+
+	is_user = user_mode(regs);
+
+	if (!current || current->pid == 0)
+		return 0;
+	
+	if (is_user && current->state != TASK_RUNNING)
+		return 0;
+
+	if (!is_user)
+	{
+		/* kernel */
+		
+		trace->pid = -1;
+		trace->truncated = 0;
+		trace->n_addresses = 1;
+		trace->addresses[0] = 0x0;
+	}
+	else
+	{
+		memset(trace, 0, sizeof (SysprofStackTrace));
+		
+		trace->pid = current->pid;
+		trace->truncated = 0;
+		
+		trace->addresses[0] = (void *)regs->eip;
+		
+		i = 1;
+		
+		frame = (StackFrame *)regs->ebp;
+		
+		while (pages_present (frame)				&&
+		       i < SYSPROF_MAX_ADDRESSES			&&
+		       ((unsigned long)frame) < START_OF_STACK		&&
+		       (unsigned long)frame >= regs->esp)
+		{
+			trace->addresses[i++] = (void *)frame->return_address;
+			frame = (StackFrame *)frame->next;
+		}
+		
+		trace->n_addresses = i;
+
+		if (i == SYSPROF_MAX_ADDRESSES)
+			trace->truncated = 1;
+		else
+			trace->truncated = 0;
+	}
+	
+	if (head++ == &stack_traces[N_TRACES - 1])
+		head = &stack_traces[0];
+	
+	wake_up (&wait_for_trace);
+	
+	return 0;
 }
 
 static int
@@ -407,10 +531,14 @@ init_module(void)
 	trace_proc_file->read_proc = procfile_read;
 	trace_proc_file->proc_fops->poll = procfile_poll;
 	trace_proc_file->size = sizeof (SysprofStackTrace);
+
+	register_timer_hook (timer_notify);
 	
+#if 0
 	init_timer(&timer);
 	timer.function = on_timer;
 	mod_timer(&timer, jiffies + INTERVAL);
+#endif
 	
 	printk(KERN_ALERT "starting sysprof module\n");
 	
@@ -420,8 +548,12 @@ init_module(void)
 void
 cleanup_module(void)
 {
+#if 0
 	del_timer (&timer);
+#endif
 
+	unregister_timer_hook (timer_notify);
+	
 	remove_proc_entry("sysprof-trace", &proc_root);
 }
 

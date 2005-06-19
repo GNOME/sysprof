@@ -1,3 +1,15 @@
+Sat Jun 18 22:45:04 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
+	* configure.ac: Check for Linux 2.6.11
+
+	* process.c (get_pidname): Present pid=-1 as [kernel].
+
+	* module/sysprof-module.c: Use register_timer_hook() instead of
+	a kernel timer. Set trace.pid to -1 if interrupt happens in
+	kernel.
+
 Sun Jun 12 20:30:37 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (build_gui): Disable type-ahead search for all the

@@ -4,6 +4,9 @@ Before 1.0:
    - Find out what distributions it actually works on
        (ask for sucess/failure-stories in 0.9.x releases)
 
+   - Create RPM package? See fedora package list for information
+     about how to package kernel modules.
+
  - After 1.0:
    - Announce on news.gnome.org
    - Announce on Gnomefiles
@@ -16,30 +19,41 @@ Before 1.2:
 	
 * See if the auto-expanding can be made more intelligent
 
-* Send entire stack to user space, then do stackwalking there
+* Send entire stack to user space, then do stackwalking there. That would
+  allow us to do more complex algorithms, like dwarf, in userspace. Though
+  we'd lose the ability to do non-racy file naming. We could pass a list
+  of the process mappings with each stack though.
 
 * If interrupt happens in kernel mode, send both
   kernel stack and user space stack, have userspace stitch them
-  together.
+  together. (User space stack must probably be done in a thread - kernel 
+  stack must probably be taken in the interrupt itself?
+  - Why this difference? The page tables should still be loaded. Is it
+    because pages_present() doesn't work? No, turning it off doesn't help.
 
 * Correctness
 	- When the module is unloaded, kill all processes blocking in read
 		- or block unloading until all processes have exited
 	  Unfortunately this is basically impossible to do with a /proc
 	  file (no open() notification). So, for 1.0 this will have to be
-	  a dont-do-that-then. For 1.2, we should do it with a sysfs
-	  file instead.
+	  a dont-do-that-then. For 1.2, we should do it with a sysfs and
+	  kobject instead.
 
 	- When the module is unloaded, can we somehow *guarantee* that no
 	  kernel thread is active? Doesn't look like it; however we can
 	  get very close by decreasing a ref count just before returning
 	  from the module. (There may still be return instructions etc.
-	  that will get run).
+	  that will get run). This may not be an issue with the timer
+  	  based scanning we are using currently.
 
 - See if there is a way to make it distcheck
+
 - grep FIXME - not10
+
 - translation should be hooked up 
+
 - Consider adding "at least 5% inclusive cost" filter
+
 - Ability to generate "screenshots" suitable for mail/blog/etc
 	UI: "generate screenshot" menu item pops up a window with
 	a text area + a radio buttons "text/html". When you flick
@@ -52,9 +66,7 @@ Before 1.2:
 
 	- Make the process waiting in poll() responsible for extracting
 	  the backtrace. Give a copy of the entire stack rather than doing
-	  the walk inside the kernel. That would allow us to do more complex 
-	  algorithms in userspace. Though we'd lose the ability to do non-racy
-	  file naming. We could pass a list of the process mappings though.
+	  the walk inside the kernel. 
 
 		New model:
 			- Two arrays, 
@@ -174,7 +186,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 		for each leaf
 			add trace to tree (leaf, interesting)
 - Consider adding KDE-style nested callgraph view
-	- probably need a dependency on gtk+ 2.8 for this.
+	- probably need a dependency on gtk+ 2.8 (cairo) for this.
 - Add support for line numbers within functions
 	- Possibly a special "view details" mode, assuming that 
 	  the details of a function are not that interesting 

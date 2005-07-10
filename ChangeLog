@@ -1,3 +1,7 @@
+Sun Jul 10 10:51:52 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* binfile.c: Various minor clean-ups
+
 Sat Jul  9 23:20:39 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* binfile.c (bin_file_new): Cache BinFiles by filename.

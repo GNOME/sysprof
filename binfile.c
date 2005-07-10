@@ -269,7 +269,7 @@ extern char *cplus_demangle (const char *mangled, int options);
 #define DMGL_PARAMS     (1 << 0)        /* Include function args */
 #define DMGL_ANSI       (1 << 1)        /* Include const, volatile, etc */
 
-char *
+static char *
 demangle (bfd *bfd, const char *name)
 {
 	char *demangled;
@@ -278,7 +278,7 @@ demangle (bfd *bfd, const char *name)
 		++name;
 
 	demangled = cplus_demangle (name, DMGL_ANSI | DMGL_PARAMS);
-	return demangled ? demangled : strdup (name);
+	return demangled ? demangled : g_strdup (name);
 }
 
 static gint
@@ -370,17 +370,12 @@ read_symbols (BinFile *bf)
 #endif
 	    
 	    symbol.address = bfd_asymbol_value (bfd_symbols[i]) - load_address;
-	    name = demangle (bfd, bfd_asymbol_name (bfd_symbols[i]));
-
+	    symbol.name = demangle (bfd, bfd_asymbol_name (bfd_symbols[i]));
 #if 0
 	    symbol.name = g_strdup_printf ("%s (%s)", name, bf->filename);
-#endif
 	    symbol.name = g_strdup (name);
-#if 0
 	    g_print ("symbol: %s (%s) %p\n", name, bf->filename, symbol.address);
 #endif
-	    
-	    free (name);
 
 	    g_array_append_vals (symbols, &symbol, 1);
 	}

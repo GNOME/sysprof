@@ -1552,7 +1552,7 @@ main (int argc, char **argv)
 
 	g_idle_add (load_file, file_open_data);
     }
-    
+
     gtk_main ();
     
     return 0;

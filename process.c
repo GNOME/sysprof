@@ -183,6 +183,9 @@ process_free_maps (Process *process)
     for (list = process->maps; list != NULL; list = list->next)
     {
 	Map *map = list->data;
+
+	if (map->filename)
+	    g_free (map->filename);
 	
 	if (map->bin_file)
 	    bin_file_free (map->bin_file);

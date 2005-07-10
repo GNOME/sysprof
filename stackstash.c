@@ -211,4 +211,5 @@ stack_stash_free	  (StackStash	   *stash)
 {
     stack_node_free (stash->root);
     g_hash_table_destroy (stash->leaves_by_process);
+    g_free (stash);
 }

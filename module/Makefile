@@ -43,7 +43,7 @@ distdir:
 
 install:
 	$(KMAKE) modules_install
-	depmod
+	[ -e /sbin/depmod ] && /sbin/depmod
 
 install-data:
 install-exec:

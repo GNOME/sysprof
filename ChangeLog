@@ -1,3 +1,14 @@
+Sat Jul  9 23:20:39 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* binfile.c (bin_file_new): Cache BinFiles by filename.
+
+	* stackstash.c (stack_stash_free): Plug leak
+
+	* process.c (process_free_maps): Plug leak
+
+	* module/Makefile (install): Check that depmod exists before
+	running it.
+
 Sun Jun 19 15:42:34 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (SAMPLES_PER_SECOND): Set to 200.

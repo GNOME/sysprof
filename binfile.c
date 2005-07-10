@@ -43,6 +43,7 @@ struct BinFile
     int         n_symbols;
     Symbol     *symbols;
     Symbol	undefined;
+    int         ref_count;
 };
 
 static bfd *
@@ -402,33 +403,55 @@ read_symbols (BinFile *bf)
     bf->symbols = (Symbol *)g_array_free (symbols, FALSE);
 } 
 
+static GHashTable *bin_files;
+
 BinFile *
 bin_file_new (const char *filename)
 {
-    BinFile *bf = g_new0 (BinFile, 1);
+    BinFile *bf;
     
-    bf->filename = g_strdup (filename);
+    if (!bin_files)
+	bin_files = g_hash_table_new (g_str_hash, g_str_equal);
 
-    read_symbols (bf);
-
-    bf->undefined.name = g_strdup_printf ("In file %s", filename);
-    bf->undefined.address = 0x0;
+    bf = g_hash_table_lookup (bin_files, filename);
+    if (bf)
+    {
+	bf->ref_count++;
+    }
+    else
+    {
+	bf = g_new0 (BinFile, 1);
     
+	bf->filename = g_strdup (filename);
+	
+	read_symbols (bf);
+	
+	bf->undefined.name = g_strdup_printf ("In file %s", filename);
+	bf->undefined.address = 0x0;
+	bf->ref_count = 1;
+	g_hash_table_insert (bin_files, bf->filename, bf);
+    }
+	
     return bf;
 }
 
 void
 bin_file_free (BinFile *bf)
 {
-    int i;
-    
-    g_free (bf->filename);
+    if (--bf->ref_count == 0)
+    {
+	int i;
 
-    for (i = 0; i < bf->n_symbols; ++i)
-	g_free (bf->symbols[i].name);
-    g_free (bf->symbols);
-    g_free (bf->undefined.name);
-    g_free (bf);
+	g_hash_table_remove (bin_files, bf->filename);
+	
+	g_free (bf->filename);
+	
+	for (i = 0; i < bf->n_symbols; ++i)
+	    g_free (bf->symbols[i].name);
+	g_free (bf->symbols);
+	g_free (bf->undefined.name);
+	g_free (bf);
+    }
 }
 
 /**

@@ -523,7 +523,7 @@ profile_new (StackStash *stash)
     /* profile objects */
     info.profile_objects = g_hash_table_new_full (g_str_hash, g_str_equal,
 						  g_free, NULL);
-    
+
     stack_stash_foreach (stash, generate_object_table, &info);
     stack_stash_foreach (stash, generate_call_tree, &info);
     link_parents (info.profile->call_tree, NULL);
@@ -531,7 +531,7 @@ profile_new (StackStash *stash)
     g_hash_table_foreach (info.profile->nodes_by_object, compute_object_total, NULL);
     
     g_hash_table_destroy (info.profile_objects);
-    
+
     return info.profile;
 }
 

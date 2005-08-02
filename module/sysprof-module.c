@@ -20,6 +20,9 @@
  */
 
 #include <linux/config.h>
+#if !CONFIG_PROFILING
+# error Sysprof needs a kernel with profiling support compiled in.
+#endif
 #ifdef CONFIG_SMP
 # define __SMP__
 #endif
@@ -33,10 +36,14 @@
 #include <linux/poll.h>
 #include <linux/highmem.h>
 #include <linux/pagemap.h>
+#include <linux/profile.h>
 
 #include "sysprof-module.h"
 
 #include <linux/version.h>
+#if KERNEL_VERSION(2,6,11) > LINUX_VERSION_CODE
+# error Sysprof needs a Linux 2.6.11 kernel or later
+#endif
 #include <linux/kallsyms.h>
 
 MODULE_LICENSE("GPL");
@@ -51,6 +58,19 @@ static SysprofStackTrace *	head = &stack_traces[0];
 static SysprofStackTrace *	tail = &stack_traces[0];
 DECLARE_WAIT_QUEUE_HEAD (wait_for_trace);
 DECLARE_WAIT_QUEUE_HEAD (wait_for_exit);
+
+/* Macro the names of the registers that are used on each architecture */
+#if defined(CONFIG_X86_64)
+# define REG_FRAME_PTR rbp
+# define REG_INS_PTR rip
+# define REG_STACK_PTR rsp
+#elif defined(CONFIG_X86)
+# define REG_FRAME_PTR ebp
+# define REG_INS_PTR eip
+# define REG_STACK_PTR esp
+#else
+# error Sysprof only supports the i386 and x86-64 architectures
+#endif
 
 #if 0
 static void on_timer(unsigned long);
@@ -306,21 +326,21 @@ generate_stack_trace(struct task_struct *task,
 	trace->pid = task->pid;
 	trace->truncated = 0;
 
-	trace->addresses[0] = (void *)regs->eip;
+	trace->addresses[0] = (void *)regs->REG_INS_PTR;
 
 	i = 1;
 
-	addr = regs->ebp;
+	addr = regs->REG_FRAME_PTR;
 
 #if 0
-	printk (KERN_ALERT "ebp: %p\n", regs->ebp);
+	printk (KERN_ALERT "frame pointer: %p\n", regs->REG_FRAME_PTR);
 #endif
 	
 	if (init_userspace_reader (&reader, task))
 	{
 		while (i < SYSPROF_MAX_ADDRESSES &&
 		       read_frame (&reader, addr, &frame) &&
-		       addr < START_OF_STACK && addr >= regs->esp)
+		       addr < START_OF_STACK && addr >= regs->REG_STACK_PTR)
 		{
 			trace->addresses[i++] = (void *)frame.return_address;
 			addr = frame.next;
@@ -454,16 +474,16 @@ timer_notify (struct pt_regs *regs)
 		trace->pid = current->pid;
 		trace->truncated = 0;
 		
-		trace->addresses[0] = (void *)regs->eip;
+		trace->addresses[0] = (void *)regs->REG_INS_PTR;
 		
 		i = 1;
 		
-		frame = (StackFrame *)regs->ebp;
+		frame = (StackFrame *)regs->REG_FRAME_PTR;
 		
 		while (pages_present (frame)				&&
 		       i < SYSPROF_MAX_ADDRESSES			&&
 		       ((unsigned long)frame) < START_OF_STACK		&&
-		       (unsigned long)frame >= regs->esp)
+		       (unsigned long)frame >= regs->REG_STACK_PTR)
 		{
 			trace->addresses[i++] = (void *)frame->return_address;
 			frame = (StackFrame *)frame->next;
@@ -540,7 +560,7 @@ init_module(void)
 	mod_timer(&timer, jiffies + INTERVAL);
 #endif
 	
-	printk(KERN_ALERT "starting sysprof module\n");
+	printk(KERN_ALERT "sysprof: loaded\n");
 	
 	return 0;
 }
@@ -555,5 +575,7 @@ cleanup_module(void)
 	unregister_timer_hook (timer_notify);
 	
 	remove_proc_entry("sysprof-trace", &proc_root);
+
+	printk(KERN_ALERT "sysprof: unloaded\n");
 }
 

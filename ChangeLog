@@ -1,3 +1,8 @@
+Mon Aug  1 23:49:51 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (REG_INS_PTR): Add support for
+	amd64/x86-64. Patch from Mike Frysinger.
+
 Sun Jul 10 10:51:52 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* binfile.c: Various minor clean-ups

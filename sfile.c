@@ -720,7 +720,7 @@ sfile_get_pointer (SFileInput  *file,
 void
 sfile_get_integer      (SFileInput  *file,
                         const char  *name,
-                        int         *integer)
+                        gint32      *integer)
 {
     Instruction *instruction;
 

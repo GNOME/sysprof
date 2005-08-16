@@ -1,3 +1,7 @@
+Mon Aug 15 20:39:11 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* binfile.c, process.c, profile.c: Fix some warnings.
+
 Mon Aug  1 23:49:51 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (REG_INS_PTR): Add support for

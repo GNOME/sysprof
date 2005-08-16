@@ -89,9 +89,9 @@ int      sfile_begin_get_list   (SFileInput  *file,
 void     sfile_get_pointer      (SFileInput  *file,
 				 const char *name,
 				 gpointer    *pointer);
-void     sfile_get_integer      (SFileInput  *file,
+void	 sfile_get_integer      (SFileInput  *file,
 				 const char *name,
-				 int         *integer);
+				 gint32     *integer);
 void     sfile_get_string       (SFileInput  *file,
 				 const char *name,
 				 char       **string);

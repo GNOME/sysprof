@@ -222,8 +222,8 @@ profile_load (const char *filename, GError **err)
 	sfile_begin_get_record (input, "object");
 
 	sfile_get_string (input, "name", &obj->name);
-	sfile_get_integer (input, "total", &obj->total);
-	sfile_get_integer (input, "self", &obj->self);
+	sfile_get_integer (input, "total", (gint32 *)&obj->total);
+	sfile_get_integer (input, "self", (gint32 *)&obj->self);
 	
 	sfile_end_get (input, "object", obj);
     }
@@ -241,8 +241,8 @@ profile_load (const char *filename, GError **err)
 	sfile_get_pointer (input, "siblings", (gpointer *)&node->siblings);
 	sfile_get_pointer (input, "children", (gpointer *)&node->children);
 	sfile_get_pointer (input, "parent", (gpointer *)&node->parent);
-	sfile_get_integer (input, "total", &node->total);
-	sfile_get_integer (input, "self", &node->self);
+	sfile_get_integer (input, "total", (gint32 *)&node->total);
+	sfile_get_integer (input, "self", (gint32 *)&node->self);
 	sfile_get_integer (input, "toplevel", &node->toplevel);
 	
 	sfile_end_get (input, "node", node);

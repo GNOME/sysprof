@@ -357,26 +357,12 @@ read_symbols (BinFile *bf)
 	if ((bfd_symbols[i]->flags & BSF_FUNCTION) &&
 	    (bfd_symbols[i]->section == text_section))
 	{
-	    char *name;
-
 	    /* Store the address in file coordinates:
 	     *    - all addresses are already offset by  section->vma
 	     *    - the section is positioned at         section->filepos
 	     */
-#if 0
-	    g_print ("file: %s\n", bf->filename);
-	    g_print ("vma: %p\n", text_section->vma);
-	    g_print ("vma: %p\n", text_section->filepos);
-#endif
-	    
 	    symbol.address = bfd_asymbol_value (bfd_symbols[i]) - load_address;
 	    symbol.name = demangle (bfd, bfd_asymbol_name (bfd_symbols[i]));
-#if 0
-	    symbol.name = g_strdup_printf ("%s (%s)", name, bf->filename);
-	    symbol.name = g_strdup (name);
-	    g_print ("symbol: %s (%s) %p\n", name, bf->filename, symbol.address);
-#endif
-
 	    g_array_append_vals (symbols, &symbol, 1);
 	}
     }

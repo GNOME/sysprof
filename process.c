@@ -296,7 +296,7 @@ static char *
 get_pidname (int pid)
 {
     if (pid == -1)
-	return g_strdup_printf ("kernel", pid);
+	return g_strdup_printf ("kernel");
     else
 	return g_strdup_printf ("pid %d", pid);
 }

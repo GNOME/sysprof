@@ -1,3 +1,16 @@
+Tue Aug 30 16:57:33 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* configure.ac: Complain if we can't find /lib/modules/`uname
+	-r`/build/Makefile. 
+
+	* process.c (process_lookup_symbol): Take an address of 0x1 to
+	mean "in kernel".
+
+	* module/sysprof-module.c (timer_notify): When reporting in-kernel
+	time, give the current pid instead of -1.
+
+	* TODO: updates
+
 Mon Aug 15 20:39:11 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* binfile.c, process.c, profile.c: Fix some warnings.

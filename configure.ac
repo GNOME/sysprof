@@ -77,12 +77,18 @@ KMINOR=`uname -r | cut -d"." -f 2`
 KMICRO=`uname -r | cut -d"." -f 3 | cut -d"-" -f 1`
 
 if [[ $KMICRO -lt 11 ]] ; then
-   if [[ $KMICRO -gt 8 ]]; then
-      echo
-      echo Linux \>= 2.6.11 is required
-      echo
-      exit 1
-   fi
+   echo *
+   echo * Linux \>= 2.6.11 is required
+   echo *
+   exit 1
+fi
+
+if [ ! test -f /lib/modules/`uname -r`/build/Makefile ] ; then
+   echo \*
+   echo \* Sysprof requires the kernel source code to be installed.
+   echo \* On a Fedora Core system the relevant package is kernel-devel
+   echo \*
+   exit 1
 fi
 
 AC_OUTPUT

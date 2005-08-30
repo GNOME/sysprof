@@ -1,5 +1,10 @@
 Before 1.0:
 
+* Fix cache so that it correctly reloads libraries when new ones are
+  installed. (Cache can go stale - probably just dump the cache when
+  a new profiling session is started). Though printing debug stuff 
+  doesn't seem to produce anything unexpected.
+
 * Build system
    - Find out what distributions it actually works on
        (ask for sucess/failure-stories in 0.9.x releases)
@@ -13,6 +18,7 @@ Before 1.0:
    - Announce on Freshmeat
    - Announce on Advogato
    - Announce on gnome-announce
+   - Announce on kernel list.
    - Announce on devtools list (?)
 
 Before 1.2:

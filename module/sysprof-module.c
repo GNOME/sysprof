@@ -462,10 +462,12 @@ timer_notify (struct pt_regs *regs)
 	{
 		/* kernel */
 		
-		trace->pid = -1;
+		trace->pid = current->pid;
 		trace->truncated = 0;
 		trace->n_addresses = 1;
-		trace->addresses[0] = 0x0;
+
+		/* 0x1 is taken by sysprof to mean "in kernel" */
+		trace->addresses[0] = (void *)0x1;
 	}
 	else
 	{

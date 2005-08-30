@@ -342,17 +342,26 @@ process_lookup_symbol (Process *process, gulong address)
 {
     static Symbol undefined;
     const Symbol *result;
+    static Symbol kernel;
     Map *map = process_locate_map (process, address);
 
 /*     g_print ("addr: %x\n", address); */
-    
+
     if (!map)
     {
-	if (undefined.name)
-	    g_free (undefined.name);
-	undefined.name = g_strdup_printf ("??? %s", process->cmdline);
-	undefined.address = 0xBABE0001;
-
+	if (address == 0x1)
+	{
+	    kernel.name = "in kernel";
+	    kernel.address = 0x0001337;
+	    return &kernel;
+	}
+	else
+	{
+	    if (undefined.name)
+		g_free (undefined.name);
+	    undefined.name = g_strdup_printf ("??? %s", process->cmdline);
+	    undefined.address = 0xBABE0001;
+	}
 #if 0
 	g_print ("no map for %p (%s)\n", address, process->cmdline);
 #endif

@@ -19,6 +19,7 @@ Before 1.0:
    - Announce on Advogato
    - Announce on gnome-announce
    - Announce on kernel list.
+   - Send to slashdot/developers
    - Announce on devtools list (?)
 
 Before 1.2:
@@ -228,6 +229,12 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
   dump the data to a network socket. Should be able to react to eg.
   SIGUSR1 by dumping the data.
 
+  Work done by Lorenzo:
+
+  http://www.colitti.com/lorenzo/software/gnome-startup/sysprof-text.diff
+  http://www.colitti.com/lorenzo/software/gnome-startup/sysprof.log
+  http://colitti.com/lorenzo/software/gnome-startup/
+
 - Figure out how Google's pprof script works. Then add real call graph 
   drawing. (google's script is really simple; uses dot from graphviz).
 
@@ -237,6 +244,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
   (g_file_replace())
 
 - somehow get access to VSEnterprise profiler and see how it works.
+  somehow get access to vtune and see how it works.
 
 Later:
 
@@ -248,6 +256,11 @@ Later:
 	 and you will need to insert the module from the command line]
 - Applications should be able to say "start profiling", "stop profiling"
   so that you can limit the profiling to specific areas.
+	Idea:
+		Add a new kernel interface that applications uses to say
+		begin/end.
+		Then add a timeline where you can mark interesting regions,
+		for example those that applications have marked interesting.
 
 - Find out how to hack around gtk+ bug causing multiple double clicks 
   to get eaten.
@@ -306,7 +319,7 @@ Later:
 
 	Having that would also take care of the "multiple functions"
 	above. Noone would understand it, though.
-		
+
 - figure out a way to deal with both disk and CPU. Need to make sure that
   things that are UNINTERRUPTIBLE while there are RUNNING tasks are not
   considered bad.
@@ -347,10 +360,10 @@ Later:
    been read will stay in cache (for short profile runs you can assume that with disk,
    but not for long ones).
 
-
-
    - Perhaps show a timeline with CPU in one color and disk in one color. Allow people to
-     look at at subintervals of this timeline.
+     look at at subintervals of this timeline. Is it useful to look at both CPU and disk at 
+     the same time? Probably not. See also marker discussion above. UI should probably allow
+     double clicking on a marked section and all instances of that one would be marked.
 
    - The existing sysprof visualization is not terribly bad, the "self" column is
      more useful now. 
@@ -361,6 +374,7 @@ Later:
    - Optimization usecases:
 
 	- A lot of stuff is read synchronously, but it is possible to read it asynchronously.
+	  Visualization: A timeline with alternating CPU/disk activity. 
 
 	- What function is doing all the synchronous reading, and what files/offsets is
 	  it reading. Visualization: lots of reads across different files out of one 
@@ -385,6 +399,7 @@ Later:
 	- Profiling a login session. 
 
     - Need to report stat() as well. (Where do inode data end up? In the buffer-cache?)
+      Also open() may cause disk reads (seeks).
 
     - To generate the timeline we need to know when a disk request is issued and when it
       is completed. This way we can assign blame to all applications that have issued a

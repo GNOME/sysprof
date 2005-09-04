@@ -348,7 +348,7 @@ read_symbols (BinFile *bf)
 
     symbols = g_array_new (FALSE, FALSE, sizeof (Symbol));
 
-/* g_print ("%s: text vma: %x\n", bf->filename, text_section->vma); */
+    /* g_print ("%s: text vma: %x\n", bf->filename, text_section->vma); */
 
     for (i = 0; i < n_symbols; i++)
     {

@@ -36,6 +36,13 @@ Before 1.2:
   stack must probably be taken in the interrupt itself?
   - Why this difference? The page tables should still be loaded. Is it
     because pages_present() doesn't work? No, turning it off doesn't help.
+  - It looks like this works. Get:
+
+       struct pt_regs *user_regs =
+          (void *)current->thread.esp0 - sizeof (struct pt_regs);
+
+    then use pages_present as usual to trace with user_regs; There could be
+    rare lockups though.
 
 * Correctness
 	- When the module is unloaded, kill all processes blocking in read
@@ -47,7 +54,7 @@ Before 1.2:
 
 	- When the module is unloaded, can we somehow *guarantee* that no
 	  kernel thread is active? Doesn't look like it; however we can
-	  get very close by decreasing a ref count just before returning
+	  get close by decreasing a ref count just before returning
 	  from the module. (There may still be return instructions etc.
 	  that will get run). This may not be an issue with the timer
   	  based scanning we are using currently.
@@ -59,6 +66,13 @@ Before 1.2:
 - translation should be hooked up 
 
 - Consider adding "at least 5% inclusive cost" filter
+
+- consider having the ability to group a function together with its nearest
+  neighbours. That way we can eliminate some of the effect of 
+	"one function taking 10% of the time"
+  vs.
+	"the same function broken into ten functions each taking 1%"
+  Not clear what the UI looks like though.
 
 - Ability to generate "screenshots" suitable for mail/blog/etc
 	UI: "generate screenshot" menu item pops up a window with
@@ -170,7 +184,8 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 			  with set/get_user_data)
 
 		- Send each stack trace to the profile module, along with
-		  presentation objects
+		  presentation objects. Maybe just a map from stack nodes
+		  to presentation objects.
 
 - Charge 'self' properly to processes that don't get any stack trace at all 
 	(probably we get that for free with stackstash reorganisation)
@@ -253,6 +268,11 @@ Later:
 
   This function would behave essentially like a signal handler: couldn't
   call malloc(), couldn't call printf(), etc. 
+
+  Note thought that scripting languages will generally have a stack with 
+  both script-binary-stack, script stack, and library stacks. We wouldn't
+  want scripts to need to parse dwarf. Also if we do that thing with 
+  sending the entire stack to userspace, things will be further complicated.
 
 - Consider this usecase:
 	Someone is considering replacing malloc()/free() with a freelist

@@ -1,3 +1,7 @@
+Sun Sep  4 19:38:51 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
 Tue Aug 30 16:57:33 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* configure.ac: Complain if we can't find /lib/modules/`uname

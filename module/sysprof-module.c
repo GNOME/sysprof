@@ -475,10 +475,10 @@ timer_notify (struct pt_regs *regs)
 		
 		trace->pid = current->pid;
 		trace->truncated = 0;
+
+		i = 0;
 		
-		trace->addresses[0] = (void *)regs->REG_INS_PTR;
-		
-		i = 1;
+		trace->addresses[i++] = (void *)regs->REG_INS_PTR;
 		
 		frame = (StackFrame *)regs->REG_FRAME_PTR;
 		

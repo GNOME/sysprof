@@ -1,26 +1,43 @@
 Before 1.0:
 
-* Fix cache so that it correctly reloads libraries when new ones are
-  installed. (Cache can go stale - probably just dump the cache when
-  a new profiling session is started). Though printing debug stuff 
-  doesn't seem to produce anything unexpected.
+   - Update version numbers in source
+
+   - Make tarball
+
+   - Check that tarball works
+
+   - cvs commit
+
+   - cvs tag sysprof-1-0
+
+   - Update website
+
+   - Announce on Freshmeat
+
+   - Announce on gnome-announce
+   - Announce on kernel list.
+
+   - Announce on Gnomefiles
+
+   - Announce on news.gnome.org
+   - Send to slashdot/developers
+   - Announce on devtools list (?)
+
+   - Announce on Advogato
+	link to archive 
+
+Before 1.0.1:
+
+* See if we can reproduce the problem where libraries didn't get correctly
+  reloaded after new versions were installed.
 
 * Build system
    - Find out what distributions it actually works on
-       (ask for sucess/failure-stories in 0.9.x releases)
+       (ask for sucess/failure-stories in 1.0 releases)
 
-   - Create RPM package? See fedora package list for information
+   - Create RPM package? See fedora-packaging-list for information
      about how to package kernel modules.
 
- - After 1.0:
-   - Announce on news.gnome.org
-   - Announce on Gnomefiles
-   - Announce on Freshmeat
-   - Announce on Advogato
-   - Announce on gnome-announce
-   - Announce on kernel list.
-   - Send to slashdot/developers
-   - Announce on devtools list (?)
 
 Before 1.2:
 	
@@ -213,7 +230,9 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	- Possibly a special "view details" mode, assuming that 
 	  the details of a function are not that interesting 
 	  together with a tree.
-- rethink caller list, not terribly useful at the moment.
+- rethink caller list, not terribly useful at the moment. Federico suggested
+  listing all ancestors.
+
 
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.
@@ -322,7 +341,7 @@ Later:
 
 - figure out a way to deal with both disk and CPU. Need to make sure that
   things that are UNINTERRUPTIBLE while there are RUNNING tasks are not
-  considered bad.
+  considered bad. Also figure out how to deal with more than one CPU/core.
 
   Not entirely clear that the sysprof visualization is right for disk.
 
@@ -364,6 +383,10 @@ Later:
      look at at subintervals of this timeline. Is it useful to look at both CPU and disk at 
      the same time? Probably not. See also marker discussion above. UI should probably allow
      double clicking on a marked section and all instances of that one would be marked.
+
+   - Other variation on the timeline idea: Instead of a disk timeline you could have a 
+     list of individual diskaccesses, and be able to select the ones you wanted to
+     get rid of.
 
    - The existing sysprof visualization is not terribly bad, the "self" column is
      more useful now. 

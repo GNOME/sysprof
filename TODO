@@ -36,8 +36,10 @@ Before 1.0.1:
        (ask for sucess/failure-stories in 1.0 releases)
 
    - Create RPM package? See fedora-packaging-list for information
-     about how to package kernel modules.
+     about how to package kernel modules. Lots of threads in
+     June 2005 and forward.
 
+     See also http://www.fedoraproject.org/wiki/Extras/KernelModuleProposal
 
 Before 1.2:
 	

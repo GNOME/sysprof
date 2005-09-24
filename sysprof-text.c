@@ -178,5 +178,8 @@ main (int argc,
     fd_set_read_callback (app->fd, on_read);
     g_main_loop_run (app->main_loop);
 
+    signal_unset_handler (SIGTERM);
+    signal_unset_handler (SIGINT);
+    
     return 0;
 }

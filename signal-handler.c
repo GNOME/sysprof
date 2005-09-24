@@ -27,48 +27,48 @@
 typedef struct SignalWatch SignalWatch;
 struct SignalWatch
 {
-    int signo;
-    int pipe_read_end;
-    int pipe_write_end;
-    struct sigaction old_action;
-    SignalFunc handler;
-    gpointer user_data;
-
-    SignalWatch *next;
+    int                 signo;
+    SignalFunc          handler;
+    gpointer            user_data;
+    
+    int                 read_end;
+    int                 write_end;
+    struct sigaction    old_action;
+    
+    SignalWatch *       next;
 };
 
-/* This is not a GHashTable because I don't trust g_hash_table_lookup()
- * to be callable from a signal handler.
- */
 static SignalWatch *signal_watches;
 
 static SignalWatch *
-lookup_watch (int signo)
+lookup_signal_watch (int signo)
 {
     SignalWatch *w;
-
+    
     for (w = signal_watches; w != NULL; w = w->next)
     {
 	if (w->signo == signo)
 	    return w;
     }
-
+    
     return NULL;
 }
 
 static void
-add_watch (SignalWatch *watch)
+add_signal_watch (SignalWatch *watch)
 {
-    g_return_if_fail (lookup_watch (watch->signo) == NULL);
+    g_return_if_fail (lookup_signal_watch (watch->signo) == NULL);
     
     watch->next = signal_watches;
     signal_watches = watch;
 }
 
 static void
-remove_watch (SignalWatch *watch)
+remove_signal_watch (SignalWatch *watch)
 {
-    /* it's either the first one in the list, or it is the ->next
+    g_return_if_fail (watch != NULL);
+    
+    /* It's either the first one in the list, or it is the ->next
      * for some other watch
      */
     if (watch == signal_watches)
@@ -79,7 +79,7 @@ remove_watch (SignalWatch *watch)
     else
     {
 	SignalWatch *w;
-	
+        
 	for (w = signal_watches; w && w->next; w = w->next)
 	{
 	    if (watch == w->next)
@@ -93,13 +93,15 @@ remove_watch (SignalWatch *watch)
 }
 
 static void
-signal_handler (int signo, siginfo_t *info, void *data)
+signal_handler (int        signo,
+                siginfo_t *info,
+                void      *data)
 {
     SignalWatch *watch;
     char x = 'x';
-
-    watch = lookup_watch (signo);
-    write (watch->pipe_write_end, &x, 1);
+    
+    watch = lookup_signal_watch (signo);
+    write (watch->write_end, &x, 1);
 }
 
 static void
@@ -108,63 +110,105 @@ on_read (gpointer data)
     SignalWatch *watch = data;
     char x;
     
-    read (watch->pipe_read_end, &x, 1);
+    read (watch->read_end, &x, 1);
     
+    /* This is a callback to the application, so things like
+     * signal_unset_handler() can be called here.
+     */
     watch->handler (watch->signo, watch->user_data);
 }
 
-static void
-create_pipe (int *read_end,
-	     int *write_end)
+static gboolean
+create_pipe (int     *read_end,
+	     int     *write_end,
+             GError **err)
 {
     int p[2];
-
-    pipe (p);
-
+    
+    if (pipe (p) < 0)
+    {
+        /* FIXME - create an error */
+        return FALSE;
+    }
+    
     if (read_end)
 	*read_end = p[0];
-
+    
     if (write_end)
 	*write_end = p[1];
+
+    return TRUE;
+}
+
+static gboolean
+install_signal_handler (int                signo,
+                        struct sigaction  *old_action,
+                        GError           **err)
+{
+    struct sigaction action;
+    
+    memset (&action, 0, sizeof (action));
+    
+    action.sa_sigaction = signal_handler;
+    sigemptyset (&action.sa_mask);
+    action.sa_flags = SA_SIGINFO;
+    
+    if (sigaction (signo, &action, old_action) < 0)
+    {
+        /* FIXME - create an error */
+        return TRUE;
+    }
+
+    return TRUE;
 }
 
 static void
-install_signal_handler (int signo, struct sigaction *old_action)
+signal_watch_free (SignalWatch *watch)
 {
-    struct sigaction action;
-
-    memset (&action, 0, sizeof (action));
-
-    action.sa_sigaction = signal_handler;
-    action.sa_flags = SA_SIGINFO;
-
-    sigaction (signo, &action, old_action);
+    fd_remove_watch (watch->read_end);
+    
+    close (watch->write_end);
+    close (watch->read_end);
+    
+    remove_signal_watch (watch);
+    
+    g_free (watch);
 }
 
 gboolean
-signal_set_handler (int signo,
-		    SignalFunc handler,
-		    gpointer data,
-		    GError **err)
+signal_set_handler (int          signo,
+		    SignalFunc   handler,
+		    gpointer     data,
+		    GError     **err)
 {
     SignalWatch *watch;
+    int read_end, write_end;
     
-    g_return_val_if_fail (lookup_watch (signo) == NULL, FALSE);
+    g_return_val_if_fail (lookup_signal_watch (signo) == NULL, FALSE);
+    
+    if (!create_pipe (&read_end, &write_end, err))
+        return FALSE;
     
     watch = g_new0 (SignalWatch, 1);
-
-    create_pipe (&watch->pipe_read_end, &watch->pipe_write_end);
+    
     watch->signo = signo;
     watch->handler = handler;
     watch->user_data = data;
-
-    add_watch (watch);
-	
-    fd_add_watch (watch->pipe_read_end, watch);
-    fd_set_read_callback (watch->pipe_read_end, on_read);
-
-    install_signal_handler (signo, &watch->old_action);
-
+    watch->read_end = read_end;
+    watch->write_end = write_end;
+    
+    fd_add_watch (watch->read_end, watch);
+    fd_set_read_callback (watch->read_end, on_read);
+    
+    add_signal_watch (watch);
+    
+    if (!install_signal_handler (signo, &watch->old_action, err))
+    {
+        signal_watch_free (watch);
+        
+        return FALSE;
+    }
+    
     return TRUE;
 }
 
@@ -173,18 +217,11 @@ signal_unset_handler (int signo)
 {
     SignalWatch *watch;
     
-    watch = lookup_watch (signo);
-
+    watch = lookup_signal_watch (signo);
+    
     g_return_if_fail (watch != NULL);
-
+    
     sigaction (signo, &watch->old_action, NULL);
-
-    fd_remove_watch (watch->pipe_read_end);
     
-    close (watch->pipe_read_end);
-    close (watch->pipe_write_end);
-
-    remove_watch (watch);
-    
-    g_free (watch);
+    signal_watch_free (watch);
 }

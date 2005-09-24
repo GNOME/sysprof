@@ -140,4 +140,4 @@ gboolean sfile_output_save      (SFileOutput       *sfile,
 				 const char  *filename,
 				 GError     **err);
 
-void sfile_output_free (SFileOutput *sfile);
+void     sfile_output_free (SFileOutput *sfile);

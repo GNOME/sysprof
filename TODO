@@ -245,17 +245,6 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 - add an 'everything' object. It is really needed for a lot of things
 	- should be easy to do with stackstash reorganization.
 
-- Non-GUI version that can save in a format the GUI can understand.
-  Could be used for profiling startup etc. Would preferably be able to
-  dump the data to a network socket. Should be able to react to eg.
-  SIGUSR1 by dumping the data.
-
-  Work done by Lorenzo:
-
-  http://www.colitti.com/lorenzo/software/gnome-startup/sysprof-text.diff
-  http://www.colitti.com/lorenzo/software/gnome-startup/sysprof.log
-  http://colitti.com/lorenzo/software/gnome-startup/
-
 - Figure out how Google's pprof script works. Then add real call graph 
   drawing. (google's script is really simple; uses dot from graphviz).
 
@@ -274,7 +263,7 @@ Later:
 
 - .desktop file
 	[Is this worth it? You will often want to start it as root, 
-	 and you will need to insert the module from the command line]
+	 and you will need to insert the module from the comman line]
 - Applications should be able to say "start profiling", "stop profiling"
   so that you can limit the profiling to specific areas.
 	Idea:
@@ -434,6 +423,17 @@ Later:
 	disk requests.
 
 DONE:
+
+* Non-GUI version that can save in a format the GUI can understand.
+  Could be used for profiling startup etc. Would preferably be able to
+  dump the data to a network socket. Should be able to react to eg.
+  SIGUSR1 by dumping the data.
+
+  Work done by Lorenzo:
+
+  http://www.colitti.com/lorenzo/software/gnome-startup/sysprof-text.diff
+  http://www.colitti.com/lorenzo/software/gnome-startup/sysprof.log
+  http://colitti.com/lorenzo/software/gnome-startup/
 
 * consider caching [filename => bin_file]
 

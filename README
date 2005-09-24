@@ -87,13 +87,12 @@ Debugging symbols
       you why, but then I'd have to kill you.
 
 
-
-
 Credits:
+      Lorenzo Colitti for writing the sysprof-text program
       Diana Fong for the icon
       Mike Frysinger for x86-64 support
       Kristian Høgsberg for the first port to the 2.6 kernel.
       Owen Taylor for the symbol lookup code in memprof
-	
+
 
 Søren   (sandmann@daimi.au.dk)

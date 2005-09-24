@@ -1,7 +1,7 @@
 SUBDIRS = module
 DIST_SUBDIRS = module
 
-bin_PROGRAMS = sysprof
+bin_PROGRAMS = sysprof sysprof-text
 pkgdata_DATA = sysprof.glade sysprof-icon.png
 
 sysprof_SOURCES =	        \
@@ -22,7 +22,29 @@ sysprof_SOURCES =	        \
 	watch.h			\
 	watch.c
 
+sysprof_text_SOURCES =	        \
+	binfile.h		\
+	binfile.c		\
+	process.h		\
+	process.c		\
+	profile.h		\
+	profile.c		\
+	sfile.h			\
+	sfile.c			\
+	stackstash.h		\
+	stackstash.c		\
+	module/sysprof-module.h	\
+	signal-handler.h	\
+	signal-handler.c	\
+	sysprof-text.c		\
+	treeviewutils.h		\
+	treeviewutils.c		\
+	watch.h			\
+	watch.c
+
 sysprof_LDADD = $(DEP_LIBS)
+
+sysprof_text_LDADD = $(DEP_LIBS)
 
 INCLUDES = 					   \
 	$(DEP_CFLAGS)				   \

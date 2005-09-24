@@ -1,4 +1,4 @@
-/* Sysprof -- Sampling, systemwide CPU profiler
+/* Sysprof -- Sampling, systemwide CPU profiler 
  * Copyright 2004, Red Hat, Inc.
  * Copyright 2004, 2005, Soeren Sandmann
  *
@@ -249,76 +249,6 @@ set_busy (GtkWidget *widget, gboolean busy)
 
     gdk_flush ();
 }
-
-#if 0
-static gchar *
-get_name (pid_t pid)
-{
-    char *cmdline;
-    char *name = g_strdup_printf ("/proc/%d/cmdline", pid);
-    
-    if (g_file_get_contents (name, &cmdline, NULL, NULL))
-	return cmdline;
-    else
-	return g_strdup ("<unknown>");
-}
-#endif
-
-#if 0
-static void
-on_timeout (gpointer data)
-{
-    Application *app = data;
-    GList *pids, *list;
-    int mypid = getpid();
-    
-    pids = list_processes ();
-    
-    for (list = pids; list != NULL; list = list->next)
-    {
-	int pid = GPOINTER_TO_INT (list->data);
-	
-	if (pid == mypid)
-	    continue;
-	
-	if (get_process_state (pid) == PROCESS_RUNNING)
-	{
-	    Process *process;
-	    SysprofStackTrace trace;
-	    int i;
-	    
-	    if (!generate_stack_trace (pid, &trace))
-	    {
-		continue;
-	    }
-	    
-	    process = process_get_from_pid (pid);
-	    
-#if 0
-	    process_ensure_map (process, trace.pid, 
-				(gulong)trace.addresses[i]);
-#endif
-	    
-	    g_print ("n addr: %d\n", trace.n_addresses);
-	    for (i = 0; i < trace.n_addresses; ++i)
-		process_ensure_map (process, trace.pid, 
-				    (gulong)trace.addresses[i]);
-	    g_assert (!app->generating_profile);
-	    
-	    stack_stash_add_trace (
-		app->stash, process,
-		(gulong *)trace.addresses, trace.n_addresses, 1);
-	    
-	    app->n_samples++;
-	}
-    }
-    
-    update_sensitivity (app);
-    g_list_free (pids);
-    
-    return TRUE;
-}
-#endif
 
 static double
 timeval_to_ms (const GTimeVal *timeval)

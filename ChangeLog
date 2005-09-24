@@ -1,3 +1,13 @@
+Sat Sep 24 00:01:42 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* Nakefile.am, sysprof-text.c: New non-GUI version, written
+	by Lorenzo Colitti, with some changes by me.
+
+	* signal-handler.[ch]: New files that provide a way to get UNIX
+	signals into a glib main loop.
+
+	* README: add Lorenzo to credits
+	
 Fri Sep 23 20:46:40 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (build_gui): If the glade file doesn't exists pop up 
@@ -7,6 +17,8 @@ Fri Sep 23 20:46:40 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 Sat Sep 17 14:35:32 2005  Soeren Sandmann  <sandmann@redhat.com>
 
+	* Release 1.0 (this comment was added post facto)
+	
 	* Bump version numbers
 	* README: update
 	* TODO: Updates

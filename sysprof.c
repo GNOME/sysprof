@@ -1353,7 +1353,10 @@ set_shadows (void)
 	);
 }
 
-static void
+#define GLADE_FILE DATADIR "/sysprof.glade"
+#define ICON_FILE  PIXMAPDIR "/sysprof-icon.png"
+
+static gboolean
 build_gui (Application *app)
 {
     GladeXML *xml;
@@ -1361,12 +1364,24 @@ build_gui (Application *app)
     GtkTreeViewColumn *col;
 
     set_shadows ();
+
+    if (!g_file_test (GLADE_FILE, G_FILE_TEST_EXISTS)   ||
+	!g_file_test (ICON_FILE,  G_FILE_TEST_EXISTS))
+    {
+	sorry (NULL,
+	       "Sysprof was not compiled or installed correctly.\n"
+	       "\n"
+	       "Running \"make install\" may solve this problem.\n");
+	    
+	return FALSE;
+    }
+	       
     
-    xml = glade_xml_new (DATADIR "/sysprof.glade", NULL, NULL);
+    xml = glade_xml_new (GLADE_FILE, NULL, NULL);
     
     /* Main Window */
     app->main_window = glade_xml_get_widget (xml, "main_window");
-    app->icon = gdk_pixbuf_new_from_file (PIXMAPDIR "/sysprof-icon.png", NULL);
+    app->icon = gdk_pixbuf_new_from_file (ICON_FILE, NULL);
 
     gtk_window_set_icon (GTK_WINDOW (app->main_window), app->icon);
     
@@ -1475,6 +1490,8 @@ build_gui (Application *app)
     
     /* Statusbar */
     queue_show_samples (app);
+
+    return TRUE;
 }
 
 static Application *
@@ -1539,7 +1556,8 @@ main (int argc, char **argv)
     g_timeout_add (10, on_timeout, app);
 #endif
     
-    build_gui (app);
+    if (!build_gui (app))
+	return -1;
     
     update_sensitivity (app);
 

@@ -1,3 +1,10 @@
+Fri Sep 23 20:46:40 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (build_gui): If the glade file doesn't exists pop up 
+	an alert suggesting running 'make install'
+
+	* sysprof.c: Remove some commented out code
+
 Sat Sep 17 14:35:32 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* Bump version numbers

@@ -42,6 +42,20 @@ Before 1.0.1:
      See also http://www.fedoraproject.org/wiki/Extras/KernelModuleProposal
 
 Before 1.2:
+
+* Figure out how to make sfile.[ch] use less memory.
+	- In general clean sfile.[ch] up a little:
+	- split out dfa in its own generic class
+	- make a generic representation of xml files with quarks for strings:
+		struct item { 
+			int begin/end/text;
+			quark text:		-> begin/end/value
+			int id;			-> for begins  that are pointed to
+		}
+	  perhaps even with iterators. Should be compact and suitable for both
+	  input and output..
+	- make the api a little saner; add format/content structs
+	- 
 	
 * See if the auto-expanding can be made more intelligent
 
@@ -411,6 +425,14 @@ Later:
 	  Normal sysprof visualization is probably useful enough.
 
 	- Profiling a login session. 
+
+	- Many applications are running at the same time, doing IPC. It would be useful
+	  if we could figure out what other things a given process is waiting on. Eg., in
+	  poll, find out what processes have the other ends of the fd's open.
+		Visualization: multiple lines on a graph. Lines join up where one process
+		is blocking on another. That would show processes holding up the progress
+		very clearly.
+	  This was suggested by Federico.
 
     - Need to report stat() as well. (Where do inode data end up? In the buffer-cache?)
       Also open() may cause disk reads (seeks).

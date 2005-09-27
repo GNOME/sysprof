@@ -452,52 +452,42 @@ timer_notify (struct pt_regs *regs)
 
 	is_user = user_mode(regs);
 
-	if (!current || current->pid == 0)
+	if (!current || current->pid == 0 || !current->mm)
 		return 0;
 	
 	if (is_user && current->state != TASK_RUNNING)
 		return 0;
 
+	memset(trace, 0, sizeof (SysprofStackTrace));
+	
+	trace->pid = current->pid;
+	
+	i = 0;
 	if (!is_user)
 	{
-		/* kernel */
-		
-		trace->pid = current->pid;
-		trace->truncated = 0;
-		trace->n_addresses = 1;
-
-		/* 0x1 is taken by sysprof to mean "in kernel" */
-		trace->addresses[0] = (void *)0x1;
+		trace->addresses[i++] = 0x01;
+		regs = (void *)current->thread.esp0 - sizeof (struct pt_regs);
 	}
-	else
+
+	trace->addresses[i++] = (void *)regs->REG_INS_PTR;
+	
+	frame = (StackFrame *)regs->REG_FRAME_PTR;
+	
+	while (pages_present (frame)				&&
+	       i < SYSPROF_MAX_ADDRESSES			&&
+	       ((unsigned long)frame) < START_OF_STACK		&&
+	       (unsigned long)frame >= regs->REG_STACK_PTR)
 	{
-		memset(trace, 0, sizeof (SysprofStackTrace));
-		
-		trace->pid = current->pid;
-		trace->truncated = 0;
-
-		i = 0;
-		
-		trace->addresses[i++] = (void *)regs->REG_INS_PTR;
-		
-		frame = (StackFrame *)regs->REG_FRAME_PTR;
-		
-		while (pages_present (frame)				&&
-		       i < SYSPROF_MAX_ADDRESSES			&&
-		       ((unsigned long)frame) < START_OF_STACK		&&
-		       (unsigned long)frame >= regs->REG_STACK_PTR)
-		{
-			trace->addresses[i++] = (void *)frame->return_address;
-			frame = (StackFrame *)frame->next;
-		}
-		
-		trace->n_addresses = i;
-
-		if (i == SYSPROF_MAX_ADDRESSES)
-			trace->truncated = 1;
-		else
-			trace->truncated = 0;
+		trace->addresses[i++] = (void *)frame->return_address;
+		frame = (StackFrame *)frame->next;
 	}
+	
+	trace->n_addresses = i;
+	
+	if (i == SYSPROF_MAX_ADDRESSES)
+		trace->truncated = 1;
+	else
+		trace->truncated = 0;
 	
 	if (head++ == &stack_traces[N_TRACES - 1])
 		head = &stack_traces[0];

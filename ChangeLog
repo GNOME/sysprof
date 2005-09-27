@@ -1,3 +1,15 @@
+Tue Sep 27 01:33:33 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* process.c (process_lookup_symbol): If the address is 0x01, treat
+	as kernel, regardless of whether we have a map for that address or
+	not.
+
+	* module/sysprof-module.c (timer_notify): Take a stack trace of
+	the current process, even when we are in kernel mode. This way we
+	can assign kernel activity to individual user space stacktraces.
+
+	* TODO: updates.
+	
 Sat Sep 24 14:41:23 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* configure.ac: Bump version number to 1.1.0

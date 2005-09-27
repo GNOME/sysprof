@@ -347,42 +347,21 @@ process_lookup_symbol (Process *process, gulong address)
 
 /*     g_print ("addr: %x\n", address); */
 
-    if (!map)
+    if (address == 0x1)
     {
-	if (address == 0x1)
-	{
-	    kernel.name = "in kernel";
-	    kernel.address = 0x0001337;
-	    return &kernel;
-	}
-	else
-	{
-	    if (undefined.name)
-		g_free (undefined.name);
-	    undefined.name = g_strdup_printf ("??? %s", process->cmdline);
-	    undefined.address = 0xBABE0001;
-	}
-#if 0
-	g_print ("no map for %p (%s)\n", address, process->cmdline);
-#endif
-	
+	kernel.name = "in kernel";
+	kernel.address = 0x00001337;
+	return &kernel;
+    }
+    else if (!map)
+    {
+	if (undefined.name)
+	    g_free (undefined.name);
+	undefined.name = g_strdup_printf ("??? %s", process->cmdline);
+	undefined.address = 0xBABE0001;
+
 	return &undefined;
     }
-#if 0
-    g_print ("has map: %s\n", process->cmdline);
-#endif
-
-#if 0
-    g_print ("has map: %s\n", process->cmdline);
-#endif
-    
-/*     if (map->do_offset) */
-/*       address -= map->start; */
-
-#if 0
-    /* convert address to file coordinates */
-    g_print ("looking up %p  ", address);
-#endif
     
     address -= map->start;
     address += map->offset;

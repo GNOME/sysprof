@@ -42,6 +42,11 @@ typedef guint SType;
  *  For formats consider:
  *
  *   Format *format_new (void);
+ *   void format_free (void);
+ *   Content *format_create_record (Format *format, Content *c1, ...);
+ *   Content *format_create_list   (Format *format, Content *t);
+ *   Content *format_create_pointer  (Format *format, Content *pointer_type);
+ *   
  *   void format_set_record (Format *f, Content *r);
  *   Content *new_record (Content *c1, ...);
  *

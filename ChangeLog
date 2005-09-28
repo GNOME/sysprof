@@ -1,3 +1,7 @@
+Wed Sep 28 12:08:32 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-text.c: Add my name to the copyright statement
+
 Tue Sep 27 01:33:33 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* process.c (process_lookup_symbol): If the address is 0x01, treat

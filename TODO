@@ -43,6 +43,10 @@ Before 1.0.1:
 
 Before 1.2:
 
+* The handling of the global variable in signal-handler.[ch] needs to be
+  atomic - right now it isn't. The issue is what happens if a handled signal
+  arrives while we are manipulating the list?
+
 * Figure out how to make sfile.[ch] use less memory.
 	- In general clean sfile.[ch] up a little:
 	- split out dfa in its own generic class

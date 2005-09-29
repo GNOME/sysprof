@@ -54,6 +54,10 @@ lookup_signal_watch (int signo)
     return NULL;
 }
 
+/* These two functions might be interrupted by a signal handler that is
+ * going to run lookup_signal_watch(). Assuming that pointer writes are
+ * atomic, the code below should be ok.
+ */
 static void
 add_signal_watch (SignalWatch *watch)
 {

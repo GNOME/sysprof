@@ -70,17 +70,15 @@ Before 1.2:
 
 * If interrupt happens in kernel mode, send both
   kernel stack and user space stack, have userspace stitch them
-  together. (User space stack must probably be done in a thread - kernel 
-  stack must probably be taken in the interrupt itself?
-  - Why this difference? The page tables should still be loaded. Is it
-    because pages_present() doesn't work? No, turning it off doesn't help.
-  - It looks like this works. Get:
-
-       struct pt_regs *user_regs =
-          (void *)current->thread.esp0 - sizeof (struct pt_regs);
-
-    then use pages_present as usual to trace with user_regs; There could be
-    rare lockups though.
+  together. well, they could be stitched together in the kernel. 
+	Already done: we now take a stacktrace of the user space process
+	when the interrupt happens in kernel mode. We don't take any
+	stacktraces of the kernel though. Things that need to be investigated:
+		- does the kernel come with dwarf debug information?
+		- does the kernel come with some other debug info
+		- is there a place where the vmlinux binary is usually
+		  placed? (We should avoid any "location of vmlinux" type
+		  questions if at all possible).
 
 * Correctness
 	- When the module is unloaded, kill all processes blocking in read
@@ -449,6 +447,18 @@ Later:
 	disk requests.
 
 DONE:
+
+* (User space stack must probably be done in a thread - kernel 
+  stack must probably be taken in the interrupt itself?
+  - Why this difference? The page tables should still be loaded. Is it
+    because pages_present() doesn't work? No, turning it off doesn't help.
+  - It looks like this works. Get:
+
+       struct pt_regs *user_regs =
+          (void *)current->thread.esp0 - sizeof (struct pt_regs);
+
+    then use pages_present as usual to trace with user_regs; There could be
+    rare lockups though.
 
 * Non-GUI version that can save in a format the GUI can understand.
   Could be used for profiling startup etc. Would preferably be able to

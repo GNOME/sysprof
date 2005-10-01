@@ -349,12 +349,10 @@ struct Info
 };
 
 static void
-generate_object_table (GSList *trace, gint size, gpointer data)
+generate_object_table (Process *process, GSList *trace, gint size, gpointer data)
 {
     Info *info = data;
     GSList *list;
-    Process *process = trace->data;
-    trace = trace->next;
     
     ensure_profile_object (info->profile_objects, process, 0);
     
@@ -446,14 +444,12 @@ dump_trace (GSList *trace)
 #endif
 
 static void
-generate_call_tree (GSList *trace, gint size, gpointer data)
+generate_call_tree (Process *process, GSList *trace, gint size, gpointer data)
 {
     Info *info = data;
     Node *match = NULL;
-    GHashTable *seen_objects;
-    Process *process = trace->data;
-    trace = trace->next;
     ProfileObject *proc = lookup_profile_object (info->profile_objects, process, 0);
+    GHashTable *seen_objects;
     
     for (match = info->profile->call_tree; match; match = match->siblings)
     {

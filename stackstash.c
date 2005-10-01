@@ -27,12 +27,14 @@ struct StackNode
     gpointer	address;
     StackNode *	siblings;
     StackNode *	children;
+    StackNode *	next;		/* next leaf with the same pid */
     int		size;
 };
 
 struct StackStash
 {
     StackNode  *root;
+    GHashTable *leaves_by_process;
 };
 
 static StackNode *
@@ -43,6 +45,7 @@ stack_node_new (void)
     node->children = NULL;
     node->address = NULL;
     node->parent = NULL;
+    node->next = NULL;
     node->size = 0;
     return node;
 }
@@ -65,6 +68,8 @@ stack_stash_new       (void)
 {
     StackStash *stash = g_new (StackStash, 1);
 
+    stash->leaves_by_process =
+	g_hash_table_new (g_direct_hash, g_direct_equal);
     stash->root = NULL;
     return stash;
 }
@@ -72,18 +77,32 @@ stack_stash_new       (void)
 static StackNode *
 stack_node_add_trace (StackNode  *node,
 		      GList      *bottom,
-		      gint        size)
+		      gint        size,
+		      StackNode **leaf)
 {
     StackNode *match;
     StackNode *n;
 
     if (!bottom)
-	return node;
-
-    for (match = node; match != NULL; match = match->siblings)
     {
-	if (match->address == bottom->data)
-	    break;
+	*leaf = NULL;
+	return node;
+    }
+
+    if (!bottom->next)
+    {
+	/* A leaf must always be separate, so pids can
+	 * point to them
+	 */
+	match = NULL;
+    }
+    else
+    {
+	for (match = node; match != NULL; match = match->siblings)
+	{
+	    if (match->address == bottom->data)
+		break;
+	}
     }
 
     if (!match)
@@ -95,57 +114,71 @@ stack_node_add_trace (StackNode  *node,
     }
 
     match->children =
-	stack_node_add_trace (match->children, bottom->next, size);
+	stack_node_add_trace (match->children, bottom->next, size, leaf);
 
     for (n = match->children; n; n = n->siblings)
 	n->parent = match;
     
     if (!bottom->next)
+    {
 	match->size += size;
+	*leaf = match;
+    }
 
     return node;
 }
 
 void
 stack_stash_add_trace (StackStash *stash,
+		       Process    *process,
 		       gulong	  *addrs,
 		       int         n_addrs,
 		       int         size)
 {
     GList *trace;
+    StackNode *leaf;
     int i;
 
     trace = NULL;
     for (i = 0; i < n_addrs; ++i)
 	trace = g_list_prepend (trace, GINT_TO_POINTER (addrs[i]));
 
-    stash->root = stack_node_add_trace (stash->root, trace, size);
+    stash->root = stack_node_add_trace (stash->root, trace, size, &leaf);
+
+    leaf->next = g_hash_table_lookup (
+	stash->leaves_by_process, process);
+    g_hash_table_insert (
+	stash->leaves_by_process, process, leaf);
 
     g_list_free (trace);
 }
 
-static void
-do_callback (StackNode *node,
-	     StackFunction stack_func,
-	     gpointer data)
+typedef struct CallbackInfo
 {
-    if (!node)
-	return;
+    StackFunction func;
+    gpointer      data;
+} CallbackInfo;
 
-    do_callback (node->siblings, stack_func, data);
-    do_callback (node->children, stack_func, data);
-
-    if (!node->children)
+static void
+do_callback (gpointer key, gpointer value, gpointer data)
+{
+    CallbackInfo *info = data;
+    Process *process = key;
+    StackNode *n;
+    StackNode *leaf = value;
+    while (leaf)
     {
-	StackNode *n;
-	GSList *trace = NULL;
+	GSList *trace;
 
-	for (n = node; n != NULL; n = n->parent)
+	trace = NULL;
+	for (n = leaf; n; n = n->parent)
 	    trace = g_slist_prepend (trace, n->address);
 
-	stack_func (trace, node->size, data);
+	info->func (process, trace, leaf->size, info->data);
 
 	g_slist_free (trace);
+	
+	leaf = leaf->next;
     }
 }
 
@@ -154,7 +187,11 @@ stack_stash_foreach   (StackStash      *stash,
 		       StackFunction    stack_func,
 		       gpointer         data)
 {
-    do_callback (stash->root, stack_func, data);
+    CallbackInfo info;
+    info.func = stack_func;
+    info.data = data;
+	
+    g_hash_table_foreach (stash->leaves_by_process, do_callback, &info);
 }
 
 static void
@@ -173,5 +210,6 @@ void
 stack_stash_free	  (StackStash	   *stash)
 {
     stack_node_free (stash->root);
+    g_hash_table_destroy (stash->leaves_by_process);
     g_free (stash);
 }

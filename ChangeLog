@@ -1,3 +1,20 @@
+Sat Oct  1 18:12:44 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profiler.[ch]: Add profiler_get_n_samples(); add unused
+	empty_file_descriptor()
+
+	* profile.h: Add include guards
+	
+	* process.[ch]: Delete process_flush_caches();
+
+	* helper.[ch]: Remove these files
+
+	* sysprof.c: Use the new profiler class.
+
+	* sysprof-text.c: Use the new profiler class
+
+	* Makefile.am: Various cleanups.
+
 Sat Oct  1 17:05:43 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* profiler.[ch]: New files containing a profiler class with code

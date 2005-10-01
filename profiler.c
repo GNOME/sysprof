@@ -116,6 +116,9 @@ on_read (gpointer data)
 	
 	profiler->n_samples++;
     }
+
+    if (profiler->callback)
+	profiler->callback (profiler->data);
 }
 
 static gboolean
@@ -175,6 +178,19 @@ open_fd (Profiler *profiler,
     return TRUE;
 }
 
+static void
+empty_file_descriptor (Profiler *profiler)
+{
+    int rd;
+    SysprofStackTrace trace;
+    
+    do
+    {
+	rd = read (profiler->fd, &trace, sizeof (trace));
+	
+    } while (rd != -1); /* until EWOULDBLOCK */
+}
+
 gboolean
 profiler_start (Profiler *profiler,
 		GError **err)
@@ -204,8 +220,14 @@ profiler_reset (Profiler *profiler)
     g_get_current_time (&profiler->latest_reset);
 }
 
+int
+profiler_get_n_samples (Profiler *profiler)
+{
+    return profiler->n_samples;
+}
+
 Profile *
 profiler_create_profile (Profiler *profiler)
 {
-    /* FIXME */
+    return profile_new (profiler->stash);
 }

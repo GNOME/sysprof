@@ -36,6 +36,7 @@
 #include "stackstash.h"
 #include "profile.h"
 #include "treeviewutils.h"
+#include "profiler.h"
 
 /* FIXME - not10 */
 #define _(a) a
@@ -53,9 +54,9 @@ typedef enum
 
 struct Application
 {
-    int			input_fd;
+    Profiler *		profiler;
+    
     State		state;
-    StackStash *	stash;
     
     GtkWidget *		main_window;
     GdkPixbuf *		icon;
@@ -82,8 +83,6 @@ struct Application
     ProfileDescendant * descendants;
     ProfileCaller *	callers;
     
-    int			n_samples;
-    
     int			timeout_id;
     int			generating_profile;
 
@@ -104,7 +103,6 @@ struct Application
 					    *
 					    * Model/View/Controller is a possibility.
 					    */
-    GTimeVal		latest_reset;
 };
 
 static gboolean
@@ -112,16 +110,20 @@ show_samples_timeout (gpointer data)
 {
     Application *app = data;
     char *label;
+    int n_samples;
 
     switch (app->state)
     {
     case INITIAL:
-	label = g_strdup ("Samples: 0");
+	n_samples = 0;
 	break;
 	
     case PROFILING:
+	n_samples = profiler_get_n_samples (app->profiler);
+	break;
+	
     case DISPLAYING:
-	label = g_strdup_printf ("Samples: %d", app->n_samples);
+	n_samples = profile_get_size (app->profile);
 	break;
 
     default:
@@ -129,6 +131,8 @@ show_samples_timeout (gpointer data)
 	break;
     }
     
+    label = g_strdup_printf ("Samples: %d", n_samples);
+
     gtk_label_set_label (GTK_LABEL (app->samples_label), label);
     
     g_free (label);
@@ -156,7 +160,9 @@ update_sensitivity (Application *app)
     gboolean sensitive_reset_button;
     
     GtkWidget *active_radio_button;
-    
+
+    gboolean has_samples;
+
     switch (app->state)
     {
     case INITIAL:
@@ -170,9 +176,11 @@ update_sensitivity (Application *app)
 	break;
 	
     case PROFILING:
-	sensitive_profile_button = (app->n_samples > 0);
-	sensitive_save_as_button = (app->n_samples > 0);
-	sensitive_reset_button = (app->n_samples > 0);
+	has_samples = (profiler_get_n_samples (app->profiler) > 0);
+    
+	sensitive_profile_button = has_samples;
+	sensitive_save_as_button = has_samples;
+	sensitive_reset_button = has_samples;
 	sensitive_start_button = TRUE;
 	sensitive_tree_views = FALSE;
 	sensitive_samples_label = TRUE;
@@ -250,66 +258,6 @@ set_busy (GtkWidget *widget, gboolean busy)
     gdk_flush ();
 }
 
-static double
-timeval_to_ms (const GTimeVal *timeval)
-{
-  return (timeval->tv_sec * G_USEC_PER_SEC + timeval->tv_usec) / 1000.0;
-}
-
-static double
-time_diff (const GTimeVal *first,
-	   const GTimeVal *second)
-{
-  double first_ms = timeval_to_ms (first);
-  double second_ms = timeval_to_ms (second);
-
-  return first_ms - second_ms;
-}
-
-#define RESET_DEAD_PERIOD 5
-
-static void
-on_read (gpointer data)
-{
-    Application *app = data;
-    SysprofStackTrace trace;
-    GTimeVal now;
-    int rd;
-    
-    rd = read (app->input_fd, &trace, sizeof (trace));
-    
-    if (app->state != PROFILING)
-	return;
-    
-    if (rd == -1 && errno == EWOULDBLOCK)
-	return;
-
-    g_get_current_time (&now);
-
-    /* After a reset we ignore samples for a short period so that
-     * a reset will actually cause 'samples' to become 0
-     */
-    if (time_diff (&now, &app->latest_reset) < RESET_DEAD_PERIOD)
-	return;
-    
-#if 0
-    int i;
-    g_print ("pid: %d\n", trace.pid);
-    for (i=0; i < trace.n_addresses; ++i)
-	g_print ("rd: %08x\n", trace.addresses[i]);
-    g_print ("-=-\n");
-#endif
-    
-    if (rd > 0  && !app->generating_profile)
-    {
-	add_trace_to_stash (&trace, app->stash);
-    
-	app->n_samples++;
-    }
-    
-    update_sensitivity (app);
-}
-
 static void
 set_application_title (Application *app,
 		       const char * name)
@@ -349,46 +297,13 @@ delete_data (Application *app)
 	gtk_tree_view_set_model (GTK_TREE_VIEW (app->callers_view), NULL);
 	gtk_tree_view_set_model (GTK_TREE_VIEW (app->descendants_view), NULL);
     }
+
+    profiler_reset (app->profiler);
     
-    if (app->stash)
-	stack_stash_free (app->stash);
-    app->stash = stack_stash_new ();
-    process_flush_caches ();
-    app->n_samples = 0;
     queue_show_samples (app);
+    
     app->profile_from_file = FALSE;
     set_application_title (app, NULL);
-    g_get_current_time (&app->latest_reset);
-}
-
-static void
-empty_file_descriptor (Application *app)
-{
-    int rd;
-    SysprofStackTrace trace;
-    
-    do
-    {
-	rd = read (app->input_fd, &trace, sizeof (trace));
-	
-    } while (rd != -1); /* until EWOULDBLOCK */
-}
-
-static gboolean
-start_profiling (gpointer data)
-{
-    Application *app = data;
-    
-    app->state = PROFILING;
-    
-    update_sensitivity (app);
-    
-    /* Make sure samples generated between 'start clicked' and now
-     * are deleted
-     */
-    empty_file_descriptor (app);
-    
-    return FALSE;
 }
 
 static void
@@ -416,27 +331,6 @@ sorry (GtkWidget *parent_window,
     gtk_widget_destroy (dialog);
 }
 
-static gboolean
-load_module (void)
-{
-    int exit_status = -1;
-    char *dummy1, *dummy2;
-
-    if (g_spawn_command_line_sync ("/sbin/modprobe sysprof-module",
-				   &dummy1, &dummy2,
-				   &exit_status,
-				   NULL))
-    {
-	if (WIFEXITED (exit_status))
-	    exit_status = WEXITSTATUS (exit_status);
-
-	g_free (dummy1);
-	g_free (dummy2);
-    }
-
-    return (exit_status == 0);
-}
-
 static void
 on_menu_item_activated (GtkWidget *menu_item, GtkWidget *tool_button)
 {
@@ -455,41 +349,25 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	    GTK_TOGGLE_TOOL_BUTTON (app->start_button)))
 	return;
 
-    if (app->input_fd == -1)
+    delete_data (app);
+
+    /* FIXME: get the real error message */
+    if (!profiler_start (app->profiler, NULL))
     {
-	int fd;
+	sorry (app->main_window,
+	       "Can't open /proc/sysprof-trace. You need to insert\n"
+	       "the sysprof kernel module. Run\n"
+	       "\n"
+	       "       modprobe sysprof-module\n"
+	       "\n"
+	       "as root.");
 
-	fd = open ("/proc/sysprof-trace", O_RDONLY);
-	if (fd < 0)
-	{
-	    load_module();
-
-	    fd = open ("/proc/sysprof-trace", O_RDONLY);
-
-	    if (fd < 0)
-	    {
-		sorry (app->main_window,
-		       "Can't open /proc/sysprof-trace. You need to insert\n"
-		       "the sysprof kernel module. Run\n"
-		       "\n"
-		       "       modprobe sysprof-module\n"
-		       "\n"
-		       "as root.");
-		
-		update_sensitivity (app);
-		return;
-	    }
-	}
-
-	app->input_fd = fd;
-	fd_add_watch (app->input_fd, app);
+	return;
     }
     
-    fd_set_read_callback (app->input_fd, on_read);
-    
-    delete_data (app);
-    
-    g_idle_add_full (G_PRIORITY_LOW, start_profiling, app, NULL);
+    app->state = PROFILING;
+
+    update_sensitivity (app);
 }
 
 enum
@@ -768,7 +646,7 @@ ensure_profile (Application *app)
     if (app->profile)
 	return;
     
-    app->profile = profile_new (app->stash);
+    app->profile = profiler_create_profile (app->profiler);
 
     fill_lists (app);
     
@@ -939,8 +817,6 @@ set_loaded_profile (Application *app,
     delete_data (app);
 	
     app->state = DISPLAYING;
-    
-    app->n_samples = profile_get_size (profile);
     
     app->profile = profile;
     app->profile_from_file = TRUE;
@@ -1408,16 +1284,21 @@ build_gui (Application *app)
     return TRUE;
 }
 
+static void
+on_new_sample (gpointer data)
+{
+    Application *app = data;
+
+    update_sensitivity (app);
+}
+
 static Application *
 application_new (void)
 {
     Application *app = g_new0 (Application, 1);
-    
-    app->stash = stack_stash_new ();
-    app->input_fd = -1;
-    app->state = INITIAL;
 
-    g_get_current_time (&app->latest_reset);
+    app->profiler = profiler_new (on_new_sample, app);
+    app->state = INITIAL;
     
     return app;
 }
@@ -1464,7 +1345,7 @@ main (int argc, char **argv)
     gtk_init (&argc, &argv);
     
     app = application_new ();
-    
+
     if (!build_gui (app))
 	return -1;
     

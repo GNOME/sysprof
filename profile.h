@@ -17,6 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifndef PROFILE_H
+#define PROFILE_H
+
 #include <glib.h>
 #include "binfile.h"
 #include "process.h"
@@ -74,3 +77,5 @@ gboolean	   profile_save		      (Profile		 *profile,
 					       GError		**err);
 Profile *	   profile_load		      (const char	 *filename,
 					       GError           **err);
+
+#endif /* PROFILE_H */

@@ -32,61 +32,21 @@
 #include "process.h"
 #include "watch.h"
 #include "signal-handler.h"
+#include "profiler.h"
 
 typedef struct Application Application;
 struct Application
 {
-    int		fd;
-    StackStash *stack_stash;
+    Profiler *	profiler;
     char *	outfile;
     GMainLoop * main_loop;
 };
 
 void
-read_trace (StackStash *stash,
-	    SysprofStackTrace *trace,
-	    GTimeVal now)
-{
-    Process *process;
-    int i;
-    
-    process = process_get_from_pid (trace->pid);
-
-    for (i = 0; i < trace->n_addresses; ++i)
-    {
-	process_ensure_map (process, trace->pid, 
-			    (gulong)trace->addresses[i]);
-    }
-
-    add_trace_to_stash (&trace, stash);
-}
-
-void
-on_read (gpointer data)
-{
-    Application *app = data;
-    SysprofStackTrace trace;
-    int bytesread;
-    GTimeVal now;
-
-    bytesread = read (app->fd, &trace, sizeof (trace));
-    g_get_current_time (&now);
-
-    if (bytesread < 0)
-    {
-        perror("read");
-        return;
-    }
-
-    if (bytesread > 0)
-        read_trace (app->stack_stash, &trace, now);
-}
-
-void
 dump_data (Application *app)
 {
     GError *err = NULL;
-    Profile *profile = profile_new (app->stack_stash);
+    Profile *profile = profiler_create_profile (app->profiler);
 
     profile_save (profile, app->outfile, &err);
 
@@ -165,16 +125,17 @@ main (int argc,
     if (quit)
 	return -1;
 
-    app->fd = fd;
+    app->profiler = profiler_new (NULL, NULL);
     app->outfile = g_strdup (argv[1]);
-    app->stack_stash = stack_stash_new ();
     app->main_loop = g_main_loop_new (NULL, 0);
 
+    /* FIXME: check the errors */
     signal_set_handler (SIGTERM, signal_handler, app, NULL);
     signal_set_handler (SIGINT, signal_handler, app, NULL);
+
+    /* FIXME: check the error */
+    profiler_start (app->profiler, NULL);
     
-    fd_add_watch (app->fd, app);
-    fd_set_read_callback (app->fd, on_read);
     g_main_loop_run (app->main_loop);
 
     signal_unset_handler (SIGTERM);

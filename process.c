@@ -388,38 +388,3 @@ process_get_cmdline (Process *process)
 {
     return process->cmdline;
 }
-
-static void
-free_process (gpointer key, gpointer value, gpointer data)
-{
-    char *cmdline = key;
-    Process *process = value;
-    
-#if 0
-    g_print ("freeing: %p\n", process);
-    memset (process, '\0', sizeof (Process));
-#endif
-    g_free (process->cmdline);
-#if 0
-    process->cmdline = "You are using free()'d memory";
-#endif
-    process_free_maps (process);
-    g_list_free (process->bad_pages);
-    g_free (cmdline);
-    
-    g_free (process);
-}
-
-void
-process_flush_caches  (void)
-{
-    if (!processes_by_cmdline)
-	return;
-    g_hash_table_foreach (processes_by_cmdline, free_process, NULL);
-    
-    g_hash_table_destroy (processes_by_cmdline);
-    g_hash_table_destroy (processes_by_pid);
-    
-    processes_by_cmdline = NULL;
-    processes_by_pid = NULL;
-}

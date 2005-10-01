@@ -19,23 +19,13 @@
 
 #include <config.h>
 
-#include <stdio.h>
 #include <gtk/gtk.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <glade/glade.h>
 #include <errno.h>
 #include <glib/gprintf.h>
-#include <sys/wait.h>
-#include <sys/types.h>
 
-#include "binfile.h"
-#include "watch.h"
-#include "module/sysprof-module.h"
-#include "stackstash.h"
-#include "profile.h"
 #include "treeviewutils.h"
+#include "profile.h"
 #include "profiler.h"
 
 /* FIXME - not10 */
@@ -983,6 +973,7 @@ expand_descendants_tree (Application *app)
 		    path = gtk_tree_path_copy (path);
 		    gtk_tree_path_next (path);
 		}
+
 		gtk_tree_path_free (path);
 	    }
 	}
@@ -1073,7 +1064,6 @@ goto_object (Application *app,
 	return;
     
     really_goto_object (app, object);
-    
 }
 
 static void

@@ -24,6 +24,7 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
+#include <glib.h>
 #include "binfile.h"
 
 typedef struct Process Process;

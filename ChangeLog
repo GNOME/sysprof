@@ -1,3 +1,7 @@
+Sat Oct  1 18:32:52 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profile.h, sysprof.c: Remove some unnecessary includes.
+
 Sat Oct  1 18:12:44 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* profiler.[ch]: Add profiler_get_n_samples(); add unused

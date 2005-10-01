@@ -21,8 +21,6 @@
 #define PROFILE_H
 
 #include <glib.h>
-#include "binfile.h"
-#include "process.h"
 #include "stackstash.h"
 
 typedef struct Profile Profile;

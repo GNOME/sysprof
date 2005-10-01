@@ -2,6 +2,7 @@
 #include "profiler.h"
 #include "module/sysprof-module.h"
 #include "watch.h"
+#include "process.h"
 
 #include <errno.h>
 #include <sys/wait.h>

@@ -1465,11 +1465,6 @@ main (int argc, char **argv)
     
     app = application_new ();
     
-#if 0
-    nice (-19);
-    g_timeout_add (10, on_timeout, app);
-#endif
-    
     if (!build_gui (app))
 	return -1;
     

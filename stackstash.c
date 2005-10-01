@@ -112,27 +112,30 @@ stack_stash_add_trace (StackStash *stash,
 
 static void
 do_callback (StackNode *node,
+	     GSList    *first,
+	     GSList    *last,
 	     StackFunction stack_func,
 	     gpointer data)
 {
+    GSList link;
+    
     if (!node)
 	return;
 
-    do_callback (node->siblings, stack_func, data);
-    do_callback (node->children, stack_func, data);
+    do_callback (node->siblings, first, last, stack_func, data);
+
+    if (!first)
+	first = &link;
+    if (last)
+	last->next = &link;
+    
+    link.data = node->address;
+    link.next = NULL;
+    
+    do_callback (node->children, first, &link, stack_func, data);
 
     if (!node->children)
-    {
-	StackNode *n;
-	GSList *trace = NULL;
-
-	for (n = node; n != NULL; n = n->parent)
-	    trace = g_slist_prepend (trace, n->address);
-
-	stack_func (trace, node->size, data);
-
-	g_slist_free (trace);
-    }
+	stack_func (first, node->size, data);
 }
 
 void
@@ -140,7 +143,7 @@ stack_stash_foreach   (StackStash      *stash,
 		       StackFunction    stack_func,
 		       gpointer         data)
 {
-    do_callback (stash->root, stack_func, data);
+    do_callback (stash->root, NULL, NULL, stack_func, data);
 }
 
 static void

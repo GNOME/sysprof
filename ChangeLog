@@ -1,3 +1,13 @@
+Sat Oct  1 17:05:43 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profiler.[ch]: New files containing a profiler class with code
+	that can be shared between gui and command line.
+	
+	* sysprof.c (main): Remove some commented out code
+
+	* stackstash.c (do_callback): Store the trace on the stack instead
+	of allocating it dynamically.
+
 Sat Oct  1 01:50:15 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* stackstash.c (sstack_stash_add_trace): Simplify this function a

@@ -4,24 +4,26 @@ DIST_SUBDIRS = module
 bin_PROGRAMS = sysprof sysprof-text
 pkgdata_DATA = sysprof.glade sysprof-icon.png
 
-sysprof_SOURCES =	        \
-	binfile.h		\
-	binfile.c		\
-	process.h		\
-	process.c		\
-	profile.h		\
-	profile.c		\
-	sfile.h			\
-	sfile.c			\
-	stackstash.h		\
-	stackstash.c		\
-	helper.c		\
-	helper.h		\
-	module/sysprof-module.h	\
-	sysprof.c		\
-	treeviewutils.h		\
-	treeviewutils.c		\
-	watch.h			\
+sysprof_SOURCES =				\
+	binfile.h				\
+	binfile.c				\
+	process.h				\
+	process.c				\
+	profile.h				\
+	profile.c				\
+	sfile.h					\
+	sfile.c					\
+	stackstash.h				\
+	stackstash.c				\
+	profiler.c				\
+	profiler.h				\
+	helper.c				\
+	helper.h				\
+	module/sysprof-module.h			\
+	sysprof.c				\
+	treeviewutils.h				\
+	treeviewutils.c				\
+	watch.h					\
 	watch.c
 
 sysprof_text_SOURCES =	        \

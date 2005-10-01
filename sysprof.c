@@ -266,7 +266,7 @@ time_diff (const GTimeVal *first,
   return first_ms - second_ms;
 }
 
-#define RESET_DEAD_PERIOD 25
+#define RESET_DEAD_PERIOD 5
 
 static void
 on_read (gpointer data)
@@ -302,24 +302,8 @@ on_read (gpointer data)
     
     if (rd > 0  && !app->generating_profile)
     {
-	Process *process = process_get_from_pid (trace.pid);
-	int i;
-/* 	char *filename = NULL; */
-	
-/* 	if (*trace.filename) */
-/* 	    filename = trace.filename; */
-	
-	for (i = 0; i < trace.n_addresses; ++i)
-	{
-	    process_ensure_map (process, trace.pid, 
-				(gulong)trace.addresses[i]);
-	}
-	g_assert (!app->generating_profile);
-	
-	stack_stash_add_trace (
-	    app->stash, process,
-	    (gulong *)trace.addresses, trace.n_addresses, 1);
-	
+	add_trace_to_stash (&trace, app->stash);
+    
 	app->n_samples++;
     }
     

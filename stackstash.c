@@ -23,11 +23,12 @@ typedef struct StackNode StackNode;
 
 struct StackNode
 {
-    StackNode *	parent;
     gpointer	address;
+    int		size;
+    
+    StackNode *	parent;
     StackNode *	siblings;
     StackNode *	children;
-    int		size;
 };
 
 struct StackStash
@@ -69,59 +70,44 @@ stack_stash_new       (void)
     return stash;
 }
 
-static StackNode *
-stack_node_add_trace (StackNode  *node,
-		      GList      *bottom,
-		      gint        size)
-{
-    StackNode *match;
-    StackNode *n;
-
-    if (!bottom)
-	return node;
-
-    for (match = node; match != NULL; match = match->siblings)
-    {
-	if (match->address == bottom->data)
-	    break;
-    }
-
-    if (!match)
-    {
-	match = stack_node_new ();
-	match->address = bottom->data;
-	match->siblings = node;
-	node = match;
-    }
-
-    match->children =
-	stack_node_add_trace (match->children, bottom->next, size);
-
-    for (n = match->children; n; n = n->siblings)
-	n->parent = match;
-    
-    if (!bottom->next)
-	match->size += size;
-
-    return node;
-}
-
 void
 stack_stash_add_trace (StackStash *stash,
-		       gulong	  *addrs,
+		       gulong     *addrs,
 		       int         n_addrs,
 		       int         size)
 {
-    GList *trace;
+    StackNode **location = &(stash->root);
+    StackNode *parent = NULL;
     int i;
+    
+    for (i = n_addrs - 1; i >= 0; --i)
+    {
+	StackNode *match = NULL;
+	StackNode *n;
 
-    trace = NULL;
-    for (i = 0; i < n_addrs; ++i)
-	trace = g_list_prepend (trace, GINT_TO_POINTER (addrs[i]));
+	for (n = *location; n != NULL; n = n->siblings)
+	{
+	    if (n->address == (gpointer)addrs[i])
+	    {
+		match = n;
+		break;
+	    }
+	}
 
-    stash->root = stack_node_add_trace (stash->root, trace, size);
+	if (!match)
+	{
+	    match = stack_node_new ();
+	    match->address = (gpointer)addrs[i];
+	    match->siblings = *location;
+	    match->parent = parent;
+	    *location = match;
+	}
 
-    g_list_free (trace);
+	location = &(match->children);
+	parent = match;
+    }
+
+    parent->size += size;
 }
 
 static void

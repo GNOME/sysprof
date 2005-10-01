@@ -1,3 +1,10 @@
+Sat Oct  1 01:50:15 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.c (sstack_stash_add_trace): Simplify this function a
+	lot.
+
+	* helper.c: Include "process.h"
+
 Sat Oct  1 01:29:06 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* profile.c (generate_object_table, generate_call_tree): Don't

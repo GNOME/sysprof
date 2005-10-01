@@ -1,5 +1,6 @@
 #include "stackstash.h"
 #include "module/sysprof-module.h"
+#include "process.h"
 
 void
 add_trace_to_stash (SysprofStackTrace *trace,

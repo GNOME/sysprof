@@ -1,35 +1,8 @@
-Before 1.0:
-
-   - Update version numbers in source
-
-   - Make tarball
-
-   - Check that tarball works
-
-   - cvs commit
-
-   - cvs tag sysprof-1-0
-
-   - Update website
-
-   - Announce on Freshmeat
-
-   - Announce on gnome-announce
-   - Announce on kernel list.
-
-   - Announce on Gnomefiles
-
-   - Announce on news.gnome.org
-   - Send to slashdot/developers
-   - Announce on devtools list (?)
-
-   - Announce on Advogato
-	link to archive 
-
 Before 1.0.1:
 
 * See if we can reproduce the problem where libraries didn't get correctly
   reloaded after new versions were installed.
+	This is just the (deleted) problem.
 
 * Build system
    - Find out what distributions it actually works on
@@ -42,10 +15,6 @@ Before 1.0.1:
      See also http://www.fedoraproject.org/wiki/Extras/KernelModuleProposal
 
 Before 1.2:
-
-* The handling of the global variable in signal-handler.[ch] needs to be
-  atomic - right now it isn't. The issue is what happens if a handled signal
-  arrives while we are manipulating the list?
 
 * Figure out how to make sfile.[ch] use less memory.
 	- In general clean sfile.[ch] up a little:
@@ -205,23 +174,35 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 - Reorganise stackstash and profile
 
 	- stackstash should just take traces of addresses without knowing
-	  anything about what those addresses mean
+	  anything about what those addresses mean.
 
 	- stacktraces should then begin with a process
+
+	- stackstash should be extended so that the "create_descendant"
+	  and "create_ancestor" code in profile.c can use it directly.
+	  At that point, get rid of the profile tree, and rename
+	  profile.c to analyze.c.
+
+	- the profile tree will then just be a stackstash where the
+	  addresses are presentation strings instead.
+
+	- Doing a profile will then amount to converting the raw stash
+	  to one where the addresses have been looked up and converted to
+	  presentation strings.
+
+	-=-=
 
 	- profile should take traces of pointers to presentation
 	  objects without knowing anything about these presentation
 	  objects.
 
-	- Creating a profile is then
+	- For each stack node, compute a presentation object
+		(probably need to export opaque stacknode objects
+		  with set/get_user_data)
 
-		- For each stack node, compute a presentation object
-			(probably need to export opaque stacknode objects
-			  with set/get_user_data)
-
-		- Send each stack trace to the profile module, along with
-		  presentation objects. Maybe just a map from stack nodes
-		  to presentation objects.
+	- Send each stack trace to the profile module, along with
+	  presentation objects. Maybe just a map from stack nodes
+	  to presentation objects.
 
 - Charge 'self' properly to processes that don't get any stack trace at all 
 	(probably we get that for free with stackstash reorganisation)
@@ -446,7 +427,41 @@ Later:
 	The disk timeline should probably vary in intensity with the number of outstanding
 	disk requests.
 
+
+
 DONE:
+
+Before 1.0:
+
+   - Update version numbers in source
+
+   - Make tarball
+
+   - Check that tarball works
+
+   - cvs commit
+
+   - cvs tag sysprof-1-0
+
+   - Update website
+
+   - Announce on Freshmeat
+
+   - Announce on gnome-announce
+   - Announce on kernel list.
+
+   - Announce on Gnomefiles
+
+   - Announce on news.gnome.org
+   - Send to slashdot/developers
+   - Announce on devtools list (?)
+
+   - Announce on Advogato
+	link to archive 
+
+* The handling of the global variable in signal-handler.[ch] needs to be
+  atomic - right now it isn't. The issue is what happens if a handled signal
+  arrives while we are manipulating the list?
 
 * (User space stack must probably be done in a thread - kernel 
   stack must probably be taken in the interrupt itself?

@@ -15,6 +15,8 @@ sysprof_SOURCES =	        \
 	sfile.c			\
 	stackstash.h		\
 	stackstash.c		\
+	helper.c		\
+	helper.h		\
 	module/sysprof-module.h	\
 	sysprof.c		\
 	treeviewutils.h		\
@@ -33,6 +35,8 @@ sysprof_text_SOURCES =	        \
 	sfile.c			\
 	stackstash.h		\
 	stackstash.c		\
+	helper.c		\
+	helper.h		\
 	module/sysprof-module.h	\
 	signal-handler.h	\
 	signal-handler.c	\

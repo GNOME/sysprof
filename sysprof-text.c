@@ -57,10 +57,8 @@ read_trace (StackStash *stash,
 	process_ensure_map (process, trace->pid, 
 			    (gulong)trace->addresses[i]);
     }
-    
-    stack_stash_add_trace (
-	stash, process,
-	(gulong *)trace->addresses, trace->n_addresses, 1);
+
+    add_trace_to_stash (&trace, stash);
 }
 
 void

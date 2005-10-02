@@ -23,6 +23,24 @@ typedef struct SFileOutput SFileOutput;
 typedef guint SType;
 
 
+#if 0
+Serializer *serializer_new (const char *version);
+void serializer_set_format (Serializer *serializer,
+			    SerializerFormat *format);
+SerializerFormat *serializer_make_list (Serializer *serializer,
+					const char *name,
+					SerializerFormat *contents);
+SerializerFormat *serializer_make_record (Serializer *serializer,
+					  const char *name,
+					  SerializerFormat *contents1,
+					  ...);
+SerializerFormat *serializer_make_integer (Serializer *serialiser,
+					   const char *name);
+SerializerFormat *serializer_make_pointer (Serializer *serialiser,
+					   const char *name,
+					   SerializerFormat *target_type);
+#endif
+
 /* A possibly better API/naming scheme
  *
  * Serializer *serializer_new (SerializerFormat *format);
@@ -64,6 +82,10 @@ typedef guint SType;
  * Also think about versioning - apps will want to be able to read and write
  * different versions of the format, and they want to be able to sniff the
  * format + version
+ *
+ * The version should be part of the format. There should be a
+ * const char *sfile_sniff (const filename);
+ * that will return NULL (+ error) if the file can't be parsed
  *
  */
 

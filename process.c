@@ -56,6 +56,8 @@ struct Process
     GList *bad_pages;
 
     int pid;
+
+    Symbol undefined;
 };
 
 static void
@@ -136,7 +138,7 @@ create_process (const char *cmdline, int pid)
 {
     Process *p;
     
-    p = g_new (Process, 1);
+    p = g_new0 (Process, 1);
 
     if (*cmdline != '\0')
 	p->cmdline = g_strdup_printf ("[%s]", cmdline);
@@ -146,6 +148,8 @@ create_process (const char *cmdline, int pid)
     p->bad_pages = NULL;
     p->maps = NULL;
     p->pid = pid;
+    p->undefined.name = NULL;
+    p->undefined.address = NULL;
     
     g_assert (!g_hash_table_lookup (processes_by_pid, GINT_TO_POINTER (pid)));
     g_assert (!g_hash_table_lookup (processes_by_cmdline, cmdline));
@@ -340,7 +344,6 @@ process_get_from_pid (int pid)
 const Symbol *
 process_lookup_symbol (Process *process, gulong address)
 {
-    static Symbol undefined;
     const Symbol *result;
     static Symbol kernel;
     Map *map = process_locate_map (process, address);
@@ -349,18 +352,20 @@ process_lookup_symbol (Process *process, gulong address)
 
     if (address == 0x1)
     {
-	kernel.name = "in kernel";
+	kernel.name = "In kernel";
 	kernel.address = 0x00001337;
 	return &kernel;
     }
     else if (!map)
     {
-	if (undefined.name)
-	    g_free (undefined.name);
-	undefined.name = g_strdup_printf ("??? %s", process->cmdline);
-	undefined.address = 0xBABE0001;
+	if (!process->undefined.name)
+	{
+	    process->undefined.name =
+		g_strdup_printf ("(??? %s)", process->cmdline);
+	    process->undefined.address = 0xBABE0001;
+	}
 
-	return &undefined;
+	return &process->undefined;
     }
     
     address -= map->start;

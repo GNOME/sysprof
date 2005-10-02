@@ -147,6 +147,35 @@ stack_stash_foreach   (StackStash      *stash,
 }
 
 static void
+do_reversed_callback (StackNode *node,
+		      GSList    *trace,
+		      StackFunction stack_func,
+		      gpointer data)
+{
+    GSList link;
+    
+    if (!node)
+	return;
+
+    link.next = trace;
+    link.data = node->address;
+    
+    do_reversed_callback (node->siblings, trace, stack_func, data);
+    do_reversed_callback (node->children, &link, stack_func, data);
+
+    if (!node->children)
+	stack_func (&link, node->size, data);
+}
+
+void
+stack_stash_foreach_reversed   (StackStash      *stash,
+				StackFunction    stack_func,
+				gpointer         data)
+{
+    do_reversed_callback (stash->root, NULL, stack_func, data);
+}
+
+static void
 stack_node_free (StackNode *node)
 {
     if (!node)

@@ -338,6 +338,7 @@ lookup_profile_object (GHashTable *profile_objects, Process *process, gulong add
     object = g_hash_table_lookup (profile_objects, key);
     g_free (key);
     g_assert (object);
+
     return object;
 }
 

@@ -16,6 +16,8 @@ Before 1.0.1:
 
 Before 1.2:
 
+* Consider renaming profiler.[ch] to collector.[ch]
+
 * Figure out how to make sfile.[ch] use less memory.
 	- In general clean sfile.[ch] up a little:
 	- split out dfa in its own generic class
@@ -228,7 +230,8 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 - Add support for line numbers within functions
 	- Possibly a special "view details" mode, assuming that 
 	  the details of a function are not that interesting 
-	  together with a tree.
+	  together with a tree. (Could add radio buttons somewhere in
+	  in the right pane).
 - rethink caller list, not terribly useful at the moment. Federico suggested
   listing all ancestors.
 

@@ -1,3 +1,14 @@
+Sun Oct  2 16:31:37 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.c (stack_stash_foreach_reversed): Add this function
+
+	* process.c: Add a per-process undefined symbol.
+
+	* profiler.c (resolve_symbols): Add code to do symbol resolution
+	here.
+
+	* TODO: Updates
+
 Sat Oct  1 18:32:52 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* profile.h, sysprof.c: Remove some unnecessary includes.

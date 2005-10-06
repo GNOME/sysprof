@@ -1,3 +1,20 @@
+Wed Oct  5 23:57:08 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
+	* profile.c (generate_call_tree): Delete all the process stuff
+
+	* profile.c (node_add_trace): Delete process argument
+
+	* profile.c (lookup_profile_object): Don't generate a string key,
+	just use the address directly.
+
+	* profile.c (ensure_profile_object): Use the address as
+	presentation name.
+
+	* profiler.c (profiler_create_profile): Pass in the resolved
+	stash. 
+
 Sun Oct  2 21:08:16 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (on_delete): Work around glib bug 317775

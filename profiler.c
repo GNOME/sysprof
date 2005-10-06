@@ -294,5 +294,5 @@ profiler_create_profile (Profiler *profiler)
     
     g_hash_table_destroy (info.unique_symbols);
     
-    return profile_new (profiler->stash);
+    return profile_new (info.resolved_stash);
 }

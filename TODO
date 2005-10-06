@@ -16,6 +16,65 @@ Before 1.0.1:
 
 Before 1.2:
 
+- Reorganise stackstash and profile
+
+	- Remaining TODO
+
+		- make the things we put in a stackstash real
+		  objects so that
+			- we can save tem
+			- they will know how to delete the presentation
+			  names and themselves (through a virutal function)
+			- they can contain markup etc.
+
+		- Get rid of ProfileObjects - they are just wrappers around
+		  the presentation strings right now. 
+
+		- Get rid of remaining uses of stack_stash_foreach(), then
+		  rename stack_stash_foreach_reversed() to
+		  stack_stash_foreach()
+
+		- Make sure we don't leak the presentation strings/objects.
+
+		- Make the Profile class use the stash directly instead of
+		  building its own copy.
+
+		- rename profiler->collector
+
+	- stackstash should just take traces of addresses without knowing
+	  anything about what those addresses mean.
+
+	- stacktraces should then begin with a process
+
+	- stackstash should be extended so that the "create_descendant"
+	  and "create_ancestor" code in profile.c can use it directly.
+	  At that point, get rid of the profile tree, and rename
+	  profile.c to analyze.c.
+
+	- the profile tree will then just be a stackstash where the
+	  addresses are presentation strings instead.
+
+	- Doing a profile will then amount to converting the raw stash
+	  to one where the addresses have been looked up and converted to
+	  presentation strings.
+
+	-=-=
+
+	- profile should take traces of pointers to presentation
+	  objects without knowing anything about these presentation
+	  objects.
+
+	- For each stack node, compute a presentation object
+		(probably need to export opaque stacknode objects
+		  with set/get_user_data)
+
+	- Send each stack trace to the profile module, along with
+	  presentation objects. Maybe just a map from stack nodes
+	  to presentation objects.
+
+
+
+
 * Consider renaming profiler.[ch] to collector.[ch]
 
 * Figure out how to make sfile.[ch] use less memory.
@@ -173,39 +232,6 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 		so (can we know the size in advance?))
 	- instead of what we do now: set the busy cursor unconditionally
 	
-- Reorganise stackstash and profile
-
-	- stackstash should just take traces of addresses without knowing
-	  anything about what those addresses mean.
-
-	- stacktraces should then begin with a process
-
-	- stackstash should be extended so that the "create_descendant"
-	  and "create_ancestor" code in profile.c can use it directly.
-	  At that point, get rid of the profile tree, and rename
-	  profile.c to analyze.c.
-
-	- the profile tree will then just be a stackstash where the
-	  addresses are presentation strings instead.
-
-	- Doing a profile will then amount to converting the raw stash
-	  to one where the addresses have been looked up and converted to
-	  presentation strings.
-
-	-=-=
-
-	- profile should take traces of pointers to presentation
-	  objects without knowing anything about these presentation
-	  objects.
-
-	- For each stack node, compute a presentation object
-		(probably need to export opaque stacknode objects
-		  with set/get_user_data)
-
-	- Send each stack trace to the profile module, along with
-	  presentation objects. Maybe just a map from stack nodes
-	  to presentation objects.
-
 - Charge 'self' properly to processes that don't get any stack trace at all 
 	(probably we get that for free with stackstash reorganisation)
 

@@ -1,3 +1,9 @@
+Sun Oct  2 21:08:16 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (on_delete): Work around glib bug 317775
+
+	* sysprof-text.c (signal_handler): Work around glib bug 317775
+
 Sun Oct  2 16:31:37 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* stackstash.c (stack_stash_foreach_reversed): Add this function

@@ -62,10 +62,11 @@ signal_handler (int signo, gpointer data)
 {
     Application *app = data;
     
-    g_print ("signal %d caught: dumping data\n", signo);
-    
     dump_data (app);
 
+    while (g_main_iteration (FALSE))
+	;
+    
     g_main_loop_quit (app->main_loop);
 }
 

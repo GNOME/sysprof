@@ -891,8 +891,14 @@ on_open_clicked (gpointer widget,
 }
 
 static void
-on_delete (GtkWidget *window)
+on_delete (GtkWidget *window,
+	   Application *app)
 {
+    /* Workaround for http://bugzilla.gnome.org/show_bug.cgi?id=317775
+     */
+    while (gtk_main_iteration ())
+	;
+    
     gtk_main_quit ();
 }
 

@@ -277,39 +277,6 @@ profile_object_free (ProfileObject *obj)
     g_free (obj);
 }
 
-static char *
-generate_key (Process *process, gulong address)
-{
-    if (address)
-    {
-	const Symbol *symbol = process_lookup_symbol (process, address);
-	
-	return g_strdup_printf ("%p%s", (void *)symbol->address, symbol->name);
-    }
-    else
-    {
-	return g_strdup_printf ("p:%p", process_get_cmdline (process));
-    }
-}
-
-static char *
-generate_presentation_name (Process *process, gulong address)
-{
-    /* FIXME - not10
-     * using 0 to indicate "process" is broken
-     */
-    if (address)
-    {
-	const Symbol *symbol = process_lookup_symbol (process, address);
-	
-	return g_strdup_printf ("%s", symbol->name);
-    }
-    else
-    {
-	return g_strdup_printf ("%s", process_get_cmdline (process));
-    }
-}
-
 static void
 ensure_profile_object (GHashTable *profile_objects, gpointer address)
 {
@@ -356,7 +323,7 @@ generate_object_table (GSList *trace, gint size, gpointer data)
 	update ();
 	ensure_profile_object (info->profile_objects, list->data);
     }
-    
+
     info->profile->size += size;
 }
 
@@ -484,7 +451,7 @@ Profile *
 profile_new (StackStash *stash)
 {
     Info info;
-
+    
     info.profile = g_new (Profile, 1);
     info.profile->call_tree = NULL;
     info.profile->nodes_by_object =

@@ -67,6 +67,7 @@ stack_stash_new       (void)
     StackStash *stash = g_new (StackStash, 1);
 
     stash->root = NULL;
+    
     return stash;
 }
 
@@ -79,7 +80,7 @@ stack_stash_add_trace (StackStash *stash,
     StackNode **location = &(stash->root);
     StackNode *parent = NULL;
     int i;
-    
+
     for (i = n_addrs - 1; i >= 0; --i)
     {
 	StackNode *match = NULL;
@@ -132,10 +133,10 @@ do_callback (StackNode *node,
     link.data = node->address;
     link.next = NULL;
     
-    do_callback (node->children, first, &link, stack_func, data);
-
-    if (!node->children)
+    if (node->size)
 	stack_func (first, node->size, data);
+
+    do_callback (node->children, first, &link, stack_func, data);
 }
 
 void
@@ -163,7 +164,7 @@ do_reversed_callback (StackNode *node,
     do_reversed_callback (node->siblings, trace, stack_func, data);
     do_reversed_callback (node->children, &link, stack_func, data);
 
-    if (!node->children)
+    if (node->size)
 	stack_func (&link, node->size, data);
 }
 

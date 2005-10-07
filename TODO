@@ -14,7 +14,13 @@ Before 1.0.1:
 
      See also http://www.fedoraproject.org/wiki/Extras/KernelModuleProposal
 
+     Someone already did create a package - should be googlable.
+
 Before 1.2:
+
+- Find out why we sometimes get completely ridicoulous stacktraces, where
+  main seems to be called from within Xlib etc. This happens even after 
+  restarting everything.
 
 - Reorganise stackstash and profile
 
@@ -72,10 +78,9 @@ Before 1.2:
 	  presentation objects. Maybe just a map from stack nodes
 	  to presentation objects.
 
-
-
-
 * Consider renaming profiler.[ch] to collector.[ch]
+
+* Make sure sysprof-text is not linked to gtk+
 
 * Figure out how to make sfile.[ch] use less memory.
 	- In general clean sfile.[ch] up a little:

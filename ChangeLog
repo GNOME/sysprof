@@ -1,3 +1,11 @@
+Thu Oct  6 22:28:39 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.c (do_callback): Call stack func if node->size > 0,
+	not if node->children != NULL
+	* stackstash.c (do_reversed_callback): same
+	* profile.c (generate_presentation_name): Delete this function
+	* profile.c (generate_key): Delete this function.
+
 Wed Oct  5 23:57:08 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Updates

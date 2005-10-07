@@ -277,7 +277,7 @@ resolve_symbols (GSList *trace, gint size, gpointer data)
     g_ptr_array_add (resolved_trace, unique_dup (info->unique_symbols,
 						 (char *)process_get_cmdline (process)));
     g_ptr_array_add (resolved_trace, unique_dup (info->unique_symbols,
-						 "Toplevel"));
+						 "Everything"));
     
     stack_stash_add_trace (info->resolved_stash, (gulong *)resolved_trace->pdata, resolved_trace->len, size);
 }

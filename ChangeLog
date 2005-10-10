@@ -1,3 +1,8 @@
+Mon Oct 10 14:33:50 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* configure.ac: Add --disable-kernel-module option. Patch from
+	Pascal Terjan. 
+
 Mon Oct 10 13:00:20 2005  Robert Love  <rml@novell.com>
 
 	* module/sysprof-module.c: Don't use INTERVAL or SAMPLES_PER_SECOND

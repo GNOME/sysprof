@@ -49,8 +49,6 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
-#define SAMPLES_PER_SECOND (200)
-#define INTERVAL (HZ / SAMPLES_PER_SECOND)
 #define N_TRACES 256
 
 static SysprofStackTrace	stack_traces[N_TRACES];
@@ -446,9 +444,6 @@ timer_notify (struct pt_regs *regs)
 	SysprofStackTrace *trace = head;
 	int i;
 	int is_user;
-
-	if ((n_samples++ % INTERVAL) != 0)
-		return 0;
 
 	is_user = user_mode(regs);
 

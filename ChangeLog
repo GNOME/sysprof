@@ -1,3 +1,9 @@
+Mon Oct 10 13:00:20 2005  Robert Love  <rml@novell.com>
+
+	* module/sysprof-module.c: Don't use INTERVAL or SAMPLES_PER_SECOND
+	  now that we use register_timer_hook(), which hits off the timer
+	  interrupt at HZ freqency (1/250 second on x86).
+
 Sat Oct  1 01:21:57 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Update

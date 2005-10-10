@@ -44,6 +44,39 @@ AC_ARG_WITH(separate-debug-dir,
 AC_DEFINE_DIR(DEBUGDIR, debugdir,
               [Look for global separate debug info in this path])
 
+AC_ARG_ENABLE(kernel-module,
+     AC_HELP_STRING(--disable-kernel-module, disable building kernel module))
+
+kernel_module="yes"
+if test "x$enableval" = "xno"; then
+	kernel_module="no"
+fi
+
+if test $kernel_module = "yes"; then
+  # Activate build in module/ subdir
+  MODULE_SUBDIR=module
+  
+  # Kernel version
+  KMAJOR=`uname -r | cut -d"." -f 1`
+  KMINOR=`uname -r | cut -d"." -f 2`
+  KMICRO=`uname -r | cut -d"." -f 3 | cut -d"-" -f 1`
+
+  if [[ $KMICRO -lt 11 ]] ; then
+     echo *
+     echo * Linux \>= 2.6.11 is required
+     echo *
+     exit 1
+  fi
+
+  if [ ! test -f /lib/modules/`uname -r`/build/Makefile ] ; then
+     echo \*
+     echo \* Sysprof requires the kernel source code to be installed.
+     echo \* On a Fedora Core system the relevant package is kernel-devel
+     echo \*
+     exit 1
+  fi
+fi
+
 # Pkgconfig dependencies
 	
 dep_modules="gtk+-2.0 > 2.6.0 gthread-2.0 gdk-pixbuf-2.0 pangoft2 libglade-2.0"
@@ -65,30 +98,10 @@ AC_CHECK_LIB(bfd, bfd_get_error, [DEP_LIBS="$DEP_LIBS -lbfd -liberty"],
 # emit files
 
 AC_SUBST(DEP_LIBS)
+AC_SUBST(MODULE_SUBDIR)
 
 AC_CONFIG_FILES([
 Makefile
 ])
-
-# Kernel version
-
-KMAJOR=`uname -r | cut -d"." -f 1`
-KMINOR=`uname -r | cut -d"." -f 2`
-KMICRO=`uname -r | cut -d"." -f 3 | cut -d"-" -f 1`
-
-if [[ $KMICRO -lt 11 ]] ; then
-   echo *
-   echo * Linux \>= 2.6.11 is required
-   echo *
-   exit 1
-fi
-
-if [ ! test -f /lib/modules/`uname -r`/build/Makefile ] ; then
-   echo \*
-   echo \* Sysprof requires the kernel source code to be installed.
-   echo \* On a Fedora Core system the relevant package is kernel-devel
-   echo \*
-   exit 1
-fi
 
 AC_OUTPUT

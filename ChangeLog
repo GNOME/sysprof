@@ -1,3 +1,8 @@
+Mon Oct 10 14:33:50 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* configure.ac: Add --disable-kernel-module option. Patch from
+	Pascal Terjan. 
+
 Sat Sep 17 14:35:32 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* Bump version numbers

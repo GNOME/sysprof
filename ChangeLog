@@ -1,3 +1,7 @@
+Mon Oct 10 22:49:03 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c: Delete lots of commented-out code.
+
 Mon Oct 10 14:33:50 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* configure.ac: Add --disable-kernel-module option. Patch from

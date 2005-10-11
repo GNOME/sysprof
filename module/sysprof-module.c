@@ -70,13 +70,6 @@ DECLARE_WAIT_QUEUE_HEAD (wait_for_exit);
 # error Sysprof only supports the i386 and x86-64 architectures
 #endif
 
-#if 0
-static void on_timer(unsigned long);
-#endif
-#if 0
-static struct timer_list timer;
-#endif
-
 typedef struct userspace_reader userspace_reader;
 struct userspace_reader
 {
@@ -84,101 +77,6 @@ struct userspace_reader
 	unsigned long cache_address;
 	unsigned long *cache;
 };
-
-#if 0
-/* This function was mostly cutted and pasted from ptrace.c
- */
-
-/* Access another process' address space.
- * Source/target buffer must be kernel space, 
- * Do not walk the page table directly, use get_user_pages
-*/
-static struct mm_struct *
-get_mm (struct task_struct *tsk)
-{
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,9)
-	struct mm_struct *mm;
-	
-	task_lock (tsk);
-	mm = tsk->mm;
-	task_unlock (tsk);
-
-	return mm;
-#else
-	return get_task_mm (tsk);
-#endif
-}
-
-static void
-put_mm (struct mm_struct *mm)
-{
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,9)
-	mmput(mm);
-#endif
-}
-#endif
-
-#if 0
-static int
-x_access_process_vm (struct task_struct *tsk,
-		     unsigned long addr,
-		     void *buf, int len, int write)
-{
-	struct mm_struct *mm;
-	struct vm_area_struct *vma;
-	struct page *page;
-	void *old_buf = buf;
-
-	mm = get_mm (tsk);
-	
-	if (!mm)
-		return 0;
-
-	down_read(&mm->mmap_sem);
-	/* ignore errors, just check how much was sucessfully transfered */
-	while (len)
-	{
-		int bytes, ret, offset;
-		void *maddr;
-
-		ret = get_user_pages(tsk, mm, addr, 1,
-				write, 1, &page, &vma);
-		if (ret <= 0) {
-			break;
-		}
-		bytes = len;
-		offset = addr & (PAGE_SIZE-1);
-		if (bytes > PAGE_SIZE-offset)
-			bytes = PAGE_SIZE-offset;
-
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
-
-		flush_cache_page(vma, addr);
-
-#endif
-		
-		maddr = kmap(page);
-		if (write) {
-			copy_to_user_page(vma, page, addr,
-					  maddr + offset, buf, bytes);
-			set_page_dirty_lock(page);
-		} else {
-			copy_from_user_page(vma, page, addr,
-					    buf, maddr + offset, bytes);
-		}
-		kunmap(page);
-		page_cache_release(page);
-		len -= bytes;
-		buf += bytes;
-		addr += bytes;
-	}
-	up_read(&mm->mmap_sem);
-
-	put_mm (mm);
-	
-	return buf - old_buf;
-}
-#endif
 
 #if 0
 static int
@@ -286,119 +184,7 @@ read_frame (userspace_reader *reader, unsigned long addr, StackFrame *frame)
 }
 #endif
 
-#if 0
-static struct pt_regs *
-get_regs (struct task_struct *task)
-{
-	/* This seems to work in Linux 2.6.11 */
-        void *stack_top = (void *)task->thread.esp0;
-        return stack_top - sizeof(struct pt_regs);
-
-#if 0
-	/* This used to work, but doesn't anymore */
-	return ((struct pt_regs *) (THREAD_SIZE + (unsigned long) task->thread_info)) - 1;
-#endif
-
-#if 0
-	/* One might suspect that this would work, but it doesn't
-	 */
-	return task_pt_regs (task);
-#endif
-}
-#endif
-
-#if 0
-static void
-generate_stack_trace(struct task_struct *task,
-		     SysprofStackTrace *trace)
-{
-	struct pt_regs *regs = get_regs (task);  // task->thread.regs;
-	
-	StackFrame frame;
-	unsigned long addr;
-	userspace_reader reader;
-	int i;
-
-	memset(trace, 0, sizeof (SysprofStackTrace));
-	
-	trace->pid = task->pid;
-	trace->truncated = 0;
-
-	trace->addresses[0] = (void *)regs->REG_INS_PTR;
-
-	i = 1;
-
-	addr = regs->REG_FRAME_PTR;
-
-#if 0
-	printk (KERN_ALERT "frame pointer: %p\n", regs->REG_FRAME_PTR);
-#endif
-	
-	if (init_userspace_reader (&reader, task))
-	{
-		while (i < SYSPROF_MAX_ADDRESSES &&
-		       read_frame (&reader, addr, &frame) &&
-		       addr < START_OF_STACK && addr >= regs->REG_STACK_PTR)
-		{
-			trace->addresses[i++] = (void *)frame.return_address;
-			addr = frame.next;
-		}
-		
-		done_userspace_reader (&reader);
-	}
-
-	trace->n_addresses = i;
-	if (i == SYSPROF_MAX_ADDRESSES)
-		trace->truncated = 1;
-	else
-		trace->truncated = 0;
-}
-#endif
-
-#if 0
-static void
-do_generate (void *data)
-{
-	struct task_struct *task = data;
-
-	generate_stack_trace(task, head);
-			
-	if (head++ == &stack_traces[N_TRACES - 1])
-		head = &stack_traces[0];
-
-	wake_up (&wait_for_trace);
-
-	/* If a task dies between the time we see it in on_timer and
-	 * the time we get here, it will be leaked. If __put_task_struct9)
-	 * was exported, then we could do this properly
-	 */
-
-	atomic_dec (&(task)->usage);
-	
-	mod_timer(&timer, jiffies + INTERVAL);
-}
-#endif
-
 struct work_struct work;
-
-#if 0
-static void
-on_timer(unsigned long dong)
-{
-	if (current && current->state == TASK_RUNNING && current->pid != 0)
-	{
-		get_task_struct (current);
-
-		INIT_WORK (&work, do_generate, current);
-
-		schedule_work (&work);
-	}
-	else
-	{
-		mod_timer(&timer, jiffies + INTERVAL);
-	}
-}
-#endif
 
 /**
  * pages_present() from OProfile
@@ -541,12 +327,6 @@ init_module(void)
 
 	register_timer_hook (timer_notify);
 	
-#if 0
-	init_timer(&timer);
-	timer.function = on_timer;
-	mod_timer(&timer, jiffies + INTERVAL);
-#endif
-	
 	printk(KERN_ALERT "sysprof: loaded\n");
 	
 	return 0;
@@ -555,10 +335,6 @@ init_module(void)
 void
 cleanup_module(void)
 {
-#if 0
-	del_timer (&timer);
-#endif
-
 	unregister_timer_hook (timer_notify);
 	
 	remove_proc_entry("sysprof-trace", &proc_root);

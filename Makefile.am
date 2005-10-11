@@ -1,4 +1,4 @@
-SUBDIRS = module
+SUBDIRS = $(MODULE_SUBDIR)
 DIST_SUBDIRS = module
 
 bin_PROGRAMS = sysprof sysprof-text

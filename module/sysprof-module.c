@@ -70,6 +70,9 @@ DECLARE_WAIT_QUEUE_HEAD (wait_for_exit);
 # error Sysprof only supports the i386 and x86-64 architectures
 #endif
 
+#define SAMPLES_PER_SECOND 250
+#define INTERVAL ((HZ <= SAMPLES_PER_SECOND)? 1 : (HZ / SAMPLES_PER_SECOND))
+
 typedef struct userspace_reader userspace_reader;
 struct userspace_reader
 {
@@ -217,8 +220,7 @@ static int pages_present(StackFrame * head)
 }
 #endif /* CONFIG_X86_4G */
 
-static int
-timer_notify (struct pt_regs *regs)
+static int timer_notify (struct pt_regs *regs)
 {
 #ifdef CONFIG_HIGHMEM
 #  define START_OF_STACK 0xFF000000
@@ -231,6 +233,9 @@ timer_notify (struct pt_regs *regs)
 	int i;
 	int is_user;
 
+	if ((++n_samples % INTERVAL) != 0)
+		return 0;
+	
 	is_user = user_mode(regs);
 
 	if (!current || current->pid == 0 || !current->mm)

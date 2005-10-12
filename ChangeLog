@@ -1,3 +1,9 @@
+Tue Oct 11 22:40:24 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (SAMPLES_PER_SECOND): Add back these
+	constants, but this time make sure we won't divide by 0 or
+	anything like that.
+
 Mon Oct 10 22:49:03 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c: Delete lots of commented-out code.

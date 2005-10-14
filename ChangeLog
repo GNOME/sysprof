@@ -1,3 +1,10 @@
+Fri Oct 14 11:44:43 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* configure.ac: Add a warning about known bugs in the kernel
+	module in this branch.
+
+	* TODO: updates.
+
 Tue Oct 11 22:40:24 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (SAMPLES_PER_SECOND): Add back these

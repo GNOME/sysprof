@@ -105,3 +105,24 @@ Makefile
 ])
 
 AC_OUTPUT
+
+echo
+echo "%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%"
+echo "@"
+echo "%      This is cvs HEAD of sysprof. "
+echo "@"
+echo "%      The kernel module in this version has bugs that"
+echo "@      cause hangs with some kernels, notably the Fedora"
+echo "%      Rawhide ones."
+echo "@"
+echo "%      If you need a stable version of sysprof, either"
+echo "@      get version 1.0 from"
+echo "%"
+echo "@          http://www.daimi.au.dk/~sandmann/sysprof"
+echo "%      "
+echo "@      or do"
+echo "%"
+echo "@          cvs -z3 upd -r SYSPROF-1-0"
+echo "%"
+echo "@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@"
+echo

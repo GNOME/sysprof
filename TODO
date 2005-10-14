@@ -49,6 +49,14 @@ Before 1.2:
 		  placed? (We should avoid any "location of vmlinux" type
 		  questions if at all possible).
 
+  regarding crossing system call barriers: Find out about the virtual dso
+  that linux uses to do fast system calls:
+
+	http://lkml.org/lkml/2002/12/18/218
+
+  and what that actually makes the stack look like. (We may want to just
+  special case this fake dso in the symbol lookup code).
+
 * Correctness
 	- When the module is unloaded, kill all processes blocking in read
 		- or block unloading until all processes have exited
@@ -164,6 +172,10 @@ Before 1.2:
 http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 
   look in dwarf2-frame.[ch] in the gdb distribution. 
+
+  Also look at bozo-profiler
+	http://www-sop.inria.fr/dream/personnel/Mathieu.Lacage/bozo-profiler/bozo-profiler-1.1.tar.gz
+  which has an elf32 parser/debugger
 
 - Make busy cursors more intelligent
 	- when you click something in the main list and we don't respond

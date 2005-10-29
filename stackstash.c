@@ -226,3 +226,16 @@ stack_stash_find_node (StackStash      *stash,
     
     return g_hash_table_lookup (stash->nodes_by_data, data);
 }
+
+void
+stack_node_list_leaves (StackNode  *node,
+			GList     **leaves)
+{
+    StackNode *n;
+    
+    if (node->size > 0)
+	*leaves = g_list_prepend (*leaves, node);
+    
+    for (n = node->children; n != NULL; n = n->siblings)
+	stack_node_list_leaves (n, leaves);
+}

@@ -58,7 +58,9 @@ void        stack_stash_foreach_reversed   (StackStash      *stash,
 					    gpointer         data);
 StackNode  *stack_stash_find_node (StackStash      *stash,
 				   gpointer         data);
-				   
+/* FIXME: should probably return a list */
+void	    stack_node_list_leaves (StackNode  *node,
+				    GList     **leaves);
 void	    stack_stash_free	  (StackStash	   *stash);
 
 #endif

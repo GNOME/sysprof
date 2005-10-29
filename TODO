@@ -22,6 +22,10 @@ Before 1.2:
   main seems to be called from within Xlib etc. This happens even after 
   restarting everything.
 
+- It looks like the stackstash-reorg code confuses "main" from unrelated
+  processes. - currently it looks like if multiple "main"s are present, only
+  one gets listed in the object list.
+
 - Reorganise stackstash and profile
 
 	- Remaining TODO

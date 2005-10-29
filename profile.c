@@ -69,6 +69,8 @@ struct Profile
     
     /* This table is really a cache. We can build it from the call_tree */
     GHashTable *	nodes_by_object;
+
+    StackStash *	stash;
 };
 
 static SFormat *
@@ -458,6 +460,8 @@ profile_new (StackStash *stash)
 	g_hash_table_new (direct_hash_no_null, g_direct_equal);
     info.profile->size = 0;
 
+    info.profile->stash = stash;
+    
     /* profile objects */
     info.profile_objects = g_hash_table_new_full (g_str_hash, g_str_equal,
 						  NULL, NULL);
@@ -473,6 +477,30 @@ profile_new (StackStash *stash)
     return info.profile;
 }
 
+static ProfileObject *
+find_object_by_name (Profile *profile,
+		     char *object)
+{
+    GList *objects = profile_get_objects (profile);
+    GList *list;
+    ProfileObject *result = NULL;
+
+    for (list = objects; list != NULL; list = list->next)
+    {
+	ProfileObject *obj = list->data;
+
+	if (obj->name == object)
+	{
+	    result = obj;
+	    break;
+	}
+    }
+
+    g_list_free (objects);
+    
+    return result;
+}
+
 static void
 add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 {
@@ -486,14 +514,14 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
     
     for (list = trace; list != NULL; list = list->next)
     {
-	Node *node = list->data;
+	StackNode *node = list->data;
 	ProfileDescendant *match = NULL;
 	
 	update();
 	
 	for (match = *tree; match != NULL; match = match->siblings)
 	{
-	    if (match->name == node->object->name)
+	    if (match->name == node->address)
 		break;
 	}
 	
@@ -506,7 +534,7 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	    for (i = 0; i < seen_objects->len; ++i)
 	    {
 		ProfileDescendant *n = seen_objects->pdata[i];
-		if (n->name == node->object->name)
+		if (n->name == node->address)
 		    seen_tree_node = n;
 	    }
 		    
@@ -534,7 +562,7 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	{
 	    match = g_new (ProfileDescendant, 1);
 	    
-	    match->name = node->object->name;
+	    match->name = node->address;
 	    match->non_recursion = 0;
 	    match->total = 0;
 	    match->self = 0;
@@ -594,82 +622,45 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 }
 
 static void
-node_list_leaves (Node *node, GList **leaves)
-{
-    Node *n;
-    
-    if (node->self > 0)
-	*leaves = g_list_prepend (*leaves, node);
-    
-    for (n = node->children; n != NULL; n = n->siblings)
-	node_list_leaves (n, leaves);
-}
-
-static void
-add_leaf_to_tree (ProfileDescendant **tree, Node *leaf, Node *top)
+add_leaf_to_tree (ProfileDescendant **tree, StackNode *leaf, StackNode *top)
 {
     GList *trace = NULL;
-    Node *node;
+    StackNode *node;
     
     for (node = leaf; node != top->parent; node = node->parent)
 	trace = g_list_prepend (trace, node);
     
-    add_trace_to_tree (tree, trace, leaf->self);
+    add_trace_to_tree (tree, trace, leaf->size);
     
     g_list_free (trace);
 }
 
-ProfileObject *
-find_object_by_name (Profile *profile,
-		     char *object)
-{
-    GList *objects = profile_get_objects (profile);
-    GList *list;
-    ProfileObject *result = NULL;
-
-    for (list = objects; list != NULL; list = list->next)
-    {
-	ProfileObject *obj = list->data;
-
-	if (obj->name == object)
-	{
-	    result = obj;
-	    break;
-	}
-    }
-
-    g_list_free (objects);
-    
-    return result;
-}
-
 ProfileDescendant *
-profile_create_descendants (Profile *profile, char *object_name)
+profile_create_descendants (Profile *profile,
+			    char *object_name)
 {
     ProfileDescendant *tree = NULL;
-    Node *node;
-    ProfileObject *object = find_object_by_name (profile, object_name);
     
-    node = g_hash_table_lookup (profile->nodes_by_object, object);
-    
+    StackNode *node = stack_stash_find_node (profile->stash, object_name);
+
     while (node)
     {
-	update();
 	if (node->toplevel)
 	{
 	    GList *leaves = NULL;
 	    GList *list;
-	    
-	    node_list_leaves (node, &leaves);
-	    
+
+	    stack_node_list_leaves (node, &leaves);
+
 	    for (list = leaves; list != NULL; list = list->next)
 		add_leaf_to_tree (&tree, list->data, node);
-	    
+
 	    g_list_free (leaves);
 	}
+	
 	node = node->next;
     }
-    
+
     return tree;
 }
 

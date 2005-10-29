@@ -1,3 +1,12 @@
+Sat Oct 29 15:33:07 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (profile_new): Add stash field to profile.
+
+	* stackstash.[ch]: Add stack_node_list_leaves();
+
+	* profile.c (profile_create_descendants): Port this function over
+	to use StackNodes instead.
+
 Sat Oct 29 03:47:03 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* profile.[ch], sysprof.c: Get rid of ProfileObject for callers

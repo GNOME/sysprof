@@ -1,3 +1,13 @@
+Sat Oct 29 16:22:28 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (build_object_list): Make this function allocate
+	the ProfileObjects.
+
+	* stackstash.[ch]: Add stack_stash_foreach_by_address()
+
+	* profile.c (profile_get_objects): Use it here to reimplement 
+	profile_get_objects() in terms of the stackstash.
+
 Sat Oct 29 15:33:07 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* profile.c (profile_new): Add stash field to profile.

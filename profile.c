@@ -477,30 +477,6 @@ profile_new (StackStash *stash)
     return info.profile;
 }
 
-static ProfileObject *
-find_object_by_name (Profile *profile,
-		     char *object)
-{
-    GList *objects = profile_get_objects (profile);
-    GList *list;
-    ProfileObject *result = NULL;
-
-    for (list = objects; list != NULL; list = list->next)
-    {
-	ProfileObject *obj = list->data;
-
-	if (obj->name == object)
-	{
-	    result = obj;
-	    break;
-	}
-    }
-
-    g_list_free (objects);
-    
-    return result;
-}
-
 static void
 add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 {
@@ -674,6 +650,30 @@ profile_caller_new (void)
     return caller;
 }
 
+static ProfileObject *
+find_object_by_name (Profile *profile,
+		     char *object)
+{
+    GList *objects = profile_get_objects (profile);
+    GList *list;
+    ProfileObject *result = NULL;
+
+    for (list = objects; list != NULL; list = list->next)
+    {
+	ProfileObject *obj = list->data;
+
+	if (obj->name == object)
+	{
+	    result = obj;
+	    break;
+	}
+    }
+
+    g_list_free (objects);
+    
+    return result;
+}
+
 ProfileCaller *
 profile_list_callers (Profile       *profile,
 		      char          *callee_name)
@@ -810,29 +810,58 @@ profile_caller_free (ProfileCaller *caller)
     g_free (caller);
 }
 
-static void
-build_object_list (gpointer key, gpointer value, gpointer data)
-{
-    ProfileObject *object = key;
-    GList **objects = data;
-    
-    *objects = g_list_prepend (*objects, object);
 
-#if 0
-    g_print ("obj: %s\n", object->name);
-#endif
+
+
+static int
+sum_children (StackNode *node)
+{
+    int total;
+    StackNode *child;
+    
+    /* FIXME: this is pretty inefficient. Instead perhaps
+     * maintain or compute it in the stackstash
+     */
+    total = node->size;
+
+    for (child = node->children; child != NULL; child = child->siblings)
+	total += sum_children (child);
+
+    return total;
+}
+
+static void
+build_object_list (StackNode *node, gpointer data)
+{
+    GList **objects = data;
+    ProfileObject *obj;
+    StackNode *n;
+
+    obj = g_new (ProfileObject, 1);
+    obj->name = node->address;
+
+    obj->total = 0;
+    for (n = node; n != NULL; n = n->next)
+    {
+	if (n->toplevel)
+	    obj->total += sum_children (n);
+    }
+    
+    obj->self = node->size;
+
+    *objects = g_list_prepend (*objects, obj);
 }
 
 GList *
 profile_get_objects (Profile *profile)
 {
     GList *objects = NULL;
-    
-    g_hash_table_foreach (profile->nodes_by_object, build_object_list, &objects);
 
-#if 0
-    g_print ("table: %p\n", profile->nodes_by_object);
-#endif
+    stack_stash_foreach_by_address (profile->stash, build_object_list, &objects);
+
+    /* FIXME: everybody still assumes that they don't have to free the result here,
+     * but these days they do, and so we are leaking all over the place
+     */
     
     return objects;
 }

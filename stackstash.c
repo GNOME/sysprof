@@ -239,3 +239,29 @@ stack_node_list_leaves (StackNode  *node,
     for (n = node->children; n != NULL; n = n->siblings)
 	stack_node_list_leaves (n, leaves);
 }
+
+typedef struct
+{
+    StackNodeFunc func;
+    gpointer	  data;
+} Info;
+
+static void
+do_foreach (gpointer key, gpointer value, gpointer data)
+{
+    Info *info = data;
+
+    info->func (value, info->data);
+}
+
+void
+stack_stash_foreach_by_address (StackStash *stash,
+				StackNodeFunc func,
+				gpointer      data)
+{
+    Info info;
+    info.func = func;
+    info.data = data;
+	
+    g_hash_table_foreach (stash->nodes_by_data, do_foreach, &info);
+}

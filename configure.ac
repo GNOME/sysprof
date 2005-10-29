@@ -122,7 +122,7 @@ echo "@          http://www.daimi.au.dk/~sandmann/sysprof"
 echo "%      "
 echo "@      or do"
 echo "%"
-echo "@          cvs -z3 upd -r SYSPROF-1-0"
+echo "@          cvs -z3 upd -r sysprof-1-0"
 echo "%"
 echo "@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@"
 echo

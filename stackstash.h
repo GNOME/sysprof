@@ -24,6 +24,22 @@
 
 typedef struct StackStash StackStash;
 
+typedef struct StackNode StackNode;
+
+struct StackNode
+{
+    gpointer	address;
+    int		size;
+    
+    StackNode *	parent;
+    StackNode *	siblings;
+    StackNode *	children;
+
+    StackNode * next;
+
+    gboolean	toplevel;
+};
+
 typedef void (* StackFunction) (GSList *trace,
 				gint size,
 				gpointer data);
@@ -40,6 +56,9 @@ void        stack_stash_foreach   (StackStash      *stash,
 void        stack_stash_foreach_reversed   (StackStash      *stash,
 					    StackFunction    stack_func,
 					    gpointer         data);
+StackNode  *stack_stash_find_node (StackStash      *stash,
+				   gpointer         data);
+				   
 void	    stack_stash_free	  (StackStash	   *stash);
 
 #endif

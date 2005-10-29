@@ -1,3 +1,11 @@
+Sat Oct 29 02:57:34 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.[ch]: Export the StackNode struct, add new
+	nodes_by_data hashtable to StackStash object, keep track of
+	whether objects are toplevels.
+
+	* TODO: some updates.
+
 Mon Oct 10 22:50:57 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* Merge in changes from HEAD

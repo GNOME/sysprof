@@ -19,21 +19,10 @@
 
 #include "stackstash.h"
 
-typedef struct StackNode StackNode;
-
-struct StackNode
-{
-    gpointer	address;
-    int		size;
-    
-    StackNode *	parent;
-    StackNode *	siblings;
-    StackNode *	children;
-};
-
 struct StackStash
 {
     StackNode  *root;
+    GHashTable *nodes_by_data;
 };
 
 static StackNode *
@@ -45,6 +34,7 @@ stack_node_new (void)
     node->address = NULL;
     node->parent = NULL;
     node->size = 0;
+    node->next = NULL;
     return node;
 }
 
@@ -67,8 +57,37 @@ stack_stash_new       (void)
     StackStash *stash = g_new (StackStash, 1);
 
     stash->root = NULL;
+    stash->nodes_by_data = g_hash_table_new (g_direct_hash, g_direct_equal);
     
     return stash;
+}
+
+void
+decorate_node (StackStash *stash,
+	       StackNode  *node)
+{
+    StackNode *n;
+    gboolean toplevel = TRUE;
+
+    /* FIXME: we will probably want to do this lazily,
+     * and more efficiently (only walk the tree once).
+     */
+
+    for (n = node->parent; n != NULL; n = n->parent)
+    {
+	if (n->address == node->address)
+	{
+	    toplevel = FALSE;
+	    break;
+	}
+    }
+
+    node->toplevel = toplevel;
+    
+    node->next = g_hash_table_lookup (
+	stash->nodes_by_data, node->address);
+    g_hash_table_insert (
+	stash->nodes_by_data, node->address, node);
 }
 
 void
@@ -102,6 +121,8 @@ stack_stash_add_trace (StackStash *stash,
 	    match->siblings = *location;
 	    match->parent = parent;
 	    *location = match;
+
+	    decorate_node (stash, match);
 	}
 
 	location = &(match->children);
@@ -192,5 +213,16 @@ void
 stack_stash_free	  (StackStash	   *stash)
 {
     stack_node_free (stash->root);
+    g_hash_table_destroy (stash->nodes_by_data);
+    
     g_free (stash);
+}
+
+StackNode *
+stack_stash_find_node (StackStash      *stash,
+		       gpointer         data)
+{
+    g_return_val_if_fail (stash != NULL, NULL);
+    
+    return g_hash_table_lookup (stash->nodes_by_data, data);
 }

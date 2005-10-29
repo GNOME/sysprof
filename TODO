@@ -26,11 +26,19 @@ Before 1.2:
 
 	- Remaining TODO
 
+		- Make the Profile class use the stash directly instead of
+		  building its own copy.
+			- store a stash in the profile class
+			- make sure descendants and callers can be
+			  built from it.
+			- get rid of other stuff in the profile
+			  struct
+
 		- make the things we put in a stackstash real
 		  objects so that
 			- we can save tem
 			- they will know how to delete the presentation
-			  names and themselves (through a virutal function)
+			  names and themselves (through a virtual function)
 			- they can contain markup etc.
 
 		- Get rid of ProfileObjects - they are just wrappers around
@@ -41,9 +49,6 @@ Before 1.2:
 		  stack_stash_foreach()
 
 		- Make sure we don't leak the presentation strings/objects.
-
-		- Make the Profile class use the stash directly instead of
-		  building its own copy.
 
 		- rename profiler->collector
 

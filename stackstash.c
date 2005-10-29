@@ -265,3 +265,9 @@ stack_stash_foreach_by_address (StackStash *stash,
 	
     g_hash_table_foreach (stash->nodes_by_data, do_foreach, &info);
 }
+
+StackNode  *
+stack_stash_get_root   (StackStash *stash)
+{
+    return stash->root;
+}

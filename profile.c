@@ -40,7 +40,6 @@ update()
 
 struct Profile
 {
-    gint		size;
     StackStash *	stash;
 };
 
@@ -248,7 +247,6 @@ profile_new (StackStash *stash)
 {
     Profile *profile = g_new (Profile, 1);
 
-    profile->size = 0;
     profile->stash = stash;
 
     return profile;
@@ -602,5 +600,5 @@ profile_get_objects (Profile *profile)
 gint
 profile_get_size (Profile *profile)
 {
-    return profile->size;
+    return compute_total (stack_stash_get_root (profile->stash));
 }

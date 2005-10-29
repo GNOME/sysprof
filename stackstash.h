@@ -67,5 +67,6 @@ void	    stack_stash_foreach_by_address (StackStash *stash,
 					    StackNodeFunc func,
 					    gpointer	  data);
 void	    stack_stash_free	  (StackStash	   *stash);
+StackNode  *stack_stash_get_root   (StackStash *stash);
 
 #endif

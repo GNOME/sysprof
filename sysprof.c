@@ -432,7 +432,7 @@ fill_main_list (Application *app)
 	    ProfileObject *object = list->data;
 	    GtkTreeIter iter;
 	    double profile_size = profile_get_size (profile);
-	    
+
 	    gtk_list_store_append (list_store, &iter);
 	    
 	    gtk_list_store_set (list_store, &iter,
@@ -1285,7 +1285,8 @@ on_new_sample (gpointer data)
 {
     Application *app = data;
 
-    update_sensitivity (app);
+    if (app->state == PROFILING)
+	update_sensitivity (app);
 }
 
 static Application *

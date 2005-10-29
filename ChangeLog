@@ -1,3 +1,12 @@
+Sat Oct 29 14:43:00 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	Fix crash pointed reported by Rudi Chiarito. 
+	
+	* stackstash.c (stack_stash_add_trace): Just return if
+	n_addrs is 0. 
+
+	* sysprof.c (on_read): Only trace if n_addresses != 0. 
+
 Sat Oct 29 14:29:55 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* README, TODO: updates

@@ -300,7 +300,7 @@ on_read (gpointer data)
     g_print ("-=-\n");
 #endif
     
-    if (rd > 0  && !app->generating_profile)
+    if (rd > 0 && !app->generating_profile && trace.n_addresses)
     {
 	Process *process = process_get_from_pid (trace.pid);
 	int i;
@@ -308,7 +308,7 @@ on_read (gpointer data)
 	
 /* 	if (*trace.filename) */
 /* 	    filename = trace.filename; */
-	
+
 	for (i = 0; i < trace.n_addresses; ++i)
 	{
 	    process_ensure_map (process, trace.pid, 

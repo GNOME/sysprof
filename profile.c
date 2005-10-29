@@ -650,62 +650,67 @@ profile_caller_new (void)
     return caller;
 }
 
-static ProfileObject *
-find_object_by_name (Profile *profile,
-		     char *object)
+static int
+sum_children (StackNode *node)
 {
-    GList *objects = profile_get_objects (profile);
-    GList *list;
-    ProfileObject *result = NULL;
+    int total;
+    StackNode *child;
+    
+    /* FIXME: this is pretty inefficient. Instead perhaps
+     * maintain or compute it in the stackstash
+     */
+    total = node->size;
 
-    for (list = objects; list != NULL; list = list->next)
+    for (child = node->children; child != NULL; child = child->siblings)
+	total += sum_children (child);
+
+    return total;
+}
+
+static int
+compute_total (StackNode *node)
+{
+    StackNode *n;
+    int total = 0;
+
+    for (n = node; n != NULL; n = n->next)
     {
-	ProfileObject *obj = list->data;
-
-	if (obj->name == object)
-	{
-	    result = obj;
-	    break;
-	}
+	if (n->toplevel)
+	    total += sum_children (n);
     }
 
-    g_list_free (objects);
-    
-    return result;
+    return total;
 }
 
 ProfileCaller *
 profile_list_callers (Profile       *profile,
 		      char          *callee_name)
 {
-    Node *callee_node;
-    Node *node;
+    StackNode *callee_node;
+    StackNode *node;
     GHashTable *callers_by_object;
     GHashTable *seen_callers;
     ProfileCaller *result = NULL;
-    ProfileObject *callee;
-    
+
     callers_by_object =
 	g_hash_table_new (g_direct_hash, g_direct_equal);
     seen_callers = g_hash_table_new (g_direct_hash, g_direct_equal);
 
-
-    callee = find_object_by_name (profile, callee_name);
-    
-    callee_node = g_hash_table_lookup (profile->nodes_by_object, callee);
+    callee_node = stack_stash_find_node (profile->stash, callee_name);
     
     for (node = callee_node; node; node = node->next)
     {
-	ProfileObject *object;
+	char *object;
+	
 	if (node->parent)
-	    object = node->parent->object;
+	    object = node->parent->address;
 	else
 	    object = NULL;
 	
 	if (!g_hash_table_lookup (callers_by_object, object))
 	{
 	    ProfileCaller *caller = profile_caller_new ();
-	    caller->name = object? object->name : NULL;
+	    caller->name = object;
 	    g_hash_table_insert (callers_by_object, object, caller);
 	    
 	    caller->next = result;
@@ -715,14 +720,14 @@ profile_list_callers (Profile       *profile,
     
     for (node = callee_node; node != NULL; node = node->next)
     {
-	Node *top_caller;
-	Node *top_callee;
-	Node *n;
+	StackNode *top_caller;
+	StackNode *top_callee;
+	StackNode *n;
 	ProfileCaller *caller;
-	ProfileObject *object;
+	char *object;
 	
 	if (node->parent)
-	    object = node->parent->object;
+	    object = node->parent->address;
 	else
 	    object = NULL;
 	
@@ -733,8 +738,8 @@ profile_list_callers (Profile       *profile,
 	top_callee = node;
 	for (n = node; n && n->parent; n = n->parent)
 	{
-	    if (n->object == node->object		   &&
-		n->parent->object == node->parent->object)
+	    if (n->address == node->address		   &&
+		n->parent->address == node->parent->address)
 	    {
 		top_caller = n->parent;
 		top_callee = n;
@@ -743,13 +748,13 @@ profile_list_callers (Profile       *profile,
 	
 	if (!g_hash_table_lookup (seen_callers, top_caller))
 	{
-	    caller->total += top_callee->total;
+	    caller->total += compute_total (top_callee);
 	    
 	    g_hash_table_insert (seen_callers, top_caller, (void *)0x1);
 	}
 	
-	if (node->self > 0)
-	    caller->self += node->self;
+	if (node->size > 0)
+	    caller->self += node->size;
     }
     
     g_hash_table_destroy (seen_callers);
@@ -810,43 +815,16 @@ profile_caller_free (ProfileCaller *caller)
     g_free (caller);
 }
 
-
-
-
-static int
-sum_children (StackNode *node)
-{
-    int total;
-    StackNode *child;
-    
-    /* FIXME: this is pretty inefficient. Instead perhaps
-     * maintain or compute it in the stackstash
-     */
-    total = node->size;
-
-    for (child = node->children; child != NULL; child = child->siblings)
-	total += sum_children (child);
-
-    return total;
-}
-
 static void
 build_object_list (StackNode *node, gpointer data)
 {
     GList **objects = data;
     ProfileObject *obj;
-    StackNode *n;
 
     obj = g_new (ProfileObject, 1);
     obj->name = node->address;
 
-    obj->total = 0;
-    for (n = node; n != NULL; n = n->next)
-    {
-	if (n->toplevel)
-	    obj->total += sum_children (n);
-    }
-    
+    obj->total = compute_total (node);
     obj->self = node->size;
 
     *objects = g_list_prepend (*objects, obj);

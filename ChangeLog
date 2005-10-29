@@ -1,3 +1,10 @@
+Sat Oct 29 16:45:34 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (compute_total): New function.
+
+	* profile.c (profile_list_callers): Port this function over to use
+	StackNodes instead.
+
 Sat Oct 29 16:22:28 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* profile.c (build_object_list): Make this function allocate

@@ -139,6 +139,9 @@ stack_stash_add_trace (StackStash *stash,
     StackNode *leaf;
     int i;
 
+    if (!n_addrs)
+	return;
+    
     trace = NULL;
     for (i = 0; i < n_addrs; ++i)
 	trace = g_list_prepend (trace, GINT_TO_POINTER (addrs[i]));

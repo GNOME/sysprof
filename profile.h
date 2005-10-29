@@ -38,7 +38,7 @@ struct ProfileObject
 
 struct ProfileDescendant
 {
-    ProfileObject *	object;
+    char *		name;
     guint		self;
     guint		total;
     guint		non_recursion;
@@ -52,7 +52,7 @@ struct ProfileDescendant
 
 struct ProfileCaller
 {
-    ProfileObject *	object;		/* can be NULL */
+    char *		name;
     guint		total;
     guint		self;
 
@@ -64,9 +64,9 @@ void               profile_free               (Profile           *profile);
 gint		   profile_get_size	      (Profile           *profile);
 GList *		   profile_get_objects	      (Profile		 *profile);
 ProfileDescendant *profile_create_descendants (Profile           *prf,
-					       ProfileObject     *object);
+					       char		 *object);
 ProfileCaller *	   profile_list_callers       (Profile		 *profile,
-					       ProfileObject     *callee);
+					       char              *object);
 void		   profile_caller_free	      (ProfileCaller     *caller);
 void               profile_descendant_free    (ProfileDescendant *descendant);
 

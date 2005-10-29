@@ -385,13 +385,13 @@ enum
     DESCENDANTS_OBJECT
 };
 
-static ProfileObject *
+static char *
 get_current_object (Application *app)
 {
     GtkTreeSelection *selection;
     GtkTreeModel *model;
     GtkTreeIter selected;
-    ProfileObject *object;
+    char *object;
     
     selection = gtk_tree_view_get_selection (app->object_view);
     
@@ -439,7 +439,7 @@ fill_main_list (Application *app)
 				OBJECT_NAME, object->name,
 				OBJECT_SELF, 100.0 * object->self / profile_size,
 				OBJECT_TOTAL, 100.0 * object->total / profile_size,
-				OBJECT_OBJECT, object,
+				OBJECT_OBJECT, object->name,
 				-1);
 	}
 	g_list_free (objects);
@@ -479,11 +479,11 @@ add_node (GtkTreeStore      *store,
     gtk_tree_store_insert (store, &iter, (GtkTreeIter *)parent, 0);
     
     gtk_tree_store_set (store, &iter,
-			DESCENDANTS_NAME, node->object->name,
+			DESCENDANTS_NAME, node->name,
 			DESCENDANTS_SELF, 100 * (node->self)/(double)size,
 			DESCENDANTS_NON_RECURSE, 100 * (node->non_recursion)/(double)size,
 			DESCENDANTS_TOTAL, 100 * (node->total)/(double)size,
-			DESCENDANTS_OBJECT, node->object,
+			DESCENDANTS_OBJECT, node->name,
 			-1);
     
     add_node (store, size, parent, node->siblings);
@@ -514,7 +514,7 @@ fill_descendants_tree (Application *app)
     
     if (app->profile)
     {
-	ProfileObject *object = get_current_object (app);
+	char *object = get_current_object (app);
 	if (object)
 	{
 	    app->descendants =
@@ -554,8 +554,8 @@ add_callers (GtkListStore *list_store,
 	GtkTreeIter iter;
 	double profile_size = profile_get_size (profile);
 	
-	if (callers->object)
-	    name = callers->object->name;
+	if (callers->name)
+	    name = callers->name;
 	else
 	    name = "<spontaneous>";
 	
@@ -565,7 +565,7 @@ add_callers (GtkListStore *list_store,
 	    CALLERS_NAME, name,
 	    CALLERS_SELF, 100.0 * callers->self / profile_size,
 	    CALLERS_TOTAL, 100.0 * callers->total / profile_size,
-	    CALLERS_OBJECT, callers->object,
+	    CALLERS_OBJECT, callers->name,
 	    -1);
 	
 	callers = callers->next;
@@ -595,7 +595,7 @@ fill_callers_list (Application *app)
     
     if (app->profile)
     {
-	ProfileObject *object = get_current_object (app);
+	char *object = get_current_object (app);
 	if (object)
 	{
 	    app->callers = profile_list_callers (app->profile, object);
@@ -1015,7 +1015,7 @@ on_object_selection_changed (GtkTreeSelection *selection,
 
 static void
 really_goto_object (Application *app,
-		    ProfileObject *object)
+		    char *object)
 {
     GtkTreeModel *profile_objects;
     GtkTreeIter iter;
@@ -1027,13 +1027,13 @@ really_goto_object (Application *app,
     {
 	do
 	{
-	    ProfileObject *profile_object;
+	    char *list_object;
 	    
 	    gtk_tree_model_get (profile_objects, &iter,
-				OBJECT_OBJECT, &profile_object,
+				OBJECT_OBJECT, &list_object,
 				-1);
 	    
-	    if (profile_object == object)
+	    if (list_object == object)
 	    {
 		found = TRUE;
 		break;
@@ -1059,7 +1059,7 @@ goto_object (Application *app,
 {
     GtkTreeIter iter;
     GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
-    ProfileObject *object;
+    char *object;
     
     if (!gtk_tree_model_get_iter (model, &iter, path))
 	return;

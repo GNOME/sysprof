@@ -493,7 +493,7 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	
 	for (match = *tree; match != NULL; match = match->siblings)
 	{
-	    if (match->object == node->object)
+	    if (match->name == node->object->name)
 		break;
 	}
 	
@@ -506,7 +506,7 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	    for (i = 0; i < seen_objects->len; ++i)
 	    {
 		ProfileDescendant *n = seen_objects->pdata[i];
-		if (n->object == node->object)
+		if (n->name == node->object->name)
 		    seen_tree_node = n;
 	    }
 		    
@@ -534,7 +534,7 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	{
 	    match = g_new (ProfileDescendant, 1);
 	    
-	    match->object = node->object;
+	    match->name = node->object->name;
 	    match->non_recursion = 0;
 	    match->total = 0;
 	    match->self = 0;
@@ -619,11 +619,36 @@ add_leaf_to_tree (ProfileDescendant **tree, Node *leaf, Node *top)
     g_list_free (trace);
 }
 
+ProfileObject *
+find_object_by_name (Profile *profile,
+		     char *object)
+{
+    GList *objects = profile_get_objects (profile);
+    GList *list;
+    ProfileObject *result = NULL;
+
+    for (list = objects; list != NULL; list = list->next)
+    {
+	ProfileObject *obj = list->data;
+
+	if (obj->name == object)
+	{
+	    result = obj;
+	    break;
+	}
+    }
+
+    g_list_free (objects);
+    
+    return result;
+}
+
 ProfileDescendant *
-profile_create_descendants (Profile *profile, ProfileObject *object)
+profile_create_descendants (Profile *profile, char *object_name)
 {
     ProfileDescendant *tree = NULL;
     Node *node;
+    ProfileObject *object = find_object_by_name (profile, object_name);
     
     node = g_hash_table_lookup (profile->nodes_by_object, object);
     
@@ -660,17 +685,21 @@ profile_caller_new (void)
 
 ProfileCaller *
 profile_list_callers (Profile       *profile,
-		      ProfileObject *callee)
+		      char          *callee_name)
 {
     Node *callee_node;
     Node *node;
     GHashTable *callers_by_object;
     GHashTable *seen_callers;
     ProfileCaller *result = NULL;
+    ProfileObject *callee;
     
     callers_by_object =
 	g_hash_table_new (g_direct_hash, g_direct_equal);
     seen_callers = g_hash_table_new (g_direct_hash, g_direct_equal);
+
+
+    callee = find_object_by_name (profile, callee_name);
     
     callee_node = g_hash_table_lookup (profile->nodes_by_object, callee);
     
@@ -685,7 +714,7 @@ profile_list_callers (Profile       *profile,
 	if (!g_hash_table_lookup (callers_by_object, object))
 	{
 	    ProfileCaller *caller = profile_caller_new ();
-	    caller->object = object;
+	    caller->name = object? object->name : NULL;
 	    g_hash_table_insert (callers_by_object, object, caller);
 	    
 	    caller->next = result;

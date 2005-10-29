@@ -18,26 +18,38 @@ Before 1.0.1:
 
 Before 1.2:
 
-- Find out why we sometimes get completely ridicoulous stacktraces, where
-  main seems to be called from within Xlib etc. This happens even after 
-  restarting everything.
+- Fix bugs/performance issues in reorganized stackstash code:
+	- total should probably be cached so that compute_total() doesn't
+	  take 80% of the time to generate a profile.
+	- decorate_node should be done lazily
+	- Find out why we sometimes get completely ridicoulous stacktraces,
+	  where main seems to be called from within Xlib etc. This happens
+	  even after restarting everything.
+	- It looks like the stackstash-reorg code confuses "main" from
+	  unrelated processes. - currently it looks like if multiple
+	  "main"s are present, only one gets listed in the object list.
+	- Numbers in caller view are completely screwed up.
+	- It looks like it sometimes gets confused with similar but different
+	  processess: Something like:
+		process a spends 80% in foo() called from bar()
+		process b spends 1% in foo() called from baz()
+	  we get reports of baz() using > 80% of the time.
+	  Or something.
 
-- It looks like the stackstash-reorg code confuses "main" from unrelated
-  processes. - currently it looks like if multiple "main"s are present, only
-  one gets listed in the object list.
+- make stasckstash ref counted
+
+- plug all the leaks
 
 - Reorganise stackstash and profile
 
-	- Remaining TODO
+	- Remaining TODO before merging into head:
 
 		- make the things we put in a stackstash real
 		  objects so that
-			- we can save tem
+			- we can save them
 			- they will know how to delete the presentation
 			  names and themselves (through a virtual function)
  			- they can contain markup etc.
-
-		- make stashes loadable and savable.
 
 		- Get rid of remaining uses of stack_stash_foreach(), then
 		  rename stack_stash_foreach_reversed() to
@@ -47,42 +59,10 @@ Before 1.2:
 
 		- rename profiler->collector
 
-		- make stasckstash ref counted
-
-		- fix all the leaks
-
 		- make loading and saving work again.
-
-	- stackstash should just take traces of addresses without knowing
-	  anything about what those addresses mean.
-
-	- stacktraces should then begin with a process
-
-	- stackstash should be extended so that the "create_descendant"
-	  and "create_ancestor" code in profile.c can use it directly.
-	  At that point, get rid of the profile tree, and rename
-	  profile.c to analyze.c.
-
-	- the profile tree will then just be a stackstash where the
-	  addresses are presentation strings instead.
-
-	- Doing a profile will then amount to converting the raw stash
-	  to one where the addresses have been looked up and converted to
-	  presentation strings.
-
-	-=-=
-
-	- profile should take traces of pointers to presentation
-	  objects without knowing anything about these presentation
-	  objects.
-
-	- For each stack node, compute a presentation object
-		(probably need to export opaque stacknode objects
-		  with set/get_user_data)
-
-	- Send each stack trace to the profile module, along with
-	  presentation objects. Maybe just a map from stack nodes
-	  to presentation objects.
+			- make stashes loadable and savable.
+			- add a way to convert 1.0 files to stashes
+	
 
 * Consider renaming profiler.[ch] to collector.[ch]
 
@@ -470,6 +450,39 @@ Later:
 
 
 DONE:
+
+stackstash reorg:
+
+	- stackstash should just take traces of addresses without knowing
+	  anything about what those addresses mean.
+
+	- stacktraces should then begin with a process
+
+	- stackstash should be extended so that the "create_descendant"
+	  and "create_ancestor" code in profile.c can use it directly.
+	  At that point, get rid of the profile tree, and rename
+	  profile.c to analyze.c.
+
+	- the profile tree will then just be a stackstash where the
+	  addresses are presentation strings instead.
+
+	- Doing a profile will then amount to converting the raw stash
+	  to one where the addresses have been looked up and converted to
+	  presentation strings.
+
+	-=-=
+
+	- profile should take traces of pointers to presentation
+	  objects without knowing anything about these presentation
+	  objects.
+
+	- For each stack node, compute a presentation object
+		(probably need to export opaque stacknode objects
+		  with set/get_user_data)
+
+	- Send each stack trace to the profile module, along with
+	  presentation objects. Maybe just a map from stack nodes
+	  to presentation objects.
 
 - Make the Profile class use the stash directly instead of
   building its own copy.

@@ -47,6 +47,12 @@ Before 1.2:
 
 		- rename profiler->collector
 
+		- make stasckstash ref counted
+
+		- fix all the leaks
+
+		- make loading and saving work again.
+
 	- stackstash should just take traces of addresses without knowing
 	  anything about what those addresses mean.
 

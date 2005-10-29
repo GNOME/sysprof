@@ -1,3 +1,9 @@
+Sat Oct 29 16:58:22 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* profile.c: Delete all the obsolete stuff related to call tree.
+
+	* TODO: update
+
 Sat Oct 29 16:52:32 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Updates

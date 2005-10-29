@@ -5,9 +5,6 @@ Before 1.0.1:
 	This is just the (deleted) problem.
 
 * Build system
-   - Find out what distributions it actually works on
-       (ask for sucess/failure-stories in 1.0 releases)
-
    - Create RPM package? See fedora-packaging-list for information
      about how to package kernel modules. Lots of threads in
      June 2005 and forward.
@@ -15,6 +12,18 @@ Before 1.0.1:
      See also http://www.fedoraproject.org/wiki/Extras/KernelModuleProposal
 
 Before 1.2:
+
+* Crash reported by Rudi Chiarito with n_addrs == 0.
+
+* Find out why we get hangs with rawhide kernels. This only happens with the
+  'trace "current"' code. See this mail:
+	
+	http://mail.nl.linux.org/kernelnewbies/2005-08/msg00157.html
+
+  esp0 points to top of kernel stack
+  esp  points to top of user stack
+
+  (Reported by Kjartan Marass).
 
 * Figure out how to make sfile.[ch] use less memory.
 	- In general clean sfile.[ch] up a little:
@@ -443,7 +452,13 @@ Later:
 
 DONE:
 
-Before 1.0:
+* Find out what distributions it actually works on
+   (ask for sucess/failure-stories in 1.0 releases)
+
+* Add note in README about Ubuntu and Debian -dbg packages and how to get
+  debug symbols for X there.
+
+* Before 1.0:
 
    - Update version numbers in source
 

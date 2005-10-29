@@ -1,3 +1,7 @@
+Sat Oct 29 14:29:55 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* README, TODO: updates
+
 Fri Oct 14 11:44:43 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* configure.ac: Add a warning about known bugs in the kernel

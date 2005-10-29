@@ -17,7 +17,6 @@ would be appreciated.
 
 
 
-
 Requirements:
 
 - A Linux kernel version 2.6.11 or newer is required.
@@ -25,7 +24,7 @@ Requirements:
 
 - GTK+ 2.6.0 or newer is required
 
-- libglade 2.5.1 is required
+- libglade 2.5.1 or newer is required
 
 
 Compiling:
@@ -35,28 +34,31 @@ Compiling:
   system compiler, but if you have upgraded your kernel it is
   possible that the new kernel was compiled with a different compiler
 
-  In that case, "modprobe sysprof-module" will produce this 
+  If the module is compiled with a different compiler than the one 
+  compiling the kernel, "modprobe sysprof-module" will produce this
   error message:
 
     insmod: error inserting './sysprof-module.o': -1 Invalid module format
 
 
-
 Debugging symbols
 
-- The programs you want to profile should have debugging symbols, or
-  you won't get much usable information. On a Fedora Core system,
-  installing the relevant -debuginfo package should be sufficient.
+- The programs and libraries you want to profile should have debugging
+  symbols, or you won't get much usable information. On a Fedora Core system,
+  installing the relevant <package>-debuginfo package should be sufficient.
+  On Ubuntu and Debian, the debug packages are called <package>-dbg.
 
-
-- X server.
+- X server
 
   The X server as shipped by most distributions uses its own home-rolled
   module loading system and Sysprof has no way to deal with that, so if you
-  run sysprof with your normal X serverr you won't get any information about
+  run sysprof with your normal X server you won't get any information about
   how time is spent inside the X server.
 
-  To fix this you have to compile your own X server:
+  On Ubuntu and Debian there is a package, xserver-xorg-dbg, containing a
+  binary called Xorg-debug that is built in such a way that sysprof can use
+  it. On other systems, to get an X server with usable symbols you
+  have to compile your own:
 
   (1) Compile the X server to use ".so" modules:
 
@@ -64,17 +66,20 @@ Debugging symbols
 	  xc/config/cf/xorgsite.def. 
 
 	  If you are compiling the CVS version of the X server
-	  (the one that will eventually become 7.0), then this is
+	  (the one that will eventually become 6.9), then this is
 	  already the default.
 
 	- "make World"
+	
+	- Don't run "make install" yet. (See below).
 
-  (2) Install the X server making sure it can't see any ".a" files. If
-      you install on top of an existing installation, just do
+  (2) Make sure the new X server can't see any old ".a" files lying 
+      around. If you install on top of an existing installation, just do
 
 	  find /usr/X11R6/lib/"*.a" | sudo xargs rm
 
-      and install the newly compiled X server. 
+      then run "make install" as root to install the newly compiled
+      X server. 
 
       If a ".so" X server finds .a files in its module path it will
       try to load those in preference to .so files and this causes

@@ -30,14 +30,6 @@ Before 1.2:
 
 	- Remaining TODO
 
-		- Make the Profile class use the stash directly instead of
-		  building its own copy.
-			- store a stash in the profile class
-			- make sure descendants and callers can be
-			  built from it.
-			- get rid of other stuff in the profile
-			  struct
-
 		- make the things we put in a stackstash real
 		  objects so that
 			- we can save tem
@@ -472,6 +464,14 @@ Later:
 
 
 DONE:
+
+- Make the Profile class use the stash directly instead of
+  building its own copy.
+	- store a stash in the profile class
+	- make sure descendants and callers can be
+	  built from it.
+	- get rid of other stuff in the profile
+	  struct
 
 Before 1.0:
 

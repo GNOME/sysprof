@@ -1,3 +1,10 @@
+Sat Oct 29 16:52:32 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
+	* profile.c: Comment out a lot of unused stuff. Also temporarily
+	comment out loading and saving.
+
 Sat Oct 29 16:45:34 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* profile.c (compute_total): New function.

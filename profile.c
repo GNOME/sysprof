@@ -38,12 +38,14 @@ update()
 #endif
 }
 
+#if 0
 static guint
 direct_hash_no_null (gconstpointer v)
 {
     g_assert (v != NULL);
     return GPOINTER_TO_UINT (v);
 }
+#endif
 
 struct Node
 {
@@ -65,14 +67,17 @@ struct Node
 struct Profile
 {
     gint		size;
+#if 0
     Node *		call_tree;
     
     /* This table is really a cache. We can build it from the call_tree */
     GHashTable *	nodes_by_object;
+#endif
 
     StackStash *	stash;
 };
 
+#if 0
 static SFormat *
 create_format (void)
 {
@@ -142,11 +147,14 @@ serialize_call_tree (Node *node, SFileOutput *output)
     serialize_call_tree (node->children, output);
 }
 
+#endif
+
 gboolean
 profile_save (Profile		 *profile,
 	      const char	 *file_name,
 	      GError            **err)
 {
+#if 0
     gboolean result;
     
     SFormat *format = create_format ();
@@ -173,7 +181,10 @@ profile_save (Profile		 *profile,
     sfile_output_free (output);
 
     return result;
+#endif
 }
+
+#if 0
 
 static void
 make_hash_table (Node *node, GHashTable *table)
@@ -191,10 +202,12 @@ make_hash_table (Node *node, GHashTable *table)
     make_hash_table (node->siblings, table);
     make_hash_table (node->children, table);
 }
+#endif
 
 Profile *
 profile_load (const char *filename, GError **err)
 {
+#if 0
     SFormat *format;
     SFileInput *input;
     Profile *profile;
@@ -260,6 +273,7 @@ profile_load (const char *filename, GError **err)
     make_hash_table (profile->call_tree, profile->nodes_by_object);
 
     return profile;
+#endif
 }
 
 static ProfileObject *
@@ -272,12 +286,14 @@ profile_object_new (void)
     return obj;
 }
 
+#if 0
 static void
 profile_object_free (ProfileObject *obj)
 {
     g_free (obj->name);
     g_free (obj);
 }
+#endif
 
 static void
 ensure_profile_object (GHashTable *profile_objects, gpointer address)
@@ -297,6 +313,7 @@ ensure_profile_object (GHashTable *profile_objects, gpointer address)
     }
 }
 
+#if 0
 static ProfileObject *
 lookup_profile_object (GHashTable *profile_objects, gpointer address)
 {
@@ -306,6 +323,7 @@ lookup_profile_object (GHashTable *profile_objects, gpointer address)
 
     return object;
 }
+#endif
 
 typedef struct Info Info;
 struct Info
@@ -329,6 +347,7 @@ generate_object_table (GSList *trace, gint size, gpointer data)
     info->profile->size += size;
 }
 
+#if 0
 static Node *
 node_new ()
 {
@@ -343,7 +362,9 @@ node_new ()
     
     return node;
 }
+#endif
 
+#if 0
 static Node *
 node_add_trace (Profile *profile, GHashTable *profile_objects, Node *node,
 		GSList *trace, gint size,
@@ -392,6 +413,7 @@ node_add_trace (Profile *profile, GHashTable *profile_objects, Node *node,
     
     return node;
 }
+#endif
 
 #if 0
 static void
@@ -407,6 +429,7 @@ dump_trace (GSList *trace)
 }
 #endif
 
+#if 0
 static void
 generate_call_tree (GSList *trace, gint size, gpointer data)
 {
@@ -422,6 +445,7 @@ generate_call_tree (GSList *trace, gint size, gpointer data)
     
     g_hash_table_destroy (seen_objects);
 }
+#endif
 
 static void
 link_parents (Node *node, Node *parent)
@@ -435,6 +459,7 @@ link_parents (Node *node, Node *parent)
     link_parents (node->children, node);
 }
 
+#if 0
 static void
 compute_object_total (gpointer key, gpointer value, gpointer data)
 {
@@ -448,6 +473,7 @@ compute_object_total (gpointer key, gpointer value, gpointer data)
 	    object->total += node->total;
     }
 }
+#endif
 
 Profile *
 profile_new (StackStash *stash)
@@ -455,9 +481,13 @@ profile_new (StackStash *stash)
     Info info;
     
     info.profile = g_new (Profile, 1);
+#if 0
     info.profile->call_tree = NULL;
+#endif
+#if 0
     info.profile->nodes_by_object =
 	g_hash_table_new (direct_hash_no_null, g_direct_equal);
+#endif
     info.profile->size = 0;
 
     info.profile->stash = stash;
@@ -467,10 +497,16 @@ profile_new (StackStash *stash)
 						  NULL, NULL);
 
     stack_stash_foreach (stash, generate_object_table, &info);
+#if 0
     stack_stash_foreach (stash, generate_call_tree, &info);
+#endif
+#if 0
     link_parents (info.profile->call_tree, NULL);
+#endif
     
+#if 0
     g_hash_table_foreach (info.profile->nodes_by_object, compute_object_total, NULL);
+#endif
     
     g_hash_table_destroy (info.profile_objects);
 
@@ -775,20 +811,28 @@ node_free (Node *node)
     g_free (node);
 }
 
+#if 0
 static void
 free_object (gpointer key, gpointer value, gpointer data)
 {
     profile_object_free (key);
 }
+#endif
 
 void
 profile_free (Profile *profile)
 {
+#if 0
     g_hash_table_foreach (profile->nodes_by_object, free_object, NULL);
+#endif
     
+#if 0
     node_free (profile->call_tree);
+#endif
     
+#if 0
     g_hash_table_destroy (profile->nodes_by_object);
+#endif
     
     g_free (profile);
 }

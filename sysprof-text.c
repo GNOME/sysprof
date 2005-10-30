@@ -32,12 +32,12 @@
 #include "process.h"
 #include "watch.h"
 #include "signal-handler.h"
-#include "profiler.h"
+#include "collector.h"
 
 typedef struct Application Application;
 struct Application
 {
-    Profiler *	profiler;
+    Collector *	collector;
     char *	outfile;
     GMainLoop * main_loop;
 };
@@ -46,7 +46,7 @@ void
 dump_data (Application *app)
 {
     GError *err = NULL;
-    Profile *profile = profiler_create_profile (app->profiler);
+    Profile *profile = collector_create_profile (app->collector);
 
     profile_save (profile, app->outfile, &err);
 
@@ -126,7 +126,7 @@ main (int argc,
     if (quit)
 	return -1;
 
-    app->profiler = profiler_new (NULL, NULL);
+    app->collector = collector_new (NULL, NULL);
     app->outfile = g_strdup (argv[1]);
     app->main_loop = g_main_loop_new (NULL, 0);
 
@@ -135,7 +135,7 @@ main (int argc,
     signal_set_handler (SIGINT, signal_handler, app, NULL);
 
     /* FIXME: check the error */
-    profiler_start (app->profiler, NULL);
+    collector_start (app->collector, NULL);
     
     g_main_loop_run (app->main_loop);
 

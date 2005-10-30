@@ -18,7 +18,7 @@ Before 1.0.1:
 
 Before 1.2:
 
-- Fix bugs/performance issues in reorganized stackstash code:
+- Fix bugs/performance issues:
 	- total should probably be cached so that compute_total() doesn't
 	  take 80% of the time to generate a profile.
 	- decorate_node should be done lazily
@@ -48,17 +48,17 @@ Before 1.2:
 - make stasckstash ref counted
 
 - plug all the leaks
+	- don't leak the presentation strings/objects
+	- loading and saving probably leak right now
+
+- think about loading and saving. Goals
+	- Can load 1.0 profiles
+	- Don't export too much of stackstashes to the rest of the
+	  app
 
 - Reorganise stackstash and profile
 
 	- Remaining TODO before merging into head:
-
-		- make loading and saving work again.
-			- make stashes loadable and savable.
-			- add a way to convert 1.0 files to stashes
-	
-
-		- Make sure we don't leak the presentation strings/objects.
 
 		- rename profiler->collector
 
@@ -450,6 +450,10 @@ Later:
 DONE:
 
 stackstash reorg:
+
+	- make loading and saving work again.
+		- make stashes loadable and savable.
+		- add a way to convert 1.0 files to stashes
 
 	- Get rid of remaining uses of stack_stash_foreach(), then
 	  rename stack_stash_foreach_reversed() to

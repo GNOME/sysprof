@@ -1,4 +1,4 @@
-/* Sysprof -- Sampling, systemwide CPU profiler 
+/* Sysprof -- Sampling, systemwide CPU profiler
  * Copyright 2004, Red Hat, Inc.
  * Copyright 2004, 2005, Soeren Sandmann
  *
@@ -26,7 +26,7 @@
 
 #include "treeviewutils.h"
 #include "profile.h"
-#include "profiler.h"
+#include "collector.h"
 
 /* FIXME - not10 */
 #define _(a) a
@@ -44,7 +44,7 @@ typedef enum
 
 struct Application
 {
-    Profiler *		profiler;
+    Collector *		collector;
     
     State		state;
     
@@ -109,7 +109,7 @@ show_samples_timeout (gpointer data)
 	break;
 	
     case PROFILING:
-	n_samples = profiler_get_n_samples (app->profiler);
+	n_samples = collector_get_n_samples (app->collector);
 	break;
 	
     case DISPLAYING:
@@ -166,7 +166,7 @@ update_sensitivity (Application *app)
 	break;
 	
     case PROFILING:
-	has_samples = (profiler_get_n_samples (app->profiler) > 0);
+	has_samples = (collector_get_n_samples (app->collector) > 0);
     
 	sensitive_profile_button = has_samples;
 	sensitive_save_as_button = has_samples;
@@ -271,7 +271,7 @@ set_application_title (Application *app,
     else
     {
 	gtk_window_set_title (GTK_WINDOW (app->main_window),
-			      "System Profiler");
+			      "System Collector");
     }
 }
 
@@ -288,7 +288,7 @@ delete_data (Application *app)
 	gtk_tree_view_set_model (GTK_TREE_VIEW (app->descendants_view), NULL);
     }
 
-    profiler_reset (app->profiler);
+    collector_reset (app->collector);
     
     queue_show_samples (app);
     
@@ -342,7 +342,7 @@ on_start_toggled (GtkWidget *widget, gpointer data)
     delete_data (app);
 
     /* FIXME: get the real error message */
-    if (!profiler_start (app->profiler, NULL))
+    if (!collector_start (app->collector, NULL))
     {
 	sorry (app->main_window,
 	       "Can't open /proc/sysprof-trace. You need to insert\n"
@@ -636,7 +636,7 @@ ensure_profile (Application *app)
     if (app->profile)
 	return;
     
-    app->profile = profiler_create_profile (app->profiler);
+    app->profile = collector_create_profile (app->collector);
 
     fill_lists (app);
     
@@ -1294,7 +1294,7 @@ application_new (void)
 {
     Application *app = g_new0 (Application, 1);
 
-    app->profiler = profiler_new (on_new_sample, app);
+    app->collector = collector_new (on_new_sample, app);
     app->state = INITIAL;
     
     return app;

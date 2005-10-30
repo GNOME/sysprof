@@ -6,12 +6,12 @@ bin_PROGRAMS = sysprof sysprof-text
 SYSPROF_CORE =					\
 	binfile.h				\
 	binfile.c				\
+	collector.c				\
+	collector.h				\
 	process.h				\
 	process.c				\
 	profile.h				\
 	profile.c				\
-	profiler.c				\
-	profiler.h				\
 	sfile.h					\
 	sfile.c					\
 	stackstash.h				\

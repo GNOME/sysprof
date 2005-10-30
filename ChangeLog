@@ -1,5 +1,10 @@
 2005-10-30  Soren Sandmann <sandmann@redhat.com>
 
+	* Makefile.am, sysprof.c, sysprof-text.c, collector.[ch]: Rename
+	profiler -> collector
+
+2005-10-30  Soren Sandmann <sandmann@redhat.com>
+
 	* profile.c (profile_load): Reenable loading. 
 
 2005-10-30  Soren Sandmann <sandmann@redhat.com>

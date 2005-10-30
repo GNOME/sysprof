@@ -1,5 +1,5 @@
 #include "stackstash.h"
-#include "profiler.h"
+#include "collector.h"
 #include "module/sysprof-module.h"
 #include "watch.h"
 #include "process.h"
@@ -10,9 +10,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-struct Profiler
+struct Collector
 {
-    ProfilerFunc	callback;
+    CollectorFunc	callback;
     gpointer		data;
     
     StackStash *	stash;
@@ -22,20 +22,20 @@ struct Profiler
 };
 
 /* callback is called whenever a new sample arrives */
-Profiler *
-profiler_new (ProfilerFunc callback,
+Collector *
+collector_new (CollectorFunc callback,
 	      gpointer     data)
 {
-    Profiler *profiler = g_new0 (Profiler, 1);
+    Collector *collector = g_new0 (Collector, 1);
     
-    profiler->callback = callback;
-    profiler->data = data;
-    profiler->fd = -1;
-    profiler->stash = NULL;
+    collector->callback = callback;
+    collector->data = data;
+    collector->fd = -1;
+    collector->stash = NULL;
     
-    profiler_reset (profiler);
+    collector_reset (collector);
     
-    return profiler;
+    return collector;
 }
 
 static double
@@ -86,11 +86,11 @@ static void
 on_read (gpointer data)
 {
     SysprofStackTrace trace;
-    Profiler *profiler = data;
+    Collector *collector = data;
     GTimeVal now;
     int rd;
     
-    rd = read (profiler->fd, &trace, sizeof (trace));
+    rd = read (collector->fd, &trace, sizeof (trace));
     
     if (rd == -1 && errno == EWOULDBLOCK)
 	return;
@@ -100,7 +100,7 @@ on_read (gpointer data)
     /* After a reset we ignore samples for a short period so that
      * a reset will actually cause 'samples' to become 0
      */
-    if (time_diff (&now, &profiler->latest_reset) < RESET_DEAD_PERIOD)
+    if (time_diff (&now, &collector->latest_reset) < RESET_DEAD_PERIOD)
 	return;
     
 #if 0
@@ -113,13 +113,13 @@ on_read (gpointer data)
     
     if (rd > 0)
     {
-	add_trace_to_stash (&trace, profiler->stash);
+	add_trace_to_stash (&trace, collector->stash);
 	
-	profiler->n_samples++;
+	collector->n_samples++;
     }
     
-    if (profiler->callback)
-	profiler->callback (profiler->data);
+    if (collector->callback)
+	collector->callback (collector->data);
 }
 
 static gboolean
@@ -144,7 +144,7 @@ load_module (void)
 }
 
 static gboolean
-open_fd (Profiler *profiler,
+open_fd (Collector *collector,
 	 GError **err)
 {
     int fd;
@@ -173,58 +173,58 @@ open_fd (Profiler *profiler,
 	}
     }
     
-    profiler->fd = fd;
-    fd_add_watch (profiler->fd, profiler);
+    collector->fd = fd;
+    fd_add_watch (collector->fd, collector);
     
     return TRUE;
 }
 
 static void
-empty_file_descriptor (Profiler *profiler)
+empty_file_descriptor (Collector *collector)
 {
     int rd;
     SysprofStackTrace trace;
     
     do
     {
-	rd = read (profiler->fd, &trace, sizeof (trace));
+	rd = read (collector->fd, &trace, sizeof (trace));
 	
     } while (rd != -1); /* until EWOULDBLOCK */
 }
 
 gboolean
-profiler_start (Profiler *profiler,
+collector_start (Collector *collector,
 		GError **err)
 {
-    if (profiler->fd < 0 && !open_fd (profiler, err))
+    if (collector->fd < 0 && !open_fd (collector, err))
 	return FALSE;
     
-    fd_set_read_callback (profiler->fd, on_read);
+    fd_set_read_callback (collector->fd, on_read);
     return TRUE;
 }
 
 void
-profiler_stop (Profiler *profiler)
+collector_stop (Collector *collector)
 {
-    fd_set_read_callback (profiler->fd, NULL);
+    fd_set_read_callback (collector->fd, NULL);
 }
 
 void
-profiler_reset (Profiler *profiler)
+collector_reset (Collector *collector)
 {
-    if (profiler->stash)
-	stack_stash_free (profiler->stash);
+    if (collector->stash)
+	stack_stash_free (collector->stash);
     
-    profiler->stash = stack_stash_new ();
-    profiler->n_samples = 0;
+    collector->stash = stack_stash_new ();
+    collector->n_samples = 0;
     
-    g_get_current_time (&profiler->latest_reset);
+    g_get_current_time (&collector->latest_reset);
 }
 
 int
-profiler_get_n_samples (Profiler *profiler)
+collector_get_n_samples (Collector *collector)
 {
-    return profiler->n_samples;
+    return collector->n_samples;
 }
 
 typedef struct
@@ -285,14 +285,14 @@ resolve_symbols (GSList *trace, gint size, gpointer data)
 }
 
 Profile *
-profiler_create_profile (Profiler *profiler)
+collector_create_profile (Collector *collector)
 {
     ResolveInfo info;
     
     info.resolved_stash = stack_stash_new ();
     info.unique_symbols = g_hash_table_new (g_direct_hash, g_direct_equal);
     
-    stack_stash_foreach (profiler->stash, resolve_symbols, &info);
+    stack_stash_foreach (collector->stash, resolve_symbols, &info);
     
     g_hash_table_destroy (info.unique_symbols);
     

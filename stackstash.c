@@ -38,18 +38,6 @@ stack_node_new (void)
     return node;
 }
 
-static void
-stack_node_destroy (gpointer p)
-{
-    StackNode *node = p;
-    if (node)
-    {
-	stack_node_destroy (node->siblings);
-	stack_node_destroy (node->children);
-	g_free (node);
-    }
-}
-
 /* Stach */
 StackStash *
 stack_stash_new       (void)

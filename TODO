@@ -36,6 +36,15 @@ Before 1.2:
 	  we get reports of baz() using > 80% of the time.
 	  Or something.
 
+- make the things we put in a stackstash real
+  objects so that
+	- we can save them
+	- they will know how to delete the presentation
+	  names and themselves (through a virtual function)
+	- they can contain markup etc.
+  - a more pragmatic approach might be to just walk the tree and
+    save it.
+
 - make stasckstash ref counted
 
 - plug all the leaks
@@ -44,21 +53,14 @@ Before 1.2:
 
 	- Remaining TODO before merging into head:
 
-		- make the things we put in a stackstash real
-		  objects so that
-			- we can save them
-			- they will know how to delete the presentation
-			  names and themselves (through a virtual function)
- 			- they can contain markup etc.
-
-		- Make sure we don't leak the presentation strings/objects.
-
-		- rename profiler->collector
-
 		- make loading and saving work again.
 			- make stashes loadable and savable.
 			- add a way to convert 1.0 files to stashes
 	
+
+		- Make sure we don't leak the presentation strings/objects.
+
+		- rename profiler->collector
 
 * Consider renaming profiler.[ch] to collector.[ch]
 

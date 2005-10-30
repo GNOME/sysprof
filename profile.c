@@ -43,7 +43,6 @@ struct Profile
     StackStash *	stash;
 };
 
-#if 0
 static SFormat *
 create_format (void)
 {
@@ -78,34 +77,52 @@ create_format (void)
 	    NULL));
 }
 
-static void
-add_object (gpointer key, gpointer value, gpointer data)
+static int
+sum_children (StackNode *node)
 {
-    SFileOutput *output = data;
-    ProfileObject *object = key;
-
-    sfile_begin_add_record (output, "object");
-
-    sfile_add_string (output, "name", object->name);
-    sfile_add_integer (output, "total", object->total);
-    sfile_add_integer (output, "self", object->self);
+    int total;
+    StackNode *child;
     
-    sfile_end_add (output, "object", object);
+    /* FIXME: this is pretty inefficient. Instead perhaps
+     * maintain or compute it in the stackstash
+     */
+    total = node->size;
+
+    for (child = node->children; child != NULL; child = child->siblings)
+	total += sum_children (child);
+
+    return total;
+}
+
+static int
+compute_total (StackNode *node)
+{
+    StackNode *n;
+    int total = 0;
+
+    for (n = node; n != NULL; n = n->next)
+    {
+	if (n->toplevel)
+	    total += sum_children (n);
+    }
+
+    return total;
 }
 
 static void
-serialize_call_tree (Node *node, SFileOutput *output)
+serialize_call_tree (StackNode *node,
+		     SFileOutput *output)
 {
     if (!node)
 	return;
     
     sfile_begin_add_record (output, "node");
-    sfile_add_pointer (output, "object", node->object);
+    sfile_add_pointer (output, "object", node->address);
     sfile_add_pointer (output, "siblings", node->siblings);
     sfile_add_pointer (output, "children", node->children);
     sfile_add_pointer (output, "parent", node->parent);
-    sfile_add_integer (output, "total", node->total);
-    sfile_add_integer (output, "self", node->self);
+    sfile_add_integer (output, "total", compute_total (node));
+    sfile_add_integer (output, "self", node->size);
     sfile_add_integer (output, "toplevel", node->toplevel);
     sfile_end_add (output, "node", node);
 
@@ -113,30 +130,46 @@ serialize_call_tree (Node *node, SFileOutput *output)
     serialize_call_tree (node->children, output);
 }
 
-#endif
-
 gboolean
 profile_save (Profile		 *profile,
 	      const char	 *file_name,
 	      GError            **err)
 {
-#if 0
     gboolean result;
+
+    GList *profile_objects;
+    GList *list;
     
     SFormat *format = create_format ();
     SFileOutput *output = sfile_output_new (format);
 
     sfile_begin_add_record (output, "profile");
 
-    sfile_add_integer (output, "size", profile->size);
-    sfile_add_pointer (output, "call_tree", profile->call_tree);
+    sfile_add_integer (output, "size", profile_get_size (profile));
+    sfile_add_pointer (output, "call_tree",
+		       stack_stash_get_root (profile->stash));
     
+    profile_objects = profile_get_objects (profile);
     sfile_begin_add_list (output, "objects");
-    g_hash_table_foreach (profile->nodes_by_object, add_object, output);
+    for (list = profile_objects; list != NULL; list = list->next)
+    {
+	ProfileObject *object = list->data;
+	
+	sfile_begin_add_record (output, "object");
+	
+	sfile_add_string (output, "name", object->name);
+	sfile_add_integer (output, "total", object->total);
+	sfile_add_integer (output, "self", object->self);
+	
+	sfile_end_add (output, "object", object->name);
+    }
+    g_list_foreach (profile_objects, (GFunc)g_free, NULL);
+    g_list_free (profile_objects);
+    
     sfile_end_add (output, "objects", NULL);
 
     sfile_begin_add_list (output, "nodes");
-    serialize_call_tree (profile->call_tree, output);
+    serialize_call_tree (stack_stash_get_root (profile->stash), output);
     sfile_end_add (output, "nodes", NULL);
 
     sfile_end_add (output, "profile", NULL);
@@ -147,11 +180,9 @@ profile_save (Profile		 *profile,
     sfile_output_free (output);
 
     return result;
-#endif
 }
 
 #if 0
-
 static void
 make_hash_table (Node *node, GHashTable *table)
 {
@@ -423,38 +454,6 @@ profile_caller_new (void)
     caller->self = 0;
     caller->total = 0;
     return caller;
-}
-
-static int
-sum_children (StackNode *node)
-{
-    int total;
-    StackNode *child;
-    
-    /* FIXME: this is pretty inefficient. Instead perhaps
-     * maintain or compute it in the stackstash
-     */
-    total = node->size;
-
-    for (child = node->children; child != NULL; child = child->siblings)
-	total += sum_children (child);
-
-    return total;
-}
-
-static int
-compute_total (StackNode *node)
-{
-    StackNode *n;
-    int total = 0;
-
-    for (n = node; n != NULL; n = n->next)
-    {
-	if (n->toplevel)
-	    total += sum_children (n);
-    }
-
-    return total;
 }
 
 ProfileCaller *

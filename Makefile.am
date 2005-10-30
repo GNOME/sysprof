@@ -2,67 +2,54 @@ SUBDIRS = $(MODULE_SUBDIR)
 DIST_SUBDIRS = module
 
 bin_PROGRAMS = sysprof sysprof-text
-pkgdata_DATA = sysprof.glade sysprof-icon.png
 
-sysprof_SOURCES =	        \
-	binfile.h		\
-	binfile.c		\
-	process.h		\
-	process.c		\
-	profile.h		\
-	profile.c		\
-	sfile.h			\
-	sfile.c			\
-	stackstash.h		\
-	stackstash.c		\
-	module/sysprof-module.h	\
-	sysprof.c		\
-	treeviewutils.h		\
-	treeviewutils.c		\
-	watch.h			\
+SYSPROF_CORE =					\
+	binfile.h				\
+	binfile.c				\
+	collector.c				\
+	collector.h				\
+	process.h				\
+	process.c				\
+	profile.h				\
+	profile.c				\
+	sfile.h					\
+	sfile.c					\
+	stackstash.h				\
+	stackstash.c				\
+	module/sysprof-module.h			\
+	watch.h					\
 	watch.c
 
-sysprof_text_SOURCES =	        \
-	binfile.h		\
-	binfile.c		\
-	process.h		\
-	process.c		\
-	profile.h		\
-	profile.c		\
-	sfile.h			\
-	sfile.c			\
-	stackstash.h		\
-	stackstash.c		\
-	module/sysprof-module.h	\
-	signal-handler.h	\
-	signal-handler.c	\
-	sysprof-text.c		\
-	treeviewutils.h		\
-	treeviewutils.c		\
-	watch.h			\
-	watch.c
+sysprof_SOURCES =				\
+	$(SYSPROF_CORE)				\
+	treeviewutils.h				\
+	treeviewutils.c				\
+	sysprof.c
+
+sysprof_text_SOURCES =				\
+	$(SYSPROF_CORE)				\
+	signal-handler.h			\
+	signal-handler.c			\
+	sysprof-text.c
 
 sysprof_LDADD = $(DEP_LIBS)
 
 sysprof_text_LDADD = $(DEP_LIBS)
 
-INCLUDES = 					   \
-	$(DEP_CFLAGS)				   \
-	-DDATADIR=\"$(pkgdatadir)\"		   \
-	-DPIXMAPDIR=\"$(datadir)/pixmaps\"
+pixmapsdir = $(datadir)/pixmaps
 
-#	memprof.desktop		
-#	memprof.spec.in
+INCLUDES =					\
+	$(DEP_CFLAGS)				\
+	-DDATADIR=\"$(pkgdatadir)\"		\
+	-DPIXMAPDIR=\"$(pixmapsdir)\"
 
-EXTRA_DIST =			\
-	sysprof.glade	  	\
-	sysprof-icon.png	\
-	module/sysprof-module.c \
-	module/sysprof-module.h	\
+EXTRA_DIST =					\
+	module/sysprof-module.c			\
+	module/sysprof-module.h			\
 	module/Makefile
 
-pixmapsdir = $(datadir)/pixmaps
-pixmaps_DATA = sysprof-icon.png
+dist_pkgdata_DATA = sysprof.glade
+dist_pixmaps_DATA = sysprof-icon.png
 
 insert-module:
 	modprobe -r sysprof-module

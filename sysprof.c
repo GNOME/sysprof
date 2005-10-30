@@ -1,4 +1,4 @@
-/* Sysprof -- Sampling, systemwide CPU profiler 
+/* Sysprof -- Sampling, systemwide CPU profiler
  * Copyright 2004, Red Hat, Inc.
  * Copyright 2004, 2005, Soeren Sandmann
  *
@@ -19,23 +19,14 @@
 
 #include <config.h>
 
-#include <stdio.h>
 #include <gtk/gtk.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <glade/glade.h>
 #include <errno.h>
 #include <glib/gprintf.h>
-#include <sys/wait.h>
-#include <sys/types.h>
 
-#include "binfile.h"
-#include "watch.h"
-#include "module/sysprof-module.h"
-#include "stackstash.h"
-#include "profile.h"
 #include "treeviewutils.h"
+#include "profile.h"
+#include "collector.h"
 
 /* FIXME - not10 */
 #define _(a) a
@@ -53,9 +44,9 @@ typedef enum
 
 struct Application
 {
-    int			input_fd;
+    Collector *		collector;
+    
     State		state;
-    StackStash *	stash;
     
     GtkWidget *		main_window;
     GdkPixbuf *		icon;
@@ -82,8 +73,6 @@ struct Application
     ProfileDescendant * descendants;
     ProfileCaller *	callers;
     
-    int			n_samples;
-    
     int			timeout_id;
     int			generating_profile;
 
@@ -104,7 +93,6 @@ struct Application
 					    *
 					    * Model/View/Controller is a possibility.
 					    */
-    GTimeVal		latest_reset;
 };
 
 static gboolean
@@ -112,16 +100,20 @@ show_samples_timeout (gpointer data)
 {
     Application *app = data;
     char *label;
+    int n_samples;
 
     switch (app->state)
     {
     case INITIAL:
-	label = g_strdup ("Samples: 0");
+	n_samples = 0;
 	break;
 	
     case PROFILING:
+	n_samples = collector_get_n_samples (app->collector);
+	break;
+	
     case DISPLAYING:
-	label = g_strdup_printf ("Samples: %d", app->n_samples);
+	n_samples = profile_get_size (app->profile);
 	break;
 
     default:
@@ -129,6 +121,8 @@ show_samples_timeout (gpointer data)
 	break;
     }
     
+    label = g_strdup_printf ("Samples: %d", n_samples);
+
     gtk_label_set_label (GTK_LABEL (app->samples_label), label);
     
     g_free (label);
@@ -156,7 +150,9 @@ update_sensitivity (Application *app)
     gboolean sensitive_reset_button;
     
     GtkWidget *active_radio_button;
-    
+
+    gboolean has_samples;
+
     switch (app->state)
     {
     case INITIAL:
@@ -170,9 +166,11 @@ update_sensitivity (Application *app)
 	break;
 	
     case PROFILING:
-	sensitive_profile_button = (app->n_samples > 0);
-	sensitive_save_as_button = (app->n_samples > 0);
-	sensitive_reset_button = (app->n_samples > 0);
+	has_samples = (collector_get_n_samples (app->collector) > 0);
+    
+	sensitive_profile_button = has_samples;
+	sensitive_save_as_button = has_samples;
+	sensitive_reset_button = has_samples;
 	sensitive_start_button = TRUE;
 	sensitive_tree_views = FALSE;
 	sensitive_samples_label = TRUE;
@@ -250,82 +248,6 @@ set_busy (GtkWidget *widget, gboolean busy)
     gdk_flush ();
 }
 
-static double
-timeval_to_ms (const GTimeVal *timeval)
-{
-  return (timeval->tv_sec * G_USEC_PER_SEC + timeval->tv_usec) / 1000.0;
-}
-
-static double
-time_diff (const GTimeVal *first,
-	   const GTimeVal *second)
-{
-  double first_ms = timeval_to_ms (first);
-  double second_ms = timeval_to_ms (second);
-
-  return first_ms - second_ms;
-}
-
-#define RESET_DEAD_PERIOD 25
-
-static void
-on_read (gpointer data)
-{
-    Application *app = data;
-    SysprofStackTrace trace;
-    GTimeVal now;
-    int rd;
-    
-    rd = read (app->input_fd, &trace, sizeof (trace));
-    
-    if (app->state != PROFILING)
-	return;
-    
-    if (rd == -1 && errno == EWOULDBLOCK)
-	return;
-
-    g_get_current_time (&now);
-
-    /* After a reset we ignore samples for a short period so that
-     * a reset will actually cause 'samples' to become 0
-     */
-    if (time_diff (&now, &app->latest_reset) < RESET_DEAD_PERIOD)
-	return;
-    
-#if 0
-    int i;
-    g_print ("pid: %d\n", trace.pid);
-    for (i=0; i < trace.n_addresses; ++i)
-	g_print ("rd: %08x\n", trace.addresses[i]);
-    g_print ("-=-\n");
-#endif
-    
-    if (rd > 0 && !app->generating_profile && trace.n_addresses)
-    {
-	Process *process = process_get_from_pid (trace.pid);
-	int i;
-/* 	char *filename = NULL; */
-	
-/* 	if (*trace.filename) */
-/* 	    filename = trace.filename; */
-
-	for (i = 0; i < trace.n_addresses; ++i)
-	{
-	    process_ensure_map (process, trace.pid, 
-				(gulong)trace.addresses[i]);
-	}
-	g_assert (!app->generating_profile);
-	
-	stack_stash_add_trace (
-	    app->stash, process,
-	    (gulong *)trace.addresses, trace.n_addresses, 1);
-	
-	app->n_samples++;
-    }
-    
-    update_sensitivity (app);
-}
-
 static void
 set_application_title (Application *app,
 		       const char * name)
@@ -349,7 +271,7 @@ set_application_title (Application *app,
     else
     {
 	gtk_window_set_title (GTK_WINDOW (app->main_window),
-			      "System Profiler");
+			      "System Collector");
     }
 }
 
@@ -365,46 +287,13 @@ delete_data (Application *app)
 	gtk_tree_view_set_model (GTK_TREE_VIEW (app->callers_view), NULL);
 	gtk_tree_view_set_model (GTK_TREE_VIEW (app->descendants_view), NULL);
     }
+
+    collector_reset (app->collector);
     
-    if (app->stash)
-	stack_stash_free (app->stash);
-    app->stash = stack_stash_new ();
-    process_flush_caches ();
-    app->n_samples = 0;
     queue_show_samples (app);
+    
     app->profile_from_file = FALSE;
     set_application_title (app, NULL);
-    g_get_current_time (&app->latest_reset);
-}
-
-static void
-empty_file_descriptor (Application *app)
-{
-    int rd;
-    SysprofStackTrace trace;
-    
-    do
-    {
-	rd = read (app->input_fd, &trace, sizeof (trace));
-	
-    } while (rd != -1); /* until EWOULDBLOCK */
-}
-
-static gboolean
-start_profiling (gpointer data)
-{
-    Application *app = data;
-    
-    app->state = PROFILING;
-    
-    update_sensitivity (app);
-    
-    /* Make sure samples generated between 'start clicked' and now
-     * are deleted
-     */
-    empty_file_descriptor (app);
-    
-    return FALSE;
 }
 
 static void
@@ -432,27 +321,6 @@ sorry (GtkWidget *parent_window,
     gtk_widget_destroy (dialog);
 }
 
-static gboolean
-load_module (void)
-{
-    int exit_status = -1;
-    char *dummy1, *dummy2;
-
-    if (g_spawn_command_line_sync ("/sbin/modprobe sysprof-module",
-				   &dummy1, &dummy2,
-				   &exit_status,
-				   NULL))
-    {
-	if (WIFEXITED (exit_status))
-	    exit_status = WEXITSTATUS (exit_status);
-
-	g_free (dummy1);
-	g_free (dummy2);
-    }
-
-    return (exit_status == 0);
-}
-
 static void
 on_menu_item_activated (GtkWidget *menu_item, GtkWidget *tool_button)
 {
@@ -471,41 +339,25 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	    GTK_TOGGLE_TOOL_BUTTON (app->start_button)))
 	return;
 
-    if (app->input_fd == -1)
+    delete_data (app);
+
+    /* FIXME: get the real error message */
+    if (!collector_start (app->collector, NULL))
     {
-	int fd;
+	sorry (app->main_window,
+	       "Can't open /proc/sysprof-trace. You need to insert\n"
+	       "the sysprof kernel module. Run\n"
+	       "\n"
+	       "       modprobe sysprof-module\n"
+	       "\n"
+	       "as root.");
 
-	fd = open ("/proc/sysprof-trace", O_RDONLY);
-	if (fd < 0)
-	{
-	    load_module();
-
-	    fd = open ("/proc/sysprof-trace", O_RDONLY);
-
-	    if (fd < 0)
-	    {
-		sorry (app->main_window,
-		       "Can't open /proc/sysprof-trace. You need to insert\n"
-		       "the sysprof kernel module. Run\n"
-		       "\n"
-		       "       modprobe sysprof-module\n"
-		       "\n"
-		       "as root.");
-		
-		update_sensitivity (app);
-		return;
-	    }
-	}
-
-	app->input_fd = fd;
-	fd_add_watch (app->input_fd, app);
+	return;
     }
     
-    fd_set_read_callback (app->input_fd, on_read);
-    
-    delete_data (app);
-    
-    g_idle_add_full (G_PRIORITY_LOW, start_profiling, app, NULL);
+    app->state = PROFILING;
+
+    update_sensitivity (app);
 }
 
 enum
@@ -533,13 +385,13 @@ enum
     DESCENDANTS_OBJECT
 };
 
-static ProfileObject *
+static char *
 get_current_object (Application *app)
 {
     GtkTreeSelection *selection;
     GtkTreeModel *model;
     GtkTreeIter selected;
-    ProfileObject *object;
+    char *object;
     
     selection = gtk_tree_view_get_selection (app->object_view);
     
@@ -580,14 +432,14 @@ fill_main_list (Application *app)
 	    ProfileObject *object = list->data;
 	    GtkTreeIter iter;
 	    double profile_size = profile_get_size (profile);
-	    
+
 	    gtk_list_store_append (list_store, &iter);
 	    
 	    gtk_list_store_set (list_store, &iter,
 				OBJECT_NAME, object->name,
 				OBJECT_SELF, 100.0 * object->self / profile_size,
 				OBJECT_TOTAL, 100.0 * object->total / profile_size,
-				OBJECT_OBJECT, object,
+				OBJECT_OBJECT, object->name,
 				-1);
 	}
 	g_list_free (objects);
@@ -627,11 +479,11 @@ add_node (GtkTreeStore      *store,
     gtk_tree_store_insert (store, &iter, (GtkTreeIter *)parent, 0);
     
     gtk_tree_store_set (store, &iter,
-			DESCENDANTS_NAME, node->object->name,
+			DESCENDANTS_NAME, node->name,
 			DESCENDANTS_SELF, 100 * (node->self)/(double)size,
 			DESCENDANTS_NON_RECURSE, 100 * (node->non_recursion)/(double)size,
 			DESCENDANTS_TOTAL, 100 * (node->total)/(double)size,
-			DESCENDANTS_OBJECT, node->object,
+			DESCENDANTS_OBJECT, node->name,
 			-1);
     
     add_node (store, size, parent, node->siblings);
@@ -662,7 +514,7 @@ fill_descendants_tree (Application *app)
     
     if (app->profile)
     {
-	ProfileObject *object = get_current_object (app);
+	char *object = get_current_object (app);
 	if (object)
 	{
 	    app->descendants =
@@ -702,8 +554,8 @@ add_callers (GtkListStore *list_store,
 	GtkTreeIter iter;
 	double profile_size = profile_get_size (profile);
 	
-	if (callers->object)
-	    name = callers->object->name;
+	if (callers->name)
+	    name = callers->name;
 	else
 	    name = "<spontaneous>";
 	
@@ -713,7 +565,7 @@ add_callers (GtkListStore *list_store,
 	    CALLERS_NAME, name,
 	    CALLERS_SELF, 100.0 * callers->self / profile_size,
 	    CALLERS_TOTAL, 100.0 * callers->total / profile_size,
-	    CALLERS_OBJECT, callers->object,
+	    CALLERS_OBJECT, callers->name,
 	    -1);
 	
 	callers = callers->next;
@@ -743,7 +595,7 @@ fill_callers_list (Application *app)
     
     if (app->profile)
     {
-	ProfileObject *object = get_current_object (app);
+	char *object = get_current_object (app);
 	if (object)
 	{
 	    app->callers = profile_list_callers (app->profile, object);
@@ -784,7 +636,7 @@ ensure_profile (Application *app)
     if (app->profile)
 	return;
     
-    app->profile = profile_new (app->stash);
+    app->profile = collector_create_profile (app->collector);
 
     fill_lists (app);
     
@@ -956,8 +808,6 @@ set_loaded_profile (Application *app,
 	
     app->state = DISPLAYING;
     
-    app->n_samples = profile_get_size (profile);
-    
     app->profile = profile;
     app->profile_from_file = TRUE;
     
@@ -1041,8 +891,14 @@ on_open_clicked (gpointer widget,
 }
 
 static void
-on_delete (GtkWidget *window)
+on_delete (GtkWidget *window,
+	   Application *app)
 {
+    /* Workaround for http://bugzilla.gnome.org/show_bug.cgi?id=317775
+     */
+    while (gtk_main_iteration ())
+	;
+    
     gtk_main_quit ();
 }
 
@@ -1123,6 +979,7 @@ expand_descendants_tree (Application *app)
 		    path = gtk_tree_path_copy (path);
 		    gtk_tree_path_next (path);
 		}
+
 		gtk_tree_path_free (path);
 	    }
 	}
@@ -1158,7 +1015,7 @@ on_object_selection_changed (GtkTreeSelection *selection,
 
 static void
 really_goto_object (Application *app,
-		    ProfileObject *object)
+		    char *object)
 {
     GtkTreeModel *profile_objects;
     GtkTreeIter iter;
@@ -1170,13 +1027,13 @@ really_goto_object (Application *app,
     {
 	do
 	{
-	    ProfileObject *profile_object;
+	    char *list_object;
 	    
 	    gtk_tree_model_get (profile_objects, &iter,
-				OBJECT_OBJECT, &profile_object,
+				OBJECT_OBJECT, &list_object,
 				-1);
 	    
-	    if (profile_object == object)
+	    if (list_object == object)
 	    {
 		found = TRUE;
 		break;
@@ -1202,7 +1059,7 @@ goto_object (Application *app,
 {
     GtkTreeIter iter;
     GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
-    ProfileObject *object;
+    char *object;
     
     if (!gtk_tree_model_get_iter (model, &iter, path))
 	return;
@@ -1213,7 +1070,6 @@ goto_object (Application *app,
 	return;
     
     really_goto_object (app, object);
-    
 }
 
 static void
@@ -1424,16 +1280,22 @@ build_gui (Application *app)
     return TRUE;
 }
 
+static void
+on_new_sample (gpointer data)
+{
+    Application *app = data;
+
+    if (app->state == PROFILING)
+	update_sensitivity (app);
+}
+
 static Application *
 application_new (void)
 {
     Application *app = g_new0 (Application, 1);
-    
-    app->stash = stack_stash_new ();
-    app->input_fd = -1;
-    app->state = INITIAL;
 
-    g_get_current_time (&app->latest_reset);
+    app->collector = collector_new (on_new_sample, app);
+    app->state = INITIAL;
     
     return app;
 }
@@ -1480,12 +1342,7 @@ main (int argc, char **argv)
     gtk_init (&argc, &argv);
     
     app = application_new ();
-    
-#if 0
-    nice (-19);
-    g_timeout_add (10, on_timeout, app);
-#endif
-    
+
     if (!build_gui (app))
 	return -1;
     

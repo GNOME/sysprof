@@ -32,63 +32,21 @@
 #include "process.h"
 #include "watch.h"
 #include "signal-handler.h"
+#include "collector.h"
 
 typedef struct Application Application;
 struct Application
 {
-    int		fd;
-    StackStash *stack_stash;
+    Collector *	collector;
     char *	outfile;
     GMainLoop * main_loop;
 };
 
 void
-read_trace (StackStash *stash,
-	    SysprofStackTrace *trace,
-	    GTimeVal now)
-{
-    Process *process;
-    int i;
-    
-    process = process_get_from_pid (trace->pid);
-
-    for (i = 0; i < trace->n_addresses; ++i)
-    {
-	process_ensure_map (process, trace->pid, 
-			    (gulong)trace->addresses[i]);
-    }
-    
-    stack_stash_add_trace (
-	stash, process,
-	(gulong *)trace->addresses, trace->n_addresses, 1);
-}
-
-void
-on_read (gpointer data)
-{
-    Application *app = data;
-    SysprofStackTrace trace;
-    int bytesread;
-    GTimeVal now;
-
-    bytesread = read (app->fd, &trace, sizeof (trace));
-    g_get_current_time (&now);
-
-    if (bytesread < 0)
-    {
-        perror("read");
-        return;
-    }
-
-    if (bytesread > 0)
-        read_trace (app->stack_stash, &trace, now);
-}
-
-void
 dump_data (Application *app)
 {
     GError *err = NULL;
-    Profile *profile = profile_new (app->stack_stash);
+    Profile *profile = collector_create_profile (app->collector);
 
     profile_save (profile, app->outfile, &err);
 
@@ -104,10 +62,11 @@ signal_handler (int signo, gpointer data)
 {
     Application *app = data;
     
-    g_print ("signal %d caught: dumping data\n", signo);
-    
     dump_data (app);
 
+    while (g_main_iteration (FALSE))
+	;
+    
     g_main_loop_quit (app->main_loop);
 }
 
@@ -167,16 +126,17 @@ main (int argc,
     if (quit)
 	return -1;
 
-    app->fd = fd;
+    app->collector = collector_new (NULL, NULL);
     app->outfile = g_strdup (argv[1]);
-    app->stack_stash = stack_stash_new ();
     app->main_loop = g_main_loop_new (NULL, 0);
 
+    /* FIXME: check the errors */
     signal_set_handler (SIGTERM, signal_handler, app, NULL);
     signal_set_handler (SIGINT, signal_handler, app, NULL);
+
+    /* FIXME: check the error */
+    collector_start (app->collector, NULL);
     
-    fd_add_watch (app->fd, app);
-    fd_set_read_callback (app->fd, on_read);
     g_main_loop_run (app->main_loop);
 
     signal_unset_handler (SIGTERM);

@@ -1,3 +1,79 @@
+2005-10-30  Soren Sandmann <sandmann@redhat.com>
+
+	* Merge stackstash-reorg branch into HEAD
+
+2005-10-30  Soren Sandmann <sandmann@redhat.com>
+
+	* Makefile.am, sysprof.c, sysprof-text.c, collector.[ch]: Rename
+	profiler -> collector
+
+2005-10-30  Soren Sandmann <sandmann@redhat.com>
+
+	* profile.c (profile_load): Reenable loading. 
+
+2005-10-30  Soren Sandmann <sandmann@redhat.com>
+
+	* profile.c (profile_save): Reenable saving.
+
+Sat Oct 29 21:37:42 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.c (stack_stash_foreach): Rename
+	stack_stash_foreach_reversed() to stack_stash_foreach(). Delete
+	the old, unused stack_stash_foreach().
+
+	* stackstash.h: Remove stack_stash_foreach_reversed(). 
+
+	* profiler.c: Use new name.	
+
+Sat Oct 29 18:37:37 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
+Sat Oct 29 17:38:01 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.[ch]: Add stack_stash_get_root(). 
+
+	* profile.c (profile_get_size): Make this function work again. 
+
+Sat Oct 29 16:58:22 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* profile.c: Delete all the obsolete stuff related to call tree.
+
+	* TODO: update
+
+Sat Oct 29 16:52:32 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
+	* profile.c: Comment out a lot of unused stuff. Also temporarily
+	comment out loading and saving.
+
+Sat Oct 29 16:45:34 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (compute_total): New function.
+
+	* profile.c (profile_list_callers): Port this function over to use
+	StackNodes instead.
+
+Sat Oct 29 16:22:28 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (build_object_list): Make this function allocate
+	the ProfileObjects.
+
+	* stackstash.[ch]: Add stack_stash_foreach_by_address()
+
+	* profile.c (profile_get_objects): Use it here to reimplement 
+	profile_get_objects() in terms of the stackstash.
+
+Sat Oct 29 15:33:07 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (profile_new): Add stash field to profile.
+
+	* stackstash.[ch]: Add stack_node_list_leaves();
+
+	* profile.c (profile_create_descendants): Port this function over
+	to use StackNodes instead.
+
 Sat Oct 29 14:43:00 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	Fix crash pointed reported by Rudi Chiarito. 
@@ -6,6 +82,21 @@ Sat Oct 29 14:43:00 2005  Søren Sandmann  <sandmann@redhat.com>
 	n_addrs is 0. 
 
 	* sysprof.c (on_read): Only trace if n_addresses != 0. 
+
+Sat Oct 29 03:47:03 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profile.[ch], sysprof.c: Get rid of ProfileObject for callers
+	and descendants.
+
+	* TODO: updates.
+
+Sat Oct 29 02:57:34 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.[ch]: Export the StackNode struct, add new
+	nodes_by_data hashtable to StackStash object, keep track of
+	whether objects are toplevels.
+
+	* TODO: some updates.
 
 Sat Oct 29 14:29:55 2005  Søren Sandmann  <sandmann@redhat.com>
 
@@ -23,6 +114,102 @@ Tue Oct 11 22:40:24 2005  Soeren Sandmann  <sandmann@redhat.com>
 	* module/sysprof-module.c (SAMPLES_PER_SECOND): Add back these
 	constants, but this time make sure we won't divide by 0 or
 	anything like that.
+
+Mon Oct 10 22:50:57 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* Merge in changes from HEAD
+
+Thu Oct  6 22:28:39 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.c (do_callback): Call stack func if node->size > 0,
+	not if node->children != NULL
+	* stackstash.c (do_reversed_callback): same
+	* profile.c (generate_presentation_name): Delete this function
+	* profile.c (generate_key): Delete this function.
+
+Wed Oct  5 23:57:08 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
+	* profile.c (generate_call_tree): Delete all the process stuff
+
+	* profile.c (node_add_trace): Delete process argument
+
+	* profile.c (lookup_profile_object): Don't generate a string key,
+	just use the address directly.
+
+	* profile.c (ensure_profile_object): Use the address as
+	presentation name.
+
+	* profiler.c (profiler_create_profile): Pass in the resolved
+	stash. 
+
+Sun Oct  2 21:08:16 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (on_delete): Work around glib bug 317775
+
+	* sysprof-text.c (signal_handler): Work around glib bug 317775
+
+Sun Oct  2 16:31:37 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.c (stack_stash_foreach_reversed): Add this function
+
+	* process.c: Add a per-process undefined symbol.
+
+	* profiler.c (resolve_symbols): Add code to do symbol resolution
+	here.
+
+	* TODO: Updates
+
+Sat Oct  1 18:32:52 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profile.h, sysprof.c: Remove some unnecessary includes.
+
+Sat Oct  1 18:12:44 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profiler.[ch]: Add profiler_get_n_samples(); add unused
+	empty_file_descriptor()
+
+	* profile.h: Add include guards
+	
+	* process.[ch]: Delete process_flush_caches();
+
+	* helper.[ch]: Remove these files
+
+	* sysprof.c: Use the new profiler class.
+
+	* sysprof-text.c: Use the new profiler class
+
+	* Makefile.am: Various cleanups.
+
+Sat Oct  1 17:05:43 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profiler.[ch]: New files containing a profiler class with code
+	that can be shared between gui and command line.
+	
+	* sysprof.c (main): Remove some commented out code
+
+	* stackstash.c (do_callback): Store the trace on the stack instead
+	of allocating it dynamically.
+
+Sat Oct  1 01:50:15 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.c (sstack_stash_add_trace): Simplify this function a
+	lot.
+
+	* helper.c: Include "process.h"
+
+Sat Oct  1 01:29:06 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (generate_object_table, generate_call_tree): Don't
+	take the process as an argument. Instead dig it out of the
+	stacktrace.
+	
+	* helper.c (add_trace_to_stash): New file, that adds a stacktrace
+	and a process to a stackstash.
+	
+	* stackstash.[ch]: Remove all traces of the concept of
+	Process. Simplify stack_node_add_trace() somewhat.
 
 Mon Oct 10 22:49:03 2005  Soeren Sandmann  <sandmann@redhat.com>
 

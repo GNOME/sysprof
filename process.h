@@ -24,6 +24,7 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
+#include <glib.h>
 #include "binfile.h"
 
 typedef struct Process Process;
@@ -41,9 +42,11 @@ typedef struct Process Process;
  * To flush the pid cache, call process_flush_caches().
  * This will invalidate all instances of Process.
  *
+ * The real fix for this is probably to have the kernel module report the
+ * maps along with the stacktrace.
+ *
  */
 
-void          process_flush_caches                (void);
 Process *     process_get_from_pid                (int         pid);
 void          process_ensure_map                  (Process    *process,
 						   int         pid,

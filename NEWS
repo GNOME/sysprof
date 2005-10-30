@@ -1,0 +1,3 @@
+- New 'everything' object
+- New commandline version 
+- Assign time spent in kernel to the user process responsible

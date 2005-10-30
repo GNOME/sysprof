@@ -21,25 +21,50 @@
 #define STACK_STASH_H
 
 #include <glib.h>
-#include "process.h"
 
 typedef struct StackStash StackStash;
 
-typedef void (* StackFunction) (Process *process,
-				GSList *trace,
+typedef struct StackNode StackNode;
+
+struct StackNode
+{
+    gpointer	address;
+    int		size;
+    
+    StackNode *	parent;
+    StackNode *	siblings;
+    StackNode *	children;
+
+    StackNode * next;
+
+    gboolean	toplevel;
+};
+
+typedef void (* StackFunction) (GSList *trace,
 				gint size,
 				gpointer data);
 
 /* Stach */
 StackStash *stack_stash_new       (void);
 void        stack_stash_add_trace (StackStash      *stash,
-				   Process	   *process,
 				   gulong          *addrs,
 				   gint	            n_addrs,
 				   int              size);
 void        stack_stash_foreach   (StackStash      *stash,
 				   StackFunction    stack_func,
 				   gpointer         data);
+StackNode  *stack_stash_find_node (StackStash      *stash,
+				   gpointer         address);
+/* FIXME: should probably return a list */
+void	    stack_node_list_leaves (StackNode  *node,
+				    GList     **leaves);
+typedef void (* StackNodeFunc) (StackNode *node,
+				gpointer data);
+void	    stack_stash_foreach_by_address (StackStash *stash,
+					    StackNodeFunc func,
+					    gpointer	  data);
 void	    stack_stash_free	  (StackStash	   *stash);
+StackNode  *stack_stash_get_root   (StackStash *stash);
+StackStash *stack_stash_new_from_root (StackNode *root);
 
 #endif

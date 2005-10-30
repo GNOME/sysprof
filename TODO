@@ -63,16 +63,6 @@ Before 1.2:
 	- Don't export too much of stackstashes to the rest of the
 	  app
 
-- Reorganise stackstash and profile
-
-	- Remaining TODO before merging into head:
-
-		- rename profiler->collector
-
-* Consider renaming profiler.[ch] to collector.[ch]
-
-* Make sure sysprof-text is not linked to gtk+
-
 * Figure out how to make sfile.[ch] use less memory.
 	- In general clean sfile.[ch] up a little:
 	- split out dfa in its own generic class
@@ -467,6 +457,10 @@ Later:
 
 
 DONE:
+
+* Make sure sysprof-text is not linked to gtk+
+
+* Consider renaming profiler.[ch] to collector.[ch]
 
 * Crash reported by Rudi Chiarito with n_addrs == 0.
 

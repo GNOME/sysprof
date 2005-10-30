@@ -78,10 +78,14 @@ if test $kernel_module = "yes"; then
 fi
 
 # Pkgconfig dependencies
-	
-dep_modules="gtk+-2.0 > 2.6.0 gthread-2.0 gdk-pixbuf-2.0 pangoft2 libglade-2.0"
 
-PKG_CHECK_MODULES(DEP, $dep_modules, [],
+core_dep="glib-2.0"
+gui_dep="gtk+-2.0 > 2.6.0 gdk-pixbuf-2.0 pangoft2 libglade-2.0"
+
+PKG_CHECK_MODULES(CORE_DEP, $core_dep, [],
+	          AC_MSG_ERROR([sysprof dependencies not satisfied]))
+
+PKG_CHECK_MODULES(GUI_DEP, $gui_dep, [],
 	          AC_MSG_ERROR([sysprof dependencies not satisfied]))
 
 # libiberty and libbfd
@@ -90,14 +94,17 @@ AC_CHECK_LIB(iberty, cplus_demangle,:,
   AC_CHECK_LIB(iberty, cplus_demangle_opname, [],
     AC_MSG_ERROR([libiberty is required to compile sysprof]), -ldl))
 
-AC_CHECK_LIB(bfd, bfd_get_error, [DEP_LIBS="$DEP_LIBS -lbfd -liberty"],
+AC_CHECK_LIB(bfd, bfd_get_error,,
   AC_MSG_ERROR([libbfd is required to compile sysprof]),
   -liberty)
 
+CORE_DEP_LIBS="$CORE_DEP_LIBS -lbfd -liberty"
+GUI_DEP_LIBS="$GUI_DEP_LIBS -lbfd -liberty"
 
 # emit files
 
-AC_SUBST(DEP_LIBS)
+AC_SUBST(CORE_DEP_LIBS)
+AC_SUBST(GUI_DEP_LIBS)
 AC_SUBST(MODULE_SUBDIR)
 
 AC_CONFIG_FILES([

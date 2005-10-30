@@ -1,5 +1,9 @@
 2005-10-30  Soren Sandmann <sandmann@redhat.com>
 
+	* configure.ac, Makefile.am: Don't link sysprof-text to gtk+.
+
+2005-10-30  Soren Sandmann <sandmann@redhat.com>
+
 	* Merge stackstash-reorg branch into HEAD
 
 2005-10-30  Soren Sandmann <sandmann@redhat.com>

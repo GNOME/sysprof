@@ -20,11 +20,31 @@ SYSPROF_CORE =					\
 	watch.h					\
 	watch.c
 
+#
+# GUI version
+#
+
 sysprof_SOURCES =				\
 	$(SYSPROF_CORE)				\
 	treeviewutils.h				\
 	treeviewutils.c				\
 	sysprof.c
+
+sysprof_CPPFLAGS =				\
+	$(GUI_DEP_CFLAGS)			\
+	-DDATADIR=\"$(pkgdatadir)\"		\
+	-DPIXMAPDIR=\"$(pixmapsdir)\"
+
+sysprof_LDADD = $(GUI_DEP_LIBS)
+
+pixmapsdir = $(datadir)/pixmaps
+
+dist_pkgdata_DATA = sysprof.glade
+dist_pixmaps_DATA = sysprof-icon.png
+
+#
+# Command line version
+#
 
 sysprof_text_SOURCES =				\
 	$(SYSPROF_CORE)				\
@@ -32,24 +52,19 @@ sysprof_text_SOURCES =				\
 	signal-handler.c			\
 	sysprof-text.c
 
-sysprof_LDADD = $(DEP_LIBS)
+sysprof_text_CPPFLAGS =				\
+	$(CORE_DEP_CFLAGS)
 
-sysprof_text_LDADD = $(DEP_LIBS)
+sysprof_text_LDADD = $(CORE_DEP_LIBS)
 
-pixmapsdir = $(datadir)/pixmaps
-
-INCLUDES =					\
-	$(DEP_CFLAGS)				\
-	-DDATADIR=\"$(pkgdatadir)\"		\
-	-DPIXMAPDIR=\"$(pixmapsdir)\"
+#
+# Module stuff
+#  
 
 EXTRA_DIST =					\
 	module/sysprof-module.c			\
 	module/sysprof-module.h			\
 	module/Makefile
-
-dist_pkgdata_DATA = sysprof.glade
-dist_pixmaps_DATA = sysprof-icon.png
 
 insert-module:
 	modprobe -r sysprof-module

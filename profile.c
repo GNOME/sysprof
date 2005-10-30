@@ -578,6 +578,10 @@ build_object_list (StackNode *node, gpointer data)
     obj->name = node->address;
 
     obj->total = compute_total (node);
+
+    /* FIXME: this is incorrect. We need to sum all the node linked
+     * through node->next
+     */
     obj->self = node->size;
 
     *objects = g_list_prepend (*objects, obj);
@@ -590,8 +594,8 @@ profile_get_objects (Profile *profile)
 
     stack_stash_foreach_by_address (profile->stash, build_object_list, &objects);
 
-    /* FIXME: everybody still assumes that they don't have to free the objects in
-     * the list, but these days they do, and so we are leaking.
+    /* FIXME: everybody still assumes that they don't have to free the
+     * objects in the list, but these days they do, and so we are leaking.
      */
     
     return objects;

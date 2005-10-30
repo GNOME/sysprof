@@ -53,9 +53,6 @@ void        stack_stash_add_trace (StackStash      *stash,
 void        stack_stash_foreach   (StackStash      *stash,
 				   StackFunction    stack_func,
 				   gpointer         data);
-void        stack_stash_foreach_reversed   (StackStash      *stash,
-					    StackFunction    stack_func,
-					    gpointer         data);
 StackNode  *stack_stash_find_node (StackStash      *stash,
 				   gpointer         address);
 /* FIXME: should probably return a list */

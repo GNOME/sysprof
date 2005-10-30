@@ -51,10 +51,6 @@ Before 1.2:
 			  names and themselves (through a virtual function)
  			- they can contain markup etc.
 
-		- Get rid of remaining uses of stack_stash_foreach(), then
-		  rename stack_stash_foreach_reversed() to
-		  stack_stash_foreach()
-
 		- Make sure we don't leak the presentation strings/objects.
 
 		- rename profiler->collector
@@ -452,6 +448,10 @@ Later:
 DONE:
 
 stackstash reorg:
+
+	- Get rid of remaining uses of stack_stash_foreach(), then
+	  rename stack_stash_foreach_reversed() to
+	  stack_stash_foreach()
 
 	- stackstash should just take traces of addresses without knowing
 	  anything about what those addresses mean.

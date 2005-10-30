@@ -274,10 +274,12 @@ resolve_symbols (GSList *trace, gint size, gpointer data)
 	g_ptr_array_add (resolved_trace, symbol);
     }
     
-    g_ptr_array_add (resolved_trace, unique_dup (info->unique_symbols,
-						 (char *)process_get_cmdline (process)));
-    g_ptr_array_add (resolved_trace, unique_dup (info->unique_symbols,
-						 "Everything"));
+    g_ptr_array_add (resolved_trace,
+		     unique_dup (info->unique_symbols,
+				 (char *)process_get_cmdline (process)));
+    g_ptr_array_add (resolved_trace,
+		     unique_dup (info->unique_symbols,
+				 "Everything"));
     
     stack_stash_add_trace (info->resolved_stash, (gulong *)resolved_trace->pdata, resolved_trace->len, size);
 }
@@ -290,7 +292,7 @@ profiler_create_profile (Profiler *profiler)
     info.resolved_stash = stack_stash_new ();
     info.unique_symbols = g_hash_table_new (g_direct_hash, g_direct_equal);
     
-    stack_stash_foreach_reversed (profiler->stash, resolve_symbols, &info);
+    stack_stash_foreach (profiler->stash, resolve_symbols, &info);
     
     g_hash_table_destroy (info.unique_symbols);
     

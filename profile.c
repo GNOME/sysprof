@@ -204,57 +204,53 @@ make_hash_table (Node *node, GHashTable *table)
 Profile *
 profile_load (const char *filename, GError **err)
 {
-#if 0
     SFormat *format;
     SFileInput *input;
     Profile *profile;
     int n, i;
+    StackNode *root;
     
     format = create_format ();
     input = sfile_load (filename, format, err);
 
     if (!input)
 	return NULL;
-    
+   
     profile = g_new (Profile, 1);
 
-    profile->nodes_by_object =
-	g_hash_table_new (direct_hash_no_null, g_direct_equal);
-    
     sfile_begin_get_record (input, "profile");
 
-    sfile_get_integer (input, "size", &profile->size);
-    sfile_get_pointer (input, "call_tree", (void **)&profile->call_tree);
+    sfile_get_integer (input, "size", NULL);
+    sfile_get_pointer (input, "call_tree", (gpointer *)&root);
 
     n = sfile_begin_get_list (input, "objects");
     for (i = 0; i < n; ++i)
     {
-	ProfileObject *obj = g_new (ProfileObject, 1);
+	char *string;
 	
 	sfile_begin_get_record (input, "object");
 
-	sfile_get_string (input, "name", &obj->name);
-	sfile_get_integer (input, "total", (gint32 *)&obj->total);
-	sfile_get_integer (input, "self", (gint32 *)&obj->self);
+	sfile_get_string (input, "name", &string);
+	sfile_get_integer (input, "total", NULL);
+	sfile_get_integer (input, "self", NULL);
 	
-	sfile_end_get (input, "object", obj);
+	sfile_end_get (input, "object", string);
     }
     sfile_end_get (input, "objects", NULL);
 
-    profile->call_tree = NULL;
     n = sfile_begin_get_list (input, "nodes");
     for (i = 0; i < n; ++i)
     {
-	Node *node = g_new (Node, 1);
+	StackNode *node = g_new (StackNode, 1);
 
 	sfile_begin_get_record (input, "node");
 
-	sfile_get_pointer (input, "object", (gpointer *)&node->object);
+	sfile_get_pointer (input, "object", (gpointer *)&node->address);
 	sfile_get_pointer (input, "siblings", (gpointer *)&node->siblings);
 	sfile_get_pointer (input, "children", (gpointer *)&node->children);
 	sfile_get_pointer (input, "parent", (gpointer *)&node->parent);
-	sfile_get_integer (input, "total", (gint32 *)&node->total);
-	sfile_get_integer (input, "self", (gint32 *)&node->self);
+	sfile_get_integer (input, "total", NULL);
+	sfile_get_integer (input, "self", (gint32 *)&node->size);
 	sfile_get_integer (input, "toplevel", &node->toplevel);
 	
 	sfile_end_get (input, "node", node);
@@ -266,11 +262,10 @@ profile_load (const char *filename, GError **err)
     
     sformat_free (format);
     sfile_input_free (input);
-    
-    make_hash_table (profile->call_tree, profile->nodes_by_object);
 
+    profile->stash = stack_stash_new_from_root (root);
+    
     return profile;
-#endif
 }
 
 Profile *

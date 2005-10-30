@@ -223,3 +223,32 @@ stack_stash_get_root   (StackStash *stash)
 {
     return stash->root;
 }
+
+static void
+build_hash_table (StackNode *node,
+		  StackStash *stash)
+{
+    if (!node)
+	return;
+
+    build_hash_table (node->siblings, stash);
+    build_hash_table (node->children, stash);
+
+    node->next = g_hash_table_lookup (
+	stash->nodes_by_data, node->address);
+    g_hash_table_insert (
+	stash->nodes_by_data, node->address, node);
+}
+
+StackStash *
+stack_stash_new_from_root (StackNode *root)
+{
+    StackStash *stash = g_new (StackStash, 1);
+
+    stash->root = root;
+    stash->nodes_by_data = g_hash_table_new (g_direct_hash, g_direct_equal);
+
+    build_hash_table (stash->root, stash);
+
+    return stash;
+}

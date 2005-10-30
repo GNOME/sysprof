@@ -1,5 +1,9 @@
 2005-10-30  Soren Sandmann <sandmann@redhat.com>
 
+	* profile.c (profile_load): Reenable loading. 
+
+2005-10-30  Soren Sandmann <sandmann@redhat.com>
+
 	* profile.c (profile_save): Reenable saving.
 
 Sat Oct 29 21:37:42 2005  Soeren Sandmann  <sandmann@redhat.com>

@@ -23,7 +23,7 @@ Before 1.2:
   esp0 points to top of kernel stack
   esp  points to top of user stack
 
-  (Reported by Kjartan Marass).
+  (Reported by Kjartan Maraas).
 
 - Fix bugs/performance issues:
 	- total should probably be cached so that compute_total() doesn't
@@ -58,10 +58,37 @@ Before 1.2:
 	- don't leak the presentation strings/objects
 	- loading and saving probably leak right now
 
-- think about loading and saving. Goals
+- rethink loading and saving. Goals
 	- Can load 1.0 profiles
 	- Don't export too much of stackstashes to the rest of the
 	  app
+
+	Features:
+
+	* Have a compatibility module that can load 1.0 modules
+		- reads in the call tree, then generate a stack stash
+		  by repeatedly adding traces.
+
+	* Make stackstash able to save themselves using callbacks.
+
+	* If loading a file fails, then try loading it using the 
+	  1.0 loader. 
+		- optimization: make sure we fail immediately if we
+		  see an unknown object.
+
+	* Add versioning support to sfile.[ch]:
+		- sformat_new() should take doctype and version strings:
+			like  "sysprof-profile"   "version 1.2"
+		- there should be sfile_sniff() functionality that will 
+			return the doctype and version of a file. Or None
+			if there aren't any.
+
+	* At this point, make the loader first check if the file has a version
+	  if it doesn't, load as 1.0, otherwise as whatever the version claims
+	  it is.
+
+	* Make provisions for forward compatibility: maybe it should be possible
+	  to load records with more fields than specified.
 
 * Figure out how to make sfile.[ch] use less memory.
 	- In general clean sfile.[ch] up a little:
@@ -88,8 +115,11 @@ Before 1.2:
   kernel stack and user space stack, have userspace stitch them
   together. well, they could be stitched together in the kernel. 
 	Already done: we now take a stacktrace of the user space process
-	when the interrupt happens in kernel mode. We don't take any
-	stacktraces of the kernel though. Things that need to be investigated:
+	when the interrupt happens in kernel mode. (Unfortunately, this
+	causes lockups on many kernels).
+	
+	We don't take any stacktraces of the kernel though. Things that need to be
+	investigated:
 		- does the kernel come with dwarf debug information?
 		- does the kernel come with some other debug info
 		- is there a place where the vmlinux binary is usually

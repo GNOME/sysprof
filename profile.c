@@ -87,10 +87,10 @@ sum_children (StackNode *node)
      * maintain or compute it in the stackstash
      */
     total = node->size;
-
+    
     for (child = node->children; child != NULL; child = child->siblings)
 	total += sum_children (child);
-
+    
     return total;
 }
 
@@ -99,13 +99,13 @@ compute_total (StackNode *node)
 {
     StackNode *n;
     int total = 0;
-
+    
     for (n = node; n != NULL; n = n->next)
     {
 	if (n->toplevel)
 	    total += sum_children (n);
     }
-
+    
     return total;
 }
 
@@ -125,7 +125,7 @@ serialize_call_tree (StackNode *node,
     sfile_add_integer (output, "self", node->size);
     sfile_add_integer (output, "toplevel", node->toplevel);
     sfile_end_add (output, "node", node);
-
+    
     serialize_call_tree (node->siblings, output);
     serialize_call_tree (node->children, output);
 }
@@ -136,15 +136,15 @@ profile_save (Profile		 *profile,
 	      GError            **err)
 {
     gboolean result;
-
+    
     GList *profile_objects;
     GList *list;
     
     SFormat *format = create_format ();
     SFileOutput *output = sfile_output_new (format);
-
+    
     sfile_begin_add_record (output, "profile");
-
+    
     sfile_add_integer (output, "size", profile_get_size (profile));
     sfile_add_pointer (output, "call_tree",
 		       stack_stash_get_root (profile->stash));
@@ -167,18 +167,18 @@ profile_save (Profile		 *profile,
     g_list_free (profile_objects);
     
     sfile_end_add (output, "objects", NULL);
-
+    
     sfile_begin_add_list (output, "nodes");
     serialize_call_tree (stack_stash_get_root (profile->stash), output);
     sfile_end_add (output, "nodes", NULL);
-
+    
     sfile_end_add (output, "profile", NULL);
-
+    
     result = sfile_output_save (output, file_name, err);
-
+    
     sformat_free (format);
     sfile_output_free (output);
-
+    
     return result;
 }
 
@@ -188,12 +188,12 @@ make_hash_table (Node *node, GHashTable *table)
 {
     if (!node)
 	return;
-
+    
     g_assert (node->object);
     
     node->next = g_hash_table_lookup (table, node->object);
     g_hash_table_insert (table, node->object, node);
-
+    
     g_assert (node->siblings != (void *)0x11);
     
     make_hash_table (node->siblings, table);
@@ -212,24 +212,24 @@ profile_load (const char *filename, GError **err)
     
     format = create_format ();
     input = sfile_load (filename, format, err);
-
+    
     if (!input)
 	return NULL;
-   
+    
     profile = g_new (Profile, 1);
-
+    
     sfile_begin_get_record (input, "profile");
-
+    
     sfile_get_integer (input, "size", NULL);
     sfile_get_pointer (input, "call_tree", (gpointer *)&root);
-
+    
     n = sfile_begin_get_list (input, "objects");
     for (i = 0; i < n; ++i)
     {
 	char *string;
 	
 	sfile_begin_get_record (input, "object");
-
+	
 	sfile_get_string (input, "name", &string);
 	sfile_get_integer (input, "total", NULL);
 	sfile_get_integer (input, "self", NULL);
@@ -237,14 +237,14 @@ profile_load (const char *filename, GError **err)
 	sfile_end_get (input, "object", string);
     }
     sfile_end_get (input, "objects", NULL);
-
+    
     n = sfile_begin_get_list (input, "nodes");
     for (i = 0; i < n; ++i)
     {
 	StackNode *node = g_new (StackNode, 1);
-
+	
 	sfile_begin_get_record (input, "node");
-
+	
 	sfile_get_pointer (input, "object", (gpointer *)&node->address);
 	sfile_get_pointer (input, "siblings", (gpointer *)&node->siblings);
 	sfile_get_pointer (input, "children", (gpointer *)&node->children);
@@ -254,7 +254,7 @@ profile_load (const char *filename, GError **err)
 	sfile_get_integer (input, "toplevel", &node->toplevel);
 	
 	sfile_end_get (input, "node", node);
-
+	
 	g_assert (node->siblings != (void *)0x11);
     }
     sfile_end_get (input, "nodes", NULL);
@@ -262,7 +262,7 @@ profile_load (const char *filename, GError **err)
     
     sformat_free (format);
     sfile_input_free (input);
-
+    
     profile->stash = stack_stash_new_from_root (root);
     
     return profile;
@@ -272,9 +272,9 @@ Profile *
 profile_new (StackStash *stash)
 {
     Profile *profile = g_new (Profile, 1);
-
+    
     profile->stash = stash;
-
+    
     return profile;
 }
 
@@ -314,7 +314,7 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 		if (n->name == node->address)
 		    seen_tree_node = n;
 	    }
-		    
+	    
 	    if (seen_tree_node)
 	    {
 		ProfileDescendant *node;
@@ -369,15 +369,15 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	
 	if (!list->next)
 	    match->self += size;
-
+	
 	g_ptr_array_add (seen_objects, match);
 	
 	tree = &(match->children);
 	parent = match;
     }
-
+    
     g_ptr_array_free (seen_objects, TRUE);
-
+    
     len = nodes_to_unmark->len;
     for (i = 0; i < len; ++i)
     {
@@ -385,7 +385,7 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	
 	tree_node->marked_non_recursive = 0;
     }
-
+    
     len = nodes_to_unmark_recursive->len;
     for (i = 0; i < len; ++i)
     {
@@ -393,7 +393,7 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
 	
 	tree_node->marked_total = FALSE;
     }
-
+    
     g_ptr_array_free (nodes_to_unmark, TRUE);
     g_ptr_array_free (nodes_to_unmark_recursive, TRUE);
 }
@@ -419,25 +419,25 @@ profile_create_descendants (Profile *profile,
     ProfileDescendant *tree = NULL;
     
     StackNode *node = stack_stash_find_node (profile->stash, object_name);
-
+    
     while (node)
     {
 	if (node->toplevel)
 	{
 	    GList *leaves = NULL;
 	    GList *list;
-
+	    
 	    stack_node_list_leaves (node, &leaves);
-
+	    
 	    for (list = leaves; list != NULL; list = list->next)
 		add_leaf_to_tree (&tree, list->data, node);
-
+	    
 	    g_list_free (leaves);
 	}
 	
 	node = node->next;
     }
-
+    
     return tree;
 }
 
@@ -460,11 +460,11 @@ profile_list_callers (Profile       *profile,
     GHashTable *callers_by_object;
     GHashTable *seen_callers;
     ProfileCaller *result = NULL;
-
+    
     callers_by_object =
 	g_hash_table_new (g_direct_hash, g_direct_equal);
     seen_callers = g_hash_table_new (g_direct_hash, g_direct_equal);
-
+    
     callee_node = stack_stash_find_node (profile->stash, callee_name);
     
     for (node = callee_node; node; node = node->next)
@@ -530,7 +530,6 @@ profile_list_callers (Profile       *profile,
     g_hash_table_destroy (callers_by_object);
     
     return result;
-    
 }
 
 void
@@ -567,17 +566,17 @@ build_object_list (StackNode *node, gpointer data)
 {
     GList **objects = data;
     ProfileObject *obj;
-
+    
     obj = g_new (ProfileObject, 1);
     obj->name = node->address;
-
+    
     obj->total = compute_total (node);
-
+    
     /* FIXME: this is incorrect. We need to sum all the node linked
      * through node->next
      */
     obj->self = node->size;
-
+    
     *objects = g_list_prepend (*objects, obj);
 }
 
@@ -585,9 +584,9 @@ GList *
 profile_get_objects (Profile *profile)
 {
     GList *objects = NULL;
-
+    
     stack_stash_foreach_by_address (profile->stash, build_object_list, &objects);
-
+    
     /* FIXME: everybody still assumes that they don't have to free the
      * objects in the list, but these days they do, and so we are leaking.
      */

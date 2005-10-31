@@ -271,7 +271,7 @@ set_application_title (Application *app,
     else
     {
 	gtk_window_set_title (GTK_WINDOW (app->main_window),
-			      "System Collector");
+			      APPLICATION_NAME);
     }
 }
 
@@ -1331,6 +1331,8 @@ load_file (gpointer data)
 	g_error_free (err);
     }
 
+    g_free (file_open_data);
+    
     return FALSE;
 }
 
@@ -1351,7 +1353,6 @@ main (int argc, char **argv)
     if (argc > 1)
     {
 	FileOpenData *file_open_data = g_new0 (FileOpenData, 1);
-
 	file_open_data->filename = argv[1];
 	file_open_data->app = app;
 

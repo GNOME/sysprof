@@ -37,7 +37,7 @@ Before 1.2:
 	  "main"s are present, only one gets listed in the object list.
 	- Numbers in caller view are completely screwed up.
 	- It looks like it sometimes gets confused with similar but different
-	  processess: Something like:
+	  processes: Something like:
 		process a spends 80% in foo() called from bar()
 		process b spends 1% in foo() called from baz()
 	  we get reports of baz() using > 80% of the time.
@@ -52,7 +52,7 @@ Before 1.2:
   - a more pragmatic approach might be to just walk the tree and
     save it.
 
-- make stasckstash ref counted
+- make stackstash ref counted
 
 - plug all the leaks
 	- don't leak the presentation strings/objects

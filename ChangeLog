@@ -1,3 +1,11 @@
+Mon Oct 31 00:22:58 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (set_application_title): Use APPLICATION_NAME macro
+
+	* sysprof.c (load_file): Don't leak the FileOpenData
+
+	* TODO: updates
+
 2005-10-30  Soren Sandmann <sandmann@redhat.com>
 
 	* configure.ac, Makefile.am: Don't link sysprof-text to gtk+.

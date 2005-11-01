@@ -74,7 +74,6 @@ struct Application
     ProfileCaller *	callers;
     
     int			timeout_id;
-    int			generating_profile;
 
     char *		loaded_profile;
     
@@ -442,6 +441,7 @@ fill_main_list (Application *app)
 				OBJECT_OBJECT, object->name,
 				-1);
 	}
+	g_list_foreach (objects, (GFunc)g_free, NULL);
 	g_list_free (objects);
 	
 	sort_state = save_sort_state (app->object_view);
@@ -1274,7 +1274,6 @@ build_gui (Application *app)
     gtk_widget_show_all (app->main_window);
     gtk_widget_hide (app->dummy_button);
     
-    /* Statusbar */
     queue_show_samples (app);
 
     return TRUE;

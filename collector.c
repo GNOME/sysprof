@@ -100,6 +100,7 @@ on_read (gpointer data)
     /* After a reset we ignore samples for a short period so that
      * a reset will actually cause 'samples' to become 0
      */
+    /* FIXME: handle time getting set back */
     if (time_diff (&now, &collector->latest_reset) < RESET_DEAD_PERIOD)
 	return;
     

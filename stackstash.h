@@ -29,6 +29,7 @@ typedef struct StackNode StackNode;
 struct StackNode
 {
     gpointer	address;
+    int		total;
     int		size;
     
     StackNode *	parent;

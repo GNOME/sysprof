@@ -35,6 +35,7 @@ stack_node_new (void)
     node->parent = NULL;
     node->size = 0;
     node->next = NULL;
+    node->total = 0;
     return node;
 }
 
@@ -46,7 +47,7 @@ stack_stash_new       (void)
 
     stash->root = NULL;
     stash->nodes_by_data = g_hash_table_new (g_direct_hash, g_direct_equal);
-    
+
     return stash;
 }
 
@@ -115,6 +116,8 @@ stack_stash_add_trace (StackStash *stash,
 
 	    decorate_node (stash, match);
 	}
+
+	match->total += size;
 
 	location = &(match->children);
 	parent = match;

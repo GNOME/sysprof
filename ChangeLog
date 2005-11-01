@@ -1,3 +1,29 @@
+Mon Oct 31 23:41:33 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* stackstash.h (struct StackNode): Add "total" field.
+
+	* stackstash.c (stack_stash_add_trace): Keep track of the
+	aggregate size.
+
+	* profile.c (profile_get_size): Sum the totals of the siblings
+	instead of all the children.
+
+	* profile.c (build_object_list): Correctly compute obj->self
+
+	* profile.c (profile_load): Don't ignore the node->total field.
+
+	* profile.c (serialize_call_tree): Save node->total instead of the
+	computed total
+
+	* profile.c (compute_total): Use n->total instead of computing it
+	from scratch.
+
+	* profile.c: Remove unused sum_children() function.
+
+	* TODO: Updates
+
+	* process.c (process_get_from_pid): Plug leak.
+
 Mon Oct 31 21:36:37 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (fill_main_list): free the profile objects.

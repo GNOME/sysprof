@@ -78,32 +78,15 @@ create_format (void)
 }
 
 static int
-sum_children (StackNode *node)
-{
-    int total;
-    StackNode *child;
-    
-    /* FIXME: this is pretty inefficient. Instead perhaps
-     * maintain or compute it in the stackstash
-     */
-    total = node->size;
-    
-    for (child = node->children; child != NULL; child = child->siblings)
-	total += sum_children (child);
-    
-    return total;
-}
-
-static int
 compute_total (StackNode *node)
 {
     StackNode *n;
     int total = 0;
-    
+
     for (n = node; n != NULL; n = n->next)
     {
 	if (n->toplevel)
-	    total += sum_children (n);
+	    total += n->total;
     }
     
     return total;
@@ -121,7 +104,7 @@ serialize_call_tree (StackNode *node,
     sfile_add_pointer (output, "siblings", node->siblings);
     sfile_add_pointer (output, "children", node->children);
     sfile_add_pointer (output, "parent", node->parent);
-    sfile_add_integer (output, "total", compute_total (node));
+    sfile_add_integer (output, "total", node->total);
     sfile_add_integer (output, "self", node->size);
     sfile_add_integer (output, "toplevel", node->toplevel);
     sfile_end_add (output, "node", node);
@@ -249,7 +232,7 @@ profile_load (const char *filename, GError **err)
 	sfile_get_pointer (input, "siblings", (gpointer *)&node->siblings);
 	sfile_get_pointer (input, "children", (gpointer *)&node->children);
 	sfile_get_pointer (input, "parent", (gpointer *)&node->parent);
-	sfile_get_integer (input, "total", NULL);
+	sfile_get_integer (input, "total", &node->total);
 	sfile_get_integer (input, "self", (gint32 *)&node->size);
 	sfile_get_integer (input, "toplevel", &node->toplevel);
 	
@@ -566,16 +549,16 @@ build_object_list (StackNode *node, gpointer data)
 {
     GList **objects = data;
     ProfileObject *obj;
+    StackNode *n;
     
     obj = g_new (ProfileObject, 1);
     obj->name = node->address;
     
     obj->total = compute_total (node);
-    
-    /* FIXME: this is incorrect. We need to sum all the node linked
-     * through node->next
-     */
-    obj->self = node->size;
+
+    obj->self = 0;
+    for (n = node; n != NULL; n = n->siblings)
+	obj->self += n->size;
     
     *objects = g_list_prepend (*objects, obj);
 }
@@ -597,5 +580,11 @@ profile_get_objects (Profile *profile)
 gint
 profile_get_size (Profile *profile)
 {
-    return compute_total (stack_stash_get_root (profile->stash));
+    StackNode *n;
+    gint size = 0;
+    
+    for (n = stack_stash_get_root (profile->stash); n != NULL; n = n->siblings)
+	size += compute_total (n);
+
+    return size;
 }

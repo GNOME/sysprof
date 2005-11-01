@@ -334,11 +334,13 @@ process_get_from_pid (int pid)
     
     cmdline = get_name (pid);
 
+    idle_free (cmdline);
+    
     p = g_hash_table_lookup (processes_by_cmdline, cmdline);
-    if (p)
-	return p;
-    else
-	return create_process (idle_free (cmdline), pid);
+    if (!p)
+	p = create_process (cmdline, pid);
+
+    return p;
 }
 
 const Symbol *

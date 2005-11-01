@@ -15,6 +15,8 @@ Before 1.0.1:
 
 Before 1.2:
 
+* Don't build the GUI if gtk+ is not installed
+
 * Handle time being set back in the RESET_DEAD_PERIOD code.
 
 * Find out if the first sort order of a GtkTreeView column can be changed
@@ -31,8 +33,6 @@ Before 1.2:
   (Reported by Kjartan Maraas).
 
 - Fix bugs/performance issues:
-	- total should probably be cached so that compute_total() doesn't
-	  take 80% of the time to generate a profile.
 	- decorate_node should be done lazily
 	- Find out why we sometimes get completely ridicoulous stacktraces,
 	  where main seems to be called from within Xlib etc. This happens
@@ -47,6 +47,9 @@ Before 1.2:
 		process b spends 1% in foo() called from baz()
 	  we get reports of baz() using > 80% of the time.
 	  Or something.
+	- add_trace_to_tree() might be a little slow when dealing with deeply
+	  recursive profiles. Hypothesis: seen_nodes can grow large, and the
+	  algorithm is O(n^2) in the length of the trace.
 
 - make the things we put in a stackstash real
   objects so that
@@ -421,6 +424,9 @@ Later:
 
 
 DONE:
+
+- total should probably be cached so that compute_total() doesn't
+  take 80% of the time to generate a profile.
 
 - Fixing the oops in kernels < 2.6.11
 

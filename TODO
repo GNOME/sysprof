@@ -117,7 +117,8 @@ Before 1.2:
 * Send entire stack to user space, then do stackwalking there. That would
   allow us to do more complex algorithms, like dwarf, in userspace. Though
   we'd lose the ability to do non-racy file naming. We could pass a list
-  of the process mappings with each stack though.
+  of the process mappings with each stack though. Doing this would also solve
+  the problem of not being able to get maps of processes running as root.
 
 * If interrupt happens in kernel mode, send both
   kernel stack and user space stack, have userspace stitch them

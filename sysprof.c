@@ -350,11 +350,11 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	       "       modprobe sysprof-module\n"
 	       "\n"
 	       "as root.");
-
-	return;
     }
-    
-    app->state = PROFILING;
+    else
+    {
+	app->state = PROFILING;
+    }
 
     update_sensitivity (app);
 }

@@ -1,3 +1,11 @@
+2005-11-01  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (on_start_toggled): Update GUI after showing error
+	message.
+
+	* sysprof.glade: Rename File menu Profiler, move
+	Start/Profile/Reset here, delete View menu.
+
 Mon Oct 31 23:41:33 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* stackstash.h (struct StackNode): Add "total" field.

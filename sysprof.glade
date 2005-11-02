@@ -32,11 +32,80 @@
 	  <child>
 	    <widget class="GtkMenuItem" id="menuitem1">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">_File</property>
+	      <property name="label" translatable="yes">_Profiler</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
 		<widget class="GtkMenu" id="menuitem1_menu">
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="start_item">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">_Start</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_start1_activate" last_modification_time="Thu, 04 Nov 2004 18:51:54 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image98">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-media-play</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="profile_item">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">_Profile</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_profile1_activate" last_modification_time="Thu, 04 Nov 2004 18:51:54 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image99">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-justify-left</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="reset_item">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">_Reset</property>
+		      <property name="use_underline">True</property>
+		      <signal name="activate" handler="on_reset_item_activate" last_modification_time="Fri, 05 Nov 2004 15:34:30 GMT"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image100">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-clear</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkSeparatorMenuItem" id="separator1">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="open_item">
@@ -47,7 +116,7 @@
 		      <accelerator key="o" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image80">
+			<widget class="GtkImage" id="image101">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-open</property>
 			  <property name="icon_size">1</property>
@@ -69,7 +138,7 @@
 		      <accelerator key="s" modifiers="GDK_CONTROL_MASK | GDK_SHIFT_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image81">
+			<widget class="GtkImage" id="image102">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-save-as</property>
 			  <property name="icon_size">1</property>
@@ -97,85 +166,9 @@
 		      <accelerator key="q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image82">
+			<widget class="GtkImage" id="image103">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
-		    </widget>
-		  </child>
-		</widget>
-	      </child>
-	    </widget>
-	  </child>
-
-	  <child>
-	    <widget class="GtkMenuItem" id="menuitem3">
-	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">_View</property>
-	      <property name="use_underline">True</property>
-
-	      <child>
-		<widget class="GtkMenu" id="menuitem3_menu">
-
-		  <child>
-		    <widget class="GtkImageMenuItem" id="start_item">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_Start</property>
-		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_start1_activate" last_modification_time="Thu, 04 Nov 2004 18:51:54 GMT"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image83">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-media-play</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkImageMenuItem" id="profile_item">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_Profile</property>
-		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_profile1_activate" last_modification_time="Thu, 04 Nov 2004 18:51:54 GMT"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image84">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-justify-left</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
-		    </widget>
-		  </child>
-
-		  <child>
-		    <widget class="GtkImageMenuItem" id="reset_item">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_Reset</property>
-		      <property name="use_underline">True</property>
-		      <signal name="activate" handler="on_reset_item_activate" last_modification_time="Fri, 05 Nov 2004 15:34:30 GMT"/>
-
-		      <child internal-child="image">
-			<widget class="GtkImage" id="image85">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
 			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
@@ -207,7 +200,7 @@
 		      <signal name="activate" handler="on_about_activate" last_modification_time="Wed, 31 Dec 2003 20:44:40 GMT"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image86">
+			<widget class="GtkImage" id="image104">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>

@@ -1,3 +1,22 @@
+/* Sysprof -- Sampling, systemwide CPU profiler
+ * Copyright 2004, Red Hat, Inc.
+ * Copyright 2004, 2005, Soeren Sandmann
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
 #include "stackstash.h"
 #include "collector.h"
 #include "module/sysprof-module.h"
@@ -89,6 +108,7 @@ on_read (gpointer data)
     Collector *collector = data;
     GTimeVal now;
     int rd;
+    double diff;
     
     rd = read (collector->fd, &trace, sizeof (trace));
     
@@ -100,8 +120,9 @@ on_read (gpointer data)
     /* After a reset we ignore samples for a short period so that
      * a reset will actually cause 'samples' to become 0
      */
-    /* FIXME: handle time getting set back */
-    if (time_diff (&now, &collector->latest_reset) < RESET_DEAD_PERIOD)
+    diff = time_diff (&now, &collector->latest_reset);
+
+    if (diff >= 0.0 && diff < RESET_DEAD_PERIOD)
 	return;
     
 #if 0
@@ -160,16 +181,6 @@ open_fd (Collector *collector,
 	if (fd < 0)
 	{
 	    /* FIXME: set error */
-#if 0
-	    sorry (app->main_window,
-		   "Can't open /proc/sysprof-trace. You need to insert\n"
-		   "the sysprof kernel module. Run\n"
-		   "\n"
-		   "       modprobe sysprof-module\n"
-		   "\n"
-		   "as root.");
-#endif
-	    
 	    return FALSE;
 	}
     }
@@ -178,19 +189,6 @@ open_fd (Collector *collector,
     fd_add_watch (collector->fd, collector);
     
     return TRUE;
-}
-
-static void
-empty_file_descriptor (Collector *collector)
-{
-    int rd;
-    SysprofStackTrace trace;
-    
-    do
-    {
-	rd = read (collector->fd, &trace, sizeof (trace));
-	
-    } while (rd != -1); /* until EWOULDBLOCK */
 }
 
 gboolean

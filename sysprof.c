@@ -231,7 +231,8 @@ update_sensitivity (Application *app)
 }
 
 static void
-set_busy (GtkWidget *widget, gboolean busy)
+set_busy (GtkWidget *widget,
+	  gboolean   busy)
 {
     GdkCursor *cursor;
     
@@ -547,8 +548,8 @@ fill_descendants_tree (Application *app)
 }
 
 static void
-add_callers (GtkListStore *list_store,
-	     Profile *profile,
+add_callers (GtkListStore  *list_store,
+	     Profile       *profile,
 	     ProfileCaller *callers)
 {
     while (callers)
@@ -1339,7 +1340,8 @@ load_file (gpointer data)
 }
 
 int
-main (int argc, char **argv)
+main (int    argc,
+      char **argv)
 {
     Application *app;
     

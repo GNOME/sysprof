@@ -1,3 +1,11 @@
+2005-11-04  Soren Sandmann  <sandmann@redhat.com>
+
+	* collector.[ch]: Add copyright statement.
+
+	* collector.c (on_read): Handle time getting set backwards.
+
+	* collector.c: Remove unused empty_filedescriptor() function.
+
 2005-11-03  Soren Sandmann  <sandmann@redhat.com>
 
 	* configure.ac: Make the message about the kernel source package

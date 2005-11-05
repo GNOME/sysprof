@@ -251,7 +251,7 @@ static int timer_notify (struct pt_regs *regs)
 	i = 0;
 	if (!is_user)
 	{
-		trace->addresses[i++] = 0x01;
+		trace->addresses[i++] = (void *)0x01;
 		regs = (void *)current->thread.esp0 - sizeof (struct pt_regs);
 	}
 

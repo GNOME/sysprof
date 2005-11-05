@@ -149,7 +149,7 @@ create_process (const char *cmdline, int pid)
     p->maps = NULL;
     p->pid = pid;
     p->undefined.name = NULL;
-    p->undefined.address = NULL;
+    p->undefined.address = 0x00;
     
     g_assert (!g_hash_table_lookup (processes_by_pid, GINT_TO_POINTER (pid)));
     g_assert (!g_hash_table_lookup (processes_by_cmdline, cmdline));

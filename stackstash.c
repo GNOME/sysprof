@@ -156,6 +156,42 @@ stack_stash_foreach   (StackStash      *stash,
 }
 
 static void
+do_node_callback (StackNode *node, const GSList *trace,
+		  StackTraceFunction func,
+		  gpointer data)
+{
+    GSList link;
+
+    if (!node)
+	return;
+
+    link.next = (GSList *)trace;
+    link.data = node;
+
+    if (node->size)
+	func (&link, data);
+    
+    do_node_callback (node->children, &link, func, data);
+    do_node_callback (node->siblings, trace, func, data);
+}
+
+void
+stack_node_foreach_trace (StackNode *node,
+			  StackTraceFunction func,
+			  gpointer   data)
+{
+    GSList link;
+
+    link.next = NULL;
+    link.data = node;
+
+    if (node->size)
+	func (&link, data);
+    
+    do_node_callback (node->children, &link, func, data);
+}
+
+static void
 stack_node_free (StackNode *node)
 {
     if (!node)

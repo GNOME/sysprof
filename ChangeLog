@@ -1,3 +1,11 @@
+Sat Nov  5 18:06:40 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (profile_create_descendants): Use callbacks from
+	stackstash.
+
+	* stackstash.c (stack_node_foreach_trace): New function
+	* stackstash.c (do_node_callback): New function
+
 Sat Nov  5 12:39:33 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* profile.c (add_trace_to_tree): Don't compute the total field.

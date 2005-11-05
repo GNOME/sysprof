@@ -243,18 +243,22 @@ profile_new (StackStash *stash)
 }
 
 static void
-add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
+add_trace_to_tree (GSList *trace, gpointer data)
 {
-    GList *list;
+    GSList *list;
     GPtrArray *nodes_to_unmark = g_ptr_array_new ();
     ProfileDescendant *parent = NULL;
     int i, len;
-    
+    ProfileDescendant **tree = data;
+    guint size = ((StackNode *)trace->data)->size;
+
+    trace = g_slist_reverse (g_slist_copy (trace));
+
     for (list = trace; list != NULL; list = list->next)
     {
 	StackNode *node = list->data;
 	ProfileDescendant *match = NULL;
-	
+
 	update();
 	
 	for (match = *tree; match != NULL; match = match->siblings)
@@ -329,20 +333,7 @@ add_trace_to_tree (ProfileDescendant **tree, GList *trace, guint size)
     }
     
     g_ptr_array_free (nodes_to_unmark, TRUE);
-}
-
-static void
-add_leaf_to_tree (ProfileDescendant **tree, StackNode *leaf, StackNode *top)
-{
-    GList *trace = NULL;
-    StackNode *node;
-    
-    for (node = leaf; node != top->parent; node = node->parent)
-	trace = g_list_prepend (trace, node);
-    
-    add_trace_to_tree (tree, trace, leaf->size);
-    
-    g_list_free (trace);
+    g_slist_free (trace);
 }
 
 ProfileDescendant *
@@ -356,17 +347,7 @@ profile_create_descendants (Profile *profile,
     while (node)
     {
 	if (node->toplevel)
-	{
-	    GList *leaves = NULL;
-	    GList *list;
-	    
-	    stack_node_list_leaves (node, &leaves);
-	    
-	    for (list = leaves; list != NULL; list = list->next)
-		add_leaf_to_tree (&tree, list->data, node);
-	    
-	    g_list_free (leaves);
-	}
+	    stack_node_foreach_trace (node, add_trace_to_tree, &tree);
 	
 	node = node->next;
     }

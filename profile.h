@@ -40,14 +40,12 @@ struct ProfileDescendant
 {
     char *		name;
     guint		self;
-    guint		total;
     guint		non_recursion;
     ProfileDescendant * parent;
     ProfileDescendant * siblings;
     ProfileDescendant * children;
 
     int			marked_non_recursive;
-    int			marked_total;
 };
 
 struct ProfileCaller

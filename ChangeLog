@@ -1,3 +1,16 @@
+Sat Nov  5 12:39:33 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (add_trace_to_tree): Don't compute the total field.
+
+	* profile.h (struct ProfileDescendant): Remove 'total' field. 
+
+	* sysprof.c: Delete DESCENDANTS_TOTAL column and everything
+	related to it.
+
+	* profile.c: Remove commented out code
+
+	* sfile.c (handle_text): Don't copy the text
+
 2005-11-04  Soren Sandmann  <sandmann@redhat.com>
 
 	* collector.[ch]: Add copyright statement.

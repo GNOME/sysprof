@@ -384,7 +384,6 @@ enum
     DESCENDANTS_NAME,
     DESCENDANTS_SELF,
     DESCENDANTS_NON_RECURSE,
-    DESCENDANTS_TOTAL,
     DESCENDANTS_OBJECT
 };
 
@@ -486,7 +485,6 @@ add_node (GtkTreeStore      *store,
 			DESCENDANTS_NAME, node->name,
 			DESCENDANTS_SELF, 100 * (node->self)/(double)size,
 			DESCENDANTS_NON_RECURSE, 100 * (node->non_recursion)/(double)size,
-			DESCENDANTS_TOTAL, 100 * (node->total)/(double)size,
 			DESCENDANTS_OBJECT, node->name,
 			-1);
     
@@ -509,9 +507,8 @@ fill_descendants_tree (Application *app)
     }
     
     tree_store =
-	gtk_tree_store_new (5,
+	gtk_tree_store_new (4,
 			    G_TYPE_STRING,
-			    G_TYPE_DOUBLE,
 			    G_TYPE_DOUBLE,
 			    G_TYPE_DOUBLE,
 			    G_TYPE_POINTER);

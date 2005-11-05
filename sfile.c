@@ -569,10 +569,6 @@ state_transition_text (const State *state, SType *type, SType *target_type)
              */
             return transition->to;
         }
-#if 0
-        else
-            g_print ("transition: %d (%s)\n", transition->kind, transition->element);
-#endif
     }
     
     return NULL;
@@ -634,22 +630,27 @@ struct BuildContext
 };
 
 static gboolean
+is_all_blank (const char *text)
+{
+    while (g_ascii_isspace (*text))
+	text++;
+
+    return (*text == '\0');
+}
+
+static gboolean
 get_number (const char *text, int *number)
 {
     char *end;
     int result;
-    char *stripped;
     gboolean retval;
 
-    stripped = g_strstrip (g_strdup (text));
-    result = strtol (stripped, &end, 10);
+    result = strtol (text, &end, 10);
 
-    retval = (*end == '\0');
-
+    retval = is_all_blank (end);
+    
     if (retval && number)
         *number = result;
-    
-    g_free (stripped);
     
     return retval;
 }
@@ -914,6 +915,15 @@ decode_text (const char *text, char **decoded)
     return TRUE;
 }
 
+static const char *
+skip_whitespace (const char *text)
+{
+    while (g_ascii_isspace (*text))
+	text++;
+
+    return text;
+}
+
 static void
 handle_text (GMarkupParseContext *context,
 	     const gchar *text,
@@ -923,24 +933,22 @@ handle_text (GMarkupParseContext *context,
 {
     BuildContext *build = user_data;
     Instruction instruction;
-    char *free_me;
     SType target_type;
 
-    text = free_me = g_strstrip (g_strdup (text));
-
-    if (strlen (text) == 0)
-        goto out;
-        
+    if (*text == '\0')
+	return;
+    
+    text = skip_whitespace (text);
+    if (*text == '\0')
+	return;
+    
     build->state = state_transition_text (build->state, &instruction.type, &target_type);
     if (!build->state)
     {
         int line, ch;
         g_markup_parse_context_get_position (context, &line, &ch);
-#if 0
-        g_print ("line: %d char: %d\n", line, ch);
-#endif
         set_invalid_content_error (err, "Unexpected text data");
-        goto out;
+        return;
     }
         
     instruction.name = NULL;
@@ -953,7 +961,7 @@ handle_text (GMarkupParseContext *context,
         if (!get_number (text, &instruction.u.pointer.target_id))
         {
             set_invalid_content_error (err, "Contents '%s' of pointer element is not a number", text);
-            goto out;
+	    return;
         }
         break;
         
@@ -961,7 +969,7 @@ handle_text (GMarkupParseContext *context,
         if (!get_number (text, &instruction.u.integer.value))
         {
             set_invalid_content_error (err, "Contents '%s' of integer element not a number", text);
-            goto out;
+            return;
         }
         break;
         
@@ -969,7 +977,7 @@ handle_text (GMarkupParseContext *context,
         if (!decode_text (text, &instruction.u.string.value))
         {
             set_invalid_content_error (err, "Contents '%s' of text element is illformed", text);
-            goto out;
+	    return;
         }
         break;
         
@@ -979,9 +987,6 @@ handle_text (GMarkupParseContext *context,
     }
     
     g_array_append_val (build->instructions, instruction);
-
- out:
-    g_free (free_me);
 }
 
 static void

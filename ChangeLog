@@ -1,3 +1,11 @@
+2005-11-03  Soren Sandmann  <sandmann@redhat.com>
+
+	* configure.ac: Make the message about the kernel source package
+	more informative. Code from Kjetil Torgrim Homme.
+
+	* sysprof.c (on_start_toggled): Only delete the data if the 
+	profiling can actually be started.
+
 2005-11-01  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (on_start_toggled): Update GUI after showing error

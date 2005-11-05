@@ -13,7 +13,14 @@ Before 1.0.1:
 
      Someone already did create a package - should be googlable.
 
+* Press start without kernel module loaded, then load kernel module and 
+  press start again. Segmentation fault.
+
 Before 1.2:
+
+* With kernel module not installed, select Profiler->Start, then dismiss
+  the alert. This causes the start button to appear prelighted. Probably
+  just another gtk+ bug.
 
 * Don't build the GUI if gtk+ is not installed
 

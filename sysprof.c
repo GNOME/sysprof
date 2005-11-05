@@ -190,8 +190,9 @@ update_sensitivity (Application *app)
 	g_assert_not_reached();
 	break;
     }
-    
-    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (active_radio_button), TRUE);
+
+    gtk_toggle_tool_button_set_active (
+	GTK_TOGGLE_TOOL_BUTTON (active_radio_button), TRUE);
 
     /* "profile" widgets */
     gtk_widget_set_sensitive (GTK_WIDGET (app->profile_button),
@@ -333,12 +334,12 @@ static void
 on_start_toggled (GtkWidget *widget, gpointer data)
 {
     Application *app = data;
-
+    
     if (!gtk_toggle_tool_button_get_active (
 	    GTK_TOGGLE_TOOL_BUTTON (app->start_button)))
+    {
 	return;
-
-    delete_data (app);
+    }
 
     /* FIXME: get the real error message */
     if (!collector_start (app->collector, NULL))
@@ -353,6 +354,8 @@ on_start_toggled (GtkWidget *widget, gpointer data)
     }
     else
     {
+	delete_data (app);
+
 	app->state = PROFILING;
     }
 

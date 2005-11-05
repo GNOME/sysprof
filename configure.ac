@@ -69,9 +69,13 @@ if test $kernel_module = "yes"; then
   fi
 
   if [ ! test -f /lib/modules/`uname -r`/build/Makefile ] ; then
+     case `uname -r` in
+     *smp) pkg=kernel-smp-devel ;;
+     *) pkg=kernel-devel ;;
+     esac
      echo \*
      echo \* Sysprof requires the kernel source code to be installed.
-     echo \* On a Fedora Core system the relevant package is kernel-devel
+     echo \* On a Fedora Core system the relevant package is $pkg
      echo \*
      exit 1
   fi

@@ -29,15 +29,6 @@
 
 typedef struct Node Node;
 
-static void
-update()
-{
-#if 0
-    while (g_main_pending())
-	g_main_iteration (FALSE);
-#endif
-}
-
 struct Profile
 {
     StackStash *	stash;
@@ -243,27 +234,24 @@ profile_new (StackStash *stash)
 }
 
 static void
-add_trace_to_tree (GSList *trace, gpointer data)
+add_trace_to_tree (GSList *trace, gint size, gpointer data)
 {
     GSList *list;
     GPtrArray *nodes_to_unmark = g_ptr_array_new ();
     ProfileDescendant *parent = NULL;
     int i, len;
     ProfileDescendant **tree = data;
-    guint size = ((StackNode *)trace->data)->size;
 
     trace = g_slist_reverse (g_slist_copy (trace));
 
     for (list = trace; list != NULL; list = list->next)
     {
-	StackNode *node = list->data;
+	gpointer address = list->data;
 	ProfileDescendant *match = NULL;
 
-	update();
-	
 	for (match = *tree; match != NULL; match = match->siblings)
 	{
-	    if (match->name == node->address)
+	    if (match->name == address)
 		break;
 	}
 	
@@ -276,7 +264,7 @@ add_trace_to_tree (GSList *trace, gpointer data)
 	    seen_tree_node = NULL;
 	    for (n = parent; n != NULL; n = n->parent)
 	    {
-		if (n->name == node->address)
+		if (n->name == address)
 		    seen_tree_node = n;
 	    }
 	    
@@ -300,7 +288,7 @@ add_trace_to_tree (GSList *trace, gpointer data)
 	{
 	    match = g_new (ProfileDescendant, 1);
 	    
-	    match->name = node->address;
+	    match->name = address;
 	    match->non_recursion = 0;
 	    match->self = 0;
 	    match->children = NULL;

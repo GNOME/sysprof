@@ -61,7 +61,6 @@ decorate_node (StackStash *stash,
     /* FIXME: we will probably want to do this lazily,
      * and more efficiently (only walk the tree once).
      */
-
     for (n = node->parent; n != NULL; n = n->parent)
     {
 	if (n->address == node->address)
@@ -128,23 +127,23 @@ stack_stash_add_trace (StackStash *stash,
 
 static void
 do_callback (StackNode *node,
-	     GSList    *trace,
-	     StackFunction stack_func,
+	     const GSList *trace,
+	     StackFunction func,
 	     gpointer data)
 {
     GSList link;
-    
+
     if (!node)
 	return;
 
-    link.next = trace;
+    link.next = (GSList *)trace;
     link.data = node->address;
-    
-    do_callback (node->siblings, trace, stack_func, data);
-    do_callback (node->children, &link, stack_func, data);
 
     if (node->size)
-	stack_func (&link, node->size, data);
+	func (&link, node->size, data);
+    
+    do_callback (node->children, &link, func, data);
+    do_callback (node->siblings, trace, func, data);
 }
 
 void
@@ -155,40 +154,20 @@ stack_stash_foreach   (StackStash      *stash,
     do_callback (stash->root, NULL, stack_func, data);
 }
 
-static void
-do_node_callback (StackNode *node, const GSList *trace,
-		  StackTraceFunction func,
-		  gpointer data)
-{
-    GSList link;
-
-    if (!node)
-	return;
-
-    link.next = (GSList *)trace;
-    link.data = node;
-
-    if (node->size)
-	func (&link, data);
-    
-    do_node_callback (node->children, &link, func, data);
-    do_node_callback (node->siblings, trace, func, data);
-}
-
 void
-stack_node_foreach_trace (StackNode *node,
-			  StackTraceFunction func,
-			  gpointer   data)
+stack_node_foreach_trace (StackNode     *node,
+			  StackFunction  func,
+			  gpointer       data)
 {
     GSList link;
 
     link.next = NULL;
-    link.data = node;
+    link.data = node->address;
 
     if (node->size)
-	func (&link, data);
+	func (&link, node->size, data);
     
-    do_node_callback (node->children, &link, func, data);
+    do_callback (node->children, &link, func, data);
 }
 
 static void

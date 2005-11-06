@@ -54,16 +54,14 @@ void        stack_stash_add_trace (StackStash      *stash,
 void        stack_stash_foreach   (StackStash      *stash,
 				   StackFunction    stack_func,
 				   gpointer         data);
+void	    stack_node_foreach_trace (StackNode *node,
+				      StackFunction stack_func,
+				      gpointer      data);
 StackNode  *stack_stash_find_node (StackStash      *stash,
 				   gpointer         address);
 /* FIXME: should probably return a list */
 void	    stack_node_list_leaves (StackNode  *node,
 				    GList     **leaves);
-typedef void (* StackTraceFunction) (GSList *trace, gpointer data);
-void	    stack_node_foreach_trace (StackNode *node,
-				      StackTraceFunction func,
-				      gpointer   data);
-
 typedef void (* StackNodeFunc) (StackNode *node,
 				gpointer data);
 void	    stack_stash_foreach_by_address (StackStash *stash,

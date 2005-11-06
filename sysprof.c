@@ -1003,7 +1003,7 @@ on_object_selection_changed (GtkTreeSelection *selection,
 
     set_busy (app->main_window, TRUE);
 
-    gdk_window_process_all_updates ();
+    gdk_window_process_all_updates (); /* Display updated selection */
     
     fill_descendants_tree (app);
     fill_callers_list (app);

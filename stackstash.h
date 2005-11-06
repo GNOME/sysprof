@@ -41,8 +41,8 @@ struct StackNode
     gboolean	toplevel;
 };
 
-typedef void (* StackFunction) (GSList *trace,
-				gint size,
+typedef void (* StackFunction) (GList   *trace,
+				gint     size,
 				gpointer data);
 
 /* Stach */

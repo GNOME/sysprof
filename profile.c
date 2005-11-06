@@ -234,17 +234,15 @@ profile_new (StackStash *stash)
 }
 
 static void
-add_trace_to_tree (GSList *trace, gint size, gpointer data)
+add_trace_to_tree (GList *trace, gint size, gpointer data)
 {
-    GSList *list;
+    GList *list;
     GPtrArray *nodes_to_unmark = g_ptr_array_new ();
     ProfileDescendant *parent = NULL;
     int i, len;
     ProfileDescendant **tree = data;
 
-    trace = g_slist_reverse (g_slist_copy (trace));
-
-    for (list = trace; list != NULL; list = list->next)
+    for (list = g_list_last (trace); list != NULL; list = list->prev)
     {
 	gpointer address = list->data;
 	ProfileDescendant *match = NULL;
@@ -321,7 +319,6 @@ add_trace_to_tree (GSList *trace, gint size, gpointer data)
     }
     
     g_ptr_array_free (nodes_to_unmark, TRUE);
-    g_slist_free (trace);
 }
 
 ProfileDescendant *

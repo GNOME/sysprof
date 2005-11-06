@@ -127,17 +127,20 @@ stack_stash_add_trace (StackStash *stash,
 
 static void
 do_callback (StackNode *node,
-	     const GSList *trace,
+	     GList *trace,
 	     StackFunction func,
 	     gpointer data)
 {
-    GSList link;
+    GList link;
 
     if (!node)
 	return;
 
-    link.next = (GSList *)trace;
+    if (trace)
+	trace->prev = &link;
+    link.next = trace;
     link.data = node->address;
+    link.prev = NULL;
 
     if (node->size)
 	func (&link, node->size, data);
@@ -159,10 +162,11 @@ stack_node_foreach_trace (StackNode     *node,
 			  StackFunction  func,
 			  gpointer       data)
 {
-    GSList link;
+    GList link;
 
     link.next = NULL;
     link.data = node->address;
+    link.prev = NULL;
 
     if (node->size)
 	func (&link, node->size, data);

@@ -256,16 +256,16 @@ lookup_symbol (Process *process, gpointer address, GHashTable *unique_symbols)
 }
 
 static void
-resolve_symbols (GSList *trace, gint size, gpointer data)
+resolve_symbols (GList *trace, gint size, gpointer data)
 {
-    GSList *slist;
+    GList *list;
     ResolveInfo *info = data;
-    Process *process = g_slist_last (trace)->data;
+    Process *process = g_list_last (trace)->data;
     GPtrArray *resolved_trace = g_ptr_array_new ();
     
-    for (slist = trace; slist && slist->next; slist = slist->next)
+    for (list = trace; list && list->next; list = list->next)
     {
-	gpointer address = slist->data;
+	gpointer address = list->data;
 	char *symbol;
 	
 	symbol = lookup_symbol (process, address, info->unique_symbols);

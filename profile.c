@@ -303,7 +303,7 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
 	    ++match->marked_non_recursive;
 	}
 	
-	if (!list->next)
+	if (!list->prev)
 	    match->self += size;
 	
 	tree = &(match->children);

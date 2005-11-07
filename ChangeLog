@@ -1,3 +1,7 @@
+Sun Nov  6 23:03:49 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (add_trace_to_tree): Test for !prev instead of !next.
+
 Sun Nov  6  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: updates

@@ -342,9 +342,15 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	return;
     }
 
-    /* FIXME: get the real error message */
-    if (!collector_start (app->collector, NULL))
+    if (collector_start (app->collector, NULL))
     {
+	delete_data (app);
+
+	app->state = PROFILING;
+    }
+    else
+    {
+	/* FIXME: get the real error message */
 	sorry (app->main_window,
 	       "Can't open /proc/sysprof-trace. You need to insert\n"
 	       "the sysprof kernel module. Run\n"
@@ -352,12 +358,6 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	       "       modprobe sysprof-module\n"
 	       "\n"
 	       "as root.");
-    }
-    else
-    {
-	delete_data (app);
-
-	app->state = PROFILING;
     }
 
     update_sensitivity (app);
@@ -639,6 +639,8 @@ ensure_profile (Application *app)
     
     app->profile = collector_create_profile (app->collector);
 
+    collector_stop (app->collector);
+    
     fill_lists (app);
     
     app->state = DISPLAYING;
@@ -689,7 +691,10 @@ on_reset_clicked (gpointer widget, gpointer data)
     delete_data (app);
     
     if (app->state == DISPLAYING)
+    {
 	app->state = INITIAL;
+	collector_stop (app->collector);
+    }
     
     update_sensitivity (app);
 
@@ -817,6 +822,8 @@ set_loaded_profile (Application *app,
     set_application_title (app, name);
     
     update_sensitivity (app);
+    
+    collector_stop (app->collector);
     
     set_busy (app->main_window, FALSE);
 }

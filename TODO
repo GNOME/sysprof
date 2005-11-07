@@ -13,8 +13,8 @@ Before 1.0.1:
 
      Someone already did create a package - should be googlable.
 
-* Press start without kernel module loaded, then load kernel module and 
-  press start again. Segmentation fault.
+* See if we can reproduce this: Press start without kernel module loaded,
+  then load kernel module and press start again. Segmentation fault. 
 
 Before 1.2:
 
@@ -23,8 +23,6 @@ Before 1.2:
   just another gtk+ bug.
 
 * Don't build the GUI if gtk+ is not installed
-
-* Handle time being set back in the RESET_DEAD_PERIOD code.
 
 * Find out if the first sort order of a GtkTreeView column can be changed
   programmatically.
@@ -120,6 +118,8 @@ Before 1.2:
 	- 
 	
 * See if the auto-expanding can be made more intelligent
+	- "Everything" should be expanded exactly one level
+	- all nodes should be expanded at least one level
 
 * Send entire stack to user space, then do stackwalking there. That would
   allow us to do more complex algorithms, like dwarf, in userspace. Though
@@ -210,7 +210,6 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 
 - support more than one reader of the samples properly
 	- Don't generate them if noone cares
-	- When not profiling, sysprof shouldn't care
 
 - Add ability to show more than one function at a time. Algorithm:
 	Find all relevant nodes;
@@ -237,13 +236,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.
-- Make things faster
-	- Can I get it to profile itself?
-	- speedprof seems to report that lots of time is spent in 
-	  stack_stash_foreach() and also in generate_key()
-- add an 'everything' object. It is really needed for a lot of things
-	- should be easy to do with stackstash reorganization.
-
+	Probably better to send a list of maps with each trace.
 - Figure out how Google's pprof script works. Then add real call graph 
   drawing. (google's script is really simple; uses dot from graphviz).
 
@@ -432,6 +425,18 @@ Later:
 
 
 DONE:
+
+- When not profiling, sysprof shouldn't keep the file open.
+
+- Make things faster
+	- Can I get it to profile itself?
+	- speedprof seems to report that lots of time is spent in 
+	  stack_stash_foreach() and also in generate_key()
+- add an 'everything' object. It is really needed for a lot of things
+	- should be easy to do with stackstash reorganization.
+
+
+* Handle time being set back in the RESET_DEAD_PERIOD code.
 
 - total should probably be cached so that compute_total() doesn't
   take 80% of the time to generate a profile.

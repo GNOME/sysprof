@@ -1,3 +1,19 @@
+Sun Nov  6  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: updates
+
+	* collector.c (on_read): Only call back when a new sample actually
+	arrived.
+
+	* collector.c (collector_stop): close the filedescriptor
+
+	* sysprof.c (on_start_toggled): Change sense of test.
+
+	* sysprof.c (ensure_profile): Stop the collector.
+
+	* sysprof.c (on_reset_clicked): Stop the collector when state
+	becomes INITIAL.
+
 Sun Nov  6 18:31:23 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* stackstash.c (stack_stash_foreach): 

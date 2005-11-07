@@ -138,10 +138,10 @@ on_read (gpointer data)
 	add_trace_to_stash (&trace, collector->stash);
 	
 	collector->n_samples++;
-    }
     
-    if (collector->callback)
-	collector->callback (collector->data);
+	if (collector->callback)
+	    collector->callback (collector->data);
+    }
 }
 
 static gboolean
@@ -205,7 +205,13 @@ collector_start (Collector *collector,
 void
 collector_stop (Collector *collector)
 {
-    fd_set_read_callback (collector->fd, NULL);
+    if (collector->fd >= 0)
+    {
+	fd_remove_watch (collector->fd);
+	
+	close (collector->fd);
+	collector->fd = -1;
+    }
 }
 
 void

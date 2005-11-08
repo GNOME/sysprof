@@ -66,8 +66,14 @@ struct Application
     GtkWidget *		reset_item;
     GtkWidget *		save_as_item;
     GtkWidget *		open_item;
+    GtkWidget *		screenshot_item;
     
     GtkWidget *		samples_label;
+
+    gboolean		screenshot_window_visible;
+    GtkWidget *		screenshot_textview;
+    GtkWidget *		screenshot_close_button;
+    GtkWidget *         screenshot_window;
     
     Profile *		profile;
     ProfileDescendant * descendants;
@@ -227,6 +233,14 @@ update_sensitivity (Application *app)
     gtk_widget_set_sensitive (GTK_WIDGET (app->descendants_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->samples_label), sensitive_samples_label);
 
+    if (app->screenshot_window_visible)
+	gtk_widget_show (app->screenshot_window);
+    else
+	gtk_widget_hide (app->screenshot_window);
+
+    gtk_check_menu_item_set_active (
+	GTK_CHECK_MENU_ITEM (app->screenshot_item), app->screenshot_window_visible);
+    
     queue_show_samples (app);
 }
 
@@ -1107,6 +1121,34 @@ on_callers_row_activated (GtkTreeView *tree_view,
 }
 
 static void
+on_screenshot_activated (GtkCheckMenuItem *menu_item,
+			 Application      *app)
+{
+    app->screenshot_window_visible = gtk_check_menu_item_get_active (menu_item);
+
+    update_sensitivity (app);
+}
+
+static void
+on_screenshot_window_delete (GtkWidget   *window,
+			     GdkEvent    *event,
+			     Application *app)
+{
+    app->screenshot_window_visible = FALSE;
+
+    update_sensitivity (app);
+}
+
+static void
+on_screenshot_close_button_clicked (GtkWidget *widget,
+				    Application *app)
+{
+    app->screenshot_window_visible = FALSE;
+
+    update_sensitivity (app);
+}
+
+static void
 set_sizes (GtkWindow *window,
 	   GtkWidget *hpaned,
 	   GtkWidget *vpaned)
@@ -1219,6 +1261,7 @@ build_gui (Application *app)
     app->reset_item = glade_xml_get_widget (xml, "reset_item");
     app->open_item = glade_xml_get_widget (xml, "open_item");
     app->save_as_item = glade_xml_get_widget (xml, "save_as_item");
+    app->screenshot_item = glade_xml_get_widget (xml, "screenshot_item");
     
     g_assert (app->start_item);
     g_assert (app->profile_item);
@@ -1239,6 +1282,9 @@ build_gui (Application *app)
     
     g_signal_connect (G_OBJECT (app->save_as_item), "activate",
 		      G_CALLBACK (on_save_as_clicked), app);
+
+    g_signal_connect (G_OBJECT (app->screenshot_item), "activate",
+		      G_CALLBACK (on_screenshot_activated), app);
 
     g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit")), "activate",
 		      G_CALLBACK (on_delete), NULL);
@@ -1277,10 +1323,24 @@ build_gui (Application *app)
     g_signal_connect (app->descendants_view, "row-activated",
 		      G_CALLBACK (on_descendants_row_activated), app);
     gtk_tree_view_column_set_expand (col, TRUE);
-    
+
     gtk_widget_grab_focus (GTK_WIDGET (app->object_view));
+
+    /* Screenshot window */
+    app->screenshot_window = glade_xml_get_widget (xml, "screenshot_window");
+    app->screenshot_textview = glade_xml_get_widget (xml, "screenshot_textview");
+    app->screenshot_close_button = glade_xml_get_widget (xml, "screenshot_close_button");
+
+    g_signal_connect (app->screenshot_window, "delete_event",
+		      G_CALLBACK (on_screenshot_window_delete), app);
+
+    g_signal_connect (app->screenshot_close_button, "clicked",
+		      G_CALLBACK (on_screenshot_close_button_clicked), app);
+    
+    /* hide/show widgets */
     gtk_widget_show_all (app->main_window);
     gtk_widget_hide (app->dummy_button);
+    gtk_widget_hide (app->screenshot_window);
     
     queue_show_samples (app);
 

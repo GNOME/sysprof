@@ -23,7 +23,6 @@
 #include <glib.h>
 
 typedef struct StackStash StackStash;
-
 typedef struct StackNode StackNode;
 
 struct StackNode
@@ -45,6 +44,9 @@ typedef void (* StackFunction) (GList   *trace,
 				gint     size,
 				gpointer data);
 
+typedef void (* StackNodeFunc) (StackNode *node,
+				gpointer data);
+
 /* Stach */
 StackStash *stack_stash_new       (void);
 void        stack_stash_add_trace (StackStash      *stash,
@@ -59,11 +61,6 @@ void	    stack_node_foreach_trace (StackNode *node,
 				      gpointer      data);
 StackNode  *stack_stash_find_node (StackStash      *stash,
 				   gpointer         address);
-/* FIXME: should probably return a list */
-void	    stack_node_list_leaves (StackNode  *node,
-				    GList     **leaves);
-typedef void (* StackNodeFunc) (StackNode *node,
-				gpointer data);
 void	    stack_stash_foreach_by_address (StackStash *stash,
 					    StackNodeFunc func,
 					    gpointer	  data);

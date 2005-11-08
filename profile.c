@@ -484,7 +484,8 @@ profile_get_objects (Profile *profile)
 {
     GList *objects = NULL;
     
-    stack_stash_foreach_by_address (profile->stash, build_object_list, &objects);
+    stack_stash_foreach_by_address (
+	profile->stash, build_object_list, &objects);
     
     /* FIXME: everybody still assumes that they don't have to free the
      * objects in the list, but these days they do, and so we are leaking.

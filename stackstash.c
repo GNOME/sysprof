@@ -138,6 +138,7 @@ do_callback (StackNode *node,
 
     if (trace)
 	trace->prev = &link;
+
     link.next = trace;
     link.data = node->address;
     link.prev = NULL;
@@ -202,19 +203,6 @@ stack_stash_find_node (StackStash      *stash,
     g_return_val_if_fail (stash != NULL, NULL);
     
     return g_hash_table_lookup (stash->nodes_by_data, data);
-}
-
-void
-stack_node_list_leaves (StackNode  *node,
-			GList     **leaves)
-{
-    StackNode *n;
-    
-    if (node->size > 0)
-	*leaves = g_list_prepend (*leaves, node);
-    
-    for (n = node->children; n != NULL; n = n->siblings)
-	stack_node_list_leaves (n, leaves);
 }
 
 typedef struct

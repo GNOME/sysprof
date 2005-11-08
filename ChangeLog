@@ -1,3 +1,14 @@
+Mon Nov  7 23:42:26 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c: Add beginning of a screenshot
+	window.
+
+	* sysprof.glade: Add screenshot window plus menu items.
+
+	* stackstash.c: Remove unused function stack_node_list_leaves()
+
+ 	* xmlstore.c: Various crack
+
 Sun Nov  6 23:03:49 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* profile.c (add_trace_to_tree): Test for !prev instead of !next.

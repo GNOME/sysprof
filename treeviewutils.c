@@ -39,11 +39,11 @@ tree_view_unset_sort_ids (GtkTreeView *tree_view)
 {
 	GList *columns = gtk_tree_view_get_columns (tree_view);
 	GList *l;
-
+	
 	for (l = columns; l; l = l->next) {
 		gtk_tree_view_column_set_sort_column_id (l->data, -1);
 	}
-
+	
 	g_list_free (columns);
 }
 
@@ -52,12 +52,12 @@ tree_view_set_sort_ids (GtkTreeView *tree_view)
 {
 	GList *columns = gtk_tree_view_get_columns (tree_view);
 	GList *l;
-
+	
 	for (l = columns; l; l = l->next) {
 		int column_id = GPOINTER_TO_INT (g_object_get_data (l->data, "mi-saved-sort-column"));
 		gtk_tree_view_column_set_sort_column_id (l->data, column_id);
 	}
-
+	
 	g_list_free (columns);
 }
 
@@ -72,9 +72,9 @@ list_iter_get_index (GtkTreeModel *model,
 	g_assert (gtk_tree_path_get_depth (path) == 1);
 	result = gtk_tree_path_get_indices (path)[0];
 	gtk_tree_path_free (path);
-
+	
 	return result;
-
+	
 }
 
 GtkTreeViewColumn *
@@ -82,7 +82,7 @@ add_plain_text_column (GtkTreeView *view, const gchar *title, gint model_column)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
-
+	
 	renderer = gtk_cell_renderer_text_new ();
 	g_object_set (renderer, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	column = gtk_tree_view_column_new_with_attributes (title, renderer,
@@ -91,7 +91,7 @@ add_plain_text_column (GtkTreeView *view, const gchar *title, gint model_column)
 	gtk_tree_view_column_set_resizable (column, TRUE);
 	gtk_tree_view_append_column (view, column);
 	column_set_sort_id (column, model_column);
-
+	
 	return column;
 }
 
@@ -103,7 +103,7 @@ pointer_to_text (GtkTreeViewColumn *tree_column,
 	gpointer p;
 	gchar *text;
 	int column = GPOINTER_TO_INT (data);
-
+	
 	gtk_tree_model_get (tree_model, iter, column, &p, -1);
 	text = g_strdup_printf ("%p", p);
         g_object_set (cell, "text", text, NULL);
@@ -123,11 +123,11 @@ double_to_text (GtkTreeViewColumn *tree_column,
 	gdouble d;
 	gchar *text;
 	ColumnInfo *info = data;
-
+	
 	gtk_tree_model_get (tree_model, iter, info->column, &d, -1);
-
+	
 	text = g_strdup_printf (info->format, d);
-
+	
         g_object_set (cell, "text", text, NULL);
         g_free (text);
 }
@@ -146,21 +146,21 @@ add_double_format_column (GtkTreeView *view, const gchar *title, gint model_colu
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 	ColumnInfo *column_info = g_new (ColumnInfo, 1);
-
+	
 	renderer = gtk_cell_renderer_text_new ();
 	g_object_set (renderer, "xalign", 1.0, NULL);
-
+	
 	column = gtk_tree_view_column_new ();
 	gtk_tree_view_column_set_title  (column, title);
 	gtk_tree_view_column_pack_start (column, renderer, TRUE);
 	gtk_tree_view_column_set_resizable (column, FALSE);
-
+	
 	column_info->column = model_column;
 	column_info->format = g_strdup (format);
 	
 	gtk_tree_view_column_set_cell_data_func (column, renderer,
 						 double_to_text, column_info, free_column_info);
-
+	
 	gtk_tree_view_append_column (view, column);
 	column_set_sort_id (column, model_column);
 	
@@ -172,9 +172,9 @@ add_pointer_column (GtkTreeView *view, const gchar *title, gint model_column)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
-
+	
 	renderer = gtk_cell_renderer_text_new ();
-
+	
 	column = gtk_tree_view_column_new ();
 	if (title)
 		gtk_tree_view_column_set_title  (column, title);
@@ -182,7 +182,7 @@ add_pointer_column (GtkTreeView *view, const gchar *title, gint model_column)
 	gtk_tree_view_column_set_resizable (column, TRUE);
 	gtk_tree_view_column_set_cell_data_func (column, renderer,
 						 pointer_to_text, GINT_TO_POINTER (model_column), NULL);
-
+	
 	gtk_tree_view_append_column (view, column);
 	column_set_sort_id (column, model_column);
 	
@@ -202,7 +202,7 @@ save_sort_state (GtkTreeView *view)
 {
 	SortState *state = NULL;
 	GtkTreeModel *model = gtk_tree_view_get_model (view);
-
+	
 	if (model && GTK_IS_TREE_SORTABLE (model)) {
 		state = g_new (SortState, 1);
 		state->is_sorted = gtk_tree_sortable_get_sort_column_id (
@@ -218,7 +218,7 @@ restore_sort_state (GtkTreeView *view, gpointer st)
 {
 	SortState *state = st;
 	GtkTreeModel *model = gtk_tree_view_get_model (view);
-
+	
 	if (state) {
 		if (state->is_sorted && model && GTK_IS_TREE_SORTABLE (model)) {
 			gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model),
@@ -229,4 +229,42 @@ restore_sort_state (GtkTreeView *view, gpointer st)
 	}
 	
 	gtk_tree_sortable_sort_column_changed (GTK_TREE_SORTABLE (model));
+}
+
+
+static void
+process_iter (GtkTreeView      *view,
+	      GtkTreeIter      *iter,
+	      VisibleCallback   callback,
+	      gpointer          data)
+{
+	GtkTreeModel *model = gtk_tree_view_get_model (view);
+	GtkTreePath *path;
+	GtkTreeIter child;
+	
+	path = gtk_tree_model_get_path (model, iter);
+	
+	callback (view, path, iter, data);
+	
+	if (gtk_tree_view_row_expanded (view, path)) {
+		if (gtk_tree_model_iter_children (model, &child, iter))	{
+			do {
+				process_iter (view, &child, callback, data);
+			} while (gtk_tree_model_iter_next (model, &child));
+		}
+	}
+	
+	gtk_tree_path_free (path);
+}
+
+void
+tree_view_foreach_visible (GtkTreeView *view,
+			   VisibleCallback callback,
+			   gpointer data)
+{
+	GtkTreeModel *model = gtk_tree_view_get_model (view);
+	GtkTreeIter iter;
+	
+	if (gtk_tree_model_get_iter_first (model, &iter))
+		process_iter (view, &iter, callback, data);
 }

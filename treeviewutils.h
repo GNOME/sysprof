@@ -43,3 +43,11 @@ GtkTreeViewColumn *add_pointer_column       (GtkTreeView *view,
 gpointer           save_sort_state          (GtkTreeView *view);
 void               restore_sort_state       (GtkTreeView *view,
 					     gpointer     state);
+
+typedef void (* VisibleCallback) (GtkTreeView  *view,
+				  GtkTreePath  *path,
+				  GtkTreeIter  *iter,
+				  gpointer      data);
+void tree_view_foreach_visible (GtkTreeView *view,
+				VisibleCallback callback,
+				gpointer data);

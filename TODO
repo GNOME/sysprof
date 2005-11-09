@@ -184,6 +184,12 @@ Before 1.2:
 	UI: "generate screenshot" menu item pops up a window with
 	a text area + a radio buttons "text/html". When you flick
 	them, the text area is automatically updated.
+	- beginning in CVS:
+		- why does the window not remember its position when
+		  you close it with the close button, but does remember
+		  it when you use the wm button or the menu item? It actually
+		  seems that it only forgets the position when you click the
+		  button with the mouse. But not if you use the keyboard ...
 
 - Find out how gdb does backtraces; they may have a better way. Also
   find out what dwarf2 is and how to use it. Look into libunwind.

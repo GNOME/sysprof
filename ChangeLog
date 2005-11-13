@@ -1,3 +1,10 @@
+Sat Nov 12 23:39:29 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (set_sizes): Put the vertical splitter at 3/8 *
+	screen_width.
+
+	* configure.ac: Disable warning.
+
 Sat Nov 12 19:44:43 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (read_frame): New function that uses

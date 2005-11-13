@@ -1231,13 +1231,12 @@ set_sizes (GtkWindow *window,
     gtk_window_resize (window, width, height);
     
     gtk_paned_set_position (GTK_PANED (vpaned), height / 2);
-    gtk_paned_set_position (GTK_PANED (hpaned), width / 2);
+    gtk_paned_set_position (GTK_PANED (hpaned), width * 3 / 8);
     
     width = monitor.width * 5 / 8;
-    height = monitor.height * 5/ 8;
+    height = monitor.height * 5 / 8;
     
     gtk_window_resize (screenshot_window, width, height);
-    
 }
 
 static void

@@ -117,25 +117,27 @@ Makefile
 
 AC_OUTPUT
 
-echo
-echo "%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%"
-echo "@"
-echo "@      Thank you for testing cvs HEAD of sysprof."
-echo "%"
-echo "%      There are currently no known bugs in the kernel"
-echo "@      module in this version, but there could easily be"
-echo "%      unknown ones. Please report any crashes or lockups"
-echo "@      that you experience."
-echo "%"
-echo "@"
-echo "%      If you need a stable version of sysprof, either"
-echo "@      get version 1.0 from"
-echo "%"
-echo "@          http://www.daimi.au.dk/~sandmann/sysprof"
-echo "%"
-echo "@      or do"
-echo "%"
-echo "@          cvs -z3 upd -r sysprof-1-0"
-echo "%"
-echo "@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@"
-echo
+if 0; then
+   echo
+   echo "%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%"
+   echo "@"  
+   echo "%      Thank you for testing cvs HEAD of sysprof."
+   echo "@"
+   echo "%      There are currently no known bugs in the kernel"
+   echo "@      module in this version, but there could easily be"
+   echo "%      unknown ones. Please report any crashes or lockups"
+   echo "@      that you experience."
+   echo "%"
+   echo "@"
+   echo "%      If you need a stable version of sysprof, either"
+   echo "@      get version 1.0 from"
+   echo "%"
+   echo "@          http://www.daimi.au.dk/~sandmann/sysprof"
+   echo "%"
+   echo "@      or do"
+   echo "%"
+   echo "@          cvs -z3 upd -r sysprof-1-0"
+   echo "%"
+   echo "@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@"
+   echo
+fi

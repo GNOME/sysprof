@@ -18,6 +18,8 @@ Before 1.0.1:
 
 Before 1.2:
 
+* Add "sysprof --version"
+
 * With kernel module not installed, select Profiler->Start, then dismiss
   the alert. This causes the start button to appear prelighted. Probably
   just another gtk+ bug.
@@ -134,7 +136,8 @@ Before 1.2:
 	when the interrupt happens in kernel mode. (Unfortunately, this
 	causes lockups on many kernels).
 	
-	We don't take any stacktraces of the kernel though. Things that need to be
+	We don't take any stacktraces of the kernel though. Things that
+	need to be
 	investigated:
 		- does the kernel come with dwarf debug information?
 		- does the kernel come with some other debug info
@@ -149,6 +152,8 @@ Before 1.2:
 
   and what that actually makes the stack look like. (We may want to just
   special case this fake dso in the symbol lookup code).
+
+  Maybe get_user_pages() is the way forward at least for some stuff.
 
 * Correctness
 	- When the module is unloaded, kill all processes blocking in read

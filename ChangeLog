@@ -1,3 +1,16 @@
+Sat Nov 12 19:44:43 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (read_frame): New function that uses
+	copy_from_user_inatomic() as check_user_pages_readable() has
+	disappeared in recent kernels.
+	
+	* module/sysprof-module.c (timer_notify): Use it here.
+	
+	* TODO: Updates
+
+	* configure.ac: Change the wording of the CVS HEAD warning as this
+	change seems to also have fixed the lockup with rawhide kernels.
+
 Wed Nov  9 00:24:11 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* treeviewutils.[ch]: Add new tree_view_foreach_visible()

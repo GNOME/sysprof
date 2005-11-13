@@ -220,6 +220,27 @@ static int pages_present(StackFrame * head)
 }
 #endif /* CONFIG_X86_4G */
 
+static int
+read_frame (void *frame_pointer, StackFrame *frame)
+{
+#if 0
+	/* This is commented out because we seem to be called with
+	 * (current_thread_info()->addr_limit.seg)) == 0
+	 * which means access_ok() _always_ fails.
+	 *
+	 * Not sure why (or even if) this isn't the case for oprofile
+	 */
+	if (!access_ok(VERIFY_READ, frame_pointer, sizeof(StackFrame)))
+		return 1;
+#endif
+
+	if (__copy_from_user_inatomic (
+		    frame, frame_pointer, sizeof (StackFrame)))
+		return 2;
+
+	return 0;
+}
+
 static int timer_notify (struct pt_regs *regs)
 {
 #ifdef CONFIG_HIGHMEM
@@ -227,7 +248,7 @@ static int timer_notify (struct pt_regs *regs)
 #else
 #  define START_OF_STACK 0xBFFFFFFF
 #endif
-	StackFrame *frame;
+	void *frame_pointer;
 	static int n_samples;
 	SysprofStackTrace *trace = head;
 	int i;
@@ -256,17 +277,39 @@ static int timer_notify (struct pt_regs *regs)
 	}
 
 	trace->addresses[i++] = (void *)regs->REG_INS_PTR;
-	
-	frame = (StackFrame *)regs->REG_FRAME_PTR;
-	
-	while (pages_present (frame)				&&
-	       i < SYSPROF_MAX_ADDRESSES			&&
-	       ((unsigned long)frame) < START_OF_STACK		&&
-	       (unsigned long)frame >= regs->REG_STACK_PTR)
+
+#if 0
+	if (is_user)
 	{
-		trace->addresses[i++] = (void *)frame->return_address;
-		frame = (StackFrame *)frame->next;
+#endif
+		StackFrame frame;
+		int result;
+
+		frame_pointer = (void *)regs->REG_FRAME_PTR;
+
+		while (((result = read_frame (frame_pointer, &frame)) == 0)		&&
+		       i < SYSPROF_MAX_ADDRESSES			&&
+		       ((unsigned long)frame_pointer) < START_OF_STACK	&&
+		       (unsigned long)frame_pointer >= regs->REG_STACK_PTR)
+		{
+			trace->addresses[i++] = (void *)frame.return_address;
+			frame_pointer = (StackFrame *)frame.next;
+		}
+
+#if 0
+		if (result) {
+			trace->addresses[i++] = (void *)0x23456789;
+			trace->addresses[i++] = current_thread_info()->addr_limit.seg;
+			trace->addresses[i++] = regs->REG_FRAME_PTR;
+			trace->addresses[i++] = result;
+			trace->addresses[i++] = 0x98765432;
+		}
+		else
+			trace->addresses[i++] = 0x10101010;
+#endif
+#if 0
 	}
+#endif
 	
 	trace->n_addresses = i;
 	

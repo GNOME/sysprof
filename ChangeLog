@@ -1,3 +1,8 @@
+2005-11-13  Soeren Sandmann  <sandmann@redhat.com>
+
+	* process.c: Add some experimental (and unused) code to look up
+	kernel symbols.
+
 Sat Nov 12 23:39:29 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (set_sizes): Put the vertical splitter at 3/8 *

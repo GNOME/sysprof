@@ -54,9 +54,9 @@ struct Process
     
     GList *maps;
     GList *bad_pages;
-
+    
     int pid;
-
+    
     Symbol undefined;
 };
 
@@ -95,7 +95,7 @@ read_maps (int pid)
 	guint start;
 	guint end;
 	guint offset;
-
+	
 #if 0
 	g_print ("buffer: %s\n", buffer);
 #endif
@@ -106,7 +106,7 @@ read_maps (int pid)
 	if (count == 4)
 	{
 	    Map *map;
-
+	    
 	    map = g_new (Map, 1);
 	    
 	    map->filename = g_strdup (file);
@@ -139,12 +139,12 @@ create_process (const char *cmdline, int pid)
     Process *p;
     
     p = g_new0 (Process, 1);
-
+    
     if (*cmdline != '\0')
 	p->cmdline = g_strdup_printf ("[%s]", cmdline);
     else
 	p->cmdline = g_strdup_printf ("[pid %d]", pid);
-
+    
     p->bad_pages = NULL;
     p->maps = NULL;
     p->pid = pid;
@@ -187,7 +187,7 @@ process_free_maps (Process *process)
     for (list = process->maps; list != NULL; list = list->next)
     {
 	Map *map = list->data;
-
+	
 	if (map->filename)
 	    g_free (map->filename);
 	
@@ -213,15 +213,15 @@ void
 process_ensure_map (Process *process, int pid, gulong addr)
 {
     /* Round down to closest page */
-
+    
     addr = (addr - addr % PAGE_SIZE);
-
+    
     if (process_has_page (process, addr))
 	return;
     
     if (g_list_find (process->bad_pages, (gpointer)addr))
 	return;
-
+    
     /* a map containing addr was not found */
     if (process->maps)
 	process_free_maps (process);
@@ -256,7 +256,7 @@ get_cmdline (int pid)
 {
     char *cmdline;
     char *filename = idle_free (g_strdup_printf ("/proc/%d/cmdline", pid));
-
+    
     if (g_file_get_contents (filename, &cmdline, NULL, NULL))
     {
 	if (*cmdline == '\0')
@@ -266,7 +266,7 @@ get_cmdline (int pid)
  	}
 	return cmdline;
     }
-
+    
     return NULL;
 }
 
@@ -275,7 +275,7 @@ get_statname (int pid)
 {
     char *stat;
     char *filename = idle_free (g_strdup_printf ("/proc/%d/stat", pid));
-
+    
 #if 0
     g_print ("stat %d\n", pid);
 #endif
@@ -285,7 +285,7 @@ get_statname (int pid)
 	char result[200];
 	
 	idle_free (stat);
-
+	
 	if (sscanf (stat, "%*d %200s %*s", result) == 1)
 	    return g_strndup (result, 200);
     }
@@ -309,13 +309,13 @@ static char *
 get_name (int pid)
 {
     char *cmdline = NULL;
-
+    
     if ((cmdline = get_cmdline (pid)))
 	return cmdline;
-
+    
     if ((cmdline = get_statname (pid)))
 	return cmdline;
-
+    
     return get_pidname (pid);
 }
 
@@ -326,37 +326,193 @@ process_get_from_pid (int pid)
     gchar *cmdline = NULL;
     
     initialize();
-
+    
     p = g_hash_table_lookup (processes_by_pid, GINT_TO_POINTER (pid));
-
+    
     if (p)
 	return p;
     
     cmdline = get_name (pid);
-
+    
     idle_free (cmdline);
     
     p = g_hash_table_lookup (processes_by_cmdline, cmdline);
     if (!p)
 	p = create_process (cmdline, pid);
-
+    
     return p;
+}
+
+#include <sys/utsname.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+
+static gboolean
+file_exists (const char *name)
+{
+    int fd;
+    fd = open (name, O_RDONLY);
+    
+    g_print ("trying: %s\n", name);
+    
+    if (fd > 0)
+    {
+	close (fd);
+	return TRUE;
+    }
+    return FALSE;
+}
+
+static gchar *
+look_for_vmlinux (void)
+{
+    struct utsname utsname;
+    char *result;
+    GList *names;
+    GList *list;
+    uname (&utsname);
+    
+    names = NULL;
+    
+    names = g_list_prepend (
+	names, g_strdup_printf (
+	    "/usr/lib/debug/lib/modules/%s/vmlinux", utsname.release));
+    
+    names = g_list_prepend (
+	names, g_strdup_printf (
+	    "/boot/vmlinux-%s", utsname.release));
+    
+    result = NULL;
+    
+    for (list = names; list != NULL; list = list->next)
+    {
+	char *name = list->data;
+	
+	if (file_exists (name))
+	{
+	    result = g_strdup (name);
+	    break;
+	}
+    }
+    
+    g_list_foreach (names, (GFunc)g_free, NULL);
+    g_list_free (names);
+    
+    return result;
+}
+
+static const gchar *
+find_kernel_binary (void)
+{
+    static gboolean looked_for_vmlinux;
+    static gchar *binary = NULL;
+    
+    if (!looked_for_vmlinux)
+    {
+	binary = look_for_vmlinux ();
+	looked_for_vmlinux = TRUE;
+    }
+    
+    return binary;
+}
+
+static void
+parse_kallsym_line (const char *line,
+		    GHashTable *table)
+{
+    char **tokens = g_strsplit_set (line, " \t", -1);
+
+    if (tokens[0] && tokens[1] && tokens[2])
+    {
+	glong address;
+	char *endptr;
+
+	address = strtoul (tokens[0], &endptr, 16);
+
+	if (*endptr == '\0')
+	{
+	    g_hash_table_insert (
+		table, GUINT_TO_POINTER (address), g_strdup (tokens[2]));
+	}
+    }
+
+    g_strfreev (tokens);
+}
+
+static void
+parse_kallsyms (const char *kallsyms,
+		GHashTable *table)
+{
+    const char *sol;
+    const char *eol;
+    
+    sol = kallsyms;
+    eol = strchr (sol, '\n');
+    while (eol)
+    {
+	char *line = g_strndup (sol, eol - sol);
+	
+	parse_kallsym_line (line, table);
+	
+	g_free (line);
+	
+	sol = eol + 1;
+	eol = strchr (sol, '\n');
+    }
+}
+
+static GHashTable *
+get_kernel_symbols (void)
+{
+    static GHashTable *kernel_syms;
+    
+    if (!kernel_syms)
+    {
+	char *kallsyms;
+	g_file_get_contents ("/proc/kallsyms", &kallsyms, NULL, NULL);
+	
+	if (kallsyms)
+	{
+	    kernel_syms = g_hash_table_new_full (g_direct_hash, g_direct_equal,
+						 NULL, g_free);
+	    
+	    parse_kallsyms (kallsyms, kernel_syms);
+	    
+	    g_free (kallsyms);
+	    g_hash_table_destroy (kernel_syms);
+	}
+    }
+
+    return NULL;
+}
+
+static const Symbol *
+lookup_kernel_symbol (gulong address)
+{
+    static Symbol kernel;
+    
+#if 0
+    g_print ("kernel binary: %s\n", find_kernel_binary ());
+#endif
+    
+    kernel.name = "In kernel";
+    kernel.address = 0x00001337;
+    return &kernel;
 }
 
 const Symbol *
 process_lookup_symbol (Process *process, gulong address)
 {
     const Symbol *result;
-    static Symbol kernel;
     Map *map = process_locate_map (process, address);
-
+    
 /*     g_print ("addr: %x\n", address); */
-
+    
     if (address == 0x1)
     {
-	kernel.name = "In kernel";
-	kernel.address = 0x00001337;
-	return &kernel;
+	return lookup_kernel_symbol (address);
     }
     else if (!map)
     {
@@ -366,27 +522,27 @@ process_lookup_symbol (Process *process, gulong address)
 		g_strdup_printf ("(??? %s)", process->cmdline);
 	    process->undefined.address = 0xBABE0001;
 	}
-
+	
 	return &process->undefined;
     }
     
     address -= map->start;
     address += map->offset;
-
+    
     if (!map->bin_file)
 	map->bin_file = bin_file_new (map->filename);
     
 /*     g_print ("%s: start: %p, load: %p\n", */
 /* 	     map->filename, map->start, bin_file_get_load_address (map->bin_file)); */
-
-     result = bin_file_lookup_symbol (map->bin_file, address);
-
+    
+    result = bin_file_lookup_symbol (map->bin_file, address);
+    
 #if 0
-     g_print (" ---> %s\n", result->name);
+    g_print (" ---> %s\n", result->name);
 #endif
-     
+    
 /*     g_print ("(%x) %x %x name; %s\n", address, map->start, map->offset, result->name); */
-
+    
     return result;
 }
 

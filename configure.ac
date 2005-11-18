@@ -117,7 +117,7 @@ Makefile
 
 AC_OUTPUT
 
-if 0; then
+if false; then
    echo
    echo "%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%"
    echo "@"  

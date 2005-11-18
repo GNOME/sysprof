@@ -1,3 +1,7 @@
+2005-11-18  Matthias Clasen  <mclasen@redhat.com>
+
+	* configure.ac: Make configure work.
+
 2005-11-13  Soeren Sandmann  <sandmann@redhat.com>
 
 	* process.c: Add some experimental (and unused) code to look up

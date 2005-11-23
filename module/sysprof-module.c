@@ -189,37 +189,6 @@ read_frame (userspace_reader *reader, unsigned long addr, StackFrame *frame)
 
 struct work_struct work;
 
-/**
- * pages_present() from OProfile
- *
- * Copyright 2002 OProfile authors
- *
- * author John Levon
- * author David Smith
- */
-
-#ifdef CONFIG_X86_4G
-/* With a 4G kernel/user split, user pages are not directly
- * accessible from the kernel, so don't try
- */
-static int pages_present(StackFrame * head)
-{
-	return 0;
-}
-#else
-/* check that the page(s) containing the frame head are present */
-static int pages_present(StackFrame * head)
-{
-	struct mm_struct * mm = current->mm;
-
-	/* FIXME: only necessary once per page */
-	if (!check_user_page_readable(mm, (unsigned long)head))
-		return 0;
-
-	return check_user_page_readable(mm, (unsigned long)(head + 1));
-}
-#endif /* CONFIG_X86_4G */
-
 static int
 read_frame (void *frame_pointer, StackFrame *frame)
 {

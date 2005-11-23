@@ -477,7 +477,7 @@ get_kernel_symbols (void)
 	{
 	    kernel_syms = g_hash_table_new_full (g_direct_hash, g_direct_equal,
 						 NULL, g_free);
-	    
+
 	    parse_kallsyms (kallsyms, kernel_syms);
 	    
 	    g_free (kallsyms);
@@ -492,7 +492,7 @@ static const Symbol *
 lookup_kernel_symbol (gulong address)
 {
     static Symbol kernel;
-    
+
 #if 0
     g_print ("kernel binary: %s\n", find_kernel_binary ());
 #endif
@@ -512,6 +512,8 @@ process_lookup_symbol (Process *process, gulong address)
     
     if (address == 0x1)
     {
+	get_kernel_symbols ();
+	
 	return lookup_kernel_symbol (address);
     }
     else if (!map)

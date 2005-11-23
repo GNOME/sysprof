@@ -1,3 +1,7 @@
+Tue Nov 22 23:38:09 2005  Soeren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c: Remove unused pages_present() function
+
 2005-11-18  Matthias Clasen  <mclasen@redhat.com>
 
 	* configure.ac: Make configure work.

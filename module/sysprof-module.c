@@ -73,121 +73,11 @@ DECLARE_WAIT_QUEUE_HEAD (wait_for_exit);
 #define SAMPLES_PER_SECOND 250
 #define INTERVAL ((HZ <= SAMPLES_PER_SECOND)? 1 : (HZ / SAMPLES_PER_SECOND))
 
-typedef struct userspace_reader userspace_reader;
-struct userspace_reader
-{
-	struct task_struct *task;
-	unsigned long cache_address;
-	unsigned long *cache;
-};
-
-#if 0
-static int
-init_userspace_reader (userspace_reader *reader,
-		       struct task_struct *task)
-{
-	reader->task = task;
-	reader->cache = kmalloc (PAGE_SIZE, GFP_KERNEL);
-	if (!reader->cache)
-		return 0;
-	reader->cache_address = 0x0;
-	return 1;
-}
-#endif
-
-#if 0
-static int
-page_readable (userspace_reader *reader, unsigned long address)
-{
-#if LINUX_VERSION_CODE >= KERNEL_VERSION (2,6,11)
-		struct mm_struct *mm;
-		int result = 1;
-
-		mm = get_mm (reader->task);
-
-		if (!mm)
-			return 0;
-		
-		if (!check_user_page_readable (reader->task->mm, address))
-			result = 0;
-
-		put_mm (mm);
-
-		return result;
-#endif
-		
-		return 1;
-}
-#endif
-
-#if 0
-static int
-read_user_space (userspace_reader *reader,
-		 unsigned long address,
-		 unsigned long *result)
-{
-	unsigned long cache_address = reader->cache_address;
-	int index, r;
-
-	if (!cache_address || cache_address != (address & PAGE_MASK))
-	{
-		if (!page_readable (reader, address))
-			return 0;
-		
-		cache_address = address & PAGE_MASK;
-
-		r = x_access_process_vm (reader->task, cache_address,
-					 reader->cache, PAGE_SIZE, 0);
-
-		if (r != PAGE_SIZE) {
-			return 0;
-		}
-
-		reader->cache_address = cache_address;
-	}
-
-	index = (address - cache_address) / sizeof (unsigned long);
-	
-	*result = reader->cache[index];
-	return 1;
-}
-#endif
-
-#if 0
-static void
-done_userspace_reader (userspace_reader *reader)
-{
-	kfree (reader->cache);
-}
-#endif
-
 typedef struct StackFrame StackFrame;
 struct StackFrame {
 	unsigned long next;
 	unsigned long return_address;
 };
-
-#if 0
-static int
-read_frame (userspace_reader *reader, unsigned long addr, StackFrame *frame)
-{
-	if (!addr || !frame)
-		return 0;
-
-	frame->next = 0;
-	frame->return_address = 0;
-	
-	if (!read_user_space (reader, addr, &(frame->next)))
-		return 0;
-
-	if (!read_user_space (reader, addr + 4, &(frame->return_address)))
-		return 0;
-
-	return 1;
-}
-#endif
-
-struct work_struct work;
 
 static int
 read_frame (void *frame_pointer, StackFrame *frame)
@@ -197,7 +87,7 @@ read_frame (void *frame_pointer, StackFrame *frame)
 	 * (current_thread_info()->addr_limit.seg)) == 0
 	 * which means access_ok() _always_ fails.
 	 *
-	 * Not sure why (or even if) this isn't the case for oprofile
+	 * Not sure why (or if) this isn't the case for oprofile
 	 */
 	if (!access_ok(VERIFY_READ, frame_pointer, sizeof(StackFrame)))
 		return 1;
@@ -210,7 +100,8 @@ read_frame (void *frame_pointer, StackFrame *frame)
 	return 0;
 }
 
-static int timer_notify (struct pt_regs *regs)
+static int
+timer_notify (struct pt_regs *regs)
 {
 #ifdef CONFIG_HIGHMEM
 #  define START_OF_STACK 0xFF000000
@@ -222,6 +113,8 @@ static int timer_notify (struct pt_regs *regs)
 	SysprofStackTrace *trace = head;
 	int i;
 	int is_user;
+	StackFrame frame;
+	int result;
 
 	if ((++n_samples % INTERVAL) != 0)
 		return 0;
@@ -247,38 +140,16 @@ static int timer_notify (struct pt_regs *regs)
 
 	trace->addresses[i++] = (void *)regs->REG_INS_PTR;
 
-#if 0
-	if (is_user)
+	frame_pointer = (void *)regs->REG_FRAME_PTR;
+	
+	while (((result = read_frame (frame_pointer, &frame)) == 0)		&&
+	       i < SYSPROF_MAX_ADDRESSES			&&
+	       ((unsigned long)frame_pointer) < START_OF_STACK	&&
+	       (unsigned long)frame_pointer >= regs->REG_STACK_PTR)
 	{
-#endif
-		StackFrame frame;
-		int result;
-
-		frame_pointer = (void *)regs->REG_FRAME_PTR;
-
-		while (((result = read_frame (frame_pointer, &frame)) == 0)		&&
-		       i < SYSPROF_MAX_ADDRESSES			&&
-		       ((unsigned long)frame_pointer) < START_OF_STACK	&&
-		       (unsigned long)frame_pointer >= regs->REG_STACK_PTR)
-		{
-			trace->addresses[i++] = (void *)frame.return_address;
-			frame_pointer = (StackFrame *)frame.next;
-		}
-
-#if 0
-		if (result) {
-			trace->addresses[i++] = (void *)0x23456789;
-			trace->addresses[i++] = current_thread_info()->addr_limit.seg;
-			trace->addresses[i++] = regs->REG_FRAME_PTR;
-			trace->addresses[i++] = result;
-			trace->addresses[i++] = 0x98765432;
-		}
-		else
-			trace->addresses[i++] = 0x10101010;
-#endif
-#if 0
+		trace->addresses[i++] = (void *)frame.return_address;
+		frame_pointer = (StackFrame *)frame.next;
 	}
-#endif
 	
 	trace->n_addresses = i;
 	
@@ -314,7 +185,6 @@ procfile_read(char *buffer,
 	return sizeof (SysprofStackTrace);
 }
 
-struct proc_dir_entry *trace_proc_file;
 static unsigned int
 procfile_poll(struct file *filp, poll_table *poll_table)
 {
@@ -328,6 +198,8 @@ procfile_poll(struct file *filp, poll_table *poll_table)
 	
 	return 0;
 }
+
+struct proc_dir_entry *trace_proc_file;
 
 int
 init_module(void)
@@ -358,4 +230,88 @@ cleanup_module(void)
 
 	printk(KERN_ALERT "sysprof: unloaded\n");
 }
+
+
+
+
+
+#if 0
+/* The old userspace_reader code - someday it may be useful again */
+
+typedef struct userspace_reader userspace_reader;
+struct userspace_reader
+{
+	struct task_struct *task;
+	unsigned long cache_address;
+	unsigned long *cache;
+};
+
+static int
+init_userspace_reader (userspace_reader *reader,
+		       struct task_struct *task)
+{
+	reader->task = task;
+	reader->cache = kmalloc (PAGE_SIZE, GFP_KERNEL);
+	if (!reader->cache)
+		return 0;
+	reader->cache_address = 0x0;
+	return 1;
+}
+
+static int
+read_user_space (userspace_reader *reader,
+		 unsigned long address,
+		 unsigned long *result)
+{
+	unsigned long cache_address = reader->cache_address;
+	int index, r;
+
+	if (!cache_address || cache_address != (address & PAGE_MASK))
+	{
+		if (!page_readable (reader, address))
+			return 0;
+		
+		cache_address = address & PAGE_MASK;
+
+		r = x_access_process_vm (reader->task, cache_address,
+					 reader->cache, PAGE_SIZE, 0);
+
+		if (r != PAGE_SIZE) {
+			return 0;
+		}
+
+		reader->cache_address = cache_address;
+	}
+
+	index = (address - cache_address) / sizeof (unsigned long);
+	
+	*result = reader->cache[index];
+	return 1;
+}
+
+static void
+done_userspace_reader (userspace_reader *reader)
+{
+	kfree (reader->cache);
+}
+
+static int
+read_frame (userspace_reader *reader, unsigned long addr, StackFrame *frame)
+{
+	if (!addr || !frame)
+		return 0;
+
+	frame->next = 0;
+	frame->return_address = 0;
+	
+	if (!read_user_space (reader, addr, &(frame->next)))
+		return 0;
+
+	if (!read_user_space (reader, addr + 4, &(frame->return_address)))
+		return 0;
+
+	return 1;
+}
+
+#endif
 

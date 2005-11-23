@@ -29,16 +29,6 @@ Before 1.2:
 * Find out if the first sort order of a GtkTreeView column can be changed
   programmatically.
 
-* Find out why we get hangs with rawhide kernels. This only happens with the
-  'trace "current"' code. See this mail:
-	
-	http://mail.nl.linux.org/kernelnewbies/2005-08/msg00157.html
-
-  esp0 points to top of kernel stack
-  esp  points to top of user stack
-
-  (Reported by Kjartan Maraas).
-
 - Fix bugs/performance issues:
 	- decorate_node should be done lazily
 	- Find out why we sometimes get completely ridicoulous stacktraces,
@@ -436,6 +426,16 @@ Later:
 
 
 DONE:
+
+* Find out why we get hangs with rawhide kernels. This only happens with the
+  'trace "current"' code. See this mail:
+	
+	http://mail.nl.linux.org/kernelnewbies/2005-08/msg00157.html
+
+  esp0 points to top of kernel stack
+  esp  points to top of user stack
+
+  (Reported by Kjartan Maraas).
 
 - When not profiling, sysprof shouldn't keep the file open.
 

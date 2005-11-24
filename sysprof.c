@@ -260,7 +260,7 @@ set_busy (GtkWidget *widget,
     if (cursor)
 	gdk_cursor_unref (cursor);
     
-    gdk_flush ();
+    gdk_display_flush (gdk_display_get_default ());
 }
 
 static void
@@ -1024,21 +1024,45 @@ expand_descendants_tree (Application *app)
     g_list_free (all_paths);
 }
 
-typedef struct
+static void
+get_data (GtkTreeView *view,
+	  GtkTreeIter *iter,
+	  gchar **name,
+	  double *self,
+	  double *cumulative)
 {
-    int text_width;
-    int self_width;
-    int cumulative_width;
-} Widths;
+    char *dummy1;
+    double dummy2;
+    double dummy3;
+    
+    GtkTreeModel *model = gtk_tree_view_get_model (view);
+    gtk_tree_model_get (
+	model, iter,
+	DESCENDANTS_NAME, name? name : &dummy1,
+	DESCENDANTS_SELF, self? self : &dummy2,
+	DESCENDANTS_NON_RECURSE, cumulative? cumulative : &dummy3,
+	-1);
+}
 
 static void
-compute_widths (GtkTreeView  *view,
-		GtkTreePath  *path,
-		GtkTreeIter  *iter,
-		gpointer      data)
+compute_text_width (GtkTreeView  *view,
+		    GtkTreePath  *path,
+		    GtkTreeIter  *iter,
+		    gpointer      data)
 {
-    GtkTreeModel *model = gtk_tree_view_get_model (view);
+    int *width = data;
+    char *name;
+
+    get_data (view, iter, &name, NULL, NULL);
+    
+    *width = MAX (g_utf8_strlen (name, -1), *width);
 }
+
+typedef struct
+{
+    int max_width;
+    GString *text;
+} AddTextInfo;
 
 static void
 add_text (GtkTreeView *view,
@@ -1046,7 +1070,25 @@ add_text (GtkTreeView *view,
 	  GtkTreeIter *iter,
 	  gpointer     data)
 {
-    Application *app = data;
+    AddTextInfo *info = data;
+    char *name;
+    double self;
+    double cumulative;
+
+    get_data (view, iter, &name, &self, &cumulative);
+    
+    g_string_append_printf (info->text, "%-*s %6.2f %6.2f\n", info->max_width, name, self, cumulative);
+}
+
+static void
+set_monospace (GtkWidget *widget)
+{
+    PangoFontDescription *desc =
+	pango_font_description_from_string ("monospace");
+    
+    gtk_widget_modify_font (widget, desc);
+    
+    pango_font_description_free (desc);
 }
 
 static void
@@ -1058,19 +1100,26 @@ update_screenshot_window (Application *app)
     
     if (app->descendants)
     {
-	Widths widths;
-
-	widths.text_width = 0;
-	widths.self_width = 0;
-	widths.cumulative_width = 0;
+	AddTextInfo info;
+	
+	info.max_width = 0;
+	info.text = g_string_new ("");
 	
 	tree_view_foreach_visible (app->descendants_view,
-				   compute_widths,
-				   &widths);
+				   compute_text_width,
+				   &info.max_width);
 
 	tree_view_foreach_visible (app->descendants_view,
 				   add_text,
-				   app);
+				   &info);
+
+	gtk_text_buffer_set_text (
+	    gtk_text_view_get_buffer (GTK_TEXT_VIEW (app->screenshot_textview)),
+	    info.text->str, -1);
+
+	set_monospace (app->screenshot_textview);
+	
+	g_string_free (info.text, TRUE);
     }
 }
 

@@ -1,3 +1,8 @@
+2005-11-23  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (update_screenshot_window): Update the screenshot
+	window.
+
 Wed Nov 23 00:44:34 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c: Various cleanups

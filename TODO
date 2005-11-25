@@ -37,6 +37,8 @@ Before 1.2:
 	- It looks like the stackstash-reorg code confuses "main" from
 	  unrelated processes. - currently it looks like if multiple
 	  "main"s are present, only one gets listed in the object list.
+		Seems to mostly happen when multiple processes are 
+		involved.
 	- Numbers in caller view are completely screwed up.
 	- It looks like it sometimes gets confused with similar but different
 	  processes: Something like:
@@ -47,6 +49,7 @@ Before 1.2:
 	- add_trace_to_tree() might be a little slow when dealing with deeply
 	  recursive profiles. Hypothesis: seen_nodes can grow large, and the
 	  algorithm is O(n^2) in the length of the trace.
+
 
 - make the things we put in a stackstash real
   objects so that

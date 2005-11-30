@@ -1,3 +1,9 @@
+2005-11-29  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (on_descendants_row_expanded_or_collapsed): New
+	function. Update screenshot window when rows are expanded and
+	collapsed.
+
 2005-11-23  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (update_screenshot_window): Update the screenshot

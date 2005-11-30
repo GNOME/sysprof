@@ -1050,7 +1050,7 @@ compute_text_width (GtkTreeView  *view,
 		    GtkTreeIter  *iter,
 		    gpointer      data)
 {
-    int *width = data;
+   int *width = data;
     char *name;
 
     get_data (view, iter, &name, NULL, NULL);
@@ -1094,8 +1094,6 @@ set_monospace (GtkWidget *widget)
 static void
 update_screenshot_window (Application *app)
 {
-    typedef gboolean (* GtkTreeModelForeachFunc) (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
-
     /* FIXME: clear the text buffer here */
     
     if (app->descendants)
@@ -1122,6 +1120,16 @@ update_screenshot_window (Application *app)
 	g_string_free (info.text, TRUE);
     }
 }
+
+static void
+on_descendants_row_expanded_or_collapsed (GtkTreeView *tree,
+					  GtkTreeIter *iter,
+					  GtkTreePath *path,
+					  Application *app)
+{
+    update_screenshot_window (app);
+}
+			     
 
 static void
 on_object_selection_changed (GtkTreeSelection *selection,
@@ -1434,6 +1442,10 @@ build_gui (Application *app)
     add_double_format_column (app->descendants_view, _("Cumulative"), DESCENDANTS_NON_RECURSE, "%.2f ");
     g_signal_connect (app->descendants_view, "row-activated",
 		      G_CALLBACK (on_descendants_row_activated), app);
+    g_signal_connect (app->descendants_view, "row_expanded",
+		      G_CALLBACK (on_descendants_row_expanded_or_collapsed), app);
+    g_signal_connect (app->descendants_view, "row_collapsed",
+		      G_CALLBACK (on_descendants_row_expanded_or_collapsed), app);
     gtk_tree_view_column_set_expand (col, TRUE);
     
     gtk_widget_grab_focus (GTK_WIDGET (app->object_view));

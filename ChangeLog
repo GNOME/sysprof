@@ -1,3 +1,8 @@
+Mon Dec 19 15:15:48 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (timer_notify): A few formatting
+	fixes. Hopefully make it work with x86-64.
+
 2005-11-29  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (on_descendants_row_expanded_or_collapsed): New

@@ -62,10 +62,12 @@ DECLARE_WAIT_QUEUE_HEAD (wait_for_exit);
 # define REG_FRAME_PTR rbp
 # define REG_INS_PTR rip
 # define REG_STACK_PTR rsp
+# define REG_STACK_PTR0 rsp0
 #elif defined(CONFIG_X86)
 # define REG_FRAME_PTR ebp
 # define REG_INS_PTR eip
 # define REG_STACK_PTR esp
+# define REG_STACK_PTR0 esp0
 #else
 # error Sysprof only supports the i386 and x86-64 architectures
 #endif
@@ -135,16 +137,17 @@ timer_notify (struct pt_regs *regs)
 	if (!is_user)
 	{
 		trace->addresses[i++] = (void *)0x01;
-		regs = (void *)current->thread.esp0 - sizeof (struct pt_regs);
+		/* FIXME: doesn't compile on x86-64 */
+		regs = (void *)current->thread.REG_STACK_PTR0 - sizeof (struct pt_regs);
 	}
 
 	trace->addresses[i++] = (void *)regs->REG_INS_PTR;
 
 	frame_pointer = (void *)regs->REG_FRAME_PTR;
 	
-	while (((result = read_frame (frame_pointer, &frame)) == 0)		&&
-	       i < SYSPROF_MAX_ADDRESSES			&&
-	       ((unsigned long)frame_pointer) < START_OF_STACK	&&
+	while (((result = read_frame (frame_pointer, &frame)) == 0)	&&
+	       i < SYSPROF_MAX_ADDRESSES				&&
+	       ((unsigned long)frame_pointer) < START_OF_STACK		&&
 	       (unsigned long)frame_pointer >= regs->REG_STACK_PTR)
 	{
 		trace->addresses[i++] = (void *)frame.return_address;

@@ -18,6 +18,8 @@ Before 1.0.1:
 
 Before 1.2:
 
+* Make it compile and work on x86-64
+
 * Add "sysprof --version"
 
 * With kernel module not installed, select Profiler->Start, then dismiss

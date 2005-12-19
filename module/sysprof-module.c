@@ -20,9 +20,6 @@
  */
 
 #include <linux/config.h>
-#if !CONFIG_PROFILING
-# error Sysprof needs a kernel with profiling support compiled in.
-#endif
 #ifdef CONFIG_SMP
 # define __SMP__
 #endif
@@ -41,8 +38,8 @@
 #include "sysprof-module.h"
 
 #include <linux/version.h>
-#if KERNEL_VERSION(2,6,11) > LINUX_VERSION_CODE
-# error Sysprof needs a Linux 2.6.11 kernel or later
+#if (KERNEL_VERSION(2,6,11) > LINUX_VERSION_CODE) || (!CONFIG_PROFILING)
+# error Sysprof needs a Linux 2.6.11 kernel or later, with profiling support compiled in.
 #endif
 #include <linux/kallsyms.h>
 
@@ -137,7 +134,6 @@ timer_notify (struct pt_regs *regs)
 	if (!is_user)
 	{
 		trace->addresses[i++] = (void *)0x01;
-		/* FIXME: doesn't compile on x86-64 */
 		regs = (void *)current->thread.REG_STACK_PTR0 - sizeof (struct pt_regs);
 	}
 

@@ -1,3 +1,7 @@
+Mon Dec 19 17:39:09 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof.c (add_text): Make the tree tree-shapeed.
+
 Mon Dec 19 15:15:48 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (timer_notify): A few formatting

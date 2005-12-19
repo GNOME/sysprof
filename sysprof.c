@@ -1044,6 +1044,12 @@ get_data (GtkTreeView *view,
 	-1);
 }
 
+static int
+get_indent (GtkTreePath *path)
+{
+    return 2 * (gtk_tree_path_get_depth (path) - 1);
+}
+
 static void
 compute_text_width (GtkTreeView  *view,
 		    GtkTreePath  *path,
@@ -1051,11 +1057,12 @@ compute_text_width (GtkTreeView  *view,
 		    gpointer      data)
 {
    int *width = data;
-    char *name;
+   char *name;
+   int indent;
+   
+   get_data (view, iter, &name, NULL, NULL);
 
-    get_data (view, iter, &name, NULL, NULL);
-    
-    *width = MAX (g_utf8_strlen (name, -1), *width);
+   *width = MAX (g_utf8_strlen (name, -1) + get_indent (path), *width);
 }
 
 typedef struct
@@ -1074,10 +1081,17 @@ add_text (GtkTreeView *view,
     char *name;
     double self;
     double cumulative;
+    int indent;
+    int i;
 
     get_data (view, iter, &name, &self, &cumulative);
+
+    indent = get_indent (path);
+
+    for (i = 0; i < indent; ++i)
+	g_string_append_c (info->text, ' ');
     
-    g_string_append_printf (info->text, "%-*s %6.2f %6.2f\n", info->max_width, name, self, cumulative);
+    g_string_append_printf (info->text, "%-*s %6.2f %6.2f\n", info->max_width - indent, name, self, cumulative);
 }
 
 static void

@@ -1,3 +1,7 @@
+Tue Dec 20 12:19:34 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* configure.ac: Add backslashes, pointed out by Ralph Siemsen.
+
 Mon Dec 19 17:39:09 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.c (add_text): Make the tree tree-shapeed.

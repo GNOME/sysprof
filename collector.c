@@ -173,12 +173,12 @@ open_fd (Collector *collector,
 {
     int fd;
     
-    fd = open ("/proc/sysprof-trace", O_RDONLY);
+    fd = open (SYSPROF_FILE, O_RDONLY);
     if (fd < 0)
     {
 	load_module();
 	
-	fd = open ("/proc/sysprof-trace", O_RDONLY);
+	fd = open (SYSPROF_FILE, O_RDONLY);
 	
 	if (fd < 0)
 	{

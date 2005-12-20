@@ -20,6 +20,8 @@
 #ifndef SYSPROF_MODULE_H
 #define SYSPROF_MODULE_H
 
+#define SYSPROF_FILE "/dev/sysprof-trace"
+
 typedef struct SysprofStackTrace SysprofStackTrace;
 
 #define SYSPROF_MAX_ADDRESSES 512

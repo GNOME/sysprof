@@ -1,0 +1,2 @@
+KERNEL=="sysprof-trace",                  MODE="0644"
+

@@ -70,15 +70,13 @@ signal_handler (int signo, gpointer data)
     g_main_loop_quit (app->main_loop);
 }
 
-#define SYSPROF_FILE "/proc/sysprof-trace"
-
 static void
 no_module (void)
 {
     perror (SYSPROF_FILE);
     fprintf (stderr,
 	     "\n"
-	     "Can't open /proc/sysprof-trace. You need to insert "
+	     "Can't open " SYSPROF_FILE ". You need to insert "
 	     "the sysprof kernel module. Run\n"
 	     "\n"
 	     "       modprobe sysprof-module\n"

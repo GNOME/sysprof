@@ -1,3 +1,18 @@
+2005-12-20  Kristian Høgsberg  <krh@redhat.com>
+
+	* Makefile.am: Dist and install udev rule.
+
+	* collector.c: (open_fd):
+	* sysprof-text.c: (no_module):
+	* sysprof.c: (on_start_toggled): Update device filename.
+
+	* 60-sysprof.rules: New udev rule file to set permissions for
+	sysprof char device.
+
+	* module/sysprof-module.c: Switch kernel module to use a misc char
+	device instead.  Start and stop the timer on device open and
+	close instead of module load and unload.
+
 Tue Dec 20 12:19:34 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* configure.ac: Add backslashes, pointed out by Ralph Siemsen.

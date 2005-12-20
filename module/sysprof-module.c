@@ -27,6 +27,7 @@
 #include <linux/kernel.h>  /* Needed for KERN_ALERT */
 #include <linux/module.h>  /* Needed by all modules */
 #include <linux/sched.h>
+#include <linux/miscdevice.h>
 
 #include <linux/proc_fs.h>
 #include <asm/uaccess.h>
@@ -166,26 +167,30 @@ timer_notify (struct pt_regs *regs)
 }
 
 static int
-procfile_read(char *buffer, 
-	      char **buffer_location, 
-	      off_t offset, 
-	      int buffer_len,
-	      int *eof,
-	      void *data)
+sysprof_read(struct file *file, char *buffer, size_t count, loff_t *offset)
 {
+	SysprofStackTrace *trace;
+	
+	if (count < sizeof *tail)
+		return -EMSGSIZE;
+
 	if (head == tail)
 		return -EWOULDBLOCK;
 	
-	*buffer_location = (char *)tail;
-	
+	printk(KERN_NOTICE "sysprof: read one trace\n");	
+
+	trace = tail;
 	if (tail++ == &stack_traces[N_TRACES - 1])
 		tail = &stack_traces[0];
 	
-	return sizeof (SysprofStackTrace);
+	if (copy_to_user(buffer, tail, sizeof *tail))
+		return -EFAULT;
+
+	return sizeof *tail;
 }
 
 static unsigned int
-procfile_poll(struct file *filp, poll_table *poll_table)
+sysprof_poll(struct file *filp, poll_table *poll_table)
 {
 	if (head != tail)
 		return POLLIN | POLLRDNORM;
@@ -198,23 +203,47 @@ procfile_poll(struct file *filp, poll_table *poll_table)
 	return 0;
 }
 
-struct proc_dir_entry *trace_proc_file;
+static int
+sysprof_open(struct inode *inode, struct file *file)
+{
+	register_timer_hook (timer_notify);
+	
+	return 0;
+}
+
+static int
+sysprof_release(struct inode *inode, struct file *file)
+{
+	unregister_timer_hook (timer_notify);
+	
+	return 0;
+}
+
+static struct file_operations sysprof_fops = {
+	.owner =	THIS_MODULE,
+        .read =         sysprof_read,
+        .poll =         sysprof_poll,
+        .open =         sysprof_open,
+        .release =      sysprof_release,
+};
+
+static struct miscdevice sysprof_miscdev = {
+	MISC_DYNAMIC_MINOR,
+	"sysprof-trace",
+	&sysprof_fops
+};
 
 int
 init_module(void)
 {
-	trace_proc_file =
-		create_proc_entry ("sysprof-trace", S_IFREG | S_IRUGO, &proc_root);
-	
-	if (!trace_proc_file)
-		return 1;
-	
-	trace_proc_file->read_proc = procfile_read;
-	trace_proc_file->proc_fops->poll = procfile_poll;
-	trace_proc_file->size = sizeof (SysprofStackTrace);
+	int ret;
 
-	register_timer_hook (timer_notify);
-	
+	ret = misc_register(&sysprof_miscdev);
+	if (ret) {
+		printk(KERN_ERR "sysprof: failed to register misc device\n");
+		return ret;
+	}
+
 	printk(KERN_ALERT "sysprof: loaded\n");
 	
 	return 0;
@@ -223,9 +252,7 @@ init_module(void)
 void
 cleanup_module(void)
 {
-	unregister_timer_hook (timer_notify);
-	
-	remove_proc_entry("sysprof-trace", &proc_root);
+	misc_deregister(&sysprof_miscdev);
 
 	printk(KERN_ALERT "sysprof: unloaded\n");
 }

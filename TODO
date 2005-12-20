@@ -150,21 +150,6 @@ Before 1.2:
 
   Maybe get_user_pages() is the way forward at least for some stuff.
 
-* Correctness
-	- When the module is unloaded, kill all processes blocking in read
-		- or block unloading until all processes have exited
-	  Unfortunately this is basically impossible to do with a /proc
-	  file (no open() notification). So, for 1.0 this will have to be
-	  a dont-do-that-then. For 1.2, we should do it with a sysfs and
-	  kobject instead.
-
-	- When the module is unloaded, can we somehow *guarantee* that no
-	  kernel thread is active? Doesn't look like it; however we can
-	  get close by decreasing a ref count just before returning
-	  from the module. (There may still be return instructions etc.
-	  that will get run). This may not be an issue with the timer
-  	  based scanning we are using currently.
-
 - See if there is a way to make it distcheck
 
 - grep FIXME - not10
@@ -431,6 +416,21 @@ Later:
 
 
 DONE:
+
+* Correctness
+	- When the module is unloaded, kill all processes blocking in read
+		- or block unloading until all processes have exited
+	  Unfortunately this is basically impossible to do with a /proc
+	  file (no open() notification). So, for 1.0 this will have to be
+	  a dont-do-that-then. For 1.2, we should do it with a sysfs and
+	  kobject instead.
+
+	- When the module is unloaded, can we somehow *guarantee* that no
+	  kernel thread is active? Doesn't look like it; however we can
+	  get close by decreasing a ref count just before returning
+	  from the module. (There may still be return instructions etc.
+	  that will get run). This may not be an issue with the timer
+  	  based scanning we are using currently.
 
 * Find out why we get hangs with rawhide kernels. This only happens with the
   'trace "current"' code. See this mail:

@@ -27,6 +27,7 @@
 #include "treeviewutils.h"
 #include "profile.h"
 #include "collector.h"
+#include "module/sysprof-module.h"
 
 /* FIXME - not10 */
 #define _(a) a
@@ -366,7 +367,7 @@ on_start_toggled (GtkWidget *widget, gpointer data)
     {
 	/* FIXME: get the real error message */
 	sorry (app->main_window,
-	       "Can't open /proc/sysprof-trace. You need to insert\n"
+	       "Can't open " SYSPROF_FILE ". You need to insert\n"
 	       "the sysprof kernel module. Run\n"
 	       "\n"
 	       "       modprobe sysprof-module\n"

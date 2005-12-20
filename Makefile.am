@@ -37,6 +37,9 @@ sysprof_CPPFLAGS =				\
 
 sysprof_LDADD = $(GUI_DEP_LIBS)
 
+udevdir = $(sysconfdir)/udev/rules.d
+dist_udev_DATA = 60-sysprof.rules
+
 pixmapsdir = $(datadir)/pixmaps
 
 dist_pkgdata_DATA = sysprof.glade

@@ -177,8 +177,6 @@ sysprof_read(struct file *file, char *buffer, size_t count, loff_t *offset)
 	if (head == tail)
 		return -EWOULDBLOCK;
 	
-	printk(KERN_NOTICE "sysprof: read one trace\n");	
-
 	trace = tail;
 	if (tail++ == &stack_traces[N_TRACES - 1])
 		tail = &stack_traces[0];

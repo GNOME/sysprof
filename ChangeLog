@@ -1,3 +1,8 @@
+2005-12-20  Kristian Høgsberg  <krh@redhat.com>
+
+	* module/sysprof-module.c (sysprof_read): Remove left over debug
+	print out.
+
 Tue Dec 20 16:03:29 2005  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Updates

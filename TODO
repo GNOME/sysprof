@@ -52,7 +52,6 @@ Before 1.2:
 	  recursive profiles. Hypothesis: seen_nodes can grow large, and the
 	  algorithm is O(n^2) in the length of the trace.
 
-
 - make the things we put in a stackstash real
   objects so that
 	- we can save them
@@ -100,9 +99,12 @@ Before 1.2:
 	* Make provisions for forward compatibility: maybe it should be possible
 	  to load records with more fields than specified.
 
-* Figure out how to make sfile.[ch] use less memory.
+	* Figure out how to make sfile.[ch] use less memory.
+	
 	- In general clean sfile.[ch] up a little:
+	
 	- split out dfa in its own generic class
+	
 	- make a generic representation of xml files with quarks for strings:
 		struct item { 
 			int begin/end/text;
@@ -111,12 +113,12 @@ Before 1.2:
 		}
 	  perhaps even with iterators. Should be compact and suitable for both
 	  input and output..
-	- make the api a little saner; add format/content structs
-	- 
+
+	- make the api saner; add format/content structs
 	
 * See if the auto-expanding can be made more intelligent
 	- "Everything" should be expanded exactly one level
-	- all nodes should be expanded at least one level
+	- all trees should be expanded at least one level
 
 * Send entire stack to user space, then do stackwalking there. That would
   allow us to do more complex algorithms, like dwarf, in userspace. Though

@@ -176,9 +176,28 @@ open_fd (Collector *collector,
     fd = open (SYSPROF_FILE, O_RDONLY);
     if (fd < 0)
     {
-	load_module();
-	
-	fd = open (SYSPROF_FILE, O_RDONLY);
+	if (load_module())
+	{
+	    GTimer *timer = g_timer_new ();
+	    
+	    while (fd < 0 && g_timer_elapsed (timer, NULL) < 0.5)
+	    {
+		usleep (100000);
+
+		g_print ("open\n");
+		
+		fd = open (SYSPROF_FILE, O_RDONLY);
+	    }
+
+	    g_timer_destroy (timer);
+	    
+	    if (fd < 0)
+	    {
+		/* FIXME: set "module is loaded but no file error" */
+	    }
+	}
+
+	/* Wait for udev to discover the new device */
 	
 	if (fd < 0)
 	{

@@ -75,13 +75,13 @@ no_module (void)
 {
     perror (SYSPROF_FILE);
     fprintf (stderr,
-	     "\n"
-	     "Can't open " SYSPROF_FILE ". You need to insert "
-	     "the sysprof kernel module. Run\n"
-	     "\n"
-	     "       modprobe sysprof-module\n"
-	     "\n"
-	     "as root.\n");
+            "\n"
+            "Can't open " SYSPROF_FILE ". You need to insert "
+            "the sysprof kernel module. Run\n"
+            "\n"
+            "       modprobe sysprof-module\n"
+            "\n"
+            "as root.\n");
 }
 
 static void
@@ -92,7 +92,7 @@ usage (const char *name)
 	     "Usage: \n"
 	     "    %s <outfile>\n"
 	     "\n"
-	     "On SIGTERM or SIGINT (Ctrl-C) write the profile to <outfile>\n"
+	     "On SIGTERM or SIGINT (Ctrl-C) the profile will be written to <outfile>\n"
 	     "\n",
 	     name);
 }
@@ -103,38 +103,33 @@ main (int argc,
 {
     gboolean quit;
     Application *app = g_new0 (Application, 1);
-    int fd;
     
-    fd = open (SYSPROF_FILE, O_RDONLY);
+    app->collector = collector_new (NULL, NULL);
+    app->outfile = g_strdup (argv[1]);
+    app->main_loop = g_main_loop_new (NULL, 0);
 
+    /* FIXME: get the real error */
     quit = FALSE;
     
-    if (fd < 0)
+    if (!collector_start (app->collector, NULL))
     {
-	no_module ();
+	no_module();
 	quit = TRUE;
     }
-
+    
     if (argc < 2)
     {
 	usage (argv[0]);
 	quit = TRUE;
     }
-    
+
     if (quit)
 	return -1;
-
-    app->collector = collector_new (NULL, NULL);
-    app->outfile = g_strdup (argv[1]);
-    app->main_loop = g_main_loop_new (NULL, 0);
-
+    
     /* FIXME: check the errors */
     signal_set_handler (SIGTERM, signal_handler, app, NULL);
     signal_set_handler (SIGINT, signal_handler, app, NULL);
 
-    /* FIXME: check the error */
-    collector_start (app->collector, NULL);
-    
     g_main_loop_run (app->main_loop);
 
     signal_unset_handler (SIGTERM);

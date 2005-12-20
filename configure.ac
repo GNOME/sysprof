@@ -62,9 +62,9 @@ if test $kernel_module = "yes"; then
   KMICRO=`uname -r | cut -d"." -f 3 | cut -d"-" -f 1`
 
   if [[ $KMICRO -lt 11 ]] ; then
-     echo *
-     echo * Linux \>= 2.6.11 is required
-     echo *
+     echo \*
+     echo \* Linux \>= 2.6.11 is required
+     echo \*
      exit 1
   fi
 

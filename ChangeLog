@@ -1,3 +1,8 @@
+Tue Dec 20 12:21:16 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* configure.ac: Add missing backslashes, pointed out by Ralph
+	Siemsen.
+
 Mon Dec 19 15:46:27 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* =-=-=-= Release sysprof 1.0.1 =-=-=-=

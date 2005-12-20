@@ -51,9 +51,9 @@ MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
 static SysprofStackTrace	stack_traces[N_TRACES];
 static SysprofStackTrace *	head = &stack_traces[0];
-static SysprofStackTrace *	tail = &stack_traces[0];
+static atomic_t			client_count = ATOMIC_INIT(0);
+
 DECLARE_WAIT_QUEUE_HEAD (wait_for_trace);
-DECLARE_WAIT_QUEUE_HEAD (wait_for_exit);
 
 /* Macro the names of the registers that are used on each architecture */
 #if defined(CONFIG_X86_64)
@@ -170,6 +170,7 @@ static int
 sysprof_read(struct file *file, char *buffer, size_t count, loff_t *offset)
 {
 	SysprofStackTrace *trace;
+	SysprofStackTrace *tail = file->private_data;
 	
 	if (count < sizeof *tail)
 		return -EMSGSIZE;
@@ -184,16 +185,20 @@ sysprof_read(struct file *file, char *buffer, size_t count, loff_t *offset)
 	if (copy_to_user(buffer, tail, sizeof *tail))
 		return -EFAULT;
 
+	file->private_data = tail;
+
 	return sizeof *tail;
 }
 
 static unsigned int
-sysprof_poll(struct file *filp, poll_table *poll_table)
+sysprof_poll(struct file *file, poll_table *poll_table)
 {
+	SysprofStackTrace *tail = file->private_data;
+
 	if (head != tail)
 		return POLLIN | POLLRDNORM;
 	
-	poll_wait(filp, &wait_for_trace, poll_table);
+	poll_wait(file, &wait_for_trace, poll_table);
 
 	if (head != tail)
 		return POLLIN | POLLRDNORM;
@@ -204,15 +209,21 @@ sysprof_poll(struct file *filp, poll_table *poll_table)
 static int
 sysprof_open(struct inode *inode, struct file *file)
 {
-	register_timer_hook (timer_notify);
+	int retval;
+
+	if (atomic_inc_return(&client_count) == 1)
+		retval = register_timer_hook (timer_notify);
+
+	file->private_data = head;
 	
-	return 0;
+	return retval;
 }
 
 static int
 sysprof_release(struct inode *inode, struct file *file)
 {
-	unregister_timer_hook (timer_notify);
+	if (atomic_dec_return(&client_count) == 0)
+		unregister_timer_hook (timer_notify);
 	
 	return 0;
 }

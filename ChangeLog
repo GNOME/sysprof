@@ -1,7 +1,7 @@
 2005-12-20  Kristian Høgsberg  <krh@redhat.com>
 
-	* module/sysprof-module.c (sysprof_read): Remove left over debug
-	print out.
+	* module/sysprof-module.c: Remove left over debug print out and
+	add support for multiple clients (readers).
 
 Tue Dec 20 16:03:29 2005  Soeren Sandmann  <sandmann@redhat.com>
 

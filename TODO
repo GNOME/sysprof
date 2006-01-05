@@ -1,4 +1,4 @@
-Before 1.0.1:
+Before 1.0.2:
 
 * See if we can reproduce the problem where libraries didn't get correctly
   reloaded after new versions were installed.
@@ -96,8 +96,8 @@ Before 1.2:
 	  if it doesn't, load as 1.0, otherwise as whatever the version claims
 	  it is.
 
-	* Make provisions for forward compatibility: maybe it should be possible
-	  to load records with more fields than specified.
+	* Make provisions for forward compatibility: maybe it should be
+	  possible to load records with more fields than specified.
 
 	* Figure out how to make sfile.[ch] use less memory.
 	
@@ -154,7 +154,7 @@ Before 1.2:
 
 - See if there is a way to make it distcheck
 
-- grep FIXME - not10
+- grep "FIXME - not10"
 
 - translation should be hooked up 
 
@@ -201,9 +201,6 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 - Charge 'self' properly to processes that don't get any stack trace at all 
 	(probably we get that for free with stackstash reorganisation)
 
-- support more than one reader of the samples properly
-	- Don't generate them if noone cares
-
 - Add ability to show more than one function at a time. Algorithm:
 	Find all relevant nodes;
 	For each relevant node
@@ -218,6 +215,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 			add trace to tree (leaf, interesting)
 - Consider adding KDE-style nested callgraph view
 	- probably need a dependency on gtk+ 2.8 (cairo) for this.
+	- Matthias has code for something like this.
 - Add support for line numbers within functions
 	- Possibly a special "view details" mode, assuming that 
 	  the details of a function are not that interesting 
@@ -225,7 +223,6 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	  in the right pane).
 - rethink caller list, not terribly useful at the moment. Federico suggested
   listing all ancestors.
-
 
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.
@@ -418,6 +415,9 @@ Later:
 
 
 DONE:
+
+* support more than one reader of the samples properly
+	- Don't generate them if noone cares
 
 * Correctness
 	- When the module is unloaded, kill all processes blocking in read

@@ -918,6 +918,9 @@ on_delete (GtkWidget *window,
 	   Application *app)
 {
     /* Workaround for http://bugzilla.gnome.org/show_bug.cgi?id=317775
+     *
+     * Without it, the read callbacks can fire _after_ gtk_main_quit()
+     * has been called and cause stuff to be called on destroyed widgets.
      */
     while (gtk_main_iteration ())
 	;
@@ -1430,7 +1433,8 @@ build_gui (Application *app)
     /* TreeViews */
     
     /* object view */
-    app->object_view = (GtkTreeView *)glade_xml_get_widget (xml, "object_view");
+    app->object_view =
+	(GtkTreeView *)glade_xml_get_widget (xml, "object_view");
     gtk_tree_view_set_enable_search (app->object_view, FALSE);
     col = add_plain_text_column (app->object_view, _("Functions"), OBJECT_NAME);
     add_double_format_column (app->object_view, _("Self"), OBJECT_SELF, "%.2f ");
@@ -1463,8 +1467,6 @@ build_gui (Application *app)
 		      G_CALLBACK (on_descendants_row_expanded_or_collapsed), app);
     gtk_tree_view_column_set_expand (col, TRUE);
     
-    gtk_widget_grab_focus (GTK_WIDGET (app->object_view));
-    
     /* screenshot window */
     app->screenshot_window = glade_xml_get_widget (xml, "screenshot_window");
     app->screenshot_textview = glade_xml_get_widget (xml, "screenshot_textview");
@@ -1486,7 +1488,8 @@ build_gui (Application *app)
     gtk_widget_show_all (app->main_window);
     gtk_widget_hide (app->dummy_button);
     gtk_widget_hide (app->screenshot_window);
-    
+     
+    gtk_widget_grab_focus (GTK_WIDGET (app->object_view));
     queue_show_samples (app);
     
     return TRUE;

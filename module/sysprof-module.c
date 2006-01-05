@@ -95,7 +95,7 @@ read_frame (void *frame_pointer, StackFrame *frame)
 
 	if (__copy_from_user_inatomic (
 		    frame, frame_pointer, sizeof (StackFrame)))
-		return 2;
+		return 1;
 
 	return 0;
 }

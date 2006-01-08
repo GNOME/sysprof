@@ -240,6 +240,8 @@ collector_reset (Collector *collector)
 {
     if (collector->stash)
 	stack_stash_free (collector->stash);
+
+    process_flush_caches();
     
     collector->stash = stack_stash_new ();
     collector->n_samples = 0;

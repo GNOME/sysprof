@@ -1,3 +1,9 @@
+Sun Jan  8 03:22:22 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* process.c (process_flush_caches): Resurrect this function.
+
+	* collector.c (collector_reset): Call it from here
+
 Sun Jan  8 02:19:34 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: update

@@ -59,6 +59,6 @@ const Symbol *process_lookup_symbol_with_filename (Process    *process,
 						   const char *filename,
 						   gulong      address);
 const char *  process_get_cmdline                 (Process    *process);
-
+void	      process_flush_caches                (void);
 
 #endif

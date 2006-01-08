@@ -18,6 +18,17 @@ Before 1.0.2:
 
 Before 1.2:
 
+* - Run a.out generated normally with gcc.
+  - Run sysprof
+  - hit profile
+  - Kill a.out
+  - strip a.out
+  - run a.out
+  - hit start
+  - hit profile
+  At this point we should not get any symbols, but we do. There is some
+  sort of bad caching going on.
+
 * Make it compile and work on x86-64
 
 * Add "sysprof --version"

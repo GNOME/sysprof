@@ -1,3 +1,8 @@
+Mon Jan  9 09:56:46 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (timer_notify): Remove START_OF_STACK
+	check.
+
 Mon Jan  9 00:53:35 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* process.c (read_maps): Use gulong for addresses. Bug reported by

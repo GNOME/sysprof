@@ -92,8 +92,8 @@ read_maps (int pid)
     {
 	char file[256];
 	int count;
-	guint start;
-	guint end;
+	gulong start;
+	gulong end;
 	guint offset;
 	
 #if 0
@@ -101,7 +101,7 @@ read_maps (int pid)
 #endif
 	
 	count = sscanf (
-	    buffer, "%x-%x %*15s %x %*x:%*x %*u %255s", 
+	    buffer, "%lx-%lx %*15s %x %*x:%*x %*u %255s", 
 	    &start, &end, &offset, file);
 	if (count == 4)
 	{

@@ -1,3 +1,8 @@
+Mon Jan  9 00:59:21 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* process.c (read_maps): Use gulong for addresses. Bug reported by
+	Martin Reddy.
+
 Sun Jan  8 03:22:22 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* process.c (process_flush_caches): Resurrect this function.

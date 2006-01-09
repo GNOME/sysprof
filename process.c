@@ -54,7 +54,7 @@ struct Process
     
     GList *maps;
     GList *bad_pages;
-
+    
     int pid;
 };
 
@@ -90,21 +90,21 @@ read_maps (int pid)
     {
 	char file[256];
 	int count;
-	guint start;
-	guint end;
+	gulong start;
+	gulong end;
 	guint offset;
-
+	
 #if 0
 	g_print ("buffer: %s\n", buffer);
 #endif
 	
 	count = sscanf (
-	    buffer, "%x-%x %*15s %x %*x:%*x %*u %255s", 
+	    buffer, "%lx-%lx %*15s %x %*x:%*x %*u %255s", 
 	    &start, &end, &offset, file);
 	if (count == 4)
 	{
 	    Map *map;
-
+	    
 	    map = g_new (Map, 1);
 	    
 	    map->filename = g_strdup (file);
@@ -137,12 +137,12 @@ create_process (const char *cmdline, int pid)
     Process *p;
     
     p = g_new (Process, 1);
-
+    
     if (*cmdline != '\0')
 	p->cmdline = g_strdup_printf ("[%s]", cmdline);
     else
 	p->cmdline = g_strdup_printf ("[pid %d]", pid);
-
+    
     p->bad_pages = NULL;
     p->maps = NULL;
     p->pid = pid;
@@ -183,7 +183,7 @@ process_free_maps (Process *process)
     for (list = process->maps; list != NULL; list = list->next)
     {
 	Map *map = list->data;
-
+	
 	if (map->filename)
 	    g_free (map->filename);
 	
@@ -209,15 +209,15 @@ void
 process_ensure_map (Process *process, int pid, gulong addr)
 {
     /* Round down to closest page */
-
+    
     addr = (addr - addr % PAGE_SIZE);
-
+    
     if (process_has_page (process, addr))
 	return;
     
     if (g_list_find (process->bad_pages, (gpointer)addr))
 	return;
-
+    
     /* a map containing addr was not found */
     if (process->maps)
 	process_free_maps (process);
@@ -252,7 +252,7 @@ get_cmdline (int pid)
 {
     char *cmdline;
     char *filename = idle_free (g_strdup_printf ("/proc/%d/cmdline", pid));
-
+    
     if (g_file_get_contents (filename, &cmdline, NULL, NULL))
     {
 	if (*cmdline == '\0')
@@ -262,7 +262,7 @@ get_cmdline (int pid)
  	}
 	return cmdline;
     }
-
+    
     return NULL;
 }
 
@@ -271,7 +271,7 @@ get_statname (int pid)
 {
     char *stat;
     char *filename = idle_free (g_strdup_printf ("/proc/%d/stat", pid));
-
+    
 #if 0
     g_print ("stat %d\n", pid);
 #endif
@@ -281,7 +281,7 @@ get_statname (int pid)
 	char result[200];
 	
 	idle_free (stat);
-
+	
 	if (sscanf (stat, "%*d %200s %*s", result) == 1)
 	    return g_strndup (result, 200);
     }
@@ -305,13 +305,13 @@ static char *
 get_name (int pid)
 {
     char *cmdline = NULL;
-
+    
     if ((cmdline = get_cmdline (pid)))
 	return cmdline;
-
+    
     if ((cmdline = get_statname (pid)))
 	return cmdline;
-
+    
     return get_pidname (pid);
 }
 
@@ -322,14 +322,14 @@ process_get_from_pid (int pid)
     gchar *cmdline = NULL;
     
     initialize();
-
+    
     p = g_hash_table_lookup (processes_by_pid, GINT_TO_POINTER (pid));
-
+    
     if (p)
 	return p;
     
     cmdline = get_name (pid);
-
+    
     p = g_hash_table_lookup (processes_by_cmdline, cmdline);
     if (p)
 	return p;
@@ -344,9 +344,9 @@ process_lookup_symbol (Process *process, gulong address)
     const Symbol *result;
     static Symbol kernel;
     Map *map = process_locate_map (process, address);
-
+    
 /*     g_print ("addr: %x\n", address); */
-
+    
     if (!map)
     {
 	if (address == 0x1)
@@ -371,14 +371,14 @@ process_lookup_symbol (Process *process, gulong address)
 #if 0
     g_print ("has map: %s\n", process->cmdline);
 #endif
-
+    
 #if 0
     g_print ("has map: %s\n", process->cmdline);
 #endif
     
 /*     if (map->do_offset) */
 /*       address -= map->start; */
-
+    
 #if 0
     /* convert address to file coordinates */
     g_print ("looking up %p  ", address);
@@ -386,21 +386,21 @@ process_lookup_symbol (Process *process, gulong address)
     
     address -= map->start;
     address += map->offset;
-
+    
     if (!map->bin_file)
 	map->bin_file = bin_file_new (map->filename);
     
 /*     g_print ("%s: start: %p, load: %p\n", */
 /* 	     map->filename, map->start, bin_file_get_load_address (map->bin_file)); */
-
-     result = bin_file_lookup_symbol (map->bin_file, address);
-
+    
+    result = bin_file_lookup_symbol (map->bin_file, address);
+    
 #if 0
-     g_print (" ---> %s\n", result->name);
+    g_print (" ---> %s\n", result->name);
 #endif
-     
+    
 /*     g_print ("(%x) %x %x name; %s\n", address, map->start, map->offset, result->name); */
-
+    
     return result;
 }
 

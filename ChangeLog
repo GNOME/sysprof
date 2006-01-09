@@ -1,3 +1,8 @@
+Mon Jan  9 00:53:35 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* process.c (read_maps): Use gulong for addresses. Bug reported by
+	Martin Reddy.
+
 Tue Dec 20 12:21:16 2005  Søren Sandmann  <sandmann@redhat.com>
 
 	* configure.ac: Add missing backslashes, pointed out by Ralph

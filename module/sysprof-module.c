@@ -103,11 +103,6 @@ read_frame (void *frame_pointer, StackFrame *frame)
 static int
 timer_notify (struct pt_regs *regs)
 {
-#ifdef CONFIG_HIGHMEM
-#  define START_OF_STACK 0xFF000000
-#else
-#  define START_OF_STACK 0xBFFFFFFF
-#endif
 	void *frame_pointer;
 	static int n_samples;
 	SysprofStackTrace *trace = head;
@@ -144,7 +139,6 @@ timer_notify (struct pt_regs *regs)
 	
 	while (((result = read_frame (frame_pointer, &frame)) == 0)	&&
 	       i < SYSPROF_MAX_ADDRESSES				&&
-	       ((unsigned long)frame_pointer) < START_OF_STACK		&&
 	       (unsigned long)frame_pointer >= regs->REG_STACK_PTR)
 	{
 		trace->addresses[i++] = (void *)frame.return_address;

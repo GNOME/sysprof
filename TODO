@@ -16,18 +16,11 @@ Before 1.0.2:
 * See if we can reproduce this: Press start without kernel module loaded,
   then load kernel module and press start again. Segmentation fault. 
 
+* Test on x86-64. 
+
 Before 1.2:
 
-* - Run a.out generated normally with gcc.
-  - Run sysprof
-  - hit profile
-  - Kill a.out
-  - strip a.out
-  - run a.out
-  - hit start
-  - hit profile
-  At this point we should not get any symbols, but we do. There is some
-  sort of bad caching going on.
+* Add spew infrastructure to make remote debugging easier.
 
 * Make it compile and work on x86-64
 
@@ -426,6 +419,17 @@ Later:
 
 
 DONE:
+
+* - Run a.out generated normally with gcc.
+  - Run sysprof
+  - hit profile
+  - Kill a.out
+  - strip a.out
+  - run a.out
+  - hit start
+  - hit profile
+  At this point we should not get any symbols, but we do. There is some
+  sort of bad caching going on.
 
 * support more than one reader of the samples properly
 	- Don't generate them if noone cares

@@ -182,10 +182,9 @@ open_fd (Collector *collector,
 	    
 	    while (fd < 0 && g_timer_elapsed (timer, NULL) < 0.5)
 	    {
+		/* Give udev time to create the device */
 		usleep (100000);
 
-		g_print ("open\n");
-		
 		fd = open (SYSPROF_FILE, O_RDONLY);
 	    }
 

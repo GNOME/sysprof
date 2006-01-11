@@ -1,3 +1,9 @@
+Wed Jan 11 17:51:54 2006  Søren Sandmann  <sandmann@redhat.com>
+
+	* collector.c: Remove debug spew. 
+
+	* TODO: updates
+
 Mon Jan  9 09:58:25 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (timer_notify): Remove START_OF_STACK

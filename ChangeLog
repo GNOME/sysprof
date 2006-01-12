@@ -1,3 +1,8 @@
+Wed Jan 11 20:23:06 2006  Søren Sandmann  <sandmann@redhat.com>
+
+	* process.c (read_maps): Also make offset a gulong (Samuel
+	Mimram).
+
 Mon Jan  9 09:56:46 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (timer_notify): Remove START_OF_STACK

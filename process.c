@@ -92,14 +92,14 @@ read_maps (int pid)
 	int count;
 	gulong start;
 	gulong end;
-	guint offset;
+	gulong offset;
 	
 #if 0
 	g_print ("buffer: %s\n", buffer);
 #endif
 	
 	count = sscanf (
-	    buffer, "%lx-%lx %*15s %x %*x:%*x %*u %255s", 
+	    buffer, "%lx-%lx %*15s %lx %*x:%*x %*u %255s", 
 	    &start, &end, &offset, file);
 	if (count == 4)
 	{

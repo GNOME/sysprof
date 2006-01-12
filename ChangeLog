@@ -1,3 +1,7 @@
+Wed Jan 11 20:31:11 2006  Søren Sandmann  <sandmann@redhat.com>
+
+	* process.c (read_maps): Also make offset a gulong (Samuel Mimram)
+
 Wed Jan 11 17:51:54 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* collector.c: Remove debug spew. 

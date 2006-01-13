@@ -1,3 +1,8 @@
+2006-01-13  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (INTERVAL): Backport fix for HZ <=
+	SAMPLES_PER_SECOND from HEAD. (Thomas de Grenier de Latour).
+
 Wed Jan 11 20:23:06 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* process.c (read_maps): Also make offset a gulong (Samuel

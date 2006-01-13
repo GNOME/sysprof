@@ -50,7 +50,7 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
 #define SAMPLES_PER_SECOND (200)
-#define INTERVAL (HZ / SAMPLES_PER_SECOND)
+#define INTERVAL ((HZ <= SAMPLES_PER_SECOND)? 1 : (HZ / SAMPLES_PER_SECOND))
 #define N_TRACES 256
 
 static SysprofStackTrace	stack_traces[N_TRACES];

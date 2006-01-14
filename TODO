@@ -129,6 +129,7 @@ Before 1.2:
   we'd lose the ability to do non-racy file naming. We could pass a list
   of the process mappings with each stack though. Doing this would also solve
   the problem of not being able to get maps of processes running as root.
+	Might be too expensive though.
 
 * If interrupt happens in kernel mode, send both
   kernel stack and user space stack, have userspace stitch them
@@ -419,6 +420,8 @@ Later:
 
 
 DONE:
+
+* Find out why we sometimes get reports of time spent by [pid 0].
 
 * - Run a.out generated normally with gcc.
   - Run sysprof

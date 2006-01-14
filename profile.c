@@ -331,6 +331,8 @@ profile_create_descendants (Profile *profile,
     
     while (node)
     {
+	g_print ("node: %s (%d)\n", node->address, node->size);
+	
 	if (node->toplevel)
 	    stack_node_foreach_trace (node, add_trace_to_tree, &tree);
 	
@@ -473,7 +475,7 @@ build_object_list (StackNode *node, gpointer data)
     obj->total = compute_total (node);
 
     obj->self = 0;
-    for (n = node; n != NULL; n = n->siblings)
+    for (n = node; n != NULL; n = n->next)
 	obj->self += n->size;
     
     *objects = g_list_prepend (*objects, obj);

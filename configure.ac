@@ -86,11 +86,12 @@ fi
 core_dep="glib-2.0"
 gui_dep="gtk+-2.0 > 2.6.0 gdk-pixbuf-2.0 pangoft2 libglade-2.0"
 
-PKG_CHECK_MODULES(CORE_DEP, $core_dep, [],
-	          AC_MSG_ERROR([sysprof dependencies not satisfied]))
+PKG_CHECK_MODULES(CORE_DEP, $core_dep, [], AC_MSG_ERROR([sysprof dependencies not satisfied]))
 
-PKG_CHECK_MODULES(GUI_DEP, $gui_dep, [],
-	          AC_MSG_ERROR([sysprof dependencies not satisfied]))
+build_gui=yes
+PKG_CHECK_MODULES(GUI_DEP, $gui_dep, [], build_gui=no)
+
+AM_CONDITIONAL([BUILD_GUI], [test "$build_gui" = yes])
 
 # libiberty and libbfd
 

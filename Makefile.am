@@ -1,7 +1,11 @@
 SUBDIRS = $(MODULE_SUBDIR)
 DIST_SUBDIRS = module
 
-bin_PROGRAMS = sysprof sysprof-text
+bin_PROGRAMS = sysprof-text
+
+if BUILD_GUI
+bin_PROGRAMS += sysprof 
+endif
 
 SYSPROF_CORE =					\
 	binfile.h				\
@@ -23,6 +27,7 @@ SYSPROF_CORE =					\
 #
 # GUI version
 #
+if BUILD_GUI
 
 sysprof_SOURCES =				\
 	$(SYSPROF_CORE)				\
@@ -36,6 +41,8 @@ sysprof_CPPFLAGS =				\
 	-DPIXMAPDIR=\"$(pixmapsdir)\"
 
 sysprof_LDADD = $(GUI_DEP_LIBS)
+
+endif
 
 udevdir = $(sysconfdir)/udev/rules.d
 dist_udev_DATA = 60-sysprof.rules

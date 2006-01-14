@@ -1062,7 +1062,6 @@ compute_text_width (GtkTreeView  *view,
 {
    int *width = data;
    char *name;
-   int indent;
    
    get_data (view, iter, &name, NULL, NULL);
 

@@ -20,6 +20,11 @@ Before 1.0.2:
 
 Before 1.2:
 
+* Consider deleting cmdline hack in process.c and replace with something at 
+  the symbol resolution level.
+
+* Fix (deleted) problem.
+
 * Add spew infrastructure to make remote debugging easier.
 
 * Make it compile and work on x86-64
@@ -29,8 +34,6 @@ Before 1.2:
 * With kernel module not installed, select Profiler->Start, then dismiss
   the alert. This causes the start button to appear prelighted. Probably
   just another gtk+ bug.
-
-* Don't build the GUI if gtk+ is not installed
 
 * Find out if the first sort order of a GtkTreeView column can be changed
   programmatically.
@@ -136,7 +139,8 @@ Before 1.2:
   together. well, they could be stitched together in the kernel. 
 	Already done: we now take a stacktrace of the user space process
 	when the interrupt happens in kernel mode. (Unfortunately, this
-	causes lockups on many kernels).
+	causes lockups on many kernels (though I haven't seen that for
+	a while)).
 	
 	We don't take any stacktraces of the kernel though. Things that
 	need to be
@@ -206,7 +210,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 - Charge 'self' properly to processes that don't get any stack trace at all 
 	(probably we get that for free with stackstash reorganisation)
 
-- Add ability to show more than one function at a time. Algorithm:
+- Consider adding ability to show more than one function at a time. Algorithm:
 	Find all relevant nodes;
 	For each relevant node
 		best_so_far = relevant node
@@ -420,6 +424,8 @@ Later:
 
 
 DONE:
+
+* Don't build the GUI if gtk+ is not installed
 
 * Find out why we sometimes get reports of time spent by [pid 0].
 

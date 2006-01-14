@@ -1,3 +1,12 @@
+Sat Jan 14 18:24:43 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* configure.ac, Makefile.am: Only build GUI when the necessary
+	dependencies are found.
+
+	* sysprof.c (compute_text_width): Remove unused variable
+
+	* profile.c (build_object_list): Follow next instead of siblings.
+
 Fri Jan 13 23:11:33 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: updates

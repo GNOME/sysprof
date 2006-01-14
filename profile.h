@@ -30,7 +30,10 @@ typedef struct ProfileCaller ProfileCaller;
 
 struct ProfileObject
 {
-    char *		name;		/* identifies this object uniquely */
+    char *		name;		/* identifies this object uniquely
+					 * (the pointer itself, not the
+					 *  string)
+					 */
     
     guint		total;		/* sum of all toplevel totals */
     guint		self;		/* sum of all selfs */

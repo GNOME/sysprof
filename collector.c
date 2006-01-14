@@ -114,7 +114,7 @@ on_read (gpointer data)
     
     if (rd == -1 && errno == EWOULDBLOCK)
 	return;
-    
+
     g_get_current_time (&now);
     
     /* After a reset we ignore samples for a short period so that

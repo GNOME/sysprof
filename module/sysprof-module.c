@@ -175,8 +175,10 @@ sysprof_read(struct file *file, char *buffer, size_t count, loff_t *offset)
 	trace = tail;
 	if (tail++ == &stack_traces[N_TRACES - 1])
 		tail = &stack_traces[0];
+
+	BUG_ON(trace->pid == 0);
 	
-	if (copy_to_user(buffer, tail, sizeof *tail))
+	if (copy_to_user(buffer, trace, sizeof *trace))
 		return -EFAULT;
 
 	file->private_data = tail;
@@ -203,7 +205,7 @@ sysprof_poll(struct file *file, poll_table *poll_table)
 static int
 sysprof_open(struct inode *inode, struct file *file)
 {
-	int retval;
+	int retval = 0;
 
 	if (atomic_inc_return(&client_count) == 1)
 		retval = register_timer_hook (timer_notify);

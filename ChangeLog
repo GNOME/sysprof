@@ -1,3 +1,10 @@
+Fri Jan 13 22:59:48 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (sysprof_open): Initialize retval.
+
+	* module/sysprof-module.c (sysprof_read): Copy contents of trace,
+	not tail to the buffer.
+
 Wed Jan 11 20:31:11 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* process.c (read_maps): Also make offset a gulong (Samuel Mimram)

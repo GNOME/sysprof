@@ -331,8 +331,6 @@ profile_create_descendants (Profile *profile,
     
     while (node)
     {
-	g_print ("node: %s (%d)\n", node->address, node->size);
-	
 	if (node->toplevel)
 	    stack_node_foreach_trace (node, add_trace_to_tree, &tree);
 	
@@ -346,90 +344,112 @@ static ProfileCaller *
 profile_caller_new (void)
 {
     ProfileCaller *caller = g_new (ProfileCaller, 1);
+
     caller->next = NULL;
     caller->self = 0;
     caller->total = 0;
+
     return caller;
+}
+
+static void
+add_to_list (gpointer key,
+	     gpointer value,
+	     gpointer user_data)
+{
+    GList **list = user_data;
+
+    *list = g_list_prepend (*list, value);
+}
+
+static GList *
+listify_hash_table (GHashTable *hash_table)
+{
+    GList *result = NULL;
+    
+    g_hash_table_foreach (hash_table, add_to_list, &result);
+
+    return result;
 }
 
 ProfileCaller *
 profile_list_callers (Profile       *profile,
 		      char          *callee_name)
 {
-    StackNode *callee_node;
+    StackNode *callees;
     StackNode *node;
-    GHashTable *callers_by_object;
-    GHashTable *seen_callers;
+    GHashTable *callers_by_name;
     ProfileCaller *result = NULL;
+
+    callers_by_name = g_hash_table_new (g_direct_hash, g_direct_equal);
     
-    callers_by_object =
-	g_hash_table_new (g_direct_hash, g_direct_equal);
-    seen_callers = g_hash_table_new (g_direct_hash, g_direct_equal);
-    
-    callee_node = stack_stash_find_node (profile->stash, callee_name);
-    
-    for (node = callee_node; node; node = node->next)
+    callees = stack_stash_find_node (profile->stash, callee_name);
+
+    for (node = callees; node != NULL; node = node->next)
     {
-	char *object;
-	
-	if (node->parent)
-	    object = node->parent->address;
-	else
-	    object = NULL;
-	
-	if (!g_hash_table_lookup (callers_by_object, object))
-	{
-	    ProfileCaller *caller = profile_caller_new ();
-	    caller->name = object;
-	    g_hash_table_insert (callers_by_object, object, caller);
-	    
-	    caller->next = result;
-	    result = caller;
-	}
-    }
-    
-    for (node = callee_node; node != NULL; node = node->next)
-    {
-	StackNode *top_caller;
-	StackNode *top_callee;
 	StackNode *n;
-	ProfileCaller *caller;
-	char *object;
-	
-	if (node->parent)
-	    object = node->parent->address;
-	else
-	    object = NULL;
-	
-	caller = g_hash_table_lookup (callers_by_object, object);
-	
-	/* find topmost node/parent pair identical to this node/parent */
-	top_caller = node->parent;
-	top_callee = node;
-	for (n = node; n && n->parent; n = n->parent)
+	gboolean seen_recursive_call;
+	GHashTable *total_ancestors;
+	GHashTable *all_ancestors;
+	GList *all, *list;
+
+	/* Build a list of those ancestor that should get assigned
+	 * totals. If this callee does not have any recursive calls
+	 * higher up, that means all of it's ancestors. If it does
+	 * have a recursive call, only the one between this node
+	 * and the recursive call should get assigned total
+	 */
+	seen_recursive_call = FALSE;
+	all_ancestors = g_hash_table_new (g_direct_hash, g_direct_equal);
+	total_ancestors = g_hash_table_new (g_direct_hash, g_direct_equal);
+	for (n = node->parent; n; n = n->parent)
 	{
-	    if (n->address == node->address		   &&
-		n->parent->address == node->parent->address)
+	    if (!seen_recursive_call)
 	    {
-		top_caller = n->parent;
-		top_callee = n;
+		g_hash_table_insert (total_ancestors, n->address, n);
 	    }
+	    else
+	    {
+		g_hash_table_remove (total_ancestors, n->address);
+	    }
+
+	    g_hash_table_insert (all_ancestors, n->address, n);
+
+	    if (n->address == node->address)
+		seen_recursive_call = TRUE;
 	}
-	
-	if (!g_hash_table_lookup (seen_callers, top_caller))
+
+	all = listify_hash_table (all_ancestors);
+
+	for (list = all; list; list = list->next)
 	{
-	    caller->total += compute_total (top_callee);
-	    
-	    g_hash_table_insert (seen_callers, top_caller, (void *)0x1);
-	}
-	
-	if (node->size > 0)
+	    ProfileCaller *caller;
+	    StackNode *ancestor = list->data;
+
+	    caller = g_hash_table_lookup (callers_by_name, ancestor->address);
+
+	    if (!caller)
+	    {
+		caller = profile_caller_new ();
+		g_hash_table_insert (
+		    callers_by_name, ancestor->address, caller);
+		caller->name = ancestor->address;
+
+		caller->next = result;
+		result = caller;
+	    }
+
 	    caller->self += node->size;
+
+	    if (g_hash_table_lookup (total_ancestors, ancestor->address))
+		caller->total += node->total;
+	}
+
+	g_list_free (all);
+	g_hash_table_destroy (all_ancestors);
+	g_hash_table_destroy (total_ancestors);
     }
-    
-    g_hash_table_destroy (seen_callers);
-    g_hash_table_destroy (callers_by_object);
-    
+
     return result;
 }
 

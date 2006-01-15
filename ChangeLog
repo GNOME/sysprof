@@ -1,3 +1,15 @@
+Sun Jan 15 00:24:02 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates
+
+	* sysprof.c (build_gui): Rename 'callers' column 'ancestors'
+
+	* profile.c (profile_list_callers): Make this function list all
+	ancestors of the function. Also make it report correct numbers
+	again. 
+
+	* profile.c (profile_create_descendants): Remove debug spew
+
 Sat Jan 14 18:24:43 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* configure.ac, Makefile.am: Only build GUI when the necessary

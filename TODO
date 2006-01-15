@@ -232,6 +232,8 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	  in the right pane).
 - rethink caller list, not terribly useful at the moment. Federico suggested
   listing all ancestors.
+	Done: implemented this idea in CVS HEAD. If we keep it that way,
+	should do a globale s/callers/ancestors on the code.
 
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.

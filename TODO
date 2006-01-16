@@ -20,10 +20,16 @@ Before 1.0.2:
 
 Before 1.2:
 
-* Consider deleting cmdline hack in process.c and replace with something at 
-  the symbol resolution level.
+* Fix (deleted) problem. But more generally, whenever we can't display a
+  symbol, display an error message instead, ie., 
+	- 'Binary file <xxxx> was deleted/replaced'
+	- 'No mapping for address'
+	- 'No symbols in binary file'
+	- 'Address has no corrresponding symbol in file'
+	- etc.
 
-* Fix (deleted) problem.
+* Consider deleting cmdline hack in process.c and replace with something at 
+  the symbol resolution level. Will require more memory though.
 
 * Add spew infrastructure to make remote debugging easier.
 

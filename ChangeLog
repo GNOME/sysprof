@@ -1,3 +1,7 @@
+Sun Jan 15 20:16:39 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c: Add package version to spew.
+
 2006-01-13  Søren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (INTERVAL): Backport fix for HZ <=

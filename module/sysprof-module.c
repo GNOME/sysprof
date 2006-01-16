@@ -40,6 +40,8 @@
 
 #include "sysprof-module.h"
 
+#include "../config.h"
+
 #include <linux/version.h>
 #if KERNEL_VERSION(2,6,11) > LINUX_VERSION_CODE
 # error Sysprof needs a Linux 2.6.11 kernel or later
@@ -227,7 +229,7 @@ init_module(void)
 
 	register_timer_hook (timer_notify);
 	
-	printk(KERN_ALERT "sysprof: loaded\n");
+	printk(KERN_ALERT "sysprof: loaded (%s)\n", PACKAGE_VERSION);
 	
 	return 0;
 }

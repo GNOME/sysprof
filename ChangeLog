@@ -1,3 +1,8 @@
+Sun Jan 15 20:22:20 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (init_module): Print out sysprof version
+	at module load time.
+
 Sun Jan 15 00:24:02 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Updates

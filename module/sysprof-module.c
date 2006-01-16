@@ -36,6 +36,7 @@
 #include <linux/pagemap.h>
 #include <linux/profile.h>
 
+#include "../config.h"
 #include "sysprof-module.h"
 
 #include <linux/version.h>
@@ -249,7 +250,7 @@ init_module(void)
 		return ret;
 	}
 
-	printk(KERN_ALERT "sysprof: loaded\n");
+	printk(KERN_ALERT "sysprof: loaded (%s)\n", PACKAGE_VERSION);
 	
 	return 0;
 }

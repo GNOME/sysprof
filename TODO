@@ -20,6 +20,10 @@ Before 1.0.2:
 
 Before 1.2:
 
+* screenshot window must be cleared when you press start.
+
+* Maybe report idle time?
+
 * Fix (deleted) problem. But more generally, whenever we can't display a
   symbol, display an error message instead, ie., 
 	- 'Binary file <xxxx> was deleted/replaced'

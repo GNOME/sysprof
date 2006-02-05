@@ -232,18 +232,25 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 		list leaves
 		for each leaf
 			add trace to tree (leaf, interesting)
+
 - Consider adding KDE-style nested callgraph view
 	- probably need a dependency on gtk+ 2.8 (cairo) for this.
 	- Matthias has code for something like this.
+
 - Add support for line numbers within functions
 	- Possibly a special "view details" mode, assuming that 
 	  the details of a function are not that interesting 
 	  together with a tree. (Could add radio buttons somewhere in
 	  in the right pane).
+	- CVS head now has two radio buttons in the right pane, and
+	  caller pane is gone.
+
 - rethink caller list, not terribly useful at the moment. Federico suggested
   listing all ancestors.
 	Done: implemented this idea in CVS HEAD. If we keep it that way,
 	should do a globale s/callers/ancestors on the code.
+  	- not sure it's an improvement. Often it is more interesting to
+	find the immediate callers.
 
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.

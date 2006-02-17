@@ -1,3 +1,10 @@
+2006-02-17  Bastien Nocera  <hadess@hadess.net>
+
+	* configure.ac:
+	* module/sysprof-module.c: (timer_notify), (sysprof_open),
+	(sysprof_release): more ifdef's to make it work with Red Hat
+	Enterprise Linux 4's 2.6.9-based kernel
+
 Sat Feb  4 23:53:05 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof.glade: Remove ancestors pane in favor of radiobuttons in

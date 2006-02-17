@@ -40,9 +40,15 @@
 #include "sysprof-module.h"
 
 #include <linux/version.h>
-#if (KERNEL_VERSION(2,6,11) > LINUX_VERSION_CODE) || (!CONFIG_PROFILING)
-# error Sysprof needs a Linux 2.6.11 kernel or later, with profiling support compiled in.
+#if (KERNEL_VERSION(2,6,9) > LINUX_VERSION_CODE) || (!CONFIG_PROFILING)
+# error Sysprof needs a Linux 2.6.9 kernel or later, with profiling support compiled in.
 #endif
+
+#if (KERNEL_VERSION(2,6,11) > LINUX_VERSION_CODE)
+#define OLD_PROFILE
+#include <linux/notifier.h>
+#endif
+
 #include <linux/kallsyms.h>
 
 MODULE_LICENSE("GPL");
@@ -101,9 +107,16 @@ read_frame (void *frame_pointer, StackFrame *frame)
 	return 0;
 }
 
+#ifdef OLD_PROFILE
+static int timer_notify(struct notifier_block * self, unsigned long val, void * data)
+#else
 static int
 timer_notify (struct pt_regs *regs)
+#endif
 {
+#ifdef OLD_PROFILE
+	struct pt_regs * regs = (struct pt_regs *)data;
+#endif
 	void *frame_pointer;
 	static int n_samples;
 	SysprofStackTrace *trace = head;
@@ -161,6 +174,14 @@ timer_notify (struct pt_regs *regs)
 	return 0;
 }
 
+#ifdef OLD_PROFILE
+static struct notifier_block timer_notifier = {
+	.notifier_call  = timer_notify,
+	NULL,
+	0
+};
+#endif
+
 static int
 sysprof_read(struct file *file, char *buffer, size_t count, loff_t *offset)
 {
@@ -208,8 +229,13 @@ sysprof_open(struct inode *inode, struct file *file)
 {
 	int retval = 0;
 
-	if (atomic_inc_return(&client_count) == 1)
+	if (atomic_inc_return(&client_count) == 1) {
+#ifndef OLD_PROFILE
 		retval = register_timer_hook (timer_notify);
+#else
+		retval = register_profile_notifier (&timer_notifier);
+#endif
+	}
 
 	file->private_data = head;
 	
@@ -219,8 +245,13 @@ sysprof_open(struct inode *inode, struct file *file)
 static int
 sysprof_release(struct inode *inode, struct file *file)
 {
-	if (atomic_dec_return(&client_count) == 0)
+	if (atomic_dec_return(&client_count) == 0) {
+#ifndef OLD_PROFILE
 		unregister_timer_hook (timer_notify);
+#else
+		unregister_profile_notifier (&timer_notifier);
+#endif
+	}
 	
 	return 0;
 }

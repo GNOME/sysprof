@@ -236,6 +236,8 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 - Consider adding KDE-style nested callgraph view
 	- probably need a dependency on gtk+ 2.8 (cairo) for this.
 	- Matthias has code for something like this.
+	- See http://www.marzocca.net/linux/baobab.html
+	- Also see http://www.cs.umd.edu/hcil/treemap-history/index.shtml
 
 - Add support for line numbers within functions
 	- Possibly a special "view details" mode, assuming that 
@@ -274,6 +276,7 @@ Later:
 - .desktop file
 	[Is this worth it? You will often want to start it as root, 
 	 and you will need to insert the module from the comman line]
+
 - Applications should be able to say "start profiling", "stop profiling"
   so that you can limit the profiling to specific areas.
 	Idea:

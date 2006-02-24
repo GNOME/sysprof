@@ -105,6 +105,8 @@ struct Application
 					    */
 };
 
+static void update_screenshot_window (Application *app);
+
 static gboolean
 show_samples_timeout (gpointer data)
 {
@@ -361,7 +363,7 @@ static void
 on_start_toggled (GtkWidget *widget, gpointer data)
 {
     Application *app = data;
-    
+
     if (!gtk_toggle_tool_button_get_active (
 	    GTK_TOGGLE_TOOL_BUTTON (app->start_button)))
     {
@@ -385,7 +387,8 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	       "\n"
 	       "as root.");
     }
-    
+
+    update_screenshot_window (app);
     update_sensitivity (app);
 }
 
@@ -1086,6 +1089,17 @@ typedef struct
 } AddTextInfo;
 
 static void
+set_monospace (GtkWidget *widget)
+{
+    PangoFontDescription *desc =
+	pango_font_description_from_string ("monospace");
+    
+    gtk_widget_modify_font (widget, desc);
+    
+    pango_font_description_free (desc);
+}
+
+static void
 add_text (GtkTreeView *view,
 	  GtkTreePath *path,
 	  GtkTreeIter *iter,
@@ -1109,20 +1123,12 @@ add_text (GtkTreeView *view,
 }
 
 static void
-set_monospace (GtkWidget *widget)
-{
-    PangoFontDescription *desc =
-	pango_font_description_from_string ("monospace");
-    
-    gtk_widget_modify_font (widget, desc);
-    
-    pango_font_description_free (desc);
-}
-
-static void
 update_screenshot_window (Application *app)
 {
-    /* FIXME: clear the text buffer here */
+    GtkTextBuffer *text_buffer =
+	gtk_text_view_get_buffer (GTK_TEXT_VIEW (app->screenshot_textview));
+
+    gtk_text_buffer_set_text (text_buffer, "", -1);
     
     if (app->descendants)
     {
@@ -1139,9 +1145,7 @@ update_screenshot_window (Application *app)
 				   add_text,
 				   &info);
 
-	gtk_text_buffer_set_text (
-	    gtk_text_view_get_buffer (GTK_TEXT_VIEW (app->screenshot_textview)),
-	    info.text->str, -1);
+	gtk_text_buffer_set_text (text_buffer, info.text->str, -1);
 
 	set_monospace (app->screenshot_textview);
 	

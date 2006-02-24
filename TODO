@@ -268,6 +268,27 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 - somehow get access to VSEnterprise profiler and see how it works.
   somehow get access to vtune and see how it works.
 
+* Some notes about timer interrupt handling in Linux
+
+On an SMP system APIC is used - the interesting file is arch/i386/kernel/apic.c
+
+On UP systems, the normal IRQ0 is used
+When the interrupt happens, 
+	entry.S
+		calls do_IRQ, which sets up the special interrupt stack, 
+		and calls __do_IRQ, which is in /kernel/irq/handle.c.
+		This calls the corresponding irqaction, which has previously
+		been setup by arch/i386/mach-default/setup.c to point to
+		timer_interrupt, which is in arch/i386/kernel/time.c.
+		This calls do_timer_interrupt_hooks() which is defined in
+		/include/asm-i386/mach-default/do_timer.h. This function
+		then calls profile_tick().
+
+	Note when the CPU switches from user mode to kernel mode, it 
+	pushes SS/ESP on top of the kernel stack, but when it switches
+	from kernel mode to kernel mode, it does _not_ push SS/ESP.
+	It does in both cases push EIP though.
+
 Later:
 
 - See if it is possible to group the X server activity under the process that

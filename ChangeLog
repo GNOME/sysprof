@@ -1,3 +1,13 @@
+Thu Feb 23 21:37:21 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* =-=-=-= Release sysprof 1.0.2 =-=-=-=
+
+	* configure.ac: Bump version number	
+	
+	* sysprof.c (on_about_activated): Update about box
+
+	* announce-1.0.2: add this file
+
 Sun Jan 15 20:16:39 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c: Add package version to spew.

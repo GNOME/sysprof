@@ -265,6 +265,6 @@ tree_view_foreach_visible (GtkTreeView *view,
 	GtkTreeModel *model = gtk_tree_view_get_model (view);
 	GtkTreeIter iter;
 	
-	if (gtk_tree_model_get_iter_first (model, &iter))
+	if (model && gtk_tree_model_get_iter_first (model, &iter))
 		process_iter (view, &iter, callback, data);
 }

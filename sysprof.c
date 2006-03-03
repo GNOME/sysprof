@@ -55,10 +55,6 @@ struct Application
     GtkTreeView *	object_view;
     GtkTreeView *	callers_view;
     GtkTreeView *	descendants_view;
-
-    GtkWidget *		ancestors_radiobutton;
-    GtkWidget *		descendants_radiobutton;
-    GtkWidget *		view_notebook;
     
     GtkWidget *		start_button;
     GtkWidget *		profile_button;
@@ -239,9 +235,6 @@ update_sensitivity (Application *app)
     gtk_widget_set_sensitive (GTK_WIDGET (app->callers_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->descendants_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->samples_label), sensitive_samples_label);
-
-    gtk_widget_set_sensitive (GTK_WIDGET (app->descendants_radiobutton), sensitive_tree_views);
-    gtk_widget_set_sensitive (GTK_WIDGET (app->ancestors_radiobutton), sensitive_tree_views);
     
     if (app->screenshot_window_visible)
 	gtk_widget_show (app->screenshot_window);
@@ -312,10 +305,6 @@ delete_data (Application *app)
 	gtk_tree_view_set_model (GTK_TREE_VIEW (app->callers_view), NULL);
 	gtk_tree_view_set_model (GTK_TREE_VIEW (app->descendants_view), NULL);
     }
-
-    /* Show descendants by default for new profiles */
-    gtk_toggle_button_set_active (
-	GTK_TOGGLE_BUTTON (app->descendants_radiobutton), TRUE);
     
     collector_reset (app->collector);
     
@@ -1298,24 +1287,10 @@ on_screenshot_close_button_clicked (GtkWidget *widget,
 }
 
 static void
-switch_views (GtkWidget *widget,
-	      Application *app)
-{
-    if (gtk_toggle_button_get_active (
-	    GTK_TOGGLE_BUTTON (app->ancestors_radiobutton)))
-    {
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (app->view_notebook), 1);
-    }
-    else
-    {
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (app->view_notebook), 0);
-    }
-}
-
-static void
 set_sizes (GtkWindow *window,
 	   GtkWindow *screenshot_window,
-	   GtkWidget *hpaned)
+	   GtkWidget *hpaned,
+	   GtkWidget *vpaned)
 {
     GdkScreen *screen;
     int monitor_num;
@@ -1333,6 +1308,7 @@ set_sizes (GtkWindow *window,
     
     gtk_window_resize (window, width, height);
     
+    gtk_paned_set_position (GTK_PANED (vpaned), height / 2);
     gtk_paned_set_position (GTK_PANED (hpaned), width * 3 / 8);
     
     width = monitor.width * 5 / 8;
@@ -1493,14 +1469,6 @@ build_gui (Application *app)
     g_signal_connect (app->descendants_view, "row_collapsed",
 		      G_CALLBACK (on_descendants_row_expanded_or_collapsed), app);
     gtk_tree_view_column_set_expand (col, TRUE);
-
-    /* view notebook */
-    app->view_notebook = glade_xml_get_widget (xml, "view_notebook");
-    app->ancestors_radiobutton = glade_xml_get_widget (xml, "ancestors_radiobutton");
-    app->descendants_radiobutton = glade_xml_get_widget (xml, "descendants_radiobutton");
-
-    g_signal_connect (app->ancestors_radiobutton, "toggled", G_CALLBACK (switch_views), app);
-    g_signal_connect (app->descendants_radiobutton, "toggled", G_CALLBACK (switch_views), app);
     
     /* screenshot window */
     app->screenshot_window = glade_xml_get_widget (xml, "screenshot_window");
@@ -1516,7 +1484,8 @@ build_gui (Application *app)
     /* set sizes */
     set_sizes (GTK_WINDOW (app->main_window),
 	       GTK_WINDOW (app->screenshot_window),
-	       glade_xml_get_widget (xml, "hpaned"));
+	       glade_xml_get_widget (xml, "hpaned"),
+	       glade_xml_get_widget (xml, "vpaned"));
     
     /* hide/show widgets */
     gtk_widget_show_all (app->main_window);

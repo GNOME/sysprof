@@ -244,8 +244,6 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	  the details of a function are not that interesting 
 	  together with a tree. (Could add radio buttons somewhere in
 	  in the right pane).
-	- CVS head now has two radio buttons in the right pane, and
-	  caller pane is gone.
 
 - rethink caller list, not terribly useful at the moment. Federico suggested
   listing all ancestors.
@@ -467,6 +465,10 @@ Later:
 
 
 DONE:
+
+- CVS head now has two radio buttons in the right pane, and
+  caller pane is gone. (This turned out to be a bad idea, because it
+  is often useful to click on ancestors to move up the tree).
 
 * Don't build the GUI if gtk+ is not installed
 

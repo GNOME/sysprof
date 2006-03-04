@@ -32,6 +32,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 static void bfd_nonfatal (const char *string);
 static void bfd_fatal (const char *string);
@@ -44,6 +46,7 @@ struct BinFile
     Symbol     *symbols;
     Symbol	undefined;
     int         ref_count;
+    ino_t	inode;
 };
 
 static bfd *
@@ -295,6 +298,21 @@ compare_address (const void *a, const void *b)
 	return 1;
 }
 
+static gboolean
+read_inode (const char *filename,
+	    ino_t      *inode)
+{
+    struct stat statbuf;
+
+    if (stat (filename, &statbuf) == 0)
+    {
+	*inode = statbuf.st_ino;
+	return TRUE;
+    }
+
+    return FALSE;
+}
+
 static void
 read_symbols (BinFile *bf)
 {
@@ -315,6 +333,12 @@ read_symbols (BinFile *bf)
     if (!bfd)
 	return;
 
+    if (!read_inode (bf->filename, &bf->inode))
+    {
+	bfd_close (bfd);
+	return;
+    }
+
     separate_debug_file = find_separate_debug_file (bfd);
     if (separate_debug_file)
     {
@@ -330,7 +354,10 @@ read_symbols (BinFile *bf)
     bfd_symbols = slurp_symtab (bfd, &n_symbols);
     
     if (!bfd_symbols)
+    {
+	bfd_close (bfd);
 	return;
+    }
     
     load_address = 0xffffffff;
     for (sec = bfd->sections; sec != NULL; sec = sec->next)
@@ -416,6 +443,12 @@ bin_file_new (const char *filename)
     return bf;
 }
 
+ino_t
+bin_file_get_inode     (BinFile    *bin_file)
+{
+    return bin_file->inode;
+}
+
 void
 bin_file_free (BinFile *bf)
 {
@@ -454,6 +487,9 @@ bin_file_lookup_symbol (BinFile    *bf,
     Symbol *result;
     
     if (!bf->symbols || (bf->n_symbols == 0))
+	return &(bf->undefined);
+
+    if (address == 0x0)
 	return &(bf->undefined);
     
     data = bf->symbols;

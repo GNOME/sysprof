@@ -41,6 +41,7 @@ struct Map
     gulong	start;
     gulong	end;
     gulong      offset;
+    gulong	inode;
 #if 0
     gboolean	do_offset;
 #endif
@@ -95,15 +96,16 @@ read_maps (int pid)
 	gulong start;
 	gulong end;
 	gulong offset;
+	gulong inode;
 	
 #if 0
 	g_print ("buffer: %s\n", buffer);
 #endif
 	
 	count = sscanf (
-	    buffer, "%lx-%lx %*15s %lx %*x:%*x %*u %255s", 
-	    &start, &end, &offset, file);
-	if (count == 4)
+	    buffer, "%lx-%lx %*15s %lx %*x:%*x %lu %255s", 
+	    &start, &end, &offset, &inode, file);
+	if (count == 5)
 	{
 	    Map *map;
 	    
@@ -114,6 +116,8 @@ read_maps (int pid)
 	    map->end = end;
 	    
 	    map->offset = offset;
+
+	    map->inode = inode;
 	    
 	    map->bin_file = NULL;
 	    
@@ -567,16 +571,26 @@ process_lookup_symbol (Process *process, gulong address)
 	
 	return &process->undefined;
     }
-    
+
     address -= map->start;
     address += map->offset;
     
     if (!map->bin_file)
 	map->bin_file = bin_file_new (map->filename);
-    
+
 /*     g_print ("%s: start: %p, load: %p\n", */
 /* 	     map->filename, map->start, bin_file_get_load_address (map->bin_file)); */
-    
+
+    if (map->inode != bin_file_get_inode (map->bin_file))
+    {
+	/* If the inodes don't match, it's probably because the
+	 * file has changed since the process started. Just return
+	 * the undefined symbol in that case.
+	 */
+	
+	address = 0x0;
+    }
+
     result = bin_file_lookup_symbol (map->bin_file, address);
     
 #if 0

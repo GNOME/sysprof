@@ -31,6 +31,7 @@ Before 1.2:
 	- 'No symbols in binary file'
 	- 'Address has no corrresponding symbol in file'
 	- etc.
+  done: HEAD will not load files with the wrong inode now.
 
 * Consider deleting cmdline hack in process.c and replace with something at 
   the symbol resolution level. Will require more memory though.
@@ -142,7 +143,10 @@ Before 1.2:
   we'd lose the ability to do non-racy file naming. We could pass a list
   of the process mappings with each stack though. Doing this would also solve
   the problem of not being able to get maps of processes running as root.
-	Might be too expensive though.
+	Might be too expensive though. User stacks seem to be on the order
+  of 100K usually, which for 200 times a second means a bandwidth of
+  20MB/s, which is probably too much. One question is how much of it
+  usually changes. 
 
 * If interrupt happens in kernel mode, send both
   kernel stack and user space stack, have userspace stitch them
@@ -171,6 +175,9 @@ Before 1.2:
 
   Maybe get_user_pages() is the way forward at least for some stuff.
 
+  note btw. that the kernel pages are only one or two pages, so we 
+  could easily just dump them to userspace.
+
 - See if there is a way to make it distcheck
 
 - grep "FIXME - not10"
@@ -196,6 +203,7 @@ Before 1.2:
 		  it when you use the wm button or the menu item? It actually
 		  seems that it only forgets the position when you click the
 		  button with the mouse. But not if you use the keyboard ...
+			This is a gtk+ bug.
 
 - Find out how gdb does backtraces; they may have a better way. Also
   find out what dwarf2 is and how to use it. Look into libunwind.
@@ -217,9 +225,6 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 		so (can we know the size in advance?))
 	- instead of what we do now: set the busy cursor unconditionally
 	
-- Charge 'self' properly to processes that don't get any stack trace at all 
-	(probably we get that for free with stackstash reorganisation)
-
 - Consider adding ability to show more than one function at a time. Algorithm:
 	Find all relevant nodes;
 	For each relevant node
@@ -465,6 +470,9 @@ Later:
 
 
 DONE:
+
+- Charge 'self' properly to processes that don't get any stack trace at all 
+	(probably we get that for free with stackstash reorganisation)
 
 - CVS head now has two radio buttons in the right pane, and
   caller pane is gone. (This turned out to be a bad idea, because it

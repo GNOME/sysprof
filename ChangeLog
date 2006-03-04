@@ -1,3 +1,12 @@
+Fri Mar  3 22:28:03 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* process.c (process_lookup_symbol): Check that the inodes match.
+
+	* binfile.c (read_symbols): Read the inode of the file
+
+	* binfile.c (read_symbols): Close the bfd if the symbol table
+	could not be read.
+
 Thu Mar  2 22:54:37 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* treeviewutils.c (tree_view_foreach_visible): Handle NULL models.

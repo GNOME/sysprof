@@ -1,6 +1,6 @@
 /* Sysprof -- Sampling, systemwide CPU profiler
  * Copyright 2004, Red Hat, Inc.
- * Copyright 2004, 2005, Soeren Sandmann
+ * Copyright 2004, 2005, 2006, Soeren Sandmann
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -675,7 +675,7 @@ on_about_activated (GtkWidget *widget, gpointer data)
     gtk_show_about_dialog (GTK_WINDOW (app->main_window),
 			   "logo", app->icon,
 			   "name", APPLICATION_NAME,
-			   "copyright", "Copyright 2004-2005, S"OSLASH"ren Sandmann",
+			   "copyright", "Copyright 2004-2006, S"OSLASH"ren Sandmann",
 			   "version", PACKAGE_VERSION,
 			   NULL);
 }

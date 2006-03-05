@@ -47,91 +47,81 @@ dump_data (Application *app)
 {
     GError *err = NULL;
     Profile *profile = collector_create_profile (app->collector);
-
+    
     profile_save (profile, app->outfile, &err);
-
+    
     if (err)
     {
-        fprintf (stderr, "%s: %s\n", app->outfile, err->message);
+        fprintf (stderr, "Error saving %s: %s\n", app->outfile, err->message);
         exit (1);
+    }
+    else
+    {
+	printf ("Saved profile in %s\n\n", app->outfile);
     }
 }
 
 void
-signal_handler (int signo, gpointer data)
+signal_handler (int      signo,
+		gpointer data)
 {
     Application *app = data;
     
     dump_data (app);
-
+    
     while (g_main_iteration (FALSE))
 	;
     
     g_main_loop_quit (app->main_loop);
 }
 
-static void
-no_module (void)
+static char *
+usage_msg (const char *name)
 {
-    perror (SYSPROF_FILE);
-    fprintf (stderr,
-            "\n"
-            "Can't open " SYSPROF_FILE ". You need to insert "
-            "the sysprof kernel module. Run\n"
-            "\n"
-            "       modprobe sysprof-module\n"
-            "\n"
-            "as root.\n");
+    return g_strdup_printf (
+	"Usage: \n"
+	"    %s <outfile>\n"
+	"\n"
+	"On SIGTERM or SIGINT (Ctrl-C) the profile will be written to <outfile>",
+	name);
 }
 
 static void
-usage (const char *name)
+die (const char *err_msg)
 {
-    fprintf (stderr,
-	     "\n"
-	     "Usage: \n"
-	     "    %s <outfile>\n"
-	     "\n"
-	     "On SIGTERM or SIGINT (Ctrl-C) the profile will be written to <outfile>\n"
-	     "\n",
-	     name);
+    if (err_msg)
+	fprintf (stderr, "\n%s\n\n", err_msg);
+    
+    exit (-1);
 }
 
 int
 main (int argc,
       char *argv[])
 {
-    gboolean quit;
     Application *app = g_new0 (Application, 1);
+    GError *err;
     
     app->collector = collector_new (NULL, NULL);
     app->outfile = g_strdup (argv[1]);
     app->main_loop = g_main_loop_new (NULL, 0);
-
-    /* FIXME: get the real error */
-    quit = FALSE;
     
-    if (!collector_start (app->collector, NULL))
-    {
-	no_module();
-	quit = TRUE;
-    }
+    err = NULL;
+    
+    if (!collector_start (app->collector, &err))
+	die (err->message);
     
     if (argc < 2)
-    {
-	usage (argv[0]);
-	quit = TRUE;
-    }
-
-    if (quit)
-	return -1;
+	die (usage_msg (argv[0]));
     
-    /* FIXME: check the errors */
-    signal_set_handler (SIGTERM, signal_handler, app, NULL);
-    signal_set_handler (SIGINT, signal_handler, app, NULL);
-
+    if (!signal_set_handler (SIGTERM, signal_handler, app, &err))
+	die (err->message);
+    
+    if (!signal_set_handler (SIGINT, signal_handler, app, &err))
+	die (err->message);
+    
     g_main_loop_run (app->main_loop);
-
+    
     signal_unset_handler (SIGTERM);
     signal_unset_handler (SIGINT);
     

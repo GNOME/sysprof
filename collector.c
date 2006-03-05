@@ -29,6 +29,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+static void set_no_module_error (GError **err);
+static void set_cant_open_error (GError **err, int eno);
+
 struct Collector
 {
     CollectorFunc	callback;
@@ -179,12 +182,13 @@ open_fd (Collector *collector,
 	if (load_module())
 	{
 	    GTimer *timer = g_timer_new ();
-	    
+
 	    while (fd < 0 && g_timer_elapsed (timer, NULL) < 0.5)
 	    {
 		/* Wait for udev to discover the new device */
 		usleep (100000);
 
+		errno = 0;
 		fd = open (SYSPROF_FILE, O_RDONLY);
 	    }
 
@@ -192,12 +196,15 @@ open_fd (Collector *collector,
 	    
 	    if (fd < 0)
 	    {
-		/* FIXME: set "module is loaded but no file error" */
+		set_cant_open_error (err, errno);
+		return FALSE;
 	    }
 	}
 
 	if (fd < 0)
 	{
+	    set_no_module_error (err);
+	    
 	    /* FIXME: set error */
 	    return FALSE;
 	}
@@ -322,4 +329,40 @@ collector_create_profile (Collector *collector)
     g_hash_table_destroy (info.unique_symbols);
     
     return profile_new (info.resolved_stash);
+}
+
+static void
+set_no_module_error (GError **err)
+{
+    g_set_error (err,
+		 COLLECTOR_ERROR,
+		 COLLECTOR_ERROR_CANT_OPEN_FILE,
+		 "Can't open " SYSPROF_FILE ". You need to insert "
+		 "the sysprof kernel module. Run\n"
+		 "\n"
+		 "       modprobe sysprof-module\n"
+		 "\n"
+		 "as root");
+}
+
+static void
+set_cant_open_error (GError **err,
+		     int      eno)
+{
+    g_set_error (err,
+		 COLLECTOR_ERROR,
+		 COLLECTOR_ERROR_CANT_OPEN_FILE,
+		 "Can't open " SYSPROF_FILE ": %s",
+		 g_strerror (eno));
+}
+
+GQuark
+collector_error_quark (void)
+{
+    static GQuark q = 0;
+    
+    if (q == 0)
+        q = g_quark_from_static_string ("collector-error-quark");
+    
+    return q;
 }

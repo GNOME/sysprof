@@ -1,3 +1,8 @@
+2006-03-05 Soeren Sandmann <sandmann@redhat.com>
+
+	* sysprof-text.c, collector.c, sysprof.c: Do proper
+	error-handling.
+
 Fri Mar  3 22:28:03 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* process.c (process_lookup_symbol): Check that the inodes match.

@@ -23,11 +23,20 @@ typedef struct Collector Collector;
 
 typedef void (* CollectorFunc) (gpointer data);
 
+#define COLLECTOR_ERROR collector_error_quark ()
+
+GQuark collector_error_quark (void);
+
+typedef enum
+{
+    COLLECTOR_ERROR_CANT_OPEN_FILE
+} CollectorError;
+
 /* callback is called whenever a new sample arrives */
 Collector *collector_new (CollectorFunc callback,
-			gpointer     data);
+			  gpointer     data);
 gboolean  collector_start (Collector *collector,
-			  GError   **err);
+			   GError   **err);
 void      collector_stop (Collector *collector);
 void      collector_reset (Collector *collector);
 int	  collector_get_n_samples (Collector *collector);

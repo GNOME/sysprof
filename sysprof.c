@@ -352,6 +352,7 @@ static void
 on_start_toggled (GtkWidget *widget, gpointer data)
 {
     Application *app = data;
+    GError *err = NULL;
 
     if (!gtk_toggle_tool_button_get_active (
 	    GTK_TOGGLE_TOOL_BUTTON (app->start_button)))
@@ -359,7 +360,7 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	return;
     }
     
-    if (collector_start (app->collector, NULL))
+    if (collector_start (app->collector, &err))
     {
 	delete_data (app);
 	
@@ -367,14 +368,9 @@ on_start_toggled (GtkWidget *widget, gpointer data)
     }
     else
     {
-	/* FIXME: get the real error message */
-	sorry (app->main_window,
-	       "Can't open " SYSPROF_FILE ". You need to insert\n"
-	       "the sysprof kernel module. Run\n"
-	       "\n"
-	       "       modprobe sysprof-module\n"
-	       "\n"
-	       "as root.");
+	sorry (app->main_window, err->message);
+
+	g_error_free (err);
     }
 
     update_screenshot_window (app);

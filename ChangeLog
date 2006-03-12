@@ -1,3 +1,14 @@
+2006-03-11 Soren Sandmann <sandmann@redhat.com>
+
+	* TODO: updates
+	
+	* stackstash.[ch]: Make stackstash refcounted
+
+	* collector.c, profile.c: Update for refcounted stackstash, plug
+	leak.
+
+	* collector.c (open_fd): Remove FIXME comment
+
 2006-03-05 Soeren Sandmann <sandmann@redhat.com>
 
 	* sysprof-text.c, collector.c, sysprof.c: Do proper

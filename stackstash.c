@@ -23,6 +23,7 @@ struct StackStash
 {
     StackNode  *root;
     GHashTable *nodes_by_data;
+    int		ref_count;
 };
 
 static StackNode *
@@ -39,16 +40,23 @@ stack_node_new (void)
     return node;
 }
 
-/* Stach */
-StackStash *
-stack_stash_new       (void)
+static StackStash *
+create_stack_stash (void)
 {
     StackStash *stash = g_new (StackStash, 1);
 
     stash->root = NULL;
     stash->nodes_by_data = g_hash_table_new (g_direct_hash, g_direct_equal);
+    stash->ref_count = 1;
 
     return stash;
+}
+
+/* Stach */
+StackStash *
+stack_stash_new       (void)
+{
+    return create_stack_stash();
 }
 
 void
@@ -187,13 +195,28 @@ stack_node_free (StackNode *node)
     g_free (node);
 }
 
-void
-stack_stash_free	  (StackStash	   *stash)
+static void
+stack_stash_free (StackStash *stash)
 {
     stack_node_free (stash->root);
     g_hash_table_destroy (stash->nodes_by_data);
     
     g_free (stash);
+}
+
+void
+stack_stash_unref (StackStash *stash)
+{
+    stash->ref_count--;
+    if (stash->ref_count == 0)
+	stack_stash_free (stash);
+}
+
+StackStash *
+stack_stash_ref (StackStash *stash)
+{
+    stash->ref_count++;
+    return stash;
 }
 
 StackNode *
@@ -256,10 +279,7 @@ build_hash_table (StackNode *node,
 StackStash *
 stack_stash_new_from_root (StackNode *root)
 {
-    StackStash *stash = g_new (StackStash, 1);
-
-    stash->root = root;
-    stash->nodes_by_data = g_hash_table_new (g_direct_hash, g_direct_equal);
+    StackStash *stash = create_stack_stash();
 
     build_hash_table (stash->root, stash);
 

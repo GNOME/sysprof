@@ -79,8 +79,6 @@ Before 1.2:
   - a more pragmatic approach might be to just walk the tree and
     save it.
 
-- make stackstash ref counted
-
 - plug all the leaks
 	- don't leak the presentation strings/objects
 	- loading and saving probably leak right now
@@ -470,6 +468,8 @@ Later:
 
 
 DONE:
+
+- make stackstash ref counted
 
 - Charge 'self' properly to processes that don't get any stack trace at all 
 	(probably we get that for free with stackstash reorganisation)

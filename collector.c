@@ -205,7 +205,6 @@ open_fd (Collector *collector,
 	{
 	    set_no_module_error (err);
 	    
-	    /* FIXME: set error */
 	    return FALSE;
 	}
     }
@@ -243,7 +242,7 @@ void
 collector_reset (Collector *collector)
 {
     if (collector->stash)
-	stack_stash_free (collector->stash);
+	stack_stash_unref (collector->stash);
 
     process_flush_caches();
     
@@ -313,13 +312,16 @@ resolve_symbols (GList *trace, gint size, gpointer data)
 		     unique_dup (info->unique_symbols,
 				 "Everything"));
     
-    stack_stash_add_trace (info->resolved_stash, (gulong *)resolved_trace->pdata, resolved_trace->len, size);
+    stack_stash_add_trace (info->resolved_stash,
+			   (gulong *)resolved_trace->pdata,
+			   resolved_trace->len, size);
 }
 
 Profile *
 collector_create_profile (Collector *collector)
 {
     ResolveInfo info;
+    Profile *profile;
     
     info.resolved_stash = stack_stash_new ();
     info.unique_symbols = g_hash_table_new (g_direct_hash, g_direct_equal);
@@ -327,8 +329,12 @@ collector_create_profile (Collector *collector)
     stack_stash_foreach (collector->stash, resolve_symbols, &info);
     
     g_hash_table_destroy (info.unique_symbols);
+
+    profile = profile_new (info.resolved_stash);
+
+    stack_stash_unref (info.resolved_stash);
     
-    return profile_new (info.resolved_stash);
+    return profile;
 }
 
 static void

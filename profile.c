@@ -228,7 +228,7 @@ profile_new (StackStash *stash)
 {
     Profile *profile = g_new (Profile, 1);
     
-    profile->stash = stash;
+    profile->stash = stack_stash_ref (stash);
     
     return profile;
 }
@@ -456,7 +456,7 @@ profile_list_callers (Profile       *profile,
 void
 profile_free (Profile *profile)
 {
-    /* FIXME unref stash */
+    stack_stash_unref (profile->stash);
     g_free (profile);
 }
 

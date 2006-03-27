@@ -2,7 +2,14 @@ Before 1.0.2:
 
 * See if we can reproduce the problem where libraries didn't get correctly
   reloaded after new versions were installed.
-	This is just the (deleted) problem.
+	This is just the (deleted) problem.Turns out that the kernel
+  doesn't print (deleted) in all cases. Some possibilities:
+
+	- check that the inodes of the mapped file and the disk file
+	  are the same (done in HEAD).
+
+	- check that the file was not modified after being mapped?
+	  (Can we get the time it was mapped or opened?)
 
 * Build system
    - Create RPM package? See fedora-packaging-list for information
@@ -248,6 +255,8 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	  together with a tree. (Could add radio buttons somewhere in
 	  in the right pane).
 
+- Add view->ancestors/descendants menu items
+
 - rethink caller list, not terribly useful at the moment. Federico suggested
   listing all ancestors.
 	Done: implemented this idea in CVS HEAD. If we keep it that way,
@@ -258,8 +267,10 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.
 	Probably better to send a list of maps with each trace.
+
 - Figure out how Google's pprof script works. Then add real call graph 
   drawing. (google's script is really simple; uses dot from graphviz).
+  KCacheGrind also uses dot to do graph drawing.
 
 - hide internal stuff in ProfileDescendant
 

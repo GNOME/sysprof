@@ -18,6 +18,8 @@ SYSPROF_CORE =					\
 	profile.c				\
 	sfile.h					\
 	sfile.c					\
+	sformat.h				\
+	sformat.c				\
 	stackstash.h				\
 	stackstash.c				\
 	module/sysprof-module.h			\

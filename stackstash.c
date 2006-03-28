@@ -281,6 +281,8 @@ stack_stash_new_from_root (StackNode *root)
 {
     StackStash *stash = create_stack_stash();
 
+    stash->root = root;
+    
     build_hash_table (stash->root, stash);
 
     return stash;

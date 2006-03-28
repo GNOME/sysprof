@@ -17,10 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-typedef struct SFormat SFormat;
+#include "sformat.h"
+
 typedef struct SFileInput SFileInput;
 typedef struct SFileOutput SFileOutput;
-typedef guint SType;
 
 
 #if 0
@@ -90,19 +90,6 @@ SerializerFormat *serializer_make_pointer (Serializer *serialiser,
  */
 
 /* - Describing Types - */
-SFormat *sformat_new         (gpointer    f);
-gpointer sformat_new_record  (const char *name,
-			      SType      *type,
-			      gpointer    content,
-			      ...);
-gpointer sformat_new_list    (const char *name,
-			      SType      *type,
-			      gpointer    content);
-gpointer sformat_new_pointer (const char *name,
-			      SType      *target_type);
-gpointer sformat_new_integer (const char *name);
-gpointer sformat_new_string  (const char *name);
-void     sformat_free        (SFormat    *format);
 
 
 /* - Reading - */

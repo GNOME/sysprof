@@ -37,35 +37,44 @@ struct Profile
 static SFormat *
 create_format (void)
 {
-    SType object_type = 0;
-    SType node_type = 0;
+    SFormat *format;
+    SForward *object_forward;
+    SForward *node_forward;
+
+    format = sformat_new();
+
+    object_forward = sformat_declare_forward (format);
+    node_forward = sformat_declare_forward (format);
     
-    return sformat_new (
-	sformat_new_record (
-	    "profile", NULL,
-	    sformat_new_integer ("size"),
-	    sformat_new_pointer ("call_tree", &node_type),
-	    sformat_new_list (
-		"objects", NULL,
-		sformat_new_record (
-		    "object", &object_type,
-		    sformat_new_string ("name"),
-		    sformat_new_integer ("total"),
-		    sformat_new_integer ("self"),
+    sformat_set_type (
+	format,
+	sformat_make_record (
+	    format, "profile", NULL,
+	    sformat_make_integer (format, "size"),
+	    sformat_make_pointer (format, "call_tree", node_forward),
+	    sformat_make_list (
+		format, "objects", NULL,
+		sformat_make_record (
+		    format, "object", object_forward,
+		    sformat_make_string (format, "name"),
+		    sformat_make_integer (format, "total"),
+		    sformat_make_integer (format, "self"),
 		    NULL)),
-	    sformat_new_list (
-		"nodes", NULL,
-		sformat_new_record (
-		    "node", &node_type,
-		    sformat_new_pointer ("object", &object_type),
-		    sformat_new_pointer ("siblings", &node_type),
-		    sformat_new_pointer ("children", &node_type),
-		    sformat_new_pointer ("parent", &node_type),
-		    sformat_new_integer ("total"),
-		    sformat_new_integer ("self"),
-		    sformat_new_integer ("toplevel"),
+	    sformat_make_list (
+		format, "nodes", NULL,
+		sformat_make_record (
+		    format, "node", node_forward,
+		    sformat_make_pointer (format, "object", object_forward),
+		    sformat_make_pointer (format, "siblings", node_forward),
+		    sformat_make_pointer (format, "children", node_forward),
+		    sformat_make_pointer (format, "parent", node_forward),
+		    sformat_make_integer (format, "total"),
+		    sformat_make_integer (format, "self"),
+		    sformat_make_integer (format, "toplevel"),
 		    NULL)),
 	    NULL));
+
+    return format;
 }
 
 static int
@@ -217,7 +226,7 @@ profile_load (const char *filename, GError **err)
     
     sformat_free (format);
     sfile_input_free (input);
-    
+
     profile->stash = stack_stash_new_from_root (root);
     
     return profile;

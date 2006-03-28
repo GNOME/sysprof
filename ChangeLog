@@ -1,3 +1,15 @@
+Mon Mar 27 21:44:04 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* sformat.[ch]: New files containing a simplified and sanitized
+	version of the state machine and type system from sfile.c.
+	
+	* sfile.c: Move the state machine and type management to separate
+	files. Make the amount of memory used during loading and saving
+	less obscene.
+
+	* stackstash.c (stack_stash_new_from_root): Make this function
+	store the root again.
+
 Mon Mar 27 09:55:01 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: updates

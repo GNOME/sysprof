@@ -128,6 +128,16 @@ Before 1.2:
 	
 	- split out dfa in its own generic class
 	
+	- Formats should become first-class, stand-alone objects that offers
+ 	  help with parsing and nothing else.
+
+		ParseContext* format_get_parse_context (format, err);
+		gboolean parse_context_begin (parse_context, name, err);
+		gboolean parse_context_end (parse_format, name, err);
+		
+	  basically, a Format encapsulates a DFA, and a ParseContext encapsulates
+	  the current state. 
+
 	- make a generic representation of xml files with quarks for strings:
 		struct item { 
 			int begin/end/text;

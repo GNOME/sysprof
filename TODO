@@ -128,16 +128,6 @@ Before 1.2:
 	
 	- split out dfa in its own generic class
 	
-	- Formats should become first-class, stand-alone objects that offers
- 	  help with parsing and nothing else.
-
-		ParseContext* format_get_parse_context (format, err);
-		gboolean parse_context_begin (parse_context, name, err);
-		gboolean parse_context_end (parse_format, name, err);
-		
-	  basically, a Format encapsulates a DFA, and a ParseContext encapsulates
-	  the current state. 
-
 	- make a generic representation of xml files with quarks for strings:
 		struct item { 
 			int begin/end/text;
@@ -312,6 +302,18 @@ When the interrupt happens,
 	It does in both cases push EIP though.
 
 Later:
+
+- Find out if sysprof accurately reports time spent handling pagefaults.
+  There is evidence that it doesn't:
+	- a version of sysprof took 10 seconds to load a certain profile.
+	  Profiling itself it appeared that most of the time was spent
+	  in the GMarkup parser
+	- a newer version of sysprof with significantly more compact
+	  Instructions took about 5 seconds, but the profile looked
+	  about the same.
+  The difference between the two versions has to be in page faults/
+  memory speed, but the profiles looked identically. 
+      Try and reproduce this result in a more controlled experiment.
 
 - See if it is possible to group the X server activity under the process that
   generated it.
@@ -489,6 +491,16 @@ Later:
 
 
 DONE:
+
+- Formats should become first-class, stand-alone objects that offers
+  help with parsing and nothing else.
+
+	ParseContext* format_get_parse_context (format, err);
+	gboolean parse_context_begin (parse_context, name, err);
+	gboolean parse_context_end (parse_format, name, err);
+		
+  basically, a Format encapsulates a DFA, and a ParseContext encapsulates
+  the current state. 
 
 - make stackstash ref counted
 

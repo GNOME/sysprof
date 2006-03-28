@@ -211,10 +211,6 @@ sfile_get_pointer (SFileInput  *file,
     Instruction *instruction;
     
     instruction = file->current_instruction++;
-    g_return_if_fail (stype_is_pointer (instruction->type) &&
-                      check_name (instruction, name));
-    
-    instruction = file->current_instruction++;
     g_return_if_fail (stype_is_pointer (instruction->type));
     
     instruction->u.pointer.location = location;
@@ -228,12 +224,7 @@ sfile_get_pointer (SFileInput  *file,
 	
         g_hash_table_insert (file->instructions_by_location, location, instruction);
     }
-    
-    instruction = file->current_instruction++;
-    g_return_if_fail (stype_is_pointer (instruction->type) &&
-                      check_name (instruction, name));
-    
-}
+ }
 
 void
 sfile_get_integer      (SFileInput  *file,
@@ -243,18 +234,10 @@ sfile_get_integer      (SFileInput  *file,
     Instruction *instruction;
 
     instruction = file->current_instruction++;
-    g_return_if_fail (stype_is_integer (instruction->type) &&
-                      check_name (instruction, name));
-    
-    instruction = file->current_instruction++;
     g_return_if_fail (stype_is_integer (instruction->type));
     
     if (integer)
         *integer = instruction->u.integer.value;
-    
-    instruction = file->current_instruction++;
-    g_return_if_fail (stype_is_integer (instruction->type) &&
-                      check_name (instruction, name));
 }
 
 void
@@ -265,18 +248,10 @@ sfile_get_string       (SFileInput  *file,
     Instruction *instruction;
     
     instruction = file->current_instruction++;
-    g_return_if_fail (stype_is_string (instruction->type) &&
-                      check_name (instruction, name));
-    
-    instruction = file->current_instruction++;
     g_return_if_fail (stype_is_string (instruction->type));
     
     if (string)
         *string = g_strdup (instruction->u.string.value);
-    
-    instruction = file->current_instruction++;
-    g_return_if_fail (stype_is_string (instruction->type) &&
-                      check_name (instruction, name));
 }
 
 static void
@@ -386,10 +361,12 @@ handle_begin_element (GMarkupParseContext *parse_context,
         set_unknown_element_error (err, "<%s> unexpected here", element_name);
         return;
     }
-    
-    /* FIXME - not10: is there really a reason to add begin/end instructions for values? */
-    instruction.kind = BEGIN;
-    g_array_append_val (build->instructions, instruction);
+
+    if (stype_is_list (instruction.type) || stype_is_record (instruction.type))
+    {
+	instruction.kind = BEGIN;
+	g_array_append_val (build->instructions, instruction);
+    }
 }
 
 static void
@@ -408,9 +385,12 @@ handle_end_element (GMarkupParseContext *context,
         return;
     }
     
-    instruction.kind = END;
+    if (stype_is_list (instruction.type) || stype_is_record (instruction.type))
+    {
+	instruction.kind = END;
     
-    g_array_append_val (build->instructions, instruction);
+	g_array_append_val (build->instructions, instruction);
+    }
 }
 
 static gboolean
@@ -671,8 +651,6 @@ build_instructions (const char *contents, SFormat *format, int *n_instructions, 
 
     *n_instructions = build.instructions->len;
 
-    g_print ("n instructions: %d\n", *n_instructions);
-    
     return (Instruction *)g_array_free (build.instructions, FALSE);
 }
 

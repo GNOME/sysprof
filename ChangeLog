@@ -1,3 +1,12 @@
+Mon Mar 27 23:04:30 2006  Soeren Sandmann  <sandmann@redhat.com>
+
+	* TODO: Updates.
+
+	* sfile.c (handle_{begin,end}_element): Don't generate begin/end
+	instructions for value elements.
+
+	* sfile.c (build_instructions): Remove debugging spew.
+
 Mon Mar 27 21:44:04 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* sformat.[ch]: New files containing a simplified and sanitized

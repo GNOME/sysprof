@@ -27,6 +27,9 @@ Before 1.0.2:
 
 Before 1.2:
 
+* commandline version should check that the output file is writable
+  before starting the profiling.
+
 * screenshot window must be cleared when you press start.
 
 * Maybe report idle time?

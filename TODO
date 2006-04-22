@@ -30,8 +30,6 @@ Before 1.2:
 * commandline version should check that the output file is writable
   before starting the profiling.
 
-* screenshot window must be cleared when you press start.
-
 * Maybe report idle time?
 
 * Fix (deleted) problem. But more generally, whenever we can't display a
@@ -138,7 +136,8 @@ Before 1.2:
 			int id;			-> for begins  that are pointed to
 		}
 	  perhaps even with iterators. Should be compact and suitable for both
-	  input and output..
+	  input and output. As a first cut, perhaps just split out the 
+	  Instruction code.
 
 	- make the api saner; add format/content structs
 	
@@ -312,11 +311,11 @@ Later:
 	  Profiling itself it appeared that most of the time was spent
 	  in the GMarkup parser
 	- a newer version of sysprof with significantly more compact
-	  Instructions took about 5 seconds, but the profile looked
-	  about the same.
+	  Instructions structure took about 5 seconds, but the profile
+	  looked about the same.
   The difference between the two versions has to be in page faults/
-  memory speed, but the profiles looked identically. 
-      Try and reproduce this result in a more controlled experiment.
+  memory speed, but the profiles looked similar.
+      Try and reproduce this in a more controlled experiment.
 
 - See if it is possible to group the X server activity under the process that
   generated it.
@@ -494,6 +493,8 @@ Later:
 
 
 DONE:
+
+- screenshot window must be cleared when you press start.
 
 - Formats should become first-class, stand-alone objects that offers
   help with parsing and nothing else.

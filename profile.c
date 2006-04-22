@@ -31,7 +31,7 @@ typedef struct Node Node;
 
 struct Profile
 {
-    StackStash *	stash;
+    StackStash *stash;
 };
 
 static SFormat *
@@ -470,7 +470,7 @@ profile_free (Profile *profile)
 }
 
 void
-profile_descendant_free    (ProfileDescendant *descendant)
+profile_descendant_free (ProfileDescendant *descendant)
 {
     if (!descendant)
 	return;

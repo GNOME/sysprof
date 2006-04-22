@@ -62,6 +62,296 @@ struct SType
 
 static void type_free (SType *type);
 
+/*
+ * Transition
+ */
+typedef enum
+{
+    BEGIN,
+    VALUE,
+    END
+} TransitionKind;
+
+struct Transition
+{
+    SType *		type;
+    TransitionKind	kind;
+    State *		to;
+};
+
+static Transition *transition_new   (SFormat        *format,
+				     TransitionKind  kind,
+				     SType          *type,
+				     State          *from,
+				     State          *to);
+static void transition_free         (Transition     *transition);
+static void transition_set_to_state (Transition     *transition,
+				     State          *to_state);
+
+/*
+ * State
+ */ 
+
+struct State
+{
+    GQueue *transitions;
+};
+
+static State *state_new            (SFormat    *format);
+static void   state_add_transition (State      *state,
+				    Transition *transition);
+static void   state_free           (State      *state);
+
+/*
+ * Format
+ */
+SFormat *
+sformat_new (void)
+{
+    /* FIXME: should probably be refcounted, and an SContext
+     * should have a ref on the format
+     */
+    SFormat *format = g_new0 (SFormat, 1);
+    
+    format->begin = NULL;
+    format->end = NULL;
+    
+    format->types = g_queue_new ();
+    format->states = g_queue_new ();
+    format->transitions = g_queue_new ();
+    
+    return format;
+}
+
+void
+sformat_free (SFormat *format)
+{
+    GList *list;
+    
+    for (list = format->types->head; list; list = list->next)
+    {
+	SType *type = list->data;
+	
+	type_free (type);
+    }
+    g_queue_free (format->types);
+    
+    for (list = format->states->head; list; list = list->next)
+    {
+	State *state = list->data;
+	
+	state_free (state);
+    }
+    g_queue_free (format->states);
+    
+    for (list = format->transitions->head; list; list = list->next)
+    {
+	Transition *transition = list->data;
+	
+	transition_free (transition);
+    }
+    g_queue_free (format->transitions);
+    
+    g_free (format);
+}
+
+void
+sformat_set_type (SFormat *format,
+		  SType   *type)
+{
+    format->begin = state_new (format);
+    format->end = state_new (format);
+    
+    state_add_transition (format->begin, type->enter);
+    transition_set_to_state (type->exit, format->end);
+}
+
+/*
+ * Type
+ */
+static SType *
+type_new (SFormat *format,
+	  TypeKind kind,
+	  const char *name)
+{
+    SType *type = g_new0 (SType, 1);
+    
+    type->kind = kind;
+    type->name = name? g_strdup (name) : NULL;
+    type->enter = NULL;
+    type->exit = NULL;
+    type->target = NULL;
+    
+    g_queue_push_tail (format->types, type);
+    
+    return type;
+}
+
+static SType *
+type_new_from_forward (SFormat *format,
+		       TypeKind kind,
+		       const char *name,
+		       SForward *forward)
+{
+    SType *type;
+    
+    if (forward)
+    {
+	type = (SType *)forward;
+	type->kind = kind;
+	type->name = g_strdup (name);
+    }
+    else
+    {
+	type = type_new (format, kind, name);
+    }
+    
+    return type;
+}
+
+
+static SType *
+type_new_value (SFormat *format, TypeKind kind, const char *name)
+{
+    SType *type = type_new (format, kind, name);
+    State *before, *after;
+    Transition *value;
+    
+    before = state_new (format);
+    after = state_new (format);
+    
+    type->enter = transition_new (format, BEGIN, type, NULL, before);
+    type->exit  = transition_new (format, END, type, after, NULL);
+    value = transition_new (format, VALUE, type, before, after);
+    
+    return type;
+}
+
+static void
+type_free (SType *type)
+{
+    g_free (type->name);
+    g_free (type);
+}
+
+SForward *
+sformat_declare_forward (SFormat *format)
+{
+    SType *type = type_new (format, TYPE_FORWARD, NULL);
+    
+    return (SForward *)type;
+}
+
+
+static GQueue *
+expand_varargs (SType *content1,
+		va_list args)
+{
+    GQueue *types = g_queue_new ();
+    SType *type;
+    
+    g_queue_push_tail (types, content1);
+    
+    type = va_arg (args, SType *);
+    while (type)
+    {
+	g_queue_push_tail (types, type);
+	type = va_arg (args, SType *);
+    }
+    
+    return types;
+}
+
+SType *
+sformat_make_record (SFormat *format,
+		     const char *name,
+		     SForward *forward,
+		     SType *content,
+		     ...)
+{
+    SType *type;
+    va_list args;
+    GQueue *types;
+    GList *list;
+    State *begin, *state;
+    
+    /* Build queue of child types */
+    va_start (args, content);
+    types = expand_varargs (content, args);
+    va_end (args);
+    
+    /* chain types together */
+    state = begin = state_new (format);
+    
+    for (list = types->head; list != NULL; list = list->next)
+    {
+        SType *child_type = list->data;
+	
+        state_add_transition (state, child_type->enter);
+	
+        state = state_new (format);
+	
+	transition_set_to_state (child_type->exit, state);
+    }
+    
+    g_queue_free (types);
+    
+    /* create and return the new type */
+    type = type_new_from_forward (format, TYPE_RECORD, name, forward);
+    type->enter = transition_new (format, BEGIN, type, NULL, begin);
+    type->exit = transition_new (format, END, type, state, NULL);
+    
+    return type;
+}
+
+SType *
+sformat_make_list   (SFormat *format,
+		     const char *name,
+		     SForward *forward,
+		     SType   *child_type)
+{
+    SType *type;
+    State *list_state;
+
+    type = type_new_from_forward (format, TYPE_LIST, name, forward);
+
+    list_state = state_new (format);
+    
+    type->enter = transition_new (format, BEGIN, type, NULL, list_state);
+    type->exit = transition_new (format, END, type, list_state, NULL);
+    
+    state_add_transition (list_state, child_type->enter);
+    transition_set_to_state (child_type->exit, list_state);
+    
+    return type;
+}
+
+SType *
+sformat_make_pointer (SFormat     *format,
+		      const char  *name,
+		      SForward    *forward)
+{
+    SType *type = type_new_value (format, TYPE_POINTER, name);
+    type->target = (SType *)forward;
+    
+    return type;
+}
+
+SType *
+sformat_make_integer (SFormat *format,
+		      const    char *name)
+{
+    return type_new_value (format, TYPE_INTEGER, name);
+}
+
+SType *
+sformat_make_string  (SFormat *format,
+		      const    char *name)
+{
+    return type_new_value (format, TYPE_STRING, name);
+}
+
+
 
 gboolean
 stype_is_record (SType *type)
@@ -107,291 +397,6 @@ stype_get_name (SType *type)
     return type->name;
 }
 
-/*
- * Transition
- */
-typedef enum
-{
-    BEGIN,
-    VALUE,
-    END
-} TransitionKind;
-
-struct Transition
-{
-    SType *		type;
-    TransitionKind	kind;
-    State *		to;
-};
-
-static Transition *transition_new (SFormat *format,
-				   TransitionKind kind,
-				   SType *type,
-				   State *from,
-				   State *to);
-static void transition_free (Transition *transition);
-static void transition_set_to_state (Transition *transition,
-				     State      *to_state);
-
-/*
- * State
- */ 
-
-struct State
-{
-    GQueue *transitions;
-};
-
-static State *state_new            (SFormat *format);
-static void   state_add_transition (State *state,
-				    Transition *transition);
-static void   state_free           (State *state);
-
-/*
- * Format
- */
-SFormat *
-sformat_new (void)
-{
-    /* FIXME: should probably be refcounted, and an SContext
-     * should have a ref on the format
-     */
-    SFormat *format = g_new0 (SFormat, 1);
-    
-    format->begin = NULL;
-    format->end = NULL;
-    
-    format->types = g_queue_new ();
-    format->states = g_queue_new ();
-    format->transitions = g_queue_new ();
-    
-    return format;
-}
-
-void
-sformat_free (SFormat *format)
-{
-    GList *list;
-    
-    for (list = format->types->head; list; list = list->next)
-    {
-	SType *type = list->data;
-	
-	type_free (type);
-    }
-    
-    for (list = format->states->head; list; list = list->next)
-    {
-	State *state = list->data;
-	
-	state_free (state);
-    }
-    
-    for (list = format->transitions->head; list; list = list->next)
-    {
-	Transition *transition = list->data;
-	
-	transition_free (transition);
-    }
-    
-    g_free (format);
-}
-
-void
-sformat_set_type (SFormat *format,
-		  SType   *type)
-{
-    format->begin = state_new (format);
-    format->end = state_new (format);
-    
-    state_add_transition (format->begin, type->enter);
-    transition_set_to_state (type->exit, format->end);
-    
-    /* Fix up pointer types */
-}
-
-/*
- * Type
- */
-static SType *
-type_new (SFormat *format,
-	  TypeKind kind,
-	  const char *name)
-{
-    SType *type = g_new0 (SType, 1);
-    
-    type->kind = kind;
-    type->name = name? g_strdup (name) : NULL;
-    type->enter = NULL;
-    type->exit = NULL;
-    type->target = NULL;
-    
-    g_queue_push_tail (format->types, type);
-    
-    return type;
-}
-
-static void
-type_free (SType *type)
-{
-    g_free (type->name);
-    g_free (type);
-}
-
-static GQueue *
-type_queue (SType *content1,
-	    va_list args)
-{
-    GQueue *types = g_queue_new ();
-    SType *type;
-    
-    g_queue_push_tail (types, content1);
-    
-    type = va_arg (args, SType *);
-    while (type)
-    {
-	g_queue_push_tail (types, type);
-	type = va_arg (args, SType *);
-    }
-    
-    return types;
-}
-
-SForward *
-sformat_declare_forward (SFormat *format)
-{
-    SType *type = type_new (format, TYPE_FORWARD, NULL);
-    
-    return (SForward *)type;
-}
-
-
-SType *
-sformat_make_record (SFormat *format,
-		     const char *name,
-		     SForward *forward,
-		     SType *content,
-		     ...)
-{
-    SType *type;
-    va_list args;
-    GQueue *types;
-    GList *list;
-    State *begin, *state;
-    
-    /* Build queue of child types */
-    va_start (args, content);
-    types = type_queue (content, args);
-    va_end (args);
-    
-    /* chain types together */
-    state = begin = state_new (format);
-    
-    for (list = types->head; list != NULL; list = list->next)
-    {
-        SType *child_type = list->data;
-	
-        state_add_transition (state, child_type->enter);
-	
-        state = state_new (format);
-	
-	transition_set_to_state (child_type->exit, state);
-    }
-    
-    g_queue_free (types);
-    
-    /* Return resulting fragment */
-    if (forward)
-    {
-	type = (SType *)forward;
-	type->kind = TYPE_RECORD;
-	type->name = g_strdup (name);
-    }
-    else
-    {
-	type = type_new (format, TYPE_RECORD, name);
-    }
-    
-    type->enter = transition_new (format, BEGIN, type, NULL, begin);
-    type->exit = transition_new (format, END, type, state, NULL);
-    
-    return type;
-}
-
-SType *
-sformat_make_list   (SFormat *format,
-		     const char *name,
-		     SForward *forward,
-		     SType   *child_type)
-{
-    SType *type;
-    State *list_state;
-    
-    if (forward)
-    {
-	type = (SType *)forward;
-	type->kind = TYPE_LIST;
-	type->name = g_strdup (name);
-    }
-    else
-    {
-	type = type_new (format, TYPE_LIST, name);
-    }
-    
-    list_state = state_new (format);
-    
-    type->enter = transition_new (format, BEGIN, type, NULL, list_state);
-    type->exit = transition_new (format, END, type, list_state, NULL);
-    
-    state_add_transition (list_state, child_type->enter);
-    transition_set_to_state (child_type->exit, list_state);
-    
-    return type;
-}
-
-static SType *
-type_new_value (SFormat *format, TypeKind kind, const char *name)
-{
-    SType *type = type_new (format, kind, name);
-    State *before, *after;
-    Transition *value;
-    
-    before = state_new (format);
-    after = state_new (format);
-    
-    type->enter = transition_new (format, BEGIN, type, NULL, before);
-    type->exit  = transition_new (format, END, type, after, NULL);
-    value = transition_new (format, VALUE, type, before, after);
-    
-    return type;
-}
-
-SType *
-sformat_make_pointer (SFormat     *format,
-		      const char  *name,
-		      SForward    *forward)
-{
-    SType *type = type_new_value (format, TYPE_POINTER, name);
-    type->target = (SType *)forward;
-    
-    return type;
-}
-
-SType *
-sformat_make_integer (SFormat *format,
-		      const    char *name)
-{
-    return type_new_value (format, TYPE_INTEGER, name);
-}
-
-SType *
-sformat_make_string  (SFormat *format,
-		      const    char *name)
-{
-    return type_new_value (format, TYPE_STRING, name);
-}
-
-
 /* Consider adding unions at some point
  *
  * To be useful they should probably be anonymous, so that
@@ -413,6 +418,8 @@ sformat_make_string  (SFormat *format,
  * Actually, we will probably have to have <union>asdlfkj</union>
  * elements. That will make things a lot easier, and unions are
  * still pretty useful if you put big things like lists in them.
+ *
+ * Or maybe just give them a name ...
  *
  * We may also consider adding anonymous records. These will
  * not be able to have pointers associated with them though

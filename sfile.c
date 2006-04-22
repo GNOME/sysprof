@@ -29,60 +29,6 @@
 #include "sfile.h"
 #include "sformat.h"
 
-static void
-set_error (GError **err, gint code, const char *format, va_list args)
-{
-    char *msg;
-    
-    if (!err)
-        return;
-    
-    msg = g_strdup_vprintf (format, args);
-    
-    if (*err == NULL)
-    {
-        *err = g_error_new_literal (G_MARKUP_ERROR, code, msg);
-    }
-    else
-    {
-        /* Warning text from GLib */
-        g_warning ("GError set over the top of a previous GError or uninitialized memory.\n" 
-                   "This indicates a bug in someone's code. You must ensure an error is NULL before it's set.\n"
-                   "The overwriting error message was: %s",
-                   msg);
-    }
-    
-    g_free (msg);
-}
-
-static void
-set_unknown_element_error (GError **err, const char *format, ...)
-{
-    va_list args;
-    va_start (args, format);
-    set_error (err, G_MARKUP_ERROR_UNKNOWN_ELEMENT, format, args);
-    va_end (args);
-}
-
-static void
-set_unknown_attribute_error (GError **err, const char *format, ...)
-{
-    va_list args;
-    va_start (args, format);
-    set_error (err, G_MARKUP_ERROR_UNKNOWN_ATTRIBUTE, format, args);
-    va_end (args);
-}
-
-static void
-set_invalid_content_error (GError **err, const char *format, ...)
-{
-    va_list args;
-    va_start (args, format);
-    set_error (err, G_MARKUP_ERROR_INVALID_CONTENT, format, args);
-    va_end (args);
-}
-
-/* reading */
 typedef struct BuildContext BuildContext;
 typedef struct Instruction Instruction;
 typedef enum
@@ -137,6 +83,63 @@ struct BuildContext
     GArray *instructions;
 };
 
+static void
+set_error (GError **err,
+	   gint code,
+	   const char *format,
+	   va_list args)
+{
+    char *msg;
+    
+    if (!err)
+        return;
+    
+    msg = g_strdup_vprintf (format, args);
+    
+    if (*err == NULL)
+    {
+        *err = g_error_new_literal (G_MARKUP_ERROR, code, msg);
+    }
+    else
+    {
+        /* Warning text from GLib */
+        g_warning ("GError set over the top of a previous GError or uninitialized memory.\n" 
+                   "This indicates a bug in someone's code. You must ensure an error is NULL before it's set.\n"
+                   "The overwriting error message was: %s",
+                   msg);
+    }
+    
+    g_free (msg);
+}
+
+static void
+set_unknown_element_error (GError **err, const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    set_error (err, G_MARKUP_ERROR_UNKNOWN_ELEMENT, format, args);
+    va_end (args);
+}
+
+static void
+set_unknown_attribute_error (GError **err, const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    set_error (err, G_MARKUP_ERROR_UNKNOWN_ATTRIBUTE, format, args);
+    va_end (args);
+}
+
+static void
+set_invalid_content_error (GError **err, const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    set_error (err, G_MARKUP_ERROR_INVALID_CONTENT, format, args);
+    va_end (args);
+}
+
+/* reading */
 static gboolean
 is_all_blank (const char *text)
 {
@@ -212,8 +215,8 @@ sfile_get_pointer (SFileInput  *file,
     
     instruction = file->current_instruction++;
     g_return_if_fail (stype_is_pointer (instruction->type));
-    
-    instruction->u.pointer.location = location;
+     
+   instruction->u.pointer.location = location;
     
     *location = (gpointer) 0xFedeAbe;
     
@@ -227,9 +230,9 @@ sfile_get_pointer (SFileInput  *file,
  }
 
 void
-sfile_get_integer      (SFileInput  *file,
-                        const char  *name,
-                        gint32      *integer)
+sfile_get_integer (SFileInput  *file,
+		   const char  *name,
+		   gint32      *integer)
 {
     Instruction *instruction;
 
@@ -241,9 +244,9 @@ sfile_get_integer      (SFileInput  *file,
 }
 
 void
-sfile_get_string       (SFileInput  *file,
-                        const char  *name,
-                        char       **string)
+sfile_get_string (SFileInput  *file,
+		  const char  *name,
+		  char       **string)
 {
     Instruction *instruction;
     
@@ -259,15 +262,11 @@ hook_up_pointers (SFileInput *file)
 {
     int i;
     
-#if 0
-    g_print ("emfle\n");
-#endif
     for (i = 0; i < file->n_instructions; ++i)
     {
         Instruction *instruction = &(file->instructions[i]);
 	
-        if (instruction->kind == VALUE &&
-            stype_is_pointer (instruction->type))
+        if (stype_is_pointer (instruction->type))
         {
             gpointer target_object;
             Instruction *target_instruction;
@@ -278,10 +277,6 @@ hook_up_pointers (SFileInput *file)
                 target_object = target_instruction->u.begin.end_instruction->u.end.object;
             else
                 target_object = NULL;
-	    
-#if 0
-            g_print ("target object: %p\n", target_object);
-#endif
 	    
             *(instruction->u.pointer.location) = target_object;
         }
@@ -489,7 +484,7 @@ free_instructions (Instruction *instructions, int n_instructions)
     {
         Instruction *instruction = &(instructions[i]);
 	
-        if (instruction->kind == VALUE && stype_is_string (instruction->type))
+        if (stype_is_string (instruction->type))
             g_free (instruction->u.string.value);
     }
     
@@ -536,7 +531,9 @@ process_instruction_pairs (Instruction *first)
 }
 
 static gboolean
-post_process_read_instructions (Instruction *instructions, int n_instructions, GError **err)
+post_process_read_instructions (Instruction  *instructions,
+				int           n_instructions,
+				GError      **err)
 {
     gboolean retval = TRUE;
     GHashTable *instructions_by_id;
@@ -565,8 +562,7 @@ post_process_read_instructions (Instruction *instructions, int n_instructions, G
     {
         Instruction *instruction = &(instructions[i]);
 	
-        if (instruction->kind == VALUE &&
-            stype_is_pointer (instruction->type))
+        if (stype_is_pointer (instruction->type))
         {
             int target_id = instruction->u.pointer.target_id;
 	    
@@ -610,7 +606,10 @@ post_process_read_instructions (Instruction *instructions, int n_instructions, G
 }
 
 static Instruction *
-build_instructions (const char *contents, SFormat *format, int *n_instructions, GError **err)
+build_instructions (const char *contents,
+		    SFormat    *format,
+		    int        *n_instructions,
+		    GError    **err)
 {
     BuildContext build;
     GMarkupParseContext *parse_context;
@@ -791,9 +790,9 @@ sfile_check_value (SFileOutput *file,
 }
 
 void
-sfile_add_string       (SFileOutput       *file,
-                        const char *name,
-                        const char *string)
+sfile_add_string (SFileOutput *file,
+		  const char  *name,
+		  const char  *string)
 {
     Instruction instruction;
     
@@ -812,9 +811,9 @@ sfile_add_string       (SFileOutput       *file,
 }
 
 void
-sfile_add_integer      (SFileOutput *file,
-                        const char  *name,
-                        int          integer)
+sfile_add_integer (SFileOutput *file,
+                   const char  *name,
+                   int          integer)
 {
     Instruction instruction;
     
@@ -831,9 +830,9 @@ sfile_add_integer      (SFileOutput *file,
 }
 
 void
-sfile_add_pointer      (SFileOutput *file,
-                        const char  *name,
-                        gpointer     pointer)
+sfile_add_pointer (SFileOutput *file,
+		   const char  *name,
+		   gpointer     pointer)
 {
     Instruction instruction;
     
@@ -898,7 +897,7 @@ post_process_write_instructions (SFileOutput *sfile)
                 if (!target)
                 {
                     g_warning ("pointer has unknown target\n");
-                    return;
+		    goto out;
                 }
 		
                 g_assert (target->kind == END);
@@ -915,11 +914,14 @@ post_process_write_instructions (SFileOutput *sfile)
             }
         }
     }
-    
+
+out:
+    g_hash_table_destroy (instructions_by_object);
 }
 
 static void
-add_indent (GString *output, int indent)
+add_indent (GString *output,
+	    int      indent)
 {
     int i;
     
@@ -928,13 +930,15 @@ add_indent (GString *output, int indent)
 }
 
 static void
-add_integer (GString *output, int value)
+add_integer (GString *output,
+	     int      value)
 {
     g_string_append_printf (output, "%d", value);
 }
 
 static void
-add_string (GString *output, const char *str)
+add_string (GString    *output,
+	    const char *str)
 {
     char *escaped = g_markup_escape_text (str, -1);
     g_string_append_c (output, '\"');
@@ -944,7 +948,10 @@ add_string (GString *output, const char *str)
 }
 
 static void
-add_begin_tag (GString *output, int indent, const char *name, int id)
+add_begin_tag (GString    *output,
+	       int         indent,
+	       const char *name,
+	       int         id)
 {
     add_indent (output, indent);
     
@@ -955,7 +962,9 @@ add_begin_tag (GString *output, int indent, const char *name, int id)
 }
 
 static void
-add_end_tag (GString *output, int indent, const char *name)
+add_end_tag (GString    *output,
+	     int         indent,
+	     const char *name)
 {
     add_indent (output, indent);
     g_string_append_printf (output, "</%s>", name);
@@ -968,10 +977,10 @@ add_nl (GString *output)
 }
 
 static gboolean
-file_replace (const gchar *filename,
-              const gchar *contents,
-              gssize	     length,
-              GError	   **error);
+file_replace (const gchar  *filename,
+              const gchar  *contents,
+              gssize	    length,
+              GError	  **error);
 
 #if 0
 static void
@@ -1101,8 +1110,10 @@ sfile_output_save (SFileOutput  *sfile,
 	    {
                 add_string (output, instruction->u.string.value);
             }
+
             add_end_tag (output, 0, get_name (instruction));
-            add_nl (output);
+
+	    add_nl (output);
             break;
         }
     }
@@ -1127,7 +1138,7 @@ sfile_output_save (SFileOutput  *sfile,
 
 
 void
-sfile_input_free	(SFileInput  *file)
+sfile_input_free (SFileInput *file)
 {
     free_instructions (file->instructions, file->n_instructions);
     

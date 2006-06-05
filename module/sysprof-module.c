@@ -217,14 +217,19 @@ procfile_poll(struct file *filp, poll_table *poll_table)
 int
 init_module(void)
 {
+	static struct file_operations fops;
+
 	trace_proc_file =
 		create_proc_entry ("sysprof-trace", S_IFREG | S_IRUGO, &proc_root);
 	
 	if (!trace_proc_file)
 		return 1;
+
+	fops = *trace_proc_file->proc_fops;
+	fops.poll = procfile_poll;
 	
 	trace_proc_file->read_proc = procfile_read;
-	trace_proc_file->proc_fops->poll = procfile_poll;
+	trace_proc_file->proc_fops = &fops;
 	trace_proc_file->size = sizeof (SysprofStackTrace);
 
 	register_timer_hook (timer_notify);

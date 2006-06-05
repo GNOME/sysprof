@@ -1,3 +1,9 @@
+2006-06-05  Soren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (init_module): Copy the proc_fops and
+	update the poll entry in the copy, rather than writing directly to
+	the proc_fops. Fixes compilation on the latest kernels.
+
 Thu Feb 23 21:37:21 2006  Soeren Sandmann  <sandmann@redhat.com>
 
 	* =-=-=-= Release sysprof 1.0.2 =-=-=-=

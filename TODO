@@ -1,4 +1,4 @@
-Before 1.0.2:
+Before 1.0.3:
 
 * See if we can reproduce the problem where libraries didn't get correctly
   reloaded after new versions were installed.
@@ -24,6 +24,11 @@ Before 1.0.2:
   then load kernel module and press start again. Segmentation fault. 
 
 * Test on x86-64. 
+
+* Consider renaming sysprof-module.[ch] to sysprof.[ch] to move it closer to 
+  kernel naming conventions. 
+
+* Get rid of include of "../config.h" as that won't work in the kernel.
 
 Before 1.2:
 

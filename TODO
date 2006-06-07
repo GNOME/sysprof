@@ -32,6 +32,8 @@ Before 1.0.3:
 
 Before 1.2:
 
+* Make it compilable against a non-running kernel.
+
 * commandline version should check that the output file is writable
   before starting the profiling.
 

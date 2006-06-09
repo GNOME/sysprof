@@ -1,3 +1,13 @@
+2006-06-08  Soren Sandmann <sandmann@redhat.com>
+
+	* =-=-=-= Release sysprof 1.0.3 =-=-=-=
+
+	* configure.ac: Bump version number
+
+	* announce-1.0.3: Add this file.
+	
+	* sysprof.c (RESET_DEAD_PERIOD): Increase this to 250
+
 2006-06-05  Soren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (init_module): Copy the proc_fops and

@@ -336,7 +336,7 @@ time_diff (const GTimeVal *first,
   return first_ms - second_ms;
 }
 
-#define RESET_DEAD_PERIOD 25
+#define RESET_DEAD_PERIOD 250
 
 static void
 on_read (gpointer data)

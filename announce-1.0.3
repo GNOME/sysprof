@@ -1,0 +1,67 @@
+Sysprof Linux Profiler v. 1.0.3
+
+
+* What is it?
+--------------------------
+
+Sysprof is a sampling system-wide CPU profiler for Linux.
+
+Sysprof uses a Linux kernel module to profile the entire system, not
+just an individual application. 
+
+Of course, sysprof handles threads and shared libraries, and
+applications do not have to be recompiled or instrumented. In fact
+they don't even have to be restarted. 
+
+Just insert the kernel module and start sysprof.
+
+
+* Features:
+----------------------
+
+    - Profiles all running processes, not just a single application
+
+    - Call graph support showing time spent in each branch of the call tree
+
+    - Has a simple graphical interface
+
+    - Profiles can be loaded and saved
+
+    - Easy to use: Just insert the kernel module and start sysprof
+
+    - Supports Fedora debuginfo packages
+
+
+* Sysprof 1.0.3
+--------------------------
+
+    - Compiles with the latest kernels
+
+
+Please report bugs as well as success or failure stories to 
+
+    sandmann@daimi au dk
+
+
+
+* Where can I get it?
+--------------------------------------------
+
+Home page:
+
+       http://www.daimi.au.dk/~sandmann/sysprof/
+
+Source code:
+
+       http://www.daimi.au.dk/~sandmann/sysprof/sysprof-1.0.2.tar.gz
+
+Sysprof requires
+
+        - Linux 2.6.11 or later, compiled with profiling support
+        - GTK+ 2.6
+	- libglade 2.5
+
+It is known to work out the box on Fedora Core 4.
+
+
+Søren

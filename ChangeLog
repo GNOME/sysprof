@@ -1,3 +1,7 @@
+2006-06-08  SÃ¸ren Sandmann  <ssp@localhost.localdomain>
+
+	* announce-1.0.3: Fix forgotten 1.0.2 -> 1.0.3.
+
 2006-06-08  Soren Sandmann <sandmann@redhat.com>
 
 	* =-=-=-= Release sysprof 1.0.3 =-=-=-=

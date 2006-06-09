@@ -161,6 +161,22 @@ Before 1.2:
   of 100K usually, which for 200 times a second means a bandwidth of
   20MB/s, which is probably too much. One question is how much of it
   usually changes. 
+	Actually it seems that the _interesting_ part of the stack 
+  (ie., from the stack pointer and up) is not that big in many cases. The
+  average stacksize seemed to be about 7700 bytes for gcc compiling gtk+.
+  Even deeply recursive apps like sysprof only generate about 55K stacks.
+
+  Other possibilities:
+
+	- Do heuristic stack walking where it lists all words on the stack
+	  that look like they might be return addresses.
+
+	- Somehow map the application's stack pages into the client. This
+	  is likely difficult or impossible.
+
+	- Another idea: copy all addresses that look like they could be
+	  return addresses, along with the location on the stack. This
+	  just might be enough for a userspace stack walker.
 
 * If interrupt happens in kernel mode, send both
   kernel stack and user space stack, have userspace stitch them

@@ -1,6 +1,6 @@
 AC_PREREQ(2.54)
 
-AC_INIT([sysprof], [1.1.0])
+AC_INIT([sysprof], [1.1.0.snap071806])
 AC_CONFIG_SRCDIR(sysprof.glade)
 
 AM_INIT_AUTOMAKE(no-define)
@@ -83,7 +83,7 @@ fi
 
 # Pkgconfig dependencies
 
-core_dep="glib-2.0"
+core_dep="glib-2.0 >= 2.6.0"
 gui_dep="gtk+-2.0 > 2.6.0 gdk-pixbuf-2.0 pangoft2 libglade-2.0"
 
 PKG_CHECK_MODULES(CORE_DEP, $core_dep, [], AC_MSG_ERROR([sysprof dependencies not satisfied]))

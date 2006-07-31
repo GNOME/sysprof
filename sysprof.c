@@ -1558,6 +1558,14 @@ main (int    argc,
     
     gtk_init (&argc, &argv);
     
+#if 0
+    /* FIXME: enable this when compiled against the relevant glib
+     * version. (The reason we want to enable it is that gslice
+     * caches too much memory and also confuses valgrind).
+     */
+    g_slice_set_config (G_SLICE_CONFIG_ALWAYS_MALLOC, TRUE);
+#endif
+    
     app = application_new ();
     
     if (!build_gui (app))

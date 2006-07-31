@@ -1,3 +1,20 @@
+2006-07-31  Soren Sandmann <sandmann@redhat.com>
+
+	* stackstash.[ch]: Add a destroy notifier to StackStash
+
+	* collector.c (collector_create_profile): Pass g_free as destroy
+	notifier.
+
+	* collector.c (collector_reset): Pass NULL as destroy notifier
+
+	* profile.c (profile_load): Pass g_free here.
+
+	* profile.c (struct Profile): Remove unused "Node" typedef 
+
+	* collector.c (resolve_symbols): Free the array here.
+
+	* TODO: various updates.
+	
 2006-07-30  Soren Sandmann <sandmann@redhat.com>
 
 	* signal-handler.c: Simplify this file a bit, and make it not rely

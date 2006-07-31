@@ -85,6 +85,12 @@ signal_handler (int        signo,
 {
     /* FIXME: I suppose we should handle short
      * and non-successful writes ...
+     *
+     * And also, there is a deadlock if so many signals arrive that
+     * write() blocks. Then we will be stuck right here, and the
+     * main loop will never run. Kinda hard to fix without dropping
+     * signals ...
+     *
      */
     write (write_end, &signo, sizeof (int));
 }
@@ -190,7 +196,7 @@ signal_set_handler (int          signo,
         
         return FALSE;
     }
-    
+        
     return TRUE;
 }
 

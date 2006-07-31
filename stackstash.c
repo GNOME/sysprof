@@ -21,9 +21,10 @@
 
 struct StackStash
 {
-    StackNode  *root;
-    GHashTable *nodes_by_data;
-    int		ref_count;
+    int			ref_count;
+    StackNode *		root;
+    GHashTable *	nodes_by_data;
+    GDestroyNotify	destroy;
 };
 
 static StackNode *
@@ -40,23 +41,25 @@ stack_node_new (void)
     return node;
 }
 
+/* "destroy", if non-NULL, is called once on every address */
 static StackStash *
-create_stack_stash (void)
+create_stack_stash (GDestroyNotify destroy)
 {
     StackStash *stash = g_new (StackStash, 1);
 
     stash->root = NULL;
     stash->nodes_by_data = g_hash_table_new (g_direct_hash, g_direct_equal);
     stash->ref_count = 1;
+    stash->destroy = destroy;
 
     return stash;
 }
 
 /* Stach */
 StackStash *
-stack_stash_new       (void)
+stack_stash_new (GDestroyNotify destroy)
 {
-    return create_stack_stash();
+    return create_stack_stash (destroy);
 }
 
 void
@@ -79,7 +82,7 @@ decorate_node (StackStash *stash,
     }
 
     node->toplevel = toplevel;
-    
+
     node->next = g_hash_table_lookup (
 	stash->nodes_by_data, node->address);
     g_hash_table_insert (
@@ -196,9 +199,26 @@ stack_node_free (StackNode *node)
 }
 
 static void
+free_key (gpointer key,
+	  gpointer value,
+	  gpointer data)
+{
+    GDestroyNotify destroy = data;
+
+    destroy (key);
+}
+
+static void
 stack_stash_free (StackStash *stash)
 {
     stack_node_free (stash->root);
+
+    if (stash->destroy)
+    {
+	g_hash_table_foreach (stash->nodes_by_data, free_key,
+			      stash->destroy);
+    }
+    
     g_hash_table_destroy (stash->nodes_by_data);
     
     g_free (stash);
@@ -277,9 +297,10 @@ build_hash_table (StackNode *node,
 }
 
 StackStash *
-stack_stash_new_from_root (StackNode *root)
+stack_stash_new_from_root (StackNode      *root,
+			   GDestroyNotify  destroy)
 {
-    StackStash *stash = create_stack_stash();
+    StackStash *stash = create_stack_stash (destroy);
 
     stash->root = root;
     

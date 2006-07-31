@@ -96,6 +96,11 @@ Before 1.2:
 
 - plug all the leaks
 	- don't leak the presentation strings/objects
+		- maybe add stack_stash_set_free_func() or something
+		- perhaps think a little bit more about the presentation
+		  object idea. Having pango markup available might be nice
+		  as well ... Plus the unique_dup() scheme is somewhat
+		  confusing. 
 	- loading and saving probably leak right now
 
 - rethink loading and saving. Goals
@@ -146,7 +151,22 @@ Before 1.2:
 	  input and output. As a first cut, perhaps just split out the 
 	  Instruction code.
 
+		(done, somewhat).
+
 	- make the api saner; add format/content structs
+		Idea: all types have to be declared:
+
+		SFormat *format = sformat_new()
+		SType   *object_list = stype_new (format);
+		SType   *object = stype_new (format);
+		...
+
+		stype_define_list (object_list, "objects", object);
+		stype_define_record (object, "object",
+				     name, total, self, NULL);
+		stype_define_pointer (...);
+		
+
 	
 * See if the auto-expanding can be made more intelligent
 	- "Everything" should be expanded exactly one level

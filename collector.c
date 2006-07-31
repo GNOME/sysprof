@@ -246,7 +246,7 @@ collector_reset (Collector *collector)
 
     process_flush_caches();
     
-    collector->stash = stack_stash_new ();
+    collector->stash = stack_stash_new (NULL);
     collector->n_samples = 0;
     
     g_get_current_time (&collector->latest_reset);
@@ -315,6 +315,8 @@ resolve_symbols (GList *trace, gint size, gpointer data)
     stack_stash_add_trace (info->resolved_stash,
 			   (gulong *)resolved_trace->pdata,
 			   resolved_trace->len, size);
+
+    g_ptr_array_free (resolved_trace, TRUE);
 }
 
 Profile *
@@ -323,10 +325,12 @@ collector_create_profile (Collector *collector)
     ResolveInfo info;
     Profile *profile;
     
-    info.resolved_stash = stack_stash_new ();
+    info.resolved_stash = stack_stash_new ((GDestroyNotify)g_free);
     info.unique_symbols = g_hash_table_new (g_direct_hash, g_direct_equal);
     
     stack_stash_foreach (collector->stash, resolve_symbols, &info);
+
+    /* FIXME: we are leaking the value strings in info.unique_symbols */
     
     g_hash_table_destroy (info.unique_symbols);
 

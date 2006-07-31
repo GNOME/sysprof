@@ -27,8 +27,6 @@
 #include "profile.h"
 #include "sfile.h"
 
-typedef struct Node Node;
-
 struct Profile
 {
     StackStash *stash;
@@ -227,7 +225,7 @@ profile_load (const char *filename, GError **err)
     sformat_free (format);
     sfile_input_free (input);
 
-    profile->stash = stack_stash_new_from_root (root);
+    profile->stash = stack_stash_new_from_root (root, (GDestroyNotify)g_free);
     
     return profile;
 }
@@ -517,10 +515,6 @@ profile_get_objects (Profile *profile)
     
     stack_stash_foreach_by_address (
 	profile->stash, build_object_list, &objects);
-    
-    /* FIXME: everybody still assumes that they don't have to free the
-     * objects in the list, but these days they do, and so we are leaking.
-     */
     
     return objects;
 }

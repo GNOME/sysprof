@@ -1,3 +1,7 @@
+2006-07-31  Paolo Borelli  <pborelli@katamail.com>
+
+	* sysprof.c (expand_descendants_tree): small cleanup.
+
 2006-07-31  Soren Sandmann <sandmann@redhat.com>
 
 	* stackstash.[ch]: Add a destroy notifier to StackStash

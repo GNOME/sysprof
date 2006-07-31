@@ -965,25 +965,25 @@ expand_descendants_tree (Application *app)
 	{
 	    GtkTreePath *path = list->data;
 	    GtkTreeIter iter;
-	    double value;
+
 	    g_assert (path != NULL);
+
 	    if (gtk_tree_model_get_iter (model, &iter, path))
 	    {
+		double value;
 		gtk_tree_model_get (model, &iter,
 				    OBJECT_TOTAL, &value,
 				    -1);
-	    }
-	    if (value >= best_value)
-	    {
-		best_value = value;
-		best_path = path;
-		
-		gtk_tree_model_get_iter (model, &best_iter, path);
+
+		if (value >= best_value)
+		{
+		    best_value = value;
+		    best_path = path;
+		    best_iter = iter;
+		}
 	    }
 	}
-	
-	gtk_tree_model_get_iter (model, &iter, best_path);
-	
+
 	n_children = gtk_tree_model_iter_n_children (model, &best_iter);
 	
 	if (n_children && (best_value / top_value) > 0.04 &&

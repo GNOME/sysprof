@@ -402,7 +402,7 @@ profile_list_callers (Profile       *profile,
 	GHashTable *all_ancestors;
 	GList *all, *list;
 
-	/* Build a list of those ancestor that should get assigned
+	/* Build a list of those ancestors that should get assigned
 	 * totals. If this callee does not have any recursive calls
 	 * higher up, that means all of it's ancestors. If it does
 	 * have a recursive call, only the one between this node

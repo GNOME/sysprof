@@ -31,14 +31,14 @@ struct SignalWatch
     SignalFunc          handler;
     gpointer            user_data;
     
-    int                 read_end;
-    int                 write_end;
     struct sigaction    old_action;
     
     SignalWatch *       next;
 };
 
-static SignalWatch *signal_watches;
+static int          read_end = -1;
+static int          write_end = -1;
+static SignalWatch *signal_watches = NULL;
 
 static SignalWatch *
 lookup_signal_watch (int signo)
@@ -54,45 +54,27 @@ lookup_signal_watch (int signo)
     return NULL;
 }
 
-/* These two functions might be interrupted by a signal handler that is
- * going to run lookup_signal_watch(). Assuming that pointer writes are
- * atomic, the code below should be ok.
- */
-static void
-add_signal_watch (SignalWatch *watch)
-{
-    g_return_if_fail (lookup_signal_watch (watch->signo) == NULL);
-    
-    watch->next = signal_watches;
-    signal_watches = watch;
-}
-
 static void
 remove_signal_watch (SignalWatch *watch)
 {
-    g_return_if_fail (watch != NULL);
+    SignalWatch *prev, *w;
     
-    /* It's either the first one in the list, or it is the ->next
-     * for some other watch
-     */
-    if (watch == signal_watches)
+    g_return_if_fail (watch != NULL);
+
+    prev = NULL;
+    for (w = signal_watches; w != NULL; w = w->next)
     {
-	signal_watches = watch->next;
-	watch->next = NULL;
-    }
-    else
-    {
-	SignalWatch *w;
+        if (w == watch)
+        {
+            if (prev)
+                prev->next = w->next;
+            else
+                signal_watches = w->next;
+
+            break;
+        }
         
-	for (w = signal_watches; w && w->next; w = w->next)
-	{
-	    if (watch == w->next)
-	    {
-		w->next = w->next->next;
-		watch->next = NULL;
-		break;
-	    }
-	}
+        prev = w;
     }
 }
 
@@ -101,25 +83,25 @@ signal_handler (int        signo,
                 siginfo_t *info,
                 void      *data)
 {
-    SignalWatch *watch;
-    char x = 'x';
-    
-    watch = lookup_signal_watch (signo);
-    write (watch->write_end, &x, 1);
+    /* FIXME: I suppose we should handle short
+     * and non-successful writes ...
+     */
+    write (write_end, &signo, sizeof (int));
 }
 
 static void
 on_read (gpointer data)
 {
-    SignalWatch *watch = data;
-    char x;
-    
-    read (watch->read_end, &x, 1);
-    
-    /* This is a callback to the application, so things like
-     * signal_unset_handler() can be called here.
-     */
-    watch->handler (watch->signo, watch->user_data);
+    SignalWatch *watch;
+    int signo;
+
+    /* FIXME: handle short read I suppose */
+    read (read_end, &signo, sizeof (int));
+
+    watch = lookup_signal_watch (signo);
+
+    if (watch)
+        watch->handler (signo, watch->user_data);
 }
 
 static gboolean
@@ -134,7 +116,8 @@ create_pipe (int     *read_end,
         /* FIXME - create an error */
         return FALSE;
     }
-    
+
+    /* FIXME: We should probably make the fd's non-blocking */
     if (read_end)
 	*read_end = p[0];
     
@@ -169,11 +152,6 @@ install_signal_handler (int                signo,
 static void
 signal_watch_free (SignalWatch *watch)
 {
-    fd_remove_watch (watch->read_end);
-    
-    close (watch->write_end);
-    close (watch->read_end);
-    
     remove_signal_watch (watch);
     
     g_free (watch);
@@ -186,25 +164,25 @@ signal_set_handler (int          signo,
 		    GError     **err)
 {
     SignalWatch *watch;
-    int read_end, write_end;
     
     g_return_val_if_fail (lookup_signal_watch (signo) == NULL, FALSE);
-    
-    if (!create_pipe (&read_end, &write_end, err))
-        return FALSE;
+
+    if (read_end == -1)
+    {
+        if (!create_pipe (&read_end, &write_end, err))
+            return FALSE;
+
+        fd_add_watch (read_end, NULL);
+        fd_set_read_callback (read_end, on_read);
+    }
     
     watch = g_new0 (SignalWatch, 1);
     
     watch->signo = signo;
     watch->handler = handler;
     watch->user_data = data;
-    watch->read_end = read_end;
-    watch->write_end = write_end;
-    
-    fd_add_watch (watch->read_end, watch);
-    fd_set_read_callback (watch->read_end, on_read);
-    
-    add_signal_watch (watch);
+    watch->next = signal_watches;
+    signal_watches = watch;
     
     if (!install_signal_handler (signo, &watch->old_action, err))
     {

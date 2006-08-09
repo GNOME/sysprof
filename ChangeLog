@@ -3,7 +3,7 @@
 	* sysprof.c (main): Make the load_file() idle low priority to
 	avoid weird toolbar flash. 
 
-	* TODO: updates.
+	* TODO, NEWS, README: updates.
 
 2006-07-31  Paolo Borelli  <pborelli@katamail.com>
 

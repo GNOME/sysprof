@@ -1,3 +1,10 @@
+2006-08-08  Soren Sandmann  <ssp@localhost.localdomain>
+
+	* sysprof.c (main): Make the load_file() idle low priority to
+	avoid weird toolbar flash. 
+
+	* TODO: updates.
+
 2006-07-31  Paolo Borelli  <pborelli@katamail.com>
 
 	* sysprof.c (expand_descendants_tree): small cleanup.

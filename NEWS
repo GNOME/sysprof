@@ -3,4 +3,5 @@
 - Assign time spent in kernel to the user process responsible
 - New screenshot window
 - Device based on udev [Kristian Hoegsberg]
+- Port to RHEL4 [Bastien Nocera]
 - Performance improvements

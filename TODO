@@ -537,6 +537,15 @@ Later:
 
 DONE:
 
+* When you load a file from the commandline, there is a weird flash of the toolbar. 
+  What's going on is this:
+		- this file is loaded into a tree model
+		- the tree model is set for the function list
+		- this causes the selection changed signal to be emitted
+		- the callback for that signal process updates
+		- somehow in that update process, the toolbar flashes.
+		- turns out to be a gtk+ issue: 350517
+
 - screenshot window must be cleared when you press start.
 
 - Formats should become first-class, stand-alone objects that offers

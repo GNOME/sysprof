@@ -1153,7 +1153,7 @@ on_object_selection_changed (GtkTreeSelection *selection,
 			     gpointer          data)
 {
     Application *app = data;
-    
+
     set_busy (app->main_window, TRUE);
     
     gdk_window_process_all_updates (); /* Display updated selection */
@@ -1528,7 +1528,7 @@ load_file (gpointer data)
     Application *app = file_open_data->app;
     GError *err = NULL;
     Profile *profile;
-    
+
     set_busy (app->main_window, TRUE);
     
     profile = profile_load (filename, &err);
@@ -1560,8 +1560,10 @@ main (int    argc,
     
 #if 0
     /* FIXME: enable this when compiled against the relevant glib
-     * version. (The reason we want to enable it is that gslice
-     * caches too much memory and also confuses valgrind).
+     * version. The reason we want to disable it is that gslice
+     *   - confuses valgrind
+     *   - caches too much memory
+     *   - is not actually faster
      */
     g_slice_set_config (G_SLICE_CONFIG_ALWAYS_MALLOC, TRUE);
 #endif
@@ -1578,8 +1580,10 @@ main (int    argc,
 	FileOpenData *file_open_data = g_new0 (FileOpenData, 1);
 	file_open_data->filename = argv[1];
 	file_open_data->app = app;
-	
-	g_idle_add (load_file, file_open_data);
+
+	/* This has to run at G_PRIORITY_LOW because of bug 350517
+	 */
+	g_idle_add_full (G_PRIORITY_LOW, load_file, file_open_data, NULL);
     }
     
     gtk_main ();

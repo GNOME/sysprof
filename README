@@ -19,8 +19,8 @@ would be appreciated.
 
 Requirements:
 
-- A Linux kernel version 2.6.11 or newer is required.
-  Unlike Sysprof 0.9, this version should work fine on SMP systems.
+- A Linux kernel version 2.6.9 or newer, compiled with profiling
+  support, is required.
 
 - GTK+ 2.6.0 or newer is required
 

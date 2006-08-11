@@ -32,6 +32,8 @@ Before 1.0.3:
 
 Before 1.2:
 
+* Rename stack_stash_foreach_by_address() to stack_stash_foreach_unique()
+
 * Make it compilable against a non-running kernel.
 
 * commandline version should check that the output file is writable
@@ -197,6 +199,22 @@ Before 1.2:
 	- Another idea: copy all addresses that look like they could be
 	  return addresses, along with the location on the stack. This
 	  just might be enough for a userspace stack walker.
+
+	- Yet another: krh suggests hashing blocks of the stack, then
+	  only sending the blocks that changed since last time.
+
+		- every time you send a stackblock, also send a cookie.
+
+		- whenever you *don't* send a stackblock, send the cookie
+		  instead. That way you always get a complete stacktrace
+		  conceptually.
+
+		- also, that would allow the kernel to just have a simple
+		  hashtable containing the known blocks. Though, that could
+		  become large. Actually there is no reason to store the
+		  blocks; you can just send the hashcode. That way you 
+		  would only need to store a list of hashcodes that we
+		  have generated previously.
 
 * If interrupt happens in kernel mode, send both
   kernel stack and user space stack, have userspace stitch them

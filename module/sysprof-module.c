@@ -111,24 +111,31 @@ read_frame (void *frame_pointer, StackFrame *frame)
 	return 0;
 }
 
+DEFINE_PER_CPU(int, n_samples);
+
 static int
 timer_notify (struct pt_regs *regs)
 {
-	static int n_samples;
 	SysprofStackTrace *trace = head;
 	int i;
 	int is_user;
+	static atomic_t in_timer_notify = ATOMIC_INIT(1);
 
-	if ((n_samples++ % INTERVAL) != 0)
+	if ((++get_cpu_var(n_samples) % INTERVAL) != 0)
 		return 0;
 
+	/* 0: locked, 1: unlocked */
+	
+	if (!atomic_dec_and_test(&in_timer_notify))
+		goto out;
+	
 	is_user = user_mode(regs);
 
 	if (!current || current->pid == 0)
-		return 0;
+		goto out;
 	
 	if (is_user && current->state != TASK_RUNNING)
-		return 0;
+		goto out;
 
 	if (!is_user)
 	{
@@ -176,7 +183,9 @@ timer_notify (struct pt_regs *regs)
 		head = &stack_traces[0];
 	
 	wake_up (&wait_for_trace);
-	
+
+out:
+	atomic_inc(&in_timer_notify);
 	return 0;
 }
 
@@ -192,6 +201,8 @@ procfile_read(char *buffer,
 		return -EWOULDBLOCK;
 	
 	*buffer_location = (char *)tail;
+
+	BUG_ON(tail->pid == 0);
 	
 	if (tail++ == &stack_traces[N_TRACES - 1])
 		tail = &stack_traces[0];

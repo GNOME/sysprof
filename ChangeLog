@@ -1,4 +1,10 @@
-2006-06-08  SÃ¸ren Sandmann  <ssp@localhost.localdomain>
+Sat Aug 12 16:27:13 2006  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (timer_notify): Bugfix for SMP kernel:
+	Make n_samples a per-CPU variable. Protect timer_notify() with an
+	atomic variable.
+
+2006-06-08  Soren Sandmann  <sandmann@redhat.com>
 
 	* announce-1.0.3: Fix forgotten 1.0.2 -> 1.0.3.
 

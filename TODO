@@ -1,4 +1,4 @@
-Before 1.0.3:
+Before 1.0.4:
 
 * See if we can reproduce the problem where libraries didn't get correctly
   reloaded after new versions were installed.
@@ -32,14 +32,16 @@ Before 1.0.3:
 
 Before 1.2:
 
-* Rename stack_stash_foreach_by_address() to stack_stash_foreach_unique()
+* Rename stack_stash_foreach_by_address() to stack_stash_foreach_unique(),
+  or maybe not ...
 
 * Make it compilable against a non-running kernel.
 
 * commandline version should check that the output file is writable
   before starting the profiling.
 
-* Maybe report idle time?
+* Maybe report idle time? Although this would come for free with the
+  timelines.
 
 * Fix (deleted) problem. But more generally, whenever we can't display a
   symbol, display an error message instead, ie., 
@@ -366,6 +368,11 @@ When the interrupt happens,
 
 Later:
 
+- On SMP systems interrupts happen unpredictably, including when another
+  one is running. Right now we are ignoring any interrupts that happen
+  when another one is running, but we should probably just save the data
+  in a per-cpu buffer.
+
 - Find out if sysprof accurately reports time spent handling pagefaults.
   There is evidence that it doesn't:
 	- a version of sysprof took 10 seconds to load a certain profile.
@@ -553,7 +560,26 @@ Later:
 
 
 
-DONE:
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* It is apparently possible to get another timer interrupt in the middle
+  of timer_notify. If this happens the circular buffer gets screwed up and
+  you get crashes. Note this gets much worse on SMP (in fact how did this
+  work at all previously?)
+
+  Possible fixes
+	- have a "in timer notify" variable, then simply reject nested
+	  interrupts
+	- keep a "ghost head" that timers can use to allocate new traces,
+	  then update the real head whenever one of them completes. Note
+	  though, that the traces will get generated in the wrong order
+	  due to the nesting. In fact, only the outermost timernotify
+	  can update the real head, and it should update it to ghost_head.
+	- do correct locking? Nah, that's crazy talk
+  Also note: a race is a race, and on SMP we probably can't even make it
+  unlikely enough to not matter.
+
+  Fixed by ignoring the nested interrupts using an atomic variable.
 
 * When you load a file from the commandline, there is a weird flash of the toolbar. 
   What's going on is this:

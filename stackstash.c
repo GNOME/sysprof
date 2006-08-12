@@ -62,7 +62,7 @@ stack_stash_new (GDestroyNotify destroy)
     return create_stack_stash (destroy);
 }
 
-void
+static void
 decorate_node (StackStash *stash,
 	       StackNode  *node)
 {

@@ -1,3 +1,13 @@
+Sat Aug 12 16:13:05 2006  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c: Make n_samples per-cpu. Add an atomic
+	variable in_timer_notify and use it to lock out simultaneous timer
+	interrupts.
+
+	* stackstash.c (decorate_node): Make decorate_node() static
+
+	* TODO
+
 Fri Aug 11 11:41:15 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO: Updates

@@ -3,6 +3,12 @@ DIST_SUBDIRS = module
 
 bin_PROGRAMS = sysprof-text
 
+noinst_PROGRAMS = testelf
+testelf_SOURCES = testelf.c elfparser.c elfparser.h binparser.c binparser.h
+testelf_CPPFLAGS =				\
+	$(CORE_DEP_CFLAGS)
+testelf_LDADD = $(CORE_DEP_LIBS)
+
 if BUILD_GUI
 bin_PROGRAMS += sysprof 
 endif

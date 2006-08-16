@@ -1,3 +1,12 @@
+2006-08-15  Soren Sandmann  <sandmann@redhat.com>
+
+	Add beginning of an ELF parser.
+	
+	* binparser.[ch]: New files
+	* elfparser.[ch]: New files
+	* testelf.c: New file
+	* Makefile.am (testelf_SOURCES): Add new testelf program.
+
 Sat Aug 12 16:13:05 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c: Make n_samples per-cpu. Add an atomic

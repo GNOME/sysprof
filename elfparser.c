@@ -402,7 +402,7 @@ check_symbol (ElfParser *parser,
 	      int	 index,
 	      gulong	 address)
 {
-    bin_parser_index (parser, index);
+    bin_parser_index (parser->parser, index);
 
     /* FIXME */
     
@@ -423,7 +423,7 @@ lookup_function_symbol (ElfParser *parser,
 
 	for (i = 0; i < end - begin; ++i)
 	{
-	    bin_parser_index (parser, i);
+	    bin_parser_index (parser->parser, i);
 	    if (check_symbol (parser, i, address))
 		return;
 	}

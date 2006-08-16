@@ -117,9 +117,11 @@ find_elf_type (const guchar *data, gsize length,
 	return FALSE;
     }
     
+#if 0
     g_print ("This elf file is %s %s\n",
 	     *is_64? "64 bit" : "32 bit",
 	     *is_be? "big endiann" : "little endian");
+#endif
     
     return TRUE;
 }
@@ -145,11 +147,13 @@ dump_symbol_table (ElfParser *parser,
 	return;
     }
 
+#if 0
     g_print ("dumping symbol table at %d\n", offset);
+#endif
     
     bin_parser_begin (parser->parser, parser->sym_format, offset);
 
-    for (i = 0; i < 200; ++i)
+    for (i = 0; i < 2000; ++i)
     {
 	guint64 idx;
 
@@ -157,6 +161,8 @@ dump_symbol_table (ElfParser *parser,
 	idx = bin_parser_get_uint (parser->parser, "st_name");
 	const char *result;
 	gsize size;
+	gulong addr;
+	guint info;
 
 #if 0
 	g_print ("addr: %p\n", bin_parser_get_address (parser->parser, "st_name"));
@@ -166,16 +172,22 @@ dump_symbol_table (ElfParser *parser,
 #endif
 
 	size = bin_parser_get_uint (parser->parser, "st_size");
-	
-	bin_parser_begin (parser->parser,
-			  NULL, parser->str_table + idx);
-	
-	result = bin_parser_get_string (parser->parser);
+	info = bin_parser_get_uint (parser->parser, "st_info");
 
-	bin_parser_end (parser->parser);
-
-	g_print ("%d symbol: size: %d, %s.\n",
-		 i, size, result);
+	if (info == STT_FUNC)
+	{
+	    addr = bin_parser_get_uint (parser->parser, "st_value");
+	    
+	    bin_parser_begin (parser->parser,
+			      NULL, parser->str_table + idx);
+	    
+	    result = bin_parser_get_string (parser->parser);
+	    
+	    bin_parser_end (parser->parser);
+	    
+	    g_print ("%d %p: symbol: size: %d, %s\n",
+		     i, (void *)addr, size, result);
+	}
     }
     
     bin_parser_end (parser->parser);
@@ -223,7 +235,7 @@ elf_parser_new (const guchar *data, gsize length)
     {
 	const char *name;
 	int offset;
-	
+
 	bin_parser_index (parser->parser, i);
 	offset = bin_parser_get_uint (parser->parser, "sh_name");
 	name = elf_lookup_string (parser, offset);
@@ -378,9 +390,78 @@ find_section (ElfParser  *parser,
 out:
     bin_parser_end (bparser);
 
+#if 0
     g_print ("found %s at %d\n", name, result);
+#endif
     
     return result;
+}
+
+static gboolean
+check_symbol (ElfParser *parser,
+	      int	 index,
+	      gulong	 address)
+{
+    bin_parser_index (parser, index);
+
+    /* FIXME */
+    
+    return FALSE;
+}
+
+void
+lookup_function_symbol (ElfParser *parser,
+			int	   begin,
+			int	   end,
+			gulong	   address)
+{
+    g_assert (end - begin > 0);
+
+    if (end - begin < 10)
+    {
+	int i;
+
+	for (i = 0; i < end - begin; ++i)
+	{
+	    bin_parser_index (parser, i);
+	    if (check_symbol (parser, i, address))
+		return;
+	}
+    }
+    else
+    {
+	int mid1 = (end - begin) / 2;
+	int mid2 = ((end - begin) / 2 - 1);
+
+	while (mid1 >= begin &&
+	       mid2 < end)
+	{
+	    /*
+
+	    if mid1 is a function,
+		then check the address.
+		if higher than input address,
+			recurse on (begin, mid1).
+		else
+			recurse on (mid2 - 1, end)
+
+
+		similar for mid2, only the other way around.
+
+		of course, if one of them matches
+	    */
+		 
+	    
+	    if (check_symbol (parser, mid1, address))
+		return;
+
+	    if (check_symbol (parser, mid2, address))
+		return;
+
+	    mid1--;
+	    mid2++;
+	}
+    }
 }
 
 const ElfSym *
@@ -391,6 +472,16 @@ elf_parser_lookup_symbol (ElfParser *parser,
     gssize strtab_offset = find_section (parser, ".strtab");
     gssize dynsym_offset = find_section (parser, ".dynsym");
     gssize dynstr_offset = find_section (parser, ".dynstr");
+
+    if (symtab_offset != -1 && strtab_offset != -1)
+    {
+	/* lookup in normal symbol table */
+    }
+
+    if (dynsym_offset != -1 && dynstr_offset != -1)
+    {
+	/* lookup in dynsym table */
+    }
 
     return NULL;
 }

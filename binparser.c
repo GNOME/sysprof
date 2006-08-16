@@ -78,6 +78,13 @@ read_varargs (va_list		args,
 static guint64
 align (guint64 offset, int alignment)
 {
+    /* Note that we can speed this up by assuming alignment'
+     * is a power of two, since
+     *
+     *     offset % alignment == offset & (alignemnt - 1)
+     *
+     */
+    
     if (offset % alignment != 0)
 	offset += (alignment - (offset % alignment));
     
@@ -229,7 +236,9 @@ bin_parser_get_uint (BinParser *parser,
 	return r64;
     }
     
+#if 0
     g_print ("width: %d\n", field->width);
+#endif
     
     g_assert_not_reached();
     return 0;
@@ -456,11 +465,13 @@ parse_elf (const guchar *data,
     
     section_header = data + bin_parser_get_uint (parser, "e_shoff");
     
+#if 0
     g_print ("section header offset: %u\n",
 	     section_header - data);
     
     g_print ("There are %llu sections\n",
 	     bin_parser_get_uint (parser, "e_shnum"));
+#endif
     
     /* should think through how to deal with offsets, and whether parsers
      * are always considered parsers of an array. If yes, then it

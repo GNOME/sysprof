@@ -1,6 +1,6 @@
-2006-08-16  SÃ¸ren Sandmann  <ssp@localhost.localdomain>
+2006-08-19  Soren Sandmann  <sandmann@redhat.com>
 
-	* elfparser.c (check_symbol): Pass the correct pointer.
+	* elfparser.c: Many cleanups.
 
 2006-08-16  Soren Sandmann  <sandmann@redhat.com>
 

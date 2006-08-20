@@ -267,7 +267,7 @@ slurp_symtab (bfd *abfd, long *symcount)
     return sy;
 }
 
-extern char *cplus_demangle (const char *mangled, int options);
+extern char *sysprof_cplus_demangle (const char *mangled, int options);
 
 #define DMGL_PARAMS     (1 << 0)        /* Include function args */
 #define DMGL_ANSI       (1 << 1)        /* Include const, volatile, etc */
@@ -280,7 +280,7 @@ demangle (bfd *bfd, const char *name)
 	if (bfd_get_symbol_leading_char (bfd) == *name)
 		++name;
 
-	demangled = cplus_demangle (name, DMGL_ANSI | DMGL_PARAMS);
+	demangled = sysprof_cplus_demangle (name, DMGL_ANSI | DMGL_PARAMS);
 	return demangled ? demangled : g_strdup (name);
 }
 

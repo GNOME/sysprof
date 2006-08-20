@@ -4,7 +4,7 @@ DIST_SUBDIRS = module
 bin_PROGRAMS = sysprof-text
 
 noinst_PROGRAMS = testelf
-testelf_SOURCES = testelf.c elfparser.c elfparser.h binparser.c binparser.h
+testelf_SOURCES = testelf.c demangle.c elfparser.c elfparser.h binparser.c binparser.h
 testelf_CPPFLAGS =				\
 	$(CORE_DEP_CFLAGS)
 testelf_LDADD = $(CORE_DEP_LIBS)
@@ -18,6 +18,7 @@ SYSPROF_CORE =					\
 	binfile.c				\
 	collector.c				\
 	collector.h				\
+	demangle.c				\
 	process.h				\
 	process.c				\
 	profile.h				\

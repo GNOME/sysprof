@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 #include <elf.h>
 #include "binparser.h"
@@ -12,6 +13,8 @@ struct SymbolTable
 
 struct ElfSym
 {
+    const char *name;
+    gulong address;
 };
 
 struct Section
@@ -32,6 +35,9 @@ struct ElfParser
     
     int		n_sections;
     Section **	sections;
+
+    int		n_symbols;
+    ElfSym *	symbols;
 };
 
 static gboolean parse_elf_signature (const guchar *data, gsize length,
@@ -159,128 +165,22 @@ elf_parser_free (ElfParser *parser)
     g_free (parser);
 }
 
+extern char *sysprof_cplus_demangle (const char *name, int options);
+
+char *
+elf_demangle (const char *name)
+{
+    char *demangled = sysprof_cplus_demangle (name, 0);
+
+    if (demangled)
+	return demangled;
+    else
+	return g_strdup (name);
+}
+
 /*
  * Looking up symbols
  */
-#if 0
-static int lookup_function_symbol (ElfParser *parser,
-				   int begin,
-				   int end,
-				   gulong address);
-
-static gboolean
-check_symbol (ElfParser *parser,
-	      int	 index,
-	      gulong	 address)
-{
-    bin_parser_index (parser->parser, index);
-    
-    /* FIXME */
-    
-    return FALSE;
-}
-
-static gboolean
-is_function (ElfParser *parser, int index)
-{
-    return FALSE;
-}
-
-static gulong
-get_address (ElfParser *parser, int index)
-{
-    return 0;
-}
-
-static int
-do_check (ElfParser *parser,
-	  int begin,
-	  int current,
-	  int other,
-	  int end,
-	  gulong address)
-{
-    int first = current > other ? current : other;
-    int last  = current > other ? other : current;
-    
-    /* The invariant here is that nothing between first
-     * and last is a function
-     */
-    
-    if (is_function (parser, current))
-    {
-	gulong addr = get_address (parser, current);
-	
-	if (addr == address)
-	{
-	    return current;
-	}
-	else if (addr > address)
-	{
-	    return lookup_function_symbol (
-		parser, begin, first, address);
-	}
-	else
-	{
-	    return lookup_function_symbol (
-		parser, last, end, address);
-	}
-    }
-    
-    return -1;
-}
-
-static int
-lookup_function_symbol (ElfParser *parser,
-			int	   begin,
-			int	   end,
-			gulong	   address)
-{
-    g_assert (end - begin > 0);
-    
-    if (end - begin < 10)
-    {
-	int i;
-	
-	for (i = 0; i < end - begin; ++i)
-	{
-	    bin_parser_index (parser->parser, i);
-	    
-	    if (is_function (parser, i)		&&
-		get_address (parser, i == address))
-	    {
-		return i;
-	    }
-	}
-    }
-    else
-    {
-	int mid1, mid2;
-	
-	mid1 = mid2 = (end - begin) / 2;
-	
-	while (mid1 >= begin &&
-	       mid2 < end)
-	{
-	    int res;
-	    
-	    res = do_check (parser, begin, mid1, mid2, end, address);
-	    if (res > 0)
-		return res;
-	    
-	    res = do_check (parser, begin, mid2, mid1, end, address);
-	    if (res > 0)
-		return res;
-	    
-	    mid1--;
-	    mid2++;
-	}
-    }
-    
-    return -1;
-}
-#endif
-
 #if 0
 #define ELF32_ST_BIND(val)		(((unsigned char) (val)) >> 4)
 #define ELF32_ST_TYPE(val)		((val) & 0xf)
@@ -292,61 +192,155 @@ lookup_function_symbol (ElfParser *parser,
 #define ELF64_ST_INFO(bind, type)	ELF32_ST_INFO ((bind), (type))
 #endif
 
-static ElfSym *
-lookup_symbol (ElfParser *parser,
-	       const Section *sym_table,
-	       const Section *str_table,
-	       gulong address)
+static int
+compare_sym (const void *a, const void *b)
 {
-    int n_symbols = sym_table->size / bin_format_get_size (parser->sym_format);
-    int i;
+    const ElfSym *sym_a = a;
+    const ElfSym *sym_b = b;
 
-    g_print ("\ndumping %d symbols from %s\n", n_symbols, sym_table->name);
+    if (sym_a->address < sym_b->address)
+	return -1;
+    else if (sym_a->address == sym_b->address)
+	return 0;
+    else
+	return 1;
+}
+
+static void
+read_table (ElfParser *parser,
+	    const Section *sym_table,
+	    const Section *str_table)
+{
+    int sym_size = bin_format_get_size (parser->sym_format);
+    int i;
+    int n_functions;
+
+    parser->n_symbols = sym_table->size / sym_size;
+    parser->symbols = g_new (ElfSym, parser->n_symbols);
+    
+    g_print ("\nreading %d symbols from %s\n",
+	     parser->n_symbols, sym_table->name);
     
     bin_parser_begin (parser->parser, parser->sym_format, sym_table->offset);
 
-    for (i = 0; i < n_symbols; ++i)
+    n_functions = 0;
+    for (i = 0; i < parser->n_symbols; ++i)
     {
-	const char *name;
-	gulong addr;
 	guint info;
-
+	gulong addr;
+	const char *name;
+	
 	bin_parser_index (parser->parser, i);
-	name = get_string (parser->parser, str_table->offset, "st_name");
+	
 	info = bin_parser_get_uint (parser->parser, "st_info");
 	addr = bin_parser_get_uint (parser->parser, "st_value");
-
-	if ((info & 0xf) == STT_FUNC)
-	    g_print ("symbol: %8lx, %s\n", addr, name);
+	name = get_string (parser->parser, str_table->offset, "st_name");
+	
+	if (addr != 0				&&
+	    (info & 0xf) == STT_FUNC		&&
+	    ((info >> 4) == STB_GLOBAL ||
+	     (info >> 4) == STB_LOCAL))
+	{
+	    parser->symbols[n_functions].name = name;
+	    parser->symbols[n_functions].address = addr;
+	    
+	    n_functions++;
+	}
     }
     
     bin_parser_end (parser->parser);
 
-    return NULL;
+    g_print ("found %d functions\n", n_functions);
+    
+    parser->n_symbols = n_functions;
+    parser->symbols = g_renew (ElfSym, parser->symbols, parser->n_symbols);
+    
+    qsort (parser->symbols, parser->n_symbols, sizeof (ElfSym), compare_sym);
+}
+
+static void
+read_symbols (ElfParser *parser)
+{
+    const Section *symtab = find_section (parser, ".symtab");
+    const Section *strtab = find_section (parser, ".strtab");
+    const Section *dynsym = find_section (parser, ".dynsym");
+    const Section *dynstr = find_section (parser, ".dynstr");
+
+    if (symtab && strtab)
+    {
+	read_table (parser, symtab, strtab);
+    }
+    else if (dynsym && dynstr)
+    {
+	read_table (parser, dynsym, dynstr);
+    }
+    else
+    {
+	/* To make sure parser->symbols is non-NULL */
+	parser->n_symbols = 0;
+	parser->symbols = g_new (ElfSym, 1);
+    }
+}
+
+static ElfSym *
+do_lookup (ElfSym *symbols, gulong address, int first, int last)
+{
+    if (address >= symbols[last].address)
+    {
+	return &(symbols[last]);
+    }
+    else if (last - first < 3)
+    {
+	while (last >= first)
+	{
+	    if (address >= symbols[last].address)
+		return &(symbols[last]);
+
+	    last--;
+	}
+
+	return NULL;
+    }
+    else
+    {
+	int mid = (first + last) / 2;
+	
+	if (symbols[mid].address > address)
+	{
+	    return do_lookup (symbols, address, first, mid);
+	}
+	else
+	{
+	    return do_lookup (symbols, address, mid, last);
+	}
+    }
 }
 
 const ElfSym *
 elf_parser_lookup_symbol (ElfParser *parser,
 			  gulong     address)
 {
-    const Section *symtab = find_section (parser, ".symtab");
-    const Section *dynsym = find_section (parser, ".dynsym");
-    const Section *strtab = find_section (parser, ".strtab");
-    const Section *dynstr = find_section (parser, ".dynstr");
+    if (!parser->symbols)
+	read_symbols (parser);
 
-    if (strtab && symtab)
-    {
-	lookup_symbol (parser, symtab, strtab, address);
-    }
+    if (parser->n_symbols == 0)
+	return NULL;
 
-    if (dynsym && dynstr)
-    {
-	lookup_symbol (parser, dynsym, dynstr, address);
-    }
+    /* FIXME: we should offset address based on the files load address */
     
-    g_print ("HELLO!!\n");
-    
-    return NULL;
+    return do_lookup (parser->symbols, address, 0, parser->n_symbols - 1);
+}
+
+const char *
+elf_sym_get_name (const ElfSym *sym)
+{
+    return sym->name;
+}
+
+gulong
+elf_sym_get_address (const ElfSym *sym)
+{
+    return sym->address;
 }
 
 /*

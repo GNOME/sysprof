@@ -1,3 +1,15 @@
+2006-08-20  Soren Sandmann  <sandmann@redhat.com>
+
+	* Makefile.am, demangle.c: New file, made out of files from
+	libiberty in binutils.
+
+	* binfile.c: Use the new sysprof_cplus_demangle() function
+	
+	* elfparser.[ch]: Add code to lookup symbols. Add demangling
+	function
+
+	* testelf.c: Various tests
+
 2006-08-19  Soren Sandmann  <sandmann@redhat.com>
 
 	* elfparser.c: Many cleanups.

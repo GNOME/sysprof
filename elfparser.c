@@ -13,7 +13,7 @@ struct SymbolTable
 
 struct ElfSym
 {
-    const char *name;
+    gulong offset;
     gulong address;
 };
 
@@ -38,6 +38,7 @@ struct ElfParser
 
     int		n_symbols;
     ElfSym *	symbols;
+    gsize	sym_strings;
 };
 
 static gboolean parse_elf_signature (const guchar *data, gsize length,
@@ -102,6 +103,8 @@ find_section (ElfParser *parser,
     return NULL;
 }
 
+static GList *all_elf_parsers = NULL;
+
 ElfParser *
 elf_parser_new (const guchar *data, gsize length)
 {
@@ -149,6 +152,8 @@ elf_parser_new (const guchar *data, gsize length)
     }
     
     bin_parser_end (parser->parser);
+
+    all_elf_parsers = g_list_prepend (all_elf_parsers, parser);
     
     return parser;
 }
@@ -157,6 +162,8 @@ void
 elf_parser_free (ElfParser *parser)
 {
     int i;
+
+    all_elf_parsers = g_list_remove (all_elf_parsers, parser);
     
     for (i = 0; i < parser->n_sections; ++i)
 	section_free (parser->sections[i]);
@@ -218,8 +225,8 @@ read_table (ElfParser *parser,
     parser->n_symbols = sym_table->size / sym_size;
     parser->symbols = g_new (ElfSym, parser->n_symbols);
     
-    g_print ("\nreading %d symbols from %s\n",
-	     parser->n_symbols, sym_table->name);
+    g_print ("\nreading %d symbols (@%d bytes) from %s\n",
+	     parser->n_symbols, sym_size, sym_table->name);
     
     bin_parser_begin (parser->parser, parser->sym_format, sym_table->offset);
 
@@ -229,20 +236,22 @@ read_table (ElfParser *parser,
 	guint info;
 	gulong addr;
 	const char *name;
+	gulong offset;
 	
 	bin_parser_index (parser->parser, i);
 	
 	info = bin_parser_get_uint (parser->parser, "st_info");
 	addr = bin_parser_get_uint (parser->parser, "st_value");
 	name = get_string (parser->parser, str_table->offset, "st_name");
+	offset = bin_parser_get_offset (parser->parser);
 	
 	if (addr != 0				&&
 	    (info & 0xf) == STT_FUNC		&&
 	    ((info >> 4) == STB_GLOBAL ||
 	     (info >> 4) == STB_LOCAL))
 	{
-	    parser->symbols[n_functions].name = name;
 	    parser->symbols[n_functions].address = addr;
+	    parser->symbols[n_functions].offset = offset;
 	    
 	    n_functions++;
 	}
@@ -251,7 +260,8 @@ read_table (ElfParser *parser,
     bin_parser_end (parser->parser);
 
     g_print ("found %d functions\n", n_functions);
-    
+
+    parser->sym_strings = str_table->offset;
     parser->n_symbols = n_functions;
     parser->symbols = g_renew (ElfSym, parser->symbols, parser->n_symbols);
     
@@ -331,10 +341,43 @@ elf_parser_lookup_symbol (ElfParser *parser,
     return do_lookup (parser->symbols, address, 0, parser->n_symbols - 1);
 }
 
+static ElfParser *
+parser_from_sym (const ElfSym *sym)
+{
+    GList *list;
+    
+    /* FIXME: This is  gross, but the alternatives I can think of
+     * are all worse.
+     */
+    for (list = all_elf_parsers; list != NULL; list = list->next)
+    {
+	ElfParser *parser = list->data;
+
+	if (sym >= parser->symbols &&
+	    sym < parser->symbols + parser->n_symbols)
+	{
+	    return parser;
+	}
+    }
+
+    return NULL;
+}
+
 const char *
 elf_sym_get_name (const ElfSym *sym)
 {
-    return sym->name;
+    ElfParser *parser = parser_from_sym (sym);
+    const char *result;
+
+    g_return_val_if_fail (parser != NULL, NULL);
+
+    bin_parser_begin (parser->parser, parser->sym_format, sym->offset);
+
+    result = get_string (parser->parser, parser->sym_strings, "st_name");
+    
+    bin_parser_end (parser->parser);
+    
+    return result;
 }
 
 gulong

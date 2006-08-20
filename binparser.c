@@ -324,6 +324,15 @@ bin_parser_index (BinParser *parser,
     parser->frame->index = index;
 }
 
+gsize
+bin_parser_get_offset (BinParser *parser)
+{
+    g_return_val_if_fail (parser != NULL, 0);
+    g_return_val_if_fail (parser->frame != NULL, 0);
+
+    return parser->frame->offset;
+}
+
 BinField *
 bin_field_new_fixed_array (int n_elements,
 		  int element_size)

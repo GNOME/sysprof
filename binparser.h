@@ -8,6 +8,7 @@ BinParser *bin_parser_new (const guchar	*data,
 BinFormat *bin_format_new (gboolean big_endian,
 			   const char *name, BinField *field,
 			   ...);
+gsize bin_parser_get_offset (BinParser *parser);
 gsize bin_format_get_size (BinFormat *format);
 void bin_parser_index (BinParser *parser, int index);
 void bin_parser_begin (BinParser *parser,

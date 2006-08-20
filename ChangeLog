@@ -1,5 +1,16 @@
 2006-08-20  Soren Sandmann  <sandmann@redhat.com>
 
+	* elfparser.c (elf_sym_get_name): Read the name out of the file
+	instead of out of the struct.
+
+	* elfparser.c (struct ElfSym): Store an offset instead of the
+	name. 
+
+	* elfparser.c (all_elf_parsers): Keep track of all elf parsers
+	created.
+	
+2006-08-20  Soren Sandmann  <sandmann@redhat.com>
+
 	* Makefile.am, demangle.c: New file, made out of files from
 	libiberty in binutils.
 

@@ -1,22 +1,31 @@
 #include <glib.h>
 #include "elfparser.h"
 
+const char *n;
+
 static void
 check (ElfParser *elf, gulong addr)
 {
     const ElfSym *sym = elf_parser_lookup_symbol (elf, addr);
+    n = elf_sym_get_name (sym);
     
-    g_print ("%p  =>    ", addr);
+#if 0
+    g_print ("%p  =>    ", (void *)addr);
+#endif
 
     if (sym)
     {
+#if 0
 	g_print ("found: %s (%p)\n",
 		 elf_sym_get_name (sym),
-		 elf_sym_get_address (sym));
+		 (void *)elf_sym_get_address (sym));
+#endif
     }
     else
     {
-	g_print ("not found\n");
+#if 0
+ 	g_print ("not found\n");
+#endif
     }
 }
 
@@ -28,10 +37,14 @@ main ()
     ElfParser *elf = elf_parser_new (
 	g_mapped_file_get_contents (libgtk),
 	g_mapped_file_get_length (libgtk));
-    
-    check (elf, 0x3e7ef20); /* gtk_handle_box_end_drag */
-    check (elf, 0x3e7ef25); /* same */
 
+    int i;
+
+    for (i = 0; i < 5000000; ++i)
+    {
+	check (elf, 0x3e7ef20); /* gtk_handle_box_end_drag */
+	check (elf, 0x3e7ef25); /* same (but in the middle of the function */
+    }
     return 0;
 }
 

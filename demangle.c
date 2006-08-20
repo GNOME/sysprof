@@ -14,6 +14,12 @@
  * in sysprof were made static or removed.
  *
  * Let's hope that no bugs are ever found in this file!
+ *
+ *	Maybe someday look at what can be deleted from this file
+ *
+ *	 - "mini string library" can be replaced with GString
+ *	 - "option" parameter to cplus_demangle can be deleted
+ *	 - demangling is always "auto"
  */
 
 /* Copyright notices:

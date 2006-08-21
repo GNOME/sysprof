@@ -245,12 +245,12 @@ elf_parser_get_crc32 (ElfParser *parser)
     data = bin_parser_get_data (parser->parser);
     length = bin_parser_get_length (parser->parser);
 
-    crc = 0;
+    crc = 0xffffffff;
 
     for (i = 0; i < length; ++i)
 	crc = crc32_table[(crc ^ data[i]) & 0xff] ^ (crc >> 8);
 
-    return crc & 0xFFFFFFFF;
+    return ~crc & 0xffffffff;
 }
 
 void

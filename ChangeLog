@@ -1,3 +1,10 @@
+2006-08-20  Soren Sandmann <sandmann@redhat.com>
+
+	* elfparser.c (elf_parser_get_crc32): Initialize crc to 0xffffffff
+	and invert it before returning.
+
+	* elfparser.h: Declare elf_parser_get_debug_link()
+
 2006-08-20  Soren Sandmann  <sandmann@daimi.au.dk>
 
 	* elfparser.c (elf_parser_get_load_address): Comment out debug spew.

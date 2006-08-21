@@ -1,3 +1,22 @@
+2006-08-20   Soren Sandmann <sandmann@daimi.au.dk>
+
+	* elfparser.c (elf_parser_get_debug_link): New function
+
+	* elfparser.c: Delete SymbolTable typedef
+
+	* binparser.[ch] (bin_parser_get_data): New function
+	(bin_parser_get_length): New function
+
+	* elfparser.[ch] (elf_parser_get_crc32): New function
+
+	* TODO: Updates
+
+	* elfparser.c (elf_parser_lookup_symbol): Offset passed in
+	addresses by the load address.
+
+	* elfparser.c (elf_parser_get_load_address): New function to
+	compute the load address of the beginning of the file.
+
 2006-08-20  Soren Sandmann  <sandmann@redhat.com>
 
 	* elfparser.c (elf_sym_get_name): Read the name out of the file

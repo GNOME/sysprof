@@ -21,7 +21,7 @@ void       elf_parser_free (ElfParser *parser);
  */
 const ElfSym *elf_parser_lookup_symbol (ElfParser *parser,
 					gulong     address);
-
+guint32 elf_parser_get_crc32 (ElfParser *parser);
 const char *elf_sym_get_name (const ElfSym *sym);
 gulong elf_sym_get_address (const ElfSym *sym);
 char *elf_demangle (const char *name);

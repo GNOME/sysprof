@@ -7,25 +7,26 @@ static void
 check (ElfParser *elf, gulong addr)
 {
     const ElfSym *sym = elf_parser_lookup_symbol (elf, addr);
+
+    if (!sym)
+    {
+	g_print ("not found\n");
+	return;
+    }
+    
     n = elf_sym_get_name (sym);
     
-#if 0
     g_print ("%p  =>    ", (void *)addr);
-#endif
 
     if (sym)
     {
-#if 0
 	g_print ("found: %s (%p)\n",
 		 elf_sym_get_name (sym),
 		 (void *)elf_sym_get_address (sym));
-#endif
     }
     else
     {
-#if 0
  	g_print ("not found\n");
-#endif
     }
 }
 
@@ -42,8 +43,9 @@ main ()
 
     for (i = 0; i < 5000000; ++i)
     {
-	check (elf, 0x3e7ef20); /* gtk_handle_box_end_drag */
-	check (elf, 0x3e7ef25); /* same (but in the middle of the function */
+	check (elf, 0x077c80f0 - (0x07787000 - 0)); /* gtk_about_dialog_set_artists  (add - (map - offset)) */
+	
+	check (elf, 0x077c80f0 - (0x07787000 - 0)); /* same (but in the middle of the function */
     }
     return 0;
 }

@@ -333,9 +333,21 @@ bin_parser_get_offset (BinParser *parser)
     return parser->frame->offset;
 }
 
+const guchar *
+bin_parser_get_data (BinParser *parser)
+{
+    return parser->data;
+}
+
+gsize
+bin_parser_get_length (BinParser *parser)
+{
+    return parser->length;
+}
+
 BinField *
 bin_field_new_fixed_array (int n_elements,
-		  int element_size)
+			   int element_size)
 {
     BinField *field = g_new0 (BinField, 1);
     field->width = n_elements * element_size;

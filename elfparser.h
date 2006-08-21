@@ -5,6 +5,8 @@ typedef struct ElfParser ElfParser;
 
 ElfParser *elf_parser_new (const guchar *data,
 			   gsize length);
+ElfParser *elf_parser_new_from_file (const char *filename,
+				     GError **err);
 void       elf_parser_free (ElfParser *parser);
 
 /* Lookup a symbol in the file.

@@ -1,3 +1,7 @@
+2006-08-20  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* elfparser.c (elf_parser_new_from_file): New function
+
 2006-08-20   Soren Sandmann <sandmann@daimi.au.dk>
 
 	* elfparser.c (elf_parser_get_debug_link): New function

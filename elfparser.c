@@ -36,6 +36,8 @@ struct ElfParser
     int			n_symbols;
     ElfSym *		symbols;
     gsize		sym_strings;
+
+    GMappedFile *	file;
 };
 
 static gboolean parse_elf_signature (const guchar *data, gsize length,
@@ -164,6 +166,29 @@ elf_parser_new (const guchar *data, gsize length)
     return parser;
 }
 
+ElfParser *
+elf_parser_new_from_file (const char *filename,
+			  GError **err)
+{
+    const guchar *data;
+    gsize length;
+    ElfParser *parser;
+    
+    GMappedFile *file = g_mapped_file_new (filename, FALSE, NULL);
+
+    if (!file)
+	return NULL;
+    
+    data = (guchar *)g_mapped_file_get_contents (file);
+    length = g_mapped_file_get_length (file);
+
+    parser = elf_parser_new (data, length);
+
+    parser->file = file;
+
+    return parser;
+}
+
 guint32
 elf_parser_get_crc32 (ElfParser *parser)
 {
@@ -238,6 +263,9 @@ elf_parser_free (ElfParser *parser)
     for (i = 0; i < parser->n_sections; ++i)
 	section_free (parser->sections[i]);
     g_free (parser->sections);
+
+    if (parser->file)
+	g_mapped_file_free (parser->file);
     
     g_free (parser);
 }

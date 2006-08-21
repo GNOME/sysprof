@@ -51,12 +51,7 @@ Process *     process_get_from_pid                (int         pid);
 void          process_ensure_map                  (Process    *process,
 						   int         pid,
 						   gulong      address);
-const Symbol *process_lookup_symbol               (Process    *process,
-						   gulong      address);
-const Symbol *process_lookup_symbol_with_filename (Process    *process,
-						   int	       pid,
-						   gulong      map_start,
-						   const char *filename,
+const char *  process_lookup_symbol		  (Process    *process,
 						   gulong      address);
 const char *  process_get_cmdline                 (Process    *process);
 void	      process_flush_caches                (void);

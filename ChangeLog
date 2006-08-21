@@ -1,3 +1,23 @@
+2006-08-20  Soren Sandmann  <sandmann@daimi.au.dk>
+
+	* process.h: Make process_lookup_symbol() return a string. Delete
+	process_lookup_symbol_with_filename().
+
+	* process.c (struct Process): Make "undefined" a string
+	(lookup_kernel_symbol): Return a string 
+	(process_lookup_symbol): Return a string, not a symbol
+
+	* collector.c (unique_dup): Take a string instead of a
+	Symbol. 
+	(lookup_symbol): Make sym a string instead of a Symbol.
+
+	* binfile.c (bin_symbol_get_name): New function.
+
+	* binfile.[ch] (struct BinSymbol): Rename Symbol to BinSymbol and
+	make it an opaque structure.
+
+	* binfile.[ch]: Remove unused symbol operations
+
 2006-08-20  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* elfparser.c (elf_parser_new_from_file): New function

@@ -38,13 +38,20 @@
 static void bfd_nonfatal (const char *string);
 static void bfd_fatal (const char *string);
 
+/* Symbol */
+struct BinSymbol
+{
+    char *	name;
+    gulong	address;
+};
+
 /* Binary File */
 struct BinFile
 {
     char *	filename;
     int         n_symbols;
-    Symbol     *symbols;
-    Symbol	undefined;
+    BinSymbol  *symbols;
+    BinSymbol	undefined;
     int         ref_count;
     ino_t	inode;
 };
@@ -287,8 +294,8 @@ demangle (bfd *bfd, const char *name)
 static gint
 compare_address (const void *a, const void *b)
 {
-    const Symbol *symbol1 = a;
-    const Symbol *symbol2 = b;
+    const BinSymbol *symbol1 = a;
+    const BinSymbol *symbol2 = b;
 
     if (symbol1->address < symbol2->address)
 	return -1;
@@ -373,13 +380,13 @@ read_symbols (BinFile *bf)
     if (!text_section)
 	return;
 
-    symbols = g_array_new (FALSE, FALSE, sizeof (Symbol));
+    symbols = g_array_new (FALSE, FALSE, sizeof (BinSymbol));
 
     /* g_print ("%s: text vma: %x\n", bf->filename, text_section->vma); */
 
     for (i = 0; i < n_symbols; i++)
     {
-	Symbol symbol;
+	BinSymbol symbol;
 	
 	if ((bfd_symbols[i]->flags & BSF_FUNCTION) &&
 	    (bfd_symbols[i]->section == text_section))
@@ -405,10 +412,10 @@ read_symbols (BinFile *bf)
 #endif
     
     /* Sort the symbols by address */
-    qsort (symbols->data, symbols->len, sizeof(Symbol), compare_address);
+    qsort (symbols->data, symbols->len, sizeof (BinSymbol), compare_address);
 
     bf->n_symbols = symbols->len;
-    bf->symbols = (Symbol *)g_array_free (symbols, FALSE);
+    bf->symbols = (BinSymbol *)g_array_free (symbols, FALSE);
 } 
 
 static GHashTable *bin_files;
@@ -476,15 +483,15 @@ bin_file_free (BinFile *bf)
  * Look up a symbol. @address should be in file coordinates
  * 
  **/
-const Symbol *
+const BinSymbol *
 bin_file_lookup_symbol (BinFile    *bf,
 			gulong     address)
 {
     int first = 0;
     int last = bf->n_symbols - 1;
     int middle = last;
-    Symbol *data;
-    Symbol *result;
+    BinSymbol *data;
+    BinSymbol *result;
     
     if (!bf->symbols || (bf->n_symbols == 0))
 	return &(bf->undefined);
@@ -539,61 +546,10 @@ bin_file_lookup_symbol (BinFile    *bf,
     return result;
 }
 
-
-/* Symbol */
-Symbol *
-symbol_copy  (const Symbol *orig)
+const char *
+bin_symbol_get_name (const BinSymbol *symbol)
 {
-    Symbol *copy;
-
-    copy = g_new (Symbol, 1);
-    copy->name = g_strdup (orig->name);
-    copy->address = orig->address;
-
-    return copy;
-}
-
-gboolean
-symbol_equal (const void *sa,
-	      const void *sb)
-{
-    const Symbol *syma = sa;
-    const Symbol *symb = sb;
-    
-    if (symb->address != syma->address)
-	return FALSE;
-
-    /* symbols compare equal if their names are both NULL */
-    
-    if (!syma->name && !symb->name)
-	return TRUE;
-
-    if (!syma)
-	return FALSE;
-
-    if (!symb)
-	return FALSE;
-
-    return strcmp (syma->name, symb->name) == 0;
-}
-
-guint
-symbol_hash  (const void *s)
-{
-    const Symbol *symbol = s;
-    
-    if (!s)
-	return 0;
-    
-    return symbol->name? g_str_hash (symbol->name) : 0 + symbol->address;
-}
-
-void
-symbol_free  (Symbol *symbol)
-{
-    if (symbol->name)
-	g_free (symbol->name);
-    g_free (symbol);
+    return symbol->name;
 }
 
 static void

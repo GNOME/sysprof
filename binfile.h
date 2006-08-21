@@ -28,27 +28,17 @@
 #include <sys/types.h>
 
 typedef struct BinFile BinFile;
-typedef struct Symbol Symbol;
+typedef struct BinSymbol BinSymbol;
 
 /* Binary File */
 
 BinFile *     bin_file_new           (const char *filename);
 void          bin_file_free          (BinFile    *bin_file);
-const Symbol *bin_file_lookup_symbol (BinFile    *bin_file,
+const BinSymbol *bin_file_lookup_symbol (BinFile    *bin_file,
 				      gulong      address);
 ino_t	      bin_file_get_inode     (BinFile    *bin_file);
 
-/* Symbol */
-struct Symbol
-{
-    char *	name;
-    gulong	address;
-};
 
-Symbol * symbol_copy  (const Symbol *orig);
-gboolean symbol_equal (const void *syma,
-		       const void *symb);
-guint    symbol_hash  (const void *sym);
-void     symbol_free  (Symbol       *symbol);
+const char *  bin_symbol_get_name (const BinSymbol *symbol);
 
 #endif

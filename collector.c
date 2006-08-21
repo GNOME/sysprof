@@ -265,15 +265,15 @@ typedef struct
 } ResolveInfo;
 
 static char *
-unique_dup (GHashTable *unique_symbols, char *s)
+unique_dup (GHashTable *unique_symbols, const char *sym)
 {
     char *result;
     
-    result = g_hash_table_lookup (unique_symbols, s);
+    result = g_hash_table_lookup (unique_symbols, sym);
     if (!result)
     {
-	result = g_strdup (s);
-	g_hash_table_insert (unique_symbols, s, result);
+	result = g_strdup (sym);
+	g_hash_table_insert (unique_symbols, (char *)sym, result);
     }
     
     return result;
@@ -282,9 +282,9 @@ unique_dup (GHashTable *unique_symbols, char *s)
 static char *
 lookup_symbol (Process *process, gpointer address, GHashTable *unique_symbols)
 {
-    const Symbol *s = process_lookup_symbol (process, (gulong)address);
+    const char *sym = process_lookup_symbol (process, (gulong)address);
     
-    return unique_dup (unique_symbols, s->name);
+    return unique_dup (unique_symbols, sym);
 }
 
 static void

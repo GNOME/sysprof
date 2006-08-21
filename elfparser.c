@@ -411,7 +411,9 @@ elf_parser_get_load_address (ElfParser *parser)
 	}
     }
 
+#if 0
     g_print ("load address is: %8p\n", (void *)load_address);
+#endif
     
     return load_address;
 }
@@ -453,6 +455,9 @@ const ElfSym *
 elf_parser_lookup_symbol (ElfParser *parser,
 			  gulong     address)
 {
+    const ElfSym *result;
+    gsize size;
+    
     if (!parser->symbols)
 	read_symbols (parser);
 
@@ -465,10 +470,22 @@ elf_parser_lookup_symbol (ElfParser *parser,
     g_print ("the address we are looking up is %p\n", address);
 #endif
     
-    /* FIXME: we should look at the symbol size and check if the
-     * address is actually within the function.
-     */
-    return do_lookup (parser->symbols, address, 0, parser->n_symbols - 1);
+    result = do_lookup (parser->symbols, address, 0, parser->n_symbols - 1);
+
+    if (result)
+    {
+	/* Check that address is actually within the function */
+	bin_parser_begin (parser->parser, parser->sym_format, result->offset);
+	
+	size = bin_parser_get_uint (parser->parser, "st_size");
+	
+	if (result->address + size > address)
+	    result = NULL;
+	
+	bin_parser_end (parser->parser);
+    }
+
+    return result;
 }
 
 static ElfParser *

@@ -1,5 +1,11 @@
 2006-08-20  Soren Sandmann  <sandmann@daimi.au.dk>
 
+	* elfparser.c (elf_parser_get_load_address): Comment out debug spew.
+	(elf_parser_lookup_symbol): Add check that address is actually
+	within the bounds of the found function.
+
+2006-08-20  Soren Sandmann  <sandmann@daimi.au.dk>
+
 	* process.h: Make process_lookup_symbol() return a string. Delete
 	process_lookup_symbol_with_filename().
 

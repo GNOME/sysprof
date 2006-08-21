@@ -411,9 +411,7 @@ elf_parser_get_load_address (ElfParser *parser)
 	}
     }
 
-#if 0
-    g_print ("load address is: %8p\n", (void *)load_address);
-#endif
+    g_print ("load address: %8p\n", (void *)load_address);
     
     return load_address;
 }
@@ -479,7 +477,7 @@ elf_parser_lookup_symbol (ElfParser *parser,
 	
 	size = bin_parser_get_uint (parser->parser, "st_size");
 	
-	if (result->address + size > address)
+	if (result->address + size <= address)
 	    result = NULL;
 	
 	bin_parser_end (parser->parser);

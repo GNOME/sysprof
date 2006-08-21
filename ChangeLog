@@ -1,3 +1,10 @@
+2006-08-21  Soren Sandmann <sandmann@redhat.com>
+
+	* TODO: Update
+
+	* elfparser.c (elf_parser_lookup_symbol): Change sense of size
+	check.
+
 2006-08-20  Soren Sandmann <sandmann@redhat.com>
 
 	* elfparser.c (elf_parser_get_crc32): Initialize crc to 0xffffffff

@@ -16,9 +16,13 @@ endif
 SYSPROF_CORE =					\
 	binfile.h				\
 	binfile.c				\
+	binparser.h				\
+	binparser.c				\
 	collector.c				\
 	collector.h				\
 	demangle.c				\
+	elfparser.c				\
+	elfparser.h				\
 	process.h				\
 	process.c				\
 	profile.h				\

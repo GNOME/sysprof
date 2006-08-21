@@ -39,6 +39,7 @@ const BinSymbol *bin_file_lookup_symbol (BinFile    *bin_file,
 ino_t	      bin_file_get_inode     (BinFile    *bin_file);
 
 
-const char *  bin_symbol_get_name (const BinSymbol *symbol);
+const char *  bin_symbol_get_name (BinFile *bin_file,
+				   const BinSymbol *symbol);
 
 #endif

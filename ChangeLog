@@ -1,5 +1,20 @@
 2006-08-21  Soren Sandmann <sandmann@redhat.com>
 
+	* process.c (process_lookup_symbol): Pass map->bin_file to
+	bin_symbol_get_name.
+
+	* binfile.h (bin_symbol_get_name): Add BinFile parameter
+
+	* elfparser.c (elf_demangle): Use options DMGL_PARAMS | DMGL_ANSI
+
+	* TODO: Updates
+
+	* binfile.c: Rewrite this file to use ElfParser instead of libbfd.
+
+	* configure.ac: Drop dependencies on libbfd and libiberty.
+
+2006-08-21  Soren Sandmann <sandmann@redhat.com>
+
 	* TODO: Update
 
 	* elfparser.c (elf_parser_lookup_symbol): Change sense of size

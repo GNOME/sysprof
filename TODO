@@ -32,6 +32,15 @@ Before 1.0.4:
 
 Before 1.2:
 
+* See if we can make "In file <blah>" not be treated as a recursive function.
+
+* Give more sensible 'error messages'. Ie., if you get permission denied for
+  a file, put "Permission denied" instead of "No map"
+
+* crc32 checking probably doesn't belong in elfparser.c
+
+* Add demangling again
+
 * Rethink binparser. Maybe the default mode should be:
 	- there is a current offset
 	- you can move the cursor

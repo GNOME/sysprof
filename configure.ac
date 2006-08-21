@@ -93,19 +93,6 @@ PKG_CHECK_MODULES(GUI_DEP, $gui_dep, [], build_gui=no)
 
 AM_CONDITIONAL([BUILD_GUI], [test "$build_gui" = yes])
 
-# libiberty and libbfd
-
-AC_CHECK_LIB(iberty, cplus_demangle,:, 
-  AC_CHECK_LIB(iberty, cplus_demangle_opname, [],
-    AC_MSG_ERROR([libiberty is required to compile sysprof]), -ldl))
-
-AC_CHECK_LIB(bfd, bfd_get_error,,
-  AC_MSG_ERROR([libbfd is required to compile sysprof]),
-  -liberty)
-
-CORE_DEP_LIBS="$CORE_DEP_LIBS -lbfd -liberty"
-GUI_DEP_LIBS="$GUI_DEP_LIBS -lbfd -liberty"
-
 # emit files
 
 AC_SUBST(CORE_DEP_LIBS)

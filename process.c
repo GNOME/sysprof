@@ -573,8 +573,29 @@ process_lookup_symbol (Process *process, gulong address)
 	return process->undefined;
     }
 
+#if 0
+    if (strcmp (map->filename, "/home/ssp/sysprof/sysprof") == 0)
+    {
+	g_print ("YES\n");
+
+	g_print ("map address: %lx\n", map->start);
+	g_print ("map offset: %lx\n", map->offset);
+	g_print ("address before: %lx\n", address);
+    }
+#endif
+#if 0
+	g_print ("address before: \n");
+#endif
+    
     address -= map->start;
     address += map->offset;
+
+#if 0
+    if (strcmp (map->filename, "/home/ssp/sysprof/sysprof") == 0)
+    {
+	g_print ("address after: %lx\n", address);
+    }
+#endif
     
     if (!map->bin_file)
 	map->bin_file = bin_file_new (map->filename);
@@ -600,7 +621,7 @@ process_lookup_symbol (Process *process, gulong address)
     
 /*     g_print ("(%x) %x %x name; %s\n", address, map->start, map->offset, result->name); */
     
-    return bin_symbol_get_name (result);
+    return bin_symbol_get_name (map->bin_file, result);
 }
 
 const char *

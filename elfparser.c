@@ -275,7 +275,10 @@ extern char *sysprof_cplus_demangle (const char *name, int options);
 char *
 elf_demangle (const char *name)
 {
-    char *demangled = sysprof_cplus_demangle (name, 0);
+#define DMGL_PARAMS     (1 << 0)        /* Include function args */
+#define DMGL_ANSI       (1 << 1)        /* Include const, volatile, etc */
+    
+    char *demangled = sysprof_cplus_demangle (name, DMGL_PARAMS | DMGL_ANSI);
 
     if (demangled)
 	return demangled;
@@ -323,8 +326,10 @@ read_table (ElfParser *parser,
     parser->n_symbols = sym_table->size / sym_size;
     parser->symbols = g_new (ElfSym, parser->n_symbols);
     
+#if 0
     g_print ("\nreading %d symbols (@%d bytes) from %s\n",
 	     parser->n_symbols, sym_size, sym_table->name);
+#endif
     
     bin_parser_begin (parser->parser, parser->sym_format, sym_table->offset);
 
@@ -357,7 +362,9 @@ read_table (ElfParser *parser,
     
     bin_parser_end (parser->parser);
 
+#if 0
     g_print ("found %d functions\n", n_functions);
+#endif
 
     parser->sym_strings = str_table->offset;
     parser->n_symbols = n_functions;
@@ -411,7 +418,9 @@ elf_parser_get_load_address (ElfParser *parser)
 	}
     }
 
+#if 0
     g_print ("load address: %8p\n", (void *)load_address);
+#endif
     
     return load_address;
 }
@@ -461,7 +470,7 @@ elf_parser_lookup_symbol (ElfParser *parser,
 
     if (parser->n_symbols == 0)
 	return NULL;
-
+ 
     address += elf_parser_get_load_address (parser);
 
 #if 0
@@ -491,7 +500,7 @@ parser_from_sym (const ElfSym *sym)
 {
     GList *list;
     
-    /* FIXME: This is  gross, but the alternatives I can think of
+    /* FIXME: This is gross, but the alternatives I can think of
      * are all worse.
      */
     for (list = all_elf_parsers; list != NULL; list = list->next)

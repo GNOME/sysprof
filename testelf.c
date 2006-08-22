@@ -14,15 +14,15 @@ check (ElfParser *elf, gulong addr)
 	return;
     }
     
-    n = elf_sym_get_name (sym);
+    n = elf_parser_get_sym_name (elf, sym);
     
     g_print ("%p  =>    ", (void *)addr);
 
     if (sym)
     {
 	g_print ("found: %s (%p)\n",
-		 elf_sym_get_name (sym),
-		 (void *)elf_sym_get_address (sym));
+		 elf_parser_get_sym_name (elf, sym),
+		 (void *)elf_parser_get_sym_address (elf, sym));
     }
     else
     {
@@ -36,7 +36,7 @@ main ()
     ElfParser *elf;
     int i;
 
-    elf = elf_parser_new_from_file ("/usr/lib/libgtk-x11-2.0.so", NULL);
+    elf = elf_parser_new ("/usr/lib/libgtk-x11-2.0.so", NULL);
 
     if (!elf)
     {

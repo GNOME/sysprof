@@ -3,10 +3,8 @@
 typedef struct ElfSym ElfSym;
 typedef struct ElfParser ElfParser;
 
-ElfParser *elf_parser_new (const guchar *data,
-			   gsize length);
-ElfParser *elf_parser_new_from_file (const char *filename,
-				     GError **err);
+ElfParser *elf_parser_new (const char *filename,
+			   GError **err);
 void       elf_parser_free (ElfParser *parser);
 const char *elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32);
 
@@ -25,6 +23,8 @@ const char *elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32);
 const ElfSym *elf_parser_lookup_symbol (ElfParser *parser,
 					gulong     address);
 guint32 elf_parser_get_crc32 (ElfParser *parser);
-const char *elf_sym_get_name (const ElfSym *sym);
-gulong elf_sym_get_address (const ElfSym *sym);
+const char *elf_parser_get_sym_name (ElfParser *parser,
+				     const ElfSym *sym);
+gulong elf_parser_get_sym_address (ElfParser *parser,
+				   const ElfSym *sym);
 char *elf_demangle (const char *name);

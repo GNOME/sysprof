@@ -63,7 +63,7 @@ static ElfParser *
 separate_debug_file_exists (const char *name, guint32 crc)
 {
     guint32 file_crc;
-    ElfParser *parser = elf_parser_new_from_file (name, NULL);
+    ElfParser *parser = elf_parser_new (name, NULL);
 
     if (!parser)
 	return NULL;
@@ -153,7 +153,7 @@ bin_file_new (const char *filename)
     else
     {
 	bf = g_new0 (BinFile, 1);
-	bf->elf = elf_parser_new_from_file (filename, NULL);
+	bf->elf = elf_parser_new (filename, NULL);
 	bf->elf = find_separate_debug_file (bf->elf, filename);
 	bf->inode = read_inode (filename);
 	bf->filename = g_strdup (filename);
@@ -209,5 +209,5 @@ bin_symbol_get_name (BinFile *file, const BinSymbol *symbol)
     if (file->undefined_name == (char *)symbol)
 	return file->undefined_name;
     else
-	return elf_sym_get_name ((const ElfSym *)symbol);
+	return elf_parser_get_sym_name (file->elf, (const ElfSym *)symbol);
 }

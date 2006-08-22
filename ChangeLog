@@ -1,5 +1,20 @@
 2006-08-21  Soren Sandmann <sandmann@redhat.com>
 
+	* elfparser.[ch]
+	(elf_parser_get_sym_name): Rename elf_sym_get_* to
+	elf_parser_get_sym_* and make these functions take a parser.
+	(parser_from_sym): Delete this function.
+	(elf_parser_new): Don't add to all_elf_parsers
+	(elf_parser_free): Don't remove from all_elf_parsers
+	(elf_parser_new): Rename to parser_new_from_file()
+	(elf_parser_new_from_file): Rename to elf_parser_new
+
+	* binfile.c: Update for new elfparser API
+
+	* TODO: updates
+
+2006-08-21  Soren Sandmann <sandmann@redhat.com>
+
 	* binfile.c (struct BinFile): Add ref_count and filename
 	(bin_files): Add map from filenames to BinFiles
 	(bin_file_new): First look for BinFile in the cache.

@@ -32,6 +32,9 @@ Before 1.0.4:
 
 Before 1.2:
 
+* "Expand all" is horrendously slow because update screenshot gets called 
+  for every "expanded" signal.
+
 * Delete elf_parser_new() and rename elf_parser_new_from_file()
 
 * See if we can make "In file <blah>" not be treated as a recursive function.

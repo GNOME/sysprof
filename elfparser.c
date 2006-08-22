@@ -111,10 +111,8 @@ find_section (ElfParser *parser,
     return NULL;
 }
 
-static GList *all_elf_parsers = NULL;
-
-ElfParser *
-elf_parser_new (const guchar *data, gsize length)
+static ElfParser *
+parser_new_from_data (const guchar *data, gsize length)
 {
     ElfParser *parser;
     gboolean is_64, is_big_endian;
@@ -161,14 +159,12 @@ elf_parser_new (const guchar *data, gsize length)
     
     bin_parser_end (parser->parser);
 
-    all_elf_parsers = g_list_prepend (all_elf_parsers, parser);
-    
     return parser;
 }
 
 ElfParser *
-elf_parser_new_from_file (const char *filename,
-			  GError **err)
+elf_parser_new (const char *filename,
+		GError **err)
 {
     const guchar *data;
     gsize length;
@@ -182,7 +178,7 @@ elf_parser_new_from_file (const char *filename,
     data = (guchar *)g_mapped_file_get_contents (file);
     length = g_mapped_file_get_length (file);
 
-    parser = elf_parser_new (data, length);
+    parser = parser_new_from_data (data, length);
 
     parser->file = file;
 
@@ -258,8 +254,6 @@ elf_parser_free (ElfParser *parser)
 {
     int i;
 
-    all_elf_parsers = g_list_remove (all_elf_parsers, parser);
-    
     for (i = 0; i < parser->n_sections; ++i)
 	section_free (parser->sections[i]);
     g_free (parser->sections);
@@ -495,28 +489,6 @@ elf_parser_lookup_symbol (ElfParser *parser,
     return result;
 }
 
-static ElfParser *
-parser_from_sym (const ElfSym *sym)
-{
-    GList *list;
-    
-    /* FIXME: This is gross, but the alternatives I can think of
-     * are all worse.
-     */
-    for (list = all_elf_parsers; list != NULL; list = list->next)
-    {
-	ElfParser *parser = list->data;
-
-	if (sym >= parser->symbols &&
-	    sym < parser->symbols + parser->n_symbols)
-	{
-	    return parser;
-	}
-    }
-
-    return NULL;
-}
-
 const char *
 elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
 {
@@ -580,9 +552,9 @@ get_debug_link_info (bfd *abfd, unsigned long *crc32_out)
 #endif
 
 const char *
-elf_sym_get_name (const ElfSym *sym)
+elf_parser_get_sym_name (ElfParser *parser,
+			 const ElfSym *sym)
 {
-    ElfParser *parser = parser_from_sym (sym);
     const char *result;
 
     g_return_val_if_fail (parser != NULL, NULL);
@@ -597,7 +569,8 @@ elf_sym_get_name (const ElfSym *sym)
 }
 
 gulong
-elf_sym_get_address (const ElfSym *sym)
+elf_parser_get_sym_address (ElfParser *parser,
+			    const ElfSym *sym)
 {
     return sym->address;
 }

@@ -38,9 +38,14 @@
 
 struct BinFile
 {
-    ElfParser	*elf;
-    ino_t	 inode;
-    char        *undefined_name;
+    int		ref_count;
+    
+    ElfParser *	elf;
+
+    char *	filename;	
+    ino_t	inode;
+    
+    char *	undefined_name;
 };
 
 /* FIXME: error handling */
@@ -54,7 +59,6 @@ read_inode (const char *filename)
     return statbuf.st_ino;
 }
 
-
 static ElfParser *
 separate_debug_file_exists (const char *name, guint32 crc)
 {
@@ -63,7 +67,7 @@ separate_debug_file_exists (const char *name, guint32 crc)
 
     if (!parser)
 	return NULL;
-    
+
     file_crc = elf_parser_get_crc32 (parser);
 
     if (file_crc != crc)
@@ -129,17 +133,35 @@ find_separate_debug_file (ElfParser *elf,
     }
 }
 
+static GHashTable *bin_files;
+
 BinFile *
 bin_file_new (const char *filename)
 {
     /* FIXME: should be able to return an error */
     BinFile *bf;
-    
-    bf = g_new0 (BinFile, 1);
-    bf->elf = elf_parser_new_from_file (filename, NULL);
-    bf->elf = find_separate_debug_file (bf->elf, filename);
-    bf->inode = read_inode (filename);
-    bf->undefined_name = g_strdup_printf ("In file %s", filename);
+
+    if (!bin_files)
+	bin_files = g_hash_table_new (g_str_hash, g_str_equal);
+
+    bf = g_hash_table_lookup (bin_files, filename);
+
+    if (bf)
+    {
+	bf->ref_count++;
+    }
+    else
+    {
+	bf = g_new0 (BinFile, 1);
+	bf->elf = elf_parser_new_from_file (filename, NULL);
+	bf->elf = find_separate_debug_file (bf->elf, filename);
+	bf->inode = read_inode (filename);
+	bf->filename = g_strdup (filename);
+	bf->undefined_name = g_strdup_printf ("In file %s", filename);
+	bf->ref_count = 1;
+
+	g_hash_table_insert (bin_files, bf->filename, bf);
+    }
     
     return bf;
 }
@@ -147,11 +169,17 @@ bin_file_new (const char *filename)
 void
 bin_file_free (BinFile *bin_file)
 {
-    if (bin_file->elf)
-	elf_parser_free (bin_file->elf);
-    
-    g_free (bin_file->undefined_name);
-    g_free (bin_file);
+    if (bin_file->ref_count-- == 0)
+    {
+	g_hash_table_remove (bin_files, bin_file->filename);
+	
+	if (bin_file->elf)
+	    elf_parser_free (bin_file->elf);
+	
+	g_free (bin_file->filename);
+	g_free (bin_file->undefined_name);
+	g_free (bin_file);
+    }
 }
 
 const BinSymbol *

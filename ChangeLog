@@ -1,5 +1,14 @@
 2006-08-21  Soren Sandmann <sandmann@redhat.com>
 
+	* binfile.c (struct BinFile): Add ref_count and filename
+	(bin_files): Add map from filenames to BinFiles
+	(bin_file_new): First look for BinFile in the cache.
+	(bin_file_free): If refcount reaches 0, remove BinFile from cache.
+	
+	* TODO: Updates
+
+2006-08-21  Soren Sandmann <sandmann@redhat.com>
+
 	* process.c (process_lookup_symbol): Pass map->bin_file to
 	bin_symbol_get_name.
 

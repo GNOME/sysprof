@@ -32,7 +32,12 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Delete elf_parser_new() and rename elf_parser_new_from_file()
+
 * See if we can make "In file <blah>" not be treated as a recursive function.
+  Maybe simply treat each individual address in the file as a function.
+  Or try to parse the machine code. Places that are called are likely 
+  to be functions.
 
 * Give more sensible 'error messages'. Ie., if you get permission denied for
   a file, put "Permission denied" instead of "No map"
@@ -605,6 +610,8 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* Restore filename => binfile cache.
 
 * It is apparently possible to get another timer interrupt in the middle
   of timer_notify. If this happens the circular buffer gets screwed up and

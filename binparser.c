@@ -15,6 +15,14 @@ struct ParserFrame
     ParserFrame *	next;
 };
 
+struct BinRecord
+{
+    BinFormat *		format;
+    int			index;
+    gsize		offset;
+    BinParser *		parser;
+};
+
 struct BinField
 {
     guint64	offset;
@@ -166,15 +174,64 @@ get_field (BinFormat *format,
 }
 
 guint64
+convert_uint (const guchar *data,
+	      gboolean	    big_endian,
+	      int	    width)
+{
+    guint8 r8;
+    guint16 r16;
+    guint32 r32;
+    guint64 r64;
+    
+    switch (width)
+    {
+    case 1:
+	r8 = *(guint8 *)data;
+	return r8;
+	
+    case 2:
+	r16 = *(guint16 *)data;
+	
+	if (big_endian)
+	    r16 = GUINT16_FROM_BE (r16);
+	else
+	    r16 = GUINT16_FROM_LE (r16);
+	
+	return r16;
+	
+    case 4:
+	r32 = *(guint32 *)data;
+	
+	if (big_endian)
+	    r32 = GUINT32_FROM_BE (r32);
+	else
+	    r32 = GUINT32_FROM_LE (r32);
+	
+	return r32;
+	
+    case 8:
+	r64 = *(guint64 *)data;
+	
+	if (big_endian)
+	    r64 = GUINT64_FROM_BE (r64);
+	else
+	    r64 = GUINT64_FROM_LE (r64);
+	
+	return r64;
+
+    default:
+	g_assert_not_reached();
+	return 0;
+    }
+}
+
+
+guint64
 bin_parser_get_uint (BinParser *parser,
 		     const gchar *name)
 {
     const BinField *field;
     const guint8 *pos;
-    guint8 r8;
-    guint16 r16;
-    guint32 r32;
-    guint64 r64;
     BinFormat *format;
     const guchar *data;
 
@@ -194,51 +251,8 @@ bin_parser_get_uint (BinParser *parser,
 	/* FIXME: generate error */
 	return 0;
     }
-    
-#if 0
-    g_print ("getting %s from offset: %llu\n", name, field->offset);
-#endif
-    
-    switch (field->width)
-    {
-    case 1:
-	r8 = *(guint8 *)pos;
-	return r8;
-	
-    case 2:
-	r16 = *(guint16 *)pos;
-	
-	if (format->big_endian)
-	    r16 = GUINT16_FROM_BE (r16);
-	else
-	    r16 = GUINT16_FROM_LE (r16);
-	
-	return r16;
-	
-    case 4:
-	r32 = *(guint32 *)pos;
-	
-	if (format->big_endian)
-	    r32 = GUINT32_FROM_BE (r32);
-	else
-	    r32 = GUINT32_FROM_LE (r32);
-	
-	return r32;
-	
-    case 8:
-	r64 = *(guint64 *)pos;
-	
-	if (format->big_endian)
-	    r64 = GUINT64_FROM_BE (r64);
-	else
-	    r64 = GUINT64_FROM_LE (r64);
-	
-	return r64;
-    }
-    
-#if 0
-    g_print ("width: %d\n", field->width);
-#endif
+
+    return convert_uint (pos, format->big_endian, field->width);
     
     g_assert_not_reached();
     return 0;
@@ -344,6 +358,59 @@ bin_parser_get_length (BinParser *parser)
 {
     return parser->length;
 }
+
+
+/* Record */
+BinRecord *
+bin_parser_get_record (BinParser *parser,
+		       BinFormat *format,
+		       gsize      offset)
+{
+    BinRecord *record = g_new0 (BinRecord, 1);
+    record->parser = parser;
+    record->index = 0;
+    record->offset = offset;
+    record->format = format;
+    return record;
+}
+
+void
+bin_record_free (BinRecord *record)
+{
+    g_free (record);
+}
+
+guint64
+bin_record_get_uint (BinRecord *record,
+		     const char *name)
+{
+    const guint8 *pos;
+    const BinField *field;
+
+    field = get_field (record->format, name);
+    pos = record->parser->data + record->offset + field->offset;
+
+    if (record->offset + field->offset + field->width > record->parser->length)
+    {
+	/* FIXME: generate error */
+	return 0;
+    }
+
+    return convert_uint (pos, record->format->big_endian, field->width);
+}
+
+void
+bin_record_index (BinRecord *record,
+		  int	  index)
+{
+    gsize format_size = bin_format_get_size (record->format);
+    
+    record->offset -= record->index * format_size;
+    record->offset += index * format_size;
+    record->index = index;
+}
+
+/* Fields */
 
 BinField *
 bin_field_new_fixed_array (int n_elements,

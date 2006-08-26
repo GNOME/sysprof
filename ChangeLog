@@ -1,3 +1,8 @@
+2006-08-26  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* binparser.h: Add new bin_record() functions
+	* binparser.c: Implement them.
+
 2006-08-22  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* collector.c (unique_dup): Demangle instead of strdup.

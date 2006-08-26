@@ -3,6 +3,7 @@
 typedef struct BinField BinField;
 typedef struct BinFormat BinFormat;
 typedef struct BinParser BinParser;
+typedef struct BinRecord BinRecord;
 
 /* BinParser */
 BinParser *bin_parser_new (const guchar	*data,
@@ -18,6 +19,16 @@ void bin_parser_end (BinParser *parser);
 const char *bin_parser_get_string (BinParser *parser);
 guint64 bin_parser_get_uint (BinParser *parser,
 			     const gchar *name);
+
+/* Record */
+BinRecord *bin_parser_get_record (BinParser *parser,
+				  BinFormat *format,
+				  gsize      offset);
+void bin_record_free (BinRecord *record);
+guint64 bin_record_get_uint (BinRecord *record,
+			  const char *name);
+void bin_record_index (BinRecord *record,
+		       int	  index);
 
 /* BinFormat */
 BinFormat *bin_format_new (gboolean big_endian,

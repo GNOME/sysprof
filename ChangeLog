@@ -1,3 +1,7 @@
+2006-08-22  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* collector.c (unique_dup): Demangle instead of strdup.
+
 2006-08-21  Soren Sandmann <sandmann@redhat.com>
 
 	* elfparser.[ch]

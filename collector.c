@@ -22,6 +22,7 @@
 #include "module/sysprof-module.h"
 #include "watch.h"
 #include "process.h"
+#include "elfparser.h"
 
 #include <errno.h>
 #include <sys/wait.h>
@@ -272,7 +273,7 @@ unique_dup (GHashTable *unique_symbols, const char *sym)
     result = g_hash_table_lookup (unique_symbols, sym);
     if (!result)
     {
-	result = g_strdup (sym);
+	result = elf_demangle (sym);
 	g_hash_table_insert (unique_symbols, (char *)sym, result);
     }
     

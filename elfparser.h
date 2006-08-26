@@ -3,10 +3,12 @@
 typedef struct ElfSym ElfSym;
 typedef struct ElfParser ElfParser;
 
-ElfParser *elf_parser_new (const char *filename,
-			   GError **err);
-void       elf_parser_free (ElfParser *parser);
-const char *elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32);
+ElfParser * elf_parser_new            (const char  *filename,
+				       GError     **err);
+void        elf_parser_free           (ElfParser   *parser);
+const char *elf_parser_get_debug_link (ElfParser   *parser,
+				       guint32     *crc32);
+
 
 /* Lookup a symbol in the file.
  *

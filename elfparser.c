@@ -483,29 +483,18 @@ elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
 {
     const Section *debug_link = find_section (parser, ".gnu_debuglink");
     const gchar *result;
-    gsize crc_offset;
 
     if (!debug_link)
 	return NULL;
 
-    bin_parser_begin (parser->parser, NULL, debug_link->offset);
+    bin_parser_goto (parser->parser, debug_link->offset);
+
     result = bin_parser_get_string (parser->parser);
-    bin_parser_end (parser->parser);
 
-    crc_offset = strlen (result) + 1;
-    crc_offset = (crc_offset + 3) & ~3;
+    bin_parser_align (parser->parser, 4);
 
-    /* FIXME: This is broken for two reasons:
-     *
-     * (1) It assumes file_endian==machine_endian
-     *
-     * (2) It doesn't check for file overrun.
-     *
-     * The fix is to make binparser capable of dealing with stuff
-     * outside of records.
-     */
-
-    *crc32 = *(guint32 *)(result + crc_offset);
+    *crc32 = bin_parser_get_uint32 (parser->parser);
+    
     return result;
 }
 

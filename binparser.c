@@ -6,15 +6,6 @@
 
 typedef struct ParserFrame ParserFrame;
 
-struct ParserFrame
-{
-    BinFormat *		format;
-    int			index;
-    gsize		offset;
-
-    ParserFrame *	next;
-};
-
 struct BinRecord
 {
     BinFormat *		format;
@@ -41,7 +32,7 @@ struct BinFormat
 
 struct BinParser
 {
-    ParserFrame *	frame;
+    gsize		offset;
     const guchar *	data;
     gsize		length;
 };
@@ -52,7 +43,7 @@ bin_parser_new (const guchar	*data,
 {
     BinParser *parser = g_new0 (BinParser, 1);
     
-    parser->frame = NULL;
+    parser->offset = 0;
     parser->data = data;
     parser->length = length;
     
@@ -173,7 +164,7 @@ get_field (BinFormat *format,
     return NULL;
 }
 
-guint64
+static guint64
 convert_uint (const guchar *data,
 	      gboolean	    big_endian,
 	      int	    width)
@@ -225,37 +216,23 @@ convert_uint (const guchar *data,
     }
 }
 
-
-guint64
-bin_parser_get_uint (BinParser *parser,
-		     const gchar *name)
+guint32
+bin_parser_get_uint32 (BinParser *parser)
 {
-    const BinField *field;
-    const guint8 *pos;
-    BinFormat *format;
-    const guchar *data;
+    guint32 result;
+    
+    /* FIXME: This is broken for two reasons:
+     *
+     * (1) It assumes file_endian==machine_endian
+     *
+     * (2) It doesn't check for file overrun.
+     *
+     */
+    result = *(guint32 *)(parser->data + parser->offset);
 
-    g_return_val_if_fail (parser->frame != NULL, 0);
-
-    format = parser->frame->format;
-    data = parser->data + parser->frame->offset;
+    parser->offset += 4;
     
-    field = get_field (format, name);
-    
-    g_return_val_if_fail (field != NULL, (guint64)-1);
-    
-    pos = data + field->offset;
-    
-    if (field->offset + field->width > parser->length)
-    {
-	/* FIXME: generate error */
-	return 0;
-    }
-
-    return convert_uint (pos, format->big_endian, field->width);
-    
-    g_assert_not_reached();
-    return 0;
+    return result;
 }
 
 static BinField *
@@ -296,46 +273,29 @@ bin_field_new_uint64 (void)
 const gchar *
 bin_parser_get_string (BinParser *parser)
 {
+    const char *result;
+    
     /* FIXME: check that the string is within the file */
-    return (gchar *)parser->data + parser->frame->offset;
+    
+    result = (const char *)parser->data + parser->offset;
+
+    parser->offset += strlen (result) + 1;
+
+    return result;
 }
 
 void
-bin_parser_begin (BinParser *parser,
-		  BinFormat *format,
-		  gsize	     offset)
+bin_parser_align (BinParser *parser,
+		  gsize	     byte_width)
 {
-    ParserFrame *frame = g_new0 (ParserFrame, 1);
-
-    frame->format = format;
-    frame->offset = offset;
-    frame->index = 0;
-
-    frame->next = parser->frame;
-    parser->frame = frame;
+    parser->offset = align (parser->offset, 4);
 }
 
 void
-bin_parser_end (BinParser *parser)
+bin_parser_goto (BinParser *parser,
+		 gsize	    offset)
 {
-    ParserFrame *frame;
-
-    frame = parser->frame;
-    parser->frame = frame->next;
-
-    g_free (frame);
-}
-
-void
-bin_parser_index (BinParser *parser,
-		  int	     index)
-{
-    gsize format_size = bin_format_get_size (parser->frame->format);
-
-    parser->frame->offset -= parser->frame->index * format_size;
-    parser->frame->offset += index * format_size;
-
-    parser->frame->index = index;
+    parser->offset = offset;
 }
 
 BinParser *
@@ -352,15 +312,18 @@ bin_record_get_string_indirect (BinRecord *record,
     BinParser *parser = record->parser;
     const char *result = NULL;    
     gsize index;
+    gsize saved_offset;
+
+    saved_offset = bin_parser_get_offset (record->parser);
     
     index = bin_record_get_uint (record, name);
 
-    bin_parser_begin (parser, record->format, str_table + index);
+    bin_parser_goto (record->parser, str_table + index);
     
     result = bin_parser_get_string (parser);
-    
-    bin_parser_end (record->parser);
-    
+
+    bin_parser_goto (record->parser, saved_offset);
+
     return result;
 }
 
@@ -368,9 +331,8 @@ gsize
 bin_parser_get_offset (BinParser *parser)
 {
     g_return_val_if_fail (parser != NULL, 0);
-    g_return_val_if_fail (parser->frame != NULL, 0);
 
-    return parser->frame->offset;
+    return parser->offset;
 }
 
 const guchar *

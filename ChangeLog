@@ -1,5 +1,28 @@
 2006-08-26  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* elfparser.c: Update to new API
+	
+	* binparser.h: Delete commented out declarations. Add new
+	functions.
+
+	* binparser.c: Delete ParserFrame, replace with one current
+	offset. 
+	(convert_uint): Make static
+	(bin_parser_get_uint): Delete this function
+	(bin_parser_get_string): Change this function to use current
+	offset instead of frame offset.
+	(bin_parser_goto): New function
+	(bin_parser_align): New function
+	(bin_parser_get_uint32): New function
+	(bin_parser_begin): Delete this function
+	(bin_parser_end): Delete this function
+	(bin_parser_index): Delete this function
+	(bin_record_get_string_indirect): Make this function use _goto()
+	instead of _begin()/_end()
+	(bin_parser_get_offset): Make this function return current offset
+
+2006-08-26  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* binparser.[ch]: Add new struct BinRecord. Comment out functions
 	related to formats. Add new functions to get fields out of
 	BinRecords.

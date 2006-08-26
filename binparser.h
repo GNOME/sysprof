@@ -11,16 +11,12 @@ BinParser *bin_parser_new (const guchar	*data,
 const guchar *bin_parser_get_data (BinParser *parser);
 gsize bin_parser_get_length (BinParser *parser);
 gsize bin_parser_get_offset (BinParser *parser);
-#if 0
-void bin_parser_index (BinParser *parser, int index);
-void bin_parser_begin (BinParser *parser,
-		       BinFormat *format,
-		       gsize offset);
-void bin_parser_end (BinParser *parser);
-guint64 bin_parser_get_uint (BinParser *parser,
-			     const gchar *name);
-#endif
+void bin_parser_align (BinParser *parser,
+		       gsize	     byte_width);
+void bin_parser_goto (BinParser *parser,
+		      gsize	 offset);
 const char *bin_parser_get_string (BinParser *parser);
+guint32 bin_parser_get_uint32 (BinParser *parser);
 
 /* Record */
 BinRecord *bin_parser_get_record (BinParser *parser,

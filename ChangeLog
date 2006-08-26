@@ -1,5 +1,13 @@
 2006-08-26  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* binparser.[ch]: Add new struct BinRecord. Comment out functions
+	related to formats. Add new functions to get fields out of
+	BinRecords.
+
+	* elfparser.c: Update to new API.
+
+2006-08-26  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* binparser.h: Add new bin_record() functions
 	* binparser.c: Implement them.
 

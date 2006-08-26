@@ -46,42 +46,23 @@ static void     make_formats        (ElfParser *parser,
 				     gboolean is_64,
 				     gboolean is_big_endian);
 
-static const char *
-get_string (BinParser *parser,
-	    gsize      table,
-	    const char *name)
-{
-    const char *result = NULL;
-    gsize index;
-    
-    index = bin_parser_get_uint (parser, name);
-    
-    bin_parser_begin (parser, NULL, table + index);
-    
-    result = bin_parser_get_string (parser);
-    
-    bin_parser_end (parser);
-    
-    return result;
-}
-
 static Section *
-section_new (ElfParser *parser,
+section_new (BinRecord *record,
 	     gsize      name_table)
 {
-    BinParser *bparser = parser->parser;
     Section *section = g_new (Section, 1);
     guint64 flags;
     
-    section->name = get_string (bparser, name_table, "sh_name");
-    section->size = bin_parser_get_uint (bparser, "sh_size");
-    section->offset = bin_parser_get_uint (bparser, "sh_offset");
+    section->name = bin_record_get_string_indirect (
+	record, "sh_name", name_table);
+    section->size = bin_record_get_uint (record, "sh_size");
+    section->offset = bin_record_get_uint (record, "sh_offset");
 
-    flags = bin_parser_get_uint (bparser, "sh_flags");
+    flags = bin_record_get_uint (record, "sh_flags");
     section->allocated = !!(flags & SHF_ALLOC);
 
     if (section->allocated)
-	section->load_address = bin_parser_get_uint (bparser, "sh_addr");
+	section->load_address = bin_record_get_uint (record, "sh_addr");
     else
 	section->load_address = 0;
     
@@ -120,6 +101,7 @@ parser_new_from_data (const guchar *data, gsize length)
     gsize section_names;
     gsize section_headers;
     int i;
+    BinRecord *elf_header, *shn_entry;
     
     if (!parse_elf_signature (data, length, &is_64, &is_big_endian))
     {
@@ -134,30 +116,32 @@ parser_new_from_data (const guchar *data, gsize length)
     make_formats (parser, is_64, is_big_endian);
     
     /* Read ELF header */
-    bin_parser_begin (parser->parser, parser->header, 0);
     
-    parser->n_sections = bin_parser_get_uint (parser->parser, "e_shnum");
-    section_names_idx = bin_parser_get_uint (parser->parser, "e_shstrndx");
-    section_headers = bin_parser_get_uint (parser->parser, "e_shoff");
+    elf_header = bin_parser_get_record (parser->parser, parser->header, 0);
     
-    bin_parser_end (parser->parser);
+    parser->n_sections = bin_record_get_uint (elf_header, "e_shnum");
+    section_names_idx = bin_record_get_uint (elf_header, "e_shstrndx");
+    section_headers = bin_record_get_uint (elf_header, "e_shoff");
+    
+    bin_record_free (elf_header);
     
     /* Read section headers */
     parser->sections = g_new0 (Section *, parser->n_sections);
     
-    bin_parser_begin (parser->parser, parser->shn_entry, section_headers);
+    shn_entry = bin_parser_get_record (parser->parser,
+				       parser->shn_entry, section_headers);
 
-    bin_parser_index (parser->parser, section_names_idx);
-    section_names = bin_parser_get_uint (parser->parser, "sh_offset");
+    bin_record_index (shn_entry, section_names_idx);
+    section_names = bin_record_get_uint (shn_entry, "sh_offset");
     
     for (i = 0; i < parser->n_sections; ++i)
     {
-	bin_parser_index (parser->parser, i);
+	bin_record_index (shn_entry, i);
 	
-	parser->sections[i] = section_new (parser, section_names);
+	parser->sections[i] = section_new (shn_entry, section_names);
     }
     
-    bin_parser_end (parser->parser);
+    bin_record_free (shn_entry);
 
     return parser;
 }
@@ -316,6 +300,7 @@ read_table (ElfParser *parser,
     int sym_size = bin_format_get_size (parser->sym_format);
     int i;
     int n_functions;
+    BinRecord *symbol;
 
     parser->n_symbols = sym_table->size / sym_size;
     parser->symbols = g_new (ElfSym, parser->n_symbols);
@@ -325,7 +310,7 @@ read_table (ElfParser *parser,
 	     parser->n_symbols, sym_size, sym_table->name);
 #endif
     
-    bin_parser_begin (parser->parser, parser->sym_format, sym_table->offset);
+    symbol = bin_parser_get_record (parser->parser, parser->sym_format, sym_table->offset);
 
     n_functions = 0;
     for (i = 0; i < parser->n_symbols; ++i)
@@ -335,12 +320,13 @@ read_table (ElfParser *parser,
 	const char *name;
 	gulong offset;
 	
-	bin_parser_index (parser->parser, i);
+	bin_record_index (symbol, i);
 	
-	info = bin_parser_get_uint (parser->parser, "st_info");
-	addr = bin_parser_get_uint (parser->parser, "st_value");
-	name = get_string (parser->parser, str_table->offset, "st_name");
-	offset = bin_parser_get_offset (parser->parser);
+	info = bin_record_get_uint (symbol, "st_info");
+	addr = bin_record_get_uint (symbol, "st_value");
+	name = bin_record_get_string_indirect (symbol, "st_name",
+					       str_table->offset);
+	offset = bin_record_get_offset (symbol);
 	
 	if (addr != 0				&&
 	    (info & 0xf) == STT_FUNC		&&
@@ -354,7 +340,7 @@ read_table (ElfParser *parser,
 	}
     }
     
-    bin_parser_end (parser->parser);
+    bin_record_free (symbol);
 
 #if 0
     g_print ("found %d functions\n", n_functions);
@@ -475,15 +461,18 @@ elf_parser_lookup_symbol (ElfParser *parser,
 
     if (result)
     {
-	/* Check that address is actually within the function */
-	bin_parser_begin (parser->parser, parser->sym_format, result->offset);
+	BinRecord *symbol;
 	
-	size = bin_parser_get_uint (parser->parser, "st_size");
+	/* Check that address is actually within the function */
+	symbol = bin_parser_get_record (parser->parser,
+					parser->sym_format, result->offset);
+	
+	size = bin_record_get_uint (symbol, "st_size");
 	
 	if (result->address + size <= address)
 	    result = NULL;
 	
-	bin_parser_end (parser->parser);
+	bin_record_free (symbol);
     }
 
     return result;
@@ -556,14 +545,16 @@ elf_parser_get_sym_name (ElfParser *parser,
 			 const ElfSym *sym)
 {
     const char *result;
+    BinRecord *symbol;
 
     g_return_val_if_fail (parser != NULL, NULL);
 
-    bin_parser_begin (parser->parser, parser->sym_format, sym->offset);
+    symbol = bin_parser_get_record (parser->parser, parser->sym_format, sym->offset);
 
-    result = get_string (parser->parser, parser->sym_strings, "st_name");
+    result = bin_record_get_string_indirect (symbol, "st_name",
+					     parser->sym_strings);
     
-    bin_parser_end (parser->parser);
+    bin_record_free (symbol);
     
     return result;
 }

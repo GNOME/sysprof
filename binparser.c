@@ -338,6 +338,32 @@ bin_parser_index (BinParser *parser,
     parser->frame->index = index;
 }
 
+BinParser *
+bin_record_get_parser (BinRecord *record)
+{
+    return record->parser;
+}
+
+const gchar *
+bin_record_get_string_indirect (BinRecord *record,
+				const char *name,
+				gsize str_table)
+{
+    BinParser *parser = record->parser;
+    const char *result = NULL;    
+    gsize index;
+    
+    index = bin_record_get_uint (record, name);
+
+    bin_parser_begin (parser, record->format, str_table + index);
+    
+    result = bin_parser_get_string (parser);
+    
+    bin_parser_end (record->parser);
+    
+    return result;
+}
+
 gsize
 bin_parser_get_offset (BinParser *parser)
 {
@@ -408,6 +434,12 @@ bin_record_index (BinRecord *record,
     record->offset -= record->index * format_size;
     record->offset += index * format_size;
     record->index = index;
+}
+
+gsize
+bin_record_get_offset (BinRecord *record)
+{
+    return record->offset;
 }
 
 /* Fields */

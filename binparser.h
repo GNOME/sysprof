@@ -11,14 +11,16 @@ BinParser *bin_parser_new (const guchar	*data,
 const guchar *bin_parser_get_data (BinParser *parser);
 gsize bin_parser_get_length (BinParser *parser);
 gsize bin_parser_get_offset (BinParser *parser);
+#if 0
 void bin_parser_index (BinParser *parser, int index);
 void bin_parser_begin (BinParser *parser,
 		       BinFormat *format,
 		       gsize offset);
 void bin_parser_end (BinParser *parser);
-const char *bin_parser_get_string (BinParser *parser);
 guint64 bin_parser_get_uint (BinParser *parser,
 			     const gchar *name);
+#endif
+const char *bin_parser_get_string (BinParser *parser);
 
 /* Record */
 BinRecord *bin_parser_get_record (BinParser *parser,
@@ -29,6 +31,11 @@ guint64 bin_record_get_uint (BinRecord *record,
 			  const char *name);
 void bin_record_index (BinRecord *record,
 		       int	  index);
+gsize bin_record_get_offset (BinRecord *record);
+const gchar *bin_record_get_string_indirect (BinRecord *record,
+					     const char *name,
+					     gsize str_table);
+BinParser *bin_record_get_parser (BinRecord *record);
 
 /* BinFormat */
 BinFormat *bin_format_new (gboolean big_endian,

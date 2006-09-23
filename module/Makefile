@@ -28,7 +28,7 @@ endif
 
 # build module
 
-$(MODULE).o: $(MODULE).c $(MODULE).h
+$(MODULE).o: $(MODULE).c
 	$(KMAKE) modules
 
 

@@ -55,8 +55,22 @@ section_new (BinRecord *record,
     
     section->name = bin_record_get_string_indirect (
 	record, "sh_name", name_table);
+
+#if 0
+    g_print ("new section: %s\n", section->name);
+#endif
+    
     section->size = bin_record_get_uint (record, "sh_size");
+
+#if 0
+    g_print ("size: %d\n", section->size);
+#endif
+    
     section->offset = bin_record_get_uint (record, "sh_offset");
+
+#if 0
+    g_print ("offset: %d\n", section->offset);
+#endif
 
     flags = bin_record_get_uint (record, "sh_flags");
     section->allocated = !!(flags & SHF_ALLOC);
@@ -80,14 +94,21 @@ find_section (ElfParser *parser,
 	      const char *name)
 {
     int i;
+
+    g_print ("looking for section %s ... ", name);
     
     for (i = 0; i < parser->n_sections; ++i)
     {
 	Section *section = parser->sections[i];
 	
 	if (strcmp (section->name, name) == 0)
+	{
+	    g_print ("found it as number %d with offset %d\n", i, section->offset);
 	    return section;
+	}
     }
+
+    g_print ("not found\n");
     
     return NULL;
 }
@@ -122,6 +143,11 @@ parser_new_from_data (const guchar *data, gsize length)
     parser->n_sections = bin_record_get_uint (elf_header, "e_shnum");
     section_names_idx = bin_record_get_uint (elf_header, "e_shstrndx");
     section_headers = bin_record_get_uint (elf_header, "e_shoff");
+#if 0
+    g_print ("e_shoff  %d\n", section_headers);
+    g_print ("header size: %d\n", bin_record_get_uint (elf_header, "e_shentsize"));
+    g_print ("real size: %d\n", bin_format_get_size (parser->shn_entry));
+#endif
     
     bin_record_free (elf_header);
     
@@ -162,6 +188,10 @@ elf_parser_new (const char *filename,
     data = (guchar *)g_mapped_file_get_contents (file);
     length = g_mapped_file_get_length (file);
 
+#if 0
+    g_print ("data %p: for %s\n", data, filename);
+#endif
+    
     parser = parser_new_from_data (data, length);
 
     parser->file = file;
@@ -308,6 +338,8 @@ read_table (ElfParser *parser,
 #if 0
     g_print ("\nreading %d symbols (@%d bytes) from %s\n",
 	     parser->n_symbols, sym_size, sym_table->name);
+
+    g_print ("table offset: %d\n", str_table->offset);
 #endif
     
     symbol = bin_parser_get_record (parser->parser, parser->sym_format, sym_table->offset);
@@ -367,6 +399,9 @@ read_symbols (ElfParser *parser)
     }
     else if (dynsym && dynstr)
     {
+#if 0
+	g_print ("reading from dynstr at offset %d\n", dynstr->offset);
+#endif
 	read_table (parser, dynsym, dynstr);
     }
     else
@@ -498,36 +533,16 @@ elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
     return result;
 }
 
-#if 0
-get_debug_link_info (bfd *abfd, unsigned long *crc32_out)
+const guchar *
+elf_parser_get_eh_frame   (ElfParser   *parser)
 {
-    asection *sect;
-    bfd_size_type debuglink_size;
-    unsigned long crc32;
-    char *contents;
-    int crc_offset;
-    
-    sect = bfd_get_section_by_name (abfd, ".gnu_debuglink");
-    
-    if (sect == NULL)
+    const Section *eh_frame = find_section (parser, ".eh_frame");
+
+    if (eh_frame)
+	return bin_parser_get_data (parser->parser) + eh_frame->offset;
+    else
 	return NULL;
-    
-    debuglink_size = bfd_section_size (abfd, sect);
-    
-    contents = g_malloc (debuglink_size);
-    bfd_get_section_contents (abfd, sect, contents,
-			      (file_ptr)0, (bfd_size_type)debuglink_size);
-    
-    /* Crc value is stored after the filename, aligned up to 4 bytes. */
-    crc_offset = strlen (contents) + 1;
-    crc_offset = (crc_offset + 3) & ~3;
-    
-    crc32 = bfd_get_32 (abfd, (bfd_byte *) (contents + crc_offset));
-    
-    *crc32_out = crc32;
-    return contents;
 }
-#endif
 
 const char *
 elf_parser_get_sym_name (ElfParser *parser,

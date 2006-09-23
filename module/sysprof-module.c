@@ -126,6 +126,9 @@ timer_notify (struct pt_regs *regs)
 	StackFrame frame;
 	int result;
 	static atomic_t in_timer_notify = ATOMIC_INIT(1);
+#if 0
+	int stacksize;
+#endif
 
 	if (((++get_cpu_var(n_samples)) % INTERVAL) != 0)
 		return 0;
@@ -157,11 +160,47 @@ timer_notify (struct pt_regs *regs)
 	trace->addresses[i++] = (void *)regs->REG_INS_PTR;
 
 	frame_pointer = (void *)regs->REG_FRAME_PTR;
+
+	{
+#if 0
+		/* In principle we should use get_task_mm() but
+		 * that will use task_lock() leading to deadlock
+		 * if somebody already has the lock
+		 */
+		if (spin_is_locked (&current->alloc_lock))
+			printk ("alreadylocked\n");
+		{
+			struct mm_struct *mm = current->mm;
+			if (mm)
+			{
+				printk (KERN_ALERT "stack size: %d (%d)\n",
+					mm->start_stack - regs->REG_STACK_PTR,
+					current->pid);
+				
+				stacksize = mm->start_stack - regs->REG_STACK_PTR;
+			}
+			else
+				stacksize = 1;
+		}
+#endif
+#if 0
+		else
+			printk (KERN_ALERT "could not lock on %d\n", current->pid);
+#endif
+	}
 	
+#if 0
+	if (stacksize < 100000)
+		goto out;
+#endif
+
 	while (((result = read_frame (frame_pointer, &frame)) == 0)	&&
 	       i < SYSPROF_MAX_ADDRESSES				&&
 	       (unsigned long)frame_pointer >= regs->REG_STACK_PTR)
 	{
+#if 0
+		printk ("frame pointer: %p (retaddr: %p)\n", frame_pointer, frame.return_address);
+#endif
 		trace->addresses[i++] = (void *)frame.return_address;
 		frame_pointer = (StackFrame *)frame.next;
 	}

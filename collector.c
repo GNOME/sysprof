@@ -129,7 +129,6 @@ on_read (gpointer data)
     if (diff >= 0.0 && diff < RESET_DEAD_PERIOD)
 	return;
     
-#if 0
     {
 	int i;
 	g_print ("pid: %d (%d)\n", trace.pid, trace.n_addresses);
@@ -137,7 +136,6 @@ on_read (gpointer data)
 	    g_print ("rd: %08x\n", trace.addresses[i]);
 	g_print ("-=-\n");
     }
-#endif
     
     if (rd > 0)
     {

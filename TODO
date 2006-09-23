@@ -32,6 +32,52 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Elf bugs:
+
+	- when an elf file is read, it should be checked that the various
+	  sections are of the right type. For example the debug information
+	  for emacs is just a stub file where all the sections are NOBITS.
+
+	- Also error handling for bin_parser is necessary.
+
+	- Can .gnu_debuglink recurse?
+
+* Strategies for taking reliable stacktraces.
+
+	Three different kinds of files
+
+	- kernel
+	- vdso
+	- regular elf files
+
+	- kernel
+		- eh_frame annotations, in kernel or in kernel debug
+		- /proc/kallsyms
+		- userspace can look at _stext and _etext to determine 
+		  start and end of kernel text segment
+		- copying kernel stack to userspace
+		- heuristically determine functions based on address
+		- is eh_frame usually loaded into memory during normal
+		  operation
+
+	- vdso
+		- assume its the same across processes, just look at
+		  sysprof's own copy.
+		- send copy of it to userspace once, or for every
+		  sample
+
+	- regular elf
+		- usually have eh_frame section which is mapped into memory
+		  during normal operation
+		- is usually mapped into memory
+		- do stackwalk in kernel based on eh_frame
+		- do stackwalk in userland based on eh_frame
+		- do ebp based stackwalk in kernel
+		- do ebp based stackwalk in userland
+		- do heuristic stackwalk in kernel
+		- do heuristic stackwalk in userland
+		- 
+
 * "Expand all" is horrendously slow because update screenshot gets called 
   for every "expanded" signal.
 

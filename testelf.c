@@ -44,9 +44,11 @@ main ()
 	return -1;
     }
 
+    g_print ("eh frame starts at %p\n", elf_parser_get_eh_frame (elf));
+    
     elf_parser_get_crc32 (elf);
     
-    for (i = 0; i < 5000000; ++i)
+    for (i = 0; i < 1; ++i)
     {
 	elf_parser_get_crc32 (elf);
 	check (elf, 0x077c80f0 - (0x07787000 - 0)); /* gtk_about_dialog_set_artists  (add - (map - offset)) */

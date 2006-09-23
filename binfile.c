@@ -68,6 +68,9 @@ separate_debug_file_exists (const char *name, guint32 crc)
     if (!parser)
 	return NULL;
 
+    g_print ("debug for the debug file: %s\n",
+	     elf_parser_get_debug_link (parser, &file_crc));
+    
     file_crc = elf_parser_get_crc32 (parser);
 
     if (file_crc != crc)
@@ -188,6 +191,7 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 {
     if (bin_file->elf)
     {
+	g_print ("lookup in %s\n", bin_file->filename);
 	const ElfSym *sym = elf_parser_lookup_symbol (bin_file->elf, address);
 
 	if (sym)

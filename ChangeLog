@@ -1,3 +1,11 @@
+2006-10-08  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* binfile.c (find_separate_debug_file): Support _debuglink
+	recursions.
+
+	* elfparser.c: Check that the sections have valid types before
+	using them. 
+
 2006-10-08  Soren Sandmann  <sandmann@daimi.au.dk>
 
 	* Delete various debug spew

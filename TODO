@@ -28,25 +28,21 @@ Before 1.0.4:
 * Consider renaming sysprof-module.[ch] to sysprof.[ch] to move it closer to 
   kernel naming conventions. 
 
-* Get rid of include of "../config.h" as that won't work in the kernel.
+* Get rid of include of "../config.h" as that won't work in the latest 
+  kernel. done in HEAD, need to check what if anything breaks with older
+  kernels.
 
 Before 1.2:
-
-* Try reproducing crash when profiling xrender demo
 
 * Fix (potential) performance issues in symbol lookup.
 
 * Elf bugs:
-
-	- when an elf file is read, it should be checked that the various
-	  sections are of the right type. For example the debug information
-	  for emacs is just a stub file where all the sections are NOBITS.
-
 	- Also error handling for bin_parser is necessary.
 
-	- Can .gnu_debuglink recurse?
-		yes, it can, and we should probably not crash if there are
-		cycles in the graph.
+	- don't loop infinitely if there are cycles in the debuglink graph.
+
+	* Find out why all apps have an "In file /usr/bin/<app binary>" below
+	  _libc_main. If possible, maybe make up a name for it.
 
 * Strategies for taking reliable stacktraces.
 
@@ -655,6 +651,25 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+- when an elf file is read, it should be checked that the various
+  sections are of the right type. For example the debug information
+  for emacs is just a stub file where all the sections are NOBITS.
+
+* Try reproducing crash when profiling xrender demo
+  - it looks like it crashes when it attempts to read /usr/bin/python
+  - apparently what's going on is that one of the symbols in python's
+    dynamic symbol table has a completely crazy 'st_name' offset.
+  DONE: we didn't actually need to read the name at all,
+  but still should find out why that value is so weird.
+  It looks like there is something strange going on with that file.
+  All the dynsyms have weird info/type values, yet nm and readelf
+  have no problems displaying it.
+	
+- Can .gnu_debuglink recurse?
+  yes, it can, and we should probably not crash if there are
+  cycles in the graph.
 
 * Find out why we are getting bogus symbols reported for /usr/bin/Xorg
   Like this:

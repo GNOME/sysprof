@@ -19,6 +19,7 @@ struct Section
     gsize		size;
     gboolean		allocated;
     gulong		load_address;
+    guint		type;
 };
 
 struct ElfParser
@@ -79,7 +80,9 @@ section_new (BinRecord *record,
 	section->load_address = bin_record_get_uint (record, "sh_addr");
     else
 	section->load_address = 0;
-    
+
+    section->type = bin_record_get_uint (record, "sh_type");
+
     return section;
 }
 
@@ -91,7 +94,8 @@ section_free (Section *section)
 
 static const Section *
 find_section (ElfParser *parser,
-	      const char *name)
+	      const char *name,
+	      guint	  type)
 {
     int i;
 
@@ -103,7 +107,7 @@ find_section (ElfParser *parser,
     {
 	Section *section = parser->sections[i];
 	
-	if (strcmp (section->name, name) == 0)
+	if (strcmp (section->name, name) == 0 && section->type == type)
 	{
 #if 0
 	    g_print ("found it as number %d with offset %d\n", i, section->offset);
@@ -190,6 +194,10 @@ elf_parser_new (const char *filename,
 
     if (!file)
 	return NULL;
+
+#if 0
+    g_print ("elf parser new : %s\n", filename);
+#endif
     
     data = (guchar *)g_mapped_file_get_contents (file);
     length = g_mapped_file_get_length (file);
@@ -197,9 +205,14 @@ elf_parser_new (const char *filename,
 #if 0
     g_print ("data %p: for %s\n", data, filename);
 #endif
-    
+
     parser = parser_new_from_data (data, length);
 
+#if 0
+    g_print ("Elf file: %s  (debug: %s)\n",
+	     filename, elf_parser_get_debug_link (parser, NULL));
+#endif
+    
     parser->file = file;
 
     return parser;
@@ -370,15 +383,29 @@ read_table (ElfParser *parser,
     {
 	guint info;
 	gulong addr;
-	const char *name;
 	gulong offset;
-	
+#if 0
+	const char *name;
+#endif
+
 	bin_record_index (symbol, i);
 	
 	info = bin_record_get_uint (symbol, "st_info");
+
+#if 0
+	g_print ("info: %d  =>   %d %d\n", info, info & 0xf, info >> 4);
+#endif
+#if 0
+	g_print ("func: %d global %d local: %d\n", STT_FUNC, STB_GLOBAL, STB_LOCAL);
+#endif
+#if 0
+	g_print ("%d, name off: %d\n", i, bin_record_get_uint (symbol, "st_name"));
+#endif
 	addr = bin_record_get_uint (symbol, "st_value");
+#if 0
 	name = bin_record_get_string_indirect (symbol, "st_name",
 					       str_table->offset);
+#endif
 	offset = bin_record_get_offset (symbol);
 	
 	if (addr != 0				&&
@@ -388,10 +415,22 @@ read_table (ElfParser *parser,
 	{
 	    parser->symbols[n_functions].address = addr;
 	    parser->symbols[n_functions].offset = offset;
+
+#if 0
+	    g_print ("name: %s\n",
+		     bin_record_get_string_indirect (symbol, "st_name",
+						     str_table->offset));
+	    
+	    g_print ("%lx\n", parser->symbols[n_functions].address);
+#endif
 	    
 	    n_functions++;
 	}
     }
+
+#if 0
+    g_print ("%d functions found \n", n_functions);
+#endif
     
     bin_record_free (symbol);
 
@@ -413,10 +452,10 @@ read_table (ElfParser *parser,
 static void
 read_symbols (ElfParser *parser)
 {
-    const Section *symtab = find_section (parser, ".symtab");
-    const Section *strtab = find_section (parser, ".strtab");
-    const Section *dynsym = find_section (parser, ".dynsym");
-    const Section *dynstr = find_section (parser, ".dynstr");
+    const Section *symtab = find_section (parser, ".symtab", SHT_SYMTAB);
+    const Section *strtab = find_section (parser, ".strtab", SHT_STRTAB);
+    const Section *dynsym = find_section (parser, ".dynsym", SHT_SYMTAB);
+    const Section *dynstr = find_section (parser, ".dynstr", SHT_STRTAB);
 
     if (symtab && strtab)
     {
@@ -513,9 +552,13 @@ elf_parser_lookup_symbol (ElfParser *parser,
     if (parser->n_symbols == 0)
 	return NULL;
 
-    text = find_section (parser, ".text");
+    text = find_section (parser, ".text", SHT_PROGBITS);
     if (!text)
-	return NULL;
+    {
+	text = find_section (parser, ".text", SHT_NOBITS);
+	if (!text)
+	    return NULL;
+    }
     
     address += text->load_address;
 
@@ -558,10 +601,14 @@ elf_parser_get_text_offset (ElfParser *parser)
 
     g_return_val_if_fail (parser != NULL, (gulong)-1);
     
-    text = find_section (parser, ".text");
+    text = find_section (parser, ".text", SHT_PROGBITS);
 
     if (!text)
-	return (gulong)-1;
+    {
+	text = find_section (parser, ".text", SHT_NOBITS);
+	if (!text)
+	    return (gulong)-1;
+    }
 
     return text->offset;
 }
@@ -569,7 +616,8 @@ elf_parser_get_text_offset (ElfParser *parser)
 const char *
 elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
 {
-    const Section *debug_link = find_section (parser, ".gnu_debuglink");
+    const Section *debug_link = find_section (parser, ".gnu_debuglink",
+					      SHT_PROGBITS);
     const gchar *result;
 
     if (!debug_link)
@@ -581,7 +629,8 @@ elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
 
     bin_parser_align (parser->parser, 4);
 
-    *crc32 = bin_parser_get_uint32 (parser->parser);
+    if (crc32)
+	*crc32 = bin_parser_get_uint32 (parser->parser);
     
     return result;
 }
@@ -589,7 +638,7 @@ elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
 const guchar *
 elf_parser_get_eh_frame   (ElfParser   *parser)
 {
-    const Section *eh_frame = find_section (parser, ".eh_frame");
+    const Section *eh_frame = find_section (parser, ".eh_frame", SHT_PROGBITS);
 
     if (eh_frame)
 	return bin_parser_get_data (parser->parser) + eh_frame->offset;

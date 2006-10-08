@@ -88,8 +88,9 @@ separate_debug_file_exists (const char *name, guint32 crc)
 static const char *const debug_file_directory = "/usr/lib/debug";
 
 static ElfParser *
-find_separate_debug_file (ElfParser *elf,
-			  const char *filename)
+get_debug_file (ElfParser *elf,
+		const char *filename,
+		char **new_name)
 {
     const char *basename;
     char *dir;
@@ -104,7 +105,7 @@ find_separate_debug_file (ElfParser *elf,
     basename = elf_parser_get_debug_link (elf, &crc32);
 
     if (!basename)
-	return elf;
+	return NULL;
 
     dir = g_path_get_dirname (filename);
     
@@ -116,7 +117,11 @@ find_separate_debug_file (ElfParser *elf,
     {
 	result = separate_debug_file_exists (tries[i], crc32);
 	if (result)
+	{
+	    if (new_name)
+		*new_name = g_strdup (tries[i]);
 	    break;
+	}
     }
 
     g_free (dir);
@@ -124,15 +129,40 @@ find_separate_debug_file (ElfParser *elf,
     for (i = 0; i < 3; ++i)
 	g_free (tries[i]);
 
-    if (result)
+    return result;
+}
+
+static ElfParser *
+find_separate_debug_file (ElfParser *elf,
+			  const char *filename)
+{
+    ElfParser *debug;
+    char *debug_name = NULL;
+    char *fname;
+
+    fname = g_strdup (filename);
+
+    /* FIXME: there is an infinite loop if there are cycles in
+     * the debug_link graph
+     */
+    do
     {
-	elf_parser_free (elf);
-	return result;
+	debug = get_debug_file (elf, fname, &debug_name);
+
+	if (debug)
+	{
+	    elf_parser_free (elf);
+	    elf = debug;
+
+	    g_free (fname);
+	    fname = debug_name;
+	}
     }
-    else
-    {
-	return elf;
-    }
+    while (debug);
+
+    g_free (fname);
+
+    return elf;
 }
 
 static GHashTable *bin_files;
@@ -163,7 +193,7 @@ bin_file_new (const char *filename)
 	if (bf->elf)
 	    bf->text_offset = elf_parser_get_text_offset (bf->elf);
 	
-	bf->elf = find_separate_debug_file (bf->elf, filename);
+	bf->elf = find_separate_debug_file (bf->elf, filename); /* find_separate_debug_file (bf->elf, filename); */
 	bf->inode = read_inode (filename);
 	bf->filename = g_strdup (filename);
 	bf->undefined_name = g_strdup_printf ("In file %s", filename);
@@ -210,7 +240,15 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 	    return (const BinSymbol *)sym;
 	}
     }
+#if 0
+    else
+	g_print ("no elf file for %s\n", bin_file->filename);
+#endif
 
+#if 0
+    g_print ("%lx undefined in %s (textoffset %d)\n", address + bin_file->text_offset, bin_file->filename, bin_file->text_offset);
+#endif
+    
     return (const BinSymbol *)bin_file->undefined_name;
 }
 

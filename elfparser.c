@@ -215,6 +215,9 @@ elf_parser_new (const char *filename,
     
     parser->file = file;
 
+    if (!parser->symbols)
+	g_print ("at this point %s has no symbols\n", filename);
+    
     return parser;
 }
 
@@ -454,25 +457,33 @@ read_symbols (ElfParser *parser)
 {
     const Section *symtab = find_section (parser, ".symtab", SHT_SYMTAB);
     const Section *strtab = find_section (parser, ".strtab", SHT_STRTAB);
-    const Section *dynsym = find_section (parser, ".dynsym", SHT_SYMTAB);
+    const Section *dynsym = find_section (parser, ".dynsym", SHT_DYNSYM);
     const Section *dynstr = find_section (parser, ".dynstr", SHT_STRTAB);
 
     if (symtab && strtab)
     {
+	g_print ("found symtab\n");
 	read_table (parser, symtab, strtab);
-    }
-    else if (dynsym && dynstr)
-    {
-#if 0
-	g_print ("reading from dynstr at offset %d\n", dynstr->offset);
-#endif
-	read_table (parser, dynsym, dynstr);
     }
     else
     {
-	/* To make sure parser->symbols is non-NULL */
-	parser->n_symbols = 0;
-	parser->symbols = g_new (ElfSym, 1);
+	g_print ("no symtab\n");
+	if (dynsym && dynstr)
+	{
+	    g_print ("reading from dynstr at offset %d\n", dynstr->offset);
+	    read_table (parser, dynsym, dynstr);
+	    g_print ("read %d symbols\n", parser->n_symbols);
+	}
+	else
+	{
+	    if (!dynsym)
+		g_print ("no dynsym\n");
+	    if (!dynstr)
+		g_print ("no dynstr\n");
+	    /* To make sure parser->symbols is non-NULL */
+	    parser->n_symbols = 0;
+	    parser->symbols = g_new (ElfSym, 1);
+	}
     }
 }
 
@@ -548,6 +559,8 @@ elf_parser_lookup_symbol (ElfParser *parser,
     
     if (!parser->symbols)
 	read_symbols (parser);
+    else
+	g_print ("has symbols already\n");
 
     if (parser->n_symbols == 0)
 	return NULL;

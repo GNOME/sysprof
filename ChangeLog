@@ -1,3 +1,7 @@
+2006-10-08  Soren Sandmann <sandmann@redhat.com>
+
+	* elfparser.c (read_symbols): Use "SHT_DYNSYM" for ".dynsym".
+
 2006-10-08  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* binfile.c (find_separate_debug_file): Support _debuglink

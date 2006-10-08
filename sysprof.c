@@ -23,6 +23,8 @@
 #include <glade/glade.h>
 #include <errno.h>
 #include <glib/gprintf.h>
+#include <string.h>
+#include <stdlib.h>
 
 #include "treeviewutils.h"
 #include "profile.h"
@@ -1550,11 +1552,46 @@ load_file (gpointer data)
     return FALSE;
 }
 
+static const char *
+process_options (int           argc,
+		 char        **argv)
+{
+    int i;
+    gboolean show_version = FALSE;
+    const char *filename = NULL;
+    
+    for (i = 1; i < argc; ++i)
+    {
+	char *option = argv[i];
+	
+	if (strcmp (option, "--version") == 0)
+	{
+	    show_version = TRUE;
+	}
+	else if (!filename)
+	{
+	    filename = argv[i];
+	}
+    }
+
+    if (show_version)
+    {
+	g_print ("%s %s\n", APPLICATION_NAME, PACKAGE_VERSION);
+	
+	exit (1);
+    }
+
+    return filename;
+}
+
 int
 main (int    argc,
       char **argv)
 {
     Application *app;
+    const char *filename;
+    
+    filename = process_options (argc, argv);
     
     gtk_init (&argc, &argv);
     
@@ -1567,20 +1604,20 @@ main (int    argc,
      */
     g_slice_set_config (G_SLICE_CONFIG_ALWAYS_MALLOC, TRUE);
 #endif
-    
+     
     app = application_new ();
-    
+
     if (!build_gui (app))
 	return -1;
     
     update_sensitivity (app);
     
-    if (argc > 1)
+    if (filename)
     {
 	FileOpenData *file_open_data = g_new0 (FileOpenData, 1);
-	file_open_data->filename = argv[1];
+	file_open_data->filename = filename;
 	file_open_data->app = app;
-
+	
 	/* This has to run at G_PRIORITY_LOW because of bug 350517
 	 */
 	g_idle_add_full (G_PRIORITY_LOW, load_file, file_open_data, NULL);

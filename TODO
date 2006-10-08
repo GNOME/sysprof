@@ -34,10 +34,8 @@ Before 1.0.4:
 
 Before 1.2:
 
-* Fix (potential) performance issues in symbol lookup.
-
 * Elf bugs:
-	- Also error handling for bin_parser is necessary.
+	- error handling for bin_parser is necessary.
 
 	- don't loop infinitely if there are cycles in the debuglink graph.
 
@@ -58,6 +56,7 @@ Before 1.2:
 		- userspace can look at _stext and _etext to determine 
 		  start and end of kernel text segment
 		- copying kernel stack to userspace
+			- it's always 4096 bytes these days
 		- heuristically determine functions based on address
 		- is eh_frame usually loaded into memory during normal
 		  operation
@@ -66,13 +65,14 @@ Before 1.2:
 		- assume its the same across processes, just look at
 		  sysprof's own copy.
 		- send copy of it to userspace once, or for every
-		  sample
+		  sample. 
 
 	- regular elf
 		- usually have eh_frame section which is mapped into memory
 		  during normal operation
-		- is usually mapped into memory
 		- do stackwalk in kernel based on eh_frame
+		- eh_frame section is usually mapped into memory, so
+		  no file reading in kernel would be necessary.
 		- do stackwalk in userland based on eh_frame
 		- do ebp based stackwalk in kernel
 		- do ebp based stackwalk in userland
@@ -84,7 +84,7 @@ Before 1.2:
 
 * See if we can make "In file <blah>" not be treated as a recursive function.
   Maybe simply treat each individual address in the file as a function.
-  Or try to parse the machine code. Places that are called are likely 
+  Or try to parse the machine code. Positions that are called are likely 
   to be functions.
 
 * Give more sensible 'error messages'. Ie., if you get permission denied for
@@ -652,6 +652,7 @@ Later:
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+* Fix (potential) performance issues in symbol lookup.
 
 - when an elf file is read, it should be checked that the various
   sections are of the right type. For example the debug information

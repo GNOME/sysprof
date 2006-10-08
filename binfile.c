@@ -204,7 +204,9 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 	
 	if (sym)
 	{
+#if 0
 	    g_print ("found  %lx => %s\n", address, bin_symbol_get_name (bin_file, sym));
+#endif
 	    return (const BinSymbol *)sym;
 	}
     }

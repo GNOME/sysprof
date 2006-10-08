@@ -580,12 +580,9 @@ process_lookup_symbol (Process *process, gulong address)
 
 	g_print ("map address: %lx\n", map->start);
 	g_print ("map offset: %lx\n", map->offset);
-#endif
 	g_print ("address before: %lx  (%s)\n", address, map->filename);
-#if 0
     }
-#endif
-#if 0
+
     g_print ("address before: \n");
 #endif
     

@@ -1,3 +1,7 @@
+2006-10-08  Soren Sandmann  <sandmann@daimi.au.dk>
+
+	* Delete various debug spew
+
 2006-10-07  Soren Sandmann  <sandmann@daimi.au.dk>
 
 	Deal with address offsets. Address lookup is now:

@@ -95,7 +95,9 @@ find_section (ElfParser *parser,
 {
     int i;
 
+#if 0
     g_print ("looking for section %s ... ", name);
+#endif
     
     for (i = 0; i < parser->n_sections; ++i)
     {
@@ -103,12 +105,16 @@ find_section (ElfParser *parser,
 	
 	if (strcmp (section->name, name) == 0)
 	{
+#if 0
 	    g_print ("found it as number %d with offset %d\n", i, section->offset);
+#endif
 	    return section;
 	}
     }
 
+#if 0
     g_print ("not found\n");
+#endif
     
     return NULL;
 }
@@ -513,14 +519,18 @@ elf_parser_lookup_symbol (ElfParser *parser,
     
     address += text->load_address;
 
+#if 0
     g_print ("the address we are looking up is %p\n", address);
+#endif
     
     result = do_lookup (parser->symbols, address, 0, parser->n_symbols - 1);
 
+#if 0
     if (result)
     {
 	g_print ("found %s at %lx\n", elf_parser_get_sym_name (parser, result), result->address);
     }
+#endif
 
     if (result)
     {

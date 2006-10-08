@@ -215,8 +215,10 @@ elf_parser_new (const char *filename,
     
     parser->file = file;
 
+#if 0
     if (!parser->symbols)
 	g_print ("at this point %s has no symbols\n", filename);
+#endif
     
     return parser;
 }
@@ -462,57 +464,33 @@ read_symbols (ElfParser *parser)
 
     if (symtab && strtab)
     {
+#if 0
 	g_print ("found symtab\n");
+#endif
 	read_table (parser, symtab, strtab);
+    }
+    else if (dynsym && dynstr)
+    {
+#if 0
+	g_print ("reading from dynstr at offset %d\n", dynstr->offset);
+#endif
+	read_table (parser, dynsym, dynstr);
+#if 0
+	g_print ("read %d symbols\n", parser->n_symbols);
+#endif
     }
     else
     {
-	g_print ("no symtab\n");
-	if (dynsym && dynstr)
-	{
-	    g_print ("reading from dynstr at offset %d\n", dynstr->offset);
-	    read_table (parser, dynsym, dynstr);
-	    g_print ("read %d symbols\n", parser->n_symbols);
-	}
-	else
-	{
-	    if (!dynsym)
-		g_print ("no dynsym\n");
-	    if (!dynstr)
-		g_print ("no dynstr\n");
-	    /* To make sure parser->symbols is non-NULL */
-	    parser->n_symbols = 0;
-	    parser->symbols = g_new (ElfSym, 1);
-	}
-    }
-}
-
-/*
- * Returns the address that the start of the file would be loaded
- * at if the whole file was mapped
- */
-static gulong
-elf_parser_get_load_address (ElfParser *parser)
-{
-    int i;
-    gulong load_address = (gulong)-1;
-
-    for (i = 0; i < parser->n_sections; ++i)
-    {
-	Section *section = parser->sections[i];
-
-	if (section->allocated)
-	{
-	    gulong addr = section->load_address - section->offset;
-	    load_address = MIN (load_address, addr);
-	}
-    }
-    
 #if 0
-    g_print ("load address: %8p\n", (void *)load_address);
+	if (!dynsym)
+	    g_print ("no dynsym\n");
+	if (!dynstr)
+	    g_print ("no dynstr\n");
 #endif
-    
-    return load_address;
+	/* To make sure parser->symbols is non-NULL */
+	parser->n_symbols = 0;
+	parser->symbols = g_new (ElfSym, 1);
+    }
 }
 
 static ElfSym *
@@ -553,14 +531,12 @@ const ElfSym *
 elf_parser_lookup_symbol (ElfParser *parser,
 			  gulong     address)
 {
-    Section *text;
+    const Section *text;
     const ElfSym *result;
     gsize size;
     
     if (!parser->symbols)
 	read_symbols (parser);
-    else
-	g_print ("has symbols already\n");
 
     if (parser->n_symbols == 0)
 	return NULL;

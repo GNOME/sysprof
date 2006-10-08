@@ -231,8 +231,9 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 	
 	const ElfSym *sym = elf_parser_lookup_symbol (bin_file->elf, address);
 
+#if 0
 	g_print ("lookup in %s\n", bin_file->filename);
-	
+#endif
 	
 	if (sym)
 	{

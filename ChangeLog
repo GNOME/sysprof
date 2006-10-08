@@ -1,5 +1,11 @@
 2006-10-08  Soren Sandmann <sandmann@redhat.com>
 
+	* elfparser.c: Remove now unused load-address heuristic
+
+	* comment out debug spew
+
+2006-10-08  Soren Sandmann <sandmann@redhat.com>
+
 	* elfparser.c (read_symbols): Use "SHT_DYNSYM" for ".dynsym".
 
 2006-10-08  Soren Sandmann <sandmann@daimi.au.dk>

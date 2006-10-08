@@ -9,6 +9,8 @@ void          elf_parser_free           (ElfParser   *parser);
 const char *  elf_parser_get_debug_link (ElfParser   *parser,
 					 guint32     *crc32);
 const guchar *elf_parser_get_eh_frame   (ElfParser   *parser);
+gulong	      elf_parser_get_text_offset (ElfParser  *parser);
+
 
 /* Lookup a symbol in the file.
  *

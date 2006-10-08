@@ -1,3 +1,26 @@
+2006-10-07  Soren Sandmann  <sandmann@daimi.au.dk>
+
+	Deal with address offsets. Address lookup is now:
+
+	- First convert the address to an offset into the file
+	- Then convert to an offset into the text segment
+	- Then add the load address of the text segment (found in the
+	debug binary)
+	- Then finally lookup the result in the symbol table.
+	
+	* elfparser.c (elf_parser_get_text_offset): New function
+
+	* elfparser.c (elf_parser_lookup_symbol): Treat addresses as
+	offsets into the text segment.
+
+	* binfile.c (bin_file_new): Store the offset of the text section
+	of the actual binary (not the debug one)
+
+	(bin_file_lookup_symbol): Subtract text_offset before passing
+	address to elf parser. 
+
+	* module/sysprof-module.c: Remove include of linux/config.h
+
 2006-08-27  Soren Sandmann <sandmann@redhat.com>
 
 	* binparser.c: Remove old commented out code

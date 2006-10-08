@@ -46,6 +46,8 @@ struct BinFile
     ino_t	inode;
     
     char *	undefined_name;
+
+    gulong	text_offset;
 };
 
 /* FIXME: error handling */
@@ -154,6 +156,13 @@ bin_file_new (const char *filename)
     {
 	bf = g_new0 (BinFile, 1);
 	bf->elf = elf_parser_new (filename, NULL);
+
+	/* We need the text offset of the actual binary, not the
+	 * (potential) debug binary
+	 */
+	if (bf->elf)
+	    bf->text_offset = elf_parser_get_text_offset (bf->elf);
+	
 	bf->elf = find_separate_debug_file (bf->elf, filename);
 	bf->inode = read_inode (filename);
 	bf->filename = g_strdup (filename);
@@ -188,10 +197,16 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 {
     if (bin_file->elf)
     {
+	address -= bin_file->text_offset;
+	
 	const ElfSym *sym = elf_parser_lookup_symbol (bin_file->elf, address);
 
+	
 	if (sym)
+	{
+	    g_print ("found  %lx => %s\n", address, bin_symbol_get_name (bin_file, sym));
 	    return (const BinSymbol *)sym;
+	}
     }
 
     return (const BinSymbol *)bin_file->undefined_name;

@@ -32,6 +32,10 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Try reproducing crash when profiling xrender demo
+
+* Fix (potential) performance issues in symbol lookup.
+
 * Elf bugs:
 
 	- when an elf file is read, it should be checked that the various
@@ -41,6 +45,8 @@ Before 1.2:
 	- Also error handling for bin_parser is necessary.
 
 	- Can .gnu_debuglink recurse?
+		yes, it can, and we should probably not crash if there are
+		cycles in the graph.
 
 * Strategies for taking reliable stacktraces.
 
@@ -76,7 +82,6 @@ Before 1.2:
 		- do ebp based stackwalk in userland
 		- do heuristic stackwalk in kernel
 		- do heuristic stackwalk in userland
-		- 
 
 * "Expand all" is horrendously slow because update screenshot gets called 
   for every "expanded" signal.
@@ -650,6 +655,63 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* Find out why we are getting bogus symbols reported for /usr/bin/Xorg
+  Like this:
+
+	Everything                                     0.00 100.00
+	  [/usr/bin/Xorg]                              0.00  94.79
+	    GetScratchPixmapHeader                     0.00  94.79
+	      __libc_start_main                        0.00  94.79
+	        FindAllClientResources                 0.00  94.79
+	          FreeFontPath                         0.00  94.79
+	            SProcRenderCreateConicalGradient   0.00  94.56
+	              ProcRenderTrapezoids             0.00  94.56
+	                AllocatePicture                0.00  94.56
+	            __glXDispatch                      0.00   0.16
+	              __glXVendorPrivate               0.00   0.08
+	              __glXRender                      0.00   0.08
+	            SmartScheduleStartTimer            0.00   0.08
+	  [./sysprof]                                  0.00   2.76
+	  [sshd: ssp@pts/0]                            0.00   2.37
+	  [compiz]                                     0.00   0.08
+
+  What's going on here is that the computed load address for the X server
+  binary is different for the debug binary. The lowest allocated address
+  is 0x08047134 for the normal, and 0x8048134 for the debug. But it looks
+  like the addresses are still the same for the symbols. 
+	The root of this problem may be that we should ignore the load
+  address of the debug binary, and just lookup the address computed.
+  The *text* segments have the same address though. Everything from 
+  "gnu version" on has the same address.
+	
+  So:
+	- find out where in memory the text segment is
+	- take an address and compute its offset to the text segment
+	- in elf parser, find address of text segment
+	- add offset
+	- lookup resulting address
+
+So basically, "load address" should really be text address. Except of course
+that load_address is not used in process.c - instead the 'load address' of the
+first part of the file is computed and assumed to be equivalent to the
+load address. So to lookup something you probably actually need
+to know the load/offset at the elf parser level:
+
+	lookup_symbol (elf, map, offset, address)
+
+then, 
+
+	real load address of text (lta) = map - offset + text_offset
+
+	offset of called func (ocf):   addr - lta 
+
+	thing to lookup in table:  ocf + text_addr.loadaddr in debug
+
+	addr - map - offset + text_offset 
+
+
+	hmmm ...
 
 * plug all the leaks
 	- don't leak the presentation strings/objects

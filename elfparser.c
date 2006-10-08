@@ -322,6 +322,21 @@ compare_sym (const void *a, const void *b)
 	return 1;
 }
 
+#if 0
+static void
+dump_symbols (ElfParser *parser, ElfSym *syms, guint n_syms)
+{
+    int i;
+
+    for (i = 0; i < n_syms; ++i)
+    {
+	ElfSym *s = &(syms[i]);
+
+	g_print ("   %s: %lx\n", elf_parser_get_sym_name (parser, s), s->address);
+    }
+}
+#endif
+
 static void
 read_table (ElfParser *parser,
 	    const Section *sym_table,
@@ -381,8 +396,12 @@ read_table (ElfParser *parser,
     parser->sym_strings = str_table->offset;
     parser->n_symbols = n_functions;
     parser->symbols = g_renew (ElfSym, parser->symbols, parser->n_symbols);
-    
+
     qsort (parser->symbols, parser->n_symbols, sizeof (ElfSym), compare_sym);
+
+#if 0
+    dump_symbols (parser, parser->symbols, parser->n_symbols);
+#endif
 }
 
 static void
@@ -432,7 +451,7 @@ elf_parser_get_load_address (ElfParser *parser)
 	    load_address = MIN (load_address, addr);
 	}
     }
-
+    
 #if 0
     g_print ("load address: %8p\n", (void *)load_address);
 #endif
@@ -473,10 +492,12 @@ do_lookup (ElfSym *symbols,
     }
 }
 
+/* Address should be given in 'offset into text segment' */
 const ElfSym *
 elf_parser_lookup_symbol (ElfParser *parser,
 			  gulong     address)
 {
+    Section *text;
     const ElfSym *result;
     gsize size;
     
@@ -485,14 +506,21 @@ elf_parser_lookup_symbol (ElfParser *parser,
 
     if (parser->n_symbols == 0)
 	return NULL;
- 
-    address += elf_parser_get_load_address (parser);
 
-#if 0
+    text = find_section (parser, ".text");
+    if (!text)
+	return NULL;
+    
+    address += text->load_address;
+
     g_print ("the address we are looking up is %p\n", address);
-#endif
     
     result = do_lookup (parser->symbols, address, 0, parser->n_symbols - 1);
+
+    if (result)
+    {
+	g_print ("found %s at %lx\n", elf_parser_get_sym_name (parser, result), result->address);
+    }
 
     if (result)
     {
@@ -511,6 +539,21 @@ elf_parser_lookup_symbol (ElfParser *parser,
     }
 
     return result;
+}
+
+gulong
+elf_parser_get_text_offset (ElfParser *parser)
+{
+    const Section *text;
+
+    g_return_val_if_fail (parser != NULL, (gulong)-1);
+    
+    text = find_section (parser, ".text");
+
+    if (!text)
+	return (gulong)-1;
+
+    return text->offset;
 }
 
 const char *

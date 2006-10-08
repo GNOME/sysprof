@@ -555,7 +555,7 @@ process_lookup_symbol (Process *process, gulong address)
     Map *map = process_locate_map (process, address);
     
 /*     g_print ("addr: %x\n", address); */
-    
+
     if (address == 0x1)
     {
 	get_kernel_symbols ();
@@ -580,15 +580,22 @@ process_lookup_symbol (Process *process, gulong address)
 
 	g_print ("map address: %lx\n", map->start);
 	g_print ("map offset: %lx\n", map->offset);
-	g_print ("address before: %lx\n", address);
+#endif
+	g_print ("address before: %lx  (%s)\n", address, map->filename);
+#if 0
     }
 #endif
 #if 0
-	g_print ("address before: \n");
+    g_print ("address before: \n");
 #endif
     
     address -= map->start;
     address += map->offset;
+    
+#if 0
+    address -= map->start;
+    address += map->offset;
+#endif
 
 #if 0
     if (strcmp (map->filename, "/home/ssp/sysprof/sysprof") == 0)

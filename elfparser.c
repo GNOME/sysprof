@@ -10,6 +10,7 @@ struct ElfSym
 {
     gulong offset;
     gulong address;
+    gulong size;
 };
 
 struct Section
@@ -39,6 +40,8 @@ struct ElfParser
     gsize		sym_strings;
 
     GMappedFile *	file;
+
+    const Section *	text_section;
 };
 
 static gboolean parse_elf_signature (const guchar *data, gsize length,
@@ -176,6 +179,11 @@ parser_new_from_data (const guchar *data, gsize length)
 	
 	parser->sections[i] = section_new (shn_entry, section_names);
     }
+
+    /* Cache the text section */
+    parser->text_section = find_section (parser, ".text", SHT_PROGBITS);
+    if (!parser->text_section)
+	parser->text_section = find_section (parser, ".text", SHT_NOBITS);
     
     bin_record_free (shn_entry);
 
@@ -207,6 +215,14 @@ elf_parser_new (const char *filename,
 #endif
 
     parser = parser_new_from_data (data, length);
+
+    if (!parser)
+    {
+	g_mapped_file_free (file);
+	return NULL;
+    }
+    
+    parser->file = file;
 
 #if 0
     g_print ("Elf file: %s  (debug: %s)\n",
@@ -420,6 +436,8 @@ read_table (ElfParser *parser,
 	{
 	    parser->symbols[n_functions].address = addr;
 	    parser->symbols[n_functions].offset = offset;
+	    parser->symbols[n_functions].size =
+		bin_record_get_uint (symbol, "st_size");
 
 #if 0
 	    g_print ("name: %s\n",
@@ -531,7 +549,6 @@ const ElfSym *
 elf_parser_lookup_symbol (ElfParser *parser,
 			  gulong     address)
 {
-    const Section *text;
     const ElfSym *result;
     gsize size;
     
@@ -541,15 +558,10 @@ elf_parser_lookup_symbol (ElfParser *parser,
     if (parser->n_symbols == 0)
 	return NULL;
 
-    text = find_section (parser, ".text", SHT_PROGBITS);
-    if (!text)
-    {
-	text = find_section (parser, ".text", SHT_NOBITS);
-	if (!text)
-	    return NULL;
-    }
+    if (!parser->text_section)
+	return NULL;
     
-    address += text->load_address;
+    address += parser->text_section->load_address;
 
 #if 0
     g_print ("the address we are looking up is %p\n", address);
@@ -564,21 +576,8 @@ elf_parser_lookup_symbol (ElfParser *parser,
     }
 #endif
 
-    if (result)
-    {
-	BinRecord *symbol;
-	
-	/* Check that address is actually within the function */
-	symbol = bin_parser_get_record (parser->parser,
-					parser->sym_format, result->offset);
-	
-	size = bin_record_get_uint (symbol, "st_size");
-	
-	if (result->address + size <= address)
-	    result = NULL;
-	
-	bin_record_free (symbol);
-    }
+    if (result && result->address + result->size <= address)
+	result = NULL;
 
     return result;
 }
@@ -586,20 +585,12 @@ elf_parser_lookup_symbol (ElfParser *parser,
 gulong
 elf_parser_get_text_offset (ElfParser *parser)
 {
-    const Section *text;
-
     g_return_val_if_fail (parser != NULL, (gulong)-1);
-    
-    text = find_section (parser, ".text", SHT_PROGBITS);
 
-    if (!text)
-    {
-	text = find_section (parser, ".text", SHT_NOBITS);
-	if (!text)
-	    return (gulong)-1;
-    }
+    if (!parser->text_section)
+	return (gulong)-1;
 
-    return text->offset;
+    return parser->text_section->offset;
 }
 
 const char *

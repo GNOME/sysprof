@@ -35,6 +35,9 @@ struct BinParser
     gsize		offset;
     const guchar *	data;
     gsize		length;
+
+    gboolean		cache_in_use;
+    BinRecord		cache;
 };
 
 BinParser *
@@ -46,6 +49,7 @@ bin_parser_new (const guchar	*data,
     parser->offset = 0;
     parser->data = data;
     parser->length = length;
+    parser->cache_in_use = FALSE;
     
     return parser;
 }
@@ -359,18 +363,33 @@ bin_parser_get_record (BinParser *parser,
 		       BinFormat *format,
 		       gsize      offset)
 {
-    BinRecord *record = g_new0 (BinRecord, 1);
+    BinRecord *record;
+    
+    if (!parser->cache_in_use)
+    {
+	parser->cache_in_use = TRUE;
+	record = &(parser->cache);
+    }
+    else
+    {
+	record = g_new0 (BinRecord, 1);
+    }
+
     record->parser = parser;
     record->index = 0;
     record->offset = offset;
     record->format = format;
+
     return record;
 }
 
 void
 bin_record_free (BinRecord *record)
 {
-    g_free (record);
+    if (record == &(record->parser->cache))
+	record->parser->cache_in_use = FALSE;
+    else
+	g_free (record);
 }
 
 guint64

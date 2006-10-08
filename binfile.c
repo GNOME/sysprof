@@ -191,9 +191,12 @@ bin_file_new (const char *filename)
 	 * (potential) debug binary
 	 */
 	if (bf->elf)
+	{
 	    bf->text_offset = elf_parser_get_text_offset (bf->elf);
 	
-	bf->elf = find_separate_debug_file (bf->elf, filename); /* find_separate_debug_file (bf->elf, filename); */
+	    bf->elf = find_separate_debug_file (bf->elf, filename);
+	}
+	
 	bf->inode = read_inode (filename);
 	bf->filename = g_strdup (filename);
 	bf->undefined_name = g_strdup_printf ("In file %s", filename);

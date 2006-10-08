@@ -1,3 +1,12 @@
+2006-10-08  Soren Sandmann  <sandmann@redhat.com>
+
+	* elfparser.c (struct ElfParser): Add a cache of the text section.
+
+	* binparser.c (struct BinParser): Add a cache of a bin record to
+	get rid of malloc()/free() overhead.
+
+	* elfparser.c (struct ElfSym): Cache the size of the symbol
+
 2006-10-08  Soren Sandmann <sandmann@redhat.com>
 
 	* elfparser.c: Remove now unused load-address heuristic

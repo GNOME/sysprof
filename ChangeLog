@@ -1,3 +1,7 @@
+2006-10-08   Soren Sandmann <sandmann@daimi.au.dk>
+
+	* binfile.c: Don't include bfd.h
+
 2006-10-08  Soren Sandmann <sandmann@redhat.com> 
 
 	* sysprof.c (process_options): New function to support --version option

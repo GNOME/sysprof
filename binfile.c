@@ -26,7 +26,6 @@
 
 #include <glib.h>
 #include "binfile.h"
-#include <bfd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>

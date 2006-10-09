@@ -1,4 +1,27 @@
-2006-10-08   Soren Sandmann <sandmann@daimi.au.dk>
+2006-10-09  Soren Sandmann  <ssp@localhost.localdomain>
+
+	* process.c (process_get_vdso_bytes): New function.
+
+	* elfparser.c (parser_new_from_data): export this function as
+	elf_parser_new_from_data(). 
+
+	* binfile.c (read_inode): Don't stat if filename is
+	'[vdso]'. Instead just return -1;
+	(bin_file_new): Use elf_parser_new_from_data() when the file is
+	[vdso]. 
+
+	* process.c (read_maps): Change the offset of the vdso map to 0
+	and the inode to -1.
+
+	* elfparser.c (elf_parser_lookup_symbol): Remove unused 'size'
+	variable.
+
+	* binfile.c (find_separate_debug_file): Deal with cycles in the
+	debuglink graph.
+
+	* configure.ac: Set version to 1.1.0. Print warning about HEAD.
+
+2006-10-08  Soren Sandmann  <ssp@localhost.localdomain>
 
 	* binfile.c: Don't include bfd.h
 

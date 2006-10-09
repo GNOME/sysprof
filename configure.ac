@@ -1,6 +1,6 @@
 AC_PREREQ(2.54)
 
-AC_INIT([sysprof], [1.1.0.snap071806])
+AC_INIT([sysprof], [1.1.0])
 AC_CONFIG_SRCDIR(sysprof.glade)
 
 AM_INIT_AUTOMAKE(no-define)
@@ -105,7 +105,7 @@ Makefile
 
 AC_OUTPUT
 
-if false; then
+if true; then
    echo
    echo "%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%"
    echo "@"  
@@ -114,7 +114,7 @@ if false; then
    echo "%      There are currently no known bugs in the kernel"
    echo "@      module in this version, but there could easily be"
    echo "%      unknown ones. Please report any crashes or lockups"
-   echo "@      that you experience."
+   echo "@      that you experience to sandmann@daimi.au.dk."
    echo "%"
    echo "@"
    echo "%      If you need a stable version of sysprof, either"

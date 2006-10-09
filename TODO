@@ -37,10 +37,15 @@ Before 1.2:
 * Elf bugs:
 	- error handling for bin_parser is necessary.
 
-	- don't loop infinitely if there are cycles in the debuglink graph.
-
 	* Find out why all apps have an "In file /usr/bin/<app binary>" below
 	  _libc_main. If possible, maybe make up a name for it.
+
+* vdso stuff:
+	- the "[vdso]" string should be #defined somewhere
+	- Does get_vdso_bytes() belong in process.c?
+	- Is basing on "[vdso]" always correct?
+
+* Convert things like [heap] and [stack] to more understandable labels.
 
 * Strategies for taking reliable stacktraces.
 
@@ -64,6 +69,7 @@ Before 1.2:
 	- vdso
 		- assume its the same across processes, just look at
 		  sysprof's own copy.
+			Done: vdso is done now
 		- send copy of it to userspace once, or for every
 		  sample. 
 
@@ -153,8 +159,6 @@ Before 1.2:
 * Add spew infrastructure to make remote debugging easier.
 
 * Make it compile and work on x86-64
-
-* Add "sysprof --version"
 
 * With kernel module not installed, select Profiler->Start, then dismiss
   the alert. This causes the start button to appear prelighted. Probably
@@ -651,6 +655,10 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* don't loop infinitely if there are cycles in the debuglink graph.
+
+* Add "sysprof --version"
 
 * Fix (potential) performance issues in symbol lookup.
 

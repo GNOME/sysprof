@@ -25,6 +25,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "process.h"
 #include "binfile.h"
@@ -115,10 +116,24 @@ read_maps (int pid)
 	    map->start = start;
 	    map->end = end;
 	    
-	    map->offset = offset;
+	    if (strcmp (map->filename, "[vdso]") == 0)
+	    {
+		/* The kernel reports offset the same as the
+		 * mapping address, which doesn't make much sense
+		 * to me. So just zero it out here
+		 */
+#if 0
+		g_print ("fixing up\n");
+#endif
+		map->offset = 0;
+		map->inode = -1;
+	    }
+	    else
+	    {
+		map->offset = offset;
+		map->inode = inode;
+	    }
 
-	    map->inode = inode;
-	    
 	    map->bin_file = NULL;
 	    
 	    result = g_list_prepend (result, map);
@@ -136,6 +151,61 @@ read_maps (int pid)
     return result;
 }
 
+static void
+free_maps (GList *maps)
+{
+    GList *list;
+    
+    for (list = maps; list != NULL; list = list->next)
+    {
+	Map *map = list->data;
+	
+	if (map->filename)
+	    g_free (map->filename);
+	
+	if (map->bin_file)
+	    bin_file_free (map->bin_file);
+	
+	g_free (map);
+    }
+    
+    g_list_free (maps);
+}
+
+const guint8 *
+process_get_vdso_bytes (gsize *length)
+{
+    static gboolean has_data;
+    static const guint8 *bytes = NULL;
+    static gsize n_bytes = 0;
+
+    if (!has_data)
+    {
+	GList *maps = read_maps (getpid());
+	GList *list;
+
+	for (list = maps; list != NULL; list = list->next)
+	{
+	    Map *map = list->data;
+
+	    if (strcmp (map->filename, "[vdso]") == 0)
+	    {
+		bytes = (guint8 *)map->start;
+		n_bytes = map->end - map->start;
+	    }
+	}
+
+	has_data = TRUE;
+	free_maps (maps);
+    }
+
+    if (length)
+	*length = n_bytes;
+
+    g_print ("the vdso is %p\n", bytes);
+    
+    return bytes;
+}
 
 static Process *
 create_process (const char *cmdline, int pid)
@@ -183,28 +253,6 @@ process_locate_map (Process *process, gulong addr)
 }
 
 static void
-process_free_maps (Process *process)
-{
-    GList *list;
-    
-    for (list = process->maps; list != NULL; list = list->next)
-    {
-	Map *map = list->data;
-	
-	if (map->filename)
-	    g_free (map->filename);
-	
-	if (map->bin_file)
-	    bin_file_free (map->bin_file);
-	
-	g_free (map);
-    }
-    
-    g_list_free (process->maps);
-}
-
-
-static void
 free_process (gpointer key, gpointer value, gpointer data)
 {
     char *cmdline = key;
@@ -218,7 +266,7 @@ free_process (gpointer key, gpointer value, gpointer data)
 #if 0
     process->cmdline = "You are using free()'d memory";
 #endif
-    process_free_maps (process);
+    free_maps (process->maps);
     g_list_free (process->bad_pages);
     g_free (cmdline);
     
@@ -265,7 +313,7 @@ process_ensure_map (Process *process, int pid, gulong addr)
     
     /* a map containing addr was not found */
     if (process->maps)
-	process_free_maps (process);
+	free_maps (process->maps);
     
     process->maps = read_maps (pid);
     
@@ -600,7 +648,7 @@ process_lookup_symbol (Process *process, gulong address)
 #endif
 
 #if 0
-    if (strcmp (map->filename, "/home/ssp/sysprof/sysprof") == 0)
+    if (strcmp (map->filename, "[vdso]") == 0)
     {
 	g_print ("address after: %lx\n", address);
     }
@@ -618,7 +666,8 @@ process_lookup_symbol (Process *process, gulong address)
 	 * file has changed since the process started. Just return
 	 * the undefined symbol in that case.
 	 */
-	
+	g_print ("warning: %s has wrong inode (%d, should be %d)\n",
+		 map->filename, map->inode, bin_file_get_inode (map->bin_file));
 	address = 0x0;
     }
 

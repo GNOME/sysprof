@@ -126,8 +126,9 @@ find_section (ElfParser *parser,
     return NULL;
 }
 
-static ElfParser *
-parser_new_from_data (const guchar *data, gsize length)
+ElfParser *
+elf_parser_new_from_data (const guchar *data,
+			  gsize length)
 {
     ElfParser *parser;
     gboolean is_64, is_big_endian;
@@ -214,7 +215,7 @@ elf_parser_new (const char *filename,
     g_print ("data %p: for %s\n", data, filename);
 #endif
 
-    parser = parser_new_from_data (data, length);
+    parser = elf_parser_new_from_data (data, length);
 
     if (!parser)
     {
@@ -550,7 +551,6 @@ elf_parser_lookup_symbol (ElfParser *parser,
 			  gulong     address)
 {
     const ElfSym *result;
-    gsize size;
     
     if (!parser->symbols)
 	read_symbols (parser);

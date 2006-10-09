@@ -3,6 +3,8 @@
 typedef struct ElfSym ElfSym;
 typedef struct ElfParser ElfParser;
 
+ElfParser *   elf_parser_new_from_data  (const guchar *data,
+					 gsize	       length);
 ElfParser *   elf_parser_new            (const char  *filename,
 					 GError     **err);
 void          elf_parser_free           (ElfParser   *parser);

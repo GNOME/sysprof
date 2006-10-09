@@ -55,5 +55,6 @@ const char *  process_lookup_symbol		  (Process    *process,
 						   gulong      address);
 const char *  process_get_cmdline                 (Process    *process);
 void	      process_flush_caches                (void);
+const guint8 *process_get_vdso_bytes		  (gsize      *length);
 
 #endif

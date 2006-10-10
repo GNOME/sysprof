@@ -118,9 +118,9 @@ read_maps (int pid)
 	    
 	    if (strcmp (map->filename, "[vdso]") == 0)
 	    {
-		/* The kernel reports offset the same as the
-		 * mapping address, which doesn't make much sense
-		 * to me. So just zero it out here
+		/* For the vdso, the kernel reports 'offset' as the
+		 * the same as the mapping addres. This doesn't make
+		 * any sense to me, so we just zero it here.
 		 */
 #if 0
 		g_print ("fixing up\n");
@@ -202,8 +202,6 @@ process_get_vdso_bytes (gsize *length)
     if (length)
 	*length = n_bytes;
 
-    g_print ("the vdso is %p\n", bytes);
-    
     return bytes;
 }
 
@@ -660,14 +658,12 @@ process_lookup_symbol (Process *process, gulong address)
 /*     g_print ("%s: start: %p, load: %p\n", */
 /* 	     map->filename, map->start, bin_file_get_load_address (map->bin_file)); */
 
-    if (map->inode != bin_file_get_inode (map->bin_file))
+    if (!bin_file_check_inode (map->bin_file, map->inode))
     {
 	/* If the inodes don't match, it's probably because the
 	 * file has changed since the process started. Just return
 	 * the undefined symbol in that case.
 	 */
-	g_print ("warning: %s has wrong inode (%d, should be %d)\n",
-		 map->filename, map->inode, bin_file_get_inode (map->bin_file));
 	address = 0x0;
     }
 

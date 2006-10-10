@@ -1,3 +1,12 @@
+2006-10-09  Soren Sandmann <sandmann@redhat.com>
+
+	* binfile.c (bin_file_get_inode): Remove this function
+
+	* binfile.c (bin_file_check_inode): New function. Only print inode
+	warning once per BinFile.
+
+	* process.c (process_get_vdso_bytes): Remove debug spew
+
 2006-10-09  Soren Sandmann  <ssp@localhost.localdomain>
 
 	* process.c (process_get_vdso_bytes): New function.

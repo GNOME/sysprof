@@ -45,11 +45,13 @@ struct BinFile
     ElfParser *	elf;
 
     char *	filename;	
-    ino_t	inode;
     
     char *	undefined_name;
 
     gulong	text_offset;
+
+    gboolean	inode_check;
+    ino_t	inode;
 };
 
 /* FIXME: error handling */
@@ -244,7 +246,8 @@ bin_file_new (const char *filename)
 	    
 	    bf->elf = find_separate_debug_file (bf->elf, filename);
 	}
-	
+
+	bf->inode_check = FALSE;
 	bf->inode = read_inode (filename);
 	bf->filename = g_strdup (filename);
 	bf->undefined_name = g_strdup_printf ("In file %s", filename);
@@ -309,14 +312,28 @@ bin_file_lookup_symbol (BinFile    *bin_file,
     return (const BinSymbol *)bin_file->undefined_name;
 }
 
-ino_t
-bin_file_get_inode (BinFile    *bin_file)
+gboolean
+bin_file_check_inode   (BinFile         *bin_file,
+			ino_t		  inode)
 {
-    return bin_file->inode;
+    if (bin_file->inode == inode)
+	return TRUE;
+
+    if (!bin_file->inode_check)
+    {
+	g_print ("warning: %s has inode %lld. It should be %lld\n",
+		 bin_file->filename,
+		 (guint64)bin_file->inode, (guint64)inode);
+	
+	bin_file->inode_check = TRUE;
+    }
+	
+    return FALSE;
 }
 
 const char *
-bin_symbol_get_name (BinFile *file, const BinSymbol *symbol)
+bin_symbol_get_name (BinFile *file,
+		     const BinSymbol *symbol)
 {
     if (file->undefined_name == (char *)symbol)
 	return file->undefined_name;

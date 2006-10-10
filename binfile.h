@@ -36,7 +36,8 @@ BinFile *        bin_file_new           (const char      *filename);
 void             bin_file_free          (BinFile         *bin_file);
 const BinSymbol *bin_file_lookup_symbol (BinFile         *bin_file,
 					 gulong           address);
-ino_t            bin_file_get_inode     (BinFile         *bin_file);
+gboolean         bin_file_check_inode   (BinFile         *bin_file,
+					 ino_t		  inode);
 const char *     bin_symbol_get_name    (BinFile         *bin_file,
 					 const BinSymbol *symbol);
 

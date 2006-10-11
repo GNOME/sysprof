@@ -34,6 +34,8 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Make sure that labels look decent in case of "No Map" etc.
+
 * Elf bugs:
 	- error handling for bin_parser is necessary.
 
@@ -422,6 +424,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	should do a globale s/callers/ancestors on the code.
   	- not sure it's an improvement. Often it is more interesting to
 	find the immediate callers.
+	- Now it's back to just listing the immediate callers.
 
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.

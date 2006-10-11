@@ -1,3 +1,13 @@
+2006-10-09  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* profile.c (profile_list_callers): Make this function return a
+	list of immediate callers again. 
+
+	* sysprof.c (build_gui): Change label back to "Callers"
+
+	* process.c (get_kernel_symbols): Only attempt to read the kernel
+	symbols once.
+
 2006-10-09  Soren Sandmann <sandmann@redhat.com>
 
 	* binfile.c (bin_file_get_inode): Remove this function

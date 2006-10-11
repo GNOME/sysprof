@@ -555,9 +555,10 @@ parse_kallsyms (const char *kallsyms,
 static GHashTable *
 get_kernel_symbols (void)
 {
+    static gboolean read_symbols = FALSE;
     static GHashTable *kernel_syms;
     
-    if (!kernel_syms)
+    if (!read_symbols)
     {
 	char *kallsyms;
 	g_file_get_contents ("/proc/kallsyms", &kallsyms, NULL, NULL);
@@ -572,6 +573,8 @@ get_kernel_symbols (void)
 	    g_free (kallsyms);
 	    g_hash_table_destroy (kernel_syms);
 	}
+
+	read_symbols = TRUE;
     }
 
     return NULL;

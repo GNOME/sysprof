@@ -359,6 +359,89 @@ profile_caller_new (void)
     return caller;
 }
 
+ProfileCaller *
+profile_list_callers (Profile       *profile,
+		      char          *callee_name)
+{
+    StackNode *node;
+    StackNode *callees;
+    GHashTable *callers_by_name;
+    GHashTable *processed_callers;
+    ProfileCaller *result = NULL;
+
+    callers_by_name = g_hash_table_new (g_direct_hash, g_direct_equal);
+    processed_callers = g_hash_table_new (g_direct_hash, g_direct_equal);
+    
+    callees = stack_stash_find_node (profile->stash, callee_name);
+
+    for (node = callees; node != NULL; node = node->next)
+    {
+	gpointer name;
+	
+	if (node->parent)
+	    name = node->parent->address;
+	else
+	    name = NULL;
+
+	if (!g_hash_table_lookup (callers_by_name, name))
+	{
+	    ProfileCaller *caller = profile_caller_new ();
+	    caller->name = name;
+	    caller->next = result;
+	    caller->total = 0;
+	    caller->self = 0;
+
+	    g_hash_table_insert (callers_by_name, name, caller);
+	    result = caller;
+	}
+    }
+    
+    for (node = callees; node != NULL; node = node->next)
+    {	
+	StackNode *top_caller = node->parent;
+	StackNode *top_callee = node;
+	StackNode *n;
+	ProfileCaller *caller;
+
+	for (n = node; n && n->parent; n = n->parent)
+	{
+	    if (n->address == node->address		&&
+		n->parent->address == node->parent->address)
+	    {
+		top_caller = n->parent;
+		top_callee = n;
+	    }
+	}
+
+	if (node->parent)
+	    caller = g_hash_table_lookup (callers_by_name, node->parent->address);
+	else
+	    caller = g_hash_table_lookup (callers_by_name, NULL);
+	
+	if (!g_hash_table_lookup (processed_callers, top_caller))
+	{
+	    caller->total += top_callee->total;
+
+	    g_hash_table_insert (processed_callers, top_caller, top_caller);
+	}
+
+	caller->self += node->size;
+    }
+
+    g_hash_table_destroy (processed_callers);
+    g_hash_table_destroy (callers_by_name);
+
+    return result;
+}
+
+#if 0
+/* This code generates a list of all ancestors, rather than
+ * all callers. It turned out to not work well in practice,
+ * but on the other hand the single list of callers is not
+ * all that great either, so we'll keep it around commented
+ * out for now
+ */
+
 static void
 add_to_list (gpointer key,
 	     gpointer value,
@@ -380,8 +463,8 @@ listify_hash_table (GHashTable *hash_table)
 }
 
 ProfileCaller *
-profile_list_callers (Profile       *profile,
-		      char          *callee_name)
+profile_list_ancestors (Profile       *profile,
+			char          *callee_name)
 {
     StackNode *callees;
     StackNode *node;
@@ -459,6 +542,7 @@ profile_list_callers (Profile       *profile,
 
     return result;
 }
+#endif
 
 void
 profile_free (Profile *profile)

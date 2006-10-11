@@ -1447,7 +1447,7 @@ build_gui (Application *app)
     /* callers view */
     app->callers_view = (GtkTreeView *)glade_xml_get_widget (xml, "callers_view");
     gtk_tree_view_set_enable_search (app->callers_view, FALSE);
-    col = add_plain_text_column (app->callers_view, _("Ancestors"), CALLERS_NAME);
+    col = add_plain_text_column (app->callers_view, _("Callers"), CALLERS_NAME);
     add_double_format_column (app->callers_view, _("Self"), CALLERS_SELF, "%.2f ");
     add_double_format_column (app->callers_view, _("Total"), CALLERS_TOTAL, "%.2f ");
     g_signal_connect (app->callers_view, "row-activated",

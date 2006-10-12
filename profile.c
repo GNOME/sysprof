@@ -376,23 +376,23 @@ profile_list_callers (Profile       *profile,
 
     for (node = callees; node != NULL; node = node->next)
     {
-	gpointer name;
+	if (!node->parent)
+	    continue;
 	
-	if (node->parent)
-	    name = node->parent->address;
-	else
-	    name = NULL;
-
-	if (!g_hash_table_lookup (callers_by_name, name))
+	ProfileCaller *caller =
+	    g_hash_table_lookup (callers_by_name, node->parent->address);
+	
+	if (!caller)
 	{
-	    ProfileCaller *caller = profile_caller_new ();
-	    caller->name = name;
-	    caller->next = result;
+	    caller = profile_caller_new ();
+	    caller->name = node->parent->address;
 	    caller->total = 0;
 	    caller->self = 0;
-
-	    g_hash_table_insert (callers_by_name, name, caller);
+	    
+	    caller->next = result;
 	    result = caller;
+	    
+	    g_hash_table_insert (callers_by_name, node->parent->address, caller);
 	}
     }
     
@@ -403,6 +403,9 @@ profile_list_callers (Profile       *profile,
 	StackNode *n;
 	ProfileCaller *caller;
 
+	if (!node->parent)
+	    continue;
+	
 	for (n = node; n && n->parent; n = n->parent)
 	{
 	    if (n->address == node->address		&&
@@ -413,18 +416,15 @@ profile_list_callers (Profile       *profile,
 	    }
 	}
 
-	if (node->parent)
-	    caller = g_hash_table_lookup (callers_by_name, node->parent->address);
-	else
-	    caller = g_hash_table_lookup (callers_by_name, NULL);
+	caller = g_hash_table_lookup (callers_by_name, node->parent->address);
 	
 	if (!g_hash_table_lookup (processed_callers, top_caller))
 	{
 	    caller->total += top_callee->total;
-
+	    
 	    g_hash_table_insert (processed_callers, top_caller, top_caller);
 	}
-
+	
 	caller->self += node->size;
     }
 

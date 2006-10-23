@@ -355,7 +355,7 @@ init_module(void)
 		return ret;
 	}
 
-	area_page = (unsigned long)&(area_backing[4096]) & PAGE_MASK;
+	area_page = ((unsigned long)area_backing + PAGE_SIZE - 1) & PAGE_MASK;
 	area = (SysprofMmapArea *)area_page;
 	area->head = 0;
 

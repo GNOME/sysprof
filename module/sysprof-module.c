@@ -53,11 +53,9 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Soeren Sandmann (sandmann@daimi.au.dk)");
 
-#define N_TRACES 256
-
-static SysprofStackTrace	stack_traces[N_TRACES];
-static SysprofStackTrace *	head = &stack_traces[0];
-static atomic_t			client_count = ATOMIC_INIT(0);
+static unsigned char	area_backing [sizeof (SysprofMmapArea) + PAGE_SIZE];
+static SysprofMmapArea *area;
+static atomic_t		client_count = ATOMIC_INIT(0);
 
 DECLARE_WAIT_QUEUE_HEAD (wait_for_trace);
 
@@ -119,7 +117,7 @@ timer_notify (struct pt_regs *regs)
 	struct pt_regs * regs = (struct pt_regs *)data;
 #endif
 	void *frame_pointer;
-	SysprofStackTrace *trace = head;
+	SysprofStackTrace *trace = &(area->traces[area->head]);
 	int i;
 	int is_user;
 	StackFrame frame;
@@ -211,8 +209,8 @@ timer_notify (struct pt_regs *regs)
 	else
 		trace->truncated = 0;
 	
-	if (head++ == &stack_traces[N_TRACES - 1])
-		head = &stack_traces[0];
+	if (area->head++ == SYSPROF_N_TRACES - 1)
+		area->head = 0;
 	
 	wake_up (&wait_for_trace);
 
@@ -232,27 +230,9 @@ static struct notifier_block timer_notifier = {
 static int
 sysprof_read(struct file *file, char *buffer, size_t count, loff_t *offset)
 {
-	SysprofStackTrace *trace;
-	SysprofStackTrace *tail = file->private_data;
-	
-	if (count < sizeof *tail)
-		return -EMSGSIZE;
+	file->private_data = &(area->traces[area->head]);
 
-	if (head == tail)
-		return -EWOULDBLOCK;
-	
-	trace = tail;
-	if (tail++ == &stack_traces[N_TRACES - 1])
-		tail = &stack_traces[0];
-
-	BUG_ON(trace->pid == 0);
-	
-	if (copy_to_user(buffer, trace, sizeof *trace))
-		return -EFAULT;
-
-	file->private_data = tail;
-
-	return sizeof *tail;
+	return 0;
 }
 
 static unsigned int
@@ -260,12 +240,12 @@ sysprof_poll(struct file *file, poll_table *poll_table)
 {
 	SysprofStackTrace *tail = file->private_data;
 
-	if (head != tail)
+	if (&(area->traces[area->head]) != tail)
 		return POLLIN | POLLRDNORM;
 	
 	poll_wait(file, &wait_for_trace, poll_table);
 
-	if (head != tail)
+	if (&(area->traces[area->head]) != tail)
 		return POLLIN | POLLRDNORM;
 	
 	return 0;
@@ -284,9 +264,54 @@ sysprof_open(struct inode *inode, struct file *file)
 #endif
 	}
 
-	file->private_data = head;
+	file->private_data = &(area->traces[area->head]);
 	
 	return retval;
+}
+
+static struct page *
+sysprof_nopage(struct vm_area_struct *vma, unsigned long addr, int *type)
+{
+	unsigned long area_start;
+	unsigned long virt;
+	struct page *page_ptr;
+
+#if 0
+	printk (KERN_ALERT "nopage called: %p (offset: %d) area: %p\n", addr, addr - vma->vm_start, area);
+#endif
+	
+	area_start = (unsigned long)area;
+	
+	virt = area_start + (addr - vma->vm_start);
+
+	if (virt > area_start + sizeof (SysprofMmapArea))
+		return NOPAGE_SIGBUS;
+
+	page_ptr = vmalloc_to_page ((void *)virt);
+	
+	get_page (page_ptr);
+	
+	if (type)
+		*type = VM_FAULT_MINOR;
+
+	return page_ptr;
+}
+
+static int
+sysprof_mmap(struct file *filp, struct vm_area_struct *vma)
+{
+	static struct vm_operations_struct ops = {
+		.nopage = sysprof_nopage,
+	};
+	
+	if (vma->vm_flags & (VM_WRITE | VM_EXEC))
+		return -EPERM;
+
+	vma->vm_flags |= VM_RESERVED;
+
+	vma->vm_ops = &ops;
+	
+	return 0;
 }
 
 static int
@@ -309,6 +334,7 @@ static struct file_operations sysprof_fops = {
         .poll =         sysprof_poll,
         .open =         sysprof_open,
         .release =      sysprof_release,
+	.mmap =		sysprof_mmap,
 };
 
 static struct miscdevice sysprof_miscdev = {
@@ -321,6 +347,7 @@ int
 init_module(void)
 {
 	int ret;
+	unsigned long area_page;
 
 	ret = misc_register(&sysprof_miscdev);
 	if (ret) {
@@ -328,8 +355,12 @@ init_module(void)
 		return ret;
 	}
 
+	area_page = (unsigned long)&(area_backing[4096]) & PAGE_MASK;
+	area = (SysprofMmapArea *)area_page;
+	area->head = 0;
+
 	printk(KERN_ALERT "sysprof: loaded (%s)\n", PACKAGE_VERSION);
-	
+
 	return 0;
 }
 
@@ -340,9 +371,6 @@ cleanup_module(void)
 
 	printk(KERN_ALERT "sysprof: unloaded\n");
 }
-
-
-
 
 
 #if 0

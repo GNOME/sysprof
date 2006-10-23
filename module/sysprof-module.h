@@ -20,10 +20,11 @@
 #ifndef SYSPROF_MODULE_H
 #define SYSPROF_MODULE_H
 
-#define SYSPROF_FILE "/dev/sysprof-trace"
-
 typedef struct SysprofStackTrace SysprofStackTrace;
+typedef struct SysprofStackInfo SysprofStackInfo;
+typedef struct SysprofMmapArea SysprofMmapArea;
 
+#define SYSPROF_N_TRACES 256
 #define SYSPROF_MAX_ADDRESSES 512
 
 struct SysprofStackTrace
@@ -34,6 +35,13 @@ struct SysprofStackTrace
 			 * with -fomit-frame-pointer or is otherwise weird
 			 */
     void *addresses[SYSPROF_MAX_ADDRESSES];
+};
+
+struct SysprofMmapArea
+{
+    unsigned int	head;
+
+    SysprofStackTrace	traces[SYSPROF_N_TRACES];
 };
 
 #endif

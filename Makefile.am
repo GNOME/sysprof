@@ -90,5 +90,5 @@ EXTRA_DIST =					\
 	module/Makefile
 
 insert-module:
-	modprobe -r sysprof-module
-	modprobe sysprof-module
+	/sbin/modprobe -r sysprof-module
+	/sbin/modprobe sysprof-module

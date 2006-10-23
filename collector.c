@@ -29,6 +29,9 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/mman.h>
+
+#define SYSPROF_FILE "/dev/sysprof-trace"
 
 static void set_no_module_error (GError **err);
 static void set_cant_open_error (GError **err, int eno);
@@ -42,12 +45,14 @@ struct Collector
     int			fd;
     GTimeVal		latest_reset;
     int			n_samples;
+    SysprofMmapArea *	map_area;
+    unsigned int	current;
 };
 
 /* callback is called whenever a new sample arrives */
 Collector *
 collector_new (CollectorFunc callback,
-	      gpointer     data)
+	       gpointer     data)
 {
     Collector *collector = g_new0 (Collector, 1);
     
@@ -80,7 +85,7 @@ time_diff (const GTimeVal *first,
 #define RESET_DEAD_PERIOD 250
 
 static void
-add_trace_to_stash (SysprofStackTrace *trace,
+add_trace_to_stash (const SysprofStackTrace *trace,
 		    StackStash *stash)
 {
     int i;
@@ -105,46 +110,64 @@ add_trace_to_stash (SysprofStackTrace *trace,
     g_free (addrs);
 }
 
-static void
-on_read (gpointer data)
+static gboolean
+in_dead_period (Collector *collector)
 {
-    SysprofStackTrace trace;
-    Collector *collector = data;
     GTimeVal now;
-    int rd;
     double diff;
-    
-    rd = read (collector->fd, &trace, sizeof (trace));
-    
-    if (rd == -1 && errno == EWOULDBLOCK)
-	return;
 
     g_get_current_time (&now);
     
+    diff = time_diff (&now, &collector->latest_reset);
+    
+    if (diff >= 0.0 && diff < RESET_DEAD_PERIOD)
+	return TRUE;
+
+    return FALSE;
+}
+
+static void
+on_read (gpointer data)
+{
+    Collector *collector = data;
+    char c;
+    
+    /* Make sure poll() doesn't fire immediately again */
+    read (collector->fd, &c, 1);
+
     /* After a reset we ignore samples for a short period so that
      * a reset will actually cause 'samples' to become 0
      */
-    diff = time_diff (&now, &collector->latest_reset);
-
-    if (diff >= 0.0 && diff < RESET_DEAD_PERIOD)
+    if (in_dead_period (collector))
+    {
+	collector->current = collector->map_area->head;
 	return;
-    
-#if 0
-    {
-	int i;
-	g_print ("pid: %d (%d)\n", trace.pid, trace.n_addresses);
-	for (i=0; i < trace.n_addresses; ++i)
-	    g_print ("rd: %08x\n", trace.addresses[i]);
-	g_print ("-=-\n");
     }
-#endif
     
-    if (rd > 0)
+    while (collector->current != collector->map_area->head)
     {
-	add_trace_to_stash (&trace, collector->stash);
+	const SysprofStackTrace *trace;
+
+	trace = &(collector->map_area->traces[collector->current]);
+	
+#if 0
+	{
+	    int i;
+	    g_print ("pid: %d (%d)\n", trace.pid, trace.n_addresses);
+	    for (i=0; i < trace.n_addresses; ++i)
+		g_print ("rd: %08x\n", trace.addresses[i]);
+	    g_print ("-=-\n");
+	}
+#endif
+	
+	add_trace_to_stash (trace, collector->stash);
+	
+	collector->current++;
+	if (collector->current >= SYSPROF_N_TRACES)
+	    collector->current = 0;
 	
 	collector->n_samples++;
-    
+	
 	if (collector->callback)
 	    collector->callback (collector->data);
     }
@@ -176,6 +199,7 @@ open_fd (Collector *collector,
 	 GError **err)
 {
     int fd;
+    void *map_area;
     
     fd = open (SYSPROF_FILE, O_RDONLY);
     if (fd < 0)
@@ -183,16 +207,16 @@ open_fd (Collector *collector,
 	if (load_module())
 	{
 	    GTimer *timer = g_timer_new ();
-
+	    
 	    while (fd < 0 && g_timer_elapsed (timer, NULL) < 0.5)
 	    {
 		/* Wait for udev to discover the new device */
 		usleep (100000);
-
+		
 		errno = 0;
 		fd = open (SYSPROF_FILE, O_RDONLY);
 	    }
-
+	    
 	    g_timer_destroy (timer);
 	    
 	    if (fd < 0)
@@ -201,7 +225,7 @@ open_fd (Collector *collector,
 		return FALSE;
 	    }
 	}
-
+	
 	if (fd < 0)
 	{
 	    set_no_module_error (err);
@@ -210,6 +234,18 @@ open_fd (Collector *collector,
 	}
     }
     
+    map_area = mmap (NULL, sizeof (SysprofMmapArea), PROT_READ, MAP_SHARED, fd, 0);
+    
+    if (map_area == MAP_FAILED)
+    {
+	close (fd);
+	set_cant_open_error (err, errno);
+	
+	return FALSE;
+    }
+    
+    collector->map_area = map_area;
+    collector->current = 0;
     collector->fd = fd;
     fd_add_watch (collector->fd, collector);
     
@@ -218,7 +254,7 @@ open_fd (Collector *collector,
 
 gboolean
 collector_start (Collector *collector,
-		GError **err)
+		 GError **err)
 {
     if (collector->fd < 0 && !open_fd (collector, err))
 	return FALSE;
@@ -234,6 +270,10 @@ collector_stop (Collector *collector)
     {
 	fd_remove_watch (collector->fd);
 	
+	munmap (collector->map_area, sizeof (SysprofMmapArea));
+	collector->map_area = NULL;
+	collector->current = 0;
+	
 	close (collector->fd);
 	collector->fd = -1;
     }
@@ -244,7 +284,7 @@ collector_reset (Collector *collector)
 {
     if (collector->stash)
 	stack_stash_unref (collector->stash);
-
+    
     process_flush_caches();
     
     collector->stash = stack_stash_new (NULL);
@@ -316,7 +356,7 @@ resolve_symbols (GList *trace, gint size, gpointer data)
     stack_stash_add_trace (info->resolved_stash,
 			   (gulong *)resolved_trace->pdata,
 			   resolved_trace->len, size);
-
+    
     g_ptr_array_free (resolved_trace, TRUE);
 }
 
@@ -330,13 +370,13 @@ collector_create_profile (Collector *collector)
     info.unique_symbols = g_hash_table_new (g_direct_hash, g_direct_equal);
     
     stack_stash_foreach (collector->stash, resolve_symbols, &info);
-
+    
     /* FIXME: we are leaking the value strings in info.unique_symbols */
     
     g_hash_table_destroy (info.unique_symbols);
-
+    
     profile = profile_new (info.resolved_stash);
-
+    
     stack_stash_unref (info.resolved_stash);
     
     return profile;

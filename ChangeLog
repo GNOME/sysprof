@@ -1,3 +1,26 @@
+2006-10-22  Soren Sandmann <sandmann@daimi.au.dk>
+
+	Communicate traces to userspace through shared memory instead of 
+	copying.
+	
+	* module/sysprof-module.c: Store the traces in a SysprofMmapArea.
+	(sysprof_mmap): Implement this method.
+	(sysprof_nopage): Implement this. 
+	(sysprof_read): Just reset the tail pointer and return zero.
+
+	* module/sysprof-module.h (struct SysprofMmapArea): New
+	structure. 
+
+	* collector.c (collector_stop): Unmap the device
+	(in_dead_period): New function
+	(on_read): Read the traces out of mmap()ed area instead of reading
+	them. Call read() to prevent poll() from firing. 
+	(struct Collector): New members map_area and current.
+
+	* Makefile.am (insert-module): Prefix modprobe with /sbin
+
+	* collector.c (open_fd): mmap() the sysprof device. 
+
 2006-10-11  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* profile.c (profile_list_callers): Skip nodes that don't have a

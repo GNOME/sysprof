@@ -53,8 +53,10 @@ struct Map
 struct Process
 {
     char *cmdline;
+
+    int n_maps;
+    Map *maps;
     
-    GList *maps;
     GList *bad_pages;
     
     int pid;
@@ -72,23 +74,22 @@ initialize (void)
     }
 }
 
-static GList *
-read_maps (int pid)
+static Map *
+read_maps (int pid, int *n_maps)
 {
     char *name = g_strdup_printf ("/proc/%d/maps", pid);
     char buffer[1024];
     FILE *in;
-    GList *result = NULL;
+    GArray *result;
     
     in = fopen (name, "r");
     if (!in)
     {
-#if 0
-	g_print ("could not open %d: %s\n", pid, g_strerror (errno));
-#endif
 	g_free (name);
 	return NULL;
     }
+
+    result = g_array_new (FALSE, FALSE, sizeof (Map));
     
     while (fgets (buffer, sizeof (buffer) - 1, in))
     {
@@ -99,77 +100,65 @@ read_maps (int pid)
 	gulong offset;
 	gulong inode;
 	
-#if 0
-	g_print ("buffer: %s\n", buffer);
-#endif
-	
 	count = sscanf (
 	    buffer, "%lx-%lx %*15s %lx %*x:%*x %lu %255s", 
 	    &start, &end, &offset, &inode, file);
 	if (count == 5)
 	{
-	    Map *map;
+	    Map map;
 	    
-	    map = g_new (Map, 1);
+	    map.filename = g_strdup (file);
+	    map.start = start;
+	    map.end = end;
 	    
-	    map->filename = g_strdup (file);
-	    map->start = start;
-	    map->end = end;
-	    
-	    if (strcmp (map->filename, "[vdso]") == 0)
+	    if (strcmp (map.filename, "[vdso]") == 0)
 	    {
 		/* For the vdso, the kernel reports 'offset' as the
 		 * the same as the mapping addres. This doesn't make
 		 * any sense to me, so we just zero it here.
 		 */
-#if 0
-		g_print ("fixing up\n");
-#endif
-		map->offset = 0;
-		map->inode = -1;
+		map.offset = 0;
+		map.inode = -1;
 	    }
 	    else
 	    {
-		map->offset = offset;
-		map->inode = inode;
+		map.offset = offset;
+		map.inode = inode;
 	    }
 
-	    map->bin_file = NULL;
-	    
-	    result = g_list_prepend (result, map);
+	    map.bin_file = NULL;
+
+	    g_array_append_val (result, map);
 	}
-#if 0
-	else
-	{
-	    g_print ("scanf\n");
-	}
-#endif
     }
     
     g_free (name);
     fclose (in);
-    return result;
+
+    if (n_maps)
+	*n_maps = result->len;
+    
+    return (Map *)g_array_free (result, FALSE);
 }
 
 static void
-free_maps (GList *maps)
+free_maps (int n_maps,
+	   Map *maps)
 {
-    GList *list;
-    
-    for (list = maps; list != NULL; list = list->next)
+    int i;
+
+    for (i = 0; i < n_maps; ++i)
     {
-	Map *map = list->data;
+	Map *map = &(maps[i]);
 	
 	if (map->filename)
 	    g_free (map->filename);
 	
 	if (map->bin_file)
 	    bin_file_free (map->bin_file);
-	
-	g_free (map);
     }
-    
-    g_list_free (maps);
+
+    g_free (maps);
 }
 
 const guint8 *
@@ -177,16 +166,18 @@ process_get_vdso_bytes (gsize *length)
 {
     static gboolean has_data;
     static const guint8 *bytes = NULL;
-    static gsize n_bytes = 0;
+    static gsize n_bytes = 0;    
 
     if (!has_data)
     {
-	GList *maps = read_maps (getpid());
-	GList *list;
+	Map *maps;
+	int n_maps, i;
 
-	for (list = maps; list != NULL; list = list->next)
+	maps = read_maps (getpid(), &n_maps);
+
+	for (i = 0; i < n_maps; ++i)
 	{
-	    Map *map = list->data;
+	    Map *map = &(maps[i]);
 
 	    if (strcmp (map->filename, "[vdso]") == 0)
 	    {
@@ -194,9 +185,9 @@ process_get_vdso_bytes (gsize *length)
 		n_bytes = map->end - map->start;
 	    }
 	}
-
+	
 	has_data = TRUE;
-	free_maps (maps);
+	free_maps (n_maps, maps);
     }
 
     if (length)
@@ -234,12 +225,12 @@ create_process (const char *cmdline, int pid)
 static Map *
 process_locate_map (Process *process, gulong addr)
 {
-    GList *list;
-    
-    for (list = process->maps; list != NULL; list = list->next)
+    int i;
+
+    for (i = 0; i < process->n_maps; ++i)
     {
-	Map *map = list->data;
-	
+	Map *map = &(process->maps[i]);
+
 	if ((addr >= map->start) &&
 	    (addr < map->end))
 	{
@@ -256,15 +247,9 @@ free_process (gpointer key, gpointer value, gpointer data)
     char *cmdline = key;
     Process *process = value;
     
-#if 0
-    g_print ("freeing: %p\n", process);
-    memset (process, '\0', sizeof (Process));
-#endif
+    free_maps (process->n_maps, process->maps);
+    
     g_free (process->cmdline);
-#if 0
-    process->cmdline = "You are using free()'d memory";
-#endif
-    free_maps (process->maps);
     g_list_free (process->bad_pages);
     g_free (cmdline);
     
@@ -311,9 +296,9 @@ process_ensure_map (Process *process, int pid, gulong addr)
     
     /* a map containing addr was not found */
     if (process->maps)
-	free_maps (process->maps);
+	free_maps (process->n_maps, process->maps);
     
-    process->maps = read_maps (pid);
+    process->maps = read_maps (pid, &process->n_maps);
     
     if (!process_has_page (process, addr))
     {

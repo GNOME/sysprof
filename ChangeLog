@@ -1,6 +1,7 @@
 2006-10-25  Soren Sandmann <sandmann@daimi.au.dk>
 
-	* process.c (free_maps): Take a pointer to a variable that 
+	* process.c (free_maps): Take a pointer to a variable that will be
+	set to 0.
 
 	* process.c: Stop coalescing processes with the same cmdline. 
 

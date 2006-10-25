@@ -88,7 +88,10 @@ Before 1.2:
 		- do heuristic stackwalk in userland
 
 * "Expand all" is horrendously slow because update screenshot gets called 
-  for every "expanded" signal.
+  for every "expanded" signal. In fact even normal expanding is really
+  slow. It's probably hopeless to get decent performance out of GtkTreeView,
+  so we will have to store a list of expanded objects and keep that uptodate
+  as the rows expands and unexpands.
 
 * See if we can make "In file <blah>" not be treated as a recursive function.
   Maybe simply treat each individual address in the file as a function.
@@ -156,7 +159,9 @@ Before 1.2:
   done: HEAD will not load files with the wrong inode now.
 
 * Consider deleting cmdline hack in process.c and replace with something at 
-  the symbol resolution level. Will require more memory though.
+  the symbol resolution level. Will require more memory though. DONE: in
+  head, processes are no longer coalesced based on cmdline. Need to add something
+  at the symbol level.
 
 * Add spew infrastructure to make remote debugging easier.
 

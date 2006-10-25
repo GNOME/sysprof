@@ -1,3 +1,11 @@
+2006-10-25  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* process.c (free_maps): Take a pointer to a variable that 
+
+	* process.c: Stop coalescing processes with the same cmdline. 
+
+	* TODO: updates.
+
 2006-10-24  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* process.c (page_size): replace PAGE_SIZE macro with this function.

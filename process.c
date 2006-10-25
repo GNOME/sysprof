@@ -30,7 +30,6 @@
 #include "process.h"
 #include "binfile.h"
 
-static GHashTable *processes_by_cmdline;
 static GHashTable *processes_by_pid;
 
 typedef struct Map Map;
@@ -65,11 +64,8 @@ struct Process
 static void
 initialize (void)
 {
-    if (!processes_by_cmdline)
-    {
-	processes_by_cmdline = g_hash_table_new (g_str_hash, g_str_equal);
+    if (!processes_by_pid)
 	processes_by_pid = g_hash_table_new (g_direct_hash, g_direct_equal);
-    }
 }
 
 static Map *
@@ -140,12 +136,12 @@ read_maps (int pid, int *n_maps)
 }
 
 static void
-free_maps (int n_maps,
+free_maps (int *n_maps,
 	   Map *maps)
 {
     int i;
 
-    for (i = 0; i < n_maps; ++i)
+    for (i = 0; i < *n_maps; ++i)
     {
 	Map *map = &(maps[i]);
 	
@@ -157,6 +153,7 @@ free_maps (int n_maps,
     }
 
     g_free (maps);
+    *n_maps = 0;
 }
 
 const guint8 *
@@ -185,7 +182,7 @@ process_get_vdso_bytes (gsize *length)
 	}
 	
 	has_data = TRUE;
-	free_maps (n_maps, maps);
+	free_maps (&n_maps, maps);
     }
 
     if (length)
@@ -207,15 +204,14 @@ create_process (const char *cmdline, int pid)
 	p->cmdline = g_strdup_printf ("[pid %d]", pid);
     
     p->bad_pages = NULL;
+    p->n_maps = 0;
     p->maps = NULL;
     p->pid = pid;
     p->undefined = NULL;
     
     g_assert (!g_hash_table_lookup (processes_by_pid, GINT_TO_POINTER (pid)));
-    g_assert (!g_hash_table_lookup (processes_by_cmdline, cmdline));
     
     g_hash_table_insert (processes_by_pid, GINT_TO_POINTER (pid), p);
-    g_hash_table_insert (processes_by_cmdline, g_strdup (cmdline), p);
     
     return p;
 }
@@ -242,14 +238,12 @@ process_locate_map (Process *process, gulong addr)
 static void
 free_process (gpointer key, gpointer value, gpointer data)
 {
-    char *cmdline = key;
     Process *process = value;
     
-    free_maps (process->n_maps, process->maps);
+    free_maps (&(process->n_maps), process->maps);
     
     g_free (process->cmdline);
     g_list_free (process->bad_pages);
-    g_free (cmdline);
     
     g_free (process);
 }
@@ -257,15 +251,12 @@ free_process (gpointer key, gpointer value, gpointer data)
 void
 process_flush_caches  (void)
 {
-    if (!processes_by_cmdline)
+    if (!processes_by_pid)
 	return;
-
-    g_hash_table_foreach (processes_by_cmdline, free_process, NULL);
     
-    g_hash_table_destroy (processes_by_cmdline);
+    g_hash_table_foreach (processes_by_pid, free_process, NULL);
     g_hash_table_destroy (processes_by_pid);
     
-    processes_by_cmdline = NULL;
     processes_by_pid = NULL;
 }
 
@@ -309,10 +300,10 @@ process_ensure_map (Process *process, int pid, gulong addr)
     
     /* a map containing addr was not found */
     if (process->maps)
-	free_maps (process->n_maps, process->maps);
+	free_maps (&(process->n_maps), process->maps);
     
-    process->maps = read_maps (pid, &process->n_maps);
-    
+    process->maps = read_maps (pid, &(process->n_maps));
+
     if (!process_has_page (process, addr))
     {
 #if 0
@@ -408,22 +399,13 @@ Process *
 process_get_from_pid (int pid)
 {
     Process *p;
-    gchar *cmdline = NULL;
     
     initialize();
     
     p = g_hash_table_lookup (processes_by_pid, GINT_TO_POINTER (pid));
     
-    if (p)
-	return p;
-    
-    cmdline = get_name (pid);
-    
-    idle_free (cmdline);
-    
-    p = g_hash_table_lookup (processes_by_cmdline, cmdline);
     if (!p)
-	p = create_process (cmdline, pid);
+	p = create_process (idle_free (get_name (pid)), pid);
     
     return p;
 }

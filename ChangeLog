@@ -1,5 +1,11 @@
 2006-10-24  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* process.c (page_size): replace PAGE_SIZE macro with this function.
+
+	* binfile.c: Remove obsolete comment.
+
+2006-10-24  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* process.c (struct Process): Use an array instead of list of
 	maps.
 

@@ -30,8 +30,6 @@
 #include "process.h"
 #include "binfile.h"
 
-#define PAGE_SIZE (getpagesize())
-
 static GHashTable *processes_by_cmdline;
 static GHashTable *processes_by_pid;
 
@@ -281,12 +279,27 @@ process_has_page (Process *process, gulong addr)
 	return FALSE;
 }
 
+static int
+page_size (void)
+{
+    static int page_size;
+    static gboolean has_page_size;
+
+    if (!has_page_size)
+    {
+	page_size = getpagesize();
+	has_page_size = TRUE;
+    }
+
+    return page_size;
+}
+
 void
 process_ensure_map (Process *process, int pid, gulong addr)
 {
     /* Round down to closest page */
     
-    addr = (addr - addr % PAGE_SIZE);
+    addr = (addr - addr % page_size());
     
     if (process_has_page (process, addr))
 	return;

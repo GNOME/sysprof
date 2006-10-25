@@ -90,7 +90,6 @@ separate_debug_file_exists (const char *name, guint32 crc)
     return parser;
 }
 
-/* FIXME - not10: this should probably be detected by config.h -- find out what gdb does*/
 static const char *const debug_file_directory = DEBUGDIR;
 
 static ElfParser *

@@ -424,8 +424,6 @@ file_exists (const char *name)
     int fd;
     fd = open (name, O_RDONLY);
     
-    g_print ("trying: %s\n", name);
-    
     if (fd > 0)
     {
 	close (fd);
@@ -565,16 +563,7 @@ lookup_kernel_symbol (gulong address)
 {
     static const char *const kernel = "In kernel";
 
-#if 0
-    g_print ("kernel binary: %s\n", find_kernel_binary ());
-#endif
-
-    return kernel; /* Can we just return "In kernel"? */
-#if 0
-    kernel.name = "In kernel";
-    kernel.address = 0x00001337;
-    return &kernel;
-#endif
+    return kernel;
 }
 
 const char *

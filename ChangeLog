@@ -1,5 +1,12 @@
 2006-10-25  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* profile.c (add_trace_to_tree): Make the pointer array static to
+	improve cache behavior and reduce calls to malloc().
+
+	* process.c (lookup_kernel_symbol): Remove obsolete comment.
+
+2006-10-25  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* process.c (free_maps): Take a pointer to a variable that will be
 	set to 0.
 

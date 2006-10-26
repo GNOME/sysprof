@@ -433,7 +433,10 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 
 - Have kernel module report the file the address was found in
 	Should avoid a lot of potential broken/raciness with dlopen etc.
-	Probably better to send a list of maps with each trace.
+	Probably better to send a list of maps with each trace. Which 
+	shouldn't really be that expensive. We already walk the list of
+	maps in process_ensure_map() on every trace. And we can do hashing
+	if it turns out to be a problem.
 
 - Figure out how Google's pprof script works. Then add real call graph 
   drawing. (google's script is really simple; uses dot from graphviz).

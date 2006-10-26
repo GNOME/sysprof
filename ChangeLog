@@ -1,3 +1,8 @@
+2006-10-26  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* collector.c (resolve_symbols): Combine processes with identical
+	commandlines here.
+
 2006-10-25  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* profile.c (add_trace_to_tree): Make the pointer array static to

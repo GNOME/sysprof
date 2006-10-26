@@ -303,6 +303,7 @@ typedef struct
 {
     StackStash *resolved_stash;
     GHashTable *unique_symbols;
+    GHashTable *unique_cmdlines;
 } ResolveInfo;
 
 static char *
@@ -331,10 +332,12 @@ lookup_symbol (Process *process, gpointer address, GHashTable *unique_symbols)
 static void
 resolve_symbols (GList *trace, gint size, gpointer data)
 {
+    static const char *const everything = "Everything";
     GList *list;
     ResolveInfo *info = data;
     Process *process = g_list_last (trace)->data;
     GPtrArray *resolved_trace = g_ptr_array_new ();
+    char *cmdline;
     
     for (list = trace; list && list->next; list = list->next)
     {
@@ -345,13 +348,20 @@ resolve_symbols (GList *trace, gint size, gpointer data)
 	
 	g_ptr_array_add (resolved_trace, symbol);
     }
+
+    cmdline = g_hash_table_lookup (info->unique_cmdlines,
+				   (char *)process_get_cmdline (process));
+    if (!cmdline)
+    {
+	cmdline = g_strdup (process_get_cmdline (process));
+
+	g_hash_table_insert (info->unique_cmdlines, cmdline, cmdline);
+    }
+    
+    g_ptr_array_add (resolved_trace, cmdline);
     
     g_ptr_array_add (resolved_trace,
-		     unique_dup (info->unique_symbols,
-				 (char *)process_get_cmdline (process)));
-    g_ptr_array_add (resolved_trace,
-		     unique_dup (info->unique_symbols,
-				 "Everything"));
+		     unique_dup (info->unique_symbols, everything));
     
     stack_stash_add_trace (info->resolved_stash,
 			   (gulong *)resolved_trace->pdata,
@@ -368,12 +378,15 @@ collector_create_profile (Collector *collector)
     
     info.resolved_stash = stack_stash_new ((GDestroyNotify)g_free);
     info.unique_symbols = g_hash_table_new (g_direct_hash, g_direct_equal);
+    info.unique_cmdlines = g_hash_table_new (g_str_hash, g_str_equal);
     
     stack_stash_foreach (collector->stash, resolve_symbols, &info);
     
-    /* FIXME: we are leaking the value strings in info.unique_symbols */
-    
+    /* FIXME: we are leaking the value strings in info.unique_symbols.
+     * [I don't believe we are anymore, but valgrind will show]
+     */
     g_hash_table_destroy (info.unique_symbols);
+    g_hash_table_destroy (info.unique_cmdlines);
     
     profile = profile_new (info.resolved_stash);
     

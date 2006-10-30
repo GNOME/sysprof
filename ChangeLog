@@ -1,3 +1,11 @@
+2006-10-29  Soren Sandmann  <sandmann@daimi.au.dk>
+
+	* -=-=-=- Release sysprof 1.0.5 -=-=-=-
+	
+	* binfile.c (read_symbols): Store symbols in offsets into original
+	file, not debug file. Fixes symbols when the debug binaries have 
+	different text offsets than the real binaries.
+
 2006-10-29  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* =-=-=-= Release sysprof 1.0.4 =-=-=-=

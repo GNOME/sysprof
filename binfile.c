@@ -305,8 +305,7 @@ read_symbols (BinFile *bf)
     int i;
     bfd *bfd;
     GArray *symbols;
-    guint load_address;
-    struct bfd_section *sec;
+    file_ptr real_text_offset;
 
     bf->symbols = NULL;
     bf->n_symbols = 0;
@@ -315,6 +314,16 @@ read_symbols (BinFile *bf)
     if (!bfd)
 	return;
 
+    text_section = bfd_get_section_by_name (bfd, ".text");
+    if (!text_section)
+    {
+	bfd_close (bfd);
+	return;
+    }
+
+    /* Offset of the text segment in the real binary (not the debug one) */
+    real_text_offset = text_section->filepos;
+    
     separate_debug_file = find_separate_debug_file (bfd);
     if (separate_debug_file)
     {
@@ -331,17 +340,7 @@ read_symbols (BinFile *bf)
     
     if (!bfd_symbols)
 	return;
-    
-    load_address = 0xffffffff;
-    for (sec = bfd->sections; sec != NULL; sec = sec->next)
-    {
-	if (sec->flags & SEC_ALLOC)
-	{
-	    if ((gulong)sec->vma < load_address)
-		load_address = sec->vma & ~4095;
-	}
-    }
-    
+
     text_section = bfd_get_section_by_name (bfd, ".text");
     if (!text_section)
 	return;
@@ -357,12 +356,21 @@ read_symbols (BinFile *bf)
 	if ((bfd_symbols[i]->flags & BSF_FUNCTION) &&
 	    (bfd_symbols[i]->section == text_section))
 	{
-	    /* Store the address in file coordinates:
-	     *    - all addresses are already offset by  section->vma
-	     *    - the section is positioned at         section->filepos
+	    /* Store the address in
+	     *
+	     *     "offset into text_segment + filepos of text segment in original binary"
+	     *
+	     * Ie., "file position of original binary"
 	     */
-	    symbol.address = bfd_asymbol_value (bfd_symbols[i]) - load_address;
+	    
+	    /* offset into text section  */
+	    symbol.address =
+		bfd_asymbol_value (bfd_symbols[i]) - text_section->vma + real_text_offset;
+	    
 	    symbol.name = demangle (bfd, bfd_asymbol_name (bfd_symbols[i]));
+#if 0
+	    g_print ("computed address for %s: %lx\n", symbol.name, symbol.address);
+#endif
 	    g_array_append_vals (symbols, &symbol, 1);
 	}
     }

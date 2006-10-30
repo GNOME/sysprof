@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <linux/config.h>
 #if !CONFIG_PROFILING
 # error Sysprof needs a kernel with profiling support compiled in.
 #endif

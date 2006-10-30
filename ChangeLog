@@ -1,3 +1,9 @@
+2006-10-29  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* =-=-=-= Release sysprof 1.0.4 =-=-=-=
+
+	* module/sysprof-module.c: Remove include of linux/config.h
+
 Sat Aug 12 16:27:13 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (timer_notify): Bugfix for SMP kernel:

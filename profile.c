@@ -363,8 +363,8 @@ profile_caller_new (void)
 }
 
 ProfileCaller *
-profile_list_callers (Profile       *profile,
-		      char          *callee_name)
+profile_list_callers (Profile *profile,
+		      char    *callee_name)
 {
     StackNode *node;
     StackNode *callees;
@@ -379,11 +379,12 @@ profile_list_callers (Profile       *profile,
 
     for (node = callees; node != NULL; node = node->next)
     {
+	ProfileCaller *caller;
+	
 	if (!node->parent)
 	    continue;
 	
-	ProfileCaller *caller =
-	    g_hash_table_lookup (callers_by_name, node->parent->address);
+	caller = g_hash_table_lookup (callers_by_name, node->parent->address);
 	
 	if (!caller)
 	{

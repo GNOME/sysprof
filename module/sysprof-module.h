@@ -24,8 +24,8 @@ typedef struct SysprofStackTrace SysprofStackTrace;
 typedef struct SysprofStackInfo SysprofStackInfo;
 typedef struct SysprofMmapArea SysprofMmapArea;
 
-#define SYSPROF_N_TRACES 256
-#define SYSPROF_MAX_ADDRESSES 512
+#define SYSPROF_N_TRACES 64
+#define SYSPROF_MAX_ADDRESSES 1021	/* to make it one page wide */
 
 struct SysprofStackTrace
 {
@@ -39,9 +39,9 @@ struct SysprofStackTrace
 
 struct SysprofMmapArea
 {
-    unsigned int	head;
-
     SysprofStackTrace	traces[SYSPROF_N_TRACES];
+
+    unsigned int	head;
 };
 
 #endif

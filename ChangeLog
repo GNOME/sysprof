@@ -1,5 +1,13 @@
 2006-10-26  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* module/sysprof-module.h (struct SysprofStackTrace): Increase the
+	max number of addresses to 1021, reorganise SysprofMmapArea to
+	make the traces naturally page aligned.
+
+	* TODO: Update
+
+2006-10-26  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* collector.c (resolve_symbols): Combine processes with identical
 	commandlines here.
 

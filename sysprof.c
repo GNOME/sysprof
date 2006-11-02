@@ -757,7 +757,6 @@ overwrite_file (GtkWindow *window,
     gtk_widget_destroy (msgbox);
     
     return (ret == GTK_RESPONSE_YES);
-    
 }
 
 static void

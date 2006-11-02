@@ -158,11 +158,6 @@ Before 1.2:
 	- etc.
   done: HEAD will not load files with the wrong inode now.
 
-* Consider deleting cmdline hack in process.c and replace with something at 
-  the symbol resolution level. Will require more memory though. DONE: in
-  head, processes are no longer coalesced based on cmdline. Need to add something
-  at the symbol level.
-
 * Add spew infrastructure to make remote debugging easier.
 
 * Make it compile and work on x86-64
@@ -436,7 +431,27 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	Probably better to send a list of maps with each trace. Which 
 	shouldn't really be that expensive. We already walk the list of
 	maps in process_ensure_map() on every trace. And we can do hashing
-	if it turns out to be a problem.
+	if it turns out to be a problem. 
+		Maybe replace the SysprofStackTrace with a union, so that
+	it can be either a list of maps, or a stacktrace. Both map lists and
+	stacktraces would come with a hashcode.allowing userspac. This avoids
+	the problem that maps could take up a lot of extra bandwidth.
+
+		struct MapInfo
+		{
+			long start;
+			long end;
+			long offset;	
+			long inode;
+		}
+
+		struct Maps
+		{
+			int hash_code;
+			int n_maps;
+			MapInfo info [127];
+			char filenames [2048];
+		}
 
 - Figure out how Google's pprof script works. Then add real call graph 
   drawing. (google's script is really simple; uses dot from graphviz).
@@ -620,7 +635,8 @@ Later:
 
    - Optimization usecases:
 
-	- A lot of stuff is read synchronously, but it is possible to read it asynchronously.
+	- A lot of stuff is read synchronously, but it is possible to read
+	  it asynchronously.
 	  Visualization: A timeline with alternating CPU/disk activity. 
 
 	- What function is doing all the synchronous reading, and what files/offsets is
@@ -666,6 +682,11 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* Consider deleting cmdline hack in process.c and replace with something at 
+  the symbol resolution level. Will require more memory though. DONE: in
+  head, processes are no longer coalesced based on cmdline. Need to add something
+  at the symbol level.
 
 * don't loop infinitely if there are cycles in the debuglink graph.
 

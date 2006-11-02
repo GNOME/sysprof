@@ -49,14 +49,14 @@ struct Map
 
 struct Process
 {
-    char *cmdline;
+    char *	cmdline;
 
-    int n_maps;
-    Map *maps;
+    int		n_maps;
+    Map *	maps;
     
-    GList *bad_pages;
+    GList *	bad_pages;
     
-    int pid;
+    int		pid;
 
     const char *undefined;
 };
@@ -352,10 +352,6 @@ get_statname (int pid)
     char *stat;
     char *filename = idle_free (g_strdup_printf ("/proc/%d/stat", pid));
     
-#if 0
-    g_print ("stat %d\n", pid);
-#endif
-    
     if (g_file_get_contents (filename, &stat, NULL, NULL))
     {
 	char result[200];
@@ -365,9 +361,6 @@ get_statname (int pid)
 	if (sscanf (stat, "%*d %200s %*s", result) == 1)
 	    return g_strndup (result, 200);
     }
-#if 0
-    g_print ("return null\n");
-#endif
     
     return NULL;
 }

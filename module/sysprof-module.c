@@ -42,7 +42,12 @@
 #include "../config.h"
 
 #include <linux/version.h>
-#if KERNEL_VERSION(2,6,11) > LINUX_VERSION_CODE
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)
+#include <linux/config.h>
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)
 # error Sysprof needs a Linux 2.6.11 kernel or later
 #endif
 #include <linux/kallsyms.h>

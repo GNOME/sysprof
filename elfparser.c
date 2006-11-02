@@ -315,6 +315,8 @@ elf_parser_free (ElfParser *parser)
 
     if (parser->file)
 	g_mapped_file_free (parser->file);
+
+    bin_parser_free (parser->parser);
     
     g_free (parser);
 }

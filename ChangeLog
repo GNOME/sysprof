@@ -1,3 +1,18 @@
+2006-11-02  Soren Sandmann <sandmann@daimi.au.dk>
+
+	Valgrind:
+	
+	* binparser.c (bin_parser_free): Add this function
+	
+	* elfparser.c (elf_parser_free): Call bin_parser_free()
+
+	* sysprof.c (compute_text_width, add_text): Plug leaks
+
+	* collector.c (add_trace_to_stash): Copy n_addresses to a stack
+	variable instead of reading it out of the mmap'ed area all the
+	time. (That way if there is an overrun, we won't write too much
+	into the address array).
+
 2006-10-26  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* module/sysprof-module.h (struct SysprofStackTrace): Increase the

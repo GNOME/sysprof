@@ -54,6 +54,12 @@ bin_parser_new (const guchar	*data,
     return parser;
 }
 
+void
+bin_parser_free (BinParser *parser)
+{
+    g_free (parser);
+}
+
 static GQueue *
 read_varargs (va_list		args,
 	      const char *	name,

@@ -1066,6 +1066,8 @@ compute_text_width (GtkTreeView  *view,
    get_data (view, iter, &name, NULL, NULL);
 
    *width = MAX (g_utf8_strlen (name, -1) + get_indent (path), *width);
+
+   g_free (name);
 }
 
 typedef struct
@@ -1106,6 +1108,8 @@ add_text (GtkTreeView *view,
 	g_string_append_c (info->text, ' ');
     
     g_string_append_printf (info->text, "%-*s %6.2f %6.2f\n", info->max_width - indent, name, self, cumulative);
+
+    g_free (name);
 }
 
 static void
@@ -1601,6 +1605,8 @@ main (int    argc,
      *   - caches too much memory
      *   - is not actually faster
      */
+#endif
+#if 0
     g_slice_set_config (G_SLICE_CONFIG_ALWAYS_MALLOC, TRUE);
 #endif
      

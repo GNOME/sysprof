@@ -91,10 +91,13 @@ add_trace_to_stash (const SysprofStackTrace *trace,
     int i;
     gulong *addrs;
     Process *process = process_get_from_pid (trace->pid);
+    int n_addresses;
     
-    addrs = g_new (gulong, trace->n_addresses + 1);
+    n_addresses = trace->n_addresses;
     
-    for (i = 0; i < trace->n_addresses; ++i)
+    addrs = g_new (gulong, n_addresses + 1);
+
+    for (i = 0; i < n_addresses; ++i)
     {
 	process_ensure_map (process, trace->pid, 
 			    (gulong)trace->addresses[i]);
@@ -105,7 +108,7 @@ add_trace_to_stash (const SysprofStackTrace *trace,
     addrs[i] = (gulong)process;
     
     stack_stash_add_trace (
-	stash, addrs, trace->n_addresses + 1, 1);
+	stash, addrs, n_addresses + 1, 1);
     
     g_free (addrs);
 }
@@ -324,7 +327,11 @@ unique_dup (GHashTable *unique_symbols, const char *sym)
 static char *
 lookup_symbol (Process *process, gpointer address, GHashTable *unique_symbols)
 {
-    const char *sym = process_lookup_symbol (process, (gulong)address);
+    const char *sym;
+
+    g_assert (process);
+    
+    sym = process_lookup_symbol (process, (gulong)address);
     
     return unique_dup (unique_symbols, sym);
 }

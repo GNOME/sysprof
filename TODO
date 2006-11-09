@@ -34,10 +34,6 @@ Before 1.0.4:
 
 Before 1.2:
 
-* Don't look in $(libdir) for separate debug files (since $libdir is
-  the libdir for sysprof, not a system wide libdir). Tim Rowley.
-  Fix is probably to hardcode /usr/lib, and also look in $libdir.
-
 * Make sure that labels look decent in case of "No Map" etc.
 
 * Elf bugs:
@@ -686,6 +682,10 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* Don't look in $(libdir) for separate debug files (since $libdir is
+  the libdir for sysprof, not a system wide libdir). Tim Rowley.
+  Fix is probably to hardcode /usr/lib, and also look in $libdir.
 
 * Consider deleting cmdline hack in process.c and replace with something at 
   the symbol resolution level. Will require more memory though. DONE: in

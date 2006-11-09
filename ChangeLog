@@ -1,3 +1,7 @@
+Thu Nov  9 16:17:11 2006  Søren Sandmann  <sandmann@redhat.com>
+
+	* binfile.c: Add debug spew.
+
 Thu Nov  9 16:01:47 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* sysprof-text.c (main): Die immediately if the output file is a

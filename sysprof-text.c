@@ -86,6 +86,14 @@ usage_msg (const char *name)
 	name);
 }
 
+static gboolean
+file_exists_and_is_dir (const char *name)
+{
+    return
+	g_file_test (name, G_FILE_TEST_EXISTS) &&
+	g_file_test (name, G_FILE_TEST_IS_DIR);
+}
+
 static void
 die (const char *err_msg)
 {
@@ -119,6 +127,13 @@ main (int argc,
     
     if (!signal_set_handler (SIGINT, signal_handler, app, &err))
 	die (err->message);
+
+    if (file_exists_and_is_dir (app->outfile))
+    {
+	char *msg = g_strdup_printf ("Can't write to %s: is a directory\n",
+				     app->outfile);
+	die (msg);
+    }
     
     g_main_loop_run (app->main_loop);
     

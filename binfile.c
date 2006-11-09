@@ -231,6 +231,8 @@ bin_file_new (const char *filename)
 	else
 	{
 	    bf->elf = elf_parser_new (filename, NULL);
+	    if (!bf->elf)
+		g_print ("Could not parse file %s\n", bf->elf);
 	}
 	
 	/* We need the text offset of the actual binary, not the

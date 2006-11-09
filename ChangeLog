@@ -1,3 +1,10 @@
+Thu Nov  9 16:01:47 2006  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-text.c (main): Die immediately if the output file is a
+	directory.
+
+	* autogen.sh (DIE): Also work when automake-1.9 is installed. 
+
 2006-11-02  Soren Sandmann <sandmann@daimi.au.dk>
 
 	Valgrind:

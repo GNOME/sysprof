@@ -303,7 +303,7 @@ void
 bin_parser_align (BinParser *parser,
 		  gsize	     byte_width)
 {
-    parser->offset = align (parser->offset, 4);
+    parser->offset = align (parser->offset, byte_width);
 }
 
 void

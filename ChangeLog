@@ -1,3 +1,11 @@
+Thu Nov  9 17:31:17 2006  Søren Sandmann  <sandmann@redhat.com>
+
+	* binfile.c (get_debug_file): Start with "/usr", not
+	"usr". Pointed out by Tim Rowley.
+
+	* binparser.c (bin_parser_align): Pass byte_width on instead of
+	hardcoding 4. 
+
 Thu Nov  9 16:47:35 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	Look in the correct directory for debug info files. (Tim Rowley)

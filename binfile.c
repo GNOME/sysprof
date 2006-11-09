@@ -88,7 +88,7 @@ separate_debug_file_exists (const char *name, guint32 crc)
 
     if (file_crc != crc)
     {
-	g_print ("warning: %s has wrong crc\n", name);
+	g_print ("warning: %s has wrong crc \n", name);
 	
 	elf_parser_free (parser);
 	
@@ -133,7 +133,7 @@ get_debug_file (ElfParser *elf,
     
     tries[0] = g_build_filename (dir, basename, NULL);
     tries[1] = g_build_filename (dir, ".debug", basename, NULL);
-    tries[2] = g_build_filename ("usr", "lib", "debug", dir, basename, NULL);
+    tries[2] = g_build_filename ("/usr", "lib", "debug", dir, basename, NULL);
     tries[3] = g_build_filename (debug_file_directory, dir, basename, NULL);
 
     for (i = 0; i < N_TRIES; ++i)

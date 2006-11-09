@@ -73,10 +73,14 @@ separate_debug_file_exists (const char *name, guint32 crc)
     guint32 file_crc;
     ElfParser *parser = elf_parser_new (name, NULL);
 
+#if 0
     g_print ("   trying %s: ", name);
+#endif
     if (!parser)
     {
+#if 0
 	g_print ("no.\n");
+#endif
 	return NULL;
     }
 
@@ -91,7 +95,9 @@ separate_debug_file_exists (const char *name, guint32 crc)
 	return NULL;
     }
 
+#if 0
     g_print ("found\n");
+#endif
 
     return parser;
 }
@@ -103,10 +109,11 @@ get_debug_file (ElfParser *elf,
 		const char *filename,
 		char **new_name)
 {
+#define N_TRIES 4
     const char *basename;
     char *dir;
     guint32 crc32;
-    char *tries[3];
+    char *tries[N_TRIES];
     int i;
     ElfParser *result;
 
@@ -115,7 +122,9 @@ get_debug_file (ElfParser *elf,
     
     basename = elf_parser_get_debug_link (elf, &crc32);
 
+#if 0
     g_print ("   debug link for %s is %s\n", filename, basename);
+#endif
     
     if (!basename)
 	return NULL;
@@ -124,14 +133,17 @@ get_debug_file (ElfParser *elf,
     
     tries[0] = g_build_filename (dir, basename, NULL);
     tries[1] = g_build_filename (dir, ".debug", basename, NULL);
-    tries[2] = g_build_filename (debug_file_directory, dir, basename, NULL);
+    tries[2] = g_build_filename ("usr", "lib", "debug", dir, basename, NULL);
+    tries[3] = g_build_filename (debug_file_directory, dir, basename, NULL);
 
-    for (i = 0; i < 3; ++i)
+    for (i = 0; i < N_TRIES; ++i)
     {
 	result = separate_debug_file_exists (tries[i], crc32);
 	if (result)
 	{
+#if 0
 	    g_print ("   found debug binary for %s: %s\n", filename, tries[i]);
+#endif
 	    if (new_name)
 		*new_name = g_strdup (tries[i]);
 	    break;
@@ -140,7 +152,7 @@ get_debug_file (ElfParser *elf,
 
     g_free (dir);
 
-    for (i = 0; i < 3; ++i)
+    for (i = 0; i < N_TRIES; ++i)
 	g_free (tries[i]);
 
     return result;
@@ -176,7 +188,9 @@ find_separate_debug_file (ElfParser *elf,
     {
 	if (list_contains_name (seen_names, fname))
 	{
+#if 0
 	    g_print ("   cycle detected\n");
+#endif
 	    /* cycle detected, just return the original elf file itself */
 	    break;
 	}
@@ -191,10 +205,12 @@ find_separate_debug_file (ElfParser *elf,
 	    seen_names = g_list_prepend (seen_names, fname);
 	    fname = debug_name;
 	}
+#if 0
 	else
 	{
 	    g_print ("   no debug info file for %s\n", fname);
 	}
+#endif
     }
     while (debug);
 
@@ -245,8 +261,11 @@ bin_file_new (const char *filename)
 	else
 	{
 	    bf->elf = elf_parser_new (filename, NULL);
+
+#if 0
 	    if (!bf->elf)
 		g_print ("Could not parse file %s\n", filename);
+#endif
 	}
 	
 	/* We need the text offset of the actual binary, not the
@@ -262,16 +281,20 @@ bin_file_new (const char *filename)
 #endif
 
 	    oldelf = bf->elf;
+#if 0
 	    if (bf->elf)
 		g_print ("trying to find separate debug file for %s\n", filename);
+#endif
 	    bf->elf = find_separate_debug_file (bf->elf, filename);
 
+#if 0
 	    if (!bf->elf)
 		g_print ("   returned NULL\n");
 	    else if (bf->elf != oldelf)
 		g_print ("   successfully opened a different elf file than the original\n");
 	    else
 		g_print ("   opened the original elf file\n");
+#endif
 	}
 
 	bf->inode_check = FALSE;

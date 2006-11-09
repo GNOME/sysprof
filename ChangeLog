@@ -1,3 +1,14 @@
+Thu Nov  9 16:47:35 2006  Søren Sandmann  <sandmann@redhat.com>
+
+	Look in the correct directory for debug info files. (Tim Rowley)
+	
+	* binfile.c (N_TRIES): Add this instead of hardcoding '3'
+
+	* binfile.c (get_debug_file): Also look in "/usr/lib/debug", in
+	addition to "$(libdir)/debug".
+
+	* binfile.c: Comment out the debug spew.
+
 Thu Nov  9 16:17:11 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* binfile.c: Add debug spew.

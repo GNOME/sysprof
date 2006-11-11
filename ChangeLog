@@ -34,6 +34,12 @@ Thu Nov  9 16:01:47 2006  Søren Sandmann  <sandmann@redhat.com>
 
 2006-11-02  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* sysprof.c (disable_g_slice): New function
+
+	* sysprof.c (main): Call it from here.
+
+2006-11-02  Soren Sandmann <sandmann@daimi.au.dk>
+
 	Valgrind:
 	
 	* binparser.c (bin_parser_free): Add this function

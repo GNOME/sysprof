@@ -1587,29 +1587,38 @@ process_options (int           argc,
     return filename;
 }
 
+static void
+disable_g_slice (void)
+{
+    
+    /* Disable gslice, since it
+     *
+     *  - confuses valgrind
+     *  - caches too much memory
+     *  - hides memory access bugs
+     *  - is not faster than malloc
+     *
+     * Note that g_slice_set_config() is broken in some versions of
+     * GLib (and 'declared internal' according to Tim), so we use the
+     * environment variable instead.
+     */
+    if (!getenv ("G_SLICE"))
+	putenv ("G_SLICE=always_malloc");
+}
+
 int
 main (int    argc,
       char **argv)
 {
     Application *app;
     const char *filename;
+
+    disable_g_slice();
     
     filename = process_options (argc, argv);
     
     gtk_init (&argc, &argv);
     
-#if 0
-    /* FIXME: enable this when compiled against the relevant glib
-     * version. The reason we want to disable it is that gslice
-     *   - confuses valgrind
-     *   - caches too much memory
-     *   - is not actually faster
-     */
-#endif
-#if 0
-    g_slice_set_config (G_SLICE_CONFIG_ALWAYS_MALLOC, TRUE);
-#endif
-     
     app = application_new ();
 
     if (!build_gui (app))

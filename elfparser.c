@@ -59,22 +59,8 @@ section_new (BinRecord *record,
     
     section->name = bin_record_get_string_indirect (
 	record, "sh_name", name_table);
-
-#if 0
-    g_print ("new section: %s\n", section->name);
-#endif
-    
     section->size = bin_record_get_uint (record, "sh_size");
-
-#if 0
-    g_print ("size: %d\n", section->size);
-#endif
-    
     section->offset = bin_record_get_uint (record, "sh_offset");
-
-#if 0
-    g_print ("offset: %d\n", section->offset);
-#endif
 
     flags = bin_record_get_uint (record, "sh_flags");
     section->allocated = !!(flags & SHF_ALLOC);
@@ -102,27 +88,14 @@ find_section (ElfParser *parser,
 {
     int i;
 
-#if 0
-    g_print ("looking for section %s ... ", name);
-#endif
-    
     for (i = 0; i < parser->n_sections; ++i)
     {
 	Section *section = parser->sections[i];
 	
 	if (strcmp (section->name, name) == 0 && section->type == type)
-	{
-#if 0
-	    g_print ("found it as number %d with offset %d\n", i, section->offset);
-#endif
 	    return section;
-	}
     }
 
-#if 0
-    g_print ("not found\n");
-#endif
-    
     return NULL;
 }
 
@@ -157,11 +130,6 @@ elf_parser_new_from_data (const guchar *data,
     parser->n_sections = bin_record_get_uint (elf_header, "e_shnum");
     section_names_idx = bin_record_get_uint (elf_header, "e_shstrndx");
     section_headers = bin_record_get_uint (elf_header, "e_shoff");
-#if 0
-    g_print ("e_shoff  %d\n", section_headers);
-    g_print ("header size: %d\n", bin_record_get_uint (elf_header, "e_shentsize"));
-    g_print ("real size: %d\n", bin_format_get_size (parser->shn_entry));
-#endif
     
     bin_record_free (elf_header);
     
@@ -340,17 +308,6 @@ elf_demangle (const char *name)
 /*
  * Looking up symbols
  */
-#if 0
-#define ELF32_ST_BIND(val)		(((unsigned char) (val)) >> 4)
-#define ELF32_ST_TYPE(val)		((val) & 0xf)
-#define ELF32_ST_INFO(bind, type)	(((bind) << 4) + ((type) & 0xf))
-
-/* Both Elf32_Sym and Elf64_Sym use the same one-byte st_info field.  */
-#define ELF64_ST_BIND(val)		ELF32_ST_BIND (val)
-#define ELF64_ST_TYPE(val)		ELF32_ST_TYPE (val)
-#define ELF64_ST_INFO(bind, type)	ELF32_ST_INFO ((bind), (type))
-#endif
-
 static int
 compare_sym (const void *a, const void *b)
 {
@@ -393,13 +350,6 @@ read_table (ElfParser *parser,
     parser->n_symbols = sym_table->size / sym_size;
     parser->symbols = g_new (ElfSym, parser->n_symbols);
     
-#if 0
-    g_print ("\nreading %d symbols (@%d bytes) from %s\n",
-	     parser->n_symbols, sym_size, sym_table->name);
-
-    g_print ("table offset: %d\n", str_table->offset);
-#endif
-    
     symbol = bin_parser_get_record (parser->parser, parser->sym_format, sym_table->offset);
 
     n_functions = 0;
@@ -408,28 +358,11 @@ read_table (ElfParser *parser,
 	guint info;
 	gulong addr;
 	gulong offset;
-#if 0
-	const char *name;
-#endif
 
 	bin_record_index (symbol, i);
 	
 	info = bin_record_get_uint (symbol, "st_info");
-
-#if 0
-	g_print ("info: %d  =>   %d %d\n", info, info & 0xf, info >> 4);
-#endif
-#if 0
-	g_print ("func: %d global %d local: %d\n", STT_FUNC, STB_GLOBAL, STB_LOCAL);
-#endif
-#if 0
-	g_print ("%d, name off: %d\n", i, bin_record_get_uint (symbol, "st_name"));
-#endif
 	addr = bin_record_get_uint (symbol, "st_value");
-#if 0
-	name = bin_record_get_string_indirect (symbol, "st_name",
-					       str_table->offset);
-#endif
 	offset = bin_record_get_offset (symbol);
 	
 	if (addr != 0				&&
@@ -441,38 +374,18 @@ read_table (ElfParser *parser,
 	    parser->symbols[n_functions].offset = offset;
 	    parser->symbols[n_functions].size =
 		bin_record_get_uint (symbol, "st_size");
-
-#if 0
-	    g_print ("name: %s\n",
-		     bin_record_get_string_indirect (symbol, "st_name",
-						     str_table->offset));
-	    
-	    g_print ("%lx\n", parser->symbols[n_functions].address);
-#endif
 	    
 	    n_functions++;
 	}
     }
 
-#if 0
-    g_print ("%d functions found \n", n_functions);
-#endif
-    
     bin_record_free (symbol);
-
-#if 0
-    g_print ("found %d functions\n", n_functions);
-#endif
 
     parser->sym_strings = str_table->offset;
     parser->n_symbols = n_functions;
     parser->symbols = g_renew (ElfSym, parser->symbols, parser->n_symbols);
 
     qsort (parser->symbols, parser->n_symbols, sizeof (ElfSym), compare_sym);
-
-#if 0
-    dump_symbols (parser, parser->symbols, parser->n_symbols);
-#endif
 }
 
 static void
@@ -485,29 +398,14 @@ read_symbols (ElfParser *parser)
 
     if (symtab && strtab)
     {
-#if 0
-	g_print ("found symtab\n");
-#endif
 	read_table (parser, symtab, strtab);
     }
     else if (dynsym && dynstr)
     {
-#if 0
-	g_print ("reading from dynstr at offset %d\n", dynstr->offset);
-#endif
 	read_table (parser, dynsym, dynstr);
-#if 0
-	g_print ("read %d symbols\n", parser->n_symbols);
-#endif
     }
     else
     {
-#if 0
-	if (!dynsym)
-	    g_print ("no dynsym\n");
-	if (!dynstr)
-	    g_print ("no dynstr\n");
-#endif
 	/* To make sure parser->symbols is non-NULL */
 	parser->n_symbols = 0;
 	parser->symbols = g_new (ElfSym, 1);

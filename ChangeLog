@@ -3,7 +3,11 @@
 	* =-=-=-= Release 1.0.7 =-=-=-=
 
 	* process.c (process_lookup_symbol): Also treat 0x01 as "In
-	kernel", even when there is a map for the 0x00 address.
+	kernel", even when there is a map for the 0x00 address. (Tim
+	Rowley).
+
+	* module/sysprof-module.c: Check for profiling enabled after
+	potentially including config.h
 
 2006-11-02  Soren Sandmann  <sandmann@daimi.au.dk>
 

@@ -19,9 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#if !CONFIG_PROFILING
-# error Sysprof needs a kernel with profiling support compiled in.
-#endif
 #ifdef CONFIG_SMP
 # define __SMP__
 #endif
@@ -45,6 +42,10 @@
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,18)
 #include <linux/config.h>
+#endif
+
+#if !CONFIG_PROFILING
+# error Sysprof needs a kernel with profiling support compiled in.
 #endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,11)

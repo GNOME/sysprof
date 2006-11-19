@@ -1,3 +1,12 @@
+2006-11-19   Soren Sandmann <sandmann@redhat.com>
+
+	* binparser.h: Declare bin_parser_free();
+
+	* elfparser.c (elf_parser_get_crc32): Use madvise(DONT_NEED) on
+	the file.
+	
+	* process.c (struct Process): Remove do_offset.
+
 Thu Nov  9 17:55:24 2006  Søren Sandmann  <sandmann@redhat.com>
 
 	* TODO (-): udpate

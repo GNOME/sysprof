@@ -203,7 +203,18 @@ Before 1.2:
 - plug all the leaks
 	- loading and saving probably leak right now
 
+- make it use less memory:
+	- StackNodes are dominating
+		- fold 'toplevel' into 'size'
+		- allocate in blocks
+			- this will need to be coordinated with
+			  profile.c which also creates stacknodes.
+
+			- maybe simply make stackstashes able to 
+			  save themselves.
+
 - rethink loading and saving. Goals
+
 	- Can load 1.0 profiles
 	- Don't export too much of stackstashes to the rest of the
 	  app

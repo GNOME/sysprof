@@ -40,9 +40,6 @@ struct Map
     gulong	end;
     gulong      offset;
     gulong	inode;
-#if 0
-    gboolean	do_offset;
-#endif
     
     BinFile *	bin_file;
 };
@@ -50,14 +47,14 @@ struct Map
 struct Process
 {
     char *	cmdline;
-
+    
     int		n_maps;
     Map *	maps;
     
     GList *	bad_pages;
     
     int		pid;
-
+    
     const char *undefined;
 };
 

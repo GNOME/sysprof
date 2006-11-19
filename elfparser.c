@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <elf.h>
+#include <sys/mman.h>
 #include "binparser.h"
 #include "elfparser.h"
 
@@ -269,6 +270,14 @@ elf_parser_get_crc32 (ElfParser *parser)
     for (i = 0; i < length; ++i)
 	crc = crc32_table[(crc ^ data[i]) & 0xff] ^ (crc >> 8);
 
+    /* We just read the entire file into memory, but we only really
+     * need the symbol table, so swap the whole thing out.
+     *
+     * We could be more exact here, but it's only a few minor
+     * pagefaults.
+     */
+    madvise ((char *)data, length, MADV_DONTNEED);
+    
     return ~crc & 0xffffffff;
 }
 

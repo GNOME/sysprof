@@ -8,6 +8,7 @@ typedef struct BinRecord BinRecord;
 /* BinParser */
 BinParser *   bin_parser_new        (const guchar *data,
 				     gsize         length);
+void          bin_parser_free       (BinParser    *parser);
 const guchar *bin_parser_get_data   (BinParser    *parser);
 gsize         bin_parser_get_length (BinParser    *parser);
 gsize         bin_parser_get_offset (BinParser    *parser);

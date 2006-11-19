@@ -1,3 +1,5 @@
+/* -*- c-basic-offset: 4 indent-tabs-mode: nil -*- */
+
 /* Sysprof -- Sampling, systemwide CPU profiler
  * Copyright 2004, Red Hat, Inc.
  * Copyright 2004, 2005, Soeren Sandmann
@@ -16,8 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-
-/* -*- c-basic-offset: 4 indent-tabs-mode: nil -*- */
 
 #include <stdarg.h>
 #include <stdlib.h>

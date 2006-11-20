@@ -656,6 +656,7 @@ ensure_profile (Application *app)
     app->profile = collector_create_profile (app->collector);
     
     collector_stop (app->collector);
+    collector_reset (app->collector);
     
     fill_lists (app);
     

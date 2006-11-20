@@ -25,12 +25,36 @@ struct StackStash
     StackNode *		root;
     GHashTable *	nodes_by_data;
     GDestroyNotify	destroy;
+
+    StackNode *		cached_nodes;
+    GPtrArray *		blocks;
 };
 
 StackNode *
-stack_node_new (void)
+stack_node_new (StackStash *stash)
 {
-    StackNode *node = g_new (StackNode, 1);
+    StackNode *node;
+
+    if (!stash->cached_nodes)
+    {
+#define BLOCK_SIZE 32768
+#define N_NODES (BLOCK_SIZE / sizeof (StackNode))
+
+	StackNode *block = g_malloc (BLOCK_SIZE);
+	int i;
+
+	for (i = 0; i < N_NODES; ++i)
+	{
+	    block[i].next = stash->cached_nodes;
+	    stash->cached_nodes = &(block[i]);
+	}
+
+	g_ptr_array_add (stash->blocks, block);
+    }
+
+    node = stash->cached_nodes;
+    stash->cached_nodes = node->next;
+
     node->siblings = NULL;
     node->children = NULL;
     node->address = NULL;
@@ -38,6 +62,7 @@ stack_node_new (void)
     node->size = 0;
     node->next = NULL;
     node->total = 0;
+    
     return node;
 }
 
@@ -51,6 +76,9 @@ create_stack_stash (GDestroyNotify destroy)
     stash->nodes_by_data = g_hash_table_new (g_direct_hash, g_direct_equal);
     stash->ref_count = 1;
     stash->destroy = destroy;
+    
+    stash->cached_nodes = NULL;
+    stash->blocks = g_ptr_array_new ();
 
     return stash;
 }
@@ -60,6 +88,38 @@ StackStash *
 stack_stash_new (GDestroyNotify destroy)
 {
     return create_stack_stash (destroy);
+}
+
+
+static void
+free_key (gpointer key,
+	  gpointer value,
+	  gpointer data)
+{
+    GDestroyNotify destroy = data;
+
+    destroy (key);
+}
+
+static void
+stack_stash_free (StackStash *stash)
+{
+    int i;
+    
+    if (stash->destroy)
+    {
+	g_hash_table_foreach (stash->nodes_by_data, free_key,
+			      stash->destroy);
+    }
+    
+    g_hash_table_destroy (stash->nodes_by_data);
+
+    for (i = 0; i < stash->blocks->len; ++i)
+	g_free (stash->blocks->pdata[i]);
+    
+    g_ptr_array_free (stash->blocks, TRUE);
+    
+    g_free (stash);
 }
 
 static void
@@ -118,7 +178,7 @@ stack_stash_add_trace (StackStash *stash,
 
 	if (!match)
 	{
-	    match = stack_node_new ();
+	    match = stack_node_new (stash);
 	    match->address = (gpointer)addrs[i];
 	    match->siblings = *location;
 	    match->parent = parent;
@@ -184,44 +244,6 @@ stack_node_foreach_trace (StackNode     *node,
 	func (&link, node->size, data);
     
     do_callback (node->children, &link, func, data);
-}
-
-static void
-stack_node_free (StackNode *node)
-{
-    if (!node)
-	return;
-
-    stack_node_free (node->siblings);
-    stack_node_free (node->children);
-
-    g_free (node);
-}
-
-static void
-free_key (gpointer key,
-	  gpointer value,
-	  gpointer data)
-{
-    GDestroyNotify destroy = data;
-
-    destroy (key);
-}
-
-static void
-stack_stash_free (StackStash *stash)
-{
-    stack_node_free (stash->root);
-
-    if (stash->destroy)
-    {
-	g_hash_table_foreach (stash->nodes_by_data, free_key,
-			      stash->destroy);
-    }
-    
-    g_hash_table_destroy (stash->nodes_by_data);
-    
-    g_free (stash);
 }
 
 void

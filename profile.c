@@ -205,7 +205,7 @@ profile_load (const char *filename, GError **err)
     n = sfile_begin_get_list (input, "nodes");
     for (i = 0; i < n; ++i)
     {
-	StackNode *node = stack_node_new ();
+	StackNode *node = stack_node_new (profile->stash);
 	gboolean toplevel;
 	gint32 size;
 	gint32 total;

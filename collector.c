@@ -398,7 +398,7 @@ collector_create_profile (Collector *collector)
     profile = profile_new (info.resolved_stash);
     
     stack_stash_unref (info.resolved_stash);
-    
+
     return profile;
 }
 

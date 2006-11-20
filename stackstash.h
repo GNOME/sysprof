@@ -49,7 +49,7 @@ typedef void (* StackNodeFunc) (StackNode *node,
 
 /* Stach */
 StackStash *stack_stash_new                (GDestroyNotify  destroy);
-StackNode * stack_node_new                 (void);
+StackNode * stack_node_new                 (StackStash     *stash);
 void        stack_stash_add_trace          (StackStash     *stash,
 					    gulong         *addrs,
 					    gint            n_addrs,

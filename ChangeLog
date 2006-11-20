@@ -1,3 +1,11 @@
+2006-11-20  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* sysprof.c (ensure_profile): reset the collector after generating
+	the profile.
+
+	* stackstash.c (struct StackStash): Add cached_nodes and blocks. 
+	(stack_node_new): Allocate stack nodes in blocks.
+
 2006-11-19  Soren Sandmann <sandmann@redhat.com>
 
 	* profile.c (profile_load): Use stack allocated variables to avoid

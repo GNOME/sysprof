@@ -1,3 +1,12 @@
+2006-11-19  Soren Sandmann <sandmann@redhat.com>
+
+	* profile.c (profile_load): Use stack_node_new() o
+	(profile_load): Use set_root() instead of new_from_root();
+	
+	* stackstash.c (stack_stash_new_from_root): Delete this function
+	(stack_stash_set_root): Add this function
+	(stack_node_new): Export this function
+
 2006-11-19   Soren Sandmann <sandmann@redhat.com>
 
 	* binparser.h: Declare bin_parser_free();

@@ -27,7 +27,7 @@ struct StackStash
     GDestroyNotify	destroy;
 };
 
-static StackNode *
+StackNode *
 stack_node_new (void)
 {
     StackNode *node = g_new (StackNode, 1);
@@ -296,15 +296,13 @@ build_hash_table (StackNode *node,
 	stash->nodes_by_data, node->address, node);
 }
 
-StackStash *
-stack_stash_new_from_root (StackNode      *root,
-			   GDestroyNotify  destroy)
+void
+stack_stash_set_root (StackStash     *stash,
+		      StackNode      *root)
 {
-    StackStash *stash = create_stack_stash (destroy);
-
-    stash->root = root;
+    g_return_if_fail (stash->root == NULL);
+    g_return_if_fail (g_hash_table_size (stash->nodes_by_data) == 0);
     
+    stash->root = root;
     build_hash_table (stash->root, stash);
-
-    return stash;
 }

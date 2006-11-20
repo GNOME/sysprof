@@ -199,11 +199,13 @@ profile_load (const char *filename, GError **err)
 	sfile_end_get (input, "object", string);
     }
     sfile_end_get (input, "objects", NULL);
+
+    profile->stash = stack_stash_new ((GDestroyNotify)g_free);
     
     n = sfile_begin_get_list (input, "nodes");
     for (i = 0; i < n; ++i)
     {
-	StackNode *node = g_new (StackNode, 1);
+	StackNode *node = stack_node_new ();
 	
 	sfile_begin_get_record (input, "node");
 	
@@ -225,7 +227,7 @@ profile_load (const char *filename, GError **err)
     sformat_free (format);
     sfile_input_free (input);
 
-    profile->stash = stack_stash_new_from_root (root, (GDestroyNotify)g_free);
+    stack_stash_set_root (profile->stash, root);
     
     return profile;
 }

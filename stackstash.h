@@ -49,8 +49,7 @@ typedef void (* StackNodeFunc) (StackNode *node,
 
 /* Stach */
 StackStash *stack_stash_new                (GDestroyNotify  destroy);
-StackStash *stack_stash_new_from_root      (StackNode      *root,
-					    GDestroyNotify  destroy);
+StackNode * stack_node_new                 (void);
 void        stack_stash_add_trace          (StackStash     *stash,
 					    gulong         *addrs,
 					    gint            n_addrs,
@@ -69,6 +68,7 @@ void        stack_stash_foreach_by_address (StackStash     *stash,
 StackNode  *stack_stash_get_root           (StackStash     *stash);
 StackStash *stack_stash_ref                (StackStash     *stash);
 void        stack_stash_unref              (StackStash     *stash);
-
+void	    stack_stash_set_root	   (StackStash     *stash,
+					    StackNode      *root);
 
 #endif

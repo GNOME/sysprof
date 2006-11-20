@@ -28,16 +28,16 @@ typedef struct StackNode StackNode;
 struct StackNode
 {
     gpointer	address;
-    int		total;
-    int		size;
+
+    guint	total : 32;
+    guint	size : 31;
+    guint	toplevel : 1;
     
     StackNode *	parent;
     StackNode *	siblings;
     StackNode *	children;
 
     StackNode * next;
-
-    gboolean	toplevel;
 };
 
 typedef void (* StackFunction) (GList   *trace,

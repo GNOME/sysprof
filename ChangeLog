@@ -1,5 +1,12 @@
 2006-11-19  Soren Sandmann <sandmann@redhat.com>
 
+	* profile.c (profile_load): Use stack allocated variables to avoid
+	taking addresses of bitfields.
+
+	* stackstash.h (struct StackNode): Store toplevel as bitfield
+
+2006-11-19  Soren Sandmann <sandmann@redhat.com>
+
 	* profile.c (profile_load): Use stack_node_new() o
 	(profile_load): Use set_root() instead of new_from_root();
 	

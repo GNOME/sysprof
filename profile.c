@@ -256,20 +256,30 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
     GList *list;
     ProfileDescendant *parent = NULL;
     int i, len;
-    ProfileDescendant **tree = data;
-
+    ProfileDescendant **tree = data;    
+    
     if (!nodes_to_unmark)
 	nodes_to_unmark = g_ptr_array_new ();
-    
+
     for (list = g_list_last (trace); list != NULL; list = list->prev)
     {
 	gpointer address = list->data;
 	ProfileDescendant *match = NULL;
+	ProfileDescendant *prev = NULL;
 
-	for (match = *tree; match != NULL; match = match->siblings)
+	for (match = *tree; match != NULL; prev = match, match = match->siblings)
 	{
 	    if (match->name == address)
+	    {
+		if (prev)
+		{
+		    /* Move to front */
+		    prev->siblings = match->siblings;
+		    match->siblings = *tree;
+		    *tree = match;
+		}
 		break;
+	    }
 	}
 	
 	if (!match)
@@ -282,7 +292,10 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
 	    for (n = parent; n != NULL; n = n->parent)
 	    {
 		if (n->name == address)
+		{
 		    seen_tree_node = n;
+		    break;
+		}
 	    }
 	    
 	    if (seen_tree_node)

@@ -204,21 +204,26 @@ do_callback (StackNode *node,
 {
     GList link;
 
-    if (!node)
-	return;
-
     if (trace)
 	trace->prev = &link;
-
+	
     link.next = trace;
-    link.data = node->address;
     link.prev = NULL;
-
-    if (node->size)
-	func (&link, node->size, data);
     
-    do_callback (node->children, &link, func, data);
-    do_callback (node->siblings, trace, func, data);
+    while (node)
+    {
+	link.data = node->address;
+	
+	if (node->size)
+	    func (&link, node->size, data);
+	
+	do_callback (node->children, &link, func, data);
+	
+	node = node->siblings;
+    }
+
+    if (trace)
+	trace->prev = NULL;
 }
 
 void

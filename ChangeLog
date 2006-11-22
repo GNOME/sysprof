@@ -1,3 +1,10 @@
+2006-11-22  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* profile.c (add_trace_to_tree): Move match to front
+	(add_trace_to_tree): Break as soon as a recursive call is found.
+
+	* stackstash.c (do_callback): Manual tail call optimization.
+
 2006-11-20  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* sysprof.c (ensure_profile): reset the collector after generating

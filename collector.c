@@ -156,9 +156,9 @@ on_read (gpointer data)
 #if 0
 	{
 	    int i;
-	    g_print ("pid: %d (%d)\n", trace.pid, trace.n_addresses);
-	    for (i=0; i < trace.n_addresses; ++i)
-		g_print ("rd: %08x\n", trace.addresses[i]);
+	    g_print ("pid: %d (%d)\n", trace->pid, trace->n_addresses);
+	    for (i=0; i < trace->n_addresses; ++i)
+		g_print ("rd: %08x\n", trace->addresses[i]);
 	    g_print ("-=-\n");
 	}
 #endif

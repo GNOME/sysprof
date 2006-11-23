@@ -1,5 +1,13 @@
 2006-11-22  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* sfile.c (sfile_load): Use GMappedFile instead
+	g_file_get_contents().
+	(build_instructions): Pass length instead of -1.
+	(sfile_output_save): Use g_file_set_contents() instead of
+	cut-and-pasted copy.
+
+2006-11-22  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* profile.c (add_trace_to_tree): Move match to front
 	(add_trace_to_tree): Break as soon as a recursive call is found.
 

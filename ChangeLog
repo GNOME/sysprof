@@ -1,3 +1,12 @@
+2006-11-23  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* process.c (read_maps): Set inode for vdso to 0.
+
+	* binfile.c (read_inode): Return -1 on error, 0 on vdso
+	(bin_file_new): Only read the inode if the file actually exists
+	and is an elf file.
+	(bin_file_check_inode): Return FALSE if there is no file.
+
 2006-11-22  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* sfile.c (sfile_load): Use GMappedFile instead

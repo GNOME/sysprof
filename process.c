@@ -106,10 +106,12 @@ read_maps (int pid, int *n_maps)
 	    {
 		/* For the vdso, the kernel reports 'offset' as the
 		 * the same as the mapping addres. This doesn't make
-		 * any sense to me, so we just zero it here.
+		 * any sense to me, so we just zero it here. There
+		 * is code in binfile.c (read_inode) that returns 0
+		 * for [vdso].
 		 */
 		map.offset = 0;
-		map.inode = -1;
+		map.inode = 0;
 	    }
 	    else
 	    {

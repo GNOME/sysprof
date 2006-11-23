@@ -54,16 +54,17 @@ struct BinFile
     ino_t	inode;
 };
 
-/* FIXME: error handling */
 static ino_t
 read_inode (const char *filename)
 {
     struct stat statbuf;
 
     if (strcmp (filename, "[vdso]") == 0)
+	return (ino_t)0;
+    
+    if (stat (filename, &statbuf) < 0)
 	return (ino_t)-1;
-
-    stat (filename, &statbuf);
+    
     return statbuf.st_ino;
 }
 
@@ -242,6 +243,13 @@ bin_file_new (const char *filename)
     {
 	bf = g_new0 (BinFile, 1);
 
+	bf->inode_check = FALSE;
+	bf->filename = g_strdup (filename);
+	bf->undefined_name = g_strdup_printf ("In file %s", filename);
+	bf->ref_count = 1;
+	
+	g_hash_table_insert (bin_files, bf->filename, bf);
+	
 	if (strcmp (filename, "[vdso]") == 0)
 	{
 	    gsize length;
@@ -295,15 +303,8 @@ bin_file_new (const char *filename)
 	    else
 		g_print ("   opened the original elf file\n");
 #endif
+	    bf->inode = read_inode (filename);
 	}
-
-	bf->inode_check = FALSE;
-	bf->inode = read_inode (filename);
-	bf->filename = g_strdup (filename);
-	bf->undefined_name = g_strdup_printf ("In file %s", filename);
-	bf->ref_count = 1;
-	
-	g_hash_table_insert (bin_files, bf->filename, bf);
     }
     
     return bf;
@@ -369,6 +370,9 @@ bin_file_check_inode   (BinFile         *bin_file,
     if (bin_file->inode == inode)
 	return TRUE;
 
+    if (!bin_file->elf)
+	return FALSE;
+    
     if (!bin_file->inode_check)
     {
 	g_print ("warning: %s has inode %lld. It should be %lld\n",

@@ -126,8 +126,12 @@ timer_notify (struct pt_regs *regs)
 #if 0
 	int stacksize;
 #endif
+	int n;
 
-	if (((++get_cpu_var(n_samples)) % INTERVAL) != 0)
+	n = ++get_cpu_var(n_samples);
+	put_cpu_var(n_samples);
+
+	if (n % INTERVAL != 0)
 		return 0;
 	
 	/* 0: locked, 1: unlocked */
@@ -216,6 +220,7 @@ timer_notify (struct pt_regs *regs)
 
 out:
 	atomic_inc(&in_timer_notify);
+	
 	return 0;
 }
 

@@ -10,7 +10,7 @@ PREFIX	:= /usr/local
 endif
 
 MODULE    := sysprof-module
-KDIR      := /lib/modules/$(shell uname -r)/build
+KDIR      := /lib/modules/$(shell uname -r)/build # /home/ssp/linux-2.6.19/
 INCLUDE   := -isystem $(KDIR)/include
 MODCFLAGS := -DMODULE -D__KERNEL__ -Wall ${INCLUDE}
 

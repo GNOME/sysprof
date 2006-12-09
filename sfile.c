@@ -628,11 +628,25 @@ build_instructions (const char *contents,
     build.instructions = g_array_new (TRUE, TRUE, sizeof (Instruction));
     
     parse_context = g_markup_parse_context_new (&parser, 0, &build, NULL);
+
+    while (length)
+    {
+        int bytes = MIN (length, 65536);
+
+        if (!g_markup_parse_context_parse (parse_context, contents, bytes, err))
+        {
+            free_instructions ((Instruction *)build.instructions->data, build.instructions->len);
+            return NULL;
+        }
+
+        contents += bytes;
+        length -= bytes;
+    }
     
-    if (!g_markup_parse_context_parse (parse_context, contents, length, err))
+    if (!g_markup_parse_context_end_parse (parse_context, err))
     {
         free_instructions ((Instruction *)build.instructions->data, build.instructions->len);
-	return NULL;
+        return NULL;
     }
     
     if (!scontext_is_finished (build.context))

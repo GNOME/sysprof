@@ -111,8 +111,8 @@ read_frame (void *frame_pointer, StackFrame *frame)
 
 	if (__copy_from_user_inatomic (
 		    frame, frame_pointer, sizeof (StackFrame)))
-		return 2;
-
+		return 1;
+	
 	return 0;
 }
 
@@ -125,8 +125,12 @@ timer_notify (struct pt_regs *regs)
 	int i;
 	int is_user;
 	static atomic_t in_timer_notify = ATOMIC_INIT(1);
+	int n;
 
-	if ((++get_cpu_var(n_samples) % INTERVAL) != 0)
+	n = ++get_cpu_var(n_samples);
+	put_cpu_var(n_samples);
+
+	if (n % INTERVAL != 0)
 		return 0;
 
 	/* 0: locked, 1: unlocked */

@@ -12,9 +12,9 @@ endif
 MODULE    := sysprof-module
 KDIR      := /lib/modules/$(shell uname -r)/build # /home/ssp/linux-2.6.19/
 INCLUDE   := -isystem $(KDIR)/include
-MODCFLAGS := -DMODULE -D__KERNEL__ -Wall ${INCLUDE}
+MODCFLAGS := -DMODULE -D__KERNEL__ -Wall $(INCLUDE)
 
-KMAKE	  := $(MAKE) -C $(KDIR) SUBDIRS=$(PWD)
+KMAKE	  := $(MAKE) -C $(KDIR) SUBDIRS=$$PWD
 
 modules: $(MODULE).o
 

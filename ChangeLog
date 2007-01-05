@@ -1,3 +1,8 @@
+2007-01-05  Behdad Esfahbod  <behdad@gnome.org>
+
+	* module/Makefile: Correct $PWD usage, so make install works from
+	inside module/.
+
 2006-12-09  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* module/sysprof-module.c: Add forgotten put_cpu_var(). 

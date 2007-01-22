@@ -63,7 +63,7 @@ dist_udev_DATA = 60-sysprof.rules
 pixmapsdir = $(datadir)/pixmaps
 
 dist_pkgdata_DATA = sysprof.glade
-dist_pixmaps_DATA = sysprof-icon-16.png sysprof-icon-24.png sysprof-icon-48.png
+dist_pixmaps_DATA = sysprof-icon-16.png sysprof-icon-24.png sysprof-icon-32.png sysprof-icon-48.png
 
 #
 # Command line version

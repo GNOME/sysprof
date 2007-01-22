@@ -1343,6 +1343,7 @@ set_icons (Application *app)
     const char *icon_files [] = {
 	PIXMAPDIR "/sysprof-icon-16.png",
 	PIXMAPDIR "/sysprof-icon-24.png",
+	PIXMAPDIR "/sysprof-icon-32.png",
 	PIXMAPDIR "/sysprof-icon-48.png",
 	NULL
     };
@@ -1351,14 +1352,19 @@ set_icons (Application *app)
 
     for (i = 0; icon_files[i] != NULL; ++i)
     {
-	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (icon_files[i], NULL);
+	const char *file = icon_files[i];
+	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (file, NULL);
 
 	if (pixbuf)
 	{
 	    pixbufs = g_list_prepend (pixbufs, pixbuf);
 
-	    if (i == 2) /* 48 x 48 */
+	    if (i == 3) /* 48 x 48 */
 		app->icon = g_object_ref (pixbuf);
+	}
+	else
+	{
+	    g_warning ("Could not open %s\n", file);
 	}
     }
 

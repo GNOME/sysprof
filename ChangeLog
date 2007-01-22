@@ -1,3 +1,8 @@
+Mon Jan 22 16:37:12 2007  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof-icon-16/24/48.png:
+	* sysprof.c: Add new icons from Diana.
+
 2007-01-05  Behdad Esfahbod  <behdad@gnome.org>
 
 	* module/Makefile: Correct $PWD usage, so make install works from

@@ -50,9 +50,9 @@ struct Application
     Collector *		collector;
     
     State		state;
+    GdkPixbuf *		icon;
     
     GtkWidget *		main_window;
-    GdkPixbuf *		icon;
     
     GtkTreeView *	object_view;
     GtkTreeView *	callers_view;
@@ -1336,7 +1336,37 @@ set_shadows (void)
 }
 
 #define GLADE_FILE DATADIR "/sysprof.glade"
-#define ICON_FILE  PIXMAPDIR "/sysprof-icon.png"
+
+static void
+set_icons (Application *app)
+{
+    const char *icon_files [] = {
+	PIXMAPDIR "/sysprof-icon-16.png",
+	PIXMAPDIR "/sysprof-icon-24.png",
+	PIXMAPDIR "/sysprof-icon-48.png",
+	NULL
+    };
+    GList *pixbufs = NULL;
+    int i;
+
+    for (i = 0; icon_files[i] != NULL; ++i)
+    {
+	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file (icon_files[i], NULL);
+
+	if (pixbuf)
+	{
+	    pixbufs = g_list_prepend (pixbufs, pixbuf);
+
+	    if (i == 2) /* 48 x 48 */
+		app->icon = g_object_ref (pixbuf);
+	}
+    }
+
+    gtk_window_set_icon_list (GTK_WINDOW (app->main_window), pixbufs);
+
+    g_list_foreach (pixbufs, (GFunc)g_object_unref, NULL);
+    g_list_free (pixbufs);
+}
 
 static gboolean
 build_gui (Application *app)
@@ -1347,8 +1377,7 @@ build_gui (Application *app)
     
     set_shadows ();
     
-    if (!g_file_test (GLADE_FILE, G_FILE_TEST_EXISTS)   ||
-	!g_file_test (ICON_FILE,  G_FILE_TEST_EXISTS))
+    if (!g_file_test (GLADE_FILE, G_FILE_TEST_EXISTS))
     {
 	sorry (NULL,
 	       "Sysprof was not compiled or installed correctly.\n"
@@ -1363,9 +1392,7 @@ build_gui (Application *app)
     
     /* Main Window */
     app->main_window = glade_xml_get_widget (xml, "main_window");
-    app->icon = gdk_pixbuf_new_from_file (ICON_FILE, NULL);
-    
-    gtk_window_set_icon (GTK_WINDOW (app->main_window), app->icon);
+    set_icons (app);
     
     g_signal_connect (G_OBJECT (app->main_window), "delete_event",
 		      G_CALLBACK (on_delete), NULL);

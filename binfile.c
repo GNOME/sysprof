@@ -269,7 +269,6 @@ bin_file_new (const char *filename)
 	else
 	{
 	    bf->elf = elf_parser_new (filename, NULL);
-
 #if 0
 	    if (!bf->elf)
 		g_print ("Could not parse file %s\n", filename);
@@ -313,7 +312,7 @@ bin_file_new (const char *filename)
 void
 bin_file_free (BinFile *bin_file)
 {
-    if (bin_file->ref_count-- == 0)
+    if (--bin_file->ref_count == 0)
     {
 	g_hash_table_remove (bin_files, bin_file->filename);
 	
@@ -364,8 +363,8 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 }
 
 gboolean
-bin_file_check_inode   (BinFile         *bin_file,
-			ino_t		  inode)
+bin_file_check_inode (BinFile *bin_file,
+		      ino_t    inode)
 {
     if (bin_file->inode == inode)
 	return TRUE;
@@ -375,7 +374,7 @@ bin_file_check_inode   (BinFile         *bin_file,
     
     if (!bin_file->inode_check)
     {
-	g_print ("warning: %s has inode %lld. It should be %lld\n",
+	g_print ("warning: Inode mismatch for %s (disk: %lld, memory: %lld)\n",
 		 bin_file->filename,
 		 (guint64)bin_file->inode, (guint64)inode);
 	

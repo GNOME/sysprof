@@ -61,7 +61,7 @@ dump_data (Application *app)
     }
 }
 
-void
+static void
 signal_handler (int      signo,
 		gpointer data)
 {

@@ -11,7 +11,6 @@ struct ElfSym
 {
     gulong offset;
     gulong address;
-    gulong size;
 };
 
 struct Section
@@ -381,8 +380,6 @@ read_table (ElfParser *parser,
 	{
 	    parser->symbols[n_functions].address = addr;
 	    parser->symbols[n_functions].offset = offset;
-	    parser->symbols[n_functions].size =
-		bin_record_get_uint (symbol, "st_size");
 	    
 	    n_functions++;
 	}
@@ -485,9 +482,19 @@ elf_parser_lookup_symbol (ElfParser *parser,
     }
 #endif
 
-    if (result && result->address + result->size <= address)
-	result = NULL;
+    if (result)
+    {
+	gulong size;
+	BinRecord *record;
+	
+	record = bin_parser_get_record (parser->parser, parser->sym_format, result->offset);
+	size = bin_record_get_uint (record, "st_size");
+	bin_record_free (record);
 
+	if (result->address + size <= address)
+	    result = NULL;
+    }
+    
     return result;
 }
 

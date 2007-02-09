@@ -309,6 +309,10 @@ typedef struct
     GHashTable *unique_cmdlines;
 } ResolveInfo;
 
+/* Note that 'unique_symbols' is a direct_hash table. Ie., we
+ * rely on the address of symbol strings being different for different
+ * symbols.
+ */
 static char *
 unique_dup (GHashTable *unique_symbols, const char *sym)
 {

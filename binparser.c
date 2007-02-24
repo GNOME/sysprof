@@ -16,57 +16,50 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 #include <string.h>
-#include <stdlib.h>
-#include <glib.h>
-#include <stdarg.h>
-#include "binparser.h"
 
-typedef struct ParserFrame ParserFrame;
+#include "binparser2.h"
 
-struct BinRecord
-{
-    BinFormat *		format;
-    int			index;
-    gsize		offset;
-    BinParser *		parser;
-};
-
-struct BinField
-{
-    guint64	offset;
-    int		width;
-    int		align;
-    char *	name;
-};
-
-struct BinFormat
-{
-    gboolean    big_endian;
-    
-    int		n_fields;
-    BinField *	fields;
-};
+typedef struct Field Field;
 
 struct BinParser
 {
-    gsize		offset;
     const guchar *	data;
     gsize		length;
 
-    gboolean		cache_in_use;
-    BinRecord		cache;
+    gsize		offset;
+    const char *	error_msg;
+    GList *		records;
+    BinEndian		endian;
+
+    gsize		saved_offset;
+};
+
+struct Field
+{
+    char	name[BIN_MAX_NAME];
+    guint	offset;			/* from beginning of struct */
+    guint	width;
+    BinType	type;
+};
+
+struct BinRecord
+{
+    int			n_fields;
+    Field		fields[1];
 };
 
 BinParser *
-bin_parser_new (const guchar	*data,
-		gsize		 length)
+bin_parser_new (const guchar *data,
+		gsize	      length)
 {
     BinParser *parser = g_new0 (BinParser, 1);
     
-    parser->offset = 0;
     parser->data = data;
     parser->length = length;
-    parser->cache_in_use = FALSE;
+    parser->offset = 0;
+    parser->error_msg = NULL;
+    parser->records = NULL;
+    parser->endian = BIN_NATIVE_ENDIAN;
     
     return parser;
 }
@@ -74,31 +67,28 @@ bin_parser_new (const guchar	*data,
 void
 bin_parser_free (BinParser *parser)
 {
+    GList *list;
+
+    for (list = parser->records; list != NULL; list = list->next)
+    {
+	BinRecord *record = list->data;
+	
+	g_free (record);
+    }
+    
     g_free (parser);
 }
 
-static GQueue *
-read_varargs (va_list		args,
-	      const char *	name,
-	      BinField *	field)
+const guchar *
+bin_parser_get_data (BinParser *parser)
 {
-    GQueue *queue = g_queue_new ();
-    gpointer p;
-    
-    if (name)
-    {
-	g_queue_push_tail (queue, (gpointer)name);
-	g_queue_push_tail (queue, field);
-	
-	p = va_arg (args, gpointer);
-	while (p)
-	{
-	    g_queue_push_tail (queue, p);
-	    p = va_arg (args, gpointer);
-	}
-    }
-    
-    return queue;
+    return parser->data;
+}
+
+gsize
+bin_parser_get_length (BinParser *parser)
+{
+    return parser->length;
 }
 
 static guint64
@@ -117,84 +107,168 @@ align (guint64 offset, int alignment)
     return offset;
 }
 
-gsize
-bin_format_get_size (BinFormat *format)
+static int
+get_field_width (const BinField *field)
 {
-    BinField *last_field = &(format->fields[format->n_fields - 1]);
-    BinField *first_field = &(format->fields[0]);
+    switch (field->type)
+    {
+    case BIN_UINT8:
+	return 1;
+    case BIN_UINT16:
+	return 2;
+    case BIN_UINT32:
+	return 4;
+    case BIN_UINT64:
+	return 8;
+    case BIN_UNINTERPRETED:
+	return field->n_bytes;
+    }
 
+    g_assert_not_reached ();
+    return -1;
+}
+
+static int
+get_align (const BinField *field)
+{
+    if (field->type == BIN_UNINTERPRETED)
+	return 1;
+    else
+	return get_field_width (field);
+}
+
+BinRecord *
+bin_parser_create_record (BinParser      *parser,
+			  const BinField *fields)
+{
+    BinRecord *record;
+    int i, n_fields;
+    guint offset;
+	
+    n_fields = 0;
+    while (fields[n_fields].name[0] != '\0')
+    {
+	n_fields++;
+#if 0
+	g_print ("type: %d\n", fields[n_fields].type);
+#endif
+    }
+
+    record = g_malloc0 (sizeof (BinRecord) +
+			(n_fields - 1) * sizeof (Field));
+
+    offset = 0;
+    record->n_fields = n_fields;
+    for (i = 0; i < n_fields; ++i)
+    {
+	const BinField *bin_field = &(fields[i]);
+	Field *field = &(record->fields[i]);
+	
+	offset = align (offset, get_align (bin_field));
+	
+	strncpy (field->name, bin_field->name, BIN_MAX_NAME - 1);
+	field->offset = offset;
+	field->type = bin_field->type;
+	field->width = get_field_width (bin_field);
+
+#if 0
+	g_print ("created field %s with type %d\n", field->name, field->type);
+#endif
+	
+	offset += record->fields[i].width;
+    }
+
+    parser->records = g_list_prepend (parser->records, record);
+    
+    return record;
+}
+
+gboolean
+bin_parser_error (BinParser *parser)
+{
+    return parser->error_msg != NULL;
+}
+
+void
+bin_parser_clear_error (BinParser *parser)
+{
+    parser->error_msg = NULL;
+}
+
+const gchar *
+bin_parser_get_error_msg (BinParser *parser)
+{
+    return parser->error_msg;
+}
+
+void
+bin_parser_set_endian (BinParser *parser,
+		       BinEndian  endian)
+{
+    parser->endian = endian;
+}
+
+/* Move current offset */
+gsize
+bin_parser_get_offset  (BinParser  *parser)
+{
+    return parser->offset;
+}
+
+void
+bin_parser_set_offset  (BinParser  *parser,
+			gsize       offset)
+{
+    parser->offset = offset;
+}
+
+void
+bin_parser_align       (BinParser  *parser,
+			gsize       byte_width)
+{
+    parser->offset = align (parser->offset, byte_width);
+}
+
+gsize
+bin_record_get_size (BinRecord *record)
+{
+    Field *last_field = &(record->fields[record->n_fields - 1]);
+    Field *first_field = &(record->fields[0]);
+
+    /* align to first field, since that's the alignment of the record
+     * following this one
+     */
+    
     return align (last_field->offset + last_field->width, first_field->width);
 }
 
-BinFormat *
-bin_format_new (gboolean big_endian,
-		const char *name, BinField *field,
-		...)
+void
+bin_parser_seek_record (BinParser  *parser,
+			BinRecord  *record,
+			int	  n_records)
 {
-    GQueue *queue = g_queue_new ();
-    BinFormat *format = g_new0 (BinFormat, 1);
-    GList *list;
-    int i;
-    guint64 offset;
-    va_list args;
-    
-    format->big_endian = big_endian;
-    
-    /* Build queue of child types */
-    va_start (args, field);
-    queue = read_varargs (args, name, field);
-    va_end (args);
-    
-    g_assert (queue->length % 2 == 0);
-    
-    format->n_fields = queue->length / 2;
-    format->fields = g_new (BinField, format->n_fields);
-    
-    i = 0;
-    offset = 0;
-    for (list = queue->head; list != NULL; list = list->next->next)
-    {
-	const char *name = list->data;
-	BinField *field = list->next->data;
-	
-	offset = align (offset, field->align);
-	
-	format->fields[i].name = g_strdup (name);
-	format->fields[i].width = field->width;
-	format->fields[i].offset = offset;
-	
-	offset += field->width;
-	++i;
-	
-	g_free (field);
-    }
-    
-    g_queue_free (queue);
-    
-    return format;
+    gsize record_size = bin_record_get_size (record);
+
+    parser->offset += record_size * n_records;
 }
 
-static const BinField *
-get_field (BinFormat *format,
-	   const gchar *name)
+void
+bin_parser_save (BinParser *parser)
 {
-    int i;
-    
-    for (i = 0; i < format->n_fields; ++i)
-    {
-	BinField *field = &(format->fields[i]);
-	
-	if (strcmp (field->name, name) == 0)
-	    return field;
-    }
-    
-    return NULL;
+    parser->saved_offset = parser->offset;
 }
 
+void
+bin_parser_restore (BinParser *parser)
+{
+    parser->offset = parser->saved_offset;
+}
+
+/* retrieve data */
 static guint64
 convert_uint (const guchar *data,
-	      gboolean	    big_endian,
-	      int	    width)
+	      BinEndian	    endian,
+	      BinType	    type)
 {
     guint8 r8;
     guint16 r16;
@@ -205,39 +279,41 @@ convert_uint (const guchar *data,
     if (width == 4)
 	g_print ("converting at %p  %d %d %d %d\n", data, data[0], data[1], data[2], data[3]);
 #endif
+
+    /* FIXME: check that we are within the file */
     
-    switch (width)
+    switch (type)
     {
-    case 1:
+    case BIN_UINT8:
 	r8 = *(guint8 *)data;
 	return r8;
 	
-    case 2:
+    case BIN_UINT16:
 	r16 = *(guint16 *)data;
 	
-	if (big_endian)
+	if (endian == BIN_BIG_ENDIAN)
 	    r16 = GUINT16_FROM_BE (r16);
-	else
+	else if (endian == BIN_LITTLE_ENDIAN)
 	    r16 = GUINT16_FROM_LE (r16);
 	
 	return r16;
 	
-    case 4:
+    case BIN_UINT32:
 	r32 = *(guint32 *)data;
 	
-	if (big_endian)
+	if (endian == BIN_BIG_ENDIAN)
 	    r32 = GUINT32_FROM_BE (r32);
-	else
+	else if (endian == BIN_LITTLE_ENDIAN)
 	    r32 = GUINT32_FROM_LE (r32);
 	
 	return r32;
 	
-    case 8:
+    case BIN_UINT64:
 	r64 = *(guint64 *)data;
 	
-	if (big_endian)
+	if (endian == BIN_BIG_ENDIAN)
 	    r64 = GUINT64_FROM_BE (r64);
-	else
+	else if (endian == BIN_LITTLE_ENDIAN)
 	    r64 = GUINT64_FROM_LE (r64);
 	
 	return r64;
@@ -248,61 +324,36 @@ convert_uint (const guchar *data,
     }
 }
 
-guint32
-bin_parser_get_uint32 (BinParser *parser)
+static int
+get_uint_width (BinType type)
 {
-    guint32 result;
-    
-    /* FIXME: This is broken for two reasons:
-     *
-     * (1) It assumes file_endian==machine_endian
-     *
-     * (2) It doesn't check for file overrun.
-     *
-     */
-    result = *(guint32 *)(parser->data + parser->offset);
-
-    parser->offset += 4;
-    
-    return result;
+    switch (type)
+    {
+    case BIN_UINT8:
+	return 1;
+    case BIN_UINT16:
+	return 2;
+    case BIN_UINT32:
+	return 4;
+    case BIN_UINT64:
+	return 8;
+    default:
+	return -1;
+    }
 }
 
-static BinField *
-new_field_uint (int width)
+guint64
+bin_parser_get_uint (BinParser *parser,
+		     BinType    type)
 {
-    BinField *field = g_new0 (BinField, 1);
-    
-    field->width = width;
-    field->align = width;
-    
-    return field;
+    guint64 r = convert_uint (parser->data + parser->offset, parser->endian, type);
+
+    parser->offset += get_uint_width (type);
+
+    return r;
 }
 
-BinField *
-bin_field_new_uint8 (void)
-{
-    return new_field_uint (1);
-}
-
-BinField *
-bin_field_new_uint16 (void)
-{
-    return new_field_uint (2);
-}
-
-BinField *
-bin_field_new_uint32 (void)
-{
-    return new_field_uint (4);
-}
-
-BinField *
-bin_field_new_uint64 (void)
-{
-    return new_field_uint (8);
-}
-
-const gchar *
+const char *
 bin_parser_get_string (BinParser *parser)
 {
     const char *result;
@@ -314,116 +365,46 @@ bin_parser_get_string (BinParser *parser)
     parser->offset += strlen (result) + 1;
 
     return result;
-}
-
-void
-bin_parser_align (BinParser *parser,
-		  gsize	     byte_width)
-{
-    parser->offset = align (parser->offset, byte_width);
-}
-
-void
-bin_parser_goto (BinParser *parser,
-		 gsize	    offset)
-{
-    parser->offset = offset;
-}
-
-BinParser *
-bin_record_get_parser (BinRecord *record)
-{
-    return record->parser;
-}
-
-const gchar *
-bin_record_get_string_indirect (BinRecord *record,
-				const char *name,
-				gsize str_table)
-{
-    BinParser *parser = record->parser;
-    const char *result = NULL;    
-    gsize index;
-    gsize saved_offset;
-
-    saved_offset = bin_parser_get_offset (record->parser);
     
-    index = bin_record_get_uint (record, name);
+}
 
-    bin_parser_goto (record->parser, str_table + index);
+static const Field *
+get_field (BinRecord *format,
+	   const gchar *name)
+{
+    int i;
     
-    result = bin_parser_get_string (parser);
-
-    bin_parser_goto (record->parser, saved_offset);
-
-    return result;
-}
-
-gsize
-bin_parser_get_offset (BinParser *parser)
-{
-    g_return_val_if_fail (parser != NULL, 0);
-
-    return parser->offset;
-}
-
-const guchar *
-bin_parser_get_data (BinParser *parser)
-{
-    return parser->data;
-}
-
-gsize
-bin_parser_get_length (BinParser *parser)
-{
-    return parser->length;
-}
-
-
-/* Record */
-BinRecord *
-bin_parser_get_record (BinParser *parser,
-		       BinFormat *format,
-		       gsize      offset)
-{
-    BinRecord *record;
-    
-    if (!parser->cache_in_use)
+    for (i = 0; i < format->n_fields; ++i)
     {
-	parser->cache_in_use = TRUE;
-	record = &(parser->cache);
+	Field *field = &(format->fields[i]);
+
+	if (strcmp (field->name, name) == 0)
+	{
+#if 0
+	    g_print ("found field: %s  (offset: %d, type %d)\n", field->name, field->offset, field->type);
+#endif
+	    
+	
+	    return field;
+	}
     }
-    else
-    {
-	record = g_new0 (BinRecord, 1);
-    }
-
-    record->parser = parser;
-    record->index = 0;
-    record->offset = offset;
-    record->format = format;
-
-    return record;
-}
-
-void
-bin_record_free (BinRecord *record)
-{
-    if (record == &(record->parser->cache))
-	record->parser->cache_in_use = FALSE;
-    else
-	g_free (record);
+    
+    return NULL;
 }
 
 guint64
-bin_record_get_uint (BinRecord *record,
-		     const char *name)
+bin_parser_get_uint_field (BinParser *parser,
+			   BinRecord *record,
+			   const char *name)
 {
-    const guint8 *pos;
-    const BinField *field;
+    const Field *field = get_field (record, name);
+    const guchar *pos;
 
-    field = get_field (record->format, name);
-    pos = record->parser->data + record->offset + field->offset;
+#if 0
+    g_print ("moving to %d (%d + %d)\n", parser->offset + field->offset, parser->offset, field->offset);
+#endif
+    
+    pos = parser->data + parser->offset + field->offset;
 
 #if 0
     g_print ("   record offset: %d\n", record->offset);
@@ -431,7 +412,7 @@ bin_record_get_uint (BinRecord *record,
     g_print ("   field offset %d\n", field->offset);
 #endif
     
-    if (record->offset + field->offset + field->width > record->parser->length)
+    if (pos > parser->data + parser->length)
     {
 	/* FIXME: generate error */
 	return 0;
@@ -441,34 +422,5 @@ bin_record_get_uint (BinRecord *record,
     g_print ("    uint %d at %p    =>   %d\n", field->width, pos, convert_uint (pos, record->format->big_endian, field->width));
 #endif
     
-    return convert_uint (pos, record->format->big_endian, field->width);
-}
-
-void
-bin_record_index (BinRecord *record,
-		  int	  index)
-{
-    gsize format_size = bin_format_get_size (record->format);
-    
-    record->offset -= record->index * format_size;
-    record->offset += index * format_size;
-    record->index = index;
-}
-
-gsize
-bin_record_get_offset (BinRecord *record)
-{
-    return record->offset;
-}
-
-/* Fields */
-
-BinField *
-bin_field_new_fixed_array (int n_elements,
-			   int element_size)
-{
-    BinField *field = g_new0 (BinField, 1);
-    field->width = n_elements * element_size;
-    field->align = element_size;
-    return field;
+    return convert_uint (pos, parser->endian, field->type);
 }

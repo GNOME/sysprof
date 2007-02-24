@@ -44,51 +44,71 @@ struct ElfParser
 {
     BinParser *		parser;
     
-    BinFormat *		header;
-    BinFormat *		strtab_format;
-    BinFormat *		shn_entry;
-    BinFormat *		sym_format;
+    BinRecord *		header;
+    BinRecord *		strtab_format;
+    BinRecord *		shn_entry;
+    BinRecord *		sym_format;
     
     int			n_sections;
     Section **		sections;
-
+    
     int			n_symbols;
     ElfSym *		symbols;
     gsize		sym_strings;
-
+    
     GMappedFile *	file;
-
+    
     const Section *	text_section;
 };
 
 static gboolean parse_elf_signature (const guchar *data, gsize length,
 				     gboolean *is_64, gboolean *is_be);
-static void     make_formats        (ElfParser *parser,
-				     gboolean is_64,
-				     gboolean is_big_endian);
+static void     make_formats        (ElfParser *parser, gboolean is_64);
+
+static const char *
+get_string_indirect (BinParser *parser,
+		     BinRecord *record,
+		     const char *name,
+		     gsize str_table)
+{
+    const char *result = NULL;    
+    gsize index;
+    
+    bin_parser_save (parser);
+    
+    index = bin_parser_get_uint_field (parser, record, name);
+    
+    bin_parser_set_offset (parser, str_table + index);
+    
+    result = bin_parser_get_string (parser);
+    
+    bin_parser_restore (parser);
+    
+    return result;
+}
 
 static Section *
-section_new (BinRecord *record,
+section_new (BinParser *parser,
+	     BinRecord *record,
 	     gsize      name_table)
 {
     Section *section = g_new (Section, 1);
     guint64 flags;
     
-    section->name = bin_record_get_string_indirect (
-	record, "sh_name", name_table);
-    section->size = bin_record_get_uint (record, "sh_size");
-    section->offset = bin_record_get_uint (record, "sh_offset");
-
-    flags = bin_record_get_uint (record, "sh_flags");
+    section->name = get_string_indirect (parser, record, "sh_name", name_table);
+    section->size = bin_parser_get_uint_field (parser, record, "sh_size");
+    section->offset = bin_parser_get_uint_field (parser, record, "sh_offset");
+    
+    flags = bin_parser_get_uint_field (parser, record, "sh_flags");
     section->allocated = !!(flags & SHF_ALLOC);
-
+    
     if (section->allocated)
-	section->load_address = bin_record_get_uint (record, "sh_addr");
+	section->load_address = bin_parser_get_uint_field (parser, record, "sh_addr");
     else
 	section->load_address = 0;
-
-    section->type = bin_record_get_uint (record, "sh_type");
-
+    
+    section->type = bin_parser_get_uint_field (parser, record, "sh_type");
+    
     return section;
 }
 
@@ -104,7 +124,7 @@ find_section (ElfParser *parser,
 	      guint	  type)
 {
     int i;
-
+    
     for (i = 0; i < parser->n_sections; ++i)
     {
 	Section *section = parser->sections[i];
@@ -112,7 +132,7 @@ find_section (ElfParser *parser,
 	if (strcmp (section->name, name) == 0 && section->type == type)
 	    return section;
     }
-
+    
     return NULL;
 }
 
@@ -126,7 +146,6 @@ elf_parser_new_from_data (const guchar *data,
     gsize section_names;
     gsize section_headers;
     int i;
-    BinRecord *elf_header, *shn_entry;
     
     if (!parse_elf_signature (data, length, &is_64, &is_big_endian))
     {
@@ -138,41 +157,47 @@ elf_parser_new_from_data (const guchar *data,
     
     parser->parser = bin_parser_new (data, length);
     
-    make_formats (parser, is_64, is_big_endian);
+    if (is_big_endian)
+	bin_parser_set_endian (parser->parser, BIN_BIG_ENDIAN);
+    else
+	bin_parser_set_endian (parser->parser, BIN_LITTLE_ENDIAN);
+    
+    make_formats (parser, is_64);
+    
     
     /* Read ELF header */
     
-    elf_header = bin_parser_get_record (parser->parser, parser->header, 0);
+    bin_parser_set_offset (parser->parser, 0);
     
-    parser->n_sections = bin_record_get_uint (elf_header, "e_shnum");
-    section_names_idx = bin_record_get_uint (elf_header, "e_shstrndx");
-    section_headers = bin_record_get_uint (elf_header, "e_shoff");
-    
-    bin_record_free (elf_header);
+    parser->n_sections = bin_parser_get_uint_field (parser->parser, parser->header, "e_shnum");
+    section_names_idx = bin_parser_get_uint_field (parser->parser, parser->header, "e_shstrndx");
+    section_headers = bin_parser_get_uint_field (parser->parser, parser->header, "e_shoff");
     
     /* Read section headers */
     parser->sections = g_new0 (Section *, parser->n_sections);
     
-    shn_entry = bin_parser_get_record (parser->parser,
-				       parser->shn_entry, section_headers);
-
-    bin_record_index (shn_entry, section_names_idx);
-    section_names = bin_record_get_uint (shn_entry, "sh_offset");
+    bin_parser_set_offset (parser->parser, section_headers);
+    
+    bin_parser_seek_record (parser->parser, parser->shn_entry,
+			    section_names_idx);
+    
+    section_names = bin_parser_get_uint_field (parser->parser, parser->shn_entry, "sh_offset");
     
     for (i = 0; i < parser->n_sections; ++i)
     {
-	bin_record_index (shn_entry, i);
+	bin_parser_set_offset (parser->parser, section_headers);
+	bin_parser_seek_record (parser->parser, parser->shn_entry, i);
 	
-	parser->sections[i] = section_new (shn_entry, section_names);
+	parser->sections[i] = section_new (parser->parser,
+					   parser->shn_entry,
+					   section_names);
     }
-
+    
     /* Cache the text section */
     parser->text_section = find_section (parser, ".text", SHT_PROGBITS);
     if (!parser->text_section)
 	parser->text_section = find_section (parser, ".text", SHT_NOBITS);
     
-    bin_record_free (shn_entry);
-
     return parser;
 }
 
@@ -185,23 +210,23 @@ elf_parser_new (const char *filename,
     ElfParser *parser;
     
     GMappedFile *file = g_mapped_file_new (filename, FALSE, NULL);
-
+    
     if (!file)
 	return NULL;
-
+    
 #if 0
     g_print ("elf parser new : %s\n", filename);
 #endif
     
     data = (guchar *)g_mapped_file_get_contents (file);
     length = g_mapped_file_get_length (file);
-
+    
 #if 0
     g_print ("data %p: for %s\n", data, filename);
 #endif
-
+    
     parser = elf_parser_new_from_data (data, length);
-
+    
     if (!parser)
     {
 	g_mapped_file_free (file);
@@ -209,14 +234,14 @@ elf_parser_new (const char *filename,
     }
     
     parser->file = file;
-
+    
 #if 0
     g_print ("Elf file: %s  (debug: %s)\n",
 	     filename, elf_parser_get_debug_link (parser, NULL));
 #endif
     
     parser->file = file;
-
+    
 #if 0
     if (!parser->symbols)
 	g_print ("at this point %s has no symbols\n", filename);
@@ -277,15 +302,15 @@ elf_parser_get_crc32 (ElfParser *parser)
     gsize length;
     gulong crc;
     gsize i;
-
+    
     data = bin_parser_get_data (parser->parser);
     length = bin_parser_get_length (parser->parser);
-
+    
     crc = 0xffffffff;
-
+    
     for (i = 0; i < length; ++i)
 	crc = crc32_table[(crc ^ data[i]) & 0xff] ^ (crc >> 8);
-
+    
     /* We just read the entire file into memory, but we only really
      * need the symbol table, so swap the whole thing out.
      *
@@ -301,14 +326,14 @@ void
 elf_parser_free (ElfParser *parser)
 {
     int i;
-
+    
     for (i = 0; i < parser->n_sections; ++i)
 	section_free (parser->sections[i]);
     g_free (parser->sections);
-
+    
     if (parser->file)
 	g_mapped_file_free (parser->file);
-
+    
     bin_parser_free (parser->parser);
     
     g_free (parser);
@@ -323,7 +348,7 @@ elf_demangle (const char *name)
 #define DMGL_ANSI       (1 << 1)        /* Include const, volatile, etc */
     
     char *demangled = sysprof_cplus_demangle (name, DMGL_PARAMS | DMGL_ANSI);
-
+    
     if (demangled)
 	return demangled;
     else
@@ -338,7 +363,7 @@ compare_sym (const void *a, const void *b)
 {
     const ElfSym *sym_a = a;
     const ElfSym *sym_b = b;
-
+    
     if (sym_a->address < sym_b->address)
 	return -1;
     else if (sym_a->address == sym_b->address)
@@ -352,11 +377,11 @@ static void
 dump_symbols (ElfParser *parser, ElfSym *syms, guint n_syms)
 {
     int i;
-
+    
     for (i = 0; i < n_syms; ++i)
     {
 	ElfSym *s = &(syms[i]);
-
+	
 	g_print ("   %s: %lx\n", elf_parser_get_sym_name (parser, s), s->address);
     }
 }
@@ -367,28 +392,32 @@ read_table (ElfParser *parser,
 	    const Section *sym_table,
 	    const Section *str_table)
 {
-    int sym_size = bin_format_get_size (parser->sym_format);
+    int sym_size = bin_record_get_size (parser->sym_format);
     int i;
     int n_functions;
-    BinRecord *symbol;
-
+    
     parser->n_symbols = sym_table->size / sym_size;
     parser->symbols = g_new (ElfSym, parser->n_symbols);
     
-    symbol = bin_parser_get_record (parser->parser, parser->sym_format, sym_table->offset);
-
+#if 0
+    g_print ("sym table offset: %d\n", sym_table->offset);
+#endif
+    
+    bin_parser_set_offset (parser->parser, sym_table->offset);
+    
     n_functions = 0;
+#if 0
+    g_print ("n syms: %d\n", parser->n_symbols);
+#endif
     for (i = 0; i < parser->n_symbols; ++i)
     {
 	guint info;
 	gulong addr;
 	gulong offset;
-
-	bin_record_index (symbol, i);
 	
-	info = bin_record_get_uint (symbol, "st_info");
-	addr = bin_record_get_uint (symbol, "st_value");
-	offset = bin_record_get_offset (symbol);
+	info = bin_parser_get_uint_field (parser->parser, parser->sym_format, "st_info");
+	addr = bin_parser_get_uint_field (parser->parser, parser->sym_format, "st_value");
+	offset = bin_parser_get_offset (parser->parser);
 	
 	if (addr != 0				&&
 	    (info & 0xf) == STT_FUNC		&&
@@ -399,15 +428,22 @@ read_table (ElfParser *parser,
 	    parser->symbols[n_functions].offset = offset;
 	    
 	    n_functions++;
-	}
+	} 
+	
+#if 0
+	g_print ("read symbol: %s\n", get_string_indirect (parser->parser,
+							   parser->sym_format, "st_name",
+							   str_table->offset));
+#endif
+	
+	
+	bin_parser_seek_record (parser->parser, parser->sym_format, 1);
     }
-
-    bin_record_free (symbol);
-
+    
     parser->sym_strings = str_table->offset;
     parser->n_symbols = n_functions;
     parser->symbols = g_renew (ElfSym, parser->symbols, parser->n_symbols);
-
+    
     qsort (parser->symbols, parser->n_symbols, sizeof (ElfSym), compare_sym);
 }
 
@@ -418,7 +454,7 @@ read_symbols (ElfParser *parser)
     const Section *strtab = find_section (parser, ".strtab", SHT_STRTAB);
     const Section *dynsym = find_section (parser, ".dynsym", SHT_DYNSYM);
     const Section *dynstr = find_section (parser, ".dynstr", SHT_STRTAB);
-
+    
     if (symtab && strtab)
     {
 	read_table (parser, symtab, strtab);
@@ -451,10 +487,10 @@ do_lookup (ElfSym *symbols,
 	{
 	    if (address >= symbols[last].address)
 		return &(symbols[last]);
-
+	    
 	    last--;
 	}
-
+	
 	return NULL;
     }
     else
@@ -476,38 +512,43 @@ elf_parser_lookup_symbol (ElfParser *parser,
     const ElfSym *result;
     
     if (!parser->symbols)
+    {
+#if 0
+	g_print ("reading symbols\n");
+#endif
 	read_symbols (parser);
-
+    }
+    
     if (parser->n_symbols == 0)
 	return NULL;
-
+    
     if (!parser->text_section)
 	return NULL;
     
     address += parser->text_section->load_address;
-
+    
 #if 0
     g_print ("the address we are looking up is %p\n", address);
 #endif
     
     result = do_lookup (parser->symbols, address, 0, parser->n_symbols - 1);
-
+    
 #if 0
     if (result)
     {
 	g_print ("found %s at %lx\n", elf_parser_get_sym_name (parser, result), result->address);
     }
 #endif
-
+    
     if (result)
     {
 	gulong size;
-	BinRecord *record;
 	
-	record = bin_parser_get_record (parser->parser, parser->sym_format, result->offset);
-	size = bin_record_get_uint (record, "st_size");
-	bin_record_free (record);
-
+	bin_parser_set_offset (parser->parser, result->offset);
+	
+	size = bin_parser_get_uint_field (parser->parser,
+					  parser->sym_format, "st_size");
+	
 	if (result->address + size <= address)
 	    result = NULL;
     }
@@ -519,10 +560,10 @@ gulong
 elf_parser_get_text_offset (ElfParser *parser)
 {
     g_return_val_if_fail (parser != NULL, (gulong)-1);
-
+    
     if (!parser->text_section)
 	return (gulong)-1;
-
+    
     return parser->text_section->offset;
 }
 
@@ -532,18 +573,18 @@ elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
     const Section *debug_link = find_section (parser, ".gnu_debuglink",
 					      SHT_PROGBITS);
     const gchar *result;
-
+    
     if (!debug_link)
 	return NULL;
-
-    bin_parser_goto (parser->parser, debug_link->offset);
-
+    
+    bin_parser_set_offset (parser->parser, debug_link->offset);
+    
     result = bin_parser_get_string (parser->parser);
-
+    
     bin_parser_align (parser->parser, 4);
-
+    
     if (crc32)
-	*crc32 = bin_parser_get_uint32 (parser->parser);
+	*crc32 = bin_parser_get_uint (parser->parser, BIN_UINT32);
     
     return result;
 }
@@ -552,7 +593,7 @@ const guchar *
 elf_parser_get_eh_frame   (ElfParser   *parser)
 {
     const Section *eh_frame = find_section (parser, ".eh_frame", SHT_PROGBITS);
-
+    
     if (eh_frame)
 	return bin_parser_get_data (parser->parser) + eh_frame->offset;
     else
@@ -564,16 +605,12 @@ elf_parser_get_sym_name (ElfParser *parser,
 			 const ElfSym *sym)
 {
     const char *result;
-    BinRecord *symbol;
-
-    g_return_val_if_fail (parser != NULL, NULL);
-
-    symbol = bin_parser_get_record (parser->parser, parser->sym_format, sym->offset);
-
-    result = bin_record_get_string_indirect (symbol, "st_name",
-					     parser->sym_strings);
     
-    bin_record_free (symbol);
+    g_return_val_if_fail (parser != NULL, NULL);
+    
+    bin_parser_set_offset (parser->parser, sym->offset);
+    result = get_string_indirect (
+	parser->parser, parser->sym_format, "st_name", parser->sym_strings);
     
     return result;
 }
@@ -616,81 +653,127 @@ parse_elf_signature (const guchar *data,
     }
     
     if (is_64)
-	*is_64 = (EI_CLASS == ELFCLASS64);
+	*is_64 = (data[EI_CLASS] == ELFCLASS64);
     
     if (is_be)
-	*is_be = (EI_DATA == ELFDATA2MSB);
+	*is_be = (data[EI_DATA] == ELFDATA2MSB);
     
     return TRUE;
 }
 
-static BinField *
-make_word (gboolean is_64)
+static void
+get_formats (gboolean is_64,
+	     const BinField **elf_header,
+	     const BinField **shn_entry,
+	     const BinField **sym_format)
 {
+    static const BinField elf64_header[] = {
+	{ "e_ident",		BIN_UNINTERPRETED, EI_NIDENT },
+	{ "e_type",		BIN_UINT16 },
+	{ "e_machine",		BIN_UINT16 }, 
+	{ "e_version",		BIN_UINT32 },
+	{ "e_entry",		BIN_UINT64 },
+	{ "e_phoff",		BIN_UINT64 },
+	{ "e_shoff",		BIN_UINT64 },
+	{ "e_flags",		BIN_UINT32 },
+	{ "e_ehsize",		BIN_UINT16 },
+	{ "e_phentsize",	BIN_UINT16 },
+	{ "e_phnum",		BIN_UINT16 },
+	{ "e_shentsize",	BIN_UINT16 },
+	{ "e_shnum",		BIN_UINT16 },
+	{ "e_shstrndx",		BIN_UINT16 },
+	{ "" },
+    };
+    
+    static const BinField elf32_header[] = {
+	{ "e_ident",		BIN_UNINTERPRETED, EI_NIDENT },
+	{ "e_type",		BIN_UINT16 },
+	{ "e_machine",		BIN_UINT16 }, 
+	{ "e_version",		BIN_UINT32 },
+	{ "e_entry",		BIN_UINT32 },
+	{ "e_phoff",		BIN_UINT32 },
+	{ "e_shoff",		BIN_UINT32 },
+	{ "e_flags",		BIN_UINT32 },
+	{ "e_ehsize",		BIN_UINT16 },
+	{ "e_phentsize",	BIN_UINT16 },
+	{ "e_phnum",		BIN_UINT16 },
+	{ "e_shentsize",	BIN_UINT16 },
+	{ "e_shnum",		BIN_UINT16 },
+	{ "e_shstrndx",		BIN_UINT16 },
+	{ "" },
+    };
+    
+    static const BinField shn64_entry[] = {
+	{ "sh_name",		BIN_UINT32 },
+	{ "sh_type",		BIN_UINT32 },
+	{ "sh_flags",		BIN_UINT64 },
+	{ "sh_addr",		BIN_UINT64 },
+	{ "sh_offset",		BIN_UINT64 },
+	{ "sh_size",		BIN_UINT64 },
+	{ "sh_link",		BIN_UINT32 },
+	{ "sh_info",		BIN_UINT32 },
+	{ "sh_addralign",	BIN_UINT64 },
+	{ "sh_entsize",		BIN_UINT64 },
+	{ "" }
+    };
+    
+    static const BinField shn32_entry[] = {
+	{ "sh_name",		BIN_UINT32 },
+	{ "sh_type",		BIN_UINT32 },
+	{ "sh_flags",		BIN_UINT32 },
+	{ "sh_addr",		BIN_UINT32 },
+	{ "sh_offset",		BIN_UINT32 },
+	{ "sh_size",		BIN_UINT32 },
+	{ "sh_link",		BIN_UINT32 },
+	{ "sh_info",		BIN_UINT32 },
+	{ "sh_addralign",	BIN_UINT32 },
+	{ "sh_entsize",		BIN_UINT32 },
+	{ "" }
+    };
+    
+    static const BinField sym64_format[] = {
+	{ "st_name",		BIN_UINT32 },
+	{ "st_info",		BIN_UINT8 },
+	{ "st_other",		BIN_UINT8 },
+	{ "st_shndx",		BIN_UINT16 },
+	{ "st_value",		BIN_UINT64 },
+	{ "st_size",		BIN_UINT64 },
+	{ "" }
+    };
+
+    static const BinField sym32_format[] = {
+	{ "st_name",		BIN_UINT32 },
+	{ "st_value",		BIN_UINT32 },
+	{ "st_size",		BIN_UINT32 },
+	{ "st_info",		BIN_UINT8 },
+	{ "st_other",		BIN_UINT8 },
+	{ "st_shndx",		BIN_UINT16 },
+	{ "" },
+    };
+
     if (is_64)
-	return bin_field_new_uint64 ();
+    {
+	*elf_header = elf64_header;
+	*shn_entry  = shn64_entry;
+	*sym_format = sym64_format;
+    }
     else
-	return bin_field_new_uint32 ();
+    {
+	*elf_header = elf32_header;
+	*shn_entry  = shn32_entry;
+	*sym_format = sym32_format;
+    }
 }
 
 static void
-make_formats (ElfParser *parser, gboolean is_64, gboolean is_big_endian)
+make_formats (ElfParser *parser, gboolean is_64)
 {
-    parser->header = bin_format_new (
-	is_big_endian,
-	"e_ident",	bin_field_new_fixed_array (EI_NIDENT, 1),
-	"e_type",	bin_field_new_uint16 (),
-	"e_machine",	bin_field_new_uint16 (),
-	"e_version",	bin_field_new_uint32 (),
-	"e_entry",	make_word (is_64),
-	"e_phoff",	make_word (is_64),
-	"e_shoff",	make_word (is_64),
-	"e_flags",	bin_field_new_uint32 (),
-	"e_ehsize",	bin_field_new_uint16 (),
-	"e_phentsize",	bin_field_new_uint16 (),
-	"e_phnum",	bin_field_new_uint16 (),
-	"e_shentsize",	bin_field_new_uint16 (),
-	"e_shnum",	bin_field_new_uint16 (),
-	"e_shstrndx",	bin_field_new_uint16 (),
-	NULL);
-    
-    parser->shn_entry = bin_format_new (
-	is_big_endian,
-	"sh_name",	bin_field_new_uint32 (),
-	"sh_type",	bin_field_new_uint32 (),
-	"sh_flags",	make_word (is_64),
-	"sh_addr",	make_word (is_64),
-	"sh_offset",	make_word (is_64),
-	"sh_size",	make_word (is_64),
-	"sh_link",	bin_field_new_uint32 (),
-	"sh_info",	bin_field_new_uint32 (),
-	"sh_addralign",	make_word (is_64),
-	"sh_entsize",	make_word (is_64),
-	NULL);
-    
-    if (is_64)
-    {
-	parser->sym_format = bin_format_new (
-	    is_big_endian,
-	    "st_name",		bin_field_new_uint32 (),
-	    "st_info",		bin_field_new_uint8 (),
-	    "st_other",		bin_field_new_uint8 (),
-	    "st_shndx",		bin_field_new_uint16 (),
-	    "st_value",		bin_field_new_uint64 (),
-	    "st_size",		bin_field_new_uint64 (),
-	    NULL);
-    }
-    else
-    {
-	parser->sym_format = bin_format_new (
-	    is_big_endian,
-	    "st_name",		bin_field_new_uint32 (),
-	    "st_value",		bin_field_new_uint32 (),
-	    "st_size",		bin_field_new_uint32 (),
-	    "st_info",		bin_field_new_uint8 (),
-	    "st_other",		bin_field_new_uint8 (),
-	    "st_shndx",		bin_field_new_uint16 (),
-	    NULL);
-    }
+    const BinField *elf_header, *shn_entry, *sym_format;
+
+    get_formats (is_64, &elf_header, &shn_entry, &sym_format);
+
+    parser->header = bin_parser_create_record (parser->parser, elf_header);
+    parser->shn_entry = bin_parser_create_record (parser->parser, shn_entry);
+    parser->sym_format = bin_parser_create_record (parser->parser, sym_format);
 }
 

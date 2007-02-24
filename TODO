@@ -103,40 +103,21 @@ Before 1.2:
 
 * crc32 checking probably doesn't belong in elfparser.c
 
-* Rethink binparser. Maybe the default mode should be:
-	- there is a current offset
-	- you can move the cursor
-		- _goto()
-		- _align()
-	- you can read structs with "begin_struct (format) / end_struct()"
-		Or maybe just "set_format()" that would accept NULL?
-	-   when you are reading a struct, you can skip records with _index()
-	- you can read fields with get_string/get_uint by passing a name.
-	- you can read anonymous strings and uints by passing NULL for name
-		This is allowed even when not reading structs. Or maybe this
-		should be separate functions. Advantages:
-			- they can skip ahead, unlike fields accessors
-			- you can access specific types (8,16,32,64)
-			- there is no "name" field
-		Disadvantage:
-			- the field accesors would need renaming.
-				bin_parser_get_uint_field ()
-			  is not really that bad though.
-		Maybe begin_record() could return a structure you could
-		use to access that particular record? Would nicely solve
-		the problems with "goto" and "index". 
-			bin_record_get_uint();
-		What should begin/end be called? They will have different
-		objects passed. 
-			bin_parser_get_record (parser) -> record
-			bin_record_free (record);
-	- Maybe support for indirect strings? Ie., get_string() in elfparser
-	- This will require endianness to be a per-parser property. Which is
-	  probably just fine. Although d-bus actually has
-	  per-message endianness. Maybe there could be a settable
-	  "endianness" property.
+* Missing things in binparser.[ch]
 
-  Also need to add error checking.
+	- it's inconvenient that you have to pass in both a parser _and_
+	  a record. The record should just contain a pointer to the parser
+
+	- the bin_parser_seek_record (..., 1); idiom is a little dubious
+
+	- maybe convert BIN_UINT32 => { BIN_UINT, 4 } 
+	  we already have the width in the struct.
+
+	- Add error checking
+	  Also need to add error checking.
+
+	- "native endian" is probably not useful. Maybe go back to just
+	  having big/little endian.
 
 * Rename stack_stash_foreach_by_address() to stack_stash_foreach_unique(),
   or maybe not ...
@@ -693,6 +674,40 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+* Rethink binparser. Maybe the default mode should be:
+	- there is a current offset
+	- you can move the cursor
+		- _goto()
+		- _align()
+	- you can read structs with "begin_struct (format) / end_struct()"
+		Or maybe just "set_format()" that would accept NULL?
+	-   when you are reading a struct, you can skip records with _index()
+	- you can read fields with get_string/get_uint by passing a name.
+	- you can read anonymous strings and uints by passing NULL for name
+		This is allowed even when not reading structs. Or maybe this
+		should be separate functions. Advantages:
+			- they can skip ahead, unlike fields accessors
+			- you can access specific types (8,16,32,64)
+			- there is no "name" field
+		Disadvantage:
+			- the field accesors would need renaming.
+				bin_parser_get_uint_field ()
+			  is not really that bad though.
+		Maybe begin_record() could return a structure you could
+		use to access that particular record? Would nicely solve
+		the problems with "goto" and "index". 
+			bin_record_get_uint();
+		What should begin/end be called? They will have different
+		objects passed. 
+			bin_parser_get_record (parser) -> record
+			bin_record_free (record);
+	- Maybe support for indirect strings? Ie., get_string() in elfparser
+	- This will require endianness to be a per-parser property. Which is
+	  probably just fine. Although d-bus actually has
+	  per-message endianness. Maybe there could be a settable
+	  "endianness" property.
 
 * Don't look in $(libdir) for separate debug files (since $libdir is
   the libdir for sysprof, not a system wide libdir). Tim Rowley.

@@ -17,52 +17,98 @@
  */
 #include <glib.h>
 
-typedef struct BinField BinField;
-typedef struct BinFormat BinFormat;
 typedef struct BinParser BinParser;
 typedef struct BinRecord BinRecord;
+typedef struct BinField  BinField;
 
-/* BinParser */
+/* The model is:
+ *
+ *    BinParser has an offset associated with it. This offset can be
+ *    manipulated with methods
+ *
+ *		goto		- go to absolute position from file start
+ *		goto_rel	- go to relative positio
+ *		goto_record_rel	- skip the given number of records 
+ *		align		- move forward until aligned to given width
+ *		save/restore	- save/restore the current offset (stack)
+ *
+ *   and queried with
+ *
+ *		get_offset	- return current offset in bytes from start
+ *
+ *   data can be retrieved with
+ *
+ *		get_uint         - return a uint of given width, and skip
+ *		get_string	 - return a null terminated stringm, and skip
+ *		get_pstring	 - return a 'pascal' string with given length
+ *
+ *		get_uint_field	 - return the named field
+ *
+ *   formats should probably be definable as static data.
+ *
+ *   A bin parser also has an associated "status" with it. This can be
+ *   OK, or error. It is ok to use a parser with an error status, but
+ *   the data returned will not be meaningfull.
+ *
+ *   
+ */
+
+#define BIN_MAX_NAME		52
+
+typedef enum
+{
+    BIN_LITTLE_ENDIAN,
+    BIN_BIG_ENDIAN,
+    BIN_NATIVE_ENDIAN
+} BinEndian;
+
+typedef enum
+{
+    /* More types can (and probably will) be added in the future */
+    BIN_UINT8,
+    BIN_UINT16,
+    BIN_UINT32,
+    BIN_UINT64,
+    BIN_UNINTERPRETED
+} BinType;
+
+struct BinField {
+    const char		name[BIN_MAX_NAME];
+    char		type;
+    char		n_bytes;	/* number of bytes if type
+					 * is UNINTERPRETED */
+};
+
 BinParser *   bin_parser_new        (const guchar *data,
 				     gsize         length);
 void          bin_parser_free       (BinParser    *parser);
 const guchar *bin_parser_get_data   (BinParser    *parser);
 gsize         bin_parser_get_length (BinParser    *parser);
-gsize         bin_parser_get_offset (BinParser    *parser);
-void          bin_parser_align      (BinParser    *parser,
-				     gsize         byte_width);
-void          bin_parser_goto       (BinParser    *parser,
-				     gsize         offset);
+void	      bin_parser_set_endian    (BinParser *parser,
+					BinEndian  endian);
+gboolean      bin_parser_error	       (BinParser *parser); 
+void	      bin_parser_clear_error   (BinParser *parser);
+const gchar * bin_parser_get_error_msg (BinParser *parser);
+BinRecord *   bin_parser_create_record (BinParser      *parser,
+					const BinField *fields);
+gsize	      bin_record_get_size      (BinRecord *record);
+
+/* Move current offset */
+gsize	      bin_parser_get_offset  (BinParser  *parser);
+void          bin_parser_set_offset  (BinParser  *parser,
+				      gsize       offset);
+void          bin_parser_align       (BinParser  *parser,
+				      gsize       byte_width);
+void	      bin_parser_seek_record (BinParser  *parser,
+				      BinRecord  *record,
+				      int	  n_records);
+void	      bin_parser_save	    (BinParser    *parser);
+void	      bin_parser_restore    (BinParser    *parser);
+
+/* retrieve data */
+guint64	      bin_parser_get_uint   (BinParser	  *parser,
+				     BinType	   type);
 const char *  bin_parser_get_string (BinParser    *parser);
-guint32       bin_parser_get_uint32 (BinParser    *parser);
-
-/* Record */
-BinRecord *  bin_parser_get_record          (BinParser  *parser,
-					     BinFormat  *format,
-					     gsize       offset);
-void         bin_record_free                (BinRecord  *record);
-guint64      bin_record_get_uint            (BinRecord  *record,
-					     const char *name);
-void         bin_record_index               (BinRecord  *record,
-					     int         index);
-gsize        bin_record_get_offset          (BinRecord  *record);
-const gchar *bin_record_get_string_indirect (BinRecord  *record,
-					     const char *name,
-					     gsize       str_table);
-BinParser *  bin_record_get_parser          (BinRecord  *record);
-
-
-/* BinFormat */
-BinFormat *bin_format_new      (gboolean    big_endian,
-				const char *name,
-				BinField   *field,
-				...);
-gsize      bin_format_get_size (BinFormat  *format);
-
-/* BinField */
-BinField *bin_field_new_uint8       (void);
-BinField *bin_field_new_uint16      (void);
-BinField *bin_field_new_uint32      (void);
-BinField *bin_field_new_uint64      (void);
-BinField *bin_field_new_fixed_array (int  n_elements,
-				     int  element_size);
+guint64	      bin_parser_get_uint_field (BinParser *parser,
+					 BinRecord *record,
+					 const char *field);

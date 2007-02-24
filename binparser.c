@@ -17,7 +17,7 @@
  */
 #include <string.h>
 
-#include "binparser2.h"
+#include "binparser.h"
 
 typedef struct Field Field;
 

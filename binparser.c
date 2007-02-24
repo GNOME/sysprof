@@ -108,33 +108,12 @@ align (guint64 offset, int alignment)
 }
 
 static int
-get_field_width (const BinField *field)
-{
-    switch (field->type)
-    {
-    case BIN_UINT8:
-	return 1;
-    case BIN_UINT16:
-	return 2;
-    case BIN_UINT32:
-	return 4;
-    case BIN_UINT64:
-	return 8;
-    case BIN_UNINTERPRETED:
-	return field->n_bytes;
-    }
-
-    g_assert_not_reached ();
-    return -1;
-}
-
-static int
 get_align (const BinField *field)
 {
     if (field->type == BIN_UNINTERPRETED)
 	return 1;
     else
-	return get_field_width (field);
+	return field->n_bytes;
 }
 
 BinRecord *
@@ -169,12 +148,8 @@ bin_parser_create_record (BinParser      *parser,
 	strncpy (field->name, bin_field->name, BIN_MAX_NAME - 1);
 	field->offset = offset;
 	field->type = bin_field->type;
-	field->width = get_field_width (bin_field);
+	field->width = bin_field->n_bytes;
 
-#if 0
-	g_print ("created field %s with type %d\n", field->name, field->type);
-#endif
-	
 	offset += record->fields[i].width;
     }
 
@@ -268,7 +243,7 @@ bin_parser_restore (BinParser *parser)
 static guint64
 convert_uint (const guchar *data,
 	      BinEndian	    endian,
-	      BinType	    type)
+	      int	    width)
 {
     guint8 r8;
     guint16 r16;
@@ -282,13 +257,13 @@ convert_uint (const guchar *data,
 
     /* FIXME: check that we are within the file */
     
-    switch (type)
+    switch (width)
     {
-    case BIN_UINT8:
+    case 1:
 	r8 = *(guint8 *)data;
 	return r8;
 	
-    case BIN_UINT16:
+    case 2:
 	r16 = *(guint16 *)data;
 	
 	if (endian == BIN_BIG_ENDIAN)
@@ -298,7 +273,7 @@ convert_uint (const guchar *data,
 	
 	return r16;
 	
-    case BIN_UINT32:
+    case 4:
 	r32 = *(guint32 *)data;
 	
 	if (endian == BIN_BIG_ENDIAN)
@@ -308,7 +283,7 @@ convert_uint (const guchar *data,
 	
 	return r32;
 	
-    case BIN_UINT64:
+    case 8:
 	r64 = *(guint64 *)data;
 	
 	if (endian == BIN_BIG_ENDIAN)
@@ -324,31 +299,13 @@ convert_uint (const guchar *data,
     }
 }
 
-static int
-get_uint_width (BinType type)
-{
-    switch (type)
-    {
-    case BIN_UINT8:
-	return 1;
-    case BIN_UINT16:
-	return 2;
-    case BIN_UINT32:
-	return 4;
-    case BIN_UINT64:
-	return 8;
-    default:
-	return -1;
-    }
-}
-
 guint64
 bin_parser_get_uint (BinParser *parser,
-		     BinType    type)
+		     int	width)
 {
-    guint64 r = convert_uint (parser->data + parser->offset, parser->endian, type);
+    guint64 r = convert_uint (parser->data + parser->offset, parser->endian, width);
 
-    parser->offset += get_uint_width (type);
+    parser->offset += width;
 
     return r;
 }
@@ -422,5 +379,5 @@ bin_parser_get_uint_field (BinParser *parser,
     g_print ("    uint %d at %p    =>   %d\n", field->width, pos, convert_uint (pos, record->format->big_endian, field->width));
 #endif
     
-    return convert_uint (pos, parser->endian, field->type);
+    return convert_uint (pos, parser->endian, field->width);
 }

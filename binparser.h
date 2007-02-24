@@ -65,10 +65,7 @@ typedef enum
 typedef enum
 {
     /* More types can (and probably will) be added in the future */
-    BIN_UINT8,
-    BIN_UINT16,
-    BIN_UINT32,
-    BIN_UINT64,
+    BIN_UINT,
     BIN_UNINTERPRETED
 } BinType;
 
@@ -107,7 +104,7 @@ void	      bin_parser_restore    (BinParser    *parser);
 
 /* retrieve data */
 guint64	      bin_parser_get_uint   (BinParser	  *parser,
-				     BinType	   type);
+				     int	   width);
 const char *  bin_parser_get_string (BinParser    *parser);
 guint64	      bin_parser_get_uint_field (BinParser *parser,
 					 BinRecord *record,

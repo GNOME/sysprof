@@ -584,7 +584,7 @@ elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
     bin_parser_align (parser->parser, 4);
     
     if (crc32)
-	*crc32 = bin_parser_get_uint (parser->parser, BIN_UINT32);
+	*crc32 = bin_parser_get_uint (parser->parser, 4);
     
     return result;
 }
@@ -669,85 +669,85 @@ get_formats (gboolean is_64,
 {
     static const BinField elf64_header[] = {
 	{ "e_ident",		BIN_UNINTERPRETED, EI_NIDENT },
-	{ "e_type",		BIN_UINT16 },
-	{ "e_machine",		BIN_UINT16 }, 
-	{ "e_version",		BIN_UINT32 },
-	{ "e_entry",		BIN_UINT64 },
-	{ "e_phoff",		BIN_UINT64 },
-	{ "e_shoff",		BIN_UINT64 },
-	{ "e_flags",		BIN_UINT32 },
-	{ "e_ehsize",		BIN_UINT16 },
-	{ "e_phentsize",	BIN_UINT16 },
-	{ "e_phnum",		BIN_UINT16 },
-	{ "e_shentsize",	BIN_UINT16 },
-	{ "e_shnum",		BIN_UINT16 },
-	{ "e_shstrndx",		BIN_UINT16 },
+	{ "e_type",		BIN_UINT,	2 },
+	{ "e_machine",		BIN_UINT,	2 }, 
+	{ "e_version",		BIN_UINT,	4 },
+	{ "e_entry",		BIN_UINT,	8 },
+	{ "e_phoff",		BIN_UINT,	8 },
+	{ "e_shoff",		BIN_UINT,	8 },
+	{ "e_flags",		BIN_UINT,	4 },
+	{ "e_ehsize",		BIN_UINT,	2 },
+	{ "e_phentsize",	BIN_UINT,	2 },
+	{ "e_phnum",		BIN_UINT,	2 },
+	{ "e_shentsize",	BIN_UINT,	2 },
+	{ "e_shnum",		BIN_UINT,	2 },
+	{ "e_shstrndx",		BIN_UINT,	2 },
 	{ "" },
     };
     
     static const BinField elf32_header[] = {
 	{ "e_ident",		BIN_UNINTERPRETED, EI_NIDENT },
-	{ "e_type",		BIN_UINT16 },
-	{ "e_machine",		BIN_UINT16 }, 
-	{ "e_version",		BIN_UINT32 },
-	{ "e_entry",		BIN_UINT32 },
-	{ "e_phoff",		BIN_UINT32 },
-	{ "e_shoff",		BIN_UINT32 },
-	{ "e_flags",		BIN_UINT32 },
-	{ "e_ehsize",		BIN_UINT16 },
-	{ "e_phentsize",	BIN_UINT16 },
-	{ "e_phnum",		BIN_UINT16 },
-	{ "e_shentsize",	BIN_UINT16 },
-	{ "e_shnum",		BIN_UINT16 },
-	{ "e_shstrndx",		BIN_UINT16 },
+	{ "e_type",		BIN_UINT,	2 },
+	{ "e_machine",		BIN_UINT,	2 }, 
+	{ "e_version",		BIN_UINT,	4 },
+	{ "e_entry",		BIN_UINT,	4 },
+	{ "e_phoff",		BIN_UINT,	4 },
+	{ "e_shoff",		BIN_UINT,	4 },
+	{ "e_flags",		BIN_UINT,	4 },
+	{ "e_ehsize",		BIN_UINT,	2 },
+	{ "e_phentsize",	BIN_UINT,	2 },
+	{ "e_phnum",		BIN_UINT,	2 },
+	{ "e_shentsize",	BIN_UINT,	2 },
+	{ "e_shnum",		BIN_UINT,	2 },
+	{ "e_shstrndx",		BIN_UINT,	2 },
 	{ "" },
     };
     
     static const BinField shn64_entry[] = {
-	{ "sh_name",		BIN_UINT32 },
-	{ "sh_type",		BIN_UINT32 },
-	{ "sh_flags",		BIN_UINT64 },
-	{ "sh_addr",		BIN_UINT64 },
-	{ "sh_offset",		BIN_UINT64 },
-	{ "sh_size",		BIN_UINT64 },
-	{ "sh_link",		BIN_UINT32 },
-	{ "sh_info",		BIN_UINT32 },
-	{ "sh_addralign",	BIN_UINT64 },
-	{ "sh_entsize",		BIN_UINT64 },
+	{ "sh_name",		BIN_UINT,	4 },
+	{ "sh_type",		BIN_UINT,	4 },
+	{ "sh_flags",		BIN_UINT,	8 },
+	{ "sh_addr",		BIN_UINT,	8 },
+	{ "sh_offset",		BIN_UINT,	8 },
+	{ "sh_size",		BIN_UINT,	8 },
+	{ "sh_link",		BIN_UINT,	4 },
+	{ "sh_info",		BIN_UINT,	4 },
+	{ "sh_addralign",	BIN_UINT,	8 },
+	{ "sh_entsize",		BIN_UINT,	8 },
 	{ "" }
     };
     
     static const BinField shn32_entry[] = {
-	{ "sh_name",		BIN_UINT32 },
-	{ "sh_type",		BIN_UINT32 },
-	{ "sh_flags",		BIN_UINT32 },
-	{ "sh_addr",		BIN_UINT32 },
-	{ "sh_offset",		BIN_UINT32 },
-	{ "sh_size",		BIN_UINT32 },
-	{ "sh_link",		BIN_UINT32 },
-	{ "sh_info",		BIN_UINT32 },
-	{ "sh_addralign",	BIN_UINT32 },
-	{ "sh_entsize",		BIN_UINT32 },
+	{ "sh_name",		BIN_UINT,	4 },
+	{ "sh_type",		BIN_UINT,	4 },
+	{ "sh_flags",		BIN_UINT,	4 },
+	{ "sh_addr",		BIN_UINT,	4 },
+	{ "sh_offset",		BIN_UINT,	4 },
+	{ "sh_size",		BIN_UINT,	4 },
+	{ "sh_link",		BIN_UINT,	4 },
+	{ "sh_info",		BIN_UINT,	4 },
+	{ "sh_addralign",	BIN_UINT,	4 },
+	{ "sh_entsize",		BIN_UINT,	4 },
 	{ "" }
     };
     
     static const BinField sym64_format[] = {
-	{ "st_name",		BIN_UINT32 },
-	{ "st_info",		BIN_UINT8 },
-	{ "st_other",		BIN_UINT8 },
-	{ "st_shndx",		BIN_UINT16 },
-	{ "st_value",		BIN_UINT64 },
-	{ "st_size",		BIN_UINT64 },
+	{ "st_name",		BIN_UINT,	4 },
+	{ "st_info",		BIN_UINT,	1 },
+	{ "st_other",		BIN_UINT,	1 },
+	{ "st_shndx",		BIN_UINT,	2 },
+	{ "st_value",		BIN_UINT,	8 },
+	{ "st_size",		BIN_UINT,	8 },
 	{ "" }
     };
 
     static const BinField sym32_format[] = {
-	{ "st_name",		BIN_UINT32 },
-	{ "st_value",		BIN_UINT32 },
-	{ "st_size",		BIN_UINT32 },
-	{ "st_info",		BIN_UINT8 },
-	{ "st_other",		BIN_UINT8 },
-	{ "st_shndx",		BIN_UINT16 },
+	{ "st_name",		BIN_UINT,	4 },
+	{ "st_value",		BIN_UINT,	4 },
+	{ "st_size",		BIN_UINT,	4 },
+	{ "st_info",		BIN_UINT,	1 },
+	{ "st_other",		BIN_UINT,	1 },
+	{ "st_shndx",		BIN_UINT,	2 },
 	{ "" },
     };
 

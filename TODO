@@ -110,9 +110,6 @@ Before 1.2:
 
 	- the bin_parser_seek_record (..., 1); idiom is a little dubious
 
-	- maybe convert BIN_UINT32 => { BIN_UINT, 4 } 
-	  we already have the width in the struct.
-
 	- Add error checking
 	  Also need to add error checking.
 
@@ -675,6 +672,10 @@ Later:
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+* Missing things in binparser.[ch]
+
+	- maybe convert BIN_UINT32 => { BIN_UINT, 4 } 
+	  we already have the width in the struct.
 
 * Rethink binparser. Maybe the default mode should be:
 	- there is a current offset

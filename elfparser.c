@@ -103,9 +103,14 @@ section_new (BinParser *parser,
     section->allocated = !!(flags & SHF_ALLOC);
     
     if (section->allocated)
-	section->load_address = bin_parser_get_uint_field (parser, record, "sh_addr");
+    {
+	section->load_address = bin_parser_get_uint_field (
+	    parser, record, "sh_addr");
+    }
     else
+    {
 	section->load_address = 0;
+    }
     
     section->type = bin_parser_get_uint_field (parser, record, "sh_type");
     
@@ -169,28 +174,35 @@ elf_parser_new_from_data (const guchar *data,
     
     bin_parser_set_offset (parser->parser, 0);
     
-    parser->n_sections = bin_parser_get_uint_field (parser->parser, parser->header, "e_shnum");
-    section_names_idx = bin_parser_get_uint_field (parser->parser, parser->header, "e_shstrndx");
-    section_headers = bin_parser_get_uint_field (parser->parser, parser->header, "e_shoff");
+    parser->n_sections = bin_parser_get_uint_field (
+	parser->parser, parser->header, "e_shnum");
+    section_names_idx = bin_parser_get_uint_field (
+	parser->parser, parser->header, "e_shstrndx");
+    section_headers = bin_parser_get_uint_field (
+	parser->parser, parser->header, "e_shoff");
     
     /* Read section headers */
     parser->sections = g_new0 (Section *, parser->n_sections);
-    
+
     bin_parser_set_offset (parser->parser, section_headers);
+    
+    bin_parser_save (parser->parser);
     
     bin_parser_seek_record (parser->parser, parser->shn_entry,
 			    section_names_idx);
-    
-    section_names = bin_parser_get_uint_field (parser->parser, parser->shn_entry, "sh_offset");
+
+    section_names = bin_parser_get_uint_field (
+	parser->parser, parser->shn_entry, "sh_offset");
+
+    bin_parser_restore (parser->parser);
     
     for (i = 0; i < parser->n_sections; ++i)
     {
-	bin_parser_set_offset (parser->parser, section_headers);
-	bin_parser_seek_record (parser->parser, parser->shn_entry, i);
-	
 	parser->sections[i] = section_new (parser->parser,
 					   parser->shn_entry,
 					   section_names);
+
+	bin_parser_seek_record (parser->parser, parser->shn_entry, 1);
     }
     
     /* Cache the text section */
@@ -415,8 +427,10 @@ read_table (ElfParser *parser,
 	gulong addr;
 	gulong offset;
 	
-	info = bin_parser_get_uint_field (parser->parser, parser->sym_format, "st_info");
-	addr = bin_parser_get_uint_field (parser->parser, parser->sym_format, "st_value");
+	info = bin_parser_get_uint_field (
+	    parser->parser, parser->sym_format, "st_info");
+	addr = bin_parser_get_uint_field (
+	    parser->parser, parser->sym_format, "st_value");
 	offset = bin_parser_get_offset (parser->parser);
 	
 	if (addr != 0				&&
@@ -546,8 +560,8 @@ elf_parser_lookup_symbol (ElfParser *parser,
 	
 	bin_parser_set_offset (parser->parser, result->offset);
 	
-	size = bin_parser_get_uint_field (parser->parser,
-					  parser->sym_format, "st_size");
+	size = bin_parser_get_uint_field (
+	    parser->parser, parser->sym_format, "st_size");
 	
 	if (result->address + size <= address)
 	    result = NULL;

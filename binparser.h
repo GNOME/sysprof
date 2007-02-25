@@ -89,6 +89,9 @@ const gchar * bin_parser_get_error_msg (BinParser *parser);
 BinRecord *   bin_parser_create_record (BinParser      *parser,
 					const BinField *fields);
 gsize	      bin_record_get_size      (BinRecord *record);
+guint64	      bin_parser_get_uint_field (BinParser *parser,
+					 BinRecord *record,
+					 const char *field);
 
 /* Move current offset */
 gsize	      bin_parser_get_offset  (BinParser  *parser);
@@ -106,6 +109,3 @@ void	      bin_parser_restore    (BinParser    *parser);
 guint64	      bin_parser_get_uint   (BinParser	  *parser,
 				     int	   width);
 const char *  bin_parser_get_string (BinParser    *parser);
-guint64	      bin_parser_get_uint_field (BinParser *parser,
-					 BinRecord *record,
-					 const char *field);

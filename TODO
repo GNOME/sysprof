@@ -106,7 +106,8 @@ Before 1.2:
 * Missing things in binparser.[ch]
 
 	- it's inconvenient that you have to pass in both a parser _and_
-	  a record. The record should just contain a pointer to the parser
+	  a record. The record should just contain a pointer to the parser.
+	  On the other hand, the result does depend on the parser->offset.
 
 	- the bin_parser_seek_record (..., 1); idiom is a little dubious
 

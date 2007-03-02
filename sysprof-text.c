@@ -42,7 +42,7 @@ struct Application
     GMainLoop * main_loop;
 };
 
-void
+static void
 dump_data (Application *app)
 {
     GError *err = NULL;

@@ -1,5 +1,9 @@
 2007-03-02  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* sysprof-text.c (dump_data): Make this function static
+
+2007-03-02  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* collector.c (collector_create_profile): Remove FIXME.
 
 2007-03-02  Soren Sandman <sandmann@daimi.au.dk>

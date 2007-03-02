@@ -330,7 +330,7 @@ elf_parser_get_crc32 (ElfParser *parser)
      * pagefaults.
      */
     madvise ((char *)data, length, MADV_DONTNEED);
-    
+
     return ~crc & 0xffffffff;
 }
 
@@ -345,6 +345,8 @@ elf_parser_free (ElfParser *parser)
     
     if (parser->file)
 	g_mapped_file_free (parser->file);
+    
+    g_free (parser->symbols);
     
     bin_parser_free (parser->parser);
     

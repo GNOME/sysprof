@@ -1,3 +1,7 @@
+2007-03-02  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* collector.c (collector_create_profile): Remove FIXME.
+
 2007-03-02  Soren Sandman <sandmann@daimi.au.dk>
 
 	* process.c (free_process): Free the undefined symbol

@@ -393,9 +393,6 @@ collector_create_profile (Collector *collector)
     
     stack_stash_foreach (collector->stash, resolve_symbols, &info);
     
-    /* FIXME: we are leaking the value strings in info.unique_symbols.
-     * [I don't believe we are anymore, but valgrind will show]
-     */
     g_hash_table_destroy (info.unique_symbols);
     g_hash_table_destroy (info.unique_cmdlines);
     

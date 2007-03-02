@@ -75,6 +75,8 @@ bin_parser_free (BinParser *parser)
 	
 	g_free (record);
     }
+
+    g_list_free (parser->records);
     
     g_free (parser);
 }

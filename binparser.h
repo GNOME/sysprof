@@ -72,8 +72,7 @@ typedef enum
 struct BinField {
     const char		name[BIN_MAX_NAME];
     char		type;
-    char		n_bytes;	/* number of bytes if type
-					 * is UNINTERPRETED */
+    char		n_bytes;	/* number of bytes in the type */
 };
 
 BinParser *   bin_parser_new        (const guchar *data,

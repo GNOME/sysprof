@@ -1,5 +1,12 @@
 2007-03-02  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* process.c (process_get_vdso_bytes): Make a copy of the vdso
+	bytes to make valgrind a little quieter.
+
+	* binparser.c: Note to self: Save the file, *then* commit.
+	
+2007-03-02  Soren Sandmann <sandmann@daimi.au.dk>
+
 	Fix two leaks, both pointed out by Kjartan Maraas
 	
 	* binparser.c (bin_parser_free): Free the record list 

@@ -175,8 +175,19 @@ process_get_vdso_bytes (gsize *length)
 
 	    if (strcmp (map->filename, "[vdso]") == 0)
 	    {
-		bytes = (guint8 *)map->start;
 		n_bytes = map->end - map->start;
+
+		/* Dup the memory here so that valgrind will only
+		 * report one 1 byte invalid read instead of
+		 * a ton when the elf parser scans the vdso
+		 *
+		 * The reason we get a spurious invalid read from
+		 * valgrind is that we are getting the address directly
+		 * from /proc/maps, and valgrind knows that its mmap()
+		 * wrapper never returned that address. But since it
+		 * is a legal mapping, it is legal to read it.
+		 */
+		bytes = g_memdup ((guint8 *)map->start, n_bytes);
 	    }
 	}
 	

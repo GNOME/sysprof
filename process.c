@@ -55,7 +55,7 @@ struct Process
     
     int		pid;
     
-    const char *undefined;
+    char *	undefined;
 };
 
 static void
@@ -251,7 +251,8 @@ free_process (gpointer key, gpointer value, gpointer data)
     Process *process = value;
     
     free_maps (&(process->n_maps), process->maps);
-    
+
+    g_free (process->undefined);
     g_free (process->cmdline);
     g_list_free (process->bad_pages);
     

@@ -1,3 +1,7 @@
+2007-03-02  Soren Sandman <sandmann@daimi.au.dk>
+
+	* process.c (free_process): Free the undefined symbol
+
 2007-03-02  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* process.c (process_get_vdso_bytes): Make a copy of the vdso

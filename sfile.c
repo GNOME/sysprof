@@ -175,7 +175,7 @@ struct SFileInput
     GHashTable *instructions_by_location;
 };
 
-gboolean
+static gboolean
 check_name (Instruction *instr,
 	    const char *name)
 {

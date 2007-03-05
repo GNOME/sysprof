@@ -68,6 +68,26 @@ read_inode (const char *filename)
     return statbuf.st_ino;
 }
 
+static gboolean
+already_warned (const char *name)
+{
+    static GPtrArray *warnings;
+    int i;
+    
+    if (!warnings)
+	warnings = g_ptr_array_new ();
+
+    for (i = 0; i < warnings->len; ++i)
+    {
+	if (strcmp (warnings->pdata[i], name) == 0)
+	    return TRUE;
+    }
+
+    g_ptr_array_add (warnings, g_strdup (name));
+    
+    return FALSE;
+}
+
 static ElfParser *
 separate_debug_file_exists (const char *name, guint32 crc)
 {
@@ -89,7 +109,8 @@ separate_debug_file_exists (const char *name, guint32 crc)
 
     if (file_crc != crc)
     {
-	g_print ("warning: %s has wrong crc \n", name);
+	if (!already_warned (name))
+	    g_print ("warning: %s has wrong crc \n", name);
 	
 	elf_parser_free (parser);
 	
@@ -136,9 +157,12 @@ get_debug_file (ElfParser *elf,
     tries[1] = g_build_filename (dir, ".debug", basename, NULL);
     tries[2] = g_build_filename ("/usr", "lib", "debug", dir, basename, NULL);
     tries[3] = g_build_filename (debug_file_directory, dir, basename, NULL);
-
+    
     for (i = 0; i < N_TRIES; ++i)
     {
+#if 0
+	g_print ("trying: %s\n", tries[i]);
+#endif
 	result = separate_debug_file_exists (tries[i], crc32);
 	if (result)
 	{

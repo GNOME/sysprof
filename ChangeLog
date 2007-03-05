@@ -1,3 +1,8 @@
+Mon Mar  5 16:55:39 2007  Søren Sandmann  <sandmann@redhat.com>
+
+	* binfile.c (already_warned): New function. Only warn once about
+	bad CRC's.
+
 2007-03-02  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* sysprof-text.c (dump_data): Make this function static

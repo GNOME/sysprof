@@ -1405,7 +1405,6 @@ build_gui (Application *app)
     gtk_widget_realize (GTK_WIDGET (app->main_window));
     
     /* Tool items */
-    
     app->start_button = glade_xml_get_widget (xml, "start_button");
     app->profile_button = glade_xml_get_widget (xml, "profile_button");
     app->reset_button = glade_xml_get_widget (xml, "reset_button");

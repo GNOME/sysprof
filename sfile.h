@@ -78,6 +78,18 @@ SerializerFormat *serializer_make_pointer (Serializer *serialiser,
  * enums, optionals, selections, empties
  *
  *
+ * Other things:
+ *
+ *	"selections" - when several different types are possible - would need lambda transitions in and out
+ *
+ *      ability to allow 'ignored' elements that are simply skipped at parse time. This could become important
+ *      for future-proofing files.
+ *
+ * unions maybe?
+ *
+ *
+ *
+ *
  *==============================================
  * Also think about versioning - apps will want to be able to read and write
  * different versions of the format, and they want to be able to sniff the

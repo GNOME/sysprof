@@ -75,21 +75,6 @@ create_format (void)
     return format;
 }
 
-static int
-compute_total (StackNode *node)
-{
-    StackNode *n;
-    int total = 0;
-
-    for (n = node; n != NULL; n = n->next)
-    {
-	if (n->toplevel)
-	    total += n->total;
-    }
-    
-    return total;
-}
-
 static void
 serialize_call_tree (StackNode *node,
 		     SFileOutput *output)
@@ -597,6 +582,21 @@ profile_caller_free (ProfileCaller *caller)
     
     profile_caller_free (caller->next);
     g_free (caller);
+}
+
+static int
+compute_total (StackNode *node)
+{
+    StackNode *n;
+    int total = 0;
+
+    for (n = node; n != NULL; n = n->next)
+    {
+	if (n->toplevel)
+	    total += n->total;
+    }
+    
+    return total;
 }
 
 static void

@@ -220,7 +220,7 @@ elf_parser_new (const char *filename,
     const guchar *data;
     gsize length;
     ElfParser *parser;
-    
+
     GMappedFile *file = g_mapped_file_new (filename, FALSE, NULL);
     
     if (!file)
@@ -319,6 +319,8 @@ elf_parser_get_crc32 (ElfParser *parser)
     length = bin_parser_get_length (parser->parser);
     
     crc = 0xffffffff;
+
+    madvise ((char *)data, length, MADV_SEQUENTIAL);
     
     for (i = 0; i < length; ++i)
 	crc = crc32_table[(crc ^ data[i]) & 0xff] ^ (crc >> 8);

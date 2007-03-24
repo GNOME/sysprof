@@ -1,5 +1,9 @@
 2007-03-24  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* elfparser.c (elf_parser_get_crc32): madvise()
+
+2007-03-24  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* sysprof.c (update_screenshot_window): Update screenshot window
 	in an idle handler to deal with the case where someone presses
 	"Shift Right Arrow" 

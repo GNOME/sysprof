@@ -82,6 +82,7 @@ struct Application
     ProfileCaller *	callers;
     
     int			timeout_id;
+    int			update_screenshot_id;
     
     char *		loaded_profile;
     
@@ -253,17 +254,23 @@ set_busy (GtkWidget *widget,
 	  gboolean   busy)
 {
     GdkCursor *cursor;
+    GdkWindow *window;
     
     if (busy)
 	cursor = gdk_cursor_new (GDK_WATCH);
     else
 	cursor = NULL;
+
+    if (GTK_IS_TEXT_VIEW (widget))
+	window = gtk_text_view_get_window (GTK_TEXT_VIEW (widget), GTK_TEXT_WINDOW_TEXT);
+    else
+	window = widget->window;
     
-    gdk_window_set_cursor (widget->window, cursor);
+    gdk_window_set_cursor (window, cursor);
     
     if (cursor)
 	gdk_cursor_unref (cursor);
-    
+
     gdk_display_flush (gdk_display_get_default ());
 }
 
@@ -1112,10 +1119,16 @@ add_text (GtkTreeView *view,
     g_free (name);
 }
 
-static void
-update_screenshot_window (Application *app)
+static gboolean
+update_screenshot_window_idle (gpointer data)
 {
-    GtkTextBuffer *text_buffer =
+    Application *app = data;
+    GtkTextBuffer *text_buffer;
+
+    if (!app->screenshot_window_visible)
+	return FALSE;
+    
+    text_buffer =
 	gtk_text_view_get_buffer (GTK_TEXT_VIEW (app->screenshot_textview));
 
     gtk_text_buffer_set_text (text_buffer, "", -1);
@@ -1141,6 +1154,41 @@ update_screenshot_window (Application *app)
 	
 	g_string_free (info.text, TRUE);
     }
+
+    app->update_screenshot_id = 0;
+
+    if (app->screenshot_window_visible)
+    {
+	set_busy (app->screenshot_window, FALSE);
+	set_busy (app->screenshot_textview, FALSE);
+    }
+    
+    return FALSE;
+}
+
+static void
+update_screenshot_window (Application *app)
+{
+    /* We do this in an idle handler to deal with the case where
+     * someone presses Shift-RightArrow on the root of a huge
+     * profile. This causes a ton of 'expanded' notifications,
+     * each of which would cause us to traverse the tree and
+     * update the screenshot window.
+     */
+    if (app->update_screenshot_id)
+	g_source_remove (app->update_screenshot_id);
+
+    if (app->screenshot_window_visible)
+    {
+	/* don't swamp the X server with cursor change requests */
+	if (!app->update_screenshot_id)
+	{
+	    set_busy (app->screenshot_window, TRUE);
+	    set_busy (app->screenshot_textview, TRUE);
+	}
+    }
+    
+    app->update_screenshot_id = g_idle_add (update_screenshot_window_idle, app);
 }
 
 static void
@@ -1151,7 +1199,6 @@ on_descendants_row_expanded_or_collapsed (GtkTreeView *tree,
 {
     update_screenshot_window (app);
 }
-			     
 
 static void
 on_object_selection_changed (GtkTreeSelection *selection,
@@ -1161,6 +1208,8 @@ on_object_selection_changed (GtkTreeSelection *selection,
 
     set_busy (app->main_window, TRUE);
     
+    update_screenshot_window (app);
+    
     gdk_window_process_all_updates (); /* Display updated selection */
     
     fill_descendants_tree (app);
@@ -1168,8 +1217,6 @@ on_object_selection_changed (GtkTreeSelection *selection,
     
     if (get_current_object (app))
 	expand_descendants_tree (app);
-    
-    update_screenshot_window (app);
     
     set_busy (app->main_window, FALSE);
 }
@@ -1264,6 +1311,8 @@ on_screenshot_activated (GtkCheckMenuItem *menu_item,
 			 Application      *app)
 {
     app->screenshot_window_visible = gtk_check_menu_item_get_active (menu_item);
+
+    update_screenshot_window (app);
     
     update_sensitivity (app);
 }

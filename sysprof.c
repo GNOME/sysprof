@@ -442,8 +442,6 @@ fill_main_list (Application *app)
     
     if (profile)
     {
-	gpointer sort_state;
-	
 	list_store = gtk_list_store_new (4,
 					 G_TYPE_STRING,
 					 G_TYPE_DOUBLE,
@@ -468,21 +466,9 @@ fill_main_list (Application *app)
 	}
 	g_list_foreach (objects, (GFunc)g_free, NULL);
 	g_list_free (objects);
-	
-	sort_state = save_sort_state (app->object_view);
-	
-	gtk_tree_view_set_model (app->object_view, GTK_TREE_MODEL (list_store));
-	
-	if (sort_state)
-	{
-	    restore_sort_state (app->object_view, sort_state);
-	}
-	else
-	{
-	    gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store),
-						  OBJECT_TOTAL,
-						  GTK_SORT_DESCENDING);
-	}
+
+	tree_view_set_model_with_default_sort (app->object_view, GTK_TREE_MODEL (list_store),
+					       OBJECT_TOTAL, GTK_SORT_DESCENDING);
 	
 	g_object_unref (G_OBJECT (list_store));
     }
@@ -518,9 +504,6 @@ static void
 fill_descendants_tree (Application *app)
 {
     GtkTreeStore *tree_store;
-    gpointer sort_state;
-    
-    sort_state = save_sort_state (app->descendants_view);
     
     if (app->descendants)
     {
@@ -547,21 +530,10 @@ fill_descendants_tree (Application *app)
 	}
     }
     
-    gtk_tree_view_set_model (
-	app->descendants_view, GTK_TREE_MODEL (tree_store));
-    
+    tree_view_set_model_with_default_sort (app->descendants_view, GTK_TREE_MODEL (tree_store),
+					   DESCENDANTS_NON_RECURSE, GTK_SORT_DESCENDING);
+
     g_object_unref (G_OBJECT (tree_store));
-    
-    if (!sort_state)
-    {
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (tree_store),
-					      DESCENDANTS_NON_RECURSE,
-					      GTK_SORT_DESCENDING);
-    }
-    else
-    {
-	restore_sort_state (app->descendants_view, sort_state);
-    }
     
     gtk_tree_view_columns_autosize (app->descendants_view);
 }
@@ -599,9 +571,6 @@ static void
 fill_callers_list (Application *app)
 {
     GtkListStore *list_store;
-    gpointer sort_state;
-    
-    sort_state = save_sort_state (app->descendants_view);
     
     if (app->callers)
     {
@@ -626,21 +595,10 @@ fill_callers_list (Application *app)
 	}
     }
     
-    gtk_tree_view_set_model (
-	app->callers_view, GTK_TREE_MODEL (list_store));
+    tree_view_set_model_with_default_sort (app->callers_view, GTK_TREE_MODEL (list_store),
+					   CALLERS_TOTAL, GTK_SORT_DESCENDING);
     
     g_object_unref (G_OBJECT (list_store));
-    
-    if (!sort_state)
-    {
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store),
-					      CALLERS_TOTAL,
-					      GTK_SORT_DESCENDING);
-    }
-    else
-    {
-	restore_sort_state (app->callers_view, sort_state);
-    }
     
     gtk_tree_view_columns_autosize (app->callers_view);
 }

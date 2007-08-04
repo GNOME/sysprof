@@ -1,3 +1,10 @@
+2007-08-04  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* sysprof.c: Update to use new tree view API.
+
+	* treeviewutils.c: Do customized sorting to get default sort
+	orders on columns. Workaround GTK+ bug 333791.
+
 2007-03-24  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* elfparser.c (elf_parser_get_crc32): madvise()

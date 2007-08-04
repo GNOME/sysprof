@@ -25,56 +25,114 @@
 
 #include "treeviewutils.h"
 
-void
-column_set_sort_id (GtkTreeViewColumn *column,
-		    int                column_id)
+static void on_column_clicked (GtkTreeViewColumn *column,
+			       gpointer data);
+typedef struct
 {
-	g_object_set_data (G_OBJECT (column),
-			   "mi-saved-sort-column", GINT_TO_POINTER (column_id));
-	gtk_tree_view_column_set_sort_column_id (column, column_id);
+	int		model_column;
+	GtkSortType	default_order;
+} SortInfo;
+
+static void
+set_sort_info (GtkTreeView *view,
+	       GtkTreeViewColumn *column,
+	       int model_column,
+	       GtkSortType default_order)
+{
+	SortInfo *info;
+	
+	info = g_new0 (SortInfo, 1);
+	info->model_column = model_column;
+	info->default_order = default_order;
+
+	gtk_tree_view_column_set_clickable (column, TRUE);
+
+	g_object_set_data (G_OBJECT (column), "column_info", info);
+	g_signal_connect (column, "clicked", G_CALLBACK (on_column_clicked), view);
 }
 
-void
-tree_view_unset_sort_ids (GtkTreeView *tree_view)
+static SortInfo *
+get_sort_info (GtkTreeViewColumn *column)
 {
-	GList *columns = gtk_tree_view_get_columns (tree_view);
-	GList *l;
-	
-	for (l = columns; l; l = l->next) {
-		gtk_tree_view_column_set_sort_column_id (l->data, -1);
+	return g_object_get_data (G_OBJECT (column), "column_info");
+}
+
+static GtkTreeViewColumn *
+find_column_by_model_column (GtkTreeView *view, int model_column)
+{
+	GList *columns = gtk_tree_view_get_columns (view);
+	GList *list;
+	GtkTreeViewColumn *result = NULL;
+
+	for (list = columns; list != NULL; list = list->next)
+	{
+		GtkTreeViewColumn *column = list->data;
+		SortInfo *info = get_sort_info (column);
+
+		if (info->model_column == model_column)
+			result = column;
 	}
-	
-	g_list_free (columns);
-}
 
-void
-tree_view_set_sort_ids (GtkTreeView *tree_view)
-{
-	GList *columns = gtk_tree_view_get_columns (tree_view);
-	GList *l;
-	
-	for (l = columns; l; l = l->next) {
-		int column_id = GPOINTER_TO_INT (g_object_get_data (l->data, "mi-saved-sort-column"));
-		gtk_tree_view_column_set_sort_column_id (l->data, column_id);
-	}
-	
 	g_list_free (columns);
-}
-
-int
-list_iter_get_index (GtkTreeModel *model,
-		     GtkTreeIter  *iter)
-{
-	GtkTreePath *path = gtk_tree_model_get_path (model,iter);
-	int result;
-	
-	g_assert (path);
-	g_assert (gtk_tree_path_get_depth (path) == 1);
-	result = gtk_tree_path_get_indices (path)[0];
-	gtk_tree_path_free (path);
 	
 	return result;
+}
+
+void
+tree_view_set_sort_column (GtkTreeView *view,
+			   int model_column,
+			   int sort_type)
+{
+	GList *columns, *list;
+	GtkTreeSortable *sortable;
+	GtkTreeViewColumn *column = find_column_by_model_column (view, model_column);
+	SortInfo *info = get_sort_info (column);
 	
+	/* For each column in the view, unset the sort indicator */
+	columns = gtk_tree_view_get_columns (view);
+	for (list = columns; list != NULL; list = list->next)
+	{
+		GtkTreeViewColumn *col = GTK_TREE_VIEW_COLUMN (list->data);
+		
+		gtk_tree_view_column_set_sort_indicator (col, FALSE);
+	}
+
+	/* Set the sort indicator for this column */
+	gtk_tree_view_column_set_sort_indicator (column, TRUE);
+	gtk_tree_view_column_set_sort_order (column, sort_type);
+
+	/* And sort the column */
+	sortable = GTK_TREE_SORTABLE (gtk_tree_view_get_model (view));
+	
+	gtk_tree_sortable_set_sort_column_id (sortable,
+					      info->model_column,
+					      sort_type);
+}
+
+static void
+on_column_clicked (GtkTreeViewColumn *column,
+		   gpointer data)
+{
+	GtkTreeView *view = data;
+	GtkSortType sort_type;
+	SortInfo *info = get_sort_info (column);
+
+	/* Find out what our current sort indicator is. If it is NONE, then
+	 * select the default for the column, otherwise, select the opposite
+	 */
+	if (!gtk_tree_view_column_get_sort_indicator (column))
+	{
+		sort_type = info->default_order;
+	}
+	else
+	{
+		if (gtk_tree_view_column_get_sort_order (column) == GTK_SORT_ASCENDING)
+			sort_type = GTK_SORT_DESCENDING;
+		else
+			sort_type = GTK_SORT_ASCENDING;
+	}
+
+	tree_view_set_sort_column (view, info->model_column, sort_type);
 }
 
 GtkTreeViewColumn *
@@ -90,7 +148,8 @@ add_plain_text_column (GtkTreeView *view, const gchar *title, gint model_column)
 							   NULL);
 	gtk_tree_view_column_set_resizable (column, TRUE);
 	gtk_tree_view_append_column (view, column);
-	column_set_sort_id (column, model_column);
+
+	set_sort_info (view, column, model_column, GTK_SORT_ASCENDING);
 	
 	return column;
 }
@@ -162,7 +221,8 @@ add_double_format_column (GtkTreeView *view, const gchar *title, gint model_colu
 						 double_to_text, column_info, free_column_info);
 	
 	gtk_tree_view_append_column (view, column);
-	column_set_sort_id (column, model_column);
+
+	set_sort_info (view, column, model_column, GTK_SORT_DESCENDING);
 	
 	return column;
 }
@@ -184,53 +244,37 @@ add_pointer_column (GtkTreeView *view, const gchar *title, gint model_column)
 						 pointer_to_text, GINT_TO_POINTER (model_column), NULL);
 	
 	gtk_tree_view_append_column (view, column);
-	column_set_sort_id (column, model_column);
 	
 	return column;
 }
 
-typedef struct
-{
-	gboolean	is_sorted;
-	int		sort_column;
-	GtkSortType	sort_type;
-} SortState;
-
-
-gpointer
-save_sort_state (GtkTreeView *view)
-{
-	SortState *state = NULL;
-	GtkTreeModel *model = gtk_tree_view_get_model (view);
-	
-	if (model && GTK_IS_TREE_SORTABLE (model)) {
-		state = g_new (SortState, 1);
-		state->is_sorted = gtk_tree_sortable_get_sort_column_id (
-			GTK_TREE_SORTABLE (model),
-			&(state->sort_column),
-			&(state->sort_type));
-	}
-	return state;
-}
-
 void
-restore_sort_state (GtkTreeView *view, gpointer st)
+tree_view_set_model_with_default_sort (GtkTreeView *view,
+				       GtkTreeModel *model,
+				       int model_column,
+				       GtkSortType default_sort)
 {
-	SortState *state = st;
-	GtkTreeModel *model = gtk_tree_view_get_model (view);
-	
-	if (state) {
-		if (state->is_sorted && model && GTK_IS_TREE_SORTABLE (model)) {
-			gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model),
-							      state->sort_column,
-							      state->sort_type);
-		}
-		g_free (state);
+	gboolean	was_sorted = FALSE;
+	int		old_column;
+	GtkSortType	old_type;
+	GtkTreeSortable *old_model;
+
+	old_model = GTK_TREE_SORTABLE (gtk_tree_view_get_model (view));
+
+	if (old_model)
+	{
+		was_sorted = gtk_tree_sortable_get_sort_column_id (
+			GTK_TREE_SORTABLE (gtk_tree_view_get_model (view)),
+			&old_column, &old_type);
 	}
 	
-	gtk_tree_sortable_sort_column_changed (GTK_TREE_SORTABLE (model));
+	gtk_tree_view_set_model (view, model);
+	
+	if (was_sorted)
+		tree_view_set_sort_column (view, old_column, old_type);
+	else
+		tree_view_set_sort_column (view, model_column, default_sort);
 }
-
 
 static void
 process_iter (GtkTreeView      *view,

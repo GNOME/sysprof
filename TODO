@@ -54,8 +54,15 @@ Before 1.2:
 		- copying kernel stack to userspace
 			- it's always 4096 bytes these days
 		- heuristically determine functions based on address
+			- callbacks on the stack can be identified
+			  by having an offset of 0.
+			- even so there is a lot of false positives.
 		- is eh_frame usually loaded into memory during normal
-		  operation
+		  operation? It is mapped, but probably not paged in,
+		  so we will be taking a few major page faults when we
+		  first profile something.
+			Unless of course, we store the entire stack in
+		  the stackstash. This may use way too much memory though.
 
 	- vdso
 		- assume its the same across processes, just look at
@@ -76,7 +83,8 @@ Before 1.2:
 		- do heuristic stackwalk in kernel
 		- do heuristic stackwalk in userland
 
-* "Expand all" is horrendously slow because update screenshot gets called 
+
+* "Expand all" is horrendously slow because update_screenshot gets called 
   for every "expanded" signal. In fact even normal expanding is really
   slow. It's probably hopeless to get decent performance out of GtkTreeView,
   so we will have to store a list of expanded objects and keep that uptodate
@@ -87,7 +95,7 @@ Before 1.2:
   Or try to parse the machine code. Positions that are called are likely 
   to be functions.
 
-* Give more sensible 'error messages'. Ie., if you get permission denied for
+* Give more sensible 'error messages'. Eg., if you get permission denied for
   a file, put "Permission denied" instead of "No map"
 
 * crc32 checking probably doesn't belong in elfparser.c
@@ -97,6 +105,7 @@ Before 1.2:
 	- it's inconvenient that you have to pass in both a parser _and_
 	  a record. The record should just contain a pointer to the parser.
 	  On the other hand, the result does depend on the parser->offset.
+	  So it's a bit confusing that it's not passed in.
 
 	- the bin_parser_seek_record (..., 1); idiom is a little dubious
 
@@ -110,9 +119,6 @@ Before 1.2:
   or maybe not ...
 
 * Make it compilable against a non-running kernel.
-
-* commandline version should check that the output file is writable
-  before starting the profiling.
 
 * Maybe report idle time? Although this would come for free with the
   timelines.
@@ -135,22 +141,6 @@ Before 1.2:
   just another gtk+ bug.
 
 - Fix bugs/performance issues:
-	- decorate_node should be done lazily
-	- Find out why we sometimes get completely ridicoulous stacktraces,
-	  where main seems to be called from within Xlib etc. This happens
-	  even after restarting everything.
-	- It looks like the stackstash-reorg code confuses "main" from
-	  unrelated processes. - currently it looks like if multiple
-	  "main"s are present, only one gets listed in the object list.
-		Seems to mostly happen when multiple processes are 
-		involved.
-	- Numbers in caller view are completely screwed up.
-	- It looks like it sometimes gets confused with similar but different
-	  processes: Something like:
-		process a spends 80% in foo() called from bar()
-		process b spends 1% in foo() called from baz()
-	  we get reports of baz() using > 80% of the time.
-	  Or something.
 	- add_trace_to_tree() might be a little slow when dealing with deeply
 	  recursive profiles. Hypothesis: seen_nodes can grow large, and the
 	  algorithm is O(n^2) in the length of the trace.
@@ -290,6 +280,67 @@ Before 1.2:
 		  would only need to store a list of hashcodes that we
 		  have generated previously.
 
+	- One problem with doing DWARF walking is that the debug code
+	  will have to be faulted in. This can be a substantial amount
+	  of disk access which is undesirable to have during a
+	  profiling run. Even if we only have to fault in the
+	  .eh_frame_hdr section, that's still 18 pages for gtk+. The 
+	  .eh_frame section for gtk+ is 72 pages.
+
+	  A possibility may be to consider two stacktraces identical if
+	  the only differing values are *outside* the text segments.
+	  This may work since stack frames tend to be the same size. 
+
+	  It is then sufficient in user space to only store one
+	  representative for each set of considered-identical stack
+	  traces.
+
+	  User space storage: Use the stackstash tree. When a new trace
+	  is added, just skip over nodes that differ, but where none of
+	  them points to text segments. Two possibilities then:
+
+	        - when two traces are determined to differ, store them
+	          in completely separate trees. This ensures that we
+	          will never run the dwarf algorithm on an invalid
+	          stack trace, but also means that we won't get shared
+	          prefixes for stacktraces.
+
+		- when two traces are determined to differ, branch off
+		  as currently. This will share more data, but the
+		  dwarf algorithm could be run on invalid traces. It
+		  may work in practice though if the compiler
+		  generally uses fixed stack frames.
+
+		  A twist on is to mark the complete stack traces as
+		  "complete". Then after running the DWARF algorithm,
+		  the generated stack trace can be saved with it. This
+		  way incomplete stack traces branching off a complete
+		  one can be completed using the DWARF information for
+		  the shared part.
+
+
+* How to get the user stack:
+
+   /* In principle we should use get_task_mm() but
+    * that will use task_lock() leading to deadlock
+    * if somebody already has the lock
+    */
+   if (spin_is_locked (&current->alloc_lock))
+           printk ("alreadylocked\n");
+   {
+           struct mm_struct *mm = current->mm;
+           if (mm)
+           {
+                   printk (KERN_ALERT "stack size: %d (%d)\n",
+                           mm->start_stack - regs->REG_STACK_PTR,
+                           current->pid);
+                   
+                   stacksize = mm->start_stack - regs->REG_STACK_PTR;
+           }
+           else
+                   stacksize = 1;
+   }
+
 * If interrupt happens in kernel mode, send both
   kernel stack and user space stack, have userspace stitch them
   together. well, they could be stitched together in the kernel. 
@@ -358,7 +409,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
   look in dwarf2-frame.[ch] in the gdb distribution. 
 
   Also look at bozo-profiler
-	http://www-sop.inria.fr/dream/personnel/Mathieu.Lacage/bozo-profiler/bozo-profiler-1.1.tar.gz
+	http://cutebugs.net/bozo-profiler/
   which has an elf32 parser/debugger
 
 - Make busy cursors more intelligent
@@ -499,12 +550,8 @@ Later:
 - Find out how to hack around gtk+ bug causing multiple double clicks 
   to get eaten.
 
-- Consider what it would take to take stacktraces of other languages
-
-	- perl, 
-	- python
-	- java
-	- bash
+- Consider what it would take to take stacktraces of other languages such
+  as perl, python, java, ruby, or bash. Or scheme.
 
   Possible solution is for the script binaries to have a function
   called something like 
@@ -516,10 +563,14 @@ Later:
   This function would behave essentially like a signal handler: couldn't
   call malloc(), couldn't call printf(), etc. 
 
-  Note thought that scripting languages will generally have a stack with 
+  Note though that scripting languages will generally have a stack with 
   both script-binary-stack, script stack, and library stacks. We wouldn't
   want scripts to need to parse dwarf. Also if we do that thing with 
-  sending the entire stack to userspace, things will be further complicated.
+  sending the entire stack to userspace, things will be further
+  complicated.
+
+  Also note languages like scheme that uses heap allocated activation
+  records.
 
 - Consider this usecase:
 	Someone is considering replacing malloc()/free() with a freelist
@@ -615,49 +666,72 @@ Later:
 	  it asynchronously.
 	  Visualization: A timeline with alternating CPU/disk activity. 
 
-	- What function is doing all the synchronous reading, and what files/offsets is
-	  it reading. Visualization: lots of reads across different files out of one 
-	  function
+	- What function is doing all the synchronous reading, and what
+	  files/offsets is it reading. Visualization: lots of reads across
+	  different files out of one function
 
-	- A piece of the program is doing disk I/O. We can drop that entire piece of
-  	  code. Sysprof visualization is ok, although seeing the files accessed is useful
- 	  so that we can tell if those files are not just going to be used in
-	  other places. (Gnumeric plugin_init()).
+	- A piece of the program is doing disk I/O. We can drop that
+ 	  entire piece of code. Sysprof visualization is ok, although seeing
+	  the files accessed is useful so that we can tell if those files are
+	  not just going to be used in other places. (Gnumeric plugin_init()).
 
-	- A function is reading a file synchronously, but there is other (CPU/disk) stuff
-	  that could be done at the same time. Visualization: A piece of the timeline 
-	  is diskbound with little or no CPU used.
+	- A function is reading a file synchronously, but there is other
+	  (CPU/disk) stuff that could be done at the same time. Visualization:
+	  A piece of the timeline is diskbound with little or no CPU used.
 
-	- Want to improve code locality of library or binary. Visualization: no GUI, just
-	  produce a list of functions that should be put first in the file. Then run the
-	  program again until the list converges. (Valgrind may be more useful here).
+	- Want to improve code locality of library or binary. Visualization:
+	  no GUI, just produce a list of functions that should be put first in
+	  the file. Then run the program again until the list converges.
+	  (Valgrind may be more useful here).
 
-	- Nautilus reads a ton of files, icons + all the files in the homedirectory.
-	  Normal sysprof visualization is probably useful enough.
+	- Nautilus reads a ton of files, icons + all the files in the
+	  homedirectory. Normal sysprof visualization is probably useful
+	  enough.
 
 	- Profiling a login session. 
 
-	- Many applications are running at the same time, doing IPC. It would be useful
-	  if we could figure out what other things a given process is waiting on. Eg., in
-	  poll, find out what processes have the other ends of the fd's open.
-		Visualization: multiple lines on a graph. Lines join up where one process
-		is blocking on another. That would show processes holding up the progress
-		very clearly.
+	- Many applications are running at the same time, doing IPC. It would
+	  be useful if we could figure out what other things a given process
+	  is waiting on. Eg., in poll, find out what processes have the other
+	  ends of the fd's open.
+		Visualization: multiple lines on a graph. Lines join up where
+	  one process is blocking on another. That would show processes holding
+	  up the progress very clearly.
 	  This was suggested by Federico.
 
-    - Need to report stat() as well. (Where do inode data end up? In the buffer-cache?)
-      Also open() may cause disk reads (seeks).
+    - Need to report stat() as well. (Where do inode data end up? In the
+      buffer-cache?) Also open() may cause disk reads (seeks).
 
-    - To generate the timeline we need to know when a disk request is issued and when it
-      is completed. This way we can assign blame to all applications that have issued a
-      disk request at a given point in time. 
+    - To generate the timeline we need to know when a disk request is
+      issued and when it is completed. This way we can assign blame to all
+      applications that have issued a disk request at a given point in time. 
 
-	The disk timeline should probably vary in intensity with the number of outstanding
-	disk requests.
-
+      The disk timeline should probably vary in intensity with the number
+      of outstanding disk requests.
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* Various:
+	- decorate_node should be done lazily
+	- Find out why we sometimes get completely ridicoulous stacktraces,
+	  where main seems to be called from within Xlib etc. This happens
+	  even after restarting everything.
+	- It looks like the stackstash-reorg code confuses "main" from
+	  unrelated processes. - currently it looks like if multiple
+	  "main"s are present, only one gets listed in the object list.
+		Seems to mostly happen when multiple processes are 
+		involved.
+	- Numbers in caller view are completely screwed up.
+	- It looks like it sometimes gets confused with similar but different
+	  processes: Something like:
+		process a spends 80% in foo() called from bar()
+		process b spends 1% in foo() called from baz()
+	  we get reports of baz() using > 80% of the time.
+	  Or something.
+
+* commandline version should check that the output file is writable
+  before starting the profiling.
 
 * See if we can reproduce the problem where libraries didn't get correctly
   reloaded after new versions were installed.

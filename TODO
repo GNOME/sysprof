@@ -1,16 +1,5 @@
 Before 1.0.4:
 
-* See if we can reproduce the problem where libraries didn't get correctly
-  reloaded after new versions were installed.
-	This is just the (deleted) problem.Turns out that the kernel
-  doesn't print (deleted) in all cases. Some possibilities:
-
-	- check that the inodes of the mapped file and the disk file
-	  are the same (done in HEAD).
-
-	- check that the file was not modified after being mapped?
-	  (Can we get the time it was mapped or opened?)
-
 * Build system
    - Create RPM package? See fedora-packaging-list for information
      about how to package kernel modules. Lots of threads in
@@ -144,9 +133,6 @@ Before 1.2:
 * With kernel module not installed, select Profiler->Start, then dismiss
   the alert. This causes the start button to appear prelighted. Probably
   just another gtk+ bug.
-
-* Find out if the first sort order of a GtkTreeView column can be changed
-  programmatically.
 
 - Fix bugs/performance issues:
 	- decorate_node should be done lazily
@@ -672,6 +658,23 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* See if we can reproduce the problem where libraries didn't get correctly
+  reloaded after new versions were installed.
+	This is just the (deleted) problem. Turns out that the kernel
+  doesn't print (deleted) in all cases. Some possibilities:
+
+	- check that the inodes of the mapped file and the disk file
+	  are the same (done in HEAD).
+
+	- check that the file was not modified after being mapped?
+	  (Can we get the time it was mapped or opened?) If it was
+	  modified you'd expect the inode to change, right?
+
+* Find out if the first sort order of a GtkTreeView column can be
+  changed programmatically. It can't (and the GTK+ bug was wontfixed).
+  A workaround is possible though. (Someone, please write a
+  GtkTreeView replacement!)
 
 * Missing things in binparser.[ch]
 

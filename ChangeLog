@@ -1,9 +1,14 @@
+2007-08-25  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* treeviewutils.c (tree_view_set_model_with_default_sort): Work
+	around GTK+ bug 405625.
+
 2007-08-04  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* sysprof.c: Update to use new tree view API.
 
 	* treeviewutils.c: Do customized sorting to get default sort
-	orders on columns. Workaround GTK+ bug 333791.
+	orders on columns. Workaround for GTK+ bug 333791.
 
 2007-03-24  Soren Sandmann <sandmann@daimi.au.dk>
 

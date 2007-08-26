@@ -258,6 +258,7 @@ tree_view_set_model_with_default_sort (GtkTreeView *view,
 	int		old_column;
 	GtkSortType	old_type;
 	GtkTreeSortable *old_model;
+	GtkAdjustment   *adjustment;
 
 	old_model = GTK_TREE_SORTABLE (gtk_tree_view_get_model (view));
 
@@ -274,6 +275,11 @@ tree_view_set_model_with_default_sort (GtkTreeView *view,
 		tree_view_set_sort_column (view, old_column, old_type);
 	else
 		tree_view_set_sort_column (view, model_column, default_sort);
+
+	/* Workaround for GTK+ crack, see bug 405625 */
+	adjustment = gtk_tree_view_get_vadjustment (view);
+	if (adjustment)
+		gtk_adjustment_set_value (adjustment, 0);
 }
 
 static void

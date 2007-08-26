@@ -1,5 +1,11 @@
 2007-08-26  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* profile.c (profile_get_size): Compute the size by simply summing
+	the size of the siblings. They are toplevel by definition, and
+	this works if the siblings for some reason has the same address.
+
+2007-08-26  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* treeviewutils.c (process_iter): Reformat and fix various minor
 	issues.
 

@@ -595,7 +595,7 @@ compute_total (StackNode *node)
 	if (n->toplevel)
 	    total += n->total;
     }
-    
+
     return total;
 }
 
@@ -608,10 +608,10 @@ build_object_list (StackNode *node, gpointer data)
     
     obj = g_new (ProfileObject, 1);
     obj->name = node->address;
-    
-    obj->total = compute_total (node);
 
+    obj->total = compute_total (node);
     obj->self = 0;
+    
     for (n = node; n != NULL; n = n->next)
 	obj->self += n->size;
     
@@ -634,9 +634,9 @@ profile_get_size (Profile *profile)
 {
     StackNode *n;
     gint size = 0;
-    
+
     for (n = stack_stash_get_root (profile->stash); n != NULL; n = n->siblings)
-	size += compute_total (n);
+	size += n->total;
 
     return size;
 }

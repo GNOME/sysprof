@@ -393,7 +393,7 @@ collector_create_profile (Collector *collector)
     info.unique_cmdlines = g_hash_table_new (g_str_hash, g_str_equal);
     
     stack_stash_foreach (collector->stash, resolve_symbols, &info);
-    
+
     g_hash_table_destroy (info.unique_symbols);
     g_hash_table_destroy (info.unique_cmdlines);
     

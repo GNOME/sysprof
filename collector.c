@@ -86,7 +86,7 @@ time_diff (const GTimeVal *first,
 
 static void
 add_trace_to_stash (const SysprofStackTrace *trace,
-		    StackStash *stash)
+		    StackStash              *stash)
 {
     int i;
     gulong *addrs;
@@ -213,7 +213,8 @@ open_fd (Collector *collector,
 	    
 	    while (fd < 0 && g_timer_elapsed (timer, NULL) < 0.5)
 	    {
-		/* Wait for udev to discover the new device */
+		/* Wait for udev to discover the new device.
+		 */
 		usleep (100000);
 		
 		errno = 0;
@@ -256,8 +257,8 @@ open_fd (Collector *collector,
 }
 
 gboolean
-collector_start (Collector *collector,
-		 GError **err)
+collector_start (Collector  *collector,
+		 GError    **err)
 {
     if (collector->fd < 0 && !open_fd (collector, err))
 	return FALSE;

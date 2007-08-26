@@ -287,9 +287,12 @@ Before 1.2:
 	  .eh_frame_hdr section, that's still 18 pages for gtk+. The 
 	  .eh_frame section for gtk+ is 72 pages.
 
-	  A possibility may be to consider two stacktraces identical if
-	  the only differing values are *outside* the text segments.
-	  This may work since stack frames tend to be the same size. 
+	  A possibility may be to consider two stacktraces identical
+	  if the only differing values are *outside* the text
+	  segments.  This may work since stack frames tend to be the
+	  same size.  Is there a way of determining the location of
+	  text segments without reading the ELF files? Maybe just
+	  check if it's inside an executable mappign.
 
 	  It is then sufficient in user space to only store one
 	  representative for each set of considered-identical stack

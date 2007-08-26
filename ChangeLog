@@ -1,3 +1,8 @@
+2007-08-26  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* treeviewutils.c (process_iter): Reformat and fix various minor
+	issues.
+
 2007-08-25  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* treeviewutils.c (tree_view_set_model_with_default_sort): Work

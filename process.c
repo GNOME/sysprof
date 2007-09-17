@@ -3,7 +3,7 @@
  * Copyright 2002, Kristian Rietveld
  *
  * Sysprof -- Sampling, systemwide CPU profiler
- * Copyright 2004-2005 Soeren Sandmann
+ * Copyright 2004-2007 Soeren Sandmann
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,7 +285,7 @@ static int
 page_size (void)
 {
     static int page_size;
-    static gboolean has_page_size;
+    static gboolean has_page_size = FALSE;
 
     if (!has_page_size)
     {
@@ -489,9 +489,15 @@ find_kernel_binary (void)
     return binary;
 }
 
+typedef struct
+{
+    gulong	 address;
+    char	*name;
+} KernelSymbol;
+
 static void
 parse_kallsym_line (const char *line,
-		    GHashTable *table)
+		    GArray *table)
 {
     char **tokens = g_strsplit_set (line, " \t", -1);
 
@@ -502,19 +508,25 @@ parse_kallsym_line (const char *line,
 
 	address = strtoul (tokens[0], &endptr, 16);
 
-	if (*endptr == '\0')
+	if (*endptr == '\0'			&&
+	    (strcmp (tokens[1], "T") == 0	||
+	     strcmp (tokens[1], "t") == 0))
 	{
-	    g_hash_table_insert (
-		table, GUINT_TO_POINTER (address), g_strdup (tokens[2]));
+	    KernelSymbol sym;
+
+	    sym.address = address;
+	    sym.name = g_strdup (tokens[2]);
+
+	    g_array_append_val (table, sym);
 	}
     }
 
     g_strfreev (tokens);
 }
 
-static void
+static gboolean
 parse_kallsyms (const char *kallsyms,
-		GHashTable *table)
+		GArray     *table)
 {
     const char *sol;
     const char *eol;
@@ -532,47 +544,133 @@ parse_kallsyms (const char *kallsyms,
 	sol = eol + 1;
 	eol = strchr (sol, '\n');
     }
+
+    if (table->len <= 1)
+	return FALSE;
+    
+    return TRUE;
 }
 
-static GHashTable *
+static int
+compare_syms (gconstpointer a, gconstpointer b)
+{
+    const KernelSymbol *sym_a = a;
+    const KernelSymbol *sym_b = b;
+
+    if (sym_a->address > sym_b->address)
+	return 1;
+    else if (sym_a->address == sym_b->address)
+	return 0;
+    else
+	return -1;
+}
+
+static GArray *
 get_kernel_symbols (void)
 {
-    static gboolean read_symbols = FALSE;
-    static GHashTable *kernel_syms;
+    static GArray *kernel_syms;
+    static gboolean initialized = FALSE;
     
-    if (!read_symbols)
+    if (!initialized)
     {
 	char *kallsyms;
-	g_file_get_contents ("/proc/kallsyms", &kallsyms, NULL, NULL);
-	
-	if (kallsyms)
+	if (g_file_get_contents ("/proc/kallsyms", &kallsyms, NULL, NULL))
 	{
-	    kernel_syms = g_hash_table_new_full (g_direct_hash, g_direct_equal,
-						 NULL, g_free);
-
-	    parse_kallsyms (kallsyms, kernel_syms);
-	    
-	    g_free (kallsyms);
-	    g_hash_table_destroy (kernel_syms);
+	    if (kallsyms)
+	    {
+		kernel_syms = g_array_new (TRUE, TRUE, sizeof (KernelSymbol));
+		
+		if (parse_kallsyms (kallsyms, kernel_syms))
+		{
+		    g_array_sort (kernel_syms, compare_syms);
+		}
+		else
+		{
+		    g_array_free (kernel_syms, TRUE);
+		    kernel_syms = NULL;
+		}
+	    }
 	}
 
-	read_symbols = TRUE;
+	if (!kernel_syms)
+	    g_print ("Warning: /proc/kallsyms could not be "
+		     "read. Kernel symbols will not be available\n");
+	
+	initialized = TRUE;
     }
 
-    return NULL;
+    return kernel_syms;
 }
 
-static const char *
-lookup_kernel_symbol (gulong address)
+gboolean
+process_is_kernel_address (gulong address)
 {
-    static const char *const kernel = "In kernel";
+    GArray *ksyms = get_kernel_symbols ();
 
-    return kernel;
+    if (ksyms &&
+	address >= g_array_index (ksyms, KernelSymbol, 0).address	&&
+	address <  g_array_index (ksyms, KernelSymbol, ksyms->len - 1).address)
+    {
+	return TRUE;
+    }
+
+    return FALSE;
+}
+
+static KernelSymbol *
+do_lookup (KernelSymbol *symbols,
+	   gulong        address,
+	   int           first,
+	   int           last)
+{
+    if (address >= symbols[last].address)
+    {
+	return &(symbols[last]);
+    }
+    else if (last - first < 3)
+    {
+	while (last >= first)
+	{
+	    if (address >= symbols[last].address)
+		return &(symbols[last]);
+	    
+	    last--;
+	}
+	
+	return NULL;
+    }
+    else
+    {
+	int mid = (first + last) / 2;
+	
+	if (symbols[mid].address > address)
+	    return do_lookup (symbols, address, first, mid);
+	else
+	    return do_lookup (symbols, address, mid, last);
+    }
+}
+
+const char *
+process_lookup_kernel_symbol (gulong address,
+			      gulong *offset)
+{
+    GArray *ksyms = get_kernel_symbols ();
+    KernelSymbol *result;
+
+    if (ksyms->len == 0)
+	return NULL;
+    
+    result = do_lookup ((KernelSymbol *)ksyms->data, address, 0, ksyms->len - 1);
+    if (result && offset)
+	*offset = address - result->address;
+    
+    return result? result->name : NULL;
 }
 
 const char *
 process_lookup_symbol (Process *process, gulong address)
 {
+    static const char *const kernel = "kernel";
     const BinSymbol *result;
     Map *map = process_locate_map (process, address);
     
@@ -580,12 +678,16 @@ process_lookup_symbol (Process *process, gulong address)
 
     if (address == 0x1)
     {
-	get_kernel_symbols ();
-	
-	return lookup_kernel_symbol (address);
+	return kernel;
     }
     else if (!map)
     {
+	gulong offset;
+	const char *res = process_lookup_kernel_symbol (address, &offset);
+	
+	if (res && offset != 0)
+	    return res;
+	
 	if (!process->undefined)
 	{
 	    process->undefined =
@@ -615,11 +717,6 @@ process_lookup_symbol (Process *process, gulong address)
     
     address -= map->start;
     address += map->offset;
-    
-#if 0
-    address -= map->start;
-    address += map->offset;
-#endif
 
 #if 0
     if (strcmp (map->filename, "[vdso]") == 0)
@@ -637,7 +734,7 @@ process_lookup_symbol (Process *process, gulong address)
     if (!bin_file_check_inode (map->bin_file, map->inode))
     {
 	/* If the inodes don't match, it's probably because the
-	 * file has changed since the process started. Just return
+	 * file has changed since the process was started. Just return
 	 * the undefined symbol in that case.
 	 */
 	address = 0x0;

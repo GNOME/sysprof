@@ -62,7 +62,7 @@ collector_new (CollectorFunc callback,
     collector->stash = NULL;
     
     collector_reset (collector);
-    
+
     return collector;
 }
 
@@ -92,23 +92,53 @@ add_trace_to_stash (const SysprofStackTrace *trace,
     gulong *addrs;
     Process *process = process_get_from_pid (trace->pid);
     int n_addresses;
-    
+    int n_kernel_words;
+    int a;
+
     n_addresses = trace->n_addresses;
+    n_kernel_words = trace->n_kernel_words;
+
+    addrs = g_new (gulong, n_addresses + n_kernel_words + 2);
     
-    addrs = g_new (gulong, n_addresses + 1);
+    a = 0;
+    /* Add kernel addresses */
+    if (trace->n_kernel_words)
+    {
+	for (i = 0; i < trace->n_kernel_words; ++i)
+	{
+	    gulong addr = (gulong)trace->kernel_stack[i];
+
+	    if (process_is_kernel_address (addr))
+		addrs[a++] = addr;
+	}
+
+	/* Add kernel marker */
+	addrs[a++] = 0x01;
+    }
+
+    /* Add user addresses */
 
     for (i = 0; i < n_addresses; ++i)
     {
-	process_ensure_map (process, trace->pid, 
-			    (gulong)trace->addresses[i]);
+	gulong addr = (gulong)trace->addresses[i];
 	
-	addrs[i] = (gulong)trace->addresses[i];
+	process_ensure_map (process, trace->pid, addr);
+	addrs[a++] = addr;
     }
+
+    /* Add process */
+    addrs[a++] = (gulong)process;
+
+#if 0
+    if (a != n_addresses)
+ 	g_print ("a: %d, n_addresses: %d, kernel words: %d\n trace->nad %d",
+		 a, n_addresses, trace->n_kernel_words, trace->n_addresses);
     
-    addrs[i] = (gulong)process;
+    g_assert (a == n_addresses);
+#endif
     
     stack_stash_add_trace (
-	stash, addrs, n_addresses + 1, 1);
+	stash, addrs, a, 1);
     
     g_free (addrs);
 }
@@ -152,7 +182,7 @@ on_read (gpointer data)
 	const SysprofStackTrace *trace;
 
 	trace = &(collector->map_area->traces[collector->current]);
-	
+
 #if 0
 	{
 	    int i;
@@ -263,6 +293,12 @@ collector_start (Collector  *collector,
     if (collector->fd < 0 && !open_fd (collector, err))
 	return FALSE;
     
+    /* Hack to make sure we parse the kernel symbols before
+     * starting collection, so the parsing doesn't interfere
+     * with the profiling.
+     */
+    process_is_kernel_address (0);
+    
     fd_set_read_callback (collector->fd, on_read);
     return TRUE;
 }
@@ -330,15 +366,44 @@ unique_dup (GHashTable *unique_symbols, const char *sym)
 }
 
 static char *
-lookup_symbol (Process *process, gpointer address, GHashTable *unique_symbols)
+lookup_symbol (Process *process, gpointer address,
+	       GHashTable *unique_symbols,
+	       gboolean kernel,
+	       gboolean first_kernel_addr)
 {
     const char *sym;
 
     g_assert (process);
+
+    if (kernel)
+    {
+	gulong offset;
+	sym = process_lookup_kernel_symbol ((gulong)address, &offset);
+
+	/* If offset is 0, it is a callback, not a return address */
+	if (offset == 0 && !first_kernel_addr)
+	    sym = NULL;
+
+	/* If offset is greater than 4096, then what happened is most
+	 * likely that it is the address of something in the gap between the
+	 * kernel text and the text of the modules. Rather than assign
+	 * this to the last function of the kernel text, we remove it here.
+	 *
+	 * FIXME: what we really should do is find out where this split
+	 * is, and act accordingly.
+	 */
+	if (offset > 4096)
+	    sym = NULL;
+    }
+    else
+    {
+	sym = process_lookup_symbol (process, (gulong)address);
+    }
     
-    sym = process_lookup_symbol (process, (gulong)address);
-    
-    return unique_dup (unique_symbols, sym);
+    if (sym)
+	return unique_dup (unique_symbols, sym);
+    else
+	return NULL;
 }
 
 static void
@@ -350,15 +415,28 @@ resolve_symbols (GList *trace, gint size, gpointer data)
     Process *process = g_list_last (trace)->data;
     GPtrArray *resolved_trace = g_ptr_array_new ();
     char *cmdline;
+    gboolean in_kernel = FALSE;
+    gboolean first_kernel_addr = TRUE;
     
+    for (list = trace; list && list->next; list = list->next)
+    {
+	if (list->data == GINT_TO_POINTER (0x01))
+	    in_kernel = TRUE;
+    }
+
     for (list = trace; list && list->next; list = list->next)
     {
 	gpointer address = list->data;
 	char *symbol;
 	
-	symbol = lookup_symbol (process, address, info->unique_symbols);
-	
-	g_ptr_array_add (resolved_trace, symbol);
+	if (address == GINT_TO_POINTER (0x01))
+	    in_kernel = FALSE;
+	symbol = lookup_symbol (process, address, info->unique_symbols,
+				in_kernel, first_kernel_addr);
+	first_kernel_addr = FALSE;
+
+	if (symbol)
+	    g_ptr_array_add (resolved_trace, symbol);
     }
 
     cmdline = g_hash_table_lookup (info->unique_cmdlines,

@@ -23,6 +23,15 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Performance:
+	Switching between descendant views is a slow:
+		  - gtk_tree_store_get_path() is O(n^2) and accounts
+		    for 43% of the time.
+		  - GObject signal emission overhead accounts for 18% of
+		    the time. 
+	Consider adding a forked version of GtkTreeStore with
+	performance fixes.
+
 * Make sure that labels look decent in case of "No Map" etc.
 
 * Elf bugs:
@@ -64,12 +73,27 @@ Before 1.2:
 			Unless of course, we store the entire stack in
 		  the stackstash. This may use way too much memory though.
 
-	- vdso
-		- assume its the same across processes, just look at
-		  sysprof's own copy.
-			Done: vdso is done now
-		- send copy of it to userspace once, or for every
-		  sample. 
+		- Locking, possibly useful code:
+
+		/* In principle we should use get_task_mm() but
+		 * that will use task_lock() leading to deadlock
+		 * if somebody already has the lock
+		 */
+		if (spin_is_locked (&current->alloc_lock))
+			printk ("alreadylocked\n");
+		{
+			struct mm_struct *mm = current->mm;
+			if (mm)
+			{
+				printk (KERN_ALERT "stack size: %d (%d)\n",
+					mm->start_stack - regs->REG_STACK_PTR,
+					current->pid);
+				
+				stacksize = mm->start_stack - regs->REG_STACK_PTR;
+			}
+			else
+				stacksize = 1;
+		}
 
 	- regular elf
 		- usually have eh_frame section which is mapped into memory
@@ -713,7 +737,15 @@ Later:
       of outstanding disk requests.
 
 
--=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE: -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+* vdso
+	- assume its the same across processes, just look at
+	  sysprof's own copy.
+		Done: vdso is done now
+	- send copy of it to userspace once, or for every
+	  sample. 
 
 * Various:
 	- decorate_node should be done lazily

@@ -106,6 +106,12 @@ read_frame (void *frame_pointer, StackFrame *frame)
 
 DEFINE_PER_CPU(int, n_samples);
 
+static int
+minimum (int a, int b)
+{
+	return a > b ? b : a;
+}
+
 #ifdef OLD_PROFILE
 static int timer_notify(struct notifier_block * self, unsigned long val, void * data)
 #else
@@ -123,9 +129,6 @@ timer_notify (struct pt_regs *regs)
 	StackFrame frame;
 	int result;
 	static atomic_t in_timer_notify = ATOMIC_INIT(1);
-#if 0
-	int stacksize;
-#endif
 	int n;
 
 	n = ++get_cpu_var(n_samples);
@@ -135,7 +138,6 @@ timer_notify (struct pt_regs *regs)
 		return 0;
 	
 	/* 0: locked, 1: unlocked */
-	
 	if (!atomic_dec_and_test(&in_timer_notify))
 		goto out;
 
@@ -150,58 +152,51 @@ timer_notify (struct pt_regs *regs)
 	memset(trace, 0, sizeof (SysprofStackTrace));
 	
 	trace->pid = current->pid;
-	
+
+	trace->n_kernel_words = 0;
+	trace->n_addresses = 0;
+
 	i = 0;
 	if (!is_user)
 	{
-		trace->addresses[i++] = (void *)0x01;
-		regs = (void *)current->thread.REG_STACK_PTR0 - sizeof (struct pt_regs);
+		int n_bytes;
+		char *esp;
+		char *eos;
+
+		trace->kernel_stack[0] = (void *)regs->REG_INS_PTR;
+		trace->n_kernel_words = 1;
+		
+		/* The timer interrupt happened in kernel mode. When this
+		 * happens the registers are pushed on the stack, _except_
+		 * esp. So we can't use regs->esp to copy the stack pointer.
+		 * Instead we use the fact that the regs pointer itself
+		 * points to the stack.
+		 */
+		esp = (char *)regs + sizeof (struct pt_regs);
+		eos = (char *)current->thread.REG_STACK_PTR0 - sizeof (struct pt_regs);
+		
+		n_bytes = minimum ((char *)eos - esp,
+				   sizeof (trace->kernel_stack));
+
+		if (n_bytes > 0) {
+			memcpy (&(trace->kernel_stack[1]), esp, n_bytes);
+			
+			trace->n_kernel_words += (n_bytes) / sizeof (void *);
+		}
+
+		/* Now trace the user stack */
+		regs = (struct pt_regs *)eos;
 	}
 
+	i = 0;
 	trace->addresses[i++] = (void *)regs->REG_INS_PTR;
 
 	frame_pointer = (void *)regs->REG_FRAME_PTR;
-
-	{
-#if 0
-		/* In principle we should use get_task_mm() but
-		 * that will use task_lock() leading to deadlock
-		 * if somebody already has the lock
-		 */
-		if (spin_is_locked (&current->alloc_lock))
-			printk ("alreadylocked\n");
-		{
-			struct mm_struct *mm = current->mm;
-			if (mm)
-			{
-				printk (KERN_ALERT "stack size: %d (%d)\n",
-					mm->start_stack - regs->REG_STACK_PTR,
-					current->pid);
-				
-				stacksize = mm->start_stack - regs->REG_STACK_PTR;
-			}
-			else
-				stacksize = 1;
-		}
-#endif
-#if 0
-		else
-			printk (KERN_ALERT "could not lock on %d\n", current->pid);
-#endif
-	}
 	
-#if 0
-	if (stacksize < 100000)
-		goto out;
-#endif
-
 	while (((result = read_frame (frame_pointer, &frame)) == 0)	&&
 	       i < SYSPROF_MAX_ADDRESSES				&&
 	       (unsigned long)frame_pointer >= regs->REG_STACK_PTR)
 	{
-#if 0
-		printk ("frame pointer: %p (retaddr: %p)\n", frame_pointer, frame.return_address);
-#endif
 		trace->addresses[i++] = (void *)frame.return_address;
 		frame_pointer = (StackFrame *)frame.next;
 	}

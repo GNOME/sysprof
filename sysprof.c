@@ -461,6 +461,10 @@ fill_main_list (Application *app)
 				OBJECT_NAME, object->name,
 				OBJECT_SELF, 100.0 * object->self / profile_size,
 				OBJECT_TOTAL, 100.0 * object->total / profile_size,
+#if 0
+				OBJECT_SELF, (double)object->self,
+				OBJECT_TOTAL, (double)object->total,
+#endif
 				OBJECT_OBJECT, object->name,
 				-1);
 	}
@@ -493,6 +497,10 @@ add_node (GtkTreeStore      *store,
 			DESCENDANTS_NAME, node->name,
 			DESCENDANTS_SELF, 100 * (node->self)/(double)size,
 			DESCENDANTS_NON_RECURSE, 100 * (node->non_recursion)/(double)size,
+#if 0
+			DESCENDANTS_SELF, (double)node->self,
+			DESCENDANTS_NON_RECURSE, (double)node->non_recursion,
+#endif
 			DESCENDANTS_OBJECT, node->name,
 			-1);
     
@@ -560,6 +568,10 @@ add_callers (GtkListStore  *list_store,
 	    CALLERS_NAME, name,
 	    CALLERS_SELF, 100.0 * callers->self / profile_size,
 	    CALLERS_TOTAL, 100.0 * callers->total / profile_size,
+#if 0
+	    CALLERS_SELF, (double)callers->self,
+	    CALLERS_TOTAL, (double)callers->total,
+#endif
 	    CALLERS_OBJECT, callers->name,
 	    -1);
 	
@@ -1146,7 +1158,8 @@ update_screenshot_window (Application *app)
 	}
     }
     
-    app->update_screenshot_id = g_idle_add (update_screenshot_window_idle, app);
+    app->update_screenshot_id = g_idle_add (
+	update_screenshot_window_idle, app);
 }
 
 static void
@@ -1675,6 +1688,10 @@ main (int    argc,
 	 */
 	g_idle_add_full (G_PRIORITY_LOW, load_file, file_open_data, NULL);
     }
+
+#if 0
+    g_idle_add (gtk_main_quit, NULL);
+#endif
     
     gtk_main ();
     

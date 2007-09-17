@@ -25,16 +25,18 @@ typedef struct SysprofStackInfo SysprofStackInfo;
 typedef struct SysprofMmapArea SysprofMmapArea;
 
 #define SYSPROF_N_TRACES 64
-#define SYSPROF_MAX_ADDRESSES 1021	/* to make it one page wide */
+#define SYSPROF_MAX_ADDRESSES 1020	/* to make it three pages wide */
 
 struct SysprofStackTrace
 {
+    void *kernel_stack[1024];
+    void *addresses[SYSPROF_MAX_ADDRESSES];
+    int	n_kernel_words;
+    int n_addresses;      /* note: this can be 1 if the process was compiled
+			   * with -fomit-frame-pointer or is otherwise weird
+			   */
     int	pid;		/* -1 if in kernel */
     int truncated;
-    int n_addresses;	/* note: this can be 1 if the process was compiled
-			 * with -fomit-frame-pointer or is otherwise weird
-			 */
-    void *addresses[SYSPROF_MAX_ADDRESSES];
 };
 
 struct SysprofMmapArea

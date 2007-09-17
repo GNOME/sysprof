@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <glib.h>
+#include <stdio.h>
 
 #include "stackstash.h"
 #include "module/sysprof-module.h"
@@ -46,18 +47,23 @@ static void
 dump_data (Application *app)
 {
     GError *err = NULL;
-    Profile *profile = collector_create_profile (app->collector);
+    Profile *profile;
+
+    printf ("Saving profile in %s ... ", app->outfile);
+    fflush (stdout);
     
+    profile = collector_create_profile (app->collector);
     profile_save (profile, app->outfile, &err);
     
     if (err)
     {
+	printf ("failed\n");
         fprintf (stderr, "Error saving %s: %s\n", app->outfile, err->message);
         exit (1);
     }
     else
     {
-	printf ("Saved profile in %s\n\n", app->outfile);
+	printf ("done\n\n");
     }
 }
 

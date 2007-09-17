@@ -1,3 +1,16 @@
+2007-09-16  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* process.c (process_lookup_kernel_symbol): Add support for
+	looking up kernel symbols from /proc/kallsyms
+
+	* sysprof-text.c (dump_data): Print note that the file is being
+	saved.
+
+	* module/sysprof-module.[ch] (timer_notify): Send a copy of the
+	kernel stack to userspace.
+
+	* collector.c: Do kernel symbol lookups.
+	
 2007-08-26  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* profile.c (profile_get_size): Compute the size by simply summing

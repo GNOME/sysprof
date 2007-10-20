@@ -21,7 +21,8 @@
 
 typedef struct Collector Collector;
 
-typedef void (* CollectorFunc) (gpointer data);
+typedef void (* CollectorFunc) (gboolean first_sample,
+				gpointer data);
 
 #define COLLECTOR_ERROR collector_error_quark ()
 

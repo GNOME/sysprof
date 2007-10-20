@@ -165,13 +165,21 @@ stack_stash_add_trace (StackStash *stash,
     for (i = n_addrs - 1; i >= 0; --i)
     {
 	StackNode *match = NULL;
-	StackNode *n;
+	StackNode *prev;
 
-	for (n = *location; n != NULL; n = n->siblings)
+	prev = NULL;
+	for (match = *location; match != NULL; prev = match, match = match->siblings)
 	{
-	    if (n->address == (gpointer)addrs[i])
+	    if (match->address == (gpointer)addrs[i])
 	    {
-		match = n;
+		if (prev)
+		{
+		    /* move to front */
+		    prev->siblings = match->siblings;
+		    match->siblings = *location;
+		    *location = match;
+		}
+		
 		break;
 	    }
 	}

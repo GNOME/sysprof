@@ -1,3 +1,16 @@
+2007-10-20  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* collector.c (on_read): Call callback with an extra boolean
+	indicating whether the sample read was the first one
+
+	* collector.c (add_trace_to_stash): Allocate addresses on the
+	stack if possible.
+
+	* sysprof.c (on_new_sample): Only call update_sensitivity() on the
+	first sample.
+
+	* stackstash.c (stack_stash_add_trace): Move match to front
+
 2007-09-16  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* process.c (process_lookup_kernel_symbol): Add support for

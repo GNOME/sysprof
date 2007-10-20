@@ -1552,12 +1552,15 @@ build_gui (Application *app)
 }
 
 static void
-on_new_sample (gpointer data)
+on_new_sample (gboolean first_sample,
+	       gpointer data)
 {
     Application *app = data;
     
-    if (app->state == PROFILING)
+    if (app->state == PROFILING && first_sample)
 	update_sensitivity (app);
+    else
+	queue_show_samples (app);
 }
 
 static Application *

@@ -94,11 +94,17 @@ add_trace_to_stash (const SysprofStackTrace *trace,
     int n_addresses;
     int n_kernel_words;
     int a;
+    gulong addrs_stack[2048];
+    int n_alloc;
 
     n_addresses = trace->n_addresses;
     n_kernel_words = trace->n_kernel_words;
 
-    addrs = g_new (gulong, n_addresses + n_kernel_words + 2);
+    n_alloc = n_addresses + n_kernel_words + 2;
+    if (n_alloc <= 2048)
+	addrs = addrs_stack;
+    else
+	addrs = g_new (gulong, n_alloc);
     
     a = 0;
     /* Add kernel addresses */
@@ -140,7 +146,8 @@ add_trace_to_stash (const SysprofStackTrace *trace,
     stack_stash_add_trace (
 	stash, addrs, a, 1);
     
-    g_free (addrs);
+    if (addrs != addrs_stack)
+	g_free (addrs);
 }
 
 static gboolean
@@ -202,7 +209,7 @@ on_read (gpointer data)
 	collector->n_samples++;
 	
 	if (collector->callback)
-	    collector->callback (collector->data);
+	    collector->callback (collector->n_samples == 1, collector->data);
     }
 }
 

@@ -1,0 +1,35 @@
+Notes about releasing
+
+These notes apply to the stable version.
+
+
+Before 1.0:
+
+   - Update version numbers and year in source
+
+   - Make tarball
+
+   - Check that tarball works
+
+   - svn add announce-1.0.x
+
+   - svn commit
+
+   - svn copy svn+ssh://ssp@svn.gnome.org/svn/sysprof/branches/sysprof-1-0 svn+ssh://ssp@svn.gnome.org/svn/sysprof/tags/SYSPROF-1-0-9 -m "tag for 1.0.9"
+
+   - Update website
+
+   - Announce on Freshmeat
+
+   - Announce on gnome-announce
+   - Announce on kernel list.
+
+   - Announce on Gnomefiles
+
+   - Announce on news.gnome.org
+   - Send to slashdot/developers
+   - Announce on devtools list (?)
+
+   - Announce on Advogato
+	link to archive 
+

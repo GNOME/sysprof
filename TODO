@@ -6,6 +6,8 @@ Before 1.0:
 
    - Check that tarball works
 
+   - svn add announce-1.0.x
+
    - svn commit
 
    - svn tag sysprof-1-0

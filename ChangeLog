@@ -1,3 +1,7 @@
+2007-10-21  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* module/Makefile: Remove CFLAGS reminiscence of 2.4 support.
+
 2007-10-20  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* collector.c (on_read): Call callback with an extra boolean

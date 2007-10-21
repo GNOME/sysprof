@@ -1,5 +1,13 @@
 2007-10-21  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* -=-=-=- Release sysprof 1.0.9 -=-=-=-
+
+	* configure.ac: Bump version. 
+
+	* Makefile.am: Add explicit /sbin in insert-module
+	
+2007-10-21  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* module/Makefile: Delete CFLAGS reminiscence of 2.4 support.
 
 2006-12-09  Soren Sandmann <sandmann@daimi.au.dk>

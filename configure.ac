@@ -1,6 +1,6 @@
 AC_PREREQ(2.54)
 
-AC_INIT([sysprof], [1.0.8])
+AC_INIT([sysprof], [1.0.9])
 AC_CONFIG_SRCDIR(sysprof.glade)
 
 AM_INIT_AUTOMAKE(no-define)

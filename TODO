@@ -1,14 +1,14 @@
 Before 1.0:
 
-   - Update version numbers in source
+   - Update version numbers and year in source
 
    - Make tarball
 
    - Check that tarball works
 
-   - cvs commit
+   - svn commit
 
-   - cvs tag sysprof-1-0
+   - svn tag sysprof-1-0
 
    - Update website
 

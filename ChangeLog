@@ -1,3 +1,7 @@
+2007-10-21  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* module/Makefile: Delete CFLAGS reminiscence of 2.4 support.
+
 2006-12-09  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* =-=-=-= Release sysprof 1.0.8 =-=-=-=

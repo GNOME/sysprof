@@ -1,7 +1,6 @@
 ifneq ($(KERNELRELEASE),)
 
 obj-m	:= sysprof-module.o
-CFLAGS += $(MODCFLAGS) -DKERNEL26
 
 else
 

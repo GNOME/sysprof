@@ -10,7 +10,7 @@ Before 1.0:
 
    - svn commit
 
-   - svn tag sysprof-1-0
+   - svn copy svn+ssh://ssp@svn.gnome.org/svn/sysprof/branches/sysprof-1-0 svn+ssh://ssp@svn.gnome.org/svn/sysprof/tags/SYSPROF-1-0-9 -m "tag for 1.0.9"
 
    - Update website
 

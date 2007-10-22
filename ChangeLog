@@ -1,3 +1,10 @@
+2007-10-22  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* elfparser.c (read_table): Don't discard weak symbols.
+
+	* elfparser.c (elf_parser_lookup_symbol): If the symbol has
+	unknown size, don't check that the address is in range.
+
 2007-10-21  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* module/Makefile: Remove CFLAGS reminiscence of 2.4 support.

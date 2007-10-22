@@ -156,18 +156,9 @@ Before 1.2:
 	- etc.
   done: HEAD will not load files with the wrong inode now.
 
-* In profile.c, change "non_recursive" to "cumulative", and
-  "marked_non_recursive" to a boolean "charged". This is tricky code,
-  so be careful. Possibly make it a two-pass operation:
-     	- first add the new trace
-	- then walk from the leaf, charging nodes
-  That would allow us to get rid of the marked field altogether. In fact,
-  maybe the descendants tree could become a stackstash. We'll just have
-  to make stack_stash_add_trace() return the leaf.
-      Hmm, not quite - we still need the "go-back-on-recursion" behavior.
-  That could be added of course, but that gets complex.
-
-  DONE: the name is now "cumulative"
+* Consider whether ProfileDescendant can be done with a StackStash We
+  need the "go-back-on-recursion" behavior.  That could be added of
+  course ... the functions are otherwise very similar.
 
 * Add spew infrastructure to make remote debugging easier.
 
@@ -751,6 +742,17 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE: -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* In profile.c, change "non_recursive" to "cumulative", and
+  "marked_non_recursive" to a boolean "charged". This is tricky code,
+  so be careful. Possibly make it a two-pass operation:
+     	- first add the new trace
+	- then walk from the leaf, charging nodes
+  That would allow us to get rid of the marked field altogether. In fact,
+  maybe the descendants tree could become a stackstash. We'll just have
+  to make stack_stash_add_trace() return the leaf.
+
+  DONE: the name is now "cumulative"
 
 
 * vdso

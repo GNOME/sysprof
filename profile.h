@@ -47,8 +47,6 @@ struct ProfileDescendant
     ProfileDescendant * parent;
     ProfileDescendant * siblings;
     ProfileDescendant * children;
-
-    int			marked_non_recursive;
 };
 
 struct ProfileCaller

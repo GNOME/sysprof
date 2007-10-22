@@ -237,21 +237,16 @@ profile_new (StackStash *stash)
 static void
 add_trace_to_tree (GList *trace, gint size, gpointer data)
 {
-    static GPtrArray *nodes_to_unmark;
     GList *list;
     ProfileDescendant *parent = NULL;
-    int i, len;
-    ProfileDescendant **tree = data;    
+    ProfileDescendant **tree = data;
     
-    if (!nodes_to_unmark)
-	nodes_to_unmark = g_ptr_array_new ();
-
     for (list = g_list_last (trace); list != NULL; list = list->prev)
     {
 	gpointer address = list->data;
-	ProfileDescendant *match = NULL;
 	ProfileDescendant *prev = NULL;
-
+	ProfileDescendant *match = NULL;
+	
 	for (match = *tree; match != NULL; prev = match, match = match->siblings)
 	{
 	    if (match->name == address)
@@ -269,36 +264,11 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
 	
 	if (!match)
 	{
-	    ProfileDescendant *seen_tree_node;
-	    ProfileDescendant *n;
-	    
 	    /* Have we seen this object further up the tree? */
-	    seen_tree_node = NULL;
-	    for (n = parent; n != NULL; n = n->parent)
+	    for (match = parent; match != NULL; match = match->parent)
 	    {
-		if (n->name == address)
-		{
-		    seen_tree_node = n;
+		if (match->name == address)
 		    break;
-		}
-	    }
-	    
-	    if (seen_tree_node)
-	    {
-		ProfileDescendant *node;
-		
-		g_assert (parent);
-
-		for (node = parent; node != seen_tree_node->parent; node = node->parent)
-		{
-		    node->cumulative -= size;
-		    --node->marked_non_recursive;
-	
-		    g_assert (node->marked_non_recursive == 0 ||
-			      node->marked_non_recursive == 1);
-		}
-		
-		match = seen_tree_node;
 	    }
 	}
 	
@@ -310,41 +280,21 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
 	    match->cumulative = 0;
 	    match->self = 0;
 	    match->children = NULL;
-	    match->marked_non_recursive = 0;
 	    match->parent = parent;
 	    match->siblings = *tree;
 	    *tree = match;
 	}
 	
-	g_assert (match->marked_non_recursive == 0 ||
-		  match->marked_non_recursive == 1);
-	
-	if (!match->marked_non_recursive)
-	{
-	    g_ptr_array_add (nodes_to_unmark, match);
-	    match->cumulative += size;
-	    ++match->marked_non_recursive;
-	}
-	
-	if (!list->prev)
-	    match->self += size;
-	
 	tree = &(match->children);
 	parent = match;
     }
-    
-    len = nodes_to_unmark->len;
-    for (i = 0; i < len; ++i)
-    {
-	ProfileDescendant *tree_node = nodes_to_unmark->pdata[i];
 
-	g_assert (tree_node->marked_non_recursive == 0 ||
-		  tree_node->marked_non_recursive == 1);
-	
-	tree_node->marked_non_recursive = 0;
+    parent->self += size;
+    while (parent)
+    {
+	parent->cumulative += size;
+	parent = parent->parent;
     }
-    
-    g_ptr_array_set_size (nodes_to_unmark, 0);
 }
 
 ProfileDescendant *

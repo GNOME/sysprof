@@ -1,5 +1,11 @@
 2007-10-22  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* profile.c (add_trace_to_tree): Make this a two-pass
+	algorithm, one pass to add the trace, and one to do the
+	accounting.
+
+2007-10-22  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* sfile.c: Fix some spelling errors
 
 	* profile.[ch], sysprof.[ch]: Change "non_recursive" to

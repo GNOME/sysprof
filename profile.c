@@ -291,8 +291,11 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
 
 		for (node = parent; node != seen_tree_node->parent; node = node->parent)
 		{
-		    node->non_recursion -= size;
+		    node->cumulative -= size;
 		    --node->marked_non_recursive;
+	
+		    g_assert (node->marked_non_recursive == 0 ||
+			      node->marked_non_recursive == 1);
 		}
 		
 		match = seen_tree_node;
@@ -304,7 +307,7 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
 	    match = g_new (ProfileDescendant, 1);
 	    
 	    match->name = address;
-	    match->non_recursion = 0;
+	    match->cumulative = 0;
 	    match->self = 0;
 	    match->children = NULL;
 	    match->marked_non_recursive = 0;
@@ -313,10 +316,13 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
 	    *tree = match;
 	}
 	
+	g_assert (match->marked_non_recursive == 0 ||
+		  match->marked_non_recursive == 1);
+	
 	if (!match->marked_non_recursive)
 	{
 	    g_ptr_array_add (nodes_to_unmark, match);
-	    match->non_recursion += size;
+	    match->cumulative += size;
 	    ++match->marked_non_recursive;
 	}
 	
@@ -331,6 +337,9 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
     for (i = 0; i < len; ++i)
     {
 	ProfileDescendant *tree_node = nodes_to_unmark->pdata[i];
+
+	g_assert (tree_node->marked_non_recursive == 0 ||
+		  tree_node->marked_non_recursive == 1);
 	
 	tree_node->marked_non_recursive = 0;
     }

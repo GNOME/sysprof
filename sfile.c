@@ -448,7 +448,7 @@ handle_text (GMarkupParseContext *context,
     {
         if (!get_number (text, &instruction.u.pointer.target_id))
         {
-            set_invalid_content_error (err, "Contents '%s' of pointer element is not a number", text);
+            set_invalid_content_error (err, "Content '%s' of pointer element is not a number", text);
 	    return;
         }
     }
@@ -456,7 +456,7 @@ handle_text (GMarkupParseContext *context,
     {
         if (!get_number (text, &instruction.u.integer.value))
         {
-            set_invalid_content_error (err, "Contents '%s' of integer element not a number", text);
+            set_invalid_content_error (err, "Content '%s' of integer element is not a number", text);
             return;
         }
     }
@@ -464,7 +464,7 @@ handle_text (GMarkupParseContext *context,
     {
         if (!decode_text (text, &instruction.u.string.value))
         {
-            set_invalid_content_error (err, "Contents '%s' of text element is illformed", text);
+            set_invalid_content_error (err, "Content '%s' of text element is ill-formed", text);
 	    return;
         }
     }

@@ -43,7 +43,7 @@ struct ProfileDescendant
 {
     char *		name;
     guint		self;
-    guint		non_recursion;
+    guint		cumulative;
     ProfileDescendant * parent;
     ProfileDescendant * siblings;
     ProfileDescendant * children;

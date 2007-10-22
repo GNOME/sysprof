@@ -405,7 +405,7 @@ enum
 {
     DESCENDANTS_NAME,
     DESCENDANTS_SELF,
-    DESCENDANTS_NON_RECURSE,
+    DESCENDANTS_CUMULATIVE,
     DESCENDANTS_OBJECT
 };
 
@@ -496,10 +496,10 @@ add_node (GtkTreeStore      *store,
     gtk_tree_store_set (store, &iter,
 			DESCENDANTS_NAME, node->name,
 			DESCENDANTS_SELF, 100 * (node->self)/(double)size,
-			DESCENDANTS_NON_RECURSE, 100 * (node->non_recursion)/(double)size,
+			DESCENDANTS_CUMULATIVE, 100 * (node->cumulative)/(double)size,
 #if 0
 			DESCENDANTS_SELF, (double)node->self,
-			DESCENDANTS_NON_RECURSE, (double)node->non_recursion,
+			DESCENDANTS_CUMULATIVE, (double)node->non_recursion,
 #endif
 			DESCENDANTS_OBJECT, node->name,
 			-1);
@@ -539,7 +539,7 @@ fill_descendants_tree (Application *app)
     }
     
     tree_view_set_model_with_default_sort (app->descendants_view, GTK_TREE_MODEL (tree_store),
-					   DESCENDANTS_NON_RECURSE, GTK_SORT_DESCENDING);
+					   DESCENDANTS_CUMULATIVE, GTK_SORT_DESCENDING);
 
     g_object_unref (G_OBJECT (tree_store));
     
@@ -1021,7 +1021,7 @@ get_data (GtkTreeView *view,
 	model, iter,
 	DESCENDANTS_NAME, name? name : &dummy1,
 	DESCENDANTS_SELF, self? self : &dummy2,
-	DESCENDANTS_NON_RECURSE, cumulative? cumulative : &dummy3,
+	DESCENDANTS_CUMULATIVE, cumulative? cumulative : &dummy3,
 	-1);
 }
 
@@ -1514,7 +1514,7 @@ build_gui (Application *app)
     gtk_tree_view_set_enable_search (app->descendants_view, FALSE);
     col = add_plain_text_column (app->descendants_view, _("Descendants"), DESCENDANTS_NAME);
     add_double_format_column (app->descendants_view, _("Self"), DESCENDANTS_SELF, "%.2f ");
-    add_double_format_column (app->descendants_view, _("Cumulative"), DESCENDANTS_NON_RECURSE, "%.2f ");
+    add_double_format_column (app->descendants_view, _("Cumulative"), DESCENDANTS_CUMULATIVE, "%.2f ");
     g_signal_connect (app->descendants_view, "row-activated",
 		      G_CALLBACK (on_descendants_row_activated), app);
     g_signal_connect (app->descendants_view, "row_expanded",

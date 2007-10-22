@@ -1,5 +1,16 @@
 2007-10-22  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* sfile.c: Fix some spelling errors
+
+	* profile.[ch], sysprof.[ch]: Change "non_recursive" to
+	"cumulative" to match the UI
+
+	* profile.c (add_trace_to_tree): Add a couple of asserts.
+
+	* TODO: updates
+
+2007-10-22  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* elfparser.c (read_table): Don't discard weak symbols.
 
 	* elfparser.c (elf_parser_lookup_symbol): If the symbol has

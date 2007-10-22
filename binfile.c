@@ -353,19 +353,24 @@ const BinSymbol *
 bin_file_lookup_symbol (BinFile    *bin_file,
 			gulong      address)
 {
+#if 0
+    g_print ("-=-=-=- \n");
+#endif
+    
     if (bin_file->elf)
     {
 #if 0
 	g_print ("bin file lookup lookup %d\n", address);
 #endif
+	
 	address -= bin_file->text_offset;
 	
-	const ElfSym *sym = elf_parser_lookup_symbol (bin_file->elf, address);
-
 #if 0
 	g_print ("lookup %d in %s\n", address, bin_file->filename);
 #endif
 	
+	const ElfSym *sym = elf_parser_lookup_symbol (bin_file->elf, address);
+
 	if (sym)
 	{
 #if 0

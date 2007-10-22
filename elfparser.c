@@ -157,8 +157,12 @@ elf_parser_new_from_data (const guchar *data,
 	/* FIXME: set error */
 	return NULL;
     }
-    
+
     parser = g_new0 (ElfParser, 1);
+    
+#if 0
+    g_print ("  new parser : %p\n", parser);
+#endif
     
     parser->parser = bin_parser_new (data, length);
     
@@ -238,6 +242,10 @@ elf_parser_new (const char *filename,
 #endif
     
     parser = elf_parser_new_from_data (data, length);
+    
+#if 0
+    g_print ("Parser for %s: %p\n", filename, parser);
+#endif
     
     if (!parser)
     {
@@ -437,23 +445,35 @@ read_table (ElfParser *parser,
 	    parser->parser, parser->sym_format, "st_value");
 	offset = bin_parser_get_offset (parser->parser);
 	
-	if (addr != 0				&&
-	    (info & 0xf) == STT_FUNC		&&
-	    ((info >> 4) == STB_GLOBAL ||
-	     (info >> 4) == STB_LOCAL))
-	{
-	    parser->symbols[n_functions].address = addr;
-	    parser->symbols[n_functions].offset = offset;
-	    
-	    n_functions++;
-	} 
-	
 #if 0
 	g_print ("read symbol: %s\n", get_string_indirect (parser->parser,
 							   parser->sym_format, "st_name",
 							   str_table->offset));
 #endif
-	
+
+	if (addr != 0				&&
+	    (info & 0xf) == STT_FUNC		&&
+	    ((info >> 4) == STB_GLOBAL ||
+	     (info >> 4) == STB_LOCAL  ||
+	     (info >> 4) == STB_WEAK)
+	    )
+	{
+	    parser->symbols[n_functions].address = addr;
+	    parser->symbols[n_functions].offset = offset;
+
+#if 0
+	    g_print ("   symbol: %s:   %d\n", get_string_indirect (parser->parser,
+								   parser->sym_format, "st_name",
+								   str_table->offset), addr);
+#endif
+	    n_functions++;
+	}
+#if 0
+	else if (addr != 0)
+	{
+	    g_print ("rejecting %d in %p (info: %d:%d) (func:global  %d:%d)\n", addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
+	}
+#endif
 	
 	bin_parser_seek_record (parser->parser, parser->sym_format, 1);
     }
@@ -546,7 +566,7 @@ elf_parser_lookup_symbol (ElfParser *parser,
     address += parser->text_section->load_address;
     
 #if 0
-    g_print ("the address we are looking up is %p\n", address);
+    g_print ("elf: the address we are looking up is %p\n", address);
 #endif
     
     result = do_lookup (parser->symbols, address, 0, parser->n_symbols - 1);
@@ -554,7 +574,11 @@ elf_parser_lookup_symbol (ElfParser *parser,
 #if 0
     if (result)
     {
-	g_print ("found %s at %lx\n", elf_parser_get_sym_name (parser, result), result->address);
+	g_print ("  elf: found %s at %lx\n", elf_parser_get_sym_name (parser, result), result->address);
+    }
+    else
+    {
+	g_print ("elf: not found\n");
     }
 #endif
     
@@ -566,8 +590,8 @@ elf_parser_lookup_symbol (ElfParser *parser,
 	
 	size = bin_parser_get_uint_field (
 	    parser->parser, parser->sym_format, "st_size");
-	
-	if (result->address + size <= address)
+
+	if (size > 0 && result->address + size <= address)
 	    result = NULL;
     }
     

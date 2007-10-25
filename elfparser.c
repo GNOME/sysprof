@@ -258,11 +258,7 @@ elf_parser_new (const char *filename,
 #if 0
     g_print ("Elf file: %s  (debug: %s)\n",
 	     filename, elf_parser_get_debug_link (parser, NULL));
-#endif
     
-    parser->file = file;
-    
-#if 0
     if (!parser->symbols)
 	g_print ("at this point %s has no symbols\n", filename);
 #endif
@@ -339,7 +335,8 @@ elf_parser_get_crc32 (ElfParser *parser)
      * We could be more exact here, but it's only a few minor
      * pagefaults.
      */
-    madvise ((char *)data, length, MADV_DONTNEED);
+    if (parser->file)
+	madvise ((char *)data, length, MADV_DONTNEED);
 
     return ~crc & 0xffffffff;
 }
@@ -461,19 +458,23 @@ read_table (ElfParser *parser,
 	    parser->symbols[n_functions].address = addr;
 	    parser->symbols[n_functions].offset = offset;
 
+	    n_functions++;
+
 #if 0
-	    g_print ("   symbol: %s:   %d\n", get_string_indirect (parser->parser,
+	    g_print ("symbol: %s:   %d\n", get_string_indirect (parser->parser,
 								   parser->sym_format, "st_name",
 								   str_table->offset), addr);
 #endif
-	    n_functions++;
-	}
 #if 0
+	    g_print ("   sym %d in %p (info: %d:%d) (func:global  %d:%d)\n", addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
+#endif
+	}
 	else if (addr != 0)
 	{
-	    g_print ("rejecting %d in %p (info: %d:%d) (func:global  %d:%d)\n", addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
-	}
+#if 0
+	    g_print ("   rejecting %d in %p (info: %d:%d) (func:global  %d:%d)\n", addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
 #endif
+	}
 	
 	bin_parser_seek_record (parser->parser, parser->sym_format, 1);
     }

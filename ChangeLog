@@ -1,5 +1,17 @@
 2007-10-22  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* process.c (look_for_vmlinux): Use an array instead of a
+	list. Look for vmlinux in the source directory.
+
+	* elfparser.c (elf_parser_get_crc32): Only use MADV_DONTNEED if
+	the data is file-backed.
+
+	* TODO: updates.
+
+	Various formatting fixes
+	
+2007-10-22  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* profile.c (add_trace_to_tree): Make this a two-pass
 	algorithm, one pass to add the trace, and one to do the
 	accounting.

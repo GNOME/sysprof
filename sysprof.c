@@ -965,9 +965,11 @@ expand_descendants_tree (Application *app)
 	n_children = gtk_tree_model_iter_n_children (model, &best_iter);
 	
 	if (n_children && (best_value / top_value) > 0.04 &&
-	    (n_children + gtk_tree_path_get_depth (best_path)) / (double)max_rows < (best_value / top_value) )
+	    (n_children + gtk_tree_path_get_depth (best_path)) /
+	    (double)max_rows < (best_value / top_value) )
 	{
-	    gtk_tree_view_expand_row (GTK_TREE_VIEW (app->descendants_view), best_path, FALSE);
+	    gtk_tree_view_expand_row (
+		GTK_TREE_VIEW (app->descendants_view), best_path, FALSE);
 	    n_rows += n_children;
 	    
 	    if (gtk_tree_path_get_depth (best_path) < 4)
@@ -1480,11 +1482,11 @@ build_gui (Application *app)
     g_signal_connect (G_OBJECT (app->screenshot_item), "activate",
 		      G_CALLBACK (on_screenshot_activated), app);
     
-    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit")), "activate",
-		      G_CALLBACK (on_delete), NULL);
+    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit")),
+		      "activate", G_CALLBACK (on_delete), NULL);
     
-    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "about")), "activate",
-		      G_CALLBACK (on_about_activated), app);
+    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "about")),
+		      "activate", G_CALLBACK (on_about_activated), app);
     
     /* TreeViews */
     
@@ -1492,41 +1494,58 @@ build_gui (Application *app)
     app->object_view =
 	(GtkTreeView *)glade_xml_get_widget (xml, "object_view");
     gtk_tree_view_set_enable_search (app->object_view, FALSE);
-    col = add_plain_text_column (app->object_view, _("Functions"), OBJECT_NAME);
-    add_double_format_column (app->object_view, _("Self"), OBJECT_SELF, "%.2f ");
-    add_double_format_column (app->object_view, _("Total"), OBJECT_TOTAL, "%.2f ");
+    col = add_plain_text_column (app->object_view, _("Functions"),
+				 OBJECT_NAME);
+    add_double_format_column (app->object_view, _("Self"),
+			      OBJECT_SELF, "%.2f ");
+    add_double_format_column (app->object_view, _("Total"),
+			      OBJECT_TOTAL, "%.2f ");
     selection = gtk_tree_view_get_selection (app->object_view);
-    g_signal_connect (selection, "changed", G_CALLBACK (on_object_selection_changed), app);
+    g_signal_connect (selection, "changed",
+		      G_CALLBACK (on_object_selection_changed), app);
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* callers view */
-    app->callers_view = (GtkTreeView *)glade_xml_get_widget (xml, "callers_view");
+    app->callers_view =
+	(GtkTreeView *)glade_xml_get_widget (xml, "callers_view");
     gtk_tree_view_set_enable_search (app->callers_view, FALSE);
-    col = add_plain_text_column (app->callers_view, _("Callers"), CALLERS_NAME);
-    add_double_format_column (app->callers_view, _("Self"), CALLERS_SELF, "%.2f ");
-    add_double_format_column (app->callers_view, _("Total"), CALLERS_TOTAL, "%.2f ");
+    col = add_plain_text_column (app->callers_view, _("Callers"),
+				 CALLERS_NAME);
+    add_double_format_column (app->callers_view, _("Self"),
+			      CALLERS_SELF, "%.2f ");
+    add_double_format_column (app->callers_view, _("Total"),
+			      CALLERS_TOTAL, "%.2f ");
     g_signal_connect (app->callers_view, "row-activated",
 		      G_CALLBACK (on_callers_row_activated), app);
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* descendants view */
-    app->descendants_view = (GtkTreeView *)glade_xml_get_widget (xml, "descendants_view");
+    app->descendants_view =
+	(GtkTreeView *)glade_xml_get_widget (xml, "descendants_view");
     gtk_tree_view_set_enable_search (app->descendants_view, FALSE);
-    col = add_plain_text_column (app->descendants_view, _("Descendants"), DESCENDANTS_NAME);
-    add_double_format_column (app->descendants_view, _("Self"), DESCENDANTS_SELF, "%.2f ");
-    add_double_format_column (app->descendants_view, _("Cumulative"), DESCENDANTS_CUMULATIVE, "%.2f ");
+    col = add_plain_text_column (app->descendants_view, _("Descendants"),
+				 DESCENDANTS_NAME);
+    add_double_format_column (app->descendants_view, _("Self"),
+			      DESCENDANTS_SELF, "%.2f ");
+    add_double_format_column (app->descendants_view, _("Cumulative"),
+			      DESCENDANTS_CUMULATIVE, "%.2f ");
     g_signal_connect (app->descendants_view, "row-activated",
 		      G_CALLBACK (on_descendants_row_activated), app);
     g_signal_connect (app->descendants_view, "row_expanded",
-		      G_CALLBACK (on_descendants_row_expanded_or_collapsed), app);
+		      G_CALLBACK (on_descendants_row_expanded_or_collapsed),
+		      app);
     g_signal_connect (app->descendants_view, "row_collapsed",
-		      G_CALLBACK (on_descendants_row_expanded_or_collapsed), app);
+		      G_CALLBACK (on_descendants_row_expanded_or_collapsed),
+		      app);
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* screenshot window */
-    app->screenshot_window = glade_xml_get_widget (xml, "screenshot_window");
-    app->screenshot_textview = glade_xml_get_widget (xml, "screenshot_textview");
-    app->screenshot_close_button = glade_xml_get_widget (xml, "screenshot_close_button");
+    app->screenshot_window =
+	glade_xml_get_widget (xml, "screenshot_window");
+    app->screenshot_textview =
+	glade_xml_get_widget (xml, "screenshot_textview");
+    app->screenshot_close_button =
+	glade_xml_get_widget (xml, "screenshot_close_button");
     
     g_signal_connect (app->screenshot_window, "delete_event",
 		      G_CALLBACK (on_screenshot_window_delete), app);

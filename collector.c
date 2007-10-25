@@ -275,7 +275,8 @@ open_fd (Collector *collector,
 	}
     }
     
-    map_area = mmap (NULL, sizeof (SysprofMmapArea), PROT_READ, MAP_SHARED, fd, 0);
+    map_area = mmap (NULL, sizeof (SysprofMmapArea),
+		     PROT_READ, MAP_SHARED, fd, 0);
     
     if (map_area == MAP_FAILED)
     {
@@ -387,7 +388,12 @@ lookup_symbol (Process *process, gpointer address,
 	gulong offset;
 	sym = process_lookup_kernel_symbol ((gulong)address, &offset);
 
-	/* If offset is 0, it is a callback, not a return address */
+	/* If offset is 0, it is a callback, not a return address.
+	 *
+	 * If "first_kernel_addr" is true, then the address is an
+	 * instruction pointer, not a return address, so it may
+	 * legitimately be at offset 0.
+	 */
 	if (offset == 0 && !first_kernel_addr)
 	    sym = NULL;
 
@@ -438,6 +444,7 @@ resolve_symbols (GList *trace, gint size, gpointer data)
 	
 	if (address == GINT_TO_POINTER (0x01))
 	    in_kernel = FALSE;
+	
 	symbol = lookup_symbol (process, address, info->unique_symbols,
 				in_kernel, first_kernel_addr);
 	first_kernel_addr = FALSE;

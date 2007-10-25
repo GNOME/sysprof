@@ -389,18 +389,37 @@ Before 1.2:
 		  placed? (We should avoid any "location of vmlinux" type
 		  questions if at all possible).
 
-  regarding crossing system call barriers: Find out about the virtual dso
-  that linux uses to do fast system calls:
+         We do now copy the kernel stack to userspace and do a
+	 heuristic stack walk there. It may be better at some point to
+	 use dump_trace() in the kernel since that will do some
+	 filtering by itself.
 
-	http://lkml.org/lkml/2002/12/18/218
+  Notes about kernel symbol lookup:
 
-  and what that actually makes the stack look like. (We may want to just
-  special case this fake dso in the symbol lookup code).
+  	- /proc/kallsym is there, but it includes things like labels.
+          There is no way to tell them from functions
 
-  Maybe get_user_pages() is the way forward at least for some stuff.
+	- We can search for a kernel binary with symbols. If the
+ 	  kernel-debug package is installed, or if the user compiled
+ 	  his own kernel, we will find one. This is a regular elf file.
+	  It also includes labels, but we can tell by the STT_INFO field
+	  which is which.
 
-  note btw. that the kernel pages are only one or two pages, so we 
-  could easily just dump them to userspace.
+	  Note though that for some labels we do actually want to
+	  treat them as functions. For example the "page_fault" label,
+	  which is function by itself. We can recognize these by the
+	  fact that their symbols have a size. However, the _start
+	  function in normal applications does not have a size, so the
+	  heuristic should be something like this:
+
+	     - If the address is inside the range of some symbol, use
+               that symbol
+	     
+	     - Otherwise, if the closest symbol is a function with
+	       size 0, use that function.
+
+	  This means the datastructure will probably have to be done a
+	  little differently.
 
 - See if there is a way to make it distcheck
 
@@ -742,6 +761,19 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE: -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* regarding crossing system call barriers: Find out about the virtual dso
+  that linux uses to do fast system calls:
+
+	http://lkml.org/lkml/2002/12/18/218
+
+  and what that actually makes the stack look like. (We may want to just
+  special case this fake dso in the symbol lookup code).
+
+  Maybe get_user_pages() is the way forward at least for some stuff.
+
+  note btw. that the kernel pages are only one or two pages, so we 
+  could easily just dump them to userspace.
 
 * In profile.c, change "non_recursive" to "cumulative", and
   "marked_non_recursive" to a boolean "charged". This is tricky code,

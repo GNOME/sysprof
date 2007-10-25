@@ -23,6 +23,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <sys/utsname.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
@@ -414,14 +417,6 @@ process_get_from_pid (int pid)
     return p;
 }
 
-
-
-#include <sys/utsname.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
-
 static gboolean
 file_exists (const char *name)
 {
@@ -441,36 +436,32 @@ look_for_vmlinux (void)
 {
     struct utsname utsname;
     char *result;
-    GList *names;
-    GList *list;
+    char **s;
+    char *names[4];
+
     uname (&utsname);
-    
-    names = NULL;
-    
-    names = g_list_prepend (
-	names, g_strdup_printf (
-	    "/usr/lib/debug/lib/modules/%s/vmlinux", utsname.release));
-    
-    names = g_list_prepend (
-	names, g_strdup_printf (
-	    "/boot/vmlinux-%s", utsname.release));
-    
+
+    names[0] = g_strdup_printf (
+	"/usr/lib/debug/lib/modules/%s/vmlinux", utsname.release);
+    names[1] = g_strdup_printf (
+	"/lib/modules/%s/source/vmlinux", utsname.release);
+    names[2] = g_strdup_printf (
+	"/boot/vmlinux-%s", utsname.release);
+    names[3] = NULL;
+
     result = NULL;
-    
-    for (list = names; list != NULL; list = list->next)
+    for (s = names; *s; s++)
     {
-	char *name = list->data;
-	
-	if (file_exists (name))
+	if (file_exists (*s))
 	{
-	    result = g_strdup (name);
+	    result = g_strdup (*s);
 	    break;
 	}
     }
-    
-    g_list_foreach (names, (GFunc)g_free, NULL);
-    g_list_free (names);
-    
+
+    for (s = names; *s; s++)
+	g_free (*s);
+
     return result;
 }
 
@@ -570,6 +561,8 @@ get_kernel_symbols (void)
 {
     static GArray *kernel_syms;
     static gboolean initialized = FALSE;
+
+    find_kernel_binary();
     
     if (!initialized)
     {

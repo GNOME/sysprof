@@ -23,6 +23,11 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Apparently, if you upgrade the kernel, then don't re-run configure, 
+  the kernel Makefile will delete all of /lib/modules/<release>/kernel 
+  if you run make install in the module directory. Need to find out what
+  is going on.
+
 * Performance:
 	Switching between descendant views is a slow:
 		  - gtk_tree_store_get_path() is O(n^2) and accounts

@@ -23,6 +23,11 @@ Before 1.0.4:
 
 Before 1.2:
 
+* If we profile something that is not very CPU bound, sysprof itself
+  seems to get a disproportionate amount of the samples. Should look into this.
+
+* Is the move-to-front in process_locate_map() really worth it?
+
 * Apparently, if you upgrade the kernel, then don't re-run configure, 
   the kernel Makefile will delete all of /lib/modules/<release>/kernel 
   if you run make install in the module directory. Need to find out what

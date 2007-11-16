@@ -191,7 +191,6 @@ profile_load (const char *filename, GError **err)
     for (i = 0; i < n; ++i)
     {
 	StackNode *node = stack_node_new (profile->stash);
-	gboolean toplevel;
 	gint32 size;
 	gint32 total;
 	
@@ -203,10 +202,9 @@ profile_load (const char *filename, GError **err)
 	sfile_get_pointer (input, "parent", (gpointer *)&node->parent);
 	sfile_get_integer (input, "total", &total);
 	sfile_get_integer (input, "self", (gint32 *)&size);
-	sfile_get_integer (input, "toplevel", &toplevel);
+	sfile_get_integer (input, "toplevel", NULL);
 
 	node->total = total;
-	node->toplevel = toplevel;
 	node->size = size;
 	
 	sfile_end_get (input, "node", node);

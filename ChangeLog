@@ -1,3 +1,17 @@
+2007-11-16  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* TODO: Updates
+	
+	* process.c (process_locate_map): Move map to front
+
+	* profile.c (profile_load): Ignore the toplevel field in the file
+	since we can compute it ourselves.
+
+	* stackstash.c (stack_stash_decorate): New function
+	
+	* stackstash.c (stack_stash_add_trace): Decorate the tree lazily
+	instead of on each sample.
+
 2007-10-22  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* process.c (look_for_vmlinux): Use an array instead of a

@@ -127,13 +127,13 @@ read_maps (int pid, int *n_maps)
 	    g_array_append_val (result, map);
 	}
     }
-    
+
     g_free (name);
     fclose (in);
 
     if (n_maps)
 	*n_maps = result->len;
-    
+
     return (Map *)g_array_free (result, FALSE);
 }
 
@@ -241,6 +241,18 @@ process_locate_map (Process *process, gulong addr)
 	if ((addr >= map->start) &&
 	    (addr < map->end))
 	{
+	    if (i > 4)
+	    {
+		/* FIXME: Is this move-to-front really worth it? */
+		Map tmp = *map;
+
+		memmove (process->maps + 1, process->maps, i * sizeof (Map));
+
+		*(process->maps) = tmp;
+
+		map = process->maps;
+	    }
+	    
 	    return map;
 	}
     }

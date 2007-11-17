@@ -236,7 +236,7 @@ sysprof_read(struct file *file, char *buffer, size_t count, loff_t *offset)
 }
 
 static int
-n_traces_available (SysprofStackTrace *tail)
+n_traces_available(SysprofStackTrace *tail)
 {
 	SysprofStackTrace *head = &(area->traces[area->head]);
 
@@ -251,12 +251,12 @@ sysprof_poll(struct file *file, poll_table *poll_table)
 {
 	SysprofStackTrace *tail = file->private_data;
 
-	if (n_traces_available (tail) >= 8)
+	if (n_traces_available (tail) >= 16)
 		return POLLIN | POLLRDNORM;
 	
 	poll_wait(file, &wait_for_trace, poll_table);
 
-	if (n_traces_available (tail) >= 8)
+	if (n_traces_available (tail) >= 16)
 		return POLLIN | POLLRDNORM;
 	
 	return 0;

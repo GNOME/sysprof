@@ -1,5 +1,12 @@
 2007-11-16  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* module/sysprof-module.c (n_traces_available): Formatting
+	
+	* module/sysprof-module.c (sysprof_poll): Require 16 traces rather
+	than 8. 
+	
+2007-11-16  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* TODO: updates
 	
 	* module/sysprof-module.c (sysprof_poll): Only select readable

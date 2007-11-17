@@ -1,3 +1,7 @@
+2007-11-17  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* collector.c (collector_create_profile): Don't collect traces here.
+	
 2007-11-16  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* module/sysprof-module.c (n_traces_available): Formatting

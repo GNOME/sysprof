@@ -488,8 +488,6 @@ collector_create_profile (Collector *collector)
     ResolveInfo info;
     Profile *profile;
 
-    collect_traces (collector);
-    
     info.resolved_stash = stack_stash_new ((GDestroyNotify)g_free);
     info.unique_symbols = g_hash_table_new (g_direct_hash, g_direct_equal);
     info.unique_cmdlines = g_hash_table_new (g_str_hash, g_str_equal);

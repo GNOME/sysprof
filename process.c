@@ -75,7 +75,7 @@ read_maps (int pid, int *n_maps)
     char buffer[1024];
     FILE *in;
     GArray *result;
-    
+
     in = fopen (name, "r");
     if (!in)
     {

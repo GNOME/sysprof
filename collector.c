@@ -167,14 +167,8 @@ in_dead_period (Collector *collector)
 }
 
 static void
-on_read (gpointer data)
+collect_traces (Collector *collector)
 {
-    Collector *collector = data;
-    char c;
-    
-    /* Make sure poll() doesn't fire immediately again */
-    read (collector->fd, &c, 1);
-
     /* After a reset we ignore samples for a short period so that
      * a reset will actually cause 'samples' to become 0
      */
@@ -183,7 +177,7 @@ on_read (gpointer data)
 	collector->current = collector->map_area->head;
 	return;
     }
-    
+
     while (collector->current != collector->map_area->head)
     {
 	const SysprofStackTrace *trace;
@@ -211,6 +205,18 @@ on_read (gpointer data)
 	if (collector->callback)
 	    collector->callback (collector->n_samples == 1, collector->data);
     }
+}
+
+static void
+on_read (gpointer data)
+{
+    Collector *collector = data;
+    char c;
+    
+    /* Make sure poll() doesn't fire immediately again */
+    read (collector->fd, &c, 1);
+
+    collect_traces (collector);
 }
 
 static gboolean
@@ -479,6 +485,8 @@ collector_create_profile (Collector *collector)
 {
     ResolveInfo info;
     Profile *profile;
+
+    collect_traces (collector);
     
     info.resolved_stash = stack_stash_new ((GDestroyNotify)g_free);
     info.unique_symbols = g_hash_table_new (g_direct_hash, g_direct_equal);

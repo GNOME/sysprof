@@ -23,9 +23,6 @@ Before 1.0.4:
 
 Before 1.2:
 
-* If we profile something that is not very CPU bound, sysprof itself
-  seems to get a disproportionate amount of the samples. Should look into this.
-
 * Is the move-to-front in process_locate_map() really worth it?
 
 * Apparently, if you upgrade the kernel, then don't re-run configure, 
@@ -771,6 +768,11 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE: -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* If we profile something that is not very CPU bound, sysprof itself
+  seems to get a disproportionate amount of the samples. Should look
+  into this.  Fixed by only returning from poll when there is more
+  than eight traces available.
 
 * regarding crossing system call barriers: Find out about the virtual dso
   that linux uses to do fast system calls:

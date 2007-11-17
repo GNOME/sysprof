@@ -235,17 +235,28 @@ sysprof_read(struct file *file, char *buffer, size_t count, loff_t *offset)
 	return 0;
 }
 
+static int
+n_traces_available (SysprofStackTrace *tail)
+{
+	SysprofStackTrace *head = &(area->traces[area->head]);
+
+	if (head >= tail)
+		return head - tail;
+	else
+		return SYSPROF_N_TRACES - (tail - head);
+}
+
 static unsigned int
 sysprof_poll(struct file *file, poll_table *poll_table)
 {
 	SysprofStackTrace *tail = file->private_data;
 
-	if (&(area->traces[area->head]) != tail)
+	if (n_traces_available (tail) >= 8)
 		return POLLIN | POLLRDNORM;
 	
 	poll_wait(file, &wait_for_trace, poll_table);
 
-	if (&(area->traces[area->head]) != tail)
+	if (n_traces_available (tail) >= 8)
 		return POLLIN | POLLRDNORM;
 	
 	return 0;

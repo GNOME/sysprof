@@ -1,5 +1,17 @@
 2007-11-16  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* TODO: updates
+	
+	* module/sysprof-module.c (sysprof_poll): Only select readable
+	when there is at least eight traces available
+
+	* collector.c (collect_traces): New function, old on_read()
+	
+	* collector.c (collector_create_profile): Collect traces here as
+	well.
+
+2007-11-16  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* TODO: Updates
 	
 	* process.c (process_locate_map): Move map to front

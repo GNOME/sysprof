@@ -112,6 +112,40 @@ minimum (int a, int b)
 	return a > b ? b : a;
 }
 
+static struct pt_regs *
+copy_kernel_stack (struct pt_regs *regs,
+		   SysprofStackTrace *trace)
+{
+	int n_bytes;
+	char *esp;
+	char *eos;
+	
+	trace->kernel_stack[0] = (void *)regs->REG_INS_PTR;
+	trace->n_kernel_words = 1;
+	
+	/* The timer interrupt happened in kernel mode. When this
+	 * happens the registers are pushed on the stack, _except_
+	 * esp. So we can't use regs->esp to copy the stack pointer.
+	 * Instead we use the fact that the regs pointer itself
+	 * points to the stack.
+	 */
+	esp = (char *)regs + sizeof (struct pt_regs);
+	eos = (char *)current->thread.REG_STACK_PTR0 -
+		sizeof (struct pt_regs);
+	
+	n_bytes = minimum ((char *)eos - esp,
+			   sizeof (trace->kernel_stack));
+	
+	if (n_bytes > 0) {
+		memcpy (&(trace->kernel_stack[1]), esp, n_bytes);
+		
+		trace->n_kernel_words += (n_bytes) / sizeof (void *);
+	}
+	
+	/* Now trace the user stack */
+	return (struct pt_regs *)eos;
+}
+
 static void
 framepointer_trace (struct pt_regs *regs, SysprofStackTrace *trace)
 {
@@ -119,10 +153,8 @@ framepointer_trace (struct pt_regs *regs, SysprofStackTrace *trace)
 	int i;
 	StackFrame frame;
 
-	i = 0;
+	i = 1;
 	
-	trace->addresses[i++] = (void *)regs->REG_INS_PTR;
-
 	framepointer = (void *)regs->REG_FRAME_PTR;
 	
 	while (read_frame (framepointer, &frame) == 0			&&
@@ -140,7 +172,29 @@ static void
 heuristic_trace (struct pt_regs *regs,
 		 SysprofStackTrace *trace)
 {
-	return framepointer_trace (regs, trace);
+	unsigned long esp = regs->REG_STACK_PTR;
+	unsigned long eos = current->mm->start_stack;
+
+	if (esp < eos - (current->mm->stack_vm << PAGE_SHIFT)) {
+		/* Stack pointer is not in stack map */
+
+		return;
+	}
+	
+	if (eos > esp) {
+		unsigned long i;
+		int j;
+
+		j = 1;
+		for (i = esp; i < eos && j < SYSPROF_MAX_ADDRESSES; i += sizeof (void *)) {
+			void *x;
+			if (__copy_from_user_inatomic (
+				    &x, (char *)i, sizeof (x)) == 0)
+				trace->addresses[j++] = x;
+		}
+		
+		trace->n_addresses = j;
+	}
 }
 
 #ifdef OLD_PROFILE
@@ -154,7 +208,6 @@ timer_notify (struct pt_regs *regs)
 	struct pt_regs * regs = (struct pt_regs *)data;
 #endif
 	SysprofStackTrace *trace = &(area->traces[area->head]);
-	int i;
 	int is_user;
 	static atomic_t in_timer_notify = ATOMIC_INIT(1);
 	int n;
@@ -171,7 +224,7 @@ timer_notify (struct pt_regs *regs)
 
 	is_user = user_mode(regs);
 
-	if (!current || current->pid == 0 || !current->mm)
+	if (!current || current->pid == 0)
 		goto out;
 	
 	if (is_user && current->state != TASK_RUNNING)
@@ -184,45 +237,20 @@ timer_notify (struct pt_regs *regs)
 	trace->n_kernel_words = 0;
 	trace->n_addresses = 0;
 
-	i = 0;
 	if (!is_user)
-	{
-		int n_bytes;
-		char *esp;
-		char *eos;
+		regs = copy_kernel_stack (regs, trace);
 
-		trace->kernel_stack[0] = (void *)regs->REG_INS_PTR;
-		trace->n_kernel_words = 1;
-		
-		/* The timer interrupt happened in kernel mode. When this
-		 * happens the registers are pushed on the stack, _except_
-		 * esp. So we can't use regs->esp to copy the stack pointer.
-		 * Instead we use the fact that the regs pointer itself
-		 * points to the stack.
-		 */
-		esp = (char *)regs + sizeof (struct pt_regs);
-		eos = (char *)current->thread.REG_STACK_PTR0 -
-			sizeof (struct pt_regs);
-		
-		n_bytes = minimum ((char *)eos - esp,
-				   sizeof (trace->kernel_stack));
+	trace->addresses[0] = (void *)regs->REG_INS_PTR;
+	trace->n_addresses = 1;
 
-		if (n_bytes > 0) {
-			memcpy (&(trace->kernel_stack[1]), esp, n_bytes);
-			
-			trace->n_kernel_words += (n_bytes) / sizeof (void *);
-		}
-
-		/* Now trace the user stack */
-		regs = (struct pt_regs *)eos;
-	}
-
+	if (current->mm) {
 #ifdef CONFIG_X86_64
-	heuristic_trace (regs, trace);
+		heuristic_trace (regs, trace);
 #elif CONFIG_X86
-	framepointer_trace (regs, trace);
+		framepointer_trace (regs, trace);
 #endif
-
+	}
+	
 	if (trace->n_addresses == SYSPROF_MAX_ADDRESSES)
 		trace->truncated = 1;
 	else

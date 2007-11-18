@@ -1,3 +1,10 @@
+Sun Nov 18 18:12:09 2007  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (heuristic_trace): Crude heuristic stack
+	scanning on x86-64.
+	
+	* module/sysprof-module.c (copy_kernel_stack): New function
+
 Sun Nov 18 13:23:39 2007  Søren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (sysprof_read): Return ssize_t instead

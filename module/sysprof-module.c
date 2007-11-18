@@ -112,6 +112,37 @@ minimum (int a, int b)
 	return a > b ? b : a;
 }
 
+static void
+framepointer_trace (struct pt_regs *regs, SysprofStackTrace *trace)
+{
+	void *framepointer;
+	int i;
+	StackFrame frame;
+
+	i = 0;
+	
+	trace->addresses[i++] = (void *)regs->REG_INS_PTR;
+
+	framepointer = (void *)regs->REG_FRAME_PTR;
+	
+	while (read_frame (framepointer, &frame) == 0			&&
+	       i < SYSPROF_MAX_ADDRESSES				&&
+	       (unsigned long)framepointer >= regs->REG_STACK_PTR)
+	{
+		trace->addresses[i++] = (void *)frame.return_address;
+		framepointer = (StackFrame *)frame.next;
+	}
+	
+	trace->n_addresses = i;
+}
+
+static void
+heuristic_trace (struct pt_regs *regs,
+		 SysprofStackTrace *trace)
+{
+	return framepointer_trace (regs, trace);
+}
+
 #ifdef OLD_PROFILE
 static int timer_notify(struct notifier_block * self, unsigned long val, void * data)
 #else
@@ -122,12 +153,9 @@ timer_notify (struct pt_regs *regs)
 #ifdef OLD_PROFILE
 	struct pt_regs * regs = (struct pt_regs *)data;
 #endif
-	void *frame_pointer;
 	SysprofStackTrace *trace = &(area->traces[area->head]);
 	int i;
 	int is_user;
-	StackFrame frame;
-	int result;
 	static atomic_t in_timer_notify = ATOMIC_INIT(1);
 	int n;
 
@@ -173,7 +201,8 @@ timer_notify (struct pt_regs *regs)
 		 * points to the stack.
 		 */
 		esp = (char *)regs + sizeof (struct pt_regs);
-		eos = (char *)current->thread.REG_STACK_PTR0 - sizeof (struct pt_regs);
+		eos = (char *)current->thread.REG_STACK_PTR0 -
+			sizeof (struct pt_regs);
 		
 		n_bytes = minimum ((char *)eos - esp,
 				   sizeof (trace->kernel_stack));
@@ -188,22 +217,13 @@ timer_notify (struct pt_regs *regs)
 		regs = (struct pt_regs *)eos;
 	}
 
-	i = 0;
-	trace->addresses[i++] = (void *)regs->REG_INS_PTR;
+#ifdef CONFIG_X86_64
+	heuristic_trace (regs, trace);
+#elif CONFIG_X86
+	framepointer_trace (regs, trace);
+#endif
 
-	frame_pointer = (void *)regs->REG_FRAME_PTR;
-	
-	while (((result = read_frame (frame_pointer, &frame)) == 0)	&&
-	       i < SYSPROF_MAX_ADDRESSES				&&
-	       (unsigned long)frame_pointer >= regs->REG_STACK_PTR)
-	{
-		trace->addresses[i++] = (void *)frame.return_address;
-		frame_pointer = (StackFrame *)frame.next;
-	}
-	
-	trace->n_addresses = i;
-	
-	if (i == SYSPROF_MAX_ADDRESSES)
+	if (trace->n_addresses == SYSPROF_MAX_ADDRESSES)
 		trace->truncated = 1;
 	else
 		trace->truncated = 0;
@@ -227,7 +247,7 @@ static struct notifier_block timer_notifier = {
 };
 #endif
 
-static int
+static ssize_t
 sysprof_read(struct file *file, char *buffer, size_t count, loff_t *offset)
 {
 	file->private_data = &(area->traces[area->head]);

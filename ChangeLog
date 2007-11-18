@@ -1,3 +1,11 @@
+Sun Nov 18 13:23:39 2007  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (sysprof_read): Return ssize_t instead
+	of int.
+
+	* module/sysprof-module.c (heuristic_trace): Beginning of
+	heuristic user stack scanning.
+
 2007-11-17  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* collector.c (collector_create_profile): Don't collect traces here.

@@ -698,7 +698,7 @@ process_lookup_symbol (Process *process, gulong address)
 	    process->undefined =
 		g_strdup_printf ("No map (%s)", process->cmdline);
 	}
-	
+
 	return process->undefined;
     }
 

@@ -23,6 +23,9 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Make sure there aren't leftover stacktraces from last time when
+  profiling begins.
+
 * Is the move-to-front in process_locate_map() really worth it?
 
 * Whenever we fail to lock the atomic variable, track this, and send the information

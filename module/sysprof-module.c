@@ -187,7 +187,9 @@ heuristic_trace (struct pt_regs *regs,
 #endif
 		unsigned long i;
 		int j;
+#if 0
 		int n_bytes = minimum (eos - esp, (SYSPROF_MAX_ADDRESSES - 1) * sizeof (void *));
+#endif
 
 		j = 1;
 		for (i = esp; i < eos && j < SYSPROF_MAX_ADDRESSES; i += sizeof (void *)) {
@@ -198,10 +200,10 @@ heuristic_trace (struct pt_regs *regs,
 				break;
 
 			vma = find_vma (current->mm, x);
-			if (vma && vma->vm_flags & VM_EXEC && vma->vm_start <= x && x <= vma->vm_end) {
-				trace->addresses[j++] = x;
-			}
-
+			
+			if (vma && vma->vm_flags & VM_EXEC)
+				if (vma->vm_start <= x && x <= vma->vm_end)
+					trace->addresses[j++] = x;
 		}
 		
 #if 0
@@ -284,6 +286,8 @@ timer_notify (struct pt_regs *regs)
 		heuristic_trace (regs, trace);
 #elif CONFIG_X86
 		framepointer_trace (regs, trace);
+#else
+#error Sysprof only supports the i386 and x86-64 architectures
 #endif
 	}
 	

@@ -169,8 +169,6 @@ in_dead_period (Collector *collector)
 static void
 collect_traces (Collector *collector)
 {
-    int n;
-    
     /* After a reset we ignore samples for a short period so that
      * a reset will actually cause 'samples' to become 0
      */

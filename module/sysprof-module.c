@@ -177,24 +177,59 @@ heuristic_trace (struct pt_regs *regs,
 
 	if (esp < eos - (current->mm->stack_vm << PAGE_SHIFT)) {
 		/* Stack pointer is not in stack map */
-
+		printk (KERN_ALERT "too small stackpointer in %d\n", current->pid);
 		return;
 	}
 	
-	if (eos > esp) {
+	if (esp < eos) {
+#if 0
+		printk (KERN_ALERT "ok stackpointer\n");
+#endif
 		unsigned long i;
 		int j;
+		int n_bytes = minimum (eos - esp, (SYSPROF_MAX_ADDRESSES - 1) * sizeof (void *));
 
+		j = 1;
+		for (i = esp; i < eos && j < SYSPROF_MAX_ADDRESSES; i += sizeof (void *)) {
+			unsigned long x;
+			struct vm_area_struct *vma;
+
+			if (__copy_from_user_inatomic (&x, (void *)i, sizeof (unsigned long)))
+				break;
+
+			vma = find_vma (current->mm, x);
+			if (vma && vma->vm_flags & VM_EXEC && vma->vm_start <= x && x <= vma->vm_end) {
+				trace->addresses[j++] = x;
+			}
+
+		}
+		
+#if 0
+		if (__copy_from_user_inatomic (&(trace->addresses[1]), esp, n_bytes) == 0)
+			trace->n_addresses = n_bytes / sizeof (void *);
+		else
+			trace->n_addresses = 1;
+			
 		j = 1;
 		for (i = esp; i < eos && j < SYSPROF_MAX_ADDRESSES; i += sizeof (void *)) {
 			void *x;
 			if (__copy_from_user_inatomic (
-				    &x, (char *)i, sizeof (x)) == 0)
-				trace->addresses[j++] = x;
+				    &x, (char *)i, sizeof (x)) == 0) {
+
+				if ((unsigned long)x != 1)
+					trace->addresses[j++] = x;
+			}
 		}
+#endif
 		
 		trace->n_addresses = j;
+
+		return;
 	}
+
+#if 0
+	printk (KERN_ALERT "too big stackpointer\n");
+#endif
 }
 
 #ifdef OLD_PROFILE
@@ -219,8 +254,9 @@ timer_notify (struct pt_regs *regs)
 		return 0;
 	
 	/* 0: locked, 1: unlocked */
-	if (!atomic_dec_and_test(&in_timer_notify))
+	if (!atomic_dec_and_test(&in_timer_notify)) {
 		goto out;
+	}
 
 	is_user = user_mode(regs);
 

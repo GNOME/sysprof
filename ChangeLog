@@ -1,3 +1,8 @@
+2007-11-18  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* module/sysprof-module.c (heuristic_trace): Make heuristic stack
+	scanning more accurate
+
 Sun Nov 18 18:12:09 2007  Søren Sandmann  <sandmann@redhat.com>
 
 	* module/sysprof-module.c (heuristic_trace): Crude heuristic stack

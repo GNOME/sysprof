@@ -25,6 +25,10 @@ Before 1.2:
 
 * Is the move-to-front in process_locate_map() really worth it?
 
+* Whenever we fail to lock the atomic variable, track this, and send the information
+  to userspace as an indication of the overhead of the profiling. Although there is
+  inherent aliasing here since stack scanning happens at regular intervals.
+
 * Apparently, if you upgrade the kernel, then don't re-run configure, 
   the kernel Makefile will delete all of /lib/modules/<release>/kernel 
   if you run make install in the module directory. Need to find out what

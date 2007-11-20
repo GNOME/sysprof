@@ -183,21 +183,6 @@ get_debug_file (ElfParser *elf,
     return result;
 }
 
-static gboolean
-list_contains_name (GList *names, const char *name)
-{
-    GList *list;
-    for (list = names; list != NULL; list = list->next)
-    {
-	const char *n = list->data;
-
-	if (strcmp (n, name) == 0)
-	    return TRUE;
-    }
-
-    return FALSE;
-}
-
 static ElfParser *
 find_separate_debug_file (ElfParser *elf,
 			  const char *filename)
@@ -205,13 +190,14 @@ find_separate_debug_file (ElfParser *elf,
     ElfParser *debug;
     char *debug_name = NULL;
     char *fname;
-    GList *seen_names = NULL;
+    GHashTable *seen_names =
+	g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
     fname = g_strdup (filename);
 
     do
     {
-	if (list_contains_name (seen_names, fname))
+	if (g_hash_table_lookup (seen_names, fname))
 	{
 #if 0
 	    g_print ("   cycle detected\n");
@@ -227,7 +213,7 @@ find_separate_debug_file (ElfParser *elf,
 	    elf_parser_free (elf);
 	    elf = debug;
 	    
-	    seen_names = g_list_prepend (seen_names, fname);
+	    g_hash_table_insert (seen_names, fname, fname);
 	    fname = debug_name;
 	}
 #if 0
@@ -240,8 +226,7 @@ find_separate_debug_file (ElfParser *elf,
     while (debug);
 
     g_free (fname);
-    g_list_foreach (seen_names, (GFunc)g_free, NULL);
-    g_list_free (seen_names);
+    g_hash_table_destroy (seen_names);
     
     return elf;
 }

@@ -1,3 +1,9 @@
+2008-02-16  Soren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c (nt_memcpy): Add a memcpy() that uses
+	nontemporal writes.
+	(copy_kernel_stack): Add commented-out use of it here.
+
 2007-11-20  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* binfile.c (find_separate_debug_file): Use hash table instead of

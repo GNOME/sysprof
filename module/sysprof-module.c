@@ -112,6 +112,38 @@ minimum (int a, int b)
 	return a > b ? b : a;
 }
 
+static void
+nt_memcpy (void *dst, void *src, int n_bytes)
+{
+#if defined(CONFIG_X86_64) || defined(CONFIG_X86)
+	if (((unsigned long)dst & 3)	||
+	    ((unsigned long)src & 3)) {
+		memcpy (dst, src, n_bytes);
+	}
+	else {
+		int i;
+		if ((unsigned long)src & 7) {
+			*(uint32_t *)dst = *(uint32_t *)src;
+			src += 4;
+			dst += 4;
+		}
+
+		for (i = 0; i < n_bytes; i += 8) {
+			__asm__ __volatile__ (
+				"  movq  (%0, %2),  %%mm0\n"
+				"  movntq %%mm0, (%1, %2)\n"
+				: 
+				: "r" (src), "r" (dst), "r" (i)
+				: "memory");
+		}
+		__asm__ __volatile__ (
+			"emms\n");
+	}
+#else
+	memcpy (dst, src, n_bytes);
+#endif
+}
+
 static struct pt_regs *
 copy_kernel_stack (struct pt_regs *regs,
 		   SysprofStackTrace *trace)
@@ -137,6 +169,9 @@ copy_kernel_stack (struct pt_regs *regs,
 			   sizeof (trace->kernel_stack));
 	
 	if (n_bytes > 0) {
+#if 0
+		nt_memcpy (&(trace->kernel_stack[1]), esp, n_bytes);
+#endif
 		memcpy (&(trace->kernel_stack[1]), esp, n_bytes);
 		
 		trace->n_kernel_words += (n_bytes) / sizeof (void *);
@@ -203,7 +238,7 @@ heuristic_trace (struct pt_regs *regs,
 			
 			if (vma && vma->vm_flags & VM_EXEC)
 				if (vma->vm_start <= x && x <= vma->vm_end)
-					trace->addresses[j++] = x;
+					trace->addresses[j++] = (void *)x;
 		}
 		
 #if 0

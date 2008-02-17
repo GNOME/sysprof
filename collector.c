@@ -383,7 +383,7 @@ static char *
 lookup_symbol (Process *process, gpointer address,
 	       GHashTable *unique_symbols,
 	       gboolean kernel,
-	       gboolean first_kernel_addr)
+	       gboolean first_addr)
 {
     const char *sym;
 
@@ -396,11 +396,11 @@ lookup_symbol (Process *process, gpointer address,
 
 	/* If offset is 0, it is a callback, not a return address.
 	 *
-	 * If "first_kernel_addr" is true, then the address is an
+	 * If "first_addr" is true, then the address is an
 	 * instruction pointer, not a return address, so it may
 	 * legitimately be at offset 0.
 	 */
-	if (offset == 0 && !first_kernel_addr)
+	if (offset == 0 && !first_addr)
 	    sym = NULL;
 
 	/* If offset is greater than 4096, then what happened is most
@@ -416,7 +416,19 @@ lookup_symbol (Process *process, gpointer address,
     }
     else
     {
-	sym = process_lookup_symbol (process, (gulong)address);
+	gulong offset;
+	
+	sym = process_lookup_symbol (process, (gulong)address, &offset);
+
+	if (offset == 0 && !first_addr)
+	{
+#if 0
+	    sym = g_strdup_printf ("%s [callback]", sym);
+	    g_print ("rejecting %s since it looks like a callback\n",
+		     sym);
+	    sym = NULL;
+#endif
+	}
     }
     
     if (sym)
@@ -435,7 +447,7 @@ resolve_symbols (GList *trace, gint size, gpointer data)
     GPtrArray *resolved_trace = g_ptr_array_new ();
     char *cmdline;
     gboolean in_kernel = FALSE;
-    gboolean first_kernel_addr = TRUE;
+    gboolean first_addr = TRUE;
     
     for (list = trace; list && list->next; list = list->next)
     {
@@ -452,8 +464,8 @@ resolve_symbols (GList *trace, gint size, gpointer data)
 	    in_kernel = FALSE;
 	
 	symbol = lookup_symbol (process, address, info->unique_symbols,
-				in_kernel, first_kernel_addr);
-	first_kernel_addr = FALSE;
+				in_kernel, first_addr);
+	first_addr = FALSE;
 
 	if (symbol)
 	    g_ptr_array_add (resolved_trace, symbol);

@@ -407,3 +407,13 @@ bin_symbol_get_name (BinFile *file,
     else
 	return elf_parser_get_sym_name (file->elf, (const ElfSym *)symbol);
 }
+
+gulong
+bin_symbol_get_address (BinFile         *file,
+			const BinSymbol *symbol)
+{
+    if (file->undefined_name == (char *)symbol)
+	return 0x0;
+    else
+	return file->text_offset + elf_parser_get_sym_address (file->elf, (const ElfSym *)symbol);
+}

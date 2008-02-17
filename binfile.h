@@ -40,5 +40,7 @@ gboolean         bin_file_check_inode   (BinFile         *bin_file,
 					 ino_t		  inode);
 const char *     bin_symbol_get_name    (BinFile         *bin_file,
 					 const BinSymbol *symbol);
+gulong		 bin_symbol_get_address (BinFile         *bin_file,
+					 const BinSymbol *symbol);
 
 #endif

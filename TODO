@@ -44,7 +44,7 @@ Before 1.2:
 		  - GObject signal emission overhead accounts for 18% of
 		    the time. 
 	Consider adding a forked version of GtkTreeStore with
-	performance fixes.
+	performance and bug fixes.
 
 * Make sure that labels look decent in case of "No Map" etc.
 
@@ -363,6 +363,17 @@ Before 1.2:
 		  one can be completed using the DWARF information for
 		  the shared part.
 
+* Notes on heuristic stack walking
+
+  - We can reject addresses that point exactly to the beginning of a
+    function since these are likely callbacks. Note though that the
+    first time a function in a shared library is called, it goes
+    through dynamic linker resolution which will cause the stack to
+    contain a callback of the function. This needs to be investigated
+    in more detail.
+
+  - We are already rejecting addresses outside the text section
+    (addresses of global variables and the like).
 
 * How to get the user stack:
 

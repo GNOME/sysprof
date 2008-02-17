@@ -57,6 +57,8 @@ struct ElfParser
     gsize		sym_strings;
     
     GMappedFile *	file;
+
+    char *		filename;
     
     const Section *	text_section;
 };
@@ -213,6 +215,8 @@ elf_parser_new_from_data (const guchar *data,
     parser->text_section = find_section (parser, ".text", SHT_PROGBITS);
     if (!parser->text_section)
 	parser->text_section = find_section (parser, ".text", SHT_NOBITS);
+
+    parser->filename = NULL;
     
     return parser;
 }
@@ -252,6 +256,8 @@ elf_parser_new (const char *filename,
 	g_mapped_file_free (file);
 	return NULL;
     }
+
+    parser->filename = g_strdup (filename);
     
     parser->file = file;
     
@@ -356,6 +362,9 @@ elf_parser_free (ElfParser *parser)
     g_free (parser->symbols);
     
     bin_parser_free (parser->parser);
+
+    if (parser->filename)
+	g_free (parser->filename);
     
     g_free (parser);
 }
@@ -461,18 +470,16 @@ read_table (ElfParser *parser,
 	    n_functions++;
 
 #if 0
-	    g_print ("symbol: %s:   %d\n", get_string_indirect (parser->parser,
+	    g_print ("    symbol: %s:   %lx\n", get_string_indirect (parser->parser,
 								   parser->sym_format, "st_name",
-								   str_table->offset), addr);
-#endif
-#if 0
-	    g_print ("   sym %d in %p (info: %d:%d) (func:global  %d:%d)\n", addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
+								   str_table->offset), addr - parser->text_section->load_address);
+	    g_print ("        sym %d in %p (info: %d:%d) (func:global  %d:%d)\n", addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
 #endif
 	}
 	else if (addr != 0)
 	{
 #if 0
-	    g_print ("   rejecting %d in %p (info: %d:%d) (func:global  %d:%d)\n", addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
+	    g_print ("        rejecting %d in %p (info: %d:%d) (func:global  %d:%d)\n", addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
 #endif
 	}
 	
@@ -496,10 +503,16 @@ read_symbols (ElfParser *parser)
     
     if (symtab && strtab)
     {
+#if 0
+	g_print ("reading symbol table of %s\n", parser->filename);
+#endif
 	read_table (parser, symtab, strtab);
     }
     else if (dynsym && dynstr)
     {
+#if 0
+	g_print ("reading dynamic symbol table of %s\n", parser->filename);
+#endif
 	read_table (parser, dynsym, dynstr);
     }
     else
@@ -565,7 +578,7 @@ elf_parser_lookup_symbol (ElfParser *parser,
 	return NULL;
     
     address += parser->text_section->load_address;
-    
+
 #if 0
     g_print ("elf: the address we are looking up is %p\n", address);
 #endif
@@ -596,6 +609,13 @@ elf_parser_lookup_symbol (ElfParser *parser,
 	    result = NULL;
     }
     
+    if (result)
+    {
+	/* Reject the symbols if the address is outside the text section */
+	if (address > parser->text_section->load_address + parser->text_section->size)
+	    result = NULL;
+    }
+
     return result;
 }
 
@@ -662,7 +682,7 @@ gulong
 elf_parser_get_sym_address (ElfParser *parser,
 			    const ElfSym *sym)
 {
-    return sym->address;
+    return sym->address - parser->text_section->load_address;
 }
 
 /*

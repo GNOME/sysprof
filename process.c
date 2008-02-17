@@ -673,7 +673,7 @@ process_lookup_kernel_symbol (gulong address,
 }
 
 const char *
-process_lookup_symbol (Process *process, gulong address)
+process_lookup_symbol (Process *process, gulong address, gulong *offset)
 {
     static const char *const kernel = "kernel";
     const BinSymbol *result;
@@ -752,6 +752,17 @@ process_lookup_symbol (Process *process, gulong address)
 #endif
     
 /*     g_print ("(%x) %x %x name; %s\n", address, map->start, map->offset, result->name); */
+
+#if 0
+    g_print ("name: %s (in %s)\n", bin_symbol_get_name (map->bin_file, result), map->filename);
+    g_print ("  in addr: %lx\n", address);
+    g_print ("  out addr: %lx\n", bin_symbol_get_address (map->bin_file, result));
+    g_print ("  map start: %lx\n", map->start);
+    g_print ("  map offset: %lx\n", map->offset);
+#endif
+
+    if (offset)
+	*offset = address - bin_symbol_get_address (map->bin_file, result);
     
     return bin_symbol_get_name (map->bin_file, result);
 }

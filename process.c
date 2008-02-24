@@ -668,7 +668,7 @@ process_lookup_kernel_symbol (gulong address,
     result = do_lookup ((KernelSymbol *)ksyms->data, address, 0, ksyms->len - 1);
     if (result && offset)
 	*offset = address - result->address;
-    
+
     return result? result->name : NULL;
 }
 
@@ -681,18 +681,20 @@ process_lookup_symbol (Process *process, gulong address, gulong *offset)
     
 /*     g_print ("addr: %x\n", address); */
 
+    if (offset)
+    {
+	/* If we don't have any offset, just return 1, so it doesn't
+	 * look like a callback
+	 */
+	*offset = 1;
+    }
+	
     if (address == 0x1)
     {
 	return kernel;
     }
     else if (!map)
     {
-	gulong offset;
-	const char *res = process_lookup_kernel_symbol (address, &offset);
-	
-	if (res && offset != 0)
-	    return res;
-	
 	if (!process->undefined)
 	{
 	    process->undefined =

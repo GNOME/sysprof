@@ -1,3 +1,8 @@
+2008-02-23  Soren Sandmann <sandmann@redhat.com>
+
+	* process.c (process_lookup_symbol): Initialize offset to 1. Don't
+	do kernel lookup for unmapped addresses. 
+
 2008-02-17  Soren Sandmann  <sandmann@redhat.com>
 
 	* collector.c (lookup_symbol): Add commented out code to reject

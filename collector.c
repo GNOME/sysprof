@@ -166,6 +166,8 @@ in_dead_period (Collector *collector)
     return FALSE;
 }
 
+
+
 static void
 collect_traces (Collector *collector)
 {
@@ -409,7 +411,7 @@ lookup_symbol (Process *process, gpointer address,
 	 * this to the last function of the kernel text, we remove it here.
 	 *
 	 * FIXME: what we really should do is find out where this split
-	 * is, and act accordingly.
+	 * is, and act accordingly. Actually, we should look at /proc/modules
 	 */
 	if (offset > 4096)
 	    sym = NULL;

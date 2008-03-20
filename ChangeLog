@@ -1,3 +1,7 @@
+2008-03-20  Soren Sandmann <sandmann@redhat.com>
+
+	* module/sysprof-module.c: Support for 2.6.24 and newer
+
 2008-02-23  Soren Sandmann <sandmann@redhat.com>
 
 	* process.c (process_lookup_symbol): Initialize offset to 1. Don't

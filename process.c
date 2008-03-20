@@ -662,6 +662,14 @@ process_lookup_kernel_symbol (gulong address,
     GArray *ksyms = get_kernel_symbols ();
     KernelSymbol *result;
 
+    if (offset)
+    {
+	/* If we don't have any offset, just return 1, so it doesn't
+	 * look like a callback
+	 */
+	*offset = 1;
+    }
+    
     if (ksyms->len == 0)
 	return NULL;
     

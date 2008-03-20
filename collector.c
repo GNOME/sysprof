@@ -143,8 +143,7 @@ add_trace_to_stash (const SysprofStackTrace *trace,
     g_assert (a == n_addresses);
 #endif
     
-    stack_stash_add_trace (
-	stash, addrs, a, 1);
+    stack_stash_add_trace (stash, addrs, a, 1);
     
     if (addrs != addrs_stack)
 	g_free (addrs);
@@ -192,6 +191,15 @@ collect_traces (Collector *collector)
 	    g_print ("pid: %d (%d)\n", trace->pid, trace->n_addresses);
 	    for (i=0; i < trace->n_addresses; ++i)
 		g_print ("rd: %08x\n", trace->addresses[i]);
+	    g_print ("-=-\n");
+	}
+#endif
+#if 0
+	{
+	    int i;
+	    g_print ("pid: %d (%d)\n", trace->pid, trace->n_addresses);
+	    for (i=0; i < trace->n_kernel_words; ++i)
+		g_print ("rd: %08x\n", trace->kernel_stack[i]);
 	    g_print ("-=-\n");
 	}
 #endif
@@ -403,7 +411,12 @@ lookup_symbol (Process *process, gpointer address,
 	 * legitimately be at offset 0.
 	 */
 	if (offset == 0 && !first_addr)
+	{
+#if 0
+	    g_print ("rejecting callback: %s (%p)\n", sym, address);
+#endif
 	    sym = NULL;
+	}
 
 	/* If offset is greater than 4096, then what happened is most
 	 * likely that it is the address of something in the gap between the
@@ -414,7 +427,12 @@ lookup_symbol (Process *process, gpointer address,
 	 * is, and act accordingly. Actually, we should look at /proc/modules
 	 */
 	if (offset > 4096)
+	{
+#if 0
+	    g_print ("offset\n");
+#endif
 	    sym = NULL;
+	}
     }
     else
     {

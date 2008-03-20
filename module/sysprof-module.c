@@ -30,6 +30,7 @@
 
 #include <linux/proc_fs.h>
 #include <asm/uaccess.h>
+#include <asm/stacktrace.h>
 #include <linux/poll.h>
 #include <linux/highmem.h>
 #include <linux/pagemap.h>
@@ -151,40 +152,84 @@ nt_memcpy (void *dst, void *src, int n_bytes)
 #endif
 }
 
-static struct pt_regs *
-copy_kernel_stack (struct pt_regs *regs,
-		   SysprofStackTrace *trace)
+/*
+ * The functions backtrace_* are based on oprofile's backtrace.c
+ *
+ * @remark Copyright 2002 OProfile authors
+ * @remark Read the file COPYING
+ *
+ * @author John Levon
+ * @author David Smith
+ */
+static void backtrace_warning_symbol(void *data, char *msg,
+                                     unsigned long symbol)
 {
-	int n_bytes;
-	char *esp;
+        /* Ignore warnings */
+}
+
+static void backtrace_warning(void *data, char *msg)
+{
+        /* Ignore warnings */
+}
+
+struct backtrace_info_t
+{
+	SysprofStackTrace *trace;
+	int pos;
+};
+
+static int backtrace_stack(void *data, char *name)
+{
+	/* Don't bother with IRQ stacks for now */
+	return -1;
+}
+
+static void backtrace_address(void *data, unsigned long addr, int reliable)
+{
+	struct backtrace_info_t *info = data;
+
+	if (info->pos < SYSPROF_MAX_ADDRESSES && reliable)
+		info->trace->kernel_stack[info->pos++] = (void *)addr;
+}
+
+const static struct stacktrace_ops backtrace_ops = {
+        .warning = backtrace_warning,
+        .warning_symbol = backtrace_warning_symbol,
+        .stack = backtrace_stack,
+        .address = backtrace_address,
+};
+
+static struct pt_regs *
+trace_kernel (struct pt_regs *regs,
+	      SysprofStackTrace *trace)
+{
+	struct backtrace_info_t info;
 	char *eos;
-	
+	unsigned long stack;
+	unsigned long bp;
+
 	trace->kernel_stack[0] = (void *)regs->REG_INS_PTR;
-	trace->n_kernel_words = 1;
 	
-	/* The timer interrupt happened in kernel mode. When this
-	 * happens the registers are pushed on the stack, _except_
-	 * esp. So we can't use regs->esp to copy the stack pointer.
-	 * Instead we use the fact that the regs pointer itself
-	 * points to the stack.
+	info.trace = trace;
+	info.pos = 1;
+
+	stack = (unsigned long) ((char *)regs + sizeof (struct pt_regs));
+#ifdef CONFIG_FRAME_POINTER
+	/* We can't set it to 0, because then the stack trace will
+	 * contain the stack of the timer interrupt
 	 */
-	esp = (char *)regs + sizeof (struct pt_regs);
-	eos = (char *)current->thread.REG_STACK_PTR0 -
-		sizeof (struct pt_regs);
-	
-	n_bytes = minimum ((char *)eos - esp,
-			   sizeof (trace->kernel_stack));
-	
-	if (n_bytes > 0) {
-#if 0
-		nt_memcpy (&(trace->kernel_stack[1]), esp, n_bytes);
+	bp = regs->REG_FRAME_PTR;
+#else
+	bp = 0;
 #endif
-		memcpy (&(trace->kernel_stack[1]), esp, n_bytes);
-		
-		trace->n_kernel_words += (n_bytes) / sizeof (void *);
-	}
+	
+	dump_trace(NULL, regs, stack, bp, &backtrace_ops, &info);
+
+	trace->n_kernel_words = info.pos;
 	
 	/* Now trace the user stack */
+	eos = (char *)current->thread.REG_STACK_PTR0 - sizeof (struct pt_regs);
+	
 	return (struct pt_regs *)eos;
 }
 
@@ -318,7 +363,7 @@ timer_notify (struct pt_regs *regs)
 	trace->n_addresses = 0;
 
 	if (!is_user)
-		regs = copy_kernel_stack (regs, trace);
+		regs = trace_kernel (regs, trace);
 
 	trace->addresses[0] = (void *)regs->REG_INS_PTR;
 	trace->n_addresses = 1;

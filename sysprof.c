@@ -378,8 +378,6 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	delete_data (app);
 	
 	app->state = PROFILING;
-
-	show_samples (app);
     }
     else
     {

@@ -105,10 +105,9 @@ struct Application
 
 static void update_screenshot_window (Application *app);
 
-static gboolean
-show_samples_timeout (gpointer data)
+static void
+show_samples (Application *app)
 {
-    Application *app = data;
     char *label;
     int n_samples;
     
@@ -136,6 +135,14 @@ show_samples_timeout (gpointer data)
     gtk_label_set_label (GTK_LABEL (app->samples_label), label);
     
     g_free (label);
+}
+
+static gboolean
+show_samples_timeout (gpointer data)
+{
+    Application *app = data;
+
+    show_samples (app);
     
     app->timeout_id = 0;
     
@@ -246,7 +253,7 @@ update_sensitivity (Application *app)
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (app->screenshot_item),
 				    app->screenshot_window_visible);
     
-    queue_show_samples (app);
+    show_samples (app);
 }
 
 static void
@@ -316,8 +323,6 @@ delete_data (Application *app)
     
     collector_reset (app->collector);
     
-    queue_show_samples (app);
-    
     app->profile_from_file = FALSE;
     set_application_title (app, NULL);
 }
@@ -373,6 +378,8 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	delete_data (app);
 	
 	app->state = PROFILING;
+
+	show_samples (app);
     }
     else
     {
@@ -637,7 +644,7 @@ ensure_profile (Application *app)
     fill_lists (app);
     
     app->state = DISPLAYING;
-    
+
     update_sensitivity (app);
 }
 

@@ -1,3 +1,8 @@
+2008-03-23  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* sysprof.c (queue_show_samples): Update samples immediately when
+	reset and start is clicked.
+
 2008-03-20  Soren Sandmann <sandmann@redhat.com>
 
 	* module/sysprof-module.c (trace_kernel): Use kernel builtin

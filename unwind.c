@@ -225,51 +225,84 @@ decode_instruction (const guchar **data)
     }
 }
 
-
 static void
-decode_entry (const guchar *data)
+decode_cie (const guchar **data, const guchar *end)
 {
-    guint64 len, aug_len;
-    const guchar *end;
     gboolean has_augmentation;
+    guint64 aug_len;
+    
+    g_print ("version: %d\n", *(*data)++);
+    
+    g_print ("augmentation: %s\n", *data);
+    
+    has_augmentation = strchr (*data, 'z');
+    
+    *data += strlen (*data) + 1;
 
-    len = get_length (&data);
+    g_print ("code alignment: %llu\n", decode_uleb128 (data));
 
-    end = data + len;
+    g_print ("data alignment: %lld\n", decode_sleb128 (data));
+
+    g_print ("return register: %llu\n", decode_uleb128 (data));
+
+    if (has_augmentation)
+    {
+	g_print ("augmentation length: %llu\n",
+		 (aug_len = decode_uleb128 (data)));
+
+	*data += aug_len;
+    }
+    
+    while (*data < end)
+	g_print ("  %s\n", decode_instruction (data));
+}
+
+static gboolean
+decode_fde (const guchar **data, const guchar *end)
+{
+    
+    
+    return FALSE;
+}
+
+static gboolean
+decode_entry (const guchar **data, gboolean eh_frame)
+{
+    guint64 len;
+    const guchar *end;
+    gboolean is_cie;
+    guint64 id;
+
+    len = get_length (data);
+
+    if (len == 0)
+	return FALSE;
+    
+    end = *data + len;
     
     g_print ("length: %llu\n", len);
 
     /* CIE_id is 0 for eh frames, and 0xffffffff/0xffffffffffffffff for .debug_frame */
     
-    g_print ("id: %d\n", *(guint32 *)data);
+    id = *(guint32 *)*data;
 
-    data += 4;
+    g_print ("id: %lld\n", id);
 
-    g_print ("version: %d\n", *data);
+    is_cie = (eh_frame && id == 0) || (!eh_frame && id == 0xffffffff);
 
-    data += 1;
-
-    g_print ("augmentation: %s\n", data);
-
-    has_augmentation = strchr (data, 'z');
+    if (is_cie)
+	g_print ("is cie\n");
+    else
+	g_print ("is not cie\n");
     
-    data += strlen (data) + 1;
+    *data += 4;
 
-    g_print ("code alignment: %llu\n", decode_uleb128 (&data));
-
-    g_print ("data alignment: %lld\n", decode_sleb128 (&data));
-
-    g_print ("return register: %llu\n", decode_uleb128 (&data));
-
-    if (has_augmentation)
-    {
-	g_print ("augmentation length: %llu\n", (aug_len = decode_uleb128 (&data)));
-
-	data += aug_len;
-    }
+    if (is_cie)
+	decode_cie (data, end);
+    else
+	decode_fde (data, end);
     
-    while (data < end)
-	g_print ("  %s\n", decode_instruction (&data));
+    return TRUE;
 }
 
 /* The correct API is probably something like
@@ -286,14 +319,17 @@ void
 unwind (ElfParser *elf)
 {
     const guchar *data;
+    gboolean eh_f;
     
     if ((data = elf_parser_get_debug_frame (elf)))
     {
 	g_print ("Using .debug_frame\n");
+	eh_f = FALSE;
     }
     else if ((data = elf_parser_get_eh_frame (elf)))
     {
 	g_print ("Using .eh_frame\n");
+	eh_f = TRUE;
     }
     else
     {
@@ -301,6 +337,7 @@ unwind (ElfParser *elf)
 	return;
     }
 
-    decode_entry (data);
+    while (decode_entry (&data, eh_f))
+	;
 }
 

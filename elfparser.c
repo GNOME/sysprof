@@ -470,16 +470,20 @@ read_table (ElfParser *parser,
 	    n_functions++;
 
 #if 0
-	    g_print ("    symbol: %s:   %lx\n", get_string_indirect (parser->parser,
-								   parser->sym_format, "st_name",
-								   str_table->offset), addr - parser->text_section->load_address);
-	    g_print ("        sym %d in %p (info: %d:%d) (func:global  %d:%d)\n", addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
+	    g_print ("    symbol: %s:   %lx\n",
+		     get_string_indirect (parser->parser,
+					  parser->sym_format, "st_name",
+					  str_table->offset),
+		     addr - parser->text_section->load_address);
+	    g_print ("        sym %d in %p (info: %d:%d) (func:global  %d:%d)\n",
+		     addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
 #endif
 	}
 	else if (addr != 0)
 	{
 #if 0
-	    g_print ("        rejecting %d in %p (info: %d:%d) (func:global  %d:%d)\n", addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
+	    g_print ("        rejecting %d in %p (info: %d:%d) (func:global  %d:%d)\n",
+		     addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
 #endif
 	}
 	
@@ -653,14 +657,27 @@ elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
 }
 
 const guchar *
-elf_parser_get_eh_frame   (ElfParser   *parser)
+get_section (ElfParser *parser,
+	     const char *name)
 {
-    const Section *eh_frame = find_section (parser, ".eh_frame", SHT_PROGBITS);
+    const Section *section = find_section (parser, name, SHT_PROGBITS);
     
-    if (eh_frame)
-	return bin_parser_get_data (parser->parser) + eh_frame->offset;
+    if (section)
+	return bin_parser_get_data (parser->parser) + section->offset;
     else
 	return NULL;
+}
+
+const guchar *
+elf_parser_get_eh_frame   (ElfParser   *parser)
+{
+    return get_section (parser, ".eh_frame");
+}
+
+const guchar *
+elf_parser_get_debug_frame   (ElfParser   *parser)
+{
+    return get_section (parser, ".debug_frame");
 }
 
 const char *

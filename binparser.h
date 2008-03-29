@@ -27,7 +27,7 @@ typedef struct BinField  BinField;
  *    manipulated with methods
  *
  *		goto		- go to absolute position from file start
- *		goto_rel	- go to relative positio
+ *		goto_rel	- go to relative position
  *		goto_record_rel	- skip the given number of records 
  *		align		- move forward until aligned to given width
  *		save/restore	- save/restore the current offset (stack)

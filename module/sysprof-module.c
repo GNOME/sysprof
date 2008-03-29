@@ -223,7 +223,11 @@ trace_kernel (struct pt_regs *regs,
 	bp = 0;
 #endif
 	
-	dump_trace(NULL, regs, stack, bp, &backtrace_ops, &info);
+	dump_trace(NULL, regs, stack,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,25))
+		   bp,
+#endif
+		   &backtrace_ops, &info);
 
 	trace->n_kernel_words = info.pos;
 	

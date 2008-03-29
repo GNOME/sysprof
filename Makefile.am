@@ -3,12 +3,6 @@ DIST_SUBDIRS = module
 
 bin_PROGRAMS = sysprof-text
 
-noinst_PROGRAMS = testelf
-testelf_SOURCES = testelf.c demangle.c elfparser.c elfparser.h binparser.c binparser.h
-testelf_CPPFLAGS =				\
-	$(CORE_DEP_CFLAGS)
-testelf_LDADD = $(CORE_DEP_LIBS)
-
 if BUILD_GUI
 bin_PROGRAMS += sysprof 
 endif
@@ -33,9 +27,12 @@ SYSPROF_CORE =					\
 	sformat.c				\
 	stackstash.h				\
 	stackstash.c				\
-	module/sysprof-module.h			\
+	unwind.h				\
+	unwind.c				\
 	watch.h					\
-	watch.c
+	watch.c					\
+						\
+	module/sysprof-module.h			
 
 #
 # GUI version
@@ -92,3 +89,32 @@ EXTRA_DIST =					\
 insert-module:
 	/sbin/modprobe -r sysprof-module
 	/sbin/modprobe sysprof-module
+
+# 
+# Test programs
+#
+noinst_PROGRAMS = testelf testunwind
+
+# testunwind
+testunwind_SOURCES =	\
+	testunwind.c	\
+	demangle.c	\
+	elfparser.c	\
+	elfparser.h	\
+	binparser.c	\
+	binparser.h	\
+	unwind.c	\
+	unwind.h
+testunwind_CPPFLAGS = $(CORE_DEP_CFLAGS)
+testunwind_LDADD = $(CORE_DEP_LIBS)
+
+# testelf
+testelf_SOURCES =	\
+	testelf.c	\
+	demangle.c	\
+	elfparser.c	\
+	elfparser.h	\
+	binparser.c	\
+	binparser.h
+testelf_CPPFLAGS = $(CORE_DEP_CFLAGS)
+testelf_LDADD = $(CORE_DEP_LIBS)

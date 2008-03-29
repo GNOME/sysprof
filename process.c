@@ -446,35 +446,28 @@ file_exists (const char *name)
 static gchar *
 look_for_vmlinux (void)
 {
+    static const char names[][48] = {
+	"/lib/modules/%s/build/vmlinux",
+	"/usr/lib/debug/lib/modules/%s/vmlinux",
+	"/lib/modules/%s/source/vmlinux",
+	"/boot/vmlinux-%s",
+    };
     struct utsname utsname;
-    char *result;
-    char **s;
-    char *names[4];
-
+    int i;
+    
     uname (&utsname);
 
-    names[0] = g_strdup_printf (
-	"/usr/lib/debug/lib/modules/%s/vmlinux", utsname.release);
-    names[1] = g_strdup_printf (
-	"/lib/modules/%s/source/vmlinux", utsname.release);
-    names[2] = g_strdup_printf (
-	"/boot/vmlinux-%s", utsname.release);
-    names[3] = NULL;
-
-    result = NULL;
-    for (s = names; *s; s++)
+    for (i = 0; i < G_N_ELEMENTS (names); ++i)
     {
-	if (file_exists (*s))
-	{
-	    result = g_strdup (*s);
-	    break;
-	}
+	char *filename = g_strdup_printf (names[i], utsname.release);
+
+	if (file_exists (filename))
+	    return filename;
+
+	g_free (filename);
     }
 
-    for (s = names; *s; s++)
-	g_free (*s);
-
-    return result;
+    return NULL;
 }
 
 static const gchar *

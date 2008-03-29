@@ -121,6 +121,22 @@ Before 1.2:
 		- do heuristic stackwalk in kernel
 		- do heuristic stackwalk in userland
 
+	- Send heuristic stack trace to user space, along with
+	  location on the stack. Then, in userspace analyze the
+	  machine code to determine the size of the stack frame at any
+	  point. The instructions that would need to be recognized are:
+
+	  	 subl <constant>, %esp
+		 addl <constant>, %esp
+		 leave
+		 jcc
+		 push
+		 pop
+
+	  GCC is unlikely to have different stack sizes at the entry
+	  to a basic block.
+
+	  We can often find a vmlinux in /lib/modules/<uname-r>/build.
 
 * "Expand all" is horrendously slow because update_screenshot gets called 
   for every "expanded" signal. In fact even normal expanding is really

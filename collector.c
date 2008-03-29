@@ -170,6 +170,8 @@ in_dead_period (Collector *collector)
 static void
 collect_traces (Collector *collector)
 {
+    gboolean first;
+    
     /* After a reset we ignore samples for a short period so that
      * a reset will actually cause 'samples' to become 0
      */
@@ -179,6 +181,8 @@ collect_traces (Collector *collector)
 	return;
     }
 
+    first = collector->n_samples == 0;
+    
     while (collector->current != collector->map_area->head)
     {
 	const SysprofStackTrace *trace;
@@ -211,10 +215,10 @@ collect_traces (Collector *collector)
 	    collector->current = 0;
 	
 	collector->n_samples++;
-	
-	if (collector->callback)
-	    collector->callback (collector->n_samples == 1, collector->data);
     }
+	
+    if (collector->callback)
+	collector->callback (first, collector->data);
 }
 
 static void

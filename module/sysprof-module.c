@@ -67,7 +67,7 @@ DECLARE_WAIT_QUEUE_HEAD (wait_for_trace);
 #	define REG_STACK_PTR rsp
 #	define REG_STACK_PTR0 rsp0
 #elif defined(CONFIG_X86)
-#	if LINUX_VERSION_CODE >= KERNEL_VERSION (2,6,24)
+#	if LINUX_VERSION_CODE >= KERNEL_VERSION (2,6,25)
 #		define REG_FRAME_PTR bp
 #		define REG_INS_PTR ip
 #		define REG_STACK_PTR sp

@@ -1,3 +1,7 @@
+Sat Mar 29 08:05:46 2008  Søren Sandmann  <sandmann@redhat.com>
+
+	* module/sysprof-module.c: x86 merge happened in 2.6.25
+
 2008-03-23  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* sysprof.c (queue_show_samples): Update samples immediately when

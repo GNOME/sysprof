@@ -651,10 +651,17 @@ on_about_activated (GtkWidget *widget, gpointer data)
 {
 #define OSLASH "\303\270"
     Application *app = data;
+    char *name_property;
+    int major, minor, micro;
+
+    if (gtk_minor_version >= 12)
+	name_property = "program-name";
+    else
+	name_property = "name";
     
     gtk_show_about_dialog (GTK_WINDOW (app->main_window),
 			   "logo", app->icon,
-			   "name", APPLICATION_NAME,
+			   name_property, APPLICATION_NAME,
 			   "copyright", "Copyright 2004-2007, S"OSLASH"ren Sandmann",
 			   "version", PACKAGE_VERSION,
 			   NULL);

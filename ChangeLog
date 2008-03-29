@@ -1,3 +1,10 @@
+2008-03-29  Soren Sandmann <sandmann@daimi.au.dk>
+
+	Work around GTK+ ABI break.
+	
+	* sysprof.c (on_about_activated): Use "program-name" instead of
+	"name" when the gtk+ minor version is >= 14.
+	
 2008-03-24  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* collector.c (collect_traces): Call back after collecting all

@@ -71,6 +71,7 @@ struct Application
     GtkWidget *		screenshot_item;
     
     GtkWidget *		samples_label;
+    int                 samples_label_width;
     
     gboolean		screenshot_window_visible;
     GtkWidget *		screenshot_textview;
@@ -1321,6 +1322,31 @@ on_screenshot_close_button_clicked (GtkWidget *widget,
     update_sensitivity (app);
 }
 
+/* If the samples label bounces around in size, this can cause the
+ * entire toolbar to be repeatedly redrawn, consuming significant CPU and
+ * distorting the profile. Constraining the label to only grow wider
+ * means that the toolbar will only be redrawn a few times as we gain
+ * more digits.
+ */
+static void
+on_samples_label_size_request (GtkWidget *widget,
+			       GtkRequisition *requistion,
+			       Application *app)
+{
+    if (app->samples_label_width >= requistion->width)
+	requistion->width = app->samples_label_width;
+    else if (requistion->width > app->samples_label_width)
+	app->samples_label_width = requistion->width;
+}
+
+static void
+on_samples_label_style_set (GtkWidget *widget,
+			    GtkStyle *previous_style,
+			    Application *app)
+{
+    app->samples_label_width = 0;
+}
+
 static void
 set_sizes (GtkWindow *window,
 	   GtkWindow *screenshot_window,
@@ -1462,6 +1488,10 @@ build_gui (Application *app)
     
     
     app->samples_label = glade_xml_get_widget (xml, "samples_label");
+    g_signal_connect(app->samples_label, "size-request",
+		     G_CALLBACK (on_samples_label_size_request), app);
+    g_signal_connect(app->samples_label, "style-set",
+		     G_CALLBACK (on_samples_label_style_set), app);
     
     /* Menu items */
     app->start_item = glade_xml_get_widget (xml, "start_item");

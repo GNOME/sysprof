@@ -1,3 +1,8 @@
+2008-04-01  Owen Taylor  <otaylor@redhat.com>
+
+	* sysprof.c (on_samples_label_size_request): Constrain the
+	samples label to only grow wider instead of bouncing around.
+
 2008-03-29  Soren Sandmann <sandmann@daimi.au.dk>
 
 	Work around GTK+ ABI break.

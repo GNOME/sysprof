@@ -27,10 +27,10 @@ ElfParser *   elf_parser_new            (const char  *filename,
 void          elf_parser_free           (ElfParser   *parser);
 const char *  elf_parser_get_debug_link (ElfParser   *parser,
 					 guint32     *crc32);
+const gchar  *elf_parser_get_build_id   (ElfParser   *parser);
 const guchar *elf_parser_get_eh_frame   (ElfParser   *parser);
 const guchar *elf_parser_get_debug_frame (ElfParser   *parser);
 gulong	      elf_parser_get_text_offset (ElfParser  *parser);
-
 
 /* Lookup a symbol in the file.
  *

@@ -127,9 +127,9 @@ separate_debug_file_exists (const char *name, guint32 crc)
 static const char *const debug_file_directory = DEBUGDIR;
 
 static ElfParser *
-get_debug_file (ElfParser *elf,
-		const char *filename,
-		char **new_name)
+get_debuglink_file (ElfParser *elf,
+		    const char *filename,
+		    char **new_name)
 {
 #define N_TRIES 4
     const char *basename;
@@ -181,6 +181,27 @@ get_debug_file (ElfParser *elf,
 	g_free (tries[i]);
 
     return result;
+}
+
+static ElfParser *
+get_build_id_file (ElfParser *elf,
+		   const char *filename,
+		   char **new_name)
+{
+    return NULL;
+}
+
+static ElfParser *
+get_debug_file (ElfParser *elf,
+		const char *filename,
+		char **new_name)
+{
+    ElfParser *t;
+
+    if ((t = get_build_id_file (elf, filename, new_name)))
+	return t;
+    else
+	return get_debuglink_file (elf, filename, new_name);
 }
 
 static ElfParser *

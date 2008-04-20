@@ -169,6 +169,9 @@ Before 1.2:
 	- "native endian" is probably not useful. Maybe go back to just
 	  having big/little endian.
 
+  Should probably rethink the whole thing. It's just not very convenient to use, even
+  for simple things like ELF files.
+
 * Rename stack_stash_foreach_by_address() to stack_stash_foreach_unique(),
   or maybe not ...
 

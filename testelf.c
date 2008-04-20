@@ -31,12 +31,19 @@ check (ElfParser *elf, gulong addr)
 }
 
 int
-main ()
+main (int argc, char **argv)
 {
     ElfParser *elf;
     int i;
+    const char *build_id;
+    const char *filename;
 
-    elf = elf_parser_new ("/usr/lib/libgtk-x11-2.0.so", NULL);
+    if (argc == 1)
+	filename = "/usr/lib/libgtk-x11-2.0.so";
+    else
+	filename = argv[0];
+
+    elf = elf_parser_new (filename, NULL);
 
     if (!elf)
     {
@@ -44,6 +51,10 @@ main ()
 	return -1;
     }
 
+    build_id = elf_parser_get_build_id (elf);
+
+    g_print ("build ID: %s\n", build_id);
+    
     elf_parser_get_crc32 (elf);
     
     for (i = 0; i < 5000000; ++i)

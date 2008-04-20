@@ -48,6 +48,7 @@ struct ElfParser
     BinRecord *		strtab_format;
     BinRecord *		shn_entry;
     BinRecord *		sym_format;
+    BinRecord *		note_format;
     
     int			n_sections;
     Section **		sections;
@@ -59,6 +60,9 @@ struct ElfParser
     GMappedFile *	file;
 
     char *		filename;
+
+    gboolean		checked_build_id;
+    char *		build_id;
     
     const Section *	text_section;
 };
@@ -217,6 +221,7 @@ elf_parser_new_from_data (const guchar *data,
 	parser->text_section = find_section (parser, ".text", SHT_NOBITS);
 
     parser->filename = NULL;
+    parser->build_id = NULL;
     
     return parser;
 }
@@ -365,6 +370,9 @@ elf_parser_free (ElfParser *parser)
 
     if (parser->filename)
 	g_free (parser->filename);
+
+    if (parser->build_id)
+	g_free (parser->build_id);
     
     g_free (parser);
 }
@@ -468,7 +476,7 @@ read_table (ElfParser *parser,
 	    parser->symbols[n_functions].offset = offset;
 
 	    n_functions++;
-
+	    
 #if 0
 	    g_print ("    symbol: %s:   %lx\n",
 		     get_string_indirect (parser->parser,
@@ -634,6 +642,53 @@ elf_parser_get_text_offset (ElfParser *parser)
     return parser->text_section->offset;
 }
 
+const gchar *
+elf_parser_get_build_id (ElfParser *parser)
+{
+    if (!parser->checked_build_id)
+    {
+	const Section *build_id = find_section (parser, ".note.gnu.build-id", SHT_NOTE);
+	guint64 name_size;
+	guint64 desc_size;
+	guint64 type;
+	const char *name;
+	const char *desc;
+	GString *string;
+	int i;
+	const char hex_digits[] = { '0', '1', '2', '3', '4', '5', '6', '7',
+				    'a', 'b', 'c', 'd', 'e', 'f' };
+	    
+	parser->checked_build_id = TRUE;
+
+	if (!build_id)
+	    return NULL;
+	
+	bin_parser_set_offset (parser->parser, build_id->offset);
+	
+	name_size = bin_parser_get_uint_field (parser->parser, parser->note_format, "name_size");
+	desc_size = bin_parser_get_uint_field (parser->parser, parser->note_format, "desc_size");
+	type = bin_parser_get_uint_field (parser->parser, parser->note_format, "type");
+	
+	name = bin_parser_get_string (parser->parser);
+	
+	bin_parser_align (parser->parser, 4);
+	
+	desc = bin_parser_get_string (parser->parser);
+	
+	string = g_string_new (NULL);
+	
+	for (i = 0; i < desc_size; ++i)
+	{
+	    g_string_append_c (string, hex_digits[desc[i] & 0xf0]);
+	    g_string_append_c (string, hex_digits[desc[i] & 0x0f]);
+	}
+	
+	parser->build_id = g_string_free (string, FALSE);
+    }
+    
+    return parser->build_id;
+}
+
 const char *
 elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
 {
@@ -745,7 +800,8 @@ static void
 get_formats (gboolean is_64,
 	     const BinField **elf_header,
 	     const BinField **shn_entry,
-	     const BinField **sym_format)
+	     const BinField **sym_format,
+	     const BinField **note_format_out)
 {
     static const BinField elf64_header[] = {
 	{ "e_ident",		BIN_UNINTERPRETED, EI_NIDENT },
@@ -831,6 +887,12 @@ get_formats (gboolean is_64,
 	{ "" },
     };
 
+    static const BinField note_format[] = {
+	{ "name_size",		BIN_UINT,	4 },
+	{ "desc_size",		BIN_UINT,	4 },
+	{ "type",		BIN_UINT,	4 },
+    };
+
     if (is_64)
     {
 	*elf_header = elf64_header;
@@ -843,17 +905,20 @@ get_formats (gboolean is_64,
 	*shn_entry  = shn32_entry;
 	*sym_format = sym32_format;
     }
+
+    *note_format_out = note_format;
 }
 
 static void
 make_formats (ElfParser *parser, gboolean is_64)
 {
-    const BinField *elf_header, *shn_entry, *sym_format;
+    const BinField *elf_header, *shn_entry, *sym_format, *note_format;
 
-    get_formats (is_64, &elf_header, &shn_entry, &sym_format);
+    get_formats (is_64, &elf_header, &shn_entry, &sym_format, &note_format);
 
     parser->header = bin_parser_create_record (parser->parser, elf_header);
     parser->shn_entry = bin_parser_create_record (parser->parser, shn_entry);
     parser->sym_format = bin_parser_create_record (parser->parser, sym_format);
+    parser->note_format = bin_parser_create_record (parser->parser, note_format);
 }
 

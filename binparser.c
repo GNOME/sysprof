@@ -324,7 +324,6 @@ bin_parser_get_string (BinParser *parser)
     parser->offset += strlen (result) + 1;
 
     return result;
-    
 }
 
 static const Field *

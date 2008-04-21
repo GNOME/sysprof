@@ -88,42 +88,6 @@ already_warned (const char *name)
     return FALSE;
 }
 
-static ElfParser *
-separate_debug_file_exists (const char *name, guint32 crc)
-{
-    guint32 file_crc;
-    ElfParser *parser = elf_parser_new (name, NULL);
-
-#if 0
-    g_print ("   trying %s: ", name);
-#endif
-    if (!parser)
-    {
-#if 0
-	g_print ("no.\n");
-#endif
-	return NULL;
-    }
-
-    file_crc = elf_parser_get_crc32 (parser);
-
-    if (file_crc != crc)
-    {
-	if (!already_warned (name))
-	    g_print ("warning: %s has wrong crc \n", name);
-	
-	elf_parser_free (parser);
-	
-	return NULL;
-    }
-
-#if 0
-    g_print ("found\n");
-#endif
-
-    return parser;
-}
-
 static const char *const debug_file_directory = DEBUGDIR;
 
 static ElfParser *
@@ -135,9 +99,8 @@ get_debuglink_file (ElfParser *elf,
     const char *basename;
     char *dir;
     guint32 crc32;
-    char *tries[N_TRIES];
-    int i;
-    ElfParser *result;
+    GList *tries = NULL, *list;
+    ElfParser *result = NULL;
 
     if (!elf)
 	return NULL;
@@ -153,32 +116,41 @@ get_debuglink_file (ElfParser *elf,
 
     dir = g_path_get_dirname (filename);
     
-    tries[0] = g_build_filename (dir, basename, NULL);
-    tries[1] = g_build_filename (dir, ".debug", basename, NULL);
-    tries[2] = g_build_filename ("/usr", "lib", "debug", dir, basename, NULL);
-    tries[3] = g_build_filename (debug_file_directory, dir, basename, NULL);
+    tries = g_list_append (tries, g_build_filename (dir, basename, NULL));
+    tries = g_list_append (tries, g_build_filename (dir, ".debug", basename, NULL));
+    tries = g_list_append (tries, g_build_filename ("/usr", "lib", "debug", dir, basename, NULL));
+    tries = g_list_append (tries, g_build_filename (debug_file_directory, dir, basename, NULL));
     
-    for (i = 0; i < N_TRIES; ++i)
+    for (list = tries; list != NULL; list = list->next)
     {
-#if 0
-	g_print ("trying: %s\n", tries[i]);
-#endif
-	result = separate_debug_file_exists (tries[i], crc32);
-	if (result)
+	const char *name = list->data;
+	ElfParser *parser = elf_parser_new (name, NULL);
+	guint32 file_crc;
+
+	if (parser)
 	{
-#if 0
-	    g_print ("   found debug binary for %s: %s\n", filename, tries[i]);
-#endif
-	    if (new_name)
-		*new_name = g_strdup (tries[i]);
-	    break;
+	    file_crc = elf_parser_get_crc32 (parser);
+	
+	    if (file_crc == crc32)
+	    {
+		result = parser;
+		*new_name = g_strdup (name);
+		break;
+	    }
+	    else
+	    {
+		if (!already_warned (name))
+		    g_print ("warning: %s has wrong crc \n", name);
+	    }
+		
+	    elf_parser_free (parser);
 	}
     }
-
+	
     g_free (dir);
 
-    for (i = 0; i < N_TRIES; ++i)
-	g_free (tries[i]);
+    g_list_foreach (tries, (GFunc)g_free, NULL);
+    g_list_free (tries);
 
     return result;
 }
@@ -188,7 +160,50 @@ get_build_id_file (ElfParser *elf,
 		   const char *filename,
 		   char **new_name)
 {
-    return NULL;
+    const char *build_id = elf_parser_get_build_id (elf);
+    GList *tries = NULL, *list;
+    char *init, *rest;
+    ElfParser *result = NULL;
+
+    if (!build_id)
+	return NULL;
+
+    if (strlen (build_id) < 4)
+	return NULL;
+
+    init = g_strndup (build_id, 2);
+    rest = g_strdup_printf (build_id + 2, ".debug");
+
+    tries = g_list_append (tries, g_build_filename ("/usr", "lib", "debug", ".build-id", init, rest, NULL));
+    tries = g_list_append (tries, g_build_filename (debug_file_directory, ".build-id", init, rest, NULL));
+
+    for (list = tries; list != NULL; list = list->next)
+    {
+	const char *name = list->data;
+	ElfParser *parser = elf_parser_new (name, NULL);
+
+	if (parser)
+	{
+	    const char *file_id = elf_parser_get_build_id (parser);
+
+	    if (file_id && strcmp (build_id, file_id) == 0)
+	    {
+		*new_name = g_strdup (filename);
+		result = parser;
+		break;
+	    }
+
+	    elf_parser_free (parser);
+	}
+    }
+
+    g_list_foreach (tries, (GFunc)g_free, NULL);
+    g_list_free (tries);
+    
+    g_free (init);
+    g_free (rest);
+    
+    return result;
 }
 
 static ElfParser *

@@ -41,7 +41,7 @@ main (int argc, char **argv)
     if (argc == 1)
 	filename = "/usr/lib/libgtk-x11-2.0.so";
     else
-	filename = argv[0];
+	filename = argv[1];
 
     elf = elf_parser_new (filename, NULL);
 
@@ -57,7 +57,9 @@ main (int argc, char **argv)
     
     elf_parser_get_crc32 (elf);
     
+#if 0
     for (i = 0; i < 5000000; ++i)
+#endif
     {
 	elf_parser_get_crc32 (elf);
 	check (elf, 0x077c80f0 - (0x07787000 - 0)); /* gtk_about_dialog_set_artists  (add - (map - offset)) */

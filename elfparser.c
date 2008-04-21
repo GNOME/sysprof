@@ -642,6 +642,27 @@ elf_parser_get_text_offset (ElfParser *parser)
     return parser->text_section->offset;
 }
 
+static gchar *
+make_hex_string (const guchar *data, int n_bytes)
+{
+    GString *string = g_string_new (NULL);
+    const char hex_digits[] = {
+	'0', '1', '2', '3', '4', '5', '6', '7',
+	'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    };
+    int i;
+    
+    for (i = 0; i < n_bytes; ++i)
+    {
+	char c = data[i];
+	    
+	g_string_append_c (string, hex_digits[(c & 0xf0) >> 4]);
+	g_string_append_c (string, hex_digits[(c & 0x0f)]);
+    }
+
+    return g_string_free (string, FALSE);
+}
+	
 const gchar *
 elf_parser_get_build_id (ElfParser *parser)
 {
@@ -652,11 +673,7 @@ elf_parser_get_build_id (ElfParser *parser)
 	guint64 desc_size;
 	guint64 type;
 	const char *name;
-	const char *desc;
-	GString *string;
-	int i;
-	const char hex_digits[] = { '0', '1', '2', '3', '4', '5', '6', '7',
-				    'a', 'b', 'c', 'd', 'e', 'f' };
+	const gchar *desc;
 	    
 	parser->checked_build_id = TRUE;
 
@@ -668,22 +685,15 @@ elf_parser_get_build_id (ElfParser *parser)
 	name_size = bin_parser_get_uint_field (parser->parser, parser->note_format, "name_size");
 	desc_size = bin_parser_get_uint_field (parser->parser, parser->note_format, "desc_size");
 	type = bin_parser_get_uint_field (parser->parser, parser->note_format, "type");
-	
+
+	bin_parser_seek_record (parser->parser, parser->note_format, 1);
 	name = bin_parser_get_string (parser->parser);
-	
+
 	bin_parser_align (parser->parser, 4);
 	
 	desc = bin_parser_get_string (parser->parser);
-	
-	string = g_string_new (NULL);
-	
-	for (i = 0; i < desc_size; ++i)
-	{
-	    g_string_append_c (string, hex_digits[desc[i] & 0xf0]);
-	    g_string_append_c (string, hex_digits[desc[i] & 0x0f]);
-	}
-	
-	parser->build_id = g_string_free (string, FALSE);
+
+	parser->build_id = make_hex_string (desc, desc_size);
     }
     
     return parser->build_id;

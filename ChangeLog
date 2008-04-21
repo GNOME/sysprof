@@ -1,3 +1,7 @@
+Mon Apr 21 15:54:24 2008  Søren Sandmann  <sandmann@redhat.com>
+
+	* binfile.c: More build-id support
+
 Sun Apr 20 16:55:47 2008  Søren Sandmann  <sandmann@redhat.com>
 
 	* elfparser.c (elf_parser_new_from_data): Initial build-id support

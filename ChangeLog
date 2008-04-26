@@ -1,5 +1,10 @@
 2008-04-26  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* sysprof.c (build_gui): Remove all calls to g_signal_connect()
+	* sysprof.c (connect_signals): Instead connect all signals here
+
+2008-04-26  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* unwind.c: Add various constants
 
 Mon Apr 21 15:54:24 2008  Søren Sandmann  <sandmann@redhat.com>

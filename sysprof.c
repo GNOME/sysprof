@@ -69,6 +69,10 @@ struct Application
     GtkWidget *		save_as_item;
     GtkWidget *		open_item;
     GtkWidget *		screenshot_item;
+    GtkWidget *		about_item;
+    GtkWidget *		quit_item;
+
+    GtkTreeSelection *	object_selection;
     
     GtkWidget *		samples_label;
     int                 samples_label_width;
@@ -418,14 +422,11 @@ enum
 static char *
 get_current_object (Application *app)
 {
-    GtkTreeSelection *selection;
     GtkTreeModel *model;
     GtkTreeIter selected;
     char *object;
     
-    selection = gtk_tree_view_get_selection (app->object_view);
-    
-    if (gtk_tree_selection_get_selected (selection, &model, &selected))
+    if (gtk_tree_selection_get_selected (app->object_selection, &model, &selected))
     {
 	gtk_tree_model_get (model, &selected,
 			    OBJECT_OBJECT, &object,
@@ -653,7 +654,6 @@ on_about_activated (GtkWidget *widget, gpointer data)
 #define OSLASH "\303\270"
     Application *app = data;
     char *name_property;
-    int major, minor, micro;
 
     if (gtk_minor_version >= 12)
 	name_property = "program-name";
@@ -1379,6 +1379,53 @@ set_sizes (GtkWindow *window,
 }
 
 static void
+connect_signals (Application *app)
+{
+    typedef struct
+    {
+	gpointer object;
+	const char *signal;
+	gpointer callback;
+	gpointer data;
+    } SignalInfo;
+
+    const SignalInfo signals[] =
+    {
+	{ app->main_window, "delete_event", on_delete, NULL },
+	{ app->start_button, "toggled", on_start_toggled, app },
+	{ app->profile_button, "toggled", on_profile_toggled, app },
+	{ app->reset_button, "clicked", on_reset_clicked, app },
+	{ app->save_as_button, "clicked", on_save_as_clicked, app },
+	{ app->start_item, "activate", on_menu_item_activated, app->start_button },
+	{ app->profile_item, "activate", on_menu_item_activated, app->profile_button },
+	{ app->reset_item, "activate", on_reset_clicked, app },
+	{ app->open_item, "activate", on_open_clicked, app },
+	{ app->save_as_item, "activate", on_save_as_clicked, app },
+	{ app->screenshot_item, "activate", on_screenshot_activated, app },
+	{ app->quit_item, "activate", on_delete, NULL },
+	{ app->about_item, "activate", on_about_activated, app },
+	{ app->object_selection, "changed", on_object_selection_changed, app },
+	{ app->callers_view, "row-activated", on_callers_row_activated, app },
+	{ app->descendants_view, "row-activated", on_descendants_row_activated, app },
+	{ app->descendants_view, "row-expanded", on_descendants_row_expanded_or_collapsed, app },
+	{ app->descendants_view, "row0collapsed", on_descendants_row_expanded_or_collapsed, app },
+	{ app->screenshot_window, "delete_event", on_screenshot_window_delete, app },
+	{ app->screenshot_close_button, "clicked", on_screenshot_close_button_clicked, app },
+	{ app->samples_label, "size-request", on_samples_label_size_request, app },
+	{ app->samples_label, "style-set", on_samples_label_style_set, app },
+    };
+
+    int i;
+    
+    for (i = 0; i < G_N_ELEMENTS (signals); ++i)
+    {
+	const SignalInfo *info = &(signals[i]);
+	
+	g_signal_connect (info->object, info->signal, info->callback, info->data);
+    }
+}
+
+static void
 set_shadows (void)
 {
     /* Get rid of motif out-bevels */
@@ -1437,7 +1484,6 @@ static gboolean
 build_gui (Application *app)
 {
     GladeXML *xml;
-    GtkTreeSelection *selection;
     GtkTreeViewColumn *col;
     
     set_shadows ();
@@ -1458,10 +1504,7 @@ build_gui (Application *app)
     /* Main Window */
     app->main_window = glade_xml_get_widget (xml, "main_window");
     set_icons (app);
-    
-    g_signal_connect (G_OBJECT (app->main_window), "delete_event",
-		      G_CALLBACK (on_delete), NULL);
-    
+
     gtk_widget_realize (GTK_WIDGET (app->main_window));
     
     /* Tool items */
@@ -1474,24 +1517,7 @@ build_gui (Application *app)
     gtk_toggle_tool_button_set_active (
 	GTK_TOGGLE_TOOL_BUTTON (app->profile_button), FALSE);
     
-    g_signal_connect (G_OBJECT (app->start_button), "toggled",
-		      G_CALLBACK (on_start_toggled), app);
-    
-    g_signal_connect (G_OBJECT (app->profile_button), "toggled",
-		      G_CALLBACK (on_profile_toggled), app);
-    
-    g_signal_connect (G_OBJECT (app->reset_button), "clicked",
-		      G_CALLBACK (on_reset_clicked), app);
-    
-    g_signal_connect (G_OBJECT (app->save_as_button), "clicked",
-		      G_CALLBACK (on_save_as_clicked), app);
-    
-    
     app->samples_label = glade_xml_get_widget (xml, "samples_label");
-    g_signal_connect(app->samples_label, "size-request",
-		     G_CALLBACK (on_samples_label_size_request), app);
-    g_signal_connect(app->samples_label, "style-set",
-		     G_CALLBACK (on_samples_label_style_set), app);
     
     /* Menu items */
     app->start_item = glade_xml_get_widget (xml, "start_item");
@@ -1500,35 +1526,13 @@ build_gui (Application *app)
     app->open_item = glade_xml_get_widget (xml, "open_item");
     app->save_as_item = glade_xml_get_widget (xml, "save_as_item");
     app->screenshot_item = glade_xml_get_widget (xml, "screenshot_item");
+    app->quit_item = glade_xml_get_widget (xml, "quit");
+    app->about_item = glade_xml_get_widget (xml, "about");
     
     g_assert (app->start_item);
     g_assert (app->profile_item);
     g_assert (app->save_as_item);
     g_assert (app->open_item);
-    
-    g_signal_connect (G_OBJECT (app->start_item), "activate",
-		      G_CALLBACK (on_menu_item_activated), app->start_button);
-    
-    g_signal_connect (G_OBJECT (app->profile_item), "activate",
-		      G_CALLBACK (on_menu_item_activated), app->profile_button);
-    
-    g_signal_connect (G_OBJECT (app->reset_item), "activate",
-		      G_CALLBACK (on_reset_clicked), app);
-    
-    g_signal_connect (G_OBJECT (app->open_item), "activate",
-		      G_CALLBACK (on_open_clicked), app);
-    
-    g_signal_connect (G_OBJECT (app->save_as_item), "activate",
-		      G_CALLBACK (on_save_as_clicked), app);
-    
-    g_signal_connect (G_OBJECT (app->screenshot_item), "activate",
-		      G_CALLBACK (on_screenshot_activated), app);
-    
-    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "quit")),
-		      "activate", G_CALLBACK (on_delete), NULL);
-    
-    g_signal_connect (G_OBJECT (glade_xml_get_widget (xml, "about")),
-		      "activate", G_CALLBACK (on_about_activated), app);
     
     /* TreeViews */
     
@@ -1542,9 +1546,7 @@ build_gui (Application *app)
 			      OBJECT_SELF, "%.2f ");
     add_double_format_column (app->object_view, _("Total"),
 			      OBJECT_TOTAL, "%.2f ");
-    selection = gtk_tree_view_get_selection (app->object_view);
-    g_signal_connect (selection, "changed",
-		      G_CALLBACK (on_object_selection_changed), app);
+    app->object_selection = gtk_tree_view_get_selection (app->object_view);
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* callers view */
@@ -1557,8 +1559,6 @@ build_gui (Application *app)
 			      CALLERS_SELF, "%.2f ");
     add_double_format_column (app->callers_view, _("Total"),
 			      CALLERS_TOTAL, "%.2f ");
-    g_signal_connect (app->callers_view, "row-activated",
-		      G_CALLBACK (on_callers_row_activated), app);
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* descendants view */
@@ -1571,14 +1571,6 @@ build_gui (Application *app)
 			      DESCENDANTS_SELF, "%.2f ");
     add_double_format_column (app->descendants_view, _("Cumulative"),
 			      DESCENDANTS_CUMULATIVE, "%.2f ");
-    g_signal_connect (app->descendants_view, "row-activated",
-		      G_CALLBACK (on_descendants_row_activated), app);
-    g_signal_connect (app->descendants_view, "row_expanded",
-		      G_CALLBACK (on_descendants_row_expanded_or_collapsed),
-		      app);
-    g_signal_connect (app->descendants_view, "row_collapsed",
-		      G_CALLBACK (on_descendants_row_expanded_or_collapsed),
-		      app);
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* screenshot window */
@@ -1588,12 +1580,6 @@ build_gui (Application *app)
 	glade_xml_get_widget (xml, "screenshot_textview");
     app->screenshot_close_button =
 	glade_xml_get_widget (xml, "screenshot_close_button");
-    
-    g_signal_connect (app->screenshot_window, "delete_event",
-		      G_CALLBACK (on_screenshot_window_delete), app);
-    
-    g_signal_connect (app->screenshot_close_button, "clicked",
-		      G_CALLBACK (on_screenshot_close_button_clicked), app);
     
     /* set sizes */
     set_sizes (GTK_WINDOW (app->main_window),
@@ -1608,6 +1594,8 @@ build_gui (Application *app)
      
     gtk_widget_grab_focus (GTK_WIDGET (app->object_view));
     queue_show_samples (app);
+
+    connect_signals (app);
     
     return TRUE;
 }

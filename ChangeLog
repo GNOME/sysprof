@@ -1,3 +1,7 @@
+2008-04-26  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* unwind.c: Add various constants
+
 Mon Apr 21 15:54:24 2008  Søren Sandmann  <sandmann@redhat.com>
 
 	* binfile.c: More build-id support

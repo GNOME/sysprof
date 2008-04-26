@@ -2,7 +2,38 @@
 #include "binparser.h"
 #include <string.h>
 
-/* FIXME: endianness, 64 bit */
+/* Pointer encodings, from dwarf2.h.  */
+typedef enum
+{
+    DW_EH_PE_absptr	= 0x00, /* */
+    DW_EH_PE_omit	= 0xff, /* Value is not there */
+
+    DW_EH_PE_uleb128	= 0x01,
+    DW_EH_PE_udata2	= 0x02,
+    DW_EH_PE_udata4	= 0x03,
+    DW_EH_PE_udata8	= 0x04,
+    DW_EH_PE_sleb128	= 0x09,
+    DW_EH_PE_sdata2	= 0x0A,
+    DW_EH_PE_sdata4	= 0x0B,
+    DW_EH_PE_sdata8	= 0x0C,
+    DW_EH_PE_signed	= 0x08,
+
+    DW_EH_PE_pcrel	= 0x10, /* Value is *(cur + val) */
+    DW_EH_PE_textrel	= 0x20, /* Value is *(&text + val) */
+    DW_EH_PE_datarel	= 0x30, /* Value is *(&data + val) */
+    DW_EH_PE_funcrel	= 0x40,	/* Value is *(fde.pc_begin + val) */
+    DW_EH_PE_aligned	= 0x50, /* Value is absolute, and stored
+				 * at next align */
+
+    DW_EH_PE_indirect	= 0x80
+} PointerEncoding;
+
+typedef struct EncodedPointer EncodedPointer;
+struct EncodedPointer
+{
+    PointerEncoding	encoding;
+    guint64		value;
+};
 
 static guint64
 get_length (const guchar **data)
@@ -225,17 +256,24 @@ decode_instruction (const guchar **data)
     }
 }
 
+typedef struct CIE CIE;
+struct CIE
+{
+    PointerEncoding	encoding;
+};
+
 static void
 decode_cie (const guchar **data, const guchar *end)
 {
     gboolean has_augmentation;
     guint64 aug_len;
+    char *augmentation;
+    CIE *cie;
+    int i, field;
     
     g_print ("version: %d\n", *(*data)++);
-    
-    g_print ("augmentation: %s\n", *data);
-    
-    has_augmentation = strchr (*data, 'z');
+
+    augmentation = (*data);
     
     *data += strlen (*data) + 1;
 
@@ -245,11 +283,28 @@ decode_cie (const guchar **data, const guchar *end)
 
     g_print ("return register: %llu\n", decode_uleb128 (data));
 
+    g_print ("augmentation: %s\n", augmentation);
+    
+    if (augmentation[0] == 'z')
+    {
+	aug_len = decode_uleb128 (data);
+
+	g_print ("len: %llu\n", aug_len);
+	
+	for (i = 1; augmentation[i] != 0; ++i)
+	{
+	    if (augmentation[i] == 'L')
+	    {
+		
+	    }
+	}
+    }
+    
+    
     if (has_augmentation)
     {
-	g_print ("augmentation length: %llu\n",
-		 (aug_len = decode_uleb128 (data)));
-
+	g_print ("%x\n", **data);
+	
 	*data += aug_len;
     }
     
@@ -338,6 +393,7 @@ unwind (ElfParser *elf)
     }
 
     while (decode_entry (&data, eh_f))
+	return ;
 	;
 }
 

@@ -71,6 +71,8 @@ struct Application
     GtkWidget *		screenshot_item;
     GtkWidget *		about_item;
     GtkWidget *		quit_item;
+    GtkWidget *		hpaned;
+    GtkWidget *		vpaned;
 
     GtkTreeSelection *	object_selection;
     
@@ -1378,6 +1380,57 @@ set_sizes (GtkWindow *window,
     gtk_window_resize (screenshot_window, width, height);
 }
 
+#define GLADE_FILE DATADIR "/sysprof.glade"
+
+static void
+gather_widgets (Application *app)
+{
+    typedef struct
+    {
+	void *location;
+	const char *name;
+    } WidgetInfo;
+
+    const WidgetInfo widgets[] =
+    {
+	{ &app->main_window, "main_window" },
+	{ &app->start_button, "start_button" },
+	{ &app->profile_button, "profile_button" },
+	{ &app->reset_button, "reset_button" },
+	{ &app->save_as_button, "save_as_button" },
+	{ &app->dummy_button, "dummy_button" },
+	{ &app->samples_label, "samples_label" },
+	{ &app->start_item, "start_item" },
+	{ &app->profile_item, "profile_item" },
+	{ &app->reset_item, "reset_item" },
+	{ &app->open_item, "open_item" },
+	{ &app->save_as_item, "save_as_item" },
+	{ &app->screenshot_item, "screenshot_item" },
+	{ &app->quit_item, "quit" },
+	{ &app->about_item, "about" },
+	{ &app->object_view, "object_view" },
+	{ &app->callers_view, "callers_view" },
+	{ &app->descendants_view, "descendants_view" },
+	{ &app->screenshot_window, "screenshot_window" },
+	{ &app->screenshot_textview, "screenshot_textview" },
+	{ &app->screenshot_close_button, "screenshot_close_button" },
+	{ &app->vpaned, "vpaned" },
+	{ &app->hpaned, "hpaned" },
+    };
+
+    GladeXML *xml = glade_xml_new (GLADE_FILE, NULL, NULL);
+    int i;
+
+    for (i = 0; i < G_N_ELEMENTS (widgets); ++i)
+    {
+	const WidgetInfo *info = &(widgets[i]);
+
+	*(GtkWidget **)(info->location) = glade_xml_get_widget (xml, info->name);
+
+	g_assert (GTK_IS_WIDGET (*(GtkWidget **)info->location));
+    }
+}
+
 static void
 connect_signals (Application *app)
 {
@@ -1408,7 +1461,7 @@ connect_signals (Application *app)
 	{ app->callers_view, "row-activated", on_callers_row_activated, app },
 	{ app->descendants_view, "row-activated", on_descendants_row_activated, app },
 	{ app->descendants_view, "row-expanded", on_descendants_row_expanded_or_collapsed, app },
-	{ app->descendants_view, "row0collapsed", on_descendants_row_expanded_or_collapsed, app },
+	{ app->descendants_view, "row-collapsed", on_descendants_row_expanded_or_collapsed, app },
 	{ app->screenshot_window, "delete_event", on_screenshot_window_delete, app },
 	{ app->screenshot_close_button, "clicked", on_screenshot_close_button_clicked, app },
 	{ app->samples_label, "size-request", on_samples_label_size_request, app },
@@ -1440,8 +1493,6 @@ set_shadows (void)
 	"widget \"*menubar\" style : rc \"blah\"\n"
 	);
 }
-
-#define GLADE_FILE DATADIR "/sysprof.glade"
 
 static void
 set_icons (Application *app)
@@ -1483,7 +1534,6 @@ set_icons (Application *app)
 static gboolean
 build_gui (Application *app)
 {
-    GladeXML *xml;
     GtkTreeViewColumn *col;
     
     set_shadows ();
@@ -1498,47 +1548,22 @@ build_gui (Application *app)
 	return FALSE;
     }
     
-    
-    xml = glade_xml_new (GLADE_FILE, NULL, NULL);
+    gather_widgets (app);
+
+    g_assert (app->main_window);
     
     /* Main Window */
-    app->main_window = glade_xml_get_widget (xml, "main_window");
     set_icons (app);
 
     gtk_widget_realize (GTK_WIDGET (app->main_window));
     
     /* Tool items */
-    app->start_button = glade_xml_get_widget (xml, "start_button");
-    app->profile_button = glade_xml_get_widget (xml, "profile_button");
-    app->reset_button = glade_xml_get_widget (xml, "reset_button");
-    app->save_as_button = glade_xml_get_widget (xml, "save_as_button");
-    app->dummy_button = glade_xml_get_widget (xml, "dummy_button");
-    
     gtk_toggle_tool_button_set_active (
 	GTK_TOGGLE_TOOL_BUTTON (app->profile_button), FALSE);
-    
-    app->samples_label = glade_xml_get_widget (xml, "samples_label");
-    
-    /* Menu items */
-    app->start_item = glade_xml_get_widget (xml, "start_item");
-    app->profile_item = glade_xml_get_widget (xml, "profile_item");
-    app->reset_item = glade_xml_get_widget (xml, "reset_item");
-    app->open_item = glade_xml_get_widget (xml, "open_item");
-    app->save_as_item = glade_xml_get_widget (xml, "save_as_item");
-    app->screenshot_item = glade_xml_get_widget (xml, "screenshot_item");
-    app->quit_item = glade_xml_get_widget (xml, "quit");
-    app->about_item = glade_xml_get_widget (xml, "about");
-    
-    g_assert (app->start_item);
-    g_assert (app->profile_item);
-    g_assert (app->save_as_item);
-    g_assert (app->open_item);
     
     /* TreeViews */
     
     /* object view */
-    app->object_view =
-	(GtkTreeView *)glade_xml_get_widget (xml, "object_view");
     gtk_tree_view_set_enable_search (app->object_view, FALSE);
     col = add_plain_text_column (app->object_view, _("Functions"),
 				 OBJECT_NAME);
@@ -1550,8 +1575,6 @@ build_gui (Application *app)
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* callers view */
-    app->callers_view =
-	(GtkTreeView *)glade_xml_get_widget (xml, "callers_view");
     gtk_tree_view_set_enable_search (app->callers_view, FALSE);
     col = add_plain_text_column (app->callers_view, _("Callers"),
 				 CALLERS_NAME);
@@ -1562,8 +1585,6 @@ build_gui (Application *app)
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* descendants view */
-    app->descendants_view =
-	(GtkTreeView *)glade_xml_get_widget (xml, "descendants_view");
     gtk_tree_view_set_enable_search (app->descendants_view, FALSE);
     col = add_plain_text_column (app->descendants_view, _("Descendants"),
 				 DESCENDANTS_NAME);
@@ -1574,18 +1595,11 @@ build_gui (Application *app)
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* screenshot window */
-    app->screenshot_window =
-	glade_xml_get_widget (xml, "screenshot_window");
-    app->screenshot_textview =
-	glade_xml_get_widget (xml, "screenshot_textview");
-    app->screenshot_close_button =
-	glade_xml_get_widget (xml, "screenshot_close_button");
     
     /* set sizes */
     set_sizes (GTK_WINDOW (app->main_window),
 	       GTK_WINDOW (app->screenshot_window),
-	       glade_xml_get_widget (xml, "hpaned"),
-	       glade_xml_get_widget (xml, "vpaned"));
+	       app->hpaned, app->vpaned);
     
     /* hide/show widgets */
     gtk_widget_show_all (app->main_window);

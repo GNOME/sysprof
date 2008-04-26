@@ -1,5 +1,13 @@
 2008-04-26  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* sysprof.c (build_gui): Get rid of all calls to
+	glade_xml_get_widget().
+        (gather_widgets): Instead get all the widgets here.
+
+	* TODO: Update
+	
+2008-04-26  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* sysprof.c (build_gui): Remove all calls to g_signal_connect()
 	* sysprof.c (connect_signals): Instead connect all signals here
 

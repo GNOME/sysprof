@@ -1429,6 +1429,8 @@ gather_widgets (Application *app)
 
 	g_assert (GTK_IS_WIDGET (*(GtkWidget **)info->location));
     }
+
+    g_object_unref (xml);
 }
 
 static void

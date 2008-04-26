@@ -55,6 +55,8 @@ Before 1.2:
 
 * Make sure that labels look decent in case of "No Map" etc.
 
+* Find out why the samples label won't right adjust
+
 * Elf bugs:
 	- error handling for bin_parser is necessary.
 

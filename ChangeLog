@@ -1,5 +1,11 @@
 2008-04-26  Soren Sandmann <sandmann@daimi.au.dk>
 
+	* process.c (get_kernel_symbols): Don't leak kallsyms
+
+	* sysprof.c (gather_widgets): Don't leak the GladeXML
+
+2008-04-26  Soren Sandmann <sandmann@daimi.au.dk>
+
 	* sysprof.c (build_gui): Get rid of all calls to
 	glade_xml_get_widget().
         (gather_widgets): Instead get all the widgets here.

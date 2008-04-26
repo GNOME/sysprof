@@ -588,6 +588,8 @@ get_kernel_symbols (void)
 		    kernel_syms = NULL;
 		}
 	    }
+
+	    g_free (kallsyms);
 	}
 
 	if (!kernel_syms)

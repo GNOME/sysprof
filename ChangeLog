@@ -1,3 +1,11 @@
+2008-04-27  Soren Sandmann <sandmann@daimi.au.dk>
+
+	* -=-=-=- Release sysprof 1.0.10 -=-=-=-
+
+	* configure.ac: Bump version
+
+	* sysprof.c: Bump year
+
 2007-10-21  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* -=-=-=- Release sysprof 1.0.9 -=-=-=-

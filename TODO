@@ -1,16 +1,23 @@
 Before 1.0:
 
    - Update version numbers and year in source
+     - configure.ac
+     - sysprof.c about box
+     - any file that changed
+
+   - make announce-1.0.10 file
+     - search-and-replace 1.0.(x-1) 1.0.x
+     - Add notes in sysprof-1.0.x section
+
+   - svn add announce-1.0.x
 
    - Make tarball
 
    - Check that tarball works
 
-   - svn add announce-1.0.x
-
    - svn commit
 
-   - svn copy svn+ssh://ssp@svn.gnome.org/svn/sysprof/branches/sysprof-1-0 svn+ssh://ssp@svn.gnome.org/svn/sysprof/tags/SYSPROF-1-0-9 -m "tag for 1.0.9"
+   - svn copy svn+ssh://ssp@svn.gnome.org/svn/sysprof/branches/sysprof-1-0 svn+ssh://ssp@svn.gnome.org/svn/sysprof/tags/SYSPROF-1-0-9 -m "tag 1.0.10"
 
    - Update website
 

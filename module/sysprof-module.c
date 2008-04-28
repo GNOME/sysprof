@@ -2,7 +2,7 @@
 
 /* Sysprof -- Sampling, systemwide CPU profiler
  * Copyright 2004, Red Hat, Inc.
- * Copyright 2004, 2005, Soeren Sandmann
+ * Copyright 2004, 2005, 2006, 2007, 2008, Soeren Sandmann
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,15 +68,24 @@ DECLARE_WAIT_QUEUE_HEAD (wait_for_exit);
 
 /* Macro the names of the registers that are used on each architecture */
 #if defined(CONFIG_X86_64)
-# define REG_FRAME_PTR rbp
-# define REG_INS_PTR rip
-# define REG_STACK_PTR rsp
+#       define REG_FRAME_PTR rbp
+#       define REG_INS_PTR rip
+#       define REG_STACK_PTR rsp
+#       define REG_STACK_PTR0 rsp0
 #elif defined(CONFIG_X86)
-# define REG_FRAME_PTR ebp
-# define REG_INS_PTR eip
-# define REG_STACK_PTR esp
+#       if LINUX_VERSION_CODE >= KERNEL_VERSION (2,6,25)
+#               define REG_FRAME_PTR bp
+#               define REG_INS_PTR ip
+#               define REG_STACK_PTR sp
+#               define REG_STACK_PTR0 sp0
+#       else
+#               define REG_FRAME_PTR ebp
+#               define REG_INS_PTR eip
+#               define REG_STACK_PTR esp
+#               define REG_STACK_PTR0 esp0
+#       endif
 #else
-# error Sysprof only supports the i386 and x86-64 architectures
+#       error Sysprof only supports the i386 and x86-64 architectures
 #endif
 
 typedef struct userspace_reader userspace_reader;

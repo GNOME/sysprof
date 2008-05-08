@@ -1,3 +1,10 @@
+2008-05-07  Soren Sandmann Pedersen  <sandmann@daimi.au.dk>
+
+	* binfile.c (get_build_id_file): Fix bug where the build id name
+	was generated incorrectly. 
+
+	Make a copy of the debug name, not the input name.
+
 2008-04-26  Soren Sandmann <sandmann@daimi.au.dk>
 
 	* process.c (get_kernel_symbols): Don't leak kallsyms

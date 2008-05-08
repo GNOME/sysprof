@@ -618,7 +618,13 @@ elf_parser_lookup_symbol (ElfParser *parser,
 	    parser->parser, parser->sym_format, "st_size");
 
 	if (size > 0 && result->address + size <= address)
+	{
+#if 0
+	    g_print ("  elf: ends at %lx, so rejecting\n",
+		     result->address + size);
+#endif
 	    result = NULL;
+	}
     }
     
     if (result)

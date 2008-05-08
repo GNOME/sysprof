@@ -172,7 +172,7 @@ get_build_id_file (ElfParser *elf,
 	return NULL;
 
     init = g_strndup (build_id, 2);
-    rest = g_strdup_printf (build_id + 2, ".debug");
+    rest = g_strdup_printf ("%s%s", build_id + 2, ".debug");
 
     tries = g_list_append (tries, g_build_filename ("/usr", "lib", "debug", ".build-id", init, rest, NULL));
     tries = g_list_append (tries, g_build_filename (debug_file_directory, ".build-id", init, rest, NULL));
@@ -188,7 +188,7 @@ get_build_id_file (ElfParser *elf,
 
 	    if (file_id && strcmp (build_id, file_id) == 0)
 	    {
-		*new_name = g_strdup (filename);
+		*new_name = g_strdup (name);
 		result = parser;
 		break;
 	    }
@@ -406,7 +406,7 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 #endif
 
 #if 0
-    g_print ("%lx undefined in %s (textoffset %d)\n", address + bin_file->text_offset, bin_file->filename, bin_file->text_offset);
+    g_print ("%lx undefined in %s (textoffset %x)\n", address + bin_file->text_offset, bin_file->filename, bin_file->text_offset);
 #endif
     
     return (const BinSymbol *)bin_file->undefined_name;

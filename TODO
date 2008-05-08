@@ -57,6 +57,9 @@ Before 1.2:
 
 * Find out why the samples label won't right adjust
 
+* If we end up believing the kernel's own stacktraces, maybe
+  /proc/kallsyms shouldn't be parsed until the user hits profile.
+
 * Elf bugs:
 	- error handling for bin_parser is necessary.
 

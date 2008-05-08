@@ -1,3 +1,9 @@
+2008-04-30  Owen Taylor  <otaylor@redhat.com>
+
+	* module/sysprof-module.c: Reorder the tests for 
+	CONFIG_X86 and CONFIG_X86_64 since post 2.6.26, they are
+	both defined on x86-64 machines.
+
 2008-05-07  Soren Sandmann Pedersen  <sandmann@daimi.au.dk>
 
 	* binfile.c (get_build_id_file): Fix bug where the build id name

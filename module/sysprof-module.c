@@ -61,12 +61,7 @@ static atomic_t		client_count = ATOMIC_INIT(0);
 DECLARE_WAIT_QUEUE_HEAD (wait_for_trace);
 
 /* Macro the names of the registers that are used on each architecture */
-#if defined(CONFIG_X86_64)
-#	define REG_FRAME_PTR rbp
-#	define REG_INS_PTR rip
-#	define REG_STACK_PTR rsp
-#	define REG_STACK_PTR0 rsp0
-#elif defined(CONFIG_X86)
+#if defined(CONFIG_X86)
 #	if LINUX_VERSION_CODE >= KERNEL_VERSION (2,6,25)
 #		define REG_FRAME_PTR bp
 #		define REG_INS_PTR ip
@@ -78,6 +73,11 @@ DECLARE_WAIT_QUEUE_HEAD (wait_for_trace);
 #		define REG_STACK_PTR esp
 #		define REG_STACK_PTR0 esp0
 #	endif
+#elif defined(CONFIG_X86_64) /* pre-2.6.25 separate architecture */
+#	define REG_FRAME_PTR rbp
+#	define REG_INS_PTR rip
+#	define REG_STACK_PTR rsp
+#	define REG_STACK_PTR0 rsp0
 #else
 #	error Sysprof only supports the i386 and x86-64 architectures
 #endif

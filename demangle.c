@@ -1,6 +1,4 @@
 /*
- * "I bred them together to create a monster"
- *
  * This file is a concatenation of the files
  *
  *	cp-demangle.c
@@ -61,7 +59,6 @@
    Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.
 */
-
 
 /* This code implements a demangler for the g++ V3 ABI.  The ABI is
    described on this web page:

@@ -220,12 +220,10 @@ get_debug_binaries (GList      *files,
     GHashTable *seen_names;
     GList *free_us = NULL;
 
-#if 0
     build_id_file = get_build_id_file (elf);
     
     if (build_id_file)
 	return g_list_prepend (files, build_id_file);
-#endif
 
     /* .gnu_debuglink is actually a chain of debuglinks, and
      * there have been real-world cases where following it was

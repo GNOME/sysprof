@@ -232,6 +232,22 @@ profile_new (StackStash *stash)
     return profile;
 }
 
+static gboolean
+fold_recursion (gpointer address)
+{
+    /* This is a hack.
+     *
+     * The correct way to do it would be to have the address
+     * be a pointer to more information about the symbol; that
+     * way we could also do things like change the font.
+     *
+     * The problem with that is that we can't compatibly add
+     * this information to saved files, and we can't compute it
+     * without access to the processes who generated it.
+     */
+    return strncmp (address, "In file", 7) != 0;
+}
+
 static void
 add_trace_to_tree (GList *trace, gint size, gpointer data)
 {
@@ -244,7 +260,7 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
 	gpointer address = list->data;
 	ProfileDescendant *prev = NULL;
 	ProfileDescendant *match = NULL;
-	
+
 	for (match = *tree; match != NULL; prev = match, match = match->siblings)
 	{
 	    if (match->name == address)
@@ -260,7 +276,7 @@ add_trace_to_tree (GList *trace, gint size, gpointer data)
 	    }
 	}
 	
-	if (!match)
+	if (!match && fold_recursion (address))
 	{
 	    /* Have we seen this object further up the tree? */
 	    for (match = parent; match != NULL; match = match->parent)

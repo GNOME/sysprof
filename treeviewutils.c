@@ -3,7 +3,7 @@
  * Copyright 2003, 2004, Red Hat, Inc.
  *
  * Sysprof -- Sampling, systemwide CPU profiler 
- * Copyright 2004, 2005, Soeren Sandmann
+ * Copyright 2004, 2005, 2006, 2007, 2008 Soeren Sandmann
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +32,10 @@ typedef struct
 } SortInfo;
 
 static void
-set_sort_info (GtkTreeView *view,
-	       GtkTreeViewColumn *column,
-	       int model_column,
-	       GtkSortType default_order)
+set_sort_info (GtkTreeView       *view,
+               GtkTreeViewColumn *column,
+               int                model_column,
+               GtkSortType        default_order)
 {
     SortInfo *info;
     
@@ -56,7 +56,8 @@ get_sort_info (GtkTreeViewColumn *column)
 }
 
 static GtkTreeViewColumn *
-find_column_by_model_column (GtkTreeView *view, int model_column)
+find_column_by_model_column (GtkTreeView *view,
+			     int          model_column)
 {
     GList *columns = gtk_tree_view_get_columns (view);
     GList *list;
@@ -78,8 +79,8 @@ find_column_by_model_column (GtkTreeView *view, int model_column)
 
 void
 tree_view_set_sort_column (GtkTreeView *view,
-			   int model_column,
-			   int sort_type)
+			   int          model_column,
+			   int          sort_type)
 {
     GList *columns, *list;
     GtkTreeSortable *sortable;

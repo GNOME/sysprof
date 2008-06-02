@@ -1,3 +1,10 @@
+Sun Jun  1 23:03:06 2008  Søren Sandmann  <sandmann@redhat.com>
+
+	* profile.c (add_trace_to_tree): Do not fold recursions for
+	symbols starting with "In file".
+
+	* treeviewutils.c: Update copyright. Various formatting fixes.
+
 2008-04-30  Owen Taylor  <otaylor@redhat.com>
 
 	* module/sysprof-module.c: Reorder the tests for 

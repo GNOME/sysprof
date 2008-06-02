@@ -248,6 +248,7 @@ get_debug_binaries (GList      *files,
 	    files = g_list_prepend (files, debuglink_file);
 
 	    filename = debug_name;
+	    elf = debuglink_file;
 	}
     }
     while (debuglink_file);

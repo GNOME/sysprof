@@ -255,6 +255,8 @@ get_debug_binaries (GList      *files,
     g_list_foreach (free_us, (GFunc)g_free, NULL);
     g_list_free (free_us);
 
+    g_hash_table_destroy (seen_names);
+    
     return files;
 }
 

@@ -1,3 +1,10 @@
+Mon Jun  2 00:51:46 2008  Søren Sandmann  <sandmann@redhat.com>
+
+	* binfile.c (get_debug_binaries): Keep a list of elf files for
+	each binary file. In some cases, notably glibc on Fedora, the
+	debug binary does not contain a symbol table, but the original
+	file does.
+
 Sun Jun  1 23:03:06 2008  Søren Sandmann  <sandmann@redhat.com>
 
 	* profile.c (add_trace_to_tree): Do not fold recursions for

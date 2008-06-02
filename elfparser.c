@@ -766,6 +766,21 @@ elf_parser_get_sym_name (ElfParser *parser,
     return result;
 }
 
+gboolean
+elf_parser_owns_symbol (ElfParser *parser,
+			const ElfSym *sym)
+{
+    ElfSym *first, *last;
+    
+    if (!parser->n_symbols)
+	return FALSE;
+
+    first = parser->symbols;
+    last = parser->symbols + parser->n_symbols - 1;
+
+    return first <= sym && sym <= last;
+}
+
 gulong
 elf_parser_get_sym_address (ElfParser *parser,
 			    const ElfSym *sym)

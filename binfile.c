@@ -41,8 +41,8 @@
 struct BinFile
 {
     int		ref_count;
-    
-    ElfParser *	elf;
+
+    GList *	elf_files;
 
     char *	filename;	
     
@@ -89,6 +89,62 @@ already_warned (const char *name)
 }
 
 static const char *const debug_file_directory = DEBUGDIR;
+
+static ElfParser *
+get_build_id_file (ElfParser *elf)
+{
+    const char *build_id;
+    GList *tries = NULL, *list;
+    char *init, *rest;
+    ElfParser *result = NULL;
+    char *tmp;
+
+    build_id = elf_parser_get_build_id (elf);
+    
+    if (!build_id)
+	return NULL;
+
+    if (strlen (build_id) < 4)
+	return NULL;
+
+    init = g_strndup (build_id, 2);
+    rest = g_strdup_printf ("%s%s", build_id + 2, ".debug");
+
+    tmp = g_build_filename (
+	"/usr", "lib", "debug", ".build-id", init, rest, NULL);
+    tries = g_list_append (tries, tmp);
+
+    tmp = g_build_filename (
+	debug_file_directory, ".build-id", init, rest, NULL);
+    tries = g_list_append (tries, tmp);
+
+    for (list = tries; list != NULL; list = list->next)
+    {
+	char *name = list->data;
+	ElfParser *parser = elf_parser_new (name, NULL);
+
+	if (parser)
+	{
+	    const char *file_id = elf_parser_get_build_id (parser);
+
+	    if (file_id && strcmp (build_id, file_id) == 0)
+	    {
+		result = parser;
+		break;
+	    }
+
+	    elf_parser_free (parser);
+	}
+    }
+
+    g_list_foreach (tries, (GFunc)g_free, NULL);
+    g_list_free (tries);
+    
+    g_free (init);
+    g_free (rest);
+    
+    return result;
+}
 
 static ElfParser *
 get_debuglink_file (ElfParser *elf,
@@ -155,116 +211,51 @@ get_debuglink_file (ElfParser *elf,
     return result;
 }
 
-static ElfParser *
-get_build_id_file (ElfParser *elf,
-		   const char *filename,
-		   char **new_name)
+static GList *
+get_debug_binaries (GList      *files,
+		    ElfParser  *elf,
+		    const char *filename)
 {
-    const char *build_id = elf_parser_get_build_id (elf);
-    GList *tries = NULL, *list;
-    char *init, *rest;
-    ElfParser *result = NULL;
+    ElfParser *build_id_file;
+    ElfParser *debuglink_file;
+    GHashTable *seen_names;
+    GList *free_us = NULL;
 
-    if (!build_id)
-	return NULL;
-
-    if (strlen (build_id) < 4)
-	return NULL;
-
-    init = g_strndup (build_id, 2);
-    rest = g_strdup_printf ("%s%s", build_id + 2, ".debug");
-
-    tries = g_list_append (tries, g_build_filename ("/usr", "lib", "debug", ".build-id", init, rest, NULL));
-    tries = g_list_append (tries, g_build_filename (debug_file_directory, ".build-id", init, rest, NULL));
-
-    for (list = tries; list != NULL; list = list->next)
-    {
-	const char *name = list->data;
-	ElfParser *parser = elf_parser_new (name, NULL);
-
-	if (parser)
-	{
-	    const char *file_id = elf_parser_get_build_id (parser);
-
-	    if (file_id && strcmp (build_id, file_id) == 0)
-	    {
-		*new_name = g_strdup (name);
-		result = parser;
-		break;
-	    }
-
-	    elf_parser_free (parser);
-	}
-    }
-
-    g_list_foreach (tries, (GFunc)g_free, NULL);
-    g_list_free (tries);
+    build_id_file = get_build_id_file (elf);
     
-    g_free (init);
-    g_free (rest);
-    
-    return result;
-}
+    if (build_id_file)
+	return g_list_prepend (files, build_id_file);
 
-static ElfParser *
-get_debug_file (ElfParser *elf,
-		const char *filename,
-		char **new_name)
-{
-    ElfParser *t;
-
-    if ((t = get_build_id_file (elf, filename, new_name)))
-	return t;
-    else
-	return get_debuglink_file (elf, filename, new_name);
-}
-
-static ElfParser *
-find_separate_debug_file (ElfParser *elf,
-			  const char *filename)
-{
-    ElfParser *debug;
-    char *debug_name = NULL;
-    char *fname;
-    GHashTable *seen_names =
-	g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-
-    fname = g_strdup (filename);
+    /* .gnu_debuglink is actually a chain of debuglinks, and
+     * there have been cases where you'd have to follow it.
+     */
+    seen_names = g_hash_table_new (g_str_hash, g_str_equal);
 
     do
     {
-	if (g_hash_table_lookup (seen_names, fname))
-	{
-#if 0
-	    g_print ("   cycle detected\n");
-#endif
-	    /* cycle detected, just return the original elf file itself */
+	char *debug_name;
+	
+	if (g_hash_table_lookup (seen_names, filename))
 	    break;
-	}
-	    
-	debug = get_debug_file (elf, fname, &debug_name);
+	
+	g_hash_table_insert (seen_names, (char *)filename, (char *)filename);
 
-	if (debug)
+	debuglink_file = get_debuglink_file (elf, filename, &debug_name);
+
+	if (debuglink_file)
 	{
-	    elf_parser_free (elf);
-	    elf = debug;
-	    
-	    g_hash_table_insert (seen_names, fname, fname);
-	    fname = debug_name;
+	    free_us = g_list_prepend (free_us, debug_name);
+	    files = g_list_prepend (files, debuglink_file);
+
+	    filename = debug_name;
 	}
-#if 0
-	else
-	{
-	    g_print ("   no debug info file for %s\n", fname);
-	}
-#endif
     }
-    while (debug);
+    while (debuglink_file);
 
-    g_free (fname);
-    g_hash_table_destroy (seen_names);
-    
-    return elf;
+    g_list_foreach (free_us, (GFunc)g_free, NULL);
+    g_list_free (free_us);
+
+    return files;
 }
 
 static GHashTable *bin_files;
@@ -286,67 +277,43 @@ bin_file_new (const char *filename)
     }
     else
     {
+	ElfParser *elf = NULL;
+	
 	bf = g_new0 (BinFile, 1);
 
 	bf->inode_check = FALSE;
 	bf->filename = g_strdup (filename);
 	bf->undefined_name = g_strdup_printf ("In file %s", filename);
 	bf->ref_count = 1;
+	bf->elf_files = NULL;
 	
 	g_hash_table_insert (bin_files, bf->filename, bf);
 	
 	if (strcmp (filename, "[vdso]") == 0)
 	{
-	    gsize length;
 	    const guint8 *vdso_bytes;
+	    gsize length;
 
 	    vdso_bytes = process_get_vdso_bytes (&length);
+
 	    if (vdso_bytes)
-	    {
-		bf->elf = elf_parser_new_from_data (vdso_bytes, length);
-#if 0
-		g_print ("got vdso elf: %p (%d)\n", bf->elf, length);
-#endif
-	    }
-	    else
-		bf->elf = NULL;
+		elf = elf_parser_new_from_data (vdso_bytes, length);
 	}
 	else
 	{
-	    bf->elf = elf_parser_new (filename, NULL);
-#if 0
-	    if (!bf->elf)
-		g_print ("Could not parse file %s\n", filename);
-#endif
+	    elf = elf_parser_new (filename, NULL);
 	}
-	
-	/* We need the text offset of the actual binary, not the
-	 * (potential) debug binary
-	 */
-	if (bf->elf)
+
+	if (elf)
 	{
-	    ElfParser *oldelf;
-	    
-	    bf->text_offset = elf_parser_get_text_offset (bf->elf);
-#if 0
-	    g_print ("text offset: %d\n", bf->text_offset);
-#endif
+	    /* We need the text offset of the actual binary, not the
+	     * (potential) debug binaries
+	     */
+	    bf->text_offset = elf_parser_get_text_offset (elf);
 
-	    oldelf = bf->elf;
-#if 0
-	    if (bf->elf)
-		g_print ("trying to find separate debug file for %s\n", filename);
-#endif
-	    bf->elf = find_separate_debug_file (bf->elf, filename);
+	    bf->elf_files = get_debug_binaries (bf->elf_files, elf, filename);
+	    bf->elf_files = g_list_append (bf->elf_files, elf);
 
-#if 0
-	    if (!bf->elf)
-		g_print ("   returned NULL\n");
-	    else if (bf->elf != oldelf)
-		g_print ("   successfully opened a different elf file than the original\n");
-	    else
-		g_print ("   opened the original elf file\n");
-#endif
 	    bf->inode = read_inode (filename);
 	}
     }
@@ -360,9 +327,9 @@ bin_file_free (BinFile *bin_file)
     if (--bin_file->ref_count == 0)
     {
 	g_hash_table_remove (bin_files, bin_file->filename);
-	
-	if (bin_file->elf)
-	    elf_parser_free (bin_file->elf);
+
+	g_list_foreach (bin_file->elf_files, (GFunc)elf_parser_free, NULL);
+	g_list_free (bin_file->elf_files);
 	
 	g_free (bin_file->filename);
 	g_free (bin_file->undefined_name);
@@ -374,39 +341,40 @@ const BinSymbol *
 bin_file_lookup_symbol (BinFile    *bin_file,
 			gulong      address)
 {
+    GList *list;
+
 #if 0
     g_print ("-=-=-=- \n");
+
+    g_print ("bin file lookup lookup %d\n", address);
 #endif
+	
+    address -= bin_file->text_offset;
     
-    if (bin_file->elf)
+#if 0
+    g_print ("lookup %d in %s\n", address, bin_file->filename);
+#endif
+	
+    for (list = bin_file->elf_files; list != NULL; list = list->next)
     {
-#if 0
-	g_print ("bin file lookup lookup %d\n", address);
-#endif
-	
-	address -= bin_file->text_offset;
-	
-#if 0
-	g_print ("lookup %d in %s\n", address, bin_file->filename);
-#endif
-	
-	const ElfSym *sym = elf_parser_lookup_symbol (bin_file->elf, address);
+	ElfParser *elf = list->data;
+	const ElfSym *sym = elf_parser_lookup_symbol (elf, address);
 
 	if (sym)
 	{
 #if 0
-	    g_print ("found  %lx => %s\n", address, bin_symbol_get_name (bin_file, sym));
+	    g_print ("found  %lx => %s\n", address,
+		     bin_symbol_get_name (bin_file, sym));
 #endif
 	    return (const BinSymbol *)sym;
 	}
     }
-#if 0
-    else
-	g_print ("no elf file for %s\n", bin_file->filename);
-#endif
 
 #if 0
-    g_print ("%lx undefined in %s (textoffset %x)\n", address + bin_file->text_offset, bin_file->filename, bin_file->text_offset);
+    g_print ("%lx undefined in %s (textoffset %x)\n",
+	     address + bin_file->text_offset,
+	     bin_file->filename,
+	     bin_file->text_offset);
 #endif
     
     return (const BinSymbol *)bin_file->undefined_name;
@@ -419,7 +387,7 @@ bin_file_check_inode (BinFile *bin_file,
     if (bin_file->inode == inode)
 	return TRUE;
 
-    if (!bin_file->elf)
+    if (!bin_file->elf_files)
 	return FALSE;
     
     if (!bin_file->inode_check)
@@ -434,14 +402,48 @@ bin_file_check_inode (BinFile *bin_file,
     return FALSE;
 }
 
+static const ElfSym *
+get_elf_sym (BinFile *file,
+	     const BinSymbol *symbol,
+	     ElfParser **elf_ret)
+{
+    GList *list;
+    
+    for (list = file->elf_files; list != NULL; list = list->next)
+    {
+	const ElfSym *sym = (const ElfSym *)symbol;
+	ElfParser *elf = list->data;
+	
+	if (elf_parser_owns_symbol (elf, sym))
+	{
+	    *elf_ret = elf;
+	    return sym;
+	}
+    }
+    
+    g_critical ("Internal error: unrecognized symbol pointer");
+
+    *elf_ret = NULL;
+    return NULL;
+}
+
 const char *
 bin_symbol_get_name (BinFile *file,
 		     const BinSymbol *symbol)
 {
     if (file->undefined_name == (char *)symbol)
+    {
 	return file->undefined_name;
+    }
     else
-	return elf_parser_get_sym_name (file->elf, (const ElfSym *)symbol);
+    {
+	ElfParser *elf;
+	const ElfSym *sym;
+
+	sym = get_elf_sym (file, symbol, &elf);
+
+	return elf_parser_get_sym_name (elf, sym);
+    }
 }
 
 gulong
@@ -449,7 +451,16 @@ bin_symbol_get_address (BinFile         *file,
 			const BinSymbol *symbol)
 {
     if (file->undefined_name == (char *)symbol)
+    {
 	return 0x0;
+    }
     else
-	return file->text_offset + elf_parser_get_sym_address (file->elf, (const ElfSym *)symbol);
+    {
+	ElfParser *elf;
+	const ElfSym *sym;
+
+	sym = get_elf_sym (file, symbol, &elf);
+
+	return elf_parser_get_sym_address (elf, sym);
+    }
 }

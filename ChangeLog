@@ -1,3 +1,7 @@
+Mon Jun  2 01:10:38 2008  Søren Sandmann  <sandmann@redhat.com>
+
+	* binfile.c (get_debug_binaries): Simplify loop.
+
 Mon Jun  2 00:58:17 2008  Søren Sandmann  <sandmann@redhat.com>
 
 	* binfile.c (get_debug_binaries): Actually recurse on the

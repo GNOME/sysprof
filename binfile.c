@@ -147,9 +147,9 @@ get_build_id_file (ElfParser *elf)
 }
 
 static ElfParser *
-get_debuglink_file (ElfParser *elf,
-		    const char *filename,
-		    char **new_name)
+get_debuglink_file (ElfParser   *elf,
+		    const char  *filename,
+		    char       **new_name)
 {
 #define N_TRIES 4
     const char *basename;
@@ -217,42 +217,41 @@ get_debug_binaries (GList      *files,
 		    const char *filename)
 {
     ElfParser *build_id_file;
-    ElfParser *debuglink_file;
     GHashTable *seen_names;
     GList *free_us = NULL;
 
+#if 0
     build_id_file = get_build_id_file (elf);
     
     if (build_id_file)
 	return g_list_prepend (files, build_id_file);
+#endif
 
     /* .gnu_debuglink is actually a chain of debuglinks, and
-     * there have been cases where you'd have to follow it.
+     * there have been real-world cases where following it was
+     * necessary to get useful debug information.
      */
     seen_names = g_hash_table_new (g_str_hash, g_str_equal);
 
-    do
+    while (elf)
     {
 	char *debug_name;
 	
 	if (g_hash_table_lookup (seen_names, filename))
 	    break;
-	
+
 	g_hash_table_insert (seen_names, (char *)filename, (char *)filename);
 
-	debuglink_file = get_debuglink_file (elf, filename, &debug_name);
+	elf = get_debuglink_file (elf, filename, &debug_name);
 
-	if (debuglink_file)
+	if (elf)
 	{
+	    files = g_list_prepend (files, elf);
 	    free_us = g_list_prepend (free_us, debug_name);
-	    files = g_list_prepend (files, debuglink_file);
-
 	    filename = debug_name;
-	    elf = debuglink_file;
 	}
     }
-    while (debuglink_file);
-
+    
     g_list_foreach (free_us, (GFunc)g_free, NULL);
     g_list_free (free_us);
 

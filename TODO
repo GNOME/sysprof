@@ -23,9 +23,14 @@ Before 1.0.4:
 
 Before 1.2:
 
-* For glibc, the debug files do not contain .strtab and .symtab, but
-  the original files do. The algorithm in binfile.c must be modified
-  accordingly.
+* Hack to disable recursion for binaries without symbols causes the
+  symbols to not work the way other symbols do. A better approach is
+  probably to simply generate a new symbol for every appearance except
+  leaf nodes, which should still be considered one symbol (or maybe be
+  considered the same symbol if they have the same parent). In fact
+  "has same parent" may be the correct criterion in all cases. 
+
+* It crashes sometimes.
 
 * Find out what is going on with kernel threads:
 
@@ -40,9 +45,10 @@ Before 1.2:
 
 * Is the move-to-front in process_locate_map() really worth it?
 
-* Whenever we fail to lock the atomic variable, track this, and send the information
-  to userspace as an indication of the overhead of the profiling. Although there is
-  inherent aliasing here since stack scanning happens at regular intervals.
+* Whenever we fail to lock the atomic variable, track this, and send the
+  information to userspace as an indication of the overhead of the profiling.
+  Although there is inherent aliasing here since stack scanning happens at
+  regular intervals.
 
 * Apparently, if you upgrade the kernel, then don't re-run configure, 
   the kernel Makefile will delete all of /lib/modules/<release>/kernel 
@@ -822,6 +828,19 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE: -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* Find out why the strings
+
+  _ZL11DisplayLineP20nsDisplayListBuilderRK6nsRectS3_R19nsLineList_iteratoriRiRK16nsDisplayListSetP12nsBlockFrame
+  _ZL11DisplayRowsP20nsDisplayListBuilderP7nsFrameRK6nsRectRK16nsDisplayListSet   _ZL11DrawBordersP10gfxContextR7gfxRectS2_PhPdS4_PjPP14nsBorderColorsijiP6nsRect _ZL11HandleEventP10nsGUIEvent
+  _ZL12IsContentLEQP13nsDisplayItemS0_Pv
+  _ZL15expose_event_cbP10_GtkWidgetP15_GdkEventExpose
+
+  do not get demangled.
+
+* For glibc, the debug files do not contain .strtab and .symtab, but
+  the original files do. The algorithm in binfile.c must be modified
+  accordingly.
 
 * If we profile something that is not very CPU bound, sysprof itself
   seems to get a disproportionate amount of the samples. Should look

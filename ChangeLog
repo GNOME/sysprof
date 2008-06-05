@@ -1,3 +1,16 @@
+Wed Jun  4 21:52:17 2008  Søren Sandmann  <sandmann@redhat.com>
+
+	* demangle.c: Apply patch from binutils to demangle local-source
+	names. Binutils changelog:
+
+	2007-05-05  Geoffrey Keating  <geoffk@apple.com>
+
+		* cp-demangle.c (d_name): Detect local-source-name.
+		(d_prefix): Likewise.
+		(d_unqualified_name): Implement local-source-name.
+
+	* sysprof.c: Update copyright statement
+	
 Mon Jun  2 01:35:25 2008  Søren Sandmann  <sandmann@redhat.com>
 
 	* demangle.c: Remove weird comment.

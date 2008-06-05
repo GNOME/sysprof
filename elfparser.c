@@ -651,11 +651,11 @@ elf_parser_get_text_offset (ElfParser *parser)
 static gchar *
 make_hex_string (const guchar *data, int n_bytes)
 {
-    GString *string = g_string_new (NULL);
-    const char hex_digits[] = {
+    static const char hex_digits[] = {
 	'0', '1', '2', '3', '4', '5', '6', '7',
 	'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
+    GString *string = g_string_new (NULL);
     int i;
     
     for (i = 0; i < n_bytes; ++i)

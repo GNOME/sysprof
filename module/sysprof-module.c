@@ -459,6 +459,29 @@ sysprof_open(struct inode *inode, struct file *file)
 	return retval;
 }
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,23))
+static int
+sysprof_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
+{
+	unsigned long area_start;
+	unsigned long virt;
+
+#if 0
+	printk (KERN_ALERT "fault called: %p (offset: %d) area: %p\n", vmf->virtual_address, addr - vma->vm_start, area);
+#endif
+
+	area_start = (unsigned long)area;
+
+	virt = area_start + ((unsigned long)vmf->virtual_address - vma->vm_start);
+	if (virt > area_start + sizeof (SysprofMmapArea))
+		return VM_FAULT_SIGBUS;
+
+	vmf->page = vmalloc_to_page ((void *)virt);
+	get_page (vmf->page);
+
+	return 0;
+}
+#else
 static struct page *
 sysprof_nopage(struct vm_area_struct *vma, unsigned long addr, int *type)
 {
@@ -486,12 +509,17 @@ sysprof_nopage(struct vm_area_struct *vma, unsigned long addr, int *type)
 
 	return page_ptr;
 }
+#endif
 
 static int
 sysprof_mmap(struct file *filp, struct vm_area_struct *vma)
 {
 	static struct vm_operations_struct ops = {
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,23))
+		.fault = sysprof_fault,
+#else
 		.nopage = sysprof_nopage,
+#endif
 	};
 	
 	if (vma->vm_flags & (VM_WRITE | VM_EXEC))

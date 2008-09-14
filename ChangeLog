@@ -1,3 +1,8 @@
+Sun Sep 14 16:04:17 2008  Søren Sandmann  <sandmann@redhat.com>
+
+	* sysprof/module/sysprof-module.c: Update to work with new
+	vm_operations interface from 2.6.23. Patch from Chris Wilson.
+
 Wed Jun  4 21:52:17 2008  Søren Sandmann  <sandmann@redhat.com>
 
 	* demangle.c: Apply patch from binutils to demangle local-source

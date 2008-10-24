@@ -5,19 +5,19 @@ Before 1.0:
      - sysprof.c about box
      - any file that changed
 
-   - make announce-1.0.10 file
+   - make announce-1.0.11 file
      - search-and-replace 1.0.(x-1) 1.0.x
      - Add notes in sysprof-1.0.x section
 
-   - svn add announce-1.0.x
+   - git add announce-1.0.x
 
    - Make tarball
 
    - Check that tarball works
 
-   - svn commit
+   - git commit
 
-   - svn copy svn+ssh://ssp@svn.gnome.org/svn/sysprof/branches/sysprof-1-0 svn+ssh://ssp@svn.gnome.org/svn/sysprof/tags/SYSPROF-1-0-9 -m "tag 1.0.10"
+   - git tag -a sysprof-1.0.11 -m "Sysprof 1.0.11"
 
    - Update website
 

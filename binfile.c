@@ -3,7 +3,7 @@
  * Copyright 2002, Kristian Rietveld
  *
  * Sysprof -- Sampling, systemwide CPU profiler
- * Copyright 2004, 2005, Soeren Sandmann
+ * Copyright 2004, 2005, 2008 Soeren Sandmann
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

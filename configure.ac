@@ -109,7 +109,7 @@ if true; then
    echo
    echo "%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%"
    echo "@"  
-   echo "%      Thank you for testing cvs HEAD of sysprof."
+   echo "%      Thank you for testing the git version of sysprof."
    echo "@"
    echo "%      There are currently no known bugs in the kernel"
    echo "@      module in this version, but there could easily be"
@@ -124,7 +124,7 @@ if true; then
    echo "%"
    echo "@      or do"
    echo "%"
-   echo "@          cvs -z3 upd -r sysprof-1-0"
+   echo "@          git checkout sysprof-1.0"
    echo "%"
    echo "@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@"
    echo

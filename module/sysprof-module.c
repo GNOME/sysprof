@@ -249,7 +249,7 @@ init_module(void)
 	static struct file_operations fops;
 
 	trace_proc_file =
-		create_proc_entry ("sysprof-trace", S_IFREG | S_IRUGO, &proc_root);
+		create_proc_entry ("sysprof-trace", S_IFREG | S_IRUGO, NULL);
 	
 	if (!trace_proc_file)
 		return 1;
@@ -273,7 +273,7 @@ cleanup_module(void)
 {
 	unregister_timer_hook (timer_notify);
 	
-	remove_proc_entry("sysprof-trace", &proc_root);
+	remove_proc_entry("sysprof-trace", NULL);
 
 	printk(KERN_ALERT "sysprof: unloaded\n");
 }

@@ -132,7 +132,7 @@ static char *
 get_debug_link_info (bfd *abfd, unsigned long *crc32_out)
 {
     asection *sect;
-    bfd_size_type debuglink_size;
+    ssize_t debuglink_size;
     unsigned long crc32;
     char *contents;
     int crc_offset;
@@ -142,12 +142,28 @@ get_debug_link_info (bfd *abfd, unsigned long *crc32_out)
     if (sect == NULL)
 	return NULL;
     
-    debuglink_size = bfd_section_size (abfd, sect);
-    
+    debuglink_size = bfd_get_section_limit (abfd, sect);
+
+    if (debuglink_size < 6)
+    {
+	g_warning ("%s: .gnu_debuglink section is %d bytes long",
+		   abfd->filename, debuglink_size);
+	return NULL;
+    }
+
     contents = g_malloc (debuglink_size);
     bfd_get_section_contents (abfd, sect, contents,
 			      (file_ptr)0, (bfd_size_type)debuglink_size);
-    
+
+    /* Sanity check */
+    if (!memchr (contents, '\0', debuglink_size - 4))
+    {
+	g_warning ("%s: Malformed .gnu_debuglink section", abfd->filename);
+
+	g_free (contents);
+	return NULL;
+    }
+
     /* Crc value is stored after the filename, aligned up to 4 bytes. */
     crc_offset = strlen (contents) + 1;
     crc_offset = (crc_offset + 3) & ~3;

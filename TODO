@@ -30,7 +30,19 @@ Before 1.2:
   considered the same symbol if they have the same parent). In fact
   "has same parent" may be the correct criterion in all cases. 
 
-* It crashes sometimes.
+  * See if we can make "In file <blah>" not be treated as a recursive function.
+    Maybe simply treat each individual address in the file as a function.
+    Or try to parse the machine code. Positions that are called are likely 
+    to be functions.
+
+    - Treat identical addresses as one function
+     
+    - Treat all addresses within a library that don't have children are
+      treated as one function.
+
+    This will have the effect of coalescing adjacent siblings without
+    children. Which is what you want since you can't tell them apart
+    anyway. It will never be a great experience though.
 
 * Find out what is going on with kernel threads:
 
@@ -166,11 +178,6 @@ Before 1.2:
   slow. It's probably hopeless to get decent performance out of GtkTreeView,
   so we will have to store a list of expanded objects and keep that uptodate
   as the rows expands and unexpands.
-
-* See if we can make "In file <blah>" not be treated as a recursive function.
-  Maybe simply treat each individual address in the file as a function.
-  Or try to parse the machine code. Positions that are called are likely 
-  to be functions.
 
 * Give more sensible 'error messages'. Eg., if you get permission denied for
   a file, put "Permission denied" instead of "No map"
@@ -828,6 +835,10 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE: -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* It crashes sometimes.
+
+  I haven't seen any crashes in a long time
 
 * Find out why the strings
 

@@ -186,7 +186,7 @@ double_to_text (GtkTreeViewColumn *tree_column,
     
     text = g_strdup_printf (info->format, d);
     
-    g_object_set (cell, "text", text, NULL);
+    g_object_set (cell, "markup", text, NULL);
     g_free (text);
 }
 

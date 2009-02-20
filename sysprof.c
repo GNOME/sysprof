@@ -1533,6 +1533,8 @@ set_icons (Application *app)
     g_list_free (pixbufs);
 }
 
+#define PCT_FORMAT "%.2f<span size='smaller'><span size='smaller'> %% </span></span>"
+
 static gboolean
 build_gui (Application *app)
 {
@@ -1570,9 +1572,9 @@ build_gui (Application *app)
     col = add_plain_text_column (app->object_view, _("Functions"),
 				 OBJECT_NAME);
     add_double_format_column (app->object_view, _("Self"),
-			      OBJECT_SELF, "%.2f ");
+			      OBJECT_SELF, PCT_FORMAT);
     add_double_format_column (app->object_view, _("Total"),
-			      OBJECT_TOTAL, "%.2f ");
+			      OBJECT_TOTAL, PCT_FORMAT);
     app->object_selection = gtk_tree_view_get_selection (app->object_view);
     gtk_tree_view_column_set_expand (col, TRUE);
     
@@ -1581,9 +1583,9 @@ build_gui (Application *app)
     col = add_plain_text_column (app->callers_view, _("Callers"),
 				 CALLERS_NAME);
     add_double_format_column (app->callers_view, _("Self"),
-			      CALLERS_SELF, "%.2f ");
+			      CALLERS_SELF, PCT_FORMAT);
     add_double_format_column (app->callers_view, _("Total"),
-			      CALLERS_TOTAL, "%.2f ");
+			      CALLERS_TOTAL, PCT_FORMAT);
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* descendants view */
@@ -1591,9 +1593,9 @@ build_gui (Application *app)
     col = add_plain_text_column (app->descendants_view, _("Descendants"),
 				 DESCENDANTS_NAME);
     add_double_format_column (app->descendants_view, _("Self"),
-			      DESCENDANTS_SELF, "%.2f ");
+			      DESCENDANTS_SELF, PCT_FORMAT);
     add_double_format_column (app->descendants_view, _("Cumulative"),
-			      DESCENDANTS_CUMULATIVE, "%.2f ");
+			      DESCENDANTS_CUMULATIVE, PCT_FORMAT);
     gtk_tree_view_column_set_expand (col, TRUE);
     
     /* screenshot window */

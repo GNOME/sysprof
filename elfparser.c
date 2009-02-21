@@ -431,8 +431,7 @@ read_table (ElfParser *parser,
 	    const Section *str_table)
 {
     int sym_size = bin_record_get_size (parser->sym_format);
-    int i;
-    int n_functions;
+    int i, n_symbols;
     
     parser->n_symbols = sym_table->size / sym_size;
     parser->symbols = g_new (ElfSym, parser->n_symbols);
@@ -443,7 +442,7 @@ read_table (ElfParser *parser,
     
     bin_parser_set_offset (parser->parser, sym_table->offset);
     
-    n_functions = 0;
+    n_symbols = 0;
 #if 0
     g_print ("n syms: %d\n", parser->n_symbols);
 #endif
@@ -452,30 +451,36 @@ read_table (ElfParser *parser,
 	guint info;
 	gulong addr;
 	gulong offset;
+	gulong shndx;
 	
 	info = bin_parser_get_uint_field (
 	    parser->parser, parser->sym_format, "st_info");
 	addr = bin_parser_get_uint_field (
 	    parser->parser, parser->sym_format, "st_value");
+	shndx = bin_parser_get_uint_field (
+	    parser->parser, parser->sym_format, "st_shndx");
 	offset = bin_parser_get_offset (parser->parser);
 	
 #if 0
-	g_print ("read symbol: %s\n", get_string_indirect (parser->parser,
-							   parser->sym_format, "st_name",
-							   str_table->offset));
+	g_print ("read symbol: %s (section: %d)\n", get_string_indirect (parser->parser,
+									 parser->sym_format, "st_name",
+									 str_table->offset),
+		 shndx);
 #endif
 
-	if (addr != 0				&&
+	if (addr != 0						&&
+	    shndx < parser->n_sections				&&
+	    parser->sections[shndx] == parser->text_section	&&
 	    (info & 0xf) == STT_FUNC		&&
 	    ((info >> 4) == STB_GLOBAL ||
 	     (info >> 4) == STB_LOCAL  ||
 	     (info >> 4) == STB_WEAK)
 	    )
 	{
-	    parser->symbols[n_functions].address = addr;
-	    parser->symbols[n_functions].offset = offset;
+	    parser->symbols[n_symbols].address = addr;
+	    parser->symbols[n_symbols].offset = offset;
 
-	    n_functions++;
+	    n_symbols++;
 	    
 #if 0
 	    g_print ("    symbol: %s:   %lx\n",
@@ -499,7 +504,7 @@ read_table (ElfParser *parser,
     }
     
     parser->sym_strings = str_table->offset;
-    parser->n_symbols = n_functions;
+    parser->n_symbols = n_symbols;
     parser->symbols = g_renew (ElfSym, parser->symbols, parser->n_symbols);
     
     qsort (parser->symbols, parser->n_symbols, sizeof (ElfSym), compare_sym);
@@ -649,7 +654,7 @@ elf_parser_get_text_offset (ElfParser *parser)
 }
 
 static gchar *
-make_hex_string (const guchar *data, int n_bytes)
+make_hex_string (const gchar *data, int n_bytes)
 {
     static const char hex_digits[] = {
 	'0', '1', '2', '3', '4', '5', '6', '7',

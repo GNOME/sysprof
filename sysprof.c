@@ -636,7 +636,7 @@ ensure_profile (Application *app)
 {
     if (app->profile)
 	return;
-    
+
     app->profile = collector_create_profile (app->collector);
     
     collector_stop (app->collector);
@@ -682,16 +682,10 @@ static void
 on_profile_toggled (GtkWidget *widget, gpointer data)
 {
     Application *app = data;
-    
+
     if (gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (app->profile_button)))
     {
 	set_busy (app->main_window, TRUE);
-	if (app->profile && !app->profile_from_file)
-	{
-	    profile_free (app->profile);
-	    app->profile = NULL;
-	}
-	
 	ensure_profile (app);
 	set_busy (app->main_window, FALSE);
     }

@@ -92,7 +92,8 @@ struct Application
     int			update_screenshot_id;
     
     char *		loaded_profile;
-    
+
+    gboolean		inhibit_forced_redraw;
     gboolean		profile_from_file; /* FIXME - not10: This is a kludge. Figure out how
 					    * to maintain the application model properly
 					    *
@@ -284,8 +285,6 @@ set_busy (GtkWidget *widget,
     
     if (cursor)
 	gdk_cursor_unref (cursor);
-
-    gdk_display_flush (gdk_display_get_default ());
 }
 
 static void
@@ -643,11 +642,20 @@ ensure_profile (Application *app)
     collector_stop (app->collector);
     collector_reset (app->collector);
     
-    fill_lists (app);
-    
     app->state = DISPLAYING;
 
     update_sensitivity (app);
+
+    app->inhibit_forced_redraw = TRUE;
+    
+    fill_main_list (app);
+
+    /* This has the side effect of selecting the first row, which in turn causes
+     * the other lists to be filled out
+     */
+    gtk_widget_grab_focus (GTK_WIDGET (app->object_view));
+    
+    app->inhibit_forced_redraw = FALSE;
 }
 
 static void
@@ -1197,8 +1205,9 @@ on_object_selection_changed (GtkTreeSelection *selection,
     set_busy (app->main_window, TRUE);
     
     update_screenshot_window (app);
-    
-    gdk_window_process_all_updates (); /* Display updated selection */
+
+    if (!app->inhibit_forced_redraw)
+	gdk_window_process_all_updates (); /* Display updated selection */
     
     fill_descendants_tree (app);
     fill_callers_list (app);

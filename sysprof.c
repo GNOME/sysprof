@@ -1327,23 +1327,6 @@ on_screenshot_close_button_clicked (GtkWidget *widget,
     update_sensitivity (app);
 }
 
-/* If the samples label bounces around in size, this can cause the
- * entire toolbar to be repeatedly redrawn, consuming significant CPU and
- * distorting the profile. Constraining the label to only grow wider
- * means that the toolbar will only be redrawn a few times as we gain
- * more digits.
- */
-static void
-on_samples_label_size_request (GtkWidget *widget,
-			       GtkRequisition *requistion,
-			       Application *app)
-{
-    if (app->samples_label_width >= requistion->width)
-	requistion->width = app->samples_label_width;
-    else if (requistion->width > app->samples_label_width)
-	app->samples_label_width = requistion->width;
-}
-
 static void
 on_samples_label_style_set (GtkWidget *widget,
 			    GtkStyle *previous_style,
@@ -1469,8 +1452,6 @@ connect_signals (Application *app)
 	{ app->descendants_view, "row-collapsed", on_descendants_row_expanded_or_collapsed, app },
 	{ app->screenshot_window, "delete_event", on_screenshot_window_delete, app },
 	{ app->screenshot_close_button, "clicked", on_screenshot_close_button_clicked, app },
-	{ app->samples_label, "size-request", on_samples_label_size_request, app },
-	{ app->samples_label, "style-set", on_samples_label_style_set, app },
     };
 
     int i;

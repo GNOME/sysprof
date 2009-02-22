@@ -23,6 +23,9 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Find out why gtk_tree_view_columns_autosize() apparently doesn't
+  work on empty tree views.
+
 * Hack to disable recursion for binaries without symbols causes the
   symbols to not work the way other symbols do.  A better approach is
   probably to simply generate a new symbol for every appearance except

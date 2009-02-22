@@ -24,11 +24,12 @@ Before 1.0.4:
 Before 1.2:
 
 * Hack to disable recursion for binaries without symbols causes the
-  symbols to not work the way other symbols do. A better approach is
+  symbols to not work the way other symbols do.  A better approach is
   probably to simply generate a new symbol for every appearance except
   leaf nodes, which should still be considered one symbol (or maybe be
   considered the same symbol if they have the same parent). In fact
-  "has same parent" may be the correct criterion in all cases. 
+  "has same parent" may be the correct criterion in all cases. (done:
+  master now doesn't fold those recursions anymore)
 
   * See if we can make "In file <blah>" not be treated as a recursive function.
     Maybe simply treat each individual address in the file as a function.
@@ -77,8 +78,6 @@ Before 1.2:
 	performance and bug fixes.
 
 * Make sure that labels look decent in case of "No Map" etc.
-
-* Find out why the samples label won't right adjust
 
 * If we end up believing the kernel's own stacktraces, maybe
   /proc/kallsyms shouldn't be parsed until the user hits profile.
@@ -835,6 +834,8 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE: -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* Find out why the samples label won't right adjust
 
 * It crashes sometimes.
 

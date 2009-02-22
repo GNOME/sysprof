@@ -1518,7 +1518,7 @@ set_icons (Application *app)
     g_list_free (pixbufs);
 }
 
-#define PCT_FORMAT "%.2f<span size='smaller'><span size='smaller'> %% </span></span>"
+#define PCT_FORMAT "%.2f<span size='smaller'><span size='smaller'> </span>%%</span>"
 
 static gboolean
 build_gui (Application *app)

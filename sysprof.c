@@ -1103,7 +1103,8 @@ add_text (GtkTreeView *view,
     for (i = 0; i < indent; ++i)
 	g_string_append_c (info->text, ' ');
     
-    g_string_append_printf (info->text, "%-*s %6.2f %6.2f\n", info->max_width - indent, name, self, cumulative);
+    g_string_append_printf (info->text, "%-*s %6.2f%% %6.2f%%\n",
+			    info->max_width - indent, name, self, cumulative);
 
     g_free (name);
 }
@@ -1517,7 +1518,7 @@ set_icons (Application *app)
     g_list_free (pixbufs);
 }
 
-#define PCT_FORMAT "%.2f<span size='smaller'><span size='smaller'> %% </span></span>"
+#define PCT_FORMAT "%.2f<span size='smaller'><span size='smaller'> </span>%%</span>"
 
 static gboolean
 build_gui (Application *app)

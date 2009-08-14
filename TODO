@@ -638,6 +638,10 @@ When the interrupt happens,
 
 Later:
 
+- If the stack trace ends in a memory access instruction, send the
+  vma information to userspace. Then have user space
+  produce statistics on what types of memory are accessed.
+
 - somehow get access to VSEnterprise profiler and see how it works.
   somehow get access to vtune and see how it works.
 

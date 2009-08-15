@@ -23,6 +23,8 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Give an informative error message if run as root
+
 * Find out why gtk_tree_view_columns_autosize() apparently doesn't
   work on empty tree views.
 
@@ -841,6 +843,8 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE: -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* Rename sysprof-text to sysprof-cli
 
 * Find out why the samples label won't right adjust
 

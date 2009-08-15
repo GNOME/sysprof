@@ -1,7 +1,7 @@
 SUBDIRS = $(MODULE_SUBDIR)
 DIST_SUBDIRS = module
 
-bin_PROGRAMS = sysprof-text
+bin_PROGRAMS = sysprof-cli
 
 if BUILD_GUI
 bin_PROGRAMS += sysprof 
@@ -66,16 +66,16 @@ dist_pixmaps_DATA = sysprof-icon-16.png sysprof-icon-24.png sysprof-icon-32.png 
 # Command line version
 #
 
-sysprof_text_SOURCES =				\
+sysprof_cli_SOURCES =				\
 	$(SYSPROF_CORE)				\
 	signal-handler.h			\
 	signal-handler.c			\
-	sysprof-text.c
+	sysprof-cli.c
 
-sysprof_text_CPPFLAGS =				\
+sysprof_cli_CPPFLAGS =				\
 	$(CORE_DEP_CFLAGS)
 
-sysprof_text_LDADD = $(CORE_DEP_LIBS)
+sysprof_cli_LDADD = $(CORE_DEP_LIBS)
 
 #
 # Module stuff

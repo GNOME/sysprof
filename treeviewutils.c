@@ -256,26 +256,32 @@ tree_view_set_model_with_default_sort (GtkTreeView  *view,
 				       int           model_column,
 				       GtkSortType   default_sort)
 {
-    gboolean	     was_sorted = FALSE;
-    int		     old_column;
-    GtkSortType	     old_type;
+    int		     column;
+    GtkSortType	     type;
     GtkTreeSortable *old_model;
     GtkAdjustment   *adjustment;
     
     old_model = GTK_TREE_SORTABLE (gtk_tree_view_get_model (view));
     
-    if (old_model)
+    if (!(old_model && gtk_tree_sortable_get_sort_column_id (
+	      GTK_TREE_SORTABLE (old_model), &column, &type)))
     {
-	was_sorted = gtk_tree_sortable_get_sort_column_id (
-	    GTK_TREE_SORTABLE (old_model), &old_column, &old_type);
+	column = model_column;
+	type = default_sort;
     }
-    
+
+    /* Setting the sort column here prevents the "rows_reordered"
+     * signal from being emitted when the model is attached to
+     * a treeview. This is desirable because at that point there
+     * is a handler attached, which means the signal will actually
+     * be emitted.
+     */
+    gtk_tree_sortable_set_sort_column_id (
+	GTK_TREE_SORTABLE (model), column, type);
+
     gtk_tree_view_set_model (view, model);
-    
-    if (was_sorted)
-	tree_view_set_sort_column (view, old_column, old_type);
-    else
-	tree_view_set_sort_column (view, model_column, default_sort);
+
+    tree_view_set_sort_column (view, column, type);
     
     /* Workaround for GTK+ crack, see bug 405625 */
     adjustment = gtk_tree_view_get_vadjustment (view);

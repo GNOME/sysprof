@@ -233,6 +233,11 @@ foo_tree_store_init (FooTreeStore *tree_store)
   tree_store->sort_list = NULL;
   tree_store->sort_column_id = GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID;
   tree_store->columns_dirty = FALSE;
+
+  tree_store->row_changed_id = g_signal_lookup ("row_changed", GTK_TYPE_TREE_MODEL);
+  tree_store->row_inserted_id = g_signal_lookup ("row_inserted", GTK_TYPE_TREE_MODEL);
+  tree_store->row_has_child_toggled_id = g_signal_lookup ("row_has_child_toggled", GTK_TYPE_TREE_MODEL);
+  tree_store->rows_reordered_id = g_signal_lookup ("rows_reordered", GTK_TYPE_TREE_MODEL);
 }
 
 /**
@@ -1059,11 +1064,13 @@ foo_tree_store_set_valist (FooTreeStore *tree_store,
 
   if (emit_signal)
     {
-      GtkTreePath *path;
-
-      path = foo_tree_store_get_path (GTK_TREE_MODEL (tree_store), iter);
-      gtk_tree_model_row_changed (GTK_TREE_MODEL (tree_store), path, iter);
-      gtk_tree_path_free (path);
+      if (g_signal_has_handler_pending (tree_store, tree_store->row_changed_id, 0, FALSE))
+	{
+	  GtkTreePath *path;
+	  path = foo_tree_store_get_path (GTK_TREE_MODEL (tree_store), iter);
+	  gtk_tree_model_row_changed (GTK_TREE_MODEL (tree_store), path, iter);
+	  gtk_tree_path_free (path);
+	}
     }
 }
 
@@ -1182,7 +1189,6 @@ foo_tree_store_insert (FooTreeStore *tree_store,
 		       GtkTreeIter  *parent,
 		       gint          position)
 {
-  GtkTreePath *path;
   GNode *parent_node;
   GNode *new_node;
 
@@ -1204,19 +1210,25 @@ foo_tree_store_insert (FooTreeStore *tree_store,
   iter->user_data = new_node;
   g_node_insert (parent_node, position, new_node);
 
-  path = foo_tree_store_get_path (GTK_TREE_MODEL (tree_store), iter);
-  gtk_tree_model_row_inserted (GTK_TREE_MODEL (tree_store), path, iter);
-
-  if (parent_node != tree_store->root)
+  if (g_signal_has_handler_pending (tree_store, tree_store->row_inserted_id, 0, FALSE) ||
+      g_signal_has_handler_pending (tree_store, tree_store->row_has_child_toggled_id, 0, FALSE))
     {
-      if (new_node->prev == NULL && new_node->next == NULL)
-        {
-          gtk_tree_path_up (path);
-          gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (tree_store), path, parent);
-        }
+      GtkTreePath *path;
+  
+      path = foo_tree_store_get_path (GTK_TREE_MODEL (tree_store), iter);
+      gtk_tree_model_row_inserted (GTK_TREE_MODEL (tree_store), path, iter);
+  
+      if (parent_node != tree_store->root)
+	{
+	  if (new_node->prev == NULL && new_node->next == NULL)
+	    {
+	      gtk_tree_path_up (path);
+	      gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (tree_store), path, parent);
+	    }
+	}
+      
+      gtk_tree_path_free (path);
     }
-
-  gtk_tree_path_free (path);
 
   validate_tree ((FooTreeStore*)tree_store);
 }
@@ -2850,10 +2862,15 @@ foo_tree_store_sort_helper (FooTreeStore *tree_store,
 
   iter.stamp = tree_store->stamp;
   iter.user_data = parent;
-  path = foo_tree_store_get_path (GTK_TREE_MODEL (tree_store), &iter);
-  gtk_tree_model_rows_reordered (GTK_TREE_MODEL (tree_store),
-				 path, &iter, new_order);
-  gtk_tree_path_free (path);
+
+  if (g_signal_has_handler_pending (tree_store, tree_store->row_inserted_id, 0, FALSE))
+    {
+      path = foo_tree_store_get_path (GTK_TREE_MODEL (tree_store), &iter);
+      gtk_tree_model_rows_reordered (GTK_TREE_MODEL (tree_store),
+				     path, &iter, new_order);
+      gtk_tree_path_free (path);
+    }
+  
   g_free (new_order);
   g_array_free (sort_array, TRUE);
 

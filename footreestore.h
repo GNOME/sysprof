@@ -56,6 +56,12 @@ struct _FooTreeStore
   GtkTreeIterCompareFunc GSEAL (default_sort_func);
   gpointer GSEAL (default_sort_data);
   GDestroyNotify GSEAL (default_sort_destroy);
+
+  guint row_changed_id;
+  guint row_inserted_id;
+  guint row_has_child_toggled_id;
+  guint rows_reordered_id;
+  
   guint GSEAL (columns_dirty) : 1;
 };
 

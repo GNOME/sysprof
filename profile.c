@@ -142,8 +142,8 @@ profile_save (Profile		 *profile,
     
     result = sfile_output_save (output, file_name, err);
     
-    sformat_free (format);
     sfile_output_free (output);
+    sformat_free (format);
     
     return result;
 }
@@ -214,8 +214,8 @@ profile_load (const char *filename, GError **err)
     sfile_end_get (input, "nodes", NULL);
     sfile_end_get (input, "profile", NULL);
     
-    sformat_free (format);
     sfile_input_free (input);
+    sformat_free (format);
 
     stack_stash_set_root (profile->stash, root);
     

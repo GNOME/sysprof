@@ -41,6 +41,10 @@ if BUILD_GUI
 
 sysprof_SOURCES =				\
 	$(SYSPROF_CORE)				\
+	footreestore.c				\
+	footreestore.h				\
+	footreedatalist.h			\
+	footreedatalist.c			\
 	treeviewutils.h				\
 	treeviewutils.c				\
 	sysprof.c

@@ -23,15 +23,35 @@
 #include "footreedatalist.h"
 #include <string.h>
 
+static FooTreeDataList *cache;
+
 /* node allocation
  */
+#define N_DATA_LISTS (64)
+
 FooTreeDataList *
 _foo_tree_data_list_alloc (void)
 {
   FooTreeDataList *list;
 
-  list = g_slice_new0 (FooTreeDataList);
+  if (!cache)
+  {
+      int i;
 
+      list = g_malloc (N_DATA_LISTS * sizeof (FooTreeDataList));
+
+      for (i = 0; i < N_DATA_LISTS; ++i)
+      {
+	  list[i].next = cache;
+	  cache = &(list[i]);
+      }
+  }
+
+  list = cache;
+  cache = cache->next;
+
+  memset (list, 0, sizeof (FooTreeDataList));
+  
   return list;
 }
 
@@ -54,7 +74,9 @@ _foo_tree_data_list_free (FooTreeDataList *list,
       else if (g_type_is_a (column_headers [i], G_TYPE_BOXED) && tmp->data.v_pointer != NULL)
 	g_boxed_free (column_headers [i], (gpointer) tmp->data.v_pointer);
 
-      g_slice_free (FooTreeDataList, tmp);
+      tmp->next = cache;
+      cache = tmp;
+      
       i++;
       tmp = next;
     }

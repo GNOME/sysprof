@@ -77,7 +77,7 @@ struct Application
     GtkTreeSelection *	object_selection;
     
     GtkWidget *		samples_label;
-    int                 samples_label_width;
+    GtkWidget *		samples_hbox;
     
     gboolean		screenshot_window_visible;
     GtkWidget *		screenshot_textview;
@@ -138,7 +138,7 @@ show_samples (Application *app)
 	break;
     }
     
-    label = g_strdup_printf ("Samples: %d", n_samples);
+    label = g_strdup_printf ("%d", n_samples);
     
     gtk_label_set_label (GTK_LABEL (app->samples_label), label);
     
@@ -171,7 +171,7 @@ update_sensitivity (Application *app)
     gboolean sensitive_save_as_button;
     gboolean sensitive_start_button;
     gboolean sensitive_tree_views;
-    gboolean sensitive_samples_label;
+    gboolean sensitive_samples_hbox;
     gboolean sensitive_reset_button;
     
     GtkWidget *active_radio_button;
@@ -186,7 +186,7 @@ update_sensitivity (Application *app)
 	sensitive_start_button = TRUE;
 	sensitive_reset_button = FALSE;
 	sensitive_tree_views = FALSE;
-	sensitive_samples_label = FALSE;
+	sensitive_samples_hbox = FALSE;
 	active_radio_button = app->dummy_button;
 	break;
 	
@@ -198,7 +198,7 @@ update_sensitivity (Application *app)
 	sensitive_reset_button = has_samples;
 	sensitive_start_button = TRUE;
 	sensitive_tree_views = FALSE;
-	sensitive_samples_label = TRUE;
+	sensitive_samples_hbox = TRUE;
 	active_radio_button = app->start_button;
 	break;
 	
@@ -208,7 +208,7 @@ update_sensitivity (Application *app)
 	sensitive_start_button = TRUE;
 	sensitive_tree_views = TRUE;
 	sensitive_reset_button = TRUE;
-	sensitive_samples_label = FALSE;
+	sensitive_samples_hbox = FALSE;
 	active_radio_button = app->profile_button;
 	break;
 	
@@ -251,7 +251,7 @@ update_sensitivity (Application *app)
     gtk_widget_set_sensitive (GTK_WIDGET (app->object_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->callers_view), sensitive_tree_views);
     gtk_widget_set_sensitive (GTK_WIDGET (app->descendants_view), sensitive_tree_views);
-    gtk_widget_set_sensitive (GTK_WIDGET (app->samples_label), sensitive_samples_label);
+    gtk_widget_set_sensitive (GTK_WIDGET (app->samples_hbox), sensitive_samples_hbox);
     
     if (app->screenshot_window_visible)
 	gtk_widget_show (app->screenshot_window);
@@ -1329,14 +1329,6 @@ on_screenshot_close_button_clicked (GtkWidget *widget,
 }
 
 static void
-on_samples_label_style_set (GtkWidget *widget,
-			    GtkStyle *previous_style,
-			    Application *app)
-{
-    app->samples_label_width = 0;
-}
-
-static void
 set_sizes (GtkWindow *window,
 	   GtkWindow *screenshot_window,
 	   GtkWidget *hpaned,
@@ -1387,6 +1379,7 @@ gather_widgets (Application *app)
 	{ &app->save_as_button, "save_as_button" },
 	{ &app->dummy_button, "dummy_button" },
 	{ &app->samples_label, "samples_label" },
+	{ &app->samples_hbox, "samples_hbox" },
 	{ &app->start_item, "start_item" },
 	{ &app->profile_item, "profile_item" },
 	{ &app->reset_item, "reset_item" },

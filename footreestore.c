@@ -335,7 +335,7 @@ foo_tree_store_set_column_types (FooTreeStore *tree_store,
 {
   gint i;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (tree_store->columns_dirty == 0);
 
   foo_tree_store_set_n_columns (tree_store, n_columns);
@@ -858,7 +858,7 @@ foo_tree_store_set_value (FooTreeStore *tree_store,
 			  gint          column,
 			  GValue       *value)
 {
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (VALID_ITER (iter, tree_store));
   g_return_if_fail (column >= 0 && column < tree_store->n_columns);
   g_return_if_fail (G_IS_VALUE (value));
@@ -1007,7 +1007,7 @@ foo_tree_store_set_valuesv (FooTreeStore *tree_store,
   gboolean emit_signal = FALSE;
   gboolean maybe_need_sort = FALSE;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (VALID_ITER (iter, tree_store));
 
   foo_tree_store_set_vector_internal (tree_store, iter,
@@ -1046,7 +1046,7 @@ foo_tree_store_set_valist (FooTreeStore *tree_store,
   gboolean emit_signal = FALSE;
   gboolean maybe_need_sort = FALSE;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (VALID_ITER (iter, tree_store));
 
   foo_tree_store_set_valist_internal (tree_store, iter,
@@ -1113,7 +1113,7 @@ foo_tree_store_remove (FooTreeStore *tree_store,
   GNode *parent;
   GNode *next_node;
 
-  g_return_val_if_fail (GTK_IS_TREE_STORE (tree_store), FALSE);
+  g_return_val_if_fail (FOO_IS_TREE_STORE (tree_store), FALSE);
   g_return_val_if_fail (VALID_ITER (iter, tree_store), FALSE);
 
   parent = G_NODE (iter->user_data)->parent;
@@ -1186,7 +1186,7 @@ foo_tree_store_insert (FooTreeStore *tree_store,
   GNode *parent_node;
   GNode *new_node;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (iter != NULL);
   if (parent)
     g_return_if_fail (VALID_ITER (parent, tree_store));
@@ -1249,7 +1249,7 @@ foo_tree_store_insert_before (FooTreeStore *tree_store,
   GNode *parent_node = NULL;
   GNode *new_node;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (iter != NULL);
   if (parent != NULL)
     g_return_if_fail (VALID_ITER (parent, tree_store));
@@ -1329,7 +1329,7 @@ foo_tree_store_insert_after (FooTreeStore *tree_store,
   GNode *parent_node;
   GNode *new_node;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (iter != NULL);
   if (parent != NULL)
     g_return_if_fail (VALID_ITER (parent, tree_store));
@@ -1426,7 +1426,7 @@ foo_tree_store_insert_with_values (FooTreeStore *tree_store,
   gboolean changed = FALSE;
   gboolean maybe_need_sort = FALSE;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
 
   if (!iter)
     iter = &tmp_iter;
@@ -1505,7 +1505,7 @@ foo_tree_store_insert_with_valuesv (FooTreeStore *tree_store,
   gboolean changed = FALSE;
   gboolean maybe_need_sort = FALSE;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
 
   if (!iter)
     iter = &tmp_iter;
@@ -1569,7 +1569,7 @@ foo_tree_store_prepend (FooTreeStore *tree_store,
 {
   GNode *parent_node;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (iter != NULL);
   if (parent != NULL)
     g_return_if_fail (VALID_ITER (parent, tree_store));
@@ -1627,7 +1627,7 @@ foo_tree_store_append (FooTreeStore *tree_store,
 {
   GNode *parent_node;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (iter != NULL);
   if (parent != NULL)
     g_return_if_fail (VALID_ITER (parent, tree_store));
@@ -1682,7 +1682,7 @@ foo_tree_store_is_ancestor (FooTreeStore *tree_store,
 			    GtkTreeIter  *iter,
 			    GtkTreeIter  *descendant)
 {
-  g_return_val_if_fail (GTK_IS_TREE_STORE (tree_store), FALSE);
+  g_return_val_if_fail (FOO_IS_TREE_STORE (tree_store), FALSE);
   g_return_val_if_fail (VALID_ITER (iter, tree_store), FALSE);
   g_return_val_if_fail (VALID_ITER (descendant, tree_store), FALSE);
 
@@ -1705,7 +1705,7 @@ gint
 foo_tree_store_iter_depth (FooTreeStore *tree_store,
 			   GtkTreeIter  *iter)
 {
-  g_return_val_if_fail (GTK_IS_TREE_STORE (tree_store), 0);
+  g_return_val_if_fail (FOO_IS_TREE_STORE (tree_store), 0);
   g_return_val_if_fail (VALID_ITER (iter, tree_store), 0);
 
   return g_node_depth (G_NODE (iter->user_data)) - 2;
@@ -1771,7 +1771,7 @@ foo_tree_store_increment_stamp (FooTreeStore *tree_store)
 void
 foo_tree_store_clear (FooTreeStore *tree_store)
 {
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
 
   foo_tree_store_clear_traverse (tree_store->root, tree_store);
   foo_tree_store_increment_stamp (tree_store);
@@ -1819,7 +1819,7 @@ gboolean
 foo_tree_store_iter_is_valid (FooTreeStore *tree_store,
                               GtkTreeIter  *iter)
 {
-  g_return_val_if_fail (GTK_IS_TREE_STORE (tree_store), FALSE);
+  g_return_val_if_fail (FOO_IS_TREE_STORE (tree_store), FALSE);
   g_return_val_if_fail (iter != NULL, FALSE);
 
   if (!VALID_ITER (iter, tree_store))
@@ -2167,7 +2167,7 @@ foo_tree_store_reorder (FooTreeStore *tree_store,
   GtkTreePath *path;
   SortTuple *sort_array;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (!FOO_TREE_STORE_IS_SORTED (tree_store));
   g_return_if_fail (parent == NULL || VALID_ITER (parent, tree_store));
   g_return_if_fail (new_order != NULL);
@@ -2250,7 +2250,7 @@ foo_tree_store_swap (FooTreeStore *tree_store,
   GtkTreePath *path_a, *path_b;
   GtkTreeIter parent;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (VALID_ITER (a, tree_store));
   g_return_if_fail (VALID_ITER (b, tree_store));
 
@@ -2388,7 +2388,7 @@ foo_tree_store_move (FooTreeStore *tree_store,
   gint depth = 0;
   gboolean handle_b = TRUE;
 
-  g_return_if_fail (GTK_IS_TREE_STORE (tree_store));
+  g_return_if_fail (FOO_IS_TREE_STORE (tree_store));
   g_return_if_fail (!FOO_TREE_STORE_IS_SORTED (tree_store));
   g_return_if_fail (VALID_ITER (iter, tree_store));
   if (position)

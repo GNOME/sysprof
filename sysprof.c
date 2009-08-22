@@ -94,21 +94,6 @@ struct Application
     char *		loaded_profile;
 
     gboolean		inhibit_forced_redraw;
-    gboolean		profile_from_file; /* FIXME - not10: This is a kludge. Figure out how
-					    * to maintain the application model properly
-					    *
-					    * The fundamental issue is that the state of
-					    * widgets is controlled by two different
-					    * entities:
-					    *
-					    *   The user clicks on them, changing their
-					    *   state.
-					    *
-					    *   The application model changes, changing their
-					    *   state.
-					    *
-					    * Model/View/Controller is a possibility.
-					    */
 };
 
 static void update_screenshot_window (Application *app);
@@ -331,7 +316,6 @@ delete_data (Application *app)
 
     collector_reset (app->collector);
 
-    app->profile_from_file = FALSE;
     set_application_title (app, NULL);
 }
 
@@ -830,7 +814,6 @@ set_loaded_profile (Application *app,
     delete_data (app);
 
     app->profile = profile;
-    app->profile_from_file = TRUE;
 
     set_application_title (app, name);
 

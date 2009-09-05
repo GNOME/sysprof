@@ -60,5 +60,6 @@ const guint8 *process_get_vdso_bytes		  (gsize      *length);
 gboolean      process_is_kernel_address		  (gulong      address);
 const char *  process_lookup_kernel_symbol        (gulong      address,
 						   gulong     *offset);
+int	      process_get_page_size		  (void);
 
 #endif

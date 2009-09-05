@@ -296,8 +296,8 @@ process_has_page (Process *process, gulong addr)
 	return FALSE;
 }
 
-static int
-page_size (void)
+int
+process_get_page_size (void)
 {
     static int page_size;
     static gboolean has_page_size = FALSE;
@@ -316,7 +316,7 @@ process_ensure_map (Process *process, int pid, gulong addr)
 {
     /* Round down to closest page */
     
-    addr = (addr - addr % page_size());
+    addr = (addr - addr % process_get_page_size());
     
     if (process_has_page (process, addr))
 	return;
@@ -678,7 +678,7 @@ process_lookup_kernel_symbol (gulong address,
 const char *
 process_lookup_symbol (Process *process, gulong address, gulong *offset)
 {
-    static const char *const kernel = "kernel";
+    static const char *const kernel = "[kernel]";
     const BinSymbol *result;
     Map *map = process_locate_map (process, address);
     
@@ -756,7 +756,9 @@ process_lookup_symbol (Process *process, gulong address, gulong *offset)
     g_print (" ---> %s\n", result->name);
 #endif
     
-/*     g_print ("(%x) %x %x name; %s\n", address, map->start, map->offset, result->name); */
+/*     g_print ("(%x) %x %x name; %s\n", address, map->start,
+ *		map->offset, result->name);
+ */
 
 #if 0
     g_print ("name: %s (in %s)\n", bin_symbol_get_name (map->bin_file, result), map->filename);

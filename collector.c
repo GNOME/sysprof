@@ -17,6 +17,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include <stdint.h>
+#include <glib.h>
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/ioctl.h>
+
 #include "stackstash.h"
 #include "collector.h"
 #include "module/sysprof-module.h"
@@ -24,17 +35,66 @@
 #include "process.h"
 #include "elfparser.h"
 
-#include <errno.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/mman.h>
+#include "perf_counter.h"
+#include "barrier.h"
 
-#define SYSPROF_FILE "/dev/sysprof-trace"
+#define N_PAGES 128		/* Number of pages in the ringbuffer */
 
-static void set_no_module_error (GError **err);
-static void set_cant_open_error (GError **err, int eno);
+typedef struct counter_t counter_t;
+typedef struct sample_event_t sample_event_t;
+typedef struct mmap_event_t mmap_event_t;
+typedef struct comm_event_t comm_event_t;
+typedef union counter_event_t counter_event_t;
+typedef void (* event_callback_t) (counter_event_t *event, gpointer data);
+
+struct counter_t
+{
+    int					fd;
+    struct perf_counter_mmap_page *	mmap_page;
+    uint8_t *				data;
+    
+    uint64_t				tail;
+    int					cpu;
+
+    event_callback_t			callback;
+    gpointer				user_data;
+    
+    GString *				partial;
+}; 
+
+struct sample_event_t
+{
+    struct perf_event_header	header;
+    uint64_t			ip;
+    uint32_t			pid, tid;
+    uint64_t			n_ips;
+    uint64_t			ips[1];
+};
+
+struct comm_event_t
+{
+    struct perf_event_header	header;
+    uint32_t			pid, tid;
+    char			comm[];
+};
+
+struct mmap_event_t
+{
+    struct perf_event_header	header;
+
+    uint32_t			pid, tid;
+    uint64_t			addr;
+    uint64_t			pgoff;
+    char			filename[1];
+};
+
+union counter_event_t
+{
+    struct perf_event_header	header;
+    mmap_event_t		mmap;
+    comm_event_t		comm;
+    sample_event_t		sample;
+};
 
 struct Collector
 {
@@ -42,23 +102,256 @@ struct Collector
     gpointer		data;
     
     StackStash *	stash;
-    int			fd;
     GTimeVal		latest_reset;
+
     int			n_samples;
-    SysprofMmapArea *	map_area;
-    unsigned int	current;
+
+    GList *		counters;
 };
+
+static int
+get_n_cpus (void)
+{
+    return sysconf (_SC_NPROCESSORS_ONLN);
+}
+
+static int
+sysprof_perf_counter_open (struct perf_counter_attr *attr,
+			   pid_t		     pid,
+			   int			     cpu,
+			   int			     group_fd,
+			   unsigned long	     flags)
+{
+    attr->size = sizeof(*attr);
+    
+    return syscall (__NR_perf_counter_open, attr, pid, cpu, group_fd, flags);
+}
+
+static int
+process_event (counter_t *counter, void *data)
+{
+    struct perf_event_header *header = data;
+    
+    counter->callback ((counter_event_t *)header, counter->user_data);
+
+    return header->size;
+}
+
+static int
+n_missing_bytes (const uint8_t *data, int n_bytes)
+{
+    const struct perf_event_header *header;
+    
+    if (n_bytes < sizeof (*header))
+	return sizeof (*header) - n_bytes;
+    
+    header = (const void *)data;
+    
+    if (n_bytes < header->size)
+	return header->size - n_bytes;
+    
+    return 0;
+}
+
+static void
+process_events (counter_t *counter, uint8_t *data, int n_bytes,
+		GString *partial)
+{
+    int n_events;
+    ssize_t n_missing;
+    
+    n_events = 0;
+    
+    while (n_bytes && (n_missing = n_missing_bytes (
+			   (uint8_t *)partial->str, partial->len)))
+    {
+	n_missing = MIN (n_bytes, n_missing);
+	
+	g_string_append_len (partial, (const char *)data, n_missing);
+	
+	data += n_missing;
+	n_bytes -= n_missing;
+    }
+
+    if (partial->len)
+    {
+	int n_used;
+	    
+	if (n_missing_bytes ((uint8_t *)partial->str, partial->len))
+	    return;
+    
+	n_used = process_event (counter, partial->str);
+
+	g_assert (n_used == partial->len);
+
+	g_string_truncate (partial, 0);
+    }
+    
+    while (n_bytes && !n_missing_bytes (data, n_bytes))
+    {
+	int n_used = process_event (counter, data);
+	
+	data += n_used;
+	n_bytes -= n_used;
+    }
+    
+    if (n_missing_bytes (data, n_bytes))
+	g_string_append_len (partial, (char *)data, n_bytes);
+}
+
+
+static void
+on_read (gpointer data)
+{
+    uint64_t head, tail;
+    counter_t *counter = data;
+    int mask = (N_PAGES * process_get_page_size() - 1);
+    uint64_t size;
+    int diff;
+    
+    tail = counter->tail;
+    
+    head = counter->mmap_page->data_head;
+    rmb();
+    
+    diff = head - tail;
+    
+    if (diff < 0)
+    {
+	g_warning ("sysprof fails at reading the buffer\n");
+	
+	tail = head;
+    }
+    
+    size = head - tail;
+    
+    if ((tail & mask) + size != (head & mask))
+    {
+	size = mask + 1 - (tail & mask);
+	
+	g_assert ((tail & mask) + size <= (N_PAGES * process_get_page_size()));
+	
+	process_events (counter, counter->data + (tail & mask),
+			size, counter->partial);
+	
+	tail += size;	
+    }
+    
+    size = head - tail;
+    
+    g_assert ((tail & mask) + size <= (N_PAGES * process_get_page_size()));
+    
+    process_events (counter,
+		    counter->data + (tail & mask), size, counter->partial);
+    
+    tail += size;
+    
+    counter->tail = tail;
+    counter->mmap_page->data_tail = tail;
+}
+
+#define fail(x)
+
+static counter_t *
+counter_new (int	      cpu,
+	     event_callback_t callback,
+	     gpointer	      data)
+{
+    struct perf_counter_attr attr;
+    counter_t *counter;
+    int fd;
+    
+    counter = g_new (counter_t, 1);
+    
+    memset (&attr, 0, sizeof (attr));
+    
+    attr.type = PERF_TYPE_HARDWARE;
+    attr.config = PERF_COUNT_HW_CPU_CYCLES;
+    attr.sample_period = 1200000 ;  /* In number of clock cycles -
+				     * use frequency instead FIXME
+				     */
+    attr.sample_type = PERF_SAMPLE_IP | PERF_SAMPLE_TID | PERF_SAMPLE_CALLCHAIN;
+    attr.wakeup_events = 100000;
+    attr.disabled = TRUE;
+    attr.mmap = TRUE;
+    attr.comm = TRUE;
+    
+    fd = sysprof_perf_counter_open (&attr, -1, cpu, -1,  0);
+    
+    if (fd < 0)
+    {
+	fail ("perf_counter_open");
+	return NULL;
+    }
+    
+    counter->fd = fd;
+    counter->mmap_page = mmap (
+	NULL, (N_PAGES + 1) * process_get_page_size(),
+	PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    
+    if (counter->mmap_page == MAP_FAILED)
+    {
+	fail ("mmap");
+	return NULL;
+    }
+    
+    counter->data = (uint8_t *)counter->mmap_page + process_get_page_size ();
+    counter->tail = 0;
+    counter->cpu = cpu;
+    counter->partial = g_string_new (NULL);
+    counter->callback = callback;
+    counter->user_data = data;
+    
+    fd_add_watch (fd, counter);
+    fd_set_read_callback (fd, on_read);
+    
+    return counter;
+}
+
+static void
+counter_enable (counter_t *counter)
+{
+    ioctl (counter->fd, PERF_COUNTER_IOC_ENABLE);
+}
+
+static void
+counter_free (counter_t *counter)
+{
+    munmap (counter->mmap_page, (N_PAGES + 1) * process_get_page_size());
+    fd_remove_watch (counter->fd);
+    
+    close (counter->fd);
+    g_string_free (counter->partial, TRUE);
+    
+    g_free (counter);
+}
+
+/*
+ * Collector
+ */
+void
+collector_reset (Collector *collector)
+{
+    if (collector->stash)
+	stack_stash_unref (collector->stash);
+    
+    process_flush_caches();
+    
+    collector->stash = stack_stash_new (NULL);
+    collector->n_samples = 0;
+    
+    g_get_current_time (&collector->latest_reset);
+}
 
 /* callback is called whenever a new sample arrives */
 Collector *
 collector_new (CollectorFunc callback,
-	       gpointer     data)
+	       gpointer      data)
 {
     Collector *collector = g_new0 (Collector, 1);
     
     collector->callback = callback;
     collector->data = data;
-    collector->fd = -1;
     collector->stash = NULL;
     
     collector_reset (collector);
@@ -88,9 +381,9 @@ static void
 add_trace_to_stash (const SysprofStackTrace *trace,
 		    StackStash              *stash)
 {
-    int i;
-    gulong *addrs;
     Process *process = process_get_from_pid (trace->pid);
+    gulong *addrs;
+    int i;
     int n_addresses;
     int n_kernel_words;
     int a;
@@ -165,200 +458,183 @@ in_dead_period (Collector *collector)
     return FALSE;
 }
 
-
+static void
+process_mmap (Collector *collector,
+	      mmap_event_t *mmap)
+{
+    
+}
 
 static void
-collect_traces (Collector *collector)
+process_comm (Collector *collector,
+	      comm_event_t *comm)
 {
-    gboolean first;
     
-    /* After a reset we ignore samples for a short period so that
-     * a reset will actually cause 'samples' to become 0
-     */
-    if (in_dead_period (collector))
+}
+
+static gboolean
+is_context (uint64_t addr)
+{
+    return
+	addr == PERF_CONTEXT_HV	||
+	addr == PERF_CONTEXT_KERNEL ||
+	addr == PERF_CONTEXT_USER ||
+	addr == PERF_CONTEXT_GUEST ||
+	addr == PERF_CONTEXT_GUEST_KERNEL ||
+	addr == PERF_CONTEXT_GUEST_USER;
+}
+
+static void
+process_sample (Collector *collector,
+		sample_event_t *sample)
+{
+    Process *process = process_get_from_pid (sample->pid);
+    gboolean first = collector->n_samples == 0;
+    uint64_t context = 0;
+    gulong addrs_stack[2048];
+    gulong *addrs;
+    int n_alloc;
+    int i;
+    gulong *a;
+
+    n_alloc = sample->n_ips + 2;
+    if (n_alloc < 2048)
+	addrs = addrs_stack;
+    else
+	addrs = g_new (gulong, n_alloc);
+
+    a = addrs;
+    for (i = 0; i < sample->n_ips; ++i)
     {
-	collector->current = collector->map_area->head;
-	return;
+	uint64_t addr = sample->ips[i];
+	
+	if (is_context (addr))
+	{
+	    /* FIXME: think this through */
+	    if (context == PERF_CONTEXT_KERNEL)
+		*a++ = 0x01; /* kernel marker */
+
+	    context = addr;
+	}
+	else
+	{
+	    if (context == PERF_CONTEXT_KERNEL)
+	    {
+		if (process_is_kernel_address (addr))
+		    *a++ = addr;
+	    }
+	    else
+	    {
+		if (!context)
+		    g_print ("no context\n");
+		
+		process_ensure_map (process, sample->pid, addr);
+		
+		*a++ = addr;
+	    }
+	}
     }
 
-    first = collector->n_samples == 0;
+    *a++ = (gulong)process;
     
-    while (collector->current != collector->map_area->head)
-    {
-	const SysprofStackTrace *trace;
+    stack_stash_add_trace (collector->stash, addrs, a - addrs, 1);
+    
+    collector->n_samples++;
 
-	trace = &(collector->map_area->traces[collector->current]);
-
-#if 0
-	{
-	    int i;
-	    g_print ("pid: %d (%d)\n", trace->pid, trace->n_addresses);
-	    for (i=0; i < trace->n_addresses; ++i)
-		g_print ("rd: %08x\n", trace->addresses[i]);
-	    g_print ("-=-\n");
-	}
-#endif
-#if 0
-	{
-	    int i;
-	    g_print ("pid: %d (%d)\n", trace->pid, trace->n_addresses);
-	    for (i=0; i < trace->n_kernel_words; ++i)
-		g_print ("rd: %08x\n", trace->kernel_stack[i]);
-	    g_print ("-=-\n");
-	}
-#endif
-	
-	add_trace_to_stash (trace, collector->stash);
-	
-	collector->current++;
-	if (collector->current >= SYSPROF_N_TRACES)
-	    collector->current = 0;
-	
-	collector->n_samples++;
-    }
-	
     if (collector->callback)
 	collector->callback (first, collector->data);
+
+    if (addrs != addrs_stack)
+	g_free (addrs);
 }
 
 static void
-on_read (gpointer data)
+on_event (counter_event_t *	event,
+	  gpointer		data)
+
 {
     Collector *collector = data;
-    char c;
     
-    /* Make sure poll() doesn't fire immediately again */
-    read (collector->fd, &c, 1);
-
-    collect_traces (collector);
-}
-
-static gboolean
-load_module (void)
-{
-    int exit_status = -1;
-    char *dummy1, *dummy2;
-    
-    if (g_spawn_command_line_sync ("/sbin/modprobe sysprof-module",
-				   &dummy1, &dummy2,
-				   &exit_status,
-				   NULL))
+    switch (event->header.type)
     {
-	if (WIFEXITED (exit_status))
-	    exit_status = WEXITSTATUS (exit_status);
+    case PERF_EVENT_MMAP:
+	process_mmap (collector, &event->mmap);
+	break;
 	
-	g_free (dummy1);
-	g_free (dummy2);
-    }
-    
-    return (exit_status == 0);
-}
-
-static gboolean
-open_fd (Collector *collector,
-	 GError **err)
-{
-    int fd;
-    void *map_area;
-    
-    fd = open (SYSPROF_FILE, O_RDONLY);
-    if (fd < 0)
-    {
-	if (load_module())
-	{
-	    GTimer *timer = g_timer_new ();
-	    
-	    while (fd < 0 && g_timer_elapsed (timer, NULL) < 0.5)
-	    {
-		/* Wait for udev to discover the new device.
-		 */
-		usleep (100000);
-		
-		errno = 0;
-		fd = open (SYSPROF_FILE, O_RDONLY);
-	    }
-	    
-	    g_timer_destroy (timer);
-	    
-	    if (fd < 0)
-	    {
-		set_cant_open_error (err, errno);
-		return FALSE;
-	    }
-	}
+    case PERF_EVENT_LOST:
+	break;
 	
-	if (fd < 0)
-	{
-	    set_no_module_error (err);
-	    
-	    return FALSE;
-	}
-    }
-    
-    map_area = mmap (NULL, sizeof (SysprofMmapArea),
-		     PROT_READ, MAP_SHARED, fd, 0);
-    
-    if (map_area == MAP_FAILED)
-    {
-	close (fd);
-	set_cant_open_error (err, errno);
+    case PERF_EVENT_COMM:
+	process_comm (collector, &event->comm);
+	break;
 	
-	return FALSE;
+    case PERF_EVENT_EXIT:
+	break;
+	
+    case PERF_EVENT_THROTTLE:
+	break;
+	
+    case PERF_EVENT_UNTHROTTLE:
+	break;
+	
+    case PERF_EVENT_FORK:
+	break;
+	
+    case PERF_EVENT_READ:
+	break;
+	
+    case PERF_EVENT_SAMPLE:
+	process_sample (collector, &event->sample);
+	break;
+	
+    default:
+	g_print ("unknown event: %d (%d)\n",
+		 event->header.type, event->header.size);
+	break;
     }
-    
-    collector->map_area = map_area;
-    collector->current = 0;
-    collector->fd = fd;
-    fd_add_watch (collector->fd, collector);
-    
-    return TRUE;
 }
 
 gboolean
 collector_start (Collector  *collector,
 		 GError    **err)
 {
-    if (collector->fd < 0 && !open_fd (collector, err))
-	return FALSE;
+    int n_cpus = get_n_cpus ();
+    GList *list;
+    int i;
+
+    for (i = 0; i < n_cpus; ++i)
+    {
+	counter_t *counter = counter_new (i, on_event, collector);
+
+	collector->counters = g_list_append (collector->counters, counter);
+    }
     
     /* Hack to make sure we parse the kernel symbols before
      * starting collection, so the parsing doesn't interfere
      * with the profiling.
      */
     process_is_kernel_address (0);
+
+    for (list = collector->counters; list != NULL; list = list->next)
+	counter_enable (list->data);
     
-    fd_set_read_callback (collector->fd, on_read);
     return TRUE;
 }
 
 void
 collector_stop (Collector *collector)
 {
-    if (collector->fd >= 0)
-    {
-	fd_remove_watch (collector->fd);
-	
-	munmap (collector->map_area, sizeof (SysprofMmapArea));
-	collector->map_area = NULL;
-	collector->current = 0;
-	
-	close (collector->fd);
-	collector->fd = -1;
-    }
-}
+    GList *list;
 
-void
-collector_reset (Collector *collector)
-{
-    if (collector->stash)
-	stack_stash_unref (collector->stash);
-    
-    process_flush_caches();
-    
-    collector->stash = stack_stash_new (NULL);
-    collector->n_samples = 0;
-    
-    g_get_current_time (&collector->latest_reset);
+    for (list = collector->counters; list != NULL; list = list->next)
+    {
+	counter_t *counter = list->data;
+	
+	counter_free (counter);
+    }
+
+    g_list_free (collector->counters);
+    collector->counters = NULL;
 }
 
 int
@@ -464,7 +740,7 @@ lookup_symbol (Process *process, gpointer address,
 static void
 resolve_symbols (GList *trace, gint size, gpointer data)
 {
-    static const char *const everything = "Everything";
+    static const char *const everything = "[Everything]";
     GList *list;
     ResolveInfo *info = data;
     Process *process = g_list_last (trace)->data;
@@ -536,31 +812,6 @@ collector_create_profile (Collector *collector)
     stack_stash_unref (info.resolved_stash);
 
     return profile;
-}
-
-static void
-set_no_module_error (GError **err)
-{
-    g_set_error (err,
-		 COLLECTOR_ERROR,
-		 COLLECTOR_ERROR_CANT_OPEN_FILE,
-		 "Can't open " SYSPROF_FILE ". You need to insert "
-		 "the sysprof kernel module. Run\n"
-		 "\n"
-		 "       modprobe sysprof-module\n"
-		 "\n"
-		 "as root");
-}
-
-static void
-set_cant_open_error (GError **err,
-		     int      eno)
-{
-    g_set_error (err,
-		 COLLECTOR_ERROR,
-		 COLLECTOR_ERROR_CANT_OPEN_FILE,
-		 "Can't open " SYSPROF_FILE ": %s",
-		 g_strerror (eno));
 }
 
 GQuark

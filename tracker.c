@@ -86,14 +86,49 @@ tracker_free (tracker_t *tracker)
     
 }
 
+#define COPY_STRING(dest, src)						\
+    do									\
+    {									\
+	strncpy (dest, src, sizeof (dest) - 1);				\
+	dest[sizeof (dest) - 1] = 0;					\
+    }									\
+    while (0)
+    
+
 void
-tracker_add_process (tracker_t *tracker)
+tracker_add_process (tracker_t * tracker,
+		     pid_t	 pid,
+		     const char *command_line)
 {
+    new_process_t event;
+
+    event.type = NEW_PROCESS;
+    event.pid = pid;
+    COPY_STRING (event.command_line, command_line);
+
+    tracker_append (tracker, &event, sizeof (event));
 }
 
 void
-tracker_add_map     (tracker_t *tracker)
+tracker_add_map (tracker_t * tracker,
+		 pid_t	     pid,
+		 uint64_t    start,
+		 uint64_t    end,
+		 uint64_t    offset,
+		 uint64_t    inode,
+		 const char *filename)
 {
+    new_map_t event;
+
+    event.type = NEW_MAP;
+    event.pid = pid;
+    COPY_STRING (event.file_name, filename);
+    event.start = start;
+    event.end = end;
+    event.offset = offset;
+    event.inode = inode;
+
+    tracker_append (tracker, &event, sizeof (event));
 }
 
 void

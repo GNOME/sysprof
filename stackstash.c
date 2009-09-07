@@ -199,7 +199,7 @@ stack_stash_free (StackStash *stash)
     g_free (stash);
 }
 
-void
+StackNode *
 stack_stash_add_trace (StackStash *stash,
 		       uint64_t   *addrs,
 		       int         n_addrs,
@@ -210,7 +210,7 @@ stack_stash_add_trace (StackStash *stash,
     int i;
 
     if (!n_addrs)
-	return;
+	return NULL;
 
     if (stash->nodes_by_data)
 	stack_stash_undecorate (stash);
@@ -253,6 +253,8 @@ stack_stash_add_trace (StackStash *stash,
     }
 
     parent->size += size;
+
+    return parent;
 }
 
 static void

@@ -272,7 +272,7 @@ set_busy (GtkWidget *widget,
     if (cursor)
 	gdk_cursor_unref (cursor);
 
-    gdk_display_flush (gdk_display_get_default());
+    gdk_display_sync (gdk_display_get_default());
 }
 
 static void
@@ -506,7 +506,7 @@ add_node (FooTreeStore      *store,
 static void
 fill_descendants_tree (Application *app)
 {
-    GtkTreeStore *tree_store;
+    FooTreeStore *tree_store;
 
     if (app->descendants)
     {

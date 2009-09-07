@@ -27,6 +27,8 @@ SYSPROF_CORE =					\
 	sformat.c				\
 	stackstash.h				\
 	stackstash.c				\
+	tracker.h				\
+	tracker.c				\
 	unwind.h				\
 	unwind.c				\
 	watch.h					\

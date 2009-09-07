@@ -127,130 +127,92 @@ sysprof_perf_counter_open (struct perf_counter_attr *attr,
     return syscall (__NR_perf_counter_open, attr, pid, cpu, group_fd, flags);
 }
 
-static int
-process_event (counter_t *counter, void *data)
-{
-    struct perf_event_header *header = data;
-    
-    counter->callback ((counter_event_t *)header, counter->user_data);
-
-    return header->size;
-}
-
-static int
-n_missing_bytes (const uint8_t *data, int n_bytes)
-{
-    const struct perf_event_header *header;
-    
-    if (n_bytes < sizeof (*header))
-	return sizeof (*header) - n_bytes;
-    
-    header = (const void *)data;
-    
-    if (n_bytes < header->size)
-	return header->size - n_bytes;
-    
-    return 0;
-}
-
-static void
-process_events (counter_t *counter, uint8_t *data, int n_bytes,
-		GString *partial)
-{
-    int n_events;
-    ssize_t n_missing;
-    
-    n_events = 0;
-    
-    while (n_bytes && (n_missing = n_missing_bytes (
-			   (uint8_t *)partial->str, partial->len)))
-    {
-	n_missing = MIN (n_bytes, n_missing);
-	
-	g_string_append_len (partial, (const char *)data, n_missing);
-	
-	data += n_missing;
-	n_bytes -= n_missing;
-    }
-
-    if (partial->len)
-    {
-	int n_used;
-	    
-	if (n_missing_bytes ((uint8_t *)partial->str, partial->len))
-	    return;
-    
-	n_used = process_event (counter, partial->str);
-
-	g_assert (n_used == partial->len);
-
-	g_string_truncate (partial, 0);
-    }
-    
-    while (n_bytes && !n_missing_bytes (data, n_bytes))
-    {
-	int n_used = process_event (counter, data);
-	
-	data += n_used;
-	n_bytes -= n_used;
-    }
-    
-    if (n_missing_bytes (data, n_bytes))
-	g_string_append_len (partial, (char *)data, n_bytes);
-}
-
-
 static void
 on_read (gpointer data)
 {
     uint64_t head, tail;
     counter_t *counter = data;
     int mask = (N_PAGES * process_get_page_size() - 1);
-    uint64_t size;
-    int diff;
-    
+#if 0
+    int n_bytes = mask + 1;
+    int x;
+#endif
+
     tail = counter->tail;
     
     head = counter->mmap_page->data_head;
     rmb();
     
-    diff = head - tail;
-    
-    if (diff < 0)
+    if (head < tail)
     {
-	g_warning ("sysprof fails at reading the buffer\n");
+	g_warning ("sysprof fails at ring buffers\n");
 	
 	tail = head;
     }
     
-    size = head - tail;
+#if 0
+    /* Verify that the double mapping works */
+    x = g_random_int() & mask;
+    g_assert (*(counter->data + x) == *(counter->data + x + n_bytes));
+#endif
     
-    if ((tail & mask) + size != (head & mask))
+    while (head - tail >= sizeof (struct perf_event_header))
     {
-	size = mask + 1 - (tail & mask);
-	
-	g_assert ((tail & mask) + size <= (N_PAGES * process_get_page_size()));
-	
-	process_events (counter, counter->data + (tail & mask),
-			size, counter->partial);
-	
-	tail += size;	
+	struct perf_event_header *header = (void *)(counter->data + (tail & mask));
+
+	if (header->size > head - tail)
+	{
+	    g_print ("asdf\n");
+	    break;
+	}
+
+	counter->callback ((counter_event_t *)header, counter->user_data);
+
+	tail += header->size;
     }
-    
-    size = head - tail;
-    
-    g_assert ((tail & mask) + size <= (N_PAGES * process_get_page_size()));
-    
-    process_events (counter,
-		    counter->data + (tail & mask), size, counter->partial);
-    
-    tail += size;
-    
+
     counter->tail = tail;
     counter->mmap_page->data_tail = tail;
 }
 
-#define fail(x)
+/* FIXME: return proper errors */
+#define fail(x)								\
+    do {								\
+	g_printerr ("the fail is strong %s\n", x);			\
+	exit (-1);							\
+    } while (0)
+
+static void *
+map_buffer (counter_t *counter)
+{ 
+    int n_bytes = N_PAGES * process_get_page_size();
+    void *address, *a;
+
+    address = mmap (NULL, n_bytes * 2 + process_get_page_size(), PROT_NONE,
+		    MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+
+    if (address == MAP_FAILED)
+	fail ("mmap");
+
+    a = mmap (address + n_bytes, n_bytes + process_get_page_size(),
+	      PROT_READ | PROT_WRITE,
+	      MAP_SHARED | MAP_FIXED, counter->fd, 0);
+    
+    if (a != address + n_bytes)
+	fail ("mmap");
+
+    a = mmap (address, n_bytes + process_get_page_size(),
+	      PROT_READ | PROT_WRITE,
+	      MAP_SHARED | MAP_FIXED, counter->fd, 0);
+
+    if (a == MAP_FAILED)
+	fail ("mmap");
+
+    if (a != address)
+	fail ("mmap");
+
+    return address;
+}
 
 static counter_t *
 counter_new (int	      cpu,
@@ -283,11 +245,10 @@ counter_new (int	      cpu,
 	fail ("perf_counter_open");
 	return NULL;
     }
-    
+
     counter->fd = fd;
-    counter->mmap_page = mmap (
-	NULL, (N_PAGES + 1) * process_get_page_size(),
-	PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+
+    counter->mmap_page = map_buffer (counter);
     
     if (counter->mmap_page == MAP_FAILED)
     {

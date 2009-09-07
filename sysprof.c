@@ -374,7 +374,7 @@ on_start_toggled (GtkWidget *widget, gpointer data)
     }
     else
     {
-	sorry (app->main_window, err->message);
+	sorry (app->main_window, err->message); 
 
 	g_error_free (err);
     }

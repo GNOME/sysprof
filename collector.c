@@ -34,6 +34,7 @@
 #include "watch.h"
 #include "process.h"
 #include "elfparser.h"
+#include "tracker.h"
 
 #include "perf_counter.h"
 #include "barrier.h"
@@ -45,7 +46,6 @@ typedef struct sample_event_t sample_event_t;
 typedef struct mmap_event_t mmap_event_t;
 typedef struct comm_event_t comm_event_t;
 typedef union counter_event_t counter_event_t;
-typedef void (* event_callback_t) (counter_event_t *event, gpointer data);
 
 static void process_event (Collector *collector, counter_event_t *event);
 
@@ -103,6 +103,7 @@ struct Collector
     gpointer		data;
     
     StackStash *	stash;
+    tracker_t *		tracker;
     GTimeVal		latest_reset;
 
     int			n_samples;
@@ -240,6 +241,10 @@ map_buffer (counter_t *counter)
     int n_bytes = N_PAGES * process_get_page_size();
     void *address, *a;
 
+    /* We use the old trick of mapping the ring buffer twice
+     * consecutively, so that we don't need special-case code
+     * to deal with wrapping.
+     */
     address = mmap (NULL, n_bytes * 2 + process_get_page_size(), PROT_NONE,
 		    MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 
@@ -281,7 +286,7 @@ counter_new (Collector *collector,
     attr.type = PERF_TYPE_HARDWARE;
     attr.config = PERF_COUNT_HW_CPU_CYCLES;
     attr.sample_period = 1200000 ;  /* In number of clock cycles -
-				     * use frequency instead FIXME
+				     * FIXME: consider using frequency instead
 				     */
     attr.sample_type = PERF_SAMPLE_IP | PERF_SAMPLE_TID | PERF_SAMPLE_CALLCHAIN;
     attr.wakeup_events = 100000;
@@ -343,15 +348,34 @@ counter_free (counter_t *counter)
 void
 collector_reset (Collector *collector)
 {
-    if (collector->stash)
-	stack_stash_unref (collector->stash);
+    gboolean restart = FALSE;
     
+    if (collector->counters)
+    {
+	collector_stop (collector);
+	restart = TRUE;
+    }
+    
+    if (collector->stash)
+    {
+	stack_stash_unref (collector->stash);
+	collector->stash = NULL;
+    }
+    
+    if (collector->tracker)
+    {
+	tracker_free (collector->tracker);
+	collector->tracker = NULL;
+    }
+
     process_flush_caches();
     
-    collector->stash = stack_stash_new (NULL);
     collector->n_samples = 0;
     
     g_get_current_time (&collector->latest_reset);
+
+    if (restart)
+	collector_start (collector, NULL);
 }
 
 /* callback is called whenever a new sample arrives */
@@ -364,6 +388,7 @@ collector_new (CollectorFunc callback,
     collector->callback = callback;
     collector->data = data;
     collector->stash = NULL;
+    collector->tracker = NULL;
     
     collector_reset (collector);
 
@@ -507,6 +532,15 @@ collector_start (Collector  *collector,
     GList *list;
     int i;
 
+    g_print ("starting\n");
+	
+    if (!collector->stash)
+	collector->stash = stack_stash_new (NULL);
+    if (!collector->tracker)
+	collector->tracker = tracker_new ();
+    
+    g_assert (collector->stash);
+    
     for (i = 0; i < n_cpus; ++i)
     {
 	counter_t *counter = counter_new (collector, i);
@@ -522,6 +556,8 @@ collector_start (Collector  *collector,
 
     for (list = collector->counters; list != NULL; list = list->next)
 	counter_enable (list->data);
+
+    g_print ("started\n");
     
     return TRUE;
 }

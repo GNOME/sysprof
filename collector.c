@@ -76,7 +76,7 @@ struct comm_event_t
 {
     struct perf_event_header	header;
     uint32_t			pid, tid;
-    char			comm[];
+    char			comm[1];
 };
 
 struct mmap_event_t
@@ -85,6 +85,7 @@ struct mmap_event_t
 
     uint32_t			pid, tid;
     uint64_t			addr;
+    uint64_t			len;
     uint64_t			pgoff;
     char			filename[1];
 };
@@ -396,94 +397,50 @@ collector_new (CollectorFunc callback,
 }
 
 static void
-process_mmap (Collector *collector,
-	      mmap_event_t *mmap)
+process_mmap (Collector *collector, mmap_event_t *mmap)
 {
-    
+    tracker_add_map (collector->tracker,
+		     mmap->pid,
+		     mmap->addr,
+		     mmap->addr + mmap->len,
+		     mmap->pgoff,
+		     0, /* inode */
+		     mmap->filename);
 }
 
 static void
-process_comm (Collector *collector,
-	      comm_event_t *comm)
+process_comm (Collector *collector, comm_event_t *comm)
 {
-    
-}
-
-static gboolean
-is_context (uint64_t addr)
-{
-    return
-	addr == PERF_CONTEXT_HV	||
-	addr == PERF_CONTEXT_KERNEL ||
-	addr == PERF_CONTEXT_USER ||
-	addr == PERF_CONTEXT_GUEST ||
-	addr == PERF_CONTEXT_GUEST_KERNEL ||
-	addr == PERF_CONTEXT_GUEST_USER;
+    tracker_add_process (collector->tracker,
+			 comm->pid,
+			 comm->comm);
 }
 
 static void
-process_sample (Collector *collector,
+process_sample (Collector      *collector,
 		sample_event_t *sample)
 {
-    Process *process = process_get_from_pid (sample->pid);
-    uint64_t context = 0;
-    uint64_t addrs_stack[2048];
-    uint64_t *addrs;
-    uint64_t *a;
-    int n_alloc;
-    int i;
+    uint64_t *ips;
+    int n_ips;
 
-    n_alloc = sample->n_ips + 2;
-    if (n_alloc < 2048)
-	addrs = addrs_stack;
-    else
-	addrs = g_new (uint64_t, n_alloc);
-
-    a = addrs;
-    for (i = 0; i < sample->n_ips; ++i)
+    if (sample->n_ips == 0)
     {
-	uint64_t addr = sample->ips[i];
-	
-	if (is_context (addr))
-	{
-	    /* FIXME: think this through */
-	    if (context == PERF_CONTEXT_KERNEL)
-		*a++ = 0x01; /* kernel marker */
-
-	    context = addr;
-	}
-	else
-	{
-	    if (context == PERF_CONTEXT_KERNEL)
-	    {
-		if (process_is_kernel_address (addr))
-		    *a++ = addr;
-	    }
-	    else
-	    {
-		if (!context)
-		    g_print ("no context\n");
-		
-		process_ensure_map (process, sample->pid, addr);
-		
-		*a++ = addr;
-	    }
-	}
+	ips = &sample->ip;
+	n_ips = 1;
     }
-
-    *a++ = POINTER_TO_U64 (process);
+    else
+    {
+	ips = sample->ips;
+	n_ips = sample->n_ips;
+    }
     
-    stack_stash_add_trace (collector->stash, addrs, a - addrs, 1);
-    
-    collector->n_samples++;
-
-    if (addrs != addrs_stack)
-	g_free (addrs);
+    tracker_add_sample (collector->tracker,
+			sample->pid, ips, n_ips);
 }
 
 static void
-process_event (Collector *collector,
-	       counter_event_t *	event)
+process_event (Collector       *collector,
+	       counter_event_t *event)
 {
     switch (event->header.type)
     {

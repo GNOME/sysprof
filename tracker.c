@@ -325,7 +325,6 @@ new_map (state_t *tracker, new_map_t *new_map)
 static void
 sample (state_t *tracker, sample_t *sample)
 {
-    
 }
 
 Profile *

@@ -341,71 +341,6 @@ time_diff (const GTimeVal *first,
 
 #define RESET_DEAD_PERIOD 250
 
-static void
-add_trace_to_stash (const SysprofStackTrace *trace,
-		    StackStash              *stash)
-{
-    Process *process = process_get_from_pid (trace->pid);
-    gulong *addrs;
-    int i;
-    int n_addresses;
-    int n_kernel_words;
-    int a;
-    gulong addrs_stack[2048];
-    int n_alloc;
-
-    n_addresses = trace->n_addresses;
-    n_kernel_words = trace->n_kernel_words;
-
-    n_alloc = n_addresses + n_kernel_words + 2;
-    if (n_alloc <= 2048)
-	addrs = addrs_stack;
-    else
-	addrs = g_new (gulong, n_alloc);
-    
-    a = 0;
-    /* Add kernel addresses */
-    if (trace->n_kernel_words)
-    {
-	for (i = 0; i < trace->n_kernel_words; ++i)
-	{
-	    gulong addr = (gulong)trace->kernel_stack[i];
-
-	    if (process_is_kernel_address (addr))
-		addrs[a++] = addr;
-	}
-
-	/* Add kernel marker */
-	addrs[a++] = 0x01;
-    }
-
-    /* Add user addresses */
-
-    for (i = 0; i < n_addresses; ++i)
-    {
-	gulong addr = (gulong)trace->addresses[i];
-	
-	process_ensure_map (process, trace->pid, addr);
-	addrs[a++] = addr;
-    }
-
-    /* Add process */
-    addrs[a++] = (gulong)process;
-
-#if 0
-    if (a != n_addresses)
- 	g_print ("a: %d, n_addresses: %d, kernel words: %d\n trace->nad %d",
-		 a, n_addresses, trace->n_kernel_words, trace->n_addresses);
-    
-    g_assert (a == n_addresses);
-#endif
-    
-    stack_stash_add_trace (stash, addrs, a, 1);
-    
-    if (addrs != addrs_stack)
-	g_free (addrs);
-}
-
 static gboolean
 in_dead_period (Collector *collector)
 {
@@ -455,17 +390,17 @@ process_sample (Collector *collector,
     Process *process = process_get_from_pid (sample->pid);
     gboolean first = collector->n_samples == 0;
     uint64_t context = 0;
-    gulong addrs_stack[2048];
-    gulong *addrs;
+    uint64_t addrs_stack[2048];
+    uint64_t *addrs;
+    uint64_t *a;
     int n_alloc;
     int i;
-    gulong *a;
 
     n_alloc = sample->n_ips + 2;
     if (n_alloc < 2048)
 	addrs = addrs_stack;
     else
-	addrs = g_new (gulong, n_alloc);
+	addrs = g_new (uint64_t, n_alloc);
 
     a = addrs;
     for (i = 0; i < sample->n_ips; ++i)
@@ -499,7 +434,7 @@ process_sample (Collector *collector,
 	}
     }
 
-    *a++ = (gulong)process;
+    *a++ = POINTER_TO_U64 (process);
     
     stack_stash_add_trace (collector->stash, addrs, a - addrs, 1);
     
@@ -634,7 +569,7 @@ unique_dup (GHashTable *unique_symbols, const char *sym)
 }
 
 static char *
-lookup_symbol (Process *process, gpointer address,
+lookup_symbol (Process *process, uint64_t address,
 	       GHashTable *unique_symbols,
 	       gboolean kernel,
 	       gboolean first_addr)
@@ -702,29 +637,43 @@ lookup_symbol (Process *process, gpointer address,
 }
 
 static void
-resolve_symbols (GList *trace, gint size, gpointer data)
+resolve_symbols (StackLink *trace, gint size, gpointer data)
 {
     static const char *const everything = "[Everything]";
-    GList *list;
     ResolveInfo *info = data;
-    Process *process = g_list_last (trace)->data;
-    GPtrArray *resolved_trace = g_ptr_array_new ();
-    char *cmdline;
     gboolean in_kernel = FALSE;
     gboolean first_addr = TRUE;
+    uint64_t addr_stack[128];
+    uint64_t *resolved_trace;
+    StackLink *link;
+    Process *process;
+    char *cmdline;
+    int len;
+
+    len = 2;
     
-    for (list = trace; list && list->next; list = list->next)
+    for (link = trace; link && link->next; link = link->next)
     {
-	if (list->data == GINT_TO_POINTER (0x01))
+	if (link->data == 0x01)
 	    in_kernel = TRUE;
+
+	len++;
     }
 
-    for (list = trace; list && list->next; list = list->next)
+    if (len > 128)
+	resolved_trace = g_new (uint64_t, len);
+    else
+	resolved_trace = addr_stack;
+    
+    process = U64_TO_POINTER (link->data);
+
+    len = 0;
+    for (link = trace; link && link->next; link = link->next)
     {
-	gpointer address = list->data;
+	uint64_t address = link->data;
 	char *symbol;
 	
-	if (address == GINT_TO_POINTER (0x01))
+	if (address == 0x01)
 	    in_kernel = FALSE;
 	
 	symbol = lookup_symbol (process, address, info->unique_symbols,
@@ -732,11 +681,12 @@ resolve_symbols (GList *trace, gint size, gpointer data)
 	first_addr = FALSE;
 
 	if (symbol)
-	    g_ptr_array_add (resolved_trace, symbol);
+	    resolved_trace[len++] = POINTER_TO_U64 (symbol);
     }
 
-    cmdline = g_hash_table_lookup (info->unique_cmdlines,
-				   (char *)process_get_cmdline (process));
+    cmdline = g_hash_table_lookup (
+	info->unique_cmdlines, (char *)process_get_cmdline (process));
+    
     if (!cmdline)
     {
 	cmdline = g_strdup (process_get_cmdline (process));
@@ -744,16 +694,14 @@ resolve_symbols (GList *trace, gint size, gpointer data)
 	g_hash_table_insert (info->unique_cmdlines, cmdline, cmdline);
     }
     
-    g_ptr_array_add (resolved_trace, cmdline);
+    resolved_trace[len++] = POINTER_TO_U64 (cmdline);
+    resolved_trace[len++] = POINTER_TO_U64 (
+	unique_dup (info->unique_symbols, everything));
+
+    stack_stash_add_trace (info->resolved_stash, resolved_trace, len, size);
     
-    g_ptr_array_add (resolved_trace,
-		     unique_dup (info->unique_symbols, everything));
-    
-    stack_stash_add_trace (info->resolved_stash,
-			   (gulong *)resolved_trace->pdata,
-			   resolved_trace->len, size);
-    
-    g_ptr_array_free (resolved_trace, TRUE);
+    if (resolved_trace != addr_stack)
+	g_free (resolved_trace);
 }
 
 Profile *

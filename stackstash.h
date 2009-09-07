@@ -21,13 +21,18 @@
 #define STACK_STASH_H
 
 #include <glib.h>
+#include <stdint.h>
 
 typedef struct StackStash StackStash;
 typedef struct StackNode StackNode;
+typedef struct StackLink StackLink;
+
+#define U64_TO_POINTER(u)	((void *)(intptr_t)u)
+#define POINTER_TO_U64(p)	((uint64_t)(intptr_t)p)
 
 struct StackNode
 {
-    gpointer	address;
+    uint64_t	data;
 
     guint	total : 32;
     guint	size : 31;
@@ -40,18 +45,25 @@ struct StackNode
     StackNode * next;
 };
 
-typedef void (* StackFunction) (GList   *trace,
-				gint     size,
-				gpointer data);
+struct StackLink
+{
+    uint64_t	data;
+    StackLink  *next;
+    StackLink  *prev;
+};
+
+typedef void (* StackFunction) (StackLink *trace,
+				gint       size,
+				gpointer   data);
 
 typedef void (* StackNodeFunc) (StackNode *node,
-				gpointer data);
+				gpointer   data);
 
 /* Stach */
 StackStash *stack_stash_new                (GDestroyNotify  destroy);
 StackNode * stack_node_new                 (StackStash     *stash);
 void        stack_stash_add_trace          (StackStash     *stash,
-					    gulong         *addrs,
+					    uint64_t       *addrs,
 					    gint            n_addrs,
 					    int             size);
 void        stack_stash_foreach            (StackStash     *stash,

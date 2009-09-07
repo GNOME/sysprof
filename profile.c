@@ -83,7 +83,7 @@ serialize_call_tree (StackNode *node,
 	return;
     
     sfile_begin_add_record (output, "node");
-    sfile_add_pointer (output, "object", node->address);
+    sfile_add_pointer (output, "object", U64_TO_POINTER (node->data));
     sfile_add_pointer (output, "siblings", node->siblings);
     sfile_add_pointer (output, "children", node->children);
     sfile_add_pointer (output, "parent", node->parent);
@@ -196,7 +196,7 @@ profile_load (const char *filename, GError **err)
 	
 	sfile_begin_get_record (input, "node");
 	
-	sfile_get_pointer (input, "object", (gpointer *)&node->address);
+	sfile_get_pointer (input, "object", (gpointer *)&node->data);
 	sfile_get_pointer (input, "siblings", (gpointer *)&node->siblings);
 	sfile_get_pointer (input, "children", (gpointer *)&node->children);
 	sfile_get_pointer (input, "parent", (gpointer *)&node->parent);
@@ -233,15 +233,19 @@ profile_new (StackStash *stash)
 }
 
 static void
-add_trace_to_tree (GList *trace, gint size, gpointer data)
+add_trace_to_tree (StackLink *trace, gint size, gpointer data)
 {
-    GList *list;
+    StackLink *link;
     ProfileDescendant *parent = NULL;
     ProfileDescendant **tree = data;
-    
-    for (list = g_list_last (trace); list != NULL; list = list->prev)
+
+    link = trace;
+    while (link->next)
+	link = link->next;
+
+    for (; link != NULL; link = link->prev)
     {
-	gpointer address = list->data;
+	gpointer address = U64_TO_POINTER (link->data);
 	ProfileDescendant *prev = NULL;
 	ProfileDescendant *match = NULL;
 
@@ -348,19 +352,21 @@ profile_list_callers (Profile *profile,
 	if (!node->parent)
 	    continue;
 	
-	caller = g_hash_table_lookup (callers_by_name, node->parent->address);
+	caller = g_hash_table_lookup (
+	    callers_by_name, U64_TO_POINTER (node->parent->data));
 	
 	if (!caller)
 	{
 	    caller = profile_caller_new ();
-	    caller->name = node->parent->address;
+	    caller->name = U64_TO_POINTER (node->parent->data);
 	    caller->total = 0;
 	    caller->self = 0;
 	    
 	    caller->next = result;
 	    result = caller;
 	    
-	    g_hash_table_insert (callers_by_name, node->parent->address, caller);
+	    g_hash_table_insert (
+		callers_by_name, U64_TO_POINTER (node->parent->data), caller);
 	}
     }
     
@@ -376,15 +382,16 @@ profile_list_callers (Profile *profile,
 	
 	for (n = node; n && n->parent; n = n->parent)
 	{
-	    if (n->address == node->address		&&
-		n->parent->address == node->parent->address)
+	    if (n->data == node->data		&&
+		n->parent->data == node->parent->data)
 	    {
 		top_caller = n->parent;
 		top_callee = n;
 	    }
 	}
 
-	caller = g_hash_table_lookup (callers_by_name, node->parent->address);
+	caller = g_hash_table_lookup (
+	    callers_by_name, U64_TO_POINTER (node->parent->data));
 	
 	if (!g_hash_table_lookup (processed_callers, top_caller))
 	{
@@ -564,7 +571,7 @@ build_object_list (StackNode *node, gpointer data)
     StackNode *n;
     
     obj = g_new (ProfileObject, 1);
-    obj->name = node->address;
+    obj->name = U64_TO_POINTER (node->data);
 
     obj->total = compute_total (node);
     obj->self = 0;

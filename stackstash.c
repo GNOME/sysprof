@@ -42,8 +42,8 @@ decorate_node (StackNode *node,
     decorate_node (node->siblings, stash);
     decorate_node (node->children, stash);
 
-    node->next = g_hash_table_lookup (stash->nodes_by_data, node->address);
-    g_hash_table_insert (stash->nodes_by_data, node->address, node);
+    node->next = g_hash_table_lookup (stash->nodes_by_data, &node->data);
+    g_hash_table_insert (stash->nodes_by_data, &node->data, node);
 	
     /* FIXME: This could be done more efficiently
      * by keeping track of the ancestors we have seen.
@@ -51,12 +51,29 @@ decorate_node (StackNode *node,
     node->toplevel = TRUE;
     for (n = node->parent; n != NULL; n = n->parent)
     {
-	if (n->address == node->address)
+	if (n->data == node->data)
 	{
 	    node->toplevel = FALSE;
 	    break;
 	}
     }
+}
+
+static unsigned int
+address_hash (gconstpointer key)
+{
+    const uint64_t *addr = key;
+
+    return *addr;
+}
+
+static gboolean
+address_equal (gconstpointer key1, gconstpointer key2)
+{
+    const uint64_t *addr1 = key1;
+    const uint64_t *addr2 = key2;
+
+    return *addr1 == *addr2;
 }
 
 static void
@@ -65,7 +82,7 @@ stack_stash_decorate (StackStash *stash)
     if (stash->nodes_by_data)
 	return;
 
-    stash->nodes_by_data = g_hash_table_new (g_direct_hash, g_direct_equal);
+    stash->nodes_by_data = g_hash_table_new (address_hash, address_equal);
 
     decorate_node (stash->root, stash);
 }
@@ -76,8 +93,9 @@ free_key (gpointer key,
 	  gpointer data)
 {
     GDestroyNotify destroy = data;
+    uint64_t u64 = *(uint64_t *)key;
 
-    destroy (key);
+    destroy (U64_TO_POINTER (u64));
 }
 
 static void
@@ -92,6 +110,7 @@ stack_stash_undecorate (StackStash *stash)
 	}
 	
 	g_hash_table_destroy (stash->nodes_by_data);
+	stash->nodes_by_data = NULL;
     }
 }
 
@@ -131,7 +150,7 @@ stack_node_new (StackStash *stash)
 
     node->siblings = NULL;
     node->children = NULL;
-    node->address = NULL;
+    node->data = 0;
     node->parent = NULL;
     node->size = 0;
     node->next = NULL;
@@ -182,7 +201,7 @@ stack_stash_free (StackStash *stash)
 
 void
 stack_stash_add_trace (StackStash *stash,
-		       gulong     *addrs,
+		       uint64_t   *addrs,
 		       int         n_addrs,
 		       int         size)
 {
@@ -204,7 +223,7 @@ stack_stash_add_trace (StackStash *stash,
 	prev = NULL;
 	for (match = *location; match; prev = match, match = match->siblings)
 	{
-	    if (match->address == (gpointer)addrs[i])
+	    if (match->data == addrs[i])
 	    {
 		if (prev)
 		{
@@ -221,7 +240,7 @@ stack_stash_add_trace (StackStash *stash,
 	if (!match)
 	{
 	    match = stack_node_new (stash);
-	    match->address = (gpointer)addrs[i];
+	    match->data = addrs[i];
 	    match->siblings = *location;
 	    match->parent = parent;
 	    *location = match;
@@ -238,11 +257,11 @@ stack_stash_add_trace (StackStash *stash,
 
 static void
 do_callback (StackNode *node,
-	     GList *trace,
+	     StackLink *trace,
 	     StackFunction func,
 	     gpointer data)
 {
-    GList link;
+    StackLink link;
 
     if (trace)
 	trace->prev = &link;
@@ -252,7 +271,7 @@ do_callback (StackNode *node,
     
     while (node)
     {
-	link.data = node->address;
+	link.data = node->data;
 	
 	if (node->size)
 	    func (&link, node->size, data);
@@ -279,10 +298,10 @@ stack_node_foreach_trace (StackNode     *node,
 			  StackFunction  func,
 			  gpointer       data)
 {
-    GList link;
+    StackLink link;
 
     link.next = NULL;
-    link.data = node->address;
+    link.data = node->data;
     link.prev = NULL;
 
     if (node->size)
@@ -310,9 +329,11 @@ StackNode *
 stack_stash_find_node (StackStash      *stash,
 		       gpointer         data)
 {
+    uint64_t u64 = POINTER_TO_U64 (data);
+    
     g_return_val_if_fail (stash != NULL, NULL);
     
-    return g_hash_table_lookup (get_nodes_by_data (stash), data);
+    return g_hash_table_lookup (get_nodes_by_data (stash), &u64);
 }
 
 typedef struct

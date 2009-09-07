@@ -217,8 +217,13 @@ on_read (gpointer data)
 	}
 
 	if (!skip_samples || header->type != PERF_EVENT_SAMPLE)
+	{
+	    if (header->type == PERF_EVENT_SAMPLE)
+		collector->n_samples++;
+	    
 	    process_event (collector, (counter_event_t *)header);
-
+	}
+	
 	tail += header->size;
     }
 
@@ -422,7 +427,6 @@ process_sample (Collector      *collector,
 {
     uint64_t *ips;
     int n_ips;
-
     if (sample->n_ips == 0)
     {
 	ips = &sample->ip;
@@ -433,7 +437,7 @@ process_sample (Collector      *collector,
 	ips = sample->ips;
 	n_ips = sample->n_ips;
     }
-    
+
     tracker_add_sample (collector->tracker,
 			sample->pid, ips, n_ips);
 }

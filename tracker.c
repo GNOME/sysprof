@@ -5,6 +5,7 @@
 
 #include "tracker.h"
 #include "stackstash.h"
+#include "binfile.h"
 
 typedef struct new_process_t new_process_t;
 typedef struct new_map_t new_map_t;
@@ -13,10 +14,10 @@ typedef struct sample_t sample_t;
 struct tracker_t
 {
     StackStash *stash;
-    
-    size_t	 n_event_bytes;
-    size_t	 n_allocated_bytes;
-    uint8_t	*events;
+
+    size_t	n_event_bytes;
+    size_t	n_allocated_bytes;
+    uint8_t *	events;
 };
 
 typedef enum
@@ -37,7 +38,7 @@ struct new_map_t
 {
     event_type_t	type;
     int32_t		pid;
-    char		file_name[PATH_MAX];
+    char		filename[PATH_MAX];
     uint64_t		start;
     uint64_t		end;
     uint64_t		offset;
@@ -274,7 +275,7 @@ tracker_add_map (tracker_t * tracker,
 
     event.type = NEW_MAP;
     event.pid = pid;
-    COPY_STRING (event.file_name, filename);
+    COPY_STRING (event.filename, filename);
     event.start = start;
     event.end = end;
     event.offset = offset;
@@ -304,26 +305,135 @@ tracker_add_sample  (tracker_t *tracker,
 
 /*  */
 typedef struct state_t state_t;
+typedef struct process_t process_t;
+typedef struct map_t map_t;
+
+struct process_t
+{
+    pid_t       pid;
+
+    char *      comm;
+    char *      undefined;
+
+    GPtrArray *	maps;
+};
+
+struct map_t
+{
+    char *	filename;
+    uint64_t	start;
+    uint64_t	end;
+    uint64_t	offset;
+    uint64_t	inode;
+
+    BinFile *	bin_file;
+};
 
 struct state_t
 {
-    
+    GHashTable *processes_by_pid;
 };
 
 static void
-new_process (state_t *tracker, new_process_t *new_process)
+destroy_map (map_t *map)
 {
+    if (map->bin_file)
+	bin_file_free (map->bin_file);
     
+    g_free (map->filename);
+    g_free (map);
 }
 
 static void
-new_map (state_t *tracker, new_map_t *new_map)
+create_map (state_t *state, new_map_t *new_map)
 {
+    process_t *process;
+    map_t *map;
+    int i;
     
+    process = g_hash_table_lookup (
+	state->processes_by_pid, GINT_TO_POINTER (new_map->pid));
+
+    if (!process)
+	return;
+
+    map = g_new0 (map_t, 1);
+    map->filename = g_strdup (new_map->filename);
+    map->start = new_map->start;
+    map->end = new_map->end;
+    map->offset = new_map->offset;
+    map->inode = new_map->inode;
+
+    /* Remove existing maps that overlap the new one */
+    for (i = 0; i < process->maps->len; ++i)
+    {
+        map_t *m = process->maps->pdata[i];
+
+        if (m->start < map->end && m->end > map->start)
+        {
+            destroy_map (m);
+	    
+            g_ptr_array_remove_index (process->maps, i);
+        }
+    }
+
+    g_ptr_array_add (process->maps, map);
 }
 
 static void
-sample (state_t *tracker, sample_t *sample)
+destroy_process (process_t *process)
+{
+    int i;
+    
+    g_free (process->comm);
+    g_free (process->undefined);
+    
+    for (i = 0; i < process->maps->len; ++i)
+    {
+	map_t *map = process->maps->pdata[i];
+	
+	destroy_map (map);
+    }
+    
+    g_ptr_array_free (process->maps, TRUE);
+    g_free (process);
+}
+
+static void
+create_process (state_t *state, new_process_t *new_process)
+{
+    process_t *process = g_new0 (process_t, 1);
+
+    process->pid = new_process->pid;
+    process->comm = g_strdup (new_process->command_line);
+    process->undefined = NULL;
+    process->maps = g_ptr_array_new ();
+
+    g_hash_table_insert (
+	state->processes_by_pid, GINT_TO_POINTER (process->pid), process);
+}
+
+static void
+free_process (gpointer data)
+{
+    process_t *process = data;
+    
+    destroy_process (process);
+}
+
+static state_t *
+state_new (void)
+{
+    state_t *state = g_new0 (state_t, 1);
+
+    state->processes_by_pid =
+	g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, free_process);
+
+    return state;
+}    
+
+static void
+process_sample (state_t *tracker, sample_t *sample)
 {
 }
 
@@ -331,33 +441,39 @@ Profile *
 tracker_create_profile (tracker_t *tracker)
 {
     uint8_t *end = tracker->events + tracker->n_event_bytes;
+    StackStash *resolved_stash;
+    Profile *profile;
+    state_t *state;
     uint8_t *event;
-
+    
+    state = state_new ();
+    resolved_stash = stack_stash_new (g_free);
+    
     event = tracker->events;
     while (event < end)
     {
 	event_type_t type = *(event_type_t *)event;
-	new_process_t *new_process;
-	new_map_t *new_map;
-	sample_t *sample;
 
 	switch (type)
 	{
 	case NEW_PROCESS:
-	    
-	    
+	    create_process (state, (new_process_t *)event);
 	    break;
 	    
 	case NEW_MAP:
-
-	    
+	    create_map (state, (new_map_t *)event);
 	    break;
 	    
 	case SAMPLE:
-
-	    
+	    process_sample (state, (sample_t *)event);
 	    break;
 	}
 	
     }
+
+    profile = profile_new (resolved_stash);
+
+    stack_stash_unref (resolved_stash);
+
+    return profile;
 }

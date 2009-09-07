@@ -38,7 +38,7 @@
 #include "perf_counter.h"
 #include "barrier.h"
 
-#define N_PAGES 128		/* Number of pages in the ringbuffer */
+#define N_PAGES 32		/* Number of pages in the ringbuffer */
 
 typedef struct counter_t counter_t;
 typedef struct sample_event_t sample_event_t;
@@ -162,7 +162,10 @@ on_read (gpointer data)
 
 	if (header->size > head - tail)
 	{
-	    g_print ("asdf\n");
+	    /* The kernel did not generate a complete event.
+	     * I don't think that can happen, but we may as well
+	     * be paranoid.
+	     */
 	    break;
 	}
 

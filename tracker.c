@@ -8,6 +8,15 @@ typedef struct new_process_t new_process_t;
 typedef struct new_map_t new_map_t;
 typedef struct sample_t sample_t;
 
+struct tracker_t
+{
+    StackStash *stash;
+    
+    size_t	 n_event_bytes;
+    size_t	 n_allocated_bytes;
+    uint8_t	*events;
+};
+
 typedef enum
 {
     NEW_PROCESS,
@@ -38,13 +47,6 @@ struct sample_t
     event_type	type;
     int32_t	pid;
     StackNode *	trace;
-};
-
-struct tracker_t
-{
-    size_t	 n_event_bytes;
-    size_t	 n_allocated_bytes;
-    uint8_t	*events;
 };
 
 #define DEFAULT_SIZE	(1024 * 1024 * 4)
@@ -137,6 +139,13 @@ tracker_add_sample  (tracker_t *tracker,
 		     uint64_t  *ips,
 		     int        n_ips)
 {
+    sample_t event;
+
+    event.type = SAMPLE;
+    event.pid = pid;
+    event.trace = stack_stash_add_trace (tracker->stash, ips, n_ips, 1);
+
+    tracker_append (tracker, &event, sizeof (event));
 }
 
 Profile *

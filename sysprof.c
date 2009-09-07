@@ -25,6 +25,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "footreestore.h"
 #include "treeviewutils.h"
 #include "profile.h"
 #include "collector.h"
@@ -475,7 +476,7 @@ fill_main_list (Application *app)
 }
 
 static void
-add_node (GtkTreeStore      *store,
+add_node (FooTreeStore      *store,
 	  int                size,
 	  const GtkTreeIter *parent,
 	  ProfileDescendant *node)
@@ -484,10 +485,10 @@ add_node (GtkTreeStore      *store,
 
     if (!node)
 	return;
-
-    gtk_tree_store_insert (store, &iter, (GtkTreeIter *)parent, 0);
-
-    gtk_tree_store_set (store, &iter,
+    
+    foo_tree_store_insert (store, &iter, (GtkTreeIter *)parent, 0);
+    
+    foo_tree_store_set (store, &iter,
 			DESCENDANTS_NAME, node->name,
 			DESCENDANTS_SELF, 100 * (node->self)/(double)size,
 			DESCENDANTS_CUMULATIVE, 100 * (node->cumulative)/(double)size,
@@ -514,7 +515,7 @@ fill_descendants_tree (Application *app)
     }
 
     tree_store =
-	gtk_tree_store_new (4,
+	foo_tree_store_new (4,
 			    G_TYPE_STRING,
 			    G_TYPE_DOUBLE,
 			    G_TYPE_DOUBLE,

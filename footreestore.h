@@ -1,5 +1,4 @@
-/* gtktreestore.h
- * Copyright (C) 2000  Red Hat, Inc.,  Jonathan Blandford <jrb@redhat.com>
+/* Copyright (C) 2000  Red Hat, Inc.,  Jonathan Blandford <jrb@redhat.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,10 +20,9 @@
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
-#ifndef __GTK_TREE_STORE_H__
-#define __GTK_TREE_STORE_H__
+#ifndef __FOO_TREE_STORE_H__
+#define __FOO_TREE_STORE_H__
 
-#include <gdkconfig.h>
 #include <gtk/gtktreemodel.h>
 #include <gtk/gtktreesortable.h>
 #include <stdarg.h>
@@ -33,17 +31,17 @@
 G_BEGIN_DECLS
 
 
-#define GTK_TYPE_TREE_STORE			(gtk_tree_store_get_type ())
-#define GTK_TREE_STORE(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_TREE_STORE, GtkTreeStore))
-#define GTK_TREE_STORE_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_TREE_STORE, GtkTreeStoreClass))
-#define GTK_IS_TREE_STORE(obj)			(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_TREE_STORE))
-#define GTK_IS_TREE_STORE_CLASS(klass)		(G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_TREE_STORE))
-#define GTK_TREE_STORE_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TREE_STORE, GtkTreeStoreClass))
+#define FOO_TYPE_TREE_STORE			(foo_tree_store_get_type ())
+#define FOO_TREE_STORE(obj)			(G_TYPE_CHECK_INSTANCE_CAST ((obj), FOO_TYPE_TREE_STORE, FooTreeStore))
+#define FOO_TREE_STORE_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST ((klass), FOO_TYPE_TREE_STORE, FooTreeStoreClass))
+#define FOO_IS_TREE_STORE(obj)			(G_TYPE_CHECK_INSTANCE_TYPE ((obj), FOO_TYPE_TREE_STORE))
+#define FOO_IS_TREE_STORE_CLASS(klass)		(G_TYPE_CHECK_CLASS_TYPE ((klass), FOO_TYPE_TREE_STORE))
+#define FOO_TREE_STORE_GET_CLASS(obj)		(G_TYPE_INSTANCE_GET_CLASS ((obj), FOO_TYPE_TREE_STORE, FooTreeStoreClass))
 
-typedef struct _GtkTreeStore       GtkTreeStore;
-typedef struct _GtkTreeStoreClass  GtkTreeStoreClass;
+typedef struct _FooTreeStore       FooTreeStore;
+typedef struct _FooTreeStoreClass  FooTreeStoreClass;
 
-struct _GtkTreeStore
+struct _FooTreeStore
 {
   GObject parent;
 
@@ -61,7 +59,7 @@ struct _GtkTreeStore
   guint GSEAL (columns_dirty) : 1;
 };
 
-struct _GtkTreeStoreClass
+struct _FooTreeStoreClass
 {
   GObjectClass parent_class;
 
@@ -73,82 +71,82 @@ struct _GtkTreeStoreClass
 };
 
 
-GType         gtk_tree_store_get_type         (void) G_GNUC_CONST;
-GtkTreeStore *gtk_tree_store_new              (gint          n_columns,
+GType         foo_tree_store_get_type         (void) G_GNUC_CONST;
+FooTreeStore *foo_tree_store_new              (gint          n_columns,
 					       ...);
-GtkTreeStore *gtk_tree_store_newv             (gint          n_columns,
+FooTreeStore *foo_tree_store_newv             (gint          n_columns,
 					       GType        *types);
-void          gtk_tree_store_set_column_types (GtkTreeStore *tree_store,
+void          foo_tree_store_set_column_types (FooTreeStore *tree_store,
 					       gint          n_columns,
 					       GType        *types);
 
-/* NOTE: use gtk_tree_model_get to get values from a GtkTreeStore */
+/* NOTE: use gtk_tree_model_get to get values from a FooTreeStore */
 
-void          gtk_tree_store_set_value        (GtkTreeStore *tree_store,
+void          foo_tree_store_set_value        (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter,
 					       gint          column,
 					       GValue       *value);
-void          gtk_tree_store_set              (GtkTreeStore *tree_store,
+void          foo_tree_store_set              (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter,
 					       ...);
-void          gtk_tree_store_set_valuesv      (GtkTreeStore *tree_store,
+void          foo_tree_store_set_valuesv      (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter,
 					       gint         *columns,
 					       GValue       *values,
 					       gint          n_values);
-void          gtk_tree_store_set_valist       (GtkTreeStore *tree_store,
+void          foo_tree_store_set_valist       (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter,
 					       va_list       var_args);
-gboolean      gtk_tree_store_remove           (GtkTreeStore *tree_store,
+gboolean      foo_tree_store_remove           (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter);
-void          gtk_tree_store_insert           (GtkTreeStore *tree_store,
+void          foo_tree_store_insert           (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter,
 					       GtkTreeIter  *parent,
 					       gint          position);
-void          gtk_tree_store_insert_before    (GtkTreeStore *tree_store,
+void          foo_tree_store_insert_before    (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter,
 					       GtkTreeIter  *parent,
 					       GtkTreeIter  *sibling);
-void          gtk_tree_store_insert_after     (GtkTreeStore *tree_store,
+void          foo_tree_store_insert_after     (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter,
 					       GtkTreeIter  *parent,
 					       GtkTreeIter  *sibling);
-void          gtk_tree_store_insert_with_values (GtkTreeStore *tree_store,
+void          foo_tree_store_insert_with_values (FooTreeStore *tree_store,
 						 GtkTreeIter  *iter,
 						 GtkTreeIter  *parent,
 						 gint          position,
 						 ...);
-void          gtk_tree_store_insert_with_valuesv (GtkTreeStore *tree_store,
+void          foo_tree_store_insert_with_valuesv (FooTreeStore *tree_store,
 						  GtkTreeIter  *iter,
 						  GtkTreeIter  *parent,
 						  gint          position,
 						  gint         *columns,
 						  GValue       *values,
 						  gint          n_values);
-void          gtk_tree_store_prepend          (GtkTreeStore *tree_store,
+void          foo_tree_store_prepend          (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter,
 					       GtkTreeIter  *parent);
-void          gtk_tree_store_append           (GtkTreeStore *tree_store,
+void          foo_tree_store_append           (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter,
 					       GtkTreeIter  *parent);
-gboolean      gtk_tree_store_is_ancestor      (GtkTreeStore *tree_store,
+gboolean      foo_tree_store_is_ancestor      (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter,
 					       GtkTreeIter  *descendant);
-gint          gtk_tree_store_iter_depth       (GtkTreeStore *tree_store,
+gint          foo_tree_store_iter_depth       (FooTreeStore *tree_store,
 					       GtkTreeIter  *iter);
-void          gtk_tree_store_clear            (GtkTreeStore *tree_store);
-gboolean      gtk_tree_store_iter_is_valid    (GtkTreeStore *tree_store,
+void          foo_tree_store_clear            (FooTreeStore *tree_store);
+gboolean      foo_tree_store_iter_is_valid    (FooTreeStore *tree_store,
                                                GtkTreeIter  *iter);
-void          gtk_tree_store_reorder          (GtkTreeStore *tree_store,
+void          foo_tree_store_reorder          (FooTreeStore *tree_store,
                                                GtkTreeIter  *parent,
                                                gint         *new_order);
-void          gtk_tree_store_swap             (GtkTreeStore *tree_store,
+void          foo_tree_store_swap             (FooTreeStore *tree_store,
                                                GtkTreeIter  *a,
                                                GtkTreeIter  *b);
-void          gtk_tree_store_move_before      (GtkTreeStore *tree_store,
+void          foo_tree_store_move_before      (FooTreeStore *tree_store,
                                                GtkTreeIter  *iter,
                                                GtkTreeIter  *position);
-void          gtk_tree_store_move_after       (GtkTreeStore *tree_store,
+void          foo_tree_store_move_after       (FooTreeStore *tree_store,
                                                GtkTreeIter  *iter,
                                                GtkTreeIter  *position);
 
@@ -156,4 +154,4 @@ void          gtk_tree_store_move_after       (GtkTreeStore *tree_store,
 G_END_DECLS
 
 
-#endif /* __GTK_TREE_STORE_H__ */
+#endif /* __FOO_TREE_STORE_H__ */

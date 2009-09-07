@@ -47,17 +47,18 @@ typedef struct comm_event_t comm_event_t;
 typedef union counter_event_t counter_event_t;
 typedef void (* event_callback_t) (counter_event_t *event, gpointer data);
 
+static void process_event (Collector *collector, counter_event_t *event);
+
 struct counter_t
 {
+    Collector *				collector;
+    
     int					fd;
     struct perf_counter_mmap_page *	mmap_page;
     uint8_t *				data;
     
     uint64_t				tail;
     int					cpu;
-
-    event_callback_t			callback;
-    gpointer				user_data;
     
     GString *				partial;
 }; 
@@ -127,12 +128,54 @@ sysprof_perf_counter_open (struct perf_counter_attr *attr,
     return syscall (__NR_perf_counter_open, attr, pid, cpu, group_fd, flags);
 }
 
+
+static double
+timeval_to_ms (const GTimeVal *timeval)
+{
+    return (timeval->tv_sec * G_USEC_PER_SEC + timeval->tv_usec) / 1000.0;
+}
+
+static double
+time_diff (const GTimeVal *first,
+	   const GTimeVal *second)
+{
+    double first_ms = timeval_to_ms (first);
+    double second_ms = timeval_to_ms (second);
+    
+    return first_ms - second_ms;
+}
+
+#define RESET_DEAD_PERIOD 250
+
+static gboolean
+in_dead_period (Collector *collector)
+{
+    GTimeVal now;
+    double diff;
+
+    g_get_current_time (&now);
+    
+    diff = time_diff (&now, &collector->latest_reset);
+    
+    if (diff >= 0.0 && diff < RESET_DEAD_PERIOD)
+	return TRUE;
+    
+    return FALSE;
+}
+
 static void
 on_read (gpointer data)
 {
-    uint64_t head, tail;
     counter_t *counter = data;
     int mask = (N_PAGES * process_get_page_size() - 1);
+    gboolean skip_samples;
+    Collector *collector;
+    uint64_t head, tail;
+    gboolean first;
+
+    collector = counter->collector;
+    first = collector->n_samples == 0;
+    
 #if 0
     int n_bytes = mask + 1;
     int x;
@@ -155,6 +198,8 @@ on_read (gpointer data)
     x = g_random_int() & mask;
     g_assert (*(counter->data + x) == *(counter->data + x + n_bytes));
 #endif
+
+    skip_samples = in_dead_period (collector);
     
     while (head - tail >= sizeof (struct perf_event_header))
     {
@@ -169,13 +214,17 @@ on_read (gpointer data)
 	    break;
 	}
 
-	counter->callback ((counter_event_t *)header, counter->user_data);
+	if (!skip_samples || header->type != PERF_EVENT_SAMPLE)
+	    process_event (collector, (counter_event_t *)header);
 
 	tail += header->size;
     }
 
     counter->tail = tail;
     counter->mmap_page->data_tail = tail;
+
+    if (collector->callback)
+	collector->callback (first, collector->data);
 }
 
 /* FIXME: return proper errors */
@@ -218,9 +267,8 @@ map_buffer (counter_t *counter)
 }
 
 static counter_t *
-counter_new (int	      cpu,
-	     event_callback_t callback,
-	     gpointer	      data)
+counter_new (Collector *collector,
+	     int	cpu)
 {
     struct perf_counter_attr attr;
     counter_t *counter;
@@ -249,6 +297,7 @@ counter_new (int	      cpu,
 	return NULL;
     }
 
+    counter->collector = collector;
     counter->fd = fd;
 
     counter->mmap_page = map_buffer (counter);
@@ -263,8 +312,6 @@ counter_new (int	      cpu,
     counter->tail = 0;
     counter->cpu = cpu;
     counter->partial = g_string_new (NULL);
-    counter->callback = callback;
-    counter->user_data = data;
     
     fd_add_watch (fd, counter);
     fd_set_read_callback (fd, on_read);
@@ -323,40 +370,6 @@ collector_new (CollectorFunc callback,
     return collector;
 }
 
-static double
-timeval_to_ms (const GTimeVal *timeval)
-{
-    return (timeval->tv_sec * G_USEC_PER_SEC + timeval->tv_usec) / 1000.0;
-}
-
-static double
-time_diff (const GTimeVal *first,
-	   const GTimeVal *second)
-{
-    double first_ms = timeval_to_ms (first);
-    double second_ms = timeval_to_ms (second);
-    
-    return first_ms - second_ms;
-}
-
-#define RESET_DEAD_PERIOD 250
-
-static gboolean
-in_dead_period (Collector *collector)
-{
-    GTimeVal now;
-    double diff;
-
-    g_get_current_time (&now);
-    
-    diff = time_diff (&now, &collector->latest_reset);
-    
-    if (diff >= 0.0 && diff < RESET_DEAD_PERIOD)
-	return TRUE;
-
-    return FALSE;
-}
-
 static void
 process_mmap (Collector *collector,
 	      mmap_event_t *mmap)
@@ -388,7 +401,6 @@ process_sample (Collector *collector,
 		sample_event_t *sample)
 {
     Process *process = process_get_from_pid (sample->pid);
-    gboolean first = collector->n_samples == 0;
     uint64_t context = 0;
     uint64_t addrs_stack[2048];
     uint64_t *addrs;
@@ -440,20 +452,14 @@ process_sample (Collector *collector,
     
     collector->n_samples++;
 
-    if (collector->callback)
-	collector->callback (first, collector->data);
-
     if (addrs != addrs_stack)
 	g_free (addrs);
 }
 
 static void
-on_event (counter_event_t *	event,
-	  gpointer		data)
-
+process_event (Collector *collector,
+	       counter_event_t *	event)
 {
-    Collector *collector = data;
-    
     switch (event->header.type)
     {
     case PERF_EVENT_MMAP:
@@ -503,7 +509,7 @@ collector_start (Collector  *collector,
 
     for (i = 0; i < n_cpus; ++i)
     {
-	counter_t *counter = counter_new (i, on_event, collector);
+	counter_t *counter = counter_new (collector, i);
 
 	collector->counters = g_list_append (collector->counters, counter);
     }

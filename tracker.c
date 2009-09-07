@@ -79,6 +79,8 @@ tracker_new (void)
     tracker->n_allocated_bytes = DEFAULT_SIZE;
     tracker->events = g_malloc (DEFAULT_SIZE);
 
+    tracker->stash = stack_stash_new (NULL);
+    
     return tracker;
 }
 

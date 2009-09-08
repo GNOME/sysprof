@@ -6,6 +6,8 @@
 #include "tracker.h"
 #include "stackstash.h"
 #include "binfile.h"
+#include "elfparser.h"
+#include "perf_counter.h"
 
 typedef struct new_process_t new_process_t;
 typedef struct new_map_t new_map_t;
@@ -14,7 +16,7 @@ typedef struct sample_t sample_t;
 struct tracker_t
 {
     StackStash *stash;
-
+    
     size_t	n_event_bytes;
     size_t	n_allocated_bytes;
     uint8_t *	events;
@@ -54,41 +56,22 @@ struct sample_t
 
 #define DEFAULT_SIZE	(1024 * 1024 * 4)
 
-static void
-tracker_append (tracker_t *tracker,
-		void      *event,
-		int        n_bytes)
-{
-    if (tracker->n_allocated_bytes - tracker->n_event_bytes < n_bytes)
-    {
-	size_t new_size = tracker->n_allocated_bytes * 2;
-	
-	tracker->events = g_realloc (tracker->events, new_size);
-
-	tracker->n_allocated_bytes = new_size;
-    }
-
-    g_assert (tracker->n_allocated_bytes - tracker->n_event_bytes >= n_bytes);
-
-    memcpy (tracker->events + tracker->n_event_bytes, event, n_bytes);
-}
-
 static char **
 get_lines (const char *format, pid_t pid)
 {
     char *filename = g_strdup_printf (format, pid);
     char **result = NULL;
     char *contents;
-
+    
     if (g_file_get_contents (filename, &contents, NULL, NULL))
     {
         result = g_strsplit (contents, "\n", -1);
-
+	
         g_free (contents);
     }
-
+    
     g_free (filename);
-
+    
     return result;
 }
 
@@ -96,11 +79,11 @@ static void
 fake_new_process (tracker_t *tracker, pid_t pid)
 {
     char **lines;
-
+    
     if ((lines = get_lines ("/proc/%d/status", pid)))
     {
         int i;
-
+	
         for (i = 0; lines[i] != NULL; ++i)
         {
             if (strncmp ("Name:", lines[i], 5) == 0)
@@ -109,7 +92,7 @@ fake_new_process (tracker_t *tracker, pid_t pid)
                 break;
             }
         }
-
+	
         g_strfreev (lines);
     }
 }
@@ -118,11 +101,11 @@ static void
 fake_new_map (tracker_t *tracker, pid_t pid)
 {
     char **lines;
-
+    
     if ((lines = get_lines ("/proc/%d/maps", pid)))
     {
         int i;
-
+	
         for (i = 0; lines[i] != NULL; ++i)
         {
             char file[256];
@@ -131,13 +114,13 @@ fake_new_map (tracker_t *tracker, pid_t pid)
             gulong offset;
             gulong inode;
             int count;
-
+	    
 	    file[255] = '\0';
 	    
             count = sscanf (
                 lines[i], "%lx-%lx %*15s %lx %*x:%*x %lu %255s",
                 &start, &end, &offset, &inode, file);
-
+	    
             if (count == 5)
             {
                 if (strcmp (file, "[vdso]") == 0)
@@ -151,11 +134,11 @@ fake_new_map (tracker_t *tracker, pid_t pid)
                     offset = 0;
                     inode = 0;
                 }
-
+		
 		tracker_add_map (tracker, pid, start, end, offset, inode, file);
             }
         }
-
+	
         g_strfreev (lines);
     }
 }
@@ -165,24 +148,24 @@ populate_from_proc (tracker_t *tracker)
 {
     GDir *proc = g_dir_open ("/proc", 0, NULL);
     const char *name;
-
+    
     if (!proc)
         return;
-
+    
     while ((name = g_dir_read_name (proc)))
     {
         pid_t pid;
         char *end;
-
+	
         pid = strtol (name, &end, 10);
-
+	
         if (*end == 0)
         {
 	    fake_new_process (tracker, pid);
 	    fake_new_map (tracker, pid);
 	}
     }
-
+    
     g_dir_close (proc);
 }
 
@@ -207,21 +190,21 @@ tracker_t *
 tracker_new (void)
 {
     tracker_t *tracker = g_new0 (tracker_t, 1);
-
+    
     tracker->n_event_bytes = 0;
     tracker->n_allocated_bytes = DEFAULT_SIZE;
     tracker->events = g_malloc (DEFAULT_SIZE);
-
+    
     tracker->stash = stack_stash_new (NULL);
-
+    
     GTimeVal before, after;
-
+    
     g_get_current_time (&before);
     
     populate_from_proc (tracker);
-
+    
     g_get_current_time (&after);
-
+    
     g_print ("Time to populate %f\n", time_diff (&after, &before));
     
     return tracker;
@@ -242,7 +225,28 @@ tracker_free (tracker_t *tracker)
 	dest[sizeof (dest) - 1] = 0;					\
     }									\
     while (0)
+
+
+static void
+tracker_append (tracker_t *tracker,
+		void      *event,
+		int        n_bytes)
+{
+    if (tracker->n_allocated_bytes - tracker->n_event_bytes < n_bytes)
+    {
+	size_t new_size = tracker->n_allocated_bytes * 2;
+	
+	tracker->events = g_realloc (tracker->events, new_size);
+	
+	tracker->n_allocated_bytes = new_size;
+    }
     
+    g_assert (tracker->n_allocated_bytes - tracker->n_event_bytes >= n_bytes);
+    
+    memcpy (tracker->events + tracker->n_event_bytes, event, n_bytes);
+
+    tracker->n_event_bytes += n_bytes;
+}
 
 void
 tracker_add_process (tracker_t * tracker,
@@ -250,13 +254,13 @@ tracker_add_process (tracker_t * tracker,
 		     const char *command_line)
 {
     new_process_t event;
-
+    
     event.type = NEW_PROCESS;
     event.pid = pid;
     COPY_STRING (event.command_line, command_line);
-
+    
     tracker_append (tracker, &event, sizeof (event));
-
+    
 #if 0
     g_print ("Added new process: %d (%s)\n", pid, command_line);
 #endif
@@ -272,7 +276,7 @@ tracker_add_map (tracker_t * tracker,
 		 const char *filename)
 {
     new_map_t event;
-
+    
     event.type = NEW_MAP;
     event.pid = pid;
     COPY_STRING (event.filename, filename);
@@ -280,9 +284,9 @@ tracker_add_map (tracker_t * tracker,
     event.end = end;
     event.offset = offset;
     event.inode = inode;
-
+    
     tracker_append (tracker, &event, sizeof (event));
-
+    
 #if 0
     g_print ("   Added new map: %d (%s)\n", pid, filename);
 #endif
@@ -295,11 +299,11 @@ tracker_add_sample  (tracker_t *tracker,
 		     int        n_ips)
 {
     sample_t event;
-
+    
     event.type = SAMPLE;
     event.pid = pid;
     event.trace = stack_stash_add_trace (tracker->stash, ips, n_ips, 1);
-
+    
     tracker_append (tracker, &event, sizeof (event));
 }
 
@@ -311,10 +315,10 @@ typedef struct map_t map_t;
 struct process_t
 {
     pid_t       pid;
-
+    
     char *      comm;
     char *      undefined;
-
+    
     GPtrArray *	maps;
 };
 
@@ -325,13 +329,15 @@ struct map_t
     uint64_t	end;
     uint64_t	offset;
     uint64_t	inode;
-
+    
     BinFile *	bin_file;
 };
 
 struct state_t
 {
     GHashTable *processes_by_pid;
+    GHashTable *unique_comms;
+    GHashTable *unique_symbols;
 };
 
 static void
@@ -353,22 +359,22 @@ create_map (state_t *state, new_map_t *new_map)
     
     process = g_hash_table_lookup (
 	state->processes_by_pid, GINT_TO_POINTER (new_map->pid));
-
+    
     if (!process)
 	return;
-
+    
     map = g_new0 (map_t, 1);
     map->filename = g_strdup (new_map->filename);
     map->start = new_map->start;
     map->end = new_map->end;
     map->offset = new_map->offset;
     map->inode = new_map->inode;
-
+    
     /* Remove existing maps that overlap the new one */
     for (i = 0; i < process->maps->len; ++i)
     {
         map_t *m = process->maps->pdata[i];
-
+	
         if (m->start < map->end && m->end > map->start)
         {
             destroy_map (m);
@@ -376,7 +382,7 @@ create_map (state_t *state, new_map_t *new_map)
             g_ptr_array_remove_index (process->maps, i);
         }
     }
-
+    
     g_ptr_array_add (process->maps, map);
 }
 
@@ -403,12 +409,12 @@ static void
 create_process (state_t *state, new_process_t *new_process)
 {
     process_t *process = g_new0 (process_t, 1);
-
+    
     process->pid = new_process->pid;
     process->comm = g_strdup (new_process->command_line);
     process->undefined = NULL;
     process->maps = g_ptr_array_new ();
-
+    
     g_hash_table_insert (
 	state->processes_by_pid, GINT_TO_POINTER (process->pid), process);
 }
@@ -425,16 +431,438 @@ static state_t *
 state_new (void)
 {
     state_t *state = g_new0 (state_t, 1);
-
+    
     state->processes_by_pid =
-	g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, free_process);
-
+	g_hash_table_new_full (g_direct_hash, g_direct_equal,
+			       NULL, free_process);
+    
+    state->unique_symbols = g_hash_table_new (g_direct_hash, g_direct_equal);
+    state->unique_comms = g_hash_table_new (g_str_hash, g_str_equal);
+    
     return state;
 }    
 
-static void
-process_sample (state_t *tracker, sample_t *sample)
+typedef struct
 {
+    gulong	 address;
+    char	*name;
+} kernel_symbol_t;
+
+static void
+parse_kallsym_line (const char *line,
+		    GArray *table)
+{
+    char **tokens = g_strsplit_set (line, " \t", -1);
+    
+    if (tokens[0] && tokens[1] && tokens[2])
+    {
+	glong address;
+	char *endptr;
+	
+	address = strtoul (tokens[0], &endptr, 16);
+	
+	if (*endptr == '\0'			&&
+	    (strcmp (tokens[1], "T") == 0	||
+	     strcmp (tokens[1], "t") == 0))
+	{
+	    kernel_symbol_t sym;
+	    
+	    sym.address = address;
+	    sym.name = g_strdup (tokens[2]);
+	    
+	    g_array_append_val (table, sym);
+	}
+    }
+    
+    g_strfreev (tokens);
+}
+
+static gboolean
+parse_kallsyms (const char *kallsyms,
+		GArray     *table)
+{
+    const char *sol;
+    const char *eol;
+    
+    sol = kallsyms;
+    eol = strchr (sol, '\n');
+    while (eol)
+    {
+	char *line = g_strndup (sol, eol - sol);
+	
+	parse_kallsym_line (line, table);
+	
+	g_free (line);
+	
+	sol = eol + 1;
+	eol = strchr (sol, '\n');
+    }
+    
+    if (table->len <= 1)
+	return FALSE;
+    
+    return TRUE;
+}
+
+static int
+compare_syms (gconstpointer a, gconstpointer b)
+{
+    const kernel_symbol_t *sym_a = a;
+    const kernel_symbol_t *sym_b = b;
+    
+    if (sym_a->address > sym_b->address)
+	return 1;
+    else if (sym_a->address == sym_b->address)
+	return 0;
+    else
+	return -1;
+}
+
+static kernel_symbol_t *
+do_lookup (kernel_symbol_t *symbols,
+	   gulong        address,
+	   int           first,
+	   int           last)
+{
+    if (address >= symbols[last].address)
+    {
+	return &(symbols[last]);
+    }
+    else if (last - first < 3)
+    {
+	while (last >= first)
+	{
+	    if (address >= symbols[last].address)
+		return &(symbols[last]);
+	    
+	    last--;
+	}
+	
+	return NULL;
+    }
+    else
+    {
+	int mid = (first + last) / 2;
+	
+	if (symbols[mid].address > address)
+	    return do_lookup (symbols, address, first, mid);
+	else
+	    return do_lookup (symbols, address, mid, last);
+    }
+}
+
+static GArray *
+get_kernel_symbols (void)
+{
+    static GArray *kernel_syms;
+    static gboolean initialized = FALSE;
+    
+#if 0
+    find_kernel_binary();
+#endif
+    
+    if (!initialized)
+    {
+	char *kallsyms;
+	if (g_file_get_contents ("/proc/kallsyms", &kallsyms, NULL, NULL))
+	{
+	    if (kallsyms)
+	    {
+		kernel_syms = g_array_new (TRUE, TRUE, sizeof (kernel_symbol_t));
+		
+		if (parse_kallsyms (kallsyms, kernel_syms))
+		{
+		    g_array_sort (kernel_syms, compare_syms);
+		}
+		else
+		{
+		    g_array_free (kernel_syms, TRUE);
+		    kernel_syms = NULL;
+		}
+	    }
+	    
+	    g_free (kallsyms);
+	}
+	
+	if (!kernel_syms)
+	    g_print ("Warning: /proc/kallsyms could not be "
+		     "read. Kernel symbols will not be available\n");
+	
+	initialized = TRUE;
+    }
+    
+    return kernel_syms;
+}
+
+const char *
+lookup_kernel_symbol (gulong address)
+{
+    kernel_symbol_t *result;
+    GArray *ksyms = get_kernel_symbols ();
+    
+    if (ksyms->len == 0)
+	return NULL;
+    
+    result = do_lookup ((kernel_symbol_t *)ksyms->data, address, 0, ksyms->len - 1);
+    
+    return result? result->name : NULL;
+}
+
+/* Note that 'unique_symbols' is a direct_hash table. Ie., we
+ * rely on the address of symbol strings being different for different
+ * symbols.
+ */
+static char *
+unique_dup (GHashTable *unique_symbols, const char *sym)
+{
+    char *result;
+    
+    result = g_hash_table_lookup (unique_symbols, sym);
+    if (!result)
+    {
+	result = elf_demangle (sym);
+	g_hash_table_insert (unique_symbols, (char *)sym, result);
+    }
+    
+    return result;
+}
+
+static map_t *
+process_locate_map (process_t *process, gulong addr)
+{
+    int i;
+    
+    for (i = 0; i < process->maps->len; ++i)
+    {
+	map_t *map = process->maps->pdata[i];
+	
+	if (addr >= map->start && addr < map->end)
+	    return map;
+    }
+    
+    return NULL;
+}
+
+const char *
+lookup_user_symbol (process_t *process, gulong address)
+{
+    static const char *const kernel = "[kernel]";
+    const BinSymbol *result;
+    map_t *map = process_locate_map (process, address);
+    
+#if 0
+    g_print ("addr: %x\n", address);
+#endif
+    
+    if (address == 0x1)
+    {
+	return kernel;
+    }
+    else if (!map)
+    {
+	if (!process->undefined)
+	{
+	    process->undefined =
+		g_strdup_printf ("No map (%s)", process->comm);
+	}
+	
+	return process->undefined;
+    }
+    
+#if 0
+    if (strcmp (map->filename, "/home/ssp/sysprof/sysprof") == 0)
+    {
+	g_print ("YES\n");
+	
+	g_print ("map address: %lx\n", map->start);
+	g_print ("map offset: %lx\n", map->offset);
+	g_print ("address before: %lx  (%s)\n", address, map->filename);
+    }
+    
+    g_print ("address before: \n");
+#endif
+    
+#if 0
+    g_print ("%s is mapped at %lx + %lx\n", map->filename, map->start, map->offset);
+    g_print ("incoming address: %lx\n", address);
+#endif
+    
+    address -= map->start;
+    address += map->offset;
+    
+#if 0
+    if (strcmp (map->filename, "[vdso]") == 0)
+    {
+	g_print ("address after: %lx\n", address);
+    }
+#endif
+    
+    if (!map->bin_file)
+	map->bin_file = bin_file_new (map->filename);
+    
+/*     g_print ("%s: start: %p, load: %p\n", */
+/* 	     map->filename, map->start, bin_file_get_load_address (map->bin_file)); */
+    
+    if (!bin_file_check_inode (map->bin_file, map->inode))
+    {
+	/* If the inodes don't match, it's probably because the
+	 * file has changed since the process was started. Just return
+	 * the undefined symbol in that case.
+	 */
+	address = 0x0;
+    }
+    
+    result = bin_file_lookup_symbol (map->bin_file, address);
+    
+#if 0
+    g_print (" ---> %s\n", result->name);
+#endif
+    
+/*     g_print ("(%x) %x %x name; %s\n", address, map->start,
+ *		map->offset, result->name);
+ */
+    
+#if 0
+    g_print ("name: %s (in %s)\n", bin_symbol_get_name (map->bin_file, result), map->filename);
+    g_print ("  in addr: %lx\n", address);
+    g_print ("  out addr: %lx\n", bin_symbol_get_address (map->bin_file, result));
+    g_print ("  map start: %lx\n", map->start);
+    g_print ("  map offset: %lx\n", map->offset);
+#endif
+    
+    return bin_symbol_get_name (map->bin_file, result);
+}
+
+static char *
+lookup_symbol (state_t    *state,
+	       process_t  *process,
+	       uint64_t    address,
+	       gboolean    kernel)
+{
+    const char *sym;
+    
+    g_assert (process);
+    
+    if (kernel)
+    {
+	sym = lookup_kernel_symbol (address);
+    }
+    else
+    {
+	sym = lookup_user_symbol (process, address);
+    }
+    
+    if (sym)
+	return unique_dup (state->unique_symbols, sym);
+    else
+	return NULL;
+}
+
+typedef struct context_info_t context_info_t;
+struct context_info_t
+{
+    enum perf_callchain_context	context;
+    char			name[32];
+};    
+
+static const context_info_t context_info[] =
+{
+    { PERF_CONTEXT_HV,			"- - hypervisor - -" },
+    { PERF_CONTEXT_KERNEL,		"- - kernel - -" },
+    { PERF_CONTEXT_USER,		"- - user - - " },
+    { PERF_CONTEXT_GUEST,		"- - guest - - " },
+    { PERF_CONTEXT_GUEST_KERNEL,	"- - guest kernel - -" },
+    { PERF_CONTEXT_GUEST_USER,		"- - guest user - -" },
+};
+
+static const char *const everything = "[Everything]";
+
+static const context_info_t *
+get_context_info (enum perf_callchain_context context)
+{
+    int i;
+    
+    for (i = 0; i < sizeof (context_info) / sizeof (context_info[0]); ++i)
+    {
+	const context_info_t *info = &context_info[i];
+	
+	if (info->context == context)
+	    return info;
+    }
+    
+    return NULL;
+}
+
+static void
+process_sample (state_t *state, StackStash *resolved, sample_t *sample)
+{
+    const context_info_t *context = NULL;
+    uint64_t *resolved_traces;
+    process_t *process;
+    StackNode *n;
+    int len;
+
+    process = g_hash_table_lookup (
+	state->processes_by_pid, GINT_TO_POINTER (sample->pid));
+    
+    if (!process)
+    {
+	g_warning ("sample for unknown process %d\n", sample->pid);
+	return;
+    }
+    
+    len = 4;
+    for (n = sample->trace; n != NULL; n = n->parent)
+	len++;
+    
+    resolved_traces = g_new (uint64_t, len);
+    
+    len = 0;
+    for (n = sample->trace; n != NULL; n = n->parent)
+    {
+	uint64_t address = n->data;
+	const context_info_t *new_context;
+	const char *symbol;
+	
+	new_context = get_context_info (address);
+	if (new_context)
+	{
+	    if (context)
+		symbol = context->name;
+	    else
+		symbol = NULL;
+	    
+	    context = new_context;
+	}
+	else
+	{
+	    gboolean kernel = context && context->context == PERF_CONTEXT_KERNEL;
+	    
+	    symbol = lookup_symbol (state, process, address, kernel);
+	}
+	
+	if (symbol)
+	    resolved_traces[len++] = POINTER_TO_U64 (symbol);
+    }
+    char *cmdline;
+
+    cmdline = g_hash_table_lookup (
+	state->unique_comms, process->comm);
+    
+    if (!cmdline)
+    {
+	cmdline = g_strdup (process->comm);
+
+	g_hash_table_insert (state->unique_comms, cmdline, cmdline);
+    }
+    
+    resolved_traces[len++] = POINTER_TO_U64 (cmdline);
+    resolved_traces[len++] = POINTER_TO_U64 (
+	unique_dup (state->unique_symbols, everything));
+
+    stack_stash_add_trace (resolved, resolved_traces, len, 1);
+
+    g_free (resolved_traces);
 }
 
 Profile *
@@ -453,27 +881,29 @@ tracker_create_profile (tracker_t *tracker)
     while (event < end)
     {
 	event_type_t type = *(event_type_t *)event;
-
+	
 	switch (type)
 	{
 	case NEW_PROCESS:
 	    create_process (state, (new_process_t *)event);
+	    event += sizeof (new_process_t);
 	    break;
 	    
 	case NEW_MAP:
 	    create_map (state, (new_map_t *)event);
+	    event += sizeof (new_map_t);
 	    break;
 	    
 	case SAMPLE:
-	    process_sample (state, (sample_t *)event);
+	    process_sample (state, resolved_stash, (sample_t *)event);
+	    event += sizeof (sample_t);
 	    break;
 	}
-	
     }
 
     profile = profile_new (resolved_stash);
-
+    
     stack_stash_unref (resolved_stash);
-
+    
     return profile;
 }

@@ -513,7 +513,6 @@ collector_start (Collector  *collector,
      * starting collection, so the parsing doesn't interfere
      * with the profiling.
      */
-    process_is_kernel_address (0);
 
     for (list = collector->counters; list != NULL; list = list->next)
 	counter_enable (list->data);
@@ -710,6 +709,8 @@ resolve_symbols (StackLink *trace, gint size, gpointer data)
 Profile *
 collector_create_profile (Collector *collector)
 {
+    return tracker_create_profile (collector->tracker);
+    
     ResolveInfo info;
     Profile *profile;
 

@@ -237,7 +237,8 @@ on_read (gpointer data)
 /* FIXME: return proper errors */
 #define fail(x)								\
     do {								\
-	g_printerr ("the fail is strong %s\n", x);			\
+	g_printerr ("the fail is ");					\
+	perror (x);							\
 	exit (-1);							\
     } while (0)
 
@@ -404,6 +405,8 @@ collector_new (CollectorFunc callback,
 static void
 process_mmap (Collector *collector, mmap_event_t *mmap)
 {
+    g_print ("%d %d => %s at %llx\n", mmap->pid, mmap->tid, mmap->filename, mmap->addr);
+    
     tracker_add_map (collector->tracker,
 		     mmap->pid,
 		     mmap->addr,

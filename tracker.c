@@ -287,9 +287,7 @@ tracker_add_map (tracker_t * tracker,
     
     tracker_append (tracker, &event, sizeof (event));
     
-#if 0
-    g_print ("   Added new map: %d (%s)\n", pid, filename);
-#endif
+    g_print ("   Added new map: %d (%s) %llx -- %llx \n", pid, filename, start, end);
 }
 
 void
@@ -644,7 +642,7 @@ process_locate_map (process_t *process, gulong addr)
 }
 
 const char *
-lookup_user_symbol (process_t *process, gulong address)
+lookup_user_symbol (process_t *process, uint64_t address)
 {
     static const char *const kernel = "[kernel]";
     const BinSymbol *result;
@@ -662,6 +660,8 @@ lookup_user_symbol (process_t *process, gulong address)
     {
 	if (!process->undefined)
 	{
+	    g_print ("no map for %llx in %d (%s)\n", address, process->pid, process->comm);
+	    
 	    process->undefined =
 		g_strdup_printf ("No map (%s)", process->comm);
 	}
@@ -807,7 +807,12 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
     
     if (!process)
     {
-	g_warning ("sample for unknown process %d\n", sample->pid);
+	static gboolean warned;
+	if (!warned)
+	{
+	    g_warning ("sample for unknown process %d", sample->pid);
+	    warned = TRUE;
+	}
 	return;
     }
     

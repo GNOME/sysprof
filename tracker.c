@@ -104,6 +104,7 @@ fake_new_process (tracker_t *tracker, pid_t pid)
 	if (lines[0] && strlen (lines[0]) > 0)
 	{
 	    tracker_add_process (tracker, pid, lines[0]);
+
 	    done = TRUE;
 	}
 
@@ -131,6 +132,9 @@ fake_new_process (tracker_t *tracker, pid_t pid)
 
 	g_strfreev (lines);
     }
+
+    if (!done)
+	g_print ("failed to fake %d\n", pid);
 }
 
 static void
@@ -460,6 +464,8 @@ create_process (state_t *state, new_process_t *new_process)
     process->pid = new_process->pid;
     process->comm = g_strdup (new_process->command_line);
     process->maps = g_ptr_array_new ();
+
+    g_print ("new comm process %d\n", new_process->pid);
     
     g_hash_table_insert (
 	state->processes_by_pid, GINT_TO_POINTER (process->pid), process);
@@ -482,7 +488,9 @@ process_fork (state_t *state, fork_t *fork)
     process_t *parent = g_hash_table_lookup (
 	state->processes_by_pid, GINT_TO_POINTER (fork->pid));
 
+#if 0
     if (parent)
+#endif
     {
 	process_t *process = g_new0 (process_t, 1);
 	int i;
@@ -490,26 +498,33 @@ process_fork (state_t *state, fork_t *fork)
 	g_print ("new child %d\n", fork->child_pid);
 	
 	process->pid = fork->child_pid;
-	process->comm = g_strdup (parent->comm);
+	process->comm = g_strdup (parent? parent->comm : "<unknown>");
 	process->maps = g_ptr_array_new ();
-
-	for (i = 0; i < parent->maps->len; ++i)
+	
+	if (parent)
 	{
-	    map_t *map = copy_map (parent->maps->pdata[i]);
-	    
-	    g_ptr_array_add (process->maps, map);
+	    for (i = 0; i < parent->maps->len; ++i)
+	    {
+		map_t *map = copy_map (parent->maps->pdata[i]);
+		
+		g_ptr_array_add (process->maps, map);
+	    }
 	}
-
+	
 	g_hash_table_insert (
 	    state->processes_by_pid, GINT_TO_POINTER (process->pid), process);
     }
+#if 0
     else
 	g_print ("no parent for %d\n", fork->child_pid);
+#endif
 }
 
 static void
 process_exit (state_t *state, exit_t *exit)
 {
+    g_print ("Exit for %d\n", exit->pid);
+    
     /* ignore for now */
 }
 
@@ -989,7 +1004,7 @@ tracker_create_profile (tracker_t *tracker)
 	    break;
 
 	case EXIT:
-	    process_exit (state, (exit_t *)exit);
+	    process_exit (state, (exit_t *)event);
 	    event += sizeof (exit_t);
 	    break;
 	    

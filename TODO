@@ -23,14 +23,30 @@ Before 1.0.4:
 
 Before 1.2:
 
+* How to deal with forks and mmaps seemingly happening after
+  samples. This can happen when a process migrates between CPUs.
+  There doesn't seem to be any way to get this information in a
+  guaranteed correct way.
+
+* How to deal with processes that exit before we can get their maps?
+  
+  Such a process can never cause events itself, but it may fork a
+  child that does. There is no way to get the maps for that child. A
+  possible solution would be to optionally generate mmap event after
+  forks. Userspace would turn this off when it was done with the
+  initial gathering of processes.
+
+* Find out why the busy cursor stays active after you hit start
+
 * Kernel binary when available, is better than kallsyms.
 
 * Hack around gtk+ bug where it mispositions the window.
 
-* Counters must not be destroyed during tracker setup. They have to exist
-  but be disabled so that we can track creation of processes.
+* Counters must not be destroyed during tracker setup. They have to
+  exist but be disabled so that we can track creation of processes.
 
-* Check that we don't use too much memory (in particular with the timeline).
+* Check that we don't use too much memory (in particular with the
+  timeline).
 
 * Fix names. "new process" is really "exec"
 
@@ -49,8 +65,8 @@ Before 1.2:
 
 * Get rid of process.c
 
-* On 32 bit, NMI stackframes are not filtered out which leads to 
-  wrong kernel traces
+* On 32 bit, NMI stackframes are not filtered out which leads to wrong
+  kernel traces
 
 * Can we track kernel modules being inserted/removed?
 
@@ -66,7 +82,7 @@ Before 1.2:
 * Sometimes it get samples for unknown processes. This may be due to
   forking without execing.
 
-* Give an informative error message if run as root
+* Give an informative error message if not run as root
 
 * What are the events generated for pid 0 and pid 1? They have no
   stacktrace, and an eip in the kernel.
@@ -75,13 +91,13 @@ Before 1.2:
   32 bits vs 64 bits. Or use C++ like behdad does in harfbuzz?
 
 * We often get "No map". I suspect this is because the vdso stackframe
-  is broken.
+  is strange.
 
 * Find out why gtk_tree_view_columns_autosize() apparently doesn't
   work on empty tree views.
 
 * Write my own tree model? There is still performance issues in
-  footreestore.
+  FooTreeStore.
 
 * Hack to disable recursion for binaries without symbols causes the
   symbols to not work the way other symbols do.  A better approach is

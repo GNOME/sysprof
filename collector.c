@@ -48,7 +48,9 @@ typedef struct exit_event_t exit_event_t;
 typedef struct fork_event_t fork_event_t;
 typedef union counter_event_t counter_event_t;
 
-static void process_event (Collector *collector, counter_event_t *event);
+static void process_event (Collector *collector,
+			   counter_t *counter,
+			   counter_event_t *event);
 
 struct counter_t
 {
@@ -254,7 +256,7 @@ on_read (gpointer data)
 	    if (header->type == PERF_EVENT_SAMPLE)
 		collector->n_samples++;
 	    
-	    process_event (collector, (counter_event_t *)header);
+	    process_event (collector, counter, (counter_event_t *)header);
 	}
 	
 	tail += header->size;
@@ -332,12 +334,9 @@ counter_new (Collector *collector,
     attr.wakeup_events = 100000;
     attr.disabled = TRUE;
 
-    if (cpu == 0)
-    {
-	attr.mmap = 1;
-	attr.comm = 1;
-	attr.task = 1;
-    }
+    attr.mmap = 1;
+    attr.comm = 1;
+    attr.task = 1;
     
     fd = sysprof_perf_counter_open (&attr, -1, cpu, -1,  0);
     
@@ -376,6 +375,12 @@ counter_enable (counter_t *counter)
 }
 
 static void
+counter_disable (counter_t *counter)
+{
+    ioctl (counter->fd, PERF_COUNTER_IOC_DISABLE);
+}
+
+static void
 counter_free (counter_t *counter)
 {
     munmap (counter->mmap_page, (N_PAGES + 1) * get_page_size());
@@ -390,29 +395,64 @@ counter_free (counter_t *counter)
 /*
  * Collector
  */
+static void
+enable_counters (Collector *collector)
+{
+    GList *list;
+
+    for (list = collector->counters; list != NULL; list = list->next)
+    {
+	counter_t *counter = list->data;
+
+	counter_enable (counter);
+    }
+}
+
+static void
+disable_counters (Collector *collector)
+{
+    GList *list;
+
+    for (list = collector->counters; list != NULL; list = list->next)
+    {
+	counter_t *counter = list->data;
+	
+	counter_disable (counter);
+    }
+}
+
 void
 collector_reset (Collector *collector)
 {
-    gboolean restart = FALSE;
-    
+    /* Disable the counters so that we won't track
+     * the activity of tracker_free()/tracker_new()
+     *
+     * They will still record fork/mmap/etc. so
+     * we can keep an accurate log of process creation
+     */
     if (collector->counters)
     {
-	collector_stop (collector);
-	restart = TRUE;
+	g_print ("disable counters\n");
+	
+	disable_counters (collector);
     }
     
     if (collector->tracker)
     {
 	tracker_free (collector->tracker);
-	collector->tracker = NULL;
+	collector->tracker = tracker_new ();
     }
 
     collector->n_samples = 0;
     
     g_get_current_time (&collector->latest_reset);
 
-    if (restart)
-	collector_start (collector, NULL);
+    if (collector->counters)
+    {
+	g_print ("enable counters\n");
+	
+	enable_counters (collector);
+    }
 }
 
 /* callback is called whenever a new sample arrives */
@@ -446,7 +486,7 @@ process_mmap (Collector *collector, mmap_event_t *mmap)
 static void
 process_comm (Collector *collector, comm_event_t *comm)
 {
-    g_print ("comm: pid: %d\n", comm->pid);
+    g_print ("pid, tid: %d %d", comm->pid, comm->tid);
     
     tracker_add_process (collector->tracker,
 			 comm->pid,
@@ -456,7 +496,8 @@ process_comm (Collector *collector, comm_event_t *comm)
 static void
 process_fork (Collector *collector, fork_event_t *fork)
 {
-    g_print ("fork: ppid: %d  pid: %d\n", fork->ppid, fork->pid);
+    g_print ("ppid: %d  pid: %d   ptid: %d  tid %d",
+	     fork->ppid, fork->pid, fork->ptid, fork->tid);
     
     tracker_add_fork (collector->tracker, fork->ppid, fork->pid);
 }
@@ -464,6 +505,8 @@ process_fork (Collector *collector, fork_event_t *fork)
 static void
 process_exit (Collector *collector, exit_event_t *exit)
 {
+    g_print ("for %d %d", exit->pid, exit->tid);
+    
     tracker_add_exit (collector->tracker, exit->pid);
 }
 
@@ -474,6 +517,8 @@ process_sample (Collector      *collector,
     uint64_t *ips;
     int n_ips;
 
+    g_print ("pid, tid: %d %d", sample->pid, sample->tid);
+    
     if (sample->n_ips == 0)
     {
 	uint64_t trace[3];
@@ -508,8 +553,27 @@ process_sample (Collector      *collector,
 
 static void
 process_event (Collector       *collector,
+	       counter_t       *counter,
 	       counter_event_t *event)
 {
+    char *name;
+    
+    switch (event->header.type)
+    {
+    case PERF_EVENT_MMAP: name = "mmap"; break;
+    case PERF_EVENT_LOST: name = "lost"; break;
+    case PERF_EVENT_COMM: name = "comm"; break;
+    case PERF_EVENT_EXIT: name = "exit"; break;
+    case PERF_EVENT_THROTTLE: name = "throttle"; break;
+    case PERF_EVENT_UNTHROTTLE: name = "unthrottle"; break;
+    case PERF_EVENT_FORK: name = "fork"; break;
+    case PERF_EVENT_READ: name = "read"; break;
+    case PERF_EVENT_SAMPLE: name = "samp"; break;
+    default: name = "unknown"; break;
+    }
+
+    g_print ("cpu %d  ::  %s   :: ", counter->cpu, name);
+    
     switch (event->header.type)
     {
     case PERF_EVENT_MMAP:
@@ -545,10 +609,11 @@ process_event (Collector       *collector,
 	break;
 	
     default:
-	g_warning ("Got unknown event: %d (%d)\n",
-		   event->header.type, event->header.size);
+	g_warning ("unknown event: %d (%d)\n", event->header.type, event->header.size);
 	break;
     }
+
+    g_print ("\n");
 }
 
 gboolean
@@ -556,7 +621,6 @@ collector_start (Collector  *collector,
 		 GError    **err)
 {
     int n_cpus = get_n_cpus ();
-    GList *list;
     int i;
 
     if (!collector->tracker)
@@ -568,14 +632,8 @@ collector_start (Collector  *collector,
 
 	collector->counters = g_list_append (collector->counters, counter);
     }
-    
-    /* Hack to make sure we parse the kernel symbols before
-     * starting collection, so the parsing doesn't interfere
-     * with the profiling.
-     */
 
-    for (list = collector->counters; list != NULL; list = list->next)
-	counter_enable (list->data);
+    enable_counters (collector);
     
     return TRUE;
 }

@@ -326,8 +326,6 @@ struct map_t
     uint64_t	end;
     uint64_t	offset;
     uint64_t	inode;
-    
-    BinFile *	bin_file;
 };
 
 struct state_t
@@ -341,9 +339,6 @@ struct state_t
 static void
 destroy_map (map_t *map)
 {
-    if (map->bin_file)
-	bin_file_free (map->bin_file);
-    
     g_free (map->filename);
     g_free (map);
 }
@@ -440,6 +435,17 @@ state_new (void)
     
     return state;
 }    
+
+static void
+state_free (state_t *state)
+{
+    g_hash_table_destroy (state->processes_by_pid);
+    g_hash_table_destroy (state->unique_symbols);
+    g_hash_table_destroy (state->unique_comms);
+    g_hash_table_destroy (state->bin_files);
+    
+    g_free (state);
+}
 
 typedef struct
 {
@@ -708,15 +714,13 @@ lookup_symbol (state_t    *state,
 	}
 	else
 	{
+	    BinFile *bin_file = state_get_bin_file (state, map->filename);
 	    const BinSymbol *bin_sym;
 	    
 	    address -= map->start;
 	    address += map->offset;
-    
-	    if (!map->bin_file)
-		map->bin_file = state_get_bin_file (state, map->filename);
-    
-	    if (map->inode && !bin_file_check_inode (map->bin_file, map->inode))
+
+	    if (map->inode && !bin_file_check_inode (bin_file, map->inode))
 	    {
 		/* If the inodes don't match, it's probably because the
 		 * file has changed since the process was started.
@@ -725,9 +729,9 @@ lookup_symbol (state_t    *state,
 	    }
 	    else
 	    {
-		bin_sym = bin_file_lookup_symbol (map->bin_file, address);
+		bin_sym = bin_file_lookup_symbol (bin_file, address);
 		
-		sym = bin_symbol_get_name (map->bin_file, bin_sym);
+		sym = bin_symbol_get_name (bin_file, bin_sym);
 	    }
 	}
     }
@@ -879,7 +883,8 @@ tracker_create_profile (tracker_t *tracker)
     }
 
     profile = profile_new (resolved_stash);
-    
+
+    state_free (state);
     stack_stash_unref (resolved_stash);
     
     return profile;

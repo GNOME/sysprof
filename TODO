@@ -23,6 +23,8 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Hack around gtk+ bug where it mispositions the window.
+
 * Counters must not be destroyed during tracker setup. They have to exist
   but be disabled so that we can track creation of processes.
 

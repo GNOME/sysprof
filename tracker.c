@@ -295,8 +295,6 @@ tracker_add_process (tracker_t * tracker,
     COPY_STRING (event.command_line, command_line);
     
     tracker_append (tracker, &event, sizeof (event));
-    
-    g_print ("Added new process: %d (%s)\n", pid, command_line);
 }
 
 void

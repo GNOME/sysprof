@@ -237,7 +237,7 @@ on_read (gpointer data)
     skip_samples = in_dead_period (collector);
     
     while (head - tail >= sizeof (struct perf_event_header))
-    {
+    {	
 	struct perf_event_header *header = (void *)(counter->data + (tail & mask));
 
 	if (header->size > head - tail)
@@ -473,10 +473,28 @@ process_sample (Collector      *collector,
 {
     uint64_t *ips;
     int n_ips;
+
     if (sample->n_ips == 0)
     {
-	ips = &sample->ip;
-	n_ips = 1;
+	uint64_t trace[3];
+
+	if (sample->header.misc & PERF_EVENT_MISC_KERNEL)
+	{
+	    trace[0] = PERF_CONTEXT_KERNEL;
+	    trace[1] = sample->ip;
+	    trace[2] = PERF_CONTEXT_USER;
+
+	    ips = trace;
+	    n_ips = 3;
+	}
+	else
+	{
+	    trace[0] = PERF_CONTEXT_USER;
+	    trace[1] = sample->ip;
+
+	    ips = trace;
+	    n_ips = 2;
+	}
     }
     else
     {

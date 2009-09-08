@@ -23,7 +23,12 @@ Before 1.0.4:
 
 Before 1.2:
 
-* Make tracker creation faster 
+* Flash when double clicking in descendants view
+
+* Find out what's up with weird two-step flash when you hit start when
+  a profile is loaded.
+
+* Make tracker creation faster. (Faster populating mainly)
 
 * Share map reading code between vdso stuff in binfile.c and tracker.c
 

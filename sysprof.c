@@ -271,8 +271,6 @@ set_busy (GtkWidget *widget,
 
     if (cursor)
 	gdk_cursor_unref (cursor);
-
-    gdk_display_sync (gdk_display_get_default());
 }
 
 static void

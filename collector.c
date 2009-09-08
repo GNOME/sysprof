@@ -405,8 +405,6 @@ collector_new (CollectorFunc callback,
 static void
 process_mmap (Collector *collector, mmap_event_t *mmap)
 {
-    g_print ("%d %d => %s at %llx\n", mmap->pid, mmap->tid, mmap->filename, mmap->addr);
-    
     tracker_add_map (collector->tracker,
 		     mmap->pid,
 		     mmap->addr,
@@ -482,8 +480,8 @@ process_event (Collector       *collector,
 	break;
 	
     default:
-	g_print ("unknown event: %d (%d)\n",
-		 event->header.type, event->header.size);
+	g_warning ("Got unknown event: %d (%d)\n",
+		   event->header.type, event->header.size);
 	break;
     }
 }
@@ -496,8 +494,6 @@ collector_start (Collector  *collector,
     GList *list;
     int i;
 
-    g_print ("starting\n");
-	
     if (!collector->stash)
 	collector->stash = stack_stash_new (NULL);
     if (!collector->tracker)
@@ -519,8 +515,6 @@ collector_start (Collector  *collector,
 
     for (list = collector->counters; list != NULL; list = list->next)
 	counter_enable (list->data);
-
-    g_print ("started\n");
     
     return TRUE;
 }

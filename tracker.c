@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <glib/gprintf.h>
 
 #include "tracker.h"
 #include "stackstash.h"
@@ -88,7 +89,8 @@ fake_new_process (tracker_t *tracker, pid_t pid)
         {
             if (strncmp ("Name:", lines[i], 5) == 0)
             {
-		tracker_add_process (tracker, pid, g_strstrip (strchr (lines[i], ':')));
+		tracker_add_process (
+		    tracker, pid, g_strstrip (strchr (lines[i], ':') + 1));
                 break;
             }
         }
@@ -190,14 +192,13 @@ tracker_t *
 tracker_new (void)
 {
     tracker_t *tracker = g_new0 (tracker_t, 1);
+    GTimeVal before, after;
     
     tracker->n_event_bytes = 0;
     tracker->n_allocated_bytes = DEFAULT_SIZE;
     tracker->events = g_malloc (DEFAULT_SIZE);
     
     tracker->stash = stack_stash_new (NULL);
-    
-    GTimeVal before, after;
     
     g_get_current_time (&before);
     
@@ -286,8 +287,6 @@ tracker_add_map (tracker_t * tracker,
     event.inode = inode;
     
     tracker_append (tracker, &event, sizeof (event));
-    
-    g_print ("   Added new map: %d (%s) %llx -- %llx \n", pid, filename, start, end);
 }
 
 void
@@ -583,8 +582,10 @@ get_kernel_symbols (void)
 	}
 	
 	if (!kernel_syms)
+	{
 	    g_print ("Warning: /proc/kallsyms could not be "
 		     "read. Kernel symbols will not be available\n");
+	}
 	
 	initialized = TRUE;
     }
@@ -642,15 +643,26 @@ process_locate_map (process_t *process, gulong addr)
 }
 
 static const char *
-make_message (state_t *state, const char *message)
+make_message (state_t *state, const char *format, ...)
 {
-    char *result = g_hash_table_lookup (state->unique_comms, message);
+    va_list args;
+    char *message;
+    char *result;
 
-    if (!result)
+    va_start (args, format);
+    g_vasprintf (&message, format, args);
+    va_end (args);
+
+    result = g_hash_table_lookup (state->unique_comms, message);
+    if (result)
     {
-	result = g_strdup (message);
-
-	g_hash_table_insert (state->unique_comms, (char *)result, (char *)result);
+	g_free (message);
+    }
+    else
+    {
+	result = message;
+	
+	g_hash_table_insert (state->unique_comms, result, result);
     }
 
     return result;
@@ -676,11 +688,7 @@ lookup_symbol (state_t    *state,
     
 	if (!map)
 	{
-	    char *message = g_strdup_printf ("No map [%s]", process->comm);
-
-	    sym = make_message (state, message);
-
-	    g_free (message);
+	    sym = make_message (state, "No map [%s]", process->comm);
 	}
 	else
 	{
@@ -697,11 +705,7 @@ lookup_symbol (state_t    *state,
 		/* If the inodes don't match, it's probably because the
 		 * file has changed since the process was started.
 		 */
-		char *message = g_strdup_printf ("inode mismatch for %s", map->filename);
-
-		sym = make_message (state, message);
-
-		g_free (message);
+		sym = make_message (state, "%s: inode mismatch", map->filename);
 	    }
 	    else
 	    {
@@ -757,10 +761,10 @@ static void
 process_sample (state_t *state, StackStash *resolved, sample_t *sample)
 {
     const context_info_t *context = NULL;
+    const char *cmdline;
     uint64_t *resolved_traces;
     process_t *process;
     StackNode *n;
-    char *cmdline;
     int len;
 
     process = g_hash_table_lookup (
@@ -811,15 +815,7 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
 	    resolved_traces[len++] = POINTER_TO_U64 (symbol);
     }
 
-    cmdline = g_hash_table_lookup (
-	state->unique_comms, process->comm);
-    
-    if (!cmdline)
-    {
-	cmdline = g_strdup (process->comm);
-
-	g_hash_table_insert (state->unique_comms, cmdline, cmdline);
-    }
+    cmdline = make_message (state, "[%s]", process->comm);
     
     resolved_traces[len++] = POINTER_TO_U64 (cmdline);
     resolved_traces[len++] = POINTER_TO_U64 (

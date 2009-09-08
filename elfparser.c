@@ -432,6 +432,10 @@ read_table (ElfParser *parser,
 {
     int sym_size = bin_record_get_size (parser->sym_format);
     int i, n_symbols;
+
+#if 0
+    g_print ("elf: Reading table for %s\n", parser->filename? parser->filename : "<unknown>");
+#endif
     
     parser->n_symbols = sym_table->size / sym_size;
     parser->symbols = g_new (ElfSym, parser->n_symbols);
@@ -505,7 +509,12 @@ read_table (ElfParser *parser,
     
     parser->sym_strings = str_table->offset;
     parser->n_symbols = n_symbols;
-    parser->symbols = g_renew (ElfSym, parser->symbols, parser->n_symbols);
+
+    /* Allocate space for at least one symbol, so that parser->symbols will be
+     * non-NULL. If it ends up being NULL, we will be parsing the file over and
+     * over.
+     */
+    parser->symbols = g_renew (ElfSym, parser->symbols, parser->n_symbols + 1); 
     
     qsort (parser->symbols, parser->n_symbols, sizeof (ElfSym), compare_sym);
 }
@@ -583,7 +592,7 @@ elf_parser_lookup_symbol (ElfParser *parser,
     if (!parser->symbols)
     {
 #if 0
-	g_print ("reading symbols\n");
+	g_print ("reading symbols at %p\n", parser);
 #endif
 	read_symbols (parser);
     }

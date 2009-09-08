@@ -80,23 +80,39 @@ static void
 fake_new_process (tracker_t *tracker, pid_t pid)
 {
     char **lines;
+    gboolean done = FALSE;
     
-    if ((lines = get_lines ("/proc/%d/status", pid)))
+    if ((lines = get_lines ("/proc/%d/cmdline", pid)))
+    {
+	if (lines[0] && strlen (lines[0]) > 0)
+	{
+	    tracker_add_process (tracker, pid, lines[0]);
+	    done = TRUE;
+	}
+
+	g_strfreev (lines);
+    }
+
+    if (!done && (lines = get_lines ("/proc/%d/status", pid)))
     {
         int i;
-	
+       
         for (i = 0; lines[i] != NULL; ++i)
         {
             if (strncmp ("Name:", lines[i], 5) == 0)
             {
-		tracker_add_process (
-		    tracker, pid, g_strstrip (strchr (lines[i], ':') + 1));
-		
-                break;
-            }
-        }
-	
-        g_strfreev (lines);
+		char *name = g_strstrip (strchr (lines[i], ':') + 1);
+
+		if (strlen (name) > 0)
+		{
+		    tracker_add_process (tracker, pid, name);
+		    done = TRUE;
+		    break;
+		}
+	    }
+	}
+
+	g_strfreev (lines);
     }
 }
 

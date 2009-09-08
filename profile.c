@@ -22,7 +22,6 @@
 #include <string.h>
 
 #include "binfile.h"
-#include "process.h"
 #include "stackstash.h"
 #include "profile.h"
 #include "sfile.h"

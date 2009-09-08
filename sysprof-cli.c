@@ -30,7 +30,6 @@
 #include "stackstash.h"
 #include "module/sysprof-module.h"
 #include "profile.h"
-#include "process.h"
 #include "watch.h"
 #include "signal-handler.h"
 #include "collector.h"

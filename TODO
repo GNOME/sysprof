@@ -23,7 +23,14 @@ Before 1.0.4:
 
 Before 1.2:
 
-* Flash when double clicking in descendants view
+* Counters must not be destroyed during tracker setup. They have to exist
+  but be disabled so that we can track creation of processes.
+
+* Check that we don't use too much memory (in particular with the timeline).
+
+* Fix names. "new process" is really "exec"
+
+* Fix flash when double clicking in descendants view
 
 * Find out what's up with weird two-step flash when you hit start when
   a profile is loaded.

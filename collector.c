@@ -44,6 +44,8 @@ typedef struct counter_t counter_t;
 typedef struct sample_event_t sample_event_t;
 typedef struct mmap_event_t mmap_event_t;
 typedef struct comm_event_t comm_event_t;
+typedef struct exit_event_t exit_event_t;
+typedef struct fork_event_t fork_event_t;
 typedef union counter_event_t counter_event_t;
 
 static void process_event (Collector *collector, counter_event_t *event);
@@ -89,12 +91,30 @@ struct mmap_event_t
     char			filename[1];
 };
 
+struct fork_event_t
+{
+    struct perf_event_header	header;
+    
+    uint32_t			pid, ppid;
+    uint32_t			tid, ptid;
+};
+
+struct exit_event_t
+{
+    struct perf_event_header	header;
+
+    uint32_t			pid, ppid;
+    uint32_t			tid, ptid;
+};
+
 union counter_event_t
 {
     struct perf_event_header	header;
     mmap_event_t		mmap;
     comm_event_t		comm;
     sample_event_t		sample;
+    fork_event_t		fork;
+    exit_event_t		exit;
 };
 
 struct Collector
@@ -312,8 +332,13 @@ counter_new (Collector *collector,
     attr.sample_type = PERF_SAMPLE_IP | PERF_SAMPLE_TID | PERF_SAMPLE_CALLCHAIN;
     attr.wakeup_events = 100000;
     attr.disabled = TRUE;
-    attr.mmap = TRUE;
-    attr.comm = TRUE;
+
+    if (cpu == 0)
+    {
+	attr.mmap = 1;
+	attr.comm = 1;
+	attr.task = 1;
+    }
     
     fd = sysprof_perf_counter_open (&attr, -1, cpu, -1,  0);
     
@@ -429,9 +454,25 @@ process_mmap (Collector *collector, mmap_event_t *mmap)
 static void
 process_comm (Collector *collector, comm_event_t *comm)
 {
+    g_print ("comm: pid: %d\n", comm->pid);
+    
     tracker_add_process (collector->tracker,
 			 comm->pid,
 			 comm->comm);
+}
+
+static void
+process_fork (Collector *collector, fork_event_t *fork)
+{
+    g_print ("fork: ppid: %d  pid: %d\n", fork->ppid, fork->pid);
+    
+    tracker_add_fork (collector->tracker, fork->ppid, fork->pid);
+}
+
+static void
+process_exit (Collector *collector, exit_event_t *exit)
+{
+    tracker_add_exit (collector->tracker, exit->pid);
 }
 
 static void
@@ -473,6 +514,7 @@ process_event (Collector       *collector,
 	break;
 	
     case PERF_EVENT_EXIT:
+	process_exit (collector, &event->exit);
 	break;
 	
     case PERF_EVENT_THROTTLE:
@@ -482,6 +524,7 @@ process_event (Collector       *collector,
 	break;
 	
     case PERF_EVENT_FORK:
+	process_fork (collector, &event->fork);
 	break;
 	
     case PERF_EVENT_READ:

@@ -13,6 +13,8 @@
 typedef struct new_process_t new_process_t;
 typedef struct new_map_t new_map_t;
 typedef struct sample_t sample_t;
+typedef struct fork_t fork_t;
+typedef struct exit_t exit_t;
 
 struct tracker_t
 {
@@ -27,7 +29,9 @@ typedef enum
 {
     NEW_PROCESS,
     NEW_MAP,
-    SAMPLE
+    SAMPLE,
+    FORK,
+    EXIT
 } event_type_t;
 
 struct new_process_t
@@ -35,6 +39,19 @@ struct new_process_t
     event_type_t	type;
     int32_t		pid;
     char		command_line[256];
+};
+
+struct fork_t
+{
+    event_type_t	type;
+    int32_t		pid;
+    int32_t		child_pid;
+};
+
+struct exit_t
+{
+    event_type_t	type;
+    int32_t		pid;
 };
 
 struct new_map_t
@@ -279,9 +296,33 @@ tracker_add_process (tracker_t * tracker,
     
     tracker_append (tracker, &event, sizeof (event));
     
-#if 0
     g_print ("Added new process: %d (%s)\n", pid, command_line);
-#endif
+}
+
+void
+tracker_add_fork (tracker_t *tracker,
+		  pid_t      pid,
+		  pid_t	     child_pid)
+{
+    fork_t event;
+
+    event.type = FORK;
+    event.pid = pid;
+    event.child_pid = child_pid;
+
+    tracker_append (tracker, &event, sizeof (event));
+}
+
+void
+tracker_add_exit (tracker_t *tracker,
+		  pid_t      pid)
+{
+    exit_t event;
+    
+    event.type = EXIT;
+    event.pid = pid;
+
+    tracker_append (tracker, &event, sizeof (event));
 }
 
 void
@@ -424,6 +465,54 @@ create_process (state_t *state, new_process_t *new_process)
     
     g_hash_table_insert (
 	state->processes_by_pid, GINT_TO_POINTER (process->pid), process);
+}
+
+static map_t *
+copy_map (map_t *map)
+{
+    map_t *copy = g_new0 (map_t, 1);
+
+    *copy = *map;
+    copy->filename = g_strdup (map->filename);
+
+    return copy;
+}
+
+static void
+process_fork (state_t *state, fork_t *fork)
+{
+    process_t *parent = g_hash_table_lookup (
+	state->processes_by_pid, GINT_TO_POINTER (fork->pid));
+
+    if (parent)
+    {
+	process_t *process = g_new0 (process_t, 1);
+	int i;
+
+	g_print ("new child %d\n", fork->child_pid);
+	
+	process->pid = fork->child_pid;
+	process->comm = g_strdup (parent->comm);
+	process->maps = g_ptr_array_new ();
+
+	for (i = 0; i < parent->maps->len; ++i)
+	{
+	    map_t *map = copy_map (parent->maps->pdata[i]);
+	    
+	    g_ptr_array_add (process->maps, map);
+	}
+
+	g_hash_table_insert (
+	    state->processes_by_pid, GINT_TO_POINTER (process->pid), process);
+    }
+    else
+	g_print ("no parent for %d\n", fork->child_pid);
+}
+
+static void
+process_exit (state_t *state, exit_t *exit)
+{
+    /* ignore for now */
 }
 
 static void
@@ -811,7 +900,7 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
 	static gboolean warned;
 	if (!warned || sample->pid != 0)
 	{
-	    g_warning ("sample for unknown process %d", sample->pid);
+	    g_print ("sample for unknown process %d\n", sample->pid);
 	    warned = TRUE;
 	}
 	return;
@@ -889,6 +978,16 @@ tracker_create_profile (tracker_t *tracker)
 	case NEW_MAP:
 	    create_map (state, (new_map_t *)event);
 	    event += sizeof (new_map_t);
+	    break;
+
+	case FORK:
+	    process_fork (state, (fork_t *)event);
+	    event += sizeof (fork_t);
+	    break;
+
+	case EXIT:
+	    process_exit (state, (exit_t *)exit);
+	    event += sizeof (exit_t);
 	    break;
 	    
 	case SAMPLE:

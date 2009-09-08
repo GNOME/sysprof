@@ -9,6 +9,11 @@ void	   tracker_free (tracker_t *);
 void tracker_add_process (tracker_t  *tracker,
 			  pid_t	      pid,
 			  const char *command_line);
+void tracker_add_fork (tracker_t *tracker,
+		       pid_t      pid,
+		       pid_t	  child_pid);
+void tracker_add_exit (tracker_t *tracker,
+		       pid_t      pid);
 void tracker_add_map (tracker_t * tracker,
 		      pid_t	     pid,
 		      uint64_t    start,

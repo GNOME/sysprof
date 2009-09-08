@@ -885,6 +885,7 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
 {
     const context_info_t *context = NULL;
     const char *cmdline;
+    uint64_t stack_addrs[256];
     uint64_t *resolved_traces;
     process_t *process;
     StackNode *n;
@@ -907,8 +908,11 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
     len = 4;
     for (n = sample->trace; n != NULL; n = n->parent)
 	len++;
-    
-    resolved_traces = g_new (uint64_t, len);
+
+    if (len > 256)
+	resolved_traces = g_new (uint64_t, len);
+    else
+	resolved_traces = stack_addrs;
     
     len = 0;
     for (n = sample->trace; n != NULL; n = n->parent)
@@ -946,7 +950,8 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
 
     stack_stash_add_trace (resolved, resolved_traces, len, 1);
 
-    g_free (resolved_traces);
+    if (resolved_traces != stack_addrs)
+	g_free (resolved_traces);
 }
 
 Profile *

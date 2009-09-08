@@ -23,6 +23,8 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Kernel binary when available, is better than kallsyms.
+
 * Hack around gtk+ bug where it mispositions the window.
 
 * Counters must not be destroyed during tracker setup. They have to exist

@@ -23,6 +23,12 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Get rid of remaining gulongs (use uint64_t instead)
+
+* Move binfile hash table to state_t.
+
+* Get rid of process.c
+
 * On 32 bit, NMI stackframes are not filtered out which leads to 
   wrong kernel traces
 

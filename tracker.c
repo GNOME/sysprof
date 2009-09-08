@@ -91,6 +91,7 @@ fake_new_process (tracker_t *tracker, pid_t pid)
             {
 		tracker_add_process (
 		    tracker, pid, g_strstrip (strchr (lines[i], ':') + 1));
+		
                 break;
             }
         }
@@ -314,7 +315,6 @@ struct process_t
     pid_t       pid;
     
     char *      comm;
-    char *      undefined;
     
     GPtrArray *	maps;
 };
@@ -389,7 +389,6 @@ destroy_process (process_t *process)
     int i;
     
     g_free (process->comm);
-    g_free (process->undefined);
     
     for (i = 0; i < process->maps->len; ++i)
     {
@@ -409,7 +408,6 @@ create_process (state_t *state, new_process_t *new_process)
     
     process->pid = new_process->pid;
     process->comm = g_strdup (new_process->command_line);
-    process->undefined = NULL;
     process->maps = g_ptr_array_new ();
     
     g_hash_table_insert (
@@ -441,13 +439,12 @@ state_new (void)
 
 typedef struct
 {
-    gulong	 address;
+    gulong  	 address;
     char	*name;
 } kernel_symbol_t;
 
 static void
-parse_kallsym_line (const char *line,
-		    GArray *table)
+parse_kallsym_line (const char *line, GArray *table)
 {
     char **tokens = g_strsplit_set (line, " \t", -1);
     

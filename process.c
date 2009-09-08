@@ -35,18 +35,6 @@
 
 static GHashTable *processes_by_pid;
 
-typedef struct Map Map;
-struct Map
-{
-    char *	filename;
-    gulong	start;
-    gulong	end;
-    gulong      offset;
-    gulong	inode;
-    
-    BinFile *	bin_file;
-};
-
 struct Process
 {
     char *	cmdline;
@@ -66,142 +54,6 @@ initialize (void)
 {
     if (!processes_by_pid)
 	processes_by_pid = g_hash_table_new (g_direct_hash, g_direct_equal);
-}
-
-static Map *
-read_maps (int pid, int *n_maps)
-{
-    char *name = g_strdup_printf ("/proc/%d/maps", pid);
-    char buffer[1024];
-    FILE *in;
-    GArray *result;
-
-    in = fopen (name, "r");
-    if (!in)
-    {
-	g_free (name);
-	return NULL;
-    }
-
-    result = g_array_new (FALSE, FALSE, sizeof (Map));
-    
-    while (fgets (buffer, sizeof (buffer) - 1, in))
-    {
-	char file[256];
-	int count;
-	gulong start;
-	gulong end;
-	gulong offset;
-	gulong inode;
-	
-	count = sscanf (
-	    buffer, "%lx-%lx %*15s %lx %*x:%*x %lu %255s", 
-	    &start, &end, &offset, &inode, file);
-	if (count == 5)
-	{
-	    Map map;
-	    
-	    map.filename = g_strdup (file);
-	    map.start = start;
-	    map.end = end;
-	    
-	    if (strcmp (map.filename, "[vdso]") == 0)
-	    {
-		/* For the vdso, the kernel reports 'offset' as the
-		 * the same as the mapping addres. This doesn't make
-		 * any sense to me, so we just zero it here. There
-		 * is code in binfile.c (read_inode) that returns 0
-		 * for [vdso].
-		 */
-		map.offset = 0;
-		map.inode = 0;
-	    }
-	    else
-	    {
-		map.offset = offset;
-		map.inode = inode;
-	    }
-
-	    map.bin_file = NULL;
-
-	    g_array_append_val (result, map);
-	}
-    }
-
-    g_free (name);
-    fclose (in);
-
-    if (n_maps)
-	*n_maps = result->len;
-
-    return (Map *)g_array_free (result, FALSE);
-}
-
-static void
-free_maps (int *n_maps,
-	   Map *maps)
-{
-    int i;
-
-    for (i = 0; i < *n_maps; ++i)
-    {
-	Map *map = &(maps[i]);
-	
-	if (map->filename)
-	    g_free (map->filename);
-	
-	if (map->bin_file)
-	    bin_file_free (map->bin_file);
-    }
-
-    g_free (maps);
-    *n_maps = 0;
-}
-
-const guint8 *
-process_get_vdso_bytes (gsize *length)
-{
-    static gboolean has_data;
-    static const guint8 *bytes = NULL;
-    static gsize n_bytes = 0;    
-
-    if (!has_data)
-    {
-	Map *maps;
-	int n_maps, i;
-
-	maps = read_maps (getpid(), &n_maps);
-
-	for (i = 0; i < n_maps; ++i)
-	{
-	    Map *map = &(maps[i]);
-
-	    if (strcmp (map->filename, "[vdso]") == 0)
-	    {
-		n_bytes = map->end - map->start;
-
-		/* Dup the memory here so that valgrind will only
-		 * report one 1 byte invalid read instead of
-		 * a ton when the elf parser scans the vdso
-		 *
-		 * The reason we get a spurious invalid read from
-		 * valgrind is that we are getting the address directly
-		 * from /proc/maps, and valgrind knows that its mmap()
-		 * wrapper never returned that address. But since it
-		 * is a legal mapping, it is legal to read it.
-		 */
-		bytes = g_memdup ((guint8 *)map->start, n_bytes);
-	    }
-	}
-	
-	has_data = TRUE;
-	free_maps (&n_maps, maps);
-    }
-
-    if (length)
-	*length = n_bytes;
-
-    return bytes;
 }
 
 static Process *
@@ -294,21 +146,6 @@ process_has_page (Process *process, gulong addr)
 	return TRUE;
     else
 	return FALSE;
-}
-
-int
-process_get_page_size (void)
-{
-    static int page_size;
-    static gboolean has_page_size = FALSE;
-
-    if (!has_page_size)
-    {
-	page_size = getpagesize();
-	has_page_size = TRUE;
-    }
-
-    return page_size;
 }
 
 void

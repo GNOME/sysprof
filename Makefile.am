@@ -17,8 +17,6 @@ SYSPROF_CORE =					\
 	demangle.c				\
 	elfparser.c				\
 	elfparser.h				\
-	process.h				\
-	process.c				\
 	profile.h				\
 	profile.c				\
 	sfile.h					\

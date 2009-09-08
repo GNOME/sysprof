@@ -165,11 +165,26 @@ in_dead_period (Collector *collector)
     return FALSE;
 }
 
+static int
+get_page_size (void)
+{
+    static int page_size;
+    static gboolean has_page_size = FALSE;
+
+    if (!has_page_size)
+    {
+	page_size = getpagesize();
+	has_page_size = TRUE;
+    }
+
+    return page_size;
+}
+
 static void
 on_read (gpointer data)
 {
     counter_t *counter = data;
-    int mask = (N_PAGES * process_get_page_size() - 1);
+    int mask = (N_PAGES * get_page_size() - 1);
     gboolean skip_samples;
     Collector *collector;
     uint64_t head, tail;
@@ -245,27 +260,27 @@ on_read (gpointer data)
 static void *
 map_buffer (counter_t *counter)
 { 
-    int n_bytes = N_PAGES * process_get_page_size();
+    int n_bytes = N_PAGES * get_page_size();
     void *address, *a;
 
     /* We use the old trick of mapping the ring buffer twice
      * consecutively, so that we don't need special-case code
      * to deal with wrapping.
      */
-    address = mmap (NULL, n_bytes * 2 + process_get_page_size(), PROT_NONE,
+    address = mmap (NULL, n_bytes * 2 + get_page_size(), PROT_NONE,
 		    MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 
     if (address == MAP_FAILED)
 	fail ("mmap");
 
-    a = mmap (address + n_bytes, n_bytes + process_get_page_size(),
+    a = mmap (address + n_bytes, n_bytes + get_page_size(),
 	      PROT_READ | PROT_WRITE,
 	      MAP_SHARED | MAP_FIXED, counter->fd, 0);
     
     if (a != address + n_bytes)
 	fail ("mmap");
 
-    a = mmap (address, n_bytes + process_get_page_size(),
+    a = mmap (address, n_bytes + get_page_size(),
 	      PROT_READ | PROT_WRITE,
 	      MAP_SHARED | MAP_FIXED, counter->fd, 0);
 
@@ -320,7 +335,7 @@ counter_new (Collector *collector,
 	return NULL;
     }
     
-    counter->data = (uint8_t *)counter->mmap_page + process_get_page_size ();
+    counter->data = (uint8_t *)counter->mmap_page + get_page_size ();
     counter->tail = 0;
     counter->cpu = cpu;
     counter->partial = g_string_new (NULL);
@@ -340,7 +355,7 @@ counter_enable (counter_t *counter)
 static void
 counter_free (counter_t *counter)
 {
-    munmap (counter->mmap_page, (N_PAGES + 1) * process_get_page_size());
+    munmap (counter->mmap_page, (N_PAGES + 1) * get_page_size());
     fd_remove_watch (counter->fd);
     
     close (counter->fd);
@@ -375,8 +390,6 @@ collector_reset (Collector *collector)
 	collector->tracker = NULL;
     }
 
-    process_flush_caches();
-    
     collector->n_samples = 0;
     
     g_get_current_time (&collector->latest_reset);

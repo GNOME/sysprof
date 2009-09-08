@@ -23,6 +23,10 @@ Before 1.0.4:
 
 Before 1.2:
 
+* Make tracker creation faster 
+
+* Share map reading code between vdso stuff in binfile.c and tracker.c
+
 * Get rid of remaining gulongs (use uint64_t instead)
 
 * Move binfile hash table to state_t.
@@ -579,6 +583,8 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 - hide internal stuff in ProfileDescendant
 
 Later:
+
+- Multithreading is possible in a number of places.
 
 - If the stack trace ends in a memory access instruction, send the
   vma information to userspace. Then have user space

@@ -122,7 +122,6 @@ struct Collector
     CollectorFunc	callback;
     gpointer		data;
     
-    StackStash *	stash;
     tracker_t *		tracker;
     GTimeVal		latest_reset;
 
@@ -402,12 +401,6 @@ collector_reset (Collector *collector)
 	restart = TRUE;
     }
     
-    if (collector->stash)
-    {
-	stack_stash_unref (collector->stash);
-	collector->stash = NULL;
-    }
-    
     if (collector->tracker)
     {
 	tracker_free (collector->tracker);
@@ -431,7 +424,6 @@ collector_new (CollectorFunc callback,
     
     collector->callback = callback;
     collector->data = data;
-    collector->stash = NULL;
     collector->tracker = NULL;
     
     collector_reset (collector);
@@ -549,12 +541,8 @@ collector_start (Collector  *collector,
     GList *list;
     int i;
 
-    if (!collector->stash)
-	collector->stash = stack_stash_new (NULL);
     if (!collector->tracker)
 	collector->tracker = tracker_new ();
-    
-    g_assert (collector->stash);
     
     for (i = 0; i < n_cpus; ++i)
     {

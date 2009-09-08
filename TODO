@@ -23,10 +23,39 @@ Before 1.0.4:
 
 Before 1.2:
 
+* On 32 bit, NMI stackframes are not filtered out which leads to 
+  wrong kernel traces
+
+* Can we track kernel modules being inserted/removed?
+
+* Does it make sense to try and locate a kernel binary, or can we
+  always just use kallsyms.
+
+* open_inode() would be useful in many cases
+
+* Is the double mapping of the ring buffer ok?
+
+* Why do we get EINVAL when we try to track forks?
+
+* Sometimes it get samples for unknown processes. This may be due to
+  forking without execing.
+
 * Give an informative error message if run as root
+
+* What are the events generated for pid 0 and pid 1? They have no
+  stacktrace, and an eip in the kernel.
+
+* Delete the binparser stuff and fix the elf parser to just deal with
+  32 bits vs 64 bits. Or use C++ like behdad does in harfbuzz?
+
+* We often get "No map". I suspect this is because the vdso stackframe
+  is broken.
 
 * Find out why gtk_tree_view_columns_autosize() apparently doesn't
   work on empty tree views.
+
+* Write my own tree model? There is still performance issues in
+  footreestore.
 
 * Hack to disable recursion for binaries without symbols causes the
   symbols to not work the way other symbols do.  A better approach is
@@ -36,56 +65,21 @@ Before 1.2:
   "has same parent" may be the correct criterion in all cases. (done:
   master now doesn't fold those recursions anymore)
 
-  * See if we can make "In file <blah>" not be treated as a recursive function.
-    Maybe simply treat each individual address in the file as a function.
-    Or try to parse the machine code. Positions that are called are likely 
-    to be functions.
+  * See if we can make "In file <blah>" not be treated as a recursive
+    function.  Maybe simply treat each individual address in the file
+    as a function.  Or try to parse the machine code. Positions that
+    are called are likely to be functions.
 
     - Treat identical addresses as one function
      
-    - Treat all addresses within a library that don't have children are
-      treated as one function.
+    - Treat all addresses within a library that don't have children
+      are treated as one function.
 
     This will have the effect of coalescing adjacent siblings without
     children. Which is what you want since you can't tell them apart
     anyway. It will never be a great experience though.
 
-* Find out what is going on with kernel threads:
-
-  [(ksoftirqd/0)]              0.00   0.03
-    No map ([(ksoftirqd/0)])   0.00   0.03
-      kernel                   0.00   0.03
-        do_softirq             0.00   0.03
-          __do_softirq         0.00   0.03
-
-* Make sure there aren't leftover stacktraces from last time when
-  profiling begins.
-
-* Is the move-to-front in process_locate_map() really worth it?
-
-* Whenever we fail to lock the atomic variable, track this, and send the
-  information to userspace as an indication of the overhead of the profiling.
-  Although there is inherent aliasing here since stack scanning happens at
-  regular intervals.
-
-* Apparently, if you upgrade the kernel, then don't re-run configure, 
-  the kernel Makefile will delete all of /lib/modules/<release>/kernel 
-  if you run make install in the module directory. Need to find out what
-  is going on.
-
-* Performance:
-	Switching between descendant views is a slow:
-		  - gtk_tree_store_get_path() is O(n^2) and accounts
-		    for 43% of the time.
-		  - GObject signal emission overhead accounts for 18% of
-		    the time. 
-	Consider adding a forked version of GtkTreeStore with
-	performance and bug fixes.
-
 * Make sure that labels look decent in case of "No Map" etc.
-
-* If we end up believing the kernel's own stacktraces, maybe
-  /proc/kallsyms shouldn't be parsed until the user hits profile.
 
 * Elf bugs:
 	- error handling for bin_parser is necessary.
@@ -209,7 +203,7 @@ Before 1.2:
 * Rename stack_stash_foreach_by_address() to stack_stash_foreach_unique(),
   or maybe not ...
 
-* Make it compilable against a non-running kernel.
+  Which things are we actually using from stack stash now?
 
 * Maybe report idle time? Although this would come for free with the
   timelines.
@@ -230,15 +224,6 @@ Before 1.2:
 * Add spew infrastructure to make remote debugging easier.
 
 * Make it compile and work on x86-64
-
-* With kernel module not installed, select Profiler->Start, then dismiss
-  the alert. This causes the start button to appear prelighted. Probably
-  just another gtk+ bug.
-
-- Fix bugs/performance issues:
-	- add_trace_to_tree() might be a little slow when dealing with deeply
-	  recursive profiles. Hypothesis: seen_nodes can grow large, and the
-	  algorithm is O(n^2) in the length of the trace.
 
 - make the things we put in a stackstash real
   objects so that
@@ -326,9 +311,7 @@ Before 1.2:
 		stype_define_record (object, "object",
 				     name, total, self, NULL);
 		stype_define_pointer (...);
-		
 
-	
 * See if the auto-expanding can be made more intelligent
 	- "Everything" should be expanded exactly one level
 	- all trees should be expanded at least one level
@@ -502,6 +485,7 @@ Before 1.2:
 - See if there is a way to make it distcheck
 
 - grep "FIXME - not10"
+- grep FIXME
 
 - translation should be hooked up 
 
@@ -570,6 +554,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	  the details of a function are not that interesting 
 	  together with a tree. (Could add radio buttons somewhere in
 	  in the right pane).
+  	- Open a new window for the function.
 
 - Add view->ancestors/descendants menu items
 
@@ -581,62 +566,11 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	find the immediate callers.
 	- Now it's back to just listing the immediate callers.
 
-- Have kernel module report the file the address was found in
-	Should avoid a lot of potential broken/raciness with dlopen etc.
-	Probably better to send a list of maps with each trace. Which 
-	shouldn't really be that expensive. We already walk the list of
-	maps in process_ensure_map() on every trace. And we can do hashing
-	if it turns out to be a problem. 
-		Maybe replace the SysprofStackTrace with a union, so that
-	it can be either a list of maps, or a stacktrace. Both map lists and
-	stacktraces would come with a hashcode.allowing userspac. This avoids
-	the problem that maps could take up a lot of extra bandwidth.
-
-		struct MapInfo
-		{
-			long start;
-			long end;
-			long offset;	
-			long inode;
-		}
-
-		struct Maps
-		{
-			int hash_code;
-			int n_maps;
-			MapInfo info [127];
-			char filenames [2048];
-		}
-
 - Figure out how Google's pprof script works. Then add real call graph 
   drawing. (google's script is really simple; uses dot from graphviz).
   KCacheGrind also uses dot to do graph drawing.
 
 - hide internal stuff in ProfileDescendant
-
-- possibly add dependency on glib 2.8 if it is released at that point.
-  (g_file_replace())
-
-* Some notes about timer interrupt handling in Linux
-
-On an SMP system APIC is used - the interesting file is arch/i386/kernel/apic.c
-
-On UP systems, the normal IRQ0 is used
-When the interrupt happens, 
-	entry.S
-		calls do_IRQ, which sets up the special interrupt stack, 
-		and calls __do_IRQ, which is in /kernel/irq/handle.c.
-		This calls the corresponding irqaction, which has previously
-		been setup by arch/i386/mach-default/setup.c to point to
-		timer_interrupt, which is in arch/i386/kernel/time.c.
-		This calls do_timer_interrupt_hooks() which is defined in
-		/include/asm-i386/mach-default/do_timer.h. This function
-		then calls profile_tick().
-
-	Note when the CPU switches from user mode to kernel mode, it 
-	pushes SS/ESP on top of the kernel stack, but when it switches
-	from kernel mode to kernel mode, it does _not_ push SS/ESP.
-	It does in both cases push EIP though.
 
 Later:
 
@@ -843,6 +777,103 @@ Later:
 
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=- ALREADY DONE: -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+* Find out what is going on with kernel threads:
+
+  [(ksoftirqd/0)]              0.00   0.03
+    No map ([(ksoftirqd/0)])   0.00   0.03
+      kernel                   0.00   0.03
+        do_softirq             0.00   0.03
+          __do_softirq         0.00   0.03
+
+* Make sure there aren't leftover stacktraces from last time when
+  profiling begins.
+
+* Is the move-to-front in process_locate_map() really worth it?
+
+* Whenever we fail to lock the atomic variable, track this, and send the
+  information to userspace as an indication of the overhead of the profiling.
+  Although there is inherent aliasing here since stack scanning happens at
+  regular intervals.
+
+* Apparently, if you upgrade the kernel, then don't re-run configure, 
+  the kernel Makefile will delete all of /lib/modules/<release>/kernel 
+  if you run make install in the module directory. Need to find out what
+  is going on.
+
+* Performance:
+	Switching between descendant views is a slow:
+		  - gtk_tree_store_get_path() is O(n^2) and accounts
+		    for 43% of the time.
+		  - GObject signal emission overhead accounts for 18% of
+		    the time. 
+	Consider adding a forked version of GtkTreeStore with
+	performance and bug fixes.
+
+* If we end up believing the kernel's own stacktraces, maybe
+  /proc/kallsyms shouldn't be parsed until the user hits profile.
+
+* Make it compilable against a non-running kernel.
+
+* With kernel module not installed, select Profiler->Start, then dismiss
+  the alert. This causes the start button to appear prelighted. Probably
+  just another gtk+ bug.
+
+- Fix bugs/performance issues:
+	- add_trace_to_tree() might be a little slow when dealing with deeply
+	  recursive profiles. Hypothesis: seen_nodes can grow large, and the
+	  algorithm is O(n^2) in the length of the trace.
+
+- Have kernel module report the file the address was found in
+	Should avoid a lot of potential broken/raciness with dlopen etc.
+	Probably better to send a list of maps with each trace. Which 
+	shouldn't really be that expensive. We already walk the list of
+	maps in process_ensure_map() on every trace. And we can do hashing
+	if it turns out to be a problem. 
+		Maybe replace the SysprofStackTrace with a union, so that
+	it can be either a list of maps, or a stacktrace. Both map lists and
+	stacktraces would come with a hashcode.allowing userspac. This avoids
+	the problem that maps could take up a lot of extra bandwidth.
+
+		struct MapInfo
+		{
+			long start;
+			long end;
+			long offset;	
+			long inode;
+		}
+
+		struct Maps
+		{
+			int hash_code;
+			int n_maps;
+			MapInfo info [127];
+			char filenames [2048];
+		}
+
+- possibly add dependency on glib 2.8 if it is released at that point.
+  (g_file_replace())
+
+* Some notes about timer interrupt handling in Linux
+
+On an SMP system APIC is used - the interesting file is arch/i386/kernel/apic.c
+
+On UP systems, the normal IRQ0 is used
+When the interrupt happens, 
+	entry.S
+		calls do_IRQ, which sets up the special interrupt stack, 
+		and calls __do_IRQ, which is in /kernel/irq/handle.c.
+		This calls the corresponding irqaction, which has previously
+		been setup by arch/i386/mach-default/setup.c to point to
+		timer_interrupt, which is in arch/i386/kernel/time.c.
+		This calls do_timer_interrupt_hooks() which is defined in
+		/include/asm-i386/mach-default/do_timer.h. This function
+		then calls profile_tick().
+
+	Note when the CPU switches from user mode to kernel mode, it 
+	pushes SS/ESP on top of the kernel stack, but when it switches
+	from kernel mode to kernel mode, it does _not_ push SS/ESP.
+	It does in both cases push EIP though.
 
 * Rename sysprof-text to sysprof-cli
 

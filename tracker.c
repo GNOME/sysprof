@@ -641,96 +641,19 @@ process_locate_map (process_t *process, gulong addr)
     return NULL;
 }
 
-const char *
-lookup_user_symbol (process_t *process, uint64_t address)
+static const char *
+make_message (state_t *state, const char *message)
 {
-    static const char *const kernel = "[kernel]";
-    const BinSymbol *result;
-    map_t *map = process_locate_map (process, address);
-    
-#if 0
-    g_print ("addr: %x\n", address);
-#endif
-    
-    if (address == 0x1)
+    char *result = g_hash_table_lookup (state->unique_comms, message);
+
+    if (!result)
     {
-	return kernel;
+	result = g_strdup (message);
+
+	g_hash_table_insert (state->unique_comms, (char *)result, (char *)result);
     }
-    else if (!map)
-    {
-	if (!process->undefined)
-	{
-	    g_print ("no map for %llx in %d (%s)\n", address, process->pid, process->comm);
-	    
-	    process->undefined =
-		g_strdup_printf ("No map (%s)", process->comm);
-	}
-	
-	return process->undefined;
-    }
-    
-#if 0
-    if (strcmp (map->filename, "/home/ssp/sysprof/sysprof") == 0)
-    {
-	g_print ("YES\n");
-	
-	g_print ("map address: %lx\n", map->start);
-	g_print ("map offset: %lx\n", map->offset);
-	g_print ("address before: %lx  (%s)\n", address, map->filename);
-    }
-    
-    g_print ("address before: \n");
-#endif
-    
-#if 0
-    g_print ("%s is mapped at %lx + %lx\n", map->filename, map->start, map->offset);
-    g_print ("incoming address: %lx\n", address);
-#endif
-    
-    address -= map->start;
-    address += map->offset;
-    
-#if 0
-    if (strcmp (map->filename, "[vdso]") == 0)
-    {
-	g_print ("address after: %lx\n", address);
-    }
-#endif
-    
-    if (!map->bin_file)
-	map->bin_file = bin_file_new (map->filename);
-    
-/*     g_print ("%s: start: %p, load: %p\n", */
-/* 	     map->filename, map->start, bin_file_get_load_address (map->bin_file)); */
-    
-    if (!bin_file_check_inode (map->bin_file, map->inode))
-    {
-	/* If the inodes don't match, it's probably because the
-	 * file has changed since the process was started. Just return
-	 * the undefined symbol in that case.
-	 */
-	address = 0x0;
-    }
-    
-    result = bin_file_lookup_symbol (map->bin_file, address);
-    
-#if 0
-    g_print (" ---> %s\n", result->name);
-#endif
-    
-/*     g_print ("(%x) %x %x name; %s\n", address, map->start,
- *		map->offset, result->name);
- */
-    
-#if 0
-    g_print ("name: %s (in %s)\n", bin_symbol_get_name (map->bin_file, result), map->filename);
-    g_print ("  in addr: %lx\n", address);
-    g_print ("  out addr: %lx\n", bin_symbol_get_address (map->bin_file, result));
-    g_print ("  map start: %lx\n", map->start);
-    g_print ("  map offset: %lx\n", map->offset);
-#endif
-    
-    return bin_symbol_get_name (map->bin_file, result);
+
+    return result;
 }
 
 static char *
@@ -749,7 +672,44 @@ lookup_symbol (state_t    *state,
     }
     else
     {
-	sym = lookup_user_symbol (process, address);
+	map_t *map = process_locate_map (process, address);
+    
+	if (!map)
+	{
+	    char *message = g_strdup_printf ("No map [%s]", process->comm);
+
+	    sym = make_message (state, message);
+
+	    g_free (message);
+	}
+	else
+	{
+	    const BinSymbol *bin_sym;
+	    
+	    address -= map->start;
+	    address += map->offset;
+    
+	    if (!map->bin_file)
+		map->bin_file = bin_file_new (map->filename);
+    
+	    if (map->inode && !bin_file_check_inode (map->bin_file, map->inode))
+	    {
+		/* If the inodes don't match, it's probably because the
+		 * file has changed since the process was started.
+		 */
+		char *message = g_strdup_printf ("inode mismatch for %s", map->filename);
+
+		sym = make_message (state, message);
+
+		g_free (message);
+	    }
+	    else
+	    {
+		bin_sym = bin_file_lookup_symbol (map->bin_file, address);
+		
+		sym = bin_symbol_get_name (map->bin_file, bin_sym);
+	    }
+	}
     }
     
     if (sym)
@@ -800,6 +760,7 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
     uint64_t *resolved_traces;
     process_t *process;
     StackNode *n;
+    char *cmdline;
     int len;
 
     process = g_hash_table_lookup (
@@ -833,7 +794,7 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
 	if (new_context)
 	{
 	    if (context)
-		symbol = context->name;
+		symbol = unique_dup (state->unique_symbols, context->name);
 	    else
 		symbol = NULL;
 	    
@@ -849,7 +810,6 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
 	if (symbol)
 	    resolved_traces[len++] = POINTER_TO_U64 (symbol);
     }
-    char *cmdline;
 
     cmdline = g_hash_table_lookup (
 	state->unique_comms, process->comm);

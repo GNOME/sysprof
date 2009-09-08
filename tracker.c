@@ -335,6 +335,7 @@ struct state_t
     GHashTable *processes_by_pid;
     GHashTable *unique_comms;
     GHashTable *unique_symbols;
+    GHashTable *bin_files;
 };
 
 static void
@@ -433,6 +434,9 @@ state_new (void)
     
     state->unique_symbols = g_hash_table_new (g_direct_hash, g_direct_equal);
     state->unique_comms = g_hash_table_new (g_str_hash, g_str_equal);
+    state->bin_files = g_hash_table_new_full (g_str_hash, g_str_equal,
+					      g_free,
+					      (GDestroyNotify)bin_file_free);
     
     return state;
 }    
@@ -665,6 +669,21 @@ make_message (state_t *state, const char *format, ...)
     return result;
 }
 
+static BinFile *
+state_get_bin_file (state_t *state, const char *filename)
+{
+    BinFile *bf = g_hash_table_lookup (state->bin_files, filename);
+
+    if (!bf)
+    {
+	bf = bin_file_new (filename);
+
+	g_hash_table_insert (state->bin_files, g_strdup (filename), bf);
+    }
+
+    return bf;
+}
+
 static char *
 lookup_symbol (state_t    *state,
 	       process_t  *process,
@@ -695,7 +714,7 @@ lookup_symbol (state_t    *state,
 	    address += map->offset;
     
 	    if (!map->bin_file)
-		map->bin_file = bin_file_new (map->filename);
+		map->bin_file = state_get_bin_file (state, map->filename);
     
 	    if (map->inode && !bin_file_check_inode (map->bin_file, map->inode))
 	    {

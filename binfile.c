@@ -41,15 +41,15 @@
 struct BinFile
 {
     int		ref_count;
-
+    
     GList *	elf_files;
-
+    
     char *	filename;	
     
     char *	undefined_name;
-
+    
     gulong	text_offset;
-
+    
     gboolean	inode_check;
     ino_t	inode;
 };
@@ -58,7 +58,7 @@ static ino_t
 read_inode (const char *filename)
 {
     struct stat statbuf;
-
+    
     if (strcmp (filename, "[vdso]") == 0)
 	return (ino_t)0;
     
@@ -76,13 +76,13 @@ already_warned (const char *name)
     
     if (!warnings)
 	warnings = g_ptr_array_new ();
-
+    
     for (i = 0; i < warnings->len; ++i)
     {
 	if (strcmp (warnings->pdata[i], name) == 0)
 	    return TRUE;
     }
-
+    
     g_ptr_array_add (warnings, g_strdup (name));
     
     return FALSE;
@@ -98,45 +98,45 @@ get_build_id_file (ElfParser *elf)
     char *init, *rest;
     ElfParser *result = NULL;
     char *tmp;
-
+    
     build_id = elf_parser_get_build_id (elf);
     
     if (!build_id)
 	return NULL;
-
+    
     if (strlen (build_id) < 4)
 	return NULL;
-
+    
     init = g_strndup (build_id, 2);
     rest = g_strdup_printf ("%s%s", build_id + 2, ".debug");
-
+    
     tmp = g_build_filename (
 	"/usr", "lib", "debug", ".build-id", init, rest, NULL);
     tries = g_list_append (tries, tmp);
-
+    
     tmp = g_build_filename (
 	debug_file_directory, ".build-id", init, rest, NULL);
     tries = g_list_append (tries, tmp);
-
+    
     for (list = tries; list != NULL; list = list->next)
     {
 	char *name = list->data;
 	ElfParser *parser = elf_parser_new (name, NULL);
-
+	
 	if (parser)
 	{
 	    const char *file_id = elf_parser_get_build_id (parser);
-
+	    
 	    if (file_id && strcmp (build_id, file_id) == 0)
 	    {
 		result = parser;
 		break;
 	    }
-
+	    
 	    elf_parser_free (parser);
 	}
     }
-
+    
     g_list_foreach (tries, (GFunc)g_free, NULL);
     g_list_free (tries);
     
@@ -157,19 +157,19 @@ get_debuglink_file (ElfParser   *elf,
     guint32 crc32;
     GList *tries = NULL, *list;
     ElfParser *result = NULL;
-
+    
     if (!elf)
 	return NULL;
     
     basename = elf_parser_get_debug_link (elf, &crc32);
-
+    
 #if 0
     g_print ("   debug link for %s is %s\n", filename, basename);
 #endif
     
     if (!basename)
 	return NULL;
-
+    
     dir = g_path_get_dirname (filename);
     
     tries = g_list_append (tries, g_build_filename (dir, basename, NULL));
@@ -182,11 +182,11 @@ get_debuglink_file (ElfParser   *elf,
 	const char *name = list->data;
 	ElfParser *parser = elf_parser_new (name, NULL);
 	guint32 file_crc;
-
+	
 	if (parser)
 	{
 	    file_crc = elf_parser_get_crc32 (parser);
-	
+	    
 	    if (file_crc == crc32)
 	    {
 		result = parser;
@@ -198,16 +198,16 @@ get_debuglink_file (ElfParser   *elf,
 		if (!already_warned (name))
 		    g_print ("warning: %s has wrong crc \n", name);
 	    }
-		
+	    
 	    elf_parser_free (parser);
 	}
     }
-	
+    
     g_free (dir);
-
+    
     g_list_foreach (tries, (GFunc)g_free, NULL);
     g_list_free (tries);
-
+    
     return result;
 }
 
@@ -219,29 +219,29 @@ get_debug_binaries (GList      *files,
     ElfParser *build_id_file;
     GHashTable *seen_names;
     GList *free_us = NULL;
-
+    
     build_id_file = get_build_id_file (elf);
     
     if (build_id_file)
 	return g_list_prepend (files, build_id_file);
-
+    
     /* .gnu_debuglink is actually a chain of debuglinks, and
      * there have been real-world cases where following it was
      * necessary to get useful debug information.
      */
     seen_names = g_hash_table_new (g_str_hash, g_str_equal);
-
+    
     while (elf)
     {
 	char *debug_name;
 	
 	if (g_hash_table_lookup (seen_names, filename))
 	    break;
-
+	
 	g_hash_table_insert (seen_names, (char *)filename, (char *)filename);
-
+	
 	elf = get_debuglink_file (elf, filename, &debug_name);
-
+	
 	if (elf)
 	{
 	    files = g_list_prepend (files, elf);
@@ -252,14 +252,11 @@ get_debug_binaries (GList      *files,
     
     g_list_foreach (free_us, (GFunc)g_free, NULL);
     g_list_free (free_us);
-
+    
     g_hash_table_destroy (seen_names);
     
     return files;
 }
-
-
-static GHashTable *bin_files;
 
 static char **
 get_lines (const char *format, pid_t pid)
@@ -286,12 +283,12 @@ get_vdso_bytes (size_t *length)
     static const uint8_t *bytes = NULL;
     static size_t n_bytes = 0;    
     static gboolean has_data;
-
+    
     if (!has_data)
     {
 	char **lines = get_lines ("/proc/%d/maps", getpid());
 	int i;
-
+	
 	for (i = 0; lines[i] != NULL; ++i)
 	{
 	    char file[256];
@@ -304,7 +301,7 @@ get_vdso_bytes (size_t *length)
 	    if (count == 3 && strcmp (file, "[vdso]") == 0)
 	    {
 		n_bytes = end - start;
-
+		
 		/* Dup the memory here so that valgrind will only
 		 * report one 1 byte invalid read instead of
 		 * a ton when the elf parser scans the vdso
@@ -316,12 +313,12 @@ get_vdso_bytes (size_t *length)
 		 * is a legal mapping, it is legal to read it.
 		 */
 		bytes = g_memdup ((uint8_t *)start, n_bytes);
-
+		
 		has_data = TRUE;
 	    }
 	}
     }
-
+    
     if (length)
 	*length = n_bytes;
     
@@ -331,59 +328,43 @@ get_vdso_bytes (size_t *length)
 BinFile *
 bin_file_new (const char *filename)
 {
-    /* FIXME: should be able to return an error */
+    ElfParser *elf = NULL;
     BinFile *bf;
-
-    if (!bin_files)
-	bin_files = g_hash_table_new (g_str_hash, g_str_equal);
-
-    bf = g_hash_table_lookup (bin_files, filename);
-
-    if (bf)
+    
+    bf = g_new0 (BinFile, 1);
+    
+    bf->inode_check = FALSE;
+    bf->filename = g_strdup (filename);
+    bf->undefined_name = g_strdup_printf ("In file %s", filename);
+    bf->ref_count = 1;
+    bf->elf_files = NULL;
+    
+    if (strcmp (filename, "[vdso]") == 0)
     {
-	bf->ref_count++;
+	const guint8 *vdso_bytes;
+	gsize length;
+	
+	vdso_bytes = get_vdso_bytes (&length);
+	
+	if (vdso_bytes)
+	    elf = elf_parser_new_from_data (vdso_bytes, length);
     }
     else
     {
-	ElfParser *elf = NULL;
+	elf = elf_parser_new (filename, NULL);
+    }
+    
+    if (elf)
+    {
+	/* We need the text offset of the actual binary, not the
+	 * (potential) debug binaries
+	 */
+	bf->text_offset = elf_parser_get_text_offset (elf);
 	
-	bf = g_new0 (BinFile, 1);
-
-	bf->inode_check = FALSE;
-	bf->filename = g_strdup (filename);
-	bf->undefined_name = g_strdup_printf ("In file %s", filename);
-	bf->ref_count = 1;
-	bf->elf_files = NULL;
+	bf->elf_files = get_debug_binaries (bf->elf_files, elf, filename);
+	bf->elf_files = g_list_append (bf->elf_files, elf);
 	
-	g_hash_table_insert (bin_files, bf->filename, bf);
-	
-	if (strcmp (filename, "[vdso]") == 0)
-	{
-	    const guint8 *vdso_bytes;
-	    gsize length;
-
-	    vdso_bytes = get_vdso_bytes (&length);
-
-	    if (vdso_bytes)
-		elf = elf_parser_new_from_data (vdso_bytes, length);
-	}
-	else
-	{
-	    elf = elf_parser_new (filename, NULL);
-	}
-
-	if (elf)
-	{
-	    /* We need the text offset of the actual binary, not the
-	     * (potential) debug binaries
-	     */
-	    bf->text_offset = elf_parser_get_text_offset (elf);
-
-	    bf->elf_files = get_debug_binaries (bf->elf_files, elf, filename);
-	    bf->elf_files = g_list_append (bf->elf_files, elf);
-
-	    bf->inode = read_inode (filename);
-	}
+	bf->inode = read_inode (filename);
     }
     
     return bf;
@@ -394,8 +375,6 @@ bin_file_free (BinFile *bin_file)
 {
     if (--bin_file->ref_count == 0)
     {
-	g_hash_table_remove (bin_files, bin_file->filename);
-
 	g_list_foreach (bin_file->elf_files, (GFunc)elf_parser_free, NULL);
 	g_list_free (bin_file->elf_files);
 	
@@ -410,24 +389,24 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 			gulong      address)
 {
     GList *list;
-
+    
 #if 0
     g_print ("-=-=-=- \n");
-
+    
     g_print ("bin file lookup lookup %d\n", address);
 #endif
-	
+    
     address -= bin_file->text_offset;
     
 #if 0
     g_print ("lookup %d in %s\n", address, bin_file->filename);
 #endif
-	
+    
     for (list = bin_file->elf_files; list != NULL; list = list->next)
     {
 	ElfParser *elf = list->data;
 	const ElfSym *sym = elf_parser_lookup_symbol (elf, address);
-
+	
 	if (sym)
 	{
 #if 0
@@ -437,7 +416,7 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 	    return (const BinSymbol *)sym;
 	}
     }
-
+    
 #if 0
     g_print ("%lx undefined in %s (textoffset %x)\n",
 	     address + bin_file->text_offset,
@@ -454,7 +433,7 @@ bin_file_check_inode (BinFile *bin_file,
 {
     if (bin_file->inode == inode)
 	return TRUE;
-
+    
     if (!bin_file->elf_files)
 	return FALSE;
     
@@ -466,7 +445,7 @@ bin_file_check_inode (BinFile *bin_file,
 	
 	bin_file->inode_check = TRUE;
     }
-	
+    
     return FALSE;
 }
 
@@ -490,7 +469,7 @@ get_elf_sym (BinFile *file,
     }
     
     g_critical ("Internal error: unrecognized symbol pointer");
-
+    
     *elf_ret = NULL;
     return NULL;
 }
@@ -507,9 +486,9 @@ bin_symbol_get_name (BinFile *file,
     {
 	ElfParser *elf;
 	const ElfSym *sym;
-
+	
 	sym = get_elf_sym (file, symbol, &elf);
-
+	
 	return elf_parser_get_sym_name (elf, sym);
     }
 }
@@ -526,9 +505,9 @@ bin_symbol_get_address (BinFile         *file,
     {
 	ElfParser *elf;
 	const ElfSym *sym;
-
+	
 	sym = get_elf_sym (file, symbol, &elf);
-
+	
 	return elf_parser_get_sym_address (elf, sym);
     }
 }

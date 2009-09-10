@@ -38,6 +38,8 @@
 #include "perf_counter.h"
 #include "barrier.h"
 
+#define d_print(...)
+
 #define N_PAGES 32		/* Number of pages in the ringbuffer */
 
 typedef struct counter_t counter_t;
@@ -225,7 +227,7 @@ on_read (gpointer data)
     
     if (head < tail)
     {
-	g_warning ("sysprof fails at ring buffers\n");
+	g_warning ("sysprof fails at ring buffers (head %llu, tail %llu\n", head, tail);
 	
 	tail = head;
     }
@@ -377,12 +379,16 @@ counter_enable (counter_t *counter)
 static void
 counter_disable (counter_t *counter)
 {
+    d_print ("disable\n");
+    
     ioctl (counter->fd, PERF_COUNTER_IOC_DISABLE);
 }
 
 static void
 counter_free (counter_t *counter)
 {
+    d_print ("munmap\n");
+
     munmap (counter->mmap_page, (N_PAGES + 1) * get_page_size());
     fd_remove_watch (counter->fd);
     
@@ -400,6 +406,8 @@ enable_counters (Collector *collector)
 {
     GList *list;
 
+    d_print ("enable\n");
+    
     for (list = collector->counters; list != NULL; list = list->next)
     {
 	counter_t *counter = list->data;
@@ -413,6 +421,8 @@ disable_counters (Collector *collector)
 {
     GList *list;
 
+    d_print ("disable\n");
+    
     for (list = collector->counters; list != NULL; list = list->next)
     {
 	counter_t *counter = list->data;
@@ -432,7 +442,7 @@ collector_reset (Collector *collector)
      */
     if (collector->counters)
     {
-	g_print ("disable counters\n");
+	d_print ("disable counters\n");
 	
 	disable_counters (collector);
     }
@@ -449,7 +459,7 @@ collector_reset (Collector *collector)
 
     if (collector->counters)
     {
-	g_print ("enable counters\n");
+	d_print ("enable counters\n");
 	
 	enable_counters (collector);
     }
@@ -486,7 +496,7 @@ process_mmap (Collector *collector, mmap_event_t *mmap)
 static void
 process_comm (Collector *collector, comm_event_t *comm)
 {
-    g_print ("pid, tid: %d %d", comm->pid, comm->tid);
+    d_print ("pid, tid: %d %d", comm->pid, comm->tid);
     
     tracker_add_process (collector->tracker,
 			 comm->pid,
@@ -496,7 +506,7 @@ process_comm (Collector *collector, comm_event_t *comm)
 static void
 process_fork (Collector *collector, fork_event_t *fork)
 {
-    g_print ("ppid: %d  pid: %d   ptid: %d  tid %d",
+    d_print ("ppid: %d  pid: %d   ptid: %d  tid %d",
 	     fork->ppid, fork->pid, fork->ptid, fork->tid);
     
     tracker_add_fork (collector->tracker, fork->ppid, fork->pid);
@@ -505,7 +515,7 @@ process_fork (Collector *collector, fork_event_t *fork)
 static void
 process_exit (Collector *collector, exit_event_t *exit)
 {
-    g_print ("for %d %d", exit->pid, exit->tid);
+    d_print ("for %d %d", exit->pid, exit->tid);
     
     tracker_add_exit (collector->tracker, exit->pid);
 }
@@ -517,7 +527,7 @@ process_sample (Collector      *collector,
     uint64_t *ips;
     int n_ips;
 
-    g_print ("pid, tid: %d %d", sample->pid, sample->tid);
+    d_print ("pid, tid: %d %d", sample->pid, sample->tid);
     
     if (sample->n_ips == 0)
     {
@@ -572,7 +582,7 @@ process_event (Collector       *collector,
     default: name = "unknown"; break;
     }
 
-    g_print ("cpu %d  ::  %s   :: ", counter->cpu, name);
+    d_print ("cpu %d  ::  %s   :: ", counter->cpu, name);
     
     switch (event->header.type)
     {
@@ -613,7 +623,7 @@ process_event (Collector       *collector,
 	break;
     }
 
-    g_print ("\n");
+    d_print ("\n");
 }
 
 gboolean
@@ -643,10 +653,16 @@ collector_stop (Collector *collector)
 {
     GList *list;
 
+    if (!collector->counters)
+	return;
+    
+    /* Read any remaining data */
     for (list = collector->counters; list != NULL; list = list->next)
     {
 	counter_t *counter = list->data;
 	
+	on_read (counter);
+    
 	counter_free (counter);
     }
 
@@ -663,6 +679,9 @@ collector_get_n_samples (Collector *collector)
 Profile *
 collector_create_profile (Collector *collector)
 {
+    /* The collector must be stopped when you create a profile */
+    g_assert (!collector->counters);
+    
     return tracker_create_profile (collector->tracker);
 }
 

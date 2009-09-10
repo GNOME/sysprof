@@ -465,7 +465,9 @@ create_process (state_t *state, new_process_t *new_process)
     process->comm = g_strdup (new_process->command_line);
     process->maps = g_ptr_array_new ();
 
+#if 0
     g_print ("new comm process %d\n", new_process->pid);
+#endif
     
     g_hash_table_insert (
 	state->processes_by_pid, GINT_TO_POINTER (process->pid), process);

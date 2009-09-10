@@ -641,9 +641,10 @@ ensure_profile (Application *app)
     if (app->profile)
 	return;
 
+    collector_stop (app->collector);
+
     app->profile = collector_create_profile (app->collector);
 
-    collector_stop (app->collector);
     collector_reset (app->collector);
 
     enter_display_mode (app);
@@ -971,7 +972,7 @@ expand_descendants_tree (Application *app)
 		GTK_TREE_VIEW (app->descendants_view), best_path, FALSE);
 	    n_rows += n_children;
 
-	    if (gtk_tree_path_get_depth (best_path) < 4)
+	    if (gtk_tree_path_get_depth (best_path) < 6)
 	    {
 		GtkTreePath *path = gtk_tree_path_copy (best_path);
 		gtk_tree_path_down (path);

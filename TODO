@@ -1,4 +1,4 @@
-Before 1.0.4:
+Before 1.2:
 
 * Build system
    - Create RPM package? See fedora-packaging-list for information
@@ -9,48 +9,85 @@ Before 1.0.4:
 
      Someone already did create a package - should be googlable.
 
-* See if we can reproduce this: Press start without kernel module loaded,
-  then load kernel module and press start again. Segmentation fault. 
+* The hrtimer in the kernel currently generate an event every time the
+  timer fires. There are two problems with this:
 
-* Test on x86-64. 
+  - Essentially all the events are idle events and exclude_idle is
+    ignored.
 
-* Consider renaming sysprof-module.[ch] to sysprof.[ch] to move it closer to 
-  kernel naming conventions. 
+  - If you make it obey exclude_idle, it still generates activity
+    based on what is running currently. Unfortunately, the thing that
+    is running will very often be the userspace tracker because it was
+    handling the last sample generated. So this degenerates into an
+    infinite loop of sorts. Or maybe the GUI is just too slow, but
+    then why doesn't it happen with the real counters?
 
-* Get rid of include of "../config.h" as that won't work in the latest 
-  kernel. done in HEAD, need to check what if anything breaks with older
-  kernels.
+    I think the solution here is to make the hrtimer fire at some
+    reasonable interval, like 100000 ns. When the timer fires, if the
+    current task is not the idle taks, it increments a counter by
+    
+		cpu clock frequency * 100000 ns
 
-Before 1.2:
+    If that overflows the sample period, an event is generated.
 
-* How to deal with forks and mmaps seemingly happening after
-  samples. This can happen when a process migrates between CPUs.
-  There doesn't seem to be any way to get this information in a
-  guaranteed correct way.
+    This is closer to the idea of a fake CPU cycle counter. 
 
-* How to deal with processes that exit before we can get their maps?
-  
-  Such a process can never cause events itself, but it may fork a
-  child that does. There is no way to get the maps for that child. A
-  possible solution would be to optionally generate mmap event after
+  Also, for reasons I don't understand, it stops generating events
+  completely if a process is running that spins on all CPUs. So this
+  interface is not usable in its present state, but fortunately all
+  CPUs we care about have hardware cycle counters.
+
+* With more than one CPU, we can get events out of order, so userspace
+  will have to deal with that. With serial numbers we could do it
+  correctly, but even without them we can do a pretty reasonable job
+  of putting them back in order. If a fork happens "soon" after a
+  sample, it probably happened before the sample; if an mmap happens
+  "soon" after a sample that would otherwise be unmapped, it probably
+  happened before the sample. All we need is a way to determine what
+  "soon" is.
+
+  Serial numbers would be useful to make "soon" an accurate measure.
+
+  There is also the issue of pid reuse, but that can probably be
+  ignored.
+
+  If we ignore pid reuse, we can sort the event buffer where two
+  events compare equal, unless both have the same pid and one is a
+  fork and the other is not.
+
+* Another issue is processes that exit during the initial scan of
+  /proc. Such a process will not cause sample events by itself, but it
+  may fork a child that will. There is no way to get maps for that
+  child.
+
+  A possible solution would be to optionally generate mmap event after
   forks. Userspace would turn this off when it was done with the
   initial gathering of processes.
+
+  Also, exec() events will delete the maps from a process, but all we
+  get is 'comm' events which is not quite the same thing.
 
 * Find out why the busy cursor stays active after you hit start
 
 * Kernel binary when available, is better than kallsyms.
 
-* Hack around gtk+ bug where it mispositions the window.
+* GTK+ bugs:
+  - Misposition window after click
+  - Find out why gtk_tree_view_columns_autosize() apparently doesn't
+    work on empty tree views.
+  - Write my own tree model? There is still performance issues in
+    FooTreeStore.
 
 * Counters must not be destroyed during tracker setup. They have to
-  exist but be disabled so that we can track creation of processes.
+  exist but be disabled so that we can track process creation.
 
 * Check that we don't use too much memory (in particular with the
   timeline).
 
-* Fix names. "new process" is really "exec"
+* Fix names. "new process" is really "exec". (What does "comm"
+  actually stand for? Command?)
 
-* Fix flash when double clicking in descendants view
+* Fix ugly flash when double clicking in descendants view
 
 * Find out what's up with weird two-step flash when you hit start when
   a profile is loaded.
@@ -92,12 +129,6 @@ Before 1.2:
 
 * We often get "No map". I suspect this is because the vdso stackframe
   is strange.
-
-* Find out why gtk_tree_view_columns_autosize() apparently doesn't
-  work on empty tree views.
-
-* Write my own tree model? There is still performance issues in
-  FooTreeStore.
 
 * Hack to disable recursion for binaries without symbols causes the
   symbols to not work the way other symbols do.  A better approach is

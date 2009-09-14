@@ -27,20 +27,20 @@
 #include <glib.h>
 #include <sys/types.h>
 
-typedef struct BinFile BinFile;
-typedef struct BinSymbol BinSymbol;
+typedef struct bin_file_t bin_file_t;
+typedef struct bin_symbol_t bin_symbol_t;
 
 /* Binary File */
 
-BinFile *        bin_file_new           (const char      *filename);
-void             bin_file_free          (BinFile         *bin_file);
-const BinSymbol *bin_file_lookup_symbol (BinFile         *bin_file,
+bin_file_t *        bin_file_new           (const char      *filename);
+void             bin_file_free          (bin_file_t         *bin_file);
+const bin_symbol_t *bin_file_lookup_symbol (bin_file_t         *bin_file,
 					 gulong           address);
-gboolean         bin_file_check_inode   (BinFile         *bin_file,
+gboolean         bin_file_check_inode   (bin_file_t         *bin_file,
 					 ino_t		  inode);
-const char *     bin_symbol_get_name    (BinFile         *bin_file,
-					 const BinSymbol *symbol);
-gulong		 bin_symbol_get_address (BinFile         *bin_file,
-					 const BinSymbol *symbol);
+const char *     bin_symbol_get_name    (bin_file_t         *bin_file,
+					 const bin_symbol_t *symbol);
+gulong		 bin_symbol_get_address (bin_file_t         *bin_file,
+					 const bin_symbol_t *symbol);
 
 #endif

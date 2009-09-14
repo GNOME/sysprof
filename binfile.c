@@ -38,7 +38,7 @@
 #include "binfile.h"
 #include "elfparser.h"
 
-struct BinFile
+struct bin_file_t
 {
     int		ref_count;
     
@@ -325,13 +325,13 @@ get_vdso_bytes (size_t *length)
     return bytes;
 }
 
-BinFile *
+bin_file_t *
 bin_file_new (const char *filename)
 {
     ElfParser *elf = NULL;
-    BinFile *bf;
+    bin_file_t *bf;
     
-    bf = g_new0 (BinFile, 1);
+    bf = g_new0 (bin_file_t, 1);
     
     bf->inode_check = FALSE;
     bf->filename = g_strdup (filename);
@@ -371,7 +371,7 @@ bin_file_new (const char *filename)
 }
 
 void
-bin_file_free (BinFile *bin_file)
+bin_file_free (bin_file_t *bin_file)
 {
     if (--bin_file->ref_count == 0)
     {
@@ -384,8 +384,8 @@ bin_file_free (BinFile *bin_file)
     }
 }
 
-const BinSymbol *
-bin_file_lookup_symbol (BinFile    *bin_file,
+const bin_symbol_t *
+bin_file_lookup_symbol (bin_file_t    *bin_file,
 			gulong      address)
 {
     GList *list;
@@ -413,7 +413,7 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 	    g_print ("found  %lx => %s\n", address,
 		     bin_symbol_get_name (bin_file, sym));
 #endif
-	    return (const BinSymbol *)sym;
+	    return (const bin_symbol_t *)sym;
 	}
     }
     
@@ -424,11 +424,11 @@ bin_file_lookup_symbol (BinFile    *bin_file,
 	     bin_file->text_offset);
 #endif
     
-    return (const BinSymbol *)bin_file->undefined_name;
+    return (const bin_symbol_t *)bin_file->undefined_name;
 }
 
 gboolean
-bin_file_check_inode (BinFile *bin_file,
+bin_file_check_inode (bin_file_t *bin_file,
 		      ino_t    inode)
 {
     if (bin_file->inode == inode)
@@ -450,8 +450,8 @@ bin_file_check_inode (BinFile *bin_file,
 }
 
 static const ElfSym *
-get_elf_sym (BinFile *file,
-	     const BinSymbol *symbol,
+get_elf_sym (bin_file_t *file,
+	     const bin_symbol_t *symbol,
 	     ElfParser **elf_ret)
 {
     GList *list;
@@ -475,8 +475,8 @@ get_elf_sym (BinFile *file,
 }
 
 const char *
-bin_symbol_get_name (BinFile *file,
-		     const BinSymbol *symbol)
+bin_symbol_get_name (bin_file_t *file,
+		     const bin_symbol_t *symbol)
 {
     if (file->undefined_name == (char *)symbol)
     {
@@ -494,8 +494,8 @@ bin_symbol_get_name (BinFile *file,
 }
 
 gulong
-bin_symbol_get_address (BinFile         *file,
-			const BinSymbol *symbol)
+bin_symbol_get_address (bin_file_t      *file,
+			const bin_symbol_t *symbol)
 {
     if (file->undefined_name == (char *)symbol)
     {

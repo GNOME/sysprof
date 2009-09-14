@@ -972,7 +972,7 @@ expand_descendants_tree (Application *app)
 		GTK_TREE_VIEW (app->descendants_view), best_path, FALSE);
 	    n_rows += n_children;
 
-	    if (gtk_tree_path_get_depth (best_path) < 6)
+	    if (gtk_tree_path_get_depth (best_path) < 4)
 	    {
 		GtkTreePath *path = gtk_tree_path_copy (best_path);
 		gtk_tree_path_down (path);

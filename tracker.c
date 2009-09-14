@@ -795,10 +795,10 @@ make_message (state_t *state, const char *format, ...)
     return result;
 }
 
-static BinFile *
+static bin_file_t *
 state_get_bin_file (state_t *state, const char *filename)
 {
-    BinFile *bf = g_hash_table_lookup (state->bin_files, filename);
+    bin_file_t *bf = g_hash_table_lookup (state->bin_files, filename);
 
     if (!bf)
     {
@@ -834,8 +834,8 @@ lookup_symbol (state_t    *state,
 	}
 	else
 	{
-	    BinFile *bin_file = state_get_bin_file (state, map->filename);
-	    const BinSymbol *bin_sym;
+	    bin_file_t *bin_file = state_get_bin_file (state, map->filename);
+	    const bin_symbol_t *bin_sym;
 	    
 	    address -= map->start;
 	    address += map->offset;

@@ -1,3 +1,10 @@
+Before 1.1:
+
+* Move perfcounter.h into sysprof namespace
+
+* Check for existence and presense of __NR_perf_counter_open in
+  syscall.h
+
 Before 1.2:
 
 * Build system
@@ -9,8 +16,8 @@ Before 1.2:
 
      Someone already did create a package - should be googlable.
 
-* The hrtimer in the kernel currently generate an event every time the
-  timer fires. There are two problems with this:
+* The hrtimer in the kernel currently generates an event every time
+  the timer fires. There are two problems with this:
 
   - Essentially all the events are idle events and exclude_idle is
     ignored.
@@ -54,6 +61,9 @@ Before 1.2:
   If we ignore pid reuse, we can sort the event buffer where two
   events compare equal, unless both have the same pid and one is a
   fork and the other is not.
+
+  A system-wide serial number could be expensive to maintain though,
+  so maybe time events would be just as good.
 
 * Another issue is processes that exit during the initial scan of
   /proc. Such a process will not cause sample events by itself, but it
@@ -116,7 +126,7 @@ Before 1.2:
 
 * Why do we get EINVAL when we try to track forks?
 
-* Sometimes it get samples for unknown processes. This may be due to
+* Sometimes it gets samples for unknown processes. This may be due to
   forking without execing.
 
 * Give an informative error message if not run as root
@@ -626,7 +636,7 @@ http://www.linuxbase.org/spec/booksets/LSB-Embedded/LSB-Embedded/ehframe.html
 	- Possibly a special "view details" mode, assuming that 
 	  the details of a function are not that interesting 
 	  together with a tree. (Could add radio buttons somewhere in
-	  in the right pane).
+	  in the right pane). Or tabs.
   	- Open a new window for the function.
 
 - Add view->ancestors/descendants menu items
@@ -782,14 +792,18 @@ Later:
    Cookies are used to figure out whether an access is really the same, ie., for two identical
    cookies, the size is still just one, however 
    
-   Memory is different from disk because you can't reasonably assume that stuff that has
-   been read will stay in cache (for short profile runs you can assume that with disk,
-   but not for long ones).
+   Memory is different from disk because you can't reasonably assume
+   that stuff that has been read will stay in cache (for short profile
+   runs you can assume that with disk, but not for long ones).
 
-   - Perhaps show a timeline with CPU in one color and disk in one color. Allow people to
-     look at at subintervals of this timeline. Is it useful to look at both CPU and disk at 
-     the same time? Probably not. See also marker discussion above. UI should probably allow
-     double clicking on a marked section and all instances of that one would be marked.
+   - Perhaps show a timeline with CPU in one color and disk in one
+     color. Allow people to look at at subintervals of this
+     timeline. Is it useful to look at both CPU and disk at the same
+     time? Probably not. See also marker discussion above. UI should
+     probably allow double clicking on a marked section and all
+     instances of that one would be marked.
+
+   - This also allows us to show how well multicore CPUs are being used.
 
    - Other variation on the timeline idea: Instead of a disk timeline you could have a 
      list of individual diskaccesses, and be able to select the ones you wanted to

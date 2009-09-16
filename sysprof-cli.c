@@ -50,6 +50,8 @@ dump_data (Application *app)
 
     printf ("Saving profile in %s ... ", app->outfile);
     fflush (stdout);
+
+    collector_stop (app->collector);
     
     profile = collector_create_profile (app->collector);
     profile_save (profile, app->outfile, &err);

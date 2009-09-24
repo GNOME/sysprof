@@ -64,8 +64,6 @@ struct counter_t
     
     uint64_t				tail;
     int					cpu;
-    
-    GString *				partial;
 }; 
 
 struct sample_event_t
@@ -362,7 +360,6 @@ counter_new (Collector *collector,
     counter->data = (uint8_t *)counter->mmap_page + get_page_size ();
     counter->tail = 0;
     counter->cpu = cpu;
-    counter->partial = g_string_new (NULL);
     
     fd_add_watch (fd, counter);
     fd_set_read_callback (fd, on_read);
@@ -393,7 +390,6 @@ counter_free (counter_t *counter)
     fd_remove_watch (counter->fd);
     
     close (counter->fd);
-    g_string_free (counter->partial, TRUE);
     
     g_free (counter);
 }

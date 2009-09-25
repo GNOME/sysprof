@@ -497,7 +497,9 @@ process_fork (state_t *state, fork_t *fork)
 	process_t *process = g_new0 (process_t, 1);
 	int i;
 
+#if 0
 	g_print ("new child %d\n", fork->child_pid);
+#endif
 	
 	process->pid = fork->child_pid;
 	process->comm = g_strdup (parent? parent->comm : "<unknown>");
@@ -525,7 +527,9 @@ process_fork (state_t *state, fork_t *fork)
 static void
 process_exit (state_t *state, exit_t *exit)
 {
+#if 0
     g_print ("Exit for %d\n", exit->pid);
+#endif
     
     /* ignore for now */
 }
@@ -916,7 +920,9 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
 	static gboolean warned;
 	if (!warned || sample->pid != 0)
 	{
+#if 0
 	    g_print ("sample for unknown process %d\n", sample->pid);
+#endif
 	    warned = TRUE;
 	}
 	return;

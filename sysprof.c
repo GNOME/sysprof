@@ -665,7 +665,7 @@ on_about_activated (GtkWidget *widget, gpointer data)
     gtk_show_about_dialog (GTK_WINDOW (app->main_window),
 			   "logo", app->icon,
 			   name_property, APPLICATION_NAME,
-			   "copyright", "Copyright 2004-2008, S"OSLASH"ren Sandmann",
+			   "copyright", "Copyright 2004-2009, S"OSLASH"ren Sandmann",
 			   "version", PACKAGE_VERSION,
 			   NULL);
 }

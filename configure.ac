@@ -44,42 +44,10 @@ AC_ARG_WITH(separate-debug-dir,
 AC_DEFINE_DIR(DEBUGDIR, debugdir,
               [Look for global separate debug info in this path])
 
-AC_ARG_ENABLE(kernel-module,
-     AC_HELP_STRING(--disable-kernel-module, disable building kernel module))
-
-kernel_module="yes"
-if test "x$enableval" = "xno"; then
-	kernel_module="no"
-fi
-
-if test $kernel_module = "yes"; then
-  # Activate build in module/ subdir
-  MODULE_SUBDIR=module
-  
-  # Kernel version
-  KMAJOR=`uname -r | cut -d"." -f 1`
-  KMINOR=`uname -r | cut -d"." -f 2`
-  KMICRO=`uname -r | cut -d"." -f 3 | cut -d"-" -f 1`
-
-  if [[ $KMICRO -lt 9 ]] ; then
-     echo \*
-     echo \* Linux \>= 2.6.9 is required
-     echo \*
-     exit 1
-  fi
-
-  if [ ! test -f /lib/modules/`uname -r`/build/Makefile ] ; then
-     case `uname -r` in
-     *smp) pkg=kernel-smp-devel ;;
-     *) pkg=kernel-devel ;;
-     esac
-     echo \*
-     echo \* Sysprof requires the kernel source code to be installed.
-     echo \* On a Fedora Core system the relevant package is $pkg
-     echo \*
-     exit 1
-  fi
-fi
+# Kernel version
+KMAJOR=`uname -r | cut -d"." -f 1`
+KMINOR=`uname -r | cut -d"." -f 2`
+KMICRO=`uname -r | cut -d"." -f 3 | cut -d"-" -f 1`
 
 # Pkgconfig dependencies
 
@@ -105,27 +73,16 @@ Makefile
 
 AC_OUTPUT
 
-if true; then
+if [[ $KMICRO -lt 31 ]] ; then
    echo
    echo "%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%"
    echo "@"  
-   echo "%      Thank you for testing the git version of sysprof."
+   echo "%      This version of sysprof will only work with a "
+   echo "@      2.6.31 kernel or later, but you are using 2.6.$KMICRO."
+   echo "%"
+   echo "@      You can _compile_ it against this version, but it "
+   echo "%      will not work unless you install 2.6.31 or later. "
    echo "@"
-   echo "%      There are currently no known bugs in the kernel"
-   echo "@      module in this version, but there could easily be"
-   echo "%      unknown ones. Please report any crashes or lockups"
-   echo "@      that you experience to sandmann@daimi.au.dk."
-   echo "%"
-   echo "@"
-   echo "%      If you need a stable version of sysprof, either"
-   echo "@      get version 1.0 from"
-   echo "%"
-   echo "@          http://www.daimi.au.dk/~sandmann/sysprof"
-   echo "%"
-   echo "@      or do"
-   echo "%"
-   echo "@          git checkout sysprof-1.0"
-   echo "%"
    echo "@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@"
    echo
 fi

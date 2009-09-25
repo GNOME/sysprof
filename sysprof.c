@@ -29,7 +29,6 @@
 #include "treeviewutils.h"
 #include "profile.h"
 #include "collector.h"
-#include "module/sysprof-module.h"
 
 /* FIXME - not10 */
 #define _(a) a

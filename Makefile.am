@@ -1,5 +1,5 @@
-SUBDIRS = $(MODULE_SUBDIR)
-DIST_SUBDIRS = module
+#SUBDIRS = $(MODULE_SUBDIR)
+#DIST_SUBDIRS = module
 
 bin_PROGRAMS = sysprof-cli
 
@@ -32,7 +32,10 @@ SYSPROF_CORE =					\
 	watch.h					\
 	watch.c					\
 						\
-	module/sysprof-module.h			
+	perf_counter.h				\
+	barrier.h
+
+#	module/sysprof-module.h			
 
 #
 # GUI version
@@ -85,14 +88,14 @@ sysprof_cli_LDADD = $(CORE_DEP_LIBS)
 # Module stuff
 #  
 
-EXTRA_DIST =					\
-	module/sysprof-module.c			\
-	module/sysprof-module.h			\
-	module/Makefile
+#EXTRA_DIST =					\
+#	module/sysprof-module.c			\
+#	module/sysprof-module.h			\
+#	module/Makefile
 
-insert-module:
-	/sbin/modprobe -r sysprof-module
-	/sbin/modprobe sysprof-module
+#insert-module:
+#	/sbin/modprobe -r sysprof-module
+#	/sbin/modprobe sysprof-module
 
 # 
 # Test programs

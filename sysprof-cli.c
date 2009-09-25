@@ -28,7 +28,6 @@
 #include <stdio.h>
 
 #include "stackstash.h"
-#include "module/sysprof-module.h"
 #include "profile.h"
 #include "watch.h"
 #include "signal-handler.h"

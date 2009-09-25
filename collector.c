@@ -30,7 +30,6 @@
 
 #include "stackstash.h"
 #include "collector.h"
-#include "module/sysprof-module.h"
 #include "watch.h"
 #include "elfparser.h"
 #include "tracker.h"

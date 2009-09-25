@@ -608,14 +608,6 @@ fill_callers_list (Application *app)
 }
 
 static void
-fill_lists (Application *app)
-{
-    fill_main_list (app);
-    fill_callers_list (app);
-    fill_descendants_tree (app);
-}
-
-static void
 enter_display_mode (Application *app)
 {
     app->state = DISPLAYING;

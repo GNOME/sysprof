@@ -45,24 +45,24 @@ struct _FooTreeStore
 {
   GObject parent;
 
-  gint GSEAL (stamp);
-  gpointer GSEAL (root);
-  gpointer GSEAL (last);
-  gint GSEAL (n_columns);
-  gint GSEAL (sort_column_id);
-  GList *GSEAL (sort_list);
-  GtkSortType GSEAL (order);
-  GType *GSEAL (column_headers);
-  GtkTreeIterCompareFunc GSEAL (default_sort_func);
-  gpointer GSEAL (default_sort_data);
-  GDestroyNotify GSEAL (default_sort_destroy);
+  gint stamp;
+  gpointer root;
+  gpointer last;
+  gint n_columns;
+  gint sort_column_id;
+  GList *sort_list;
+  GtkSortType order;
+  GType *column_headers;
+  GtkTreeIterCompareFunc default_sort_func;
+  gpointer default_sort_data;
+  GDestroyNotify default_sort_destroy;
 
   guint row_changed_id;
   guint row_inserted_id;
   guint row_has_child_toggled_id;
   guint rows_reordered_id;
   
-  guint GSEAL (columns_dirty) : 1;
+  guint (columns_dirty) : 1;
 };
 
 struct _FooTreeStoreClass

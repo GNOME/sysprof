@@ -144,6 +144,10 @@ sysprof_perf_counter_open (struct perf_counter_attr *attr,
 			   int			     group_fd,
 			   unsigned long	     flags)
 {
+#ifndef __NR_perf_counter_open
+#define __NR_perf_counter_open 336
+#endif
+    
     attr->size = sizeof(*attr);
     
     return syscall (__NR_perf_counter_open, attr, pid, cpu, group_fd, flags);
@@ -271,7 +275,6 @@ on_read (gpointer data)
 /* FIXME: return proper errors */
 #define fail(x)								\
     do {								\
-	g_printerr ("the fail is ");					\
 	perror (x);							\
 	exit (-1);							\
     } while (0)

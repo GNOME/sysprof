@@ -26,6 +26,7 @@ typedef struct Section Section;
 
 struct ElfSym
 {
+    gulong table;
     gulong offset;
     gulong address;
 };
@@ -75,13 +76,27 @@ static gboolean parse_elf_signature (const guchar *data, gsize length,
 				     gboolean *is_64, gboolean *is_be);
 static void     make_formats        (ElfParser *parser, gboolean is_64);
 
+/* FIXME: All of these should in principle do endian swapping,
+ * but sysprof never has to deal with binaries of a different
+ * endianness than sysprof itself
+ */
+#define GET_FIELD(parser, offset, struct_name, idx, field_name)		\
+    (((parser))->is_64?							\
+     ((Elf64_ ## struct_name *)(((parser)->data + offset)) + (idx))->field_name : \
+     ((Elf32_ ## struct_name *)(((parser)->data + offset)) + (idx))->field_name)
+
+#define GET_UINT32(parser, offset)					\
+    *((uint32_t *)(parser->data + offset))				\
+
+#define GET_SIZE(parser, struct_name)					\
+    (((parser)->is_64?							\
+      sizeof (Elf64_ ## struct_name) :					\
+      sizeof (Elf32_ ## struct_name)))
+
 #define MAKE_ELF_UINT_ACCESSOR(field_name)				\
     static uint64_t field_name  (ElfParser *parser)			\
     {									\
-	if (parser->is_64)						\
-	    return ((Elf64_Ehdr *)parser->data)->field_name;		\
-	else								\
-	    return ((Elf32_Ehdr *)parser->data)->field_name;		\
+	return GET_FIELD (parser, 0, Ehdr, 0, field_name);		\
     }
 
 MAKE_ELF_UINT_ACCESSOR (e_type)
@@ -101,11 +116,9 @@ MAKE_ELF_UINT_ACCESSOR (e_shstrndx)
 #define MAKE_SECTION_HEADER_ACCESSOR(field_name)			\
     static uint64_t field_name (ElfParser *parser, int nth_section)	\
     {									\
-	const char *data = parser->data + e_shoff (parser);		\
-	if (parser->is_64)						\
-	    return (((Elf64_Shdr *)data) + nth_section)->field_name;	\
-	else								\
-	    return (((Elf32_Shdr *)data) + nth_section)->field_name;	\
+	gsize offset = e_shoff (parser);				\
+									\
+	return GET_FIELD (parser, offset, Shdr, nth_section, field_name); \
     }
 
 MAKE_SECTION_HEADER_ACCESSOR (sh_name);
@@ -120,39 +133,17 @@ MAKE_SECTION_HEADER_ACCESSOR (sh_addralign);
 MAKE_SECTION_HEADER_ACCESSOR (sh_entsize);
 
 #define MAKE_SYMBOL_ACCESSOR(field_name)				\
-    static uint64_t field_name (ElfParser *parser, gsize offset)	\
+    static uint64_t field_name (ElfParser *parser, gulong offset, gulong nth)	\
     {									\
-	const char *data = parser->data + offset;			\
-	if (parser->is_64)						\
-	    return (((Elf64_Sym *)data)->field_name);			\
-	else								\
-	    return (((Elf32_Sym *)data)->field_name);			\
+	return GET_FIELD (parser, offset, Sym, nth, field_name);	\
     }
 
 MAKE_SYMBOL_ACCESSOR(st_name);
-
-
-static const char *
-get_string_indirect (BinParser *parser,
-		     BinRecord *record,
-		     const char *name,
-		     gsize str_table)
-{
-    const char *result = NULL;    
-    gsize index;
-    
-    bin_parser_save (parser);
-    
-    index = bin_parser_get_uint_field (parser, record, name);
-    
-    bin_parser_set_offset (parser, str_table + index);
-    
-    result = bin_parser_get_string (parser);
-    
-    bin_parser_restore (parser);
-    
-    return result;
-}
+MAKE_SYMBOL_ACCESSOR(st_info);
+MAKE_SYMBOL_ACCESSOR(st_value);
+MAKE_SYMBOL_ACCESSOR(st_size);
+MAKE_SYMBOL_ACCESSOR(st_other);
+MAKE_SYMBOL_ACCESSOR(st_shndx);
 
 static void
 section_free (Section *section)
@@ -487,8 +478,6 @@ read_table (ElfParser *parser,
     g_print ("sym table offset: %d\n", sym_table->offset);
 #endif
     
-    bin_parser_set_offset (parser->parser, sym_table->offset);
-    
     n_symbols = 0;
 #if 0
     g_print ("n syms: %d\n", parser->n_symbols);
@@ -497,16 +486,11 @@ read_table (ElfParser *parser,
     {
 	guint info;
 	gulong addr;
-	gulong offset;
 	gulong shndx;
-	
-	info = bin_parser_get_uint_field (
-	    parser->parser, parser->sym_format, "st_info");
-	addr = bin_parser_get_uint_field (
-	    parser->parser, parser->sym_format, "st_value");
-	shndx = bin_parser_get_uint_field (
-	    parser->parser, parser->sym_format, "st_shndx");
-	offset = bin_parser_get_offset (parser->parser);
+
+	info = st_info (parser, sym_table->offset, i);
+	addr = st_value (parser, sym_table->offset, i);
+	shndx = st_shndx (parser, sym_table->offset, i);
 	
 #if 0
 	g_print ("read symbol: %s (section: %d)\n", get_string_indirct (parser->parser,
@@ -518,14 +502,14 @@ read_table (ElfParser *parser,
 	if (addr != 0						&&
 	    shndx < parser->n_sections				&&
 	    parser->sections[shndx] == parser->text_section	&&
-	    (info & 0xf) == STT_FUNC		&&
+	    (info & 0xf) == STT_FUNC				&&
 	    ((info >> 4) == STB_GLOBAL ||
 	     (info >> 4) == STB_LOCAL  ||
-	     (info >> 4) == STB_WEAK)
-	    )
+	     (info >> 4) == STB_WEAK))
 	{
 	    parser->symbols[n_symbols].address = addr;
-	    parser->symbols[n_symbols].offset = offset;
+	    parser->symbols[n_symbols].table = sym_table->offset;
+	    parser->symbols[n_symbols].offset = i;
 
 	    n_symbols++;
 	    
@@ -546,8 +530,6 @@ read_table (ElfParser *parser,
 		     addr, parser, info & 0xf, info >> 4, STT_FUNC, STB_GLOBAL);
 #endif
 	}
-	
-	bin_parser_seek_record (parser->parser, parser->sym_format, 1);
     }
     
     parser->sym_strings = str_table->offset;
@@ -667,12 +649,7 @@ elf_parser_lookup_symbol (ElfParser *parser,
     
     if (result)
     {
-	gulong size;
-	
-	bin_parser_set_offset (parser->parser, result->offset);
-	
-	size = bin_parser_get_uint_field (
-	    parser->parser, parser->sym_format, "st_size");
+	gulong size = st_size (parser, result->table, result->offset);
 
 	if (size > 0 && result->address + size <= address)
 	{
@@ -731,32 +708,37 @@ elf_parser_get_build_id (ElfParser *parser)
 {
     if (!parser->checked_build_id)
     {
-	const Section *build_id = find_section (parser, ".note.gnu.build-id", SHT_NOTE);
+	const Section *build_id =
+	    find_section (parser, ".note.gnu.build-id", SHT_NOTE);
 	guint64 name_size;
 	guint64 desc_size;
 	guint64 type;
 	const char *name;
-	const gchar *desc;
+	guint64 offset;
 	    
 	parser->checked_build_id = TRUE;
 
 	if (!build_id)
 	    return NULL;
-	
-	bin_parser_set_offset (parser->parser, build_id->offset);
-	
-	name_size = bin_parser_get_uint_field (parser->parser, parser->note_format, "name_size");
-	desc_size = bin_parser_get_uint_field (parser->parser, parser->note_format, "desc_size");
-	type = bin_parser_get_uint_field (parser->parser, parser->note_format, "type");
 
-	bin_parser_seek_record (parser->parser, parser->note_format, 1);
-	name = bin_parser_get_string (parser->parser);
+	offset = build_id->offset;
 
-	bin_parser_align (parser->parser, 4);
+	name_size = GET_FIELD (parser, offset, Nhdr, 0, n_namesz);
+	desc_size = GET_FIELD (parser, offset, Nhdr, 0, n_descsz);
+	type      = GET_FIELD (parser, offset, Nhdr, 0, n_type);
+
+	offset += GET_SIZE (parser, Nhdr);
+
+	name = parser->data + offset;
 	
-	desc = bin_parser_get_string (parser->parser);
+	if (strncmp (name, ELF_NOTE_GNU, name_size) != 0 || type != NT_GNU_BUILD_ID)
+	    return NULL;
 
-	parser->build_id = make_hex_string (desc, desc_size);
+	offset += strlen (parser->data + offset);
+
+	offset = (offset + 3) & (~0x3);
+
+	parser->build_id = make_hex_string (parser->data + offset, desc_size);
     }
     
     return parser->build_id;
@@ -765,21 +747,24 @@ elf_parser_get_build_id (ElfParser *parser)
 const char *
 elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
 {
+    guint64 offset;
     const Section *debug_link = find_section (parser, ".gnu_debuglink",
 					      SHT_PROGBITS);
     const gchar *result;
     
     if (!debug_link)
 	return NULL;
+
+    offset = debug_link->offset;
     
-    bin_parser_set_offset (parser->parser, debug_link->offset);
-    
-    result = bin_parser_get_string (parser->parser);
-    
-    bin_parser_align (parser->parser, 4);
-    
+    result = parser->data + offset;
+
     if (crc32)
-	*crc32 = bin_parser_get_uint (parser->parser, 4);
+    {
+	offset = (offset + 3) & ~0x3;
+
+	*crc32 = GET_UINT32 (parser, offset);
+    }
     
     return result;
 }
@@ -789,9 +774,9 @@ get_section (ElfParser *parser,
 	     const char *name)
 {
     const Section *section = find_section (parser, name, SHT_PROGBITS);
-    
+
     if (section)
-	return bin_parser_get_data (parser->parser) + section->offset;
+	return parser->data + section->offset;
     else
 	return NULL;
 }
@@ -814,7 +799,8 @@ elf_parser_get_sym_name (ElfParser *parser,
 {
     g_return_val_if_fail (parser != NULL, NULL);
 
-    return (char *)(parser->data + parser->sym_strings + st_name (parser, sym->offset));
+    return (char *)(parser->data + parser->sym_strings +
+		    st_name (parser, sym->table, sym->offset));
 }
 
 gboolean

@@ -1,5 +1,4 @@
 #include "elfparser.h"
-#include "binparser.h"
 #include <string.h>
 
 /* Pointer encodings, from dwarf2.h.  */

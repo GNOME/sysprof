@@ -19,7 +19,6 @@
 #include <string.h>
 #include <elf.h>
 #include <sys/mman.h>
-#include "binparser.h"
 #include "elfparser.h"
 
 typedef struct Section Section;
@@ -43,16 +42,8 @@ struct Section
 
 struct ElfParser
 {
-    BinParser *		parser;
-    
-    BinRecord *		header;
-    BinRecord *		strtab_format;
-    BinRecord *		shn_entry;
-    BinRecord *		sym_format;
-    BinRecord *		note_format;
-
     gboolean		is_64;
-    const char *	data;
+    const guchar *	data;
     gsize		length;
     
     int			n_sections;
@@ -71,10 +62,6 @@ struct ElfParser
     
     const Section *	text_section;
 };
-
-static gboolean parse_elf_signature (const guchar *data, gsize length,
-				     gboolean *is_64, gboolean *is_be);
-static void     make_formats        (ElfParser *parser, gboolean is_64);
 
 /* FIXME: All of these should in principle do endian swapping,
  * but sysprof never has to deal with binaries of a different
@@ -99,17 +86,7 @@ static void     make_formats        (ElfParser *parser, gboolean is_64);
 	return GET_FIELD (parser, 0, Ehdr, 0, field_name);		\
     }
 
-MAKE_ELF_UINT_ACCESSOR (e_type)
-MAKE_ELF_UINT_ACCESSOR (e_machine)
-MAKE_ELF_UINT_ACCESSOR (e_version)
-MAKE_ELF_UINT_ACCESSOR (e_entry)
-MAKE_ELF_UINT_ACCESSOR (e_phoff)
 MAKE_ELF_UINT_ACCESSOR (e_shoff)
-MAKE_ELF_UINT_ACCESSOR (e_flags)
-MAKE_ELF_UINT_ACCESSOR (e_ehsize)
-MAKE_ELF_UINT_ACCESSOR (e_phentsize)
-MAKE_ELF_UINT_ACCESSOR (e_phnum)
-MAKE_ELF_UINT_ACCESSOR (e_shentsize)
 MAKE_ELF_UINT_ACCESSOR (e_shnum)
 MAKE_ELF_UINT_ACCESSOR (e_shstrndx)
 
@@ -127,10 +104,6 @@ MAKE_SECTION_HEADER_ACCESSOR (sh_flags);
 MAKE_SECTION_HEADER_ACCESSOR (sh_addr);
 MAKE_SECTION_HEADER_ACCESSOR (sh_offset);
 MAKE_SECTION_HEADER_ACCESSOR (sh_size);
-MAKE_SECTION_HEADER_ACCESSOR (sh_link);
-MAKE_SECTION_HEADER_ACCESSOR (sh_info);
-MAKE_SECTION_HEADER_ACCESSOR (sh_addralign);
-MAKE_SECTION_HEADER_ACCESSOR (sh_entsize);
 
 #define MAKE_SYMBOL_ACCESSOR(field_name)				\
     static uint64_t field_name (ElfParser *parser, gulong offset, gulong nth)	\
@@ -142,7 +115,6 @@ MAKE_SYMBOL_ACCESSOR(st_name);
 MAKE_SYMBOL_ACCESSOR(st_info);
 MAKE_SYMBOL_ACCESSOR(st_value);
 MAKE_SYMBOL_ACCESSOR(st_size);
-MAKE_SYMBOL_ACCESSOR(st_other);
 MAKE_SYMBOL_ACCESSOR(st_shndx);
 
 static void
@@ -169,6 +141,42 @@ find_section (ElfParser *parser,
     return NULL;
 }
 
+static gboolean
+parse_elf_signature (const guchar *data,
+		     gsize	   length,
+		     gboolean     *is_64,
+		     gboolean     *is_be)
+{
+    /* FIXME: this function should be able to return an error */
+    if (length < EI_NIDENT)
+    {
+	/* FIXME set error */
+	return FALSE;
+    }
+    
+    if (data[EI_CLASS] != ELFCLASS32 &&
+	data[EI_CLASS] != ELFCLASS64)
+    {
+	/* FIXME set error */
+	return FALSE;
+    }
+    
+    if (data[EI_DATA] != ELFDATA2LSB &&
+	data[EI_DATA] != ELFDATA2MSB)
+    {
+	/* FIXME set error */
+	return FALSE;
+    }
+    
+    if (is_64)
+	*is_64 = (data[EI_CLASS] == ELFCLASS64);
+    
+    if (is_be)
+	*is_be = (data[EI_DATA] == ELFDATA2MSB);
+    
+    return TRUE;
+}
+
 ElfParser *
 elf_parser_new_from_data (const guchar *data,
 			  gsize length)
@@ -176,7 +184,7 @@ elf_parser_new_from_data (const guchar *data,
     ElfParser *parser;
     gboolean is_64, is_big_endian;
     int section_names_idx;
-    const char *section_names;
+    const guchar *section_names;
     gsize section_headers;
     int i;
     
@@ -189,26 +197,14 @@ elf_parser_new_from_data (const guchar *data,
     parser = g_new0 (ElfParser, 1);
 
     parser->is_64 = is_64;
-    parser->data = (const char *)data;
+    parser->data = data;
     parser->length = length;
     
 #if 0
     g_print ("  new parser : %p\n", parser);
 #endif
     
-    parser->parser = bin_parser_new (data, length);
-    
-    if (is_big_endian)
-	bin_parser_set_endian (parser->parser, BIN_BIG_ENDIAN);
-    else
-	bin_parser_set_endian (parser->parser, BIN_LITTLE_ENDIAN);
-    
-    make_formats (parser, is_64);
-    
-    
     /* Read ELF header */
-    
-    bin_parser_set_offset (parser->parser, 0);
     
     parser->n_sections = e_shnum (parser);
     section_names_idx = e_shstrndx (parser);
@@ -216,20 +212,9 @@ elf_parser_new_from_data (const guchar *data,
     
     /* Read section headers */
     parser->sections = g_new0 (Section *, parser->n_sections);
-
     
-    
-    bin_parser_set_offset (parser->parser, section_headers);
-    
-    bin_parser_save (parser->parser);
-    
-    bin_parser_seek_record (parser->parser, parser->shn_entry,
-			    section_names_idx);
-
     section_names = parser->data + sh_offset (parser, section_names_idx);
 
-    bin_parser_restore (parser->parser);
-    
     for (i = 0; i < parser->n_sections; ++i)
     {
 	Section *section = g_new (Section, 1);
@@ -400,8 +385,6 @@ elf_parser_free (ElfParser *parser)
     
     g_free (parser->symbols);
     
-    bin_parser_free (parser->parser);
-
     if (parser->filename)
 	g_free (parser->filename);
 
@@ -464,7 +447,7 @@ read_table (ElfParser *parser,
 	    const Section *sym_table,
 	    const Section *str_table)
 {
-    int sym_size = bin_record_get_size (parser->sym_format);
+    int sym_size = GET_SIZE (parser, Sym);
     int i, n_symbols;
 
 #if 0
@@ -683,7 +666,7 @@ elf_parser_get_text_offset (ElfParser *parser)
 }
 
 static gchar *
-make_hex_string (const gchar *data, int n_bytes)
+make_hex_string (const guchar *data, int n_bytes)
 {
     static const char hex_digits[] = {
 	'0', '1', '2', '3', '4', '5', '6', '7',
@@ -729,12 +712,12 @@ elf_parser_get_build_id (ElfParser *parser)
 
 	offset += GET_SIZE (parser, Nhdr);
 
-	name = parser->data + offset;
+	name = (char *)(parser->data + offset);
 	
 	if (strncmp (name, ELF_NOTE_GNU, name_size) != 0 || type != NT_GNU_BUILD_ID)
 	    return NULL;
 
-	offset += strlen (parser->data + offset);
+	offset += strlen (name);
 
 	offset = (offset + 3) & (~0x3);
 
@@ -757,7 +740,7 @@ elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
 
     offset = debug_link->offset;
     
-    result = parser->data + offset;
+    result = (char *)(parser->data + offset);
 
     if (crc32)
     {
@@ -828,165 +811,3 @@ elf_parser_get_sym_address (ElfParser *parser,
 /*
  * Utility functions
  */
-static gboolean
-parse_elf_signature (const guchar *data,
-		     gsize	   length,
-		     gboolean     *is_64,
-		     gboolean     *is_be)
-{
-    /* FIXME: this function should be able to return an error */
-    if (length < EI_NIDENT)
-    {
-	/* FIXME set error */
-	return FALSE;
-    }
-    
-    if (data[EI_CLASS] != ELFCLASS32 &&
-	data[EI_CLASS] != ELFCLASS64)
-    {
-	/* FIXME set error */
-	return FALSE;
-    }
-    
-    if (data[EI_DATA] != ELFDATA2LSB &&
-	data[EI_DATA] != ELFDATA2MSB)
-    {
-	/* FIXME set error */
-	return FALSE;
-    }
-    
-    if (is_64)
-	*is_64 = (data[EI_CLASS] == ELFCLASS64);
-    
-    if (is_be)
-	*is_be = (data[EI_DATA] == ELFDATA2MSB);
-    
-    return TRUE;
-}
-
-static void
-get_formats (gboolean is_64,
-	     const BinField **elf_header,
-	     const BinField **shn_entry,
-	     const BinField **sym_format,
-	     const BinField **note_format_out)
-{
-    static const BinField elf64_header[] = {
-	{ "e_ident",		BIN_UNINTERPRETED, EI_NIDENT },
-	{ "e_type",		BIN_UINT,	2 },
-	{ "e_machine",		BIN_UINT,	2 }, 
-	{ "e_version",		BIN_UINT,	4 },
-	{ "e_entry",		BIN_UINT,	8 },
-	{ "e_phoff",		BIN_UINT,	8 },
-	{ "e_shoff",		BIN_UINT,	8 },
-	{ "e_flags",		BIN_UINT,	4 },
-	{ "e_ehsize",		BIN_UINT,	2 },
-	{ "e_phentsize",	BIN_UINT,	2 },
-	{ "e_phnum",		BIN_UINT,	2 },
-	{ "e_shentsize",	BIN_UINT,	2 },
-	{ "e_shnum",		BIN_UINT,	2 },
-	{ "e_shstrndx",		BIN_UINT,	2 },
-	{ "" },
-    };
-    
-    static const BinField elf32_header[] = {
-	{ "e_ident",		BIN_UNINTERPRETED, EI_NIDENT },
-	{ "e_type",		BIN_UINT,	2 },
-	{ "e_machine",		BIN_UINT,	2 }, 
-	{ "e_version",		BIN_UINT,	4 },
-	{ "e_entry",		BIN_UINT,	4 },
-	{ "e_phoff",		BIN_UINT,	4 },
-	{ "e_shoff",		BIN_UINT,	4 },
-	{ "e_flags",		BIN_UINT,	4 },
-	{ "e_ehsize",		BIN_UINT,	2 },
-	{ "e_phentsize",	BIN_UINT,	2 },
-	{ "e_phnum",		BIN_UINT,	2 },
-	{ "e_shentsize",	BIN_UINT,	2 },
-	{ "e_shnum",		BIN_UINT,	2 },
-	{ "e_shstrndx",		BIN_UINT,	2 },
-	{ "" },
-    };
-    
-    static const BinField shn64_entry[] = {
-	{ "sh_name",		BIN_UINT,	4 },
-	{ "sh_type",		BIN_UINT,	4 },
-	{ "sh_flags",		BIN_UINT,	8 },
-	{ "sh_addr",		BIN_UINT,	8 },
-	{ "sh_offset",		BIN_UINT,	8 },
-	{ "sh_size",		BIN_UINT,	8 },
-	{ "sh_link",		BIN_UINT,	4 },
-	{ "sh_info",		BIN_UINT,	4 },
-	{ "sh_addralign",	BIN_UINT,	8 },
-	{ "sh_entsize",		BIN_UINT,	8 },
-	{ "" }
-    };
-    
-    static const BinField shn32_entry[] = {
-	{ "sh_name",		BIN_UINT,	4 },
-	{ "sh_type",		BIN_UINT,	4 },
-	{ "sh_flags",		BIN_UINT,	4 },
-	{ "sh_addr",		BIN_UINT,	4 },
-	{ "sh_offset",		BIN_UINT,	4 },
-	{ "sh_size",		BIN_UINT,	4 },
-	{ "sh_link",		BIN_UINT,	4 },
-	{ "sh_info",		BIN_UINT,	4 },
-	{ "sh_addralign",	BIN_UINT,	4 },
-	{ "sh_entsize",		BIN_UINT,	4 },
-	{ "" }
-    };
-    
-    static const BinField sym64_format[] = {
-	{ "st_name",		BIN_UINT,	4 },
-	{ "st_info",		BIN_UINT,	1 },
-	{ "st_other",		BIN_UINT,	1 },
-	{ "st_shndx",		BIN_UINT,	2 },
-	{ "st_value",		BIN_UINT,	8 },
-	{ "st_size",		BIN_UINT,	8 },
-	{ "" }
-    };
-
-    static const BinField sym32_format[] = {
-	{ "st_name",		BIN_UINT,	4 },
-	{ "st_value",		BIN_UINT,	4 },
-	{ "st_size",		BIN_UINT,	4 },
-	{ "st_info",		BIN_UINT,	1 },
-	{ "st_other",		BIN_UINT,	1 },
-	{ "st_shndx",		BIN_UINT,	2 },
-	{ "" },
-    };
-
-    static const BinField note_format[] = {
-	{ "name_size",		BIN_UINT,	4 },
-	{ "desc_size",		BIN_UINT,	4 },
-	{ "type",		BIN_UINT,	4 },
-    };
-
-    if (is_64)
-    {
-	*elf_header = elf64_header;
-	*shn_entry  = shn64_entry;
-	*sym_format = sym64_format;
-    }
-    else
-    {
-	*elf_header = elf32_header;
-	*shn_entry  = shn32_entry;
-	*sym_format = sym32_format;
-    }
-
-    *note_format_out = note_format;
-}
-
-static void
-make_formats (ElfParser *parser, gboolean is_64)
-{
-    const BinField *elf_header, *shn_entry, *sym_format, *note_format;
-
-    get_formats (is_64, &elf_header, &shn_entry, &sym_format, &note_format);
-
-    parser->header = bin_parser_create_record (parser->parser, elf_header);
-    parser->shn_entry = bin_parser_create_record (parser->parser, shn_entry);
-    parser->sym_format = bin_parser_create_record (parser->parser, sym_format);
-    parser->note_format = bin_parser_create_record (parser->parser, note_format);
-}
-

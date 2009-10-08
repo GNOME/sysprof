@@ -10,8 +10,6 @@ endif
 SYSPROF_CORE =					\
 	binfile.h				\
 	binfile.c				\
-	binparser.h				\
-	binparser.c				\
 	collector.c				\
 	collector.h				\
 	demangle.c				\
@@ -108,8 +106,6 @@ testunwind_SOURCES =	\
 	demangle.c	\
 	elfparser.c	\
 	elfparser.h	\
-	binparser.c	\
-	binparser.h	\
 	unwind.c	\
 	unwind.h
 testunwind_CPPFLAGS = $(CORE_DEP_CFLAGS)
@@ -120,8 +116,7 @@ testelf_SOURCES =	\
 	testelf.c	\
 	demangle.c	\
 	elfparser.c	\
-	elfparser.h	\
-	binparser.c	\
-	binparser.h
+	elfparser.h
+
 testelf_CPPFLAGS = $(CORE_DEP_CFLAGS)
 testelf_LDADD = $(CORE_DEP_LIBS)

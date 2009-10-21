@@ -7,6 +7,9 @@ Before 1.1:
 
 Before 1.2:
 
+* Filter out kernel stacktrace entries from the interrupts.
+  (This can be done better in the kernel).
+
 * Make sure errors are reported properly.
 
 * Fork GtkLabel and change it to only request a resize when the new size is

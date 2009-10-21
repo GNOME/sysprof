@@ -36,28 +36,24 @@ typedef enum
 
 struct new_process_t
 {
-    event_type_t	type;
-    int32_t		pid;
+    uint32_t		header;
     char		command_line[256];
 };
 
 struct fork_t
 {
-    event_type_t	type;
-    int32_t		pid;
+    uint32_t		header;
     int32_t		child_pid;
 };
 
 struct exit_t
 {
-    event_type_t	type;
-    int32_t		pid;
+    uint32_t		header;
 };
 
 struct new_map_t
 {
-    event_type_t	type;
-    int32_t		pid;
+    uint32_t		header;
     char		filename[PATH_MAX];
     uint64_t		start;
     uint64_t		end;
@@ -67,10 +63,21 @@ struct new_map_t
 
 struct sample_t
 {
-    event_type_t	type;
-    int32_t		pid;
+    uint32_t		header;
     StackNode *		trace;
 };
+
+#define TYPE_SHIFT 29
+#define PID_MASK ((uint32_t)((1 << TYPE_SHIFT) - 1))
+
+#define MAKE_HEADER(type, pid)						\
+    ((uint32_t)((((uint32_t)pid) & PID_MASK) | (type << TYPE_SHIFT)))
+
+#define GET_PID(header)							\
+    (header & PID_MASK)
+
+#define GET_TYPE(header)						\
+    (header >> TYPE_SHIFT)
 
 #define DEFAULT_SIZE	(1024 * 1024 * 4)
 
@@ -293,9 +300,8 @@ tracker_add_process (tracker_t * tracker,
 		     const char *command_line)
 {
     new_process_t event;
-    
-    event.type = NEW_PROCESS;
-    event.pid = pid;
+
+    event.header = MAKE_HEADER (NEW_PROCESS, pid);
     COPY_STRING (event.command_line, command_line);
     
     tracker_append (tracker, &event, sizeof (event));
@@ -308,8 +314,7 @@ tracker_add_fork (tracker_t *tracker,
 {
     fork_t event;
 
-    event.type = FORK;
-    event.pid = pid;
+    event.header = MAKE_HEADER(FORK, pid);
     event.child_pid = child_pid;
 
     tracker_append (tracker, &event, sizeof (event));
@@ -320,9 +325,8 @@ tracker_add_exit (tracker_t *tracker,
 		  pid_t      pid)
 {
     exit_t event;
-    
-    event.type = EXIT;
-    event.pid = pid;
+
+    event.header = MAKE_HEADER (EXIT, pid);
 
     tracker_append (tracker, &event, sizeof (event));
 }
@@ -338,8 +342,7 @@ tracker_add_map (tracker_t * tracker,
 {
     new_map_t event;
     
-    event.type = NEW_MAP;
-    event.pid = pid;
+    event.header = MAKE_HEADER (NEW_MAP, pid);
     COPY_STRING (event.filename, filename);
     event.start = start;
     event.end = end;
@@ -357,8 +360,7 @@ tracker_add_sample  (tracker_t *tracker,
 {
     sample_t event;
     
-    event.type = SAMPLE;
-    event.pid = pid;
+    event.header = MAKE_HEADER (SAMPLE, pid);
     event.trace = stack_stash_add_trace (tracker->stash, ips, n_ips, 1);
     
     tracker_append (tracker, &event, sizeof (event));
@@ -408,9 +410,10 @@ create_map (state_t *state, new_map_t *new_map)
     process_t *process;
     map_t *map;
     int i;
+    pid_t pid = GET_PID (new_map->header);
     
     process = g_hash_table_lookup (
-	state->processes_by_pid, GINT_TO_POINTER (new_map->pid));
+	state->processes_by_pid, GINT_TO_POINTER (pid));
     
     if (!process)
 	return;
@@ -461,7 +464,7 @@ create_process (state_t *state, new_process_t *new_process)
 {
     process_t *process = g_new0 (process_t, 1);
     
-    process->pid = new_process->pid;
+    process->pid = GET_PID (new_process->header);
     process->comm = g_strdup (new_process->command_line);
     process->maps = g_ptr_array_new ();
 
@@ -488,7 +491,7 @@ static void
 process_fork (state_t *state, fork_t *fork)
 {
     process_t *parent = g_hash_table_lookup (
-	state->processes_by_pid, GINT_TO_POINTER (fork->pid));
+	state->processes_by_pid, GINT_TO_POINTER (GET_PID (fork->header)));
 
 #if 0
     if (parent)
@@ -911,14 +914,15 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
     process_t *process;
     StackNode *n;
     int len;
+    pid_t pid = GET_PID (sample->header);
 
     process = g_hash_table_lookup (
-	state->processes_by_pid, GINT_TO_POINTER (sample->pid));
+	state->processes_by_pid, GINT_TO_POINTER (pid));
     
     if (!process)
     {
 	static gboolean warned;
-	if (!warned || sample->pid != 0)
+	if (!warned || pid != 0)
 	{
 #if 0
 	    g_print ("sample for unknown process %d\n", sample->pid);
@@ -992,7 +996,7 @@ tracker_create_profile (tracker_t *tracker)
     event = tracker->events;
     while (event < end)
     {
-	event_type_t type = *(event_type_t *)event;
+	event_type_t type = GET_TYPE (*(uint32_t *)event);
 	
 	switch (type)
 	{

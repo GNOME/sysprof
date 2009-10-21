@@ -42,7 +42,7 @@
 
 #define N_PAGES 32		/* Number of pages in the ringbuffer */
 
-#define N_WAKEUP_EVENTS		150
+#define N_WAKEUP_EVENTS		149
 
 typedef struct counter_t counter_t;
 typedef struct sample_event_t sample_event_t;

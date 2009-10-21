@@ -1665,7 +1665,7 @@ process_options (int           argc,
 }
 
 static void
-disable_g_slice (void)
+apply_workarounds (void)
 {
 
     /* Disable gslice, since it
@@ -1681,6 +1681,18 @@ disable_g_slice (void)
      */
     if (!getenv ("G_SLICE"))
 	putenv ("G_SLICE=always_malloc");
+
+    /* Accessibility prevents sysprof from working reliably, so
+     * disable it. Specifically, it
+     *
+     *  - causes large amounts of time to be spent in sysprof itself
+     *    whenever the label is updated.
+     *  - sometimes hangs at shutdown
+     *  - does long-running roundtrip requests that prevents
+     *    reading the event buffers, resulting in lost events.
+     */
+    putenv ("NO_GAIL=1");
+    putenv ("NO_AT_BRIDGE=1");
 }
 
 int
@@ -1690,7 +1702,7 @@ main (int    argc,
     Application *app;
     const char *filename;
 
-    disable_g_slice();
+    apply_workarounds();
 
     filename = process_options (argc, argv);
 

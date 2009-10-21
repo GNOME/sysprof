@@ -932,7 +932,7 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
 	return;
     }
     
-    len = 4;
+    len = 5;
     for (n = sample->trace; n != NULL; n = n->parent)
 	len++;
 
@@ -969,6 +969,17 @@ process_sample (state_t *state, StackStash *resolved, sample_t *sample)
 	    resolved_traces[len++] = POINTER_TO_U64 (symbol);
     }
 
+    if (context && context->context != PERF_CONTEXT_USER)
+    {
+	/* Kernel threads do not have a user part, so we end up here
+	 * without ever getting a user context. If this happens,
+	 * add the '- - kernel - - ' name, so that kernel threads
+	 * are properly blamed on the kernel
+	 */
+	resolved_traces[len++] =
+	    POINTER_TO_U64 (unique_dup (state->unique_symbols, context->name));
+    }
+	
     cmdline = make_message (state, "[%s]", process->comm);
     
     resolved_traces[len++] = POINTER_TO_U64 (cmdline);

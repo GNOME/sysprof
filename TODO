@@ -7,6 +7,42 @@ Before 1.1:
 
 Before 1.2:
 
+* Make sure errors are reported properly.
+
+* Fork GtkLabel and change it to only request a resize when the new size is
+  actually larger than the old one. It could also be special-purposed for
+  the "Samples: <number>" format with the number left-aligned.
+
+* When should the samples label be updated? On one hand we don't want
+  it to be the only thing that shows up on the profile. On the other,
+  when there are things going on, it should update quickly.
+
+  It is also desirable that it updates slowly if there is slow
+  activity going on; for example if you are moving the mouse cursor
+  around.
+
+  Cost of updating the samples label:	s	(in samples)
+  Base rate:				f
+
+  If we update the samples label c times per second, the frequency is
+
+	c * s
+  
+  If we update the samples label for every k samples.
+
+	(k - s)/f   is the time it takes before updating
+
+  So if the update rate should be proportional to the base rate, then
+  we get
+
+	(k - s)/f = d/f
+
+  which implies k = d + s. So we should pick some constant d and only
+  update when that many samples have arrived.
+
+* The counters seem to not be disabled when looking at the
+  profiles.
+
 * Build system
    - Create RPM package? See fedora-packaging-list for information
      about how to package kernel modules. Lots of threads in

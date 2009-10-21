@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/ioctl.h>
+#include <errno.h>
 
 #include "stackstash.h"
 #include "collector.h"
@@ -40,6 +41,8 @@
 #define d_print(...)
 
 #define N_PAGES 32		/* Number of pages in the ringbuffer */
+
+#define N_WAKEUP_EVENTS		150
 
 typedef struct counter_t counter_t;
 typedef struct sample_event_t sample_event_t;
@@ -126,6 +129,7 @@ struct Collector
     tracker_t *		tracker;
     GTimeVal		latest_reset;
 
+    int			prev_samples;
     int			n_samples;
 
     GList *		counters;
@@ -211,10 +215,8 @@ on_read (gpointer data)
     gboolean skip_samples;
     Collector *collector;
     uint64_t head, tail;
-    gboolean first;
 
     collector = counter->collector;
-    first = collector->n_samples == 0;
     
 #if 0
     int n_bytes = mask + 1;
@@ -240,6 +242,10 @@ on_read (gpointer data)
 #endif
 
     skip_samples = in_dead_period (collector);
+
+#if 0
+    g_print ("n bytes %d\n", head - tail);
+#endif
     
     while (head - tail >= sizeof (struct perf_event_header))
     {	
@@ -269,7 +275,16 @@ on_read (gpointer data)
     counter->mmap_page->data_tail = tail;
 
     if (collector->callback)
-	collector->callback (first, collector->data);
+    {
+	if (collector->n_samples - collector->prev_samples >= N_WAKEUP_EVENTS)
+	{
+	    gboolean first_sample = collector->prev_samples == 0;
+	    
+	    collector->callback (first_sample, collector->data);
+
+	    collector->prev_samples = collector->n_samples;
+	}
+    }
 }
 
 /* FIXME: return proper errors */
@@ -333,14 +348,24 @@ counter_new (Collector *collector,
 				     * FIXME: consider using frequency instead
 				     */
     attr.sample_type = PERF_SAMPLE_IP | PERF_SAMPLE_TID | PERF_SAMPLE_CALLCHAIN;
-    attr.wakeup_events = 100000;
+    attr.wakeup_events = N_WAKEUP_EVENTS;
     attr.disabled = TRUE;
 
     attr.mmap = 1;
     attr.comm = 1;
     attr.task = 1;
     
-    fd = sysprof_perf_counter_open (&attr, -1, cpu, -1,  0);
+    if ((fd = sysprof_perf_counter_open (&attr, -1, cpu, -1,  0)) < 0)
+    {
+	if (errno == ENODEV)
+	{
+	    attr.type = PERF_TYPE_SOFTWARE;
+	    attr.config = PERF_COUNT_SW_CPU_CLOCK;
+	    attr.sample_period = 10000000;
+
+	    fd = sysprof_perf_counter_open (&attr, -1, cpu, -1, 0);
+	}
+    }
     
     if (fd < 0)
     {
@@ -452,6 +477,7 @@ collector_reset (Collector *collector)
     }
 
     collector->n_samples = 0;
+    collector->prev_samples = 0;
     
     g_get_current_time (&collector->latest_reset);
 
@@ -589,6 +615,7 @@ process_event (Collector       *collector,
 	break;
 	
     case PERF_EVENT_LOST:
+	g_print ("lost event\n");
 	break;
 	
     case PERF_EVENT_COMM:
@@ -600,9 +627,11 @@ process_event (Collector       *collector,
 	break;
 	
     case PERF_EVENT_THROTTLE:
+	g_print ("throttle\n");
 	break;
 	
     case PERF_EVENT_UNTHROTTLE:
+	g_print ("unthrottle\n");
 	break;
 	
     case PERF_EVENT_FORK:
@@ -617,7 +646,8 @@ process_event (Collector       *collector,
 	break;
 	
     default:
-	g_warning ("unknown event: %d (%d)\n", event->header.type, event->header.size);
+	g_warning ("unknown event: %d (%d)\n",
+		   event->header.type, event->header.size);
 	break;
     }
 

@@ -354,6 +354,7 @@ counter_new (Collector *collector,
     attr.mmap = 1;
     attr.comm = 1;
     attr.task = 1;
+    attr.exclude_idle = 1;
     
     if ((fd = sysprof_perf_counter_open (&attr, -1, cpu, -1,  0)) < 0)
     {
@@ -361,7 +362,7 @@ counter_new (Collector *collector,
 	{
 	    attr.type = PERF_TYPE_SOFTWARE;
 	    attr.config = PERF_COUNT_SW_CPU_CLOCK;
-	    attr.sample_period = 10000000;
+	    attr.sample_period = 2000000;
 
 	    fd = sysprof_perf_counter_open (&attr, -1, cpu, -1, 0);
 	}

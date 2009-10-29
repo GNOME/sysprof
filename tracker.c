@@ -727,18 +727,60 @@ get_kernel_symbols (void)
     return kernel_syms;
 }
 
+static const char skip_kernel_symbols[][32]  =
+{
+    "common_interrupt",
+    "apic_timer_interrupt",
+    "smp_apic_timer_interrupt",
+    "hrtimer_interrupt",
+    "__run_hrtimer",
+    "perf_swevent_hrtimer",
+    "perf_event_overflow",
+    "__perf_event_overflow",
+    "perf_prepare_sample",
+    "perf_callchain",
+    ""
+};
+
 const char *
 lookup_kernel_symbol (gulong address)
 {
     kernel_symbol_t *result;
     GArray *ksyms = get_kernel_symbols ();
+    const char *sym;
+    const char *s;
+    int i;
     
     if (ksyms->len == 0)
 	return NULL;
     
     result = do_lookup ((kernel_symbol_t *)ksyms->data, address, 0, ksyms->len - 1);
     
-    return result? result->name : NULL;
+    sym = result? result->name : NULL;
+
+
+    /* This is a workaround for a kernel bug, where it reports not
+     * only the kernel stack, but also the IRQ stack for the
+     * timer interrupt that generated the stack.
+     *
+     * The stack as reported by the kernel looks like this:
+     *
+     * [ip] [irq stack] [real kernel stack]
+     *
+     * Below we filter out the [irq stack]
+     */
+    i = 0;
+    while (skip_kernel_symbols[i][0] != '\0')
+    {
+	if (strcmp (sym, skip_kernel_symbols[i]) == 0)
+	{
+	    sym = NULL;
+	    break;
+	}
+	i++;
+    }
+
+    return sym;
 }
 
 /* Note that 'unique_symbols' is a direct_hash table. Ie., we

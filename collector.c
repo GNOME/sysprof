@@ -362,7 +362,7 @@ counter_new (Collector *collector,
 	{
 	    attr.type = PERF_TYPE_SOFTWARE;
 	    attr.config = PERF_COUNT_SW_CPU_CLOCK;
-	    attr.sample_period = 2000000;
+	    attr.sample_period = 1000000;
 
 	    fd = sysprof_perf_counter_open (&attr, -1, cpu, -1, 0);
 	}

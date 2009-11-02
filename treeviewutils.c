@@ -329,3 +329,34 @@ tree_view_foreach_visible (GtkTreeView *view,
     if (model && gtk_tree_model_get_iter_first (model, &iter))
 	process_iter (view, &iter, callback, data);
 }
+
+/* Not really a *treeview* utility, but there isn't really a
+ * better place to put it
+ */
+void
+set_error (GError **err, gint domain, gint code,
+	   const char *format, va_list args)
+{
+    char *msg;
+    
+    if (!err)
+        return;
+    
+    msg = g_strdup_vprintf (format, args);
+    
+    if (*err == NULL)
+    {
+        *err = g_error_new_literal (G_MARKUP_ERROR, code, msg);
+    }
+    else
+    {
+        /* Warning text from GLib */
+        g_warning ("GError set over the top of a previous GError or uninitialized memory.\n" 
+                   "This indicates a bug in someone's code. You must ensure an error is NULL before it's set.\n"
+                   "The overwriting error message was: %s",
+                   msg);
+    }
+    
+    g_free (msg);
+}
+

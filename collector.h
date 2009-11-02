@@ -30,7 +30,8 @@ GQuark collector_error_quark (void);
 
 typedef enum
 {
-    COLLECTOR_ERROR_CANT_OPEN_FILE
+    COLLECTOR_ERROR_CANT_OPEN_FILE,
+    COLLECTOR_ERROR_CANT_OPEN_COUNTER
 } CollectorError;
 
 /* callback is called whenever a new sample arrives */

@@ -295,7 +295,7 @@ on_read (gpointer data)
     } while (0)
 
 static void *
-map_buffer (counter_t *counter)
+map_buffer (counter_t *counter, GError **err)
 { 
     int n_bytes = N_PAGES * get_page_size();
     void *address, *a;
@@ -331,8 +331,9 @@ map_buffer (counter_t *counter)
 }
 
 static counter_t *
-counter_new (Collector *collector,
-	     int	cpu)
+counter_new (Collector  *collector,
+	     int	 cpu,
+	     GError    **err)
 {
     struct perf_counter_attr attr;
     counter_t *counter;
@@ -370,20 +371,20 @@ counter_new (Collector *collector,
     
     if (fd < 0)
     {
-	fail ("perf_counter_open");
+	g_set_error (err, COLLECTOR_ERROR, COLLECTOR_ERROR_CANT_OPEN_COUNTER,
+		     "Could not open performance counter: %s\n",
+		     strerror (errno));
+
 	return NULL;
     }
 
     counter->collector = collector;
     counter->fd = fd;
 
-    counter->mmap_page = map_buffer (counter);
+    counter->mmap_page = map_buffer (counter, err);
     
     if (counter->mmap_page == MAP_FAILED)
-    {
-	fail ("mmap");
 	return NULL;
-    }
     
     counter->data = (uint8_t *)counter->mmap_page + get_page_size ();
     counter->tail = 0;
@@ -667,7 +668,7 @@ collector_start (Collector  *collector,
     
     for (i = 0; i < n_cpus; ++i)
     {
-	counter_t *counter = counter_new (collector, i);
+	counter_t *counter = counter_new (collector, i, err);
 
 	collector->counters = g_list_append (collector->counters, counter);
     }

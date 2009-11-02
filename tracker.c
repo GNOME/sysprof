@@ -763,13 +763,13 @@ lookup_kernel_symbol (gulong address)
     kernel_symbol_t *result;
     GArray *ksyms = get_kernel_symbols ();
     const char *sym;
-    const char *s;
     int i;
 
     if (ksyms->len == 0)
 	return NULL;
 
-    result = do_lookup ((kernel_symbol_t *)ksyms->data, address, 0, ksyms->len - 1);
+    result = do_lookup ((kernel_symbol_t *)ksyms->data,
+			address, 0, ksyms->len - 1);
 
     sym = result? result->name : NULL;
 

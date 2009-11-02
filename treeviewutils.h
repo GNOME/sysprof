@@ -47,3 +47,9 @@ typedef void (* VisibleCallback) (GtkTreeView  *view,
 void tree_view_foreach_visible (GtkTreeView *view,
 				VisibleCallback callback,
 				gpointer data);
+
+
+
+void
+set_error_va (GError **err, gint domain, gint code,
+	      const char *format, va_list args);

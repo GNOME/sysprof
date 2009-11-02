@@ -16,15 +16,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#if defined(GTK_DISABLE_SINGLE_INCLUDES) && !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
-#error "Only <gtk/gtk.h> can be included directly."
-#endif
-
 #ifndef __FOO_TREE_STORE_H__
 #define __FOO_TREE_STORE_H__
 
-#include <gtk/gtktreemodel.h>
-#include <gtk/gtktreesortable.h>
+#include <gtk/gtk.h>
 #include <stdarg.h>
 
 

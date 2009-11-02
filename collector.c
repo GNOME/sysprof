@@ -287,45 +287,46 @@ on_read (gpointer data)
     }
 }
 
-/* FIXME: return proper errors */
-#define fail(x)								\
-    do {								\
-	perror (x);							\
-	exit (-1);							\
-    } while (0)
+static void *
+fail (GError **err, const char *what)
+{
+    g_set_error (err, COLLECTOR_ERROR, COLLECTOR_ERROR_FAILED,
+		 "%s: %s", what, strerror (errno));
 
+    return NULL;
+}
+	
 static void *
 map_buffer (counter_t *counter, GError **err)
 { 
     int n_bytes = N_PAGES * get_page_size();
     void *address, *a;
 
-    /* We use the old trick of mapping the ring buffer twice
-     * consecutively, so that we don't need special-case code
-     * to deal with wrapping.
+    /* We map the ring buffer twice in consecutive address space,
+     * so that we don't need special-case code to deal with wrapping.
      */
     address = mmap (NULL, n_bytes * 2 + get_page_size(), PROT_NONE,
 		    MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 
     if (address == MAP_FAILED)
-	fail ("mmap");
-
+	return fail (err, "mmap");
+    
     a = mmap (address + n_bytes, n_bytes + get_page_size(),
 	      PROT_READ | PROT_WRITE,
 	      MAP_SHARED | MAP_FIXED, counter->fd, 0);
     
     if (a != address + n_bytes)
-	fail ("mmap");
+	return fail (err, "mmap");
 
     a = mmap (address, n_bytes + get_page_size(),
 	      PROT_READ | PROT_WRITE,
 	      MAP_SHARED | MAP_FIXED, counter->fd, 0);
 
-    if (a == MAP_FAILED)
-	fail ("mmap");
+    if (a == MAP_FAILED || a != address)
+	return fail (err, "mmap");
 
     if (a != address)
-	fail ("mmap");
+	return fail (err, "mmap");
 
     return address;
 }
@@ -370,20 +371,14 @@ counter_new (Collector  *collector,
     }
     
     if (fd < 0)
-    {
-	g_set_error (err, COLLECTOR_ERROR, COLLECTOR_ERROR_CANT_OPEN_COUNTER,
-		     "Could not open performance counter: %s\n",
-		     strerror (errno));
-
-	return NULL;
-    }
+	return fail (err, "Could not open performance counter");
 
     counter->collector = collector;
     counter->fd = fd;
 
     counter->mmap_page = map_buffer (counter, err);
     
-    if (counter->mmap_page == MAP_FAILED)
+    if (!counter->mmap_page || counter->mmap_page == MAP_FAILED)
 	return NULL;
     
     counter->data = (uint8_t *)counter->mmap_page + get_page_size ();
@@ -670,6 +665,18 @@ collector_start (Collector  *collector,
     {
 	counter_t *counter = counter_new (collector, i, err);
 
+	if (!counter)
+	{
+	    GList *list;
+	    
+	    for (list = collector->counters; list != NULL; list = list->next)
+		counter_free (list->data);
+
+	    collector->tracker = NULL;
+	    
+	    return FALSE;
+	}
+	
 	collector->counters = g_list_append (collector->counters, counter);
     }
 

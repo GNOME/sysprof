@@ -360,14 +360,11 @@ counter_new (Collector  *collector,
     
     if ((fd = sysprof_perf_counter_open (&attr, -1, cpu, -1,  0)) < 0)
     {
-	if (errno == ENODEV)
-	{
-	    attr.type = PERF_TYPE_SOFTWARE;
-	    attr.config = PERF_COUNT_SW_CPU_CLOCK;
-	    attr.sample_period = 1000000;
-
-	    fd = sysprof_perf_counter_open (&attr, -1, cpu, -1, 0);
-	}
+	attr.type = PERF_TYPE_SOFTWARE;
+	attr.config = PERF_COUNT_SW_CPU_CLOCK;
+	attr.sample_period = 1000000;
+	
+	fd = sysprof_perf_counter_open (&attr, -1, cpu, -1, 0);
     }
     
     if (fd < 0)

@@ -75,7 +75,8 @@ signal_handler (int      signo,
     
     dump_data (app);
     
-    while (g_main_context_iteration (NULL, FALSE));
+    while (g_main_context_iteration (NULL, FALSE))
+	;
     
     g_main_loop_quit (app->main_loop);
 }

@@ -149,9 +149,43 @@ sysprof_perf_counter_open (struct perf_counter_attr *attr,
 			   unsigned long	     flags)
 {
 #ifndef __NR_perf_counter_open
+#if defined(__i386__)
 #define __NR_perf_counter_open 336
+#elif defined(__x86_64__)
+#define __NR_perf_counter_open 298
+#elif defined(__arm__)
+#define __NR_perf_counter_open 364
+#elif defined(__bfin__)
+#define __NR_perf_counter_open 369
+#elif defined(__frv__)
+#define __NR_perf_counter_open 336
+#elif defined(__m68k__)
+#define __NR_perf_counter_open 332
+#elif defined(__MICROBLAZE__)
+#define __NR_perf_counter_open 366
+#elif defined(__mips__) && defined(_ABIO32)
+#define __NR_perf_counter_open 4333
+#elif defined(__mips__) && defined(_ABIN32)
+#define __NR_perf_counter_open 6296
+#elif defined(__mips__) && defined(_ABI64)
+#define __NR_perf_counter_open 5292
+#elif defined(__mn10300__)
+#define __NR_perf_counter_open 337
+#elif defined(__hppa__)
+#define __NR_perf_counter_open 318
+#elif defined(__ppc__) || defined(__ppc64__)
+#define __NR_perf_counter_open 319
+#elif defined(__s390__)
+#define __NR_perf_counter_open 331
+#elif defined(__sh__) && (!defined(__SH5__) || __SH5__ == 32)
+#define __NR_perf_counter_open 336
+#elif defined(__sh__) && defined(__SH5__) && __SH5__ == 64
+#define __NR_perf_counter_open 364
+#elif defined(__sparc__) || defined(__sparc64__)
+#define __NR_perf_counter_open 327
 #endif
-    
+#endif
+
     attr->size = sizeof(*attr);
     
     return syscall (__NR_perf_counter_open, attr, pid, cpu, group_fd, flags);

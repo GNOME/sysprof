@@ -740,6 +740,10 @@ static const char skip_kernel_symbols[][32]  =
     "__perf_event_overflow",
     "perf_prepare_sample",
     "perf_callchain",
+    "perf_swcounter_hrtimer",
+    "perf_counter_overflow",
+    "__perf_counter_overflow",
+    "perf_counter_output",
 
     /* NMI stack */
     "nmi_stack_correct",
@@ -748,8 +752,10 @@ static const char skip_kernel_symbols[][32]  =
     "atomic_notifier_call_chain",
     "notifier_call_chain",
     "perf_event_nmi_handler",
+    "perf_counter_nmi_handler",
     "intel_pmu_handle_irq",
     "perf_event_overflow",
+    "perf_counter_overflow",
     "__perf_event_overflow",
     "perf_prepare_sample",
     "perf_callchain",

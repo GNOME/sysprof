@@ -246,17 +246,13 @@ on_read (gpointer data)
 {
     counter_t *counter = data;
     int mask = (N_PAGES * get_page_size() - 1);
+    int n_bytes = mask + 1;
     gboolean skip_samples;
     Collector *collector;
     uint64_t head, tail;
 
     collector = counter->collector;
     
-#if 0
-    int n_bytes = mask + 1;
-    int x;
-#endif
-
     tail = counter->tail;
     
     head = counter->mmap_page->data_head;
@@ -283,7 +279,22 @@ on_read (gpointer data)
     
     while (head - tail >= sizeof (struct perf_event_header))
     {	
-	struct perf_event_header *header = (void *)(counter->data + (tail & mask));
+	struct perf_event_header *header;
+	guint8 buffer[4096];
+	guint8 *free_me;
+
+	free_me = NULL;
+
+	/* Note that:
+	 * 
+	 * - perf events are a multiple of 64 bits
+	 * - the perf event header is 64 bits
+	 * - the data area is a multiple of 64 bits
+	 *
+	 * which means there will always be space for one header, which means we
+	 * can safely dereference the size field.
+	 */
+	header = (struct perf_event_header *)(counter->data + (tail & mask));
 
 	if (header->size > head - tail)
 	{
@@ -294,14 +305,36 @@ on_read (gpointer data)
 	    break;
 	}
 
-	if (!skip_samples || header->type != PERF_EVENT_SAMPLE)
+	if (counter->data + (tail & mask) + header->size > counter->data + n_bytes)
 	{
+	    int n_before, n_after;
+	    guint8 *b;
+	    
+	    if (header->size > sizeof (buffer))
+		free_me = b = g_malloc (header->size);
+	    else
+		b = buffer;
+
+	    n_after = (tail & mask) + header->size - n_bytes;
+	    n_before = header->size - n_after;
+	    
+	    memcpy (b, counter->data + (tail & mask), n_before);
+	    memcpy (b + n_before, counter->data, n_after);
+
+	    header = (struct perf_event_header *)b;
+	}
+
+	if (!skip_samples || header->type != PERF_EVENT_SAMPLE)
+	  {
 	    if (header->type == PERF_EVENT_SAMPLE)
-		collector->n_samples++;
+	      collector->n_samples++;
 	    
 	    process_event (collector, counter, (counter_event_t *)header);
-	}
-	
+	  }
+
+	if (free_me)
+	    g_free (free_me);
+
 	tail += header->size;
     }
 
@@ -334,33 +367,12 @@ static void *
 map_buffer (counter_t *counter, GError **err)
 { 
     int n_bytes = N_PAGES * get_page_size();
-    void *address, *a;
+    void *address;
 
-    /* We map the ring buffer twice in consecutive address space,
-     * so that we don't need special-case code to deal with wrapping.
-     */
-    address = mmap (NULL, n_bytes * 2 + get_page_size(), PROT_NONE,
-		    MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    address = mmap (NULL, n_bytes + get_page_size(), PROT_READ | PROT_WRITE, MAP_SHARED, counter->fd, 0);
 
     if (address == MAP_FAILED)
-	return fail (err, "mmap");
-    
-    a = mmap (address + n_bytes, n_bytes + get_page_size(),
-	      PROT_READ | PROT_WRITE,
-	      MAP_SHARED | MAP_FIXED, counter->fd, 0);
-    
-    if (a != address + n_bytes)
-	return fail (err, "mmap");
-
-    a = mmap (address, n_bytes + get_page_size(),
-	      PROT_READ | PROT_WRITE,
-	      MAP_SHARED | MAP_FIXED, counter->fd, 0);
-
-    if (a == MAP_FAILED || a != address)
-	return fail (err, "mmap");
-
-    if (a != address)
-	return fail (err, "mmap");
+      return fail (err, "mmap");
 
     return address;
 }

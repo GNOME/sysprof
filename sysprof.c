@@ -1587,7 +1587,7 @@ application_new (void)
 {
     Application *app = g_new0 (Application, 1);
 
-    app->collector = collector_new (on_new_sample, app);
+    app->collector = collector_new (FALSE, on_new_sample, app);
     app->state = INITIAL;
 
     return app;

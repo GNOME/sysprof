@@ -110,13 +110,12 @@ die (const char *err_msg)
 }
 
 int
-main (int argc,
-      char *argv[])
+main (int argc, char *argv[])
 {
     Application *app = g_new0 (Application, 1);
     GError *err;
     
-    app->collector = collector_new (NULL, NULL);
+    app->collector = collector_new (FALSE, NULL, NULL);
     app->outfile = g_strdup (argv[1]);
     app->main_loop = g_main_loop_new (NULL, 0);
     

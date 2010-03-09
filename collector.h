@@ -34,7 +34,8 @@ typedef enum
 } CollectorError;
 
 /* callback is called whenever a new sample arrives */
-Collector *collector_new            (CollectorFunc   callback,
+Collector *collector_new            (gboolean        use_hw_counters,
+				     CollectorFunc   callback,
 				     gpointer        data);
 gboolean   collector_start          (Collector      *collector,
 				     GError        **err);

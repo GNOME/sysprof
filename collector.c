@@ -133,6 +133,8 @@ struct Collector
     int			n_samples;
 
     GList *		counters;
+
+    gboolean		use_hw_counters;
 };
 
 static int
@@ -531,7 +533,8 @@ collector_reset (Collector *collector)
 
 /* callback is called whenever a new sample arrives */
 Collector *
-collector_new (CollectorFunc callback,
+collector_new (gboolean	     use_hw_counters,
+	       CollectorFunc callback,
 	       gpointer      data)
 {
     Collector *collector = g_new0 (Collector, 1);
@@ -539,6 +542,7 @@ collector_new (CollectorFunc callback,
     collector->callback = callback;
     collector->data = data;
     collector->tracker = NULL;
+    collector->use_hw_counters = use_hw_counters;
     
     collector_reset (collector);
 

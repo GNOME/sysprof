@@ -493,6 +493,12 @@ process_fork (state_t *state, fork_t *fork)
     process_t *parent = g_hash_table_lookup (
 	state->processes_by_pid, GINT_TO_POINTER (GET_PID (fork->header)));
 
+    if (GET_PID (fork->header) == fork->child_pid)
+    {
+	/* Just a new thread being spawned */
+	return;
+    }
+    
 #if 0
     if (parent)
 #endif
@@ -505,7 +511,12 @@ process_fork (state_t *state, fork_t *fork)
 #endif
 
 	process->pid = fork->child_pid;
-	process->comm = g_strdup (parent? parent->comm : "<unknown>");
+
+	if (parent)
+	    process->comm = g_strdup (parent->comm);
+	else
+	    process->comm = g_strdup_printf ("<pid %d>", fork->child_pid);
+
 	process->maps = g_ptr_array_new ();
 
 	if (parent)

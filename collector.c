@@ -406,7 +406,7 @@ counter_new (Collector  *collector,
     attr.task = 1;
     attr.exclude_idle = 1;
     
-    if ((fd = sysprof_perf_counter_open (&attr, -1, cpu, -1,  0)) < 0)
+    if (!collector->use_hw_counters || (fd = sysprof_perf_counter_open (&attr, -1, cpu, -1,  0)) < 0)
     {
 	attr.type = PERF_TYPE_SOFTWARE;
 	attr.config = PERF_COUNT_SW_CPU_CLOCK;
@@ -417,7 +417,7 @@ counter_new (Collector  *collector,
     
     if (fd < 0)
 	return fail (err, "Could not open performance counter");
-
+    
     counter->collector = collector;
     counter->fd = fd;
 
@@ -431,8 +431,9 @@ counter_new (Collector  *collector,
     counter->cpu = cpu;
     
     fd_add_watch (fd, counter);
+
     fd_set_read_callback (fd, on_read);
-    
+
     return counter;
 }
 

@@ -360,7 +360,7 @@ static void *
 fail (GError **err, const char *what)
 {
     g_set_error (err, COLLECTOR_ERROR, COLLECTOR_ERROR_FAILED,
-		 "%s: %s", what, strerror (errno));
+		 "%s: %s", what, g_strerror (errno));
 
     return NULL;
 }

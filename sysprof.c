@@ -333,7 +333,7 @@ sorry (GtkWidget *parent_window,
     dialog = gtk_message_dialog_new (parent_window ? GTK_WINDOW (parent_window) : NULL,
 				     GTK_DIALOG_DESTROY_WITH_PARENT,
 				     GTK_MESSAGE_WARNING,
-				     GTK_BUTTONS_OK, message);
+				     GTK_BUTTONS_OK, "%s", message);
     g_free (message);
 
     gtk_window_set_title (GTK_WINDOW (dialog), APPLICATION_NAME " Warning");

@@ -575,7 +575,7 @@ process_comm (Collector *collector, comm_event_t *comm)
 static void
 process_fork (Collector *collector, fork_event_t *fork)
 {
-    g_print ("ppid: %d  pid: %d   ptid: %d  tid %d\n",
+    d_print ("ppid: %d  pid: %d   ptid: %d  tid %d\n",
 	     fork->ppid, fork->pid, fork->ptid, fork->tid);
     
     tracker_add_fork (collector->tracker, fork->ppid, fork->pid);

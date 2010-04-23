@@ -220,6 +220,13 @@ stack_stash_add_trace (StackStash *stash,
 	StackNode *match = NULL;
 	StackNode *prev;
 
+	/* FIXME: On x86-64 we don't get proper stacktraces which means
+	 * each node can have tons of children. That makes this loop
+	 * here show up on profiles.
+	 *
+	 * Not sure what can be done about it aside from actually fixing
+	 * x86-64 to get stacktraces.
+	 */
 	prev = NULL;
 	for (match = *location; match; prev = match, match = match->siblings)
 	{

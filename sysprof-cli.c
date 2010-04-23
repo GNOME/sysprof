@@ -47,7 +47,9 @@ dump_data (Application *app)
     GError *err = NULL;
     Profile *profile;
 
-    printf ("Saving profile in %s ... ", app->outfile);
+    printf ("Saving profile (%d samples) in %s ... ",
+	    collector_get_n_samples (app->collector),
+	    app->outfile);
     fflush (stdout);
 
     collector_stop (app->collector);

@@ -36,7 +36,7 @@
 #include "tracker.h"
 
 #include "perf_counter.h"
-#include "barrier.h"
+#include "util.h"
 
 #define d_print(...)
 
@@ -262,7 +262,7 @@ on_read (gpointer data)
     
     if (head < tail)
     {
-	g_warning ("sysprof fails at ring buffers (head %llu, tail %llu\n", head, tail);
+	g_warning ("sysprof fails at ring buffers (head "FMT64", tail "FMT64"\n", head, tail);
 	
 	tail = head;
     }

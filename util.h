@@ -1,3 +1,8 @@
+#ifndef UTIL_H
+#define UTIL_H
+
+#define FMT64   "%"G_GUINT64_FORMAT
+
 #if defined(__i386__)
 #define rmb()           asm volatile("lock; addl $0,0(%%esp)" ::: "memory")
 #define cpu_relax()     asm volatile("rep; nop" ::: "memory");
@@ -30,4 +35,6 @@
 #ifdef __hppa__
 #define rmb()           asm volatile("" ::: "memory")
 #define cpu_relax()     asm volatile("" ::: "memory");
+#endif
+
 #endif

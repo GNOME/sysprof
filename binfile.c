@@ -37,6 +37,7 @@
 
 #include "binfile.h"
 #include "elfparser.h"
+#include "util.h"
 
 struct bin_file_t
 {
@@ -439,7 +440,7 @@ bin_file_check_inode (bin_file_t *bin_file,
     
     if (!bin_file->inode_check)
     {
-	g_print ("warning: Inode mismatch for %s (disk: %lld, memory: %lld)\n",
+	g_print ("warning: Inode mismatch for %s (disk: "FMT64", memory: "FMT64")\n",
 		 bin_file->filename,
 		 (guint64)bin_file->inode, (guint64)inode);
 	

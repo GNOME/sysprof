@@ -1,5 +1,6 @@
 #include "elfparser.h"
 #include <string.h>
+#include "util.h"
 
 /* Pointer encodings, from dwarf2.h.  */
 typedef enum
@@ -131,7 +132,7 @@ decode_instruction (const guchar **data)
     else if (high2 == 0x02)
     {
 	g_print ("register: %d\n", low6);
-	g_print ("offset: %llu\n", decode_uleb128 (data));
+	g_print ("offset: "FMT64"\n", decode_uleb128 (data));
 	
 	return "DW_CFA_offset";
     }
@@ -193,8 +194,8 @@ decode_instruction (const guchar **data)
 	    return "DW_CFA_restore_state";
 
 	case 0x0c:
-	    g_print ("reg: %llu\n", decode_uleb128 (data));
-	    g_print ("off: %llu\n", decode_uleb128 (data));
+	    g_print ("reg: "FMT64"\n", decode_uleb128 (data));
+	    g_print ("off: "FMT64"\n", decode_uleb128 (data));
 	    return "DW_CFA_def_cfa";
 
 	case 0x0d:
@@ -266,7 +267,7 @@ decode_cie (const guchar **data, const guchar *end)
 {
     gboolean has_augmentation;
     guint64 aug_len;
-    char *augmentation;
+    const char *augmentation;
     CIE *cie;
     int i, field;
     
@@ -276,11 +277,11 @@ decode_cie (const guchar **data, const guchar *end)
     
     *data += strlen (*data) + 1;
 
-    g_print ("code alignment: %llu\n", decode_uleb128 (data));
+    g_print ("code alignment: "FMT64"\n", decode_uleb128 (data));
 
     g_print ("data alignment: %lld\n", decode_sleb128 (data));
 
-    g_print ("return register: %llu\n", decode_uleb128 (data));
+    g_print ("return register: "FMT64"\n", decode_uleb128 (data));
 
     g_print ("augmentation: %s\n", augmentation);
     
@@ -288,7 +289,7 @@ decode_cie (const guchar **data, const guchar *end)
     {
 	aug_len = decode_uleb128 (data);
 
-	g_print ("len: %llu\n", aug_len);
+	g_print ("len: "FMT64"\n", aug_len);
 	
 	for (i = 1; augmentation[i] != 0; ++i)
 	{
@@ -334,7 +335,7 @@ decode_entry (const guchar **data, gboolean eh_frame)
     
     end = *data + len;
     
-    g_print ("length: %llu\n", len);
+    g_print ("length: "FMT64"\n", len);
 
     /* CIE_id is 0 for eh frames, and 0xffffffff/0xffffffffffffffff for .debug_frame */
     

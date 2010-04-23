@@ -34,7 +34,6 @@ int
 main (int argc, char **argv)
 {
     ElfParser *elf;
-    int i;
     const char *build_id;
     const char *filename;
 

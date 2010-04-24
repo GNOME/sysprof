@@ -291,6 +291,10 @@ tracker_append (tracker_t *tracker,
 
     memcpy (tracker->events + tracker->n_event_bytes, event, n_bytes);
 
+#if 0
+    g_print (" (address %p)\n", tracker->events + tracker->n_event_bytes);
+#endif
+
     tracker->n_event_bytes += n_bytes;
 }
 
@@ -301,6 +305,10 @@ tracker_add_process (tracker_t * tracker,
 {
     new_process_t event;
 
+#if 0
+    g_print ("Add new process %s %d to tracker ", command_line, pid);
+#endif
+    
     event.header = MAKE_HEADER (NEW_PROCESS, pid);
     COPY_STRING (event.command_line, command_line);
 
@@ -462,18 +470,28 @@ destroy_process (process_t *process)
 static void
 create_process (state_t *state, new_process_t *new_process)
 {
-    process_t *process = g_new0 (process_t, 1);
+    pid_t pid = GET_PID (new_process->header);
+    const char *comm = new_process->command_line;
 
-    process->pid = GET_PID (new_process->header);
-    process->comm = g_strdup (new_process->command_line);
-    process->maps = g_ptr_array_new ();
+    process_t *process =
+	g_hash_table_lookup (state->processes_by_pid, GINT_TO_POINTER (pid));
 
-#if 0
-    g_print ("new comm process %d\n", new_process->pid);
-#endif
-
-    g_hash_table_insert (
-	state->processes_by_pid, GINT_TO_POINTER (process->pid), process);
+    if (process)
+    {
+	g_free (process->comm);
+	process->comm = g_strdup (comm);
+    }
+    else
+    {
+	process = g_new0 (process_t, 1);
+	
+	process->pid = pid;
+	process->comm = g_strdup (comm);
+	process->maps = g_ptr_array_new ();
+	
+	g_hash_table_insert (
+	    state->processes_by_pid, GINT_TO_POINTER (process->pid), process);
+    }
 }
 
 static map_t *
@@ -490,52 +508,43 @@ copy_map (map_t *map)
 static void
 process_fork (state_t *state, fork_t *fork)
 {
-    process_t *parent = g_hash_table_lookup (
-	state->processes_by_pid, GINT_TO_POINTER (GET_PID (fork->header)));
+    pid_t ppid = GET_PID (fork->header);
+    GPtrArray *maps;
 
-    if (GET_PID (fork->header) == fork->child_pid)
+    process_t *parent = g_hash_table_lookup (
+	state->processes_by_pid, GINT_TO_POINTER (ppid));
+    process_t *child;
+
+    if (ppid == fork->child_pid)
     {
 	/* Just a new thread being spawned */
 	return;
     }
-    
-#if 0
+
+    child = g_new0 (process_t, 1);
     if (parent)
-#endif
-    {
-	process_t *process = g_new0 (process_t, 1);
-	int i;
-
-#if 0
-	g_print ("new child %d\n", fork->child_pid);
-#endif
-
-	process->pid = fork->child_pid;
-
-	if (parent)
-	    process->comm = g_strdup (parent->comm);
-	else
-	    process->comm = g_strdup_printf ("<pid %d>", fork->child_pid);
-
-	process->maps = g_ptr_array_new ();
-
-	if (parent)
-	{
-	    for (i = 0; i < parent->maps->len; ++i)
-	    {
-		map_t *map = copy_map (parent->maps->pdata[i]);
-
-		g_ptr_array_add (process->maps, map);
-	    }
-	}
-
-	g_hash_table_insert (
-	    state->processes_by_pid, GINT_TO_POINTER (process->pid), process);
-    }
-#if 0
+	child->comm = g_strdup (parent->comm);
     else
-	g_print ("no parent for %d\n", fork->child_pid);
-#endif
+	child->comm = g_strdup_printf ("[pid %d]", fork->child_pid);
+
+    child->pid = fork->child_pid;
+
+    child->maps = g_ptr_array_new ();
+
+    if (parent)
+    {
+	int i;
+	
+	for (i = 0; i < parent->maps->len; ++i)
+	{
+	    map_t *map = copy_map (parent->maps->pdata[i]);
+	    
+	    g_ptr_array_add (maps, map);
+	}
+    }
+
+    g_hash_table_insert (
+	state->processes_by_pid, GINT_TO_POINTER (child->pid), child);
 }
 
 static void

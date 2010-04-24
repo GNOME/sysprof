@@ -509,7 +509,6 @@ static void
 process_fork (state_t *state, fork_t *fork)
 {
     pid_t ppid = GET_PID (fork->header);
-    GPtrArray *maps;
 
     process_t *parent = g_hash_table_lookup (
 	state->processes_by_pid, GINT_TO_POINTER (ppid));
@@ -539,7 +538,7 @@ process_fork (state_t *state, fork_t *fork)
 	{
 	    map_t *map = copy_map (parent->maps->pdata[i]);
 	    
-	    g_ptr_array_add (maps, map);
+	    g_ptr_array_add (child->maps, map);
 	}
     }
 

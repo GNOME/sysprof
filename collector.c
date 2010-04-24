@@ -379,9 +379,30 @@ map_buffer (counter_t *counter, GError **err)
     return address;
 }
 
+static gboolean
+counter_set_output (counter_t *counter, int output)
+{
+    return ioctl (counter->fd, PERF_COUNTER_IOC_SET_OUTPUT, output) == 0;
+}
+
+static void
+counter_enable (counter_t *counter)
+{
+    ioctl (counter->fd, PERF_COUNTER_IOC_ENABLE);
+}
+
+static void
+counter_disable (counter_t *counter)
+{
+    d_print ("disable\n");
+    
+    ioctl (counter->fd, PERF_COUNTER_IOC_DISABLE);
+}
+
 static counter_t *
 counter_new (Collector  *collector,
 	     int	 cpu,
+	     counter_t  *output,
 	     GError    **err)
 {
     struct perf_counter_attr attr;
@@ -417,38 +438,33 @@ counter_new (Collector  *collector,
     
     if (fd < 0)
 	return fail (err, "Could not open performance counter");
-    
+
     counter->collector = collector;
     counter->fd = fd;
-
-    counter->mmap_page = map_buffer (counter, err);
-    
-    if (!counter->mmap_page || counter->mmap_page == MAP_FAILED)
-	return NULL;
-    
-    counter->data = (uint8_t *)counter->mmap_page + get_page_size ();
-    counter->tail = 0;
     counter->cpu = cpu;
-    
-    fd_add_watch (fd, counter);
 
-    fd_set_read_callback (fd, on_read);
+    if (output && counter_set_output (counter, output->fd))
+    {
+	counter->mmap_page = NULL;
+	counter->data = NULL;
+	counter->tail = 0;
+    }
+    else
+    {
+	counter->mmap_page = map_buffer (counter, err);
+	
+	if (!counter->mmap_page || counter->mmap_page == MAP_FAILED)
+	    return NULL;
+    
+	counter->data = (uint8_t *)counter->mmap_page + get_page_size ();
+	counter->tail = 0;
+	
+	fd_add_watch (fd, counter);
+	
+	fd_set_read_callback (fd, on_read);
+    }
 
     return counter;
-}
-
-static void
-counter_enable (counter_t *counter)
-{
-    ioctl (counter->fd, PERF_COUNTER_IOC_ENABLE);
-}
-
-static void
-counter_disable (counter_t *counter)
-{
-    d_print ("disable\n");
-    
-    ioctl (counter->fd, PERF_COUNTER_IOC_DISABLE);
 }
 
 static void
@@ -705,13 +721,15 @@ collector_start (Collector  *collector,
 {
     int n_cpus = get_n_cpus ();
     int i;
+    counter_t *output;
 
     if (!collector->tracker)
 	collector->tracker = tracker_new ();
-    
+
+    output = NULL;
     for (i = 0; i < n_cpus; ++i)
     {
-	counter_t *counter = counter_new (collector, i, err);
+	counter_t *counter = counter_new (collector, i, output, err);
 
 	if (!counter)
 	{
@@ -724,8 +742,11 @@ collector_start (Collector  *collector,
 	    
 	    return FALSE;
 	}
-	
+
 	collector->counters = g_list_append (collector->counters, counter);
+
+	if (!output)
+	    output = counter;
     }
 
     enable_counters (collector);
@@ -746,7 +767,8 @@ collector_stop (Collector *collector)
     {
 	counter_t *counter = list->data;
 	
-	on_read (counter);
+	if (counter->data)
+	    on_read (counter);
     
 	counter_free (counter);
     }

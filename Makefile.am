@@ -31,7 +31,7 @@ SYSPROF_CORE =					\
 	watch.c					\
 						\
 	perf_counter.h				\
-	barrier.h
+	util.h
 
 #	module/sysprof-module.h			
 

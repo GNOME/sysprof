@@ -90,9 +90,9 @@ AC_CHECK_LIB(iberty, cplus_demangle,:,
   AC_CHECK_LIB(iberty, cplus_demangle_opname, [],
     AC_MSG_ERROR([libiberty is required to compile sysprof]), -ldl))
 
-AC_CHECK_LIB(bfd, bfd_get_error, [DEP_LIBS="$DEP_LIBS -lbfd -liberty"],
+AC_CHECK_LIB(bfd, bfd_get_error, [DEP_LIBS="$DEP_LIBS -lbfd -liberty -lz"],
   AC_MSG_ERROR([libbfd is required to compile sysprof]),
-  -liberty)
+  -liberty -lz)
 
 
 # emit files

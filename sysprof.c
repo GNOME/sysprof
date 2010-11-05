@@ -270,6 +270,8 @@ set_busy (GtkWidget *widget,
 
     if (cursor)
 	gdk_cursor_unref (cursor);
+
+    gdk_flush();
 }
 
 static void
@@ -1725,10 +1727,6 @@ main (int    argc,
 	 */
 	g_idle_add_full (G_PRIORITY_LOW, load_file, file_open_data, NULL);
     }
-
-#if 0
-    g_idle_add (gtk_main_quit, NULL);
-#endif
 
     gtk_main ();
 

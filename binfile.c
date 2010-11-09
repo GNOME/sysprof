@@ -158,11 +158,14 @@ get_debuglink_file (ElfParser   *elf,
     guint32 crc32;
     GList *tries = NULL, *list;
     ElfParser *result = NULL;
+    const char *build_id;
     
     if (!elf)
 	return NULL;
     
     basename = elf_parser_get_debug_link (elf, &crc32);
+
+    build_id = elf_parser_get_build_id (elf);
     
 #if 0
     g_print ("   debug link for %s is %s\n", filename, basename);
@@ -183,9 +186,18 @@ get_debuglink_file (ElfParser   *elf,
 	const char *name = list->data;
 	ElfParser *parser = elf_parser_new (name, NULL);
 	guint32 file_crc;
+	const char *file_build_id;
 	
 	if (parser)
 	{
+	    /* If both files have build ids, and they don't match,
+	     * there is no point computing a CRC32 that we know
+	     * will fail
+	     */
+	    file_build_id = elf_parser_get_build_id (parser);
+	    if (build_id && file_build_id && strcmp (build_id, file_build_id) != 0)
+		goto skip;
+
 	    file_crc = elf_parser_get_crc32 (parser);
 	    
 	    if (file_crc == crc32)
@@ -197,9 +209,13 @@ get_debuglink_file (ElfParser   *elf,
 	    else
 	    {
 		if (!already_warned (name))
-		    g_print ("warning: %s has wrong crc \n", name);
+		{
+		    g_print ("warning: %s has wrong crc %x, %s has crc %x)\n",
+			     name, file_crc, filename, crc32);
+		}
 	    }
-	    
+
+	skip:
 	    elf_parser_free (parser);
 	}
     }
@@ -430,7 +446,7 @@ bin_file_lookup_symbol (bin_file_t    *bin_file,
 
 gboolean
 bin_file_check_inode (bin_file_t *bin_file,
-		      ino_t    inode)
+		      ino_t       inode)
 {
     if (bin_file->inode == inode)
 	return TRUE;

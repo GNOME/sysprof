@@ -28,6 +28,14 @@
 #define FOO_TREE_STORE_IS_SORTED(tree) (((FooTreeStore*)(tree))->sort_column_id != GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID)
 #define VALID_ITER(iter, tree_store) ((iter)!= NULL && (iter)->user_data != NULL && ((FooTreeStore*)(tree_store))->stamp == (iter)->stamp)
 
+/* Get rid of some macros that cause lots of g_atomic_get_pointer() */
+#undef g_return_if_fail
+#undef GTK_TREE_MODEL
+#undef FOO_TREE_STORE
+#define g_return_if_fail(x)
+#define GTK_TREE_MODEL(m) ((GtkTreeModel *)m)
+#define FOO_TREE_STORE(m) ((FooTreeStore *)m)
+
 static void         foo_tree_store_tree_model_init (GtkTreeModelIface *iface);
 static void         foo_tree_store_drag_source_init(GtkTreeDragSourceIface *iface);
 static void         foo_tree_store_drag_dest_init  (GtkTreeDragDestIface   *iface);

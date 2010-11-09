@@ -385,7 +385,7 @@ struct process_t
 
     char *      comm;
 
-    GPtrArray *	maps;
+    GArray *	maps;
 };
 
 struct map_t
@@ -405,18 +405,38 @@ struct state_t
     GHashTable *bin_files;
 };
 
-static void
-destroy_map (map_t *map)
+static const map_t *
+process_locate_map (process_t *process, gulong addr)
 {
-    g_free (map->filename);
-    g_free (map);
+    GArray *maps = process->maps;
+    int i;
+
+    for (i = 0; i < process->maps->len; ++i)
+    {
+	map_t *map = &g_array_index (maps, map_t, i);
+
+	if (addr >= map->start && addr < map->end && i > 0)
+	{
+	    map_t tmp = *map;
+	    
+	    memmove (&(g_array_index (maps, map_t, 1)),
+		     &(g_array_index (maps, map_t, 0)),
+		     i * sizeof (map_t));
+
+	    g_array_index (maps, map_t, 0) = tmp;
+	    
+	    return &g_array_index (maps, map_t, 0);
+	}
+    }
+
+    return NULL;
 }
 
 static void
 create_map (state_t *state, new_map_t *new_map)
 {
     process_t *process;
-    map_t *map;
+    map_t map;
     int i;
     pid_t pid = GET_PID (new_map->header);
 
@@ -426,27 +446,26 @@ create_map (state_t *state, new_map_t *new_map)
     if (!process)
 	return;
 
-    map = g_new0 (map_t, 1);
-    map->filename = g_strdup (new_map->filename);
-    map->start = new_map->start;
-    map->end = new_map->end;
-    map->offset = new_map->offset;
-    map->inode = new_map->inode;
+    map.filename = g_strdup (new_map->filename);
+    map.start = new_map->start;
+    map.end = new_map->end;
+    map.offset = new_map->offset;
+    map.inode = new_map->inode;
 
     /* Remove existing maps that overlap the new one */
     for (i = 0; i < process->maps->len; ++i)
     {
-        map_t *m = process->maps->pdata[i];
+        map_t *m = &g_array_index (process->maps, map_t, i);
 
-        if (m->start < map->end && m->end > map->start)
+        if (m->start < map.end && m->end > map.start)
         {
-            destroy_map (m);
+            g_free (m->filename);
 
-            g_ptr_array_remove_index (process->maps, i);
+	    g_array_remove_index (process->maps, i);
         }
     }
 
-    g_ptr_array_add (process->maps, map);
+    g_array_append_vals (process->maps, &map, 1);
 }
 
 static void
@@ -458,12 +477,12 @@ destroy_process (process_t *process)
 
     for (i = 0; i < process->maps->len; ++i)
     {
-	map_t *map = process->maps->pdata[i];
+	map_t *map = &g_array_index (process->maps, map_t, i);
 
-	destroy_map (map);
+	g_free (map->filename);
     }
 
-    g_ptr_array_free (process->maps, TRUE);
+    g_array_free (process->maps, TRUE);
     g_free (process);
 }
 
@@ -487,22 +506,11 @@ create_process (state_t *state, new_process_t *new_process)
 	
 	process->pid = pid;
 	process->comm = g_strdup (comm);
-	process->maps = g_ptr_array_new ();
+	process->maps = g_array_new (FALSE, FALSE, sizeof (map_t));
 	
 	g_hash_table_insert (
 	    state->processes_by_pid, GINT_TO_POINTER (process->pid), process);
     }
-}
-
-static map_t *
-copy_map (map_t *map)
-{
-    map_t *copy = g_new0 (map_t, 1);
-
-    *copy = *map;
-    copy->filename = g_strdup (map->filename);
-
-    return copy;
 }
 
 static void
@@ -528,7 +536,7 @@ process_fork (state_t *state, fork_t *fork)
 
     child->pid = fork->child_pid;
 
-    child->maps = g_ptr_array_new ();
+    child->maps = g_array_new (FALSE, FALSE, sizeof (map_t));
 
     if (parent)
     {
@@ -536,9 +544,11 @@ process_fork (state_t *state, fork_t *fork)
 	
 	for (i = 0; i < parent->maps->len; ++i)
 	{
-	    map_t *map = copy_map (parent->maps->pdata[i]);
+	    map_t copy = g_array_index (parent->maps, map_t, i);
+
+	    copy.filename = g_strdup (copy.filename);
 	    
-	    g_ptr_array_add (child->maps, map);
+	    g_array_append_val (child->maps, copy);
 	}
     }
 
@@ -842,22 +852,6 @@ unique_dup (GHashTable *unique_symbols, const char *sym)
     return result;
 }
 
-static map_t *
-process_locate_map (process_t *process, gulong addr)
-{
-    int i;
-
-    for (i = 0; i < process->maps->len; ++i)
-    {
-	map_t *map = process->maps->pdata[i];
-
-	if (addr >= map->start && addr < map->end)
-	    return map;
-    }
-
-    return NULL;
-}
-
 static const char *
 make_message (state_t *state, const char *format, ...)
 {
@@ -915,7 +909,7 @@ lookup_symbol (state_t    *state,
     }
     else
     {
-	map_t *map = process_locate_map (process, address);
+	const map_t *map = process_locate_map (process, address);
 
 	if (!map)
 	{
@@ -1119,7 +1113,7 @@ tracker_create_profile (tracker_t *tracker)
 	    break;
 	}
     }
-
+    
     profile = profile_new (resolved_stash);
 
     state_free (state);

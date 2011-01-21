@@ -365,7 +365,7 @@ on_start_toggled (GtkWidget *widget, gpointer data)
 	return;
     }
 
-    if (collector_start (app->collector, &err))
+    if (collector_start (app->collector, -1, &err))
     {
 	delete_data (app);
 

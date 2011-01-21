@@ -401,6 +401,7 @@ counter_disable (counter_t *counter)
 
 static counter_t *
 counter_new (Collector  *collector,
+	     pid_t	 pid,
 	     int	 cpu,
 	     counter_t  *output,
 	     GError    **err)
@@ -427,13 +428,13 @@ counter_new (Collector  *collector,
     attr.task = 1;
     attr.exclude_idle = 1;
     
-    if (!collector->use_hw_counters || (fd = sysprof_perf_counter_open (&attr, -1, cpu, -1,  0)) < 0)
+    if (!collector->use_hw_counters || (fd = sysprof_perf_counter_open (&attr, pid, cpu, -1,  0)) < 0)
     {
 	attr.type = PERF_TYPE_SOFTWARE;
 	attr.config = PERF_COUNT_SW_CPU_CLOCK;
 	attr.sample_period = 1000000;
 	
-	fd = sysprof_perf_counter_open (&attr, -1, cpu, -1, 0);
+	fd = sysprof_perf_counter_open (&attr, pid, cpu, -1, 0);
     }
     
     if (fd < 0)
@@ -717,6 +718,7 @@ process_event (Collector       *collector,
 
 gboolean
 collector_start (Collector  *collector,
+		 pid_t       pid,
 		 GError    **err)
 {
     int n_cpus = get_n_cpus ();
@@ -729,7 +731,7 @@ collector_start (Collector  *collector,
     output = NULL;
     for (i = 0; i < n_cpus; ++i)
     {
-	counter_t *counter = counter_new (collector, i, output, err);
+	counter_t *counter = counter_new (collector, pid, i, output, err);
 
 	if (!counter)
 	{

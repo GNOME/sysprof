@@ -38,6 +38,7 @@ Collector *collector_new            (gboolean        use_hw_counters,
 				     CollectorFunc   callback,
 				     gpointer        data);
 gboolean   collector_start          (Collector      *collector,
+				     pid_t           pid,
 				     GError        **err);
 void       collector_stop           (Collector      *collector);
 void       collector_reset          (Collector      *collector);

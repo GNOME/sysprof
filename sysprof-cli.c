@@ -111,19 +111,38 @@ die (const char *err_msg)
     exit (-1);
 }
 
+static int opt_pid = -1;
+
+static GOptionEntry entries[] =
+{
+  { "pid", 'p', 0, G_OPTION_ARG_INT, &opt_pid,
+    "Make sysprof specific to a task", NULL },
+  { NULL }
+};
+
 int
 main (int argc, char *argv[])
 {
-    Application *app = g_new0 (Application, 1);
+    Application *app;
+    GOptionContext *context;
     GError *err;
     
+    err = NULL;
+
+    context = g_option_context_new ("- Sysprof");
+    g_option_context_add_main_entries (context, entries, NULL);
+    if (!g_option_context_parse (context, &argc, &argv, &err))
+    {
+	    g_print ("Failed to parse options: %s\n", err->message);
+	    return 1;
+    }
+
+    app = g_new0 (Application, 1);
     app->collector = collector_new (FALSE, NULL, NULL);
     app->outfile = g_strdup (argv[1]);
     app->main_loop = g_main_loop_new (NULL, 0);
     
-    err = NULL;
-    
-    if (!collector_start (app->collector, &err))
+    if (!collector_start (app->collector, (pid_t) opt_pid, &err))
 	die (err->message);
     
     if (argc < 2)

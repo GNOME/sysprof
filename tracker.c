@@ -251,7 +251,9 @@ tracker_new (void)
 
     g_get_current_time (&after);
 
+#if 0
     g_print ("Time to populate %f\n", time_diff (&after, &before));
+#endif
 
     return tracker;
 }

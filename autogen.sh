@@ -7,6 +7,8 @@ test -n "$srcdir" || srcdir=.
 olddir=`pwd`
 cd "$srcdir"
 
+mkdir m4
+
 AUTORECONF=`which autoreconf`
 if test -z $AUTORECONF; then
         echo "*** No autoreconf found, please install it ***"

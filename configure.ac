@@ -1,19 +1,24 @@
-AC_PREREQ(2.54)
+AC_PREREQ([2.63])
 
 AC_INIT([sysprof], [1.1.7])
-AC_CONFIG_SRCDIR(sysprof.glade)
 
-AM_INIT_AUTOMAKE(no-define)
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_SRCDIR([sysprof.glade])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([build-aux])
 
-AM_CONFIG_HEADER(config.h)
-
-AC_PROG_CC
-AC_PROG_INSTALL
+AM_INIT_AUTOMAKE([1.10 -Wall no-define])
+AM_MAINTAINER_MODE([enable])
 
 # Support silent build rules, requires at least automake-1.11. Disable
 # by either passing --disable-silent-rules to configure or passing V=1
 # to make
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
+# Check for programs
+AC_PROG_CC
+AM_PROG_CC_C_O
+AC_PROG_INSTALL
 
 changequote(,)dnl
 if test "x$GCC" = "xyes"; then

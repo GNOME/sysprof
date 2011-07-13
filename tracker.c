@@ -417,15 +417,18 @@ process_locate_map (process_t *process, gulong addr)
     {
 	map_t *map = &g_array_index (maps, map_t, i);
 
-	if (addr >= map->start && addr < map->end && i > 0)
+	if (addr >= map->start && addr < map->end)
 	{
-	    map_t tmp = *map;
+            if (i > 0)
+            {
+	        map_t tmp = *map;
 	    
-	    memmove (&(g_array_index (maps, map_t, 1)),
-		     &(g_array_index (maps, map_t, 0)),
-		     i * sizeof (map_t));
+	        memmove (&(g_array_index (maps, map_t, 1)),
+	                 &(g_array_index (maps, map_t, 0)),
+                         i * sizeof (map_t));
 
-	    g_array_index (maps, map_t, 0) = tmp;
+	        g_array_index (maps, map_t, 0) = tmp;
+            }
 	    
 	    return &g_array_index (maps, map_t, 0);
 	}

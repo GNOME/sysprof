@@ -175,7 +175,7 @@ sysprof_perf_counter_open (struct perf_counter_attr *attr,
 #define __NR_perf_counter_open 337
 #elif defined(__hppa__)
 #define __NR_perf_counter_open 318
-#elif defined(__ppc__) || defined(__ppc64__)
+#elif defined(__powerpc__) || defined(__powerpc64__)
 #define __NR_perf_counter_open 319
 #elif defined(__s390__)
 #define __NR_perf_counter_open 331

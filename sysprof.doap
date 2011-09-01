@@ -1,0 +1,28 @@
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:gnome="http://api.gnome.org/doap-extensions#"
+         xmlns="http://usefulinc.com/ns/doap#">
+
+  <name xml:lang="en">Sysprof</name>
+  <shortdesc xml:lang="en">Sysprof kernel based performance profiler for Linux</shortdesc>
+  <description>The Sysprof profiler is a statistical profiler based on
+  hardware performance counters in modern CPUs. Please see
+
+		http://sysprof.com
+
+Not only will that give you the very latest version of this rapidly
+changing project, it will be much easier than get GNOME Shell and
+its dependencies to build from tarballs.</description>
+  <homepage rdf:resource="http://sysprof.com" />
+  <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/sysprof-list" />
+  <download-page rdf:resource="http://sysprof.com/" />
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Søren Sandmann Pedersen</foaf:name>
+      <foaf:mbox rdf:resource="mailto:sandmann@cs.au.dk" />
+      <gnome:userid>ssp</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+</Project>

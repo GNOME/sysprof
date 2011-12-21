@@ -825,7 +825,7 @@ lookup_kernel_symbol (gulong address)
      * Below we filter out the [irq stack]
      */
     i = 0;
-    while (skip_kernel_symbols[i][0] != '\0')
+    while (sym && skip_kernel_symbols[i][0] != '\0')
     {
 	if (strcmp (sym, skip_kernel_symbols[i]) == 0)
 	{

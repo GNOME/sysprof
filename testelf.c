@@ -1,5 +1,6 @@
 #include <glib.h>
 #include "elfparser.h"
+#include <string.h>
 
 const char *n;
 
@@ -34,8 +35,10 @@ int
 main (int argc, char **argv)
 {
     ElfParser *elf;
+    ElfParser *debug = NULL;
     const char *build_id;
     const char *filename;
+    const char *dir;
 
     if (argc == 1)
 	filename = "/usr/lib/libgtk-x11-2.0.so";
@@ -50,11 +53,38 @@ main (int argc, char **argv)
 	return -1;
     }
 
-    build_id = elf_parser_get_build_id (elf);
+    dir = g_path_get_dirname (filename);
 
-    g_print ("build ID: %s\n", build_id);
+    build_id = elf_parser_get_build_id (elf);
     
-    elf_parser_get_crc32 (elf);
+    guint crc = elf_parser_get_crc32 (elf);
+
+    g_print ("build ID: %s crc: %x\n", build_id, crc);
+    filename = elf_parser_get_debug_link(elf, &crc);
+    if (filename)
+    {
+	filename = g_build_filename ("/usr", "lib", "debug", dir, filename, NULL);
+	g_print ("Debug link: %s crc: %x\n", filename, crc);
+	debug = elf_parser_new (filename, NULL);
+
+	if (debug)
+	{
+	    const char *build = elf_parser_get_build_id (debug);
+	    guint crc_debug = elf_parser_get_crc32 (debug);
+	    g_print ("Debug link build ID: %s crc: %x\n", build, crc_debug);
+	    if (strcmp(build, build_id) != 0 || crc_debug != crc)
+		g_print ("Build ID or crc not matching!\n");
+	}
+	else
+	{
+	    g_print ("Separate debug symbol file not found\n");
+	}
+
+    }
+    else
+    {
+	g_print ("No debug link\n");
+    }
     
 #if 0
     for (i = 0; i < 5000000; ++i)

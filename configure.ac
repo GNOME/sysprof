@@ -83,7 +83,7 @@ Makefile
 
 AC_OUTPUT
 
-if [[ $KMICRO -lt 31 ]] ; then
+if [[ $KMAJOR -eq 2 -a $KMINOR -eq 6 -a $KMICRO -lt 31 ]] ; then
    echo
    echo "%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%"
    echo "@"  

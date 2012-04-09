@@ -744,7 +744,8 @@ elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
 
     if (crc32)
     {
-	offset = (offset + 3) & ~0x3;
+	int len = strlen (result) + 1;
+	offset = (offset + len + 3) & ~0x3;
 
 	*crc32 = GET_UINT32 (parser, offset);
     }

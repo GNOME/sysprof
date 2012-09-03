@@ -35,7 +35,7 @@
 #include "elfparser.h"
 #include "tracker.h"
 
-#include "perf_counter.h"
+#include <linux/perf_event.h>
 #include "util.h"
 
 #define d_print(...)
@@ -61,7 +61,7 @@ struct counter_t
     Collector *				collector;
     
     int					fd;
-    struct perf_counter_mmap_page *	mmap_page;
+    struct perf_event_mmap_page *	mmap_page;
     uint8_t *				data;
     
     uint64_t				tail;
@@ -144,11 +144,11 @@ get_n_cpus (void)
 }
 
 static int
-sysprof_perf_counter_open (struct perf_counter_attr *attr,
-			   pid_t		     pid,
-			   int			     cpu,
-			   int			     group_fd,
-			   unsigned long	     flags)
+sysprof_perf_counter_open (struct perf_event_attr *attr,
+			   pid_t		   pid,
+			   int			   cpu,
+			   int			   group_fd,
+			   unsigned long	   flags)
 {
 #ifndef __NR_perf_counter_open
 #if defined(__i386__)
@@ -326,13 +326,13 @@ on_read (gpointer data)
 	    header = (struct perf_event_header *)b;
 	}
 
-	if (!skip_samples || header->type != PERF_EVENT_SAMPLE)
-	  {
-	    if (header->type == PERF_EVENT_SAMPLE)
+	if (!skip_samples || header->type != PERF_RECORD_SAMPLE)
+	{
+	    if (header->type == PERF_RECORD_SAMPLE)
 	      collector->n_samples++;
 	    
 	    process_event (collector, counter, (counter_event_t *)header);
-	  }
+	}
 
 	if (free_me)
 	    g_free (free_me);
@@ -382,13 +382,13 @@ map_buffer (counter_t *counter, GError **err)
 static gboolean
 counter_set_output (counter_t *counter, int output)
 {
-    return ioctl (counter->fd, PERF_COUNTER_IOC_SET_OUTPUT, output) == 0;
+    return ioctl (counter->fd, PERF_EVENT_IOC_SET_OUTPUT, output) == 0;
 }
 
 static void
 counter_enable (counter_t *counter)
 {
-    ioctl (counter->fd, PERF_COUNTER_IOC_ENABLE);
+    ioctl (counter->fd, PERF_EVENT_IOC_ENABLE);
 }
 
 static void
@@ -396,7 +396,7 @@ counter_disable (counter_t *counter)
 {
     d_print ("disable\n");
     
-    ioctl (counter->fd, PERF_COUNTER_IOC_DISABLE);
+    ioctl (counter->fd, PERF_EVENT_IOC_DISABLE);
 }
 
 static counter_t *
@@ -406,7 +406,7 @@ counter_new (Collector  *collector,
 	     counter_t  *output,
 	     GError    **err)
 {
-    struct perf_counter_attr attr;
+    struct perf_event_attr attr;
     counter_t *counter;
     int fd;
     
@@ -619,7 +619,7 @@ process_sample (Collector      *collector,
     {
 	uint64_t trace[3];
 
-	if (sample->header.misc & PERF_EVENT_MISC_KERNEL)
+	if (sample->header.misc & PERF_RECORD_MISC_KERNEL)
 	{
 	    trace[0] = PERF_CONTEXT_KERNEL;
 	    trace[1] = sample->ip;
@@ -656,15 +656,15 @@ process_event (Collector       *collector,
     
     switch (event->header.type)
     {
-    case PERF_EVENT_MMAP: name = "mmap"; break;
-    case PERF_EVENT_LOST: name = "lost"; break;
-    case PERF_EVENT_COMM: name = "comm"; break;
-    case PERF_EVENT_EXIT: name = "exit"; break;
-    case PERF_EVENT_THROTTLE: name = "throttle"; break;
-    case PERF_EVENT_UNTHROTTLE: name = "unthrottle"; break;
-    case PERF_EVENT_FORK: name = "fork"; break;
-    case PERF_EVENT_READ: name = "read"; break;
-    case PERF_EVENT_SAMPLE: name = "samp"; break;
+    case PERF_RECORD_MMAP: name = "mmap"; break;
+    case PERF_RECORD_LOST: name = "lost"; break;
+    case PERF_RECORD_COMM: name = "comm"; break;
+    case PERF_RECORD_EXIT: name = "exit"; break;
+    case PERF_RECORD_THROTTLE: name = "throttle"; break;
+    case PERF_RECORD_UNTHROTTLE: name = "unthrottle"; break;
+    case PERF_RECORD_FORK: name = "fork"; break;
+    case PERF_RECORD_READ: name = "read"; break;
+    case PERF_RECORD_SAMPLE: name = "samp"; break;
     default: name = "unknown"; break;
     }
 
@@ -672,38 +672,38 @@ process_event (Collector       *collector,
     
     switch (event->header.type)
     {
-    case PERF_EVENT_MMAP:
+    case PERF_RECORD_MMAP:
 	process_mmap (collector, &event->mmap);
 	break;
 	
-    case PERF_EVENT_LOST:
+    case PERF_RECORD_LOST:
 	g_print ("lost event\n");
 	break;
 	
-    case PERF_EVENT_COMM:
+    case PERF_RECORD_COMM:
 	process_comm (collector, &event->comm);
 	break;
 	
-    case PERF_EVENT_EXIT:
+    case PERF_RECORD_EXIT:
 	process_exit (collector, &event->exit);
 	break;
 	
-    case PERF_EVENT_THROTTLE:
+    case PERF_RECORD_THROTTLE:
 	g_print ("throttle\n");
 	break;
 	
-    case PERF_EVENT_UNTHROTTLE:
+    case PERF_RECORD_UNTHROTTLE:
 	g_print ("unthrottle\n");
 	break;
 	
-    case PERF_EVENT_FORK:
+    case PERF_RECORD_FORK:
 	process_fork (collector, &event->fork);
 	break;
 	
-    case PERF_EVENT_READ:
+    case PERF_RECORD_READ:
 	break;
 	
-    case PERF_EVENT_SAMPLE:
+    case PERF_RECORD_SAMPLE:
 	process_sample (collector, &event->sample);
 	break;
 	

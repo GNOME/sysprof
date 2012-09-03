@@ -3,12 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <glib/gprintf.h>
-
+#include <linux/perf_event.h>
 #include "tracker.h"
 #include "stackstash.h"
 #include "binfile.h"
 #include "elfparser.h"
-#include "perf_counter.h"
 
 typedef struct new_process_t new_process_t;
 typedef struct new_map_t new_map_t;

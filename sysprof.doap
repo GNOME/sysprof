@@ -11,9 +11,8 @@
 
 		http://sysprof.com
 
-Not only will that give you the very latest version of this rapidly
-changing project, it will be much easier than get GNOME Shell and
-its dependencies to build from tarballs.</description>
+  for more information.
+  </description>
   <homepage rdf:resource="http://sysprof.com" />
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/sysprof-list" />
   <download-page rdf:resource="http://sysprof.com/" />

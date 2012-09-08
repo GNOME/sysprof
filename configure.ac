@@ -1,6 +1,6 @@
 AC_PREREQ([2.63])
 
-AC_INIT([sysprof], [1.1.9])
+AC_INIT([sysprof], [1.2.0])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([sysprof.glade])
@@ -82,17 +82,3 @@ Makefile
 ])
 
 AC_OUTPUT
-
-if [[ $KMAJOR -eq 2 -a $KMINOR -eq 6 -a $KMICRO -lt 31 ]] ; then
-   echo
-   echo "%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%"
-   echo "@"  
-   echo "%      This version of sysprof will only work with a "
-   echo "@      2.6.31 kernel or later, but you are using 2.6.$KMICRO."
-   echo "%"
-   echo "@      You can _compile_ it against this version, but it "
-   echo "%      will not work unless you install 2.6.31 or later. "
-   echo "@"
-   echo "@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@%@"
-   echo
-fi

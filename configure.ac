@@ -1,6 +1,6 @@
 AC_PREREQ([2.63])
 
-AC_INIT([sysprof], [1.2.0])
+AC_INIT([sysprof], [1.3.1])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([sysprof.glade])

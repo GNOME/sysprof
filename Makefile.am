@@ -83,18 +83,8 @@ sysprof_cli_CPPFLAGS =				\
 
 sysprof_cli_LDADD = $(CORE_DEP_LIBS)
 
-#
-# Module stuff
-#  
-
-#EXTRA_DIST =					\
-#	module/sysprof-module.c			\
-#	module/sysprof-module.h			\
-#	module/Makefile
-
-#insert-module:
-#	/sbin/modprobe -r sysprof-module
-#	/sbin/modprobe sysprof-module
+EXTRA_DIST =					\
+	sysprof-icon-source.svg
 
 # 
 # Test programs

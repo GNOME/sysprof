@@ -1458,6 +1458,7 @@ set_icons (Application *app)
 	PIXMAPDIR "/sysprof-icon-24.png",
 	PIXMAPDIR "/sysprof-icon-32.png",
 	PIXMAPDIR "/sysprof-icon-48.png",
+	PIXMAPDIR "/sysprof-icon-256.png",
 	NULL
     };
     GList *pixbufs = NULL;

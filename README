@@ -4,100 +4,21 @@ stacktraces which are then interpreted by the userspace program
 
 See the Sysprof homepage:
 
-	http://www.daimi.au.dk/~sandmann/sysprof/
+        http://sysprof.com/
 
 for more information
 
-Please mail bug reports to
+Questions, patches and bug reports should be sent to the sysprof
+mailing list:
 
-	Soren Sandmann  (sandmann@daimi.au.dk)
+        sysprof-list@gnome.org
 
-Also information about whether it works or doesn't work on your distribution
-would be appreciated.
+The list is archived here:
 
-
-
-Requirements:
-
-- A Linux kernel version 2.6.9 or newer, compiled with profiling
-  support, is required.
-
-- GTK+ 2.6.0 or newer is required
-
-- libglade 2.5.1 or newer is required
-
-
-Compiling:
-
-- Sysprof must be compiled with the same compiler that compiled the 
-  kernel it is going to be used with. Usually this is just the the
-  system compiler, but if you have upgraded your kernel it is
-  possible that the new kernel was compiled with a different compiler
-
-  If the module is compiled with a different compiler than the one 
-  compiling the kernel, "modprobe sysprof-module" will produce this
-  error message:
-
-    insmod: error inserting './sysprof-module.o': -1 Invalid module format
-
+        https://mail.gnome.org/archives/sysprof-list/
 
 Debugging symbols
 
-- The programs and libraries you want to profile should have debugging
-  symbols, or you won't get much usable information. On a Fedora Core system,
-  installing the relevant <package>-debuginfo package should be sufficient.
-  On Ubuntu and Debian, the debug packages are called <package>-dbg.
-
-- X server
-
-  The X server as shipped by most distributions uses its own home-rolled
-  module loading system and Sysprof has no way to deal with that, so if you
-  run sysprof with your normal X server you won't get any information about
-  how time is spent inside the X server.
-
-  On Ubuntu and Debian there is a package, xserver-xorg-dbg, containing a
-  binary called Xorg-debug that is built in such a way that sysprof can use
-  it. On other systems, to get an X server with usable symbols you
-  have to compile your own:
-
-  (1) Compile the X server to use ".so" modules:
-
-	- Uncomment the line "MakeDllModules	Yes" in 
-	  xc/config/cf/xorgsite.def. 
-
-	  If you are compiling the CVS version of the X server
-	  (the one that will eventually become 6.9), then this is
-	  already the default.
-
-	- "make World"
-	
-	- Don't run "make install" yet. (See below).
-
-  (2) Make sure the new X server can't see any old ".a" files lying 
-      around. If you install on top of an existing installation, just do
-
-	  find /usr/X11R6/lib/"*.a" | sudo xargs rm
-
-      then run "make install" as root to install the newly compiled
-      X server. 
-
-      If a ".so" X server finds .a files in its module path it will
-      try to load those in preference to .so files and this causes
-      symbol resolution problems
-
-  (3) Run your new X server
-
-  (4) Run sysprof as root. This is necessary because the X server binary 
-      for security reasons is not readable by regular users. I could tell
-      you why, but then I'd have to kill you.
-
-
-Credits:
-      Lorenzo Colitti for writing the sysprof-text program
-      Diana Fong for the icon
-      Mike Frysinger for x86-64 support
-      Kristian Høgsberg for the first port to the 2.6 kernel.
-      Owen Taylor for the symbol lookup code in memprof
-
-
-Søren   (sandmann@daimi.au.dk)
+- The programs and libraries you want to profile should be compiled
+  with -fno-omit-frame-pointers and have debugging symbols available,
+  or you won't get much usable information.

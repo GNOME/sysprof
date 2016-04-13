@@ -9,7 +9,7 @@
   <description>The Sysprof profiler is a statistical profiler based on
   hardware performance counters in modern CPUs. Please see
 
-	http://sysprof.com
+		http://sysprof.com
 
   for more information.
   </description>
@@ -18,11 +18,6 @@
   <download-page rdf:resource="http://sysprof.com/" />
 
   <maintainer>
-    <foaf:Person>
-      <foaf:name>Christian Hergert</foaf:name>
-      <foaf:mbox rdf:resource="mailto:chergert@gnome.org" />
-      <gnome:userid>chergert</gnome:userid>
-    </foaf:Person>
     <foaf:Person>
       <foaf:name>Søren Sandmann Pedersen</foaf:name>
       <foaf:mbox rdf:resource="mailto:sandmann@cs.au.dk" />

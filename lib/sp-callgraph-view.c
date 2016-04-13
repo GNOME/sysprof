@@ -51,6 +51,8 @@ typedef struct
   GtkTreeView         *descendants_view;
   GtkTreeViewColumn   *descendants_name_column;
 
+  GQueue              *history;
+
   guint                profile_size;
 } SpCallgraphViewPrivate;
 
@@ -60,6 +62,11 @@ enum {
   PROP_0,
   PROP_PROFILE,
   N_PROPS
+};
+
+enum {
+  GO_PREVIOUS,
+  N_SIGNALS
 };
 
 enum {
@@ -74,6 +81,7 @@ static void sp_callgraph_view_update_descendants (SpCallgraphView *self,
                                                   StackNode       *node);
 
 static GParamSpec *properties [N_PROPS];
+static guint signals [N_SIGNALS];
 
 static guint
 sp_callgraph_view_get_profile_size (SpCallgraphView *self)
@@ -201,6 +209,7 @@ sp_callgraph_view_unload (SpCallgraphView *self)
   g_assert (SP_IS_CALLGRAPH_VIEW (self));
   g_assert (SP_IS_CALLGRAPH_PROFILE (priv->profile));
 
+  g_queue_clear (priv->history);
   g_clear_object (&priv->profile);
   priv->profile_size = 0;
 }
@@ -593,11 +602,26 @@ sp_callgraph_view_tag_data_func (GtkTreeViewColumn *column,
 }
 
 static void
+sp_callgraph_view_real_go_previous (SpCallgraphView *self)
+{
+  SpCallgraphViewPrivate *priv = sp_callgraph_view_get_instance_private (self);
+  StackNode *node;
+
+  g_assert (SP_IS_CALLGRAPH_VIEW (self));
+
+  node = g_queue_pop_head (priv->history);
+
+  if (NULL != (node = g_queue_peek_head (priv->history)))
+    sp_callgraph_view_set_node (self, node);
+}
+
+static void
 sp_callgraph_view_finalize (GObject *object)
 {
   SpCallgraphView *self = (SpCallgraphView *)object;
   SpCallgraphViewPrivate *priv = sp_callgraph_view_get_instance_private (self);
 
+  g_clear_pointer (&priv->history, g_queue_free);
   g_clear_object (&priv->profile);
 
   G_OBJECT_CLASS (sp_callgraph_view_parent_class)->finalize (object);
@@ -647,10 +671,13 @@ sp_callgraph_view_class_init (SpCallgraphViewClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  GtkBindingSet *bindings;
 
   object_class->finalize = sp_callgraph_view_finalize;
   object_class->get_property = sp_callgraph_view_get_property;
   object_class->set_property = sp_callgraph_view_set_property;
+
+  klass->go_previous = sp_callgraph_view_real_go_previous;
 
   properties [PROP_PROFILE] =
     g_param_spec_object ("profile",
@@ -661,6 +688,13 @@ sp_callgraph_view_class_init (SpCallgraphViewClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
+  signals [GO_PREVIOUS] =
+    g_signal_new ("go-previous",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (SpCallgraphViewClass, go_previous),
+                  NULL, NULL, NULL, G_TYPE_NONE, 0);
+
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/org/gnome/sysprof/ui/sp-callgraph-view.ui");
 
@@ -668,6 +702,9 @@ sp_callgraph_view_class_init (SpCallgraphViewClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, functions_view);
   gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, descendants_view);
   gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, descendants_name_column);
+
+  bindings = gtk_binding_set_by_class (klass);
+  gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
 }
 
 static void
@@ -676,6 +713,8 @@ sp_callgraph_view_init (SpCallgraphView *self)
   SpCallgraphViewPrivate *priv = sp_callgraph_view_get_instance_private (self);
   GtkTreeSelection *selection;
   GtkCellRenderer *cell;
+
+  priv->history = g_queue_new ();
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -850,6 +889,9 @@ sp_callgraph_view_update_descendants (SpCallgraphView *self,
   GtkTreeStore *store;
 
   g_assert (SP_IS_CALLGRAPH_VIEW (self));
+
+  if (g_queue_peek_head (priv->history) != node)
+    g_queue_push_head (priv->history, node);
 
   store = gtk_tree_store_new (4,
                               G_TYPE_STRING,

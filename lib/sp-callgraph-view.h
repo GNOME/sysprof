@@ -32,6 +32,10 @@ G_DECLARE_DERIVABLE_TYPE (SpCallgraphView, sp_callgraph_view, SP, CALLGRAPH_VIEW
 struct _SpCallgraphViewClass
 {
   GtkBinClass parent_class;
+
+  void (*go_previous) (SpCallgraphView *self);
+
+  gpointer padding[8];
 };
 
 GtkWidget          *sp_callgraph_view_new         (void);

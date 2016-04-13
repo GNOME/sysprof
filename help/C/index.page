@@ -1,0 +1,18 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:its="http://www.w3.org/2005/11/its"
+      type="guide"
+      id="index">
+
+  <info>
+    <revision pkgversion="3.20" date="2016-01-23" status="stub" />
+
+    <include href="legal.xml" xmlns="http://www.w3.org/2001/XInclude"/>
+  </info>
+
+  <title>Sysprof</title>
+
+  <section id="profiling" style="2column">
+    <title>Profiling</title>
+  </section>
+
+</page>

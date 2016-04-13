@@ -1,0 +1,57 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:its="http://www.w3.org/2005/11/its"
+      type="topic"
+      id="introduction">
+
+  <info>
+    <link type="guide" xref="index"/>
+<!--
+    <link type="guide" xref="index#features"/>
+    <link type="seealso" xref="anotherpageid"/>
+-->
+    <revision pkgversion="3.20" date="2016-04-04" status="stub" />
+
+    <credit type="author">
+      <name>Christian Hergert</name>
+      <email its:translate="no">christian@hergert.me</email>
+      <years>2016</years>
+    </credit>
+ 
+    <include href="legal.xml" xmlns="http://www.w3.org/2001/XInclude"/>
+
+    <desc>Welcome to <app>Sysprof</app>!</desc>
+  </info>
+
+  <title>Introduction</title>
+
+  <p><app>Sysprof</app> is a system profiler for Linux that targets
+  the GNOME desktop.</p>
+
+  <section id="what-is-a-profiler">
+    <info>
+      <link type="guide" xref="index"/>
+      <desc>Differences between tracing and sampling</desc>
+    </info>
+    <title>What is a Profiler?</title>
+
+    <p>A profiler is an application that records information about an
+application or system while it runs. That information can be explored to
+gain insight into how the application could be changed to perform
+better.</p>
+
+    <p>Two common categories of software profilers exist, commonly referred
+to as either tracing or sampling profilers. What is meant by tracing
+profiler is that every function call executed by the program is known to the
+profiler. A sampling profiler works by inspecting the state of the
+program on a regular frequency and therefore does not see every function
+call executed by the program.</p>
+
+    <p>Both tracing and sampling profilers have their advantages. A
+notable advtantage of a sampling profiler is that the overhead is much
+less than that of a tracing profiler, making it easier to use for
+software that requires interactivity.</p>
+
+    <p><app>Sysprof</app> is a sampling profiler.</p>
+  </section>
+
+</page>

@@ -1,0 +1,34 @@
+<schemalist>
+  <schema id="org.gnome.sysprof2" path="/org/gnome/sysprof/" gettext-domain="sysprof">
+    <key name="window-size" type="(ii)">
+      <default>(-1, -1)</default>
+      <summary>Window size</summary>
+      <description>Window size (width and height).</description>
+    </key>
+    <key name="window-position" type="(ii)">
+      <default>(-1,-1)</default>
+      <summary>Window position</summary>
+      <description>Window position (x and y).</description>
+    </key>
+    <key name="window-maximized" type="b">
+      <default>true</default>
+      <summary>Window maximized</summary>
+      <description>Window maximized state</description>
+    </key>
+    <key name="last-spawn-argv" type="s">
+      <default>''</default>
+      <summary>Last Spawn Program</summary>
+      <description>The last spawned program, which will be set in the UI upon restart of the application.</description>
+    </key>
+    <key name="last-spawn-inherit-env" type="b">
+      <default>true</default>
+      <summary>Last Spawn Inherit Environment</summary>
+      <description>If the last spawned environment inherits the parent environment.</description>
+    </key>
+    <key name="last-spawn-env" type="as">
+      <default>[]</default>
+      <summary>Last Spawn Environment</summary>
+      <description>The last spawned environment, which will be set in the UI upon restart of the application.</description>
+    </key>
+  </schema>
+</schemalist>

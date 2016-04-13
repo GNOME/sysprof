@@ -1,10 +1,10 @@
-/* Sysprof -- Sampling, systemwide CPU profiler
- * Copyright 2005, Lorenzo Colitti
- * Copyright 2005, Soren Sandmann 
+/* sysprof-cli.c
  *
- * This program is free software; you can redistribute it and/or modify
+ * Copyright (C) 2016 Christian Hergert <chergert@redhat.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -13,158 +13,208 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <config.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <fcntl.h>
+#include <glib/gi18n.h>
+#include <glib/gstdio.h>
 #include <signal.h>
-#include <glib.h>
-#include <stdio.h>
+#include <stdlib.h>
+#include <sys/eventfd.h>
+#include <sys/types.h>
+#include <signal.h>
+#include <sysprof.h>
 
-#include "stackstash.h"
-#include "profile.h"
-#include "watch.h"
-#include "signal-handler.h"
-#include "collector.h"
-
-typedef struct Application Application;
-struct Application
-{
-    Collector *	collector;
-    char *	outfile;
-    GMainLoop * main_loop;
-};
+static GMainLoop  *main_loop;
+static SpProfiler *profiler;
+static int efd = -1;
+static int exit_code = EXIT_SUCCESS;
 
 static void
-dump_data (Application *app)
+signal_handler (int signum)
 {
-    GError *err = NULL;
-    Profile *profile;
+  gint64 val = 1;
 
-    printf ("Saving profile (%d samples) in %s ... ",
-	    collector_get_n_samples (app->collector),
-	    app->outfile);
-    fflush (stdout);
-
-    collector_stop (app->collector);
-    
-    profile = collector_create_profile (app->collector);
-    profile_save (profile, app->outfile, &err);
-    
-    if (err)
-    {
-	printf ("failed\n");
-        fprintf (stderr, "Error saving %s: %s\n", app->outfile, err->message);
-        exit (1);
-    }
-    else
-    {
-	printf ("done\n\n");
-    }
-}
-
-static void
-signal_handler (int      signo,
-		gpointer data)
-{
-    Application *app = data;
-    
-    dump_data (app);
-    
-    while (g_main_context_iteration (NULL, FALSE))
-	;
-    
-    g_main_loop_quit (app->main_loop);
-}
-
-static char *
-usage_msg (const char *name)
-{
-    return g_strdup_printf (
-	"Usage: \n"
-	"    %s <outfile>\n"
-	"\n"
-	"On SIGTERM or SIGINT (Ctrl-C) the profile will be written to <outfile>",
-	name);
+  write (efd, &val, sizeof val);
 }
 
 static gboolean
-file_exists_and_is_dir (const char *name)
+dispatch (GSource     *source,
+          GSourceFunc  callback,
+          gpointer     callback_data)
 {
-    return
-	g_file_test (name, G_FILE_TEST_EXISTS) &&
-	g_file_test (name, G_FILE_TEST_IS_DIR);
+  sp_profiler_stop (profiler);
+  g_main_loop_quit (main_loop);
+  return G_SOURCE_REMOVE;
+}
+
+static GSourceFuncs source_funcs = {
+  NULL, NULL, dispatch, NULL
+};
+
+static void
+profiler_stopped (SpProfiler *profiler,
+                  GMainLoop  *main_loop)
+{
+  g_main_loop_quit (main_loop);
 }
 
 static void
-die (const char *err_msg)
+profiler_failed (SpProfiler   *profiler,
+                 const GError *reason,
+                 GMainLoop    *main_loop)
 {
-    if (err_msg)
-	fprintf (stderr, "\n%s\n\n", err_msg);
-    
-    exit (-1);
+  g_assert (SP_IS_PROFILER (profiler));
+  g_assert (reason != NULL);
+
+  g_printerr ("Failure: %s\n", reason->message);
+  exit_code = EXIT_FAILURE;
 }
 
-static int opt_pid = -1;
-
-static GOptionEntry entries[] =
+gint
+main (gint   argc,
+      gchar *argv[])
 {
-  { "pid", 'p', 0, G_OPTION_ARG_INT, &opt_pid,
-    "Make sysprof specific to a task", NULL },
-  { NULL }
-};
+  SpCaptureWriter *writer;
+  SpSource *source;
+  GMainContext *main_context;
+  GOptionContext *context;
+  const gchar *filename = "capture.syscap";
+  GError *error = NULL;
+  GSource *gsource;
+  gchar *command = NULL;
+  int pid = -1;
+  int fd;
+  GOptionEntry entries[] = {
+    { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task"), N_("PID") },
+    { "command", 'c', 0, G_OPTION_ARG_STRING, &command, N_("Run a command and profile the process"), N_("COMMAND") },
+    { NULL }
+  };
 
-int
-main (int argc, char *argv[])
-{
-    Application *app;
-    GOptionContext *context;
-    GError *err;
-    
-    err = NULL;
+  sp_clock_init ();
 
-    context = g_option_context_new ("- Sysprof");
-    g_option_context_add_main_entries (context, entries, NULL);
-    if (!g_option_context_parse (context, &argc, &argv, &err))
+  context = g_option_context_new (_("[CAPTURE_FILE] - Sysprof"));
+  g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
+
+  if (!g_option_context_parse (context, &argc, &argv, &error))
     {
-	    g_print ("Failed to parse options: %s\n", err->message);
-	    return 1;
+      g_printerr ("%s\n", error->message);
+      return EXIT_FAILURE;
     }
 
-    app = g_new0 (Application, 1);
-    app->collector = collector_new (FALSE, NULL, NULL);
-    app->outfile = g_strdup (argv[1]);
-    app->main_loop = g_main_loop_new (NULL, 0);
-    
-    if (!collector_start (app->collector, (pid_t) opt_pid, &err))
-	die (err->message);
-    
-    if (argc < 2)
-	die (usage_msg (argv[0]));
-    
-    if (!signal_set_handler (SIGTERM, signal_handler, app, &err))
-	die (err->message);
-    
-    if (!signal_set_handler (SIGINT, signal_handler, app, &err))
-	die (err->message);
-
-    if (file_exists_and_is_dir (app->outfile))
+  if (argc > 2)
     {
-	char *msg = g_strdup_printf ("Can't write to %s: is a directory\n",
-				     app->outfile);
-	die (msg);
+      gint i;
+
+      g_printerr (_("Too many arguments were passed to sysprof-cli:"));
+
+      for (i = 2; i < argc; i++)
+        g_printerr (" %s", argv [i]);
+      g_printerr ("\n");
+
+      return EXIT_FAILURE;
     }
-    
-    g_main_loop_run (app->main_loop);
-    
-    signal_unset_handler (SIGTERM);
-    signal_unset_handler (SIGINT);
-    
-    return 0;
+
+  efd = eventfd (0, O_CLOEXEC);
+
+  main_loop = g_main_loop_new (NULL, FALSE);
+
+  gsource = g_source_new (&source_funcs, sizeof (GSource));
+  g_source_add_unix_fd (gsource, efd, G_IO_IN);
+  g_source_attach (gsource, NULL);
+
+  profiler = sp_profiler_new ();
+
+  g_signal_connect (profiler,
+                    "failed",
+                    G_CALLBACK (profiler_failed),
+                    main_loop);
+
+  g_signal_connect (profiler,
+                    "stopped",
+                    G_CALLBACK (profiler_stopped),
+                    main_loop);
+
+  if (argc == 2)
+    filename = argv[1];
+
+  if (-1 == (fd = g_open (filename, O_CREAT | O_RDWR | O_CLOEXEC, 0640)))
+    {
+      g_printerr ("Failed to open %s\n", filename);
+      return EXIT_FAILURE;
+    }
+
+  if (command != NULL)
+    {
+      g_auto(GStrv) child_argv = NULL;
+      gint child_argc;
+
+      if (!g_shell_parse_argv (command, &child_argc, &child_argv, &error))
+        {
+          g_printerr ("Invalid command: %s\n", error->message);
+          return EXIT_FAILURE;
+        }
+
+      if (!g_spawn_async (NULL, child_argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, &pid, &error))
+        {
+          g_printerr ("Invalid command: %s\n", error->message);
+          return EXIT_FAILURE;
+        }
+
+      /* Stop the process until we are setup */
+      if (0 != kill (pid, SIGSTOP))
+        {
+          g_printerr ("Failed to pause inferior during setup\n");
+          return EXIT_FAILURE;
+        }
+    }
+
+  writer = sp_capture_writer_new_from_fd (fd, 0);
+  sp_profiler_set_writer (profiler, writer);
+
+  source = sp_proc_source_new ();
+  sp_profiler_add_source (profiler, source);
+  g_object_unref (source);
+
+  source = sp_perf_source_new ();
+
+  sp_profiler_add_source (profiler, source);
+  g_object_unref (source);
+
+  if (pid != -1)
+    {
+      sp_profiler_set_whole_system (profiler, FALSE);
+      sp_profiler_add_pid (profiler, pid);
+    }
+
+  signal (SIGINT, signal_handler);
+  signal (SIGTERM, signal_handler);
+
+  sp_profiler_start (profiler);
+
+  /* Restore the process if we stopped it */
+  if (command)
+    kill (pid, SIGCONT);
+
+  g_printerr ("Recording, press ^C to exit\n");
+
+  g_main_loop_run (main_loop);
+
+  main_context = g_main_loop_get_context (main_loop);
+  while (g_main_context_pending (main_context))
+    g_main_context_iteration (main_context, FALSE);
+
+  close (efd);
+
+  g_clear_pointer (&writer, sp_capture_writer_unref);
+  g_clear_object (&profiler);
+  g_clear_pointer (&main_loop, g_main_loop_unref);
+  g_clear_pointer (&context, g_option_context_free);
+
+  return EXIT_SUCCESS;
 }

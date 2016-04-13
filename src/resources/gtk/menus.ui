@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <menu id="app-menu">
+    <section id="app-menu-new-section">
+      <item>
+        <attribute name="label" translatable="yes">_New Window</attribute>
+        <attribute name="action">app.new-window</attribute>
+      </item>
+    </section>
+    <section id="app-menu-open-section">
+      <item>
+        <attribute name="label" translatable="yes">_Open Capture</attribute>
+        <attribute name="action">app.open-capture</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">About</attribute>
+        <attribute name="action">app.about</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Help</attribute>
+        <attribute name="action">app.help</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Quit</attribute>
+        <attribute name="action">app.quit</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="gear-menu">
+    <section id="gear-menu-open-section">
+      <item>
+        <attribute name="label" translatable="yes">Open</attribute>
+        <attribute name="action">win.open-capture</attribute>
+      </item>
+    </section>
+    <section id="gear-menu-save-section">
+      <item>
+        <attribute name="label" translatable="yes">Save As</attribute>
+        <attribute name="action">win.save-capture</attribute>
+      </item>
+    </section>
+    <section id="gear-menu-close-section">
+      <item>
+        <attribute name="label" translatable="yes">Close</attribute>
+        <attribute name="action">win.close-capture</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

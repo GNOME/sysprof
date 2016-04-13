@@ -1,0 +1,25 @@
+# TODO
+
+ - Follow fork/threads
+
+   Currently, when watching a pid, we do not have a way to follow forks.
+   We need to watch FORK/EXIT events and create/dispose additional perf
+   streams from the kernel.
+
+ - Add cpu/mem/net data source
+
+ - Add frame types for generic counters
+
+ - Add support for visualizations other than the callgraph.
+
+   1) I'd like to see a graph of call depth over time.
+   2) line graphs for cpu/mem/net.
+   3) disk I/O
+
+   etc.
+
+   One quick way to put together the UI is to just use ListBox for the
+   rows. Then we need a "graph" child that allows drawing. The nice thing
+   here is that we get pixel caching for free. Resizing the row height
+   gets a little annoying though.
+

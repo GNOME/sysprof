@@ -1,0 +1,5 @@
+[D-BUS Service]
+Name=org.gnome.Sysprof2
+Exec=@sysprofdprivdir@/sysprofd
+User=root
+SystemdService=sysprof2.service

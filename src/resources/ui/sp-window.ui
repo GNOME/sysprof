@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <template class="SpWindow" parent="GtkApplicationWindow">
+    <property name="default-height">700</property>
+    <property name="default-width">1200</property>
+    <property name="icon-name">sysprof</property>
+    <property name="show-menubar">false</property>
+    <property name="title" translatable="yes">Sysprof</property>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="show-close-button">true</property>
+        <property name="visible">true</property>
+        <child type="title">
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <property name="visible">true</property>
+            <child>
+              <object class="GtkLabel" id="title">
+                <property name="visible">true</property>
+                <property name="label" translatable="yes">Sysprof</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                  <attribute name="scale" value="0.8"/>
+                </attributes>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="subtitle">
+                <property name="visible">true</property>
+                <property name="label" translatable="yes">Not running</property>
+                <property name="ellipsize">start</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+                <attributes>
+                  <attribute name="scale" value="0.8"/>
+                </attributes>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="record_button">
+            <property name="label" translatable="yes">_Record</property>
+            <property name="use-underline">true</property>
+            <property name="visible">true</property>
+            <property name="width-request">100</property>
+            <style>
+              <class name="suggested-action"/>
+            </style>
+          </object>
+        </child>
+        <child>
+          <object class="SpProfilerMenuButton" id="profiler_menu_button">
+            <property name="width-request">200</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="stat_label">
+            <property name="margin-end">12</property>
+            <property name="xalign">1</property>
+            <style>
+              <class name="dim-label"/>
+            </style>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="gear_menu_button">
+            <property name="visible">true</property>
+            <style>
+              <class name="image-button"/>
+            </style>
+            <child>
+              <object class="GtkImage">
+                <property name="icon-name">open-menu-symbolic</property>
+                <property name="visible">true</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="visible">true</property>
+        <child>
+          <object class="GtkRevealer" id="info_bar_revealer">
+            <property name="visible">true</property>
+            <property name="reveal-child">false</property>
+            <child>
+              <object class="GtkInfoBar" id="info_bar">
+                <property name="visible">true</property>
+                <child internal-child="content_area">
+                  <object class="GtkBox">
+                    <child>
+                      <object class="GtkLabel" id="info_bar_label">
+                        <property name="hexpand">true</property>
+                        <property name="label">Failure</property>
+                        <property name="visible">true</property>
+                        <property name="wrap">true</property>
+                        <property name="xalign">0</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="close_info_button">
+                        <property name="label" translatable="yes">_Close</property>
+                        <property name="use-underline">true</property>
+                        <property name="visible">true</property>
+                        <property name="width-request">100</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <action-widgets>
+                  <action-widget response="0">close_info_button</action-widget>
+                </action-widgets>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStack" id="view_stack">
+            <property name="expand">true</property>
+            <property name="transition-duration">400</property>
+            <property name="transition-type">crossfade</property>
+            <property name="visible">true</property>
+            <child>
+              <object class="SpEmptyStateView" id="empty_view">
+                <property name="visible">true</property>
+              </object>
+              <packing>
+                <property name="name">empty</property>
+              </packing>
+            </child>
+            <child>
+              <object class="SpFailedStateView" id="failed_view">
+                <property name="visible">true</property>
+              </object>
+              <packing>
+                <property name="name">failed</property>
+              </packing>
+            </child>
+            <child>
+              <object class="SpRecordingStateView" id="recording_view">
+                <property name="visible">true</property>
+              </object>
+              <packing>
+                <property name="name">recording</property>
+              </packing>
+            </child>
+            <child>
+              <object class="SpCallgraphView" id="callgraph_view">
+                <property name="visible">true</property>
+              </object>
+              <packing>
+                <property name="name">browsing</property>
+              </packing>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

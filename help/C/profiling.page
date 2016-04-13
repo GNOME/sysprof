@@ -1,0 +1,140 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:its="http://www.w3.org/2005/11/its"
+      type="topic"
+      id="profiling">
+
+  <section id="system-profiling">
+    <info>
+      <link type="guide" xref="index#profiling"/>
+    </info>
+    <title>How to profile your system</title>
+    <p>When <app>Sysprof</app> profiles your system, it records stack
+information for all applications executing, including the Linux kernel. This
+can sometimes be confusing if you only want to look at a single process.  If
+your application does not interact much with the host system, you may have more
+success with <link href="profiling#new-process-profiling">profiling an existing
+process</link>.</p>
+
+    <p>To profile your entire system, ensure the target button is set to
+<em>All Processes</em> and click <em>Record</em>.</p>
+
+    <p>At this point, you may be asked to <em>authorize</em> access to
+profile the system. This is required as the Linux kernel's perf
+implementation requires root to perform whole-system profiling.</p>
+
+    <p>During the profiling session, you will see the number of
+seconds the profile has been active. Clicking the <em>Record</em>
+button again will stop the profiling session. Afterwhich, the callgraph
+will be displayed.</p>
+
+    <note>
+      <p>If you find that the <app>sysprof</app> application is showing up in
+your profiling callgraph, you might consider recording the profiling session
+with <cmd>sysprof-cli</cmd>. This is a command line program that will capture
+your profiling session to disk to be viewed at a later time.</p>
+    </note>
+
+    <p>See <link href="profiling#interpreting-results">interpreting
+results</link> for more guidance.</p>
+
+  </section>
+
+  <section id="existing-process-profiling">
+    <info>
+      <link type="guide" xref="index#profiling"/>
+    </info>
+    <title>Profile an existing process</title>
+    <p>With <app>Sysprof</app>, you can profile one or more existing
+processes on your system. First, select the <em>profiling target</em>
+button next to the <em>Record</em> button. Select <em>Existing Process</em>
+in the popover that is displayed. Next, select as many processes as you'd
+like to profile. Processes selected for profiling will have a checkmark
+next to their name.</p>
+
+    <p>After selecting your target processes, click the <em>Record</em>
+button to start profiling.</p>
+
+    <p>When you have completed, click the <em>Record</em> button again
+to stop profiling.</p>
+
+    <p>See <link href="profiling#interpreting-results">interpreting
+results</link> for more guidance.</p>
+
+  </section>
+
+  <section id="new-process-profiling">
+    <info>
+      <link type="guide" xref="index#profiling"/>
+    </info>
+    <title>Profile a new process</title>
+
+    <p>Often times, you may need to spawn a new process to profile.
+First, select the <em>profiling target</em> button next to the
+<em>Record</em> button. Next, select <em>New Process</em> and fill
+out the necessary information to spawn the process.</p>
+
+    <note>
+      <p>If you are spawning a process that requires access to your current
+display, such as a GTK+ application, you will want to make sure <em>Inherit
+current environment</em> is set.</p>
+    </note>
+
+  </section>
+
+  <section id="sysprof-cli">
+    <info>
+      <link type="guide" xref="index#profiling"/>
+    </info>
+    <title>Profiling with the sysprof-cli command line tool</title>
+
+    <p>For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd>
+command line tool. When run without any arguments, it will record your entire
+system and save the output to <file>capture.syscap</file>. This file can be
+opened with the <app>Sysprof</app> application to view the callgraph.</p>
+
+    <p>You can also attach to an existing process using
+<cmd>sysprof-cli -p pid</cmd>.</p>
+
+    <p>If you would like to spawn a new process, use <cmd>sysprof-cli -c
+'command'</cmd> to specify a command to be launched. The command will inherit
+the current environment.</p>
+
+  </section>
+
+  <section id="interpreting-results">
+    <info>
+      <link type="guide" xref="index#profiling"/>
+    </info>
+    <title>Interpreting results</title>
+
+    <p>The profiling results in <app>Sysprof</app> are split into three
+sections. On the top left is a list of all the functions profiled. They
+are sorted by how often they were called during the sampling frequency.</p>
+
+    <note>
+      <p>It is important to note that the amount of time spent in each function
+is not captured. That would require a tracing profiler to accurately record.
+The percentage is calculated by determining how often that function showed
+up in the current stacktrace when a sample was recorded.</p>
+    </note>
+
+    <p>After selecting a function from the functions list, all of the recorded
+callers of that function will be displayed on the bottom left. They are also
+sorted by the percentage of samples that included that function in the
+stacktrace.</p>
+
+    <p>On the right, are all of the decendants of a selected function. You can
+select a function either from the functions list, or the callers list.</p>
+
+    <p>You can jump into a function by activating a row in the tree of descendants
+with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>.</p>
+
+    <note>
+      <p>If you see <em>- - kernel - -</em> in your results, that means that the
+application transitioned into or from the Linux kernel. There can be many reasons
+for this such as a <em>syscall</em> or <em>signal</em>.</p>
+    </note>
+
+  </section>
+
+</page>

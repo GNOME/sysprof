@@ -9,9 +9,7 @@ nobase_icon_DATA = \
 	scalable/apps/sysprof-symbolic.svg \
 	$(NULL)
 
-EXTRA_DIST = \
-	$(nobase_icon_DATA) \
-	sysprof-source.svg
+EXTRA_DIST = $(nobase_icon_DATA)
 
 gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
 

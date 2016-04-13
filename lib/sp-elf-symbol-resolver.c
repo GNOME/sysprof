@@ -162,6 +162,9 @@ guess_tag (SpElfSymbolResolver *self,
       else if (strstr (map->filename, "/libgio-2.0."))
         tag = g_quark_from_static_string ("Gio");
 
+      else if (strstr (map->filename, "/libgirepository-1.0."))
+        tag = g_quark_from_static_string ("Introspection");
+
       else if (strstr (map->filename, "/libgtk-3."))
         tag = g_quark_from_static_string ("Gtk+");
 

@@ -1,6 +1,6 @@
 SUBDIRS = daemon data help lib po src tools tests
 
-EXTRA_DIST = AUTHORS
+EXTRA_DIST = AUTHORS tap-test
 
 DISTCHECK_CONFIGURE_FLAGS = --with-systemdsystemunitdir='$(prefix)/etc/systemd/system'
 

@@ -29,7 +29,7 @@ TEST_ENVIRONMENT = \
 	MALLOC_PERTURB_=$$(($${RANDOM:-256} % 256))
 
 TEST_PROGS = test-model-filter
-LOG_COMPILER = $(top_srcdir)/build-aux/tap-test
+LOG_COMPILER = $(top_srcdir)/tap-test
 
 noinst_PROGRAMS = $(TESTS)
 check_PROGRAMS = $(TESTS)

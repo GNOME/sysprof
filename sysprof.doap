@@ -19,6 +19,13 @@
 
   <maintainer>
     <foaf:Person>
+      <foaf:name>Christian Hergert</foaf:name>
+      <foaf:mbox rdf:resource="mailto:chergert@gnome.org" />
+      <gnome:userid>chergert</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+  <maintainer>
+    <foaf:Person>
       <foaf:name>Søren Sandmann Pedersen</foaf:name>
       <foaf:mbox rdf:resource="mailto:sandmann@cs.au.dk" />
       <gnome:userid>ssp</gnome:userid>

@@ -24,6 +24,7 @@ dist-hook: dist-ChangeLog
 GITIGNOREFILES = \
 	**/*.swp \
 	*.o \
+	ABOUT-NLS \
 	aclocal.m4 \
 	build-aux \
 	ChangeLog \
@@ -32,6 +33,8 @@ GITIGNOREFILES = \
 	gtk-doc.m4 \
 	gtk-doc.make \
 	INSTALL \
+	po/.pot \
+	po/stamp-po \
 	$(NULL)
 
 -include $(top_srcdir)/git.mk

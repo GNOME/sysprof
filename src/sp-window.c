@@ -550,6 +550,18 @@ sp_window_save_capture (GSimpleAction *action,
 
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 
+      if (filename == NULL)
+        goto failure;
+
+      if (!g_str_has_suffix (filename, ".syscap"))
+        {
+          gchar *tmp;
+
+          tmp = g_strdup_printf ("%s.syscap", filename);
+          g_free (filename);
+          filename = tmp;
+        }
+
       /* this should really be done outside the main loop. */
       if (!sp_capture_reader_save_as (reader, filename, &error))
         {

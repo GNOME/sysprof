@@ -41,6 +41,12 @@
         <attribute name="action">win.save-capture</attribute>
       </item>
     </section>
+    <section id="gear-menu-screenshot-section">
+      <item>
+        <attribute name="label" translatable="yes">Screenshot</attribute>
+        <attribute name="action">win.screenshot</attribute>
+      </item>
+    </section>
     <section id="gear-menu-close-section">
       <item>
         <attribute name="label" translatable="yes">Close</attribute>

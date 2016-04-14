@@ -279,6 +279,7 @@ sp_window_set_state (SpWindow      *self,
       sp_window_set_profiler (self, profiler);
       sp_window_action_set (self, "close-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "save-capture", "enabled", FALSE, NULL);
+      sp_window_action_set (self, "screenshot", "enabled", FALSE, NULL);
       break;
 
     case SP_WINDOW_STATE_RECORDING:
@@ -293,6 +294,7 @@ sp_window_set_state (SpWindow      *self,
       sp_callgraph_view_set_profile (self->callgraph_view, NULL);
       sp_window_action_set (self, "close-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "save-capture", "enabled", FALSE, NULL);
+      sp_window_action_set (self, "screenshot", "enabled", FALSE, NULL);
       break;
 
     case SP_WINDOW_STATE_PROCESSING:
@@ -300,6 +302,7 @@ sp_window_set_state (SpWindow      *self,
       gtk_label_set_label (self->subtitle, _("Building profile…"));
       sp_window_action_set (self, "close-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "save-capture", "enabled", FALSE, NULL);
+      sp_window_action_set (self, "screenshot", "enabled", FALSE, NULL);
       sp_window_build_profile (self);
       break;
 
@@ -314,6 +317,7 @@ sp_window_set_state (SpWindow      *self,
       sp_window_update_subtitle (self);
       sp_window_action_set (self, "close-capture", "enabled", TRUE, NULL);
       sp_window_action_set (self, "save-capture", "enabled", TRUE, NULL);
+      sp_window_action_set (self, "screenshot", "enabled", TRUE, NULL);
 
       break;
 
@@ -602,6 +606,47 @@ sp_window_record_button_clicked (SpWindow  *self,
 }
 
 static void
+sp_window_screenshot (GSimpleAction *action,
+                      GVariant      *variant,
+                      gpointer       user_data)
+{
+  SpWindow *self = user_data;
+  g_autofree gchar *str = NULL;
+  GtkWindow *window;
+  GtkScrolledWindow *scroller;
+  GtkTextView *text_view;
+
+  g_assert (G_IS_SIMPLE_ACTION (action));
+  g_assert (SP_IS_WINDOW (self));
+
+  if (NULL == (str = sp_callgraph_view_screenshot (self->callgraph_view)))
+    return;
+
+  window = g_object_new (GTK_TYPE_WINDOW,
+                         "title", "Sysprof",
+                         "default-width", 800,
+                         "default-height", 600,
+                         "transient-for", self,
+                         NULL);
+
+  scroller = g_object_new (GTK_TYPE_SCROLLED_WINDOW,
+                           "visible", TRUE,
+                           NULL);
+  gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (scroller));
+
+  text_view = g_object_new (GTK_TYPE_TEXT_VIEW,
+                            "editable", FALSE,
+                            "monospace", TRUE,
+                            "visible", TRUE,
+                            NULL);
+  gtk_container_add (GTK_CONTAINER (scroller), GTK_WIDGET (text_view));
+
+  gtk_text_buffer_set_text (gtk_text_view_get_buffer (text_view), str, -1);
+
+  gtk_window_present (window);
+}
+
+static void
 sp_window_destroy (GtkWidget *widget)
 {
   SpWindow *self = (SpWindow *)widget;
@@ -679,6 +724,7 @@ sp_window_init (SpWindow *self)
     { "close-capture", sp_window_close_capture },
     { "open-capture",  sp_window_open_capture },
     { "save-capture",  sp_window_save_capture },
+    { "screenshot",  sp_window_screenshot },
   };
   GtkApplication *app;
   GMenu *menu;

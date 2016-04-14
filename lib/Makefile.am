@@ -114,6 +114,9 @@ libsysprof_@API_VERSION@_la_LIBADD = \
 	$(NULL)
 
 libsysprof_@API_VERSION@_la_LDFLAGS = \
+	-avoid-version \
+	-no-undefined \
+	-export-symbols-regex '^(sp_).*' \
 	$(WARN_LDFLAGS) \
 	$(NULL)
 

@@ -50,6 +50,8 @@ struct _SpWindow
   GtkStack             *view_stack;
 
   guint                 stats_handler;
+
+  guint                 closing : 1;
 };
 
 G_DEFINE_TYPE (SpWindow, sp_window, GTK_TYPE_APPLICATION_WINDOW)
@@ -425,6 +427,12 @@ sp_window_profiler_stopped (SpWindow   *self,
 
   sp_window_disable_stats (self);
 
+  if (self->closing)
+    {
+      gtk_window_close (GTK_WINDOW (self));
+      return;
+    }
+
   if (self->state == SP_WINDOW_STATE_FAILED)
     return;
 
@@ -650,6 +658,31 @@ sp_window_screenshot (GSimpleAction *action,
   gtk_window_present (window);
 }
 
+static gboolean
+sp_window_delete_event (GtkWidget   *widget,
+                        GdkEventAny *event)
+{
+  SpWindow *self = (SpWindow *)widget;
+
+  g_assert (SP_IS_WINDOW (self));
+  g_assert (event != NULL);
+
+  if (self->state == SP_WINDOW_STATE_RECORDING)
+    {
+      if (self->profiler != NULL)
+        {
+          if (self->closing == FALSE)
+            {
+              self->closing = TRUE;
+              sp_profiler_stop (self->profiler);
+              return GDK_EVENT_STOP;
+            }
+        }
+    }
+
+  return GDK_EVENT_PROPAGATE;
+}
+
 static void
 sp_window_destroy (GtkWidget *widget)
 {
@@ -685,6 +718,7 @@ sp_window_class_init (SpWindowClass *klass)
 
   object_class->constructed = sp_window_constructed;
 
+  widget_class->delete_event = sp_window_delete_event;
   widget_class->destroy = sp_window_destroy;
 
   signals [START_RECORDING] =

@@ -116,6 +116,8 @@ libsysprof_@API_VERSION@_la_LDFLAGS = \
 	$(NULL)
 
 
+if ENABLE_GTK
+
 # This is our GTK library containing the widgets suitable for viewing
 # and manipulating the various profiler API in libsysprof.  This is
 # meant to be used by IDEs and the sysprof gui.
@@ -180,6 +182,8 @@ glib_resources_c = sp-resources.c
 glib_resources_h = sp-resources.h
 glib_resources_namespace = sp
 include $(top_srcdir)/gresources.mk
+
+endif
 
 
 -include $(top_srcdir)/git.mk

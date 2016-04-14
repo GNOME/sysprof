@@ -1,3 +1,5 @@
+if ENABLE_GTK
+
 bin_PROGRAMS = sysprof
 
 sysprof_CFLAGS = \
@@ -36,5 +38,7 @@ glib_resources_c = sp-resources.c
 glib_resources_h = sp-resources.h
 glib_resources_namespace = sysprof
 include $(top_srcdir)/gresources.mk
+
+endif
 
 -include $(top_srcdir)/git.mk

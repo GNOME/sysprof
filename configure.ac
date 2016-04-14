@@ -82,19 +82,38 @@ VAPIGEN_CHECK
 dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
-PKG_CHECK_MODULES(SYSPROF,    [gio-2.0 >= 2.44
-			       gio-unix-2.0 >= 2.44
+m4_define([glib_required_version], [2.44.0])
+m4_define([gtk_required_version], [3.16.0])
+m4_define([systemd_required_version], [222])
+
+PKG_CHECK_MODULES(SYSPROF,    [gio-2.0 >= glib_required_version
+			       gio-unix-2.0 >= glib_required_version
                                polkit-gobject-1])
-PKG_CHECK_MODULES(SYSPROF_UI, [gio-2.0 >= 2.44
-                               gtk+-3.0 >= 3.16
-                               polkit-gobject-1])
-PKG_CHECK_MODULES(SYSTEMD,    [libsystemd >= 222],
+PKG_CHECK_MODULES(SYSPROF_UI, [gio-2.0 >= glib_required_version
+                               gtk+-3.0 >= gtk_required_version
+                               polkit-gobject-1],
+			       [have_uilibs=yes],
+			       [have_uilibs=no])
+PKG_CHECK_MODULES(SYSTEMD,    [libsystemd >= systemd_required_version],
                               [have_systemd=yes],
                               [have_systemd=no])
 
-
 # we require systemd for sysprofd
 AM_CONDITIONAL(ENABLE_SYSPROFD, [test x$have_systemd = xyes])
+
+# we might be building sysprof-cli without the UI
+AC_ARG_ENABLE([gtk],
+              [AS_HELP_STRING([--enable-gtk=@<:@yes/no/auto@:>@],
+                              [Build GTK user interface.])],
+              [enable_gtk=$enableval],
+              [enable_gtk=auto])
+AS_IF([test "$enable_gtk" != no],[
+	AS_IF([test "$enable_gtk" = "yes" && test "$have_uilibs" = "no"],[
+		AC_MSG_ERROR([--enable-gtk requires gtk+-3.0 >= gtk_required_version])
+	])
+	enable_gtk=$have_uilibs
+])
+AM_CONDITIONAL(ENABLE_GTK, test "$enable_gtk" = "yes")
 
 
 # where to place systemd units if necessary
@@ -196,5 +215,6 @@ echo ""
 echo "  Debug Directory ...................... : ${debugdir}"
 echo ""
 echo "  Sysprofd ............................. : ${have_systemd}"
+echo "  Sysprof GTK Interface  ............... : ${enable_gtk}"
 echo "  Systemd System Units ................. : ${with_systemdsystemunitdir}"
 echo ""

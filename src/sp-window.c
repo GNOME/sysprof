@@ -603,7 +603,10 @@ sp_window_record_button_clicked (SpWindow  *self,
   g_assert (SP_IS_WINDOW (self));
   g_assert (GTK_IS_BUTTON (button));
 
-  sp_window_start_recording (self);
+  if (self->state == SP_WINDOW_STATE_RECORDING)
+    sp_window_stop_recording (self);
+  else
+    sp_window_start_recording (self);
 }
 
 static void

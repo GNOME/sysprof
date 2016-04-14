@@ -88,11 +88,13 @@ main (gint   argc,
   GError *error = NULL;
   GSource *gsource;
   gchar *command = NULL;
+  gboolean version = FALSE;
   int pid = -1;
   int fd;
   GOptionEntry entries[] = {
     { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task"), N_("PID") },
     { "command", 'c', 0, G_OPTION_ARG_STRING, &command, N_("Run a command and profile the process"), N_("COMMAND") },
+    { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
   };
 
@@ -105,6 +107,12 @@ main (gint   argc,
     {
       g_printerr ("%s\n", error->message);
       return EXIT_FAILURE;
+    }
+
+  if (version)
+    {
+      g_print ("Sysprof "PACKAGE_VERSION"\n");
+      return EXIT_SUCCESS;
     }
 
   if (argc > 2)

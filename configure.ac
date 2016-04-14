@@ -68,6 +68,7 @@ dnl Check for required programs
 dnl ***********************************************************************
 AX_COMPILER_FLAGS_CXXFLAGS
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_INSTALL
 AX_CXX_COMPILE_STDCXX_0X
 AC_PATH_PROG([GLIB_GENMARSHAL],[glib-genmarshal])

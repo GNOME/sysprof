@@ -54,6 +54,8 @@ struct _SpProfilerClass
    * completion of stopping.
    */
   void (*stopped) (SpProfiler *self);
+
+  gpointer padding[8];
 };
 
 SpProfiler      *sp_profiler_new                       (void);

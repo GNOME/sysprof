@@ -32,6 +32,8 @@ G_DECLARE_DERIVABLE_TYPE (SpRecordingStateView, sp_recording_state_view, SP, REC
 struct _SpRecordingStateViewClass
 {
   GtkBinClass parent;
+
+  gpointer padding[4];
 };
 
 GtkWidget *sp_recording_state_view_new          (void);

@@ -33,6 +33,8 @@ G_DECLARE_DERIVABLE_TYPE (SpModelFilter, sp_model_filter, SP, MODEL_FILTER, GObj
 struct _SpModelFilterClass
 {
   GObjectClass parent_class;
+
+  gpointer padding[8];
 };
 
 SpModelFilter *sp_model_filter_new             (GListModel        *child_model);

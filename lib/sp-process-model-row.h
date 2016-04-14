@@ -32,6 +32,8 @@ G_DECLARE_DERIVABLE_TYPE (SpProcessModelRow, sp_process_model_row, SP, PROCESS_M
 struct _SpProcessModelRowClass
 {
   GtkListBoxRowClass parent;
+
+  gpointer padding[4];
 };
 
 GtkWidget          *sp_process_model_row_new          (SpProcessModelItem *item);

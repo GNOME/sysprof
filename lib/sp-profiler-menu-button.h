@@ -32,6 +32,8 @@ G_DECLARE_DERIVABLE_TYPE (SpProfilerMenuButton, sp_profiler_menu_button, SP, PRO
 struct _SpProfilerMenuButtonClass
 {
   GtkMenuButtonClass parent_class;
+
+  gpointer padding[8];
 };
 
 GtkWidget  *sp_profiler_menu_button_new          (void);

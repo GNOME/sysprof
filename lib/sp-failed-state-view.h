@@ -32,6 +32,8 @@ G_DECLARE_DERIVABLE_TYPE (SpFailedStateView, sp_failed_state_view, SP, FAILED_ST
 struct _SpFailedStateViewClass
 {
   GtkBinClass parent;
+
+  gpointer padding[4];
 };
 
 GtkWidget *sp_failed_state_view_new          (void);

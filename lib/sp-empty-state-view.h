@@ -30,6 +30,8 @@ G_DECLARE_DERIVABLE_TYPE (SpEmptyStateView, sp_empty_state_view, SP, EMPTY_STATE
 struct _SpEmptyStateViewClass
 {
   GtkBinClass parent;
+
+  gpointer padding[4];
 };
 
 GtkWidget *sp_empty_state_view_new (void);

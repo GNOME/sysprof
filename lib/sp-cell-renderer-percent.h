@@ -42,6 +42,8 @@ struct _SpCellRendererPercent
 struct _SpCellRendererPercentClass
 {
   GtkCellRendererTextClass parent_class;
+
+  gpointer padding[4];
 };
 
 GType            sp_cell_renderer_percent_get_type    (void);

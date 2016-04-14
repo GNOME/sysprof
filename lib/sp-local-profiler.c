@@ -459,6 +459,9 @@ sp_local_profiler_start (SpProfiler *profiler)
   g_return_if_fail (priv->is_stopping == FALSE);
   g_return_if_fail (priv->is_starting == FALSE);
 
+  g_clear_pointer (&priv->timer, g_timer_destroy);
+  g_object_notify (G_OBJECT (self), "elapsed");
+
   if (priv->writer == NULL)
     {
       SpCaptureWriter *writer;

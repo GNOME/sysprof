@@ -118,6 +118,10 @@ G_DEFINE_BOXED_TYPE (SpPerfCounter,
                      (GBoxedCopyFunc)sp_perf_counter_ref,
                      (GBoxedFreeFunc)sp_perf_counter_unref)
 
+#if ENABLE_SYSPROFD
+static GDBusConnection *shared_conn;
+#endif
+
 static gboolean
 perf_gsource_dispatch (GSource     *source,
                        GSourceFunc  callback,
@@ -413,16 +417,17 @@ static GDBusProxy *
 get_proxy (void)
 {
   static GDBusProxy *proxy;
-  GDBusConnection *bus = NULL;
 
   if (proxy != NULL)
     return g_object_ref (proxy);
 
-  bus = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL);
-  if (bus == NULL)
+  if (shared_conn == NULL)
+    shared_conn = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL);
+
+  if (shared_conn == NULL)
     return NULL;
 
-  proxy = g_dbus_proxy_new_sync (bus,
+  proxy = g_dbus_proxy_new_sync (shared_conn,
                                  (G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES |
                                   G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS |
                                   G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION),
@@ -490,7 +495,124 @@ get_authorized_proxy (void)
 
   return NULL;
 }
+
+
+static void
+sp_perf_counter_acquire_cb (GObject      *object,
+                            GAsyncResult *result,
+                            gpointer      user_data)
+{
+  g_autoptr(GTask) task = user_data;
+  GPermission *permission = (GPermission *)object;
+  GError *error = NULL;
+
+  g_assert (G_IS_PERMISSION (permission));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (!g_permission_acquire_finish (permission, result, &error))
+    {
+      g_task_return_error (task, error);
+      return;
+    }
+
+  g_task_return_boolean (task, TRUE);
+}
+
+static void
+sp_perf_counter_permission_cb (GObject      *object,
+                               GAsyncResult *result,
+                               gpointer      user_data)
+{
+  g_autoptr(GTask) task = user_data;
+  GPermission *permission;
+  GError *error = NULL;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (NULL == (permission = polkit_permission_new_finish (result, &error)))
+    {
+      g_task_return_error (task, error);
+      return;
+    }
+
+  g_permission_acquire_async (permission,
+                              g_task_get_cancellable (task),
+                              sp_perf_counter_acquire_cb,
+                              g_object_ref (task));
+
+  g_object_unref (permission);
+}
+
+static void
+sp_perf_counter_get_bus_cb (GObject      *object,
+                            GAsyncResult *result,
+                            gpointer      user_data)
+{
+  g_autoptr(GDBusConnection) bus = NULL;
+  g_autoptr(GTask) task = user_data;
+  PolkitSubject *subject = NULL;
+  const gchar *name;
+  GError *error = NULL;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (NULL == (bus = g_bus_get_finish (result, &error)))
+    {
+      g_task_return_error (task, error);
+      return;
+    }
+
+  shared_conn = g_object_ref (bus);
+
+  name = g_dbus_connection_get_unique_name (bus);
+  subject = polkit_system_bus_name_new (name);
+
+  polkit_permission_new ("org.gnome.sysprof2.perf-event-open",
+                         subject,
+                         g_task_get_cancellable (task),
+                         sp_perf_counter_permission_cb,
+                         g_object_ref (task));
+
+  g_object_unref (subject);
+}
+
 #endif
+
+void
+sp_perf_counter_authorize_async (GCancellable        *cancellable,
+                                 GAsyncReadyCallback  callback,
+                                 gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (NULL, cancellable, callback, user_data);
+
+#if ENABLE_SYSPROFD
+  g_bus_get (G_BUS_TYPE_SYSTEM,
+             cancellable,
+             sp_perf_counter_get_bus_cb,
+             g_object_ref (task));
+#else
+  g_task_return_new_error (error,
+                           G_IO_ERROR,
+                           G_IO_ERROR_NOT_SUPPORTED,
+                           "Sysprofd is not supported in current configuration");
+#endif
+}
+
+gboolean
+sp_perf_counter_authorize_finish (GAsyncResult  *result,
+                                  GError       **error)
+{
+  g_assert (G_IS_TASK (result));
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
 
 gint
 sp_perf_counter_open (SpPerfCounter          *self,

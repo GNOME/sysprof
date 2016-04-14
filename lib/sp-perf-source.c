@@ -55,6 +55,7 @@ struct _SpPerfSource
   GHashTable      *pids;
 
   guint            running : 1;
+  guint            is_ready : 1;
 };
 
 static void source_iface_init (SpSourceInterface *iface);
@@ -431,12 +432,57 @@ sp_perf_source_add_pid (SpSource *source,
 }
 
 static void
+sp_perf_source_authorize_cb (GObject      *object,
+                             GAsyncResult *result,
+                             gpointer      user_data)
+{
+  g_autoptr(SpPerfSource) self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+
+  if (!sp_perf_counter_authorize_finish (result, &error))
+    {
+      sp_source_emit_failed (SP_SOURCE (self), error);
+      return;
+    }
+
+  self->is_ready = TRUE;
+
+  sp_source_emit_ready (SP_SOURCE (self));
+}
+
+static void
+sp_perf_source_prepare (SpSource *source)
+{
+  SpPerfSource *self = (SpPerfSource *)source;
+
+  g_assert (SP_IS_PERF_SOURCE (self));
+
+  sp_perf_counter_authorize_async (NULL,
+                                   sp_perf_source_authorize_cb,
+                                   g_object_ref (self));
+}
+
+static gboolean
+sp_perf_source_get_is_ready (SpSource *source)
+{
+  SpPerfSource *self = (SpPerfSource *)source;
+
+  g_assert (SP_IS_PERF_SOURCE (self));
+
+  return self->is_ready;
+}
+
+static void
 source_iface_init (SpSourceInterface *iface)
 {
   iface->start = sp_perf_source_start;
   iface->stop = sp_perf_source_stop;
   iface->set_writer = sp_perf_source_set_writer;
   iface->add_pid = sp_perf_source_add_pid;
+  iface->prepare = sp_perf_source_prepare;
+  iface->get_is_ready = sp_perf_source_get_is_ready;
 }
 
 SpSource *

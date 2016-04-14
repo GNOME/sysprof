@@ -19,7 +19,7 @@
 #ifndef SP_PERF_COUNTER_H
 #define SP_PERF_COUNTER_H
 
-#include <glib-object.h>
+#include <gio/gio.h>
 #include <linux/perf_event.h>
 
 
@@ -109,6 +109,12 @@ typedef union
 typedef void (*SpPerfCounterCallback) (SpPerfCounterEvent *event,
                                        guint               cpu,
                                        gpointer            user_data);
+
+void     sp_perf_counter_authorize_async  (GCancellable         *cancellable,
+                                           GAsyncReadyCallback   callback,
+                                           gpointer              user_data);
+gboolean sp_perf_counter_authorize_finish (GAsyncResult         *result,
+                                           GError              **error);
 
 GType          sp_perf_counter_get_type     (void);
 SpPerfCounter *sp_perf_counter_new          (GMainContext           *context);

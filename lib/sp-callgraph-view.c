@@ -957,7 +957,7 @@ sp_callgraph_view_screenshot (SpCallgraphView *self)
    * put the timing information at the beginning of the line.
    */
 
-  str = g_string_new (NULL);
+  str = g_string_new ("      SELF CUMULATIVE    FUNCTION\n");
   tree_path = gtk_tree_path_new_first ();
 
   for (;;)

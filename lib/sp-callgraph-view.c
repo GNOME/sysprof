@@ -921,3 +921,83 @@ sp_callgraph_view_update_descendants (SpCallgraphView *self,
 
   g_clear_object (&store);
 }
+
+/**
+ * sp_callgraph_view_screenshot:
+ * @self: A #SpCallgraphView.
+ *
+ * This function will generate a text representation of the descendants tree.
+ * This is useful if you want to include various profiling information in a
+ * commit message or email.
+ *
+ * The text generated will match the current row expansion in the tree view.
+ *
+ * Returns: (nullable) (transfer full): A newly allocated string that should be freed
+ *   with g_free().
+ */
+gchar *
+sp_callgraph_view_screenshot (SpCallgraphView *self)
+{
+  SpCallgraphViewPrivate *priv = sp_callgraph_view_get_instance_private (self);
+  GtkTreeView *tree_view;
+  GtkTreeModel *model;
+  GtkTreePath *tree_path;
+  GString *str;
+  GtkTreeIter iter;
+
+  g_return_val_if_fail (SP_IS_CALLGRAPH_VIEW (self), NULL);
+
+  tree_view = priv->descendants_view;
+
+  if (NULL == (model = gtk_tree_view_get_model (tree_view)))
+    return NULL;
+
+  /*
+   * To avoid having to precalculate the deepest visible row, we
+   * put the timing information at the beginning of the line.
+   */
+
+  str = g_string_new (NULL);
+  tree_path = gtk_tree_path_new_first ();
+
+  for (;;)
+    {
+      if (gtk_tree_model_get_iter (model, &iter, tree_path))
+        {
+          guint depth = gtk_tree_path_get_depth (tree_path);
+          StackNode *node;
+          gdouble in_self;
+          gdouble total;
+          guint i;
+
+          gtk_tree_model_get (model, &iter,
+                              COLUMN_SELF, &in_self,
+                              COLUMN_TOTAL, &total,
+                              COLUMN_POINTER, &node,
+                              -1);
+
+          g_string_append_printf (str, "[% 7.2lf%%] [% 7.2lf%%]  ", in_self, total);
+
+          for (i = 0; i < depth; i++)
+            g_string_append (str, "  ");
+          g_string_append (str, GSIZE_TO_POINTER (node->data));
+          g_string_append_c (str, '\n');
+
+          if (gtk_tree_view_row_expanded (tree_view, tree_path))
+            gtk_tree_path_down (tree_path);
+          else
+            gtk_tree_path_next (tree_path);
+
+          continue;
+        }
+
+      if (!gtk_tree_path_up (tree_path) || !gtk_tree_path_get_depth (tree_path))
+        break;
+
+      gtk_tree_path_next (tree_path);
+    }
+
+  gtk_tree_path_free (tree_path);
+
+  return g_string_free (str, FALSE);
+}

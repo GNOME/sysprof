@@ -42,6 +42,7 @@ GtkWidget          *sp_callgraph_view_new         (void);
 SpCallgraphProfile *sp_callgraph_view_get_profile (SpCallgraphView    *self);
 void                sp_callgraph_view_set_profile (SpCallgraphView    *self,
                                                    SpCallgraphProfile *profile);
+gchar              *sp_callgraph_view_screenshot  (SpCallgraphView    *self);
 
 G_END_DECLS
 

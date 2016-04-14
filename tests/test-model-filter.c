@@ -1,4 +1,4 @@
-#include <sysprof.h>
+#include <sysprof-ui.h>
 
 #include "sp-model-filter.h"
 

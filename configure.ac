@@ -82,12 +82,15 @@ VAPIGEN_CHECK
 dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
-PKG_CHECK_MODULES(SYSPROF, [gio-2.0 >= 2.44
-                            gtk+-3.0 >= 3.16
-                            polkit-gobject-1])
-PKG_CHECK_MODULES(SYSTEMD, [libsystemd >= 222],
-                           [have_systemd=yes],
-                           [have_systemd=no])
+PKG_CHECK_MODULES(SYSPROF,    [gio-2.0 >= 2.44
+			       gio-unix-2.0 >= 2.44
+                               polkit-gobject-1])
+PKG_CHECK_MODULES(SYSPROF_UI, [gio-2.0 >= 2.44
+                               gtk+-3.0 >= 3.16
+                               polkit-gobject-1])
+PKG_CHECK_MODULES(SYSTEMD,    [libsystemd >= 222],
+                              [have_systemd=yes],
+                              [have_systemd=no])
 
 
 # we require systemd for sysprofd
@@ -163,6 +166,7 @@ AC_CONFIG_FILES([
 	data/Makefile
 	data/icons/Makefile
 	data/sysprof-$API_VERSION.pc:data/sysprof.pc.in
+	data/sysprof-ui-$API_VERSION.pc:data/sysprof-ui.pc.in
 	data/org.gnome.Sysprof2.conf
 	data/org.gnome.sysprof2.policy
 

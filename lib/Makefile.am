@@ -1,86 +1,17 @@
+noinst_LTLIBRARIES =
+lib_LTLIBRARIES =
 EXTRA_DIST =
 CLEANFILES =
 DISTCLEANFILES =
 BUILT_SOURCES =
 
-lib_LTLIBRARIES = libsysprof-@API_VERSION@.la
-
-nodist_libsysprof_@API_VERSION@_la_SOURCES = \
-	sp-resources.c \
-	sp-resources.h
-
-headersdir = $(includedir)/sysprof-@API_VERSION@
-headers_DATA = \
-	sysprof.h \
-	sysprof-version.h \
-	sp-address.h \
-	sp-callgraph-profile.h \
-	sp-callgraph-view.h \
-	sp-capture-reader.h \
-	sp-capture-writer.h \
-	sp-capture-types.h \
-	sp-cell-renderer-percent.h \
-	sp-clock.h \
-	sp-elf-symbol-resolver.h \
-	sp-empty-state-view.h \
-	sp-failed-state-view.h \
-	sp-error.h \
-	sp-gjs-source.h \
-	sp-jitmap-symbol-resolver.h \
-	sp-kernel-symbol.h \
-	sp-kernel-symbol-resolver.h \
-	sp-map-lookaside.h \
-	sp-model-filter.h \
-	sp-perf-source.h \
-	sp-proc-source.h \
-	sp-process-model.h \
-	sp-process-model-item.h \
-	sp-process-model-row.h \
-	sp-profile.h \
-	sp-profiler.h \
-	sp-profiler-menu-button.h \
-	sp-recording-state-view.h \
-	sp-source.h \
-	sp-symbol-resolver.h \
-	$(NULL)
-
-libsysprof_@API_VERSION@_la_SOURCES = \
-	$(headers_DATA) \
-	sp-address.c \
-	sp-callgraph-profile.c \
-	sp-callgraph-profile-private.h \
-	sp-callgraph-view.c \
-	sp-capture-reader.c \
-	sp-capture-writer.c \
-	sp-cell-renderer-percent.c \
-	sp-clock.c \
-	sp-elf-symbol-resolver.c \
-	sp-empty-state-view.c \
-	sp-failed-state-view.c \
-	sp-error.c \
-	sp-gjs-source.c \
-	sp-jitmap-symbol-resolver.c \
-	sp-kernel-symbol.c \
-	sp-kernel-symbol-resolver.c \
-	sp-line-reader.c \
-	sp-line-reader.h \
-	sp-map-lookaside.c \
-	sp-model-filter.c \
-	sp-perf-counter.c \
-	sp-perf-counter.h \
-	sp-perf-source.c \
-	sp-proc-source.c \
-	sp-process-model.c \
-	sp-process-model-item.c \
-	sp-process-model-row.c \
-	sp-profile.c \
-	sp-profiler.c \
-	sp-profiler-menu-button.c \
-	sp-recording-state-view.c \
-	sp-scrolled-window.c \
-	sp-scrolled-window.h \
-	sp-source.c \
-	sp-symbol-resolver.c \
+# Both the profiler library and the UI library need to share some
+# data-structures. Notably, the StackStash. So we build a private
+# static library that can be used from both. It adds a little bit
+# of overhead in terms of duplicated procedures, but they should
+# always be installed in sync, and therefore no big deal.
+noinst_LTLIBRARIES += libutil.la
+libutil_la_SOURCES = \
 	util/binfile.c \
 	util/binfile.h \
 	util/demangle.cpp \
@@ -91,25 +22,89 @@ libsysprof_@API_VERSION@_la_SOURCES = \
 	util/stackstash.h \
 	util/util.h \
 	$(NULL)
+libutil_la_CFLAGS = \
+	-I$(srcdir)/util \
+	$(SYSPROF_CFLAGS) \
+	$(WARN_CFLAGS) \
+	$(NULL)
+libutil_la_CXXFLAGS = \
+	-I$(srcdir)/util \
+	$(SYSPROF_CFLAGS) \
+	$(WARN_CXXFLAGS) \
+	$(NULL)
 
+
+# We split up the library code into two libraries.  One containing the
+# minimum necessary to do profiling on a particular host (that might not
+# have GTK+ installed), and the library containing reusable GTK
+# components (for IDE integration).
+#
+lib_LTLIBRARIES += libsysprof-@API_VERSION@.la
+headersdir = $(includedir)/sysprof-@API_VERSION@
+headers_DATA = \
+	sysprof.h \
+	sysprof-version.h \
+	sp-address.h \
+	sp-callgraph-profile.h \
+	sp-capture-reader.h \
+	sp-capture-writer.h \
+	sp-capture-types.h \
+	sp-clock.h \
+	sp-elf-symbol-resolver.h \
+	sp-error.h \
+	sp-gjs-source.h \
+	sp-jitmap-symbol-resolver.h \
+	sp-kernel-symbol.h \
+	sp-kernel-symbol-resolver.h \
+	sp-map-lookaside.h \
+	sp-perf-source.h \
+	sp-proc-source.h \
+	sp-profile.h \
+	sp-profiler.h \
+	sp-source.h \
+	sp-symbol-resolver.h \
+	$(NULL)
+
+libsysprof_@API_VERSION@_la_SOURCES = \
+	$(headers_DATA) \
+	sp-address.c \
+	sp-callgraph-profile.c \
+	sp-callgraph-profile-private.h \
+	sp-capture-reader.c \
+	sp-capture-writer.c \
+	sp-clock.c \
+	sp-elf-symbol-resolver.c \
+	sp-error.c \
+	sp-gjs-source.c \
+	sp-jitmap-symbol-resolver.c \
+	sp-kernel-symbol.c \
+	sp-kernel-symbol-resolver.c \
+	sp-line-reader.c \
+	sp-line-reader.h \
+	sp-map-lookaside.c \
+	sp-perf-counter.c \
+	sp-perf-counter.h \
+	sp-perf-source.c \
+	sp-proc-source.c \
+	sp-profile.c \
+	sp-profiler.c \
+	sp-source.c \
+	sp-symbol-resolver.c \
+	$(NULL)
 
 libsysprof_@API_VERSION@_la_CFLAGS = \
 	-I$(srcdir)/util \
 	$(SYSPROF_CFLAGS) \
 	$(WARN_CFLAGS) \
 	$(NULL)
-
-libsysprof_@API_VERSION@_la_CXXFLAGS = \
-	-I$(srcdir)/util \
-	$(SYSPROF_CFLAGS) \
-	$(WARN_CXXFLAGS) \
-	$(NULL)
-
 if ENABLE_SYSPROFD
-libsysprof_@API_VERSION@_la_CFLAGS += -DENABLE_SYSPROFD
+libsysprof_@API_VERSION@_la_CFLAGS += \
+	-DENABLE_SYSPROFD
 endif
 
 libsysprof_@API_VERSION@_la_LIBADD = \
+	libutil.la \
+	-lstdc++ \
 	$(SYSPROF_LIBS) \
 	$(NULL)
 
@@ -120,6 +115,65 @@ libsysprof_@API_VERSION@_la_LDFLAGS = \
 	$(WARN_LDFLAGS) \
 	$(NULL)
 
+
+# This is our GTK library containing the widgets suitable for viewing
+# and manipulating the various profiler API in libsysprof.  This is
+# meant to be used by IDEs and the sysprof gui.
+lib_LTLIBRARIES += libsysprof-ui-@API_VERSION@.la
+
+uiheadersdir = $(includedir)/sysprof-@API_VERSION@
+uiheaders_DATA = \
+	sp-callgraph-view.h \
+	sp-cell-renderer-percent.h \
+	sp-empty-state-view.h \
+	sp-failed-state-view.h \
+	sp-model-filter.h \
+	sp-process-model.h \
+	sp-process-model-item.h \
+	sp-process-model-row.h \
+	sp-profiler-menu-button.h \
+	sp-recording-state-view.h \
+	sp-scrolled-window.h \
+	sysprof-ui.h \
+	$(NULL)
+
+libsysprof_ui_@API_VERSION@_la_SOURCES = \
+	$(uiheaders_DATA) \
+	sp-callgraph-view.c \
+	sp-cell-renderer-percent.c \
+	sp-empty-state-view.c \
+	sp-failed-state-view.c \
+	sp-model-filter.c \
+	sp-process-model.c \
+	sp-process-model-item.c \
+	sp-process-model-row.c \
+	sp-profiler-menu-button.c \
+	sp-recording-state-view.c \
+	sp-scrolled-window.c \
+	$(NULL)
+
+libsysprof_ui_@API_VERSION@_la_CFLAGS = \
+	-I$(srcdir)/util \
+	$(SYSPROF_UI_CFLAGS) \
+	$(WARN_CFLAGS) \
+	$(NULL)
+
+libsysprof_ui_@API_VERSION@_la_LIBADD = \
+	libutil.la \
+	libsysprof-@API_VERSION@.la \
+	$(SYSPROF_UI_LIBS) \
+	$(NULL)
+
+libsysprof_ui_@API_VERSION@_la_LDFLAGS = \
+	-avoid-version \
+	-no-undefined \
+	-export-symbols-regex '^(sp_).*' \
+	$(WARN_LDFLAGS) \
+	$(NULL)
+
+nodist_libsysprof_ui_@API_VERSION@_la_SOURCES = \
+	sp-resources.c \
+	sp-resources.h
 
 glib_resources_xml = resources/libsysprof.gresource.xml
 glib_resources_c = sp-resources.c

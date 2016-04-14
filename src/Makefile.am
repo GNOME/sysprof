@@ -1,7 +1,7 @@
 bin_PROGRAMS = sysprof
 
 sysprof_CFLAGS = \
-	$(SYSPROF_CFLAGS) \
+	$(SYSPROF_UI_CFLAGS) \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/lib
 
@@ -21,8 +21,10 @@ nodist_sysprof_SOURCES = \
 	sp-resources.h
 
 sysprof_LDADD = \
-	$(SYSPROF_LIBS) \
-	$(top_builddir)/lib/libsysprof-@API_VERSION@.la
+	$(SYSPROF_UI_LIBS) \
+	$(top_builddir)/lib/libsysprof-@API_VERSION@.la \
+	$(top_builddir)/lib/libsysprof-ui-@API_VERSION@.la \
+	$(NULL)
 
 EXTRA_DIST =
 CLEANFILES =

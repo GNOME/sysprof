@@ -19,6 +19,7 @@
 #include <errno.h>
 #include <glib/gi18n.h>
 #include <sysprof.h>
+#include <sysprof-ui.h>
 
 #include "sp-application.h"
 #include "sp-window.h"

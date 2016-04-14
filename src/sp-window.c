@@ -265,8 +265,6 @@ sp_window_set_state (SpWindow      *self,
     {
     case SP_WINDOW_STATE_EMPTY:
     case SP_WINDOW_STATE_FAILED:
-      profiler = sp_local_profiler_new ();
-
       gtk_button_set_label (self->record_button, _("Record"));
       gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), TRUE);
       add_class (self->record_button, "suggsted-action");
@@ -279,10 +277,11 @@ sp_window_set_state (SpWindow      *self,
       sp_callgraph_view_set_profile (self->callgraph_view, NULL);
       gtk_widget_set_visible (GTK_WIDGET (self->stat_label), FALSE);
       g_clear_pointer (&self->reader, sp_capture_reader_unref);
-      sp_window_set_profiler (self, profiler);
       sp_window_action_set (self, "close-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "save-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "screenshot", "enabled", FALSE, NULL);
+      profiler = sp_local_profiler_new ();
+      sp_window_set_profiler (self, profiler);
       break;
 
     case SP_WINDOW_STATE_RECORDING:
@@ -321,7 +320,8 @@ sp_window_set_state (SpWindow      *self,
       sp_window_action_set (self, "close-capture", "enabled", TRUE, NULL);
       sp_window_action_set (self, "save-capture", "enabled", TRUE, NULL);
       sp_window_action_set (self, "screenshot", "enabled", TRUE, NULL);
-
+      profiler = sp_local_profiler_new ();
+      sp_window_set_profiler (self, profiler);
       break;
 
     default:

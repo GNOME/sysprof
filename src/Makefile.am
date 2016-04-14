@@ -3,7 +3,9 @@ if ENABLE_GTK
 bin_PROGRAMS = sysprof
 
 sysprof_CFLAGS = \
-	$(SYSPROF_UI_CFLAGS) \
+	$(GIO_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(POLKIT_CFLAGS) \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/lib
 
@@ -23,7 +25,9 @@ nodist_sysprof_SOURCES = \
 	sp-resources.h
 
 sysprof_LDADD = \
-	$(SYSPROF_UI_LIBS) \
+	$(GIO_LIBS) \
+	$(GTK_LIBS) \
+	$(POLKIT_LIBS) \
 	$(top_builddir)/lib/libsysprof-@API_VERSION@.la \
 	$(top_builddir)/lib/libsysprof-ui-@API_VERSION@.la \
 	$(NULL)

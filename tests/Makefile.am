@@ -2,12 +2,14 @@ TESTS =
 TEST_PROGS =
 
 test_cflags = \
-	$(SYSPROF_CFLAGS) \
+	$(GIO_CFLAGS) \
+	$(POLKIT_CFLAGS) \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/lib
 
 test_libs = \
-	$(SYSPROF_LIBS) \
+	$(GIO_LIBS) \
+	$(POLKIT_LIBS) \
 	$(top_builddir)/lib/libsysprof-@API_VERSION@.la
 
 TESTS += test-capture
@@ -19,11 +21,15 @@ test_capture_LDADD = $(test_libs)
 if ENABLE_GTK
 
 test_ui_cflags = \
-	$(SYSPROF_UI_CFLAGS) \
+	$(GIO_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(POLKIT_CFLAGS) \
 	-I$(top_srcdir)/lib \
 	-I$(top_builddir)/lib
 test_ui_libs = \
-	$(SYSPROF_UI_LIBS) \
+	$(GIO_LIBS) \
+	$(GTK_LIBS) \
+	$(POLKIT_LIBS) \
 	$(top_builddir)/lib/libsysprof-@API_VERSION@.la \
 	$(top_builddir)/lib/libsysprof-ui-@API_VERSION@.la
 

@@ -24,12 +24,12 @@ libutil_la_SOURCES = \
 	$(NULL)
 libutil_la_CFLAGS = \
 	-I$(srcdir)/util \
-	$(SYSPROF_CFLAGS) \
+	$(GIO_CFLAGS) \
 	$(WARN_CFLAGS) \
 	$(NULL)
 libutil_la_CXXFLAGS = \
 	-I$(srcdir)/util \
-	$(SYSPROF_CFLAGS) \
+	$(GIO_CFLAGS) \
 	$(WARN_CXXFLAGS) \
 	$(NULL)
 
@@ -94,19 +94,20 @@ libsysprof_@API_VERSION@_la_SOURCES = \
 
 libsysprof_@API_VERSION@_la_CFLAGS = \
 	-I$(srcdir)/util \
-	$(SYSPROF_CFLAGS) \
+	$(GIO_CFLAGS) \
 	$(WARN_CFLAGS) \
 	$(NULL)
-if ENABLE_SYSPROFD
-libsysprof_@API_VERSION@_la_CFLAGS += \
-	-DENABLE_SYSPROFD
-endif
 
 libsysprof_@API_VERSION@_la_LIBADD = \
 	libutil.la \
 	-lstdc++ \
-	$(SYSPROF_LIBS) \
+	$(GIO_LIBS) \
 	$(NULL)
+
+if ENABLE_SYSPROFD
+libsysprof_@API_VERSION@_la_LIBADD += $(POLKIT_LIBS)
+libsysprof_@API_VERSION@_la_CFLAGS += $(POLKIT_CFLAGS) -DENABLE_SYSPROFD
+endif
 
 libsysprof_@API_VERSION@_la_LDFLAGS = \
 	-avoid-version \
@@ -156,14 +157,18 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 
 libsysprof_ui_@API_VERSION@_la_CFLAGS = \
 	-I$(srcdir)/util \
-	$(SYSPROF_UI_CFLAGS) \
+	$(GIO_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(POLKIT_CFLAGS) \
 	$(WARN_CFLAGS) \
 	$(NULL)
 
 libsysprof_ui_@API_VERSION@_la_LIBADD = \
 	libutil.la \
 	libsysprof-@API_VERSION@.la \
-	$(SYSPROF_UI_LIBS) \
+	$(GIO_LIBS) \
+	$(GTK_LIBS) \
+	$(POLKIT_LIBS) \
 	$(NULL)
 
 libsysprof_ui_@API_VERSION@_la_LDFLAGS = \

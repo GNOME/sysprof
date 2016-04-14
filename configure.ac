@@ -87,20 +87,29 @@ m4_define([glib_required_version], [2.44.0])
 m4_define([gtk_required_version], [3.16.0])
 m4_define([systemd_required_version], [222])
 
-PKG_CHECK_MODULES(SYSPROF,    [gio-2.0 >= glib_required_version
-			       gio-unix-2.0 >= glib_required_version
-                               polkit-gobject-1])
-PKG_CHECK_MODULES(SYSPROF_UI, [gio-2.0 >= glib_required_version
-                               gtk+-3.0 >= gtk_required_version
-                               polkit-gobject-1],
-			       [have_uilibs=yes],
-			       [have_uilibs=no])
-PKG_CHECK_MODULES(SYSTEMD,    [libsystemd >= systemd_required_version],
-                              [have_systemd=yes],
-                              [have_systemd=no])
+PKG_CHECK_MODULES(GIO,
+                  [gio-2.0 >= glib_required_version
+                   gio-unix-2.0 >= glib_required_version])
+PKG_CHECK_MODULES(GTK,
+                  [gtk+-3.0 >= gtk_required_version],
+                  [have_gtk=yes],
+                  [have_gtk=no])
+PKG_CHECK_MODULES(POLKIT,
+                  [polkit-gobject-1],
+                  [have_polkit=yes],
+                  [have_polkit=no])
+PKG_CHECK_MODULES(SYSTEMD,
+                  [libsystemd >= systemd_required_version],
+                  [have_systemd=yes],
+                  [have_systemd=no])
+
+enable_sysprofd=no
+AS_IF([test "$have_polkit" = "yes" && test "$have_systemd" = "yes"],[
+       enable_sysprofd=yes
+])
 
 # we require systemd for sysprofd
-AM_CONDITIONAL(ENABLE_SYSPROFD, [test x$have_systemd = xyes])
+AM_CONDITIONAL(ENABLE_SYSPROFD, [test "$enable_sysprofd" = "yes"])
 
 # we might be building sysprof-cli without the UI
 AC_ARG_ENABLE([gtk],
@@ -108,11 +117,13 @@ AC_ARG_ENABLE([gtk],
                               [Build GTK user interface.])],
               [enable_gtk=$enableval],
               [enable_gtk=auto])
-AS_IF([test "$enable_gtk" != no],[
-	AS_IF([test "$enable_gtk" = "yes" && test "$have_uilibs" = "no"],[
-		AC_MSG_ERROR([--enable-gtk requires gtk+-3.0 >= gtk_required_version])
+AS_IF([test "$enable_gtk" = auto],[
+	AS_IF([test "$have_gtk" = "yes" && test "$have_polkit" = "yes"],[enable_gtk=yes],[enable_gtk=no])
+])
+AS_IF([test "$enable_gtk" = "yes"],[
+	AS_IF([test "$have_gtk" = "yes" && test "$have_polkit" = "yes"],[],[
+		AC_MSG_ERROR([--enable-gtk requires gtk+-3.0 >= gtk_required_version and polkit-gobject-1])
 	])
-	enable_gtk=$have_uilibs
 ])
 AM_CONDITIONAL(ENABLE_GTK, test "$enable_gtk" = "yes")
 
@@ -209,13 +220,37 @@ echo " ${PACKAGE} - ${VERSION}"
 echo ""
 echo " Options"
 echo ""
-echo "  Prefix ............................... : ${prefix}"
-echo "  Libdir ............................... : ${libdir}"
-echo "  Libexecdir ........................... : ${libexecdir}"
+echo "  Prefix ....................................... : ${prefix}"
+echo "  Libdir ....................................... : ${libdir}"
+echo "  Libexecdir ................................... : ${libexecdir}"
 echo ""
-echo "  Debug Directory ...................... : ${debugdir}"
+echo "  Debug Symbols Directory ...................... : ${debugdir}"
 echo ""
-echo "  Sysprofd ............................. : ${have_systemd}"
-echo "  Sysprof GTK Interface  ............... : ${enable_gtk}"
-echo "  Systemd System Units ................. : ${with_systemdsystemunitdir}"
+echo "    The sysprof interface will look in this"
+echo "    directory to load symbols for libraries that"
+echo "    have symbols stripped."
+echo ""
+echo "  sysprof-cli .................................. : yes"
+echo ""
+echo "    The sysprof-cli command line tool can be used"
+echo "    to profile systems where there is no access"
+echo "    to GTK. It also has less overhead than the"
+echo "    full GTK interface."
+echo ""
+echo "  sysprof GTK Interface  ....................... : ${enable_gtk}"
+echo ""
+echo "    The GTK interface can explore sysprof capture"
+echo "    files. If you want the user interface, ensure"
+echo "    this is yes."
+echo ""
+echo "  sysprofd ..................................... : ${enable_sysprofd}"
+echo ""
+echo "    The sysprofd system daemon provides support"
+echo "    for accessing hardware performance counters"
+echo "    as a normal user."
+echo ""
+echo "  Systemd System Units ......................... : ${with_systemdsystemunitdir}"
+echo ""
+echo "    sysprofd uses systemd to manage the service"
+echo "    and sd-bus for D-Bus communication."
 echo ""

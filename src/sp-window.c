@@ -263,7 +263,7 @@ sp_window_set_state (SpWindow      *self,
     {
     case SP_WINDOW_STATE_EMPTY:
     case SP_WINDOW_STATE_FAILED:
-      profiler = sp_profiler_new ();
+      profiler = sp_local_profiler_new ();
 
       gtk_button_set_label (self->record_button, _("Record"));
       gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), TRUE);
@@ -667,7 +667,7 @@ sp_window_constructed (GObject *object)
 
   G_OBJECT_CLASS (sp_window_parent_class)->constructed (object);
 
-  profiler = sp_profiler_new ();
+  profiler = sp_local_profiler_new ();
   sp_window_set_profiler (self, profiler);
 
   sp_window_set_state (self, SP_WINDOW_STATE_EMPTY);

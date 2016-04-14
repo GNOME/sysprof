@@ -128,7 +128,7 @@ main (gint   argc,
   g_source_add_unix_fd (gsource, efd, G_IO_IN);
   g_source_attach (gsource, NULL);
 
-  profiler = sp_profiler_new ();
+  profiler = sp_local_profiler_new ();
 
   g_signal_connect (profiler,
                     "failed",

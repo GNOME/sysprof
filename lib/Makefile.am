@@ -56,6 +56,7 @@ headers_DATA = \
 	sp-jitmap-symbol-resolver.h \
 	sp-kernel-symbol.h \
 	sp-kernel-symbol-resolver.h \
+	sp-local-profiler.h \
 	sp-map-lookaside.h \
 	sp-perf-source.h \
 	sp-proc-source.h \
@@ -81,6 +82,7 @@ libsysprof_@API_VERSION@_la_SOURCES = \
 	sp-kernel-symbol-resolver.c \
 	sp-line-reader.c \
 	sp-line-reader.h \
+	sp-local-profiler.c \
 	sp-map-lookaside.c \
 	sp-perf-counter.c \
 	sp-perf-counter.h \

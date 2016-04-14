@@ -26,11 +26,11 @@ G_BEGIN_DECLS
 
 #define SP_TYPE_PROFILER (sp_profiler_get_type())
 
-G_DECLARE_DERIVABLE_TYPE (SpProfiler, sp_profiler, SP, PROFILER, GObject)
+G_DECLARE_INTERFACE (SpProfiler, sp_profiler, SP, PROFILER, GObject)
 
-struct _SpProfilerClass
+struct _SpProfilerInterface
 {
-  GObjectClass parent_class;
+  GTypeInterface parent_interface;
 
   /**
    * SpProfiler::failed:
@@ -55,11 +55,92 @@ struct _SpProfilerClass
    */
   void (*stopped) (SpProfiler *self);
 
-  gpointer padding[8];
+  /**
+   * SpProfiler::add_source:
+   *
+   * Adds a source to the profiler.
+   */
+  void (*add_source) (SpProfiler *profiler,
+                      SpSource   *source);
+
+  /**
+   * SpProfiler::set_writer:
+   *
+   * Sets the writer to use for the profiler.
+   */
+  void (*set_writer) (SpProfiler      *self,
+                      SpCaptureWriter *writer);
+
+  /**
+   * SpProfiler::get_writer:
+   *
+   * Gets the writer that is being used to capture.
+   *
+   * Returns: (nullable) (transfer none): A #SpCaptureWriter.
+   */
+  SpCaptureWriter *(*get_writer) (SpProfiler *self);
+
+  /**
+   * SpProfiler::start:
+   *
+   * Starts the profiler.
+   */
+  void (*start) (SpProfiler *self);
+
+  /**
+   * SpProfiler::stop:
+   *
+   * Stops the profiler.
+   */
+  void (*stop) (SpProfiler *self);
+
+  /**
+   * SpProfiler::add_pid:
+   *
+   * Add a pid to be profiled.
+   */
+  void (*add_pid) (SpProfiler *self,
+                   GPid        pid);
+
+  /**
+   * SpProfiler::remove_pid:
+   *
+   * Remove a pid from the profiler. This will not be called after
+   * SpProfiler::start has been called.
+   */
+  void (*remove_pid) (SpProfiler *self,
+                      GPid        pid);
+
+  /**
+   * SpProfiler::get_pids:
+   *
+   * Gets the pids that are part of this profiling session. If no pids
+   * have been specified, %NULL is returned.
+   *
+   * Returns: (nullable) (transfer none): An array of #GPid, or %NULL.
+   */
+  const GPid *(*get_pids) (SpProfiler *self,
+                           guint      *n_pids);
 };
 
-SpProfiler      *sp_profiler_new                       (void);
+void             sp_profiler_emit_failed               (SpProfiler          *self,
+                                                        const GError        *error);
+void             sp_profiler_emit_stopped              (SpProfiler          *self);
 gdouble          sp_profiler_get_elapsed               (SpProfiler          *self);
+gboolean         sp_profiler_get_is_mutable            (SpProfiler          *self);
+gboolean         sp_profiler_get_spawn_inherit_environ (SpProfiler          *self);
+void             sp_profiler_set_spawn_inherit_environ (SpProfiler          *self,
+                                                        gboolean             spawn_inherit_environ);
+gboolean         sp_profiler_get_whole_system          (SpProfiler          *self);
+void             sp_profiler_set_whole_system          (SpProfiler          *self,
+                                                        gboolean             whole_system);
+gboolean         sp_profiler_get_spawn                 (SpProfiler          *self);
+void             sp_profiler_set_spawn                 (SpProfiler          *self,
+                                                        gboolean             spawn);
+void             sp_profiler_set_spawn_argv            (SpProfiler          *self,
+                                                        const gchar * const *spawn_argv);
+void             sp_profiler_set_spawn_env             (SpProfiler          *self,
+                                                        const gchar * const *spawn_env);
 void             sp_profiler_add_source                (SpProfiler          *self,
                                                         SpSource            *source);
 void             sp_profiler_set_writer                (SpProfiler          *self,
@@ -72,22 +153,8 @@ void             sp_profiler_add_pid                   (SpProfiler          *sel
                                                         GPid                 pid);
 void             sp_profiler_remove_pid                (SpProfiler          *self,
                                                         GPid                 pid);
-gboolean         sp_profiler_get_is_mutable            (SpProfiler          *self);
-gboolean         sp_profiler_get_whole_system          (SpProfiler          *self);
-void             sp_profiler_set_whole_system          (SpProfiler          *self,
-                                                        gboolean             whole_system);
 const GPid      *sp_profiler_get_pids                  (SpProfiler          *self,
                                                         guint               *n_pids);
-gboolean         sp_profiler_get_spawn                 (SpProfiler          *self);
-void             sp_profiler_set_spawn                 (SpProfiler          *self,
-                                                        gboolean             spawn);
-void             sp_profiler_set_spawn_argv            (SpProfiler          *self,
-                                                        const gchar * const *spawn_argv);
-void             sp_profiler_set_spawn_env             (SpProfiler          *self,
-                                                        const gchar * const *spawn_env);
-gboolean         sp_profiler_get_spawn_inherit_environ (SpProfiler          *self);
-void             sp_profiler_set_spawn_inherit_environ (SpProfiler          *self,
-                                                        gboolean             spawn_inherit_environ);
 
 G_END_DECLS
 

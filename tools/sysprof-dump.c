@@ -27,6 +27,7 @@ main (gint argc,
 {
   SpCaptureReader *reader;
   SpCaptureFrameType type;
+  GHashTable *ctrtypes;
   GError *error = NULL;
 
   if (argc != 2)
@@ -36,6 +37,10 @@ main (gint argc,
     }
 
   reader = sp_capture_reader_new (argv[1], &error);
+  ctrtypes = g_hash_table_new (NULL, NULL);
+
+#define SET_CTR_TYPE(i,t) g_hash_table_insert(ctrtypes, GINT_TO_POINTER(i), GINT_TO_POINTER(t))
+#define GET_CTR_TYPE(i) GPOINTER_TO_INT(g_hash_table_lookup(ctrtypes, GINT_TO_POINTER(i)))
 
   if (reader == NULL)
     {
@@ -94,13 +99,13 @@ main (gint argc,
           {
             const SpCaptureMap *map = sp_capture_reader_read_map (reader);
 
-            g_print ("MAP: pid=%d\n"
+            g_print ("MAP: pid=%d time=%"G_GINT64_FORMAT"\n"
                      "   start  = %"G_GUINT64_FORMAT"\n"
                      "     end  = %"G_GUINT64_FORMAT"\n"
                      "   offset = %"G_GUINT64_FORMAT"\n"
                      "    inode = %"G_GUINT64_FORMAT"\n"
                      " filename = %s\n",
-                     map->frame.pid,
+                     map->frame.pid, map->frame.time,
                      map->start, map->end, map->offset, map->inode, map->filename);
 
             break;
@@ -113,7 +118,8 @@ main (gint argc,
             if (pr == NULL)
               perror ("Failed to read process");
 
-            g_print ("PROCESS: pid=%d cmdline=%s\n", pr->frame.pid, pr->cmdline);
+            g_print ("PROCESS: pid=%d cmdline=%s time=%"G_GINT64_FORMAT"\n", pr->frame.pid, pr->cmdline, pr->frame.time);
+
             break;
           }
 
@@ -122,7 +128,7 @@ main (gint argc,
             const SpCaptureSample *s =  sp_capture_reader_read_sample (reader);
             guint i;
 
-            g_print ("SAMPLE: pid=%d\n", s->frame.pid);
+            g_print ("SAMPLE: pid=%d time=%"G_GINT64_FORMAT"\n", s->frame.pid, s->frame.time);
 
             for (i = 0; i < s->n_addrs; i++)
               g_print ("  "SP_CAPTURE_ADDRESS_FORMAT"\n", s->addrs[i]);
@@ -148,11 +154,13 @@ main (gint argc,
               {
                 const SpCaptureCounter *ctr = &def->counters[i];
 
-                g_print ("  COUNTER: %s\n           %s\n           %s\n\n",
+                SET_CTR_TYPE (ctr->id, ctr->type);
+
+                g_print ("  COUNTER(%d): %s\n           %s\n           %s\n\n",
+                         ctr->id,
                          ctr->category,
                          ctr->name,
                          ctr->description);
-
               }
           }
           break;
@@ -172,9 +180,16 @@ main (gint argc,
                 for (j = 0; j < G_N_ELEMENTS (values->ids); j++)
                   {
                     if (values->ids[j])
-                      g_print ("  COUNTER(%d): %"G_GINT64_FORMAT"\n",
-                               values->ids[j],
-                               values->values[j]);
+                      {
+                        if (GET_CTR_TYPE (values->ids[j]) == SP_CAPTURE_COUNTER_INT64)
+                          g_print ("  COUNTER(%d): %"G_GINT64_FORMAT"\n",
+                                   values->ids[j],
+                                   values->values[j].v64);
+                        else if (GET_CTR_TYPE (values->ids[j]) == SP_CAPTURE_COUNTER_DOUBLE)
+                          g_print ("  COUNTER(%d): %lf\n",
+                                   values->ids[j],
+                                   values->values[j].vdbl);
+                      }
                   }
               }
           }

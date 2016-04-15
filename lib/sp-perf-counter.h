@@ -33,18 +33,6 @@ typedef struct _SpPerfCounter SpPerfCounter;
 
 typedef struct
 {
-  /*
-   * These fields are available as the suffix only because we have specified
-   * them when creating attributes. Be careful about using them.
-   * Ideally, we would probably switch from using structures overlaid with
-   * casts to a reader design, which knows about the attributes.
-   */
-  guint32 pid, tid;
-  guint64 time;
-} SpPerfCounterSuffix;
-
-typedef struct
-{
   struct perf_event_header header;
   guint32 pid;
   guint32 ppid;

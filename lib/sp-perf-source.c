@@ -165,13 +165,21 @@ sp_perf_source_handle_sample (SpPerfSource                   *self,
                                 n_ips);
 }
 
+static inline void
+realign (gsize *pos,
+         gsize  align)
+{
+  *pos = (*pos + align - 1) & ~(align - 1);
+}
+
 static void
 sp_perf_source_handle_event (SpPerfCounterEvent *event,
                              guint               cpu,
                              gpointer            user_data)
 {
   SpPerfSource *self = user_data;
-  SpPerfCounterSuffix *suffix;
+  gsize offset;
+  gint64 time;
 
   g_assert (SP_IS_PERF_SOURCE (self));
   g_assert (event != NULL);
@@ -179,13 +187,12 @@ sp_perf_source_handle_event (SpPerfCounterEvent *event,
   switch (event->header.type)
     {
     case PERF_RECORD_COMM:
-      suffix = (SpPerfCounterSuffix *)event->raw
-             + G_STRUCT_OFFSET (SpPerfCounterEventComm, comm)
-             + strlen (event->comm.comm)
-             + 1;
+      offset = strlen (event->comm.comm) + 1;
+      realign (&offset, sizeof (guint64));
+      memcpy (&time, event->comm.comm + offset, sizeof time);
 
       sp_capture_writer_add_process (self->writer,
-                                     suffix->time,
+                                     time,
                                      cpu,
                                      event->comm.pid,
                                      event->comm.comm);
@@ -230,13 +237,12 @@ sp_perf_source_handle_event (SpPerfCounterEvent *event,
       break;
 
     case PERF_RECORD_MMAP:
-      suffix = (SpPerfCounterSuffix *)event->raw
-             + G_STRUCT_OFFSET (SpPerfCounterEventMmap, filename)
-             + strlen (event->mmap.filename)
-             + 1;
+      offset = strlen (event->mmap.filename) + 1;
+      realign (&offset, sizeof (guint64));
+      memcpy (&time, event->mmap.filename + offset, sizeof time);
 
       sp_capture_writer_add_map (self->writer,
-                                 suffix->time,
+                                 time,
                                  cpu,
                                  event->mmap.pid,
                                  event->mmap.addr,
@@ -275,7 +281,6 @@ sp_perf_source_start_pid (SpPerfSource  *self,
   g_assert (SP_IS_PERF_SOURCE (self));
 
   attr.sample_type = PERF_SAMPLE_IP
-                   | PERF_SAMPLE_TID
                    | PERF_SAMPLE_CALLCHAIN
                    | PERF_SAMPLE_TIME;
   attr.wakeup_events = N_WAKEUP_EVENTS;
@@ -284,9 +289,11 @@ sp_perf_source_start_pid (SpPerfSource  *self,
   attr.comm = 1;
   attr.task = 1;
   attr.exclude_idle = 1;
-  attr.size = sizeof attr;
   attr.clockid = sp_clock;
   attr.use_clockid = 1;
+  attr.sample_id_all = 1;
+
+  attr.size = sizeof attr;
 
   if (pid != -1)
     {

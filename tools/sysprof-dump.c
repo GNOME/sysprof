@@ -137,6 +137,49 @@ main (gint argc,
             break;
           }
 
+        case SP_CAPTURE_FRAME_CTRDEF:
+          {
+            const SpCaptureFrameCounterDefine *def = sp_capture_reader_read_counter_define (reader);
+            guint i;
+
+            g_print ("NEW COUNTERS: pid=%d time=%"G_GINT64_FORMAT"\n", def->frame.pid, def->frame.time);
+
+            for (i = 0; i < def->n_counters; i++)
+              {
+                const SpCaptureCounter *ctr = &def->counters[i];
+
+                g_print ("  COUNTER: %s\n           %s\n           %s\n\n",
+                         ctr->category,
+                         ctr->name,
+                         ctr->description);
+
+              }
+          }
+          break;
+
+        case SP_CAPTURE_FRAME_CTRSET:
+          {
+            const SpCaptureFrameCounterSet *set = sp_capture_reader_read_counter_set (reader);
+            guint i;
+
+            g_print ("SET COUNTERS: pid=%d time=%"G_GINT64_FORMAT"\n", set->frame.pid, set->frame.time);
+
+            for (i = 0; i < set->n_values; i++)
+              {
+                const SpCaptureCounterValues *values = &set->values[i];
+                guint j;
+
+                for (j = 0; j < G_N_ELEMENTS (values->ids); j++)
+                  {
+                    if (values->ids[j])
+                      g_print ("  COUNTER(%d): %"G_GINT64_FORMAT"\n",
+                               values->ids[j],
+                               values->values[j]);
+                  }
+              }
+          }
+          break;
+
         default:
           g_print ("Skipping unknown frame type: (%d): ", type);
           if (!sp_capture_reader_skip (reader))

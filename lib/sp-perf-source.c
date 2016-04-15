@@ -189,6 +189,7 @@ sp_perf_source_handle_event (SpPerfCounterEvent *event,
     case PERF_RECORD_COMM:
       offset = strlen (event->comm.comm) + 1;
       realign (&offset, sizeof (guint64));
+      offset += sizeof (GPid) + sizeof (GPid);
       memcpy (&time, event->comm.comm + offset, sizeof time);
 
       sp_capture_writer_add_process (self->writer,
@@ -239,6 +240,7 @@ sp_perf_source_handle_event (SpPerfCounterEvent *event,
     case PERF_RECORD_MMAP:
       offset = strlen (event->mmap.filename) + 1;
       realign (&offset, sizeof (guint64));
+      offset += sizeof (GPid) + sizeof (GPid);
       memcpy (&time, event->mmap.filename + offset, sizeof time);
 
       sp_capture_writer_add_map (self->writer,
@@ -281,6 +283,7 @@ sp_perf_source_start_pid (SpPerfSource  *self,
   g_assert (SP_IS_PERF_SOURCE (self));
 
   attr.sample_type = PERF_SAMPLE_IP
+                   | PERF_SAMPLE_TID
                    | PERF_SAMPLE_CALLCHAIN
                    | PERF_SAMPLE_TIME;
   attr.wakeup_events = N_WAKEUP_EVENTS;

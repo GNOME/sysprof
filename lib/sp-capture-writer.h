@@ -98,6 +98,8 @@ gboolean            sp_capture_writer_flush           (SpCaptureWriter         *
 gboolean            sp_capture_writer_save_as         (SpCaptureWriter         *self,
                                                        const gchar             *filename,
                                                        GError                 **error);
+gint                sp_capture_writer_request_counter (SpCaptureWriter         *self,
+                                                       guint                    n_counters);
 SpCaptureReader    *sp_capture_writer_create_reader   (SpCaptureWriter         *self,
                                                        GError                 **error);
 gboolean            sp_capture_writer_splice          (SpCaptureWriter         *self,

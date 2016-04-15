@@ -90,6 +90,9 @@ struct _SpCaptureWriter
   gsize pos;
   gsize len;
 
+  /* counter id sequence */
+  gint next_counter_id;
+
   /* Statistics while recording */
   SpCaptureStat stat;
 };
@@ -378,6 +381,7 @@ sp_capture_writer_new_from_fd (int   fd,
   self->fd = fd;
   self->buf = (guint8 *)g_malloc (buffer_size);
   self->len = buffer_size;
+  self->next_counter_id = 1;
 
   g_get_current_time (&tv);
   nowstr = g_time_val_to_iso8601 (&tv);
@@ -1085,4 +1089,18 @@ sp_capture_writer_set_counters (SpCaptureWriter *self,
   self->stat.frame_count[SP_CAPTURE_FRAME_CTRSET]++;
 
   return TRUE;
+}
+
+gint
+sp_capture_writer_request_counter (SpCaptureWriter *self,
+                                   guint            n_counters)
+{
+  gint ret;
+
+  g_assert (self != NULL);
+
+  ret = self->next_counter_id;
+  ret += n_counters;
+
+  return ret;
 }

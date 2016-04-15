@@ -80,6 +80,7 @@ sysprofd_perf_event_open (sd_bus_message *msg,
   int exclude_idle = 0;
   int fd = -1;
   int use_clockid = 0;
+  int sample_id_all = 0;
   int r;
 
   assert (msg);
@@ -116,6 +117,12 @@ sysprofd_perf_event_open (sd_bus_message *msg,
       else if (strcmp (name, "wakeup_events") == 0)
         {
           r = sd_bus_message_read (msg, "u", &wakeup_events);
+          if (r < 0)
+            GOTO (cleanup);
+        }
+      else if (strcmp (name, "sample_id_all") == 0)
+        {
+          r = sd_bus_message_read (msg, "b", &sample_id_all);
           if (r < 0)
             GOTO (cleanup);
         }
@@ -224,19 +231,21 @@ sysprofd_perf_event_open (sd_bus_message *msg,
   if (!use_clockid || clockid < 0)
     clockid = CLOCK_MONOTONIC_RAW;
 
+  attr.clockid = clockid;
   attr.comm = !!comm;
   attr.config = config;
   attr.disabled = disabled;
   attr.exclude_idle = !!exclude_idle;
   attr.mmap = !!mmap_;
+  attr.sample_id_all = sample_id_all;
   attr.sample_period = sample_period;
   attr.sample_type = sample_type;
-  attr.size = sizeof attr;
   attr.task = !!task;
   attr.type = type;
-  attr.clockid = clockid;
   attr.use_clockid = use_clockid;
   attr.wakeup_events = wakeup_events;
+
+  attr.size = sizeof attr;
 
   fd = _perf_event_open (&attr, pid, cpu, -1, 0);
   if (fd < 0)

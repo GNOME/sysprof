@@ -27,7 +27,7 @@ test_reader_basic (void)
   SpCaptureReader *reader;
   SpCaptureWriter *writer;
   GError *error = NULL;
-  gint64 t = g_get_monotonic_time ();
+  gint64 t = SP_CAPTURE_CURRENT_TIME;
   guint i;
   gint r;
 

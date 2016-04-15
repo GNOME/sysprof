@@ -37,6 +37,8 @@ gint64                             sp_capture_reader_get_start_time      (SpCapt
 gboolean                           sp_capture_reader_skip                (SpCaptureReader     *self);
 gboolean                           sp_capture_reader_peek_type           (SpCaptureReader     *self,
                                                                           SpCaptureFrameType  *type);
+gboolean                           sp_capture_reader_peek_frame          (SpCaptureReader     *self,
+                                                                          SpCaptureFrame      *frame);
 const SpCaptureMap                *sp_capture_reader_read_map            (SpCaptureReader     *self);
 const SpCaptureExit               *sp_capture_reader_read_exit           (SpCaptureReader     *self);
 const SpCaptureFork               *sp_capture_reader_read_fork           (SpCaptureReader     *self);

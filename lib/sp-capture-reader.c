@@ -277,26 +277,42 @@ sp_capture_reader_skip (SpCaptureReader *self)
 }
 
 gboolean
-sp_capture_reader_peek_type (SpCaptureReader    *self,
-                             SpCaptureFrameType *type)
+sp_capture_reader_peek_frame (SpCaptureReader *self,
+                              SpCaptureFrame  *frame)
 {
-  SpCaptureFrame *frame;
+  SpCaptureFrame *real_frame;
 
   g_assert (self != NULL);
   g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
   g_assert (self->pos <= self->bufsz);
-  g_assert (type != NULL);
 
-  *type = 0;
-
-  if (!sp_capture_reader_ensure_space_for (self, sizeof *frame))
+  if (!sp_capture_reader_ensure_space_for (self, sizeof *real_frame))
     return FALSE;
 
   g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
-  frame = (SpCaptureFrame *)(gpointer)&self->buf[self->pos];
+  real_frame = (SpCaptureFrame *)(gpointer)&self->buf[self->pos];
 
-  *type = frame->type;
+  *frame = *real_frame;
+
+  sp_capture_reader_bswap_frame (self, frame);
+
+  return TRUE;
+}
+
+gboolean
+sp_capture_reader_peek_type (SpCaptureReader    *self,
+                             SpCaptureFrameType *type)
+{
+  SpCaptureFrame frame;
+
+  g_assert (self != NULL);
+  g_assert (type != NULL);
+
+  if (!sp_capture_reader_peek_frame (self, &frame))
+    return FALSE;
+
+  *type = frame.type;
 
   return TRUE;
 }

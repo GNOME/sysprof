@@ -33,6 +33,7 @@ SpCaptureReader                   *sp_capture_reader_ref                 (SpCapt
 void                               sp_capture_reader_unref               (SpCaptureReader     *self);
 const gchar                       *sp_capture_reader_get_filename        (SpCaptureReader     *self);
 const gchar                       *sp_capture_reader_get_time            (SpCaptureReader     *self);
+gint64                             sp_capture_reader_get_start_time      (SpCaptureReader     *self);
 gboolean                           sp_capture_reader_skip                (SpCaptureReader     *self);
 gboolean                           sp_capture_reader_peek_type           (SpCaptureReader     *self,
                                                                           SpCaptureFrameType  *type);

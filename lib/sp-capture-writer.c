@@ -396,6 +396,7 @@ sp_capture_writer_new_from_fd (int   fd,
 #endif
   header->padding = 0;
   g_strlcpy (header->capture_time, nowstr, sizeof header->capture_time);
+  header->time = SP_CAPTURE_CURRENT_TIME;
   memset (header->suffix, 0, sizeof header->suffix);
 
   self->pos += sizeof *header;

@@ -67,7 +67,8 @@ typedef struct
   guint32 little_endian : 1;
   guint32 padding : 23;
   gchar   capture_time[64];
-  gchar   suffix[184];
+  gint64  time;
+  gchar   suffix[176];
 } SpCaptureFileHeader;
 
 typedef struct

@@ -783,3 +783,14 @@ handle_errno:
 
   return FALSE;
 }
+
+gint64
+sp_capture_reader_get_start_time (SpCaptureReader *self)
+{
+  g_return_val_if_fail (self != NULL, 0);
+
+  if (self->endian != G_BYTE_ORDER)
+    return GUINT64_SWAP_LE_BE (self->header.time);
+
+  return self->header.time;
+}

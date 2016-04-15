@@ -656,6 +656,7 @@ sp_perf_counter_open (SpPerfCounter          *self,
 					"{'exclude_idle', <%b>},"
 					"{'mmap', <%b>},"
 					"{'wakeup_events', <%u>},"
+					"{'sample_id_all', <%b>},"
 					"{'sample_period', <%t>},"
 					"{'sample_type', <%t>},"
 					"{'task', <%b>},"
@@ -673,6 +674,7 @@ sp_perf_counter_open (SpPerfCounter          *self,
       (gboolean)!!attr->exclude_idle,
       (gboolean)!!attr->mmap,
       (guint32)attr->wakeup_events,
+      (gboolean)!!attr->sample_id_all,
       (guint64)attr->sample_period,
       (guint64)attr->sample_type,
       (gboolean)!!attr->task,

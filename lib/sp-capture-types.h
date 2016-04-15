@@ -55,8 +55,7 @@ typedef enum
   SP_CAPTURE_FRAME_EXIT      = 6,
   SP_CAPTURE_FRAME_JITMAP    = 7,
   SP_CAPTURE_FRAME_CTRDEF    = 8,
-  SP_CAPTURE_FRAME_CTRADD    = 9,
-  SP_CAPTURE_FRAME_CTRSET    = 10,
+  SP_CAPTURE_FRAME_CTRSET    = 9,
 } SpCaptureFrameType;
 
 #pragma pack(push, 1)

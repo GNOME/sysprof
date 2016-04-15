@@ -38,12 +38,20 @@ G_BEGIN_DECLS
 # define SP_CAPTURE_ADDRESS_FORMAT "0x%016llx"
 #endif
 
-#define SP_CAPTURE_CURRENT_TIME (g_get_monotonic_time() * 1000L)
+#define SP_CAPTURE_CURRENT_TIME   (g_get_monotonic_time() * 1000L)
+#define SP_CAPTURE_COUNTER_INT64  0
+#define SP_CAPTURE_COUNTER_DOUBLE 1
 
 typedef struct _SpCaptureReader SpCaptureReader;
 typedef struct _SpCaptureWriter SpCaptureWriter;
 
 typedef guint64 SpCaptureAddress;
+
+typedef union
+{
+  gint64  v64;
+  gdouble vdbl;
+} SpCaptureCounterValue;
 
 typedef enum
 {
@@ -131,12 +139,12 @@ typedef struct
 
 typedef struct
 {
-  gchar   category[32];
-  gchar   name[32];
-  gchar   description[52];
-  guint32 id : 24;
-  guint8  type;
-  gint64  value;
+  gchar                 category[32];
+  gchar                 name[32];
+  gchar                 description[52];
+  guint32               id : 24;
+  guint8                type;
+  SpCaptureCounterValue value;
 } SpCaptureCounter;
 
 typedef struct
@@ -154,8 +162,8 @@ typedef struct
    * bytes.  So this makes a nice 2-cacheline aligned size which is
    * useful when the number of counters is rather small.
    */
-  guint32 ids[8];
-  gint64  values[8];
+  guint32               ids[8];
+  SpCaptureCounterValue values[8];
 } SpCaptureCounterValues;
 
 typedef struct

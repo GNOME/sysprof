@@ -92,7 +92,7 @@ gboolean            sp_capture_writer_set_counters    (SpCaptureWriter         *
                                                        gint                     cpu,
                                                        GPid                     pid,
                                                        const guint             *counters_ids,
-                                                       const gint64            *values,
+                                                       const SpCaptureCounterValue *values,
                                                        guint                    n_counters);
 gboolean            sp_capture_writer_flush           (SpCaptureWriter         *self);
 gboolean            sp_capture_writer_save_as         (SpCaptureWriter         *self,

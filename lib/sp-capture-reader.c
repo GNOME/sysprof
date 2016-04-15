@@ -606,7 +606,7 @@ sp_capture_reader_read_counter_define (SpCaptureReader *self)
       for (i = 0; i < def->n_counters; i++)
         {
           def->counters[i].id = GUINT32_SWAP_LE_BE (def->counters[i].id);
-          def->counters[i].value = GUINT64_SWAP_LE_BE (def->counters[i].value);
+          def->counters[i].value.v64 = GUINT64_SWAP_LE_BE (def->counters[i].value.v64);
         }
     }
 
@@ -657,7 +657,7 @@ sp_capture_reader_read_counter_set (SpCaptureReader *self)
           for (j = 0; j < G_N_ELEMENTS (set->values[0].values); i++)
             {
               set->values[i].ids[j] = GUINT32_SWAP_LE_BE (set->values[i].ids[j]);
-              set->values[i].values[j] = GUINT64_SWAP_LE_BE (set->values[i].values[j]);
+              set->values[i].values[j].v64 = GUINT64_SWAP_LE_BE (set->values[i].values[j].v64);
             }
         }
     }

@@ -195,7 +195,7 @@ test_reader_basic (void)
         g_snprintf (counters[i].description, sizeof counters[i].description, "desc%d", i);
         counters[i].id = i + 1;
         counters[i].type = 0;
-        counters[i].value = i * G_GINT64_CONSTANT (100000000000);
+        counters[i].value.v64 = i * G_GINT64_CONSTANT (100000000000);
       }
 
     r = sp_capture_writer_define_counters (writer, t, -1, -1, counters, G_N_ELEMENTS (counters));
@@ -226,7 +226,7 @@ test_reader_basic (void)
   for (i = 0; i < 1000; i++)
     {
       gint ids[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-      gint64 values[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+      SpCaptureCounterValue values[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
       r = sp_capture_writer_set_counters (writer, t, -1,  -1, ids, values, G_N_ELEMENTS (values));
       g_assert_cmpint (r, ==, TRUE);
@@ -254,16 +254,16 @@ test_reader_basic (void)
       g_assert_cmpint (8, ==, set->values[0].ids[7]);
       g_assert_cmpint (9, ==, set->values[1].ids[0]);
       g_assert_cmpint (10, ==, set->values[1].ids[1]);
-      g_assert_cmpint (1, ==, set->values[0].values[0]);
-      g_assert_cmpint (2, ==, set->values[0].values[1]);
-      g_assert_cmpint (3, ==, set->values[0].values[2]);
-      g_assert_cmpint (4, ==, set->values[0].values[3]);
-      g_assert_cmpint (5, ==, set->values[0].values[4]);
-      g_assert_cmpint (6, ==, set->values[0].values[5]);
-      g_assert_cmpint (7, ==, set->values[0].values[6]);
-      g_assert_cmpint (8, ==, set->values[0].values[7]);
-      g_assert_cmpint (9, ==, set->values[1].values[0]);
-      g_assert_cmpint (10, ==, set->values[1].values[1]);
+      g_assert_cmpint (1, ==, set->values[0].values[0].v64);
+      g_assert_cmpint (2, ==, set->values[0].values[1].v64);
+      g_assert_cmpint (3, ==, set->values[0].values[2].v64);
+      g_assert_cmpint (4, ==, set->values[0].values[3].v64);
+      g_assert_cmpint (5, ==, set->values[0].values[4].v64);
+      g_assert_cmpint (6, ==, set->values[0].values[5].v64);
+      g_assert_cmpint (7, ==, set->values[0].values[6].v64);
+      g_assert_cmpint (8, ==, set->values[0].values[7].v64);
+      g_assert_cmpint (9, ==, set->values[1].values[0].v64);
+      g_assert_cmpint (10, ==, set->values[1].values[1].v64);
     }
 
   for (i = 0; i < 1000; i++)

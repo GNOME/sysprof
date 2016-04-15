@@ -1022,13 +1022,13 @@ sp_capture_writer_define_counters (SpCaptureWriter        *self,
 }
 
 gboolean
-sp_capture_writer_set_counters (SpCaptureWriter *self,
-                                gint64           time,
-                                gint             cpu,
-                                GPid             pid,
-                                const guint     *counters_ids,
-                                const gint64    *values,
-                                guint            n_counters)
+sp_capture_writer_set_counters (SpCaptureWriter             *self,
+                                gint64                       time,
+                                gint                         cpu,
+                                GPid                         pid,
+                                const guint                 *counters_ids,
+                                const SpCaptureCounterValue *values,
+                                guint                        n_counters)
 {
   SpCaptureFrameCounterSet *set;
   gsize len;

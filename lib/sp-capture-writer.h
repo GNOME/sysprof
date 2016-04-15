@@ -81,6 +81,19 @@ gboolean            sp_capture_writer_add_timestamp   (SpCaptureWriter         *
                                                        gint64                   time,
                                                        gint                     cpu,
                                                        GPid                     pid);
+gboolean            sp_capture_writer_define_counters (SpCaptureWriter         *self,
+                                                       gint64                   time,
+                                                       gint                     cpu,
+                                                       GPid                     pid,
+                                                       const SpCaptureCounter  *counters,
+                                                       guint                    n_counters);
+gboolean            sp_capture_writer_set_counters    (SpCaptureWriter         *self,
+                                                       gint64                   time,
+                                                       gint                     cpu,
+                                                       GPid                     pid,
+                                                       const guint             *counters_ids,
+                                                       const gint64            *values,
+                                                       guint                    n_counters);
 gboolean            sp_capture_writer_flush           (SpCaptureWriter         *self);
 gboolean            sp_capture_writer_save_as         (SpCaptureWriter         *self,
                                                        const gchar             *filename,

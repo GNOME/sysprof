@@ -183,6 +183,89 @@ test_reader_basic (void)
       g_assert_cmpint (ex->child_pid, ==, i);
     }
 
+  {
+    SpCaptureCounter counters[10];
+
+    t = SP_CAPTURE_CURRENT_TIME;
+
+    for (i = 0; i < G_N_ELEMENTS (counters); i++)
+      {
+        g_snprintf (counters[i].category, sizeof counters[i].category, "cat%d", i);
+        g_snprintf (counters[i].name, sizeof counters[i].name, "name%d", i);
+        g_snprintf (counters[i].description, sizeof counters[i].description, "desc%d", i);
+        counters[i].id = i + 1;
+        counters[i].type = 0;
+        counters[i].value = i * G_GINT64_CONSTANT (100000000000);
+      }
+
+    r = sp_capture_writer_define_counters (writer, t, -1, -1, counters, G_N_ELEMENTS (counters));
+    g_assert_cmpint (r, ==, TRUE);
+  }
+
+  sp_capture_writer_flush (writer);
+
+  {
+    const SpCaptureFrameCounterDefine *def;
+
+    def = sp_capture_reader_read_counter_define (reader);
+    g_assert (def != NULL);
+    g_assert_cmpint (def->n_counters, ==, 10);
+
+    for (i = 0; i < def->n_counters; i++)
+      {
+        g_autofree gchar *cat = g_strdup_printf ("cat%d", i);
+        g_autofree gchar *name = g_strdup_printf ("name%d", i);
+        g_autofree gchar *desc = g_strdup_printf ("desc%d", i);
+
+        g_assert_cmpstr (def->counters[i].category, ==, cat);
+        g_assert_cmpstr (def->counters[i].name, ==, name);
+        g_assert_cmpstr (def->counters[i].description, ==, desc);
+      }
+  }
+
+  for (i = 0; i < 1000; i++)
+    {
+      gint ids[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+      gint64 values[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+      r = sp_capture_writer_set_counters (writer, t, -1,  -1, ids, values, G_N_ELEMENTS (values));
+      g_assert_cmpint (r, ==, TRUE);
+    }
+
+  sp_capture_writer_flush (writer);
+
+  for (i = 0; i < 1000; i++)
+    {
+      const SpCaptureFrameCounterSet *set;
+
+      set = sp_capture_reader_read_counter_set (reader);
+      g_assert (set != NULL);
+
+      /* 8 per chunk */
+      g_assert_cmpint (set->n_values, ==, 2);
+
+      g_assert_cmpint (1, ==, set->values[0].ids[0]);
+      g_assert_cmpint (2, ==, set->values[0].ids[1]);
+      g_assert_cmpint (3, ==, set->values[0].ids[2]);
+      g_assert_cmpint (4, ==, set->values[0].ids[3]);
+      g_assert_cmpint (5, ==, set->values[0].ids[4]);
+      g_assert_cmpint (6, ==, set->values[0].ids[5]);
+      g_assert_cmpint (7, ==, set->values[0].ids[6]);
+      g_assert_cmpint (8, ==, set->values[0].ids[7]);
+      g_assert_cmpint (9, ==, set->values[1].ids[0]);
+      g_assert_cmpint (10, ==, set->values[1].ids[1]);
+      g_assert_cmpint (1, ==, set->values[0].values[0]);
+      g_assert_cmpint (2, ==, set->values[0].values[1]);
+      g_assert_cmpint (3, ==, set->values[0].values[2]);
+      g_assert_cmpint (4, ==, set->values[0].values[3]);
+      g_assert_cmpint (5, ==, set->values[0].values[4]);
+      g_assert_cmpint (6, ==, set->values[0].values[5]);
+      g_assert_cmpint (7, ==, set->values[0].values[6]);
+      g_assert_cmpint (8, ==, set->values[0].values[7]);
+      g_assert_cmpint (9, ==, set->values[1].values[0]);
+      g_assert_cmpint (10, ==, set->values[1].values[1]);
+    }
+
   for (i = 0; i < 1000; i++)
     {
       SpCaptureAddress addr;

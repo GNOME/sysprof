@@ -539,7 +539,7 @@ sp_capture_reader_read_sample (SpCaptureReader *self)
 
   sample = (SpCaptureSample *)(gpointer)&self->buf[self->pos];
 
-  if (self->endian != G_BYTE_ORDER)
+  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
     {
       guint i;
 
@@ -550,6 +550,105 @@ sp_capture_reader_read_sample (SpCaptureReader *self)
   self->pos += sample->frame.len;
 
   return sample;
+}
+
+const SpCaptureFrameCounterDefine *
+sp_capture_reader_read_counter_define (SpCaptureReader *self)
+{
+  SpCaptureFrameCounterDefine *def;
+
+  g_assert (self != NULL);
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+  g_assert (self->pos <= self->bufsz);
+
+  if (!sp_capture_reader_ensure_space_for (self, sizeof *def))
+    return NULL;
+
+  def = (SpCaptureFrameCounterDefine *)(gpointer)&self->buf[self->pos];
+
+  if (def->frame.type != SP_CAPTURE_FRAME_CTRDEF)
+    return NULL;
+
+  if (def->frame.len < sizeof *def)
+    return NULL;
+
+  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+    def->n_counters = GUINT16_SWAP_LE_BE (def->n_counters);
+
+  if (def->frame.len < (sizeof *def + (sizeof (SpCaptureFrameCounterDefine) * def->n_counters)))
+    return NULL;
+
+  if (!sp_capture_reader_ensure_space_for (self, def->frame.len))
+    return NULL;
+
+  def = (SpCaptureFrameCounterDefine *)(gpointer)&self->buf[self->pos];
+
+  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+    {
+      guint i;
+
+      for (i = 0; i < def->n_counters; i++)
+        {
+          def->counters[i].id = GUINT32_SWAP_LE_BE (def->counters[i].id);
+          def->counters[i].value = GUINT64_SWAP_LE_BE (def->counters[i].value);
+        }
+    }
+
+  self->pos += def->frame.len;
+
+  return def;
+}
+
+const SpCaptureFrameCounterSet *
+sp_capture_reader_read_counter_set (SpCaptureReader *self)
+{
+  SpCaptureFrameCounterSet *set;
+
+  g_assert (self != NULL);
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+  g_assert (self->pos <= self->bufsz);
+
+  if (!sp_capture_reader_ensure_space_for (self, sizeof *set))
+    return NULL;
+
+  set = (SpCaptureFrameCounterSet *)(gpointer)&self->buf[self->pos];
+
+  if (set->frame.type != SP_CAPTURE_FRAME_CTRSET)
+    return NULL;
+
+  if (set->frame.len < sizeof *set)
+    return NULL;
+
+  if (self->endian != G_BYTE_ORDER)
+    set->n_values = GUINT16_SWAP_LE_BE (set->n_values);
+
+  if (set->frame.len < (sizeof *set + (sizeof (SpCaptureCounterValues) * set->n_values)))
+    return NULL;
+
+  if (!sp_capture_reader_ensure_space_for (self, set->frame.len))
+    return NULL;
+
+  set = (SpCaptureFrameCounterSet *)(gpointer)&self->buf[self->pos];
+
+  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+    {
+      guint i;
+
+      for (i = 0; i < set->n_values; i++)
+        {
+          guint j;
+
+          for (j = 0; j < G_N_ELEMENTS (set->values[0].values); i++)
+            {
+              set->values[i].ids[j] = GUINT32_SWAP_LE_BE (set->values[i].ids[j]);
+              set->values[i].values[j] = GUINT64_SWAP_LE_BE (set->values[i].values[j]);
+            }
+        }
+    }
+
+  self->pos += set->frame.len;
+
+  return set;
 }
 
 gboolean

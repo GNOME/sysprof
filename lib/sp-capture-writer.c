@@ -176,6 +176,10 @@ static inline gboolean
 sp_capture_writer_ensure_space_for (SpCaptureWriter *self,
                                     gsize            len)
 {
+  /* Check for max frame size */
+  if (len > G_MAXUSHORT)
+    return FALSE;
+
   if ((self->len - self->pos) < len)
     {
       if (!sp_capture_writer_flush_data (self))
@@ -951,4 +955,125 @@ sp_capture_writer_stat (SpCaptureWriter *self,
   g_return_if_fail (stat != NULL);
 
   *stat = self->stat;
+}
+
+gboolean
+sp_capture_writer_define_counters (SpCaptureWriter        *self,
+                                   gint64                  time,
+                                   gint                    cpu,
+                                   GPid                    pid,
+                                   const SpCaptureCounter *counters,
+                                   guint                   n_counters)
+{
+  SpCaptureFrameCounterDefine *def;
+  gsize len;
+  guint i;
+
+  g_assert (self != NULL);
+  g_assert (counters != NULL);
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+
+  if (n_counters == 0)
+    return TRUE;
+
+  len = sizeof *def + (sizeof *counters * n_counters);
+
+  sp_capture_writer_realign (&len);
+
+  if (!sp_capture_writer_ensure_space_for (self, len))
+    return FALSE;
+
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+
+  def = (SpCaptureFrameCounterDefine *)&self->buf[self->pos];
+  def->frame.len = len;
+  def->frame.cpu = cpu;
+  def->frame.pid = pid;
+  def->frame.time = time;
+  def->frame.type = SP_CAPTURE_FRAME_CTRDEF;
+  def->frame.padding = 0;
+  def->padding = 0;
+  def->n_counters = n_counters;
+
+  for (i = 0; i < n_counters; i++)
+    def->counters[i] = counters[i];
+
+  self->pos += def->frame.len;
+
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+
+  self->stat.frame_count[SP_CAPTURE_FRAME_CTRDEF]++;
+
+  return TRUE;
+}
+
+gboolean
+sp_capture_writer_set_counters (SpCaptureWriter *self,
+                                gint64           time,
+                                gint             cpu,
+                                GPid             pid,
+                                const guint     *counters_ids,
+                                const gint64    *values,
+                                guint            n_counters)
+{
+  SpCaptureFrameCounterSet *set;
+  gsize len;
+  guint n_groups;
+  guint group;
+  guint field;
+  guint i;
+
+  g_assert (self != NULL);
+  g_assert (counters_ids != NULL);
+  g_assert (values != NULL || !n_counters);
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+
+  if (n_counters == 0)
+    return TRUE;
+
+  /* Determine how many value groups we need */
+  n_groups = n_counters / G_N_ELEMENTS (set->values[0].values);
+  if ((n_groups * G_N_ELEMENTS (set->values[0].values)) != n_counters)
+    n_groups++;
+
+  len = sizeof *set + (n_groups * sizeof (SpCaptureCounterValues));
+
+  sp_capture_writer_realign (&len);
+
+  if (!sp_capture_writer_ensure_space_for (self, len))
+    return FALSE;
+
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+
+  set = (SpCaptureFrameCounterSet *)&self->buf[self->pos];
+  set->frame.len = len;
+  set->frame.cpu = cpu;
+  set->frame.pid = pid;
+  set->frame.time = time;
+  set->frame.type = SP_CAPTURE_FRAME_CTRSET;
+  set->frame.padding = 0;
+  set->padding = 0;
+  set->n_values = n_groups;
+
+  for (i = 0, group = 0, field = 0; i < n_counters; i++)
+    {
+      set->values[group].ids[field] = counters_ids[i];
+      set->values[group].values[field] = values[i];
+
+      field++;
+
+      if (field == G_N_ELEMENTS (set->values[0].values))
+        {
+          field = 0;
+          group++;
+        }
+    }
+
+  self->pos += set->frame.len;
+
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+
+  self->stat.frame_count[SP_CAPTURE_FRAME_CTRSET]++;
+
+  return TRUE;
 }

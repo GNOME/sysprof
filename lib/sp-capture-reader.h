@@ -25,31 +25,33 @@ G_BEGIN_DECLS
 
 typedef struct _SpCaptureReader SpCaptureReader;
 
-SpCaptureReader          *sp_capture_reader_new            (const gchar         *filename,
-                                                            GError             **error);
-SpCaptureReader          *sp_capture_reader_new_from_fd    (int                  fd,
-                                                            GError             **error);
-SpCaptureReader          *sp_capture_reader_ref            (SpCaptureReader     *self);
-void                      sp_capture_reader_unref          (SpCaptureReader     *self);
-const gchar              *sp_capture_reader_get_filename   (SpCaptureReader     *self);
-const gchar              *sp_capture_reader_get_time       (SpCaptureReader     *self);
-gboolean                  sp_capture_reader_skip           (SpCaptureReader     *self);
-gboolean                  sp_capture_reader_peek_type      (SpCaptureReader     *self,
-                                                            SpCaptureFrameType  *type);
-const SpCaptureMap       *sp_capture_reader_read_map       (SpCaptureReader     *self);
-const SpCaptureExit      *sp_capture_reader_read_exit      (SpCaptureReader     *self);
-const SpCaptureFork      *sp_capture_reader_read_fork      (SpCaptureReader     *self);
-const SpCaptureTimestamp *sp_capture_reader_read_timestamp (SpCaptureReader     *self);
-const SpCaptureProcess   *sp_capture_reader_read_process   (SpCaptureReader     *self);
-const SpCaptureSample    *sp_capture_reader_read_sample    (SpCaptureReader     *self);
-GHashTable               *sp_capture_reader_read_jitmap    (SpCaptureReader     *self);
-gboolean                  sp_capture_reader_reset          (SpCaptureReader     *self);
-gboolean                  sp_capture_reader_splice         (SpCaptureReader     *self,
-                                                            SpCaptureWriter     *dest,
-                                                            GError             **error);
-gboolean                  sp_capture_reader_save_as        (SpCaptureReader     *self,
-                                                            const gchar         *filename,
-                                                            GError             **error);
+SpCaptureReader                   *sp_capture_reader_new                 (const gchar         *filename,
+                                                                          GError             **error);
+SpCaptureReader                   *sp_capture_reader_new_from_fd         (int                  fd,
+                                                                          GError             **error);
+SpCaptureReader                   *sp_capture_reader_ref                 (SpCaptureReader     *self);
+void                               sp_capture_reader_unref               (SpCaptureReader     *self);
+const gchar                       *sp_capture_reader_get_filename        (SpCaptureReader     *self);
+const gchar                       *sp_capture_reader_get_time            (SpCaptureReader     *self);
+gboolean                           sp_capture_reader_skip                (SpCaptureReader     *self);
+gboolean                           sp_capture_reader_peek_type           (SpCaptureReader     *self,
+                                                                          SpCaptureFrameType  *type);
+const SpCaptureMap                *sp_capture_reader_read_map            (SpCaptureReader     *self);
+const SpCaptureExit               *sp_capture_reader_read_exit           (SpCaptureReader     *self);
+const SpCaptureFork               *sp_capture_reader_read_fork           (SpCaptureReader     *self);
+const SpCaptureTimestamp          *sp_capture_reader_read_timestamp      (SpCaptureReader     *self);
+const SpCaptureProcess            *sp_capture_reader_read_process        (SpCaptureReader     *self);
+const SpCaptureSample             *sp_capture_reader_read_sample         (SpCaptureReader     *self);
+GHashTable                        *sp_capture_reader_read_jitmap         (SpCaptureReader     *self);
+const SpCaptureFrameCounterDefine *sp_capture_reader_read_counter_define (SpCaptureReader     *self);
+const SpCaptureFrameCounterSet    *sp_capture_reader_read_counter_set    (SpCaptureReader     *self);
+gboolean                           sp_capture_reader_reset               (SpCaptureReader     *self);
+gboolean                           sp_capture_reader_splice              (SpCaptureReader     *self,
+                                                                          SpCaptureWriter     *dest,
+                                                                          GError             **error);
+gboolean                           sp_capture_reader_save_as             (SpCaptureReader     *self,
+                                                                          const gchar         *filename,
+                                                                          GError             **error);
 
 #ifndef SP_DISABLE_GOBJECT
 # define SP_TYPE_CAPTURE_READER (sp_capture_reader_get_type())

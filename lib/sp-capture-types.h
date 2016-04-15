@@ -54,6 +54,9 @@ typedef enum
   SP_CAPTURE_FRAME_FORK      = 5,
   SP_CAPTURE_FRAME_EXIT      = 6,
   SP_CAPTURE_FRAME_JITMAP    = 7,
+  SP_CAPTURE_FRAME_CTRDEF    = 8,
+  SP_CAPTURE_FRAME_CTRADD    = 9,
+  SP_CAPTURE_FRAME_CTRSET    = 10,
 } SpCaptureFrameType;
 
 #pragma pack(push, 1)
@@ -126,6 +129,43 @@ typedef struct
   SpCaptureFrame frame;
 } SpCaptureTimestamp;
 
+typedef struct
+{
+  gchar   category[32];
+  gchar   name[32];
+  gchar   description[52];
+  guint32 id : 24;
+  guint8  type;
+  gint64  value;
+} SpCaptureCounter;
+
+typedef struct
+{
+  SpCaptureFrame   frame;
+  guint16          n_counters;
+  guint64          padding : 48;
+  SpCaptureCounter counters[0];
+} SpCaptureFrameCounterDefine;
+
+typedef struct
+{
+  /*
+   * 96 bytes might seem a bit odd, but the counter frame header is 32
+   * bytes.  So this makes a nice 2-cacheline aligned size which is
+   * useful when the number of counters is rather small.
+   */
+  guint32 ids[8];
+  gint64  values[8];
+} SpCaptureCounterValues;
+
+typedef struct
+{
+  SpCaptureFrame         frame;
+  guint16                n_values;
+  guint64                padding : 48;
+  SpCaptureCounterValues values[0];
+} SpCaptureFrameCounterSet;
+
 #pragma pack(pop)
 
 G_STATIC_ASSERT (sizeof (SpCaptureFileHeader) == 256);
@@ -137,6 +177,10 @@ G_STATIC_ASSERT (sizeof (SpCaptureSample) == 32);
 G_STATIC_ASSERT (sizeof (SpCaptureFork) == 28);
 G_STATIC_ASSERT (sizeof (SpCaptureExit) == 24);
 G_STATIC_ASSERT (sizeof (SpCaptureTimestamp) == 24);
+G_STATIC_ASSERT (sizeof (SpCaptureCounter) == 128);
+G_STATIC_ASSERT (sizeof (SpCaptureCounterValues) == 96);
+G_STATIC_ASSERT (sizeof (SpCaptureFrameCounterDefine) == 32);
+G_STATIC_ASSERT (sizeof (SpCaptureFrameCounterSet) == 32);
 
 static inline gint
 sp_capture_address_compare (SpCaptureAddress a,

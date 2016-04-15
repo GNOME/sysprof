@@ -190,7 +190,10 @@ main (gint   argc,
   g_object_unref (source);
 
   source = sp_perf_source_new ();
+  sp_profiler_add_source (profiler, source);
+  g_object_unref (source);
 
+  source = sp_hostinfo_source_new ();
   sp_profiler_add_source (profiler, source);
   g_object_unref (source);
 

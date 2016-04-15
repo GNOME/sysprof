@@ -1,4 +1,4 @@
-/* sysprof-ui.h
+/* sp-line-visualizer-row.h
  *
  * Copyright (C) 2016 Christian Hergert <christian@hergert.me>
  *
@@ -16,27 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SYSPROF_UI_H
-#define SYSPROF_UI_H
+#ifndef SP_LINE_VISUALIZER_ROW_H
+#define SP_LINE_VISUALIZER_ROW_H
 
-#include <sysprof.h>
+#include "sp-visualizer-row.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_INSIDE
-# include "sp-callgraph-view.h"
-# include "sp-cell-renderer-percent.h"
-# include "sp-line-visualizer-row.h"
-# include "sp-empty-state-view.h"
-# include "sp-model-filter.h"
-# include "sp-recording-state-view.h"
-# include "sp-process-model.h"
-# include "sp-process-model-item.h"
-# include "sp-process-model-row.h"
-# include "sp-profiler-menu-button.h"
-# include "sp-visualizer-row.h"
-#undef SYSPROF_INSIDE
+#define SP_TYPE_LINE_VISUALIZER_ROW (sp_line_visualizer_row_get_type())
+
+G_DECLARE_FINAL_TYPE (SpLineVisualizerRow, sp_line_visualizer_row, SP, LINE_VISUALIZER_ROW, SpVisualizerRow)
+
+GtkWidget *sp_line_visualizer_row_new         (void);
+void       sp_line_visualizer_row_add_counter (SpLineVisualizerRow *self,
+                                               guint                counter_id);
 
 G_END_DECLS
 
-#endif /* SYSPROF_UI_H */
+#endif /* SP_LINE_VISUALIZER_ROW_H */

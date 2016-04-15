@@ -1,4 +1,4 @@
-/* sysprof-ui.h
+/* sp-hostinfo-source.h
  *
  * Copyright (C) 2016 Christian Hergert <christian@hergert.me>
  *
@@ -16,27 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SYSPROF_UI_H
-#define SYSPROF_UI_H
+#ifndef SP_HOSTINFO_SOURCE_H
+#define SP_HOSTINFO_SOURCE_H
 
-#include <sysprof.h>
+#include "sp-source.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_INSIDE
-# include "sp-callgraph-view.h"
-# include "sp-cell-renderer-percent.h"
-# include "sp-line-visualizer-row.h"
-# include "sp-empty-state-view.h"
-# include "sp-model-filter.h"
-# include "sp-recording-state-view.h"
-# include "sp-process-model.h"
-# include "sp-process-model-item.h"
-# include "sp-process-model-row.h"
-# include "sp-profiler-menu-button.h"
-# include "sp-visualizer-row.h"
-#undef SYSPROF_INSIDE
+#define SP_TYPE_HOSTINFO_SOURCE (sp_hostinfo_source_get_type())
+
+G_DECLARE_FINAL_TYPE (SpHostinfoSource, sp_hostinfo_source, SP, HOSTINFO_SOURCE, GObject)
+
+SpSource *sp_hostinfo_source_new (void);
 
 G_END_DECLS
 
-#endif /* SYSPROF_UI_H */
+#endif /* SP_HOSTINFO_SOURCE_H */
+

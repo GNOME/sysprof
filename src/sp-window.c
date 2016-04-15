@@ -48,6 +48,7 @@ struct _SpWindow
   GtkLabel             *stat_label;
   GtkLabel             *title;
   GtkStack             *view_stack;
+  GtkListBox           *visualizer_rows;
 
   guint                 stats_handler;
 
@@ -211,12 +212,16 @@ sp_window_build_profile_cb (GObject      *object,
     }
 
   sp_callgraph_view_set_profile (self->callgraph_view, SP_CALLGRAPH_PROFILE (profile));
-  sp_window_set_state (self, SP_WINDOW_STATE_BROWSING);
-
   if (sp_callgraph_view_get_n_functions (self->callgraph_view) == 0)
     sp_window_notify_user (self,
                            GTK_MESSAGE_WARNING,
                            _("Not enough samples were collected to generate a callgraph"));
+
+  gtk_container_foreach (GTK_CONTAINER (self->visualizer_rows),
+                         (GtkCallback)sp_visualizer_row_set_reader,
+                         self->reader);
+
+  sp_window_set_state (self, SP_WINDOW_STATE_BROWSING);
 }
 
 static void
@@ -362,6 +367,7 @@ static void
 sp_window_add_sources (SpWindow   *window,
                        SpProfiler *profiler)
 {
+  g_autoptr(SpSource) host_source = NULL;
   g_autoptr(SpSource) proc_source = NULL;
   g_autoptr(SpSource) perf_source = NULL;
 
@@ -373,6 +379,9 @@ sp_window_add_sources (SpWindow   *window,
 
   perf_source = sp_perf_source_new ();
   sp_profiler_add_source (profiler, perf_source);
+
+  host_source = sp_hostinfo_source_new ();
+  sp_profiler_add_source (profiler, host_source);
 }
 
 static void
@@ -760,6 +769,7 @@ sp_window_class_init (SpWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SpWindow, subtitle);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, title);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, view_stack);
+  gtk_widget_class_bind_template_child (widget_class, SpWindow, visualizer_rows);
 }
 
 static void

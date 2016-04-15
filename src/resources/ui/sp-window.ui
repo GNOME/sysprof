@@ -160,8 +160,34 @@
               </packing>
             </child>
             <child>
-              <object class="SpCallgraphView" id="callgraph_view">
+              <object class="GtkPaned">
+                <property name="orientation">vertical</property>
                 <property name="visible">true</property>
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="min-content-height">75</property>
+                    <property name="max-content-height">225</property>
+                    <property name="visible">true</property>
+                    <child>
+                      <object class="GtkListBox" id="visualizer_rows">
+                        <property name="visible">true</property>
+                        <child>
+                          <object class="SpLineVisualizerRow" id="cpu_row">
+                            <property name="title" translatable="yes">CPU</property>
+                            <property name="height-request">75</property>
+                            <property name="selectable">false</property>
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="SpCallgraphView" id="callgraph_view">
+                    <property name="visible">true</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="name">browsing</property>

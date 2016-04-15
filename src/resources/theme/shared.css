@@ -1,10 +1,14 @@
 GtkPopover GtkListBox GtkListBoxRow,
+GtkPaned GtkListBox GtkListBoxRow,
+paned list row,
 popover list row {
   padding: 6px 10px 6px 10px;
   border-bottom: 1px solid alpha(@borders, 0.2);
 }
 
 GtkPopover GtkListBox GtkListBoxRow:last-child,
+GtkPaned GtkListBox GtkListBoxRow:last-child,
+paned list row:last-child,
 popover list row:last-child {
   border-bottom: none;
 }

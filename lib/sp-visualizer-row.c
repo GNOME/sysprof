@@ -1,4 +1,4 @@
-/* sysprof-ui.h
+/* sp-visualizer-row.c
  *
  * Copyright (C) 2016 Christian Hergert <christian@hergert.me>
  *
@@ -16,27 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SYSPROF_UI_H
-#define SYSPROF_UI_H
+#include "sp-visualizer-row.h"
 
-#include <sysprof.h>
+G_DEFINE_ABSTRACT_TYPE (SpVisualizerRow, sp_visualizer_row, GTK_TYPE_LIST_BOX_ROW)
 
-G_BEGIN_DECLS
+static void
+sp_visualizer_row_class_init (SpVisualizerRowClass *klass)
+{
+}
 
-#define SYSPROF_INSIDE
-# include "sp-callgraph-view.h"
-# include "sp-cell-renderer-percent.h"
-# include "sp-line-visualizer-row.h"
-# include "sp-empty-state-view.h"
-# include "sp-model-filter.h"
-# include "sp-recording-state-view.h"
-# include "sp-process-model.h"
-# include "sp-process-model-item.h"
-# include "sp-process-model-row.h"
-# include "sp-profiler-menu-button.h"
-# include "sp-visualizer-row.h"
-#undef SYSPROF_INSIDE
+static void
+sp_visualizer_row_init (SpVisualizerRow *self)
+{
+}
 
-G_END_DECLS
+void
+sp_visualizer_row_set_reader (SpVisualizerRow *self,
+                              SpCaptureReader *reader)
+{
+  g_return_if_fail (SP_IS_VISUALIZER_ROW (self));
 
-#endif /* SYSPROF_UI_H */
+  if (SP_VISUALIZER_ROW_GET_CLASS (self)->set_reader)
+    SP_VISUALIZER_ROW_GET_CLASS (self)->set_reader (self, reader);
+}

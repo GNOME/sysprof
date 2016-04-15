@@ -32,6 +32,7 @@ G_BEGIN_DECLS
 # include "sp-elf-symbol-resolver.h"
 # include "sp-error.h"
 # include "sp-gjs-source.h"
+# include "sp-hostinfo-source.h"
 # include "sp-jitmap-symbol-resolver.h"
 # include "sp-kernel-symbol-resolver.h"
 # include "sp-kernel-symbol.h"

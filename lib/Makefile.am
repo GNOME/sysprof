@@ -52,6 +52,7 @@ headers_DATA = \
 	sp-elf-symbol-resolver.h \
 	sp-error.h \
 	sp-gjs-source.h \
+	sp-hostinfo-source.h \
 	sp-jitmap-symbol-resolver.h \
 	sp-kernel-symbol.h \
 	sp-kernel-symbol-resolver.h \
@@ -76,6 +77,7 @@ libsysprof_@API_VERSION@_la_SOURCES = \
 	sp-elf-symbol-resolver.c \
 	sp-error.c \
 	sp-gjs-source.c \
+	sp-hostinfo-source.c \
 	sp-jitmap-symbol-resolver.c \
 	sp-kernel-symbol.c \
 	sp-kernel-symbol-resolver.c \
@@ -133,12 +135,14 @@ uiheaders_DATA = \
 	sp-cell-renderer-percent.h \
 	sp-empty-state-view.h \
 	sp-failed-state-view.h \
+	sp-line-visualizer-row.h \
 	sp-model-filter.h \
 	sp-process-model.h \
 	sp-process-model-item.h \
 	sp-process-model-row.h \
 	sp-profiler-menu-button.h \
 	sp-recording-state-view.h \
+	sp-visualizer-row.h \
 	sysprof-ui.h \
 	$(NULL)
 
@@ -148,12 +152,14 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	sp-cell-renderer-percent.c \
 	sp-empty-state-view.c \
 	sp-failed-state-view.c \
+	sp-line-visualizer-row.c \
 	sp-model-filter.c \
 	sp-process-model.c \
 	sp-process-model-item.c \
 	sp-process-model-row.c \
 	sp-profiler-menu-button.c \
 	sp-recording-state-view.c \
+	sp-visualizer-row.c \
 	$(NULL)
 
 libsysprof_ui_@API_VERSION@_la_CFLAGS = \

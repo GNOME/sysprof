@@ -933,10 +933,19 @@ SpCaptureReader *
 sp_capture_writer_create_reader (SpCaptureWriter  *self,
                                  GError          **error)
 {
+  int copy;
+
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (self->fd != -1, NULL);
 
-  return sp_capture_reader_new_from_fd (self->fd, error);
+  /*
+   * We don't care about the write position, since the reader
+   * uses positioned reads.
+   */
+  if (-1 == (copy = dup (self->fd)))
+    return NULL;
+
+  return sp_capture_reader_new_from_fd (copy, error);
 }
 
 /**

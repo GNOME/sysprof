@@ -213,7 +213,7 @@ sp_capture_writer_flush_jitmap (SpCaptureWriter *self)
   jitmap.frame.len = len;
   jitmap.frame.cpu = -1;
   jitmap.frame.pid = getpid ();
-  jitmap.frame.time = g_get_monotonic_time ();
+  jitmap.frame.time = SP_CAPTURE_CURRENT_TIME;
   jitmap.frame.type = SP_CAPTURE_FRAME_JITMAP;
   jitmap.n_jitmaps = self->addr_hash_size;
 

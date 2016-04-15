@@ -1101,7 +1101,7 @@ sp_capture_writer_request_counter (SpCaptureWriter *self,
   g_assert (self != NULL);
 
   ret = self->next_counter_id;
-  ret += n_counters;
+  self->next_counter_id += n_counters;
 
   return ret;
 }

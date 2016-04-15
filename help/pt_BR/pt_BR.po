@@ -1,0 +1,397 @@
+# Brazilian Portuguese translation for sysprof.
+# Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Rafael Fontenelle <rafaelff@gnome.org>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"POT-Creation-Date: 2016-04-15 14:21+0000\n"
+"PO-Revision-Date: 2016-04-15 12:12-0200\n"
+"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
+"Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+"X-Project-Style: gnome\n"
+
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr "Rafael Fontenelle <rafaelff@gnome.org>, 2016"
+
+#. (itstool) path: page/title
+#: C/index.page:12
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: section/title
+#: C/index.page:15
+msgid "Profiling"
+msgstr "Perfilamento"
+
+#. (itstool) path: credit/name
+#: C/introduction.page:15
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
+
+#. (itstool) path: credit/years
+#: C/introduction.page:17
+msgid "2016"
+msgstr "2016"
+
+#. (itstool) path: info/desc
+#: C/introduction.page:22
+msgid "Welcome to <app>Sysprof</app>!"
+msgstr "Bem-vindo ao <app>Sysprof</app>!"
+
+#. (itstool) path: page/title
+#: C/introduction.page:25
+msgid "Introduction"
+msgstr "Introdução"
+
+#. (itstool) path: page/p
+#: C/introduction.page:27
+msgid ""
+"<app>Sysprof</app> is a system profiler for Linux that targets the GNOME "
+"desktop."
+msgstr ""
+"<app>Sysprof</app> é um perfilador para Linux com foco no ambiente GNOME."
+
+#. (itstool) path: info/desc
+#: C/introduction.page:33
+msgid "Differences between tracing and sampling"
+msgstr "Diferenças entre rastreamento e amostragem"
+
+#. (itstool) path: section/title
+#: C/introduction.page:35
+msgid "What is a Profiler?"
+msgstr "O que é um perfilador?"
+
+#. (itstool) path: section/p
+#: C/introduction.page:37
+msgid ""
+"A profiler is an application that records information about an application "
+"or system while it runs. That information can be explored to gain insight "
+"into how the application could be changed to perform better."
+msgstr ""
+"Um perfilador é um aplicativo que grava informações sobre um aplicativo ou "
+"sistema enquanto ele está em execução. Aquela informação pode ser explorada "
+"para obter um visão aprofundada sobre como o aplicativo poderia ser alterado "
+"para funcionar melhor."
+
+#. (itstool) path: section/p
+#: C/introduction.page:42
+msgid ""
+"Two common categories of software profilers exist, commonly referred to as "
+"either tracing or sampling profilers. What is meant by tracing profiler is "
+"that every function call executed by the program is known to the profiler. A "
+"sampling profiler works by inspecting the state of the program on a regular "
+"frequency and therefore does not see every function call executed by the "
+"program."
+msgstr ""
+"Existem duas categorias comuns de perfiladores de programa, normalmente "
+"referidos como perfiladores de rastreamento ou amostragem. O significado de "
+"perfilador de rastreamento é que toda chamada de função executada pelo "
+"programa é conhecida pelo perfilador. Um perfilador de amostragem funciona "
+"inspecionando o estado do programa em uma frequência regular e, portanto, "
+"não vê toda chamada de função executada pelo programa."
+
+#. (itstool) path: section/p
+#: C/introduction.page:49
+msgid ""
+"Both tracing and sampling profilers have their advantages. A notable "
+"advtantage of a sampling profiler is that the overhead is much less than "
+"that of a tracing profiler, making it easier to use for software that "
+"requires interactivity."
+msgstr ""
+"Ambos perfiladores de rastreamento e amostragem possuem suas vantagens. Uma "
+"vantagem notória do perfilador de amostragem é que a sobrecarga é muito "
+"menor do que um perfilador de rastreamento, tornando-o mais fácil de usar "
+"para programas que exigem interatividade."
+
+#. (itstool) path: section/p
+#: C/introduction.page:54
+msgid "<app>Sysprof</app> is a sampling profiler."
+msgstr "<app>Sysprof</app> é um perfilador de amostragem."
+
+#. (itstool) path: section/title
+#: C/profiling.page:10
+msgid "How to profile your system"
+msgstr "Como perfilar seus sistema"
+
+#. (itstool) path: section/p
+#: C/profiling.page:11
+msgid ""
+"When <app>Sysprof</app> profiles your system, it records stack information "
+"for all applications executing, including the Linux kernel. This can "
+"sometimes be confusing if you only want to look at a single process. If your "
+"application does not interact much with the host system, you may have more "
+"success with <link href=\"profiling#new-process-profiling\">profiling an "
+"existing process</link>."
+msgstr ""
+"Quando <app>Sysprof</app> perfila seu sistema, ele grava informações da "
+"pilha de todos os aplicativos em execução, incluindo o kernel Linux. Isso "
+"pode, em alguns casos, ser confuso, se você deseja apenas olhar um único "
+"processo. Se o aplicativo não interage muito com o sistema hospedeiro, você "
+"pode obter mais sucesso com <link href=\"profiling#new-process-profiling\">"
+"perfilamento de um processo existente</link>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:18
+msgid ""
+"To profile your entire system, ensure the target button is set to <em>All "
+"Processes</em> and click <em>Record</em>."
+msgstr ""
+"Para perfilar todo o seu sistema, certifique-se que o botão do alvo esteja "
+"definido para <em>Todos processos</em> e clique em <em>Gravar</em>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:21
+msgid ""
+"At this point, you may be asked to <em>authorize</em> access to profile the "
+"system. This is required as the Linux kernel's perf implementation requires "
+"root to perform whole-system profiling."
+msgstr ""
+"Neste momento, você pode ter que <em>autorizar</em> acesso ao perfilador do "
+"sistema. Isso é necessário, pois a implementação do perf do kernel Linux "
+"requer as permissões do \"root\" para realizar perfilamento de todo o "
+"sistema."
+
+#. (itstool) path: section/p
+#: C/profiling.page:25
+msgid ""
+"During the profiling session, you will see the number of seconds the profile "
+"has been active. Clicking the <em>Record</em> button again will stop the "
+"profiling session. Afterwhich, the callgraph will be displayed."
+msgstr ""
+"Durante a sessão de perfilamento, você verá o número de segundos que o "
+"perfil está ativo. Clicando no botão <em>Gravar</em> novamente irá parar a "
+"sessão de perfilamento. Então, o gráfico de chamadas será exibido."
+
+#. (itstool) path: note/p
+#: C/profiling.page:31
+msgid ""
+"If you find that the <app>sysprof</app> application is showing up in your "
+"profiling callgraph, you might consider recording the profiling session with "
+"<cmd>sysprof-cli</cmd>. This is a command line program that will capture "
+"your profiling session to disk to be viewed at a later time."
+msgstr ""
+"Se você descobrir que o aplicativo <app>sysprof</app> está mostrando seu "
+"gráfico de chamadas de perfilamento, você pode considerar realizar a "
+"gravação da sessão de perfilamento com <cmd>sysprof-cli</cmd>. Este é um "
+"programa de linha de comando que vai capturar sua sessão de perfilamento "
+"para o disco para ser visto em outra ocasião."
+
+#. (itstool) path: section/p
+#: C/profiling.page:37 C/profiling.page:60
+msgid ""
+"See <link href=\"profiling#interpreting-results\">interpreting results</"
+"link> for more guidance."
+msgstr ""
+"Veja <link href=\"profiling#interpreting-results\">interpretando "
+"resultados</link> para mais direcionamento."
+
+#. (itstool) path: section/title
+#: C/profiling.page:46
+msgid "Profile an existing process"
+msgstr "Perfilando um processo existente"
+
+#. (itstool) path: section/p
+#: C/profiling.page:47
+msgid ""
+"With <app>Sysprof</app>, you can profile one or more existing processes on "
+"your system. First, select the <em>profiling target</em> button next to the "
+"<em>Record</em> button. Select <em>Existing Process</em> in the popover that "
+"is displayed. Next, select as many processes as you'd like to profile. "
+"Processes selected for profiling will have a checkmark next to their name."
+msgstr ""
+"Com o <app>Sysprof</app>, você pode perfilar um ou mais processos existentes "
+"em seu sistema. Primeiro, selecione o botão de <em>alvo do perfilamento</em> "
+"próximo ao botão de <em>Gravar</em>. Selecione <em>Processo existente</em> "
+"na janela sobreposta exibida. Em seguida, selecione a quantidade de "
+"processos desejada para perfilar. Os processos selecionados para "
+"perfilamento terão uma marca de seleção ao lado de sus nomes."
+
+#. (itstool) path: section/p
+#: C/profiling.page:54
+msgid ""
+"After selecting your target processes, click the <em>Record</em> button to "
+"start profiling."
+msgstr ""
+"Após selecionar seus processos alvos, clique no botão <em>Gravar</em> para "
+"iniciar o perfilamento."
+
+#. (itstool) path: section/p
+#: C/profiling.page:57
+msgid ""
+"When you have completed, click the <em>Record</em> button again to stop "
+"profiling."
+msgstr ""
+"Quando você concluir, clique no botão <em>Gravar</em> novamente e pare o "
+"perfilamento."
+
+#. (itstool) path: section/title
+#: C/profiling.page:69
+msgid "Profile a new process"
+msgstr "Perfilando um novo processo"
+
+#. (itstool) path: section/p
+#: C/profiling.page:71
+msgid ""
+"Often times, you may need to spawn a new process to profile. First, select "
+"the <em>profiling target</em> button next to the <em>Record</em> button. "
+"Next, select <em>New Process</em> and fill out the necessary information to "
+"spawn the process."
+msgstr ""
+"Ocasionalmente, você pode ter que iniciar um novo processo para perfilar. "
+"Primeiro, selecione o botão de <em>alvo de perfilamento</em> próximo ao "
+"botão de <em>Gravar</em>. Em seguida, selecione <em>Novo processo</em> e "
+"preencha toda informação necessária para iniciar o processo."
+
+#. (itstool) path: note/p
+#: C/profiling.page:77
+msgid ""
+"If you are spawning a process that requires access to your current display, "
+"such as a GTK+ application, you will want to make sure <em>Inherit current "
+"environment</em> is set."
+msgstr ""
+"Se você está iniciando um processo que requer acesso à sua exibição atual, "
+"tal como um aplicativo GTK+, é melhor se certificar de que <em>Herdar o "
+"ambiente atual</em> esteja definido."
+
+#. (itstool) path: section/title
+#: C/profiling.page:88
+msgid "Profiling with the sysprof-cli command line tool"
+msgstr "Perfilando com a ferramenta de linha de comando sysprof-cli"
+
+#. (itstool) path: section/p
+#: C/profiling.page:90
+msgid ""
+"For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
+"command line tool. When run without any arguments, it will record your "
+"entire system and save the output to <file>capture.syscap</file>. This file "
+"can be opened with the <app>Sysprof</app> application to view the callgraph."
+msgstr ""
+"Para uma sobrecarga mínima, você pode considerar o uso da ferramenta de "
+"linha de comando <cmd>sysprof-cli</cmd>. Quando executado sem argumentos, "
+"ele vai gravar todo o seu sistema e salvar a saída para "
+"<file>capture.syscap</file>. Esse arquivo pode ser aberto com o aplicativo "
+"<app>Sysprof</app> para visualizar o gráfico de chamadas."
+
+#. (itstool) path: section/p
+#: C/profiling.page:95
+msgid ""
+"You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
+"cmd>."
+msgstr ""
+"Você também pode anexar a um processo existente usando <cmd>sysprof-cli -p "
+"pid</cmd>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:98
+msgid ""
+"If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
+"cmd> to specify a command to be launched. The command will inherit the "
+"current environment."
+msgstr ""
+"Se você desejar iniciar um novo processo, use <cmd>sysprof-cli -c "
+"'comando'</cmd> para especificar um comando a ser iniciado. O comando vai "
+"herdar o ambiente atual."
+
+#. (itstool) path: section/title
+#: C/profiling.page:108
+msgid "Interpreting results"
+msgstr "Interpretando os resultados"
+
+#. (itstool) path: section/p
+#: C/profiling.page:110
+msgid ""
+"The profiling results in <app>Sysprof</app> are split into three sections. "
+"On the top left is a list of all the functions profiled. They are sorted by "
+"how often they were called during the sampling frequency."
+msgstr ""
+"Os resultados de perfilamento no <app>Sysprof</app> estão divididos em três "
+"seções. No canto superior esquerdo está uma lista de todas as funções "
+"perfiladas. Elas estão ordenadas pela frequência em que elas foram chamadas "
+"durante a frequência da amostragem."
+
+#. (itstool) path: note/p
+#: C/profiling.page:115
+msgid ""
+"It is important to note that the amount of time spent in each function is "
+"not captured. That would require a tracing profiler to accurately record. "
+"The percentage is calculated by determining how often that function showed "
+"up in the current stacktrace when a sample was recorded."
+msgstr ""
+"É importante notar que a quantidade de tempo dispendida para cada função não "
+"é capturada. Para isto, seria necessário um perfilador de rastreamento para "
+"gravar com precisão. A porcentagem é calculada determinando a frequência que "
+"aquela função apareceu no rastreamento de pilha atual quando a amostra foi "
+"gravada."
+
+#. (itstool) path: section/p
+#: C/profiling.page:121
+msgid ""
+"After selecting a function from the functions list, all of the recorded "
+"callers of that function will be displayed on the bottom left. They are also "
+"sorted by the percentage of samples that included that function in the "
+"stacktrace."
+msgstr ""
+"Após selecionar uma função a partir da lista de funções, todos os chamadores "
+"gravados daquela função serão exibidos no canto inferior esquerdo. Eles "
+"também são ordenados pela porcentagem de amostras, o que inclui aquela "
+"função no rastreamento de pilha."
+
+#. (itstool) path: section/p
+#: C/profiling.page:126
+msgid ""
+"On the right, are all of the decendants of a selected function. You can "
+"select a function either from the functions list, or the callers list."
+msgstr ""
+"Na direita, estão todos os descendentes de uma função selecionada. Você pode "
+"selecionar uma função da lista de funções ou da lista de chamadores."
+
+#. (itstool) path: section/p
+#: C/profiling.page:129
+msgid ""
+"You can jump into a function by activating a row in the tree of descendants "
+"with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
+msgstr ""
+"Você pode se adentrar em uma função ao ativar uma linha na árvore de "
+"descendentes com um clique duplo ou pressionando <key>Enter</key> ou <key>"
+"Barra de espaço</key>."
+
+#. (itstool) path: note/p
+#: C/profiling.page:133
+msgid ""
+"If you see <em>- - kernel - -</em> in your results, that means that the "
+"application transitioned into or from the Linux kernel. There can be many "
+"reasons for this such as a <em>syscall</em> or <em>signal</em>."
+msgstr ""
+"Se você vê <em>- - kernel - -</em> em seus resultados, significa que um "
+"aplicativo com transição para o ou do kernel Linux. Há muitos motivos para "
+"isto, tal como uma <em>chamada do sistema</em> ou <em>sinal</em>."
+
+#. (itstool) path: p/link
+#: C/legal.xml:5
+msgid "Creative Commons Attribution-ShareAlike 4.0 International"
+msgstr "Creative Commons Atribuição Compartilhada Igual 4.0 Internacional"
+
+#. (itstool) path: license/p
+#: C/legal.xml:4
+msgid "This work is licensed under a <_:link-1/> license."
+msgstr "Este trabalho está licenciado sob uma licença <_:link-1/>."
+
+#. (itstool) path: license/p
+#: C/legal.xml:8
+msgid ""
+"As a special exception, the copyright holders give you permission to copy, "
+"modify, and distribute the example code contained in this documentation "
+"under the terms of your choosing, without restriction."
+msgstr ""
+"Como uma exceção especial, os mantenedores do copyright dão a você permissão "
+"para copiar, modificar e distribuir o código exemplo contido nesta "
+"documentação sob os termos de sua escolha, sem restrição."

@@ -13,6 +13,6 @@ HELP_FILES = \
 	legal.xml
 
 # Translated languages
-HELP_LINGUAS = de
+HELP_LINGUAS = de pt_BR
 
 -include $(top_srcdir)/git.mk

@@ -186,7 +186,7 @@ msgstr ""
 #: lib/sp-callgraph-profile.c:318
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr ""
-"Sysprof não foi capaz de gerar um gráfico de chamada da captura do sistema."
+"Sysprof não foi capaz de gerar um gráfico de chamadas da captura do sistema."
 
 #: lib/sp-perf-source.c:335
 #, c-format

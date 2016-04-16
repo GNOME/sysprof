@@ -212,6 +212,11 @@ sp_window_build_profile_cb (GObject      *object,
 
   sp_callgraph_view_set_profile (self->callgraph_view, SP_CALLGRAPH_PROFILE (profile));
   sp_window_set_state (self, SP_WINDOW_STATE_BROWSING);
+
+  if (sp_callgraph_view_get_n_functions (self->callgraph_view) == 0)
+    sp_window_notify_user (self,
+                           GTK_MESSAGE_WARNING,
+                           _("Not enough samples were collected to generate a callgraph"));
 }
 
 static void

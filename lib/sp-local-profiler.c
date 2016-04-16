@@ -19,10 +19,10 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <errno.h>
-#include <sys/syscall.h>
 #include <unistd.h>
 
 #include "sp-local-profiler.h"
+#include "sp-platform.h"
 
 typedef struct
 {
@@ -467,7 +467,7 @@ sp_local_profiler_start (SpProfiler *profiler)
       SpCaptureWriter *writer;
       int fd;
 
-      if ((-1 == (fd = syscall (__NR_memfd_create, "[sysprof]", 0))) ||
+      if ((-1 == (fd = sp_memfd_create ("[sysprof]"))) ||
           (NULL == (writer = sp_capture_writer_new_from_fd (fd, 0))))
         {
           const GError error = {

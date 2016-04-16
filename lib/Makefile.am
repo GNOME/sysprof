@@ -87,6 +87,8 @@ libsysprof_@API_VERSION@_la_SOURCES = \
 	sp-perf-counter.c \
 	sp-perf-counter.h \
 	sp-perf-source.c \
+	sp-platform.c \
+	sp-platform.h \
 	sp-proc-source.c \
 	sp-profile.c \
 	sp-profiler.c \

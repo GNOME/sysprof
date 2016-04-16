@@ -1001,3 +1001,18 @@ sp_callgraph_view_screenshot (SpCallgraphView *self)
 
   return g_string_free (str, FALSE);
 }
+
+guint
+sp_callgraph_view_get_n_functions (SpCallgraphView *self)
+{
+  SpCallgraphViewPrivate *priv = sp_callgraph_view_get_instance_private (self);
+  GtkTreeModel *model;
+  guint ret = 0;
+
+  g_return_val_if_fail (SP_IS_CALLGRAPH_VIEW (self), 0);
+
+  if (NULL != (model = gtk_tree_view_get_model (priv->functions_view)))
+    ret = gtk_tree_model_iter_n_children (model, NULL);
+
+  return ret;
+}

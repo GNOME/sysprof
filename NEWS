@@ -1,0 +1,89 @@
+Overview of changes in Sysprof 3.20.0
+=====================================
+
+Sysprof 3.20.0 is a major rewrite of the sysprof internals.
+
+ * The GTK+ user interface has been ported to GTK+ 3, and includes
+   the use of modern GTK+ patterns, including GtkHeaderBar.
+
+ * A new library, libsysprof-2 has been created, which contains the
+   internals for implementing a Linux perf-based profiler.
+
+ * A new library, libsysprof-ui-2 has been created, which can be used by
+   IDEs to provide profiling capabilities. GNOME Builder is expected to
+   take advantage of this.
+
+ * Sysprof uses a new binary capture format, to allow for collecting
+   more types of data than simply Perf callchain information.
+
+ * Data collection sources have been abstracted, allowing for new types
+   of data collection to occur. Additionally, it is now possible to port
+   Sysprof to other operating systems if contributors are found to
+   implement those features. As before, Sysprof is currently supported
+   on Linux, where the perf_event_open syscall is available.
+
+ * The sysprof capture format supports information from JITd languages.
+   Patches to Gjs (GNOME's wrapper around mozjs24) exist that can export
+   JIT information from the JavaScript engine.
+
+ * Sysprof now supports launching an application as part of the
+   profiling process.
+
+ * Sysprof can attach to one-or-more existing processes to collect
+   profiling information. This still uses the Linux perf infrastructure,
+   which means sampling is still performed.
+
+ * The user interface provides a stopwatch for the amount of time that
+   has elapsed since recording started. If you find that the sysprof UI
+   shows up in your capture, we suggest using sysprof-cli to collect
+   samples.
+
+ * The Sysprof UI provides tags next to common GNOME libraries used in
+   the GNOME stack to allow users to quickly identify libraries that
+   may not have fully-qualified symbol names.
+
+ * The binutils based demanger has been removed in favor of
+   abi::__cxx_demangle() function. This fixes modern C++ demangling
+   and vastly simplifies the Sysprof codebase. However, it does require
+   a C++ compiler and linker to build Sysprof. Applications using
+   libsysprof-2 and libsysprof-ui-2 do not require a C++ compiler.
+
+ * Sysprof now provides a D-Bus service, sysprofd, which can perform
+   elevated perf_event_open syscalls on behalf of the user interface
+   after appropriate authorization. Polkit is used to perform the
+   authorization. This service requires sd-bus from systemd 222 and
+   newer. If you choose not to use this service, or do not have
+   systemd on your system, you will have to perform system-wide
+   captures as root, either via the UI, or via sysprof-cli.
+
+ * sysprof-cli now supports executing a command with the -c option.
+
+ * A new mimetype for *.syscap is installed to allow opening capture
+   files from Nautilus or other file-managers.
+
+ * The sysprof artwork has been updated.
+
+ * Sysprof can now be translated using GNOME's i18n and l10n
+   infrastructure.
+
+ * Sysprof now comes with a modest help manual which can be viewed with
+   the Yelp documentation browser.
+
+ * New code in sysprof has been licensed under the GPLv3 or newer.
+
+Translations
+
+ * Brazilian Portuguese by Rafael Fontenelle
+ * German by Mario Blättermann
+ * Polish by Piotr Drąg
+ * Serbian by Мирослав Николић
+
+It is worth noting that Sysprof is still a sampling based profiler.
+However, it should now be possible to extend sysprof to support tracing
+via callgrind. If you are interested in helping on this effort, please
+let us know and we can help you get started.
+
+Happy Perf Hunting,
+
+-- Christian Hergert <christian@hergert.me>
+

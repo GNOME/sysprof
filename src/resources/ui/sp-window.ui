@@ -5,11 +5,11 @@
     <property name="default-width">1200</property>
     <property name="icon-name">sysprof</property>
     <property name="show-menubar">false</property>
-    <property name="title" translatable="yes">Sysprof</property>
     <child type="titlebar">
       <object class="GtkHeaderBar">
         <property name="show-close-button">true</property>
         <property name="visible">true</property>
+        <property name="title" translatable="yes">Sysprof</property>
         <child type="title">
           <object class="GtkBox">
             <property name="orientation">vertical</property>

@@ -35,6 +35,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 #include <errno.h>
@@ -292,9 +296,12 @@ sp_perf_source_start_pid (SpPerfSource  *self,
   attr.comm = 1;
   attr.task = 1;
   attr.exclude_idle = 1;
+  attr.sample_id_all = 1;
+
+#if HAVE_PERF_CLOCKID
   attr.clockid = sp_clock;
   attr.use_clockid = 1;
-  attr.sample_id_all = 1;
+#endif
 
   attr.size = sizeof attr;
 

@@ -80,6 +80,16 @@ GOBJECT_INTROSPECTION_CHECK([1.42.0])
 VAPIGEN_CHECK
 
 
+
+dnl ***********************************************************************
+dnl Check for recent perf improvements
+dnl ***********************************************************************
+AC_CHECK_MEMBERS([struct perf_event_attr.use_clockid, struct perf_event_attr.clockid],
+                 [AC_DEFINE([HAVE_PERF_CLOCKID],[1],[Define if perf supports clockid])],
+                 [],
+                 [[#include <linux/perf_event.h>]])
+
+
 dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************

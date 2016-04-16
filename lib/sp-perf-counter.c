@@ -35,6 +35,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <errno.h>
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
@@ -650,7 +654,10 @@ sp_perf_counter_open (SpPerfCounter          *self,
 			"("
 				"["
 					"{'comm', <%b>},"
+#if HAVE_PERF_CLOCKID
 					"{'clockid', <%i>},"
+					"{'use_clockid', <%b>},"
+#endif
 					"{'config', <%t>},"
 					"{'disabled', <%b>},"
 					"{'exclude_idle', <%b>},"
@@ -660,15 +667,17 @@ sp_perf_counter_open (SpPerfCounter          *self,
 					"{'sample_period', <%t>},"
 					"{'sample_type', <%t>},"
 					"{'task', <%b>},"
-					"{'type', <%u>},"
-					"{'use_clockid', <%b>}"
+					"{'type', <%u>}"
 				"],"
 				"%i,"
 				"%i,"
 				"%t"
 			")",
       (gboolean)!!attr->comm,
+#if HAVE_PERF_CLOCKID
       (gint32)attr->clockid,
+      (gboolean)!!attr->use_clockid,
+#endif
       (guint64)attr->config,
       (gboolean)!!attr->disabled,
       (gboolean)!!attr->exclude_idle,
@@ -679,7 +688,6 @@ sp_perf_counter_open (SpPerfCounter          *self,
       (guint64)attr->sample_type,
       (gboolean)!!attr->task,
       (guint32)attr->type,
-      (gboolean)!!attr->use_clockid,
       (gint32)pid,
       (gint32)cpu,
       (guint64)flags);

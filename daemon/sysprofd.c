@@ -16,6 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <assert.h>
 #include <stdio.h>
 #include <errno.h>
@@ -228,10 +232,6 @@ sysprofd_perf_event_open (sd_bus_message *msg,
   else if (r == 0)
     return -EACCES;
 
-  if (!use_clockid || clockid < 0)
-    clockid = CLOCK_MONOTONIC_RAW;
-
-  attr.clockid = clockid;
   attr.comm = !!comm;
   attr.config = config;
   attr.disabled = disabled;
@@ -242,8 +242,15 @@ sysprofd_perf_event_open (sd_bus_message *msg,
   attr.sample_type = sample_type;
   attr.task = !!task;
   attr.type = type;
-  attr.use_clockid = use_clockid;
   attr.wakeup_events = wakeup_events;
+
+#if HAVE_PERF_CLOCKID
+  if (!use_clockid || clockid < 0)
+    attr.clockid = CLOCK_MONOTONIC_RAW;
+  else
+    attr.clockid = clockid;
+  attr.use_clockid = use_clockid;
+#endif
 
   attr.size = sizeof attr;
 

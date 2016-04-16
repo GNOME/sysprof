@@ -1,12 +1,15 @@
+GtkPopover GtkListBox GtkListBoxRow,
 popover list row {
   padding: 6px 10px 6px 10px;
   border-bottom: 1px solid alpha(@borders, 0.2);
 }
 
+GtkPopover GtkListBox GtkListBoxRow:last-child,
 popover list row:last-child {
   border-bottom: none;
 }
 
+GtkPopover SpScrolledWindow,
 popover scrolledwindow {
   border-top: 1px solid alpha(@borders, 0.75);
 }

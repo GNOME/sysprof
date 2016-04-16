@@ -68,6 +68,13 @@ enum {
   N_PROPS
 };
 
+static void sp_profiler_menu_button_env_row_changed (SpProfilerMenuButton *self,
+                                                     GtkTreePath          *tree_path,
+                                                     GtkTreeIter          *tree_iter,
+                                                     gpointer              user_data);
+static void sp_profiler_menu_button_validate_spawn  (SpProfilerMenuButton *self,
+                                                     GtkEntry             *entry);
+
 static GParamSpec *properties [N_PROPS];
 
 GtkWidget *
@@ -212,6 +219,9 @@ sp_profiler_menu_button_connect (SpProfilerMenuButton *self)
                              G_CONNECT_SWAPPED);
 
   sp_profiler_menu_button_update_label (self);
+
+  sp_profiler_menu_button_validate_spawn (self, priv->spawn_entry);
+  sp_profiler_menu_button_env_row_changed (self, NULL, NULL, NULL);
 }
 
 static void
@@ -604,16 +614,15 @@ sp_profiler_menu_button_class_init (SpProfilerMenuButtonClass *klass)
 static void
 sp_profiler_menu_button_env_row_changed (SpProfilerMenuButton *self,
                                          GtkTreePath          *tree_path,
-                                         GtkTreeIter          *iter,
+                                         GtkTreeIter          *tree_iter,
                                          gpointer              user_data)
 {
   SpProfilerMenuButtonPrivate *priv = sp_profiler_menu_button_get_instance_private (self);
   g_autoptr(GPtrArray) env = NULL;
   GtkTreeModel *model;
+  GtkTreeIter iter;
 
   g_assert (SP_IS_PROFILER_MENU_BUTTON (self));
-  g_assert (tree_path != NULL);
-  g_assert (iter != NULL);
 
   /* queue saving settings to gsettings */
   if (priv->save_env_source)
@@ -623,14 +632,14 @@ sp_profiler_menu_button_env_row_changed (SpProfilerMenuButton *self,
   /* sync the environ to the profiler */
   env = g_ptr_array_new_with_free_func (g_free);
   model = gtk_tree_view_get_model (priv->env_tree_view);
-  if (gtk_tree_model_get_iter_first (model, iter))
+  if (gtk_tree_model_get_iter_first (model, &iter))
     {
       do
         {
           g_autofree gchar *key = NULL;
           g_autofree gchar *value = NULL;
 
-          gtk_tree_model_get (model, iter,
+          gtk_tree_model_get (model, &iter,
                               0, &key,
                               1, &value,
                               -1);
@@ -638,7 +647,7 @@ sp_profiler_menu_button_env_row_changed (SpProfilerMenuButton *self,
           if (key && *key)
             g_ptr_array_add (env, g_strdup_printf ("%s=%s", key, value));
         }
-      while (gtk_tree_model_iter_next (model, iter));
+      while (gtk_tree_model_iter_next (model, &iter));
     }
   g_ptr_array_add (env, NULL);
   sp_profiler_set_spawn_env (priv->profiler, (const gchar * const *)env->pdata);

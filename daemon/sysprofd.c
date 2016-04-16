@@ -244,7 +244,7 @@ sysprofd_perf_event_open (sd_bus_message *msg,
   attr.type = type;
   attr.wakeup_events = wakeup_events;
 
-#if HAVE_PERF_CLOCKID
+#ifdef HAVE_PERF_CLOCKID
   if (!use_clockid || clockid < 0)
     attr.clockid = CLOCK_MONOTONIC_RAW;
   else

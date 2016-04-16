@@ -298,7 +298,7 @@ sp_perf_source_start_pid (SpPerfSource  *self,
   attr.exclude_idle = 1;
   attr.sample_id_all = 1;
 
-#if HAVE_PERF_CLOCKID
+#ifdef HAVE_PERF_CLOCKID
   attr.clockid = sp_clock;
   attr.use_clockid = 1;
 #endif

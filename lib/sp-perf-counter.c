@@ -654,7 +654,7 @@ sp_perf_counter_open (SpPerfCounter          *self,
 			"("
 				"["
 					"{'comm', <%b>},"
-#if HAVE_PERF_CLOCKID
+#ifdef HAVE_PERF_CLOCKID
 					"{'clockid', <%i>},"
 					"{'use_clockid', <%b>},"
 #endif
@@ -674,7 +674,7 @@ sp_perf_counter_open (SpPerfCounter          *self,
 				"%t"
 			")",
       (gboolean)!!attr->comm,
-#if HAVE_PERF_CLOCKID
+#ifdef HAVE_PERF_CLOCKID
       (gint32)attr->clockid,
       (gboolean)!!attr->use_clockid,
 #endif

@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <glib.h>
+#include <glib/gstdio.h>
 #include <sys/syscall.h>
 #include <unistd.h>
 

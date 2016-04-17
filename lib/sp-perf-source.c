@@ -460,8 +460,11 @@ sp_perf_source_authorize_cb (GObject      *object,
 
   if (!sp_perf_counter_authorize_finish (result, &error))
     {
-      sp_source_emit_failed (SP_SOURCE (self), error);
-      return;
+      if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED))
+        {
+          sp_source_emit_failed (SP_SOURCE (self), error);
+          return;
+        }
     }
 
   self->is_ready = TRUE;

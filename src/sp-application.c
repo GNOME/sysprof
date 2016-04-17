@@ -170,6 +170,11 @@ sysprof_about (GSimpleAction *action,
                          "website-label", _("Learn more about Sysprof"),
                          NULL);
 
+  g_signal_connect (dialog,
+                    "response",
+                    G_CALLBACK (gtk_widget_destroy),
+                    NULL);
+
   gtk_window_present (dialog);
 }
 

@@ -605,7 +605,7 @@ sp_perf_counter_authorize_async (GCancellable        *cancellable,
              sp_perf_counter_get_bus_cb,
              g_object_ref (task));
 #else
-  g_task_return_new_error (error,
+  g_task_return_new_error (task,
                            G_IO_ERROR,
                            G_IO_ERROR_NOT_SUPPORTED,
                            "Sysprofd is not supported in current configuration");

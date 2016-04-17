@@ -99,6 +99,7 @@ libsysprof_@API_VERSION@_la_SOURCES = \
 libsysprof_@API_VERSION@_la_CFLAGS = \
 	-I$(srcdir)/util \
 	$(GIO_CFLAGS) \
+	$(POLKIT_CFLAGS) \
 	$(WARN_CFLAGS) \
 	$(NULL)
 
@@ -106,6 +107,7 @@ libsysprof_@API_VERSION@_la_LIBADD = \
 	libutil.la \
 	-lstdc++ \
 	$(GIO_LIBS) \
+	$(POLKIT_LIBS) \
 	$(NULL)
 
 if ENABLE_SYSPROFD

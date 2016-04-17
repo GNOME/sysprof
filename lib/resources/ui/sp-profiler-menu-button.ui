@@ -45,9 +45,11 @@
         </child>
         <child>
           <object class="GtkBox">
+            <property name="width-request">425</property>
             <property name="visible">true</property>
             <property name="hexpand">true</property>
             <property name="margin">10</property>
+            <property name="spacing">12</property>
             <child type="center">
               <object class="GtkLabel">
                 <property name="hexpand">true</property>
@@ -76,28 +78,34 @@
             <property name="visible">true</property>
             <property name="border-width">10</property>
             <child>
-              <object class="GtkBox" id="processes_box">
-                <property name="orientation">vertical</property>
+              <object class="GtkBox">
+                <!-- box with single child is used so we can toggle visibility of the child -->
                 <property name="visible">true</property>
-                <style>
-                  <class name="linked"/>
-                </style>
                 <child>
-                  <object class="GtkEntry" id="process_filter_entry">
-                    <property name="placeholder-text" translatable="yes">Search</property>
+                  <object class="GtkBox" id="processes_box">
+                    <property name="orientation">vertical</property>
                     <property name="visible">true</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="SpScrolledWindow">
-                    <property name="min-content-width">100</property>
-                    <property name="max-content-width">400</property>
-                    <property name="max-content-height">450</property>
-                    <property name="shadow-type">in</property>
-                    <property name="visible">true</property>
+                    <style>
+                      <class name="linked"/>
+                    </style>
                     <child>
-                      <object class="GtkListBox" id="process_list_box">
+                      <object class="GtkEntry" id="process_filter_entry">
+                        <property name="placeholder-text" translatable="yes">Search</property>
                         <property name="visible">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="SpScrolledWindow">
+                        <property name="min-content-width">100</property>
+                        <property name="max-content-width">400</property>
+                        <property name="max-content-height">450</property>
+                        <property name="shadow-type">in</property>
+                        <property name="visible">true</property>
+                        <child>
+                          <object class="GtkListBox" id="process_list_box">
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>

@@ -203,7 +203,7 @@ sp_profiler_menu_button_connect (SpProfilerMenuButton *self)
 
   add_binding (&priv->list_sensitive_binding,
                priv->profiler, "whole-system",
-               priv->processes_box, "sensitive",
+               priv->processes_box, "visible",
                G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
 
   add_binding (&priv->inherit_binding,

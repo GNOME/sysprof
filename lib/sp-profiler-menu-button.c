@@ -779,7 +779,7 @@ sp_profiler_menu_button_validate_spawn (SpProfilerMenuButton *self,
 {
   SpProfilerMenuButtonPrivate *priv = sp_profiler_menu_button_get_instance_private (self);
   g_auto(GStrv) argv = NULL;
-  const gchar *icon_name = NULL;
+  g_autoptr(GError) error = NULL;
   const gchar *text;
   gint argc;
 
@@ -788,17 +788,22 @@ sp_profiler_menu_button_validate_spawn (SpProfilerMenuButton *self,
 
   text = gtk_entry_get_text (entry);
 
-  if (!g_shell_parse_argv (text, &argc, &argv, NULL))
+  if (text && *text && !g_shell_parse_argv (text, &argc, &argv, &error))
     {
-      icon_name = "dialog-warning-symbolic";
       sp_profiler_set_spawn_argv (priv->profiler, NULL);
+      g_object_set (entry,
+                    "secondary-icon-name", "dialog-warning-symbolic",
+                    "secondary-icon-tooltip-text", _("The command line arguments provided are invalid"),
+                    NULL);
     }
   else
-    sp_profiler_set_spawn_argv (priv->profiler, (const gchar * const *)argv);
-
-  gtk_entry_set_icon_from_icon_name (entry,
-                                     GTK_ENTRY_ICON_SECONDARY,
-                                     icon_name);
+    {
+      sp_profiler_set_spawn_argv (priv->profiler, (const gchar * const *)argv);
+      g_object_set (entry,
+                    "secondary-icon-name", NULL,
+                    "secondary-icon-tooltip-text", NULL,
+                    NULL);
+    }
 }
 
 static void

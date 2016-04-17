@@ -128,6 +128,7 @@
                 </child>
                 <child>
                   <object class="GtkEntry" id="spawn_entry">
+                    <property name="secondary-icon-activatable">false</property>
                     <property name="visible">true</property>
                   </object>
                 </child>

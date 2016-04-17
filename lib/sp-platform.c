@@ -57,7 +57,7 @@ sp_memfd_create (const gchar *name)
   if (name_used != NULL)
     {
       g_unlink (name_used);
-      g_free (name_used)
+      g_free (name_used);
     }
 
   return fd;

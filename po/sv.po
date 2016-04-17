@@ -1,0 +1,384 @@
+# Swedish translation for sysprof.
+# Copyright © 2016 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=sysprof&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2016-04-17 01:59+0000\n"
+"PO-Revision-Date: 2016-04-17 22:04+0200\n"
+"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.7.1\n"
+
+#: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:167
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof2.desktop:5
+msgid "Profiler"
+msgstr "Profilerare"
+
+#: data/org.gnome.Sysprof2.desktop:6
+msgid "Profile an application or entire system."
+msgstr "Profilera ett program eller hela systemet."
+
+#: data/org.gnome.Sysprof2.desktop:9
+msgid "sysprof"
+msgstr "sysprof"
+
+#: data/org.gnome.sysprof2.gschema.xml:5
+msgid "Window size"
+msgstr "Fönsterstorlek"
+
+#: data/org.gnome.sysprof2.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "Fönsterstorlek (bredd och höjd)."
+
+#: data/org.gnome.sysprof2.gschema.xml:10
+msgid "Window position"
+msgstr "Fönsterposition"
+
+#: data/org.gnome.sysprof2.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "Fönsterposition (x och y)."
+
+#: data/org.gnome.sysprof2.gschema.xml:15
+msgid "Window maximized"
+msgstr "Fönster maximerat"
+
+#: data/org.gnome.sysprof2.gschema.xml:16
+msgid "Window maximized state"
+msgstr "Maximerat tillstånd för fönster"
+
+#: data/org.gnome.sysprof2.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr "Senast startade program"
+
+#: data/org.gnome.sysprof2.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+"Det senast startade programmet, vilket kommer ställas in i "
+"användargränssnittet då programmet startas om."
+
+#: data/org.gnome.sysprof2.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr "Senast startad ärver miljö"
+
+#: data/org.gnome.sysprof2.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr "Om den senast startade miljön ärver den överordnade miljön."
+
+#: data/org.gnome.sysprof2.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr "Senast startade miljö"
+
+#: data/org.gnome.sysprof2.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+"Den senast startade miljön, vilken kommer ställas in i användargränssnittet "
+"då programmet startas om."
+
+#: lib/resources/ui/sp-callgraph-view.ui:24
+msgid "Functions"
+msgstr "Funktioner"
+
+#: lib/resources/ui/sp-callgraph-view.ui:40
+#: lib/resources/ui/sp-callgraph-view.ui:101
+#: lib/resources/ui/sp-callgraph-view.ui:164
+msgid "Self"
+msgstr "Själv"
+
+#: lib/resources/ui/sp-callgraph-view.ui:56
+#: lib/resources/ui/sp-callgraph-view.ui:117
+msgid "Total"
+msgstr "Totalt"
+
+#: lib/resources/ui/sp-callgraph-view.ui:85
+msgid "Callers"
+msgstr "Anropare"
+
+#: lib/resources/ui/sp-callgraph-view.ui:148
+msgid "Descendants"
+msgstr "Ättlingar"
+
+#: lib/resources/ui/sp-callgraph-view.ui:180
+msgid "Cumulative"
+msgstr "Kumulativt"
+
+#: lib/resources/ui/sp-empty-state-view.ui:22
+msgid "Welcome to Sysprof"
+msgstr "Välkommen till Sysprof"
+
+#: lib/resources/ui/sp-empty-state-view.ui:39
+msgid "Start profiling your system with the <b>Record</b> button above"
+msgstr "Börja profilera ditt system med knappen <b>Spela in</b> ovan"
+
+#: lib/resources/ui/sp-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "Aj, det där gjorde ont!"
+
+#: lib/resources/ui/sp-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr "Något gick oväntat fel då ditt system skulle profileras."
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:56
+msgid "Profile my _entire system"
+msgstr "Profilera _hela mitt system"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:93
+msgid "Search"
+msgstr "Sök"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:117
+msgid "Existing Process"
+msgstr "Befintlig process"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:127
+msgid "Command Line"
+msgstr "Kommandorad"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:146
+msgid "Environment"
+msgstr "Miljö"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:160
+msgid "Inherit current environment"
+msgstr "Ärv aktuell miljö"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:178
+msgid "Key"
+msgstr "Nyckel"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:193
+msgid "Value"
+msgstr "Värde"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:211
+#: lib/sp-profiler-menu-button.c:116
+msgid "New Process"
+msgstr "Ny process"
+
+#: lib/resources/ui/sp-recording-state-view.ui:22
+msgid "00:00"
+msgstr "00:00"
+
+#: lib/resources/ui/sp-recording-state-view.ui:39
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"Visste du att du kan använda <a href=\"help:sysprof\">sysprof-cli</a> för "
+"att spela in?"
+
+#: lib/sp-callgraph-profile.c:318
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "Sysprof kunde inte skapa en anropsgraf från systemfångsten."
+
+#: lib/sp-perf-source.c:342
+#, c-format
+msgid ""
+"Sysprof requires authorization to access your computers performance counters."
+msgstr ""
+"Sysprof kräver autentisering för att komma åt din dators prestandaräknare."
+
+#: lib/sp-perf-source.c:347
+#, c-format
+msgid "An error occurred while attempting to access performance counters: %s"
+msgstr "Ett fel uppstod vid försök att komma åt prestandaräknare: %s"
+
+#: lib/sp-profiler-menu-button.c:114 lib/sp-profiler-menu-button.c:129
+msgid "All Processes"
+msgstr "Alla processer"
+
+#: lib/sp-profiler-menu-button.c:135
+#, c-format
+msgid "Process %d"
+msgstr "Process %d"
+
+#: lib/sp-profiler-menu-button.c:140
+#, c-format
+msgid "%u Processes"
+msgstr "%u processer"
+
+#: lib/sp-profiler-menu-button.c:796
+msgid "The command line arguments provided are invalid"
+msgstr "Kommandoradsargumenten som tillhandahölls är ogiltiga"
+
+#: src/resources/gtk/menus.ui:6
+msgid "_New Window"
+msgstr "_Nytt fönster"
+
+#: src/resources/gtk/menus.ui:12
+msgid "_Open Capture"
+msgstr "Ö_ppna fångst"
+
+#: src/resources/gtk/menus.ui:18
+msgid "About"
+msgstr "Om"
+
+#: src/resources/gtk/menus.ui:22
+msgid "Help"
+msgstr "Hjälp"
+
+#: src/resources/gtk/menus.ui:26
+msgid "_Quit"
+msgstr "A_vsluta"
+
+#: src/resources/gtk/menus.ui:34 src/sp-window.c:930
+msgid "Open"
+msgstr "Öppna"
+
+#: src/resources/gtk/menus.ui:40
+msgid "Save As"
+msgstr "Spara som"
+
+#: src/resources/gtk/menus.ui:46
+msgid "Screenshot"
+msgstr "Skärmbild"
+
+#: src/resources/gtk/menus.ui:52
+msgid "Close"
+msgstr "Stäng"
+
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:281
+msgid "Not running"
+msgstr "Kör inte"
+
+#: src/resources/ui/sp-window.ui:44
+msgid "_Record"
+msgstr "_Spela in"
+
+#: src/resources/ui/sp-window.ui:116
+msgid "_Close"
+msgstr "S_täng"
+
+#: src/sp-application.c:160
+msgid "A system profiler"
+msgstr "En systemprofilerare"
+
+#: src/sp-application.c:164
+msgid "translator-credits"
+msgstr ""
+"Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
+"Skicka synpunkter på översättningen till\n"
+"<tp-sv@listor.tp-sv.se>."
+
+#: src/sp-application.c:170
+msgid "Learn more about Sysprof"
+msgstr "Lär dig mer om Sysprof"
+
+#: src/sp-window.c:139
+#, c-format
+msgid "Samples: %u"
+msgstr "Samplingar: %u"
+
+#: src/sp-window.c:172
+msgid "[Memory Capture]"
+msgstr "[Minnesfångst]"
+
+#: src/sp-window.c:185
+#, c-format
+msgid "%s - %s"
+msgstr "%s - %s"
+
+#: src/sp-window.c:219
+msgid "Not enough samples were collected to generate a callgraph"
+msgstr ""
+"Har inte samlat tillräckligt många samplingar för att skapa en anropsgraf"
+
+#: src/sp-window.c:273 src/sp-window.c:317
+msgid "Record"
+msgstr "Spela in"
+
+#: src/sp-window.c:293
+msgid "Stop"
+msgstr "Stoppa"
+
+#: src/sp-window.c:298
+msgid "Recording…"
+msgstr "Spelar in…"
+
+#: src/sp-window.c:309
+msgid "Building profile…"
+msgstr "Bygger profil…"
+
+#. SpProfiler::stopped will move us to generating
+#: src/sp-window.c:385
+msgid "Stopping…"
+msgstr "Stoppar…"
+
+#: src/sp-window.c:552
+msgid "Save Capture As"
+msgstr "Spara fångst som"
+
+#: src/sp-window.c:555 src/sp-window.c:929
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: src/sp-window.c:556
+msgid "Save"
+msgstr "Spara"
+
+#: src/sp-window.c:588
+#, c-format
+msgid "An error occurred while attempting to save your capture: %s"
+msgstr "Ett fel uppstod vid försök att spara din fångst: %s"
+
+#: src/sp-window.c:896
+#, c-format
+msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgstr "Filen ”%s” kunde inte öppnas. Endast lokala filer stöds."
+
+#: src/sp-window.c:924
+msgid "Open Capture"
+msgstr "Öppna fångst"
+
+#: src/sp-window.c:936
+msgid "Sysprof Captures"
+msgstr "Sysprof-fångster"
+
+#: src/sp-window.c:941
+msgid "All Files"
+msgstr "Alla filer"
+
+#: tools/sysprof-cli.c:95
+msgid "Make sysprof specific to a task"
+msgstr "Gör sysprof specifik för en uppgift"
+
+#: tools/sysprof-cli.c:95
+msgid "PID"
+msgstr "PID"
+
+#: tools/sysprof-cli.c:96
+msgid "Run a command and profile the process"
+msgstr "Kör ett kommando och profilera processen"
+
+#: tools/sysprof-cli.c:96
+msgid "COMMAND"
+msgstr "KOMMANDO"
+
+#: tools/sysprof-cli.c:97
+msgid "Print the sysprof-cli version and exit"
+msgstr "Skriv ut version för sysprof-cli och avsluta"
+
+#: tools/sysprof-cli.c:103
+msgid "[CAPTURE_FILE] - Sysprof"
+msgstr "[FÅNGSTFIL] - Sysprof"
+
+#: tools/sysprof-cli.c:122
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "För många argument skickades till sysprof-cli:"

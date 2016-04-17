@@ -122,7 +122,7 @@ G_DEFINE_BOXED_TYPE (SpPerfCounter,
                      (GBoxedCopyFunc)sp_perf_counter_ref,
                      (GBoxedFreeFunc)sp_perf_counter_unref)
 
-#if ENABLE_SYSPROFD
+#ifdef ENABLE_SYSPROFD
 static GDBusConnection *shared_conn;
 #endif
 
@@ -596,7 +596,7 @@ sp_perf_counter_authorize_async (GCancellable        *cancellable,
 
   task = g_task_new (NULL, cancellable, callback, user_data);
 
-#if ENABLE_SYSPROFD
+#ifdef ENABLE_SYSPROFD
   g_bus_get (G_BUS_TYPE_SYSTEM,
              cancellable,
              sp_perf_counter_get_bus_cb,

@@ -22,6 +22,7 @@ typedef struct
 {
   SpProcessModelItem *item;
 
+  GtkLabel *args_label;
   GtkLabel *label;
   GtkLabel *pid;
   GtkImage *image;
@@ -71,11 +72,19 @@ sp_process_model_row_set_item (SpProcessModelRow  *self,
       const gchar *command_line;
       g_auto(GStrv) parts = NULL;
       g_autofree gchar *pidstr = NULL;
+      const gchar * const *argv;
       GPid pid;
 
       command_line = sp_process_model_item_get_command_line (item);
       parts = g_strsplit (command_line ?: "", "\n", 0);
       gtk_label_set_label (priv->label, parts [0]);
+
+      if ((NULL != (argv = sp_process_model_item_get_argv (item))) && (argv[0] != NULL))
+        {
+          g_autofree gchar *argvstr = g_strjoinv (" ", (gchar **)&argv[1]);
+
+          gtk_label_set_label (priv->args_label, argvstr);
+        }
 
       pid = sp_process_model_item_get_pid (item);
       pidstr = g_strdup_printf ("<small>%u</small>", pid);
@@ -109,6 +118,34 @@ sp_process_model_row_set_selected (SpProcessModelRow *self,
       gtk_widget_set_visible (GTK_WIDGET (priv->check), selected);
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_SELECTED]);
     }
+}
+
+static gboolean
+sp_process_model_row_query_tooltip (GtkWidget  *widget,
+                                    gint        x,
+                                    gint        y,
+                                    gboolean    keyboard_mode,
+                                    GtkTooltip *tooltip)
+{
+  SpProcessModelRow *self = (SpProcessModelRow *)widget;
+  SpProcessModelRowPrivate *priv = sp_process_model_row_get_instance_private (self);
+
+  g_assert (SP_IS_PROCESS_MODEL_ROW (self));
+  g_assert (GTK_IS_TOOLTIP (tooltip));
+
+  if (priv->item != NULL)
+    {
+      const gchar * const *argv = sp_process_model_item_get_argv (priv->item);
+
+      if (argv != NULL)
+        {
+          g_autofree gchar *str = g_strjoinv (" ", (gchar **)argv);
+          gtk_tooltip_set_text (tooltip, str);
+          return TRUE;
+        }
+    }
+
+  return FALSE;
 }
 
 static void
@@ -178,6 +215,8 @@ sp_process_model_row_class_init (SpProcessModelRowClass *klass)
   object_class->get_property = sp_process_model_row_get_property;
   object_class->set_property = sp_process_model_row_set_property;
 
+  widget_class->query_tooltip = sp_process_model_row_query_tooltip;
+
   properties [PROP_ITEM] =
     g_param_spec_object ("item",
                          "Item",
@@ -196,6 +235,7 @@ sp_process_model_row_class_init (SpProcessModelRowClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/org/gnome/sysprof/ui/sp-process-model-row.ui");
+  gtk_widget_class_bind_template_child_private (widget_class, SpProcessModelRow, args_label);
   gtk_widget_class_bind_template_child_private (widget_class, SpProcessModelRow, image);
   gtk_widget_class_bind_template_child_private (widget_class, SpProcessModelRow, label);
   gtk_widget_class_bind_template_child_private (widget_class, SpProcessModelRow, pid);
@@ -206,4 +246,6 @@ static void
 sp_process_model_row_init (SpProcessModelRow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_widget_set_has_tooltip (GTK_WIDGET (self), TRUE);
 }

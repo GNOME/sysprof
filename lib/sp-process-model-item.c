@@ -16,15 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include "sp-process-model-item.h"
 #include "sp-proc-source.h"
 
 struct _SpProcessModelItem
 {
-  GObject  parent_instance;
-  GPid     pid;
-  gchar   *command_line;
-  guint    is_kernel : 1;
+  GObject   parent_instance;
+  GPid      pid;
+  gchar    *command_line; /* Short version (first field) */
+  gchar   **argv;         /* Long version (argv as a strv) */
+  guint     is_kernel : 1;
 };
 
 G_DEFINE_TYPE (SpProcessModelItem, sp_process_model_item, G_TYPE_OBJECT)
@@ -44,6 +47,7 @@ sp_process_model_item_finalize (GObject *object)
   SpProcessModelItem *self = (SpProcessModelItem *)object;
 
   g_clear_pointer (&self->command_line, g_free);
+  g_clear_pointer (&self->argv, g_strfreev);
 
   G_OBJECT_CLASS (sp_process_model_item_parent_class)->finalize (object);
 }
@@ -189,3 +193,42 @@ sp_process_model_item_is_kernel (SpProcessModelItem *self)
 
   return self->is_kernel;
 }
+
+const gchar const * const *
+sp_process_model_item_get_argv (SpProcessModelItem *self)
+{
+  g_autofree gchar *contents = NULL;
+  g_autofree gchar *path = NULL;
+  const gchar *pos;
+  const gchar *endptr;
+  GPtrArray *ar;
+  gsize size = 0;
+  GPid pid;
+
+  g_return_val_if_fail (SP_IS_PROCESS_MODEL_ITEM (self), NULL);
+
+  if (self->argv)
+    return (const gchar * const *)self->argv;
+
+  if ((pid = sp_process_model_item_get_pid (self)) < 0)
+    return NULL;
+
+  path = g_strdup_printf ("/proc/%u/cmdline", (guint)pid);
+  if (!g_file_get_contents (path, &contents, &size, NULL))
+    return NULL;
+
+  ar = g_ptr_array_new ();
+
+  /* Each parameter is followed by \0 */
+  for (pos = contents, endptr = contents + size;
+       pos < endptr;
+       pos += strlen (pos) + 1)
+    g_ptr_array_add (ar, g_strdup (pos));
+  g_ptr_array_add (ar, NULL);
+
+  g_clear_pointer (&self->argv, g_strfreev);
+  self->argv = (gchar **)g_ptr_array_free (ar, FALSE);
+
+  return (const gchar * const *)self->argv;
+}
+

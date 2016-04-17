@@ -27,13 +27,14 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SpProcessModelItem, sp_process_model_item, SP, PROCESS_MODEL_ITEM, GObject)
 
-SpProcessModelItem *sp_process_model_item_new              (GPid                pid);
-guint               sp_process_model_item_hash             (SpProcessModelItem *self);
-gboolean            sp_process_model_item_equal            (SpProcessModelItem *self,
-                                                            SpProcessModelItem *other);
-GPid                sp_process_model_item_get_pid          (SpProcessModelItem *self);
-const gchar        *sp_process_model_item_get_command_line (SpProcessModelItem *self);
-gboolean            sp_process_model_item_is_kernel        (SpProcessModelItem *self);
+SpProcessModelItem  *sp_process_model_item_new              (GPid                pid);
+guint                sp_process_model_item_hash             (SpProcessModelItem *self);
+gboolean             sp_process_model_item_equal            (SpProcessModelItem *self,
+                                                             SpProcessModelItem *other);
+GPid                 sp_process_model_item_get_pid          (SpProcessModelItem *self);
+const gchar         *sp_process_model_item_get_command_line (SpProcessModelItem *self);
+gboolean             sp_process_model_item_is_kernel        (SpProcessModelItem *self);
+const gchar * const *sp_process_model_item_get_argv         (SpProcessModelItem *self);
 
 G_END_DECLS
 

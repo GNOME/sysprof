@@ -19,6 +19,17 @@
           </object>
         </child>
         <child>
+          <object class="GtkLabel" id="args_label">
+            <property name="hexpand">false</property>
+            <property name="visible">true</property>
+            <property name="ellipsize">end</property>
+            <property name="xalign">0.0</property>
+            <style>
+              <class name="dim-label"/>
+            </style>
+          </object>
+        </child>
+        <child>
           <object class="GtkImage" id="check">
             <property name="hexpand">false</property>
             <property name="icon-name">object-select-symbolic</property>

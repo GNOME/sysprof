@@ -42,12 +42,15 @@
 #include <errno.h>
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
-#include <polkit/polkit.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/syscall.h>
 #include <unistd.h>
+
+#ifdef ENABLE_SYSPROFD
+# include <polkit/polkit.h>
+#endif
 
 #include "sp-perf-counter.h"
 

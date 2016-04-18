@@ -379,14 +379,6 @@ sp_window_start_recording (SpWindow *self)
 {
   g_assert (SP_IS_WINDOW (self));
 
-  if (self->state == SP_WINDOW_STATE_RECORDING)
-    {
-      /* SpProfiler::stopped will move us to generating */
-      gtk_label_set_label (self->subtitle, _("Stopping…"));
-      sp_profiler_stop (self->profiler);
-      return;
-    }
-
   if ((self->state == SP_WINDOW_STATE_EMPTY) ||
       (self->state == SP_WINDOW_STATE_FAILED) ||
       (self->state == SP_WINDOW_STATE_BROWSING))
@@ -407,7 +399,16 @@ sp_window_stop_recording (SpWindow *self)
   if (self->state == SP_WINDOW_STATE_RECORDING)
     {
       if (self->profiler != NULL)
-        sp_profiler_stop (self->profiler);
+        {
+          /* SpProfiler::stopped will move us to generating */
+          gtk_label_set_label (self->subtitle, _("Stopping…"));
+          /*
+           * In case that ::stopped takes a while to execute,
+           * disable record button immediately.
+           */
+          gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), FALSE);
+          sp_profiler_stop (self->profiler);
+        }
     }
 }
 

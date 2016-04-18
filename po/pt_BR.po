@@ -5,10 +5,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=sysprof"
-"&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-04-16 01:11+0000\n"
-"PO-Revision-Date: 2016-04-16 08:02-0200\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=syspro"
+"f&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2016-04-17 00:40+0000\n"
+"PO-Revision-Date: 2016-04-18 09:44-0200\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -151,24 +151,24 @@ msgstr "Processo existente"
 msgid "Command Line"
 msgstr "Linha de comando"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:136
+#: lib/resources/ui/sp-profiler-menu-button.ui:137
 msgid "Environment"
 msgstr "Ambiente"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:150
+#: lib/resources/ui/sp-profiler-menu-button.ui:151
 msgid "Inherit current environment"
 msgstr "Herdar o ambiente atual"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:168
+#: lib/resources/ui/sp-profiler-menu-button.ui:169
 msgid "Key"
 msgstr "Chave"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:183
+#: lib/resources/ui/sp-profiler-menu-button.ui:184
 msgid "Value"
 msgstr "Valor"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:201
-#: lib/sp-profiler-menu-button.c:109
+#: lib/resources/ui/sp-profiler-menu-button.ui:202
+#: lib/sp-profiler-menu-button.c:116
 msgid "New Process"
 msgstr "Novo processo"
 
@@ -188,32 +188,36 @@ msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr ""
 "Sysprof não foi capaz de gerar um gráfico de chamadas da captura do sistema."
 
-#: lib/sp-perf-source.c:335
+#: lib/sp-perf-source.c:342
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
 msgstr ""
-"Sysprof requer autorização para acessar os contadores de desempenho dos seus "
+"Sysprof requer autorização para acessar os contadores de desempenho de seus "
 "computadores."
 
-#: lib/sp-perf-source.c:340
+#: lib/sp-perf-source.c:347
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Ocorreu um erro enquanto tentava acessar contadores de desempenho: %s"
 
-#: lib/sp-profiler-menu-button.c:107 lib/sp-profiler-menu-button.c:122
+#: lib/sp-profiler-menu-button.c:114 lib/sp-profiler-menu-button.c:129
 msgid "All Processes"
 msgstr "Todos processos"
 
-#: lib/sp-profiler-menu-button.c:128
+#: lib/sp-profiler-menu-button.c:135
 #, c-format
 msgid "Process %d"
 msgstr "Processo %d"
 
-#: lib/sp-profiler-menu-button.c:133
+#: lib/sp-profiler-menu-button.c:140
 #, c-format
 msgid "%u Processes"
 msgstr "%u processos"
+
+#: lib/sp-profiler-menu-button.c:796
+msgid "The command line arguments provided are invalid"
+msgstr "Os argumentos de linha de comando fornecidos são inválidos"
 
 #: src/resources/gtk/menus.ui:6
 msgid "_New Window"

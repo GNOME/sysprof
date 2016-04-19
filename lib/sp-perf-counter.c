@@ -247,7 +247,7 @@ sp_perf_counter_flush (SpPerfCounter     *self,
        * which means there will always be space for one header, which means we
        * can safely dereference the size field.
        */
-      header = (struct perf_event_header *)(info->data + (tail & mask));
+      header = (struct perf_event_header *)(gpointer)(info->data + (tail & mask));
 
       if (header->size > head - tail)
         {
@@ -275,7 +275,7 @@ sp_perf_counter_flush (SpPerfCounter     *self,
           memcpy (b, info->data + (tail & mask), n_before);
           memcpy (b + n_before, info->data, n_after);
 
-          header = (struct perf_event_header *)b;
+          header = (struct perf_event_header *)(gpointer)b;
         }
 
       if (header->type == PERF_RECORD_SAMPLE)

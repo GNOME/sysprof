@@ -214,7 +214,7 @@ sp_perf_source_handle_event (SpPerfCounterEvent *event,
         {
           g_hash_table_remove (self->pids, GINT_TO_POINTER (event->exit.pid));
 
-          if (self->running && (g_hash_table_size (self->pids) > 0))
+          if (self->running && (g_hash_table_size (self->pids) == 0))
             {
               self->running = FALSE;
               sp_perf_counter_disable (self->counter);

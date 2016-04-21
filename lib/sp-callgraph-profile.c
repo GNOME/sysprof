@@ -304,7 +304,7 @@ sp_callgraph_profile_generate_worker (GTask        *task,
 
       g_array_index (resolved, guint64, len++) = POINTER_TO_U64 ("[Everything]");
 
-      stack_stash_add_trace (resolved_stash, (SpAddress *)resolved->data, len, 1);
+      stack_stash_add_trace (resolved_stash, (SpAddress *)(gpointer)resolved->data, len, 1);
     }
 
   ret = TRUE;

@@ -171,6 +171,9 @@ guess_tag (SpElfSymbolResolver *self,
       else if (strstr (map->filename, "/libgdk-3."))
         tag = g_quark_from_static_string ("Gdk");
 
+      else if (strstr (map->filename, "/libgtksourceview-3.0"))
+        tag = g_quark_from_static_string ("GtkSourceView");
+
       else if (strstr (map->filename, "/libpixman-1"))
         tag = g_quark_from_static_string ("Pixman");
 

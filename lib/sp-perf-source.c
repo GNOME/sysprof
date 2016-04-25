@@ -43,8 +43,11 @@
 #include <glib/gi18n.h>
 #include <errno.h>
 #include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "sp-clock.h"
+#include "sp-line-reader.h"
 #include "sp-perf-counter.h"
 #include "sp-perf-source.h"
 
@@ -449,6 +452,15 @@ sp_perf_source_add_pid (SpSource *source,
 }
 
 static void
+sp_perf_source_emit_ready (SpPerfSource *self)
+{
+  g_assert (SP_IS_PERF_SOURCE (self));
+
+  self->is_ready = TRUE;
+  sp_source_emit_ready (SP_SOURCE (self));
+}
+
+static void
 sp_perf_source_authorize_cb (GObject      *object,
                              GAsyncResult *result,
                              gpointer      user_data)
@@ -467,9 +479,80 @@ sp_perf_source_authorize_cb (GObject      *object,
         }
     }
 
-  self->is_ready = TRUE;
+  sp_perf_source_emit_ready (self);
+}
 
-  sp_source_emit_ready (SP_SOURCE (self));
+static gboolean
+user_owns_pid (uid_t uid,
+               GPid  pid)
+{
+  g_autofree gchar *contents = NULL;
+  g_autofree gchar *path = NULL;
+  g_autoptr(SpLineReader) reader = NULL;
+  gchar *line;
+  gsize len;
+  gsize line_len;
+
+  path = g_strdup_printf ("/proc/%u/status", (guint)pid);
+
+  if (!g_file_get_contents (path, &contents, &len, NULL))
+    return FALSE;
+
+  reader = sp_line_reader_new (contents, len);
+
+  while (NULL != (line = (gchar *)sp_line_reader_next (reader, &line_len)))
+    {
+      if (g_str_has_prefix (line, "Uid:"))
+        {
+          g_auto(GStrv) parts = NULL;
+          guint i;
+
+          line[line_len] = '\0';
+          parts = g_strsplit (line, "\t", 0);
+
+          for (i = 1; parts[i]; i++)
+            {
+              gint64 v64;
+
+              v64 = g_ascii_strtoll (parts[i], NULL, 10);
+
+              if (v64 > 0 && v64 <= G_MAXUINT)
+                {
+                  if ((uid_t)v64 == uid)
+                    return TRUE;
+                }
+            }
+        }
+    }
+
+  return FALSE;
+}
+
+static gboolean
+sp_perf_source_needs_auth (SpPerfSource *self)
+{
+  GHashTableIter iter;
+  gpointer key;
+  uid_t uid;
+
+  g_assert (SP_IS_PERF_SOURCE (self));
+
+  if (g_hash_table_size (self->pids) == 0)
+    return TRUE;
+
+  uid = getuid ();
+
+  g_hash_table_iter_init (&iter, self->pids);
+
+  while (g_hash_table_iter_next (&iter, &key, NULL))
+    {
+      GPid pid = GPOINTER_TO_INT (key);
+
+      if (!user_owns_pid (uid, pid))
+        return TRUE;
+    }
+
+  return FALSE;
 }
 
 static void
@@ -479,9 +562,12 @@ sp_perf_source_prepare (SpSource *source)
 
   g_assert (SP_IS_PERF_SOURCE (self));
 
-  sp_perf_counter_authorize_async (NULL,
-                                   sp_perf_source_authorize_cb,
-                                   g_object_ref (self));
+  if (sp_perf_source_needs_auth (self))
+    sp_perf_counter_authorize_async (NULL,
+                                     sp_perf_source_authorize_cb,
+                                     g_object_ref (self));
+  else
+    sp_perf_source_emit_ready (self);
 }
 
 static gboolean

@@ -503,6 +503,27 @@ get_authorized_proxy (void)
   return NULL;
 }
 
+static void
+sp_perf_counter_ping_cb (GObject      *object,
+                         GAsyncResult *result,
+                         gpointer      user_data)
+{
+  GDBusProxy *proxy = (GDBusProxy *)object;
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(GVariant) ret = NULL;
+  GError *error = NULL;
+
+  g_assert (G_IS_DBUS_PROXY (proxy));
+  g_assert (G_IS_TASK (task));
+  g_assert (G_IS_ASYNC_RESULT (result));
+
+  ret = g_dbus_proxy_call_finish (proxy, result, &error);
+
+  if (error != NULL)
+    g_task_return_error (task, error);
+  else
+    g_task_return_boolean (task, TRUE);
+}
 
 static void
 sp_perf_counter_acquire_cb (GObject      *object,
@@ -511,6 +532,7 @@ sp_perf_counter_acquire_cb (GObject      *object,
 {
   g_autoptr(GTask) task = user_data;
   GPermission *permission = (GPermission *)object;
+  g_autoptr(GDBusProxy) proxy = NULL;
   GError *error = NULL;
 
   g_assert (G_IS_PERMISSION (permission));
@@ -523,7 +545,26 @@ sp_perf_counter_acquire_cb (GObject      *object,
       return;
     }
 
-  g_task_return_boolean (task, TRUE);
+  proxy = get_proxy ();
+
+  if (proxy == NULL)
+    {
+      /* We don't connect at startup, shouldn't happen */
+      g_task_return_new_error (task,
+                               G_IO_ERROR,
+                               G_IO_ERROR_FAILED,
+                               "Failed to create proxy");
+      return;
+    }
+
+  g_dbus_proxy_call (proxy,
+                     "org.freedesktop.DBus.Peer.Ping",
+                     NULL,
+                     G_DBUS_CALL_FLAGS_NONE,
+                     5000,
+                     g_task_get_cancellable (task),
+                     sp_perf_counter_ping_cb,
+                     g_object_ref (task));
 }
 
 static void

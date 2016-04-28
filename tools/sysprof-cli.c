@@ -58,18 +58,18 @@ static GSourceFuncs source_funcs = {
 };
 
 static void
-profiler_stopped (SpProfiler *profiler,
-                  GMainLoop  *main_loop)
+profiler_stopped (SpProfiler *profiler_,
+                  GMainLoop  *main_loop_)
 {
-  g_main_loop_quit (main_loop);
+  g_main_loop_quit (main_loop_);
 }
 
 static void
-profiler_failed (SpProfiler   *profiler,
+profiler_failed (SpProfiler   *profiler_,
                  const GError *reason,
-                 GMainLoop    *main_loop)
+                 GMainLoop    *main_loop_)
 {
-  g_assert (SP_IS_PROFILER (profiler));
+  g_assert (SP_IS_PROFILER (profiler_));
   g_assert (reason != NULL);
 
   g_printerr ("Failure: %s\n", reason->message);

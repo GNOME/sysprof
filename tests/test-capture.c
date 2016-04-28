@@ -226,7 +226,7 @@ test_reader_basic (void)
   for (i = 0; i < 1000; i++)
     {
       guint ids[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-      SpCaptureCounterValue values[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+      SpCaptureCounterValue values[10] = { {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10} };
 
       r = sp_capture_writer_set_counters (writer, t, -1,  -1, ids, values, G_N_ELEMENTS (values));
       g_assert_cmpint (r, ==, TRUE);

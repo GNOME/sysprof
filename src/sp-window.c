@@ -763,7 +763,6 @@ sp_window_class_init (SpWindowClass *klass)
 static void
 sp_window_init (SpWindow *self)
 {
-  GAction *action;
   static GActionEntry action_entries[] = {
     { "close-capture", sp_window_close_capture },
     { "open-capture",  sp_window_open_capture },

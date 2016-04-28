@@ -66,7 +66,6 @@ sysprofd_perf_event_open (sd_bus_message *msg,
 {
   struct perf_event_attr attr = { 0 };
   sd_bus_message *reply = NULL;
-  sd_bus_message *kvpair;
   uint64_t flags = 0;
   int disabled = 0;
   int32_t wakeup_events = 149;

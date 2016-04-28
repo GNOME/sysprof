@@ -8,9 +8,9 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-04-25 22:12+0000\n"
-"PO-Revision-Date: 2016-04-25 14:29+0200\n"
-"Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
+"POT-Creation-Date: 2016-04-28 11:00+0000\n"
+"PO-Revision-Date: 2016-04-28 23:01+0200\n"
+"Last-Translator: Gabor Kelemen <kelemeng at ubuntu dot com>\n"
 "Language-Team: Hungarian <openscope at gmail dot com>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
@@ -62,31 +62,35 @@ msgstr "Az ablak maximalizált állapota"
 
 #: data/org.gnome.sysprof2.gschema.xml:20
 msgid "Last Spawn Program"
-msgstr ""
+msgstr "Legutóbb indított program"
 
 #: data/org.gnome.sysprof2.gschema.xml:21
 msgid ""
 "The last spawned program, which will be set in the UI upon restart of the "
 "application."
 msgstr ""
+"A legutóbb indított program, amely az alkalmazás újraindításakor kerül "
+"beállításra a felületen."
 
 #: data/org.gnome.sysprof2.gschema.xml:25
 msgid "Last Spawn Inherit Environment"
-msgstr ""
+msgstr "Legutóbb indított örökli a környezetet"
 
 #: data/org.gnome.sysprof2.gschema.xml:26
 msgid "If the last spawned environment inherits the parent environment."
-msgstr ""
+msgstr "A legutóbb indított környezet örökli-e a szülőkörnyezetet."
 
 #: data/org.gnome.sysprof2.gschema.xml:30
 msgid "Last Spawn Environment"
-msgstr ""
+msgstr "Legutóbb indított környezet"
 
 #: data/org.gnome.sysprof2.gschema.xml:31
 msgid ""
 "The last spawned environment, which will be set in the UI upon restart of "
 "the application."
 msgstr ""
+"A legutóbb indított környezet, amely az alkalmazás újraindításakor kerül "
+"beállításra a felületen."
 
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
@@ -117,11 +121,11 @@ msgstr "Kumulatív"
 
 #: lib/resources/ui/sp-empty-state-view.ui:22
 msgid "Welcome to Sysprof"
-msgstr ""
+msgstr "Üdvözöljük a Sysprofban"
 
 #: lib/resources/ui/sp-empty-state-view.ui:39
 msgid "Start profiling your system with the <b>Record</b> button above"
-msgstr ""
+msgstr "Kezdje el a rendszer profilozását a fenti <b>Rögzítés</b> gombbal"
 
 #: lib/resources/ui/sp-failed-state-view.ui:22
 msgid "Ouch, that hurt!"
@@ -129,11 +133,11 @@ msgstr "Jaj, ez fájt!"
 
 #: lib/resources/ui/sp-failed-state-view.ui:39
 msgid "Something unexpectedly went wrong while trying to profile your system."
-msgstr ""
+msgstr "Valami váratlanul elromlott a rendszer profilozási kísérlete során."
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:56
 msgid "Profile my _entire system"
-msgstr ""
+msgstr "A _teljes rendszer profilozása"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:93
 msgid "Search"
@@ -153,7 +157,7 @@ msgstr "Környezet"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:160
 msgid "Inherit current environment"
-msgstr ""
+msgstr "Jelenlegi környezet öröklése"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:178
 msgid "Key"
@@ -166,49 +170,56 @@ msgstr "Érték"
 #: lib/resources/ui/sp-profiler-menu-button.ui:211
 #: lib/sp-profiler-menu-button.c:116
 msgid "New Process"
-msgstr ""
+msgstr "Új folyamat"
 
 #: lib/resources/ui/sp-recording-state-view.ui:22
 msgid "00:00"
-msgstr ""
+msgstr "00:00"
 
 #: lib/resources/ui/sp-recording-state-view.ui:39
 msgid ""
 "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
 msgstr ""
+"Tudta, hogy használhatja a <a href=\"help:sysprof\">sysprof-cli</a> "
+"programot is a rögzítéshez?"
 
 #: lib/sp-callgraph-profile.c:318
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr ""
+"A Sysprof nem volt képes hívási gráfot generálni a rendszerrögzítésből."
 
 #: lib/sp-perf-source.c:345
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
 msgstr ""
+"A Sysprofnak jogosultságra van szüksége a számítógép "
+"teljesítményszámlálóinak hozzáféréséhez."
 
 #: lib/sp-perf-source.c:350
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr ""
+"Hiba történt a teljesítményszámlálókhoz történő hozzáférés kísérlete során: "
+"%s"
 
 #: lib/sp-profiler-menu-button.c:114 lib/sp-profiler-menu-button.c:129
 msgid "All Processes"
-msgstr ""
+msgstr "Minden folyamat"
 
 #: lib/sp-profiler-menu-button.c:135
 #, c-format
 msgid "Process %d"
-msgstr ""
+msgstr "%d. folyamat"
 
 #: lib/sp-profiler-menu-button.c:140
 #, c-format
 msgid "%u Processes"
-msgstr ""
+msgstr "%u folyamat"
 
 #: lib/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
-msgstr ""
+msgstr "A megadott parancssori argumentumok érvénytelenek"
 
 #: src/resources/gtk/menus.ui:6
 msgid "_New Window"
@@ -216,7 +227,7 @@ msgstr "Új _ablak"
 
 #: src/resources/gtk/menus.ui:12
 msgid "_Open Capture"
-msgstr ""
+msgstr "Rögzítés _megnyitása"
 
 #: src/resources/gtk/menus.ui:18
 msgid "About"
@@ -230,7 +241,7 @@ msgstr "Súgó"
 msgid "_Quit"
 msgstr "_Kilépés"
 
-#: src/resources/gtk/menus.ui:34 src/sp-window.c:931
+#: src/resources/gtk/menus.ui:34 src/sp-window.c:930
 msgid "Open"
 msgstr "Megnyitás"
 
@@ -260,24 +271,26 @@ msgstr "_Bezárás"
 
 #: src/sp-application.c:160
 msgid "A system profiler"
-msgstr ""
+msgstr "Egy rendszerprofilozó"
 
 #: src/sp-application.c:164
 msgid "translator-credits"
-msgstr "Kelemen Gábor <kelemeng at ubuntu dot com>"
+msgstr ""
+"Kelemen Gábor <kelemeng at ubuntu dot com>\n"
+"Meskó Balázs <meskobalazs at gmail dot com>"
 
 #: src/sp-application.c:170
 msgid "Learn more about Sysprof"
-msgstr ""
+msgstr "Tudjon meg többet a Sysprofról"
 
 #: src/sp-window.c:139
 #, c-format
 msgid "Samples: %u"
-msgstr ""
+msgstr "Minták: %u"
 
 #: src/sp-window.c:172
 msgid "[Memory Capture]"
-msgstr ""
+msgstr "[Memóriarögzítés]"
 
 #: src/sp-window.c:185
 #, c-format
@@ -286,7 +299,7 @@ msgstr "%s - %s"
 
 #: src/sp-window.c:219
 msgid "Not enough samples were collected to generate a callgraph"
-msgstr ""
+msgstr "Nincs elég begyűjtött minta a hívási gráf generálásához"
 
 #: src/sp-window.c:273 src/sp-window.c:317
 msgid "Record"
@@ -302,7 +315,7 @@ msgstr "Felvétel…"
 
 #: src/sp-window.c:309
 msgid "Building profile…"
-msgstr ""
+msgstr "Profil összeállítása…"
 
 #. SpProfiler::stopped will move us to generating
 #: src/sp-window.c:404
@@ -311,9 +324,9 @@ msgstr "Leállítás…"
 
 #: src/sp-window.c:553
 msgid "Save Capture As"
-msgstr ""
+msgstr "Rögzítés mentése másként"
 
-#: src/sp-window.c:556 src/sp-window.c:930
+#: src/sp-window.c:556 src/sp-window.c:929
 msgid "Cancel"
 msgstr "Mégse"
 
@@ -324,28 +337,28 @@ msgstr "Mentés"
 #: src/sp-window.c:589
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
-msgstr ""
+msgstr "Hiba történt a rögzítés mentési kísérlete során: %s"
 
-#: src/sp-window.c:897
+#: src/sp-window.c:896
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
-msgstr ""
+msgstr "A(z) „%s” fájl nem nyitható meg. Csak a helyi fájlok támogatottak."
 
-#: src/sp-window.c:925
+#: src/sp-window.c:924
 msgid "Open Capture"
-msgstr ""
+msgstr "Rögzítés megnyitása"
 
-#: src/sp-window.c:937
+#: src/sp-window.c:936
 msgid "Sysprof Captures"
-msgstr ""
+msgstr "Sysprof rögzítések"
 
-#: src/sp-window.c:942
+#: src/sp-window.c:941
 msgid "All Files"
 msgstr "Minden fájl"
 
 #: tools/sysprof-cli.c:95
 msgid "Make sysprof specific to a task"
-msgstr ""
+msgstr "A sysprof egy feladathoz rendelése"
 
 #: tools/sysprof-cli.c:95
 msgid "PID"
@@ -353,7 +366,7 @@ msgstr "PID"
 
 #: tools/sysprof-cli.c:96
 msgid "Run a command and profile the process"
-msgstr ""
+msgstr "Parancs futtatása, és a folyamat profilozása"
 
 #: tools/sysprof-cli.c:96
 msgid "COMMAND"
@@ -361,13 +374,14 @@ msgstr "PARANCS"
 
 #: tools/sysprof-cli.c:97
 msgid "Print the sysprof-cli version and exit"
-msgstr ""
+msgstr "A sysprof-cli verzió kiírása és kilépés"
 
 #: tools/sysprof-cli.c:103
 msgid "[CAPTURE_FILE] - Sysprof"
-msgstr ""
+msgstr "[RÖGZÍTÉS_FÁJL] - Sysprof"
 
 #: tools/sysprof-cli.c:122
 #, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
-msgstr ""
+msgstr "Túl sok argumentum lett átadva a sysprof-cli-nek:"
+

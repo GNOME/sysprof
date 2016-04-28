@@ -16,6 +16,7 @@
   <homepage rdf:resource="http://sysprof.com" />
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/sysprof-list" />
   <download-page rdf:resource="http://sysprof.com/" />
+  <bug-database rdf:resource="https://bugzilla.gnome.org/browse.cgi?product=sysprof" />
 
   <maintainer>
     <foaf:Person>

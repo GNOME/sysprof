@@ -137,7 +137,7 @@ sp_profiler_menu_button_update_label (SpProfilerMenuButton *self)
       return;
     }
 
-  str = g_strdup_printf (_("%u Processes"), n_pids);
+  str = g_strdup_printf (ngettext("%u Process", "%u Processes", n_pids), n_pids);
   gtk_label_set_label (priv->label, str);
 }
 

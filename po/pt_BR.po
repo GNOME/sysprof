@@ -5,10 +5,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=syspro"
-"f&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-04-17 00:40+0000\n"
-"PO-Revision-Date: 2016-04-18 09:44-0200\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=sysprof"
+"&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2016-05-03 09:42+0000\n"
+"PO-Revision-Date: 2016-05-03 15:33-0200\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -135,39 +135,39 @@ msgstr "Ai, isso machuca!"
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr "Algum erro inesperado ocorreu enquanto tentava perfilar o seu sistema."
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:54
+#: lib/resources/ui/sp-profiler-menu-button.ui:56
 msgid "Profile my _entire system"
 msgstr "Perfilar _todo o meu sistema"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:87
+#: lib/resources/ui/sp-profiler-menu-button.ui:93
 msgid "Search"
 msgstr "Pesquisar"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:108
+#: lib/resources/ui/sp-profiler-menu-button.ui:117
 msgid "Existing Process"
 msgstr "Processo existente"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:118
+#: lib/resources/ui/sp-profiler-menu-button.ui:127
 msgid "Command Line"
 msgstr "Linha de comando"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:137
+#: lib/resources/ui/sp-profiler-menu-button.ui:146
 msgid "Environment"
 msgstr "Ambiente"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:151
+#: lib/resources/ui/sp-profiler-menu-button.ui:160
 msgid "Inherit current environment"
 msgstr "Herdar o ambiente atual"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:169
+#: lib/resources/ui/sp-profiler-menu-button.ui:178
 msgid "Key"
 msgstr "Chave"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:184
+#: lib/resources/ui/sp-profiler-menu-button.ui:193
 msgid "Value"
 msgstr "Valor"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:202
+#: lib/resources/ui/sp-profiler-menu-button.ui:211
 #: lib/sp-profiler-menu-button.c:116
 msgid "New Process"
 msgstr "Novo processo"
@@ -188,7 +188,7 @@ msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr ""
 "Sysprof não foi capaz de gerar um gráfico de chamadas da captura do sistema."
 
-#: lib/sp-perf-source.c:342
+#: lib/sp-perf-source.c:345
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
@@ -196,7 +196,7 @@ msgstr ""
 "Sysprof requer autorização para acessar os contadores de desempenho de seus "
 "computadores."
 
-#: lib/sp-perf-source.c:347
+#: lib/sp-perf-source.c:350
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Ocorreu um erro enquanto tentava acessar contadores de desempenho: %s"
@@ -212,8 +212,11 @@ msgstr "Processo %d"
 
 #: lib/sp-profiler-menu-button.c:140
 #, c-format
-msgid "%u Processes"
-msgstr "%u processos"
+#| msgid "%u Processes"
+msgid "%u Process"
+msgid_plural "%u Processes"
+msgstr[0] "%u processo"
+msgstr[1] "%u processos"
 
 #: lib/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
@@ -315,23 +318,23 @@ msgid "Building profile…"
 msgstr "Construindo perfil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:385
+#: src/sp-window.c:404
 msgid "Stopping…"
 msgstr "Parando…"
 
-#: src/sp-window.c:552
+#: src/sp-window.c:553
 msgid "Save Capture As"
 msgstr "Salvar captura como"
 
-#: src/sp-window.c:555 src/sp-window.c:929
+#: src/sp-window.c:556 src/sp-window.c:929
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/sp-window.c:556
+#: src/sp-window.c:557
 msgid "Save"
 msgstr "Salvar"
 
-#: src/sp-window.c:588
+#: src/sp-window.c:589
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Ocorreu um erro enquanto tentava salvar sua captura: %s"

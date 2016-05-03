@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-04-16 14:16+0000\n"
-"PO-Revision-Date: 2016-05-03 11:44+0200\n"
+"POT-Creation-Date: 2016-05-03 10:01+0000\n"
+"PO-Revision-Date: 2016-05-03 12:05+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -135,39 +135,39 @@ msgstr "Něco je špatně!"
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr "Při pokusu o profilování vašeho systému se něco neočekávaně pokazilo."
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:54
+#: lib/resources/ui/sp-profiler-menu-button.ui:56
 msgid "Profile my _entire system"
 msgstr "Profilovat c_elý můj systém"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:87
+#: lib/resources/ui/sp-profiler-menu-button.ui:93
 msgid "Search"
 msgstr "hledat"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:108
+#: lib/resources/ui/sp-profiler-menu-button.ui:117
 msgid "Existing Process"
 msgstr "Stávající proces"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:118
+#: lib/resources/ui/sp-profiler-menu-button.ui:127
 msgid "Command Line"
 msgstr "Příkazový řádek"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:136
+#: lib/resources/ui/sp-profiler-menu-button.ui:146
 msgid "Environment"
 msgstr "Prostředí"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:150
+#: lib/resources/ui/sp-profiler-menu-button.ui:160
 msgid "Inherit current environment"
 msgstr "Zdědit aktuální prostředí"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:168
+#: lib/resources/ui/sp-profiler-menu-button.ui:178
 msgid "Key"
 msgstr "Klíč"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:183
+#: lib/resources/ui/sp-profiler-menu-button.ui:193
 msgid "Value"
 msgstr "Hodnota"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:201
+#: lib/resources/ui/sp-profiler-menu-button.ui:211
 #: lib/sp-profiler-menu-button.c:116
 msgid "New Process"
 msgstr "Nový proces"
@@ -187,14 +187,14 @@ msgstr ""
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr "Sysprof nebyl schopen ze systémového záznamu vygenerovat graf volání."
 
-#: lib/sp-perf-source.c:335
+#: lib/sp-perf-source.c:345
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
 msgstr ""
 "Sysprof požaduje ověření kvůli přístupu k počitadlům výkonu vašeho počítače."
 
-#: lib/sp-perf-source.c:340
+#: lib/sp-perf-source.c:350
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Nastala chyba při pokusu o přístup k počitadlům výkonu: %s"
@@ -210,8 +210,16 @@ msgstr "Proces %d"
 
 #: lib/sp-profiler-menu-button.c:140
 #, c-format
-msgid "%u Processes"
-msgstr "%u procesů"
+#| msgid "%u Processes"
+msgid "%u Process"
+msgid_plural "%u Processes"
+msgstr[0] "%u proces"
+msgstr[1] "%u procesy"
+msgstr[2] "%u procesů"
+
+#: lib/sp-profiler-menu-button.c:796
+msgid "The command line arguments provided are invalid"
+msgstr "Zadané argumenty příkazového řádku nejsou platné"
 
 #: src/resources/gtk/menus.ui:6
 msgid "_New Window"
@@ -308,23 +316,23 @@ msgid "Building profile…"
 msgstr "Sestavuje se profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:385
+#: src/sp-window.c:404
 msgid "Stopping…"
 msgstr "Zastavuje se…"
 
-#: src/sp-window.c:552
+#: src/sp-window.c:553
 msgid "Save Capture As"
 msgstr "Uložení záznamu jako"
 
-#: src/sp-window.c:555 src/sp-window.c:929
+#: src/sp-window.c:556 src/sp-window.c:929
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/sp-window.c:556
+#: src/sp-window.c:557
 msgid "Save"
 msgstr "Uložit"
 
-#: src/sp-window.c:588
+#: src/sp-window.c:589
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Vyskytla se chyba při pokusu uložit váš záznam: %s"

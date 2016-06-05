@@ -383,6 +383,7 @@ sp_window_start_recording (SpWindow *self)
       (self->state == SP_WINDOW_STATE_FAILED) ||
       (self->state == SP_WINDOW_STATE_BROWSING))
     {
+      gtk_revealer_set_reveal_child (self->info_bar_revealer, FALSE);
       sp_window_add_sources (self, self->profiler);
       sp_window_set_state (self, SP_WINDOW_STATE_RECORDING);
       sp_window_enable_stats (self);

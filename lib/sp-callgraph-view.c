@@ -667,6 +667,24 @@ sp_callgraph_view_set_property (GObject      *object,
 }
 
 static void
+descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
+                                 GtkMovementStep  step,
+                                 int              direction,
+                                 gpointer         user_data)
+{
+  if (step == GTK_MOVEMENT_VISUAL_POSITIONS && direction == 1)
+    {
+      GtkTreePath *path;
+      gtk_tree_view_get_cursor (descendants_view, &path, NULL);
+      gtk_tree_view_expand_row (descendants_view, path, FALSE);
+
+      g_signal_stop_emission_by_name (descendants_view, "move-cursor");
+
+      gtk_tree_path_free (path);
+    }
+}
+
+static void
 sp_callgraph_view_class_init (SpCallgraphViewClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
@@ -737,6 +755,12 @@ sp_callgraph_view_init (SpCallgraphView *self)
                            G_CALLBACK (sp_callgraph_view_caller_activated),
                            self,
                            G_CONNECT_SWAPPED);
+
+  g_signal_connect (priv->descendants_view,
+                    "move-cursor",
+                    G_CALLBACK (descendants_view_move_cursor_cb),
+                    NULL);
+
 
   cell = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
                        "foreground", "#666666",

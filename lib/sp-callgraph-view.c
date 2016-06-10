@@ -135,7 +135,7 @@ build_functions_store (StackNode *node,
 
   gtk_list_store_append (state->store, &iter);
   gtk_list_store_set (state->store, &iter,
-                      COLUMN_NAME, (const gchar *)node->data,
+                      COLUMN_NAME, U64_TO_POINTER(node->data),
                       COLUMN_SELF, 100.0 * size / state->profile_size,
                       COLUMN_TOTAL, 100.0 * total / state->profile_size,
                       COLUMN_POINTER, node,

@@ -94,7 +94,7 @@ dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
 m4_define([glib_required_version], [2.44.0])
-m4_define([gtk_required_version], [3.16.0])
+m4_define([gtk_required_version], [3.21.3])
 m4_define([systemd_required_version], [222])
 
 PKG_CHECK_MODULES(GIO,

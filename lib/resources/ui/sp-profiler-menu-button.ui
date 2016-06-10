@@ -95,7 +95,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="SpScrolledWindow">
+                      <object class="GtkScrolledWindow">
                         <property name="expand">true</property>
                         <property name="min-content-width">100</property>
                         <property name="max-content-width">400</property>
@@ -162,7 +162,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="SpScrolledWindow">
+                  <object class="GtkScrolledWindow">
                     <property name="shadow-type">in</property>
                     <property name="min-content-height">100</property>
                     <property name="max-content-height">400</property>

@@ -47,7 +47,7 @@ program on a regular frequency and therefore does not see every function
 call executed by the program.</p>
 
     <p>Both tracing and sampling profilers have their advantages. A
-notable advtantage of a sampling profiler is that the overhead is much
+notable advantage of a sampling profiler is that the overhead is much
 less than that of a tracing profiler, making it easier to use for
 software that requires interactivity.</p>
 

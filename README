@@ -20,5 +20,5 @@ The list is archived here:
 Debugging symbols
 
 - The programs and libraries you want to profile should be compiled
-  with -fno-omit-frame-pointers and have debugging symbols available,
+  with -fno-omit-frame-pointer and have debugging symbols available,
   or you won't get much usable information.

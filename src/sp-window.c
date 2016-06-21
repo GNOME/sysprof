@@ -329,6 +329,7 @@ sp_window_set_state (SpWindow      *self,
       sp_window_set_profiler (self, profiler);
       break;
 
+    case SP_WINDOW_STATE_0:
     default:
       g_warning ("Unknown state: %0d", state);
       break;

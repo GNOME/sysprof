@@ -113,12 +113,23 @@ PKG_CHECK_MODULES(SYSTEMD,
                   [have_systemd=yes],
                   [have_systemd=no])
 
-enable_sysprofd=no
-AS_IF([test "$have_polkit" = "yes" && test "$have_systemd" = "yes"],[
-       enable_sysprofd=yes
+# sysprofd requires libsystemd and polkit, and is required to run
+# the ui without root permissions
+AC_ARG_ENABLE([sysprofd],
+              [AS_HELP_STRING([--enable-sysprofd=@<:@yes/no/auto@:>@],
+                              [Build Sysprof D-Bus daemon.])],
+              [enable_sysprofd=$enableval],
+              [enable_sysprofd=auto])
+AS_IF([test "$enable_sysprofd" = "auto"],[
+        AS_IF([test "$have_polkit" = "yes" && test "$have_systemd" = "yes"],
+              [enable_sysprofd=yes],
+              [enable_sysprofd=no])
 ])
-
-# we require systemd for sysprofd
+AS_IF([test "$enable_sysprofd" = "yes"],[
+        AS_IF([test "$have_systemd" = "yes" && test "$have_polkit" = "yes"],[],[
+                AC_MSG_ERROR([--enable-sysprofd requires libsystemd >= systemd_required_version and polkit-gobject-1])
+        ])
+])
 AM_CONDITIONAL(ENABLE_SYSPROFD, [test "$enable_sysprofd" = "yes"])
 
 # we might be building sysprof-cli without the UI

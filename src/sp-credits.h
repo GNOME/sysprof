@@ -5,7 +5,7 @@
 
 G_BEGIN_DECLS
 
-static gchar *sysprof_authors[] = {
+static const gchar *sysprof_authors[] = {
   "Bastien Nocera",
   "Behdad Esfahbod",
   "Christian Hergert",
@@ -28,7 +28,7 @@ static gchar *sysprof_authors[] = {
   NULL
 };
 
-static gchar *sysprof_artists[] = {
+static const gchar *sysprof_artists[] = {
   "Jakub Steiner",
   NULL
 };

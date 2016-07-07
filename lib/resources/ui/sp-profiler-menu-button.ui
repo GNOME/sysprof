@@ -11,9 +11,11 @@
         <child>
           <object class="GtkLabel" id="label">
             <property name="ellipsize">end</property>
-            <property name="hexpand">true</property>
             <property name="visible">true</property>
           </object>
+          <packing>
+            <property name="expand">true</property>
+          </packing>
         </child>
         <child>
           <object class="GtkImage">

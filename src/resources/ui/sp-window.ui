@@ -54,6 +54,7 @@
           <object class="SpProfilerMenuButton" id="profiler_menu_button">
             <property name="width-request">200</property>
             <property name="visible">true</property>
+            <property name="halign">start</property>
           </object>
         </child>
         <child>

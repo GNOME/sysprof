@@ -1,0 +1,384 @@
+# Spanish translation for sysprof.
+# Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=sysprof&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2016-07-13 07:49+0000\n"
+"PO-Revision-Date: 2016-07-22 11:48+0200\n"
+"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
+"Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.6\n"
+
+#: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:167
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof2.desktop:5
+msgid "Profiler"
+msgstr "Perfilador"
+
+#: data/org.gnome.Sysprof2.desktop:6
+msgid "Profile an application or entire system."
+msgstr "Perfilar una aplicación o el sistema completo."
+
+#: data/org.gnome.Sysprof2.desktop:9
+msgid "sysprof"
+msgstr "sysprof"
+
+#: data/org.gnome.sysprof2.gschema.xml:5
+msgid "Window size"
+msgstr "Tamaño de la ventana"
+
+#: data/org.gnome.sysprof2.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "Tamaño de la ventana (altura y anchura)."
+
+#: data/org.gnome.sysprof2.gschema.xml:10
+msgid "Window position"
+msgstr "Posición de la ventana"
+
+#: data/org.gnome.sysprof2.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "Posición de la ventana (X e Y)."
+
+#: data/org.gnome.sysprof2.gschema.xml:15
+msgid "Window maximized"
+msgstr "Ventana maximizada"
+
+#: data/org.gnome.sysprof2.gschema.xml:16
+msgid "Window maximized state"
+msgstr "Estado maximizado de la ventana"
+
+#: data/org.gnome.sysprof2.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr "Último programa lanzado"
+
+#: data/org.gnome.sysprof2.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+"El último programa lanzado, que aparecerá en la IU tras el reinicio de la "
+"aplicación."
+
+#: data/org.gnome.sysprof2.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr "Último entorno heredado lanzado"
+
+#: data/org.gnome.sysprof2.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr "Si el último entorno lanzado hereda el entorno padre."
+
+#: data/org.gnome.sysprof2.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr "Último entorno lanzado"
+
+#: data/org.gnome.sysprof2.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+"El último entorno lanzado, que aparecerá en la IU tras el reinicio de la "
+"aplicación."
+
+#: lib/resources/ui/sp-callgraph-view.ui:24
+msgid "Functions"
+msgstr "Funciones"
+
+#: lib/resources/ui/sp-callgraph-view.ui:40
+#: lib/resources/ui/sp-callgraph-view.ui:101
+#: lib/resources/ui/sp-callgraph-view.ui:164
+msgid "Self"
+msgstr "Propio"
+
+#: lib/resources/ui/sp-callgraph-view.ui:56
+#: lib/resources/ui/sp-callgraph-view.ui:117
+msgid "Total"
+msgstr "Total"
+
+#: lib/resources/ui/sp-callgraph-view.ui:85
+msgid "Callers"
+msgstr "Llamadores"
+
+#: lib/resources/ui/sp-callgraph-view.ui:148
+msgid "Descendants"
+msgstr "Descendientes"
+
+#: lib/resources/ui/sp-callgraph-view.ui:180
+msgid "Cumulative"
+msgstr "Acumulativo"
+
+#: lib/resources/ui/sp-empty-state-view.ui:22
+msgid "Welcome to Sysprof"
+msgstr "Bienvenido a Sysprof"
+
+#: lib/resources/ui/sp-empty-state-view.ui:39
+msgid "Start profiling your system with the <b>Record</b> button above"
+msgstr "Empiece a perfilar su sistema con el botón <b>Grabar</b>"
+
+#: lib/resources/ui/sp-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "Vaya, eso ha dolido."
+
+#: lib/resources/ui/sp-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr "Algo ha ido mal de manera inesperada al intentar perfilar su sistema."
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:58
+msgid "Profile my _entire system"
+msgstr "Perfilar el sistema _completo"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:95
+msgid "Search"
+msgstr "Buscar"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:119
+msgid "Existing Process"
+msgstr "Proceso existente"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:129
+msgid "Command Line"
+msgstr "Línea de comandos"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:148
+msgid "Environment"
+msgstr "Entorno"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:162
+msgid "Inherit current environment"
+msgstr "Entorno actual heredado"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:180
+msgid "Key"
+msgstr "Clave"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:195
+msgid "Value"
+msgstr "Valor"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:213
+#: lib/sp-profiler-menu-button.c:116
+msgid "New Process"
+msgstr "Nuevo proceso"
+
+#: lib/resources/ui/sp-recording-state-view.ui:22
+msgid "00:00"
+msgstr "00:00"
+
+#: lib/resources/ui/sp-recording-state-view.ui:39
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"¿Sabía que puede usar <a href=\"help:sysprof\">sysprof-cli</a> para grabar?"
+
+#: lib/sp-callgraph-profile.c:318
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "Sysprof no ha podido generar un gráfico desde el sistema de captura."
+
+#: lib/sp-perf-source.c:345
+#, c-format
+msgid ""
+"Sysprof requires authorization to access your computers performance counters."
+msgstr ""
+"Sysprof necesita autorización para acceder a los contadores de rendimiento "
+"de su equipo."
+
+#: lib/sp-perf-source.c:350
+#, c-format
+msgid "An error occurred while attempting to access performance counters: %s"
+msgstr ""
+"Ha ocurrido un error al intentar acceder a los contadores de rendimiento: %s"
+
+#: lib/sp-profiler-menu-button.c:114 lib/sp-profiler-menu-button.c:129
+msgid "All Processes"
+msgstr "Todos los procesos"
+
+#: lib/sp-profiler-menu-button.c:135
+#, c-format
+msgid "Process %d"
+msgstr "Proceso %d"
+
+#: lib/sp-profiler-menu-button.c:140
+#, c-format
+msgid "%u Process"
+msgid_plural "%u Processes"
+msgstr[0] "%u proceso"
+msgstr[1] "%u procesos"
+
+#: lib/sp-profiler-menu-button.c:796
+msgid "The command line arguments provided are invalid"
+msgstr "Los argumentos de línea de comandos proporcionados no son válidos"
+
+#: src/resources/gtk/menus.ui:6
+msgid "_New Window"
+msgstr "Ventana _nueva"
+
+#: src/resources/gtk/menus.ui:12
+msgid "_Open Capture"
+msgstr "_Abrir captura"
+
+#: src/resources/gtk/menus.ui:18
+msgid "About"
+msgstr "Acerca de"
+
+#: src/resources/gtk/menus.ui:22
+msgid "Help"
+msgstr "Ayuda"
+
+#: src/resources/gtk/menus.ui:26
+msgid "_Quit"
+msgstr "_Salir"
+
+#: src/resources/gtk/menus.ui:34 src/sp-window.c:932
+msgid "Open"
+msgstr "Abrir"
+
+#: src/resources/gtk/menus.ui:40
+msgid "Save As"
+msgstr "Guardar como"
+
+#: src/resources/gtk/menus.ui:46
+msgid "Screenshot"
+msgstr "Captura de pantalla"
+
+#: src/resources/gtk/menus.ui:52
+msgid "Close"
+msgstr "Cerrar"
+
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:281
+msgid "Not running"
+msgstr "No está en ejecución"
+
+#: src/resources/ui/sp-window.ui:44
+msgid "_Record"
+msgstr "_Grabar"
+
+#: src/resources/ui/sp-window.ui:117
+msgid "_Close"
+msgstr "_Cerrar"
+
+#: src/sp-application.c:160
+msgid "A system profiler"
+msgstr "Un perfilador del sistema"
+
+#: src/sp-application.c:164
+msgid "translator-credits"
+msgstr "Daniel Mustieles <daniel.mustieles@gmail.com>, 2016"
+
+#: src/sp-application.c:170
+msgid "Learn more about Sysprof"
+msgstr "Saber más sobre Sysprof"
+
+#: src/sp-window.c:139
+#, c-format
+msgid "Samples: %u"
+msgstr "Muestras: %u"
+
+#: src/sp-window.c:172
+msgid "[Memory Capture]"
+msgstr "[Captura de memoria]"
+
+#: src/sp-window.c:185
+#, c-format
+msgid "%s - %s"
+msgstr "%s - %s"
+
+#: src/sp-window.c:219
+msgid "Not enough samples were collected to generate a callgraph"
+msgstr "No se han recopilado suficientes muestras para generar un gráfico"
+
+#: src/sp-window.c:273 src/sp-window.c:317
+msgid "Record"
+msgstr "Grabar"
+
+#: src/sp-window.c:293
+msgid "Stop"
+msgstr "Detener"
+
+#: src/sp-window.c:298
+msgid "Recording…"
+msgstr "Grabando…"
+
+#: src/sp-window.c:309
+msgid "Building profile…"
+msgstr "Construyendo perfil…"
+
+#. SpProfiler::stopped will move us to generating
+#: src/sp-window.c:406
+msgid "Stopping…"
+msgstr "Deteniendo…"
+
+#: src/sp-window.c:555
+msgid "Save Capture As"
+msgstr "Guardar captura como"
+
+#: src/sp-window.c:558 src/sp-window.c:931
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/sp-window.c:559
+msgid "Save"
+msgstr "Guardar"
+
+#: src/sp-window.c:591
+#, c-format
+msgid "An error occurred while attempting to save your capture: %s"
+msgstr "Ha ocurrido un error al intentar guardar la captura: %s"
+
+#: src/sp-window.c:898
+#, c-format
+msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgstr ""
+"No se pudo abrir el archivo «%s». Sólo se soportan los archivos locales."
+
+#: src/sp-window.c:926
+msgid "Open Capture"
+msgstr "Abrir captura"
+
+#: src/sp-window.c:938
+msgid "Sysprof Captures"
+msgstr "Capturas de Sysprof"
+
+#: src/sp-window.c:943
+msgid "All Files"
+msgstr "Todos los archivos"
+
+#: tools/sysprof-cli.c:95
+msgid "Make sysprof specific to a task"
+msgstr "Hacer que sysprof sea específico de una tarea"
+
+#: tools/sysprof-cli.c:95
+msgid "PID"
+msgstr "PID"
+
+#: tools/sysprof-cli.c:96
+msgid "Run a command and profile the process"
+msgstr "Ejecutar un comando y perfila el proceso"
+
+#: tools/sysprof-cli.c:96
+msgid "COMMAND"
+msgstr "COMANDO"
+
+#: tools/sysprof-cli.c:97
+msgid "Print the sysprof-cli version and exit"
+msgstr "Mostrar la versión de sysprof-cli y salir"
+
+#: tools/sysprof-cli.c:103
+msgid "[CAPTURE_FILE] - Sysprof"
+msgstr "[ARCHIVO_CAPTURA] - Sysprof"
+
+#: tools/sysprof-cli.c:122
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "Se han pasado demasiados argumentos a sysprof-cli:"

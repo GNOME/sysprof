@@ -1,0 +1,390 @@
+# Slovak translation for sysprof.
+# Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Dušan Kazik <prescott66@gmail.com>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=sysprof&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2016-08-09 13:38+0000\n"
+"PO-Revision-Date: 2016-08-10 15:33+0200\n"
+"Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
+"Language: sk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
+"Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
+"X-Generator: Poedit 1.8.8\n"
+
+#: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:167
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof2.desktop:5
+msgid "Profiler"
+msgstr "Nástroj na tvorbu profilov"
+
+#: data/org.gnome.Sysprof2.desktop:6
+msgid "Profile an application or entire system."
+msgstr "Vytvára profil aplikácie alebo celého systému."
+
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: data/org.gnome.Sysprof2.desktop:10
+msgid "sysprof"
+msgstr "sysprof"
+
+#: data/org.gnome.sysprof2.gschema.xml:5
+msgid "Window size"
+msgstr "Veľkosť okna"
+
+#: data/org.gnome.sysprof2.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "Veľkosť okna (šírka a výška)."
+
+#: data/org.gnome.sysprof2.gschema.xml:10
+msgid "Window position"
+msgstr "Pozícia okna"
+
+#: data/org.gnome.sysprof2.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "Pozícia okna (x a y)."
+
+#: data/org.gnome.sysprof2.gschema.xml:15
+msgid "Window maximized"
+msgstr "Maximalizované okno"
+
+#: data/org.gnome.sysprof2.gschema.xml:16
+msgid "Window maximized state"
+msgstr "Maximalizovaný stav okna"
+
+#: data/org.gnome.sysprof2.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr "Posledný spustený program"
+
+#: data/org.gnome.sysprof2.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+"Posledný spustený program, ktorý bude nastavený v používateľskom rozhraní po "
+"reštarte aplikácie."
+
+#: data/org.gnome.sysprof2.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr "Posledné spustené zdedené prostredie"
+
+#: data/org.gnome.sysprof2.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr "Ak posledné spustené prostredie zdedí pôvodné prostredie."
+
+#: data/org.gnome.sysprof2.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr "Posledné spustené prostredie"
+
+#: data/org.gnome.sysprof2.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+"Posledné spustené prostredie, ktoré bude nastavené v používateľskom rozhraní "
+"po reštarte aplikácie."
+
+#: lib/resources/ui/sp-callgraph-view.ui:24
+msgid "Functions"
+msgstr "Funkcie"
+
+#: lib/resources/ui/sp-callgraph-view.ui:40
+#: lib/resources/ui/sp-callgraph-view.ui:101
+#: lib/resources/ui/sp-callgraph-view.ui:164
+msgid "Self"
+msgstr "Samotný"
+
+#: lib/resources/ui/sp-callgraph-view.ui:56
+#: lib/resources/ui/sp-callgraph-view.ui:117
+msgid "Total"
+msgstr "Celkom"
+
+#: lib/resources/ui/sp-callgraph-view.ui:85
+msgid "Callers"
+msgstr "Volajúci"
+
+#: lib/resources/ui/sp-callgraph-view.ui:148
+msgid "Descendants"
+msgstr "Podradené procesy"
+
+#: lib/resources/ui/sp-callgraph-view.ui:180
+msgid "Cumulative"
+msgstr "Súčet"
+
+#: lib/resources/ui/sp-empty-state-view.ui:22
+msgid "Welcome to Sysprof"
+msgstr "Vitajte v aplikácii Sysprof"
+
+#: lib/resources/ui/sp-empty-state-view.ui:39
+msgid "Start profiling your system with the <b>Record</b> button above"
+msgstr ""
+"Vytváranie profilu vášho systému spustíte pomocou tlačidla <b>Zaznamenať</b> "
+"vyššie"
+
+#: lib/resources/ui/sp-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "Au, to bolelo!"
+
+#: lib/resources/ui/sp-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr ""
+"Počas pokusu o vytvorenie profilu vášho systému nastala nečakaná chyba."
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:58
+msgid "Profile my _entire system"
+msgstr "Vytvoriť profil môjho _celého systému"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:95
+msgid "Search"
+msgstr "Vyhľadajte"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:119
+msgid "Existing Process"
+msgstr "Existujúci proces"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:129
+msgid "Command Line"
+msgstr "Príkazový riadok"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:148
+msgid "Environment"
+msgstr "Prostredie"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:162
+msgid "Inherit current environment"
+msgstr "Zdediť aktuálne prostredie"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:180
+msgid "Key"
+msgstr "Kľúč"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:195
+msgid "Value"
+msgstr "Hodnota"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:213
+#: lib/sp-profiler-menu-button.c:116
+msgid "New Process"
+msgstr "Nový proces"
+
+#: lib/resources/ui/sp-recording-state-view.ui:22
+msgid "00:00"
+msgstr "00:00"
+
+#: lib/resources/ui/sp-recording-state-view.ui:39
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"Vedeli ste, že môžete použiť program <a href=\"help:sysprof\">sysprof-cli</"
+"a> na vytvorenie záznamu?"
+
+#: lib/sp-callgraph-profile.c:318
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
+"Aplikácia Sysprof nebola schopná vygenerovať graf volaní zo systémového "
+"záznamu."
+
+#: lib/sp-perf-source.c:345
+#, c-format
+msgid ""
+"Sysprof requires authorization to access your computers performance counters."
+msgstr ""
+"Aplikácia Sysprof vyžaduje overenie totožnosti na získanie prístupu k "
+"počítadlám výkonu vášho počítača."
+
+#: lib/sp-perf-source.c:350
+#, c-format
+msgid "An error occurred while attempting to access performance counters: %s"
+msgstr "Vyskytla sa chyba pri pokuse získať prístup k počítadlám výkonu: %s"
+
+#: lib/sp-profiler-menu-button.c:114 lib/sp-profiler-menu-button.c:129
+msgid "All Processes"
+msgstr "Všetky procesy"
+
+#: lib/sp-profiler-menu-button.c:135
+#, c-format
+msgid "Process %d"
+msgstr "Proces č. %d"
+
+#: lib/sp-profiler-menu-button.c:140
+#, c-format
+msgid "%u Process"
+msgid_plural "%u Processes"
+msgstr[0] "%u procesov"
+msgstr[1] "%u proces"
+msgstr[2] "%u procesy"
+
+#: lib/sp-profiler-menu-button.c:796
+msgid "The command line arguments provided are invalid"
+msgstr "Poskytnuté parametre príkazového riadku sú neplatné"
+
+#: src/resources/gtk/menus.ui:6
+msgid "_New Window"
+msgstr "_Nové okno"
+
+#: src/resources/gtk/menus.ui:12
+msgid "_Open Capture"
+msgstr "_Otvoriť záznam"
+
+#: src/resources/gtk/menus.ui:18
+msgid "About"
+msgstr "O aplikácii"
+
+#: src/resources/gtk/menus.ui:22
+msgid "Help"
+msgstr "Pomocník"
+
+#: src/resources/gtk/menus.ui:26
+msgid "_Quit"
+msgstr "_Ukončiť"
+
+#: src/resources/gtk/menus.ui:34 src/sp-window.c:932
+msgid "Open"
+msgstr "Otvoriť"
+
+#: src/resources/gtk/menus.ui:40
+msgid "Save As"
+msgstr "Uložiť ako"
+
+#: src/resources/gtk/menus.ui:46
+msgid "Screenshot"
+msgstr "Snímka obrazovky"
+
+#: src/resources/gtk/menus.ui:52
+msgid "Close"
+msgstr "Zavrieť"
+
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:281
+msgid "Not running"
+msgstr "Nie je spustený"
+
+#: src/resources/ui/sp-window.ui:44
+msgid "_Record"
+msgstr "Zaz_namenať"
+
+#: src/resources/ui/sp-window.ui:117
+msgid "_Close"
+msgstr "_Zavrieť"
+
+#: src/sp-application.c:160
+msgid "A system profiler"
+msgstr "Nástroj na tvorbu systémových profilov"
+
+#: src/sp-application.c:164
+msgid "translator-credits"
+msgstr "Dušan Kazik <prescott66@gmail.com>"
+
+#: src/sp-application.c:170
+msgid "Learn more about Sysprof"
+msgstr "Zistite viac o aplikácii Sysprof"
+
+#: src/sp-window.c:139
+#, c-format
+msgid "Samples: %u"
+msgstr "Vzorky: %u"
+
+#: src/sp-window.c:172
+msgid "[Memory Capture]"
+msgstr "[Záznam pamäte]"
+
+#: src/sp-window.c:185
+#, c-format
+msgid "%s - %s"
+msgstr "%s - %s"
+
+#: src/sp-window.c:219
+msgid "Not enough samples were collected to generate a callgraph"
+msgstr "Nebol zozbieraný dostatok vzoriek na vygenerovanie grafu volaní"
+
+#: src/sp-window.c:273 src/sp-window.c:317
+msgid "Record"
+msgstr "Zaznamenať"
+
+#: src/sp-window.c:293
+msgid "Stop"
+msgstr "Zastaviť"
+
+#: src/sp-window.c:298
+msgid "Recording…"
+msgstr "Zaznamenáva sa…"
+
+#: src/sp-window.c:309
+msgid "Building profile…"
+msgstr "Zostavuje sa profil…"
+
+#. SpProfiler::stopped will move us to generating
+#: src/sp-window.c:406
+msgid "Stopping…"
+msgstr "Zastavuje sa…"
+
+#: src/sp-window.c:555
+msgid "Save Capture As"
+msgstr "Uloženie záznamu ako"
+
+#: src/sp-window.c:558 src/sp-window.c:931
+msgid "Cancel"
+msgstr "Zrušiť"
+
+#: src/sp-window.c:559
+msgid "Save"
+msgstr "Uložiť"
+
+#: src/sp-window.c:591
+#, c-format
+msgid "An error occurred while attempting to save your capture: %s"
+msgstr "Vyskytla sa chyba pri pokuse o uloženie vášho záznamu: %s"
+
+#: src/sp-window.c:898
+#, c-format
+msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgstr "Súbor „%s“ sa nepodarilo otvoriť. Podporované sú iba lokálne súbory."
+
+#: src/sp-window.c:926
+msgid "Open Capture"
+msgstr "Otvorenie záznamu"
+
+#: src/sp-window.c:938
+msgid "Sysprof Captures"
+msgstr "Záznamy aplikácie Sysprof"
+
+#: src/sp-window.c:943
+msgid "All Files"
+msgstr "Všetky súbory"
+
+#: tools/sysprof-cli.c:95
+msgid "Make sysprof specific to a task"
+msgstr "Učiní program sysprof špecifickým danej úlohe"
+
+#: tools/sysprof-cli.c:95
+msgid "PID"
+msgstr "PID"
+
+#: tools/sysprof-cli.c:96
+msgid "Run a command and profile the process"
+msgstr "Spustí príkaz a vytvorí profil procesu"
+
+#: tools/sysprof-cli.c:96
+msgid "COMMAND"
+msgstr "PRÍKAZ"
+
+#: tools/sysprof-cli.c:97
+msgid "Print the sysprof-cli version and exit"
+msgstr "Vypíše verziu programu sysprof-cli a skončí"
+
+#: tools/sysprof-cli.c:103
+msgid "[CAPTURE_FILE] - Sysprof"
+msgstr "[SÚBOR_ZÁZNAMU] - Sysprof"
+
+#: tools/sysprof-cli.c:122
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "Programu sysprof-cli bolo odovzdaných príliš veľa parametrov:"

@@ -39,6 +39,7 @@
 
 #include "sp-callgraph-profile-private.h"
 #include "sp-callgraph-view.h"
+#include "sp-cell-renderer-percent.h"
 
 #include "util.h"
 
@@ -723,6 +724,8 @@ sp_callgraph_view_class_init (SpCallgraphViewClass *klass)
 
   bindings = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
+
+  g_type_ensure (SP_TYPE_CELL_RENDERER_PERCENT);
 }
 
 static void

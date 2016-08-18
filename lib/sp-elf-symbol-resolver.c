@@ -189,6 +189,18 @@ guess_tag (SpElfSymbolResolver *self,
       else if (strstr (map->filename, "/libpango-1.0."))
         tag = g_quark_from_static_string ("Pango");
 
+      else if (strstr (map->filename, "/libpangocairo-1.0."))
+        tag = g_quark_from_static_string ("Pango");
+
+      else if (strstr (map->filename, "/libpangomm-1.4."))
+        tag = g_quark_from_static_string ("Pango");
+
+      else if (strstr (map->filename, "/libpangoft2-1.0"))
+        tag = g_quark_from_static_string ("Pango");
+
+      else if (strstr (map->filename, "/libpangoxft-1.0."))
+        tag = g_quark_from_static_string ("Pango");
+
       else if (strstr (map->filename, "/libclutter-"))
         tag = g_quark_from_static_string ("Clutter");
 

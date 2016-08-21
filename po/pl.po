@@ -1,27 +1,23 @@
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-# Aviary.pl
-# Jeśli masz jakiekolwiek uwagi odnoszące się do tłumaczenia lub chcesz
-# pomóc w jego rozwijaniu i pielęgnowaniu, napisz do nas:
-# gnomepl@aviary.pl
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Polish translation for sysprof.
+# Copyright © 2016 the sysprof authors.
+# This file is distributed under the same license as the sysprof package.
 # Piotr Drąg <piotrdrag@gmail.com>, 2016.
-# Aviary.pl <gnomepl@aviary.pl>, 2016.
+# Aviary.pl <community-poland@mozilla.org>, 2016.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-03 09:42+0000\n"
-"PO-Revision-Date: 2016-05-03 13:17+0200\n"
+"POT-Creation-Date: 2016-08-21 14:58+0000\n"
+"PO-Revision-Date: 2016-08-21 17:01+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
-"Language-Team: Polish <gnomepl@aviary.pl>\n"
+"Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Poedit-Language: Polish\n"
-"X-Poedit-Country: Poland\n"
 
 #: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
 #: src/resources/ui/sp-window.ui:20 src/sp-application.c:167
@@ -36,7 +32,8 @@ msgstr "Profiler"
 msgid "Profile an application or entire system."
 msgstr "Profilowanie programu lub całego systemu"
 
-#: data/org.gnome.Sysprof2.desktop:9
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: data/org.gnome.Sysprof2.desktop:10
 msgid "sysprof"
 msgstr "sysprof"
 
@@ -46,7 +43,7 @@ msgstr "Rozmiar okna"
 
 #: data/org.gnome.sysprof2.gschema.xml:6
 msgid "Window size (width and height)."
-msgstr "Rozmiar okna (szerokość i wysokość)."
+msgstr "Rozmiar okna (szerokość i wysokość)."
 
 #: data/org.gnome.sysprof2.gschema.xml:10
 msgid "Window position"
@@ -54,7 +51,7 @@ msgstr "Położenie okna"
 
 #: data/org.gnome.sysprof2.gschema.xml:11
 msgid "Window position (x and y)."
-msgstr "Położenie okna (na osi X i Y)."
+msgstr "Położenie okna (na osi X i Y)."
 
 #: data/org.gnome.sysprof2.gschema.xml:15
 msgid "Window maximized"
@@ -73,7 +70,7 @@ msgid ""
 "The last spawned program, which will be set in the UI upon restart of the "
 "application."
 msgstr ""
-"Ostatnio uruchomiony program, który zostanie ustawiony w interfejsie po "
+"Ostatnio uruchomiony program, który zostanie ustawiony w interfejsie po "
 "ponownym uruchomieniu."
 
 #: data/org.gnome.sysprof2.gschema.xml:25
@@ -93,7 +90,7 @@ msgid ""
 "The last spawned environment, which will be set in the UI upon restart of "
 "the application."
 msgstr ""
-"Ostatnio uruchomione środowisko, które zostanie ustawione w interfejsie po "
+"Ostatnio uruchomione środowisko, które zostanie ustawione w interfejsie po "
 "ponownym uruchomieniu."
 
 #: lib/resources/ui/sp-callgraph-view.ui:24
@@ -125,7 +122,7 @@ msgstr "Narastająco"
 
 #: lib/resources/ui/sp-empty-state-view.ui:22
 msgid "Welcome to Sysprof"
-msgstr "Witamy w programie Sysprof"
+msgstr "Witamy w programie Sysprof"
 
 #: lib/resources/ui/sp-empty-state-view.ui:39
 msgid "Start profiling your system with the <b>Record</b> button above"
@@ -139,39 +136,39 @@ msgstr "Auć, to bolało!"
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr "Coś się nie powiodło podczas profilowania systemu."
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:56
+#: lib/resources/ui/sp-profiler-menu-button.ui:58
 msgid "Profile my _entire system"
 msgstr "Profilowanie _całego systemu"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:93
+#: lib/resources/ui/sp-profiler-menu-button.ui:95
 msgid "Search"
 msgstr "Wyszukiwanie"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:117
+#: lib/resources/ui/sp-profiler-menu-button.ui:119
 msgid "Existing Process"
 msgstr "Istniejący proces"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:127
+#: lib/resources/ui/sp-profiler-menu-button.ui:129
 msgid "Command Line"
 msgstr "Wiersz poleceń"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:146
+#: lib/resources/ui/sp-profiler-menu-button.ui:148
 msgid "Environment"
 msgstr "Środowisko"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:160
+#: lib/resources/ui/sp-profiler-menu-button.ui:162
 msgid "Inherit current environment"
 msgstr "Dziedziczenie obecnego środowiska"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:178
+#: lib/resources/ui/sp-profiler-menu-button.ui:180
 msgid "Key"
 msgstr "Klucz"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:193
+#: lib/resources/ui/sp-profiler-menu-button.ui:195
 msgid "Value"
 msgstr "Wartość"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:211
+#: lib/resources/ui/sp-profiler-menu-button.ui:213
 #: lib/sp-profiler-menu-button.c:116
 msgid "New Process"
 msgstr "Nowy proces"
@@ -189,7 +186,7 @@ msgstr ""
 
 #: lib/sp-callgraph-profile.c:318
 msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr "Sysprof nie może utworzyć wykresu wywołań z przechwytywania systemu."
+msgstr "Sysprof nie może utworzyć wykresu wywołań z przechwytywania systemu."
 
 #: lib/sp-perf-source.c:345
 #, c-format
@@ -235,7 +232,7 @@ msgstr "_Otwórz przechwytywanie"
 
 #: src/resources/gtk/menus.ui:18
 msgid "About"
-msgstr "O programie"
+msgstr "O programie"
 
 #: src/resources/gtk/menus.ui:22
 msgid "Help"
@@ -245,7 +242,7 @@ msgstr "Pomoc"
 msgid "_Quit"
 msgstr "Za_kończ"
 
-#: src/resources/gtk/menus.ui:34 src/sp-window.c:930
+#: src/resources/gtk/menus.ui:34 src/sp-window.c:932
 msgid "Open"
 msgstr "Otwórz"
 
@@ -269,7 +266,7 @@ msgstr "Bezczynny"
 msgid "_Record"
 msgstr "_Nagrywaj"
 
-#: src/resources/ui/sp-window.ui:116
+#: src/resources/ui/sp-window.ui:117
 msgid "_Close"
 msgstr "Za_mknij"
 
@@ -281,11 +278,11 @@ msgstr "Profiler systemu"
 msgid "translator-credits"
 msgstr ""
 "Piotr Drąg <piotrdrag@gmail.com>, 2016\n"
-"Aviary.pl <gnomepl@aviary.pl>, 2016"
+"Aviary.pl <community-poland@mozilla.org>, 2016"
 
 #: src/sp-application.c:170
 msgid "Learn more about Sysprof"
-msgstr "Więcej informacji o Sysprof"
+msgstr "Więcej informacji o Sysprof"
 
 #: src/sp-window.c:139
 #, c-format
@@ -322,41 +319,41 @@ msgid "Building profile…"
 msgstr "Budowanie profilu…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:404
+#: src/sp-window.c:406
 msgid "Stopping…"
 msgstr "Zatrzymywanie…"
 
-#: src/sp-window.c:553
+#: src/sp-window.c:555
 msgid "Save Capture As"
 msgstr "Zapis przechwytywania jako"
 
-#: src/sp-window.c:556 src/sp-window.c:929
+#: src/sp-window.c:558 src/sp-window.c:931
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/sp-window.c:557
+#: src/sp-window.c:559
 msgid "Save"
 msgstr "Zapisz"
 
-#: src/sp-window.c:589
+#: src/sp-window.c:591
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Wystąpił błąd podczas zapisywania przechwytywania: %s"
 
-#: src/sp-window.c:896
+#: src/sp-window.c:898
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr "Nie można otworzyć pliku „%s”. Tylko lokalne pliki są obsługiwane."
 
-#: src/sp-window.c:924
+#: src/sp-window.c:926
 msgid "Open Capture"
 msgstr "Otwarcie przechwytywania"
 
-#: src/sp-window.c:936
+#: src/sp-window.c:938
 msgid "Sysprof Captures"
 msgstr "Przechwytywania Sysprof"
 
-#: src/sp-window.c:941
+#: src/sp-window.c:943
 msgid "All Files"
 msgstr "Wszystkie pliki"
 
@@ -370,7 +367,7 @@ msgstr "PID"
 
 #: tools/sysprof-cli.c:96
 msgid "Run a command and profile the process"
-msgstr "Wykonuje polecenie i profiluje proces"
+msgstr "Wykonuje polecenie i profiluje proces"
 
 #: tools/sysprof-cli.c:96
 msgid "COMMAND"
@@ -378,7 +375,7 @@ msgstr "POLECENIE"
 
 #: tools/sysprof-cli.c:97
 msgid "Print the sysprof-cli version and exit"
-msgstr "Wyświetla wersję sysprof-cli i kończy działanie"
+msgstr "Wyświetla wersję sysprof-cli i kończy działanie"
 
 #: tools/sysprof-cli.c:103
 msgid "[CAPTURE_FILE] - Sysprof"

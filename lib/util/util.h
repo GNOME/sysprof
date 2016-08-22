@@ -1,11 +1,11 @@
 #ifndef SP_UTIL_H
 #define SP_UTIL_H
 
-#if defined(__i386__)
+#ifdef __i386__
 #define read_barrier()           asm volatile("lock; addl $0,0(%%esp)" ::: "memory")
 #endif
 
-#if defined(__x86_64__)
+#ifdef __x86_64__
 #define read_barrier()           asm volatile("lfence" ::: "memory")
 #endif
 

@@ -194,7 +194,7 @@ sp_process_model_item_is_kernel (SpProcessModelItem *self)
   return self->is_kernel;
 }
 
-const gchar const * const *
+const gchar * const *
 sp_process_model_item_get_argv (SpProcessModelItem *self)
 {
   g_autofree gchar *contents = NULL;

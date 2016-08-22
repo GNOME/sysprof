@@ -517,6 +517,8 @@ sp_capture_reader_read_jitmap (SpCaptureReader *self)
       g_hash_table_insert (ret, GSIZE_TO_POINTER (addr), g_strdup (str));
     }
 
+  sp_capture_reader_bswap_jitmap (self, jitmap);
+
   self->pos += jitmap->frame.len;
 
   return g_steal_pointer (&ret);

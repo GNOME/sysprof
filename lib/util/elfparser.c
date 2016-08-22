@@ -71,11 +71,11 @@ struct ElfParser
  */
 #define GET_FIELD(parser, offset, struct_name, idx, field_name)         \
     (((parser))->is_64?                                                 \
-     ((Elf64_ ## struct_name *)(((parser)->data + offset)) + (idx))->field_name : \
-     ((Elf32_ ## struct_name *)(((parser)->data + offset)) + (idx))->field_name)
+     ((Elf64_ ## struct_name *)(gpointer)(((parser)->data + offset)) + (idx))->field_name : \
+     ((Elf32_ ## struct_name *)(gpointer)(((parser)->data + offset)) + (idx))->field_name)
 
 #define GET_UINT32(parser, offset)                                      \
-    *((uint32_t *)(parser->data + offset))                              \
+    *((uint32_t *)(gpointer)(parser->data + offset))                    \
 
 #define GET_SIZE(parser, struct_name)                                   \
     (((parser)->is_64?                                                  \

@@ -198,7 +198,7 @@ sp_kernel_symbol_from_address (SpCaptureAddress address)
   if (address < first->address)
     return NULL;
 
-  return sp_kernel_symbol_lookup ((SpKernelSymbol *)kernel_symbols->data,
+  return sp_kernel_symbol_lookup ((SpKernelSymbol *)(gpointer)kernel_symbols->data,
                                   address,
                                   0,
                                   kernel_symbols->len - 1);

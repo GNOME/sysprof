@@ -29,4 +29,8 @@
 #define read_barrier()           asm volatile("" ::: "memory")
 #endif
 
+#ifdef __arm__
+#define read_barrier()           asm volatile("dsb" ::: "memory")
+#endif
+
 #endif /* SP_UTIL_H */

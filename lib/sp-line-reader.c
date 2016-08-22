@@ -51,27 +51,21 @@ SpLineReader *
 sp_line_reader_new (const gchar *contents,
                     gssize       length)
 {
-  SpLineReader *self;
+  SpLineReader *self = g_slice_new (SpLineReader);
 
-  g_return_val_if_fail (contents != NULL, NULL);
-
-  self = g_slice_new (SpLineReader);
-
-  if (length < 0)
-    length = strlen (contents);
-
-  if (contents != NULL)
+  if (contents == NULL)
     {
-      self->contents = contents;
-      self->length = length;
-      self->pos = 0;
+      contents = "";
+      length = 0;
     }
-  else
+  else if (length < 0)
     {
-      self->contents = NULL;
-      self->length = 0;
-      self->pos = 0;
+      length = strlen (contents);
     }
+
+  self->contents = contents;
+  self->length = length;
+  self->pos = 0;
 
   return self;
 }

@@ -99,6 +99,16 @@ AX_CHECK_COMPILE_FLAG([-std=gnu11],
 
 
 dnl ***********************************************************************
+dnl GCC 4.8 supports gnu11, but lacked the stdatomic.h headers.
+dnl ***********************************************************************
+AC_MSG_CHECKING([whether C compiler supports stdatomic.h])
+AC_TRY_LINK([#include <stdatomic.h>],
+            [atomic_thread_fence(memory_order_acquire);atomic_thread_fence(memory_order_seq_cst);],
+	    [AC_MSG_RESULT([yes])],
+	    [AC_MSG_ERROR([Sysprof requires a C compiler with stdatomic support such as GCC 4.9 or newer])])
+
+
+dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
 m4_define([glib_required_version], [2.44.0])

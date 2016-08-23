@@ -1,3 +1,43 @@
+Overview of changes in Sysprof 3.21.90
+======================================
+
+Sysprof 3.21.90 is our first release while we prepare things for the 3.22.0
+release of GNOME. Thanks to everyone who contributed to this release!
+
+Build System Improvements
+
+ * Sysprof now supports an --enable-sysprofd configure option to ensure the
+   systemd/dbus service is installed. (Jussi Kukkonen)
+ * sysprof-ui-2.pc is only installed if the Gtk UI is installed.
+ * Build fixes for polkit integration.
+
+Bugs Fixed
+
+ * Workaround for systems without memfd
+ * Support older Linux/perf implementations
+ * Architecture improvements for ARM
+ * Fix use of U64_TO_POINTER (Jussi Kukkonen)
+ * Hide info bar when starting to record (Tim Bäder)
+ * Expand cursor row on Right in callgraph (Tim Bäder)
+ * Elf symbol resolver now recognizes more GNOME platform libraries.
+ * Sysprofd integration now pings the service before considering it
+   available for use.
+ * Correctness improvements for capture reader and writer.
+
+New and Updated Translations
+
+ * Swedish (Anders Jonsson)
+ * Hungarian (Balázs Meskó, Gabor Kelemen)
+ * German (Christian Kirbach)
+ * Spanish (Daniel Mustieles)
+ * Slovak (Dušan Kazik)
+ * Czech (Marek Černocký)
+ * Polish (Piotr Drąg)
+ * Brazilian Portuguese (Rafael Fontenelle)
+ * Portuguese (Tiago Santos)
+ * Serbian (Мирослав Николић)
+
+
 Overview of changes in Sysprof 3.20.0
 =====================================
 

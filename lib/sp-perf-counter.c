@@ -291,6 +291,8 @@ sp_perf_counter_flush (SpPerfCounter     *self,
     }
 
   info->tail = tail;
+
+  atomic_thread_fence (memory_order_seq_cst);
   info->map->data_tail = tail;
 }
 

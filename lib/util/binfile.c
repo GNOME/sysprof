@@ -37,7 +37,6 @@
 
 #include "binfile.h"
 #include "elfparser.h"
-#include "util.h"
 
 struct bin_file_t
 {

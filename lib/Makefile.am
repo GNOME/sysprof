@@ -20,7 +20,6 @@ libutil_la_SOURCES = \
 	util/elfparser.h \
 	util/stackstash.c \
 	util/stackstash.h \
-	util/util.h \
 	$(NULL)
 libutil_la_CFLAGS = \
 	-I$(srcdir)/util \

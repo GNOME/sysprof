@@ -41,8 +41,6 @@
 #include "sp-callgraph-view.h"
 #include "sp-cell-renderer-percent.h"
 
-#include "util.h"
-
 typedef struct
 {
   SpCallgraphProfile  *profile;

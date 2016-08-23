@@ -42,6 +42,7 @@
 #include <errno.h>
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
+#include <stdatomic.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -53,8 +54,6 @@
 #endif
 
 #include "sp-perf-counter.h"
-
-#include "util.h"
 
 /*
  * Number of pages to map for the ring buffer.  We map one additional buffer
@@ -227,7 +226,7 @@ sp_perf_counter_flush (SpPerfCounter     *self,
   tail = info->tail;
   head = info->map->data_head;
 
-  read_barrier ();
+  atomic_thread_fence (memory_order_acquire);
 
   if (head < tail)
     tail = head;

@@ -91,6 +91,14 @@ AC_CHECK_MEMBERS([struct perf_event_attr.use_clockid, struct perf_event_attr.clo
 
 
 dnl ***********************************************************************
+dnl Ensure C11 is Supported
+dnl ***********************************************************************
+AX_CHECK_COMPILE_FLAG([-std=gnu11],
+                      [CFLAGS="$CFLAGS -std=gnu11"],
+                      [AC_MSG_ERROR([C compiler cannot compile GNU C11 code])])
+
+
+dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
 m4_define([glib_required_version], [2.44.0])

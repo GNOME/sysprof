@@ -7,9 +7,10 @@ desktopdir = $(datadir)/applications
 desktop_DATA = org.gnome.Sysprof2.desktop
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = \
-	sysprof-$(API_VERSION).pc \
-	sysprof-ui-$(API_VERSION).pc
+pkgconfig_DATA = sysprof-$(API_VERSION).pc
+if ENABLE_GTK
+pkgconfig_DATA += sysprof-ui-$(API_VERSION).pc
+endif
 
 gsettings_SCHEMAS = org.gnome.sysprof2.gschema.xml
 

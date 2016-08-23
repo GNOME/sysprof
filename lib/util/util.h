@@ -33,4 +33,12 @@
 #define read_barrier()           asm volatile("dsb" ::: "memory")
 #endif
 
+/*
+ * Fallback to a full memory barrier if the architecture is not yet
+ * supported with a lighter read barrier.
+ */
+#ifndef read_barrier
+#define read_barrier()           __sync_synchronize()
+#endif
+
 #endif /* SP_UTIL_H */

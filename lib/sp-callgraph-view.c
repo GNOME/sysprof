@@ -671,13 +671,22 @@ descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
                                  int              direction,
                                  gpointer         user_data)
 {
-  if (step == GTK_MOVEMENT_VISUAL_POSITIONS && direction == 1)
+  if (step == GTK_MOVEMENT_VISUAL_POSITIONS)
     {
       GtkTreePath *path;
-      gtk_tree_view_get_cursor (descendants_view, &path, NULL);
-      gtk_tree_view_expand_row (descendants_view, path, FALSE);
 
-      g_signal_stop_emission_by_name (descendants_view, "move-cursor");
+      gtk_tree_view_get_cursor (descendants_view, &path, NULL);
+
+      if (direction == 1)
+        {
+          gtk_tree_view_expand_row (descendants_view, path, FALSE);
+          g_signal_stop_emission_by_name (descendants_view, "move-cursor");
+        }
+      else if (direction == -1)
+        {
+          gtk_tree_view_collapse_row (descendants_view, path);
+          g_signal_stop_emission_by_name (descendants_view, "move-cursor");
+        }
 
       gtk_tree_path_free (path);
     }

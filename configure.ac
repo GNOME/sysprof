@@ -6,7 +6,7 @@ dnl Define Versioning Information
 dnl ***********************************************************************
 m4_define([major_version],[3])
 m4_define([minor_version],[21])
-m4_define([micro_version],[90])
+m4_define([micro_version],[91])
 m4_define([package_version],[major_version.minor_version.micro_version])
 m4_define([bug_report_url],[https://bugzilla.gnome.org/enter_bug.cgi?product=sysprof])
 m4_define([api_version],[2])
@@ -112,7 +112,7 @@ dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
 m4_define([glib_required_version], [2.44.0])
-m4_define([gtk_required_version], [3.21.3])
+m4_define([gtk_required_version], [3.21.4])
 m4_define([systemd_required_version], [222])
 
 PKG_CHECK_MODULES(GIO,

@@ -1,3 +1,19 @@
+Overview of changes in Sysprof 3.21.91
+======================================
+
+Sysprof 3.21.91 is here with a few changes as we stabilize for 3.22.
+
+ * Allow collapsing the callgraph tree with Left arrow.
+ * Add a full barrier before writing data_tail as suggested by
+   Perf kernel documentation. (Ray Strode)
+ * Support for additional architectures has been enabled by the use
+   of C11 atomics.
+ * Require -std=gnu11 for stdatomic.h
+ * Correct gettext domain for translation files (Kalev Lember)
+
+If you have fun and interesting architectures, please give them a try!
+
+
 Overview of changes in Sysprof 3.21.90
 ======================================
 

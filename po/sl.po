@@ -1,0 +1,414 @@
+# Slovenian translation for sysprof.
+# Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+#
+# Matej Urbančič <mateju@svn.gnome.org>, 2016
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=sysprof&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2016-08-27 20:08+0000\n"
+"PO-Revision-Date: 2016-08-29 19:52+0200\n"
+"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
+"Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
+"Language: sl_SI\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
+"%100==4 ? 3 : 0);\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 1.8.7.1\n"
+
+#: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:167
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof2.desktop:5
+#, fuzzy
+msgid "Profiler"
+msgstr ""
+"Programnik Anjuta DevStudio je studio z naprednimi zmožnostmi za "
+"programiranje, vodenje projektov, čarovnikov, razhroščevalnika, urejevalnika "
+"kode, nadzora različic in oblikovalnika vmesnika. Zasnovan je z namenom biti "
+"enostaven in uporaben program z široko paleto razvojnih zmožnosti."
+
+#: data/org.gnome.Sysprof2.desktop:6
+#, fuzzy
+msgid "Profile an application or entire system."
+msgstr "Izberite naziv, ki določa profil na vašem sistemu."
+
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: data/org.gnome.Sysprof2.desktop:10
+msgid "sysprof"
+msgstr "sysprof"
+
+#: data/org.gnome.sysprof2.gschema.xml:5
+msgid "Window size"
+msgstr "Velikost okna"
+
+#: data/org.gnome.sysprof2.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "Velikost okna (širina in višina)."
+
+#: data/org.gnome.sysprof2.gschema.xml:10
+#, fuzzy
+msgid "Window position"
+msgstr "Položaj okna"
+
+#: data/org.gnome.sysprof2.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "Položaj okna (osi x in y)."
+
+#: data/org.gnome.sysprof2.gschema.xml:15
+msgid "Window maximized"
+msgstr "Povečano okno"
+
+#: data/org.gnome.sysprof2.gschema.xml:16
+msgid "Window maximized state"
+msgstr "Razpeto glavno okno"
+
+#: data/org.gnome.sysprof2.gschema.xml:20
+#, fuzzy
+msgid "Last Spawn Program"
+msgstr "Ni mogoče oživiti programa SSH: %s"
+
+#: data/org.gnome.sysprof2.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+
+#: data/org.gnome.sysprof2.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr ""
+
+#: data/org.gnome.sysprof2.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr ""
+
+#: data/org.gnome.sysprof2.gschema.xml:30
+#, fuzzy
+msgid "Last Spawn Environment"
+msgstr "_Okolje"
+
+#: data/org.gnome.sysprof2.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+
+#: lib/resources/ui/sp-callgraph-view.ui:24
+msgid "Functions"
+msgstr "Funkcije"
+
+#: lib/resources/ui/sp-callgraph-view.ui:40
+#: lib/resources/ui/sp-callgraph-view.ui:101
+#: lib/resources/ui/sp-callgraph-view.ui:164
+msgid "Self"
+msgstr "Lastno"
+
+#: lib/resources/ui/sp-callgraph-view.ui:56
+#: lib/resources/ui/sp-callgraph-view.ui:117
+msgid "Total"
+msgstr "Skupno"
+
+#: lib/resources/ui/sp-callgraph-view.ui:85
+msgid "Callers"
+msgstr ""
+
+#: lib/resources/ui/sp-callgraph-view.ui:148
+#, fuzzy
+msgid "Descendants"
+msgstr "Zanemari potomce"
+
+#: lib/resources/ui/sp-callgraph-view.ui:180
+msgid "Cumulative"
+msgstr "Združevano"
+
+#: lib/resources/ui/sp-empty-state-view.ui:22
+#, fuzzy
+msgid "Welcome to Sysprof"
+msgstr "Dobrodošli!"
+
+#: lib/resources/ui/sp-empty-state-view.ui:39
+msgid "Start profiling your system with the <b>Record</b> button above"
+msgstr ""
+
+#: lib/resources/ui/sp-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr ""
+
+#: lib/resources/ui/sp-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr ""
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:58
+#, fuzzy
+msgid "Profile my _entire system"
+msgstr "Izberite naziv, ki določa profil na vašem sistemu."
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:95
+msgid "Search"
+msgstr "Poišči"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:119
+#, fuzzy
+msgid "Existing Process"
+msgstr "V obdelavi"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:129
+msgid "Command Line"
+msgstr "Ukazna vrstica"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:148
+msgid "Environment"
+msgstr "Okolje"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:162
+#, fuzzy
+msgid "Inherit current environment"
+msgstr "prevzemi"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:180
+msgid "Key"
+msgstr "Ključ"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:195
+#, fuzzy
+msgid "Value"
+msgstr "po vrednost"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:213
+#: lib/sp-profiler-menu-button.c:116
+#, fuzzy
+msgid "New Process"
+msgstr ""
+"Opravilo je že zagnano.\n"
+"Ali želite trenutno opravilo zaključiti in pripeti novo opravilo?"
+
+#: lib/resources/ui/sp-recording-state-view.ui:22
+msgid "00:00"
+msgstr "00:00"
+
+#: lib/resources/ui/sp-recording-state-view.ui:39
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+
+#: lib/sp-callgraph-profile.c:318
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
+
+#: lib/sp-perf-source.c:345
+#, c-format
+msgid ""
+"Sysprof requires authorization to access your computers performance counters."
+msgstr ""
+
+#: lib/sp-perf-source.c:350
+#, c-format
+msgid "An error occurred while attempting to access performance counters: %s"
+msgstr ""
+
+#: lib/sp-profiler-menu-button.c:114 lib/sp-profiler-menu-button.c:129
+#, fuzzy
+msgid "All Processes"
+msgstr ""
+"Določa obsežnost beleženja na RAVEN ('debug' - razhroščevalna, 'detailed' - "
+"podrobna, 'minimal' - minimalna, 'errors' - le napake) za vsa opravila"
+
+#: lib/sp-profiler-menu-button.c:135
+#, fuzzy, c-format
+msgid "Process %d"
+msgstr "Končano opravilo %d - »%s«"
+
+#: lib/sp-profiler-menu-button.c:140
+#, c-format
+msgid "%u Process"
+msgid_plural "%u Processes"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: lib/sp-profiler-menu-button.c:796
+#, fuzzy
+msgid "The command line arguments provided are invalid"
+msgstr "Polje argumentov ukazne vrstice"
+
+#: src/resources/gtk/menus.ui:6
+msgid "_New Window"
+msgstr "_Novo okno"
+
+#: src/resources/gtk/menus.ui:12
+#, fuzzy
+msgid "_Open Capture"
+msgstr "Zajemanje"
+
+#: src/resources/gtk/menus.ui:18
+msgid "About"
+msgstr "O programu"
+
+#: src/resources/gtk/menus.ui:22
+msgid "Help"
+msgstr "Pomoč"
+
+#: src/resources/gtk/menus.ui:26
+msgid "_Quit"
+msgstr "_Končaj"
+
+#: src/resources/gtk/menus.ui:34 src/sp-window.c:932
+msgid "Open"
+msgstr "Odpri"
+
+#: src/resources/gtk/menus.ui:40
+msgid "Save As"
+msgstr "Shrani kot"
+
+#: src/resources/gtk/menus.ui:46
+msgid "Screenshot"
+msgstr "Zaslonska slika"
+
+#: src/resources/gtk/menus.ui:52
+msgid "Close"
+msgstr "Zapri"
+
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:281
+#, fuzzy
+msgid "Not running"
+msgstr "Zagnano"
+
+#: src/resources/ui/sp-window.ui:44
+msgid "_Record"
+msgstr "_Snemaj"
+
+#: src/resources/ui/sp-window.ui:117
+msgid "_Close"
+msgstr "_Zapri"
+
+#: src/sp-application.c:160
+#, fuzzy
+msgid "A system profiler"
+msgstr "Sistemska datoteka"
+
+#: src/sp-application.c:164
+msgid "translator-credits"
+msgstr "Matej Urbančič <mateju@svn@gnome.org>"
+
+#: src/sp-application.c:170
+#, fuzzy
+msgid "Learn more about Sysprof"
+msgstr "Več podrobnosti o upravljanju barv"
+
+#: src/sp-window.c:139
+#, c-format
+msgid "Samples: %u"
+msgstr "Vzorci: %u"
+
+#: src/sp-window.c:172
+msgid "[Memory Capture]"
+msgstr "[Zajemanje pomnilnika]"
+
+#: src/sp-window.c:185
+#, c-format
+msgid "%s - %s"
+msgstr "%s - %s"
+
+#: src/sp-window.c:219
+msgid "Not enough samples were collected to generate a callgraph"
+msgstr ""
+
+#: src/sp-window.c:273 src/sp-window.c:317
+msgid "Record"
+msgstr "Snemaj"
+
+#: src/sp-window.c:293
+msgid "Stop"
+msgstr "Zaustavi"
+
+#: src/sp-window.c:298
+msgid "Recording…"
+msgstr "Poteka snemanje ..."
+
+#: src/sp-window.c:309
+#, fuzzy
+msgid "Building profile…"
+msgstr "Izgradnja paketov"
+
+#. SpProfiler::stopped will move us to generating
+#: src/sp-window.c:406
+#, fuzzy
+msgid "Stopping…"
+msgstr "Zaustavljanje"
+
+#: src/sp-window.c:555
+#, fuzzy
+msgid "Save Capture As"
+msgstr "Zajemanje"
+
+#: src/sp-window.c:558 src/sp-window.c:931
+msgid "Cancel"
+msgstr "Prekliči"
+
+#: src/sp-window.c:559
+msgid "Save"
+msgstr "Shrani"
+
+#: src/sp-window.c:591
+#, c-format
+msgid "An error occurred while attempting to save your capture: %s"
+msgstr ""
+
+#: src/sp-window.c:898
+#, c-format
+msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgstr ""
+
+#: src/sp-window.c:926
+#, fuzzy
+msgid "Open Capture"
+msgstr "Zajemanje"
+
+#: src/sp-window.c:938
+msgid "Sysprof Captures"
+msgstr ""
+
+#: src/sp-window.c:943
+msgid "All Files"
+msgstr "Vse datoteke"
+
+#: tools/sysprof-cli.c:95
+msgid "Make sysprof specific to a task"
+msgstr ""
+
+#: tools/sysprof-cli.c:95
+msgid "PID"
+msgstr "PID"
+
+#: tools/sysprof-cli.c:96
+#, fuzzy
+msgid "Run a command and profile the process"
+msgstr "_Zaženi ukaz kot prijavno lupino"
+
+#: tools/sysprof-cli.c:96
+msgid "COMMAND"
+msgstr "UKAZ"
+
+#: tools/sysprof-cli.c:97
+#, fuzzy
+msgid "Print the sysprof-cli version and exit"
+msgstr "Izpiši podatke o različici in končaj"
+
+#: tools/sysprof-cli.c:103
+#, fuzzy
+msgid "[CAPTURE_FILE] - Sysprof"
+msgstr "Zajemanje"
+
+#: tools/sysprof-cli.c:122
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr ""

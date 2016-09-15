@@ -133,22 +133,23 @@ PKG_CHECK_MODULES(SYSTEMD,
 
 # sysprofd requires libsystemd and polkit, and is required to run
 # the ui without root permissions
-AC_ARG_ENABLE([sysprofd],
-              [AS_HELP_STRING([--enable-sysprofd=@<:@yes/no/auto@:>@],
+AC_ARG_WITH([sysprofd],
+             [AS_HELP_STRING([--with-sysprofd=@<:@host/bundled/no/auto@:>@],
                               [Build Sysprof D-Bus daemon.])],
-              [enable_sysprofd=$enableval],
-              [enable_sysprofd=auto])
-AS_IF([test "$enable_sysprofd" = "auto"],[
+             [with_sysprofd=$withval],
+             [with_sysprofd=auto])
+AS_IF([test "$with_sysprofd" = "auto"],[
         AS_IF([test "$have_polkit" = "yes" && test "$have_systemd" = "yes"],
-              [enable_sysprofd=yes],
-              [enable_sysprofd=no])
+              [with_sysprofd=bundled],
+              [with_sysprofd=no])
 ])
-AS_IF([test "$enable_sysprofd" = "yes"],[
+AS_IF([test "$with_sysprofd" = "bundled"],[
         AS_IF([test "$have_systemd" = "yes" && test "$have_polkit" = "yes"],[],[
                 AC_MSG_ERROR([--enable-sysprofd requires libsystemd >= systemd_required_version and polkit-gobject-1])
         ])
 ])
-AM_CONDITIONAL(ENABLE_SYSPROFD, [test "$enable_sysprofd" = "yes"])
+AM_CONDITIONAL(ENABLE_SYSPROFD, [test "$with_sysprofd" = "bundled"])
+AM_CONDITIONAL(ENABLE_POLKIT, [test "$with_sysprofd" = "host" || test "$with_sysprofd" = "bundled"])
 
 # we might be building sysprof-cli without the UI
 AC_ARG_ENABLE([gtk],
@@ -282,7 +283,7 @@ echo "    The GTK interface can explore sysprof capture"
 echo "    files. If you want the user interface, ensure"
 echo "    this is yes."
 echo ""
-echo "  sysprofd ..................................... : ${enable_sysprofd}"
+echo "  sysprofd ..................................... : ${with_sysprofd}"
 echo ""
 echo "    The sysprofd system daemon provides support"
 echo "    for accessing hardware performance counters"

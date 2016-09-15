@@ -49,7 +49,7 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 
-#ifdef ENABLE_SYSPROFD
+#ifdef ENABLE_POLKIT
 # include <polkit/polkit.h>
 #endif
 
@@ -124,7 +124,7 @@ G_DEFINE_BOXED_TYPE (SpPerfCounter,
                      (GBoxedCopyFunc)sp_perf_counter_ref,
                      (GBoxedFreeFunc)sp_perf_counter_unref)
 
-#ifdef ENABLE_SYSPROFD
+#ifdef ENABLE_POLKIT
 static GDBusConnection *shared_conn;
 #endif
 
@@ -420,7 +420,7 @@ sp_perf_counter_take_fd (SpPerfCounter *self,
   sp_perf_counter_add_info (self, fd, -1);
 }
 
-#ifdef ENABLE_SYSPROFD
+#ifdef ENABLE_POLKIT
 static GDBusProxy *
 get_proxy (void)
 {
@@ -641,7 +641,7 @@ sp_perf_counter_authorize_async (GCancellable        *cancellable,
 
   task = g_task_new (NULL, cancellable, callback, user_data);
 
-#ifdef ENABLE_SYSPROFD
+#ifdef ENABLE_POLKIT
   g_bus_get (G_BUS_TYPE_SYSTEM,
              cancellable,
              sp_perf_counter_get_bus_cb,
@@ -671,7 +671,7 @@ sp_perf_counter_open (SpPerfCounter          *self,
                       gint                    group_fd,
                       gulong                  flags)
 {
-#ifdef ENABLE_SYSPROFD
+#ifdef ENABLE_POLKIT
   g_autoptr(GError) error = NULL;
   g_autoptr(GDBusProxy) proxy = NULL;
   g_autoptr(GUnixFDList) fdlist = NULL;
@@ -694,7 +694,7 @@ sp_perf_counter_open (SpPerfCounter          *self,
       return ret;
     }
 
-#ifdef ENABLE_SYSPROFD
+#ifdef ENABLE_POLKIT
   params = g_variant_new_parsed (
 			"("
 				"["

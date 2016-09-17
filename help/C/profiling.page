@@ -109,7 +109,7 @@ the current environment.</p>
 
     <p>The profiling results in <app>Sysprof</app> are split into three
 sections. On the top left is a list of all the functions profiled. They
-are sorted by how often they were called during the sampling frequency.</p>
+are sorted by how often they were called during the recording.</p>
 
     <note>
       <p>It is important to note that the amount of time spent in each function

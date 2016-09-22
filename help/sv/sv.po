@@ -1,0 +1,392 @@
+# Swedish translation for sysprof.
+# Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"POT-Creation-Date: 2016-09-21 17:48+0000\n"
+"PO-Revision-Date: 2016-09-22 12:29+0200\n"
+"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
+"Language-Team: Swedish <gnome-se-list@gnome.org>\n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.9\n"
+
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr "Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016"
+
+#. (itstool) path: page/title
+#: C/index.page:12
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: section/title
+#: C/index.page:15
+msgid "Profiling"
+msgstr "Profilering"
+
+#. (itstool) path: credit/name
+#: C/introduction.page:15
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
+
+#. (itstool) path: credit/years
+#: C/introduction.page:17
+msgid "2016"
+msgstr "2016"
+
+#. (itstool) path: info/desc
+#: C/introduction.page:22
+msgid "Welcome to <app>Sysprof</app>!"
+msgstr "Välkommen till <app>Sysprof</app>!"
+
+#. (itstool) path: page/title
+#: C/introduction.page:25
+msgid "Introduction"
+msgstr "Introduktion"
+
+#. (itstool) path: page/p
+#: C/introduction.page:27
+msgid ""
+"<app>Sysprof</app> is a system profiler for Linux that targets the GNOME "
+"desktop."
+msgstr ""
+"<app>Sysprof</app> är en systemprofilerare för Linux som riktar sig mot "
+"GNOME-skrivbordet."
+
+#. (itstool) path: info/desc
+#: C/introduction.page:33
+msgid "Differences between tracing and sampling"
+msgstr "Skillnader mellan spårning och stickprov"
+
+#. (itstool) path: section/title
+#: C/introduction.page:35
+msgid "What is a Profiler?"
+msgstr "Vad är en profilerare?"
+
+#. (itstool) path: section/p
+#: C/introduction.page:37
+msgid ""
+"A profiler is an application that records information about an application "
+"or system while it runs. That information can be explored to gain insight "
+"into how the application could be changed to perform better."
+msgstr ""
+"En profilerare är ett program som spelar in information om ett program eller "
+"system under tiden det kör. Denna information kan utforskas för att närmare "
+"förstå hur programmet skulle kunna ändras för att få bättre prestanda."
+
+#. (itstool) path: section/p
+#: C/introduction.page:42
+msgid ""
+"Two common categories of software profilers exist, commonly referred to as "
+"either tracing or sampling profilers. What is meant by tracing profiler is "
+"that every function call executed by the program is known to the profiler. A "
+"sampling profiler works by inspecting the state of the program on a regular "
+"frequency and therefore does not see every function call executed by the "
+"program."
+msgstr ""
+"Två vanliga kategorier av programvaruprofilerare existerar och kallas "
+"vanligen spårnings- eller stickprovsprofilerare. En spårningsprofilerare "
+"innebär att varje funktionsanrop som utförs av programmet är känt av "
+"profileraren. En stickprovsprofilerare fungerar genom att inspektera "
+"programmets tillstånd med regelbundna mellanrum och ser därmed inte varje "
+"funktionsanrop som utförs av programmet."
+
+#. (itstool) path: section/p
+#: C/introduction.page:49
+msgid ""
+"Both tracing and sampling profilers have their advantages. A notable "
+"advantage of a sampling profiler is that the overhead is much less than that "
+"of a tracing profiler, making it easier to use for software that requires "
+"interactivity."
+msgstr ""
+"Både spårnings- och stickprovsprofilerare har sina fördelar. En tydlig "
+"fördel med en stickprovsprofilerare är att prestandakostnaden är mycket "
+"mindre än den för en spårningsprofilerare, vilket gör den lättare att "
+"använda för programvara som kräver interaktion."
+
+#. (itstool) path: section/p
+#: C/introduction.page:54
+msgid "<app>Sysprof</app> is a sampling profiler."
+msgstr "<app>Sysprof</app> är en stickprovsprofilerare."
+
+#. (itstool) path: section/title
+#: C/profiling.page:10
+msgid "How to profile your system"
+msgstr "Hur du kan profilera ditt system"
+
+#. (itstool) path: section/p
+#: C/profiling.page:11
+msgid ""
+"When <app>Sysprof</app> profiles your system, it records stack information "
+"for all applications executing, including the Linux kernel. This can "
+"sometimes be confusing if you only want to look at a single process. If your "
+"application does not interact much with the host system, you may have more "
+"success with <link href=\"profiling#new-process-profiling\">profiling an "
+"existing process</link>."
+msgstr ""
+"Då <app>Sysprof</app> profilerar system spelar det in stackinformation för "
+"alla program som kör, inklusive Linux-kärnan. Detta kan ibland vara "
+"förvirrande om du bara vill titta på en enstaka process. Om ditt program "
+"inte interagerar mycket med värdsystemet kan du lyckas bättre med att <link "
+"href=\"profiling#new-process-profiling\">profilera en befintlig process</"
+"link>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:18
+msgid ""
+"To profile your entire system, ensure the target button is set to <em>All "
+"Processes</em> and click <em>Record</em>."
+msgstr ""
+"För att profilera hela ditt system säkerställer du att målknappen är "
+"inställd på <em>Alla processer</em> och klickar <em>Spela in</em>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:21
+msgid ""
+"At this point, you may be asked to <em>authorize</em> access to profile the "
+"system. This is required as the Linux kernel's perf implementation requires "
+"root to perform whole-system profiling."
+msgstr ""
+"Vid denna tidpunkt kan du bli efterfrågad att <em>auktorisera</em> åtkomst "
+"för att profilera systemet. Detta krävs för att Linux-kärnans implementation "
+"av perf kräver att root utför profilering av hela systemet."
+
+#. (itstool) path: section/p
+#: C/profiling.page:25
+msgid ""
+"During the profiling session, you will see the number of seconds the profile "
+"has been active. Clicking the <em>Record</em> button again will stop the "
+"profiling session. Afterwhich, the callgraph will be displayed."
+msgstr ""
+"Under profileringssessionen kommer du att se antalet sekunder som profilen "
+"varit aktiv. Att klicka på knappen <em>Spela in</em> igen kommer att stoppa "
+"profileringssessionen. Efter detta kommer anropsgrafen att visas."
+
+#. (itstool) path: note/p
+#: C/profiling.page:31
+msgid ""
+"If you find that the <app>sysprof</app> application is showing up in your "
+"profiling callgraph, you might consider recording the profiling session with "
+"<cmd>sysprof-cli</cmd>. This is a command line program that will capture "
+"your profiling session to disk to be viewed at a later time."
+msgstr ""
+"Om du ser att programmet <app>sysprof</app> dyker upp i anropsgrafen för din "
+"profilering kan du vilja spela in profileringssessionen med <cmd>sysprof-"
+"cli</cmd>. Detta är ett kommandradsprogram som fångar in din "
+"profileringssession till disk så att den kan visas vid ett senare tillfälle."
+
+#. (itstool) path: section/p
+#: C/profiling.page:37 C/profiling.page:60
+msgid ""
+"See <link href=\"profiling#interpreting-results\">interpreting results</"
+"link> for more guidance."
+msgstr ""
+"Se <link href=\"profiling#interpreting-results\">tolka resultat</link> för "
+"mer hjälp."
+
+#. (itstool) path: section/title
+#: C/profiling.page:46
+msgid "Profile an existing process"
+msgstr "Profilera en befintlig process"
+
+# TODO: profiling target???
+#. (itstool) path: section/p
+#: C/profiling.page:47
+msgid ""
+"With <app>Sysprof</app>, you can profile one or more existing processes on "
+"your system. First, select the <em>profiling target</em> button next to the "
+"<em>Record</em> button. Select <em>Existing Process</em> in the popover that "
+"is displayed. Next, select as many processes as you'd like to profile. "
+"Processes selected for profiling will have a checkmark next to their name."
+msgstr ""
+"Med<app>Sysprof</app> kan du profilera en eller flera befintliga processer "
+"på ditt system. Välj först knappen <em>profileringsmål</em> intill knappen "
+"<em>Spela in</em>. Välj <em>Befintlig process</em> i kontextfönstret som "
+"visas. Markera sedan så många processer som du vill profilera. Processer som "
+"är markerade för profilering kommer ha en bock intill sitt namn."
+
+#. (itstool) path: section/p
+#: C/profiling.page:54
+msgid ""
+"After selecting your target processes, click the <em>Record</em> button to "
+"start profiling."
+msgstr ""
+"Klicka på knappen <em>Spela in</em> efter att ha valt dina målprocesser för "
+"att börja profilera."
+
+#. (itstool) path: section/p
+#: C/profiling.page:57
+msgid ""
+"When you have completed, click the <em>Record</em> button again to stop "
+"profiling."
+msgstr ""
+"Då du är klar klickar du på knappen <em>Spela in</em> igen för att sluta "
+"profilera."
+
+#. (itstool) path: section/title
+#: C/profiling.page:69
+msgid "Profile a new process"
+msgstr "Profilera en ny process"
+
+# TODO: profiling target???
+#. (itstool) path: section/p
+#: C/profiling.page:71
+msgid ""
+"Often times, you may need to spawn a new process to profile. First, select "
+"the <em>profiling target</em> button next to the <em>Record</em> button. "
+"Next, select <em>New Process</em> and fill out the necessary information to "
+"spawn the process."
+msgstr ""
+"Ofta kan du behöva starta en ny process att profilera. Välj först knappen "
+"<em>profileringsmål</em> intill knappen <em>Spela in</em>. Välj sedan <em>Ny "
+"process</em> och fyll i nödvändig information för att starta processen."
+
+#. (itstool) path: note/p
+#: C/profiling.page:77
+msgid ""
+"If you are spawning a process that requires access to your current display, "
+"such as a GTK+ application, you will want to make sure <em>Inherit current "
+"environment</em> is set."
+msgstr ""
+"Om du startar en process som kräver åtkomst till din aktuella display, så "
+"som ett GTK+-program, kommer du vilja vara säker på att <em>Ärv aktuell "
+"miljö</em> är inställt."
+
+#. (itstool) path: section/title
+#: C/profiling.page:88
+msgid "Profiling with the sysprof-cli command line tool"
+msgstr "Profilering med kommandoradsverktyget sysprof-cli"
+
+#. (itstool) path: section/p
+#: C/profiling.page:90
+msgid ""
+"For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
+"command line tool. When run without any arguments, it will record your "
+"entire system and save the output to <file>capture.syscap</file>. This file "
+"can be opened with the <app>Sysprof</app> application to view the callgraph."
+msgstr ""
+"För minimal prestandakostnad kan du överväga att använda "
+"kommandoradsverktyget <cmd>sysprof-cli</cmd>. Då det körs utan några "
+"arguments kommer det spela in hela ditt system och spara utdata till "
+"<file>capture.syscap</file>. Denna fil kan öppnas med programmet "
+"<app>Sysprof</app> för att visa anropsgrafen."
+
+#. (itstool) path: section/p
+#: C/profiling.page:95
+msgid ""
+"You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
+"cmd>."
+msgstr ""
+"Du kan också fästa till en befintlig process med <cmd>sysprof-cli -p pid</"
+"cmd>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:98
+msgid ""
+"If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
+"cmd> to specify a command to be launched. The command will inherit the "
+"current environment."
+msgstr ""
+"Om du vill starta en ny process, använd <cmd>sysprof-cli -c 'kommando'</cmd> "
+"för att ange ett kommando som ska startas. Kommandot kommer ärva den "
+"aktuella miljön."
+
+#. (itstool) path: section/title
+#: C/profiling.page:108
+msgid "Interpreting results"
+msgstr "Tolka resultat"
+
+#. (itstool) path: section/p
+#: C/profiling.page:110
+msgid ""
+"The profiling results in <app>Sysprof</app> are split into three sections. "
+"On the top left is a list of all the functions profiled. They are sorted by "
+"how often they were called during the recording."
+msgstr ""
+"Profileringsresultaten i <app>Sysprof</app> är uppdelade i tre delar. Längst "
+"upp till vänster finns en lista över alla profilerade funktioner. De "
+"sorteras efter hur ofta de anropades under inspelningen."
+
+#. (itstool) path: note/p
+#: C/profiling.page:115
+msgid ""
+"It is important to note that the amount of time spent in each function is "
+"not captured. That would require a tracing profiler to accurately record. "
+"The percentage is calculated by determining how often that function showed "
+"up in the current stacktrace when a sample was recorded."
+msgstr ""
+"Det är viktigt att notera att mängden tid som spenderats i varje funktion "
+"inte fångas. Det skulle kräva en spårningsprofilerare för att spela in det "
+"korrekt. Procentandelen räknas ut genom att avgöra hur ofta funktionen dök "
+"upp i det aktuella stackspåret då ett stickprov spelades in."
+
+#. (itstool) path: section/p
+#: C/profiling.page:121
+msgid ""
+"After selecting a function from the functions list, all of the recorded "
+"callers of that function will be displayed on the bottom left. They are also "
+"sorted by the percentage of samples that included that function in the "
+"stacktrace."
+msgstr ""
+"Efter att ha valt en funktion från funktionslistan kommer alla anroparna "
+"till den funktionen att visas längst ner till vänster. De är också sorterade "
+"efter procentandelen av stickproven som innehåller funktionen i stackspåret."
+
+#. (itstool) path: section/p
+#: C/profiling.page:126
+msgid ""
+"On the right, are all of the decendants of a selected function. You can "
+"select a function either from the functions list, or the callers list."
+msgstr ""
+"Till höger är alla ättlingarna till en vald funktion. Du kan välja en "
+"funktion antingen från funktionslistan eller från listan över anropare."
+
+#. (itstool) path: section/p
+#: C/profiling.page:129
+msgid ""
+"You can jump into a function by activating a row in the tree of descendants "
+"with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
+msgstr ""
+"Du kan hoppa in i en funktion genom att aktivera en rad i trädet av "
+"ättlingar med ett dubbelklick eller genom att trycka <key>Retur</key> eller "
+"<key>Blanksteg</key>."
+
+#. (itstool) path: note/p
+#: C/profiling.page:133
+msgid ""
+"If you see <em>- - kernel - -</em> in your results, that means that the "
+"application transitioned into or from the Linux kernel. There can be many "
+"reasons for this such as a <em>syscall</em> or <em>signal</em>."
+msgstr ""
+"Om du ser <em>- - kernel - -</em> bland dina resultat betyder det att "
+"programmet gick in i eller ut från Linux-kärnan. Det kan finnas många "
+"orsaker till detta som ett <em>systemanrop</em> eller en <em>signal</em>."
+
+#. (itstool) path: p/link
+#: C/legal.xml:5
+msgid "Creative Commons Attribution-ShareAlike 4.0 International"
+msgstr "Creative Commons Erkännande-DelaLika 4.0 Internationell"
+
+#. (itstool) path: license/p
+#: C/legal.xml:4
+msgid "This work is licensed under a <_:link-1/> license."
+msgstr "Detta verk är licensierat under licensen <_:link-1/>."
+
+#. (itstool) path: license/p
+#: C/legal.xml:8
+msgid ""
+"As a special exception, the copyright holders give you permission to copy, "
+"modify, and distribute the example code contained in this documentation "
+"under the terms of your choosing, without restriction."
+msgstr ""
+"Som ett speciellt undantag ger upphovsrättsinnehavarna dig tillåtelse att "
+"kopiera, modifiera och distribuera exempelkoden som finns i denna "
+"dokumentation under de villkor som du väljer, utan restriktioner."

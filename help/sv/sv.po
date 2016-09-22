@@ -1,5 +1,5 @@
 # Swedish translation for sysprof.
-# Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
+# Copyright © 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 # Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016.
 #
@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "POT-Creation-Date: 2016-09-21 17:48+0000\n"
-"PO-Revision-Date: 2016-09-22 12:29+0200\n"
+"PO-Revision-Date: 2016-09-22 22:29+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
-"Language-Team: Swedish <gnome-se-list@gnome.org>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -197,7 +197,6 @@ msgstr ""
 msgid "Profile an existing process"
 msgstr "Profilera en befintlig process"
 
-# TODO: profiling target???
 #. (itstool) path: section/p
 #: C/profiling.page:47
 msgid ""
@@ -208,10 +207,10 @@ msgid ""
 "Processes selected for profiling will have a checkmark next to their name."
 msgstr ""
 "Med<app>Sysprof</app> kan du profilera en eller flera befintliga processer "
-"på ditt system. Välj först knappen <em>profileringsmål</em> intill knappen "
-"<em>Spela in</em>. Välj <em>Befintlig process</em> i kontextfönstret som "
-"visas. Markera sedan så många processer som du vill profilera. Processer som "
-"är markerade för profilering kommer ha en bock intill sitt namn."
+"på ditt system. Välj först knappen för <em>profileringsmål</em> intill "
+"knappen <em>Spela in</em>. Välj <em>Befintlig process</em> i kontextfönstret "
+"som visas. Markera sedan så många processer som du vill profilera. Processer "
+"som är markerade för profilering kommer ha en bock intill sitt namn."
 
 #. (itstool) path: section/p
 #: C/profiling.page:54
@@ -236,7 +235,6 @@ msgstr ""
 msgid "Profile a new process"
 msgstr "Profilera en ny process"
 
-# TODO: profiling target???
 #. (itstool) path: section/p
 #: C/profiling.page:71
 msgid ""
@@ -246,8 +244,9 @@ msgid ""
 "spawn the process."
 msgstr ""
 "Ofta kan du behöva starta en ny process att profilera. Välj först knappen "
-"<em>profileringsmål</em> intill knappen <em>Spela in</em>. Välj sedan <em>Ny "
-"process</em> och fyll i nödvändig information för att starta processen."
+"för <em>profileringsmål</em> intill knappen <em>Spela in</em>. Välj sedan "
+"<em>Ny process</em> och fyll i nödvändig information för att starta "
+"processen."
 
 #. (itstool) path: note/p
 #: C/profiling.page:77
@@ -275,7 +274,7 @@ msgid ""
 msgstr ""
 "För minimal prestandakostnad kan du överväga att använda "
 "kommandoradsverktyget <cmd>sysprof-cli</cmd>. Då det körs utan några "
-"arguments kommer det spela in hela ditt system och spara utdata till "
+"argument kommer det spela in hela ditt system och spara utdata till "
 "<file>capture.syscap</file>. Denna fil kan öppnas med programmet "
 "<app>Sysprof</app> för att visa anropsgrafen."
 

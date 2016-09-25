@@ -13,9 +13,16 @@ test_libs = \
 	$(top_builddir)/lib/libsysprof-@API_VERSION@.la
 
 TESTS += test-capture
+TEST_PROGS += test-capture
 test_capture_SOURCES = test-capture.c
 test_capture_CFLAGS = $(test_cflags)
 test_capture_LDADD = $(test_libs)
+
+TESTS += test-capture-cursor
+TEST_PROGS += test-capture-cursor
+test_capture_cursor_SOURCES = test-capture-cursor.c
+test_capture_cursor_CFLAGS = $(test_cflags)
+test_capture_cursor_LDADD = $(test_libs)
 
 
 if ENABLE_GTK

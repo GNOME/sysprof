@@ -137,6 +137,7 @@ uiheadersdir = $(includedir)/sysprof-@API_VERSION@
 uiheaders_DATA = \
 	sp-callgraph-view.h \
 	sp-cell-renderer-percent.h \
+	sp-cpu-visualizer-row.h \
 	sp-empty-state-view.h \
 	sp-failed-state-view.h \
 	sp-line-visualizer-row.h \
@@ -154,6 +155,7 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	$(uiheaders_DATA) \
 	sp-callgraph-view.c \
 	sp-cell-renderer-percent.c \
+	sp-cpu-visualizer-row.c \
 	sp-empty-state-view.c \
 	sp-failed-state-view.c \
 	sp-line-visualizer-row.c \

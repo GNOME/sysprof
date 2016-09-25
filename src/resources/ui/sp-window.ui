@@ -172,7 +172,7 @@
                       <object class="GtkListBox" id="visualizer_rows">
                         <property name="visible">true</property>
                         <child>
-                          <object class="SpLineVisualizerRow" id="cpu_row">
+                          <object class="SpCpuVisualizerRow" id="cpu_row">
                             <property name="title" translatable="yes">CPU</property>
                             <property name="height-request">75</property>
                             <property name="selectable">false</property>

@@ -25,9 +25,38 @@ G_BEGIN_DECLS
 
 #define SP_TYPE_LINE_VISUALIZER_ROW (sp_line_visualizer_row_get_type())
 
-G_DECLARE_FINAL_TYPE (SpLineVisualizerRow, sp_line_visualizer_row, SP, LINE_VISUALIZER_ROW, SpVisualizerRow)
+G_DECLARE_DERIVABLE_TYPE (SpLineVisualizerRow, sp_line_visualizer_row, SP, LINE_VISUALIZER_ROW, SpVisualizerRow)
+
+struct _SpLineVisualizerRowClass
+{
+  SpVisualizerRowClass parent_class;
+
+  void (*counter_added) (SpLineVisualizerRow *self,
+                         guint                counter_id);
+  void (*prepare)       (SpLineVisualizerRow *self,
+                         cairo_t             *cr,
+                         guint                counter_id);
+
+  gpointer _reserved1;
+  gpointer _reserved2;
+  gpointer _reserved3;
+  gpointer _reserved4;
+  gpointer _reserved5;
+  gpointer _reserved6;
+  gpointer _reserved7;
+  gpointer _reserved8;
+  gpointer _reserved9;
+  gpointer _reserved10;
+  gpointer _reserved11;
+  gpointer _reserved12;
+  gpointer _reserved13;
+  gpointer _reserved14;
+  gpointer _reserved15;
+  gpointer _reserved16;
+};
 
 GtkWidget *sp_line_visualizer_row_new         (void);
+void       sp_line_visualizer_row_clear       (SpLineVisualizerRow *self);
 void       sp_line_visualizer_row_add_counter (SpLineVisualizerRow *self,
                                                guint                counter_id);
 

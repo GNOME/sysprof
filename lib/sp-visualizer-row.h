@@ -42,6 +42,23 @@ struct _SpVisualizerRowClass
    */
   void (*set_reader) (SpVisualizerRow *self,
                       SpCaptureReader *reader);
+
+  gpointer _reserved1;
+  gpointer _reserved2;
+  gpointer _reserved3;
+  gpointer _reserved4;
+  gpointer _reserved5;
+  gpointer _reserved6;
+  gpointer _reserved7;
+  gpointer _reserved8;
+  gpointer _reserved9;
+  gpointer _reserved10;
+  gpointer _reserved11;
+  gpointer _reserved12;
+  gpointer _reserved13;
+  gpointer _reserved14;
+  gpointer _reserved15;
+  gpointer _reserved16;
 };
 
 void sp_visualizer_row_set_reader (SpVisualizerRow *self,

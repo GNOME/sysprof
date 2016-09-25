@@ -26,6 +26,8 @@ G_BEGIN_DECLS
 #define SP_TYPE_CAPTURE_CONDITION (sp_capture_condition_get_type())
 
 GType               sp_capture_condition_get_type               (void);
+SpCaptureCondition *sp_capture_condition_new_and                (SpCaptureCondition       *left,
+                                                                 SpCaptureCondition       *right);
 SpCaptureCondition *sp_capture_condition_new_where_type_in      (guint                     n_types,
                                                                  const SpCaptureFrameType *types);
 SpCaptureCondition *sp_capture_condition_new_where_time_between (gint64                    begin_time,

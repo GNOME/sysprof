@@ -35,6 +35,7 @@
 
 typedef enum
 {
+  SP_CAPTURE_CONDITION_AND,
   SP_CAPTURE_CONDITION_WHERE_TYPE_IN,
   SP_CAPTURE_CONDITION_WHERE_TIME_BETWEEN,
   SP_CAPTURE_CONDITION_WHERE_PID_IN,
@@ -52,6 +53,10 @@ struct _SpCaptureCondition
     } where_time_between;
     GArray *where_pid_in;
     GArray *where_counter_in;
+    struct {
+      SpCaptureCondition *left;
+      SpCaptureCondition *right;
+    } and;
   } u;
 };
 
@@ -64,6 +69,10 @@ sp_capture_condition_match (const SpCaptureCondition *self,
 
   switch (self->type)
     {
+    case SP_CAPTURE_CONDITION_AND:
+      return sp_capture_condition_match (self->u.and.left, frame) &&
+             sp_capture_condition_match (self->u.and.right, frame);
+
     case SP_CAPTURE_CONDITION_WHERE_TYPE_IN:
       for (guint i = 0; i < self->u.where_type_in->len; i++)
         {
@@ -143,6 +152,11 @@ sp_capture_condition_copy (const SpCaptureCondition *self)
 
   switch (self->type)
     {
+    case SP_CAPTURE_CONDITION_AND:
+      return sp_capture_condition_new_and (
+        sp_capture_condition_copy (self->u.and.left),
+        sp_capture_condition_copy (self->u.and.right));
+
     case SP_CAPTURE_CONDITION_WHERE_TYPE_IN:
       return sp_capture_condition_new_where_type_in (
           self->u.where_type_in->len,
@@ -172,6 +186,11 @@ sp_capture_condition_free (SpCaptureCondition *self)
 {
   switch (self->type)
     {
+    case SP_CAPTURE_CONDITION_AND:
+      sp_capture_condition_free (self->u.and.left);
+      sp_capture_condition_free (self->u.and.right);
+      break;
+
     case SP_CAPTURE_CONDITION_WHERE_TYPE_IN:
       g_array_free (self->u.where_type_in, TRUE);
       break;
@@ -268,6 +287,33 @@ sp_capture_condition_new_where_counter_in (guint        n_counters,
   self->u.where_counter_in = g_array_sized_new (FALSE, FALSE, sizeof (guint), n_counters);
   g_array_set_size (self->u.where_counter_in, n_counters);
   memcpy (self->u.where_counter_in->data, counters, sizeof (guint) * n_counters);
+
+  return self;
+}
+
+/**
+ * sp_capture_condition_new_and:
+ * @left: (transfer full): An #SpCaptureCondition
+ * @right: (transfer full): An #SpCaptureCondition
+ *
+ * Creates a new #SpCaptureCondition that requires both left and right
+ * to evaluate to %TRUE.
+ *
+ * Returns: (transfer full): A new #SpCaptureCondition.
+ */
+SpCaptureCondition *
+sp_capture_condition_new_and (SpCaptureCondition *left,
+                              SpCaptureCondition *right)
+{
+  SpCaptureCondition *self;
+
+  g_return_val_if_fail (left != NULL, NULL);
+  g_return_val_if_fail (right != NULL, NULL);
+
+  self = g_slice_new0 (SpCaptureCondition);
+  self->type = SP_CAPTURE_CONDITION_AND;
+  self->u.and.left = left;
+  self->u.and.right = right;
 
   return self;
 }

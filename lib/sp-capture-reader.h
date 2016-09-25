@@ -29,6 +29,7 @@ SpCaptureReader                   *sp_capture_reader_new                 (const 
                                                                           GError             **error);
 SpCaptureReader                   *sp_capture_reader_new_from_fd         (int                  fd,
                                                                           GError             **error);
+SpCaptureReader                   *sp_capture_reader_copy                (SpCaptureReader     *self);
 SpCaptureReader                   *sp_capture_reader_ref                 (SpCaptureReader     *self);
 void                               sp_capture_reader_unref               (SpCaptureReader     *self);
 const gchar                       *sp_capture_reader_get_filename        (SpCaptureReader     *self);

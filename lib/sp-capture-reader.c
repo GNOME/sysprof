@@ -812,3 +812,38 @@ sp_capture_reader_get_start_time (SpCaptureReader *self)
 
   return self->header.time;
 }
+
+/**
+ * sp_capture_reader_copy:
+ *
+ * This function makes a copy of the reader. Since readers use
+ * positioned reads with pread(), this allows you to have multiple
+ * readers with the shared file descriptor. This uses dup() to create
+ * another file descriptor.
+ *
+ * Returns: (transfer full): A copy of @self with a new file-descriptor.
+ */
+SpCaptureReader *
+sp_capture_reader_copy (SpCaptureReader *self)
+{
+  SpCaptureReader *copy;
+  int fd;
+
+  g_return_val_if_fail (self != NULL, NULL);
+
+  if (-1 == (fd = dup (self->fd)))
+    return NULL;
+
+  copy = g_new0 (SpCaptureReader, 1);
+
+  *copy = *self;
+
+  copy->ref_count = 1;
+  copy->filename = g_strdup (self->filename);
+  copy->fd = fd;
+
+  copy->buf = g_malloc (self->bufsz);
+  memcpy (copy->buf, self->buf, self->bufsz);
+
+  return copy;
+}

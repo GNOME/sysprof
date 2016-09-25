@@ -18,7 +18,13 @@
 
 #include "sp-visualizer-row.h"
 
-G_DEFINE_ABSTRACT_TYPE (SpVisualizerRow, sp_visualizer_row, GTK_TYPE_LIST_BOX_ROW)
+typedef struct
+{
+  gint64 begin_time;
+  gint64 end_time;
+} SpVisualizerRowPrivate;
+
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (SpVisualizerRow, sp_visualizer_row, GTK_TYPE_LIST_BOX_ROW)
 
 static void
 sp_visualizer_row_class_init (SpVisualizerRowClass *klass)
@@ -38,4 +44,45 @@ sp_visualizer_row_set_reader (SpVisualizerRow *self,
 
   if (SP_VISUALIZER_ROW_GET_CLASS (self)->set_reader)
     SP_VISUALIZER_ROW_GET_CLASS (self)->set_reader (self, reader);
+}
+
+void
+sp_visualizer_row_set_time_range (SpVisualizerRow *self,
+                                  gint64           begin_time,
+                                  gint64           end_time)
+{
+  SpVisualizerRowPrivate *priv = sp_visualizer_row_get_instance_private (self);
+
+  g_return_if_fail (SP_IS_VISUALIZER_ROW (self));
+
+  if (begin_time > end_time)
+    {
+      gint64 tmp = begin_time;
+      begin_time = end_time;
+      end_time = tmp;
+    }
+
+  priv->begin_time = begin_time;
+  priv->end_time = end_time;
+
+  if (SP_VISUALIZER_ROW_GET_CLASS (self)->set_time_range)
+    SP_VISUALIZER_ROW_GET_CLASS (self)->set_time_range (self, begin_time, end_time);
+}
+
+void
+sp_visualizer_row_get_time_range (SpVisualizerRow *self,
+                                  gint64          *begin_time,
+                                  gint64          *end_time)
+{
+  SpVisualizerRowPrivate *priv = sp_visualizer_row_get_instance_private (self);
+
+  g_return_if_fail (SP_IS_VISUALIZER_ROW (self));
+  g_return_if_fail (begin_time != NULL);
+  g_return_if_fail (end_time != NULL);
+
+  if (begin_time != NULL)
+    *begin_time = priv->begin_time;
+
+  if (end_time != NULL)
+    *end_time = priv->end_time;
 }

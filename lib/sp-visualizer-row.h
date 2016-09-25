@@ -43,6 +43,21 @@ struct _SpVisualizerRowClass
   void (*set_reader) (SpVisualizerRow *self,
                       SpCaptureReader *reader);
 
+  /**
+   * SpVisualizerRow::set_time_range:
+   * @self: A #SpVisualizerRow
+   * @begin_time: the beginning time for the row.
+   * @end_time: the end time for the row.
+   *
+   * This function is used to notify the row that the range the
+   * row should be displaying has changed. This might happen when
+   * the user has altered the zoom level, selected a region, in or
+   * a new capture was loaded.
+   */
+  void (*set_time_range) (SpVisualizerRow *self,
+                          gint64           begin_time,
+                          gint64           end_time);
+
   gpointer _reserved1;
   gpointer _reserved2;
   gpointer _reserved3;
@@ -61,8 +76,14 @@ struct _SpVisualizerRowClass
   gpointer _reserved16;
 };
 
-void sp_visualizer_row_set_reader (SpVisualizerRow *self,
-                                   SpCaptureReader *reader);
+void sp_visualizer_row_set_reader     (SpVisualizerRow *self,
+                                       SpCaptureReader *reader);
+void sp_visualizer_row_get_time_range (SpVisualizerRow *self,
+                                       gint64          *begin_time,
+                                       gint64          *end_time);
+void sp_visualizer_row_set_time_range (SpVisualizerRow *self,
+                                       gint64           begin_time,
+                                       gint64           end_time);
 
 G_END_DECLS
 

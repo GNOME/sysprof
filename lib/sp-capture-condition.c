@@ -22,11 +22,23 @@
 
 #include "sp-capture-condition.h"
 
+/**
+ * SECTION:sp-capture-condition
+ * @title: SpCaptureCondition
+ *
+ * The #SpCaptureCondition type is an abstraction on an operation
+ * for a sort of AST to the #SpCaptureCursor. The goal is that if
+ * we abstract the types of fields we want to match in the cursor
+ * that we can opportunistically add indexes to speed up the operation
+ * later on without changing the implementation of cursor consumers.
+ */
+
 typedef enum
 {
   SP_CAPTURE_CONDITION_WHERE_TYPE_IN,
   SP_CAPTURE_CONDITION_WHERE_TIME_BETWEEN,
   SP_CAPTURE_CONDITION_WHERE_PID_IN,
+  SP_CAPTURE_CONDITION_WHERE_COUNTER_IN,
 } SpCaptureConditionType;
 
 struct _SpCaptureCondition
@@ -39,6 +51,7 @@ struct _SpCaptureCondition
       gint64 end;
     } where_time_between;
     GArray *where_pid_in;
+    GArray *where_counter_in;
   } u;
 };
 
@@ -70,6 +83,47 @@ sp_capture_condition_match (const SpCaptureCondition *self,
         }
       return FALSE;
 
+    case SP_CAPTURE_CONDITION_WHERE_COUNTER_IN:
+      if (frame->type == SP_CAPTURE_FRAME_CTRSET)
+        {
+          const SpCaptureFrameCounterSet *set = (SpCaptureFrameCounterSet *)frame;
+
+          for (guint i = 0; i < self->u.where_counter_in->len; i++)
+            {
+              guint counter = g_array_index (self->u.where_counter_in, guint, i);
+
+              for (guint j = 0; j < set->n_values; j++)
+                {
+                  if (counter == set->values[j].ids[0] ||
+                      counter == set->values[j].ids[1] ||
+                      counter == set->values[j].ids[2] ||
+                      counter == set->values[j].ids[3] ||
+                      counter == set->values[j].ids[4] ||
+                      counter == set->values[j].ids[5] ||
+                      counter == set->values[j].ids[6] ||
+                      counter == set->values[j].ids[7])
+                    return TRUE;
+                }
+            }
+        }
+      else if (frame->type == SP_CAPTURE_FRAME_CTRDEF)
+        {
+          const SpCaptureFrameCounterDefine *def = (SpCaptureFrameCounterDefine *)frame;
+
+          for (guint i = 0; i < self->u.where_counter_in->len; i++)
+            {
+              guint counter = g_array_index (self->u.where_counter_in, guint, i);
+
+              for (guint j = 0; j < def->n_counters; j++)
+                {
+                  if (def->counters[j].id == counter)
+                    return TRUE;
+                }
+            }
+        }
+
+      return FALSE;
+
     default:
       break;
     }
@@ -91,14 +145,19 @@ sp_capture_condition_copy (const SpCaptureCondition *self)
     {
     case SP_CAPTURE_CONDITION_WHERE_TYPE_IN:
       return sp_capture_condition_new_where_type_in (
-          self->u.where_type_in->len, (const SpCaptureFrameType *)self->u.where_type_in->data);
+          self->u.where_type_in->len,
+          (const SpCaptureFrameType *)(gpointer)self->u.where_type_in->data);
 
     case SP_CAPTURE_CONDITION_WHERE_TIME_BETWEEN:
       break;
 
     case SP_CAPTURE_CONDITION_WHERE_PID_IN:
       return sp_capture_condition_new_where_pid_in (
-          self->u.where_pid_in->len, (const GPid *)self->u.where_pid_in->data);
+          self->u.where_pid_in->len, (const GPid *)(gpointer)self->u.where_pid_in->data);
+
+    case SP_CAPTURE_CONDITION_WHERE_COUNTER_IN:
+      return sp_capture_condition_new_where_counter_in (
+          self->u.where_counter_in->len, (const guint *)(gpointer)self->u.where_counter_in->data);
 
     default:
       g_assert_not_reached ();
@@ -122,6 +181,10 @@ sp_capture_condition_free (SpCaptureCondition *self)
 
     case SP_CAPTURE_CONDITION_WHERE_PID_IN:
       g_array_free (self->u.where_pid_in, TRUE);
+      break;
+
+    case SP_CAPTURE_CONDITION_WHERE_COUNTER_IN:
+      g_array_free (self->u.where_counter_in, TRUE);
       break;
 
     default:
@@ -188,6 +251,23 @@ sp_capture_condition_new_where_pid_in (guint       n_pids,
   self->u.where_pid_in = g_array_sized_new (FALSE, FALSE, sizeof (GPid), n_pids);
   g_array_set_size (self->u.where_pid_in, n_pids);
   memcpy (self->u.where_pid_in->data, pids, sizeof (GPid) * n_pids);
+
+  return self;
+}
+
+SpCaptureCondition *
+sp_capture_condition_new_where_counter_in (guint        n_counters,
+                                           const guint *counters)
+{
+  SpCaptureCondition *self;
+
+  g_return_val_if_fail (counters != NULL, NULL);
+
+  self = g_slice_new0 (SpCaptureCondition);
+  self->type = SP_CAPTURE_CONDITION_WHERE_COUNTER_IN;
+  self->u.where_counter_in = g_array_sized_new (FALSE, FALSE, sizeof (guint), n_counters);
+  g_array_set_size (self->u.where_counter_in, n_counters);
+  memcpy (self->u.where_counter_in->data, counters, sizeof (guint) * n_counters);
 
   return self;
 }

@@ -26,6 +26,8 @@ G_BEGIN_DECLS
 #define SYSPROF_INSIDE
 # include "sp-address.h"
 # include "sp-callgraph-profile.h"
+# include "sp-capture-condition.h"
+# include "sp-capture-cursor.h"
 # include "sp-capture-reader.h"
 # include "sp-capture-writer.h"
 # include "sp-clock.h"

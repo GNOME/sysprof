@@ -42,8 +42,10 @@ G_BEGIN_DECLS
 #define SP_CAPTURE_COUNTER_INT64  0
 #define SP_CAPTURE_COUNTER_DOUBLE 1
 
-typedef struct _SpCaptureReader SpCaptureReader;
-typedef struct _SpCaptureWriter SpCaptureWriter;
+typedef struct _SpCaptureReader    SpCaptureReader;
+typedef struct _SpCaptureWriter    SpCaptureWriter;
+typedef struct _SpCaptureCursor    SpCaptureCursor;
+typedef struct _SpCaptureCondition SpCaptureCondition;
 
 typedef guint64 SpCaptureAddress;
 

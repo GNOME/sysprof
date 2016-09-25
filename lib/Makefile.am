@@ -45,6 +45,8 @@ headers_DATA = \
 	sysprof-version.h \
 	sp-address.h \
 	sp-callgraph-profile.h \
+	sp-capture-condition.h \
+	sp-capture-cursor.h \
 	sp-capture-reader.h \
 	sp-capture-writer.h \
 	sp-capture-types.h \
@@ -71,6 +73,8 @@ libsysprof_@API_VERSION@_la_SOURCES = \
 	sp-address.c \
 	sp-callgraph-profile.c \
 	sp-callgraph-profile-private.h \
+	sp-capture-condition.c \
+	sp-capture-cursor.c \
 	sp-capture-reader.c \
 	sp-capture-writer.c \
 	sp-clock.c \

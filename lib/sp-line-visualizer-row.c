@@ -536,8 +536,6 @@ sp_line_visualizer_row_add_counter (SpLineVisualizerRow *self,
   if (SP_LINE_VISUALIZER_ROW_GET_CLASS (self)->counter_added)
     SP_LINE_VISUALIZER_ROW_GET_CLASS (self)->counter_added (self, counter_id);
 
-  g_print ("Adding counter: %d\n", counter_id);
-
   sp_line_visualizer_row_queue_reload (self);
 }
 

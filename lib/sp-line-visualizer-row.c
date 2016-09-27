@@ -778,6 +778,14 @@ sp_line_visualizer_row_render_worker (GTask        *task,
       goto cleanup;
     }
 
+  /*
+   * Flip the coordinate space so that we can just use the x,y pairs
+   * as our position between 0.0 and 1.0 and have both the direction
+   * and the placement correct.
+   */
+  cairo_translate (cr, 0, render->height);
+  cairo_scale (cr, render->width, -render->height);
+
   for (guint i = 0; i < render->lines->len; i++)
     {
       const LineInfo *info = &g_array_index (render->lines, LineInfo, i);
@@ -786,28 +794,32 @@ sp_line_visualizer_row_render_worker (GTask        *task,
 
       points = point_cache_get_points (render->cache, info->id, &n_points);
 
-      cairo_move_to (cr, 0, render->height);
-
-      gdk_cairo_set_source_rgba (cr, &info->foreground);
-      cairo_set_line_width (cr, info->line_width);
+      cairo_move_to (cr, 0, 0);
 
       for (guint j = 0; j < n_points; j++)
         {
           const Point *p = &points[i];
 
-          cairo_line_to (cr, p->x * render->width, 1.0 - p->y * render->height);
+          cairo_line_to (cr, p->x, p->y);
 
           if G_UNLIKELY (j + 1 == n_points)
             {
+              gdk_cairo_set_source_rgba (cr, &info->foreground);
+              cairo_set_line_width (cr, info->line_width / (gdouble)render->height);
               cairo_stroke_preserve (cr);
-              cairo_line_to (cr, p->x * render->width, render->height);
+              cairo_line_to (cr, p->x, 0.0);
             }
         }
 
-      cairo_line_to (cr, 0, render->height);
-
-      gdk_cairo_set_source_rgba (cr, &info->background);
-      cairo_fill (cr);
+      if (n_points > 0 && info->background.alpha > 0)
+        {
+          /*
+           * Close the path and fill if nencessary.
+           */
+          cairo_line_to (cr, 0, 0);
+          gdk_cairo_set_source_rgba (cr, &info->background);
+          cairo_fill (cr);
+        }
     }
 
   g_task_return_pointer (task,

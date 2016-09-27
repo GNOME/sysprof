@@ -18,6 +18,8 @@ libutil_la_SOURCES = \
 	util/demangle.h \
 	util/elfparser.c \
 	util/elfparser.h \
+	util/pointcache.c \
+	util/pointcache.h \
 	util/stackstash.c \
 	util/stackstash.h \
 	$(NULL)

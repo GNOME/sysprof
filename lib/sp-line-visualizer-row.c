@@ -19,149 +19,199 @@
 #define G_LOG_DOMAIN "sp-line-visualizer-row"
 
 #include <stdlib.h>
+#include <string.h>
 
+#include "pointcache.h"
+#include "sp-capture-condition.h"
+#include "sp-capture-cursor.h"
 #include "sp-line-visualizer-row.h"
 
 typedef struct
 {
+  /*
+   * Our reader as assigned by the visualizer system.
+   */
   SpCaptureReader *reader;
 
-  GHashTable      *counters;
-  GtkLabel        *label;
+  /*
+   * An array of LineInfo which contains information about the counters
+   * we need to render.
+   */
+  GArray *lines;
 
+  /*
+   * This is our set of cached points to render. Once it is assigned here,
+   * it is immutable (and therefore may be shared with worker processes
+   * that are rendering the points).
+   */
+  PointCache *cache;
+
+  /*
+   * This is our offscreen surface that is already rendered. We use it
+   * to render to the front buffer (during our ::draw vfunc).
+   */
   cairo_surface_t *surface;
-  guint            draw_sequence;
+
+  /*
+   * We track the draw sequence so that we only "consume" the newest
+   * draw operation after a threaded render completes.
+   */
+  guint draw_sequence;
+
+  /*
+   * Child widget to display the label in the upper corner.
+   */
+  GtkLabel *label;
+
+  /*
+   * Range of the scale for lower and upper.
+   */
+  gdouble y_lower;
+  gdouble y_upper;
+
+  /*
+   * If we have a new counter discovered or the reader is set, we might
+   * want to delay loading until we return to the main loop. This can
+   * help us avoid doing duplicate work.
+   */
+  guint queued_load;
 } SpLineVisualizerRowPrivate;
 
 typedef struct
 {
-  gint64 begin_time;
-  gint64 end_time;
+  guint id;
+  gdouble line_width;
+  GdkRGBA background;
+  GdkRGBA foreground;
+} LineInfo;
+
+typedef struct
+{
+  PointCache *cache;
+  GArray *lines;
   gint width;
   gint height;
-  guint sequence;
-} DrawRequest;
+} RenderData;
+
+typedef struct
+{
+  SpCaptureCursor *cursor;
+  GArray *lines;
+  PointCache *cache;
+  gint64 begin_time;
+  gint64 end_time;
+  gdouble y_lower;
+  gdouble y_upper;
+} LoadData;
 
 G_DEFINE_TYPE_WITH_PRIVATE (SpLineVisualizerRow, sp_line_visualizer_row, SP_TYPE_VISUALIZER_ROW)
+
+static void            sp_line_visualizer_row_load_data_async   (SpLineVisualizerRow  *self,
+                                                                 GCancellable         *cancellable,
+                                                                 GAsyncReadyCallback   callback,
+                                                                 gpointer              user_data);
+static PointCache      *sp_line_visualizer_row_load_data_finish (SpLineVisualizerRow  *self,
+                                                                 GAsyncResult         *result,
+                                                                 GError              **error);
+static void            sp_line_visualizer_row_render_async      (SpLineVisualizerRow  *self,
+                                                                 PointCache           *cache,
+                                                                 GCancellable         *cancellable,
+                                                                 GAsyncReadyCallback   callback,
+                                                                 gpointer              user_data);
+static cairo_surface_t *sp_line_visualizer_row_render_finish    (SpLineVisualizerRow  *self,
+                                                                 GAsyncResult         *result,
+                                                                 GError              **error);
 
 enum {
   PROP_0,
   PROP_TITLE,
+  PROP_Y_LOWER,
+  PROP_Y_UPPER,
   N_PROPS
 };
 
 static GParamSpec *properties [N_PROPS];
 
 static void
-sp_line_visualizer_row_draw_worker (GTask        *task,
-                                    gpointer      source_object,
-                                    gpointer      task_data,
-                                    GCancellable *cancellable)
+load_data_free (gpointer data)
 {
-  SpLineVisualizerRow *self = source_object;
-  DrawRequest *draw = task_data;
-  cairo_surface_t *surface = NULL;
-  cairo_t *cr = NULL;
+  LoadData *load = data;
 
-  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
-  g_assert (G_IS_TASK (task));
-  g_assert (draw != NULL);
-  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
-
-  /*
-   * Create our image surface. We do this in the local thread and use
-   * an image surface so that we can work around the lack of thread
-   * safety in cairo and pixman. They are mostly thread unaware though,
-   * so as long as we are really careful, we are okay.
-   *
-   * We draw using ARGB32 because the GtkListBoxRow will be doing it's
-   * own pixel caching. This means we can concentrate on the line data
-   * and ignore having to deal with backgrounds and such.
-   */
-  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, draw->width, draw->height);
-
-  if (surface == NULL)
+  if (load != NULL)
     {
-      g_task_return_new_error (task,
-                               G_IO_ERROR,
-                               G_IO_ERROR_FAILED,
-                               "Failed to create image surface of size %dx%d",
-                               draw->width, draw->height);
-      goto cleanup;
+      g_clear_pointer (&load->lines, g_array_unref);
+      g_clear_object (&load->cursor);
+      g_clear_pointer (&load->cache, point_cache_unref);
+      g_slice_free (LoadData, load);
     }
-
-  cr = cairo_create (surface);
-
-  if (cr == NULL)
-    {
-      g_task_return_new_error (task,
-                               G_IO_ERROR,
-                               G_IO_ERROR_FAILED,
-                               "Failed to create cairo context");
-      goto cleanup;
-    }
-
-  g_task_return_pointer (task, g_steal_pointer (&surface), (GDestroyNotify)cairo_surface_destroy);
-
-cleanup:
-  if (surface != NULL)
-    cairo_surface_destroy (surface);
-
-  if (cr != NULL)
-    cairo_destroy (cr);
 }
 
 static void
-complete_draw (GObject      *object,
-               GAsyncResult *result,
-               gpointer      user_data)
+render_data_free (gpointer data)
+{
+  RenderData *render = data;
+
+  if (render != NULL)
+    {
+      g_clear_pointer (&render->cache, point_cache_unref);
+      g_clear_pointer (&render->lines, g_array_unref);
+      g_slice_free (RenderData, render);
+    }
+}
+
+static GArray *
+copy_array (GArray *ar)
+{
+  GArray *ret;
+
+  ret = g_array_sized_new (FALSE, FALSE, g_array_get_element_size (ar), ar->len);
+  g_array_set_size (ret, ar->len);
+  memcpy (ret->data, ar->data, ar->len * g_array_get_element_size (ret));
+
+  return ret;
+}
+
+static void
+sp_line_visualizer_row_render_cb (GObject      *object,
+                                  GAsyncResult *result,
+                                  gpointer      user_data)
 {
   SpLineVisualizerRow *self = (SpLineVisualizerRow *)object;
   SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
-  DrawRequest *draw;
-  GTask *task = (GTask *)result;
+  g_autoptr(GError) error = NULL;
   cairo_surface_t *surface;
 
   g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
-  g_assert (G_IS_TASK (task));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (user_data == NULL);
 
-  draw = g_task_get_task_data (task);
-  surface = g_task_propagate_pointer (task, NULL);
+  surface = sp_line_visualizer_row_render_finish (self, result, &error);
 
-  if (surface != NULL && draw->sequence == priv->draw_sequence)
+  if (surface == NULL)
     {
-      g_clear_pointer (&priv->surface, cairo_surface_destroy);
-      priv->surface = surface;
-      gtk_widget_queue_draw (GTK_WIDGET (self));
+      g_warning ("%s", error->message);
+      return;
     }
+
+  g_clear_pointer (&priv->surface, cairo_surface_destroy);
+  priv->surface = surface;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
 static void
-sp_line_visualizer_row_begin_draw (SpLineVisualizerRow *self)
+sp_line_visualizer_row_begin_offscreen_draw (SpLineVisualizerRow *self)
 {
   SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
-  g_autoptr(GTask) task = NULL;
-  DrawRequest *draw;
-  gint64 begin_time;
-  gint64 end_time;
-  GtkAllocation alloc;
 
   g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
 
-  sp_visualizer_row_get_time_range (SP_VISUALIZER_ROW (self), &begin_time, &end_time);
-  gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
-
-  draw = g_new (DrawRequest, 1);
-  draw->begin_time = begin_time;
-  draw->end_time = end_time;
-  draw->width = alloc.width;
-  draw->height = alloc.height;
-  draw->sequence = ++priv->draw_sequence;
-
-  task = g_task_new (self, NULL, complete_draw, NULL);
-  g_task_set_source_tag (task, sp_line_visualizer_row_begin_draw);
-  g_task_set_task_data (task, draw, g_free);
-  g_task_run_in_thread (task, sp_line_visualizer_row_draw_worker);
+  if (priv->cache != NULL)
+    sp_line_visualizer_row_render_async (self,
+                                         priv->cache,
+                                         NULL,
+                                         sp_line_visualizer_row_render_cb,
+                                         NULL);
 }
 
 static gboolean
@@ -196,7 +246,7 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
        */
       if (width != alloc.width || height != alloc.height)
         {
-
+          /* TODO: Handle intermediate scaling */
           return ret;
         }
 
@@ -210,6 +260,66 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
     }
 
   return ret;
+}
+
+static void
+sp_line_visualizer_row_load_data_cb (GObject      *object,
+                                     GAsyncResult *result,
+                                     gpointer      user_data)
+{
+  SpLineVisualizerRow *self = (SpLineVisualizerRow *)object;
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
+  g_autoptr(GError) error = NULL;
+  g_autoptr(PointCache) cache = NULL;
+
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
+
+  cache = sp_line_visualizer_row_load_data_finish (self, result, &error);
+
+  if (cache == NULL)
+    {
+      g_warning ("%s", error->message);
+      return;
+    }
+
+  g_clear_pointer (&priv->cache, point_cache_unref);
+  priv->cache = g_steal_pointer (&cache);
+
+  gtk_widget_queue_resize (GTK_WIDGET (self));
+}
+
+static gboolean
+sp_line_visualizer_row_do_reload (gpointer data)
+{
+  SpLineVisualizerRow *self = data;
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
+
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
+
+  priv->queued_load = 0;
+
+  sp_line_visualizer_row_load_data_async (self,
+                                          NULL,
+                                          sp_line_visualizer_row_load_data_cb,
+                                          NULL);
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+sp_line_visualizer_row_queue_reload (SpLineVisualizerRow *self)
+{
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
+
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
+
+  if (priv->queued_load == 0)
+    {
+      priv->queued_load = gdk_threads_add_idle_full (G_PRIORITY_LOW,
+                                                     sp_line_visualizer_row_do_reload,
+                                                     self,
+                                                     NULL);
+    }
 }
 
 static void
@@ -232,20 +342,8 @@ sp_line_visualizer_row_set_reader (SpVisualizerRow *row,
       if (reader != NULL)
         priv->reader = sp_capture_reader_ref (reader);
 
-      gtk_widget_queue_draw (GTK_WIDGET (self));
+      sp_line_visualizer_row_queue_reload (self);
     }
-}
-
-static void
-sp_line_visualizer_row_real_prepare (SpLineVisualizerRow *self,
-                                     cairo_t             *cr,
-                                     guint                counter_id)
-{
-  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
-  g_assert (cr != NULL);
-
-  cairo_set_line_width (cr, 1.0);
-  cairo_set_source_rgba (cr, 0, 0, 0, 0.4);
 }
 
 static void
@@ -254,8 +352,15 @@ sp_line_visualizer_row_finalize (GObject *object)
   SpLineVisualizerRow *self = (SpLineVisualizerRow *)object;
   SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
 
-  g_clear_pointer (&priv->counters, g_hash_table_unref);
+  g_clear_pointer (&priv->lines, g_array_unref);
+  g_clear_pointer (&priv->cache, point_cache_unref);
   g_clear_pointer (&priv->reader, sp_capture_reader_unref);
+
+  if (priv->queued_load != 0)
+    {
+      g_source_remove (priv->queued_load);
+      priv->queued_load = 0;
+    }
 
   G_OBJECT_CLASS (sp_line_visualizer_row_parent_class)->finalize (object);
 }
@@ -271,7 +376,7 @@ sp_line_visualizer_row_size_allocate (GtkWidget     *widget,
 
   GTK_WIDGET_CLASS (sp_line_visualizer_row_parent_class)->size_allocate (widget, alloc);
 
-  sp_line_visualizer_row_begin_draw (self);
+  sp_line_visualizer_row_begin_offscreen_draw (self);
 }
 
 static void
@@ -302,6 +407,14 @@ sp_line_visualizer_row_get_property (GObject    *object,
       g_object_get_property (G_OBJECT (priv->label), "label", value);
       break;
 
+    case PROP_Y_LOWER:
+      g_value_set_double (value, priv->y_lower);
+      break;
+
+    case PROP_Y_UPPER:
+      g_value_set_double (value, priv->y_upper);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -322,6 +435,16 @@ sp_line_visualizer_row_set_property (GObject      *object,
       g_object_set_property (G_OBJECT (priv->label), "label", value);
       break;
 
+    case PROP_Y_LOWER:
+      priv->y_lower = g_value_get_double (value);
+      gtk_widget_queue_resize (GTK_WIDGET (self));
+      break;
+
+    case PROP_Y_UPPER:
+      priv->y_upper = g_value_get_double (value);
+      gtk_widget_queue_resize (GTK_WIDGET (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -333,8 +456,6 @@ sp_line_visualizer_row_class_init (SpLineVisualizerRowClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   SpVisualizerRowClass *visualizer_class = SP_VISUALIZER_ROW_CLASS (klass);
-
-  klass->prepare = sp_line_visualizer_row_real_prepare;
 
   object_class->finalize = sp_line_visualizer_row_finalize;
   object_class->get_property = sp_line_visualizer_row_get_property;
@@ -353,6 +474,24 @@ sp_line_visualizer_row_class_init (SpLineVisualizerRowClass *klass)
                          NULL,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_Y_LOWER] =
+    g_param_spec_double ("y-lower",
+                         "Y Lower",
+                         "The lowest Y value for the visualizer",
+                         -G_MAXDOUBLE,
+                         G_MAXDOUBLE,
+                         0.0,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_Y_UPPER] =
+    g_param_spec_double ("y-upper",
+                         "Y Upper",
+                         "The highest Y value for the visualizer",
+                         -G_MAXDOUBLE,
+                         G_MAXDOUBLE,
+                         100.0,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -362,7 +501,7 @@ sp_line_visualizer_row_init (SpLineVisualizerRow *self)
   SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
   PangoAttrList *attrs = pango_attr_list_new ();
 
-  priv->counters = g_hash_table_new (NULL, NULL);
+  priv->lines = g_array_new (FALSE, FALSE, sizeof (LineInfo));
 
   pango_attr_list_insert (attrs, pango_attr_scale_new (PANGO_SCALE_SMALL * PANGO_SCALE_SMALL));
 
@@ -382,22 +521,24 @@ sp_line_visualizer_row_add_counter (SpLineVisualizerRow *self,
                                     guint                counter_id)
 {
   SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
+  LineInfo line_info = { 0 };
 
   g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
-  g_assert (priv->counters != NULL);
+  g_assert (priv->lines != NULL);
 
-  g_hash_table_insert (priv->counters, GSIZE_TO_POINTER (counter_id), NULL);
+  line_info.id = counter_id;
+  line_info.foreground.alpha = 0.4;
+  line_info.background.alpha = 0.2;
+  line_info.line_width = 1.0;
+
+  g_array_append_val (priv->lines, line_info);
 
   if (SP_LINE_VISUALIZER_ROW_GET_CLASS (self)->counter_added)
     SP_LINE_VISUALIZER_ROW_GET_CLASS (self)->counter_added (self, counter_id);
 
-  /*
-   * We use queue_resize so that a size_allocate() is called
-   * to kick off the new threaded draw of the widget. Otherwise,
-   * we'd have to do our own queuing, so this simplifies things
-   * a small bit.
-   */
-  gtk_widget_queue_resize (GTK_WIDGET (self));
+  g_print ("Adding counter: %d\n", counter_id);
+
+  sp_line_visualizer_row_queue_reload (self);
 }
 
 void
@@ -407,6 +548,348 @@ sp_line_visualizer_row_clear (SpLineVisualizerRow *self)
 
   g_return_if_fail (SP_IS_LINE_VISUALIZER_ROW (self));
 
-  g_hash_table_remove_all (priv->counters);
-  gtk_widget_queue_resize (GTK_WIDGET (self));
+  if (priv->lines->len > 0)
+    g_array_remove_range (priv->lines, 0, priv->lines->len);
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static inline gboolean
+contains_id (GArray *ar,
+             guint   id)
+{
+  for (guint i = 0; i < ar->len; i++)
+    {
+      const LineInfo *info = &g_array_index (ar, LineInfo, i);
+      if (info->id == id)
+        return TRUE;
+    }
+
+  return FALSE;
+}
+
+static inline guint8
+counter_type (LoadData *load,
+              guint     counter_id)
+{
+  /* TODO: Support other counter types
+   *
+   * We need to keep some information on the counter (by id) so that we
+   * can track the counters type (which is a 1-byte type id).
+   */
+  return SP_CAPTURE_COUNTER_DOUBLE;
+}
+
+static gfloat
+calc_x (gint64 lower,
+        gint64 upper,
+        gint64 value)
+{
+  return (gdouble)(value - lower) / (gdouble)(upper - lower);
+}
+
+static gfloat
+calc_y_double (gdouble lower,
+               gdouble upper,
+               gdouble value)
+{
+  return (value - lower) / (upper - lower);
+}
+
+static gfloat
+calc_y_int64 (gint64 lower,
+              gint64 upper,
+              gint64 value)
+{
+  return (gdouble)(value - lower) / (gdouble)(upper - lower);
+}
+
+static gboolean
+sp_line_visualizer_row_load_data_frame_cb (const SpCaptureFrame *frame,
+                                           gpointer              user_data)
+{
+  LoadData *load = user_data;
+
+  g_assert (frame != NULL);
+  g_assert (frame->type == SP_CAPTURE_FRAME_CTRSET ||
+            frame->type == SP_CAPTURE_FRAME_CTRDEF);
+  g_assert (load != NULL);
+
+  if (frame->type == SP_CAPTURE_FRAME_CTRSET)
+    {
+      const SpCaptureFrameCounterSet *set = (SpCaptureFrameCounterSet *)frame;
+      gfloat x = calc_x (load->begin_time, load->end_time, frame->time);
+
+      for (guint i = 0; i < set->n_values; i++)
+        {
+          const SpCaptureCounterValues *group = &set->values[i];
+
+          for (guint j = 0; j < G_N_ELEMENTS (group->ids); j++)
+            {
+              guint counter_id = group->ids[j];
+
+              if (counter_id != 0 && contains_id (load->lines, counter_id))
+                {
+                  gfloat y;
+
+                  if (counter_type (load, counter_id) == SP_CAPTURE_COUNTER_DOUBLE)
+                    y = calc_y_double (load->y_lower, load->y_upper, group->values[j].vdbl);
+                  else
+                    y = calc_y_int64 (load->y_lower, load->y_upper, group->values[j].v64);
+
+                  point_cache_add_point_to_set (load->cache, counter_id, x, y);
+                }
+            }
+        }
+    }
+
+  return TRUE;
+}
+
+static void
+sp_line_visualizer_row_load_data_worker (GTask        *task,
+                                         gpointer      source_object,
+                                         gpointer      task_data,
+                                         GCancellable *cancellable)
+{
+  LoadData *load = task_data;
+  g_autoptr(GArray) counter_ids = NULL;
+
+  g_assert (G_IS_TASK (task));
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (source_object));
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  counter_ids = g_array_new (FALSE, FALSE, sizeof (guint));
+
+  for (guint i = 0; i < load->lines->len; i++)
+    {
+      const LineInfo *line_info = &g_array_index (load->lines, LineInfo, i);
+
+      g_array_append_val (counter_ids, line_info->id);
+    }
+
+  sp_capture_cursor_add_condition (load->cursor,
+                                   sp_capture_condition_new_where_counter_in (counter_ids->len,
+                                                                              (guint *)(gpointer)counter_ids->data));
+  sp_capture_cursor_foreach (load->cursor, sp_line_visualizer_row_load_data_frame_cb, load);
+  g_task_return_pointer (task, g_steal_pointer (&load->cache), (GDestroyNotify)point_cache_unref);
+}
+
+static void
+sp_line_visualizer_row_load_data_async (SpLineVisualizerRow *self,
+                                        GCancellable        *cancellable,
+                                        GAsyncReadyCallback  callback,
+                                        gpointer             user_data)
+{
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
+  g_autoptr(GTask) task = NULL;
+  LoadData *load;
+
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sp_line_visualizer_row_load_data_async);
+
+  if (priv->reader == NULL)
+    {
+      g_task_return_new_error (task,
+                               G_IO_ERROR,
+                               G_IO_ERROR_FAILED,
+                               "No data loaded");
+      return;
+    }
+
+  load = g_slice_new0 (LoadData);
+  load->cache = point_cache_new ();
+  load->y_lower = priv->y_lower;
+  load->y_upper = priv->y_upper;
+  sp_visualizer_row_get_time_range (SP_VISUALIZER_ROW (self), &load->begin_time, &load->end_time);
+  load->cursor = sp_capture_cursor_new (priv->reader);
+  load->lines = copy_array (priv->lines);
+
+  for (guint i = 0; i < load->lines->len; i++)
+    {
+      const LineInfo *line_info = &g_array_index (load->lines, LineInfo, i);
+
+      point_cache_add_set (load->cache, line_info->id);
+    }
+
+  g_task_set_task_data  (task, load, load_data_free);
+  g_task_run_in_thread (task, sp_line_visualizer_row_load_data_worker);
+}
+
+static PointCache *
+sp_line_visualizer_row_load_data_finish (SpLineVisualizerRow  *self,
+                                         GAsyncResult         *result,
+                                         GError              **error)
+{
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
+  g_assert (G_IS_TASK (result));
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+static void
+sp_line_visualizer_row_render_worker (GTask        *task,
+                                      gpointer      source_object,
+                                      gpointer      task_data,
+                                      GCancellable *cancellable)
+{
+  RenderData *render = task_data;
+  cairo_surface_t *surface = NULL;
+  cairo_t *cr = NULL;
+
+  g_assert (G_IS_TASK (task));
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (source_object));
+  g_assert (render != NULL);
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  /*
+   * Create our image surface. We do this in the local thread and use
+   * an image surface so that we can work around the lack of thread
+   * safety in cairo and pixman. They are mostly thread unaware though,
+   * so as long as we are really careful, we are okay.
+   *
+   * We draw using ARGB32 because the GtkListBoxRow will be doing it's
+   * own pixel caching. This means we can concentrate on the line data
+   * and ignore having to deal with backgrounds and such.
+   */
+  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
+                                        render->width,
+                                        render->height);
+
+  if (surface == NULL)
+    {
+      g_task_return_new_error (task,
+                               G_IO_ERROR,
+                               G_IO_ERROR_FAILED,
+                               "Failed to create image surface of size %dx%d",
+                               render->width, render->height);
+      goto cleanup;
+    }
+
+  cr = cairo_create (surface);
+
+  if (cr == NULL)
+    {
+      g_task_return_new_error (task,
+                               G_IO_ERROR,
+                               G_IO_ERROR_FAILED,
+                               "Failed to create cairo context");
+      goto cleanup;
+    }
+
+  for (guint i = 0; i < render->lines->len; i++)
+    {
+      const LineInfo *info = &g_array_index (render->lines, LineInfo, i);
+      const Point *points;
+      guint n_points;
+
+      points = point_cache_get_points (render->cache, info->id, &n_points);
+
+      cairo_move_to (cr, 0, render->height);
+
+      gdk_cairo_set_source_rgba (cr, &info->foreground);
+      cairo_set_line_width (cr, info->line_width);
+
+      for (guint j = 0; j < n_points; j++)
+        {
+          const Point *p = &points[i];
+
+          cairo_line_to (cr, p->x * render->width, 1.0 - p->y * render->height);
+
+          if G_UNLIKELY (j + 1 == n_points)
+            {
+              cairo_stroke_preserve (cr);
+              cairo_line_to (cr, p->x * render->width, render->height);
+            }
+        }
+
+      cairo_line_to (cr, 0, render->height);
+
+      gdk_cairo_set_source_rgba (cr, &info->background);
+      cairo_fill (cr);
+    }
+
+  g_task_return_pointer (task,
+                         g_steal_pointer (&surface),
+                         (GDestroyNotify)cairo_surface_destroy);
+
+cleanup:
+  if (surface != NULL)
+    cairo_surface_destroy (surface);
+
+  if (cr != NULL)
+    cairo_destroy (cr);
+}
+
+/**
+ * sp_line_visualizer_row_render_async:
+ * @self: an #SpLineVisualizerRow
+ * @cache: (transfer full): A #PointCache with points to render
+ * @lines: (transfer full): information about the lines
+ * @n_lines: number of lines to render
+ * @cancellable: (nullable): A #GCancellable or %NULL
+ * @callback: a callback for completion
+ * @user_data: user data for @callback
+ *
+ * This asynchronously renders the visuzlier to an offscreen
+ * cairo_image_surface_t which cna then be rendered to the front
+ * buffer as necessary.
+ *
+ * Call sp_line_visualizer_row_render_finish() to get the rendered
+ * image surface.
+ */
+static void
+sp_line_visualizer_row_render_async (SpLineVisualizerRow *self,
+                                     PointCache          *cache,
+                                     GCancellable        *cancellable,
+                                     GAsyncReadyCallback  callback,
+                                     gpointer             user_data)
+{
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
+  RenderData *render;
+  g_autoptr(GTask) task = NULL;
+  GtkAllocation alloc;
+
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
+  g_assert (cache != NULL);
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sp_line_visualizer_row_render_async);
+
+  render = g_slice_new0 (RenderData);
+  render->cache = point_cache_ref (cache);
+  render->lines = copy_array (priv->lines);
+  render->width = alloc.width;
+  render->height = alloc.height;
+
+  g_task_set_task_data (task, render, render_data_free);
+  g_task_run_in_thread (task, sp_line_visualizer_row_render_worker);
+}
+
+/**
+ * sp_line_visualizer_row_render_finish:
+ *
+ * This completes an asynchronous request to render the visualizer.
+ * The resulting cairo_surface_t will really be a cairo_image_surface_t.
+ * We do not use a "similar surface" because we need to ensure that
+ * the render can be performed in a thread-safe manner as it is
+ * dispatched to another thread.
+ *
+ * Returns: (transfer full): A #cairo_image_surface_t.
+ */
+static cairo_surface_t *
+sp_line_visualizer_row_render_finish (SpLineVisualizerRow  *self,
+                                      GAsyncResult         *result,
+                                      GError              **error)
+{
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
+  g_assert (G_IS_TASK (result));
+
+  return g_task_propagate_pointer (G_TASK (result), error);
 }

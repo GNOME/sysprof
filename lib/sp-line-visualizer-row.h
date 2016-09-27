@@ -33,9 +33,6 @@ struct _SpLineVisualizerRowClass
 
   void (*counter_added) (SpLineVisualizerRow *self,
                          guint                counter_id);
-  void (*prepare)       (SpLineVisualizerRow *self,
-                         cairo_t             *cr,
-                         guint                counter_id);
 
   gpointer _reserved1;
   gpointer _reserved2;

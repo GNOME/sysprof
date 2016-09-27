@@ -169,7 +169,7 @@
                     <property name="max-content-height">225</property>
                     <property name="visible">true</property>
                     <child>
-                      <object class="GtkListBox" id="visualizer_rows">
+                      <object class="SpVisualizerList" id="visualizer_rows">
                         <property name="visible">true</property>
                         <child>
                           <object class="SpCpuVisualizerRow" id="cpu_row">

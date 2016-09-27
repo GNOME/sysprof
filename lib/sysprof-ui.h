@@ -34,6 +34,7 @@ G_BEGIN_DECLS
 # include "sp-process-model-item.h"
 # include "sp-process-model-row.h"
 # include "sp-profiler-menu-button.h"
+# include "sp-visualizer-list.h"
 # include "sp-visualizer-row.h"
 #undef SYSPROF_INSIDE
 

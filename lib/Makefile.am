@@ -149,6 +149,7 @@ uiheaders_DATA = \
 	sp-process-model-row.h \
 	sp-profiler-menu-button.h \
 	sp-recording-state-view.h \
+	sp-visualizer-list.h \
 	sp-visualizer-row.h \
 	sysprof-ui.h \
 	$(NULL)
@@ -167,6 +168,7 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	sp-process-model-row.c \
 	sp-profiler-menu-button.c \
 	sp-recording-state-view.c \
+	sp-visualizer-list.c \
 	sp-visualizer-row.c \
 	$(NULL)
 

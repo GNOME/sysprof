@@ -22,6 +22,7 @@
 #include <sysprof-ui.h>
 
 #include "sp-application.h"
+#include "sp-visualizer-list.h"
 #include "sp-window.h"
 #include "sp-window-settings.h"
 
@@ -48,7 +49,7 @@ struct _SpWindow
   GtkLabel             *stat_label;
   GtkLabel             *title;
   GtkStack             *view_stack;
-  GtkListBox           *visualizer_rows;
+  SpVisualizerList     *visualizer_rows;
 
   guint                 stats_handler;
 
@@ -217,9 +218,7 @@ sp_window_build_profile_cb (GObject      *object,
                            GTK_MESSAGE_WARNING,
                            _("Not enough samples were collected to generate a callgraph"));
 
-  gtk_container_foreach (GTK_CONTAINER (self->visualizer_rows),
-                         (GtkCallback)sp_visualizer_row_set_reader,
-                         self->reader);
+  sp_visualizer_list_set_reader (self->visualizer_rows, self->reader);
 
   sp_window_set_state (self, SP_WINDOW_STATE_BROWSING);
 }

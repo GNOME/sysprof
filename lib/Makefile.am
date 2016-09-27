@@ -151,6 +151,7 @@ uiheaders_DATA = \
 	sp-recording-state-view.h \
 	sp-visualizer-list.h \
 	sp-visualizer-row.h \
+	sp-visualizer-ticks.h \
 	sysprof-ui.h \
 	$(NULL)
 
@@ -170,6 +171,7 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	sp-recording-state-view.c \
 	sp-visualizer-list.c \
 	sp-visualizer-row.c \
+	sp-visualizer-ticks.c \
 	$(NULL)
 
 libsysprof_ui_@API_VERSION@_la_CFLAGS = \

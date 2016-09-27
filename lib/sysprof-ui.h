@@ -36,6 +36,7 @@ G_BEGIN_DECLS
 # include "sp-profiler-menu-button.h"
 # include "sp-visualizer-list.h"
 # include "sp-visualizer-row.h"
+# include "sp-visualizer-ticks.h"
 #undef SYSPROF_INSIDE
 
 G_END_DECLS

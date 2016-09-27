@@ -1,14 +1,16 @@
-paned list row,
 popover list row {
   padding: 6px 10px 6px 10px;
   border-bottom: 1px solid alpha(@borders, 0.2);
 }
 
-paned list row:last-child,
 popover list row:last-child {
   border-bottom: none;
 }
 
 popover scrolledwindow {
   border-top: 1px solid alpha(@borders, 0.75);
+}
+
+list.visualizers row {
+  border-bottom: 1px solid alpha(@borders, 0.2);
 }

@@ -246,7 +246,10 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
        */
       if (width != alloc.width || height != alloc.height)
         {
-          /* TODO: Handle intermediate scaling */
+          cairo_rectangle (cr, 0, 0, width, height);
+          cairo_scale (cr, (gdouble)alloc.width / (gdouble)width, (gdouble)alloc.height / (gdouble)height);
+          cairo_set_source_surface (cr, priv->surface, 0, 0);
+          cairo_fill (cr);
           return ret;
         }
 

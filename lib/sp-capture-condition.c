@@ -167,11 +167,13 @@ sp_capture_condition_copy (const SpCaptureCondition *self)
 
     case SP_CAPTURE_CONDITION_WHERE_PID_IN:
       return sp_capture_condition_new_where_pid_in (
-          self->u.where_pid_in->len, (const GPid *)(gpointer)self->u.where_pid_in->data);
+          self->u.where_pid_in->len,
+          (const GPid *)(gpointer)self->u.where_pid_in->data);
 
     case SP_CAPTURE_CONDITION_WHERE_COUNTER_IN:
       return sp_capture_condition_new_where_counter_in (
-          self->u.where_counter_in->len, (const guint *)(gpointer)self->u.where_counter_in->data);
+          self->u.where_counter_in->len,
+          (const guint *)(gpointer)self->u.where_counter_in->data);
 
     default:
       g_assert_not_reached ();
@@ -280,13 +282,17 @@ sp_capture_condition_new_where_counter_in (guint        n_counters,
 {
   SpCaptureCondition *self;
 
-  g_return_val_if_fail (counters != NULL, NULL);
+  g_return_val_if_fail (counters != NULL || n_counters == 0, NULL);
 
   self = g_slice_new0 (SpCaptureCondition);
   self->type = SP_CAPTURE_CONDITION_WHERE_COUNTER_IN;
   self->u.where_counter_in = g_array_sized_new (FALSE, FALSE, sizeof (guint), n_counters);
-  g_array_set_size (self->u.where_counter_in, n_counters);
-  memcpy (self->u.where_counter_in->data, counters, sizeof (guint) * n_counters);
+
+  if (n_counters > 0)
+    {
+      g_array_set_size (self->u.where_counter_in, n_counters);
+      memcpy (self->u.where_counter_in->data, counters, sizeof (guint) * n_counters);
+    }
 
   return self;
 }

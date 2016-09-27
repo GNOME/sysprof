@@ -35,8 +35,14 @@ sp_cpu_visualizer_counter_found (const SpCaptureFrame *frame,
 {
   const SpCaptureFrameCounterDefine *def = (SpCaptureFrameCounterDefine *)frame;
   GArray *counters = user_data;
+  gboolean found = FALSE;
 
   g_assert (frame->type == SP_CAPTURE_FRAME_CTRDEF);
+
+  /*
+   * In practice, all the CPU counters are defined at once, so we can avoid
+   * walking the rest of the capture by returning after we find our CTRDEF.
+   */
 
   for (guint i = 0; i < def->n_counters; i++)
     {
@@ -44,10 +50,11 @@ sp_cpu_visualizer_counter_found (const SpCaptureFrame *frame,
         {
           guint id = def->counters[i].id;
           g_array_append_val (counters, id);
+          found = TRUE;
         }
     }
 
-  return TRUE;
+  return !found;
 }
 
 static void

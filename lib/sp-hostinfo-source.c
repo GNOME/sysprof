@@ -257,7 +257,7 @@ sp_hostinfo_source_start (SpSource *source)
 
   g_assert (SP_IS_HOSTINFO_SOURCE (self));
 
-  self->handler = g_timeout_add (500, collect_hostinfo_cb, self);
+  self->handler = g_timeout_add (250, collect_hostinfo_cb, self);
 }
 
 static void

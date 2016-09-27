@@ -121,27 +121,11 @@ sp_cpu_visualizer_row_set_reader (SpVisualizerRow *row,
 }
 
 static void
-sp_cpu_visualizer_row_prepare (SpLineVisualizerRow *row,
-                               cairo_t             *cr,
-                               guint                counter_id)
-{
-  g_assert (SP_IS_LINE_VISUALIZER_ROW (row));
-  g_assert (cr != NULL);
-  g_assert (counter_id > 0);
-
-  cairo_set_source_rgba (cr, 0, 0, 0, 0.4);
-  cairo_set_line_width (cr, 1.0);
-}
-
-static void
 sp_cpu_visualizer_row_class_init (SpCpuVisualizerRowClass *klass)
 {
-  SpLineVisualizerRowClass *line_class = SP_LINE_VISUALIZER_ROW_CLASS (klass);
   SpVisualizerRowClass *row_class = SP_VISUALIZER_ROW_CLASS (klass);
 
   row_class->set_reader = sp_cpu_visualizer_row_set_reader;
-
-  line_class->prepare = sp_cpu_visualizer_row_prepare;
 }
 
 static void

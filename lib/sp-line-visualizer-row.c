@@ -214,6 +214,38 @@ sp_line_visualizer_row_begin_offscreen_draw (SpLineVisualizerRow *self)
                                          NULL);
 }
 
+static inline void
+subtract_border (GtkAllocation *alloc,
+                 GtkBorder     *border)
+{
+#if 0
+  g_print ("Border; %d %d %d %d\n", border->top, border->left, border->bottom, border->right);
+#endif
+
+  alloc->x += border->left;
+  alloc->y += border->top;
+  alloc->width -= border->left + border->right;
+  alloc->height -= border->top + border->bottom;
+}
+
+static void
+adjust_alloc_for_borders (SpLineVisualizerRow *self,
+                          GtkAllocation       *alloc)
+{
+  GtkStyleContext *style_context;
+  GtkBorder border;
+  GtkStateFlags state;
+
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
+  g_assert (alloc != NULL);
+
+  state = gtk_widget_get_state_flags (GTK_WIDGET (self));
+  style_context = gtk_widget_get_style_context (GTK_WIDGET (self));
+  gtk_style_context_get_border (style_context, state, &border);
+
+  subtract_border (alloc, &border);
+}
+
 static gboolean
 sp_line_visualizer_row_draw (GtkWidget *widget,
                              cairo_t   *cr)
@@ -227,6 +259,7 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
   g_assert (cr != NULL);
 
   gtk_widget_get_allocation (widget, &alloc);
+  adjust_alloc_for_borders (self, &alloc);
 
   ret = GTK_WIDGET_CLASS (sp_line_visualizer_row_parent_class)->draw (widget, cr);
 
@@ -869,6 +902,7 @@ sp_line_visualizer_row_render_async (SpLineVisualizerRow *self,
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
+  adjust_alloc_for_borders (self, &alloc);
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sp_line_visualizer_row_render_async);

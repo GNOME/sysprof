@@ -778,47 +778,45 @@ sp_line_visualizer_row_render_worker (GTask        *task,
       goto cleanup;
     }
 
-  /*
-   * Flip the coordinate space so that we can just use the x,y pairs
-   * as our position between 0.0 and 1.0 and have both the direction
-   * and the placement correct.
-   */
+  /* Flip the coordinate space so that 0,0 is in the bottom left. */
   cairo_translate (cr, 0, render->height);
-  cairo_scale (cr, render->width, -render->height);
+  cairo_scale (cr, 1.0, -1.0);
 
   for (guint i = 0; i < render->lines->len; i++)
     {
-      const LineInfo *info = &g_array_index (render->lines, LineInfo, i);
+      const LineInfo *line_info = &g_array_index (render->lines, LineInfo, i);
       const Point *points;
       guint n_points;
 
-      points = point_cache_get_points (render->cache, info->id, &n_points);
+      points = point_cache_get_points (render->cache, line_info->id, &n_points);
 
-      cairo_move_to (cr, 0, 0);
-
-      for (guint j = 0; j < n_points; j++)
+      if (n_points > 0)
         {
-          const Point *p = &points[i];
+          gdouble last_x = points[0].x * render->width;
+          gdouble last_y = points[0].y * render->height;
 
-          cairo_line_to (cr, p->x, p->y);
+          cairo_move_to (cr, last_x, last_y);
 
-          if G_UNLIKELY (j + 1 == n_points)
+          for (guint j = 1; j < n_points; j++)
             {
-              gdk_cairo_set_source_rgba (cr, &info->foreground);
-              cairo_set_line_width (cr, info->line_width / (gdouble)render->height);
-              cairo_stroke_preserve (cr);
-              cairo_line_to (cr, p->x, 0.0);
-            }
-        }
+              gdouble x = points[j].x * render->width;
+              gdouble y = points[j].y * render->height;
 
-      if (n_points > 0 && info->background.alpha > 0)
-        {
-          /*
-           * Close the path and fill if nencessary.
-           */
-          cairo_line_to (cr, 0, 0);
-          gdk_cairo_set_source_rgba (cr, &info->background);
-          cairo_fill (cr);
+              cairo_curve_to (cr,
+                              last_x + ((x - last_x) / 2),
+                              last_y,
+                              last_x + ((x - last_x) / 2),
+                              y,
+                              x,
+                              y);
+
+              last_x = x;
+              last_y = y;
+            }
+
+          cairo_set_line_width (cr, line_info->line_width);
+          gdk_cairo_set_source_rgba (cr, &line_info->foreground);
+          cairo_stroke (cr);
         }
     }
 

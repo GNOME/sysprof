@@ -199,6 +199,7 @@ sp_capture_cursor_new (SpCaptureReader *reader)
 
   self = g_object_new (SP_TYPE_CAPTURE_CURSOR, NULL);
   self->reader = sp_capture_reader_copy (reader);
+  sp_capture_reader_reset (self->reader);
 
   return self;
 }

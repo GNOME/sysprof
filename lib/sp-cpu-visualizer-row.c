@@ -102,6 +102,9 @@ complete_counters (GObject      *object,
           sp_line_visualizer_row_add_counter (SP_LINE_VISUALIZER_ROW (self), counter_id);
         }
     }
+
+  /* Hide ourself if we failed to locate counters */
+  gtk_widget_set_visible (GTK_WIDGET (self), counters != NULL && counters->len > 0);
 }
 
 static void

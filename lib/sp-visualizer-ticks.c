@@ -34,6 +34,7 @@ struct _SpVisualizerTicks
 enum {
   TICK_MINUTES,
   TICK_HALF_MINUTES,
+  TICK_FIVE_SECONDS,
   TICK_SECONDS,
   TICK_HALF_SECONDS,
   TICK_QUARTER_SECONDS,
@@ -49,13 +50,14 @@ struct {
   gint64 span;
 } tick_sizing[N_TICKS] = {
   { 3, 12, NSEC_PER_SEC * 60 },
-  { 2, 11, NSEC_PER_SEC * 30 },
-  { 1, 10, NSEC_PER_SEC },
-  { 1, 9, NSEC_PER_SEC / 2 },
-  { 1, 7, NSEC_PER_SEC / 4 },
-  { 1, 6, NSEC_PER_SEC / 10 },
-  { 1, 5, NSEC_PER_SEC / 100 },
-  { 1, 4, NSEC_PER_SEC / 1000 },
+  { 1, 11, NSEC_PER_SEC * 30 },
+  { 1, 10, NSEC_PER_SEC * 5 },
+  { 1, 9, NSEC_PER_SEC },
+  { 1, 8, NSEC_PER_SEC / 2 },
+  { 1, 6, NSEC_PER_SEC / 4 },
+  { 1, 5, NSEC_PER_SEC / 10 },
+  { 1, 4, NSEC_PER_SEC / 100 },
+  { 1, 3, NSEC_PER_SEC / 1000 },
 };
 
 G_DEFINE_TYPE (SpVisualizerTicks, sp_visualizer_ticks, GTK_TYPE_DRAWING_AREA)
@@ -67,9 +69,8 @@ draw_ticks (SpVisualizerTicks *self,
             gint               ticks)
 {
   gdouble half;
+  gdouble space;
   gint64 timespan;
-  gint64 n_ticks;
-  gint space;
 
   g_assert (SP_IS_VISUALIZER_TICKS (self));
   g_assert (cr != NULL);
@@ -78,14 +79,15 @@ draw_ticks (SpVisualizerTicks *self,
   g_assert (ticks < N_TICKS);
 
   timespan = self->end_time - self->begin_time;
-  n_ticks = timespan / tick_sizing[ticks].span;
-  space = area->width / n_ticks;
+  space = (gdouble)area->width / (gdouble)timespan * (gdouble)tick_sizing[ticks].span;
   half = tick_sizing[ticks].width / 2.0;
 
-  for (gint x = 0; x < area->width; x += space)
+  g_assert (space >= MIN_TICK_DISTANCE);
+
+  for (gdouble x = 0; x < area->width; x += space)
     {
-      cairo_move_to (cr, x - half, 0);
-      cairo_line_to (cr, x - half, tick_sizing[ticks].height);
+      cairo_move_to (cr, (gint)x - half, 0);
+      cairo_line_to (cr, (gint)x - half, tick_sizing[ticks].height);
     }
 
   cairo_set_line_width (cr, tick_sizing[ticks].width);

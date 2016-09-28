@@ -549,31 +549,32 @@ sp_window_save_capture (GSimpleAction *action,
 {
   g_autoptr(SpCaptureReader) reader = NULL;
   SpWindow *self = user_data;
-  GtkWidget *dialog;
-  GtkResponseType response;
+  GtkFileChooserNative *dialog;
+  gint response;
 
   g_assert (G_IS_SIMPLE_ACTION (action));
   g_assert (variant == NULL);
   g_assert (SP_IS_WINDOW (self));
 
   if (self->reader == NULL)
-    return;
+    {
+      g_warning ("Save called without a capture open, ignoring");
+      return;
+    }
 
   reader = sp_capture_reader_ref (self->reader);
 
-  dialog = gtk_file_chooser_dialog_new (_("Save Capture As"),
+  dialog = gtk_file_chooser_native_new (_("Save Capture As"),
                                         GTK_WINDOW (self),
                                         GTK_FILE_CHOOSER_ACTION_SAVE,
-                                        _("Cancel"), GTK_RESPONSE_CANCEL,
-                                        _("Save"), GTK_RESPONSE_OK,
-                                        NULL);
+                                        _("Save"),
+                                        _("Cancel"));
 
   gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (dialog), TRUE);
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 
-  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
 
-  if (response == GTK_RESPONSE_OK)
+  if (response == GTK_RESPONSE_ACCEPT)
     {
       g_autofree gchar *filename = NULL;
       g_autoptr(GError) error = NULL;
@@ -604,7 +605,7 @@ sp_window_save_capture (GSimpleAction *action,
     }
 
 failure:
-  gtk_widget_destroy (dialog);
+  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dialog));
 }
 
 static void
@@ -782,6 +783,7 @@ sp_window_init (SpWindow *self)
     { "screenshot",  sp_window_screenshot },
   };
   GtkApplication *app;
+  GtkPopover *popover;
   GMenu *menu;
 
   gtk_widget_init_template (GTK_WIDGET (self));
@@ -824,6 +826,13 @@ sp_window_init (SpWindow *self)
   app = GTK_APPLICATION (g_application_get_default ());
   menu = gtk_application_get_menu_by_id (app, "gear-menu");
   gtk_menu_button_set_menu_model (self->gear_menu_button, G_MENU_MODEL (menu));
+
+  /*
+   * Set the min-width on the popover for the gear menu, which is rather
+   * small by default (since our wording is short).
+   */
+  popover = gtk_menu_button_get_popover (self->gear_menu_button);
+  gtk_widget_set_size_request (GTK_WIDGET (popover), 200, -1);
 
   /*
    * Restore previous window settings.
@@ -926,23 +935,17 @@ sp_window_get_state (SpWindow *self)
 void
 sp_window_open_from_dialog (SpWindow *self)
 {
+  GtkFileChooserNative *dialog;
   GtkFileFilter *filter;
-  GtkDialog *dialog;
+  gint response;
 
   g_assert (SP_IS_WINDOW (self));
 
-  dialog = g_object_new (GTK_TYPE_FILE_CHOOSER_DIALOG,
-                         "action", GTK_FILE_CHOOSER_ACTION_OPEN,
-                         "title", _("Open Capture"),
-                         "transient-for", self,
-                         NULL);
-
-  gtk_dialog_add_buttons (dialog,
-                          _("Cancel"), GTK_RESPONSE_CANCEL,
-                          _("Open"), GTK_RESPONSE_OK,
-                          NULL);
-
-  gtk_dialog_set_default_response (dialog, GTK_RESPONSE_OK);
+  dialog = gtk_file_chooser_native_new (_("Open Capture"),
+                                        GTK_WINDOW (self),
+                                        GTK_FILE_CHOOSER_ACTION_OPEN,
+                                        _("Open"),
+                                        _("Cancel"));
 
   filter = gtk_file_filter_new ();
   gtk_file_filter_set_name (filter, _("Sysprof Captures"));
@@ -954,7 +957,9 @@ sp_window_open_from_dialog (SpWindow *self)
   gtk_file_filter_add_pattern (filter, "*");
   gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
 
-  if (gtk_dialog_run (dialog) == GTK_RESPONSE_OK)
+  response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
+
+  if (response == GTK_RESPONSE_ACCEPT)
     {
       g_autoptr(GFile) file = NULL;
 
@@ -962,5 +967,5 @@ sp_window_open_from_dialog (SpWindow *self)
       sp_window_open (self, file);
     }
 
-  gtk_widget_destroy (GTK_WIDGET (dialog));
+  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dialog));
 }

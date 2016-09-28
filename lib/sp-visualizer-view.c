@@ -38,6 +38,12 @@ enum {
   N_PROPS
 };
 
+enum {
+  VISUALIZER_ADDED,
+  VISUALIZER_REMOVED,
+  N_SIGNALS
+};
+
 static void buildable_iface_init (GtkBuildableIface *iface);
 
 G_DEFINE_TYPE_EXTENDED (SpVisualizerView, sp_visualizer_view, GTK_TYPE_BIN, 0,
@@ -45,7 +51,34 @@ G_DEFINE_TYPE_EXTENDED (SpVisualizerView, sp_visualizer_view, GTK_TYPE_BIN, 0,
                         G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
 
 static GParamSpec *properties [N_PROPS];
+static guint signals [N_SIGNALS];
 static GtkBuildableIface *parent_buildable;
+
+static void
+sp_visualizer_view_row_added (SpVisualizerView *self,
+                              GtkWidget        *widget,
+                              SpVisualizerList *list)
+{
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (GTK_IS_WIDGET (widget));
+  g_assert (SP_IS_VISUALIZER_LIST (list));
+
+  if (SP_IS_VISUALIZER_ROW (widget))
+    g_signal_emit (self, signals [VISUALIZER_ADDED], 0, widget);
+}
+
+static void
+sp_visualizer_view_row_removed (SpVisualizerView *self,
+                                GtkWidget        *widget,
+                                SpVisualizerList *list)
+{
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (GTK_IS_WIDGET (widget));
+  g_assert (SP_IS_VISUALIZER_LIST (list));
+
+  if (SP_IS_VISUALIZER_ROW (widget))
+    g_signal_emit (self, signals [VISUALIZER_REMOVED], 0, widget);
+}
 
 static void
 sp_visualizer_view_finalize (GObject *object)
@@ -115,6 +148,22 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
+  signals [VISUALIZER_ADDED] =
+    g_signal_new ("visualizer-added",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (SpVisualizerViewClass, visualizer_added),
+                  NULL, NULL, NULL,
+                  G_TYPE_NONE, 1, SP_TYPE_VISUALIZER_ROW);
+
+  signals [VISUALIZER_REMOVED] =
+    g_signal_new ("visualizer-removed",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (SpVisualizerViewClass, visualizer_removed),
+                  NULL, NULL, NULL,
+                  G_TYPE_NONE, 1, SP_TYPE_VISUALIZER_ROW);
+
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sp-visualizer-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, list);
   gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, ticks);
@@ -125,7 +174,21 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
 static void
 sp_visualizer_view_init (SpVisualizerView *self)
 {
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_signal_connect_object (priv->list,
+                           "add",
+                           G_CALLBACK (sp_visualizer_view_row_added),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (priv->list,
+                           "remove",
+                           G_CALLBACK (sp_visualizer_view_row_removed),
+                           self,
+                           G_CONNECT_SWAPPED);
 }
 
 /**

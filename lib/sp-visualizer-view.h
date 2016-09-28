@@ -21,6 +21,8 @@
 
 #include <gtk/gtk.h>
 
+#include "sp-visualizer-row.h"
+
 G_BEGIN_DECLS
 
 #define SP_TYPE_VISUALIZER_VIEW (sp_visualizer_view_get_type())
@@ -30,6 +32,11 @@ G_DECLARE_DERIVABLE_TYPE (SpVisualizerView, sp_visualizer_view, SP, VISUALIZER_V
 struct _SpVisualizerViewClass
 {
   GtkBinClass parent_class;
+
+  void (*visualizer_added)   (SpVisualizerView *self,
+                              SpVisualizerRow  *visualizer);
+  void (*visualizer_removed) (SpVisualizerView *self,
+                              SpVisualizerRow  *visualizer);
 
   gpointer _reserved1;
   gpointer _reserved2;

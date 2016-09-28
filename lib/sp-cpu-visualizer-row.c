@@ -20,11 +20,13 @@
 
 #include "sp-capture-condition.h"
 #include "sp-capture-cursor.h"
+#include "sp-color-cycle.h"
 #include "sp-cpu-visualizer-row.h"
 
 struct _SpCpuVisualizerRow
 {
   SpLineVisualizerRow parent_instance;
+  SpColorCycle *colors;
 };
 
 G_DEFINE_TYPE (SpCpuVisualizerRow, sp_cpu_visualizer_row, SP_TYPE_LINE_VISUALIZER_ROW)
@@ -98,8 +100,10 @@ complete_counters (GObject      *object,
       for (guint i = 0; i < counters->len; i++)
         {
           guint counter_id = g_array_index (counters, guint, i);
+          GdkRGBA color;
 
-          sp_line_visualizer_row_add_counter (SP_LINE_VISUALIZER_ROW (self), counter_id);
+          sp_color_cycle_next (self->colors, &color);
+          sp_line_visualizer_row_add_counter (SP_LINE_VISUALIZER_ROW (self), counter_id, &color);
         }
     }
 
@@ -131,9 +135,22 @@ sp_cpu_visualizer_row_set_reader (SpVisualizerRow *row,
 }
 
 static void
+sp_cpu_visualizer_row_finalize (GObject *object)
+{
+  SpCpuVisualizerRow *self = (SpCpuVisualizerRow *)object;
+
+  g_clear_pointer (&self->colors, sp_color_cycle_unref);
+
+  G_OBJECT_CLASS (sp_cpu_visualizer_row_parent_class)->finalize (object);
+}
+
+static void
 sp_cpu_visualizer_row_class_init (SpCpuVisualizerRowClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   SpVisualizerRowClass *row_class = SP_VISUALIZER_ROW_CLASS (klass);
+
+  object_class->finalize = sp_cpu_visualizer_row_finalize;
 
   row_class->set_reader = sp_cpu_visualizer_row_set_reader;
 }
@@ -141,6 +158,7 @@ sp_cpu_visualizer_row_class_init (SpCpuVisualizerRowClass *klass)
 static void
 sp_cpu_visualizer_row_init (SpCpuVisualizerRow *self)
 {
+  self->colors = sp_color_cycle_new ();
 }
 
 GtkWidget *

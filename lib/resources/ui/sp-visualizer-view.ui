@@ -14,7 +14,6 @@
         <child>
           <object class="GtkScrolledWindow">
             <property name="visible">true</property>
-            <property name="min-content-height">75</property>
             <property name="propagate-natural-height">true</property>
             <child>
               <object class="SpVisualizerList" id="list">

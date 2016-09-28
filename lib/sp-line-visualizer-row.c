@@ -421,12 +421,26 @@ static void
 sp_line_visualizer_row_style_updated (GtkWidget *widget)
 {
   SpLineVisualizerRow *self = (SpLineVisualizerRow *)widget;
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
 
   g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
 
   GTK_WIDGET_CLASS (sp_line_visualizer_row_parent_class)->style_updated (widget);
 
-  sp_line_visualizer_row_begin_offscreen_draw (self);
+  /*
+   * Only queue a draw if a line that is drawn relies on the the style context
+   * of the widget (as opposed to a style set manually).
+   */
+  for (guint i = 0; i < priv->lines->len; i++)
+    {
+      const LineInfo *line_info = &g_array_index (priv->lines, LineInfo, i);
+
+      if (line_info->use_default_style)
+        {
+          sp_line_visualizer_row_begin_offscreen_draw (self);
+          break;
+        }
+    }
 }
 
 

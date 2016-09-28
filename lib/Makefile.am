@@ -159,6 +159,8 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	$(uiheaders_DATA) \
 	sp-callgraph-view.c \
 	sp-cell-renderer-percent.c \
+	sp-color-cycle.c \
+	sp-color-cycle.h \
 	sp-cpu-visualizer-row.c \
 	sp-empty-state-view.c \
 	sp-failed-state-view.c \

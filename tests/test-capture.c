@@ -50,6 +50,9 @@ test_reader_basic (void)
 
   sp_capture_writer_flush (writer);
 
+  /* We should have an old header (without end time) */
+  g_assert_cmpint (0, ==, sp_capture_reader_get_end_time (reader));
+
   for (i = 0; i < 100; i++)
     {
       SpCaptureFrameType type = -1;
@@ -74,6 +77,11 @@ test_reader_basic (void)
       g_assert_cmpint (map->inode, ==, i + 3);
       g_assert_cmpstr (map->filename, ==, str);
     }
+
+  /* Now that we have read a frame, we should start having updated
+   * end times with each incoming frame.
+   */
+  g_assert_cmpint (0, !=, sp_capture_reader_get_end_time (reader));
 
   for (i = 0; i < 100; i++)
     {

@@ -62,7 +62,6 @@ struct _SpCaptureWriter
    * alinged for the write buffer. This improves the performance of large
    * writes to the target file-descriptor.
    */
-
   volatile gint ref_count;
 
   /*
@@ -397,6 +396,7 @@ sp_capture_writer_new_from_fd (int   fd,
   header->padding = 0;
   g_strlcpy (header->capture_time, nowstr, sizeof header->capture_time);
   header->time = SP_CAPTURE_CURRENT_TIME;
+  header->end_time = 0;
   memset (header->suffix, 0, sizeof header->suffix);
 
   self->pos += sizeof *header;
@@ -710,13 +710,31 @@ sp_capture_writer_add_timestamp (SpCaptureWriter *self,
   return TRUE;
 }
 
+static gboolean
+sp_capture_writer_flush_end_time (SpCaptureWriter *self)
+{
+  gint64 end_time = SP_CAPTURE_CURRENT_TIME;
+
+  g_assert (self != NULL);
+
+  /* This field is opportunistic, so a failure is okay. */
+
+  pwrite (self->fd,
+          &end_time,
+          sizeof (end_time),
+          G_STRUCT_OFFSET (SpCaptureFileHeader, end_time));
+
+  return TRUE;
+}
+
 gboolean
 sp_capture_writer_flush (SpCaptureWriter *self)
 {
   g_assert (self != NULL);
 
   return (sp_capture_writer_flush_jitmap (self) &&
-          sp_capture_writer_flush_data (self));
+          sp_capture_writer_flush_data (self) &&
+          sp_capture_writer_flush_end_time (self));
 }
 
 /**

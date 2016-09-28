@@ -39,6 +39,7 @@ struct _SpCaptureReader
   int                  fd;
   gint                 endian;
   SpCaptureFileHeader  header;
+  gint64               end_time;
 };
 
 #ifndef SP_DISABLE_GOBJECT
@@ -296,6 +297,9 @@ sp_capture_reader_peek_frame (SpCaptureReader *self,
   *frame = *real_frame;
 
   sp_capture_reader_bswap_frame (self, frame);
+
+  if (frame->time > self->end_time)
+    self->end_time = frame->time;
 
   return TRUE;
 }
@@ -811,6 +815,36 @@ sp_capture_reader_get_start_time (SpCaptureReader *self)
     return GUINT64_SWAP_LE_BE (self->header.time);
 
   return self->header.time;
+}
+
+/**
+ * sp_capture_reader_get_end_time:
+ *
+ * This function will return the end time for the capture, which is the
+ * same as the last event added to the capture.
+ *
+ * If the end time has been stored in the capture header, that will be used.
+ * Otherwise, the time is discovered from the last capture frame and therefore
+ * the caller must have read all frames to ensure this value is accurate.
+ *
+ * Captures created by sysprof versions containing this API will have the
+ * end time set if the output capture file-descriptor supports seeking.
+ *
+ * Since: 3.22.1
+ */
+gint64
+sp_capture_reader_get_end_time (SpCaptureReader *self)
+{
+  g_return_val_if_fail (self != NULL, 0);
+
+  if (self->header.end_time != 0)
+    {
+      if (self->endian != G_BYTE_ORDER)
+        return GUINT64_SWAP_LE_BE (self->header.end_time);
+      return self->header.end_time;
+    }
+
+  return self->end_time;
 }
 
 /**

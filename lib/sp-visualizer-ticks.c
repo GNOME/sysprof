@@ -82,8 +82,6 @@ draw_ticks (SpVisualizerTicks *self,
   space = (gdouble)area->width / (gdouble)timespan * (gdouble)tick_sizing[ticks].span;
   half = tick_sizing[ticks].width / 2.0;
 
-  g_assert (space >= MIN_TICK_DISTANCE);
-
   for (gdouble x = 0; x < area->width; x += space)
     {
       cairo_move_to (cr, (gint)x - .5 - (gint)half, 0);

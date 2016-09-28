@@ -120,3 +120,17 @@ sp_color_cycle_next (SpColorCycle *self,
 
   self->position = (self->position + 1) % self->n_colors;
 }
+
+void
+sp_color_cycle_reset (SpColorCycle *self)
+{
+  g_return_if_fail (self != NULL);
+
+  for (guint i = 0; default_colors[i]; i++)
+    {
+      if G_UNLIKELY (!gdk_rgba_parse (&self->colors[i], default_colors[i]))
+        g_warning ("Failed to parse color %s into an RGBA", default_colors[i]);
+    }
+
+  self->position = 0;
+}

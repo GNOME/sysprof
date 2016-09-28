@@ -31,6 +31,7 @@ GType         sp_color_cycle_get_type (void);
 SpColorCycle *sp_color_cycle_ref      (SpColorCycle *self);
 void          sp_color_cycle_unref    (SpColorCycle *self);
 SpColorCycle *sp_color_cycle_new      (void);
+void          sp_color_cycle_reset    (SpColorCycle *self);
 void          sp_color_cycle_next     (SpColorCycle *self,
                                        GdkRGBA      *rgba);
 

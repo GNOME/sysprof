@@ -99,8 +99,11 @@ sp_visualizer_ticks_draw (GtkWidget *widget,
                           cairo_t   *cr)
 {
   SpVisualizerTicks *self = (SpVisualizerTicks *)widget;
+  GtkStyleContext *style;
   GtkAllocation alloc;
+  GtkStateFlags state;
   gint64 timespan;
+  GdkRGBA color;
 
   g_assert (SP_IS_VISUALIZER_TICKS (self));
   g_assert (cr != NULL);
@@ -110,7 +113,11 @@ sp_visualizer_ticks_draw (GtkWidget *widget,
 
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
 
-  cairo_set_source_rgba (cr, 0, 0, 0, .2);
+  style = gtk_widget_get_style_context (widget);
+  state = gtk_widget_get_state_flags (widget);
+  gtk_style_context_get_color (style, state, &color);
+
+  gdk_cairo_set_source_rgba (cr, &color);
 
   /*
    * We need to discover up to what level we will draw tick marks.

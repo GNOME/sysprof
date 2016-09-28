@@ -126,8 +126,8 @@ sp_visualizer_ticks_draw (GtkWidget *widget,
       if ((alloc.width / n_ticks) < MIN_TICK_DISTANCE)
         continue;
 
-      for (guint j = 0; j < i; j++)
-        draw_ticks (self, cr, &alloc, j);
+      for (guint j = i; j > 0; j--)
+        draw_ticks (self, cr, &alloc, j - 1);
 
       break;
     }

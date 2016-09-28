@@ -83,12 +83,14 @@ typedef struct
   gdouble line_width;
   GdkRGBA background;
   GdkRGBA foreground;
+  guint use_default_style : 1;
 } LineInfo;
 
 typedef struct
 {
   PointCache *cache;
   GArray *lines;
+  GdkRGBA color;
   gint width;
   gint height;
 } RenderData;
@@ -416,6 +418,19 @@ sp_line_visualizer_row_size_allocate (GtkWidget     *widget,
 }
 
 static void
+sp_line_visualizer_row_style_updated (GtkWidget *widget)
+{
+  SpLineVisualizerRow *self = (SpLineVisualizerRow *)widget;
+
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
+
+  GTK_WIDGET_CLASS (sp_line_visualizer_row_parent_class)->style_updated (widget);
+
+  sp_line_visualizer_row_begin_offscreen_draw (self);
+}
+
+
+static void
 sp_line_visualizer_row_destroy (GtkWidget *widget)
 {
   SpLineVisualizerRow *self = (SpLineVisualizerRow *)widget;
@@ -500,6 +515,7 @@ sp_line_visualizer_row_class_init (SpLineVisualizerRowClass *klass)
   widget_class->draw = sp_line_visualizer_row_draw;
   widget_class->destroy = sp_line_visualizer_row_destroy;
   widget_class->size_allocate = sp_line_visualizer_row_size_allocate;
+  widget_class->style_updated = sp_line_visualizer_row_style_updated;
 
   visualizer_class->set_reader = sp_line_visualizer_row_set_reader;
 
@@ -563,8 +579,7 @@ sp_line_visualizer_row_add_counter (SpLineVisualizerRow *self,
   g_assert (priv->lines != NULL);
 
   line_info.id = counter_id;
-  line_info.foreground.alpha = 0.4;
-  line_info.background.alpha = 0.2;
+  line_info.use_default_style = TRUE;
   line_info.line_width = 1.0;
 
   g_array_append_val (priv->lines, line_info);
@@ -851,7 +866,12 @@ sp_line_visualizer_row_render_worker (GTask        *task,
             }
 
           cairo_set_line_width (cr, line_info->line_width);
-          gdk_cairo_set_source_rgba (cr, &line_info->foreground);
+
+          if (line_info->use_default_style)
+            gdk_cairo_set_source_rgba (cr, &render->color);
+          else
+            gdk_cairo_set_source_rgba (cr, &line_info->foreground);
+
           cairo_stroke (cr);
         }
     }
@@ -895,7 +915,9 @@ sp_line_visualizer_row_render_async (SpLineVisualizerRow *self,
   SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
   RenderData *render;
   g_autoptr(GTask) task = NULL;
+  GtkStyleContext *style_context;
   GtkAllocation alloc;
+  GtkStateFlags state;
 
   g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
   g_assert (cache != NULL);
@@ -912,6 +934,10 @@ sp_line_visualizer_row_render_async (SpLineVisualizerRow *self,
   render->lines = copy_array (priv->lines);
   render->width = alloc.width;
   render->height = alloc.height;
+
+  style_context = gtk_widget_get_style_context (GTK_WIDGET (self));
+  state = gtk_widget_get_state_flags (GTK_WIDGET (self));
+  gtk_style_context_get_color (style_context, state, &render->color);
 
   g_task_set_task_data (task, render, render_data_free);
   g_task_run_in_thread (task, sp_line_visualizer_row_render_worker);

@@ -11,6 +11,16 @@ popover scrolledwindow {
   border-top: 1px solid alpha(@borders, 0.75);
 }
 
+list.visualizers {
+  background: @theme_bg_color;
+}
+
 list.visualizers row {
+  background: @content_view_bg;
   border-bottom: 1px solid alpha(@borders, 0.2);
+}
+
+list.visualizers row:backdrop,
+list.visualizers row:last-child {
+  border-bottom: none;
 }

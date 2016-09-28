@@ -120,6 +120,8 @@ sp_cpu_visualizer_row_set_reader (SpVisualizerRow *row,
 
   g_assert (SP_IS_CPU_VISUALIZER_ROW (row));
 
+  sp_color_cycle_reset (self->colors);
+
   sp_line_visualizer_row_clear (SP_LINE_VISUALIZER_ROW (row));
 
   SP_VISUALIZER_ROW_CLASS (sp_cpu_visualizer_row_parent_class)->set_reader (row, reader);

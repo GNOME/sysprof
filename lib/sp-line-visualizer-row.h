@@ -55,7 +55,8 @@ struct _SpLineVisualizerRowClass
 GtkWidget *sp_line_visualizer_row_new         (void);
 void       sp_line_visualizer_row_clear       (SpLineVisualizerRow *self);
 void       sp_line_visualizer_row_add_counter (SpLineVisualizerRow *self,
-                                               guint                counter_id);
+                                               guint                counter_id,
+                                               const GdkRGBA       *color);
 
 G_END_DECLS
 

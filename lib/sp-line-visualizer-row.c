@@ -584,7 +584,8 @@ sp_line_visualizer_row_init (SpLineVisualizerRow *self)
 
 void
 sp_line_visualizer_row_add_counter (SpLineVisualizerRow *self,
-                                    guint                counter_id)
+                                    guint                counter_id,
+                                    const GdkRGBA       *color)
 {
   SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
   LineInfo line_info = { 0 };
@@ -593,8 +594,17 @@ sp_line_visualizer_row_add_counter (SpLineVisualizerRow *self,
   g_assert (priv->lines != NULL);
 
   line_info.id = counter_id;
-  line_info.use_default_style = TRUE;
   line_info.line_width = 1.0;
+
+  if (color != NULL)
+    {
+      line_info.foreground = *color;
+      line_info.use_default_style = FALSE;
+    }
+  else
+    {
+      line_info.use_default_style = TRUE;
+    }
 
   g_array_append_val (priv->lines, line_info);
 

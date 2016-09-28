@@ -159,6 +159,8 @@ sp_visualizer_ticks_class_init (SpVisualizerTicksClass *klass)
 
   widget_class->draw = sp_visualizer_ticks_draw;
   widget_class->get_preferred_height = sp_visualizer_ticks_get_preferred_height;
+
+  gtk_widget_class_set_css_name (widget_class, "ticks");
 }
 
 static void

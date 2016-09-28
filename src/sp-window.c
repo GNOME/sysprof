@@ -42,6 +42,7 @@ struct _SpWindow
   GtkInfoBar           *info_bar;
   GtkLabel             *info_bar_label;
   GtkRevealer          *info_bar_revealer;
+  GtkPaned             *paned;
   SpProfilerMenuButton *profiler_menu_button;
   SpRecordingStateView *recording_view;
   GtkButton            *record_button;
@@ -702,6 +703,18 @@ sp_window_delete_event (GtkWidget   *widget,
 }
 
 static void
+sp_window_reset_paned (SpWindow *self)
+{
+  gint min_height;
+  gint nat_height;
+
+  g_assert (SP_IS_WINDOW (self));
+
+  gtk_widget_get_preferred_height (GTK_WIDGET (self->visualizers), &min_height, &nat_height);
+  gtk_paned_set_position (self->paned, MAX (min_height, MIN (nat_height, 300)));
+}
+
+static void
 sp_window_destroy (GtkWidget *widget)
 {
   SpWindow *self = (SpWindow *)widget;
@@ -763,6 +776,7 @@ sp_window_class_init (SpWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SpWindow, info_bar);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, info_bar_label);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, info_bar_revealer);
+  gtk_widget_class_bind_template_child (widget_class, SpWindow, paned);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, profiler_menu_button);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, record_button);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, recording_view);
@@ -810,10 +824,21 @@ sp_window_init (SpWindow *self)
                            self,
                            G_CONNECT_SWAPPED);
 
+  g_signal_connect_object (self->visualizers,
+                           "visualizer-added",
+                           G_CALLBACK (sp_window_reset_paned),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (self->visualizers,
+                           "visualizer-removed",
+                           G_CALLBACK (sp_window_reset_paned),
+                           self,
+                           G_CONNECT_SWAPPED);
+
   /*
    * Setup actions for the window.
    */
-
   g_action_map_add_action_entries (G_ACTION_MAP (self),
                                    action_entries,
                                    G_N_ELEMENTS (action_entries),
@@ -822,7 +847,6 @@ sp_window_init (SpWindow *self)
   /*
    * Setup our gear (hamburger) menu.
    */
-
   app = GTK_APPLICATION (g_application_get_default ());
   menu = gtk_application_get_menu_by_id (app, "gear-menu");
   gtk_menu_button_set_menu_model (self->gear_menu_button, G_MENU_MODEL (menu));
@@ -837,7 +861,6 @@ sp_window_init (SpWindow *self)
   /*
    * Restore previous window settings.
    */
-
   sp_window_settings_register (GTK_WINDOW (self));
 
   /*
@@ -845,6 +868,12 @@ sp_window_init (SpWindow *self)
    * launch, enter, escape, view.
    */
   gtk_window_set_focus (GTK_WINDOW (self), GTK_WIDGET (self->record_button));
+
+  /*
+   * And finally ensure we have proper placement of our paned taking
+   * into account the size of the visualizers.
+   */
+  sp_window_reset_paned (self);
 }
 
 static void

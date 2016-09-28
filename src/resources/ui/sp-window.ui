@@ -160,9 +160,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkPaned">
+              <object class="GtkPaned" id="paned">
                 <property name="orientation">vertical</property>
                 <property name="visible">true</property>
+                <property name="vexpand">true</property>
                 <child>
                   <object class="SpVisualizerView" id="visualizers">
                     <property name="visible">true</property>
@@ -177,11 +178,20 @@
                       </object>
                     </child>
                   </object>
+                  <packing>
+                    <property name="shrink">false</property>
+                    <property name="resize">false</property>
+                  </packing>
                 </child>
                 <child>
                   <object class="SpCallgraphView" id="callgraph_view">
                     <property name="visible">true</property>
+                    <property name="vexpand">true</property>
                   </object>
+                  <packing>
+                    <property name="shrink">false</property>
+                    <property name="resize">true</property>
+                  </packing>
                 </child>
               </object>
               <packing>

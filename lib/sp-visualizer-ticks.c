@@ -86,8 +86,8 @@ draw_ticks (SpVisualizerTicks *self,
 
   for (gdouble x = 0; x < area->width; x += space)
     {
-      cairo_move_to (cr, (gint)x - half, 0);
-      cairo_line_to (cr, (gint)x - half, tick_sizing[ticks].height);
+      cairo_move_to (cr, (gint)x - .5 - (gint)half, 0);
+      cairo_line_to (cr, (gint)x - .5 - (gint)half, tick_sizing[ticks].height);
     }
 
   cairo_set_line_width (cr, tick_sizing[ticks].width);

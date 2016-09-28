@@ -164,38 +164,16 @@
                 <property name="orientation">vertical</property>
                 <property name="visible">true</property>
                 <child>
-                  <object class="GtkOverlay" id="visualizer_overlay">
+                  <object class="SpVisualizerView" id="visualizers">
                     <property name="visible">true</property>
-                    <child type="overlay">
-                      <object class="SpVisualizerTicks">
-                        <property name="valign">start</property>
-                        <property name="hexpand">true</property>
+                    <child type="visualizer">
+                      <object class="SpCpuVisualizerRow" id="cpu_row">
+                        <property name="title" translatable="yes">CPU</property>
+                        <property name="height-request">75</property>
+                        <property name="selectable">false</property>
                         <property name="visible">true</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkScrolledWindow">
-                        <property name="min-content-height">75</property>
-                        <property name="max-content-height">225</property>
-                        <property name="visible">true</property>
-                        <child>
-                          <object class="SpVisualizerList" id="visualizer_rows">
-                            <property name="visible">true</property>
-                            <style>
-                              <class name="visualizers"/>
-                            </style>
-                            <child>
-                              <object class="SpCpuVisualizerRow" id="cpu_row">
-                                <property name="title" translatable="yes">CPU</property>
-                                <property name="height-request">75</property>
-                                <property name="selectable">false</property>
-                                <property name="visible">true</property>
-                                <property name="y-lower">0.0</property>
-                                <property name="y-upper">100.0</property>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
+                        <property name="y-lower">0.0</property>
+                        <property name="y-upper">100.0</property>
                       </object>
                     </child>
                   </object>

@@ -22,7 +22,7 @@
 #include <sysprof-ui.h>
 
 #include "sp-application.h"
-#include "sp-visualizer-list.h"
+#include "sp-visualizer-view.h"
 #include "sp-window.h"
 #include "sp-window-settings.h"
 
@@ -49,7 +49,7 @@ struct _SpWindow
   GtkLabel             *stat_label;
   GtkLabel             *title;
   GtkStack             *view_stack;
-  SpVisualizerList     *visualizer_rows;
+  SpVisualizerView     *visualizers;
 
   guint                 stats_handler;
 
@@ -200,6 +200,7 @@ sp_window_build_profile_cb (GObject      *object,
   SpProfile *profile = (SpProfile *)object;
   g_autoptr(SpWindow) self = user_data;
   g_autoptr(GError) error = NULL;
+  gint64 begin_time;
 
   g_assert (SP_IS_CALLGRAPH_PROFILE (profile));
   g_assert (SP_IS_WINDOW (self));
@@ -218,7 +219,7 @@ sp_window_build_profile_cb (GObject      *object,
                            GTK_MESSAGE_WARNING,
                            _("Not enough samples were collected to generate a callgraph"));
 
-  sp_visualizer_list_set_reader (self->visualizer_rows, self->reader);
+  sp_visualizer_view_set_reader (self->visualizers, self->reader);
 
   sp_window_set_state (self, SP_WINDOW_STATE_BROWSING);
 }
@@ -768,7 +769,7 @@ sp_window_class_init (SpWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SpWindow, subtitle);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, title);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, view_stack);
-  gtk_widget_class_bind_template_child (widget_class, SpWindow, visualizer_rows);
+  gtk_widget_class_bind_template_child (widget_class, SpWindow, visualizers);
 }
 
 static void

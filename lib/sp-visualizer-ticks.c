@@ -198,7 +198,7 @@ sp_visualizer_ticks_set_time_range (SpVisualizerTicks *self,
 {
   g_return_if_fail (SP_IS_VISUALIZER_TICKS (self));
 
-  if (begin_time < end_time)
+  if (begin_time > end_time)
     {
       gint64 tmp = begin_time;
       begin_time = end_time;

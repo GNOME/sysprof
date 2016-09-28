@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SpVisualizerView" parent="GtkBin">
+    <child>
+      <object class="GtkOverlay">
+        <property name="visible">true</property>
+        <child type="overlay">
+          <object class="SpVisualizerTicks" id="ticks">
+            <property name="valign">start</property>
+            <property name="hexpand">true</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="visible">true</property>
+            <property name="min-content-height">75</property>
+            <property name="propagate-natural-height">true</property>
+            <child>
+              <object class="SpVisualizerList" id="list">
+                <property name="visible">true</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

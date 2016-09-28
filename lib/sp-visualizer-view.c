@@ -218,8 +218,18 @@ sp_visualizer_view_set_reader (SpVisualizerView *self,
 
   if (reader != NULL)
     {
+      gint64 real_end_time;
+
       begin_time = sp_capture_reader_get_start_time (reader);
+      real_end_time = sp_capture_reader_get_end_time (reader);
+
       end_time = begin_time + (G_GINT64_CONSTANT (1000000000) * 60);
+
+      /* If we were able to extract a proper end time and its less
+       * than 60 seconds, we will use the whole width to show that.
+       */
+      if (real_end_time > 0 && real_end_time < end_time)
+        end_time = real_end_time;
     }
 
   sp_visualizer_list_set_reader (priv->list, reader);

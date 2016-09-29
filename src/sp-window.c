@@ -18,6 +18,7 @@
 
 #include <errno.h>
 #include <glib/gi18n.h>
+#include <math.h>
 #include <sysprof.h>
 #include <sysprof-ui.h>
 
@@ -52,6 +53,7 @@ struct _SpWindow
   GtkStack             *view_stack;
   SpVisualizerView     *visualizers;
   SpZoomManager        *zoom_manager;
+  GtkLabel             *zoom_one_label;
 
   guint                 stats_handler;
 
@@ -715,6 +717,17 @@ sp_window_reset_paned (SpWindow *self)
   gtk_paned_set_position (self->paned, MAX (min_height, MIN (nat_height, 300)));
 }
 
+static gboolean
+zoom_level_to_string (GBinding     *binding,
+                      const GValue *from_value,
+                      GValue       *to_value,
+                      gpointer      user_data)
+{
+  gdouble percent = 100.0 * g_value_get_double (from_value);
+  g_value_take_string (to_value, g_strdup_printf ("%u%%", (guint)ceil (percent)));
+  return TRUE;
+}
+
 static void
 sp_window_destroy (GtkWidget *widget)
 {
@@ -786,6 +799,8 @@ sp_window_class_init (SpWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SpWindow, title);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, view_stack);
   gtk_widget_class_bind_template_child (widget_class, SpWindow, visualizers);
+  gtk_widget_class_bind_template_child (widget_class, SpWindow, zoom_manager);
+  gtk_widget_class_bind_template_child (widget_class, SpWindow, zoom_one_label);
 }
 
 static void
@@ -833,6 +848,10 @@ sp_window_init (SpWindow *self)
                            G_CALLBACK (sp_window_reset_paned),
                            self,
                            G_CONNECT_SWAPPED);
+
+  g_object_bind_property_full (self->zoom_manager, "zoom", self->zoom_one_label, "label",
+                               G_BINDING_SYNC_CREATE,
+                               zoom_level_to_string, NULL, NULL, NULL);
 
   /*
    * Setup actions for the window.

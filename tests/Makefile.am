@@ -47,6 +47,12 @@ test_model_filter_SOURCES = test-model-filter.c
 test_model_filter_CFLAGS = $(test_ui_cflags)
 test_model_filter_LDADD = $(test_ui_libs)
 
+TESTS += test-zoom
+TEST_PROGS += test-zoom
+test_zoom_SOURCES = test-zoom.c
+test_zoom_CFLAGS = $(test_ui_cflags)
+test_zoom_LDADD = $(test_ui_libs)
+
 endif
 
 TEST_ENVIRONMENT = \

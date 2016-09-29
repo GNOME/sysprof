@@ -38,6 +38,7 @@ G_BEGIN_DECLS
 # include "sp-visualizer-row.h"
 # include "sp-visualizer-ticks.h"
 # include "sp-visualizer-view.h"
+# include "sp-zoom-manager.h"
 #undef SYSPROF_INSIDE
 
 G_END_DECLS

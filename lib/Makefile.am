@@ -153,6 +153,7 @@ uiheaders_DATA = \
 	sp-visualizer-row.h \
 	sp-visualizer-ticks.h \
 	sp-visualizer-view.h \
+	sp-zoom-manager.h \
 	sysprof-ui.h \
 	$(NULL)
 
@@ -176,6 +177,7 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	sp-visualizer-row.c \
 	sp-visualizer-ticks.c \
 	sp-visualizer-view.c \
+	sp-zoom-manager.c \
 	$(NULL)
 
 libsysprof_ui_@API_VERSION@_la_CFLAGS = \

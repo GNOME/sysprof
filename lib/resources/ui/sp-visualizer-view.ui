@@ -12,11 +12,25 @@
           </object>
         </child>
         <child>
-          <object class="GtkScrolledWindow">
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
             <property name="visible">true</property>
-            <property name="propagate-natural-height">true</property>
             <child>
-              <object class="SpVisualizerList" id="list">
+              <object class="GtkScrolledWindow">
+                <property name="hscrollbar-policy">external</property>
+                <property name="visible">true</property>
+                <property name="propagate-natural-height">true</property>
+                <child>
+                  <object class="SpVisualizerList" id="list">
+                    <property name="visible">true</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrollbar" id="scrollbar">
+                <property name="adjustment">scroll_adjustment</property>
+                <property name="orientation">horizontal</property>
                 <property name="visible">true</property>
               </object>
             </child>
@@ -25,4 +39,9 @@
       </object>
     </child>
   </template>
+  <object class="GtkAdjustment" id="scroll_adjustment">
+    <property name="lower">0.0</property>
+    <property name="upper">0.0</property>
+    <property name="value">0.0</property>
+  </object>
 </interface>

@@ -29,10 +29,11 @@
 typedef struct
 {
   SpCaptureReader   *reader;
+  SpZoomManager     *zoom_manager;
 
   SpVisualizerList  *list;
+  GtkAdjustment     *scroll_adjustment;
   SpVisualizerTicks *ticks;
-  SpZoomManager     *zoom_manager;
 } SpVisualizerViewPrivate;
 
 enum {
@@ -85,6 +86,41 @@ sp_visualizer_view_row_removed (SpVisualizerView *self,
 }
 
 static void
+sp_visualizer_view_set_time_range (SpVisualizerView *self,
+                                   gint64            begin_time,
+                                   gint64            end_time)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+
+  if (begin_time < end_time)
+    {
+      gint64 tmp = begin_time;
+      begin_time = end_time;
+      end_time = tmp;
+    }
+
+  sp_visualizer_list_set_time_range (priv->list, begin_time, end_time);
+  sp_visualizer_ticks_set_time_range (priv->ticks, begin_time, end_time);
+}
+
+static void
+sp_visualizer_view_adjustment_value_changed (SpVisualizerView *self,
+                                             GtkAdjustment    *adjustment)
+{
+  gint64 begin_time;
+  gint64 end_time;
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (GTK_IS_ADJUSTMENT (adjustment));
+
+  begin_time = gtk_adjustment_get_value (adjustment);
+  end_time = begin_time + gtk_adjustment_get_page_size (adjustment);
+  sp_visualizer_view_set_time_range (self, begin_time, end_time);
+}
+
+static void
 sp_visualizer_view_notify_zoom (SpVisualizerView *self,
                                 GParamSpec       *pspec,
                                 SpZoomManager    *zoom_manager)
@@ -104,8 +140,8 @@ sp_visualizer_view_notify_zoom (SpVisualizerView *self,
 
   end_time = begin_time + (NSEC_PER_SEC * 60.0 / zoom);
 
-  sp_visualizer_list_set_time_range (priv->list, begin_time, end_time);
-  sp_visualizer_ticks_set_time_range (priv->ticks, begin_time, end_time);
+  sp_visualizer_view_set_time_range (self, begin_time, end_time);
+  gtk_adjustment_set_page_size (priv->scroll_adjustment, end_time - begin_time);
 }
 
 static void
@@ -210,6 +246,7 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sp-visualizer-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, list);
+  gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, scroll_adjustment);
   gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, ticks);
 
   gtk_widget_class_set_css_name (widget_class, "visualizers");
@@ -231,6 +268,12 @@ sp_visualizer_view_init (SpVisualizerView *self)
   g_signal_connect_object (priv->list,
                            "remove",
                            G_CALLBACK (sp_visualizer_view_row_removed),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (priv->scroll_adjustment,
+                           "value-changed",
+                           G_CALLBACK (sp_visualizer_view_adjustment_value_changed),
                            self,
                            G_CONNECT_SWAPPED);
 }
@@ -261,9 +304,24 @@ sp_visualizer_view_set_reader (SpVisualizerView *self,
   if (priv->reader != reader)
     {
       g_clear_pointer (&priv->reader, sp_capture_reader_unref);
-      priv->reader = sp_capture_reader_ref (reader);
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_READER]);
       sp_visualizer_list_set_reader (priv->list, reader);
+      if (reader != NULL)
+        {
+          gint64 begin_time = 0;
+          gint64 end_time = 0;
+
+          priv->reader = sp_capture_reader_ref (reader);
+          begin_time = sp_capture_reader_get_start_time (reader);
+          end_time = sp_capture_reader_get_end_time (reader);
+
+          g_object_set (priv->scroll_adjustment,
+                        "lower", (gdouble)begin_time,
+                        "upper", (gdouble)end_time,
+                        "value", (gdouble)begin_time,
+                        NULL);
+        }
+
       if (priv->zoom_manager != NULL)
         sp_visualizer_view_notify_zoom (self, NULL, priv->zoom_manager);
     }

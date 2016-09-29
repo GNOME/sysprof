@@ -451,10 +451,12 @@ sp_line_visualizer_row_set_time_range (SpVisualizerRow *row,
                                        gint64           begin_time,
                                        gint64           end_time)
 {
+  SpLineVisualizerRow *self = (SpLineVisualizerRow *)row;
+
   g_assert (SP_IS_LINE_VISUALIZER_ROW (row));
   g_assert (begin_time <= end_time);
 
-  sp_line_visualizer_row_queue_reload (SP_LINE_VISUALIZER_ROW (row));
+  sp_line_visualizer_row_queue_reload (self);
 }
 
 static void
@@ -741,6 +743,10 @@ sp_line_visualizer_row_load_data_worker (GTask        *task,
 {
   LoadData *load = task_data;
   g_autoptr(GArray) counter_ids = NULL;
+  SpCaptureCondition *left, *right;
+  gint64 ext_begin_time;
+  gint64 ext_end_time;
+  gint64 ext;
 
   g_assert (G_IS_TASK (task));
   g_assert (SP_IS_LINE_VISUALIZER_ROW (source_object));
@@ -755,10 +761,22 @@ sp_line_visualizer_row_load_data_worker (GTask        *task,
       g_array_append_val (counter_ids, line_info->id);
     }
 
-  sp_capture_cursor_add_condition (load->cursor,
-                                   sp_capture_condition_new_where_counter_in (counter_ids->len,
-                                                                              (guint *)(gpointer)counter_ids->data));
+  /*
+   * Add a little extra time to the visible range so that we can get any datapoints
+   * that might be overlapping the region a bit. This helps so that we can draw
+   * appropriate data points that need a proper x,y coordinate outside the
+   * visible area for cairo_curve_to().
+   */
+  ext = (load->end_time - load->begin_time) / 3;
+  ext_begin_time = load->begin_time - ext;
+  ext_end_time = load->end_time + ext;
+
+  left = sp_capture_condition_new_where_counter_in (counter_ids->len, (guint *)(gpointer)counter_ids->data);
+  right = sp_capture_condition_new_where_time_between (ext_begin_time, ext_end_time);
+  sp_capture_cursor_add_condition (load->cursor, sp_capture_condition_new_and (left, right));
+
   sp_capture_cursor_foreach (load->cursor, sp_line_visualizer_row_load_data_frame_cb, load);
+
   g_task_return_pointer (task, g_steal_pointer (&load->cache), (GDestroyNotify)point_cache_unref);
 }
 

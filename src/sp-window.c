@@ -724,7 +724,7 @@ zoom_level_to_string (GBinding     *binding,
                       gpointer      user_data)
 {
   gdouble percent = 100.0 * g_value_get_double (from_value);
-  g_value_take_string (to_value, g_strdup_printf ("%u%%", (guint)ceil (percent)));
+  g_value_take_string (to_value, g_strdup_printf ("%u%%", (guint)floor (percent)));
   return TRUE;
 }
 

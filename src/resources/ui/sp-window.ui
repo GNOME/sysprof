@@ -205,6 +205,7 @@
     </child>
   </template>
   <object class="SpZoomManager" id="zoom_manager">
+    <property name="min-zoom">0.01</property>
   </object>
   <object class="GtkPopover" id="gear_popover">
     <property name="border-width">12</property>

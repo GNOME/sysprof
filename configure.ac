@@ -130,6 +130,7 @@ PKG_CHECK_MODULES(SYSTEMD,
                   [libsystemd >= systemd_required_version],
                   [have_systemd=yes],
                   [have_systemd=no])
+LT_LIB_M
 
 # sysprofd requires libsystemd and polkit, and is required to run
 # the ui without root permissions

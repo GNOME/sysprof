@@ -27,6 +27,7 @@ nodist_sysprof_SOURCES = \
 sysprof_LDADD = \
 	$(GIO_LIBS) \
 	$(GTK_LIBS) \
+	$(LIBM) \
 	$(POLKIT_LIBS) \
 	$(top_builddir)/lib/libsysprof-@API_VERSION@.la \
 	$(top_builddir)/lib/libsysprof-ui-@API_VERSION@.la \

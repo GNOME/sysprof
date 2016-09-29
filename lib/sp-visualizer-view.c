@@ -24,17 +24,21 @@
 #include "sp-visualizer-ticks.h"
 #include "sp-visualizer-view.h"
 
+#define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
+
 typedef struct
 {
   SpCaptureReader   *reader;
 
   SpVisualizerList  *list;
   SpVisualizerTicks *ticks;
+  SpZoomManager     *zoom_manager;
 } SpVisualizerViewPrivate;
 
 enum {
   PROP_0,
   PROP_READER,
+  PROP_ZOOM_MANAGER,
   N_PROPS
 };
 
@@ -81,12 +85,37 @@ sp_visualizer_view_row_removed (SpVisualizerView *self,
 }
 
 static void
+sp_visualizer_view_notify_zoom (SpVisualizerView *self,
+                                GParamSpec       *pspec,
+                                SpZoomManager    *zoom_manager)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+  gint64 begin_time = 0.0;
+  gint64 end_time;
+  gdouble zoom;
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (SP_IS_ZOOM_MANAGER (zoom_manager));
+
+  zoom = sp_zoom_manager_get_zoom (zoom_manager);
+
+  if (priv->reader != NULL)
+    begin_time = sp_capture_reader_get_start_time (priv->reader);
+
+  end_time = begin_time + (NSEC_PER_SEC * 60.0 / zoom);
+
+  sp_visualizer_list_set_time_range (priv->list, begin_time, end_time);
+  sp_visualizer_ticks_set_time_range (priv->ticks, begin_time, end_time);
+}
+
+static void
 sp_visualizer_view_finalize (GObject *object)
 {
   SpVisualizerView *self = (SpVisualizerView *)object;
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
 
   g_clear_pointer (&priv->reader, sp_capture_reader_unref);
+  g_clear_object (&priv->zoom_manager);
 
   G_OBJECT_CLASS (sp_visualizer_view_parent_class)->finalize (object);
 }
@@ -103,6 +132,10 @@ sp_visualizer_view_get_property (GObject    *object,
     {
     case PROP_READER:
       g_value_set_boxed (value, sp_visualizer_view_get_reader (self));
+      break;
+
+    case PROP_ZOOM_MANAGER:
+      g_value_set_object (value, sp_visualizer_view_get_zoom_manager (self));
       break;
 
     default:
@@ -122,6 +155,10 @@ sp_visualizer_view_set_property (GObject      *object,
     {
     case PROP_READER:
       sp_visualizer_view_set_reader (self, g_value_get_boxed (value));
+      break;
+
+    case PROP_ZOOM_MANAGER:
+      sp_visualizer_view_set_zoom_manager (self, g_value_get_object (value));
       break;
 
     default:
@@ -145,6 +182,13 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
                         "The reader for the visualizers",
                         SP_TYPE_CAPTURE_READER,
                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_ZOOM_MANAGER] =
+    g_param_spec_object ("zoom-manager",
+                         "Zoom Manager",
+                         "The zoom manager for the view",
+                         SP_TYPE_ZOOM_MANAGER,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -211,31 +255,18 @@ sp_visualizer_view_set_reader (SpVisualizerView *self,
                                SpCaptureReader  *reader)
 {
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
-  gint64 begin_time = 0;
-  gint64 end_time = 0;
 
   g_return_if_fail (SP_IS_VISUALIZER_VIEW (self));
 
-  if (reader != NULL)
+  if (priv->reader != reader)
     {
-      gint64 real_end_time;
-
-      begin_time = sp_capture_reader_get_start_time (reader);
-      real_end_time = sp_capture_reader_get_end_time (reader);
-
-      end_time = begin_time + (G_GINT64_CONSTANT (1000000000) * 60);
-
-      /* If we were able to extract a proper end time and its less
-       * than 60 seconds, we will use the whole width to show that.
-       */
-      if (real_end_time > 0 && real_end_time < end_time)
-        end_time = real_end_time;
+      g_clear_pointer (&priv->reader, sp_capture_reader_unref);
+      priv->reader = sp_capture_reader_ref (reader);
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_READER]);
+      sp_visualizer_list_set_reader (priv->list, reader);
+      if (priv->zoom_manager != NULL)
+        sp_visualizer_view_notify_zoom (self, NULL, priv->zoom_manager);
     }
-
-  sp_visualizer_list_set_reader (priv->list, reader);
-  sp_visualizer_list_set_time_range (priv->list, begin_time, end_time);
-
-  sp_visualizer_ticks_set_time_range (priv->ticks, 0, end_time - begin_time);
 }
 
 static void
@@ -265,4 +296,49 @@ buildable_iface_init (GtkBuildableIface *iface)
 {
   parent_buildable = g_type_interface_peek_parent (iface);
   iface->add_child = sp_visualizer_view_add_child;
+}
+
+SpZoomManager *
+sp_visualizer_view_get_zoom_manager (SpVisualizerView *self)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+
+  g_return_val_if_fail (SP_IS_VISUALIZER_VIEW (self), NULL);
+
+  return priv->zoom_manager;
+}
+
+void
+sp_visualizer_view_set_zoom_manager (SpVisualizerView *self,
+                                     SpZoomManager    *zoom_manager)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+
+  g_return_if_fail (SP_IS_VISUALIZER_VIEW (self));
+  g_return_if_fail (!zoom_manager || SP_IS_ZOOM_MANAGER (zoom_manager));
+
+  if (zoom_manager != priv->zoom_manager)
+    {
+      if (priv->zoom_manager != NULL)
+        {
+          g_signal_handlers_disconnect_by_func (priv->zoom_manager,
+                                                G_CALLBACK (sp_visualizer_view_notify_zoom),
+                                                self);
+          g_clear_object (&priv->zoom_manager);
+        }
+
+      if (zoom_manager != NULL)
+        {
+          priv->zoom_manager = g_object_ref (zoom_manager);
+          g_signal_connect_object (priv->zoom_manager,
+                                   "notify::zoom",
+                                   G_CALLBACK (sp_visualizer_view_notify_zoom),
+                                   self,
+                                   G_CONNECT_SWAPPED);
+          sp_visualizer_view_notify_zoom (self, NULL, priv->zoom_manager);
+        }
+
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ZOOM_MANAGER]);
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
 }

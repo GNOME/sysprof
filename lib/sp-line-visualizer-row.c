@@ -336,10 +336,13 @@ sp_line_visualizer_row_do_reload (gpointer data)
 
   priv->queued_load = 0;
 
-  sp_line_visualizer_row_load_data_async (self,
-                                          NULL,
-                                          sp_line_visualizer_row_load_data_cb,
-                                          NULL);
+  if (priv->reader != NULL)
+    {
+      sp_line_visualizer_row_load_data_async (self,
+                                              NULL,
+                                              sp_line_visualizer_row_load_data_cb,
+                                              NULL);
+    }
 
   return G_SOURCE_REMOVE;
 }
@@ -443,6 +446,16 @@ sp_line_visualizer_row_style_updated (GtkWidget *widget)
     }
 }
 
+static void
+sp_line_visualizer_row_set_time_range (SpVisualizerRow *row,
+                                       gint64           begin_time,
+                                       gint64           end_time)
+{
+  g_assert (SP_IS_LINE_VISUALIZER_ROW (row));
+  g_assert (begin_time <= end_time);
+
+  sp_line_visualizer_row_queue_reload (SP_LINE_VISUALIZER_ROW (row));
+}
 
 static void
 sp_line_visualizer_row_destroy (GtkWidget *widget)
@@ -532,6 +545,7 @@ sp_line_visualizer_row_class_init (SpLineVisualizerRowClass *klass)
   widget_class->style_updated = sp_line_visualizer_row_style_updated;
 
   visualizer_class->set_reader = sp_line_visualizer_row_set_reader;
+  visualizer_class->set_time_range = sp_line_visualizer_row_set_time_range;
 
   properties [PROP_TITLE] =
     g_param_spec_string ("title",

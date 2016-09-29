@@ -67,6 +67,8 @@ sp_visualizer_row_set_time_range (SpVisualizerRow *self,
 
   if (SP_VISUALIZER_ROW_GET_CLASS (self)->set_time_range)
     SP_VISUALIZER_ROW_GET_CLASS (self)->set_time_range (self, begin_time, end_time);
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
 void

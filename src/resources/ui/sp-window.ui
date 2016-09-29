@@ -72,6 +72,7 @@
         </child>
         <child>
           <object class="GtkMenuButton" id="gear_menu_button">
+            <property name="popover">gear_popover</property>
             <property name="visible">true</property>
             <style>
               <class name="image-button"/>
@@ -203,4 +204,95 @@
       </object>
     </child>
   </template>
+  <object class="SpZoomManager" id="zoom_manager">
+  </object>
+  <object class="GtkPopover" id="gear_popover">
+    <property name="border-width">12</property>
+    <property name="width-request">225</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="visible">true</property>
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="margin-bottom">12</property>
+            <property name="visible">true</property>
+            <style>
+              <class name="linked"/>
+            </style>
+            <child>
+              <object class="GtkButton">
+                <property name="action-name">zoom.zoom-out</property>
+                <property name="hexpand">true</property>
+                <property name="visible">true</property>
+                <style>
+                  <class name="image-button"/>
+                </style>
+                <child>
+                  <object class="GtkImage">
+                    <property name="icon-name">zoom-out-symbolic</property>
+                    <property name="visible">true</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="action-name">zoom.zoom-one</property>
+                <property name="label" translatable="yes">100%</property>
+                <property name="visible">true</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="action-name">zoom.zoom-in</property>
+                <property name="hexpand">true</property>
+                <property name="visible">true</property>
+                <style>
+                  <class name="image-button"/>
+                </style>
+                <child>
+                  <object class="GtkImage">
+                    <property name="icon-name">zoom-in-symbolic</property>
+                    <property name="visible">true</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="action-name">win.open-capture</property>
+            <property name="text" translatable="yes">Open</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="action-name">win.save-capture</property>
+            <property name="text" translatable="yes">Save As</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="margin-top">12</property>
+            <property name="action-name">win.screenshot</property>
+            <property name="text" translatable="yes">Screenshot</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="margin-top">12</property>
+            <property name="action-name">win.close-capture</property>
+            <property name="text" translatable="yes">Close</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
 </interface>

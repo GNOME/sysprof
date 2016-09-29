@@ -51,6 +51,7 @@ struct _SpWindow
   GtkLabel             *title;
   GtkStack             *view_stack;
   SpVisualizerView     *visualizers;
+  SpZoomManager        *zoom_manager;
 
   guint                 stats_handler;
 
@@ -796,9 +797,6 @@ sp_window_init (SpWindow *self)
     { "save-capture",  sp_window_save_capture },
     { "screenshot",  sp_window_screenshot },
   };
-  GtkApplication *app;
-  GtkPopover *popover;
-  GMenu *menu;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -843,20 +841,7 @@ sp_window_init (SpWindow *self)
                                    action_entries,
                                    G_N_ELEMENTS (action_entries),
                                    self);
-
-  /*
-   * Setup our gear (hamburger) menu.
-   */
-  app = GTK_APPLICATION (g_application_get_default ());
-  menu = gtk_application_get_menu_by_id (app, "gear-menu");
-  gtk_menu_button_set_menu_model (self->gear_menu_button, G_MENU_MODEL (menu));
-
-  /*
-   * Set the min-width on the popover for the gear menu, which is rather
-   * small by default (since our wording is short).
-   */
-  popover = gtk_menu_button_get_popover (self->gear_menu_button);
-  gtk_widget_set_size_request (GTK_WIDGET (popover), 200, -1);
+  gtk_widget_insert_action_group (GTK_WIDGET (self), "zoom", G_ACTION_GROUP (self->zoom_manager));
 
   /*
    * Restore previous window settings.

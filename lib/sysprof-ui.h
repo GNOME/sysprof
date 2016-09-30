@@ -29,6 +29,7 @@ G_BEGIN_DECLS
 # include "sp-line-visualizer-row.h"
 # include "sp-empty-state-view.h"
 # include "sp-model-filter.h"
+# include "sp-multi-paned.h"
 # include "sp-recording-state-view.h"
 # include "sp-process-model.h"
 # include "sp-process-model-item.h"

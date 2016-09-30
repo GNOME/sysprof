@@ -259,8 +259,15 @@ sp_application_init (SpApplication *self)
     { "help",         sysprof_help },
     { "quit",         sysprof_quit },
   };
+  static const gchar *zoom_in_accels[] = { "<control>plus", NULL };
+  static const gchar *zoom_out_accels[] = { "<control>minus", NULL };
+  static const gchar *zoom_one_accels[] = { "<control>0", NULL };
 
   g_action_map_add_action_entries (G_ACTION_MAP (self), actions, G_N_ELEMENTS (actions), self);
+
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self), "zoom.zoom-in", zoom_in_accels);
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self), "zoom.zoom-out", zoom_out_accels);
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self), "zoom.zoom-one", zoom_one_accels);
 
   g_application_set_default (G_APPLICATION (self));
 }

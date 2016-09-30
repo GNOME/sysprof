@@ -27,6 +27,7 @@ struct _SpVisualizerTicks
 {
   GtkDrawingArea parent_instance;
 
+  gint64 epoch;
   gint64 begin_time;
   gint64 end_time;
 };
@@ -70,6 +71,7 @@ draw_ticks (SpVisualizerTicks *self,
 {
   gdouble half;
   gdouble space;
+  gdouble offset;
   gint64 timespan;
 
   g_assert (SP_IS_VISUALIZER_TICKS (self));
@@ -82,7 +84,13 @@ draw_ticks (SpVisualizerTicks *self,
   space = (gdouble)area->width / (gdouble)timespan * (gdouble)tick_sizing[ticks].span;
   half = tick_sizing[ticks].width / 2.0;
 
-  for (gdouble x = 0; x < area->width; x += space)
+  /* Take our epoch into account to calculate the offset of the
+   * first tick, which might not align perfectly when the beginning
+   * of the visible area.
+   */
+  offset = ((self->begin_time - self->epoch) % tick_sizing[ticks].span) / (gdouble)tick_sizing[ticks].span * space;
+
+  for (gdouble x = -offset; x < area->width; x += space)
     {
       cairo_move_to (cr, (gint)x - .5 - (gint)half, 0);
       cairo_line_to (cr, (gint)x - .5 - (gint)half, tick_sizing[ticks].height);
@@ -207,4 +215,37 @@ sp_visualizer_ticks_set_time_range (SpVisualizerTicks *self,
   self->end_time = end_time;
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+gint64
+sp_visualizer_ticks_get_epoch (SpVisualizerTicks *self)
+{
+  g_return_val_if_fail (SP_IS_VISUALIZER_TICKS (self), 0);
+
+  return self->epoch;
+}
+
+/*
+ * Sets the epoch for the visualizer ticks.
+ *
+ * The epoch is the "real" starting time of the capture, where as the
+ * sp_visualizer_ticks_set_time_range() function sets the visible range
+ * of the capture.
+ *
+ * This is used to calculate the offset of the beginning of the capture
+ * from begin_time so that the ticks appear in the proper location.
+ *
+ * This function should only need to be called when the reader is changed.
+ */
+void
+sp_visualizer_ticks_set_epoch (SpVisualizerTicks *self,
+                               gint64             epoch)
+{
+  g_return_if_fail (SP_IS_VISUALIZER_TICKS (self));
+
+  if (self->epoch != epoch)
+    {
+      self->epoch = epoch;
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
 }

@@ -328,6 +328,8 @@ sp_visualizer_view_set_reader (SpVisualizerView *self,
           begin_time = sp_capture_reader_get_start_time (reader);
           end_time = sp_capture_reader_get_end_time (reader);
 
+          sp_visualizer_ticks_set_epoch (priv->ticks, begin_time);
+
           g_object_set (priv->scroll_adjustment,
                         "lower", (gdouble)begin_time,
                         "upper", (gdouble)end_time,

@@ -28,6 +28,9 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (SpVisualizerTicks, sp_visualizer_ticks, SP, VISUALIZER_TICKS, GtkDrawingArea)
 
 GtkWidget *sp_visualizer_ticks_new            (void);
+void       sp_visualizer_ticks_set_epoch      (SpVisualizerTicks *self,
+                                               gint64             epoch);
+gint64     sp_visualizer_ticks_get_epoch      (SpVisualizerTicks *self);
 void       sp_visualizer_ticks_get_time_range (SpVisualizerTicks *self,
                                                gint64            *begin_time,
                                                gint64            *end_time);

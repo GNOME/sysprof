@@ -23,6 +23,7 @@
 #include <sysprof-ui.h>
 
 #include "sp-application.h"
+#include "sp-multi-paned.h"
 #include "sp-visualizer-view.h"
 #include "sp-window.h"
 #include "sp-window-settings.h"
@@ -705,18 +706,6 @@ sp_window_delete_event (GtkWidget   *widget,
   return GDK_EVENT_PROPAGATE;
 }
 
-static void
-sp_window_reset_paned (SpWindow *self)
-{
-  gint min_height;
-  gint nat_height;
-
-  g_assert (SP_IS_WINDOW (self));
-
-  gtk_widget_get_preferred_height (GTK_WIDGET (self->visualizers), &min_height, &nat_height);
-  gtk_paned_set_position (self->paned, MAX (min_height, MIN (nat_height, 300)));
-}
-
 static gboolean
 zoom_level_to_string (GBinding     *binding,
                       const GValue *from_value,
@@ -837,18 +826,6 @@ sp_window_init (SpWindow *self)
                            self,
                            G_CONNECT_SWAPPED);
 
-  g_signal_connect_object (self->visualizers,
-                           "visualizer-added",
-                           G_CALLBACK (sp_window_reset_paned),
-                           self,
-                           G_CONNECT_SWAPPED);
-
-  g_signal_connect_object (self->visualizers,
-                           "visualizer-removed",
-                           G_CALLBACK (sp_window_reset_paned),
-                           self,
-                           G_CONNECT_SWAPPED);
-
   g_object_bind_property_full (self->zoom_manager, "zoom", self->zoom_one_label, "label",
                                G_BINDING_SYNC_CREATE,
                                zoom_level_to_string, NULL, NULL, NULL);
@@ -872,12 +849,6 @@ sp_window_init (SpWindow *self)
    * launch, enter, escape, view.
    */
   gtk_window_set_focus (GTK_WINDOW (self), GTK_WIDGET (self->record_button));
-
-  /*
-   * And finally ensure we have proper placement of our paned taking
-   * into account the size of the visualizers.
-   */
-  sp_window_reset_paned (self);
 }
 
 static void

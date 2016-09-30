@@ -219,6 +219,7 @@
               <object class="GtkButton">
                 <property name="action-name">zoom.zoom-out</property>
                 <property name="hexpand">true</property>
+                <property name="tooltip-text" translatable="yes">Zoom out (Ctrl+-)</property>
                 <property name="visible">true</property>
                 <style>
                   <class name="image-button"/>
@@ -234,6 +235,7 @@
             <child>
               <object class="GtkButton">
                 <property name="action-name">zoom.zoom-one</property>
+                <property name="tooltip-text" translatable="yes">Reset zoom level (Ctrl+0)</property>
                 <property name="visible">true</property>
                 <child>
                   <object class="GtkLabel" id="zoom_one_label">
@@ -247,6 +249,7 @@
               <object class="GtkButton">
                 <property name="action-name">zoom.zoom-in</property>
                 <property name="hexpand">true</property>
+                <property name="tooltip-text" translatable="yes">Zoom in (Ctrl++)</property>
                 <property name="visible">true</property>
                 <style>
                   <class name="image-button"/>

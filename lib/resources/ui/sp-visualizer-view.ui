@@ -20,6 +20,7 @@
                 <property name="hscrollbar-policy">external</property>
                 <property name="visible">true</property>
                 <property name="propagate-natural-height">true</property>
+                <property name="vexpand">true</property>
                 <child>
                   <object class="SpVisualizerList" id="list">
                     <property name="visible">true</property>

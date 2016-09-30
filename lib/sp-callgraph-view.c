@@ -492,6 +492,9 @@ sp_callgraph_view_set_node (SpCallgraphView *self,
   g_assert (SP_IS_CALLGRAPH_VIEW (self));
   g_assert (node != NULL);
 
+  if (priv->profile == NULL)
+    return;
+
   model = gtk_tree_view_get_model (priv->functions_view);
 
   if (gtk_tree_model_get_iter_first (model, &iter))
@@ -585,6 +588,9 @@ sp_callgraph_view_tag_data_func (GtkTreeViewColumn *column,
   SpCallgraphViewPrivate *priv = sp_callgraph_view_get_instance_private (self);
   StackNode *node = NULL;
   const gchar *str = NULL;
+
+  if (priv->profile == NULL)
+    return;
 
   gtk_tree_model_get (model, iter, COLUMN_POINTER, &node, -1);
 

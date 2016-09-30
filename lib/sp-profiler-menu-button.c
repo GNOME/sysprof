@@ -31,6 +31,7 @@ typedef struct
   SpModelFilter        *process_filter;
 
   /* Gtk template widgets */
+  GtkTreeModel         *environment_model;
   GtkLabel             *label;
   GtkPopover           *popover;
   GtkEntry             *process_filter_entry;
@@ -68,12 +69,13 @@ enum {
   N_PROPS
 };
 
-static void sp_profiler_menu_button_env_row_changed (SpProfilerMenuButton *self,
-                                                     GtkTreePath          *tree_path,
-                                                     GtkTreeIter          *tree_iter,
-                                                     gpointer              user_data);
-static void sp_profiler_menu_button_validate_spawn  (SpProfilerMenuButton *self,
-                                                     GtkEntry             *entry);
+static void     sp_profiler_menu_button_env_row_changed (SpProfilerMenuButton *self,
+                                                         GtkTreePath          *tree_path,
+                                                         GtkTreeIter          *tree_iter,
+                                                         gpointer              user_data);
+static void     sp_profiler_menu_button_validate_spawn  (SpProfilerMenuButton *self,
+                                                         GtkEntry             *entry);
+static gboolean save_environ_to_gsettings               (gpointer              data);
 
 static GParamSpec *properties [N_PROPS];
 
@@ -236,6 +238,9 @@ sp_profiler_menu_button_disconnect (SpProfilerMenuButton *self)
   clear_binding (&priv->whole_system_binding);
   clear_binding (&priv->list_sensitive_binding);
   clear_binding (&priv->inherit_binding);
+
+  if (priv->save_env_source != 0)
+    save_environ_to_gsettings (self);
 
   g_signal_handler_disconnect (priv->profiler, priv->notify_whole_system_handler);
   priv->notify_whole_system_handler = 0;
@@ -469,7 +474,6 @@ save_environ_to_gsettings (gpointer data)
   SpProfilerMenuButtonPrivate *priv = sp_profiler_menu_button_get_instance_private (self);
   g_autoptr(GPtrArray) ar = NULL;
   g_autoptr(GSettings) settings = NULL;
-  GtkTreeModel *model;
   GtkTreeIter iter;
 
   g_assert (SP_IS_PROFILER_MENU_BUTTON (self));
@@ -478,18 +482,16 @@ save_environ_to_gsettings (gpointer data)
 
   settings = g_settings_new ("org.gnome.sysprof2");
 
-  model = gtk_tree_view_get_model (priv->env_tree_view);
-
   ar = g_ptr_array_new_with_free_func (g_free);
 
-  if (gtk_tree_model_get_iter_first (model, &iter))
+  if (gtk_tree_model_get_iter_first (priv->environment_model, &iter))
     {
       do
         {
           g_autofree gchar *key = NULL;
           g_autofree gchar *value = NULL;
 
-          gtk_tree_model_get (model, &iter,
+          gtk_tree_model_get (priv->environment_model, &iter,
                               0, &key,
                               1, &value,
                               -1);
@@ -499,7 +501,7 @@ save_environ_to_gsettings (gpointer data)
 
           g_ptr_array_add (ar, g_strdup_printf ("%s=%s", key, value ? value : ""));
         }
-      while (gtk_tree_model_iter_next (model, &iter));
+      while (gtk_tree_model_iter_next (priv->environment_model, &iter));
     }
 
   g_ptr_array_add (ar, NULL);
@@ -521,9 +523,6 @@ sp_profiler_menu_button_destroy (GtkWidget *widget)
       sp_profiler_menu_button_disconnect (self);
       g_clear_object (&priv->profiler);
     }
-
-  if (priv->save_env_source)
-    save_environ_to_gsettings (self);
 
   g_clear_object (&priv->process_filter);
 
@@ -597,6 +596,7 @@ sp_profiler_menu_button_class_init (SpProfilerMenuButtonClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SpProfilerMenuButton, env_key_column);
   gtk_widget_class_bind_template_child_private (widget_class, SpProfilerMenuButton, env_tree_view);
   gtk_widget_class_bind_template_child_private (widget_class, SpProfilerMenuButton, env_value_column);
+  gtk_widget_class_bind_template_child_private (widget_class, SpProfilerMenuButton, environment_model);
   gtk_widget_class_bind_template_child_private (widget_class, SpProfilerMenuButton, inherit_environ);
   gtk_widget_class_bind_template_child_private (widget_class, SpProfilerMenuButton, key_cell);
   gtk_widget_class_bind_template_child_private (widget_class, SpProfilerMenuButton, label);

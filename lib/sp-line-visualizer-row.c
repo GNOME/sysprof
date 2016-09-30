@@ -91,6 +91,7 @@ typedef struct
   PointCache *cache;
   GArray *lines;
   GdkRGBA color;
+  gint scale_factor;
   gint width;
   gint height;
 } RenderData;
@@ -267,11 +268,12 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
 
   if (ret == GDK_EVENT_PROPAGATE && priv->surface != NULL)
     {
+      gint scale_factor = gtk_widget_get_scale_factor (widget);
       gint width;
       gint height;
 
-      width = cairo_image_surface_get_width (priv->surface);
-      height = cairo_image_surface_get_height (priv->surface);
+      width = cairo_image_surface_get_width (priv->surface) / scale_factor;
+      height = cairo_image_surface_get_height (priv->surface) / scale_factor;
 
       /*
        * We must have another threaded draw queued, so to give the impression
@@ -861,8 +863,8 @@ sp_line_visualizer_row_render_worker (GTask        *task,
    * and ignore having to deal with backgrounds and such.
    */
   surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
-                                        render->width,
-                                        render->height);
+                                        render->width * render->scale_factor,
+                                        render->height * render->scale_factor);
 
   if (surface == NULL)
     {
@@ -873,6 +875,11 @@ sp_line_visualizer_row_render_worker (GTask        *task,
                                render->width, render->height);
       goto cleanup;
     }
+
+  if (render->scale_factor != 1)
+    cairo_surface_set_device_scale (surface,
+                                    render->scale_factor,
+                                    render->scale_factor);
 
   cr = cairo_create (surface);
 
@@ -990,6 +997,7 @@ sp_line_visualizer_row_render_async (SpLineVisualizerRow *self,
   render->lines = copy_array (priv->lines);
   render->width = alloc.width;
   render->height = alloc.height;
+  render->scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
 
   style_context = gtk_widget_get_style_context (GTK_WIDGET (self));
   state = gtk_widget_get_state_flags (GTK_WIDGET (self));

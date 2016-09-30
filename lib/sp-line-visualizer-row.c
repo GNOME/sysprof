@@ -745,10 +745,7 @@ sp_line_visualizer_row_load_data_worker (GTask        *task,
 {
   LoadData *load = task_data;
   g_autoptr(GArray) counter_ids = NULL;
-  SpCaptureCondition *left, *right;
-  gint64 ext_begin_time;
-  gint64 ext_end_time;
-  gint64 ext;
+  SpCaptureCondition *left;
 
   g_assert (G_IS_TASK (task));
   g_assert (SP_IS_LINE_VISUALIZER_ROW (source_object));
@@ -763,19 +760,29 @@ sp_line_visualizer_row_load_data_worker (GTask        *task,
       g_array_append_val (counter_ids, line_info->id);
     }
 
+#if 0
   /*
    * Add a little extra time to the visible range so that we can get any datapoints
    * that might be overlapping the region a bit. This helps so that we can draw
    * appropriate data points that need a proper x,y coordinate outside the
    * visible area for cairo_curve_to().
+   *
+   * XXX: This is currently disabled because at certain zoom levels, you will end
+   * up missing data points. We need to always include one datapoint before the
+   * current time range.
    */
+  SpCaptureCondition *right;
+  gint64 ext_begin_time;
+  gint64 ext_end_time;
+  gint64 ext;
   ext = (load->end_time - load->begin_time) / 3;
   ext_begin_time = load->begin_time - ext;
   ext_end_time = load->end_time + ext;
+  right = sp_capture_condition_new_where_time_between (ext_begin_time, ext_end_time);
+#endif
 
   left = sp_capture_condition_new_where_counter_in (counter_ids->len, (guint *)(gpointer)counter_ids->data);
-  right = sp_capture_condition_new_where_time_between (ext_begin_time, ext_end_time);
-  sp_capture_cursor_add_condition (load->cursor, sp_capture_condition_new_and (left, right));
+  sp_capture_cursor_add_condition (load->cursor, left);
 
   sp_capture_cursor_foreach (load->cursor, sp_line_visualizer_row_load_data_frame_cb, load);
 

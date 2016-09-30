@@ -21,7 +21,11 @@
 #include "sp-visualizer-ticks.h"
 
 #define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
+#define NSEC_PER_HOUR (NSEC_PER_SEC * 60 * 60)
+#define NSEC_PER_MIN (NSEC_PER_SEC * 60)
+#define NSEC_PER_MSEC (NSEC_PER_SEC/1000L)
 #define MIN_TICK_DISTANCE 20
+#define LABEL_HEIGHT_PX 8
 
 struct _SpVisualizerTicks
 {
@@ -64,15 +68,99 @@ struct {
 G_DEFINE_TYPE (SpVisualizerTicks, sp_visualizer_ticks, GTK_TYPE_DRAWING_AREA)
 
 static void
+update_label_text (PangoLayout *layout,
+                   gint64       time,
+                   gboolean     want_msec)
+{
+  g_autofree gchar *str = NULL;
+  gint hours = 0;
+  gint min = 0;
+  gint sec = 0;
+  gint msec = 0;
+  gint64 tmp;
+
+  g_assert (PANGO_IS_LAYOUT (layout));
+
+  tmp = time % NSEC_PER_MSEC;
+  time -= tmp;
+  msec = tmp / 1000000L;
+
+  /* In case our pixel math got us not quite there */
+  if (msec == 999)
+    {
+      msec = 0;
+      time += NSEC_PER_SEC;
+    }
+
+  if (time >= NSEC_PER_HOUR)
+    {
+      hours = time / NSEC_PER_HOUR;
+      time %= NSEC_PER_HOUR;
+    }
+
+  if (time >= NSEC_PER_MIN)
+    {
+      min = time / NSEC_PER_MIN;
+      time %= NSEC_PER_MIN;
+    }
+
+  if (time >= NSEC_PER_SEC)
+    {
+      sec = time / NSEC_PER_SEC;
+      time %= NSEC_PER_SEC;
+    }
+
+  if (want_msec || (!hours && !min && !sec))
+    {
+      if (hours > 0)
+        str = g_strdup_printf ("%02u:%02u:%02u.%04u", hours, min, sec, msec);
+      else
+        str = g_strdup_printf ("%02u:%02u.%04u", min, sec, msec);
+    }
+  else
+    {
+      if (hours > 0)
+        str = g_strdup_printf ("%02u:%02u:%02u", hours, min, sec);
+      else
+        str = g_strdup_printf ("%02u:%02u", min, sec);
+    }
+
+  pango_layout_set_text (layout, str, -1);
+}
+
+static inline gdouble
+get_x_for_time (SpVisualizerTicks   *self,
+                const GtkAllocation *alloc,
+                gint64               t)
+{
+  gint64 timespan = self->end_time - self->begin_time;
+  gdouble x_ratio = (gdouble)(t - self->begin_time) / (gdouble)timespan;
+  return alloc->width * x_ratio;
+}
+
+#if 0
+static inline gint64
+get_time_at_x (SpVisualizerTicks   *self,
+               const GtkAllocation *alloc,
+               gdouble              x)
+{
+  return self->begin_time
+       - self->epoch
+       + ((self->end_time - self->begin_time) / (gdouble)alloc->width * x);
+}
+#endif
+
+static gboolean
 draw_ticks (SpVisualizerTicks *self,
             cairo_t           *cr,
             GtkAllocation     *area,
-            gint               ticks)
+            gint               ticks,
+            gboolean           label_mode)
 {
+  GtkAllocation alloc;
   gdouble half;
-  gdouble space;
-  gdouble offset;
-  gint64 timespan;
+  gint64 x_offset;
+  gint count = 0;
 
   g_assert (SP_IS_VISUALIZER_TICKS (self));
   g_assert (cr != NULL);
@@ -80,24 +168,72 @@ draw_ticks (SpVisualizerTicks *self,
   g_assert (ticks >= 0);
   g_assert (ticks < N_TICKS);
 
-  timespan = self->end_time - self->begin_time;
-  space = (gdouble)area->width / (gdouble)timespan * (gdouble)tick_sizing[ticks].span;
+  /*
+   * If we are in label_model, we don't draw the ticks but only the labels.
+   * That way we can determine which tick level managed to draw a tick in
+   * the visible region so we only show labels for the largest tick level.
+   * (Returning true from this method indicates we successfully drew a tick).
+   */
+
   half = tick_sizing[ticks].width / 2.0;
 
   /* Take our epoch into account to calculate the offset of the
    * first tick, which might not align perfectly when the beginning
    * of the visible area.
    */
-  offset = ((self->begin_time - self->epoch) % tick_sizing[ticks].span) / (gdouble)tick_sizing[ticks].span * space;
+  x_offset = (self->begin_time - self->epoch) % tick_sizing[ticks].span;
+  gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
 
-  for (gdouble x = -offset; x < area->width; x += space)
+  if G_UNLIKELY (label_mode)
     {
-      cairo_move_to (cr, (gint)x - .5 - (gint)half, 0);
-      cairo_line_to (cr, (gint)x - .5 - (gint)half, tick_sizing[ticks].height);
+      PangoLayout *layout;
+      PangoFontDescription *font_desc;
+      gboolean want_msec;
+
+      layout = gtk_widget_create_pango_layout (GTK_WIDGET (self), "00:10:00");
+
+      font_desc = pango_font_description_new ();
+      pango_font_description_set_family_static (font_desc, "Monospace");
+      pango_font_description_set_absolute_size (font_desc, LABEL_HEIGHT_PX * PANGO_SCALE);
+      pango_layout_set_font_description (layout, font_desc);
+      pango_font_description_free (font_desc);
+
+      /* If we are operating on smaller than seconds here, then we want
+       * to ensure we include msec with the timestamps.
+       */
+      want_msec = tick_sizing[ticks].span < NSEC_PER_SEC;
+
+      for (gint64 t = self->begin_time - x_offset;
+           t <= self->end_time;
+           t += tick_sizing[ticks].span)
+        {
+          gdouble x = get_x_for_time (self, &alloc, t);
+
+          cairo_move_to (cr, (gint)x + .5 - (gint)half, alloc.height - LABEL_HEIGHT_PX);
+          update_label_text (layout, t - self->epoch, want_msec);
+          pango_cairo_show_layout (cr, layout);
+        }
+
+      g_clear_object (&layout);
+    }
+  else
+    {
+      for (gint64 t = self->begin_time - x_offset;
+           t <= self->end_time;
+           t += tick_sizing[ticks].span)
+        {
+          gdouble x = get_x_for_time (self, &alloc, t);
+
+          cairo_move_to (cr, (gint)x - .5 - (gint)half, 0);
+          cairo_line_to (cr, (gint)x - .5 - (gint)half, tick_sizing[ticks].height);
+          count++;
+        }
+
+      cairo_set_line_width (cr, tick_sizing[ticks].width);
+      cairo_stroke (cr);
     }
 
-  cairo_set_line_width (cr, tick_sizing[ticks].width);
-  cairo_stroke (cr);
+  return count > 2;
 }
 
 static gboolean
@@ -135,12 +271,19 @@ sp_visualizer_ticks_draw (GtkWidget *widget,
   for (guint i = G_N_ELEMENTS (tick_sizing); i > 0; i--)
     {
       gint64 n_ticks = timespan / tick_sizing[i - 1].span;
+      gint largest_match = -1;
 
       if ((alloc.width / n_ticks) < MIN_TICK_DISTANCE)
         continue;
 
       for (guint j = i; j > 0; j--)
-        draw_ticks (self, cr, &alloc, j - 1);
+        {
+          if (draw_ticks (self, cr, &alloc, j - 1, FALSE))
+            largest_match = j - 1;
+        }
+
+      if (largest_match != -1)
+        draw_ticks (self, cr, &alloc, largest_match, TRUE);
 
       break;
     }
@@ -155,7 +298,7 @@ sp_visualizer_ticks_get_preferred_height (GtkWidget *widget,
 {
   g_assert (SP_IS_VISUALIZER_TICKS (widget));
 
-  *min_height = *nat_height = tick_sizing[0].height;
+  *min_height = *nat_height = tick_sizing[0].height + LABEL_HEIGHT_PX;
 }
 
 static void
@@ -172,8 +315,7 @@ sp_visualizer_ticks_class_init (SpVisualizerTicksClass *klass)
 static void
 sp_visualizer_ticks_init (SpVisualizerTicks *self)
 {
-  /* XXX: set range from callers */
-  self->end_time = 1000000000UL * 60UL;
+  self->end_time = G_GINT64_CONSTANT (1000000000) * 60;
 }
 
 GtkWidget *

@@ -17,7 +17,8 @@
             <property name="visible">true</property>
             <child>
               <object class="GtkScrolledWindow">
-                <property name="hscrollbar-policy">external</property>
+                <!-- Horizontal scrolling is handled by @scrollbar -->
+                <property name="hscrollbar-policy">never</property>
                 <property name="visible">true</property>
                 <property name="propagate-natural-height">true</property>
                 <property name="vexpand">true</property>

@@ -150,9 +150,7 @@ uiheaders_DATA = \
 	sp-process-model-row.h \
 	sp-profiler-menu-button.h \
 	sp-recording-state-view.h \
-	sp-visualizer-list.h \
 	sp-visualizer-row.h \
-	sp-visualizer-ticks.h \
 	sp-visualizer-view.h \
 	sp-zoom-manager.h \
 	sysprof-ui.h \
@@ -176,8 +174,10 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	sp-profiler-menu-button.c \
 	sp-recording-state-view.c \
 	sp-visualizer-list.c \
+	sp-visualizer-list.h \
 	sp-visualizer-row.c \
 	sp-visualizer-ticks.c \
+	sp-visualizer-ticks.h \
 	sp-visualizer-view.c \
 	sp-zoom-manager.c \
 	$(NULL)

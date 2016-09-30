@@ -205,7 +205,6 @@ sp_window_build_profile_cb (GObject      *object,
   SpProfile *profile = (SpProfile *)object;
   g_autoptr(SpWindow) self = user_data;
   g_autoptr(GError) error = NULL;
-  gint64 begin_time;
 
   g_assert (SP_IS_CALLGRAPH_PROFILE (profile));
   g_assert (SP_IS_WINDOW (self));

@@ -144,6 +144,7 @@ uiheaders_DATA = \
 	sp-failed-state-view.h \
 	sp-line-visualizer-row.h \
 	sp-model-filter.h \
+	sp-multi-paned.h \
 	sp-process-model.h \
 	sp-process-model-item.h \
 	sp-process-model-row.h \
@@ -168,6 +169,7 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	sp-failed-state-view.c \
 	sp-line-visualizer-row.c \
 	sp-model-filter.c \
+	sp-multi-paned.c \
 	sp-process-model.c \
 	sp-process-model-item.c \
 	sp-process-model-row.c \

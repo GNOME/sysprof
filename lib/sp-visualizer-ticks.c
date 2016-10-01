@@ -273,7 +273,7 @@ sp_visualizer_ticks_draw (GtkWidget *widget,
       gint64 n_ticks = timespan / tick_sizing[i - 1].span;
       gint largest_match = -1;
 
-      if ((alloc.width / n_ticks) < MIN_TICK_DISTANCE)
+      if (n_ticks == 0 || (alloc.width / n_ticks) < MIN_TICK_DISTANCE)
         continue;
 
       for (guint j = i; j > 0; j--)

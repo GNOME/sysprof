@@ -79,8 +79,6 @@ sp_visualizer_row_get_time_range (SpVisualizerRow *self,
   SpVisualizerRowPrivate *priv = sp_visualizer_row_get_instance_private (self);
 
   g_return_if_fail (SP_IS_VISUALIZER_ROW (self));
-  g_return_if_fail (begin_time != NULL);
-  g_return_if_fail (end_time != NULL);
 
   if (begin_time != NULL)
     *begin_time = priv->begin_time;

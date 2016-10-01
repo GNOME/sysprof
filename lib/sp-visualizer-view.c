@@ -130,6 +130,9 @@ sp_visualizer_view_notify_zoom (SpVisualizerView *self,
   gint64 begin_time = 0.0;
   gint64 end_time;
   gdouble zoom;
+  gdouble page_size;
+  gdouble upper;
+  gdouble value;
 
   g_assert (SP_IS_VISUALIZER_VIEW (self));
   g_assert (SP_IS_ZOOM_MANAGER (zoom_manager));
@@ -143,6 +146,15 @@ sp_visualizer_view_notify_zoom (SpVisualizerView *self,
 
   sp_visualizer_view_set_time_range (self, begin_time, end_time);
   gtk_adjustment_set_page_size (priv->scroll_adjustment, end_time - begin_time);
+
+  g_object_get (priv->scroll_adjustment,
+                "page-size", &page_size,
+                "upper", &upper,
+                "value", &value,
+                NULL);
+
+  if (value + page_size > upper)
+    gtk_adjustment_set_value (priv->scroll_adjustment, upper - page_size);
 
   if (priv->reader != NULL)
     {

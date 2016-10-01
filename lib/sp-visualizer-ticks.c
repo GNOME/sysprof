@@ -110,7 +110,7 @@ update_label_text (PangoLayout *layout,
       time %= NSEC_PER_SEC;
     }
 
-  if (want_msec || (!hours && !min && !sec))
+  if (want_msec || (!hours && !min && !sec && msec))
     {
       if (hours > 0)
         str = g_strdup_printf ("%02u:%02u:%02u.%04u", hours, min, sec, msec);

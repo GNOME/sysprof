@@ -51,12 +51,7 @@ typedef struct
    * to render to the front buffer (during our ::draw vfunc).
    */
   cairo_surface_t *surface;
-
-  /*
-   * We track the draw sequence so that we only "consume" the newest
-   * draw operation after a threaded render completes.
-   */
-  guint draw_sequence;
+  gint64 surface_begin_time;
 
   /*
    * Child widget to display the label in the upper corner.
@@ -68,6 +63,10 @@ typedef struct
    */
   gdouble y_lower;
   gdouble y_upper;
+
+  /* Cached copy of begin/end time for quick access */
+  gint64 begin_time;
+  gint64 end_time;
 
   /*
    * If we have a new counter discovered or the reader is set, we might
@@ -91,6 +90,7 @@ typedef struct
   PointCache *cache;
   GArray *lines;
   GdkRGBA color;
+  gint64 begin_time;
   gint scale_factor;
   gint width;
   gint height;
@@ -123,6 +123,7 @@ static void            sp_line_visualizer_row_render_async      (SpLineVisualize
                                                                  gpointer              user_data);
 static cairo_surface_t *sp_line_visualizer_row_render_finish    (SpLineVisualizerRow  *self,
                                                                  GAsyncResult         *result,
+                                                                 gint64               *surface_begin_time,
                                                                  GError              **error);
 
 enum {
@@ -183,12 +184,13 @@ sp_line_visualizer_row_render_cb (GObject      *object,
   SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
   g_autoptr(GError) error = NULL;
   cairo_surface_t *surface;
+  gint64 surface_begin_time;
 
   g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (user_data == NULL);
 
-  surface = sp_line_visualizer_row_render_finish (self, result, &error);
+  surface = sp_line_visualizer_row_render_finish (self, result, &surface_begin_time, &error);
 
   if (surface == NULL)
     {
@@ -197,7 +199,9 @@ sp_line_visualizer_row_render_cb (GObject      *object,
     }
 
   g_clear_pointer (&priv->surface, cairo_surface_destroy);
+
   priv->surface = surface;
+  priv->surface_begin_time = surface_begin_time;
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }
@@ -249,6 +253,17 @@ adjust_alloc_for_borders (SpLineVisualizerRow *self,
   subtract_border (alloc, &border);
 }
 
+static inline gdouble
+get_x_for_time (SpLineVisualizerRow *self,
+                const GtkAllocation *alloc,
+                gint64               t)
+{
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
+  gint64 timespan = priv->end_time - priv->begin_time;
+  gdouble x_ratio = (gdouble)(t - priv->begin_time) / (gdouble)timespan;
+  return alloc->width * x_ratio;
+}
+
 static gboolean
 sp_line_visualizer_row_draw (GtkWidget *widget,
                              cairo_t   *cr)
@@ -271,6 +286,7 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
       gint scale_factor = gtk_widget_get_scale_factor (widget);
       gint width;
       gint height;
+      gint x_offset = 0;
 
       width = cairo_image_surface_get_width (priv->surface) / scale_factor;
       height = cairo_image_surface_get_height (priv->surface) / scale_factor;
@@ -291,11 +307,18 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
         }
 
       /*
+       * If we have moved our time range since we last rendered, then we
+       * might need to adjust the x_offset when reusing this cached surface.
+       */
+      if (priv->surface_begin_time != priv->begin_time)
+        x_offset = get_x_for_time (self, &alloc, priv->surface_begin_time);
+
+      /*
        * This is our ideal path, where we have a 1-to-1 match of our backing
        * surface matching the widgets current allocation.
        */
       cairo_rectangle (cr, 0, 0, alloc.width, alloc.height);
-      cairo_set_source_surface (cr, priv->surface, 0, 0);
+      cairo_set_source_surface (cr, priv->surface, x_offset, 0);
       cairo_fill (cr);
     }
 
@@ -454,9 +477,13 @@ sp_line_visualizer_row_set_time_range (SpVisualizerRow *row,
                                        gint64           end_time)
 {
   SpLineVisualizerRow *self = (SpLineVisualizerRow *)row;
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
 
   g_assert (SP_IS_LINE_VISUALIZER_ROW (row));
   g_assert (begin_time <= end_time);
+
+  priv->begin_time = begin_time;
+  priv->end_time = end_time;
 
   sp_line_visualizer_row_queue_reload (self);
 }
@@ -1006,6 +1033,8 @@ sp_line_visualizer_row_render_async (SpLineVisualizerRow *self,
   render->height = alloc.height;
   render->scale_factor = gtk_widget_get_scale_factor (GTK_WIDGET (self));
 
+  sp_visualizer_row_get_time_range (SP_VISUALIZER_ROW (self), &render->begin_time, NULL);
+
   style_context = gtk_widget_get_style_context (GTK_WIDGET (self));
   state = gtk_widget_get_state_flags (GTK_WIDGET (self));
   gtk_style_context_get_color (style_context, state, &render->color);
@@ -1028,10 +1057,18 @@ sp_line_visualizer_row_render_async (SpLineVisualizerRow *self,
 static cairo_surface_t *
 sp_line_visualizer_row_render_finish (SpLineVisualizerRow  *self,
                                       GAsyncResult         *result,
+                                      gint64               *surface_begin_time,
                                       GError              **error)
 {
+  RenderData *render;
+
   g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
   g_assert (G_IS_TASK (result));
+
+  render = g_task_get_task_data (G_TASK (result));
+
+  if (surface_begin_time != NULL)
+    *surface_begin_time = render->begin_time;
 
   return g_task_propagate_pointer (G_TASK (result), error);
 }

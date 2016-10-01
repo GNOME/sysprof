@@ -33,6 +33,16 @@ struct _SpApplication
 
 G_DEFINE_TYPE (SpApplication, sp_application, GTK_TYPE_APPLICATION)
 
+struct {
+  const gchar *action_name;
+  const gchar *accels[12];
+} default_accels[] = {
+  { "zoom.zoom-in", { "<Primary>plus", "<Primary>KP_Add", "<Primary>equal", "ZoomIn", NULL } },
+  { "zoom.zoom-out", { "<Primary>minus", "<Primary>KP_Subtract", "ZoomOut", NULL } },
+  { "zoom.zoom-one", { "<Primary>0", "<Primary>KP_0", NULL } },
+  { NULL }
+};
+
 static void
 sp_application_activate (GApplication *app)
 {
@@ -90,7 +100,7 @@ sp_application_open (GApplication  *app,
 static void
 sp_application_startup (GApplication *application)
 {
-  GtkCssProvider *provider;
+  g_autoptr(GtkCssProvider) provider = NULL;
 
   g_assert (SP_IS_APPLICATION (application));
 
@@ -101,7 +111,11 @@ sp_application_startup (GApplication *application)
   gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
                                              GTK_STYLE_PROVIDER (provider),
                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-  g_clear_object (&provider);
+
+  for (guint i = 0; default_accels[i].action_name; i++)
+    gtk_application_set_accels_for_action (GTK_APPLICATION (application),
+                                           default_accels[i].action_name,
+                                           default_accels[i].accels);
 }
 
 static void
@@ -259,15 +273,8 @@ sp_application_init (SpApplication *self)
     { "help",         sysprof_help },
     { "quit",         sysprof_quit },
   };
-  static const gchar *zoom_in_accels[] = { "<control>plus", NULL };
-  static const gchar *zoom_out_accels[] = { "<control>minus", NULL };
-  static const gchar *zoom_one_accels[] = { "<control>0", NULL };
 
   g_action_map_add_action_entries (G_ACTION_MAP (self), actions, G_N_ELEMENTS (actions), self);
-
-  gtk_application_set_accels_for_action (GTK_APPLICATION (self), "zoom.zoom-in", zoom_in_accels);
-  gtk_application_set_accels_for_action (GTK_APPLICATION (self), "zoom.zoom-out", zoom_out_accels);
-  gtk_application_set_accels_for_action (GTK_APPLICATION (self), "zoom.zoom-one", zoom_one_accels);
 
   g_application_set_default (G_APPLICATION (self));
 }

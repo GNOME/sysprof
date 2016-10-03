@@ -95,7 +95,7 @@ sp_visualizer_view_set_time_range (SpVisualizerView *self,
 
   g_assert (SP_IS_VISUALIZER_VIEW (self));
 
-  if (begin_time < end_time)
+  if (end_time < begin_time)
     {
       gint64 tmp = begin_time;
       begin_time = end_time;

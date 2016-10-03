@@ -33,7 +33,6 @@ typedef struct
 
   SpVisualizerList  *list;
   GtkAdjustment     *scroll_adjustment;
-  GtkScrollbar      *scrollbar;
   SpVisualizerTicks *ticks;
 } SpVisualizerViewPrivate;
 
@@ -155,17 +154,6 @@ sp_visualizer_view_notify_zoom (SpVisualizerView *self,
 
   if (value + page_size > upper)
     gtk_adjustment_set_value (priv->scroll_adjustment, upper - page_size);
-
-  if (priv->reader != NULL)
-    {
-      gint64 real_range;
-      gboolean visible;
-
-      real_range = sp_capture_reader_get_end_time (priv->reader)
-                 - sp_capture_reader_get_start_time (priv->reader);
-      visible = (gtk_adjustment_get_page_size (priv->scroll_adjustment) < real_range);
-      gtk_widget_set_visible (GTK_WIDGET (priv->scrollbar), visible);
-    }
 }
 
 static void
@@ -271,7 +259,6 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sp-visualizer-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, list);
   gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, scroll_adjustment);
-  gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, scrollbar);
   gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, ticks);
 
   gtk_widget_class_set_css_name (widget_class, "visualizers");

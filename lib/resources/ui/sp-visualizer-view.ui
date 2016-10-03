@@ -17,22 +17,21 @@
             <property name="visible">true</property>
             <child>
               <object class="GtkScrolledWindow">
-                <!-- Horizontal scrolling is handled by @scrollbar -->
-                <property name="hscrollbar-policy">never</property>
-                <property name="visible">true</property>
+                <property name="hadjustment">scroll_adjustment</property>
                 <property name="propagate-natural-height">true</property>
                 <property name="vexpand">true</property>
+                <property name="visible">true</property>
                 <child>
-                  <object class="SpVisualizerList" id="list">
+                  <object class="SpViewport">
                     <property name="visible">true</property>
+                    <property name="hadjustment">scroll_adjustment</property>
+                    <child>
+                      <object class="SpVisualizerList" id="list">
+                        <property name="visible">true</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkScrollbar" id="scrollbar">
-                <property name="adjustment">scroll_adjustment</property>
-                <property name="orientation">horizontal</property>
               </object>
             </child>
           </object>

@@ -411,6 +411,6 @@ sp_visualizer_view_set_zoom_manager (SpVisualizerView *self,
         }
 
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ZOOM_MANAGER]);
-      gtk_widget_queue_draw (GTK_WIDGET (self));
+      gtk_widget_queue_resize (GTK_WIDGET (self));
     }
 }

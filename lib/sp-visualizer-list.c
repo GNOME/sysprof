@@ -22,12 +22,15 @@
 
 #include "sp-visualizer-list.h"
 #include "sp-visualizer-row.h"
+#include "sp-zoom-manager.h"
 
-#define NSEC_PER_SEC G_GUINT64_CONSTANT(1000000000)
+#define NSEC_PER_SEC              G_GUINT64_CONSTANT(1000000000)
+#define DEFAULT_PIXELS_PER_SECOND 20
 
 typedef struct
 {
   SpCaptureReader *reader;
+  SpZoomManager *zoom_manager;
   gint64 begin_time;
   gint64 end_time;
 } SpVisualizerListPrivate;
@@ -35,12 +38,29 @@ typedef struct
 enum {
   PROP_0,
   PROP_READER,
+  PROP_ZOOM_MANAGER,
   N_PROPS
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (SpVisualizerList, sp_visualizer_list, GTK_TYPE_LIST_BOX)
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+sp_visualizer_list_add (GtkContainer *container,
+                        GtkWidget    *widget)
+{
+  SpVisualizerList *self = (SpVisualizerList *)container;
+  SpVisualizerListPrivate *priv = sp_visualizer_list_get_instance_private (self);
+
+  GTK_CONTAINER_CLASS (sp_visualizer_list_parent_class)->add (container, widget);
+
+  if (SP_IS_VISUALIZER_ROW (widget))
+    {
+      sp_visualizer_row_set_reader (SP_VISUALIZER_ROW (widget), priv->reader);
+      sp_visualizer_row_set_zoom_manager (SP_VISUALIZER_ROW (widget), priv->zoom_manager);
+    }
+}
 
 static void
 sp_visualizer_list_finalize (GObject *object)
@@ -67,6 +87,10 @@ sp_visualizer_list_get_property (GObject    *object,
       g_value_set_boxed (value, sp_visualizer_list_get_reader (self));
       break;
 
+    case PROP_ZOOM_MANAGER:
+      g_value_set_object (value, sp_visualizer_list_get_zoom_manager (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -86,6 +110,10 @@ sp_visualizer_list_set_property (GObject      *object,
       sp_visualizer_list_set_reader (self, g_value_get_boxed (value));
       break;
 
+    case PROP_ZOOM_MANAGER:
+      sp_visualizer_list_set_zoom_manager (self, g_value_get_object (value));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -95,10 +123,13 @@ static void
 sp_visualizer_list_class_init (SpVisualizerListClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
   object_class->finalize = sp_visualizer_list_finalize;
   object_class->get_property = sp_visualizer_list_get_property;
   object_class->set_property = sp_visualizer_list_set_property;
+
+  container_class->add = sp_visualizer_list_add;
 
   properties [PROP_READER] =
     g_param_spec_boxed ("reader",
@@ -106,6 +137,13 @@ sp_visualizer_list_class_init (SpVisualizerListClass *klass)
                         "The capture reader",
                         SP_TYPE_CAPTURE_READER,
                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_ZOOM_MANAGER] =
+    g_param_spec_object ("zoom-manager",
+                         "Zoom Manager",
+                         "The zoom manager",
+                         SP_TYPE_ZOOM_MANAGER,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -119,50 +157,6 @@ GtkWidget *
 sp_visualizer_list_new (void)
 {
   return g_object_new (SP_TYPE_VISUALIZER_ROW, NULL);
-}
-
-static void
-propagate_time (GtkWidget *widget,
-                gpointer   user_data)
-{
-  struct {
-    gint64 begin;
-    gint64 end;
-  } *t = user_data;
-
-  if (SP_IS_VISUALIZER_ROW (widget))
-    sp_visualizer_row_set_time_range (SP_VISUALIZER_ROW (widget), t->begin, t->end);
-}
-
-void
-sp_visualizer_list_set_time_range (SpVisualizerList *self,
-                                   gint64            begin_time,
-                                   gint64            end_time)
-{
-  struct {
-    gint64 begin;
-    gint64 end;
-  } t = { begin_time, end_time };
-
-  g_return_if_fail (SP_IS_VISUALIZER_LIST (self));
-
-  gtk_container_foreach (GTK_CONTAINER (self), propagate_time, &t);
-}
-
-void
-sp_visualizer_list_get_time_range (SpVisualizerList *self,
-                                   gint64           *begin_time,
-                                   gint64           *end_time)
-{
-  SpVisualizerListPrivate *priv = sp_visualizer_list_get_instance_private (self);
-
-  g_return_if_fail (SP_IS_VISUALIZER_LIST (self));
-
-  if (begin_time)
-    *begin_time = priv->begin_time;
-
-  if (end_time)
-    *end_time = priv->end_time;
 }
 
 /**
@@ -182,34 +176,6 @@ sp_visualizer_list_get_reader (SpVisualizerList *self)
   return priv->reader;
 }
 
-static void
-propagate_reader (GtkWidget *widget,
-                  gpointer   user_data)
-{
-  SpCaptureReader *reader = user_data;
-
-  if (SP_IS_VISUALIZER_ROW (widget))
-    sp_visualizer_row_set_reader (SP_VISUALIZER_ROW (widget), reader);
-}
-
-static void
-sp_visualizer_list_update_time_range (SpVisualizerList *self)
-{
-  SpVisualizerListPrivate *priv = sp_visualizer_list_get_instance_private (self);
-  gint64 begin_time = 0;
-  gint64 end_time = 0;
-
-  g_return_if_fail (SP_IS_VISUALIZER_LIST (self));
-
-  if (priv->reader != NULL)
-    {
-      begin_time = sp_capture_reader_get_start_time (priv->reader);
-      end_time = begin_time + (NSEC_PER_SEC * 60);
-    }
-
-  sp_visualizer_list_set_time_range (self, begin_time, end_time);
-}
-
 void
 sp_visualizer_list_set_reader (SpVisualizerList *self,
                                SpCaptureReader  *reader)
@@ -221,10 +187,47 @@ sp_visualizer_list_set_reader (SpVisualizerList *self,
   if (reader != priv->reader)
     {
       g_clear_pointer (&priv->reader, sp_capture_reader_unref);
-      if (reader)
+
+      if (reader != NULL)
         priv->reader = sp_capture_reader_ref (reader);
-      gtk_container_foreach (GTK_CONTAINER (self), propagate_reader, reader);
-      sp_visualizer_list_update_time_range (self);
+
+      gtk_container_foreach (GTK_CONTAINER (self),
+                             (GtkCallback)sp_visualizer_row_set_reader,
+                             reader);
+
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_READER]);
     }
+}
+
+void
+sp_visualizer_list_set_zoom_manager (SpVisualizerList *self,
+                                     SpZoomManager    *zoom_manager)
+{
+  SpVisualizerListPrivate *priv = sp_visualizer_list_get_instance_private (self);
+
+  g_return_if_fail (SP_IS_VISUALIZER_LIST (self));
+  g_return_if_fail (SP_IS_ZOOM_MANAGER (zoom_manager));
+
+  if (g_set_object (&priv->zoom_manager, zoom_manager))
+    {
+      gtk_container_foreach (GTK_CONTAINER (self),
+                             (GtkCallback)sp_visualizer_row_set_zoom_manager,
+                             zoom_manager);
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ZOOM_MANAGER]);
+    }
+}
+
+/**
+ * sp_visualizer_list_get_zoom_manager:
+ *
+ * Returns: (nullable) (transfer): A #SpZoomManager or %NULL.
+ */
+SpZoomManager *
+sp_visualizer_list_get_zoom_manager (SpVisualizerList *self)
+{
+  SpVisualizerListPrivate *priv = sp_visualizer_list_get_instance_private (self);
+
+  g_return_val_if_fail (SP_IS_VISUALIZER_LIST (self), NULL);
+
+  return priv->zoom_manager;
 }

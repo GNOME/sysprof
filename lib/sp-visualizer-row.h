@@ -22,12 +22,25 @@
 #include <gtk/gtk.h>
 
 #include "sp-capture-reader.h"
+#include "sp-zoom-manager.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_VISUALIZER_ROW (sp_visualizer_row_get_type())
 
 G_DECLARE_DERIVABLE_TYPE (SpVisualizerRow, sp_visualizer_row, SP, VISUALIZER_ROW, GtkListBoxRow)
+
+typedef struct
+{
+  gfloat x;
+  gfloat y;
+} SpVisualizerRowRelativePoint;
+
+typedef struct
+{
+  gint x;
+  gint y;
+} SpVisualizerRowAbsolutePoint;
 
 struct _SpVisualizerRowClass
 {
@@ -42,21 +55,6 @@ struct _SpVisualizerRowClass
    */
   void (*set_reader) (SpVisualizerRow *self,
                       SpCaptureReader *reader);
-
-  /**
-   * SpVisualizerRow::set_time_range:
-   * @self: A #SpVisualizerRow
-   * @begin_time: the beginning time for the row.
-   * @end_time: the end time for the row.
-   *
-   * This function is used to notify the row that the range the
-   * row should be displaying has changed. This might happen when
-   * the user has altered the zoom level, selected a region, in or
-   * a new capture was loaded.
-   */
-  void (*set_time_range) (SpVisualizerRow *self,
-                          gint64           begin_time,
-                          gint64           end_time);
 
   gpointer _reserved1;
   gpointer _reserved2;
@@ -76,14 +74,16 @@ struct _SpVisualizerRowClass
   gpointer _reserved16;
 };
 
-void sp_visualizer_row_set_reader     (SpVisualizerRow *self,
-                                       SpCaptureReader *reader);
-void sp_visualizer_row_get_time_range (SpVisualizerRow *self,
-                                       gint64          *begin_time,
-                                       gint64          *end_time);
-void sp_visualizer_row_set_time_range (SpVisualizerRow *self,
-                                       gint64           begin_time,
-                                       gint64           end_time);
+void           sp_visualizer_row_set_reader       (SpVisualizerRow *self,
+                                                   SpCaptureReader *reader);
+SpZoomManager *sp_visualizer_row_get_zoom_manager (SpVisualizerRow *self);
+void           sp_visualizer_row_set_zoom_manager (SpVisualizerRow *self,
+                                                   SpZoomManager   *zoom_manager);
+void           sp_visualizer_row_translate_points (SpVisualizerRow                    *self,
+                                                   const SpVisualizerRowRelativePoint *in_points,
+                                                   guint                               n_in_points,
+                                                   SpVisualizerRowAbsolutePoint       *out_points,
+                                                   guint                               n_out_points);
 
 G_END_DECLS
 

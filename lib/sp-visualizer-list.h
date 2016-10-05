@@ -22,6 +22,7 @@
 #include <gtk/gtk.h>
 
 #include "sp-capture-reader.h"
+#include "sp-zoom-manager.h"
 
 G_BEGIN_DECLS
 
@@ -43,16 +44,13 @@ struct _SpVisualizerListClass
   gpointer _reserved8;
 };
 
-GtkWidget       *sp_visualizer_list_new            (void);
-void             sp_visualizer_list_set_reader     (SpVisualizerList *self,
-                                                    SpCaptureReader  *reader);
-SpCaptureReader *sp_visualizer_list_get_reader     (SpVisualizerList *self);
-void             sp_visualizer_list_set_time_range (SpVisualizerList *self,
-                                                    gint64            begin_time,
-                                                    gint64            end_time);
-void             sp_visualizer_list_get_time_range (SpVisualizerList *self,
-                                                    gint64           *begin_time,
-                                                    gint64           *end_time);
+GtkWidget       *sp_visualizer_list_new              (void);
+void             sp_visualizer_list_set_reader       (SpVisualizerList *self,
+                                                      SpCaptureReader  *reader);
+SpCaptureReader *sp_visualizer_list_get_reader       (SpVisualizerList *self);
+SpZoomManager   *sp_visualizer_list_get_zoom_manager (SpVisualizerList *self);
+void             sp_visualizer_list_set_zoom_manager (SpVisualizerList *self,
+                                                      SpZoomManager    *zoom_manager);
 
 G_END_DECLS
 

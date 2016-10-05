@@ -12,26 +12,13 @@
           </object>
         </child>
         <child>
-          <object class="GtkBox">
-            <property name="orientation">vertical</property>
+          <object class="GtkScrolledWindow">
+            <property name="propagate-natural-height">true</property>
+            <property name="propagate-natural-width">false</property>
             <property name="visible">true</property>
             <child>
-              <object class="GtkScrolledWindow">
-                <property name="hadjustment">scroll_adjustment</property>
-                <property name="propagate-natural-height">true</property>
-                <property name="vexpand">true</property>
+              <object class="SpVisualizerList" id="list">
                 <property name="visible">true</property>
-                <child>
-                  <object class="SpViewport">
-                    <property name="visible">true</property>
-                    <property name="hadjustment">scroll_adjustment</property>
-                    <child>
-                      <object class="SpVisualizerList" id="list">
-                        <property name="visible">true</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
               </object>
             </child>
           </object>

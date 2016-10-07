@@ -21,10 +21,13 @@
 #include <glib/gi18n.h>
 
 #include "sp-visualizer-list.h"
+#include "sp-visualizer-row.h"
+#include "sp-visualizer-row-private.h"
 #include "sp-visualizer-ticks.h"
 #include "sp-visualizer-view.h"
 
 #define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
+#define DEFAULT_PIXELS_PER_SECOND 20
 
 typedef struct
 {
@@ -32,7 +35,7 @@ typedef struct
   SpZoomManager     *zoom_manager;
 
   SpVisualizerList  *list;
-  GtkAdjustment     *scroll_adjustment;
+  GtkScrolledWindow *scroller;
   SpVisualizerTicks *ticks;
 } SpVisualizerViewPrivate;
 
@@ -83,6 +86,80 @@ sp_visualizer_view_row_removed (SpVisualizerView *self,
 
   if (SP_IS_VISUALIZER_ROW (widget))
     g_signal_emit (self, signals [VISUALIZER_REMOVED], 0, widget);
+}
+
+static void
+find_row1 (GtkWidget *widget,
+           gpointer   data)
+{
+  GtkWidget **row1 = data;
+
+  if (*row1 == NULL && SP_IS_VISUALIZER_ROW (widget))
+    *row1 = widget;
+}
+
+static void
+sp_visualizer_view_update_ticks (SpVisualizerView *self)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+  SpVisualizerRow *row1 = NULL;
+  GtkAdjustment *hadjustment;
+  GtkAllocation alloc;
+  gdouble nsec_per_pixel;
+  gdouble value;
+  gint64 begin_time;
+  gint64 end_time;
+  gint graph_width;
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+
+  if (priv->reader == NULL)
+    return;
+
+  begin_time = sp_capture_reader_get_start_time (priv->reader);
+  end_time = sp_capture_reader_get_end_time (priv->reader);
+
+  gtk_container_foreach (GTK_CONTAINER (priv->list), find_row1, &row1);
+
+  if (!SP_IS_VISUALIZER_ROW (row1))
+    return;
+
+  hadjustment = gtk_scrolled_window_get_hadjustment (priv->scroller);
+  value = gtk_adjustment_get_value (hadjustment);
+
+  gtk_widget_get_allocation (GTK_WIDGET (priv->ticks), &alloc);
+
+  /* In practice, the adjustment is 1.0 per pixel. */
+  graph_width = _sp_visualizer_row_get_graph_width (row1);
+  nsec_per_pixel = (end_time - begin_time) / (gdouble)graph_width;
+  begin_time += value * nsec_per_pixel;
+  end_time = begin_time + (alloc.width * nsec_per_pixel);
+
+  sp_visualizer_ticks_set_time_range (priv->ticks, begin_time, end_time);
+}
+
+static void
+sp_visualizer_view_hadjustment_value_changed (SpVisualizerView *self,
+                                              GtkAdjustment    *adjustment)
+{
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (GTK_IS_ADJUSTMENT (adjustment));
+
+  sp_visualizer_view_update_ticks (self);
+}
+
+static void
+sp_visualizer_view_size_allocate (GtkWidget     *widget,
+                                  GtkAllocation *allocation)
+{
+  SpVisualizerView *self = (SpVisualizerView *)widget;
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (allocation != NULL);
+
+  GTK_WIDGET_CLASS (sp_visualizer_view_parent_class)->size_allocate (widget, allocation);
+
+  sp_visualizer_view_update_ticks (self);
 }
 
 static void
@@ -153,6 +230,8 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
   object_class->get_property = sp_visualizer_view_get_property;
   object_class->set_property = sp_visualizer_view_set_property;
 
+  widget_class->size_allocate = sp_visualizer_view_size_allocate;
+
   properties [PROP_READER] =
     g_param_spec_boxed ("reader",
                         "Reader",
@@ -187,7 +266,7 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sp-visualizer-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, list);
-  gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, scroll_adjustment);
+  gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, scroller);
   gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, ticks);
 
   gtk_widget_class_set_css_name (widget_class, "visualizers");
@@ -197,6 +276,7 @@ static void
 sp_visualizer_view_init (SpVisualizerView *self)
 {
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+  GtkAdjustment *hadjustment;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -209,6 +289,14 @@ sp_visualizer_view_init (SpVisualizerView *self)
   g_signal_connect_object (priv->list,
                            "remove",
                            G_CALLBACK (sp_visualizer_view_row_removed),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  hadjustment = gtk_scrolled_window_get_hadjustment (priv->scroller);
+
+  g_signal_connect_object (hadjustment,
+                           "value-changed",
+                           G_CALLBACK (sp_visualizer_view_hadjustment_value_changed),
                            self,
                            G_CONNECT_SWAPPED);
 }
@@ -239,9 +327,22 @@ sp_visualizer_view_set_reader (SpVisualizerView *self,
   if (priv->reader != reader)
     {
       g_clear_pointer (&priv->reader, sp_capture_reader_unref);
+
       if (reader != NULL)
-        priv->reader = sp_capture_reader_ref (reader);
+        {
+          gint64 begin_time;
+
+          priv->reader = sp_capture_reader_ref (reader);
+
+          begin_time = sp_capture_reader_get_start_time (priv->reader);
+
+          sp_visualizer_ticks_set_epoch (priv->ticks, begin_time);
+          sp_visualizer_ticks_set_time_range (priv->ticks, begin_time, begin_time);
+        }
+
       sp_visualizer_list_set_reader (priv->list, reader);
+      sp_visualizer_view_update_ticks (self);
+
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_READER]);
     }
 }
@@ -275,6 +376,17 @@ buildable_iface_init (GtkBuildableIface *iface)
   iface->add_child = sp_visualizer_view_add_child;
 }
 
+static void
+sp_visualizer_view_zoom_manager_notify_zoom (SpVisualizerView *self,
+                                             GParamSpec       *pspec,
+                                             SpZoomManager    *zoom_manager)
+{
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (SP_IS_ZOOM_MANAGER (zoom_manager));
+
+  sp_visualizer_view_update_ticks (self);
+}
+
 /**
  * sp_visualizer_view_get_zoom_manager:
  *
@@ -299,10 +411,29 @@ sp_visualizer_view_set_zoom_manager (SpVisualizerView *self,
   g_return_if_fail (SP_IS_VISUALIZER_VIEW (self));
   g_return_if_fail (!zoom_manager || SP_IS_ZOOM_MANAGER (zoom_manager));
 
-  if (g_set_object (&priv->zoom_manager, zoom_manager))
+  if (priv->zoom_manager != zoom_manager)
     {
+      if (priv->zoom_manager != NULL)
+        {
+          g_signal_handlers_disconnect_by_func (priv->zoom_manager,
+                                                G_CALLBACK (sp_visualizer_view_zoom_manager_notify_zoom),
+                                                self);
+          g_clear_object (&priv->zoom_manager);
+        }
+
+      if (zoom_manager != NULL)
+        {
+          priv->zoom_manager = g_object_ref (zoom_manager);
+          g_signal_connect_object (priv->zoom_manager,
+                                   "notify::zoom",
+                                   G_CALLBACK (sp_visualizer_view_zoom_manager_notify_zoom),
+                                   self,
+                                   G_CONNECT_SWAPPED);
+        }
+
       sp_visualizer_list_set_zoom_manager (priv->list, zoom_manager);
-      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ZOOM_MANAGER]);
       gtk_widget_queue_resize (GTK_WIDGET (self));
+
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ZOOM_MANAGER]);
     }
 }

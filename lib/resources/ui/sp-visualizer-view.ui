@@ -12,7 +12,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkScrolledWindow">
+          <object class="GtkScrolledWindow" id="scroller">
             <property name="propagate-natural-height">true</property>
             <property name="propagate-natural-width">false</property>
             <property name="visible">true</property>
@@ -26,9 +26,4 @@
       </object>
     </child>
   </template>
-  <object class="GtkAdjustment" id="scroll_adjustment">
-    <property name="lower">0.0</property>
-    <property name="upper">0.0</property>
-    <property name="value">0.0</property>
-  </object>
 </interface>

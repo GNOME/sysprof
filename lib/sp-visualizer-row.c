@@ -19,6 +19,7 @@
 #define G_LOG_DOMAIN "sp-visualizer-row"
 
 #include "sp-visualizer-row.h"
+#include "sp-visualizer-row-private.h"
 
 #define NSEC_PER_SEC              G_GINT64_CONSTANT(1000000000)
 #define DEFAULT_PIXELS_PER_SECOND 20
@@ -39,8 +40,8 @@ static GParamSpec *properties [N_PROPS];
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (SpVisualizerRow, sp_visualizer_row, GTK_TYPE_LIST_BOX_ROW)
 
-static gint
-sp_visualizer_row_get_graph_width (SpVisualizerRow *self)
+gint
+_sp_visualizer_row_get_graph_width (SpVisualizerRow *self)
 {
   SpVisualizerRowPrivate *priv = sp_visualizer_row_get_instance_private (self);
   gdouble zoom_level = 1.0;
@@ -78,7 +79,7 @@ sp_visualizer_row_get_preferred_width (GtkWidget *widget,
 
   GTK_WIDGET_CLASS (sp_visualizer_row_parent_class)->get_preferred_width (widget, &real_min_width, &real_nat_width);
 
-  graph_width = sp_visualizer_row_get_graph_width (self);
+  graph_width = _sp_visualizer_row_get_graph_width (self);
 
   *min_width = *nat_width = real_min_width + graph_width;
 }
@@ -292,7 +293,7 @@ sp_visualizer_row_translate_points (SpVisualizerRow                    *self,
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
   adjust_alloc_for_borders (self, &alloc);
 
-  graph_width = sp_visualizer_row_get_graph_width (self);
+  graph_width = _sp_visualizer_row_get_graph_width (self);
 
   for (guint i = 0; i < n_in_points; i++)
     {

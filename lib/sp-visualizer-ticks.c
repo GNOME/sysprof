@@ -54,7 +54,7 @@ struct {
   gint height;
   gint64 span;
 } tick_sizing[N_TICKS] = {
-  { 3, 12, NSEC_PER_SEC * 60 },
+  { 1, 12, NSEC_PER_SEC * 60 },
   { 1, 11, NSEC_PER_SEC * 30 },
   { 1, 10, NSEC_PER_SEC * 5 },
   { 1, 9, NSEC_PER_SEC },

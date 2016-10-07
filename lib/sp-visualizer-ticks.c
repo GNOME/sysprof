@@ -23,7 +23,7 @@
 #define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
 #define NSEC_PER_HOUR (NSEC_PER_SEC * 60 * 60)
 #define NSEC_PER_MIN (NSEC_PER_SEC * 60)
-#define NSEC_PER_MSEC (NSEC_PER_SEC/1000L)
+#define NSEC_PER_MSEC (NSEC_PER_SEC/G_GINT64_CONSTANT(1000))
 #define MIN_TICK_DISTANCE 20
 #define LABEL_HEIGHT_PX 8
 
@@ -73,24 +73,17 @@ update_label_text (PangoLayout *layout,
                    gboolean     want_msec)
 {
   g_autofree gchar *str = NULL;
+  gint64 tmp;
+  gint msec = 0;
   gint hours = 0;
   gint min = 0;
   gint sec = 0;
-  gint msec = 0;
-  gint64 tmp;
 
   g_assert (PANGO_IS_LAYOUT (layout));
 
-  tmp = time % NSEC_PER_MSEC;
+  tmp = time % NSEC_PER_SEC;
   time -= tmp;
-  msec = tmp / 1000000L;
-
-  /* In case our pixel math got us not quite there */
-  if (msec == 999)
-    {
-      msec = 0;
-      time += NSEC_PER_SEC;
-    }
+  msec = tmp / 100000L;
 
   if (time >= NSEC_PER_HOUR)
     {

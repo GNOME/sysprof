@@ -95,10 +95,7 @@ get_time_from_coordinates (SpVisualizerView *self,
 {
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
   SpVisualizerRow *row1 = NULL;
-  GtkAdjustment *hadjustment;
   GtkAllocation alloc;
-  gdouble nsec_per_pixel;
-  gdouble value;
   gint64 begin_time;
   gint64 end_time;
   gint graph_width;
@@ -121,18 +118,11 @@ get_time_from_coordinates (SpVisualizerView *self,
   if (!SP_IS_VISUALIZER_ROW (row1))
     return 0;
 
-  hadjustment = gtk_scrolled_window_get_hadjustment (priv->scroller);
-  value = gtk_adjustment_get_value (hadjustment);
-
   begin_time = sp_capture_reader_get_start_time (priv->reader);
   end_time = sp_capture_reader_get_end_time (priv->reader);
-
   graph_width = _sp_visualizer_row_get_graph_width (row1);
-  nsec_per_pixel = (end_time - begin_time) / (gdouble)graph_width;
-  begin_time += value * nsec_per_pixel;
-  end_time = begin_time + (alloc.width * nsec_per_pixel);
 
-  return begin_time + ((end_time - begin_time) / (gdouble)alloc.width * x);
+  return begin_time + ((end_time - begin_time) * (x / (gdouble)graph_width));
 }
 
 static gint
@@ -203,16 +193,21 @@ static void
 sp_visualizer_view_update_ticks (SpVisualizerView *self)
 {
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+  GtkAdjustment *hadjustment;
   GtkAllocation alloc;
+  gdouble value;
   gint64 begin_time;
   gint64 end_time;
 
   g_assert (SP_IS_VISUALIZER_VIEW (self));
 
+  hadjustment = gtk_scrolled_window_get_hadjustment (priv->scroller);
+  value = gtk_adjustment_get_value (hadjustment);
+
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
 
-  begin_time = get_time_from_coordinates (self, alloc.x, alloc.y);
-  end_time = get_time_from_coordinates (self, alloc.x + alloc.width, alloc.y);
+  begin_time = get_time_from_coordinates (self, alloc.x + value, alloc.y);
+  end_time = get_time_from_coordinates (self, alloc.x + value + alloc.width, alloc.y);
 
   sp_visualizer_ticks_set_time_range (priv->ticks, begin_time, end_time);
 }

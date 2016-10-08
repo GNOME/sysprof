@@ -174,8 +174,6 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	sp-process-model-row.c \
 	sp-profiler-menu-button.c \
 	sp-recording-state-view.c \
-	sp-viewport.c \
-	sp-viewport.h \
 	sp-visualizer-list.c \
 	sp-visualizer-list.h \
 	sp-visualizer-row.c \

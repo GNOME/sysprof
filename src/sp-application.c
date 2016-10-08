@@ -264,14 +264,51 @@ sysprof_open_capture (GSimpleAction *action,
 }
 
 static void
+sysprof_show_help_overlay (GSimpleAction *action,
+                           GVariant      *variant,
+                           gpointer       user_data)
+{
+  GtkApplication *app = user_data;
+  SpWindow *window = NULL;
+
+  g_assert (G_IS_APPLICATION (app));
+  g_assert (G_IS_SIMPLE_ACTION (action));
+  g_assert (variant == NULL);
+
+  for (GList *list = gtk_application_get_windows (app); list; list = list->next)
+    {
+      GtkWindow *element = list->data;
+
+      if (SP_IS_WINDOW (element))
+        {
+          window = SP_WINDOW (element);
+          break;
+        }
+    }
+
+  if (window == NULL)
+    {
+      window = g_object_new (SP_TYPE_WINDOW,
+                             "application", app,
+                             NULL);
+      gtk_window_present (GTK_WINDOW (window));
+    }
+
+  g_assert (g_action_group_has_action (G_ACTION_GROUP (window), "show-help-overlay"));
+
+  g_action_group_activate_action (G_ACTION_GROUP (window), "show-help-overlay", NULL);
+}
+
+static void
 sp_application_init (SpApplication *self)
 {
   static const GActionEntry actions[] = {
-    { "about",        sysprof_about },
-    { "new-window",   sysprof_new_window },
-    { "open-capture", sysprof_open_capture },
-    { "help",         sysprof_help },
-    { "quit",         sysprof_quit },
+    { "about",             sysprof_about },
+    { "new-window",        sysprof_new_window },
+    { "open-capture",      sysprof_open_capture },
+    { "help",              sysprof_help },
+    { "show-help-overlay", sysprof_show_help_overlay },
+    { "quit",              sysprof_quit },
   };
 
   g_action_map_add_action_entries (G_ACTION_MAP (self), actions, G_N_ELEMENTS (actions), self);

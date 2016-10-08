@@ -3,6 +3,7 @@
   <gresource prefix="/org/gnome/sysprof">
     <!-- Automatic GTK resources -->
     <file>gtk/menus.ui</file>
+    <file>gtk/help-overlay.ui</file>
 
     <!-- Application icons -->
     <file alias="icons/16x16/apps/sysprof.png">../../data/icons/16x16/apps/sysprof.png</file>

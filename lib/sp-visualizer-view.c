@@ -20,6 +20,7 @@
 
 #include <glib/gi18n.h>
 
+#include "sp-theme-manager.h"
 #include "sp-visualizer-list.h"
 #include "sp-visualizer-row.h"
 #include "sp-visualizer-row-private.h"
@@ -76,7 +77,6 @@ G_DEFINE_TYPE_EXTENDED (SpVisualizerView, sp_visualizer_view, GTK_TYPE_BIN, 0,
 static GParamSpec *properties [N_PROPS];
 static guint signals [N_SIGNALS];
 static GtkBuildableIface *parent_buildable;
-static GtkCssProvider *css_provider;
 
 static void
 find_row1 (GtkWidget *widget,
@@ -476,6 +476,7 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  SpThemeManager *theme_manager = sp_theme_manager_get_default ();
 
   object_class->finalize = sp_visualizer_view_finalize;
   object_class->get_property = sp_visualizer_view_get_property;
@@ -523,11 +524,9 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
 
   gtk_widget_class_set_css_name (widget_class, "visualizers");
 
-  css_provider = gtk_css_provider_new ();
-  gtk_css_provider_load_from_resource (css_provider, "/org/gnome/sysprof/css/shared.css");
-  gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
-                                             GTK_STYLE_PROVIDER (css_provider),
-                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION-1);
+  sp_theme_manager_register_resource (theme_manager, NULL, NULL, "/org/gnome/sysprof/css/SpVisualizerView-shared.css");
+  sp_theme_manager_register_resource (theme_manager, "Adwaita", NULL, "/org/gnome/sysprof/css/SpVisualizerView-Adwaita.css");
+  sp_theme_manager_register_resource (theme_manager, "Adwaita", "dark", "/org/gnome/sysprof/css/SpVisualizerView-Adwaita-dark.css");
 }
 
 static void

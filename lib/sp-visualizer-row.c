@@ -159,6 +159,8 @@ sp_visualizer_row_class_init (SpVisualizerRowClass *klass)
 static void
 sp_visualizer_row_init (SpVisualizerRow *self)
 {
+  gtk_list_box_row_set_activatable (GTK_LIST_BOX_ROW (self), FALSE);
+  gtk_list_box_row_set_selectable (GTK_LIST_BOX_ROW (self), FALSE);
 }
 
 static void

@@ -1,0 +1,10 @@
+visualizers.selection {
+  background: none;
+  background-color: alpha(@theme_selected_bg_color, 0.35);
+  border: 1px solid @theme_selected_bg_color;
+}
+visualizers.selection:backdrop {
+  background: none;
+  background-color: alpha(@theme_selected_bg_color, 0.15);
+  border: none;
+}

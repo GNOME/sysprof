@@ -23,6 +23,7 @@
 #include "sp-visualizer-list.h"
 #include "sp-visualizer-row.h"
 #include "sp-visualizer-row-private.h"
+#include "sp-visualizer-selection.h"
 #include "sp-visualizer-ticks.h"
 #include "sp-visualizer-view.h"
 
@@ -31,13 +32,27 @@
 
 typedef struct
 {
-  SpCaptureReader   *reader;
-  SpZoomManager     *zoom_manager;
+  SpCaptureReader       *reader;
+  SpZoomManager         *zoom_manager;
+  SpVisualizerSelection *selection;
 
-  SpVisualizerList  *list;
-  GtkScrolledWindow *scroller;
-  SpVisualizerTicks *ticks;
+  SpVisualizerList      *list;
+  GtkScrolledWindow     *scroller;
+  SpVisualizerTicks     *ticks;
+
+  gint64                 drag_begin_at;
+  gint64                 drag_selection_at;
+
+  guint                  button_pressed : 1;
 } SpVisualizerViewPrivate;
+
+typedef struct
+{
+  SpVisualizerView *self;
+  GtkStyleContext  *style_context;
+  cairo_t          *cr;
+  GtkAllocation     alloc;
+} SelectionDraw;
 
 enum {
   PROP_0,
@@ -61,6 +76,102 @@ G_DEFINE_TYPE_EXTENDED (SpVisualizerView, sp_visualizer_view, GTK_TYPE_BIN, 0,
 static GParamSpec *properties [N_PROPS];
 static guint signals [N_SIGNALS];
 static GtkBuildableIface *parent_buildable;
+static GtkCssProvider *css_provider;
+
+static void
+find_row1 (GtkWidget *widget,
+           gpointer   data)
+{
+  GtkWidget **row1 = data;
+
+  if (*row1 == NULL && SP_IS_VISUALIZER_ROW (widget))
+    *row1 = widget;
+}
+
+static gint64
+get_time_from_coordinates (SpVisualizerView *self,
+                           gint              x,
+                           gint              y)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+  SpVisualizerRow *row1 = NULL;
+  GtkAdjustment *hadjustment;
+  GtkAllocation alloc;
+  gdouble nsec_per_pixel;
+  gdouble value;
+  gint64 begin_time;
+  gint64 end_time;
+  gint graph_width;
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+
+  if (priv->reader == NULL)
+    return 0;
+
+  gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
+
+  x -= alloc.x;
+  y -= alloc.y;
+
+  /*
+   * Find the first row so we can get an idea of how wide the graph is
+   * (ignoring spacing caused by the widget being wider than the data points.
+   */
+  gtk_container_foreach (GTK_CONTAINER (priv->list), find_row1, &row1);
+  if (!SP_IS_VISUALIZER_ROW (row1))
+    return 0;
+
+  hadjustment = gtk_scrolled_window_get_hadjustment (priv->scroller);
+  value = gtk_adjustment_get_value (hadjustment);
+
+  begin_time = sp_capture_reader_get_start_time (priv->reader);
+  end_time = sp_capture_reader_get_end_time (priv->reader);
+
+  graph_width = _sp_visualizer_row_get_graph_width (row1);
+  nsec_per_pixel = (end_time - begin_time) / (gdouble)graph_width;
+  begin_time += value * nsec_per_pixel;
+  end_time = begin_time + (alloc.width * nsec_per_pixel);
+
+  return begin_time + ((end_time - begin_time) / (gdouble)alloc.width * x);
+}
+
+static gint
+get_x_for_time_at (SpVisualizerView    *self,
+                   const GtkAllocation *alloc,
+                   gint64               time_at)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+  SpVisualizerRow *row1 = NULL;
+  GtkAdjustment *hadjustment;
+  gdouble nsec_per_pixel;
+  gdouble value;
+  gint64 begin_time;
+  gint64 end_time;
+  gint graph_width;
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (alloc != NULL);
+
+  /*
+   * Find the first row so we can get an idea of how wide the graph is
+   * (ignoring spacing caused by the widget being wider than the data points.
+   */
+  gtk_container_foreach (GTK_CONTAINER (priv->list), find_row1, &row1);
+  if (!SP_IS_VISUALIZER_ROW (row1))
+    return 0;
+
+  hadjustment = gtk_scrolled_window_get_hadjustment (priv->scroller);
+  value = gtk_adjustment_get_value (hadjustment);
+
+  begin_time = sp_capture_reader_get_start_time (priv->reader);
+  end_time = sp_capture_reader_get_end_time (priv->reader);
+
+  graph_width = _sp_visualizer_row_get_graph_width (row1);
+  nsec_per_pixel = (end_time - begin_time) / (gdouble)graph_width;
+  begin_time += value * nsec_per_pixel;
+
+  return ((time_at - begin_time) / nsec_per_pixel);
+}
 
 static void
 sp_visualizer_view_row_added (SpVisualizerView *self,
@@ -89,51 +200,19 @@ sp_visualizer_view_row_removed (SpVisualizerView *self,
 }
 
 static void
-find_row1 (GtkWidget *widget,
-           gpointer   data)
-{
-  GtkWidget **row1 = data;
-
-  if (*row1 == NULL && SP_IS_VISUALIZER_ROW (widget))
-    *row1 = widget;
-}
-
-static void
 sp_visualizer_view_update_ticks (SpVisualizerView *self)
 {
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
-  SpVisualizerRow *row1 = NULL;
-  GtkAdjustment *hadjustment;
   GtkAllocation alloc;
-  gdouble nsec_per_pixel;
-  gdouble value;
   gint64 begin_time;
   gint64 end_time;
-  gint graph_width;
 
   g_assert (SP_IS_VISUALIZER_VIEW (self));
 
-  if (priv->reader == NULL)
-    return;
+  gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
 
-  begin_time = sp_capture_reader_get_start_time (priv->reader);
-  end_time = sp_capture_reader_get_end_time (priv->reader);
-
-  gtk_container_foreach (GTK_CONTAINER (priv->list), find_row1, &row1);
-
-  if (!SP_IS_VISUALIZER_ROW (row1))
-    return;
-
-  hadjustment = gtk_scrolled_window_get_hadjustment (priv->scroller);
-  value = gtk_adjustment_get_value (hadjustment);
-
-  gtk_widget_get_allocation (GTK_WIDGET (priv->ticks), &alloc);
-
-  /* In practice, the adjustment is 1.0 per pixel. */
-  graph_width = _sp_visualizer_row_get_graph_width (row1);
-  nsec_per_pixel = (end_time - begin_time) / (gdouble)graph_width;
-  begin_time += value * nsec_per_pixel;
-  end_time = begin_time + (alloc.width * nsec_per_pixel);
+  begin_time = get_time_from_coordinates (self, alloc.x, alloc.y);
+  end_time = get_time_from_coordinates (self, alloc.x + alloc.width, alloc.y);
 
   sp_visualizer_ticks_set_time_range (priv->ticks, begin_time, end_time);
 }
@@ -163,6 +242,182 @@ sp_visualizer_view_size_allocate (GtkWidget     *widget,
 }
 
 static void
+draw_selection_cb (SpVisualizerSelection *selection,
+                   gint64                 range_begin,
+                   gint64                 range_end,
+                   gpointer               user_data)
+{
+  SelectionDraw *draw = user_data;
+  GdkRectangle area;
+
+  g_assert (SP_IS_VISUALIZER_SELECTION (selection));
+  g_assert (draw != NULL);
+  g_assert (draw->cr != NULL);
+  g_assert (SP_IS_VISUALIZER_VIEW (draw->self));
+
+  area.x = get_x_for_time_at (draw->self, &draw->alloc, range_begin);
+  area.width = get_x_for_time_at (draw->self, &draw->alloc, range_end) - area.x;
+  area.y = 0;
+  area.height = draw->alloc.height;
+
+  if (area.width < 0)
+    {
+      area.width = ABS (area.width);
+      area.x -= area.width;
+    }
+
+  gtk_render_background (draw->style_context, draw->cr, area.x, area.y, area.width, area.height);
+}
+
+static gboolean
+sp_visualizer_view_draw (GtkWidget *widget,
+                         cairo_t   *cr)
+{
+  SpVisualizerView *self = (SpVisualizerView *)widget;
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+  SelectionDraw draw = { 0 };
+  gboolean ret;
+
+  g_assert (GTK_IS_WIDGET (widget));
+  g_assert (cr != NULL);
+
+  draw.style_context = gtk_widget_get_style_context (widget);
+  draw.self = self;
+  draw.cr = cr;
+
+  gtk_widget_get_allocation (widget, &draw.alloc);
+
+  ret = GTK_WIDGET_CLASS (sp_visualizer_view_parent_class)->draw (widget, cr);
+
+  if (sp_visualizer_selection_get_has_selection (priv->selection) || priv->button_pressed)
+    {
+      gtk_style_context_add_class (draw.style_context, "selection");
+      sp_visualizer_selection_foreach (priv->selection, draw_selection_cb, &draw);
+      if (priv->button_pressed)
+        draw_selection_cb (priv->selection, priv->drag_begin_at, priv->drag_selection_at, &draw);
+      gtk_style_context_remove_class (draw.style_context, "selection");
+    }
+
+  return ret;
+}
+
+static gboolean
+sp_visualizer_view_list_button_press_event (SpVisualizerView *self,
+                                            GdkEventButton   *ev,
+                                            SpVisualizerList *list)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (ev != NULL);
+  g_assert (SP_IS_VISUALIZER_LIST (list));
+
+  if (priv->reader == NULL)
+    return GDK_EVENT_PROPAGATE;
+
+  if (ev->button != GDK_BUTTON_PRIMARY)
+    {
+      if (sp_visualizer_selection_get_has_selection (priv->selection))
+        {
+          sp_visualizer_selection_unselect_all (priv->selection);
+          return GDK_EVENT_STOP;
+        }
+      return GDK_EVENT_PROPAGATE;
+    }
+
+  if ((ev->state & GDK_SHIFT_MASK) == 0)
+    sp_visualizer_selection_unselect_all (priv->selection);
+
+  priv->button_pressed = TRUE;
+
+  priv->drag_begin_at = get_time_from_coordinates (self, ev->x, ev->y);
+  priv->drag_selection_at = priv->drag_begin_at;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+
+  return GDK_EVENT_PROPAGATE;
+}
+
+static gboolean
+sp_visualizer_view_list_button_release_event (SpVisualizerView *self,
+                                              GdkEventButton   *ev,
+                                              SpVisualizerList *list)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (ev != NULL);
+  g_assert (SP_IS_VISUALIZER_LIST (list));
+
+  if (!priv->button_pressed || ev->button != GDK_BUTTON_PRIMARY)
+    return GDK_EVENT_PROPAGATE;
+
+  priv->button_pressed = FALSE;
+
+  if (priv->drag_begin_at != priv->drag_selection_at)
+    {
+      sp_visualizer_selection_select_range (priv->selection,
+                                            priv->drag_begin_at,
+                                            priv->drag_selection_at);
+      priv->drag_begin_at = -1;
+      priv->drag_selection_at = -1;
+    }
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+
+  return GDK_EVENT_STOP;
+}
+
+static gboolean
+sp_visualizer_view_list_motion_notify_event (SpVisualizerView *self,
+                                             GdkEventMotion   *ev,
+                                             SpVisualizerList *list)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (ev != NULL);
+  g_assert (SP_IS_VISUALIZER_LIST (list));
+
+  if (!priv->button_pressed)
+    return GDK_EVENT_PROPAGATE;
+
+  priv->drag_selection_at = get_time_from_coordinates (self, ev->x, ev->y);
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+
+  return GDK_EVENT_PROPAGATE;
+}
+
+static void
+sp_visualizer_view_list_realize_after (SpVisualizerView *self,
+                                       SpVisualizerList *list)
+{
+  GdkDisplay *display;
+  GdkWindow *window;
+  GdkCursor *cursor;
+
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (SP_IS_VISUALIZER_LIST (list));
+
+  window = gtk_widget_get_window (GTK_WIDGET (list));
+  display = gdk_window_get_display (window);
+  cursor = gdk_cursor_new_from_name (display, "text");
+  gdk_window_set_cursor (window, cursor);
+  g_clear_object (&cursor);
+}
+
+static void
+sp_visualizer_view_selection_changed (SpVisualizerView      *self,
+                                      SpVisualizerSelection *selection)
+{
+  g_assert (SP_IS_VISUALIZER_VIEW (self));
+  g_assert (SP_IS_VISUALIZER_SELECTION (selection));
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
 sp_visualizer_view_finalize (GObject *object)
 {
   SpVisualizerView *self = (SpVisualizerView *)object;
@@ -170,6 +425,7 @@ sp_visualizer_view_finalize (GObject *object)
 
   g_clear_pointer (&priv->reader, sp_capture_reader_unref);
   g_clear_object (&priv->zoom_manager);
+  g_clear_object (&priv->selection);
 
   G_OBJECT_CLASS (sp_visualizer_view_parent_class)->finalize (object);
 }
@@ -230,6 +486,7 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
   object_class->get_property = sp_visualizer_view_get_property;
   object_class->set_property = sp_visualizer_view_set_property;
 
+  widget_class->draw = sp_visualizer_view_draw;
   widget_class->size_allocate = sp_visualizer_view_size_allocate;
 
   properties [PROP_READER] =
@@ -270,6 +527,12 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SpVisualizerView, ticks);
 
   gtk_widget_class_set_css_name (widget_class, "visualizers");
+
+  css_provider = gtk_css_provider_new ();
+  gtk_css_provider_load_from_resource (css_provider, "/org/gnome/sysprof/css/shared.css");
+  gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
+                                             GTK_STYLE_PROVIDER (css_provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION-1);
 }
 
 static void
@@ -278,7 +541,42 @@ sp_visualizer_view_init (SpVisualizerView *self)
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
   GtkAdjustment *hadjustment;
 
+  priv->drag_begin_at = -1;
+  priv->drag_selection_at = -1;
+
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  priv->selection = g_object_new (SP_TYPE_VISUALIZER_SELECTION, NULL);
+
+  g_signal_connect_object (priv->selection,
+                           "changed",
+                           G_CALLBACK (sp_visualizer_view_selection_changed),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (priv->list,
+                           "button-press-event",
+                           G_CALLBACK (sp_visualizer_view_list_button_press_event),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (priv->list,
+                           "button-release-event",
+                           G_CALLBACK (sp_visualizer_view_list_button_release_event),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (priv->list,
+                           "motion-notify-event",
+                           G_CALLBACK (sp_visualizer_view_list_motion_notify_event),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (priv->list,
+                           "realize",
+                           G_CALLBACK (sp_visualizer_view_list_realize_after),
+                           self,
+                           G_CONNECT_SWAPPED | G_CONNECT_AFTER);
 
   g_signal_connect_object (priv->list,
                            "add",
@@ -338,6 +636,8 @@ sp_visualizer_view_set_reader (SpVisualizerView *self,
 
           sp_visualizer_ticks_set_epoch (priv->ticks, begin_time);
           sp_visualizer_ticks_set_time_range (priv->ticks, begin_time, begin_time);
+
+          sp_visualizer_selection_unselect_all (priv->selection);
         }
 
       sp_visualizer_list_set_reader (priv->list, reader);
@@ -436,4 +736,22 @@ sp_visualizer_view_set_zoom_manager (SpVisualizerView *self,
 
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ZOOM_MANAGER]);
     }
+}
+
+/**
+ * sp_visualizer_view_get_selection:
+ *
+ * Gets the #SpVisualizerSelection instance for the visualizer view.
+ * This can be used to alter the selection or selections of the visualizers.
+ *
+ * Returns: (transfer none): An #SpVisualizerSelection.
+ */
+SpVisualizerSelection *
+sp_visualizer_view_get_selection (SpVisualizerView *self)
+{
+  SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+
+  g_return_val_if_fail (SP_IS_VISUALIZER_VIEW (self), NULL);
+
+  return priv->selection;
 }

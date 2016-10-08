@@ -10,6 +10,9 @@
             <property name="hexpand">true</property>
             <property name="visible">true</property>
           </object>
+          <packing>
+            <property name="pass-through">true</property>
+          </packing>
         </child>
         <child>
           <object class="GtkScrolledWindow" id="scroller">

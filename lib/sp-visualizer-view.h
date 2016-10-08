@@ -22,6 +22,7 @@
 #include <gtk/gtk.h>
 
 #include "sp-visualizer-row.h"
+#include "sp-visualizer-selection.h"
 #include "sp-zoom-manager.h"
 
 G_BEGIN_DECLS
@@ -57,13 +58,14 @@ struct _SpVisualizerViewClass
   gpointer _reserved16;
 };
 
-GtkWidget       *sp_visualizer_view_new              (void);
-SpCaptureReader *sp_visualizer_view_get_reader       (SpVisualizerView *self);
-void             sp_visualizer_view_set_reader       (SpVisualizerView *self,
-                                                      SpCaptureReader  *reader);
-SpZoomManager   *sp_visualizer_view_get_zoom_manager (SpVisualizerView *self);
-void             sp_visualizer_view_set_zoom_manager (SpVisualizerView *self,
-                                                      SpZoomManager    *zoom_manager);
+GtkWidget             *sp_visualizer_view_new              (void);
+SpCaptureReader       *sp_visualizer_view_get_reader       (SpVisualizerView *self);
+void                   sp_visualizer_view_set_reader       (SpVisualizerView *self,
+                                                            SpCaptureReader  *reader);
+SpZoomManager         *sp_visualizer_view_get_zoom_manager (SpVisualizerView *self);
+void                   sp_visualizer_view_set_zoom_manager (SpVisualizerView *self,
+                                                            SpZoomManager    *zoom_manager);
+SpVisualizerSelection *sp_visualizer_view_get_selection    (SpVisualizerView *self);
 
 G_END_DECLS
 

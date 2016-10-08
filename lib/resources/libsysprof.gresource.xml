@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <gresources>
   <gresource prefix="/org/gnome/sysprof">
+    <file compressed="true">css/shared.css</file>
+
     <file compressed="true">ui/sp-callgraph-view.ui</file>
     <file compressed="true">ui/sp-empty-state-view.ui</file>
     <file compressed="true">ui/sp-failed-state-view.ui</file>

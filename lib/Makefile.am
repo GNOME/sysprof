@@ -151,6 +151,7 @@ uiheaders_DATA = \
 	sp-profiler-menu-button.h \
 	sp-recording-state-view.h \
 	sp-visualizer-row.h \
+	sp-visualizer-selection.h \
 	sp-visualizer-view.h \
 	sp-zoom-manager.h \
 	sysprof-ui.h \
@@ -178,6 +179,7 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	sp-visualizer-list.c \
 	sp-visualizer-list.h \
 	sp-visualizer-row.c \
+	sp-visualizer-selection.c \
 	sp-visualizer-ticks.c \
 	sp-visualizer-ticks.h \
 	sp-visualizer-ticks-private.h \

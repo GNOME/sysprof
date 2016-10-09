@@ -120,7 +120,6 @@ sp_theme_manager_do_reload (gpointer data)
               gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
                                                          GTK_STYLE_PROVIDER (theme_resource->provider),
                                                          GTK_STYLE_PROVIDER_PRIORITY_APPLICATION - 1);
-              g_print ("Registered resource file %s\n", theme_resource->resource);
             }
         }
       else
@@ -130,7 +129,6 @@ sp_theme_manager_do_reload (gpointer data)
               gtk_style_context_remove_provider_for_screen (gdk_screen_get_default (),
                                                             GTK_STYLE_PROVIDER (theme_resource->provider));
               g_clear_object (&theme_resource->provider);
-              g_print ("Unregistered resource file %s\n", theme_resource->resource);
             }
         }
     }

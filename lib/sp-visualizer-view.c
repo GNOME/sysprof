@@ -527,6 +527,9 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
   sp_theme_manager_register_resource (theme_manager, NULL, NULL, "/org/gnome/sysprof/css/SpVisualizerView-shared.css");
   sp_theme_manager_register_resource (theme_manager, "Adwaita", NULL, "/org/gnome/sysprof/css/SpVisualizerView-Adwaita.css");
   sp_theme_manager_register_resource (theme_manager, "Adwaita", "dark", "/org/gnome/sysprof/css/SpVisualizerView-Adwaita-dark.css");
+
+  g_type_ensure (SP_TYPE_VISUALIZER_LIST);
+  g_type_ensure (SP_TYPE_VISUALIZER_TICKS);
 }
 
 static void

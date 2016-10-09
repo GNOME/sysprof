@@ -36,7 +36,6 @@ G_BEGIN_DECLS
 # include "sp-process-model-row.h"
 # include "sp-profiler-menu-button.h"
 # include "sp-visualizer-row.h"
-# include "sp-visualizer-selection.h"
 # include "sp-visualizer-view.h"
 # include "sp-zoom-manager.h"
 #undef SYSPROF_INSIDE

@@ -538,6 +538,7 @@ int
 main (int argc,
       char *argv[])
 {
+  sp_clock_init ();
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/SpCapture/ReaderWriter", test_reader_basic);
   g_test_add_func ("/SpCapture/Writer/splice", test_writer_splice);

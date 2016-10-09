@@ -21,6 +21,8 @@
 
 #include "sp-capture-reader.h"
 
+#define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
+
 gint
 main (gint argc,
       gchar *argv[])
@@ -29,6 +31,7 @@ main (gint argc,
   SpCaptureFrameType type;
   GHashTable *ctrtypes;
   GError *error = NULL;
+  gint64 begin_time;
 
   if (argc != 2)
     {
@@ -38,6 +41,8 @@ main (gint argc,
 
   reader = sp_capture_reader_new (argv[1], &error);
   ctrtypes = g_hash_table_new (NULL, NULL);
+
+  begin_time = sp_capture_reader_get_start_time (reader);
 
 #define SET_CTR_TYPE(i,t) g_hash_table_insert(ctrtypes, GINT_TO_POINTER(i), GINT_TO_POINTER(t))
 #define GET_CTR_TYPE(i) GPOINTER_TO_INT(g_hash_table_lookup(ctrtypes, GINT_TO_POINTER(i)))
@@ -126,9 +131,10 @@ main (gint argc,
         case SP_CAPTURE_FRAME_SAMPLE:
           {
             const SpCaptureSample *s =  sp_capture_reader_read_sample (reader);
+            gdouble ptime = (s->frame.time - begin_time) / (gdouble)NSEC_PER_SEC;
             guint i;
 
-            g_print ("SAMPLE: pid=%d time=%"G_GINT64_FORMAT"\n", s->frame.pid, s->frame.time);
+            g_print ("SAMPLE: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n", s->frame.pid, s->frame.time, ptime);
 
             for (i = 0; i < s->n_addrs; i++)
               g_print ("  "SP_CAPTURE_ADDRESS_FORMAT"\n", s->addrs[i]);

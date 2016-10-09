@@ -217,6 +217,21 @@ sp_callgraph_view_unload (SpCallgraphView *self)
   gtk_tree_view_set_model (priv->descendants_view, NULL);
 }
 
+/**
+ * sp_callgraph_view_get_profile:
+ *
+ * Returns: (transfer none): An #SpCallgraphProfile.
+ */
+SpCallgraphProfile *
+sp_callgraph_view_get_profile (SpCallgraphView *self)
+{
+  SpCallgraphViewPrivate *priv = sp_callgraph_view_get_instance_private (self);
+
+  g_return_val_if_fail (SP_IS_CALLGRAPH_VIEW (self), NULL);
+
+  return priv->profile;
+}
+
 void
 sp_callgraph_view_set_profile (SpCallgraphView    *self,
                                SpCallgraphProfile *profile)

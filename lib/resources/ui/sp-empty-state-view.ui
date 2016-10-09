@@ -18,7 +18,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="title">
             <property name="label" translatable="yes">Welcome to Sysprof</property>
             <property name="visible">true</property>
             <style>
@@ -35,7 +35,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="subtitle">
             <property name="label" translatable="yes">Start profiling your system with the &lt;b&gt;Record&lt;/b&gt; button above</property>
             <property name="use-markup">true</property>
             <property name="visible">true</property>

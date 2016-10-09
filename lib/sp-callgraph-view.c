@@ -211,6 +211,10 @@ sp_callgraph_view_unload (SpCallgraphView *self)
   g_queue_clear (priv->history);
   g_clear_object (&priv->profile);
   priv->profile_size = 0;
+
+  gtk_tree_view_set_model (priv->callers_view, NULL);
+  gtk_tree_view_set_model (priv->functions_view, NULL);
+  gtk_tree_view_set_model (priv->descendants_view, NULL);
 }
 
 void

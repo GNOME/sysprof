@@ -20,6 +20,7 @@
 #define SP_CALLGRAPH_PROFILE_H
 
 #include "sp-profile.h"
+#include "sp-visualizer-selection.h"
 
 G_BEGIN_DECLS
 
@@ -27,9 +28,10 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SpCallgraphProfile, sp_callgraph_profile, SP, CALLGRAPH_PROFILE, GObject)
 
-SpProfile *sp_callgraph_profile_new     (void);
-GQuark     sp_callgraph_profile_get_tag (SpCallgraphProfile *self,
-                                         const gchar        *symbol);
+SpProfile *sp_callgraph_profile_new                (void);
+SpProfile *sp_callgraph_profile_new_with_selection (SpVisualizerSelection *selection);
+GQuark     sp_callgraph_profile_get_tag            (SpCallgraphProfile    *self,
+                                                    const gchar           *symbol);
 
 G_END_DECLS
 

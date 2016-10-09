@@ -37,6 +37,8 @@ struct _SpWindow
   SpProfiler           *profiler;
   SpCaptureReader      *reader;
 
+  GCancellable         *refilter_cancellable;
+
   /* Gtk widget template children */
   SpCallgraphView      *callgraph_view;
   SpEmptyStateView     *empty_view;
@@ -212,6 +214,10 @@ sp_window_build_profile_cb (GObject      *object,
 
   if (!sp_profile_generate_finish (profile, result, &error))
     {
+      /* If we were cancelled while updating the selection, ignore the failure */
+      if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
+          (self->state == SP_WINDOW_STATE_BROWSING))
+        return;
       sp_window_notify_user (self, GTK_MESSAGE_ERROR, "%s", error->message);
       sp_window_set_state (self, SP_WINDOW_STATE_EMPTY);
       return;
@@ -232,14 +238,27 @@ static void
 sp_window_build_profile (SpWindow *self)
 {
   g_autoptr(SpProfile) profile = NULL;
+  SpVisualizerSelection *selection;
 
   g_assert (SP_IS_WINDOW (self));
   g_assert (self->reader != NULL);
 
-  profile = sp_callgraph_profile_new ();
+  if (self->refilter_cancellable != NULL)
+    {
+      if (!g_cancellable_is_cancelled (self->refilter_cancellable))
+        g_cancellable_cancel (self->refilter_cancellable);
+      g_clear_object (&self->refilter_cancellable);
+    }
+
+  selection = sp_visualizer_view_get_selection (self->visualizers);
+
+  profile = sp_callgraph_profile_new_with_selection (selection);
   sp_profile_set_reader (profile, self->reader);
+
+  self->refilter_cancellable = g_cancellable_new ();
+
   sp_profile_generate (profile,
-                       NULL,
+                       self->refilter_cancellable,
                        sp_window_build_profile_cb,
                        g_object_ref (self));
 }
@@ -717,9 +736,26 @@ zoom_level_to_string (GBinding     *binding,
 }
 
 static void
+sp_window_visualizers_selection_changed (SpWindow              *self,
+                                         SpVisualizerSelection *selection)
+{
+  g_assert (SP_IS_WINDOW (self));
+  g_assert (SP_IS_VISUALIZER_SELECTION (selection));
+
+  sp_window_build_profile (self);
+}
+
+static void
 sp_window_destroy (GtkWidget *widget)
 {
   SpWindow *self = (SpWindow *)widget;
+
+  if (self->refilter_cancellable != NULL)
+    {
+      if (!g_cancellable_is_cancelled (self->refilter_cancellable))
+        g_cancellable_cancel (self->refilter_cancellable);
+      g_clear_object (&self->refilter_cancellable);
+    }
 
   g_clear_object (&self->profiler);
   g_clear_pointer (&self->reader, sp_capture_reader_unref);
@@ -800,6 +836,7 @@ sp_window_init (SpWindow *self)
     { "save-capture",  sp_window_save_capture },
     { "screenshot",  sp_window_screenshot },
   };
+  SpVisualizerSelection *selection;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -828,6 +865,18 @@ sp_window_init (SpWindow *self)
   g_object_bind_property_full (self->zoom_manager, "zoom", self->zoom_one_label, "label",
                                G_BINDING_SYNC_CREATE,
                                zoom_level_to_string, NULL, NULL, NULL);
+
+  /*
+   * Wire up selections for visualizers to update callgraph.
+   */
+
+  selection = sp_visualizer_view_get_selection (self->visualizers);
+
+  g_signal_connect_object (selection,
+                           "changed",
+                           G_CALLBACK (sp_window_visualizers_selection_changed),
+                           self,
+                           G_CONNECT_SWAPPED);
 
   /*
    * Setup actions for the window.

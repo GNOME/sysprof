@@ -46,28 +46,54 @@
 #include "sp-jitmap-symbol-resolver.h"
 #include "sp-map-lookaside.h"
 #include "sp-kernel-symbol-resolver.h"
+#include "sp-visualizer-selection.h"
 
 #include "stackstash.h"
 
+#define CHECK_CANCELLABLE_INTERVAL 100
+
 struct _SpCallgraphProfile
 {
-  GObject          parent_instance;
+  GObject                parent_instance;
 
-  SpCaptureReader *reader;
-  GStringChunk    *symbols;
-  StackStash      *stash;
-  GHashTable      *tags;
+  SpCaptureReader       *reader;
+  SpVisualizerSelection *selection;
+  StackStash            *stash;
+  GStringChunk          *symbols;
+  GHashTable            *tags;
 };
+
+typedef struct
+{
+  SpCaptureReader       *reader;
+  SpVisualizerSelection *selection;
+} Generate;
 
 static void profile_iface_init (SpProfileInterface *iface);
 
 G_DEFINE_TYPE_EXTENDED (SpCallgraphProfile, sp_callgraph_profile, G_TYPE_OBJECT, 0,
                         G_IMPLEMENT_INTERFACE (SP_TYPE_PROFILE, profile_iface_init))
 
+enum {
+  PROP_0,
+  PROP_SELECTION,
+  N_PROPS
+};
+
+static GParamSpec *properties [N_PROPS];
+
 SpProfile *
 sp_callgraph_profile_new (void)
 {
   return g_object_new (SP_TYPE_CALLGRAPH_PROFILE, NULL);
+}
+
+SpProfile *
+sp_callgraph_profile_new_with_selection (SpVisualizerSelection *selection)
+{
+  return g_object_new (SP_TYPE_CALLGRAPH_PROFILE,
+                       "selection", selection,
+                       NULL);
 }
 
 static void
@@ -79,8 +105,47 @@ sp_callgraph_profile_finalize (GObject *object)
   g_clear_pointer (&self->stash, stack_stash_unref);
   g_clear_pointer (&self->reader, sp_capture_reader_unref);
   g_clear_pointer (&self->tags, g_hash_table_unref);
+  g_clear_object (&self->selection);
 
   G_OBJECT_CLASS (sp_callgraph_profile_parent_class)->finalize (object);
+}
+
+static void
+sp_callgraph_profile_get_property (GObject    *object,
+                                   guint       prop_id,
+                                   GValue     *value,
+                                   GParamSpec *pspec)
+{
+  SpCallgraphProfile *self = SP_CALLGRAPH_PROFILE (object);
+
+  switch (prop_id)
+    {
+    case PROP_SELECTION:
+      g_value_set_object (value, self->selection);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
+sp_callgraph_profile_set_property (GObject      *object,
+                                   guint         prop_id,
+                                   const GValue *value,
+                                   GParamSpec   *pspec)
+{
+  SpCallgraphProfile *self = SP_CALLGRAPH_PROFILE (object);
+
+  switch (prop_id)
+    {
+    case PROP_SELECTION:
+      self->selection = g_value_dup_object (value);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
 static void
@@ -89,6 +154,17 @@ sp_callgraph_profile_class_init (SpCallgraphProfileClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = sp_callgraph_profile_finalize;
+  object_class->get_property = sp_callgraph_profile_get_property;
+  object_class->set_property = sp_callgraph_profile_set_property;
+
+  properties [PROP_SELECTION] =
+    g_param_spec_object ("selection",
+                         "Selection",
+                         "The selection for filtering the callgraph",
+                         SP_TYPE_VISUALIZER_SELECTION,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
@@ -142,19 +218,26 @@ sp_callgraph_profile_generate_worker (GTask        *task,
                                       GCancellable *cancellable)
 {
   SpCallgraphProfile *self = source_object;
-  SpCaptureReader *reader = task_data;
+  Generate *gen = task_data;
+  SpCaptureReader *reader;
+  SpVisualizerSelection *selection;
   g_autoptr(GArray) resolved = NULL;
   g_autoptr(GHashTable) maps_by_pid = NULL;
   g_autoptr(GHashTable) cmdlines = NULL;
   g_autoptr(GPtrArray) resolvers = NULL;
   SpCaptureFrameType type;
-  StackStash *stash;
-  StackStash *resolved_stash;
+  StackStash *stash = NULL;
+  StackStash *resolved_stash = NULL;
+  guint count = 0;
   gboolean ret = FALSE;
   guint j;
 
   g_assert (G_IS_TASK (task));
+  g_assert (gen != NULL);
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  reader = gen->reader;
+  selection = gen->selection;
 
   maps_by_pid = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)sp_map_lookaside_free);
   cmdlines = g_hash_table_new (NULL, NULL);
@@ -206,6 +289,9 @@ sp_callgraph_profile_generate_worker (GTask        *task,
                            (gchar *)sp_callgraph_profile_intern_string (self, cmdline));
     }
 
+  if (g_task_return_error_if_cancelled (task))
+    goto cleanup;
+
   sp_capture_reader_reset (reader);
 
   /*
@@ -230,8 +316,17 @@ sp_callgraph_profile_generate_worker (GTask        *task,
           continue;
         }
 
+      if (++count == CHECK_CANCELLABLE_INTERVAL)
+        {
+          if (g_task_return_error_if_cancelled (task))
+            goto cleanup;
+        }
+
       if (NULL == (sample = sp_capture_reader_read_sample (reader)))
         goto failure;
+
+      if (!sp_visualizer_selection_contains (selection, sample->frame.time))
+        continue;
 
       cmdline = g_hash_table_lookup (cmdlines, GINT_TO_POINTER (sample->frame.pid));
 
@@ -315,10 +410,22 @@ failure:
     g_task_return_new_error (task,
                              G_IO_ERROR,
                              G_IO_ERROR_FAILED,
+                             "%s",
                              _("Sysprof was unable to generate a callgraph from the system capture."));
-  self->stash = resolved_stash;
-  stack_stash_unref (stash);
-  g_task_return_boolean (task, ret);
+  else
+    g_task_return_pointer (task, g_steal_pointer (&resolved_stash), (GDestroyNotify)stack_stash_unref);
+
+cleanup:
+  g_clear_pointer (&resolved_stash, stack_stash_unref);
+  g_clear_pointer (&stash, stack_stash_unref);
+}
+
+static void
+generate_free (Generate *generate)
+{
+  sp_capture_reader_unref (generate->reader);
+  g_clear_object (&generate->selection);
+  g_slice_free (Generate, generate);
 }
 
 static void
@@ -328,14 +435,19 @@ sp_callgraph_profile_generate (SpProfile           *profile,
                                gpointer             user_data)
 {
   SpCallgraphProfile *self = (SpCallgraphProfile *)profile;
+  Generate *gen;
 
   g_autoptr(GTask) task = NULL;
 
   g_assert (SP_IS_CALLGRAPH_PROFILE (self));
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
+  gen = g_slice_new0 (Generate);
+  gen->reader = sp_capture_reader_copy (self->reader);
+  gen->selection = sp_visualizer_selection_copy (self->selection);
+
   task = g_task_new (self, cancellable, callback, user_data);
-  g_task_set_task_data (task, self->reader, NULL);
+  g_task_set_task_data (task, gen, (GDestroyNotify)generate_free);
   g_task_run_in_thread (task, sp_callgraph_profile_generate_worker);
 }
 
@@ -344,10 +456,28 @@ sp_callgraph_profile_generate_finish (SpProfile     *profile,
                                       GAsyncResult  *result,
                                       GError       **error)
 {
-  g_assert (SP_IS_CALLGRAPH_PROFILE (profile));
+  SpCallgraphProfile *self = (SpCallgraphProfile *)profile;
+  StackStash *stash;
+
+  g_assert (SP_IS_CALLGRAPH_PROFILE (self));
   g_assert (G_IS_TASK (result));
 
-  return g_task_propagate_boolean (G_TASK (result), error);
+  stash = g_task_propagate_pointer (G_TASK (result), error);
+
+  if (stash != NULL)
+    {
+      if (stash != self->stash)
+        {
+          g_clear_pointer (&self->stash, stack_stash_unref);
+          self->stash = g_steal_pointer (&stash);
+        }
+
+      g_clear_pointer (&stash, stack_stash_unref);
+
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 static void

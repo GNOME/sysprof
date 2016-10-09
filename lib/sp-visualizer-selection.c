@@ -212,3 +212,40 @@ sp_visualizer_selection_unselect_all (SpVisualizerSelection *self)
       g_signal_emit (self, signals [CHANGED], 0);
     }
 }
+
+gboolean
+sp_visualizer_selection_contains (SpVisualizerSelection *self,
+                                  gint64                 time_at)
+{
+  if (self == NULL || self->ranges->len == 0)
+    return TRUE;
+
+  for (guint i = 0; i < self->ranges->len; i++)
+    {
+      const Range *range = &g_array_index (self->ranges, Range, i);
+
+      if (time_at >= range->begin && time_at <= range->end)
+        return TRUE;
+    }
+
+  return FALSE;
+}
+
+SpVisualizerSelection *
+sp_visualizer_selection_copy (const SpVisualizerSelection *self)
+{
+  SpVisualizerSelection *copy;
+
+  if (self == NULL)
+    return NULL;
+
+  copy = g_object_new (SP_TYPE_VISUALIZER_SELECTION, NULL);
+
+  for (guint i = 0; i < self->ranges->len; i++)
+    {
+      Range range = g_array_index (self->ranges, Range, i);
+      g_array_append_val (copy->ranges, range);
+    }
+
+  return copy;
+}

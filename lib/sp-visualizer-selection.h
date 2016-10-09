@@ -19,13 +19,13 @@
 #ifndef SP_VISUALIZER_SELECTION_H
 #define SP_VISUALIZER_SELECTION_H
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_VISUALIZER_SELECTION (sp_visualizer_selection_get_type())
 
-G_DECLARE_FINAL_TYPE (SpVisualizerSelection, sp_visualizer_selection, SP, VISUALIZER_SELECTION, GtkDrawingArea)
+G_DECLARE_FINAL_TYPE (SpVisualizerSelection, sp_visualizer_selection, SP, VISUALIZER_SELECTION, GObject)
 
 typedef void (*SpVisualizerSelectionForeachFunc) (SpVisualizerSelection *self,
                                                   gint64                 begin_time,
@@ -33,6 +33,8 @@ typedef void (*SpVisualizerSelectionForeachFunc) (SpVisualizerSelection *self,
                                                   gpointer               user_data);
 
 gboolean sp_visualizer_selection_get_has_selection (SpVisualizerSelection            *self);
+gboolean sp_visualizer_selection_contains          (SpVisualizerSelection            *self,
+                                                    gint64                            time_at);
 void     sp_visualizer_selection_select_range      (SpVisualizerSelection            *self,
                                                     gint64                            begin_time,
                                                     gint64                            end_time);
@@ -43,6 +45,8 @@ void     sp_visualizer_selection_unselect_all      (SpVisualizerSelection       
 void     sp_visualizer_selection_foreach           (SpVisualizerSelection            *self,
                                                     SpVisualizerSelectionForeachFunc  foreach_func,
                                                     gpointer                          user_data);
+SpVisualizerSelection *
+         sp_visualizer_selection_copy              (const SpVisualizerSelection      *self);
 
 G_END_DECLS
 

@@ -25,6 +25,8 @@
 # include <glib-object.h>
 #endif
 
+#include "sp-clock.h"
+
 G_BEGIN_DECLS
 
 #define SP_CAPTURE_MAGIC (GUINT32_TO_LE(0xFDCA975E))
@@ -38,7 +40,7 @@ G_BEGIN_DECLS
 # define SP_CAPTURE_ADDRESS_FORMAT "0x%016llx"
 #endif
 
-#define SP_CAPTURE_CURRENT_TIME   (g_get_monotonic_time() * 1000L)
+#define SP_CAPTURE_CURRENT_TIME   (sp_clock_get_current_time())
 #define SP_CAPTURE_COUNTER_INT64  0
 #define SP_CAPTURE_COUNTER_DOUBLE 1
 

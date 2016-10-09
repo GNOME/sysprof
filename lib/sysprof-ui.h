@@ -26,6 +26,7 @@ G_BEGIN_DECLS
 #define SYSPROF_INSIDE
 # include "sp-callgraph-view.h"
 # include "sp-cell-renderer-percent.h"
+# include "sp-cpu-visualizer-row.h"
 # include "sp-line-visualizer-row.h"
 # include "sp-empty-state-view.h"
 # include "sp-model-filter.h"

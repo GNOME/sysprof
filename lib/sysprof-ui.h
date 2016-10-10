@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 # include "sp-callgraph-view.h"
 # include "sp-cell-renderer-percent.h"
 # include "sp-cpu-visualizer-row.h"
+# include "sp-failed-state-view.h"
 # include "sp-line-visualizer-row.h"
 # include "sp-empty-state-view.h"
 # include "sp-model-filter.h"

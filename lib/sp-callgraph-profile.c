@@ -46,7 +46,7 @@
 #include "sp-jitmap-symbol-resolver.h"
 #include "sp-map-lookaside.h"
 #include "sp-kernel-symbol-resolver.h"
-#include "sp-visualizer-selection.h"
+#include "sp-selection.h"
 
 #include "stackstash.h"
 
@@ -57,7 +57,7 @@ struct _SpCallgraphProfile
   GObject                parent_instance;
 
   SpCaptureReader       *reader;
-  SpVisualizerSelection *selection;
+  SpSelection *selection;
   StackStash            *stash;
   GStringChunk          *symbols;
   GHashTable            *tags;
@@ -66,7 +66,7 @@ struct _SpCallgraphProfile
 typedef struct
 {
   SpCaptureReader       *reader;
-  SpVisualizerSelection *selection;
+  SpSelection *selection;
 } Generate;
 
 static void profile_iface_init (SpProfileInterface *iface);
@@ -89,7 +89,7 @@ sp_callgraph_profile_new (void)
 }
 
 SpProfile *
-sp_callgraph_profile_new_with_selection (SpVisualizerSelection *selection)
+sp_callgraph_profile_new_with_selection (SpSelection *selection)
 {
   return g_object_new (SP_TYPE_CALLGRAPH_PROFILE,
                        "selection", selection,
@@ -161,7 +161,7 @@ sp_callgraph_profile_class_init (SpCallgraphProfileClass *klass)
     g_param_spec_object ("selection",
                          "Selection",
                          "The selection for filtering the callgraph",
-                         SP_TYPE_VISUALIZER_SELECTION,
+                         SP_TYPE_SELECTION,
                          (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
@@ -220,7 +220,7 @@ sp_callgraph_profile_generate_worker (GTask        *task,
   SpCallgraphProfile *self = source_object;
   Generate *gen = task_data;
   SpCaptureReader *reader;
-  SpVisualizerSelection *selection;
+  SpSelection *selection;
   g_autoptr(GArray) resolved = NULL;
   g_autoptr(GHashTable) maps_by_pid = NULL;
   g_autoptr(GHashTable) cmdlines = NULL;
@@ -325,7 +325,7 @@ sp_callgraph_profile_generate_worker (GTask        *task,
       if (NULL == (sample = sp_capture_reader_read_sample (reader)))
         goto failure;
 
-      if (!sp_visualizer_selection_contains (selection, sample->frame.time))
+      if (!sp_selection_contains (selection, sample->frame.time))
         continue;
 
       cmdline = g_hash_table_lookup (cmdlines, GINT_TO_POINTER (sample->frame.pid));
@@ -444,7 +444,7 @@ sp_callgraph_profile_generate (SpProfile           *profile,
 
   gen = g_slice_new0 (Generate);
   gen->reader = sp_capture_reader_copy (self->reader);
-  gen->selection = sp_visualizer_selection_copy (self->selection);
+  gen->selection = sp_selection_copy (self->selection);
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_task_data (task, gen, (GDestroyNotify)generate_free);

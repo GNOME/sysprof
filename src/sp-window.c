@@ -238,7 +238,7 @@ static void
 sp_window_build_profile (SpWindow *self)
 {
   g_autoptr(SpProfile) profile = NULL;
-  SpVisualizerSelection *selection;
+  SpSelection *selection;
 
   g_assert (SP_IS_WINDOW (self));
   g_assert (self->reader != NULL);
@@ -737,10 +737,10 @@ zoom_level_to_string (GBinding     *binding,
 
 static void
 sp_window_visualizers_selection_changed (SpWindow              *self,
-                                         SpVisualizerSelection *selection)
+                                         SpSelection *selection)
 {
   g_assert (SP_IS_WINDOW (self));
-  g_assert (SP_IS_VISUALIZER_SELECTION (selection));
+  g_assert (SP_IS_SELECTION (selection));
 
   sp_window_build_profile (self);
 }
@@ -836,7 +836,7 @@ sp_window_init (SpWindow *self)
     { "save-capture",  sp_window_save_capture },
     { "screenshot",  sp_window_screenshot },
   };
-  SpVisualizerSelection *selection;
+  SpSelection *selection;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 

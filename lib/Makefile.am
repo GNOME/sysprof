@@ -66,9 +66,9 @@ headers_DATA = \
 	sp-proc-source.h \
 	sp-profile.h \
 	sp-profiler.h \
+	sp-selection.h \
 	sp-source.h \
 	sp-symbol-resolver.h \
-	sp-visualizer-selection.h \
 	$(NULL)
 
 libsysprof_@API_VERSION@_la_SOURCES = \
@@ -100,9 +100,9 @@ libsysprof_@API_VERSION@_la_SOURCES = \
 	sp-proc-source.c \
 	sp-profile.c \
 	sp-profiler.c \
+	sp-selection.c \
 	sp-source.c \
 	sp-symbol-resolver.c \
-	sp-visualizer-selection.c \
 	$(NULL)
 
 libsysprof_@API_VERSION@_la_CFLAGS = \

@@ -24,7 +24,7 @@
 #include "sp-visualizer-list.h"
 #include "sp-visualizer-row.h"
 #include "sp-visualizer-row-private.h"
-#include "sp-visualizer-selection.h"
+#include "sp-selection.h"
 #include "sp-visualizer-ticks.h"
 #include "sp-visualizer-view.h"
 
@@ -35,7 +35,7 @@ typedef struct
 {
   SpCaptureReader       *reader;
   SpZoomManager         *zoom_manager;
-  SpVisualizerSelection *selection;
+  SpSelection *selection;
 
   SpVisualizerList      *list;
   GtkScrolledWindow     *scroller;
@@ -237,7 +237,7 @@ sp_visualizer_view_size_allocate (GtkWidget     *widget,
 }
 
 static void
-draw_selection_cb (SpVisualizerSelection *selection,
+draw_selection_cb (SpSelection *selection,
                    gint64                 range_begin,
                    gint64                 range_end,
                    gpointer               user_data)
@@ -245,7 +245,7 @@ draw_selection_cb (SpVisualizerSelection *selection,
   SelectionDraw *draw = user_data;
   GdkRectangle area;
 
-  g_assert (SP_IS_VISUALIZER_SELECTION (selection));
+  g_assert (SP_IS_SELECTION (selection));
   g_assert (draw != NULL);
   g_assert (draw->cr != NULL);
   g_assert (SP_IS_VISUALIZER_VIEW (draw->self));
@@ -284,10 +284,10 @@ sp_visualizer_view_draw (GtkWidget *widget,
 
   ret = GTK_WIDGET_CLASS (sp_visualizer_view_parent_class)->draw (widget, cr);
 
-  if (sp_visualizer_selection_get_has_selection (priv->selection) || priv->button_pressed)
+  if (sp_selection_get_has_selection (priv->selection) || priv->button_pressed)
     {
       gtk_style_context_add_class (draw.style_context, "selection");
-      sp_visualizer_selection_foreach (priv->selection, draw_selection_cb, &draw);
+      sp_selection_foreach (priv->selection, draw_selection_cb, &draw);
       if (priv->button_pressed)
         draw_selection_cb (priv->selection, priv->drag_begin_at, priv->drag_selection_at, &draw);
       gtk_style_context_remove_class (draw.style_context, "selection");
@@ -312,16 +312,16 @@ sp_visualizer_view_list_button_press_event (SpVisualizerView *self,
 
   if (ev->button != GDK_BUTTON_PRIMARY)
     {
-      if (sp_visualizer_selection_get_has_selection (priv->selection))
+      if (sp_selection_get_has_selection (priv->selection))
         {
-          sp_visualizer_selection_unselect_all (priv->selection);
+          sp_selection_unselect_all (priv->selection);
           return GDK_EVENT_STOP;
         }
       return GDK_EVENT_PROPAGATE;
     }
 
   if ((ev->state & GDK_SHIFT_MASK) == 0)
-    sp_visualizer_selection_unselect_all (priv->selection);
+    sp_selection_unselect_all (priv->selection);
 
   priv->button_pressed = TRUE;
 
@@ -351,7 +351,7 @@ sp_visualizer_view_list_button_release_event (SpVisualizerView *self,
 
   if (priv->drag_begin_at != priv->drag_selection_at)
     {
-      sp_visualizer_selection_select_range (priv->selection,
+      sp_selection_select_range (priv->selection,
                                             priv->drag_begin_at,
                                             priv->drag_selection_at);
       priv->drag_begin_at = -1;
@@ -404,10 +404,10 @@ sp_visualizer_view_list_realize_after (SpVisualizerView *self,
 
 static void
 sp_visualizer_view_selection_changed (SpVisualizerView      *self,
-                                      SpVisualizerSelection *selection)
+                                      SpSelection *selection)
 {
   g_assert (SP_IS_VISUALIZER_VIEW (self));
-  g_assert (SP_IS_VISUALIZER_SELECTION (selection));
+  g_assert (SP_IS_SELECTION (selection));
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }
@@ -543,7 +543,7 @@ sp_visualizer_view_init (SpVisualizerView *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  priv->selection = g_object_new (SP_TYPE_VISUALIZER_SELECTION, NULL);
+  priv->selection = g_object_new (SP_TYPE_SELECTION, NULL);
 
   g_signal_connect_object (priv->selection,
                            "changed",
@@ -634,7 +634,7 @@ sp_visualizer_view_set_reader (SpVisualizerView *self,
           sp_visualizer_ticks_set_epoch (priv->ticks, begin_time);
           sp_visualizer_ticks_set_time_range (priv->ticks, begin_time, begin_time);
 
-          sp_visualizer_selection_unselect_all (priv->selection);
+          sp_selection_unselect_all (priv->selection);
         }
 
       sp_visualizer_list_set_reader (priv->list, reader);
@@ -738,12 +738,12 @@ sp_visualizer_view_set_zoom_manager (SpVisualizerView *self,
 /**
  * sp_visualizer_view_get_selection:
  *
- * Gets the #SpVisualizerSelection instance for the visualizer view.
+ * Gets the #SpSelection instance for the visualizer view.
  * This can be used to alter the selection or selections of the visualizers.
  *
- * Returns: (transfer none): An #SpVisualizerSelection.
+ * Returns: (transfer none): An #SpSelection.
  */
-SpVisualizerSelection *
+SpSelection *
 sp_visualizer_view_get_selection (SpVisualizerView *self)
 {
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);

@@ -1,4 +1,4 @@
-/* sp-visualizer-selection.c
+/* sp-selection.c
  *
  * Copyright (C) 2016 Christian Hergert <chergert@redhat.com>
  *
@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define G_LOG_DOMAIN "sp-visualizer-selection"
+#define G_LOG_DOMAIN "sp-selection"
 
-#include "sp-visualizer-selection.h"
+#include "sp-selection.h"
 
-struct _SpVisualizerSelection
+struct _SpSelection
 {
   GObject  parent_instance;
   GArray  *ranges;
@@ -32,7 +32,7 @@ typedef struct
   gint64 end;
 } Range;
 
-G_DEFINE_TYPE (SpVisualizerSelection, sp_visualizer_selection, G_TYPE_OBJECT)
+G_DEFINE_TYPE (SpSelection, sp_selection, G_TYPE_OBJECT)
 
 enum {
   PROP_0,
@@ -61,27 +61,27 @@ int64_swap (gint64 *a,
 }
 
 static void
-sp_visualizer_selection_finalize (GObject *object)
+sp_selection_finalize (GObject *object)
 {
-  SpVisualizerSelection *self = (SpVisualizerSelection *)object;
+  SpSelection *self = (SpSelection *)object;
 
   g_clear_pointer (&self->ranges, g_array_unref);
 
-  G_OBJECT_CLASS (sp_visualizer_selection_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sp_selection_parent_class)->finalize (object);
 }
 
 static void
-sp_visualizer_selection_get_property (GObject    *object,
-                                      guint       prop_id,
-                                      GValue     *value,
-                                      GParamSpec *pspec)
+sp_selection_get_property (GObject    *object,
+                           guint       prop_id,
+                           GValue     *value,
+                           GParamSpec *pspec)
 {
-  SpVisualizerSelection *self = SP_VISUALIZER_SELECTION (object);
+  SpSelection *self = SP_SELECTION (object);
 
   switch (prop_id)
     {
     case PROP_HAS_SELECTION:
-      g_value_set_boolean (value, sp_visualizer_selection_get_has_selection (self));
+      g_value_set_boolean (value, sp_selection_get_has_selection (self));
       break;
 
     default:
@@ -90,12 +90,12 @@ sp_visualizer_selection_get_property (GObject    *object,
 }
 
 static void
-sp_visualizer_selection_class_init (SpVisualizerSelectionClass *klass)
+sp_selection_class_init (SpSelectionClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = sp_visualizer_selection_finalize;
-  object_class->get_property = sp_visualizer_selection_get_property;
+  object_class->finalize = sp_selection_finalize;
+  object_class->get_property = sp_selection_get_property;
 
   properties [PROP_HAS_SELECTION] =
     g_param_spec_boolean ("has-selection",
@@ -107,7 +107,7 @@ sp_visualizer_selection_class_init (SpVisualizerSelectionClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   /**
-   * SpVisualizerSelection::changed:
+   * SpSelection::changed:
    *
    * This signal is emitted when the selection has changed.
    */
@@ -119,33 +119,33 @@ sp_visualizer_selection_class_init (SpVisualizerSelectionClass *klass)
 }
 
 static void
-sp_visualizer_selection_init (SpVisualizerSelection *self)
+sp_selection_init (SpSelection *self)
 {
   self->ranges = g_array_new (FALSE, FALSE, sizeof (Range));
 }
 
 gboolean
-sp_visualizer_selection_get_has_selection (SpVisualizerSelection *self)
+sp_selection_get_has_selection (SpSelection *self)
 {
-  g_return_val_if_fail (SP_IS_VISUALIZER_SELECTION (self), FALSE);
+  g_return_val_if_fail (SP_IS_SELECTION (self), FALSE);
 
   return self->ranges->len > 0;
 }
 
 /**
- * sp_visualizer_selection_foreach:
- * @self: A #SpVisualizerSelection
+ * sp_selection_foreach:
+ * @self: A #SpSelection
  * @foreach_func: (scope call): a callback for each range
  * @user_data: user data for @foreach_func
  *
  * Calls @foreach_func for every selected range.
  */
 void
-sp_visualizer_selection_foreach (SpVisualizerSelection            *self,
-                                 SpVisualizerSelectionForeachFunc  foreach_func,
-                                 gpointer                          user_data)
+sp_selection_foreach (SpSelection            *self,
+                      SpSelectionForeachFunc  foreach_func,
+                      gpointer                user_data)
 {
-  g_return_if_fail (SP_IS_VISUALIZER_SELECTION (self));
+  g_return_if_fail (SP_IS_SELECTION (self));
   g_return_if_fail (foreach_func != NULL);
 
   for (guint i = 0; i < self->ranges->len; i++)
@@ -156,13 +156,13 @@ sp_visualizer_selection_foreach (SpVisualizerSelection            *self,
 }
 
 void
-sp_visualizer_selection_select_range (SpVisualizerSelection *self,
-                                      gint64                 begin_time,
-                                      gint64                 end_time)
+sp_selection_select_range (SpSelection *self,
+                           gint64       begin_time,
+                           gint64       end_time)
 {
   Range range = { 0 };
 
-  g_return_if_fail (SP_IS_VISUALIZER_SELECTION (self));
+  g_return_if_fail (SP_IS_SELECTION (self));
 
   int64_swap (&begin_time, &end_time);
 
@@ -177,11 +177,11 @@ sp_visualizer_selection_select_range (SpVisualizerSelection *self,
 }
 
 void
-sp_visualizer_selection_unselect_range (SpVisualizerSelection *self,
-                                        gint64                 begin,
-                                        gint64                 end)
+sp_selection_unselect_range (SpSelection *self,
+                             gint64       begin,
+                             gint64       end)
 {
-  g_return_if_fail (SP_IS_VISUALIZER_SELECTION (self));
+  g_return_if_fail (SP_IS_SELECTION (self));
 
   int64_swap (&begin, &end);
 
@@ -201,9 +201,9 @@ sp_visualizer_selection_unselect_range (SpVisualizerSelection *self,
 }
 
 void
-sp_visualizer_selection_unselect_all (SpVisualizerSelection *self)
+sp_selection_unselect_all (SpSelection *self)
 {
-  g_return_if_fail (SP_IS_VISUALIZER_SELECTION (self));
+  g_return_if_fail (SP_IS_SELECTION (self));
 
   if (self->ranges->len > 0)
     {
@@ -214,8 +214,8 @@ sp_visualizer_selection_unselect_all (SpVisualizerSelection *self)
 }
 
 gboolean
-sp_visualizer_selection_contains (SpVisualizerSelection *self,
-                                  gint64                 time_at)
+sp_selection_contains (SpSelection *self,
+                       gint64       time_at)
 {
   if (self == NULL || self->ranges->len == 0)
     return TRUE;
@@ -231,15 +231,15 @@ sp_visualizer_selection_contains (SpVisualizerSelection *self,
   return FALSE;
 }
 
-SpVisualizerSelection *
-sp_visualizer_selection_copy (const SpVisualizerSelection *self)
+SpSelection *
+sp_selection_copy (const SpSelection *self)
 {
-  SpVisualizerSelection *copy;
+  SpSelection *copy;
 
   if (self == NULL)
     return NULL;
 
-  copy = g_object_new (SP_TYPE_VISUALIZER_SELECTION, NULL);
+  copy = g_object_new (SP_TYPE_SELECTION, NULL);
 
   for (guint i = 0; i < self->ranges->len; i++)
     {

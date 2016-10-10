@@ -309,6 +309,8 @@ static void
 sp_visualizer_ticks_init (SpVisualizerTicks *self)
 {
   self->end_time = G_GINT64_CONSTANT (1000000000) * 60;
+
+  gtk_widget_set_has_window (GTK_WIDGET (self), FALSE);
 }
 
 GtkWidget *

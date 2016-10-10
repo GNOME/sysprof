@@ -961,6 +961,15 @@ sp_capture_writer_create_reader (SpCaptureWriter  *self,
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (self->fd != -1, NULL);
 
+  if (!sp_capture_writer_flush (self))
+    {
+      g_set_error (error,
+                   G_FILE_ERROR,
+                   g_file_error_from_errno (errno),
+                   "%s", g_strerror (errno));
+      return NULL;
+    }
+
   /*
    * We don't care about the write position, since the reader
    * uses positioned reads.

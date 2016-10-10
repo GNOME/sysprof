@@ -10,6 +10,7 @@ lib/resources/ui/sp-recording-state-view.ui
 lib/sp-callgraph-profile.c
 lib/sp-perf-source.c
 lib/sp-profiler-menu-button.c
+src/resources/gtk/help-overlay.ui
 src/resources/gtk/menus.ui
 src/resources/ui/sp-window.ui
 src/sp-application.c

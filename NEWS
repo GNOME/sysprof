@@ -1,3 +1,22 @@
+Overview of changes in Sysprof 3.22.1
+=====================================
+
+ * A new data source called "hostinfo" has been added. It records various
+   CPU datapoints as "counters" in the sysprof capture.
+ * A new visualizers abstraction has been added so that we can start
+   providing new ways to look at profiler data.
+ * A CPU visualizer has been added which renders datapoints recorded
+   from the hostinfo data source.
+ * Selecting ranges of the visualizer will update the callgraph limiting
+   stacktrace samples, to the given time range.
+ * Missing headers are now installed which may be needed by applications
+   using libsysprof-ui.
+ * A keyboard shortcuts dialog has been added.
+ * A theme manager has been added to allow us to provide custom CSS for
+   various themes. Currently, we have additional styling added for
+   Adwaita and Adwaita-dark.
+
+
 Overview of changes in Sysprof 3.22.0
 =====================================
 

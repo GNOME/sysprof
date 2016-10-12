@@ -80,7 +80,7 @@ sp_capture_cursor_foreach (SpCaptureCursor         *self,
     {
       const SpCaptureFrame *frame;
       SpCaptureFrameType type = 0;
-      ReadDelegate delegate;
+      ReadDelegate delegate = NULL;
 
       if (!sp_capture_reader_peek_type (self->reader, &type))
         return;
@@ -130,7 +130,10 @@ sp_capture_cursor_foreach (SpCaptureCursor         *self,
           break;
         }
 
-      if (delegate != NULL && NULL == (frame = delegate (self->reader)))
+      if (delegate == NULL)
+        continue;
+
+      if (NULL == (frame = delegate (self->reader)))
         return;
 
       if (self->conditions->len == 0)

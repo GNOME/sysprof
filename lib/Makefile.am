@@ -180,9 +180,9 @@ libsysprof_ui_@API_VERSION@_la_SOURCES = \
 	sp-visualizer-list.c \
 	sp-visualizer-list.h \
 	sp-visualizer-row.c \
+	sp-visualizer-row-private.h \
 	sp-visualizer-ticks.c \
 	sp-visualizer-ticks.h \
-	sp-visualizer-ticks-private.h \
 	sp-visualizer-view.c \
 	sp-zoom-manager.c \
 	$(NULL)

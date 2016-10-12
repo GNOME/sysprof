@@ -34,6 +34,8 @@ test_reader_basic (void)
   writer = sp_capture_writer_new ("capture-file", 0);
   g_assert (writer != NULL);
 
+  sp_capture_writer_flush (writer);
+
   reader = sp_capture_reader_new ("capture-file", &error);
   g_assert_no_error (error);
   g_assert (reader != NULL);
@@ -49,9 +51,6 @@ test_reader_basic (void)
     }
 
   sp_capture_writer_flush (writer);
-
-  /* We should have an old header (without end time) */
-  g_assert_cmpint (0, ==, sp_capture_reader_get_end_time (reader));
 
   for (i = 0; i < 100; i++)
     {

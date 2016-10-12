@@ -2,7 +2,7 @@ SUBDIRS = daemon data help lib po src tools tests
 
 EXTRA_DIST = AUTHORS tap-test COPYING.gpl-2
 
-DISTCHECK_CONFIGURE_FLAGS = --with-systemdsystemunitdir='$(prefix)/etc/systemd/system'
+DISTCHECK_CONFIGURE_FLAGS = --with-sysprofd=bundled --with-systemdsystemunitdir='$(prefix)/etc/systemd/system'
 
 AUTHORS:
 	$(AM_V_GEN)if test -d "$(srcdir)/.git"; \

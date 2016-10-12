@@ -22,10 +22,12 @@ test_cursor_basic (void)
   gint r;
   gint count = 0;
 
-  writer = sp_capture_writer_new ("capture-file", 0);
+  writer = sp_capture_writer_new ("capture-cursor-file", 0);
   g_assert (writer != NULL);
 
-  reader = sp_capture_reader_new ("capture-file", &error);
+  sp_capture_writer_flush (writer);
+
+  reader = sp_capture_reader_new ("capture-cursor-file", &error);
   g_assert_no_error (error);
   g_assert (reader != NULL);
 
@@ -45,13 +47,14 @@ test_cursor_basic (void)
   sp_capture_reader_unref (reader);
   sp_capture_writer_unref (writer);
 
-  g_unlink ("capture-file");
+  g_unlink ("capture-cursor-file");
 }
 
 int
 main (int argc,
       char *argv[])
 {
+  sp_clock_init ();
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/SpCaptureCursor/basic", test_cursor_basic);
   return g_test_run ();

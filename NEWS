@@ -1,6 +1,8 @@
 Overview of changes in Sysprof 3.22.1
 =====================================
 
+Changes since 3.22.0
+
  * A new data source called "hostinfo" has been added. It records various
    CPU datapoints as "counters" in the sysprof capture.
  * A new visualizers abstraction has been added so that we can start
@@ -15,6 +17,8 @@ Overview of changes in Sysprof 3.22.1
  * A theme manager has been added to allow us to provide custom CSS for
    various themes. Currently, we have additional styling added for
    Adwaita and Adwaita-dark.
+
+Thanks again to all of our translators
 
 
 Overview of changes in Sysprof 3.22.0

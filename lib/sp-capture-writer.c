@@ -714,15 +714,20 @@ static gboolean
 sp_capture_writer_flush_end_time (SpCaptureWriter *self)
 {
   gint64 end_time = SP_CAPTURE_CURRENT_TIME;
+  ssize_t ret;
 
   g_assert (self != NULL);
 
   /* This field is opportunistic, so a failure is okay. */
 
-  pwrite (self->fd,
-          &end_time,
-          sizeof (end_time),
-          G_STRUCT_OFFSET (SpCaptureFileHeader, end_time));
+again:
+  ret = pwrite (self->fd,
+                &end_time,
+                sizeof (end_time),
+                G_STRUCT_OFFSET (SpCaptureFileHeader, end_time));
+
+  if (ret < 0 && errno == EAGAIN)
+    goto again;
 
   return TRUE;
 }

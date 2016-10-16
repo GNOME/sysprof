@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-05-03 10:01+0000\n"
-"PO-Revision-Date: 2016-05-03 12:05+0200\n"
+"POT-Creation-Date: 2016-10-10 10:23+0000\n"
+"PO-Revision-Date: 2016-10-16 22:08+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
-"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
+"Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.7\n"
 
 #: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:167
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -32,7 +32,8 @@ msgstr "Profiler"
 msgid "Profile an application or entire system."
 msgstr "Profilujte aplikace nebo celý systém."
 
-#: data/org.gnome.Sysprof2.desktop:9
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: data/org.gnome.Sysprof2.desktop:10
 msgid "sysprof"
 msgstr "sysprof"
 
@@ -135,40 +136,40 @@ msgstr "Něco je špatně!"
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr "Při pokusu o profilování vašeho systému se něco neočekávaně pokazilo."
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:56
+#: lib/resources/ui/sp-profiler-menu-button.ui:58
 msgid "Profile my _entire system"
 msgstr "Profilovat c_elý můj systém"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:93
+#: lib/resources/ui/sp-profiler-menu-button.ui:95
 msgid "Search"
 msgstr "hledat"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:117
+#: lib/resources/ui/sp-profiler-menu-button.ui:121
 msgid "Existing Process"
 msgstr "Stávající proces"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:127
+#: lib/resources/ui/sp-profiler-menu-button.ui:131
 msgid "Command Line"
 msgstr "Příkazový řádek"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:146
+#: lib/resources/ui/sp-profiler-menu-button.ui:150
 msgid "Environment"
 msgstr "Prostředí"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:160
+#: lib/resources/ui/sp-profiler-menu-button.ui:164
 msgid "Inherit current environment"
 msgstr "Zdědit aktuální prostředí"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:178
+#: lib/resources/ui/sp-profiler-menu-button.ui:182
 msgid "Key"
 msgstr "Klíč"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:193
+#: lib/resources/ui/sp-profiler-menu-button.ui:197
 msgid "Value"
 msgstr "Hodnota"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:211
-#: lib/sp-profiler-menu-button.c:116
+#: lib/resources/ui/sp-profiler-menu-button.ui:215
+#: lib/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Nový proces"
 
@@ -183,7 +184,7 @@ msgstr ""
 "Víte, že k zaznamenávání můžete použít <a href=\"help:sysprof\">sysprof-cli</"
 "a>?"
 
-#: lib/sp-callgraph-profile.c:318
+#: lib/sp-callgraph-profile.c:414
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr "Sysprof nebyl schopen ze systémového záznamu vygenerovat graf volání."
 
@@ -199,18 +200,17 @@ msgstr ""
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Nastala chyba při pokusu o přístup k počitadlům výkonu: %s"
 
-#: lib/sp-profiler-menu-button.c:114 lib/sp-profiler-menu-button.c:129
+#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Všechny procesy"
 
-#: lib/sp-profiler-menu-button.c:135
+#: lib/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Proces %d"
 
-#: lib/sp-profiler-menu-button.c:140
+#: lib/sp-profiler-menu-button.c:142
 #, c-format
-#| msgid "%u Processes"
 msgid "%u Process"
 msgid_plural "%u Processes"
 msgstr[0] "%u proces"
@@ -220,6 +220,76 @@ msgstr[2] "%u procesů"
 #: lib/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
 msgstr "Zadané argumenty příkazového řádku nejsou platné"
+
+#: src/resources/gtk/help-overlay.ui:8
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Klávesové zkratky Sysprof"
+
+#: src/resources/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Záznam"
+
+#: src/resources/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Zastavit záznam"
+
+#: src/resources/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Graf volání"
+
+#: src/resources/gtk/help-overlay.ui:29
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Rozbalit funkci"
+
+#: src/resources/gtk/help-overlay.ui:30
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "Zobrazit přímé potomky funkce v grafu volání"
+
+#: src/resources/gtk/help-overlay.ui:37
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Sbalit funkci"
+
+#: src/resources/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr "Skrýt všechny potomky v grafu volání ve vybrané funkci"
+
+#: src/resources/gtk/help-overlay.ui:45
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "Přejít do funkce"
+
+#: src/resources/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr "Vybere funkci nebo soubor jako nejvyšší úroveň grafu volání"
+
+#: src/resources/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Vizualizace"
+
+#: src/resources/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Přiblížit"
+
+#: src/resources/gtk/help-overlay.ui:66
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Oddálit"
+
+#: src/resources/gtk/help-overlay.ui:73
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Výchozí přiblížení"
 
 #: src/resources/gtk/menus.ui:6
 msgid "_New Window"
@@ -238,26 +308,14 @@ msgid "Help"
 msgstr "Nápověda"
 
 #: src/resources/gtk/menus.ui:26
+msgid "Keyboard Shortcuts"
+msgstr "Klávesové zkratky"
+
+#: src/resources/gtk/menus.ui:30
 msgid "_Quit"
 msgstr "U_končit"
 
-#: src/resources/gtk/menus.ui:34 src/sp-window.c:930
-msgid "Open"
-msgstr "Otevřít"
-
-#: src/resources/gtk/menus.ui:40
-msgid "Save As"
-msgstr "Uložit jako"
-
-#: src/resources/gtk/menus.ui:46
-msgid "Screenshot"
-msgstr "Snímek obrazovky"
-
-#: src/resources/gtk/menus.ui:52
-msgid "Close"
-msgstr "Zavřít"
-
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:281
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:309
 msgid "Not running"
 msgstr "Neběží"
 
@@ -265,92 +323,124 @@ msgstr "Neběží"
 msgid "_Record"
 msgstr "_Záznam"
 
-#: src/resources/ui/sp-window.ui:116
+#: src/resources/ui/sp-window.ui:118
 msgid "_Close"
 msgstr "_Zavřít"
 
-#: src/sp-application.c:160
+#: src/resources/ui/sp-window.ui:174
+msgid "CPU"
+msgstr "Procesor"
+
+#: src/resources/ui/sp-window.ui:222
+msgid "Zoom out (Ctrl+-)"
+msgstr "Oddálit (Ctrl+-)"
+
+#: src/resources/ui/sp-window.ui:238
+msgid "Reset zoom level (Ctrl+0)"
+msgstr "Výchozí úroveň přiblížení (Ctrl+0)"
+
+#: src/resources/ui/sp-window.ui:252
+msgid "Zoom in (Ctrl++)"
+msgstr "Přiblížit (Ctrl++)"
+
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:999
+msgid "Open"
+msgstr "Otevřít"
+
+#: src/resources/ui/sp-window.ui:284
+msgid "Save As"
+msgstr "Uložit jako"
+
+#: src/resources/ui/sp-window.ui:297
+msgid "Screenshot"
+msgstr "Snímek obrazovky"
+
+#: src/resources/ui/sp-window.ui:310
+msgid "Close"
+msgstr "Zavřít"
+
+#: src/sp-application.c:174
 msgid "A system profiler"
 msgstr "Systémový profiler"
 
-#: src/sp-application.c:164
+#: src/sp-application.c:178
 msgid "translator-credits"
 msgstr "Marek Černocký <marek@manet.cz>"
 
-#: src/sp-application.c:170
+#: src/sp-application.c:184
 msgid "Learn more about Sysprof"
 msgstr "Přečtěte si o Sysprof více"
 
-#: src/sp-window.c:139
+#: src/sp-window.c:148
 #, c-format
 msgid "Samples: %u"
 msgstr "Vzorky: %u"
 
-#: src/sp-window.c:172
+#: src/sp-window.c:181
 msgid "[Memory Capture]"
 msgstr "[Záznam paměti]"
 
-#: src/sp-window.c:185
+#: src/sp-window.c:194
 #, c-format
 msgid "%s - %s"
 msgstr "%s – %s"
 
-#: src/sp-window.c:219
+#: src/sp-window.c:230
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Nebyl sesbírán dostatek vzorků pro vygenerování grafu volání"
 
-#: src/sp-window.c:273 src/sp-window.c:317
+#: src/sp-window.c:301 src/sp-window.c:345
 msgid "Record"
 msgstr "Zaznamenávat"
 
-#: src/sp-window.c:293
+#: src/sp-window.c:321
 msgid "Stop"
 msgstr "Zastavit"
 
-#: src/sp-window.c:298
+#: src/sp-window.c:326
 msgid "Recording…"
 msgstr "Zaznamenává se…"
 
-#: src/sp-window.c:309
+#: src/sp-window.c:337
 msgid "Building profile…"
 msgstr "Sestavuje se profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:404
+#: src/sp-window.c:438
 msgid "Stopping…"
 msgstr "Zastavuje se…"
 
-#: src/sp-window.c:553
+#: src/sp-window.c:590
 msgid "Save Capture As"
 msgstr "Uložení záznamu jako"
 
-#: src/sp-window.c:556 src/sp-window.c:929
-msgid "Cancel"
-msgstr "Zrušit"
-
-#: src/sp-window.c:557
+#: src/sp-window.c:593
 msgid "Save"
 msgstr "Uložit"
 
-#: src/sp-window.c:589
+#: src/sp-window.c:594 src/sp-window.c:1000
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: src/sp-window.c:624
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Vyskytla se chyba při pokusu uložit váš záznam: %s"
 
-#: src/sp-window.c:896
+#: src/sp-window.c:969
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr "Soubor „%s“ nelze otevřít. Podporovány jsou jen místní soubory."
 
-#: src/sp-window.c:924
+#: src/sp-window.c:996
 msgid "Open Capture"
 msgstr "Otevření záznamu"
 
-#: src/sp-window.c:936
+#: src/sp-window.c:1003
 msgid "Sysprof Captures"
 msgstr "Záznam Sysprof"
 
-#: src/sp-window.c:941
+#: src/sp-window.c:1008
 msgid "All Files"
 msgstr "Všechny soubory"
 

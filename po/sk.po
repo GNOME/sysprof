@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-08-09 13:38+0000\n"
-"PO-Revision-Date: 2016-08-10 15:33+0200\n"
+"POT-Creation-Date: 2016-10-10 10:23+0000\n"
+"PO-Revision-Date: 2016-10-16 20:49+0200\n"
+"Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
-"Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.9\n"
 
 #: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:167
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -147,32 +147,32 @@ msgstr "Vytvoriť profil môjho _celého systému"
 msgid "Search"
 msgstr "Vyhľadajte"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:119
+#: lib/resources/ui/sp-profiler-menu-button.ui:121
 msgid "Existing Process"
 msgstr "Existujúci proces"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:129
+#: lib/resources/ui/sp-profiler-menu-button.ui:131
 msgid "Command Line"
 msgstr "Príkazový riadok"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:148
+#: lib/resources/ui/sp-profiler-menu-button.ui:150
 msgid "Environment"
 msgstr "Prostredie"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:162
+#: lib/resources/ui/sp-profiler-menu-button.ui:164
 msgid "Inherit current environment"
 msgstr "Zdediť aktuálne prostredie"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:180
+#: lib/resources/ui/sp-profiler-menu-button.ui:182
 msgid "Key"
 msgstr "Kľúč"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:195
+#: lib/resources/ui/sp-profiler-menu-button.ui:197
 msgid "Value"
 msgstr "Hodnota"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:213
-#: lib/sp-profiler-menu-button.c:116
+#: lib/resources/ui/sp-profiler-menu-button.ui:215
+#: lib/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Nový proces"
 
@@ -187,7 +187,7 @@ msgstr ""
 "Vedeli ste, že môžete použiť program <a href=\"help:sysprof\">sysprof-cli</"
 "a> na vytvorenie záznamu?"
 
-#: lib/sp-callgraph-profile.c:318
+#: lib/sp-callgraph-profile.c:414
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr ""
 "Aplikácia Sysprof nebola schopná vygenerovať graf volaní zo systémového "
@@ -206,16 +206,16 @@ msgstr ""
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Vyskytla sa chyba pri pokuse získať prístup k počítadlám výkonu: %s"
 
-#: lib/sp-profiler-menu-button.c:114 lib/sp-profiler-menu-button.c:129
+#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Všetky procesy"
 
-#: lib/sp-profiler-menu-button.c:135
+#: lib/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Proces č. %d"
 
-#: lib/sp-profiler-menu-button.c:140
+#: lib/sp-profiler-menu-button.c:142
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
@@ -226,6 +226,76 @@ msgstr[2] "%u procesy"
 #: lib/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
 msgstr "Poskytnuté parametre príkazového riadku sú neplatné"
+
+#: src/resources/gtk/help-overlay.ui:8
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Skratky aplikácie Sysprof"
+
+#: src/resources/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Zaznamenávanie"
+
+#: src/resources/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Zastavenie zaznamenávania"
+
+#: src/resources/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Graf volaní"
+
+#: src/resources/gtk/help-overlay.ui:29
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Rozbalenie funkcie"
+
+#: src/resources/gtk/help-overlay.ui:30
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr ""
+
+#: src/resources/gtk/help-overlay.ui:37
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Zbalenie funkcie"
+
+#: src/resources/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr ""
+
+#: src/resources/gtk/help-overlay.ui:45
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "Skok do funkcie"
+
+#: src/resources/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr ""
+
+#: src/resources/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Zobrazovače"
+
+#: src/resources/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Zväčšenie"
+
+#: src/resources/gtk/help-overlay.ui:66
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Zmenšenie"
+
+#: src/resources/gtk/help-overlay.ui:73
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Obnovenie priblíženia"
 
 #: src/resources/gtk/menus.ui:6
 msgid "_New Window"
@@ -244,26 +314,14 @@ msgid "Help"
 msgstr "Pomocník"
 
 #: src/resources/gtk/menus.ui:26
+msgid "Keyboard Shortcuts"
+msgstr "Klávesové skratky"
+
+#: src/resources/gtk/menus.ui:30
 msgid "_Quit"
 msgstr "_Ukončiť"
 
-#: src/resources/gtk/menus.ui:34 src/sp-window.c:932
-msgid "Open"
-msgstr "Otvoriť"
-
-#: src/resources/gtk/menus.ui:40
-msgid "Save As"
-msgstr "Uložiť ako"
-
-#: src/resources/gtk/menus.ui:46
-msgid "Screenshot"
-msgstr "Snímka obrazovky"
-
-#: src/resources/gtk/menus.ui:52
-msgid "Close"
-msgstr "Zavrieť"
-
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:281
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:309
 msgid "Not running"
 msgstr "Nie je spustený"
 
@@ -271,92 +329,124 @@ msgstr "Nie je spustený"
 msgid "_Record"
 msgstr "Zaz_namenať"
 
-#: src/resources/ui/sp-window.ui:117
+#: src/resources/ui/sp-window.ui:118
 msgid "_Close"
 msgstr "_Zavrieť"
 
-#: src/sp-application.c:160
+#: src/resources/ui/sp-window.ui:174
+msgid "CPU"
+msgstr "Procesor"
+
+#: src/resources/ui/sp-window.ui:222
+msgid "Zoom out (Ctrl+-)"
+msgstr ""
+
+#: src/resources/ui/sp-window.ui:238
+msgid "Reset zoom level (Ctrl+0)"
+msgstr ""
+
+#: src/resources/ui/sp-window.ui:252
+msgid "Zoom in (Ctrl++)"
+msgstr ""
+
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:999
+msgid "Open"
+msgstr "Otvoriť"
+
+#: src/resources/ui/sp-window.ui:284
+msgid "Save As"
+msgstr "Uložiť ako"
+
+#: src/resources/ui/sp-window.ui:297
+msgid "Screenshot"
+msgstr "Snímka obrazovky"
+
+#: src/resources/ui/sp-window.ui:310
+msgid "Close"
+msgstr "Zavrieť"
+
+#: src/sp-application.c:174
 msgid "A system profiler"
 msgstr "Nástroj na tvorbu systémových profilov"
 
-#: src/sp-application.c:164
+#: src/sp-application.c:178
 msgid "translator-credits"
 msgstr "Dušan Kazik <prescott66@gmail.com>"
 
-#: src/sp-application.c:170
+#: src/sp-application.c:184
 msgid "Learn more about Sysprof"
 msgstr "Zistite viac o aplikácii Sysprof"
 
-#: src/sp-window.c:139
+#: src/sp-window.c:148
 #, c-format
 msgid "Samples: %u"
 msgstr "Vzorky: %u"
 
-#: src/sp-window.c:172
+#: src/sp-window.c:181
 msgid "[Memory Capture]"
 msgstr "[Záznam pamäte]"
 
-#: src/sp-window.c:185
+#: src/sp-window.c:194
 #, c-format
 msgid "%s - %s"
 msgstr "%s - %s"
 
-#: src/sp-window.c:219
+#: src/sp-window.c:230
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Nebol zozbieraný dostatok vzoriek na vygenerovanie grafu volaní"
 
-#: src/sp-window.c:273 src/sp-window.c:317
+#: src/sp-window.c:301 src/sp-window.c:345
 msgid "Record"
 msgstr "Zaznamenať"
 
-#: src/sp-window.c:293
+#: src/sp-window.c:321
 msgid "Stop"
 msgstr "Zastaviť"
 
-#: src/sp-window.c:298
+#: src/sp-window.c:326
 msgid "Recording…"
 msgstr "Zaznamenáva sa…"
 
-#: src/sp-window.c:309
+#: src/sp-window.c:337
 msgid "Building profile…"
 msgstr "Zostavuje sa profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:406
+#: src/sp-window.c:438
 msgid "Stopping…"
 msgstr "Zastavuje sa…"
 
-#: src/sp-window.c:555
+#: src/sp-window.c:590
 msgid "Save Capture As"
 msgstr "Uloženie záznamu ako"
 
-#: src/sp-window.c:558 src/sp-window.c:931
-msgid "Cancel"
-msgstr "Zrušiť"
-
-#: src/sp-window.c:559
+#: src/sp-window.c:593
 msgid "Save"
 msgstr "Uložiť"
 
-#: src/sp-window.c:591
+#: src/sp-window.c:594 src/sp-window.c:1000
+msgid "Cancel"
+msgstr "Zrušiť"
+
+#: src/sp-window.c:624
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Vyskytla sa chyba pri pokuse o uloženie vášho záznamu: %s"
 
-#: src/sp-window.c:898
+#: src/sp-window.c:969
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr "Súbor „%s“ sa nepodarilo otvoriť. Podporované sú iba lokálne súbory."
 
-#: src/sp-window.c:926
+#: src/sp-window.c:996
 msgid "Open Capture"
 msgstr "Otvorenie záznamu"
 
-#: src/sp-window.c:938
+#: src/sp-window.c:1003
 msgid "Sysprof Captures"
 msgstr "Záznamy aplikácie Sysprof"
 
-#: src/sp-window.c:943
+#: src/sp-window.c:1008
 msgid "All Files"
 msgstr "Všetky súbory"
 

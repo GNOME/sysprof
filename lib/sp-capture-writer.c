@@ -375,6 +375,9 @@ sp_capture_writer_new_from_fd (int   fd,
   g_assert (fd != -1);
   g_assert (buffer_size % getpagesize() == 0);
 
+  if (ftruncate (fd, 0) != 0)
+    return NULL;
+
   self = g_new0 (SpCaptureWriter, 1);
   self->ref_count = 1;
   self->fd = fd;

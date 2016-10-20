@@ -1,0 +1,6 @@
+{
+global:
+  sp_*;
+local:
+  *;
+};

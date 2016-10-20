@@ -1,0 +1,11 @@
+option('enable_gtk', type: 'boolean')
+option('with_sysprofd', type: 'combo',
+  choices: ['host', 'bundled', 'none'],
+  value: 'bundled',
+)
+option('systemdunitdir', type: 'string',
+  description: 'Directory for systemd service files'
+)
+option('debugdir', type: 'string',
+  description: 'Look for global separate debug info in this path'
+)

@@ -1,3 +1,18 @@
+Overview of changes in Sysprof 3.22.2
+=====================================
+
+Changes since 3.22.1
+
+ * ftruncate() when creating a capture in case we overwrite a previous
+   capture file. This ensures we don't leave junk at the end of the
+   capture.
+ * Handle EAGAIN when writin the opportunistic end-time header.
+ * Capture cursor should short circuit when no read delegate was found.
+
+Translations:
+
+ * Czech and Slovak translations were updated.
+
 Overview of changes in Sysprof 3.22.1
 =====================================
 

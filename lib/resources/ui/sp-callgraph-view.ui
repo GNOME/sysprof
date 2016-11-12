@@ -146,14 +146,6 @@
                     <property name="sizing">fixed</property>
                     <property name="sort-column-id">0</property>
                     <property name="title" translatable="yes">Descendants</property>
-                    <child>
-                      <object class="GtkCellRendererText">
-                        <property name="ellipsize">middle</property>
-                      </object>
-                      <attributes>
-                        <attribute name="text">0</attribute>
-                      </attributes>
-                    </child>
                   </object>
                 </child>
                 <child>

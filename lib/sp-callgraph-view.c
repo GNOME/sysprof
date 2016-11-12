@@ -796,6 +796,12 @@ sp_callgraph_view_init (SpCallgraphView *self)
                     G_CALLBACK (descendants_view_move_cursor_cb),
                     NULL);
 
+  cell = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+                       "ellipsize", PANGO_ELLIPSIZE_MIDDLE,
+                       "xalign", 0.0f,
+                       NULL);
+  gtk_tree_view_column_pack_start (priv->descendants_name_column, cell, TRUE);
+  gtk_tree_view_column_add_attribute (priv->descendants_name_column, cell, "text", 0);
 
   cell = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
                        "foreground", "#666666",

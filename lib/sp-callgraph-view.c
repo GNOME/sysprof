@@ -526,7 +526,7 @@ sp_callgraph_view_set_node (SpCallgraphView *self,
                               COLUMN_POINTER, &item,
                               -1);
 
-          if (item == node)
+          if (item != NULL && item->data == node->data)
             {
               GtkTreeSelection *selection;
 

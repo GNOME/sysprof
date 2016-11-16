@@ -25,6 +25,8 @@ G_BEGIN_DECLS
 
 #define SP_TYPE_VISUALIZER_TICKS (sp_visualizer_ticks_get_type())
 
+typedef struct _SpVisualizerTicks SpVisualizerTicks __attribute__((aligned(8)));
+
 G_DECLARE_FINAL_TYPE (SpVisualizerTicks, sp_visualizer_ticks, SP, VISUALIZER_TICKS, GtkDrawingArea)
 
 GtkWidget *sp_visualizer_ticks_new            (void);

@@ -25,6 +25,8 @@ G_BEGIN_DECLS
 
 #define SP_TYPE_ZOOM_MANAGER (sp_zoom_manager_get_type())
 
+typedef struct _SpZoomManager SpZoomManager __attribute__((aligned(8)));
+
 G_DECLARE_FINAL_TYPE (SpZoomManager, sp_zoom_manager, SP, ZOOM_MANAGER, GObject)
 
 SpZoomManager *sp_zoom_manager_new              (void);

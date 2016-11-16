@@ -32,7 +32,7 @@ struct _SpZoomManager
   gdouble min_zoom;
   gdouble max_zoom;
   gdouble zoom;
-} __attribute__((aligned(8)));
+};
 
 enum {
   PROP_0,
@@ -108,7 +108,7 @@ sp_zoom_manager_get_property (GObject    *object,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-  SpZoomManager *self = (SpZoomManager *)object;
+  SpZoomManager *self = SP_ZOOM_MANAGER (object);
 
   switch (prop_id)
     {
@@ -143,7 +143,7 @@ sp_zoom_manager_set_property (GObject      *object,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-  SpZoomManager *self = (SpZoomManager *)object;
+  SpZoomManager *self = SP_ZOOM_MANAGER (object);
 
   switch (prop_id)
     {

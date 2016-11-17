@@ -212,6 +212,8 @@ sp_window_build_profile_cb (GObject      *object,
   g_assert (SP_IS_WINDOW (self));
   g_assert (G_IS_ASYNC_RESULT (result));
 
+  gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), TRUE);
+
   if (!sp_profile_generate_finish (profile, result, &error))
     {
       /* If we were cancelled while updating the selection, ignore the failure */
@@ -256,6 +258,8 @@ sp_window_build_profile (SpWindow *self)
   sp_profile_set_reader (profile, self->reader);
 
   self->refilter_cancellable = g_cancellable_new ();
+
+  gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), FALSE);
 
   sp_profile_generate (profile,
                        self->refilter_cancellable,

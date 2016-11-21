@@ -433,8 +433,12 @@ sp_capture_writer_new_from_fd (int   fd,
   nowstr = g_time_val_to_iso8601 (&tv);
 
   header = sp_capture_writer_allocate (self, &header_len);
-  if (!header)
-    return NULL;
+
+  if (header == NULL)
+    {
+      sp_capture_writer_finalize (self);
+      return NULL;
+    }
 
   header->magic = SP_CAPTURE_MAGIC;
   header->version = 1;

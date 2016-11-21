@@ -101,6 +101,24 @@ G_DEFINE_BOXED_TYPE (SpCaptureWriter, sp_capture_writer,
                      sp_capture_writer_ref, sp_capture_writer_unref)
 #endif
 
+static inline void
+sp_capture_writer_frame_init (SpCaptureFrame     *frame_,
+                              gint                len,
+                              gint                cpu,
+                              GPid                pid,
+                              gint64              time_,
+                              SpCaptureFrameType  type)
+{
+  g_assert (frame_ != NULL);
+
+  frame_->len = len;
+  frame_->cpu = cpu;
+  frame_->pid = pid;
+  frame_->time = time_;
+  frame_->type = type;
+  frame_->padding = 0;
+}
+
 static void
 sp_capture_writer_finalize (SpCaptureWriter *self)
 {
@@ -191,6 +209,30 @@ sp_capture_writer_ensure_space_for (SpCaptureWriter *self,
   return TRUE;
 }
 
+static inline gpointer
+sp_capture_writer_allocate (SpCaptureWriter *self,
+                            gsize           *len)
+{
+  gpointer p;
+
+  g_assert (self != NULL);
+  g_assert (len != NULL);
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+
+  sp_capture_writer_realign (len);
+
+  if (!sp_capture_writer_ensure_space_for (self, *len))
+    return NULL;
+
+  p = (gpointer)&self->buf[self->pos];
+
+  self->pos += *len;
+
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+
+  return p;
+}
+
 static gboolean
 sp_capture_writer_flush_jitmap (SpCaptureWriter *self)
 {
@@ -209,11 +251,12 @@ sp_capture_writer_flush_jitmap (SpCaptureWriter *self)
 
   sp_capture_writer_realign (&len);
 
-  jitmap.frame.len = len;
-  jitmap.frame.cpu = -1;
-  jitmap.frame.pid = getpid ();
-  jitmap.frame.time = SP_CAPTURE_CURRENT_TIME;
-  jitmap.frame.type = SP_CAPTURE_FRAME_JITMAP;
+  sp_capture_writer_frame_init (&jitmap.frame,
+                                len,
+                                -1,
+                                getpid (),
+                                SP_CAPTURE_CURRENT_TIME,
+                                SP_CAPTURE_FRAME_JITMAP);
   jitmap.n_jitmaps = self->addr_hash_size;
 
   if (sizeof jitmap != write (self->fd, &jitmap, sizeof jitmap))
@@ -368,6 +411,7 @@ sp_capture_writer_new_from_fd (int   fd,
   SpCaptureWriter *self;
   SpCaptureFileHeader *header;
   GTimeVal tv;
+  gsize header_len = sizeof(*header);
 
   if (buffer_size == 0)
     buffer_size = DEFAULT_BUFFER_SIZE;
@@ -388,7 +432,10 @@ sp_capture_writer_new_from_fd (int   fd,
   g_get_current_time (&tv);
   nowstr = g_time_val_to_iso8601 (&tv);
 
-  header = (SpCaptureFileHeader *)(gpointer)self->buf;
+  header = sp_capture_writer_allocate (self, &header_len);
+  if (!header)
+    return NULL;
+
   header->magic = SP_CAPTURE_MAGIC;
   header->version = 1;
 #ifdef G_LITTLE_ENDIAN
@@ -401,8 +448,6 @@ sp_capture_writer_new_from_fd (int   fd,
   header->time = SP_CAPTURE_CURRENT_TIME;
   header->end_time = 0;
   memset (header->suffix, 0, sizeof header->suffix);
-
-  self->pos += sizeof *header;
 
   if (!sp_capture_writer_flush_data (self))
     {
@@ -460,25 +505,20 @@ sp_capture_writer_add_map (SpCaptureWriter *self,
     filename = "";
 
   g_assert (self != NULL);
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
   g_assert (filename != NULL);
 
   len = sizeof *ev + strlen (filename) + 1;
 
-  sp_capture_writer_realign (&len);
-
-  if (!sp_capture_writer_ensure_space_for (self, len))
+  ev = (SpCaptureMap *)sp_capture_writer_allocate (self, &len);
+  if (!ev)
     return FALSE;
 
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
-
-  ev = (SpCaptureMap *)(gpointer)&self->buf[self->pos];
-  ev->frame.len = len;
-  ev->frame.cpu = cpu;
-  ev->frame.pid = pid;
-  ev->frame.time = time;
-  ev->frame.type = SP_CAPTURE_FRAME_MAP;
-  ev->frame.padding = 0;
+  sp_capture_writer_frame_init (&ev->frame,
+                                len,
+                                cpu,
+                                pid,
+                                time,
+                                SP_CAPTURE_FRAME_MAP);
   ev->start = start;
   ev->end = end;
   ev->offset = offset;
@@ -486,10 +526,6 @@ sp_capture_writer_add_map (SpCaptureWriter *self,
 
   g_strlcpy (ev->filename, filename, len - sizeof *ev);
   ev->filename[len - sizeof *ev - 1] = '\0';
-
-  self->pos += ev->frame.len;
-
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
   self->stat.frame_count[SP_CAPTURE_FRAME_MAP]++;
 
@@ -528,32 +564,23 @@ sp_capture_writer_add_process (SpCaptureWriter *self,
     cmdline = "";
 
   g_assert (self != NULL);
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
   g_assert (cmdline != NULL);
 
   len = sizeof *ev + strlen (cmdline) + 1;
 
-  sp_capture_writer_realign (&len);
-
-  if (!sp_capture_writer_ensure_space_for (self, len))
+  ev = (SpCaptureProcess *)sp_capture_writer_allocate (self, &len);
+  if (!ev)
     return FALSE;
 
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
-
-  ev = (SpCaptureProcess *)(gpointer)&self->buf[self->pos];
-  ev->frame.len = len;
-  ev->frame.cpu = cpu;
-  ev->frame.pid = pid;
-  ev->frame.time = time;
-  ev->frame.type = SP_CAPTURE_FRAME_PROCESS;
-  ev->frame.padding = 0;
+  sp_capture_writer_frame_init (&ev->frame,
+                                len,
+                                cpu,
+                                pid,
+                                time,
+                                SP_CAPTURE_FRAME_PROCESS);
 
   g_strlcpy (ev->cmdline, cmdline, len - sizeof *ev);
   ev->cmdline[len - sizeof *ev - 1] = '\0';
-
-  self->pos += ev->frame.len;
-
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
   self->stat.frame_count[SP_CAPTURE_FRAME_PROCESS]++;
 
@@ -572,31 +599,22 @@ sp_capture_writer_add_sample (SpCaptureWriter        *self,
   gsize len;
 
   g_assert (self != NULL);
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
   len = sizeof *ev + (n_addrs * sizeof (SpCaptureAddress));
 
-  sp_capture_writer_realign (&len);
-
-  if (!sp_capture_writer_ensure_space_for (self, len))
+  ev = (SpCaptureSample *)sp_capture_writer_allocate (self, &len);
+  if (!ev)
     return FALSE;
 
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
-
-  ev = (SpCaptureSample *)(gpointer)&self->buf[self->pos];
-  ev->frame.len = len;
-  ev->frame.cpu = cpu;
-  ev->frame.pid = pid;
-  ev->frame.time = time;
-  ev->frame.type = SP_CAPTURE_FRAME_SAMPLE;
-  ev->frame.padding = 0;
+  sp_capture_writer_frame_init (&ev->frame,
+                                len,
+                                cpu,
+                                pid,
+                                time,
+                                SP_CAPTURE_FRAME_SAMPLE);
   ev->n_addrs = n_addrs;
 
   memcpy (ev->addrs, addrs, (n_addrs * sizeof (SpCaptureAddress)));
-
-  self->pos += ev->frame.len;
-
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
   self->stat.frame_count[SP_CAPTURE_FRAME_SAMPLE]++;
 
@@ -614,27 +632,18 @@ sp_capture_writer_add_fork (SpCaptureWriter *self,
   gsize len = sizeof *ev;
 
   g_assert (self != NULL);
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
-  sp_capture_writer_realign (&len);
-
-  if (!sp_capture_writer_ensure_space_for (self, len))
+  ev = (SpCaptureFork *)sp_capture_writer_allocate (self, &len);
+  if (!ev)
     return FALSE;
 
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
-
-  ev = (SpCaptureFork *)(gpointer)&self->buf[self->pos];
-  ev->frame.len = len;
-  ev->frame.cpu = cpu;
-  ev->frame.pid = pid;
-  ev->frame.time = time;
-  ev->frame.type = SP_CAPTURE_FRAME_FORK;
-  ev->frame.padding = 0;
+  sp_capture_writer_frame_init (&ev->frame,
+                                len,
+                                cpu,
+                                pid,
+                                time,
+                                SP_CAPTURE_FRAME_FORK);
   ev->child_pid = child_pid;
-
-  self->pos += ev->frame.len;
-
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
   self->stat.frame_count[SP_CAPTURE_FRAME_FORK]++;
 
@@ -651,26 +660,17 @@ sp_capture_writer_add_exit (SpCaptureWriter *self,
   gsize len = sizeof *ev;
 
   g_assert (self != NULL);
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
-  sp_capture_writer_realign (&len);
-
-  if (!sp_capture_writer_ensure_space_for (self, len))
+  ev = (SpCaptureExit *)sp_capture_writer_allocate (self, &len);
+  if (!ev)
     return FALSE;
 
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
-
-  ev = (SpCaptureExit *)(gpointer)&self->buf[self->pos];
-  ev->frame.len = len;
-  ev->frame.cpu = cpu;
-  ev->frame.pid = pid;
-  ev->frame.time = time;
-  ev->frame.type = SP_CAPTURE_FRAME_EXIT;
-  ev->frame.padding = 0;
-
-  self->pos += ev->frame.len;
-
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+  sp_capture_writer_frame_init (&ev->frame,
+                                len,
+                                cpu,
+                                pid,
+                                time,
+                                SP_CAPTURE_FRAME_EXIT);
 
   self->stat.frame_count[SP_CAPTURE_FRAME_EXIT]++;
 
@@ -687,28 +687,19 @@ sp_capture_writer_add_timestamp (SpCaptureWriter *self,
   gsize len = sizeof *ev;
 
   g_assert (self != NULL);
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
-  sp_capture_writer_realign (&len);
-
-  if (!sp_capture_writer_ensure_space_for (self, len))
+  ev = (SpCaptureTimestamp *)sp_capture_writer_allocate (self, &len);
+  if (!ev)
     return FALSE;
 
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+  sp_capture_writer_frame_init (&ev->frame,
+                                len,
+                                cpu,
+                                pid,
+                                time,
+                                SP_CAPTURE_FRAME_TIMESTAMP);
 
-  ev = (SpCaptureTimestamp *)(gpointer)&self->buf[self->pos];
-  ev->frame.len = len;
-  ev->frame.cpu = cpu;
-  ev->frame.pid = pid;
-  ev->frame.time = time;
-  ev->frame.type = SP_CAPTURE_FRAME_TIMESTAMP;
-  ev->frame.padding = 0;
-
-  self->pos += ev->frame.len;
-
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
-
-  self->stat.frame_count[SP_CAPTURE_FRAME_TIMESTAMP]++;
+    self->stat.frame_count[SP_CAPTURE_FRAME_TIMESTAMP]++;
 
   return TRUE;
 }
@@ -1020,36 +1011,27 @@ sp_capture_writer_define_counters (SpCaptureWriter        *self,
 
   g_assert (self != NULL);
   g_assert (counters != NULL);
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
   if (n_counters == 0)
     return TRUE;
 
   len = sizeof *def + (sizeof *counters * n_counters);
 
-  sp_capture_writer_realign (&len);
-
-  if (!sp_capture_writer_ensure_space_for (self, len))
+  def = (SpCaptureFrameCounterDefine *)sp_capture_writer_allocate (self, &len);
+  if (!def)
     return FALSE;
 
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
-
-  def = (SpCaptureFrameCounterDefine *)&self->buf[self->pos];
-  def->frame.len = len;
-  def->frame.cpu = cpu;
-  def->frame.pid = pid;
-  def->frame.time = time;
-  def->frame.type = SP_CAPTURE_FRAME_CTRDEF;
-  def->frame.padding = 0;
+  sp_capture_writer_frame_init (&def->frame,
+                                len,
+                                cpu,
+                                pid,
+                                time,
+                                SP_CAPTURE_FRAME_CTRDEF);
   def->padding = 0;
   def->n_counters = n_counters;
 
   for (i = 0; i < n_counters; i++)
     def->counters[i] = counters[i];
-
-  self->pos += def->frame.len;
-
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
   self->stat.frame_count[SP_CAPTURE_FRAME_CTRDEF]++;
 
@@ -1075,7 +1057,6 @@ sp_capture_writer_set_counters (SpCaptureWriter             *self,
   g_assert (self != NULL);
   g_assert (counters_ids != NULL);
   g_assert (values != NULL || !n_counters);
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
   if (n_counters == 0)
     return TRUE;
@@ -1087,20 +1068,16 @@ sp_capture_writer_set_counters (SpCaptureWriter             *self,
 
   len = sizeof *set + (n_groups * sizeof (SpCaptureCounterValues));
 
-  sp_capture_writer_realign (&len);
-
-  if (!sp_capture_writer_ensure_space_for (self, len))
+  set = (SpCaptureFrameCounterSet *)sp_capture_writer_allocate (self, &len);
+  if (!set)
     return FALSE;
 
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
-
-  set = (SpCaptureFrameCounterSet *)&self->buf[self->pos];
-  set->frame.len = len;
-  set->frame.cpu = cpu;
-  set->frame.pid = pid;
-  set->frame.time = time;
-  set->frame.type = SP_CAPTURE_FRAME_CTRSET;
-  set->frame.padding = 0;
+  sp_capture_writer_frame_init (&set->frame,
+                                len,
+                                cpu,
+                                pid,
+                                time,
+                                SP_CAPTURE_FRAME_CTRSET);
   set->padding = 0;
   set->n_values = n_groups;
 
@@ -1117,10 +1094,6 @@ sp_capture_writer_set_counters (SpCaptureWriter             *self,
           group++;
         }
     }
-
-  self->pos += set->frame.len;
-
-  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
 
   self->stat.frame_count[SP_CAPTURE_FRAME_CTRSET]++;
 

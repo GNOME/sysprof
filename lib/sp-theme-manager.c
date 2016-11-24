@@ -176,6 +176,8 @@ static void
 sp_theme_manager_init (SpThemeManager *self)
 {
   self->theme_resources = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, theme_resource_free);
+
+  gtk_icon_theme_add_resource_path (gtk_icon_theme_get_default (), "/org/gnome/sysprof/icons");
 }
 
 /**

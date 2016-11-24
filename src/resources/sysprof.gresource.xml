@@ -5,14 +5,6 @@
     <file>gtk/menus.ui</file>
     <file>gtk/help-overlay.ui</file>
 
-    <!-- Application icons -->
-    <file alias="icons/16x16/apps/sysprof.png">../../data/icons/16x16/apps/sysprof.png</file>
-    <file alias="icons/24x24/apps/sysprof.png">../../data/icons/24x24/apps/sysprof.png</file>
-    <file alias="icons/32x32/apps/sysprof.png">../../data/icons/32x32/apps/sysprof.png</file>
-    <file alias="icons/48x48/apps/sysprof.png">../../data/icons/48x48/apps/sysprof.png</file>
-    <file alias="icons/256x256/apps/sysprof.png">../../data/icons/256x256/apps/sysprof.png</file>
-    <file alias="icons/scalable/apps/sysprof-symbolic.svg">../../data/icons/scalable/apps/sysprof-symbolic.svg</file>
-
     <!-- Theme overrides -->
     <file compressed="true">theme/shared.css</file>
 

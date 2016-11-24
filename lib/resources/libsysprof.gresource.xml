@@ -5,6 +5,14 @@
     <file compressed="true">css/SpVisualizerView-Adwaita.css</file>
     <file compressed="true">css/SpVisualizerView-Adwaita-dark.css</file>
 
+    <!-- Application icons -->
+    <file alias="icons/16x16/apps/sysprof.png">../../data/icons/16x16/apps/sysprof.png</file>
+    <file alias="icons/24x24/apps/sysprof.png">../../data/icons/24x24/apps/sysprof.png</file>
+    <file alias="icons/32x32/apps/sysprof.png">../../data/icons/32x32/apps/sysprof.png</file>
+    <file alias="icons/48x48/apps/sysprof.png">../../data/icons/48x48/apps/sysprof.png</file>
+    <file alias="icons/256x256/apps/sysprof.png">../../data/icons/256x256/apps/sysprof.png</file>
+    <file alias="icons/scalable/apps/sysprof-symbolic.svg">../../data/icons/scalable/apps/sysprof-symbolic.svg</file>
+
     <file compressed="true">ui/sp-callgraph-view.ui</file>
     <file compressed="true">ui/sp-empty-state-view.ui</file>
     <file compressed="true">ui/sp-failed-state-view.ui</file>

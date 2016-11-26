@@ -89,11 +89,14 @@ main (gint   argc,
   GSource *gsource;
   gchar *command = NULL;
   gboolean version = FALSE;
+  gboolean force = FALSE;
   int pid = -1;
   int fd;
+  int flags;
   GOptionEntry entries[] = {
     { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task"), N_("PID") },
     { "command", 'c', 0, G_OPTION_ARG_STRING, &command, N_("Run a command and profile the process"), N_("COMMAND") },
+    { "force", 'f', 0, G_OPTION_ARG_NONE, &force, N_("Force overwrite the capture file") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
   };
@@ -151,7 +154,19 @@ main (gint   argc,
   if (argc == 2)
     filename = argv[1];
 
-  if (-1 == (fd = g_open (filename, O_CREAT | O_RDWR | O_CLOEXEC, 0640)))
+  flags = O_CREAT | O_RDWR | O_CLOEXEC;
+  if (!force)
+    {
+      /* if we don't force overwrite we want to ensure the file doesn't exist
+       * and never overwrite it. O_EXCL will prevent opening in that case */
+      flags |= O_EXCL;
+      if (g_file_test (filename, G_FILE_TEST_EXISTS))
+        {
+          g_printerr (_("%s exists. Use --force to overwrite\n"), filename);
+          return EXIT_FAILURE;
+        }
+    }
+  if (-1 == (fd = g_open (filename, flags, 0640)))
     {
       g_printerr ("Failed to open %s\n", filename);
       return EXIT_FAILURE;

@@ -1,3 +1,20 @@
+Overview of changes in Sysprof 3.22.3
+=====================================
+
+Changes since 3.22.2
+
+  * Fix expansion of function text in callgraph.
+  * Fix jump-to-function in callees list.
+  * Disable record button while generating callgraph profile.
+  * Ensure sysprof icons are available form libsysprof-ui-2.
+  * sysprof-cli requires --force to overwrite previous capture. [Hubert Figuière]
+  * Reduce code duplication in capture frame initialization. [Vito Caputo]
+
+Translations:
+
+  * Brazilian Portuguese and Polish translations were updated.
+    [Enrico Nicoletto, Piotr Drąg]
+
 Overview of changes in Sysprof 3.22.2
 =====================================
 

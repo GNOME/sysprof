@@ -1,5 +1,6 @@
 bin_PROGRAMS = sysprof-cli
 noinst_PROGRAMS = sysprof-dump
+EXTRA_DIST = meson.build
 
 AM_CPPFLAGS = \
 	$(GIO_CFLAGS) \

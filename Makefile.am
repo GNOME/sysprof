@@ -1,6 +1,14 @@
 SUBDIRS = daemon data help lib po src tools tests
 
-EXTRA_DIST = AUTHORS tap-test COPYING.gpl-2
+EXTRA_DIST = \
+	AUTHORS \
+	tap-test \
+	COPYING.gpl-2 \
+	meson.build \
+	meson_options.txt \
+	meson_post_install.sh \
+	config.h.meson \
+	po/meson.build
 
 DISTCHECK_CONFIGURE_FLAGS = --with-sysprofd=bundled --with-systemdsystemunitdir='$(prefix)/etc/systemd/system'
 

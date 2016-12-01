@@ -1,5 +1,6 @@
 TESTS =
 TEST_PROGS =
+EXTRA_DIST = meson.build
 
 test_cflags = \
 	$(GIO_CFLAGS) \

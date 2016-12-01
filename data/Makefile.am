@@ -23,6 +23,7 @@ EXTRA_DIST = \
 	org.gnome.Sysprof2.desktop \
 	$(mime_DATA) \
 	$(gsettings_SCHEMAS) \
+	meson.build \
 	$(NULL)
 
 DISTCLEANFILES = $(pkgconfig_DATA)

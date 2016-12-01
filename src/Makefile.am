@@ -33,7 +33,7 @@ sysprof_LDADD = \
 	$(top_builddir)/lib/libsysprof-ui-@API_VERSION@.la \
 	$(NULL)
 
-EXTRA_DIST =
+EXTRA_DIST = meson.build
 CLEANFILES =
 DISTCLEANFILES =
 BUILT_SOURCES =

@@ -43,16 +43,21 @@
 
 typedef struct
 {
-  SpCallgraphProfile  *profile;
+  SpCallgraphProfile    *profile;
+  SpCallgraphProfile    *compare_to;
 
-  GtkTreeView         *callers_view;
-  GtkTreeView         *functions_view;
-  GtkTreeView         *descendants_view;
-  GtkTreeViewColumn   *descendants_name_column;
+  GtkTreeView           *callers_view;
+  GtkTreeView           *functions_view;
+  GtkTreeView           *descendants_view;
+  GtkTreeViewColumn     *descendants_name_column;
 
-  GQueue              *history;
+  GtkTreeViewColumn     *change_column;
+  SpCellRendererPercent *change_cell;
 
-  guint                profile_size;
+  GQueue                *history;
+
+  guint                  profile_size;
+  guint                  compare_size;
 } SpCallgraphViewPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (SpCallgraphView, sp_callgraph_view, GTK_TYPE_BIN)
@@ -105,6 +110,33 @@ sp_callgraph_view_get_profile_size (SpCallgraphView *self)
     size += node->total;
 
   priv->profile_size = size;
+
+  return size;
+}
+
+static guint
+sp_callgraph_view_get_compare_to_size (SpCallgraphView *self)
+{
+  SpCallgraphViewPrivate *priv = sp_callgraph_view_get_instance_private (self);
+  StackStash *stash;
+  StackNode *node;
+  guint size = 0;
+
+  g_assert (SP_IS_CALLGRAPH_VIEW (self));
+
+  if (priv->compare_size != 0)
+    return priv->compare_size;
+
+  if (priv->compare_to == NULL)
+    return 0;
+
+  if (NULL == (stash = sp_callgraph_profile_get_stash (priv->compare_to)))
+    return 0;
+
+  for (node = stack_stash_get_root (stash); node != NULL; node = node->siblings)
+    size += node->total;
+
+  priv->compare_size = size;
 
   return size;
 }
@@ -750,9 +782,11 @@ sp_callgraph_view_class_init (SpCallgraphViewClass *klass)
                                                "/org/gnome/sysprof/ui/sp-callgraph-view.ui");
 
   gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, callers_view);
-  gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, functions_view);
-  gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, descendants_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, change_cell);
+  gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, change_column);
   gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, descendants_name_column);
+  gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, descendants_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SpCallgraphView, functions_view);
 
   bindings = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
@@ -965,19 +999,18 @@ sp_callgraph_view_update_descendants (SpCallgraphView *self,
                               G_TYPE_POINTER);
 
   if (priv->profile != NULL)
-  {
-    StackStash *stash;
+    {
+      StackStash *stash = sp_callgraph_profile_get_stash (priv->profile);
 
-    stash = sp_callgraph_profile_get_stash (priv->profile);
-    if (stash != NULL)
-      {
-        Descendant *tree;
+      if (stash != NULL)
+        {
+          Descendant *tree;
 
-        tree = build_tree (node);
-        if (tree != NULL)
-          append_to_tree_and_free (self, stash, store, tree, NULL);
-      }
-  }
+          tree = build_tree (node);
+          if (tree != NULL)
+            append_to_tree_and_free (self, stash, store, tree, NULL);
+        }
+    }
 
   gtk_tree_view_set_model (priv->descendants_view, GTK_TREE_MODEL (store));
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store),
@@ -1080,4 +1113,95 @@ sp_callgraph_view_get_n_functions (SpCallgraphView *self)
     ret = gtk_tree_model_iter_n_children (model, NULL);
 
   return ret;
+}
+
+static gboolean
+nodes_equal (StackNode *node,
+             StackNode *other)
+{
+  return TRUE;
+}
+
+static StackNode *
+find_compare_to_node (SpCallgraphView *self,
+                      StackNode       *node)
+{
+  SpCallgraphViewPrivate *priv = sp_callgraph_view_get_instance_private (self);
+  StackStash *other;
+  StackNode *iter;
+  gpointer resolved;
+
+  other = sp_callgraph_profile_get_stash (priv->compare_to);
+  resolved = sp_callgraph_profile_resolve_name (priv->compare_to, (const gchar *)node->data);
+
+  if (resolved == 0)
+    return NULL;
+
+  iter = stack_stash_find_node (other, resolved);
+
+  if (iter == NULL)
+    return NULL;
+
+  for (; iter != NULL; iter = iter->next)
+    {
+      if (nodes_equal (node, iter))
+        return iter;
+    }
+
+  return NULL;
+}
+
+static void
+compare_profiles_cell_data_func (GtkTreeViewColumn *tree_column,
+                                 GtkCellRenderer   *cell,
+                                 GtkTreeModel      *model,
+                                 GtkTreeIter       *iter,
+                                 gpointer           user_data)
+{
+  SpCallgraphView *self = user_data;
+  StackNode *node = NULL;
+  gdouble change = 0.0;
+  gdouble total = 0.0;
+
+  gtk_tree_model_get (model, iter,
+                      COLUMN_POINTER, &node,
+                      COLUMN_TOTAL, &total,
+                      -1);
+
+  if G_LIKELY (node != NULL)
+    {
+      StackNode *compare_to_node = find_compare_to_node (self, node);
+      guint profile_size = sp_callgraph_view_get_compare_to_size (self);
+
+      if (compare_to_node != NULL)
+        {
+          gdouble other_total = 100 * compare_to_node->total / (gdouble)profile_size;
+
+          //g_print ("%lf %lf\n", total, other_total);
+
+          change = total - other_total;
+        }
+    }
+
+  sp_cell_renderer_percent_set_percent (SP_CELL_RENDERER_PERCENT (cell), change);
+}
+
+void
+sp_callgraph_view_compare_to (SpCallgraphView    *self,
+                              SpCallgraphProfile *compare_to)
+{
+  SpCallgraphViewPrivate *priv = sp_callgraph_view_get_instance_private (self);
+
+  g_return_if_fail (SP_IS_CALLGRAPH_VIEW (self));
+  g_return_if_fail (SP_IS_CALLGRAPH_PROFILE (compare_to));
+
+  if (g_set_object (&priv->compare_to, compare_to))
+    {
+      gtk_tree_view_column_set_visible (priv->change_column, TRUE);
+      gtk_tree_view_column_set_cell_data_func (priv->change_column,
+                                               GTK_CELL_RENDERER (priv->change_cell),
+                                               compare_profiles_cell_data_func,
+                                               self,
+                                               NULL);
+    }
 }

@@ -32,6 +32,8 @@ SpProfile *sp_callgraph_profile_new                (void);
 SpProfile *sp_callgraph_profile_new_with_selection (SpSelection        *selection);
 GQuark     sp_callgraph_profile_get_tag            (SpCallgraphProfile *self,
                                                     const gchar        *symbol);
+gpointer   sp_callgraph_profile_resolve_name       (SpCallgraphProfile *self,
+                                                    const gchar        *name);
 
 G_END_DECLS
 

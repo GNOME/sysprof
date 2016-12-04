@@ -46,11 +46,14 @@ struct _SpCellRendererPercentClass
   gpointer padding[4];
 };
 
-GType            sp_cell_renderer_percent_get_type    (void);
-GtkCellRenderer *sp_cell_renderer_percent_new         (void);
-gdouble          sp_cell_renderer_percent_get_percent (SpCellRendererPercent *self);
-void             sp_cell_renderer_percent_set_percent (SpCellRendererPercent *self,
-                                                       gdouble                percent);
+GType            sp_cell_renderer_percent_get_type        (void);
+GtkCellRenderer *sp_cell_renderer_percent_new             (void);
+gboolean         sp_cell_renderer_percent_get_ignore_zero (SpCellRendererPercent *self);
+void             sp_cell_renderer_percent_set_ignore_zero (SpCellRendererPercent *self,
+                                                           gboolean               ignore_zero);
+gdouble          sp_cell_renderer_percent_get_percent     (SpCellRendererPercent *self);
+void             sp_cell_renderer_percent_set_percent     (SpCellRendererPercent *self,
+                                                           gdouble                percent);
 
 G_END_DECLS
 

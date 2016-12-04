@@ -149,6 +149,18 @@
                   </object>
                 </child>
                 <child>
+                  <object class="GtkTreeViewColumn" id="change_column">
+                    <property name="expand">false</property>
+                    <property name="title" translatable="yes">Change</property>
+                    <property name="visible">false</property>
+                    <child>
+                      <object class="SpCellRendererPercent" id="change_cell">
+                        <property name="ignore-zero">true</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
                   <object class="GtkTreeViewColumn" id="descendants_self_column">
                     <property name="expand">false</property>
                     <property name="sizing">fixed</property>

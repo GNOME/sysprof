@@ -76,8 +76,10 @@ enum {
 
 static guint signals [N_SIGNALS];
 
-static void sp_window_set_profiler (SpWindow   *self,
-                                    SpProfiler *profiler);
+static void sp_window_set_profiler    (SpWindow   *self,
+                                       SpProfiler *profiler);
+static void sp_window_compare_to_file (SpWindow   *self,
+                                       GFile      *file);
 
 static void
 sp_window_notify_user (SpWindow       *self,
@@ -153,6 +155,42 @@ sp_window_update_stats (gpointer data)
   return G_SOURCE_CONTINUE;
 }
 
+static GFile *
+sp_window_request_file (SpWindow    *self,
+                        const gchar *title)
+{
+  GtkFileChooserNative *dialog;
+  GtkFileFilter *filter;
+  GFile *ret = NULL;
+  gint response;
+
+  g_assert (SP_IS_WINDOW (self));
+
+  dialog = gtk_file_chooser_native_new (title,
+                                        GTK_WINDOW (self),
+                                        GTK_FILE_CHOOSER_ACTION_OPEN,
+                                        _("Open"),
+                                        _("Cancel"));
+
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name (filter, _("Sysprof Captures"));
+  gtk_file_filter_add_pattern (filter, "*.syscap");
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name (filter, _("All Files"));
+  gtk_file_filter_add_pattern (filter, "*");
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+  response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
+
+  if (response == GTK_RESPONSE_ACCEPT)
+    ret = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+
+  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dialog));
+
+  return ret;
+}
 
 static void
 sp_window_update_subtitle (SpWindow *self)
@@ -315,6 +353,7 @@ sp_window_set_state (SpWindow      *self,
       gtk_widget_set_visible (GTK_WIDGET (self->stat_label), FALSE);
       g_clear_pointer (&self->reader, sp_capture_reader_unref);
       sp_window_action_set (self, "close-capture", "enabled", FALSE, NULL);
+      sp_window_action_set (self, "compare-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "save-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "screenshot", "enabled", FALSE, NULL);
       profiler = sp_local_profiler_new ();
@@ -332,6 +371,7 @@ sp_window_set_state (SpWindow      *self,
       g_clear_pointer (&self->reader, sp_capture_reader_unref);
       sp_callgraph_view_set_profile (self->callgraph_view, NULL);
       sp_window_action_set (self, "close-capture", "enabled", FALSE, NULL);
+      sp_window_action_set (self, "compare-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "save-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "screenshot", "enabled", FALSE, NULL);
       break;
@@ -340,6 +380,7 @@ sp_window_set_state (SpWindow      *self,
       gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), FALSE);
       gtk_label_set_label (self->subtitle, _("Building profile…"));
       sp_window_action_set (self, "close-capture", "enabled", FALSE, NULL);
+      sp_window_action_set (self, "compare-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "save-capture", "enabled", FALSE, NULL);
       sp_window_action_set (self, "screenshot", "enabled", FALSE, NULL);
       sp_window_build_profile (self);
@@ -355,6 +396,7 @@ sp_window_set_state (SpWindow      *self,
       sp_window_update_stats (self);
       sp_window_update_subtitle (self);
       sp_window_action_set (self, "close-capture", "enabled", TRUE, NULL);
+      sp_window_action_set (self, "compare-capture", "enabled", TRUE, NULL);
       sp_window_action_set (self, "save-capture", "enabled", TRUE, NULL);
       sp_window_action_set (self, "screenshot", "enabled", TRUE, NULL);
       profiler = sp_local_profiler_new ();
@@ -567,6 +609,23 @@ sp_window_open_capture (GSimpleAction *action,
   g_assert (SP_IS_WINDOW (self));
 
   sp_window_open_from_dialog (self);
+}
+
+static void
+sp_window_compare_capture (GSimpleAction *action,
+                           GVariant      *variant,
+                           gpointer       user_data)
+{
+  SpWindow *self = user_data;
+  g_autoptr(GFile) file = NULL;
+
+  g_assert (G_IS_SIMPLE_ACTION (action));
+  g_assert (variant == NULL);
+  g_assert (SP_IS_WINDOW (self));
+
+  file = sp_window_request_file (self, _("Open Capture for Comparison"));
+
+  sp_window_compare_to_file (self, file);
 }
 
 static void
@@ -837,6 +896,7 @@ sp_window_init (SpWindow *self)
   static GActionEntry action_entries[] = {
     { "close-capture", sp_window_close_capture },
     { "open-capture",  sp_window_open_capture },
+    { "compare-capture",  sp_window_compare_capture },
     { "save-capture",  sp_window_save_capture },
     { "screenshot",  sp_window_screenshot },
   };
@@ -991,37 +1051,90 @@ sp_window_get_state (SpWindow *self)
 void
 sp_window_open_from_dialog (SpWindow *self)
 {
-  GtkFileChooserNative *dialog;
-  GtkFileFilter *filter;
-  gint response;
+  g_autoptr(GFile) file = NULL;
 
   g_assert (SP_IS_WINDOW (self));
 
-  dialog = gtk_file_chooser_native_new (_("Open Capture"),
-                                        GTK_WINDOW (self),
-                                        GTK_FILE_CHOOSER_ACTION_OPEN,
-                                        _("Open"),
-                                        _("Cancel"));
+  file = sp_window_request_file (self, _("Open Capture"));
 
-  filter = gtk_file_filter_new ();
-  gtk_file_filter_set_name (filter, _("Sysprof Captures"));
-  gtk_file_filter_add_pattern (filter, "*.syscap");
-  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+  if (file != NULL)
+    sp_window_open (self, file);
+}
 
-  filter = gtk_file_filter_new ();
-  gtk_file_filter_set_name (filter, _("All Files"));
-  gtk_file_filter_add_pattern (filter, "*");
-  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+static void
+sp_window_compare_to_generate_cb (GObject      *object,
+                                  GAsyncResult *result,
+                                  gpointer      user_data)
+{
+  SpCallgraphProfile *profile = (SpCallgraphProfile *)object;
+  g_autoptr(SpWindow) self = user_data;
+  g_autoptr(GError) error = NULL;
 
-  response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
+  g_assert (SP_IS_WINDOW (self));
+  g_assert (SP_IS_CALLGRAPH_PROFILE (profile));
 
-  if (response == GTK_RESPONSE_ACCEPT)
+  if (!sp_profile_generate_finish (SP_PROFILE (profile), result, &error))
     {
-      g_autoptr(GFile) file = NULL;
-
-      file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-      sp_window_open (self, file);
+      sp_window_notify_user (self,
+                             GTK_MESSAGE_ERROR,
+                             "%s", error->message);
+      return;
     }
 
-  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dialog));
+  sp_callgraph_view_compare_to (self->callgraph_view, SP_CALLGRAPH_PROFILE (profile));
+}
+
+static void
+sp_window_compare_to_read_cb (GObject      *object,
+                              GAsyncResult *result,
+                              gpointer      user_data)
+{
+  SpWindow *self = (SpWindow *)object;
+  g_autoptr(SpProfile) profile = NULL;
+  g_autoptr(SpCaptureReader) reader = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SP_IS_WINDOW (self));
+  g_assert (G_IS_TASK (result));
+
+  reader = g_task_propagate_pointer (G_TASK (result), &error);
+
+  if (reader == NULL)
+    {
+      sp_window_notify_user (self,
+                             GTK_MESSAGE_ERROR,
+                             "%s", error->message);
+      return;
+    }
+
+  profile = sp_callgraph_profile_new ();
+  sp_profile_set_reader (profile, reader);
+
+  sp_profile_generate (profile,
+                       NULL,
+                       sp_window_compare_to_generate_cb,
+                       g_object_ref (self));
+}
+
+static void
+sp_window_compare_to_file (SpWindow *self,
+                           GFile    *file)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SP_IS_WINDOW (self));
+  g_return_if_fail (G_IS_FILE (file));
+
+  if (!g_file_is_native (file))
+    {
+      sp_window_notify_user (self,
+                             GTK_MESSAGE_ERROR,
+                             _("The file \"%s\" could not be opened. Only local files are supported."),
+                             g_file_get_uri (file));
+      return;
+    }
+
+  task = g_task_new (self, NULL, sp_window_compare_to_read_cb, NULL);
+  g_task_set_task_data (task, g_object_ref (file), g_object_unref);
+  g_task_run_in_thread (task, sp_window_open_worker);
 }

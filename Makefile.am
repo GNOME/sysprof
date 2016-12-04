@@ -35,6 +35,7 @@ GITIGNOREFILES = \
 	ABOUT-NLS \
 	aclocal.m4 \
 	build-aux \
+	build \
 	ChangeLog \
 	config \
 	config.h.in \

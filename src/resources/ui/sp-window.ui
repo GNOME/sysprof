@@ -280,6 +280,20 @@
         </child>
         <child>
           <object class="GtkModelButton">
+            <property name="action-name">win.compare-capture</property>
+            <property name="text" translatable="yes">Open for comparison</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="orientation">horizontal</property>
+            <property name="margin-top">6</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton">
             <property name="action-name">win.save-capture</property>
             <property name="text" translatable="yes">Save As</property>
             <property name="visible">true</property>

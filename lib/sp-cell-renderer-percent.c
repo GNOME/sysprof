@@ -23,11 +23,13 @@
 typedef struct
 {
   gdouble percent;
+  guint ignore_zero : 1;
 } SpCellRendererPercentPrivate;
 
 enum {
   PROP_0,
   PROP_PERCENT,
+  PROP_IGNORE_ZERO,
   N_PROPS
 };
 
@@ -49,6 +51,10 @@ sp_cell_renderer_percent_get_property (GObject    *object,
       g_value_set_double (value, sp_cell_renderer_percent_get_percent (self));
       break;
 
+    case PROP_IGNORE_ZERO:
+      g_value_set_boolean (value, sp_cell_renderer_percent_get_ignore_zero (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -66,6 +72,10 @@ sp_cell_renderer_percent_set_property (GObject      *object,
     {
     case PROP_PERCENT:
       sp_cell_renderer_percent_set_percent (self, g_value_get_double (value));
+      break;
+
+    case PROP_IGNORE_ZERO:
+      sp_cell_renderer_percent_set_ignore_zero (self, g_value_get_boolean (value));
       break;
 
     default:
@@ -89,6 +99,13 @@ sp_cell_renderer_percent_class_init (SpCellRendererPercentClass *klass)
                          100.0,
                          0.0,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_IGNORE_ZERO] =
+    g_param_spec_boolean ("ignore-zero",
+                          "Ignore Zero",
+                          "If Zero should be rendered as empty",
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -116,7 +133,7 @@ sp_cell_renderer_percent_set_percent (SpCellRendererPercent *self,
   SpCellRendererPercentPrivate *priv = sp_cell_renderer_percent_get_instance_private (self);
 
   g_return_if_fail (SP_IS_CELL_RENDERER_PERCENT (self));
-  g_return_if_fail (percent >= 0.0);
+  g_return_if_fail (percent >= -100.0);
   g_return_if_fail (percent <= 100.0);
 
   if (percent != priv->percent)
@@ -125,11 +142,45 @@ sp_cell_renderer_percent_set_percent (SpCellRendererPercent *self,
 
       priv->percent = percent;
 
-      g_snprintf (text, sizeof text, "%.2lf<span size='smaller'><span size='smaller'> </span>%%</span>", percent);
-      text [sizeof text - 1] = '\0';
+      if (priv->percent != 0.0 || !priv->ignore_zero)
+        {
+          g_snprintf (text, sizeof text, "%.2lf<span size='smaller'><span size='smaller'> </span>%%</span>", percent);
+          text [sizeof text - 1] = '\0';
+        }
+      else
+        {
+          text[0] = '\0';
+        }
 
       g_object_set (self, "markup", text, NULL);
 
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_PERCENT]);
+    }
+}
+
+gboolean
+sp_cell_renderer_percent_get_ignore_zero (SpCellRendererPercent *self)
+{
+  SpCellRendererPercentPrivate *priv = sp_cell_renderer_percent_get_instance_private (self);
+
+  g_return_val_if_fail (SP_IS_CELL_RENDERER_PERCENT (self), FALSE);
+
+  return priv->ignore_zero;
+}
+
+void
+sp_cell_renderer_percent_set_ignore_zero (SpCellRendererPercent *self,
+                                          gboolean               ignore_zero)
+{
+  SpCellRendererPercentPrivate *priv = sp_cell_renderer_percent_get_instance_private (self);
+
+  g_return_if_fail (SP_IS_CELL_RENDERER_PERCENT (self));
+
+  ignore_zero = !!ignore_zero;
+
+  if (ignore_zero != priv->ignore_zero)
+    {
+      priv->ignore_zero = ignore_zero;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_IGNORE_ZERO]);
     }
 }

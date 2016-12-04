@@ -54,19 +54,19 @@
 
 struct _SpCallgraphProfile
 {
-  GObject                parent_instance;
+  GObject          parent_instance;
 
-  SpCaptureReader       *reader;
-  SpSelection *selection;
-  StackStash            *stash;
-  GStringChunk          *symbols;
-  GHashTable            *tags;
+  SpCaptureReader *reader;
+  SpSelection     *selection;
+  StackStash      *stash;
+  GStringChunk    *symbols;
+  GHashTable      *tags;
 };
 
 typedef struct
 {
-  SpCaptureReader       *reader;
-  SpSelection *selection;
+  SpCaptureReader *reader;
+  SpSelection     *selection;
 } Generate;
 
 static void profile_iface_init (SpProfileInterface *iface);
@@ -503,4 +503,22 @@ sp_callgraph_profile_get_tag (SpCallgraphProfile *self,
   g_return_val_if_fail (SP_IS_CALLGRAPH_PROFILE (self), 0);
 
   return GPOINTER_TO_SIZE (g_hash_table_lookup (self->tags, symbol));
+}
+
+gpointer
+sp_callgraph_profile_resolve_name (SpCallgraphProfile *self,
+                                   const gchar        *name)
+{
+  GHashTable *const_table;
+
+  g_return_val_if_fail (SP_IS_CALLGRAPH_PROFILE (self), 0);
+
+  /*
+   * XXX: This is a total hack until we implement string chunk
+   *      with our own fronting hsahtable. But we know the hashtable
+   *      is the first field of the structure.
+   */
+  const_table = *(GHashTable **)self->symbols;
+
+  return g_hash_table_lookup (const_table, name);
 }

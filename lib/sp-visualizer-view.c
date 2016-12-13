@@ -431,7 +431,7 @@ sp_visualizer_view_get_property (GObject    *object,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  SpVisualizerView *self = (SpVisualizerView *)object;
+  SpVisualizerView *self = SP_VISUALIZER_VIEW (object);
 
   switch (prop_id)
     {
@@ -454,7 +454,7 @@ sp_visualizer_view_set_property (GObject      *object,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  SpVisualizerView *self = (SpVisualizerView *)object;
+  SpVisualizerView *self = SP_VISUALIZER_VIEW (object);
 
   switch (prop_id)
     {

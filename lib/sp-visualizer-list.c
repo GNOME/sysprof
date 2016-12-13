@@ -79,7 +79,7 @@ sp_visualizer_list_get_property (GObject    *object,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  SpVisualizerList *self = (SpVisualizerList *)object;
+  SpVisualizerList *self = SP_VISUALIZER_LIST (object);
 
   switch (prop_id)
     {
@@ -102,7 +102,7 @@ sp_visualizer_list_set_property (GObject      *object,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  SpVisualizerList *self = (SpVisualizerList *)object;
+  SpVisualizerList *self = SP_VISUALIZER_LIST (object);
 
   switch (prop_id)
     {

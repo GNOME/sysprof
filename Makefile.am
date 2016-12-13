@@ -6,7 +6,7 @@ EXTRA_DIST = \
 	COPYING.gpl-2 \
 	meson.build \
 	meson_options.txt \
-	meson_post_install.sh \
+	build-aux/meson_post_install.sh \
 	config.h.meson \
 	po/meson.build
 

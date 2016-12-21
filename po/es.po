@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-07-13 07:49+0000\n"
-"PO-Revision-Date: 2016-07-22 11:48+0200\n"
+"POT-Creation-Date: 2016-11-26 23:21+0000\n"
+"PO-Revision-Date: 2016-12-21 10:28+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
-"Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
+"Language-Team: es <gnome-es-list@gnome.org>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.6\n"
 
 #: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:167
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -32,7 +32,8 @@ msgstr "Perfilador"
 msgid "Profile an application or entire system."
 msgstr "Perfilar una aplicación o el sistema completo."
 
-#: data/org.gnome.Sysprof2.desktop:9
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: data/org.gnome.Sysprof2.desktop:10
 msgid "sysprof"
 msgstr "sysprof"
 
@@ -98,7 +99,7 @@ msgstr "Funciones"
 
 #: lib/resources/ui/sp-callgraph-view.ui:40
 #: lib/resources/ui/sp-callgraph-view.ui:101
-#: lib/resources/ui/sp-callgraph-view.ui:164
+#: lib/resources/ui/sp-callgraph-view.ui:156
 msgid "Self"
 msgstr "Propio"
 
@@ -115,7 +116,7 @@ msgstr "Llamadores"
 msgid "Descendants"
 msgstr "Descendientes"
 
-#: lib/resources/ui/sp-callgraph-view.ui:180
+#: lib/resources/ui/sp-callgraph-view.ui:172
 msgid "Cumulative"
 msgstr "Acumulativo"
 
@@ -143,32 +144,32 @@ msgstr "Perfilar el sistema _completo"
 msgid "Search"
 msgstr "Buscar"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:119
+#: lib/resources/ui/sp-profiler-menu-button.ui:121
 msgid "Existing Process"
 msgstr "Proceso existente"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:129
+#: lib/resources/ui/sp-profiler-menu-button.ui:131
 msgid "Command Line"
 msgstr "Línea de comandos"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:148
+#: lib/resources/ui/sp-profiler-menu-button.ui:150
 msgid "Environment"
 msgstr "Entorno"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:162
+#: lib/resources/ui/sp-profiler-menu-button.ui:164
 msgid "Inherit current environment"
 msgstr "Entorno actual heredado"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:180
+#: lib/resources/ui/sp-profiler-menu-button.ui:182
 msgid "Key"
 msgstr "Clave"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:195
+#: lib/resources/ui/sp-profiler-menu-button.ui:197
 msgid "Value"
 msgstr "Valor"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:213
-#: lib/sp-profiler-menu-button.c:116
+#: lib/resources/ui/sp-profiler-menu-button.ui:215
+#: lib/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Nuevo proceso"
 
@@ -182,7 +183,7 @@ msgid ""
 msgstr ""
 "¿Sabía que puede usar <a href=\"help:sysprof\">sysprof-cli</a> para grabar?"
 
-#: lib/sp-callgraph-profile.c:318
+#: lib/sp-callgraph-profile.c:414
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr "Sysprof no ha podido generar un gráfico desde el sistema de captura."
 
@@ -200,16 +201,16 @@ msgid "An error occurred while attempting to access performance counters: %s"
 msgstr ""
 "Ha ocurrido un error al intentar acceder a los contadores de rendimiento: %s"
 
-#: lib/sp-profiler-menu-button.c:114 lib/sp-profiler-menu-button.c:129
+#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Todos los procesos"
 
-#: lib/sp-profiler-menu-button.c:135
+#: lib/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Proceso %d"
 
-#: lib/sp-profiler-menu-button.c:140
+#: lib/sp-profiler-menu-button.c:142
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
@@ -219,6 +220,81 @@ msgstr[1] "%u procesos"
 #: lib/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
 msgstr "Los argumentos de línea de comandos proporcionados no son válidos"
+
+#: src/resources/gtk/help-overlay.ui:8
+#| msgid "Sysprof Captures"
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Atajos de Sysprof"
+
+#: src/resources/gtk/help-overlay.ui:12
+#| msgid "Recording…"
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Grabando"
+
+#: src/resources/gtk/help-overlay.ui:16
+#| msgid "Recording…"
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Detener grabación"
+
+#: src/resources/gtk/help-overlay.ui:25
+#| msgid "Callers"
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Gráfico"
+
+#: src/resources/gtk/help-overlay.ui:29
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Expandir función"
+
+#: src/resources/gtk/help-overlay.ui:30
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "Muestra los descendientes directos de la función del gráfico"
+
+#: src/resources/gtk/help-overlay.ui:37
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Contraer función"
+
+#: src/resources/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr ""
+"Oculta todos los descendientes del gráfico debajo de la función seleccionada"
+
+#: src/resources/gtk/help-overlay.ui:45
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "Saltar a la función"
+
+#: src/resources/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr "Selecciona la función o el archivo como parte superior del gráfico"
+
+#: src/resources/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Visualizadores"
+
+#: src/resources/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Acercar"
+
+#: src/resources/gtk/help-overlay.ui:66
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Alejar"
+
+#: src/resources/gtk/help-overlay.ui:73
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Restablecer ampliación"
 
 #: src/resources/gtk/menus.ui:6
 msgid "_New Window"
@@ -237,26 +313,14 @@ msgid "Help"
 msgstr "Ayuda"
 
 #: src/resources/gtk/menus.ui:26
+msgid "Keyboard Shortcuts"
+msgstr "Atajos de teclado"
+
+#: src/resources/gtk/menus.ui:30
 msgid "_Quit"
 msgstr "_Salir"
 
-#: src/resources/gtk/menus.ui:34 src/sp-window.c:932
-msgid "Open"
-msgstr "Abrir"
-
-#: src/resources/gtk/menus.ui:40
-msgid "Save As"
-msgstr "Guardar como"
-
-#: src/resources/gtk/menus.ui:46
-msgid "Screenshot"
-msgstr "Captura de pantalla"
-
-#: src/resources/gtk/menus.ui:52
-msgid "Close"
-msgstr "Cerrar"
-
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:281
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
 msgid "Not running"
 msgstr "No está en ejecución"
 
@@ -264,121 +328,162 @@ msgstr "No está en ejecución"
 msgid "_Record"
 msgstr "_Grabar"
 
-#: src/resources/ui/sp-window.ui:117
+#: src/resources/ui/sp-window.ui:118
 msgid "_Close"
 msgstr "_Cerrar"
 
-#: src/sp-application.c:160
+#: src/resources/ui/sp-window.ui:174
+msgid "CPU"
+msgstr "CPU"
+
+#: src/resources/ui/sp-window.ui:222
+msgid "Zoom out (Ctrl+-)"
+msgstr "Alejar (Ctrl+-)"
+
+#: src/resources/ui/sp-window.ui:238
+msgid "Reset zoom level (Ctrl+0)"
+msgstr "Restablecer nivel de ampliación (Ctrl+0)"
+
+#: src/resources/ui/sp-window.ui:252
+msgid "Zoom in (Ctrl++)"
+msgstr "Acercar (Ctrl++)"
+
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
+msgid "Open"
+msgstr "Abrir"
+
+#: src/resources/ui/sp-window.ui:284
+msgid "Save As"
+msgstr "Guardar como"
+
+#: src/resources/ui/sp-window.ui:297
+msgid "Screenshot"
+msgstr "Captura de pantalla"
+
+#: src/resources/ui/sp-window.ui:310
+msgid "Close"
+msgstr "Cerrar"
+
+#: src/sp-application.c:174
 msgid "A system profiler"
 msgstr "Un perfilador del sistema"
 
-#: src/sp-application.c:164
+#: src/sp-application.c:178
 msgid "translator-credits"
 msgstr "Daniel Mustieles <daniel.mustieles@gmail.com>, 2016"
 
-#: src/sp-application.c:170
+#: src/sp-application.c:184
 msgid "Learn more about Sysprof"
 msgstr "Saber más sobre Sysprof"
 
-#: src/sp-window.c:139
+#: src/sp-window.c:148
 #, c-format
 msgid "Samples: %u"
 msgstr "Muestras: %u"
 
-#: src/sp-window.c:172
+#: src/sp-window.c:181
 msgid "[Memory Capture]"
 msgstr "[Captura de memoria]"
 
-#: src/sp-window.c:185
+#: src/sp-window.c:194
 #, c-format
 msgid "%s - %s"
 msgstr "%s - %s"
 
-#: src/sp-window.c:219
+#: src/sp-window.c:232
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "No se han recopilado suficientes muestras para generar un gráfico"
 
-#: src/sp-window.c:273 src/sp-window.c:317
+#: src/sp-window.c:305 src/sp-window.c:349
 msgid "Record"
 msgstr "Grabar"
 
-#: src/sp-window.c:293
+#: src/sp-window.c:325
 msgid "Stop"
 msgstr "Detener"
 
-#: src/sp-window.c:298
+#: src/sp-window.c:330
 msgid "Recording…"
 msgstr "Grabando…"
 
-#: src/sp-window.c:309
+#: src/sp-window.c:341
 msgid "Building profile…"
 msgstr "Construyendo perfil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:406
+#: src/sp-window.c:442
 msgid "Stopping…"
 msgstr "Deteniendo…"
 
-#: src/sp-window.c:555
+#: src/sp-window.c:594
 msgid "Save Capture As"
 msgstr "Guardar captura como"
 
-#: src/sp-window.c:558 src/sp-window.c:931
-msgid "Cancel"
-msgstr "Cancelar"
-
-#: src/sp-window.c:559
+#: src/sp-window.c:597
 msgid "Save"
 msgstr "Guardar"
 
-#: src/sp-window.c:591
+#: src/sp-window.c:598 src/sp-window.c:1004
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/sp-window.c:628
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Ha ocurrido un error al intentar guardar la captura: %s"
 
-#: src/sp-window.c:898
+#: src/sp-window.c:973
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr ""
 "No se pudo abrir el archivo «%s». Sólo se soportan los archivos locales."
 
-#: src/sp-window.c:926
+#: src/sp-window.c:1000
 msgid "Open Capture"
 msgstr "Abrir captura"
 
-#: src/sp-window.c:938
+#: src/sp-window.c:1007
 msgid "Sysprof Captures"
 msgstr "Capturas de Sysprof"
 
-#: src/sp-window.c:943
+#: src/sp-window.c:1012
 msgid "All Files"
 msgstr "Todos los archivos"
 
-#: tools/sysprof-cli.c:95
+#: tools/sysprof-cli.c:97
 msgid "Make sysprof specific to a task"
 msgstr "Hacer que sysprof sea específico de una tarea"
 
-#: tools/sysprof-cli.c:95
+#: tools/sysprof-cli.c:97
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:96
+#: tools/sysprof-cli.c:98
 msgid "Run a command and profile the process"
 msgstr "Ejecutar un comando y perfila el proceso"
 
-#: tools/sysprof-cli.c:96
+#: tools/sysprof-cli.c:98
 msgid "COMMAND"
 msgstr "COMANDO"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
+msgid "Force overwrite the capture file"
+msgstr "Forzar la sobrescritura del archivo de captura"
+
+#: tools/sysprof-cli.c:100
 msgid "Print the sysprof-cli version and exit"
 msgstr "Mostrar la versión de sysprof-cli y salir"
 
-#: tools/sysprof-cli.c:103
+#: tools/sysprof-cli.c:106
 msgid "[CAPTURE_FILE] - Sysprof"
 msgstr "[ARCHIVO_CAPTURA] - Sysprof"
 
-#: tools/sysprof-cli.c:122
+#: tools/sysprof-cli.c:125
 #, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Se han pasado demasiados argumentos a sysprof-cli:"
+
+#: tools/sysprof-cli.c:165
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s existe. Use --force para sobrescribir\n"

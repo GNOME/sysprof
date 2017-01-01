@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-10-10 10:23+0000\n"
-"PO-Revision-Date: 2016-10-16 20:49+0200\n"
+"POT-Creation-Date: 2016-11-26 23:21+0000\n"
+"PO-Revision-Date: 2017-01-01 21:13+0100\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
 #: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
@@ -99,7 +99,7 @@ msgstr "Funkcie"
 
 #: lib/resources/ui/sp-callgraph-view.ui:40
 #: lib/resources/ui/sp-callgraph-view.ui:101
-#: lib/resources/ui/sp-callgraph-view.ui:164
+#: lib/resources/ui/sp-callgraph-view.ui:156
 msgid "Self"
 msgstr "Samotný"
 
@@ -116,7 +116,7 @@ msgstr "Volajúci"
 msgid "Descendants"
 msgstr "Podradené procesy"
 
-#: lib/resources/ui/sp-callgraph-view.ui:180
+#: lib/resources/ui/sp-callgraph-view.ui:172
 msgid "Cumulative"
 msgstr "Súčet"
 
@@ -321,7 +321,7 @@ msgstr "Klávesové skratky"
 msgid "_Quit"
 msgstr "_Ukončiť"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:309
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
 msgid "Not running"
 msgstr "Nie je spustený"
 
@@ -339,17 +339,17 @@ msgstr "Procesor"
 
 #: src/resources/ui/sp-window.ui:222
 msgid "Zoom out (Ctrl+-)"
-msgstr ""
+msgstr "Zmenšenie (Ctrl+-)"
 
 #: src/resources/ui/sp-window.ui:238
 msgid "Reset zoom level (Ctrl+0)"
-msgstr ""
+msgstr "Obnovenie úrovne priblíženia (Ctrl+0)"
 
 #: src/resources/ui/sp-window.ui:252
 msgid "Zoom in (Ctrl++)"
-msgstr ""
+msgstr "Zväčšenie (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:999
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
 msgid "Open"
 msgstr "Otvoriť"
 
@@ -391,90 +391,99 @@ msgstr "[Záznam pamäte]"
 msgid "%s - %s"
 msgstr "%s - %s"
 
-#: src/sp-window.c:230
+#: src/sp-window.c:232
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Nebol zozbieraný dostatok vzoriek na vygenerovanie grafu volaní"
 
-#: src/sp-window.c:301 src/sp-window.c:345
+#: src/sp-window.c:305 src/sp-window.c:349
 msgid "Record"
 msgstr "Zaznamenať"
 
-#: src/sp-window.c:321
+#: src/sp-window.c:325
 msgid "Stop"
 msgstr "Zastaviť"
 
-#: src/sp-window.c:326
+#: src/sp-window.c:330
 msgid "Recording…"
 msgstr "Zaznamenáva sa…"
 
-#: src/sp-window.c:337
+#: src/sp-window.c:341
 msgid "Building profile…"
 msgstr "Zostavuje sa profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:438
+#: src/sp-window.c:442
 msgid "Stopping…"
 msgstr "Zastavuje sa…"
 
-#: src/sp-window.c:590
+#: src/sp-window.c:594
 msgid "Save Capture As"
 msgstr "Uloženie záznamu ako"
 
-#: src/sp-window.c:593
+#: src/sp-window.c:597
 msgid "Save"
 msgstr "Uložiť"
 
-#: src/sp-window.c:594 src/sp-window.c:1000
+#: src/sp-window.c:598 src/sp-window.c:1004
 msgid "Cancel"
 msgstr "Zrušiť"
 
-#: src/sp-window.c:624
+#: src/sp-window.c:628
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Vyskytla sa chyba pri pokuse o uloženie vášho záznamu: %s"
 
-#: src/sp-window.c:969
+#: src/sp-window.c:973
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr "Súbor „%s“ sa nepodarilo otvoriť. Podporované sú iba lokálne súbory."
 
-#: src/sp-window.c:996
+#: src/sp-window.c:1000
 msgid "Open Capture"
 msgstr "Otvorenie záznamu"
 
-#: src/sp-window.c:1003
+#: src/sp-window.c:1007
 msgid "Sysprof Captures"
 msgstr "Záznamy aplikácie Sysprof"
 
-#: src/sp-window.c:1008
+#: src/sp-window.c:1012
 msgid "All Files"
 msgstr "Všetky súbory"
 
-#: tools/sysprof-cli.c:95
+#: tools/sysprof-cli.c:97
 msgid "Make sysprof specific to a task"
 msgstr "Učiní program sysprof špecifickým danej úlohe"
 
-#: tools/sysprof-cli.c:95
+#: tools/sysprof-cli.c:97
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:96
+#: tools/sysprof-cli.c:98
 msgid "Run a command and profile the process"
 msgstr "Spustí príkaz a vytvorí profil procesu"
 
-#: tools/sysprof-cli.c:96
+#: tools/sysprof-cli.c:98
 msgid "COMMAND"
 msgstr "PRÍKAZ"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
+msgid "Force overwrite the capture file"
+msgstr ""
+
+#: tools/sysprof-cli.c:100
 msgid "Print the sysprof-cli version and exit"
 msgstr "Vypíše verziu programu sysprof-cli a skončí"
 
-#: tools/sysprof-cli.c:103
+#: tools/sysprof-cli.c:106
 msgid "[CAPTURE_FILE] - Sysprof"
 msgstr "[SÚBOR_ZÁZNAMU] - Sysprof"
 
-#: tools/sysprof-cli.c:122
+#: tools/sysprof-cli.c:125
 #, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Programu sysprof-cli bolo odovzdaných príliš veľa parametrov:"
+
+#: tools/sysprof-cli.c:165
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s existuje. Použite parameter --force na prepísanie\n"

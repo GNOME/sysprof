@@ -3,9 +3,6 @@ SUBDIRS = icons
 mimedir = $(datadir)/mime/packages
 mime_DATA = sysprof-mime.xml
 
-desktopdir = $(datadir)/applications
-desktop_DATA = org.gnome.Sysprof2.desktop
-
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = sysprof-$(API_VERSION).pc
 if ENABLE_GTK
@@ -19,6 +16,14 @@ gsettings_SCHEMAS = org.gnome.sysprof2.gschema.xml
 @GSETTINGS_RULES@
 
 
+%.desktop: %.desktop.in
+	$(AM_V_GEN)$(MSGFMT) --desktop --template $< -d $(top_srcdir)/po -o $@
+
+desktopdir = $(datadir)/applications
+desktop_in_files = org.gnome.Sysprof2.desktop.in
+desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+
+
 %.appdata.xml: %.appdata.xml.in
 	$(AM_V_GEN)$(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@
 
@@ -29,14 +34,14 @@ appstream_XML = $(appstream_in_files:.xml.in=.xml)
 
 EXTRA_DIST = \
 	sysprof.pc.in \
-	org.gnome.Sysprof2.desktop \
+	$(desktop_in_files) \
 	$(appstream_in_files) \
 	$(mime_DATA) \
 	$(gsettings_SCHEMAS) \
 	meson.build \
 	$(NULL)
 
-DISTCLEANFILES = $(pkgconfig_DATA) $(appstream_XML)
+DISTCLEANFILES = $(pkgconfig_DATA) $(appstream_XML) $(desktop_DATA)
 GITIGNOREFILES = $(dbusservice_DATA)
 
 

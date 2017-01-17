@@ -6,10 +6,6 @@ install_data('sysprof-mime.xml',
   install_dir: join_paths(datadir, 'mime/packages')
 )
 
-install_data('org.gnome.Sysprof2.desktop',
-  install_dir: join_paths(datadir, 'applications')
-)
-
 install_data('org.gnome.sysprof2.gschema.xml',
   install_dir: join_paths(datadir, 'glib-2.0/schemas')
 )
@@ -21,6 +17,14 @@ custom_target('appdata-file',
     command: [msgfmt, '--xml', '--template', '@INPUT@', '-d', podir, '-o', '@OUTPUT@'],
     install: true,
     install_dir: join_paths(datadir, 'appdata')
+)
+
+custom_target('desktop-file',
+    input: 'org.gnome.Sysprof2.desktop.in',
+    output: 'org.gnome.Sysprof2.desktop',
+    command: [msgfmt, '--desktop', '--template', '@INPUT@', '-d', podir, '-o', '@OUTPUT@'],
+    install: true,
+    install_dir: join_paths(datadir, 'applications')
 )
 
 pkgconf = configuration_data()

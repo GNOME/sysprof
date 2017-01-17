@@ -1,5 +1,6 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
+data/org.gnome.Sysprof2.appdata.xml.in
 data/org.gnome.Sysprof2.desktop
 data/org.gnome.sysprof2.gschema.xml
 lib/resources/ui/sp-callgraph-view.ui

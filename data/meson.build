@@ -1,4 +1,6 @@
 datadir = get_option('datadir')
+podir = join_paths(meson.source_root(), 'po')
+msgfmt = find_program('msgfmt')
 
 install_data('sysprof-mime.xml',
   install_dir: join_paths(datadir, 'mime/packages')
@@ -12,6 +14,14 @@ install_data('org.gnome.sysprof2.gschema.xml',
   install_dir: join_paths(datadir, 'glib-2.0/schemas')
 )
 
+# TODO: 0.37.0 adds i18n.merge_file()
+custom_target('appdata-file',
+    input: 'org.gnome.Sysprof2.appdata.xml.in',
+    output: 'org.gnome.Sysprof2.appdata.xml',
+    command: [msgfmt, '--xml', '--template', '@INPUT@', '-d', podir, '-o', '@OUTPUT@'],
+    install: true,
+    install_dir: join_paths(datadir, 'appdata')
+)
 
 pkgconf = configuration_data()
 pkgconf.set('VERSION', meson.project_version())

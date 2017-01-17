@@ -18,15 +18,25 @@ gsettings_SCHEMAS = org.gnome.sysprof2.gschema.xml
 
 @GSETTINGS_RULES@
 
+
+%.appdata.xml: %.appdata.xml.in
+	$(AM_V_GEN)$(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@
+
+@APPSTREAM_XML_RULES@
+appstream_in_files = org.gnome.Sysprof2.appdata.xml.in
+appstream_XML = $(appstream_in_files:.xml.in=.xml)
+
+
 EXTRA_DIST = \
 	sysprof.pc.in \
 	org.gnome.Sysprof2.desktop \
+	$(appstream_in_files) \
 	$(mime_DATA) \
 	$(gsettings_SCHEMAS) \
 	meson.build \
 	$(NULL)
 
-DISTCLEANFILES = $(pkgconfig_DATA)
+DISTCLEANFILES = $(pkgconfig_DATA) $(appstream_XML)
 GITIGNOREFILES = $(dbusservice_DATA)
 
 

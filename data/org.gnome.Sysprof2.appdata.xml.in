@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.gnome.Sysprof2.desktop</id>
+  <translation type="gettext">sysprof</translation>
+  <name>Sysprof</name>
+  <summary>Profiler for an application or entire system</summary>
+  <project_license>GPL-3.0+</project_license>
+  <project_group>GNOME</project_group>
+  <developer_name>The GNOME Foundation</developer_name>
+
+  <description>
+    <p>Sysprof allows you to profile applications to aid in debugging and optimization.</p>
+  </description>
+
+  <url type="homepage">https://wiki.gnome.org/Apps/Sysprof</url>
+  <url type="bugtracker">https://bugzilla.gnome.org/enter_bug.cgi?product=sysprof</url>
+  <url type="donation">https://www.gnome.org/friends</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://git.gnome.org/browse/sysprof/plain/data/screenshots/sysprof-main-window.png</image>
+    </screenshot>
+  </screenshots>
+
+  <kudos>
+    <kudo>AppMenu</kudo>
+    <kudo>HiDpiIcon</kudo>
+    <kudo>ModernToolkit</kudo>
+  </kudos>
+
+  <provides>
+    <binary>sysprof</binary>
+    <binary>sysprof-cli</binary>
+    <dbus type="system">org.gnome.Sysprof2</dbus>
+  </provides>
+
+  <releases>
+    <release version="3.22.2" date="2016-11-28"/>
+  </releases>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <update_contact>tingping_AT_tingping.se</update_contact>
+</component>

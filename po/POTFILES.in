@@ -3,6 +3,7 @@
 data/org.gnome.Sysprof2.appdata.xml.in
 data/org.gnome.Sysprof2.desktop.in
 data/org.gnome.sysprof2.gschema.xml
+data/org.gnome.sysprof2.policy.in
 lib/resources/ui/sp-callgraph-view.ui
 lib/resources/ui/sp-empty-state-view.ui
 lib/resources/ui/sp-failed-state-view.ui

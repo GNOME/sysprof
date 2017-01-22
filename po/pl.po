@@ -1,16 +1,16 @@
 # Polish translation for sysprof.
-# Copyright © 2016 the sysprof authors.
+# Copyright © 2016-2017 the sysprof authors.
 # This file is distributed under the same license as the sysprof package.
-# Piotr Drąg <piotrdrag@gmail.com>, 2016.
-# Aviary.pl <community-poland@mozilla.org>, 2016.
+# Piotr Drąg <piotrdrag@gmail.com>, 2016-2017.
+# Aviary.pl <community-poland@mozilla.org>, 2016-2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-11-26 23:21+0000\n"
-"PO-Revision-Date: 2016-11-27 17:30+0100\n"
+"POT-Creation-Date: 2017-01-18 22:19+0000\n"
+"PO-Revision-Date: 2017-01-22 21:38+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -20,21 +20,38 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
 
-#: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
+#: data/org.gnome.Sysprof2.appdata.xml.in:5
+#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
 #: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof2.desktop:5
+#: data/org.gnome.Sysprof2.appdata.xml.in:6
+msgid "Profiler for an application or entire system"
+msgstr "Profiler programów lub całego systemu"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "Fundacja GNOME"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof umożliwia profilowanie programów, aby wspomóc debugowanie "
+"i optymalizację."
+
+#: data/org.gnome.Sysprof2.desktop.in:5
 msgid "Profiler"
 msgstr "Profiler"
 
-#: data/org.gnome.Sysprof2.desktop:6
+#: data/org.gnome.Sysprof2.desktop.in:6
 msgid "Profile an application or entire system."
 msgstr "Profilowanie programu lub całego systemu"
 
 #. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: data/org.gnome.Sysprof2.desktop:10
+#: data/org.gnome.Sysprof2.desktop.in:10
 msgid "sysprof"
 msgstr "sysprof"
 
@@ -93,6 +110,16 @@ msgid ""
 msgstr ""
 "Ostatnio uruchomione środowisko, które zostanie ustawione w interfejsie po "
 "ponownym uruchomieniu."
+
+#: data/org.gnome.sysprof2.policy.in:13
+msgid "Open a perf event stream"
+msgstr "Otwarcie strumienia zdarzeń wydajności"
+
+#: data/org.gnome.sysprof2.policy.in:14
+msgid "Authentication is required to access system performance counters."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby uzyskać dostęp do liczników wydajności "
+"komputera."
 
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
@@ -370,8 +397,8 @@ msgstr "Profiler systemu"
 #: src/sp-application.c:178
 msgid "translator-credits"
 msgstr ""
-"Piotr Drąg <piotrdrag@gmail.com>, 2016\n"
-"Aviary.pl <community-poland@mozilla.org>, 2016"
+"Piotr Drąg <piotrdrag@gmail.com>, 2016-2017\n"
+"Aviary.pl <community-poland@mozilla.org>, 2016-2017"
 
 #: src/sp-application.c:184
 msgid "Learn more about Sysprof"

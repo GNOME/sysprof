@@ -1,15 +1,15 @@
 # Czech translation for sysprof.
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Marek Černocký <marek@manet.cz>, 2016.
+# Marek Černocký <marek@manet.cz>, 2016, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-11-26 23:21+0000\n"
-"PO-Revision-Date: 2016-12-20 11:07+0100\n"
+"POT-Creation-Date: 2017-01-18 22:19+0000\n"
+"PO-Revision-Date: 2017-02-11 10:46+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -19,21 +19,37 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Gtranslator 2.91.7\n"
 
-#: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
+#: data/org.gnome.Sysprof2.appdata.xml.in:5
+#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
 #: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof2.desktop:5
+#: data/org.gnome.Sysprof2.appdata.xml.in:6
+msgid "Profiler for an application or entire system"
+msgstr "Profiler pro aplikace nebo celý systém"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "Nadace GNOME"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof vám umožní profilovat aplikace za účelem ladění a optimalizace."
+
+#: data/org.gnome.Sysprof2.desktop.in:5
 msgid "Profiler"
 msgstr "Profiler"
 
-#: data/org.gnome.Sysprof2.desktop:6
+#: data/org.gnome.Sysprof2.desktop.in:6
 msgid "Profile an application or entire system."
 msgstr "Profilujte aplikace nebo celý systém."
 
 #. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: data/org.gnome.Sysprof2.desktop:10
+#: data/org.gnome.Sysprof2.desktop.in:10
 msgid "sysprof"
 msgstr "sysprof"
 
@@ -92,6 +108,14 @@ msgid ""
 msgstr ""
 "Poslední spuštěné prostředí, které bude nastaveno v uživatelském rozhraní po "
 "restartu aplikace."
+
+#: data/org.gnome.sysprof2.policy.in:13
+msgid "Open a perf event stream"
+msgstr "Otevřít záznam událostí perf"
+
+#: data/org.gnome.sysprof2.policy.in:14
+msgid "Authentication is required to access system performance counters."
+msgstr "Pro přístupu k počitadlům výkonu systému je zapotřebí ověření."
 
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"

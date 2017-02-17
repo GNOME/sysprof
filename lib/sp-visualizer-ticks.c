@@ -233,7 +233,7 @@ static gboolean
 sp_visualizer_ticks_draw (GtkWidget *widget,
                           cairo_t   *cr)
 {
-  SpVisualizerTicks *self = (SpVisualizerTicks *)widget;
+  SpVisualizerTicks *self = SP_VISUALIZER_TICKS (widget);
   GtkStyleContext *style;
   GtkAllocation alloc;
   GtkStateFlags state;

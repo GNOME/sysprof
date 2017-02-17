@@ -1,3 +1,17 @@
+Overview of changes in Sysprof 3.23.90
+======================================
+
+Changes since 3.22.3
+
+  * Build system support for Meson. This may become the preferred build system
+    for 3.26 based on feedback from distributions.
+  * Appdata support has been added
+  * Desktop file can be translated
+
+Translations:
+
+  * Brazilian Portuguese, Polish, Czech, Slovak, and Spanish.
+
 Overview of changes in Sysprof 3.22.3
 =====================================
 

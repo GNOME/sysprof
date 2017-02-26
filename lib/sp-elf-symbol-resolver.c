@@ -140,6 +140,10 @@ sp_elf_symbol_resolver_get_bin_file (SpElfSymbolResolver *self,
       /*
        * If we are in a new mount namespace, then rely on the sp_symbol_dirs
        * to find us a locate to resolve the file where the CRC will match.
+       *
+       * TODO: We need to translate the path here so that we can locate the
+       *       binary behind it (which then has links to the debug file in
+       *       the section header).
        */
       if (g_str_has_prefix (filename, "/newroot/"))
         alternate += strlen ("/newroot");

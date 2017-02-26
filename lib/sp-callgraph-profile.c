@@ -57,18 +57,16 @@ struct _SpCallgraphProfile
   GObject                parent_instance;
 
   SpCaptureReader       *reader;
-  SpSelection           *selection;
+  SpSelection *selection;
   StackStash            *stash;
   GStringChunk          *symbols;
-  GHashTable            *symbol_dirs;
   GHashTable            *tags;
 };
 
 typedef struct
 {
-  SpCaptureReader *reader;
-  SpSelection     *selection;
-  GHashTable      *symbol_dirs;
+  SpCaptureReader       *reader;
+  SpSelection *selection;
 } Generate;
 
 static void profile_iface_init (SpProfileInterface *iface);
@@ -83,20 +81,6 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
-
-static GHashTable *
-ht_copy (GHashTable *ht)
-{
-  GHashTable *copy = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  GHashTableIter iter;
-  gpointer k,v;
-
-  g_hash_table_iter_init (&iter, ht);
-  while (g_hash_table_iter_next (&iter, &k, &v))
-    g_hash_table_insert (copy, g_strdup (k), g_strdup (v));
-
-  return ht;
-}
 
 SpProfile *
 sp_callgraph_profile_new (void)
@@ -120,7 +104,6 @@ sp_callgraph_profile_finalize (GObject *object)
   g_clear_pointer (&self->symbols, g_string_chunk_free);
   g_clear_pointer (&self->stash, stack_stash_unref);
   g_clear_pointer (&self->reader, sp_capture_reader_unref);
-  g_clear_pointer (&self->symbol_dirs, g_hash_table_unref);
   g_clear_pointer (&self->tags, g_hash_table_unref);
   g_clear_object (&self->selection);
 
@@ -189,7 +172,6 @@ sp_callgraph_profile_init (SpCallgraphProfile *self)
 {
   self->symbols = g_string_chunk_new (getpagesize ());
   self->tags = g_hash_table_new (g_str_hash, g_str_equal);
-  self->symbol_dirs = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 }
 
 static void
@@ -243,7 +225,6 @@ sp_callgraph_profile_generate_worker (GTask        *task,
   g_autoptr(GHashTable) maps_by_pid = NULL;
   g_autoptr(GHashTable) cmdlines = NULL;
   g_autoptr(GPtrArray) resolvers = NULL;
-  g_autoptr(SpSymbolResolver) elf_resolver = NULL;
   SpCaptureFrameType type;
   StackStash *stash = NULL;
   StackStash *resolved_stash = NULL;
@@ -264,17 +245,9 @@ sp_callgraph_profile_generate_worker (GTask        *task,
   stash = stack_stash_new (NULL);
   resolved_stash = stack_stash_new (NULL);
 
-  /*
-   * If we are running inside a mount namespace, such as with flatpak, we might
-   * need to alter the sysroot to the checkout location of the container. That
-   * way we can resolve elf files from inside the mount namespace.
-   */
-  elf_resolver = sp_elf_symbol_resolver_new ();
-  sp_elf_symbol_resolver_set_symbol_dirs (SP_ELF_SYMBOL_RESOLVER (elf_resolver), gen->symbol_dirs);
-
   resolvers = g_ptr_array_new_with_free_func (g_object_unref);
   g_ptr_array_add (resolvers, sp_kernel_symbol_resolver_new ());
-  g_ptr_array_add (resolvers, g_steal_pointer (&elf_resolver));
+  g_ptr_array_add (resolvers, sp_elf_symbol_resolver_new ());
   g_ptr_array_add (resolvers, sp_jitmap_symbol_resolver_new ());
 
   for (j = 0; j < resolvers->len; j++)
@@ -448,12 +421,11 @@ cleanup:
 }
 
 static void
-generate_free (Generate *gen)
+generate_free (Generate *generate)
 {
-  g_clear_pointer (&gen->reader, sp_capture_reader_unref);
-  g_clear_pointer (&gen->symbol_dirs, g_hash_table_unref);
-  g_clear_object (&gen->selection);
-  g_slice_free (Generate, gen);
+  sp_capture_reader_unref (generate->reader);
+  g_clear_object (&generate->selection);
+  g_slice_free (Generate, generate);
 }
 
 static void
@@ -473,7 +445,6 @@ sp_callgraph_profile_generate (SpProfile           *profile,
   gen = g_slice_new0 (Generate);
   gen->reader = sp_capture_reader_copy (self->reader);
   gen->selection = sp_selection_copy (self->selection);
-  gen->symbol_dirs = ht_copy (self->symbol_dirs);
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_task_data (task, gen, (GDestroyNotify)generate_free);
@@ -523,16 +494,6 @@ sp_callgraph_profile_get_stash (SpCallgraphProfile *self)
   g_return_val_if_fail (SP_IS_CALLGRAPH_PROFILE (self), NULL);
 
   return self->stash;
-}
-
-void
-sp_callgraph_profile_add_symbol_dir (SpCallgraphProfile *self,
-                                     const gchar        *path,
-                                     const gchar        *symbol_dir)
-{
-  g_return_if_fail (SP_IS_CALLGRAPH_PROFILE (self));
-
-  g_hash_table_insert (self->symbol_dirs, g_strdup (path), g_strdup (symbol_dir));
 }
 
 GQuark

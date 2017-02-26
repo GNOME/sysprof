@@ -27,9 +27,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SpElfSymbolResolver, sp_elf_symbol_resolver, SP, ELF_SYMBOL_RESOLVER, GObject)
 
-SpSymbolResolver *sp_elf_symbol_resolver_new             (void);
-void              sp_elf_symbol_resolver_set_symbol_dirs (SpElfSymbolResolver *self,
-                                                          GHashTable          *symbol_dirs);
+SpSymbolResolver *sp_elf_symbol_resolver_new (void);
 
 G_END_DECLS
 

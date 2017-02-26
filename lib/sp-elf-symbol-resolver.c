@@ -24,13 +24,6 @@
 #include "sp-map-lookaside.h"
 #include "sp-elf-symbol-resolver.h"
 
-typedef struct
-{
-  gchar *src;
-  gchar *dst;
-  gsize  srclen;
-} SymbolDir;
-
 struct _SpElfSymbolResolver
 {
   GObject     parent_instance;
@@ -38,7 +31,6 @@ struct _SpElfSymbolResolver
   GHashTable *lookasides;
   GHashTable *bin_files;
   GHashTable *tag_cache;
-  GArray     *symbol_dirs;
 };
 
 static void symbol_resolver_iface_init (SpSymbolResolverInterface *iface);
@@ -58,7 +50,6 @@ sp_elf_symbol_resolver_finalize (GObject *object)
   g_clear_pointer (&self->bin_files, g_hash_table_unref);
   g_clear_pointer (&self->lookasides, g_hash_table_unref);
   g_clear_pointer (&self->tag_cache, g_hash_table_unref);
-  g_clear_pointer (&self->symbol_dirs, g_array_unref);
 
   G_OBJECT_CLASS (sp_elf_symbol_resolver_parent_class)->finalize (object);
 }
@@ -74,8 +65,6 @@ sp_elf_symbol_resolver_class_init (SpElfSymbolResolverClass *klass)
 static void
 sp_elf_symbol_resolver_init (SpElfSymbolResolver *self)
 {
-  self->symbol_dirs = g_array_new (FALSE, FALSE, sizeof (SymbolDir));
-
   self->lookasides = g_hash_table_new_full (NULL,
                                             NULL,
                                             NULL,
@@ -142,30 +131,11 @@ sp_elf_symbol_resolver_get_bin_file (SpElfSymbolResolver *self,
 
   g_assert (SP_IS_ELF_SYMBOL_RESOLVER (self));
 
-  if (filename == NULL)
-    return NULL;
-
   bin_file = g_hash_table_lookup (self->bin_files, filename);
 
   if (bin_file == NULL)
     {
-      g_autofree gchar *translated = NULL;
-      const gchar *alternate = filename;
-
-      /*
-       * See if we have a symbol directory that is set to be the resolution
-       * path for this filename. We will want to alter where we find the
-       * symbols based on this directory.
-       */
-      for (guint i = 0; i < self->symbol_dirs->len; i++)
-        {
-          const SymbolDir *sd = &g_array_index (self->symbol_dirs, SymbolDir, i);
-
-          if (g_str_has_prefix (filename, sd->src))
-            alternate = translated = g_build_filename (sd->dst, filename + sd->srclen, NULL);
-        }
-
-      bin_file = bin_file_new (alternate);
+      bin_file = bin_file_new (filename);
       g_hash_table_insert (self->bin_files, g_strdup (filename), bin_file);
     }
 
@@ -321,34 +291,4 @@ SpSymbolResolver *
 sp_elf_symbol_resolver_new (void)
 {
   return g_object_new (SP_TYPE_ELF_SYMBOL_RESOLVER, NULL);
-}
-
-void
-sp_elf_symbol_resolver_set_symbol_dirs (SpElfSymbolResolver *self,
-                                        GHashTable          *symbol_dirs)
-{
-  GHashTableIter iter;
-
-  g_return_if_fail (SP_IS_ELF_SYMBOL_RESOLVER (self));
-
-  if (self->symbol_dirs->len)
-    g_array_remove_range (self->symbol_dirs, 0, self->symbol_dirs->len - 1);
-
-  if (symbol_dirs)
-    {
-      gpointer k, v;
-
-      g_hash_table_iter_init (&iter, symbol_dirs);
-
-      while (g_hash_table_iter_next (&iter, &k, &v))
-        {
-          SymbolDir dir;
-
-          dir.src = g_strdup ((gchar *)k);
-          dir.srclen = strlen (dir.src);
-          dir.dst = g_strdup ((gchar *)v);
-
-          g_array_append_val (self->symbol_dirs, dir);
-        }
-    }
 }

@@ -30,9 +30,6 @@ G_DECLARE_FINAL_TYPE (SpCallgraphProfile, sp_callgraph_profile, SP, CALLGRAPH_PR
 
 SpProfile *sp_callgraph_profile_new                (void);
 SpProfile *sp_callgraph_profile_new_with_selection (SpSelection        *selection);
-void       sp_callgraph_profile_add_symbol_dir     (SpCallgraphProfile *selection,
-                                                    const gchar        *path,
-                                                    const gchar        *symbol_dir);
 GQuark     sp_callgraph_profile_get_tag            (SpCallgraphProfile *self,
                                                     const gchar        *symbol);
 

@@ -1,16 +1,16 @@
 # Serbian translation for sysprof.
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2016.
+# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2016, 2017.
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=sysprof"
 "&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-08-21 14:58+0000\n"
-"PO-Revision-Date: 2016-08-21 20:30+0200\n"
+"POT-Creation-Date: 2017-01-18 22:19+0000\n"
+"PO-Revision-Date: 2017-02-25 20:26+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
-"Language-Team: Serbian <gnome@prevod.org>\n"
+"Language-Team: Serbian <(nothing)>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,21 +19,39 @@ msgstr ""
 "n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Project-Style: gnome\n"
 
-#: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:167
+#: data/org.gnome.Sysprof2.appdata.xml.in:5
+#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
 msgid "Sysprof"
 msgstr "Профилатор система"
 
-#: data/org.gnome.Sysprof2.desktop:5
+#: data/org.gnome.Sysprof2.appdata.xml.in:6
+#| msgid "Profile an application or entire system."
+msgid "Profiler for an application or entire system"
+msgstr "Профилатор за програм или читав систем"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "Гномова Фондација"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Профилатор система вам омогућава да профилишете програме за помоћ у "
+"прочишћавању и оптимизацији."
+
+#: data/org.gnome.Sysprof2.desktop.in:5
 msgid "Profiler"
 msgstr "Профилатор"
 
-#: data/org.gnome.Sysprof2.desktop:6
+#: data/org.gnome.Sysprof2.desktop.in:6
 msgid "Profile an application or entire system."
 msgstr "Профилишите неки програм или читав систем."
 
 #. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: data/org.gnome.Sysprof2.desktop:10
+#: data/org.gnome.Sysprof2.desktop.in:10
 msgid "sysprof"
 msgstr "sysprof"
 
@@ -93,13 +111,25 @@ msgstr ""
 "Последње изрођено окружење, које ће бити подешено у корисничком сучељу након "
 "поновног покретања програма."
 
+#: data/org.gnome.sysprof2.policy.in:13
+msgid "Open a perf event stream"
+msgstr "Отвори ток догађаја учинка"
+
+#: data/org.gnome.sysprof2.policy.in:14
+#| msgid ""
+#| "Sysprof requires authorization to access your computers performance "
+#| "counters."
+msgid "Authentication is required to access system performance counters."
+msgstr ""
+"Потребно је потврђивање идентитета за приступ бројачима учинка рачунара."
+
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
 msgstr "Функције"
 
 #: lib/resources/ui/sp-callgraph-view.ui:40
 #: lib/resources/ui/sp-callgraph-view.ui:101
-#: lib/resources/ui/sp-callgraph-view.ui:164
+#: lib/resources/ui/sp-callgraph-view.ui:156
 msgid "Self"
 msgstr "Једна"
 
@@ -116,7 +146,7 @@ msgstr "Позивачи"
 msgid "Descendants"
 msgstr "Наследници"
 
-#: lib/resources/ui/sp-callgraph-view.ui:180
+#: lib/resources/ui/sp-callgraph-view.ui:172
 msgid "Cumulative"
 msgstr "Збирно"
 
@@ -145,32 +175,32 @@ msgstr "Профилиши мој _читав систем"
 msgid "Search"
 msgstr "Тражи"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:119
+#: lib/resources/ui/sp-profiler-menu-button.ui:121
 msgid "Existing Process"
 msgstr "Напуштам процес"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:129
+#: lib/resources/ui/sp-profiler-menu-button.ui:131
 msgid "Command Line"
 msgstr "Линија наредби"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:148
+#: lib/resources/ui/sp-profiler-menu-button.ui:150
 msgid "Environment"
 msgstr "Окружење"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:162
+#: lib/resources/ui/sp-profiler-menu-button.ui:164
 msgid "Inherit current environment"
 msgstr "Наследи текуће окружење"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:180
+#: lib/resources/ui/sp-profiler-menu-button.ui:182
 msgid "Key"
 msgstr "Кључ"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:195
+#: lib/resources/ui/sp-profiler-menu-button.ui:197
 msgid "Value"
 msgstr "Вредност"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:213
-#: lib/sp-profiler-menu-button.c:116
+#: lib/resources/ui/sp-profiler-menu-button.ui:215
+#: lib/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Нови процес"
 
@@ -185,7 +215,7 @@ msgstr ""
 "Да ли знате да можете користити „<a href=\"help:sysprof\">sysprof-cli</a>“ "
 "за снимање?"
 
-#: lib/sp-callgraph-profile.c:318
+#: lib/sp-callgraph-profile.c:414
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr ""
 "Профилатор система није био у стању да створи график позива из снимка "
@@ -203,18 +233,17 @@ msgstr ""
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Дошло је до грешке приликом покушаја приступања бројачима учинка: %s"
 
-#: lib/sp-profiler-menu-button.c:114 lib/sp-profiler-menu-button.c:129
+#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Сви процеси"
 
-#: lib/sp-profiler-menu-button.c:135
+#: lib/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Процес %d"
 
-#: lib/sp-profiler-menu-button.c:140
+#: lib/sp-profiler-menu-button.c:142
 #, c-format
-#| msgid "%u Processes"
 msgid "%u Process"
 msgid_plural "%u Processes"
 msgstr[0] "%u процес"
@@ -225,6 +254,80 @@ msgstr[3] "%u процеса"
 #: lib/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
 msgstr "Достављени аргументи линије наредби су неисправни"
+
+#: src/resources/gtk/help-overlay.ui:8
+#| msgid "Sysprof Captures"
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Пречице"
+
+#: src/resources/gtk/help-overlay.ui:12
+#| msgid "Recording…"
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Снимам"
+
+#: src/resources/gtk/help-overlay.ui:16
+#| msgid "Recording…"
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Заустави снимање"
+
+#: src/resources/gtk/help-overlay.ui:25
+#| msgid "Callers"
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "График позива"
+
+#: src/resources/gtk/help-overlay.ui:29
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Рашири функцију"
+
+#: src/resources/gtk/help-overlay.ui:30
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "Приказује директне наследнике функције графика позива"
+
+#: src/resources/gtk/help-overlay.ui:37
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Скупи функцију"
+
+#: src/resources/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr "Скрива све наследнике графика позива испод изабране функције"
+
+#: src/resources/gtk/help-overlay.ui:45
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "Скочи у функцију"
+
+#: src/resources/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr "Бира функцију или датотеку као врх графика позива"
+
+#: src/resources/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Приказивачи"
+
+#: src/resources/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Увеличава"
+
+#: src/resources/gtk/help-overlay.ui:66
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Умањује"
+
+#: src/resources/gtk/help-overlay.ui:73
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Враћа увеличање"
 
 #: src/resources/gtk/menus.ui:6
 msgid "_New Window"
@@ -243,26 +346,14 @@ msgid "Help"
 msgstr "Помоћ"
 
 #: src/resources/gtk/menus.ui:26
+msgid "Keyboard Shortcuts"
+msgstr "Пречице тастатуре"
+
+#: src/resources/gtk/menus.ui:30
 msgid "_Quit"
 msgstr "_Изађи"
 
-#: src/resources/gtk/menus.ui:34 src/sp-window.c:932
-msgid "Open"
-msgstr "Отвори"
-
-#: src/resources/gtk/menus.ui:40
-msgid "Save As"
-msgstr "Сачувај као"
-
-#: src/resources/gtk/menus.ui:46
-msgid "Screenshot"
-msgstr "Снимак екрана"
-
-#: src/resources/gtk/menus.ui:52
-msgid "Close"
-msgstr "Затвори"
-
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:281
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
 msgid "Not running"
 msgstr "Није покренут"
 
@@ -270,123 +361,164 @@ msgstr "Није покренут"
 msgid "_Record"
 msgstr "_Сними"
 
-#: src/resources/ui/sp-window.ui:117
+#: src/resources/ui/sp-window.ui:118
 msgid "_Close"
 msgstr "_Затвори"
 
-#: src/sp-application.c:160
+#: src/resources/ui/sp-window.ui:174
+msgid "CPU"
+msgstr "ЦПУ"
+
+#: src/resources/ui/sp-window.ui:222
+msgid "Zoom out (Ctrl+-)"
+msgstr "Умањи (Ктрл+-)"
+
+#: src/resources/ui/sp-window.ui:238
+msgid "Reset zoom level (Ctrl+0)"
+msgstr "Врати ниво увеличања (Ктрл+0)"
+
+#: src/resources/ui/sp-window.ui:252
+msgid "Zoom in (Ctrl++)"
+msgstr "Увећај (Ктрл++)"
+
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
+msgid "Open"
+msgstr "Отвори"
+
+#: src/resources/ui/sp-window.ui:284
+msgid "Save As"
+msgstr "Сачувај као"
+
+#: src/resources/ui/sp-window.ui:297
+msgid "Screenshot"
+msgstr "Снимак екрана"
+
+#: src/resources/ui/sp-window.ui:310
+msgid "Close"
+msgstr "Затвори"
+
+#: src/sp-application.c:174
 msgid "A system profiler"
 msgstr "Профилатор система"
 
-#: src/sp-application.c:164
+#: src/sp-application.c:178
 msgid "translator-credits"
 msgstr ""
 "Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "\n"
 "http://prevod.org — преводи на српски језик"
 
-#: src/sp-application.c:170
+#: src/sp-application.c:184
 msgid "Learn more about Sysprof"
 msgstr "Сазнајте више о Профилатору система"
 
-#: src/sp-window.c:139
+#: src/sp-window.c:148
 #, c-format
 msgid "Samples: %u"
 msgstr "Узорака: %u"
 
-#: src/sp-window.c:172
+#: src/sp-window.c:181
 msgid "[Memory Capture]"
 msgstr "[Снимак меморије]"
 
-#: src/sp-window.c:185
+#: src/sp-window.c:194
 #, c-format
 msgid "%s - %s"
 msgstr "%s — %s"
 
-#: src/sp-window.c:219
+#: src/sp-window.c:232
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Није прикупљено довољно узорака за стварање графика позива"
 
-#: src/sp-window.c:273 src/sp-window.c:317
+#: src/sp-window.c:305 src/sp-window.c:349
 msgid "Record"
 msgstr "Сними"
 
-#: src/sp-window.c:293
+#: src/sp-window.c:325
 msgid "Stop"
 msgstr "Заустави"
 
-#: src/sp-window.c:298
+#: src/sp-window.c:330
 msgid "Recording…"
 msgstr "Снимам…"
 
-#: src/sp-window.c:309
+#: src/sp-window.c:341
 msgid "Building profile…"
 msgstr "Изграђујем профил…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:406
+#: src/sp-window.c:442
 msgid "Stopping…"
 msgstr "Заустављам…"
 
-#: src/sp-window.c:555
+#: src/sp-window.c:594
 msgid "Save Capture As"
 msgstr "Сачувај снимак као"
 
-#: src/sp-window.c:558 src/sp-window.c:931
-msgid "Cancel"
-msgstr "Откажи"
-
-#: src/sp-window.c:559
+#: src/sp-window.c:597
 msgid "Save"
 msgstr "Сачувај"
 
-#: src/sp-window.c:591
+#: src/sp-window.c:598 src/sp-window.c:1004
+msgid "Cancel"
+msgstr "Откажи"
+
+#: src/sp-window.c:628
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Дошло је до грешке приликом покушаја чувања вашег снимка: %s"
 
-#: src/sp-window.c:898
+#: src/sp-window.c:973
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr "Не могу да отворим датотеку „%s“. Подржане су само месне датотеке."
 
-#: src/sp-window.c:926
+#: src/sp-window.c:1000
 msgid "Open Capture"
 msgstr "Отворите снимак"
 
-#: src/sp-window.c:938
+#: src/sp-window.c:1007
 msgid "Sysprof Captures"
 msgstr "Снимци програма"
 
-#: src/sp-window.c:943
+#: src/sp-window.c:1012
 msgid "All Files"
 msgstr "Све датотеке"
 
-#: tools/sysprof-cli.c:95
+#: tools/sysprof-cli.c:97
 msgid "Make sysprof specific to a task"
 msgstr "Чини да профилатор буде специфичан за задатак"
 
-#: tools/sysprof-cli.c:95
+#: tools/sysprof-cli.c:97
 msgid "PID"
 msgstr "ЛИБ"
 
-#: tools/sysprof-cli.c:96
+#: tools/sysprof-cli.c:98
 msgid "Run a command and profile the process"
 msgstr "Извршава наредбу и профилише процес"
 
-#: tools/sysprof-cli.c:96
+#: tools/sysprof-cli.c:98
 msgid "COMMAND"
 msgstr "НАРЕДБА"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
+msgid "Force overwrite the capture file"
+msgstr "Приморава преписивање датотеке снимања"
+
+#: tools/sysprof-cli.c:100
 msgid "Print the sysprof-cli version and exit"
 msgstr "Исписује издање програма „sysprof-cli“ и излази"
 
-#: tools/sysprof-cli.c:103
+#: tools/sysprof-cli.c:106
 msgid "[CAPTURE_FILE] - Sysprof"
 msgstr "[ДАТОТЕКА_СНИМКА] — Профилатор система"
 
-#: tools/sysprof-cli.c:122
+#: tools/sysprof-cli.c:125
 #, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Превише аргумената је прослеђено конзолном програму:"
+
+#: tools/sysprof-cli.c:165
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "„%s“ је изашао. Користите „--force“ да препишете\n"

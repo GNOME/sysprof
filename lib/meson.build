@@ -88,6 +88,7 @@ libsysprof_headers = [
   'sp-profiler.h',
   'sp-selection.h',
   'sp-source.h',
+  'sp-symbol-dirs.h',
   'sp-symbol-resolver.h',
 ]
 
@@ -121,6 +122,7 @@ libsysprof_sources = [
   'sp-profiler.c',
   'sp-selection.c',
   'sp-source.c',
+  'sp-symbol-dirs.c',
   'sp-symbol-resolver.c',
 ]
 

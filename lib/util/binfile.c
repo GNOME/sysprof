@@ -38,6 +38,8 @@
 #include "binfile.h"
 #include "elfparser.h"
 
+#include "../sp-symbol-dirs.h"
+
 struct bin_file_t
 {
     int         ref_count;
@@ -88,8 +90,6 @@ already_warned (const char *name)
     return FALSE;
 }
 
-static const char *const debug_file_directory = DEBUGDIR;
-
 static ElfParser *
 get_build_id_file (ElfParser *elf)
 {
@@ -114,8 +114,7 @@ get_build_id_file (ElfParser *elf)
         "/usr", "lib", "debug", ".build-id", init, rest, NULL);
     tries = g_list_append (tries, tmp);
 
-    tmp = g_build_filename (
-        debug_file_directory, ".build-id", init, rest, NULL);
+    tmp = g_build_filename (DEBUGDIR, ".build-id", init, rest, NULL);
     tries = g_list_append (tries, tmp);
 
     for (list = tries; list != NULL; list = list->next)
@@ -151,13 +150,13 @@ get_debuglink_file (ElfParser   *elf,
                     const char  *filename,
                     char       **new_name)
 {
-#define N_TRIES 4
     const char *basename;
     char *dir;
     guint32 crc32;
-    GList *tries = NULL, *list;
+    gchar **tries;
     ElfParser *result = NULL;
     const char *build_id;
+    guint i;
 
     if (!elf)
         return NULL;
@@ -175,14 +174,11 @@ get_debuglink_file (ElfParser   *elf,
 
     dir = g_path_get_dirname (filename);
 
-    tries = g_list_append (tries, g_build_filename (dir, basename, NULL));
-    tries = g_list_append (tries, g_build_filename (dir, ".debug", basename, NULL));
-    tries = g_list_append (tries, g_build_filename ("/usr", "lib", "debug", dir, basename, NULL));
-    tries = g_list_append (tries, g_build_filename (debug_file_directory, dir, basename, NULL));
+    tries = sp_symbol_dirs_get_paths (dir, basename);
 
-    for (list = tries; list != NULL; list = list->next)
+    for (i = 0; tries[i]; i++)
     {
-        const char *name = list->data;
+        const char *name = tries[i];
         ElfParser *parser = elf_parser_new (name, NULL);
         guint32 file_crc;
         const char *file_build_id;
@@ -220,9 +216,7 @@ get_debuglink_file (ElfParser   *elf,
     }
 
     g_free (dir);
-
-    g_list_foreach (tries, (GFunc)g_free, NULL);
-    g_list_free (tries);
+    g_strfreev (tries);
 
     return result;
 }

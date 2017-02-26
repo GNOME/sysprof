@@ -46,6 +46,7 @@ G_BEGIN_DECLS
 # include "sp-profiler.h"
 # include "sp-selection.h"
 # include "sp-source.h"
+# include "sp-symbol-dirs.h"
 # include "sp-symbol-resolver.h"
 # include "sysprof-version.h"
 #undef SYSPROF_INSIDE

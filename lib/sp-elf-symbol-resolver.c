@@ -135,7 +135,16 @@ sp_elf_symbol_resolver_get_bin_file (SpElfSymbolResolver *self,
 
   if (bin_file == NULL)
     {
-      bin_file = bin_file_new (filename);
+      const gchar *alternate = filename;
+
+      /*
+       * If we are in a new mount namespace, then rely on the sp_symbol_dirs
+       * to find us a locate to resolve the file where the CRC will match.
+       */
+      if (g_str_has_prefix (filename, "/newroot/"))
+        alternate += strlen ("/newroot");
+
+      bin_file = bin_file_new (alternate);
       g_hash_table_insert (self->bin_files, g_strdup (filename), bin_file);
     }
 
@@ -268,8 +277,15 @@ sp_elf_symbol_resolver_resolve (SpSymbolResolver *resolver,
 
   g_assert (bin_file != NULL);
 
-  if (map->inode && !bin_file_check_inode (bin_file, map->inode))
-    return g_strdup_printf ("%s: inode mismatch", map->filename);
+  /*
+   * Ensure we have a valid inode mapping, unless it was in a /newroot/, for
+   * which those won't be reliable.
+   */
+  if (!g_str_has_prefix (map->filename, "/newroot/"))
+    {
+      if (map->inode && !bin_file_check_inode (bin_file, map->inode))
+        return g_strdup_printf ("%s: inode mismatch", map->filename);
+    }
 
   bin_sym = bin_file_lookup_symbol (bin_file, address);
   bin_sym_name = bin_symbol_get_name (bin_file, bin_sym);

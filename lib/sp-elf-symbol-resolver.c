@@ -323,6 +323,15 @@ sp_elf_symbol_resolver_new (void)
   return g_object_new (SP_TYPE_ELF_SYMBOL_RESOLVER, NULL);
 }
 
+/**
+ * sp_elf_symbol_resolver_set_symbol_dirs:
+ * @self: An #SpElfSymbolResolver
+ * @symbol_dirs: (element-type utf8 utf8): Mapping of srcdir to dstdir
+ *
+ * This allows setting a mapping of source paths to destination paths so that
+ * the location of the files with debug symbols can accessed during symbol
+ * resolving.
+ */
 void
 sp_elf_symbol_resolver_set_symbol_dirs (SpElfSymbolResolver *self,
                                         GHashTable          *symbol_dirs)

@@ -281,15 +281,8 @@ sp_elf_symbol_resolver_resolve (SpSymbolResolver *resolver,
 
   g_assert (bin_file != NULL);
 
-  /*
-   * Ensure we have a valid inode mapping, unless it was in a /newroot/, for
-   * which those won't be reliable.
-   */
-  if (!g_str_has_prefix (map->filename, "/newroot/"))
-    {
-      if (map->inode && !bin_file_check_inode (bin_file, map->inode))
-        return g_strdup_printf ("%s: inode mismatch", map->filename);
-    }
+  if (map->inode && !bin_file_check_inode (bin_file, map->inode))
+    return g_strdup_printf ("%s: inode mismatch", map->filename);
 
   bin_sym = bin_file_lookup_symbol (bin_file, address);
   bin_sym_name = bin_symbol_get_name (bin_file, bin_sym);

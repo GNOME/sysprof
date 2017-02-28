@@ -1,3 +1,19 @@
+Overview of changes in Sysprof 3.23.91
+======================================
+
+Changes since 3.23.90
+
+  * Various compilation checks bsaed on results from ARM builders.
+  * Support for setting symbol directories to affect symbol resolution.
+  * Translate paths from /newroot/ into the host filesystem when possible.
+    This should allow some degree of profiling container-based applications
+    and still resolve symbols on the host. Builder does this now when profiling
+    Flatpak-based applications.
+
+Translations:
+
+ * Finnish, Serbian
+
 Overview of changes in Sysprof 3.23.90
 ======================================
 

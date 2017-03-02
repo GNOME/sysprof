@@ -32,7 +32,7 @@ struct _SpZoomManager
   gdouble min_zoom;
   gdouble max_zoom;
   gdouble zoom;
-};
+} __attribute__((aligned(8)));
 
 enum {
   PROP_0,

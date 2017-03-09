@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-01-18 22:19+0000\n"
-"PO-Revision-Date: 2017-02-18 18:22+0200\n"
+"POT-Creation-Date: 2017-02-28 00:49+0000\n"
+"PO-Revision-Date: 2017-03-10 00:25+0200\n"
 "Last-Translator: Jiri Grönroos <jiri.gronroos+l10n@iki.fi>\n"
 "Language-Team: suomi <lokalisointi-lista@googlegroups.com>\n"
 "Language: fi\n"
@@ -26,19 +26,20 @@ msgid "Sysprof"
 msgstr "Sysprof"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:6
-#| msgid "Profile an application or entire system."
 msgid "Profiler for an application or entire system"
 msgstr "Profiloi sovellus tai koko järjestelmä"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:9
 msgid "The GNOME Foundation"
-msgstr ""
+msgstr "Gnome-säätiö"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:12
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
+"Sysprof mahdollistaa sovellusten profiloinnin esimerkiksi vianetsinnän tai "
+"optimoinnin vuoksi."
 
 #: data/org.gnome.Sysprof2.desktop.in:5
 msgid "Profiler"
@@ -67,7 +68,7 @@ msgstr "Ikkunan sijainti"
 
 #: data/org.gnome.sysprof2.gschema.xml:11
 msgid "Window position (x and y)."
-msgstr ""
+msgstr "Ikkunan sijainti (x ja y)."
 
 #: data/org.gnome.sysprof2.gschema.xml:15
 msgid "Window maximized"
@@ -110,14 +111,12 @@ msgid "Open a perf event stream"
 msgstr ""
 
 #: data/org.gnome.sysprof2.policy.in:14
-#, fuzzy
 #| msgid ""
 #| "Sysprof requires authorization to access your computers performance "
 #| "counters."
 msgid "Authentication is required to access system performance counters."
 msgstr ""
-"Sysprof vaatii tunnistautumisen päästäkseen käsiksi tietokoneen "
-"suorituskykymittareihin."
+"Tunnistautuminen vaaditaan tietokoneen suorituskykymittareiden käyttämiseksi."
 
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
@@ -171,7 +170,7 @@ msgstr "Profiloi _koko järjestelmä"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:95
 msgid "Search"
-msgstr ""
+msgstr "Etsi"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:121
 msgid "Existing Process"
@@ -251,24 +250,21 @@ msgid "The command line arguments provided are invalid"
 msgstr "Annetut komentoriviargumentit ovat virheelliset"
 
 #: src/resources/gtk/help-overlay.ui:8
-#| msgid "Sysprof Captures"
 msgctxt "shortcut window"
 msgid "Sysprof Shortcuts"
 msgstr "Sysprof-pikanäppäimet"
 
 #: src/resources/gtk/help-overlay.ui:12
-#, fuzzy
 #| msgid "Recording…"
 msgctxt "shortcut window"
 msgid "Recording"
-msgstr "Taltioidaan…"
+msgstr "Taltioidaan"
 
 #: src/resources/gtk/help-overlay.ui:16
-#, fuzzy
 #| msgid "Recording…"
 msgctxt "shortcut window"
 msgid "Stop recording"
-msgstr "Taltioidaan…"
+msgstr "Pysäytä taltiointi"
 
 #: src/resources/gtk/help-overlay.ui:25
 #, fuzzy
@@ -280,7 +276,7 @@ msgstr "Kutsujat"
 #: src/resources/gtk/help-overlay.ui:29
 msgctxt "shortcut window"
 msgid "Expand function"
-msgstr ""
+msgstr "Laajenna funktiota"
 
 #: src/resources/gtk/help-overlay.ui:30
 msgctxt "shortcut window"
@@ -290,7 +286,7 @@ msgstr ""
 #: src/resources/gtk/help-overlay.ui:37
 msgctxt "shortcut window"
 msgid "Collapse function"
-msgstr ""
+msgstr "Supista funktio"
 
 #: src/resources/gtk/help-overlay.ui:38
 msgctxt "shortcut window"
@@ -300,7 +296,7 @@ msgstr ""
 #: src/resources/gtk/help-overlay.ui:45
 msgctxt "shortcut window"
 msgid "Jump into function"
-msgstr ""
+msgstr "Siirry funktioon"
 
 #: src/resources/gtk/help-overlay.ui:46
 msgctxt "shortcut window"
@@ -310,22 +306,22 @@ msgstr ""
 #: src/resources/gtk/help-overlay.ui:55
 msgctxt "shortcut window"
 msgid "Visualizers"
-msgstr ""
+msgstr "Visualisoinnit"
 
 #: src/resources/gtk/help-overlay.ui:59
 msgctxt "shortcut window"
 msgid "Zoom in"
-msgstr ""
+msgstr "Lähennä"
 
 #: src/resources/gtk/help-overlay.ui:66
 msgctxt "shortcut window"
 msgid "Zoom out"
-msgstr ""
+msgstr "Loitonna"
 
 #: src/resources/gtk/help-overlay.ui:73
 msgctxt "shortcut window"
 msgid "Reset zoom"
-msgstr ""
+msgstr "Palauta mittakaava"
 
 #: src/resources/gtk/menus.ui:6
 msgid "_New Window"
@@ -369,15 +365,15 @@ msgstr "Suoritin"
 
 #: src/resources/ui/sp-window.ui:222
 msgid "Zoom out (Ctrl+-)"
-msgstr ""
+msgstr "Loitonna (Ctrl+-)"
 
 #: src/resources/ui/sp-window.ui:238
 msgid "Reset zoom level (Ctrl+0)"
-msgstr ""
+msgstr "Palauta mittakaava (Ctrl+0)"
 
 #: src/resources/ui/sp-window.ui:252
 msgid "Zoom in (Ctrl++)"
-msgstr ""
+msgstr "Lähennä (Ctrl++)"
 
 #: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
 msgid "Open"
@@ -495,7 +491,7 @@ msgstr "Suorita komento ja profiloi prosessi"
 
 #: tools/sysprof-cli.c:98
 msgid "COMMAND"
-msgstr ""
+msgstr "KOMENTO"
 
 #: tools/sysprof-cli.c:99
 msgid "Force overwrite the capture file"
@@ -517,4 +513,4 @@ msgstr ""
 #: tools/sysprof-cli.c:165
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
-msgstr ""
+msgstr "%s on olemassa. Käytä valitsinta --force korvataksesi\n"

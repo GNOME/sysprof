@@ -1,39 +1,58 @@
-# Hungarian translation of sysprof
-# Copyright (C) 2016. Free Software Foundation, Inc.
+# Hungarian translation for sysprof.
+# Copyright (C) 2016, 2017 Free Software Foundation, Inc.
 # This file is distributed under the same license as the sysprof package.
 #
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2016.
+# Balázs Úr <urbalazs@gmail.com>, 2017.
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-10-10 10:23+0000\n"
-"PO-Revision-Date: 2016-10-10 17:15+0200\n"
-"Last-Translator: Meskó Balázs <meskobalazs@gmail.com>\n"
+"POT-Creation-Date: 2017-02-28 00:49+0000\n"
+"PO-Revision-Date: 2017-03-18 23:03+0100\n"
+"Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
 "Language-Team: Hungarian <openscope at gmail dot com>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Lokalize 1.2\n"
 
-#: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
+#: data/org.gnome.Sysprof2.appdata.xml.in:5
+#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
 #: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof2.desktop:5
+#: data/org.gnome.Sysprof2.appdata.xml.in:6
+#| msgid "Profile an application or entire system."
+msgid "Profiler for an application or entire system"
+msgstr "Profilozó egy alkalmazáshoz vagy egy egész rendszerhez"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "A GNOME alapítvány"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"A Sysprof lehetővé teszi az alkalmazások profilozását a hibakeresés és az "
+"optimalizáció támogatáshoz."
+
+#: data/org.gnome.Sysprof2.desktop.in:5
 msgid "Profiler"
 msgstr "Profilozó"
 
-#: data/org.gnome.Sysprof2.desktop:6
+#: data/org.gnome.Sysprof2.desktop.in:6
 msgid "Profile an application or entire system."
 msgstr "Alkalmazás vagy egész rendszer profilozása."
 
 #. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: data/org.gnome.Sysprof2.desktop:10
+#: data/org.gnome.Sysprof2.desktop.in:10
 msgid "sysprof"
 msgstr "sysprof"
 
@@ -93,13 +112,24 @@ msgstr ""
 "A legutóbb indított környezet, amely az alkalmazás újraindításakor kerül "
 "beállításra a felületen."
 
+#: data/org.gnome.sysprof2.policy.in:13
+msgid "Open a perf event stream"
+msgstr "Egy perf eseményfolyam megnyitása"
+
+#: data/org.gnome.sysprof2.policy.in:14
+#| msgid ""
+#| "Sysprof requires authorization to access your computers performance "
+#| "counters."
+msgid "Authentication is required to access system performance counters."
+msgstr "Hitelesítés szükséges a rendszerteljesítmény számlálók eléréséhez."
+
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
 msgstr "Függvények"
 
 #: lib/resources/ui/sp-callgraph-view.ui:40
 #: lib/resources/ui/sp-callgraph-view.ui:101
-#: lib/resources/ui/sp-callgraph-view.ui:164
+#: lib/resources/ui/sp-callgraph-view.ui:156
 msgid "Self"
 msgstr "Önmaga"
 
@@ -116,7 +146,7 @@ msgstr "Hívók"
 msgid "Descendants"
 msgstr "Leszármazottak"
 
-#: lib/resources/ui/sp-callgraph-view.ui:180
+#: lib/resources/ui/sp-callgraph-view.ui:172
 msgid "Cumulative"
 msgstr "Kumulatív"
 
@@ -319,7 +349,7 @@ msgstr "Gyorsbillentyűk"
 msgid "_Quit"
 msgstr "_Kilépés"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:309
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
 msgid "Not running"
 msgstr "Nem fut"
 
@@ -347,7 +377,7 @@ msgstr "Nagyítási szint visszállítása (Ctrl+0)"
 msgid "Zoom in (Ctrl++)"
 msgstr "Nagyítás (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:999
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
 msgid "Open"
 msgstr "Megnyitás"
 
@@ -391,90 +421,100 @@ msgstr "[Memóriarögzítés]"
 msgid "%s - %s"
 msgstr "%s - %s"
 
-#: src/sp-window.c:230
+#: src/sp-window.c:232
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Nincs elég begyűjtött minta a hívási gráf generálásához"
 
-#: src/sp-window.c:301 src/sp-window.c:345
+#: src/sp-window.c:305 src/sp-window.c:349
 msgid "Record"
 msgstr "Felvétel"
 
-#: src/sp-window.c:321
+#: src/sp-window.c:325
 msgid "Stop"
 msgstr "Leállítás"
 
-#: src/sp-window.c:326
+#: src/sp-window.c:330
 msgid "Recording…"
 msgstr "Felvétel…"
 
-#: src/sp-window.c:337
+#: src/sp-window.c:341
 msgid "Building profile…"
 msgstr "Profil összeállítása…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:438
+#: src/sp-window.c:442
 msgid "Stopping…"
 msgstr "Leállítás…"
 
-#: src/sp-window.c:590
+#: src/sp-window.c:594
 msgid "Save Capture As"
 msgstr "Rögzítés mentése másként"
 
-#: src/sp-window.c:593
+#: src/sp-window.c:597
 msgid "Save"
 msgstr "Mentés"
 
-#: src/sp-window.c:594 src/sp-window.c:1000
+#: src/sp-window.c:598 src/sp-window.c:1004
 msgid "Cancel"
 msgstr "Mégse"
 
-#: src/sp-window.c:624
+#: src/sp-window.c:628
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Hiba történt a rögzítés mentési kísérlete során: %s"
 
-#: src/sp-window.c:969
+#: src/sp-window.c:973
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr "A(z) „%s” fájl nem nyitható meg. Csak a helyi fájlok támogatottak."
 
-#: src/sp-window.c:996
+#: src/sp-window.c:1000
 msgid "Open Capture"
 msgstr "Rögzítés megnyitása"
 
-#: src/sp-window.c:1003
+#: src/sp-window.c:1007
 msgid "Sysprof Captures"
 msgstr "Sysprof rögzítések"
 
-#: src/sp-window.c:1008
+#: src/sp-window.c:1012
 msgid "All Files"
 msgstr "Minden fájl"
 
-#: tools/sysprof-cli.c:95
+#: tools/sysprof-cli.c:97
 msgid "Make sysprof specific to a task"
 msgstr "A sysprof egy feladathoz rendelése"
 
-#: tools/sysprof-cli.c:95
+#: tools/sysprof-cli.c:97
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:96
+#: tools/sysprof-cli.c:98
 msgid "Run a command and profile the process"
 msgstr "Parancs futtatása, és a folyamat profilozása"
 
-#: tools/sysprof-cli.c:96
+#: tools/sysprof-cli.c:98
 msgid "COMMAND"
 msgstr "PARANCS"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
+msgid "Force overwrite the capture file"
+msgstr "A rögzítésfájl erőltetett felülírása"
+
+#: tools/sysprof-cli.c:100
 msgid "Print the sysprof-cli version and exit"
 msgstr "A sysprof-cli verzió kiírása és kilépés"
 
-#: tools/sysprof-cli.c:103
+#: tools/sysprof-cli.c:106
 msgid "[CAPTURE_FILE] - Sysprof"
 msgstr "[RÖGZÍTÉS_FÁJL] - Sysprof"
 
-#: tools/sysprof-cli.c:122
+#: tools/sysprof-cli.c:125
 #, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Túl sok argumentum lett átadva a sysprof-cli-nek:"
+
+#: tools/sysprof-cli.c:165
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "A(z) %s létezik. Használja a --force kapcsolót a felülíráshoz\n"
+

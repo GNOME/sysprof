@@ -10,7 +10,7 @@ EXTRA_DIST = \
 	config.h.meson \
 	po/meson.build
 
-DISTCHECK_CONFIGURE_FLAGS = --with-sysprofd=bundled --with-systemdsystemunitdir='$(prefix)/etc/systemd/system'
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk --with-sysprofd=bundled --with-systemdsystemunitdir='\${prefix}/etc/systemd/system'
 
 AUTHORS:
 	$(AM_V_GEN)if test -d "$(srcdir)/.git"; \

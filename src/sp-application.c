@@ -197,10 +197,18 @@ sysprof_help (GSimpleAction *action,
               GVariant      *param,
               gpointer       user_data)
 {
-  gtk_show_uri (gdk_screen_get_default (),
-                "help:sysprof",
-                gtk_get_current_event_time (),
-                NULL);
+  SpApplication *self = user_data;
+  GtkWindow *window;
+
+  g_assert (SP_IS_APPLICATION (self));
+  g_assert (G_IS_SIMPLE_ACTION (action));
+
+  window = gtk_application_get_active_window (GTK_APPLICATION (self));
+
+  gtk_show_uri_on_window (window,
+                          "help:sysprof",
+                          gtk_get_current_event_time (),
+                          NULL);
 }
 
 static void

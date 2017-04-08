@@ -175,6 +175,7 @@ sysprof_about (GSimpleAction *action,
                          "copyright", "Copyright © 2004-2009 Søren Sandmann Pedersen\n"
                                       "Copyright © 2016 Christian Hergert",
                          "transient-for", best_toplevel,
+                         "modal", TRUE,
                          "translator-credits", _("translator-credits"),
                          "license-type", GTK_LICENSE_GPL_3_0,
                          "logo-icon-name", "sysprof",

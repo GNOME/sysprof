@@ -841,6 +841,7 @@ sp_window_init (SpWindow *self)
     { "screenshot",  sp_window_screenshot },
   };
   SpSelection *selection;
+  g_autoptr(GtkWindowGroup) window_group = NULL;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -901,6 +902,12 @@ sp_window_init (SpWindow *self)
    * launch, enter, escape, view.
    */
   gtk_window_set_focus (GTK_WINDOW (self), GTK_WIDGET (self->record_button));
+
+  /*
+   * Prevent grabs (e.g. modal dialogs) from affecting multiple windows.
+   */
+  window_group = gtk_window_group_new ();
+  gtk_window_group_add_window (window_group, GTK_WINDOW (self));
 }
 
 static void

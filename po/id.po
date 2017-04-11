@@ -1,0 +1,508 @@
+# Indonesian translation for sysprof.
+# Copyright (C) 2017 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Andika Triwidada <atriwidada@gnome.org>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof sysprof-3-24\n"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
+"product=sysprof&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2017-04-10 22:36+0000\n"
+"PO-Revision-Date: 2017-04-11 15:05+0700\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
+"Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:5
+#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:6
+msgid "Profiler for an application or entire system"
+msgstr "Pemantau profil bagi suatu aplikasi atau seluruh sistem"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "Yayasan GNOME"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof memungkinkan Anda memantau profil aplikasi untuk membantu "
+"pengawakutuan dan optimisasi."
+
+#: data/org.gnome.Sysprof2.desktop.in:5
+msgid "Profiler"
+msgstr "Profiler"
+
+#: data/org.gnome.Sysprof2.desktop.in:6
+msgid "Profile an application or entire system."
+msgstr "Memantau profil suatu aplikasi atau seluruh sistem."
+
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: data/org.gnome.Sysprof2.desktop.in:10
+msgid "sysprof"
+msgstr "sysprof"
+
+#: data/org.gnome.sysprof2.gschema.xml:5
+msgid "Window size"
+msgstr "Ukuran jendela"
+
+#: data/org.gnome.sysprof2.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "Ukuran jendela (lebar dan tinggi)."
+
+#: data/org.gnome.sysprof2.gschema.xml:10
+msgid "Window position"
+msgstr "Posisi jendela"
+
+#: data/org.gnome.sysprof2.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "Posisi jendela (x dan y)."
+
+#: data/org.gnome.sysprof2.gschema.xml:15
+msgid "Window maximized"
+msgstr "Jendela termaksimalkan"
+
+#: data/org.gnome.sysprof2.gschema.xml:16
+msgid "Window maximized state"
+msgstr "Keadaan jendela termaksimalkan"
+
+#: data/org.gnome.sysprof2.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr "Program yang Terakhir Di-spawn"
+
+#: data/org.gnome.sysprof2.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+"Program yang terakhir di-spawn, yang akan ditata dalam UI saat start ulang "
+"aplikasi."
+
+#: data/org.gnome.sysprof2.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr "Lingkungan Warisan Spawn Terakhir"
+
+#: data/org.gnome.sysprof2.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr "Apakah lingkungan yang di-spawn terakhir mewarisi lingkungan induk."
+
+#: data/org.gnome.sysprof2.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr "Lingkungan Spawn Terakhir"
+
+#: data/org.gnome.sysprof2.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+"Lingkungan yang terakhir di-spawn, yang akan ditata dalam UI saat start "
+"ulang aplikasi."
+
+#: data/org.gnome.sysprof2.policy.in:13
+msgid "Open a perf event stream"
+msgstr "Buka suatu stream peristiwa perf"
+
+#: data/org.gnome.sysprof2.policy.in:14
+msgid "Authentication is required to access system performance counters."
+msgstr "Otentikasi diperlukan untuk mengakses pencacah kinerja sistem."
+
+#: lib/resources/ui/sp-callgraph-view.ui:24
+msgid "Functions"
+msgstr "Fungsi"
+
+#: lib/resources/ui/sp-callgraph-view.ui:40
+#: lib/resources/ui/sp-callgraph-view.ui:101
+#: lib/resources/ui/sp-callgraph-view.ui:156
+msgid "Self"
+msgstr "Self"
+
+#: lib/resources/ui/sp-callgraph-view.ui:56
+#: lib/resources/ui/sp-callgraph-view.ui:117
+msgid "Total"
+msgstr "Total"
+
+#: lib/resources/ui/sp-callgraph-view.ui:85
+msgid "Callers"
+msgstr "Pemanggil"
+
+#: lib/resources/ui/sp-callgraph-view.ui:148
+msgid "Descendants"
+msgstr "Turunan"
+
+#: lib/resources/ui/sp-callgraph-view.ui:172
+msgid "Cumulative"
+msgstr "Kumulatif"
+
+#: lib/resources/ui/sp-empty-state-view.ui:22
+msgid "Welcome to Sysprof"
+msgstr "Selamat Datang ke Sysprof"
+
+#: lib/resources/ui/sp-empty-state-view.ui:39
+msgid "Start profiling your system with the <b>Record</b> button above"
+msgstr "Mulai memantau profil sistem Anda dengan tombol <b>Rekam</b> di atas"
+
+#: lib/resources/ui/sp-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "Aduh, sakit!"
+
+#: lib/resources/ui/sp-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr ""
+"Sesuatu secara tak diduga mengacau ketika mencoba memantau profil sistem "
+"Anda."
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:58
+msgid "Profile my _entire system"
+msgstr "Pantau profil s_eluruh sistem saya"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:95
+msgid "Search"
+msgstr "Cari"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:121
+msgid "Existing Process"
+msgstr "Proses Yang Ada"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:131
+msgid "Command Line"
+msgstr "Baris Perintah"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:150
+msgid "Environment"
+msgstr "Lingkungan"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:164
+msgid "Inherit current environment"
+msgstr "Warisi lingkungan saat ini"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:182
+msgid "Key"
+msgstr "Kunci"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:197
+msgid "Value"
+msgstr "Nilai"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:215
+#: lib/sp-profiler-menu-button.c:118
+msgid "New Process"
+msgstr "Proses Baru"
+
+#: lib/resources/ui/sp-recording-state-view.ui:22
+msgid "00:00"
+msgstr "00:00"
+
+#: lib/resources/ui/sp-recording-state-view.ui:39
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"Tahukah Anda bahwa Anda dapat memakai <a href=\"help:sysprof\">sysprof-cli</"
+"a> untuk merekam?"
+
+#: lib/sp-callgraph-profile.c:414
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "Sysprof tidak mampu membuat suatu callgraph dari tangkapan sistem."
+
+#: lib/sp-perf-source.c:345
+#, c-format
+msgid ""
+"Sysprof requires authorization to access your computers performance counters."
+msgstr ""
+"Sysprof memerlukan otorisasi untuk mengakses pencacah kinerja komputer Anda."
+
+#: lib/sp-perf-source.c:350
+#, c-format
+msgid "An error occurred while attempting to access performance counters: %s"
+msgstr "Kesalahan terjadi ketika mencoba mengakses pencacah kinerja: %s"
+
+#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
+msgid "All Processes"
+msgstr "Semua Proses"
+
+#: lib/sp-profiler-menu-button.c:137
+#, c-format
+msgid "Process %d"
+msgstr "Proses %d"
+
+#: lib/sp-profiler-menu-button.c:142
+#, c-format
+msgid "%u Process"
+msgid_plural "%u Processes"
+msgstr[0] "%u Proses"
+
+#: lib/sp-profiler-menu-button.c:796
+msgid "The command line arguments provided are invalid"
+msgstr "Argumen baris perintah yang diberikan tidak valid"
+
+#: src/resources/gtk/help-overlay.ui:8
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Pintasan Sysprof"
+
+#: src/resources/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Merekam"
+
+#: src/resources/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Berhenti merekam"
+
+#: src/resources/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Callgraph"
+
+#: src/resources/gtk/help-overlay.ui:29
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Ekspansi fungsi"
+
+#: src/resources/gtk/help-overlay.ui:30
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "Menampilkan turunan langsung dari fungsi callgraph"
+
+#: src/resources/gtk/help-overlay.ui:37
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Kuncupkan fungsi"
+
+#: src/resources/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr "Menyembunyikan semua turunan callgraph di bawah fungsi yang dipilih"
+
+#: src/resources/gtk/help-overlay.ui:45
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "Lompat ke fungsi"
+
+#: src/resources/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr "Pilih fungsi atau berkas sebagai puncak callgraph"
+
+#: src/resources/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Penampil"
+
+#: src/resources/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Perbesar"
+
+#: src/resources/gtk/help-overlay.ui:66
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Perkecil"
+
+#: src/resources/gtk/help-overlay.ui:73
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Reset zum"
+
+#: src/resources/gtk/menus.ui:6
+msgid "_New Window"
+msgstr "Je_ndela Baru"
+
+#: src/resources/gtk/menus.ui:12
+msgid "_Open Capture"
+msgstr "Buk_a Tangkapan"
+
+#: src/resources/gtk/menus.ui:18
+msgid "About"
+msgstr "Tentang"
+
+#: src/resources/gtk/menus.ui:22
+msgid "Help"
+msgstr "Bantuan"
+
+#: src/resources/gtk/menus.ui:26
+msgid "Keyboard Shortcuts"
+msgstr "Pintasan Papan Ketik"
+
+#: src/resources/gtk/menus.ui:30
+msgid "_Quit"
+msgstr "_Keluar"
+
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
+msgid "Not running"
+msgstr "Tidak sedang berjalan"
+
+#: src/resources/ui/sp-window.ui:44
+msgid "_Record"
+msgstr "_Rekam"
+
+#: src/resources/ui/sp-window.ui:118
+msgid "_Close"
+msgstr "_Tutup"
+
+#: src/resources/ui/sp-window.ui:174
+msgid "CPU"
+msgstr "CPU"
+
+#: src/resources/ui/sp-window.ui:222
+msgid "Zoom out (Ctrl+-)"
+msgstr "Perkecil (Ctrl+-)"
+
+#: src/resources/ui/sp-window.ui:238
+msgid "Reset zoom level (Ctrl+0)"
+msgstr "Reset tingkat zum (Ctrl+0)"
+
+#: src/resources/ui/sp-window.ui:252
+msgid "Zoom in (Ctrl++)"
+msgstr "Perbesar (Ctrl++)"
+
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1010
+msgid "Open"
+msgstr "Buka"
+
+#: src/resources/ui/sp-window.ui:284
+msgid "Save As"
+msgstr "Simpan Sebagai"
+
+#: src/resources/ui/sp-window.ui:297
+msgid "Screenshot"
+msgstr "Cuplikan layar"
+
+#: src/resources/ui/sp-window.ui:310
+msgid "Close"
+msgstr "Tutup"
+
+#: src/sp-application.c:174
+msgid "A system profiler"
+msgstr "Pemantau profil sistem"
+
+#: src/sp-application.c:179
+msgid "translator-credits"
+msgstr "Andika Triwidada <andika@gmail.com>, 2017"
+
+#: src/sp-application.c:185
+msgid "Learn more about Sysprof"
+msgstr "Pelajari lebih lanjut tentang Sysprof"
+
+#: src/sp-window.c:148
+#, c-format
+msgid "Samples: %u"
+msgstr "Cuplikan: %u"
+
+#: src/sp-window.c:181
+msgid "[Memory Capture]"
+msgstr "[Tangkapan Memori]"
+
+#: src/sp-window.c:194
+#, c-format
+msgid "%s - %s"
+msgstr "%s - %s"
+
+#: src/sp-window.c:232
+msgid "Not enough samples were collected to generate a callgraph"
+msgstr "Tidak cukup cuplikan dikumpulkan untuk membuat suatu callgraph"
+
+#: src/sp-window.c:305 src/sp-window.c:349
+msgid "Record"
+msgstr "Rekam"
+
+#: src/sp-window.c:325
+msgid "Stop"
+msgstr "Berhenti"
+
+#: src/sp-window.c:330
+msgid "Recording…"
+msgstr "Sedang merekam…"
+
+#: src/sp-window.c:341
+msgid "Building profile…"
+msgstr "Sedang membangun profil…"
+
+#. SpProfiler::stopped will move us to generating
+#: src/sp-window.c:442
+msgid "Stopping…"
+msgstr "Menghentikan…"
+
+#: src/sp-window.c:594
+msgid "Save Capture As"
+msgstr "Simpan Tangkapan Sebagai"
+
+#: src/sp-window.c:597
+msgid "Save"
+msgstr "Simpan"
+
+#: src/sp-window.c:598 src/sp-window.c:1011
+msgid "Cancel"
+msgstr "Batal"
+
+#: src/sp-window.c:628
+#, c-format
+msgid "An error occurred while attempting to save your capture: %s"
+msgstr "Terjadi kesalahan ketika mencoba menyimpan tangkapan Anda: %s"
+
+#: src/sp-window.c:980
+#, c-format
+msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgstr "Berkas \"%s\" tidak dapat dibuka. Hanya berkas lokal yang didukung."
+
+#: src/sp-window.c:1007
+msgid "Open Capture"
+msgstr "Buka Tangkapan"
+
+#: src/sp-window.c:1014
+msgid "Sysprof Captures"
+msgstr "Tangkapan Sysprof"
+
+#: src/sp-window.c:1019
+msgid "All Files"
+msgstr "Semua Berkas"
+
+#: tools/sysprof-cli.c:97
+msgid "Make sysprof specific to a task"
+msgstr "Membuat sysprof spesifik ke sebuah tugas"
+
+#: tools/sysprof-cli.c:97
+msgid "PID"
+msgstr "PID"
+
+#: tools/sysprof-cli.c:98
+msgid "Run a command and profile the process"
+msgstr "Jalankan suatu perintah dan buat profil proses tersebut"
+
+#: tools/sysprof-cli.c:98
+msgid "COMMAND"
+msgstr "PERINTAH"
+
+#: tools/sysprof-cli.c:99
+msgid "Force overwrite the capture file"
+msgstr "Paksa timpa berkas tangkapan"
+
+#: tools/sysprof-cli.c:100
+msgid "Print the sysprof-cli version and exit"
+msgstr "Cetak versi sysprof-cli dan keluar"
+
+#: tools/sysprof-cli.c:106
+msgid "[CAPTURE_FILE] - Sysprof"
+msgstr "[BERKAS_TANGKAPAN] - Sysprof"
+
+#: tools/sysprof-cli.c:125
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "Terlalu banyak argumen yang diberikan ke sysprof-cli:"
+
+#: tools/sysprof-cli.c:165
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s telah ada. Gunakan --force untuk menimpa\n"

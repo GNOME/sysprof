@@ -1,0 +1,513 @@
+# Friulian translation for sysprof.
+# Copyright (C) 2017 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Fabio Tomat <f.t.public@gmail.com>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
+"product=sysprof&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2017-04-11 08:08+0000\n"
+"PO-Revision-Date: 2017-04-15 14:57+0200\n"
+"Language-Team: Friulian <fur@li.org>\n"
+"Language: fur\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Last-Translator: Fabio Tomat <f.t.public@gmail.com>\n"
+"X-Generator: Poedit 1.8.12\n"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:5
+#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:6
+msgid "Profiler for an application or entire system"
+msgstr "Profiladôr par une aplicazion o pal sisteme intîr"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "La fondazion GNOME"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof ti permet di profilâ aplicazions par judâ intal debug e tal "
+"perfezionament."
+
+#: data/org.gnome.Sysprof2.desktop.in:5
+msgid "Profiler"
+msgstr "Profiladôr"
+
+#: data/org.gnome.Sysprof2.desktop.in:6
+msgid "Profile an application or entire system."
+msgstr "Profile une aplicazion o il sisteme intîr."
+
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: data/org.gnome.Sysprof2.desktop.in:10
+msgid "sysprof"
+msgstr "sysprof"
+
+#: data/org.gnome.sysprof2.gschema.xml:5
+msgid "Window size"
+msgstr "Dimension barcon"
+
+#: data/org.gnome.sysprof2.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "La dimension dal barcon (largjece e altece)."
+
+#: data/org.gnome.sysprof2.gschema.xml:10
+msgid "Window position"
+msgstr "Posizion dal barcon"
+
+#: data/org.gnome.sysprof2.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "La posizion dal barcon (x e y)."
+
+#: data/org.gnome.sysprof2.gschema.xml:15
+msgid "Window maximized"
+msgstr "Barcon slargjât"
+
+#: data/org.gnome.sysprof2.gschema.xml:16
+msgid "Window maximized state"
+msgstr "Stât dal barcon slargjât"
+
+#: data/org.gnome.sysprof2.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr ""
+
+#: data/org.gnome.sysprof2.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+
+#: data/org.gnome.sysprof2.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr ""
+
+#: data/org.gnome.sysprof2.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr ""
+
+#: data/org.gnome.sysprof2.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr ""
+
+#: data/org.gnome.sysprof2.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+
+#: data/org.gnome.sysprof2.policy.in:13
+msgid "Open a perf event stream"
+msgstr "Vierç un flus di events perf"
+
+#: data/org.gnome.sysprof2.policy.in:14
+msgid "Authentication is required to access system performance counters."
+msgstr ""
+"La autenticazion e je necessarie par acedi ai contadôrs di prestazion dal "
+"sisteme."
+
+#: lib/resources/ui/sp-callgraph-view.ui:24
+msgid "Functions"
+msgstr "Funzions"
+
+#: lib/resources/ui/sp-callgraph-view.ui:40
+#: lib/resources/ui/sp-callgraph-view.ui:101
+#: lib/resources/ui/sp-callgraph-view.ui:156
+msgid "Self"
+msgstr "Propri"
+
+#: lib/resources/ui/sp-callgraph-view.ui:56
+#: lib/resources/ui/sp-callgraph-view.ui:117
+msgid "Total"
+msgstr "Totâl"
+
+#: lib/resources/ui/sp-callgraph-view.ui:85
+msgid "Callers"
+msgstr ""
+
+#: lib/resources/ui/sp-callgraph-view.ui:148
+msgid "Descendants"
+msgstr "Dissendent"
+
+#: lib/resources/ui/sp-callgraph-view.ui:172
+msgid "Cumulative"
+msgstr "Cumulatîf"
+
+#: lib/resources/ui/sp-empty-state-view.ui:22
+msgid "Welcome to Sysprof"
+msgstr "Benvignûts su Sysprof"
+
+#: lib/resources/ui/sp-empty-state-view.ui:39
+msgid "Start profiling your system with the <b>Record</b> button above"
+msgstr "Tache a profilâ il sisteme cul boton <b>Regjistre</b> parsore"
+
+#: lib/resources/ui/sp-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "Ahia, chel al à fat mâl!"
+
+#: lib/resources/ui/sp-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr ""
+"Alc al è lât stuart in maniere inspietade intant che si cirive di profilâ il "
+"sisteme."
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:58
+msgid "Profile my _entire system"
+msgstr "Profile il sisteme _intîr"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:95
+msgid "Search"
+msgstr "Cîr"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:121
+msgid "Existing Process"
+msgstr "Procès esistent"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:131
+msgid "Command Line"
+msgstr "Rie di comant"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:150
+msgid "Environment"
+msgstr "Ambient"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:164
+msgid "Inherit current environment"
+msgstr "Eredite ambient atuâl"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:182
+msgid "Key"
+msgstr "Clâf"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:197
+msgid "Value"
+msgstr "Valôr"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:215
+#: lib/sp-profiler-menu-button.c:118
+msgid "New Process"
+msgstr "Gnûf procès"
+
+#: lib/resources/ui/sp-recording-state-view.ui:22
+msgid "00:00"
+msgstr "00:00"
+
+#: lib/resources/ui/sp-recording-state-view.ui:39
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"Sâstu di podê doprâ <a href=\"help:sysprof\">sysprof-cli</a> par regjistrâ?"
+
+#: lib/sp-callgraph-profile.c:414
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
+"Sysprof nol rivave a gjenerâ un grafic des clamadis dal sisteme di cature."
+
+#: lib/sp-perf-source.c:345
+#, c-format
+msgid ""
+"Sysprof requires authorization to access your computers performance counters."
+msgstr ""
+"Sysprof al à dibisugne di autorizazions par acedi ai tiei contadôrs di "
+"prestazion dal computer."
+
+#: lib/sp-perf-source.c:350
+#, c-format
+msgid "An error occurred while attempting to access performance counters: %s"
+msgstr ""
+"Al è capitât un erôr intant che si cirive di acedi ai contadôrs di "
+"prestazion: %s"
+
+#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
+msgid "All Processes"
+msgstr "Ducj i procès"
+
+#: lib/sp-profiler-menu-button.c:137
+#, c-format
+msgid "Process %d"
+msgstr "Procès %d"
+
+#: lib/sp-profiler-menu-button.c:142
+#, c-format
+msgid "%u Process"
+msgid_plural "%u Processes"
+msgstr[0] "%u Procès"
+msgstr[1] "%u Procès"
+
+#: lib/sp-profiler-menu-button.c:796
+msgid "The command line arguments provided are invalid"
+msgstr "I argoments de rie di comant furnîts no son valits"
+
+#: src/resources/gtk/help-overlay.ui:8
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Scurtis Sysprof"
+
+#: src/resources/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Daûr a regjistrâ"
+
+#: src/resources/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Ferme regjistrazion"
+
+#: src/resources/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Grafic des clamadis"
+
+#: src/resources/gtk/help-overlay.ui:29
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Espant funzion"
+
+#: src/resources/gtk/help-overlay.ui:30
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr ""
+
+#: src/resources/gtk/help-overlay.ui:37
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Colasse funzion"
+
+#: src/resources/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr ""
+
+#: src/resources/gtk/help-overlay.ui:45
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "Salte inte funzion"
+
+#: src/resources/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr ""
+"Selezione la funzion o il file come part superiôr dal grafic des clamadis"
+
+#: src/resources/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr ""
+
+#: src/resources/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Ingrandìs"
+
+#: src/resources/gtk/help-overlay.ui:66
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Impiçulìs"
+
+#: src/resources/gtk/help-overlay.ui:73
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Azere ingrandiment"
+
+#: src/resources/gtk/menus.ui:6
+msgid "_New Window"
+msgstr "_Gnûf barcon"
+
+#: src/resources/gtk/menus.ui:12
+msgid "_Open Capture"
+msgstr "_Vierç cature"
+
+#: src/resources/gtk/menus.ui:18
+msgid "About"
+msgstr "Informazions"
+
+#: src/resources/gtk/menus.ui:22
+msgid "Help"
+msgstr "Jutori"
+
+#: src/resources/gtk/menus.ui:26
+msgid "Keyboard Shortcuts"
+msgstr "Scurtis di tastiere"
+
+#: src/resources/gtk/menus.ui:30
+msgid "_Quit"
+msgstr "_Jes"
+
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
+msgid "Not running"
+msgstr "Nol è in esecuzion"
+
+#: src/resources/ui/sp-window.ui:44
+msgid "_Record"
+msgstr "_Regjistre"
+
+#: src/resources/ui/sp-window.ui:118
+msgid "_Close"
+msgstr "_Siere"
+
+#: src/resources/ui/sp-window.ui:174
+msgid "CPU"
+msgstr "CPU"
+
+#: src/resources/ui/sp-window.ui:222
+msgid "Zoom out (Ctrl+-)"
+msgstr "Impiçulìs (Ctrl+-)"
+
+#: src/resources/ui/sp-window.ui:238
+msgid "Reset zoom level (Ctrl+0)"
+msgstr "Azere nivel ingrandiment (Ctrl+0)"
+
+#: src/resources/ui/sp-window.ui:252
+msgid "Zoom in (Ctrl++)"
+msgstr "Ingrandìs (Ctrl++)"
+
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1010
+msgid "Open"
+msgstr "Vierç"
+
+#: src/resources/ui/sp-window.ui:284
+msgid "Save As"
+msgstr "Salve come"
+
+#: src/resources/ui/sp-window.ui:297
+msgid "Screenshot"
+msgstr "Cature di schermi"
+
+#: src/resources/ui/sp-window.ui:310
+msgid "Close"
+msgstr "Siere"
+
+#: src/sp-application.c:174
+msgid "A system profiler"
+msgstr "Un profiladôr di sisteme"
+
+#: src/sp-application.c:179
+msgid "translator-credits"
+msgstr "Fabio Tomat, <f.t.public@gmail.com>"
+
+#: src/sp-application.c:185
+msgid "Learn more about Sysprof"
+msgstr "Plui informazions su Sysprof"
+
+#: src/sp-window.c:148
+#, c-format
+msgid "Samples: %u"
+msgstr "Campions: %u"
+
+#: src/sp-window.c:181
+msgid "[Memory Capture]"
+msgstr "[Cature memorie]"
+
+#: src/sp-window.c:194
+#, c-format
+msgid "%s - %s"
+msgstr "%s - %s"
+
+#: src/sp-window.c:232
+msgid "Not enough samples were collected to generate a callgraph"
+msgstr ""
+"No son stâts colezionâts vonde campions par gjenerâ un grafic des clamadis"
+
+#: src/sp-window.c:305 src/sp-window.c:349
+msgid "Record"
+msgstr "Regjistre"
+
+#: src/sp-window.c:325
+msgid "Stop"
+msgstr "Ferme"
+
+#: src/sp-window.c:330
+msgid "Recording…"
+msgstr "Daûr a regjistrâ…"
+
+#: src/sp-window.c:341
+msgid "Building profile…"
+msgstr "Costruzion profîl…"
+
+#. SpProfiler::stopped will move us to generating
+#: src/sp-window.c:442
+msgid "Stopping…"
+msgstr "Daûr a fermâ…"
+
+#: src/sp-window.c:594
+msgid "Save Capture As"
+msgstr "Salve cature come"
+
+#: src/sp-window.c:597
+msgid "Save"
+msgstr "Salve"
+
+#: src/sp-window.c:598 src/sp-window.c:1011
+msgid "Cancel"
+msgstr "Anule"
+
+#: src/sp-window.c:628
+#, c-format
+msgid "An error occurred while attempting to save your capture: %s"
+msgstr "Al è capitât un erôr intant che si cirive di salvâ la cature: %s"
+
+#: src/sp-window.c:980
+#, c-format
+msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgstr ""
+"Il file \"%s\" nol pues jessi viert. A son supuartâts dome i file locâi."
+
+#: src/sp-window.c:1007
+msgid "Open Capture"
+msgstr "Vierç cature"
+
+#: src/sp-window.c:1014
+msgid "Sysprof Captures"
+msgstr "Caturis sysprof"
+
+#: src/sp-window.c:1019
+msgid "All Files"
+msgstr "Ducj i file"
+
+#: tools/sysprof-cli.c:97
+msgid "Make sysprof specific to a task"
+msgstr "Rint sysprof specific a une ativitât"
+
+#: tools/sysprof-cli.c:97
+msgid "PID"
+msgstr "PID"
+
+#: tools/sysprof-cli.c:98
+msgid "Run a command and profile the process"
+msgstr "Eseguìs un comant e profile il procès"
+
+#: tools/sysprof-cli.c:98
+msgid "COMMAND"
+msgstr "COMANT"
+
+#: tools/sysprof-cli.c:99
+msgid "Force overwrite the capture file"
+msgstr "Sfuarce sorescriture dal file di cature"
+
+#: tools/sysprof-cli.c:100
+msgid "Print the sysprof-cli version and exit"
+msgstr "Stampe la version di sysprof-cli e jes"
+
+#: tools/sysprof-cli.c:106
+msgid "[CAPTURE_FILE] - Sysprof"
+msgstr "[FILE_CATURE] - Sysprof"
+
+#: tools/sysprof-cli.c:125
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "A son stâts passâts a sysprof-cli masse argoments:"
+
+#: tools/sysprof-cli.c:165
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s al esist. Dopre --force par sorescrivi\n"

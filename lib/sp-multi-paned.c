@@ -42,12 +42,6 @@ typedef struct
   GtkWidget *widget;
 
   /*
-   * The input only window for resize grip.
-   * Has a cursor associated with it.
-   */
-  GdkWindow *handle;
-
-  /*
    * The position the handle has been dragged to.
    * This is used to adjust size requests.
    */
@@ -169,12 +163,6 @@ enum {
 };
 
 enum {
-  STYLE_PROP_0,
-  STYLE_PROP_HANDLE_SIZE,
-  N_STYLE_PROPS
-};
-
-enum {
   RESIZE_DRAG_BEGIN,
   RESIZE_DRAG_END,
   N_SIGNALS
@@ -187,7 +175,6 @@ enum {
 
 static GParamSpec *properties [N_PROPS];
 static GParamSpec *child_properties [N_CHILD_PROPS];
-static GParamSpec *style_properties [N_STYLE_PROPS];
 static guint signals [N_SIGNALS];
 static AllocationStage allocation_stages[] = {
   allocation_stage_borders,
@@ -259,6 +246,7 @@ sp_multi_paned_is_last_visible_child (SpMultiPaned      *self,
   return !sp_multi_paned_get_next_visible_child (self, child);
 }
 
+#if 0
 static void
 sp_multi_paned_get_handle_rect (SpMultiPaned      *self,
                                  SpMultiPanedChild *child,
@@ -300,50 +288,7 @@ sp_multi_paned_get_handle_rect (SpMultiPaned      *self,
       handle_rect->height = HANDLE_HEIGHT;
     }
 }
-
-static void
-sp_multi_paned_create_child_handle (SpMultiPaned      *self,
-                                     SpMultiPanedChild *child)
-{
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-  GdkWindowAttr attributes = { 0 };
-  GdkDisplay *display;
-  GdkWindow *parent;
-  const char *cursor_name;
-  GdkRectangle handle_rect;
-
-  g_assert (SP_IS_MULTI_PANED (self));
-  g_assert (child != NULL);
-  g_assert (child->handle == NULL);
-
-  display = gtk_widget_get_display (GTK_WIDGET (self));
-  parent = gtk_widget_get_window (GTK_WIDGET (self));
-
-  cursor_name = (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
-                ? "col-resize"
-                : "row-resize";
-
-  sp_multi_paned_get_handle_rect (self, child, &handle_rect);
-
-  attributes.window_type = GDK_WINDOW_CHILD;
-  attributes.wclass = GDK_INPUT_ONLY;
-  attributes.x = handle_rect.x;
-  attributes.y = -handle_rect.y;
-  attributes.width = handle_rect.width;
-  attributes.height = handle_rect.height;
-  attributes.visual = gtk_widget_get_visual (GTK_WIDGET (self));
-  attributes.event_mask = (GDK_BUTTON_PRESS_MASK |
-                           GDK_BUTTON_RELEASE_MASK |
-                           GDK_ENTER_NOTIFY_MASK |
-                           GDK_LEAVE_NOTIFY_MASK |
-                           GDK_POINTER_MOTION_MASK);
-  attributes.cursor = gdk_cursor_new_from_name (display, cursor_name);
-
-  child->handle = gdk_window_new (parent, &attributes, GDK_WA_CURSOR);
-  gtk_widget_register_window (GTK_WIDGET (self), child->handle);
-
-  g_clear_object (&attributes.cursor);
-}
+#endif
 
 static gint
 sp_multi_paned_calc_handle_size (SpMultiPaned *self)
@@ -355,7 +300,7 @@ sp_multi_paned_calc_handle_size (SpMultiPaned *self)
 
   g_assert (SP_IS_MULTI_PANED (self));
 
-  gtk_widget_style_get (GTK_WIDGET (self), "handle-size", &handle_size, NULL);
+  handle_size = 10;
 
   for (i = 0; i < priv->children->len; i++)
     {
@@ -366,51 +311,6 @@ sp_multi_paned_calc_handle_size (SpMultiPaned *self)
     }
 
   return MAX (0, (visible_children - 1) * handle_size);
-}
-
-static void
-sp_multi_paned_destroy_child_handle (SpMultiPaned      *self,
-                                      SpMultiPanedChild *child)
-{
-  g_assert (SP_IS_MULTI_PANED (self));
-  g_assert (child != NULL);
-
-  if (child->handle != NULL)
-    {
-      gdk_window_destroy (child->handle);
-      child->handle = NULL;
-    }
-}
-
-static void
-sp_multi_paned_update_child_handles (SpMultiPaned *self)
-{
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-  GtkWidget *widget = GTK_WIDGET (self);
-
-  if (gtk_widget_get_realized (widget))
-    {
-      GdkCursor *cursor;
-      guint i;
-
-      if (gtk_widget_is_sensitive (widget))
-        cursor = gdk_cursor_new_from_name (gtk_widget_get_display (widget),
-                                           priv->orientation == GTK_ORIENTATION_HORIZONTAL
-                                           ? "col-resize"
-                                           : "row-resize");
-      else
-        cursor = NULL;
-
-      for (i = 0; i < priv->children->len; i++)
-        {
-          SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
-
-          gdk_window_set_cursor (child->handle, cursor);
-        }
-
-      if (cursor)
-        g_object_unref (cursor);
-    }
 }
 
 static SpMultiPanedChild *
@@ -487,9 +387,6 @@ sp_multi_paned_add (GtkContainer *container,
   child.widget = g_object_ref_sink (widget);
   child.position = -1;
 
-  if (gtk_widget_get_realized (GTK_WIDGET (self)))
-    sp_multi_paned_create_child_handle (self, &child);
-
   gtk_widget_set_parent (widget, GTK_WIDGET (self));
 
   g_array_append_val (priv->children, child);
@@ -516,8 +413,6 @@ sp_multi_paned_remove (GtkContainer *container,
 
       if (child->widget == widget)
         {
-          sp_multi_paned_destroy_child_handle (self, child);
-
           g_array_remove_index (priv->children, i);
           child = NULL;
 
@@ -535,7 +430,6 @@ sp_multi_paned_remove (GtkContainer *container,
 
 static void
 sp_multi_paned_forall (GtkContainer *container,
-                        gboolean      include_internals,
                         GtkCallback   callback,
                         gpointer      user_data)
 {
@@ -567,266 +461,85 @@ sp_multi_paned_get_request_mode (GtkWidget *widget)
 }
 
 static void
-sp_multi_paned_get_preferred_height (GtkWidget *widget,
-                                      gint      *min_height,
-                                      gint      *nat_height)
+sp_multi_paned_measure (GtkWidget      *widget,
+                        GtkOrientation  orientation,
+                        int             for_size,
+                        int            *minimum,
+                        int            *natural,
+                        int            *minimum_baseline,
+                        int            *natural_baseline)
 {
   SpMultiPaned *self = (SpMultiPaned *)widget;
   SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
+  int handle_size;
+  int min = 0;
+  int nat = 0;
   guint i;
-  gint real_min_height = 0;
-  gint real_nat_height = 0;
 
-  g_assert (SP_IS_MULTI_PANED (self));
-  g_assert (min_height != NULL);
-  g_assert (nat_height != NULL);
+  *minimum = 0;
+  *natural = 0;
 
-  for (i = 0; i < priv->children->len; i++)
+  handle_size = sp_multi_paned_calc_handle_size (self);
+
+  if (orientation == GTK_ORIENTATION_HORIZONTAL)
     {
-      SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
-      gint child_min_height = 0;
-      gint child_nat_height = 0;
-
-      if (gtk_widget_get_visible (child->widget))
+      for (i = 0; i < priv->children->len; i++)
         {
-          gtk_widget_get_preferred_height (child->widget, &child_min_height, &child_nat_height);
+          SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
+          int child_min, child_nat;
 
-          if (priv->orientation == GTK_ORIENTATION_VERTICAL)
+          gtk_widget_measure (child->widget, orientation, for_size,
+                              &child_min, &child_nat, NULL, NULL);
+
+          if (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
             {
-              real_min_height += child_min_height;
-              real_nat_height += child_nat_height;
+              min += child_min;
+              nat += child_nat;
             }
           else
             {
-              real_min_height = MAX (real_min_height, child_min_height);
-              real_nat_height = MAX (real_nat_height, child_nat_height);
+              min = MAX (min, child_min);
+              nat = MAX (nat, child_nat);
             }
         }
-    }
 
-  if (priv->orientation == GTK_ORIENTATION_VERTICAL)
-    {
-      gint handle_size = sp_multi_paned_calc_handle_size (self);
-
-      real_min_height += handle_size;
-      real_nat_height += handle_size;
-    }
-
-  *min_height = real_min_height;
-  *nat_height = real_nat_height;
-}
-
-static void
-sp_multi_paned_get_child_preferred_height_for_width (SpMultiPaned      *self,
-                                                      SpMultiPanedChild *children,
-                                                      gint                n_children,
-                                                      gint                width,
-                                                      gint               *min_height,
-                                                      gint               *nat_height)
-{
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-  SpMultiPanedChild *child = children;
-  gint child_min_height = 0;
-  gint child_nat_height = 0;
-  gint neighbor_min_height = 0;
-  gint neighbor_nat_height = 0;
-
-  g_assert (SP_IS_MULTI_PANED (self));
-  g_assert (n_children == 0 || children != NULL);
-  g_assert (min_height != NULL);
-  g_assert (nat_height != NULL);
-
-  *min_height = 0;
-  *nat_height = 0;
-
-  if (n_children == 0)
-    return;
-
-  if (gtk_widget_get_visible (child->widget))
-    gtk_widget_get_preferred_height_for_width (child->widget,
-                                               width,
-                                               &child_min_height,
-                                               &child_nat_height);
-
-  sp_multi_paned_get_child_preferred_height_for_width (self,
-                                                        children + 1,
-                                                        n_children - 1,
-                                                        width,
-                                                        &neighbor_min_height,
-                                                        &neighbor_nat_height);
-
-  if (priv->orientation == GTK_ORIENTATION_VERTICAL)
-    {
-      *min_height = child_min_height + neighbor_min_height;
-      *nat_height = child_nat_height + neighbor_nat_height;
+      if (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
+        {
+          min += handle_size;
+          nat += handle_size;
+        }
     }
   else
     {
-      *min_height = MAX (child_min_height, neighbor_min_height);
-      *nat_height = MAX (child_nat_height, neighbor_nat_height);
-    }
-}
-
-static void
-sp_multi_paned_get_preferred_height_for_width (GtkWidget *widget,
-                                                gint       width,
-                                                gint      *min_height,
-                                                gint      *nat_height)
-{
-  SpMultiPaned *self = (SpMultiPaned *)widget;
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-
-  g_assert (SP_IS_MULTI_PANED (self));
-  g_assert (min_height != NULL);
-  g_assert (nat_height != NULL);
-
-  *min_height = 0;
-  *nat_height = 0;
-
-  sp_multi_paned_get_child_preferred_height_for_width (self,
-                                                        (SpMultiPanedChild *)(gpointer)priv->children->data,
-                                                        priv->children->len,
-                                                        width,
-                                                        min_height,
-                                                        nat_height);
-
-  if (priv->orientation == GTK_ORIENTATION_VERTICAL)
-    {
-      gint handle_size = sp_multi_paned_calc_handle_size (self);
-
-      *min_height += handle_size;
-      *nat_height += handle_size;
-    }
-}
-
-static void
-sp_multi_paned_get_preferred_width (GtkWidget *widget,
-                                     gint      *min_width,
-                                     gint      *nat_width)
-{
-  SpMultiPaned *self = (SpMultiPaned *)widget;
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-  guint i;
-  gint real_min_width = 0;
-  gint real_nat_width = 0;
-
-  g_assert (SP_IS_MULTI_PANED (self));
-  g_assert (min_width != NULL);
-  g_assert (nat_width != NULL);
-
-  for (i = 0; i < priv->children->len; i++)
-    {
-      SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
-      gint child_min_width = 0;
-      gint child_nat_width = 0;
-
-      if (gtk_widget_get_visible (child->widget))
+      for (i = 0; i < priv->children->len; i++)
         {
-          gtk_widget_get_preferred_width (child->widget, &child_min_width, &child_nat_width);
+          SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
+          int child_min, child_nat;
 
-          if (priv->orientation == GTK_ORIENTATION_VERTICAL)
+          gtk_widget_measure (child->widget, orientation, for_size,
+                              &child_min, &child_nat, NULL, NULL);
+
+          if (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
             {
-              real_min_width = MAX (real_min_width, child_min_width);
-              real_nat_width = MAX (real_nat_width, child_nat_width);
+              min = MAX (min, child_min);
+              nat = MAX (nat, child_nat);
             }
           else
             {
-              real_min_width += child_min_width;
-              real_nat_width += child_nat_width;
+              min += child_min;
+              nat += child_nat;
             }
+        }
+
+      if (priv->orientation == GTK_ORIENTATION_VERTICAL)
+        {
+          min += handle_size;
+          nat += handle_size;
         }
     }
 
-  if (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
-    {
-      gint handle_size = sp_multi_paned_calc_handle_size (self);
-
-      real_min_width += handle_size;
-      real_nat_width += handle_size;
-    }
-
-  *min_width = real_min_width;
-  *nat_width = real_nat_width;
-}
-
-static void
-sp_multi_paned_get_child_preferred_width_for_height (SpMultiPaned      *self,
-                                                      SpMultiPanedChild *children,
-                                                      gint                n_children,
-                                                      gint                height,
-                                                      gint               *min_width,
-                                                      gint               *nat_width)
-{
-  SpMultiPanedChild *child = children;
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-  gint child_min_width = 0;
-  gint child_nat_width = 0;
-  gint neighbor_min_width = 0;
-  gint neighbor_nat_width = 0;
-
-  g_assert (SP_IS_MULTI_PANED (self));
-  g_assert (n_children == 0 || children != NULL);
-  g_assert (min_width != NULL);
-  g_assert (nat_width != NULL);
-
-  *min_width = 0;
-  *nat_width = 0;
-
-  if (n_children == 0)
-    return;
-
-  if (gtk_widget_get_visible (child->widget))
-    gtk_widget_get_preferred_width_for_height (child->widget,
-                                               height,
-                                               &child_min_width,
-                                               &child_nat_width);
-
-  sp_multi_paned_get_child_preferred_width_for_height (self,
-                                                        children + 1,
-                                                        n_children - 1,
-                                                        height,
-                                                        &neighbor_min_width,
-                                                        &neighbor_nat_width);
-
-  if (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
-    {
-      *min_width = child_min_width + neighbor_min_width;
-      *nat_width = child_nat_width + neighbor_nat_width;
-    }
-  else
-    {
-      *min_width = MAX (child_min_width, neighbor_min_width);
-      *nat_width = MAX (child_nat_width, neighbor_nat_width);
-    }
-}
-
-static void
-sp_multi_paned_get_preferred_width_for_height (GtkWidget *widget,
-                                                gint       height,
-                                                gint      *min_width,
-                                                gint      *nat_width)
-{
-  SpMultiPaned *self = (SpMultiPaned *)widget;
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-
-  g_assert (SP_IS_MULTI_PANED (self));
-  g_assert (min_width != NULL);
-  g_assert (nat_width != NULL);
-
-  sp_multi_paned_get_child_preferred_width_for_height (self,
-                                                        (SpMultiPanedChild *)(gpointer)priv->children->data,
-                                                        priv->children->len,
-                                                        height,
-                                                        min_width,
-                                                        nat_width);
-
-  if (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
-    {
-      gint handle_size = sp_multi_paned_calc_handle_size (self);
-
-      *min_width += handle_size;
-      *nat_width += handle_size;
-    }
+  *minimum = min;
+  *natural = nat;
 }
 
 static void
@@ -965,7 +678,7 @@ allocation_stage_borders (SpMultiPaned   *self,
   g_assert (state->children != NULL);
   g_assert (state->n_children > 0);
 
-  border_width = gtk_container_get_border_width (GTK_CONTAINER (self));
+  border_width = 0;
 
   state->top_alloc.x += border_width;
   state->top_alloc.y += border_width;
@@ -998,15 +711,15 @@ allocation_stage_cache_request (SpMultiPaned   *self,
       SpMultiPanedChild *child = state->children [i];
 
       if (IS_HORIZONTAL (state->orientation))
-        gtk_widget_get_preferred_width_for_height (child->widget,
-                                                   state->avail_height,
-                                                   &child->min_req.width,
-                                                   &child->nat_req.width);
+        gtk_widget_measure (child->widget, GTK_ORIENTATION_HORIZONTAL,
+                            state->avail_height,
+                            &child->min_req.width,&child->nat_req.width,
+                            NULL, NULL);
       else
-        gtk_widget_get_preferred_height_for_width (child->widget,
-                                                   state->avail_width,
-                                                   &child->min_req.height,
-                                                   &child->nat_req.height);
+        gtk_widget_measure (child->widget, GTK_ORIENTATION_VERTICAL,
+                            state->avail_width,
+                            &child->min_req.height,&child->nat_req.height,
+                            NULL, NULL);
     }
 }
 
@@ -1272,6 +985,7 @@ allocation_stage_allocate (SpMultiPaned   *self,
                            AllocationState *state)
 {
   guint i;
+  GtkAllocation clip;
 
   g_assert (SP_IS_MULTI_PANED (self));
   g_assert (state != NULL);
@@ -1282,35 +996,15 @@ allocation_stage_allocate (SpMultiPaned   *self,
     {
       SpMultiPanedChild *child = state->children [i];
 
-      gtk_widget_size_allocate (child->widget, &child->alloc);
-
-      if ((child->handle != NULL) && (state->n_children != (i + 1)))
-        {
-          if (state->orientation == GTK_ORIENTATION_HORIZONTAL)
-            {
-              gdk_window_move_resize (child->handle,
-                                      child->alloc.x + child->alloc.width - (HANDLE_WIDTH / 2),
-                                      child->alloc.y,
-                                      HANDLE_WIDTH,
-                                      child->alloc.height);
-            }
-          else
-            {
-              gdk_window_move_resize (child->handle,
-                                      child->alloc.x,
-                                      child->alloc.y + child->alloc.height - (HANDLE_HEIGHT / 2),
-                                      child->alloc.width,
-                                      HANDLE_HEIGHT);
-            }
-
-          gdk_window_show (child->handle);
-        }
+      gtk_widget_size_allocate (child->widget, &child->alloc, -1, &clip);
     }
 }
 
 static void
-sp_multi_paned_size_allocate (GtkWidget     *widget,
-                               GtkAllocation *allocation)
+sp_multi_paned_size_allocate (GtkWidget           *widget,
+                              const GtkAllocation *allocation,
+                              int                  baseline,
+                              GtkAllocation       *out_clip)
 {
   SpMultiPaned *self = (SpMultiPaned *)widget;
   SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
@@ -1321,7 +1015,10 @@ sp_multi_paned_size_allocate (GtkWidget     *widget,
   g_assert (SP_IS_MULTI_PANED (self));
   g_assert (allocation != NULL);
 
-  GTK_WIDGET_CLASS (sp_multi_paned_parent_class)->size_allocate (widget, allocation);
+  GTK_WIDGET_CLASS (sp_multi_paned_parent_class)->size_allocate (widget,
+                                                                 allocation,
+                                                                 baseline,
+                                                                 out_clip);
 
   if (priv->children->len == 0)
     return;
@@ -1341,8 +1038,6 @@ sp_multi_paned_size_allocate (GtkWidget     *widget,
           gtk_widget_get_child_visible (child->widget) &&
           gtk_widget_get_visible (child->widget))
         g_ptr_array_add (children, child);
-      else if (child->handle)
-        gdk_window_hide (child->handle);
     }
 
   state.children = (SpMultiPanedChild **)children->pdata;
@@ -1354,9 +1049,7 @@ sp_multi_paned_size_allocate (GtkWidget     *widget,
       return;
     }
 
-  gtk_widget_style_get (GTK_WIDGET (self),
-                        "handle-size", &state.handle_size,
-                        NULL);
+  state.handle_size = 10;
 
   state.orientation = priv->orientation;
   state.top_alloc = *allocation;
@@ -1370,136 +1063,62 @@ sp_multi_paned_size_allocate (GtkWidget     *widget,
 }
 
 static void
-sp_multi_paned_realize (GtkWidget *widget)
+sp_multi_paned_snapshot (GtkWidget   *widget,
+                         GtkSnapshot *snapshot)
 {
   SpMultiPaned *self = (SpMultiPaned *)widget;
   SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
+  GtkStyleContext *style_context;
+  gint handle_size = 1;
   guint i;
+  cairo_t *cr;
+  graphene_rect_t bounds;
 
   g_assert (SP_IS_MULTI_PANED (self));
 
-  GTK_WIDGET_CLASS (sp_multi_paned_parent_class)->realize (widget);
+  GTK_WIDGET_CLASS (sp_multi_paned_parent_class)->snapshot (widget, snapshot);
+
+  graphene_rect_init (&bounds,
+                      0, 0,
+                      gtk_widget_get_allocated_width (widget),
+                      gtk_widget_get_allocated_height (widget));
+  cr = gtk_snapshot_append_cairo (snapshot, &bounds, "multi paned");
+
+  style_context = gtk_widget_get_style_context (GTK_WIDGET (self));
+
+  handle_size = 10;
 
   for (i = 0; i < priv->children->len; i++)
     {
       SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
+      GtkAllocation alloc;
 
-      sp_multi_paned_create_child_handle (self, child);
-    }
-}
+      if (!gtk_widget_get_realized (child->widget) ||
+          !gtk_widget_get_visible (child->widget))
+        continue;
 
-static void
-sp_multi_paned_unrealize (GtkWidget *widget)
-{
-  SpMultiPaned *self = (SpMultiPaned *)widget;
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-  guint i;
+      gtk_widget_get_allocation (child->widget, &alloc);
 
-  g_assert (SP_IS_MULTI_PANED (self));
-
-  for (i = 0; i < priv->children->len; i++)
-    {
-      SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
-
-      sp_multi_paned_destroy_child_handle (self, child);
-    }
-
-  GTK_WIDGET_CLASS (sp_multi_paned_parent_class)->unrealize (widget);
-}
-
-static void
-sp_multi_paned_map (GtkWidget *widget)
-{
-  SpMultiPaned *self = (SpMultiPaned *)widget;
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-  guint i;
-
-  g_assert (SP_IS_MULTI_PANED (self));
-
-  GTK_WIDGET_CLASS (sp_multi_paned_parent_class)->map (widget);
-
-  for (i = 0; i < priv->children->len; i++)
-    {
-      SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
-
-      gdk_window_show (child->handle);
-    }
-}
-
-static void
-sp_multi_paned_unmap (GtkWidget *widget)
-{
-  SpMultiPaned *self = (SpMultiPaned *)widget;
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-  guint i;
-
-  g_assert (SP_IS_MULTI_PANED (self));
-
-  for (i = 0; i < priv->children->len; i++)
-    {
-      SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
-
-      gdk_window_hide (child->handle);
-    }
-
-  GTK_WIDGET_CLASS (sp_multi_paned_parent_class)->unmap (widget);
-}
-
-static gboolean
-sp_multi_paned_draw (GtkWidget *widget,
-                      cairo_t   *cr)
-{
-  SpMultiPaned *self = (SpMultiPaned *)widget;
-  SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-  gboolean ret;
-
-  g_assert (SP_IS_MULTI_PANED (self));
-  g_assert (cr != NULL);
-
-  ret = GTK_WIDGET_CLASS (sp_multi_paned_parent_class)->draw (widget, cr);
-
-  if (ret != GDK_EVENT_STOP)
-    {
-      GtkStyleContext *style_context;
-      gint handle_size = 1;
-      guint i;
-
-      style_context = gtk_widget_get_style_context (GTK_WIDGET (self));
-
-      gtk_widget_style_get (widget, "handle-size", &handle_size, NULL);
-
-      for (i = 0; i < priv->children->len; i++)
+      if (!sp_multi_paned_is_last_visible_child (self, child))
         {
-          SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
-          GtkAllocation alloc;
-
-          if (!gtk_widget_get_realized (child->widget) ||
-              !gtk_widget_get_visible (child->widget))
-            continue;
-
-          gtk_widget_get_allocation (child->widget, &alloc);
-
-          if (!sp_multi_paned_is_last_visible_child (self, child))
-            {
-              if (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
-                gtk_render_handle (style_context,
-                                   cr,
-                                   alloc.x + alloc.width,
-                                   0,
-                                   handle_size,
-                                   alloc.height);
-              else
-                gtk_render_handle (style_context,
-                                   cr,
-                                   0,
-                                   alloc.y + alloc.height,
-                                   alloc.width,
-                                   handle_size);
-            }
+          if (priv->orientation == GTK_ORIENTATION_HORIZONTAL)
+            gtk_render_handle (style_context,
+                               cr,
+                               alloc.x + alloc.width,
+                               0,
+                               handle_size,
+                               alloc.height);
+          else
+            gtk_render_handle (style_context,
+                               cr,
+                               0,
+                               alloc.y + alloc.height,
+                               alloc.width,
+                               handle_size);
         }
     }
 
-  return ret;
+  cairo_destroy (cr);
 }
 
 static void
@@ -1509,31 +1128,31 @@ sp_multi_paned_pan_gesture_drag_begin (SpMultiPaned *self,
                                         GtkGesturePan *gesture)
 {
   SpMultiPanedPrivate *priv = sp_multi_paned_get_instance_private (self);
-  GdkEventSequence *sequence;
-  const GdkEvent *event;
+  /*GdkEventSequence *sequence;*/
+  /*const GdkEvent *event;*/
   guint i;
 
   g_assert (SP_IS_MULTI_PANED (self));
   g_assert (GTK_IS_GESTURE_PAN (gesture));
   g_assert (gesture == priv->gesture);
 
-  sequence = gtk_gesture_single_get_current_sequence (GTK_GESTURE_SINGLE (gesture));
-  event = gtk_gesture_get_last_event (GTK_GESTURE (gesture), sequence);
+  /*sequence = gtk_gesture_single_get_current_sequence (GTK_GESTURE_SINGLE (gesture));*/
+  /*event = gtk_gesture_get_last_event (GTK_GESTURE (gesture), sequence);*/
 
   priv->drag_begin = NULL;
   priv->drag_begin_position = 0;
   priv->drag_extra_offset = 0;
 
-  for (i = 0; i < priv->children->len; i++)
-    {
-      SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
+  /*for (i = 0; i < priv->children->len; i++)*/
+    /*{*/
+      /*SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);*/
 
-      if (child->handle == event->any.window)
-        {
-          priv->drag_begin = child;
-          break;
-        }
-    }
+      /*if (child->handle == event->any.window)*/
+        /*{*/
+          /*priv->drag_begin = child;*/
+          /*break;*/
+        /*}*/
+    /*}*/
 
   if (priv->drag_begin == NULL)
     {
@@ -1545,8 +1164,8 @@ sp_multi_paned_pan_gesture_drag_begin (SpMultiPaned *self,
     {
       SpMultiPanedChild *child = &g_array_index (priv->children, SpMultiPanedChild, i);
 
-      if (child->handle == event->any.window)
-        break;
+      /*if (child->handle == event->any.window)*/
+        /*break;*/
 
       /*
        * We want to make any child before the drag child "sticky" so that it
@@ -1783,22 +1402,12 @@ sp_multi_paned_set_property (GObject      *object,
     {
     case PROP_ORIENTATION:
       priv->orientation = g_value_get_enum (value);
-      sp_multi_paned_update_child_handles (self);
       gtk_widget_queue_resize (GTK_WIDGET (self));
       break;
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
-}
-
-static void
-sp_multi_paned_state_flags_changed (GtkWidget     *widget,
-                                     GtkStateFlags  previous_state)
-{
-  sp_multi_paned_update_child_handles (SP_MULTI_PANED (widget));
-
-  GTK_WIDGET_CLASS (sp_multi_paned_parent_class)->state_flags_changed (widget, previous_state);
 }
 
 static void
@@ -1813,17 +1422,9 @@ sp_multi_paned_class_init (SpMultiPanedClass *klass)
   object_class->finalize = sp_multi_paned_finalize;
 
   widget_class->get_request_mode = sp_multi_paned_get_request_mode;
-  widget_class->get_preferred_width = sp_multi_paned_get_preferred_width;
-  widget_class->get_preferred_height = sp_multi_paned_get_preferred_height;
-  widget_class->get_preferred_width_for_height = sp_multi_paned_get_preferred_width_for_height;
-  widget_class->get_preferred_height_for_width = sp_multi_paned_get_preferred_height_for_width;
+  widget_class->measure  = sp_multi_paned_measure;
+  widget_class->snapshot = sp_multi_paned_snapshot;
   widget_class->size_allocate = sp_multi_paned_size_allocate;
-  widget_class->realize = sp_multi_paned_realize;
-  widget_class->unrealize = sp_multi_paned_unrealize;
-  widget_class->map = sp_multi_paned_map;
-  widget_class->unmap = sp_multi_paned_unmap;
-  widget_class->draw = sp_multi_paned_draw;
-  widget_class->state_flags_changed = sp_multi_paned_state_flags_changed;
 
   container_class->add = sp_multi_paned_add;
   container_class->remove = sp_multi_paned_remove;
@@ -1857,15 +1458,6 @@ sp_multi_paned_class_init (SpMultiPanedClass *klass)
 
   gtk_container_class_install_child_properties (container_class, N_CHILD_PROPS, child_properties);
 
-  style_properties [STYLE_PROP_HANDLE_SIZE] =
-    g_param_spec_int ("handle-size",
-                      "Handle Size",
-                      "Width of the resize handle",
-                      0,
-                      G_MAXINT,
-                      1,
-                      (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
-  gtk_widget_class_install_style_property (widget_class, style_properties [STYLE_PROP_HANDLE_SIZE]);
 
   signals [RESIZE_DRAG_BEGIN] =
     g_signal_new ("resize-drag-begin",

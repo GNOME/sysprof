@@ -3,11 +3,12 @@
   <template class="SpEmptyStateView" parent="GtkBin">
     <child>
       <object class="GtkBox">
-        <property name="border-width">36</property>
         <property name="orientation">vertical</property>
         <property name="spacing">12</property>
         <property name="visible">true</property>
-        <child type="center">
+        <property name="halign">center</property>
+        <property name="valign">center</property>
+        <child>
           <object class="GtkImage">
             <property name="icon-name">sysprof-symbolic</property>
             <property name="pixel-size">256</property>

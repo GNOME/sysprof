@@ -66,22 +66,31 @@ _sp_visualizer_row_get_graph_width (SpVisualizerRow *self)
 }
 
 static void
-sp_visualizer_row_get_preferred_width (GtkWidget *widget,
-                                       gint      *min_width,
-                                       gint      *nat_width)
+sp_visualizer_row_measure (GtkWidget      *widget,
+                           GtkOrientation  orientation,
+                           int             for_size,
+                           int            *minimum,
+                           int            *natural,
+                           int            *minimum_baseline,
+                           int            *natural_baseline)
 {
-  SpVisualizerRow *self = (SpVisualizerRow *)widget;
-  gint graph_width;
-  gint real_min_width = 0;
-  gint real_nat_width = 0;
+  if (orientation == GTK_ORIENTATION_HORIZONTAL)
+    {
+      int real_min_width, real_nat_width;
+      int graph_width;
 
-  g_assert (SP_IS_VISUALIZER_ROW (self));
+      GTK_WIDGET_CLASS (sp_visualizer_row_parent_class)->measure (widget, orientation, -1,
+                                                                  &real_min_width, &real_nat_width,
+                                                                  NULL, NULL);
 
-  GTK_WIDGET_CLASS (sp_visualizer_row_parent_class)->get_preferred_width (widget, &real_min_width, &real_nat_width);
+      graph_width = _sp_visualizer_row_get_graph_width (SP_VISUALIZER_ROW (widget));
 
-  graph_width = _sp_visualizer_row_get_graph_width (self);
-
-  *min_width = *nat_width = real_min_width + graph_width;
+      *minimum = *natural = real_min_width + graph_width;
+    }
+  else
+    {
+      *minimum = *natural = 0;
+    }
 }
 
 static void
@@ -144,7 +153,7 @@ sp_visualizer_row_class_init (SpVisualizerRowClass *klass)
   object_class->get_property = sp_visualizer_row_get_property;
   object_class->set_property = sp_visualizer_row_set_property;
 
-  widget_class->get_preferred_width = sp_visualizer_row_get_preferred_width;
+  widget_class->measure = sp_visualizer_row_measure;
 
   properties [PROP_ZOOM_MANAGER] =
     g_param_spec_object ("zoom-manager",
@@ -265,14 +274,12 @@ adjust_alloc_for_borders (SpVisualizerRow *self,
 {
   GtkStyleContext *style_context;
   GtkBorder border;
-  GtkStateFlags state;
 
   g_assert (SP_IS_VISUALIZER_ROW (self));
   g_assert (alloc != NULL);
 
-  state = gtk_widget_get_state_flags (GTK_WIDGET (self));
   style_context = gtk_widget_get_style_context (GTK_WIDGET (self));
-  gtk_style_context_get_border (style_context, state, &border);
+  gtk_style_context_get_border (style_context, &border);
 
   subtract_border (alloc, &border);
 }

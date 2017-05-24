@@ -229,28 +229,31 @@ draw_ticks (SpVisualizerTicks *self,
   return count > 2;
 }
 
-static gboolean
-sp_visualizer_ticks_draw (GtkWidget *widget,
-                          cairo_t   *cr)
+static void
+sp_visualizer_ticks_snapshot (GtkWidget   *widget,
+                              GtkSnapshot *snapshot)
 {
   SpVisualizerTicks *self = SP_VISUALIZER_TICKS (widget);
   GtkStyleContext *style;
   GtkAllocation alloc;
-  GtkStateFlags state;
   gint64 timespan;
   GdkRGBA color;
+  graphene_rect_t bounds;
+  cairo_t *cr;
 
   g_assert (SP_IS_VISUALIZER_TICKS (self));
-  g_assert (cr != NULL);
 
   if (0 == (timespan = self->end_time - self->begin_time))
-    return GDK_EVENT_PROPAGATE;
+    return;
 
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
+  graphene_rect_init (&bounds,
+                      0, 0,
+                      alloc.width, alloc.height);
+  cr = gtk_snapshot_append_cairo (snapshot, &bounds, "visualizer ticks");
 
   style = gtk_widget_get_style_context (widget);
-  state = gtk_widget_get_state_flags (widget);
-  gtk_style_context_get_color (style, state, &color);
+  gtk_style_context_get_color (style, &color);
 
   gdk_cairo_set_source_rgba (cr, &color);
 
@@ -281,17 +284,26 @@ sp_visualizer_ticks_draw (GtkWidget *widget,
       break;
     }
 
-  return GDK_EVENT_PROPAGATE;
+  cairo_destroy (cr);
 }
 
 static void
-sp_visualizer_ticks_get_preferred_height (GtkWidget *widget,
-                                          gint      *min_height,
-                                          gint      *nat_height)
+sp_visualizer_ticks_measure (GtkWidget      *widget,
+                             GtkOrientation  orientation,
+                             int             for_size,
+                             int            *minimum,
+                             int            *natural,
+                             int            *minimum_baseline,
+                             int            *natural_baseline)
 {
-  g_assert (SP_IS_VISUALIZER_TICKS (widget));
-
-  *min_height = *nat_height = tick_sizing[0].height + LABEL_HEIGHT_PX;
+  if (orientation == GTK_ORIENTATION_HORIZONTAL)
+    {
+      *minimum = *natural = 0;
+    }
+  else
+    {
+      *minimum = *natural = tick_sizing[0].height + LABEL_HEIGHT_PX;
+    }
 }
 
 static void
@@ -299,8 +311,8 @@ sp_visualizer_ticks_class_init (SpVisualizerTicksClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  widget_class->draw = sp_visualizer_ticks_draw;
-  widget_class->get_preferred_height = sp_visualizer_ticks_get_preferred_height;
+  widget_class->measure = sp_visualizer_ticks_measure;
+  widget_class->snapshot = sp_visualizer_ticks_snapshot;
 
   gtk_widget_class_set_css_name (widget_class, "ticks");
 }

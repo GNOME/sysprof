@@ -12,10 +12,8 @@
           <object class="GtkLabel" id="label">
             <property name="ellipsize">end</property>
             <property name="visible">true</property>
+            <property name="hexpand">1</property>
           </object>
-          <packing>
-            <property name="expand">true</property>
-          </packing>
         </child>
         <child>
           <object class="GtkImage">
@@ -38,11 +36,11 @@
         <property name="visible">true</property>
         <child>
           <object class="GtkStackSwitcher">
-            <property name="border-width">6</property>
             <property name="halign">center</property>
             <property name="orientation">horizontal</property>
             <property name="stack">stack</property>
             <property name="visible">true</property>
+            <property name="margin">6</property>
           </object>
         </child>
         <child>
@@ -52,7 +50,7 @@
             <property name="hexpand">true</property>
             <property name="margin">10</property>
             <property name="spacing">12</property>
-            <child type="center">
+            <child>
               <object class="GtkLabel">
                 <property name="hexpand">true</property>
                 <property name="label" translatable="yes">Profile my _entire system</property>
@@ -78,11 +76,11 @@
             <property name="vhomogeneous">false</property>
             <property name="interpolate-size">true</property>
             <property name="visible">true</property>
-            <property name="border-width">10</property>
             <child>
               <object class="GtkBox">
                 <!-- box with single child is used so we can toggle visibility of the child -->
                 <property name="visible">true</property>
+                <property name="margin">12</property>
                 <child>
                   <object class="GtkBox" id="processes_box">
                     <property name="orientation">vertical</property>
@@ -126,6 +124,7 @@
                 <property name="orientation">vertical</property>
                 <property name="spacing">12</property>
                 <property name="visible">true</property>
+                <property name="margin">12</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="label" translatable="yes">Command Line</property>

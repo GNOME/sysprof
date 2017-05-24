@@ -220,7 +220,7 @@ if get_option('enable_gtk')
 
   libsysprof_ui_deps = [
     libsysprof_dep,
-    dependency('gtk+-3.0', version: '>=3.21.5'),
+    dependency('gtk+-4.0', version: '>=3.89.5'),
   ]
 
   libsysprof_ui = shared_library('sysprof-ui-' + libsysprof_api_version,

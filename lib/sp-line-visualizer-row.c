@@ -131,28 +131,31 @@ copy_array (GArray *ar)
   return ret;
 }
 
-static gboolean
-sp_line_visualizer_row_draw (GtkWidget *widget,
-                             cairo_t   *cr)
+static void
+sp_line_visualizer_row_snapshot (GtkWidget   *widget,
+                                 GtkSnapshot *snapshot)
 {
   SpLineVisualizerRow *self = (SpLineVisualizerRow *)widget;
   SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
   GtkStyleContext *style_context;
-  GtkStateFlags flags;
   GdkRGBA foreground;
-  gboolean ret;
+  cairo_t *cr;
+  graphene_rect_t bounds;
 
   g_assert (SP_IS_LINE_VISUALIZER_ROW (widget));
-  g_assert (cr != NULL);
-
-  ret = GTK_WIDGET_CLASS (sp_line_visualizer_row_parent_class)->draw (widget, cr);
 
   if (priv->cache == NULL)
-    return ret;
+    return;
+
+  graphene_rect_init (&bounds,
+                      0, 0,
+                      gtk_widget_get_allocated_width (widget),
+                      gtk_widget_get_allocated_height (widget));
+  cr = gtk_snapshot_append_cairo (snapshot, &bounds, "SpLineVisualizerRow");
+
 
   style_context = gtk_widget_get_style_context (widget);
-  flags = gtk_widget_get_state_flags (widget);
-  gtk_style_context_get_color (style_context, flags, &foreground);
+  gtk_style_context_get_color (style_context, &foreground);
 
   for (guint line = 0; line < priv->lines->len; line++)
     {
@@ -205,7 +208,7 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
         }
     }
 
-  return ret;
+  cairo_destroy (cr);
 }
 
 static void
@@ -383,7 +386,7 @@ sp_line_visualizer_row_class_init (SpLineVisualizerRowClass *klass)
   object_class->get_property = sp_line_visualizer_row_get_property;
   object_class->set_property = sp_line_visualizer_row_set_property;
 
-  widget_class->draw = sp_line_visualizer_row_draw;
+  widget_class->snapshot = sp_line_visualizer_row_snapshot;
 
   visualizer_class->set_reader = sp_line_visualizer_row_set_reader;
 

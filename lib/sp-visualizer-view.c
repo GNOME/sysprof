@@ -223,15 +223,17 @@ sp_visualizer_view_hadjustment_value_changed (SpVisualizerView *self,
 }
 
 static void
-sp_visualizer_view_size_allocate (GtkWidget     *widget,
-                                  GtkAllocation *allocation)
+sp_visualizer_view_size_allocate (GtkWidget           *widget,
+                                  const GtkAllocation *allocation,
+                                  int                  baseline,
+                                  GtkAllocation       *out_clip)
 {
   SpVisualizerView *self = (SpVisualizerView *)widget;
 
   g_assert (SP_IS_VISUALIZER_VIEW (self));
   g_assert (allocation != NULL);
 
-  GTK_WIDGET_CLASS (sp_visualizer_view_parent_class)->size_allocate (widget, allocation);
+  GTK_WIDGET_CLASS (sp_visualizer_view_parent_class)->size_allocate (widget, allocation, -1, out_clip);
 
   sp_visualizer_view_update_ticks (self);
 }
@@ -264,17 +266,25 @@ draw_selection_cb (SpSelection *selection,
   gtk_render_background (draw->style_context, draw->cr, area.x, area.y, area.width, area.height);
 }
 
-static gboolean
-sp_visualizer_view_draw (GtkWidget *widget,
-                         cairo_t   *cr)
+static void
+sp_visualizer_view_snapshot (GtkWidget   *widget,
+                             GtkSnapshot *snapshot)
 {
   SpVisualizerView *self = (SpVisualizerView *)widget;
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
   SelectionDraw draw = { 0 };
-  gboolean ret;
+  graphene_rect_t bounds;
+  cairo_t *cr;
 
   g_assert (GTK_IS_WIDGET (widget));
-  g_assert (cr != NULL);
+
+  graphene_rect_init (&bounds,
+                      0, 0,
+                      gtk_widget_get_allocated_width (widget),
+                      gtk_widget_get_allocated_height (widget));
+  cr = gtk_snapshot_append_cairo (snapshot, &bounds, "multi paned");
+
+
 
   draw.style_context = gtk_widget_get_style_context (widget);
   draw.self = self;
@@ -282,7 +292,7 @@ sp_visualizer_view_draw (GtkWidget *widget,
 
   gtk_widget_get_allocation (widget, &draw.alloc);
 
-  ret = GTK_WIDGET_CLASS (sp_visualizer_view_parent_class)->draw (widget, cr);
+  GTK_WIDGET_CLASS (sp_visualizer_view_parent_class)->snapshot (widget, snapshot);
 
   if (sp_selection_get_has_selection (priv->selection) || priv->button_pressed)
     {
@@ -293,7 +303,7 @@ sp_visualizer_view_draw (GtkWidget *widget,
       gtk_style_context_remove_class (draw.style_context, "selection");
     }
 
-  return ret;
+  cairo_destroy (cr);
 }
 
 static gboolean
@@ -398,7 +408,10 @@ sp_visualizer_view_list_realize_after (SpVisualizerView *self,
   window = gtk_widget_get_window (GTK_WIDGET (list));
   display = gdk_window_get_display (window);
   cursor = gdk_cursor_new_from_name (display, "text");
-  gdk_window_set_cursor (window, cursor);
+
+  /* TODO: gtk_widget_set_cursor is still private */
+  /*gdk_window_set_cursor (window, cursor);*/
+
   g_clear_object (&cursor);
 }
 
@@ -482,7 +495,7 @@ sp_visualizer_view_class_init (SpVisualizerViewClass *klass)
   object_class->get_property = sp_visualizer_view_get_property;
   object_class->set_property = sp_visualizer_view_set_property;
 
-  widget_class->draw = sp_visualizer_view_draw;
+  widget_class->snapshot = sp_visualizer_view_snapshot;
   widget_class->size_allocate = sp_visualizer_view_size_allocate;
 
   properties [PROP_READER] =

@@ -113,14 +113,14 @@ dnl ***********************************************************************
 dnl Check for required packages
 dnl ***********************************************************************
 m4_define([glib_required_version], [2.44.0])
-m4_define([gtk_required_version], [3.22.0])
+m4_define([gtk_required_version], [3.89.5])
 m4_define([systemd_required_version], [222])
 
 PKG_CHECK_MODULES(GIO,
                   [gio-2.0 >= glib_required_version
                    gio-unix-2.0 >= glib_required_version])
 PKG_CHECK_MODULES(GTK,
-                  [gtk+-3.0 >= gtk_required_version],
+                  [gtk+-4.0 >= gtk_required_version],
                   [have_gtk=yes],
                   [have_gtk=no])
 PKG_CHECK_MODULES(POLKIT,

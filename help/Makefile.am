@@ -13,7 +13,7 @@ HELP_FILES = \
 	legal.xml
 
 # Translated languages
-HELP_LINGUAS = cs de pt_BR sv
+HELP_LINGUAS = cs de pl pt_BR sv
 
 EXTRA_DIST = meson.build
 

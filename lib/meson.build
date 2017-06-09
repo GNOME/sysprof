@@ -23,8 +23,7 @@ libutil_deps = [
 ]
 
 libutil_includes = [
-  # https://github.com/mesonbuild/meson/issues/974
-  join_paths(meson.current_source_dir(), 'util'),
+  'util',
 ]
 
 libutil = static_library('util',

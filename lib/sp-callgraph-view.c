@@ -474,7 +474,7 @@ sp_callgraph_view_function_selection_changed (SpCallgraphView  *self,
     gpointer key, value;
     guint size = 0;
 
-    size = sp_callgraph_view_get_profile_size (self);
+    size = MAX (1, sp_callgraph_view_get_profile_size (self));
 
     g_hash_table_iter_init (&hiter, callers);
 
@@ -924,7 +924,7 @@ append_to_tree_and_free (SpCallgraphView *self,
   g_assert (GTK_IS_TREE_STORE (store));
   g_assert (item != NULL);
 
-  profile_size = sp_callgraph_view_get_profile_size (self);
+  profile_size = MAX (1, sp_callgraph_view_get_profile_size (self));
 
   gtk_tree_store_append (store, &iter, parent);
 

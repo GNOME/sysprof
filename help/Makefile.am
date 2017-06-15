@@ -10,6 +10,7 @@ HELP_FILES = \
 	index.page \
 	introduction.page \
 	profiling.page \
+	faq.page \
 	legal.xml
 
 # Translated languages

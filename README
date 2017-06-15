@@ -22,3 +22,23 @@ Debugging symbols
 - The programs and libraries you want to profile should be compiled
   with -fno-omit-frame-pointer and have debugging symbols available,
   or you won't get much usable information.
+
+
+Building Sysprof
+----------------
+
+You need some packages installed. The package names may vary depending on your
+distribution, the following command works on Fedora 25:
+
+    sudo dnf install gcc make autoconf automake autopoint libtool ghc-gio
+
+Then do the following:
+
+    ./autogen.sh   # configure, generate makefiles etc.
+    make           # Build the code
+    make install   # Install (default prefix /usr/local)
+
+WARNING: `make install` will mostly install under the configured install prefix
+but installs systemd service configuration directly in the system default
+location `/usr/lib/systemd` so it won't work without root privileges, even if
+the install prefix is a user-owned directory.

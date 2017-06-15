@@ -1,0 +1,46 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      xmlns:its="http://www.w3.org/2005/11/its"
+      type="topic"
+      id="faq">
+
+  <section id="what-does-heap-mean">
+    <info>
+      <link type="guide" xref="index#faq"/>
+    </info>
+    <title>What does "In file [heap]" mean?</title>
+
+    <p>This means that sysprof believes a function was called from somewhere in
+    the program's heap (where <code>malloc</code> allocates memory) rather than
+    the code section (where executable code normally lives.) There are several
+    possible explanations.
+    </p>
+
+    <section>
+      <title>JIT (Just in Time) compilers</title>
+
+      <p>Languages like Java can generate executable code while a program is
+      running and store it in the heap. Sysprof is accurately reporting the
+      situation in this case.</p>
+    </section>
+
+    <section>
+      <title>Optimizing compilers</title>
+
+      <p>C and C++ compilers can optimize away information needed to determine a
+      function's caller, so it is mistaken for [heap]. You can still tell how
+      often each function is called by the program, but not always from
+      where.</p>
+
+      <note>
+        <p>For gcc, the flag <code>-fno-omit-frame-pointer</code> will prevent
+        this optimization. The flag is not always needed, for example on x86_64
+        machines it is only needed with -O3 optimization.</p>
+      </note>
+
+      <note>
+        <p>To get the most detailed and accurate call tree from un-optimized
+        code, use these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code></p>
+      </note>
+    </section>
+  </section>
+</page>

@@ -1,15 +1,15 @@
 # Spanish translation for sysprof.
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2016.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2016, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-11-26 23:21+0000\n"
-"PO-Revision-Date: 2016-12-21 10:28+0100\n"
+"POT-Creation-Date: 2017-02-28 00:49+0000\n"
+"PO-Revision-Date: 2017-06-20 13:53+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: es <gnome-es-list@gnome.org>\n"
 "Language: es\n"
@@ -19,21 +19,39 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Gtranslator 2.91.6\n"
 
-#: data/org.gnome.Sysprof2.desktop:4 src/resources/ui/sp-window.ui:12
+#: data/org.gnome.Sysprof2.appdata.xml.in:5
+#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
 #: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof2.desktop:5
+#: data/org.gnome.Sysprof2.appdata.xml.in:6
+#| msgid "Profile an application or entire system."
+msgid "Profiler for an application or entire system"
+msgstr "Perfilador para una aplicación o el sistema completo"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "La Fundación GNOME"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof le permite perfilar aplicaciones para ayudar en la depuración y la "
+"optimización."
+
+#: data/org.gnome.Sysprof2.desktop.in:5
 msgid "Profiler"
 msgstr "Perfilador"
 
-#: data/org.gnome.Sysprof2.desktop:6
+#: data/org.gnome.Sysprof2.desktop.in:6
 msgid "Profile an application or entire system."
 msgstr "Perfilar una aplicación o el sistema completo."
 
 #. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: data/org.gnome.Sysprof2.desktop:10
+#: data/org.gnome.Sysprof2.desktop.in:10
 msgid "sysprof"
 msgstr "sysprof"
 
@@ -92,6 +110,19 @@ msgid ""
 msgstr ""
 "El último entorno lanzado, que aparecerá en la IU tras el reinicio de la "
 "aplicación."
+
+#: data/org.gnome.sysprof2.policy.in:13
+msgid "Open a perf event stream"
+msgstr "Abrir un flujo de eventos de rendimiento"
+
+#: data/org.gnome.sysprof2.policy.in:14
+#| msgid ""
+#| "Sysprof requires authorization to access your computers performance "
+#| "counters."
+msgid "Authentication is required to access system performance counters."
+msgstr ""
+"Se necesita autorización para acceder a los contadores de rendimiento de su "
+"equipo."
 
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
@@ -222,25 +253,21 @@ msgid "The command line arguments provided are invalid"
 msgstr "Los argumentos de línea de comandos proporcionados no son válidos"
 
 #: src/resources/gtk/help-overlay.ui:8
-#| msgid "Sysprof Captures"
 msgctxt "shortcut window"
 msgid "Sysprof Shortcuts"
 msgstr "Atajos de Sysprof"
 
 #: src/resources/gtk/help-overlay.ui:12
-#| msgid "Recording…"
 msgctxt "shortcut window"
 msgid "Recording"
 msgstr "Grabando"
 
 #: src/resources/gtk/help-overlay.ui:16
-#| msgid "Recording…"
 msgctxt "shortcut window"
 msgid "Stop recording"
 msgstr "Detener grabación"
 
 #: src/resources/gtk/help-overlay.ui:25
-#| msgid "Callers"
 msgctxt "shortcut window"
 msgid "Callgraph"
 msgstr "Gráfico"

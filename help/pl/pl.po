@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof-help\n"
-"POT-Creation-Date: 2017-04-15 12:58+0000\n"
-"PO-Revision-Date: 2017-05-26 22:08+0200\n"
+"POT-Creation-Date: 2017-06-28 17:59+0000\n"
+"PO-Revision-Date: 2017-07-02 18:44+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -34,6 +34,11 @@ msgstr "Sysprof"
 #: C/index.page:15
 msgid "Profiling"
 msgstr "Profilowanie"
+
+#. (itstool) path: section/title
+#: C/index.page:19
+msgid "Frequently Asked Questions"
+msgstr "Najczęściej zadawane pytania"
 
 #. (itstool) path: credit/name
 #: C/introduction.page:15
@@ -136,8 +141,8 @@ msgstr ""
 "Profilując system, program <app>Sysprof</app> nagrywa informacje o stosie "
 "dla wszystkich wykonywanych programów, w tym jądra Linux. Może to "
 "przeszkadzać, jeśli badany jest tylko jeden proces. Jeśli dany program nie "
-"korzysta za bardzo z systemu, to lepiej skorzystać z <link href=\"profiling#"
-"new-process-profiling\">profilowania istniejącego procesu</link>."
+"korzysta za bardzo z systemu, to lepiej skorzystać z <link href="
+"\"profiling#new-process-profiling\">profilowania istniejącego procesu</link>."
 
 #. (itstool) path: section/p
 #: C/profiling.page:18
@@ -365,6 +370,77 @@ msgstr ""
 "<em>- - kernel - -</em> w wynikach oznacza, że program przeszedł do lub "
 "z jądra Linux. Może to mieć wiele przyczyn, na przykład <em>wywołanie "
 "systemowe</em> lub <em>sygnał</em>."
+
+#. (itstool) path: section/title
+#: C/faq.page:10
+msgid "What does \"In file [heap]\" mean?"
+msgstr "Co oznacza „In file [heap]”?"
+
+#. (itstool) path: section/p
+#: C/faq.page:12
+msgid ""
+"This means that sysprof believes a function was called from somewhere in the "
+"program's heap (where <code>malloc</code> allocates memory) rather than the "
+"code section (where executable code normally lives.) There are several "
+"possible explanations."
+msgstr ""
+"Oznacza to, że Sysprof uważa, że funkcja została wywołana ze stosu programu "
+"(gdzie <code>malloc</code> przydziela pamięć) zamiast z sekcji kodu (gdzie "
+"zwykle znajduje się kod wykonywalny). Jest kilka możliwych wyjaśnień."
+
+#. (itstool) path: section/title
+#: C/faq.page:19
+msgid "JIT (Just in Time) compilers"
+msgstr "Kompilatory JIT"
+
+#. (itstool) path: section/p
+#: C/faq.page:21
+msgid ""
+"Languages like Java can generate executable code while a program is running "
+"and store it in the heap. Sysprof is accurately reporting the situation in "
+"this case."
+msgstr ""
+"Języki typu Java mogą tworzyć kod wykonywalny podczas działania programu "
+"i przechowywać go na stosie. W takim przypadku Sysprof właściwie zgłasza "
+"sytuację."
+
+#. (itstool) path: section/title
+#: C/faq.page:27
+msgid "Optimizing compilers"
+msgstr "Kompilatory optymalizujące"
+
+#. (itstool) path: section/p
+#: C/faq.page:29
+msgid ""
+"C and C++ compilers can optimize away information needed to determine a "
+"function's caller, so it is mistaken for [heap]. You can still tell how "
+"often each function is called by the program, but not always from where."
+msgstr ""
+"Kompilatory języków C i C++ mogą optymalizować (usuwać) informacje wymagane "
+"do ustalania wywołania funkcji, które jest mylone ze stosem. Nadal można "
+"badać częstość wywoływania każdej funkcji przez program, ale nie zawsze ich "
+"pochodzenie."
+
+#. (itstool) path: note/p
+#: C/faq.page:35
+msgid ""
+"For gcc, the flag <code>-fno-omit-frame-pointer</code> will prevent this "
+"optimization. The flag is not always needed, for example on x86_64 machines "
+"it is only needed with -O3 optimization."
+msgstr ""
+"W przypadku kompilatora GCC flaga <code>-fno-omit-frame-pointer</code> "
+"wyłącza tę optymalizację. Nie jest ona zawsze wymagana, na przykład "
+"komputery w architekturze x86_64 wymagają jej tylko dla optymalizacji -O3."
+
+#. (itstool) path: note/p
+#: C/faq.page:41
+msgid ""
+"To get the most detailed and accurate call tree from un-optimized code, use "
+"these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
+msgstr ""
+"Użycie flag <code>-ggdb -fno-omit-frame-pointer -O0</code> umożliwia "
+"uzyskanie najbardziej szczegółowego i dokładnego drzewa wywołań "
+"z niezoptymalizowanego kodu."
 
 #. (itstool) path: p/link
 #: C/legal.xml:5

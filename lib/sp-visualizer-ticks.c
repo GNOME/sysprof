@@ -34,7 +34,7 @@ struct _SpVisualizerTicks
   gint64 epoch;
   gint64 begin_time;
   gint64 end_time;
-};
+} __attribute__((aligned(8)));
 
 enum {
   TICK_MINUTES,

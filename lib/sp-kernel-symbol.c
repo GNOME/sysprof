@@ -109,7 +109,10 @@ sp_kernel_symbol_load (void)
           gchar *endptr;
 
           if (g_hash_table_contains (skip, tokens [2]))
-            continue;
+            {
+              g_strfreev (tokens);
+              continue;
+            }
 
           address = g_ascii_strtoull (tokens [0], &endptr, 16);
 

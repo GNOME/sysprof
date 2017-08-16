@@ -338,6 +338,8 @@ get_vdso_bytes (size_t *length)
                 has_data = TRUE;
             }
         }
+
+        g_strfreev (lines);
     }
 
     if (length)

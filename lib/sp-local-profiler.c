@@ -252,7 +252,12 @@ sp_local_profiler_finalize (GObject *object)
   g_clear_pointer (&priv->starting, g_ptr_array_unref);
   g_clear_pointer (&priv->stopping, g_ptr_array_unref);
   g_clear_pointer (&priv->finished_or_failed, g_ptr_array_unref);
+  g_clear_pointer (&priv->failures, g_ptr_array_unref);
   g_clear_pointer (&priv->pids, g_array_unref);
+
+  g_strfreev (priv->spawn_env);
+  g_strfreev (priv->spawn_argv);
+
 
   G_OBJECT_CLASS (sp_local_profiler_parent_class)->finalize (object);
 }

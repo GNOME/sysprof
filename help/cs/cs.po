@@ -1,16 +1,15 @@
 # Czech translation for sysprof.
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-#
-# Marek Černocký <marek@manet.cz>, 2016.
+# Marek Černocký <marek@manet.cz>, 2016, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2016-09-17 17:16+0000\n"
-"PO-Revision-Date: 2016-09-18 10:03+0200\n"
+"POT-Creation-Date: 2017-06-28 17:59+0000\n"
+"PO-Revision-Date: 2017-08-31 10:58+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
-"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
+"Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,6 +31,11 @@ msgstr "Sysprof"
 #: C/index.page:15
 msgid "Profiling"
 msgstr "Profilování"
+
+#. (itstool) path: section/title
+#: C/index.page:19
+msgid "Frequently Asked Questions"
+msgstr "Časté dotazy a odpovědi"
 
 #. (itstool) path: credit/name
 #: C/introduction.page:15
@@ -367,6 +371,75 @@ msgstr ""
 "Pokud ve svých výsledcích vidíte <em>- - kernel - -</em>, znamená to, že "
 "aplikace přešla do/z linuxového jádra. To se děje z různých důvodů, "
 "například kvůli <em>systémovému volání</em> nebo <em>signálu</em>."
+
+#. (itstool) path: section/title
+#: C/faq.page:10
+msgid "What does \"In file [heap]\" mean?"
+msgstr "Co znamená „In file [heap]“?"
+
+#. (itstool) path: section/p
+#: C/faq.page:12
+msgid ""
+"This means that sysprof believes a function was called from somewhere in the "
+"program's heap (where <code>malloc</code> allocates memory) rather than the "
+"code section (where executable code normally lives.) There are several "
+"possible explanations."
+msgstr ""
+"Znamená to, že sysprof věří, že funkce byla zavolaná odněkud z haldy "
+"programu (oblast, ze které <code>malloc</code> přiděluje paměť), místo ze "
+"sekce s kódem (kde se normálně nachází proveditelný kód). Pro takové chování "
+"programu existuje několik vysvětlení."
+
+#. (itstool) path: section/title
+#: C/faq.page:19
+msgid "JIT (Just in Time) compilers"
+msgstr "Kompilátory JIT (Just in Time)"
+
+#. (itstool) path: section/p
+#: C/faq.page:21
+msgid ""
+"Languages like Java can generate executable code while a program is running "
+"and store it in the heap. Sysprof is accurately reporting the situation in "
+"this case."
+msgstr ""
+"Jazyky, jako je Java, mohou generovat proveditelný kód za běhu programu a "
+"ukládat jej na haldě. Sysprof v takovém případě situaci hlásí správně."
+
+#. (itstool) path: section/title
+#: C/faq.page:27
+msgid "Optimizing compilers"
+msgstr "Optimalizující kompilátory"
+
+#. (itstool) path: section/p
+#: C/faq.page:29
+msgid ""
+"C and C++ compilers can optimize away information needed to determine a "
+"function's caller, so it is mistaken for [heap]. You can still tell how "
+"often each function is called by the program, but not always from where."
+msgstr ""
+"Kompilátory C a C++ může v rámci optimalizace zahodit informace potřebné k "
+"určení volajícího funkce, proto jsou mylně zaměněné za [heap]. I tak lze "
+"říci, jak často jsou jednotlivé funkce programem volané, ale ne odkud."
+
+#. (itstool) path: note/p
+#: C/faq.page:35
+msgid ""
+"For gcc, the flag <code>-fno-omit-frame-pointer</code> will prevent this "
+"optimization. The flag is not always needed, for example on x86_64 machines "
+"it is only needed with -O3 optimization."
+msgstr ""
+"U gcc můžete k předejití této optimalizace použít příznak <code>-fno-omit-"
+"frame-pointer</code>. Není ale potřeba vždy, například u kódu pro procesory "
+"x86_64 je potřeba jen při optimalizaci -03."
+
+#. (itstool) path: note/p
+#: C/faq.page:41
+msgid ""
+"To get the most detailed and accurate call tree from un-optimized code, use "
+"these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
+msgstr ""
+"Pro získání podrobného a přesného stromu volání z neoptimalizovaného kódu "
+"použijte příznaky <code>-ggdb -fno-omit-frame-pointer -O0</code>."
 
 #. (itstool) path: p/link
 #: C/legal.xml:5

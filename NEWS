@@ -1,3 +1,24 @@
+Overview of changes in Sysprof 3.25.92
+======================================
+
+Changes since 3.24.0
+
+ * Additional help topics
+ * Fix for a potential divide-by-zero when generating callgraphs
+ * Alignment attributes to allow building on armel/armhf/mipsel
+ * About dialog is now modal
+ * Each new Sysprof window gets its own window group
+
+Note to packagers:
+
+  * We will drop autotools after 3.26 and complete our switch to Meson.
+
+Translations:
+
+  * Indonesian, Spanish, Slovak, Friulian, Czech, Polish, Brazilian Portuguese
+
+Thanks to all of our contributors
+
 Overview of changes in Sysprof 3.24.0
 =====================================
 

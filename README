@@ -30,15 +30,16 @@ Building Sysprof
 You need some packages installed. The package names may vary depending on your
 distribution, the following command works on Fedora 25:
 
-    sudo dnf install gcc make autoconf automake autopoint libtool ghc-gio
+    sudo dnf install gcc gcc-c++ ninja-build gtk3-devel
 
 Then do the following:
 
-    ./autogen.sh   # configure, generate makefiles etc.
-    make           # Build the code
-    make install   # Install (default prefix /usr/local)
+    meson --prefix=/usr build
+    cd build
+    ninja
+    sudo ninja install
 
-WARNING: `make install` will mostly install under the configured install prefix
-but installs systemd service configuration directly in the system default
-location `/usr/lib/systemd` so it won't work without root privileges, even if
-the install prefix is a user-owned directory.
+WARNING: `ninja install` will mostly install under the configured install
+prefix but installs systemd service configuration directly in the system
+default location `/usr/lib/systemd` so it won't work without root privileges,
+even if the install prefix is a user-owned directory.

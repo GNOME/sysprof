@@ -1,4 +1,4 @@
 gnome.yelp('sysprof',
-  ['index.page', 'introduction.page', 'legal.xml', 'profiling.page'],
+  sources: ['index.page', 'introduction.page', 'profiling.page', 'faq.page', 'legal.xml'],
   languages: ['cs', 'de', 'pl', 'pt_BR', 'sv'],
 )

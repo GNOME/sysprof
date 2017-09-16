@@ -57,7 +57,7 @@ if get_option('enable_gtk')
   endforeach
 endif
 
-if get_option('with_sysprofd') != 'none'
+if get_option('with_sysprofd') == 'bundled'
 
   sysprofdconf = configuration_data()
   sysprofdconf.set('sysprofdprivdir', pkglibexecdir)

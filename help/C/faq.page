@@ -3,19 +3,22 @@
       type="topic"
       id="faq">
 
-  <section id="what-does-heap-mean">
     <info>
       <link type="guide" xref="index#faq"/>
     </info>
-    <title>What does "In file [heap]" mean?</title>
+    <title>What does heap mean?</title>
 
-    <p>This means that sysprof believes a function was called from somewhere in
-    the program's heap (where <code>malloc</code> allocates memory) rather than
-    the code section (where executable code normally lives.) There are several
-    possible explanations.
-    </p>
+    <section id="what-does-heap-mean">
+      <title>What does "In file [heap]" mean?</title>
 
-    <section>
+      <p>This means that sysprof believes a function was called from somewhere in
+      the program's heap (where <code>malloc</code> allocates memory) rather than
+      the code section (where executable code normally lives.) There are several
+      possible explanations.
+      </p>
+    </section>
+
+    <section id="jit">
       <title>JIT (Just in Time) compilers</title>
 
       <p>Languages like Java can generate executable code while a program is
@@ -23,7 +26,7 @@
       situation in this case.</p>
     </section>
 
-    <section>
+    <section id="optimizing">
       <title>Optimizing compilers</title>
 
       <p>C and C++ compilers can optimize away information needed to determine a
@@ -42,5 +45,4 @@
         code, use these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code></p>
       </note>
     </section>
-  </section>
 </page>

@@ -24,31 +24,39 @@
 G_BEGIN_DECLS
 
 #define SYSPROF_INSIDE
+
 # include "sp-address.h"
-# include "sp-callgraph-profile.h"
-# include "sp-capture-condition.h"
-# include "sp-capture-cursor.h"
-# include "sp-capture-reader.h"
-# include "sp-capture-writer.h"
 # include "sp-clock.h"
-# include "sp-elf-symbol-resolver.h"
 # include "sp-error.h"
-# include "sp-gjs-source.h"
-# include "sp-hostinfo-source.h"
-# include "sp-jitmap-symbol-resolver.h"
-# include "sp-kernel-symbol-resolver.h"
-# include "sp-kernel-symbol.h"
-# include "sp-local-profiler.h"
-# include "sp-map-lookaside.h"
-# include "sp-perf-source.h"
-# include "sp-proc-source.h"
-# include "sp-profile.h"
-# include "sp-profiler.h"
-# include "sp-selection.h"
-# include "sp-source.h"
-# include "sp-symbol-dirs.h"
-# include "sp-symbol-resolver.h"
 # include "sysprof-version.h"
+
+# include "callgraph/sp-callgraph-profile.h"
+
+# include "capture/sp-capture-condition.h"
+# include "capture/sp-capture-cursor.h"
+# include "capture/sp-capture-reader.h"
+# include "capture/sp-capture-writer.h"
+
+# include "profiler/sp-local-profiler.h"
+# include "profiler/sp-profile.h"
+# include "profiler/sp-profiler.h"
+
+# include "sources/sp-gjs-source.h"
+# include "sources/sp-hostinfo-source.h"
+# include "sources/sp-perf-source.h"
+# include "sources/sp-proc-source.h"
+# include "sources/sp-source.h"
+
+# include "symbols/sp-elf-symbol-resolver.h"
+# include "symbols/sp-jitmap-symbol-resolver.h"
+# include "symbols/sp-kernel-symbol-resolver.h"
+# include "symbols/sp-kernel-symbol.h"
+# include "symbols/sp-symbol-dirs.h"
+# include "symbols/sp-symbol-resolver.h"
+
+# include "util/sp-map-lookaside.h"
+# include "util/sp-selection.h"
+
 #undef SYSPROF_INSIDE
 
 G_END_DECLS

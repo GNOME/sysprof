@@ -20,8 +20,8 @@
 #include <elf.h>
 #include <sys/mman.h>
 
-#include "demangle.h"
-#include "elfparser.h"
+#include "util/demangle.h"
+#include "util/elfparser.h"
 
 typedef struct Section Section;
 

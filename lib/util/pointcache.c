@@ -18,7 +18,7 @@
 
 #define G_LOG_DOMAIN "pointcache"
 
-#include "pointcache.h"
+#include "util/pointcache.h"
 
 struct _PointCache
 {

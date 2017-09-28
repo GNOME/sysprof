@@ -35,10 +35,10 @@
 #include <sys/stat.h>
 #include <stdint.h>
 
-#include "binfile.h"
-#include "elfparser.h"
+#include "util/binfile.h"
+#include "util/elfparser.h"
 
-#include "../sp-symbol-dirs.h"
+#include "symbols/sp-symbol-dirs.h"
 
 struct bin_file_t
 {

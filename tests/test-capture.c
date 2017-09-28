@@ -17,9 +17,7 @@
  */
 
 #include <glib/gstdio.h>
-
-#include "sp-capture-reader.h"
-#include "sp-capture-writer.h"
+#include <sysprof.h>
 
 static void
 test_reader_basic (void)

@@ -18,8 +18,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "sp-capture-reader.h"
+#include <sysprof.h>
 
 #define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
 

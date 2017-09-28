@@ -1,4 +1,4 @@
-#include "sp-zoom-manager.h"
+#include "util/sp-zoom-manager.h"
 
 static void
 test_zoom_manager (void)

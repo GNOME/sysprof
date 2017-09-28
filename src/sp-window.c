@@ -23,10 +23,11 @@
 #include <sysprof-ui.h>
 
 #include "sp-application.h"
-#include "sp-multi-paned.h"
-#include "sp-visualizer-view.h"
 #include "sp-window.h"
 #include "sp-window-settings.h"
+
+#include "widgets/sp-multi-paned.h"
+#include "visualizers/sp-visualizer-view.h"
 
 struct _SpWindow
 {

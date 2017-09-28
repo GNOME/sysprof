@@ -24,22 +24,22 @@
 G_BEGIN_DECLS
 
 #define SYSPROF_INSIDE
-# include "sp-callgraph-view.h"
-# include "sp-cell-renderer-percent.h"
-# include "sp-cpu-visualizer-row.h"
-# include "sp-failed-state-view.h"
-# include "sp-line-visualizer-row.h"
-# include "sp-empty-state-view.h"
-# include "sp-model-filter.h"
-# include "sp-multi-paned.h"
-# include "sp-recording-state-view.h"
-# include "sp-process-model.h"
-# include "sp-process-model-item.h"
-# include "sp-process-model-row.h"
-# include "sp-profiler-menu-button.h"
-# include "sp-visualizer-row.h"
-# include "sp-visualizer-view.h"
-# include "sp-zoom-manager.h"
+# include "callgraph/sp-callgraph-view.h"
+# include "widgets/sp-cell-renderer-percent.h"
+# include "visualizers/sp-cpu-visualizer-row.h"
+# include "widgets/sp-failed-state-view.h"
+# include "visualizers/sp-line-visualizer-row.h"
+# include "widgets/sp-empty-state-view.h"
+# include "util/sp-model-filter.h"
+# include "widgets/sp-multi-paned.h"
+# include "widgets/sp-recording-state-view.h"
+# include "util/sp-process-model.h"
+# include "util/sp-process-model-item.h"
+# include "widgets/sp-process-model-row.h"
+# include "widgets/sp-profiler-menu-button.h"
+# include "visualizers/sp-visualizer-row.h"
+# include "visualizers/sp-visualizer-view.h"
+# include "util/sp-zoom-manager.h"
 #undef SYSPROF_INSIDE
 
 G_END_DECLS

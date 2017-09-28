@@ -1,6 +1,6 @@
 #include <sysprof-ui.h>
 
-#include "sp-model-filter.h"
+#include "util/sp-model-filter.h"
 
 #define TEST_TYPE_ITEM (test_item_get_type())
 

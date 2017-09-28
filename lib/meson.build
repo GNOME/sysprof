@@ -26,71 +26,25 @@ libsysprof_headers = [
   'sp-address.h',
   'sp-clock.h',
   'sp-error.h',
-  'callgraph/sp-callgraph-profile.h',
-  'capture/sp-capture-condition.h',
-  'capture/sp-capture-cursor.h',
-  'capture/sp-capture-reader.h',
-  'capture/sp-capture-types.h',
-  'capture/sp-capture-writer.h',
-  'profiler/sp-local-profiler.h',
-  'profiler/sp-profile.h',
-  'profiler/sp-profiler.h',
-  'sources/sp-gjs-source.h',
-  'sources/sp-hostinfo-source.h',
-  'sources/sp-perf-source.h',
-  'sources/sp-proc-source.h',
-  'sources/sp-source.h',
-  'symbols/sp-elf-symbol-resolver.h',
-  'symbols/sp-jitmap-symbol-resolver.h',
-  'symbols/sp-kernel-symbol-resolver.h',
-  'symbols/sp-kernel-symbol.h',
-  'symbols/sp-symbol-dirs.h',
-  'symbols/sp-symbol-resolver.h',
-  'util/sp-map-lookaside.h',
-  'util/sp-selection.h',
 ]
 
 libsysprof_sources = [
   'sp-address.c',
   'sp-clock.c',
   'sp-error.c',
-  'callgraph/sp-callgraph-profile-private.h',
-  'callgraph/sp-callgraph-profile.c',
-  'capture/sp-capture-condition.c',
-  'capture/sp-capture-cursor.c',
-  'capture/sp-capture-reader.c',
-  'capture/sp-capture-writer.c',
-  'profiler/sp-local-profiler.c',
-  'profiler/sp-profile.c',
-  'profiler/sp-profiler.c',
-  'sources/sp-gjs-source.c',
-  'sources/sp-hostinfo-source.c',
-  'sources/sp-perf-counter.c',
-  'sources/sp-perf-counter.h',
-  'sources/sp-perf-source.c',
-  'sources/sp-proc-source.c',
-  'sources/sp-source.c',
-  'symbols/sp-elf-symbol-resolver.c',
-  'symbols/sp-jitmap-symbol-resolver.c',
-  'symbols/sp-kernel-symbol-resolver.c',
-  'symbols/sp-kernel-symbol.c',
-  'symbols/sp-symbol-dirs.c',
-  'symbols/sp-symbol-resolver.c',
-  'util/binfile.c',
-  'util/binfile.h',
-  'util/demangle.cpp',
-  'util/demangle.h',
-  'util/elfparser.c',
-  'util/elfparser.h',
-  'util/sp-line-reader.c',
-  'util/sp-line-reader.h',
-  'util/sp-map-lookaside.c',
-  'util/sp-platform.c',
-  'util/sp-platform.h',
-  'util/sp-selection.c',
-  'util/stackstash.c',
-  'util/stackstash.h',
 ]
+
+libsysprof_ui_headers = ['sysprof-ui.h']
+libsysprof_ui_sources = []
+
+subdir('callgraph')
+subdir('capture')
+subdir('profiler')
+subdir('sources')
+subdir('symbols')
+subdir('util')
+subdir('visualizers')
+subdir('widgets')
 
 cxx = meson.get_compiler('cpp')
 
@@ -130,58 +84,6 @@ if get_option('enable_gtk')
   # This is our GTK library containing the widgets suitable for viewing
   # and manipulating the various profiler API in libsysprof.  This is
   # meant to be used by IDEs and the sysprof gui.
-
-  libsysprof_ui_headers = [
-    'callgraph/sp-callgraph-view.h',
-    'util/sp-model-filter.h',
-    'util/sp-process-model-item.h',
-    'util/sp-process-model.h',
-    'util/sp-zoom-manager.h',
-    'visualizers/sp-cpu-visualizer-row.h',
-    'visualizers/sp-line-visualizer-row.h',
-    'visualizers/sp-visualizer-row.h',
-    'visualizers/sp-visualizer-view.h',
-    'widgets/sp-cell-renderer-percent.h',
-    'widgets/sp-empty-state-view.h',
-    'widgets/sp-failed-state-view.h',
-    'widgets/sp-multi-paned.h',
-    'widgets/sp-process-model-row.h',
-    'widgets/sp-profiler-menu-button.h',
-    'widgets/sp-recording-state-view.h',
-    'sysprof-ui.h',
-  ]
-
-  libsysprof_ui_sources = [
-    'callgraph/sp-callgraph-view.c',
-    'util/pointcache.c',
-    'util/pointcache.h',
-    'util/sp-color-cycle.c',
-    'util/sp-color-cycle.h',
-    'util/sp-model-filter.c',
-    'util/sp-process-model-item.c',
-    'util/sp-process-model.c',
-    'util/sp-theme-manager.c',
-    'util/sp-theme-manager.h',
-    'util/sp-zoom-manager.c',
-    'util/stackstash.c',
-    'util/stackstash.h',
-    'visualizers/sp-cpu-visualizer-row.c',
-    'visualizers/sp-line-visualizer-row.c',
-    'visualizers/sp-visualizer-list.c',
-    'visualizers/sp-visualizer-list.h',
-    'visualizers/sp-visualizer-row-private.h',
-    'visualizers/sp-visualizer-row.c',
-    'visualizers/sp-visualizer-ticks.c',
-    'visualizers/sp-visualizer-ticks.h',
-    'visualizers/sp-visualizer-view.c',
-    'widgets/sp-cell-renderer-percent.c',
-    'widgets/sp-empty-state-view.c',
-    'widgets/sp-failed-state-view.c',
-    'widgets/sp-multi-paned.c',
-    'widgets/sp-process-model-row.c',
-    'widgets/sp-profiler-menu-button.c',
-    'widgets/sp-recording-state-view.c',
-  ]
 
   libsysprof_ui_resources = gnome.compile_resources(
     'sp-ui-resources', 'resources/libsysprof.gresource.xml',

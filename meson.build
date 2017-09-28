@@ -119,4 +119,4 @@ subdir('data')
 subdir('help')
 subdir('po')
 
-meson.add_install_script('build-aux/meson_post_install.sh')
+meson.add_install_script('build-aux/meson/post_install.sh')

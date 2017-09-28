@@ -72,6 +72,7 @@ typedef struct
   GdkRGBA background;
   GdkRGBA foreground;
   guint use_default_style : 1;
+  guint fill : 1;
 } LineInfo;
 
 typedef struct
@@ -139,11 +140,14 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
   SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
   GtkStyleContext *style_context;
   GtkStateFlags flags;
+  GtkAllocation alloc;
   GdkRGBA foreground;
   gboolean ret;
 
   g_assert (SP_IS_LINE_VISUALIZER_ROW (widget));
   g_assert (cr != NULL);
+
+  gtk_widget_get_allocation (widget, &alloc);
 
   ret = GTK_WIDGET_CLASS (sp_line_visualizer_row_parent_class)->draw (widget, cr);
 
@@ -160,6 +164,7 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
       const LineInfo *line_info = &g_array_index (priv->lines, LineInfo, line);
       const Point *fpoints;
       guint n_fpoints = 0;
+      GdkRGBA color;
 
       fpoints = point_cache_get_points (priv->cache, line_info->id, &n_fpoints);
 
@@ -179,7 +184,15 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
           last_x = points[0].x;
           last_y = points[0].y;
 
-          cairo_move_to (cr, last_x, last_y);
+          if (line_info->fill)
+            {
+              cairo_move_to (cr, last_x, alloc.height);
+              cairo_line_to (cr, last_x, last_y);
+            }
+          else
+            {
+              cairo_move_to (cr, last_x, last_y);
+            }
 
           for (guint i = 1; i < n_fpoints; i++)
             {
@@ -194,14 +207,25 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
               last_y = points[i].y;
             }
 
+          if (line_info->fill)
+            {
+              cairo_line_to (cr, last_x, alloc.height);
+              cairo_close_path (cr);
+            }
+
           cairo_set_line_width (cr, line_info->line_width);
 
           if (line_info->use_default_style)
-            gdk_cairo_set_source_rgba (cr, &foreground);
+            color = foreground;
           else
-            gdk_cairo_set_source_rgba (cr, &line_info->foreground);
+            color = line_info->foreground;
 
-          cairo_stroke (cr);
+          gdk_cairo_set_source_rgba (cr, &color);
+
+          if (line_info->fill)
+            cairo_fill (cr);
+          else
+            cairo_stroke (cr);
         }
     }
 

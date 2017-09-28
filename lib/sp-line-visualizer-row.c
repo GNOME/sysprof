@@ -640,6 +640,7 @@ sp_line_visualizer_row_load_data_async (SpLineVisualizerRow *self,
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_priority (task, G_PRIORITY_LOW);
   g_task_set_source_tag (task, sp_line_visualizer_row_load_data_async);
 
   if (priv->reader == NULL)

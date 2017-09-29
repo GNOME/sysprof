@@ -5,6 +5,7 @@
 # components (for IDE integration).
 
 libsysprof_api_version = '2'
+libsysprof_header_subdir = 'sysprof-' + libsysprof_api_version
 
 libsysprof_version_conf = configuration_data()
 libsysprof_version = meson.project_version().split('.')
@@ -21,20 +22,22 @@ configure_file(
     install_dir: join_paths(get_option('includedir'), 'sysprof-' + libsysprof_api_version)
 )
 
-libsysprof_headers = [
+libsysprof_base_headers = [
   'sysprof.h',
   'sp-address.h',
   'sp-clock.h',
   'sp-error.h',
 ]
 
+libsysprof_headers = libsysprof_base_headers
 libsysprof_sources = [
   'sp-address.c',
   'sp-clock.c',
   'sp-error.c',
 ]
 
-libsysprof_ui_headers = ['sysprof-ui.h']
+libsysprof_ui_base_headers = ['sysprof-ui.h']
+libsysprof_ui_headers = libsysprof_ui_base_headers
 libsysprof_ui_sources = []
 
 subdir('callgraph')
@@ -70,15 +73,13 @@ libsysprof = shared_library('sysprof-' + libsysprof_api_version,
        install: true,
 )
 
-install_headers(libsysprof_headers,
-  subdir: 'sysprof-' + libsysprof_api_version,
-)
-
 libsysprof_dep = declare_dependency(
   include_directories: include_directories('.'),
      link_with: libsysprof,
   dependencies: libsysprof_deps,
 )
+
+install_headers(libsysprof_base_headers, subdir: libsysprof_header_subdir)
 
 if get_option('enable_gtk')
   # This is our GTK library containing the widgets suitable for viewing
@@ -104,14 +105,12 @@ if get_option('enable_gtk')
          install: true,
   )
 
-  install_headers(libsysprof_ui_headers,
-    subdir: 'sysprof-' + libsysprof_api_version,
-  )
-
   libsysprof_ui_dep = declare_dependency(
            dependencies: libsysprof_ui_deps,
               link_with: libsysprof_ui,
     include_directories: include_directories('.'),
   )
+
+  install_headers(libsysprof_ui_base_headers, subdir: libsysprof_header_subdir)
 
 endif

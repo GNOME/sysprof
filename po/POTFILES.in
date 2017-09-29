@@ -4,14 +4,14 @@ data/org.gnome.Sysprof2.appdata.xml.in
 data/org.gnome.Sysprof2.desktop.in
 data/org.gnome.sysprof2.gschema.xml
 data/org.gnome.sysprof2.policy.in
+lib/callgraph/sp-callgraph-profile.c
 lib/resources/ui/sp-callgraph-view.ui
 lib/resources/ui/sp-empty-state-view.ui
 lib/resources/ui/sp-failed-state-view.ui
 lib/resources/ui/sp-profiler-menu-button.ui
 lib/resources/ui/sp-recording-state-view.ui
-lib/sp-callgraph-profile.c
-lib/sp-perf-source.c
-lib/sp-profiler-menu-button.c
+lib/sources/sp-perf-source.c
+lib/widgets/sp-profiler-menu-button.c
 src/resources/gtk/help-overlay.ui
 src/resources/gtk/menus.ui
 src/resources/ui/sp-window.ui

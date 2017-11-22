@@ -12,8 +12,8 @@
 information for all applications executing, including the Linux kernel. This
 can sometimes be confusing if you only want to look at a single process.  If
 your application does not interact much with the host system, you may have more
-success with <link href="profiling#new-process-profiling">profiling an existing
-process</link>.</p>
+success by using <app>Sysprof</app> to
+<link href="profiling#new-process-profiling">spawn a new process</link>.</p>
 
     <p>To profile your entire system, ensure the target button is set to
 <em>All Processes</em> and click <em>Record</em>.</p>

@@ -92,6 +92,7 @@ element_free (gpointer data)
 {
   Element *e = data;
 
+  e->iter = NULL;
   g_clear_object (&e->object);
   g_slice_free (Element, e);
 }

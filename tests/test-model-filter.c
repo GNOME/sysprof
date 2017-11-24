@@ -1,4 +1,5 @@
 #include <sysprof-ui.h>
+#include <string.h>
 
 #include "util/sp-model-filter.h"
 
@@ -109,11 +110,51 @@ test_basic (void)
   g_clear_object (&filter);
 }
 
+static gboolean
+filter_keyword_cb (GObject  *object,
+                   gpointer  user_data)
+{
+  SpProcessModelItem *item = SP_PROCESS_MODEL_ITEM (object);
+  const gchar *needle = user_data;
+  const gchar *haystack = sp_process_model_item_get_command_line (item);
+
+  return NULL != strstr (haystack, needle);
+}
+
+static void
+test_process (void)
+{
+  SpProcessModel *model = sp_process_model_new ();
+  SpModelFilter *filter;
+  static gchar *searches[] = {
+    "a", "b", "foo", "bar", "gnome", "gnome-test",
+    "gsd", "gsd-", "libexec", "/", ":",
+  };
+
+  filter = sp_model_filter_new (G_LIST_MODEL (model));
+
+  sp_process_model_reload (model);
+
+  for (guint i = 0; i < G_N_ELEMENTS (searches); i++)
+    {
+      sp_model_filter_set_filter_func (filter,
+                                       filter_keyword_cb,
+                                       g_strdup (searches[i]),
+                                       g_free);
+      sp_model_filter_invalidate (filter);
+      sp_process_model_reload (model);
+    }
+
+  g_object_unref (filter);
+  g_object_unref (model);
+}
+
 gint
 main (gint argc,
       gchar *argv[])
 {
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/SpModelFilter/basic", test_basic);
+  g_test_add_func ("/SpModelFilter/process", test_process);
   return g_test_run ();
 }

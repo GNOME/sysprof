@@ -236,6 +236,7 @@ sp_process_model_do_reload (gpointer user_data)
   self->reload_source = 0;
 
   task = g_task_new (self, NULL, sp_process_model_merge_cb, NULL);
+  g_task_set_priority (task, G_PRIORITY_LOW);
   g_task_run_in_thread (task, sp_process_model_reload_worker);
 
   return G_SOURCE_REMOVE;
@@ -245,6 +246,26 @@ SpProcessModel *
 sp_process_model_new (void)
 {
   return g_object_new (SP_TYPE_PROCESS_MODEL, NULL);
+}
+
+void
+sp_process_model_reload (SpProcessModel *self)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SP_IS_PROCESS_MODEL (self));
+
+  if (self->reload_source != 0)
+    {
+      g_source_remove (self->reload_source);
+      self->reload_source = 0;
+    }
+
+  task = g_task_new (self, NULL, NULL, NULL);
+  g_task_set_priority (task, G_PRIORITY_LOW);
+  g_task_run_in_thread_sync (task, sp_process_model_reload_worker);
+
+  sp_process_model_merge_cb (G_OBJECT (self), G_ASYNC_RESULT (task), NULL);
 }
 
 void

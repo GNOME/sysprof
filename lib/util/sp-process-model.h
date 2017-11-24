@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (SpProcessModel, sp_process_model, SP, PROCESS_MODEL, GObject)
 
 SpProcessModel *sp_process_model_new          (void);
+void            sp_process_model_reload       (SpProcessModel *self);
 void            sp_process_model_queue_reload (SpProcessModel *self);
 
 G_END_DECLS

@@ -82,8 +82,9 @@ sp_process_model_row_set_item (SpProcessModelRow  *self,
       if ((NULL != (argv = sp_process_model_item_get_argv (item))) && (argv[0] != NULL))
         {
           g_autofree gchar *argvstr = g_strjoinv (" ", (gchar **)&argv[1]);
+          g_autofree gchar *escaped = g_markup_escape_text (argvstr, -1);
 
-          gtk_label_set_label (priv->args_label, argvstr);
+          gtk_label_set_label (priv->args_label, escaped);
         }
 
       pid = sp_process_model_item_get_pid (item);

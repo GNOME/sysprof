@@ -356,42 +356,44 @@ sp_profiler_menu_button_clicked (GtkButton *button)
   GTK_BUTTON_CLASS (sp_profiler_menu_button_parent_class)->clicked (button);
 }
 
+static gboolean
+sp_profiler_menu_button_filter_func (GObject  *object,
+                                     gpointer  user_data)
+{
+  const gchar *needle = user_data;
+  const gchar *haystack;
+
+  g_assert (SP_IS_PROCESS_MODEL_ITEM (object));
+
+  if (needle == NULL)
+    return TRUE;
+
+  haystack = sp_process_model_item_get_command_line (SP_PROCESS_MODEL_ITEM (object));
+
+  if (haystack == NULL)
+    return FALSE;
+
+  return strstr (haystack, needle) != NULL;
+}
+
 static void
 sp_profiler_menu_button_filter_changed (SpProfilerMenuButton *self,
                                         GtkEntry             *entry)
 {
   SpProfilerMenuButtonPrivate *priv = sp_profiler_menu_button_get_instance_private (self);
+  const gchar *text;
 
   g_assert (SP_IS_PROFILER_MENU_BUTTON (self));
   g_assert (GTK_IS_ENTRY (entry));
 
-  sp_model_filter_invalidate (priv->process_filter);
-}
+  text = gtk_entry_get_text (entry);
+  if (text && *text == 0)
+    text = NULL;
 
-static gboolean
-sp_profiler_menu_button_filter_func (GObject  *object,
-                                     gpointer  user_data)
-{
-  SpProfilerMenuButton *self = user_data;
-  SpProfilerMenuButtonPrivate *priv = sp_profiler_menu_button_get_instance_private (self);
-  const gchar *cmdline;
-  const gchar *text;
-  gboolean ret;
-
-  g_assert (SP_IS_PROFILER_MENU_BUTTON (self));
-  g_assert (SP_IS_PROCESS_MODEL_ITEM (object));
-
-  text = gtk_entry_get_text (priv->process_filter_entry);
-  if (!text || !*text)
-    return TRUE;
-
-  cmdline = sp_process_model_item_get_command_line (SP_PROCESS_MODEL_ITEM (object));
-  if (!cmdline)
-    return FALSE;
-
-  ret = (strstr (cmdline, text) != NULL);
-
-  return ret;
+  sp_model_filter_set_filter_func (priv->process_filter,
+                                   sp_profiler_menu_button_filter_func,
+                                   g_strdup (text),
+                                   g_free);
 }
 
 static void
@@ -403,9 +405,7 @@ sp_profiler_menu_button_constructed (GObject *object)
   g_assert (SP_IS_PROFILER_MENU_BUTTON (self));
 
   priv->process_filter = sp_model_filter_new (G_LIST_MODEL (priv->process_model));
-  sp_model_filter_set_filter_func (priv->process_filter,
-                                   sp_profiler_menu_button_filter_func,
-                                   self, NULL);
+
   gtk_list_box_bind_model (priv->process_list_box,
                            G_LIST_MODEL (priv->process_filter),
                            sp_profiler_menu_button_create_row,

@@ -20,7 +20,7 @@ test('test-capture-cursor', test_capture_cursor, env: test_env)
 
 if get_option('enable_gtk')
 
-  test_model_filter = executable('test-model_filter',
+  test_model_filter = executable('test-model-filter',
     'test-model-filter.c',
     dependencies: libsysprof_ui_dep,
   )

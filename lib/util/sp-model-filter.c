@@ -18,59 +18,41 @@
 
 #include "util/sp-model-filter.h"
 
-/*
- * This is a simple model filter for GListModel.
- *
- * Let me start by saying how it works, and then how I wish it worked.
- *
- * This uses 2 GSequence (Treaps) to track the filters. One matches the
- * underlying listmodel. One matches the filtered set. We hold onto our
- * own reference to the object in the child list model, and update things
- * as necessary when ::items-changed is emitted.
- *
- * I'd rather see this solved in one of two ways.
- *
- * 1) Add filtering support to GListStore
- *
- * or
- *
- * 2) Create a multi-tree data-structure that contains two tree nodes
- *    in each element. One tree contains all items, one tree contains
- *    the visible items (a subset of the other tree). The nodes might
- *    look something like:
- *
- *    Item {
- *      TreeNode  all_tree;
- *      TreeNode  visible_tree;
- *      GObject  *item;
- *    }
- *
- * But either way, this gets the job done for now. I'd venture a guess
- * that in many cases (small lists), this is actually slower than just
- * rechecking a simple GPtrArray, but let's see how it goes.
- *
- * -- Christian
- */
+typedef struct
+{
+  GSequenceIter *child_iter;
+  GSequenceIter *filter_iter;
+} SpModelFilterItem;
 
 typedef struct
 {
-  GListModel        *child_model;
+  /* The list we are filtering */
+  GListModel *child_model;
 
-  GSequence         *seq;
-  GSequence         *visible_seq;
+  /*
+   * Both sequences point to the same SpModelFilterItem which
+   * contains cross-referencing stable GSequenceIter pointers.
+   * The child_seq is considered the "owner" and used to release
+   * allocated resources.
+   */
+  GSequence *child_seq;
+  GSequence *filter_seq;
 
-  SpModelFilterFunc  filter_func;
-  gpointer           filter_func_data;
-  GDestroyNotify     filter_func_data_destroy;
+  /*
+   * Typical set of callback/closure/free function pointers and data.
+   * Called for child items to determine visibility state.
+   */
+  SpModelFilterFunc filter_func;
+  gpointer filter_func_data;
+  GDestroyNotify filter_func_data_destroy;
 
-  guint              needs_rebuild : 1;
+  /*
+   * If set, we will not emit items-changed. This is useful during
+   * invalidation so that we can do a single emission for all items
+   * that have changed.
+   */
+  guint supress_items_changed : 1;
 } SpModelFilterPrivate;
-
-typedef struct
-{
-  GSequenceIter *iter;
-  GObject       *object;
-} Element;
 
 static void list_model_iface_init (GListModelInterface *iface);
 
@@ -86,15 +68,16 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
+static guint signal_id;
 
 static void
-element_free (gpointer data)
+sp_model_filter_item_free (gpointer data)
 {
-  Element *e = data;
+  SpModelFilterItem *item = data;
 
-  e->iter = NULL;
-  g_clear_object (&e->object);
-  g_slice_free (Element, e);
+  g_clear_pointer (&item->filter_iter, g_sequence_remove);
+  item->child_iter = NULL;
+  g_slice_free (SpModelFilterItem, item);
 }
 
 static gboolean
@@ -102,6 +85,39 @@ sp_model_filter_default_filter_func (GObject  *item,
                                      gpointer  user_data)
 {
   return TRUE;
+}
+
+/*
+ * Locates the next item in the filter sequence starting from
+ * the cross-reference found at @iter. If none are found, the
+ * end_iter for the filter sequence is returned.
+ *
+ * This returns an iter in the filter_sequence, not the child_seq.
+ *
+ * Returns: a #GSequenceIter from the filter sequence.
+ */
+static GSequenceIter *
+find_next_visible_filter_iter (SpModelFilter *self,
+                               GSequenceIter *iter)
+{
+  SpModelFilterPrivate *priv = sp_model_filter_get_instance_private (self);
+
+  g_assert (SP_IS_MODEL_FILTER (self));
+  g_assert (iter != NULL);
+
+  for (; !g_sequence_iter_is_end (iter); iter = g_sequence_iter_next (iter))
+    {
+      SpModelFilterItem *item = g_sequence_get (iter);
+
+      g_assert (item->child_iter == iter);
+      g_assert (item->filter_iter == NULL ||
+                g_sequence_iter_get_sequence (item->filter_iter) == priv->filter_seq);
+
+      if (item->filter_iter != NULL)
+        return item->filter_iter;
+    }
+
+  return g_sequence_get_end_iter (priv->filter_seq);
 }
 
 static void
@@ -112,99 +128,111 @@ sp_model_filter_child_model_items_changed (SpModelFilter *self,
                                            GListModel    *child_model)
 {
   SpModelFilterPrivate *priv = sp_model_filter_get_instance_private (self);
-  GSequenceIter *insert_before = NULL;
-  GSequenceIter *insert_iter;
-  GSequenceIter *lower;
-  GSequenceIter *upper;
-  guint i;
+  gboolean unblocked;
 
   g_assert (SP_IS_MODEL_FILTER (self));
   g_assert (G_IS_LIST_MODEL (child_model));
+  g_assert (priv->child_model == child_model);
+  g_assert (position <= (guint)g_sequence_get_length (priv->child_seq));
+  g_assert ((g_sequence_get_length (priv->child_seq) - n_removed + n_added) ==
+            g_list_model_get_n_items (child_model));
 
+  unblocked = !priv->supress_items_changed;
 
-  for (i = 0; i < n_removed; i++)
+  if (n_removed > 0)
     {
-      GSequenceIter *iter;
-      Element *ele;
+      GSequenceIter *iter = g_sequence_get_iter_at_pos (priv->child_seq, position);
+      gint first_position = -1;
+      guint count = 0;
 
-      iter = g_sequence_get_iter_at_pos (priv->seq, position);
-      ele = g_sequence_get (iter);
+      g_assert (!g_sequence_iter_is_end (iter));
 
-      if (ele->iter)
+      /* Small shortcut when all items are removed */
+      if (n_removed == (guint)g_sequence_get_length (priv->child_seq))
         {
-          guint visible_position = g_sequence_iter_get_position (ele->iter);
-
-          insert_before = g_sequence_iter_next (ele->iter);
-          g_sequence_remove (ele->iter);
-          g_list_model_items_changed (G_LIST_MODEL (self), visible_position, 1, 0);
+          g_sequence_remove_range (g_sequence_get_begin_iter (priv->child_seq),
+                                   g_sequence_get_end_iter (priv->child_seq));
+          g_assert (g_sequence_is_empty (priv->child_seq));
+          g_assert (g_sequence_is_empty (priv->filter_seq));
+          goto add_new_items;
         }
 
-      g_sequence_remove (iter);
-    }
-
-  insert_iter = g_sequence_get_iter_at_pos (priv->seq, position + 1);
-
-  if (insert_before != NULL)
-    goto add_items;
-
-#if GLIB_CHECK_VERSION(2, 48, 0)
-  if (g_sequence_is_empty (priv->visible_seq))
-#else
-  if (g_sequence_get_begin_iter (priv->visible_seq) == g_sequence_get_end_iter (priv->visible_seq))
-#endif
-    {
-      insert_before = g_sequence_get_end_iter (priv->visible_seq);
-      goto add_items;
-    }
-
-  lower = g_sequence_get_begin_iter (priv->visible_seq);
-  upper = g_sequence_get_end_iter (priv->visible_seq);
-
-  while (lower != upper)
-    {
-      GSequenceIter *mid;
-      GSequenceIter *iter;
-      guint mid_pos;
-
-      mid = g_sequence_range_get_midpoint (lower, upper);
-      iter = g_sequence_get (mid);
-      mid_pos = g_sequence_iter_get_position (iter);
-
-      if (mid_pos < position)
-        lower = g_sequence_iter_next (mid);
-      else if (mid_pos > position)
-        upper = g_sequence_iter_prev (mid);
-      else
-        upper = lower = mid;
-    }
-
-  if (upper == g_sequence_get_end_iter (priv->visible_seq))
-    insert_before = upper;
-  else
-    insert_before =
-      ((guint)g_sequence_iter_get_position (g_sequence_get (upper)) <= position)
-        ? upper : g_sequence_iter_next (upper);
-
-add_items:
-  for (i = 0; i < n_added; i++)
-    {
-      GSequenceIter *iter;
-      Element *ele;
-
-      ele = g_slice_new (Element);
-      ele->object = g_list_model_get_item (priv->child_model, position + i);
-      ele->iter = NULL;
-
-      iter = g_sequence_insert_before (insert_iter, ele);
-
-      if (priv->filter_func (ele->object, priv->filter_func_data))
+      for (guint i = 0; i < n_removed; i++)
         {
-          ele->iter = g_sequence_insert_before (insert_before, iter);
-          g_list_model_items_changed (G_LIST_MODEL (self),
-                                      g_sequence_iter_get_position (ele->iter),
-                                      0, 1);
+          GSequenceIter *to_remove = iter;
+          SpModelFilterItem *item = g_sequence_get (iter);
+
+          g_assert (item != NULL);
+          g_assert (item->child_iter == iter);
+          g_assert (item->filter_iter == NULL ||
+                    g_sequence_iter_get_sequence (item->filter_iter) == priv->filter_seq);
+
+          /* If this is visible, we need to notify about removal */
+          if (unblocked && item->filter_iter != NULL)
+            {
+              if (first_position < 0)
+                first_position = g_sequence_iter_get_position (item->filter_iter);
+
+              count++;
+            }
+
+          /* Fetch the next while the iter is still valid */
+          iter = g_sequence_iter_next (iter);
+
+          /* Cascades into also removing from filter_seq. */
+          g_sequence_remove (to_remove);
         }
+
+      if (unblocked && first_position >= 0)
+        g_list_model_items_changed (G_LIST_MODEL (self), first_position, count, 0);
     }
+
+add_new_items:
+
+  if (n_added > 0)
+    {
+      GSequenceIter *iter = g_sequence_get_iter_at_pos (priv->child_seq, position + 1);
+      GSequenceIter *filter_iter = find_next_visible_filter_iter (self, iter);
+      guint filter_position = g_sequence_iter_get_position (filter_iter);
+      guint count = 0;
+
+      /* Walk backwards to insert items into the filter list so that
+       * we can use the same filter_position for each items-changed
+       * signal emission.
+       */
+      for (guint i = position + n_added; i > position; i--)
+        {
+          g_autoptr(GObject) instance = NULL;
+          SpModelFilterItem *item;
+
+          item = g_slice_new0 (SpModelFilterItem);
+          item->filter_iter = NULL;
+          item->child_iter = g_sequence_insert_before (iter, item);
+
+          instance = g_list_model_get_item (child_model, i - 1);
+          g_assert (G_IS_OBJECT (instance));
+
+          /* Check if this item is visible */
+          if (priv->filter_func (instance, priv->filter_func_data))
+            {
+              item->filter_iter = g_sequence_insert_before (filter_iter, item);
+
+              /* Use this in the future for relative positioning */
+              filter_iter = item->filter_iter;
+
+              count++;
+            }
+
+          /* Insert next item before this */
+          iter = item->child_iter;
+        }
+
+      if (unblocked && count)
+        g_list_model_items_changed (G_LIST_MODEL (self), filter_position, 0, count);
+    }
+
+  g_assert ((guint)g_sequence_get_length (priv->child_seq) ==
+            g_list_model_get_n_items (child_model));
 }
 
 static void
@@ -213,8 +241,8 @@ sp_model_filter_finalize (GObject *object)
   SpModelFilter *self = (SpModelFilter *)object;
   SpModelFilterPrivate *priv = sp_model_filter_get_instance_private (self);
 
-  g_clear_pointer (&priv->seq, g_sequence_free);
-  g_clear_pointer (&priv->visible_seq, g_sequence_free);
+  g_clear_pointer (&priv->child_seq, g_sequence_free);
+  g_clear_pointer (&priv->filter_seq, g_sequence_free);
 
   if (priv->filter_func_data_destroy)
     {
@@ -262,6 +290,8 @@ sp_model_filter_class_init (SpModelFilterClass *klass)
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  signal_id = g_signal_lookup ("items-changed", SP_TYPE_MODEL_FILTER);
 }
 
 static void
@@ -270,57 +300,8 @@ sp_model_filter_init (SpModelFilter *self)
   SpModelFilterPrivate *priv = sp_model_filter_get_instance_private (self);
 
   priv->filter_func = sp_model_filter_default_filter_func;
-  priv->seq = g_sequence_new (element_free);
-  priv->visible_seq = g_sequence_new (NULL);
-
-  priv->needs_rebuild = TRUE;
-}
-
-static void
-sp_model_filter_rebuild (SpModelFilter *self,
-                         gboolean       no_emit)
-{
-  SpModelFilterPrivate *priv = sp_model_filter_get_instance_private (self);
-  guint new_n_items = 0;
-  guint old_n_items;
-  guint n_items;
-  guint i;
-
-  g_assert (SP_IS_MODEL_FILTER (self));
-  g_assert (priv->needs_rebuild);
-
-  old_n_items = g_sequence_get_length (priv->visible_seq);
-
-  g_clear_pointer (&priv->seq, g_sequence_free);
-  g_clear_pointer (&priv->visible_seq, g_sequence_free);
-
-  priv->seq = g_sequence_new (element_free);
-  priv->visible_seq = g_sequence_new (NULL);
-
-  n_items = g_list_model_get_n_items (priv->child_model);
-
-  for (i = 0; i < n_items; i++)
-    {
-      GSequenceIter *iter;
-      Element *ele;
-
-      ele = g_slice_new (Element);
-      ele->object = g_list_model_get_item (priv->child_model, i);
-      ele->iter = NULL;
-
-      iter = g_sequence_append (priv->seq, ele);
-
-      if (priv->filter_func (ele->object, priv->filter_func_data))
-        {
-          ele->iter = g_sequence_append (priv->visible_seq, iter);
-          new_n_items++;
-        }
-    }
-
-  if (!no_emit)
-    g_list_model_items_changed (G_LIST_MODEL (self), 0, old_n_items, new_n_items);
-
-  priv->needs_rebuild = FALSE;
+  priv->child_seq = g_sequence_new (sp_model_filter_item_free);
+  priv->filter_seq = g_sequence_new (NULL);
 }
 
 static GType
@@ -341,11 +322,9 @@ sp_model_filter_get_n_items (GListModel *model)
   SpModelFilterPrivate *priv = sp_model_filter_get_instance_private (self);
 
   g_assert (SP_IS_MODEL_FILTER (self));
+  g_assert (priv->filter_seq != NULL);
 
-  if (priv->needs_rebuild)
-    sp_model_filter_rebuild (self, TRUE);
-
-  return g_sequence_get_length (priv->visible_seq);
+  return g_sequence_get_length (priv->filter_seq);
 }
 
 static gpointer
@@ -354,33 +333,25 @@ sp_model_filter_get_item (GListModel *model,
 {
   SpModelFilter *self = (SpModelFilter *)model;
   SpModelFilterPrivate *priv = sp_model_filter_get_instance_private (self);
+  SpModelFilterItem *item;
   GSequenceIter *iter;
-  Element *ele;
+  guint child_position;
 
   g_assert (SP_IS_MODEL_FILTER (self));
+  g_assert (position < (guint)g_sequence_get_length (priv->filter_seq));
 
-  if (priv->needs_rebuild)
-    sp_model_filter_rebuild (self, TRUE);
+  iter = g_sequence_get_iter_at_pos (priv->filter_seq, position);
+  g_assert (!g_sequence_iter_is_end (iter));
 
-  iter = g_sequence_get_iter_at_pos (priv->visible_seq, position);
+  item = g_sequence_get (iter);
+  g_assert (item != NULL);
+  g_assert (item->filter_iter == iter);
+  g_assert (item->child_iter != NULL);
+  g_assert (g_sequence_iter_get_sequence (item->child_iter) == priv->child_seq);
 
-  if (!iter || g_sequence_iter_is_end (iter))
-    {
-      g_warning ("invalid position for filter, filter is corrupt");
-      return NULL;
-    }
+  child_position = g_sequence_iter_get_position (item->child_iter);
 
-  iter = g_sequence_get (iter);
-
-  if (!iter || g_sequence_iter_is_end (iter))
-    {
-      g_warning ("invalid position for filter, filter is corrupt");
-      return NULL;
-    }
-
-  ele = g_sequence_get (iter);
-
-  return g_object_ref (ele->object);
+  return g_list_model_get_item (priv->child_model, child_position);
 }
 
 static void
@@ -409,6 +380,8 @@ sp_model_filter_new (GListModel *child_model)
                            ret,
                            G_CONNECT_SWAPPED);
 
+  sp_model_filter_invalidate (ret);
+
   return ret;
 }
 
@@ -434,12 +407,59 @@ void
 sp_model_filter_invalidate (SpModelFilter *self)
 {
   SpModelFilterPrivate *priv = sp_model_filter_get_instance_private (self);
+  guint n_items;
 
   g_return_if_fail (SP_IS_MODEL_FILTER (self));
 
-  priv->needs_rebuild = TRUE;
+  /* We block emission while in invalidate so that we can use
+   * a single larger items-changed rather lots of small emissions.
+   */
+  priv->supress_items_changed = TRUE;
 
-  sp_model_filter_rebuild (self, FALSE);
+  /* First determine how many items we need to synthesize as a removal */
+  n_items = g_sequence_get_length (priv->filter_seq);
+
+  /*
+   * If we have a child store, we want to rebuild our list of items
+   * from scratch, so just remove everything.
+   */
+  if (!g_sequence_is_empty (priv->child_seq))
+    g_sequence_remove_range (g_sequence_get_begin_iter (priv->child_seq),
+                             g_sequence_get_end_iter (priv->child_seq));
+
+  g_assert (g_sequence_is_empty (priv->child_seq));
+  g_assert (g_sequence_is_empty (priv->filter_seq));
+  g_assert (!priv->child_model || G_IS_LIST_MODEL (priv->child_model));
+
+  /*
+   * Now add the new items by synthesizing the addition of all the
+   * itmes in the list.
+   */
+  if (priv->child_model != NULL)
+    {
+      guint child_n_items;
+
+      /*
+       * Now add all the items as one shot to our list so that
+       * we get populate our sequence and filter sequence.
+       */
+      child_n_items = g_list_model_get_n_items (priv->child_model);
+      sp_model_filter_child_model_items_changed (self, 0, 0, child_n_items, priv->child_model);
+
+      g_assert ((guint)g_sequence_get_length (priv->child_seq) == child_n_items);
+      g_assert ((guint)g_sequence_get_length (priv->filter_seq) <= child_n_items);
+    }
+
+  priv->supress_items_changed = FALSE;
+
+  /* Now that we've updated our sequences, notify of all the changes
+   * as a single series of updates to the consumers.
+   */
+  if (n_items > 0 || !g_sequence_is_empty (priv->filter_seq))
+    g_list_model_items_changed (G_LIST_MODEL (self),
+                                0,
+                                n_items,
+                                g_sequence_get_length (priv->filter_seq));
 }
 
 void
@@ -453,7 +473,7 @@ sp_model_filter_set_filter_func (SpModelFilter     *self,
   g_return_if_fail (SP_IS_MODEL_FILTER (self));
   g_return_if_fail (filter_func || (!filter_func_data && !filter_func_data_destroy));
 
-  if (priv->filter_func_data_destroy)
+  if (priv->filter_func_data_destroy != NULL)
     g_clear_pointer (&priv->filter_func_data, priv->filter_func_data_destroy);
 
   if (filter_func != NULL)

@@ -60,6 +60,9 @@ test_basic (void)
   model = g_list_store_new (TEST_TYPE_ITEM);
   g_assert (model);
 
+  filter = sp_model_filter_new (G_LIST_MODEL (model));
+  g_assert (filter);
+
   for (i = 0; i < 1000; i++)
     {
       g_autoptr(TestItem) val = test_item_new (i);
@@ -68,13 +71,19 @@ test_basic (void)
     }
 
   g_assert_cmpint (1000, ==, g_list_model_get_n_items (G_LIST_MODEL (model)));
-
-  filter = sp_model_filter_new (G_LIST_MODEL (model));
-  g_assert (filter);
+  g_assert_cmpint (1000, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
 
   g_assert_cmpint (1000, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
   sp_model_filter_set_filter_func (filter, filter_func1, NULL, NULL);
   g_assert_cmpint (500, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
+
+  for (i = 0; i < 500; i++)
+    {
+      g_autoptr(TestItem) item = g_list_model_get_item (G_LIST_MODEL (filter), i);
+
+      g_assert (TEST_IS_ITEM (item));
+      g_assert (filter_func1 (G_OBJECT (item), NULL));
+    }
 
   for (i = 0; i < 1000; i += 2)
     g_list_store_remove (model, 998 - i);
@@ -115,10 +124,10 @@ filter_keyword_cb (GObject  *object,
                    gpointer  user_data)
 {
   SpProcessModelItem *item = SP_PROCESS_MODEL_ITEM (object);
-  const gchar *needle = user_data;
   const gchar *haystack = sp_process_model_item_get_command_line (item);
+  const gchar *needle = user_data;
 
-  return NULL != strstr (haystack, needle);
+  return strstr (haystack, needle) != NULL;
 }
 
 static void
@@ -128,7 +137,7 @@ test_process (void)
   SpModelFilter *filter;
   static gchar *searches[] = {
     "a", "b", "foo", "bar", "gnome", "gnome-test",
-    "gsd", "gsd-", "libexec", "/", ":",
+    "libexec", "/", ":", "gsd-",
   };
 
   filter = sp_model_filter_new (G_LIST_MODEL (model));
@@ -137,12 +146,22 @@ test_process (void)
 
   for (guint i = 0; i < G_N_ELEMENTS (searches); i++)
     {
-      sp_model_filter_set_filter_func (filter,
-                                       filter_keyword_cb,
-                                       g_strdup (searches[i]),
-                                       g_free);
-      sp_model_filter_invalidate (filter);
-      sp_process_model_reload (model);
+      const gchar *needle = searches[i];
+      guint n_items;
+
+      sp_model_filter_set_filter_func (filter, filter_keyword_cb, g_strdup (needle), g_free);
+
+      n_items = g_list_model_get_n_items (G_LIST_MODEL (filter));
+
+      for (guint j = 0; j < n_items; j++)
+        {
+          g_autoptr(SpProcessModelItem) item = g_list_model_get_item (G_LIST_MODEL (filter), j);
+
+          g_assert (SP_IS_PROCESS_MODEL_ITEM (item));
+          g_assert (filter_keyword_cb (G_OBJECT (item), (gchar *)needle));
+
+          //g_print ("%s: %s\n", needle, sp_process_model_item_get_command_line (item));
+        }
     }
 
   g_object_unref (filter);

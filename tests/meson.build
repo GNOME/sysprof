@@ -30,7 +30,6 @@ if get_option('enable_gtk')
     'test-process-model.c',
     dependencies: libsysprof_ui_dep,
   )
-  test('test-process-model', test_process_model, env: test_env)
 
   test_zoom = executable('test-zoom',
     'test-zoom.c',

@@ -1,14 +1,14 @@
 # Polish translation for sysprof help.
 # Copyright © 2017 the sysprof authors.
-# This file is distributed under the same license as the sysprof package.
+# This file is distributed under the same license as the sysprof help.
 # Piotr Drąg <piotrdrag@gmail.com>, 2017.
 # Aviary.pl <community-poland@mozilla.org>, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof-help\n"
-"POT-Creation-Date: 2017-09-25 16:15+0000\n"
-"PO-Revision-Date: 2017-09-27 12:40+0200\n"
+"POT-Creation-Date: 2017-11-22 01:08+0000\n"
+"PO-Revision-Date: 2017-11-26 18:25+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -135,14 +135,15 @@ msgid ""
 "for all applications executing, including the Linux kernel. This can "
 "sometimes be confusing if you only want to look at a single process. If your "
 "application does not interact much with the host system, you may have more "
-"success with <link href=\"profiling#new-process-profiling\">profiling an "
-"existing process</link>."
+"success by using <app>Sysprof</app> to <link href=\"profiling#new-process-"
+"profiling\">spawn a new process</link>."
 msgstr ""
 "Profilując system, program <app>Sysprof</app> nagrywa informacje o stosie "
 "dla wszystkich wykonywanych programów, w tym jądra Linux. Może to "
 "przeszkadzać, jeśli badany jest tylko jeden proces. Jeśli dany program nie "
-"korzysta za bardzo z systemu, to lepiej skorzystać z <link href="
-"\"profiling#new-process-profiling\">profilowania istniejącego procesu</link>."
+"korzysta za bardzo z systemu, to lepiej użyć programu <app>Sysprof</app> do "
+"<link href=\"profiling#new-process-profiling\">wywołania nowego procesu</"
+"link>."
 
 #. (itstool) path: section/p
 #: C/profiling.page:18

@@ -16,7 +16,7 @@ custom_target('appdata-file',
     output: 'org.gnome.Sysprof2.appdata.xml',
     command: [msgfmt, '--xml', '--template', '@INPUT@', '-d', podir, '-o', '@OUTPUT@'],
     install: true,
-    install_dir: join_paths(datadir, 'appdata')
+    install_dir: join_paths(datadir, 'metainfo')
 )
 
 custom_target('desktop-file',

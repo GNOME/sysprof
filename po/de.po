@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-03-27 23:22+0000\n"
-"PO-Revision-Date: 2017-09-14 10:30+0200\n"
+"POT-Creation-Date: 2017-11-22 01:08+0000\n"
+"PO-Revision-Date: 2017-12-27 00:59+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.0.5\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -120,6 +120,11 @@ msgstr ""
 "Legitimierung ist erforderlich, um auf Leistungswerte Ihres Rechners "
 "zuzugreifen."
 
+#: lib/callgraph/sp-callgraph-profile.c:414
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
+"Sysprof konnte keinen Aufrufgraphen anhand der Systemaufnahme erstellen."
+
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
 msgstr "Funktionen"
@@ -128,7 +133,7 @@ msgstr "Funktionen"
 #: lib/resources/ui/sp-callgraph-view.ui:101
 #: lib/resources/ui/sp-callgraph-view.ui:156
 msgid "Self"
-msgstr ""
+msgstr "Selbst"
 
 #: lib/resources/ui/sp-callgraph-view.ui:56
 #: lib/resources/ui/sp-callgraph-view.ui:117
@@ -199,7 +204,7 @@ msgid "Value"
 msgstr "Wert"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:215
-#: lib/sp-profiler-menu-button.c:118
+#: lib/widgets/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Neuer Prozess"
 
@@ -214,12 +219,7 @@ msgstr ""
 "Wussten Sie, dass Sie <a href=\"help:sysprof\">sysprof-cli</a> zum Aufnehmen "
 "verwenden können?"
 
-#: lib/sp-callgraph-profile.c:414
-msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr ""
-"Sysprof konnte keinen Aufrufgraphen anhand der Systemaufnahme erstellen."
-
-#: lib/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:345
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
@@ -227,28 +227,29 @@ msgstr ""
 "Sysprof erfordert Ihre Legitimierung, um auf Leistungswerte Ihres Rechners "
 "zuzugreifen."
 
-#: lib/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:350
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Ein Fehler passierte beim versuchten Zugriff auf Leistungswerte: %s"
 
-#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
+#: lib/widgets/sp-profiler-menu-button.c:116
+#: lib/widgets/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Alle Prozesse"
 
-#: lib/sp-profiler-menu-button.c:137
+#: lib/widgets/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Prozess %d"
 
-#: lib/sp-profiler-menu-button.c:142
+#: lib/widgets/sp-profiler-menu-button.c:142
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
 msgstr[0] "%u Prozess"
 msgstr[1] "%u Prozesse"
 
-#: lib/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
 msgstr "Die Argumente der Befehlszeile sind ungültig"
 
@@ -268,7 +269,6 @@ msgid "Stop recording"
 msgstr "Aufnahme anhalten"
 
 #: src/resources/gtk/help-overlay.ui:25
-#| msgid "Callers"
 msgctxt "shortcut window"
 msgid "Callgraph"
 msgstr "Callgraph"
@@ -347,7 +347,7 @@ msgstr "Tastenkombinationen"
 msgid "_Quit"
 msgstr "_Beenden"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
 msgid "Not running"
 msgstr "Läuft nicht"
 
@@ -375,7 +375,7 @@ msgstr "Vergrößerung zurücksetzen (Strg+0)"
 msgid "Zoom in (Ctrl++)"
 msgstr "Vergrößern (Strg++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
 msgid "Open"
 msgstr "Öffnen"
 
@@ -395,88 +395,88 @@ msgstr "Schließen"
 msgid "A system profiler"
 msgstr "Eine System-Profiler"
 
-#: src/sp-application.c:178
+#: src/sp-application.c:179
 msgid "translator-credits"
 msgstr "Mario Blättermann <mario.blaettermann@gmail.com>"
 
-#: src/sp-application.c:184
+#: src/sp-application.c:185
 msgid "Learn more about Sysprof"
 msgstr "Erfahren Sie mehr über Sysprof"
 
-#: src/sp-window.c:148
+#: src/sp-window.c:149
 #, c-format
 msgid "Samples: %u"
 msgstr "Messwerte: %u"
 
-#: src/sp-window.c:181
+#: src/sp-window.c:182
 msgid "[Memory Capture]"
 msgstr "[Speicheraufnahme]"
 
-#: src/sp-window.c:194
+#: src/sp-window.c:195
 #, c-format
 msgid "%s - %s"
 msgstr "%s - %s"
 
-#: src/sp-window.c:232
+#: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr ""
 "Es wurden nicht genug Messwerte gesammelt, um einen Aufrufgraphen erstellen "
 "zu können"
 
-#: src/sp-window.c:305 src/sp-window.c:349
+#: src/sp-window.c:306 src/sp-window.c:350
 msgid "Record"
 msgstr "Aufnehmen"
 
-#: src/sp-window.c:325
+#: src/sp-window.c:326
 msgid "Stop"
 msgstr "Stopp"
 
-#: src/sp-window.c:330
+#: src/sp-window.c:331
 msgid "Recording…"
 msgstr "Aufnahme läuft …"
 
-#: src/sp-window.c:341
+#: src/sp-window.c:342
 msgid "Building profile…"
 msgstr "Profil wird erstellt …"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:442
+#: src/sp-window.c:443
 msgid "Stopping…"
 msgstr "Wird gestoppt …"
 
-#: src/sp-window.c:594
+#: src/sp-window.c:595
 msgid "Save Capture As"
 msgstr "Aufnahme speichern unter"
 
-#: src/sp-window.c:597
+#: src/sp-window.c:598
 msgid "Save"
 msgstr "Speichern"
 
-#: src/sp-window.c:598 src/sp-window.c:1004
+#: src/sp-window.c:599 src/sp-window.c:1012
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/sp-window.c:628
+#: src/sp-window.c:629
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Ein Fehler passierte beim versuchten Speichern Ihrer Aufnahme: %s"
 
-#: src/sp-window.c:973
+#: src/sp-window.c:981
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr ""
 "Die Datei »%s« konnte nicht geöffnet werden. Es werden nur lokale Dateien "
 "unterstützt."
 
-#: src/sp-window.c:1000
+#: src/sp-window.c:1008
 msgid "Open Capture"
 msgstr "Aufnahme öffnen"
 
-#: src/sp-window.c:1007
+#: src/sp-window.c:1015
 msgid "Sysprof Captures"
 msgstr "Sysprof-Aufnahmen"
 
-#: src/sp-window.c:1012
+#: src/sp-window.c:1020
 msgid "All Files"
 msgstr "Alle Dateien"
 

@@ -54,8 +54,8 @@ theme_resource_free (gpointer data)
 
       if (theme_resource->provider != NULL)
         {
-          gtk_style_context_remove_provider_for_screen (gdk_screen_get_default (),
-                                                        GTK_STYLE_PROVIDER (theme_resource->provider));
+          gtk_style_context_remove_provider_for_display (gdk_display_get_default (),
+                                                         GTK_STYLE_PROVIDER (theme_resource->provider));
           g_clear_object (&theme_resource->provider);
         }
 
@@ -117,17 +117,17 @@ sp_theme_manager_do_reload (gpointer data)
             {
               theme_resource->provider = gtk_css_provider_new ();
               gtk_css_provider_load_from_resource (theme_resource->provider, theme_resource->resource);
-              gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
-                                                         GTK_STYLE_PROVIDER (theme_resource->provider),
-                                                         GTK_STYLE_PROVIDER_PRIORITY_APPLICATION - 1);
+              gtk_style_context_add_provider_for_display (gdk_display_get_default (),
+                                                          GTK_STYLE_PROVIDER (theme_resource->provider),
+                                                          GTK_STYLE_PROVIDER_PRIORITY_APPLICATION - 1);
             }
         }
       else
         {
           if (theme_resource->provider != NULL)
             {
-              gtk_style_context_remove_provider_for_screen (gdk_screen_get_default (),
-                                                            GTK_STYLE_PROVIDER (theme_resource->provider));
+              gtk_style_context_remove_provider_for_display (gdk_display_get_default (),
+                                                             GTK_STYLE_PROVIDER (theme_resource->provider));
               g_clear_object (&theme_resource->provider);
             }
         }

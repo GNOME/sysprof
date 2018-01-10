@@ -312,6 +312,9 @@ sp_visualizer_view_list_button_press_event (SpVisualizerView *self,
                                             SpVisualizerList *list)
 {
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+  guint button;
+  GdkModifierType modifier_state;
+  double x, y;
 
   g_assert (SP_IS_VISUALIZER_VIEW (self));
   g_assert (ev != NULL);
@@ -320,7 +323,9 @@ sp_visualizer_view_list_button_press_event (SpVisualizerView *self,
   if (priv->reader == NULL)
     return GDK_EVENT_PROPAGATE;
 
-  if (ev->button != GDK_BUTTON_PRIMARY)
+  gdk_event_get_button ((GdkEvent*)ev, &button);
+
+  if (button != GDK_BUTTON_PRIMARY)
     {
       if (sp_selection_get_has_selection (priv->selection))
         {
@@ -330,12 +335,16 @@ sp_visualizer_view_list_button_press_event (SpVisualizerView *self,
       return GDK_EVENT_PROPAGATE;
     }
 
-  if ((ev->state & GDK_SHIFT_MASK) == 0)
+  gdk_event_get_state ((GdkEvent *)ev, &modifier_state);
+
+  if ((modifier_state & GDK_SHIFT_MASK) == 0)
     sp_selection_unselect_all (priv->selection);
 
   priv->button_pressed = TRUE;
 
-  priv->drag_begin_at = get_time_from_coordinates (self, ev->x, ev->y);
+  gdk_event_get_coords ((GdkEvent *)ev, &x, &y);
+
+  priv->drag_begin_at = get_time_from_coordinates (self, x, y);
   priv->drag_selection_at = priv->drag_begin_at;
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
@@ -349,12 +358,15 @@ sp_visualizer_view_list_button_release_event (SpVisualizerView *self,
                                               SpVisualizerList *list)
 {
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+  guint button;
 
   g_assert (SP_IS_VISUALIZER_VIEW (self));
   g_assert (ev != NULL);
   g_assert (SP_IS_VISUALIZER_LIST (list));
 
-  if (!priv->button_pressed || ev->button != GDK_BUTTON_PRIMARY)
+  gdk_event_get_button ((GdkEvent*)ev, &button);
+
+  if (!priv->button_pressed || button != GDK_BUTTON_PRIMARY)
     return GDK_EVENT_PROPAGATE;
 
   priv->button_pressed = FALSE;
@@ -379,6 +391,7 @@ sp_visualizer_view_list_motion_notify_event (SpVisualizerView *self,
                                              SpVisualizerList *list)
 {
   SpVisualizerViewPrivate *priv = sp_visualizer_view_get_instance_private (self);
+  double x, y;
 
   g_assert (SP_IS_VISUALIZER_VIEW (self));
   g_assert (ev != NULL);
@@ -387,7 +400,10 @@ sp_visualizer_view_list_motion_notify_event (SpVisualizerView *self,
   if (!priv->button_pressed)
     return GDK_EVENT_PROPAGATE;
 
-  priv->drag_selection_at = get_time_from_coordinates (self, ev->x, ev->y);
+
+  gdk_event_get_coords ((GdkEvent *)ev, &x, &y);
+
+  priv->drag_selection_at = get_time_from_coordinates (self, x, y);
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
 
@@ -398,19 +414,14 @@ static void
 sp_visualizer_view_list_realize_after (SpVisualizerView *self,
                                        SpVisualizerList *list)
 {
-  GdkDisplay *display;
-  GdkWindow *window;
   GdkCursor *cursor;
 
   g_assert (SP_IS_VISUALIZER_VIEW (self));
   g_assert (SP_IS_VISUALIZER_LIST (list));
 
-  window = gtk_widget_get_window (GTK_WIDGET (list));
-  display = gdk_window_get_display (window);
-  cursor = gdk_cursor_new_from_name (display, "text");
+  cursor = gdk_cursor_new_from_name ("text", NULL);
 
-  /* TODO: gtk_widget_set_cursor is still private */
-  /*gdk_window_set_cursor (window, cursor);*/
+  gtk_widget_set_cursor (GTK_WIDGET (self), cursor);
 
   g_clear_object (&cursor);
 }

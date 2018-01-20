@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sysprof.h>
+#include <sysprof-capture.h>
 
 #define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
 

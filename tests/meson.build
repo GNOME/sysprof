@@ -8,7 +8,7 @@ test_env = [
 
 test_capture = executable('test-capture',
   'test-capture.c',
-  dependencies: libsysprof_dep,
+  dependencies: libsysprof_capture_dep,
 )
 test('test-capture', test_capture, env: test_env)
 

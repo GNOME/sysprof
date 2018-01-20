@@ -24,21 +24,26 @@ configure_file(
 
 libsysprof_base_headers = [
   'sysprof.h',
+  'sysprof-capture.h',
   'sp-address.h',
   'sp-clock.h',
   'sp-error.h',
 ]
 
-libsysprof_headers = libsysprof_base_headers
-libsysprof_sources = [
+libsysprof_base_sources = [
   'sp-address.c',
   'sp-clock.c',
   'sp-error.c',
 ]
 
+libsysprof_headers = libsysprof_base_headers
+libsysprof_sources = libsysprof_base_sources
+
 libsysprof_ui_base_headers = ['sysprof-ui.h']
 libsysprof_ui_headers = libsysprof_ui_base_headers
 libsysprof_ui_sources = []
+
+libsysprof_capture_sources = libsysprof_base_sources
 
 subdir('callgraph')
 subdir('capture')
@@ -50,6 +55,10 @@ subdir('visualizers')
 subdir('widgets')
 
 cxx = meson.get_compiler('cpp')
+
+libsysprof_capture_deps = [
+  dependency('gobject-2.0'),
+]
 
 libsysprof_deps = [
   cxx.find_library('stdc++'),
@@ -64,6 +73,13 @@ if get_option('with_sysprofd') != 'none'
   libsysprof_c_args += '-DENABLE_POLKIT'
 endif
 
+libsysprof_capture = static_library('sysprof-capture-' + libsysprof_api_version,
+  libsysprof_capture_sources,
+  dependencies: libsysprof_capture_deps,
+        c_args: libsysprof_c_args,
+       install: true,
+)
+
 libsysprof = shared_library('sysprof-' + libsysprof_api_version,
   libsysprof_sources,
   dependencies: libsysprof_deps,
@@ -77,6 +93,12 @@ libsysprof_dep = declare_dependency(
   include_directories: include_directories('.'),
      link_with: libsysprof,
   dependencies: libsysprof_deps,
+)
+
+libsysprof_capture_dep = declare_dependency(
+  include_directories: include_directories('.'),
+     link_with: libsysprof_capture,
+  dependencies: libsysprof_capture_deps,
 )
 
 install_headers(libsysprof_base_headers, subdir: libsysprof_header_subdir)

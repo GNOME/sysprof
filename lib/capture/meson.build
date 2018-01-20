@@ -16,5 +16,7 @@ capture_sources = [
 libsysprof_headers += files(capture_headers)
 libsysprof_sources += files(capture_sources)
 
+libsysprof_capture_sources += files(capture_sources)
+
 install_headers(capture_headers,
   subdir: join_paths(libsysprof_header_subdir, 'capture'))

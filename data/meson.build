@@ -40,6 +40,13 @@ configure_file(
   install: true,
   install_dir: pkgconfigdir,
 )
+configure_file(
+  input: 'sysprof-capture.pc.in',
+  output: 'sysprof-capture-@0@.pc'.format(libsysprof_api_version),
+  configuration: pkgconf,
+  install: true,
+  install_dir: pkgconfigdir,
+)
 if get_option('enable_gtk')
   configure_file(
     input: 'sysprof-ui.pc.in',

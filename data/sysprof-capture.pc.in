@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${exec_prefix}/include
+
+Name: libsysprof-capture-@API_VERSION@
+Description: The sysprof profiler library for reading and writing capture files
+Version: @VERSION@
+Libs: -L${libdir} -lsysprof-capture-@API_VERSION@
+Cflags: -I${includedir}/sysprof-@API_VERSION@
+Requires: gobject-2.0

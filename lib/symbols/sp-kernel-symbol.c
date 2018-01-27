@@ -186,8 +186,17 @@ sp_kernel_symbol_from_address (SpCaptureAddress address)
 
   if (G_UNLIKELY (kernel_symbols == NULL))
     {
-      if (!sp_kernel_symbol_load ())
+      static gboolean failed;
+
+      if (failed)
         return NULL;
+
+      if (!sp_kernel_symbol_load ())
+        {
+          g_warning ("Failed to load kernel symbol map, kernel symbols will not be available!");
+          failed = TRUE;
+          return NULL;
+        }
     }
 
   g_assert (kernel_symbols != NULL);

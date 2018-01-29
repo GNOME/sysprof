@@ -368,7 +368,7 @@ sp_callgraph_profile_generate_worker (GTask        *task,
                   str = sp_symbol_resolver_resolve_with_context (resolver,
                                                                  sample->frame.time,
                                                                  sample->frame.pid,
-                                                                 context,
+                                                                 last_context,
                                                                  address,
                                                                  &tag);
 

@@ -28,6 +28,7 @@
 
 static GArray *kernel_symbols;
 static GStringChunk *kernel_symbol_strs;
+static GHashTable *kernel_symbols_skip_hash;
 static const gchar *kernel_symbols_skip[] = {
   /* IRQ stack */
   "common_interrupt",
@@ -77,15 +78,10 @@ sp_kernel_symbol_compare (gconstpointer a,
 }
 
 static inline gboolean
-is_ignored (GHashTable  *skip,
-            const gchar *name,
-            guint8       type)
+type_is_ignored (guint8 type)
 {
   /* Only allow symbols in the text (code) section */
-  if (type != 't' && type != 'T')
-    return TRUE;
-
-  return g_hash_table_contains (skip, name);
+  return (type != 't' && type != 'T');
 }
 
 static gboolean
@@ -122,7 +118,7 @@ failure:
 }
 
 static gboolean
-sp_kernel_symbol_load_from_sysprofd (GHashTable *skip)
+sp_kernel_symbol_load_from_sysprofd (void)
 {
   g_autoptr(GDBusConnection) conn = NULL;
   g_autoptr(GVariant) ret = NULL;
@@ -133,8 +129,6 @@ sp_kernel_symbol_load_from_sysprofd (GHashTable *skip)
   const gchar *name;
   guint64 addr;
   guint8 type;
-
-  g_assert (skip != NULL);
 
   if (!(conn = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL)))
     return FALSE;
@@ -171,7 +165,7 @@ sp_kernel_symbol_load_from_sysprofd (GHashTable *skip)
     {
       SpKernelSymbol sym;
 
-      if (is_ignored (skip, name, type))
+      if (type_is_ignored (type))
         continue;
 
       sym.address = addr;
@@ -206,6 +200,7 @@ sp_kernel_symbol_load (void)
   skip = g_hash_table_new (g_str_hash, g_str_equal);
   for (guint i = 0; i < G_N_ELEMENTS (kernel_symbols_skip); i++)
     g_hash_table_insert (skip, (gchar *)kernel_symbols_skip[i], NULL);
+  kernel_symbols_skip_hash = g_steal_pointer (&skip);
 
   kernel_symbol_strs = g_string_chunk_new (4096);
   ar = g_array_new (FALSE, TRUE, sizeof (SpKernelSymbol));
@@ -217,7 +212,7 @@ sp_kernel_symbol_load (void)
     {
       SpKernelSymbol sym;
 
-      if (is_ignored (skip, name, type))
+      if (type_is_ignored (type))
         continue;
 
       sym.address = addr;
@@ -235,7 +230,7 @@ sp_kernel_symbol_load (void)
   return TRUE;
 
 query_daemon:
-  if (sp_kernel_symbol_load_from_sysprofd (skip))
+  if (sp_kernel_symbol_load_from_sysprofd ())
     return TRUE;
 
   g_warning ("Kernel symbols will not be available.");
@@ -288,6 +283,7 @@ const SpKernelSymbol *
 sp_kernel_symbol_from_address (SpCaptureAddress address)
 {
   const SpKernelSymbol *first;
+  const SpKernelSymbol *ret;
 
   if G_UNLIKELY (kernel_symbols == NULL)
     {
@@ -311,8 +307,16 @@ sp_kernel_symbol_from_address (SpCaptureAddress address)
   if (address < first->address)
     return NULL;
 
-  return sp_kernel_symbol_lookup ((SpKernelSymbol *)(gpointer)kernel_symbols->data,
-                                  address,
-                                  0,
-                                  kernel_symbols->len - 1);
+  ret = sp_kernel_symbol_lookup ((SpKernelSymbol *)(gpointer)kernel_symbols->data,
+                                 address,
+                                 0,
+                                 kernel_symbols->len - 1);
+
+  /* We resolve all symbols, including ignored symbols so that we
+   * don't give back the wrong function juxtapose an ignored func.
+   */
+  if (ret != NULL && g_hash_table_contains (kernel_symbols_skip_hash, ret->name))
+    return NULL;
+
+  return ret;
 }

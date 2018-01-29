@@ -363,11 +363,12 @@ sp_callgraph_profile_generate_worker (GTask        *task,
                   GQuark tag = 0;
                   gchar *str;
 
-                  str = sp_symbol_resolver_resolve (resolver,
-                                                    sample->frame.time,
-                                                    sample->frame.pid,
-                                                    address,
-                                                    &tag);
+                  str = sp_symbol_resolver_resolve_with_context (resolver,
+                                                                 sample->frame.time,
+                                                                 sample->frame.pid,
+                                                                 context,
+                                                                 address,
+                                                                 &tag);
 
                   if (str != NULL)
                     {

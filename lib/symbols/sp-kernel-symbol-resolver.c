@@ -24,27 +24,7 @@ struct _SpKernelSymbolResolver
   GObject parent_instance;
 };
 
-static void symbol_resolver_iface_init (SpSymbolResolverInterface *iface);
-
-G_DEFINE_TYPE_EXTENDED (SpKernelSymbolResolver,
-                        sp_kernel_symbol_resolver,
-                        G_TYPE_OBJECT,
-                        0,
-                        G_IMPLEMENT_INTERFACE (SP_TYPE_SYMBOL_RESOLVER,
-                                               symbol_resolver_iface_init))
-
 static GQuark linux_quark;
-
-static void
-sp_kernel_symbol_resolver_class_init (SpKernelSymbolResolverClass *klass)
-{
-  linux_quark = g_quark_from_static_string ("Linux");
-}
-
-static void
-sp_kernel_symbol_resolver_init (SpKernelSymbolResolver *skernel)
-{
-}
 
 static gchar *
 sp_kernel_symbol_resolver_resolve (SpSymbolResolver *resolver,
@@ -70,6 +50,23 @@ static void
 symbol_resolver_iface_init (SpSymbolResolverInterface *iface)
 {
   iface->resolve = sp_kernel_symbol_resolver_resolve;
+}
+
+G_DEFINE_TYPE_WITH_CODE (SpKernelSymbolResolver,
+                         sp_kernel_symbol_resolver,
+                         G_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (SP_TYPE_SYMBOL_RESOLVER,
+                                                symbol_resolver_iface_init))
+
+static void
+sp_kernel_symbol_resolver_class_init (SpKernelSymbolResolverClass *klass)
+{
+  linux_quark = g_quark_from_static_string ("Linux");
+}
+
+static void
+sp_kernel_symbol_resolver_init (SpKernelSymbolResolver *skernel)
+{
 }
 
 SpSymbolResolver *

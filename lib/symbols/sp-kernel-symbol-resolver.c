@@ -27,15 +27,19 @@ struct _SpKernelSymbolResolver
 static GQuark linux_quark;
 
 static gchar *
-sp_kernel_symbol_resolver_resolve (SpSymbolResolver *resolver,
-                                   guint64           time,
-                                   GPid              pid,
-                                   SpCaptureAddress  address,
-                                   GQuark           *tag)
+sp_kernel_symbol_resolver_resolve_with_context (SpSymbolResolver *resolver,
+                                                guint64           time,
+                                                GPid              pid,
+                                                SpAddressContext  context,
+                                                SpCaptureAddress  address,
+                                                GQuark           *tag)
 {
   const SpKernelSymbol *sym;
 
   g_assert (SP_IS_SYMBOL_RESOLVER (resolver));
+
+  if (context != SP_ADDRESS_CONTEXT_KERNEL)
+    return NULL;
 
   if (NULL != (sym = sp_kernel_symbol_from_address (address)))
     {
@@ -49,7 +53,7 @@ sp_kernel_symbol_resolver_resolve (SpSymbolResolver *resolver,
 static void
 symbol_resolver_iface_init (SpSymbolResolverInterface *iface)
 {
-  iface->resolve = sp_kernel_symbol_resolver_resolve;
+  iface->resolve_with_context = sp_kernel_symbol_resolver_resolve_with_context;
 }
 
 G_DEFINE_TYPE_WITH_CODE (SpKernelSymbolResolver,

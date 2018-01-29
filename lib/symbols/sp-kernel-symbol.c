@@ -81,6 +81,10 @@ is_ignored (GHashTable  *skip,
             const gchar *name,
             guint8       type)
 {
+  /* Only allow symbols in the text (code) section */
+  if (type != 't' && type != 'T')
+    return TRUE;
+
   return g_hash_table_contains (skip, name);
 }
 

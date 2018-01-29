@@ -20,9 +20,38 @@
 
 G_DEFINE_INTERFACE (SpSymbolResolver, sp_symbol_resolver, G_TYPE_OBJECT)
 
+static gchar *
+sp_symbol_resolver_real_resolve (SpSymbolResolver *self,
+                                 guint64           time,
+                                 GPid              pid,
+                                 SpCaptureAddress  address,
+                                 GQuark           *tag)
+{
+  *tag = 0;
+  return NULL;
+}
+
+static gchar *
+sp_symbol_resolver_real_resolve_with_context (SpSymbolResolver *self,
+                                              guint64           time,
+                                              GPid              pid,
+                                              SpAddressContext  context,
+                                              SpCaptureAddress  address,
+                                              GQuark           *tag)
+{
+  *tag = 0;
+
+  if (SP_SYMBOL_RESOLVER_GET_IFACE (self)->resolve)
+    return SP_SYMBOL_RESOLVER_GET_IFACE (self)->resolve (self, time, pid, address, tag);
+
+  return NULL;
+}
+
 static void
 sp_symbol_resolver_default_init (SpSymbolResolverInterface *iface)
 {
+  iface->resolve = sp_symbol_resolver_real_resolve;
+  iface->resolve_with_context = sp_symbol_resolver_real_resolve_with_context;
 }
 
 void
@@ -68,5 +97,44 @@ sp_symbol_resolver_resolve (SpSymbolResolver *self,
 
   *tag = 0;
 
-  return SP_SYMBOL_RESOLVER_GET_IFACE (self)->resolve (self, time, pid, address, tag);
+  if (SP_SYMBOL_RESOLVER_GET_IFACE (self)->resolve)
+    return SP_SYMBOL_RESOLVER_GET_IFACE (self)->resolve (self, time, pid, address, tag);
+
+  return NULL;
+}
+
+/**
+ * sp_symbol_resolver_resolve_with_context:
+ * @self: A #SpSymbolResolver
+ * @time: The time of the sample
+ * @pid: The process generating the sample
+ * @context: the address context
+ * @address: the sample address
+ * @tag: (out): A tag for the symbol.
+ *
+ * This function is like sp_symbol_resolver_resolve() but allows
+ * access to the address context, which might be necessary to
+ * determine the difference between user space and kernel space
+ * addresses.
+ *
+ * Returns: (nullable) (transfer full): A newly allocated string, or %NULL.
+ */
+gchar *
+sp_symbol_resolver_resolve_with_context (SpSymbolResolver *self,
+                                         guint64           time,
+                                         GPid              pid,
+                                         SpAddressContext  context,
+                                         SpCaptureAddress  address,
+                                         GQuark           *tag)
+{
+  GQuark dummy;
+
+  g_return_val_if_fail (SP_IS_SYMBOL_RESOLVER (self), NULL);
+
+  if (tag == NULL)
+    tag = &dummy;
+
+  *tag = 0;
+
+  return SP_SYMBOL_RESOLVER_GET_IFACE (self)->resolve_with_context (self, time, pid, context, address, tag);
 }

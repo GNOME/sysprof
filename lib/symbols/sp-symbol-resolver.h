@@ -21,6 +21,7 @@
 
 #include <glib-object.h>
 
+#include "sp-address.h"
 #include "capture/sp-capture-reader.h"
 
 G_BEGIN_DECLS
@@ -33,22 +34,34 @@ struct _SpSymbolResolverInterface
 {
   GTypeInterface parent_interface;
 
-  void   (*load)    (SpSymbolResolver *self,
-                     SpCaptureReader  *reader);
-  gchar *(*resolve) (SpSymbolResolver *self,
-                     guint64           time,
-                     GPid              pid,
-                     SpCaptureAddress  address,
-                     GQuark           *tag);
+  void   (*load)                 (SpSymbolResolver *self,
+                                  SpCaptureReader  *reader);
+  gchar *(*resolve)              (SpSymbolResolver *self,
+                                  guint64           time,
+                                  GPid              pid,
+                                  SpCaptureAddress  address,
+                                  GQuark           *tag);
+  gchar *(*resolve_with_context) (SpSymbolResolver *self,
+                                  guint64           time,
+                                  GPid              pid,
+                                  SpAddressContext  context,
+                                  SpCaptureAddress  address,
+                                  GQuark           *tag);
 };
 
-void   sp_symbol_resolver_load    (SpSymbolResolver *self,
-                                   SpCaptureReader  *reader);
-gchar *sp_symbol_resolver_resolve (SpSymbolResolver *self,
-                                   guint64           time,
-                                   GPid              pid,
-                                   SpCaptureAddress  address,
-                                   GQuark           *tag);
+void   sp_symbol_resolver_load                 (SpSymbolResolver *self,
+                                                SpCaptureReader  *reader);
+gchar *sp_symbol_resolver_resolve              (SpSymbolResolver *self,
+                                                guint64           time,
+                                                GPid              pid,
+                                                SpCaptureAddress  address,
+                                                GQuark           *tag);
+gchar *sp_symbol_resolver_resolve_with_context (SpSymbolResolver *self,
+                                                guint64           time,
+                                                GPid              pid,
+                                                SpAddressContext  context,
+                                                SpCaptureAddress  address,
+                                                GQuark           *tag);
 
 G_END_DECLS
 

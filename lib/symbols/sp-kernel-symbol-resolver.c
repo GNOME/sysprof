@@ -41,7 +41,9 @@ sp_kernel_symbol_resolver_resolve_with_context (SpSymbolResolver *resolver,
   if (context != SP_ADDRESS_CONTEXT_KERNEL)
     return NULL;
 
-  if (NULL != (sym = sp_kernel_symbol_from_address (address)))
+  sym = sp_kernel_symbol_from_address (address);
+
+  if (sym != NULL)
     {
       *tag = linux_quark;
       return g_strdup (sym->name);

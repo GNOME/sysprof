@@ -7,10 +7,13 @@
   <!-- Only root can own the service -->
   <policy user="root">
     <allow own="org.gnome.Sysprof2"/>
+    <allow send_destination="org.gnome.Sysprof2"/>
+    <allow receive_sender="org.gnome.Sysprof2"/>
   </policy>
 
   <!-- Anyone can send messages to the owner of org.gnome.Sysprof2 -->
   <policy context="default">
     <allow send_destination="org.gnome.Sysprof2"/>
+    <allow receive_sender="org.gnome.Sysprof2"/>
   </policy>
 </busconfig>

@@ -266,7 +266,7 @@ sp_elf_symbol_resolver_resolve_with_context (SpSymbolResolver *resolver,
 
   g_assert (SP_IS_ELF_SYMBOL_RESOLVER (self));
 
-  if (context != SP_ADDRESS_CONTEXT_USER && context != SP_ADDRESS_CONTEXT_NONE)
+  if (context != SP_ADDRESS_CONTEXT_USER)
     return NULL;
 
   lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (pid));

@@ -20,5 +20,20 @@
    <arg name="flags" type="t" direction="in"/>
    <arg name="perf_stream_fd" type="h" direction="out"/>
   </method>
+
+  <!--
+    GetKernelSymbols:
+
+    Loads the name, type, and address of Linux kernel symbols. This is useful
+    if your system does not provide access to /proc/kallsyms to non-root users.
+
+    Returns: an array of (tys) tuples. t is the address, y is the type, and s
+      is the name.
+
+    Since: 3.28
+  -->
+  <method name="GetKernelSymbols">
+   <arg name="symbols" type="a(tys)" direction="out"/>
+  </method>
  </interface>
 </node>

@@ -17,6 +17,18 @@
       <allow_inactive>auth_admin_keep</allow_inactive>
       <allow_active>auth_admin_keep</allow_active>
     </defaults>
+    <annotate key="org.freedesktop.policykit.imply">org.gnome.sysprof2.get-kernel-symbols</annotate>
+  </action>
+
+  <action id="org.gnome.sysprof2.get-kernel-symbols">
+    <description>Get a list of kernel symbols and their address</description>
+    <message>Authentication is required to access Linux kernel information.</message>
+    <defaults>
+      <allow_any>auth_admin_keep</allow_any>
+      <allow_inactive>auth_admin_keep</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.imply">org.gnome.sysprof2.perf-event-open</annotate>
   </action>
 
 </policyconfig>

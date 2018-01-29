@@ -16,13 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "config.h"
 
 #include <assert.h>
 #include <stdio.h>
 #include <errno.h>
+#include <glib.h>
 #include <linux/capability.h>
 #include <linux/perf_event.h>
 #include <stdlib.h>
@@ -31,8 +30,83 @@
 #include <unistd.h>
 
 #include "sd-bus-helper.h"
+#include "../lib/sp-kallsyms.h"
 
 #define BUS_TIMEOUT_USEC (1000000L * 10L)
+
+#if 0
+#define GOTO(l) do { \
+  fprintf (stderr, "GOTO: %s:%d: " #l "\n", __FUNCTION__, __LINE__); \
+  goto l; \
+} while (0)
+#else
+#define GOTO(l) goto l
+#endif
+
+static int
+sysprofd_get_kernel_symbols (sd_bus_message *msg,
+                             void           *user_data,
+                             sd_bus_error   *error)
+{
+  g_autoptr(SpKallsyms) kallsyms = NULL;
+  sd_bus_message *reply = NULL;
+  const gchar *name;
+  guint64 addr;
+  guint8 type;
+  bool challenge = false;
+  int r;
+
+  assert (msg);
+  assert (error);
+
+  /* Authorize peer */
+  r = bus_test_polkit (msg,
+                       CAP_SYS_ADMIN,
+                       "org.gnome.sysprof2.get-kernel-symbols",
+                       NULL,
+                       UID_INVALID,
+                       &challenge,
+                       error);
+
+  if (r <= 0)
+    fprintf (stderr, "GetKernelSymbols() Failure: %s\n", error->message);
+
+  if (r < 0)
+    return r;
+  else if (r == 0)
+    return -EACCES;
+
+  if (!(kallsyms = sp_kallsyms_new ()))
+    {
+      sd_bus_error_set (error,
+                        SD_BUS_ERROR_FILE_NOT_FOUND,
+                        "Failed to open /proc/kallsyms");
+      return -ENOENT;
+    }
+
+  r = sd_bus_message_new_method_return (msg, &reply);
+  if (r < 0)
+    return r;
+
+  r = sd_bus_message_open_container (reply, 'a', "(tys)");
+  if (r < 0)
+    return r;
+
+  while (sp_kallsyms_next (kallsyms, &name, &addr, &type))
+  {
+    g_print ("%s: %lu\n", name, addr);
+    sd_bus_message_append (reply, "(tys)", addr, type, name);
+  }
+
+  r = sd_bus_message_close_container (reply);
+  if (r < 0)
+    return r;
+
+  r = sd_bus_send (NULL, reply, NULL);
+  sd_bus_message_unref (reply);
+
+  return r;
+}
 
 static int
 _perf_event_open (struct perf_event_attr *attr,
@@ -49,15 +123,6 @@ _perf_event_open (struct perf_event_attr *attr,
 
   return syscall (__NR_perf_event_open, attr, pid, cpu, group_fd, flags);
 }
-
-#if 0
-#define GOTO(l) do { \
-  fprintf (stderr, "GOTO: %s:%d: " #l "\n", __FUNCTION__, __LINE__); \
-  goto l; \
-} while (0)
-#else
-#define GOTO(l) goto l
-#endif
 
 static int
 sysprofd_perf_event_open (sd_bus_message *msg,
@@ -274,6 +339,7 @@ sysprofd_perf_event_open (sd_bus_message *msg,
 static const sd_bus_vtable sysprofd_vtable[] = {
   SD_BUS_VTABLE_START (0),
   SD_BUS_METHOD ("PerfEventOpen", "a{sv}iit", "h", sysprofd_perf_event_open, SD_BUS_VTABLE_UNPRIVILEGED),
+  SD_BUS_METHOD ("GetKernelSymbols", "", "a(tys)", sysprofd_get_kernel_symbols, SD_BUS_VTABLE_UNPRIVILEGED),
   SD_BUS_VTABLE_END
 };
 

@@ -10,5 +10,5 @@ Icon=sysprof
 StartupNotify=true
 Terminal=false
 Type=Application
-Categories=GNOME;Development;
+Categories=GNOME;GTK;Development;
 MimeType=application/x-sysprof-capture;

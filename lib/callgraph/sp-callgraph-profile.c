@@ -332,6 +332,15 @@ sp_callgraph_profile_generate_worker (GTask        *task,
 
       cmdline = g_hash_table_lookup (cmdlines, GINT_TO_POINTER (sample->frame.pid));
 
+#if 0
+      /* This assertion appears to hold true, but since we're taking in
+       * untrusted data from capture files, it's not safe to assume. But in
+       * practice it is.
+       */
+      g_assert (sp_address_is_context_switch (sample->addrs[0], &last_context));
+      last_context = SP_ADDRESS_CONTEXT_NONE;
+#endif
+
       node = stack_stash_add_trace (stash, sample->addrs, sample->n_addrs, 1);
 
       for (iter = node; iter != NULL; iter = iter->parent)

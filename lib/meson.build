@@ -28,12 +28,14 @@ libsysprof_base_headers = [
   'sp-address.h',
   'sp-clock.h',
   'sp-error.h',
+  'sp-kallsyms.h',
 ]
 
 libsysprof_base_sources = [
   'sp-address.c',
   'sp-clock.c',
   'sp-error.c',
+  'sp-kallsyms.c',
 ]
 
 libsysprof_headers = libsysprof_base_headers

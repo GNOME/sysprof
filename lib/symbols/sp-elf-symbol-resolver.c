@@ -250,11 +250,12 @@ guess_tag (SpElfSymbolResolver *self,
 }
 
 static gchar *
-sp_elf_symbol_resolver_resolve (SpSymbolResolver *resolver,
-                                guint64           time,
-                                GPid              pid,
-                                SpCaptureAddress  address,
-                                GQuark           *tag)
+sp_elf_symbol_resolver_resolve_with_context (SpSymbolResolver *resolver,
+                                             guint64           time,
+                                             GPid              pid,
+                                             SpAddressContext  context,
+                                             SpCaptureAddress  address,
+                                             GQuark           *tag)
 {
   SpElfSymbolResolver *self = (SpElfSymbolResolver *)resolver;
   const bin_symbol_t *bin_sym;
@@ -264,6 +265,9 @@ sp_elf_symbol_resolver_resolve (SpSymbolResolver *resolver,
   bin_file_t *bin_file;
 
   g_assert (SP_IS_ELF_SYMBOL_RESOLVER (self));
+
+  if (context != SP_ADDRESS_CONTEXT_USER && context != SP_ADDRESS_CONTEXT_NONE)
+    return NULL;
 
   lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (pid));
   if (lookaside == NULL)
@@ -296,7 +300,7 @@ static void
 symbol_resolver_iface_init (SpSymbolResolverInterface *iface)
 {
   iface->load = sp_elf_symbol_resolver_load;
-  iface->resolve = sp_elf_symbol_resolver_resolve;
+  iface->resolve_with_context = sp_elf_symbol_resolver_resolve_with_context;
 }
 
 SpSymbolResolver *

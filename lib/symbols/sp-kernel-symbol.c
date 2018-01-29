@@ -76,6 +76,14 @@ sp_kernel_symbol_compare (gconstpointer a,
     return -1;
 }
 
+static inline gboolean
+is_ignored (GHashTable  *skip,
+            const gchar *name,
+            guint8       type)
+{
+  return g_hash_table_contains (skip, name);
+}
+
 static gboolean
 authorize_proxy (GDBusConnection *conn)
 {
@@ -114,6 +122,7 @@ sp_kernel_symbol_load_from_sysprofd (GHashTable *skip)
 {
   g_autoptr(GDBusConnection) conn = NULL;
   g_autoptr(GVariant) ret = NULL;
+  g_autoptr(GVariant) results = NULL;
   g_autoptr(GArray) ar = NULL;
   g_autoptr(GError) error = NULL;
   GVariantIter iter;
@@ -138,7 +147,7 @@ sp_kernel_symbol_load_from_sysprofd (GHashTable *skip)
                                      "org.gnome.Sysprof2",
                                      "GetKernelSymbols",
                                      NULL,
-                                     G_VARIANT_TYPE ("a(tys)"),
+                                     G_VARIANT_TYPE ("(a(tys))"),
                                      G_DBUS_CALL_FLAGS_NONE,
                                      -1,
                                      NULL,
@@ -152,12 +161,13 @@ sp_kernel_symbol_load_from_sysprofd (GHashTable *skip)
 
   ar = g_array_new (FALSE, TRUE, sizeof (SpKernelSymbol));
 
-  g_variant_iter_init (&iter, ret);
+  results = g_variant_get_child_value (ret, 0);
+  g_variant_iter_init (&iter, results);
   while (g_variant_iter_loop (&iter, "(ty&s)", &addr, &type, &name))
     {
       SpKernelSymbol sym;
 
-      if (g_hash_table_contains (skip, name))
+      if (is_ignored (skip, name, type))
         continue;
 
       sym.address = addr;
@@ -167,6 +177,13 @@ sp_kernel_symbol_load_from_sysprofd (GHashTable *skip)
     }
 
   g_array_sort (ar, sp_kernel_symbol_compare);
+
+#if 0
+  g_print ("First: 0x%lx  Last: 0x%lx\n",
+           g_array_index (ar, SpKernelSymbol, 0).address,
+           g_array_index (ar, SpKernelSymbol, ar->len - 1).address);
+#endif
+
   kernel_symbols = g_steal_pointer (&ar);
 
   return TRUE;
@@ -196,7 +213,7 @@ sp_kernel_symbol_load (void)
     {
       SpKernelSymbol sym;
 
-      if (g_hash_table_contains (skip, name))
+      if (is_ignored (skip, name, type))
         continue;
 
       sym.address = addr;
@@ -268,7 +285,7 @@ sp_kernel_symbol_from_address (SpCaptureAddress address)
 {
   const SpKernelSymbol *first;
 
-  if (G_UNLIKELY (kernel_symbols == NULL))
+  if G_UNLIKELY (kernel_symbols == NULL)
     {
       static gboolean failed;
 

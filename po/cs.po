@@ -1,15 +1,15 @@
 # Czech translation for sysprof.
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Marek Černocký <marek@manet.cz>, 2016, 2017.
+# Marek Černocký <marek@manet.cz>, 2016, 2017, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-01-18 22:19+0000\n"
-"PO-Revision-Date: 2017-02-11 10:46+0100\n"
+"POT-Creation-Date: 2018-01-29 06:17+0000\n"
+"PO-Revision-Date: 2018-01-29 09:40+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -117,6 +117,18 @@ msgstr "Otevřít záznam událostí perf"
 msgid "Authentication is required to access system performance counters."
 msgstr "Pro přístupu k počitadlům výkonu systému je zapotřebí ověření."
 
+#: data/org.gnome.sysprof2.policy.in:24
+msgid "Get a list of kernel symbols and their address"
+msgstr "Získat seznam symbolů jádra a jejich adresy"
+
+#: data/org.gnome.sysprof2.policy.in:25
+msgid "Authentication is required to access Linux kernel information."
+msgstr "Pro přístupu k informacím linuxového jádra je zapotřebí ověření."
+
+#: lib/callgraph/sp-callgraph-profile.c:415
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "Sysprof nebyl schopen ze systémového záznamu vygenerovat graf volání."
+
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
 msgstr "Funkce"
@@ -193,7 +205,7 @@ msgid "Value"
 msgstr "Hodnota"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:215
-#: lib/sp-profiler-menu-button.c:118
+#: lib/widgets/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Nový proces"
 
@@ -208,32 +220,29 @@ msgstr ""
 "Víte, že k zaznamenávání můžete použít <a href=\"help:sysprof\">sysprof-cli</"
 "a>?"
 
-#: lib/sp-callgraph-profile.c:414
-msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr "Sysprof nebyl schopen ze systémového záznamu vygenerovat graf volání."
-
-#: lib/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:345
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
 msgstr ""
 "Sysprof požaduje ověření kvůli přístupu k počitadlům výkonu vašeho počítače."
 
-#: lib/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:350
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Nastala chyba při pokusu o přístup k počitadlům výkonu: %s"
 
-#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
+#: lib/widgets/sp-profiler-menu-button.c:116
+#: lib/widgets/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Všechny procesy"
 
-#: lib/sp-profiler-menu-button.c:137
+#: lib/widgets/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Proces %d"
 
-#: lib/sp-profiler-menu-button.c:142
+#: lib/widgets/sp-profiler-menu-button.c:142
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
@@ -241,7 +250,7 @@ msgstr[0] "%u proces"
 msgstr[1] "%u procesy"
 msgstr[2] "%u procesů"
 
-#: lib/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
 msgstr "Zadané argumenty příkazového řádku nejsou platné"
 
@@ -339,7 +348,7 @@ msgstr "Klávesové zkratky"
 msgid "_Quit"
 msgstr "U_končit"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
 msgid "Not running"
 msgstr "Neběží"
 
@@ -367,7 +376,7 @@ msgstr "Výchozí úroveň přiblížení (Ctrl+0)"
 msgid "Zoom in (Ctrl++)"
 msgstr "Přiblížit (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
 msgid "Open"
 msgstr "Otevřít"
 
@@ -387,84 +396,84 @@ msgstr "Zavřít"
 msgid "A system profiler"
 msgstr "Systémový profiler"
 
-#: src/sp-application.c:178
+#: src/sp-application.c:179
 msgid "translator-credits"
 msgstr "Marek Černocký <marek@manet.cz>"
 
-#: src/sp-application.c:184
+#: src/sp-application.c:185
 msgid "Learn more about Sysprof"
 msgstr "Přečtěte si o Sysprof více"
 
-#: src/sp-window.c:148
+#: src/sp-window.c:149
 #, c-format
 msgid "Samples: %u"
 msgstr "Vzorky: %u"
 
-#: src/sp-window.c:181
+#: src/sp-window.c:182
 msgid "[Memory Capture]"
 msgstr "[Záznam paměti]"
 
-#: src/sp-window.c:194
+#: src/sp-window.c:195
 #, c-format
 msgid "%s - %s"
 msgstr "%s – %s"
 
-#: src/sp-window.c:232
+#: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Nebyl sesbírán dostatek vzorků pro vygenerování grafu volání"
 
-#: src/sp-window.c:305 src/sp-window.c:349
+#: src/sp-window.c:306 src/sp-window.c:350
 msgid "Record"
 msgstr "Zaznamenávat"
 
-#: src/sp-window.c:325
+#: src/sp-window.c:326
 msgid "Stop"
 msgstr "Zastavit"
 
-#: src/sp-window.c:330
+#: src/sp-window.c:331
 msgid "Recording…"
 msgstr "Zaznamenává se…"
 
-#: src/sp-window.c:341
+#: src/sp-window.c:342
 msgid "Building profile…"
 msgstr "Sestavuje se profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:442
+#: src/sp-window.c:443
 msgid "Stopping…"
 msgstr "Zastavuje se…"
 
-#: src/sp-window.c:594
+#: src/sp-window.c:595
 msgid "Save Capture As"
 msgstr "Uložení záznamu jako"
 
-#: src/sp-window.c:597
+#: src/sp-window.c:598
 msgid "Save"
 msgstr "Uložit"
 
-#: src/sp-window.c:598 src/sp-window.c:1004
+#: src/sp-window.c:599 src/sp-window.c:1012
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/sp-window.c:628
+#: src/sp-window.c:629
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Vyskytla se chyba při pokusu uložit váš záznam: %s"
 
-#: src/sp-window.c:973
+#: src/sp-window.c:981
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr "Soubor „%s“ nelze otevřít. Podporovány jsou jen místní soubory."
 
-#: src/sp-window.c:1000
+#: src/sp-window.c:1008
 msgid "Open Capture"
 msgstr "Otevření záznamu"
 
-#: src/sp-window.c:1007
+#: src/sp-window.c:1015
 msgid "Sysprof Captures"
 msgstr "Záznam Sysprof"
 
-#: src/sp-window.c:1012
+#: src/sp-window.c:1020
 msgid "All Files"
 msgstr "Všechny soubory"
 

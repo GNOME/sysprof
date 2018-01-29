@@ -230,7 +230,6 @@ sp_callgraph_profile_generate_worker (GTask        *task,
   StackStash *resolved_stash = NULL;
   guint count = 0;
   gboolean ret = FALSE;
-  guint j;
 
   g_assert (G_IS_TASK (task));
   g_assert (gen != NULL);
@@ -250,7 +249,7 @@ sp_callgraph_profile_generate_worker (GTask        *task,
   g_ptr_array_add (resolvers, sp_elf_symbol_resolver_new ());
   g_ptr_array_add (resolvers, sp_jitmap_symbol_resolver_new ());
 
-  for (j = 0; j < resolvers->len; j++)
+  for (guint j = 0; j < resolvers->len; j++)
     {
       SpSymbolResolver *resolver = g_ptr_array_index (resolvers, j);
 
@@ -328,6 +327,9 @@ sp_callgraph_profile_generate_worker (GTask        *task,
       if (!sp_selection_contains (selection, sample->frame.time))
         continue;
 
+      if (sample->n_addrs == 0)
+        continue;
+
       cmdline = g_hash_table_lookup (cmdlines, GINT_TO_POINTER (sample->frame.pid));
 
       node = stack_stash_add_trace (stash, sample->addrs, sample->n_addrs, 1);
@@ -357,7 +359,7 @@ sp_callgraph_profile_generate_worker (GTask        *task,
             }
           else
             {
-              for (j = 0; j < resolvers->len; j++)
+              for (guint j = 0; j < resolvers->len; j++)
                 {
                   SpSymbolResolver *resolver = g_ptr_array_index (resolvers, j);
                   GQuark tag = 0;

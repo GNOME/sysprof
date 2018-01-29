@@ -16,10 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define G_LOG_DOMAIN "sp-kernel-symbol"
+
+#include <gio/gio.h>
+#include <polkit/polkit.h>
+
+#include "sp-kallsyms.h"
+
 #include "util/sp-line-reader.h"
 #include "symbols/sp-kernel-symbol.h"
 
 static GArray *kernel_symbols;
+static GStringChunk *kernel_symbol_strs;
 static const gchar *kernel_symbols_skip[] = {
   /* IRQ stack */
   "common_interrupt",
@@ -51,8 +59,6 @@ static const gchar *kernel_symbols_skip[] = {
   "__perf_event_overflow",
   "perf_prepare_sample",
   "perf_callchain",
-
-  NULL
 };
 
 static gint
@@ -71,71 +77,149 @@ sp_kernel_symbol_compare (gconstpointer a,
 }
 
 static gboolean
-sp_kernel_symbol_load (void)
+authorize_proxy (GDBusConnection *conn)
 {
-  g_autofree gchar *contents = NULL;
+  PolkitSubject *subject = NULL;
+  GPermission *permission = NULL;
+  const gchar *name;
+
+  g_assert (G_IS_DBUS_CONNECTION (conn));
+
+  name = g_dbus_connection_get_unique_name (conn);
+  if (name == NULL)
+    goto failure;
+
+  subject = polkit_system_bus_name_new (name);
+  if (subject == NULL)
+    goto failure;
+
+  permission = polkit_permission_new_sync ("org.gnome.sysprof2.get-kernel-symbols", subject, NULL, NULL);
+  if (permission == NULL)
+    goto failure;
+
+  if (!g_permission_acquire (permission, NULL, NULL))
+    goto failure;
+
+  return TRUE;
+
+failure:
+  g_clear_object (&subject);
+  g_clear_object (&permission);
+
+  return FALSE;
+}
+
+static gboolean
+sp_kernel_symbol_load_from_sysprofd (GHashTable *skip)
+{
+  g_autoptr(GDBusConnection) conn = NULL;
+  g_autoptr(GVariant) ret = NULL;
   g_autoptr(GArray) ar = NULL;
-  g_autoptr(GHashTable) skip = NULL;
-  g_autoptr(SpLineReader) reader = NULL;
-  const gchar *line;
-  gsize len;
-  guint i;
+  g_autoptr(GError) error = NULL;
+  GVariantIter iter;
+  const gchar *name;
+  guint64 addr;
+  guint8 type;
 
-  skip = g_hash_table_new (g_str_hash, g_str_equal);
-  for (i = 0; kernel_symbols_skip [i]; i++)
-    g_hash_table_insert (skip, (gchar *)kernel_symbols_skip [i], NULL);
+  g_assert (skip != NULL);
 
-  ar = g_array_new (FALSE, TRUE, sizeof (SpKernelSymbol));
+  if (!(conn = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL)))
+    return FALSE;
 
-  if (!g_file_get_contents ("/proc/kallsyms", &contents, &len, NULL))
+  if (!authorize_proxy (conn))
     {
-      g_warning ("/proc/kallsyms is missing, kernel symbols will not be available");
+      g_warning ("Failed to acquire sufficient credentials to read kernel symbols");
       return FALSE;
     }
 
-  reader = sp_line_reader_new (contents, len);
+  ret = g_dbus_connection_call_sync (conn,
+                                     "org.gnome.Sysprof2",
+                                     "/org/gnome/Sysprof2",
+                                     "org.gnome.Sysprof2",
+                                     "GetKernelSymbols",
+                                     NULL,
+                                     G_VARIANT_TYPE ("a(tys)"),
+                                     G_DBUS_CALL_FLAGS_NONE,
+                                     -1,
+                                     NULL,
+                                     &error);
 
-  while (NULL != (line = sp_line_reader_next (reader, &len)))
+  if (error != NULL)
     {
-      gchar **tokens;
-
-      ((gchar *)line) [len] = '\0';
-
-      tokens = g_strsplit_set (line, " \t", -1);
-
-      if (tokens [0] && tokens [1] && tokens [2])
-        {
-          SpCaptureAddress address;
-          gchar *endptr;
-
-          if (g_hash_table_contains (skip, tokens [2]))
-            continue;
-
-          address = g_ascii_strtoull (tokens [0], &endptr, 16);
-
-          if (*endptr == '\0' &&
-              (g_str_equal (tokens [1], "T") || g_str_equal (tokens [1], "t")))
-            {
-              SpKernelSymbol sym;
-
-              sym.address = address;
-              sym.name = g_steal_pointer (&tokens [2]);
-
-              g_array_append_val (ar, sym);
-            }
-        }
-
-      g_strfreev (tokens);
+      g_warning ("Failed to load symbols from sysprofd: %s", error->message);
+      return FALSE;
     }
 
-  if (ar->len == 0)
-    return FALSE;
+  ar = g_array_new (FALSE, TRUE, sizeof (SpKernelSymbol));
+
+  g_variant_iter_init (&iter, ret);
+  while (g_variant_iter_loop (&iter, "(ty&s)", &addr, &type, &name))
+    {
+      SpKernelSymbol sym;
+
+      if (g_hash_table_contains (skip, name))
+        continue;
+
+      sym.address = addr;
+      sym.name = g_string_chunk_insert_const (kernel_symbol_strs, name);
+
+      g_array_append_val (ar, sym);
+    }
 
   g_array_sort (ar, sp_kernel_symbol_compare);
-
   kernel_symbols = g_steal_pointer (&ar);
 
   return TRUE;
+}
+
+static gboolean
+sp_kernel_symbol_load (void)
+{
+  g_autoptr(GHashTable) skip = NULL;
+  g_autoptr(SpKallsyms) kallsyms = NULL;
+  g_autoptr(GArray) ar = NULL;
+  const gchar *name;
+  guint64 addr;
+  guint8 type;
+
+  skip = g_hash_table_new (g_str_hash, g_str_equal);
+  for (guint i = 0; i < G_N_ELEMENTS (kernel_symbols_skip); i++)
+    g_hash_table_insert (skip, (gchar *)kernel_symbols_skip[i], NULL);
+
+  kernel_symbol_strs = g_string_chunk_new (4096);
+  ar = g_array_new (FALSE, TRUE, sizeof (SpKernelSymbol));
+
+  if (!(kallsyms = sp_kallsyms_new ()))
+    goto query_daemon;
+
+  while (sp_kallsyms_next (kallsyms, &name, &addr, &type))
+    {
+      SpKernelSymbol sym;
+
+      if (g_hash_table_contains (skip, name))
+        continue;
+
+      sym.address = addr;
+      sym.name = g_string_chunk_insert_const (kernel_symbol_strs, name);
+
+      g_array_append_val (ar, sym);
+    }
+
+  if (ar->len == 0)
+    goto query_daemon;
+
+  g_array_sort (ar, sp_kernel_symbol_compare);
+  kernel_symbols = g_steal_pointer (&ar);
+
+  return TRUE;
+
+query_daemon:
+  if (sp_kernel_symbol_load_from_sysprofd (skip))
+    return TRUE;
+
+  g_warning ("Kernel symbols will not be available.");
+
+  return FALSE;
 }
 
 static const SpKernelSymbol *
@@ -193,7 +277,6 @@ sp_kernel_symbol_from_address (SpCaptureAddress address)
 
       if (!sp_kernel_symbol_load ())
         {
-          g_warning ("Failed to load kernel symbol map, kernel symbols will not be available!");
           failed = TRUE;
           return NULL;
         }

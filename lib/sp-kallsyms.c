@@ -47,13 +47,16 @@ sp_kallsyms_free (SpKallsyms *self)
 }
 
 SpKallsyms *
-sp_kallsyms_new (void)
+sp_kallsyms_new (const gchar *path)
 {
   g_autoptr(SpKallsyms) self = NULL;
 
+  if (path == NULL)
+    path = "/proc/kallsyms";
+
   self = g_slice_new0 (SpKallsyms);
 
-  if (!g_file_get_contents ("/proc/kallsyms", &self->buf, &self->buflen, NULL))
+  if (!g_file_get_contents (path, &self->buf, &self->buflen, NULL))
     return NULL;
 
   self->iter = self->buf;
@@ -70,6 +73,7 @@ sp_kallsyms_next (SpKallsyms   *self,
 {
   guint64 addr;
   char *tok;
+  char *pptr;
 
   g_return_val_if_fail (self != NULL, FALSE);
   g_return_val_if_fail (self->buf != NULL, FALSE);
@@ -93,10 +97,12 @@ try_next:
         return FALSE;
     }
 
-  addr = g_ascii_strtoull (tok, NULL, 10);
-  if ((addr == G_MAXUINT64 && errno == ERANGE) ||
-      (addr == 0 && errno == EINVAL))
-    return FALSE;
+  /* We'll keep going if we fail to parse, (null) usually, so that we
+   * just skip to the next line.
+   */
+  addr = g_ascii_strtoull (tok, &pptr, 16);
+  if ((pptr == tok) || (addr == G_MAXUINT64 && errno == ERANGE) || (addr == 0 && errno == EINVAL))
+    addr = 0;
 
   *address = addr;
 
@@ -139,7 +145,7 @@ try_next:
   if (self->iter >= self->endptr)
     return FALSE;
 
-  if (g_strcmp0 (tok, "(null)") == 0)
+  if (addr == 0)
     goto try_next;
 
   *name = tok;

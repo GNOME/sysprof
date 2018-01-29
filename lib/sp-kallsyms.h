@@ -27,7 +27,7 @@ G_BEGIN_DECLS
 
 typedef struct _SpKallsyms SpKallsyms;
 
-SpKallsyms *sp_kallsyms_new  (void);
+SpKallsyms *sp_kallsyms_new  (const gchar  *path);
 gboolean    sp_kallsyms_next (SpKallsyms   *self,
                               const gchar **name,
                               guint64      *address,

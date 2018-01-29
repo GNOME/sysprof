@@ -76,7 +76,7 @@ sysprofd_get_kernel_symbols (sd_bus_message *msg,
   else if (r == 0)
     return -EACCES;
 
-  if (!(kallsyms = sp_kallsyms_new ()))
+  if (!(kallsyms = sp_kallsyms_new (NULL)))
     {
       sd_bus_error_set (error,
                         SD_BUS_ERROR_FILE_NOT_FOUND,

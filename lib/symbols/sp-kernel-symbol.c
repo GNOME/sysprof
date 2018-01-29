@@ -189,7 +189,7 @@ sp_kernel_symbol_load (void)
   kernel_symbol_strs = g_string_chunk_new (4096);
   ar = g_array_new (FALSE, TRUE, sizeof (SpKernelSymbol));
 
-  if (!(kallsyms = sp_kallsyms_new ()))
+  if (!(kallsyms = sp_kallsyms_new (NULL)))
     goto query_daemon;
 
   while (sp_kallsyms_next (kallsyms, &name, &addr, &type))

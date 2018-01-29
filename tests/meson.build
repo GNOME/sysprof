@@ -18,6 +18,11 @@ test_capture_cursor = executable('test-capture-cursor',
 )
 test('test-capture-cursor', test_capture_cursor, env: test_env)
 
+test_kallsyms = executable('test-kallsyms',
+  ['test-kallsyms.c', '../lib/sp-kallsyms.c'],
+  dependencies: libsysprof_dep,
+)
+
 if get_option('enable_gtk')
 
   test_model_filter = executable('test-model-filter',

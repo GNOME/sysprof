@@ -1,16 +1,16 @@
 # Polish translation for sysprof.
-# Copyright © 2016-2017 the sysprof authors.
+# Copyright © 2016-2018 the sysprof authors.
 # This file is distributed under the same license as the sysprof package.
-# Piotr Drąg <piotrdrag@gmail.com>, 2016-2017.
-# Aviary.pl <community-poland@mozilla.org>, 2016-2017.
+# Piotr Drąg <piotrdrag@gmail.com>, 2016-2018.
+# Aviary.pl <community-poland@mozilla.org>, 2016-2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-01-18 22:19+0000\n"
-"PO-Revision-Date: 2017-01-22 21:38+0100\n"
+"POT-Creation-Date: 2018-01-29 06:17+0000\n"
+"PO-Revision-Date: 2018-02-04 17:11+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -22,7 +22,7 @@ msgstr ""
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -121,6 +121,20 @@ msgstr ""
 "Wymagane jest uwierzytelnienie, aby uzyskać dostęp do liczników wydajności "
 "komputera."
 
+#: data/org.gnome.sysprof2.policy.in:24
+msgid "Get a list of kernel symbols and their address"
+msgstr "Uzyskanie listy symboli jądra i ich adresów"
+
+#: data/org.gnome.sysprof2.policy.in:25
+msgid "Authentication is required to access Linux kernel information."
+msgstr ""
+"Wymagane jest uwierzytelnienie, aby uzyskać dostęp do informacji o jądrze "
+"Linux."
+
+#: lib/callgraph/sp-callgraph-profile.c:415
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "Sysprof nie może utworzyć wykresu wywołań z przechwytywania systemu."
+
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
 msgstr "Funkcje"
@@ -197,7 +211,7 @@ msgid "Value"
 msgstr "Wartość"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:215
-#: lib/sp-profiler-menu-button.c:118
+#: lib/widgets/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Nowy proces"
 
@@ -212,11 +226,7 @@ msgstr ""
 "Do profilowania można używać także polecenia <a href=\"help:sysprof"
 "\">sysprof-cli</a>."
 
-#: lib/sp-callgraph-profile.c:414
-msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr "Sysprof nie może utworzyć wykresu wywołań z przechwytywania systemu."
-
-#: lib/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:345
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
@@ -224,21 +234,22 @@ msgstr ""
 "Sysprof wymaga upoważnienia, aby uzyskać dostęp do liczników wydajności "
 "komputera."
 
-#: lib/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:350
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Wystąpił błąd podczas uzyskiwania dostępu do liczników wydajności: %s"
 
-#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
+#: lib/widgets/sp-profiler-menu-button.c:116
+#: lib/widgets/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Wszystkie procesy"
 
-#: lib/sp-profiler-menu-button.c:137
+#: lib/widgets/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Proces %d"
 
-#: lib/sp-profiler-menu-button.c:142
+#: lib/widgets/sp-profiler-menu-button.c:142
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
@@ -246,7 +257,7 @@ msgstr[0] "%u proces"
 msgstr[1] "%u procesy"
 msgstr[2] "%u procesów"
 
-#: lib/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
 msgstr "Podane parametry wiersza poleceń są nieprawidłowe"
 
@@ -346,7 +357,7 @@ msgstr "Skróty klawiszowe"
 msgid "_Quit"
 msgstr "Za_kończ"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
 msgid "Not running"
 msgstr "Bezczynny"
 
@@ -374,7 +385,7 @@ msgstr "Przywraca poziom powiększenia (Ctrl+0)"
 msgid "Zoom in (Ctrl++)"
 msgstr "Powiększa (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
 msgid "Open"
 msgstr "Otwórz"
 
@@ -394,86 +405,86 @@ msgstr "Zamknij"
 msgid "A system profiler"
 msgstr "Profiler systemu"
 
-#: src/sp-application.c:178
+#: src/sp-application.c:179
 msgid "translator-credits"
 msgstr ""
-"Piotr Drąg <piotrdrag@gmail.com>, 2016-2017\n"
-"Aviary.pl <community-poland@mozilla.org>, 2016-2017"
+"Piotr Drąg <piotrdrag@gmail.com>, 2016-2018\n"
+"Aviary.pl <community-poland@mozilla.org>, 2016-2018"
 
-#: src/sp-application.c:184
+#: src/sp-application.c:185
 msgid "Learn more about Sysprof"
 msgstr "Więcej informacji o Sysprof"
 
-#: src/sp-window.c:148
+#: src/sp-window.c:149
 #, c-format
 msgid "Samples: %u"
 msgstr "Próbki: %u"
 
-#: src/sp-window.c:181
+#: src/sp-window.c:182
 msgid "[Memory Capture]"
 msgstr "[Przechwytywanie pamięci]"
 
-#: src/sp-window.c:194
+#: src/sp-window.c:195
 #, c-format
 msgid "%s - %s"
 msgstr "%s — %s"
 
-#: src/sp-window.c:232
+#: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Zebrano za mało próbek, aby utworzyć wykres wywołań"
 
-#: src/sp-window.c:305 src/sp-window.c:349
+#: src/sp-window.c:306 src/sp-window.c:350
 msgid "Record"
 msgstr "Nagrywaj"
 
-#: src/sp-window.c:325
+#: src/sp-window.c:326
 msgid "Stop"
 msgstr "Zatrzymaj"
 
-#: src/sp-window.c:330
+#: src/sp-window.c:331
 msgid "Recording…"
 msgstr "Nagrywanie…"
 
-#: src/sp-window.c:341
+#: src/sp-window.c:342
 msgid "Building profile…"
 msgstr "Budowanie profilu…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:442
+#: src/sp-window.c:443
 msgid "Stopping…"
 msgstr "Zatrzymywanie…"
 
-#: src/sp-window.c:594
+#: src/sp-window.c:595
 msgid "Save Capture As"
 msgstr "Zapis przechwytywania jako"
 
-#: src/sp-window.c:597
+#: src/sp-window.c:598
 msgid "Save"
 msgstr "Zapisz"
 
-#: src/sp-window.c:598 src/sp-window.c:1004
+#: src/sp-window.c:599 src/sp-window.c:1012
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/sp-window.c:628
+#: src/sp-window.c:629
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Wystąpił błąd podczas zapisywania przechwytywania: %s"
 
-#: src/sp-window.c:973
+#: src/sp-window.c:981
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr "Nie można otworzyć pliku „%s”. Obsługiwane są tylko lokalne pliki."
 
-#: src/sp-window.c:1000
+#: src/sp-window.c:1008
 msgid "Open Capture"
 msgstr "Otwarcie przechwytywania"
 
-#: src/sp-window.c:1007
+#: src/sp-window.c:1015
 msgid "Sysprof Captures"
 msgstr "Przechwytywania Sysprof"
 
-#: src/sp-window.c:1012
+#: src/sp-window.c:1020
 msgid "All Files"
 msgstr "Wszystkie pliki"
 

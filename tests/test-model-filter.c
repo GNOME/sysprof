@@ -79,10 +79,10 @@ test_basic (void)
 
   for (i = 0; i < 500; i++)
     {
-      g_autoptr(TestItem) item = g_list_model_get_item (G_LIST_MODEL (filter), i);
+      g_autoptr(TestItem) ele = g_list_model_get_item (G_LIST_MODEL (filter), i);
 
-      g_assert (TEST_IS_ITEM (item));
-      g_assert (filter_func1 (G_OBJECT (item), NULL));
+      g_assert (TEST_IS_ITEM (ele));
+      g_assert (filter_func1 (G_OBJECT (ele), NULL));
     }
 
   for (i = 0; i < 1000; i += 2)

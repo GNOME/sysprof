@@ -214,21 +214,22 @@ sp_capture_reader_ensure_space_for (SpCaptureReader *self,
                                     gsize            len)
 {
   g_assert (self != NULL);
+  g_assert (self->pos <= self->len);
   g_assert (len > 0);
 
   if ((self->len - self->pos) < len)
     {
       gssize r;
 
-      g_assert (self->len >= self->pos);
-
-      memmove (self->buf, &self->buf[self->pos], self->len - self->pos);
+      if (self->len > self->pos)
+        memmove (self->buf, &self->buf[self->pos], self->len - self->pos);
       self->len -= self->pos;
       self->pos = 0;
 
-      while ((self->len - self->pos) <= len)
+      while (self->len < len)
         {
-          g_assert (self->pos + self->len < self->bufsz);
+          g_assert ((self->pos + self->len) < self->bufsz);
+          g_assert (self->len < self->bufsz);
 
           /* Read into our buffer after our current read position */
           r = pread (self->fd,
@@ -285,6 +286,7 @@ sp_capture_reader_peek_frame (SpCaptureReader *self,
 
   g_assert (self != NULL);
   g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+  g_assert (self->pos <= self->len);
   g_assert (self->pos <= self->bufsz);
 
   if (!sp_capture_reader_ensure_space_for (self, sizeof *real_frame))

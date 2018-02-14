@@ -145,7 +145,7 @@ sp_capture_cursor_foreach (SpCaptureCursor         *self,
         {
           for (guint i = 0; i < self->conditions->len; i++)
             {
-              SpCaptureCondition *condition = g_ptr_array_index (self->conditions, i);
+              const SpCaptureCondition *condition = g_ptr_array_index (self->conditions, i);
 
               if (sp_capture_condition_match (condition, frame))
                 {

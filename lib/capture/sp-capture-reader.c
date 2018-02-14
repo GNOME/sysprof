@@ -176,9 +176,9 @@ sp_capture_reader_bswap_frame (SpCaptureReader *self,
   if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
     {
       frame->len = GUINT16_SWAP_LE_BE (frame->len);
-      frame->cpu = GUINT16_SWAP_LE_BE (frame->len);
-      frame->pid = GUINT32_SWAP_LE_BE (frame->len);
-      frame->time = GUINT64_SWAP_LE_BE (frame->len);
+      frame->cpu = GUINT16_SWAP_LE_BE (frame->cpu);
+      frame->pid = GUINT32_SWAP_LE_BE (frame->pid);
+      frame->time = GUINT64_SWAP_LE_BE (frame->time);
     }
 }
 

@@ -1,28 +1,28 @@
 # Brazilian Portuguese translation for sysprof.
-# Copyright (C) 2017 sysprof's COPYRIGHT HOLDER
+# Copyright (C) 2018 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Rafael Fontenelle <rafaelff@gnome.org>, 2016, 2017.
-# Enrico Nicoletto <liverig@gmail.com>, 2016, 2017.
+# Enrico Nicoletto <liverig@gmail.com>, 2016-2017.
+# Rafael Fontenelle <rafaelff@gnome.org>, 2016-2018.
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-01-18 22:19+0000\n"
-"PO-Revision-Date: 2017-02-06 08:57-0200\n"
-"Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?product=syspro"
+"f&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2018-01-29 06:17+0000\n"
+"PO-Revision-Date: 2018-02-19 17:54-0200\n"
+"Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Virtaal 1.0.0-beta1\n"
 "X-Project-Style: gnome\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -121,6 +121,20 @@ msgstr ""
 "É necessária autenticação para acessar os contadores de desempenho do "
 "sistema."
 
+#: data/org.gnome.sysprof2.policy.in:24
+msgid "Get a list of kernel symbols and their address"
+msgstr "Obter uma lista de símbolos de kernel e seus endereços"
+
+#: data/org.gnome.sysprof2.policy.in:25
+#| msgid "Authentication is required to access system performance counters."
+msgid "Authentication is required to access Linux kernel information."
+msgstr "É necessária autenticação para acessar as informações do kernel Linux."
+
+#: lib/callgraph/sp-callgraph-profile.c:415
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
+"Sysprof não foi capaz de gerar um gráfico de chamadas da captura do sistema."
+
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
 msgstr "Funções"
@@ -197,7 +211,7 @@ msgid "Value"
 msgstr "Valor"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:215
-#: lib/sp-profiler-menu-button.c:118
+#: lib/widgets/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Novo processo"
 
@@ -212,12 +226,7 @@ msgstr ""
 "Você sabia que você pode usar o <a href=\"help:sysprof\">sysprof-cli</a> "
 "para gravar?"
 
-#: lib/sp-callgraph-profile.c:414
-msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr ""
-"Sysprof não foi capaz de gerar um gráfico de chamadas da captura do sistema."
-
-#: lib/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:345
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
@@ -225,28 +234,29 @@ msgstr ""
 "Sysprof requer autorização para acessar os contadores de desempenho de seus "
 "computadores."
 
-#: lib/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:350
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Ocorreu um erro enquanto tentava acessar contadores de desempenho: %s"
 
-#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
+#: lib/widgets/sp-profiler-menu-button.c:116
+#: lib/widgets/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Todos processos"
 
-#: lib/sp-profiler-menu-button.c:137
+#: lib/widgets/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Processo %d"
 
-#: lib/sp-profiler-menu-button.c:142
+#: lib/widgets/sp-profiler-menu-button.c:142
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
 msgstr[0] "%u processo"
 msgstr[1] "%u processos"
 
-#: lib/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
 msgstr "Os argumentos de linha de comando fornecidos são inválidos"
 
@@ -347,7 +357,7 @@ msgstr "Atalhos de teclado"
 msgid "_Quit"
 msgstr "_Sair"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
 msgid "Not running"
 msgstr "Ocioso"
 
@@ -375,7 +385,7 @@ msgstr "Redefinir nível de ampliação (Ctrl+0)"
 msgid "Zoom in (Ctrl++)"
 msgstr "Ampliar (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
 msgid "Open"
 msgstr "Abrir"
 
@@ -395,88 +405,88 @@ msgstr "Fechar"
 msgid "A system profiler"
 msgstr "Um perfilador de sistema"
 
-#: src/sp-application.c:178
+#: src/sp-application.c:179
 msgid "translator-credits"
 msgstr ""
-"Rafael Fontenelle <rafaelff@gnome.org>, 2016, 2017\n"
-"Enrico Nicoletto <liverig@gmail.com>, 2016, 2017."
+"Enrico Nicoletto <liverig@gmail.com>, 2016-2017\n"
+"Rafael Fontenelle <rafaelff@gnome.org>, 2016-2018"
 
-#: src/sp-application.c:184
+#: src/sp-application.c:185
 msgid "Learn more about Sysprof"
 msgstr "Aprenda mais sobre o Sysprof"
 
-#: src/sp-window.c:148
+#: src/sp-window.c:149
 #, c-format
 msgid "Samples: %u"
 msgstr "Exemplos: %u"
 
-#: src/sp-window.c:181
+#: src/sp-window.c:182
 msgid "[Memory Capture]"
 msgstr "[Captura da memória]"
 
-#: src/sp-window.c:194
+#: src/sp-window.c:195
 #, c-format
 msgid "%s - %s"
 msgstr "%s - %s"
 
-#: src/sp-window.c:232
+#: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr ""
 "Não foram coletadas amostras suficientes para gerar um gráfico de chamadas"
 
-#: src/sp-window.c:305 src/sp-window.c:349
+#: src/sp-window.c:306 src/sp-window.c:350
 msgid "Record"
 msgstr "Gravar"
 
-#: src/sp-window.c:325
+#: src/sp-window.c:326
 msgid "Stop"
 msgstr "Parar"
 
-#: src/sp-window.c:330
+#: src/sp-window.c:331
 msgid "Recording…"
 msgstr "Gravando…"
 
-#: src/sp-window.c:341
+#: src/sp-window.c:342
 msgid "Building profile…"
 msgstr "Construindo perfil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:442
+#: src/sp-window.c:443
 msgid "Stopping…"
 msgstr "Parando…"
 
-#: src/sp-window.c:594
+#: src/sp-window.c:595
 msgid "Save Capture As"
 msgstr "Salvar captura como"
 
-#: src/sp-window.c:597
+#: src/sp-window.c:598
 msgid "Save"
 msgstr "Salvar"
 
-#: src/sp-window.c:598 src/sp-window.c:1004
+#: src/sp-window.c:599 src/sp-window.c:1012
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/sp-window.c:628
+#: src/sp-window.c:629
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Ocorreu um erro enquanto tentava salvar sua captura: %s"
 
-#: src/sp-window.c:973
+#: src/sp-window.c:981
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr ""
 "O arquivo \"%s\" não pôde ser aberto. Há suporte apenas arquivos locais."
 
-#: src/sp-window.c:1000
+#: src/sp-window.c:1008
 msgid "Open Capture"
 msgstr "Abrir captura"
 
-#: src/sp-window.c:1007
+#: src/sp-window.c:1015
 msgid "Sysprof Captures"
 msgstr "Capturas do Sysprof"
 
-#: src/sp-window.c:1012
+#: src/sp-window.c:1020
 msgid "All Files"
 msgstr "Todos arquivos"
 

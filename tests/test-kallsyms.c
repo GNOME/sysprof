@@ -27,7 +27,7 @@ main (gint argc,
       g_assert (addr != 0);
       g_assert (type != 0);
 
-      g_print ("%s %lx\n", name, addr);
+      g_print ("%s %"G_GUINT64_FORMAT"x\n", name, addr);
     }
 
   return EXIT_SUCCESS;

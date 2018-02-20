@@ -1,3 +1,27 @@
+Overview of changes in Sysprof 3.27.91
+======================================
+
+ * Sysprof now exclusively uses the meson build system.
+ * Improvements to the process filtering model used in the profiler popover.
+ * More tests for utility helpers.
+ * Some code was relicensed to LGPLv2.1+ to extend it's reusability.
+ * A new libsysprof-capture-2.a static library is installed to allow external
+   tooling to read and write the capture format. We expect tooling such as
+   GJS to use this in the future.
+ * A new kallsyms tokenizer was added.
+ * If we fail to parse kallsyms as the effective user, we now query the
+   sysprofd daemon to access and parse those symbols for us as root. This
+   requires polkit authorization on the DBus connection just like our
+   elevated perf_event_open() helper.
+ * Now that we have to deal with overlapping kernel and user-space memory,
+   Sysprof tries harder to check the current perf context. New API was
+   added to symbol resolvers to facilitate this.
+
+Translations:
+
+ * Czech, German, Polish
+
+
 Overview of changes in Sysprof 3.26.0
 =====================================
 

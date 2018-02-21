@@ -93,10 +93,7 @@ sysprofd_get_kernel_symbols (sd_bus_message *msg,
     return r;
 
   while (sp_kallsyms_next (kallsyms, &name, &addr, &type))
-  {
-    g_print ("%s: %lu\n", name, addr);
     sd_bus_message_append (reply, "(tys)", addr, type, name);
-  }
 
   r = sd_bus_message_close_container (reply);
   if (r < 0)

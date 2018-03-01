@@ -2,22 +2,23 @@
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2016-2017.
+# Tim Sabsch <tim@sabsch.com>, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-11-22 01:08+0000\n"
-"PO-Revision-Date: 2017-12-27 00:59+0100\n"
-"Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
+"POT-Creation-Date: 2018-02-20 22:19+0000\n"
+"PO-Revision-Date: 2018-03-01 11:00+0100\n"
+"Last-Translator: Tim Sabsch <tim@sabsch.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.5\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
@@ -92,11 +93,11 @@ msgstr ""
 
 #: data/org.gnome.sysprof2.gschema.xml:25
 msgid "Last Spawn Inherit Environment"
-msgstr ""
+msgstr "Zuletzt erzeugte vererbte Umgebung"
 
 #: data/org.gnome.sysprof2.gschema.xml:26
 msgid "If the last spawned environment inherits the parent environment."
-msgstr ""
+msgstr "Ob die zuletzt erzeugte Umgebung die übergeordnete Umgebung vererbt."
 
 #: data/org.gnome.sysprof2.gschema.xml:30
 msgid "Last Spawn Environment"
@@ -112,7 +113,7 @@ msgstr ""
 
 #: data/org.gnome.sysprof2.policy.in:13
 msgid "Open a perf event stream"
-msgstr ""
+msgstr "»perf event«-Datenstrom öffnen"
 
 #: data/org.gnome.sysprof2.policy.in:14
 msgid "Authentication is required to access system performance counters."
@@ -120,7 +121,17 @@ msgstr ""
 "Legitimierung ist erforderlich, um auf Leistungswerte Ihres Rechners "
 "zuzugreifen."
 
-#: lib/callgraph/sp-callgraph-profile.c:414
+#: data/org.gnome.sysprof2.policy.in:24
+msgid "Get a list of kernel symbols and their address"
+msgstr "Eine Liste der Kernel-Symbole und ihrer Adressen erhalten"
+
+#: data/org.gnome.sysprof2.policy.in:25
+msgid "Authentication is required to access Linux kernel information."
+msgstr ""
+"Legitimierung ist erforderlich, um auf Informationen des Linux-Kernels "
+"zuzugreifen."
+
+#: lib/callgraph/sp-callgraph-profile.c:426
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr ""
 "Sysprof konnte keinen Aufrufgraphen anhand der Systemaufnahme erstellen."
@@ -397,7 +408,9 @@ msgstr "Eine System-Profiler"
 
 #: src/sp-application.c:179
 msgid "translator-credits"
-msgstr "Mario Blättermann <mario.blaettermann@gmail.com>"
+msgstr ""
+"Mario Blättermann <mario.blaettermann@gmail.com>\n"
+"Tim Sabsch <tim@sabsch.com>"
 
 #: src/sp-application.c:185
 msgid "Learn more about Sysprof"
@@ -483,7 +496,7 @@ msgstr "Alle Dateien"
 # Task ist ein Begriff aus der Informatik
 #: tools/sysprof-cli.c:97
 msgid "Make sysprof specific to a task"
-msgstr "sysprof auf eine Task festlegen"
+msgstr "Sysprof auf einen Task festlegen"
 
 #: tools/sysprof-cli.c:97
 msgid "PID"
@@ -510,7 +523,6 @@ msgid "[CAPTURE_FILE] - Sysprof"
 msgstr "[AUFNAHMEDATEI] - Sysprof"
 
 #: tools/sysprof-cli.c:125
-#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "An sysprof-cli wurden zu viele Argumente übergeben:"
 

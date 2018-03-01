@@ -3,22 +3,23 @@
 # This file is distributed under the same license as the sysprof package.
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2016, 2017.
 # Christian Kirbach <christian.kirbach@gmail.com>, 2017.
+# Tim Sabsch <tim@sabsch.com>, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-10-03 21:59+0000\n"
-"PO-Revision-Date: 2017-12-25 16:13+0100\n"
-"Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
+"POT-Creation-Date: 2018-01-27 10:43+0000\n"
+"PO-Revision-Date: 2018-02-27 15:44+0100\n"
+"Last-Translator: Tim Sabsch <tim@sabsch.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.5\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
@@ -93,11 +94,11 @@ msgstr ""
 
 #: data/org.gnome.sysprof2.gschema.xml:25
 msgid "Last Spawn Inherit Environment"
-msgstr ""
+msgstr "Zuletzt erzeugte vererbte Umgebung"
 
 #: data/org.gnome.sysprof2.gschema.xml:26
 msgid "If the last spawned environment inherits the parent environment."
-msgstr ""
+msgstr "Ob die zuletzt erzeugte Umgebung die übergeordnete Umgebung vererbt."
 
 #: data/org.gnome.sysprof2.gschema.xml:30
 msgid "Last Spawn Environment"
@@ -113,7 +114,7 @@ msgstr ""
 
 #: data/org.gnome.sysprof2.policy.in:13
 msgid "Open a perf event stream"
-msgstr ""
+msgstr "»perf event«-Datenstrom öffnen"
 
 #: data/org.gnome.sysprof2.policy.in:14
 msgid "Authentication is required to access system performance counters."
@@ -272,7 +273,7 @@ msgstr "Aufnahme anhalten"
 #: src/resources/gtk/help-overlay.ui:25
 msgctxt "shortcut window"
 msgid "Callgraph"
-msgstr "Aufruf-Graph"
+msgstr "Aufrufgraph"
 
 #: src/resources/gtk/help-overlay.ui:29
 msgctxt "shortcut window"
@@ -282,7 +283,7 @@ msgstr "Funktion erweitern"
 #: src/resources/gtk/help-overlay.ui:30
 msgctxt "shortcut window"
 msgid "Shows the direct descendants of the callgraph function"
-msgstr ""
+msgstr "Zeigt die unmittelbaren Nachfolger der Aufrufgraphen-Funktion an"
 
 #: src/resources/gtk/help-overlay.ui:37
 msgctxt "shortcut window"
@@ -293,6 +294,7 @@ msgstr "Funktion einklappen"
 msgctxt "shortcut window"
 msgid "Hides all callgraph descendants below the selected function"
 msgstr ""
+"Verbirgt alle Nachfolger des Aufrufgraphen unter der ausgewählten Funktion"
 
 #: src/resources/gtk/help-overlay.ui:45
 msgctxt "shortcut window"
@@ -302,13 +304,12 @@ msgstr "In Funktion springen"
 #: src/resources/gtk/help-overlay.ui:46
 msgctxt "shortcut window"
 msgid "Selects the function or file as the top of the callgraph"
-msgstr ""
+msgstr "Wählt die Funktion oder Datei als Startelement des Aufrufgraphen aus"
 
 #: src/resources/gtk/help-overlay.ui:55
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Visualizers"
-msgstr "Darstellung"
+msgstr "Visualisierungen"
 
 #: src/resources/gtk/help-overlay.ui:59
 msgctxt "shortcut window"
@@ -399,7 +400,10 @@ msgstr "Eine Systemanalyse"
 
 #: src/sp-application.c:179
 msgid "translator-credits"
-msgstr "Mario Blättermann <mario.blaettermann@gmail.com>"
+msgstr ""
+"Mario Blättermann <mario.blaettermann@gmail.com>\n"
+"Christian Kirbach <christian.kirbach@gmail.com\n"
+"Tim Sabsch <tim@sabsch.com>"
 
 #: src/sp-application.c:185
 msgid "Learn more about Sysprof"

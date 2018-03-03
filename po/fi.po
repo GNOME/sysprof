@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-02-28 00:49+0000\n"
-"PO-Revision-Date: 2017-03-10 00:25+0200\n"
+"POT-Creation-Date: 2018-02-20 22:19+0000\n"
+"PO-Revision-Date: 2018-03-03 19:05+0200\n"
 "Last-Translator: Jiri Grönroos <jiri.gronroos+l10n@iki.fi>\n"
 "Language-Team: suomi <lokalisointi-lista@googlegroups.com>\n"
 "Language: fi\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -72,7 +72,7 @@ msgstr "Ikkunan sijainti (x ja y)."
 
 #: data/org.gnome.sysprof2.gschema.xml:15
 msgid "Window maximized"
-msgstr ""
+msgstr "Ikkuna suurennettu"
 
 #: data/org.gnome.sysprof2.gschema.xml:16
 msgid "Window maximized state"
@@ -111,12 +111,21 @@ msgid "Open a perf event stream"
 msgstr ""
 
 #: data/org.gnome.sysprof2.policy.in:14
-#| msgid ""
-#| "Sysprof requires authorization to access your computers performance "
-#| "counters."
 msgid "Authentication is required to access system performance counters."
 msgstr ""
 "Tunnistautuminen vaaditaan tietokoneen suorituskykymittareiden käyttämiseksi."
+
+#: data/org.gnome.sysprof2.policy.in:24
+msgid "Get a list of kernel symbols and their address"
+msgstr ""
+
+#: data/org.gnome.sysprof2.policy.in:25
+msgid "Authentication is required to access Linux kernel information."
+msgstr "Tunnistautuminen vaaditaan Linux-ytimen tietoihin pääsemiseksi."
+
+#: lib/callgraph/sp-callgraph-profile.c:426
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
 
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
@@ -197,7 +206,7 @@ msgid "Value"
 msgstr "Arvo"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:215
-#: lib/sp-profiler-menu-button.c:118
+#: lib/widgets/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Uusi prosessi"
 
@@ -212,11 +221,7 @@ msgstr ""
 "Voit käyttää myös komentoa <a href=\"help:sysprof\">sysprof-cli</a> "
 "taltiointiin."
 
-#: lib/sp-callgraph-profile.c:414
-msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr ""
-
-#: lib/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:345
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
@@ -224,28 +229,29 @@ msgstr ""
 "Sysprof vaatii tunnistautumisen päästäkseen käsiksi tietokoneen "
 "suorituskykymittareihin."
 
-#: lib/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:350
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Suorituskykymittareiden käyttöä yrittäessä tapahtui virhe: %s"
 
-#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
+#: lib/widgets/sp-profiler-menu-button.c:116
+#: lib/widgets/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Kaikki prosessit"
 
-#: lib/sp-profiler-menu-button.c:137
+#: lib/widgets/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Prosessi %d"
 
-#: lib/sp-profiler-menu-button.c:142
+#: lib/widgets/sp-profiler-menu-button.c:142
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
 msgstr[0] "%u prosessi"
 msgstr[1] "%u prosessia"
 
-#: lib/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
 msgstr "Annetut komentoriviargumentit ovat virheelliset"
 
@@ -255,13 +261,11 @@ msgid "Sysprof Shortcuts"
 msgstr "Sysprof-pikanäppäimet"
 
 #: src/resources/gtk/help-overlay.ui:12
-#| msgid "Recording…"
 msgctxt "shortcut window"
 msgid "Recording"
 msgstr "Taltioidaan"
 
 #: src/resources/gtk/help-overlay.ui:16
-#| msgid "Recording…"
 msgctxt "shortcut window"
 msgid "Stop recording"
 msgstr "Pysäytä taltiointi"
@@ -347,7 +351,7 @@ msgstr "Pikanäppäimet"
 msgid "_Quit"
 msgstr "_Lopeta"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
 msgid "Not running"
 msgstr "Ei käynnissä"
 
@@ -375,7 +379,7 @@ msgstr "Palauta mittakaava (Ctrl+0)"
 msgid "Zoom in (Ctrl++)"
 msgstr "Lähennä (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
 msgid "Open"
 msgstr "Avaa"
 
@@ -395,85 +399,85 @@ msgstr "Sulje"
 msgid "A system profiler"
 msgstr "Järjestelmän profiloija"
 
-#: src/sp-application.c:178
+#: src/sp-application.c:179
 msgid "translator-credits"
 msgstr "Jiri Grönroos"
 
-#: src/sp-application.c:184
+#: src/sp-application.c:185
 msgid "Learn more about Sysprof"
 msgstr "Lisätietoja Sysprofistsa"
 
-#: src/sp-window.c:148
+#: src/sp-window.c:149
 #, c-format
 msgid "Samples: %u"
 msgstr "Näytteet: %u"
 
-#: src/sp-window.c:181
+#: src/sp-window.c:182
 msgid "[Memory Capture]"
 msgstr "[Muistitaltiointi]"
 
-#: src/sp-window.c:194
+#: src/sp-window.c:195
 #, c-format
 msgid "%s - %s"
 msgstr "%s - %s"
 
-#: src/sp-window.c:232
+#: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr ""
 
-#: src/sp-window.c:305 src/sp-window.c:349
+#: src/sp-window.c:306 src/sp-window.c:350
 msgid "Record"
 msgstr "Taltioi"
 
-#: src/sp-window.c:325
+#: src/sp-window.c:326
 msgid "Stop"
 msgstr "Pysäytä"
 
-#: src/sp-window.c:330
+#: src/sp-window.c:331
 msgid "Recording…"
 msgstr "Taltioidaan…"
 
-#: src/sp-window.c:341
+#: src/sp-window.c:342
 msgid "Building profile…"
 msgstr "Rakennetaan profiilia…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:442
+#: src/sp-window.c:443
 msgid "Stopping…"
 msgstr "Pysäytetään…"
 
-#: src/sp-window.c:594
+#: src/sp-window.c:595
 msgid "Save Capture As"
 msgstr "Tallenna taltiointi nimellä"
 
-#: src/sp-window.c:597
+#: src/sp-window.c:598
 msgid "Save"
 msgstr "Tallenna"
 
-#: src/sp-window.c:598 src/sp-window.c:1004
+#: src/sp-window.c:599 src/sp-window.c:1012
 msgid "Cancel"
 msgstr "Peru"
 
-#: src/sp-window.c:628
+#: src/sp-window.c:629
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Taltiointia tallennettaessa tapahtui virhe: %s"
 
-#: src/sp-window.c:973
+#: src/sp-window.c:981
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr ""
 "Tiedostoa \"%s\" ei voitu avata. Vain paikalliset tiedostot ovat tuettuja."
 
-#: src/sp-window.c:1000
+#: src/sp-window.c:1008
 msgid "Open Capture"
 msgstr "Avaa taltiointi"
 
-#: src/sp-window.c:1007
+#: src/sp-window.c:1015
 msgid "Sysprof Captures"
 msgstr "Sysprof-taltioinnit"
 
-#: src/sp-window.c:1012
+#: src/sp-window.c:1020
 msgid "All Files"
 msgstr "Kaikki tiedostot"
 
@@ -506,7 +510,6 @@ msgid "[CAPTURE_FILE] - Sysprof"
 msgstr ""
 
 #: tools/sysprof-cli.c:125
-#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr ""
 

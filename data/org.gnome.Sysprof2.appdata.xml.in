@@ -35,7 +35,7 @@
   </provides>
 
   <releases>
-    <release version="3.22.3" date="2016-11-28"/>
+    <release version="3.27.92" date="2018-03-04"/>
   </releases>
 
   <metadata_license>CC0-1.0</metadata_license>

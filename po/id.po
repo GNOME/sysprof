@@ -5,11 +5,11 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: sysprof sysprof-3-24\n"
+"Project-Id-Version: sysprof sysprof-3-28\n"
 "Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-04-10 22:36+0000\n"
-"PO-Revision-Date: 2017-04-11 15:05+0700\n"
+"POT-Creation-Date: 2018-03-14 17:02+0000\n"
+"PO-Revision-Date: 2018-03-15 20:38+0700\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
@@ -118,6 +118,18 @@ msgstr "Buka suatu stream peristiwa perf"
 msgid "Authentication is required to access system performance counters."
 msgstr "Otentikasi diperlukan untuk mengakses pencacah kinerja sistem."
 
+#: data/org.gnome.sysprof2.policy.in:24
+msgid "Get a list of kernel symbols and their address"
+msgstr "Dapatkan daftar simbol kernel dan alamat mereka"
+
+#: data/org.gnome.sysprof2.policy.in:25
+msgid "Authentication is required to access Linux kernel information."
+msgstr "Otentikasi diperlukan untuk mengakses informasi kernel Linux."
+
+#: lib/callgraph/sp-callgraph-profile.c:426
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "Sysprof tidak mampu membuat suatu callgraph dari tangkapan sistem."
+
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
 msgstr "Fungsi"
@@ -196,7 +208,7 @@ msgid "Value"
 msgstr "Nilai"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:215
-#: lib/sp-profiler-menu-button.c:118
+#: lib/widgets/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Proses Baru"
 
@@ -211,38 +223,35 @@ msgstr ""
 "Tahukah Anda bahwa Anda dapat memakai <a href=\"help:sysprof\">sysprof-cli</"
 "a> untuk merekam?"
 
-#: lib/sp-callgraph-profile.c:414
-msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr "Sysprof tidak mampu membuat suatu callgraph dari tangkapan sistem."
-
-#: lib/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:345
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
 msgstr ""
 "Sysprof memerlukan otorisasi untuk mengakses pencacah kinerja komputer Anda."
 
-#: lib/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:350
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Kesalahan terjadi ketika mencoba mengakses pencacah kinerja: %s"
 
-#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
+#: lib/widgets/sp-profiler-menu-button.c:116
+#: lib/widgets/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Semua Proses"
 
-#: lib/sp-profiler-menu-button.c:137
+#: lib/widgets/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Proses %d"
 
-#: lib/sp-profiler-menu-button.c:142
+#: lib/widgets/sp-profiler-menu-button.c:142
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
 msgstr[0] "%u Proses"
 
-#: lib/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:796
 msgid "The command line arguments provided are invalid"
 msgstr "Argumen baris perintah yang diberikan tidak valid"
 
@@ -340,7 +349,7 @@ msgstr "Pintasan Papan Ketik"
 msgid "_Quit"
 msgstr "_Keluar"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
 msgid "Not running"
 msgstr "Tidak sedang berjalan"
 
@@ -368,7 +377,7 @@ msgstr "Reset tingkat zum (Ctrl+0)"
 msgid "Zoom in (Ctrl++)"
 msgstr "Perbesar (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1010
+#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
 msgid "Open"
 msgstr "Buka"
 
@@ -390,82 +399,82 @@ msgstr "Pemantau profil sistem"
 
 #: src/sp-application.c:179
 msgid "translator-credits"
-msgstr "Andika Triwidada <andika@gmail.com>, 2017"
+msgstr "Andika Triwidada <andika@gmail.com>, 2017, 2018."
 
 #: src/sp-application.c:185
 msgid "Learn more about Sysprof"
 msgstr "Pelajari lebih lanjut tentang Sysprof"
 
-#: src/sp-window.c:148
+#: src/sp-window.c:149
 #, c-format
 msgid "Samples: %u"
 msgstr "Cuplikan: %u"
 
-#: src/sp-window.c:181
+#: src/sp-window.c:182
 msgid "[Memory Capture]"
 msgstr "[Tangkapan Memori]"
 
-#: src/sp-window.c:194
+#: src/sp-window.c:195
 #, c-format
 msgid "%s - %s"
 msgstr "%s - %s"
 
-#: src/sp-window.c:232
+#: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Tidak cukup cuplikan dikumpulkan untuk membuat suatu callgraph"
 
-#: src/sp-window.c:305 src/sp-window.c:349
+#: src/sp-window.c:306 src/sp-window.c:350
 msgid "Record"
 msgstr "Rekam"
 
-#: src/sp-window.c:325
+#: src/sp-window.c:326
 msgid "Stop"
 msgstr "Berhenti"
 
-#: src/sp-window.c:330
+#: src/sp-window.c:331
 msgid "Recording…"
 msgstr "Sedang merekam…"
 
-#: src/sp-window.c:341
+#: src/sp-window.c:342
 msgid "Building profile…"
 msgstr "Sedang membangun profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:442
+#: src/sp-window.c:443
 msgid "Stopping…"
 msgstr "Menghentikan…"
 
-#: src/sp-window.c:594
+#: src/sp-window.c:595
 msgid "Save Capture As"
 msgstr "Simpan Tangkapan Sebagai"
 
-#: src/sp-window.c:597
+#: src/sp-window.c:598
 msgid "Save"
 msgstr "Simpan"
 
-#: src/sp-window.c:598 src/sp-window.c:1011
+#: src/sp-window.c:599 src/sp-window.c:1012
 msgid "Cancel"
 msgstr "Batal"
 
-#: src/sp-window.c:628
+#: src/sp-window.c:629
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Terjadi kesalahan ketika mencoba menyimpan tangkapan Anda: %s"
 
-#: src/sp-window.c:980
+#: src/sp-window.c:981
 #, c-format
 msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgstr "Berkas \"%s\" tidak dapat dibuka. Hanya berkas lokal yang didukung."
 
-#: src/sp-window.c:1007
+#: src/sp-window.c:1008
 msgid "Open Capture"
 msgstr "Buka Tangkapan"
 
-#: src/sp-window.c:1014
+#: src/sp-window.c:1015
 msgid "Sysprof Captures"
 msgstr "Tangkapan Sysprof"
 
-#: src/sp-window.c:1019
+#: src/sp-window.c:1020
 msgid "All Files"
 msgstr "Semua Berkas"
 
@@ -498,7 +507,6 @@ msgid "[CAPTURE_FILE] - Sysprof"
 msgstr "[BERKAS_TANGKAPAN] - Sysprof"
 
 #: tools/sysprof-cli.c:125
-#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Terlalu banyak argumen yang diberikan ke sysprof-cli:"
 

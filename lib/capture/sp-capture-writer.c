@@ -572,6 +572,8 @@ sp_capture_writer_add_mark (SpCaptureWriter *self,
   memcpy (ev->name, name, sizeof ev->name);
   memcpy (ev->message, message, message_len);
 
+  self->stat.frame_count[SP_CAPTURE_FRAME_MARK]++;
+
   return TRUE;
 }
 

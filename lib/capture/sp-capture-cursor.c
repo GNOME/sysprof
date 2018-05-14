@@ -99,6 +99,10 @@ sp_capture_cursor_foreach (SpCaptureCursor         *self,
           delegate = READ_DELEGATE (sp_capture_reader_read_map);
           break;
 
+        case SP_CAPTURE_FRAME_MARK:
+          delegate = READ_DELEGATE (sp_capture_reader_read_mark);
+          break;
+
         case SP_CAPTURE_FRAME_PROCESS:
           delegate = READ_DELEGATE (sp_capture_reader_read_process);
           break;

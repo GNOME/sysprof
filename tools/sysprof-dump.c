@@ -115,6 +115,20 @@ main (gint argc,
             break;
           }
 
+        case SP_CAPTURE_FRAME_MARK:
+          {
+            const SpCaptureMark *mark = sp_capture_reader_read_mark (reader);
+
+            g_print ("MARK: pid=%d time=%"G_GINT64_FORMAT"\n"
+                     "    name  = %s\n"
+                     " duration = %"G_GUINT64_FORMAT"\n"
+                     "  message = %s\n",
+                     mark->frame.pid, mark->frame.time,
+                     mark->name, mark->duration, mark->message);
+
+            break;
+          }
+
         case SP_CAPTURE_FRAME_PROCESS:
           {
             const SpCaptureProcess *pr = sp_capture_reader_read_process (reader);

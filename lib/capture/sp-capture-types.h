@@ -68,6 +68,7 @@ typedef enum
   SP_CAPTURE_FRAME_JITMAP    = 7,
   SP_CAPTURE_FRAME_CTRDEF    = 8,
   SP_CAPTURE_FRAME_CTRSET    = 9,
+  SP_CAPTURE_FRAME_MARK      = 10,
 } SpCaptureFrameType;
 
 #pragma pack(push, 1)
@@ -179,6 +180,14 @@ typedef struct
   SpCaptureCounterValues values[0];
 } SpCaptureFrameCounterSet;
 
+typedef struct
+{
+  SpCaptureFrame frame;
+  gint64         duration;
+  gchar          name[32];
+  gchar          message[0];
+} SpCaptureMark;
+
 #pragma pack(pop)
 
 G_STATIC_ASSERT (sizeof (SpCaptureFileHeader) == 256);
@@ -194,6 +203,7 @@ G_STATIC_ASSERT (sizeof (SpCaptureCounter) == 128);
 G_STATIC_ASSERT (sizeof (SpCaptureCounterValues) == 96);
 G_STATIC_ASSERT (sizeof (SpCaptureFrameCounterDefine) == 32);
 G_STATIC_ASSERT (sizeof (SpCaptureFrameCounterSet) == 32);
+G_STATIC_ASSERT (sizeof (SpCaptureMark) == 64);
 
 static inline gint
 sp_capture_address_compare (SpCaptureAddress a,

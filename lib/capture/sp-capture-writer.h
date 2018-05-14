@@ -55,6 +55,13 @@ gboolean            sp_capture_writer_add_map         (SpCaptureWriter         *
                                                        guint64                  offset,
                                                        guint64                  inode,
                                                        const gchar             *filename);
+gboolean            sp_capture_writer_add_mark        (SpCaptureWriter         *self,
+                                                       gint64                   time,
+                                                       gint                     cpu,
+                                                       GPid                     pid,
+                                                       guint64                  duration,
+                                                       const gchar             *name,
+                                                       const gchar             *message);
 guint64             sp_capture_writer_add_jitmap      (SpCaptureWriter         *self,
                                                        const gchar             *name);
 gboolean            sp_capture_writer_add_process     (SpCaptureWriter         *self,

@@ -536,6 +536,45 @@ sp_capture_writer_add_map (SpCaptureWriter *self,
   return TRUE;
 }
 
+gboolean
+sp_capture_writer_add_mark (SpCaptureWriter *self,
+                            gint64           time,
+                            gint             cpu,
+                            GPid             pid,
+                            guint64          duration,
+                            const gchar     *name,
+                            const gchar     *message)
+{
+  SpCaptureMark *ev;
+  gsize message_len;
+  gsize len;
+
+  g_assert (self != NULL);
+  g_assert (name != NULL);
+
+  if (message == NULL)
+    message = "";
+  message_len = strlen (message) + 1;
+
+  len = sizeof *ev + message_len;
+  ev = (SpCaptureMark *)sp_capture_writer_allocate (self, &len);
+  if (!ev)
+    return FALSE;
+
+  sp_capture_writer_frame_init (&ev->frame,
+                                len,
+                                cpu,
+                                pid,
+                                time,
+                                SP_CAPTURE_FRAME_MARK);
+
+  ev->duration = duration;
+  memcpy (ev->name, name, sizeof ev->name);
+  memcpy (ev->message, message, message_len);
+
+  return TRUE;
+}
+
 SpCaptureAddress
 sp_capture_writer_add_jitmap (SpCaptureWriter *self,
                               const gchar     *name)

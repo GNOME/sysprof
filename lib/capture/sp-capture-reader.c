@@ -199,6 +199,17 @@ sp_capture_reader_bswap_map (SpCaptureReader *self,
 }
 
 static inline void
+sp_capture_reader_bswap_mark (SpCaptureReader *self,
+                              SpCaptureMark   *mark)
+{
+  g_assert (self != NULL);
+  g_assert (mark != NULL);
+
+  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+    mark->duration = GUINT64_SWAP_LE_BE (mark->duration);
+}
+
+static inline void
 sp_capture_reader_bswap_jitmap (SpCaptureReader *self,
                                 SpCaptureJitmap *jitmap)
 {
@@ -424,6 +435,47 @@ sp_capture_reader_read_map (SpCaptureReader *self)
     return NULL;
 
   return map;
+}
+
+const SpCaptureMark *
+sp_capture_reader_read_mark (SpCaptureReader *self)
+{
+  SpCaptureMark *mark;
+
+  g_assert (self != NULL);
+  g_assert ((self->pos % SP_CAPTURE_ALIGN) == 0);
+  g_assert (self->pos <= self->bufsz);
+
+  if (!sp_capture_reader_ensure_space_for (self, sizeof *mark))
+    return NULL;
+
+  mark = (SpCaptureMark *)(gpointer)&self->buf[self->pos];
+
+  sp_capture_reader_bswap_frame (self, &mark->frame);
+
+  if (mark->frame.type != SP_CAPTURE_FRAME_MARK)
+    return NULL;
+
+  if (mark->frame.len < (sizeof *mark + 1))
+    return NULL;
+
+  if (!sp_capture_reader_ensure_space_for (self, mark->frame.len))
+    return NULL;
+
+  mark = (SpCaptureMark *)(gpointer)&self->buf[self->pos];
+
+  sp_capture_reader_bswap_mark (self, mark);
+
+  self->pos += mark->frame.len;
+
+  if ((self->pos % SP_CAPTURE_ALIGN) != 0)
+    return NULL;
+
+  /* Ensure trailing \0 in name and message */
+  mark->name[sizeof mark->name - 1] = 0;
+  self->buf[self->pos + mark->frame.len - 1] = 0;
+
+  return mark;
 }
 
 const SpCaptureProcess *

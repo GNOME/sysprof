@@ -42,6 +42,7 @@ gboolean                           sp_capture_reader_peek_type           (SpCapt
 gboolean                           sp_capture_reader_peek_frame          (SpCaptureReader     *self,
                                                                           SpCaptureFrame      *frame);
 const SpCaptureMap                *sp_capture_reader_read_map            (SpCaptureReader     *self);
+const SpCaptureMark               *sp_capture_reader_read_mark           (SpCaptureReader     *self);
 const SpCaptureExit               *sp_capture_reader_read_exit           (SpCaptureReader     *self);
 const SpCaptureFork               *sp_capture_reader_read_fork           (SpCaptureReader     *self);
 const SpCaptureTimestamp          *sp_capture_reader_read_timestamp      (SpCaptureReader     *self);

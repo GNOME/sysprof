@@ -531,6 +531,51 @@ test_reader_splice (void)
   g_unlink ("writer3.syscap");
 }
 
+static void
+test_reader_writer_mark (void)
+{
+  SpCaptureWriter *writer;
+  SpCaptureReader *reader;
+  const SpCaptureMark *mark;
+  SpCaptureFrameType type;
+  GError *error = NULL;
+  gint r;
+
+  writer = sp_capture_writer_new ("mark1.syscap", 0);
+
+  sp_capture_writer_add_mark (writer, SP_CAPTURE_CURRENT_TIME, -1, -1, 125, "Draw", "hdmi-1");
+  sp_capture_writer_add_mark (writer, SP_CAPTURE_CURRENT_TIME, -1, -1, 0, "Deadline", "hdmi-1");
+
+  g_clear_pointer (&writer, sp_capture_writer_unref);
+
+  reader = sp_capture_reader_new ("mark1.syscap", &error);
+  g_assert_no_error (error);
+  g_assert (reader != NULL);
+
+  mark = sp_capture_reader_read_mark (reader);
+  g_assert_nonnull (mark);
+  g_assert_cmpstr (mark->name, ==, "Draw");
+  g_assert_cmpint (mark->duration, ==, 125);
+  g_assert_cmpstr (mark->message, ==, "hdmi-1");
+  g_assert_cmpint (mark->frame.time, >, 0);
+  g_assert_cmpint (mark->frame.cpu, ==, -1);
+
+  mark = sp_capture_reader_read_mark (reader);
+  g_assert_nonnull (mark);
+  g_assert_cmpstr (mark->name, ==, "Deadline");
+  g_assert_cmpint (mark->duration, ==, 0);
+  g_assert_cmpstr (mark->message, ==, "hdmi-1");
+  g_assert_cmpint (mark->frame.time, >, 0);
+  g_assert_cmpint (mark->frame.cpu, ==, -1);
+
+  r = sp_capture_reader_peek_type (reader, &type);
+  g_assert_cmpint (r, ==, FALSE);
+
+  g_clear_pointer (&reader, sp_capture_reader_unref);
+
+  g_unlink ("mark1.syscap");
+}
+
 int
 main (int argc,
       char *argv[])
@@ -540,5 +585,6 @@ main (int argc,
   g_test_add_func ("/SpCapture/ReaderWriter", test_reader_basic);
   g_test_add_func ("/SpCapture/Writer/splice", test_writer_splice);
   g_test_add_func ("/SpCapture/Reader/splice", test_reader_splice);
+  g_test_add_func ("/SpCapture/ReaderWriter/mark", test_reader_writer_mark);
   return g_test_run ();
 }

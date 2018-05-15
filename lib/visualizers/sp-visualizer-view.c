@@ -35,7 +35,7 @@ typedef struct
 {
   SpCaptureReader       *reader;
   SpZoomManager         *zoom_manager;
-  SpSelection *selection;
+  SpSelection           *selection;
 
   SpVisualizerList      *list;
   GtkScrolledWindow     *scroller;

@@ -39,6 +39,13 @@ typedef struct
   gint64 end_time;
 } SpVisualizerListPrivate;
 
+typedef struct
+{
+  SpCaptureCursor *cursor;
+  GHashTable *mark_groups;
+  gboolean has_cpu;
+} Discovery;
+
 enum {
   PROP_0,
   PROP_READER,
@@ -49,6 +56,14 @@ enum {
 G_DEFINE_TYPE_WITH_PRIVATE (SpVisualizerList, sp_visualizer_list, GTK_TYPE_LIST_BOX)
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+discovery_free (Discovery *state)
+{
+  g_clear_pointer (&state->mark_groups, g_hash_table_unref);
+  g_clear_object (&state->cursor);
+  g_slice_free (Discovery, state);
+}
 
 static void
 sp_visualizer_list_add (GtkContainer *container,
@@ -180,30 +195,30 @@ sp_visualizer_list_get_reader (SpVisualizerList *self)
   return priv->reader;
 }
 
-enum {
-  FOUND_CPU  = 1 << 0,
-  FOUND_MARK = 1 << 1,
-};
-
 static gboolean
 discover_new_rows_frame_cb (const SpCaptureFrame *frame,
                             gpointer              user_data)
 {
-  guint *found = user_data;
+  Discovery *state = user_data;
 
   g_assert (frame != NULL);
-  g_assert (found != NULL);
+  g_assert (state != NULL);
 
   if (frame->type == SP_CAPTURE_FRAME_MARK)
-    *found = FOUND_MARK;
+    {
+      const SpCaptureMark *mark = (const SpCaptureMark *)frame;
+
+      if (!g_hash_table_contains (state->mark_groups, mark->group))
+        g_hash_table_add (state->mark_groups, g_strdup (mark->group));
+    }
 
   /* TODO: Make this look for CPU define. Currently it is the
    *       only thing that uses it. So...
    */
   if (frame->type == SP_CAPTURE_FRAME_CTRDEF)
-    *found = FOUND_CPU;
+    state->has_cpu = TRUE;
 
-  return FALSE;
+  return TRUE;
 }
 
 static void
@@ -212,13 +227,13 @@ discover_new_rows_worker (GTask        *task,
                           gpointer      task_data,
                           GCancellable *cancellable)
 {
-  SpCaptureCursor *cursor = task_data;
-  guint found = 0;
+  Discovery *state = task_data;
 
-  g_assert (SP_IS_CAPTURE_CURSOR (cursor));
+  g_assert (state != NULL);
+  g_assert (SP_IS_CAPTURE_CURSOR (state->cursor));
 
-  sp_capture_cursor_foreach (cursor, discover_new_rows_frame_cb, &found);
-  g_task_return_int (task, found);
+  sp_capture_cursor_foreach (state->cursor, discover_new_rows_frame_cb, state);
+  g_task_return_boolean (task, TRUE);
 }
 
 static void
@@ -227,22 +242,17 @@ handle_capture_results (GObject      *object,
                         gpointer      user_data)
 {
   SpVisualizerList *self = (SpVisualizerList *)object;
-  guint found;
+  Discovery *state;
+  GHashTableIter iter;
+  const gchar *key;
 
   g_assert (SP_IS_VISUALIZER_LIST (self));
   g_assert (G_IS_TASK (result));
   g_assert (user_data == NULL);
 
-  found = g_task_propagate_int (G_TASK (result), NULL);
+  state = g_task_get_task_data (G_TASK (result));
 
-  if (found & FOUND_MARK)
-    {
-      GtkWidget *row = sp_mark_visualizer_row_new ();
-      gtk_container_add (GTK_CONTAINER (self), row);
-      gtk_widget_show (row);
-    }
-
-  if (found & FOUND_CPU)
+  if (state->has_cpu)
     {
       GtkWidget *row = g_object_new (SP_TYPE_CPU_VISUALIZER_ROW,
                                      "title", _("CPU"),
@@ -251,6 +261,19 @@ handle_capture_results (GObject      *object,
                                      "visible", TRUE,
                                      "y-lower", 0.0,
                                      "y-upper", 100.0,
+                                     NULL);
+      gtk_container_add (GTK_CONTAINER (self), row);
+    }
+
+  g_hash_table_iter_init (&iter, state->mark_groups);
+
+  while (g_hash_table_iter_next (&iter, (gpointer *)&key, NULL))
+    {
+      GtkWidget *row = g_object_new (SP_TYPE_MARK_VISUALIZER_ROW,
+                                     "title", key,
+                                     "height-request", 75,
+                                     "selectable", FALSE,
+                                     "visible", TRUE,
                                      NULL);
       gtk_container_add (GTK_CONTAINER (self), row);
     }
@@ -264,6 +287,7 @@ discover_new_rows (SpVisualizerList *self,
   g_autoptr(SpCaptureCursor) cursor = NULL;
   g_autoptr(GTask) task = NULL;
   SpCaptureCondition *condition;
+  Discovery *state;
 
   g_assert (SP_IS_VISUALIZER_LIST (self));
   g_assert (reader != NULL);
@@ -279,11 +303,13 @@ discover_new_rows (SpVisualizerList *self,
   condition = sp_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
   sp_capture_cursor_add_condition (cursor, g_steal_pointer (&condition));
 
-  /*
-   * Now thread things to discover the rows.
-   */
+  state = g_slice_new0 (Discovery);
+  state->mark_groups = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  state->cursor = g_steal_pointer (&cursor);
+  state->has_cpu = FALSE;
+
   task = g_task_new (self, NULL, handle_capture_results, NULL);
-  g_task_set_task_data (task, g_steal_pointer (&cursor), g_object_unref);
+  g_task_set_task_data (task, g_steal_pointer (&state), (GDestroyNotify)discovery_free);
   g_task_run_in_thread (task, discover_new_rows_worker);
 }
 

@@ -270,6 +270,7 @@ handle_capture_results (GObject      *object,
   while (g_hash_table_iter_next (&iter, (gpointer *)&key, NULL))
     {
       GtkWidget *row = g_object_new (SP_TYPE_MARK_VISUALIZER_ROW,
+                                     "group", key,
                                      "title", key,
                                      "height-request", 75,
                                      "selectable", FALSE,

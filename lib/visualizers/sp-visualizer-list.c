@@ -243,7 +243,6 @@ handle_capture_results (GObject      *object,
 {
   SpVisualizerList *self = (SpVisualizerList *)object;
   Discovery *state;
-  GHashTableIter iter;
   const gchar *key;
 
   g_assert (SP_IS_VISUALIZER_LIST (self));
@@ -265,18 +264,23 @@ handle_capture_results (GObject      *object,
       gtk_container_add (GTK_CONTAINER (self), row);
     }
 
-  g_hash_table_iter_init (&iter, state->mark_groups);
-
-  while (g_hash_table_iter_next (&iter, (gpointer *)&key, NULL))
+  if (g_hash_table_size (state->mark_groups) < 30)
     {
-      GtkWidget *row = g_object_new (SP_TYPE_MARK_VISUALIZER_ROW,
-                                     "group", key,
-                                     "title", key,
-                                     "height-request", 75,
-                                     "selectable", FALSE,
-                                     "visible", TRUE,
-                                     NULL);
-      gtk_container_add (GTK_CONTAINER (self), row);
+      GHashTableIter iter;
+
+      g_hash_table_iter_init (&iter, state->mark_groups);
+
+      while (g_hash_table_iter_next (&iter, (gpointer *)&key, NULL))
+        {
+          GtkWidget *row = g_object_new (SP_TYPE_MARK_VISUALIZER_ROW,
+                                         "group", key,
+                                         "title", key,
+                                         "height-request", 75,
+                                         "selectable", FALSE,
+                                         "visible", TRUE,
+                                         NULL);
+          gtk_container_add (GTK_CONTAINER (self), row);
+        }
     }
 }
 

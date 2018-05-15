@@ -28,6 +28,13 @@ typedef struct
   SpCaptureReader *reader;
 
   /*
+   * The group we care about for displaying marks. The idea is that we only
+   * show one group per-row, so tooling from separate systems can either be
+   * displayed together or not, based on usefulness.
+   */
+  gchar *group;
+
+  /*
    * A sorted array of MarkInfo about marks we care to render.
    */
   GArray *marks;
@@ -46,6 +53,7 @@ typedef struct
 
 enum {
   PROP_0,
+  PROP_GROUP,
   PROP_TITLE,
   N_PROPS
 };
@@ -189,6 +197,7 @@ sp_mark_visualizer_row_finalize (GObject *object)
   SpMarkVisualizerRow *self = (SpMarkVisualizerRow *)object;
   SpMarkVisualizerRowPrivate *priv = sp_mark_visualizer_row_get_instance_private (self);
 
+  g_clear_pointer (&priv->group, g_free);
   g_clear_pointer (&priv->marks, g_array_unref);
 
   G_OBJECT_CLASS (sp_mark_visualizer_row_parent_class)->finalize (object);
@@ -205,6 +214,10 @@ sp_mark_visualizer_row_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_GROUP:
+      g_value_set_string (value, sp_mark_visualizer_row_get_group (self));
+      break;
+
     case PROP_TITLE:
       g_value_set_string (value, gtk_label_get_label (priv->label));
       break;
@@ -225,6 +238,10 @@ sp_mark_visualizer_row_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_GROUP:
+      sp_mark_visualizer_row_set_group (self, g_value_get_string (value));
+      break;
+
     case PROP_TITLE:
       gtk_label_set_label (priv->label, g_value_get_string (value));
       break;
@@ -248,6 +265,13 @@ sp_mark_visualizer_row_class_init (SpMarkVisualizerRowClass *klass)
   widget_class->draw = sp_mark_visualizer_row_draw;
 
   visualizer_class->set_reader = sp_mark_visualizer_row_set_reader;
+
+  properties [PROP_GROUP] =
+    g_param_spec_string ("group",
+                         "Group",
+                         "The group of the row",
+                         NULL,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_TITLE] =
     g_param_spec_string ("title",
@@ -286,14 +310,28 @@ sp_mark_visualizer_row_new (void)
   return g_object_new (SP_TYPE_MARK_VISUALIZER_ROW, NULL);
 }
 
-void
-sp_mark_visualizer_row_add_mark (SpMarkVisualizerRow *self,
-                                 GPid                 pid,
-                                 GPid                 tid,
-                                 const gchar         *name,
-                                 const GdkRGBA       *color)
+const gchar *
+sp_mark_visualizer_row_get_group (SpMarkVisualizerRow *self)
 {
-  g_return_if_fail (SP_IS_MARK_VISUALIZER_ROW (self));
-  g_return_if_fail (name != NULL);
+  SpMarkVisualizerRowPrivate *priv = sp_mark_visualizer_row_get_instance_private (self);
 
+  g_return_val_if_fail (SP_IS_MARK_VISUALIZER_ROW (self), NULL);
+
+  return priv->group;
+}
+
+void
+sp_mark_visualizer_row_set_group (SpMarkVisualizerRow *self,
+                                  const gchar         *group)
+{
+  SpMarkVisualizerRowPrivate *priv = sp_mark_visualizer_row_get_instance_private (self);
+
+  g_return_if_fail (SP_IS_MARK_VISUALIZER_ROW (self));
+
+  if (g_strcmp0 (priv->group, group) != 0)
+    {
+      g_free (priv->group);
+      priv->group = g_strdup (group);
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_GROUP]);
+    }
 }

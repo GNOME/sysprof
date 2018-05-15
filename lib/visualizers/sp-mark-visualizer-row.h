@@ -34,11 +34,9 @@ struct _SpMarkVisualizerRowClass
   gpointer _reserved[16];
 };
 
-GtkWidget *sp_mark_visualizer_row_new      (void);
-void       sp_mark_visualizer_row_add_mark (SpMarkVisualizerRow *self,
-                                            GPid                 pid,
-                                            GPid                 tid,
-                                            const gchar         *name,
-                                            const GdkRGBA       *color);
+GtkWidget   *sp_mark_visualizer_row_new       (void);
+const gchar *sp_mark_visualizer_row_get_group (SpMarkVisualizerRow *self);
+void         sp_mark_visualizer_row_set_group (SpMarkVisualizerRow *self,
+                                               const gchar         *group);
 
 G_END_DECLS

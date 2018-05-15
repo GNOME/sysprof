@@ -20,6 +20,9 @@
 
 #include <glib/gi18n.h>
 
+#include "capture/sp-capture-condition.h"
+#include "capture/sp-capture-cursor.h"
+#include "visualizers/sp-cpu-visualizer-row.h"
 #include "visualizers/sp-visualizer-list.h"
 #include "visualizers/sp-visualizer-row.h"
 #include "util/sp-zoom-manager.h"
@@ -176,6 +179,102 @@ sp_visualizer_list_get_reader (SpVisualizerList *self)
   return priv->reader;
 }
 
+enum {
+  FOUND_CPU  = 1 << 0,
+};
+
+static gboolean
+discover_new_rows_frame_cb (const SpCaptureFrame *frame,
+                            gpointer              user_data)
+{
+  guint *found = user_data;
+
+  g_assert (frame != NULL);
+  g_assert (found != NULL);
+
+  /* TODO: Make this look for CPU define. Currently it is the
+   *       only thing that uses it. So...
+   */
+  if (frame->type == SP_CAPTURE_FRAME_CTRDEF)
+    *found = FOUND_CPU;
+
+  return FALSE;
+}
+
+static void
+discover_new_rows_worker (GTask        *task,
+                          gpointer      source_object,
+                          gpointer      task_data,
+                          GCancellable *cancellable)
+{
+  SpCaptureCursor *cursor = task_data;
+  guint found = 0;
+
+  g_assert (SP_IS_CAPTURE_CURSOR (cursor));
+
+  sp_capture_cursor_foreach (cursor, discover_new_rows_frame_cb, &found);
+  g_task_return_int (task, found);
+}
+
+static void
+handle_capture_results (GObject      *object,
+                        GAsyncResult *result,
+                        gpointer      user_data)
+{
+  SpVisualizerList *self = (SpVisualizerList *)object;
+  guint found;
+
+  g_assert (SP_IS_VISUALIZER_LIST (self));
+  g_assert (G_IS_TASK (result));
+  g_assert (user_data == NULL);
+
+  found = g_task_propagate_int (G_TASK (result), NULL);
+
+  if (found & FOUND_CPU)
+    {
+      GtkWidget *row = g_object_new (SP_TYPE_CPU_VISUALIZER_ROW,
+                                     "title", _("CPU"),
+                                     "height-request", 75,
+                                     "selectable", FALSE,
+                                     "visible", TRUE,
+                                     "y-lower", 0.0,
+                                     "y-upper", 100.0,
+                                     NULL);
+      gtk_container_add (GTK_CONTAINER (self), row);
+    }
+}
+
+static void
+discover_new_rows (SpVisualizerList *self,
+                   SpCaptureReader  *reader)
+{
+  static const SpCaptureFrameType types[] = { SP_CAPTURE_FRAME_CTRDEF, SP_CAPTURE_FRAME_MARK };
+  g_autoptr(SpCaptureCursor) cursor = NULL;
+  g_autoptr(GTask) task = NULL;
+  SpCaptureCondition *condition;
+
+  g_assert (SP_IS_VISUALIZER_LIST (self));
+  g_assert (reader != NULL);
+
+  /*
+   * The goal here is to automatically discover what rows should be added to
+   * the visualizer list based on events we find in the capture file. In the
+   * future, we might be able to add a UI flow to ask what the user wants or
+   * denote capabilities at the beginning of the capture stream.
+   */
+
+  cursor = sp_capture_cursor_new (reader);
+  condition = sp_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
+  sp_capture_cursor_add_condition (cursor, g_steal_pointer (&condition));
+
+  /*
+   * Now thread things to discover the rows.
+   */
+  task = g_task_new (self, NULL, handle_capture_results, NULL);
+  g_task_set_task_data (task, g_steal_pointer (&cursor), g_object_unref);
+  g_task_run_in_thread (task, discover_new_rows_worker);
+}
+
 void
 sp_visualizer_list_set_reader (SpVisualizerList *self,
                                SpCaptureReader  *reader)
@@ -189,7 +288,10 @@ sp_visualizer_list_set_reader (SpVisualizerList *self,
       g_clear_pointer (&priv->reader, sp_capture_reader_unref);
 
       if (reader != NULL)
-        priv->reader = sp_capture_reader_ref (reader);
+        {
+          priv->reader = sp_capture_reader_ref (reader);
+          discover_new_rows (self, reader);
+        }
 
       gtk_container_foreach (GTK_CONTAINER (self),
                              (GtkCallback)sp_visualizer_row_set_reader,

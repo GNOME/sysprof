@@ -25,6 +25,7 @@
 #include "visualizers/sp-cpu-visualizer-row.h"
 #include "visualizers/sp-visualizer-list.h"
 #include "visualizers/sp-visualizer-row.h"
+#include "visualizers/sp-mark-visualizer-row.h"
 #include "util/sp-zoom-manager.h"
 
 #define NSEC_PER_SEC              G_GUINT64_CONSTANT(1000000000)
@@ -181,6 +182,7 @@ sp_visualizer_list_get_reader (SpVisualizerList *self)
 
 enum {
   FOUND_CPU  = 1 << 0,
+  FOUND_MARK = 1 << 1,
 };
 
 static gboolean
@@ -191,6 +193,9 @@ discover_new_rows_frame_cb (const SpCaptureFrame *frame,
 
   g_assert (frame != NULL);
   g_assert (found != NULL);
+
+  if (frame->type == SP_CAPTURE_FRAME_MARK)
+    *found = FOUND_MARK;
 
   /* TODO: Make this look for CPU define. Currently it is the
    *       only thing that uses it. So...
@@ -229,6 +234,13 @@ handle_capture_results (GObject      *object,
   g_assert (user_data == NULL);
 
   found = g_task_propagate_int (G_TASK (result), NULL);
+
+  if (found & FOUND_MARK)
+    {
+      GtkWidget *row = sp_mark_visualizer_row_new ();
+      gtk_container_add (GTK_CONTAINER (self), row);
+      gtk_widget_show (row);
+    }
 
   if (found & FOUND_CPU)
     {

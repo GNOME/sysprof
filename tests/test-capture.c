@@ -543,8 +543,8 @@ test_reader_writer_mark (void)
 
   writer = sp_capture_writer_new ("mark1.syscap", 0);
 
-  sp_capture_writer_add_mark (writer, SP_CAPTURE_CURRENT_TIME, -1, -1, 125, "Draw", "hdmi-1");
-  sp_capture_writer_add_mark (writer, SP_CAPTURE_CURRENT_TIME, -1, -1, 0, "Deadline", "hdmi-1");
+  sp_capture_writer_add_mark (writer, SP_CAPTURE_CURRENT_TIME, -1, -1, 125, "thread-0", "Draw", "hdmi-1");
+  sp_capture_writer_add_mark (writer, SP_CAPTURE_CURRENT_TIME, -1, -1, 0, "thread-1", "Deadline", "hdmi-1");
 
   g_clear_pointer (&writer, sp_capture_writer_unref);
 
@@ -554,6 +554,7 @@ test_reader_writer_mark (void)
 
   mark = sp_capture_reader_read_mark (reader);
   g_assert_nonnull (mark);
+  g_assert_cmpstr (mark->group, ==, "thread-0");
   g_assert_cmpstr (mark->name, ==, "Draw");
   g_assert_cmpint (mark->duration, ==, 125);
   g_assert_cmpstr (mark->message, ==, "hdmi-1");
@@ -562,6 +563,7 @@ test_reader_writer_mark (void)
 
   mark = sp_capture_reader_read_mark (reader);
   g_assert_nonnull (mark);
+  g_assert_cmpstr (mark->group, ==, "thread-1");
   g_assert_cmpstr (mark->name, ==, "Deadline");
   g_assert_cmpint (mark->duration, ==, 0);
   g_assert_cmpstr (mark->message, ==, "hdmi-1");

@@ -184,7 +184,8 @@ typedef struct
 {
   SpCaptureFrame frame;
   gint64         duration;
-  gchar          name[32];
+  gchar          group[24];
+  gchar          name[40];
   gchar          message[0];
 } SpCaptureMark;
 
@@ -203,7 +204,7 @@ G_STATIC_ASSERT (sizeof (SpCaptureCounter) == 128);
 G_STATIC_ASSERT (sizeof (SpCaptureCounterValues) == 96);
 G_STATIC_ASSERT (sizeof (SpCaptureFrameCounterDefine) == 32);
 G_STATIC_ASSERT (sizeof (SpCaptureFrameCounterSet) == 32);
-G_STATIC_ASSERT (sizeof (SpCaptureMark) == 64);
+G_STATIC_ASSERT (sizeof (SpCaptureMark) == 96);
 
 static inline gint
 sp_capture_address_compare (SpCaptureAddress a,

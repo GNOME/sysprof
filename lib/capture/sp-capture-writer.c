@@ -542,6 +542,7 @@ sp_capture_writer_add_mark (SpCaptureWriter *self,
                             gint             cpu,
                             GPid             pid,
                             guint64          duration,
+                            const gchar     *group,
                             const gchar     *name,
                             const gchar     *message)
 {
@@ -551,6 +552,7 @@ sp_capture_writer_add_mark (SpCaptureWriter *self,
 
   g_assert (self != NULL);
   g_assert (name != NULL);
+  g_assert (group != NULL);
 
   if (message == NULL)
     message = "";
@@ -569,7 +571,8 @@ sp_capture_writer_add_mark (SpCaptureWriter *self,
                                 SP_CAPTURE_FRAME_MARK);
 
   ev->duration = duration;
-  memcpy (ev->name, name, sizeof ev->name);
+  g_strlcpy (ev->group, group, sizeof ev->group);
+  g_strlcpy (ev->name, name, sizeof ev->name);
   memcpy (ev->message, message, message_len);
 
   self->stat.frame_count[SP_CAPTURE_FRAME_MARK]++;

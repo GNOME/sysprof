@@ -60,6 +60,7 @@ gboolean            sp_capture_writer_add_mark        (SpCaptureWriter         *
                                                        gint                     cpu,
                                                        GPid                     pid,
                                                        guint64                  duration,
+                                                       const gchar             *group,
                                                        const gchar             *name,
                                                        const gchar             *message);
 guint64             sp_capture_writer_add_jitmap      (SpCaptureWriter         *self,

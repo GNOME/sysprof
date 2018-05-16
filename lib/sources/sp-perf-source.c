@@ -43,6 +43,7 @@
 #include <glib/gi18n.h>
 #include <errno.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -53,6 +54,43 @@
 
 #define N_WAKEUP_EVENTS 149
 
+/* Identifiers for the various tracepoints we might watch for */
+enum SpTracepoint {
+  DRM_VBLANK,
+};
+
+typedef struct {
+  enum SpTracepoint tp;
+  const char *path;
+} SpOptionalTracepoint;
+
+/* Global list of the optional tracepoints we might want to watch. */
+static const SpOptionalTracepoint optional_tracepoints[] = {
+  /* This event fires just after the vblank IRQ handler starts.
+   *
+   * Note that on many platforms when nothing is waiting for vblank
+   * (no pageflips have happened recently, no rendering is
+   * synchronizing to vblank), the vblank IRQ will get masked off and
+   * the event won't show up in the timeline.
+   *
+   * Also note that when we're in watch-a-single-process mode, we
+   * won't get the event since it comes in on an IRQ handler, not for
+   * our pid.
+   */
+  { DRM_VBLANK, "drm/drm_vblank_event" },
+};
+
+/* Struct describing tracepoint events.
+ *
+ * This should be extended with some sort of union for the describing
+ * the locations of the relevant fields within the _RAW section of the
+ * struct perf_event, so we can pick out things like the vblank CRTC
+ * number and MSC.
+ */
+typedef struct {
+  enum SpTracepoint tp;
+} SpTracepointDesc;
+
 struct _SpPerfSource
 {
   GObject          parent_instance;
@@ -60,6 +98,9 @@ struct _SpPerfSource
   SpCaptureWriter *writer;
   SpPerfCounter   *counter;
   GHashTable      *pids;
+
+  /* Mapping from perf sample identifiers to SpTracepointDesc. */
+  GHashTable      *tracepoint_event_ids;
 
   guint            running : 1;
   guint            is_ready : 1;
@@ -93,6 +134,7 @@ sp_perf_source_finalize (GObject *object)
   g_clear_pointer (&self->writer, sp_capture_writer_unref);
   g_clear_pointer (&self->counter, sp_perf_counter_unref);
   g_clear_pointer (&self->pids, g_hash_table_unref);
+  g_clear_pointer (&self->tracepoint_event_ids, g_hash_table_unref);
 
   G_OBJECT_CLASS (sp_perf_source_parent_class)->finalize (object);
 }
@@ -116,6 +158,7 @@ static void
 sp_perf_source_init (SpPerfSource *self)
 {
   self->pids = g_hash_table_new (NULL, NULL);
+  self->tracepoint_event_ids = g_hash_table_new (NULL, NULL);
 }
 
 static gboolean
@@ -129,6 +172,30 @@ do_emit_exited (gpointer data)
 }
 
 static void
+sp_perf_source_handle_tracepoint (SpPerfSource                   *self,
+                                  gint                            cpu,
+                                  const SpPerfCounterEventSample *sample,
+                                  SpTracepointDesc               *tp_desc)
+{
+    switch (tp_desc->tp)
+      {
+      case DRM_VBLANK:
+        sp_capture_writer_add_mark (self->writer,
+                                    sample->time,
+                                    cpu,
+                                    sample->pid,
+                                    0,
+                                    "drm",
+                                    "vblank",
+                                    NULL);
+        break;
+
+      default:
+        break;
+      }
+}
+
+static void
 sp_perf_source_handle_sample (SpPerfSource                   *self,
                               gint                            cpu,
                               const SpPerfCounterEventSample *sample)
@@ -136,9 +203,21 @@ sp_perf_source_handle_sample (SpPerfSource                   *self,
   const guint64 *ips;
   gint n_ips;
   guint64 trace[3];
+  SpTracepointDesc *tp_desc;
 
   g_assert (SP_IS_PERF_SOURCE (self));
   g_assert (sample != NULL);
+
+  /* We don't capture IPs with tracepoints, and get _RAW data instead.  Handle
+   * them separately.
+   */
+  tp_desc = g_hash_table_lookup (self->tracepoint_event_ids,
+                                 GINT_TO_POINTER (sample->identifier));
+  if (tp_desc)
+    {
+      sp_perf_source_handle_tracepoint (self, cpu, sample, tp_desc);
+      return;
+    }
 
   ips = sample->ips;
   n_ips = sample->n_ips;
@@ -277,6 +356,106 @@ sp_perf_source_handle_event (SpPerfCounterEvent *event,
 }
 
 static gboolean
+sp_perf_get_tracepoint_config (const char *path, gint64 *config)
+{
+  gchar *filename = NULL;
+  gchar *contents;
+  size_t len;
+
+  filename = g_strdup_printf ("/sys/kernel/debug/tracing/events/%s/id", path);
+  if (!filename)
+    return FALSE;
+
+  if (!g_file_get_contents (filename, &contents, &len, NULL))
+    {
+      g_free (filename);
+      return FALSE;
+    }
+
+  g_free(filename);
+
+  *config = strtoull(contents, NULL, 0);
+
+  g_free (contents);
+
+  return TRUE;
+}
+
+/* Adds a perf tracepoint event, if it's available.
+ *
+ * These are kernel tracepoints that we want to include in our capture
+ * when present, but may be kernel version or driver-specific.
+ */
+static void
+sp_perf_source_add_optional_tracepoint (SpPerfSource                *self,
+                                        GPid                        pid,
+                                        gint                        cpu,
+                                        const SpOptionalTracepoint *optional_tracepoint,
+                                        GError                     **error)
+{
+  struct perf_event_attr attr = { 0 };
+  SpTracepointDesc *tp_desc;
+  gulong flags = 0;
+  gint fd;
+  gint64 config;
+  gint64 id;
+  int ret;
+
+  if (!sp_perf_get_tracepoint_config(optional_tracepoint->path, &config))
+    return;
+
+  attr.type = PERF_TYPE_TRACEPOINT;
+  attr.sample_type = PERF_SAMPLE_RAW
+                   | PERF_SAMPLE_IP
+                   | PERF_SAMPLE_TID
+                   | PERF_SAMPLE_IDENTIFIER
+                   | PERF_SAMPLE_CALLCHAIN
+                   | PERF_SAMPLE_TIME;
+  attr.config = config;
+  attr.sample_period = 1;
+
+#ifdef HAVE_PERF_CLOCKID
+  attr.clockid = sp_clock;
+  attr.use_clockid = 1;
+#endif
+
+  attr.size = sizeof attr;
+
+  fd = sp_perf_counter_open (self->counter, &attr, pid, cpu, -1, flags);
+
+  ret = ioctl (fd, PERF_EVENT_IOC_ID, &id);
+  if (ret != 0)
+    {
+      g_set_error (error,
+                   G_IO_ERROR,
+                   G_IO_ERROR_FAILED,
+                   _("Sysprof failed to get perf_event ID."));
+      close(fd);
+      return;
+    }
+
+  tp_desc = g_malloc (sizeof (*tp_desc));
+  if (!tp_desc)
+    {
+      close(fd);
+      return;
+    }
+
+  tp_desc->tp = optional_tracepoint->tp;
+
+  /* Here's where we should inspect the /format file to determine how
+   * to pick fields out of the _RAW data.
+   */
+
+  /* We're truncating the event ID from 64b to 32 to fit in the hash.
+   * The event IDs start from 0 at boot, so meh.
+   */
+  g_assert (id <= 0xffffffff);
+  g_hash_table_insert (self->tracepoint_event_ids,
+                       GINT_TO_POINTER (id), tp_desc);
+}
+
+static gboolean
 sp_perf_source_start_pid (SpPerfSource  *self,
                           GPid           pid,
                           GError       **error)
@@ -286,6 +465,7 @@ sp_perf_source_start_pid (SpPerfSource  *self,
   gint ncpu = g_get_num_processors ();
   gint cpu = 0;
   gint fd;
+  gint i;
 
   g_assert (SP_IS_PERF_SOURCE (self));
 
@@ -358,6 +538,13 @@ sp_perf_source_start_pid (SpPerfSource  *self,
 
               return FALSE;
             }
+        }
+
+      for (i = 0; i < G_N_ELEMENTS(optional_tracepoints); i++)
+        {
+          sp_perf_source_add_optional_tracepoint (self, pid, cpu,
+                                                  &optional_tracepoints[i],
+                                                  error);
         }
     }
 

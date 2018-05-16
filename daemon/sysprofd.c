@@ -115,7 +115,7 @@ _perf_event_open (struct perf_event_attr *attr,
   assert (attr != NULL);
 
   /* Quick sanity check */
-  if (attr->sample_period < 100000)
+  if (attr->sample_period < 100000 && attr->type != PERF_TYPE_TRACEPOINT)
     return -EINVAL;
 
   return syscall (__NR_perf_event_open, attr, pid, cpu, group_fd, flags);

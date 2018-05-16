@@ -25,6 +25,14 @@
 
 G_BEGIN_DECLS
 
+/* Structs representing the layouts of perf records returned by the
+ * kernel.
+ *
+ * perf returns variable-layout structs based on the
+ * perf_event_sample_format selectors in perf_event_attr.sample_type.
+ * These structs are the particular layouts that sysprof requests.
+ */
+
 #define SP_TYPE_PERF_COUNTER (sp_perf_counter_get_type())
 
 typedef struct _SpPerfCounter SpPerfCounter;

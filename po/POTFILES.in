@@ -11,6 +11,7 @@ lib/resources/ui/sp-failed-state-view.ui
 lib/resources/ui/sp-profiler-menu-button.ui
 lib/resources/ui/sp-recording-state-view.ui
 lib/sources/sp-perf-source.c
+lib/visualizers/sp-visualizer-list.c
 lib/widgets/sp-profiler-menu-button.c
 src/resources/gtk/help-overlay.ui
 src/resources/gtk/menus.ui

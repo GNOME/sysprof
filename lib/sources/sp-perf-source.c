@@ -57,6 +57,8 @@
 /* Identifiers for the various tracepoints we might watch for */
 enum SpTracepoint {
   DRM_VBLANK,
+  DRM_I915_BEGIN,
+  DRM_I915_END,
 };
 
 typedef struct {
@@ -80,6 +82,20 @@ static const SpOptionalTracepoint optional_tracepoints[] = {
    */
   { DRM_VBLANK, "drm/drm_vblank_event",
     (const char *[]){ "crtc", "seq", NULL } },
+
+  /* I915 GPU execution.
+   *
+   * I don't know i915's model too well any more, but I think while
+   * there's an add that hasn't been retired (use the ring and seqno
+   * to correlate them, I think), then the GPU is busy.  The retires
+   * may or may not be delayed a while if the CPU isn't currently
+   * blocking on the GPU -- I would think you'd get them driven from
+   * the done IRQ handler, but I haven't verified that.
+   */
+  { DRM_I915_BEGIN, "i915/i915_gem_request_add",
+    (const char *[]){ "ctx", "ring", "seqno", NULL } },
+  { DRM_I915_END, "i915/i915_gem_request_retire",
+    (const char *[]){ "ctx", "ring", "seqno", NULL } },
 };
 
 /* Struct describing tracepoint events.
@@ -201,6 +217,27 @@ sp_perf_source_handle_tracepoint (SpPerfSource                       *self,
                                   0,
                                   "drm",
                                   "vblank",
+                                  message);
+      break;
+
+    case DRM_I915_BEGIN:
+    case DRM_I915_END:
+      message = g_strdup_printf ("ctx=%u, ring=%u, seqno=%u",
+                                 *(guint *)(sample->raw +
+                                            tp_desc->field_offsets[0]),
+                                 *(guint *)(sample->raw +
+                                            tp_desc->field_offsets[1]),
+                                 *(guint *)(sample->raw +
+                                            tp_desc->field_offsets[2]));
+
+      sp_capture_writer_add_mark (self->writer,
+                                  sample->time,
+                                  cpu,
+                                  sample->pid,
+                                  0,
+                                  "drm",
+                                  (tp_desc->tp == DRM_I915_BEGIN ?
+                                   "i915 gpu begin" : "i915 gpu end"),
                                   message);
       break;
 

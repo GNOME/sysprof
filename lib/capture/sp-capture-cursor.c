@@ -210,3 +210,18 @@ sp_capture_cursor_new (SpCaptureReader *reader)
 
   return self;
 }
+
+/**
+ * sp_capture_cursor_get_reader:
+ *
+ * Gets the underlying reader that is used by the cursor.
+ *
+ * Returns: (transfer none): An #SpCaptureReader
+ */
+SpCaptureReader *
+sp_capture_cursor_get_reader (SpCaptureCursor *self)
+{
+  g_return_val_if_fail (SP_IS_CAPTURE_CURSOR (self), NULL);
+
+  return self->reader;
+}

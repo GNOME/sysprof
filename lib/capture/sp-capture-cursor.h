@@ -42,6 +42,7 @@ typedef gboolean (*SpCaptureCursorCallback) (const SpCaptureFrame *frame,
                                              gpointer              user_data);
 
 SpCaptureCursor *sp_capture_cursor_new            (SpCaptureReader         *reader);
+SpCaptureReader *sp_capture_cursor_get_reader     (SpCaptureCursor         *self);
 void             sp_capture_cursor_foreach        (SpCaptureCursor         *self,
                                                    SpCaptureCursorCallback  callback,
                                                    gpointer                 user_data);

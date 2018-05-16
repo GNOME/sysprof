@@ -81,6 +81,7 @@ typedef struct
 typedef struct
 {
   struct perf_event_header header;
+  guint64 identifier;
   guint64 ip;
   guint32 pid;
   guint32 tid;

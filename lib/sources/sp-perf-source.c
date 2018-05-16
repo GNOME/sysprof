@@ -291,6 +291,7 @@ sp_perf_source_start_pid (SpPerfSource  *self,
 
   attr.sample_type = PERF_SAMPLE_IP
                    | PERF_SAMPLE_TID
+                   | PERF_SAMPLE_IDENTIFIER
                    | PERF_SAMPLE_CALLCHAIN
                    | PERF_SAMPLE_TIME;
   attr.wakeup_events = N_WAKEUP_EVENTS;

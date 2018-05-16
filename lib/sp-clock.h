@@ -34,8 +34,11 @@ static inline SpTimeStamp
 sp_clock_get_current_time (void)
 {
   struct timespec ts;
+  SpClock clock = sp_clock;
 
-  clock_gettime (sp_clock, &ts);
+  if G_UNLIKELY (clock == -1)
+    clock = CLOCK_MONOTONIC;
+  clock_gettime (clock, &ts);
 
   return (ts.tv_sec * G_GINT64_CONSTANT (1000000000)) + ts.tv_nsec;
 }

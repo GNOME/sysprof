@@ -314,6 +314,9 @@ sp_perf_source_start_pid (SpPerfSource  *self,
       cpu = -1;
     }
 
+  /* Perf won't let us capture on all CPUs on all pids, so we have to
+   * loop over CPUs if we're not just watching a single pid.
+   */
   for (; cpu < ncpu; cpu++)
     {
       attr.type = PERF_TYPE_HARDWARE;

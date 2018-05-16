@@ -18,7 +18,10 @@
 
 #define G_LOG_DOMAIN "sp-mark-visualizer-row"
 
-#include "sp-mark-visualizer-row.h"
+#include "capture/sp-capture-condition.h"
+#include "capture/sp-capture-cursor.h"
+#include "util/rectangles.h"
+#include "visualizers/sp-mark-visualizer-row.h"
 
 typedef struct
 {
@@ -35,9 +38,10 @@ typedef struct
   gchar *group;
 
   /*
-   * A sorted array of MarkInfo about marks we care to render.
+   * Rectangle information we have built from the marks that belong to this
+   * row of information.
    */
-  GArray *marks;
+  Rectangles *rectangles;
 
   /*
    * Child widget to display the label in the upper corner.
@@ -47,9 +51,10 @@ typedef struct
 
 typedef struct
 {
-  gchar *name;
-  GPid   pid;
-} MarkInfo;
+  gchar *group;
+  SpCaptureCursor *cursor;
+  Rectangles *rects;
+} BuildState;
 
 enum {
   PROP_0,
@@ -62,17 +67,65 @@ G_DEFINE_TYPE_WITH_PRIVATE (SpMarkVisualizerRow, sp_mark_visualizer_row, SP_TYPE
 
 static GParamSpec *properties [N_PROPS];
 
+static void
+build_state_free (BuildState *state)
+{
+  g_free (state->group);
+  g_object_unref (state->cursor);
+  g_slice_free (BuildState, state);
+}
+
+static gboolean
+sp_mark_visualizer_row_add_rect (const SpCaptureFrame *frame,
+                                 gpointer              user_data)
+{
+  BuildState *state = user_data;
+  const SpCaptureMark *mark = (const SpCaptureMark *)frame;
+
+  g_assert (frame != NULL);
+  g_assert (frame->type == SP_CAPTURE_FRAME_MARK);
+  g_assert (state != NULL);
+  g_assert (state->rects != NULL);
+
+  if (g_strcmp0 (mark->group, state->group) == 0)
+    rectangles_add (state->rects,
+                    frame->time,
+                    frame->time + mark->duration,
+                    mark->name,
+                    mark->message);
+
+  return TRUE;
+}
+
+static void
+sp_mark_visualizer_row_worker (GTask        *task,
+                               gpointer      source_object,
+                               gpointer      task_data,
+                               GCancellable *cancellable)
+{
+  BuildState *state = task_data;
+  gint64 end_time;
+
+  g_assert (G_IS_TASK (task));
+  g_assert (SP_IS_MARK_VISUALIZER_ROW (source_object));
+  g_assert (state != NULL);
+  g_assert (SP_IS_CAPTURE_CURSOR (state->cursor));
+
+  sp_capture_cursor_foreach (state->cursor, sp_mark_visualizer_row_add_rect, state);
+  end_time = sp_capture_reader_get_end_time (sp_capture_cursor_get_reader (state->cursor));
+  rectangles_set_end_time (state->rects, end_time);
+  g_task_return_pointer (task, g_steal_pointer (&state->rects), (GDestroyNotify)rectangles_free);
+}
+
 static gboolean
 sp_mark_visualizer_row_draw (GtkWidget *widget,
                              cairo_t   *cr)
 {
-#if 0
   SpMarkVisualizerRow *self = (SpMarkVisualizerRow *)widget;
   SpMarkVisualizerRowPrivate *priv = sp_mark_visualizer_row_get_instance_private (self);
   GtkStyleContext *style_context;
   GtkStateFlags flags;
   GdkRGBA foreground;
-#endif
   GtkAllocation alloc;
   gboolean ret;
 
@@ -83,94 +136,60 @@ sp_mark_visualizer_row_draw (GtkWidget *widget,
 
   ret = GTK_WIDGET_CLASS (sp_mark_visualizer_row_parent_class)->draw (widget, cr);
 
-#if 0
-  if (priv->cache == NULL)
+  if (priv->rectangles == NULL)
     return ret;
 
   style_context = gtk_widget_get_style_context (widget);
   flags = gtk_widget_get_state_flags (widget);
   gtk_style_context_get_color (style_context, flags, &foreground);
 
-  for (guint line = 0; line < priv->lines->len; line++)
-    {
-      g_autofree SpVisualizerRowAbsolutePoint *points = NULL;
-      const MarkInfo *line_info = &g_array_index (priv->lines, MarkInfo, line);
-      const Point *fpoints;
-      guint n_fpoints = 0;
-      GdkRGBA color;
-
-      fpoints = point_cache_get_points (priv->cache, line_info->id, &n_fpoints);
-
-      if (n_fpoints > 0)
-        {
-          gfloat last_x;
-          gfloat last_y;
-
-          points = g_new0 (SpVisualizerRowAbsolutePoint, n_fpoints);
-
-          sp_visualizer_row_translate_points (SP_VISUALIZER_ROW (self),
-                                              (const SpVisualizerRowRelativePoint *)fpoints,
-                                              n_fpoints,
-                                              points,
-                                              n_fpoints);
-
-          last_x = points[0].x;
-          last_y = points[0].y;
-
-          if (line_info->fill)
-            {
-              cairo_move_to (cr, last_x, alloc.height);
-              cairo_line_to (cr, last_x, last_y);
-            }
-          else
-            {
-              cairo_move_to (cr, last_x, last_y);
-            }
-
-          for (guint i = 1; i < n_fpoints; i++)
-            {
-              cairo_curve_to (cr,
-                              last_x + ((points[i].x - last_x) / 2),
-                              last_y,
-                              last_x + ((points[i].x - last_x) / 2),
-                              points[i].y,
-                              points[i].x,
-                              points[i].y);
-              last_x = points[i].x;
-              last_y = points[i].y;
-            }
-
-          if (line_info->fill)
-            {
-              cairo_line_to (cr, last_x, alloc.height);
-              cairo_close_path (cr);
-            }
-
-          cairo_set_line_width (cr, line_info->line_width);
-
-          if (line_info->use_default_style)
-            color = foreground;
-          else
-            color = line_info->foreground;
-
-          gdk_cairo_set_source_rgba (cr, &color);
-
-          if (line_info->fill)
-            cairo_fill (cr);
-          else
-            cairo_stroke (cr);
-        }
-    }
-#endif
+  rectangles_draw (priv->rectangles, GTK_WIDGET (self), cr);
 
   return ret;
 }
 
 static void
-sp_mark_visualizer_row_queue_reload (SpMarkVisualizerRow *self)
+data_load_cb (GObject      *object,
+              GAsyncResult *result,
+              gpointer      user_data)
 {
+  SpMarkVisualizerRow *self = (SpMarkVisualizerRow *)object;
+  SpMarkVisualizerRowPrivate *priv = sp_mark_visualizer_row_get_instance_private (self);
+
+  g_assert (SP_IS_MARK_VISUALIZER_ROW (self));
+  g_assert (G_IS_TASK (result));
+
+  g_clear_pointer (&priv->rectangles, rectangles_free);
+  priv->rectangles = g_task_propagate_pointer (G_TASK (result), NULL);
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sp_mark_visualizer_row_reload (SpMarkVisualizerRow *self)
+{
+  SpMarkVisualizerRowPrivate *priv = sp_mark_visualizer_row_get_instance_private (self);
+  g_autoptr(SpCaptureCursor) cursor = NULL;
+  g_autoptr(GTask) task = NULL;
+  SpCaptureCondition *condition;
+  BuildState *state;
+
   g_assert (SP_IS_MARK_VISUALIZER_ROW (self));
 
+  g_clear_pointer (&priv->rectangles, rectangles_free);
+
+  condition = sp_capture_condition_new_where_type_in (1, (SpCaptureFrameType[]) { SP_CAPTURE_FRAME_MARK });
+  cursor = sp_capture_cursor_new (priv->reader);
+  sp_capture_cursor_add_condition (cursor, g_steal_pointer (&condition));
+
+  state = g_slice_new0 (BuildState);
+  state->group = g_strdup (priv->group);
+  state->cursor = g_steal_pointer (&cursor);
+  state->rects = rectangles_new (sp_capture_reader_get_start_time (priv->reader),
+                                 sp_capture_reader_get_end_time (priv->reader));
+
+  task = g_task_new (self, NULL, data_load_cb, NULL);
+  g_task_set_task_data (task, state, (GDestroyNotify)build_state_free);
+  g_task_run_in_thread (task, sp_mark_visualizer_row_worker);
 }
 
 static void
@@ -187,7 +206,7 @@ sp_mark_visualizer_row_set_reader (SpVisualizerRow *row,
       g_clear_pointer (&priv->reader, sp_capture_reader_unref);
       if (reader != NULL)
         priv->reader = sp_capture_reader_ref (reader);
-      sp_mark_visualizer_row_queue_reload (self);
+      sp_mark_visualizer_row_reload (self);
     }
 }
 
@@ -198,7 +217,7 @@ sp_mark_visualizer_row_finalize (GObject *object)
   SpMarkVisualizerRowPrivate *priv = sp_mark_visualizer_row_get_instance_private (self);
 
   g_clear_pointer (&priv->group, g_free);
-  g_clear_pointer (&priv->marks, g_array_unref);
+  g_clear_pointer (&priv->rectangles, rectangles_free);
 
   G_OBJECT_CLASS (sp_mark_visualizer_row_parent_class)->finalize (object);
 }
@@ -288,8 +307,6 @@ sp_mark_visualizer_row_init (SpMarkVisualizerRow *self)
 {
   SpMarkVisualizerRowPrivate *priv = sp_mark_visualizer_row_get_instance_private (self);
   PangoAttrList *attrs = pango_attr_list_new ();
-
-  priv->marks = g_array_new (FALSE, FALSE, sizeof (MarkInfo));
 
   pango_attr_list_insert (attrs, pango_attr_scale_new (PANGO_SCALE_SMALL * PANGO_SCALE_SMALL));
 

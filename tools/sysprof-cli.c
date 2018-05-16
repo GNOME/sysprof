@@ -103,7 +103,7 @@ main (gint   argc,
 
   sp_clock_init ();
 
-  context = g_option_context_new (_("[CAPTURE_FILE] - Sysprof"));
+  context = g_option_context_new (_("[CAPTURE_FILE] — Sysprof"));
   g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
 
   if (!g_option_context_parse (context, &argc, &argv, &error))

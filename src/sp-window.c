@@ -192,7 +192,7 @@ sp_window_update_subtitle (SpWindow *self)
       dt = g_date_time_new_from_timeval_local (&tv);
       str = g_date_time_format (dt, "%x %X");
 
-      label = g_strdup_printf (_("%s - %s"), filename, str);
+      label = g_strdup_printf (_("%s — %s"), filename, str);
 
       gtk_label_set_label (self->subtitle, label);
     }
@@ -978,7 +978,7 @@ sp_window_open (SpWindow *self,
     {
       sp_window_notify_user (self,
                              GTK_MESSAGE_ERROR,
-                             _("The file \"%s\" could not be opened. Only local files are supported."),
+                             _("The file “%s” could not be opened. Only local files are supported."),
                              g_file_get_uri (file));
       return;
     }

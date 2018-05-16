@@ -477,7 +477,7 @@ sp_perf_get_tracepoint_fields (SpTracepointDesc           *tp_desc,
           g_set_error (error,
                        G_IO_ERROR,
                        G_IO_ERROR_FAILED,
-                       _("Sysprof failed to find field '%s'."),
+                       _("Sysprof failed to find field “%s”."),
                        optional_tp->fields[i]);
           g_free (contents);
           return FALSE;
@@ -490,7 +490,7 @@ sp_perf_get_tracepoint_fields (SpTracepointDesc           *tp_desc,
           g_set_error (error,
                        G_IO_ERROR,
                        G_IO_ERROR_FAILED,
-                       _("Sysprof failed to parse offset for '%s'."),
+                       _("Sysprof failed to parse offset for “%s”."),
                        optional_tp->fields[i]);
           g_free (contents);
           return FALSE;

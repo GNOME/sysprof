@@ -24,18 +24,17 @@ void
 sp_clock_init (void)
 {
   static const gint clock_ids[] = {
+    CLOCK_MONOTONIC,
     CLOCK_MONOTONIC_RAW,
     CLOCK_MONOTONIC_COARSE,
-    CLOCK_MONOTONIC,
     CLOCK_REALTIME_COARSE,
     CLOCK_REALTIME,
   };
-  guint i;
 
   if (sp_clock != -1)
     return;
 
-  for (i = 0; i < G_N_ELEMENTS (clock_ids); i++)
+  for (guint i = 0; i < G_N_ELEMENTS (clock_ids); i++)
     {
       struct timespec ts;
       int clock_id = clock_ids [i];

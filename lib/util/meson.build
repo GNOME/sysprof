@@ -39,6 +39,8 @@ util_ui_headers = [
 util_ui_sources = [
   'pointcache.c',
   'pointcache.h',
+  'rectangles.c',
+  'rectangles.h',
   'sp-color-cycle.c',
   'sp-color-cycle.h',
   'sp-model-filter.c',

@@ -31,6 +31,7 @@ main (gint argc,
   GHashTable *ctrtypes;
   GError *error = NULL;
   gint64 begin_time;
+  gint64 end_time;
 
   if (argc != 2)
     {
@@ -51,6 +52,12 @@ main (gint argc,
       g_printerr ("%s\n", error->message);
       return EXIT_FAILURE;
     }
+
+  begin_time = sp_capture_reader_get_start_time (reader);
+  end_time = sp_capture_reader_get_end_time (reader);
+
+  g_print ("Capture Time Range: %"G_GUINT64_FORMAT" to %"G_GUINT64_FORMAT" (%lf)\n",
+           begin_time, end_time, (end_time - begin_time) / (gdouble)NSEC_PER_SEC);
 
   while (sp_capture_reader_peek_type (reader, &type))
     {
@@ -118,13 +125,14 @@ main (gint argc,
         case SP_CAPTURE_FRAME_MARK:
           {
             const SpCaptureMark *mark = sp_capture_reader_read_mark (reader);
+            gdouble ptime = (mark->frame.time - begin_time) / (gdouble)NSEC_PER_SEC;
 
-            g_print ("MARK: pid=%d time=%"G_GINT64_FORMAT"\n"
+            g_print ("MARK: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
                      "   group  = %s\n"
                      "    name  = %s\n"
                      " duration = %"G_GUINT64_FORMAT"\n"
                      "  message = %s\n",
-                     mark->frame.pid, mark->frame.time,
+                     mark->frame.pid, mark->frame.time, ptime,
                      mark->group, mark->name, mark->duration, mark->message);
 
             break;

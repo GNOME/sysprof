@@ -88,17 +88,30 @@ typedef struct
   guint64 time;
   guint64 n_ips;
   guint64 ips[0];
-} SpPerfCounterEventSample;
+} SpPerfCounterEventCallchain;
+
+typedef struct
+{
+  struct perf_event_header header;
+  guint64 identifier;
+  guint64 ip;
+  guint32 pid;
+  guint32 tid;
+  guint64 time;
+  guint32 raw_size;
+  guchar raw[];
+} SpPerfCounterEventTracepoint;
 
 typedef union
 {
-  struct perf_event_header header;
-  guint8                   raw[0];
-  SpPerfCounterEventFork   fork;
-  SpPerfCounterEventComm   comm;
-  SpPerfCounterEventExit   exit;
-  SpPerfCounterEventMmap   mmap;
-  SpPerfCounterEventSample sample;
+  struct perf_event_header     header;
+  guint8                       raw[0];
+  SpPerfCounterEventFork       fork;
+  SpPerfCounterEventComm       comm;
+  SpPerfCounterEventExit       exit;
+  SpPerfCounterEventMmap       mmap;
+  SpPerfCounterEventCallchain  callchain;
+  SpPerfCounterEventTracepoint tracepoint;
 } SpPerfCounterEvent;
 
 #pragma pack(pop)

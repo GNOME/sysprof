@@ -61,7 +61,8 @@ enum SpTracepoint {
 
 typedef struct {
   enum SpTracepoint tp;
-  const char *path;
+  const char       *path;
+  const char      **fields;
 } SpOptionalTracepoint;
 
 /* Global list of the optional tracepoints we might want to watch. */
@@ -77,7 +78,8 @@ static const SpOptionalTracepoint optional_tracepoints[] = {
    * won't get the event since it comes in on an IRQ handler, not for
    * our pid.
    */
-  { DRM_VBLANK, "drm/drm_vblank_event" },
+  { DRM_VBLANK, "drm/drm_vblank_event",
+    (const char *[]){ "crtc", "seq", NULL } },
 };
 
 /* Struct describing tracepoint events.
@@ -89,6 +91,7 @@ static const SpOptionalTracepoint optional_tracepoints[] = {
  */
 typedef struct {
   enum SpTracepoint tp;
+  gsize field_offsets[0];
 } SpTracepointDesc;
 
 struct _SpPerfSource
@@ -172,52 +175,53 @@ do_emit_exited (gpointer data)
 }
 
 static void
-sp_perf_source_handle_tracepoint (SpPerfSource                   *self,
-                                  gint                            cpu,
-                                  const SpPerfCounterEventSample *sample,
-                                  SpTracepointDesc               *tp_desc)
+sp_perf_source_handle_tracepoint (SpPerfSource                       *self,
+                                  gint                                cpu,
+                                  const SpPerfCounterEventTracepoint *sample,
+                                  SpTracepointDesc                   *tp_desc)
 {
-    switch (tp_desc->tp)
-      {
-      case DRM_VBLANK:
-        sp_capture_writer_add_mark (self->writer,
-                                    sample->time,
-                                    cpu,
-                                    sample->pid,
-                                    0,
-                                    "drm",
-                                    "vblank",
-                                    NULL);
-        break;
+  gchar *message = NULL;
 
-      default:
-        break;
-      }
+  /* Note that field_offsets[] correspond to the
+   * SpOptionalTracepoint->fields[] strings.  Yes, this is gross.
+   */
+  switch (tp_desc->tp)
+    {
+    case DRM_VBLANK:
+      message = g_strdup_printf ("crtc=%d, seq=%u",
+                                 *(gint *)(sample->raw +
+                                           tp_desc->field_offsets[0]),
+                                 *(guint *)(sample->raw +
+                                            tp_desc->field_offsets[1]));
+
+      sp_capture_writer_add_mark (self->writer,
+                                  sample->time,
+                                  cpu,
+                                  sample->pid,
+                                  0,
+                                  "drm",
+                                  "vblank",
+                                  message);
+      break;
+
+    default:
+      break;
+    }
+
+  g_free (message);
 }
 
 static void
-sp_perf_source_handle_sample (SpPerfSource                   *self,
-                              gint                            cpu,
-                              const SpPerfCounterEventSample *sample)
+sp_perf_source_handle_callchain (SpPerfSource                      *self,
+                                 gint                               cpu,
+                                 const SpPerfCounterEventCallchain *sample)
 {
   const guint64 *ips;
   gint n_ips;
   guint64 trace[3];
-  SpTracepointDesc *tp_desc;
 
   g_assert (SP_IS_PERF_SOURCE (self));
   g_assert (sample != NULL);
-
-  /* We don't capture IPs with tracepoints, and get _RAW data instead.  Handle
-   * them separately.
-   */
-  tp_desc = g_hash_table_lookup (self->tracepoint_event_ids,
-                                 GINT_TO_POINTER (sample->identifier));
-  if (tp_desc)
-    {
-      sp_perf_source_handle_tracepoint (self, cpu, sample, tp_desc);
-      return;
-    }
 
   ips = sample->ips;
   n_ips = sample->n_ips;
@@ -264,6 +268,7 @@ sp_perf_source_handle_event (SpPerfCounterEvent *event,
                              gpointer            user_data)
 {
   SpPerfSource *self = user_data;
+  SpTracepointDesc *tp_desc;
   gsize offset;
   gint64 time;
 
@@ -345,7 +350,21 @@ sp_perf_source_handle_event (SpPerfCounterEvent *event,
       break;
 
     case PERF_RECORD_SAMPLE:
-      sp_perf_source_handle_sample (self, cpu, &event->sample);
+      /* We don't capture IPs with tracepoints, and get _RAW data
+       * instead.  Handle them separately.
+       */
+      g_assert (&event->callchain.identifier == &event->tracepoint.identifier);
+      tp_desc = g_hash_table_lookup (self->tracepoint_event_ids,
+                                     GINT_TO_POINTER (event->callchain.identifier));
+      if (tp_desc)
+        {
+          sp_perf_source_handle_tracepoint (self, cpu, &event->tracepoint,
+                                            tp_desc);
+        }
+      else
+        {
+          sp_perf_source_handle_callchain (self, cpu, &event->callchain);
+        }
       break;
 
     case PERF_RECORD_THROTTLE:
@@ -381,6 +400,74 @@ sp_perf_get_tracepoint_config (const char *path, gint64 *config)
   return TRUE;
 }
 
+static gboolean
+sp_perf_get_tracepoint_fields (SpTracepointDesc           *tp_desc,
+                               const SpOptionalTracepoint *optional_tp,
+                               GError                    **error)
+{
+  gchar *filename = NULL;
+  gchar *contents;
+  size_t len;
+  gint i;
+  filename = g_strdup_printf ("/sys/kernel/debug/tracing/events/%s/format",
+                              optional_tp->path);
+  if (!filename)
+    return FALSE;
+
+  if (!g_file_get_contents (filename, &contents, &len, NULL))
+    {
+      g_free (filename);
+      return FALSE;
+    }
+
+  g_free (filename);
+
+  /* Look up our fields.  Some example strings:
+   *
+   *  field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+   *	field:int crtc;	offset:8;	size:4;	signed:1;
+   *  field:unsigned int seq;	offset:12;	size:4;	signed:0;
+   */
+  for (i = 0; optional_tp->fields[i] != NULL; i++)
+    {
+      gchar *pattern = g_strdup_printf ("%s;\toffset:", optional_tp->fields[i]);
+      gchar *match;
+      gint64 offset;
+
+      match = strstr (contents, pattern);
+      if (!match)
+        {
+          g_set_error (error,
+                       G_IO_ERROR,
+                       G_IO_ERROR_FAILED,
+                       _("Sysprof failed to find field '%s'."),
+                       optional_tp->fields[i]);
+          g_free (contents);
+          return FALSE;
+        }
+
+      offset = g_ascii_strtoll (match + strlen (pattern),
+                                NULL, 0);
+      if (offset == G_MININT64 && errno != 0)
+        {
+          g_set_error (error,
+                       G_IO_ERROR,
+                       G_IO_ERROR_FAILED,
+                       _("Sysprof failed to parse offset for '%s'."),
+                       optional_tp->fields[i]);
+          g_free (contents);
+          return FALSE;
+        }
+
+      tp_desc->field_offsets[i] = offset;
+      g_free (pattern);
+    }
+
+  g_free (contents);
+
+  return TRUE;
+}
+
 /* Adds a perf tracepoint event, if it's available.
  *
  * These are kernel tracepoints that we want to include in our capture
@@ -400,6 +487,7 @@ sp_perf_source_add_optional_tracepoint (SpPerfSource                *self,
   gint64 config;
   gint64 id;
   int ret;
+  gint num_fields;
 
   if (!sp_perf_get_tracepoint_config(optional_tracepoint->path, &config))
     return;
@@ -409,7 +497,7 @@ sp_perf_source_add_optional_tracepoint (SpPerfSource                *self,
                    | PERF_SAMPLE_IP
                    | PERF_SAMPLE_TID
                    | PERF_SAMPLE_IDENTIFIER
-                   | PERF_SAMPLE_CALLCHAIN
+                   | PERF_SAMPLE_RAW
                    | PERF_SAMPLE_TIME;
   attr.config = config;
   attr.sample_period = 1;
@@ -434,7 +522,12 @@ sp_perf_source_add_optional_tracepoint (SpPerfSource                *self,
       return;
     }
 
-  tp_desc = g_malloc (sizeof (*tp_desc));
+  /* The fields list is NULL-terminated, count how many are there. */
+  for (num_fields = 0; optional_tracepoint->fields[num_fields]; num_fields++)
+    ;
+
+  tp_desc = g_malloc (sizeof (*tp_desc) +
+                      sizeof(*tp_desc->field_offsets) * num_fields);
   if (!tp_desc)
     {
       close(fd);
@@ -442,6 +535,13 @@ sp_perf_source_add_optional_tracepoint (SpPerfSource                *self,
     }
 
   tp_desc->tp = optional_tracepoint->tp;
+
+  if (!sp_perf_get_tracepoint_fields (tp_desc, optional_tracepoint, error))
+    {
+      free(tp_desc);
+      close(fd);
+      return;
+    }
 
   /* Here's where we should inspect the /format file to determine how
    * to pick fields out of the _RAW data.

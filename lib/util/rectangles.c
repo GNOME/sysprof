@@ -157,33 +157,39 @@ rectangles_draw (Rectangles *self,
 
   for (guint i = 0; i < self->rectangles->len; i++)
     {
-      const Rectangle *rect = &g_array_index (self->rectangles, Rectangle, i);
+      Rectangle *rect = &g_array_index (self->rectangles, Rectangle, i);
       guint y_index = GPOINTER_TO_UINT (g_hash_table_lookup (self->y_indexes, rect->name));
       SpVisualizerRowRelativePoint in_points[2];
       SpVisualizerRowAbsolutePoint out_points[2];
       GdkRectangle r;
 
+      g_assert (y_index > 0);
+      g_assert (y_index <= n_rows);
+
       in_points[0].x = (rect->begin - self->begin_time) / range;
-      in_points[0].y = y_index / (gfloat)n_rows;
+      in_points[0].y = (y_index - 1) / (gdouble)n_rows;
       in_points[1].x = (rect->end - self->begin_time) / range;
-      in_points[1].y = y_index / (gfloat)n_rows + 1;
+      in_points[1].y = 0;
 
       sp_visualizer_row_translate_points (SP_VISUALIZER_ROW (row),
                                           in_points, G_N_ELEMENTS (in_points),
                                           out_points, G_N_ELEMENTS (out_points));
 
+      r.height = alloc.height / (gdouble)n_rows;
       r.x = out_points[0].x;
-      r.y = out_points[0].y;
-      r.height = out_points[1].y - out_points[0].y;
+      r.y = out_points[0].y - r.height;
 
-      if (rect->end == rect->begin)
+      if (rect->end <= rect->begin)
         r.width = 1;
       else
         r.width = MAX (1, out_points[1].x - out_points[0].x);
 
+      rect->area = r;
+
       gdk_cairo_rectangle (cr, &r);
     }
 
+  cairo_set_source_rgb (cr, 0, 0, 0);
   cairo_fill (cr);
 }
 

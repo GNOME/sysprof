@@ -26,18 +26,23 @@ G_BEGIN_DECLS
 
 typedef struct _Rectangles Rectangles;
 
-Rectangles *rectangles_new          (gint64       begin_time,
-                                    gint64       end_time);
-void        rectangles_free         (Rectangles  *self);
-void        rectangles_draw         (Rectangles  *self,
-                                     GtkWidget   *widget,
-                                     cairo_t     *cr);
-void        rectangles_add          (Rectangles  *self,
-                                     gint64       begin_time,
-                                     gint64       end_time,
-                                     const gchar *name,
-                                     const gchar *message);
-void        rectangles_set_end_time (Rectangles  *self,
-                                     gint64       end_time);
+Rectangles *rectangles_new           (gint64       begin_time,
+                                      gint64       end_time);
+void        rectangles_free          (Rectangles  *self);
+void        rectangles_draw          (Rectangles  *self,
+                                      GtkWidget   *widget,
+                                      cairo_t     *cr);
+void        rectangles_add           (Rectangles  *self,
+                                      gint64       begin_time,
+                                      gint64       end_time,
+                                      const gchar *name,
+                                      const gchar *message);
+void        rectangles_set_end_time  (Rectangles  *self,
+                                      gint64       end_time);
+gboolean    rectangles_query_tooltip (Rectangles  *self,
+                                      GtkTooltip  *tooltip,
+                                      const gchar *group,
+                                      gint         x,
+                                      gint         y);
 
 G_END_DECLS

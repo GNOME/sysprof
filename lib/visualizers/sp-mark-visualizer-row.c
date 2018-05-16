@@ -118,6 +118,24 @@ sp_mark_visualizer_row_worker (GTask        *task,
 }
 
 static gboolean
+sp_mark_visualizer_row_query_tooltip (GtkWidget  *widget,
+                                      gint        x,
+                                      gint        y,
+                                      gboolean    keyboard_mode,
+                                      GtkTooltip *tooltip)
+{
+  SpMarkVisualizerRow *self = (SpMarkVisualizerRow *)widget;
+  SpMarkVisualizerRowPrivate *priv = sp_mark_visualizer_row_get_instance_private (self);
+
+  g_assert (SP_IS_MARK_VISUALIZER_ROW (self));
+
+  if (priv->rectangles == NULL)
+    return FALSE;
+
+  return rectangles_query_tooltip (priv->rectangles, tooltip, priv->group, x, y);
+}
+
+static gboolean
 sp_mark_visualizer_row_draw (GtkWidget *widget,
                              cairo_t   *cr)
 {
@@ -282,6 +300,7 @@ sp_mark_visualizer_row_class_init (SpMarkVisualizerRowClass *klass)
   object_class->set_property = sp_mark_visualizer_row_set_property;
 
   widget_class->draw = sp_mark_visualizer_row_draw;
+  widget_class->query_tooltip = sp_mark_visualizer_row_query_tooltip;
 
   visualizer_class->set_reader = sp_mark_visualizer_row_set_reader;
 
@@ -307,6 +326,8 @@ sp_mark_visualizer_row_init (SpMarkVisualizerRow *self)
 {
   SpMarkVisualizerRowPrivate *priv = sp_mark_visualizer_row_get_instance_private (self);
   PangoAttrList *attrs = pango_attr_list_new ();
+
+  gtk_widget_set_has_tooltip (GTK_WIDGET (self), TRUE);
 
   pango_attr_list_insert (attrs, pango_attr_scale_new (PANGO_SCALE_SMALL * PANGO_SCALE_SMALL));
 

@@ -200,3 +200,33 @@ rectangles_set_end_time (Rectangles *self,
   /* We might not know the real end time until we've exhausted the stream */
   self->end_time = end_time;
 }
+
+gboolean
+rectangles_query_tooltip (Rectangles  *self,
+                          GtkTooltip  *tooltip,
+                          const gchar *group,
+                          gint         x,
+                          gint         y)
+{
+  g_assert (self != NULL);
+  g_assert (GTK_IS_TOOLTIP (tooltip));
+
+  /* TODO: Sort, binary search, etc. */
+
+  for (guint i = 0; i < self->rectangles->len; i++)
+    {
+      const Rectangle *r = &g_array_index (self->rectangles, Rectangle, i);
+
+      if (r->area.x <= x &&
+          r->area.y <= y &&
+          r->area.x + r->area.width >= x &&
+          r->area.y + r->area.height >= y)
+        {
+          g_autofree gchar *text = g_strdup_printf ("%s:%s: %s", group, r->name, r->message);
+          gtk_tooltip_set_text (tooltip, text);
+          return TRUE;
+        }
+    }
+
+  return FALSE;
+}

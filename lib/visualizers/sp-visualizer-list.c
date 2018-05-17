@@ -43,7 +43,8 @@ typedef struct
 {
   SpCaptureCursor *cursor;
   GHashTable *mark_groups;
-  gboolean has_cpu;
+  guint fps_counter;
+  guint has_cpu : 1;
 } Discovery;
 
 enum {
@@ -212,11 +213,20 @@ discover_new_rows_frame_cb (const SpCaptureFrame *frame,
         g_hash_table_add (state->mark_groups, g_strdup (mark->group));
     }
 
-  /* TODO: Make this look for CPU define. Currently it is the
-   *       only thing that uses it. So...
-   */
   if (frame->type == SP_CAPTURE_FRAME_CTRDEF)
-    state->has_cpu = TRUE;
+    {
+      const SpCaptureFrameCounterDefine *def = (const SpCaptureFrameCounterDefine *)frame;
+
+      for (guint i = 0; i < def->n_counters; i++)
+        {
+          const SpCaptureCounter *ctr = &def->counters[i];
+
+          if (strstr (ctr->category, "CPU Percent") != NULL)
+            state->has_cpu = TRUE;
+          else if (strstr (ctr->category, "gtk") != NULL && strstr (ctr->name, "fps") != NULL)
+            state->fps_counter = ctr->id;
+        }
+    }
 
   return TRUE;
 }
@@ -261,6 +271,22 @@ handle_capture_results (GObject      *object,
                                      "y-lower", 0.0,
                                      "y-upper", 100.0,
                                      NULL);
+      gtk_container_add (GTK_CONTAINER (self), row);
+    }
+
+  if (state->fps_counter)
+    {
+      GdkRGBA rgba;
+      GtkWidget *row = g_object_new (SP_TYPE_LINE_VISUALIZER_ROW,
+                                     "title", _("FPS"),
+                                     "height-request", 50,
+                                     "selectable", FALSE,
+                                     "visible", TRUE,
+                                     "y-lower", 0.0,
+                                     "y-upper", 150.0,
+                                     NULL);
+      gdk_rgba_parse (&rgba, "#204a87");
+      sp_line_visualizer_row_add_counter (SP_LINE_VISUALIZER_ROW (row), state->fps_counter, &rgba);
       gtk_container_add (GTK_CONTAINER (self), row);
     }
 

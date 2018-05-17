@@ -481,6 +481,7 @@ sp_line_visualizer_row_add_counter (SpLineVisualizerRow *self,
     }
   else
     {
+      gdk_rgba_parse (&line_info.foreground, "#000");
       line_info.use_default_style = TRUE;
     }
 

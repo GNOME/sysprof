@@ -54,7 +54,14 @@ typedef struct
   gchar *group;
   SpCaptureCursor *cursor;
   Rectangles *rects;
+  GHashTable *inferred_rects;
 } BuildState;
+
+typedef struct {
+  gint64 time;
+  gchar *name;
+  gchar *message;
+} InferredRect;
 
 enum {
   PROP_0,
@@ -68,12 +75,96 @@ G_DEFINE_TYPE_WITH_PRIVATE (SpMarkVisualizerRow, sp_mark_visualizer_row, SP_TYPE
 static GParamSpec *properties [N_PROPS];
 
 static void
+free_inferred_rect (InferredRect *rect)
+{
+  g_free (rect->name);
+  g_free (rect->message);
+  g_free (rect);
+}
+
+static void
+add_inferred_rect_point (BuildState *state,
+                         InferredRect *rect)
+{
+  rectangles_add (state->rects,
+                  rect->time,
+                  rect->time,
+                  rect->name,
+                  rect->message);
+}
+
+static void
 build_state_free (BuildState *state)
 {
+  g_hash_table_remove_all (state->inferred_rects);
+  g_clear_pointer (&state->inferred_rects, g_hash_table_unref);
   g_free (state->group);
   g_object_unref (state->cursor);
   g_slice_free (BuildState, state);
 }
+
+/* Creates rectangles for GPU marks.
+ *
+ * GPU marks come in as a begin and an end, but since those things are
+ * processessed on potentially different CPUs, perf doesn't record
+ * them in sequence order in the mmap ringbuffer.  Thus, we have to
+ * shuffle things back around at visualization time.
+ */
+static gboolean
+process_gpu_mark (BuildState *state,
+                  const SpCaptureMark *mark)
+{
+  InferredRect *rect = g_hash_table_lookup (state->inferred_rects,
+                                            mark->message);
+
+  if (rect)
+    {
+      gboolean ours_begins = strstr (mark->name, "begin") != NULL;
+      gboolean theirs_begins = strstr (rect->name, "begin") != NULL;
+
+      if (ours_begins != theirs_begins)
+        {
+          rectangles_add (state->rects,
+                          ours_begins ? mark->frame.time : rect->time,
+                          ours_begins ? rect->time : mark->frame.time,
+                          ours_begins ? mark->name : rect->name,
+                          rect->message);
+        }
+      else
+        {
+          /* Something went weird with the tracking (GPU hang caused
+           * two starts?), so just put up both time points as vertical
+           * bars for now.
+           */
+          rectangles_add (state->rects,
+                          mark->frame.time,
+                          mark->frame.time,
+                          mark->name,
+                          mark->message);
+
+          add_inferred_rect_point (state, rect);
+        }
+
+      g_hash_table_remove (state->inferred_rects,
+                           rect->message);
+    }
+  else
+    {
+      rect = g_malloc0 (sizeof (*rect));
+      if (!rect)
+        return FALSE;
+
+      rect->name = g_strdup (mark->name);
+      rect->message = g_strdup (mark->message);
+      rect->time = mark->frame.time;
+      g_hash_table_insert (state->inferred_rects,
+                           rect->message,
+                           rect);
+    }
+
+  return TRUE;
+}
+
 
 static gboolean
 sp_mark_visualizer_row_add_rect (const SpCaptureFrame *frame,
@@ -88,11 +179,17 @@ sp_mark_visualizer_row_add_rect (const SpCaptureFrame *frame,
   g_assert (state->rects != NULL);
 
   if (g_strcmp0 (mark->group, state->group) == 0)
-    rectangles_add (state->rects,
-                    frame->time,
-                    frame->time + mark->duration,
-                    mark->name,
-                    mark->message);
+    {
+      if (strstr (mark->name, "gpu begin") != NULL ||
+          strstr (mark->name, "gpu end") != NULL)
+        process_gpu_mark (state, mark);
+      else
+        rectangles_add (state->rects,
+                        frame->time,
+                        frame->time + mark->duration,
+                        mark->name,
+                        mark->message);
+    }
 
   return TRUE;
 }
@@ -104,6 +201,8 @@ sp_mark_visualizer_row_worker (GTask        *task,
                                GCancellable *cancellable)
 {
   BuildState *state = task_data;
+  GHashTableIter iter;
+  gpointer key, value;
   gint64 end_time;
 
   g_assert (G_IS_TASK (task));
@@ -112,6 +211,19 @@ sp_mark_visualizer_row_worker (GTask        *task,
   g_assert (SP_IS_CAPTURE_CURSOR (state->cursor));
 
   sp_capture_cursor_foreach (state->cursor, sp_mark_visualizer_row_add_rect, state);
+
+  /* If any inferred rects are left incomplete, just drop them in as
+   * point events for now.
+   */
+  g_hash_table_iter_init (&iter, state->inferred_rects);
+  while (g_hash_table_iter_next (&iter, &key, &value))
+    {
+      InferredRect *rect = value;
+
+      add_inferred_rect_point (state, rect);
+    }
+  g_hash_table_remove_all (state->inferred_rects);
+
   end_time = sp_capture_reader_get_end_time (sp_capture_cursor_get_reader (state->cursor));
   rectangles_set_end_time (state->rects, end_time);
   g_task_return_pointer (task, g_steal_pointer (&state->rects), (GDestroyNotify)rectangles_free);
@@ -200,6 +312,9 @@ sp_mark_visualizer_row_reload (SpMarkVisualizerRow *self)
   sp_capture_cursor_add_condition (cursor, g_steal_pointer (&condition));
 
   state = g_slice_new0 (BuildState);
+  state->inferred_rects = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                 NULL,
+                                                 (GDestroyNotify)free_inferred_rect);
   state->group = g_strdup (priv->group);
   state->cursor = g_steal_pointer (&cursor);
   state->rects = rectangles_new (sp_capture_reader_get_start_time (priv->reader),

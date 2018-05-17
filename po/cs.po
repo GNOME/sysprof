@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2018-01-29 06:17+0000\n"
-"PO-Revision-Date: 2018-01-29 09:40+0100\n"
+"POT-Creation-Date: 2018-05-16 16:13+0000\n"
+"PO-Revision-Date: 2018-05-17 10:42+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -125,7 +125,7 @@ msgstr "Získat seznam symbolů jádra a jejich adresy"
 msgid "Authentication is required to access Linux kernel information."
 msgstr "Pro přístupu k informacím linuxového jádra je zapotřebí ověření."
 
-#: lib/callgraph/sp-callgraph-profile.c:415
+#: lib/callgraph/sp-callgraph-profile.c:426
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr "Sysprof nebyl schopen ze systémového záznamu vygenerovat graf volání."
 
@@ -220,17 +220,36 @@ msgstr ""
 "Víte, že k zaznamenávání můžete použít <a href=\"help:sysprof\">sysprof-cli</"
 "a>?"
 
-#: lib/sources/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:480
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Selhalo vyhledání pole „%s“."
+
+#: lib/sources/sp-perf-source.c:493
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Selhalo zpracování posunutí v „%s“;"
+
+#: lib/sources/sp-perf-source.c:557
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Selhalo získání ID pro perf_event."
+
+#: lib/sources/sp-perf-source.c:666
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
 msgstr ""
 "Sysprof požaduje ověření kvůli přístupu k počitadlům výkonu vašeho počítače."
 
-#: lib/sources/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:671
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Nastala chyba při pokusu o přístup k počitadlům výkonu: %s"
+
+#: lib/visualizers/sp-visualizer-list.c:257
+msgid "CPU"
+msgstr "Procesor"
 
 #: lib/widgets/sp-profiler-menu-button.c:116
 #: lib/widgets/sp-profiler-menu-button.c:131
@@ -360,35 +379,31 @@ msgstr "_Záznam"
 msgid "_Close"
 msgstr "_Zavřít"
 
-#: src/resources/ui/sp-window.ui:174
-msgid "CPU"
-msgstr "Procesor"
-
-#: src/resources/ui/sp-window.ui:222
+#: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Oddálit (Ctrl+-)"
 
-#: src/resources/ui/sp-window.ui:238
+#: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Výchozí úroveň přiblížení (Ctrl+0)"
 
-#: src/resources/ui/sp-window.ui:252
+#: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Přiblížit (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
+#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
 msgid "Open"
 msgstr "Otevřít"
 
-#: src/resources/ui/sp-window.ui:284
+#: src/resources/ui/sp-window.ui:274
 msgid "Save As"
 msgstr "Uložit jako"
 
-#: src/resources/ui/sp-window.ui:297
+#: src/resources/ui/sp-window.ui:287
 msgid "Screenshot"
 msgstr "Snímek obrazovky"
 
-#: src/resources/ui/sp-window.ui:310
+#: src/resources/ui/sp-window.ui:300
 msgid "Close"
 msgstr "Zavřít"
 
@@ -415,8 +430,8 @@ msgstr "[Záznam paměti]"
 
 #: src/sp-window.c:195
 #, c-format
-msgid "%s - %s"
-msgstr "%s – %s"
+msgid "%s — %s"
+msgstr "%s — %s"
 
 #: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
@@ -462,7 +477,7 @@ msgstr "Vyskytla se chyba při pokusu uložit váš záznam: %s"
 
 #: src/sp-window.c:981
 #, c-format
-msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Soubor „%s“ nelze otevřít. Podporovány jsou jen místní soubory."
 
 #: src/sp-window.c:1008
@@ -502,11 +517,10 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Vypsat verzi sysprof-cli a skončit"
 
 #: tools/sysprof-cli.c:106
-msgid "[CAPTURE_FILE] - Sysprof"
+msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[SOUBOR_ZÁZNAMU] – Sysprof"
 
 #: tools/sysprof-cli.c:125
-#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Do sysprof-cli bylo předáno příliš mnoho argumentů:"
 

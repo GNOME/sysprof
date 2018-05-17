@@ -34,6 +34,7 @@
 
 #define DEFAULT_BUFFER_SIZE (getpagesize() * 64L)
 #define INVALID_ADDRESS     (G_GUINT64_CONSTANT(0))
+#define MAX_COUNTERS        ((1 << 24) - 1)
 
 typedef struct
 {
@@ -1079,7 +1080,15 @@ sp_capture_writer_define_counters (SpCaptureWriter        *self,
   def->n_counters = n_counters;
 
   for (i = 0; i < n_counters; i++)
-    def->counters[i] = counters[i];
+    {
+      if (counters[i].id >= self->next_counter_id)
+        {
+          g_warning ("Counter %u has not been registered.", counters[i].id);
+          continue;
+        }
+
+      def->counters[i] = counters[i];
+    }
 
   self->stat.frame_count[SP_CAPTURE_FRAME_CTRDEF]++;
 
@@ -1171,7 +1180,7 @@ sp_capture_writer_request_counter (SpCaptureWriter *self,
 
   g_assert (self != NULL);
 
-  if (G_MAXUINT - n_counters < self->next_counter_id)
+  if (MAX_COUNTERS - n_counters < self->next_counter_id)
     return 0;
 
   ret = self->next_counter_id;

@@ -106,6 +106,17 @@ sp_capture_reader_get_filename (SpCaptureReader *self)
   return self->filename;
 }
 
+/**
+ * sp_capture_reader_new_from_fd:
+ * @fd: an fd to take ownership from
+ * @error: a location for a #GError or %NULL
+ *
+ * Creates a new reader using the file-descriptor.
+ *
+ * This is useful if you don't necessarily have access to the filename itself.
+ *
+ * Returns: (transfer full): an #SpCaptureReader or %NULL upon failure.
+ */
 SpCaptureReader *
 sp_capture_reader_new_from_fd (int      fd,
                                GError **error)

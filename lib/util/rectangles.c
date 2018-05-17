@@ -19,6 +19,7 @@
  */
 
 #include "util/rectangles.h"
+#include "util/sp-color-cycle.h"
 #include "visualizers/sp-visualizer-row.h"
 
 typedef struct
@@ -35,6 +36,8 @@ struct _Rectangles
   GStringChunk *strings;
   GArray *rectangles;
   GHashTable *y_indexes;
+  GHashTable *colors;
+  SpColorCycle *cycle;
   gint64 begin_time;
   gint64 end_time;
   guint sorted : 1;
@@ -50,6 +53,8 @@ rectangles_new (gint64 begin_time,
   self->strings = g_string_chunk_new (4096);
   self->rectangles = g_array_new (FALSE, FALSE, sizeof (Rectangle));
   self->y_indexes = g_hash_table_new (g_str_hash, g_str_equal);
+  self->colors = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
+  self->cycle = sp_color_cycle_new ();
   self->begin_time = begin_time;
   self->end_time = end_time;
   self->sorted = FALSE;
@@ -90,6 +95,9 @@ rectangles_free (Rectangles *self)
 {
   g_string_chunk_free (self->strings);
   g_array_unref (self->rectangles);
+  g_hash_table_unref (self->colors);
+  g_hash_table_unref (self->y_indexes);
+  sp_color_cycle_unref (self->cycle);
   g_slice_free (Rectangles, self);
 }
 
@@ -126,7 +134,13 @@ rectangles_sort (Rectangles *self)
       const Rectangle *rect = &g_array_index (self->rectangles, Rectangle, i);
 
       if (!g_hash_table_contains (self->y_indexes, rect->name))
-        g_hash_table_insert (self->y_indexes, (gchar *)rect->name, GUINT_TO_POINTER (++sequence));
+        {
+          GdkRGBA rgba;
+
+          sp_color_cycle_next (self->cycle, &rgba);
+          g_hash_table_insert (self->y_indexes, (gchar *)rect->name, GUINT_TO_POINTER (++sequence));
+          g_hash_table_insert (self->colors, (gchar *)rect->name, g_memdup (&rgba, sizeof rgba));
+        }
     }
 
   self->sorted = TRUE;
@@ -162,6 +176,7 @@ rectangles_draw (Rectangles *self,
       SpVisualizerRowRelativePoint in_points[2];
       SpVisualizerRowAbsolutePoint out_points[2];
       GdkRectangle r;
+      GdkRGBA *rgba;
 
       g_assert (y_index > 0);
       g_assert (y_index <= n_rows);
@@ -186,11 +201,12 @@ rectangles_draw (Rectangles *self,
 
       rect->area = r;
 
-      gdk_cairo_rectangle (cr, &r);
-    }
+      rgba = g_hash_table_lookup (self->colors, rect->name);
 
-  cairo_set_source_rgb (cr, 0, 0, 0);
-  cairo_fill (cr);
+      gdk_cairo_rectangle (cr, &r);
+      gdk_cairo_set_source_rgba (cr, rgba);
+      cairo_fill (cr);
+    }
 }
 
 void

@@ -186,7 +186,7 @@ publish_cpu (SpHostinfoSource *self)
 
   sp_capture_writer_set_counters (self->writer,
                                   SP_CAPTURE_CURRENT_TIME,
-                                  getpid (),
+                                  -1,
                                   -1,
                                   counter_ids,
                                   counter_values,

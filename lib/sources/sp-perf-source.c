@@ -85,17 +85,15 @@ static const SpOptionalTracepoint optional_tracepoints[] = {
 
   /* I915 GPU execution.
    *
-   * I don't know i915's model too well any more, but I think while
-   * there's an add that hasn't been retired (use the ring and seqno
-   * to correlate them, I think), then the GPU is busy.  The retires
-   * may or may not be delayed a while if the CPU isn't currently
-   * blocking on the GPU -- I would think you'd get them driven from
-   * the done IRQ handler, but I haven't verified that.
+   * These are the wrong events to be watching.  We need to use the
+   * ones under CONFIG_DRM_I915_LOW_LEVEL_TRACEPOINTS instead.
    */
+#if 0
   { DRM_I915_BEGIN, "i915/i915_gem_request_add",
     (const char *[]){ "ctx", "ring", "seqno", NULL } },
   { DRM_I915_END, "i915/i915_gem_request_retire",
     (const char *[]){ "ctx", "ring", "seqno", NULL } },
+#endif
 };
 
 /* Struct describing tracepoint events.

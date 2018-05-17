@@ -79,7 +79,7 @@ free_inferred_rect (InferredRect *rect)
 {
   g_free (rect->name);
   g_free (rect->message);
-  g_free (rect);
+  g_slice_free (InferredRect, rect);
 }
 
 static void
@@ -150,16 +150,12 @@ process_gpu_mark (BuildState *state,
     }
   else
     {
-      rect = g_malloc0 (sizeof (*rect));
-      if (!rect)
-        return FALSE;
-
+      rect = g_slice_new0 (InferredRect);
       rect->name = g_strdup (mark->name);
       rect->message = g_strdup (mark->message);
       rect->time = mark->frame.time;
-      g_hash_table_insert (state->inferred_rects,
-                           rect->message,
-                           rect);
+
+      g_hash_table_insert (state->inferred_rects, rect->message, rect);
     }
 
   return TRUE;

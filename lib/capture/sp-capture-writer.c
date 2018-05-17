@@ -1150,13 +1150,29 @@ sp_capture_writer_set_counters (SpCaptureWriter             *self,
   return TRUE;
 }
 
-gint
+/**
+ * sp_capture_writer_request_counter:
+ *
+ * This requests a series of counter identifiers for the capture.
+ *
+ * The returning number is always greater than zero. The resulting counter
+ * values are monotonic starting from the resulting value.
+ *
+ * For example, if you are returned 5, and requested 3 counters, the counter
+ * ids you should use are 5, 6, and 7.
+ *
+ * Returns: The next series of counter values or zero on failure.
+ */
+guint
 sp_capture_writer_request_counter (SpCaptureWriter *self,
                                    guint            n_counters)
 {
   gint ret;
 
   g_assert (self != NULL);
+
+  if (G_MAXUINT - n_counters < self->next_counter_id)
+    return 0;
 
   ret = self->next_counter_id;
   self->next_counter_id += n_counters;

@@ -1,0 +1,98 @@
+{
+    "app-id" : "org.gnome.Sysprof2",
+    "runtime" : "org.gnome.Platform",
+    "runtime-version" : "master",
+    "sdk" : "org.gnome.Sdk",
+    "command" : "sysprof",
+    "tags" : [
+        "nightly"
+    ],
+    "desktop-file-name-prefix" : "(Nightly) ",
+    "finish-args" : [
+        "--require-version=0.10.0",
+        "--allow=devel",
+        "--share=ipc",
+        "--socket=x11",
+        "--socket=wayland",
+        "--talk-name=org.gtk.vfs.*",
+        "--system-talk-name=org.freedesktop.PolicyKit1",
+        "--system-talk-name=org.gnome.Sysprof2",
+        "--filesystem=xdg-run/dconf",
+        "--filesystem=~/.config/dconf:ro",
+        "--talk-name=ca.desrt.dconf",
+        "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
+    ],
+    "build-options" : {
+        "cflags" : "-O2 -g",
+        "cxxflags" : "-O2 -g",
+        "env" : {
+            "V" : "1"
+        }
+    },
+    "cleanup" : [
+        "/include",
+        "/lib/pkgconfig",
+        "/share/pkgconfig",
+        "/share/aclocal",
+        "/man",
+        "/share/man",
+        "/share/gtk-doc",
+        "/share/doc",
+        "/share/vala",
+        "/share/bash-completions",
+        "*.la",
+        "*.a"
+    ],
+    "modules" : [
+        {
+            "name" : "polkit",
+            "config-opts" : [
+                "--disable-polkitd",
+                "--disable-man-pages",
+                "--disable-introspection"
+            ],
+            "rm-configure" : true,
+            "cleanup" : [
+                "/bin/*",
+                "/etc/pam.d",
+                "/etc/dbus-1",
+                "/share/dbus-1/system-services/*",
+                "/share/polkit-1/actions/*",
+                "/lib/polkit-1"
+            ],
+            "sources" : [
+                {
+                    "type" : "archive",
+                    "url" : "http://www.freedesktop.org/software/polkit/releases/polkit-0.113.tar.gz",
+                    "sha256" : "e1c095093c654951f78f8618d427faf91cf62abdefed98de40ff65eca6413c81"
+                },
+                {
+                    "type" : "patch",
+                    "path" : "polkit-build-Add-option-to-build-without-polkitd.patch"
+                },
+                {
+                    "type" : "file",
+                    "path" : "polkit-autogen",
+                    "dest-filename" : "autogen.sh"
+                }
+            ]
+        },
+        {
+            "name" : "sysprof",
+            "config-opts" : [
+                "--libdir=/app/lib",
+                "--buildtype=debugoptimized",
+                "-Denable_gtk=true",
+                "-Dwith_sysprofd=host"
+            ],
+            "buildsystem" : "meson",
+            "builddir" : true,
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://git.gnome.org/browse/sysprof"
+                }
+            ]
+        }
+    ]
+}

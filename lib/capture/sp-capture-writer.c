@@ -1188,3 +1188,33 @@ sp_capture_writer_request_counter (SpCaptureWriter *self,
 
   return ret;
 }
+
+gboolean
+_sp_capture_writer_set_time_range (SpCaptureWriter *self,
+                                   gint64           start_time,
+                                   gint64           end_time)
+{
+  ssize_t ret;
+
+  g_assert (self != NULL);
+
+do_start:
+  ret = pwrite (self->fd,
+                &start_time,
+                sizeof (start_time),
+                G_STRUCT_OFFSET (SpCaptureFileHeader, time));
+
+  if (ret < 0 && errno == EAGAIN)
+    goto do_start;
+
+do_end:
+  ret = pwrite (self->fd,
+                &end_time,
+                sizeof (end_time),
+                G_STRUCT_OFFSET (SpCaptureFileHeader, end_time));
+
+  if (ret < 0 && errno == EAGAIN)
+    goto do_end;
+
+  return TRUE;
+}

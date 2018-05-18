@@ -8,3 +8,6 @@ visualizers.selection:backdrop {
   background-color: alpha(@theme_selected_bg_color, 0.15);
   border: none;
 }
+visualizers list row:not(:first-child) {
+  border-top: 1px solid alpha(@borders, 0.4);
+}

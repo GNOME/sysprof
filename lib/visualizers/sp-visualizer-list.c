@@ -295,6 +295,8 @@ handle_capture_results (GObject      *object,
                                      NULL);
       gdk_rgba_parse (&rgba, "#204a87");
       sp_line_visualizer_row_add_counter (SP_LINE_VISUALIZER_ROW (row), state->fps_counter, &rgba);
+      rgba.alpha = 0.3;
+      sp_line_visualizer_row_set_fill (SP_LINE_VISUALIZER_ROW (row), state->fps_counter, &rgba);
       gtk_container_add (GTK_CONTAINER (self), row);
     }
 

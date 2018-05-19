@@ -261,6 +261,14 @@ handle_capture_results (GObject      *object,
 
   state = g_task_get_task_data (G_TASK (result));
 
+  /*
+   * TODO: It would be really nice if we had a more structured way to do this
+   *       so that data collections and visualizations could be mapped
+   *       together. One way to do so might be to create the concept of an
+   *       "instrument" which represents that pair and allows the user to
+   *       select what sort of data collections they'd like to see.
+   */
+
   if (state->has_cpu)
     {
       GtkWidget *row = g_object_new (SP_TYPE_CPU_VISUALIZER_ROW,

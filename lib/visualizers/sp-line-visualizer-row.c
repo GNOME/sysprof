@@ -69,8 +69,8 @@ typedef struct
 {
   guint id;
   gdouble line_width;
-  GdkRGBA background;
   GdkRGBA foreground;
+  GdkRGBA background;
   guint use_default_style : 1;
   guint fill : 1;
 } LineInfo;
@@ -215,17 +215,19 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
 
           cairo_set_line_width (cr, line_info->line_width);
 
+          if (line_info->fill)
+            {
+              gdk_cairo_set_source_rgba (cr, &line_info->background);
+              cairo_fill_preserve (cr);
+            }
+
           if (line_info->use_default_style)
             color = foreground;
           else
             color = line_info->foreground;
 
           gdk_cairo_set_source_rgba (cr, &color);
-
-          if (line_info->fill)
-            cairo_fill (cr);
-          else
-            cairo_stroke (cr);
+          cairo_stroke (cr);
         }
     }
 
@@ -682,4 +684,50 @@ sp_line_visualizer_row_load_data_finish (SpLineVisualizerRow  *self,
   g_assert (G_IS_TASK (result));
 
   return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+void
+sp_line_visualizer_row_set_line_width (SpLineVisualizerRow *self,
+                                       guint                counter_id,
+                                       gdouble              width)
+{
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
+
+  g_return_if_fail (SP_IS_LINE_VISUALIZER_ROW (self));
+
+  for (guint i = 0; i < priv->lines->len; i++)
+    {
+      LineInfo *info = &g_array_index (priv->lines, LineInfo, i);
+
+      if (info->id == counter_id)
+        {
+          info->line_width = width;
+          sp_line_visualizer_row_queue_reload (self);
+          break;
+        }
+    }
+}
+
+void
+sp_line_visualizer_row_set_fill (SpLineVisualizerRow *self,
+                                 guint                counter_id,
+                                 const GdkRGBA       *color)
+{
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
+
+  g_return_if_fail (SP_IS_LINE_VISUALIZER_ROW (self));
+
+  for (guint i = 0; i < priv->lines->len; i++)
+    {
+      LineInfo *info = &g_array_index (priv->lines, LineInfo, i);
+
+      if (info->id == counter_id)
+        {
+          info->fill = !!color;
+          if (color != NULL)
+            info->background = *color;
+          sp_line_visualizer_row_queue_reload (self);
+          break;
+        }
+    }
 }

@@ -38,11 +38,17 @@ struct _SpLineVisualizerRowClass
   gpointer _reserved[16];
 };
 
-GtkWidget *sp_line_visualizer_row_new         (void);
-void       sp_line_visualizer_row_clear       (SpLineVisualizerRow *self);
-void       sp_line_visualizer_row_add_counter (SpLineVisualizerRow *self,
-                                               guint                counter_id,
-                                               const GdkRGBA       *color);
+GtkWidget *sp_line_visualizer_row_new            (void);
+void       sp_line_visualizer_row_clear          (SpLineVisualizerRow *self);
+void       sp_line_visualizer_row_add_counter    (SpLineVisualizerRow *self,
+                                                  guint                counter_id,
+                                                  const GdkRGBA       *color);
+void       sp_line_visualizer_row_set_line_width (SpLineVisualizerRow *self,
+                                                  guint                counter_id,
+                                                  gdouble              width);
+void       sp_line_visualizer_row_set_fill       (SpLineVisualizerRow *self,
+                                                  guint                counter_id,
+                                                  const GdkRGBA       *color);
 
 G_END_DECLS
 

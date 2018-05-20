@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
 "product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2018-01-29 06:17+0000\n"
-"PO-Revision-Date: 2018-02-04 17:11+0100\n"
+"POT-Creation-Date: 2018-05-17 19:32+0000\n"
+"PO-Revision-Date: 2018-05-20 20:50+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -131,9 +131,9 @@ msgstr ""
 "Wymagane jest uwierzytelnienie, aby uzyskać dostęp do informacji o jądrze "
 "Linux."
 
-#: lib/callgraph/sp-callgraph-profile.c:415
+#: lib/callgraph/sp-callgraph-profile.c:426
 msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr "Sysprof nie może utworzyć wykresu wywołań z przechwytywania systemu."
+msgstr "Nie można utworzyć wykresu wywołań z przechwytywania systemu."
 
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
@@ -226,18 +226,41 @@ msgstr ""
 "Do profilowania można używać także polecenia <a href=\"help:sysprof"
 "\">sysprof-cli</a>."
 
-#: lib/sources/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:478
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Odnalezienie pola „%s” się nie powiodło."
+
+#: lib/sources/sp-perf-source.c:491
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Przetworzenie wyrównania dla „%s” się nie powiodło."
+
+#: lib/sources/sp-perf-source.c:555
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Uzyskanie identyfikatora „perf_event” się nie powiodło."
+
+#: lib/sources/sp-perf-source.c:664
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
 msgstr ""
-"Sysprof wymaga upoważnienia, aby uzyskać dostęp do liczników wydajności "
+"Wymagane jest upoważnienie, aby uzyskać dostęp do liczników wydajności "
 "komputera."
 
-#: lib/sources/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:669
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Wystąpił błąd podczas uzyskiwania dostępu do liczników wydajności: %s"
+
+#: lib/visualizers/sp-visualizer-list.c:267
+msgid "CPU"
+msgstr "Procesor"
+
+#: lib/visualizers/sp-visualizer-list.c:281
+msgid "FPS"
+msgstr "FPS"
 
 #: lib/widgets/sp-profiler-menu-button.c:116
 #: lib/widgets/sp-profiler-menu-button.c:131
@@ -369,35 +392,31 @@ msgstr "_Nagrywaj"
 msgid "_Close"
 msgstr "Za_mknij"
 
-#: src/resources/ui/sp-window.ui:174
-msgid "CPU"
-msgstr "Procesor"
-
-#: src/resources/ui/sp-window.ui:222
+#: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Pomniejsza (Ctrl+-)"
 
-#: src/resources/ui/sp-window.ui:238
+#: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Przywraca poziom powiększenia (Ctrl+0)"
 
-#: src/resources/ui/sp-window.ui:252
+#: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Powiększa (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
+#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
 msgid "Open"
 msgstr "Otwórz"
 
-#: src/resources/ui/sp-window.ui:284
+#: src/resources/ui/sp-window.ui:274
 msgid "Save As"
 msgstr "Zapisz jako"
 
-#: src/resources/ui/sp-window.ui:297
+#: src/resources/ui/sp-window.ui:287
 msgid "Screenshot"
 msgstr "Zrzut ekranu"
 
-#: src/resources/ui/sp-window.ui:310
+#: src/resources/ui/sp-window.ui:300
 msgid "Close"
 msgstr "Zamknij"
 
@@ -426,7 +445,7 @@ msgstr "[Przechwytywanie pamięci]"
 
 #: src/sp-window.c:195
 #, c-format
-msgid "%s - %s"
+msgid "%s — %s"
 msgstr "%s — %s"
 
 #: src/sp-window.c:233
@@ -473,7 +492,7 @@ msgstr "Wystąpił błąd podczas zapisywania przechwytywania: %s"
 
 #: src/sp-window.c:981
 #, c-format
-msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Nie można otworzyć pliku „%s”. Obsługiwane są tylko lokalne pliki."
 
 #: src/sp-window.c:1008
@@ -513,11 +532,10 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Wyświetla wersję sysprof-cli i kończy działanie"
 
 #: tools/sysprof-cli.c:106
-msgid "[CAPTURE_FILE] - Sysprof"
+msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[PLIK_PRZECHWYTYWANIA] — Sysprof"
 
 #: tools/sysprof-cli.c:125
-#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Przekazano za dużo parametrów do polecenia sysprof-cli:"
 

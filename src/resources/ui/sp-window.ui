@@ -172,9 +172,111 @@
                   </object>
                 </child>
                 <child>
-                  <object class="SpCallgraphView" id="callgraph_view">
+                  <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <property name="vexpand">false</property>
                     <property name="visible">true</property>
-                    <property name="vexpand">true</property>
+                    <style>
+                      <class name="controls"/>
+                    </style>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="orientation">horizontal</property>
+                        <property name="halign">start</property>
+                        <property name="hexpand">false</property>
+                        <property name="visible">true</property>
+                        <style>
+                          <class name="linked"/>
+                        </style>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="action-name">zoom.zoom-out</property>
+                            <property name="hexpand">true</property>
+                            <property name="tooltip-text" translatable="yes">Zoom out (Ctrl+-)</property>
+                            <property name="visible">true</property>
+                            <style>
+                              <class name="image-button"/>
+                            </style>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="icon-name">zoom-out-symbolic</property>
+                                <property name="visible">true</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="action-name">zoom.zoom-one</property>
+                            <property name="tooltip-text" translatable="yes">Reset zoom level (Ctrl+0)</property>
+                            <property name="visible">true</property>
+                            <child>
+                              <object class="GtkLabel" id="zoom_one_label">
+                                <property name="width-chars">5</property>
+                                <property name="visible">true</property>
+                                <property name="margin-left">8</property>
+                                <property name="margin-right">8</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="action-name">zoom.zoom-in</property>
+                            <property name="hexpand">true</property>
+                            <property name="tooltip-text" translatable="yes">Zoom in (Ctrl++)</property>
+                            <property name="visible">true</property>
+                            <style>
+                              <class name="image-button"/>
+                            </style>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="icon-name">zoom-in-symbolic</property>
+                                <property name="visible">true</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="center">
+                      <object class="GtkStackSwitcher">
+                        <style>
+                          <class name="views"/>
+                        </style>
+                        <property name="halign">center</property>
+                        <property name="stack">data_stack</property>
+                        <property name="vexpand">false</property>
+                        <property name="visible">true</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkStack" id="data_stack">
+                    <property name="expand">true</property>
+                    <property name="transition-type">crossfade</property>
+                    <property name="visible">true</property>
+                    <child>
+                      <object class="SpCallgraphView" id="callgraph_view">
+                        <property name="visible">true</property>
+                        <property name="expand">true</property>
+                      </object>
+                      <packing>
+                        <property name="name">callgraph</property>
+                        <property name="title" translatable="yes">Callgraph</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="SpTimechartView" id="timechart_view">
+                        <property name="visible">true</property>
+                        <property name="expand">true</property>
+                      </object>
+                      <packing>
+                        <property name="name">timechart</property>
+                        <property name="title" translatable="yes">Timechart</property>
+                      </packing>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -197,70 +299,6 @@
       <object class="GtkBox">
         <property name="orientation">vertical</property>
         <property name="visible">true</property>
-        <child>
-          <object class="GtkBox">
-            <property name="hexpand">true</property>
-            <property name="orientation">horizontal</property>
-            <property name="visible">true</property>
-            <style>
-              <class name="linked"/>
-            </style>
-            <child>
-              <object class="GtkButton">
-                <property name="action-name">zoom.zoom-out</property>
-                <property name="hexpand">true</property>
-                <property name="tooltip-text" translatable="yes">Zoom out (Ctrl+-)</property>
-                <property name="visible">true</property>
-                <style>
-                  <class name="image-button"/>
-                </style>
-                <child>
-                  <object class="GtkImage">
-                    <property name="icon-name">zoom-out-symbolic</property>
-                    <property name="visible">true</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton">
-                <property name="action-name">zoom.zoom-one</property>
-                <property name="tooltip-text" translatable="yes">Reset zoom level (Ctrl+0)</property>
-                <property name="visible">true</property>
-                <child>
-                  <object class="GtkLabel" id="zoom_one_label">
-                    <property name="width-chars">5</property>
-                    <property name="visible">true</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton">
-                <property name="action-name">zoom.zoom-in</property>
-                <property name="hexpand">true</property>
-                <property name="tooltip-text" translatable="yes">Zoom in (Ctrl++)</property>
-                <property name="visible">true</property>
-                <style>
-                  <class name="image-button"/>
-                </style>
-                <child>
-                  <object class="GtkImage">
-                    <property name="icon-name">zoom-in-symbolic</property>
-                    <property name="visible">true</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkSeparator">
-            <property name="orientation">horizontal</property>
-            <property name="margin-top">6</property>
-            <property name="visible">true</property>
-          </object>
-        </child>
         <child>
           <object class="GtkModelButton">
             <property name="action-name">win.open-capture</property>

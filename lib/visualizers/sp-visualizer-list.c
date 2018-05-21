@@ -311,7 +311,7 @@ handle_capture_results (GObject      *object,
           GtkWidget *row = g_object_new (SP_TYPE_MARK_VISUALIZER_ROW,
                                          "group", key,
                                          "title", key,
-                                         "height-request", 50,
+                                         "height-request", 35,
                                          "selectable", FALSE,
                                          "visible", TRUE,
                                          NULL);

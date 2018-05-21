@@ -190,6 +190,7 @@ test_reader_basic (void)
 
   {
     SpCaptureCounter counters[10];
+    guint base = sp_capture_writer_request_counter (writer, G_N_ELEMENTS (counters));
 
     t = SP_CAPTURE_CURRENT_TIME;
 
@@ -198,7 +199,7 @@ test_reader_basic (void)
         g_snprintf (counters[i].category, sizeof counters[i].category, "cat%d", i);
         g_snprintf (counters[i].name, sizeof counters[i].name, "name%d", i);
         g_snprintf (counters[i].description, sizeof counters[i].description, "desc%d", i);
-        counters[i].id = i + 1;
+        counters[i].id = base + i;
         counters[i].type = 0;
         counters[i].value.v64 = i * G_GINT64_CONSTANT (100000000000);
       }

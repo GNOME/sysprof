@@ -59,7 +59,7 @@ gboolean                           sp_capture_reader_save_as             (SpCapt
                                                                           const gchar         *filename,
                                                                           GError             **error);
 
-#ifndef SP_DISABLE_GOBJECT
+#ifdef SP_ENABLE_GOBJECT
 # define SP_TYPE_CAPTURE_READER (sp_capture_reader_get_type())
   GType sp_capture_reader_get_type (void);
 #endif

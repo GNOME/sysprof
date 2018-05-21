@@ -1,9 +1,9 @@
 sysprof_cli = executable('sysprof-cli',
   'sysprof-cli.c',
   dependencies: libsysprof_dep,
-  c_args: exe_c_args,
-  link_args: exe_link_args,
-  install: true,
+        c_args: exe_c_args,
+     link_args: exe_link_args,
+       install: true,
 )
 
 sysprof_cat = executable('sysprof-cat', 'sysprof-cat.c',
@@ -15,6 +15,6 @@ sysprof_cat = executable('sysprof-cat', 'sysprof-cat.c',
 sysprof_dump = executable('sysprof-dump',
   'sysprof-dump.c',
   dependencies: libsysprof_capture_dep,
-  c_args: exe_c_args,
-  link_args: exe_link_args,
+        c_args: exe_c_args,
+     link_args: exe_link_args,
 )

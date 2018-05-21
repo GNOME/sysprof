@@ -13,10 +13,15 @@ capture_sources = [
   'sp-capture-writer.c',
 ]
 
+static_capture_sources = [
+  'sp-capture-reader.c',
+  'sp-capture-writer.c',
+]
+
 libsysprof_headers += files(capture_headers)
 libsysprof_sources += files(capture_sources)
 
-libsysprof_capture_sources += files(capture_sources)
+libsysprof_capture_sources += files(static_capture_sources)
 
 install_headers(capture_headers,
   subdir: join_paths(libsysprof_header_subdir, 'capture'))

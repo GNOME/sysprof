@@ -19,7 +19,7 @@
 #ifndef SYSPROF_CAPTURE_H
 #define SYSPROF_CAPTURE_H
 
-#include <glib-object.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 
@@ -30,8 +30,6 @@ G_BEGIN_DECLS
 # include "sp-error.h"
 # include "sysprof-version.h"
 
-# include "capture/sp-capture-condition.h"
-# include "capture/sp-capture-cursor.h"
 # include "capture/sp-capture-reader.h"
 # include "capture/sp-capture-writer.h"
 

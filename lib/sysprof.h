@@ -24,6 +24,7 @@
 G_BEGIN_DECLS
 
 #define SYSPROF_INSIDE
+#define SP_ENABLE_GOBJECT
 
 # include "sp-address.h"
 # include "sp-clock.h"
@@ -57,6 +58,7 @@ G_BEGIN_DECLS
 # include "util/sp-map-lookaside.h"
 # include "util/sp-selection.h"
 
+#undef SP_ENABLE_GOBJECT
 #undef SYSPROF_INSIDE
 
 G_END_DECLS

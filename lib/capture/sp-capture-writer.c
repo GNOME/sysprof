@@ -97,7 +97,7 @@ struct _SpCaptureWriter
   SpCaptureStat stat;
 };
 
-#ifndef SP_DISABLE_GOBJECT
+#ifdef SP_ENABLE_GOBJECT
 G_DEFINE_BOXED_TYPE (SpCaptureWriter, sp_capture_writer,
                      sp_capture_writer_ref, sp_capture_writer_unref)
 #endif

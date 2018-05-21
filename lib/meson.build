@@ -59,7 +59,7 @@ subdir('widgets')
 cxx = meson.get_compiler('cpp')
 
 libsysprof_capture_deps = [
-  dependency('gobject-2.0'),
+  dependency('glib-2.0'),
 ]
 
 libsysprof_deps = [
@@ -68,7 +68,7 @@ libsysprof_deps = [
 ]
 
 version_link_arg = '-Wl,--version-script,' + join_paths(meson.current_source_dir(), 'sysprof.map')
-libsysprof_c_args = []
+libsysprof_c_args = [ '-DSP_ENABLE_GOBJECT' ]
 
 if get_option('with_sysprofd') != 'none'
   libsysprof_deps += dependency('polkit-gobject-1')
@@ -78,7 +78,6 @@ endif
 libsysprof_capture = static_library('sysprof-capture-' + libsysprof_api_version,
   libsysprof_capture_sources,
   dependencies: libsysprof_capture_deps,
-        c_args: libsysprof_c_args,
        install: true,
 )
 
@@ -93,14 +92,14 @@ libsysprof = shared_library('sysprof-' + libsysprof_api_version,
 
 libsysprof_dep = declare_dependency(
   include_directories: include_directories('.'),
-     link_with: libsysprof,
-  dependencies: libsysprof_deps,
+            link_with: libsysprof,
+         dependencies: libsysprof_deps,
 )
 
 libsysprof_capture_dep = declare_dependency(
   include_directories: include_directories('.'),
-     link_with: libsysprof_capture,
-  dependencies: libsysprof_capture_deps,
+            link_with: libsysprof_capture,
+         dependencies: libsysprof_capture_deps,
 )
 
 install_headers(libsysprof_base_headers, subdir: libsysprof_header_subdir)
@@ -121,9 +120,12 @@ if get_option('enable_gtk')
     dependency('gtk+-3.0', version: '>=3.22.0'),
   ]
 
+  libsysprof_ui_c_args = [ '-DSP_ENABLE_GOBJECT' ]
+
   libsysprof_ui = shared_library('sysprof-ui-' + libsysprof_api_version,
     libsysprof_ui_resources + libsysprof_ui_sources,
     dependencies: libsysprof_ui_deps,
+          c_args: libsysprof_ui_c_args,
        link_args: version_link_arg,
     link_depends: 'sysprof.map',
          install: true,

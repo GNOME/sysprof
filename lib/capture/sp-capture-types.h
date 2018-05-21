@@ -21,7 +21,7 @@
 
 #include <glib.h>
 
-#ifndef SP_DISABLE_GOBJECT
+#ifdef SP_ENABLE_GOBJECT
 # include <glib-object.h>
 #endif
 

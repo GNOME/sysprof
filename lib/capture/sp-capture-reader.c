@@ -42,7 +42,7 @@ struct _SpCaptureReader
   gint64               end_time;
 };
 
-#ifndef SP_DISABLE_GOBJECT
+#ifdef SP_ENABLE_GOBJECT
 G_DEFINE_BOXED_TYPE (SpCaptureReader, sp_capture_reader,
                      sp_capture_reader_ref, sp_capture_reader_unref)
 #endif

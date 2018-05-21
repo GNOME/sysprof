@@ -120,7 +120,7 @@ gboolean            _sp_capture_writer_set_time_range (SpCaptureWriter         *
                                                        gint64                   start_time,
                                                        gint64                   end_time) G_GNUC_INTERNAL;
 
-#ifndef SP_DISABLE_GOBJECT
+#ifdef SP_ENABLE_GOBJECT
 # define SP_TYPE_CAPTURE_WRITER (sp_capture_writer_get_type())
   GType sp_capture_writer_get_type (void);
 #endif

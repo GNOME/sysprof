@@ -19,6 +19,8 @@
 #ifndef SP_CAPTURE_CONDITION_H
 #define SP_CAPTURE_CONDITION_H
 
+#include <glib-object.h>
+
 #include "capture/sp-capture-types.h"
 
 G_BEGIN_DECLS

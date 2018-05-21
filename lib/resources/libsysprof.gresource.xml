@@ -19,6 +19,7 @@
     <file compressed="true">ui/sp-process-model-row.ui</file>
     <file compressed="true">ui/sp-profiler-menu-button.ui</file>
     <file compressed="true">ui/sp-recording-state-view.ui</file>
+    <file compressed="true">ui/sp-timechart-view.ui</file>
     <file compressed="true">ui/sp-visualizer-view.ui</file>
   </gresource>
 </gresources>

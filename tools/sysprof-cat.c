@@ -115,6 +115,12 @@ main (gint   argc,
   if (argc == 1)
     return 0;
 
+  if (isatty (STDOUT_FILENO))
+    {
+      g_printerr ("stdout is a TTY, refusing to write binary data to stdout.\n");
+      return EXIT_FAILURE;
+    }
+
   for (guint i = 1; i < argc; i++)
     {
       if (!g_file_test (argv[i], G_FILE_TEST_IS_REGULAR))

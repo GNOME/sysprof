@@ -67,7 +67,7 @@ G_DEFINE_TYPE_WITH_CODE (SpKernelSymbolResolver,
 static void
 sp_kernel_symbol_resolver_class_init (SpKernelSymbolResolverClass *klass)
 {
-  linux_quark = g_quark_from_static_string ("Linux");
+  linux_quark = g_quark_from_static_string ("Kernel");
 }
 
 static void

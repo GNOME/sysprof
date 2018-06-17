@@ -273,7 +273,7 @@ handle_capture_results (GObject      *object,
     {
       GtkWidget *row = g_object_new (SP_TYPE_CPU_VISUALIZER_ROW,
                                      "title", _("CPU"),
-                                     "height-request", 35,
+                                     "height-request", 50,
                                      "selectable", FALSE,
                                      "visible", TRUE,
                                      "y-lower", 0.0,

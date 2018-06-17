@@ -80,8 +80,8 @@ point_cache_contains_set (PointCache *self,
 void
 point_cache_add_point_to_set (PointCache *self,
                               guint       set_id,
-                              gfloat      x,
-                              gfloat      y)
+                              gdouble     x,
+                              gdouble     y)
 {
   GArray *ar;
   Point point = { x, y };

@@ -170,8 +170,8 @@ sp_line_visualizer_row_draw (GtkWidget *widget,
 
       if (n_fpoints > 0)
         {
-          gfloat last_x;
-          gfloat last_y;
+          gdouble last_x;
+          gdouble last_y;
 
           points = g_new0 (SpVisualizerRowAbsolutePoint, n_fpoints);
 
@@ -534,7 +534,7 @@ counter_type (LoadData *load,
   return SP_CAPTURE_COUNTER_DOUBLE;
 }
 
-static inline gfloat
+static inline gdouble
 calc_x (gint64 lower,
         gint64 upper,
         gint64 value)
@@ -542,7 +542,7 @@ calc_x (gint64 lower,
   return (gdouble)(value - lower) / (gdouble)(upper - lower);
 }
 
-static inline gfloat
+static inline gdouble
 calc_y_double (gdouble lower,
                gdouble upper,
                gdouble value)
@@ -550,7 +550,7 @@ calc_y_double (gdouble lower,
   return (value - lower) / (upper - lower);
 }
 
-static inline gfloat
+static inline gdouble
 calc_y_int64 (gint64 lower,
               gint64 upper,
               gint64 value)
@@ -572,7 +572,7 @@ sp_line_visualizer_row_load_data_frame_cb (const SpCaptureFrame *frame,
   if (frame->type == SP_CAPTURE_FRAME_CTRSET)
     {
       const SpCaptureFrameCounterSet *set = (SpCaptureFrameCounterSet *)frame;
-      gfloat x = calc_x (load->begin_time, load->end_time, frame->time);
+      gdouble x = calc_x (load->begin_time, load->end_time, frame->time);
 
       for (guint i = 0; i < set->n_values; i++)
         {
@@ -584,7 +584,7 @@ sp_line_visualizer_row_load_data_frame_cb (const SpCaptureFrame *frame,
 
               if (counter_id != 0 && contains_id (load->lines, counter_id))
                 {
-                  gfloat y;
+                  gdouble y;
 
                   if (counter_type (load, counter_id) == SP_CAPTURE_COUNTER_DOUBLE)
                     y = calc_y_double (load->y_lower, load->y_upper, group->values[j].vdbl);

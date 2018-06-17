@@ -27,8 +27,8 @@ typedef struct _PointCache PointCache;
 
 typedef struct
 {
-  gfloat x;
-  gfloat y;
+  gdouble x;
+  gdouble y;
 } Point;
 
 PointCache  *point_cache_new              (void);
@@ -40,8 +40,8 @@ gboolean     point_cache_contains_set     (PointCache *self,
                                            guint       set_id);
 void         point_cache_add_point_to_set (PointCache *self,
                                            guint       set_id,
-                                           gfloat      x,
-                                           gfloat      y);
+                                           gdouble     x,
+                                           gdouble     y);
 const Point *point_cache_get_points       (PointCache *self,
                                            guint       set_id,
                                            guint      *n_points);

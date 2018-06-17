@@ -32,8 +32,8 @@ G_DECLARE_DERIVABLE_TYPE (SpVisualizerRow, sp_visualizer_row, SP, VISUALIZER_ROW
 
 typedef struct
 {
-  gfloat x;
-  gfloat y;
+  gdouble x;
+  gdouble y;
 } SpVisualizerRowRelativePoint;
 
 typedef struct

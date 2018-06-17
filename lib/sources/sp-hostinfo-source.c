@@ -17,10 +17,15 @@
  */
 
 #include <ctype.h>
+#include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include "sources/sp-hostinfo-source.h"
+
+#define PROC_STAT_BUF_SIZE 4096
 
 struct _SpHostinfoSource
 {
@@ -28,9 +33,11 @@ struct _SpHostinfoSource
 
   guint            handler;
   gint             n_cpu;
+  gint             stat_fd;
 
   SpCaptureWriter *writer;
   GArray          *cpu_info;
+  gchar           *stat_buf;
 };
 
 typedef struct
@@ -61,6 +68,30 @@ sp_hostinfo_source_new (void)
   return g_object_new (SP_TYPE_HOSTINFO_SOURCE, NULL);
 }
 
+static gboolean
+read_stat (SpHostinfoSource *self)
+{
+  gssize len;
+
+  g_assert (self != NULL);
+  g_assert (self->stat_fd != -1);
+  g_assert (self->stat_buf != NULL);
+
+  if (lseek (self->stat_fd, 0, SEEK_SET) != 0)
+    return FALSE;
+
+  len = read (self->stat_fd, self->stat_buf, PROC_STAT_BUF_SIZE);
+  if (len <= 0)
+    return FALSE;
+
+  if (len < PROC_STAT_BUF_SIZE)
+    self->stat_buf[len] = 0;
+  else
+    self->stat_buf[PROC_STAT_BUF_SIZE-1] = 0;
+
+  return TRUE;
+}
+
 static void
 poll_cpu (SpHostinfoSource *self)
 {
@@ -85,77 +116,78 @@ poll_cpu (SpHostinfoSource *self)
   glong steal_calc;
   glong guest_calc;
   glong guest_nice_calc;
-  gchar *buf = NULL;
   glong total;
   gchar *line;
   gint ret;
   gint id;
-  gint i;
 
-  if (g_file_get_contents("/proc/stat", &buf, NULL, NULL))
+  if (read_stat (self))
     {
-      line = buf;
-      for (i = 0; buf[i]; i++)
+      line = self->stat_buf;
+
+      for (gsize i = 0; self->stat_buf[i]; i++)
         {
-          if (buf[i] == '\n') {
-            buf[i] = '\0';
-            if (g_str_has_prefix(line, "cpu"))
-              {
-                if (isdigit(line[3]))
-                  {
-                    CpuInfo *cpu_info;
+          if (self->stat_buf[i] == '\n')
+            {
+              self->stat_buf[i] = '\0';
 
-                    user = nice = sys = idle = id = 0;
-                    ret = sscanf (line, "%s %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld",
-                                  cpu, &user, &nice, &sys, &idle,
-                                  &iowait, &irq, &softirq, &steal, &guest, &guest_nice);
-                    if (ret != 11)
-                      goto next;
+              if (strncmp (line, "cpu", 3) == 0)
+                {
+                  if (isdigit (line[3]))
+                    {
+                      CpuInfo *cpu_info;
 
-                    ret = sscanf(cpu, "cpu%d", &id);
+                      user = nice = sys = idle = id = 0;
+                      ret = sscanf (line, "%s %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld",
+                                    cpu, &user, &nice, &sys, &idle,
+                                    &iowait, &irq, &softirq, &steal, &guest, &guest_nice);
+                      if (ret != 11)
+                        goto next;
 
-                    if (ret != 1 || id < 0 || id >= self->n_cpu)
-                      goto next;
+                      ret = sscanf(cpu, "cpu%d", &id);
 
-                    cpu_info = &g_array_index (self->cpu_info, CpuInfo, id);
+                      if (ret != 1 || id < 0 || id >= self->n_cpu)
+                        goto next;
 
-                    user_calc = user - cpu_info->last_user;
-                    nice_calc = nice - cpu_info->last_nice;
-                    system_calc = sys - cpu_info->last_system;
-                    idle_calc = idle - cpu_info->last_idle;
-                    iowait_calc = iowait - cpu_info->last_iowait;
-                    irq_calc = irq - cpu_info->last_irq;
-                    softirq_calc = softirq - cpu_info->last_softirq;
-                    steal_calc = steal - cpu_info->last_steal;
-                    guest_calc = guest - cpu_info->last_guest;
-                    guest_nice_calc = guest_nice - cpu_info->last_guest_nice;
+                      cpu_info = &g_array_index (self->cpu_info, CpuInfo, id);
 
-                    total = user_calc + nice_calc + system_calc + idle_calc + iowait_calc + irq_calc + softirq_calc + steal_calc + guest_calc + guest_nice_calc;
-                    cpu_info->total = ((total - idle_calc) / (gdouble)total) * 100.0;
+                      user_calc = user - cpu_info->last_user;
+                      nice_calc = nice - cpu_info->last_nice;
+                      system_calc = sys - cpu_info->last_system;
+                      idle_calc = idle - cpu_info->last_idle;
+                      iowait_calc = iowait - cpu_info->last_iowait;
+                      irq_calc = irq - cpu_info->last_irq;
+                      softirq_calc = softirq - cpu_info->last_softirq;
+                      steal_calc = steal - cpu_info->last_steal;
+                      guest_calc = guest - cpu_info->last_guest;
+                      guest_nice_calc = guest_nice - cpu_info->last_guest_nice;
 
-                    cpu_info->last_user = user;
-                    cpu_info->last_nice = nice;
-                    cpu_info->last_idle = idle;
-                    cpu_info->last_system = sys;
-                    cpu_info->last_iowait = iowait;
-                    cpu_info->last_irq = irq;
-                    cpu_info->last_softirq = softirq;
-                    cpu_info->last_steal = steal;
-                    cpu_info->last_guest = guest;
-                    cpu_info->last_guest_nice = guest_nice;
-                  }
-              } else {
-                /* CPU info comes first. Skip further lines. */
-                break;
-              }
+                      total = user_calc + nice_calc + system_calc + idle_calc + iowait_calc + irq_calc + softirq_calc + steal_calc + guest_calc + guest_nice_calc;
+                      cpu_info->total = ((total - idle_calc) / (gdouble)total) * 100.0;
 
-          next:
-            line = &buf[i + 1];
-          }
-      }
-  }
+                      cpu_info->last_user = user;
+                      cpu_info->last_nice = nice;
+                      cpu_info->last_idle = idle;
+                      cpu_info->last_system = sys;
+                      cpu_info->last_iowait = iowait;
+                      cpu_info->last_irq = irq;
+                      cpu_info->last_softirq = softirq;
+                      cpu_info->last_steal = steal;
+                      cpu_info->last_guest = guest;
+                      cpu_info->last_guest_nice = guest_nice;
+                    }
+                }
+              else
+                {
+                  /* CPU info comes first. Skip further lines. */
+                  break;
+                }
 
-  g_free (buf);
+            next:
+              line = &self->stat_buf[i + 1];
+            }
+        }
+    }
 }
 
 static void
@@ -163,12 +195,11 @@ publish_cpu (SpHostinfoSource *self)
 {
   SpCaptureCounterValue *counter_values;
   guint *counter_ids;
-  gint i;
 
   counter_ids = alloca (sizeof *counter_ids * self->n_cpu * 2);
   counter_values = alloca (sizeof *counter_values * self->n_cpu * 2);
 
-  for (i = 0; i < self->n_cpu; i++)
+  for (guint i = 0; i < self->n_cpu; i++)
     {
       CpuInfo *info = &g_array_index (self->cpu_info, CpuInfo, i);
       SpCaptureCounterValue *value = &counter_values[i*2];
@@ -219,6 +250,7 @@ sp_hostinfo_source_finalize (GObject *object)
 
   g_clear_pointer (&self->writer, sp_capture_writer_unref);
   g_clear_pointer (&self->cpu_info, g_array_unref);
+  g_clear_pointer (&self->stat_buf, g_free);
 
   G_OBJECT_CLASS (sp_hostinfo_source_parent_class)->finalize (object);
 }
@@ -234,7 +266,9 @@ sp_hostinfo_source_class_init (SpHostinfoSourceClass *klass)
 static void
 sp_hostinfo_source_init (SpHostinfoSource *self)
 {
+  self->stat_fd = -1;
   self->cpu_info = g_array_new (FALSE, TRUE, sizeof (CpuInfo));
+  self->stat_buf = g_malloc (PROC_STAT_BUF_SIZE);
 }
 
 static void
@@ -270,6 +304,12 @@ sp_hostinfo_source_stop (SpSource *source)
   g_source_remove (self->handler);
   self->handler = 0;
 
+  if (self->stat_fd != -1)
+    {
+      close (self->stat_fd);
+      self->stat_fd = -1;
+    }
+
   sp_source_emit_finished (SP_SOURCE (self));
 }
 
@@ -278,17 +318,17 @@ sp_hostinfo_source_prepare (SpSource *source)
 {
   SpHostinfoSource *self = (SpHostinfoSource *)source;
   SpCaptureCounter *counters;
-  gint i;
 
   g_assert (SP_IS_HOSTINFO_SOURCE (self));
 
+  self->stat_fd = open ("/proc/stat", O_RDONLY);
   self->n_cpu = g_get_num_processors ();
 
   g_array_set_size (self->cpu_info, 0);
 
   counters = alloca (sizeof *counters * self->n_cpu * 2);
 
-  for (i = 0; i < self->n_cpu; i++)
+  for (guint i = 0; i < self->n_cpu; i++)
     {
       SpCaptureCounter *ctr = &counters[i*2];
       CpuInfo info = { 0 };

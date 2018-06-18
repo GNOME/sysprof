@@ -218,7 +218,7 @@ publish_cpu (SpHostinfoSource *self)
   sp_capture_writer_set_counters (self->writer,
                                   SP_CAPTURE_CURRENT_TIME,
                                   -1,
-                                  -1,
+                                  getpid (),
                                   counter_ids,
                                   counter_values,
                                   self->n_cpu * 2);
@@ -366,8 +366,8 @@ sp_hostinfo_source_prepare (SpSource *source)
 
   sp_capture_writer_define_counters (self->writer,
                                      SP_CAPTURE_CURRENT_TIME,
-                                     getpid (),
                                      -1,
+                                     getpid (),
                                      counters,
                                      self->n_cpu * 2);
 

@@ -185,7 +185,7 @@ sp_perf_counter_finalize (SpPerfCounter *self)
     self->callback_data_destroy (self->callback_data);
 
   g_clear_pointer (&self->source, g_source_destroy);
-  g_clear_pointer (&self->info, g_ptr_array_free);
+  g_clear_pointer (&self->info, g_ptr_array_unref);
   g_clear_pointer (&self->context, g_main_context_unref);
   g_slice_free (SpPerfCounter, self);
 }

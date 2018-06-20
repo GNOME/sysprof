@@ -31,6 +31,8 @@ pkgconf = configuration_data()
 pkgconf.set('VERSION', meson.project_version())
 pkgconf.set('API_VERSION', libsysprof_api_version)
 pkgconf.set('prefix', get_option('prefix'))
+pkgconf.set('libdir', join_paths('${exec_prefix}', get_option('libdir')))
+pkgconf.set('includedir', join_paths('${prefix}', get_option('includedir')))
 
 pkgconfigdir = join_paths(get_option('libdir'), 'pkgconfig')
 configure_file(

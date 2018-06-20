@@ -305,7 +305,7 @@ sp_window_set_state (SpWindow      *self,
     case SP_WINDOW_STATE_FAILED:
       gtk_button_set_label (self->record_button, _("Record"));
       gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), TRUE);
-      add_class (self->record_button, "suggsted-action");
+      add_class (self->record_button, "suggested-action");
       remove_class (self->record_button, "destructive-action");
       if (state == SP_WINDOW_STATE_FAILED)
         gtk_stack_set_visible_child_name (self->view_stack, "failed");
@@ -325,7 +325,7 @@ sp_window_set_state (SpWindow      *self,
     case SP_WINDOW_STATE_RECORDING:
       gtk_button_set_label (self->record_button, _("Stop"));
       gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), TRUE);
-      remove_class (self->record_button, "suggsted-action");
+      remove_class (self->record_button, "suggested-action");
       add_class (self->record_button, "destructive-action");
       gtk_stack_set_visible_child_name (self->view_stack, "recording");
       gtk_label_set_label (self->subtitle, _("Recording…"));
@@ -349,7 +349,7 @@ sp_window_set_state (SpWindow      *self,
     case SP_WINDOW_STATE_BROWSING:
       gtk_button_set_label (self->record_button, _("Record"));
       gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), TRUE);
-      add_class (self->record_button, "suggsted-action");
+      add_class (self->record_button, "suggested-action");
       remove_class (self->record_button, "destructive-action");
       gtk_widget_set_visible (GTK_WIDGET (self->stat_label), TRUE);
       gtk_stack_set_visible_child_name (self->view_stack, "browsing");

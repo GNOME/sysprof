@@ -6,10 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
-"product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2018-02-20 22:19+0000\n"
-"PO-Revision-Date: 2018-02-22 13:32+0100\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2018-06-10 18:48+0000\n"
+"PO-Revision-Date: 2018-06-22 11:52+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: es <gnome-es-list@gnome.org>\n"
 "Language: es\n"
@@ -125,7 +124,6 @@ msgid "Get a list of kernel symbols and their address"
 msgstr "Obtener una lista de símbolos del kernel y sus direcciones"
 
 #: data/org.gnome.sysprof2.policy.in:25
-#| msgid "Authentication is required to access system performance counters."
 msgid "Authentication is required to access Linux kernel information."
 msgstr ""
 "Se necesita autorización para acceder a la información del kernel Linux"
@@ -224,7 +222,22 @@ msgid ""
 msgstr ""
 "¿Sabía que puede usar <a href=\"help:sysprof\">sysprof-cli</a> para grabar?"
 
-#: lib/sources/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:478
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Sysprof no ha podido encontrar el campo «%s»."
+
+#: lib/sources/sp-perf-source.c:491
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Sysprof no pudo analizar el desplazamiento para «%s»."
+
+#: lib/sources/sp-perf-source.c:555
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Sysprof no pudo obtener el ID de perf_event."
+
+#: lib/sources/sp-perf-source.c:664
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
@@ -232,11 +245,19 @@ msgstr ""
 "Sysprof necesita autorización para acceder a los contadores de rendimiento "
 "de su equipo."
 
-#: lib/sources/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:669
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr ""
 "Ha ocurrido un error al intentar acceder a los contadores de rendimiento: %s"
+
+#: lib/visualizers/sp-visualizer-list.c:275
+msgid "CPU"
+msgstr "CPU"
+
+#: lib/visualizers/sp-visualizer-list.c:289
+msgid "FPS"
+msgstr "FPS"
 
 #: lib/widgets/sp-profiler-menu-button.c:116
 #: lib/widgets/sp-profiler-menu-button.c:131
@@ -366,35 +387,31 @@ msgstr "_Grabar"
 msgid "_Close"
 msgstr "_Cerrar"
 
-#: src/resources/ui/sp-window.ui:174
-msgid "CPU"
-msgstr "CPU"
-
-#: src/resources/ui/sp-window.ui:222
+#: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Alejar (Ctrl+-)"
 
-#: src/resources/ui/sp-window.ui:238
+#: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Restablecer nivel de ampliación (Ctrl+0)"
 
-#: src/resources/ui/sp-window.ui:252
+#: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Acercar (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
+#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
 msgid "Open"
 msgstr "Abrir"
 
-#: src/resources/ui/sp-window.ui:284
+#: src/resources/ui/sp-window.ui:274
 msgid "Save As"
 msgstr "Guardar como"
 
-#: src/resources/ui/sp-window.ui:297
+#: src/resources/ui/sp-window.ui:287
 msgid "Screenshot"
 msgstr "Captura de pantalla"
 
-#: src/resources/ui/sp-window.ui:310
+#: src/resources/ui/sp-window.ui:300
 msgid "Close"
 msgstr "Cerrar"
 
@@ -421,8 +438,8 @@ msgstr "[Captura de memoria]"
 
 #: src/sp-window.c:195
 #, c-format
-msgid "%s - %s"
-msgstr "%s - %s"
+msgid "%s — %s"
+msgstr "%s — %s"
 
 #: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
@@ -468,7 +485,8 @@ msgstr "Ha ocurrido un error al intentar guardar la captura: %s"
 
 #: src/sp-window.c:981
 #, c-format
-msgid "The file \"%s\" could not be opened. Only local files are supported."
+#| msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr ""
 "No se pudo abrir el archivo «%s». Sólo se soportan los archivos locales."
 
@@ -509,8 +527,9 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Mostrar la versión de sysprof-cli y salir"
 
 #: tools/sysprof-cli.c:106
-msgid "[CAPTURE_FILE] - Sysprof"
-msgstr "[ARCHIVO_CAPTURA] - Sysprof"
+#| msgid "[CAPTURE_FILE] - Sysprof"
+msgid "[CAPTURE_FILE] — Sysprof"
+msgstr "[ARCHIVO_CAPTURA] — Sysprof"
 
 #: tools/sysprof-cli.c:125
 msgid "Too many arguments were passed to sysprof-cli:"
@@ -520,3 +539,6 @@ msgstr "Se han pasado demasiados argumentos a sysprof-cli:"
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existe. Use --force para sobrescribir\n"
+
+#~ msgid "%s - %s"
+#~ msgstr "%s - %s"

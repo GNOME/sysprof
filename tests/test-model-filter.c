@@ -97,7 +97,10 @@ test_basic (void)
   sp_model_filter_set_filter_func (filter, filter_func2, NULL, NULL);
   g_assert_cmpint (500, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
 
-  g_list_store_append (model, test_item_new (1001));
+  {
+    g_autoptr(TestItem) freeme = test_item_new (1001);
+    g_list_store_append (model, freeme);
+  }
 
   for (i = 0; i < 500; i++)
     g_list_store_remove (model, 0);

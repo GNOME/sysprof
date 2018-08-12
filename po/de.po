@@ -1,24 +1,23 @@
 # German translation for sysprof.
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Mario Blättermann <mario.blaettermann@gmail.com>, 2016-2017.
+# Mario Blättermann <mario.blaettermann@gmail.com>, 2016-2018.
 # Tim Sabsch <tim@sabsch.com>, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
-"product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2018-02-20 22:19+0000\n"
-"PO-Revision-Date: 2018-03-01 11:00+0100\n"
-"Last-Translator: Tim Sabsch <tim@sabsch.com>\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2018-07-28 01:02+0000\n"
+"PO-Revision-Date: 2018-08-12 15:19+0200\n"
+"Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.1\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
@@ -230,7 +229,22 @@ msgstr ""
 "Wussten Sie, dass Sie <a href=\"help:sysprof\">sysprof-cli</a> zum Aufnehmen "
 "verwenden können?"
 
-#: lib/sources/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:478
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Sysprof konnte das Feld »%s« nicht finden."
+
+#: lib/sources/sp-perf-source.c:491
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Sysprof konnte die Position »%s« nicht auswerten."
+
+#: lib/sources/sp-perf-source.c:555
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Sysprof konnte die Kennung von perf_event nicht erhalten."
+
+#: lib/sources/sp-perf-source.c:664
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
@@ -238,10 +252,18 @@ msgstr ""
 "Sysprof erfordert Ihre Legitimierung, um auf Leistungswerte Ihres Rechners "
 "zuzugreifen."
 
-#: lib/sources/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:669
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Ein Fehler passierte beim versuchten Zugriff auf Leistungswerte: %s"
+
+#: lib/visualizers/sp-visualizer-list.c:275
+msgid "CPU"
+msgstr "CPU"
+
+#: lib/visualizers/sp-visualizer-list.c:289
+msgid "FPS"
+msgstr "FPS"
 
 #: lib/widgets/sp-profiler-menu-button.c:116
 #: lib/widgets/sp-profiler-menu-button.c:131
@@ -370,35 +392,31 @@ msgstr "_Aufnehmen"
 msgid "_Close"
 msgstr "S_chließen"
 
-#: src/resources/ui/sp-window.ui:174
-msgid "CPU"
-msgstr "CPU"
-
-#: src/resources/ui/sp-window.ui:222
+#: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Verkleinern (Strg+-)"
 
-#: src/resources/ui/sp-window.ui:238
+#: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Vergrößerung zurücksetzen (Strg+0)"
 
-#: src/resources/ui/sp-window.ui:252
+#: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Vergrößern (Strg++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
+#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
 msgid "Open"
 msgstr "Öffnen"
 
-#: src/resources/ui/sp-window.ui:284
+#: src/resources/ui/sp-window.ui:274
 msgid "Save As"
 msgstr "Speichern unter"
 
-#: src/resources/ui/sp-window.ui:297
+#: src/resources/ui/sp-window.ui:287
 msgid "Screenshot"
 msgstr "Bildschirmfoto"
 
-#: src/resources/ui/sp-window.ui:310
+#: src/resources/ui/sp-window.ui:300
 msgid "Close"
 msgstr "Schließen"
 
@@ -427,8 +445,8 @@ msgstr "[Speicheraufnahme]"
 
 #: src/sp-window.c:195
 #, c-format
-msgid "%s - %s"
-msgstr "%s - %s"
+msgid "%s — %s"
+msgstr "%s — %s"
 
 #: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
@@ -476,7 +494,7 @@ msgstr "Ein Fehler passierte beim versuchten Speichern Ihrer Aufnahme: %s"
 
 #: src/sp-window.c:981
 #, c-format
-msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr ""
 "Die Datei »%s« konnte nicht geöffnet werden. Es werden nur lokale Dateien "
 "unterstützt."
@@ -519,8 +537,8 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Die Versionsnummer von sysprof-cli ausgeben und beenden"
 
 #: tools/sysprof-cli.c:106
-msgid "[CAPTURE_FILE] - Sysprof"
-msgstr "[AUFNAHMEDATEI] - Sysprof"
+msgid "[CAPTURE_FILE] — Sysprof"
+msgstr "[AUFNAHMEDATEI] — Sysprof"
 
 #: tools/sysprof-cli.c:125
 msgid "Too many arguments were passed to sysprof-cli:"

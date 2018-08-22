@@ -11,21 +11,17 @@ sysprof_sources = [
   'sp-window-settings.h',
 ]
 
-sysprof_resources = gnome.compile_resources(
-  'sp-resources', 'resources/sysprof.gresource.xml',
+sysprof_resources = gnome.compile_resources('sp-resources', 'resources/sysprof.gresource.xml',
   source_dir: 'resources',
-  c_name: 'sysprof',
+      c_name: 'sysprof',
 )
 
-sysprof = executable('sysprof',
-  sysprof_resources + sysprof_sources,
-  dependencies: [
-    libsysprof_ui_dep,
-    cc.find_library('m', required: false),
-  ],
-  c_args: exe_c_args,
-  link_args: exe_link_args,
-  install: true,
+sysprof = executable('sysprof', sysprof_resources + sysprof_sources,
+       gui_app: true,
+       install: true,
+        c_args: release_flags + exe_c_args,
+  dependencies: [libsysprof_ui_dep, cc.find_library('m', required: false)],
+     link_args: exe_link_args,
 )
 
 endif

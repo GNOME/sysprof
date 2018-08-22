@@ -103,24 +103,21 @@ endif
 
 add_project_arguments(global_c_args, language: 'c')
 
+release_flags = []
 global_link_args = []
 test_link_args = [
   '-Wl,-z,relro',
   '-Wl,-z,now',
 ]
 if not get_option('buildtype').startswith('debug')
-
-  # TODO: Maybe reuse 'b_ndebug' option
-  add_global_arguments([
+  release_flags += [
     '-DG_DISABLE_CAST_CHECKS',
     '-DG_DISABLE_ASSERT',
-  ], language: 'c')
-
+  ]
   test_link_args += [
     '-Wl,-Bsymbolic',
     '-fno-plt',
   ]
-
 endif
 
 foreach arg: test_link_args

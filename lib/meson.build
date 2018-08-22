@@ -68,7 +68,7 @@ libsysprof_deps = [
 ]
 
 version_link_arg = '-Wl,--version-script,' + join_paths(meson.current_source_dir(), 'sysprof.map')
-libsysprof_c_args = [ '-DSP_ENABLE_GOBJECT' ]
+libsysprof_c_args = release_flags + ['-DSP_ENABLE_GOBJECT']
 
 if get_option('with_sysprofd') != 'none'
   libsysprof_deps += dependency('polkit-gobject-1')
@@ -77,6 +77,7 @@ endif
 
 libsysprof_capture = static_library('sysprof-capture-' + libsysprof_api_version,
   libsysprof_capture_sources,
+        c_args: release_flags,
   dependencies: libsysprof_capture_deps,
        install: true,
 )
@@ -120,7 +121,7 @@ if get_option('enable_gtk')
     dependency('gtk+-3.0', version: '>=3.22.0'),
   ]
 
-  libsysprof_ui_c_args = [ '-DSP_ENABLE_GOBJECT' ]
+  libsysprof_ui_c_args = release_flags + ['-DSP_ENABLE_GOBJECT']
 
   libsysprof_ui = shared_library('sysprof-ui-' + libsysprof_api_version,
     libsysprof_ui_resources + libsysprof_ui_sources,

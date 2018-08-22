@@ -68,11 +68,10 @@ sp_cpu_visualizer_row_discover_counters (GTask        *task,
   const SpCaptureFrameType types[] = { SP_CAPTURE_FRAME_CTRDEF };
   SpCaptureReader *reader = task_data;
   g_autoptr(SpCaptureCursor) cursor = NULL;
-  SpCpuVisualizerRow *self = source_object;
   g_autoptr(GArray) counters = NULL;
 
   g_assert (G_IS_TASK (task));
-  g_assert (SP_IS_CPU_VISUALIZER_ROW (self));
+  g_assert (SP_IS_CPU_VISUALIZER_ROW (source_object));
   g_assert (reader != NULL);
 
   counters = g_array_new (FALSE, FALSE, sizeof (guint));

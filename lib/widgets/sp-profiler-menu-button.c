@@ -332,10 +332,9 @@ sp_profiler_menu_button_create_row (gpointer itemptr,
                                     gpointer user_data)
 {
   SpProcessModelItem *item = itemptr;
-  SpProfilerMenuButton *self = user_data;
 
   g_assert (SP_IS_PROCESS_MODEL_ITEM (item));
-  g_assert (SP_IS_PROFILER_MENU_BUTTON (self));
+  g_assert (SP_IS_PROFILER_MENU_BUTTON (user_data));
 
   return g_object_new (SP_TYPE_PROCESS_MODEL_ROW,
                        "item", item,

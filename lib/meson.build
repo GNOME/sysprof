@@ -65,15 +65,11 @@ libsysprof_capture_deps = [
 libsysprof_deps = [
   cxx.find_library('stdc++'),
   dependency('gio-unix-2.0'),
+  dependency('polkit-gobject-1'),
 ]
 
 version_link_arg = '-Wl,--version-script,' + join_paths(meson.current_source_dir(), 'sysprof.map')
-libsysprof_c_args = release_flags + ['-DSP_ENABLE_GOBJECT']
-
-if get_option('with_sysprofd') != 'none'
-  libsysprof_deps += dependency('polkit-gobject-1')
-  libsysprof_c_args += '-DENABLE_POLKIT'
-endif
+libsysprof_c_args = release_flags + ['-DSP_ENABLE_GOBJECT', '-DENABLE_POLKIT']
 
 libsysprof_capture = static_library('sysprof-capture-' + libsysprof_api_version,
   libsysprof_capture_sources,

@@ -18,8 +18,13 @@
 
 #define G_LOG_DOMAIN "sp-kernel-symbol"
 
+#include "config.h"
+
 #include <gio/gio.h>
-#include <polkit/polkit.h>
+
+#ifdef ENABLE_POLKIT
+# include <polkit/polkit.h>
+#endif
 
 #include "sp-kallsyms.h"
 
@@ -87,6 +92,7 @@ type_is_ignored (guint8 type)
 static gboolean
 authorize_proxy (GDBusConnection *conn)
 {
+#ifdef ENABLE_POLKIT
   PolkitSubject *subject = NULL;
   GPermission *permission = NULL;
   const gchar *name;
@@ -113,6 +119,7 @@ authorize_proxy (GDBusConnection *conn)
 failure:
   g_clear_object (&subject);
   g_clear_object (&permission);
+#endif
 
   return FALSE;
 }

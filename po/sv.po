@@ -7,10 +7,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
-"product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2018-03-05 15:37+0000\n"
-"PO-Revision-Date: 2018-03-11 19:04+0100\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2018-06-10 18:48+0000\n"
+"PO-Revision-Date: 2018-09-03 14:29+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -18,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.1.1\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
@@ -222,17 +221,40 @@ msgstr ""
 "Visste du att du kan använda <a href=\"help:sysprof\">sysprof-cli</a> för "
 "att spela in?"
 
-#: lib/sources/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:478
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Sysprof misslyckades med att hitta fältet ”%s”."
+
+#: lib/sources/sp-perf-source.c:491
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Sysprof misslyckades med att tolka position för ”%s”."
+
+#: lib/sources/sp-perf-source.c:555
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Sysprof misslyckades med att erhålla perf_event-ID."
+
+#: lib/sources/sp-perf-source.c:664
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
 msgstr ""
 "Sysprof kräver autentisering för att komma åt din dators prestandaräknare."
 
-#: lib/sources/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:669
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Ett fel uppstod vid försök att komma åt prestandaräknare: %s"
+
+#: lib/visualizers/sp-visualizer-list.c:275
+msgid "CPU"
+msgstr "CPU"
+
+#: lib/visualizers/sp-visualizer-list.c:289
+msgid "FPS"
+msgstr "Bilder/s"
 
 #: lib/widgets/sp-profiler-menu-button.c:116
 #: lib/widgets/sp-profiler-menu-button.c:131
@@ -361,35 +383,31 @@ msgstr "_Spela in"
 msgid "_Close"
 msgstr "S_täng"
 
-#: src/resources/ui/sp-window.ui:174
-msgid "CPU"
-msgstr "CPU"
-
-#: src/resources/ui/sp-window.ui:222
+#: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Zooma ut (Ctrl+-)"
 
-#: src/resources/ui/sp-window.ui:238
+#: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Återställ zoomnivå (Ctrl+0)"
 
-#: src/resources/ui/sp-window.ui:252
+#: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Zooma in (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
+#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
 msgid "Open"
 msgstr "Öppna"
 
-#: src/resources/ui/sp-window.ui:284
+#: src/resources/ui/sp-window.ui:274
 msgid "Save As"
 msgstr "Spara som"
 
-#: src/resources/ui/sp-window.ui:297
+#: src/resources/ui/sp-window.ui:287
 msgid "Screenshot"
 msgstr "Skärmbild"
 
-#: src/resources/ui/sp-window.ui:310
+#: src/resources/ui/sp-window.ui:300
 msgid "Close"
 msgstr "Stäng"
 
@@ -419,8 +437,8 @@ msgstr "[Minnesfångst]"
 
 #: src/sp-window.c:195
 #, c-format
-msgid "%s - %s"
-msgstr "%s - %s"
+msgid "%s — %s"
+msgstr "%s — %s"
 
 #: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
@@ -467,7 +485,7 @@ msgstr "Ett fel uppstod vid försök att spara din fångst: %s"
 
 #: src/sp-window.c:981
 #, c-format
-msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Filen ”%s” kunde inte öppnas. Endast lokala filer stöds."
 
 #: src/sp-window.c:1008
@@ -507,8 +525,8 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Skriv ut version för sysprof-cli och avsluta"
 
 #: tools/sysprof-cli.c:106
-msgid "[CAPTURE_FILE] - Sysprof"
-msgstr "[FÅNGSTFIL] - Sysprof"
+msgid "[CAPTURE_FILE] — Sysprof"
+msgstr "[FÅNGSTFIL] — Sysprof"
 
 #: tools/sysprof-cli.c:125
 msgid "Too many arguments were passed to sysprof-cli:"
@@ -518,3 +536,6 @@ msgstr "För många argument skickades till sysprof-cli:"
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existerar. Använd --force för att skriva över\n"
+
+#~ msgid "%s - %s"
+#~ msgstr "%s - %s"

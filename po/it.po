@@ -6,10 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
-"product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2018-02-19 22:33+0000\n"
-"PO-Revision-Date: 2018-03-18 12:19+0100\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2018-08-27 07:37+0000\n"
+"PO-Revision-Date: 2018-09-03 13:11+0200\n"
 "Last-Translator: Gianvito Cavasoli <gianvito@gmx.it>\n"
 "Language-Team: Italiano <gnome-it-list@gnome.org>\n"
 "Language: it\n"
@@ -230,7 +229,22 @@ msgstr ""
 "Sapete che si può usare <a href=\"help:sysprof\">sysprof-cli</a> per "
 "registrare?"
 
-#: lib/sources/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:478
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Ricerca del campo «%s» non riuscita."
+
+#: lib/sources/sp-perf-source.c:491
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Analisi dell'offset di «%s» non riuscita."
+
+#: lib/sources/sp-perf-source.c:555
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Recupero dell'identificativo di perf_event non riuscito."
+
+#: lib/sources/sp-perf-source.c:664
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
@@ -238,12 +252,20 @@ msgstr ""
 "L'applicazione richide l'autorizzazione per accedere ai contatori delle "
 "prestazioni del computer."
 
-#: lib/sources/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:669
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr ""
 "Si è verificato un errore durante il tentativo di accedere ai contatori "
 "delle prestazioni: %s"
+
+#: lib/visualizers/sp-visualizer-list.c:275
+msgid "CPU"
+msgstr "CPU"
+
+#: lib/visualizers/sp-visualizer-list.c:289
+msgid "FPS"
+msgstr "FPS"
 
 #: lib/widgets/sp-profiler-menu-button.c:116
 #: lib/widgets/sp-profiler-menu-button.c:131
@@ -262,7 +284,7 @@ msgid_plural "%u Processes"
 msgstr[0] "%u processo"
 msgstr[1] "%u processi"
 
-#: lib/widgets/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:795
 msgid "The command line arguments provided are invalid"
 msgstr "Gli argomenti della riga di comando forniti non sono validi"
 
@@ -375,35 +397,31 @@ msgstr "_Registra"
 msgid "_Close"
 msgstr "_Chiudi"
 
-#: src/resources/ui/sp-window.ui:174
-msgid "CPU"
-msgstr "CPU"
-
-#: src/resources/ui/sp-window.ui:222
+#: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Diminuisce l'ingrandimento (Ctrl+-)"
 
-#: src/resources/ui/sp-window.ui:238
+#: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Azzera il livello d'ingrandimento (Ctrl+0)"
 
-#: src/resources/ui/sp-window.ui:252
+#: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Aumenta l'ingrandimento (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
+#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
 msgid "Open"
 msgstr "Apri"
 
-#: src/resources/ui/sp-window.ui:284
+#: src/resources/ui/sp-window.ui:274
 msgid "Save As"
 msgstr "Salva come"
 
-#: src/resources/ui/sp-window.ui:297
+#: src/resources/ui/sp-window.ui:287
 msgid "Screenshot"
 msgstr "Schermata"
 
-#: src/resources/ui/sp-window.ui:310
+#: src/resources/ui/sp-window.ui:300
 msgid "Close"
 msgstr "Chiudi"
 
@@ -430,8 +448,8 @@ msgstr "[Cattura memoria]"
 
 #: src/sp-window.c:195
 #, c-format
-msgid "%s - %s"
-msgstr "%s - %s"
+msgid "%s — %s"
+msgstr "%s — %s"
 
 #: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
@@ -480,7 +498,8 @@ msgstr ""
 
 #: src/sp-window.c:981
 #, c-format
-msgid "The file \"%s\" could not be opened. Only local files are supported."
+#| msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr ""
 "Il file «%s» non può essere aperto. Sono supportati solo i file locali."
 
@@ -521,11 +540,11 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Stampa la versione di sysprof-cli ed esce"
 
 #: tools/sysprof-cli.c:106
-msgid "[CAPTURE_FILE] - Sysprof"
-msgstr "[FILE_CATTURA] - Sysprof"
+#| msgid "[CAPTURE_FILE] - Sysprof"
+msgid "[CAPTURE_FILE] — Sysprof"
+msgstr "[FILE_CATTURA] — Sysprof"
 
 #: tools/sysprof-cli.c:125
-#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Sono stati passati troppi argomenti a sysprof-cli:"
 

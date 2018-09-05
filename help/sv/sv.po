@@ -1,13 +1,13 @@
 # Swedish translation for sysprof.
-# Copyright © 2016 sysprof's COPYRIGHT HOLDER
+# Copyright © 2016, 2018 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2016-09-21 17:48+0000\n"
-"PO-Revision-Date: 2016-09-22 22:29+0200\n"
+"POT-Creation-Date: 2018-03-19 20:23+0000\n"
+"PO-Revision-Date: 2018-09-05 13:06+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.1.1\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
@@ -31,6 +31,11 @@ msgstr "Sysprof"
 #: C/index.page:15
 msgid "Profiling"
 msgstr "Profilering"
+
+#. (itstool) path: section/title
+#: C/index.page:19
+msgid "Frequently Asked Questions"
+msgstr "Vanliga frågor"
 
 #. (itstool) path: credit/name
 #: C/introduction.page:15
@@ -129,15 +134,15 @@ msgid ""
 "for all applications executing, including the Linux kernel. This can "
 "sometimes be confusing if you only want to look at a single process. If your "
 "application does not interact much with the host system, you may have more "
-"success with <link href=\"profiling#new-process-profiling\">profiling an "
-"existing process</link>."
+"success by using <app>Sysprof</app> to <link href=\"profiling#new-process-"
+"profiling\">spawn a new process</link>."
 msgstr ""
 "Då <app>Sysprof</app> profilerar system spelar det in stackinformation för "
 "alla program som kör, inklusive Linux-kärnan. Detta kan ibland vara "
 "förvirrande om du bara vill titta på en enstaka process. Om ditt program "
-"inte interagerar mycket med värdsystemet kan du lyckas bättre med att <link "
-"href=\"profiling#new-process-profiling\">profilera en befintlig process</"
-"link>."
+"inte interagerar mycket med värdsystemet kan du lyckas bättre med att "
+"använda <app>Sysprof</app> för att <link href=\"profiling#new-process-"
+"profiling\">starta en ny process</link>."
 
 #. (itstool) path: section/p
 #: C/profiling.page:18
@@ -368,6 +373,82 @@ msgstr ""
 "Om du ser <em>- - kernel - -</em> bland dina resultat betyder det att "
 "programmet gick in i eller ut från Linux-kärnan. Det kan finnas många "
 "orsaker till detta som ett <em>systemanrop</em> eller en <em>signal</em>."
+
+#. (itstool) path: page/title
+#: C/faq.page:9
+msgid "What does heap mean?"
+msgstr "Vad betyder heap?"
+
+#. (itstool) path: section/title
+#: C/faq.page:12
+msgid "What does \"In file [heap]\" mean?"
+msgstr "Vad betyder ”In file [heap]”?"
+
+#. (itstool) path: section/p
+#: C/faq.page:14
+msgid ""
+"This means that sysprof believes a function was called from somewhere in the "
+"program's heap (where <code>malloc</code> allocates memory) rather than the "
+"code section (where executable code normally lives.) There are several "
+"possible explanations."
+msgstr ""
+"Detta betyder att sysprof tror att en funktion anropades från någonstans i "
+"programmets heap (där <code>malloc</code> allokerar minne) snarare än "
+"kodavsnittet (där körbar kod vanligen befinner sig.) Det finns flera möjliga "
+"förklaringar."
+
+#. (itstool) path: section/title
+#: C/faq.page:22
+msgid "JIT (Just in Time) compilers"
+msgstr "JIT-kompilatorer (Just in Time)"
+
+#. (itstool) path: section/p
+#: C/faq.page:24
+msgid ""
+"Languages like Java can generate executable code while a program is running "
+"and store it in the heap. Sysprof is accurately reporting the situation in "
+"this case."
+msgstr ""
+"Språk som java kan generera körbar kod under tiden ett program körs och "
+"lagra den i heapen. Sysprof rapporterar situationen korrekt i detta fall."
+
+#. (itstool) path: section/title
+#: C/faq.page:30
+msgid "Optimizing compilers"
+msgstr "Optimera kompilatorer"
+
+#. (itstool) path: section/p
+#: C/faq.page:32
+msgid ""
+"C and C++ compilers can optimize away information needed to determine a "
+"function's caller, so it is mistaken for [heap]. You can still tell how "
+"often each function is called by the program, but not always from where."
+msgstr ""
+"C- och C++-kompilatorer kan optimera bort information som krävs för att "
+"avgöra en funktions anropare, så den antas felaktigt vara [heap]. Du kan "
+"fortfarande avgöra hur ofta varje funktion anropas av programmet, men inte "
+"alltid från var."
+
+#. (itstool) path: note/p
+#: C/faq.page:38
+msgid ""
+"For gcc, the flag <code>-fno-omit-frame-pointer</code> will prevent this "
+"optimization. The flag is not always needed, for example on x86_64 machines "
+"it is only needed with -O3 optimization."
+msgstr ""
+"För gcc kommer flaggan <code>-fno-omit-frame-pointer</code> förhindra denna "
+"optimering. Flaggan behövs inte alltid, på x86_64-behövs den exempelvis bara "
+"med optimeringen -O3."
+
+#. (itstool) path: note/p
+#: C/faq.page:44
+msgid ""
+"To get the most detailed and accurate call tree from un-optimized code, use "
+"these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
+msgstr ""
+"För att få det mest detaljerade och korrekta anropsträdet från icke-"
+"optimerad kod, använd dessa flaggor: <code>-ggdb -fno-omit-frame-pointer -"
+"O0</code>"
 
 #. (itstool) path: p/link
 #: C/legal.xml:5

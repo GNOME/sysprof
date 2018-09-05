@@ -1,3 +1,15 @@
+Overview of changes in Sysprof 3.30.0
+=====================================
+
+ * Fix incorrect free func for GPtrArray
+ * Various build system improvements
+ * ENABLE_POLKIT is now repsected in the kallsyms support
+ * suggested-action fixes for CSS
+
+Translations:
+
+ * Swedish, Spanish, Brazilian Portuguese, Italian, and German
+
 Overview of changes in Sysprof 3.29.3
 =====================================
 

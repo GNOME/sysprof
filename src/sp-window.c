@@ -80,7 +80,7 @@ static guint signals [N_SIGNALS];
 static void sp_window_set_profiler (SpWindow   *self,
                                     SpProfiler *profiler);
 
-static void
+static G_GNUC_PRINTF(3, 4) void
 sp_window_notify_user (SpWindow       *self,
                        GtkMessageType  message_type,
                        const gchar    *format,

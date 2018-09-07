@@ -34,3 +34,6 @@
 
 /* Version number of package */
 #mesondefine VERSION
+
+/* Size of a pointer */
+#mesondefine VOID_P_SIZE

@@ -35,6 +35,7 @@ has_clockid = cc.has_member('struct perf_event_attr', 'clockid', prefix: '#inclu
 if has_use_clockid and has_clockid
   config_h.set10('HAVE_PERF_CLOCKID', true)
 endif
+config_h.set('VOID_P_SIZE', cc.sizeof('void*'))
 
 add_global_arguments([
   '-DHAVE_CONFIG_H',

@@ -19,6 +19,7 @@
 #ifndef SP_CAPTURE_FORMAT_H
 #define SP_CAPTURE_FORMAT_H
 
+#include <config.h>
 #include <glib.h>
 
 #ifdef SP_ENABLE_GOBJECT
@@ -32,12 +33,14 @@ G_BEGIN_DECLS
 #define SP_CAPTURE_MAGIC (GUINT32_TO_LE(0xFDCA975E))
 #define SP_CAPTURE_ALIGN (sizeof(SpCaptureAddress))
 
-#if __WORDSIZE == 64
+#if VOID_P_SIZE == 8
 # define SP_CAPTURE_JITMAP_MARK    G_GUINT64_CONSTANT(0xE000000000000000)
 # define SP_CAPTURE_ADDRESS_FORMAT "0x%016lx"
-#else
+#elif VOID_P_SIZE == 4
 # define SP_CAPTURE_JITMAP_MARK    G_GUINT64_CONSTANT(0xE0000000)
 # define SP_CAPTURE_ADDRESS_FORMAT "0x%016llx"
+#else
+#error Unknown VOID_P_SIZE
 #endif
 
 #define SP_CAPTURE_CURRENT_TIME   (sp_clock_get_current_time())

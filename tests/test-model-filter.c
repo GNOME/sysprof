@@ -171,6 +171,72 @@ test_process (void)
   g_object_unref (model);
 }
 
+static guint last_n_added = 0;
+static guint last_n_removed = 0;
+static guint last_changed_position = 0;
+
+static void
+model_items_changed_cb (SpModelFilter *filter,
+                        guint          position,
+                        guint          n_removed,
+                        guint          n_added,
+                        GListModel    *model)
+{
+  last_n_added = n_added;
+  last_n_removed = n_removed;
+  last_changed_position = position;
+}
+
+
+static void
+filter_items_changed_cb (SpModelFilter *filter,
+                         guint          position,
+                         guint          n_removed,
+                         guint          n_added,
+                         GListModel    *model)
+{
+  g_assert_cmpint (n_added, ==, last_n_added);
+  g_assert_cmpint (n_removed, ==, last_n_removed);
+  g_assert_cmpint (position, ==, last_changed_position);
+}
+
+static void
+test_items_changed (void)
+{
+  SpModelFilter *filter;
+  GListStore *model;
+  guint i;
+
+  model = g_list_store_new (TEST_TYPE_ITEM);
+  g_assert (model);
+
+  g_signal_connect (model, "items-changed", G_CALLBACK (model_items_changed_cb), NULL);
+
+  filter = sp_model_filter_new (G_LIST_MODEL (model));
+  g_assert (filter);
+
+  g_signal_connect_after (filter, "items-changed", G_CALLBACK (filter_items_changed_cb), model);
+
+  /* The filter model is not filtered, so it must mirror whatever
+   * the child model does. In this case, test if the position of
+   * items-changed match.
+   */
+  for (i = 0; i < 100; i++)
+    {
+      g_autoptr (TestItem) val = test_item_new (i);
+      g_list_store_append (model, val);
+    }
+
+  g_assert_cmpint (100, ==, g_list_model_get_n_items (G_LIST_MODEL (model)));
+  g_assert_cmpint (100, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
+
+  for (i = 0; i < 100; i++)
+    g_list_store_remove (model, 0);
+
+  g_clear_object (&model);
+  g_clear_object (&filter);
+}
+
 gint
 main (gint argc,
       gchar *argv[])
@@ -178,5 +244,6 @@ main (gint argc,
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/SpModelFilter/basic", test_basic);
   g_test_add_func ("/SpModelFilter/process", test_process);
+  g_test_add_func ("/SpModelFilter/items-changed", test_items_changed);
   return g_test_run ();
 }

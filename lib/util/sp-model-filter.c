@@ -191,7 +191,7 @@ add_new_items:
 
   if (n_added > 0)
     {
-      GSequenceIter *iter = g_sequence_get_iter_at_pos (priv->child_seq, position + 1);
+      GSequenceIter *iter = g_sequence_get_iter_at_pos (priv->child_seq, position);
       GSequenceIter *filter_iter = find_next_visible_filter_iter (self, iter);
       guint filter_position = g_sequence_iter_get_position (filter_iter);
       guint count = 0;

@@ -1,12 +1,12 @@
 # Brazilian Portuguese translation for sysprof.
-# Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
+# Copyright (C) 2018 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Rafael Fontenelle <rafaelff@gnome.org>, 2016, 2017.
+# Rafael Fontenelle <rafaelff@gnome.org>, 2016-2018.
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2017-06-26 00:35+0000\n"
-"PO-Revision-Date: 2017-09-03 09:34-0200\n"
+"POT-Creation-Date: 2018-03-14 17:02+0000\n"
+"PO-Revision-Date: 2018-09-15 04:19-0200\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -20,7 +20,7 @@ msgstr ""
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
-msgstr "Rafael Fontenelle <rafaelff@gnome.org>, 2016, 2017"
+msgstr "Rafael Fontenelle <rafaelff@gnome.org>, 2016-2018"
 
 #. (itstool) path: page/title
 #: C/index.page:12
@@ -129,20 +129,27 @@ msgstr "Como perfilar seus sistema"
 
 #. (itstool) path: section/p
 #: C/profiling.page:11
+#| msgid ""
+#| "When <app>Sysprof</app> profiles your system, it records stack "
+#| "information for all applications executing, including the Linux kernel. "
+#| "This can sometimes be confusing if you only want to look at a single "
+#| "process. If your application does not interact much with the host system, "
+#| "you may have more success with <link href=\"profiling#new-process-"
+#| "profiling\">profiling an existing process</link>."
 msgid ""
 "When <app>Sysprof</app> profiles your system, it records stack information "
 "for all applications executing, including the Linux kernel. This can "
 "sometimes be confusing if you only want to look at a single process. If your "
 "application does not interact much with the host system, you may have more "
-"success with <link href=\"profiling#new-process-profiling\">profiling an "
-"existing process</link>."
+"success by using <app>Sysprof</app> to <link href=\"profiling#new-process-"
+"profiling\">spawn a new process</link>."
 msgstr ""
 "Quando <app>Sysprof</app> perfila seu sistema, ele grava informações da "
 "pilha de todos os aplicativos em execução, incluindo o kernel Linux. Isso "
 "pode, em alguns casos, ser confuso, se você deseja apenas olhar um único "
 "processo. Se o aplicativo não interage muito com o sistema hospedeiro, você "
-"pode obter mais sucesso com <link href=\"profiling#new-process-profiling\">"
-"perfilamento de um processo existente</link>."
+"pode obter mais sucesso usando o <app>Sysprof</app> para <link href="
+"\"profiling#new-process-profiling\">criar um novo processo</link>."
 
 #. (itstool) path: section/p
 #: C/profiling.page:18
@@ -162,8 +169,7 @@ msgid ""
 msgstr ""
 "Neste momento, você pode ter que <em>autorizar</em> acesso ao perfilador do "
 "sistema. Isso é necessário, pois a implementação do perf do kernel Linux "
-"requer as permissões do \"root\" para realizar perfilamento de todo o "
-"sistema."
+"requer as permissões do “root” para realizar perfilamento de todo o sistema."
 
 #. (itstool) path: section/p
 #: C/profiling.page:25
@@ -282,9 +288,9 @@ msgid ""
 msgstr ""
 "Para uma sobrecarga mínima, você pode considerar o uso da ferramenta de "
 "linha de comando <cmd>sysprof-cli</cmd>. Quando executado sem argumentos, "
-"ele vai gravar todo o seu sistema e salvar a saída para "
-"<file>capture.syscap</file>. Esse arquivo pode ser aberto com o aplicativo "
-"<app>Sysprof</app> para visualizar o gráfico de chamadas."
+"ele vai gravar todo o seu sistema e salvar a saída para <file>capture."
+"syscap</file>. Esse arquivo pode ser aberto com o aplicativo <app>Sysprof</"
+"app> para visualizar o gráfico de chamadas."
 
 #. (itstool) path: section/p
 #: C/profiling.page:95
@@ -380,13 +386,19 @@ msgstr ""
 "aplicativo com transição para o ou do kernel Linux. Há muitos motivos para "
 "isto, tal como uma <em>chamada do sistema</em> ou <em>sinal</em>."
 
+#. (itstool) path: page/title
+#: C/faq.page:9
+#| msgid "What does \"In file [heap]\" mean?"
+msgid "What does heap mean?"
+msgstr "O que heap significa?"
+
 #. (itstool) path: section/title
-#: C/faq.page:10
+#: C/faq.page:12
 msgid "What does \"In file [heap]\" mean?"
-msgstr "O que \"In file [heap]\" significa?"
+msgstr "O que “In file [heap]” significa?"
 
 #. (itstool) path: section/p
-#: C/faq.page:12
+#: C/faq.page:14
 msgid ""
 "This means that sysprof believes a function was called from somewhere in the "
 "program's heap (where <code>malloc</code> allocates memory) rather than the "
@@ -399,12 +411,12 @@ msgstr ""
 "possível explicações."
 
 #. (itstool) path: section/title
-#: C/faq.page:19
+#: C/faq.page:22
 msgid "JIT (Just in Time) compilers"
 msgstr "Compiladores JIT (Just in Time)"
 
 #. (itstool) path: section/p
-#: C/faq.page:21
+#: C/faq.page:24
 msgid ""
 "Languages like Java can generate executable code while a program is running "
 "and store it in the heap. Sysprof is accurately reporting the situation in "
@@ -415,12 +427,12 @@ msgstr ""
 "situação neste caso."
 
 #. (itstool) path: section/title
-#: C/faq.page:27
+#: C/faq.page:30
 msgid "Optimizing compilers"
 msgstr "Otimizando compiladores"
 
 #. (itstool) path: section/p
-#: C/faq.page:29
+#: C/faq.page:32
 msgid ""
 "C and C++ compilers can optimize away information needed to determine a "
 "function's caller, so it is mistaken for [heap]. You can still tell how "
@@ -432,7 +444,7 @@ msgstr ""
 "mas nem sempre de onde."
 
 #. (itstool) path: note/p
-#: C/faq.page:35
+#: C/faq.page:38
 msgid ""
 "For gcc, the flag <code>-fno-omit-frame-pointer</code> will prevent this "
 "optimization. The flag is not always needed, for example on x86_64 machines "
@@ -443,14 +455,14 @@ msgstr ""
 "máquinas x86_64 só é necessário com a otimização -O3."
 
 #. (itstool) path: note/p
-#: C/faq.page:41
+#: C/faq.page:44
 msgid ""
 "To get the most detailed and accurate call tree from un-optimized code, use "
 "these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
 msgstr ""
 "Para obter a árvore de chamadas mais detalhada e precisa a partir de código "
-"não otimizado, use essas sinalizações: <code>-ggdb -fno-omit-frame-pointer "
-"-O0</code>"
+"não otimizado, use essas sinalizações: <code>-ggdb -fno-omit-frame-pointer -"
+"O0</code>"
 
 #. (itstool) path: p/link
 #: C/legal.xml:5

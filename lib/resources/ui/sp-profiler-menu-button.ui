@@ -55,7 +55,7 @@
             <child type="center">
               <object class="GtkLabel">
                 <property name="hexpand">true</property>
-                <property name="label" translatable="yes">Profile my _entire system</property>
+                <property name="label" translatable="yes" comments="Translators: This is the description for a switch.">Profile my _entire system</property>
                 <property name="use-underline">true</property>
                 <property name="visible">true</property>
                 <property name="xalign">1</property>
@@ -92,7 +92,7 @@
                     </style>
                     <child>
                       <object class="GtkEntry" id="process_filter_entry">
-                        <property name="placeholder-text" translatable="yes">Search</property>
+                        <property name="placeholder-text" translatable="yes" comments="Translators: This is the placeholder in a search entry.">Search</property>
                         <property name="visible">true</property>
                       </object>
                     </child>
@@ -161,7 +161,7 @@
                 <child>
                   <object class="GtkCheckButton" id="inherit_environ">
                     <property name="active">true</property>
-                    <property name="label" translatable="yes">Inherit current environment</property>
+                    <property name="label" translatable="yes" comments="Translators: This is a check button.">Inherit current environment</property>
                     <property name="visible">true</property>
                   </object>
                 </child>

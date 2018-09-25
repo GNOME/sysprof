@@ -41,7 +41,7 @@
         </child>
         <child>
           <object class="GtkButton" id="record_button">
-            <property name="label" translatable="yes">_Record</property>
+            <property name="label" translatable="yes" comments="Translators: This is a button.">_Record</property>
             <property name="use-underline">true</property>
             <property name="visible">true</property>
             <property name="width-request">100</property>
@@ -115,7 +115,7 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="close_info_button">
-                        <property name="label" translatable="yes">_Close</property>
+                        <property name="label" translatable="yes" comments="Translators: This is a button.">_Close</property>
                         <property name="use-underline">true</property>
                         <property name="visible">true</property>
                         <property name="width-request">100</property>
@@ -209,7 +209,7 @@
               <object class="GtkButton">
                 <property name="action-name">zoom.zoom-out</property>
                 <property name="hexpand">true</property>
-                <property name="tooltip-text" translatable="yes">Zoom out (Ctrl+-)</property>
+                <property name="tooltip-text" translatable="yes" comments="Translators: This is a tooltip.">Zoom out (Ctrl+-)</property>
                 <property name="visible">true</property>
                 <style>
                   <class name="image-button"/>
@@ -225,7 +225,7 @@
             <child>
               <object class="GtkButton">
                 <property name="action-name">zoom.zoom-one</property>
-                <property name="tooltip-text" translatable="yes">Reset zoom level (Ctrl+0)</property>
+                <property name="tooltip-text" translatable="yes" comments="Translators: This is a tooltip.">Reset zoom level (Ctrl+0)</property>
                 <property name="visible">true</property>
                 <child>
                   <object class="GtkLabel" id="zoom_one_label">
@@ -239,7 +239,7 @@
               <object class="GtkButton">
                 <property name="action-name">zoom.zoom-in</property>
                 <property name="hexpand">true</property>
-                <property name="tooltip-text" translatable="yes">Zoom in (Ctrl++)</property>
+                <property name="tooltip-text" translatable="yes" comments="Translators: This is a tooltip.">Zoom in (Ctrl++)</property>
                 <property name="visible">true</property>
                 <style>
                   <class name="image-button"/>
@@ -264,7 +264,7 @@
         <child>
           <object class="GtkModelButton">
             <property name="action-name">app.new-window</property>
-            <property name="text" translatable="yes">New Window</property>
+            <property name="text" translatable="yes" comments="Translators: This is a menu label.">New Window</property>
             <property name="visible">true</property>
           </object>
         </child>
@@ -277,14 +277,14 @@
         <child>
           <object class="GtkModelButton">
             <property name="action-name">win.open-capture</property>
-            <property name="text" translatable="yes">Open Capture…</property>
+            <property name="text" translatable="yes" comments="Translators: This is a menu label.">Open Capture…</property>
             <property name="visible">true</property>
           </object>
         </child>
         <child>
           <object class="GtkModelButton">
             <property name="action-name">win.save-capture</property>
-            <property name="text" translatable="yes">Save As…</property>
+            <property name="text" translatable="yes" comments="Translators: This is a menu label.">Save As…</property>
             <property name="visible">true</property>
           </object>
         </child>
@@ -297,7 +297,7 @@
         <child>
           <object class="GtkModelButton">
             <property name="action-name">win.screenshot</property>
-            <property name="text" translatable="yes">Screenshot</property>
+            <property name="text" translatable="yes" comments="Translators: This is a menu label.">Screenshot</property>
             <property name="visible">true</property>
           </object>
         </child>
@@ -310,7 +310,7 @@
         <child>
           <object class="GtkModelButton">
             <property name="action-name">win.close-capture</property>
-            <property name="text" translatable="yes">Close</property>
+            <property name="text" translatable="yes" comments="Translators: This is a menu label.">Close</property>
             <property name="visible">true</property>
           </object>
         </child>

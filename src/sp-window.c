@@ -146,6 +146,7 @@ sp_window_update_stats (gpointer data)
           sp_capture_writer_stat (writer, &stbuf);
 
           count = stbuf.frame_count[SP_CAPTURE_FRAME_SAMPLE];
+          /* Translators: %u is the number (amount) of samples. */
           str = g_strdup_printf (_("Samples: %u"), count);
           gtk_label_set_label (self->stat_label, str);
         }
@@ -192,6 +193,7 @@ sp_window_update_subtitle (SpWindow *self)
       dt = g_date_time_new_from_timeval_local (&tv);
       str = g_date_time_format (dt, "%x %X");
 
+      /* Translators: The first %s is a file name, the second is the date and time. */
       label = g_strdup_printf (_("%s — %s"), filename, str);
 
       gtk_label_set_label (self->subtitle, label);
@@ -303,6 +305,7 @@ sp_window_set_state (SpWindow      *self,
     {
     case SP_WINDOW_STATE_EMPTY:
     case SP_WINDOW_STATE_FAILED:
+      /* Translators: This is a button. */
       gtk_button_set_label (self->record_button, _("Record"));
       gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), TRUE);
       add_class (self->record_button, "suggested-action");
@@ -323,6 +326,7 @@ sp_window_set_state (SpWindow      *self,
       break;
 
     case SP_WINDOW_STATE_RECORDING:
+      /* Translators: This is a button. */
       gtk_button_set_label (self->record_button, _("Stop"));
       gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), TRUE);
       remove_class (self->record_button, "suggested-action");
@@ -347,6 +351,7 @@ sp_window_set_state (SpWindow      *self,
       break;
 
     case SP_WINDOW_STATE_BROWSING:
+      /* Translators: This is a button. */
       gtk_button_set_label (self->record_button, _("Record"));
       gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), TRUE);
       add_class (self->record_button, "suggested-action");
@@ -592,10 +597,13 @@ sp_window_save_capture (GSimpleAction *action,
 
   reader = sp_capture_reader_ref (self->reader);
 
+  /* Translators: This is a window title. */
   dialog = gtk_file_chooser_native_new (_("Save Capture As…"),
                                         GTK_WINDOW (self),
                                         GTK_FILE_CHOOSER_ACTION_SAVE,
+                                        /* Translators: This is a button. */
                                         _("Save"),
+                                        /* Translators: This is a button. */
                                         _("Cancel"));
 
   gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (dialog), TRUE);
@@ -626,6 +634,7 @@ sp_window_save_capture (GSimpleAction *action,
         {
           sp_window_notify_user (self,
                                  GTK_MESSAGE_ERROR,
+                                 /* Translators: %s is the error message. */
                                  _("An error occurred while attempting to save your capture: %s"),
                                  error->message);
           goto failure;
@@ -1005,10 +1014,13 @@ sp_window_open_from_dialog (SpWindow *self)
 
   g_assert (SP_IS_WINDOW (self));
 
+  /* Translators: This is a window title. */
   dialog = gtk_file_chooser_native_new (_("Open Capture…"),
                                         GTK_WINDOW (self),
                                         GTK_FILE_CHOOSER_ACTION_OPEN,
+                                        /* Translators: This is a button. */
                                         _("Open"),
+                                        /* Translators: This is a button. */
                                         _("Cancel"));
 
   filter = gtk_file_filter_new ();

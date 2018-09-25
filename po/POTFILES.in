@@ -14,7 +14,6 @@ lib/sources/sp-perf-source.c
 lib/visualizers/sp-visualizer-list.c
 lib/widgets/sp-profiler-menu-button.c
 src/resources/gtk/help-overlay.ui
-src/resources/gtk/menus.ui
 src/resources/ui/sp-window.ui
 src/sp-application.c
 src/sp-window.c

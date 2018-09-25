@@ -272,6 +272,7 @@ handle_capture_results (GObject      *object,
   if (state->has_cpu)
     {
       GtkWidget *row = g_object_new (SP_TYPE_CPU_VISUALIZER_ROW,
+                                     /* Translators: CPU is the processor. */
                                      "title", _("CPU"),
                                      "height-request", 50,
                                      "selectable", FALSE,
@@ -286,6 +287,7 @@ handle_capture_results (GObject      *object,
     {
       GdkRGBA rgba;
       GtkWidget *row = g_object_new (SP_TYPE_LINE_VISUALIZER_ROW,
+                                     /* Translators: FPS is frames per second. */
                                      "title", _("FPS"),
                                      "height-request", 35,
                                      "selectable", FALSE,

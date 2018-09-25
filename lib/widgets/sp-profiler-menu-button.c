@@ -134,11 +134,13 @@ sp_profiler_menu_button_update_label (SpProfilerMenuButton *self)
 
   if (n_pids == 1)
     {
+      /* Translators: %d is the PID of the process. */
       str = g_strdup_printf (_("Process %d"), pids[0]);
       gtk_label_set_label (priv->label, str);
       return;
     }
 
+  /* Translators: %u is the number (amount) of processes. */
   str = g_strdup_printf (ngettext("%u Process", "%u Processes", n_pids), n_pids);
   gtk_label_set_label (priv->label, str);
 }

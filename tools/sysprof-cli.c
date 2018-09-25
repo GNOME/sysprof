@@ -162,6 +162,7 @@ main (gint   argc,
       flags |= O_EXCL;
       if (g_file_test (filename, G_FILE_TEST_EXISTS))
         {
+          /* Translators: %s is a file name. */
           g_printerr (_("%s exists. Use --force to overwrite\n"), filename);
           return EXIT_FAILURE;
         }

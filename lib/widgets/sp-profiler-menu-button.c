@@ -479,6 +479,9 @@ save_environ_to_gsettings (gpointer data)
 
   priv->save_env_source = 0;
 
+  if (priv->environment_model == NULL)
+    return G_SOURCE_REMOVE;
+
   settings = g_settings_new ("org.gnome.sysprof2");
 
   ar = g_ptr_array_new_with_free_func (g_free);
@@ -524,6 +527,12 @@ sp_profiler_menu_button_destroy (GtkWidget *widget)
     }
 
   g_clear_object (&priv->process_filter);
+
+  if (priv->save_env_source)
+    {
+      g_source_remove (priv->save_env_source);
+      priv->save_env_source = 0;
+    }
 
   GTK_WIDGET_CLASS (sp_profiler_menu_button_parent_class)->destroy (widget);
 }
@@ -622,15 +631,24 @@ sp_profiler_menu_button_env_row_changed (SpProfilerMenuButton *self,
   GtkTreeIter iter;
 
   g_assert (SP_IS_PROFILER_MENU_BUTTON (self));
+  g_assert (GTK_IS_TREE_MODEL (priv->environment_model));
 
   /* queue saving settings to gsettings */
   if (priv->save_env_source)
     g_source_remove (priv->save_env_source);
-  priv->save_env_source = g_timeout_add_seconds (1, save_environ_to_gsettings, self);
+  priv->save_env_source = g_timeout_add_seconds_full (G_PRIORITY_DEFAULT,
+                                                      1,
+                                                      save_environ_to_gsettings,
+                                                      g_object_ref (self),
+                                                      g_object_unref);
+
+  if (priv->profiler == NULL)
+    return;
 
   /* sync the environ to the profiler */
   env = g_ptr_array_new_with_free_func (g_free);
-  model = gtk_tree_view_get_model (priv->env_tree_view);
+  model = priv->environment_model;
+
   if (gtk_tree_model_get_iter_first (model, &iter))
     {
       do

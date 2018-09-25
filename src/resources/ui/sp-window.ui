@@ -277,7 +277,7 @@
         <child>
           <object class="GtkModelButton">
             <property name="action-name">win.open-capture</property>
-            <property name="text" translatable="yes" comments="Translators: This is a menu label.">Open Capture…</property>
+            <property name="text" translatable="yes" context="menu label" comments="Translators: This is a menu label.">Open Capture…</property>
             <property name="visible">true</property>
           </object>
         </child>

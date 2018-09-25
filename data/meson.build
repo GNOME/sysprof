@@ -1,6 +1,5 @@
 datadir = get_option('datadir')
 podir = join_paths(meson.source_root(), 'po')
-msgfmt = find_program('msgfmt')
 
 install_data('sysprof-mime.xml',
   install_dir: join_paths(datadir, 'mime/packages')
@@ -10,19 +9,19 @@ install_data('org.gnome.sysprof2.gschema.xml',
   install_dir: join_paths(datadir, 'glib-2.0/schemas')
 )
 
-# TODO: 0.37.0 adds i18n.merge_file()
-custom_target('appdata-file',
+i18n.merge_file(
     input: 'org.gnome.Sysprof2.appdata.xml.in',
     output: 'org.gnome.Sysprof2.appdata.xml',
-    command: [msgfmt, '--xml', '--template', '@INPUT@', '-d', podir, '-o', '@OUTPUT@'],
+    po_dir: podir,
     install: true,
     install_dir: join_paths(datadir, 'metainfo')
 )
 
-custom_target('desktop-file',
+i18n.merge_file(
     input: 'org.gnome.Sysprof2.desktop.in',
     output: 'org.gnome.Sysprof2.desktop',
-    command: [msgfmt, '--desktop', '--template', '@INPUT@', '-d', podir, '-o', '@OUTPUT@'],
+    type: 'desktop',
+    po_dir: podir,
     install: true,
     install_dir: join_paths(datadir, 'applications')
 )
@@ -98,10 +97,11 @@ if get_option('with_sysprofd') == 'bundled'
     install_dir: systemdunitdir,
   )
 
-  configure_file(
+  i18n.merge_file(
     input: 'org.gnome.sysprof2.policy.in',
     output: 'org.gnome.sysprof2.policy',
     configuration: sysprofdconf,
+    po_dir: podir,
     install: true,
     install_dir: join_paths(datadir, 'polkit-1/actions'),
   )

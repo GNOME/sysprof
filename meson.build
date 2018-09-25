@@ -152,6 +152,7 @@ configure_file(
 )
 
 gnome = import('gnome')
+i18n = import('i18n')
 
 subdir('lib')
 subdir('daemon')

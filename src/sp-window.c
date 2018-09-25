@@ -592,7 +592,7 @@ sp_window_save_capture (GSimpleAction *action,
 
   reader = sp_capture_reader_ref (self->reader);
 
-  dialog = gtk_file_chooser_native_new (_("Save Capture As"),
+  dialog = gtk_file_chooser_native_new (_("Save Capture As…"),
                                         GTK_WINDOW (self),
                                         GTK_FILE_CHOOSER_ACTION_SAVE,
                                         _("Save"),
@@ -1005,7 +1005,7 @@ sp_window_open_from_dialog (SpWindow *self)
 
   g_assert (SP_IS_WINDOW (self));
 
-  dialog = gtk_file_chooser_native_new (_("Open Capture"),
+  dialog = gtk_file_chooser_native_new (_("Open Capture…"),
                                         GTK_WINDOW (self),
                                         GTK_FILE_CHOOSER_ACTION_OPEN,
                                         _("Open"),

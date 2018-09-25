@@ -16,9 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "config.h"
 
 #include <glib/gi18n.h>
 
@@ -319,6 +317,14 @@ sp_application_init (SpApplication *self)
     { "show-help-overlay", sysprof_show_help_overlay },
     { "quit",              sysprof_quit },
   };
+
+  setlocale (LC_ALL, "");
+
+  bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+  textdomain (GETTEXT_PACKAGE);
+
+  g_set_application_name (_("Sysprof"));
 
   g_action_map_add_action_entries (G_ACTION_MAP (self), actions, G_N_ELEMENTS (actions), self);
 

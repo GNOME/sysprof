@@ -29,6 +29,8 @@ config_h.set_quoted('DEBUGDIR', debugdir)
 
 config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
 config_h.set10('ENABLE_NLS', true)
+config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
+config_h.set('LOCALEDIR', 'PACKAGE_LOCALE_DIR')
 
 has_use_clockid = cc.has_member('struct perf_event_attr', 'use_clockid', prefix: '#include <linux/perf_event.h>')
 has_clockid = cc.has_member('struct perf_event_attr', 'clockid', prefix: '#include <linux/perf_event.h>')
@@ -146,7 +148,6 @@ if cc.has_argument('-fPIE')
 endif
 
 configure_file(
-          input: 'config.h.meson',
          output: 'config.h',
   configuration: config_h
 )

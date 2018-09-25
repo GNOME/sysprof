@@ -2,7 +2,6 @@
 <gresources>
   <gresource prefix="/org/gnome/sysprof">
     <!-- Automatic GTK resources -->
-    <file>gtk/menus.ui</file>
     <file>gtk/help-overlay.ui</file>
 
     <!-- Theme overrides -->

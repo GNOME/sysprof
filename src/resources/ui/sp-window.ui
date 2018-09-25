@@ -263,15 +263,28 @@
         </child>
         <child>
           <object class="GtkModelButton">
+            <property name="action-name">app.new-window</property>
+            <property name="text" translatable="yes">New Window</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="orientation">horizontal</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton">
             <property name="action-name">win.open-capture</property>
-            <property name="text" translatable="yes">Open</property>
+            <property name="text" translatable="yes">Open Capture…</property>
             <property name="visible">true</property>
           </object>
         </child>
         <child>
           <object class="GtkModelButton">
             <property name="action-name">win.save-capture</property>
-            <property name="text" translatable="yes">Save As</property>
+            <property name="text" translatable="yes">Save As…</property>
             <property name="visible">true</property>
           </object>
         </child>
@@ -298,6 +311,33 @@
           <object class="GtkModelButton">
             <property name="action-name">win.close-capture</property>
             <property name="text" translatable="yes">Close</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="orientation">horizontal</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="action-name">app.show-help-overlay</property>
+            <property name="text" translatable="yes">Keyboard Shortcuts</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="action-name">app.help</property>
+            <property name="text" translatable="yes">Help</property>
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="action-name">app.about</property>
+            <property name="text" translatable="yes">About Sysprof</property>
             <property name="visible">true</property>
           </object>
         </child>

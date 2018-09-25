@@ -1,3 +1,13 @@
+Overview of changes in Sysprof 3.30.1
+=====================================
+
+ * Various compilation fixes for alternative platforms, compilers, and toolchains.
+ * Backport model filter fixes from libdazzle.
+
+Translations:
+
+ * Swedish, Hungarian, Brazilian Portuguese
+
 Overview of changes in Sysprof 3.30.0
 =====================================
 

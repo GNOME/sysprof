@@ -6,10 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
-"product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2018-05-17 19:32+0000\n"
-"PO-Revision-Date: 2018-05-21 09:58+0200\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2018-09-25 18:50+0000\n"
+"PO-Revision-Date: 2018-09-28 12:40+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -172,10 +171,12 @@ msgstr "Něco je špatně!"
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr "Při pokusu o profilování vašeho systému se něco neočekávaně pokazilo."
 
+#. Translators: This is the description for a switch.
 #: lib/resources/ui/sp-profiler-menu-button.ui:58
 msgid "Profile my _entire system"
 msgstr "Profilovat c_elý můj systém"
 
+#. Translators: This is the placeholder in a search entry.
 #: lib/resources/ui/sp-profiler-menu-button.ui:95
 msgid "Search"
 msgstr "hledat"
@@ -192,6 +193,7 @@ msgstr "Příkazový řádek"
 msgid "Environment"
 msgstr "Prostředí"
 
+#. Translators: This is a check button.
 #: lib/resources/ui/sp-profiler-menu-button.ui:164
 msgid "Inherit current environment"
 msgstr "Zdědit aktuální prostředí"
@@ -247,11 +249,13 @@ msgstr ""
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Nastala chyba při pokusu o přístup k počitadlům výkonu: %s"
 
-#: lib/visualizers/sp-visualizer-list.c:267
+#. Translators: CPU is the processor.
+#: lib/visualizers/sp-visualizer-list.c:276
 msgid "CPU"
 msgstr "Procesor"
 
-#: lib/visualizers/sp-visualizer-list.c:281
+#. Translators: FPS is frames per second.
+#: lib/visualizers/sp-visualizer-list.c:291
 msgid "FPS"
 msgstr "FPS"
 
@@ -260,12 +264,14 @@ msgstr "FPS"
 msgid "All Processes"
 msgstr "Všechny procesy"
 
-#: lib/widgets/sp-profiler-menu-button.c:137
+#. Translators: %d is the PID of the process.
+#: lib/widgets/sp-profiler-menu-button.c:138
 #, c-format
 msgid "Process %d"
 msgstr "Proces %d"
 
-#: lib/widgets/sp-profiler-menu-button.c:142
+#. Translators: %u is the number (amount) of processes.
+#: lib/widgets/sp-profiler-menu-button.c:144
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
@@ -273,7 +279,7 @@ msgstr[0] "%u proces"
 msgstr[1] "%u procesy"
 msgstr[2] "%u procesů"
 
-#: lib/widgets/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:815
 msgid "The command line arguments provided are invalid"
 msgstr "Zadané argumenty příkazového řádku nejsou platné"
 
@@ -347,69 +353,72 @@ msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Výchozí přiblížení"
 
-#: src/resources/gtk/menus.ui:6
-msgid "_New Window"
-msgstr "_Nové okno"
-
-#: src/resources/gtk/menus.ui:12
-msgid "_Open Capture"
-msgstr "_Otevřít záznam"
-
-#: src/resources/gtk/menus.ui:18
-msgid "About"
-msgstr "O aplikaci"
-
-#: src/resources/gtk/menus.ui:22
-msgid "Help"
-msgstr "Nápověda"
-
-#: src/resources/gtk/menus.ui:26
-msgid "Keyboard Shortcuts"
-msgstr "Klávesové zkratky"
-
-#: src/resources/gtk/menus.ui:30
-msgid "_Quit"
-msgstr "U_končit"
-
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:317
 msgid "Not running"
 msgstr "Neběží"
 
+#. Translators: This is a button.
 #: src/resources/ui/sp-window.ui:44
 msgid "_Record"
 msgstr "_Záznam"
 
+#. Translators: This is a button.
 #: src/resources/ui/sp-window.ui:118
 msgid "_Close"
 msgstr "_Zavřít"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Oddálit (Ctrl+-)"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Výchozí úroveň přiblížení (Ctrl+0)"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Přiblížit (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
-msgid "Open"
-msgstr "Otevřít"
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:267
+msgid "New Window"
+msgstr "Nové okno"
 
-#: src/resources/ui/sp-window.ui:274
-msgid "Save As"
-msgstr "Uložit jako"
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:280
+msgctxt "menu label"
+msgid "Open Capture…"
+msgstr "Otevřít záznam…"
 
+#. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:287
+msgid "Save As…"
+msgstr "Uložit jako…"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:300
 msgid "Screenshot"
 msgstr "Snímek obrazovky"
 
-#: src/resources/ui/sp-window.ui:300
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:313
 msgid "Close"
 msgstr "Zavřít"
+
+#: src/resources/ui/sp-window.ui:326
+msgid "Keyboard Shortcuts"
+msgstr "Klávesové zkratky"
+
+#: src/resources/ui/sp-window.ui:333
+msgid "Help"
+msgstr "Nápověda"
+
+#: src/resources/ui/sp-window.ui:340
+msgid "About Sysprof"
+msgstr "O aplikaci Sysprof"
 
 #: src/sp-application.c:174
 msgid "A system profiler"
@@ -423,76 +432,90 @@ msgstr "Marek Černocký <marek@manet.cz>"
 msgid "Learn more about Sysprof"
 msgstr "Přečtěte si o Sysprof více"
 
-#: src/sp-window.c:149
+#. Translators: %u is the number (amount) of samples.
+#: src/sp-window.c:150
 #, c-format
 msgid "Samples: %u"
 msgstr "Vzorky: %u"
 
-#: src/sp-window.c:182
+#: src/sp-window.c:183
 msgid "[Memory Capture]"
 msgstr "[Záznam paměti]"
 
-#: src/sp-window.c:195
+#. Translators: The first %s is a file name, the second is the date and time.
+#: src/sp-window.c:197
 #, c-format
 msgid "%s — %s"
 msgstr "%s — %s"
 
-#: src/sp-window.c:233
+#: src/sp-window.c:235
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Nebyl sesbírán dostatek vzorků pro vygenerování grafu volání"
 
-#: src/sp-window.c:306 src/sp-window.c:350
+#. Translators: This is a button.
+#: src/sp-window.c:309 src/sp-window.c:355
 msgid "Record"
 msgstr "Zaznamenávat"
 
-#: src/sp-window.c:326
+#. Translators: This is a button.
+#: src/sp-window.c:330
 msgid "Stop"
 msgstr "Zastavit"
 
-#: src/sp-window.c:331
+#: src/sp-window.c:335
 msgid "Recording…"
 msgstr "Zaznamenává se…"
 
-#: src/sp-window.c:342
+#: src/sp-window.c:346
 msgid "Building profile…"
 msgstr "Sestavuje se profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:443
+#: src/sp-window.c:448
 msgid "Stopping…"
 msgstr "Zastavuje se…"
 
-#: src/sp-window.c:595
-msgid "Save Capture As"
+#. Translators: This is a window title.
+#: src/sp-window.c:601
+msgid "Save Capture As…"
 msgstr "Uložení záznamu jako"
 
-#: src/sp-window.c:598
+#. Translators: This is a button.
+#: src/sp-window.c:605
 msgid "Save"
 msgstr "Uložit"
 
-#: src/sp-window.c:599 src/sp-window.c:1012
+#. Translators: This is a button.
+#: src/sp-window.c:607 src/sp-window.c:1024
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/sp-window.c:629
+#. Translators: %s is the error message.
+#: src/sp-window.c:638
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Vyskytla se chyba při pokusu uložit váš záznam: %s"
 
-#: src/sp-window.c:981
+#: src/sp-window.c:990
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Soubor „%s“ nelze otevřít. Podporovány jsou jen místní soubory."
 
-#: src/sp-window.c:1008
-msgid "Open Capture"
+#. Translators: This is a window title.
+#: src/sp-window.c:1018
+msgid "Open Capture…"
 msgstr "Otevření záznamu"
 
-#: src/sp-window.c:1015
+#. Translators: This is a button.
+#: src/sp-window.c:1022
+msgid "Open"
+msgstr "Otevřít"
+
+#: src/sp-window.c:1027
 msgid "Sysprof Captures"
 msgstr "Záznam Sysprof"
 
-#: src/sp-window.c:1020
+#: src/sp-window.c:1032
 msgid "All Files"
 msgstr "Všechny soubory"
 
@@ -528,7 +551,8 @@ msgstr "[SOUBOR_ZÁZNAMU] – Sysprof"
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Do sysprof-cli bylo předáno příliš mnoho argumentů:"
 
-#: tools/sysprof-cli.c:165
+#. Translators: %s is a file name.
+#: tools/sysprof-cli.c:166
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s již existuje. Použijte --force k jeho přepsání\n"

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-06-10 18:48+0000\n"
-"PO-Revision-Date: 2018-09-03 14:29+0200\n"
+"POT-Creation-Date: 2018-09-25 18:50+0000\n"
+"PO-Revision-Date: 2018-09-29 15:02+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -173,10 +173,12 @@ msgstr "Aj, det där gjorde ont!"
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr "Något gick oväntat fel då ditt system skulle profileras."
 
+#. Translators: This is the description for a switch.
 #: lib/resources/ui/sp-profiler-menu-button.ui:58
 msgid "Profile my _entire system"
 msgstr "Profilera _hela mitt system"
 
+#. Translators: This is the placeholder in a search entry.
 #: lib/resources/ui/sp-profiler-menu-button.ui:95
 msgid "Search"
 msgstr "Sök"
@@ -193,6 +195,7 @@ msgstr "Kommandorad"
 msgid "Environment"
 msgstr "Miljö"
 
+#. Translators: This is a check button.
 #: lib/resources/ui/sp-profiler-menu-button.ui:164
 msgid "Inherit current environment"
 msgstr "Ärv aktuell miljö"
@@ -248,11 +251,13 @@ msgstr ""
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Ett fel uppstod vid försök att komma åt prestandaräknare: %s"
 
-#: lib/visualizers/sp-visualizer-list.c:275
+#. Translators: CPU is the processor.
+#: lib/visualizers/sp-visualizer-list.c:276
 msgid "CPU"
 msgstr "CPU"
 
-#: lib/visualizers/sp-visualizer-list.c:289
+#. Translators: FPS is frames per second.
+#: lib/visualizers/sp-visualizer-list.c:291
 msgid "FPS"
 msgstr "Bilder/s"
 
@@ -261,19 +266,21 @@ msgstr "Bilder/s"
 msgid "All Processes"
 msgstr "Alla processer"
 
-#: lib/widgets/sp-profiler-menu-button.c:137
+#. Translators: %d is the PID of the process.
+#: lib/widgets/sp-profiler-menu-button.c:138
 #, c-format
 msgid "Process %d"
 msgstr "Process %d"
 
-#: lib/widgets/sp-profiler-menu-button.c:142
+#. Translators: %u is the number (amount) of processes.
+#: lib/widgets/sp-profiler-menu-button.c:144
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
 msgstr[0] "%u process"
 msgstr[1] "%u processer"
 
-#: lib/widgets/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:815
 msgid "The command line arguments provided are invalid"
 msgstr "Kommandoradsargumenten som tillhandahölls är ogiltiga"
 
@@ -347,69 +354,72 @@ msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Återställ zoom"
 
-#: src/resources/gtk/menus.ui:6
-msgid "_New Window"
-msgstr "_Nytt fönster"
-
-#: src/resources/gtk/menus.ui:12
-msgid "_Open Capture"
-msgstr "Ö_ppna fångst"
-
-#: src/resources/gtk/menus.ui:18
-msgid "About"
-msgstr "Om"
-
-#: src/resources/gtk/menus.ui:22
-msgid "Help"
-msgstr "Hjälp"
-
-#: src/resources/gtk/menus.ui:26
-msgid "Keyboard Shortcuts"
-msgstr "Tangentbordsgenvägar"
-
-#: src/resources/gtk/menus.ui:30
-msgid "_Quit"
-msgstr "A_vsluta"
-
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:317
 msgid "Not running"
 msgstr "Kör inte"
 
+#. Translators: This is a button.
 #: src/resources/ui/sp-window.ui:44
 msgid "_Record"
 msgstr "_Spela in"
 
+#. Translators: This is a button.
 #: src/resources/ui/sp-window.ui:118
 msgid "_Close"
 msgstr "S_täng"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Zooma ut (Ctrl+-)"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Återställ zoomnivå (Ctrl+0)"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Zooma in (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
-msgid "Open"
-msgstr "Öppna"
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:267
+msgid "New Window"
+msgstr "Nytt fönster"
 
-#: src/resources/ui/sp-window.ui:274
-msgid "Save As"
-msgstr "Spara som"
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:280
+msgctxt "menu label"
+msgid "Open Capture…"
+msgstr "Öppna fångst…"
 
+#. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:287
+msgid "Save As…"
+msgstr "Spara som…"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:300
 msgid "Screenshot"
 msgstr "Skärmbild"
 
-#: src/resources/ui/sp-window.ui:300
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:313
 msgid "Close"
 msgstr "Stäng"
+
+#: src/resources/ui/sp-window.ui:326
+msgid "Keyboard Shortcuts"
+msgstr "Tangentbordsgenvägar"
+
+#: src/resources/ui/sp-window.ui:333
+msgid "Help"
+msgstr "Hjälp"
+
+#: src/resources/ui/sp-window.ui:340
+msgid "About Sysprof"
+msgstr "Om Sysprof"
 
 #: src/sp-application.c:174
 msgid "A system profiler"
@@ -426,77 +436,91 @@ msgstr ""
 msgid "Learn more about Sysprof"
 msgstr "Lär dig mer om Sysprof"
 
-#: src/sp-window.c:149
+#. Translators: %u is the number (amount) of samples.
+#: src/sp-window.c:150
 #, c-format
 msgid "Samples: %u"
 msgstr "Samplingar: %u"
 
-#: src/sp-window.c:182
+#: src/sp-window.c:183
 msgid "[Memory Capture]"
 msgstr "[Minnesfångst]"
 
-#: src/sp-window.c:195
+#. Translators: The first %s is a file name, the second is the date and time.
+#: src/sp-window.c:197
 #, c-format
 msgid "%s — %s"
 msgstr "%s — %s"
 
-#: src/sp-window.c:233
+#: src/sp-window.c:235
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr ""
 "Har inte samlat tillräckligt många samplingar för att skapa en anropsgraf"
 
-#: src/sp-window.c:306 src/sp-window.c:350
+#. Translators: This is a button.
+#: src/sp-window.c:309 src/sp-window.c:355
 msgid "Record"
 msgstr "Spela in"
 
-#: src/sp-window.c:326
+#. Translators: This is a button.
+#: src/sp-window.c:330
 msgid "Stop"
 msgstr "Stoppa"
 
-#: src/sp-window.c:331
+#: src/sp-window.c:335
 msgid "Recording…"
 msgstr "Spelar in…"
 
-#: src/sp-window.c:342
+#: src/sp-window.c:346
 msgid "Building profile…"
 msgstr "Bygger profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:443
+#: src/sp-window.c:448
 msgid "Stopping…"
 msgstr "Stoppar…"
 
-#: src/sp-window.c:595
-msgid "Save Capture As"
-msgstr "Spara fångst som"
+#. Translators: This is a window title.
+#: src/sp-window.c:601
+msgid "Save Capture As…"
+msgstr "Spara fångst som…"
 
-#: src/sp-window.c:598
+#. Translators: This is a button.
+#: src/sp-window.c:605
 msgid "Save"
 msgstr "Spara"
 
-#: src/sp-window.c:599 src/sp-window.c:1012
+#. Translators: This is a button.
+#: src/sp-window.c:607 src/sp-window.c:1024
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/sp-window.c:629
+#. Translators: %s is the error message.
+#: src/sp-window.c:638
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Ett fel uppstod vid försök att spara din fångst: %s"
 
-#: src/sp-window.c:981
+#: src/sp-window.c:990
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Filen ”%s” kunde inte öppnas. Endast lokala filer stöds."
 
-#: src/sp-window.c:1008
-msgid "Open Capture"
-msgstr "Öppna fångst"
+#. Translators: This is a window title.
+#: src/sp-window.c:1018
+msgid "Open Capture…"
+msgstr "Öppna fångst…"
 
-#: src/sp-window.c:1015
+#. Translators: This is a button.
+#: src/sp-window.c:1022
+msgid "Open"
+msgstr "Öppna"
+
+#: src/sp-window.c:1027
 msgid "Sysprof Captures"
 msgstr "Sysprof-fångster"
 
-#: src/sp-window.c:1020
+#: src/sp-window.c:1032
 msgid "All Files"
 msgstr "Alla filer"
 
@@ -532,10 +556,20 @@ msgstr "[FÅNGSTFIL] — Sysprof"
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "För många argument skickades till sysprof-cli:"
 
-#: tools/sysprof-cli.c:165
+#. Translators: %s is a file name.
+#: tools/sysprof-cli.c:166
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existerar. Använd --force för att skriva över\n"
+
+#~ msgid "_Open Capture"
+#~ msgstr "Ö_ppna fångst"
+
+#~ msgid "About"
+#~ msgstr "Om"
+
+#~ msgid "_Quit"
+#~ msgstr "A_vsluta"
 
 #~ msgid "%s - %s"
 #~ msgstr "%s - %s"

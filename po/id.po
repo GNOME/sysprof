@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-28\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-06-10 18:48+0000\n"
-"PO-Revision-Date: 2018-07-06 13:45+0700\n"
+"POT-Creation-Date: 2018-09-25 18:50+0000\n"
+"PO-Revision-Date: 2018-10-02 20:35+0700\n"
 "Last-Translator: Kukuh Syafaat <kukuhsyafaat@gnome.org>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
@@ -174,10 +174,12 @@ msgstr ""
 "Sesuatu secara tak diduga mengacau ketika mencoba memantau profil sistem "
 "Anda."
 
+#. Translators: This is the description for a switch.
 #: lib/resources/ui/sp-profiler-menu-button.ui:58
 msgid "Profile my _entire system"
 msgstr "Pantau profil s_eluruh sistem saya"
 
+#. Translators: This is the placeholder in a search entry.
 #: lib/resources/ui/sp-profiler-menu-button.ui:95
 msgid "Search"
 msgstr "Cari"
@@ -194,6 +196,7 @@ msgstr "Baris Perintah"
 msgid "Environment"
 msgstr "Lingkungan"
 
+#. Translators: This is a check button.
 #: lib/resources/ui/sp-profiler-menu-button.ui:164
 msgid "Inherit current environment"
 msgstr "Warisi lingkungan saat ini"
@@ -249,11 +252,13 @@ msgstr ""
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Kesalahan terjadi ketika mencoba mengakses pencacah kinerja: %s"
 
-#: lib/visualizers/sp-visualizer-list.c:275
+#. Translators: CPU is the processor.
+#: lib/visualizers/sp-visualizer-list.c:276
 msgid "CPU"
 msgstr "CPU"
 
-#: lib/visualizers/sp-visualizer-list.c:289
+#. Translators: FPS is frames per second.
+#: lib/visualizers/sp-visualizer-list.c:291
 msgid "FPS"
 msgstr "FPS"
 
@@ -262,18 +267,20 @@ msgstr "FPS"
 msgid "All Processes"
 msgstr "Semua Proses"
 
-#: lib/widgets/sp-profiler-menu-button.c:137
+#. Translators: %d is the PID of the process.
+#: lib/widgets/sp-profiler-menu-button.c:138
 #, c-format
 msgid "Process %d"
 msgstr "Proses %d"
 
-#: lib/widgets/sp-profiler-menu-button.c:142
+#. Translators: %u is the number (amount) of processes.
+#: lib/widgets/sp-profiler-menu-button.c:144
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
 msgstr[0] "%u Proses"
 
-#: lib/widgets/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:815
 msgid "The command line arguments provided are invalid"
 msgstr "Argumen baris perintah yang diberikan tidak valid"
 
@@ -347,69 +354,72 @@ msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Reset zum"
 
-#: src/resources/gtk/menus.ui:6
-msgid "_New Window"
-msgstr "Je_ndela Baru"
-
-#: src/resources/gtk/menus.ui:12
-msgid "_Open Capture"
-msgstr "Buk_a Tangkapan"
-
-#: src/resources/gtk/menus.ui:18
-msgid "About"
-msgstr "Tentang"
-
-#: src/resources/gtk/menus.ui:22
-msgid "Help"
-msgstr "Bantuan"
-
-#: src/resources/gtk/menus.ui:26
-msgid "Keyboard Shortcuts"
-msgstr "Pintasan Papan Ketik"
-
-#: src/resources/gtk/menus.ui:30
-msgid "_Quit"
-msgstr "_Keluar"
-
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:317
 msgid "Not running"
 msgstr "Tidak sedang berjalan"
 
+#. Translators: This is a button.
 #: src/resources/ui/sp-window.ui:44
 msgid "_Record"
 msgstr "_Rekam"
 
+#. Translators: This is a button.
 #: src/resources/ui/sp-window.ui:118
 msgid "_Close"
 msgstr "_Tutup"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Perkecil (Ctrl+-)"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Reset tingkat zum (Ctrl+0)"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Perbesar (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
-msgid "Open"
-msgstr "Buka"
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:267
+msgid "New Window"
+msgstr "Jendela Baru"
 
-#: src/resources/ui/sp-window.ui:274
-msgid "Save As"
-msgstr "Simpan Sebagai"
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:280
+msgctxt "menu label"
+msgid "Open Capture…"
+msgstr "Buka Tangkapan…"
 
+#. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:287
+msgid "Save As…"
+msgstr "Simpan Sebagai…"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:300
 msgid "Screenshot"
 msgstr "Cuplikan layar"
 
-#: src/resources/ui/sp-window.ui:300
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:313
 msgid "Close"
 msgstr "Tutup"
+
+#: src/resources/ui/sp-window.ui:326
+msgid "Keyboard Shortcuts"
+msgstr "Pintasan Papan Ketik"
+
+#: src/resources/ui/sp-window.ui:333
+msgid "Help"
+msgstr "Bantuan"
+
+#: src/resources/ui/sp-window.ui:340
+msgid "About Sysprof"
+msgstr "Tentang Sysprof"
 
 #: src/sp-application.c:174
 msgid "A system profiler"
@@ -425,76 +435,90 @@ msgstr ""
 msgid "Learn more about Sysprof"
 msgstr "Pelajari lebih lanjut tentang Sysprof"
 
-#: src/sp-window.c:149
+#. Translators: %u is the number (amount) of samples.
+#: src/sp-window.c:150
 #, c-format
 msgid "Samples: %u"
 msgstr "Cuplikan: %u"
 
-#: src/sp-window.c:182
+#: src/sp-window.c:183
 msgid "[Memory Capture]"
 msgstr "[Tangkapan Memori]"
 
-#: src/sp-window.c:195
+#. Translators: The first %s is a file name, the second is the date and time.
+#: src/sp-window.c:197
 #, c-format
 msgid "%s — %s"
 msgstr "%s — %s"
 
-#: src/sp-window.c:233
+#: src/sp-window.c:235
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Tidak cukup cuplikan dikumpulkan untuk membuat suatu callgraph"
 
-#: src/sp-window.c:306 src/sp-window.c:350
+#. Translators: This is a button.
+#: src/sp-window.c:309 src/sp-window.c:355
 msgid "Record"
 msgstr "Rekam"
 
-#: src/sp-window.c:326
+#. Translators: This is a button.
+#: src/sp-window.c:330
 msgid "Stop"
 msgstr "Berhenti"
 
-#: src/sp-window.c:331
+#: src/sp-window.c:335
 msgid "Recording…"
 msgstr "Sedang merekam…"
 
-#: src/sp-window.c:342
+#: src/sp-window.c:346
 msgid "Building profile…"
 msgstr "Sedang membangun profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:443
+#: src/sp-window.c:448
 msgid "Stopping…"
 msgstr "Menghentikan…"
 
-#: src/sp-window.c:595
-msgid "Save Capture As"
-msgstr "Simpan Tangkapan Sebagai"
+#. Translators: This is a window title.
+#: src/sp-window.c:601
+msgid "Save Capture As…"
+msgstr "Simpan Tangkapan Sebagai…"
 
-#: src/sp-window.c:598
+#. Translators: This is a button.
+#: src/sp-window.c:605
 msgid "Save"
 msgstr "Simpan"
 
-#: src/sp-window.c:599 src/sp-window.c:1012
+#. Translators: This is a button.
+#: src/sp-window.c:607 src/sp-window.c:1024
 msgid "Cancel"
 msgstr "Batal"
 
-#: src/sp-window.c:629
+#. Translators: %s is the error message.
+#: src/sp-window.c:638
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Terjadi kesalahan ketika mencoba menyimpan tangkapan Anda: %s"
 
-#: src/sp-window.c:981
+#: src/sp-window.c:990
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Berkas \"%s\" tidak dapat dibuka. Hanya berkas lokal yang didukung."
 
-#: src/sp-window.c:1008
-msgid "Open Capture"
-msgstr "Buka Tangkapan"
+#. Translators: This is a window title.
+#: src/sp-window.c:1018
+msgid "Open Capture…"
+msgstr "Buka Tangkapan…"
 
-#: src/sp-window.c:1015
+#. Translators: This is a button.
+#: src/sp-window.c:1022
+msgid "Open"
+msgstr "Buka"
+
+#: src/sp-window.c:1027
 msgid "Sysprof Captures"
 msgstr "Tangkapan Sysprof"
 
-#: src/sp-window.c:1020
+#: src/sp-window.c:1032
 msgid "All Files"
 msgstr "Semua Berkas"
 
@@ -530,10 +554,20 @@ msgstr "[BERKAS_TANGKAPAN] — Sysprof"
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Terlalu banyak argumen yang diberikan ke sysprof-cli:"
 
-#: tools/sysprof-cli.c:165
+#. Translators: %s is a file name.
+#: tools/sysprof-cli.c:166
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s telah ada. Gunakan --force untuk menimpa\n"
+
+#~ msgid "_Open Capture"
+#~ msgstr "Buk_a Tangkapan"
+
+#~ msgid "About"
+#~ msgstr "Tentang"
+
+#~ msgid "_Quit"
+#~ msgstr "_Keluar"
 
 #~ msgid "%s - %s"
 #~ msgstr "%s - %s"

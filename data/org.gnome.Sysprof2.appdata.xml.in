@@ -26,6 +26,7 @@
     <kudo>AppMenu</kudo>
     <kudo>HiDpiIcon</kudo>
     <kudo>ModernToolkit</kudo>
+    <kudo>UserDocs</kudo>
   </kudos>
 
   <provides>

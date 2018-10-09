@@ -100,7 +100,6 @@ if get_option('with_sysprofd') == 'bundled'
   i18n.merge_file(
     input: 'org.gnome.sysprof2.policy.in',
     output: 'org.gnome.sysprof2.policy',
-    configuration: sysprofdconf,
     po_dir: podir,
     install: true,
     install_dir: join_paths(datadir, 'polkit-1/actions'),

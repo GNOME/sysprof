@@ -1,6 +1,7 @@
 sources_headers = [
   'sp-gjs-source.h',
   'sp-hostinfo-source.h',
+  'sp-memory-source.h',
   'sp-perf-source.h',
   'sp-proc-source.h',
   'sp-source.h',
@@ -9,6 +10,7 @@ sources_headers = [
 sources_sources = [
   'sp-gjs-source.c',
   'sp-hostinfo-source.c',
+  'sp-memory-source.c',
   'sp-perf-counter.c',
   'sp-perf-counter.h',
   'sp-perf-source.c',

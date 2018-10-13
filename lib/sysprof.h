@@ -44,6 +44,7 @@ G_BEGIN_DECLS
 
 # include "sources/sp-gjs-source.h"
 # include "sources/sp-hostinfo-source.h"
+# include "sources/sp-memory-source.h"
 # include "sources/sp-perf-source.h"
 # include "sources/sp-proc-source.h"
 # include "sources/sp-source.h"

@@ -88,6 +88,7 @@ main (gint   argc,
   GError *error = NULL;
   GSource *gsource;
   gchar *command = NULL;
+  gboolean memory = FALSE;
   gboolean version = FALSE;
   gboolean force = FALSE;
   int pid = -1;
@@ -97,6 +98,7 @@ main (gint   argc,
     { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task"), N_("PID") },
     { "command", 'c', 0, G_OPTION_ARG_STRING, &command, N_("Run a command and profile the process"), N_("COMMAND") },
     { "force", 'f', 0, G_OPTION_ARG_NONE, &force, N_("Force overwrite the capture file") },
+    { "memory", 'm', 0, G_OPTION_ARG_NONE, &memory, N_("Record basic memory statistics") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
   };
@@ -212,6 +214,13 @@ main (gint   argc,
   source = sp_hostinfo_source_new ();
   sp_profiler_add_source (profiler, source);
   g_object_unref (source);
+
+  if (memory)
+    {
+      source = sp_memory_source_new ();
+      sp_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
 
   if (pid != -1)
     {

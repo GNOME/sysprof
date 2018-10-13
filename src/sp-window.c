@@ -403,6 +403,7 @@ sp_window_add_sources (SpWindow   *window,
   g_autoptr(SpSource) host_source = NULL;
   g_autoptr(SpSource) proc_source = NULL;
   g_autoptr(SpSource) perf_source = NULL;
+  g_autoptr(SpSource) memory_source = NULL;
 
   g_assert (SP_IS_WINDOW (window));
   g_assert (SP_IS_PROFILER (profiler));
@@ -415,6 +416,9 @@ sp_window_add_sources (SpWindow   *window,
 
   host_source = sp_hostinfo_source_new ();
   sp_profiler_add_source (profiler, host_source);
+
+  memory_source = sp_memory_source_new ();
+  sp_profiler_add_source (profiler, memory_source);
 }
 
 static void

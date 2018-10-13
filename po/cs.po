@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-09-25 18:50+0000\n"
-"PO-Revision-Date: 2018-09-28 12:40+0200\n"
+"POT-Creation-Date: 2018-10-13 00:12+0000\n"
+"PO-Revision-Date: 2018-10-13 08:23+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -20,7 +20,8 @@ msgstr ""
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
+#: src/sp-application.c:328
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -420,15 +421,15 @@ msgstr "Nápověda"
 msgid "About Sysprof"
 msgstr "O aplikaci Sysprof"
 
-#: src/sp-application.c:174
+#: src/sp-application.c:173
 msgid "A system profiler"
 msgstr "Systémový profiler"
 
-#: src/sp-application.c:179
+#: src/sp-application.c:178
 msgid "translator-credits"
 msgstr "Marek Černocký <marek@manet.cz>"
 
-#: src/sp-application.c:185
+#: src/sp-application.c:184
 msgid "Learn more about Sysprof"
 msgstr "Přečtěte si o Sysprof více"
 
@@ -471,88 +472,92 @@ msgid "Building profile…"
 msgstr "Sestavuje se profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:448
+#: src/sp-window.c:452
 msgid "Stopping…"
 msgstr "Zastavuje se…"
 
 #. Translators: This is a window title.
-#: src/sp-window.c:601
+#: src/sp-window.c:605
 msgid "Save Capture As…"
 msgstr "Uložení záznamu jako"
 
 #. Translators: This is a button.
-#: src/sp-window.c:605
+#: src/sp-window.c:609
 msgid "Save"
 msgstr "Uložit"
 
 #. Translators: This is a button.
-#: src/sp-window.c:607 src/sp-window.c:1024
+#: src/sp-window.c:611 src/sp-window.c:1028
 msgid "Cancel"
 msgstr "Zrušit"
 
 #. Translators: %s is the error message.
-#: src/sp-window.c:638
+#: src/sp-window.c:642
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Vyskytla se chyba při pokusu uložit váš záznam: %s"
 
-#: src/sp-window.c:990
+#: src/sp-window.c:994
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Soubor „%s“ nelze otevřít. Podporovány jsou jen místní soubory."
 
 #. Translators: This is a window title.
-#: src/sp-window.c:1018
+#: src/sp-window.c:1022
 msgid "Open Capture…"
 msgstr "Otevření záznamu"
 
 #. Translators: This is a button.
-#: src/sp-window.c:1022
+#: src/sp-window.c:1026
 msgid "Open"
 msgstr "Otevřít"
 
-#: src/sp-window.c:1027
+#: src/sp-window.c:1031
 msgid "Sysprof Captures"
 msgstr "Záznam Sysprof"
 
-#: src/sp-window.c:1032
+#: src/sp-window.c:1036
 msgid "All Files"
 msgstr "Všechny soubory"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:98
 msgid "Make sysprof specific to a task"
 msgstr "Určit konkrétní úlohu pro sysprof"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:98
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:99
 msgid "Run a command and profile the process"
 msgstr "Spustit příkaz a profilovat proces"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:99
 msgid "COMMAND"
 msgstr "PŘÍKAZ"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:100
 msgid "Force overwrite the capture file"
 msgstr "Vynutit přepsání souboru se záznamem"
 
-#: tools/sysprof-cli.c:100
+#: tools/sysprof-cli.c:101
+msgid "Record basic memory statistics"
+msgstr "Zaznamenávat základní paměťové statistiky"
+
+#: tools/sysprof-cli.c:102
 msgid "Print the sysprof-cli version and exit"
 msgstr "Vypsat verzi sysprof-cli a skončit"
 
-#: tools/sysprof-cli.c:106
+#: tools/sysprof-cli.c:108
 msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[SOUBOR_ZÁZNAMU] – Sysprof"
 
-#: tools/sysprof-cli.c:125
+#: tools/sysprof-cli.c:127
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Do sysprof-cli bylo předáno příliš mnoho argumentů:"
 
 #. Translators: %s is a file name.
-#: tools/sysprof-cli.c:166
+#: tools/sysprof-cli.c:168
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s již existuje. Použijte --force k jeho přepsání\n"

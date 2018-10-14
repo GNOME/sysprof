@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-09-25 18:50+0000\n"
-"PO-Revision-Date: 2018-09-26 17:45+0200\n"
+"POT-Creation-Date: 2018-10-13 00:12+0000\n"
+"PO-Revision-Date: 2018-10-14 17:27+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -21,7 +21,8 @@ msgstr ""
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
+#: src/sp-application.c:328
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -429,17 +430,17 @@ msgstr "Pomoc"
 msgid "About Sysprof"
 msgstr "O programie"
 
-#: src/sp-application.c:174
+#: src/sp-application.c:173
 msgid "A system profiler"
 msgstr "Profiler systemu"
 
-#: src/sp-application.c:179
+#: src/sp-application.c:178
 msgid "translator-credits"
 msgstr ""
 "Piotr Drąg <piotrdrag@gmail.com>, 2016-2018\n"
 "Aviary.pl <community-poland@mozilla.org>, 2016-2018"
 
-#: src/sp-application.c:185
+#: src/sp-application.c:184
 msgid "Learn more about Sysprof"
 msgstr "Więcej informacji o Sysprof"
 
@@ -482,88 +483,92 @@ msgid "Building profile…"
 msgstr "Budowanie profilu…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:448
+#: src/sp-window.c:452
 msgid "Stopping…"
 msgstr "Zatrzymywanie…"
 
 #. Translators: This is a window title.
-#: src/sp-window.c:601
+#: src/sp-window.c:605
 msgid "Save Capture As…"
 msgstr "Zapis przechwytywania jako…"
 
 #. Translators: This is a button.
-#: src/sp-window.c:605
+#: src/sp-window.c:609
 msgid "Save"
 msgstr "Zapisz"
 
 #. Translators: This is a button.
-#: src/sp-window.c:607 src/sp-window.c:1024
+#: src/sp-window.c:611 src/sp-window.c:1028
 msgid "Cancel"
 msgstr "Anuluj"
 
 #. Translators: %s is the error message.
-#: src/sp-window.c:638
+#: src/sp-window.c:642
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Wystąpił błąd podczas zapisywania przechwytywania: %s"
 
-#: src/sp-window.c:990
+#: src/sp-window.c:994
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Nie można otworzyć pliku „%s”. Obsługiwane są tylko lokalne pliki."
 
 #. Translators: This is a window title.
-#: src/sp-window.c:1018
+#: src/sp-window.c:1022
 msgid "Open Capture…"
 msgstr "Otwarcie przechwytywania…"
 
 #. Translators: This is a button.
-#: src/sp-window.c:1022
+#: src/sp-window.c:1026
 msgid "Open"
 msgstr "Otwórz"
 
-#: src/sp-window.c:1027
+#: src/sp-window.c:1031
 msgid "Sysprof Captures"
 msgstr "Przechwytywania Sysprof"
 
-#: src/sp-window.c:1032
+#: src/sp-window.c:1036
 msgid "All Files"
 msgstr "Wszystkie pliki"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:98
 msgid "Make sysprof specific to a task"
 msgstr "Sysprof dla konkretnego zadania"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:98
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:99
 msgid "Run a command and profile the process"
 msgstr "Wykonuje polecenie i profiluje proces"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:99
 msgid "COMMAND"
 msgstr "POLECENIE"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:100
 msgid "Force overwrite the capture file"
 msgstr "Wymusza zastąpienie pliku przechwytywania"
 
-#: tools/sysprof-cli.c:100
+#: tools/sysprof-cli.c:101
+msgid "Record basic memory statistics"
+msgstr "Nagrywa podstawowe statystyki pamięci"
+
+#: tools/sysprof-cli.c:102
 msgid "Print the sysprof-cli version and exit"
 msgstr "Wyświetla wersję sysprof-cli i kończy działanie"
 
-#: tools/sysprof-cli.c:106
+#: tools/sysprof-cli.c:108
 msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[PLIK_PRZECHWYTYWANIA] — Sysprof"
 
-#: tools/sysprof-cli.c:125
+#: tools/sysprof-cli.c:127
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Przekazano za dużo parametrów do polecenia sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: tools/sysprof-cli.c:166
+#: tools/sysprof-cli.c:168
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "Plik „%s” istnieje. Użycie opcji „--force” go zastąpi\n"

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-09-25 18:50+0000\n"
-"PO-Revision-Date: 2018-10-05 11:20-0200\n"
+"POT-Creation-Date: 2018-10-13 00:12+0000\n"
+"PO-Revision-Date: 2018-10-15 07:19-0200\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -21,7 +21,8 @@ msgstr ""
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
+#: src/sp-application.c:328
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -392,20 +393,17 @@ msgstr "Ampliar (Ctrl++)"
 
 #. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:267
-#| msgid "_New Window"
 msgid "New Window"
 msgstr "Nova janela"
 
 #. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:280
-#| msgid "Open Capture"
 msgctxt "menu label"
 msgid "Open Capture…"
 msgstr "Abrir captura…"
 
 #. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:287
-#| msgid "Save As"
 msgid "Save As…"
 msgstr "Salvar como…"
 
@@ -428,21 +426,20 @@ msgid "Help"
 msgstr "Ajuda"
 
 #: src/resources/ui/sp-window.ui:340
-#| msgid "Sysprof"
 msgid "About Sysprof"
 msgstr "Sobre o Sysprof"
 
-#: src/sp-application.c:174
+#: src/sp-application.c:173
 msgid "A system profiler"
 msgstr "Um perfilador de sistema"
 
-#: src/sp-application.c:179
+#: src/sp-application.c:178
 msgid "translator-credits"
 msgstr ""
 "Enrico Nicoletto <liverig@gmail.com>, 2016-2017\n"
 "Rafael Fontenelle <rafaelff@gnome.org>, 2016-2018"
 
-#: src/sp-application.c:185
+#: src/sp-application.c:184
 msgid "Learn more about Sysprof"
 msgstr "Aprenda mais sobre o Sysprof"
 
@@ -486,91 +483,93 @@ msgid "Building profile…"
 msgstr "Construindo perfil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:448
+#: src/sp-window.c:452
 msgid "Stopping…"
 msgstr "Parando…"
 
 #. Translators: This is a window title.
-#: src/sp-window.c:601
-#| msgid "Save Capture As"
+#: src/sp-window.c:605
 msgid "Save Capture As…"
 msgstr "Salvar captura como…"
 
 #. Translators: This is a button.
-#: src/sp-window.c:605
+#: src/sp-window.c:609
 msgid "Save"
 msgstr "Salvar"
 
 #. Translators: This is a button.
-#: src/sp-window.c:607 src/sp-window.c:1024
+#: src/sp-window.c:611 src/sp-window.c:1028
 msgid "Cancel"
 msgstr "Cancelar"
 
 #. Translators: %s is the error message.
-#: src/sp-window.c:638
+#: src/sp-window.c:642
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Ocorreu um erro enquanto tentava salvar sua captura: %s"
 
-#: src/sp-window.c:990
+#: src/sp-window.c:994
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr ""
 "O arquivo “%s” não pôde ser aberto. Há suporte apenas a arquivos locais."
 
 #. Translators: This is a window title.
-#: src/sp-window.c:1018
-#| msgid "Open Capture"
+#: src/sp-window.c:1022
 msgid "Open Capture…"
 msgstr "Abrir captura…"
 
 #. Translators: This is a button.
-#: src/sp-window.c:1022
+#: src/sp-window.c:1026
 msgid "Open"
 msgstr "Abrir"
 
-#: src/sp-window.c:1027
+#: src/sp-window.c:1031
 msgid "Sysprof Captures"
 msgstr "Capturas do Sysprof"
 
-#: src/sp-window.c:1032
+#: src/sp-window.c:1036
 msgid "All Files"
 msgstr "Todos arquivos"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:98
 msgid "Make sysprof specific to a task"
 msgstr "Usa o sysprof especificamente para uma tarefa"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:98
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:99
 msgid "Run a command and profile the process"
 msgstr "Executa um comando e perfila seu processo"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:99
 msgid "COMMAND"
 msgstr "COMANDO"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:100
 msgid "Force overwrite the capture file"
 msgstr "Força sobrescrever o arquivo de captura"
 
-#: tools/sysprof-cli.c:100
+#: tools/sysprof-cli.c:101
+msgid "Record basic memory statistics"
+msgstr "Registra estatísticas básicas de memória"
+
+#: tools/sysprof-cli.c:102
 msgid "Print the sysprof-cli version and exit"
 msgstr "Emite a versão do sysprof-cli e sai"
 
-#: tools/sysprof-cli.c:106
+#: tools/sysprof-cli.c:108
 msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[ARQUIVO_CAPTURA] — Sysprof"
 
-#: tools/sysprof-cli.c:125
+#: tools/sysprof-cli.c:127
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Argumentos demais foram passados para o sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: tools/sysprof-cli.c:166
+#: tools/sysprof-cli.c:168
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existe. Use --force para sobrescrevê-lo\n"

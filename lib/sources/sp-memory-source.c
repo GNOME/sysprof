@@ -55,19 +55,24 @@ typedef struct
   GPid pid;
   int stat_fd;
 
-  /* Keep in this order, so we can address from total */
-  SpCaptureCounterValue mem_total;
-  SpCaptureCounterValue mem_avail;
-  SpCaptureCounterValue mem_free;
+  union {
+    struct {
+      SpCaptureCounterValue used;
+      gint64 total;
+      gint64 avail;
+      gint64 free;
+    } sys;
+    struct {
+      SpCaptureCounterValue used;
+      gint64 size;
+      gint64 resident;
+      gint64 shared;
+      gint64 text;
+      gint64 data;
+    } proc;
+  };
 
-  /* Keep in this order, so we can address from size */
-  SpCaptureCounterValue mem_size;
-  SpCaptureCounterValue mem_resident;
-  SpCaptureCounterValue mem_shared;
-  SpCaptureCounterValue mem_text;
-  SpCaptureCounterValue mem_data;
-
-  guint  counter_ids[5];
+  guint counter_ids[1];
 } MemStat;
 
 static void source_iface_init (SpSourceInterface *iface);
@@ -113,6 +118,7 @@ mem_stat_parse_statm (MemStat *st,
                       gchar   *buf)
 {
   g_assert (st != NULL);
+  g_assert (buf != NULL);
 
   sscanf (buf,
           "%"G_GINT64_FORMAT" "
@@ -121,11 +127,13 @@ mem_stat_parse_statm (MemStat *st,
           "%"G_GINT64_FORMAT" "
           "%*1c "
           "%"G_GINT64_FORMAT,
-          &st->mem_size.v64,
-          &st->mem_resident.v64,
-          &st->mem_shared.v64,
-          &st->mem_text.v64,
-          &st->mem_data.v64);
+          &st->proc.size,
+          &st->proc.resident,
+          &st->proc.shared,
+          &st->proc.text,
+          &st->proc.data);
+
+  st->proc.used.vdbl = st->proc.size - st->proc.shared - st->proc.text - st->proc.data;
 }
 
 static void
@@ -136,6 +144,7 @@ mem_stat_parse_meminfo (MemStat *st,
   gchar *save = NULL;
 
   g_assert (st != NULL);
+  g_assert (buf != NULL);
 
   for (;;)
     {
@@ -179,6 +188,9 @@ mem_stat_parse_meminfo (MemStat *st,
 
       *v64ptr = v64;
     }
+
+  /* Create pre-compiled value for used to simplify display */
+  st->sys.used.vdbl = (gdouble)st->sys.total - (gdouble)st->sys.avail;
 }
 
 static void
@@ -221,8 +233,8 @@ mem_stat_publish (MemStat         *st,
                                   -1,
                                   st->pid,
                                   st->counter_ids,
-                                  st->pid == -1 ? &st->mem_total : &st->mem_size,
-                                  st->pid == -1 ? 3 : 5);
+                                  st->pid == -1 ? &st->sys.used : &st->proc.used,
+                                  1);
 }
 
 /**
@@ -272,9 +284,9 @@ sp_memory_source_class_init (SpMemorySourceClass *klass)
 
 #define ADD_OFFSET(n,o) \
   g_hash_table_insert (keys, (gchar *)n, GUINT_TO_POINTER (o))
-  ADD_OFFSET ("MemTotal", G_STRUCT_OFFSET (MemStat, mem_total));
-  ADD_OFFSET ("MemFree", G_STRUCT_OFFSET (MemStat, mem_free));
-  ADD_OFFSET ("MemAvailable", G_STRUCT_OFFSET (MemStat, mem_avail));
+  ADD_OFFSET ("MemTotal", G_STRUCT_OFFSET (MemStat, sys.total));
+  ADD_OFFSET ("MemFree", G_STRUCT_OFFSET (MemStat, sys.free));
+  ADD_OFFSET ("MemAvailable", G_STRUCT_OFFSET (MemStat, sys.avail));
 #undef ADD_OFFSET
 }
 
@@ -328,81 +340,43 @@ sp_memory_source_prepare (SpSource *source)
 
       mem_stat_open (st);
 
-      for (guint j = 0; j < G_N_ELEMENTS (counters); j++)
-        g_strlcpy (counters[j].category, "Memory", sizeof counters[j].category);
-
       if (st->pid == -1)
         {
-          base = sp_capture_writer_request_counter (self->writer, 3);
+          base = sp_capture_writer_request_counter (self->writer, 1);
 
-          g_strlcpy (counters[0].name, "Total", sizeof counters[0].name);
-          g_strlcpy (counters[1].name, "Available", sizeof counters[1].name);
-          g_strlcpy (counters[2].name, "Free",  sizeof counters[2].name);
-
-          g_strlcpy (counters[0].description, "", sizeof counters[0].description);
-          g_strlcpy (counters[1].description, "", sizeof counters[1].description);
-          g_strlcpy (counters[2].description, "", sizeof counters[2].description);
+          g_strlcpy (counters[0].category, "Memory", sizeof counters[0].category);
+          g_strlcpy (counters[0].name, "Used", sizeof counters[0].name);
+          g_strlcpy (counters[0].description, "Memory used by system", sizeof counters[0].description);
 
           counters[0].id = st->counter_ids[0] = base;
-          counters[1].id = st->counter_ids[1] = base + 1;
-          counters[2].id = st->counter_ids[2] = base + 2;
-
-          counters[0].type = SP_CAPTURE_COUNTER_INT64;
-          counters[1].type = SP_CAPTURE_COUNTER_INT64;
-          counters[2].type = SP_CAPTURE_COUNTER_INT64;
-
-          counters[0].value.v64 = 0;
-          counters[1].value.v64 = 0;
-          counters[2].value.v64 = 0;
-
+          counters[0].type = SP_CAPTURE_COUNTER_DOUBLE;
+          counters[0].value.vdbl = 0;
 
           sp_capture_writer_define_counters (self->writer,
                                              SP_CAPTURE_CURRENT_TIME,
                                              -1,
                                              -1,
                                              counters,
-                                             3);
+                                             1);
         }
       else
         {
-          base = sp_capture_writer_request_counter (self->writer, 5);
+          base = sp_capture_writer_request_counter (self->writer, 1);
 
-          g_strlcpy (counters[0].name, "Size", sizeof counters[0].name);
-          g_strlcpy (counters[1].name, "Resident", sizeof counters[1].name);
-          g_strlcpy (counters[2].name, "Shared",  sizeof counters[2].name);
-          g_strlcpy (counters[3].name, "Text",  sizeof counters[3].name);
-          g_strlcpy (counters[4].name, "Data",  sizeof counters[4].name);
-
-          g_strlcpy (counters[0].description, "", sizeof counters[0].description);
-          g_strlcpy (counters[1].description, "", sizeof counters[1].description);
-          g_strlcpy (counters[2].description, "", sizeof counters[2].description);
-          g_strlcpy (counters[3].description, "", sizeof counters[3].description);
-          g_strlcpy (counters[4].description, "", sizeof counters[4].description);
+          g_strlcpy (counters[0].category, "Memory", sizeof counters[0].category);
+          g_strlcpy (counters[0].name, "Used", sizeof counters[0].name);
+          g_strlcpy (counters[0].description, "Memory used by process", sizeof counters[0].description);
 
           counters[0].id = st->counter_ids[0] = base;
-          counters[1].id = st->counter_ids[1] = base + 1;
-          counters[2].id = st->counter_ids[2] = base + 2;
-          counters[3].id = st->counter_ids[3] = base + 3;
-          counters[4].id = st->counter_ids[4] = base + 4;
-
-          counters[0].type = SP_CAPTURE_COUNTER_INT64;
-          counters[1].type = SP_CAPTURE_COUNTER_INT64;
-          counters[2].type = SP_CAPTURE_COUNTER_INT64;
-          counters[3].type = SP_CAPTURE_COUNTER_INT64;
-          counters[4].type = SP_CAPTURE_COUNTER_INT64;
-
-          counters[0].value.v64 = 0;
-          counters[1].value.v64 = 0;
-          counters[2].value.v64 = 0;
-          counters[3].value.v64 = 0;
-          counters[4].value.v64 = 0;
+          counters[0].type = SP_CAPTURE_COUNTER_DOUBLE;
+          counters[0].value.vdbl = 0;
 
           sp_capture_writer_define_counters (self->writer,
                                              SP_CAPTURE_CURRENT_TIME,
                                              -1,
                                              st->pid,
                                              counters,
-                                             5);
+                                             1);
         }
     }
 
@@ -437,9 +411,9 @@ sp_memory_source_start (SpSource *source)
 
   g_assert (SP_IS_MEMORY_SOURCE (self));
 
-  /* Poll 20x/sec for memory stats */
+  /* Poll 4x/sec for memory stats */
   self->timer_source = g_timeout_add_full (G_PRIORITY_HIGH,
-                                           1000 / 20,
+                                           1000 / 4,
                                            (GSourceFunc)sp_memory_source_timer_cb,
                                            self,
                                            NULL);

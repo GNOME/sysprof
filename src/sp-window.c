@@ -16,6 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
+
+#define G_LOG_DOMAIN "sp-window"
+
 #include <errno.h>
 #include <glib/gi18n.h>
 #include <math.h>
@@ -858,6 +862,10 @@ sp_window_init (SpWindow *self)
   g_autoptr(GtkWindowGroup) window_group = NULL;
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+#ifdef DEVELOPMENT_BUILD
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (self)), "development-version");
+#endif
 
   /*
    * Hookup widget signals.

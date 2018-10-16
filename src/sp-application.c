@@ -100,6 +100,9 @@ static void
 sp_application_startup (GApplication *application)
 {
   g_autoptr(GtkCssProvider) provider = NULL;
+#ifdef DEVELOPMENT_BUILD
+  g_autoptr(GtkCssProvider) adwaita = NULL;
+#endif
 
   g_assert (SP_IS_APPLICATION (application));
 
@@ -110,6 +113,14 @@ sp_application_startup (GApplication *application)
   gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
                                              GTK_STYLE_PROVIDER (provider),
                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+#ifdef DEVELOPMENT_BUILD
+  adwaita = gtk_css_provider_new ();
+  gtk_css_provider_load_from_resource (adwaita, "/org/gnome/sysprof/theme/Adwaita-shared.css");
+  gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
+                                             GTK_STYLE_PROVIDER (adwaita),
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+#endif
 
   for (guint i = 0; default_accels[i].action_name; i++)
     gtk_application_set_accels_for_action (GTK_APPLICATION (application),

@@ -6,6 +6,7 @@
 
     <!-- Theme overrides -->
     <file compressed="true">theme/shared.css</file>
+    <file compressed="true">theme/Adwaita-shared.css</file>
 
     <!-- UI Files -->
     <file compressed="true">ui/sp-window.ui</file>

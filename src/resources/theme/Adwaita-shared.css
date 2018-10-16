@@ -1,4 +1,3 @@
-
 /* development styles */
 window.development-version headerbar {
   background: transparent -gtk-icontheme("system-run-symbolic") 80% 0/128px 128px no-repeat,
@@ -6,8 +5,4 @@ window.development-version headerbar {
                               mix(@theme_fg_color, @theme_bg_color, 0.5) 0%,
                               @theme_bg_color 25%);
   color: alpha(@theme_fg_color, 0.2);
-}
-
-window.development-version headerbar label {
-  color: @theme_fg_color;
 }

@@ -44,6 +44,7 @@ typedef struct
   SpCaptureCursor *cursor;
   GHashTable *mark_groups;
   guint fps_counter;
+  GArray *memory;
   guint has_cpu : 1;
 } Discovery;
 
@@ -62,6 +63,7 @@ static void
 discovery_free (Discovery *state)
 {
   g_clear_pointer (&state->mark_groups, g_hash_table_unref);
+  g_clear_pointer (&state->memory, g_array_unref);
   g_clear_object (&state->cursor);
   g_slice_free (Discovery, state);
 }
@@ -205,6 +207,14 @@ discover_new_rows_frame_cb (const SpCaptureFrame *frame,
   g_assert (frame != NULL);
   g_assert (state != NULL);
 
+  /*
+   * NOTE:
+   *
+   * It would be nice if we could redesign this all around the concept of
+   * an "gadget" or something which combines a data collection series
+   * and widget views to be displayed.
+   */
+
   if (frame->type == SP_CAPTURE_FRAME_MARK)
     {
       const SpCaptureMark *mark = (const SpCaptureMark *)frame;
@@ -221,10 +231,18 @@ discover_new_rows_frame_cb (const SpCaptureFrame *frame,
         {
           const SpCaptureCounter *ctr = &def->counters[i];
 
-          if (strstr (ctr->category, "CPU Percent") != NULL)
+          if (!state->has_cpu &&
+              strstr (ctr->category, "CPU Percent") != NULL)
             state->has_cpu = TRUE;
-          else if (strstr (ctr->category, "gtk") != NULL && strstr (ctr->name, "fps") != NULL)
+          else if (!state->fps_counter &&
+                   strstr (ctr->category, "gtk") != NULL && strstr (ctr->name, "fps") != NULL)
             state->fps_counter = ctr->id;
+          else if (strcmp ("Memory", ctr->category) == 0 &&
+                   strcmp ("Used", ctr->name) == 0)
+            {
+              guint counter_id = ctr->id;
+              g_array_append_val (state->memory, counter_id);
+            }
         }
     }
 
@@ -280,6 +298,24 @@ handle_capture_results (GObject      *object,
                                      "y-lower", 0.0,
                                      "y-upper", 100.0,
                                      NULL);
+      gtk_container_add (GTK_CONTAINER (self), row);
+    }
+
+  for (guint i = 0; i < state->memory->len; i++)
+    {
+      guint counter_id = g_array_index (state->memory, guint, i);
+      GdkRGBA rgba;
+      GtkWidget *row = g_object_new (SP_TYPE_LINE_VISUALIZER_ROW,
+                                     "title", _("Memory Used"),
+                                     "height-request", 35,
+                                     "selectable", FALSE,
+                                     "visible", TRUE,
+                                     "y-lower", 0.0,
+                                     NULL);
+      gdk_rgba_parse (&rgba, "#204a87");
+      sp_line_visualizer_row_add_counter (SP_LINE_VISUALIZER_ROW (row), counter_id, &rgba);
+      rgba.alpha = 0.3;
+      sp_line_visualizer_row_set_fill (SP_LINE_VISUALIZER_ROW (row), counter_id, &rgba);
       gtk_container_add (GTK_CONTAINER (self), row);
     }
 
@@ -349,7 +385,7 @@ discover_new_rows (SpVisualizerList *self,
   state = g_slice_new0 (Discovery);
   state->mark_groups = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   state->cursor = g_steal_pointer (&cursor);
-  state->has_cpu = FALSE;
+  state->memory = g_array_new (FALSE, FALSE, sizeof (guint));
 
   task = g_task_new (self, NULL, handle_capture_results, NULL);
   g_task_set_task_data (task, g_steal_pointer (&state), (GDestroyNotify)discovery_free);

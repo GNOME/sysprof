@@ -63,6 +63,9 @@ typedef struct
    * help us avoid doing duplicate work.
    */
   guint queued_load;
+
+  guint y_lower_set : 1;
+  guint y_upper_set : 1;
 } SpLineVisualizerRowPrivate;
 
 typedef struct
@@ -84,6 +87,8 @@ typedef struct
   gint64 end_time;
   gdouble y_lower;
   gdouble y_upper;
+  guint y_lower_set : 1;
+  guint y_upper_set : 1;
 } LoadData;
 
 G_DEFINE_TYPE_WITH_PRIVATE (SpLineVisualizerRow, sp_line_visualizer_row, SP_TYPE_VISUALIZER_ROW)
@@ -385,11 +390,13 @@ sp_line_visualizer_row_set_property (GObject      *object,
 
     case PROP_Y_LOWER:
       priv->y_lower = g_value_get_double (value);
+      priv->y_lower_set = TRUE;
       gtk_widget_queue_resize (GTK_WIDGET (self));
       break;
 
     case PROP_Y_UPPER:
       priv->y_upper = g_value_get_double (value);
+      priv->y_upper_set = TRUE;
       gtk_widget_queue_resize (GTK_WIDGET (self));
       break;
 
@@ -600,6 +607,53 @@ sp_line_visualizer_row_load_data_frame_cb (const SpCaptureFrame *frame,
   return TRUE;
 }
 
+static gboolean
+sp_line_visualizer_row_load_data_range_cb (const SpCaptureFrame *frame,
+                                           gpointer              user_data)
+{
+  LoadData *load = user_data;
+
+  g_assert (frame != NULL);
+  g_assert (frame->type == SP_CAPTURE_FRAME_CTRSET ||
+            frame->type == SP_CAPTURE_FRAME_CTRDEF);
+  g_assert (load != NULL);
+  g_assert (load->y_upper_set == FALSE ||
+            load->y_lower_set == FALSE);
+
+  if (frame->type == SP_CAPTURE_FRAME_CTRSET)
+    {
+      const SpCaptureFrameCounterSet *set = (SpCaptureFrameCounterSet *)frame;
+
+      for (guint i = 0; i < set->n_values; i++)
+        {
+          const SpCaptureCounterValues *group = &set->values[i];
+
+          for (guint j = 0; j < G_N_ELEMENTS (group->ids); j++)
+            {
+              guint counter_id = group->ids[j];
+
+              if (counter_id != 0 && contains_id (load->lines, counter_id))
+                {
+                  gdouble y;
+
+                  if (counter_type (load, counter_id) == SP_CAPTURE_COUNTER_DOUBLE)
+                    y = group->values[j].vdbl;
+                  else
+                    y = group->values[j].v64;
+
+                  if (!load->y_upper_set)
+                    load->y_upper = MAX (load->y_upper, y);
+
+                  if (!load->y_lower_set)
+                    load->y_lower = MAX (load->y_lower, y);
+                }
+            }
+        }
+    }
+
+  return TRUE;
+}
+
 static void
 sp_line_visualizer_row_load_data_worker (GTask        *task,
                                          gpointer      source_object,
@@ -621,10 +675,21 @@ sp_line_visualizer_row_load_data_worker (GTask        *task,
       g_array_append_val (counter_ids, line_info->id);
     }
 
-  sp_capture_cursor_add_condition (
-      load->cursor,
-      sp_capture_condition_new_where_counter_in (counter_ids->len,
-                                                 (guint *)(gpointer)counter_ids->data));
+  sp_capture_cursor_add_condition (load->cursor,
+                                   sp_capture_condition_new_where_counter_in (counter_ids->len,
+                                                                              (guint *)(gpointer)counter_ids->data));
+
+  /* If y boundaries are not set, we need to discover them by scaning the data. */
+  if (!load->y_lower_set || !load->y_upper_set)
+    {
+      sp_capture_cursor_foreach (load->cursor, sp_line_visualizer_row_load_data_range_cb, load);
+      sp_capture_cursor_reset (load->cursor);
+
+      /* Add extra boundary for some space above the graph line */
+      if (G_MAXDOUBLE - load->y_upper > (load->y_upper * .25))
+        load->y_upper *= 1.25;
+    }
+
   sp_capture_cursor_foreach (load->cursor, sp_line_visualizer_row_load_data_frame_cb, load);
   g_task_return_pointer (task, g_steal_pointer (&load->cache), (GDestroyNotify)point_cache_unref);
 }
@@ -659,6 +724,8 @@ sp_line_visualizer_row_load_data_async (SpLineVisualizerRow *self,
   load->cache = point_cache_new ();
   load->y_lower = priv->y_lower;
   load->y_upper = priv->y_upper;
+  load->y_lower_set = priv->y_lower_set;
+  load->y_upper_set = priv->y_upper_set;
   load->begin_time = sp_capture_reader_get_start_time (priv->reader);
   load->end_time = sp_capture_reader_get_end_time (priv->reader);
   load->cursor = sp_capture_cursor_new (priv->reader);
@@ -680,8 +747,25 @@ sp_line_visualizer_row_load_data_finish (SpLineVisualizerRow  *self,
                                          GAsyncResult         *result,
                                          GError              **error)
 {
+  SpLineVisualizerRowPrivate *priv = sp_line_visualizer_row_get_instance_private (self);
+  LoadData *state;
+
   g_assert (SP_IS_LINE_VISUALIZER_ROW (self));
   g_assert (G_IS_TASK (result));
+
+  state = g_task_get_task_data (G_TASK (result));
+
+  if (!priv->y_lower_set && priv->y_lower != state->y_lower)
+    {
+      priv->y_lower = state->y_lower;
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_Y_LOWER]);
+    }
+
+  if (!priv->y_upper_set && priv->y_upper != state->y_upper)
+    {
+      priv->y_upper = state->y_upper;
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_Y_UPPER]);
+    }
 
   return g_task_propagate_pointer (G_TASK (result), error);
 }

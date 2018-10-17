@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-10-13 00:12+0000\n"
-"PO-Revision-Date: 2018-10-13 08:23+0200\n"
+"POT-Creation-Date: 2018-10-16 18:42+0000\n"
+"PO-Revision-Date: 2018-10-17 09:13+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -20,8 +20,8 @@ msgstr ""
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
-#: src/sp-application.c:328
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:192
+#: src/sp-application.c:339
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -251,12 +251,16 @@ msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Nastala chyba při pokusu o přístup k počitadlům výkonu: %s"
 
 #. Translators: CPU is the processor.
-#: lib/visualizers/sp-visualizer-list.c:276
+#: lib/visualizers/sp-visualizer-list.c:294
 msgid "CPU"
 msgstr "Procesor"
 
+#: lib/visualizers/sp-visualizer-list.c:309
+msgid "Memory Used"
+msgstr "Využití paměti"
+
 #. Translators: FPS is frames per second.
-#: lib/visualizers/sp-visualizer-list.c:291
+#: lib/visualizers/sp-visualizer-list.c:327
 msgid "FPS"
 msgstr "FPS"
 
@@ -354,7 +358,7 @@ msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Výchozí přiblížení"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:317
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:321
 msgid "Not running"
 msgstr "Neběží"
 
@@ -421,143 +425,147 @@ msgstr "Nápověda"
 msgid "About Sysprof"
 msgstr "O aplikaci Sysprof"
 
-#: src/sp-application.c:173
+#: src/sp-application.c:184
 msgid "A system profiler"
 msgstr "Systémový profiler"
 
-#: src/sp-application.c:178
+#: src/sp-application.c:189
 msgid "translator-credits"
 msgstr "Marek Černocký <marek@manet.cz>"
 
-#: src/sp-application.c:184
+#: src/sp-application.c:195
 msgid "Learn more about Sysprof"
 msgstr "Přečtěte si o Sysprof více"
 
 #. Translators: %u is the number (amount) of samples.
-#: src/sp-window.c:150
+#: src/sp-window.c:154
 #, c-format
 msgid "Samples: %u"
 msgstr "Vzorky: %u"
 
-#: src/sp-window.c:183
+#: src/sp-window.c:187
 msgid "[Memory Capture]"
 msgstr "[Záznam paměti]"
 
 #. Translators: The first %s is a file name, the second is the date and time.
-#: src/sp-window.c:197
+#: src/sp-window.c:201
 #, c-format
 msgid "%s — %s"
 msgstr "%s — %s"
 
-#: src/sp-window.c:235
+#: src/sp-window.c:239
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Nebyl sesbírán dostatek vzorků pro vygenerování grafu volání"
 
 #. Translators: This is a button.
-#: src/sp-window.c:309 src/sp-window.c:355
+#: src/sp-window.c:313 src/sp-window.c:359
 msgid "Record"
 msgstr "Zaznamenávat"
 
 #. Translators: This is a button.
-#: src/sp-window.c:330
+#: src/sp-window.c:334
 msgid "Stop"
 msgstr "Zastavit"
 
-#: src/sp-window.c:335
+#: src/sp-window.c:339
 msgid "Recording…"
 msgstr "Zaznamenává se…"
 
-#: src/sp-window.c:346
+#: src/sp-window.c:350
 msgid "Building profile…"
 msgstr "Sestavuje se profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:452
+#: src/sp-window.c:456
 msgid "Stopping…"
 msgstr "Zastavuje se…"
 
 #. Translators: This is a window title.
-#: src/sp-window.c:605
+#: src/sp-window.c:609
 msgid "Save Capture As…"
 msgstr "Uložení záznamu jako"
 
 #. Translators: This is a button.
-#: src/sp-window.c:609
+#: src/sp-window.c:613
 msgid "Save"
 msgstr "Uložit"
 
 #. Translators: This is a button.
-#: src/sp-window.c:611 src/sp-window.c:1028
+#: src/sp-window.c:615 src/sp-window.c:1036
 msgid "Cancel"
 msgstr "Zrušit"
 
 #. Translators: %s is the error message.
-#: src/sp-window.c:642
+#: src/sp-window.c:646
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Vyskytla se chyba při pokusu uložit váš záznam: %s"
 
-#: src/sp-window.c:994
+#: src/sp-window.c:1002
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Soubor „%s“ nelze otevřít. Podporovány jsou jen místní soubory."
 
 #. Translators: This is a window title.
-#: src/sp-window.c:1022
+#: src/sp-window.c:1030
 msgid "Open Capture…"
 msgstr "Otevření záznamu"
 
 #. Translators: This is a button.
-#: src/sp-window.c:1026
+#: src/sp-window.c:1034
 msgid "Open"
 msgstr "Otevřít"
 
-#: src/sp-window.c:1031
+#: src/sp-window.c:1039
 msgid "Sysprof Captures"
 msgstr "Záznam Sysprof"
 
-#: src/sp-window.c:1036
+#: src/sp-window.c:1044
 msgid "All Files"
 msgstr "Všechny soubory"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:99
 msgid "Make sysprof specific to a task"
 msgstr "Určit konkrétní úlohu pro sysprof"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:99
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:100
 msgid "Run a command and profile the process"
 msgstr "Spustit příkaz a profilovat proces"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:100
 msgid "COMMAND"
 msgstr "PŘÍKAZ"
 
-#: tools/sysprof-cli.c:100
+#: tools/sysprof-cli.c:101
 msgid "Force overwrite the capture file"
 msgstr "Vynutit přepsání souboru se záznamem"
 
-#: tools/sysprof-cli.c:101
-msgid "Record basic memory statistics"
-msgstr "Zaznamenávat základní paměťové statistiky"
-
 #: tools/sysprof-cli.c:102
+msgid "Disable recording of CPU statistics"
+msgstr "Zakázat záznam procesorových statistik"
+
+#: tools/sysprof-cli.c:103
+msgid "Disable recording of memory statistics"
+msgstr "Zakázat záznam paměťových statistik"
+
+#: tools/sysprof-cli.c:104
 msgid "Print the sysprof-cli version and exit"
 msgstr "Vypsat verzi sysprof-cli a skončit"
 
-#: tools/sysprof-cli.c:108
+#: tools/sysprof-cli.c:110
 msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[SOUBOR_ZÁZNAMU] – Sysprof"
 
-#: tools/sysprof-cli.c:127
+#: tools/sysprof-cli.c:129
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Do sysprof-cli bylo předáno příliš mnoho argumentů:"
 
 #. Translators: %s is a file name.
-#: tools/sysprof-cli.c:168
+#: tools/sysprof-cli.c:170
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s již existuje. Použijte --force k jeho přepsání\n"

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-10-13 00:12+0000\n"
-"PO-Revision-Date: 2018-10-14 17:27+0200\n"
+"POT-Creation-Date: 2018-10-16 18:42+0000\n"
+"PO-Revision-Date: 2018-10-21 20:35+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -21,8 +21,8 @@ msgstr ""
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
-#: src/sp-application.c:328
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:192
+#: src/sp-application.c:339
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -258,12 +258,16 @@ msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Wystąpił błąd podczas uzyskiwania dostępu do liczników wydajności: %s"
 
 #. Translators: CPU is the processor.
-#: lib/visualizers/sp-visualizer-list.c:276
+#: lib/visualizers/sp-visualizer-list.c:294
 msgid "CPU"
 msgstr "Procesor"
 
+#: lib/visualizers/sp-visualizer-list.c:309
+msgid "Memory Used"
+msgstr "Użyta pamięć"
+
 #. Translators: FPS is frames per second.
-#: lib/visualizers/sp-visualizer-list.c:291
+#: lib/visualizers/sp-visualizer-list.c:327
 msgid "FPS"
 msgstr "FPS"
 
@@ -363,7 +367,7 @@ msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Przywrócenie powiększenia"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:317
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:321
 msgid "Not running"
 msgstr "Bezczynny"
 
@@ -430,145 +434,149 @@ msgstr "Pomoc"
 msgid "About Sysprof"
 msgstr "O programie"
 
-#: src/sp-application.c:173
+#: src/sp-application.c:184
 msgid "A system profiler"
 msgstr "Profiler systemu"
 
-#: src/sp-application.c:178
+#: src/sp-application.c:189
 msgid "translator-credits"
 msgstr ""
 "Piotr Drąg <piotrdrag@gmail.com>, 2016-2018\n"
 "Aviary.pl <community-poland@mozilla.org>, 2016-2018"
 
-#: src/sp-application.c:184
+#: src/sp-application.c:195
 msgid "Learn more about Sysprof"
 msgstr "Więcej informacji o Sysprof"
 
 #. Translators: %u is the number (amount) of samples.
-#: src/sp-window.c:150
+#: src/sp-window.c:154
 #, c-format
 msgid "Samples: %u"
 msgstr "Próbki: %u"
 
-#: src/sp-window.c:183
+#: src/sp-window.c:187
 msgid "[Memory Capture]"
 msgstr "[Przechwytywanie pamięci]"
 
 #. Translators: The first %s is a file name, the second is the date and time.
-#: src/sp-window.c:197
+#: src/sp-window.c:201
 #, c-format
 msgid "%s — %s"
 msgstr "%s — %s"
 
-#: src/sp-window.c:235
+#: src/sp-window.c:239
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Zebrano za mało próbek, aby utworzyć wykres wywołań"
 
 #. Translators: This is a button.
-#: src/sp-window.c:309 src/sp-window.c:355
+#: src/sp-window.c:313 src/sp-window.c:359
 msgid "Record"
 msgstr "Nagrywaj"
 
 #. Translators: This is a button.
-#: src/sp-window.c:330
+#: src/sp-window.c:334
 msgid "Stop"
 msgstr "Zatrzymaj"
 
-#: src/sp-window.c:335
+#: src/sp-window.c:339
 msgid "Recording…"
 msgstr "Nagrywanie…"
 
-#: src/sp-window.c:346
+#: src/sp-window.c:350
 msgid "Building profile…"
 msgstr "Budowanie profilu…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:452
+#: src/sp-window.c:456
 msgid "Stopping…"
 msgstr "Zatrzymywanie…"
 
 #. Translators: This is a window title.
-#: src/sp-window.c:605
+#: src/sp-window.c:609
 msgid "Save Capture As…"
 msgstr "Zapis przechwytywania jako…"
 
 #. Translators: This is a button.
-#: src/sp-window.c:609
+#: src/sp-window.c:613
 msgid "Save"
 msgstr "Zapisz"
 
 #. Translators: This is a button.
-#: src/sp-window.c:611 src/sp-window.c:1028
+#: src/sp-window.c:615 src/sp-window.c:1036
 msgid "Cancel"
 msgstr "Anuluj"
 
 #. Translators: %s is the error message.
-#: src/sp-window.c:642
+#: src/sp-window.c:646
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Wystąpił błąd podczas zapisywania przechwytywania: %s"
 
-#: src/sp-window.c:994
+#: src/sp-window.c:1002
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Nie można otworzyć pliku „%s”. Obsługiwane są tylko lokalne pliki."
 
 #. Translators: This is a window title.
-#: src/sp-window.c:1022
+#: src/sp-window.c:1030
 msgid "Open Capture…"
 msgstr "Otwarcie przechwytywania…"
 
 #. Translators: This is a button.
-#: src/sp-window.c:1026
+#: src/sp-window.c:1034
 msgid "Open"
 msgstr "Otwórz"
 
-#: src/sp-window.c:1031
+#: src/sp-window.c:1039
 msgid "Sysprof Captures"
 msgstr "Przechwytywania Sysprof"
 
-#: src/sp-window.c:1036
+#: src/sp-window.c:1044
 msgid "All Files"
 msgstr "Wszystkie pliki"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:99
 msgid "Make sysprof specific to a task"
 msgstr "Sysprof dla konkretnego zadania"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:99
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:100
 msgid "Run a command and profile the process"
 msgstr "Wykonuje polecenie i profiluje proces"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:100
 msgid "COMMAND"
 msgstr "POLECENIE"
 
-#: tools/sysprof-cli.c:100
+#: tools/sysprof-cli.c:101
 msgid "Force overwrite the capture file"
 msgstr "Wymusza zastąpienie pliku przechwytywania"
 
-#: tools/sysprof-cli.c:101
-msgid "Record basic memory statistics"
-msgstr "Nagrywa podstawowe statystyki pamięci"
-
 #: tools/sysprof-cli.c:102
+msgid "Disable recording of CPU statistics"
+msgstr "Wyłącza nagrywanie statystyk procesora"
+
+#: tools/sysprof-cli.c:103
+msgid "Disable recording of memory statistics"
+msgstr "Wyłącza nagrywanie statystyk pamięci"
+
+#: tools/sysprof-cli.c:104
 msgid "Print the sysprof-cli version and exit"
 msgstr "Wyświetla wersję sysprof-cli i kończy działanie"
 
-#: tools/sysprof-cli.c:108
+#: tools/sysprof-cli.c:110
 msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[PLIK_PRZECHWYTYWANIA] — Sysprof"
 
-#: tools/sysprof-cli.c:127
+#: tools/sysprof-cli.c:129
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Przekazano za dużo parametrów do polecenia sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: tools/sysprof-cli.c:168
+#: tools/sysprof-cli.c:170
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "Plik „%s” istnieje. Użycie opcji „--force” go zastąpi\n"

@@ -645,7 +645,7 @@ sp_line_visualizer_row_load_data_range_cb (const SpCaptureFrame *frame,
                     load->y_upper = MAX (load->y_upper, y);
 
                   if (!load->y_lower_set)
-                    load->y_lower = MAX (load->y_lower, y);
+                    load->y_lower = MIN (load->y_lower, y);
                 }
             }
         }

@@ -1,3 +1,9 @@
+Overview of changes in Sysprof 3.30.2
+=====================================
+
+ * The profiler menu button more properly handles changes to the toplevel window.
+ * Fixes for i18n/l10n intialization.
+
 Overview of changes in Sysprof 3.30.1
 =====================================
 

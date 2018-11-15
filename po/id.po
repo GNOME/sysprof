@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-28\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-09-25 18:50+0000\n"
-"PO-Revision-Date: 2018-10-02 20:35+0700\n"
+"POT-Creation-Date: 2018-11-05 10:08+0000\n"
+"PO-Revision-Date: 2018-11-15 23:44+0700\n"
 "Last-Translator: Kukuh Syafaat <kukuhsyafaat@gnome.org>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
@@ -20,7 +20,8 @@ msgstr ""
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:192
+#: src/sp-application.c:339
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -253,12 +254,16 @@ msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Kesalahan terjadi ketika mencoba mengakses pencacah kinerja: %s"
 
 #. Translators: CPU is the processor.
-#: lib/visualizers/sp-visualizer-list.c:276
+#: lib/visualizers/sp-visualizer-list.c:294
 msgid "CPU"
 msgstr "CPU"
 
+#: lib/visualizers/sp-visualizer-list.c:309
+msgid "Memory Used"
+msgstr "Memori yang Digunakan"
+
 #. Translators: FPS is frames per second.
-#: lib/visualizers/sp-visualizer-list.c:291
+#: lib/visualizers/sp-visualizer-list.c:327
 msgid "FPS"
 msgstr "FPS"
 
@@ -354,7 +359,7 @@ msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Reset zum"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:317
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:321
 msgid "Not running"
 msgstr "Tidak sedang berjalan"
 
@@ -421,141 +426,149 @@ msgstr "Bantuan"
 msgid "About Sysprof"
 msgstr "Tentang Sysprof"
 
-#: src/sp-application.c:174
+#: src/sp-application.c:184
 msgid "A system profiler"
 msgstr "Pemantau profil sistem"
 
-#: src/sp-application.c:179
+#: src/sp-application.c:189
 msgid "translator-credits"
 msgstr ""
 "Andika Triwidada <andika@gmail.com>, 2017, 2018.\n"
 "Kukuh Syafaat <kukuhsyafaat@gnome.org>, 2018."
 
-#: src/sp-application.c:185
+#: src/sp-application.c:195
 msgid "Learn more about Sysprof"
 msgstr "Pelajari lebih lanjut tentang Sysprof"
 
 #. Translators: %u is the number (amount) of samples.
-#: src/sp-window.c:150
+#: src/sp-window.c:154
 #, c-format
 msgid "Samples: %u"
 msgstr "Cuplikan: %u"
 
-#: src/sp-window.c:183
+#: src/sp-window.c:187
 msgid "[Memory Capture]"
 msgstr "[Tangkapan Memori]"
 
 #. Translators: The first %s is a file name, the second is the date and time.
-#: src/sp-window.c:197
+#: src/sp-window.c:201
 #, c-format
 msgid "%s — %s"
 msgstr "%s — %s"
 
-#: src/sp-window.c:235
+#: src/sp-window.c:239
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Tidak cukup cuplikan dikumpulkan untuk membuat suatu callgraph"
 
 #. Translators: This is a button.
-#: src/sp-window.c:309 src/sp-window.c:355
+#: src/sp-window.c:313 src/sp-window.c:359
 msgid "Record"
 msgstr "Rekam"
 
 #. Translators: This is a button.
-#: src/sp-window.c:330
+#: src/sp-window.c:334
 msgid "Stop"
 msgstr "Berhenti"
 
-#: src/sp-window.c:335
+#: src/sp-window.c:339
 msgid "Recording…"
 msgstr "Sedang merekam…"
 
-#: src/sp-window.c:346
+#: src/sp-window.c:350
 msgid "Building profile…"
 msgstr "Sedang membangun profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:448
+#: src/sp-window.c:456
 msgid "Stopping…"
 msgstr "Menghentikan…"
 
 #. Translators: This is a window title.
-#: src/sp-window.c:601
+#: src/sp-window.c:609
 msgid "Save Capture As…"
 msgstr "Simpan Tangkapan Sebagai…"
 
 #. Translators: This is a button.
-#: src/sp-window.c:605
+#: src/sp-window.c:613
 msgid "Save"
 msgstr "Simpan"
 
 #. Translators: This is a button.
-#: src/sp-window.c:607 src/sp-window.c:1024
+#: src/sp-window.c:615 src/sp-window.c:1036
 msgid "Cancel"
 msgstr "Batal"
 
 #. Translators: %s is the error message.
-#: src/sp-window.c:638
+#: src/sp-window.c:646
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Terjadi kesalahan ketika mencoba menyimpan tangkapan Anda: %s"
 
-#: src/sp-window.c:990
+#: src/sp-window.c:1002
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Berkas \"%s\" tidak dapat dibuka. Hanya berkas lokal yang didukung."
 
 #. Translators: This is a window title.
-#: src/sp-window.c:1018
+#: src/sp-window.c:1030
 msgid "Open Capture…"
 msgstr "Buka Tangkapan…"
 
 #. Translators: This is a button.
-#: src/sp-window.c:1022
+#: src/sp-window.c:1034
 msgid "Open"
 msgstr "Buka"
 
-#: src/sp-window.c:1027
+#: src/sp-window.c:1039
 msgid "Sysprof Captures"
 msgstr "Tangkapan Sysprof"
 
-#: src/sp-window.c:1032
+#: src/sp-window.c:1044
 msgid "All Files"
 msgstr "Semua Berkas"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
 msgid "Make sysprof specific to a task"
 msgstr "Membuat sysprof spesifik ke sebuah tugas"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:100
 msgid "Run a command and profile the process"
 msgstr "Jalankan suatu perintah dan buat profil proses tersebut"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:100
 msgid "COMMAND"
 msgstr "PERINTAH"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:101
 msgid "Force overwrite the capture file"
 msgstr "Paksa timpa berkas tangkapan"
 
-#: tools/sysprof-cli.c:100
+#: tools/sysprof-cli.c:102
+msgid "Disable recording of CPU statistics"
+msgstr "Nonaktifkan perekaman statistik CPU"
+
+#: tools/sysprof-cli.c:103
+msgid "Disable recording of memory statistics"
+msgstr "Nonaktifkan perekaman statistik memori"
+
+#: tools/sysprof-cli.c:104
 msgid "Print the sysprof-cli version and exit"
 msgstr "Cetak versi sysprof-cli dan keluar"
 
-#: tools/sysprof-cli.c:106
+#: tools/sysprof-cli.c:110
 msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[BERKAS_TANGKAPAN] — Sysprof"
 
-#: tools/sysprof-cli.c:125
+#: tools/sysprof-cli.c:129
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Terlalu banyak argumen yang diberikan ke sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: tools/sysprof-cli.c:166
+#: tools/sysprof-cli.c:170
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s telah ada. Gunakan --force untuk menimpa\n"

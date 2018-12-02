@@ -6,10 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?"
-"product=sysprof&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-03-27 23:22+0000\n"
-"PO-Revision-Date: 2017-04-01 09:02+0200\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2018-09-25 18:03+0000\n"
+"PO-Revision-Date: 2018-12-02 19:38+0100\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
@@ -17,11 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.2\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -118,6 +117,22 @@ msgstr ""
 "Vyžaduje sa overenie totožnosti na získanie prístupu k počítadlám výkonu "
 "vášho systému."
 
+#: data/org.gnome.sysprof2.policy.in:24
+msgid "Get a list of kernel symbols and their address"
+msgstr ""
+
+#: data/org.gnome.sysprof2.policy.in:25
+msgid "Authentication is required to access Linux kernel information."
+msgstr ""
+"Vyžaduje sa overenie totožnosti na získanie prístupu k informáciám o jadre "
+"systému Linux."
+
+#: lib/callgraph/sp-callgraph-profile.c:426
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
+"Aplikácia Sysprof nebola schopná vygenerovať graf volaní zo systémového "
+"záznamu."
+
 #: lib/resources/ui/sp-callgraph-view.ui:24
 msgid "Functions"
 msgstr "Funkcie"
@@ -197,7 +212,7 @@ msgid "Value"
 msgstr "Hodnota"
 
 #: lib/resources/ui/sp-profiler-menu-button.ui:215
-#: lib/sp-profiler-menu-button.c:118
+#: lib/widgets/sp-profiler-menu-button.c:118
 msgid "New Process"
 msgstr "Nový proces"
 
@@ -212,13 +227,22 @@ msgstr ""
 "Vedeli ste, že môžete použiť program <a href=\"help:sysprof\">sysprof-cli</"
 "a> na vytvorenie záznamu?"
 
-#: lib/sp-callgraph-profile.c:414
-msgid "Sysprof was unable to generate a callgraph from the system capture."
+#: lib/sources/sp-perf-source.c:478
+#, c-format
+msgid "Sysprof failed to find field “%s”."
 msgstr ""
-"Aplikácia Sysprof nebola schopná vygenerovať graf volaní zo systémového "
-"záznamu."
 
-#: lib/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:491
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr ""
+
+#: lib/sources/sp-perf-source.c:555
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr ""
+
+#: lib/sources/sp-perf-source.c:664
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
@@ -226,21 +250,30 @@ msgstr ""
 "Aplikácia Sysprof vyžaduje overenie totožnosti na získanie prístupu k "
 "počítadlám výkonu vášho počítača."
 
-#: lib/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:669
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Vyskytla sa chyba pri pokuse získať prístup k počítadlám výkonu: %s"
 
-#: lib/sp-profiler-menu-button.c:116 lib/sp-profiler-menu-button.c:131
+#: lib/visualizers/sp-visualizer-list.c:275
+msgid "CPU"
+msgstr "Procesor"
+
+#: lib/visualizers/sp-visualizer-list.c:289
+msgid "FPS"
+msgstr "Sn./s"
+
+#: lib/widgets/sp-profiler-menu-button.c:116
+#: lib/widgets/sp-profiler-menu-button.c:131
 msgid "All Processes"
 msgstr "Všetky procesy"
 
-#: lib/sp-profiler-menu-button.c:137
+#: lib/widgets/sp-profiler-menu-button.c:137
 #, c-format
 msgid "Process %d"
 msgstr "Proces č. %d"
 
-#: lib/sp-profiler-menu-button.c:142
+#: lib/widgets/sp-profiler-menu-button.c:142
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
@@ -248,7 +281,7 @@ msgstr[0] "%u procesov"
 msgstr[1] "%u proces"
 msgstr[2] "%u procesy"
 
-#: lib/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:813
 msgid "The command line arguments provided are invalid"
 msgstr "Poskytnuté parametre príkazového riadku sú neplatné"
 
@@ -346,7 +379,7 @@ msgstr "Klávesové skratky"
 msgid "_Quit"
 msgstr "_Ukončiť"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:313
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
 msgid "Not running"
 msgstr "Nie je spustený"
 
@@ -358,35 +391,31 @@ msgstr "Zaz_namenať"
 msgid "_Close"
 msgstr "_Zavrieť"
 
-#: src/resources/ui/sp-window.ui:174
-msgid "CPU"
-msgstr "Procesor"
-
-#: src/resources/ui/sp-window.ui:222
+#: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Zmenšenie (Ctrl+-)"
 
-#: src/resources/ui/sp-window.ui:238
+#: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Obnovenie úrovne priblíženia (Ctrl+0)"
 
-#: src/resources/ui/sp-window.ui:252
+#: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Zväčšenie (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1003
+#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
 msgid "Open"
 msgstr "Otvoriť"
 
-#: src/resources/ui/sp-window.ui:284
+#: src/resources/ui/sp-window.ui:274
 msgid "Save As"
 msgstr "Uložiť ako"
 
-#: src/resources/ui/sp-window.ui:297
+#: src/resources/ui/sp-window.ui:287
 msgid "Screenshot"
 msgstr "Snímka obrazovky"
 
-#: src/resources/ui/sp-window.ui:310
+#: src/resources/ui/sp-window.ui:300
 msgid "Close"
 msgstr "Zavrieť"
 
@@ -394,84 +423,84 @@ msgstr "Zavrieť"
 msgid "A system profiler"
 msgstr "Nástroj na tvorbu systémových profilov"
 
-#: src/sp-application.c:178
+#: src/sp-application.c:179
 msgid "translator-credits"
 msgstr "Dušan Kazik <prescott66@gmail.com>"
 
-#: src/sp-application.c:184
+#: src/sp-application.c:185
 msgid "Learn more about Sysprof"
 msgstr "Zistite viac o aplikácii Sysprof"
 
-#: src/sp-window.c:148
+#: src/sp-window.c:149
 #, c-format
 msgid "Samples: %u"
 msgstr "Vzorky: %u"
 
-#: src/sp-window.c:181
+#: src/sp-window.c:182
 msgid "[Memory Capture]"
 msgstr "[Záznam pamäte]"
 
-#: src/sp-window.c:194
+#: src/sp-window.c:195
 #, c-format
-msgid "%s - %s"
-msgstr "%s - %s"
+msgid "%s — %s"
+msgstr "%s — %s"
 
-#: src/sp-window.c:232
+#: src/sp-window.c:233
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Nebol zozbieraný dostatok vzoriek na vygenerovanie grafu volaní"
 
-#: src/sp-window.c:305 src/sp-window.c:349
+#: src/sp-window.c:306 src/sp-window.c:350
 msgid "Record"
 msgstr "Zaznamenať"
 
-#: src/sp-window.c:325
+#: src/sp-window.c:326
 msgid "Stop"
 msgstr "Zastaviť"
 
-#: src/sp-window.c:330
+#: src/sp-window.c:331
 msgid "Recording…"
 msgstr "Zaznamenáva sa…"
 
-#: src/sp-window.c:341
+#: src/sp-window.c:342
 msgid "Building profile…"
 msgstr "Zostavuje sa profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:442
+#: src/sp-window.c:443
 msgid "Stopping…"
 msgstr "Zastavuje sa…"
 
-#: src/sp-window.c:594
+#: src/sp-window.c:595
 msgid "Save Capture As"
 msgstr "Uloženie záznamu ako"
 
-#: src/sp-window.c:597
+#: src/sp-window.c:598
 msgid "Save"
 msgstr "Uložiť"
 
-#: src/sp-window.c:598 src/sp-window.c:1004
+#: src/sp-window.c:599 src/sp-window.c:1012
 msgid "Cancel"
 msgstr "Zrušiť"
 
-#: src/sp-window.c:628
+#: src/sp-window.c:629
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Vyskytla sa chyba pri pokuse o uloženie vášho záznamu: %s"
 
-#: src/sp-window.c:973
+#: src/sp-window.c:981
 #, c-format
-msgid "The file \"%s\" could not be opened. Only local files are supported."
-msgstr "Súbor „%s“ sa nepodarilo otvoriť. Podporované sú iba lokálne súbory."
+msgid "The file “%s” could not be opened. Only local files are supported."
+msgstr "Súbor „%s“ sa nepodarilo otvoriť. Podporované sú iba miestne súbory."
 
-#: src/sp-window.c:1000
+#: src/sp-window.c:1008
 msgid "Open Capture"
 msgstr "Otvorenie záznamu"
 
-#: src/sp-window.c:1007
+#: src/sp-window.c:1015
 msgid "Sysprof Captures"
 msgstr "Záznamy aplikácie Sysprof"
 
-#: src/sp-window.c:1012
+#: src/sp-window.c:1020
 msgid "All Files"
 msgstr "Všetky súbory"
 
@@ -500,11 +529,10 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Vypíše verziu programu sysprof-cli a skončí"
 
 #: tools/sysprof-cli.c:106
-msgid "[CAPTURE_FILE] - Sysprof"
-msgstr "[SÚBOR_ZÁZNAMU] - Sysprof"
+msgid "[CAPTURE_FILE] — Sysprof"
+msgstr "[SÚBOR_ZÁZNAMU] — Sysprof"
 
 #: tools/sysprof-cli.c:125
-#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Programu sysprof-cli bolo odovzdaných príliš veľa parametrov:"
 
@@ -512,3 +540,6 @@ msgstr "Programu sysprof-cli bolo odovzdaných príliš veľa parametrov:"
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existuje. Použite parameter --force na prepísanie\n"
+
+#~ msgid "%s - %s"
+#~ msgstr "%s - %s"

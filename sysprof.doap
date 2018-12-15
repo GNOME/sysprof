@@ -17,7 +17,7 @@
   <homepage rdf:resource="http://sysprof.com" />
   <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/sysprof-list" />
   <download-page rdf:resource="http://sysprof.com/" />
-  <bug-database rdf:resource="https://bugzilla.gnome.org/browse.cgi?product=sysprof" />
+  <bug-database rdf:resource="https://gitlab.gnome.org/GNOME/sysprof/issues/" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#apps" />
   <programming-language>C</programming-language>
 

@@ -11,8 +11,17 @@ sysprofd_sources = [
 # NOTE: This is used in data/meson.build
 pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'), 'sysprof')
 
+# Check for sd-bus support either by systemd or elogind
+sdbus_dep = dependency('libsystemd', version: '>=222', required: false)
+if not sdbus_dep.found()
+  sdbus_dep = dependency('libelogind', version: '>=239.3', required: false)
+  if not sdbus_dep.found()
+    error('sysprofd requires sd-bus but neither systemd nor elogind were found')
+  endif
+endif
+
 sysprofd_deps = [
-  dependency('libsystemd', version: '>=222'),
+  sdbus_dep,
   dependency('glib-2.0'),
 ]
 

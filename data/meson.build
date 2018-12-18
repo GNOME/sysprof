@@ -87,7 +87,7 @@ if get_option('with_sysprofd') == 'bundled'
 
   systemdunitdir = get_option('systemdunitdir')
   if systemdunitdir == ''
-    systemdunitdir = dependency('systemd').get_pkgconfig_variable('systemdsystemunitdir')
+    systemdunitdir = dependency('systemd', required: false).get_pkgconfig_variable('systemdsystemunitdir')
   endif
   configure_file(
     input: 'sysprof2.service.in',

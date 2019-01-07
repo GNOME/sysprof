@@ -1,15 +1,15 @@
 # Swedish translation for sysprof.
-# Copyright © 2016-2018 sysprof's COPYRIGHT HOLDER
+# Copyright © 2016-2019 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016, 2018.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016, 2018, 2019.
 # Josef Andersson <l10nl18nsweja@gmail.com>, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-09-25 18:50+0000\n"
-"PO-Revision-Date: 2018-09-29 15:02+0200\n"
+"POT-Creation-Date: 2018-12-02 18:39+0000\n"
+"PO-Revision-Date: 2019-01-07 23:29+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -17,11 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.1.1\n"
+"X-Generator: Poedit 2.2\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:192
+#: src/sp-application.c:339
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -252,12 +253,16 @@ msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Ett fel uppstod vid försök att komma åt prestandaräknare: %s"
 
 #. Translators: CPU is the processor.
-#: lib/visualizers/sp-visualizer-list.c:276
+#: lib/visualizers/sp-visualizer-list.c:294
 msgid "CPU"
 msgstr "CPU"
 
+#: lib/visualizers/sp-visualizer-list.c:309
+msgid "Memory Used"
+msgstr "Använt minne"
+
 #. Translators: FPS is frames per second.
-#: lib/visualizers/sp-visualizer-list.c:291
+#: lib/visualizers/sp-visualizer-list.c:327
 msgid "FPS"
 msgstr "Bilder/s"
 
@@ -354,7 +359,7 @@ msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Återställ zoom"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:317
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:321
 msgid "Not running"
 msgstr "Kör inte"
 
@@ -421,143 +426,151 @@ msgstr "Hjälp"
 msgid "About Sysprof"
 msgstr "Om Sysprof"
 
-#: src/sp-application.c:174
+#: src/sp-application.c:184
 msgid "A system profiler"
 msgstr "En systemprofilerare"
 
-#: src/sp-application.c:179
+#: src/sp-application.c:189
 msgid "translator-credits"
 msgstr ""
 "Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Skicka synpunkter på översättningen till\n"
 "<tp-sv@listor.tp-sv.se>."
 
-#: src/sp-application.c:185
+#: src/sp-application.c:195
 msgid "Learn more about Sysprof"
 msgstr "Lär dig mer om Sysprof"
 
 #. Translators: %u is the number (amount) of samples.
-#: src/sp-window.c:150
+#: src/sp-window.c:154
 #, c-format
 msgid "Samples: %u"
 msgstr "Samplingar: %u"
 
-#: src/sp-window.c:183
+#: src/sp-window.c:187
 msgid "[Memory Capture]"
 msgstr "[Minnesfångst]"
 
 #. Translators: The first %s is a file name, the second is the date and time.
-#: src/sp-window.c:197
+#: src/sp-window.c:201
 #, c-format
 msgid "%s — %s"
 msgstr "%s — %s"
 
-#: src/sp-window.c:235
+#: src/sp-window.c:239
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr ""
 "Har inte samlat tillräckligt många samplingar för att skapa en anropsgraf"
 
 #. Translators: This is a button.
-#: src/sp-window.c:309 src/sp-window.c:355
+#: src/sp-window.c:313 src/sp-window.c:359
 msgid "Record"
 msgstr "Spela in"
 
 #. Translators: This is a button.
-#: src/sp-window.c:330
+#: src/sp-window.c:334
 msgid "Stop"
 msgstr "Stoppa"
 
-#: src/sp-window.c:335
+#: src/sp-window.c:339
 msgid "Recording…"
 msgstr "Spelar in…"
 
-#: src/sp-window.c:346
+#: src/sp-window.c:350
 msgid "Building profile…"
 msgstr "Bygger profil…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:448
+#: src/sp-window.c:456
 msgid "Stopping…"
 msgstr "Stoppar…"
 
 #. Translators: This is a window title.
-#: src/sp-window.c:601
+#: src/sp-window.c:609
 msgid "Save Capture As…"
 msgstr "Spara fångst som…"
 
 #. Translators: This is a button.
-#: src/sp-window.c:605
+#: src/sp-window.c:613
 msgid "Save"
 msgstr "Spara"
 
 #. Translators: This is a button.
-#: src/sp-window.c:607 src/sp-window.c:1024
+#: src/sp-window.c:615 src/sp-window.c:1036
 msgid "Cancel"
 msgstr "Avbryt"
 
 #. Translators: %s is the error message.
-#: src/sp-window.c:638
+#: src/sp-window.c:646
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Ett fel uppstod vid försök att spara din fångst: %s"
 
-#: src/sp-window.c:990
+#: src/sp-window.c:1002
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Filen ”%s” kunde inte öppnas. Endast lokala filer stöds."
 
 #. Translators: This is a window title.
-#: src/sp-window.c:1018
+#: src/sp-window.c:1030
 msgid "Open Capture…"
 msgstr "Öppna fångst…"
 
 #. Translators: This is a button.
-#: src/sp-window.c:1022
+#: src/sp-window.c:1034
 msgid "Open"
 msgstr "Öppna"
 
-#: src/sp-window.c:1027
+#: src/sp-window.c:1039
 msgid "Sysprof Captures"
 msgstr "Sysprof-fångster"
 
-#: src/sp-window.c:1032
+#: src/sp-window.c:1044
 msgid "All Files"
 msgstr "Alla filer"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
 msgid "Make sysprof specific to a task"
 msgstr "Gör sysprof specifik för en uppgift"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:100
 msgid "Run a command and profile the process"
 msgstr "Kör ett kommando och profilera processen"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:100
 msgid "COMMAND"
 msgstr "KOMMANDO"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:101
 msgid "Force overwrite the capture file"
 msgstr "Tvinga överskrivning av fångstfilen"
 
-#: tools/sysprof-cli.c:100
+#: tools/sysprof-cli.c:102
+msgid "Disable recording of CPU statistics"
+msgstr "Inaktivera inspelning av processorstatistik"
+
+#: tools/sysprof-cli.c:103
+msgid "Disable recording of memory statistics"
+msgstr "Inaktivera inspelning av minnesstatistik"
+
+#: tools/sysprof-cli.c:104
 msgid "Print the sysprof-cli version and exit"
 msgstr "Skriv ut version för sysprof-cli och avsluta"
 
-#: tools/sysprof-cli.c:106
+#: tools/sysprof-cli.c:110
 msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[FÅNGSTFIL] — Sysprof"
 
-#: tools/sysprof-cli.c:125
+#: tools/sysprof-cli.c:129
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "För många argument skickades till sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: tools/sysprof-cli.c:166
+#: tools/sysprof-cli.c:170
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existerar. Använd --force för att skriva över\n"

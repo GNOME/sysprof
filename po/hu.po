@@ -1,27 +1,28 @@
 # Hungarian translation for sysprof.
-# Copyright (C) 2016, 2017, 2018 Free Software Foundation, Inc.
+# Copyright (C) 2016, 2017, 2018, 2019 Free Software Foundation, Inc.
 # This file is distributed under the same license as the sysprof package.
 #
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2016.
-# Balázs Úr <urbalazs at gmail dot com>, 2017, 2018.
+# Balázs Úr <urbalazs at gmail dot com>, 2017, 2018, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-06-10 18:48+0000\n"
-"PO-Revision-Date: 2018-09-03 21:23+0200\n"
-"Last-Translator: Meskó Balázs <mesko.balazs@fsf.hu>\n"
-"Language-Team: Hungarian <openscope at gmail dot com>\n"
+"POT-Creation-Date: 2018-11-05 10:08+0000\n"
+"PO-Revision-Date: 2019-01-27 18:32+0100\n"
+"Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
+"Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.1.1\n"
+"X-Generator: Lokalize 1.2\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:192
+#: src/sp-application.c:339
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -174,10 +175,12 @@ msgstr "Jaj, ez fájt!"
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr "Valami váratlanul elromlott a rendszer profilozási kísérlete során."
 
+#. Translators: This is the description for a switch.
 #: lib/resources/ui/sp-profiler-menu-button.ui:58
 msgid "Profile my _entire system"
 msgstr "A _teljes rendszer profilozása"
 
+#. Translators: This is the placeholder in a search entry.
 #: lib/resources/ui/sp-profiler-menu-button.ui:95
 msgid "Search"
 msgstr "Keresés"
@@ -194,6 +197,7 @@ msgstr "Parancssor"
 msgid "Environment"
 msgstr "Környezet"
 
+#. Translators: This is a check button.
 #: lib/resources/ui/sp-profiler-menu-button.ui:164
 msgid "Inherit current environment"
 msgstr "Jelenlegi környezet öröklése"
@@ -252,11 +256,17 @@ msgstr ""
 "Hiba történt a teljesítményszámlálókhoz történő hozzáférés kísérlete során: "
 "%s"
 
-#: lib/visualizers/sp-visualizer-list.c:275
+#. Translators: CPU is the processor.
+#: lib/visualizers/sp-visualizer-list.c:294
 msgid "CPU"
 msgstr "CPU"
 
-#: lib/visualizers/sp-visualizer-list.c:289
+#: lib/visualizers/sp-visualizer-list.c:309
+msgid "Memory Used"
+msgstr "Használt memória"
+
+#. Translators: FPS is frames per second.
+#: lib/visualizers/sp-visualizer-list.c:327
 msgid "FPS"
 msgstr "FPS"
 
@@ -265,19 +275,21 @@ msgstr "FPS"
 msgid "All Processes"
 msgstr "Minden folyamat"
 
-#: lib/widgets/sp-profiler-menu-button.c:137
+#. Translators: %d is the PID of the process.
+#: lib/widgets/sp-profiler-menu-button.c:138
 #, c-format
 msgid "Process %d"
 msgstr "%d. folyamat"
 
-#: lib/widgets/sp-profiler-menu-button.c:142
+#. Translators: %u is the number (amount) of processes.
+#: lib/widgets/sp-profiler-menu-button.c:144
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
 msgstr[0] "%u folyamat"
 msgstr[1] "%u folyamat"
 
-#: lib/widgets/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:815
 msgid "The command line arguments provided are invalid"
 msgstr "A megadott parancssori argumentumok érvénytelenek"
 
@@ -352,193 +364,217 @@ msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Nagyítás visszaállítása"
 
-#: src/resources/gtk/menus.ui:6
-msgid "_New Window"
-msgstr "Új _ablak"
-
-#: src/resources/gtk/menus.ui:12
-msgid "_Open Capture"
-msgstr "Rögzítés _megnyitása"
-
-#: src/resources/gtk/menus.ui:18
-msgid "About"
-msgstr "Névjegy"
-
-#: src/resources/gtk/menus.ui:22
-msgid "Help"
-msgstr "Súgó"
-
-#: src/resources/gtk/menus.ui:26
-msgid "Keyboard Shortcuts"
-msgstr "Gyorsbillentyűk"
-
-#: src/resources/gtk/menus.ui:30
-msgid "_Quit"
-msgstr "_Kilépés"
-
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:321
 msgid "Not running"
 msgstr "Nem fut"
 
+#. Translators: This is a button.
 #: src/resources/ui/sp-window.ui:44
 msgid "_Record"
 msgstr "_Felvétel"
 
+#. Translators: This is a button.
 #: src/resources/ui/sp-window.ui:118
 msgid "_Close"
 msgstr "_Bezárás"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Kicsinyítés (Ctrl+-)"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Nagyítási szint visszállítása (Ctrl+0)"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Nagyítás (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
-msgid "Open"
-msgstr "Megnyitás"
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:267
+msgid "New Window"
+msgstr "Új ablak"
 
-#: src/resources/ui/sp-window.ui:274
-msgid "Save As"
-msgstr "Mentés másként"
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:280
+msgctxt "menu label"
+msgid "Open Capture…"
+msgstr "Rögzítés megnyitása…"
 
+#. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:287
+msgid "Save As…"
+msgstr "Mentés másként…"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:300
 msgid "Screenshot"
 msgstr "Képernyőkép"
 
-#: src/resources/ui/sp-window.ui:300
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:313
 msgid "Close"
 msgstr "Bezárás"
 
-#: src/sp-application.c:174
+#: src/resources/ui/sp-window.ui:326
+msgid "Keyboard Shortcuts"
+msgstr "Gyorsbillentyűk"
+
+#: src/resources/ui/sp-window.ui:333
+msgid "Help"
+msgstr "Súgó"
+
+#: src/resources/ui/sp-window.ui:340
+msgid "About Sysprof"
+msgstr "A Sysprof névjegye"
+
+#: src/sp-application.c:184
 msgid "A system profiler"
 msgstr "Egy rendszerprofilozó"
 
-#: src/sp-application.c:179
+#: src/sp-application.c:189
 msgid "translator-credits"
 msgstr ""
 "Kelemen Gábor <kelemeng at ubuntu dot com>\n"
 "Meskó Balázs <meskobalazs at gmail dot com>"
 
-#: src/sp-application.c:185
+#: src/sp-application.c:195
 msgid "Learn more about Sysprof"
 msgstr "Tudjon meg többet a Sysprofról"
 
-#: src/sp-window.c:149
+#. Translators: %u is the number (amount) of samples.
+#: src/sp-window.c:154
 #, c-format
 msgid "Samples: %u"
 msgstr "Minták: %u"
 
-#: src/sp-window.c:182
+#: src/sp-window.c:187
 msgid "[Memory Capture]"
 msgstr "[Memóriarögzítés]"
 
-#: src/sp-window.c:195
+#. Translators: The first %s is a file name, the second is the date and time.
+#: src/sp-window.c:201
 #, c-format
 msgid "%s — %s"
 msgstr "%s – %s"
 
-#: src/sp-window.c:233
+#: src/sp-window.c:239
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr "Nincs elég begyűjtött minta a hívási gráf generálásához"
 
-#: src/sp-window.c:306 src/sp-window.c:350
+#. Translators: This is a button.
+#: src/sp-window.c:313 src/sp-window.c:359
 msgid "Record"
 msgstr "Felvétel"
 
-#: src/sp-window.c:326
+#. Translators: This is a button.
+#: src/sp-window.c:334
 msgid "Stop"
 msgstr "Leállítás"
 
-#: src/sp-window.c:331
+#: src/sp-window.c:339
 msgid "Recording…"
 msgstr "Felvétel…"
 
-#: src/sp-window.c:342
+#: src/sp-window.c:350
 msgid "Building profile…"
 msgstr "Profil összeállítása…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:443
+#: src/sp-window.c:456
 msgid "Stopping…"
 msgstr "Leállítás…"
 
-#: src/sp-window.c:595
-msgid "Save Capture As"
-msgstr "Rögzítés mentése másként"
+#. Translators: This is a window title.
+#: src/sp-window.c:609
+msgid "Save Capture As…"
+msgstr "Rögzítés mentése másként…"
 
-#: src/sp-window.c:598
+#. Translators: This is a button.
+#: src/sp-window.c:613
 msgid "Save"
 msgstr "Mentés"
 
-#: src/sp-window.c:599 src/sp-window.c:1012
+#. Translators: This is a button.
+#: src/sp-window.c:615 src/sp-window.c:1036
 msgid "Cancel"
 msgstr "Mégse"
 
-#: src/sp-window.c:629
+#. Translators: %s is the error message.
+#: src/sp-window.c:646
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr "Hiba történt a rögzítés mentési kísérlete során: %s"
 
-#: src/sp-window.c:981
+#: src/sp-window.c:1002
 #, c-format
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "A(z) „%s” fájl nem nyitható meg. Csak a helyi fájlok támogatottak."
 
-#: src/sp-window.c:1008
-msgid "Open Capture"
-msgstr "Rögzítés megnyitása"
+#. Translators: This is a window title.
+#: src/sp-window.c:1030
+msgid "Open Capture…"
+msgstr "Rögzítés megnyitása…"
 
-#: src/sp-window.c:1015
+#. Translators: This is a button.
+#: src/sp-window.c:1034
+msgid "Open"
+msgstr "Megnyitás"
+
+#: src/sp-window.c:1039
 msgid "Sysprof Captures"
 msgstr "Sysprof rögzítések"
 
-#: src/sp-window.c:1020
+#: src/sp-window.c:1044
 msgid "All Files"
 msgstr "Minden fájl"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
 msgid "Make sysprof specific to a task"
 msgstr "A sysprof egy feladathoz rendelése"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:100
 msgid "Run a command and profile the process"
 msgstr "Parancs futtatása, és a folyamat profilozása"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:100
 msgid "COMMAND"
 msgstr "PARANCS"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:101
 msgid "Force overwrite the capture file"
 msgstr "A rögzítésfájl erőltetett felülírása"
 
-#: tools/sysprof-cli.c:100
+#: tools/sysprof-cli.c:102
+msgid "Disable recording of CPU statistics"
+msgstr "Processzorstatisztikák rögzítésének letiltása"
+
+#: tools/sysprof-cli.c:103
+msgid "Disable recording of memory statistics"
+msgstr "Memóriastatisztikák rögzítésének letiltása"
+
+#: tools/sysprof-cli.c:104
 msgid "Print the sysprof-cli version and exit"
 msgstr "A sysprof-cli verzió kiírása és kilépés"
 
-#: tools/sysprof-cli.c:106
+#: tools/sysprof-cli.c:110
 msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[RÖGZÍTÉS_FÁJL] – Sysprof"
 
-#: tools/sysprof-cli.c:125
+#: tools/sysprof-cli.c:129
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Túl sok argumentum lett átadva a sysprof-cli-nek:"
 
-#: tools/sysprof-cli.c:165
+#. Translators: %s is a file name.
+#: tools/sysprof-cli.c:170
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "A(z) %s létezik. Használja a --force kapcsolót a felülíráshoz\n"
 
-#~ msgid "%s - %s"
-#~ msgstr "%s - %s"

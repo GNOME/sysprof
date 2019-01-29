@@ -6,7 +6,7 @@ Comment=Profile an application or entire system.
 Exec=sysprof %u
 TryExec=sysprof
 # Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-Icon=sysprof
+Icon=org.gnome.Sysprof
 StartupNotify=true
 Terminal=false
 Type=Application

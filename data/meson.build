@@ -57,7 +57,7 @@ if get_option('enable_gtk')
     install_dir: pkgconfigdir,
   )
 
-  icon_sizes = ['16x16', '24x24', '32x32', '48x48', '256x256', 'scalable']
+  icon_sizes = ['scalable', 'symbolic']
   foreach size: icon_sizes
     install_subdir('icons/' + size,
       install_dir: join_paths(datadir, 'icons/hicolor')

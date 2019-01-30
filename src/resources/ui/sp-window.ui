@@ -3,7 +3,7 @@
   <template class="SpWindow" parent="GtkApplicationWindow">
     <property name="default-height">700</property>
     <property name="default-width">1200</property>
-    <property name="icon-name">sysprof</property>
+    <property name="icon-name">org.gnome.Sysprof-symbolic</property>
     <property name="show-menubar">false</property>
     <child type="titlebar">
       <object class="GtkHeaderBar">

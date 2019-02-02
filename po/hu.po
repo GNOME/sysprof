@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-11-05 10:08+0000\n"
-"PO-Revision-Date: 2019-01-27 18:32+0100\n"
+"POT-Creation-Date: 2019-01-30 22:27+0000\n"
+"PO-Revision-Date: 2019-02-02 09:14+0100\n"
 "Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
 "Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
 "Language: hu\n"
@@ -52,8 +52,8 @@ msgstr "Alkalmazás vagy egész rendszer profilozása."
 
 #. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 #: data/org.gnome.Sysprof2.desktop.in:10
-msgid "sysprof"
-msgstr "sysprof"
+msgid "org.gnome.Sysprof"
+msgstr "org.gnome.Sysprof"
 
 #: data/org.gnome.sysprof2.gschema.xml:5
 msgid "Window size"

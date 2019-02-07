@@ -1,3 +1,16 @@
+Overview of changes in Sysprof 3.31.90
+======================================
+
+ * A new memory source for basic memory statistics. This is meant
+   for overview only, not precise details.
+ * Fix a small memory leak.
+ * Allow disabling memory/cpu sources from sysprof-cli.
+ * CSS styling updates.
+ * Updated icon for GNOME 3.32 icon initiative.
+ * The line visualizer can auto-discover Y axis range.
+ * Build system improvements.
+ * Updated translations.
+
 Overview of changes in Sysprof 3.31.1
 =====================================
 

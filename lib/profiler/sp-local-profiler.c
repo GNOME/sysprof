@@ -74,6 +74,13 @@ typedef struct
    * feature of per-process vs whole-system.
    */
   guint whole_system : 1;
+
+  /*
+   * If we got a stop request after calling start() but before we have had
+   * a chance to settle, then we need to stop immediately after starting.
+   * We do this to avoid a more complex state machine (for now).
+   */
+  guint stop_after_starting : 1;
 } SpLocalProfilerPrivate;
 
 static void profiler_iface_init (SpProfilerInterface *iface);
@@ -191,7 +198,13 @@ sp_local_profiler_stop (SpProfiler *profiler)
 
   g_return_if_fail (SP_IS_LOCAL_PROFILER (self));
 
-  if (priv->is_stopping || (!priv->is_starting && !priv->is_running))
+  if (priv->is_starting)
+    {
+      priv->stop_after_starting = TRUE;
+      return;
+    }
+
+  if (priv->is_stopping || !priv->is_running)
     return;
 
   priv->is_stopping = TRUE;
@@ -444,7 +457,7 @@ sp_local_profiler_finish_startup (SpLocalProfiler *self)
    *
    * If we detect this, we stop immediately.
    */
-  if (priv->finished_or_failed->len == priv->sources->len)
+  if (priv->finished_or_failed->len == priv->sources->len || priv->stop_after_starting)
     sp_local_profiler_stop (SP_PROFILER (self));
 }
 

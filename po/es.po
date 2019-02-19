@@ -1,14 +1,14 @@
 # Spanish translation for sysprof.
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2016, 2017, 2018.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2016-2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-11-05 10:08+0000\n"
-"PO-Revision-Date: 2018-11-15 12:16+0100\n"
+"POT-Creation-Date: 2019-01-30 22:27+0000\n"
+"PO-Revision-Date: 2019-02-19 15:58+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: es <gnome-es-list@gnome.org>\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Gtranslator 3.31.90\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
@@ -51,8 +51,8 @@ msgstr "Perfilar una aplicación o el sistema completo."
 
 #. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 #: data/org.gnome.Sysprof2.desktop.in:10
-msgid "sysprof"
-msgstr "sysprof"
+msgid "org.gnome.Sysprof"
+msgstr "org.gnome.Sysprof"
 
 #: data/org.gnome.sysprof2.gschema.xml:5
 msgid "Window size"
@@ -394,20 +394,17 @@ msgstr "Acercar (Ctrl++)"
 
 #. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:267
-#| msgid "_New Window"
 msgid "New Window"
 msgstr "Ventana nueva"
 
 #. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:280
-#| msgid "Open Capture"
 msgctxt "menu label"
 msgid "Open Capture…"
 msgstr "Abrir captura…"
 
 #. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:287
-#| msgid "Save As"
 msgid "Save As…"
 msgstr "Guardar como…"
 
@@ -430,7 +427,6 @@ msgid "Help"
 msgstr "Ayuda"
 
 #: src/resources/ui/sp-window.ui:340
-#| msgid "Sysprof"
 msgid "About Sysprof"
 msgstr "Acerca de Sysprof"
 
@@ -491,7 +487,6 @@ msgstr "Deteniendo…"
 
 #. Translators: This is a window title.
 #: src/sp-window.c:609
-#| msgid "Save Capture As"
 msgid "Save Capture As…"
 msgstr "Guardar captura como…"
 
@@ -519,7 +514,6 @@ msgstr ""
 
 #. Translators: This is a window title.
 #: src/sp-window.c:1030
-#| msgid "Open Capture"
 msgid "Open Capture…"
 msgstr "Abrir captura…"
 
@@ -581,6 +575,9 @@ msgstr "Se han pasado demasiados argumentos a sysprof-cli:"
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existe. Use --force para sobrescribir\n"
+
+#~ msgid "sysprof"
+#~ msgstr "sysprof"
 
 #~ msgid "_Open Capture"
 #~ msgstr "_Abrir captura"

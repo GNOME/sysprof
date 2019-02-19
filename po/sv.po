@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-12-02 18:39+0000\n"
-"PO-Revision-Date: 2019-01-07 23:29+0100\n"
+"POT-Creation-Date: 2019-01-30 22:27+0000\n"
+"PO-Revision-Date: 2019-02-19 22:18+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
@@ -52,8 +52,8 @@ msgstr "Profilera ett program eller hela systemet."
 
 #. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 #: data/org.gnome.Sysprof2.desktop.in:10
-msgid "sysprof"
-msgstr "sysprof"
+msgid "org.gnome.Sysprof"
+msgstr "org.gnome.Sysprof"
 
 #: data/org.gnome.sysprof2.gschema.xml:5
 msgid "Window size"
@@ -574,6 +574,9 @@ msgstr "För många argument skickades till sysprof-cli:"
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existerar. Använd --force för att skriva över\n"
+
+#~ msgid "sysprof"
+#~ msgstr "sysprof"
 
 #~ msgid "_Open Capture"
 #~ msgstr "Ö_ppna fångst"

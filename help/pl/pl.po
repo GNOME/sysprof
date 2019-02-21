@@ -1,14 +1,14 @@
 # Polish translation for sysprof help.
-# Copyright © 2017 the sysprof authors.
+# Copyright © 2017-2019 the sysprof authors.
 # This file is distributed under the same license as the sysprof help.
-# Piotr Drąg <piotrdrag@gmail.com>, 2017.
-# Aviary.pl <community-poland@mozilla.org>, 2017.
+# Piotr Drąg <piotrdrag@gmail.com>, 2017-2019.
+# Aviary.pl <community-poland@mozilla.org>, 2017-2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof-help\n"
-"POT-Creation-Date: 2017-11-22 01:08+0000\n"
-"PO-Revision-Date: 2017-11-26 18:25+0100\n"
+"POT-Creation-Date: 2018-06-10 18:48+0000\n"
+"PO-Revision-Date: 2019-02-21 18:11+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -22,8 +22,8 @@ msgstr ""
 msgctxt "_"
 msgid "translator-credits"
 msgstr ""
-"Piotr Drąg <piotrdrag@gmail.com>, 2017\n"
-"Aviary.pl <community-poland@mozilla.org>, 2017"
+"Piotr Drąg <piotrdrag@gmail.com>, 2017-2019\n"
+"Aviary.pl <community-poland@mozilla.org>, 2017-2019"
 
 #. (itstool) path: page/title
 #: C/index.page:12
@@ -262,7 +262,7 @@ msgid ""
 "environment</em> is set."
 msgstr ""
 "Jeśli wywoływany jest proces wymagający dostępu do bieżącego ekranu, taki "
-"jak program GTK+, to ustaw opcję <em>Dziedziczenie obecnego środowiska</em>."
+"jak program GTK, to ustaw opcję <em>Dziedziczenie obecnego środowiska</em>."
 
 #. (itstool) path: section/title
 #: C/profiling.page:88

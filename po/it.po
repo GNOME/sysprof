@@ -1,14 +1,14 @@
 # Italian translation for sysprof.
-# Copyright (C) 2018 sysprof's COPYRIGHT HOLDER
+# Copyright (C) 2018-2019 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Gianvito Cavasoli <gianvito@gmx.it>, 2018.
+# Gianvito Cavasoli <gianvito@gmx.it>, 2018-2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2018-08-27 07:37+0000\n"
-"PO-Revision-Date: 2018-09-03 13:11+0200\n"
+"POT-Creation-Date: 2019-01-30 22:27+0000\n"
+"PO-Revision-Date: 2019-02-27 14:38+0100\n"
 "Last-Translator: Gianvito Cavasoli <gianvito@gmx.it>\n"
 "Language-Team: Italiano <gnome-it-list@gnome.org>\n"
 "Language: it\n"
@@ -16,11 +16,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Gtranslator 3.30.1\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:182
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:192
+#: src/sp-application.c:339
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -50,8 +51,8 @@ msgstr "Profila un'applicazione o l'intero sistema."
 
 #. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 #: data/org.gnome.Sysprof2.desktop.in:10
-msgid "sysprof"
-msgstr "sysprof"
+msgid "org.gnome.Sysprof"
+msgstr "org.gnome.Sysprof"
 
 #: data/org.gnome.sysprof2.gschema.xml:5
 msgid "Window size"
@@ -181,10 +182,12 @@ msgstr ""
 "Qualcosa di imprevisto è accaduto durante il tentativo di profilazione del "
 "sistema."
 
+#. Translators: This is the description for a switch.
 #: lib/resources/ui/sp-profiler-menu-button.ui:58
 msgid "Profile my _entire system"
 msgstr "Profila l'_intero sistema"
 
+#. Translators: This is the placeholder in a search entry.
 #: lib/resources/ui/sp-profiler-menu-button.ui:95
 msgid "Search"
 msgstr "Cerca"
@@ -201,6 +204,7 @@ msgstr "Riga di comando"
 msgid "Environment"
 msgstr "Ambiente"
 
+#. Translators: This is a check button.
 #: lib/resources/ui/sp-profiler-menu-button.ui:164
 msgid "Inherit current environment"
 msgstr "Eredita ambiente attuale"
@@ -259,11 +263,17 @@ msgstr ""
 "Si è verificato un errore durante il tentativo di accedere ai contatori "
 "delle prestazioni: %s"
 
-#: lib/visualizers/sp-visualizer-list.c:275
+#. Translators: CPU is the processor.
+#: lib/visualizers/sp-visualizer-list.c:294
 msgid "CPU"
 msgstr "CPU"
 
-#: lib/visualizers/sp-visualizer-list.c:289
+#: lib/visualizers/sp-visualizer-list.c:309
+msgid "Memory Used"
+msgstr "Memoria usata"
+
+#. Translators: FPS is frames per second.
+#: lib/visualizers/sp-visualizer-list.c:327
 msgid "FPS"
 msgstr "FPS"
 
@@ -272,19 +282,21 @@ msgstr "FPS"
 msgid "All Processes"
 msgstr "Tutti i processi"
 
-#: lib/widgets/sp-profiler-menu-button.c:137
+#. Translators: %d is the PID of the process.
+#: lib/widgets/sp-profiler-menu-button.c:138
 #, c-format
 msgid "Process %d"
 msgstr "Processo %d"
 
-#: lib/widgets/sp-profiler-menu-button.c:142
+#. Translators: %u is the number (amount) of processes.
+#: lib/widgets/sp-profiler-menu-button.c:144
 #, c-format
 msgid "%u Process"
 msgid_plural "%u Processes"
 msgstr[0] "%u processo"
 msgstr[1] "%u processi"
 
-#: lib/widgets/sp-profiler-menu-button.c:795
+#: lib/widgets/sp-profiler-menu-button.c:815
 msgid "The command line arguments provided are invalid"
 msgstr "Gli argomenti della riga di comando forniti non sono validi"
 
@@ -361,194 +373,224 @@ msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Azzera ingrandimento"
 
-#: src/resources/gtk/menus.ui:6
-msgid "_New Window"
-msgstr "_Nuova finestra"
-
-#: src/resources/gtk/menus.ui:12
-msgid "_Open Capture"
-msgstr "_Apri cattura"
-
-#: src/resources/gtk/menus.ui:18
-msgid "About"
-msgstr "Informazioni"
-
-#: src/resources/gtk/menus.ui:22
-msgid "Help"
-msgstr "Aiuto"
-
-#: src/resources/gtk/menus.ui:26
-msgid "Keyboard Shortcuts"
-msgstr "Scorciatoie da tastiera"
-
-#: src/resources/gtk/menus.ui:30
-msgid "_Quit"
-msgstr "_Esci"
-
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:321
 msgid "Not running"
 msgstr "Non in esecuzione"
 
+#. Translators: This is a button.
 #: src/resources/ui/sp-window.ui:44
 msgid "_Record"
 msgstr "_Registra"
 
+#. Translators: This is a button.
 #: src/resources/ui/sp-window.ui:118
 msgid "_Close"
 msgstr "_Chiudi"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Diminuisce l'ingrandimento (Ctrl+-)"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Azzera il livello d'ingrandimento (Ctrl+0)"
 
+#. Translators: This is a tooltip.
 #: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Aumenta l'ingrandimento (Ctrl++)"
 
-#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
-msgid "Open"
-msgstr "Apri"
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:267
+#| msgid "_New Window"
+msgid "New Window"
+msgstr "Nuova finestra"
 
-#: src/resources/ui/sp-window.ui:274
-msgid "Save As"
-msgstr "Salva come"
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:280
+#| msgid "Open Capture"
+msgctxt "menu label"
+msgid "Open Capture…"
+msgstr "Apri cattura…"
 
+#. Translators: This is a menu label.
 #: src/resources/ui/sp-window.ui:287
+#| msgid "Save As"
+msgid "Save As…"
+msgstr "Salva come…"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:300
 msgid "Screenshot"
 msgstr "Schermata"
 
-#: src/resources/ui/sp-window.ui:300
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:313
 msgid "Close"
 msgstr "Chiudi"
 
-#: src/sp-application.c:174
+#: src/resources/ui/sp-window.ui:326
+msgid "Keyboard Shortcuts"
+msgstr "Scorciatoie da tastiera"
+
+#: src/resources/ui/sp-window.ui:333
+msgid "Help"
+msgstr "Aiuto"
+
+#: src/resources/ui/sp-window.ui:340
+#| msgid "Sysprof"
+msgid "About Sysprof"
+msgstr "Informazioni su Sysprof"
+
+#: src/sp-application.c:184
 msgid "A system profiler"
 msgstr "Un profilatore di sistema"
 
-#: src/sp-application.c:179
+#: src/sp-application.c:189
 msgid "translator-credits"
 msgstr "Gianvito Cavasoli <gianvito@gmx.it>"
 
-#: src/sp-application.c:185
+#: src/sp-application.c:195
 msgid "Learn more about Sysprof"
 msgstr "Maggiori informazioni su Sysprof"
 
-#: src/sp-window.c:149
+#. Translators: %u is the number (amount) of samples.
+#: src/sp-window.c:154
 #, c-format
 msgid "Samples: %u"
 msgstr "Campioni: %u"
 
-#: src/sp-window.c:182
+#: src/sp-window.c:187
 msgid "[Memory Capture]"
 msgstr "[Cattura memoria]"
 
-#: src/sp-window.c:195
+#. Translators: The first %s is a file name, the second is the date and time.
+#: src/sp-window.c:201
 #, c-format
 msgid "%s — %s"
 msgstr "%s — %s"
 
-#: src/sp-window.c:233
+#: src/sp-window.c:239
 msgid "Not enough samples were collected to generate a callgraph"
 msgstr ""
 "Non sono stati raccolti abbastanza campioni per generare un grafico di "
 "chiamata"
 
-#: src/sp-window.c:306 src/sp-window.c:350
+#. Translators: This is a button.
+#: src/sp-window.c:313 src/sp-window.c:359
 msgid "Record"
 msgstr "Registra"
 
-#: src/sp-window.c:326
+#. Translators: This is a button.
+#: src/sp-window.c:334
 msgid "Stop"
 msgstr "Interrompi"
 
-#: src/sp-window.c:331
+#: src/sp-window.c:339
 msgid "Recording…"
 msgstr "Registrazione…"
 
-#: src/sp-window.c:342
+#: src/sp-window.c:350
 msgid "Building profile…"
 msgstr "Profilo in costruzione…"
 
 #. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:443
+#: src/sp-window.c:456
 msgid "Stopping…"
 msgstr "Interruzione…"
 
-#: src/sp-window.c:595
-msgid "Save Capture As"
-msgstr "Salva cattura come"
+#. Translators: This is a window title.
+#: src/sp-window.c:609
+#| msgid "Save Capture As"
+msgid "Save Capture As…"
+msgstr "Salva cattura come…"
 
-#: src/sp-window.c:598
+#. Translators: This is a button.
+#: src/sp-window.c:613
 msgid "Save"
 msgstr "Salva"
 
-#: src/sp-window.c:599 src/sp-window.c:1012
+#. Translators: This is a button.
+#: src/sp-window.c:615 src/sp-window.c:1036
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/sp-window.c:629
+#. Translators: %s is the error message.
+#: src/sp-window.c:646
 #, c-format
 msgid "An error occurred while attempting to save your capture: %s"
 msgstr ""
 "Si è verificato un errore durante il tentativo di salvare la cattura: %s"
 
-#: src/sp-window.c:981
+#: src/sp-window.c:1002
 #, c-format
-#| msgid "The file \"%s\" could not be opened. Only local files are supported."
 msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr ""
 "Il file «%s» non può essere aperto. Sono supportati solo i file locali."
 
-#: src/sp-window.c:1008
-msgid "Open Capture"
-msgstr "Apri cattura"
+#. Translators: This is a window title.
+#: src/sp-window.c:1030
+#| msgid "Open Capture"
+msgid "Open Capture…"
+msgstr "Apri cattura…"
 
-#: src/sp-window.c:1015
+#. Translators: This is a button.
+#: src/sp-window.c:1034
+msgid "Open"
+msgstr "Apri"
+
+#: src/sp-window.c:1039
 msgid "Sysprof Captures"
 msgstr "Catture applicazione"
 
-#: src/sp-window.c:1020
+#: src/sp-window.c:1044
 msgid "All Files"
 msgstr "Tutti i file"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
 msgid "Make sysprof specific to a task"
 msgstr "Rende sysprof specifico per un'attività"
 
-#: tools/sysprof-cli.c:97
+#: tools/sysprof-cli.c:99
 msgid "PID"
 msgstr "PID"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:100
 msgid "Run a command and profile the process"
 msgstr "Esegue un comando e profila il processo"
 
-#: tools/sysprof-cli.c:98
+#: tools/sysprof-cli.c:100
 msgid "COMMAND"
 msgstr "COMANDO"
 
-#: tools/sysprof-cli.c:99
+#: tools/sysprof-cli.c:101
 msgid "Force overwrite the capture file"
 msgstr "Forza sovrascrittura del file acquisito"
 
-#: tools/sysprof-cli.c:100
+#: tools/sysprof-cli.c:102
+msgid "Disable recording of CPU statistics"
+msgstr "Disabilita la registrazione delle statistiche della CPU"
+
+#: tools/sysprof-cli.c:103
+msgid "Disable recording of memory statistics"
+msgstr "Disabilita la registrazione delle statistiche della memoria"
+
+#: tools/sysprof-cli.c:104
 msgid "Print the sysprof-cli version and exit"
 msgstr "Stampa la versione di sysprof-cli ed esce"
 
-#: tools/sysprof-cli.c:106
-#| msgid "[CAPTURE_FILE] - Sysprof"
+#: tools/sysprof-cli.c:110
 msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[FILE_CATTURA] — Sysprof"
 
-#: tools/sysprof-cli.c:125
+#: tools/sysprof-cli.c:129
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Sono stati passati troppi argomenti a sysprof-cli:"
 
-#: tools/sysprof-cli.c:165
+#. Translators: %s is a file name.
+#: tools/sysprof-cli.c:170
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s esiste. Usare --force per sovrascrivere\n"

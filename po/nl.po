@@ -1,0 +1,580 @@
+# Dutch translation for sysprof.
+# Copyright (C) 2019 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Nathan Follens <nthn@unseen.is>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2019-02-28 11:22+0000\n"
+"PO-Revision-Date: 2019-03-04 16:58+0100\n"
+"Language-Team: Dutch <gnome-nl-list@gnome.org>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Last-Translator: Nathan Follens <nthn@unseen.is>\n"
+"X-Generator: Poedit 2.2.1\n"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:5
+#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:192
+#: src/sp-application.c:339
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:6
+msgid "Profiler for an application or entire system"
+msgstr "Profiler voor een toepassing of voor het volledige systeem"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "De Gnome Foundation"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof biedt u de mogelijkheid om toepassingen te profileren, om u te "
+"helpen bij debuggen en optimalisatie."
+
+#: data/org.gnome.Sysprof2.desktop.in:5
+msgid "Profiler"
+msgstr "Profiler"
+
+#: data/org.gnome.Sysprof2.desktop.in:6
+msgid "Profile an application or entire system."
+msgstr "Profileer een toepassing of het volledige systeem."
+
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: data/org.gnome.Sysprof2.desktop.in:10
+msgid "org.gnome.Sysprof"
+msgstr "org.gnome.Sysprof"
+
+#: data/org.gnome.sysprof2.gschema.xml:5
+msgid "Window size"
+msgstr "Venstergrootte"
+
+#: data/org.gnome.sysprof2.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "Venstergrootte (breedte en hoogte)."
+
+#: data/org.gnome.sysprof2.gschema.xml:10
+msgid "Window position"
+msgstr "Vensterpositie"
+
+#: data/org.gnome.sysprof2.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "Vensterpositie (x en y)."
+
+#: data/org.gnome.sysprof2.gschema.xml:15
+msgid "Window maximized"
+msgstr "Gemaximaliseerd venster"
+
+#: data/org.gnome.sysprof2.gschema.xml:16
+msgid "Window maximized state"
+msgstr "Venster in gemaximaliseerde vorm"
+
+#: data/org.gnome.sysprof2.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr "Laatst gestarte programma"
+
+#: data/org.gnome.sysprof2.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+"Het laatst gestarte programma, hetwelk ingesteld zal worden in de "
+"gebruikersinterface na de toepassing te herstarten."
+
+#: data/org.gnome.sysprof2.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr "Laatst gestarte geërfde omgeving"
+
+#: data/org.gnome.sysprof2.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr "Of de laatste gestarte omgeving de ouder-omgeving erft."
+
+#: data/org.gnome.sysprof2.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr "Laatste gestarte omgeving"
+
+#: data/org.gnome.sysprof2.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+"De laatst gestarte omgeving, dewelke ingesteld zal worden in de "
+"gebruikersinterface na de toepassing te herstarten."
+
+#: data/org.gnome.sysprof2.policy.in:13
+msgid "Open a perf event stream"
+msgstr "Een perf-event-stream openen"
+
+#: data/org.gnome.sysprof2.policy.in:14
+msgid "Authentication is required to access system performance counters."
+msgstr "Authenticatie is vereist voor toegang tot de systeemprestatietellers."
+
+#: data/org.gnome.sysprof2.policy.in:24
+msgid "Get a list of kernel symbols and their address"
+msgstr "Verkrijg een lijst van kernelsymbolen en hun adres"
+
+#: data/org.gnome.sysprof2.policy.in:25
+msgid "Authentication is required to access Linux kernel information."
+msgstr "Authenticatie is vereist voor toegang tot Linux-kernelinformatie."
+
+#: lib/callgraph/sp-callgraph-profile.c:426
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
+"Sysprof kon geen oproepgrafiek genereren op basis van de systeemopname."
+
+#: lib/resources/ui/sp-callgraph-view.ui:24
+msgid "Functions"
+msgstr "Functies"
+
+#: lib/resources/ui/sp-callgraph-view.ui:40
+#: lib/resources/ui/sp-callgraph-view.ui:101
+#: lib/resources/ui/sp-callgraph-view.ui:156
+msgid "Self"
+msgstr "Self"
+
+#: lib/resources/ui/sp-callgraph-view.ui:56
+#: lib/resources/ui/sp-callgraph-view.ui:117
+msgid "Total"
+msgstr "Totaal"
+
+#: lib/resources/ui/sp-callgraph-view.ui:85
+msgid "Callers"
+msgstr "Oproepers"
+
+# :) - Nathan
+#: lib/resources/ui/sp-callgraph-view.ui:148
+msgid "Descendants"
+msgstr "Nakomelingen"
+
+#: lib/resources/ui/sp-callgraph-view.ui:172
+msgid "Cumulative"
+msgstr "Cumulative"
+
+#: lib/resources/ui/sp-empty-state-view.ui:22
+msgid "Welcome to Sysprof"
+msgstr "Welkom bij Sysprof"
+
+#: lib/resources/ui/sp-empty-state-view.ui:39
+msgid "Start profiling your system with the <b>Record</b> button above"
+msgstr "Begin uw systeem te profileren met de knop <b>Opnemen</b> hierboven"
+
+#: lib/resources/ui/sp-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "Ai, dat deed pijn!"
+
+#: lib/resources/ui/sp-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr "Er ging iets onverwacht mis bij het profileren van uw systeem."
+
+#. Translators: This is the description for a switch.
+#: lib/resources/ui/sp-profiler-menu-button.ui:58
+msgid "Profile my _entire system"
+msgstr "Mijn voll_edige systeem profileren"
+
+#. Translators: This is the placeholder in a search entry.
+#: lib/resources/ui/sp-profiler-menu-button.ui:95
+msgid "Search"
+msgstr "Zoeken"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:121
+msgid "Existing Process"
+msgstr "Bestaand proces"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:131
+msgid "Command Line"
+msgstr "Opdrachtregel"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:150
+msgid "Environment"
+msgstr "Omgeving"
+
+#. Translators: This is a check button.
+#: lib/resources/ui/sp-profiler-menu-button.ui:164
+msgid "Inherit current environment"
+msgstr "Huidige omgeving erven"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:182
+msgid "Key"
+msgstr "Sleutel"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:197
+msgid "Value"
+msgstr "Waarde"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:215
+#: lib/widgets/sp-profiler-menu-button.c:118
+msgid "New Process"
+msgstr "Nieuw proces"
+
+#: lib/resources/ui/sp-recording-state-view.ui:22
+msgid "00:00"
+msgstr "00:00"
+
+#: lib/resources/ui/sp-recording-state-view.ui:39
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"Wist u dat u <a href=\"help:sysprof\">sysprof-cli</a> kunt gebruiken om op "
+"te nemen?"
+
+#: lib/sources/sp-perf-source.c:478
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Sysprof kon veld ‘%s’ niet vinden."
+
+#: lib/sources/sp-perf-source.c:491
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Sysprof kon offset voor ‘%s’ niet ontleden."
+
+#: lib/sources/sp-perf-source.c:555
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Sysprof kon perf_event-ID niet verkrijgen."
+
+#: lib/sources/sp-perf-source.c:664
+#, c-format
+msgid ""
+"Sysprof requires authorization to access your computers performance counters."
+msgstr "Sysprof heeft toegang nodig tot de prestatietellers van uw computer."
+
+#: lib/sources/sp-perf-source.c:669
+#, c-format
+msgid "An error occurred while attempting to access performance counters: %s"
+msgstr ""
+"Er is een fout opgetreden bij het benaderen van de prestatietellers: %s"
+
+#. Translators: CPU is the processor.
+#: lib/visualizers/sp-visualizer-list.c:294
+msgid "CPU"
+msgstr "Processor"
+
+#: lib/visualizers/sp-visualizer-list.c:309
+msgid "Memory Used"
+msgstr "Gebruikt geheugen"
+
+#. Translators: FPS is frames per second.
+#: lib/visualizers/sp-visualizer-list.c:327
+msgid "FPS"
+msgstr "FPS"
+
+#: lib/widgets/sp-profiler-menu-button.c:116
+#: lib/widgets/sp-profiler-menu-button.c:131
+msgid "All Processes"
+msgstr "Alle processen"
+
+#. Translators: %d is the PID of the process.
+#: lib/widgets/sp-profiler-menu-button.c:138
+#, c-format
+msgid "Process %d"
+msgstr "Proces %d"
+
+#. Translators: %u is the number (amount) of processes.
+#: lib/widgets/sp-profiler-menu-button.c:144
+#, c-format
+msgid "%u Process"
+msgid_plural "%u Processes"
+msgstr[0] "%u proces"
+msgstr[1] "%u processen"
+
+#: lib/widgets/sp-profiler-menu-button.c:815
+msgid "The command line arguments provided are invalid"
+msgstr "De opgegeven opdrachtregelparameters zijn ongeldig"
+
+#: src/resources/gtk/help-overlay.ui:8
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Sysprof-sneltoetsen"
+
+#: src/resources/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Opnemen"
+
+#: src/resources/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Opname stoppen"
+
+#: src/resources/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Oproepgrafiek"
+
+#: src/resources/gtk/help-overlay.ui:29
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Functie uitbreiden"
+
+#: src/resources/gtk/help-overlay.ui:30
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "Toont de rechtstreekse nakomelingen van de oproepgrafiek-functie"
+
+#: src/resources/gtk/help-overlay.ui:37
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Functie dichtvouwen"
+
+#: src/resources/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr ""
+"Verbergt alle oproepgrafiek-nakomelingen onder de geselecteerde functie"
+
+#: src/resources/gtk/help-overlay.ui:45
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "In functie springen"
+
+#: src/resources/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr "Selecteert de functie of het bestand als de top van de oproepgrafiek"
+
+#: src/resources/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Visualiseerders"
+
+#: src/resources/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Inzoomen"
+
+#: src/resources/gtk/help-overlay.ui:66
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Uitzoomen"
+
+#: src/resources/gtk/help-overlay.ui:73
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Zoomniveau herstellen"
+
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:321
+msgid "Not running"
+msgstr "Niet actief"
+
+#. Translators: This is a button.
+#: src/resources/ui/sp-window.ui:44
+msgid "_Record"
+msgstr "Op_nemen"
+
+#. Translators: This is a button.
+#: src/resources/ui/sp-window.ui:118
+msgid "_Close"
+msgstr "_Sluiten"
+
+#. Translators: This is a tooltip.
+#: src/resources/ui/sp-window.ui:212
+msgid "Zoom out (Ctrl+-)"
+msgstr "Uitzoomen (Ctrl+-)"
+
+#. Translators: This is a tooltip.
+#: src/resources/ui/sp-window.ui:228
+msgid "Reset zoom level (Ctrl+0)"
+msgstr "Zoomniveau herstellen (Ctrl+0)"
+
+#. Translators: This is a tooltip.
+#: src/resources/ui/sp-window.ui:242
+msgid "Zoom in (Ctrl++)"
+msgstr "Inzoomen (Ctrl++)"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:267
+msgid "New Window"
+msgstr "Nieuw venster"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:280
+msgctxt "menu label"
+msgid "Open Capture…"
+msgstr "Opname openen…"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:287
+msgid "Save As…"
+msgstr "Opslaan als…"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:300
+msgid "Screenshot"
+msgstr "Schermafdruk"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:313
+msgid "Close"
+msgstr "Sluiten"
+
+#: src/resources/ui/sp-window.ui:326
+msgid "Keyboard Shortcuts"
+msgstr "Sneltoetsen"
+
+#: src/resources/ui/sp-window.ui:333
+msgid "Help"
+msgstr "Hulp"
+
+#: src/resources/ui/sp-window.ui:340
+msgid "About Sysprof"
+msgstr "Over Sysprof"
+
+#: src/sp-application.c:184
+msgid "A system profiler"
+msgstr "Een systeemprofiler"
+
+#: src/sp-application.c:189
+msgid "translator-credits"
+msgstr ""
+"Nathan Follens <nthn@unseen.is>\n"
+"\n"
+"Meer info over Gnome-NL http://nl.gnome.org"
+
+#: src/sp-application.c:195
+msgid "Learn more about Sysprof"
+msgstr "Kom meer te weten over Sysprof"
+
+#. Translators: %u is the number (amount) of samples.
+#: src/sp-window.c:154
+#, c-format
+msgid "Samples: %u"
+msgstr "Steekproeven: %u"
+
+# Geen idee of dit vertaald moet worden - Nathan
+#: src/sp-window.c:187
+msgid "[Memory Capture]"
+msgstr "[Memory Capture]"
+
+#. Translators: The first %s is a file name, the second is the date and time.
+#: src/sp-window.c:201
+#, c-format
+msgid "%s — %s"
+msgstr "%s — %s"
+
+#: src/sp-window.c:239
+msgid "Not enough samples were collected to generate a callgraph"
+msgstr "Onvoldoende steekproeven uitgevoerd om een oproepgrafiek te genereren"
+
+#. Translators: This is a button.
+#: src/sp-window.c:313 src/sp-window.c:359
+msgid "Record"
+msgstr "Opnemen"
+
+#. Translators: This is a button.
+#: src/sp-window.c:334
+msgid "Stop"
+msgstr "Stoppen"
+
+#: src/sp-window.c:339
+msgid "Recording…"
+msgstr "Opnemen…"
+
+#: src/sp-window.c:350
+msgid "Building profile…"
+msgstr "Profiel compileren…"
+
+#. SpProfiler::stopped will move us to generating
+#: src/sp-window.c:456
+msgid "Stopping…"
+msgstr "Stoppen…"
+
+#. Translators: This is a window title.
+#: src/sp-window.c:609
+msgid "Save Capture As…"
+msgstr "Opname opslaan als…"
+
+#. Translators: This is a button.
+#: src/sp-window.c:613
+msgid "Save"
+msgstr "Opslaan"
+
+#. Translators: This is a button.
+#: src/sp-window.c:615 src/sp-window.c:1036
+msgid "Cancel"
+msgstr "Annuleren"
+
+#. Translators: %s is the error message.
+#: src/sp-window.c:646
+#, c-format
+msgid "An error occurred while attempting to save your capture: %s"
+msgstr "Er is een fout opgetreden bij het opslaan van uw opname: %s"
+
+#: src/sp-window.c:1002
+#, c-format
+msgid "The file “%s” could not be opened. Only local files are supported."
+msgstr ""
+"Het bestand ‘%s’ kon niet geopend worden. Enkel lokale bestanden worden "
+"ondersteund."
+
+#. Translators: This is a window title.
+#: src/sp-window.c:1030
+msgid "Open Capture…"
+msgstr "Opname openen…"
+
+#. Translators: This is a button.
+#: src/sp-window.c:1034
+msgid "Open"
+msgstr "Openen"
+
+#: src/sp-window.c:1039
+msgid "Sysprof Captures"
+msgstr "Sysprof-opnamen"
+
+#: src/sp-window.c:1044
+msgid "All Files"
+msgstr "Alle bestanden"
+
+#: tools/sysprof-cli.c:99
+msgid "Make sysprof specific to a task"
+msgstr "Wijs sysprof aan een specifieke taak toe"
+
+#: tools/sysprof-cli.c:99
+msgid "PID"
+msgstr "PID"
+
+#: tools/sysprof-cli.c:100
+msgid "Run a command and profile the process"
+msgstr "Voer een opdracht uit en profileer het proces"
+
+#: tools/sysprof-cli.c:100
+msgid "COMMAND"
+msgstr "OPDRACHT"
+
+#: tools/sysprof-cli.c:101
+msgid "Force overwrite the capture file"
+msgstr "Overschrijf gedwongen het opnamebestand"
+
+#: tools/sysprof-cli.c:102
+msgid "Disable recording of CPU statistics"
+msgstr "Schakel opname van CPU-statistieken uit"
+
+#: tools/sysprof-cli.c:103
+msgid "Disable recording of memory statistics"
+msgstr "Schakel opname van geheugenstatistieken uit"
+
+#: tools/sysprof-cli.c:104
+msgid "Print the sysprof-cli version and exit"
+msgstr "Versie van sysprof-cli tonen en afsluiten"
+
+#: tools/sysprof-cli.c:110
+msgid "[CAPTURE_FILE] — Sysprof"
+msgstr "[CAPTURE_FILE] — Sysprof"
+
+#: tools/sysprof-cli.c:129
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "Te veel parameters gegeven aan sysprof-cli:"
+
+#. Translators: %s is a file name.
+#: tools/sysprof-cli.c:170
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s bestaat al. Gebruik --force om het te overschrijven\n"

@@ -5,19 +5,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?product=syspro"
-"f&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2018-02-20 22:19+0000\n"
-"PO-Revision-Date: 2018-02-23 00:41+0200\n"
-"Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2018-09-25 18:03+0000\n"
+"PO-Revision-Date: 2019-03-11 19:24+0100\n"
+"Last-Translator: Марко М. Костић <marko.m.kostic@gmail.com>\n"
 "Language-Team: српски <gnome-sr@googlegroups.org>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : "
-"n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Project-Style: gnome\n"
+"X-Generator: Poedit 2.2.1\n"
 
 #: data/org.gnome.Sysprof2.appdata.xml.in:5
 #: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
@@ -124,9 +124,9 @@ msgid "Get a list of kernel symbols and their address"
 msgstr "Добави списак симбола кернела и њихове адресе"
 
 #: data/org.gnome.sysprof2.policy.in:25
-#| msgid "Authentication is required to access system performance counters."
 msgid "Authentication is required to access Linux kernel information."
-msgstr "Потребно је потврђивање идентитета за приступ подацима кернела Линукса."
+msgstr ""
+"Потребно је потврђивање идентитета за приступ подацима кернела Линукса."
 
 #: lib/callgraph/sp-callgraph-profile.c:426
 msgid "Sysprof was unable to generate a callgraph from the system capture."
@@ -226,17 +226,40 @@ msgstr ""
 "Да ли знате да можете користити „<a href=\"help:sysprof\">sysprof-cli</a>“ "
 "за снимање?"
 
-#: lib/sources/sp-perf-source.c:345
+#: lib/sources/sp-perf-source.c:478
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Профилатор система није успео наћи поље „%s“."
+
+#: lib/sources/sp-perf-source.c:491
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Профилатор система није успео да обради офсет за „%s“."
+
+#: lib/sources/sp-perf-source.c:555
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Профилатор система није успео да добави ИБ perf_event-a."
+
+#: lib/sources/sp-perf-source.c:664
 #, c-format
 msgid ""
 "Sysprof requires authorization to access your computers performance counters."
 msgstr ""
 "Профилатор система захтева овлашћење за приступ бројачима учинка рачунара."
 
-#: lib/sources/sp-perf-source.c:350
+#: lib/sources/sp-perf-source.c:669
 #, c-format
 msgid "An error occurred while attempting to access performance counters: %s"
 msgstr "Дошло је до грешке приликом покушаја приступања бројачима учинка: %s"
+
+#: lib/visualizers/sp-visualizer-list.c:275
+msgid "CPU"
+msgstr "ЦПУ"
+
+#: lib/visualizers/sp-visualizer-list.c:289
+msgid "FPS"
+msgstr "КПС (FPS)"
 
 #: lib/widgets/sp-profiler-menu-button.c:116
 #: lib/widgets/sp-profiler-menu-button.c:131
@@ -257,7 +280,7 @@ msgstr[1] "%u процеса"
 msgstr[2] "%u процеса"
 msgstr[3] "%u процеса"
 
-#: lib/widgets/sp-profiler-menu-button.c:796
+#: lib/widgets/sp-profiler-menu-button.c:813
 msgid "The command line arguments provided are invalid"
 msgstr "Достављени аргументи линије наредби су неисправни"
 
@@ -367,35 +390,31 @@ msgstr "_Сними"
 msgid "_Close"
 msgstr "_Затвори"
 
-#: src/resources/ui/sp-window.ui:174
-msgid "CPU"
-msgstr "ЦПУ"
-
-#: src/resources/ui/sp-window.ui:222
+#: src/resources/ui/sp-window.ui:212
 msgid "Zoom out (Ctrl+-)"
 msgstr "Умањи (Ктрл+-)"
 
-#: src/resources/ui/sp-window.ui:238
+#: src/resources/ui/sp-window.ui:228
 msgid "Reset zoom level (Ctrl+0)"
 msgstr "Врати ниво увеличања (Ктрл+0)"
 
-#: src/resources/ui/sp-window.ui:252
+#: src/resources/ui/sp-window.ui:242
 msgid "Zoom in (Ctrl++)"
 msgstr "Увећај (Ктрл++)"
 
-#: src/resources/ui/sp-window.ui:277 src/sp-window.c:1011
+#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
 msgid "Open"
 msgstr "Отвори"
 
-#: src/resources/ui/sp-window.ui:284
+#: src/resources/ui/sp-window.ui:274
 msgid "Save As"
 msgstr "Сачувај као"
 
-#: src/resources/ui/sp-window.ui:297
+#: src/resources/ui/sp-window.ui:287
 msgid "Screenshot"
 msgstr "Снимак екрана"
 
-#: src/resources/ui/sp-window.ui:310
+#: src/resources/ui/sp-window.ui:300
 msgid "Close"
 msgstr "Затвори"
 
@@ -425,7 +444,7 @@ msgstr "[Снимак меморије]"
 
 #: src/sp-window.c:195
 #, c-format
-msgid "%s - %s"
+msgid "%s — %s"
 msgstr "%s — %s"
 
 #: src/sp-window.c:233
@@ -472,7 +491,7 @@ msgstr "Дошло је до грешке приликом покушаја чу
 
 #: src/sp-window.c:981
 #, c-format
-msgid "The file \"%s\" could not be opened. Only local files are supported."
+msgid "The file “%s” could not be opened. Only local files are supported."
 msgstr "Не могу да отворим датотеку „%s“. Подржане су само месне датотеке."
 
 #: src/sp-window.c:1008
@@ -512,7 +531,7 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Исписује издање програма „sysprof-cli“ и излази"
 
 #: tools/sysprof-cli.c:106
-msgid "[CAPTURE_FILE] - Sysprof"
+msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[ДАТОТЕКА_СНИМКА] — Профилатор система"
 
 #: tools/sysprof-cli.c:125
@@ -523,3 +542,6 @@ msgstr "Превише аргумената је прослеђено конзо
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "„%s“ је изашао. Користите „--force“ да препишете\n"
+
+#~ msgid "%s - %s"
+#~ msgstr "%s — %s"

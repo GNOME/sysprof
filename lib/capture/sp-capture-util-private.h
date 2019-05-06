@@ -30,15 +30,15 @@
 #ifdef __linux__
 # define _sp_sendfile sendfile
 #else
-static inline gssize
-_sp_sendfile (gint     out_fd,
-              gint     in_fd,
-              goffset *offset,
-              gsize    count)
+static inline ssize_t
+_sp_sendfile (int     out_fd,
+              int     in_fd,
+              off_t  *offset,
+              size_t  count)
 {
-  gssize total = 0;
-  goffset wpos = 0;
-  goffset rpos = 0;
+  ssize_t total = 0;
+  off_t wpos = 0;
+  off_t rpos = 0;
 
   errno = 0;
 
@@ -47,11 +47,11 @@ _sp_sendfile (gint     out_fd,
 
   while (count > 0)
     {
-      guint8 buf[4096*4];
-      gssize n_written = 0;
-      gssize n_read;
-      goffset off = 0;
-      gsize to_read;
+      unsigned char buf[4096*4];
+      ssize_t n_written = 0;
+      ssize_t n_read;
+      off_t off = 0;
+      size_t to_read;
 
       /* Try to page align */
       if ((rpos % 4096) != 0)

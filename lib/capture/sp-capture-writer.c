@@ -24,12 +24,12 @@
 #include <fcntl.h>
 #include <glib/gstdio.h>
 #include <string.h>
-#include <sys/sendfile.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 #include "capture/sp-capture-reader.h"
+#include "capture/sp-capture-util-private.h"
 #include "capture/sp-capture-writer.h"
 
 #define DEFAULT_BUFFER_SIZE (getpagesize() * 64L)
@@ -829,7 +829,7 @@ sp_capture_writer_save_as (SpCaptureWriter            *self,
     {
       gssize written;
 
-      written = sendfile (fd, self->fd, &in_off, pos);
+      written = _sp_sendfile (fd, self->fd, &in_off, pos);
 
       if (written < 0)
         goto handle_errno;
@@ -908,7 +908,7 @@ _sp_capture_writer_splice_from_fd (SpCaptureWriter  *self,
     {
       gssize written;
 
-      written = sendfile (self->fd, fd, &in_off, to_write);
+      written = _sp_sendfile (self->fd, fd, &in_off, to_write);
 
       if (written < 0)
         goto handle_errno;

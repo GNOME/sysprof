@@ -19,12 +19,12 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
-#include <sys/sendfile.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 #include "capture/sp-capture-reader.h"
+#include "capture/sp-capture-util-private.h"
 #include "capture/sp-capture-writer.h"
 
 struct _SpCaptureReader
@@ -842,7 +842,7 @@ sp_capture_reader_save_as (SpCaptureReader  *self,
     {
       gssize written;
 
-      written = sendfile (fd, self->fd, &in_off, to_write);
+      written = _sp_sendfile (fd, self->fd, &in_off, to_write);
 
       if (written < 0)
         goto handle_errno;

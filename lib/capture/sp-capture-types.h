@@ -94,7 +94,8 @@ typedef struct
   gint32  pid;
   gint64  time;
   guint8  type;
-  guint64 padding : 56;
+  guint32 padding1;
+  guint32 padding2 : 24;
   guint8  data[0];
 } SpCaptureFrame;
 
@@ -125,7 +126,8 @@ typedef struct
 {
   SpCaptureFrame   frame;
   guint16          n_addrs;
-  guint64          padding : 48;
+  guint32          padding1;
+  guint32          padding2 : 16;
   SpCaptureAddress addrs[0];
 } SpCaptureSample;
 
@@ -159,7 +161,8 @@ typedef struct
 {
   SpCaptureFrame   frame;
   guint16          n_counters;
-  guint64          padding : 48;
+  guint32          padding1;
+  guint32          padding2 : 16;
   SpCaptureCounter counters[0];
 } SpCaptureFrameCounterDefine;
 
@@ -178,7 +181,8 @@ typedef struct
 {
   SpCaptureFrame         frame;
   guint16                n_values;
-  guint64                padding : 48;
+  guint32                padding1;
+  guint32                padding2 : 16;
   SpCaptureCounterValues values[0];
 } SpCaptureFrameCounterSet;
 

@@ -117,7 +117,8 @@ sp_capture_writer_frame_init (SpCaptureFrame     *frame_,
   frame_->pid = pid;
   frame_->time = time_;
   frame_->type = type;
-  frame_->padding = 0;
+  frame_->padding1 = 0;
+  frame_->padding2 = 0;
 }
 
 static void
@@ -1076,7 +1077,8 @@ sp_capture_writer_define_counters (SpCaptureWriter        *self,
                                 pid,
                                 time,
                                 SP_CAPTURE_FRAME_CTRDEF);
-  def->padding = 0;
+  def->padding1 = 0;
+  def->padding2 = 0;
   def->n_counters = n_counters;
 
   for (i = 0; i < n_counters; i++)
@@ -1137,7 +1139,8 @@ sp_capture_writer_set_counters (SpCaptureWriter             *self,
                                 pid,
                                 time,
                                 SP_CAPTURE_FRAME_CTRSET);
-  set->padding = 0;
+  set->padding1 = 0;
+  set->padding2 = 0;
   set->n_values = n_groups;
 
   for (i = 0, group = 0, field = 0; i < n_counters; i++)

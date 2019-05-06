@@ -363,6 +363,28 @@ test_reader_basic (void)
   g_assert (r);
   g_assert (g_file_test ("capture-file.bak", G_FILE_TEST_IS_REGULAR));
 
+  /* make sure contents are equal */
+  {
+    g_autofree gchar *buf1 = NULL;
+    g_autofree gchar *buf2 = NULL;
+    gsize buf1len = 0;
+    gsize buf2len = 0;
+
+    r = g_file_get_contents ("capture-file.bak", &buf1, &buf1len, &error);
+    g_assert_no_error (error);
+    g_assert_true (r);
+
+    r = g_file_get_contents ("capture-file", &buf2, &buf2len, &error);
+    g_assert_no_error (error);
+    g_assert_true (r);
+
+    g_assert_cmpint (buf1len, >, 0);
+    g_assert_cmpint (buf2len, >, 0);
+
+    g_assert_cmpint (buf1len, ==, buf2len);
+    g_assert_true (0 == memcmp (buf1, buf2, buf1len));
+  }
+
   g_clear_pointer (&writer, sp_capture_writer_unref);
   g_clear_pointer (&reader, sp_capture_reader_unref);
 

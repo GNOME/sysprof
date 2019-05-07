@@ -31,6 +31,20 @@ sp_get_symbol_dirs_locked (void)
     {
       sp_symbol_dirs = g_ptr_array_new ();
       g_ptr_array_add (sp_symbol_dirs, g_strdup ("/usr/lib/debug"));
+
+      /* Add path to host system if we have it */
+      if (g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS))
+        {
+          static gchar *tries[] = {
+            "/var/run/host/usr/lib/debug",
+          };
+
+          for (guint i = 0; i < G_N_ELEMENTS (tries); i++)
+            {
+              if (g_file_test (tries[i], G_FILE_TEST_EXISTS))
+                g_ptr_array_add (sp_symbol_dirs, g_strdup (tries[i]));
+            }
+        }
     }
 
   return sp_symbol_dirs;

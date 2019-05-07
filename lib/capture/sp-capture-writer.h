@@ -49,7 +49,7 @@ void                sp_capture_writer_stat            (SpCaptureWriter         *
 gboolean            sp_capture_writer_add_map         (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
-                                                       GPid                     pid,
+                                                       gint32                   pid,
                                                        guint64                  start,
                                                        guint64                  end,
                                                        guint64                  offset,
@@ -58,7 +58,7 @@ gboolean            sp_capture_writer_add_map         (SpCaptureWriter         *
 gboolean            sp_capture_writer_add_mark        (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
-                                                       GPid                     pid,
+                                                       gint32                   pid,
                                                        guint64                  duration,
                                                        const gchar             *group,
                                                        const gchar             *name,
@@ -68,37 +68,37 @@ guint64             sp_capture_writer_add_jitmap      (SpCaptureWriter         *
 gboolean            sp_capture_writer_add_process     (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
-                                                       GPid                     pid,
+                                                       gint32                   pid,
                                                        const gchar             *cmdline);
 gboolean            sp_capture_writer_add_sample      (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
-                                                       GPid                     pid,
+                                                       gint32                   pid,
                                                        const SpCaptureAddress  *addrs,
                                                        guint                    n_addrs);
 gboolean            sp_capture_writer_add_fork        (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
-                                                       GPid                     pid,
-                                                       GPid                     child_pid);
+                                                       gint32                   pid,
+                                                       gint32                   child_pid);
 gboolean            sp_capture_writer_add_exit        (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
-                                                       GPid                     pid);
+                                                       gint32                   pid);
 gboolean            sp_capture_writer_add_timestamp   (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
-                                                       GPid                     pid);
+                                                       gint32                   pid);
 gboolean            sp_capture_writer_define_counters (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
-                                                       GPid                     pid,
+                                                       gint32                   pid,
                                                        const SpCaptureCounter  *counters,
                                                        guint                    n_counters);
 gboolean            sp_capture_writer_set_counters    (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
-                                                       GPid                     pid,
+                                                       gint32                   pid,
                                                        const guint             *counters_ids,
                                                        const SpCaptureCounterValue *values,
                                                        guint                    n_counters);

@@ -35,7 +35,7 @@ SpCaptureCondition *sp_capture_condition_new_where_type_in      (guint          
 SpCaptureCondition *sp_capture_condition_new_where_time_between (gint64                    begin_time,
                                                                  gint64                    end_time);
 SpCaptureCondition *sp_capture_condition_new_where_pid_in       (guint                     n_pids,
-                                                                 const GPid               *pids);
+                                                                 const gint32             *pids);
 SpCaptureCondition *sp_capture_condition_new_where_counter_in   (guint                     n_counters,
                                                                  const guint              *counters);
 gboolean            sp_capture_condition_match                  (const SpCaptureCondition *self,

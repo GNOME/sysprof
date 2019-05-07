@@ -88,7 +88,7 @@ sp_capture_condition_match (const SpCaptureCondition *self,
     case SP_CAPTURE_CONDITION_WHERE_PID_IN:
       for (guint i = 0; i < self->u.where_pid_in->len; i++)
         {
-          if (frame->pid == g_array_index (self->u.where_pid_in, GPid, i))
+          if (frame->pid == g_array_index (self->u.where_pid_in, gint32, i))
             return TRUE;
         }
       return FALSE;
@@ -169,7 +169,7 @@ sp_capture_condition_copy (const SpCaptureCondition *self)
     case SP_CAPTURE_CONDITION_WHERE_PID_IN:
       return sp_capture_condition_new_where_pid_in (
           self->u.where_pid_in->len,
-          (const GPid *)(gpointer)self->u.where_pid_in->data);
+          (const gint32 *)(gpointer)self->u.where_pid_in->data);
 
     case SP_CAPTURE_CONDITION_WHERE_COUNTER_IN:
       return sp_capture_condition_new_where_counter_in (
@@ -261,8 +261,8 @@ sp_capture_condition_new_where_time_between (gint64 begin_time,
 }
 
 SpCaptureCondition *
-sp_capture_condition_new_where_pid_in (guint       n_pids,
-                                       const GPid *pids)
+sp_capture_condition_new_where_pid_in (guint         n_pids,
+                                       const gint32 *pids)
 {
   SpCaptureCondition *self;
 
@@ -270,9 +270,9 @@ sp_capture_condition_new_where_pid_in (guint       n_pids,
 
   self = g_slice_new0 (SpCaptureCondition);
   self->type = SP_CAPTURE_CONDITION_WHERE_PID_IN;
-  self->u.where_pid_in = g_array_sized_new (FALSE, FALSE, sizeof (GPid), n_pids);
+  self->u.where_pid_in = g_array_sized_new (FALSE, FALSE, sizeof (gint32), n_pids);
   g_array_set_size (self->u.where_pid_in, n_pids);
-  memcpy (self->u.where_pid_in->data, pids, sizeof (GPid) * n_pids);
+  memcpy (self->u.where_pid_in->data, pids, sizeof (gint32) * n_pids);
 
   return self;
 }

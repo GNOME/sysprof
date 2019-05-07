@@ -32,6 +32,14 @@ G_BEGIN_DECLS
 #define SP_CAPTURE_MAGIC (GUINT32_TO_LE(0xFDCA975E))
 #define SP_CAPTURE_ALIGN (sizeof(SpCaptureAddress))
 
+#if defined(_MSC_VER)
+# define SP_ALIGNED_BEGIN(_N) __declspec(align (_N))
+# define SP_ALIGNED_END(_N)
+#else
+# define SP_ALIGNED_BEGIN(_N)
+# define SP_ALIGNED_END(_N) __attribute__((aligned ((_N))))
+#endif
+
 #if GLIB_SIZEOF_VOID_P == 8
 # define SP_CAPTURE_JITMAP_MARK    G_GUINT64_CONSTANT(0xE000000000000000)
 # define SP_CAPTURE_ADDRESS_FORMAT "0x%016lx"
@@ -73,32 +81,35 @@ typedef enum
   SP_CAPTURE_FRAME_MARK      = 10,
 } SpCaptureFrameType;
 
-#pragma pack(push, 1)
-
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   guint32 magic;
-  guint8  version;
+  guint32 version : 8;
   guint32 little_endian : 1;
   guint32 padding : 23;
   gchar   capture_time[64];
   gint64  time;
   gint64  end_time;
   gchar   suffix[168];
-} SpCaptureFileHeader;
+} SpCaptureFileHeader
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   guint16 len;
   gint16  cpu;
   gint32  pid;
   gint64  time;
-  guint8  type;
-  guint32 padding1;
-  guint32 padding2 : 24;
+  guint32 type : 8;
+  guint32 padding1 : 24;
+  guint32 padding2;
   guint8  data[0];
-} SpCaptureFrame;
+} SpCaptureFrame
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   SpCaptureFrame frame;
@@ -107,65 +118,83 @@ typedef struct
   guint64        offset;
   guint64        inode;
   gchar          filename[0];
-} SpCaptureMap;
+} SpCaptureMap
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   SpCaptureFrame frame;
   guint32        n_jitmaps;
   guint8         data[0];
-} SpCaptureJitmap;
+} SpCaptureJitmap
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   SpCaptureFrame frame;
   gchar          cmdline[0];
-} SpCaptureProcess;
+} SpCaptureProcess
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   SpCaptureFrame   frame;
-  guint16          n_addrs;
-  guint32          padding1;
-  guint32          padding2 : 16;
+  guint32          n_addrs : 16;
+  guint32          padding1 : 16;
+  guint32          padding2;
   SpCaptureAddress addrs[0];
-} SpCaptureSample;
+} SpCaptureSample
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   SpCaptureFrame frame;
-  GPid           child_pid;
-} SpCaptureFork;
+  gint32         child_pid;
+} SpCaptureFork
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   SpCaptureFrame frame;
-} SpCaptureExit;
+} SpCaptureExit
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   SpCaptureFrame frame;
-} SpCaptureTimestamp;
+} SpCaptureTimestamp
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   gchar                 category[32];
   gchar                 name[32];
   gchar                 description[52];
   guint32               id : 24;
-  guint8                type;
+  guint32               type : 8;
   SpCaptureCounterValue value;
-} SpCaptureCounter;
+} SpCaptureCounter
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   SpCaptureFrame   frame;
-  guint16          n_counters;
-  guint32          padding1;
-  guint32          padding2 : 16;
+  guint32          n_counters : 16;
+  guint32          padding1 : 16;
+  guint32          padding2;
   SpCaptureCounter counters[0];
-} SpCaptureFrameCounterDefine;
+} SpCaptureFrameCounterDefine
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   /*
@@ -175,17 +204,21 @@ typedef struct
    */
   guint32               ids[8];
   SpCaptureCounterValue values[8];
-} SpCaptureCounterValues;
+} SpCaptureCounterValues
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   SpCaptureFrame         frame;
-  guint16                n_values;
-  guint32                padding1;
-  guint32                padding2 : 16;
+  guint32                n_values : 16;
+  guint32                padding1 : 16;
+  guint32                padding2;
   SpCaptureCounterValues values[0];
-} SpCaptureFrameCounterSet;
+} SpCaptureFrameCounterSet
+SP_ALIGNED_END(1);
 
+SP_ALIGNED_BEGIN(1)
 typedef struct
 {
   SpCaptureFrame frame;
@@ -193,9 +226,8 @@ typedef struct
   gchar          group[24];
   gchar          name[40];
   gchar          message[0];
-} SpCaptureMark;
-
-#pragma pack(pop)
+} SpCaptureMark
+SP_ALIGNED_END(1);
 
 G_STATIC_ASSERT (sizeof (SpCaptureFileHeader) == 256);
 G_STATIC_ASSERT (sizeof (SpCaptureFrame) == 24);

@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <glib/gstdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -414,6 +415,9 @@ sp_capture_writer_new_from_fd (int   fd,
   SpCaptureFileHeader *header;
   GTimeVal tv;
   gsize header_len = sizeof(*header);
+
+  if (fd < 0)
+    return NULL;
 
   if (buffer_size == 0)
     buffer_size = DEFAULT_BUFFER_SIZE;
@@ -1220,4 +1224,23 @@ do_end:
     goto do_end;
 
   return TRUE;
+}
+
+SpCaptureWriter *
+sp_capture_writer_new_from_env (gsize buffer_size)
+{
+  const gchar *fdstr;
+  int fd;
+
+  if (!(fdstr = g_getenv ("SYSPROF_TRACE_FD")))
+    return NULL;
+
+  if (!(fd = atoi (fdstr)))
+    return NULL;
+
+  /* ignore stdin/stdout/stderr */
+  if (fd < 2)
+    return NULL;
+
+  return sp_capture_writer_new_from_fd (dup (fd), buffer_size);
 }

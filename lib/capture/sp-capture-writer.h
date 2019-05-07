@@ -38,6 +38,7 @@ typedef struct
   gsize padding[48];
 } SpCaptureStat;
 
+SpCaptureWriter    *sp_capture_writer_new_from_env    (gsize                    buffer_size);
 SpCaptureWriter    *sp_capture_writer_new             (const gchar             *filename,
                                                        gsize                    buffer_size);
 SpCaptureWriter    *sp_capture_writer_new_from_fd     (int                      fd,

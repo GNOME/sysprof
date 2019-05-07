@@ -55,7 +55,7 @@ sp_capture_reader_read_file_header (SpCaptureReader      *self,
   g_assert (self != NULL);
   g_assert (header != NULL);
 
-  if (sizeof *header != pread (self->fd, header, sizeof *header, 0L))
+  if (sizeof *header != _sp_pread (self->fd, header, sizeof *header, 0L))
     {
       g_set_error (error,
                    G_FILE_ERROR,
@@ -254,10 +254,10 @@ sp_capture_reader_ensure_space_for (SpCaptureReader *self,
           g_assert (self->len < self->bufsz);
 
           /* Read into our buffer after our current read position */
-          r = pread (self->fd,
-                     &self->buf[self->len],
-                     self->bufsz - self->len,
-                     self->fd_off);
+          r = _sp_pread (self->fd,
+                         &self->buf[self->len],
+                         self->bufsz - self->len,
+                         self->fd_off);
 
           if (r <= 0)
             break;

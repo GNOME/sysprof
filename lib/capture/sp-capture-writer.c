@@ -32,7 +32,7 @@
 #include "capture/sp-capture-util-private.h"
 #include "capture/sp-capture-writer.h"
 
-#define DEFAULT_BUFFER_SIZE (getpagesize() * 64L)
+#define DEFAULT_BUFFER_SIZE (_sp_getpagesize() * 64L)
 #define INVALID_ADDRESS     (G_GUINT64_CONSTANT(0))
 #define MAX_COUNTERS        ((1 << 24) - 1)
 
@@ -170,7 +170,7 @@ sp_capture_writer_flush_data (SpCaptureWriter *self)
 
   while (to_write > 0)
     {
-      written = write (self->fd, buf, to_write);
+      written = _sp_write (self->fd, buf, to_write);
       if (written < 0)
         return FALSE;
 
@@ -261,10 +261,10 @@ sp_capture_writer_flush_jitmap (SpCaptureWriter *self)
                                 SP_CAPTURE_FRAME_JITMAP);
   jitmap.n_jitmaps = self->addr_hash_size;
 
-  if (sizeof jitmap != write (self->fd, &jitmap, sizeof jitmap))
+  if (sizeof jitmap != _sp_write (self->fd, &jitmap, sizeof jitmap))
     return FALSE;
 
-  r = write (self->fd, self->addr_buf, len - sizeof jitmap);
+  r = _sp_write (self->fd, self->addr_buf, len - sizeof jitmap);
   if (r < 0 || (gsize)r != (len - sizeof jitmap))
     return FALSE;
 
@@ -419,7 +419,7 @@ sp_capture_writer_new_from_fd (int   fd,
     buffer_size = DEFAULT_BUFFER_SIZE;
 
   g_assert (fd != -1);
-  g_assert (buffer_size % getpagesize() == 0);
+  g_assert (buffer_size % _sp_getpagesize() == 0);
 
   if (ftruncate (fd, 0) != 0)
     return NULL;
@@ -463,7 +463,7 @@ sp_capture_writer_new_from_fd (int   fd,
 
   g_assert (self->pos == 0);
   g_assert (self->len > 0);
-  g_assert (self->len % getpagesize() == 0);
+  g_assert (self->len % _sp_getpagesize() == 0);
   g_assert (self->buf != NULL);
   g_assert (self->addr_hash_size == 0);
   g_assert (self->fd != -1);
@@ -479,7 +479,7 @@ sp_capture_writer_new (const gchar *filename,
   int fd;
 
   g_assert (filename != NULL);
-  g_assert (buffer_size % getpagesize() == 0);
+  g_assert (buffer_size % _sp_getpagesize() == 0);
 
   if ((-1 == (fd = open (filename, O_CREAT | O_RDWR, 0640))) ||
       (-1 == ftruncate (fd, 0L)))
@@ -765,10 +765,10 @@ sp_capture_writer_flush_end_time (SpCaptureWriter *self)
   /* This field is opportunistic, so a failure is okay. */
 
 again:
-  ret = pwrite (self->fd,
-                &end_time,
-                sizeof (end_time),
-                G_STRUCT_OFFSET (SpCaptureFileHeader, end_time));
+  ret = _sp_pwrite (self->fd,
+                    &end_time,
+                    sizeof (end_time),
+                    G_STRUCT_OFFSET (SpCaptureFileHeader, end_time));
 
   if (ret < 0 && errno == EAGAIN)
     goto again;
@@ -1202,19 +1202,19 @@ _sp_capture_writer_set_time_range (SpCaptureWriter *self,
   g_assert (self != NULL);
 
 do_start:
-  ret = pwrite (self->fd,
-                &start_time,
-                sizeof (start_time),
-                G_STRUCT_OFFSET (SpCaptureFileHeader, time));
+  ret = _sp_pwrite (self->fd,
+                    &start_time,
+                    sizeof (start_time),
+                    G_STRUCT_OFFSET (SpCaptureFileHeader, time));
 
   if (ret < 0 && errno == EAGAIN)
     goto do_start;
 
 do_end:
-  ret = pwrite (self->fd,
-                &end_time,
-                sizeof (end_time),
-                G_STRUCT_OFFSET (SpCaptureFileHeader, end_time));
+  ret = _sp_pwrite (self->fd,
+                    &end_time,
+                    sizeof (end_time),
+                    G_STRUCT_OFFSET (SpCaptureFileHeader, end_time));
 
   if (ret < 0 && errno == EAGAIN)
     goto do_end;

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <template class="SpRecordingStateView" parent="GtkBin">
+  <template class="SysprofRecordingStateView" parent="GtkBin">
     <child>
       <object class="GtkBox">
         <property name="border-width">36</property>

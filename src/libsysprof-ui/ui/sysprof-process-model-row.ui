@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <interface>
-  <template class="SpProcessModelRow" parent="GtkListBoxRow">
+  <template class="SysprofProcessModelRow" parent="GtkListBoxRow">
     <child>
       <object class="GtkBox">
         <property name="visible">true</property>

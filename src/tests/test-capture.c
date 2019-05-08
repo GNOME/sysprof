@@ -26,19 +26,19 @@
 static void
 test_reader_basic (void)
 {
-  SpCaptureReader *reader;
-  SpCaptureWriter *writer;
+  SysprofCaptureReader *reader;
+  SysprofCaptureWriter *writer;
   GError *error = NULL;
-  gint64 t = SP_CAPTURE_CURRENT_TIME;
+  gint64 t = SYSPROF_CAPTURE_CURRENT_TIME;
   guint i;
   gint r;
 
-  writer = sp_capture_writer_new ("capture-file", 0);
+  writer = sysprof_capture_writer_new ("capture-file", 0);
   g_assert (writer != NULL);
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
-  reader = sp_capture_reader_new ("capture-file", &error);
+  reader = sysprof_capture_reader_new ("capture-file", &error);
   g_assert_no_error (error);
   g_assert (reader != NULL);
 
@@ -48,26 +48,26 @@ test_reader_basic (void)
 
       g_snprintf (str, sizeof str, "%d", i);
 
-      r = sp_capture_writer_add_map (writer, t, -1, -1, i, i + 1, i + 2, i + 3, str);
+      r = sysprof_capture_writer_add_map (writer, t, -1, -1, i, i + 1, i + 2, i + 3, str);
       g_assert_cmpint (r, ==, TRUE);
     }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
   for (i = 0; i < 100; i++)
     {
-      SpCaptureFrameType type = -1;
-      const SpCaptureMap *map;
+      SysprofCaptureFrameType type = -1;
+      const SysprofCaptureMap *map;
       gchar str[16];
 
       g_snprintf (str, sizeof str, "%d", i);
 
-      if (!sp_capture_reader_peek_type (reader, &type))
+      if (!sysprof_capture_reader_peek_type (reader, &type))
         g_assert_not_reached ();
 
-      g_assert_cmpint (type, ==, SP_CAPTURE_FRAME_MAP);
+      g_assert_cmpint (type, ==, SYSPROF_CAPTURE_FRAME_MAP);
 
-      map = sp_capture_reader_read_map (reader);
+      map = sysprof_capture_reader_read_map (reader);
 
       g_assert (map != NULL);
       g_assert_cmpint (map->frame.pid, ==, -1);
@@ -82,27 +82,27 @@ test_reader_basic (void)
   /* Now that we have read a frame, we should start having updated
    * end times with each incoming frame.
    */
-  g_assert_cmpint (0, !=, sp_capture_reader_get_end_time (reader));
+  g_assert_cmpint (0, !=, sysprof_capture_reader_get_end_time (reader));
 
   for (i = 0; i < 100; i++)
     {
-      r = sp_capture_writer_add_timestamp (writer, t, i, -1);
+      r = sysprof_capture_writer_add_timestamp (writer, t, i, -1);
       g_assert_cmpint (r, ==, TRUE);
     }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
   for (i = 0; i < 100; i++)
     {
-      SpCaptureFrameType type = -1;
-      const SpCaptureTimestamp *ts;
+      SysprofCaptureFrameType type = -1;
+      const SysprofCaptureTimestamp *ts;
 
-      if (!sp_capture_reader_peek_type (reader, &type))
+      if (!sysprof_capture_reader_peek_type (reader, &type))
         g_assert_not_reached ();
 
-      g_assert_cmpint (type, ==, SP_CAPTURE_FRAME_TIMESTAMP);
+      g_assert_cmpint (type, ==, SYSPROF_CAPTURE_FRAME_TIMESTAMP);
 
-      ts = sp_capture_reader_read_timestamp (reader);
+      ts = sysprof_capture_reader_read_timestamp (reader);
 
       g_assert (ts != NULL);
       g_assert_cmpint (ts->frame.cpu, ==, i);
@@ -111,23 +111,23 @@ test_reader_basic (void)
 
   for (i = 0; i < 100; i++)
     {
-      r = sp_capture_writer_add_exit (writer, t, i, -1);
+      r = sysprof_capture_writer_add_exit (writer, t, i, -1);
       g_assert_cmpint (r, ==, TRUE);
     }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
   for (i = 0; i < 100; i++)
     {
-      SpCaptureFrameType type = -1;
-      const SpCaptureExit *ex;
+      SysprofCaptureFrameType type = -1;
+      const SysprofCaptureExit *ex;
 
-      if (!sp_capture_reader_peek_type (reader, &type))
+      if (!sysprof_capture_reader_peek_type (reader, &type))
         g_assert_not_reached ();
 
-      g_assert_cmpint (type, ==, SP_CAPTURE_FRAME_EXIT);
+      g_assert_cmpint (type, ==, SYSPROF_CAPTURE_FRAME_EXIT);
 
-      ex = sp_capture_reader_read_exit (reader);
+      ex = sysprof_capture_reader_read_exit (reader);
 
       g_assert (ex != NULL);
       g_assert_cmpint (ex->frame.cpu, ==, i);
@@ -139,26 +139,26 @@ test_reader_basic (void)
       char cmdline[32];
 
       g_snprintf (cmdline, sizeof cmdline, "program-%d", i);
-      r = sp_capture_writer_add_process (writer, t, -1, i, cmdline);
+      r = sysprof_capture_writer_add_process (writer, t, -1, i, cmdline);
       g_assert_cmpint (r, ==, TRUE);
     }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
   for (i = 0; i < 100; i++)
     {
-      SpCaptureFrameType type = -1;
-      const SpCaptureProcess *pr;
+      SysprofCaptureFrameType type = -1;
+      const SysprofCaptureProcess *pr;
       char str[32];
 
       g_snprintf (str, sizeof str, "program-%d", i);
 
-      if (!sp_capture_reader_peek_type (reader, &type))
+      if (!sysprof_capture_reader_peek_type (reader, &type))
         g_assert_not_reached ();
 
-      g_assert_cmpint (type, ==, SP_CAPTURE_FRAME_PROCESS);
+      g_assert_cmpint (type, ==, SYSPROF_CAPTURE_FRAME_PROCESS);
 
-      pr = sp_capture_reader_read_process (reader);
+      pr = sysprof_capture_reader_read_process (reader);
 
       g_assert (pr != NULL);
       g_assert_cmpint (pr->frame.cpu, ==, -1);
@@ -168,23 +168,23 @@ test_reader_basic (void)
 
   for (i = 0; i < 100; i++)
     {
-      r = sp_capture_writer_add_fork (writer, t, i, -1, i);
+      r = sysprof_capture_writer_add_fork (writer, t, i, -1, i);
       g_assert_cmpint (r, ==, TRUE);
     }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
   for (i = 0; i < 100; i++)
     {
-      SpCaptureFrameType type = -1;
-      const SpCaptureFork *ex;
+      SysprofCaptureFrameType type = -1;
+      const SysprofCaptureFork *ex;
 
-      if (!sp_capture_reader_peek_type (reader, &type))
+      if (!sysprof_capture_reader_peek_type (reader, &type))
         g_assert_not_reached ();
 
-      g_assert_cmpint (type, ==, SP_CAPTURE_FRAME_FORK);
+      g_assert_cmpint (type, ==, SYSPROF_CAPTURE_FRAME_FORK);
 
-      ex = sp_capture_reader_read_fork (reader);
+      ex = sysprof_capture_reader_read_fork (reader);
 
       g_assert (ex != NULL);
       g_assert_cmpint (ex->frame.cpu, ==, i);
@@ -193,10 +193,10 @@ test_reader_basic (void)
     }
 
   {
-    SpCaptureCounter counters[10];
-    guint base = sp_capture_writer_request_counter (writer, G_N_ELEMENTS (counters));
+    SysprofCaptureCounter counters[10];
+    guint base = sysprof_capture_writer_request_counter (writer, G_N_ELEMENTS (counters));
 
-    t = SP_CAPTURE_CURRENT_TIME;
+    t = SYSPROF_CAPTURE_CURRENT_TIME;
 
     for (i = 0; i < G_N_ELEMENTS (counters); i++)
       {
@@ -208,16 +208,16 @@ test_reader_basic (void)
         counters[i].value.v64 = i * G_GINT64_CONSTANT (100000000000);
       }
 
-    r = sp_capture_writer_define_counters (writer, t, -1, -1, counters, G_N_ELEMENTS (counters));
+    r = sysprof_capture_writer_define_counters (writer, t, -1, -1, counters, G_N_ELEMENTS (counters));
     g_assert_cmpint (r, ==, TRUE);
   }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
   {
-    const SpCaptureFrameCounterDefine *def;
+    const SysprofCaptureFrameCounterDefine *def;
 
-    def = sp_capture_reader_read_counter_define (reader);
+    def = sysprof_capture_reader_read_counter_define (reader);
     g_assert (def != NULL);
     g_assert_cmpint (def->n_counters, ==, 10);
 
@@ -236,19 +236,19 @@ test_reader_basic (void)
   for (i = 0; i < 1000; i++)
     {
       guint ids[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-      SpCaptureCounterValue values[10] = { {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10} };
+      SysprofCaptureCounterValue values[10] = { {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10} };
 
-      r = sp_capture_writer_set_counters (writer, t, -1,  -1, ids, values, G_N_ELEMENTS (values));
+      r = sysprof_capture_writer_set_counters (writer, t, -1,  -1, ids, values, G_N_ELEMENTS (values));
       g_assert_cmpint (r, ==, TRUE);
     }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
   for (i = 0; i < 1000; i++)
     {
-      const SpCaptureFrameCounterSet *set;
+      const SysprofCaptureFrameCounterSet *set;
 
-      set = sp_capture_reader_read_counter_set (reader);
+      set = sysprof_capture_reader_read_counter_set (reader);
       g_assert (set != NULL);
 
       /* 8 per chunk */
@@ -278,30 +278,30 @@ test_reader_basic (void)
 
   for (i = 0; i < 1000; i++)
     {
-      SpCaptureAddress addr;
+      SysprofCaptureAddress addr;
       gchar str[32];
 
       g_snprintf (str, sizeof str, "jitstring-%d", i);
 
-      addr = sp_capture_writer_add_jitmap (writer, str);
-      g_assert_cmpint (addr, ==, (i + 1) | SP_CAPTURE_JITMAP_MARK);
+      addr = sysprof_capture_writer_add_jitmap (writer, str);
+      g_assert_cmpint (addr, ==, (i + 1) | SYSPROF_CAPTURE_JITMAP_MARK);
     }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
   i = 0;
 
   for (;;)
     {
-      SpCaptureFrameType type = -1;
+      SysprofCaptureFrameType type = -1;
       g_autoptr(GHashTable) ret = NULL;
 
-      if (sp_capture_reader_peek_type (reader, &type))
-        g_assert_cmpint (type, ==, SP_CAPTURE_FRAME_JITMAP);
+      if (sysprof_capture_reader_peek_type (reader, &type))
+        g_assert_cmpint (type, ==, SYSPROF_CAPTURE_FRAME_JITMAP);
       else
         break;
 
-      ret = sp_capture_reader_read_jitmap (reader);
+      ret = sysprof_capture_reader_read_jitmap (reader);
       g_assert (ret != NULL);
 
       i += g_hash_table_size (ret);
@@ -310,15 +310,15 @@ test_reader_basic (void)
   g_assert_cmpint (1000, ==, i);
 
   {
-    SpCaptureFrameType type = -1;
+    SysprofCaptureFrameType type = -1;
 
-    if (sp_capture_reader_peek_type (reader, &type))
+    if (sysprof_capture_reader_peek_type (reader, &type))
       g_assert_not_reached ();
   }
 
   for (i = 1; i <= 1000; i++)
     {
-      SpCaptureAddress *addrs;
+      SysprofCaptureAddress *addrs;
       guint j;
 
       addrs = alloca (i * sizeof *addrs);
@@ -326,24 +326,24 @@ test_reader_basic (void)
       for (j = 0; j < i; j++)
         addrs[j] = i;
 
-      if (!sp_capture_writer_add_sample (writer, t, -1, -1, -2, addrs, i))
+      if (!sysprof_capture_writer_add_sample (writer, t, -1, -1, -2, addrs, i))
         g_assert_not_reached ();
     }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
   for (i = 1; i <= 1000; i++)
     {
-      SpCaptureFrameType type = -1;
-      const SpCaptureSample *sample;
+      SysprofCaptureFrameType type = -1;
+      const SysprofCaptureSample *sample;
       guint j;
 
-      if (!sp_capture_reader_peek_type (reader, &type))
+      if (!sysprof_capture_reader_peek_type (reader, &type))
         g_assert_not_reached ();
 
-      g_assert_cmpint (type, ==, SP_CAPTURE_FRAME_SAMPLE);
+      g_assert_cmpint (type, ==, SYSPROF_CAPTURE_FRAME_SAMPLE);
 
-      sample = sp_capture_reader_read_sample (reader);
+      sample = sysprof_capture_reader_read_sample (reader);
 
       g_assert (sample != NULL);
       g_assert_cmpint (sample->frame.time, ==, t);
@@ -357,13 +357,13 @@ test_reader_basic (void)
     }
 
   {
-    SpCaptureFrameType type = -1;
+    SysprofCaptureFrameType type = -1;
 
-    if (sp_capture_reader_peek_type (reader, &type))
+    if (sysprof_capture_reader_peek_type (reader, &type))
       g_assert_not_reached ();
   }
 
-  r = sp_capture_writer_save_as (writer, "capture-file.bak", &error);
+  r = sysprof_capture_writer_save_as (writer, "capture-file.bak", &error);
   g_assert_no_error (error);
   g_assert (r);
   g_assert (g_file_test ("capture-file.bak", G_FILE_TEST_IS_REGULAR));
@@ -390,31 +390,31 @@ test_reader_basic (void)
     g_assert_true (0 == memcmp (buf1, buf2, buf1len));
   }
 
-  g_clear_pointer (&writer, sp_capture_writer_unref);
-  g_clear_pointer (&reader, sp_capture_reader_unref);
+  g_clear_pointer (&writer, sysprof_capture_writer_unref);
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
 
-  reader = sp_capture_reader_new ("capture-file.bak", &error);
+  reader = sysprof_capture_reader_new ("capture-file.bak", &error);
   g_assert_no_error (error);
   g_assert (reader != NULL);
 
   for (i = 0; i < 2; i++)
     {
-      SpCaptureFrameType type = -1;
+      SysprofCaptureFrameType type = -1;
       guint count = 0;
 
-      while (sp_capture_reader_peek_type (reader, &type))
+      while (sysprof_capture_reader_peek_type (reader, &type))
         {
           count++;
-          if (!sp_capture_reader_skip (reader))
+          if (!sysprof_capture_reader_skip (reader))
             g_assert_not_reached ();
         }
 
       g_assert_cmpint (count, >, 1500);
 
-      sp_capture_reader_reset (reader);
+      sysprof_capture_reader_reset (reader);
     }
 
-  sp_capture_reader_unref (reader);
+  sysprof_capture_reader_unref (reader);
 
   g_unlink ("capture-file");
   g_unlink ("capture-file.bak");
@@ -423,34 +423,34 @@ test_reader_basic (void)
 static void
 test_writer_splice (void)
 {
-  SpCaptureWriter *writer1;
-  SpCaptureWriter *writer2;
-  SpCaptureReader *reader;
-  SpCaptureFrameType type;
+  SysprofCaptureWriter *writer1;
+  SysprofCaptureWriter *writer2;
+  SysprofCaptureReader *reader;
+  SysprofCaptureFrameType type;
   GError *error = NULL;
   guint i;
   gint r;
 
-  writer1 = sp_capture_writer_new ("writer1.syscap", 0);
-  writer2 = sp_capture_writer_new ("writer2.syscap", 0);
+  writer1 = sysprof_capture_writer_new ("writer1.syscap", 0);
+  writer2 = sysprof_capture_writer_new ("writer2.syscap", 0);
 
   for (i = 0; i < 1000; i++)
-    sp_capture_writer_add_timestamp (writer1, SP_CAPTURE_CURRENT_TIME, -1, -1);
+    sysprof_capture_writer_add_timestamp (writer1, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1);
 
-  r = sp_capture_writer_splice (writer1, writer2, &error);
+  r = sysprof_capture_writer_splice (writer1, writer2, &error);
   g_assert_no_error (error);
   g_assert (r == TRUE);
 
-  g_clear_pointer (&writer1, sp_capture_writer_unref);
-  g_clear_pointer (&writer2, sp_capture_writer_unref);
+  g_clear_pointer (&writer1, sysprof_capture_writer_unref);
+  g_clear_pointer (&writer2, sysprof_capture_writer_unref);
 
-  reader = sp_capture_reader_new ("writer2.syscap", &error);
+  reader = sysprof_capture_reader_new ("writer2.syscap", &error);
   g_assert_no_error (error);
   g_assert (reader != NULL);
 
   for (i = 0; i < 1000; i++)
     {
-      const SpCaptureTimestamp *ts = sp_capture_reader_read_timestamp (reader);
+      const SysprofCaptureTimestamp *ts = sysprof_capture_reader_read_timestamp (reader);
 
       g_assert (ts != NULL);
       g_assert_cmpint (ts->frame.cpu, ==, -1);
@@ -458,10 +458,10 @@ test_writer_splice (void)
       g_assert_cmpint (ts->frame.time, >, 0);
     }
 
-  r = sp_capture_reader_peek_type (reader, &type);
+  r = sysprof_capture_reader_peek_type (reader, &type);
   g_assert_cmpint (r, ==, FALSE);
 
-  g_clear_pointer (&reader, sp_capture_reader_unref);
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
 
   g_unlink ("writer1.syscap");
   g_unlink ("writer2.syscap");
@@ -470,27 +470,27 @@ test_writer_splice (void)
 static void
 test_reader_splice (void)
 {
-  SpCaptureWriter *writer1;
-  SpCaptureWriter *writer2;
-  SpCaptureReader *reader;
-  SpCaptureFrameType type;
+  SysprofCaptureWriter *writer1;
+  SysprofCaptureWriter *writer2;
+  SysprofCaptureReader *reader;
+  SysprofCaptureFrameType type;
   GError *error = NULL;
   guint i;
   guint count;
   gint r;
 
-  writer1 = sp_capture_writer_new ("writer1.syscap", 0);
-  writer2 = sp_capture_writer_new ("writer2.syscap", 0);
+  writer1 = sysprof_capture_writer_new ("writer1.syscap", 0);
+  writer2 = sysprof_capture_writer_new ("writer2.syscap", 0);
 
   for (i = 0; i < 1000; i++)
-    sp_capture_writer_add_timestamp (writer1, SP_CAPTURE_CURRENT_TIME, -1, -1);
+    sysprof_capture_writer_add_timestamp (writer1, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1);
 
-  r = sp_capture_writer_flush (writer1);
+  r = sysprof_capture_writer_flush (writer1);
   g_assert_cmpint (r, ==, TRUE);
 
-  g_clear_pointer (&writer1, sp_capture_writer_unref);
+  g_clear_pointer (&writer1, sysprof_capture_writer_unref);
 
-  reader = sp_capture_reader_new ("writer1.syscap", &error);
+  reader = sysprof_capture_reader_new ("writer1.syscap", &error);
   g_assert_no_error (error);
   g_assert (reader != NULL);
 
@@ -498,7 +498,7 @@ test_reader_splice (void)
 
   for (i = 0; i < 1000; i++)
     {
-      const SpCaptureTimestamp *ts = sp_capture_reader_read_timestamp (reader);
+      const SysprofCaptureTimestamp *ts = sysprof_capture_reader_read_timestamp (reader);
 
       g_assert (ts != NULL);
       g_assert_cmpint (ts->frame.cpu, ==, -1);
@@ -506,21 +506,21 @@ test_reader_splice (void)
       g_assert_cmpint (ts->frame.time, >, 0);
     }
 
-  r = sp_capture_reader_peek_type (reader, &type);
+  r = sysprof_capture_reader_peek_type (reader, &type);
   g_assert_cmpint (r, ==, FALSE);
 
-  r = sp_capture_reader_splice (reader, writer2, &error);
+  r = sysprof_capture_reader_splice (reader, writer2, &error);
   g_assert_no_error (error);
   g_assert_cmpint (r, ==, TRUE);
 
-  g_clear_pointer (&reader, sp_capture_reader_unref);
-  g_clear_pointer (&writer2, sp_capture_writer_unref);
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
+  g_clear_pointer (&writer2, sysprof_capture_writer_unref);
 
-  reader = sp_capture_reader_new ("writer2.syscap", 0);
+  reader = sysprof_capture_reader_new ("writer2.syscap", 0);
 
   for (i = 0; i < 1000; i++)
     {
-      const SpCaptureTimestamp *ts = sp_capture_reader_read_timestamp (reader);
+      const SysprofCaptureTimestamp *ts = sysprof_capture_reader_read_timestamp (reader);
 
       g_assert (ts != NULL);
       g_assert_cmpint (ts->frame.cpu, ==, -1);
@@ -528,31 +528,31 @@ test_reader_splice (void)
       g_assert_cmpint (ts->frame.time, >, 0);
     }
 
-  r = sp_capture_reader_peek_type (reader, &type);
+  r = sysprof_capture_reader_peek_type (reader, &type);
   g_assert_cmpint (r, ==, FALSE);
 
-  g_clear_pointer (&reader, sp_capture_reader_unref);
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
 
-  reader = sp_capture_reader_new ("writer2.syscap", &error);
+  reader = sysprof_capture_reader_new ("writer2.syscap", &error);
   g_assert_no_error (error);
   g_assert (reader != NULL);
 
-  r = sp_capture_reader_save_as (reader, "writer3.syscap", &error);
+  r = sysprof_capture_reader_save_as (reader, "writer3.syscap", &error);
   g_assert_no_error (error);
   g_assert_cmpint (r, ==, TRUE);
 
-  g_clear_pointer (&reader, sp_capture_reader_unref);
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
 
-  reader = sp_capture_reader_new ("writer3.syscap", &error);
+  reader = sysprof_capture_reader_new ("writer3.syscap", &error);
   g_assert_no_error (error);
   g_assert (reader != NULL);
 
   count = 0;
-  while (sp_capture_reader_skip (reader))
+  while (sysprof_capture_reader_skip (reader))
     count++;
   g_assert_cmpint (count, ==, 1000);
 
-  g_clear_pointer (&reader, sp_capture_reader_unref);
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
 
   g_unlink ("writer1.syscap");
   g_unlink ("writer2.syscap");
@@ -562,25 +562,25 @@ test_reader_splice (void)
 static void
 test_reader_writer_mark (void)
 {
-  SpCaptureWriter *writer;
-  SpCaptureReader *reader;
-  const SpCaptureMark *mark;
-  SpCaptureFrameType type;
+  SysprofCaptureWriter *writer;
+  SysprofCaptureReader *reader;
+  const SysprofCaptureMark *mark;
+  SysprofCaptureFrameType type;
   GError *error = NULL;
   gint r;
 
-  writer = sp_capture_writer_new ("mark1.syscap", 0);
+  writer = sysprof_capture_writer_new ("mark1.syscap", 0);
 
-  sp_capture_writer_add_mark (writer, SP_CAPTURE_CURRENT_TIME, -1, -1, 125, "thread-0", "Draw", "hdmi-1");
-  sp_capture_writer_add_mark (writer, SP_CAPTURE_CURRENT_TIME, -1, -1, 0, "thread-1", "Deadline", "hdmi-1");
+  sysprof_capture_writer_add_mark (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, 125, "thread-0", "Draw", "hdmi-1");
+  sysprof_capture_writer_add_mark (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, 0, "thread-1", "Deadline", "hdmi-1");
 
-  g_clear_pointer (&writer, sp_capture_writer_unref);
+  g_clear_pointer (&writer, sysprof_capture_writer_unref);
 
-  reader = sp_capture_reader_new ("mark1.syscap", &error);
+  reader = sysprof_capture_reader_new ("mark1.syscap", &error);
   g_assert_no_error (error);
   g_assert (reader != NULL);
 
-  mark = sp_capture_reader_read_mark (reader);
+  mark = sysprof_capture_reader_read_mark (reader);
   g_assert_nonnull (mark);
   g_assert_cmpstr (mark->group, ==, "thread-0");
   g_assert_cmpstr (mark->name, ==, "Draw");
@@ -589,7 +589,7 @@ test_reader_writer_mark (void)
   g_assert_cmpint (mark->frame.time, >, 0);
   g_assert_cmpint (mark->frame.cpu, ==, -1);
 
-  mark = sp_capture_reader_read_mark (reader);
+  mark = sysprof_capture_reader_read_mark (reader);
   g_assert_nonnull (mark);
   g_assert_cmpstr (mark->group, ==, "thread-1");
   g_assert_cmpstr (mark->name, ==, "Deadline");
@@ -598,10 +598,10 @@ test_reader_writer_mark (void)
   g_assert_cmpint (mark->frame.time, >, 0);
   g_assert_cmpint (mark->frame.cpu, ==, -1);
 
-  r = sp_capture_reader_peek_type (reader, &type);
+  r = sysprof_capture_reader_peek_type (reader, &type);
   g_assert_cmpint (r, ==, FALSE);
 
-  g_clear_pointer (&reader, sp_capture_reader_unref);
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
 
   g_unlink ("mark1.syscap");
 }
@@ -610,11 +610,11 @@ int
 main (int argc,
       char *argv[])
 {
-  sp_clock_init ();
+  sysprof_clock_init ();
   g_test_init (&argc, &argv, NULL);
-  g_test_add_func ("/SpCapture/ReaderWriter", test_reader_basic);
-  g_test_add_func ("/SpCapture/Writer/splice", test_writer_splice);
-  g_test_add_func ("/SpCapture/Reader/splice", test_reader_splice);
-  g_test_add_func ("/SpCapture/ReaderWriter/mark", test_reader_writer_mark);
+  g_test_add_func ("/SysprofCapture/ReaderWriter", test_reader_basic);
+  g_test_add_func ("/SysprofCapture/Writer/splice", test_writer_splice);
+  g_test_add_func ("/SysprofCapture/Reader/splice", test_reader_splice);
+  g_test_add_func ("/SysprofCapture/ReaderWriter/mark", test_reader_writer_mark);
   return g_test_run ();
 }

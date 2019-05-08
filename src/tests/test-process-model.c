@@ -8,7 +8,7 @@ static GtkWidget *
 create_row (gpointer item,
             gpointer user_data)
 {
-  return sp_process_model_row_new (item);
+  return sysprof_process_model_row_new (item);
 }
 
 static gboolean
@@ -16,22 +16,22 @@ filter_cb (GObject  *object,
            gpointer  user_data)
 {
   const gchar *needle = user_data;
-  const gchar *command = sp_process_model_item_get_command_line (SP_PROCESS_MODEL_ITEM (object));
+  const gchar *command = sysprof_process_model_item_get_command_line (SYSPROF_PROCESS_MODEL_ITEM (object));
 
   return !!strstr (command, needle);
 }
 
 static void
 on_entry_changed (GtkEntry      *entry,
-                  SpModelFilter *filter)
+                  SysprofModelFilter *filter)
 {
   const gchar *text;
 
   g_assert (GTK_IS_ENTRY (entry));
-  g_assert (SP_IS_MODEL_FILTER (filter));
+  g_assert (SYSPROF_IS_MODEL_FILTER (filter));
 
   text = gtk_entry_get_text (entry);
-  sp_model_filter_set_filter_func (filter, filter_cb, g_strdup (text), g_free);
+  sysprof_model_filter_set_filter_func (filter, filter_cb, g_strdup (text), g_free);
 
   //gtk_list_box_bind_model (GTK_LIST_BOX (list), G_LIST_MODEL (filter), create_row, NULL, NULL);
 }
@@ -40,8 +40,8 @@ gint
 main (gint argc,
       gchar *argv[])
 {
-  SpProcessModel *model;
-  SpModelFilter *filter;
+  SysprofProcessModel *model;
+  SysprofModelFilter *filter;
   GtkWidget *window;
   GtkWidget *box;
   GtkWidget *scroller;
@@ -77,8 +77,8 @@ main (gint argc,
                        NULL);
   gtk_container_add (GTK_CONTAINER (scroller), list);
 
-  model = sp_process_model_new ();
-  filter = sp_model_filter_new (G_LIST_MODEL (model));
+  model = sysprof_process_model_new ();
+  filter = sysprof_model_filter_new (G_LIST_MODEL (model));
   gtk_list_box_bind_model (GTK_LIST_BOX (list), G_LIST_MODEL (filter), create_row, NULL, NULL);
 
   g_signal_connect (entry,

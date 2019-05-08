@@ -28,8 +28,8 @@ gint
 main (gint argc,
       gchar *argv[])
 {
-  SpCaptureReader *reader;
-  SpCaptureFrameType type;
+  SysprofCaptureReader *reader;
+  SysprofCaptureFrameType type;
   GHashTable *ctrtypes;
   GError *error = NULL;
   gint64 begin_time;
@@ -41,10 +41,10 @@ main (gint argc,
       return EXIT_FAILURE;
     }
 
-  reader = sp_capture_reader_new (argv[1], &error);
+  reader = sysprof_capture_reader_new (argv[1], &error);
   ctrtypes = g_hash_table_new (NULL, NULL);
 
-  begin_time = sp_capture_reader_get_start_time (reader);
+  begin_time = sysprof_capture_reader_get_start_time (reader);
 
 #define SET_CTR_TYPE(i,t) g_hash_table_insert(ctrtypes, GINT_TO_POINTER(i), GINT_TO_POINTER(t))
 #define GET_CTR_TYPE(i) GPOINTER_TO_INT(g_hash_table_lookup(ctrtypes, GINT_TO_POINTER(i)))
@@ -55,19 +55,19 @@ main (gint argc,
       return EXIT_FAILURE;
     }
 
-  begin_time = sp_capture_reader_get_start_time (reader);
-  end_time = sp_capture_reader_get_end_time (reader);
+  begin_time = sysprof_capture_reader_get_start_time (reader);
+  end_time = sysprof_capture_reader_get_end_time (reader);
 
   g_print ("Capture Time Range: %"G_GUINT64_FORMAT" to %"G_GUINT64_FORMAT" (%lf)\n",
            begin_time, end_time, (end_time - begin_time) / (gdouble)NSEC_PER_SEC);
 
-  while (sp_capture_reader_peek_type (reader, &type))
+  while (sysprof_capture_reader_peek_type (reader, &type))
     {
       switch (type)
         {
-        case SP_CAPTURE_FRAME_EXIT:
+        case SYSPROF_CAPTURE_FRAME_EXIT:
           {
-            const SpCaptureExit *ex = sp_capture_reader_read_exit (reader);
+            const SysprofCaptureExit *ex = sysprof_capture_reader_read_exit (reader);
 
             if (ex == NULL)
               return EXIT_FAILURE;
@@ -77,9 +77,9 @@ main (gint argc,
             break;
           }
 
-        case SP_CAPTURE_FRAME_FORK:
+        case SYSPROF_CAPTURE_FRAME_FORK:
           {
-            const SpCaptureFork *fk = sp_capture_reader_read_fork (reader);
+            const SysprofCaptureFork *fk = sysprof_capture_reader_read_fork (reader);
 
             if (fk == NULL)
               return EXIT_FAILURE;
@@ -89,11 +89,11 @@ main (gint argc,
             break;
           }
 
-        case SP_CAPTURE_FRAME_JITMAP:
+        case SYSPROF_CAPTURE_FRAME_JITMAP:
           {
-            g_autoptr(GHashTable) ret = sp_capture_reader_read_jitmap (reader);
+            g_autoptr(GHashTable) ret = sysprof_capture_reader_read_jitmap (reader);
             GHashTableIter iter;
-            SpCaptureAddress addr;
+            SysprofCaptureAddress addr;
             const gchar *str;
 
             if (ret == NULL)
@@ -103,14 +103,14 @@ main (gint argc,
 
             g_hash_table_iter_init (&iter, ret);
             while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&str))
-              g_print ("  "SP_CAPTURE_ADDRESS_FORMAT" : %s\n", addr, str);
+              g_print ("  "SYSPROF_CAPTURE_ADDRESS_FORMAT" : %s\n", addr, str);
 
             break;
           }
 
-        case SP_CAPTURE_FRAME_MAP:
+        case SYSPROF_CAPTURE_FRAME_MAP:
           {
-            const SpCaptureMap *map = sp_capture_reader_read_map (reader);
+            const SysprofCaptureMap *map = sysprof_capture_reader_read_map (reader);
 
             g_print ("MAP: pid=%d time=%"G_GINT64_FORMAT"\n"
                      "   start  = %"G_GUINT64_FORMAT"\n"
@@ -124,9 +124,9 @@ main (gint argc,
             break;
           }
 
-        case SP_CAPTURE_FRAME_MARK:
+        case SYSPROF_CAPTURE_FRAME_MARK:
           {
-            const SpCaptureMark *mark = sp_capture_reader_read_mark (reader);
+            const SysprofCaptureMark *mark = sysprof_capture_reader_read_mark (reader);
             gdouble ptime = (mark->frame.time - begin_time) / (gdouble)NSEC_PER_SEC;
 
             g_print ("MARK: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
@@ -140,9 +140,9 @@ main (gint argc,
             break;
           }
 
-        case SP_CAPTURE_FRAME_PROCESS:
+        case SYSPROF_CAPTURE_FRAME_PROCESS:
           {
-            const SpCaptureProcess *pr = sp_capture_reader_read_process (reader);
+            const SysprofCaptureProcess *pr = sysprof_capture_reader_read_process (reader);
 
             if (pr == NULL)
               perror ("Failed to read process");
@@ -152,37 +152,37 @@ main (gint argc,
             break;
           }
 
-        case SP_CAPTURE_FRAME_SAMPLE:
+        case SYSPROF_CAPTURE_FRAME_SAMPLE:
           {
-            const SpCaptureSample *s =  sp_capture_reader_read_sample (reader);
+            const SysprofCaptureSample *s =  sysprof_capture_reader_read_sample (reader);
             gdouble ptime = (s->frame.time - begin_time) / (gdouble)NSEC_PER_SEC;
             guint i;
 
             g_print ("SAMPLE: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n", s->frame.pid, s->frame.time, ptime);
 
             for (i = 0; i < s->n_addrs; i++)
-              g_print ("  "SP_CAPTURE_ADDRESS_FORMAT"\n", s->addrs[i]);
+              g_print ("  "SYSPROF_CAPTURE_ADDRESS_FORMAT"\n", s->addrs[i]);
 
             break;
           }
 
-        case SP_CAPTURE_FRAME_TIMESTAMP:
+        case SYSPROF_CAPTURE_FRAME_TIMESTAMP:
           {
-            const SpCaptureTimestamp *ts =  sp_capture_reader_read_timestamp (reader);
+            const SysprofCaptureTimestamp *ts =  sysprof_capture_reader_read_timestamp (reader);
             g_print ("TIMESTAMP: pid=%d time=%"G_GINT64_FORMAT"\n", ts->frame.pid, ts->frame.time);
             break;
           }
 
-        case SP_CAPTURE_FRAME_CTRDEF:
+        case SYSPROF_CAPTURE_FRAME_CTRDEF:
           {
-            const SpCaptureFrameCounterDefine *def = sp_capture_reader_read_counter_define (reader);
+            const SysprofCaptureFrameCounterDefine *def = sysprof_capture_reader_read_counter_define (reader);
             guint i;
 
             g_print ("NEW COUNTERS: pid=%d time=%"G_GINT64_FORMAT"\n", def->frame.pid, def->frame.time);
 
             for (i = 0; i < def->n_counters; i++)
               {
-                const SpCaptureCounter *ctr = &def->counters[i];
+                const SysprofCaptureCounter *ctr = &def->counters[i];
 
                 SET_CTR_TYPE (ctr->id, ctr->type);
 
@@ -195,27 +195,27 @@ main (gint argc,
           }
           break;
 
-        case SP_CAPTURE_FRAME_CTRSET:
+        case SYSPROF_CAPTURE_FRAME_CTRSET:
           {
-            const SpCaptureFrameCounterSet *set = sp_capture_reader_read_counter_set (reader);
+            const SysprofCaptureFrameCounterSet *set = sysprof_capture_reader_read_counter_set (reader);
             guint i;
 
             g_print ("SET COUNTERS: pid=%d time=%"G_GINT64_FORMAT"\n", set->frame.pid, set->frame.time);
 
             for (i = 0; i < set->n_values; i++)
               {
-                const SpCaptureCounterValues *values = &set->values[i];
+                const SysprofCaptureCounterValues *values = &set->values[i];
                 guint j;
 
                 for (j = 0; j < G_N_ELEMENTS (values->ids); j++)
                   {
                     if (values->ids[j])
                       {
-                        if (GET_CTR_TYPE (values->ids[j]) == SP_CAPTURE_COUNTER_INT64)
+                        if (GET_CTR_TYPE (values->ids[j]) == SYSPROF_CAPTURE_COUNTER_INT64)
                           g_print ("  COUNTER(%d): %"G_GINT64_FORMAT"\n",
                                    values->ids[j],
                                    values->values[j].v64);
-                        else if (GET_CTR_TYPE (values->ids[j]) == SP_CAPTURE_COUNTER_DOUBLE)
+                        else if (GET_CTR_TYPE (values->ids[j]) == SYSPROF_CAPTURE_COUNTER_DOUBLE)
                           g_print ("  COUNTER(%d): %lf\n",
                                    values->ids[j],
                                    values->values[j].vdbl);
@@ -227,7 +227,7 @@ main (gint argc,
 
         default:
           g_print ("Skipping unknown frame type: (%d): ", type);
-          if (!sp_capture_reader_skip (reader))
+          if (!sysprof_capture_reader_skip (reader))
             {
               g_print ("Failed\n");
               return EXIT_FAILURE;

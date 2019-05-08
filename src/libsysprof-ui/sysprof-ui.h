@@ -26,22 +26,22 @@ G_BEGIN_DECLS
 
 #define SYSPROF_UI_INSIDE
 
-# include "sp-callgraph-view.h"
-# include "sp-cell-renderer-percent.h"
-# include "sp-cpu-visualizer-row.h"
-# include "sp-failed-state-view.h"
-# include "sp-line-visualizer-row.h"
-# include "sp-empty-state-view.h"
-# include "sp-model-filter.h"
-# include "sp-multi-paned.h"
-# include "sp-recording-state-view.h"
-# include "sp-process-model.h"
-# include "sp-process-model-item.h"
-# include "sp-process-model-row.h"
-# include "sp-profiler-menu-button.h"
-# include "sp-visualizer-row.h"
-# include "sp-visualizer-view.h"
-# include "sp-zoom-manager.h"
+# include "sysprof-callgraph-view.h"
+# include "sysprof-cell-renderer-percent.h"
+# include "sysprof-cpu-visualizer-row.h"
+# include "sysprof-failed-state-view.h"
+# include "sysprof-line-visualizer-row.h"
+# include "sysprof-empty-state-view.h"
+# include "sysprof-model-filter.h"
+# include "sysprof-multi-paned.h"
+# include "sysprof-recording-state-view.h"
+# include "sysprof-process-model.h"
+# include "sysprof-process-model-item.h"
+# include "sysprof-process-model-row.h"
+# include "sysprof-profiler-menu-button.h"
+# include "sysprof-visualizer-row.h"
+# include "sysprof-visualizer-view.h"
+# include "sysprof-zoom-manager.h"
 
 #undef SYSPROF_UI_INSIDE
 

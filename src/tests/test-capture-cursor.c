@@ -22,7 +22,7 @@
 #include <sysprof-capture.h>
 
 static gboolean
-increment (const SpCaptureFrame *frame,
+increment (const SysprofCaptureFrame *frame,
            gpointer              user_data)
 {
   gint *count= user_data;
@@ -33,39 +33,39 @@ increment (const SpCaptureFrame *frame,
 static void
 test_cursor_basic (void)
 {
-  SpCaptureReader *reader;
-  SpCaptureWriter *writer;
-  SpCaptureCursor *cursor;
+  SysprofCaptureReader *reader;
+  SysprofCaptureWriter *writer;
+  SysprofCaptureCursor *cursor;
   GError *error = NULL;
-  gint64 t = SP_CAPTURE_CURRENT_TIME;
+  gint64 t = SYSPROF_CAPTURE_CURRENT_TIME;
   guint i;
   gint r;
   gint count = 0;
 
-  writer = sp_capture_writer_new ("capture-cursor-file", 0);
+  writer = sysprof_capture_writer_new ("capture-cursor-file", 0);
   g_assert (writer != NULL);
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
-  reader = sp_capture_reader_new ("capture-cursor-file", &error);
+  reader = sysprof_capture_reader_new ("capture-cursor-file", &error);
   g_assert_no_error (error);
   g_assert (reader != NULL);
 
   for (i = 0; i < 100; i++)
     {
-      r = sp_capture_writer_add_timestamp (writer, t, i, -1);
+      r = sysprof_capture_writer_add_timestamp (writer, t, i, -1);
       g_assert_cmpint (r, ==, TRUE);
     }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
-  cursor = sp_capture_cursor_new (reader);
-  sp_capture_cursor_foreach (cursor, increment, &count);
+  cursor = sysprof_capture_cursor_new (reader);
+  sysprof_capture_cursor_foreach (cursor, increment, &count);
   g_assert_cmpint (count, ==, 100);
-  g_clear_pointer (&cursor, sp_capture_cursor_unref);
+  g_clear_pointer (&cursor, sysprof_capture_cursor_unref);
 
-  sp_capture_reader_unref (reader);
-  sp_capture_writer_unref (writer);
+  sysprof_capture_reader_unref (reader);
+  sysprof_capture_writer_unref (writer);
 
   g_unlink ("capture-cursor-file");
 }
@@ -74,8 +74,8 @@ int
 main (int argc,
       char *argv[])
 {
-  sp_clock_init ();
+  sysprof_clock_init ();
   g_test_init (&argc, &argv, NULL);
-  g_test_add_func ("/SpCaptureCursor/basic", test_cursor_basic);
+  g_test_add_func ("/SysprofCaptureCursor/basic", test_cursor_basic);
   return g_test_run ();
 }

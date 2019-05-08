@@ -37,7 +37,7 @@
 
 #include "binfile.h"
 #include "elfparser.h"
-#include "sp-symbol-dirs.h"
+#include "sysprof-symbol-dirs.h"
 
 struct bin_file_t
 {
@@ -173,7 +173,7 @@ get_debuglink_file (ElfParser   *elf,
 
     dir = g_path_get_dirname (filename);
 
-    tries = sp_symbol_dirs_get_paths (dir, basename);
+    tries = sysprof_symbol_dirs_get_paths (dir, basename);
 
     for (i = 0; tries[i]; i++)
     {

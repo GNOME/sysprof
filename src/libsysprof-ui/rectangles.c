@@ -19,8 +19,8 @@
  */
 
 #include "rectangles.h"
-#include "sp-color-cycle.h"
-#include "sp-visualizer-row.h"
+#include "sysprof-color-cycle.h"
+#include "sysprof-visualizer-row.h"
 
 typedef struct
 {
@@ -37,7 +37,7 @@ struct _Rectangles
   GArray *rectangles;
   GHashTable *y_indexes;
   GHashTable *colors;
-  SpColorCycle *cycle;
+  SysprofColorCycle *cycle;
   gint64 begin_time;
   gint64 end_time;
   guint sorted : 1;
@@ -54,7 +54,7 @@ rectangles_new (gint64 begin_time,
   self->rectangles = g_array_new (FALSE, FALSE, sizeof (Rectangle));
   self->y_indexes = g_hash_table_new (g_str_hash, g_str_equal);
   self->colors = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
-  self->cycle = sp_color_cycle_new ();
+  self->cycle = sysprof_color_cycle_new ();
   self->begin_time = begin_time;
   self->end_time = end_time;
   self->sorted = FALSE;
@@ -97,7 +97,7 @@ rectangles_free (Rectangles *self)
   g_array_unref (self->rectangles);
   g_hash_table_unref (self->colors);
   g_hash_table_unref (self->y_indexes);
-  sp_color_cycle_unref (self->cycle);
+  sysprof_color_cycle_unref (self->cycle);
   g_slice_free (Rectangles, self);
 }
 
@@ -137,7 +137,7 @@ rectangles_sort (Rectangles *self)
         {
           GdkRGBA rgba;
 
-          sp_color_cycle_next (self->cycle, &rgba);
+          sysprof_color_cycle_next (self->cycle, &rgba);
           g_hash_table_insert (self->y_indexes, (gchar *)rect->name, GUINT_TO_POINTER (++sequence));
           g_hash_table_insert (self->colors, (gchar *)rect->name, g_memdup (&rgba, sizeof rgba));
         }
@@ -156,7 +156,7 @@ rectangles_draw (Rectangles *self,
   guint n_rows;
 
   g_assert (self != NULL);
-  g_assert (SP_IS_VISUALIZER_ROW (row));
+  g_assert (SYSPROF_IS_VISUALIZER_ROW (row));
   g_assert (cr != NULL);
 
   if (!self->sorted)
@@ -173,8 +173,8 @@ rectangles_draw (Rectangles *self,
     {
       Rectangle *rect = &g_array_index (self->rectangles, Rectangle, i);
       guint y_index = GPOINTER_TO_UINT (g_hash_table_lookup (self->y_indexes, rect->name));
-      SpVisualizerRowRelativePoint in_points[2];
-      SpVisualizerRowAbsolutePoint out_points[2];
+      SysprofVisualizerRowRelativePoint in_points[2];
+      SysprofVisualizerRowAbsolutePoint out_points[2];
       GdkRectangle r;
       GdkRGBA *rgba;
 
@@ -186,9 +186,9 @@ rectangles_draw (Rectangles *self,
       in_points[1].x = (rect->end - self->begin_time) / range;
       in_points[1].y = 0;
 
-      sp_visualizer_row_translate_points (SP_VISUALIZER_ROW (row),
-                                          in_points, G_N_ELEMENTS (in_points),
-                                          out_points, G_N_ELEMENTS (out_points));
+      sysprof_visualizer_row_translate_points (SYSPROF_VISUALIZER_ROW (row),
+                                               in_points, G_N_ELEMENTS (in_points),
+                                               out_points, G_N_ELEMENTS (out_points));
 
       r.height = alloc.height / (gdouble)n_rows;
       r.x = out_points[0].x;

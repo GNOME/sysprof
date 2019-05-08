@@ -30,7 +30,8 @@
 #include <unistd.h>
 
 #include "sd-bus-helper.h"
-#include "sp-kallsyms.h"
+
+#include "sysprof-kallsyms.h"
 
 #define BUS_TIMEOUT_USEC (1000000L * 10L)
 
@@ -48,7 +49,7 @@ sysprofd_get_kernel_symbols (sd_bus_message *msg,
                              void           *user_data,
                              sd_bus_error   *error)
 {
-  g_autoptr(SpKallsyms) kallsyms = NULL;
+  g_autoptr(SysprofKallsyms) kallsyms = NULL;
   sd_bus_message *reply = NULL;
   const gchar *name;
   guint64 addr;
@@ -76,7 +77,7 @@ sysprofd_get_kernel_symbols (sd_bus_message *msg,
   else if (r == 0)
     return -EACCES;
 
-  if (!(kallsyms = sp_kallsyms_new (NULL)))
+  if (!(kallsyms = sysprof_kallsyms_new (NULL)))
     {
       sd_bus_error_set (error,
                         SD_BUS_ERROR_FILE_NOT_FOUND,
@@ -92,7 +93,7 @@ sysprofd_get_kernel_symbols (sd_bus_message *msg,
   if (r < 0)
     return r;
 
-  while (sp_kallsyms_next (kallsyms, &name, &addr, &type))
+  while (sysprof_kallsyms_next (kallsyms, &name, &addr, &type))
     sd_bus_message_append (reply, "(tys)", addr, type, name);
 
   r = sd_bus_message_close_container (reply);

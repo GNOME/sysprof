@@ -5,6 +5,7 @@ libsysprof_capture_headers = [
   'sp-capture-types.h',
   'sp-capture-writer.h',
   'sysprof-capture.h',
+  'sysprof-version-macros.h',
 ]
 
 libsysprof_capture_sources = [

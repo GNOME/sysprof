@@ -1,6 +1,6 @@
 /* demangle.h
  *
- * Copyright 2016 Christian Hergert <chergert@redhat.com>
+ * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DEMANGLE_H
-#define DEMANGLE_H
+#pragma once
 
 #include <glib.h>
 
@@ -26,5 +25,3 @@ G_BEGIN_DECLS
 gchar *sysprof_cplus_demangle (const gchar *name);
 
 G_END_DECLS
-
-#endif /* DEMANGLE_H */

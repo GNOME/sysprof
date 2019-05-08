@@ -21,7 +21,8 @@
 #pragma once
 
 #include <glib-object.h>
-#include <sysprof-capture.h>
+
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -29,8 +30,11 @@ G_BEGIN_DECLS
 #define SP_TYPE_CAPTURE_WRITER (sp_capture_writer_get_type())
 #define SP_TYPE_CAPTURE_CURSOR (sp_capture_cursor_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 GType sp_capture_reader_get_type (void);
+SYSPROF_AVAILABLE_IN_ALL
 GType sp_capture_writer_get_type (void);
+SYSPROF_AVAILABLE_IN_ALL
 GType sp_capture_cursor_get_type (void);
 
 G_END_DECLS

@@ -23,7 +23,6 @@ libsysprof_public_sources = [
 
 libsysprof_public_headers = [
   'sp-callgraph-profile.h',
-  'sp-callgraph-profile-private.h',
   'sp-capture-gobject.h',
   'sp-elf-symbol-resolver.h',
   'sp-hostinfo-source.h',
@@ -45,10 +44,10 @@ libsysprof_public_headers = [
 ]
 
 libsysprof_private_sources = [
+  '../stackstash.c',
   'binfile.c',
   'demangle.cpp',
   'elfparser.c',
-  'stackstash.c',
   'sp-source-util.c',
   'sp-line-reader.c',
 ]
@@ -90,12 +89,15 @@ if get_option('with_sysprofd') != 'none'
   libsysprof_deps += dependency('polkit-gobject-1')
 endif
 
-libsysprof = shared_library('sysprof-@0@'.format(libsysprof_api_version),
+libsysprof = shared_library(
+  'sysprof-@0@'.format(libsysprof_api_version),
   libsysprof_public_sources + libsysprof_private_sources,
-  dependencies: libsysprof_deps,
-        c_args: libsysprof_c_args,
-       install: true,
-   install_dir: get_option('libdir'),
+
+           dependencies: libsysprof_deps,
+                 c_args: libsysprof_c_args,
+                install: true,
+            install_dir: get_option('libdir'),
+  gnu_symbol_visibility: 'hidden',
 )
 
 libsysprof_dep = declare_dependency(

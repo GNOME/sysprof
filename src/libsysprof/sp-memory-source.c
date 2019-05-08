@@ -1,6 +1,6 @@
 /* sp-memory-source.c
  *
- * Copyright 2018 Christian Hergert <chergert@redhat.com>
+ * Copyright 2018-2019 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
-
 #define G_LOG_DOMAIN "sp-memory-source"
+
+#include "config.h"
 
 #include <errno.h>
 #include <fcntl.h>

@@ -1,6 +1,6 @@
 /* sp-callgraph-profile.h
  *
- * Copyright 2016 Christian Hergert <christian@hergert.me>
+ * Copyright 2016-2019 Christian Hergert <christian@hergert.me>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_CALLGRAPH_PROFILE_H
-#define SP_CALLGRAPH_PROFILE_H
+#pragma once
+
+#include "sysprof-version-macros.h"
 
 #include "sp-profile.h"
 #include "sp-selection.h"
@@ -26,13 +29,17 @@ G_BEGIN_DECLS
 
 #define SP_TYPE_CALLGRAPH_PROFILE (sp_callgraph_profile_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SpCallgraphProfile, sp_callgraph_profile, SP, CALLGRAPH_PROFILE, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
 SpProfile *sp_callgraph_profile_new                (void);
+SYSPROF_AVAILABLE_IN_ALL
 SpProfile *sp_callgraph_profile_new_with_selection (SpSelection        *selection);
+SYSPROF_AVAILABLE_IN_ALL
+gpointer sp_callgraph_profile_get_stash            (SpCallgraphProfile *self);
+SYSPROF_AVAILABLE_IN_ALL
 GQuark     sp_callgraph_profile_get_tag            (SpCallgraphProfile *self,
                                                     const gchar        *symbol);
 
 G_END_DECLS
-
-#endif /* SP_CALLGRAPH_PROFILE_H */

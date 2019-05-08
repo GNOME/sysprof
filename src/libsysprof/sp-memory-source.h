@@ -1,6 +1,6 @@
 /* sp-memory-source.h
  *
- * Copyright 2018 Christian Hergert <chergert@redhat.com>
+ * Copyright 2018-2019 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,18 @@
 
 #pragma once
 
+#include "sysprof-version-macros.h"
+
 #include "sp-source.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_MEMORY_SOURCE (sp_memory_source_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SpMemorySource, sp_memory_source, SP, MEMORY_SOURCE, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
 SpSource *sp_memory_source_new (void);
 
 G_END_DECLS

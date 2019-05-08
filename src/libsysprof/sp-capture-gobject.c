@@ -18,7 +18,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include "config.h"
+
 #include "sp-capture-gobject.h"
+
+#include <sysprof-capture.h>
 
 G_DEFINE_BOXED_TYPE (SpCaptureReader, sp_capture_reader, (GBoxedCopyFunc)sp_capture_reader_ref, (GBoxedFreeFunc)sp_capture_reader_unref)
 G_DEFINE_BOXED_TYPE (SpCaptureWriter, sp_capture_writer, (GBoxedCopyFunc)sp_capture_writer_ref, (GBoxedFreeFunc)sp_capture_writer_unref)

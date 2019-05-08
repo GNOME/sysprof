@@ -1,6 +1,6 @@
 /* sp-perf-source.h
  *
- * Copyright 2016 Christian Hergert <chergert@redhat.com>
+ * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_PERF_SOURCE_H
-#define SP_PERF_SOURCE_H
+#pragma once
+
+#include "sysprof-version-macros.h"
 
 #include "sp-source.h"
 
@@ -25,12 +28,13 @@ G_BEGIN_DECLS
 
 #define SP_TYPE_PERF_SOURCE (sp_perf_source_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SpPerfSource, sp_perf_source, SP, PERF_SOURCE, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
 SpSource *sp_perf_source_new            (void);
+SYSPROF_AVAILABLE_IN_ALL
 void      sp_perf_source_set_target_pid (SpPerfSource *self,
                                          GPid          pid);
 
 G_END_DECLS
-
-#endif /* SP_PERF_SOURCE_H */

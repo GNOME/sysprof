@@ -23,6 +23,7 @@ libsysprof_ui_private_sources = [
   'rectangles.c',
   'sp-cell-renderer-percent.c',
   'sp-theme-manager.c',
+  '../stackstash.c',
 ]
 
 libsysprof_ui_public_headers = [

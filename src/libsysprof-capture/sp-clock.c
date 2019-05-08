@@ -18,6 +18,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#define G_LOG_DOMAIN "sp-clock"
+
+#include "config.h"
+
 #include "sp-clock.h"
 
 gint sp_clock = -1;

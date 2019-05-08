@@ -1,27 +1,17 @@
-if get_option('enable_gtk')
+sysprof_header_subdir = 'sysprof-@0@'.format(libsysprof_api_version)
 
-sysprof_sources = [
-  'sysprof.c',
-  'sp-application.c',
-  'sp-application.h',
-  'sp-credits.h',
-  'sp-window.c',
-  'sp-window.h',
-  'sp-window-settings.c',
-  'sp-window-settings.h',
-]
+sysprof_version_conf = configuration_data()
+sysprof_version = meson.project_version().split('.')
+sysprof_version_conf.set('MAJOR_VERSION', sysprof_version[0])
+sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
+sysprof_version_conf.set('MICRO_VERSION', sysprof_version[2])
+sysprof_version_conf.set('VERSION', meson.project_version())
 
-sysprof_resources = gnome.compile_resources('sp-resources', 'resources/sysprof.gresource.xml',
-  source_dir: 'resources',
-      c_name: 'sysprof',
-)
-
-sysprof = executable('sysprof', sysprof_resources + sysprof_sources,
-       gui_app: true,
-       install: true,
-        c_args: release_flags + exe_c_args,
-  dependencies: [libsysprof_ui_dep, cc.find_library('m', required: false)],
-     link_args: exe_link_args,
-)
-
-endif
+subdir('shared')
+subdir('libsysprof-capture')
+subdir('sysprofd')
+subdir('libsysprof')
+subdir('libsysprof-ui')
+subdir('sysprof')
+subdir('tools')
+subdir('tests')

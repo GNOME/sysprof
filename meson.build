@@ -1,19 +1,30 @@
 project('sysprof', ['c', 'cpp'],
-  license: ['GPL3+', 'GPL2+'],
-  version: '3.32.0',
-  meson_version: '>=0.47.2',
-  default_options: [
-    'c_std=gnu11',
-    'cpp_std=c++03',
-    'warning_level=2',
+        license: ['GPL3+', 'GPL2+'],
+        version: '3.33.1',
+  meson_version: '>=0.49.0',
+  default_options: [ 'c_std=gnu11',
+                     'cpp_std=c++03',
+                     'warning_level=2',
   ]
 )
 
+gnome = import('gnome')
+pkgconfig = import('pkgconfig')
+i18n = import('i18n')
+
+libsysprof_api_version = 2
 version_split = meson.project_version().split('.')
+datadir = get_option('datadir')
+podir = join_paths(meson.source_root(), 'po')
+
+
+glib_req_version = '>= 2.60'
+gtk_req_version = '>= 3.24'
 
 cc = meson.get_compiler('c')
-config_h = configuration_data()
+cxx = meson.get_compiler('cpp')
 
+config_h = configuration_data()
 config_h.set_quoted('PACKAGE_NAME', 'sysprof')
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
 config_h.set_quoted('PACKAGE_STRING', 'sysprof-' + meson.project_version())
@@ -21,7 +32,10 @@ config_h.set_quoted('PACKAGE_BUGREPORT', 'https://bugzilla.gnome.org/enter_bug.c
 config_h.set('PACKAGE_TARNAME', 'PACKAGE_STRING')
 config_h.set('PACKAGE', 'PACKAGE_NAME')
 config_h.set('VERSION', 'PACKAGE_VERSION')
-# PACKAGE_URL
+
+if get_option('with_sysprofd') != 'none'
+  config_h.set10('ENABLE_POLKIT', true)
+endif
 
 debugdir = get_option('debugdir')
 if debugdir == ''
@@ -44,7 +58,6 @@ if has_use_clockid and has_clockid
 endif
 
 add_global_arguments([
-  '-DHAVE_CONFIG_H',
   '-I' + meson.build_root(), # config.h
 ], language: 'c')
 
@@ -145,27 +158,12 @@ int main(void) {
   error('Sysprof requires a C compiler with stdatomic support such as GCC 4.9 or newer')
 endif
 
-exe_c_args = []
-exe_link_args = []
-if cc.has_argument('-fPIE')
-  exe_c_args += '-fPIE'
-  exe_link_args += '-fpie'
-endif
-
 configure_file(
          output: 'config.h',
   configuration: config_h
 )
 
-gnome = import('gnome')
-i18n = import('i18n')
-
-subdir('lib')
-subdir('daemon')
 subdir('src')
-subdir('tools')
-subdir('tests')
-
 subdir('data')
 subdir('help')
 subdir('po')

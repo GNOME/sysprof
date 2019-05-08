@@ -141,7 +141,7 @@ typedef struct
   SpCaptureFrame   frame;
   guint32          n_addrs : 16;
   guint32          padding1 : 16;
-  guint32          padding2;
+  gint32           tid;
   SpCaptureAddress addrs[0];
 } SpCaptureSample
 SP_ALIGNED_END(1);

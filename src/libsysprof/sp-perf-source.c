@@ -284,6 +284,7 @@ sp_perf_source_handle_callchain (SpPerfSource                      *self,
                                 sample->time,
                                 cpu,
                                 sample->pid,
+                                sample->tid,
                                 ips,
                                 n_ips);
 }

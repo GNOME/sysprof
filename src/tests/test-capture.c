@@ -326,7 +326,7 @@ test_reader_basic (void)
       for (j = 0; j < i; j++)
         addrs[j] = i;
 
-      if (!sp_capture_writer_add_sample (writer, t, -1, -1, addrs, i))
+      if (!sp_capture_writer_add_sample (writer, t, -1, -1, -2, addrs, i))
         g_assert_not_reached ();
     }
 
@@ -349,6 +349,7 @@ test_reader_basic (void)
       g_assert_cmpint (sample->frame.time, ==, t);
       g_assert_cmpint (sample->frame.cpu, ==, -1);
       g_assert_cmpint (sample->frame.pid, ==, -1);
+      g_assert_cmpint (sample->tid, ==, -2);
       g_assert_cmpint (sample->n_addrs, ==, i);
 
       for (j = 0; j < i; j++)

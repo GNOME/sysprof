@@ -35,12 +35,15 @@ libsysprof_capture_deps = [
 
 install_headers(libsysprof_capture_headers, subdir: sysprof_header_subdir)
 
-libsysprof_capture = static_library('sysprof-capture-@0@'.format(libsysprof_api_version),
+libsysprof_capture = static_library(
+  'sysprof-capture-@0@'.format(libsysprof_api_version),
   libsysprof_capture_sources,
-  dependencies: libsysprof_capture_deps,
-        c_args: [ '-DSYSPROF_CAPTURE_COMPILATION' ],
-   install_dir: get_option('libdir'),
-       install: true,
+
+           dependencies: libsysprof_capture_deps,
+                 c_args: [ '-DSYSPROF_CAPTURE_COMPILATION' ],
+            install_dir: get_option('libdir'),
+                install: true,
+  gnu_symbol_visibility: 'hidden',
 )
 
 libsysprof_capture_dep = declare_dependency(

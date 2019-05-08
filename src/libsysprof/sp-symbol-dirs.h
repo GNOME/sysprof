@@ -20,12 +20,17 @@
 
 #pragma once
 
+#include "sysprof-version-macros.h"
+
 #include <glib.h>
 
 G_BEGIN_DECLS
 
+SYSPROF_AVAILABLE_IN_ALL
 void    sp_symbol_dirs_add       (const gchar *dir);
+SYSPROF_AVAILABLE_IN_ALL
 void    sp_symbol_dirs_remove    (const gchar *dir);
+SYSPROF_AVAILABLE_IN_ALL
 gchar **sp_symbol_dirs_get_paths (const gchar *dir,
                                   const gchar *name);
 

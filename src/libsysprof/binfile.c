@@ -300,6 +300,7 @@ get_lines (const char *format,
 static const uint8_t *
 get_vdso_bytes (size_t *length)
 {
+#ifdef __linux__
     static const uint8_t *bytes = NULL;
     static size_t n_bytes = 0;
     static gboolean has_data;
@@ -343,6 +344,11 @@ get_vdso_bytes (size_t *length)
         *length = n_bytes;
 
     return bytes;
+#else
+    if (length)
+        *length = 0;
+    return NULL;
+#endif
 }
 
 bin_file_t *

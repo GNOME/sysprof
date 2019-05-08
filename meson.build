@@ -17,9 +17,8 @@ version_split = meson.project_version().split('.')
 datadir = get_option('datadir')
 podir = join_paths(meson.source_root(), 'po')
 
-
-glib_req_version = '>= 2.60'
-gtk_req_version = '>= 3.24'
+glib_req_version = '>= 2.56'
+gtk_req_version = '>= 3.22'
 
 cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')

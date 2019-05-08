@@ -14,6 +14,9 @@ sysprof_resources = gnome.compile_resources('sysprof-resources', 'sysprof.gresou
 
 sysprof_deps = [
   cc.find_library('m', required: false),
+  libshared_dep,
+  libsysprof_capture_dep,
+  libsysprof_dep,
   libsysprof_ui_dep,
 ]
 
@@ -22,7 +25,6 @@ sysprof = executable('sysprof', sysprof_resources + sysprof_sources,
        gui_app: true,
    install_dir: get_option('bindir'),
        install: true,
-          pie: true,
 )
 
 endif

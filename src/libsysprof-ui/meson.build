@@ -56,7 +56,6 @@ libsysprof_ui_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('gtk+-3.0', version: gtk_req_version),
   libsysprof_dep,
-  libshared_dep,
 ]
 
 libsysprof_ui = shared_library('sysprof-ui-@0@'.format(libsysprof_api_version),

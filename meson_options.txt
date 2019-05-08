@@ -23,3 +23,6 @@ option('systemdunitdir', type: 'string',
 option('debugdir', type: 'string',
   description: 'Look for global separate debug info in this path'
 )
+
+# If Yelp documentation should be installed
+option('help', type: 'boolean')

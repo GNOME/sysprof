@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <gresources>
   <gresource prefix="/org/gnome/sysprof">
-    <file compressed="true">css/SpVisualizerView-shared.css</file>
-    <file compressed="true">css/SpVisualizerView-Adwaita.css</file>
-    <file compressed="true">css/SpVisualizerView-Adwaita-dark.css</file>
+    <file compressed="true">css/SysprofVisualizerView-shared.css</file>
+    <file compressed="true">css/SysprofVisualizerView-Adwaita.css</file>
+    <file compressed="true">css/SysprofVisualizerView-Adwaita-dark.css</file>
 
     <!-- Application icons -->
     <file alias="icons/scalable/apps/org.gnome.Sysprof.svg">../../data/icons/scalable/apps/org.gnome.Sysprof.svg</file>
     <file alias="icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg">../../data/icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg</file>
 
-    <file compressed="true">ui/sp-callgraph-view.ui</file>
-    <file compressed="true">ui/sp-empty-state-view.ui</file>
-    <file compressed="true">ui/sp-failed-state-view.ui</file>
-    <file compressed="true">ui/sp-process-model-row.ui</file>
-    <file compressed="true">ui/sp-profiler-menu-button.ui</file>
-    <file compressed="true">ui/sp-recording-state-view.ui</file>
-    <file compressed="true">ui/sp-visualizer-view.ui</file>
+    <file compressed="true">ui/sysprof-callgraph-view.ui</file>
+    <file compressed="true">ui/sysprof-empty-state-view.ui</file>
+    <file compressed="true">ui/sysprof-failed-state-view.ui</file>
+    <file compressed="true">ui/sysprof-process-model-row.ui</file>
+    <file compressed="true">ui/sysprof-profiler-menu-button.ui</file>
+    <file compressed="true">ui/sysprof-recording-state-view.ui</file>
+    <file compressed="true">ui/sysprof-visualizer-view.ui</file>
   </gresource>
 </gresources>

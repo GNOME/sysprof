@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <interface>
-  <template class="SpWindow" parent="GtkApplicationWindow">
+  <template class="SysprofWindow" parent="GtkApplicationWindow">
     <property name="default-height">700</property>
     <property name="default-width">1200</property>
     <property name="icon-name">org.gnome.Sysprof-symbolic</property>
@@ -51,7 +51,7 @@
           </object>
         </child>
         <child>
-          <object class="SpProfilerMenuButton" id="profiler_menu_button">
+          <object class="SysprofProfilerMenuButton" id="profiler_menu_button">
             <property name="width-request">200</property>
             <property name="visible">true</property>
             <property name="halign">start</property>
@@ -137,7 +137,7 @@
             <property name="transition-type">crossfade</property>
             <property name="visible">true</property>
             <child>
-              <object class="SpEmptyStateView" id="empty_view">
+              <object class="SysprofEmptyStateView" id="empty_view">
                 <property name="visible">true</property>
               </object>
               <packing>
@@ -145,7 +145,7 @@
               </packing>
             </child>
             <child>
-              <object class="SpFailedStateView" id="failed_view">
+              <object class="SysprofFailedStateView" id="failed_view">
                 <property name="visible">true</property>
               </object>
               <packing>
@@ -153,7 +153,7 @@
               </packing>
             </child>
             <child>
-              <object class="SpRecordingStateView" id="recording_view">
+              <object class="SysprofRecordingStateView" id="recording_view">
                 <property name="visible">true</property>
               </object>
               <packing>
@@ -161,18 +161,18 @@
               </packing>
             </child>
             <child>
-              <object class="SpMultiPaned" id="paned">
+              <object class="SysprofMultiPaned" id="paned">
                 <property name="orientation">vertical</property>
                 <property name="visible">true</property>
                 <property name="vexpand">true</property>
                 <child>
-                  <object class="SpVisualizerView" id="visualizers">
+                  <object class="SysprofVisualizerView" id="visualizers">
                     <property name="visible">true</property>
                     <property name="zoom-manager">zoom_manager</property>
                   </object>
                 </child>
                 <child>
-                  <object class="SpCallgraphView" id="callgraph_view">
+                  <object class="SysprofCallgraphView" id="callgraph_view">
                     <property name="visible">true</property>
                     <property name="vexpand">true</property>
                   </object>
@@ -187,7 +187,7 @@
       </object>
     </child>
   </template>
-  <object class="SpZoomManager" id="zoom_manager">
+  <object class="SysprofZoomManager" id="zoom_manager">
     <property name="min-zoom">0.01</property>
   </object>
   <object class="GtkPopover" id="gear_popover">

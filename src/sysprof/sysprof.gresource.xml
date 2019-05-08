@@ -9,6 +9,6 @@
     <file compressed="true">theme/Adwaita-shared.css</file>
 
     <!-- UI Files -->
-    <file compressed="true">ui/sp-window.ui</file>
+    <file compressed="true">ui/sysprof-window.ui</file>
   </gresource>
 </gresources>

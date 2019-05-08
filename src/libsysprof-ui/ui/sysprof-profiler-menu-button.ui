@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <template class="SpProfilerMenuButton" parent="GtkMenuButton">
+  <template class="SysprofProfilerMenuButton" parent="GtkMenuButton">
     <property name="popover">popover</property>
     <property name="width-request">150</property>
     <child>
@@ -29,7 +29,7 @@
       </object>
     </child>
   </template>
-  <object class="SpProcessModel" id="process_model">
+  <object class="SysprofProcessModel" id="process_model">
   </object>
   <object class="GtkPopover" id="popover">
     <child>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="SpVisualizerView" parent="GtkBin">
+  <template class="SysprofVisualizerView" parent="GtkBin">
     <child>
       <object class="GtkOverlay">
         <property name="visible">true</property>
         <child type="overlay">
-          <object class="SpVisualizerTicks" id="ticks">
+          <object class="SysprofVisualizerTicks" id="ticks">
             <property name="valign">start</property>
             <property name="hexpand">true</property>
             <property name="visible">true</property>
@@ -20,7 +20,7 @@
             <property name="propagate-natural-width">false</property>
             <property name="visible">true</property>
             <child>
-              <object class="SpVisualizerList" id="list">
+              <object class="SysprofVisualizerList" id="list">
                 <property name="visible">true</property>
               </object>
             </child>

@@ -1,5 +1,5 @@
 <interface>
-  <template class="SpCallgraphView" parent="GtkBin">
+  <template class="SysprofCallgraphView" parent="GtkBin">
     <child>
       <object class="GtkPaned">
         <property name="orientation">horizontal</property>
@@ -39,7 +39,7 @@
                         <property name="sort-column-id">1</property>
                         <property name="title" translatable="yes">Self</property>
                         <child>
-                          <object class="SpCellRendererPercent">
+                          <object class="SysprofCellRendererPercent">
                             <property name="xpad">6</property>
                           </object>
                           <attributes>
@@ -55,7 +55,7 @@
                         <property name="sort-column-id">2</property>
                         <property name="title" translatable="yes">Total</property>
                         <child>
-                          <object class="SpCellRendererPercent">
+                          <object class="SysprofCellRendererPercent">
                             <property name="xpad">6</property>
                           </object>
                           <attributes>
@@ -100,7 +100,7 @@
                         <property name="sort-column-id">1</property>
                         <property name="title" translatable="yes">Self</property>
                         <child>
-                          <object class="SpCellRendererPercent">
+                          <object class="SysprofCellRendererPercent">
                             <property name="xpad">6</property>
                           </object>
                           <attributes>
@@ -116,7 +116,7 @@
                         <property name="sort-column-id">2</property>
                         <property name="title" translatable="yes">Total</property>
                         <child>
-                          <object class="SpCellRendererPercent">
+                          <object class="SysprofCellRendererPercent">
                             <property name="xpad">6</property>
                           </object>
                           <attributes>
@@ -155,7 +155,7 @@
                     <property name="sort-column-id">1</property>
                     <property name="title" translatable="yes">Self</property>
                     <child>
-                      <object class="SpCellRendererPercent">
+                      <object class="SysprofCellRendererPercent">
                         <property name="xpad">6</property>
                       </object>
                       <attributes>
@@ -171,7 +171,7 @@
                     <property name="sort-column-id">2</property>
                     <property name="title" translatable="yes">Cumulative</property>
                     <child>
-                      <object class="SpCellRendererPercent">
+                      <object class="SysprofCellRendererPercent">
                         <property name="xpad">6</property>
                       </object>
                       <attributes>

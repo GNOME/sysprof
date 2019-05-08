@@ -29,12 +29,12 @@
 #include <unistd.h>
 
 #ifdef __linux__
-# define _sp_getpagesize getpagesize
-# define _sp_pread       pread
-# define _sp_pwrite      pwrite
-# define _sp_write       write
-# define _sp_getpid      getpid
-# define _sp_sendfile    sendfile
+# define _sp_getpagesize()     getpagesize()
+# define _sp_pread(a,b,c,d)    pread(a,b,c,d)
+# define _sp_pwrite(a,b,c,d)   pwrite(a,b,c,d)
+# define _sp_write(a,b,c)      write(a,b,c)
+# define _sp_getpid()          getpid()
+# define _sp_sendfile(a,b,c,d) sendfile(a,b,c,d)
 #else
 size_t  _sp_getpagesize (void);
 ssize_t _sp_pread       (int     fd,

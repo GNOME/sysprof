@@ -21,22 +21,32 @@
 #pragma once
 
 #include "sp-capture-types.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureCondition *sp_capture_condition_copy                   (const SpCaptureCondition *self);
+SYSPROF_AVAILABLE_IN_ALL
 void                sp_capture_condition_unref                  (SpCaptureCondition       *self);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureCondition *sp_capture_condition_ref                    (SpCaptureCondition       *self);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureCondition *sp_capture_condition_new_and                (SpCaptureCondition       *left,
                                                                  SpCaptureCondition       *right);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureCondition *sp_capture_condition_new_where_type_in      (guint                     n_types,
                                                                  const SpCaptureFrameType *types);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureCondition *sp_capture_condition_new_where_time_between (gint64                    begin_time,
                                                                  gint64                    end_time);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureCondition *sp_capture_condition_new_where_pid_in       (guint                     n_pids,
                                                                  const gint32             *pids);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureCondition *sp_capture_condition_new_where_counter_in   (guint                     n_counters,
                                                                  const guint              *counters);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_condition_match                  (const SpCaptureCondition *self,
                                                                  const SpCaptureFrame     *frame);
 

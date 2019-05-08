@@ -20,10 +20,11 @@
 
 #pragma once
 
-#include <glib.h>
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
+SYSPROF_AVAILABLE_IN_ALL
 int sp_memfd_create (const gchar *desc);
 
 G_END_DECLS

@@ -21,52 +21,71 @@
 #pragma once
 
 #include "sp-capture-types.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 typedef struct _SpCaptureReader SpCaptureReader;
 
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureReader                   *sp_capture_reader_new                 (const gchar         *filename,
                                                                           GError             **error);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureReader                   *sp_capture_reader_new_from_fd         (int                  fd,
                                                                           GError             **error);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureReader                   *sp_capture_reader_copy                (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureReader                   *sp_capture_reader_ref                 (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 void                               sp_capture_reader_unref               (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const gchar                       *sp_capture_reader_get_filename        (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const gchar                       *sp_capture_reader_get_time            (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 gint64                             sp_capture_reader_get_start_time      (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 gint64                             sp_capture_reader_get_end_time        (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean                           sp_capture_reader_skip                (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean                           sp_capture_reader_peek_type           (SpCaptureReader     *self,
                                                                           SpCaptureFrameType  *type);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean                           sp_capture_reader_peek_frame          (SpCaptureReader     *self,
                                                                           SpCaptureFrame      *frame);
+SYSPROF_AVAILABLE_IN_ALL
 const SpCaptureMap                *sp_capture_reader_read_map            (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SpCaptureMark               *sp_capture_reader_read_mark           (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SpCaptureExit               *sp_capture_reader_read_exit           (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SpCaptureFork               *sp_capture_reader_read_fork           (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SpCaptureTimestamp          *sp_capture_reader_read_timestamp      (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SpCaptureProcess            *sp_capture_reader_read_process        (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SpCaptureSample             *sp_capture_reader_read_sample         (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 GHashTable                        *sp_capture_reader_read_jitmap         (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SpCaptureFrameCounterDefine *sp_capture_reader_read_counter_define (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SpCaptureFrameCounterSet    *sp_capture_reader_read_counter_set    (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean                           sp_capture_reader_reset               (SpCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean                           sp_capture_reader_splice              (SpCaptureReader     *self,
                                                                           SpCaptureWriter     *dest,
                                                                           GError             **error);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean                           sp_capture_reader_save_as             (SpCaptureReader     *self,
                                                                           const gchar         *filename,
                                                                           GError             **error);
 
-#ifdef SP_ENABLE_GOBJECT
-# define SP_TYPE_CAPTURE_READER (sp_capture_reader_get_type())
-  GType sp_capture_reader_get_type (void);
-#endif
-
-#if GLIB_CHECK_VERSION(2, 44, 0)
-  G_DEFINE_AUTOPTR_CLEANUP_FUNC (SpCaptureReader, sp_capture_reader_unref)
-#endif
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SpCaptureReader, sp_capture_reader_unref)
 
 G_END_DECLS

@@ -1,20 +1,24 @@
+tools_deps = [
+  libshared_dep,
+  libsysprof_capture_dep,
+]
 
-sysprof_cli = executable('sysprof-cli', 'sysprof-cli.c',
-  dependencies: libsysprof_dep,
-   install_dir: get_option('bindir'),
-       install: true,
-)
+if host_machine.system() == 'linux'
+  sysprof_cli = executable('sysprof-cli', 'sysprof-cli.c',
+    dependencies: tools_deps + [libsysprof_dep],
+     install_dir: get_option('bindir'),
+         install: true,
+  )
+endif
 
 sysprof_cat = executable('sysprof-cat', 'sysprof-cat.c',
-  dependencies: libsysprof_capture_dep,
+  dependencies: tools_deps,
    install_dir: get_option('bindir'),
        install: true,
-           pie: true,
 )
 
 sysprof_dump = executable('sysprof-dump', 'sysprof-dump.c',
-  dependencies: libsysprof_capture_dep,
+  dependencies: tools_deps,
    install_dir: get_option('bindir'),
        install: true,
-           pie: true,
 )

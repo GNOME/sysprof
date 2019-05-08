@@ -340,7 +340,7 @@ sp_callgraph_profile_generate_worker (GTask        *task,
       last_context = SP_ADDRESS_CONTEXT_NONE;
 #endif
 
-      node = stack_stash_add_trace (stash, sample->addrs, sample->n_addrs, 1);
+      node = stack_stash_add_trace (stash, (gpointer)sample->addrs, sample->n_addrs, 1);
 
       for (iter = node; iter != NULL; iter = iter->parent)
         len++;
@@ -410,7 +410,7 @@ sp_callgraph_profile_generate_worker (GTask        *task,
 
       g_array_index (resolved, guint64, len++) = POINTER_TO_U64 ("[Everything]");
 
-      stack_stash_add_trace (resolved_stash, (SpAddress *)(gpointer)resolved->data, len, 1);
+      stack_stash_add_trace (resolved_stash, (gpointer)resolved->data, len, 1);
     }
 
   ret = TRUE;

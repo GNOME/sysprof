@@ -12,6 +12,7 @@ libsysprof_capture_sources = [
   'sp-capture-cursor.c',
   'sp-capture-reader.c',
   'sp-capture-writer.c',
+  'sp-capture-util.c',
 ]
 
 configure_file(

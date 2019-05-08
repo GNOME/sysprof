@@ -4,6 +4,7 @@ shared_sources = [
   'sp-error.c',
   'sp-line-reader.c',
   'sp-platform.c',
+  'sp-kallsyms.c',
 ]
 
 shared_public_headers = [
@@ -11,13 +12,10 @@ shared_public_headers = [
   'sp-clock.h',
   'sp-error.h',
   'sp-platform.h',
+  'sp-kallsyms.h',
 ]
 
 install_headers(shared_public_headers, subdir: sysprof_header_subdir)
-
-if host_machine.system() == 'linux'
-  shared_sources += ['sp-kallsyms.c']
-endif
 
 libshared_deps = [
   dependency('glib-2.0'),

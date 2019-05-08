@@ -29,12 +29,7 @@ G_BEGIN_DECLS
 # include "sp-local-profiler.h"
 # include "sp-profile.h"
 # include "sp-profiler.h"
-# include "sp-gjs-source.h"
-# include "sp-hostinfo-source.h"
 # include "sp-map-lookaside.h"
-# include "sp-memory-source.h"
-# include "sp-perf-source.h"
-# include "sp-proc-source.h"
 # include "sp-source.h"
 # include "sp-elf-symbol-resolver.h"
 # include "sp-jitmap-symbol-resolver.h"
@@ -44,6 +39,15 @@ G_BEGIN_DECLS
 # include "sp-symbol-resolver.h"
 # include "sp-map-lookaside.h"
 # include "sp-selection.h"
+
+#ifdef __linux__
+# include "sp-gjs-source.h"
+# include "sp-hostinfo-source.h"
+# include "sp-memory-source.h"
+# include "sp-perf-source.h"
+# include "sp-proc-source.h"
+#endif
+
 #undef SYSPROF_INSIDE
 
 G_END_DECLS

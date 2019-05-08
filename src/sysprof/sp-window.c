@@ -400,6 +400,7 @@ static void
 sp_window_add_sources (SpWindow   *window,
                        SpProfiler *profiler)
 {
+#ifdef __linux__
   g_autoptr(SpSource) host_source = NULL;
   g_autoptr(SpSource) proc_source = NULL;
   g_autoptr(SpSource) perf_source = NULL;
@@ -419,6 +420,7 @@ sp_window_add_sources (SpWindow   *window,
 
   memory_source = sp_memory_source_new ();
   sp_profiler_add_source (profiler, memory_source);
+#endif
 }
 
 static void

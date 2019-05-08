@@ -18,7 +18,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <linux/perf_event.h>
+#ifdef __linux__
+# include <linux/perf_event.h>
+#else
+# include "sp-address-fallback.h"
+#endif
 
 #include "sp-address.h"
 

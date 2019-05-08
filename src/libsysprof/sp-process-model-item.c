@@ -19,7 +19,9 @@
 #include <string.h>
 
 #include "sp-process-model-item.h"
-#include "sp-proc-source.h"
+#ifdef __linux__
+# include "sp-proc-source.h"
+#endif
 
 struct _SpProcessModelItem
 {
@@ -134,19 +136,19 @@ sp_process_model_item_init (SpProcessModelItem *self)
 SpProcessModelItem *
 sp_process_model_item_new (GPid pid)
 {
+  g_autofree gchar *cmdline = NULL;
   SpProcessModelItem *ret;
-  gchar *cmdline;
-  gboolean is_kernel;
+  gboolean is_kernel = FALSE;
 
+#ifdef __linux__
   cmdline = sp_proc_source_get_command_line (pid, &is_kernel);
+#endif
 
   ret = g_object_new (SP_TYPE_PROCESS_MODEL_ITEM,
                       "command-line", cmdline,
                       "pid", (int)pid,
                       NULL);
   ret->is_kernel = is_kernel;
-
-  g_free (cmdline);
 
   return ret;
 }

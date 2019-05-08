@@ -28,8 +28,10 @@ sp_clock_init (void)
   static const gint clock_ids[] = {
     CLOCK_MONOTONIC,
     CLOCK_MONOTONIC_RAW,
+#ifdef __linux__
     CLOCK_MONOTONIC_COARSE,
     CLOCK_REALTIME_COARSE,
+#endif
     CLOCK_REALTIME,
   };
 

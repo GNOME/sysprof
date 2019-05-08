@@ -1,4 +1,4 @@
-libsysprof_capture_headers = [
+libsysprof_capture_headers = files([
   'sp-address.h',
   'sp-clock.h',
   'sp-capture-condition.h',
@@ -9,9 +9,9 @@ libsysprof_capture_headers = [
   'sp-platform.h',
   'sysprof-capture.h',
   'sysprof-version-macros.h',
-]
+])
 
-libsysprof_capture_sources = [
+libsysprof_capture_sources = files([
   'sp-address.c',
   'sp-capture-condition.c',
   'sp-capture-cursor.c',
@@ -20,7 +20,7 @@ libsysprof_capture_sources = [
   'sp-capture-writer.c',
   'sp-clock.c',
   'sp-platform.c',
-]
+])
 
 configure_file(
           input: 'sysprof-version.h.in',
@@ -33,8 +33,6 @@ libsysprof_capture_deps = [
   dependency('glib-2.0', version: glib_req_version),
 ]
 
-install_headers(libsysprof_capture_headers, subdir: sysprof_header_subdir)
-
 libsysprof_capture = static_library(
   'sysprof-capture-@0@'.format(libsysprof_api_version),
   libsysprof_capture_sources,
@@ -46,10 +44,12 @@ libsysprof_capture = static_library(
   gnu_symbol_visibility: 'hidden',
 )
 
+libsysprof_capture_include_dirs = include_directories('.')
+
 libsysprof_capture_dep = declare_dependency(
            link_whole: libsysprof_capture,
          dependencies: libsysprof_capture_deps,
-  include_directories: include_directories('.'),
+  include_directories: libsysprof_capture_include_dirs,
 )
 
 pkgconfig.generate(

@@ -34,7 +34,7 @@ static G_LOCK_DEFINE (_sp_io_sync);
 #endif
 
 size_t
-_sp_getpagesize (void)
+(_sp_getpagesize) (void)
 {
   static size_t pgsz = 0;
 
@@ -53,10 +53,10 @@ _sp_getpagesize (void)
 }
 
 ssize_t
-_sp_pread (int     fd,
-           void   *buf,
-           size_t  count,
-           off_t   offset)
+(_sp_pread) (int     fd,
+             void   *buf,
+             size_t  count,
+             off_t   offset)
 {
 #ifdef G_OS_WIN32
   ssize_t ret = -1;
@@ -75,10 +75,10 @@ _sp_pread (int     fd,
 }
 
 ssize_t
-_sp_pwrite (int         fd,
-            const void *buf,
-            size_t      count,
-            off_t       offset)
+(_sp_pwrite) (int         fd,
+              const void *buf,
+              size_t      count,
+              off_t       offset)
 {
 #ifdef G_OS_WIN32
   ssize_t ret = -1;
@@ -97,9 +97,9 @@ _sp_pwrite (int         fd,
 }
 
 ssize_t
-_sp_write (int         fd,
-           const void *buf,
-           size_t      count)
+(_sp_write) (int         fd,
+             const void *buf,
+             size_t      count)
 {
 #ifdef G_OS_WIN32
   ssize_t ret = -1;
@@ -117,7 +117,7 @@ _sp_write (int         fd,
 }
 
 gint32
-_sp_getpid (void)
+(_sp_getpid) (void)
 {
 #ifdef G_OS_WIN32
   return _getpid ();
@@ -127,10 +127,10 @@ _sp_getpid (void)
 }
 
 ssize_t
-_sp_sendfile (int     out_fd,
-              int     in_fd,
-              off_t  *offset,
-              size_t  count)
+(_sp_sendfile) (int     out_fd,
+                int     in_fd,
+                off_t  *offset,
+                size_t  count)
 {
   ssize_t total = 0;
   off_t wpos = 0;

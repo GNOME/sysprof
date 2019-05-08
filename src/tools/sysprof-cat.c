@@ -105,7 +105,7 @@ gint
 main (gint   argc,
       gchar *argv[])
 {
-  g_autoptr(SpCaptureWriter) writer = NULL;
+  g_autoptr(SysprofCaptureWriter) writer = NULL;
   g_autofree gchar *contents = NULL;
   g_autofree gchar *tmpname = NULL;
   gint64 first_start_time = G_MAXINT64;
@@ -137,13 +137,13 @@ main (gint   argc,
       return EXIT_FAILURE;
     }
 
-  writer = sp_capture_writer_new_from_fd (fd, 4096*4);
+  writer = sysprof_capture_writer_new_from_fd (fd, 4096*4);
 
   for (guint i = 1; i < argc; i++)
     {
       g_autoptr(GError) error = NULL;
-      g_autoptr(SpCaptureReader) reader = sp_capture_reader_new (argv[i], &error);
-      SpCaptureFrameType type;
+      g_autoptr(SysprofCaptureReader) reader = sysprof_capture_reader_new (argv[i], &error);
+      SysprofCaptureFrameType type;
       gint64 start_time;
 
       if (reader == NULL)
@@ -156,16 +156,16 @@ main (gint   argc,
       translate_table_clear (TRANSLATE_CTR);
       translate_table_clear (TRANSLATE_ADDR);
 
-      start_time = sp_capture_reader_get_start_time (reader);
+      start_time = sysprof_capture_reader_get_start_time (reader);
 
       if (start_time < first_start_time)
         first_start_time = start_time;
 
-      while (sp_capture_reader_peek_type (reader, &type))
+      while (sysprof_capture_reader_peek_type (reader, &type))
         {
-          SpCaptureFrame fr;
+          SysprofCaptureFrame fr;
 
-          if (sp_capture_reader_peek_frame (reader, &fr))
+          if (sysprof_capture_reader_peek_frame (reader, &fr))
             {
               if (fr.time > end_time)
                 end_time = fr.time;
@@ -173,28 +173,28 @@ main (gint   argc,
 
           switch (type)
             {
-            case SP_CAPTURE_FRAME_TIMESTAMP:
+            case SYSPROF_CAPTURE_FRAME_TIMESTAMP:
               {
-                const SpCaptureTimestamp *frame;
+                const SysprofCaptureTimestamp *frame;
 
-                if (!(frame = sp_capture_reader_read_timestamp (reader)))
+                if (!(frame = sysprof_capture_reader_read_timestamp (reader)))
                   goto panic;
 
-                sp_capture_writer_add_timestamp (writer,
+                sysprof_capture_writer_add_timestamp (writer,
                                                  frame->frame.time,
                                                  frame->frame.cpu,
                                                  frame->frame.pid);
                 break;
               }
 
-            case SP_CAPTURE_FRAME_MAP:
+            case SYSPROF_CAPTURE_FRAME_MAP:
               {
-                const SpCaptureMap *frame;
+                const SysprofCaptureMap *frame;
 
-                if (!(frame = sp_capture_reader_read_map (reader)))
+                if (!(frame = sysprof_capture_reader_read_map (reader)))
                   goto panic;
 
-                sp_capture_writer_add_map (writer,
+                sysprof_capture_writer_add_map (writer,
                                            frame->frame.time,
                                            frame->frame.cpu,
                                            frame->frame.pid,
@@ -206,14 +206,14 @@ main (gint   argc,
                 break;
               }
 
-            case SP_CAPTURE_FRAME_MARK:
+            case SYSPROF_CAPTURE_FRAME_MARK:
               {
-                const SpCaptureMark *frame;
+                const SysprofCaptureMark *frame;
 
-                if (!(frame = sp_capture_reader_read_mark (reader)))
+                if (!(frame = sysprof_capture_reader_read_mark (reader)))
                   goto panic;
 
-                sp_capture_writer_add_mark (writer,
+                sysprof_capture_writer_add_mark (writer,
                                             frame->frame.time,
                                             frame->frame.cpu,
                                             frame->frame.pid,
@@ -228,14 +228,14 @@ main (gint   argc,
                 break;
               }
 
-            case SP_CAPTURE_FRAME_PROCESS:
+            case SYSPROF_CAPTURE_FRAME_PROCESS:
               {
-                const SpCaptureProcess *frame;
+                const SysprofCaptureProcess *frame;
 
-                if (!(frame = sp_capture_reader_read_process (reader)))
+                if (!(frame = sysprof_capture_reader_read_process (reader)))
                   goto panic;
 
-                sp_capture_writer_add_process (writer,
+                sysprof_capture_writer_add_process (writer,
                                                frame->frame.time,
                                                frame->frame.cpu,
                                                frame->frame.pid,
@@ -243,14 +243,14 @@ main (gint   argc,
                 break;
               }
 
-            case SP_CAPTURE_FRAME_FORK:
+            case SYSPROF_CAPTURE_FRAME_FORK:
               {
-                const SpCaptureFork *frame;
+                const SysprofCaptureFork *frame;
 
-                if (!(frame = sp_capture_reader_read_fork (reader)))
+                if (!(frame = sysprof_capture_reader_read_fork (reader)))
                   goto panic;
 
-                sp_capture_writer_add_fork (writer,
+                sysprof_capture_writer_add_fork (writer,
                                             frame->frame.time,
                                             frame->frame.cpu,
                                             frame->frame.pid,
@@ -258,34 +258,34 @@ main (gint   argc,
                 break;
               }
 
-            case SP_CAPTURE_FRAME_EXIT:
+            case SYSPROF_CAPTURE_FRAME_EXIT:
               {
-                const SpCaptureExit *frame;
+                const SysprofCaptureExit *frame;
 
-                if (!(frame = sp_capture_reader_read_exit (reader)))
+                if (!(frame = sysprof_capture_reader_read_exit (reader)))
                   goto panic;
 
-                sp_capture_writer_add_exit (writer,
+                sysprof_capture_writer_add_exit (writer,
                                             frame->frame.time,
                                             frame->frame.cpu,
                                             frame->frame.pid);
                 break;
               }
 
-            case SP_CAPTURE_FRAME_JITMAP:
+            case SYSPROF_CAPTURE_FRAME_JITMAP:
               {
                 GHashTable *jitmap;
                 GHashTableIter iter;
                 const gchar *name;
                 guint64 addr;
 
-                if (!(jitmap = sp_capture_reader_read_jitmap (reader)))
+                if (!(jitmap = sysprof_capture_reader_read_jitmap (reader)))
                   goto panic;
 
                 g_hash_table_iter_init (&iter, jitmap);
                 while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&name))
                   {
-                    guint64 replace = sp_capture_writer_add_jitmap (writer, name);
+                    guint64 replace = sysprof_capture_writer_add_jitmap (writer, name);
                     /* We need to keep a table of replacement addresses so that
                      * we can translate the samples into the destination address
                      * space that we synthesized for the address identifier.
@@ -300,20 +300,20 @@ main (gint   argc,
                 break;
               }
 
-            case SP_CAPTURE_FRAME_SAMPLE:
+            case SYSPROF_CAPTURE_FRAME_SAMPLE:
               {
-                const SpCaptureSample *frame;
+                const SysprofCaptureSample *frame;
 
-                if (!(frame = sp_capture_reader_read_sample (reader)))
+                if (!(frame = sysprof_capture_reader_read_sample (reader)))
                   goto panic;
 
                 {
-                  SpCaptureAddress addrs[frame->n_addrs];
+                  SysprofCaptureAddress addrs[frame->n_addrs];
 
                   for (guint z = 0; z < frame->n_addrs; z++)
                     addrs[z] = translate_table_translate (TRANSLATE_ADDR, frame->addrs[z]);
 
-                  sp_capture_writer_add_sample (writer,
+                  sysprof_capture_writer_add_sample (writer,
                                                 frame->frame.time,
                                                 frame->frame.cpu,
                                                 frame->frame.pid,
@@ -325,22 +325,22 @@ main (gint   argc,
                 break;
               }
 
-            case SP_CAPTURE_FRAME_CTRDEF:
+            case SYSPROF_CAPTURE_FRAME_CTRDEF:
               {
-                const SpCaptureFrameCounterDefine *frame;
+                const SysprofCaptureFrameCounterDefine *frame;
 
-                if (!(frame = sp_capture_reader_read_counter_define (reader)))
+                if (!(frame = sysprof_capture_reader_read_counter_define (reader)))
                   goto panic;
 
                 {
-                  g_autoptr(GArray) counter = g_array_new (FALSE, FALSE, sizeof (SpCaptureCounter));
+                  g_autoptr(GArray) counter = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounter));
 
                   for (guint z = 0; z < frame->n_counters; z++)
                     {
-                      SpCaptureCounter c = frame->counters[z];
+                      SysprofCaptureCounter c = frame->counters[z];
                       guint src = c.id;
 
-                      c.id = sp_capture_writer_request_counter (writer, 1);
+                      c.id = sysprof_capture_writer_request_counter (writer, 1);
 
                       if (c.id != src)
                         translate_table_add (TRANSLATE_CTR, src, c.id);
@@ -348,7 +348,7 @@ main (gint   argc,
                       g_array_append_val (counter, c);
                     }
 
-                  sp_capture_writer_define_counters (writer,
+                  sysprof_capture_writer_define_counters (writer,
                                                      frame->frame.time,
                                                      frame->frame.cpu,
                                                      frame->frame.pid,
@@ -361,27 +361,27 @@ main (gint   argc,
                 break;
               }
 
-            case SP_CAPTURE_FRAME_CTRSET:
+            case SYSPROF_CAPTURE_FRAME_CTRSET:
               {
-                const SpCaptureFrameCounterSet *frame;
+                const SysprofCaptureFrameCounterSet *frame;
 
-                if (!(frame = sp_capture_reader_read_counter_set (reader)))
+                if (!(frame = sysprof_capture_reader_read_counter_set (reader)))
                   goto panic;
 
                 {
                   g_autoptr(GArray) ids = g_array_new (FALSE, FALSE, sizeof (guint));
-                  g_autoptr(GArray) values = g_array_new (FALSE, FALSE, sizeof (SpCaptureCounterValue));
+                  g_autoptr(GArray) values = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounterValue));
 
                   for (guint z = 0; z < frame->n_values; z++)
                     {
-                      const SpCaptureCounterValues *v = &frame->values[z];
+                      const SysprofCaptureCounterValues *v = &frame->values[z];
 
                       for (guint y = 0; y < G_N_ELEMENTS (v->ids); y++)
                         {
                           if (v->ids[y])
                             {
                               guint dst = translate_table_translate (TRANSLATE_CTR, v->ids[y]);
-                              SpCaptureCounterValue value = v->values[y];
+                              SysprofCaptureCounterValue value = v->values[y];
 
                               g_array_append_val (ids, dst);
                               g_array_append_val (values, value);
@@ -391,12 +391,12 @@ main (gint   argc,
 
                   g_assert (ids->len == values->len);
 
-                  sp_capture_writer_set_counters (writer,
+                  sysprof_capture_writer_set_counters (writer,
                                                   frame->frame.time,
                                                   frame->frame.cpu,
                                                   frame->frame.pid,
                                                   (const guint *)(gpointer)ids->data,
-                                                  (const SpCaptureCounterValue *)(gpointer)values->data,
+                                                  (const SysprofCaptureCounterValue *)(gpointer)values->data,
                                                   ids->len);
                 }
 
@@ -409,10 +409,10 @@ main (gint   argc,
         }
     }
 
-  sp_capture_writer_flush (writer);
+  sysprof_capture_writer_flush (writer);
 
   /* do this after flushing as it uses pwrite() to replace data */
-  _sp_capture_writer_set_time_range (writer, first_start_time, end_time);
+  _sysprof_capture_writer_set_time_range (writer, first_start_time, end_time);
 
   if (g_file_get_contents (tmpname, &contents, &len, NULL))
     write (STDOUT_FILENO, contents, len);

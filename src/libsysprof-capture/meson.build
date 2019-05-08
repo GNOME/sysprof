@@ -1,25 +1,25 @@
 libsysprof_capture_headers = files([
-  'sp-address.h',
-  'sp-clock.h',
-  'sp-capture-condition.h',
-  'sp-capture-cursor.h',
-  'sp-capture-reader.h',
-  'sp-capture-types.h',
-  'sp-capture-writer.h',
-  'sp-platform.h',
+  'sysprof-address.h',
+  'sysprof-clock.h',
+  'sysprof-capture-condition.h',
+  'sysprof-capture-cursor.h',
+  'sysprof-capture-reader.h',
+  'sysprof-capture-types.h',
+  'sysprof-capture-writer.h',
+  'sysprof-platform.h',
   'sysprof-capture.h',
   'sysprof-version-macros.h',
 ])
 
 libsysprof_capture_sources = files([
-  'sp-address.c',
-  'sp-capture-condition.c',
-  'sp-capture-cursor.c',
-  'sp-capture-reader.c',
-  'sp-capture-util.c',
-  'sp-capture-writer.c',
-  'sp-clock.c',
-  'sp-platform.c',
+  'sysprof-address.c',
+  'sysprof-capture-condition.c',
+  'sysprof-capture-cursor.c',
+  'sysprof-capture-reader.c',
+  'sysprof-capture-util.c',
+  'sysprof-capture-writer.c',
+  'sysprof-clock.c',
+  'sysprof-platform.c',
 ])
 
 configure_file(

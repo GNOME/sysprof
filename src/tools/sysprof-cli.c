@@ -31,7 +31,7 @@
 #include <sysprof.h>
 
 static GMainLoop  *main_loop;
-static SpProfiler *profiler;
+static SysprofProfiler *profiler;
 static int efd = -1;
 static int exit_code = EXIT_SUCCESS;
 
@@ -48,7 +48,7 @@ dispatch (GSource     *source,
           GSourceFunc  callback,
           gpointer     callback_data)
 {
-  sp_profiler_stop (profiler);
+  sysprof_profiler_stop (profiler);
   g_main_loop_quit (main_loop);
   return G_SOURCE_REMOVE;
 }
@@ -58,18 +58,18 @@ static GSourceFuncs source_funcs = {
 };
 
 static void
-profiler_stopped (SpProfiler *profiler_,
+profiler_stopped (SysprofProfiler *profiler_,
                   GMainLoop  *main_loop_)
 {
   g_main_loop_quit (main_loop_);
 }
 
 static void
-profiler_failed (SpProfiler   *profiler_,
+profiler_failed (SysprofProfiler   *profiler_,
                  const GError *reason,
                  GMainLoop    *main_loop_)
 {
-  g_assert (SP_IS_PROFILER (profiler_));
+  g_assert (SYSPROF_IS_PROFILER (profiler_));
   g_assert (reason != NULL);
 
   g_printerr ("Failure: %s\n", reason->message);
@@ -80,8 +80,8 @@ gint
 main (gint   argc,
       gchar *argv[])
 {
-  SpCaptureWriter *writer;
-  SpSource *source;
+  SysprofCaptureWriter *writer;
+  SysprofSource *source;
   GMainContext *main_context;
   GOptionContext *context;
   const gchar *filename = "capture.syscap";
@@ -105,7 +105,7 @@ main (gint   argc,
     { NULL }
   };
 
-  sp_clock_init ();
+  sysprof_clock_init ();
 
   context = g_option_context_new (_("[CAPTURE_FILE] — Sysprof"));
   g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
@@ -143,7 +143,7 @@ main (gint   argc,
   g_source_add_unix_fd (gsource, efd, G_IO_IN);
   g_source_attach (gsource, NULL);
 
-  profiler = sp_local_profiler_new ();
+  profiler = sysprof_local_profiler_new ();
 
   g_signal_connect (profiler,
                     "failed",
@@ -202,41 +202,41 @@ main (gint   argc,
         }
     }
 
-  writer = sp_capture_writer_new_from_fd (fd, 0);
-  sp_profiler_set_writer (profiler, writer);
+  writer = sysprof_capture_writer_new_from_fd (fd, 0);
+  sysprof_profiler_set_writer (profiler, writer);
 
-  source = sp_proc_source_new ();
-  sp_profiler_add_source (profiler, source);
+  source = sysprof_proc_source_new ();
+  sysprof_profiler_add_source (profiler, source);
   g_object_unref (source);
 
-  source = sp_perf_source_new ();
-  sp_profiler_add_source (profiler, source);
+  source = sysprof_perf_source_new ();
+  sysprof_profiler_add_source (profiler, source);
   g_object_unref (source);
 
   if (!no_cpu)
     {
-      source = sp_hostinfo_source_new ();
-      sp_profiler_add_source (profiler, source);
+      source = sysprof_hostinfo_source_new ();
+      sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }
 
   if (!no_memory)
     {
-      source = sp_memory_source_new ();
-      sp_profiler_add_source (profiler, source);
+      source = sysprof_memory_source_new ();
+      sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }
 
   if (pid != -1)
     {
-      sp_profiler_set_whole_system (profiler, FALSE);
-      sp_profiler_add_pid (profiler, pid);
+      sysprof_profiler_set_whole_system (profiler, FALSE);
+      sysprof_profiler_add_pid (profiler, pid);
     }
 
   signal (SIGINT, signal_handler);
   signal (SIGTERM, signal_handler);
 
-  sp_profiler_start (profiler);
+  sysprof_profiler_start (profiler);
 
   /* Restore the process if we stopped it */
   if (command)
@@ -252,7 +252,7 @@ main (gint   argc,
 
   close (efd);
 
-  g_clear_pointer (&writer, sp_capture_writer_unref);
+  g_clear_pointer (&writer, sysprof_capture_writer_unref);
   g_clear_object (&profiler);
   g_clear_pointer (&main_loop, g_main_loop_unref);
   g_clear_pointer (&context, g_option_context_free);

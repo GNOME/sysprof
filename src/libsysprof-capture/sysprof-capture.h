@@ -26,12 +26,12 @@ G_BEGIN_DECLS
 
 #define SYSPROF_CAPTURE_INSIDE
 
-# include "sp-address.h"
-# include "sp-capture-condition.h"
-# include "sp-capture-cursor.h"
-# include "sp-capture-reader.h"
-# include "sp-capture-writer.h"
-# include "sp-clock.h"
+# include "sysprof-address.h"
+# include "sysprof-capture-condition.h"
+# include "sysprof-capture-cursor.h"
+# include "sysprof-capture-reader.h"
+# include "sysprof-capture-writer.h"
+# include "sysprof-clock.h"
 # include "sysprof-version.h"
 # include "sysprof-version-macros.h"
 

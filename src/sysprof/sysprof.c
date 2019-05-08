@@ -20,18 +20,18 @@
 #include <gtk/gtk.h>
 #include <sysprof.h>
 
-#include "sp-application.h"
+#include "sysprof-application.h"
 
 gint
 main (gint argc,
       gchar *argv[])
 {
-  g_autoptr(SpApplication) app = NULL;
+  g_autoptr(SysprofApplication) app = NULL;
   gint ret;
 
-  sp_clock_init ();
+  sysprof_clock_init ();
 
-  app = sp_application_new ();
+  app = sysprof_application_new ();
   ret = g_application_run (G_APPLICATION (app), argc, argv);
 
   return ret;

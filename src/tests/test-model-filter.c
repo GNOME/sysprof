@@ -51,14 +51,14 @@ static void
 test_basic (void)
 {
   GListStore *model;
-  SpModelFilter *filter;
+  SysprofModelFilter *filter;
   TestItem *item;
   guint i;
 
   model = g_list_store_new (TEST_TYPE_ITEM);
   g_assert (model);
 
-  filter = sp_model_filter_new (G_LIST_MODEL (model));
+  filter = sysprof_model_filter_new (G_LIST_MODEL (model));
   g_assert (filter);
 
   for (i = 0; i < 1000; i++)
@@ -72,7 +72,7 @@ test_basic (void)
   g_assert_cmpint (1000, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
 
   g_assert_cmpint (1000, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
-  sp_model_filter_set_filter_func (filter, filter_func1, NULL, NULL);
+  sysprof_model_filter_set_filter_func (filter, filter_func1, NULL, NULL);
   g_assert_cmpint (500, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
 
   for (i = 0; i < 500; i++)
@@ -89,10 +89,10 @@ test_basic (void)
   g_assert_cmpint (500, ==, g_list_model_get_n_items (G_LIST_MODEL (model)));
   g_assert_cmpint (0, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
 
-  sp_model_filter_set_filter_func (filter, NULL, NULL, NULL);
+  sysprof_model_filter_set_filter_func (filter, NULL, NULL, NULL);
   g_assert_cmpint (500, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
 
-  sp_model_filter_set_filter_func (filter, filter_func2, NULL, NULL);
+  sysprof_model_filter_set_filter_func (filter, filter_func2, NULL, NULL);
   g_assert_cmpint (500, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
 
   {
@@ -106,7 +106,7 @@ test_basic (void)
   g_assert_cmpint (1, ==, g_list_model_get_n_items (G_LIST_MODEL (model)));
   g_assert_cmpint (1, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
 
-  sp_model_filter_set_filter_func (filter, NULL, NULL, NULL);
+  sysprof_model_filter_set_filter_func (filter, NULL, NULL, NULL);
   g_assert_cmpint (1, ==, g_list_model_get_n_items (G_LIST_MODEL (model)));
   g_assert_cmpint (1, ==, g_list_model_get_n_items (G_LIST_MODEL (filter)));
 
@@ -124,8 +124,8 @@ static gboolean
 filter_keyword_cb (GObject  *object,
                    gpointer  user_data)
 {
-  SpProcessModelItem *item = SP_PROCESS_MODEL_ITEM (object);
-  const gchar *haystack = sp_process_model_item_get_command_line (item);
+  SysprofProcessModelItem *item = SYSPROF_PROCESS_MODEL_ITEM (object);
+  const gchar *haystack = sysprof_process_model_item_get_command_line (item);
   const gchar *needle = user_data;
 
   return strstr (haystack, needle) != NULL;
@@ -134,34 +134,34 @@ filter_keyword_cb (GObject  *object,
 static void
 test_process (void)
 {
-  SpProcessModel *model = sp_process_model_new ();
-  SpModelFilter *filter;
+  SysprofProcessModel *model = sysprof_process_model_new ();
+  SysprofModelFilter *filter;
   static gchar *searches[] = {
     "a", "b", "foo", "bar", "gnome", "gnome-test",
     "libexec", "/", ":", "gsd-",
   };
 
-  filter = sp_model_filter_new (G_LIST_MODEL (model));
+  filter = sysprof_model_filter_new (G_LIST_MODEL (model));
 
-  sp_process_model_reload (model);
+  sysprof_process_model_reload (model);
 
   for (guint i = 0; i < G_N_ELEMENTS (searches); i++)
     {
       const gchar *needle = searches[i];
       guint n_items;
 
-      sp_model_filter_set_filter_func (filter, filter_keyword_cb, g_strdup (needle), g_free);
+      sysprof_model_filter_set_filter_func (filter, filter_keyword_cb, g_strdup (needle), g_free);
 
       n_items = g_list_model_get_n_items (G_LIST_MODEL (filter));
 
       for (guint j = 0; j < n_items; j++)
         {
-          g_autoptr(SpProcessModelItem) item = g_list_model_get_item (G_LIST_MODEL (filter), j);
+          g_autoptr(SysprofProcessModelItem) item = g_list_model_get_item (G_LIST_MODEL (filter), j);
 
-          g_assert (SP_IS_PROCESS_MODEL_ITEM (item));
+          g_assert (SYSPROF_IS_PROCESS_MODEL_ITEM (item));
           g_assert (filter_keyword_cb (G_OBJECT (item), (gchar *)needle));
 
-          //g_print ("%s: %s\n", needle, sp_process_model_item_get_command_line (item));
+          //g_print ("%s: %s\n", needle, sysprof_process_model_item_get_command_line (item));
         }
     }
 
@@ -174,7 +174,7 @@ static guint last_n_removed = 0;
 static guint last_changed_position = 0;
 
 static void
-model_items_changed_cb (SpModelFilter *filter,
+model_items_changed_cb (SysprofModelFilter *filter,
                         guint          position,
                         guint          n_removed,
                         guint          n_added,
@@ -187,7 +187,7 @@ model_items_changed_cb (SpModelFilter *filter,
 
 
 static void
-filter_items_changed_cb (SpModelFilter *filter,
+filter_items_changed_cb (SysprofModelFilter *filter,
                          guint          position,
                          guint          n_removed,
                          guint          n_added,
@@ -201,7 +201,7 @@ filter_items_changed_cb (SpModelFilter *filter,
 static void
 test_items_changed (void)
 {
-  SpModelFilter *filter;
+  SysprofModelFilter *filter;
   GListStore *model;
   guint i;
 
@@ -210,7 +210,7 @@ test_items_changed (void)
 
   g_signal_connect (model, "items-changed", G_CALLBACK (model_items_changed_cb), NULL);
 
-  filter = sp_model_filter_new (G_LIST_MODEL (model));
+  filter = sysprof_model_filter_new (G_LIST_MODEL (model));
   g_assert (filter);
 
   g_signal_connect_after (filter, "items-changed", G_CALLBACK (filter_items_changed_cb), model);
@@ -240,8 +240,8 @@ main (gint argc,
       gchar *argv[])
 {
   g_test_init (&argc, &argv, NULL);
-  g_test_add_func ("/SpModelFilter/basic", test_basic);
-  g_test_add_func ("/SpModelFilter/process", test_process);
-  g_test_add_func ("/SpModelFilter/items-changed", test_items_changed);
+  g_test_add_func ("/SysprofModelFilter/basic", test_basic);
+  g_test_add_func ("/SysprofModelFilter/process", test_process);
+  g_test_add_func ("/SysprofModelFilter/items-changed", test_items_changed);
   return g_test_run ();
 }

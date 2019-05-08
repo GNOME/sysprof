@@ -6,9 +6,9 @@ int
 main (gint argc,
       gchar *argv[])
 {
-  g_autoptr(SpKallsyms) kallsyms = NULL;
+  g_autoptr(SysprofKallsyms) kallsyms = NULL;
   const gchar *name;
-  SpAddress addr = 0;
+  SysprofAddress addr = 0;
   guint8 type;
 
   if (argc < 2)
@@ -17,9 +17,9 @@ main (gint argc,
       return EXIT_FAILURE;
     }
 
-  kallsyms = sp_kallsyms_new (argv[1]);
+  kallsyms = sysprof_kallsyms_new (argv[1]);
 
-  while (sp_kallsyms_next (kallsyms, &name, &addr, &type))
+  while (sysprof_kallsyms_next (kallsyms, &name, &addr, &type))
     {
       g_assert (name != NULL);
       g_assert (addr != 0);

@@ -52,10 +52,12 @@ libsysprof_private_sources = [
   'sp-line-reader.c',
 ]
 
+libsysprof_public_sources += libsysprof_capture_sources
+libsysprof_public_headers += libsysprof_capture_headers
+
 libsysprof_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('gio-unix-2.0', version: glib_req_version),
-  libsysprof_capture_dep,
 ]
 
 if host_machine.system() == 'linux'
@@ -93,6 +95,7 @@ libsysprof = shared_library(
   'sysprof-@0@'.format(libsysprof_api_version),
   libsysprof_public_sources + libsysprof_private_sources,
 
+    include_directories: [include_directories('.'), libsysprof_capture_include_dirs],
            dependencies: libsysprof_deps,
                  c_args: libsysprof_c_args,
                 install: true,
@@ -103,7 +106,7 @@ libsysprof = shared_library(
 libsysprof_dep = declare_dependency(
             link_with: libsysprof,
          dependencies: libsysprof_deps,
-  include_directories: include_directories('.'),
+  include_directories: [include_directories('.'), libsysprof_capture_include_dirs],
 )
 
 pkgconfig.generate(

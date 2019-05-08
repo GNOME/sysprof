@@ -76,6 +76,7 @@ gboolean            sp_capture_writer_add_sample      (SpCaptureWriter         *
                                                        gint64                   time,
                                                        gint                     cpu,
                                                        gint32                   pid,
+                                                       gint32                   tid,
                                                        const SpCaptureAddress  *addrs,
                                                        guint                    n_addrs);
 gboolean            sp_capture_writer_add_fork        (SpCaptureWriter         *self,

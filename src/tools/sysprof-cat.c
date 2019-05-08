@@ -317,6 +317,7 @@ main (gint   argc,
                                                 frame->frame.time,
                                                 frame->frame.cpu,
                                                 frame->frame.pid,
+                                                frame->tid,
                                                 addrs,
                                                 frame->n_addrs);
                 }

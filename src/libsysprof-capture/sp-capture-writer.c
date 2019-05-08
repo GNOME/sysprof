@@ -648,6 +648,7 @@ sp_capture_writer_add_sample (SpCaptureWriter        *self,
                               gint64                  time,
                               gint                    cpu,
                               gint32                  pid,
+                              gint32                  tid,
                               const SpCaptureAddress *addrs,
                               guint                   n_addrs)
 {
@@ -669,6 +670,7 @@ sp_capture_writer_add_sample (SpCaptureWriter        *self,
                                 time,
                                 SP_CAPTURE_FRAME_SAMPLE);
   ev->n_addrs = n_addrs;
+  ev->tid = tid;
 
   memcpy (ev->addrs, addrs, (n_addrs * sizeof (SpCaptureAddress)));
 

@@ -1,6 +1,6 @@
 /* sp-hostinfo-source.h
  *
- * Copyright 2016 Christian Hergert <christian@hergert.me>
+ * Copyright 2016-2019 Christian Hergert <christian@hergert.me>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_HOSTINFO_SOURCE_H
-#define SP_HOSTINFO_SOURCE_H
+#pragma once
+
+#include "sysprof-version-macros.h"
 
 #include "sp-source.h"
 
@@ -25,11 +28,10 @@ G_BEGIN_DECLS
 
 #define SP_TYPE_HOSTINFO_SOURCE (sp_hostinfo_source_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SpHostinfoSource, sp_hostinfo_source, SP, HOSTINFO_SOURCE, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
 SpSource *sp_hostinfo_source_new (void);
 
 G_END_DECLS
-
-#endif /* SP_HOSTINFO_SOURCE_H */
-

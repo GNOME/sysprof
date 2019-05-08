@@ -1,6 +1,6 @@
 /* sp-elf-symbol-resolver.h
  *
- * Copyright 2016 Christian Hergert <chergert@redhat.com>
+ * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_ELF_SYMBOL_RESOLVER_H
-#define SP_ELF_SYMBOL_RESOLVER_H
+#pragma once
+
+#include "sysprof-version-macros.h"
 
 #include "sp-symbol-resolver.h"
 
@@ -25,10 +28,10 @@ G_BEGIN_DECLS
 
 #define SP_TYPE_ELF_SYMBOL_RESOLVER (sp_elf_symbol_resolver_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SpElfSymbolResolver, sp_elf_symbol_resolver, SP, ELF_SYMBOL_RESOLVER, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
 SpSymbolResolver *sp_elf_symbol_resolver_new (void);
 
 G_END_DECLS
-
-#endif /* SP_ELF_SYMBOL_RESOLVER_H */

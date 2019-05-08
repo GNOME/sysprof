@@ -1,6 +1,6 @@
 /* sp-callgraph-profile.c
  *
- * Copyright 2016 Christian Hergert <christian@hergert.me>
+ * Copyright 2016-2019 Christian Hergert <christian@hergert.me>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 /* Sysprof -- Sampling, systemwide CPU profiler
@@ -34,20 +36,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
+
 #include <glib/gi18n.h>
 #include <string.h>
 #include <sysprof-capture.h>
 #include <unistd.h>
 
+#include "../stackstash.h"
+
 #include "sp-callgraph-profile.h"
-#include "sp-callgraph-profile-private.h"
 #include "sp-capture-reader.h"
 #include "sp-elf-symbol-resolver.h"
 #include "sp-jitmap-symbol-resolver.h"
-#include "sp-map-lookaside.h"
 #include "sp-kernel-symbol-resolver.h"
+#include "sp-map-lookaside.h"
 #include "sp-selection.h"
-#include "stackstash.h"
 
 #define CHECK_CANCELLABLE_INTERVAL 100
 
@@ -499,7 +503,7 @@ profile_iface_init (SpProfileInterface *iface)
   iface->set_reader = sp_callgraph_profile_set_reader;
 }
 
-StackStash *
+gpointer
 sp_callgraph_profile_get_stash (SpCallgraphProfile *self)
 {
   g_return_val_if_fail (SP_IS_CALLGRAPH_PROFILE (self), NULL);

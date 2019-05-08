@@ -54,4 +54,3 @@ gulong        elf_parser_get_sym_address (ElfParser     *parser,
 gboolean      elf_parser_owns_symbol     (ElfParser     *parser,
 					  const ElfSym  *sym);
 char *        elf_demangle               (const char    *name);
-

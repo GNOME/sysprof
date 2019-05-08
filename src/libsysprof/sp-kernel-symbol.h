@@ -1,6 +1,6 @@
 /* sp-kernel-symbol.h
  *
- * Copyright 2016 Christian Hergert <chergert@redhat.com>
+ * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_KERNEL_SYMBOL_H
-#define SP_KERNEL_SYMBOL_H
+#pragma once
 
 #include "sp-capture-types.h"
 
@@ -32,5 +33,3 @@ typedef struct
 const SpKernelSymbol *sp_kernel_symbol_from_address (SpCaptureAddress address);
 
 G_END_DECLS
-
-#endif /* SP_KERNEL_SYMBOL_H */

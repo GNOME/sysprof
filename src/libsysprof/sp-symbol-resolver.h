@@ -1,6 +1,6 @@
 /* sp-symbol-resolver.h
  *
- * Copyright 2016 Christian Hergert <chergert@redhat.com>
+ * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_SYMBOL_RESOLVER_H
-#define SP_SYMBOL_RESOLVER_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -64,5 +65,3 @@ gchar *sp_symbol_resolver_resolve_with_context (SpSymbolResolver *self,
                                                 GQuark           *tag);
 
 G_END_DECLS
-
-#endif /* SP_SYMBOL_RESOLVER_H */

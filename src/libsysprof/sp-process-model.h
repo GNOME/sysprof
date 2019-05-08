@@ -1,6 +1,6 @@
 /* sp-process-model.h
  *
- * Copyright 2016 Christian Hergert <christian@hergert.me>
+ * Copyright 2016-2019 Christian Hergert <christian@hergert.me>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,23 +14,28 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_PROCESS_MODEL_H
-#define SP_PROCESS_MODEL_H
+#pragma once
 
 #include <gio/gio.h>
+
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_PROCESS_MODEL (sp_process_model_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SpProcessModel, sp_process_model, SP, PROCESS_MODEL, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
 SpProcessModel *sp_process_model_new          (void);
+SYSPROF_AVAILABLE_IN_ALL
 void            sp_process_model_reload       (SpProcessModel *self);
+SYSPROF_AVAILABLE_IN_ALL
 void            sp_process_model_queue_reload (SpProcessModel *self);
 
 G_END_DECLS
-
-#endif /* SP_PROCESS_MODEL_H */

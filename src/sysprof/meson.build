@@ -14,7 +14,6 @@ sysprof_resources = gnome.compile_resources('sysprof-resources', 'sysprof.gresou
 
 sysprof_deps = [
   cc.find_library('m', required: false),
-  libshared_dep,
   libsysprof_capture_dep,
   libsysprof_dep,
   libsysprof_ui_dep,

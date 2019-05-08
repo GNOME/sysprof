@@ -1,19 +1,25 @@
 libsysprof_capture_headers = [
+  'sp-address.h',
+  'sp-clock.h',
   'sp-capture-condition.h',
   'sp-capture-cursor.h',
   'sp-capture-reader.h',
   'sp-capture-types.h',
   'sp-capture-writer.h',
+  'sp-platform.h',
   'sysprof-capture.h',
   'sysprof-version-macros.h',
 ]
 
 libsysprof_capture_sources = [
+  'sp-address.c',
   'sp-capture-condition.c',
   'sp-capture-cursor.c',
   'sp-capture-reader.c',
-  'sp-capture-writer.c',
   'sp-capture-util.c',
+  'sp-capture-writer.c',
+  'sp-clock.c',
+  'sp-platform.c',
 ]
 
 configure_file(
@@ -25,7 +31,6 @@ configure_file(
 
 libsysprof_capture_deps = [
   dependency('glib-2.0', version: glib_req_version),
-  libshared_dep,
 ]
 
 install_headers(libsysprof_capture_headers, subdir: sysprof_header_subdir)

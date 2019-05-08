@@ -1,5 +1,4 @@
 tools_deps = [
-  libshared_dep,
   libsysprof_capture_dep,
 ]
 

@@ -4,6 +4,7 @@ sysprofd_sources = [
   'sysprofd.c',
   'sd-bus-helper.c',
   'sd-bus-helper.h',
+  '../libsysprof/sp-kallsyms.c',
 ]
 
 pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
@@ -11,14 +12,14 @@ pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
 sysprofd_deps = [
   dependency('libsystemd', version: '>=222'),
   dependency('glib-2.0', version: glib_req_version),
-  libshared_dep,
 ]
 
 sysprofd = executable('sysprofd', sysprofd_sources,
-  dependencies: sysprofd_deps,
-       install: true,
-   install_dir: pkglibexecdir,
-           pie: true,
+         dependencies: sysprofd_deps,
+              install: true,
+          install_dir: pkglibexecdir,
+                  pie: true,
+  include_directories: [include_directories('.'), '../libsysprof'],
 )
 
 sysprofdconf = configuration_data()

@@ -6,6 +6,7 @@ libsysprof_public_sources = [
   'sp-elf-symbol-resolver.c',
   'sp-hostinfo-source.c',
   'sp-jitmap-symbol-resolver.c',
+  'sp-kallsyms.c',
   'sp-kernel-symbol.c',
   'sp-kernel-symbol-resolver.c',
   'sp-local-profiler.c',
@@ -27,6 +28,7 @@ libsysprof_public_headers = [
   'sp-elf-symbol-resolver.h',
   'sp-hostinfo-source.h',
   'sp-jitmap-symbol-resolver.h',
+  'sp-kallsyms.h',
   'sp-kernel-symbol.h',
   'sp-kernel-symbol-resolver.h',
   'sp-local-profiler.h',
@@ -48,6 +50,7 @@ libsysprof_private_sources = [
   'elfparser.c',
   'stackstash.c',
   'sp-source-util.c',
+  'sp-line-reader.c',
 ]
 
 libsysprof_deps = [

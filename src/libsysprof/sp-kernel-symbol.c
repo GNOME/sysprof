@@ -27,7 +27,6 @@
 #include <sysprof-capture.h>
 
 #include "sp-kallsyms.h"
-#include "sp-line-reader.h"
 #include "sp-kernel-symbol.h"
 
 static GArray *kernel_symbols;

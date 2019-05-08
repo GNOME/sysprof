@@ -1,4 +1,4 @@
-/* sp-address.h
+/* sp-clock.h
  *
  * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
  *
@@ -21,38 +21,39 @@
 #pragma once
 
 #include <glib.h>
+#include <time.h>
+
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
-typedef guint64 SpAddress;
+typedef gint SpClock;
+typedef gint64 SpTimeStamp;
+typedef gint32 SpTimeSpan;
 
-G_STATIC_ASSERT (sizeof (SpAddress) >= sizeof (gpointer));
+SYSPROF_AVAILABLE_IN_ALL
+SpClock sp_clock;
 
-typedef enum
+static inline SpTimeStamp
+sp_clock_get_current_time (void)
 {
-  SP_ADDRESS_CONTEXT_NONE = 0,
-  SP_ADDRESS_CONTEXT_HYPERVISOR,
-  SP_ADDRESS_CONTEXT_KERNEL,
-  SP_ADDRESS_CONTEXT_USER,
-  SP_ADDRESS_CONTEXT_GUEST,
-  SP_ADDRESS_CONTEXT_GUEST_KERNEL,
-  SP_ADDRESS_CONTEXT_GUEST_USER,
-} SpAddressContext;
+  struct timespec ts;
+  SpClock clock = sp_clock;
 
-gboolean     sp_address_is_context_switch (SpAddress         address,
-                                           SpAddressContext *context);
-const gchar *sp_address_context_to_string (SpAddressContext  context);
+  if G_UNLIKELY (clock == -1)
+    clock = CLOCK_MONOTONIC;
+  clock_gettime (clock, &ts);
 
-static inline gint
-sp_address_compare (SpAddress a,
-                    SpAddress b)
-{
-  if (a < b)
-    return -1;
-  else if (a == b)
-    return 0;
-  else
-    return 1;
+  return (ts.tv_sec * G_GINT64_CONSTANT (1000000000)) + ts.tv_nsec;
 }
+
+static inline SpTimeSpan
+sp_clock_get_relative_time (SpTimeStamp epoch)
+{
+  return sp_clock_get_current_time () - epoch;
+}
+
+SYSPROF_AVAILABLE_IN_ALL
+void sp_clock_init (void);
 
 G_END_DECLS

@@ -20,10 +20,6 @@
 
 #pragma once
 
-#if !defined(SYSPROF_CAPTURE_INSIDE) && !defined(SYSPROF_CAPTURE_COMPILATION)
-# error "Only <sysprof-capture.h> can be included directly."
-#endif
-
 /**
  * SECTION:sysprof-version
  * @short_description: sysprof version checking

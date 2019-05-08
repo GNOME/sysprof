@@ -20,19 +20,20 @@
 
 #pragma once
 
-#include <glib.h>
-
-#include "sp-kallsyms.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 typedef struct _SpKallsyms SpKallsyms;
 
+SYSPROF_AVAILABLE_IN_ALL
 SpKallsyms *sp_kallsyms_new  (const gchar  *path);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean    sp_kallsyms_next (SpKallsyms   *self,
                               const gchar **name,
                               guint64      *address,
                               guint8       *type);
+SYSPROF_AVAILABLE_IN_ALL
 void        sp_kallsyms_free (SpKallsyms   *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SpKallsyms, sp_kallsyms_free)

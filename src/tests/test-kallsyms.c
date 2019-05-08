@@ -1,8 +1,6 @@
-#include "../shared/sp-address.h"
-#include "../shared/sp-kallsyms.h"
-
 #include <glib.h>
 #include <stdlib.h>
+#include <sysprof.h>
 
 int
 main (gint argc,

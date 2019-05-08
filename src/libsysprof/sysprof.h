@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 # include "sp-callgraph-profile.h"
 # include "sp-capture-gobject.h"
 # include "sp-local-profiler.h"
+# include "sp-kallsyms.h"
 # include "sp-profile.h"
 # include "sp-profiler.h"
 # include "sp-map-lookaside.h"

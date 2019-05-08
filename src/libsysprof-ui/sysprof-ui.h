@@ -25,7 +25,8 @@
 
 G_BEGIN_DECLS
 
-#define SYSPROF_INSIDE
+#define SYSPROF_UI_INSIDE
+
 # include "sp-callgraph-view.h"
 # include "sp-cell-renderer-percent.h"
 # include "sp-cpu-visualizer-row.h"
@@ -42,7 +43,8 @@ G_BEGIN_DECLS
 # include "sp-visualizer-row.h"
 # include "sp-visualizer-view.h"
 # include "sp-zoom-manager.h"
-#undef SYSPROF_INSIDE
+
+#undef SYSPROF_UI_INSIDE
 
 G_END_DECLS
 

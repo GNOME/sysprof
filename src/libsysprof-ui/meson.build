@@ -63,6 +63,7 @@ libsysprof_ui = shared_library('sysprof-ui-@0@'.format(libsysprof_api_version),
          dependencies: libsysprof_ui_deps,
           install_dir: get_option('libdir'),
               install: true,
+               c_args: [ '-DSYSPROF_UI_COMPILATION' ],
 )
 
 libsysprof_ui_dep = declare_dependency(

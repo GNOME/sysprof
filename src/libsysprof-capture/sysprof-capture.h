@@ -32,7 +32,6 @@ G_BEGIN_DECLS
 # include "sp-capture-reader.h"
 # include "sp-capture-writer.h"
 # include "sp-clock.h"
-# include "sp-error.h"
 # include "sysprof-version.h"
 # include "sysprof-version-macros.h"
 

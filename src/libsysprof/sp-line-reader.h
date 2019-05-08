@@ -26,9 +26,12 @@ G_BEGIN_DECLS
 
 typedef struct _SpLineReader SpLineReader;
 
+G_GNUC_INTERNAL
 SpLineReader *sp_line_reader_new  (const gchar   *contents,
                                    gssize         length);
+G_GNUC_INTERNAL
 void          sp_line_reader_free (SpLineReader  *self);
+G_GNUC_INTERNAL
 const gchar  *sp_line_reader_next (SpLineReader  *self,
                                    gsize         *length);
 

@@ -59,12 +59,15 @@ libsysprof_ui_deps = [
   libsysprof_dep,
 ]
 
-libsysprof_ui = shared_library('sysprof-ui-@0@'.format(libsysprof_api_version),
+libsysprof_ui = shared_library(
+  'sysprof-ui-@0@'.format(libsysprof_api_version),
   libsysprof_ui_public_sources + libsysprof_ui_private_sources + libsysprof_ui_resources,
-         dependencies: libsysprof_ui_deps,
-          install_dir: get_option('libdir'),
-              install: true,
-               c_args: [ '-DSYSPROF_UI_COMPILATION' ],
+
+           dependencies: libsysprof_ui_deps,
+            install_dir: get_option('libdir'),
+                install: true,
+                 c_args: [ '-DSYSPROF_UI_COMPILATION' ],
+  gnu_symbol_visibility: 'hidden',
 )
 
 libsysprof_ui_dep = declare_dependency(

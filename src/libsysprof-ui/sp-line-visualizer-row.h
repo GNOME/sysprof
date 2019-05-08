@@ -18,15 +18,16 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_LINE_VISUALIZER_ROW_H
-#define SP_LINE_VISUALIZER_ROW_H
+#pragma once
 
 #include "sp-visualizer-row.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_LINE_VISUALIZER_ROW (sp_line_visualizer_row_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SpLineVisualizerRow, sp_line_visualizer_row, SP, LINE_VISUALIZER_ROW, SpVisualizerRow)
 
 struct _SpLineVisualizerRowClass
@@ -40,18 +41,21 @@ struct _SpLineVisualizerRowClass
   gpointer _reserved[16];
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sp_line_visualizer_row_new            (void);
+SYSPROF_AVAILABLE_IN_ALL
 void       sp_line_visualizer_row_clear          (SpLineVisualizerRow *self);
+SYSPROF_AVAILABLE_IN_ALL
 void       sp_line_visualizer_row_add_counter    (SpLineVisualizerRow *self,
                                                   guint                counter_id,
                                                   const GdkRGBA       *color);
+SYSPROF_AVAILABLE_IN_ALL
 void       sp_line_visualizer_row_set_line_width (SpLineVisualizerRow *self,
                                                   guint                counter_id,
                                                   gdouble              width);
+SYSPROF_AVAILABLE_IN_ALL
 void       sp_line_visualizer_row_set_fill       (SpLineVisualizerRow *self,
                                                   guint                counter_id,
                                                   const GdkRGBA       *color);
 
 G_END_DECLS
-
-#endif /* SP_LINE_VISUALIZER_ROW_H */

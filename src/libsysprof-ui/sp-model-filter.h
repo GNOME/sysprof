@@ -18,10 +18,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_MODEL_FILTER_H
-#define SP_MODEL_FILTER_H
+#pragma once
 
 #include <gio/gio.h>
+
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -30,6 +31,7 @@ G_BEGIN_DECLS
 typedef gboolean (*SpModelFilterFunc) (GObject  *object,
                                        gpointer  user_data);
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SpModelFilter, sp_model_filter, SP, MODEL_FILTER, GObject)
 
 struct _SpModelFilterClass
@@ -39,14 +41,16 @@ struct _SpModelFilterClass
   gpointer padding[8];
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 SpModelFilter *sp_model_filter_new             (GListModel        *child_model);
+SYSPROF_AVAILABLE_IN_ALL
 GListModel    *sp_model_filter_get_child_model (SpModelFilter     *self);
+SYSPROF_AVAILABLE_IN_ALL
 void           sp_model_filter_invalidate      (SpModelFilter     *self);
+SYSPROF_AVAILABLE_IN_ALL
 void           sp_model_filter_set_filter_func (SpModelFilter     *self,
                                                 SpModelFilterFunc  filter_func,
                                                 gpointer           filter_func_data,
                                                 GDestroyNotify     filter_func_data_destroy);
 
 G_END_DECLS
-
-#endif /* SP_MODEL_FILTER_H */

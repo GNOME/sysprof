@@ -19,15 +19,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_MULTI_PANED_H
-#define SP_MULTI_PANED_H
+#pragma once
 
 #include <gtk/gtk.h>
+
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_MULTI_PANED (sp_multi_paned_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SpMultiPaned, sp_multi_paned, SP, MULTI_PANED, GtkContainer)
 
 struct _SpMultiPanedClass
@@ -49,9 +51,9 @@ struct _SpMultiPanedClass
   gpointer _reserved8;
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sp_multi_paned_new            (void);
+SYSPROF_AVAILABLE_IN_ALL
 guint      sp_multi_paned_get_n_children (SpMultiPaned *self);
 
 G_END_DECLS
-
-#endif /* SP_MULTI_PANED_H */

@@ -20,6 +20,8 @@
 
 #define G_LOG_DOMAIN "sp-mark-visualizer-row"
 
+#include "config.h"
+
 #include "sp-capture-condition.h"
 #include "sp-capture-cursor.h"
 #include "rectangles.h"

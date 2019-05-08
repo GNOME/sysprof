@@ -18,17 +18,18 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_FAILED_STATE_VIEW_H
-#define SP_FAILED_STATE_VIEW_H
+#pragma once
 
 #include <gtk/gtk.h>
 
 #include "sp-profiler.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_FAILED_STATE_VIEW (sp_failed_state_view_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SpFailedStateView, sp_failed_state_view, SP, FAILED_STATE_VIEW, GtkBin)
 
 struct _SpFailedStateViewClass
@@ -38,10 +39,10 @@ struct _SpFailedStateViewClass
   gpointer padding[4];
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sp_failed_state_view_new          (void);
+SYSPROF_AVAILABLE_IN_ALL
 void       sp_failed_state_view_set_profiler (SpFailedStateView *self,
                                               SpProfiler        *profiler);
 
 G_END_DECLS
-
-#endif /* SP_FAILED_STATE_VIEW_H */

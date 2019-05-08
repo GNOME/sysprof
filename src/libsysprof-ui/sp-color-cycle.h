@@ -18,10 +18,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_COLOR_CYCLE_H
-#define SP_COLOR_CYCLE_H
+#pragma once
 
 #include <gtk/gtk.h>
+
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -29,14 +30,18 @@ G_BEGIN_DECLS
 
 typedef struct _SpColorCycle SpColorCycle;
 
+SYSPROF_AVAILABLE_IN_ALL
 GType         sp_color_cycle_get_type (void);
+SYSPROF_AVAILABLE_IN_ALL
 SpColorCycle *sp_color_cycle_ref      (SpColorCycle *self);
+SYSPROF_AVAILABLE_IN_ALL
 void          sp_color_cycle_unref    (SpColorCycle *self);
+SYSPROF_AVAILABLE_IN_ALL
 SpColorCycle *sp_color_cycle_new      (void);
+SYSPROF_AVAILABLE_IN_ALL
 void          sp_color_cycle_reset    (SpColorCycle *self);
+SYSPROF_AVAILABLE_IN_ALL
 void          sp_color_cycle_next     (SpColorCycle *self,
                                        GdkRGBA      *rgba);
 
 G_END_DECLS
-
-#endif /* SP_COLOR_CYCLE_H */

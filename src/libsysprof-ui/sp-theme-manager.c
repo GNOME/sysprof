@@ -20,6 +20,8 @@
 
 #define G_LOG_DOMAIN "sp-theme-manager"
 
+#include "config.h"
+
 #include "sp-theme-manager.h"
 
 struct _SpThemeManager

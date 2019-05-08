@@ -18,6 +18,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include "config.h"
+
 #include "sp-failed-state-view.h"
 
 G_DEFINE_TYPE (SpFailedStateView, sp_failed_state_view, GTK_TYPE_BIN)

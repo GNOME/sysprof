@@ -18,8 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_VISUALIZER_LIST_H
-#define SP_VISUALIZER_LIST_H
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -55,5 +54,3 @@ void             sp_visualizer_list_set_zoom_manager (SpVisualizerList *self,
                                                       SpZoomManager    *zoom_manager);
 
 G_END_DECLS
-
-#endif /* SP_VISUALIZER_LIST_H */

@@ -20,6 +20,8 @@
 
 #define G_LOG_DOMAIN "sp-visualizer-view"
 
+#include "config.h"
+
 #include <glib/gi18n.h>
 
 #include "sp-theme-manager.h"

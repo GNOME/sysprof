@@ -21,11 +21,13 @@
 #pragma once
 
 #include "sp-visualizer-row.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_MARK_VISUALIZER_ROW (sp_mark_visualizer_row_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SpMarkVisualizerRow, sp_mark_visualizer_row, SP, MARK_VISUALIZER_ROW, SpVisualizerRow)
 
 struct _SpMarkVisualizerRowClass
@@ -36,8 +38,11 @@ struct _SpMarkVisualizerRowClass
   gpointer _reserved[16];
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget   *sp_mark_visualizer_row_new       (void);
+SYSPROF_AVAILABLE_IN_ALL
 const gchar *sp_mark_visualizer_row_get_group (SpMarkVisualizerRow *self);
+SYSPROF_AVAILABLE_IN_ALL
 void         sp_mark_visualizer_row_set_group (SpMarkVisualizerRow *self,
                                                const gchar         *group);
 

@@ -18,8 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef POINT_CACHE_H
-#define POINT_CACHE_H
+#pragma once
 
 #include <glib.h>
 
@@ -51,5 +50,3 @@ const Point *point_cache_get_points       (PointCache *self,
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (PointCache, point_cache_unref)
 
 G_END_DECLS
-
-#endif /* POINT_CACHE_H */

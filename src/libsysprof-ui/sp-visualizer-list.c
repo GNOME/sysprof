@@ -20,6 +20,8 @@
 
 #define G_LOG_DOMAIN "sp-visualizer-list"
 
+#include "config.h"
+
 #include <glib/gi18n.h>
 #include <sysprof.h>
 

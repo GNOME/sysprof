@@ -18,19 +18,20 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_CPU_VISUALIZER_ROW_H
-#define SP_CPU_VISUALIZER_ROW_H
+#pragma once
 
 #include "sp-line-visualizer-row.h"
+
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_CPU_VISUALIZER_ROW (sp_cpu_visualizer_row_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SpCpuVisualizerRow, sp_cpu_visualizer_row, SP, CPU_VISUALIZER_ROW, SpLineVisualizerRow)
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sp_cpu_visualizer_row_new (void);
 
 G_END_DECLS
-
-#endif /* SP_CPU_VISUALIZER_ROW_H */

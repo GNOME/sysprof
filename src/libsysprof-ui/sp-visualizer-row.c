@@ -20,6 +20,8 @@
 
 #define G_LOG_DOMAIN "sp-visualizer-row"
 
+#include "config.h"
+
 #include "sp-visualizer-row.h"
 #include "sp-visualizer-row-private.h"
 

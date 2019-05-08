@@ -18,17 +18,18 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_PROFILER_MENU_BUTTON_H
-#define SP_PROFILER_MENU_BUTTON_H
+#pragma once
 
 #include <gtk/gtk.h>
 
 #include "sp-profiler.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_PROFILER_MENU_BUTTON (sp_profiler_menu_button_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SpProfilerMenuButton, sp_profiler_menu_button, SP, PROFILER_MENU_BUTTON, GtkMenuButton)
 
 struct _SpProfilerMenuButtonClass
@@ -38,11 +39,12 @@ struct _SpProfilerMenuButtonClass
   gpointer padding[8];
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget  *sp_profiler_menu_button_new          (void);
+SYSPROF_AVAILABLE_IN_ALL
 void        sp_profiler_menu_button_set_profiler (SpProfilerMenuButton *self,
                                                   SpProfiler           *profiler);
+SYSPROF_AVAILABLE_IN_ALL
 SpProfiler *sp_profiler_menu_button_get_profiler (SpProfilerMenuButton *self);
 
 G_END_DECLS
-
-#endif /* SP_PROFILER_MENU_BUTTON_H */

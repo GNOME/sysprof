@@ -20,6 +20,8 @@
 
 #define G_LOG_DOMAIN "sp-empty-state-view"
 
+#include "config.h"
+
 #include <string.h>
 
 #include "sp-empty-state-view.h"

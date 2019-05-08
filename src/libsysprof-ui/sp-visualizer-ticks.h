@@ -18,8 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_VISUALIZER_TICKS_H
-#define SP_VISUALIZER_TICKS_H
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -41,5 +40,3 @@ void       sp_visualizer_ticks_set_time_range (SpVisualizerTicks *self,
                                                gint64             end_time);
 
 G_END_DECLS
-
-#endif /* SP_VISUALIZER_TICKS_H */

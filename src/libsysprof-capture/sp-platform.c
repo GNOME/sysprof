@@ -18,6 +18,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#define G_LOG_DOMAIN "sp-platform"
+
 #include "config.h"
 
 #include <glib.h>

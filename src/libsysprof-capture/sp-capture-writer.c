@@ -18,6 +18,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#define G_LOG_DOMAIN "sp-capture-writer"
+
+#include "config.h"
+
 #ifndef _GNU_SOURCE
 # define _GNU_SOURCE
 #endif

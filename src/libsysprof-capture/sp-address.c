@@ -18,6 +18,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include "config.h"
+
 #ifdef __linux__
 # include <linux/perf_event.h>
 #else

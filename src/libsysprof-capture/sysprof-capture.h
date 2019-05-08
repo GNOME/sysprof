@@ -34,6 +34,7 @@ G_BEGIN_DECLS
 # include "sp-clock.h"
 # include "sp-error.h"
 # include "sysprof-version.h"
+# include "sysprof-version-macros.h"
 
 #undef SYSPROF_CAPTURE_INSIDE
 

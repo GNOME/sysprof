@@ -21,6 +21,7 @@
 #pragma once
 
 #include "sp-capture-types.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -40,15 +41,23 @@ typedef struct _SpCaptureCursor SpCaptureCursor;
 typedef gboolean (*SpCaptureCursorCallback) (const SpCaptureFrame *frame,
                                              gpointer              user_data);
 
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureCursor *sp_capture_cursor_new            (SpCaptureReader         *reader);
+SYSPROF_AVAILABLE_IN_ALL
 void             sp_capture_cursor_unref          (SpCaptureCursor         *self);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureCursor *sp_capture_cursor_ref            (SpCaptureCursor         *self);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureReader *sp_capture_cursor_get_reader     (SpCaptureCursor         *self);
+SYSPROF_AVAILABLE_IN_ALL
 void             sp_capture_cursor_foreach        (SpCaptureCursor         *self,
                                                    SpCaptureCursorCallback  callback,
                                                    gpointer                 user_data);
+SYSPROF_AVAILABLE_IN_ALL
 void             sp_capture_cursor_reset          (SpCaptureCursor         *self);
+SYSPROF_AVAILABLE_IN_ALL
 void             sp_capture_cursor_reverse        (SpCaptureCursor         *self);
+SYSPROF_AVAILABLE_IN_ALL
 void             sp_capture_cursor_add_condition  (SpCaptureCursor         *self,
                                                    SpCaptureCondition      *condition);
 

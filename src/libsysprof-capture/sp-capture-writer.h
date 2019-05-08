@@ -21,6 +21,7 @@
 #pragma once
 
 #include "sp-capture-types.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -39,15 +40,22 @@ typedef struct
   gsize padding[48];
 } SpCaptureStat;
 
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureWriter    *sp_capture_writer_new_from_env    (gsize                    buffer_size);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureWriter    *sp_capture_writer_new             (const gchar             *filename,
                                                        gsize                    buffer_size);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureWriter    *sp_capture_writer_new_from_fd     (int                      fd,
                                                        gsize                    buffer_size);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureWriter    *sp_capture_writer_ref             (SpCaptureWriter         *self);
+SYSPROF_AVAILABLE_IN_ALL
 void                sp_capture_writer_unref           (SpCaptureWriter         *self);
+SYSPROF_AVAILABLE_IN_ALL
 void                sp_capture_writer_stat            (SpCaptureWriter         *self,
                                                        SpCaptureStat           *stat);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_add_map         (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
@@ -57,6 +65,7 @@ gboolean            sp_capture_writer_add_map         (SpCaptureWriter         *
                                                        guint64                  offset,
                                                        guint64                  inode,
                                                        const gchar             *filename);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_add_mark        (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
@@ -65,13 +74,16 @@ gboolean            sp_capture_writer_add_mark        (SpCaptureWriter         *
                                                        const gchar             *group,
                                                        const gchar             *name,
                                                        const gchar             *message);
+SYSPROF_AVAILABLE_IN_ALL
 guint64             sp_capture_writer_add_jitmap      (SpCaptureWriter         *self,
                                                        const gchar             *name);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_add_process     (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
                                                        gint32                   pid,
                                                        const gchar             *cmdline);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_add_sample      (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
@@ -79,25 +91,30 @@ gboolean            sp_capture_writer_add_sample      (SpCaptureWriter         *
                                                        gint32                   tid,
                                                        const SpCaptureAddress  *addrs,
                                                        guint                    n_addrs);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_add_fork        (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
                                                        gint32                   pid,
                                                        gint32                   child_pid);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_add_exit        (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
                                                        gint32                   pid);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_add_timestamp   (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
                                                        gint32                   pid);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_define_counters (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
                                                        gint32                   pid,
                                                        const SpCaptureCounter  *counters,
                                                        guint                    n_counters);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_set_counters    (SpCaptureWriter         *self,
                                                        gint64                   time,
                                                        gint                     cpu,
@@ -105,31 +122,31 @@ gboolean            sp_capture_writer_set_counters    (SpCaptureWriter         *
                                                        const guint             *counters_ids,
                                                        const SpCaptureCounterValue *values,
                                                        guint                    n_counters);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_flush           (SpCaptureWriter         *self);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_save_as         (SpCaptureWriter         *self,
                                                        const gchar             *filename,
                                                        GError                 **error);
+SYSPROF_AVAILABLE_IN_ALL
 guint               sp_capture_writer_request_counter (SpCaptureWriter         *self,
                                                        guint                    n_counters);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureReader    *sp_capture_writer_create_reader   (SpCaptureWriter         *self,
                                                        GError                 **error);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_capture_writer_splice          (SpCaptureWriter         *self,
                                                        SpCaptureWriter         *dest,
                                                        GError                 **error);
+G_GNUC_INTERNAL
 gboolean            _sp_capture_writer_splice_from_fd (SpCaptureWriter         *self,
                                                        int                      fd,
                                                        GError                 **error) G_GNUC_INTERNAL;
+G_GNUC_INTERNAL
 gboolean            _sp_capture_writer_set_time_range (SpCaptureWriter         *self,
                                                        gint64                   start_time,
                                                        gint64                   end_time) G_GNUC_INTERNAL;
 
-#ifdef SP_ENABLE_GOBJECT
-# define SP_TYPE_CAPTURE_WRITER (sp_capture_writer_get_type())
-  GType sp_capture_writer_get_type (void);
-#endif
-
-#if GLIB_CHECK_VERSION(2, 44, 0)
-  G_DEFINE_AUTOPTR_CLEANUP_FUNC (SpCaptureWriter, sp_capture_writer_unref)
-#endif
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SpCaptureWriter, sp_capture_writer_unref)
 
 G_END_DECLS

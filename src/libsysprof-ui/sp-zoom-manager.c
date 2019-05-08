@@ -20,6 +20,8 @@
 
 #define G_LOG_DOMAIN "sp-zoom-manager"
 
+#include "config.h"
+
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 

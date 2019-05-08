@@ -18,15 +18,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_EMPTY_STATE_VIEW_H
-#define SP_EMPTY_STATE_VIEW_H
+#pragma once
 
 #include <gtk/gtk.h>
+
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_EMPTY_STATE_VIEW (sp_empty_state_view_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SpEmptyStateView, sp_empty_state_view, SP, EMPTY_STATE_VIEW, GtkBin)
 
 struct _SpEmptyStateViewClass
@@ -36,9 +38,7 @@ struct _SpEmptyStateViewClass
   gpointer padding[4];
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sp_empty_state_view_new (void);
 
 G_END_DECLS
-
-#endif /* SP_EMPTY_STATE_VIEW_H */
-

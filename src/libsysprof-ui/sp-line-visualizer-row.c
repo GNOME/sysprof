@@ -20,6 +20,8 @@
 
 #define G_LOG_DOMAIN "sp-line-visualizer-row"
 
+#include "config.h"
+
 #include <stdlib.h>
 #include <string.h>
 

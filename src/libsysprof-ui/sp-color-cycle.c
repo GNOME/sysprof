@@ -20,6 +20,8 @@
 
 #define G_LOG_DOMAIN "sp-color-cycle"
 
+#include "config.h"
+
 #include "sp-color-cycle.h"
 
 G_DEFINE_BOXED_TYPE (SpColorCycle, sp_color_cycle, sp_color_cycle_ref, sp_color_cycle_unref)

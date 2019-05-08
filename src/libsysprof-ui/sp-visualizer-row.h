@@ -18,8 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_VISUALIZER_ROW_H
-#define SP_VISUALIZER_ROW_H
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -74,5 +73,3 @@ void           sp_visualizer_row_translate_points (SpVisualizerRow              
                                                    guint                               n_out_points);
 
 G_END_DECLS
-
-#endif /* SP_VISUALIZER_ROW_H */

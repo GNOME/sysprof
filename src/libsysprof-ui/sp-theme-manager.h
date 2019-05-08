@@ -18,8 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_THEME_MANAGER_H
-#define SP_THEME_MANAGER_H
+#pragma once
 
 #include <gtk/gtk.h>
 
@@ -27,16 +26,18 @@ G_BEGIN_DECLS
 
 #define SP_TYPE_THEME_MANAGER (sp_theme_manager_get_type())
 
+G_GNUC_INTERNAL
 G_DECLARE_FINAL_TYPE (SpThemeManager, sp_theme_manager, SP, THEME_MANAGER, GObject)
 
+G_GNUC_INTERNAL
 SpThemeManager *sp_theme_manager_get_default       (void);
+G_GNUC_INTERNAL
 void            sp_theme_manager_unregister        (SpThemeManager *self,
                                                     guint           registration_id);
+G_GNUC_INTERNAL
 guint           sp_theme_manager_register_resource (SpThemeManager *self,
                                                     const gchar    *theme_name,
                                                     const gchar    *variant,
                                                     const gchar    *resource);
 
 G_END_DECLS
-
-#endif /* SP_THEME_MANAGER_H */

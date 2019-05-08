@@ -18,8 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_VISUALIZER_VIEW_H
-#define SP_VISUALIZER_VIEW_H
+#pragma once
 
 #include <gtk/gtk.h>
 #include <sysprof.h>
@@ -27,11 +26,13 @@
 #include "sp-visualizer-row.h"
 #include "sp-selection.h"
 #include "sp-zoom-manager.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_VISUALIZER_VIEW (sp_visualizer_view_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SpVisualizerView, sp_visualizer_view, SP, VISUALIZER_VIEW, GtkBin)
 
 struct _SpVisualizerViewClass
@@ -61,15 +62,19 @@ struct _SpVisualizerViewClass
   gpointer _reserved16;
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget       *sp_visualizer_view_new              (void);
+SYSPROF_AVAILABLE_IN_ALL
 SpCaptureReader *sp_visualizer_view_get_reader       (SpVisualizerView *self);
+SYSPROF_AVAILABLE_IN_ALL
 void             sp_visualizer_view_set_reader       (SpVisualizerView *self,
                                                       SpCaptureReader  *reader);
+SYSPROF_AVAILABLE_IN_ALL
 SpZoomManager   *sp_visualizer_view_get_zoom_manager (SpVisualizerView *self);
+SYSPROF_AVAILABLE_IN_ALL
 void             sp_visualizer_view_set_zoom_manager (SpVisualizerView *self,
                                                       SpZoomManager    *zoom_manager);
+SYSPROF_AVAILABLE_IN_ALL
 SpSelection     *sp_visualizer_view_get_selection    (SpVisualizerView *self);
 
 G_END_DECLS
-
-#endif /* SP_VISUALIZER_VIEW_H */

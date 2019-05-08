@@ -18,17 +18,18 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_PROCESS_MODEL_ROW_H
-#define SP_PROCESS_MODEL_ROW_H
+#pragma once
 
 #include <gtk/gtk.h>
 
 #include "sp-process-model-item.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SP_TYPE_PROCESS_MODEL_ROW (sp_process_model_row_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SpProcessModelRow, sp_process_model_row, SP, PROCESS_MODEL_ROW, GtkListBoxRow)
 
 struct _SpProcessModelRowClass
@@ -38,13 +39,14 @@ struct _SpProcessModelRowClass
   gpointer padding[4];
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget          *sp_process_model_row_new          (SpProcessModelItem *item);
+SYSPROF_AVAILABLE_IN_ALL
 SpProcessModelItem *sp_process_model_row_get_item     (SpProcessModelRow  *self);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean            sp_process_model_row_get_selected (SpProcessModelRow  *self);
+SYSPROF_AVAILABLE_IN_ALL
 void                sp_process_model_row_set_selected (SpProcessModelRow  *self,
                                                        gboolean            selected);
 
 G_END_DECLS
-
-#endif /* SP_PROCESS_MODEL_ROW_H */
-

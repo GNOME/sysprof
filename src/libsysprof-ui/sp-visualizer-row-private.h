@@ -18,8 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_VISUALIZER_ROW_PRIVATE_H
-#define SP_VISUALIZER_ROW_PRIVATE_H
+#pragma once
 
 #include "sp-visualizer-row.h"
 
@@ -28,5 +27,3 @@ G_BEGIN_DECLS
 gint _sp_visualizer_row_get_graph_width (SpVisualizerRow *self);
 
 G_END_DECLS
-
-#endif /* SP_VISUALIZER_ROW_PRIVATE_H */

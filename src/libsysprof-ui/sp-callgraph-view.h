@@ -18,17 +18,19 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_CALLGRAPH_VIEW_H
-#define SP_CALLGRAPH_VIEW_H
+#pragma once
 
 #include <gtk/gtk.h>
 
 #include "sp-callgraph-profile.h"
 
+#include "sysprof-version-macros.h"
+
 G_BEGIN_DECLS
 
 #define SP_TYPE_CALLGRAPH_VIEW (sp_callgraph_view_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SpCallgraphView, sp_callgraph_view, SP, CALLGRAPH_VIEW, GtkBin)
 
 struct _SpCallgraphViewClass
@@ -40,13 +42,16 @@ struct _SpCallgraphViewClass
   gpointer padding[8];
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget          *sp_callgraph_view_new             (void);
+SYSPROF_AVAILABLE_IN_ALL
 SpCallgraphProfile *sp_callgraph_view_get_profile     (SpCallgraphView    *self);
+SYSPROF_AVAILABLE_IN_ALL
 void                sp_callgraph_view_set_profile     (SpCallgraphView    *self,
                                                        SpCallgraphProfile *profile);
+SYSPROF_AVAILABLE_IN_ALL
 gchar              *sp_callgraph_view_screenshot      (SpCallgraphView    *self);
+SYSPROF_AVAILABLE_IN_ALL
 guint               sp_callgraph_view_get_n_functions (SpCallgraphView    *self);
 
 G_END_DECLS
-
-#endif /* SP_CALLGRAPH_VIEW_H */

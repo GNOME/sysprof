@@ -18,8 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SYSPROF_UI_H
-#define SYSPROF_UI_H
+#pragma once
 
 #include <sysprof.h>
 
@@ -47,5 +46,3 @@ G_BEGIN_DECLS
 #undef SYSPROF_UI_INSIDE
 
 G_END_DECLS
-
-#endif /* SYSPROF_UI_H */

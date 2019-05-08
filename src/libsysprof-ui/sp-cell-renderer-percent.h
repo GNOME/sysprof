@@ -18,10 +18,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SP_CELL_RENDERER_PERCENT_H
-#define SP_CELL_RENDERER_PERCENT_H
+#pragma once
 
 #include <gtk/gtk.h>
+
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -48,12 +49,14 @@ struct _SpCellRendererPercentClass
   gpointer padding[4];
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 GType            sp_cell_renderer_percent_get_type    (void);
+SYSPROF_AVAILABLE_IN_ALL
 GtkCellRenderer *sp_cell_renderer_percent_new         (void);
+SYSPROF_AVAILABLE_IN_ALL
 gdouble          sp_cell_renderer_percent_get_percent (SpCellRendererPercent *self);
+SYSPROF_AVAILABLE_IN_ALL
 void             sp_cell_renderer_percent_set_percent (SpCellRendererPercent *self,
                                                        gdouble                percent);
 
 G_END_DECLS
-
-#endif /* SP_CELL_RENDERER_PERCENT_H */

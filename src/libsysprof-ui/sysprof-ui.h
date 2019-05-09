@@ -35,8 +35,6 @@ G_BEGIN_DECLS
 # include "sysprof-model-filter.h"
 # include "sysprof-multi-paned.h"
 # include "sysprof-recording-state-view.h"
-# include "sysprof-process-model.h"
-# include "sysprof-process-model-item.h"
 # include "sysprof-process-model-row.h"
 # include "sysprof-profiler-menu-button.h"
 # include "sysprof-visualizer-row.h"

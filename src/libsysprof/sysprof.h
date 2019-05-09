@@ -31,6 +31,8 @@ G_BEGIN_DECLS
 # include "sysprof-profile.h"
 # include "sysprof-profiler.h"
 # include "sysprof-map-lookaside.h"
+# include "sysprof-process-model.h"
+# include "sysprof-process-model-item.h"
 # include "sysprof-source.h"
 # include "sysprof-elf-symbol-resolver.h"
 # include "sysprof-jitmap-symbol-resolver.h"

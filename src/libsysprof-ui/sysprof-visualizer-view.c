@@ -28,7 +28,6 @@
 #include "sysprof-visualizer-list.h"
 #include "sysprof-visualizer-row.h"
 #include "sysprof-visualizer-row-private.h"
-#include "sysprof-selection.h"
 #include "sysprof-visualizer-ticks.h"
 #include "sysprof-visualizer-view.h"
 

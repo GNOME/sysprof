@@ -21,9 +21,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
-
-#include "sysprof-process-model-item.h"
-#include "sysprof-version-macros.h"
+#include <sysprof.h>
 
 G_BEGIN_DECLS
 

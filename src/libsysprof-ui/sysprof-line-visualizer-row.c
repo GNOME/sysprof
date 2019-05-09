@@ -24,10 +24,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <sysprof.h>
 
 #include "pointcache.h"
-#include "sysprof-capture-condition.h"
-#include "sysprof-capture-cursor.h"
 #include "sysprof-line-visualizer-row.h"
 
 typedef struct

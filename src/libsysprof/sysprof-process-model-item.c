@@ -18,11 +18,14 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#define G_LOG_DOMAIN "sp-process-model-item"
+
 #include "config.h"
 
 #include <string.h>
 
 #include "sysprof-process-model-item.h"
+
 #ifdef __linux__
 # include "sysprof-proc-source.h"
 #endif

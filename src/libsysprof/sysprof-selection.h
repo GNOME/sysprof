@@ -20,6 +20,10 @@
 
 #pragma once
 
+#if !defined (SYSPROF_INSIDE) && !defined (SYSPROF_COMPILATION)
+# error "Only <sysprof.h> can be included directly."
+#endif
+
 #include <glib-object.h>
 
 #include "sysprof-version-macros.h"

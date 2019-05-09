@@ -22,10 +22,9 @@
 
 #include <glib/gi18n.h>
 #include <string.h>
+#include <sysprof.h>
 
 #include "sysprof-model-filter.h"
-#include "sysprof-process-model.h"
-#include "sysprof-process-model-item.h"
 #include "sysprof-process-model-row.h"
 #include "sysprof-profiler-menu-button.h"
 

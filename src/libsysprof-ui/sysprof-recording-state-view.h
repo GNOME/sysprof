@@ -45,6 +45,6 @@ SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sysprof_recording_state_view_new          (void);
 SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_recording_state_view_set_profiler (SysprofRecordingStateView *self,
-                                                 SysprofProfiler           *profiler);
+                                                      SysprofProfiler           *profiler);
 
 G_END_DECLS

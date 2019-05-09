@@ -67,17 +67,17 @@ struct _SysprofVisualizerViewClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget       *sysprof_visualizer_view_new              (void);
+GtkWidget            *sysprof_visualizer_view_new              (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureReader *sysprof_visualizer_view_get_reader       (SysprofVisualizerView *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_visualizer_view_set_reader       (SysprofVisualizerView *self,
-                                                      SysprofCaptureReader  *reader);
+void                  sysprof_visualizer_view_set_reader       (SysprofVisualizerView *self,
+                                                                SysprofCaptureReader  *reader);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofZoomManager   *sysprof_visualizer_view_get_zoom_manager (SysprofVisualizerView *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_visualizer_view_set_zoom_manager (SysprofVisualizerView *self,
-                                                      SysprofZoomManager    *zoom_manager);
+void                  sysprof_visualizer_view_set_zoom_manager (SysprofVisualizerView *self,
+                                                                SysprofZoomManager    *zoom_manager);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofSelection     *sysprof_visualizer_view_get_selection    (SysprofVisualizerView *self);
 

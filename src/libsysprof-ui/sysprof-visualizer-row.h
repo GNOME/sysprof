@@ -25,8 +25,8 @@
 #endif
 
 #include <gtk/gtk.h>
+#include <sysprof.h>
 
-#include "sysprof-capture-reader.h"
 #include "sysprof-zoom-manager.h"
 
 G_BEGIN_DECLS
@@ -65,15 +65,19 @@ struct _SysprofVisualizerRowClass
   gpointer _reserved[16];
 };
 
-void           sysprof_visualizer_row_set_reader       (SysprofVisualizerRow *self,
-                                                   SysprofCaptureReader *reader);
-SysprofZoomManager *sysprof_visualizer_row_get_zoom_manager (SysprofVisualizerRow *self);
-void           sysprof_visualizer_row_set_zoom_manager (SysprofVisualizerRow *self,
-                                                   SysprofZoomManager   *zoom_manager);
-void           sysprof_visualizer_row_translate_points (SysprofVisualizerRow                    *self,
-                                                   const SysprofVisualizerRowRelativePoint *in_points,
-                                                   guint                               n_in_points,
-                                                   SysprofVisualizerRowAbsolutePoint       *out_points,
-                                                   guint                               n_out_points);
+SYSPROF_AVAILABLE_IN_ALL
+void                sysprof_visualizer_row_set_reader       (SysprofVisualizerRow                    *self,
+                                                             SysprofCaptureReader                    *reader);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofZoomManager *sysprof_visualizer_row_get_zoom_manager (SysprofVisualizerRow                    *self);
+SYSPROF_AVAILABLE_IN_ALL
+void                sysprof_visualizer_row_set_zoom_manager (SysprofVisualizerRow                    *self,
+                                                             SysprofZoomManager                      *zoom_manager);
+SYSPROF_AVAILABLE_IN_ALL
+void                sysprof_visualizer_row_translate_points (SysprofVisualizerRow                    *self,
+                                                             const SysprofVisualizerRowRelativePoint *in_points,
+                                                             guint                                    n_in_points,
+                                                             SysprofVisualizerRowAbsolutePoint       *out_points,
+                                                             guint                                    n_out_points);
 
 G_END_DECLS

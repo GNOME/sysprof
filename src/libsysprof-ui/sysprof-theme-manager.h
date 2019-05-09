@@ -36,12 +36,12 @@ G_DECLARE_FINAL_TYPE (SysprofThemeManager, sysprof_theme_manager, SYSPROF, THEME
 G_GNUC_INTERNAL
 SysprofThemeManager *sysprof_theme_manager_get_default       (void);
 G_GNUC_INTERNAL
-void            sysprof_theme_manager_unregister        (SysprofThemeManager *self,
-                                                    guint           registration_id);
+void                 sysprof_theme_manager_unregister        (SysprofThemeManager *self,
+                                                              guint                registration_id);
 G_GNUC_INTERNAL
-guint           sysprof_theme_manager_register_resource (SysprofThemeManager *self,
-                                                    const gchar    *theme_name,
-                                                    const gchar    *variant,
-                                                    const gchar    *resource);
+guint                sysprof_theme_manager_register_resource (SysprofThemeManager *self,
+                                                              const gchar         *theme_name,
+                                                              const gchar         *variant,
+                                                              const gchar         *resource);
 
 G_END_DECLS

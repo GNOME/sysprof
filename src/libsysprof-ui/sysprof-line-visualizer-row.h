@@ -24,8 +24,9 @@
 # error "Only <sysprof-ui.h> can be included directly."
 #endif
 
+#include <sysprof.h>
+
 #include "sysprof-visualizer-row.h"
-#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -51,15 +52,15 @@ SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_line_visualizer_row_clear          (SysprofLineVisualizerRow *self);
 SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_line_visualizer_row_add_counter    (SysprofLineVisualizerRow *self,
-                                                  guint                counter_id,
-                                                  const GdkRGBA       *color);
+                                                       guint                     counter_id,
+                                                       const GdkRGBA            *color);
 SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_line_visualizer_row_set_line_width (SysprofLineVisualizerRow *self,
-                                                  guint                counter_id,
-                                                  gdouble              width);
+                                                       guint                     counter_id,
+                                                       gdouble                   width);
 SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_line_visualizer_row_set_fill       (SysprofLineVisualizerRow *self,
-                                                  guint                counter_id,
-                                                  const GdkRGBA       *color);
+                                                       guint                     counter_id,
+                                                       const GdkRGBA            *color);
 
 G_END_DECLS

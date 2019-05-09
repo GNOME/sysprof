@@ -46,15 +46,15 @@ struct _SysprofModelFilterClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofModelFilter *sysprof_model_filter_new             (GListModel        *child_model);
+SysprofModelFilter *sysprof_model_filter_new             (GListModel             *child_model);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel    *sysprof_model_filter_get_child_model (SysprofModelFilter     *self);
+GListModel         *sysprof_model_filter_get_child_model (SysprofModelFilter     *self);
 SYSPROF_AVAILABLE_IN_ALL
-void           sysprof_model_filter_invalidate      (SysprofModelFilter     *self);
+void                sysprof_model_filter_invalidate      (SysprofModelFilter     *self);
 SYSPROF_AVAILABLE_IN_ALL
-void           sysprof_model_filter_set_filter_func (SysprofModelFilter     *self,
-                                                SysprofModelFilterFunc  filter_func,
-                                                gpointer           filter_func_data,
-                                                GDestroyNotify     filter_func_data_destroy);
+void                sysprof_model_filter_set_filter_func (SysprofModelFilter     *self,
+                                                          SysprofModelFilterFunc  filter_func,
+                                                          gpointer                filter_func_data,
+                                                          GDestroyNotify          filter_func_data_destroy);
 
 G_END_DECLS

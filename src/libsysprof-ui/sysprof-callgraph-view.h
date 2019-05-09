@@ -44,15 +44,15 @@ struct _SysprofCallgraphViewClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget          *sysprof_callgraph_view_new             (void);
+GtkWidget               *sysprof_callgraph_view_new             (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCallgraphProfile *sysprof_callgraph_view_get_profile     (SysprofCallgraphView    *self);
 SYSPROF_AVAILABLE_IN_ALL
-void                sysprof_callgraph_view_set_profile     (SysprofCallgraphView    *self,
-                                                       SysprofCallgraphProfile *profile);
+void                     sysprof_callgraph_view_set_profile     (SysprofCallgraphView    *self,
+                                                                 SysprofCallgraphProfile *profile);
 SYSPROF_AVAILABLE_IN_ALL
-gchar              *sysprof_callgraph_view_screenshot      (SysprofCallgraphView    *self);
+gchar                   *sysprof_callgraph_view_screenshot      (SysprofCallgraphView    *self);
 SYSPROF_AVAILABLE_IN_ALL
-guint               sysprof_callgraph_view_get_n_functions (SysprofCallgraphView    *self);
+guint                    sysprof_callgraph_view_get_n_functions (SysprofCallgraphView    *self);
 
 G_END_DECLS

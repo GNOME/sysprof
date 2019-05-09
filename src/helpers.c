@@ -27,6 +27,7 @@
 # include <linux/perf_event.h>
 # include <sys/syscall.h>
 #endif
+#include <string.h>
 #include <unistd.h>
 
 #include "helpers.h"

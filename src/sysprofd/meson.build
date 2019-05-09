@@ -10,7 +10,6 @@ sysprofd_sources = [
 pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
 
 sysprofd_deps = [
-  dependency('libsystemd', version: '>=222'),
   dependency('glib-2.0', version: glib_req_version),
   dependency('gio-2.0', version: glib_req_version),
   dependency('gio-unix-2.0', version: glib_req_version),

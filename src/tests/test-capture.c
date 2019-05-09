@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include <glib/gstdio.h>
+#include <string.h>
 #include <sysprof-capture.h>
 
 static void

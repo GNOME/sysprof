@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include <gio/gio.h>
+#include <stdlib.h>
 
 #include "ipc-service.h"
 #include "ipc-service-impl.h"

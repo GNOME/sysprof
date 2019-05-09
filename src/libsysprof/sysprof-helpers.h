@@ -42,7 +42,6 @@ gboolean        sysprof_helpers_list_processes_finish  (SysprofHelpers          
                                                         gint32                 **processes,
                                                         gsize                   *n_processes,
                                                         GError                 **error);
-#ifdef __linux__
 void            sysprof_helpers_get_proc_file_async    (SysprofHelpers          *self,
                                                         const gchar             *path,
                                                         GCancellable            *cancellable,
@@ -52,6 +51,7 @@ gboolean        sysprof_helpers_get_proc_file_finish   (SysprofHelpers          
                                                         GAsyncResult            *result,
                                                         gchar                  **contents,
                                                         GError                 **error);
+#ifdef __linux__
 void            sysprof_helpers_perf_event_open_async  (SysprofHelpers          *self,
                                                         struct perf_event_attr  *attr,
                                                         gint32                   pid,

@@ -35,7 +35,26 @@ struct _SysprofHelpers
   IpcService *proxy;
 };
 
+typedef struct
+{
+  GVariant *options;
+  gint32 pid;
+  gint32 cpu;
+  gint group_fd;
+  guint64 flags;
+} PerfEventOpen;
+
 G_DEFINE_TYPE (SysprofHelpers, sysprof_helpers, G_TYPE_OBJECT)
+
+static void
+perf_event_open_free (gpointer data)
+{
+  PerfEventOpen *state = data;
+  g_clear_pointer (&state->options, g_variant_unref);
+  if (state->group_fd)
+    close (state->group_fd);
+  g_slice_free (PerfEventOpen, state);
+}
 
 static void
 sysprof_helpers_finalize (GObject *object)
@@ -191,7 +210,6 @@ sysprof_helpers_list_processes_finish (SysprofHelpers  *self,
   return FALSE;
 }
 
-#ifdef __linux__
 static void
 sysprof_helpers_get_proc_file_cb (IpcService   *service,
                                   GAsyncResult *result,
@@ -255,6 +273,7 @@ sysprof_helpers_get_proc_file_finish (SysprofHelpers  *self,
   return FALSE;
 }
 
+#ifdef __linux__
 static void
 sysprof_helpers_perf_event_open_cb (IpcService   *service,
                                     GAsyncResult *result,
@@ -263,18 +282,82 @@ sysprof_helpers_perf_event_open_cb (IpcService   *service,
   g_autoptr(GTask) task = user_data;
   g_autoptr(GUnixFDList) fd_list = NULL;
   g_autoptr(GError) error = NULL;
+  PerfEventOpen *state;
 
   g_assert (IPC_IS_SERVICE (service));
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
 
+  state = g_task_get_task_data (task);
+
+  g_assert (state != NULL);
+  g_assert (state->options != NULL);
+
   if (!g_dbus_proxy_call_with_unix_fd_list_finish (G_DBUS_PROXY (service),
                                                    &fd_list,
                                                    result,
                                                    &error))
+    {
+      gint out_fd = -1;
+
+      if (helpers_perf_event_open (state->options,
+                                   state->pid,
+                                   state->cpu,
+                                   state->group_fd,
+                                   state->flags,
+                                   &out_fd))
+        {
+          fd_list = g_unix_fd_list_new ();
+          if (-1 == g_unix_fd_list_append (fd_list, out_fd, NULL))
+            g_clear_object (&fd_list);
+          close (out_fd);
+        }
+    }
+
+  g_assert (error || fd_list);
+
+  if (error != NULL)
     g_task_return_error (task, g_steal_pointer (&error));
   else
     g_task_return_pointer (task, g_steal_pointer (&fd_list), g_object_unref);
+}
+
+static GVariant *
+build_options_dict (struct perf_event_attr *attr)
+{
+  return g_variant_take_ref (
+    g_variant_new_parsed ("["
+                            "{'comm', <%b>},"
+#ifdef HAVE_PERF_CLOCKID
+                            "{'clockid', <%i>},"
+                            "{'use_clockid', <%b>},"
+#endif
+                            "{'config', <%t>},"
+                            "{'disabled', <%b>},"
+                            "{'exclude_idle', <%b>},"
+                            "{'mmap', <%b>},"
+                            "{'wakeup_events', <%u>},"
+                            "{'sample_id_all', <%b>},"
+                            "{'sample_period', <%t>},"
+                            "{'sample_type', <%t>},"
+                            "{'task', <%b>},"
+                            "{'type', <%u>}"
+                          "]",
+                          (gboolean)!!attr->comm,
+#ifdef HAVE_PERF_CLOCKID
+                          (gint32)attr->clockid,
+                          (gboolean)!!attr->use_clockid,
+#endif
+                          (guint64)attr->config,
+                          (gboolean)!!attr->disabled,
+                          (gboolean)!!attr->exclude_idle,
+                          (gboolean)!!attr->mmap,
+                          (guint32)attr->wakeup_events,
+                          (gboolean)!!attr->sample_id_all,
+                          (guint64)attr->sample_period,
+                          (guint64)attr->sample_type,
+                          (gboolean)!!attr->task,
+                          (guint32)attr->type));
 }
 
 void
@@ -289,28 +372,50 @@ sysprof_helpers_perf_event_open_async (SysprofHelpers         *self,
                                        gpointer                user_data)
 {
   g_autoptr(GTask) task = NULL;
-  g_autoptr(GVariant) options = NULL;
 
   g_return_if_fail (SYSPROF_IS_HELPERS (self));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+  g_return_if_fail (group_fd >= -1);
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_helpers_list_processes_async);
 
   if (!fail_if_no_proxy (self, task))
-    g_dbus_proxy_call_with_unix_fd_list (G_DBUS_PROXY (self->proxy),
-                                         "PerfEventOpen",
-                                         g_variant_new ("(@a{sv}iit)",
-                                                        options,
-                                                        pid,
-                                                        cpu,
-                                                        flags),
-                                         G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
-                                         -1,
-                                         NULL,
-                                         cancellable,
-                                         (GAsyncReadyCallback) sysprof_helpers_perf_event_open_cb,
-                                         g_steal_pointer (&task));
+    {
+      g_autoptr(GUnixFDList) fd_list = NULL;
+      g_autoptr(GVariant) params = NULL;
+      PerfEventOpen *state;
+      gint handle = -1;
+
+      if (group_fd != -1)
+        {
+          fd_list = g_unix_fd_list_new ();
+          handle = g_unix_fd_list_append (fd_list, group_fd, NULL);
+        }
+
+      state = g_slice_new0 (PerfEventOpen);
+      state->options = g_variant_take_ref (build_options_dict (attr));
+      state->pid = pid;
+      state->cpu = cpu;
+      state->group_fd = dup (group_fd);
+      state->flags = flags;
+      g_task_set_task_data (task, state, perf_event_open_free);
+
+      g_dbus_proxy_call_with_unix_fd_list (G_DBUS_PROXY (self->proxy),
+                                           "PerfEventOpen",
+                                           g_variant_new ("(@a{sv}iiht)",
+                                                          state->options,
+                                                          state->pid,
+                                                          state->cpu,
+                                                          handle,
+                                                          state->flags),
+                                           G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
+                                           -1,
+                                           fd_list,
+                                           cancellable,
+                                           (GAsyncReadyCallback) sysprof_helpers_perf_event_open_cb,
+                                           g_steal_pointer (&task));
+    }
 }
 
 gboolean

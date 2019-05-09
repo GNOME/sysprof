@@ -34,13 +34,13 @@ G_DECLARE_FINAL_TYPE (SysprofVisualizerTicks, sysprof_visualizer_ticks, SYSPROF,
 
 GtkWidget *sysprof_visualizer_ticks_new            (void);
 void       sysprof_visualizer_ticks_set_epoch      (SysprofVisualizerTicks *self,
-                                               gint64             epoch);
+                                                    gint64                  epoch);
 gint64     sysprof_visualizer_ticks_get_epoch      (SysprofVisualizerTicks *self);
 void       sysprof_visualizer_ticks_get_time_range (SysprofVisualizerTicks *self,
-                                               gint64            *begin_time,
-                                               gint64            *end_time);
+                                                    gint64                 *begin_time,
+                                                    gint64                 *end_time);
 void       sysprof_visualizer_ticks_set_time_range (SysprofVisualizerTicks *self,
-                                               gint64             begin_time,
-                                               gint64             end_time);
+                                                    gint64                  begin_time,
+                                                    gint64                  end_time);
 
 G_END_DECLS

@@ -25,9 +25,7 @@
 #endif
 
 #include <gtk/gtk.h>
-
-#include "sysprof-profiler.h"
-#include "sysprof-version-macros.h"
+#include <sysprof.h>
 
 G_BEGIN_DECLS
 
@@ -44,10 +42,10 @@ struct _SysprofProfilerMenuButtonClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget  *sysprof_profiler_menu_button_new          (void);
+GtkWidget       *sysprof_profiler_menu_button_new          (void);
 SYSPROF_AVAILABLE_IN_ALL
-void        sysprof_profiler_menu_button_set_profiler (SysprofProfilerMenuButton *self,
-                                                  SysprofProfiler           *profiler);
+void             sysprof_profiler_menu_button_set_profiler (SysprofProfilerMenuButton *self,
+                                                            SysprofProfiler           *profiler);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofProfiler *sysprof_profiler_menu_button_get_profiler (SysprofProfilerMenuButton *self);
 

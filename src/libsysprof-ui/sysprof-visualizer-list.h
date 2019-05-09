@@ -49,12 +49,12 @@ struct _SysprofVisualizerListClass
   gpointer _reserved8;
 };
 
-GtkWidget       *sysprof_visualizer_list_new              (void);
-void             sysprof_visualizer_list_set_reader       (SysprofVisualizerList *self,
-                                                      SysprofCaptureReader  *reader);
+GtkWidget            *sysprof_visualizer_list_new              (void);
+void                  sysprof_visualizer_list_set_reader       (SysprofVisualizerList *self,
+                                                                SysprofCaptureReader  *reader);
 SysprofCaptureReader *sysprof_visualizer_list_get_reader       (SysprofVisualizerList *self);
 SysprofZoomManager   *sysprof_visualizer_list_get_zoom_manager (SysprofVisualizerList *self);
-void             sysprof_visualizer_list_set_zoom_manager (SysprofVisualizerList *self,
-                                                      SysprofZoomManager    *zoom_manager);
+void                  sysprof_visualizer_list_set_zoom_manager (SysprofVisualizerList *self,
+                                                                SysprofZoomManager    *zoom_manager);
 
 G_END_DECLS

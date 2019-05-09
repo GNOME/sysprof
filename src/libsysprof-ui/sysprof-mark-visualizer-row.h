@@ -48,6 +48,6 @@ SYSPROF_AVAILABLE_IN_ALL
 const gchar *sysprof_mark_visualizer_row_get_group (SysprofMarkVisualizerRow *self);
 SYSPROF_AVAILABLE_IN_ALL
 void         sysprof_mark_visualizer_row_set_group (SysprofMarkVisualizerRow *self,
-                                               const gchar         *group);
+                                                    const gchar              *group);
 
 G_END_DECLS

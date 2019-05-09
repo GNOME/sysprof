@@ -61,6 +61,6 @@ SYSPROF_AVAILABLE_IN_ALL
 gdouble          sysprof_cell_renderer_percent_get_percent (SysprofCellRendererPercent *self);
 SYSPROF_AVAILABLE_IN_ALL
 void             sysprof_cell_renderer_percent_set_percent (SysprofCellRendererPercent *self,
-                                                       gdouble                percent);
+                                                            gdouble                     percent);
 
 G_END_DECLS

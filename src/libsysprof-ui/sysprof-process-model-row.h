@@ -42,13 +42,13 @@ struct _SysprofProcessModelRowClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget          *sysprof_process_model_row_new          (SysprofProcessModelItem *item);
+GtkWidget               *sysprof_process_model_row_new          (SysprofProcessModelItem *item);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofProcessModelItem *sysprof_process_model_row_get_item     (SysprofProcessModelRow  *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean            sysprof_process_model_row_get_selected (SysprofProcessModelRow  *self);
+gboolean                 sysprof_process_model_row_get_selected (SysprofProcessModelRow  *self);
 SYSPROF_AVAILABLE_IN_ALL
-void                sysprof_process_model_row_set_selected (SysprofProcessModelRow  *self,
-                                                       gboolean            selected);
+void                     sysprof_process_model_row_set_selected (SysprofProcessModelRow  *self,
+                                                                 gboolean                 selected);
 
 G_END_DECLS

@@ -26,8 +26,7 @@
 #endif
 
 #include <gtk/gtk.h>
-
-#include "sysprof-version-macros.h"
+#include <sysprof.h>
 
 G_BEGIN_DECLS
 

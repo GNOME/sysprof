@@ -1,10 +1,15 @@
 if get_option('with_sysprofd') == 'bundled'
 
+ipc_service_src = gnome.gdbus_codegen('ipc-service',
+           sources: 'org.gnome.Sysprof3.Service.xml',
+  interface_prefix: 'org.gnome.Sysprof3.',
+         namespace: 'Ipc',
+)
+
 sysprofd_sources = [
   'sysprofd.c',
-  'sd-bus-helper.c',
-  'sd-bus-helper.h',
-  '../libsysprof/sysprof-kallsyms.c',
+  'ipc-service-impl.c',
+  ipc_service_src,
 ]
 
 pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
@@ -12,6 +17,8 @@ pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
 sysprofd_deps = [
   dependency('libsystemd', version: '>=222'),
   dependency('glib-2.0', version: glib_req_version),
+  dependency('gio-2.0', version: glib_req_version),
+  dependency('gio-unix-2.0', version: glib_req_version),
 ]
 
 sysprofd = executable('sysprofd', sysprofd_sources,
@@ -19,9 +26,6 @@ sysprofd = executable('sysprofd', sysprofd_sources,
               install: true,
           install_dir: pkglibexecdir,
                   pie: true,
-  include_directories: [include_directories('.'),
-                        '../libsysprof',
-                        libsysprof_capture_include_dirs],
 )
 
 sysprofdconf = configuration_data()

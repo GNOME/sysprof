@@ -1,0 +1,54 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.gnome.Sysprof3.Service">
+    <!--
+      PerfEventOpen:
+      @options: key-value pair of attributes for the perf_event_open() syscall.
+      @pid: the process id to monitor, or -1 for system-wide.
+      @cpu: affinity to cpu.
+      @flags: flags for perf_event_open() syscall.
+      @perf_stream_fd: (out): A fd to communicate with perf.
+
+      Performs the perf_event_open() syscall with elevated privileges and passes
+      the resulting fd back to the calling process.
+    -->
+    <method name="PerfEventOpen">
+      <arg name="options" type="a{sv}" direction="in"/>
+      <arg name="pid" type="i" direction="in"/>
+      <arg name="cpu" type="i" direction="in"/>
+      <arg name="flags" type="t" direction="in"/>
+      <arg name="perf_stream_fd" type="h" direction="out"/>
+    </method>
+
+    <!--
+      GetProcFile:
+      @path: the path including "/proc/" prefix.
+
+      Gets a file from /proc.
+
+      The file must be a C-string (no embedded NUL bytes) but need not be UTF-8.
+
+      Returns: an array of bytes.
+
+      Since: 3.34
+    -->
+    <method name="GetProcFile">
+      <arg name="path" type="ay" direction="in"/>
+      <arg name="contents" type="ay" direction="out"/>
+    </method>
+
+    <!--
+      ListProcesses:
+
+      List the processes on the system.
+
+      Returns: an array of 32-bit integers
+
+      Since: 3.34
+    -->
+    <method name="ListProcesses">
+      <arg name="processes" type="ai" direction="out"/>
+    </method>
+  </interface>
+</node>

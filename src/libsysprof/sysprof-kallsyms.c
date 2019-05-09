@@ -51,6 +51,20 @@ sysprof_kallsyms_free (SysprofKallsyms *self)
 }
 
 SysprofKallsyms *
+sysprof_kallsyms_new_take (gchar *data)
+{
+  g_autoptr(SysprofKallsyms) self = NULL;
+
+  self = g_slice_new0 (SysprofKallsyms);
+  self->buf = g_steal_pointer (&data);
+  self->buflen = strlen (self->buf);
+  self->endptr = self->buf + self->buflen;
+  self->iter = self->buf;
+
+  return g_steal_pointer (&self);
+}
+
+SysprofKallsyms *
 sysprof_kallsyms_new (const gchar *path)
 {
   g_autoptr(SysprofKallsyms) self = NULL;
@@ -70,10 +84,10 @@ sysprof_kallsyms_new (const gchar *path)
 }
 
 gboolean
-sysprof_kallsyms_next (SysprofKallsyms   *self,
-                  const gchar **name,
-                  guint64      *address,
-                  guint8       *type)
+sysprof_kallsyms_next (SysprofKallsyms  *self,
+                       const gchar     **name,
+                       guint64          *address,
+                       guint8           *type)
 {
   guint64 addr;
   char *tok;

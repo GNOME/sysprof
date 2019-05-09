@@ -32,11 +32,11 @@ static GQuark linux_quark;
 
 static gchar *
 sysprof_kernel_symbol_resolver_resolve_with_context (SysprofSymbolResolver *resolver,
-                                                guint64           time,
-                                                GPid              pid,
-                                                SysprofAddressContext  context,
-                                                SysprofCaptureAddress  address,
-                                                GQuark           *tag)
+                                                     guint64                time,
+                                                     GPid                   pid,
+                                                     SysprofAddressContext  context,
+                                                     SysprofCaptureAddress  address,
+                                                     GQuark                *tag)
 {
   const SysprofKernelSymbol *sym;
 

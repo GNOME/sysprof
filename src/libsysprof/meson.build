@@ -47,7 +47,6 @@ libsysprof_private_sources = [
   'binfile.c',
   'demangle.cpp',
   'elfparser.c',
-  'ipc-service-client.c',
   'sysprof-helpers.c',
   'sysprof-line-reader.c',
   ipc_service_src,

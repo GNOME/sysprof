@@ -18,6 +18,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#define G_LOG_DOMAIN "sysprof-process-model-row"
+
 #include "config.h"
 
 #include "sysprof-process-model-row.h"

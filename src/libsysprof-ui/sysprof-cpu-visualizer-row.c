@@ -22,8 +22,8 @@
 
 #include "config.h"
 
-#include "sysprof-capture-condition.h"
-#include "sysprof-capture-cursor.h"
+#include <sysprof.h>
+
 #include "sysprof-color-cycle.h"
 #include "sysprof-cpu-visualizer-row.h"
 

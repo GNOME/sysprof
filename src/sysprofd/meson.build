@@ -19,6 +19,7 @@ sysprofd_deps = [
   dependency('glib-2.0', version: glib_req_version),
   dependency('gio-2.0', version: glib_req_version),
   dependency('gio-unix-2.0', version: glib_req_version),
+  dependency('polkit-gobject-1', version: polkit_req_version),
 ]
 
 sysprofd = executable('sysprofd', sysprofd_sources,

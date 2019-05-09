@@ -347,7 +347,7 @@ SysprofApplication *
 sysprof_application_new (void)
 {
   return g_object_new (SYSPROF_TYPE_APPLICATION,
-                       "application-id", "org.gnome.Sysprof2",
+                       "application-id", "org.gnome.Sysprof3",
                        "resource-base-path", "/org/gnome/sysprof",
                        "flags", G_APPLICATION_HANDLES_OPEN,
                        NULL);

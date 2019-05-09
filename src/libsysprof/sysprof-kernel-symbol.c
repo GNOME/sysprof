@@ -23,11 +23,9 @@
 #include "config.h"
 
 #include <gio/gio.h>
-#ifdef ENABLE_POLKIT
-# include <polkit/polkit.h>
-#endif
 #include <sysprof-capture.h>
 
+#include "sysprof-helpers.h"
 #include "sysprof-kallsyms.h"
 #include "sysprof-kernel-symbol.h"
 
@@ -69,7 +67,7 @@ static const gchar *kernel_symbols_skip[] = {
 
 static gint
 sysprof_kernel_symbol_compare (gconstpointer a,
-                          gconstpointer b)
+                               gconstpointer b)
 {
   const SysprofKernelSymbol *syma = a;
   const SysprofKernelSymbol *symb = b;
@@ -90,95 +88,32 @@ type_is_ignored (guint8 type)
 }
 
 static gboolean
-authorize_proxy (GDBusConnection *conn)
-{
-#ifdef ENABLE_POLKIT
-  PolkitSubject *subject = NULL;
-  GPermission *permission = NULL;
-  const gchar *name;
-
-  g_assert (G_IS_DBUS_CONNECTION (conn));
-
-  name = g_dbus_connection_get_unique_name (conn);
-  if (name == NULL)
-    goto failure;
-
-  subject = polkit_system_bus_name_new (name);
-  if (subject == NULL)
-    goto failure;
-
-  permission = polkit_permission_new_sync ("org.gnome.sysprof2.get-kernel-symbols", subject, NULL, NULL);
-  if (permission == NULL)
-    goto failure;
-
-  if (!g_permission_acquire (permission, NULL, NULL))
-    goto failure;
-
-  return TRUE;
-
-failure:
-  g_clear_object (&subject);
-  g_clear_object (&permission);
-#endif
-
-  return FALSE;
-}
-
-static gboolean
 sysprof_kernel_symbol_load_from_sysprofd (void)
 {
-  g_autoptr(GDBusConnection) conn = NULL;
-  g_autoptr(GVariant) ret = NULL;
-  g_autoptr(GVariant) results = NULL;
+  SysprofHelpers *helpers = sysprof_helpers_get_default ();
+  g_autoptr(SysprofKallsyms) kallsyms = NULL;
+  g_autofree gchar *contents = NULL;
   g_autoptr(GArray) ar = NULL;
-  g_autoptr(GError) error = NULL;
-  GVariantIter iter;
   const gchar *name;
   guint64 addr;
   guint8 type;
 
-  if (!(conn = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL)))
+  if (!sysprof_helpers_get_proc_file (helpers, "/proc/kallsyms", NULL, &contents, NULL))
     return FALSE;
 
-  if (!authorize_proxy (conn))
+  kallsyms = sysprof_kallsyms_new_take (g_steal_pointer (&contents));
+
+  while (sysprof_kallsyms_next (kallsyms, &name, &addr, &type))
     {
-      g_warning ("Failed to acquire sufficient credentials to read kernel symbols");
-      return FALSE;
-    }
+      if (!type_is_ignored (type))
+        {
+          SysprofKernelSymbol sym;
 
-  ret = g_dbus_connection_call_sync (conn,
-                                     "org.gnome.Sysprof2",
-                                     "/org/gnome/Sysprof2",
-                                     "org.gnome.Sysprof2",
-                                     "GetKernelSymbols",
-                                     NULL,
-                                     G_VARIANT_TYPE ("(a(tys))"),
-                                     G_DBUS_CALL_FLAGS_NONE,
-                                     -1,
-                                     NULL,
-                                     &error);
+          sym.address = addr;
+          sym.name = g_string_chunk_insert_const (kernel_symbol_strs, name);
 
-  if (error != NULL)
-    {
-      g_warning ("Failed to load symbols from sysprofd: %s", error->message);
-      return FALSE;
-    }
-
-  ar = g_array_new (FALSE, TRUE, sizeof (SysprofKernelSymbol));
-
-  results = g_variant_get_child_value (ret, 0);
-  g_variant_iter_init (&iter, results);
-  while (g_variant_iter_loop (&iter, "(ty&s)", &addr, &type, &name))
-    {
-      SysprofKernelSymbol sym;
-
-      if (type_is_ignored (type))
-        continue;
-
-      sym.address = addr;
-      sym.name = g_string_chunk_insert_const (kernel_symbol_strs, name);
-
-      g_array_append_val (ar, sym);
+          g_array_append_val (ar, sym);
+        }
     }
 
   g_array_sort (ar, sysprof_kernel_symbol_compare);

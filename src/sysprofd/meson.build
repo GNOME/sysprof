@@ -28,15 +28,15 @@ sysprofdconf = configuration_data()
 sysprofdconf.set('sysprofdprivdir', pkglibexecdir)
 
 configure_file(
-          input: 'org.gnome.Sysprof2.service.in',
-         output: 'org.gnome.Sysprof2.service',
+          input: 'org.gnome.Sysprof3.service.in',
+         output: 'org.gnome.Sysprof3.service',
   configuration: sysprofdconf,
     install_dir: join_paths(datadir, 'dbus-1/system-services'),
 )
 
 configure_file(
-          input: 'org.gnome.Sysprof2.conf.in',
-         output: 'org.gnome.Sysprof2.conf',
+          input: 'org.gnome.Sysprof3.conf.in',
+         output: 'org.gnome.Sysprof3.conf',
   configuration: sysprofdconf,
     install_dir: join_paths(datadir, 'dbus-1/system.d'),
 )
@@ -46,8 +46,8 @@ if systemdunitdir == ''
   systemdunitdir = dependency('systemd').get_pkgconfig_variable('systemdsystemunitdir')
 endif
 configure_file(
-          input: 'sysprof2.service.in',
-         output: 'sysprof2.service',
+          input: 'sysprof3.service.in',
+         output: 'sysprof3.service',
   configuration: sysprofdconf,
     install_dir: systemdunitdir,
 )

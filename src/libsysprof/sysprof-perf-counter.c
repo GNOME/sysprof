@@ -439,9 +439,9 @@ get_proxy (void)
                                   G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS |
                                   G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION),
                                  NULL,
-                                 "org.gnome.Sysprof2",
-                                 "/org/gnome/Sysprof2",
-                                 "org.gnome.Sysprof2",
+                                 "org.gnome.Sysprof3",
+                                 "/org/gnome/Sysprof3",
+                                 "org.gnome.Sysprof3.Service",
                                  NULL, NULL);
 
   if (proxy != NULL)
@@ -475,7 +475,7 @@ authorize_proxy (GDBusProxy *proxy)
   if (subject == NULL)
     goto failure;
 
-  permission = polkit_permission_new_sync ("org.gnome.sysprof2.perf-event-open", subject, NULL, NULL);
+  permission = polkit_permission_new_sync ("org.gnome.sysprof3.profile", subject, NULL, NULL);
   if (permission == NULL)
     goto failure;
 

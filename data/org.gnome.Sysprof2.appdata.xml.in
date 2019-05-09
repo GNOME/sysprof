@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>org.gnome.Sysprof2.desktop</id>
+  <id>org.gnome.Sysprof3.desktop</id>
   <translation type="gettext">sysprof</translation>
   <name>Sysprof</name>
-  <summary>Profiler for an application or entire system</summary>
+  <summary>Profile an application or entire system</summary>
   <project_license>GPL-3.0+</project_license>
   <project_group>GNOME</project_group>
   <developer_name>The GNOME Foundation</developer_name>
@@ -13,7 +13,7 @@
   </description>
 
   <url type="homepage">https://wiki.gnome.org/Apps/Sysprof</url>
-  <url type="bugtracker">https://bugzilla.gnome.org/enter_bug.cgi?product=sysprof</url>
+  <url type="bugtracker">https://gitlab.gnome.org/GNOME/sysprof/issues</url>
   <url type="donation">https://www.gnome.org/friends</url>
 
   <screenshots>
@@ -32,15 +32,13 @@
   <provides>
     <binary>sysprof</binary>
     <binary>sysprof-cli</binary>
-    <dbus type="system">org.gnome.Sysprof2</dbus>
+    <dbus type="system">org.gnome.Sysprof3</dbus>
   </provides>
 
   <releases>
     <release version="3.31.91" date="2019-02-18"/>
-    <release version="3.31.90" date="2019-02-07"/>
-    <release version="3.31.1" date="2018-10-08"/>
   </releases>
 
   <metadata_license>CC0-1.0</metadata_license>
-  <update_contact>christian_AT_hergert.me</update_contact>
+  <update_contact>chergert_AT_redhat.com</update_contact>
 </component>

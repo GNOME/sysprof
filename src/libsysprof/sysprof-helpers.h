@@ -42,6 +42,11 @@ gboolean        sysprof_helpers_list_processes_finish  (SysprofHelpers          
                                                         gint32                 **processes,
                                                         gsize                   *n_processes,
                                                         GError                 **error);
+gboolean        sysprof_helpers_get_proc_file          (SysprofHelpers          *self,
+                                                        const gchar             *path,
+                                                        GCancellable            *cancellable,
+                                                        gchar                  **contents,
+                                                        GError                 **error);
 void            sysprof_helpers_get_proc_file_async    (SysprofHelpers          *self,
                                                         const gchar             *path,
                                                         GCancellable            *cancellable,

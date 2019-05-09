@@ -1,4 +1,4 @@
-#include "sysprof-zoom-manager.h"
+#include <sysprof-ui.h>
 
 static void
 test_zoom_manager (void)

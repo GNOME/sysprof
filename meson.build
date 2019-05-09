@@ -12,7 +12,7 @@ gnome = import('gnome')
 pkgconfig = import('pkgconfig')
 i18n = import('i18n')
 
-libsysprof_api_version = 2
+libsysprof_api_version = 3
 version_split = meson.project_version().split('.')
 datadir = get_option('datadir')
 podir = join_paths(meson.source_root(), 'po')

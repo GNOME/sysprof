@@ -7,6 +7,10 @@ sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
 sysprof_version_conf.set('MICRO_VERSION', sysprof_version[2])
 sysprof_version_conf.set('VERSION', meson.project_version())
 
+helpers_sources = files([
+  'helpers.c',
+])
+
 subdir('libsysprof-capture')
 subdir('sysprofd')
 subdir('libsysprof')

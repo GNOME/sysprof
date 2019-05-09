@@ -22,6 +22,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "sysprof-capture-condition.h"
 #include "sysprof-capture-cursor.h"
 #include "rectangles.h"

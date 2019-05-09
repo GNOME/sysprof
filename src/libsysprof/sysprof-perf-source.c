@@ -42,6 +42,7 @@
 #include <gio/gio.h>
 #include <glib/gi18n.h>
 #include <errno.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -429,7 +430,7 @@ sysprof_perf_get_tracepoint_config (const char *path, gint64 *config)
 
   g_free(filename);
 
-  *config = strtoull(contents, NULL, 0);
+  *config = strtoull (contents, NULL, 0);
 
   g_free (contents);
 

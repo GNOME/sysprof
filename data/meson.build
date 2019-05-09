@@ -2,21 +2,21 @@ install_data('sysprof-mime.xml',
   install_dir: join_paths(datadir, 'mime/packages')
 )
 
-install_data('org.gnome.sysprof2.gschema.xml',
+install_data('org.gnome.sysprof3.gschema.xml',
   install_dir: join_paths(datadir, 'glib-2.0/schemas')
 )
 
 i18n.merge_file(
-          input: 'org.gnome.Sysprof2.appdata.xml.in',
-         output: 'org.gnome.Sysprof2.appdata.xml',
+          input: 'org.gnome.Sysprof3.appdata.xml.in',
+         output: 'org.gnome.Sysprof3.appdata.xml',
          po_dir: podir,
         install: true,
     install_dir: join_paths(datadir, 'metainfo')
 )
 
 i18n.merge_file(
-          input: 'org.gnome.Sysprof2.desktop.in',
-         output: 'org.gnome.Sysprof2.desktop',
+          input: 'org.gnome.Sysprof3.desktop.in',
+         output: 'org.gnome.Sysprof3.desktop',
            type: 'desktop',
          po_dir: podir,
         install: true,

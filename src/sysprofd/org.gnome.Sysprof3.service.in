@@ -1,5 +1,5 @@
 [D-BUS Service]
-Name=org.gnome.Sysprof2
+Name=org.gnome.Sysprof3
 Exec=@sysprofdprivdir@/sysprofd
 User=root
-SystemdService=sysprof2.service
+SystemdService=sysprof3.service

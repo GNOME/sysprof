@@ -27,14 +27,14 @@
 
 G_BEGIN_DECLS
 
-gboolean helpers_list_processes  (gint32   **processes,
-                                  gsize     *n_processes);
-gboolean helpers_perf_event_open (GVariant  *options,
-                                  gint32     pid,
-                                  gint32     cpu,
-                                  gint       group_fd,
-                                  guint64    flags,
-                                  gint      *out_fd);
+gboolean helpers_list_processes  (gint32      **processes,
+                                  gsize        *n_processes);
+gboolean helpers_perf_event_open (GVariant     *options,
+                                  gint32        pid,
+                                  gint32        cpu,
+                                  gint          group_fd,
+                                  guint64       flags,
+                                  gint         *out_fd);
 gboolean helpers_get_proc_file   (const gchar  *path,
                                   gchar       **contents,
                                   gsize        *len);

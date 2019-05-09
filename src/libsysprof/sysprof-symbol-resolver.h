@@ -44,16 +44,16 @@ struct _SysprofSymbolResolverInterface
   void   (*load)                 (SysprofSymbolResolver *self,
                                   SysprofCaptureReader  *reader);
   gchar *(*resolve)              (SysprofSymbolResolver *self,
-                                  guint64           time,
-                                  GPid              pid,
+                                  guint64                time,
+                                  GPid                   pid,
                                   SysprofCaptureAddress  address,
-                                  GQuark           *tag);
+                                  GQuark                *tag);
   gchar *(*resolve_with_context) (SysprofSymbolResolver *self,
-                                  guint64           time,
-                                  GPid              pid,
+                                  guint64                time,
+                                  GPid                   pid,
                                   SysprofAddressContext  context,
                                   SysprofCaptureAddress  address,
-                                  GQuark           *tag);
+                                  GQuark                *tag);
 };
 
 SYSPROF_AVAILABLE_IN_ALL

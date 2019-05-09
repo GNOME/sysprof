@@ -51,6 +51,8 @@ ipc_service_impl_handle_list_processes (IpcService            *service,
   g_assert (IPC_IS_SERVICE_IMPL (service));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
 
+  g_message ("ListProcesses()");
+
   if (!(dir = g_dir_open ("/proc/", 0, NULL)))
     {
       g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
@@ -98,6 +100,8 @@ ipc_service_impl_handle_get_proc_file (IpcService            *service,
 
   g_assert (IPC_IS_SERVICE_IMPL (service));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+
+  g_message ("GetProcFile(%s)", path);
 
   canon = g_canonicalize_filename (path, "/proc/");
 
@@ -167,6 +171,8 @@ ipc_service_impl_handle_perf_event_open (IpcService            *service,
 
   g_assert (IPC_IS_SERVICE_IMPL (service));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+
+  g_message ("PerfEventOpen(pid=%d, cpu=%d)", pid, cpu);
 
   if (pid < -1 || cpu < -1)
     {
@@ -307,6 +313,7 @@ ipc_service_impl_handle_perf_event_open (IpcService            *service,
                                              G_DBUS_ERROR_FAILED,
                                              "Failed to open perf event stream: %s",
                                              g_strerror (errno));
+      return TRUE;
     }
 
   fd_list = g_unix_fd_list_new ();

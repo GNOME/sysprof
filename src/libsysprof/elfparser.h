@@ -15,18 +15,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
 #include <glib.h>
 
 typedef struct ElfSym ElfSym;
 typedef struct ElfParser ElfParser;
 
-ElfParser *   elf_parser_new_from_data   (const guchar  *data,
-					  gsize          length);
-ElfParser *   elf_parser_new             (const char    *filename,
-					  GError       **err);
+ElfParser    *elf_parser_new_from_data   (const guchar  *data,
+                                          gsize          length);
+ElfParser    *elf_parser_new             (const char    *filename,
+                                          GError       **err);
 void          elf_parser_free            (ElfParser     *parser);
-const char *  elf_parser_get_debug_link  (ElfParser     *parser,
-					  guint32       *crc32);
+const char   *elf_parser_get_debug_link  (ElfParser     *parser,
+                                          guint32       *crc32);
 const gchar  *elf_parser_get_build_id    (ElfParser     *parser);
 const guchar *elf_parser_get_eh_frame    (ElfParser     *parser);
 const guchar *elf_parser_get_debug_frame (ElfParser     *parser);
@@ -44,13 +45,14 @@ gulong        elf_parser_get_text_offset (ElfParser     *parser);
  * of the file would have been mapped, so a - (m - o) is the position
  * in the file of a.
  */
-const ElfSym *elf_parser_lookup_symbol   (ElfParser     *parser,
-					  gulong         address);
-guint32       elf_parser_get_crc32       (ElfParser     *parser);
-const char *  elf_parser_get_sym_name    (ElfParser     *parser,
-					  const ElfSym  *sym);
-gulong        elf_parser_get_sym_address (ElfParser     *parser,
-					  const ElfSym  *sym);
-gboolean      elf_parser_owns_symbol     (ElfParser     *parser,
-					  const ElfSym  *sym);
-char *        elf_demangle               (const char    *name);
+const ElfSym *elf_parser_lookup_symbol   (ElfParser    *parser,
+                                          gulong        address);
+guint32       elf_parser_get_crc32       (ElfParser    *parser);
+const char   *elf_parser_get_sym_name    (ElfParser    *parser,
+                                          const ElfSym *sym);
+gulong        elf_parser_get_sym_address (ElfParser    *parser,
+                                          const ElfSym *sym);
+gboolean      elf_parser_owns_symbol     (ElfParser    *parser,
+                                          const ElfSym *sym);
+char         *elf_demangle               (const char   *name);
+

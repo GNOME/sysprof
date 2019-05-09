@@ -132,57 +132,57 @@ struct _SysprofProfilerInterface
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_emit_failed               (SysprofProfiler          *self,
-                                                        const GError        *error);
+void                  sysprof_profiler_emit_failed               (SysprofProfiler      *self,
+                                                                  const GError         *error);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_emit_stopped              (SysprofProfiler          *self);
+void                  sysprof_profiler_emit_stopped              (SysprofProfiler      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gdouble          sysprof_profiler_get_elapsed               (SysprofProfiler          *self);
+gdouble               sysprof_profiler_get_elapsed               (SysprofProfiler      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_profiler_get_is_mutable            (SysprofProfiler          *self);
+gboolean              sysprof_profiler_get_is_mutable            (SysprofProfiler      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_profiler_get_spawn_inherit_environ (SysprofProfiler          *self);
+gboolean              sysprof_profiler_get_spawn_inherit_environ (SysprofProfiler      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_set_spawn_inherit_environ (SysprofProfiler          *self,
-                                                        gboolean             spawn_inherit_environ);
+void                  sysprof_profiler_set_spawn_inherit_environ (SysprofProfiler      *self,
+                                                                  gboolean              spawn_inherit_environ);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_profiler_get_whole_system          (SysprofProfiler          *self);
+gboolean              sysprof_profiler_get_whole_system          (SysprofProfiler      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_set_whole_system          (SysprofProfiler          *self,
-                                                        gboolean             whole_system);
+void                  sysprof_profiler_set_whole_system          (SysprofProfiler      *self,
+                                                                  gboolean              whole_system);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_profiler_get_spawn                 (SysprofProfiler          *self);
+gboolean              sysprof_profiler_get_spawn                 (SysprofProfiler      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_set_spawn                 (SysprofProfiler          *self,
-                                                        gboolean             spawn);
+void                  sysprof_profiler_set_spawn                 (SysprofProfiler      *self,
+                                                                  gboolean              spawn);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_set_spawn_argv            (SysprofProfiler          *self,
-                                                        const gchar * const *spawn_argv);
+void                  sysprof_profiler_set_spawn_argv            (SysprofProfiler      *self,
+                                                                  const gchar * const  *spawn_argv);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_set_spawn_env             (SysprofProfiler          *self,
-                                                        const gchar * const *spawn_env);
+void                  sysprof_profiler_set_spawn_env             (SysprofProfiler      *self,
+                                                                  const gchar * const  *spawn_env);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_add_source                (SysprofProfiler          *self,
-                                                        SysprofSource            *source);
+void                  sysprof_profiler_add_source                (SysprofProfiler      *self,
+                                                                  SysprofSource        *source);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_set_writer                (SysprofProfiler          *self,
-                                                        SysprofCaptureWriter     *writer);
+void                  sysprof_profiler_set_writer                (SysprofProfiler      *self,
+                                                                  SysprofCaptureWriter *writer);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureWriter *sysprof_profiler_get_writer                (SysprofProfiler          *self);
+SysprofCaptureWriter *sysprof_profiler_get_writer                (SysprofProfiler      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_profiler_get_is_running            (SysprofProfiler          *self);
+gboolean              sysprof_profiler_get_is_running            (SysprofProfiler      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_start                     (SysprofProfiler          *self);
+void                  sysprof_profiler_start                     (SysprofProfiler      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_stop                      (SysprofProfiler          *self);
+void                  sysprof_profiler_stop                      (SysprofProfiler      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_add_pid                   (SysprofProfiler          *self,
-                                                        GPid                 pid);
+void                  sysprof_profiler_add_pid                   (SysprofProfiler      *self,
+                                                                  GPid                  pid);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_profiler_remove_pid                (SysprofProfiler          *self,
-                                                        GPid                 pid);
+void                  sysprof_profiler_remove_pid                (SysprofProfiler      *self,
+                                                                  GPid                  pid);
 SYSPROF_AVAILABLE_IN_ALL
-const GPid      *sysprof_profiler_get_pids                  (SysprofProfiler          *self,
-                                                        guint               *n_pids);
+const GPid           *sysprof_profiler_get_pids                  (SysprofProfiler      *self,
+                                                                  guint                *n_pids);
 
 G_END_DECLS

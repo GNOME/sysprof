@@ -27,13 +27,13 @@ G_BEGIN_DECLS
 typedef struct _SysprofLineReader SysprofLineReader;
 
 G_GNUC_INTERNAL
-SysprofLineReader *sysprof_line_reader_new  (const gchar   *contents,
-                                   gssize         length);
+SysprofLineReader *sysprof_line_reader_new  (const gchar       *contents,
+                                             gssize             length);
 G_GNUC_INTERNAL
-void          sysprof_line_reader_free (SysprofLineReader  *self);
+void               sysprof_line_reader_free (SysprofLineReader *self);
 G_GNUC_INTERNAL
-const gchar  *sysprof_line_reader_next (SysprofLineReader  *self,
-                                   gsize         *length);
+const gchar       *sysprof_line_reader_next (SysprofLineReader *self,
+                                             gsize             *length);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofLineReader, sysprof_line_reader_free)
 

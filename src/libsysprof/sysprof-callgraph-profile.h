@@ -41,9 +41,9 @@ SysprofProfile *sysprof_callgraph_profile_new                (void);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofProfile *sysprof_callgraph_profile_new_with_selection (SysprofSelection        *selection);
 SYSPROF_AVAILABLE_IN_ALL
-gpointer sysprof_callgraph_profile_get_stash            (SysprofCallgraphProfile *self);
+gpointer        sysprof_callgraph_profile_get_stash          (SysprofCallgraphProfile *self);
 SYSPROF_AVAILABLE_IN_ALL
-GQuark     sysprof_callgraph_profile_get_tag            (SysprofCallgraphProfile *self,
-                                                    const gchar        *symbol);
+GQuark          sysprof_callgraph_profile_get_tag            (SysprofCallgraphProfile *self,
+                                                              const gchar             *symbol);
 
 G_END_DECLS

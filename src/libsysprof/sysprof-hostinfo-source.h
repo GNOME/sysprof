@@ -24,8 +24,6 @@
 # error "Only <sysprof.h> can be included directly."
 #endif
 
-#include "sysprof-version-macros.h"
-
 #include "sysprof-source.h"
 
 G_BEGIN_DECLS

@@ -32,6 +32,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofJitmapSymbolResolver, sysprof_jitmap_symbol_resolver, SYSPROF, JITMAP_SYMBOL_RESOLVER, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
 SysprofSymbolResolver *sysprof_jitmap_symbol_resolver_new (void);
 
 G_END_DECLS

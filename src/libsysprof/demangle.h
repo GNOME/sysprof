@@ -22,6 +22,7 @@
 
 G_BEGIN_DECLS
 
+G_GNUC_INTERNAL
 gchar *sysprof_cplus_demangle (const gchar *name);
 
 G_END_DECLS

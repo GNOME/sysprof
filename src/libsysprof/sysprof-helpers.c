@@ -224,9 +224,47 @@ sysprof_helpers_get_proc_file_cb (IpcService   *service,
   g_assert (G_IS_TASK (task));
 
   if (!ipc_service_call_get_proc_file_finish (service, &contents, result, &error))
-    g_task_return_error (task, g_steal_pointer (&error));
-  else
-    g_task_return_pointer (task, g_steal_pointer (&contents), g_free);
+    {
+      const gchar *path = g_task_get_task_data (task);
+      gsize len;
+
+      if (!helpers_get_proc_file (path, &contents, &len))
+        {
+          g_task_return_error (task, g_steal_pointer (&error));
+          return;
+        }
+
+      g_clear_error (&error);
+    }
+
+  g_task_return_pointer (task, g_steal_pointer (&contents), g_free);
+}
+
+gboolean
+sysprof_helpers_get_proc_file (SysprofHelpers  *self,
+                               const gchar     *path,
+                               GCancellable    *cancellable,
+                               gchar          **contents,
+                               GError         **error)
+{
+  gsize len;
+
+  g_return_val_if_fail (SYSPROF_IS_HELPERS (self), FALSE);
+  g_return_val_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable), FALSE);
+
+  if (self->proxy != NULL)
+    {
+      if (ipc_service_call_get_proc_file_sync (self->proxy, path, contents, cancellable, error))
+        return TRUE;
+    }
+
+  if (!helpers_get_proc_file (path, contents, &len))
+    return FALSE;
+
+  if (error != NULL)
+    g_clear_error (error);
+
+  return TRUE;
 }
 
 void
@@ -243,6 +281,7 @@ sysprof_helpers_get_proc_file_async (SysprofHelpers      *self,
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_helpers_list_processes_async);
+  g_task_set_task_data (task, g_strdup (path), g_free);
 
   if (!fail_if_no_proxy (self, task))
     ipc_service_call_get_proc_file (self->proxy,

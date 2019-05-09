@@ -1,14 +1,9 @@
 if get_option('with_sysprofd') == 'bundled'
 
-ipc_service_src = gnome.gdbus_codegen('ipc-service',
-           sources: 'org.gnome.Sysprof3.Service.xml',
-  interface_prefix: 'org.gnome.Sysprof3.',
-         namespace: 'Ipc',
-)
-
 sysprofd_sources = [
   'sysprofd.c',
   'ipc-service-impl.c',
+  helpers_sources,
   ipc_service_src,
 ]
 
@@ -27,6 +22,7 @@ sysprofd = executable('sysprofd', sysprofd_sources,
               install: true,
           install_dir: pkglibexecdir,
                   pie: true,
+  include_directories: [include_directories('.'), ipc_include_dirs],
 )
 
 sysprofdconf = configuration_data()

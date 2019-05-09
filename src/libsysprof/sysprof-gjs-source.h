@@ -30,8 +30,10 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_GJS_SOURCE (sysprof_gjs_source_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofGjsSource, sysprof_gjs_source, SYSPROF, GJS_SOURCE, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
 SysprofSource *sysprof_gjs_source_new (void);
 
 G_END_DECLS

@@ -32,6 +32,7 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_SOURCE (sysprof_source_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_INTERFACE (SysprofSource, sysprof_source, SYSPROF, SOURCE, GObject)
 
 struct _SysprofSourceInterface
@@ -120,17 +121,26 @@ struct _SysprofSourceInterface
   void (*stop) (SysprofSource *self);
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_add_pid       (SysprofSource        *self,
-                                  GPid             pid);
+                                       GPid                  pid);
+SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_emit_ready    (SysprofSource        *self);
+SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_emit_finished (SysprofSource        *self);
+SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_emit_failed   (SysprofSource        *self,
-                                  const GError    *error);
+                                       const GError         *error);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean sysprof_source_get_is_ready  (SysprofSource        *self);
+SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_prepare       (SysprofSource        *self);
+SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_set_writer    (SysprofSource        *self,
-                                  SysprofCaptureWriter *writer);
+                                       SysprofCaptureWriter *writer);
+SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_start         (SysprofSource        *self);
+SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_stop          (SysprofSource        *self);
 
 G_END_DECLS

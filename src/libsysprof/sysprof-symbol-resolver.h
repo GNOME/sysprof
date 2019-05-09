@@ -28,11 +28,13 @@
 
 #include "sysprof-address.h"
 #include "sysprof-capture-reader.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_SYMBOL_RESOLVER (sysprof_symbol_resolver_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_INTERFACE (SysprofSymbolResolver, sysprof_symbol_resolver, SYSPROF, SYMBOL_RESOLVER, GObject)
 
 struct _SysprofSymbolResolverInterface
@@ -54,18 +56,21 @@ struct _SysprofSymbolResolverInterface
                                   GQuark           *tag);
 };
 
+SYSPROF_AVAILABLE_IN_ALL
 void   sysprof_symbol_resolver_load                 (SysprofSymbolResolver *self,
-                                                SysprofCaptureReader  *reader);
+                                                     SysprofCaptureReader  *reader);
+SYSPROF_AVAILABLE_IN_ALL
 gchar *sysprof_symbol_resolver_resolve              (SysprofSymbolResolver *self,
-                                                guint64           time,
-                                                GPid              pid,
-                                                SysprofCaptureAddress  address,
-                                                GQuark           *tag);
+                                                     guint64                time,
+                                                     GPid                   pid,
+                                                     SysprofCaptureAddress  address,
+                                                     GQuark                *tag);
+SYSPROF_AVAILABLE_IN_ALL
 gchar *sysprof_symbol_resolver_resolve_with_context (SysprofSymbolResolver *self,
-                                                guint64           time,
-                                                GPid              pid,
-                                                SysprofAddressContext  context,
-                                                SysprofCaptureAddress  address,
-                                                GQuark           *tag);
+                                                     guint64                time,
+                                                     GPid                   pid,
+                                                     SysprofAddressContext  context,
+                                                     SysprofCaptureAddress  address,
+                                                     GQuark                *tag);
 
 G_END_DECLS

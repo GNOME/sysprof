@@ -41,24 +41,24 @@ typedef void (*SysprofSelectionForeachFunc) (SysprofSelection *self,
                                         gpointer     user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
-gboolean     sysprof_selection_get_has_selection (SysprofSelection            *self);
+gboolean          sysprof_selection_get_has_selection (SysprofSelection            *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean     sysprof_selection_contains          (SysprofSelection            *self,
-                                             gint64                  time_at);
+gboolean          sysprof_selection_contains          (SysprofSelection            *self,
+                                                       gint64                       time_at);
 SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_selection_select_range      (SysprofSelection            *self,
-                                             gint64                  begin_time,
-                                             gint64                  end_time);
+void              sysprof_selection_select_range      (SysprofSelection            *self,
+                                                       gint64                       begin_time,
+                                                       gint64                       end_time);
 SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_selection_unselect_range    (SysprofSelection            *self,
-                                             gint64                  begin,
-                                             gint64                  end);
+void              sysprof_selection_unselect_range    (SysprofSelection            *self,
+                                                       gint64                       begin,
+                                                       gint64                       end);
 SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_selection_unselect_all      (SysprofSelection            *self);
+void              sysprof_selection_unselect_all      (SysprofSelection            *self);
 SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_selection_foreach           (SysprofSelection            *self,
-                                             SysprofSelectionForeachFunc  foreach_func,
-                                             gpointer                user_data);
+void              sysprof_selection_foreach           (SysprofSelection            *self,
+                                                       SysprofSelectionForeachFunc  foreach_func,
+                                                       gpointer                     user_data);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofSelection *sysprof_selection_copy              (const SysprofSelection      *self);
 

@@ -31,14 +31,14 @@ G_BEGIN_DECLS
 typedef struct _SysprofKallsyms SysprofKallsyms;
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofKallsyms *sysprof_kallsyms_new  (const gchar  *path);
+SysprofKallsyms *sysprof_kallsyms_new  (const gchar      *path);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean    sysprof_kallsyms_next (SysprofKallsyms   *self,
-                              const gchar **name,
-                              guint64      *address,
-                              guint8       *type);
+gboolean         sysprof_kallsyms_next (SysprofKallsyms  *self,
+                                        const gchar     **name,
+                                        guint64          *address,
+                                        guint8           *type);
 SYSPROF_AVAILABLE_IN_ALL
-void        sysprof_kallsyms_free (SysprofKallsyms   *self);
+void             sysprof_kallsyms_free (SysprofKallsyms  *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofKallsyms, sysprof_kallsyms_free)
 

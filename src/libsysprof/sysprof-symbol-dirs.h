@@ -36,6 +36,6 @@ SYSPROF_AVAILABLE_IN_ALL
 void    sysprof_symbol_dirs_remove    (const gchar *dir);
 SYSPROF_AVAILABLE_IN_ALL
 gchar **sysprof_symbol_dirs_get_paths (const gchar *dir,
-                                  const gchar *name);
+                                       const gchar *name);
 
 G_END_DECLS

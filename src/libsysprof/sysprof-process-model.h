@@ -38,8 +38,8 @@ G_DECLARE_FINAL_TYPE (SysprofProcessModel, sysprof_process_model, SYSPROF, PROCE
 SYSPROF_AVAILABLE_IN_ALL
 SysprofProcessModel *sysprof_process_model_new          (void);
 SYSPROF_AVAILABLE_IN_ALL
-void            sysprof_process_model_reload       (SysprofProcessModel *self);
+void                 sysprof_process_model_reload       (SysprofProcessModel *self);
 SYSPROF_AVAILABLE_IN_ALL
-void            sysprof_process_model_queue_reload (SysprofProcessModel *self);
+void                 sysprof_process_model_queue_reload (SysprofProcessModel *self);
 
 G_END_DECLS

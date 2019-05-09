@@ -34,6 +34,7 @@ typedef struct
   const gchar      *name;
 } SysprofKernelSymbol;
 
+SYSPROF_AVAILABLE_IN_ALL
 const SysprofKernelSymbol *sysprof_kernel_symbol_from_address (SysprofCaptureAddress address);
 
 G_END_DECLS

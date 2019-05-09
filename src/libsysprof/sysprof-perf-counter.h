@@ -125,33 +125,32 @@ typedef void (*SysprofPerfCounterCallback) (SysprofPerfCounterEvent *event,
                                        guint               cpu,
                                        gpointer            user_data);
 
-void     sysprof_perf_counter_authorize_async  (GCancellable         *cancellable,
-                                           GAsyncReadyCallback   callback,
-                                           gpointer              user_data);
-gboolean sysprof_perf_counter_authorize_finish (GAsyncResult         *result,
-                                           GError              **error);
-
-GType          sysprof_perf_counter_get_type     (void);
-SysprofPerfCounter *sysprof_perf_counter_new          (GMainContext           *context);
-void           sysprof_perf_counter_set_callback (SysprofPerfCounter          *self,
-                                             SysprofPerfCounterCallback   callback,
-                                             gpointer                callback_data,
-                                             GDestroyNotify          callback_data_destroy);
-void           sysprof_perf_counter_add_pid      (SysprofPerfCounter          *self,
-                                             GPid                    pid);
-gint           sysprof_perf_counter_open         (SysprofPerfCounter          *self,
-                                             struct perf_event_attr *attr,
-                                             GPid                    pid,
-                                             gint                    cpu,
-                                             gint                    group_fd,
-                                             gulong                  flags);
-void           sysprof_perf_counter_take_fd      (SysprofPerfCounter          *self,
-                                             int                     fd);
-void           sysprof_perf_counter_enable       (SysprofPerfCounter          *self);
-void           sysprof_perf_counter_disable      (SysprofPerfCounter          *self);
-void           sysprof_perf_counter_close        (SysprofPerfCounter          *self,
-                                             gint                    fd);
-SysprofPerfCounter *sysprof_perf_counter_ref          (SysprofPerfCounter          *self);
-void           sysprof_perf_counter_unref        (SysprofPerfCounter          *self);
+void                sysprof_perf_counter_authorize_async  (GCancellable                *cancellable,
+                                                           GAsyncReadyCallback          callback,
+                                                           gpointer                     user_data);
+gboolean            sysprof_perf_counter_authorize_finish (GAsyncResult                *result,
+                                                           GError                     **error);
+GType               sysprof_perf_counter_get_type         (void);
+SysprofPerfCounter *sysprof_perf_counter_new              (GMainContext                *context);
+void                sysprof_perf_counter_set_callback     (SysprofPerfCounter          *self,
+                                                           SysprofPerfCounterCallback   callback,
+                                                           gpointer                     callback_data,
+                                                           GDestroyNotify               callback_data_destroy);
+void                sysprof_perf_counter_add_pid          (SysprofPerfCounter          *self,
+                                                           GPid                         pid);
+gint                sysprof_perf_counter_open             (SysprofPerfCounter          *self,
+                                                           struct perf_event_attr      *attr,
+                                                           GPid                         pid,
+                                                           gint                         cpu,
+                                                           gint                         group_fd,
+                                                           gulong                       flags);
+void                sysprof_perf_counter_take_fd          (SysprofPerfCounter          *self,
+                                                           int                          fd);
+void                sysprof_perf_counter_enable           (SysprofPerfCounter          *self);
+void                sysprof_perf_counter_disable          (SysprofPerfCounter          *self);
+void                sysprof_perf_counter_close            (SysprofPerfCounter          *self,
+                                                           gint                         fd);
+SysprofPerfCounter *sysprof_perf_counter_ref              (SysprofPerfCounter          *self);
+void                sysprof_perf_counter_unref            (SysprofPerfCounter          *self);
 
 G_END_DECLS

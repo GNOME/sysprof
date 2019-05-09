@@ -32,6 +32,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofKernelSymbolResolver, sysprof_kernel_symbol_resolver, SYSPROF, KERNEL_SYMBOL_RESOLVER, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
 SysprofSymbolResolver *sysprof_kernel_symbol_resolver_new (void);
 
 G_END_DECLS

@@ -24,8 +24,6 @@
 # error "Only <sysprof.h> can be included directly."
 #endif
 
-#include <glib.h>
-
 #include "sysprof-capture-types.h"
 
 G_BEGIN_DECLS
@@ -41,12 +39,15 @@ typedef struct
   const gchar      *filename;
 } SysprofMap;
 
+SYSPROF_AVAILABLE_IN_ALL
 SysprofMapLookaside *sysprof_map_lookaside_new    (void);
-void            sysprof_map_lookaside_insert (SysprofMapLookaside   *self,
-                                         const SysprofMap      *map);
+void                 sysprof_map_lookaside_insert (SysprofMapLookaside   *self,
+                                                   const SysprofMap      *map);
+SYSPROF_AVAILABLE_IN_ALL
 const SysprofMap    *sysprof_map_lookaside_lookup (SysprofMapLookaside   *self,
-                                         SysprofCaptureAddress  address);
-void            sysprof_map_lookaside_free   (SysprofMapLookaside *self);
+                                                   SysprofCaptureAddress  address);
+SYSPROF_AVAILABLE_IN_ALL
+void                 sysprof_map_lookaside_free   (SysprofMapLookaside   *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofMapLookaside, sysprof_map_lookaside_free)
 

@@ -26,9 +26,8 @@
 
 #include <gio/gio.h>
 
-#include "sysprof-version-macros.h"
-
 #include "sysprof-capture-reader.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -53,16 +52,16 @@ struct _SysprofProfileInterface
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-void     sysprof_profile_set_reader      (SysprofProfile            *self,
-                                     SysprofCaptureReader      *reader);
+void     sysprof_profile_set_reader      (SysprofProfile        *self,
+                                          SysprofCaptureReader  *reader);
 SYSPROF_AVAILABLE_IN_ALL
-void     sysprof_profile_generate        (SysprofProfile            *self,
-                                     GCancellable         *cancellable,
-                                     GAsyncReadyCallback   callback,
-                                     gpointer              user_data);
+void     sysprof_profile_generate        (SysprofProfile        *self,
+                                          GCancellable          *cancellable,
+                                          GAsyncReadyCallback    callback,
+                                          gpointer               user_data);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean sysprof_profile_generate_finish (SysprofProfile            *self,
-                                     GAsyncResult         *result,
-                                     GError              **error);
+gboolean sysprof_profile_generate_finish (SysprofProfile        *self,
+                                          GAsyncResult          *result,
+                                          GError               **error);
 
 G_END_DECLS

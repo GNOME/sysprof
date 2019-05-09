@@ -36,19 +36,19 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofProcessModelItem, sysprof_process_model_item, SYSPROF, PROCESS_MODEL_ITEM, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofProcessModelItem  *sysprof_process_model_item_new              (GPid                pid);
+SysprofProcessModelItem *sysprof_process_model_item_new              (GPid                     pid);
 SYSPROF_AVAILABLE_IN_ALL
-guint                sysprof_process_model_item_hash             (SysprofProcessModelItem *self);
+guint                    sysprof_process_model_item_hash             (SysprofProcessModelItem *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean             sysprof_process_model_item_equal            (SysprofProcessModelItem *self,
-                                                             SysprofProcessModelItem *other);
+gboolean                 sysprof_process_model_item_equal            (SysprofProcessModelItem *self,
+                                                                      SysprofProcessModelItem *other);
 SYSPROF_AVAILABLE_IN_ALL
-GPid                 sysprof_process_model_item_get_pid          (SysprofProcessModelItem *self);
+GPid                     sysprof_process_model_item_get_pid          (SysprofProcessModelItem *self);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar         *sysprof_process_model_item_get_command_line (SysprofProcessModelItem *self);
+const gchar             *sysprof_process_model_item_get_command_line (SysprofProcessModelItem *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean             sysprof_process_model_item_is_kernel        (SysprofProcessModelItem *self);
+gboolean                 sysprof_process_model_item_is_kernel        (SysprofProcessModelItem *self);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar * const *sysprof_process_model_item_get_argv         (SysprofProcessModelItem *self);
+const gchar * const     *sysprof_process_model_item_get_argv         (SysprofProcessModelItem *self);
 
 G_END_DECLS

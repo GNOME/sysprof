@@ -24,9 +24,8 @@
 # error "Only <sysprof.h> can be included directly."
 #endif
 
-#include "sysprof-version-macros.h"
-
 #include "sysprof-source.h"
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -38,7 +37,7 @@ G_DECLARE_FINAL_TYPE (SysprofPerfSource, sysprof_perf_source, SYSPROF, PERF_SOUR
 SYSPROF_AVAILABLE_IN_ALL
 SysprofSource *sysprof_perf_source_new            (void);
 SYSPROF_AVAILABLE_IN_ALL
-void      sysprof_perf_source_set_target_pid (SysprofPerfSource *self,
-                                         GPid          pid);
+void           sysprof_perf_source_set_target_pid (SysprofPerfSource *self,
+                                                   GPid               pid);
 
 G_END_DECLS

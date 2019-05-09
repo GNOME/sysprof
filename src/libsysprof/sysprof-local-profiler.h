@@ -25,7 +25,6 @@
 #endif
 
 #include "sysprof-profiler.h"
-
 #include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS

@@ -22,6 +22,8 @@
 
 #include "config.h"
 
+#include <polkit/polkit.h>
+
 #include "ipc-service-impl.h"
 
 struct _IpcServiceImpl
@@ -108,6 +110,43 @@ ipc_service_impl_handle_get_proc_file (IpcService            *service,
   return TRUE;
 }
 
+static gboolean
+ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
+                                     GDBusMethodInvocation  *invocation)
+{
+  PolkitAuthority *authority = NULL;
+  PolkitSubject *subject = NULL;
+  const gchar *peer_name;
+  gboolean ret = TRUE;
+
+  g_assert (IPC_IS_SERVICE_IMPL (skeleton));
+  g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+
+  peer_name = g_dbus_method_invocation_get_sender (invocation);
+
+  if (!(authority = polkit_authority_get_sync (NULL, NULL)) ||
+      !(subject = polkit_system_bus_name_new (peer_name)) ||
+      !polkit_authority_check_authorization_sync (authority,
+                                                  POLKIT_SUBJECT (subject),
+                                                  "org.gnome.sysprof3.profile",
+                                                  NULL,
+                                                  POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION,
+                                                  NULL,
+                                                  NULL))
+    {
+      g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
+                                             G_DBUS_ERROR,
+                                             G_DBUS_ERROR_ACCESS_DENIED,
+                                             "Not authorized to make request");
+      ret = FALSE;
+    }
+
+  g_clear_object (&authority);
+  g_clear_object (&subject);
+
+  return ret;
+}
+
 static void
 init_service_iface (IpcServiceIface *iface)
 {
@@ -121,11 +160,16 @@ G_DEFINE_TYPE_WITH_CODE (IpcServiceImpl, ipc_service_impl, IPC_TYPE_SERVICE_SKEL
 static void
 ipc_service_impl_class_init (IpcServiceImplClass *klass)
 {
+  GDBusInterfaceSkeletonClass *skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
+
+  skeleton_class->g_authorize_method = ipc_service_impl_g_authorize_method;
 }
 
 static void
 ipc_service_impl_init (IpcServiceImpl *self)
 {
+  g_dbus_interface_skeleton_set_flags (G_DBUS_INTERFACE_SKELETON (self),
+                                       G_DBUS_INTERFACE_SKELETON_FLAGS_HANDLE_METHOD_INVOCATIONS_IN_THREAD);
 }
 
 IpcService *

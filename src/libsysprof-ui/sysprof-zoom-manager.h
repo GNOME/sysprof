@@ -20,6 +20,10 @@
 
 #pragma once
 
+#if !defined (SYSPROF_UI_INSIDE) && !defined (SYSPROF_UI_COMPILATION)
+# error "Only <sysprof-ui.h> can be included directly."
+#endif
+
 #include <glib-object.h>
 
 #include "sysprof-version-macros.h"

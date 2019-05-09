@@ -1,6 +1,6 @@
 /* sysprofd.c
  *
- * Copyright 2016 Christian Hergert <christian@hergert.me>
+ * Copyright 2019 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,413 +14,110 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
+
+#define G_LOG_DOMAIN "sysprofd"
 
 #include "config.h"
 
-#include <assert.h>
-#include <errno.h>
-#include <glib.h>
-#include <linux/capability.h>
-#include <linux/perf_event.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/syscall.h>
-#include <time.h>
-#include <unistd.h>
+#include <gio/gio.h>
 
-#include "sd-bus-helper.h"
+#include "ipc-service.h"
+#include "ipc-service-impl.h"
 
-#include "sysprof-kallsyms.h"
+#define BUS_NAME                "org.gnome.Sysprof3"
+#define OBJECT_PATH             "/org/gnome/Sysprof3"
+#define NAME_ACQUIRE_DELAY_SECS 3
 
-#define BUS_TIMEOUT_USEC (1000000L * 10L)
+static GMainLoop *main_loop;
+static gboolean   name_acquired;
+static gint       exit_status = EXIT_SUCCESS;
 
-#if 0
-#define GOTO(l) do { \
-  fprintf (stderr, "GOTO: %s:%d: " #l "\n", __FUNCTION__, __LINE__); \
-  goto l; \
-} while (0)
-#else
-#define GOTO(l) goto l
-#endif
-
-static int
-sysprofd_get_kernel_symbols (sd_bus_message *msg,
-                             void           *user_data,
-                             sd_bus_error   *error)
+static void
+name_acquired_cb (GDBusConnection *connection,
+                  const gchar     *name,
+                  gpointer         user_data)
 {
-  g_autoptr(SysprofKallsyms) kallsyms = NULL;
-  sd_bus_message *reply = NULL;
-  const gchar *name;
-  guint64 addr;
-  guint8 type;
-  bool challenge = false;
-  int r;
-
-  assert (msg);
-  assert (error);
-
-  /* Authorize peer */
-  r = bus_test_polkit (msg,
-                       CAP_SYS_ADMIN,
-                       "org.gnome.sysprof2.get-kernel-symbols",
-                       NULL,
-                       UID_INVALID,
-                       &challenge,
-                       error);
-
-  if (r <= 0)
-    fprintf (stderr, "GetKernelSymbols() Failure: %s\n", error->message);
-
-  if (r < 0)
-    return r;
-  else if (r == 0)
-    return -EACCES;
-
-  if (!(kallsyms = sysprof_kallsyms_new (NULL)))
-    {
-      sd_bus_error_set (error,
-                        SD_BUS_ERROR_FILE_NOT_FOUND,
-                        "Failed to open /proc/kallsyms");
-      return -ENOENT;
-    }
-
-  r = sd_bus_message_new_method_return (msg, &reply);
-  if (r < 0)
-    return r;
-
-  r = sd_bus_message_open_container (reply, 'a', "(tys)");
-  if (r < 0)
-    return r;
-
-  while (sysprof_kallsyms_next (kallsyms, &name, &addr, &type))
-    sd_bus_message_append (reply, "(tys)", addr, type, name);
-
-  r = sd_bus_message_close_container (reply);
-  if (r < 0)
-    return r;
-
-  r = sd_bus_send (NULL, reply, NULL);
-  sd_bus_message_unref (reply);
-
-  return r;
+  g_message ("Acquired Bus Name: %s", name);
+  name_acquired = TRUE;
 }
 
-static int
-_perf_event_open (struct perf_event_attr *attr,
-                  pid_t                   pid,
-                  int                     cpu,
-                  int                     group_fd,
-                  unsigned long           flags)
+static void
+name_lost_cb (GDBusConnection *connection,
+              const gchar     *name,
+              gpointer         user_data)
 {
-  assert (attr != NULL);
-
-  /* Quick sanity check */
-  if (attr->sample_period < 100000 && attr->type != PERF_TYPE_TRACEPOINT)
-    return -EINVAL;
-
-  return syscall (__NR_perf_event_open, attr, pid, cpu, group_fd, flags);
+  /* Exit if we lost the name */
+  if (g_strcmp0 (name, BUS_NAME) == 0)
+    {
+      g_message ("Lost Bus Name: %s, exiting.", name);
+      name_acquired = FALSE;
+      g_main_loop_quit (main_loop);
+    }
 }
 
-static int
-sysprofd_perf_event_open (sd_bus_message *msg,
-                          void           *user_data,
-                          sd_bus_error   *error)
+static gboolean
+wait_for_acquire_timeout_cb (gpointer data)
 {
-  struct perf_event_attr attr = { 0 };
-  sd_bus_message *reply = NULL;
-  uint64_t flags = 0;
-  int disabled = 0;
-  int32_t wakeup_events = 149;
-  int32_t cpu = -1;
-  int32_t pid = -1;
-  bool challenge = false;
-  int32_t type = 0;
-  uint64_t sample_period = 0;
-  uint64_t sample_type = 0;
-  uint64_t config = 0;
-  int clockid = CLOCK_MONOTONIC_RAW;
-  int comm = 0;
-  int mmap_ = 0;
-  int task = 0;
-  int exclude_idle = 0;
-  int fd = -1;
-  int use_clockid = 0;
-  int sample_id_all = 0;
-  int r;
-
-  assert (msg);
-
-  r = sd_bus_message_enter_container (msg, SD_BUS_TYPE_ARRAY, "{sv}");
-  if (r < 0)
-    return r;
-
-  for (;;)
+  if (!name_acquired)
     {
-      const char *name = NULL;
-
-      r = sd_bus_message_enter_container (msg, SD_BUS_TYPE_DICT_ENTRY, "sv");
-      if (r < 0)
-        return r;
-
-      if (r == 0)
-        break;
-
-      r = sd_bus_message_read (msg, "s", &name);
-      if (r < 0)
-        goto cleanup;
-
-      r = sd_bus_message_enter_container (msg, SD_BUS_TYPE_VARIANT, NULL);
-      if (r < 0)
-        goto cleanup;
-
-      if (strcmp (name, "disabled") == 0)
-        {
-          r = sd_bus_message_read (msg, "b", &disabled);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "wakeup_events") == 0)
-        {
-          r = sd_bus_message_read (msg, "u", &wakeup_events);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "sample_id_all") == 0)
-        {
-          r = sd_bus_message_read (msg, "b", &sample_id_all);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "clockid") == 0)
-        {
-          r = sd_bus_message_read (msg, "i", &clockid);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "comm") == 0)
-        {
-          r = sd_bus_message_read (msg, "b", &comm);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "exclude_idle") == 0)
-        {
-          r = sd_bus_message_read (msg, "b", &exclude_idle);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "mmap") == 0)
-        {
-          r = sd_bus_message_read (msg, "b", &mmap_);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "config") == 0)
-        {
-          r = sd_bus_message_read (msg, "t", &config);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "sample_period") == 0)
-        {
-          r = sd_bus_message_read (msg, "t", &sample_period);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "sample_type") == 0)
-        {
-          r = sd_bus_message_read (msg, "t", &sample_type);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "task") == 0)
-        {
-          r = sd_bus_message_read (msg, "b", &task);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "type") == 0)
-        {
-          r = sd_bus_message_read (msg, "u", &type);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-      else if (strcmp (name, "use_clockid") == 0)
-        {
-          r = sd_bus_message_read (msg, "b", &use_clockid);
-          if (r < 0)
-            GOTO (cleanup);
-        }
-
-      r = sd_bus_message_exit_container (msg);
-      if (r < 0)
-        goto cleanup;
-
-      sd_bus_message_exit_container (msg);
-      if (r < 0)
-        goto cleanup;
-
-    cleanup:
-      if (r < 0)
-        return r;
+      exit_status = EXIT_FAILURE;
+      g_critical ("Failed to acquire name on bus after %d seconds, exiting.",
+                  NAME_ACQUIRE_DELAY_SECS);
+      g_main_loop_quit (main_loop);
     }
 
-  r = sd_bus_message_exit_container (msg);
-  if (r < 0)
-    return r;
-
-  r = sd_bus_message_read (msg, "iit", &pid, &cpu, &flags);
-  if (r < 0)
-    return r;
-
-  if (pid < -1 || cpu < -1)
-    return -EINVAL;
-
-  r = sd_bus_message_new_method_return (msg, &reply);
-  if (r < 0)
-    return r;
-
-  /* Authorize peer */
-  r = bus_test_polkit (msg,
-                       CAP_SYS_ADMIN,
-                       "org.gnome.sysprof2.perf-event-open",
-                       NULL,
-                       UID_INVALID,
-                       &challenge,
-                       error);
-  if (r < 0)
-    return r;
-  else if (r == 0)
-    return -EACCES;
-
-  attr.comm = !!comm;
-  attr.config = config;
-  attr.disabled = disabled;
-  attr.exclude_idle = !!exclude_idle;
-  attr.mmap = !!mmap_;
-  attr.sample_id_all = sample_id_all;
-  attr.sample_period = sample_period;
-  attr.sample_type = sample_type;
-  attr.task = !!task;
-  attr.type = type;
-  attr.wakeup_events = wakeup_events;
-
-#ifdef HAVE_PERF_CLOCKID
-  if (!use_clockid || clockid < 0)
-    attr.clockid = CLOCK_MONOTONIC_RAW;
-  else
-    attr.clockid = clockid;
-  attr.use_clockid = use_clockid;
-#endif
-
-  attr.size = sizeof attr;
-
-  fd = _perf_event_open (&attr, pid, cpu, -1, 0);
-  if (fd < 0)
-    {
-      fprintf (stderr,
-               "Failed to open perf event stream: %s\n",
-               strerror (errno));
-      return -EINVAL;
-    }
-
-  sd_bus_message_append_basic (reply, SD_BUS_TYPE_UNIX_FD, &fd);
-  r = sd_bus_send (NULL, reply, NULL);
-  sd_bus_message_unref (reply);
-
-  close (fd);
-
-  return r;
+  return G_SOURCE_REMOVE;
 }
 
-static const sd_bus_vtable sysprofd_vtable[] = {
-  SD_BUS_VTABLE_START (0),
-  SD_BUS_METHOD ("PerfEventOpen", "a{sv}iit", "h", sysprofd_perf_event_open, SD_BUS_VTABLE_UNPRIVILEGED),
-  SD_BUS_METHOD ("GetKernelSymbols", "", "a(tys)", sysprofd_get_kernel_symbols, SD_BUS_VTABLE_UNPRIVILEGED),
-  SD_BUS_VTABLE_END
-};
-
-int
-main (int   argc,
-      char *argv[])
+gint
+main (gint   argc,
+      gchar *argv[])
 {
-  sd_bus_slot *slot = NULL;
-  sd_bus *bus = NULL;
-  int r;
+  g_autoptr(GDBusConnection) bus = NULL;
+  g_autoptr(GError) error = NULL;
+  GBusType bus_type = G_BUS_TYPE_SYSTEM;
 
-  /* Connect to the system bus */
-  r = sd_bus_default_system (&bus);
-  if (r < 0)
-    {
-      fprintf (stderr,
-               "Failed to connect to system bus: %s\n",
-               strerror (-r));
-      goto failure;
-    }
+  g_set_prgname ("sysprofd");
+  g_set_application_name ("sysprofd");
 
-  /* Install our object */
-  r = sd_bus_add_object_vtable (bus,
-                                &slot,
-                                "/org/gnome/Sysprof2",
-                                "org.gnome.Sysprof2",
-                                sysprofd_vtable,
-                                NULL);
-  if (r < 0)
-    {
-      fprintf (stderr,
-               "Failed to install object on bus: %s\n",
-               strerror (-r));
-      goto failure;
-    }
+  if (g_getenv ("SYSPROFD_USE_SESSION_BUS"))
+    bus_type = G_BUS_TYPE_SESSION;
 
-  /* Request our well-known name on the bus */
-  r = sd_bus_request_name (bus, "org.gnome.Sysprof2", 0);
-  if (r < 0)
-    {
-      fprintf (stderr,
-               "Failed to register name on the bus: %s\n",
-               strerror (-r));
-      goto failure;
-    }
+  main_loop = g_main_loop_new (NULL, FALSE);
 
-  for (;;)
+  if ((bus = g_bus_get_sync (bus_type, NULL, &error)))
     {
-      /* Process requests */
-      r = sd_bus_process (bus, NULL);
-      if (r < 0)
+      g_autoptr(IpcService) service = ipc_service_impl_new ();
+
+      if (g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (service),
+                                            bus,
+                                            OBJECT_PATH,
+                                            &error))
         {
-          fprintf (stderr,
-                   "Failed to process bus: %s\n",
-                   strerror (-r));
-          goto failure;
+          g_bus_own_name_on_connection (bus,
+                                        BUS_NAME,
+                                        (G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT |
+                                         G_BUS_NAME_OWNER_FLAGS_REPLACE),
+                                        name_acquired_cb,
+                                        name_lost_cb,
+                                        NULL,
+                                        NULL);
+          g_timeout_add_seconds (NAME_ACQUIRE_DELAY_SECS,
+                                 wait_for_acquire_timeout_cb,
+                                 NULL);
+          g_main_loop_run (main_loop);
+          g_main_loop_unref (main_loop);
+
+          return exit_status;
         }
-
-      /* If we processed a request, continue processing */
-      if (r > 0)
-        continue;
-
-      /* Wait for the next request to process */
-      r = sd_bus_wait (bus, BUS_TIMEOUT_USEC);
-      if (r < 0)
-        {
-          fprintf (stderr,
-                   "Failed to wait on bus: %s\n",
-                   strerror (-r));
-          goto failure;
-        }
-
-      /*
-       * If we timed out, we can expire, we will be auto-started by
-       * systemd or dbus on the next activation request.
-       */
-      if (r == 0)
-        break;
     }
 
-failure:
-  sd_bus_slot_unref (slot);
-  sd_bus_unref (bus);
+  g_error ("Failed to setup system bus: %s", error->message);
 
-  return r < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
+  g_main_loop_unref (main_loop);
+
+  return EXIT_FAILURE;
 }

@@ -822,15 +822,19 @@ sysprof_profiler_menu_button_validate_spawn (SysprofProfilerMenuButton *self,
     {
       g_autoptr(GPtrArray) cooked = g_ptr_array_new ();
 
-      if (g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS))
+      if (argv != NULL)
         {
-          g_ptr_array_add (cooked, "flatpak-spawn");
-          g_ptr_array_add (cooked, "--host");
-          g_ptr_array_add (cooked, "--watch-bus");
+          if (g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS))
+            {
+              g_ptr_array_add (cooked, "flatpak-spawn");
+              g_ptr_array_add (cooked, "--host");
+              g_ptr_array_add (cooked, "--watch-bus");
+            }
+
+          for (guint i = 0; argv[i] != NULL; i++)
+            g_ptr_array_add (cooked, argv[i]);
         }
 
-      for (guint i = 0; argv[i] != NULL; i++)
-        g_ptr_array_add (cooked, argv[i]);
       g_ptr_array_add (cooked, NULL);
 
       sysprof_profiler_set_spawn_argv (priv->profiler,

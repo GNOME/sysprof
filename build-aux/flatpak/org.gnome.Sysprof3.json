@@ -1,5 +1,5 @@
 {
-    "app-id" : "org.gnome.Sysprof2",
+    "app-id" : "org.gnome.Sysprof3",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "master",
     "sdk" : "org.gnome.Sdk",
@@ -16,7 +16,7 @@
         "--socket=wayland",
         "--talk-name=org.gtk.vfs.*",
         "--system-talk-name=org.freedesktop.PolicyKit1",
-        "--system-talk-name=org.gnome.Sysprof2",
+        "--system-talk-name=org.gnome.Sysprof3",
         "--filesystem=home",
         "--filesystem=host",
         "--filesystem=xdg-run/dconf",

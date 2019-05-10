@@ -150,7 +150,7 @@ sysprof_window_settings_register (GtkWindow *window)
 {
   if (settings == NULL)
     {
-      settings = g_settings_new ("org.gnome.sysprof2");
+      settings = g_settings_new ("org.gnome.sysprof3");
       g_object_add_weak_pointer (G_OBJECT (settings), (gpointer *)&settings);
     }
   else

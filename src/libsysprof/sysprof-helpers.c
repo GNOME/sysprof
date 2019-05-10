@@ -26,6 +26,7 @@
 #include <polkit/polkit.h>
 
 #include "sysprof-helpers.h"
+#include "sysprof-backport-autocleanups.h"
 
 #include "helpers.h"
 #include "ipc-service.h"

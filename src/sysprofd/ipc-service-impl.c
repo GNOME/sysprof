@@ -254,7 +254,7 @@ ipc_service_impl_handle_get_process_info (IpcService            *service,
           if (want_mountinfo)
             add_pid_proc_file_to (pid, "mountinfo", &dict);
 
-          g_variant_builder_add (&builder, "a{sv}", g_variant_dict_end (&dict));
+          g_variant_builder_add_value (&builder, g_variant_dict_end (&dict));
         }
     }
 

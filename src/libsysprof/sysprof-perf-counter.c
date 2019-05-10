@@ -432,10 +432,9 @@ sysprof_perf_counter_open (SysprofPerfCounter     *self,
   g_return_val_if_fail (group_fd >= -1, -1);
 
   if (sysprof_helpers_perf_event_open (helpers, attr, pid, cpu, group_fd, flags, NULL, &out_fd, NULL))
-    {
-    }
+    return out_fd;
 
-  return out_fd;
+  return -1;
 }
 
 void

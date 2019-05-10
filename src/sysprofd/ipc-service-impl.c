@@ -47,8 +47,6 @@ ipc_service_impl_handle_list_processes (IpcService            *service,
   g_assert (IPC_IS_SERVICE_IMPL (service));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
 
-  g_message ("ListProcesses()");
-
   if (!helpers_list_processes (&processes, &n_processes))
     g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
                                            G_DBUS_ERROR,
@@ -75,8 +73,6 @@ ipc_service_impl_handle_get_proc_file (IpcService            *service,
 
   g_assert (IPC_IS_SERVICE_IMPL (service));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
-
-  g_message ("GetProcFile(%s)", path);
 
   if (!helpers_get_proc_file (path, &contents, &len))
     g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
@@ -176,8 +172,6 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
 
   g_assert (IPC_IS_SERVICE_IMPL (skeleton));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
-
-  return TRUE;
 
   peer_name = g_dbus_method_invocation_get_sender (invocation);
 

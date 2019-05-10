@@ -592,8 +592,7 @@ sysprof_perf_source_start_pid (SysprofPerfSource  *self,
   gulong flags = 0;
   gint ncpu = g_get_num_processors ();
   gint cpu = 0;
-  gint fd;
-  gint i;
+  gint fd = -1;
 
   g_assert (SYSPROF_IS_PERF_SOURCE (self));
 
@@ -661,12 +660,10 @@ sysprof_perf_source_start_pid (SysprofPerfSource  *self,
             }
         }
 
-      for (i = 0; i < G_N_ELEMENTS(optional_tracepoints); i++)
-        {
-          sysprof_perf_source_add_optional_tracepoint (self, pid, cpu,
-                                                  &optional_tracepoints[i],
-                                                  error);
-        }
+      for (guint i = 0; i < G_N_ELEMENTS(optional_tracepoints); i++)
+        sysprof_perf_source_add_optional_tracepoint (self, pid, cpu,
+                                                     &optional_tracepoints[i],
+                                                     error);
     }
 
   return TRUE;

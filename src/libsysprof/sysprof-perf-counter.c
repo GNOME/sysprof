@@ -293,12 +293,11 @@ static gboolean
 sysprof_perf_counter_dispatch (gpointer user_data)
 {
   SysprofPerfCounter *self = user_data;
-  guint i;
 
   g_assert (self != NULL);
   g_assert (self->info != NULL);
 
-  for (i = 0; i < self->info->len; i++)
+  for (guint i = 0; i < self->info->len; i++)
     {
       SysprofPerfCounterInfo *info = g_ptr_array_index (self->info, i);
 

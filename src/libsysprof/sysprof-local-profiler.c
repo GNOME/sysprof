@@ -22,9 +22,11 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <gio/gio.h>
 #include <errno.h>
 #include <unistd.h>
 
+#include "sysprof-helpers.h"
 #include "sysprof-local-profiler.h"
 #include "sysprof-platform.h"
 
@@ -466,19 +468,21 @@ sysprof_local_profiler_finish_startup (SysprofLocalProfiler *self)
 }
 
 static void
-sysprof_local_profiler_start (SysprofProfiler *profiler)
+sysprof_local_profiler_authorize_cb (GObject      *object,
+                                     GAsyncResult *result,
+                                     gpointer      user_data)
 {
-  SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
+  SysprofHelpers *helpers = (SysprofHelpers *)object;
+  g_autoptr(SysprofLocalProfiler) self = user_data;
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
-  guint i;
+  g_autoptr(GError) error = NULL;
 
-  g_return_if_fail (SYSPROF_IS_LOCAL_PROFILER (self));
-  g_return_if_fail (priv->is_running == FALSE);
-  g_return_if_fail (priv->is_stopping == FALSE);
-  g_return_if_fail (priv->is_starting == FALSE);
+  g_assert (SYSPROF_IS_HELPERS (helpers));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_LOCAL_PROFILER (self));
 
-  g_clear_pointer (&priv->timer, g_timer_destroy);
-  g_object_notify (G_OBJECT (self), "elapsed");
+  /* Ignore the result and try anyway */
+  sysprof_helpers_authorize_finish (helpers, result, NULL);
 
   if (priv->writer == NULL)
     {
@@ -488,7 +492,7 @@ sysprof_local_profiler_start (SysprofProfiler *profiler)
       if ((-1 == (fd = sysprof_memfd_create ("[sysprof]"))) ||
           (NULL == (writer = sysprof_capture_writer_new_from_fd (fd, 0))))
         {
-          const GError error = {
+          const GError werror = {
             G_FILE_ERROR,
             g_file_error_from_errno (errno),
             (gchar *)g_strerror (errno)
@@ -497,7 +501,7 @@ sysprof_local_profiler_start (SysprofProfiler *profiler)
           if (fd != -1)
             close (fd);
 
-          sysprof_profiler_emit_failed (SYSPROF_PROFILER (self), &error);
+          sysprof_profiler_emit_failed (SYSPROF_PROFILER (self), &werror);
 
           return;
         }
@@ -516,20 +520,19 @@ sysprof_local_profiler_start (SysprofProfiler *profiler)
     {
       g_autoptr(GPtrArray) ar = g_ptr_array_new_with_free_func (g_free);
       GPid pid;
-      GError *error = NULL;
 
       if (priv->spawn_inherit_environ)
         {
           gchar **environ = g_get_environ ();
 
-          for (i = 0; environ[i]; i++)
+          for (guint i = 0; environ[i]; i++)
             g_ptr_array_add (ar, environ[i]);
           g_free (environ);
         }
 
       if (priv->spawn_env)
         {
-          for (i = 0; priv->spawn_env[i]; i++)
+          for (guint i = 0; priv->spawn_env[i]; i++)
             g_ptr_array_add (ar, g_strdup (priv->spawn_env[i]));
         }
 
@@ -545,12 +548,12 @@ sysprof_local_profiler_start (SysprofProfiler *profiler)
                           NULL,
                           &pid,
                           &error))
-        g_ptr_array_add (priv->failures, error);
+        g_ptr_array_add (priv->failures, g_steal_pointer (&error));
       else
         g_array_append_val (priv->pids, pid);
     }
 
-  for (i = 0; i < priv->sources->len; i++)
+  for (guint i = 0; i < priv->sources->len; i++)
     {
       SysprofSource *source = g_ptr_array_index (priv->sources, i);
       guint j;
@@ -569,7 +572,7 @@ sysprof_local_profiler_start (SysprofProfiler *profiler)
       sysprof_source_prepare (source);
     }
 
-  for (i = 0; i < priv->sources->len; i++)
+  for (guint i = 0; i < priv->sources->len; i++)
     {
       SysprofSource *source = g_ptr_array_index (priv->sources, i);
 
@@ -582,8 +585,29 @@ sysprof_local_profiler_start (SysprofProfiler *profiler)
 }
 
 static void
+sysprof_local_profiler_start (SysprofProfiler *profiler)
+{
+  SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
+  SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
+  SysprofHelpers *helpers = sysprof_helpers_get_default ();
+
+  g_return_if_fail (SYSPROF_IS_LOCAL_PROFILER (self));
+  g_return_if_fail (priv->is_running == FALSE);
+  g_return_if_fail (priv->is_stopping == FALSE);
+  g_return_if_fail (priv->is_starting == FALSE);
+
+  g_clear_pointer (&priv->timer, g_timer_destroy);
+  g_object_notify (G_OBJECT (self), "elapsed");
+
+  sysprof_helpers_authorize_async (helpers,
+                                   NULL,
+                                   sysprof_local_profiler_authorize_cb,
+                                   g_object_ref (self));
+}
+
+static void
 sysprof_local_profiler_set_writer (SysprofProfiler      *profiler,
-                              SysprofCaptureWriter *writer)
+                                   SysprofCaptureWriter *writer)
 {
   SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);

@@ -80,7 +80,7 @@ sysprof_helpers_get_default (void)
   if (g_once_init_enter (&instance))
     {
       SysprofHelpers *self = g_object_new (SYSPROF_TYPE_HELPERS, NULL);
-      g_object_add_weak_pointer (G_OBJECT (instance), (gpointer *)&instance);
+      g_object_add_weak_pointer (G_OBJECT (self), (gpointer *)&instance);
       g_once_init_leave (&instance, self);
     }
 

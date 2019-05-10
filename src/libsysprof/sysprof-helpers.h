@@ -78,19 +78,6 @@ gboolean        sysprof_helpers_perf_event_open        (SysprofHelpers          
                                                         GCancellable            *cancellable,
                                                         gint                    *out_fd,
                                                         GError                 **error);
-void            sysprof_helpers_perf_event_open_async  (SysprofHelpers          *self,
-                                                        struct perf_event_attr  *attr,
-                                                        gint32                   pid,
-                                                        gint32                   cpu,
-                                                        gint32                   group_fd,
-                                                        guint64                  flags,
-                                                        GCancellable            *cancellable,
-                                                        GAsyncReadyCallback      callback,
-                                                        gpointer                 user_data);
-gboolean        sysprof_helpers_perf_event_open_finish (SysprofHelpers          *self,
-                                                        GAsyncResult            *result,
-                                                        gint                    *out_fd,
-                                                        GError                 **error);
 #endif
 
 G_END_DECLS

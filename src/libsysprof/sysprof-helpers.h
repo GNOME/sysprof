@@ -33,6 +33,13 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (SysprofHelpers, sysprof_helpers, SYSPROF, HELPERS, GObject)
 
 SysprofHelpers *sysprof_helpers_get_default            (void);
+void            sysprof_helpers_authorize_async        (SysprofHelpers          *self,
+                                                        GCancellable            *cancellable,
+                                                        GAsyncReadyCallback      callback,
+                                                        gpointer                 user_data);
+gboolean        sysprof_helpers_authorize_finish       (SysprofHelpers          *self,
+                                                        GAsyncResult            *result,
+                                                        GError                 **error);
 gboolean        sysprof_helpers_list_processes         (SysprofHelpers          *self,
                                                         GCancellable            *cancellable,
                                                         gint32                 **processes,
@@ -62,6 +69,15 @@ gboolean        sysprof_helpers_get_proc_file_finish   (SysprofHelpers          
                                                         gchar                  **contents,
                                                         GError                 **error);
 #ifdef __linux__
+gboolean        sysprof_helpers_perf_event_open        (SysprofHelpers          *self,
+                                                        struct perf_event_attr  *attr,
+                                                        gint32                   pid,
+                                                        gint32                   cpu,
+                                                        gint32                   group_fd,
+                                                        guint64                  flags,
+                                                        GCancellable            *cancellable,
+                                                        gint                    *out_fd,
+                                                        GError                 **error);
 void            sysprof_helpers_perf_event_open_async  (SysprofHelpers          *self,
                                                         struct perf_event_attr  *attr,
                                                         gint32                   pid,

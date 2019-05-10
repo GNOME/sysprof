@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include <gio/gunixfdlist.h>
+#include <polkit/polkit.h>
 
 #include "sysprof-helpers.h"
 
@@ -524,3 +525,102 @@ sysprof_helpers_perf_event_open_finish (SysprofHelpers  *self,
   return FALSE;
 }
 #endif /* __linux__ */
+
+static void
+sysprof_helpers_check_authorization_cb (GObject      *object,
+                                        GAsyncResult *result,
+                                        gpointer      user_data)
+{
+  PolkitAuthority *authority = (PolkitAuthority *)object;
+  g_autoptr(PolkitAuthorizationResult) res = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+
+  g_assert (POLKIT_IS_AUTHORITY (authority));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (!(res = polkit_authority_check_authorization_finish (authority, result, &error)))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else if (!polkit_authorization_result_get_is_authorized (res))
+    g_task_return_new_error (task,
+                             G_IO_ERROR,
+                             G_IO_ERROR_PROXY_AUTH_FAILED,
+                             "Failed to authorize user credentials");
+  else
+    g_task_return_boolean (task, TRUE);
+}
+
+static void
+sysprof_helpers_get_authority_cb (GObject      *object,
+                                  GAsyncResult *result,
+                                  gpointer      user_data)
+{
+  g_autoptr(PolkitAuthority) authority = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+  PolkitSubject *subject;
+  GCancellable *cancellable;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  cancellable = g_task_get_cancellable (task);
+  subject = g_task_get_task_data (task);
+
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+  g_assert (POLKIT_IS_SUBJECT (subject));
+
+  if (!(authority = polkit_authority_get_finish (result, &error)))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    polkit_authority_check_authorization (authority,
+                                          subject,
+                                          "org.gnome.sysprof3.profile",
+                                          NULL,
+                                          POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION,
+                                          cancellable,
+                                          sysprof_helpers_check_authorization_cb,
+                                          g_steal_pointer (&task));
+}
+
+void
+sysprof_helpers_authorize_async (SysprofHelpers      *self,
+                                 GCancellable        *cancellable,
+                                 GAsyncReadyCallback  callback,
+                                 gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  g_autoptr(PolkitSubject) subject = NULL;
+  GDBusConnection *bus;
+  const gchar *unique_name;
+
+  g_return_if_fail (SYSPROF_IS_HELPERS (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_helpers_authorize_async);
+
+  if (fail_if_no_proxy (self, task))
+    return;
+
+  bus = g_dbus_proxy_get_connection (G_DBUS_PROXY (self->proxy));
+  unique_name = g_dbus_connection_get_unique_name (bus);
+  subject = polkit_system_bus_name_new (unique_name);
+  g_task_set_task_data (task, g_steal_pointer (&subject), g_object_unref);
+
+  polkit_authority_get_async (cancellable,
+                              sysprof_helpers_get_authority_cb,
+                              g_steal_pointer (&task));
+}
+
+gboolean
+sysprof_helpers_authorize_finish (SysprofHelpers  *self,
+                                  GAsyncResult    *result,
+                                  GError         **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_HELPERS (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}

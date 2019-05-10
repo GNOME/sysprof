@@ -487,7 +487,7 @@ save_environ_to_gsettings (gpointer data)
   if (priv->environment_model == NULL)
     return G_SOURCE_REMOVE;
 
-  settings = g_settings_new ("org.gnome.sysprof2");
+  settings = g_settings_new ("org.gnome.sysprof3");
 
   ar = g_ptr_array_new_with_free_func (g_free);
 

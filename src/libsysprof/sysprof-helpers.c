@@ -36,26 +36,7 @@ struct _SysprofHelpers
   IpcService *proxy;
 };
 
-typedef struct
-{
-  GVariant *options;
-  gint32 pid;
-  gint32 cpu;
-  gint group_fd;
-  guint64 flags;
-} PerfEventOpen;
-
 G_DEFINE_TYPE (SysprofHelpers, sysprof_helpers, G_TYPE_OBJECT)
-
-static void
-perf_event_open_free (gpointer data)
-{
-  PerfEventOpen *state = data;
-  g_clear_pointer (&state->options, g_variant_unref);
-  if (state->group_fd)
-    close (state->group_fd);
-  g_slice_free (PerfEventOpen, state);
-}
 
 static void
 sysprof_helpers_finalize (GObject *object)
@@ -343,54 +324,6 @@ sysprof_helpers_get_proc_file_finish (SysprofHelpers  *self,
 }
 
 #ifdef __linux__
-static void
-sysprof_helpers_perf_event_open_cb (IpcService   *service,
-                                    GAsyncResult *result,
-                                    gpointer      user_data)
-{
-  g_autoptr(GTask) task = user_data;
-  g_autoptr(GUnixFDList) fd_list = NULL;
-  g_autoptr(GError) error = NULL;
-  PerfEventOpen *state;
-
-  g_assert (IPC_IS_SERVICE (service));
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (G_IS_TASK (task));
-
-  state = g_task_get_task_data (task);
-
-  g_assert (state != NULL);
-  g_assert (state->options != NULL);
-
-  if (!g_dbus_proxy_call_with_unix_fd_list_finish (G_DBUS_PROXY (service),
-                                                   &fd_list,
-                                                   result,
-                                                   &error))
-    {
-      gint out_fd = -1;
-
-      if (helpers_perf_event_open (state->options,
-                                   state->pid,
-                                   state->cpu,
-                                   state->group_fd,
-                                   state->flags,
-                                   &out_fd))
-        {
-          fd_list = g_unix_fd_list_new ();
-          if (-1 == g_unix_fd_list_append (fd_list, out_fd, NULL))
-            g_clear_object (&fd_list);
-          close (out_fd);
-        }
-    }
-
-  g_assert (error || fd_list);
-
-  if (error != NULL)
-    g_task_return_error (task, g_steal_pointer (&error));
-  else
-    g_task_return_pointer (task, g_steal_pointer (&fd_list), g_object_unref);
-}
-
 static GVariant *
 build_options_dict (struct perf_event_attr *attr)
 {
@@ -429,62 +362,86 @@ build_options_dict (struct perf_event_attr *attr)
                           (guint32)attr->type));
 }
 
-void
-sysprof_helpers_perf_event_open_async (SysprofHelpers         *self,
-                                       struct perf_event_attr *attr,
-                                       gint32                  pid,
-                                       gint32                  cpu,
-                                       gint32                  group_fd,
-                                       guint64                 flags,
-                                       GCancellable           *cancellable,
-                                       GAsyncReadyCallback     callback,
-                                       gpointer                user_data)
+gboolean
+sysprof_helpers_perf_event_open (SysprofHelpers          *self,
+                                 struct perf_event_attr  *attr,
+                                 gint32                   pid,
+                                 gint32                   cpu,
+                                 gint32                   group_fd,
+                                 guint64                  flags,
+                                 GCancellable            *cancellable,
+                                 gint                    *out_fd,
+                                 GError                 **error)
 {
-  g_autoptr(GTask) task = NULL;
+  g_autoptr(GUnixFDList) fd_list = NULL;
+  g_autoptr(GUnixFDList) out_fd_list = NULL;
+  g_autoptr(GVariant) options = NULL;
+  g_autoptr(GVariant) reply = NULL;
+  gint handle = -1;
 
-  g_return_if_fail (SYSPROF_IS_HELPERS (self));
-  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
-  g_return_if_fail (group_fd >= -1);
+  g_return_val_if_fail (SYSPROF_IS_HELPERS (self), FALSE);
+  g_return_val_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable), FALSE);
+  g_return_val_if_fail (group_fd >= -1, FALSE);
+  g_return_val_if_fail (out_fd != NULL, FALSE);
 
-  task = g_task_new (self, cancellable, callback, user_data);
-  g_task_set_source_tag (task, sysprof_helpers_perf_event_open_async);
+  *out_fd = -1;
 
-  if (!fail_if_no_proxy (self, task))
+  if (self->proxy == NULL)
     {
-      g_autoptr(GUnixFDList) fd_list = NULL;
-      g_autoptr(GVariant) params = NULL;
-      PerfEventOpen *state;
-      gint handle = -1;
+      g_set_error (error,
+                   G_IO_ERROR,
+                   G_IO_ERROR_NOT_CONNECTED,
+                   "No access to system proxy");
+      return FALSE;
+    }
 
-      if (group_fd != -1)
+  if (group_fd != -1)
+    {
+      fd_list = g_unix_fd_list_new ();
+      handle = g_unix_fd_list_append (fd_list, group_fd, NULL);
+    }
+
+  options = build_options_dict (attr);
+
+  reply = g_dbus_proxy_call_with_unix_fd_list_sync (G_DBUS_PROXY (self->proxy),
+                                                    "PerfEventOpen",
+                                                    g_variant_new ("(@a{sv}iiht)",
+                                                                   options,
+                                                                   pid,
+                                                                   cpu,
+                                                                   handle,
+                                                                   flags),
+                                                    G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
+                                                    -1,
+                                                    fd_list,
+                                                    &out_fd_list,
+                                                    cancellable,
+                                                    error);
+
+  if (reply == NULL)
+    {
+      /* Try in-process (without elevated privs) */
+      if (helpers_perf_event_open (options, pid, cpu, group_fd, flags, out_fd))
         {
-          fd_list = g_unix_fd_list_new ();
-          handle = g_unix_fd_list_append (fd_list, group_fd, NULL);
+          g_clear_error (error);
+          return TRUE;
         }
 
-      state = g_slice_new0 (PerfEventOpen);
-      state->options = g_variant_take_ref (build_options_dict (attr));
-      state->pid = pid;
-      state->cpu = cpu;
-      state->group_fd = dup (group_fd);
-      state->flags = flags;
-      g_task_set_task_data (task, state, perf_event_open_free);
-
-      g_dbus_proxy_call_with_unix_fd_list (G_DBUS_PROXY (self->proxy),
-                                           "PerfEventOpen",
-                                           g_variant_new ("(@a{sv}iiht)",
-                                                          state->options,
-                                                          state->pid,
-                                                          state->cpu,
-                                                          handle,
-                                                          state->flags),
-                                           G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
-                                           -1,
-                                           fd_list,
-                                           cancellable,
-                                           (GAsyncReadyCallback) sysprof_helpers_perf_event_open_cb,
-                                           g_steal_pointer (&task));
+      return FALSE;
     }
+
+  if (out_fd_list == NULL || g_unix_fd_list_get_length (out_fd_list) != 1)
+    {
+      g_set_error (error,
+                   G_IO_ERROR,
+                   G_IO_ERROR_FAILED,
+                   "Received invalid reply from peer");
+      return FALSE;
+    }
+
+  *out_fd = g_unix_fd_list_get (out_fd_list, 0, error);
+
+  return *out_fd != -1;
 }
 
 gboolean

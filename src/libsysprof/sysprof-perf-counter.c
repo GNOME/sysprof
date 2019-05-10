@@ -42,9 +42,6 @@
 #include <errno.h>
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
-#ifdef ENABLE_POLKIT
-# include <polkit/polkit.h>
-#endif
 #include <stdatomic.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -52,6 +49,7 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 
+#include "sysprof-helpers.h"
 #include "sysprof-perf-counter.h"
 
 /*
@@ -114,7 +112,7 @@ struct _SysprofPerfCounter
 
 typedef struct
 {
-  GSource        source;
+  GSource             source;
   SysprofPerfCounter *counter;
 } PerfGSource;
 
@@ -122,10 +120,6 @@ G_DEFINE_BOXED_TYPE (SysprofPerfCounter,
                      sysprof_perf_counter,
                      (GBoxedCopyFunc)sysprof_perf_counter_ref,
                      (GBoxedFreeFunc)sysprof_perf_counter_unref)
-
-#ifdef ENABLE_POLKIT
-static GDBusConnection *shared_conn;
-#endif
 
 static gboolean
 perf_gsource_dispatch (GSource     *source,
@@ -212,7 +206,7 @@ sysprof_perf_counter_ref (SysprofPerfCounter *self)
 
 static void
 sysprof_perf_counter_flush (SysprofPerfCounter     *self,
-                       SysprofPerfCounterInfo *info)
+                            SysprofPerfCounterInfo *info)
 {
   guint64 head;
   guint64 tail;
@@ -316,7 +310,7 @@ sysprof_perf_counter_dispatch (gpointer user_data)
 
 static void
 sysprof_perf_counter_enable_info (SysprofPerfCounter     *self,
-                             SysprofPerfCounterInfo *info)
+                                  SysprofPerfCounterInfo *info)
 {
   g_assert (self != NULL);
   g_assert (info != NULL);
@@ -351,7 +345,7 @@ sysprof_perf_counter_new (GMainContext *context)
 
 void
 sysprof_perf_counter_close (SysprofPerfCounter *self,
-                       gint           fd)
+                            gint                fd)
 {
   guint i;
 
@@ -375,8 +369,8 @@ sysprof_perf_counter_close (SysprofPerfCounter *self,
 
 static void
 sysprof_perf_counter_add_info (SysprofPerfCounter *self,
-                          int            fd,
-                          int            cpu)
+                               int                 fd,
+                               int                 cpu)
 {
   SysprofPerfCounterInfo *info;
   guint8 *map;
@@ -411,7 +405,7 @@ sysprof_perf_counter_add_info (SysprofPerfCounter *self,
 
 void
 sysprof_perf_counter_take_fd (SysprofPerfCounter *self,
-                         int            fd)
+                              int                 fd)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (fd > -1);
@@ -419,380 +413,36 @@ sysprof_perf_counter_take_fd (SysprofPerfCounter *self,
   sysprof_perf_counter_add_info (self, fd, -1);
 }
 
-#ifdef ENABLE_POLKIT
-static GDBusProxy *
-get_proxy (void)
-{
-  static GDBusProxy *proxy;
-
-  if (proxy != NULL)
-    return g_object_ref (proxy);
-
-  if (shared_conn == NULL)
-    shared_conn = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL);
-
-  if (shared_conn == NULL)
-    return NULL;
-
-  proxy = g_dbus_proxy_new_sync (shared_conn,
-                                 (G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES |
-                                  G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS |
-                                  G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION),
-                                 NULL,
-                                 "org.gnome.Sysprof3",
-                                 "/org/gnome/Sysprof3",
-                                 "org.gnome.Sysprof3.Service",
-                                 NULL, NULL);
-
-  if (proxy != NULL)
-    {
-      g_object_add_weak_pointer (G_OBJECT (proxy), (gpointer *)&proxy);
-      return g_object_ref (proxy);
-    }
-
-  return NULL;
-}
-
-static gboolean
-authorize_proxy (GDBusProxy *proxy)
-{
-  PolkitSubject *subject = NULL;
-  GPermission *permission = NULL;
-  GDBusConnection *conn;
-  const gchar *name;
-
-  g_assert (G_IS_DBUS_PROXY (proxy));
-
-  conn = g_dbus_proxy_get_connection (proxy);
-  if (conn == NULL)
-    goto failure;
-
-  name = g_dbus_connection_get_unique_name (conn);
-  if (name == NULL)
-    goto failure;
-
-  subject = polkit_system_bus_name_new (name);
-  if (subject == NULL)
-    goto failure;
-
-  permission = polkit_permission_new_sync ("org.gnome.sysprof3.profile", subject, NULL, NULL);
-  if (permission == NULL)
-    goto failure;
-
-  if (!g_permission_acquire (permission, NULL, NULL))
-    goto failure;
-
-  return TRUE;
-
-failure:
-  g_clear_object (&subject);
-  g_clear_object (&permission);
-
-  return FALSE;
-}
-
-static GDBusProxy *
-get_authorized_proxy (void)
-{
-  g_autoptr(GDBusProxy) proxy = NULL;
-
-  proxy = get_proxy ();
-  if (proxy != NULL && authorize_proxy (proxy))
-    return g_steal_pointer (&proxy);
-
-  return NULL;
-}
-
-static void
-sysprof_perf_counter_ping_cb (GObject      *object,
-                         GAsyncResult *result,
-                         gpointer      user_data)
-{
-  GDBusProxy *proxy = (GDBusProxy *)object;
-  g_autoptr(GTask) task = user_data;
-  g_autoptr(GVariant) ret = NULL;
-  GError *error = NULL;
-
-  g_assert (G_IS_DBUS_PROXY (proxy));
-  g_assert (G_IS_TASK (task));
-  g_assert (G_IS_ASYNC_RESULT (result));
-
-  ret = g_dbus_proxy_call_finish (proxy, result, &error);
-
-  if (error != NULL)
-    g_task_return_error (task, error);
-  else
-    g_task_return_boolean (task, TRUE);
-}
-
-static void
-sysprof_perf_counter_acquire_cb (GObject      *object,
-                            GAsyncResult *result,
-                            gpointer      user_data)
-{
-  g_autoptr(GTask) task = user_data;
-  GPermission *permission = (GPermission *)object;
-  g_autoptr(GDBusProxy) proxy = NULL;
-  GError *error = NULL;
-
-  g_assert (G_IS_PERMISSION (permission));
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (G_IS_TASK (task));
-
-  if (!g_permission_acquire_finish (permission, result, &error))
-    {
-      g_task_return_error (task, error);
-      return;
-    }
-
-  proxy = get_proxy ();
-
-  if (proxy == NULL)
-    {
-      /* We don't connect at startup, shouldn't happen */
-      g_task_return_new_error (task,
-                               G_IO_ERROR,
-                               G_IO_ERROR_FAILED,
-                               "Failed to create proxy");
-      return;
-    }
-
-  g_dbus_proxy_call (proxy,
-                     "org.freedesktop.DBus.Peer.Ping",
-                     NULL,
-                     G_DBUS_CALL_FLAGS_NONE,
-                     5000,
-                     g_task_get_cancellable (task),
-                     sysprof_perf_counter_ping_cb,
-                     g_object_ref (task));
-}
-
-static void
-sysprof_perf_counter_permission_cb (GObject      *object,
-                               GAsyncResult *result,
-                               gpointer      user_data)
-{
-  g_autoptr(GTask) task = user_data;
-  GPermission *permission;
-  GError *error = NULL;
-
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (G_IS_TASK (task));
-
-  if (NULL == (permission = polkit_permission_new_finish (result, &error)))
-    {
-      g_task_return_error (task, error);
-      return;
-    }
-
-  g_permission_acquire_async (permission,
-                              g_task_get_cancellable (task),
-                              sysprof_perf_counter_acquire_cb,
-                              g_object_ref (task));
-
-  g_object_unref (permission);
-}
-
-static void
-sysprof_perf_counter_get_bus_cb (GObject      *object,
-                            GAsyncResult *result,
-                            gpointer      user_data)
-{
-  g_autoptr(GDBusConnection) bus = NULL;
-  g_autoptr(GTask) task = user_data;
-  PolkitSubject *subject = NULL;
-  const gchar *name;
-  GError *error = NULL;
-
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (G_IS_TASK (task));
-
-  if (NULL == (bus = g_bus_get_finish (result, &error)))
-    {
-      g_task_return_error (task, error);
-      return;
-    }
-
-  shared_conn = g_object_ref (bus);
-
-  name = g_dbus_connection_get_unique_name (bus);
-  subject = polkit_system_bus_name_new (name);
-
-  polkit_permission_new ("org.gnome.sysprof2.perf-event-open",
-                         subject,
-                         g_task_get_cancellable (task),
-                         sysprof_perf_counter_permission_cb,
-                         g_object_ref (task));
-
-  g_object_unref (subject);
-}
-
-#endif
-
-void
-sysprof_perf_counter_authorize_async (GCancellable        *cancellable,
-                                 GAsyncReadyCallback  callback,
-                                 gpointer             user_data)
-{
-  g_autoptr(GTask) task = NULL;
-
-  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
-
-  task = g_task_new (NULL, cancellable, callback, user_data);
-
-#ifdef ENABLE_POLKIT
-  g_bus_get (G_BUS_TYPE_SYSTEM,
-             cancellable,
-             sysprof_perf_counter_get_bus_cb,
-             g_object_ref (task));
-#else
-  g_task_return_new_error (task,
-                           G_IO_ERROR,
-                           G_IO_ERROR_NOT_SUPPORTED,
-                           "Sysprofd is not supported in current configuration");
-#endif
-}
-
-gboolean
-sysprof_perf_counter_authorize_finish (GAsyncResult  *result,
-                                  GError       **error)
-{
-  g_assert (G_IS_TASK (result));
-
-  return g_task_propagate_boolean (G_TASK (result), error);
-}
-
 gint
-sysprof_perf_counter_open (SysprofPerfCounter          *self,
-                      struct perf_event_attr *attr,
-                      GPid                    pid,
-                      gint                    cpu,
-                      gint                    group_fd,
-                      gulong                  flags)
+sysprof_perf_counter_open (SysprofPerfCounter     *self,
+                           struct perf_event_attr *attr,
+                           GPid                    pid,
+                           gint                    cpu,
+                           gint                    group_fd,
+                           gulong                  flags)
 {
-#ifdef ENABLE_POLKIT
+  SysprofHelpers *helpers = sysprof_helpers_get_default ();
   g_autoptr(GError) error = NULL;
-  g_autoptr(GDBusProxy) proxy = NULL;
-  g_autoptr(GUnixFDList) fdlist = NULL;
-  g_autoptr(GVariant) res = NULL;
-  g_autoptr(GVariant) params = NULL;
-  gint handle = -1;
-#endif
-  gint ret = -1;
+  gint out_fd = -1;
 
   g_return_val_if_fail (self != NULL, -1);
   g_return_val_if_fail (attr != NULL, -1);
+  g_return_val_if_fail (cpu >= -1, -1);
+  g_return_val_if_fail (pid >= -1, -1);
+  g_return_val_if_fail (group_fd >= -1, -1);
 
-  /*
-   * First, we try to run the syscall locally, since we should avoid the
-   * polkit request unless we have to use it for elevated privileges.
-   */
-  if (-1 != (ret = syscall (__NR_perf_event_open, attr, pid, cpu, group_fd, flags)))
+  if (sysprof_helpers_perf_event_open (helpers, attr, pid, cpu, group_fd, flags, NULL, &out_fd, NULL))
     {
-      sysprof_perf_counter_take_fd (self, ret);
-      return ret;
     }
 
-#ifdef ENABLE_POLKIT
-  params = g_variant_new_parsed (
-			"("
-				"["
-					"{'comm', <%b>},"
-#ifdef HAVE_PERF_CLOCKID
-					"{'clockid', <%i>},"
-					"{'use_clockid', <%b>},"
-#endif
-					"{'config', <%t>},"
-					"{'disabled', <%b>},"
-					"{'exclude_idle', <%b>},"
-					"{'mmap', <%b>},"
-					"{'wakeup_events', <%u>},"
-					"{'sample_id_all', <%b>},"
-					"{'sample_period', <%t>},"
-					"{'sample_type', <%t>},"
-					"{'task', <%b>},"
-					"{'type', <%u>}"
-				"],"
-				"%i,"
-				"%i,"
-				"%t"
-			")",
-      (gboolean)!!attr->comm,
-#ifdef HAVE_PERF_CLOCKID
-      (gint32)attr->clockid,
-      (gboolean)!!attr->use_clockid,
-#endif
-      (guint64)attr->config,
-      (gboolean)!!attr->disabled,
-      (gboolean)!!attr->exclude_idle,
-      (gboolean)!!attr->mmap,
-      (guint32)attr->wakeup_events,
-      (gboolean)!!attr->sample_id_all,
-      (guint64)attr->sample_period,
-      (guint64)attr->sample_type,
-      (gboolean)!!attr->task,
-      (guint32)attr->type,
-      (gint32)pid,
-      (gint32)cpu,
-      (guint64)flags);
-
-  params = g_variant_ref_sink (params);
-
-  if (NULL == (proxy = get_authorized_proxy ()))
-    {
-      errno = EPERM;
-      return -1;
-    }
-
-  res = g_dbus_proxy_call_with_unix_fd_list_sync (proxy,
-                                                  "PerfEventOpen",
-                                                  params,
-                                                  G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
-                                                  60000,
-                                                  NULL,
-                                                  &fdlist,
-                                                  NULL,
-                                                  &error);
-
-  if (res == NULL)
-    {
-      g_autofree gchar *str = g_variant_print (params, TRUE);
-
-      g_warning ("PerfEventOpen: %s: %s", error->message, str);
-      return -1;
-    }
-
-  if (!g_variant_is_of_type (res, (const GVariantType *)"(h)"))
-    {
-      g_warning ("Received something other than a handle");
-      return -1;
-    }
-
-  if (fdlist == NULL)
-    {
-      g_warning ("Failed to receive fdlist");
-      return -1;
-    }
-
-  g_variant_get (res, "(h)", &handle);
-
-  if (-1 == (ret = g_unix_fd_list_get (fdlist, handle, &error)))
-    {
-      g_warning ("%s", error->message);
-      return -1;
-    }
-
-  sysprof_perf_counter_take_fd (self, ret);
-#endif
-
-  return ret;
+  return out_fd;
 }
 
 void
 sysprof_perf_counter_set_callback (SysprofPerfCounter         *self,
-                              SysprofPerfCounterCallback  callback,
-                              gpointer               callback_data,
-                              GDestroyNotify         callback_data_destroy)
+                                   SysprofPerfCounterCallback  callback,
+                                   gpointer                    callback_data,
+                                   GDestroyNotify              callback_data_destroy)
 {
   g_return_if_fail (self != NULL);
 
@@ -811,9 +461,7 @@ sysprof_perf_counter_enable (SysprofPerfCounter *self)
 
   if (g_atomic_int_add (&self->enabled, 1) == 0)
     {
-      guint i;
-
-      for (i = 0; i < self->info->len; i++)
+      for (guint i = 0; i < self->info->len; i++)
         {
           SysprofPerfCounterInfo *info = g_ptr_array_index (self->info, i);
 
@@ -829,9 +477,7 @@ sysprof_perf_counter_disable (SysprofPerfCounter *self)
 
   if (g_atomic_int_dec_and_test (&self->enabled))
     {
-      guint i;
-
-      for (i = 0; i < self->info->len; i++)
+      for (guint i = 0; i < self->info->len; i++)
         {
           SysprofPerfCounterInfo *info = g_ptr_array_index (self->info, i);
 

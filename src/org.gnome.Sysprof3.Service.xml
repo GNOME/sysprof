@@ -52,5 +52,25 @@
     <method name="ListProcesses">
       <arg name="processes" type="ai" direction="out"/>
     </method>
+    <!--
+      GetProcessInfo:
+      @attributes: a comma separated string of attributes to load
+
+      Gets information about the processes on the system.
+
+      Attributes can be a comma separated list of the following:
+
+      - pid: (int32): the process identifier, always included
+      - cmdline: (string): Provides the command line
+      - maps: (string): Provide the contents of /proc/pid/maps
+      - statm: (string): Provide the contents of /proc/pid/statm
+      - mountinfo: (string): Provide the contents of/proc/pid/mountinfo
+
+      Returns: an array of vardict containing the requested attributs
+    -->
+    <method name="GetProcessInfo">
+      <arg name="attributes" type="s" direction="in"/>
+      <arg name="processes" type="aa{sv}" direction="out"/>
+    </method>
   </interface>
 </node>

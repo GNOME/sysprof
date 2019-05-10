@@ -481,8 +481,11 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (SYSPROF_IS_LOCAL_PROFILER (self));
 
-  /* Ignore the result and try anyway */
-  sysprof_helpers_authorize_finish (helpers, result, NULL);
+  if (!sysprof_helpers_authorize_finish (helpers, result, &error))
+    {
+      sysprof_profiler_emit_failed (SYSPROF_PROFILER (self), error);
+      return;
+    }
 
   if (priv->writer == NULL)
     {

@@ -88,15 +88,21 @@ type_is_ignored (guint8 type)
 }
 
 static gboolean
-sysprof_kernel_symbol_load_from_sysprofd (void)
+sysprof_kernel_symbol_load (void)
 {
   SysprofHelpers *helpers = sysprof_helpers_get_default ();
   g_autoptr(SysprofKallsyms) kallsyms = NULL;
-  g_autofree gchar *contents = NULL;
+  g_autoptr(GHashTable) skip = NULL;
   g_autoptr(GArray) ar = NULL;
+  g_autofree gchar *contents = NULL;
   const gchar *name;
   guint64 addr;
   guint8 type;
+
+  skip = g_hash_table_new (g_str_hash, g_str_equal);
+  for (guint i = 0; i < G_N_ELEMENTS (kernel_symbols_skip); i++)
+    g_hash_table_insert (skip, (gchar *)kernel_symbols_skip[i], NULL);
+  kernel_symbols_skip_hash = g_steal_pointer (&skip);
 
   if (!sysprof_helpers_get_proc_file (helpers, "/proc/kallsyms", NULL, &contents, NULL))
     return FALSE;
@@ -129,62 +135,11 @@ sysprof_kernel_symbol_load_from_sysprofd (void)
   return TRUE;
 }
 
-static gboolean
-sysprof_kernel_symbol_load (void)
-{
-  g_autoptr(GHashTable) skip = NULL;
-  g_autoptr(SysprofKallsyms) kallsyms = NULL;
-  g_autoptr(GArray) ar = NULL;
-  const gchar *name;
-  guint64 addr;
-  guint8 type;
-
-  skip = g_hash_table_new (g_str_hash, g_str_equal);
-  for (guint i = 0; i < G_N_ELEMENTS (kernel_symbols_skip); i++)
-    g_hash_table_insert (skip, (gchar *)kernel_symbols_skip[i], NULL);
-  kernel_symbols_skip_hash = g_steal_pointer (&skip);
-
-  kernel_symbol_strs = g_string_chunk_new (4096);
-  ar = g_array_new (FALSE, TRUE, sizeof (SysprofKernelSymbol));
-
-  if (!(kallsyms = sysprof_kallsyms_new (NULL)))
-    goto query_daemon;
-
-  while (sysprof_kallsyms_next (kallsyms, &name, &addr, &type))
-    {
-      SysprofKernelSymbol sym;
-
-      if (type_is_ignored (type))
-        continue;
-
-      sym.address = addr;
-      sym.name = g_string_chunk_insert_const (kernel_symbol_strs, name);
-
-      g_array_append_val (ar, sym);
-    }
-
-  if (ar->len == 0)
-    goto query_daemon;
-
-  g_array_sort (ar, sysprof_kernel_symbol_compare);
-  kernel_symbols = g_steal_pointer (&ar);
-
-  return TRUE;
-
-query_daemon:
-  if (sysprof_kernel_symbol_load_from_sysprofd ())
-    return TRUE;
-
-  g_warning ("Kernel symbols will not be available.");
-
-  return FALSE;
-}
-
 static const SysprofKernelSymbol *
 sysprof_kernel_symbol_lookup (SysprofKernelSymbol   *symbols,
-                         SysprofCaptureAddress  address,
-                         guint             first,
-                         guint             last)
+                              SysprofCaptureAddress  address,
+                              guint                  first,
+                              guint                  last)
 {
   if (address >= symbols [last].address)
     {
@@ -250,9 +205,9 @@ sysprof_kernel_symbol_from_address (SysprofCaptureAddress address)
     return NULL;
 
   ret = sysprof_kernel_symbol_lookup ((SysprofKernelSymbol *)(gpointer)kernel_symbols->data,
-                                 address,
-                                 0,
-                                 kernel_symbols->len - 1);
+                                      address,
+                                      0,
+                                      kernel_symbols->len - 1);
 
   /* We resolve all symbols, including ignored symbols so that we
    * don't give back the wrong function juxtapose an ignored func.

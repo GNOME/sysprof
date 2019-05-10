@@ -725,8 +725,6 @@ sysprof_perf_source_start (SysprofSource *source)
   self->running = TRUE;
 
   sysprof_perf_counter_enable (self->counter);
-
-  sysprof_source_emit_ready (source);
 }
 
 static void
@@ -773,122 +771,12 @@ sysprof_perf_source_add_pid (SysprofSource *source,
 }
 
 static void
-sysprof_perf_source_emit_ready (SysprofPerfSource *self)
-{
-  g_assert (SYSPROF_IS_PERF_SOURCE (self));
-
-  self->is_ready = TRUE;
-  sysprof_source_emit_ready (SYSPROF_SOURCE (self));
-}
-
-static void
-sysprof_perf_source_authorize_cb (GObject      *object,
-                             GAsyncResult *result,
-                             gpointer      user_data)
-{
-  g_autoptr(SysprofPerfSource) self = user_data;
-  g_autoptr(GError) error = NULL;
-
-  g_assert (G_IS_ASYNC_RESULT (result));
-
-  if (!sysprof_perf_counter_authorize_finish (result, &error))
-    {
-      if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED))
-        {
-          sysprof_source_emit_failed (SYSPROF_SOURCE (self), error);
-          return;
-        }
-    }
-
-  sysprof_perf_source_emit_ready (self);
-}
-
-static gboolean
-user_owns_pid (uid_t uid,
-               GPid  pid)
-{
-  g_autofree gchar *contents = NULL;
-  g_autofree gchar *path = NULL;
-  g_autoptr(SysprofLineReader) reader = NULL;
-  gchar *line;
-  gsize len;
-  gsize line_len;
-
-  path = g_strdup_printf ("/proc/%u/status", (guint)pid);
-
-  if (!g_file_get_contents (path, &contents, &len, NULL))
-    return FALSE;
-
-  reader = sysprof_line_reader_new (contents, len);
-
-  while (NULL != (line = (gchar *)sysprof_line_reader_next (reader, &line_len)))
-    {
-      if (g_str_has_prefix (line, "Uid:"))
-        {
-          g_auto(GStrv) parts = NULL;
-          guint i;
-
-          line[line_len] = '\0';
-          parts = g_strsplit (line, "\t", 0);
-
-          for (i = 1; parts[i]; i++)
-            {
-              gint64 v64;
-
-              v64 = g_ascii_strtoll (parts[i], NULL, 10);
-
-              if (v64 > 0 && v64 <= G_MAXUINT)
-                {
-                  if ((uid_t)v64 == uid)
-                    return TRUE;
-                }
-            }
-        }
-    }
-
-  return FALSE;
-}
-
-static gboolean
-sysprof_perf_source_needs_auth (SysprofPerfSource *self)
-{
-  GHashTableIter iter;
-  gpointer key;
-  uid_t uid;
-
-  g_assert (SYSPROF_IS_PERF_SOURCE (self));
-
-  if (g_hash_table_size (self->pids) == 0)
-    return TRUE;
-
-  uid = getuid ();
-
-  g_hash_table_iter_init (&iter, self->pids);
-
-  while (g_hash_table_iter_next (&iter, &key, NULL))
-    {
-      GPid pid = GPOINTER_TO_INT (key);
-
-      if (!user_owns_pid (uid, pid))
-        return TRUE;
-    }
-
-  return FALSE;
-}
-
-static void
 sysprof_perf_source_prepare (SysprofSource *source)
 {
-  SysprofPerfSource *self = (SysprofPerfSource *)source;
+  g_assert (SYSPROF_IS_PERF_SOURCE (source));
 
-  g_assert (SYSPROF_IS_PERF_SOURCE (self));
-
-  if (sysprof_perf_source_needs_auth (self))
-    sysprof_perf_counter_authorize_async (NULL,
-                                     sysprof_perf_source_authorize_cb,
-                                     g_object_ref (self));
-  else
-    sysprof_perf_source_emit_ready (self);
+  SYSPROF_PERF_SOURCE (source)->is_ready = TRUE;
+  sysprof_source_emit_ready (source);
 }
 
 static gboolean

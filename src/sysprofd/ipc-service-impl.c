@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <gio/gunixfdlist.h>
 #include <polkit/polkit.h>
+#include <string.h>
 #include <sys/syscall.h>
 #include <time.h>
 #include <unistd.h>

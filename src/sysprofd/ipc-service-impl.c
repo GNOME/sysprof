@@ -190,9 +190,16 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
 }
 
 static void
+postprocess_cmdline (gchar **str,
+                     gsize   len)
+{
+}
+
+static void
 add_pid_proc_file_to (gint          pid,
                       const gchar  *name,
-                      GVariantDict *dict)
+                      GVariantDict *dict,
+		      void (*postprocess) (gchar **, gsize))
 {
   g_autofree gchar *path = NULL;
   g_autofree gchar *contents = NULL;
@@ -205,7 +212,11 @@ add_pid_proc_file_to (gint          pid,
   path = g_strdup_printf ("/proc/%d/%s", pid, name);
 
   if (g_file_get_contents (path, &contents, &len, NULL))
-    g_variant_dict_insert (dict, name, "s", contents);
+    {
+      if (postprocess)
+        postprocess (&contents, len);
+      g_variant_dict_insert (dict, name, "s", contents);
+    }
 }
 
 static gboolean
@@ -240,19 +251,19 @@ ipc_service_impl_handle_get_process_info (IpcService            *service,
           GVariantDict dict;
 
           g_variant_dict_init (&dict, NULL);
-          g_variant_dict_insert (&dict, "pid", "i", pid);
+          g_variant_dict_insert (&dict, "pid", "i", pid, NULL);
 
           if (want_statm)
-            add_pid_proc_file_to (pid, "statm", &dict);
+            add_pid_proc_file_to (pid, "statm", &dict, NULL);
 
           if (want_cmdline)
-            add_pid_proc_file_to (pid, "cmdline", &dict);
+            add_pid_proc_file_to (pid, "cmdline", &dict, postprocess_cmdline);
 
           if (want_maps)
-            add_pid_proc_file_to (pid, "maps", &dict);
+            add_pid_proc_file_to (pid, "maps", &dict, NULL);
 
           if (want_mountinfo)
-            add_pid_proc_file_to (pid, "mountinfo", &dict);
+            add_pid_proc_file_to (pid, "mountinfo", &dict, NULL);
 
           g_variant_builder_add_value (&builder, g_variant_dict_end (&dict));
         }

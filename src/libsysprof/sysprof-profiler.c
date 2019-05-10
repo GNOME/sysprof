@@ -148,7 +148,7 @@ sysprof_profiler_get_spawn_inherit_environ (SysprofProfiler *self)
 
 void
 sysprof_profiler_set_spawn_inherit_environ (SysprofProfiler *self,
-                                       gboolean    spawn_inherit_environ)
+                                            gboolean         spawn_inherit_environ)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_object_set (self, "spawn-inherit-environ", !!spawn_inherit_environ, NULL);
@@ -182,23 +182,23 @@ sysprof_profiler_get_whole_system (SysprofProfiler *self)
 
 void
 sysprof_profiler_set_whole_system (SysprofProfiler *self,
-                              gboolean    whole_system)
+                                   gboolean         whole_system)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_object_set (self, "whole-system", !!whole_system, NULL);
 }
 
 void
-sysprof_profiler_set_spawn_argv (SysprofProfiler          *self,
-                            const gchar * const *spawn_argv)
+sysprof_profiler_set_spawn_argv (SysprofProfiler     *self,
+                                 const gchar * const *spawn_argv)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_object_set (self, "spawn-argv", spawn_argv, NULL);
 }
 
 void
-sysprof_profiler_set_spawn_env (SysprofProfiler          *self,
-                           const gchar * const *spawn_env)
+sysprof_profiler_set_spawn_env (SysprofProfiler     *self,
+                                const gchar * const *spawn_env)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_object_set (self, "spawn-env", spawn_env, NULL);
@@ -206,7 +206,7 @@ sysprof_profiler_set_spawn_env (SysprofProfiler          *self,
 
 void
 sysprof_profiler_add_source (SysprofProfiler *self,
-                        SysprofSource   *source)
+                             SysprofSource   *source)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_return_if_fail (SYSPROF_IS_SOURCE (source));
@@ -216,7 +216,7 @@ sysprof_profiler_add_source (SysprofProfiler *self,
 
 void
 sysprof_profiler_set_writer (SysprofProfiler      *self,
-                        SysprofCaptureWriter *writer)
+                             SysprofCaptureWriter *writer)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_return_if_fail (writer != NULL);
@@ -250,7 +250,7 @@ sysprof_profiler_stop (SysprofProfiler *self)
 
 void
 sysprof_profiler_add_pid (SysprofProfiler *self,
-                     GPid        pid)
+                          GPid             pid)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_return_if_fail (pid > -1);
@@ -260,7 +260,7 @@ sysprof_profiler_add_pid (SysprofProfiler *self,
 
 void
 sysprof_profiler_remove_pid (SysprofProfiler *self,
-                        GPid        pid)
+                             GPid             pid)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_return_if_fail (pid > -1);
@@ -270,7 +270,7 @@ sysprof_profiler_remove_pid (SysprofProfiler *self,
 
 const GPid *
 sysprof_profiler_get_pids (SysprofProfiler *self,
-                      guint      *n_pids)
+                           guint           *n_pids)
 {
   g_return_val_if_fail (SYSPROF_IS_PROFILER (self), NULL);
   g_return_val_if_fail (n_pids != NULL, NULL);
@@ -279,8 +279,8 @@ sysprof_profiler_get_pids (SysprofProfiler *self,
 }
 
 void
-sysprof_profiler_emit_failed (SysprofProfiler   *self,
-                         const GError *error)
+sysprof_profiler_emit_failed (SysprofProfiler *self,
+                              const GError    *error)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_return_if_fail (error != NULL);

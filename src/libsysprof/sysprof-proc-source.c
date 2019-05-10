@@ -43,13 +43,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "sysprof-helpers.h"
 #include "sysprof-proc-source.h"
 
 struct _SysprofProcSource
 {
-  GObject          parent_instance;
+  GObject               parent_instance;
   SysprofCaptureWriter *writer;
-  GArray          *pids;
+  GArray               *pids;
 };
 
 static void    source_iface_init (SysprofSourceInterface *iface);
@@ -64,11 +65,11 @@ static gchar **
 proc_readlines (const gchar *format,
                 ...)
 {
+  SysprofHelpers *helpers = sysprof_helpers_get_default ();
+  g_autofree gchar *filename = NULL;
+  g_autofree gchar *contents = NULL;
   gchar **ret = NULL;
-  gchar *filename = NULL;
-  gchar *contents = NULL;
   va_list args;
-  gsize len;
 
   g_assert (format != NULL);
 
@@ -76,13 +77,10 @@ proc_readlines (const gchar *format,
   filename = g_strdup_vprintf (format, args);
   va_end (args);
 
-  if (g_file_get_contents (filename, &contents, &len, NULL))
+  if (sysprof_helpers_get_proc_file (helpers, filename, NULL, &contents, NULL))
     ret = g_strsplit (contents, "\n", 0);
 
-  g_free (contents);
-  g_free (filename);
-
-  return ret;
+  return g_steal_pointer (&ret);
 }
 
 gchar *
@@ -382,20 +380,19 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
 static void
 sysprof_proc_source_populate (SysprofProcSource *self)
 {
+  SysprofHelpers *helpers = sysprof_helpers_get_default ();
   g_auto(GStrv) mounts = NULL;
-  const gchar *name;
-  GDir *dir;
+  g_autofree gint32 *pids = NULL;
+  gsize n_pids = 0;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
 
-  if (NULL == (mounts = proc_readlines ("/proc/mounts")))
+  if (!(mounts = proc_readlines ("/proc/mounts")))
     return;
 
   if (self->pids->len > 0)
     {
-      guint i;
-
-      for (i = 0; i < self->pids->len; i++)
+      for (guint i = 0; i < self->pids->len; i++)
         {
           GPid pid = g_array_index (self->pids, GPid, i);
 
@@ -406,23 +403,14 @@ sysprof_proc_source_populate (SysprofProcSource *self)
       return;
     }
 
-  if (NULL == (dir = g_dir_open ("/proc", 0, NULL)))
-    return;
-
-  while (NULL != (name = g_dir_read_name (dir)))
+  if (sysprof_helpers_list_processes (helpers, NULL, &pids, &n_pids, NULL))
     {
-      GPid pid;
-      char *end;
-
-      pid = strtol (name, &end, 10);
-      if (pid <= 0 || *end != '\0')
-        continue;
-
-      sysprof_proc_source_populate_process (self, pid);
-      sysprof_proc_source_populate_maps (self, pid, mounts);
+      for (guint i = 0; i < n_pids; i++)
+        {
+          sysprof_proc_source_populate_process (self, pids[i]);
+          sysprof_proc_source_populate_maps (self, pids[i], mounts);
+        }
     }
-
-  g_dir_close (dir);
 }
 
 static void
@@ -461,7 +449,7 @@ sysprof_proc_source_set_writer (SysprofSource        *source,
 
 static void
 sysprof_proc_source_add_pid (SysprofSource *source,
-                        GPid      pid)
+                             GPid           pid)
 {
   SysprofProcSource *self = (SysprofProcSource *)source;
   guint i;

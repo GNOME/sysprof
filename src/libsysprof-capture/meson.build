@@ -30,7 +30,7 @@ configure_file(
 )
 
 libsysprof_capture_deps = [
-  dependency('glib-2.0', version: glib_req_version),
+  glib_dep,
 ]
 
 libsysprof_capture = static_library(

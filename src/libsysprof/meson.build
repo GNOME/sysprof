@@ -58,8 +58,9 @@ libsysprof_public_sources += libsysprof_capture_sources
 libsysprof_public_headers += libsysprof_capture_headers
 
 libsysprof_deps = [
-  dependency('gio-2.0', version: glib_req_version),
-  dependency('gio-unix-2.0', version: glib_req_version),
+  gio_dep,
+  gio_unix_dep,
+  polkit_dep,
 ]
 
 if host_machine.system() == 'linux'
@@ -87,10 +88,6 @@ endif
 
 if host_machine.system() != 'darwin'
   libsysprof_deps += [cxx.find_library('stdc++')]
-endif
-
-if get_option('with_sysprofd') != 'none'
-  libsysprof_deps += dependency('polkit-gobject-1')
 endif
 
 libsysprof = shared_library(

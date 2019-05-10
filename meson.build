@@ -47,8 +47,17 @@ if get_option('default_library') != 'static'
   endif
 endif
 
-if get_option('with_sysprofd') != 'none'
-  config_h.set10('ENABLE_POLKIT', true)
+glib_dep = dependency('glib-2.0', version: glib_req_version)
+gio_dep = dependency('gio-2.0', version: glib_req_version)
+gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version)
+gtk_dep = dependency('gtk+-3.0', version: gtk_req_version)
+
+# If we find polkit 0.114, we don't need to backport autoptr cleanups
+polkit_dep = dependency('polkit-gobject-1', version: '0.114', required: false)
+if polkit_dep.found()
+  config_h.set10('HAVE_POLKIT_AUTOPTR', true)
+else
+  polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version)
 endif
 
 debugdir = get_option('debugdir')

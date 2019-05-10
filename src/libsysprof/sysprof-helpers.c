@@ -158,6 +158,35 @@ sysprof_helpers_list_processes_cb (IpcService   *service,
                              "Failed to list processes");
 }
 
+gboolean
+sysprof_helpers_list_processes (SysprofHelpers  *self,
+                                GCancellable    *cancellable,
+                                gint32         **processes,
+                                gsize           *n_processes,
+                                GError         **error)
+{
+  g_autoptr(GVariant) fixed_ar = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_HELPERS (self), FALSE);
+  g_return_val_if_fail (processes != NULL, FALSE);
+  g_return_val_if_fail (n_processes != NULL, FALSE);
+
+  if (ipc_service_call_list_processes_sync (self->proxy, &fixed_ar, cancellable, NULL))
+    {
+      const gint32 *data;
+      gsize len;
+
+      data = g_variant_get_fixed_array (fixed_ar, &len, sizeof (gint32));
+      *processes = g_memdup (data, len * sizeof (gint32));
+      *n_processes = len;
+
+      return TRUE;
+    }
+
+  helpers_list_processes (processes, n_processes);
+  return TRUE;
+}
+
 void
 sysprof_helpers_list_processes_async (SysprofHelpers      *self,
                                       GCancellable        *cancellable,
@@ -280,7 +309,7 @@ sysprof_helpers_get_proc_file_async (SysprofHelpers      *self,
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   task = g_task_new (self, cancellable, callback, user_data);
-  g_task_set_source_tag (task, sysprof_helpers_list_processes_async);
+  g_task_set_source_tag (task, sysprof_helpers_get_proc_file_async);
   g_task_set_task_data (task, g_strdup (path), g_free);
 
   if (!fail_if_no_proxy (self, task))
@@ -417,7 +446,7 @@ sysprof_helpers_perf_event_open_async (SysprofHelpers         *self,
   g_return_if_fail (group_fd >= -1);
 
   task = g_task_new (self, cancellable, callback, user_data);
-  g_task_set_source_tag (task, sysprof_helpers_list_processes_async);
+  g_task_set_source_tag (task, sysprof_helpers_perf_event_open_async);
 
   if (!fail_if_no_proxy (self, task))
     {

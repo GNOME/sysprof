@@ -56,13 +56,15 @@
 #define N_WAKEUP_EVENTS 149
 
 /* Identifiers for the various tracepoints we might watch for */
-enum SysprofTracepoint {
+enum SysprofTracepoint
+{
   DRM_VBLANK,
   DRM_I915_BEGIN,
   DRM_I915_END,
 };
 
-typedef struct {
+typedef struct
+{
   enum SysprofTracepoint tp;
   const char       *path;
   const char      **fields;
@@ -111,17 +113,17 @@ typedef struct {
 
 struct _SysprofPerfSource
 {
-  GObject          parent_instance;
+  GObject               parent_instance;
 
   SysprofCaptureWriter *writer;
   SysprofPerfCounter   *counter;
-  GHashTable      *pids;
+  GHashTable           *pids;
 
   /* Mapping from perf sample identifiers to SysprofTracepointDesc. */
-  GHashTable      *tracepoint_event_ids;
+  GHashTable           *tracepoint_event_ids;
 
-  guint            running : 1;
-  guint            is_ready : 1;
+  guint                 running : 1;
+  guint                 is_ready : 1;
 };
 
 static void source_iface_init (SysprofSourceInterface *iface);
@@ -191,9 +193,9 @@ do_emit_exited (gpointer data)
 
 static void
 sysprof_perf_source_handle_tracepoint (SysprofPerfSource                       *self,
-                                  gint                                cpu,
-                                  const SysprofPerfCounterEventTracepoint *sample,
-                                  SysprofTracepointDesc                   *tp_desc)
+                                       gint                                     cpu,
+                                       const SysprofPerfCounterEventTracepoint *sample,
+                                       SysprofTracepointDesc                   *tp_desc)
 {
   gchar *message = NULL;
 
@@ -210,13 +212,13 @@ sysprof_perf_source_handle_tracepoint (SysprofPerfSource                       *
                                             tp_desc->field_offsets[1]));
 
       sysprof_capture_writer_add_mark (self->writer,
-                                  sample->time,
-                                  cpu,
-                                  sample->pid,
-                                  0,
-                                  "drm",
-                                  "vblank",
-                                  message);
+                                       sample->time,
+                                       cpu,
+                                       sample->pid,
+                                       0,
+                                       "drm",
+                                       "vblank",
+                                       message);
       break;
 
     case DRM_I915_BEGIN:
@@ -230,14 +232,14 @@ sysprof_perf_source_handle_tracepoint (SysprofPerfSource                       *
                                             tp_desc->field_offsets[2]));
 
       sysprof_capture_writer_add_mark (self->writer,
-                                  sample->time,
-                                  cpu,
-                                  sample->pid,
-                                  0,
-                                  "drm",
-                                  (tp_desc->tp == DRM_I915_BEGIN ?
-                                   "i915 gpu begin" : "i915 gpu end"),
-                                  message);
+                                       sample->time,
+                                       cpu,
+                                       sample->pid,
+                                       0,
+                                       "drm",
+                                       (tp_desc->tp == DRM_I915_BEGIN ?
+                                        "i915 gpu begin" : "i915 gpu end"),
+                                       message);
       break;
 
     default:
@@ -249,8 +251,8 @@ sysprof_perf_source_handle_tracepoint (SysprofPerfSource                       *
 
 static void
 sysprof_perf_source_handle_callchain (SysprofPerfSource                      *self,
-                                 gint                               cpu,
-                                 const SysprofPerfCounterEventCallchain *sample)
+                                      gint                                    cpu,
+                                      const SysprofPerfCounterEventCallchain *sample)
 {
   const guint64 *ips;
   gint n_ips;
@@ -301,8 +303,8 @@ realign (gsize *pos,
 
 static void
 sysprof_perf_source_handle_event (SysprofPerfCounterEvent *event,
-                             guint               cpu,
-                             gpointer            user_data)
+                                  guint                    cpu,
+                                  gpointer                 user_data)
 {
   SysprofPerfSource *self = user_data;
   SysprofTracepointDesc *tp_desc;
@@ -412,35 +414,26 @@ sysprof_perf_source_handle_event (SysprofPerfCounterEvent *event,
 }
 
 static gboolean
-sysprof_perf_get_tracepoint_config (const char *path, gint64 *config)
+sysprof_perf_get_tracepoint_config (const char *path,
+                                    gint64     *config)
 {
-  gchar *filename = NULL;
-  gchar *contents;
-  size_t len;
+  g_autofree gchar *filename = NULL;
+  g_autofree gchar *contents = NULL;
+  gsize len;
 
   filename = g_strdup_printf ("/sys/kernel/debug/tracing/events/%s/id", path);
-  if (!filename)
+  if (!g_file_get_contents (filename, &contents, &len, NULL))
     return FALSE;
 
-  if (!g_file_get_contents (filename, &contents, &len, NULL))
-    {
-      g_free (filename);
-      return FALSE;
-    }
-
-  g_free(filename);
-
-  *config = strtoull (contents, NULL, 0);
-
-  g_free (contents);
+  *config = g_ascii_strtoull (contents, NULL, 10);
 
   return TRUE;
 }
 
 static gboolean
-sysprof_perf_get_tracepoint_fields (SysprofTracepointDesc           *tp_desc,
-                               const SysprofOptionalTracepoint *optional_tp,
-                               GError                    **error)
+sysprof_perf_get_tracepoint_fields (SysprofTracepointDesc            *tp_desc,
+                                    const SysprofOptionalTracepoint  *optional_tp,
+                                    GError                          **error)
 {
   gchar *filename = NULL;
   gchar *contents;
@@ -512,10 +505,10 @@ sysprof_perf_get_tracepoint_fields (SysprofTracepointDesc           *tp_desc,
  */
 static void
 sysprof_perf_source_add_optional_tracepoint (SysprofPerfSource                *self,
-                                        GPid                        pid,
-                                        gint                        cpu,
-                                        const SysprofOptionalTracepoint *optional_tracepoint,
-                                        GError                     **error)
+                                             GPid                              pid,
+                                             gint                              cpu,
+                                             const SysprofOptionalTracepoint  *optional_tracepoint,
+                                             GError                          **error)
 {
   struct perf_event_attr attr = { 0 };
   SysprofTracepointDesc *tp_desc;
@@ -594,8 +587,8 @@ sysprof_perf_source_add_optional_tracepoint (SysprofPerfSource                *s
 
 static gboolean
 sysprof_perf_source_start_pid (SysprofPerfSource  *self,
-                          GPid           pid,
-                          GError       **error)
+                               GPid                pid,
+                               GError            **error)
 {
   struct perf_event_attr attr = { 0 };
   gulong flags = 0;
@@ -699,8 +692,8 @@ sysprof_perf_source_start (SysprofSource *source)
   self->counter = sysprof_perf_counter_new (NULL);
 
   sysprof_perf_counter_set_callback (self->counter,
-                                sysprof_perf_source_handle_event,
-                                self, NULL);
+                                     sysprof_perf_source_handle_event,
+                                     self, NULL);
 
   if (g_hash_table_size (self->pids) > 0)
     {
@@ -756,7 +749,7 @@ sysprof_perf_source_stop (SysprofSource *source)
 
 static void
 sysprof_perf_source_set_writer (SysprofSource        *source,
-                           SysprofCaptureWriter *writer)
+                                SysprofCaptureWriter *writer)
 {
   SysprofPerfSource *self = (SysprofPerfSource *)source;
 

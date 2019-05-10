@@ -374,14 +374,14 @@ sysprof_perf_source_handle_event (SysprofPerfCounterEvent *event,
       memcpy (&time, event->mmap.filename + offset, sizeof time);
 
       sysprof_capture_writer_add_map (self->writer,
-                                 time,
-                                 cpu,
-                                 event->mmap.pid,
-                                 event->mmap.addr,
-                                 event->mmap.addr + event->mmap.len,
-                                 event->mmap.pgoff,
-                                 0,
-                                 event->mmap.filename);
+                                      time,
+                                      cpu,
+                                      event->mmap.pid,
+                                      event->mmap.addr,
+                                      event->mmap.addr + event->mmap.len,
+                                      event->mmap.pgoff,
+                                      0,
+                                      event->mmap.filename);
 
       break;
 
@@ -397,8 +397,7 @@ sysprof_perf_source_handle_event (SysprofPerfCounterEvent *event,
                                      GINT_TO_POINTER (event->callchain.identifier));
       if (tp_desc)
         {
-          sysprof_perf_source_handle_tracepoint (self, cpu, &event->tracepoint,
-                                            tp_desc);
+          sysprof_perf_source_handle_tracepoint (self, cpu, &event->tracepoint, tp_desc);
         }
       else
         {
@@ -581,8 +580,7 @@ sysprof_perf_source_add_optional_tracepoint (SysprofPerfSource                *s
    * The event IDs start from 0 at boot, so meh.
    */
   g_assert (id <= 0xffffffff);
-  g_hash_table_insert (self->tracepoint_event_ids,
-                       GINT_TO_POINTER (id), tp_desc);
+  g_hash_table_insert (self->tracepoint_event_ids, GINT_TO_POINTER (id), tp_desc);
 }
 
 static gboolean
@@ -759,7 +757,7 @@ sysprof_perf_source_set_writer (SysprofSource        *source,
 
 static void
 sysprof_perf_source_add_pid (SysprofSource *source,
-                        GPid      pid)
+                             GPid      pid)
 {
   SysprofPerfSource *self = (SysprofPerfSource *)source;
 
@@ -808,7 +806,7 @@ sysprof_perf_source_new (void)
 
 void
 sysprof_perf_source_set_target_pid (SysprofPerfSource *self,
-                               GPid          pid)
+                                    GPid          pid)
 {
   g_return_if_fail (SYSPROF_IS_PERF_SOURCE (self));
   g_return_if_fail (pid >= -1);

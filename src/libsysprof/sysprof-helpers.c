@@ -444,44 +444,6 @@ sysprof_helpers_perf_event_open (SysprofHelpers          *self,
 
   return *out_fd != -1;
 }
-
-gboolean
-sysprof_helpers_perf_event_open_finish (SysprofHelpers  *self,
-                                        GAsyncResult    *result,
-                                        gint            *out_fd,
-                                        GError         **error)
-{
-  g_autoptr(GUnixFDList) fd_list = NULL;
-
-  g_return_val_if_fail (SYSPROF_IS_HELPERS (self), FALSE);
-  g_return_val_if_fail (G_IS_TASK (result), FALSE);
-
-  if ((fd_list = g_task_propagate_pointer (G_TASK (result), error)))
-    {
-      if (g_unix_fd_list_get_length (fd_list) != 1)
-        {
-          g_set_error (error,
-                       G_IO_ERROR,
-                       G_IO_ERROR_FAILED,
-                       "Incorrect number of FDs from peer");
-          return FALSE;
-        }
-
-      if (out_fd != NULL)
-        {
-          gint fd = g_unix_fd_list_get (fd_list, 0, error);
-
-          if (fd == -1)
-            return FALSE;
-
-          *out_fd = fd;
-        }
-
-      return TRUE;
-    }
-
-  return FALSE;
-}
 #endif /* __linux__ */
 
 static void

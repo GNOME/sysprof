@@ -107,16 +107,6 @@ ipc_service_impl_handle_perf_event_open (IpcService            *service,
 
   g_message ("PerfEventOpen(pid=%d, cpu=%d)", pid, cpu);
 
-  /* Consistency check for cpu/pid */
-  if (pid < -1 || cpu < -1 || !(pid == -1 && cpu == -1))
-    {
-      g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
-                                             G_DBUS_ERROR,
-                                             G_DBUS_ERROR_INVALID_ARGS,
-                                             "pid and cpu must be >= -1 and only one may be -1");
-      return TRUE;
-    }
-
   /* Get the group_fd if provided */
   message = g_dbus_method_invocation_get_message (invocation);
   if ((in_fd_list = g_dbus_message_get_unix_fd_list (message)) &&

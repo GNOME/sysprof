@@ -650,17 +650,10 @@ sysprof_perf_source_start_pid (SysprofPerfSource  *self,
 
           if (fd == -1)
             {
-              if (errno == EPERM || errno == EACCES)
-                g_set_error (error,
-                             G_IO_ERROR,
-                             G_IO_ERROR_PERMISSION_DENIED,
-                             _("Sysprof requires authorization to access your computers performance counters."));
-              else
-                g_set_error (error,
-                             G_IO_ERROR,
-                             G_IO_ERROR_FAILED,
-                             _("An error occurred while attempting to access performance counters: %s"),
-                             g_strerror (errno));
+              g_set_error (error,
+                           G_IO_ERROR,
+                           G_IO_ERROR_FAILED,
+                           _("An error occurred while attempting to access performance counters"));
 
               sysprof_source_stop (SYSPROF_SOURCE (self));
 

@@ -428,7 +428,7 @@ sysprof_profiler_menu_button_realize (GtkWidget *widget)
 
   GTK_WIDGET_CLASS (sysprof_profiler_menu_button_parent_class)->realize (widget);
 
-  settings = g_settings_new ("org.gnome.sysprof2");
+  settings = g_settings_new ("org.gnome.sysprof3");
 
   env = g_settings_get_strv (settings, "last-spawn-env");
 

@@ -1,5 +1,5 @@
 <schemalist>
-  <schema id="org.gnome.sysprof2" path="/org/gnome/sysprof/" gettext-domain="sysprof">
+  <schema id="org.gnome.sysprof3" path="/org/gnome/sysprof/" gettext-domain="sysprof">
     <key name="window-size" type="(ii)">
       <default>(-1, -1)</default>
       <summary>Window size</summary>

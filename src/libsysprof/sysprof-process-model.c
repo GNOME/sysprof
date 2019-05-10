@@ -95,8 +95,8 @@ find_index (GPtrArray *ar,
 
 static void
 sysprof_process_model_merge_cb (GObject      *object,
-                           GAsyncResult *result,
-                           gpointer      user_data)
+                                GAsyncResult *result,
+                                gpointer      user_data)
 {
   SysprofProcessModel *self = (SysprofProcessModel *)object;
   g_autoptr(GPtrArray) ret = NULL;
@@ -182,9 +182,9 @@ compare_by_pid (gconstpointer a,
 
 static void
 sysprof_process_model_reload_worker (GTask        *task,
-                                gpointer      source_object,
-                                gpointer      task_data,
-                                GCancellable *cancellable)
+                                     gpointer      source_object,
+                                     gpointer      task_data,
+                                     GCancellable *cancellable)
 {
   g_autoptr(GPtrArray) ret = NULL;
   const gchar *name;
@@ -299,7 +299,7 @@ sysprof_process_model_get_n_items (GListModel *model)
 
 static gpointer
 sysprof_process_model_get_item (GListModel *model,
-                           guint       position)
+                                guint       position)
 {
   SysprofProcessModel *self = (SysprofProcessModel *)model;
 

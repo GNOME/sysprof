@@ -848,6 +848,21 @@ sysprof_profiler_menu_button_validate_spawn (SysprofProfilerMenuButton *self,
 }
 
 static void
+sysprof_profiler_menu_button_notify_whole_system (SysprofProfilerMenuButton *self,
+                                                  GParamSpec                *pspec,
+                                                  GtkSwitch                 *whole_system)
+{
+  SysprofProfilerMenuButtonPrivate *priv = sysprof_profiler_menu_button_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_PROFILER_MENU_BUTTON (self));
+  g_assert (GTK_IS_SWITCH (whole_system));
+
+  /* Reload when process view is shown */
+  if (!gtk_switch_get_active (whole_system))
+    sysprof_process_model_queue_reload (priv->process_model);
+}
+
+static void
 sysprof_profiler_menu_button_init (SysprofProfilerMenuButton *self)
 {
   SysprofProfilerMenuButtonPrivate *priv = sysprof_profiler_menu_button_get_instance_private (self);
@@ -875,6 +890,12 @@ sysprof_profiler_menu_button_init (SysprofProfilerMenuButton *self)
   g_signal_connect_object (priv->stack,
                            "notify::visible-child",
                            G_CALLBACK (sysprof_profiler_menu_button_update_label),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (priv->whole_system_switch,
+                           "notify::active",
+                           G_CALLBACK (sysprof_profiler_menu_button_notify_whole_system),
                            self,
                            G_CONNECT_SWAPPED);
 

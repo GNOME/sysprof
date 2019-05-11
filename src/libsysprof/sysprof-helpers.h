@@ -68,6 +68,11 @@ gboolean        sysprof_helpers_get_proc_file_finish   (SysprofHelpers          
                                                         GAsyncResult            *result,
                                                         gchar                  **contents,
                                                         GError                 **error);
+gboolean        sysprof_helpers_get_process_info       (SysprofHelpers          *self,
+                                                        const gchar             *attributes,
+                                                        GCancellable            *cancellable,
+                                                        GVariant               **info,
+                                                        GError                 **error);
 #ifdef __linux__
 gboolean        sysprof_helpers_perf_event_open        (SysprofHelpers          *self,
                                                         struct perf_event_attr  *attr,

@@ -73,6 +73,15 @@ gboolean        sysprof_helpers_get_process_info       (SysprofHelpers          
                                                         GCancellable            *cancellable,
                                                         GVariant               **info,
                                                         GError                 **error);
+void            sysprof_helpers_get_process_info_async (SysprofHelpers          *self,
+                                                        const gchar             *attributes,
+                                                        GCancellable            *cancellable,
+                                                        GAsyncReadyCallback      callback,
+                                                        gpointer                 user_data);
+gboolean        sysprof_helpers_get_process_info_finish(SysprofHelpers          *self,
+                                                        GAsyncResult            *result,
+                                                        GVariant               **info,
+                                                        GError                 **error);
 #ifdef __linux__
 gboolean        sysprof_helpers_perf_event_open        (SysprofHelpers          *self,
                                                         struct perf_event_attr  *attr,

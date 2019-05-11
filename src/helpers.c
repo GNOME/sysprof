@@ -277,7 +277,7 @@ helpers_get_proc_file (const gchar  *path,
   canon = g_file_get_path (file);
 
   return g_file_is_native (file) &&
-         g_str_has_prefix (canon, "/proc/") &&
+         (g_str_has_prefix (canon, "/proc/") || g_str_has_prefix (canon, "/sys/")) &&
          g_file_get_contents (canon, contents, len, NULL);
 }
 

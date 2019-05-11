@@ -566,3 +566,66 @@ sysprof_helpers_get_process_info (SysprofHelpers  *self,
 
   return ipc_service_call_get_process_info_sync (self->proxy, attributes, info, cancellable, error);
 }
+
+static void
+sysprof_helpers_get_process_info_cb (IpcService   *service,
+                                     GAsyncResult *result,
+                                     gpointer      user_data)
+{
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(GVariant) info = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (IPC_IS_SERVICE (service));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (!ipc_service_call_get_process_info_finish (service, &info, result, &error))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    g_task_return_pointer (task, g_steal_pointer (&info), (GDestroyNotify)g_variant_unref);
+}
+
+void
+sysprof_helpers_get_process_info_async (SysprofHelpers      *self,
+                                        const gchar         *attributes,
+                                        GCancellable        *cancellable,
+                                        GAsyncReadyCallback  callback,
+                                        gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_assert (SYSPROF_IS_HELPERS (self));
+  g_assert (attributes != NULL);
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_helpers_get_process_info_async);
+
+  ipc_service_call_get_process_info (self->proxy,
+                                     attributes,
+                                     cancellable,
+                                     (GAsyncReadyCallback) sysprof_helpers_get_process_info_cb,
+                                     g_steal_pointer (&task));
+}
+
+gboolean
+sysprof_helpers_get_process_info_finish (SysprofHelpers  *self,
+                                         GAsyncResult    *result,
+                                         GVariant       **info,
+                                         GError         **error)
+{
+  g_autoptr(GVariant) ret = NULL;
+
+  g_assert (SYSPROF_IS_HELPERS (self));
+  g_assert (G_IS_TASK (result));
+
+  if ((ret = g_task_propagate_pointer (G_TASK (result), error)))
+    {
+      if (info)
+        *info = g_steal_pointer (&ret);
+      return TRUE;
+    }
+
+  return FALSE;
+}

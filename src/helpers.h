@@ -27,6 +27,7 @@
 
 G_BEGIN_DECLS
 
+gboolean helpers_can_see_pids    (void);
 gboolean helpers_list_processes  (gint32      **processes,
                                   gsize        *n_processes);
 gboolean helpers_perf_event_open (GVariant     *options,

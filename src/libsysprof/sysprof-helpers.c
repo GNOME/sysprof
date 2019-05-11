@@ -154,6 +154,13 @@ sysprof_helpers_list_processes (SysprofHelpers  *self,
   g_return_val_if_fail (processes != NULL, FALSE);
   g_return_val_if_fail (n_processes != NULL, FALSE);
 
+  if (helpers_can_see_pids ())
+    {
+      /* No need to query remote if we can see pids in this namespace */
+      if (helpers_list_processes (processes, n_processes))
+        return TRUE;
+    }
+
   if (ipc_service_call_list_processes_sync (self->proxy, &fixed_ar, cancellable, NULL))
     {
       const gint32 *data;

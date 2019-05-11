@@ -62,6 +62,7 @@
 
       - pid: (int32): the process identifier, always included
       - cmdline: (string): Provides the command line
+      - comm: (string): Provide the comm, useful when cmdline is empty
       - maps: (string): Provide the contents of /proc/pid/maps
       - statm: (string): Provide the contents of /proc/pid/statm
       - mountinfo: (string): Provide the contents of/proc/pid/mountinfo

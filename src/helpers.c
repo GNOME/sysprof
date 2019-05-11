@@ -280,3 +280,31 @@ helpers_get_proc_file (const gchar  *path,
          g_str_has_prefix (canon, "/proc/") &&
          g_file_get_contents (canon, contents, len, NULL);
 }
+
+gboolean
+helpers_can_see_pids (void)
+{
+  g_autofree gchar *contents = NULL;
+  gsize len = 0;
+
+  if (g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS))
+    return FALSE;
+
+  if (helpers_get_proc_file ("/proc/mounts", &contents, &len))
+    {
+      g_auto(GStrv) lines = g_strsplit (contents, "\n", 0);
+
+      for (guint i = 0; lines[i]; i++)
+        {
+          if (!g_str_has_prefix (lines[i], "proc /proc "))
+            continue;
+
+          if (strstr (lines[i], "hidepid=") && !strstr (lines[i], "hidepid=0"))
+            return FALSE;
+
+          return TRUE;
+        }
+    }
+
+  return TRUE;
+}

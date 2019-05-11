@@ -141,6 +141,38 @@ sysprof_process_model_item_init (SysprofProcessModelItem *self)
 }
 
 SysprofProcessModelItem *
+sysprof_process_model_item_new_from_variant (GVariant *info)
+{
+  SysprofProcessModelItem *ret;
+  GVariantDict dict;
+  const gchar *cmdline;
+
+  g_return_val_if_fail (info != NULL, NULL);
+  g_return_val_if_fail (g_variant_is_of_type (info, G_VARIANT_TYPE_VARDICT), NULL);
+
+  ret = g_object_new (SYSPROF_TYPE_PROCESS_MODEL_ITEM, NULL);
+
+  g_variant_dict_init (&dict, info);
+
+  if (g_variant_dict_lookup (&dict, "cmdline", "&s", &cmdline) && *cmdline)
+    {
+      if (g_shell_parse_argv (cmdline, NULL, &ret->argv, NULL))
+        ret->command_line = g_strdup (ret->argv[0]);
+    }
+  else if (g_variant_dict_lookup (&dict, "comm", "&s", &cmdline))
+    {
+      ret->argv = g_new0 (gchar *, 2);
+      ret->argv[0] = g_strdup (cmdline);
+      ret->is_kernel = TRUE;
+    }
+
+  g_variant_dict_lookup (&dict, "pid", "i", &ret->pid);
+  g_variant_dict_clear (&dict);
+
+  return g_steal_pointer (&ret);
+}
+
+SysprofProcessModelItem *
 sysprof_process_model_item_new (GPid pid)
 {
   g_autofree gchar *cmdline = NULL;
@@ -170,7 +202,7 @@ sysprof_process_model_item_hash (SysprofProcessModelItem *self)
 
 gboolean
 sysprof_process_model_item_equal (SysprofProcessModelItem *self,
-                             SysprofProcessModelItem *other)
+                                  SysprofProcessModelItem *other)
 {
   g_assert (SYSPROF_IS_PROCESS_MODEL_ITEM (self));
   g_assert (SYSPROF_IS_PROCESS_MODEL_ITEM (other));

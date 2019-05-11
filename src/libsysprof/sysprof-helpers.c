@@ -551,3 +551,18 @@ sysprof_helpers_authorize_finish (SysprofHelpers  *self,
 
   return g_task_propagate_boolean (G_TASK (result), error);
 }
+
+gboolean
+sysprof_helpers_get_process_info (SysprofHelpers  *self,
+                                  const gchar     *attributes,
+                                  GCancellable    *cancellable,
+                                  GVariant       **info,
+                                  GError         **error)
+{
+  g_assert (SYSPROF_IS_HELPERS (self));
+  g_assert (attributes != NULL);
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+  g_assert (info != NULL);
+
+  return ipc_service_call_get_process_info_sync (self->proxy, attributes, info, cancellable, error);
+}

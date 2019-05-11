@@ -362,7 +362,7 @@ sysprof_profiler_menu_button_clicked (GtkButton *button)
 
 static gboolean
 sysprof_profiler_menu_button_filter_func (GObject  *object,
-                                     gpointer  user_data)
+                                          gpointer  user_data)
 {
   const gchar *needle = user_data;
   const gchar *haystack;
@@ -382,7 +382,7 @@ sysprof_profiler_menu_button_filter_func (GObject  *object,
 
 static void
 sysprof_profiler_menu_button_filter_changed (SysprofProfilerMenuButton *self,
-                                        GtkEntry             *entry)
+                                             GtkEntry                  *entry)
 {
   SysprofProfilerMenuButtonPrivate *priv = sysprof_profiler_menu_button_get_instance_private (self);
   const gchar *text;

@@ -107,7 +107,9 @@ sysprof_kernel_symbol_load (void)
   if (!sysprof_helpers_get_proc_file (helpers, "/proc/kallsyms", NULL, &contents, NULL))
     return FALSE;
 
+  kernel_symbol_strs = g_string_chunk_new (4096 * 4);
   kallsyms = sysprof_kallsyms_new_take (g_steal_pointer (&contents));
+  ar = g_array_new (FALSE, FALSE, sizeof (SysprofKernelSymbol));
 
   while (sysprof_kallsyms_next (kallsyms, &name, &addr, &type))
     {

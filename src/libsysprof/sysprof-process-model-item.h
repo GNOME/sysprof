@@ -38,6 +38,8 @@ G_DECLARE_FINAL_TYPE (SysprofProcessModelItem, sysprof_process_model_item, SYSPR
 SYSPROF_AVAILABLE_IN_ALL
 SysprofProcessModelItem *sysprof_process_model_item_new              (GPid                     pid);
 SYSPROF_AVAILABLE_IN_ALL
+SysprofProcessModelItem *sysprof_process_model_item_new_from_variant (GVariant                *info);
+SYSPROF_AVAILABLE_IN_ALL
 guint                    sysprof_process_model_item_hash             (SysprofProcessModelItem *self);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean                 sysprof_process_model_item_equal            (SysprofProcessModelItem *self,

@@ -67,8 +67,6 @@ static void
 sysprof_process_model_init (SysprofProcessModel *self)
 {
   self->items = g_ptr_array_new_with_free_func (g_object_unref);
-
-  sysprof_process_model_queue_reload (self);
 }
 
 static guint

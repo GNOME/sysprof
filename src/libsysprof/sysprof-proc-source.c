@@ -134,22 +134,17 @@ sysprof_proc_source_get_command_line (GPid      pid,
 
 static void
 sysprof_proc_source_populate_process (SysprofProcSource *self,
-                                      GPid          pid)
+                                      GPid               pid,
+                                      const gchar       *cmdline)
 {
-  gchar *cmdline;
-
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
   g_assert (pid > 0);
 
-  if (NULL != (cmdline = sysprof_proc_source_get_command_line (pid, NULL)))
-    {
-      sysprof_capture_writer_add_process (self->writer,
-                                          SYSPROF_CAPTURE_CURRENT_TIME,
-                                          -1,
-                                          pid,
-                                          cmdline);
-      g_free (cmdline);
-    }
+  sysprof_capture_writer_add_process (self->writer,
+                                      SYSPROF_CAPTURE_CURRENT_TIME,
+                                      -1,
+                                      pid,
+                                      cmdline);
 }
 
 static gboolean
@@ -208,10 +203,10 @@ find_mount (GStrv        mounts,
  */
 static void
 sysprof_proc_source_translate_path (const gchar *file,
-                               GStrv        mountinfo,
-                               GStrv        mounts,
-                               gchar       *out_file,
-                               gsize        out_file_len)
+                                    GStrv        mountinfo,
+                                    GStrv        mounts,
+                                    gchar       *out_file,
+                                    gsize        out_file_len)
 {
   g_autofree gchar *closest_host = NULL;
   g_autofree gchar *closest_guest = NULL;
@@ -295,23 +290,24 @@ failure:
 
 static void
 sysprof_proc_source_populate_maps (SysprofProcSource *self,
-                              GPid          pid,
-                              GStrv         mounts)
+                                   GPid               pid,
+                                   GStrv              mounts,
+                                   const gchar       *mapsstr,
+                                   const gchar       *mountinfostr)
 {
-  g_auto(GStrv) lines = NULL;
+  g_auto(GStrv) maps = NULL;
   g_auto(GStrv) mountinfo = NULL;
   guint i;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
+  g_assert (mapsstr != NULL);
+  g_assert (mountinfostr != NULL);
   g_assert (pid > 0);
 
-  if (NULL == (lines = proc_readlines ("/proc/%d/maps", pid)))
-    return;
+  maps = g_strsplit (mapsstr, "\n", 0);
+  mountinfo = g_strsplit (mountinfostr, "\n", 0);
 
-  if (NULL == (mountinfo = proc_readlines ("/proc/%d/mountinfo", pid)))
-    return;
-
-  for (i = 0; lines [i] != NULL; i++)
+  for (i = 0; maps [i] != NULL; i++)
     {
       gchar file[256];
       gchar translated[256];
@@ -322,7 +318,7 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
       gulong inode;
       gint r;
 
-      r = sscanf (lines [i],
+      r = sscanf (maps [i],
                   "%lx-%lx %*15s %lx %*x:%*x %lu %255s",
                   &start, &end, &offset, &inode, file);
 
@@ -357,58 +353,114 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
            * for the path.
            */
           sysprof_proc_source_translate_path (file,
-                                         mountinfo,
-                                         mounts,
-                                         translated,
-                                         sizeof translated);
+                                              mountinfo,
+                                              mounts,
+                                              translated,
+                                              sizeof translated);
           fileptr = translated;
         }
 
       sysprof_capture_writer_add_map (self->writer,
-                                 SYSPROF_CAPTURE_CURRENT_TIME,
-                                 -1,
-                                 pid,
-                                 start,
-                                 end,
-                                 offset,
-                                 inode,
-                                 fileptr);
+                                      SYSPROF_CAPTURE_CURRENT_TIME,
+                                      -1,
+                                      pid,
+                                      start,
+                                      end,
+                                      offset,
+                                      inode,
+                                      fileptr);
     }
 }
 
-static void
-sysprof_proc_source_populate (SysprofProcSource *self)
+static gboolean
+pid_is_interesting (SysprofProcSource *self,
+                    GPid               pid)
 {
-  SysprofHelpers *helpers = sysprof_helpers_get_default ();
+  if (self->pids == NULL || self->pids->len == 0)
+    return TRUE;
+
+  for (guint i = 0; i < self->pids->len; i++)
+    {
+      if (g_array_index (self->pids, GPid, i) == pid)
+        return TRUE;
+    }
+
+  return FALSE;
+}
+
+static void
+sysprof_proc_source_populate (SysprofProcSource *self,
+                              GVariant          *info)
+{
   g_auto(GStrv) mounts = NULL;
-  g_autofree gint32 *pids = NULL;
   gsize n_pids = 0;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
+  g_assert (info != NULL);
+  g_assert (g_variant_is_of_type (info, G_VARIANT_TYPE ("aa{sv}")));
 
   if (!(mounts = proc_readlines ("/proc/mounts")))
     return;
 
-  if (self->pids->len > 0)
+  n_pids = g_variant_n_children (info);
+  for (gsize i = 0; i < n_pids; i++)
     {
-      for (guint i = 0; i < self->pids->len; i++)
-        {
-          GPid pid = g_array_index (self->pids, GPid, i);
+      g_autoptr(GVariant) pidinfo = g_variant_get_child_value (info, i);
+      GVariantDict dict;
+      const gchar *cmdline;
+      const gchar *comm;
+      const gchar *mountinfo;
+      const gchar *maps;
+      gint32 pid;
 
-          sysprof_proc_source_populate_process (self, pid);
-          sysprof_proc_source_populate_maps (self, pid, mounts);
-        }
+      g_variant_dict_init (&dict, pidinfo);
 
-      return;
+      if (!g_variant_dict_lookup (&dict, "pid", "i", &pid) ||
+          !pid_is_interesting (self, pid))
+        goto skip;
+
+      if (!g_variant_dict_lookup (&dict, "cmdline", "&s", &cmdline))
+        cmdline = "";
+
+      if (!g_variant_dict_lookup (&dict, "comm", "&s", &comm))
+        comm = "";
+
+      if (!g_variant_dict_lookup (&dict, "mountinfo", "&s", &mountinfo))
+        mountinfo = "";
+
+      if (!g_variant_dict_lookup (&dict, "maps", "&s", &maps))
+        maps = "";
+
+      sysprof_proc_source_populate_process (self, pid, *cmdline ? cmdline : comm);
+      sysprof_proc_source_populate_maps (self, pid, mounts, maps, mountinfo);
+
+      skip:
+        g_variant_dict_clear (&dict);
     }
+}
 
-  if (sysprof_helpers_list_processes (helpers, NULL, &pids, &n_pids, NULL))
+static void
+sysprof_proc_source_get_process_info_cb (GObject      *object,
+                                         GAsyncResult *result,
+                                         gpointer      user_data)
+{
+  SysprofHelpers *helpers = (SysprofHelpers *)object;
+  g_autoptr(SysprofProcSource) self = user_data;
+  g_autoptr(GVariant) info = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_HELPERS (helpers));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_PROC_SOURCE (self));
+
+  if (!sysprof_helpers_get_process_info_finish (helpers, result, &info, &error))
     {
-      for (guint i = 0; i < n_pids; i++)
-        {
-          sysprof_proc_source_populate_process (self, pids[i]);
-          sysprof_proc_source_populate_maps (self, pids[i], mounts);
-        }
+      sysprof_source_emit_failed (SYSPROF_SOURCE (self), error);
+    }
+  else
+    {
+      sysprof_proc_source_populate (self, info);
+      sysprof_source_emit_finished (SYSPROF_SOURCE (self));
     }
 }
 
@@ -416,12 +468,16 @@ static void
 sysprof_proc_source_start (SysprofSource *source)
 {
   SysprofProcSource *self = (SysprofProcSource *)source;
+  SysprofHelpers *helpers = sysprof_helpers_get_default ();
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
   g_assert (self->writer != NULL);
 
-  sysprof_proc_source_populate (self);
-  sysprof_source_emit_finished (source);
+  sysprof_helpers_get_process_info_async (helpers,
+                                          "pid,maps,mountinfo,cmdline,comm",
+                                          NULL,
+                                          sysprof_proc_source_get_process_info_cb,
+                                          g_object_ref (self));
 }
 
 static void

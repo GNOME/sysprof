@@ -626,9 +626,9 @@ sysprof_profiler_menu_button_class_init (SysprofProfilerMenuButtonClass *klass)
 
 static void
 sysprof_profiler_menu_button_env_row_changed (SysprofProfilerMenuButton *self,
-                                         GtkTreePath          *tree_path,
-                                         GtkTreeIter          *tree_iter,
-                                         gpointer              user_data)
+                                              GtkTreePath               *tree_path,
+                                              GtkTreeIter               *tree_iter,
+                                              gpointer                   user_data)
 {
   SysprofProfilerMenuButtonPrivate *priv = sysprof_profiler_menu_button_get_instance_private (self);
   g_autoptr(GPtrArray) env = NULL;
@@ -797,7 +797,7 @@ sysprof_profiler_menu_button_env_value_edited (SysprofProfilerMenuButton *self,
 
 static void
 sysprof_profiler_menu_button_validate_spawn (SysprofProfilerMenuButton *self,
-                                        GtkEntry             *entry)
+                                             GtkEntry             *entry)
 {
   SysprofProfilerMenuButtonPrivate *priv = sysprof_profiler_menu_button_get_instance_private (self);
   g_auto(GStrv) argv = NULL;

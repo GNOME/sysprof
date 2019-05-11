@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 
+#include "sysprof-backport-autocleanups.h"
 #include "sysprof-process-model.h"
 #include "sysprof-process-model-item.h"
 
@@ -44,12 +45,7 @@ sysprof_process_model_finalize (GObject *object)
 {
   SysprofProcessModel *self = (SysprofProcessModel *)object;
 
-  if (self->reload_source)
-    {
-      g_source_remove (self->reload_source);
-      self->reload_source = 0;
-    }
-
+  g_clear_handle_id (&self->reload_source, g_source_remove);
   g_clear_pointer (&self->items, g_ptr_array_unref);
 
   G_OBJECT_CLASS (sysprof_process_model_parent_class)->finalize (object);
@@ -235,7 +231,7 @@ sysprof_process_model_do_reload (gpointer user_data)
   SysprofProcessModel *self = user_data;
   g_autoptr(GTask) task = NULL;
 
-  self->reload_source = 0;
+  g_clear_handle_id (&self->reload_source, g_source_remove);
 
   task = g_task_new (self, NULL, sysprof_process_model_merge_cb, NULL);
   g_task_set_priority (task, G_PRIORITY_LOW);
@@ -257,11 +253,7 @@ sysprof_process_model_reload (SysprofProcessModel *self)
 
   g_return_if_fail (SYSPROF_IS_PROCESS_MODEL (self));
 
-  if (self->reload_source != 0)
-    {
-      g_source_remove (self->reload_source);
-      self->reload_source = 0;
-    }
+  g_clear_handle_id (&self->reload_source, g_source_remove);
 
   task = g_task_new (self, NULL, NULL, NULL);
   g_task_set_priority (task, G_PRIORITY_LOW);

@@ -23,6 +23,7 @@
 #include <stdlib.h>
 
 #include "sysprof-backport-autocleanups.h"
+#include "sysprof-helpers.h"
 #include "sysprof-process-model.h"
 #include "sysprof-process-model-item.h"
 
@@ -180,49 +181,36 @@ sysprof_process_model_reload_worker (GTask        *task,
                                      gpointer      task_data,
                                      GCancellable *cancellable)
 {
+  SysprofHelpers *helpers = sysprof_helpers_get_default ();
   g_autoptr(GPtrArray) ret = NULL;
-  const gchar *name;
-  GError *error = NULL;
-  GDir *dir;
+  g_autoptr(GVariant) info = NULL;
 
   g_assert (SYSPROF_IS_PROCESS_MODEL (source_object));
   g_assert (G_IS_TASK (task));
 
-  dir = g_dir_open ("/proc", 0, &error);
-
-  if (dir == NULL)
-    {
-      g_task_return_error (task, error);
-      return;
-    }
-
   ret = g_ptr_array_new_with_free_func (g_object_unref);
 
-  while ((name = g_dir_read_name (dir)))
+  if (sysprof_helpers_get_process_info (helpers, "pid,cmdline,comm", NULL, &info, NULL))
     {
-      SysprofProcessModelItem *item;
-      GPid pid;
-      gchar *end;
+      gsize n_children = g_variant_n_children (info);
 
-      pid = strtol (name, &end, 10);
-      if (pid <= 0 || *end != '\0')
-        continue;
-
-      item = sysprof_process_model_item_new (pid);
-
-      if (sysprof_process_model_item_is_kernel (item))
+      for (gsize i = 0; i < n_children; i++)
         {
-          g_object_unref (item);
-          continue;
+          g_autoptr(GVariant) pidinfo = g_variant_get_child_value (info, i);
+          g_autoptr(SysprofProcessModelItem) item = sysprof_process_model_item_new_from_variant (pidinfo);
+
+          if (sysprof_process_model_item_is_kernel (item))
+            continue;
+
+          g_ptr_array_add (ret, g_steal_pointer (&item));
         }
 
-      g_ptr_array_add (ret, item);
+      g_ptr_array_sort (ret, compare_by_pid);
     }
 
-  g_dir_close (dir);
-
-  g_ptr_array_sort (ret, compare_by_pid);
-  g_task_return_pointer (task, g_ptr_array_ref (ret), (GDestroyNotify)g_ptr_array_unref);
+  g_task_return_pointer (task,
+                         g_steal_pointer (&ret),
+                         (GDestroyNotify)g_ptr_array_unref);
 }
 
 static gboolean

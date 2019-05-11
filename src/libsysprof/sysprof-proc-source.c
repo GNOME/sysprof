@@ -85,11 +85,10 @@ proc_readlines (const gchar *format,
 
 gchar *
 sysprof_proc_source_get_command_line (GPid      pid,
-                                 gboolean *is_kernel)
+                                      gboolean *is_kernel)
 {
   gchar *ret;
   gchar **lines;
-
 
   if (is_kernel)
     *is_kernel = FALSE;
@@ -135,7 +134,7 @@ sysprof_proc_source_get_command_line (GPid      pid,
 
 static void
 sysprof_proc_source_populate_process (SysprofProcSource *self,
-                                 GPid          pid)
+                                      GPid          pid)
 {
   gchar *cmdline;
 
@@ -145,10 +144,10 @@ sysprof_proc_source_populate_process (SysprofProcSource *self,
   if (NULL != (cmdline = sysprof_proc_source_get_command_line (pid, NULL)))
     {
       sysprof_capture_writer_add_process (self->writer,
-                                     SYSPROF_CAPTURE_CURRENT_TIME,
-                                     -1,
-                                     pid,
-                                     cmdline);
+                                          SYSPROF_CAPTURE_CURRENT_TIME,
+                                          -1,
+                                          pid,
+                                          cmdline);
       g_free (cmdline);
     }
 }

@@ -355,7 +355,9 @@ sysprof_profiler_menu_button_clicked (GtkButton *button)
 
   g_assert (SYSPROF_IS_PROFILER_MENU_BUTTON (self));
 
-  sysprof_process_model_queue_reload (priv->process_model);
+  /* don't reload if we aren't showing the list */
+  if (!gtk_switch_get_active (priv->whole_system_switch))
+    sysprof_process_model_queue_reload (priv->process_model);
 
   GTK_BUTTON_CLASS (sysprof_profiler_menu_button_parent_class)->clicked (button);
 }

@@ -13,13 +13,11 @@
 #endif
 
 #if !GLIB_CHECK_VERSION(2, 56, 0)
-  static inline void
-  g_clear_handle_id (guint *ptr,
-                     void (*clear_func) (guint handle_id))
-  {
-    guint id = *ptr;
-    *ptr = 0;
-    if (id)
-      clear_func (handle_id);
-  }
+# define g_clear_handle_id(ptr, clear_func) \
+    G_STMT_START {                          \
+      guint __ptr = *(ptr);                 \
+      *(ptr) = 0;                           \
+      if (__ptr != 0)                       \
+        clear_func (__ptr);                 \
+    } G_STMT_END
 #endif

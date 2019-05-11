@@ -73,12 +73,12 @@ enum {
 };
 
 static void     sysprof_profiler_menu_button_env_row_changed (SysprofProfilerMenuButton *self,
-                                                         GtkTreePath          *tree_path,
-                                                         GtkTreeIter          *tree_iter,
-                                                         gpointer              user_data);
+                                                              GtkTreePath          *tree_path,
+                                                              GtkTreeIter          *tree_iter,
+                                                              gpointer              user_data);
 static void     sysprof_profiler_menu_button_validate_spawn  (SysprofProfilerMenuButton *self,
-                                                         GtkEntry             *entry);
-static gboolean save_environ_to_gsettings               (gpointer              data);
+                                                              GtkEntry             *entry);
+static gboolean save_environ_to_gsettings                    (gpointer              data);
 
 static GParamSpec *properties [N_PROPS];
 
@@ -281,7 +281,7 @@ sysprof_profiler_menu_button_get_profiler (SysprofProfilerMenuButton *self)
 
 void
 sysprof_profiler_menu_button_set_profiler (SysprofProfilerMenuButton *self,
-                                      SysprofProfiler           *profiler)
+                                           SysprofProfiler           *profiler)
 {
   SysprofProfilerMenuButtonPrivate *priv = sysprof_profiler_menu_button_get_instance_private (self);
 
@@ -305,8 +305,8 @@ sysprof_profiler_menu_button_set_profiler (SysprofProfilerMenuButton *self,
 
 static void
 sysprof_profiler_menu_button_row_activated (SysprofProfilerMenuButton *self,
-                                       SysprofProcessModelRow    *row,
-                                       GtkListBox           *list_box)
+                                            SysprofProcessModelRow    *row,
+                                            GtkListBox                *list_box)
 {
   SysprofProfilerMenuButtonPrivate *priv = sysprof_profiler_menu_button_get_instance_private (self);
   gboolean selected;

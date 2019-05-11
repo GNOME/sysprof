@@ -37,8 +37,5 @@ G_DECLARE_FINAL_TYPE (SysprofProcSource, sysprof_proc_source, SYSPROF, PROC_SOUR
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofSource *sysprof_proc_source_new              (void);
-SYSPROF_AVAILABLE_IN_ALL
-gchar         *sysprof_proc_source_get_command_line (GPid      pid,
-                                                     gboolean *is_kernel);
 
 G_END_DECLS

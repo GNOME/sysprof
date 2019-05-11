@@ -172,26 +172,6 @@ sysprof_process_model_item_new_from_variant (GVariant *info)
   return g_steal_pointer (&ret);
 }
 
-SysprofProcessModelItem *
-sysprof_process_model_item_new (GPid pid)
-{
-  g_autofree gchar *cmdline = NULL;
-  SysprofProcessModelItem *ret;
-  gboolean is_kernel = FALSE;
-
-#ifdef __linux__
-  cmdline = sysprof_proc_source_get_command_line (pid, &is_kernel);
-#endif
-
-  ret = g_object_new (SYSPROF_TYPE_PROCESS_MODEL_ITEM,
-                      "command-line", cmdline,
-                      "pid", (int)pid,
-                      NULL);
-  ret->is_kernel = is_kernel;
-
-  return ret;
-}
-
 guint
 sysprof_process_model_item_hash (SysprofProcessModelItem *self)
 {

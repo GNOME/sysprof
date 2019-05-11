@@ -83,55 +83,6 @@ proc_readlines (const gchar *format,
   return g_steal_pointer (&ret);
 }
 
-gchar *
-sysprof_proc_source_get_command_line (GPid      pid,
-                                      gboolean *is_kernel)
-{
-  gchar *ret;
-  gchar **lines;
-
-  if (is_kernel)
-    *is_kernel = FALSE;
-
-  /*
-   * Get the full command line from /proc/pid/cmdline.
-   */
-  if (NULL != (lines = proc_readlines ("/proc/%d/cmdline", pid)))
-    {
-      if (lines [0] && lines [0][0])
-        {
-          ret = g_strdup (lines [0]);
-          g_strfreev (lines);
-          return ret;
-        }
-
-      g_strfreev (lines);
-    }
-
-  /*
-   * We are guessing this is a kernel process based on cmdline being null.
-   */
-  if (is_kernel)
-    *is_kernel = TRUE;
-
-  /*
-   * Check the first line of /proc/pid/status for Name: foo
-   */
-  if (NULL != (lines = proc_readlines ("/proc/%d/status", pid)))
-    {
-      if (lines [0] && g_str_has_prefix (lines [0], "Name:"))
-        {
-          ret = g_strstrip (g_strdup (lines [0] + 5));
-          g_strfreev (lines);
-          return ret;
-        }
-
-      g_strfreev (lines);
-    }
-
-  return NULL;
-}
-
 static void
 sysprof_proc_source_populate_process (SysprofProcSource *self,
                                       GPid               pid,

@@ -29,6 +29,7 @@
 #include <sysprof-capture.h>
 #include <unistd.h>
 
+#include "sysprof-helpers.h"
 #include "sysprof-memory-source.h"
 
 #define BUF_SIZE 4096
@@ -85,6 +86,9 @@ static GHashTable *keys;
 static void
 mem_stat_open (MemStat *st)
 {
+  SysprofHelpers *helpers = sysprof_helpers_get_default ();
+  g_autoptr(GError) error = NULL;
+
   g_assert (st != NULL);
   g_assert (st->stat_fd == -1);
 
@@ -92,12 +96,13 @@ mem_stat_open (MemStat *st)
     {
       g_autofree gchar *path = g_strdup_printf ("/proc/%d/statm", st->pid);
 
-      if (-1 == (st->stat_fd = open (path, O_RDONLY)))
-        g_warning ("Failed to access statm for pid %d", st->pid);
+      if (!sysprof_helpers_get_proc_fd (helpers, path, NULL, &st->stat_fd, &error))
+        g_warning ("Failed to access statm for pid %d: %s", st->pid, error->message);
     }
   else
     {
-      st->stat_fd = open ("/proc/meminfo", O_RDONLY);
+      if (!sysprof_helpers_get_proc_fd (helpers, "/proc/meminfo", NULL, &st->stat_fd, &error))
+        g_warning ("Failed to access /proc/statm: %s", error->message);
     }
 }
 

@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <fcntl.h>
 #include <gio/gio.h>
 #include <errno.h>
 #ifdef __linux__
@@ -279,6 +280,25 @@ helpers_get_proc_file (const gchar  *path,
   return g_file_is_native (file) &&
          (g_str_has_prefix (canon, "/proc/") || g_str_has_prefix (canon, "/sys/")) &&
          g_file_get_contents (canon, contents, len, NULL);
+}
+
+gboolean
+helpers_get_proc_fd (const gchar *path,
+                     gint        *out_fd)
+{
+  g_autofree gchar *canon = NULL;
+  g_autoptr(GFile) file = NULL;
+
+  g_assert (path != NULL);
+  g_assert (out_fd != NULL);
+
+  /* Canonicalize filename */
+  file = g_file_new_for_path (path);
+  canon = g_file_get_path (file);
+
+  return g_file_is_native (file) &&
+         (g_str_has_prefix (canon, "/proc/") || g_str_has_prefix (canon, "/sys/")) &&
+         -1 != (*out_fd = open (canon, O_RDONLY | O_CLOEXEC));
 }
 
 gboolean

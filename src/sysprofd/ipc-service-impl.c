@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include <errno.h>
+#include <fcntl.h>
 #include <gio/gunixfdlist.h>
 #include <polkit/polkit.h>
 #include <string.h>
@@ -84,6 +85,50 @@ ipc_service_impl_handle_get_proc_file (IpcService            *service,
     ipc_service_complete_get_proc_file (service,
                                         g_steal_pointer (&invocation),
                                         contents);
+
+  return TRUE;
+}
+
+static gboolean
+ipc_service_impl_handle_get_proc_fd (IpcService            *service,
+                                     GDBusMethodInvocation *invocation,
+                                     const gchar           *path)
+{
+  g_autoptr(GFile) file = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autofree gchar *canon = NULL;
+
+  g_assert (IPC_IS_SERVICE_IMPL (service));
+  g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+
+  file = g_file_new_for_path (path);
+  canon = g_file_get_path (file);
+
+  if (g_str_has_prefix (canon, "/proc/") || g_str_has_prefix (canon, "/sys/"))
+    {
+      gint fd = open (canon, O_RDONLY | O_CLOEXEC);
+
+      if (fd != -1)
+        {
+          g_autoptr(GUnixFDList) fd_list = g_unix_fd_list_new ();
+          gint handle = g_unix_fd_list_append (fd_list, fd, &error);
+
+          close (fd);
+
+          if (handle != -1)
+            {
+              g_dbus_method_invocation_return_value_with_unix_fd_list (g_steal_pointer (&invocation),
+                                                                       g_variant_new ("(h)", handle),
+                                                                       fd_list);
+              return TRUE;
+            }
+        }
+    }
+
+  g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
+                                         G_DBUS_ERROR,
+                                         G_DBUS_ERROR_ACCESS_DENIED,
+                                         "Failed to load proc fd");
 
   return TRUE;
 }
@@ -343,6 +388,7 @@ init_service_iface (IpcServiceIface *iface)
 {
   iface->handle_list_processes = ipc_service_impl_handle_list_processes;
   iface->handle_get_proc_file = ipc_service_impl_handle_get_proc_file;
+  iface->handle_get_proc_fd = ipc_service_impl_handle_get_proc_fd;
   iface->handle_perf_event_open = ipc_service_impl_handle_perf_event_open;
   iface->handle_get_process_info = ipc_service_impl_handle_get_process_info;
 }

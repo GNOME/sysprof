@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofMarksView" parent="GtkBin">
+    <child>
+      <object class="GtkScrolledWindow" id="scroller">
+        <property name="visible">true</property>
+        <child>
+          <object class="GtkTreeView" id="tree_view">
+            <property name="headers-visible">true</property>
+            <property name="visible">true</property>
+            <child>
+              <object class="GtkTreeViewColumn" id="text_column">
+                <property name="title" translatable="yes">Mark</property>
+                <property name="expand">false</property>
+                <child>
+                  <object class="GtkCellRendererText" id="text_cell">
+                    <property name="xalign">0</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkTreeViewColumn" id="duration_column">
+                <property name="title" translatable="yes">Duration</property>
+                <property name="expand">true</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

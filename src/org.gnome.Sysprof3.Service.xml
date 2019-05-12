@@ -27,7 +27,7 @@
       GetProcFile:
       @path: the path including "/proc/" prefix.
 
-      Gets a file from /proc.
+      Gets a file from /proc/ or /sys/.
 
       The file must be a C-string (no embedded NUL bytes) but need not be UTF-8.
 
@@ -38,6 +38,24 @@
     <method name="GetProcFile">
       <arg name="path" type="ay" direction="in"/>
       <arg name="contents" type="ay" direction="out"/>
+    </method>
+
+    <!--
+      GetProcFd:
+      @path: the path within /proc or /sys
+
+      Like GetProcFile, but returns a FD for the file.
+
+      This is useful for situations where you need to seek() back to 0 to
+      optimize the parsing of the file contents.
+
+      Returns: a file-descriptor
+
+      Since: 3.34
+    -->
+    <method name="GetProcFd">
+      <arg name="path" type="ay" direction="in"/>
+      <arg name="fd" type="h" direction="out"/>
     </method>
 
     <!--

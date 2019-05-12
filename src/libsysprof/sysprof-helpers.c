@@ -229,6 +229,56 @@ sysprof_helpers_list_processes_finish (SysprofHelpers  *self,
   return FALSE;
 }
 
+gboolean
+sysprof_helpers_get_proc_fd (SysprofHelpers  *self,
+                             const gchar     *path,
+                             GCancellable    *cancellable,
+                             gint            *out_fd,
+                             GError         **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_HELPERS (self), FALSE);
+  g_return_val_if_fail (path != NULL, FALSE);
+  g_return_val_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable), FALSE);
+  g_return_val_if_fail (out_fd != NULL, FALSE);
+
+  *out_fd = -1;
+
+  if (self->proxy != NULL)
+    {
+      g_autoptr(GVariant) reply = NULL;
+      g_autoptr(GUnixFDList) out_fd_list = NULL;
+
+      reply = g_dbus_proxy_call_with_unix_fd_list_sync (G_DBUS_PROXY (self->proxy),
+                                                        "GetProcFd",
+                                                        g_variant_new ("(^ay)", path),
+                                                        G_DBUS_CALL_FLAGS_NO_AUTO_START,
+                                                        -1,
+                                                        NULL,
+                                                        &out_fd_list,
+                                                        cancellable,
+                                                        error);
+
+      if (reply != NULL && out_fd_list != NULL)
+        {
+          gint handle = -1;
+
+          g_variant_get (reply, "(h)", &handle);
+
+          if (handle < g_unix_fd_list_get_length (out_fd_list))
+            {
+              *out_fd = g_unix_fd_list_get (out_fd_list, handle, error);
+              return *out_fd != -1;
+            }
+        }
+    }
+
+  if (!helpers_get_proc_fd (path, out_fd))
+    return FALSE;
+
+  g_clear_error (error);
+  return TRUE;
+}
+
 static void
 sysprof_helpers_get_proc_file_cb (IpcService   *service,
                                   GAsyncResult *result,

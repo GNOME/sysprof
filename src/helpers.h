@@ -39,5 +39,7 @@ gboolean helpers_perf_event_open (GVariant     *options,
 gboolean helpers_get_proc_file   (const gchar  *path,
                                   gchar       **contents,
                                   gsize        *len);
+gboolean helpers_get_proc_fd     (const gchar  *path,
+                                  gint         *out_fd);
 
 G_END_DECLS

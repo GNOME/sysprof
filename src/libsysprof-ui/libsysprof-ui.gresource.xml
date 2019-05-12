@@ -9,12 +9,12 @@
     <file alias="icons/scalable/apps/org.gnome.Sysprof.svg">../../data/icons/scalable/apps/org.gnome.Sysprof.svg</file>
     <file alias="icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg">../../data/icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg</file>
 
-    <file compressed="true">ui/sysprof-callgraph-view.ui</file>
-    <file compressed="true">ui/sysprof-empty-state-view.ui</file>
-    <file compressed="true">ui/sysprof-failed-state-view.ui</file>
-    <file compressed="true">ui/sysprof-process-model-row.ui</file>
-    <file compressed="true">ui/sysprof-profiler-menu-button.ui</file>
-    <file compressed="true">ui/sysprof-recording-state-view.ui</file>
-    <file compressed="true">ui/sysprof-visualizer-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-callgraph-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-empty-state-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-failed-state-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-process-model-row.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-profiler-menu-button.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-recording-state-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-visualizer-view.ui</file>
   </gresource>
 </gresources>

@@ -105,7 +105,7 @@ build_state_free (BuildState *state)
   g_hash_table_remove_all (state->inferred_rects);
   g_clear_pointer (&state->inferred_rects, g_hash_table_unref);
   g_free (state->group);
-  g_object_unref (state->cursor);
+  g_clear_pointer (&state->cursor, sysprof_capture_cursor_unref);
   g_slice_free (BuildState, state);
 }
 

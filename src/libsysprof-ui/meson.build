@@ -5,6 +5,7 @@ libsysprof_ui_public_sources = [
   'sysprof-empty-state-view.c',
   'sysprof-failed-state-view.c',
   'sysprof-line-visualizer-row.c',
+  'sysprof-marks-model.c',
   'sysprof-marks-view.c',
   'sysprof-mark-visualizer-row.c',
   'sysprof-model-filter.c',
@@ -23,7 +24,6 @@ libsysprof_ui_private_sources = [
   'pointcache.c',
   'rectangles.c',
   'sysprof-cell-renderer-percent.c',
-  'sysprof-marks-model.c',
   'sysprof-theme-manager.c',
   '../stackstash.c',
 ]
@@ -35,6 +35,7 @@ libsysprof_ui_public_headers = [
   'sysprof-empty-state-view.h',
   'sysprof-failed-state-view.h',
   'sysprof-line-visualizer-row.h',
+  'sysprof-marks-model.h',
   'sysprof-marks-view.h',
   'sysprof-mark-visualizer-row.h',
   'sysprof-model-filter.h',

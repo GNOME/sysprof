@@ -269,6 +269,8 @@ sysprof_window_build_profile (SysprofWindow *self)
                             self->refilter_cancellable,
                             sysprof_window_build_profile_cb,
                             g_object_ref (self));
+
+  sysprof_marks_view_set_reader (self->marks_view, self->reader);
 }
 
 static void
@@ -835,6 +837,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, info_bar);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, info_bar_label);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, info_bar_revealer);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, marks_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, paned);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, profiler_menu_button);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, record_button);

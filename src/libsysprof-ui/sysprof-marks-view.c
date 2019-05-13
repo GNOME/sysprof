@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include "sysprof-marks-model.h"
 #include "sysprof-marks-view.h"
 
 typedef struct
@@ -52,9 +53,33 @@ sysprof_marks_view_new (void)
   return g_object_new (SYSPROF_TYPE_MARKS_VIEW, NULL);
 }
 
+static void
+new_marks_model_cb (GObject      *object,
+                    GAsyncResult *result,
+                    gpointer      user_data)
+{
+  g_autoptr(SysprofMarksView) self = user_data;
+  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
+  g_autoptr(SysprofMarksModel) model = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_MARKS_VIEW (self));
+  g_assert (G_IS_ASYNC_RESULT (result));
+
+  if (!(model = sysprof_marks_model_new_finish (result, &error)))
+    g_warning ("Failed to load marks model: %s", error->message);
+  else
+    gtk_tree_view_set_model (priv->tree_view, GTK_TREE_MODEL (model));
+}
+
 void
 sysprof_marks_view_set_reader (SysprofMarksView     *self,
                                SysprofCaptureReader *reader)
 {
   g_return_if_fail (SYSPROF_IS_MARKS_VIEW (self));
+
+  sysprof_marks_model_new_async (reader,
+                                 NULL,
+                                 new_marks_model_cb,
+                                 g_object_ref (self));
 }

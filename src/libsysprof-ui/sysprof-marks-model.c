@@ -33,8 +33,10 @@ struct _SysprofMarksModel
 
 typedef struct
 {
-  gint64 begin_time;
-  gint64 end_time;
+  gint64       begin_time;
+  gint64       end_time;
+  const gchar *group;
+  const gchar *name;
 } Item;
 
 static void
@@ -84,6 +86,8 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
 
   item.begin_time = frame->time;
   item.end_time = item.begin_time + mark->duration;
+  item.group = g_string_chunk_insert_const (self->chunks, mark->group);
+  item.name = g_string_chunk_insert_const (self->chunks, mark->name);
 
   g_array_append_val (self->items, item);
 

@@ -32,10 +32,10 @@ typedef const SysprofCaptureFrame *(*ReadDelegate) (SysprofCaptureReader *);
 
 struct _SysprofCaptureCursor
 {
-  volatile gint    ref_count;
-  GPtrArray       *conditions;
+  volatile gint         ref_count;
+  GPtrArray            *conditions;
   SysprofCaptureReader *reader;
-  guint            reversed : 1;
+  guint                 reversed : 1;
 };
 
 static void

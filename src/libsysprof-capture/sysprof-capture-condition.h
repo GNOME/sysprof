@@ -28,27 +28,27 @@ G_BEGIN_DECLS
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCondition *sysprof_capture_condition_copy                   (const SysprofCaptureCondition *self);
 SYSPROF_AVAILABLE_IN_ALL
-void                sysprof_capture_condition_unref                  (SysprofCaptureCondition       *self);
+void                     sysprof_capture_condition_unref                  (SysprofCaptureCondition       *self);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCondition *sysprof_capture_condition_ref                    (SysprofCaptureCondition       *self);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCondition *sysprof_capture_condition_new_and                (SysprofCaptureCondition       *left,
-                                                                 SysprofCaptureCondition       *right);
+                                                                           SysprofCaptureCondition       *right);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCondition *sysprof_capture_condition_new_where_type_in      (guint                     n_types,
-                                                                 const SysprofCaptureFrameType *types);
+SysprofCaptureCondition *sysprof_capture_condition_new_where_type_in      (guint                          n_types,
+                                                                           const SysprofCaptureFrameType *types);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCondition *sysprof_capture_condition_new_where_time_between (gint64                    begin_time,
-                                                                 gint64                    end_time);
+SysprofCaptureCondition *sysprof_capture_condition_new_where_time_between (gint64                         begin_time,
+                                                                           gint64                         end_time);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCondition *sysprof_capture_condition_new_where_pid_in       (guint                     n_pids,
-                                                                 const gint32             *pids);
+SysprofCaptureCondition *sysprof_capture_condition_new_where_pid_in       (guint                          n_pids,
+                                                                           const gint32                  *pids);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCondition *sysprof_capture_condition_new_where_counter_in   (guint                     n_counters,
-                                                                 const guint              *counters);
+SysprofCaptureCondition *sysprof_capture_condition_new_where_counter_in   (guint                          n_counters,
+                                                                           const guint                   *counters);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean            sysprof_capture_condition_match                  (const SysprofCaptureCondition *self,
-                                                                 const SysprofCaptureFrame     *frame);
+gboolean                 sysprof_capture_condition_match                  (const SysprofCaptureCondition *self,
+                                                                           const SysprofCaptureFrame     *frame);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureCondition, sysprof_capture_condition_unref)
 

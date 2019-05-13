@@ -29,6 +29,7 @@ struct _SysprofMarksModel
   GObject       parent_instance;
   GStringChunk *chunks;
   GArray       *items;
+  gint64        max_end_time;
 };
 
 typedef struct
@@ -276,9 +277,25 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
   item.group = g_string_chunk_insert_const (self->chunks, mark->group);
   item.name = g_string_chunk_insert_const (self->chunks, mark->name);
 
+  if G_LIKELY (item.end_time > self->max_end_time)
+    self->max_end_time = item.end_time;
+
   g_array_append_val (self->items, item);
 
   return TRUE;
+}
+
+static gint
+item_compare (gconstpointer a,
+              gconstpointer b)
+{
+  const Item *ia = a;
+  const Item *ib = b;
+
+  if (ia->begin_time == ib->begin_time)
+    return ia->end_time - ib->end_time;
+
+  return ia->begin_time - ib->begin_time;
 }
 
 static void
@@ -302,6 +319,8 @@ sysprof_marks_model_new_worker (GTask        *task,
   condition = sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
   sysprof_capture_cursor_add_condition (cursor, g_steal_pointer (&condition));
   sysprof_capture_cursor_foreach (cursor, cursor_foreach_cb, self);
+
+  g_array_sort (self->items, item_compare);
 
   g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);
 }
@@ -332,4 +351,23 @@ sysprof_marks_model_new_finish (GAsyncResult  *result,
   g_return_val_if_fail (G_IS_TASK (result), NULL);
 
   return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+void
+sysprof_marks_model_get_range (SysprofMarksModel *self,
+                               gint64            *begin_time,
+                               gint64            *end_time)
+{
+  g_return_if_fail (SYSPROF_IS_MARKS_MODEL (self));
+
+  if (begin_time != NULL)
+    {
+      *begin_time = 0;
+
+      if (self->items->len > 0)
+        *begin_time = g_array_index (self->items, Item, 0).begin_time;
+    }
+
+  if (end_time != NULL)
+    *end_time = self->max_end_time;
 }

@@ -38,30 +38,31 @@ struct _SysprofWindow
   SysprofProfiler           *profiler;
   SysprofCaptureReader      *reader;
 
-  GCancellable         *refilter_cancellable;
+  GCancellable              *refilter_cancellable;
 
   /* Gtk widget template children */
   SysprofCallgraphView      *callgraph_view;
   SysprofEmptyStateView     *empty_view;
-  GtkMenuButton        *gear_menu_button;
-  GtkInfoBar           *info_bar;
-  GtkLabel             *info_bar_label;
-  GtkRevealer          *info_bar_revealer;
-  GtkPaned             *paned;
+  GtkMenuButton             *gear_menu_button;
+  GtkInfoBar                *info_bar;
+  GtkLabel                  *info_bar_label;
+  GtkRevealer               *info_bar_revealer;
+  SysprofMarksView          *marks_view;
+  GtkPaned                  *paned;
   SysprofProfilerMenuButton *profiler_menu_button;
   SysprofRecordingStateView *recording_view;
-  GtkButton            *record_button;
-  GtkLabel             *subtitle;
-  GtkLabel             *stat_label;
-  GtkLabel             *title;
-  GtkStack             *view_stack;
+  GtkButton                 *record_button;
+  GtkLabel                  *subtitle;
+  GtkLabel                  *stat_label;
+  GtkLabel                  *title;
+  GtkStack                  *view_stack;
   SysprofVisualizerView     *visualizers;
   SysprofZoomManager        *zoom_manager;
-  GtkLabel             *zoom_one_label;
+  GtkLabel                  *zoom_one_label;
 
-  guint                 stats_handler;
+  guint                      stats_handler;
 
-  guint                 closing : 1;
+  guint                      closing : 1;
 };
 
 G_DEFINE_TYPE (SysprofWindow, sysprof_window, GTK_TYPE_APPLICATION_WINDOW)
@@ -265,9 +266,9 @@ sysprof_window_build_profile (SysprofWindow *self)
   gtk_widget_set_sensitive (GTK_WIDGET (self->record_button), FALSE);
 
   sysprof_profile_generate (profile,
-                       self->refilter_cancellable,
-                       sysprof_window_build_profile_cb,
-                       g_object_ref (self));
+                            self->refilter_cancellable,
+                            sysprof_window_build_profile_cb,
+                            g_object_ref (self));
 }
 
 static void
@@ -509,9 +510,9 @@ sysprof_window_profiler_stopped (SysprofWindow   *self,
 }
 
 static void
-sysprof_window_profiler_failed (SysprofWindow     *self,
-                           const GError *reason,
-                           SysprofProfiler   *profiler)
+sysprof_window_profiler_failed (SysprofWindow   *self,
+                                const GError    *reason,
+                                SysprofProfiler *profiler)
 {
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (reason != NULL);
@@ -523,7 +524,7 @@ sysprof_window_profiler_failed (SysprofWindow     *self,
 
 static void
 sysprof_window_set_profiler (SysprofWindow   *self,
-                        SysprofProfiler *profiler)
+                             SysprofProfiler *profiler)
 {
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (SYSPROF_IS_PROFILER (profiler));
@@ -569,8 +570,8 @@ sysprof_window_set_profiler (SysprofWindow   *self,
 
 static void
 sysprof_window_open_capture (GSimpleAction *action,
-                        GVariant      *variant,
-                        gpointer       user_data)
+                             GVariant      *variant,
+                             gpointer       user_data)
 {
   SysprofWindow *self = user_data;
 
@@ -583,8 +584,8 @@ sysprof_window_open_capture (GSimpleAction *action,
 
 static void
 sysprof_window_save_capture (GSimpleAction *action,
-                        GVariant      *variant,
-                        gpointer       user_data)
+                             GVariant      *variant,
+                             gpointer       user_data)
 {
   g_autoptr(SysprofCaptureReader) reader = NULL;
   SysprofWindow *self = user_data;
@@ -653,8 +654,8 @@ failure:
 
 static void
 sysprof_window_close_capture (GSimpleAction *action,
-                         GVariant      *variant,
-                         gpointer       user_data)
+                              GVariant      *variant,
+                              gpointer       user_data)
 {
   SysprofWindow *self = user_data;
 
@@ -666,8 +667,8 @@ sysprof_window_close_capture (GSimpleAction *action,
 }
 
 static void
-sysprof_window_record_button_clicked (SysprofWindow  *self,
-                                 GtkButton *button)
+sysprof_window_record_button_clicked (SysprofWindow *self,
+                                      GtkButton     *button)
 {
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (GTK_IS_BUTTON (button));
@@ -680,8 +681,8 @@ sysprof_window_record_button_clicked (SysprofWindow  *self,
 
 static void
 sysprof_window_screenshot (GSimpleAction *action,
-                      GVariant      *variant,
-                      gpointer       user_data)
+                           GVariant      *variant,
+                           gpointer       user_data)
 {
   SysprofWindow *self = user_data;
   g_autofree gchar *str = NULL;
@@ -944,13 +945,11 @@ sysprof_window_open_cb (GObject      *object,
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (G_IS_TASK (result));
 
-  reader = g_task_propagate_pointer (G_TASK (result), &error);
-
-  if (reader == NULL)
+  if (!(reader = g_task_propagate_pointer (G_TASK (result), &error)))
     {
       sysprof_window_notify_user (self,
-                             GTK_MESSAGE_ERROR,
-                             "%s", error->message);
+                                  GTK_MESSAGE_ERROR,
+                                  "%s", error->message);
       return;
     }
 
@@ -962,14 +961,14 @@ sysprof_window_open_cb (GObject      *object,
 
 static void
 sysprof_window_open_worker (GTask        *task,
-                       gpointer      source_object,
-                       gpointer      task_data,
-                       GCancellable *cancellable)
+                            gpointer      source_object,
+                            gpointer      task_data,
+                            GCancellable *cancellable)
 {
   g_autofree gchar *path = NULL;
+  g_autoptr(GError) error = NULL;
   SysprofCaptureReader *reader;
   GFile *file = task_data;
-  GError *error = NULL;
 
   g_assert (G_IS_TASK (task));
   g_assert (SYSPROF_IS_WINDOW (source_object));
@@ -977,18 +976,17 @@ sysprof_window_open_worker (GTask        *task,
 
   path = g_file_get_path (file);
 
-  if (NULL == (reader = sysprof_capture_reader_new (path, &error)))
-    {
-      g_task_return_error (task, error);
-      return;
-    }
-
-  g_task_return_pointer (task, reader, (GDestroyNotify)sysprof_capture_reader_unref);
+  if (!(reader = sysprof_capture_reader_new (path, &error)))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    g_task_return_pointer (task,
+                           g_steal_pointer (&reader),
+                           (GDestroyNotify)sysprof_capture_reader_unref);
 }
 
 void
 sysprof_window_open (SysprofWindow *self,
-                GFile    *file)
+                     GFile         *file)
 {
   g_autoptr(GTask) task = NULL;
 
@@ -998,9 +996,9 @@ sysprof_window_open (SysprofWindow *self,
   if (!g_file_is_native (file))
     {
       sysprof_window_notify_user (self,
-                             GTK_MESSAGE_ERROR,
-                             _("The file “%s” could not be opened. Only local files are supported."),
-                             g_file_get_uri (file));
+                                  GTK_MESSAGE_ERROR,
+                                  _("The file “%s” could not be opened. Only local files are supported."),
+                                  g_file_get_uri (file));
       return;
     }
 

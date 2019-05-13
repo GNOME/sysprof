@@ -32,6 +32,7 @@ G_BEGIN_DECLS
 # include "sysprof-empty-state-view.h"
 # include "sysprof-failed-state-view.h"
 # include "sysprof-line-visualizer-row.h"
+# include "sysprof-marks-model.h"
 # include "sysprof-marks-view.h"
 # include "sysprof-mark-visualizer-row.h"
 # include "sysprof-model-filter.h"

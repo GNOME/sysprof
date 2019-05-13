@@ -101,8 +101,8 @@ sysprof_capture_cursor_unref (SysprofCaptureCursor *self)
  */
 void
 sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
-                           SysprofCaptureCursorCallback  callback,
-                           gpointer                 user_data)
+                                SysprofCaptureCursorCallback  callback,
+                                gpointer                      user_data)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (self->reader != NULL);
@@ -221,7 +221,7 @@ sysprof_capture_cursor_reverse (SysprofCaptureCursor *self)
  */
 void
 sysprof_capture_cursor_add_condition (SysprofCaptureCursor    *self,
-                                 SysprofCaptureCondition *condition)
+                                      SysprofCaptureCondition *condition)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (condition != NULL);

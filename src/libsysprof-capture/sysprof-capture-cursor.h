@@ -39,27 +39,27 @@ typedef struct _SysprofCaptureCursor SysprofCaptureCursor;
  * Returns: %TRUE if iteration should stop, otherwise %FALSE.
  */
 typedef gboolean (*SysprofCaptureCursorCallback) (const SysprofCaptureFrame *frame,
-                                             gpointer              user_data);
+                                                  gpointer                   user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCursor *sysprof_capture_cursor_new            (SysprofCaptureReader         *reader);
+SysprofCaptureCursor *sysprof_capture_cursor_new           (SysprofCaptureReader         *reader);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_capture_cursor_unref          (SysprofCaptureCursor         *self);
+void                  sysprof_capture_cursor_unref         (SysprofCaptureCursor         *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCursor *sysprof_capture_cursor_ref            (SysprofCaptureCursor         *self);
+SysprofCaptureCursor *sysprof_capture_cursor_ref           (SysprofCaptureCursor         *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureReader *sysprof_capture_cursor_get_reader     (SysprofCaptureCursor         *self);
+SysprofCaptureReader *sysprof_capture_cursor_get_reader    (SysprofCaptureCursor         *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_capture_cursor_foreach        (SysprofCaptureCursor         *self,
-                                                   SysprofCaptureCursorCallback  callback,
-                                                   gpointer                 user_data);
+void                  sysprof_capture_cursor_foreach       (SysprofCaptureCursor         *self,
+                                                            SysprofCaptureCursorCallback  callback,
+                                                            gpointer                      user_data);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_capture_cursor_reset          (SysprofCaptureCursor         *self);
+void                  sysprof_capture_cursor_reset         (SysprofCaptureCursor         *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_capture_cursor_reverse        (SysprofCaptureCursor         *self);
+void                  sysprof_capture_cursor_reverse       (SysprofCaptureCursor         *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_capture_cursor_add_condition  (SysprofCaptureCursor         *self,
-                                                   SysprofCaptureCondition      *condition);
+void                  sysprof_capture_cursor_add_condition (SysprofCaptureCursor         *self,
+                                                            SysprofCaptureCondition      *condition);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureCursor, sysprof_capture_cursor_unref)
 

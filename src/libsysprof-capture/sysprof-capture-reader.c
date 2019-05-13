@@ -48,11 +48,6 @@ struct _SysprofCaptureReader
   gint64               end_time;
 };
 
-#ifdef SYSPROF_ENABLE_GOBJECT
-G_DEFINE_BOXED_TYPE (SysprofCaptureReader, sysprof_capture_reader,
-                     sysprof_capture_reader_ref, sysprof_capture_reader_unref)
-#endif
-
 static gboolean
 sysprof_capture_reader_read_file_header (SysprofCaptureReader      *self,
                                     SysprofCaptureFileHeader  *header,

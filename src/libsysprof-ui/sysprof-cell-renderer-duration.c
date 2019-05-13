@@ -65,14 +65,11 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   g_assert (cr != NULL);
   g_assert (GTK_IS_WIDGET (widget));
 
-  if (priv->begin_time == priv->end_time)
-    return;
-
-  if (priv->end_time < priv->begin_time)
-    return;
-
-  if (priv->begin_time > priv->zoom_end || priv->end_time < priv->zoom_begin)
-    return;
+  if (priv->end_time >= priv->begin_time)
+    {
+      if (priv->begin_time > priv->zoom_end || priv->end_time < priv->zoom_begin)
+        return;
+    }
 
   style_context = gtk_widget_get_style_context (widget);
   gtk_style_context_get_color (style_context,
@@ -83,6 +80,9 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
 
   x1 = (priv->begin_time - priv->zoom_begin) / zoom_range * cell_area->width;
   x2 = (priv->end_time - priv->zoom_begin) / zoom_range * cell_area->width;
+
+  if (x2 < x1)
+    x2 = x1;
 
   r.x = cell_area->x + x1;
   r.y = cell_area->y;

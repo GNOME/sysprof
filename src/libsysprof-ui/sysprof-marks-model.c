@@ -294,10 +294,14 @@ item_compare (gconstpointer a,
   const Item *ia = a;
   const Item *ib = b;
 
-  if (ia->begin_time == ib->begin_time)
-    return ia->end_time - ib->end_time;
-
-  return ia->begin_time - ib->begin_time;
+  if (ia->begin_time < ib->begin_time)
+    return -1;
+  else if (ia->begin_time > ib->begin_time)
+    return 1;
+  else if (ia->end_time > ib->end_time)
+    return 1;
+  else
+    return 0;
 }
 
 static void

@@ -39,9 +39,196 @@ typedef struct
   const gchar *name;
 } Item;
 
+static gint
+sysprof_marks_model_get_n_columns (GtkTreeModel *model)
+{
+  return SYSPROF_MARKS_MODEL_COLUMN_LAST;
+}
+
+static GType
+sysprof_marks_model_get_column_type (GtkTreeModel *model,
+                                     gint          column)
+{
+  switch (column)
+    {
+    case SYSPROF_MARKS_MODEL_COLUMN_GROUP:
+      return G_TYPE_STRING;
+
+    case SYSPROF_MARKS_MODEL_COLUMN_NAME:
+      return G_TYPE_STRING;
+
+    case SYSPROF_MARKS_MODEL_COLUMN_BEGIN_TIME:
+      return G_TYPE_INT64;
+
+    case SYSPROF_MARKS_MODEL_COLUMN_END_TIME:
+      return G_TYPE_INT64;
+
+    case SYSPROF_MARKS_MODEL_COLUMN_DURATION:
+      return G_TYPE_DOUBLE;
+
+    default:
+      return 0;
+    }
+}
+
+static GtkTreePath *
+sysprof_marks_model_get_path (GtkTreeModel *model,
+                              GtkTreeIter  *iter)
+{
+  gint off;
+
+  g_assert (SYSPROF_IS_MARKS_MODEL (model));
+  g_assert (iter != NULL);
+
+  off = GPOINTER_TO_INT (iter->user_data);
+
+  return gtk_tree_path_new_from_indices (off, -1);
+}
+
+static gboolean
+sysprof_marks_model_get_iter (GtkTreeModel *model,
+                              GtkTreeIter  *iter,
+                              GtkTreePath  *path)
+{
+  SysprofMarksModel *self = (SysprofMarksModel *)model;
+  gint off;
+
+  g_assert (SYSPROF_IS_MARKS_MODEL (self));
+  g_assert (iter != NULL);
+  g_assert (path != NULL);
+
+  memset (iter, 0, sizeof *iter);
+
+  if (gtk_tree_path_get_depth (path) != 1)
+    return FALSE;
+
+  off = gtk_tree_path_get_indices (path)[0];
+  iter->user_data = GINT_TO_POINTER (off);
+
+  return off >= 0 && off < self->items->len;
+}
+
+static gboolean
+sysprof_marks_model_iter_next (GtkTreeModel *model,
+                               GtkTreeIter  *iter)
+{
+  SysprofMarksModel *self = (SysprofMarksModel *)model;
+  gint off;
+
+  g_assert (SYSPROF_IS_MARKS_MODEL (self));
+  g_assert (iter != NULL);
+
+  off = GPOINTER_TO_INT (iter->user_data);
+  off++;
+  iter->user_data = GINT_TO_POINTER (off);
+
+  return off < self->items->len;
+}
+
+static gboolean
+sysprof_marks_model_iter_nth_child (GtkTreeModel *model,
+                                    GtkTreeIter  *iter,
+                                    GtkTreeIter  *parent,
+                                    gint          n)
+{
+  SysprofMarksModel *self = (SysprofMarksModel *)model;
+
+  g_assert (SYSPROF_IS_MARKS_MODEL (self));
+  g_assert (iter != NULL);
+
+  if (parent != NULL)
+    return FALSE;
+
+  iter->user_data = GINT_TO_POINTER (n);
+
+  return n < self->items->len;
+}
+
+static gint
+sysprof_marks_model_iter_n_children (GtkTreeModel *model,
+                                     GtkTreeIter  *iter)
+{
+  SysprofMarksModel *self = (SysprofMarksModel *)model;
+
+  g_assert (SYSPROF_IS_MARKS_MODEL (self));
+
+  return iter ? 0 : self->items->len;
+}
+
+static gboolean
+sysprof_marks_model_iter_has_child (GtkTreeModel *model,
+                                    GtkTreeIter  *iter)
+{
+  return FALSE;
+}
+
+static GtkTreeModelFlags
+sysprof_marks_model_get_flags (GtkTreeModel *model)
+{
+  return GTK_TREE_MODEL_LIST_ONLY;
+}
+
+static void
+sysprof_marks_model_get_value (GtkTreeModel *model,
+                               GtkTreeIter  *iter,
+                               gint          column,
+                               GValue       *value)
+{
+  SysprofMarksModel *self = (SysprofMarksModel *)model;
+  const Item *item;
+
+  g_assert (SYSPROF_IS_MARKS_MODEL (self));
+  g_assert (iter != NULL);
+  g_assert (column < SYSPROF_MARKS_MODEL_COLUMN_LAST);
+
+  item = &g_array_index (self->items, Item, GPOINTER_TO_INT (iter->user_data));
+
+  switch (column)
+    {
+    case SYSPROF_MARKS_MODEL_COLUMN_GROUP:
+      g_value_init (value, G_TYPE_STRING);
+      g_value_set_string (value, item->group);
+      break;
+
+    case SYSPROF_MARKS_MODEL_COLUMN_NAME:
+      g_value_init (value, G_TYPE_STRING);
+      g_value_set_string (value, item->name);
+      break;
+
+    case SYSPROF_MARKS_MODEL_COLUMN_BEGIN_TIME:
+      g_value_init (value, G_TYPE_INT64);
+      g_value_set_int64 (value, item->begin_time);
+      break;
+
+    case SYSPROF_MARKS_MODEL_COLUMN_END_TIME:
+      g_value_init (value, G_TYPE_INT64);
+      g_value_set_int64 (value, item->end_time);
+      break;
+
+    case SYSPROF_MARKS_MODEL_COLUMN_DURATION:
+      g_value_init (value, G_TYPE_DOUBLE);
+      if (item->end_time)
+        g_value_set_double (value, (item->end_time - item->begin_time) / (double)(G_USEC_PER_SEC * 1000));
+      break;
+
+    default:
+      break;
+    }
+}
+
 static void
 tree_model_iface_init (GtkTreeModelIface *iface)
 {
+  iface->get_n_columns = sysprof_marks_model_get_n_columns;
+  iface->get_column_type = sysprof_marks_model_get_column_type;
+  iface->get_iter = sysprof_marks_model_get_iter;
+  iface->get_path = sysprof_marks_model_get_path;
+  iface->iter_next = sysprof_marks_model_iter_next;
+  iface->iter_n_children = sysprof_marks_model_iter_n_children;
+  iface->iter_nth_child = sysprof_marks_model_iter_nth_child;
+  iface->iter_has_child = sysprof_marks_model_iter_has_child;
+  iface->get_flags = sysprof_marks_model_get_flags;
+  iface->get_value = sysprof_marks_model_get_value;
 }
 
 G_DEFINE_TYPE_WITH_CODE (SysprofMarksModel, sysprof_marks_model, G_TYPE_OBJECT,
@@ -91,7 +278,7 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
 
   g_array_append_val (self->items, item);
 
-  return FALSE;
+  return TRUE;
 }
 
 static void

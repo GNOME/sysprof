@@ -35,23 +35,23 @@
 
 struct _SysprofCaptureReader
 {
-  volatile gint        ref_count;
-  gchar               *filename;
-  guint8              *buf;
-  gsize                bufsz;
-  gsize                len;
-  gsize                pos;
-  gsize                fd_off;
-  int                  fd;
-  gint                 endian;
+  volatile gint             ref_count;
+  gchar                    *filename;
+  guint8                   *buf;
+  gsize                     bufsz;
+  gsize                     len;
+  gsize                     pos;
+  gsize                     fd_off;
+  int                       fd;
+  gint                      endian;
   SysprofCaptureFileHeader  header;
-  gint64               end_time;
+  gint64                    end_time;
 };
 
 static gboolean
 sysprof_capture_reader_read_file_header (SysprofCaptureReader      *self,
-                                    SysprofCaptureFileHeader  *header,
-                                    GError              **error)
+                                         SysprofCaptureFileHeader  *header,
+                                         GError                   **error)
 {
   g_assert (self != NULL);
   g_assert (header != NULL);
@@ -120,7 +120,7 @@ sysprof_capture_reader_get_filename (SysprofCaptureReader *self)
  */
 SysprofCaptureReader *
 sysprof_capture_reader_new_from_fd (int      fd,
-                               GError **error)
+                                    GError **error)
 {
   SysprofCaptureReader *self;
 
@@ -151,7 +151,7 @@ sysprof_capture_reader_new_from_fd (int      fd,
 
 SysprofCaptureReader *
 sysprof_capture_reader_new (const gchar  *filename,
-                       GError      **error)
+                            GError      **error)
 {
   SysprofCaptureReader *self;
   int fd;
@@ -180,7 +180,7 @@ sysprof_capture_reader_new (const gchar  *filename,
 
 static inline void
 sysprof_capture_reader_bswap_frame (SysprofCaptureReader *self,
-                               SysprofCaptureFrame  *frame)
+                                    SysprofCaptureFrame  *frame)
 {
   g_assert (self != NULL);
   g_assert (frame!= NULL);
@@ -196,7 +196,7 @@ sysprof_capture_reader_bswap_frame (SysprofCaptureReader *self,
 
 static inline void
 sysprof_capture_reader_bswap_map (SysprofCaptureReader *self,
-                             SysprofCaptureMap    *map)
+                                  SysprofCaptureMap    *map)
 {
   g_assert (self != NULL);
   g_assert (map != NULL);
@@ -212,7 +212,7 @@ sysprof_capture_reader_bswap_map (SysprofCaptureReader *self,
 
 static inline void
 sysprof_capture_reader_bswap_mark (SysprofCaptureReader *self,
-                              SysprofCaptureMark   *mark)
+                                   SysprofCaptureMark   *mark)
 {
   g_assert (self != NULL);
   g_assert (mark != NULL);
@@ -223,7 +223,7 @@ sysprof_capture_reader_bswap_mark (SysprofCaptureReader *self,
 
 static inline void
 sysprof_capture_reader_bswap_jitmap (SysprofCaptureReader *self,
-                                SysprofCaptureJitmap *jitmap)
+                                     SysprofCaptureJitmap *jitmap)
 {
   g_assert (self != NULL);
   g_assert (jitmap != NULL);
@@ -234,7 +234,7 @@ sysprof_capture_reader_bswap_jitmap (SysprofCaptureReader *self,
 
 static gboolean
 sysprof_capture_reader_ensure_space_for (SysprofCaptureReader *self,
-                                    gsize            len)
+                                         gsize                 len)
 {
   g_assert (self != NULL);
   g_assert (self->pos <= self->len);
@@ -303,7 +303,7 @@ sysprof_capture_reader_skip (SysprofCaptureReader *self)
 
 gboolean
 sysprof_capture_reader_peek_frame (SysprofCaptureReader *self,
-                              SysprofCaptureFrame  *frame)
+                                   SysprofCaptureFrame  *frame)
 {
   SysprofCaptureFrame *real_frame;
 
@@ -331,7 +331,7 @@ sysprof_capture_reader_peek_frame (SysprofCaptureReader *self,
 
 gboolean
 sysprof_capture_reader_peek_type (SysprofCaptureReader    *self,
-                             SysprofCaptureFrameType *type)
+                                  SysprofCaptureFrameType *type)
 {
   SysprofCaptureFrame frame;
 
@@ -348,8 +348,8 @@ sysprof_capture_reader_peek_type (SysprofCaptureReader    *self,
 
 static const SysprofCaptureFrame *
 sysprof_capture_reader_read_basic (SysprofCaptureReader    *self,
-                              SysprofCaptureFrameType  type,
-                              gsize               extra)
+                                   SysprofCaptureFrameType  type,
+                                   gsize                    extra)
 {
   SysprofCaptureFrame *frame;
   gsize len = sizeof *frame + extra;
@@ -774,8 +774,8 @@ sysprof_capture_reader_unref (SysprofCaptureReader *self)
 
 gboolean
 sysprof_capture_reader_splice (SysprofCaptureReader  *self,
-                          SysprofCaptureWriter  *dest,
-                          GError          **error)
+                               SysprofCaptureWriter  *dest,
+                               GError               **error)
 {
   g_assert (self != NULL);
   g_assert (self->fd != -1);
@@ -813,8 +813,8 @@ sysprof_capture_reader_splice (SysprofCaptureReader  *self,
  */
 gboolean
 sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
-                           const gchar      *filename,
-                           GError          **error)
+                                const gchar           *filename,
+                                GError               **error)
 {
   struct stat stbuf;
   off_t in_off;

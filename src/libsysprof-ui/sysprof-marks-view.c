@@ -22,12 +22,14 @@
 
 #include "config.h"
 
+#include "sysprof-cell-renderer-duration.h"
 #include "sysprof-marks-model.h"
 #include "sysprof-marks-view.h"
 
 typedef struct
 {
-  GtkTreeView *tree_view;
+  GtkTreeView                 *tree_view;
+  SysprofCellRendererDuration *duration_cell;
 } SysprofMarksViewPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofMarksView, sysprof_marks_view, GTK_TYPE_BIN)
@@ -39,6 +41,9 @@ sysprof_marks_view_class_init (SysprofMarksViewClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-marks-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, tree_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, duration_cell);
+
+  g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_DURATION);
 }
 
 static void
@@ -62,14 +67,24 @@ new_marks_model_cb (GObject      *object,
   SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
   g_autoptr(SysprofMarksModel) model = NULL;
   g_autoptr(GError) error = NULL;
+  gint64 zoom_begin, zoom_end;
 
   g_assert (SYSPROF_IS_MARKS_VIEW (self));
   g_assert (G_IS_ASYNC_RESULT (result));
 
   if (!(model = sysprof_marks_model_new_finish (result, &error)))
-    g_warning ("Failed to load marks model: %s", error->message);
-  else
-    gtk_tree_view_set_model (priv->tree_view, GTK_TREE_MODEL (model));
+    {
+      g_warning ("Failed to load marks model: %s", error->message);
+      return;
+    }
+
+  sysprof_marks_model_get_range (model, &zoom_begin, &zoom_end);
+  g_object_set (priv->duration_cell,
+                "zoom-begin", zoom_begin,
+                "zoom-end", zoom_end,
+                NULL);
+
+  gtk_tree_view_set_model (priv->tree_view, GTK_TREE_MODEL (model));
 }
 
 void

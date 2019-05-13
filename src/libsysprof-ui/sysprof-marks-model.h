@@ -46,5 +46,8 @@ void               sysprof_marks_model_new_async  (SysprofCaptureReader  *reader
                                                    gpointer               user_data);
 SysprofMarksModel *sysprof_marks_model_new_finish (GAsyncResult          *result,
                                                    GError               **error);
+void               sysprof_marks_model_get_range  (SysprofMarksModel     *self,
+                                                   gint64                *begin_time,
+                                                   gint64                *end_time);
 
 G_END_DECLS

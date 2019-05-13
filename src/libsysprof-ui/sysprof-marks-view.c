@@ -20,6 +20,8 @@
 
 #define G_LOG_DOMAIN "sysprof-marks-view"
 
+#include "config.h"
+
 #include "sysprof-marks-view.h"
 
 typedef struct

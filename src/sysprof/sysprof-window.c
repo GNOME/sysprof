@@ -845,6 +845,8 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, visualizers);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, zoom_manager);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, zoom_one_label);
+
+  g_type_ensure (SYSPROF_TYPE_MARKS_VIEW);
 }
 
 static void

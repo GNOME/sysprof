@@ -30,7 +30,7 @@ typedef struct
   GtkTreeView *tree_view;
 } SysprofMarksViewPrivate;
 
-G_DEFINE_TYPE (SysprofMarksView, sysprof_marks_view, GTK_TYPE_BIN)
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofMarksView, sysprof_marks_view, GTK_TYPE_BIN)
 
 static void
 sysprof_marks_view_class_init (SysprofMarksViewClass *klass)

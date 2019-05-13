@@ -905,16 +905,19 @@ sysprof_capture_reader_get_start_time (SysprofCaptureReader *self)
 gint64
 sysprof_capture_reader_get_end_time (SysprofCaptureReader *self)
 {
+  gint64 end_time = 0;
+
   g_return_val_if_fail (self != NULL, 0);
 
   if (self->header.end_time != 0)
     {
       if (self->endian != G_BYTE_ORDER)
-        return GUINT64_SWAP_LE_BE (self->header.end_time);
-      return self->header.end_time;
+        end_time = GUINT64_SWAP_LE_BE (self->header.end_time);
+      else
+        end_time = self->header.end_time;
     }
 
-  return self->end_time;
+  return MAX (self->end_time, end_time);
 }
 
 /**

@@ -22,6 +22,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "sysprof-marks-model.h"
 
 struct _SysprofMarksModel

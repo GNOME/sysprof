@@ -487,6 +487,10 @@ sysprof_capture_reader_read_mark (SysprofCaptureReader *self)
   mark->name[sizeof mark->name - 1] = 0;
   self->buf[self->pos + mark->frame.len - 1] = 0;
 
+  /* Maybe update end-time */
+  if G_UNLIKELY ((mark->frame.time + mark->duration) > self->end_time)
+    self->end_time = mark->frame.time + mark->duration;
+
   return mark;
 }
 

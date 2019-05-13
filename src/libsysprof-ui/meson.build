@@ -23,6 +23,7 @@ libsysprof_ui_private_sources = [
   'pointcache.c',
   'rectangles.c',
   'sysprof-cell-renderer-percent.c',
+  'sysprof-marks-model.c',
   'sysprof-theme-manager.c',
   '../stackstash.c',
 ]

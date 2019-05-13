@@ -102,9 +102,9 @@ sysprof_marks_model_new_worker (GTask        *task,
 {
   const SysprofCaptureFrameType types[] = { SYSPROF_CAPTURE_FRAME_MARK };
   SysprofCaptureReader *reader = task_data;
-  g_autoptr(SysprofCaptureCondition) condition = NULL;
   g_autoptr(SysprofCaptureCursor) cursor = NULL;
   g_autoptr(SysprofMarksModel) self = NULL;
+  SysprofCaptureCondition *condition;
 
   g_assert (G_IS_TASK (task));
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
@@ -113,7 +113,7 @@ sysprof_marks_model_new_worker (GTask        *task,
 
   cursor = sysprof_capture_cursor_new (reader);
   condition = sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
-  sysprof_capture_cursor_add_condition (cursor, condition);
+  sysprof_capture_cursor_add_condition (cursor, g_steal_pointer (&condition));
   sysprof_capture_cursor_foreach (cursor, cursor_foreach_cb, self);
 
   g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);

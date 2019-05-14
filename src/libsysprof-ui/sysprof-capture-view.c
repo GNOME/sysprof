@@ -55,6 +55,7 @@ typedef struct
 typedef struct
 {
   SysprofCaptureReader *reader;
+  SysprofSelection *selection;
   gint n_active;
   guint has_error : 1;
 } LoadAsync;
@@ -77,6 +78,7 @@ load_async_free (gpointer data)
   if (state != NULL)
     {
       g_clear_pointer (&state->reader, sysprof_capture_reader_unref);
+      g_clear_object (&state->selection);
       g_slice_free (LoadAsync, state);
     }
 }
@@ -302,6 +304,42 @@ sysprof_capture_view_scan_finish (SysprofCaptureView  *self,
 }
 
 static void
+sysprof_capture_view_load_marks_cb (GObject      *object,
+                                    GAsyncResult *result,
+                                    gpointer      user_data)
+{
+  SysprofMarksView *view = (SysprofMarksView *)object;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+  LoadAsync *state;
+
+  g_assert (SYSPROF_IS_MARKS_VIEW (view));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  state = g_task_get_task_data (task);
+  g_assert (state != NULL);
+  g_assert (state->reader != NULL);
+  g_assert (state->n_active > 0);
+
+  state->n_active--;
+
+  if (!sysprof_marks_view_load_finish (view, result, &error))
+    {
+      if (!state->has_error)
+        {
+          state->has_error = TRUE;
+          g_task_return_error (task, g_steal_pointer (&error));
+        }
+
+      return;
+    }
+
+  if (state->n_active == 0)
+    g_task_return_boolean (task, TRUE);
+}
+
+static void
 sysprof_capture_view_load_callgraph_cb (GObject      *object,
                                         GAsyncResult *result,
                                         gpointer      user_data)
@@ -367,7 +405,7 @@ sysprof_capture_view_load_scan_cb (GObject      *object,
       state->n_active++;
       sysprof_capture_view_generate_callgraph_async (self,
                                                      state->reader,
-                                                     NULL,
+                                                     state->selection,
                                                      g_task_get_cancellable (task),
                                                      sysprof_capture_view_load_callgraph_cb,
                                                      g_object_ref (task));
@@ -377,7 +415,15 @@ sysprof_capture_view_load_scan_cb (GObject      *object,
     sysprof_visualizer_view_set_reader (priv->visualizer_view, state->reader);
 
   if (priv->features.has_marks)
-    sysprof_marks_view_set_reader (priv->marks_view, state->reader);
+    {
+      state->n_active++;
+      sysprof_marks_view_load_async (priv->marks_view,
+                                     state->reader,
+                                     state->selection,
+                                     g_task_get_cancellable (task),
+                                     sysprof_capture_view_load_marks_cb,
+                                     g_object_ref (task));
+    }
 
   if (state->n_active == 0)
     g_task_return_boolean (task, TRUE);
@@ -392,6 +438,7 @@ sysprof_capture_view_real_load_async (SysprofCaptureView   *self,
 {
   SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
   g_autoptr(GTask) task = NULL;
+  SysprofSelection *selection;
   LoadAsync *state;
 
   g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
@@ -401,8 +448,11 @@ sysprof_capture_view_real_load_async (SysprofCaptureView   *self,
   g_clear_pointer (&priv->reader, sysprof_capture_reader_unref);
   priv->reader = sysprof_capture_reader_ref (reader);
 
+  selection = sysprof_visualizer_view_get_selection (priv->visualizer_view);
+
   state = g_slice_new0 (LoadAsync);
   state->reader = sysprof_capture_reader_copy (reader);
+  state->selection = g_object_ref (selection);
   state->n_active = 0;
 
   task = g_task_new (self, cancellable, callback, user_data);

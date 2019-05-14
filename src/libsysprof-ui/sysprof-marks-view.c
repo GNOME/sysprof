@@ -59,22 +59,26 @@ sysprof_marks_view_new (void)
 }
 
 static void
-new_marks_model_cb (GObject      *object,
-                    GAsyncResult *result,
-                    gpointer      user_data)
+sysprof_marks_view_load_cb (GObject      *object,
+                            GAsyncResult *result,
+                            gpointer      user_data)
 {
-  g_autoptr(SysprofMarksView) self = user_data;
-  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
   g_autoptr(SysprofMarksModel) model = NULL;
   g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+  SysprofMarksView *self;
+  SysprofMarksViewPrivate *priv;
   gint64 zoom_begin, zoom_end;
 
-  g_assert (SYSPROF_IS_MARKS_VIEW (self));
   g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+  priv = sysprof_marks_view_get_instance_private (self);
 
   if (!(model = sysprof_marks_model_new_finish (result, &error)))
     {
-      g_warning ("Failed to load marks model: %s", error->message);
+      g_task_return_error (task, g_steal_pointer (&error));
       return;
     }
 
@@ -85,16 +89,42 @@ new_marks_model_cb (GObject      *object,
                 NULL);
 
   gtk_tree_view_set_model (priv->tree_view, GTK_TREE_MODEL (model));
+
+  g_task_return_boolean (task, TRUE);
 }
 
 void
-sysprof_marks_view_set_reader (SysprofMarksView     *self,
-                               SysprofCaptureReader *reader)
+sysprof_marks_view_load_async (SysprofMarksView     *self,
+                               SysprofCaptureReader *reader,
+                               SysprofSelection     *selection,
+                               GCancellable         *cancellable,
+                               GAsyncReadyCallback   callback,
+                               gpointer              user_data)
 {
+  g_autoptr(GTask) task = NULL;
+
   g_return_if_fail (SYSPROF_IS_MARKS_VIEW (self));
+  g_return_if_fail (reader != NULL);
+  g_return_if_fail (!selection || SYSPROF_IS_SELECTION (selection));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_marks_view_load_async);
 
   sysprof_marks_model_new_async (reader,
-                                 NULL,
-                                 new_marks_model_cb,
-                                 g_object_ref (self));
+                                 selection,
+                                 cancellable,
+                                 sysprof_marks_view_load_cb,
+                                 g_steal_pointer (&task));
+}
+
+gboolean
+sysprof_marks_view_load_finish (SysprofMarksView  *self,
+                                GAsyncResult      *result,
+                                GError           **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_MARKS_VIEW (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }

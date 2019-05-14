@@ -310,43 +310,77 @@ sysprof_marks_model_new_worker (GTask        *task,
                                 gpointer      task_data,
                                 GCancellable *cancellable)
 {
-  const SysprofCaptureFrameType types[] = { SYSPROF_CAPTURE_FRAME_MARK };
-  SysprofCaptureReader *reader = task_data;
-  g_autoptr(SysprofCaptureCursor) cursor = NULL;
   g_autoptr(SysprofMarksModel) self = NULL;
-  SysprofCaptureCondition *condition;
+  SysprofCaptureCursor *cursor = task_data;
 
   g_assert (G_IS_TASK (task));
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   self = g_object_new (SYSPROF_TYPE_MARKS_MODEL, NULL);
-
-  cursor = sysprof_capture_cursor_new (reader);
-  condition = sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
-  sysprof_capture_cursor_add_condition (cursor, g_steal_pointer (&condition));
   sysprof_capture_cursor_foreach (cursor, cursor_foreach_cb, self);
-
   g_array_sort (self->items, item_compare);
 
   g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);
 }
 
+static void
+sysprof_marks_model_selection_foreach_cb (SysprofSelection *selection,
+                                          gint64            begin,
+                                          gint64            end,
+                                          gpointer          user_data)
+{
+  SysprofCaptureCondition **condition = user_data;
+  SysprofCaptureCondition *c;
+
+  g_assert (SYSPROF_IS_SELECTION (selection));
+  g_assert (condition != NULL);
+
+  c = sysprof_capture_condition_new_where_time_between (begin, end);
+
+  if (*condition)
+    *condition = sysprof_capture_condition_new_or (c, *condition);
+  else
+    *condition = c;
+}
+
 void
 sysprof_marks_model_new_async (SysprofCaptureReader *reader,
+                               SysprofSelection     *selection,
                                GCancellable         *cancellable,
                                GAsyncReadyCallback   callback,
                                gpointer              user_data)
 {
+  const SysprofCaptureFrameType types[] = { SYSPROF_CAPTURE_FRAME_MARK };
+  g_autoptr(SysprofCaptureCursor) cursor = NULL;
   g_autoptr(GTask) task = NULL;
+  SysprofCaptureCondition *c;
 
   g_return_if_fail (reader != NULL);
+  g_return_if_fail (!selection || SYSPROF_IS_SELECTION (selection));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  cursor = sysprof_capture_cursor_new (reader);
+
+  c = sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
+
+  if (selection)
+    {
+      SysprofCaptureCondition *condition = NULL;
+
+      sysprof_selection_foreach (selection,
+                                 sysprof_marks_model_selection_foreach_cb,
+                                 &condition);
+      if (condition)
+        c = sysprof_capture_condition_new_and (c, condition);
+    }
+
+  sysprof_capture_cursor_add_condition (cursor, g_steal_pointer (&c));
 
   task = g_task_new (NULL, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_marks_model_new_async);
   g_task_set_task_data (task,
-                        sysprof_capture_reader_ref (reader),
-                        (GDestroyNotify) sysprof_capture_reader_unref);
+                        g_steal_pointer (&cursor),
+                        (GDestroyNotify) sysprof_capture_cursor_unref);
   g_task_run_in_thread (task, sysprof_marks_model_new_worker);
 }
 

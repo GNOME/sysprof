@@ -71,8 +71,8 @@ _sysprof_visualizer_row_get_graph_width (SysprofVisualizerRow *self)
 
 static void
 sysprof_visualizer_row_get_preferred_width (GtkWidget *widget,
-                                       gint      *min_width,
-                                       gint      *nat_width)
+                                            gint      *min_width,
+                                            gint      *nat_width)
 {
   SysprofVisualizerRow *self = (SysprofVisualizerRow *)widget;
   gint graph_width;

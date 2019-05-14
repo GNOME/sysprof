@@ -243,7 +243,7 @@ G_STATIC_ASSERT (sizeof (SysprofCaptureMark) == 96);
 
 static inline gint
 sysprof_capture_address_compare (SysprofCaptureAddress a,
-                            SysprofCaptureAddress b)
+                                 SysprofCaptureAddress b)
 {
   if (a < b)
     return -1;

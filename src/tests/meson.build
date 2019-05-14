@@ -55,6 +55,11 @@ if get_option('enable_gtk')
     dependencies: test_ui_deps,
   )
 
+  test_capture_view = executable('test-capture-view', 'test-capture-view.c',
+          c_args: test_cflags,
+    dependencies: test_ui_deps,
+  )
+
   test('test-model-filter', test_model_filter, env: test_env)
   test('test-zoom', test_zoom, env: test_env)
 

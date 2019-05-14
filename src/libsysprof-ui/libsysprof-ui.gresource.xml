@@ -10,6 +10,7 @@
     <file alias="icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg">../../data/icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg</file>
 
     <file preprocess="xml-stripblanks">ui/sysprof-callgraph-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-capture-view.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-empty-state-view.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-failed-state-view.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-marks-view.ui</file>

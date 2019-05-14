@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofCaptureView" parent="GtkBin">
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="visible">true</property>
+        <child>
+          <object class="GtkStackSwitcher">
+            <property name="stack">sections_stack</property>
+            <property name="halign">center</property>
+            <property name="visible">true</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">true</property>
+          </object>
+        </child>
+        <child>
+          <object class="SysprofMultiPaned">
+            <property name="visible">true</property>
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="visible">true</property>
+                <child>
+                  <object class="SysprofVisualizerView" id="visualizers">
+                    <property name="visible">true</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkSeparator">
+                    <property name="visible">true</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStack" id="sections_stack">
+                <property name="homogeneous">true</property>
+                <property name="visible">true</property>
+                <property name="vexpand">true</property>
+                <child>
+                  <object class="SysprofCallgraphView" id="callgraph_view">
+                    <property name="visible">true</property>
+                  </object>
+                  <packing>
+                    <property name="title" translatable="yes">Callgraph</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="SysprofMarksView" id="marks_view">
+                    <property name="visible">true</property>
+                  </object>
+                  <packing>
+                    <property name="title" translatable="yes">Marks</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+  <object class="SysprofZoomManager" id="zoom_manager">
+  </object>
+</interface>

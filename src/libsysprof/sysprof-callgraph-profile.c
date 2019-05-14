@@ -59,8 +59,8 @@ struct _SysprofCallgraphProfile
 {
   GObject                parent_instance;
 
-  SysprofCaptureReader       *reader;
-  SysprofSelection *selection;
+  SysprofCaptureReader  *reader;
+  SysprofSelection      *selection;
   StackStash            *stash;
   GStringChunk          *symbols;
   GHashTable            *tags;
@@ -68,8 +68,8 @@ struct _SysprofCallgraphProfile
 
 typedef struct
 {
-  SysprofCaptureReader       *reader;
-  SysprofSelection *selection;
+  SysprofCaptureReader *reader;
+  SysprofSelection     *selection;
 } Generate;
 
 static void profile_iface_init (SysprofProfileInterface *iface);

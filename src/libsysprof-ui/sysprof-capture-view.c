@@ -25,6 +25,7 @@
 #include "sysprof-callgraph-view.h"
 #include "sysprof-capture-view.h"
 #include "sysprof-marks-view.h"
+#include "sysprof-visualizer-view.h"
 #include "sysprof-zoom-manager.h"
 
 typedef struct
@@ -46,6 +47,7 @@ typedef struct
   /* Template Objects */
   SysprofCallgraphView   *callgraph_view;
   SysprofMarksView       *marks_view;
+  SysprofVisualizerView  *visualizer_view;
   SysprofZoomManager     *zoom_manager;
 
   guint                   busy;
@@ -372,6 +374,12 @@ sysprof_capture_view_load_scan_cb (GObject      *object,
                                                      g_object_ref (task));
     }
 
+  if (priv->features.has_counters)
+    {
+      state->n_active++;
+      sysprof_visualizer_view_set_reader (priv->visualizer_view, state->reader);
+    }
+
   if (state->n_active == 0)
     g_task_return_boolean (task, TRUE);
 }
@@ -492,6 +500,7 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-capture-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, callgraph_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, marks_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, visualizer_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, zoom_manager);
 
   properties [PROP_BUSY] =

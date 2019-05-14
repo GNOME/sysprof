@@ -27,6 +27,9 @@
 
 #include "sysprof-zoom-manager.h"
 
+#define DEFAULT_PIXELS_PER_SEC (20.0)
+#define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
+
 struct _SysprofZoomManager
 {
   GObject parent_instance;
@@ -56,21 +59,9 @@ G_DEFINE_TYPE_EXTENDED (SysprofZoomManager, sysprof_zoom_manager, G_TYPE_OBJECT,
 
 static GParamSpec *properties [N_PROPS];
 static gdouble zoom_levels[] = {
-  0.3,
-  0.5,
-  0.67,
-  0.80,
-  0.90,
-  1.0,
-  1.5,
-  2.0,
-  2.5,
-  3.0,
-  5.0,
-  10.0,
-  20.0,
-  30.0,
-  50.0,
+  0.3, 0.5, 0.67, 0.80, 0.90,
+  1.0, 1.5, 2.0, 2.5, 3.0,
+  5.0, 10.0, 20.0, 30.0, 50.0,
 };
 
 static void
@@ -505,4 +496,22 @@ sysprof_zoom_manager_get_zoom_label (SysprofZoomManager *self)
     return g_strdup_printf ("%0.2lf%%", percent);
   else
     return g_strdup_printf ("%d%%", (gint)percent);
+}
+
+gint64
+sysprof_zoom_manager_get_duration_for_width (SysprofZoomManager *self,
+                                             gint                width)
+{
+  g_return_val_if_fail (SYSPROF_IS_ZOOM_MANAGER (self), 0);
+
+  return NSEC_PER_SEC * ((gdouble)width / (DEFAULT_PIXELS_PER_SEC * self->zoom));
+}
+
+gint
+sysprof_zoom_manager_get_width_for_duration (SysprofZoomManager *self,
+                                             gint64              duration)
+{
+  g_return_val_if_fail (SYSPROF_IS_ZOOM_MANAGER (self), 0);
+
+  return (gdouble)duration / (gdouble)NSEC_PER_SEC * DEFAULT_PIXELS_PER_SEC * self->zoom;
 }

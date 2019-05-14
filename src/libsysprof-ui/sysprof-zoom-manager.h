@@ -64,5 +64,11 @@ void                sysprof_zoom_manager_set_zoom         (SysprofZoomManager *s
                                                            gdouble             zoom);
 SYSPROF_AVAILABLE_IN_ALL
 gchar              *sysprof_zoom_manager_get_zoom_label   (SysprofZoomManager *self);
+SYSPROF_AVAILABLE_IN_ALL
+gint                sysprof_zoom_manager_get_width_for_duration (SysprofZoomManager *self,
+                                                                 gint64              duration);
+SYSPROF_AVAILABLE_IN_ALL
+gint64              sysprof_zoom_manager_get_duration_for_width (SysprofZoomManager *self,
+                                                                 gint                width);
 
 G_END_DECLS

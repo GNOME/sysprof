@@ -26,6 +26,7 @@
 
 typedef struct
 {
+  gchar *text;
   gint64 begin_time;
   gint64 end_time;
   gint64 zoom_begin;
@@ -36,6 +37,7 @@ enum {
   PROP_0,
   PROP_BEGIN_TIME,
   PROP_END_TIME,
+  PROP_TEXT,
   PROP_ZOOM_BEGIN,
   PROP_ZOOM_END,
   N_PROPS
@@ -92,6 +94,30 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   gdk_cairo_rectangle (cr, &r);
   gdk_cairo_set_source_rgba (cr, &rgba);
   cairo_fill (cr);
+
+  if (priv->text)
+    {
+      PangoLayout *layout;
+      gint w, h;
+
+      /* Add some spacing before/after */
+      r.x -= 12;
+      r.width += 24;
+
+      layout = gtk_widget_create_pango_layout (widget, priv->text);
+      pango_layout_get_pixel_size (layout, &w, &h);
+
+      if ((r.x - w) >= cell_area->x)
+        cairo_move_to (cr, r.x - w, r.y + ((r.height - h) / 2));
+      else
+        cairo_move_to (cr, r.x + r.width, r.y + ((r.height - h) / 2));
+
+      rgba.alpha = 0.4;
+      gdk_cairo_set_source_rgba (cr, &rgba);
+      pango_cairo_show_layout (cr, layout);
+
+      g_object_unref (layout);
+    }
 }
 
 static void
@@ -111,6 +137,10 @@ sysprof_cell_renderer_duration_get_property (GObject    *object,
 
     case PROP_ZOOM_BEGIN:
       g_value_set_int64 (value, priv->zoom_begin);
+      break;
+
+    case PROP_TEXT:
+      g_value_set_string (value, priv->text);
       break;
 
     case PROP_ZOOM_END:
@@ -143,6 +173,11 @@ sysprof_cell_renderer_duration_set_property (GObject      *object,
 
     case PROP_ZOOM_BEGIN:
       priv->zoom_begin = g_value_get_int64 (value);
+      break;
+
+    case PROP_TEXT:
+      g_free (priv->text);
+      priv->text = g_value_dup_string (value);
       break;
 
     case PROP_ZOOM_END:
@@ -178,6 +213,11 @@ sysprof_cell_renderer_duration_class_init (SysprofCellRendererDurationClass *kla
     g_param_spec_int64 ("zoom-begin", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_TEXT] =
+    g_param_spec_string ("text", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_ZOOM_END] =
     g_param_spec_int64 ("zoom-end", NULL, NULL,

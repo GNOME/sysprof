@@ -36,9 +36,9 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofSelection, sysprof_selection, SYSPROF, SELECTION, GObject)
 
 typedef void (*SysprofSelectionForeachFunc) (SysprofSelection *self,
-                                        gint64       begin_time,
-                                        gint64       end_time,
-                                        gpointer     user_data);
+                                             gint64            begin_time,
+                                             gint64            end_time,
+                                             gpointer          user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
 gboolean          sysprof_selection_get_has_selection (SysprofSelection            *self);

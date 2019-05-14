@@ -39,9 +39,17 @@ struct _SysprofMarksViewClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget *sysprof_marks_view_new        (void);
+GtkWidget *sysprof_marks_view_new         (void);
 SYSPROF_AVAILABLE_IN_ALL
-void       sysprof_marks_view_set_reader (SysprofMarksView     *self,
-                                          SysprofCaptureReader *reader);
+void       sysprof_marks_view_load_async  (SysprofMarksView      *self,
+                                           SysprofCaptureReader  *reader,
+                                           SysprofSelection      *selection,
+                                           GCancellable          *cancellable,
+                                           GAsyncReadyCallback    callback,
+                                           gpointer               user_data);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean   sysprof_marks_view_load_finish (SysprofMarksView      *self,
+                                           GAsyncResult          *result,
+                                           GError               **error);
 
 G_END_DECLS

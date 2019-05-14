@@ -21,7 +21,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
-#include <sysprof-capture.h>
+#include <sysprof.h>
 
 G_BEGIN_DECLS
 
@@ -41,6 +41,7 @@ typedef enum
 G_DECLARE_FINAL_TYPE (SysprofMarksModel, sysprof_marks_model, SYSPROF, MARKS_MODEL, GObject)
 
 void               sysprof_marks_model_new_async  (SysprofCaptureReader  *reader,
+                                                   SysprofSelection      *selection,
                                                    GCancellable          *cancellable,
                                                    GAsyncReadyCallback    callback,
                                                    gpointer               user_data);

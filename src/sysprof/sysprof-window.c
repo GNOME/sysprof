@@ -270,7 +270,7 @@ sysprof_window_build_profile (SysprofWindow *self)
                             sysprof_window_build_profile_cb,
                             g_object_ref (self));
 
-  sysprof_marks_view_set_reader (self->marks_view, self->reader);
+  sysprof_marks_view_load_async (self->marks_view, self->reader, selection, NULL, NULL, NULL);
 }
 
 static void

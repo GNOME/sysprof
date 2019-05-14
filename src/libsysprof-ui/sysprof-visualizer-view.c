@@ -31,9 +31,6 @@
 #include "sysprof-visualizer-ticks.h"
 #include "sysprof-visualizer-view.h"
 
-#define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
-#define DEFAULT_PIXELS_PER_SECOND 20
-
 typedef struct
 {
   SysprofCaptureReader       *reader;
@@ -41,13 +38,13 @@ typedef struct
   SysprofSelection           *selection;
 
   SysprofVisualizerList      *list;
-  GtkScrolledWindow     *scroller;
+  GtkScrolledWindow          *scroller;
   SysprofVisualizerTicks     *ticks;
 
-  gint64                 drag_begin_at;
-  gint64                 drag_selection_at;
+  gint64                      drag_begin_at;
+  gint64                      drag_selection_at;
 
-  guint                  button_pressed : 1;
+  guint                       button_pressed : 1;
 } SysprofVisualizerViewPrivate;
 
 typedef struct

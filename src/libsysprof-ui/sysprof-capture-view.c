@@ -374,11 +374,11 @@ sysprof_capture_view_load_scan_cb (GObject      *object,
                                                      g_object_ref (task));
     }
 
-  if (priv->features.has_counters)
-    {
-      state->n_active++;
-      sysprof_visualizer_view_set_reader (priv->visualizer_view, state->reader);
-    }
+  if (priv->features.has_counters || priv->features.has_marks)
+    sysprof_visualizer_view_set_reader (priv->visualizer_view, state->reader);
+
+  if (priv->features.has_marks)
+    sysprof_marks_view_set_reader (priv->marks_view, state->reader);
 
   if (state->n_active == 0)
     g_task_return_boolean (task, TRUE);

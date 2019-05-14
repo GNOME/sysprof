@@ -345,7 +345,7 @@ sysprof_marks_model_new_async (SysprofCaptureReader *reader,
   task = g_task_new (NULL, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_marks_model_new_async);
   g_task_set_task_data (task,
-                        sysprof_capture_reader_copy (reader),
+                        sysprof_capture_reader_ref (reader),
                         (GDestroyNotify) sysprof_capture_reader_unref);
   g_task_run_in_thread (task, sysprof_marks_model_new_worker);
 }

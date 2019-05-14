@@ -24,6 +24,8 @@
 
 #include "sysprof-cell-renderer-duration.h"
 
+#define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
+
 typedef struct
 {
   gchar *text;
@@ -57,11 +59,13 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
 {
   SysprofCellRendererDuration *self = (SysprofCellRendererDuration *)renderer;
   SysprofCellRendererDurationPrivate *priv = sysprof_cell_renderer_duration_get_instance_private (self);
+  g_autoptr(GString) str = NULL;
   GtkStyleContext *style_context;
   gdouble zoom_range;
   gdouble x1, x2;
   GdkRGBA rgba;
   GdkRectangle r;
+  gint off = -1;
 
   g_assert (SYSPROF_IS_CELL_RENDERER_DURATION (self));
   g_assert (cr != NULL);
@@ -95,22 +99,55 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   gdk_cairo_set_source_rgba (cr, &rgba);
   cairo_fill (cr);
 
-  if (priv->text)
+  str = g_string_new (priv->text);
+
+  if (priv->begin_time != priv->end_time)
+    {
+      gint64 duration = priv->end_time - priv->begin_time;
+      gdouble sec = duration / (gdouble)NSEC_PER_SEC;
+      gchar fmt[32];
+
+      if (str->len)
+        g_string_append_c (str, ' ');
+
+      off = str->len;
+
+      if (ABS (sec) < 1.0)
+        g_snprintf (fmt, sizeof fmt, "(%0.2lf msec)", sec * 1000.0);
+      else
+        g_snprintf (fmt, sizeof fmt, "(%0.2lf sec)", sec);
+
+      g_string_append (str, fmt);
+    }
+
+  if (str->len)
     {
       PangoLayout *layout;
       gint w, h;
 
       /* Add some spacing before/after */
-      r.x -= 12;
-      r.width += 24;
+      r.x -= 24;
+      r.width += 48;
 
-      layout = gtk_widget_create_pango_layout (widget, priv->text);
+      layout = gtk_widget_create_pango_layout (widget, NULL);
+      pango_layout_set_text (layout, str->str, str->len);
       pango_layout_get_pixel_size (layout, &w, &h);
 
-      if ((r.x - w) >= cell_area->x)
-        cairo_move_to (cr, r.x - w, r.y + ((r.height - h) / 2));
-      else
+      if ((r.x + r.width + w) < (cell_area->x + cell_area->width))
         cairo_move_to (cr, r.x + r.width, r.y + ((r.height - h) / 2));
+      else
+        cairo_move_to (cr, r.x - w, r.y + ((r.height - h) / 2));
+
+      if (off > -1)
+        {
+          PangoAttrList *list = pango_attr_list_new ();
+          PangoAttribute *attr = pango_attr_scale_new (0.8333);
+          attr->start_index = off;
+          attr->end_index = str->len;
+          pango_attr_list_insert (list, g_steal_pointer (&attr));
+          pango_layout_set_attributes (layout, list);
+          pango_attr_list_unref (list);
+        }
 
       rgba.alpha = 0.4;
       gdk_cairo_set_source_rgba (cr, &rgba);

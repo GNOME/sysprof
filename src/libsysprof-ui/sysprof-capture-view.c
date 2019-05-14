@@ -398,6 +398,9 @@ sysprof_capture_view_real_load_async (SysprofCaptureView   *self,
   g_assert (reader != NULL);
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
+  g_clear_pointer (&priv->reader, sysprof_capture_reader_unref);
+  priv->reader = sysprof_capture_reader_ref (reader);
+
   state = g_slice_new0 (LoadAsync);
   state->reader = sysprof_capture_reader_copy (reader);
   state->n_active = 0;
@@ -419,7 +422,6 @@ sysprof_capture_view_real_load_async (SysprofCaptureView   *self,
       g_set_object (&priv->cancellable, cancellable);
     }
 
-
   /* First, discover the the time range for the display */
   sysprof_capture_view_scan_async (self,
                                    reader,
@@ -437,6 +439,21 @@ sysprof_capture_view_real_load_finish (SysprofCaptureView  *self,
   g_assert (G_IS_TASK (result));
   
   return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
+sysprof_capture_view_selection_changed_cb (SysprofCaptureView *self,
+                                           SysprofSelection   *selection)
+{
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
+  g_assert (SYSPROF_IS_SELECTION (selection));
+
+  if (priv->reader == NULL)
+    return;
+
+  sysprof_capture_view_generate_callgraph_async (self, priv->reader, selection, NULL, NULL, NULL);
 }
 
 static void
@@ -516,8 +533,16 @@ static void
 sysprof_capture_view_init (SysprofCaptureView *self)
 {
   SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+  SysprofSelection *selection;
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  selection = sysprof_visualizer_view_get_selection (priv->visualizer_view);
+  g_signal_connect_object (selection,
+                           "changed",
+                           G_CALLBACK (sysprof_capture_view_selection_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 
   gtk_widget_insert_action_group (GTK_WIDGET (self),
                                   "zoom",

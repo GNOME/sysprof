@@ -26,7 +26,6 @@
 #include "sysprof-capture-view.h"
 #include "sysprof-marks-view.h"
 #include "sysprof-visualizer-view.h"
-#include "sysprof-zoom-manager.h"
 
 typedef struct
 {
@@ -516,7 +515,13 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
 static void
 sysprof_capture_view_init (SysprofCaptureView *self)
 {
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_widget_insert_action_group (GTK_WIDGET (self),
+                                  "zoom",
+                                  G_ACTION_GROUP (priv->zoom_manager));
 }
 
 /**
@@ -584,4 +589,22 @@ sysprof_capture_view_reset (SysprofCaptureView *self)
   g_return_if_fail (SYSPROF_IS_CAPTURE_VIEW (self));
 
   /* TODO: reset */
+}
+
+/**
+ * sysprof_capture_view_get_zoom_manager:
+ * @self: a #SysprofCaptureView
+ *
+ * Returns: (transfer none): a #SysprofZoomManager
+ *
+ * Since: 3.34
+ */
+SysprofZoomManager *
+sysprof_capture_view_get_zoom_manager (SysprofCaptureView *self)
+{
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_CAPTURE_VIEW (self), NULL);
+
+  return priv->zoom_manager;
 }

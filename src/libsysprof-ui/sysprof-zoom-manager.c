@@ -129,6 +129,10 @@ sysprof_zoom_manager_get_property (GObject    *object,
       g_value_set_double (value, sysprof_zoom_manager_get_zoom (self));
       break;
 
+    case PROP_ZOOM_LABEL:
+      g_value_take_string (value, sysprof_zoom_manager_get_zoom_label (self));
+      break;
+
     case PROP_CAN_ZOOM_IN:
       g_value_set_boolean (value, sysprof_zoom_manager_get_can_zoom_in (self));
       break;
@@ -217,6 +221,11 @@ sysprof_zoom_manager_class_init (SysprofZoomManagerClass *klass)
                          G_MAXDOUBLE,
                          1.0,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_ZOOM_LABEL] =
+    g_param_spec_string ("zoom-label", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -407,6 +416,7 @@ sysprof_zoom_manager_set_zoom (SysprofZoomManager *self,
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ZOOM]);
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_ZOOM_IN]);
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_ZOOM_OUT]);
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ZOOM_LABEL]);
     }
 }
 
@@ -476,4 +486,27 @@ action_group_iface_init (GActionGroupInterface *iface)
   iface->query_action = sysprof_zoom_manager_query_action;
   iface->change_action_state = sysprof_zoom_manager_change_action_state;
   iface->activate_action = sysprof_zoom_manager_activate_action;
+}
+
+/**
+ * sysprof_zoom_manager_get_zoom_level:
+ * @self: a #SysprofZoomManager
+ *
+ * Returns: (transfer full): a string containing the zoom percentage label
+ *
+ * Since: 3.34
+ */
+gchar *
+sysprof_zoom_manager_get_zoom_label (SysprofZoomManager *self)
+{
+  gdouble percent;
+
+  g_return_val_if_fail (SYSPROF_IS_ZOOM_MANAGER (self), NULL);
+
+  percent = self->zoom * 100.0;
+
+  if (percent < 1.0)
+    return g_strdup_printf ("%0.2lf%%", percent);
+  else
+    return g_strdup_printf ("%d%%", (gint)percent);
 }

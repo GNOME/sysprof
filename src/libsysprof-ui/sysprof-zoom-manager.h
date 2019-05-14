@@ -62,5 +62,7 @@ gdouble             sysprof_zoom_manager_get_zoom         (SysprofZoomManager *s
 SYSPROF_AVAILABLE_IN_ALL
 void                sysprof_zoom_manager_set_zoom         (SysprofZoomManager *self,
                                                            gdouble             zoom);
+SYSPROF_AVAILABLE_IN_ALL
+gchar              *sysprof_zoom_manager_get_zoom_label   (SysprofZoomManager *self);
 
 G_END_DECLS

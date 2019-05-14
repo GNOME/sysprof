@@ -132,9 +132,13 @@ sysprof_kernel_symbol_load (void)
            g_array_index (ar, SysprofKernelSymbol, ar->len - 1).address);
 #endif
 
-  kernel_symbols = g_steal_pointer (&ar);
+  if (ar->len > 0)
+    {
+      kernel_symbols = g_steal_pointer (&ar);
+      return TRUE;
+    }
 
-  return TRUE;
+  return FALSE;
 }
 
 static const SysprofKernelSymbol *

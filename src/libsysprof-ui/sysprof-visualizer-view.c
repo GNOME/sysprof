@@ -93,8 +93,8 @@ find_row1 (GtkWidget *widget,
 
 static gint64
 get_time_from_coordinates (SysprofVisualizerView *self,
-                           gint              x,
-                           gint              y)
+                           gint                   x,
+                           gint                   y)
 {
   SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
   SysprofVisualizerRow *row1 = NULL;
@@ -129,9 +129,9 @@ get_time_from_coordinates (SysprofVisualizerView *self,
 }
 
 static gint
-get_x_for_time_at (SysprofVisualizerView    *self,
-                   const GtkAllocation *alloc,
-                   gint64               time_at)
+get_x_for_time_at (SysprofVisualizerView *self,
+                   const GtkAllocation   *alloc,
+                   gint64                 time_at)
 {
   SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
   SysprofVisualizerRow *row1 = NULL;
@@ -168,8 +168,8 @@ get_x_for_time_at (SysprofVisualizerView    *self,
 
 static void
 sysprof_visualizer_view_row_added (SysprofVisualizerView *self,
-                              GtkWidget        *widget,
-                              SysprofVisualizerList *list)
+                                   GtkWidget             *widget,
+                                   SysprofVisualizerList *list)
 {
   g_assert (SYSPROF_IS_VISUALIZER_VIEW (self));
   g_assert (GTK_IS_WIDGET (widget));
@@ -181,8 +181,8 @@ sysprof_visualizer_view_row_added (SysprofVisualizerView *self,
 
 static void
 sysprof_visualizer_view_row_removed (SysprofVisualizerView *self,
-                                GtkWidget        *widget,
-                                SysprofVisualizerList *list)
+                                     GtkWidget             *widget,
+                                     SysprofVisualizerList *list)
 {
   g_assert (SYSPROF_IS_VISUALIZER_VIEW (self));
   g_assert (GTK_IS_WIDGET (widget));
@@ -217,7 +217,7 @@ sysprof_visualizer_view_update_ticks (SysprofVisualizerView *self)
 
 static void
 sysprof_visualizer_view_hadjustment_value_changed (SysprofVisualizerView *self,
-                                              GtkAdjustment    *adjustment)
+                                                   GtkAdjustment         *adjustment)
 {
   g_assert (SYSPROF_IS_VISUALIZER_VIEW (self));
   g_assert (GTK_IS_ADJUSTMENT (adjustment));
@@ -227,7 +227,7 @@ sysprof_visualizer_view_hadjustment_value_changed (SysprofVisualizerView *self,
 
 static void
 sysprof_visualizer_view_size_allocate (GtkWidget     *widget,
-                                  GtkAllocation *allocation)
+                                       GtkAllocation *allocation)
 {
   SysprofVisualizerView *self = (SysprofVisualizerView *)widget;
 
@@ -241,9 +241,9 @@ sysprof_visualizer_view_size_allocate (GtkWidget     *widget,
 
 static void
 draw_selection_cb (SysprofSelection *selection,
-                   gint64                 range_begin,
-                   gint64                 range_end,
-                   gpointer               user_data)
+                   gint64            range_begin,
+                   gint64            range_end,
+                   gpointer          user_data)
 {
   SelectionDraw *draw = user_data;
   GdkRectangle area;
@@ -269,7 +269,7 @@ draw_selection_cb (SysprofSelection *selection,
 
 static gboolean
 sysprof_visualizer_view_draw (GtkWidget *widget,
-                         cairo_t   *cr)
+                              cairo_t   *cr)
 {
   SysprofVisualizerView *self = (SysprofVisualizerView *)widget;
   SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
@@ -301,8 +301,8 @@ sysprof_visualizer_view_draw (GtkWidget *widget,
 
 static gboolean
 sysprof_visualizer_view_list_button_press_event (SysprofVisualizerView *self,
-                                            GdkEventButton   *ev,
-                                            SysprofVisualizerList *list)
+                                                 GdkEventButton        *ev,
+                                                 SysprofVisualizerList *list)
 {
   SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
 
@@ -338,8 +338,8 @@ sysprof_visualizer_view_list_button_press_event (SysprofVisualizerView *self,
 
 static gboolean
 sysprof_visualizer_view_list_button_release_event (SysprofVisualizerView *self,
-                                              GdkEventButton   *ev,
-                                              SysprofVisualizerList *list)
+                                                   GdkEventButton        *ev,
+                                                   SysprofVisualizerList *list)
 {
   SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
 
@@ -355,8 +355,8 @@ sysprof_visualizer_view_list_button_release_event (SysprofVisualizerView *self,
   if (priv->drag_begin_at != priv->drag_selection_at)
     {
       sysprof_selection_select_range (priv->selection,
-                                            priv->drag_begin_at,
-                                            priv->drag_selection_at);
+                                      priv->drag_begin_at,
+                                      priv->drag_selection_at);
       priv->drag_begin_at = -1;
       priv->drag_selection_at = -1;
     }
@@ -368,8 +368,8 @@ sysprof_visualizer_view_list_button_release_event (SysprofVisualizerView *self,
 
 static gboolean
 sysprof_visualizer_view_list_motion_notify_event (SysprofVisualizerView *self,
-                                             GdkEventMotion   *ev,
-                                             SysprofVisualizerList *list)
+                                                  GdkEventMotion        *ev,
+                                                  SysprofVisualizerList *list)
 {
   SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
 
@@ -389,7 +389,7 @@ sysprof_visualizer_view_list_motion_notify_event (SysprofVisualizerView *self,
 
 static void
 sysprof_visualizer_view_list_realize_after (SysprofVisualizerView *self,
-                                       SysprofVisualizerList *list)
+                                            SysprofVisualizerList *list)
 {
   GdkDisplay *display;
   GdkWindow *window;
@@ -406,8 +406,8 @@ sysprof_visualizer_view_list_realize_after (SysprofVisualizerView *self,
 }
 
 static void
-sysprof_visualizer_view_selection_changed (SysprofVisualizerView      *self,
-                                      SysprofSelection *selection)
+sysprof_visualizer_view_selection_changed (SysprofVisualizerView *self,
+                                           SysprofSelection      *selection)
 {
   g_assert (SYSPROF_IS_VISUALIZER_VIEW (self));
   g_assert (SYSPROF_IS_SELECTION (selection));
@@ -430,9 +430,9 @@ sysprof_visualizer_view_finalize (GObject *object)
 
 static void
 sysprof_visualizer_view_get_property (GObject    *object,
-                                 guint       prop_id,
-                                 GValue     *value,
-                                 GParamSpec *pspec)
+                                      guint       prop_id,
+                                      GValue     *value,
+                                      GParamSpec *pspec)
 {
   SysprofVisualizerView *self = SYSPROF_VISUALIZER_VIEW (object);
 
@@ -453,9 +453,9 @@ sysprof_visualizer_view_get_property (GObject    *object,
 
 static void
 sysprof_visualizer_view_set_property (GObject      *object,
-                                 guint         prop_id,
-                                 const GValue *value,
-                                 GParamSpec   *pspec)
+                                      guint         prop_id,
+                                      const GValue *value,
+                                      GParamSpec   *pspec)
 {
   SysprofVisualizerView *self = SYSPROF_VISUALIZER_VIEW (object);
 
@@ -616,7 +616,7 @@ sysprof_visualizer_view_get_reader (SysprofVisualizerView *self)
 
 void
 sysprof_visualizer_view_set_reader (SysprofVisualizerView *self,
-                               SysprofCaptureReader  *reader)
+                                    SysprofCaptureReader  *reader)
 {
   SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
 
@@ -649,9 +649,9 @@ sysprof_visualizer_view_set_reader (SysprofVisualizerView *self,
 
 static void
 sysprof_visualizer_view_add_child (GtkBuildable *buildable,
-                              GtkBuilder   *builder,
-                              GObject      *child,
-                              const gchar  *type)
+                                   GtkBuilder   *builder,
+                                   GObject      *child,
+                                   const gchar  *type)
 {
   SysprofVisualizerView *self = (SysprofVisualizerView *)buildable;
   SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
@@ -678,8 +678,8 @@ buildable_iface_init (GtkBuildableIface *iface)
 
 static void
 sysprof_visualizer_view_zoom_manager_notify_zoom (SysprofVisualizerView *self,
-                                             GParamSpec       *pspec,
-                                             SysprofZoomManager    *zoom_manager)
+                                                  GParamSpec            *pspec,
+                                                  SysprofZoomManager    *zoom_manager)
 {
   g_assert (SYSPROF_IS_VISUALIZER_VIEW (self));
   g_assert (SYSPROF_IS_ZOOM_MANAGER (zoom_manager));
@@ -704,7 +704,7 @@ sysprof_visualizer_view_get_zoom_manager (SysprofVisualizerView *self)
 
 void
 sysprof_visualizer_view_set_zoom_manager (SysprofVisualizerView *self,
-                                     SysprofZoomManager    *zoom_manager)
+                                          SysprofZoomManager    *zoom_manager)
 {
   SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
 

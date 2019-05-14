@@ -40,6 +40,7 @@
 typedef enum
 {
   SYSPROF_CAPTURE_CONDITION_AND,
+  SYSPROF_CAPTURE_CONDITION_OR,
   SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN,
   SYSPROF_CAPTURE_CONDITION_WHERE_TIME_BETWEEN,
   SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN,
@@ -61,7 +62,7 @@ struct _SysprofCaptureCondition
     struct {
       SysprofCaptureCondition *left;
       SysprofCaptureCondition *right;
-    } and;
+    } and, or;
   } u;
 };
 
@@ -77,6 +78,10 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
     case SYSPROF_CAPTURE_CONDITION_AND:
       return sysprof_capture_condition_match (self->u.and.left, frame) &&
              sysprof_capture_condition_match (self->u.and.right, frame);
+
+    case SYSPROF_CAPTURE_CONDITION_OR:
+      return sysprof_capture_condition_match (self->u.or.left, frame) ||
+             sysprof_capture_condition_match (self->u.or.right, frame);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN:
       for (guint i = 0; i < self->u.where_type_in->len; i++)
@@ -173,6 +178,11 @@ sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
         sysprof_capture_condition_copy (self->u.and.left),
         sysprof_capture_condition_copy (self->u.and.right));
 
+    case SYSPROF_CAPTURE_CONDITION_OR:
+      return sysprof_capture_condition_new_or (
+        sysprof_capture_condition_copy (self->u.or.left),
+        sysprof_capture_condition_copy (self->u.or.right));
+
     case SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN:
       return sysprof_capture_condition_new_where_type_in (
           self->u.where_type_in->len,
@@ -207,6 +217,11 @@ sysprof_capture_condition_finalize (SysprofCaptureCondition *self)
     case SYSPROF_CAPTURE_CONDITION_AND:
       sysprof_capture_condition_unref (self->u.and.left);
       sysprof_capture_condition_unref (self->u.and.right);
+      break;
+
+    case SYSPROF_CAPTURE_CONDITION_OR:
+      sysprof_capture_condition_unref (self->u.or.left);
+      sysprof_capture_condition_unref (self->u.or.right);
       break;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN:
@@ -340,7 +355,7 @@ sysprof_capture_condition_new_where_counter_in (guint        n_counters,
  */
 SysprofCaptureCondition *
 sysprof_capture_condition_new_and (SysprofCaptureCondition *left,
-                              SysprofCaptureCondition *right)
+                                   SysprofCaptureCondition *right)
 {
   SysprofCaptureCondition *self;
 
@@ -351,6 +366,33 @@ sysprof_capture_condition_new_and (SysprofCaptureCondition *left,
   self->type = SYSPROF_CAPTURE_CONDITION_AND;
   self->u.and.left = left;
   self->u.and.right = right;
+
+  return self;
+}
+
+/**
+ * sysprof_capture_condition_new_or:
+ * @left: (transfer full): An #SysprofCaptureCondition
+ * @right: (transfer full): An #SysprofCaptureCondition
+ *
+ * Creates a new #SysprofCaptureCondition that requires either left and right
+ * to evaluate to %TRUE.
+ *
+ * Returns: (transfer full): A new #SysprofCaptureCondition.
+ */
+SysprofCaptureCondition *
+sysprof_capture_condition_new_or (SysprofCaptureCondition *left,
+                                  SysprofCaptureCondition *right)
+{
+  SysprofCaptureCondition *self;
+
+  g_return_val_if_fail (left != NULL, NULL);
+  g_return_val_if_fail (right != NULL, NULL);
+
+  self = sysprof_capture_condition_init ();
+  self->type = SYSPROF_CAPTURE_CONDITION_OR;
+  self->u.or.left = left;
+  self->u.or.right = right;
 
   return self;
 }

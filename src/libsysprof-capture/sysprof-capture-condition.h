@@ -35,6 +35,9 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCondition *sysprof_capture_condition_new_and                (SysprofCaptureCondition       *left,
                                                                            SysprofCaptureCondition       *right);
 SYSPROF_AVAILABLE_IN_ALL
+SysprofCaptureCondition *sysprof_capture_condition_new_or                 (SysprofCaptureCondition       *left,
+                                                                           SysprofCaptureCondition       *right);
+SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCondition *sysprof_capture_condition_new_where_type_in      (guint                          n_types,
                                                                            const SysprofCaptureFrameType *types);
 SYSPROF_AVAILABLE_IN_ALL

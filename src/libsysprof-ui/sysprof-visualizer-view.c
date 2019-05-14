@@ -95,7 +95,6 @@ get_time_from_coordinates (SysprofVisualizerView *self,
 {
   SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
   SysprofVisualizerRow *row1 = NULL;
-  GtkAllocation alloc;
   gint64 begin_time;
   gint64 end_time;
   gint graph_width;
@@ -104,11 +103,6 @@ get_time_from_coordinates (SysprofVisualizerView *self,
 
   if (priv->reader == NULL)
     return 0;
-
-  gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
-
-  x -= alloc.x;
-  y -= alloc.y;
 
   /*
    * Find the first row so we can get an idea of how wide the graph is

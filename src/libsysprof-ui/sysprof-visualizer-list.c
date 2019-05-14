@@ -31,8 +31,7 @@
 #include "sysprof-mark-visualizer-row.h"
 #include "sysprof-zoom-manager.h"
 
-#define NSEC_PER_SEC              G_GUINT64_CONSTANT(1000000000)
-#define DEFAULT_PIXELS_PER_SECOND 20
+#define NSEC_PER_SEC G_GUINT64_CONSTANT(1000000000)
 
 typedef struct
 {

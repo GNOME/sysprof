@@ -23,6 +23,8 @@
 #include <gtk/gtk.h>
 #include <sysprof-capture.h>
 
+#include "sysprof-zoom-manager.h"
+
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_CAPTURE_VIEW (sysprof_capture_view_get_type())
@@ -48,20 +50,22 @@ struct _SysprofCaptureViewClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget            *sysprof_capture_view_new         (void);
+GtkWidget            *sysprof_capture_view_new              (void);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureReader *sysprof_capture_view_get_reader  (SysprofCaptureView    *self);
+SysprofZoomManager   *sysprof_capture_view_get_zoom_manager (SysprofCaptureView *self);
 SYSPROF_AVAILABLE_IN_ALL
-void                  sysprof_capture_view_load_async  (SysprofCaptureView    *self,
-                                                        SysprofCaptureReader  *reader,
-                                                        GCancellable          *cancellable,
-                                                        GAsyncReadyCallback    callback,
-                                                        gpointer               user_data);
+SysprofCaptureReader *sysprof_capture_view_get_reader       (SysprofCaptureView    *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_view_load_finish (SysprofCaptureView    *self,
-                                                        GAsyncResult          *result,
-                                                        GError               **error);
+void                  sysprof_capture_view_load_async       (SysprofCaptureView    *self,
+                                                             SysprofCaptureReader  *reader,
+                                                             GCancellable          *cancellable,
+                                                             GAsyncReadyCallback    callback,
+                                                             gpointer               user_data);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_view_get_busy    (SysprofCaptureView    *self);
+gboolean              sysprof_capture_view_load_finish      (SysprofCaptureView    *self,
+                                                             GAsyncResult          *result,
+                                                             GError               **error);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean              sysprof_capture_view_get_busy         (SysprofCaptureView    *self);
 
 G_END_DECLS

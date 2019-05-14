@@ -45,6 +45,7 @@ enum {
   PROP_MIN_ZOOM,
   PROP_MAX_ZOOM,
   PROP_ZOOM,
+  PROP_ZOOM_LABEL,
   N_PROPS
 };
 
@@ -78,8 +79,8 @@ static gdouble zoom_levels[] = {
 
 static void
 sysprof_zoom_manager_zoom_in_action (GSimpleAction *action,
-                                GVariant *param,
-                                gpointer user_data)
+                                     GVariant      *param,
+                                     gpointer       user_data)
 {
   SysprofZoomManager *self = user_data;
   g_assert (SYSPROF_IS_ZOOM_MANAGER (self));
@@ -88,8 +89,8 @@ sysprof_zoom_manager_zoom_in_action (GSimpleAction *action,
 
 static void
 sysprof_zoom_manager_zoom_out_action (GSimpleAction *action,
-                                 GVariant      *param,
-                                 gpointer       user_data)
+                                      GVariant      *param,
+                                      gpointer       user_data)
 {
   SysprofZoomManager *self = user_data;
   g_assert (SYSPROF_IS_ZOOM_MANAGER (self));
@@ -98,8 +99,8 @@ sysprof_zoom_manager_zoom_out_action (GSimpleAction *action,
 
 static void
 sysprof_zoom_manager_zoom_one_action (GSimpleAction *action,
-                                 GVariant      *param,
-                                 gpointer       user_data)
+                                      GVariant      *param,
+                                      gpointer       user_data)
 {
   SysprofZoomManager *self = user_data;
   g_assert (SYSPROF_IS_ZOOM_MANAGER (self));
@@ -108,9 +109,9 @@ sysprof_zoom_manager_zoom_one_action (GSimpleAction *action,
 
 static void
 sysprof_zoom_manager_get_property (GObject    *object,
-                              guint       prop_id,
-                              GValue     *value,
-                              GParamSpec *pspec)
+                                   guint       prop_id,
+                                   GValue     *value,
+                                   GParamSpec *pspec)
 {
   SysprofZoomManager *self = SYSPROF_ZOOM_MANAGER (object);
 
@@ -143,9 +144,9 @@ sysprof_zoom_manager_get_property (GObject    *object,
 
 static void
 sysprof_zoom_manager_set_property (GObject      *object,
-                              guint         prop_id,
-                              const GValue *value,
-                              GParamSpec   *pspec)
+                                   guint         prop_id,
+                                   const GValue *value,
+                                   GParamSpec   *pspec)
 {
   SysprofZoomManager *self = SYSPROF_ZOOM_MANAGER (object);
 
@@ -287,7 +288,7 @@ sysprof_zoom_manager_get_max_zoom (SysprofZoomManager *self)
 
 void
 sysprof_zoom_manager_set_min_zoom (SysprofZoomManager *self,
-                              gdouble        min_zoom)
+                                   gdouble             min_zoom)
 {
   g_return_if_fail (SYSPROF_IS_ZOOM_MANAGER (self));
 
@@ -301,7 +302,7 @@ sysprof_zoom_manager_set_min_zoom (SysprofZoomManager *self,
 
 void
 sysprof_zoom_manager_set_max_zoom (SysprofZoomManager *self,
-                              gdouble        max_zoom)
+                                   gdouble             max_zoom)
 {
   g_return_if_fail (SYSPROF_IS_ZOOM_MANAGER (self));
 
@@ -385,7 +386,7 @@ sysprof_zoom_manager_get_zoom (SysprofZoomManager *self)
 
 void
 sysprof_zoom_manager_set_zoom (SysprofZoomManager *self,
-                          gdouble        zoom)
+                               gdouble             zoom)
 {
   gdouble min_zoom;
   gdouble max_zoom;
@@ -421,12 +422,12 @@ sysprof_zoom_manager_list_actions (GActionGroup *action_group)
 
 static gboolean
 sysprof_zoom_manager_query_action (GActionGroup        *action_group,
-                              const gchar         *action_name,
-                              gboolean            *enabled,
-                              const GVariantType **parameter_type,
-                              const GVariantType **state_type,
-                              GVariant           **state_hint,
-                              GVariant           **state)
+                                   const gchar         *action_name,
+                                   gboolean            *enabled,
+                                   const GVariantType **parameter_type,
+                                   const GVariantType **state_type,
+                                   GVariant           **state_hint,
+                                   GVariant           **state)
 {
   SysprofZoomManager *self = (SysprofZoomManager *)action_group;
 
@@ -444,8 +445,8 @@ sysprof_zoom_manager_query_action (GActionGroup        *action_group,
 
 static void
 sysprof_zoom_manager_change_action_state (GActionGroup *action_group,
-                                       const gchar  *action_name,
-                                       GVariant     *value)
+                                          const gchar  *action_name,
+                                          GVariant     *value)
 {
   SysprofZoomManager *self = (SysprofZoomManager *)action_group;
 
@@ -457,8 +458,8 @@ sysprof_zoom_manager_change_action_state (GActionGroup *action_group,
 
 static void
 sysprof_zoom_manager_activate_action (GActionGroup *action_group,
-                                   const gchar  *action_name,
-                                   GVariant     *parameter)
+                                      const gchar  *action_name,
+                                      GVariant     *parameter)
 {
   SysprofZoomManager *self = (SysprofZoomManager *)action_group;
 

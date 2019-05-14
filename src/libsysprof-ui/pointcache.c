@@ -99,7 +99,13 @@ point_cache_get_points (PointCache *self,
 {
   GArray *ar;
 
-  ar = g_hash_table_lookup (self->sets, GUINT_TO_POINTER (set_id));
-  *n_points = ar->len;
-  return &g_array_index (ar, const Point, 0);
+  *n_points = 0;
+
+  if ((ar = g_hash_table_lookup (self->sets, GUINT_TO_POINTER (set_id))))
+    {
+      *n_points = ar->len;
+      return &g_array_index (ar, const Point, 0);
+    }
+
+  return NULL;
 }

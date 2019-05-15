@@ -100,7 +100,7 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
 
   r.x = cell_area->x + x1;
   r.height = 10;
-  r.y = cell_area->y + (cell_area->height - r.height) / 2;
+  r.y = cell_area->y + (cell_area->height - r.height) / 2.0;
   r.width = MAX (1.0, x2 - x1);
 
   gdk_cairo_rectangle (cr, &r);

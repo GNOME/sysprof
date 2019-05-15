@@ -511,6 +511,14 @@ sysprof_callgraph_profile_get_stash (SysprofCallgraphProfile *self)
   return self->stash;
 }
 
+gboolean
+sysprof_callgraph_profile_is_empty (SysprofCallgraphProfile *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_PROFILE (self), FALSE);
+
+  return self->stash == NULL;
+}
+
 GQuark
 sysprof_callgraph_profile_get_tag (SysprofCallgraphProfile *self,
                               const gchar        *symbol)

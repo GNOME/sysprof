@@ -58,6 +58,19 @@ typedef struct _SysprofCaptureCondition SysprofCaptureCondition;
 
 typedef guint64 SysprofCaptureAddress;
 
+typedef struct
+{
+  /*
+   * The number of frames indexed by SysprofCaptureFrameType
+   */
+  gsize frame_count[16];
+
+  /*
+   * Padding for future expansion.
+   */
+  gsize padding[48];
+} SysprofCaptureStat;
+
 typedef union
 {
   gint64  v64;

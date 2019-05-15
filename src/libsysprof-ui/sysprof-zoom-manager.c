@@ -515,3 +515,15 @@ sysprof_zoom_manager_get_width_for_duration (SysprofZoomManager *self,
 
   return (gdouble)duration / (gdouble)NSEC_PER_SEC * DEFAULT_PIXELS_PER_SEC * self->zoom;
 }
+
+gdouble
+sysprof_zoom_manager_fit_zoom_for_duration (SysprofZoomManager *self,
+                                            gint64              duration,
+                                            gint                width)
+{
+  g_return_val_if_fail (SYSPROF_IS_ZOOM_MANAGER (self), 1.0);
+  g_return_val_if_fail (duration >= 0, 1.0);
+
+  return ((gdouble)width / DEFAULT_PIXELS_PER_SEC) /
+         ((gdouble)duration / (gdouble)NSEC_PER_SEC);
+}

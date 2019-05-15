@@ -258,7 +258,7 @@ sysprof_capture_view_scan_worker (GTask        *task,
       if (begin_time < features.begin_time)
         features.begin_time = begin_time;
 
-      if (end_time < features.end_time)
+      if (end_time > features.end_time)
         features.end_time = end_time;
     }
 
@@ -507,6 +507,26 @@ sysprof_capture_view_selection_changed_cb (SysprofCaptureView *self,
 }
 
 static void
+fit_zoom_cb (GSimpleAction *action,
+             GVariant      *param,
+             gpointer       user_data)
+{
+  SysprofCaptureView *self = user_data;
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+  GtkAllocation alloc;
+  gdouble zoom;
+  gint64 duration;
+
+  g_assert (G_IS_SIMPLE_ACTION (action));
+  g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
+
+  duration = priv->features.end_time - priv->features.begin_time;
+  gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
+  zoom = sysprof_zoom_manager_fit_zoom_for_duration (priv->zoom_manager, duration, alloc.width);
+  sysprof_zoom_manager_set_zoom (priv->zoom_manager, zoom);
+}
+
+static void
 sysprof_capture_view_finalize (GObject *object)
 {
   SysprofCaptureView *self = (SysprofCaptureView *)object;
@@ -583,7 +603,11 @@ static void
 sysprof_capture_view_init (SysprofCaptureView *self)
 {
   SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+  g_autoptr(GSimpleActionGroup) group = NULL;
   SysprofSelection *selection;
+  static GActionEntry actions[] = {
+    { "fit-zoom", fit_zoom_cb },
+  };
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -597,6 +621,15 @@ sysprof_capture_view_init (SysprofCaptureView *self)
   gtk_widget_insert_action_group (GTK_WIDGET (self),
                                   "zoom",
                                   G_ACTION_GROUP (priv->zoom_manager));
+
+  group = g_simple_action_group_new ();
+  g_action_map_add_action_entries (G_ACTION_MAP (group),
+                                   actions,
+                                   G_N_ELEMENTS (actions),
+                                   self);
+  gtk_widget_insert_action_group (GTK_WIDGET (self),
+                                  "capture-view",
+                                  G_ACTION_GROUP (group));
 }
 
 /**

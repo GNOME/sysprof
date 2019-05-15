@@ -31,6 +31,7 @@ typedef struct
 {
   gint64 capture_begin_time;
   gint64 capture_end_time;
+  gint64 capture_duration;
   gint64 begin_time;
   gint64 end_time;
   gchar *text;
@@ -64,7 +65,6 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   SysprofCellRendererDurationPrivate *priv = sysprof_cell_renderer_duration_get_instance_private (self);
   g_autoptr(GString) str = NULL;
   GtkStyleContext *style_context;
-  gdouble zoom_range;
   gdouble x1, x2;
   GdkRGBA rgba;
   GdkRectangle r;
@@ -82,12 +82,8 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
                                gtk_style_context_get_state (style_context),
                                &rgba);
 
-  return;
-#if 0
-  zoom_range = (gdouble)priv->zoom_end - (gdouble)priv->zoom_begin;
-
-  x1 = (priv->begin_time - priv->zoom_begin) / zoom_range * cell_area->width;
-  x2 = (priv->end_time - priv->zoom_begin) / zoom_range * cell_area->width;
+  x1 = (priv->begin_time - priv->capture_begin_time) / (gdouble)priv->capture_duration * cell_area->width;
+  x2 = (priv->end_time - priv->capture_begin_time) / (gdouble)priv->capture_duration * cell_area->width;
 
   if (x2 < x1)
     x2 = x1;
@@ -157,7 +153,6 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
 
       g_object_unref (layout);
     }
-#endif
 }
 
 static GtkSizeRequestMode
@@ -287,10 +282,12 @@ sysprof_cell_renderer_duration_set_property (GObject      *object,
 
     case PROP_CAPTURE_BEGIN_TIME:
       priv->capture_begin_time = g_value_get_int64 (value);
+      priv->capture_duration = priv->capture_end_time - priv->capture_begin_time;
       break;
 
     case PROP_CAPTURE_END_TIME:
       priv->capture_end_time = g_value_get_int64 (value);
+      priv->capture_duration = priv->capture_end_time - priv->capture_begin_time;
       break;
 
     case PROP_END_TIME:

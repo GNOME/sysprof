@@ -1012,6 +1012,7 @@ SysprofCaptureReader *
 sysprof_capture_writer_create_reader (SysprofCaptureWriter  *self,
                                       GError               **error)
 {
+  SysprofCaptureReader *ret;
   int copy;
 
   g_return_val_if_fail (self != NULL, NULL);
@@ -1033,7 +1034,10 @@ sysprof_capture_writer_create_reader (SysprofCaptureWriter  *self,
   if (-1 == (copy = dup (self->fd)))
     return NULL;
 
-  return sysprof_capture_reader_new_from_fd (copy, error);
+  if ((ret = sysprof_capture_reader_new_from_fd (copy, error)))
+    sysprof_capture_reader_set_stat (ret, &self->stat);
+
+  return g_steal_pointer (&ret);
 }
 
 /**

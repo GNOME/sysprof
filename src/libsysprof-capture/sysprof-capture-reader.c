@@ -46,6 +46,8 @@ struct _SysprofCaptureReader
   gint                      endian;
   SysprofCaptureFileHeader  header;
   gint64                    end_time;
+  SysprofCaptureStat        st_buf;
+  guint                     st_buf_set : 1;
 };
 
 static gboolean
@@ -954,4 +956,34 @@ sysprof_capture_reader_copy (SysprofCaptureReader *self)
   memcpy (copy->buf, self->buf, self->bufsz);
 
   return copy;
+}
+
+void
+sysprof_capture_reader_set_stat (SysprofCaptureReader     *self,
+                                 const SysprofCaptureStat *st_buf)
+{
+  g_return_if_fail (self != NULL);
+
+  if (st_buf != NULL)
+    {
+      self->st_buf = *st_buf;
+      self->st_buf_set = TRUE;
+    }
+  else
+    {
+      memset (&self->st_buf, 0, sizeof (self->st_buf));
+      self->st_buf_set = FALSE;
+    }
+}
+
+gboolean
+sysprof_capture_reader_get_stat (SysprofCaptureReader *self,
+                                 SysprofCaptureStat   *st_buf)
+{
+  g_return_val_if_fail (self != NULL, FALSE);
+
+  if (st_buf != NULL)
+    *st_buf = self->st_buf;
+
+  return self->st_buf_set;
 }

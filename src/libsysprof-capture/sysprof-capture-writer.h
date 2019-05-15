@@ -27,19 +27,6 @@ G_BEGIN_DECLS
 
 typedef struct _SysprofCaptureWriter SysprofCaptureWriter;
 
-typedef struct
-{
-  /*
-   * The number of frames indexed by SysprofCaptureFrameType
-   */
-  gsize frame_count[16];
-
-  /*
-   * Padding for future expansion.
-   */
-  gsize padding[48];
-} SysprofCaptureStat;
-
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureWriter *sysprof_capture_writer_new_from_env    (gsize                              buffer_size);
 SYSPROF_AVAILABLE_IN_ALL

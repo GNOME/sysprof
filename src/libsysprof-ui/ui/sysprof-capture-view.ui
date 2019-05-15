@@ -126,6 +126,15 @@
                     <property name="title" translatable="yes">Timings</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="SysprofDetailsView" id="details_view">
+                    <property name="margin">36</property>
+                    <property name="visible">true</property>
+                  </object>
+                  <packing>
+                    <property name="title" translatable="yes">Details</property>
+                  </packing>
+                </child>
               </object>
             </child>
           </object>

@@ -54,6 +54,7 @@ typedef struct
   GtkTreeView         *functions_view;
   GtkTreeView         *descendants_view;
   GtkTreeViewColumn   *descendants_name_column;
+  GtkStack            *stack;
 
   GQueue              *history;
 
@@ -149,7 +150,7 @@ build_functions_store (StackNode *node,
 
 static void
 sysprof_callgraph_view_load (SysprofCallgraphView    *self,
-                        SysprofCallgraphProfile *profile)
+                             SysprofCallgraphProfile *profile)
 {
   SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
   GtkListStore *functions;
@@ -173,9 +174,10 @@ sysprof_callgraph_view_load (SysprofCallgraphView    *self,
    *       insensitive and give some indication of loading progress.
    */
 
-  g_set_object (&priv->profile, profile);
+  if (!g_set_object (&priv->profile, profile))
+    return;
 
-  if (NULL == (stash = sysprof_callgraph_profile_get_stash (profile)))
+  if (!(stash = sysprof_callgraph_profile_get_stash (profile)))
     return;
 
   for (n = stack_stash_get_root (stash); n; n = n->siblings)
@@ -202,6 +204,8 @@ sysprof_callgraph_view_load (SysprofCallgraphView    *self,
       gtk_tree_selection_select_iter (selection, &iter);
     }
 
+  gtk_stack_set_visible_child_name (priv->stack, "callgraph");
+
   g_clear_object (&functions);
 }
 
@@ -220,6 +224,8 @@ sysprof_callgraph_view_unload (SysprofCallgraphView *self)
   gtk_tree_view_set_model (priv->callers_view, NULL);
   gtk_tree_view_set_model (priv->functions_view, NULL);
   gtk_tree_view_set_model (priv->descendants_view, NULL);
+
+  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
 }
 
 /**
@@ -239,7 +245,7 @@ sysprof_callgraph_view_get_profile (SysprofCallgraphView *self)
 
 void
 sysprof_callgraph_view_set_profile (SysprofCallgraphView    *self,
-                               SysprofCallgraphProfile *profile)
+                                    SysprofCallgraphProfile *profile)
 {
   SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
 
@@ -758,6 +764,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphView, functions_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphView, descendants_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphView, descendants_name_column);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphView, stack);
 
   bindings = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
@@ -775,6 +782,8 @@ sysprof_callgraph_view_init (SysprofCallgraphView *self)
   priv->history = g_queue_new ();
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
 
   selection = gtk_tree_view_get_selection (priv->functions_view);
 

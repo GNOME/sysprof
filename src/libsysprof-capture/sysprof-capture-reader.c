@@ -951,6 +951,8 @@ sysprof_capture_reader_copy (SysprofCaptureReader *self)
   copy->filename = g_strdup (self->filename);
   copy->fd = fd;
   copy->end_time = self->end_time;
+  copy->st_buf = self->st_buf;
+  copy->st_buf_set = self->st_buf_set;
 
   copy->buf = g_malloc (self->bufsz);
   memcpy (copy->buf, self->buf, self->bufsz);

@@ -221,6 +221,7 @@ sysprof_capture_view_scan_worker (GTask        *task,
   SysprofCaptureReader *reader = task_data;
   SysprofCaptureFeatures features = {0};
   SysprofCaptureFrame frame;
+  SysprofCaptureStat st_buf = {0};
 
   g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
   g_assert (G_IS_TASK (task));
@@ -234,6 +235,10 @@ sysprof_capture_view_scan_worker (GTask        *task,
     {
       gint64 begin_time = frame.time;
       gint64 end_time = G_MININT64;
+
+      g_assert (frame.type < G_N_ELEMENTS (st_buf.frame_count));
+
+      st_buf.frame_count[frame.type]++;
 
       if (frame.type == SYSPROF_CAPTURE_FRAME_MARK)
         {
@@ -264,6 +269,8 @@ sysprof_capture_view_scan_worker (GTask        *task,
       if (end_time > features.end_time)
         features.end_time = end_time;
     }
+
+  sysprof_capture_reader_set_stat (reader, &st_buf);
 
   if (!g_task_return_error_if_cancelled (task))
     {
@@ -428,6 +435,8 @@ sysprof_capture_view_load_scan_cb (GObject      *object,
                                      g_object_ref (task));
     }
 
+  sysprof_details_view_set_reader (priv->details_view, priv->reader);
+
   if (state->n_active == 0)
     g_task_return_boolean (task, TRUE);
 }
@@ -488,8 +497,6 @@ sysprof_capture_view_real_load_async (SysprofCaptureView   *self,
                                    cancellable,
                                    sysprof_capture_view_load_scan_cb,
                                    g_steal_pointer (&task));
-
-  sysprof_details_view_set_reader (priv->details_view, reader);
 }
 
 static gboolean

@@ -25,9 +25,6 @@
 #include "sysprof-visualizer-row.h"
 #include "sysprof-visualizer-row-private.h"
 
-#define NSEC_PER_SEC              G_GINT64_CONSTANT(1000000000)
-#define DEFAULT_PIXELS_PER_SECOND 20
-
 typedef struct
 {
   SysprofCaptureReader *reader;
@@ -48,25 +45,18 @@ gint
 _sysprof_visualizer_row_get_graph_width (SysprofVisualizerRow *self)
 {
   SysprofVisualizerRowPrivate *priv = sysprof_visualizer_row_get_instance_private (self);
-  gdouble zoom_level = 1.0;
   gint64 begin_time;
   gint64 end_time;
 
   g_assert (SYSPROF_IS_VISUALIZER_ROW (self));
 
-  if (priv->reader == NULL)
+  if (priv->reader == NULL || priv->zoom_manager == NULL)
     return 0;
-
-  if (priv->zoom_manager != NULL)
-    zoom_level = sysprof_zoom_manager_get_zoom (priv->zoom_manager);
 
   begin_time = sysprof_capture_reader_get_start_time (priv->reader);
   end_time = sysprof_capture_reader_get_end_time (priv->reader);
 
-  return (end_time - begin_time)
-         / (gdouble)NSEC_PER_SEC
-         * zoom_level
-         * DEFAULT_PIXELS_PER_SECOND;
+  return sysprof_zoom_manager_get_width_for_duration (priv->zoom_manager, end_time - begin_time);
 }
 
 static void
@@ -90,9 +80,9 @@ sysprof_visualizer_row_get_preferred_width (GtkWidget *widget,
 
 static void
 sysprof_visualizer_row_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
-                                GParamSpec *pspec)
+                                     guint       prop_id,
+                                     GValue     *value,
+                                     GParamSpec *pspec)
 {
   SysprofVisualizerRow *self = SYSPROF_VISUALIZER_ROW (object);
 
@@ -109,9 +99,9 @@ sysprof_visualizer_row_get_property (GObject    *object,
 
 static void
 sysprof_visualizer_row_set_property (GObject      *object,
-                                guint         prop_id,
-                                const GValue *value,
-                                GParamSpec   *pspec)
+                                     guint         prop_id,
+                                     const GValue *value,
+                                     GParamSpec   *pspec)
 {
   SysprofVisualizerRow *self = SYSPROF_VISUALIZER_ROW (object);
 
@@ -169,8 +159,8 @@ sysprof_visualizer_row_init (SysprofVisualizerRow *self)
 
 static void
 sysprof_visualizer_row_zoom_manager_notify_zoom (SysprofVisualizerRow *self,
-                                            GParamSpec      *pspec,
-                                            SysprofZoomManager   *zoom_manager)
+                                                 GParamSpec           *pspec,
+                                                 SysprofZoomManager   *zoom_manager)
 {
   g_assert (SYSPROF_IS_VISUALIZER_ROW (self));
   g_assert (SYSPROF_IS_ZOOM_MANAGER (zoom_manager));
@@ -195,7 +185,7 @@ sysprof_visualizer_row_get_zoom_manager (SysprofVisualizerRow *self)
 
 void
 sysprof_visualizer_row_set_zoom_manager (SysprofVisualizerRow *self,
-                                    SysprofZoomManager   *zoom_manager)
+                                         SysprofZoomManager   *zoom_manager)
 {
   SysprofVisualizerRowPrivate *priv = sysprof_visualizer_row_get_instance_private (self);
 
@@ -229,7 +219,7 @@ sysprof_visualizer_row_set_zoom_manager (SysprofVisualizerRow *self,
 
 void
 sysprof_visualizer_row_set_reader (SysprofVisualizerRow *self,
-                              SysprofCaptureReader *reader)
+                                   SysprofCaptureReader *reader)
 {
   SysprofVisualizerRowPrivate *priv = sysprof_visualizer_row_get_instance_private (self);
 
@@ -265,7 +255,7 @@ subtract_border (GtkAllocation *alloc,
 
 static void
 adjust_alloc_for_borders (SysprofVisualizerRow *self,
-                          GtkAllocation   *alloc)
+                          GtkAllocation        *alloc)
 {
   GtkStyleContext *style_context;
   GtkBorder border;
@@ -283,10 +273,10 @@ adjust_alloc_for_borders (SysprofVisualizerRow *self,
 
 void
 sysprof_visualizer_row_translate_points (SysprofVisualizerRow                    *self,
-                                    const SysprofVisualizerRowRelativePoint *in_points,
-                                    guint                               n_in_points,
-                                    SysprofVisualizerRowAbsolutePoint       *out_points,
-                                    guint                               n_out_points)
+                                         const SysprofVisualizerRowRelativePoint *in_points,
+                                         guint                                    n_in_points,
+                                         SysprofVisualizerRowAbsolutePoint       *out_points,
+                                         guint                                    n_out_points)
 {
   GtkAllocation alloc;
   gint graph_width;

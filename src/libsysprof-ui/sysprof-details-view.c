@@ -26,10 +26,17 @@
 
 #include "sysprof-details-view.h"
 
+#define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
+
 struct _SysprofDetailsView
 {
   GtkBin    parent_instance;
+  GtkLabel *duration;
   GtkLabel *filename;
+  GtkLabel *forks;
+  GtkLabel *marks;
+  GtkLabel *processes;
+  GtkLabel *samples;
   GtkLabel *start_time;
 };
 
@@ -50,7 +57,12 @@ sysprof_details_view_class_init (SysprofDetailsViewClass *klass)
   object_class->finalize = sysprof_details_view_finalize;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-details-view.ui");
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, duration);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, filename);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, forks);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, marks);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, processes);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, samples);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, start_time);
 }
 
@@ -72,10 +84,14 @@ sysprof_details_view_set_reader (SysprofDetailsView   *self,
 {
   g_autoptr(GDateTime) dt = NULL;
   g_autoptr(GDateTime) local = NULL;
+  g_autofree gchar *duration_str = NULL;
   const gchar *filename;
   const gchar *capture_at;
+  SysprofCaptureStat st_buf;
+  gint64 duration;
 
   g_return_if_fail (SYSPROF_IS_DETAILS_VIEW (self));
+  g_return_if_fail (reader != NULL);
 
   if (!(filename = sysprof_capture_reader_get_filename (reader)))
     filename = _("Memory Capture");
@@ -87,5 +103,27 @@ sysprof_details_view_set_reader (SysprofDetailsView   *self,
     {
       g_autofree gchar *str = g_date_time_format (local, "%x %X");
       gtk_label_set_label (self->start_time, str);
+    }
+
+  duration = sysprof_capture_reader_get_end_time (reader) -
+             sysprof_capture_reader_get_start_time (reader);
+  duration_str = g_strdup_printf (_("%0.4lf seconds"), duration / (gdouble)NSEC_PER_SEC);
+  gtk_label_set_label (self->duration, duration_str);
+
+  if (sysprof_capture_reader_get_stat (reader, &st_buf))
+    {
+#define SET_FRAME_COUNT(field, TYPE) \
+      G_STMT_START { \
+        g_autofree gchar *str = NULL; \
+        str = g_strdup_printf ("%"G_GSIZE_FORMAT, st_buf.frame_count[TYPE]); \
+        gtk_label_set_label (self->field, str); \
+      } G_STMT_END
+
+      SET_FRAME_COUNT (samples, SYSPROF_CAPTURE_FRAME_SAMPLE);
+      SET_FRAME_COUNT (marks, SYSPROF_CAPTURE_FRAME_MARK);
+      SET_FRAME_COUNT (processes, SYSPROF_CAPTURE_FRAME_PROCESS);
+      SET_FRAME_COUNT (forks, SYSPROF_CAPTURE_FRAME_FORK);
+
+#undef SET_FRAME_COUNT
     }
 }

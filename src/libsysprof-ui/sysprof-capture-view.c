@@ -24,6 +24,7 @@
 
 #include "sysprof-callgraph-view.h"
 #include "sysprof-capture-view.h"
+#include "sysprof-details-view.h"
 #include "sysprof-marks-view.h"
 #include "sysprof-visualizer-view.h"
 
@@ -45,6 +46,7 @@ typedef struct
 
   /* Template Objects */
   SysprofCallgraphView   *callgraph_view;
+  SysprofDetailsView     *details_view;
   SysprofMarksView       *marks_view;
   SysprofVisualizerView  *visualizer_view;
   SysprofZoomManager     *zoom_manager;
@@ -485,6 +487,8 @@ sysprof_capture_view_real_load_async (SysprofCaptureView   *self,
                                    cancellable,
                                    sysprof_capture_view_load_scan_cb,
                                    g_steal_pointer (&task));
+
+  sysprof_details_view_set_reader (priv->details_view, reader);
 }
 
 static gboolean
@@ -585,6 +589,7 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-capture-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, callgraph_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, details_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, marks_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, visualizer_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, zoom_manager);
@@ -597,6 +602,8 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
                           (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
   
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  g_type_ensure (SYSPROF_TYPE_DETAILS_VIEW);
 }
 
 static void

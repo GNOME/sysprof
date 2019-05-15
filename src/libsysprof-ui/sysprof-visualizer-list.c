@@ -35,8 +35,6 @@ typedef struct
 {
   SysprofCaptureReader *reader;
   SysprofZoomManager *zoom_manager;
-  gint64 begin_time;
-  gint64 end_time;
 } SysprofVisualizerListPrivate;
 
 typedef struct

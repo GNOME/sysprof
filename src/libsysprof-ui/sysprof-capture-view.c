@@ -725,11 +725,15 @@ sysprof_capture_view_fit_to_width (SysprofCaptureView *self)
   GtkAllocation alloc;
   gdouble zoom;
   gint64 duration;
+  gint width;
 
   g_return_if_fail (SYSPROF_IS_CAPTURE_VIEW (self));
 
-  duration = priv->features.end_time - priv->features.begin_time;
+  /* Trim a bit off the width to avoid drawing past edges */
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
-  zoom = sysprof_zoom_manager_fit_zoom_for_duration (priv->zoom_manager, duration, alloc.width);
+  width = MAX (100, alloc.width - 25);
+
+  duration = priv->features.end_time - priv->features.begin_time;
+  zoom = sysprof_zoom_manager_fit_zoom_for_duration (priv->zoom_manager, duration, width);
   sysprof_zoom_manager_set_zoom (priv->zoom_manager, zoom);
 }

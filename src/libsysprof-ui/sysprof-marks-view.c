@@ -25,23 +25,101 @@
 #include "sysprof-cell-renderer-duration.h"
 #include "sysprof-marks-model.h"
 #include "sysprof-marks-view.h"
+#include "sysprof-zoom-manager.h"
 
 typedef struct
 {
+  SysprofZoomManager          *zoom_manager;
+
+  /* Template objects */
   GtkTreeView                 *tree_view;
   SysprofCellRendererDuration *duration_cell;
 } SysprofMarksViewPrivate;
 
+enum {
+  PROP_0,
+  PROP_ZOOM_MANAGER,
+  N_PROPS
+};
+
+static GParamSpec *properties [N_PROPS];
+
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofMarksView, sysprof_marks_view, GTK_TYPE_BIN)
+
+static void
+sysprof_marks_view_finalize (GObject *object)
+{
+  SysprofMarksView *self = (SysprofMarksView *)object;
+  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
+
+  g_clear_object (&priv->zoom_manager);
+
+  G_OBJECT_CLASS (sysprof_marks_view_parent_class)->finalize (object);
+}
+
+static void
+sysprof_marks_view_get_property (GObject    *object,
+                                 guint       prop_id,
+                                 GValue     *value,
+                                 GParamSpec *pspec)
+{
+  SysprofMarksView *self = SYSPROF_MARKS_VIEW (object);
+  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
+
+  switch (prop_id)
+    {
+    case PROP_ZOOM_MANAGER:
+      g_value_set_object (value, priv->zoom_manager);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
+sysprof_marks_view_set_property (GObject      *object,
+                                 guint         prop_id,
+                                 const GValue *value,
+                                 GParamSpec   *pspec)
+{
+  SysprofMarksView *self = SYSPROF_MARKS_VIEW (object);
+  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
+
+  switch (prop_id)
+    {
+    case PROP_ZOOM_MANAGER:
+      g_set_object (&priv->zoom_manager, g_value_get_object (value));
+      g_object_set (priv->duration_cell,
+                    "zoom-manager", priv->zoom_manager,
+                    NULL);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
 
 static void
 sysprof_marks_view_class_init (SysprofMarksViewClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+
+  object_class->finalize = sysprof_marks_view_finalize;
+  object_class->get_property = sysprof_marks_view_get_property;
+  object_class->set_property = sysprof_marks_view_set_property;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-marks-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, tree_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, duration_cell);
+
+  properties [PROP_ZOOM_MANAGER] =
+    g_param_spec_object ("zoom-manager", NULL, NULL,
+                         SYSPROF_TYPE_ZOOM_MANAGER,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_DURATION);
 }
@@ -66,9 +144,11 @@ sysprof_marks_view_load_cb (GObject      *object,
   g_autoptr(SysprofMarksModel) model = NULL;
   g_autoptr(GError) error = NULL;
   g_autoptr(GTask) task = user_data;
-  SysprofMarksView *self;
   SysprofMarksViewPrivate *priv;
-  gint64 zoom_begin, zoom_end;
+  SysprofCaptureReader *reader;
+  SysprofMarksView *self;
+  gint64 capture_begin_time;
+  gint64 capture_end_time;
 
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
@@ -82,10 +162,16 @@ sysprof_marks_view_load_cb (GObject      *object,
       return;
     }
 
-  sysprof_marks_model_get_range (model, &zoom_begin, &zoom_end);
+  reader = g_task_get_task_data (task);
+  g_assert (reader != NULL);
+
+  capture_begin_time = sysprof_capture_reader_get_start_time (reader);
+  capture_end_time = sysprof_capture_reader_get_end_time (reader);
+
   g_object_set (priv->duration_cell,
-                "zoom-begin", zoom_begin,
-                "zoom-end", zoom_end,
+                "capture-begin-time", capture_begin_time,
+                "capture-end-time", capture_end_time,
+                "zoom-manager", priv->zoom_manager,
                 NULL);
 
   gtk_tree_view_set_model (priv->tree_view, GTK_TREE_MODEL (model));
@@ -110,6 +196,9 @@ sysprof_marks_view_load_async (SysprofMarksView     *self,
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_marks_view_load_async);
+  g_task_set_task_data (task,
+                        sysprof_capture_reader_ref (reader),
+                        (GDestroyNotify) sysprof_capture_reader_unref);
 
   sysprof_marks_model_new_async (reader,
                                  selection,

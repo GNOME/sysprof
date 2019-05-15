@@ -23,25 +23,28 @@
 #include "config.h"
 
 #include "sysprof-cell-renderer-duration.h"
+#include "sysprof-zoom-manager.h"
 
 #define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
 
 typedef struct
 {
-  gchar *text;
+  gint64 capture_begin_time;
+  gint64 capture_end_time;
   gint64 begin_time;
   gint64 end_time;
-  gint64 zoom_begin;
-  gint64 zoom_end;
+  gchar *text;
+  SysprofZoomManager *zoom_manager;
 } SysprofCellRendererDurationPrivate;
 
 enum {
   PROP_0,
   PROP_BEGIN_TIME,
+  PROP_CAPTURE_BEGIN_TIME,
+  PROP_CAPTURE_END_TIME,
   PROP_END_TIME,
   PROP_TEXT,
-  PROP_ZOOM_BEGIN,
-  PROP_ZOOM_END,
+  PROP_ZOOM_MANAGER,
   N_PROPS
 };
 
@@ -71,17 +74,16 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   g_assert (cr != NULL);
   g_assert (GTK_IS_WIDGET (widget));
 
-  if (priv->end_time >= priv->begin_time)
-    {
-      if (priv->begin_time > priv->zoom_end || priv->end_time < priv->zoom_begin)
-        return;
-    }
+  if (priv->zoom_manager == NULL)
+    return;
 
   style_context = gtk_widget_get_style_context (widget);
   gtk_style_context_get_color (style_context,
                                gtk_style_context_get_state (style_context),
                                &rgba);
 
+  return;
+#if 0
   zoom_range = (gdouble)priv->zoom_end - (gdouble)priv->zoom_begin;
 
   x1 = (priv->begin_time - priv->zoom_begin) / zoom_range * cell_area->width;
@@ -155,6 +157,77 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
 
       g_object_unref (layout);
     }
+#endif
+}
+
+static GtkSizeRequestMode
+sysprof_cell_renderer_duration_get_request_mode (GtkCellRenderer *renderer)
+{
+  return GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+}
+
+static void
+sysprof_cell_renderer_duration_get_preferred_width (GtkCellRenderer *cell,
+                                                    GtkWidget       *widget,
+                                                    gint            *min_width,
+                                                    gint            *nat_width)
+{
+  SysprofCellRendererDuration *self = (SysprofCellRendererDuration *)cell;
+  SysprofCellRendererDurationPrivate *priv = sysprof_cell_renderer_duration_get_instance_private (self);
+  gint width = 1;
+
+  g_assert (SYSPROF_IS_CELL_RENDERER_DURATION (self));
+  g_assert (GTK_IS_WIDGET (widget));
+
+  GTK_CELL_RENDERER_CLASS (sysprof_cell_renderer_duration_parent_class)->get_preferred_width (cell, widget, min_width, nat_width);
+
+  if (priv->zoom_manager && priv->capture_begin_time && priv->capture_end_time)
+    width = sysprof_zoom_manager_get_width_for_duration (priv->zoom_manager,
+                                                         priv->capture_end_time - priv->capture_begin_time);
+
+  if (min_width)
+    *min_width = width;
+
+  if (nat_width)
+    *nat_width = width;
+}
+
+static void
+sysprof_cell_renderer_duration_get_preferred_height_for_width (GtkCellRenderer *cell,
+                                                               GtkWidget       *widget,
+                                                               gint             width,
+                                                               gint            *min_height,
+                                                               gint            *nat_height)
+{
+  PangoLayout *layout;
+  gint w, h;
+  gint ypad;
+
+  g_assert (SYSPROF_IS_CELL_RENDERER_DURATION (cell));
+
+  gtk_cell_renderer_get_padding (cell, NULL, &ypad);
+
+  layout = gtk_widget_create_pango_layout (widget, "XMZ09");
+  pango_layout_get_pixel_size (layout, &w, &h);
+  g_clear_object (&layout);
+
+  if (min_height)
+    *min_height = h + (ypad * 2);
+
+  if (nat_height)
+    *nat_height = h + (ypad * 2);
+}
+
+static void
+sysprof_cell_renderer_duration_finalize (GObject *object)
+{
+  SysprofCellRendererDuration *self = (SysprofCellRendererDuration *)object;
+  SysprofCellRendererDurationPrivate *priv = sysprof_cell_renderer_duration_get_instance_private (self);
+
+  g_clear_object (&priv->zoom_manager);
+  g_clear_pointer (&priv->text, g_free);
+
+  G_OBJECT_CLASS (sysprof_cell_renderer_duration_parent_class)->finalize (object);
 }
 
 static void
@@ -172,20 +245,24 @@ sysprof_cell_renderer_duration_get_property (GObject    *object,
       g_value_set_int64 (value, priv->begin_time);
       break;
 
-    case PROP_ZOOM_BEGIN:
-      g_value_set_int64 (value, priv->zoom_begin);
+    case PROP_CAPTURE_BEGIN_TIME:
+      g_value_set_int64 (value, priv->capture_begin_time);
+      break;
+
+    case PROP_CAPTURE_END_TIME:
+      g_value_set_int64 (value, priv->capture_end_time);
+      break;
+
+    case PROP_END_TIME:
+      g_value_set_int64 (value, priv->end_time);
       break;
 
     case PROP_TEXT:
       g_value_set_string (value, priv->text);
       break;
 
-    case PROP_ZOOM_END:
-      g_value_set_int64 (value, priv->zoom_end);
-      break;
-
-    case PROP_END_TIME:
-      g_value_set_int64 (value, priv->end_time);
+    case PROP_ZOOM_MANAGER:
+      g_value_set_object (value, priv->zoom_manager);
       break;
 
     default:
@@ -208,8 +285,16 @@ sysprof_cell_renderer_duration_set_property (GObject      *object,
       priv->begin_time = g_value_get_int64 (value);
       break;
 
-    case PROP_ZOOM_BEGIN:
-      priv->zoom_begin = g_value_get_int64 (value);
+    case PROP_CAPTURE_BEGIN_TIME:
+      priv->capture_begin_time = g_value_get_int64 (value);
+      break;
+
+    case PROP_CAPTURE_END_TIME:
+      priv->capture_end_time = g_value_get_int64 (value);
+      break;
+
+    case PROP_END_TIME:
+      priv->end_time = g_value_get_int64 (value);
       break;
 
     case PROP_TEXT:
@@ -217,12 +302,8 @@ sysprof_cell_renderer_duration_set_property (GObject      *object,
       priv->text = g_value_dup_string (value);
       break;
 
-    case PROP_ZOOM_END:
-      priv->zoom_end = g_value_get_int64 (value);
-      break;
-
-    case PROP_END_TIME:
-      priv->end_time = g_value_get_int64 (value);
+    case PROP_ZOOM_MANAGER:
+      g_set_object (&priv->zoom_manager, g_value_get_object (value));
       break;
 
     default:
@@ -236,36 +317,52 @@ sysprof_cell_renderer_duration_class_init (SysprofCellRendererDurationClass *kla
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkCellRendererClass *cell_class = GTK_CELL_RENDERER_CLASS (klass);
 
+  object_class->finalize = sysprof_cell_renderer_duration_finalize;
   object_class->get_property = sysprof_cell_renderer_duration_get_property;
   object_class->set_property = sysprof_cell_renderer_duration_set_property;
 
+  cell_class->get_preferred_height_for_width = sysprof_cell_renderer_duration_get_preferred_height_for_width;
+  cell_class->get_preferred_width = sysprof_cell_renderer_duration_get_preferred_width;
+  cell_class->get_request_mode = sysprof_cell_renderer_duration_get_request_mode;
   cell_class->render = sysprof_cell_renderer_duration_render;
+
+  /* Note we do not emit ::notify() for these properties */
 
   properties [PROP_BEGIN_TIME] =
     g_param_spec_int64 ("begin-time", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
-                        (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_ZOOM_BEGIN] =
-    g_param_spec_int64 ("zoom-begin", NULL, NULL,
+  properties [PROP_CAPTURE_BEGIN_TIME] =
+    g_param_spec_int64 ("capture-begin-time", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
-                        (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_TEXT] =
-    g_param_spec_string ("text", NULL, NULL,
-                         NULL,
-                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-
-  properties [PROP_ZOOM_END] =
-    g_param_spec_int64 ("zoom-end", NULL, NULL,
+  properties [PROP_CAPTURE_END_TIME] =
+    g_param_spec_int64 ("capture-end-time", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
-                        (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_END_TIME] =
     g_param_spec_int64 ("end-time", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
-                        (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-  
+                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_END_TIME] =
+    g_param_spec_int64 ("end-time", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_TEXT] =
+    g_param_spec_string ("text", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_ZOOM_MANAGER] =
+    g_param_spec_object ("zoom-manager", NULL, NULL,
+                         SYSPROF_TYPE_ZOOM_MANAGER,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 

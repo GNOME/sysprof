@@ -115,6 +115,7 @@
                 </child>
                 <child>
                   <object class="SysprofMarksView" id="marks_view">
+                    <property name="zoom-manager">zoom_manager</property>
                     <property name="visible">true</property>
                   </object>
                   <packing>

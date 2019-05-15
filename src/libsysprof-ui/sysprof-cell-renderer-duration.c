@@ -37,6 +37,7 @@ typedef struct
   gchar *text;
   SysprofZoomManager *zoom_manager;
   GdkRGBA color;
+  guint color_set : 1;
 } SysprofCellRendererDurationPrivate;
 
 enum {
@@ -66,6 +67,7 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   SysprofCellRendererDuration *self = (SysprofCellRendererDuration *)renderer;
   SysprofCellRendererDurationPrivate *priv = sysprof_cell_renderer_duration_get_instance_private (self);
   g_autoptr(GString) str = NULL;
+  GtkStyleContext *style_context;
   gdouble x1, x2;
   GdkRGBA rgba;
   GdkRectangle r;
@@ -79,7 +81,14 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   if (priv->zoom_manager == NULL)
     return;
 
-  rgba = priv->color;
+  style_context = gtk_widget_get_style_context (widget);
+
+  if (priv->color_set)
+    rgba = priv->color;
+  else
+    gtk_style_context_get_color (style_context,
+                                 gtk_style_context_get_state (style_context),
+                                 &rgba);
 
   duration = sysprof_zoom_manager_get_duration_for_width (priv->zoom_manager, bg_area->width);
 
@@ -90,9 +99,9 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
     x2 = x1;
 
   r.x = cell_area->x + x1;
-  r.y = cell_area->y + (cell_area->height / 5.0);
+  r.height = 10;
+  r.y = cell_area->y + (cell_area->height - r.height) / 2;
   r.width = MAX (1.0, x2 - x1);
-  r.height = cell_area->height / 5.0 * 3.25;
 
   gdk_cairo_rectangle (cr, &r);
   gdk_cairo_set_source_rgba (cr, &rgba);
@@ -295,6 +304,7 @@ sysprof_cell_renderer_duration_set_property (GObject      *object,
         priv->color = *(GdkRGBA *)g_value_get_boxed (value);
       else
         gdk_rgba_parse (&priv->color, "#000");
+      priv->color_set = !!g_value_get_boolean (value);
       break;
 
     case PROP_END_TIME:

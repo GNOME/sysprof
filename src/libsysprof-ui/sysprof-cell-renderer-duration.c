@@ -36,6 +36,7 @@ typedef struct
   gint64 end_time;
   gchar *text;
   SysprofZoomManager *zoom_manager;
+  GdkRGBA color;
 } SysprofCellRendererDurationPrivate;
 
 enum {
@@ -43,6 +44,7 @@ enum {
   PROP_BEGIN_TIME,
   PROP_CAPTURE_BEGIN_TIME,
   PROP_CAPTURE_END_TIME,
+  PROP_COLOR,
   PROP_END_TIME,
   PROP_TEXT,
   PROP_ZOOM_MANAGER,
@@ -64,7 +66,6 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   SysprofCellRendererDuration *self = (SysprofCellRendererDuration *)renderer;
   SysprofCellRendererDurationPrivate *priv = sysprof_cell_renderer_duration_get_instance_private (self);
   g_autoptr(GString) str = NULL;
-  GtkStyleContext *style_context;
   gdouble x1, x2;
   GdkRGBA rgba;
   GdkRectangle r;
@@ -78,10 +79,7 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   if (priv->zoom_manager == NULL)
     return;
 
-  style_context = gtk_widget_get_style_context (widget);
-  gtk_style_context_get_color (style_context,
-                               gtk_style_context_get_state (style_context),
-                               &rgba);
+  rgba = priv->color;
 
   duration = sysprof_zoom_manager_get_duration_for_width (priv->zoom_manager, bg_area->width);
 
@@ -292,6 +290,13 @@ sysprof_cell_renderer_duration_set_property (GObject      *object,
       priv->capture_duration = priv->capture_end_time - priv->capture_begin_time;
       break;
 
+    case PROP_COLOR:
+      if (g_value_get_boxed (value))
+        priv->color = *(GdkRGBA *)g_value_get_boxed (value);
+      else
+        gdk_rgba_parse (&priv->color, "#000");
+      break;
+
     case PROP_END_TIME:
       priv->end_time = g_value_get_int64 (value);
       break;
@@ -342,6 +347,11 @@ sysprof_cell_renderer_duration_class_init (SysprofCellRendererDurationClass *kla
                         G_MININT64, G_MAXINT64, 0,
                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_COLOR] =
+    g_param_spec_boxed ("color", NULL, NULL,
+                        GDK_TYPE_RGBA,
+                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_END_TIME] =
     g_param_spec_int64 ("end-time", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
@@ -368,6 +378,9 @@ sysprof_cell_renderer_duration_class_init (SysprofCellRendererDurationClass *kla
 static void
 sysprof_cell_renderer_duration_init (SysprofCellRendererDuration *self)
 {
+  SysprofCellRendererDurationPrivate *priv = sysprof_cell_renderer_duration_get_instance_private (self);
+
+  priv->color.alpha = 1.0;
 }
 
 GtkCellRenderer *

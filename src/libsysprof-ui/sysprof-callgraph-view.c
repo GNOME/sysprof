@@ -177,8 +177,10 @@ sysprof_callgraph_view_load (SysprofCallgraphView    *self,
   if (!g_set_object (&priv->profile, profile))
     return;
 
-  if (!(stash = sysprof_callgraph_profile_get_stash (profile)))
+  if (sysprof_callgraph_profile_is_empty (profile))
     return;
+
+  stash = sysprof_callgraph_profile_get_stash (profile);
 
   for (n = stack_stash_get_root (stash); n; n = n->siblings)
     state.profile_size += n->total;

@@ -50,6 +50,7 @@ typedef struct
   SysprofMarksView       *marks_view;
   SysprofVisualizerView  *visualizer_view;
   SysprofZoomManager     *zoom_manager;
+  GtkStackSwitcher       *stack_switcher;
 
   guint                   busy;
 } SysprofCaptureViewPrivate;
@@ -531,6 +532,19 @@ fit_zoom_cb (GSimpleAction *action,
 }
 
 static void
+set_use_underline_cb (GtkWidget *widget,
+                      gpointer   user_data)
+{
+  if (GTK_IS_RADIO_BUTTON (widget))
+    {
+      GtkWidget *child = gtk_bin_get_child (GTK_BIN (widget));
+
+      if (GTK_IS_LABEL (child))
+        gtk_label_set_use_underline (GTK_LABEL (child), TRUE);
+    }
+}
+
+static void
 sysprof_capture_view_finalize (GObject *object)
 {
   SysprofCaptureView *self = (SysprofCaptureView *)object;
@@ -591,6 +605,7 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, callgraph_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, details_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, marks_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, stack_switcher);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, visualizer_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, zoom_manager);
 
@@ -617,6 +632,10 @@ sysprof_capture_view_init (SysprofCaptureView *self)
   };
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_container_foreach (GTK_CONTAINER (priv->stack_switcher),
+                         set_use_underline_cb,
+                         NULL);
 
   selection = sysprof_visualizer_view_get_selection (priv->visualizer_view);
   g_signal_connect_object (selection,

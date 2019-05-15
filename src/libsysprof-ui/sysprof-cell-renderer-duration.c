@@ -68,6 +68,7 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   gdouble x1, x2;
   GdkRGBA rgba;
   GdkRectangle r;
+  gint64 duration;
   gint off = -1;
 
   g_assert (SYSPROF_IS_CELL_RENDERER_DURATION (self));
@@ -82,8 +83,10 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
                                gtk_style_context_get_state (style_context),
                                &rgba);
 
-  x1 = (priv->begin_time - priv->capture_begin_time) / (gdouble)priv->capture_duration * cell_area->width;
-  x2 = (priv->end_time - priv->capture_begin_time) / (gdouble)priv->capture_duration * cell_area->width;
+  duration = sysprof_zoom_manager_get_duration_for_width (priv->zoom_manager, bg_area->width);
+
+  x1 = (priv->begin_time - priv->capture_begin_time) / (gdouble)duration * cell_area->width;
+  x2 = (priv->end_time - priv->capture_begin_time) / (gdouble)duration * cell_area->width;
 
   if (x2 < x1)
     x2 = x1;
@@ -101,8 +104,7 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
 
   if (priv->begin_time != priv->end_time)
     {
-      gint64 duration = priv->end_time - priv->begin_time;
-      gdouble sec = duration / (gdouble)NSEC_PER_SEC;
+      gdouble sec = (priv->end_time - priv->begin_time) / (gdouble)NSEC_PER_SEC;
       gchar fmt[32];
 
       if (str->len)

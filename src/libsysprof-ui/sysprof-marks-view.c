@@ -33,6 +33,7 @@ typedef struct
 
   /* Template objects */
   GtkTreeView                 *tree_view;
+  GtkTreeViewColumn           *duration_column;
   SysprofCellRendererDuration *duration_cell;
 } SysprofMarksViewPrivate;
 
@@ -89,10 +90,18 @@ sysprof_marks_view_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_ZOOM_MANAGER:
-      g_set_object (&priv->zoom_manager, g_value_get_object (value));
-      g_object_set (priv->duration_cell,
-                    "zoom-manager", priv->zoom_manager,
-                    NULL);
+      if (g_set_object (&priv->zoom_manager, g_value_get_object (value)))
+        {
+          g_object_set (priv->duration_cell,
+                        "zoom-manager", priv->zoom_manager,
+                        NULL);
+          if (priv->zoom_manager)
+            g_signal_connect_object (priv->zoom_manager,
+                                     "notify::zoom",
+                                     G_CALLBACK (gtk_tree_view_column_queue_resize),
+                                     priv->duration_column,
+                                     G_CONNECT_SWAPPED);
+        }
       break;
 
     default:
@@ -113,6 +122,7 @@ sysprof_marks_view_class_init (SysprofMarksViewClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-marks-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, tree_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, duration_cell);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, duration_column);
 
   properties [PROP_ZOOM_MANAGER] =
     g_param_spec_object ("zoom-manager", NULL, NULL,

@@ -462,6 +462,13 @@ sysprof_capture_view_real_load_async (SysprofCaptureView   *self,
                         load_async_free);
   sysprof_capture_view_monitor_task (self, task);
 
+  /* Zoom after loading state */
+  g_signal_connect_object (task,
+                           "notify::completed",
+                           G_CALLBACK (sysprof_capture_view_fit_to_width),
+                           self,
+                           G_CONNECT_SWAPPED);
+
   /* Cancel any previously in-flight operations and save a cancellable so
    * that any supplimental calls will result in the previous being cancelled.
    */
@@ -512,18 +519,11 @@ fit_zoom_cb (GSimpleAction *action,
              gpointer       user_data)
 {
   SysprofCaptureView *self = user_data;
-  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
-  GtkAllocation alloc;
-  gdouble zoom;
-  gint64 duration;
 
   g_assert (G_IS_SIMPLE_ACTION (action));
   g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
 
-  duration = priv->features.end_time - priv->features.begin_time;
-  gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
-  zoom = sysprof_zoom_manager_fit_zoom_for_duration (priv->zoom_manager, duration, alloc.width);
-  sysprof_zoom_manager_set_zoom (priv->zoom_manager, zoom);
+  sysprof_capture_view_fit_to_width (self);
 }
 
 static void
@@ -697,6 +697,7 @@ sysprof_capture_view_reset (SysprofCaptureView *self)
   g_return_if_fail (SYSPROF_IS_CAPTURE_VIEW (self));
 
   /* TODO: reset */
+  g_warning ("Clear all loaded state");
 }
 
 /**
@@ -715,4 +716,20 @@ sysprof_capture_view_get_zoom_manager (SysprofCaptureView *self)
   g_return_val_if_fail (SYSPROF_IS_CAPTURE_VIEW (self), NULL);
 
   return priv->zoom_manager;
+}
+
+void
+sysprof_capture_view_fit_to_width (SysprofCaptureView *self)
+{
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+  GtkAllocation alloc;
+  gdouble zoom;
+  gint64 duration;
+
+  g_return_if_fail (SYSPROF_IS_CAPTURE_VIEW (self));
+
+  duration = priv->features.end_time - priv->features.begin_time;
+  gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
+  zoom = sysprof_zoom_manager_fit_zoom_for_duration (priv->zoom_manager, duration, alloc.width);
+  sysprof_zoom_manager_set_zoom (priv->zoom_manager, zoom);
 }

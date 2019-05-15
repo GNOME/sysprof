@@ -619,7 +619,6 @@ sysprof_visualizer_view_set_reader (SysprofVisualizerView *self,
 
       if (reader != NULL)
         {
-          GtkAllocation alloc;
           gint64 begin_time;
           gint64 end_time;
 
@@ -632,18 +631,6 @@ sysprof_visualizer_view_set_reader (SysprofVisualizerView *self,
           sysprof_visualizer_ticks_set_time_range (priv->ticks, begin_time, end_time);
 
           sysprof_selection_unselect_all (priv->selection);
-
-          gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
-
-          if (alloc.width)
-            {
-              gdouble zoom;
-
-              zoom = sysprof_zoom_manager_fit_zoom_for_duration (priv->zoom_manager,
-                                                                 end_time - begin_time,
-                                                                 alloc.width);
-              sysprof_zoom_manager_set_zoom (priv->zoom_manager, zoom);
-            }
         }
 
       sysprof_visualizer_list_set_reader (priv->list, reader);

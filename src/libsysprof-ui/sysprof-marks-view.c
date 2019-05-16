@@ -39,6 +39,7 @@ typedef struct
   GtkTreeView                 *tree_view;
   GtkTreeViewColumn           *duration_column;
   SysprofCellRendererDuration *duration_cell;
+  GtkStack                    *stack;
 } SysprofMarksViewPrivate;
 
 enum {
@@ -216,6 +217,7 @@ sysprof_marks_view_class_init (SysprofMarksViewClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, tree_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, duration_cell);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, duration_column);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, stack);
 
   properties [PROP_ZOOM_MANAGER] =
     g_param_spec_object ("zoom-manager", NULL, NULL,
@@ -290,6 +292,11 @@ sysprof_marks_view_load_cb (GObject      *object,
                 NULL);
 
   gtk_tree_view_set_model (priv->tree_view, GTK_TREE_MODEL (model));
+
+  if (gtk_tree_model_iter_n_children (GTK_TREE_MODEL (model), NULL) == 0)
+    gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  else
+    gtk_stack_set_visible_child_name (priv->stack, "marks");
 
   g_task_return_boolean (task, TRUE);
 }

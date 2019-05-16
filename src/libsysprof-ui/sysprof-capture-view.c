@@ -434,16 +434,13 @@ sysprof_capture_view_load_scan_cb (GObject      *object,
   if (priv->features.has_counters || priv->features.has_marks)
     sysprof_visualizer_view_set_reader (priv->visualizer_view, state->reader);
 
-  if (priv->features.has_marks)
-    {
-      state->n_active++;
-      sysprof_marks_view_load_async (priv->marks_view,
-                                     state->reader,
-                                     state->selection,
-                                     g_task_get_cancellable (task),
-                                     sysprof_capture_view_load_marks_cb,
-                                     g_object_ref (task));
-    }
+  state->n_active++;
+  sysprof_marks_view_load_async (priv->marks_view,
+                                 state->reader,
+                                 state->selection,
+                                 g_task_get_cancellable (task),
+                                 sysprof_capture_view_load_marks_cb,
+                                 g_object_ref (task));
 
   sysprof_details_view_set_reader (priv->details_view, priv->reader);
 

@@ -27,8 +27,8 @@
         <attribute name="action">app.help</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">Quit</attribute>
-        <attribute name="action">app.quit</attribute>
+        <attribute name="label" translatable="yes">About Sysprof</attribute>
+        <attribute name="action">app.about</attribute>
       </item>
     </section>
   </menu>

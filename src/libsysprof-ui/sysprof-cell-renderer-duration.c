@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include "sysprof-cell-renderer-duration.h"
+#include "sysprof-ui-private.h"
 #include "sysprof-zoom-manager.h"
 
 #define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
@@ -99,13 +100,32 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
     x2 = x1;
 
   r.x = cell_area->x + x1;
-  r.height = 10;
-  r.y = cell_area->y + (cell_area->height - r.height) / 2.0;
+  r.height = 12;
+  r.y = cell_area->y + (cell_area->height - r.height) / 2;
   r.width = MAX (1.0, x2 - x1);
 
-  gdk_cairo_rectangle (cr, &r);
+  if ((cell_area->height - r.height) % 2 == 1)
+    r.height++;
+
   gdk_cairo_set_source_rgba (cr, &rgba);
-  cairo_fill (cr);
+
+  if (r.width > 3)
+    {
+      _sysprof_rounded_rectangle (cr, &r, 2, 2);
+      cairo_fill (cr);
+    }
+  else if (r.width > 1)
+    {
+      gdk_cairo_rectangle (cr, &r);
+      cairo_fill (cr);
+    }
+  else
+    {
+      cairo_set_line_width (cr, 1);
+      cairo_move_to (cr, r.x, r.y);
+      cairo_line_to (cr, r.x, r.y + r.height);
+      cairo_stroke (cr);
+    }
 
   str = g_string_new (priv->text);
 

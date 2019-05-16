@@ -10,6 +10,20 @@
         <property name="show-close-button">true</property>
         <property name="visible">true</property>
         <property name="title" translatable="yes">Sysprof</property>
+        <child>
+          <object class="GtkMenuButton" id="menu_button">
+            <property name="visible">true</property>
+            <child>
+              <object class="GtkImage">
+                <property name="icon-name">open-menu-symbolic</property>
+                <property name="visible">true</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+          </packing>
+        </child>
         <child type="title">
           <object class="GtkBox">
             <property name="orientation">vertical</property>

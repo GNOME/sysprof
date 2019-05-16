@@ -27,6 +27,7 @@ libsysprof_ui_private_sources = [
   'pointcache.c',
   'rectangles.c',
   'sysprof-details-view.c',
+  'sysprof-cairo.c',
   'sysprof-cell-renderer-duration.c',
   'sysprof-cell-renderer-percent.c',
   'sysprof-tab.c',

@@ -29,6 +29,9 @@ void _sysprof_marks_view_set_hadjustment      (SysprofMarksView      *self,
                                                GtkAdjustment         *hadjustment);
 void _sysprof_visualizer_view_set_hadjustment (SysprofVisualizerView *self,
                                                GtkAdjustment         *hadjustment);
-
+void _sysprof_rounded_rectangle               (cairo_t               *cr,
+                                               const GdkRectangle    *rect,
+                                               gint                   x_radius,
+                                               gint                   y_radius);
 
 G_END_DECLS

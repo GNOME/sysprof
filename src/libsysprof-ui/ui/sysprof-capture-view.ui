@@ -80,11 +80,6 @@
           </object>
         </child>
         <child>
-          <object class="GtkSeparator">
-            <property name="visible">true</property>
-          </object>
-        </child>
-        <child>
           <object class="SysprofMultiPaned">
             <property name="visible">true</property>
             <child>
@@ -97,11 +92,11 @@
                     <property name="visible">true</property>
                   </object>
                 </child>
-                <child>
-                  <object class="GtkSeparator">
-                    <property name="visible">true</property>
-                  </object>
-                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator">
+                <property name="visible">true</property>
               </object>
             </child>
             <child>
@@ -149,4 +144,5 @@
     </child>
   </template>
   <object class="SysprofZoomManager" id="zoom_manager"/>
+  <object class="GtkAdjustment" id="time_adj"/>
 </interface>

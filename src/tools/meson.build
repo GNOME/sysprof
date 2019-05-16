@@ -21,3 +21,9 @@ sysprof_dump = executable('sysprof-dump', 'sysprof-dump.c',
    install_dir: get_option('bindir'),
        install: true,
 )
+
+sysprof_profiler_ctl = executable('sysprof-profiler-ctl',
+  [ 'sysprof-profiler-ctl.c', ipc_profiler_src ],
+  dependencies: [ tools_deps, gio_unix_dep ],
+       install: false,
+)

@@ -259,7 +259,10 @@ sysprof_open_capture (GSimpleAction *action,
       GtkWindow *window = list->data;
 
       if (SYSPROF_IS_WINDOW (window))
-        sysprof_window_open_from_dialog (SYSPROF_WINDOW (window));
+        {
+          sysprof_window_open_from_dialog (SYSPROF_WINDOW (window));
+          break;
+        }
     }
 }
 

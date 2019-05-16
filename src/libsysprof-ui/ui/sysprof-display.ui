@@ -31,6 +31,17 @@
             <property name="name">recording</property>
           </packing>
         </child>
+        <child>
+          <object class="SysprofEmptyStateView" id="failed_view">
+            <property name="icon-name">computer-fail-symbolic</property>
+            <property name="title" translatable="yes">Something went wrong</property>
+            <property name="subtitle" translatable="yes">Sysprof failed to access the requested performance data.</property>
+            <property name="visible">true</property>
+          </object>
+          <packing>
+            <property name="name">failed</property>
+          </packing>
+        </child>
       </object>
     </child>
   </template>

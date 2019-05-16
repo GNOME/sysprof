@@ -21,6 +21,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
+#include <sysprof.h>
 
 #include "sysprof-version-macros.h"
 
@@ -40,6 +41,13 @@ struct _SysprofDisplayClass
 } __attribute__((aligned(8)));
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget *sysprof_display_new (void);
+GtkWidget       *sysprof_display_new          (void);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofProfiler *sysprof_display_get_profiler (SysprofDisplay *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean         sysprof_display_is_empty     (SysprofDisplay *self);
+SYSPROF_AVAILABLE_IN_ALL
+void             sysprof_display_open         (SysprofDisplay *self,
+                                               GFile          *file);
 
 G_END_DECLS

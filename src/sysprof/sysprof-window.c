@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
 #include <sysprof-ui.h>
 
 #include "sysprof-window.h"
@@ -134,13 +135,50 @@ sysprof_window_open (SysprofWindow *self,
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
   g_return_if_fail (G_IS_FILE (file));
 
-
+  sysprof_notebook_open (self->notebook, file);
 }
 
 void
 sysprof_window_open_from_dialog (SysprofWindow *self)
 {
+  GtkFileChooserNative *dialog;
+  GtkFileFilter *filter;
+  gint response;
+
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
+
+  /* Translators: This is a window title. */
+  dialog = gtk_file_chooser_native_new (_("Open Capture…"),
+                                        GTK_WINDOW (self),
+                                        GTK_FILE_CHOOSER_ACTION_OPEN,
+                                        /* Translators: This is a button. */
+                                        _("Open"),
+                                        /* Translators: This is a button. */
+                                        _("Cancel"));
+
+  gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (dialog), TRUE);
+
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name (filter, _("Sysprof Captures"));
+  gtk_file_filter_add_pattern (filter, "*.syscap");
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name (filter, _("All Files"));
+  gtk_file_filter_add_pattern (filter, "*");
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
+
+  response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
+
+  if (response == GTK_RESPONSE_ACCEPT)
+    {
+      g_autoptr(GFile) file = NULL;
+
+      file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+      sysprof_window_open (self, file);
+    }
+
+  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dialog));
 }
 
 void

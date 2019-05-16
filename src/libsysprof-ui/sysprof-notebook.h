@@ -43,5 +43,8 @@ SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sysprof_notebook_new           (void);
 SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_notebook_close_current (SysprofNotebook *self);
+SYSPROF_AVAILABLE_IN_ALL
+void       sysprof_notebook_open          (SysprofNotebook *self,
+                                           GFile           *file);
 
 G_END_DECLS

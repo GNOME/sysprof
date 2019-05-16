@@ -35,9 +35,15 @@
 
 typedef struct
 {
+  GFile                     *file;
+  SysprofProfiler           *profiler;
+
+  /* Template Objects */
   SysprofCaptureView        *capture_view;
+  SysprofEmptyStateView     *failed_view;
   SysprofEmptyStateView     *empty_view;
   SysprofRecordingStateView *recording_view;
+  GtkStack                  *stack;
 } SysprofDisplayPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofDisplay, sysprof_display, GTK_TYPE_BIN)
@@ -73,6 +79,9 @@ sysprof_display_dup_title (SysprofDisplay *self)
 
   g_return_val_if_fail (SYSPROF_IS_DISPLAY (self), NULL);
 
+  if (priv->file != NULL)
+    return g_file_get_basename (priv->file);
+
   if ((reader = sysprof_capture_view_get_reader (priv->capture_view)))
     {
       const gchar *filename;
@@ -88,6 +97,11 @@ sysprof_display_dup_title (SysprofDisplay *self)
 static void
 sysprof_display_finalize (GObject *object)
 {
+  SysprofDisplay *self = (SysprofDisplay *)object;
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_clear_object (&priv->profiler);
+
   G_OBJECT_CLASS (sysprof_display_parent_class)->finalize (object);
 }
 
@@ -143,9 +157,11 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-display.ui");
-  gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay , empty_view);
-  gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay , recording_view);
-  gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay , capture_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, capture_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, empty_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, failed_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, recording_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, stack);
 
   g_type_ensure (SYSPROF_TYPE_CAPTURE_VIEW);
   g_type_ensure (SYSPROF_TYPE_EMPTY_STATE_VIEW);
@@ -156,4 +172,114 @@ static void
 sysprof_display_init (SysprofDisplay *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+}
+
+/**
+ * sysprof_display_get_profiler:
+ *
+ * Gets the proflier for the display.
+ *
+ * Returns: (transfer none) (nullable): a #SysprofProfiler or %NULL
+ *
+ * Since: 3.34
+ */
+SysprofProfiler *
+sysprof_display_get_profiler (SysprofDisplay *self)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_DISPLAY (self), NULL);
+
+  return priv->profiler;
+}
+
+/**
+ * sysprof_display_is_empty:
+ *
+ * Checks if any content is or will be loaded into @self.
+ *
+ * Returns: %TRUE if the tab is unperterbed.
+ *
+ * Since: 3.34
+ */
+gboolean
+sysprof_display_is_empty (SysprofDisplay *self)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_DISPLAY (self), FALSE);
+
+  return priv->file == NULL &&
+         priv->profiler == NULL &&
+         NULL == sysprof_capture_view_get_reader (priv->capture_view);
+}
+
+static void
+sysprof_display_open_cb (GObject      *object,
+                         GAsyncResult *result,
+                         gpointer      user_data)
+{
+  g_autoptr(SysprofDisplay) self = user_data;
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+  g_autoptr(SysprofCaptureReader) reader = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_DISPLAY (self));
+  g_assert (G_IS_TASK (result));
+
+  if (!(reader = g_task_propagate_pointer (G_TASK (result), &error)))
+    {
+      gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->failed_view));
+      return;
+    }
+
+  sysprof_capture_view_load_async (priv->capture_view, reader, NULL, NULL, NULL);
+  gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->capture_view));
+}
+
+static void
+sysprof_display_open_worker (GTask        *task,
+                             gpointer      source_object,
+                             gpointer      task_data,
+                             GCancellable *cancellable)
+{
+  g_autofree gchar *path = NULL;
+  g_autoptr(GError) error = NULL;
+  SysprofCaptureReader *reader;
+  GFile *file = task_data;
+
+  g_assert (G_IS_TASK (task));
+  g_assert (source_object == NULL);
+  g_assert (G_IS_FILE (file));
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  path = g_file_get_path (file);
+
+  if (!(reader = sysprof_capture_reader_new (path, &error)))
+    g_task_return_error (task, g_steal_pointer ((&error)));
+  else
+    g_task_return_pointer (task,
+                           g_steal_pointer (&reader),
+                           (GDestroyNotify) sysprof_capture_reader_unref);
+}
+
+void
+sysprof_display_open (SysprofDisplay *self,
+                      GFile          *file)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
+  g_return_if_fail (G_IS_FILE (file));
+  g_return_if_fail (g_file_is_native (file));
+  g_return_if_fail (sysprof_display_is_empty (self));
+
+  g_set_object (&priv->file, file);
+
+  task = g_task_new (NULL, NULL, sysprof_display_open_cb, g_object_ref (self));
+  g_task_set_task_data (task, g_file_dup (file), g_object_unref);
+  g_task_run_in_thread (task, sysprof_display_open_worker);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
 }

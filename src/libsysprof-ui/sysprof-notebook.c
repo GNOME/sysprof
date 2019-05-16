@@ -83,6 +83,9 @@ sysprof_notebook_page_removed (GtkNotebook *notebook,
   g_assert (SYSPROF_IS_NOTEBOOK (notebook));
   g_assert (GTK_IS_WIDGET (child));
 
+  if (gtk_widget_in_destruction (GTK_WIDGET (notebook)))
+    return;
+
   if (gtk_notebook_get_n_pages (notebook) == 0)
     {
       child = sysprof_display_new ();
@@ -164,4 +167,52 @@ sysprof_notebook_close_current (SysprofNotebook *self)
 
   if ((page = gtk_notebook_get_current_page (GTK_NOTEBOOK (self))) >= 0)
     gtk_widget_destroy (gtk_notebook_get_nth_page (GTK_NOTEBOOK (self), page));
+}
+
+static void
+find_empty_display_cb (GtkWidget *widget,
+                       gpointer   user_data)
+{
+  GtkWidget **display = user_data;
+
+  g_assert (GTK_IS_WIDGET (widget));
+  g_assert (display != NULL);
+
+  if (*display != NULL)
+    return;
+
+  if (SYSPROF_IS_DISPLAY (widget) &&
+      sysprof_display_is_empty (SYSPROF_DISPLAY (widget)))
+    *display = widget;
+}
+
+void
+sysprof_notebook_open (SysprofNotebook *self,
+                       GFile           *file)
+{
+  GtkWidget *display = NULL;
+  gint page;
+
+  g_return_if_fail (SYSPROF_IS_NOTEBOOK (self));
+  g_return_if_fail (g_file_is_native (file));
+
+  gtk_container_foreach (GTK_CONTAINER (self),
+                         find_empty_display_cb,
+                         &display);
+
+  if (display == NULL)
+    {
+
+      display = sysprof_display_new ();
+      page = gtk_notebook_insert_page (GTK_NOTEBOOK (self), display, NULL, -1);
+      gtk_widget_show (display);
+    }
+  else
+    {
+      page = gtk_notebook_page_num (GTK_NOTEBOOK (self), display);
+    }
+
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (self), page);
+
+  sysprof_display_open (SYSPROF_DISPLAY (display), file);
 }

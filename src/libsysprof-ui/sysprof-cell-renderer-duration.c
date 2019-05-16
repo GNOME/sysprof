@@ -157,7 +157,11 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
         }
 
       if (priv->end_time < priv->begin_time)
-        gdk_rgba_parse (&rgba, "#f00");
+        {
+          gdk_rgba_parse (&rgba, "#f00");
+          if (state & GTK_CELL_RENDERER_SELECTED)
+            rgba.alpha = 0.6;
+        }
       else
         rgba.alpha = 0.4;
 

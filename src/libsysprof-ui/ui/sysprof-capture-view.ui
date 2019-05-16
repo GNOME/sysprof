@@ -70,7 +70,7 @@
             </child>
             <child type="center">
               <object class="GtkStackSwitcher" id="stack_switcher">
-                <property name="stack">sections_stack</property>
+                <property name="stack">stack</property>
                 <property name="halign">center</property>
                 <property name="visible">true</property>
                 <property name="margin-top">6</property>
@@ -105,7 +105,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkStack" id="sections_stack">
+              <object class="GtkStack" id="stack">
                 <property name="homogeneous">true</property>
                 <property name="visible">true</property>
                 <property name="vexpand">true</property>
@@ -116,6 +116,7 @@
                   <packing>
                     <!-- translators: the _ is used to denote the accelerator key -->
                     <property name="title" translatable="yes">_Callgraph</property>
+                    <property name="name">callgraph</property>
                   </packing>
                 </child>
                 <child>
@@ -126,6 +127,7 @@
                   <packing>
                     <!-- translators: the _ is used to denote the accelerator key -->
                     <property name="title" translatable="yes">_Timings</property>
+                    <property name="name">timings</property>
                   </packing>
                 </child>
                 <child>
@@ -136,6 +138,7 @@
                   <packing>
                     <!-- translators: the _ is used to denote the accelerator key -->
                     <property name="title" translatable="yes">_Details</property>
+                    <property name="name">details</property>
                   </packing>
                 </child>
               </object>

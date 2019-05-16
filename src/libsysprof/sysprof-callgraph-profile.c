@@ -514,14 +514,18 @@ sysprof_callgraph_profile_get_stash (SysprofCallgraphProfile *self)
 gboolean
 sysprof_callgraph_profile_is_empty (SysprofCallgraphProfile *self)
 {
+  StackNode *root;
+
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_PROFILE (self), FALSE);
 
-  return self->stash == NULL;
+  return (self->stash == NULL ||
+          !(root = stack_stash_get_root (self->stash)) ||
+          !root->total);
 }
 
 GQuark
 sysprof_callgraph_profile_get_tag (SysprofCallgraphProfile *self,
-                              const gchar        *symbol)
+                                   const gchar        *symbol)
 {
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_PROFILE (self), 0);
 

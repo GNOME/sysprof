@@ -527,3 +527,18 @@ sysprof_zoom_manager_fit_zoom_for_duration (SysprofZoomManager *self,
 
   return (width / DEFAULT_PIXELS_PER_SEC) / (duration / (gdouble)NSEC_PER_SEC);
 }
+
+gdouble
+sysprof_zoom_manager_get_offset_at_time (SysprofZoomManager *self,
+                                         gint64              offset,
+                                         gint                width)
+{
+  gint64 full_duration;
+  gdouble ratio;
+
+  g_return_val_if_fail (SYSPROF_IS_ZOOM_MANAGER (self), 0.0);
+
+  full_duration = sysprof_zoom_manager_get_duration_for_width (self, width);
+  ratio = offset / (gdouble)full_duration;
+  return ratio * width;
+}

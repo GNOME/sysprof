@@ -2,82 +2,101 @@
 <interface>
   <template class="SysprofMarksView" parent="GtkBin">
     <child>
-      <object class="GtkScrolledWindow" id="scroller">
+      <object class="GtkStack" id="stack">
         <property name="visible">true</property>
         <child>
-          <object class="GtkTreeView" id="tree_view">
-            <property name="headers-visible">false</property>
-            <property name="enable-grid-lines">horizontal</property>
+          <object class="GtkScrolledWindow" id="scroller">
             <property name="visible">true</property>
             <child>
-              <object class="GtkTreeViewColumn">
-                <property name="title" translatable="yes">Group</property>
-                <property name="resizable">true</property>
-                <property name="expand">false</property>
-                <property name="visible">false</property>
+              <object class="GtkTreeView" id="tree_view">
+                <property name="headers-visible">false</property>
+                <property name="enable-grid-lines">horizontal</property>
+                <property name="visible">true</property>
                 <child>
-                  <object class="GtkCellRendererText" id="text_cell">
-                    <property name="xalign">0</property>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title" translatable="yes">Group</property>
+                    <property name="resizable">true</property>
+                    <property name="expand">false</property>
+                    <property name="visible">false</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="text_cell">
+                        <property name="xalign">0</property>
+                      </object>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
                   </object>
-                  <attributes>
-                    <attribute name="text">0</attribute>
-                  </attributes>
                 </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkTreeViewColumn">
-                <property name="title" translatable="yes">Name</property>
-                <property name="resizable">true</property>
-                <property name="expand">false</property>
-                <property name="visible">false</property>
                 <child>
-                  <object class="GtkCellRendererText">
-                    <property name="xalign">0</property>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title" translatable="yes">Name</property>
+                    <property name="resizable">true</property>
+                    <property name="expand">false</property>
+                    <property name="visible">false</property>
+                    <child>
+                      <object class="GtkCellRendererText">
+                        <property name="xalign">0</property>
+                      </object>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
                   </object>
-                  <attributes>
-                    <attribute name="text">1</attribute>
-                  </attributes>
                 </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkTreeViewColumn" id="elapsed_column">
-                <property name="title" translatable="yes">Elapsed</property>
-                <property name="resizable">true</property>
-                <property name="expand">false</property>
-                <property name="visible">false</property>
                 <child>
-                  <object class="GtkCellRendererText">
-                    <property name="xalign">0</property>
+                  <object class="GtkTreeViewColumn" id="elapsed_column">
+                    <property name="title" translatable="yes">Elapsed</property>
+                    <property name="resizable">true</property>
+                    <property name="expand">false</property>
+                    <property name="visible">false</property>
+                    <child>
+                      <object class="GtkCellRendererText">
+                        <property name="xalign">0</property>
+                      </object>
+                      <attributes>
+                        <attribute name="text">4</attribute>
+                      </attributes>
+                    </child>
                   </object>
-                  <attributes>
-                    <attribute name="text">4</attribute>
-                  </attributes>
                 </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkTreeViewColumn" id="duration_column">
-                <property name="title" translatable="yes">Duration</property>
-                <property name="expand">true</property>
                 <child>
-                  <object class="SysprofCellRendererDuration" id="duration_cell">
-                    <property name="xalign">0</property>
-                    <property name="ypad">1</property>
-                  </object>
-                  <attributes>
-                    <attribute name="text">1</attribute>
-                    <attribute name="begin-time">2</attribute>
-                    <attribute name="end-time">3</attribute>
-                  </attributes>
-                  <cell-packing>
+                  <object class="GtkTreeViewColumn" id="duration_column">
+                    <property name="title" translatable="yes">Duration</property>
                     <property name="expand">true</property>
-                  </cell-packing>
+                    <child>
+                      <object class="SysprofCellRendererDuration" id="duration_cell">
+                        <property name="xalign">0</property>
+                        <property name="ypad">1</property>
+                      </object>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                        <attribute name="begin-time">2</attribute>
+                        <attribute name="end-time">3</attribute>
+                      </attributes>
+                      <cell-packing>
+                        <property name="expand">true</property>
+                      </cell-packing>
+                    </child>
+                  </object>
                 </child>
               </object>
             </child>
           </object>
+          <packing>
+            <property name="name">marks</property>
+          </packing>
+        </child>
+        <child>
+          <object class="SysprofEmptyStateView">
+            <property name="icon-name">computer-fail-symbolic</property>
+            <property name="title" translatable="yes">No Timings Available</property>
+            <property name="subtitle" translatable="yes">No timing data was collected.</property>
+            <property name="visible">true</property>
+          </object>
+          <packing>
+            <property name="name">empty-state</property>
+          </packing>
         </child>
       </object>
     </child>

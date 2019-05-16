@@ -3,6 +3,7 @@
   <gresource prefix="/org/gnome/sysprof">
     <!-- Automatic GTK resources -->
     <file>gtk/help-overlay.ui</file>
+    <file>gtk/menus.ui</file>
 
     <!-- Theme overrides -->
     <file compressed="true">theme/shared.css</file>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <menu id="win-menu">
+    <section id="win-menu-new">
+      <item>
+        <attribute name="label" translatable="yes">New Tab</attribute>
+        <attribute name="action">win.new-tab</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">New Window</attribute>
+        <attribute name="action">app.new-window</attribute>
+      </item>
+    </section>
+    <section id="win-menu-open">
+      <item>
+        <attribute name="label" translatable="yes">Open Capture…</attribute>
+        <attribute name="action">app.open-capture</attribute>
+      </item>
+    </section>
+    <section id="win-menu-misc">
+      <item>
+        <attribute name="label" translatable="yes">Keyboard Shortcuts</attribute>
+        <attribute name="action">app.show-help-overlay</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Help</attribute>
+        <attribute name="action">app.help</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Quit</attribute>
+        <attribute name="action">app.quit</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>

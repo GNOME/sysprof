@@ -17,6 +17,12 @@
         <attribute name="action">app.open-capture</attribute>
       </item>
     </section>
+    <section id="win-menu-close">
+      <item>
+        <attribute name="label" translatable="yes">Close</attribute>
+        <attribute name="action">win.close-tab</attribute>
+      </item>
+    </section>
     <section id="win-menu-misc">
       <item>
         <attribute name="label" translatable="yes">Keyboard Shortcuts</attribute>

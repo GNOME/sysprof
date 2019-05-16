@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofDisplay" parent="GtkBin">
+    <child>
+      <object class="GtkStack" id="stack">
+        <property name="homogeneous">false</property>
+        <property name="visible">true</property>
+        <child>
+          <object class="SysprofEmptyStateView" id="empty_view">
+            <property name="title" translatable="yes">Welcome to Sysprof</property>
+            <property name="subtitle" translatable="yes">Start profiling your system with the &lt;b&gt;Record&lt;/b&gt; button above.</property>
+            <property name="visible">true</property>
+          </object>
+          <packing>
+            <property name="name">empty</property>
+          </packing>
+        </child>
+        <child>
+          <object class="SysprofCaptureView" id="capture_view">
+            <property name="visible">true</property>
+          </object>
+          <packing>
+            <property name="name">capture</property>
+          </packing>
+        </child>
+        <child>
+          <object class="SysprofRecordingStateView" id="recording_view">
+            <property name="visible">true</property>
+          </object>
+          <packing>
+            <property name="name">recording</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

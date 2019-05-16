@@ -37,7 +37,7 @@ G_DEFINE_TYPE (SysprofCpuVisualizerRow, sysprof_cpu_visualizer_row, SYSPROF_TYPE
 
 static gboolean
 sysprof_cpu_visualizer_counter_found (const SysprofCaptureFrame *frame,
-                                 gpointer              user_data)
+                                      gpointer                   user_data)
 {
   const SysprofCaptureFrameCounterDefine *def = (SysprofCaptureFrameCounterDefine *)frame;
   GArray *counters = user_data;
@@ -65,9 +65,9 @@ sysprof_cpu_visualizer_counter_found (const SysprofCaptureFrame *frame,
 
 static void
 sysprof_cpu_visualizer_row_discover_counters (GTask        *task,
-                                         gpointer      source_object,
-                                         gpointer      task_data,
-                                         GCancellable *canellable)
+                                              gpointer      source_object,
+                                              gpointer      task_data,
+                                              GCancellable *canellable)
 {
   const SysprofCaptureFrameType types[] = { SYSPROF_CAPTURE_FRAME_CTRDEF };
   SysprofCaptureReader *reader = task_data;
@@ -116,7 +116,7 @@ complete_counters (GObject      *object,
 
 static void
 sysprof_cpu_visualizer_row_set_reader (SysprofVisualizerRow *row,
-                                  SysprofCaptureReader *reader)
+                                       SysprofCaptureReader *reader)
 {
   SysprofCpuVisualizerRow *self = (SysprofCpuVisualizerRow *)row;
   g_autoptr(GTask) task = NULL;

@@ -108,7 +108,7 @@ sysprof_color_cycle_unref (SysprofColorCycle *self)
 
 void
 sysprof_color_cycle_next (SysprofColorCycle *self,
-                     GdkRGBA      *rgba)
+                          GdkRGBA      *rgba)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (self->position < self->n_colors);

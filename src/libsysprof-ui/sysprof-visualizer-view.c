@@ -748,3 +748,15 @@ sysprof_visualizer_view_get_selection (SysprofVisualizerView *self)
 
   return priv->selection;
 }
+
+void
+_sysprof_visualizer_view_set_hadjustment (SysprofVisualizerView *self,
+                                          GtkAdjustment         *hadjustment)
+{
+  SysprofVisualizerViewPrivate *priv = sysprof_visualizer_view_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_VISUALIZER_VIEW (self));
+  g_return_if_fail (GTK_IS_ADJUSTMENT (hadjustment));
+
+  gtk_scrolled_window_set_hadjustment (priv->scroller, hadjustment);
+}

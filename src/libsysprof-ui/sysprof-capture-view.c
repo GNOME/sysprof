@@ -26,6 +26,7 @@
 #include "sysprof-capture-view.h"
 #include "sysprof-details-view.h"
 #include "sysprof-marks-view.h"
+#include "sysprof-ui-private.h"
 #include "sysprof-visualizer-view.h"
 
 typedef struct
@@ -45,6 +46,7 @@ typedef struct
   SysprofCaptureFeatures  features;
 
   /* Template Objects */
+  GtkAdjustment          *time_adj;
   GtkStack               *stack;
   SysprofCallgraphView   *callgraph_view;
   SysprofDetailsView     *details_view;
@@ -598,19 +600,6 @@ sysprof_capture_view_get_property (GObject    *object,
 }
 
 static void
-sysprof_capture_view_set_property (GObject      *object,
-                                   guint         prop_id,
-                                   const GValue *value,
-                                   GParamSpec   *pspec)
-{
-  switch (prop_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
 sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
@@ -618,7 +607,6 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
 
   object_class->finalize = sysprof_capture_view_finalize;
   object_class->get_property = sysprof_capture_view_get_property;
-  object_class->set_property = sysprof_capture_view_set_property;
 
   klass->load_async = sysprof_capture_view_real_load_async;
   klass->load_finish = sysprof_capture_view_real_load_finish;
@@ -629,6 +617,7 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, marks_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, stack);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, stack_switcher);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, time_adj);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, visualizer_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, zoom_manager);
 
@@ -679,6 +668,9 @@ sysprof_capture_view_init (SysprofCaptureView *self)
   gtk_widget_insert_action_group (GTK_WIDGET (self),
                                   "capture-view",
                                   G_ACTION_GROUP (group));
+
+  _sysprof_marks_view_set_hadjustment (priv->marks_view, priv->time_adj);
+  _sysprof_visualizer_view_set_hadjustment (priv->visualizer_view, priv->time_adj);
 }
 
 /**

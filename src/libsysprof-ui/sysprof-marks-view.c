@@ -32,6 +32,7 @@ typedef struct
   SysprofZoomManager          *zoom_manager;
 
   /* Template objects */
+  GtkScrolledWindow           *scroller;
   GtkTreeView                 *tree_view;
   GtkTreeViewColumn           *duration_column;
   SysprofCellRendererDuration *duration_cell;
@@ -120,6 +121,7 @@ sysprof_marks_view_class_init (SysprofMarksViewClass *klass)
   object_class->set_property = sysprof_marks_view_set_property;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-marks-view.ui");
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, scroller);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, tree_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, duration_cell);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, duration_column);
@@ -226,4 +228,16 @@ sysprof_marks_view_load_finish (SysprofMarksView  *self,
   g_return_val_if_fail (G_IS_TASK (result), FALSE);
 
   return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+void
+_sysprof_marks_view_set_hadjustment (SysprofMarksView *self,
+                                     GtkAdjustment    *hadjustment)
+{
+  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_MARKS_VIEW (self));
+  g_return_if_fail (GTK_IS_ADJUSTMENT (hadjustment));
+
+  gtk_scrolled_window_set_hadjustment (priv->scroller, hadjustment);
 }

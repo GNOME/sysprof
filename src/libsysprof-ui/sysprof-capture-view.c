@@ -565,6 +565,35 @@ set_use_underline_cb (GtkWidget *widget,
     }
 }
 
+static gboolean
+do_best_fit_in_idle (gpointer user_data)
+{
+  SysprofCaptureView *self = user_data;
+
+  if (gtk_widget_get_visible (GTK_WIDGET (self)))
+    sysprof_capture_view_fit_to_width (self);
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+sysprof_capture_view_map (GtkWidget *widget)
+{
+  SysprofCaptureView *self = (SysprofCaptureView *)widget;
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
+
+  GTK_WIDGET_CLASS (sysprof_capture_view_parent_class)->map (widget);
+
+  if (priv->reader != NULL)
+    g_timeout_add_full (G_PRIORITY_LOW,
+                        25,
+                        do_best_fit_in_idle,
+                        g_object_ref (self),
+                        g_object_unref);
+}
+
 static void
 sysprof_capture_view_finalize (GObject *object)
 {
@@ -604,6 +633,8 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
 
   object_class->finalize = sysprof_capture_view_finalize;
   object_class->get_property = sysprof_capture_view_get_property;
+
+  widget_class->map = sysprof_capture_view_map;
 
   klass->load_async = sysprof_capture_view_real_load_async;
   klass->load_finish = sysprof_capture_view_real_load_finish;

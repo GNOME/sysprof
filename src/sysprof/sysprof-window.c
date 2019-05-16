@@ -83,8 +83,23 @@ close_tab_cb (GSimpleAction *action,
               gpointer       user_data)
 {
   SysprofWindow *self = user_data;
+  GtkNotebook *notebook;
 
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
+
+  notebook = GTK_NOTEBOOK (self->notebook);
+
+  if (gtk_notebook_get_n_pages (notebook) == 1)
+    {
+      GtkWidget *child = gtk_notebook_get_nth_page (notebook, 0);
+
+      if (SYSPROF_IS_DISPLAY (child) &&
+          sysprof_display_is_empty (SYSPROF_DISPLAY (child)))
+        {
+          gtk_widget_destroy (GTK_WIDGET (self));
+          return;
+        }
+    }
 
   sysprof_notebook_close_current (self->notebook);
 }

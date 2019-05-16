@@ -42,6 +42,29 @@ struct _SysprofDetailsView
 
 G_DEFINE_TYPE (SysprofDetailsView, sysprof_details_view, GTK_TYPE_BIN)
 
+#if GLIB_CHECK_VERSION(2, 56, 0)
+# define _g_date_time_new_from_iso8601 g_date_time_new_from_iso8601
+#else
+static GDateTime *
+_g_date_time_new_from_iso8601 (const gchar *str,
+                               GTimeZone   *default_tz)
+{
+  GTimeVal tv;
+
+  if (g_time_val_from_iso8601 (str, &tv))
+    {
+      g_autoptr(GDateTime) dt = g_date_time_new_from_timeval_utc (&tv);
+
+      if (default_tz)
+        return g_date_time_to_timezone (dt, default_tz);
+      else
+        return g_steal_pointer (&dt);
+    }
+
+  return NULL;
+}
+#endif
+
 static void
 sysprof_details_view_finalize (GObject *object)
 {
@@ -98,7 +121,7 @@ sysprof_details_view_set_reader (SysprofDetailsView   *self,
   gtk_label_set_label (self->filename, filename);
 
   if ((capture_at = sysprof_capture_reader_get_time (reader)) &&
-      (dt = g_date_time_new_from_iso8601 (capture_at, NULL)) &&
+      (dt = _g_date_time_new_from_iso8601 (capture_at, NULL)) &&
       (local = g_date_time_to_local (dt)))
     {
       g_autofree gchar *str = g_date_time_format (local, "%x %X");

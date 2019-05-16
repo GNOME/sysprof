@@ -226,7 +226,7 @@ sysprof_capture_view_scan_worker (GTask        *task,
   SysprofCaptureReader *reader = task_data;
   SysprofCaptureFeatures features = {0};
   SysprofCaptureFrame frame;
-  SysprofCaptureStat st_buf = {0};
+  SysprofCaptureStat st_buf = {{0}};
 
   g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
   g_assert (G_IS_TASK (task));
@@ -774,4 +774,23 @@ sysprof_capture_view_fit_to_width (SysprofCaptureView *self)
   duration = priv->features.end_time - priv->features.begin_time;
   zoom = sysprof_zoom_manager_fit_zoom_for_duration (priv->zoom_manager, duration, width);
   sysprof_zoom_manager_set_zoom (priv->zoom_manager, zoom);
+}
+
+/**
+ * sysprof_capture_view_get_reader:
+ *
+ * Gets the reader for the view, if any.
+ *
+ * Returns: (transfer none): a #SysprofCaptureReader or %NULL
+ *
+ * Since: 3.34
+ */
+SysprofCaptureReader *
+sysprof_capture_view_get_reader (SysprofCaptureView *self)
+{
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_CAPTURE_VIEW (self), NULL);
+
+  return priv->reader;
 }

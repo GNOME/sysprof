@@ -1,6 +1,6 @@
-/* sysprof-window.h
+/* sysprof-tab.h
  *
- * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
+ * Copyright 2019 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,18 +22,14 @@
 
 #include <gtk/gtk.h>
 
-#include "sysprof-application.h"
+#include "sysprof-display.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_WINDOW (sysprof_window_get_type())
+#define SYSPROF_TYPE_TAB (sysprof_tab_get_type())
 
-G_DECLARE_FINAL_TYPE (SysprofWindow, sysprof_window, SYSPROF, WINDOW, GtkApplicationWindow)
+G_DECLARE_FINAL_TYPE (SysprofTab, sysprof_tab, SYSPROF, TAB, GtkBox)
 
-GtkWidget *sysprof_window_new              (SysprofApplication *application);
-void       sysprof_window_new_tab          (SysprofWindow      *self);
-void       sysprof_window_open             (SysprofWindow      *self,
-                                            GFile              *file);
-void       sysprof_window_open_from_dialog (SysprofWindow      *self);
+GtkWidget *sysprof_tab_new (SysprofDisplay *display);
 
 G_END_DECLS

@@ -36,9 +36,20 @@ struct {
   const gchar *action_name;
   const gchar *accels[12];
 } default_accels[] = {
-  { "zoom.zoom-in", { "<Primary>plus", "<Primary>KP_Add", "<Primary>equal", "ZoomIn", NULL } },
-  { "zoom.zoom-out", { "<Primary>minus", "<Primary>KP_Subtract", "ZoomOut", NULL } },
-  { "zoom.zoom-one", { "<Primary>0", "<Primary>KP_0", NULL } },
+  { "zoom.zoom-in",       { "<Primary>plus", "<Primary>KP_Add", "<Primary>equal", "ZoomIn", NULL } },
+  { "zoom.zoom-out",      { "<Primary>minus", "<Primary>KP_Subtract", "ZoomOut", NULL } },
+  { "zoom.zoom-one",      { "<Primary>0", "<Primary>KP_0", NULL } },
+  { "win.new-tab",        { "<Primary>t", NULL } },
+  { "win.close-tab",      { "<Primary>w", NULL } },
+  { "win.switch-tab(1)",  { "<Alt>1", NULL } },
+  { "win.switch-tab(2)",  { "<Alt>2", NULL } },
+  { "win.switch-tab(3)",  { "<Alt>3", NULL } },
+  { "win.switch-tab(4)",  { "<Alt>4", NULL } },
+  { "win.switch-tab(5)",  { "<Alt>5", NULL } },
+  { "win.switch-tab(6)",  { "<Alt>6", NULL } },
+  { "win.switch-tab(7)",  { "<Alt>7", NULL } },
+  { "win.switch-tab(8)",  { "<Alt>8", NULL } },
+  { "win.switch-tab(9)",  { "<Alt>9", NULL } },
   { NULL }
 };
 
@@ -70,29 +81,23 @@ sysprof_application_activate (GApplication *app)
 
 static void
 sysprof_application_open (GApplication  *app,
-                     GFile        **files,
-                     gint           n_files,
-                     const gchar   *hint)
+                          GFile        **files,
+                          gint           n_files,
+                          const gchar   *hint)
 {
-  guint opened = 0;
-  gint i;
+  GtkWidget *window;
 
   g_assert (SYSPROF_IS_APPLICATION (app));
   g_assert (files != NULL || n_files == 0);
 
-  for (i = 0; i < n_files; i++)
-    {
-      SysprofWindow *window;
+  window = sysprof_window_new (SYSPROF_APPLICATION (app));
 
-      window = g_object_new (SYSPROF_TYPE_WINDOW,
-                             "application", app,
-                             NULL);
-      sysprof_window_open (window, files [i]);
-      gtk_window_present (GTK_WINDOW (window));
-      opened++;
-    }
+  for (gint i = 0; i < n_files; i++)
+    sysprof_window_open (SYSPROF_WINDOW (window), files[i]);
 
-  if (opened == 0)
+  gtk_window_present (GTK_WINDOW (window));
+
+  if (n_files == 0)
     sysprof_application_activate (app);
 }
 
@@ -246,7 +251,6 @@ sysprof_open_capture (GSimpleAction *action,
                       gpointer       user_data)
 {
   GtkApplication *app = user_data;
-  GtkWidget *window;
   GList *list;
 
   g_assert (G_IS_APPLICATION (app));
@@ -257,29 +261,11 @@ sysprof_open_capture (GSimpleAction *action,
 
   for (; list != NULL; list = list->next)
     {
-      window = list->data;
+      GtkWindow *window = list->data;
 
       if (SYSPROF_IS_WINDOW (window))
-        {
-          SysprofWindowState state;
-
-          state = sysprof_window_get_state (SYSPROF_WINDOW (window));
-
-          if (state == SYSPROF_WINDOW_STATE_EMPTY)
-            {
-              sysprof_window_open_from_dialog (SYSPROF_WINDOW (window));
-              return;
-            }
-        }
+        sysprof_window_open_from_dialog (SYSPROF_WINDOW (window));
     }
-
-  window = g_object_new (SYSPROF_TYPE_WINDOW,
-                         "application", app,
-                         NULL);
-
-  gtk_window_present (GTK_WINDOW (window));
-
-  sysprof_window_open_from_dialog (SYSPROF_WINDOW (window));
 }
 
 static void

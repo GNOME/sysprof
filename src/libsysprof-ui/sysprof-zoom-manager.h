@@ -74,5 +74,9 @@ SYSPROF_AVAILABLE_IN_ALL
 gdouble             sysprof_zoom_manager_fit_zoom_for_duration  (SysprofZoomManager *self,
                                                                  gint64              duration,
                                                                  gint                width);
+SYSPROF_AVAILABLE_IN_ALL
+gdouble             sysprof_zoom_manager_get_offset_at_time     (SysprofZoomManager *self,
+                                                                 gint64              offset,
+                                                                 gint                width);
 
 G_END_DECLS

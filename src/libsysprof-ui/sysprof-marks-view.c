@@ -31,6 +31,9 @@ typedef struct
 {
   SysprofZoomManager          *zoom_manager;
 
+  gint64                       capture_begin_time;
+  gint64                       capture_end_time;
+
   /* Template objects */
   GtkScrolledWindow           *scroller;
   GtkTreeView                 *tree_view;
@@ -47,6 +50,52 @@ enum {
 static GParamSpec *properties [N_PROPS];
 
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofMarksView, sysprof_marks_view, GTK_TYPE_BIN)
+
+static void
+sysprof_marks_view_selection_changed_cb (SysprofMarksView *self,
+                                         GtkTreeSelection *selection)
+{
+  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+
+  g_assert (SYSPROF_IS_MARKS_VIEW (self));
+  g_assert (GTK_IS_TREE_SELECTION (selection));
+
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    {
+      GtkAdjustment *adj;
+      gdouble x;
+      gint64 begin_time;
+      gdouble lower;
+      gdouble upper;
+      gdouble value;
+      gdouble page_size;
+      gint width;
+
+      gtk_tree_model_get (model, &iter,
+                          SYSPROF_MARKS_MODEL_COLUMN_BEGIN_TIME, &begin_time,
+                          -1);
+
+      adj = gtk_scrolled_window_get_hadjustment (priv->scroller);
+      width = gtk_tree_view_column_get_width (priv->duration_column);
+      x = sysprof_zoom_manager_get_offset_at_time (priv->zoom_manager,
+                                                   begin_time - priv->capture_begin_time,
+                                                   width);
+
+      g_object_get (adj,
+                    "lower", &lower,
+                    "upper", &upper,
+                    "value", &value,
+                    "page-size", &page_size,
+                    NULL);
+
+      if (x < value)
+        gtk_adjustment_set_value (adj, MAX (lower, x - (page_size / 3.0)));
+      else if (x > (value + page_size))
+        gtk_adjustment_set_value (adj, MIN (upper - page_size, (x - (page_size / 3.0))));
+    }
+}
 
 static void
 sysprof_marks_view_finalize (GObject *object)
@@ -139,7 +188,15 @@ sysprof_marks_view_class_init (SysprofMarksViewClass *klass)
 static void
 sysprof_marks_view_init (SysprofMarksView *self)
 {
+  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
+
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_signal_connect_object (gtk_tree_view_get_selection (priv->tree_view),
+                           "changed",
+                           G_CALLBACK (sysprof_marks_view_selection_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 }
 
 GtkWidget *
@@ -159,8 +216,6 @@ sysprof_marks_view_load_cb (GObject      *object,
   SysprofMarksViewPrivate *priv;
   SysprofCaptureReader *reader;
   SysprofMarksView *self;
-  gint64 capture_begin_time;
-  gint64 capture_end_time;
 
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
@@ -177,12 +232,12 @@ sysprof_marks_view_load_cb (GObject      *object,
   reader = g_task_get_task_data (task);
   g_assert (reader != NULL);
 
-  capture_begin_time = sysprof_capture_reader_get_start_time (reader);
-  capture_end_time = sysprof_capture_reader_get_end_time (reader);
+  priv->capture_begin_time = sysprof_capture_reader_get_start_time (reader);
+  priv->capture_end_time = sysprof_capture_reader_get_end_time (reader);
 
   g_object_set (priv->duration_cell,
-                "capture-begin-time", capture_begin_time,
-                "capture-end-time", capture_end_time,
+                "capture-begin-time", priv->capture_begin_time,
+                "capture-end-time", priv->capture_end_time,
                 "zoom-manager", priv->zoom_manager,
                 NULL);
 

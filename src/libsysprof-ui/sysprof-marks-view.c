@@ -51,6 +51,48 @@ static GParamSpec *properties [N_PROPS];
 
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofMarksView, sysprof_marks_view, GTK_TYPE_BIN)
 
+static gboolean
+sysprof_marks_view_tree_view_key_press_event_cb (SysprofMarksView  *self,
+                                                 const GdkEventKey *key,
+                                                 GtkTreeView       *tree_view)
+{
+  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
+  gint dir = 0;
+
+  g_assert (SYSPROF_MARKS_VIEW (self));
+  g_assert (key != NULL);
+
+  if (key->state == 0)
+    {
+      switch (key->keyval)
+        {
+        case GDK_KEY_Left:
+          dir = -1;
+          break;
+
+        case GDK_KEY_Right:
+          dir = 1;
+          break;
+
+        default:
+          break;
+        }
+
+      if (dir)
+        {
+          GtkAdjustment *adj = gtk_scrolled_window_get_hadjustment (priv->scroller);
+          gdouble step = gtk_adjustment_get_step_increment (adj);
+          gdouble val = CLAMP (gtk_adjustment_get_value (adj) + (step * dir),
+                               gtk_adjustment_get_lower (adj),
+                               gtk_adjustment_get_upper (adj));
+          gtk_adjustment_set_value (adj, val);
+          return GDK_EVENT_STOP;
+        }
+    }
+
+  return GDK_EVENT_PROPAGATE;
+}
+
 static void
 sysprof_marks_view_selection_changed_cb (SysprofMarksView *self,
                                          GtkTreeSelection *selection)
@@ -191,6 +233,12 @@ sysprof_marks_view_init (SysprofMarksView *self)
   SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_signal_connect_object (priv->tree_view,
+                           "key-press-event",
+                           G_CALLBACK (sysprof_marks_view_tree_view_key_press_event_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 
   g_signal_connect_object (gtk_tree_view_get_selection (priv->tree_view),
                            "changed",

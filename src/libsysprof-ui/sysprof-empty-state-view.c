@@ -28,6 +28,7 @@
 
 typedef struct
 {
+  GtkImage *image;
   GtkLabel *title;
   GtkLabel *subtitle;
 } SysprofEmptyStateViewPrivate;
@@ -38,6 +39,7 @@ enum {
   PROP_0,
   PROP_TITLE,
   PROP_SUBTITLE,
+  PROP_ICON_NAME,
   N_PROPS
 };
 
@@ -51,9 +53,9 @@ sysprof_empty_state_view_new (void)
 
 static gboolean
 sysprof_empty_state_view_action (GtkWidget   *widget,
-                            const gchar *prefix,
-                            const gchar *action_name,
-                            GVariant    *parameter)
+                                 const gchar *prefix,
+                                 const gchar *action_name,
+                                 GVariant    *parameter)
 {
   GtkWidget *toplevel;
   GApplication *app;
@@ -97,8 +99,8 @@ sysprof_empty_state_view_action (GtkWidget   *widget,
 
 static gboolean
 sysprof_empty_state_view_activate_link (SysprofEmptyStateView *self,
-                                   const gchar      *uri,
-                                   GtkLabel         *label)
+                                        const gchar           *uri,
+                                        GtkLabel              *label)
 {
   g_assert (SYSPROF_IS_EMPTY_STATE_VIEW (self));
   g_assert (uri != NULL);
@@ -143,15 +145,21 @@ sysprof_empty_state_view_activate_link (SysprofEmptyStateView *self,
 
 static void
 sysprof_empty_state_view_set_property (GObject      *object,
-                                  guint         prop_id,
-                                  const GValue *value,
-                                  GParamSpec   *pspec)
+                                       guint         prop_id,
+                                       const GValue *value,
+                                       GParamSpec   *pspec)
 {
   SysprofEmptyStateView *self = SYSPROF_EMPTY_STATE_VIEW (object);
   SysprofEmptyStateViewPrivate *priv = sysprof_empty_state_view_get_instance_private (self);
 
   switch (prop_id)
     {
+    case PROP_ICON_NAME:
+      g_object_set (priv->image,
+                    "icon-name", g_value_get_string (value),
+                    NULL);
+      break;
+
     case PROP_TITLE:
       gtk_label_set_label (priv->title, g_value_get_string (value));
       break;
@@ -173,17 +181,18 @@ sysprof_empty_state_view_class_init (SysprofEmptyStateViewClass *klass)
 
   object_class->set_property = sysprof_empty_state_view_set_property;
 
+  properties [PROP_ICON_NAME] =
+    g_param_spec_string ("icon-name", NULL, NULL,
+                         NULL,
+                         (G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_TITLE] =
-    g_param_spec_string ("title",
-                         NULL,
-                         NULL,
+    g_param_spec_string ("title", NULL, NULL,
                          NULL,
                          (G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_SUBTITLE] =
-    g_param_spec_string ("subtitle",
-                         NULL,
-                         NULL,
+    g_param_spec_string ("subtitle", NULL, NULL,
                          NULL,
                          (G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
 
@@ -192,6 +201,7 @@ sysprof_empty_state_view_class_init (SysprofEmptyStateViewClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-empty-state-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofEmptyStateView, subtitle);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofEmptyStateView, title);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofEmptyStateView, image);
 }
 
 static void

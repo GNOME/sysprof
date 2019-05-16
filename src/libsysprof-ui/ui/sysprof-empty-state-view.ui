@@ -8,9 +8,9 @@
         <property name="spacing">12</property>
         <property name="visible">true</property>
         <child type="center">
-          <object class="GtkImage">
+          <object class="GtkImage" id="image">
             <property name="icon-name">org.gnome.Sysprof-symbolic</property>
-            <property name="pixel-size">256</property>
+            <property name="pixel-size">192</property>
             <property name="visible">true</property>
             <style>
               <class name="dim-label"/>

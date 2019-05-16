@@ -156,7 +156,11 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
           pango_attr_list_unref (list);
         }
 
-      rgba.alpha = 0.4;
+      if (priv->end_time < priv->begin_time)
+        gdk_rgba_parse (&rgba, "#f00");
+      else
+        rgba.alpha = 0.4;
+
       gdk_cairo_set_source_rgba (cr, &rgba);
       pango_cairo_show_layout (cr, layout);
 

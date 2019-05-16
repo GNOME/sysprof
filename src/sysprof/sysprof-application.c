@@ -72,10 +72,7 @@ sysprof_application_activate (GApplication *app)
         }
     }
 
-  window = g_object_new (SYSPROF_TYPE_WINDOW,
-                         "application", app,
-                         NULL);
-
+  window = SYSPROF_WINDOW (sysprof_window_new (SYSPROF_APPLICATION (app)));
   gtk_window_present (GTK_WINDOW (window));
 }
 
@@ -239,9 +236,7 @@ sysprof_new_window (GSimpleAction *action,
   g_assert (G_IS_SIMPLE_ACTION (action));
   g_assert (variant == NULL);
 
-  window = g_object_new (SYSPROF_TYPE_WINDOW,
-                         "application", self,
-                         NULL);
+  window = SYSPROF_WINDOW (sysprof_window_new (self));
   gtk_window_present (GTK_WINDOW (window));
 }
 
@@ -293,9 +288,7 @@ sysprof_show_help_overlay (GSimpleAction *action,
 
   if (window == NULL)
     {
-      window = g_object_new (SYSPROF_TYPE_WINDOW,
-                             "application", app,
-                             NULL);
+      window = SYSPROF_WINDOW (sysprof_window_new (SYSPROF_APPLICATION (app)));
       gtk_window_present (GTK_WINDOW (window));
     }
 

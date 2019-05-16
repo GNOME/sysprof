@@ -227,8 +227,8 @@
     </columns>
     <data>
       <row>
-        <col id="0"></col>
-        <col id="1"></col>
+        <col id="0">''</col>
+        <col id="1">''</col>
       </row>
     </data>
   </object>

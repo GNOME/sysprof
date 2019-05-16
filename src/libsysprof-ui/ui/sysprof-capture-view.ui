@@ -11,20 +11,21 @@
             <property name="visible">true</property>
             <child>
               <object class="GtkBox">
-                <property name="margin-start">6</property>
-                <property name="margin-end">12</property>
+                <property name="margin-start">12</property>
+                <property name="margin-end">6</property>
                 <property name="orientation">horizontal</property>
                 <property name="valign">center</property>
                 <property name="visible">true</property>
-                <style>
-                  <class name="linked"/>
-                </style>
                 <child>
                   <object class="GtkButton">
                     <property name="action-name">zoom.zoom-out</property>
                     <property name="focus-on-click">false</property>
                     <property name="visible">true</property>
                     <property name="tooltip-text" translatable="yes">Zoom Out</property>
+                    <style>
+                      <class name="flat"/>
+                      <class name="image-button"/>
+                    </style>
                     <child>
                       <object class="GtkImage">
                         <property name="icon-name">zoom-out-symbolic</property>
@@ -40,12 +41,13 @@
                     <property name="tooltip-text" translatable="yes">Resize to Fit</property>
                     <property name="visible">true</property>
                     <style>
+                      <class name="flat"/>
                       <class name="image-button"/>
                     </style>
                     <child>
                       <object class="GtkImage">
-                        <property name="margin-start">12</property>
-                        <property name="margin-end">12</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
                         <property name="icon-name">zoom-fit-best-symbolic</property>
                         <property name="visible">true</property>
                       </object>
@@ -58,6 +60,10 @@
                     <property name="focus-on-click">false</property>
                     <property name="tooltip-text" translatable="yes">Zoom In</property>
                     <property name="visible">true</property>
+                    <style>
+                      <class name="flat"/>
+                      <class name="image-button"/>
+                    </style>
                     <child>
                       <object class="GtkImage">
                         <property name="icon-name">zoom-in-symbolic</property>
@@ -67,6 +73,9 @@
                   </object>
                 </child>
               </object>
+              <packing>
+                <property name="pack-type">end</property>
+              </packing>
             </child>
             <child type="center">
               <object class="GtkStackSwitcher" id="stack_switcher">

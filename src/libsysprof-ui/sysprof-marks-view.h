@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <sysprof-capture.h>
+#include <sysprof.h>
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS

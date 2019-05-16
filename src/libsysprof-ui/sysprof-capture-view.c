@@ -45,6 +45,7 @@ typedef struct
   SysprofCaptureFeatures  features;
 
   /* Template Objects */
+  GtkStack               *stack;
   SysprofCallgraphView   *callgraph_view;
   SysprofDetailsView     *details_view;
   SysprofMarksView       *marks_view;
@@ -150,6 +151,8 @@ sysprof_capture_view_generate_callgraph_cb (GObject      *object,
   SysprofCallgraphProfile *callgraph = (SysprofCallgraphProfile *)object;
   g_autoptr(GError) error = NULL;
   g_autoptr(GTask) task = user_data;
+  SysprofCaptureView *self;
+  SysprofCaptureViewPrivate *priv;
 
   g_assert (SYSPROF_IS_CALLGRAPH_PROFILE (callgraph));
   g_assert (G_IS_ASYNC_RESULT (result));
@@ -158,15 +161,15 @@ sysprof_capture_view_generate_callgraph_cb (GObject      *object,
   if (!sysprof_profile_generate_finish (SYSPROF_PROFILE (callgraph), result, &error))
     {
       g_task_return_error (task, g_steal_pointer (&error));
+      return;
     }
-  else
-    {
-      SysprofCaptureView *self = g_task_get_source_object (task);
-      SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
 
-      sysprof_callgraph_view_set_profile (priv->callgraph_view, callgraph);
-      g_task_return_boolean (task, TRUE);
-    }
+  self = g_task_get_source_object (task);
+  priv = sysprof_capture_view_get_instance_private (self);
+
+  sysprof_callgraph_view_set_profile (priv->callgraph_view, callgraph);
+
+  g_task_return_boolean (task, TRUE);
 }
 
 static void
@@ -307,8 +310,13 @@ sysprof_capture_view_scan_finish (SysprofCaptureView  *self,
                                   GAsyncResult        *result,
                                   GError             **error)
 {
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+
   g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
   g_assert (G_IS_TASK (result));
+
+  if (!priv->features.has_samples && priv->features.has_marks)
+    gtk_stack_set_visible_child_name (priv->stack, "timings");
 
   return g_task_propagate_boolean (G_TASK (result), error);
 }
@@ -612,6 +620,7 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, callgraph_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, details_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, marks_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, stack);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, stack_switcher);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, visualizer_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, zoom_manager);

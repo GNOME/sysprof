@@ -530,7 +530,14 @@ sysprof_capture_view_selection_changed_cb (SysprofCaptureView *self,
   if (priv->reader == NULL)
     return;
 
-  sysprof_capture_view_generate_callgraph_async (self, priv->reader, selection, NULL, NULL, NULL);
+  sysprof_capture_view_generate_callgraph_async (self,
+                                                 priv->reader,
+                                                 selection,
+                                                 NULL, NULL, NULL);
+  sysprof_marks_view_load_async (priv->marks_view,
+                                 priv->reader,
+                                 selection,
+                                 NULL, NULL, NULL);
 }
 
 static void

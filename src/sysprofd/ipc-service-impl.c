@@ -201,6 +201,7 @@ static gboolean
 ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
                                      GDBusMethodInvocation  *invocation)
 {
+  PolkitAuthorizationResult *res = NULL;
   PolkitAuthority *authority = NULL;
   PolkitSubject *subject = NULL;
   const gchar *peer_name;
@@ -213,13 +214,14 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
 
   if (!(authority = polkit_authority_get_sync (NULL, NULL)) ||
       !(subject = polkit_system_bus_name_new (peer_name)) ||
-      !polkit_authority_check_authorization_sync (authority,
+      !(res = polkit_authority_check_authorization_sync (authority,
                                                   POLKIT_SUBJECT (subject),
                                                   "org.gnome.sysprof3.profile",
                                                   NULL,
                                                   POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION,
                                                   NULL,
-                                                  NULL))
+                                                  NULL)) ||
+      !polkit_authorization_result_get_is_authorized (res))
     {
       g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
                                              G_DBUS_ERROR,
@@ -230,6 +232,7 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
 
   g_clear_object (&authority);
   g_clear_object (&subject);
+  g_clear_object (&res);
 
   return ret;
 }

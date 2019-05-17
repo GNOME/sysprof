@@ -47,4 +47,11 @@ void             _sysprof_rounded_rectangle               (cairo_t              
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofMarkStat, _sysprof_mark_stat_free)
 
+#if !GLIB_CHECK_VERSION(2, 56, 0)
+# define g_clear_weak_pointer(ptr) \
+   (*(ptr) ? (g_object_remove_weak_pointer((GObject*)*(ptr), (gpointer*)ptr),*(ptr)=NULL,1) : 0)
+# define g_set_weak_pointer(ptr,obj) \
+   ((obj!=*(ptr))?(g_clear_weak_pointer(ptr),*(ptr)=obj,((obj)?g_object_add_weak_pointer((GObject*)obj,(gpointer*)ptr),NULL:NULL),1):0)
+#endif
+
 G_END_DECLS

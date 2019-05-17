@@ -24,6 +24,7 @@
 
 #include "sysprof-display.h"
 #include "sysprof-tab.h"
+#include "sysprof-ui-private.h"
 
 struct _SysprofTab
 {

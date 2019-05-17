@@ -32,5 +32,8 @@ G_DECLARE_FINAL_TYPE (SysprofDetailsView, sysprof_details_view, SYSPROF, DETAILS
 GtkWidget *sysprof_details_view_new        (void);
 void       sysprof_details_view_set_reader (SysprofDetailsView   *self,
                                             SysprofCaptureReader *reader);
+void       sysprof_details_view_add_item   (SysprofDetailsView   *self,
+                                            GtkWidget            *left,
+                                            GtkWidget            *center);
 
 G_END_DECLS

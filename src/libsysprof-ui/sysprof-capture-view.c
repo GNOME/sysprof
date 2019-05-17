@@ -22,12 +22,16 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #include "sysprof-callgraph-view.h"
 #include "sysprof-capture-view.h"
 #include "sysprof-details-view.h"
 #include "sysprof-marks-view.h"
 #include "sysprof-ui-private.h"
 #include "sysprof-visualizer-view.h"
+
+#define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
 
 typedef struct
 {
@@ -42,6 +46,7 @@ typedef struct
 {
   SysprofCaptureReader   *reader;
   GCancellable           *cancellable;
+  GHashTable             *mark_stats;
 
   SysprofCaptureFeatures  features;
 
@@ -120,6 +125,62 @@ GtkWidget *
 sysprof_capture_view_new (void)
 {
   return g_object_new (SYSPROF_TYPE_CAPTURE_VIEW, NULL);
+}
+
+static void
+add_marks_to_details (SysprofCaptureView *self)
+{
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+  GHashTableIter iter;
+  gpointer k, v;
+  guint count = 0;
+
+  g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
+
+  if (priv->mark_stats == NULL)
+    return;
+
+  if (g_hash_table_size (priv->mark_stats) == 0)
+    return;
+
+  g_hash_table_iter_init (&iter, priv->mark_stats);
+  while (count < 100 && g_hash_table_iter_next (&iter, &k, &v))
+    {
+      g_autofree gchar *str = NULL;
+      SysprofMarkStat *st = v;
+      GtkLabel *left_label;
+      GtkLabel *center_label;
+
+      if (st->avg == 0)
+        continue;
+
+      left_label = g_object_new (GTK_TYPE_LABEL,
+                                 "visible", TRUE,
+                                 "xalign", 1.0f,
+                                 "label", st->name,
+                                 "ellipsize", PANGO_ELLIPSIZE_START,
+                                 NULL);
+      gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (left_label)),
+                                   GTK_STYLE_CLASS_DIM_LABEL);
+      str = g_strdup_printf ("<span fgalpha='32767'>Min:</span> %.4lf  "
+                             "<span fgalpha='32767'>Max:</span> %.4lf  "
+                             "<span fgalpha='32767'>Ø:</span> %.4lf",
+                             st->min / (gdouble)NSEC_PER_SEC,
+                             st->max / (gdouble)NSEC_PER_SEC,
+                             st->avg / (gdouble)NSEC_PER_SEC);
+      center_label = g_object_new (GTK_TYPE_LABEL,
+                                   "label", str,
+                                   "use-markup", TRUE,
+                                   "visible", TRUE,
+                                   "xalign", 0.0f,
+                                   NULL);
+
+      sysprof_details_view_add_item (priv->details_view,
+                                     GTK_WIDGET (left_label),
+                                     GTK_WIDGET (center_label));
+
+      count++;
+    }
 }
 
 static void
@@ -348,6 +409,11 @@ sysprof_capture_view_scan_worker (GTask        *task,
 
   sysprof_capture_reader_set_stat (reader, &st_buf);
 
+  g_object_set_data_full (G_OBJECT (task),
+                          "MARK_STAT",
+                          g_steal_pointer (&mark_stats),
+                          (GDestroyNotify) g_hash_table_unref);
+
   if (!g_task_return_error_if_cancelled (task))
     {
       priv->features = features;
@@ -384,12 +450,19 @@ sysprof_capture_view_scan_finish (SysprofCaptureView  *self,
                                   GError             **error)
 {
   SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+  GHashTable *stats;
 
   g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
   g_assert (G_IS_TASK (result));
 
   if (!priv->features.has_samples && priv->features.has_marks)
     gtk_stack_set_visible_child_name (priv->stack, "timings");
+
+  g_clear_pointer (&priv->mark_stats, g_hash_table_unref);
+  if ((stats = g_object_get_data (G_OBJECT (result), "MARK_STAT")))
+    priv->mark_stats = g_hash_table_ref (stats);
+
+  add_marks_to_details (self);
 
   return g_task_propagate_boolean (G_TASK (result), error);
 }
@@ -671,6 +744,7 @@ sysprof_capture_view_finalize (GObject *object)
   SysprofCaptureView *self = (SysprofCaptureView *)object;
   SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
 
+  g_clear_pointer (&priv->mark_stats, g_hash_table_unref);
   g_clear_pointer (&priv->reader, sysprof_capture_reader_unref);
   g_clear_object (&priv->cancellable);
 

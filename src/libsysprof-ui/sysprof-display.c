@@ -71,7 +71,7 @@ sysprof_display_new (void)
   return g_object_new (SYSPROF_TYPE_DISPLAY, NULL);
 }
 
-static gchar *
+gchar *
 sysprof_display_dup_title (SysprofDisplay *self)
 {
   SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
@@ -91,7 +91,38 @@ sysprof_display_dup_title (SysprofDisplay *self)
 
     }
 
-  return g_strdup (_("Unsaved Session"));
+  return g_strdup (_("New Recording"));
+}
+
+static void
+update_title_child_property (SysprofDisplay *self)
+{
+  GtkWidget *parent;
+
+  g_assert (SYSPROF_IS_DISPLAY (self));
+
+  if ((parent = gtk_widget_get_parent (GTK_WIDGET (self))) && GTK_IS_NOTEBOOK (parent))
+    {
+      g_autofree gchar *title = sysprof_display_dup_title (self);
+
+      gtk_container_child_set (GTK_CONTAINER (parent), GTK_WIDGET (self),
+                               "menu-label", title,
+                               NULL);
+    }
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
+}
+
+static void
+sysprof_display_parent_set (GtkWidget *widget,
+                            GtkWidget *old_parent)
+{
+  g_assert (SYSPROF_IS_DISPLAY (widget));
+
+  if (GTK_WIDGET_CLASS (sysprof_display_parent_class)->parent_set)
+    GTK_WIDGET_CLASS (sysprof_display_parent_class)->parent_set (widget, old_parent);
+
+  update_title_child_property (SYSPROF_DISPLAY (widget));
 }
 
 static void
@@ -146,6 +177,8 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
   object_class->finalize = sysprof_display_finalize;
   object_class->get_property = sysprof_display_get_property;
   object_class->set_property = sysprof_display_set_property;
+
+  widget_class->parent_set = sysprof_display_parent_set;
 
   properties [PROP_TITLE] =
     g_param_spec_string ("title",
@@ -281,5 +314,5 @@ sysprof_display_open (SysprofDisplay *self,
   g_task_set_task_data (task, g_file_dup (file), g_object_unref);
   g_task_run_in_thread (task, sysprof_display_open_worker);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
+  update_title_child_property (self);
 }

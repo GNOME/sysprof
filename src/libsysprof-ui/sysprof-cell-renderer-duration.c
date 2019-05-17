@@ -122,8 +122,8 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   else
     {
       cairo_set_line_width (cr, 1);
-      cairo_move_to (cr, r.x, r.y);
-      cairo_line_to (cr, r.x, r.y + r.height);
+      cairo_move_to (cr, r.x + .5, r.y);
+      cairo_line_to (cr, r.x + .5, r.y + r.height);
       cairo_stroke (cr);
     }
 

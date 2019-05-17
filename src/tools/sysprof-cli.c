@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include <fcntl.h>
+#include <glib-unix.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 #include <signal.h>
@@ -32,42 +33,26 @@
 
 static GMainLoop  *main_loop;
 static SysprofProfiler *profiler;
-static int efd = -1;
 static int exit_code = EXIT_SUCCESS;
 
-static void
-signal_handler (int signum)
-{
-  gint64 val = 1;
-
-  write (efd, &val, sizeof val);
-}
-
 static gboolean
-dispatch (GSource     *source,
-          GSourceFunc  callback,
-          gpointer     callback_data)
+sigint_handler (gpointer user_data)
 {
-  sysprof_profiler_stop (profiler);
   g_main_loop_quit (main_loop);
   return G_SOURCE_REMOVE;
 }
 
-static GSourceFuncs source_funcs = {
-  NULL, NULL, dispatch, NULL
-};
-
 static void
 profiler_stopped (SysprofProfiler *profiler_,
-                  GMainLoop  *main_loop_)
+                  GMainLoop       *main_loop_)
 {
   g_main_loop_quit (main_loop_);
 }
 
 static void
-profiler_failed (SysprofProfiler   *profiler_,
-                 const GError *reason,
-                 GMainLoop    *main_loop_)
+profiler_failed (SysprofProfiler *profiler_,
+                 const GError    *reason,
+                 GMainLoop       *main_loop_)
 {
   g_assert (SYSPROF_IS_PROFILER (profiler_));
   g_assert (reason != NULL);
@@ -86,7 +71,6 @@ main (gint   argc,
   GOptionContext *context;
   const gchar *filename = "capture.syscap";
   GError *error = NULL;
-  GSource *gsource;
   gchar *command = NULL;
   gboolean no_memory = FALSE;
   gboolean no_cpu = FALSE;
@@ -106,6 +90,9 @@ main (gint   argc,
   };
 
   sysprof_clock_init ();
+
+  g_unix_signal_add (SIGINT, sigint_handler, main_loop);
+  g_unix_signal_add (SIGTERM, sigint_handler, main_loop);
 
   context = g_option_context_new (_("[CAPTURE_FILE] — Sysprof"));
   g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
@@ -135,13 +122,7 @@ main (gint   argc,
       return EXIT_FAILURE;
     }
 
-  efd = eventfd (0, O_CLOEXEC);
-
   main_loop = g_main_loop_new (NULL, FALSE);
-
-  gsource = g_source_new (&source_funcs, sizeof (GSource));
-  g_source_add_unix_fd (gsource, efd, G_IO_IN);
-  g_source_attach (gsource, NULL);
 
   profiler = sysprof_local_profiler_new ();
 
@@ -233,9 +214,6 @@ main (gint   argc,
       sysprof_profiler_add_pid (profiler, pid);
     }
 
-  signal (SIGINT, signal_handler);
-  signal (SIGTERM, signal_handler);
-
   sysprof_profiler_start (profiler);
 
   /* Restore the process if we stopped it */
@@ -250,7 +228,7 @@ main (gint   argc,
   while (g_main_context_pending (main_context))
     g_main_context_iteration (main_context, FALSE);
 
-  close (efd);
+  sysprof_capture_writer_flush (writer);
 
   g_clear_pointer (&writer, sysprof_capture_writer_unref);
   g_clear_object (&profiler);

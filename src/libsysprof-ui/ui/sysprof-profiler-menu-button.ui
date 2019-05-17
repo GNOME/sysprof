@@ -2,6 +2,9 @@
 <interface>
   <template class="SysprofProfilerMenuButton" parent="GtkMenuButton">
     <property name="popover">popover</property>
+    <style>
+      <class name="sysprofprofilermenubutton"/>
+    </style>
     <child>
       <object class="GtkImage">
         <property name="icon-name">pan-down-symbolic</property>

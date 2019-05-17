@@ -26,19 +26,7 @@
 #include "sysprof-notebook.h"
 #include "sysprof-tab.h"
 
-typedef struct
-{
-  void *dummy;
-} SysprofNotebookPrivate;
-
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofNotebook, sysprof_notebook, GTK_TYPE_NOTEBOOK)
-
-enum {
-  PROP_0,
-  N_PROPS
-};
-
-static GParamSpec *properties [N_PROPS];
+G_DEFINE_TYPE (SysprofNotebook, sysprof_notebook, GTK_TYPE_NOTEBOOK)
 
 /**
  * sysprof_notebook_new:
@@ -98,53 +86,9 @@ sysprof_notebook_page_removed (GtkNotebook *notebook,
 }
 
 static void
-sysprof_notebook_finalize (GObject *object)
-{
-  SysprofNotebook *self = (SysprofNotebook *)object;
-  SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
-
-  G_OBJECT_CLASS (sysprof_notebook_parent_class)->finalize (object);
-}
-
-static void
-sysprof_notebook_get_property (GObject    *object,
-                               guint       prop_id,
-                               GValue     *value,
-                               GParamSpec *pspec)
-{
-  SysprofNotebook *self = SYSPROF_NOTEBOOK (object);
-
-  switch (prop_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
-sysprof_notebook_set_property (GObject      *object,
-                               guint         prop_id,
-                               const GValue *value,
-                               GParamSpec   *pspec)
-{
-  SysprofNotebook *self = SYSPROF_NOTEBOOK (object);
-
-  switch (prop_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
 sysprof_notebook_class_init (SysprofNotebookClass *klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkNotebookClass *notebook_class = GTK_NOTEBOOK_CLASS (klass);
-
-  object_class->finalize = sysprof_notebook_finalize;
-  object_class->get_property = sysprof_notebook_get_property;
-  object_class->set_property = sysprof_notebook_set_property;
 
   notebook_class->page_added = sysprof_notebook_page_added;
   notebook_class->page_removed = sysprof_notebook_page_removed;

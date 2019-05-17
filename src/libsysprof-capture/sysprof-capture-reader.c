@@ -109,6 +109,35 @@ sysprof_capture_reader_get_filename (SysprofCaptureReader *self)
   return self->filename;
 }
 
+static void
+sysprof_capture_reader_discover_end_time (SysprofCaptureReader *self)
+{
+  SysprofCaptureFrame frame;
+
+  g_assert (self != NULL);
+
+  while (sysprof_capture_reader_peek_frame (self, &frame))
+    {
+      gint64 end_time = frame.time;
+
+      if (frame.type == SYSPROF_CAPTURE_FRAME_MARK)
+        {
+          const SysprofCaptureMark *mark = NULL;
+
+          if ((mark = sysprof_capture_reader_read_mark (self)))
+            end_time = frame.time + MAX (0, mark->duration);
+        }
+
+      if (end_time > self->end_time)
+        self->end_time = end_time;
+
+      if (!sysprof_capture_reader_skip (self))
+        break;
+    }
+
+  sysprof_capture_reader_reset (self);
+}
+
 /**
  * sysprof_capture_reader_new_from_fd:
  * @fd: an fd to take ownership from
@@ -147,6 +176,13 @@ sysprof_capture_reader_new_from_fd (int      fd,
     self->endian = G_LITTLE_ENDIAN;
   else
     self->endian = G_BIG_ENDIAN;
+
+  /* If we detect a capture file that did not get an end time, or an erroneous
+   * end time, then we need to take a performance hit here and scan the file
+   * and discover the end time with frame timings.
+   */
+  if (self->header.end_time < self->header.time)
+    sysprof_capture_reader_discover_end_time (self);
 
   return self;
 }

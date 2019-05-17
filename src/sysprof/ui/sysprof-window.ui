@@ -54,21 +54,30 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="record_button">
-            <property name="label" translatable="yes" comments="Translators: This is a button.">_Record</property>
-            <property name="use-underline">true</property>
+          <object class="GtkBox">
             <property name="visible">true</property>
-            <property name="width-request">100</property>
             <style>
-              <class name="suggested-action"/>
+              <class name="linked"/>
             </style>
-          </object>
-        </child>
-        <child>
-          <object class="SysprofProfilerMenuButton" id="profiler_menu_button">
-            <property name="width-request">200</property>
-            <property name="visible">true</property>
-            <property name="halign">start</property>
+            <child>
+              <object class="GtkButton" id="record_button">
+                <property name="label" translatable="yes" comments="Translators: This is a button.">_Record</property>
+                <property name="use-underline">true</property>
+                <property name="visible">true</property>
+                <property name="width-request">100</property>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="SysprofProfilerMenuButton" id="profiler_menu_button">
+                <property name="visible">true</property>
+                <style>
+                  <class name="suggested-action"/>
+                </style>
+              </object>
+            </child>
           </object>
         </child>
         <child>

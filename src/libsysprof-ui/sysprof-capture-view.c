@@ -61,6 +61,8 @@ typedef struct
   GtkStackSwitcher       *stack_switcher;
 
   guint                   busy;
+
+  guint                   needs_fit : 1;
 } SysprofCaptureViewPrivate;
 
 typedef struct
@@ -92,6 +94,17 @@ load_async_free (gpointer data)
       g_clear_object (&state->selection);
       g_slice_free (LoadAsync, state);
     }
+}
+
+static gboolean
+do_best_fit_in_idle (gpointer user_data)
+{
+  SysprofCaptureView *self = user_data;
+
+  if (gtk_widget_get_visible (GTK_WIDGET (self)))
+    sysprof_capture_view_fit_to_width (self);
+
+  return G_SOURCE_REMOVE;
 }
 
 SysprofMarkStat *
@@ -471,6 +484,8 @@ sysprof_capture_view_scan_finish (SysprofCaptureView  *self,
 
   add_marks_to_details (self);
 
+  priv->needs_fit = TRUE;
+
   return g_task_propagate_boolean (G_TASK (result), error);
 }
 
@@ -716,17 +731,6 @@ set_use_underline_cb (GtkWidget *widget,
     }
 }
 
-static gboolean
-do_best_fit_in_idle (gpointer user_data)
-{
-  SysprofCaptureView *self = user_data;
-
-  if (gtk_widget_get_visible (GTK_WIDGET (self)))
-    sysprof_capture_view_fit_to_width (self);
-
-  return G_SOURCE_REMOVE;
-}
-
 static void
 sysprof_capture_view_map (GtkWidget *widget)
 {
@@ -737,7 +741,7 @@ sysprof_capture_view_map (GtkWidget *widget)
 
   GTK_WIDGET_CLASS (sysprof_capture_view_parent_class)->map (widget);
 
-  if (priv->reader != NULL)
+  if (priv->needs_fit)
     g_timeout_add_full (G_PRIORITY_LOW,
                         25,
                         do_best_fit_in_idle,
@@ -950,11 +954,22 @@ sysprof_capture_view_fit_to_width (SysprofCaptureView *self)
 
   g_return_if_fail (SYSPROF_IS_CAPTURE_VIEW (self));
 
+  if (priv->reader == NULL)
+    return;
+
+  duration = priv->features.end_time - priv->features.begin_time;
+
+  g_print ("DURATION: %ld\n", duration);
+
+  if (duration <= 0)
+    return;
+
+  priv->needs_fit = FALSE;
+
   /* Trim a bit off the width to avoid drawing past edges */
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
   width = MAX (100, alloc.width - 25);
 
-  duration = priv->features.end_time - priv->features.begin_time;
   zoom = sysprof_zoom_manager_fit_zoom_for_duration (priv->zoom_manager, duration, width);
   sysprof_zoom_manager_set_zoom (priv->zoom_manager, zoom);
 }

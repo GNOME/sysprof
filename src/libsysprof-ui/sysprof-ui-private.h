@@ -25,13 +25,26 @@
 
 G_BEGIN_DECLS
 
-void _sysprof_marks_view_set_hadjustment      (SysprofMarksView      *self,
-                                               GtkAdjustment         *hadjustment);
-void _sysprof_visualizer_view_set_hadjustment (SysprofVisualizerView *self,
-                                               GtkAdjustment         *hadjustment);
-void _sysprof_rounded_rectangle               (cairo_t               *cr,
-                                               const GdkRectangle    *rect,
-                                               gint                   x_radius,
-                                               gint                   y_radius);
+typedef struct
+{
+  gchar   *name;
+  guint64  count;
+  gint64   max;
+  gint64   min;
+  gint64   avg;
+} SysprofMarkStat;
+
+SysprofMarkStat *_sysprof_mark_stat_new                   (const gchar           *name);
+void             _sysprof_mark_stat_free                  (SysprofMarkStat       *self);
+void             _sysprof_marks_view_set_hadjustment      (SysprofMarksView      *self,
+                                                           GtkAdjustment         *hadjustment);
+void             _sysprof_visualizer_view_set_hadjustment (SysprofVisualizerView *self,
+                                                           GtkAdjustment         *hadjustment);
+void             _sysprof_rounded_rectangle               (cairo_t               *cr,
+                                                           const GdkRectangle    *rect,
+                                                           gint                   x_radius,
+                                                           gint                   y_radius);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofMarkStat, _sysprof_mark_stat_free)
 
 G_END_DECLS

@@ -89,6 +89,24 @@ load_async_free (gpointer data)
     }
 }
 
+SysprofMarkStat *
+_sysprof_mark_stat_new (const gchar *name)
+{
+  SysprofMarkStat *ret;
+
+  ret = g_slice_new0 (SysprofMarkStat);
+  ret->name = g_strdup (name);
+
+  return ret;
+}
+
+void
+_sysprof_mark_stat_free (SysprofMarkStat *self)
+{
+  g_clear_pointer (&self->name, g_free);
+  g_slice_free (SysprofMarkStat, self);
+}
+
 /**
  * sysprof_capture_view_new:
  *
@@ -224,6 +242,7 @@ sysprof_capture_view_scan_worker (GTask        *task,
   SysprofCaptureView *self = source_object;
   SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
   SysprofCaptureReader *reader = task_data;
+  g_autoptr(GHashTable) mark_stats = NULL;
   SysprofCaptureFeatures features = {0};
   SysprofCaptureFrame frame;
   SysprofCaptureStat st_buf = {{0}};
@@ -232,6 +251,9 @@ sysprof_capture_view_scan_worker (GTask        *task,
   g_assert (G_IS_TASK (task));
   g_assert (reader != NULL);
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  mark_stats = g_hash_table_new_full (g_str_hash, g_str_equal, NULL,
+                                      (GDestroyNotify)_sysprof_mark_stat_free);
 
   features.begin_time = sysprof_capture_reader_get_start_time (reader);
   features.end_time = sysprof_capture_reader_get_end_time (reader);
@@ -248,8 +270,34 @@ sysprof_capture_view_scan_worker (GTask        *task,
       if (frame.type == SYSPROF_CAPTURE_FRAME_MARK)
         {
           const SysprofCaptureMark *mark;
+
           if ((mark = sysprof_capture_reader_read_mark (reader)))
-            end_time = frame.time + mark->duration;
+            {
+              SysprofMarkStat *mstat;
+              gchar name[128];
+
+              end_time = frame.time + mark->duration;
+
+              g_snprintf (name, sizeof name, "%s:%s", mark->group, mark->name);
+
+              if (!(mstat = g_hash_table_lookup (mark_stats, name)))
+                {
+                  mstat = _sysprof_mark_stat_new (name);
+                  g_hash_table_insert (mark_stats, mstat->name, mstat);
+                }
+
+              if (mark->duration > 0)
+                {
+                  if (mstat->min == 0 || mark->duration < mstat->min)
+                    mstat->min = mark->duration;
+                }
+
+              if (mark->duration > mstat->max)
+                mstat->max = mark->duration;
+
+              mstat->avg += mark->duration;
+              mstat->count++;
+            }
 
           features.has_marks = TRUE;
         }
@@ -274,6 +322,29 @@ sysprof_capture_view_scan_worker (GTask        *task,
       if (end_time > features.end_time)
         features.end_time = end_time;
     }
+
+  {
+    GHashTableIter iter;
+    gpointer k,v;
+
+    g_hash_table_iter_init (&iter, mark_stats);
+    while (g_hash_table_iter_next (&iter, &k, &v))
+      {
+        SysprofMarkStat *mstat = v;
+
+        if (mstat->count > 0 && mstat->avg > 0)
+          mstat->avg /= mstat->count;
+
+#if 0
+        g_print ("%s: count=%ld avg=%ld min=%ld max=%ld\n",
+                 (gchar*)k,
+                 ((SysprofMarkStat *)v)->count,
+                 ((SysprofMarkStat *)v)->avg,
+                 ((SysprofMarkStat *)v)->min,
+                 ((SysprofMarkStat *)v)->max);
+#endif
+      }
+  }
 
   sysprof_capture_reader_set_stat (reader, &st_buf);
 

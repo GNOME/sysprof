@@ -358,7 +358,12 @@ sysprof_capture_view_scan_worker (GTask        *task,
               if (mark->duration > mstat->max)
                 mstat->max = mark->duration;
 
-              mstat->avg += mark->duration;
+              if (mark->duration > 0)
+                {
+                  mstat->avg += mark->duration;
+                  mstat->avg_count++;
+                }
+
               mstat->count++;
             }
 
@@ -395,8 +400,8 @@ sysprof_capture_view_scan_worker (GTask        *task,
       {
         SysprofMarkStat *mstat = v;
 
-        if (mstat->count > 0 && mstat->avg > 0)
-          mstat->avg /= mstat->count;
+        if (mstat->avg_count > 0 && mstat->avg > 0)
+          mstat->avg /= mstat->avg_count;
 
 #if 0
         g_print ("%s: count=%ld avg=%ld min=%ld max=%ld\n",

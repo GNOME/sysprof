@@ -32,6 +32,7 @@ typedef struct
   gint64   max;
   gint64   min;
   gint64   avg;
+  guint64  avg_count;
 } SysprofMarkStat;
 
 SysprofMarkStat *_sysprof_mark_stat_new                   (const gchar           *name);

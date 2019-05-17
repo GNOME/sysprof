@@ -30,8 +30,8 @@
 
 typedef struct
 {
-  SysprofProfiler           *profiler;
-  SysprofModelFilter        *process_filter;
+  SysprofProfiler      *profiler;
+  SysprofModelFilter   *process_filter;
 
   /* Gtk template widgets */
   GtkTreeModel         *environment_model;
@@ -39,7 +39,7 @@ typedef struct
   GtkPopover           *popover;
   GtkEntry             *process_filter_entry;
   GtkListBox           *process_list_box;
-  SysprofProcessModel       *process_model;
+  SysprofProcessModel  *process_model;
   GtkBox               *processes_box;
   GtkEntry             *spawn_entry;
   GtkStack             *stack;
@@ -930,6 +930,4 @@ sysprof_profiler_menu_button_init (SysprofProfilerMenuButton *self)
                            G_CALLBACK (sysprof_profiler_menu_button_env_key_editing_started),
                            self,
                            G_CONNECT_SWAPPED);
-
-  gtk_widget_set_sensitive (GTK_WIDGET (self), FALSE);
 }

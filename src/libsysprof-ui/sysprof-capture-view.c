@@ -155,6 +155,7 @@ add_marks_to_details (SysprofCaptureView *self)
         continue;
 
       left_label = g_object_new (GTK_TYPE_LABEL,
+                                 "selectable", TRUE,
                                  "visible", TRUE,
                                  "xalign", 1.0f,
                                  "label", st->name,
@@ -170,6 +171,7 @@ add_marks_to_details (SysprofCaptureView *self)
                              st->avg / (gdouble)NSEC_PER_SEC);
       center_label = g_object_new (GTK_TYPE_LABEL,
                                    "label", str,
+                                   "selectable", TRUE,
                                    "use-markup", TRUE,
                                    "visible", TRUE,
                                    "xalign", 0.0f,

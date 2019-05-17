@@ -31,6 +31,10 @@
 struct _SysprofDetailsView
 {
   GtkBin    parent_instance;
+
+  /* Template Objects */
+  GtkBox *left_box;
+  GtkBox *center_box;
   GtkLabel *duration;
   GtkLabel *filename;
   GtkLabel *forks;
@@ -38,6 +42,7 @@ struct _SysprofDetailsView
   GtkLabel *processes;
   GtkLabel *samples;
   GtkLabel *start_time;
+  GtkBox   *vbox;
 };
 
 G_DEFINE_TYPE (SysprofDetailsView, sysprof_details_view, GTK_TYPE_BIN)
@@ -87,6 +92,9 @@ sysprof_details_view_class_init (SysprofDetailsViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, processes);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, samples);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, start_time);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, vbox);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, left_box);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, center_box);
 }
 
 static void
@@ -149,4 +157,21 @@ sysprof_details_view_set_reader (SysprofDetailsView   *self,
 
 #undef SET_FRAME_COUNT
     }
+}
+
+void
+sysprof_details_view_add_item (SysprofDetailsView *self,
+                               GtkWidget          *left,
+                               GtkWidget          *center)
+{
+  g_return_if_fail (SYSPROF_IS_DETAILS_VIEW (self));
+  g_return_if_fail (GTK_IS_WIDGET (left));
+  g_return_if_fail (GTK_IS_WIDGET (center));
+
+  gtk_container_add_with_properties (GTK_CONTAINER (self->left_box), left,
+                                     "pack-type", GTK_PACK_START,
+                                     "expand", TRUE,
+                                     "fill", TRUE,
+                                     NULL);
+  gtk_container_add (GTK_CONTAINER (self->center_box), center);
 }

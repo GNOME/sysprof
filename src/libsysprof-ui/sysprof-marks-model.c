@@ -298,10 +298,16 @@ item_compare (gconstpointer a,
     return -1;
   else if (ia->begin_time > ib->begin_time)
     return 1;
-  else if (ia->end_time > ib->end_time)
+
+  /* Sort items with longer duration first, as they might be
+   * "overarching" marks containing other marks.
+   */
+  if (ia->end_time > ib->end_time)
+    return -1;
+  else if (ib->end_time > ia->end_time)
     return 1;
-  else
-    return 0;
+
+  return 0;
 }
 
 static void

@@ -68,6 +68,7 @@ sysprof_environ_editor_create_dummy_row (SysprofEnvironEditor *self)
 
   label = g_object_new (GTK_TYPE_LABEL,
                         "label", _("New variable…"),
+                        "margin", 6,
                         "visible", TRUE,
                         "xalign", 0.0f,
                         NULL);

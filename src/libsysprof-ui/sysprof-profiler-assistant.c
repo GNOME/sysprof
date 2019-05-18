@@ -24,6 +24,7 @@
 
 #include <sysprof.h>
 
+#include "sysprof-aid-icon.h"
 #include "sysprof-environ-editor.h"
 #include "sysprof-profiler-assistant.h"
 #include "sysprof-process-model-row.h"
@@ -37,6 +38,7 @@ struct _SysprofProfilerAssistant
   GtkRevealer          *process_revealer;
   GtkListBox           *process_list_box;
   SysprofEnvironEditor *environ_editor;
+  GtkFlowBox           *aid_flow_box;
 };
 
 G_DEFINE_TYPE (SysprofProfilerAssistant, sysprof_profiler_assistant, GTK_TYPE_BIN)
@@ -54,6 +56,18 @@ GtkWidget *
 sysprof_profiler_assistant_new (void)
 {
   return g_object_new (SYSPROF_TYPE_PROFILER_ASSISTANT, NULL);
+}
+
+static void
+sysprof_profiler_assistant_aid_activated_cb (SysprofProfilerAssistant *self,
+                                             SysprofAidIcon           *icon,
+                                             GtkFlowBox               *flow_box)
+{
+  g_assert (SYSPROF_IS_PROFILER_ASSISTANT (self));
+  g_assert (SYSPROF_IS_AID_ICON (icon));
+  g_assert (GTK_IS_FLOW_BOX (flow_box));
+
+  sysprof_aid_icon_toggle (icon);
 }
 
 static GtkWidget *
@@ -128,11 +142,13 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-profiler-assistant.ui");
+  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, aid_flow_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, command_line);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, environ_editor);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_list_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_revealer);
 
+  g_type_ensure (SYSPROF_TYPE_AID_ICON);
   g_type_ensure (SYSPROF_TYPE_ENVIRON_EDITOR);
 }
 
@@ -158,6 +174,12 @@ sysprof_profiler_assistant_init (SysprofProfilerAssistant *self)
   g_signal_connect_object (self->process_revealer,
                            "notify::reveal-child",
                            G_CALLBACK (sysprof_profiler_assistant_notify_reveal_child_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (self->aid_flow_box,
+                           "child-activated",
+                           G_CALLBACK (sysprof_profiler_assistant_aid_activated_cb),
                            self,
                            G_CONNECT_SWAPPED);
 

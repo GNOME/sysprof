@@ -145,6 +145,8 @@ static void
 add_marks_to_details (SysprofCaptureView *self)
 {
   SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+  PangoAttrList *attrs;
+  PangoAttrList *dim_attrs;
   GHashTableIter iter;
   gpointer k, v;
   guint count = 0;
@@ -157,46 +159,78 @@ add_marks_to_details (SysprofCaptureView *self)
   if (g_hash_table_size (priv->mark_stats) == 0)
     return;
 
+  attrs = pango_attr_list_new ();
+  pango_attr_list_insert (attrs, pango_attr_weight_new (PANGO_WEIGHT_BOLD));
+  pango_attr_list_insert (attrs, pango_attr_foreground_alpha_new (65535/2));
+
+  dim_attrs = pango_attr_list_new ();
+  pango_attr_list_insert (dim_attrs, pango_attr_foreground_alpha_new (65535/2));
+
   g_hash_table_iter_init (&iter, priv->mark_stats);
   while (count < 100 && g_hash_table_iter_next (&iter, &k, &v))
     {
-      g_autofree gchar *str = NULL;
       SysprofMarkStat *st = v;
-      GtkLabel *left_label;
-      GtkLabel *center_label;
+      g_autofree gchar *minstr = _sysprof_format_duration (st->min);
+      g_autofree gchar *maxstr = _sysprof_format_duration (st->max);
+      g_autofree gchar *avgstr = _sysprof_format_duration (st->avg);
 
       if (st->avg == 0)
         continue;
 
-      left_label = g_object_new (GTK_TYPE_LABEL,
-                                 "selectable", TRUE,
-                                 "visible", TRUE,
-                                 "xalign", 1.0f,
-                                 "label", st->name,
-                                 "ellipsize", PANGO_ELLIPSIZE_START,
-                                 NULL);
-      gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (left_label)),
-                                   GTK_STYLE_CLASS_DIM_LABEL);
-      str = g_strdup_printf ("<span fgalpha='32767'>Min:</span> %.4lf  "
-                             "<span fgalpha='32767'>Max:</span> %.4lf  "
-                             "<span fgalpha='32767'>Ø:</span> %.4lf",
-                             st->min / (gdouble)NSEC_PER_SEC,
-                             st->max / (gdouble)NSEC_PER_SEC,
-                             st->avg / (gdouble)NSEC_PER_SEC);
-      center_label = g_object_new (GTK_TYPE_LABEL,
-                                   "label", str,
-                                   "selectable", TRUE,
-                                   "use-markup", TRUE,
-                                   "visible", TRUE,
-                                   "xalign", 0.0f,
-                                   NULL);
+      sysprof_details_view_add_item (priv->details_view,
+                                     g_object_new (GTK_TYPE_LABEL,
+                                                   "margin-top", 6,
+                                                   "label", st->name,
+                                                   "attributes", attrs,
+                                                   "xalign", 1.0f,
+                                                   "visible", TRUE,
+                                                   NULL),
+                                     NULL);
 
       sysprof_details_view_add_item (priv->details_view,
-                                     GTK_WIDGET (left_label),
-                                     GTK_WIDGET (center_label));
+                                     g_object_new (GTK_TYPE_LABEL,
+                                                   "attributes", dim_attrs,
+                                                   "label", "Min",
+                                                   "xalign", 1.0f,
+                                                   "visible", TRUE,
+                                                   NULL),
+                                     g_object_new (GTK_TYPE_LABEL,
+                                                   "label", minstr,
+                                                   "xalign", 0.0f,
+                                                   "visible", TRUE,
+                                                   NULL));
+
+      sysprof_details_view_add_item (priv->details_view,
+                                     g_object_new (GTK_TYPE_LABEL,
+                                                   "attributes", dim_attrs,
+                                                   "label", "Max",
+                                                   "xalign", 1.0f,
+                                                   "visible", TRUE,
+                                                   NULL),
+                                     g_object_new (GTK_TYPE_LABEL,
+                                                   "label", maxstr,
+                                                   "xalign", 0.0f,
+                                                   "visible", TRUE,
+                                                   NULL));
+
+      sysprof_details_view_add_item (priv->details_view,
+                                     g_object_new (GTK_TYPE_LABEL,
+                                                   "attributes", dim_attrs,
+                                                   "label", "Ø",
+                                                   "xalign", 1.0f,
+                                                   "visible", TRUE,
+                                                   NULL),
+                                     g_object_new (GTK_TYPE_LABEL,
+                                                   "label", avgstr,
+                                                   "xalign", 0.0f,
+                                                   "visible", TRUE,
+                                                   NULL));
 
       count++;
     }
+
+  pango_attr_list_unref (attrs);
+  pango_attr_list_unref (dim_attrs);
 }
 
 static void
@@ -960,8 +994,6 @@ sysprof_capture_view_fit_to_width (SysprofCaptureView *self)
     return;
 
   duration = priv->features.end_time - priv->features.begin_time;
-
-  g_print ("DURATION: %ld\n", duration);
 
   if (duration <= 0)
     return;

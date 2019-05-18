@@ -20,6 +20,7 @@ podir = join_paths(meson.source_root(), 'po')
 glib_req_version = '>= 2.50'
 gtk_req_version = '>= 3.22'
 polkit_req_version = '>= 0.105'
+dazzle_req_version = '>= 3.33.1'
 
 cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')
@@ -51,6 +52,7 @@ glib_dep = dependency('glib-2.0', version: glib_req_version)
 gio_dep = dependency('gio-2.0', version: glib_req_version)
 gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version)
 gtk_dep = dependency('gtk+-3.0', version: gtk_req_version)
+dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version)
 
 # If we find polkit 0.114, we don't need to backport autoptr cleanups
 polkit_dep = dependency('polkit-gobject-1', version: '>= 0.114', required: false)

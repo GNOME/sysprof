@@ -328,3 +328,79 @@ helpers_can_see_pids (void)
 
   return TRUE;
 }
+
+static void
+helpers_list_processes_worker (GTask        *task,
+                               gpointer      source_object,
+                               gpointer      task_data,
+                               GCancellable *cancellable)
+{
+  g_autofree gint32 *processes = NULL;
+  gsize n_processes;
+
+  g_assert (G_IS_TASK (task));
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  if (helpers_list_processes (&processes, &n_processes))
+    {
+      GArray *ar;
+
+      ar = g_array_new (FALSE, FALSE, sizeof (gint32));
+      g_array_append_vals (ar, processes, n_processes);
+      g_task_return_pointer (task,
+                             g_steal_pointer (&ar),
+                             (GDestroyNotify) g_array_unref);
+
+      return;
+    }
+
+  g_task_return_new_error (task,
+                           G_IO_ERROR,
+                           G_IO_ERROR_FAILED,
+                           "Failed to list processes");
+}
+
+void
+helpers_list_processes_async (GCancellable        *cancellable,
+                              GAsyncReadyCallback  callback,
+                              gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (NULL, cancellable, callback, user_data);
+  g_task_set_source_tag (task, helpers_list_processes_async);
+  g_task_run_in_thread (task, helpers_list_processes_worker);
+}
+
+gboolean
+helpers_list_processes_finish (GAsyncResult  *result,
+                               gint32       **processes,
+                               gsize         *n_processes,
+                               GError       **error)
+{
+  g_autoptr(GArray) ret = NULL;
+
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  if ((ret = g_task_propagate_pointer (G_TASK (result), error)))
+    {
+      if (n_processes)
+        *n_processes = ret->len;
+
+      if (processes)
+        *processes = (gint32 *)(gpointer)g_array_free (ret, FALSE);
+
+      return TRUE;
+    }
+  else
+    {
+      if (processes)
+        *processes = NULL;
+      if (n_processes)
+        *n_processes = 0;
+    }
+
+  return FALSE;
+}

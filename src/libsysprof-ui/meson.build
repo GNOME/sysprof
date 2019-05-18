@@ -11,7 +11,6 @@ libsysprof_ui_public_sources = [
   'sysprof-marks-view.c',
   'sysprof-mark-visualizer-row.c',
   'sysprof-model-filter.c',
-  'sysprof-multi-paned.c',
   'sysprof-notebook.c',
   'sysprof-process-model-row.c',
   'sysprof-profiler-menu-button.c',
@@ -48,7 +47,6 @@ libsysprof_ui_public_headers = [
   'sysprof-marks-view.h',
   'sysprof-mark-visualizer-row.h',
   'sysprof-model-filter.h',
-  'sysprof-multi-paned.h',
   'sysprof-notebook.h',
   'sysprof-process-model-row.h',
   'sysprof-profiler-menu-button.h',
@@ -70,6 +68,7 @@ libsysprof_ui_resources = gnome.compile_resources(
 libsysprof_ui_deps = [
   gio_dep,
   gtk_dep,
+  dazzle_dep,
   libsysprof_dep,
 ]
 

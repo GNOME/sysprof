@@ -82,6 +82,21 @@
             ]
         },
         {
+            "name" : "libdazzle",
+            "config-opts" : [
+                "--libdir=/app/lib",
+                "--buildtype=debugoptimized"
+            ],
+            "buildsystem" : "meson",
+            "builddir" : true,
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://gitlab.gnome.org/GNOME/libdazzle.git"
+                }
+            ]
+        },
+        {
             "name" : "sysprof",
             "config-opts" : [
                 "--libdir=/app/lib",
@@ -94,7 +109,7 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "https://git.gnome.org/browse/sysprof"
+                    "url" : "https://gitlab.gnome.org/GNOME/sysprof.git"
                 }
             ]
         }

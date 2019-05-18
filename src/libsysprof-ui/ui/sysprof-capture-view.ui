@@ -89,7 +89,7 @@
           </object>
         </child>
         <child>
-          <object class="SysprofMultiPaned">
+          <object class="DzlMultiPaned">
             <property name="visible">true</property>
             <child>
               <object class="GtkBox">

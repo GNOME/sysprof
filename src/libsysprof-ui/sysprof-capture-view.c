@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <dazzle.h>
 #include <glib/gi18n.h>
 
 #include "sysprof-callgraph-view.h"
@@ -814,6 +815,7 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
   
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
+  g_type_ensure (DZL_TYPE_MULTI_PANED);
   g_type_ensure (SYSPROF_TYPE_DETAILS_VIEW);
 }
 

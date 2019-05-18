@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 
 #define SYSPROF_UI_INSIDE
 
+# include "sysprof-aid.h"
 # include "sysprof-callgraph-view.h"
 # include "sysprof-capture-view.h"
 # include "sysprof-cell-renderer-percent.h"

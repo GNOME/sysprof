@@ -8,96 +8,155 @@
         <property name="hscrollbar-policy">never</property>
         <property name="visible">true</property>
         <child>
-          <object class="DzlThreeGrid" id="three_grid">
+          <object class="GtkBox">
             <property name="margin">36</property>
-            <property name="column-spacing">12</property>
-            <property name="row-spacing">6</property>
+            <property name="spacing">12</property>
+            <property name="orientation">vertical</property>
             <property name="visible">true</property>
             <child>
-              <object class="GtkLabel" id="label1">
-                <property name="label" translatable="yes">All Processes</property>
-                <property name="xalign">1.0</property>
-                <property name="visible">true</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-              </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSwitch" id="whole_system_switch">
-                <property name="active">true</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="visible">true</property>
-              </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox">
-                <property name="orientation">vertical</property>
+              <object class="DzlThreeGrid" id="three_grid">
+                <property name="column-spacing">12</property>
+                <property name="row-spacing">6</property>
                 <property name="visible">true</property>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Enable to generate callgraph information for all applications and the operating system kernel. This may not be possible on some system system configurations.</property>
-                    <property name="margin-bottom">6</property>
-                    <property name="max-width-chars">10</property>
-                    <property name="wrap">true</property>
+                  <object class="GtkLabel" id="label0">
+                    <property name="label" translatable="yes">Data Collection</property>
+                    <property name="xalign">1.0</property>
+                    <property name="valign">start</property>
                     <property name="visible">true</property>
-                    <property name="xalign">0.0</property>
-                    <attributes>
-                      <attribute name="scale" value="0.8333"/>
-                    </attributes>
                     <style>
                       <class name="dim-label"/>
                     </style>
                   </object>
+                  <packing>
+                    <property name="column">left</property>
+                    <property name="row">0</property>
+                  </packing>
                 </child>
                 <child>
-                  <object class="GtkRevealer" id="process_revealer">
-                    <property name="reveal-child" bind-source="whole_system_switch" bind-property="active" bind-flags="sync-create|invert-boolean"/>
+                  <object class="GtkFlowBox" id="aid_flow_box">
+                    <property name="activate-on-single-click">true</property>
+                    <property name="column-spacing">24</property>
+                    <property name="row-spacing">12</property>
+                    <property name="max-children-per-line">4</property>
+                    <property name="min-children-per-line">4</property>
+                    <property name="halign">fill</property>
+                    <property name="selection-mode">single</property>
+                    <property name="margin-bottom">24</property>
                     <property name="visible">true</property>
                     <child>
-                      <object class="GtkBox">
-                        <property name="margin-bottom">12</property>
-                        <property name="orientation">vertical</property>
+                      <object class="SysprofAidIcon">
                         <property name="visible">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="SysprofAidIcon">
+                        <property name="visible">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="SysprofAidIcon">
+                        <property name="visible">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="SysprofAidIcon">
+                        <property name="visible">true</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="column">center</property>
+                    <property name="row">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label1">
+                    <property name="label" translatable="yes">All Processes</property>
+                    <property name="xalign">1.0</property>
+                    <property name="visible">true</property>
+                    <style>
+                      <class name="dim-label"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="column">left</property>
+                    <property name="row">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSwitch" id="whole_system_switch">
+                    <property name="active">true</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="visible">true</property>
+                  </object>
+                  <packing>
+                    <property name="column">center</property>
+                    <property name="row">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="visible">true</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Include all applications and operating system kernel in callgraph. This may not be possible on some system system configurations.</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="max-width-chars">10</property>
+                        <property name="wrap">true</property>
+                        <property name="visible">true</property>
+                        <property name="xalign">0.0</property>
+                        <attributes>
+                          <attribute name="scale" value="0.8333"/>
+                        </attributes>
                         <style>
-                          <class name="linked"/>
+                          <class name="dim-label"/>
                         </style>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkRevealer" id="process_revealer">
+                        <property name="reveal-child" bind-source="whole_system_switch" bind-property="active" bind-flags="sync-create|invert-boolean"/>
+                        <property name="visible">true</property>
                         <child>
-                          <object class="GtkSearchEntry">
-                            <property name="placeholder-text" translatable="yes">Search Processes…</property>
+                          <object class="GtkBox">
+                            <property name="margin-bottom">12</property>
+                            <property name="orientation">vertical</property>
                             <property name="visible">true</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkScrolledWindow">
-                            <property name="shadow-type">in</property>
-                            <property name="hscrollbar-policy">never</property>
-                            <property name="min-content-height">175</property>
-                            <property name="max-content-height">175</property>
-                            <property name="visible">true</property>
+                            <style>
+                              <class name="linked"/>
+                            </style>
                             <child>
-                              <object class="GtkListBox" id="process_list_box">
-                                <property name="selection-mode">none</property>
+                              <object class="GtkSearchEntry">
+                                <property name="placeholder-text" translatable="yes">Search Processes…</property>
                                 <property name="visible">true</property>
-                                <child type="placeholder">
-                                  <object class="GtkLabel">
-                                    <property name="margin-left">12</property>
-                                    <property name="margin-right">12</property>
-                                    <property name="label" translatable="yes">Loading Processes…</property>
-                                    <property name="valign">center</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkScrolledWindow">
+                                <property name="shadow-type">in</property>
+                                <property name="hscrollbar-policy">never</property>
+                                <property name="min-content-height">175</property>
+                                <property name="max-content-height">175</property>
+                                <property name="visible">true</property>
+                                <child>
+                                  <object class="GtkListBox" id="process_list_box">
+                                    <property name="selection-mode">none</property>
                                     <property name="visible">true</property>
-                                    <style>
-                                      <class name="dim-label"/>
-                                    </style>
+                                    <child type="placeholder">
+                                      <object class="GtkLabel">
+                                        <property name="margin-left">12</property>
+                                        <property name="margin-right">12</property>
+                                        <property name="label" translatable="yes">Loading Processes…</property>
+                                        <property name="valign">center</property>
+                                        <property name="visible">true</property>
+                                        <style>
+                                          <class name="dim-label"/>
+                                        </style>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -107,179 +166,185 @@
                       </object>
                     </child>
                   </object>
-                </child>
-              </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label2">
-                <property name="label" translatable="yes">Launch Application</property>
-                <property name="xalign">1.0</property>
-                <property name="valign">start</property>
-                <property name="visible">true</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-              </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox">
-                <property name="orientation">vertical</property>
-                <property name="width-request">500</property>
-                <property name="valign">start</property>
-                <property name="visible">true</property>
-                <child>
-                  <object class="GtkSwitch" id="launch_switch">
-                    <property name="active">false</property>
-                    <property name="halign">start</property>
-                    <property name="valign">center</property>
-                    <property name="visible">true</property>
-                  </object>
+                  <packing>
+                    <property name="column">center</property>
+                    <property name="row">2</property>
+                  </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">Enable to launch a program of your choosing before profiling.</property>
-                    <property name="margin-top">6</property>
-                    <property name="margin-bottom">6</property>
-                    <property name="max-width-chars">10</property>
-                    <property name="wrap">true</property>
+                  <object class="GtkLabel" id="label2">
+                    <property name="label" translatable="yes">Launch Application</property>
+                    <property name="xalign">1.0</property>
+                    <property name="valign">start</property>
                     <property name="visible">true</property>
-                    <property name="xalign">0.0</property>
-                    <attributes>
-                      <attribute name="scale" value="0.8333"/>
-                    </attributes>
                     <style>
                       <class name="dim-label"/>
                     </style>
                   </object>
+                  <packing>
+                    <property name="column">left</property>
+                    <property name="row">3</property>
+                  </packing>
                 </child>
                 <child>
-                  <object class="GtkRevealer" id="launch_revealer">
-                    <property name="reveal-child" bind-source="launch_switch" bind-property="active" bind-flags="sync-create"/>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="width-request">500</property>
+                    <property name="valign">start</property>
                     <property name="visible">true</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkSwitch" id="launch_switch">
+                        <property name="active">false</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="visible">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Enable to launch a program of your choosing before profiling.</property>
                         <property name="margin-top">6</property>
-                        <property name="spacing">6</property>
-                        <property name="margin-bottom">12</property>
-                        <property name="orientation">vertical</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="max-width-chars">10</property>
+                        <property name="wrap">true</property>
+                        <property name="visible">true</property>
+                        <property name="xalign">0.0</property>
+                        <attributes>
+                          <attribute name="scale" value="0.8333"/>
+                        </attributes>
+                        <style>
+                          <class name="dim-label"/>
+                        </style>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkRevealer" id="launch_revealer">
+                        <property name="reveal-child" bind-source="launch_switch" bind-property="active" bind-flags="sync-create"/>
                         <property name="visible">true</property>
                         <child>
-                          <object class="GtkLabel">
-                            <property name="label" translatable="yes">Command Line</property>
-                            <property name="xalign">0.0</property>
-                            <property name="visible">true</property>
-                            <attributes>
-                              <attribute name="scale" value="0.8333"/>
-                              <attribute name="weight" value="bold"/>
-                            </attributes>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="command_line">
-                            <property name="visible">true</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label" translatable="yes">Environment</property>
-                            <property name="margin-top">12</property>
-                            <property name="xalign">0.0</property>
-                            <property name="visible">true</property>
-                            <attributes>
-                              <attribute name="scale" value="0.8333"/>
-                              <attribute name="weight" value="bold"/>
-                            </attributes>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkFrame">
-                            <property name="shadow-type">in</property>
+                          <object class="GtkBox">
+                            <property name="margin-top">6</property>
+                            <property name="spacing">6</property>
+                            <property name="margin-bottom">12</property>
+                            <property name="orientation">vertical</property>
                             <property name="visible">true</property>
                             <child>
-                              <object class="SysprofEnvironEditor" id="environ_editor">
+                              <object class="GtkLabel">
+                                <property name="label" translatable="yes">Command Line</property>
+                                <property name="xalign">0.0</property>
+                                <property name="visible">true</property>
+                                <attributes>
+                                  <attribute name="scale" value="0.8333"/>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                                <style>
+                                  <class name="dim-label"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="command_line">
                                 <property name="visible">true</property>
                               </object>
                             </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label" translatable="yes">Inherit Environment</property>
-                            <property name="margin-top">12</property>
-                            <property name="max-width-chars">10</property>
-                            <property name="wrap">true</property>
-                            <property name="visible">true</property>
-                            <property name="xalign">0.0</property>
-                            <attributes>
-                              <attribute name="scale" value="0.8333"/>
-                              <attribute name="weight" value="bold"/>
-                            </attributes>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkSwitch" id="inherit_switch">
-                            <property name="active">true</property>
-                            <property name="halign">start</property>
-                            <property name="visible">true</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label" translatable="yes">Enable to ensure your application shares the display, message-bus, and other desktop environment settings.</property>
-                            <property name="margin-bottom">12</property>
-                            <property name="max-width-chars">10</property>
-                            <property name="wrap">true</property>
-                            <property name="visible">true</property>
-                            <property name="xalign">0.0</property>
-                            <attributes>
-                              <attribute name="scale" value="0.8333"/>
-                            </attributes>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label" translatable="yes">Environment</property>
+                                <property name="margin-top">12</property>
+                                <property name="xalign">0.0</property>
+                                <property name="visible">true</property>
+                                <attributes>
+                                  <attribute name="scale" value="0.8333"/>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                                <style>
+                                  <class name="dim-label"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkFrame">
+                                <property name="shadow-type">in</property>
+                                <property name="visible">true</property>
+                                <child>
+                                  <object class="SysprofEnvironEditor" id="environ_editor">
+                                    <property name="visible">true</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label" translatable="yes">Inherit Environment</property>
+                                <property name="margin-top">12</property>
+                                <property name="max-width-chars">10</property>
+                                <property name="wrap">true</property>
+                                <property name="visible">true</property>
+                                <property name="xalign">0.0</property>
+                                <attributes>
+                                  <attribute name="scale" value="0.8333"/>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                                <style>
+                                  <class name="dim-label"/>
+                                </style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkSwitch" id="inherit_switch">
+                                <property name="active">true</property>
+                                <property name="halign">start</property>
+                                <property name="visible">true</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label" translatable="yes">Enable to ensure your application shares the display, message-bus, and other desktop environment settings.</property>
+                                <property name="margin-bottom">12</property>
+                                <property name="max-width-chars">10</property>
+                                <property name="wrap">true</property>
+                                <property name="visible">true</property>
+                                <property name="xalign">0.0</property>
+                                <attributes>
+                                  <attribute name="scale" value="0.8333"/>
+                                </attributes>
+                                <style>
+                                  <class name="dim-label"/>
+                                </style>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
                     </child>
                   </object>
+                  <packing>
+                    <property name="column">center</property>
+                    <property name="row">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="record_button">
+                    <property name="label" translatable="yes">_Record</property>
+                    <property name="use-underline">true</property>
+                    <property name="halign">end</property>
+                    <property name="width-request">125</property>
+                    <property name="visible">true</property>
+                    <property name="margin-top">12</property>
+                    <property name="margin-bottom">24</property>
+                    <style>
+                      <class name="suggested-action"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="column">center</property>
+                    <property name="row">4</property>
+                  </packing>
                 </child>
               </object>
               <packing>
-                <property name="column">center</property>
-                <property name="row">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="record_button">
-                <property name="label" translatable="yes">_Record</property>
-                <property name="use-underline">true</property>
-                <property name="halign">end</property>
-                <property name="width-request">125</property>
-                <property name="visible">true</property>
-                <style>
-                  <class name="suggested-action"/>
-                </style>
-              </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">4</property>
+                <property name="pack-type">start</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -290,6 +355,7 @@
   <object class="GtkSizeGroup">
     <property name="mode">vertical</property>
     <widgets>
+      <widget name="label0"/>
       <widget name="label1"/>
       <widget name="whole_system_switch"/>
     </widgets>

@@ -14,6 +14,7 @@
     <file preprocess="xml-stripblanks">ui/sysprof-display.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-details-view.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-empty-state-view.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-environ-editor-row.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-failed-state-view.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-marks-view.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-process-model-row.ui</file>

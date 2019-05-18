@@ -45,6 +45,7 @@ void             _sysprof_rounded_rectangle               (cairo_t              
                                                            const GdkRectangle    *rect,
                                                            gint                   x_radius,
                                                            gint                   y_radius);
+gchar           *_sysprof_format_duration                 (gint64                 duration);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofMarkStat, _sysprof_mark_stat_free)
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <gresources>
   <gresource prefix="/org/gnome/sysprof">
+    <file compressed="true">css/SysprofEnvironEditor-shared.css</file>
     <file compressed="true">css/SysprofVisualizerView-shared.css</file>
     <file compressed="true">css/SysprofVisualizerView-Adwaita.css</file>
     <file compressed="true">css/SysprofVisualizerView-Adwaita-dark.css</file>

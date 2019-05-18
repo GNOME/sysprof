@@ -26,6 +26,7 @@
 
 #include "sysprof-environ-editor.h"
 #include "sysprof-environ-editor-row.h"
+#include "sysprof-theme-manager.h"
 
 struct _SysprofEnvironEditor
 {
@@ -248,6 +249,7 @@ sysprof_environ_editor_class_init (SysprofEnvironEditorClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   GtkListBoxClass *list_box_class = GTK_LIST_BOX_CLASS (klass);
+  SysprofThemeManager *theme_manager = sysprof_theme_manager_get_default ();
 
   object_class->get_property = sysprof_environ_editor_get_property;
   object_class->set_property = sysprof_environ_editor_set_property;
@@ -264,12 +266,17 @@ sysprof_environ_editor_class_init (SysprofEnvironEditorClass *klass)
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  sysprof_theme_manager_register_resource (theme_manager, NULL, NULL, "/org/gnome/sysprof/css/SysprofEnvironEditor-shared.css");
 }
 
 static void
 sysprof_environ_editor_init (SysprofEnvironEditor *self)
 {
   gtk_list_box_set_selection_mode (GTK_LIST_BOX (self), GTK_SELECTION_NONE);
+
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (self)),
+                               "environ-editor");
 }
 
 GtkWidget *

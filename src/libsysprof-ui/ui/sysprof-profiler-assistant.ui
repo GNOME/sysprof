@@ -14,7 +14,7 @@
             <property name="row-spacing">6</property>
             <property name="visible">true</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="label1">
                 <property name="label" translatable="yes">All Processes</property>
                 <property name="xalign">1.0</property>
                 <property name="visible">true</property>
@@ -115,7 +115,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="label2">
                 <property name="label" translatable="yes">Launch Application</property>
                 <property name="xalign">1.0</property>
                 <property name="valign">start</property>
@@ -193,6 +193,7 @@
                         <child>
                           <object class="GtkLabel">
                             <property name="label" translatable="yes">Environment</property>
+                            <property name="margin-top">12</property>
                             <property name="xalign">0.0</property>
                             <property name="visible">true</property>
                             <attributes>
@@ -215,6 +216,46 @@
                             </child>
                           </object>
                         </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Inherit Environment</property>
+                            <property name="margin-top">12</property>
+                            <property name="max-width-chars">10</property>
+                            <property name="wrap">true</property>
+                            <property name="visible">true</property>
+                            <property name="xalign">0.0</property>
+                            <attributes>
+                              <attribute name="scale" value="0.8333"/>
+                              <attribute name="weight" value="bold"/>
+                            </attributes>
+                            <style>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSwitch" id="inherit_switch">
+                            <property name="active">true</property>
+                            <property name="halign">start</property>
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Enable to ensure your application shares the display, message-bus, and other desktop environment settings.</property>
+                            <property name="margin-bottom">12</property>
+                            <property name="max-width-chars">10</property>
+                            <property name="wrap">true</property>
+                            <property name="visible">true</property>
+                            <property name="xalign">0.0</property>
+                            <attributes>
+                              <attribute name="scale" value="0.8333"/>
+                            </attributes>
+                            <style>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
@@ -230,7 +271,6 @@
                 <property name="label" translatable="yes">_Record</property>
                 <property name="use-underline">true</property>
                 <property name="halign">end</property>
-                <property name="margin-top">24</property>
                 <property name="width-request">125</property>
                 <property name="visible">true</property>
                 <style>
@@ -247,4 +287,18 @@
       </object>
     </child>
   </template>
+  <object class="GtkSizeGroup">
+    <property name="mode">vertical</property>
+    <widgets>
+      <widget name="label1"/>
+      <widget name="whole_system_switch"/>
+    </widgets>
+  </object>
+  <object class="GtkSizeGroup">
+    <property name="mode">vertical</property>
+    <widgets>
+      <widget name="label2"/>
+      <widget name="launch_switch"/>
+    </widgets>
+  </object>
 </interface>

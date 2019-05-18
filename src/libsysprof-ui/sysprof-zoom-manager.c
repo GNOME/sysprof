@@ -542,3 +542,23 @@ sysprof_zoom_manager_get_offset_at_time (SysprofZoomManager *self,
   ratio = offset / (gdouble)full_duration;
   return ratio * width;
 }
+
+gchar *
+_sysprof_format_duration (gint64 duration)
+{
+  gboolean negative = duration < 0;
+
+  if (duration == 0)
+    return g_strdup ("0");
+
+  duration = ABS (duration);
+
+  if (duration < NSEC_PER_SEC)
+    return g_strdup_printf ("%s%.2lf msec",
+                            negative ? "-" : "",
+                            (duration / 1000000.0));
+  else
+    return g_strdup_printf ("%s%.4lf seconds",
+                            negative ? "-" : "",
+                            (duration / (gdouble)NSEC_PER_SEC));
+}

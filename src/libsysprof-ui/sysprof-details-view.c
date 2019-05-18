@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <dazzle.h>
 #include <glib/gi18n.h>
 
 #include "sysprof-details-view.h"
@@ -30,19 +31,19 @@
 
 struct _SysprofDetailsView
 {
-  GtkBin    parent_instance;
+  GtkBin        parent_instance;
 
   /* Template Objects */
-  GtkBox *left_box;
-  GtkBox *center_box;
-  GtkLabel *duration;
-  GtkLabel *filename;
-  GtkLabel *forks;
-  GtkLabel *marks;
-  GtkLabel *processes;
-  GtkLabel *samples;
-  GtkLabel *start_time;
-  GtkBox   *vbox;
+  DzlThreeGrid *three_grid;
+  GtkLabel     *duration;
+  GtkLabel     *filename;
+  GtkLabel     *forks;
+  GtkLabel     *marks;
+  GtkLabel     *processes;
+  GtkLabel     *samples;
+  GtkLabel     *start_time;
+
+  guint         next_row;
 };
 
 G_DEFINE_TYPE (SysprofDetailsView, sysprof_details_view, GTK_TYPE_BIN)
@@ -92,15 +93,17 @@ sysprof_details_view_class_init (SysprofDetailsViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, processes);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, samples);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, start_time);
-  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, vbox);
-  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, left_box);
-  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, center_box);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, three_grid);
+
+  g_type_ensure (DZL_TYPE_THREE_GRID);
 }
 
 static void
 sysprof_details_view_init (SysprofDetailsView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  self->next_row = 7;
 }
 
 GtkWidget *
@@ -165,13 +168,20 @@ sysprof_details_view_add_item (SysprofDetailsView *self,
                                GtkWidget          *center)
 {
   g_return_if_fail (SYSPROF_IS_DETAILS_VIEW (self));
-  g_return_if_fail (GTK_IS_WIDGET (left));
-  g_return_if_fail (GTK_IS_WIDGET (center));
+  g_return_if_fail (!left || GTK_IS_WIDGET (left));
+  g_return_if_fail (!center || GTK_IS_WIDGET (center));
 
-  gtk_container_add_with_properties (GTK_CONTAINER (self->left_box), left,
-                                     "pack-type", GTK_PACK_START,
-                                     "expand", TRUE,
-                                     "fill", TRUE,
-                                     NULL);
-  gtk_container_add (GTK_CONTAINER (self->center_box), center);
+  if (left)
+    gtk_container_add_with_properties (GTK_CONTAINER (self->three_grid), left,
+                                       "row", self->next_row,
+                                       "column", DZL_THREE_GRID_COLUMN_LEFT,
+                                       NULL);
+
+  if (center)
+    gtk_container_add_with_properties (GTK_CONTAINER (self->three_grid), center,
+                                       "row", self->next_row,
+                                       "column", DZL_THREE_GRID_COLUMN_CENTER,
+                                       NULL);
+
+  self->next_row++;
 }

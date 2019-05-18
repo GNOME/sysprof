@@ -236,6 +236,9 @@ sysprof_marks_view_init (SysprofMarksView *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  gtk_tree_selection_set_mode (gtk_tree_view_get_selection (priv->tree_view),
+                               GTK_SELECTION_MULTIPLE);
+
   g_signal_connect_object (priv->tree_view,
                            "key-press-event",
                            G_CALLBACK (sysprof_marks_view_tree_view_key_press_event_cb),

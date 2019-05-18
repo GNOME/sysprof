@@ -24,6 +24,7 @@
 
 #include <sysprof.h>
 
+#include "sysprof-environ-editor.h"
 #include "sysprof-profiler-assistant.h"
 #include "sysprof-process-model-row.h"
 
@@ -32,6 +33,7 @@ struct _SysprofProfilerAssistant
   GtkBin       parent_instance;
 
   /* Template Objects */
+  GtkEntry    *command_line;
   GtkRevealer *process_revealer;
   GtkListBox  *process_list_box;
 };
@@ -99,19 +101,49 @@ sysprof_profiler_assistant_row_activated_cb (SysprofProfilerAssistant *self,
 }
 
 static void
+sysprof_profiler_assistant_command_line_changed_cb (SysprofProfilerAssistant *self,
+                                                    GtkEntry                 *entry)
+{
+  g_auto(GStrv) argv = NULL;
+  GtkStyleContext *style_context;
+  const gchar *text;
+  gint argc;
+
+  g_assert (SYSPROF_IS_PROFILER_ASSISTANT (self));
+  g_assert (GTK_IS_ENTRY (entry));
+
+  style_context = gtk_widget_get_style_context (GTK_WIDGET (entry));
+  text = gtk_entry_get_text (entry);
+
+  if (text == NULL || text[0] == 0 || g_shell_parse_argv (text, &argc, &argv, NULL))
+    gtk_style_context_remove_class (style_context, GTK_STYLE_CLASS_ERROR);
+  else
+    gtk_style_context_add_class (style_context, GTK_STYLE_CLASS_ERROR);
+}
+
+static void
 sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-profiler-assistant.ui");
+  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, command_line);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_list_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_revealer);
+
+  g_type_ensure (SYSPROF_TYPE_ENVIRON_EDITOR);
 }
 
 static void
 sysprof_profiler_assistant_init (SysprofProfilerAssistant *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_signal_connect_object (self->command_line,
+                           "changed",
+                           G_CALLBACK (sysprof_profiler_assistant_command_line_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 
   g_signal_connect_object (self->process_list_box,
                            "row-activated",

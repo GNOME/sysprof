@@ -108,6 +108,37 @@ fail_if_no_proxy (SysprofHelpers *self,
 }
 
 static void
+sysprof_helpers_list_processes_local_cb (GObject      *object,
+                                         GAsyncResult *result,
+                                         gpointer      user_data)
+{
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autofree gint32 *processes = NULL;
+  gsize n_processes = 0;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (helpers_list_processes_finish (result, &processes, &n_processes, &error))
+    {
+      g_autoptr(GVariant) ret = NULL;
+
+      ret = g_variant_new_fixed_array (G_VARIANT_TYPE_INT32,
+                                       processes,
+                                       n_processes,
+                                       sizeof (gint32));
+      g_task_return_pointer (task,
+                             g_variant_take_ref (g_steal_pointer (&ret)),
+                             (GDestroyNotify) g_variant_unref);
+
+      return;
+    }
+
+  g_task_return_error (task, g_steal_pointer (&error));
+}
+
+static void
 sysprof_helpers_list_processes_cb (IpcService   *service,
                                    GAsyncResult *result,
                                    gpointer      user_data)
@@ -121,24 +152,11 @@ sysprof_helpers_list_processes_cb (IpcService   *service,
   g_assert (G_IS_TASK (task));
 
   if (!ipc_service_call_list_processes_finish (service, &processes, result, &error))
-    {
-      g_autofree gint32 *out_processes = NULL;
-      gsize out_n_processes = 0;
-
-      if (helpers_list_processes (&out_processes, &out_n_processes))
-        processes = g_variant_new_fixed_array (G_VARIANT_TYPE_INT32,
-                                               out_processes,
-                                               out_n_processes,
-                                               sizeof (gint32));
-    }
-
-  if (processes != NULL)
-    g_task_return_pointer (task, g_steal_pointer (&processes), (GDestroyNotify) g_variant_unref);
+    helpers_list_processes_async (g_task_get_cancellable (task),
+                                  sysprof_helpers_list_processes_local_cb,
+                                  g_object_ref (task));
   else
-    g_task_return_new_error (task,
-                             G_IO_ERROR,
-                             G_IO_ERROR_NOT_SUPPORTED,
-                             "Failed to list processes");
+    g_task_return_pointer (task, g_steal_pointer (&processes), (GDestroyNotify) g_variant_unref);
 }
 
 gboolean

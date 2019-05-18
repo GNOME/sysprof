@@ -2,14 +2,14 @@
 <gresources>
   <gresource prefix="/org/gnome/sysprof">
     <!-- Automatic GTK resources -->
-    <file>gtk/help-overlay.ui</file>
-    <file>gtk/menus.ui</file>
+    <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
+    <file preprocess="xml-stripblanks">gtk/menus.ui</file>
 
     <!-- Theme overrides -->
     <file compressed="true">theme/shared.css</file>
     <file compressed="true">theme/Adwaita-shared.css</file>
 
     <!-- UI Files -->
-    <file compressed="true">ui/sysprof-window.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-window.ui</file>
   </gresource>
 </gresources>

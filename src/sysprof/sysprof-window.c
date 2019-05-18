@@ -105,33 +105,11 @@ close_tab_cb (GSimpleAction *action,
   sysprof_notebook_close_current (self->notebook);
 }
 
-static void
-sysprof_window_constructed (GObject *object)
-{
-  SysprofWindow *self = (SysprofWindow *)object;
-  GApplication *app = g_application_get_default ();
-  GMenu *menu;
-
-  G_OBJECT_CLASS (sysprof_window_parent_class)->constructed (object);
-
-  menu = gtk_application_get_menu_by_id (GTK_APPLICATION (app), "win-menu");
-  gtk_menu_button_set_menu_model (self->menu_button, G_MENU_MODEL (menu));
-}
-
-static void
-sysprof_window_finalize (GObject *object)
-{
-  G_OBJECT_CLASS (sysprof_window_parent_class)->finalize (object);
-}
 
 static void
 sysprof_window_class_init (SysprofWindowClass *klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-
-  object_class->constructed = sysprof_window_constructed;
-  object_class->finalize = sysprof_window_finalize;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-window.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, menu_button);

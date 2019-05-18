@@ -27,15 +27,18 @@
 
 struct _SysprofApplication
 {
-  GtkApplication parent_instance;
+  DzlApplication parent_instance;
 };
 
-G_DEFINE_TYPE (SysprofApplication, sysprof_application, GTK_TYPE_APPLICATION)
+G_DEFINE_TYPE (SysprofApplication, sysprof_application, DZL_TYPE_APPLICATION)
 
 struct {
   const gchar *action_name;
   const gchar *accels[12];
 } default_accels[] = {
+  { "app.help",           { "F1", NULL } },
+  { "app.new-window",     { "<Primary>n", NULL } },
+  { "app.open-capture",   { "<Primary>o", NULL } },
   { "zoom.zoom-in",       { "<Primary>plus", "<Primary>KP_Add", "<Primary>equal", "ZoomIn", NULL } },
   { "zoom.zoom-out",      { "<Primary>minus", "<Primary>KP_Subtract", "ZoomOut", NULL } },
   { "zoom.zoom-one",      { "<Primary>0", "<Primary>KP_0", NULL } },

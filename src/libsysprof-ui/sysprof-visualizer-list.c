@@ -42,6 +42,7 @@ typedef struct
   SysprofCaptureCursor *cursor;
   GHashTable *mark_groups;
   guint fps_counter;
+  guint pixels_counter;
   GArray *memory;
   guint has_cpu : 1;
 } Discovery;
@@ -235,6 +236,9 @@ discover_new_rows_frame_cb (const SysprofCaptureFrame *frame,
           else if (!state->fps_counter &&
                    strstr (ctr->category, "gtk") != NULL && strstr (ctr->name, "fps") != NULL)
             state->fps_counter = ctr->id;
+          else if (!state->pixels_counter &&
+                   strstr (ctr->category, "gtk") != NULL && strstr (ctr->name, "frame pixels") != NULL)
+            state->pixels_counter = ctr->id;
           else if (strcmp ("Memory", ctr->category) == 0 &&
                    strcmp ("Used", ctr->name) == 0)
             {
@@ -333,6 +337,24 @@ handle_capture_results (GObject      *object,
       sysprof_line_visualizer_row_add_counter (SYSPROF_LINE_VISUALIZER_ROW (row), state->fps_counter, &rgba);
       rgba.alpha = 0.3;
       sysprof_line_visualizer_row_set_fill (SYSPROF_LINE_VISUALIZER_ROW (row), state->fps_counter, &rgba);
+      gtk_container_add (GTK_CONTAINER (self), row);
+    }
+
+  if (state->pixels_counter)
+    {
+      GdkRGBA rgba;
+      GtkWidget *row = g_object_new (SYSPROF_TYPE_LINE_VISUALIZER_ROW,
+                                     /* Translators: amount of pixels drawn per frame. */
+                                     "title", _("Pixel Bandwidth"),
+                                     "height-request", 35,
+                                     "selectable", FALSE,
+                                     "visible", TRUE,
+                                     "y-lower", 0.0,
+                                     NULL);
+      gdk_rgba_parse (&rgba, "#ad7fa8");
+      sysprof_line_visualizer_row_add_counter (SYSPROF_LINE_VISUALIZER_ROW (row), state->pixels_counter, &rgba);
+      rgba.alpha = 0.3;
+      sysprof_line_visualizer_row_set_fill (SYSPROF_LINE_VISUALIZER_ROW (row), state->pixels_counter, &rgba);
       gtk_container_add (GTK_CONTAINER (self), row);
     }
 

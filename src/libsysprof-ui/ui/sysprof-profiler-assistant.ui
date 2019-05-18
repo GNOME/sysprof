@@ -205,9 +205,8 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkScrolledWindow">
+                          <object class="GtkFrame">
                             <property name="shadow-type">in</property>
-                            <property name="propagate-natural-height">true</property>
                             <property name="visible">true</property>
                             <child>
                               <object class="SysprofEnvironEditor" id="environ_editor">

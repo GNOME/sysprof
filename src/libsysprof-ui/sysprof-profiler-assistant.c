@@ -30,12 +30,13 @@
 
 struct _SysprofProfilerAssistant
 {
-  GtkBin       parent_instance;
+  GtkBin                parent_instance;
 
   /* Template Objects */
-  GtkEntry    *command_line;
-  GtkRevealer *process_revealer;
-  GtkListBox  *process_list_box;
+  GtkEntry             *command_line;
+  GtkRevealer          *process_revealer;
+  GtkListBox           *process_list_box;
+  SysprofEnvironEditor *environ_editor;
 };
 
 G_DEFINE_TYPE (SysprofProfilerAssistant, sysprof_profiler_assistant, GTK_TYPE_BIN)
@@ -128,6 +129,7 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-profiler-assistant.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, command_line);
+  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, environ_editor);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_list_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_revealer);
 
@@ -137,6 +139,8 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
 static void
 sysprof_profiler_assistant_init (SysprofProfilerAssistant *self)
 {
+  g_autoptr(SysprofEnviron) environ = sysprof_environ_new ();
+
   gtk_widget_init_template (GTK_WIDGET (self));
 
   g_signal_connect_object (self->command_line,
@@ -156,4 +160,6 @@ sysprof_profiler_assistant_init (SysprofProfilerAssistant *self)
                            G_CALLBACK (sysprof_profiler_assistant_notify_reveal_child_cb),
                            self,
                            G_CONNECT_SWAPPED);
+
+  sysprof_environ_editor_set_environ (self->environ_editor, environ);
 }

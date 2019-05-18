@@ -94,6 +94,32 @@ sysprof_marks_view_tree_view_key_press_event_cb (SysprofMarksView  *self,
   return GDK_EVENT_PROPAGATE;
 }
 
+static gboolean
+get_selected (GtkTreeSelection  *selection,
+              GtkTreeModel     **model,
+              GtkTreeIter       *iter)
+{
+  GtkTreeModel *m;
+
+  g_assert (GTK_IS_TREE_SELECTION (selection));
+
+  if (gtk_tree_selection_count_selected_rows (selection) != 1)
+    return FALSE;
+
+  m = gtk_tree_view_get_model (gtk_tree_selection_get_tree_view (selection));
+  if (model)
+    *model = m;
+
+  if (iter)
+    {
+      GList *paths = gtk_tree_selection_get_selected_rows (selection, model);
+      gtk_tree_model_get_iter (m, iter, paths->data);
+      g_list_free_full (paths, (GDestroyNotify)gtk_tree_path_free);
+    }
+
+  return TRUE;
+}
+
 static void
 sysprof_marks_view_selection_changed_cb (SysprofMarksView *self,
                                          GtkTreeSelection *selection)
@@ -105,7 +131,7 @@ sysprof_marks_view_selection_changed_cb (SysprofMarksView *self,
   g_assert (SYSPROF_IS_MARKS_VIEW (self));
   g_assert (GTK_IS_TREE_SELECTION (selection));
 
-  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+  if (get_selected (selection, &model, &iter))
     {
       GtkAdjustment *adj;
       gdouble x;

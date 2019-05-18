@@ -196,6 +196,7 @@ add_marks_to_details (SysprofCaptureView *self)
                                                    NULL),
                                      g_object_new (GTK_TYPE_LABEL,
                                                    "label", minstr,
+                                                   "selectable", TRUE,
                                                    "xalign", 0.0f,
                                                    "visible", TRUE,
                                                    NULL));
@@ -209,6 +210,7 @@ add_marks_to_details (SysprofCaptureView *self)
                                                    NULL),
                                      g_object_new (GTK_TYPE_LABEL,
                                                    "label", maxstr,
+                                                   "selectable", TRUE,
                                                    "xalign", 0.0f,
                                                    "visible", TRUE,
                                                    NULL));
@@ -222,6 +224,7 @@ add_marks_to_details (SysprofCaptureView *self)
                                                    NULL),
                                      g_object_new (GTK_TYPE_LABEL,
                                                    "label", avgstr,
+                                                   "selectable", TRUE,
                                                    "xalign", 0.0f,
                                                    "visible", TRUE,
                                                    NULL));

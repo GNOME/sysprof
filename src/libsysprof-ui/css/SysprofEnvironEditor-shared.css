@@ -8,6 +8,6 @@ list.environ-editor row button.flat:not(:hover) {
   border-color: transparent;
 }
 list.environ-editor row button.flat image {
-  padding: 3;
+  padding: 3px;
   margin: 0;
 }

@@ -35,12 +35,20 @@ struct _SysprofProfilerAssistant
   GtkBin                parent_instance;
 
   /* Template Objects */
+  GtkButton            *record_button;
   GtkEntry             *command_line;
   GtkRevealer          *process_revealer;
   GtkListBox           *process_list_box;
   SysprofEnvironEditor *environ_editor;
   GtkFlowBox           *aid_flow_box;
 };
+
+enum {
+  START_RECORDING,
+  N_SIGNALS
+};
+
+static guint signals [N_SIGNALS];
 
 G_DEFINE_TYPE (SysprofProfilerAssistant, sysprof_profiler_assistant, GTK_TYPE_BIN)
 
@@ -138,9 +146,41 @@ sysprof_profiler_assistant_command_line_changed_cb (SysprofProfilerAssistant *se
 }
 
 static void
+sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
+                                              GtkButton                *button)
+{
+  g_autoptr(SysprofProfiler) profiler = NULL;
+
+  g_assert (SYSPROF_IS_PROFILER_ASSISTANT (self));
+  g_assert (GTK_IS_BUTTON (button));
+
+  gtk_widget_set_sensitive (GTK_WIDGET (self), FALSE);
+
+  profiler = sysprof_local_profiler_new ();
+
+
+  g_signal_emit (self, signals [START_RECORDING], 0, profiler);
+}
+
+static void
 sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+
+  /**
+   * SysprofProfilerAssistant::start-recording:
+   * @self: a #SysprofProfilerAssistant
+   * @profiler: a #SysprofProfiler
+   *
+   * This signal is emitted when a new profiling session should start.
+   */
+  signals [START_RECORDING] =
+    g_signal_new ("start-recording",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0, NULL, NULL,
+                  g_cclosure_marshal_VOID__OBJECT,
+                  G_TYPE_NONE, 1, SYSPROF_TYPE_PROFILER);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-profiler-assistant.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, aid_flow_box);
@@ -148,6 +188,7 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, environ_editor);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_list_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_revealer);
+  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, record_button);
 
   g_type_ensure (SYSPROF_TYPE_AID_ICON);
   g_type_ensure (SYSPROF_TYPE_CPU_AID);
@@ -160,6 +201,12 @@ sysprof_profiler_assistant_init (SysprofProfilerAssistant *self)
   g_autoptr(SysprofEnviron) environ = sysprof_environ_new ();
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_signal_connect_object (self->record_button,
+                           "clicked",
+                           G_CALLBACK (sysprof_profiler_assistant_record_clicked_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 
   g_signal_connect_object (self->command_line,
                            "changed",

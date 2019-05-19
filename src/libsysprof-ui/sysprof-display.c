@@ -28,6 +28,7 @@
 #include <sysprof-ui.h>
 #include <sysprof.h>
 
+#include "sysprof-profiler-assistant.h"
 #include "sysprof-capture-view.h"
 #include "sysprof-display.h"
 #include "sysprof-empty-state-view.h"
@@ -39,6 +40,7 @@ typedef struct
   SysprofProfiler           *profiler;
 
   /* Template Objects */
+  SysprofProfilerAssistant  *assistant;
   SysprofCaptureView        *capture_view;
   SysprofEmptyStateView     *failed_view;
   SysprofEmptyStateView     *empty_view;
@@ -69,6 +71,21 @@ GtkWidget *
 sysprof_display_new (void)
 {
   return g_object_new (SYSPROF_TYPE_DISPLAY, NULL);
+}
+
+static void
+sysprof_display_start_recording_cb (SysprofDisplay           *self,
+                                    SysprofProfiler          *profiler,
+                                    SysprofProfilerAssistant *assistant)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
+  g_return_if_fail (SYSPROF_IS_PROFILER (profiler));
+  g_return_if_fail (SYSPROF_IS_PROFILER_ASSISTANT (assistant));
+
+  sysprof_recording_state_view_set_profiler (priv->recording_view, profiler);
+  gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->recording_view));
 }
 
 gchar *
@@ -194,6 +211,7 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, empty_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, failed_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, recording_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, assistant);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, stack);
 
   g_type_ensure (SYSPROF_TYPE_CAPTURE_VIEW);
@@ -204,7 +222,15 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
 static void
 sysprof_display_init (SysprofDisplay *self)
 {
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_signal_connect_object (priv->assistant,
+                           "start-recording",
+                           G_CALLBACK (sysprof_display_start_recording_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 }
 
 /**

@@ -473,3 +473,66 @@ sysprof_display_open (SysprofDisplay *self,
 
   update_title_child_property (self);
 }
+
+void
+sysprof_display_save (SysprofDisplay *self)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+  g_autoptr(GFile) file = NULL;
+  GtkFileChooserNative *native;
+  SysprofCaptureReader *reader;
+  GtkWindow *parent;
+  gint res;
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
+
+  if (!(reader = sysprof_capture_view_get_reader (priv->capture_view)))
+    return;
+
+  parent = GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (self)));
+
+  native = gtk_file_chooser_native_new (_("Save Recording"),
+                                        parent,
+                                        GTK_FILE_CHOOSER_ACTION_SAVE,
+                                        _("Save"),
+                                        _("Cancel"));
+  gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (native), TRUE);
+  gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (native), TRUE);
+  gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER (native), TRUE);
+  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (native), "capture.sysprof");
+
+  res = gtk_native_dialog_run (GTK_NATIVE_DIALOG (native));
+
+  switch (res)
+    {
+    case GTK_RESPONSE_ACCEPT:
+      file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (native));
+
+      if (g_file_is_native (file))
+        {
+          g_autofree gchar *path = g_file_get_path (file);
+          g_autoptr(GError) error = NULL;
+
+          if (!sysprof_capture_reader_save_as (reader, path, &error))
+            {
+              GtkWidget *msg;
+
+              msg = gtk_message_dialog_new (parent,
+                                            GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_USE_HEADER_BAR,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_CLOSE,
+                                            _("Failed to save recording: %s"),
+                                            error->message);
+              gtk_window_present (GTK_WINDOW (msg));
+              g_signal_connect (msg, "response", G_CALLBACK (gtk_widget_destroy), NULL);
+            }
+        }
+
+      break;
+
+    default:
+      break;
+    }
+
+  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (native));
+}

@@ -51,5 +51,7 @@ gboolean         sysprof_display_is_empty     (SysprofDisplay *self);
 SYSPROF_AVAILABLE_IN_ALL
 void             sysprof_display_open         (SysprofDisplay *self,
                                                GFile          *file);
+SYSPROF_AVAILABLE_IN_ALL
+void             sysprof_display_save         (SysprofDisplay *self);
 
 G_END_DECLS

@@ -40,6 +40,7 @@ G_BEGIN_DECLS
 # include "sysprof-marks-model.h"
 # include "sysprof-marks-view.h"
 # include "sysprof-mark-visualizer-row.h"
+# include "sysprof-memory-aid.h"
 # include "sysprof-model-filter.h"
 # include "sysprof-notebook.h"
 # include "sysprof-process-model-row.h"

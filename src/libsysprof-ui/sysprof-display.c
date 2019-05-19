@@ -102,12 +102,28 @@ sysprof_display_profiler_stopped_cb (SysprofDisplay  *self,
                                      SysprofProfiler *profiler)
 {
   SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+  SysprofCaptureWriter *writer;
 
   g_assert (SYSPROF_IS_DISPLAY (self));
   g_assert (SYSPROF_IS_PROFILER (profiler));
 
-  gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->capture_view));
+  if ((writer = sysprof_profiler_get_writer (profiler)))
+    {
+      g_autoptr(SysprofCaptureReader) reader = NULL;
+      g_autoptr(GError) error = NULL;
 
+      if (!(reader = sysprof_capture_writer_create_reader (writer, &error)))
+        {
+          g_warning ("Failed to create capture creader: %s\n", error->message);
+          gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->failed_view));
+          goto notify;
+        }
+
+      sysprof_capture_view_load_async (priv->capture_view, reader, NULL, NULL, NULL);
+      gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->capture_view));
+    }
+
+notify:
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_RECORDING]);
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
 }
@@ -206,6 +222,21 @@ sysprof_display_get_is_recording (SysprofDisplay *self)
   g_assert (SYSPROF_IS_DISPLAY (self));
 
   return GTK_WIDGET (priv->recording_view) == gtk_stack_get_visible_child (priv->stack);
+}
+
+static void
+stop_recording_cb (GSimpleAction *action,
+                   GVariant      *param,
+                   gpointer       user_data)
+{
+  SysprofDisplay *self = user_data;
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_assert (G_IS_SIMPLE_ACTION (action));
+  g_assert (SYSPROF_IS_DISPLAY (self));
+
+  if (priv->profiler != NULL)
+    sysprof_profiler_stop (priv->profiler);
 }
 
 static void
@@ -313,8 +344,18 @@ static void
 sysprof_display_init (SysprofDisplay *self)
 {
   SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+  g_autoptr(GSimpleActionGroup) group = g_simple_action_group_new ();
+  static const GActionEntry actions[] = {
+    { "stop-recording", stop_recording_cb },
+  };
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_action_map_add_action_entries (G_ACTION_MAP (group),
+                                   actions,
+                                   G_N_ELEMENTS (actions),
+                                   self);
+  gtk_widget_insert_action_group (GTK_WIDGET (self), "display", G_ACTION_GROUP (group));
 
   g_signal_connect_object (priv->assistant,
                            "start-recording",

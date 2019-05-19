@@ -22,6 +22,8 @@
 
 #include "config.h"
 
+#include <string.h>
+
 #include "sysprof-environ.h"
 #include "sysprof-environ-variable.h"
 

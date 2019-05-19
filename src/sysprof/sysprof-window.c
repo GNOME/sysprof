@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <dazzle.h>
 #include <glib/gi18n.h>
 #include <sysprof-ui.h>
 
@@ -30,6 +31,9 @@
 struct _SysprofWindow
 {
   GtkApplicationWindow  parent_instance;
+
+  DzlBindingGroup      *display_bindings;
+
   SysprofNotebook      *notebook;
   GtkMenuButton        *menu_button;
 };
@@ -118,9 +122,38 @@ save_capture_cb (GSimpleAction *action,
 }
 
 static void
+sysprof_window_switch_page_cb (SysprofWindow   *self,
+                               GtkWidget       *widget,
+                               guint            page_num,
+                               SysprofNotebook *notebook)
+{
+  SysprofDisplay *current;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+  g_assert (SYSPROF_IS_NOTEBOOK (notebook));
+
+  current = sysprof_notebook_get_current (notebook);
+  dzl_binding_group_set_source (self->display_bindings, current);
+}
+
+static void
+sysprof_window_finalize (GObject *object)
+{
+  SysprofWindow *self = SYSPROF_WINDOW (object);
+
+  dzl_binding_group_set_source (self->display_bindings, NULL);
+  g_clear_object (&self->display_bindings);
+
+  G_OBJECT_CLASS (sysprof_window_parent_class)->finalize (object);
+}
+
+static void
 sysprof_window_class_init (SysprofWindowClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+
+  object_class->finalize = sysprof_window_finalize;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-window.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, menu_button);
@@ -134,6 +167,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 static void
 sysprof_window_init (SysprofWindow *self)
 {
+  GAction *action;
   static GActionEntry actions[] = {
     { "close-tab", close_tab_cb },
     { "new-tab", new_tab_cb },
@@ -147,6 +181,20 @@ sysprof_window_init (SysprofWindow *self)
                                    actions,
                                    G_N_ELEMENTS (actions),
                                    self);
+  action = g_action_map_lookup_action (G_ACTION_MAP (self), "save-capture");
+
+  self->display_bindings = dzl_binding_group_new ();
+  dzl_binding_group_bind (self->display_bindings, "can-save", action, "enabled", G_BINDING_SYNC_CREATE);
+
+  g_signal_connect_object (self->notebook,
+                           "switch-page",
+                           G_CALLBACK (sysprof_window_switch_page_cb),
+                           self,
+                           G_CONNECT_SWAPPED | G_CONNECT_AFTER);
+
+  dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "save-capture",
+                             "enabled", FALSE,
+                             NULL);
 }
 
 void

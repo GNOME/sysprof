@@ -53,5 +53,7 @@ void             sysprof_display_open         (SysprofDisplay *self,
                                                GFile          *file);
 SYSPROF_AVAILABLE_IN_ALL
 void             sysprof_display_save         (SysprofDisplay *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean         sysprof_display_get_can_save (SysprofDisplay *self);
 
 G_END_DECLS

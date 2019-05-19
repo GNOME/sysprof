@@ -43,8 +43,8 @@
           <object class="GtkLabel" id="label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Aid Description</property>
             <property name="use_underline">True</property>
+            <property name="justify">center</property>
             <property name="wrap">True</property>
             <property name="mnemonic_widget">SysprofAidIcon</property>
             <property name="max_width_chars">12</property>

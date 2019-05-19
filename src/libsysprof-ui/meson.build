@@ -1,6 +1,7 @@
 libsysprof_ui_public_sources = [
   'sysprof-aid.c',
   'sysprof-capture-view.c',
+  'sysprof-callgraph-aid.c',
   'sysprof-callgraph-view.c',
   'sysprof-color-cycle.c',
   'sysprof-cpu-aid.c',
@@ -46,6 +47,7 @@ libsysprof_ui_private_sources = [
 libsysprof_ui_public_headers = [
   'sysprof-aid.h',
   'sysprof-capture-view.h',
+  'sysprof-callgraph-aid.h',
   'sysprof-callgraph-view.h',
   'sysprof-cell-renderer-percent.h',
   'sysprof-cpu-aid.h',

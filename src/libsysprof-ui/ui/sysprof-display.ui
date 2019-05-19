@@ -15,16 +15,6 @@
           </packing>
         </child>
         <child>
-          <object class="SysprofEmptyStateView" id="empty_view">
-            <property name="title" translatable="yes">Welcome to Sysprof</property>
-            <property name="subtitle" translatable="yes">Start profiling your system with the &lt;b&gt;Record&lt;/b&gt; button above.</property>
-            <property name="visible">true</property>
-          </object>
-          <packing>
-            <property name="name">empty</property>
-          </packing>
-        </child>
-        <child>
           <object class="SysprofCaptureView" id="capture_view">
             <property name="visible">true</property>
           </object>

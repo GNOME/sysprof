@@ -43,7 +43,6 @@ typedef struct
   SysprofProfilerAssistant  *assistant;
   SysprofCaptureView        *capture_view;
   SysprofEmptyStateView     *failed_view;
-  SysprofEmptyStateView     *empty_view;
   SysprofRecordingStateView *recording_view;
   GtkStack                  *stack;
 } SysprofDisplayPrivate;
@@ -80,12 +79,18 @@ sysprof_display_start_recording_cb (SysprofDisplay           *self,
 {
   SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
 
-  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
-  g_return_if_fail (SYSPROF_IS_PROFILER (profiler));
-  g_return_if_fail (SYSPROF_IS_PROFILER_ASSISTANT (assistant));
+  g_assert (SYSPROF_IS_DISPLAY (self));
+  g_assert (SYSPROF_IS_PROFILER (profiler));
+  g_assert (SYSPROF_IS_PROFILER_ASSISTANT (assistant));
+  g_assert (sysprof_display_is_empty (self));
 
-  sysprof_recording_state_view_set_profiler (priv->recording_view, profiler);
-  gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->recording_view));
+  if (g_set_object (&priv->profiler, profiler))
+    {
+      sysprof_recording_state_view_set_profiler (priv->recording_view, profiler);
+      gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->recording_view));
+    }
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
 }
 
 gchar *
@@ -107,6 +112,9 @@ sysprof_display_dup_title (SysprofDisplay *self)
         return g_strdup (filename);
 
     }
+
+  if (priv->profiler != NULL)
+    return g_strdup (_("⏺ Recording…"));
 
   return g_strdup (_("New Recording"));
 }
@@ -208,7 +216,6 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-display.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, capture_view);
-  gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, empty_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, failed_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, recording_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, assistant);

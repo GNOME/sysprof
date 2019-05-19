@@ -13,14 +13,12 @@
         <attribute name="accel">&lt;primary&gt;n</attribute>
       </item>
     </section>
-    <section id="win-menu-open">
+    <section id="win-menu-file">
       <item>
         <attribute name="label" translatable="yes">Open Recording…</attribute>
         <attribute name="action">app.open-capture</attribute>
         <attribute name="accel">&lt;primary&gt;o</attribute>
       </item>
-    </section>
-    <section id="win-menu-save">
       <item>
         <attribute name="label" translatable="yes">Save Recording…</attribute>
         <attribute name="action">win.save-capture</attribute>

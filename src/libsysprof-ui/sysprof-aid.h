@@ -38,22 +38,28 @@ struct _SysprofAidClass
 {
   GObjectClass parent_class;
 
+  void (*prepare) (SysprofAid      *self,
+                   SysprofProfiler *profiler);
+
   /*< gpointer >*/
   gpointer _reserved[16];
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-const gchar *sysprof_aid_get_display_name (SysprofAid  *self);
+const gchar *sysprof_aid_get_display_name (SysprofAid      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_aid_set_display_name (SysprofAid  *self,
-                                           const gchar *display_name);
+void         sysprof_aid_set_display_name (SysprofAid      *self,
+                                           const gchar     *display_name);
 SYSPROF_AVAILABLE_IN_ALL
-GIcon       *sysprof_aid_get_icon         (SysprofAid  *self);
+GIcon       *sysprof_aid_get_icon         (SysprofAid      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_aid_set_icon         (SysprofAid  *self,
-                                           GIcon       *icon);
+void         sysprof_aid_set_icon         (SysprofAid      *self,
+                                           GIcon           *icon);
 SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_aid_set_icon_name    (SysprofAid  *self,
-                                           const gchar *icon_name);
+void         sysprof_aid_set_icon_name    (SysprofAid      *self,
+                                           const gchar     *icon_name);
+SYSPROF_AVAILABLE_IN_ALL
+void         sysprof_aid_prepare          (SysprofAid      *self,
+                                           SysprofProfiler *profiler);
 
 G_END_DECLS

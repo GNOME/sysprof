@@ -49,8 +49,24 @@ sysprof_cpu_aid_new (void)
 }
 
 static void
+sysprof_cpu_aid_prepare (SysprofAid      *self,
+                         SysprofProfiler *profiler)
+{
+  g_autoptr(SysprofSource) source = NULL;
+
+  g_assert (SYSPROF_IS_CPU_AID (self));
+  g_assert (SYSPROF_IS_PROFILER (profiler));
+
+  source = sysprof_hostinfo_source_new ();
+  sysprof_profiler_add_source (profiler, source);
+}
+
+static void
 sysprof_cpu_aid_class_init (SysprofCpuAidClass *klass)
 {
+  SysprofAidClass *aid_class = SYSPROF_AID_CLASS (klass);
+
+  aid_class->prepare = sysprof_cpu_aid_prepare;
 }
 
 static void

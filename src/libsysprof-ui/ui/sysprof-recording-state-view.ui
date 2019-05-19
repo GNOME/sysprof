@@ -3,11 +3,13 @@
   <template class="SysprofRecordingStateView" parent="GtkBin">
     <child>
       <object class="GtkBox">
+        <property name="width-request">500</property>
+        <property name="halign">center</property>
         <property name="border-width">36</property>
         <property name="orientation">vertical</property>
         <property name="spacing">12</property>
         <property name="visible">true</property>
-        <child type="center">
+        <child>
           <object class="GtkImage">
             <property name="icon-name">org.gnome.Sysprof-symbolic</property>
             <property name="pixel-size">256</property>
@@ -27,12 +29,9 @@
             <attributes>
               <attribute name="scale" value="4"/>
               <attribute name="weight" value="bold"/>
+              <attribute name="font-features" value="font-feature-settings: &apos;tnum&apos;"/>
             </attributes>
           </object>
-          <packing>
-            <property name="pack-type">end</property>
-            <property name="position">2</property>
-          </packing>
         </child>
         <child>
           <object class="GtkLabel">
@@ -43,20 +42,20 @@
               <class name="dim-label"/>
             </style>
           </object>
-          <packing>
-            <property name="pack-type">end</property>
-            <property name="position">1</property>
-          </packing>
         </child>
         <child>
-          <object class="GtkLabel">
-            <property name="vexpand">true</property>
+          <object class="GtkButton">
+            <property name="action-name">display.stop-recording</property>
+            <property name="margin-top">24</property>
             <property name="visible">true</property>
+            <property name="label" translatable="yes">_Stop Recording</property>
+            <property name="halign">end</property>
+            <property name="width-request">125</property>
+            <property name="use-underline">true</property>
+            <style>
+              <class name="destructive-action"/>
+            </style>
           </object>
-          <packing>
-            <property name="position">0</property>
-            <property name="pack-type">end</property>
-          </packing>
         </child>
       </object>
     </child>

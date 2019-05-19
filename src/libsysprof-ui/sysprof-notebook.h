@@ -22,6 +22,7 @@
 
 #include <gtk/gtk.h>
 
+#include "sysprof-display.h"
 #include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
@@ -40,13 +41,15 @@ struct _SysprofNotebookClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget *sysprof_notebook_new           (void);
+GtkWidget      *sysprof_notebook_new           (void);
 SYSPROF_AVAILABLE_IN_ALL
-void       sysprof_notebook_close_current (SysprofNotebook *self);
+SysprofDisplay *sysprof_notebook_get_current   (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
-void       sysprof_notebook_open          (SysprofNotebook *self,
-                                           GFile           *file);
+void            sysprof_notebook_close_current (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
-void       sysprof_notebook_save          (SysprofNotebook *self);
+void            sysprof_notebook_open          (SysprofNotebook *self,
+                                                GFile           *file);
+SYSPROF_AVAILABLE_IN_ALL
+void            sysprof_notebook_save          (SysprofNotebook *self);
 
 G_END_DECLS

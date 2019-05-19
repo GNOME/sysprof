@@ -161,7 +161,7 @@ sysprof_notebook_open (SysprofNotebook *self,
   sysprof_display_open (SYSPROF_DISPLAY (display), file);
 }
 
-static SysprofDisplay *
+SysprofDisplay *
 sysprof_notebook_get_current (SysprofNotebook *self)
 {
   gint page;

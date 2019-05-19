@@ -160,3 +160,27 @@ sysprof_notebook_open (SysprofNotebook *self,
 
   sysprof_display_open (SYSPROF_DISPLAY (display), file);
 }
+
+static SysprofDisplay *
+sysprof_notebook_get_current (SysprofNotebook *self)
+{
+  gint page;
+
+  g_assert (SYSPROF_IS_NOTEBOOK (self));
+
+  if ((page = gtk_notebook_get_current_page (GTK_NOTEBOOK (self))) >= 0)
+    return SYSPROF_DISPLAY (gtk_notebook_get_nth_page (GTK_NOTEBOOK (self), page));
+
+  return NULL;
+}
+
+void
+sysprof_notebook_save (SysprofNotebook *self)
+{
+  SysprofDisplay *display;
+
+  g_return_if_fail (SYSPROF_IS_NOTEBOOK (self));
+
+  if ((display = sysprof_notebook_get_current (self)))
+    sysprof_display_save (display);
+}

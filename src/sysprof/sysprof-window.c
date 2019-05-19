@@ -105,6 +105,17 @@ close_tab_cb (GSimpleAction *action,
   sysprof_notebook_close_current (self->notebook);
 }
 
+static void
+save_capture_cb (GSimpleAction *action,
+                 GVariant      *param,
+                 gpointer       user_data)
+{
+  SysprofWindow *self = user_data;
+
+  g_return_if_fail (SYSPROF_IS_WINDOW (self));
+
+  sysprof_notebook_save (self->notebook);
+}
 
 static void
 sysprof_window_class_init (SysprofWindowClass *klass)
@@ -127,6 +138,7 @@ sysprof_window_init (SysprofWindow *self)
     { "close-tab", close_tab_cb },
     { "new-tab", new_tab_cb },
     { "switch-tab", switch_tab_cb, "i" },
+    { "save-capture", save_capture_cb },
   };
 
   gtk_widget_init_template (GTK_WIDGET (self));

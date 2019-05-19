@@ -209,11 +209,15 @@ sysprof_helpers_list_processes_async (SysprofHelpers      *self,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_helpers_list_processes_async);
 
-  if (!fail_if_no_proxy (self, task))
+  if (self->proxy != NULL)
     ipc_service_call_list_processes (self->proxy,
                                      cancellable,
                                      (GAsyncReadyCallback) sysprof_helpers_list_processes_cb,
                                      g_steal_pointer (&task));
+  else
+    helpers_list_processes_async (cancellable,
+                                  sysprof_helpers_list_processes_local_cb,
+                                  g_steal_pointer (&task));
 }
 
 gboolean

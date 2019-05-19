@@ -70,6 +70,7 @@
     <method name="ListProcesses">
       <arg name="processes" type="ai" direction="out"/>
     </method>
+
     <!--
       GetProcessInfo:
       @attributes: a comma separated string of attributes to load

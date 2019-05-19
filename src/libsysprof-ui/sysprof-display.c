@@ -110,7 +110,6 @@ sysprof_display_dup_title (SysprofDisplay *self)
 
       if ((filename = sysprof_capture_reader_get_filename (reader)))
         return g_strdup (filename);
-
     }
 
   if (priv->profiler != NULL)

@@ -52,6 +52,7 @@ G_DEFINE_TYPE_WITH_PRIVATE (SysprofDisplay, sysprof_display, GTK_TYPE_BIN)
 
 enum {
   PROP_0,
+  PROP_RECORDING,
   PROP_TITLE,
   N_PROPS
 };
@@ -92,6 +93,7 @@ sysprof_display_profiler_failed_cb (SysprofDisplay  *self,
 
   gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->failed_view));
 
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_RECORDING]);
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
 }
 
@@ -106,6 +108,7 @@ sysprof_display_profiler_stopped_cb (SysprofDisplay  *self,
 
   gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->capture_view));
 
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_RECORDING]);
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
 }
 
@@ -141,6 +144,7 @@ sysprof_display_start_recording_cb (SysprofDisplay           *self,
       sysprof_profiler_start (priv->profiler);
     }
 
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_RECORDING]);
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
 }
 
@@ -158,7 +162,7 @@ sysprof_display_dup_title (SysprofDisplay *self)
   if (priv->profiler != NULL)
     {
       if (sysprof_profiler_get_is_running (priv->profiler))
-        return g_strdup (_("⏺ Recording…"));
+        return g_strdup (_("Recording…"));
     }
 
   if (priv->file != NULL)
@@ -192,6 +196,16 @@ update_title_child_property (SysprofDisplay *self)
     }
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
+}
+
+static gboolean
+sysprof_display_get_is_recording (SysprofDisplay *self)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_DISPLAY (self));
+
+  return GTK_WIDGET (priv->recording_view) == gtk_stack_get_visible_child (priv->stack);
 }
 
 static void
@@ -229,6 +243,10 @@ sysprof_display_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_RECORDING:
+      g_value_set_boolean (value, sysprof_display_get_is_recording (self));
+      break;
+
     case PROP_TITLE:
       g_value_take_string (value, sysprof_display_dup_title (self));
       break;
@@ -262,6 +280,13 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
   object_class->set_property = sysprof_display_set_property;
 
   widget_class->parent_set = sysprof_display_parent_set;
+
+  properties [PROP_RECORDING] =
+    g_param_spec_boolean ("recording",
+                          "Recording",
+                          "If the display is in recording state",
+                          FALSE,
+                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_TITLE] =
     g_param_spec_string ("title",

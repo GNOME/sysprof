@@ -32,6 +32,7 @@ struct _SysprofTab
 
   GtkButton      *close_button;
   GtkLabel       *title;
+  GtkImage       *recording;
 
   SysprofDisplay *display;
 };
@@ -106,9 +107,8 @@ sysprof_tab_set_property (GObject      *object,
     {
     case PROP_DISPLAY:
       g_set_weak_pointer (&self->display, g_value_get_object (value));
-      g_object_bind_property (self->display, "title",
-                              self->title, "label",
-                              G_BINDING_SYNC_CREATE);
+      g_object_bind_property (self->display, "title", self->title, "label", G_BINDING_SYNC_CREATE);
+      g_object_bind_property (self->display, "recording", self->recording, "visible", G_BINDING_SYNC_CREATE);
       break;
 
     default:
@@ -128,6 +128,7 @@ sysprof_tab_class_init (SysprofTabClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-tab.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofTab, close_button);
+  gtk_widget_class_bind_template_child (widget_class, SysprofTab, recording);
   gtk_widget_class_bind_template_child (widget_class, SysprofTab, title);
 
   properties [PROP_DISPLAY] =

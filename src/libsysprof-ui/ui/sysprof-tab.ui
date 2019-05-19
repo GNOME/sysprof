@@ -7,13 +7,27 @@
     <property name="hexpand">True</property>
     <property name="spacing">6</property>
     <child>
-      <object class="GtkLabel" id="title">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="hexpand">True</property>
+      <object class="GtkImage" id="recording">
+        <property name="visible">false</property>
+        <property name="icon-name">media-record-symbolic</property>
+        <property name="pixel-size">16</property>
+        <property name="hexpand">true</property>
+        <property name="halign">end</property>
       </object>
       <packing>
         <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+        <property name="pack-type">start</property>
+      </packing>
+    </child>
+    <child type="center">
+      <object class="GtkLabel" id="title">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
         <property name="fill">True</property>
         <property name="position">0</property>
       </packing>
@@ -36,6 +50,7 @@
         </style>
       </object>
       <packing>
+        <property name="pack-type">end</property>
         <property name="expand">False</property>
         <property name="fill">True</property>
         <property name="position">1</property>

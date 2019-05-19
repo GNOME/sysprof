@@ -36,6 +36,7 @@ enum {
   PROP_0,
   PROP_DISPLAY_NAME,
   PROP_ICON,
+  PROP_ICON_NAME,
   N_PROPS
 };
 
@@ -83,16 +84,19 @@ sysprof_aid_set_property (GObject      *object,
                           GParamSpec   *pspec)
 {
   SysprofAid *self = SYSPROF_AID (object);
-  SysprofAidPrivate *priv = sysprof_aid_get_instance_private (self);
 
   switch (prop_id)
     {
     case PROP_DISPLAY_NAME:
-      priv->display_name = g_value_dup_string (value);
+      sysprof_aid_set_display_name (self, g_value_get_object (value));
       break;
 
     case PROP_ICON:
-      priv->icon = g_value_dup_object (value);
+      sysprof_aid_set_icon (self, g_value_get_object (value));
+      break;
+
+    case PROP_ICON_NAME:
+      sysprof_aid_set_icon_name (self, g_value_get_string (value));
       break;
 
     default:
@@ -114,14 +118,21 @@ sysprof_aid_class_init (SysprofAidClass *klass)
                          "Display Name",
                          "Display Name",
                          NULL,
-                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_ICON_NAME] =
+    g_param_spec_string ("icon-name",
+                         "Icon Name",
+                         "Icon Name",
+                         NULL,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_ICON] =
     g_param_spec_object ("icon",
                          "Icon",
                          "The icon to display",
                          G_TYPE_ICON,
-                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -168,4 +179,46 @@ sysprof_aid_get_icon (SysprofAid *self)
   g_return_val_if_fail (SYSPROF_IS_AID (self), NULL);
 
   return priv->icon;
+}
+
+void
+sysprof_aid_set_icon (SysprofAid *self,
+                      GIcon      *icon)
+{
+  SysprofAidPrivate *priv = sysprof_aid_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_AID (self));
+
+  if (g_set_object (&priv->icon, icon))
+    g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ICON]);
+}
+
+void
+sysprof_aid_set_icon_name (SysprofAid  *self,
+                           const gchar *icon_name)
+{
+  g_autoptr(GIcon) icon = NULL;
+
+  g_return_if_fail (SYSPROF_IS_AID (self));
+
+  if (icon_name != NULL)
+    icon = g_themed_icon_new (icon_name);
+
+  sysprof_aid_set_icon (self, icon);
+}
+
+void
+sysprof_aid_set_display_name (SysprofAid  *self,
+                              const gchar *display_name)
+{
+  SysprofAidPrivate *priv = sysprof_aid_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_AID (self));
+
+  if (g_strcmp0 (display_name, priv->display_name) != 0)
+    {
+      g_free (priv->display_name);
+      priv->display_name = g_strdup (display_name);
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_DISPLAY_NAME]);
+    }
 }

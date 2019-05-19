@@ -31,6 +31,7 @@ G_BEGIN_DECLS
 # include "sysprof-callgraph-view.h"
 # include "sysprof-capture-view.h"
 # include "sysprof-cell-renderer-percent.h"
+# include "sysprof-cpu-aid.h"
 # include "sysprof-cpu-visualizer-row.h"
 # include "sysprof-display.h"
 # include "sysprof-empty-state-view.h"

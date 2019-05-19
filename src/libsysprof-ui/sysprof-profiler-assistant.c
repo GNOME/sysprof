@@ -25,6 +25,7 @@
 #include <sysprof.h>
 
 #include "sysprof-aid-icon.h"
+#include "sysprof-cpu-aid.h"
 #include "sysprof-environ-editor.h"
 #include "sysprof-profiler-assistant.h"
 #include "sysprof-process-model-row.h"
@@ -149,6 +150,7 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_revealer);
 
   g_type_ensure (SYSPROF_TYPE_AID_ICON);
+  g_type_ensure (SYSPROF_TYPE_CPU_AID);
   g_type_ensure (SYSPROF_TYPE_ENVIRON_EDITOR);
 }
 

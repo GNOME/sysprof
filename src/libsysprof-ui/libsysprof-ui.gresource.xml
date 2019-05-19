@@ -8,6 +8,7 @@
 
     <!-- Application icons -->
     <file alias="icons/scalable/apps/org.gnome.Sysprof.svg">../../data/icons/scalable/apps/org.gnome.Sysprof.svg</file>
+    <file alias="icons/scalable/apps/org.gnome.Sysprof-symbolic.svg">../../data/icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg</file>
     <file alias="icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg">../../data/icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg</file>
 
     <file preprocess="xml-stripblanks">ui/sysprof-aid-icon.ui</file>

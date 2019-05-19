@@ -41,6 +41,9 @@ struct _SysprofProfilerAssistant
   GtkListBox           *process_list_box;
   SysprofEnvironEditor *environ_editor;
   GtkFlowBox           *aid_flow_box;
+  GtkSwitch            *whole_system_switch;
+  GtkSwitch            *launch_switch;
+  GtkSwitch            *inherit_switch;
 };
 
 enum {
@@ -183,6 +186,31 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
                          (GtkCallback) sysprof_profiler_assistant_foreach_cb,
                          profiler);
 
+  /* Setup whole system profiling */
+  sysprof_profiler_set_whole_system (profiler, gtk_switch_get_active (self->whole_system_switch));
+
+  if (gtk_switch_get_active (self->launch_switch))
+    {
+      g_auto(GStrv) argv = NULL;
+      g_auto(GStrv) env = NULL;
+      SysprofEnviron *environ;
+      const gchar *command;
+      gint argc;
+
+      command = gtk_entry_get_text (self->command_line);
+      g_shell_parse_argv (command, &argc, &argv, NULL);
+
+      sysprof_profiler_set_spawn (profiler, TRUE);
+      sysprof_profiler_set_spawn_argv (profiler, (const gchar * const *)argv);
+
+      environ = sysprof_environ_editor_get_environ (self->environ_editor);
+      env = sysprof_environ_get_environ (environ);
+      sysprof_profiler_set_spawn_env (profiler, (const gchar * const *)env);
+
+      sysprof_profiler_set_spawn_inherit_environ (profiler,
+                                                  gtk_switch_get_active (self->inherit_switch));
+    }
+
   g_signal_emit (self, signals [START_RECORDING], 0, profiler);
 }
 
@@ -213,6 +241,9 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_list_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_revealer);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, record_button);
+  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, whole_system_switch);
+  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, launch_switch);
+  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, inherit_switch);
 
   g_type_ensure (SYSPROF_TYPE_AID_ICON);
   g_type_ensure (SYSPROF_TYPE_CPU_AID);

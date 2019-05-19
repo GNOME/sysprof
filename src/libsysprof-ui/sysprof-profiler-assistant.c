@@ -146,6 +146,26 @@ sysprof_profiler_assistant_command_line_changed_cb (SysprofProfilerAssistant *se
 }
 
 static void
+sysprof_profiler_assistant_foreach_cb (GtkWidget       *widget,
+                                       SysprofProfiler *profiler)
+{
+  g_assert (GTK_IS_WIDGET (widget));
+  g_assert (SYSPROF_IS_PROFILER (profiler));
+
+  if (SYSPROF_IS_PROCESS_MODEL_ROW (widget) &&
+      sysprof_process_model_row_get_selected (SYSPROF_PROCESS_MODEL_ROW (widget)))
+    {
+      SysprofProcessModelItem *item;
+      GPid pid;
+
+      item = sysprof_process_model_row_get_item (SYSPROF_PROCESS_MODEL_ROW (widget));
+      pid = sysprof_process_model_item_get_pid (item);
+
+      sysprof_profiler_add_pid (profiler, pid);
+    }
+}
+
+static void
 sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
                                               GtkButton                *button)
 {
@@ -158,6 +178,10 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
 
   profiler = sysprof_local_profiler_new ();
 
+  /* Add pids to profiler */
+  gtk_container_foreach (GTK_CONTAINER (self->process_list_box),
+                         (GtkCallback) sysprof_profiler_assistant_foreach_cb,
+                         profiler);
 
   g_signal_emit (self, signals [START_RECORDING], 0, profiler);
 }

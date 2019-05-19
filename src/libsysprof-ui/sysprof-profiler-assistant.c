@@ -166,6 +166,12 @@ sysprof_profiler_assistant_foreach_cb (GtkWidget       *widget,
 
       sysprof_profiler_add_pid (profiler, pid);
     }
+  else if (SYSPROF_IS_AID_ICON (widget))
+    {
+      SysprofAid *aid = sysprof_aid_icon_get_aid (SYSPROF_AID_ICON (widget));
+
+      sysprof_aid_prepare (aid, profiler);
+    }
 }
 
 static void
@@ -221,6 +227,9 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
 #endif
 
   /* Now allow the aids to add their sources */
+  gtk_container_foreach (GTK_CONTAINER (self->aid_flow_box),
+                         (GtkCallback) sysprof_profiler_assistant_foreach_cb,
+                         profiler);
 
   g_signal_emit (self, signals [START_RECORDING], 0, profiler);
 }

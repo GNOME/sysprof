@@ -222,3 +222,14 @@ sysprof_aid_set_display_name (SysprofAid  *self,
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_DISPLAY_NAME]);
     }
 }
+
+void
+sysprof_aid_prepare (SysprofAid      *self,
+                     SysprofProfiler *profiler)
+{
+  g_return_if_fail (SYSPROF_IS_AID (self));
+  g_return_if_fail (SYSPROF_IS_PROFILER (profiler));
+
+  if (SYSPROF_AID_GET_CLASS (self)->prepare)
+    SYSPROF_AID_GET_CLASS (self)->prepare (self, profiler);
+}

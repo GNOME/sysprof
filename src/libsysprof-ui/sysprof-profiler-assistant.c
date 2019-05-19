@@ -173,6 +173,9 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
                                               GtkButton                *button)
 {
   g_autoptr(SysprofProfiler) profiler = NULL;
+#ifdef __linux__
+  g_autoptr(SysprofSource) proc_source = NULL;
+#endif
 
   g_assert (SYSPROF_IS_PROFILER_ASSISTANT (self));
   g_assert (GTK_IS_BUTTON (button));
@@ -210,6 +213,14 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
       sysprof_profiler_set_spawn_inherit_environ (profiler,
                                                   gtk_switch_get_active (self->inherit_switch));
     }
+
+#ifdef __linux__
+  /* Always add the proc source */
+  proc_source = sysprof_proc_source_new ();
+  sysprof_profiler_add_source (profiler, proc_source);
+#endif
+
+  /* Now allow the aids to add their sources */
 
   g_signal_emit (self, signals [START_RECORDING], 0, profiler);
 }

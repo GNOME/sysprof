@@ -38,6 +38,7 @@ typedef struct
 {
   GFile                     *file;
   SysprofProfiler           *profiler;
+  GError                    *error;
 
   /* Template Objects */
   SysprofProfilerAssistant  *assistant;
@@ -73,6 +74,42 @@ sysprof_display_new (void)
 }
 
 static void
+sysprof_display_profiler_failed_cb (SysprofDisplay  *self,
+                                    const GError    *error,
+                                    SysprofProfiler *profiler)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_DISPLAY (self));
+  g_assert (error != NULL);
+  g_assert (SYSPROF_IS_PROFILER (profiler));
+
+  g_clear_object (&priv->profiler);
+
+  /* Save the error for future use */
+  g_clear_error (&priv->error);
+  priv->error = g_error_copy (error);
+
+  gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->failed_view));
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
+}
+
+static void
+sysprof_display_profiler_stopped_cb (SysprofDisplay  *self,
+                                     SysprofProfiler *profiler)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_DISPLAY (self));
+  g_assert (SYSPROF_IS_PROFILER (profiler));
+
+  gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->capture_view));
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
+}
+
+static void
 sysprof_display_start_recording_cb (SysprofDisplay           *self,
                                     SysprofProfiler          *profiler,
                                     SysprofProfilerAssistant *assistant)
@@ -88,6 +125,20 @@ sysprof_display_start_recording_cb (SysprofDisplay           *self,
     {
       sysprof_recording_state_view_set_profiler (priv->recording_view, profiler);
       gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->recording_view));
+
+      g_signal_connect_object (priv->profiler,
+                               "stopped",
+                               G_CALLBACK (sysprof_display_profiler_stopped_cb),
+                               self,
+                               G_CONNECT_SWAPPED);
+
+      g_signal_connect_object (priv->profiler,
+                               "failed",
+                               G_CALLBACK (sysprof_display_profiler_failed_cb),
+                               self,
+                               G_CONNECT_SWAPPED);
+
+      sysprof_profiler_start (priv->profiler);
     }
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
@@ -101,6 +152,15 @@ sysprof_display_dup_title (SysprofDisplay *self)
 
   g_return_val_if_fail (SYSPROF_IS_DISPLAY (self), NULL);
 
+  if (priv->error)
+    return g_strdup (_("Failed Recording"));
+
+  if (priv->profiler != NULL)
+    {
+      if (sysprof_profiler_get_is_running (priv->profiler))
+        return g_strdup (_("⏺ Recording…"));
+    }
+
   if (priv->file != NULL)
     return g_file_get_basename (priv->file);
 
@@ -111,9 +171,6 @@ sysprof_display_dup_title (SysprofDisplay *self)
       if ((filename = sysprof_capture_reader_get_filename (reader)))
         return g_strdup (filename);
     }
-
-  if (priv->profiler != NULL)
-    return g_strdup (_("⏺ Recording…"));
 
   return g_strdup (_("New Recording"));
 }
@@ -155,7 +212,9 @@ sysprof_display_finalize (GObject *object)
   SysprofDisplay *self = (SysprofDisplay *)object;
   SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
 
+  g_clear_error (&priv->error);
   g_clear_object (&priv->profiler);
+  g_clear_object (&priv->file);
 
   G_OBJECT_CLASS (sysprof_display_parent_class)->finalize (object);
 }

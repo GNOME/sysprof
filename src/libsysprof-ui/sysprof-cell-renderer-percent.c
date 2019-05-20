@@ -41,9 +41,9 @@ static GParamSpec *properties [N_PROPS];
 
 static void
 sysprof_cell_renderer_percent_get_property (GObject    *object,
-                                       guint       prop_id,
-                                       GValue     *value,
-                                       GParamSpec *pspec)
+                                            guint       prop_id,
+                                            GValue     *value,
+                                            GParamSpec *pspec)
 {
   SysprofCellRendererPercent *self = SYSPROF_CELL_RENDERER_PERCENT (object);
 
@@ -60,9 +60,9 @@ sysprof_cell_renderer_percent_get_property (GObject    *object,
 
 static void
 sysprof_cell_renderer_percent_set_property (GObject      *object,
-                                       guint         prop_id,
-                                       const GValue *value,
-                                       GParamSpec   *pspec)
+                                            guint         prop_id,
+                                            const GValue *value,
+                                            GParamSpec   *pspec)
 {
   SysprofCellRendererPercent *self = SYSPROF_CELL_RENDERER_PERCENT (object);
 
@@ -115,7 +115,7 @@ sysprof_cell_renderer_percent_get_percent (SysprofCellRendererPercent *self)
 
 void
 sysprof_cell_renderer_percent_set_percent (SysprofCellRendererPercent *self,
-                                      gdouble                percent)
+                                           gdouble                     percent)
 {
   SysprofCellRendererPercentPrivate *priv = sysprof_cell_renderer_percent_get_instance_private (self);
 

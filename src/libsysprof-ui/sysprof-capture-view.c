@@ -639,8 +639,7 @@ sysprof_capture_view_load_scan_cb (GObject      *object,
                                                      g_object_ref (task));
     }
 
-  if (priv->features.has_counters || priv->features.has_marks)
-    sysprof_visualizer_view_set_reader (priv->visualizer_view, state->reader);
+  sysprof_visualizer_view_set_reader (priv->visualizer_view, state->reader);
 
   state->n_active++;
   sysprof_marks_view_load_async (priv->marks_view,

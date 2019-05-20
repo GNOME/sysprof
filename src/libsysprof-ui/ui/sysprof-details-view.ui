@@ -208,7 +208,7 @@
                 <property name="shadow-type">in</property>
                 <property name="margin-bottom">12</property>
                 <child>
-                  <object class="GtkTreeView" id="marks_tree_view">
+                  <object class="GtkTreeView" id="marks_view">
                     <property name="model">marks_store</property>
                     <property name="width-request">500</property>
                     <property name="height-request">100</property>

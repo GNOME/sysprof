@@ -37,6 +37,7 @@ struct _SysprofDetailsView
   /* Template Objects */
   DzlThreeGrid *three_grid;
   GtkListStore *marks_store;
+  GtkTreeView  *marks_view;
   GtkLabel     *duration;
   GtkLabel     *filename;
   GtkLabel     *forks;
@@ -93,6 +94,7 @@ sysprof_details_view_class_init (SysprofDetailsViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, forks);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, marks);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, marks_store);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, marks_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, processes);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, samples);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, start_time);
@@ -105,6 +107,9 @@ static void
 sysprof_details_view_init (SysprofDetailsView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_tree_selection_set_mode (gtk_tree_view_get_selection (self->marks_view),
+                               GTK_SELECTION_MULTIPLE);
 
   self->next_row = 8;
 }

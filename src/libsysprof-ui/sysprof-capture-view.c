@@ -218,7 +218,7 @@ add_marks_to_details (SysprofCaptureView *self)
       sysprof_details_view_add_item (priv->details_view,
                                      g_object_new (GTK_TYPE_LABEL,
                                                    "attributes", dim_attrs,
-                                                   "label", "Ø",
+                                                   "label", "Avg",
                                                    "xalign", 1.0f,
                                                    "visible", TRUE,
                                                    NULL),

@@ -343,6 +343,13 @@ sysprof_helpers_get_proc_file (SysprofHelpers  *self,
   g_return_val_if_fail (SYSPROF_IS_HELPERS (self), FALSE);
   g_return_val_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable), FALSE);
 
+  /* try locally first if we can */
+  if (!g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS))
+    {
+      if (helpers_get_proc_file (path, contents, &len))
+        return TRUE;
+    }
+
   if (self->proxy != NULL)
     {
       if (ipc_service_call_get_proc_file_sync (self->proxy, path, contents, cancellable, error))

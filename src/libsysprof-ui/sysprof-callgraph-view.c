@@ -50,15 +50,15 @@ typedef struct
 {
   SysprofCallgraphProfile  *profile;
 
-  GtkTreeView         *callers_view;
-  GtkTreeView         *functions_view;
-  GtkTreeView         *descendants_view;
-  GtkTreeViewColumn   *descendants_name_column;
-  GtkStack            *stack;
+  GtkTreeView              *callers_view;
+  GtkTreeView              *functions_view;
+  GtkTreeView              *descendants_view;
+  GtkTreeViewColumn        *descendants_name_column;
+  GtkStack                 *stack;
 
-  GQueue              *history;
+  GQueue                   *history;
 
-  guint                profile_size;
+  guint                     profile_size;
 } SysprofCallgraphViewPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofCallgraphView, sysprof_callgraph_view, GTK_TYPE_BIN)
@@ -83,7 +83,7 @@ enum {
 
 
 static void sysprof_callgraph_view_update_descendants (SysprofCallgraphView *self,
-                                                  StackNode       *node);
+                                                       StackNode            *node);
 
 static GParamSpec *properties [N_PROPS];
 static guint signals [N_SIGNALS];
@@ -392,8 +392,8 @@ caller_free (gpointer data)
 }
 
 static void
-sysprof_callgraph_view_function_selection_changed (SysprofCallgraphView  *self,
-                                              GtkTreeSelection *selection)
+sysprof_callgraph_view_function_selection_changed (SysprofCallgraphView *self,
+                                                   GtkTreeSelection     *selection)
 {
   SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
   GtkTreeModel *model = NULL;
@@ -515,7 +515,7 @@ sysprof_callgraph_view_function_selection_changed (SysprofCallgraphView  *self,
 
 static void
 sysprof_callgraph_view_set_node (SysprofCallgraphView *self,
-                            StackNode       *node)
+                                 StackNode            *node)
 {
   SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
   GtkTreeModel *model;
@@ -554,10 +554,10 @@ sysprof_callgraph_view_set_node (SysprofCallgraphView *self,
 }
 
 static void
-sysprof_callgraph_view_descendant_activated (SysprofCallgraphView   *self,
-                                        GtkTreePath       *path,
-                                        GtkTreeViewColumn *column,
-                                        GtkTreeView       *tree_view)
+sysprof_callgraph_view_descendant_activated (SysprofCallgraphView *self,
+                                             GtkTreePath          *path,
+                                             GtkTreeViewColumn    *column,
+                                             GtkTreeView          *tree_view)
 {
   GtkTreeModel *model;
   StackNode *node = NULL;
@@ -611,10 +611,10 @@ sysprof_callgraph_view_caller_activated (SysprofCallgraphView   *self,
 
 static void
 sysprof_callgraph_view_tag_data_func (GtkTreeViewColumn *column,
-                                 GtkCellRenderer   *cell,
-                                 GtkTreeModel      *model,
-                                 GtkTreeIter       *iter,
-                                 gpointer           data)
+                                      GtkCellRenderer   *cell,
+                                      GtkTreeModel      *model,
+                                      GtkTreeIter       *iter,
+                                      gpointer           data)
 {
   SysprofCallgraphView *self = data;
   SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
@@ -666,9 +666,9 @@ sysprof_callgraph_view_finalize (GObject *object)
 
 static void
 sysprof_callgraph_view_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
-                                GParamSpec *pspec)
+                                     guint       prop_id,
+                                     GValue     *value,
+                                     GParamSpec *pspec)
 {
   SysprofCallgraphView *self = SYSPROF_CALLGRAPH_VIEW (object);
   SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
@@ -686,9 +686,9 @@ sysprof_callgraph_view_get_property (GObject    *object,
 
 static void
 sysprof_callgraph_view_set_property (GObject      *object,
-                                guint         prop_id,
-                                const GValue *value,
-                                GParamSpec   *pspec)
+                                     guint         prop_id,
+                                     const GValue *value,
+                                     GParamSpec   *pspec)
 {
   SysprofCallgraphView *self = SYSPROF_CALLGRAPH_VIEW (object);
 
@@ -928,10 +928,10 @@ build_tree (StackNode *node)
 
 static void
 append_to_tree_and_free (SysprofCallgraphView *self,
-                         StackStash      *stash,
-                         GtkTreeStore    *store,
-                         Descendant      *item,
-                         GtkTreeIter     *parent)
+                         StackStash           *stash,
+                         GtkTreeStore         *store,
+                         Descendant           *item,
+                         GtkTreeIter          *parent)
 {
   StackNode *node = NULL;
   GtkTreeIter iter;

@@ -60,6 +60,8 @@ const SysprofCaptureMap                *sysprof_capture_reader_read_map         
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureMark               *sysprof_capture_reader_read_mark           (SysprofCaptureReader     *self);
 SYSPROF_AVAILABLE_IN_ALL
+const SysprofCaptureMetadata           *sysprof_capture_reader_read_metadata       (SysprofCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureExit               *sysprof_capture_reader_read_exit           (SysprofCaptureReader     *self);
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureFork               *sysprof_capture_reader_read_fork           (SysprofCaptureReader     *self);

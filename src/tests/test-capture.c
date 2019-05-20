@@ -607,6 +607,52 @@ test_reader_writer_mark (void)
   g_unlink ("mark1.syscap");
 }
 
+static void
+test_reader_writer_metadata (void)
+{
+  SysprofCaptureWriter *writer;
+  SysprofCaptureReader *reader;
+  const SysprofCaptureMetadata *metadata;
+  SysprofCaptureFrameType type;
+  GError *error = NULL;
+  gint r;
+
+  writer = sysprof_capture_writer_new ("metadata1.syscap", 0);
+
+#define STR1 "[Something]\nhere=1\n"
+#define STR2 "[and]\nthere=2\n"
+
+  sysprof_capture_writer_add_metadata (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, "aid.cpu", STR1, -1);
+  sysprof_capture_writer_add_metadata (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, "aid.mem", STR2, strlen (STR2));
+
+  g_clear_pointer (&writer, sysprof_capture_writer_unref);
+
+  reader = sysprof_capture_reader_new ("metadata1.syscap", &error);
+  g_assert_no_error (error);
+  g_assert (reader != NULL);
+
+  metadata = sysprof_capture_reader_read_metadata (reader);
+  g_assert_nonnull (metadata);
+  g_assert_cmpstr (metadata->id, ==, "aid.cpu");
+  g_assert_cmpstr (metadata->metadata, ==, STR1);
+  g_assert_cmpint (metadata->frame.time, >, 0);
+  g_assert_cmpint (metadata->frame.cpu, ==, -1);
+
+  metadata = sysprof_capture_reader_read_metadata (reader);
+  g_assert_nonnull (metadata);
+  g_assert_cmpstr (metadata->id, ==, "aid.mem");
+  g_assert_cmpstr (metadata->metadata, ==, STR2);
+  g_assert_cmpint (metadata->frame.time, >, 0);
+  g_assert_cmpint (metadata->frame.cpu, ==, -1);
+
+  r = sysprof_capture_reader_peek_type (reader, &type);
+  g_assert_cmpint (r, ==, FALSE);
+
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
+
+  g_unlink ("metadata1.syscap");
+}
+
 int
 main (int argc,
       char *argv[])
@@ -617,5 +663,6 @@ main (int argc,
   g_test_add_func ("/SysprofCapture/Writer/splice", test_writer_splice);
   g_test_add_func ("/SysprofCapture/Reader/splice", test_reader_splice);
   g_test_add_func ("/SysprofCapture/ReaderWriter/mark", test_reader_writer_mark);
+  g_test_add_func ("/SysprofCapture/ReaderWriter/metadata", test_reader_writer_metadata);
   return g_test_run ();
 }

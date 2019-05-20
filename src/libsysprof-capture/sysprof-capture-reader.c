@@ -532,6 +532,45 @@ sysprof_capture_reader_read_mark (SysprofCaptureReader *self)
   return mark;
 }
 
+const SysprofCaptureMetadata *
+sysprof_capture_reader_read_metadata (SysprofCaptureReader *self)
+{
+  SysprofCaptureMetadata *metadata;
+
+  g_assert (self != NULL);
+  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  g_assert (self->pos <= self->bufsz);
+
+  if (!sysprof_capture_reader_ensure_space_for (self, sizeof *metadata))
+    return NULL;
+
+  metadata = (SysprofCaptureMetadata *)(gpointer)&self->buf[self->pos];
+
+  sysprof_capture_reader_bswap_frame (self, &metadata->frame);
+
+  if (metadata->frame.type != SYSPROF_CAPTURE_FRAME_METADATA)
+    return NULL;
+
+  if (metadata->frame.len < (sizeof *metadata + 1))
+    return NULL;
+
+  if (!sysprof_capture_reader_ensure_space_for (self, metadata->frame.len))
+    return NULL;
+
+  metadata = (SysprofCaptureMetadata *)(gpointer)&self->buf[self->pos];
+
+  self->pos += metadata->frame.len;
+
+  if ((self->pos % SYSPROF_CAPTURE_ALIGN) != 0)
+    return NULL;
+
+  /* Ensure trailing \0 in .id and .metadata */
+  metadata->id[sizeof metadata->id - 1] = 0;
+  self->buf[self->pos + metadata->frame.len - 1] = 0;
+
+  return metadata;
+}
+
 const SysprofCaptureProcess *
 sysprof_capture_reader_read_process (SysprofCaptureReader *self)
 {

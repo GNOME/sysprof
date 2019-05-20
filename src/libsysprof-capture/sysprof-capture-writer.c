@@ -587,6 +587,51 @@ sysprof_capture_writer_add_mark (SysprofCaptureWriter *self,
   return TRUE;
 }
 
+gboolean
+sysprof_capture_writer_add_metadata (SysprofCaptureWriter *self,
+                                     gint64                time,
+                                     gint                  cpu,
+                                     gint32                pid,
+                                     const gchar          *id,
+                                     const gchar          *metadata,
+                                     gssize                metadata_len)
+{
+  SysprofCaptureMetadata *ev;
+  gsize len;
+
+  g_assert (self != NULL);
+  g_assert (id != NULL);
+
+  if (metadata == NULL)
+    {
+      metadata = "";
+      len = 0;
+    }
+
+  if (metadata_len < 0)
+    metadata_len = strlen (metadata);
+
+  len = sizeof *ev + metadata_len + 1;
+  ev = (SysprofCaptureMetadata *)sysprof_capture_writer_allocate (self, &len);
+  if (!ev)
+    return FALSE;
+
+  sysprof_capture_writer_frame_init (&ev->frame,
+                                     len,
+                                     cpu,
+                                     pid,
+                                     time,
+                                     SYSPROF_CAPTURE_FRAME_METADATA);
+
+  g_strlcpy (ev->id, id, sizeof ev->id);
+  memcpy (ev->metadata, metadata, metadata_len);
+  ev->metadata[metadata_len] = 0;
+
+  self->stat.frame_count[SYSPROF_CAPTURE_FRAME_METADATA]++;
+
+  return TRUE;
+}
+
 SysprofCaptureAddress
 sysprof_capture_writer_add_jitmap (SysprofCaptureWriter *self,
                                    const gchar          *name)

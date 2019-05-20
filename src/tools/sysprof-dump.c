@@ -130,12 +130,26 @@ main (gint argc,
             gdouble ptime = (mark->frame.time - begin_time) / (gdouble)NSEC_PER_SEC;
 
             g_print ("MARK: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
-                     "   group  = %s\n"
-                     "    name  = %s\n"
+                     "    group = %s\n"
+                     "     name = %s\n"
                      " duration = %"G_GUINT64_FORMAT"\n"
                      "  message = %s\n",
                      mark->frame.pid, mark->frame.time, ptime,
                      mark->group, mark->name, mark->duration, mark->message);
+
+            break;
+          }
+
+        case SYSPROF_CAPTURE_FRAME_METADATA:
+          {
+            const SysprofCaptureMetadata *metadata = sysprof_capture_reader_read_metadata (reader);
+            gdouble ptime = (metadata->frame.time - begin_time) / (gdouble)NSEC_PER_SEC;
+
+            g_print ("METADATA: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
+                     "       id = %s\n"
+                     "\"\"\"\n%s\n\"\"\"",
+                     metadata->frame.pid, metadata->frame.time, ptime,
+                     metadata->id, metadata->metadata);
 
             break;
           }

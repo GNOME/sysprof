@@ -292,14 +292,15 @@ sysprof_capture_view_generate_callgraph_cb (GObject      *object,
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
 
+  self = g_task_get_source_object (task);
+  priv = sysprof_capture_view_get_instance_private (self);
+
   if (!sysprof_profile_generate_finish (SYSPROF_PROFILE (callgraph), result, &error))
     {
+      _sysprof_callgraph_view_set_failed (priv->callgraph_view);
       g_task_return_error (task, g_steal_pointer (&error));
       return;
     }
-
-  self = g_task_get_source_object (task);
-  priv = sysprof_capture_view_get_instance_private (self);
 
   sysprof_callgraph_view_set_profile (priv->callgraph_view, callgraph);
 
@@ -513,8 +514,11 @@ sysprof_capture_view_scan_finish (SysprofCaptureView  *self,
   g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
   g_assert (G_IS_TASK (result));
 
-  if (!priv->features.has_samples && priv->features.has_marks)
-    gtk_stack_set_visible_child_name (priv->stack, "timings");
+  if (!priv->features.has_samples)
+    gtk_widget_hide (GTK_WIDGET (priv->callgraph_view));
+
+  if (!priv->features.has_marks)
+    gtk_widget_hide (GTK_WIDGET (priv->marks_view));
 
   g_clear_pointer (&priv->mark_stats, g_hash_table_unref);
   if ((stats = g_object_get_data (G_OBJECT (result), "MARK_STAT")))

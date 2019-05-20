@@ -62,6 +62,14 @@ gboolean              sysprof_capture_writer_add_mark        (SysprofCaptureWrit
                                                               const gchar                       *name,
                                                               const gchar                       *message);
 SYSPROF_AVAILABLE_IN_ALL
+gboolean              sysprof_capture_writer_add_metadata    (SysprofCaptureWriter              *self,
+                                                              gint64                             time,
+                                                              gint                               cpu,
+                                                              gint32                             pid,
+                                                              const gchar                       *id,
+                                                              const gchar                       *metadata,
+                                                              gssize                             metadata_len);
+SYSPROF_AVAILABLE_IN_ALL
 guint64               sysprof_capture_writer_add_jitmap      (SysprofCaptureWriter              *self,
                                                               const gchar                       *name);
 SYSPROF_AVAILABLE_IN_ALL

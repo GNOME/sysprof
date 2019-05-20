@@ -272,6 +272,23 @@ main (gint   argc,
                 break;
               }
 
+            case SYSPROF_CAPTURE_FRAME_METADATA:
+              {
+                const SysprofCaptureMetadata *frame;
+
+                if (!(frame = sysprof_capture_reader_read_metadata (reader)))
+                  goto panic;
+
+                sysprof_capture_writer_add_metadata (writer,
+                                                     frame->frame.time,
+                                                     frame->frame.cpu,
+                                                     frame->frame.pid,
+                                                     frame->id,
+                                                     frame->metadata,
+                                                     frame->frame.len - G_STRUCT_OFFSET (SysprofCaptureMetadata, metadata));
+                break;
+              }
+
             case SYSPROF_CAPTURE_FRAME_JITMAP:
               {
                 GHashTable *jitmap;

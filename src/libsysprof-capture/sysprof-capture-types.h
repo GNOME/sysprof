@@ -89,6 +89,7 @@ typedef enum
   SYSPROF_CAPTURE_FRAME_CTRDEF    = 8,
   SYSPROF_CAPTURE_FRAME_CTRSET    = 9,
   SYSPROF_CAPTURE_FRAME_MARK      = 10,
+  SYSPROF_CAPTURE_FRAME_METADATA  = 11,
 } SysprofCaptureFrameType;
 
 SYSPROF_ALIGNED_BEGIN(1)
@@ -239,6 +240,15 @@ typedef struct
 } SysprofCaptureMark
 SYSPROF_ALIGNED_END(1);
 
+SYSPROF_ALIGNED_BEGIN(1)
+typedef struct
+{
+  SysprofCaptureFrame frame;
+  gchar               id[40];
+  gchar               metadata[0];
+} SysprofCaptureMetadata
+SYSPROF_ALIGNED_END(1);
+
 G_STATIC_ASSERT (sizeof (SysprofCaptureFileHeader) == 256);
 G_STATIC_ASSERT (sizeof (SysprofCaptureFrame) == 24);
 G_STATIC_ASSERT (sizeof (SysprofCaptureMap) == 56);
@@ -253,6 +263,7 @@ G_STATIC_ASSERT (sizeof (SysprofCaptureCounterValues) == 96);
 G_STATIC_ASSERT (sizeof (SysprofCaptureFrameCounterDefine) == 32);
 G_STATIC_ASSERT (sizeof (SysprofCaptureFrameCounterSet) == 32);
 G_STATIC_ASSERT (sizeof (SysprofCaptureMark) == 96);
+G_STATIC_ASSERT (sizeof (SysprofCaptureMetadata) == 64);
 
 static inline gint
 sysprof_capture_address_compare (SysprofCaptureAddress a,

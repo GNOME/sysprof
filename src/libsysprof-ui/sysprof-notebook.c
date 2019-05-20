@@ -28,6 +28,14 @@
 
 G_DEFINE_TYPE (SysprofNotebook, sysprof_notebook, GTK_TYPE_NOTEBOOK)
 
+enum {
+  PROP_0,
+  PROP_CAN_SAVE,
+  N_PROPS
+};
+
+static GParamSpec *properties [N_PROPS];
+
 /**
  * sysprof_notebook_new:
  *
@@ -44,6 +52,17 @@ sysprof_notebook_new (void)
 }
 
 static void
+sysprof_notebook_notify_can_save_cb (SysprofNotebook *self,
+                                     GParamSpec      *pspec,
+                                     SysprofDisplay  *display)
+{
+  g_assert (SYSPROF_IS_NOTEBOOK (self));
+  g_assert (SYSPROF_IS_DISPLAY (display));
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_SAVE]);
+}
+
+static void
 sysprof_notebook_page_added (GtkNotebook *notebook,
                              GtkWidget   *child,
                              guint        page_num)
@@ -57,6 +76,14 @@ sysprof_notebook_page_added (GtkNotebook *notebook,
 
       gtk_notebook_set_tab_label (notebook, child, tab);
       gtk_notebook_set_tab_reorderable (notebook, child, TRUE);
+
+      g_signal_connect_object (child,
+                               "notify::can-save",
+                               G_CALLBACK (sysprof_notebook_notify_can_save_cb),
+                               notebook,
+                               G_CONNECT_SWAPPED);
+
+      g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_SAVE]);
     }
 
   gtk_notebook_set_show_tabs (notebook,
@@ -79,6 +106,12 @@ sysprof_notebook_page_removed (GtkNotebook *notebook,
       child = sysprof_display_new ();
       gtk_container_add (GTK_CONTAINER (notebook), child);
       gtk_widget_show (child);
+
+      g_signal_handlers_disconnect_by_func (child,
+                                            G_CALLBACK (sysprof_notebook_notify_can_save_cb),
+                                            notebook);
+
+      g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_SAVE]);
     }
 
   gtk_notebook_set_show_tabs (notebook,
@@ -86,12 +119,55 @@ sysprof_notebook_page_removed (GtkNotebook *notebook,
 }
 
 static void
+sysprof_notebook_switch_page (GtkNotebook *notebook,
+                              GtkWidget   *widget,
+                              guint        page)
+{
+  g_assert (GTK_IS_NOTEBOOK (notebook));
+  g_assert (GTK_IS_WIDGET (widget));
+
+  GTK_NOTEBOOK_CLASS (sysprof_notebook_parent_class)->switch_page (notebook, widget, page);
+
+  g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_SAVE]);
+}
+
+static void
+sysprof_notebook_get_property (GObject    *object,
+                               guint       prop_id,
+                               GValue     *value,
+                               GParamSpec *pspec)
+{
+  SysprofNotebook *self = (SysprofNotebook *)object;
+
+  switch (prop_id)
+    {
+    case PROP_CAN_SAVE:
+      g_value_set_boolean (value, sysprof_notebook_get_can_save (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
 sysprof_notebook_class_init (SysprofNotebookClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkNotebookClass *notebook_class = GTK_NOTEBOOK_CLASS (klass);
+
+  object_class->get_property = sysprof_notebook_get_property;
 
   notebook_class->page_added = sysprof_notebook_page_added;
   notebook_class->page_removed = sysprof_notebook_page_removed;
+  notebook_class->switch_page = sysprof_notebook_switch_page;
+
+  properties [PROP_CAN_SAVE] =
+    g_param_spec_boolean ("can-save",
+                          "Can Save",
+                          "If the current display can save a recording",
+                          FALSE,
+                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 }
 
 static void
@@ -183,4 +259,17 @@ sysprof_notebook_save (SysprofNotebook *self)
 
   if ((display = sysprof_notebook_get_current (self)))
     sysprof_display_save (display);
+}
+
+gboolean
+sysprof_notebook_get_can_save (SysprofNotebook *self)
+{
+  SysprofDisplay *display;
+
+  g_return_val_if_fail (SYSPROF_IS_NOTEBOOK (self), FALSE);
+
+  if ((display = sysprof_notebook_get_current (self)))
+    return sysprof_display_get_can_save (display);
+
+  return FALSE;
 }

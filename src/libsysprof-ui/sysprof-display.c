@@ -197,7 +197,7 @@ sysprof_display_dup_title (SysprofDisplay *self)
   g_return_val_if_fail (SYSPROF_IS_DISPLAY (self), NULL);
 
   if (priv->error)
-    return g_strdup (_("Failed Recording"));
+    return g_strdup (_("Recording Failed"));
 
   if (priv->profiler != NULL)
     {

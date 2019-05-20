@@ -44,17 +44,48 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton">
-            <property name="action-name">display.stop-recording</property>
-            <property name="margin-top">24</property>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">6</property>
             <property name="visible">true</property>
-            <property name="label" translatable="yes">_Stop Recording</property>
-            <property name="halign">end</property>
-            <property name="width-request">125</property>
-            <property name="use-underline">true</property>
-            <style>
-              <class name="destructive-action"/>
-            </style>
+            <child>
+              <object class="GtkLabel">
+                <property name="label" translatable="yes">Samples</property>
+                <property name="xalign">1.0</property>
+                <property name="valign">baseline</property>
+                <property name="visible">true</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="samples">
+                <property name="label">0</property>
+                <property name="visible">true</property>
+                <property name="hexpand">true</property>
+                <property name="valign">baseline</property>
+                <property name="xalign">0.0</property>
+                <attributes>
+                  <attribute name="font-features" value="font-feature-settings: &apos;tnum&apos;"/>
+                </attributes>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="action-name">display.stop-recording</property>
+                <property name="margin-top">24</property>
+                <property name="visible">true</property>
+                <property name="label" translatable="yes">_Stop Recording</property>
+                <property name="halign">end</property>
+                <property name="width-request">125</property>
+                <property name="valign">baseline</property>
+                <property name="use-underline">true</property>
+                <style>
+                  <class name="destructive-action"/>
+                </style>
+              </object>
+            </child>
           </object>
         </child>
       </object>

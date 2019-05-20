@@ -145,11 +145,8 @@ static void
 add_marks_to_details (SysprofCaptureView *self)
 {
   SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
-  PangoAttrList *attrs;
-  PangoAttrList *dim_attrs;
   GHashTableIter iter;
   gpointer k, v;
-  guint count = 0;
 
   g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
 
@@ -159,81 +156,14 @@ add_marks_to_details (SysprofCaptureView *self)
   if (g_hash_table_size (priv->mark_stats) == 0)
     return;
 
-  attrs = pango_attr_list_new ();
-  pango_attr_list_insert (attrs, pango_attr_weight_new (PANGO_WEIGHT_BOLD));
-  pango_attr_list_insert (attrs, pango_attr_foreground_alpha_new (65535/2));
-
-  dim_attrs = pango_attr_list_new ();
-  pango_attr_list_insert (dim_attrs, pango_attr_foreground_alpha_new (65535/2));
-
   g_hash_table_iter_init (&iter, priv->mark_stats);
-  while (count < 100 && g_hash_table_iter_next (&iter, &k, &v))
+  while (g_hash_table_iter_next (&iter, &k, &v))
     {
-      SysprofMarkStat *st = v;
-      g_autofree gchar *minstr = _sysprof_format_duration (st->min);
-      g_autofree gchar *maxstr = _sysprof_format_duration (st->max);
-      g_autofree gchar *avgstr = _sysprof_format_duration (st->avg);
+      const gchar *name = k;
+      const SysprofMarkStat *st = v;
 
-      if (st->avg == 0)
-        continue;
-
-      sysprof_details_view_add_item (priv->details_view,
-                                     g_object_new (GTK_TYPE_LABEL,
-                                                   "margin-top", 6,
-                                                   "label", st->name,
-                                                   "attributes", attrs,
-                                                   "xalign", 1.0f,
-                                                   "visible", TRUE,
-                                                   NULL),
-                                     NULL);
-
-      sysprof_details_view_add_item (priv->details_view,
-                                     g_object_new (GTK_TYPE_LABEL,
-                                                   "attributes", dim_attrs,
-                                                   "label", "Min",
-                                                   "xalign", 1.0f,
-                                                   "visible", TRUE,
-                                                   NULL),
-                                     g_object_new (GTK_TYPE_LABEL,
-                                                   "label", minstr,
-                                                   "selectable", TRUE,
-                                                   "xalign", 0.0f,
-                                                   "visible", TRUE,
-                                                   NULL));
-
-      sysprof_details_view_add_item (priv->details_view,
-                                     g_object_new (GTK_TYPE_LABEL,
-                                                   "attributes", dim_attrs,
-                                                   "label", "Max",
-                                                   "xalign", 1.0f,
-                                                   "visible", TRUE,
-                                                   NULL),
-                                     g_object_new (GTK_TYPE_LABEL,
-                                                   "label", maxstr,
-                                                   "selectable", TRUE,
-                                                   "xalign", 0.0f,
-                                                   "visible", TRUE,
-                                                   NULL));
-
-      sysprof_details_view_add_item (priv->details_view,
-                                     g_object_new (GTK_TYPE_LABEL,
-                                                   "attributes", dim_attrs,
-                                                   "label", "Avg",
-                                                   "xalign", 1.0f,
-                                                   "visible", TRUE,
-                                                   NULL),
-                                     g_object_new (GTK_TYPE_LABEL,
-                                                   "label", avgstr,
-                                                   "selectable", TRUE,
-                                                   "xalign", 0.0f,
-                                                   "visible", TRUE,
-                                                   NULL));
-
-      count++;
+      sysprof_details_view_add_mark (priv->details_view, name, st->min, st->max, st->avg);
     }
-
-  pango_attr_list_unref (attrs);
-  pango_attr_list_unref (dim_attrs);
 }
 
 static void

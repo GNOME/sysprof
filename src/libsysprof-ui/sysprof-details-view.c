@@ -26,6 +26,7 @@
 #include <glib/gi18n.h>
 
 #include "sysprof-details-view.h"
+#include "sysprof-ui-private.h"
 
 #define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
 
@@ -35,6 +36,7 @@ struct _SysprofDetailsView
 
   /* Template Objects */
   DzlThreeGrid *three_grid;
+  GtkListStore *marks_store;
   GtkLabel     *duration;
   GtkLabel     *filename;
   GtkLabel     *forks;
@@ -90,6 +92,7 @@ sysprof_details_view_class_init (SysprofDetailsViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, filename);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, forks);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, marks);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, marks_store);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, processes);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, samples);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, start_time);
@@ -103,7 +106,7 @@ sysprof_details_view_init (SysprofDetailsView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  self->next_row = 7;
+  self->next_row = 8;
 }
 
 GtkWidget *
@@ -184,4 +187,24 @@ sysprof_details_view_add_item (SysprofDetailsView *self,
                                        NULL);
 
   self->next_row++;
+}
+
+void
+sysprof_details_view_add_mark (SysprofDetailsView *self,
+                               const gchar        *mark,
+                               gint64              min,
+                               gint64              max,
+                               gint64              avg)
+{
+  GtkTreeIter iter;
+
+  g_return_if_fail (SYSPROF_IS_DETAILS_VIEW (self));
+
+  gtk_list_store_append (self->marks_store, &iter);
+  gtk_list_store_set (self->marks_store, &iter,
+                      0, mark,
+                      1, min ? _sysprof_format_duration (min) : "—",
+                      2, max ? _sysprof_format_duration (max) : "—",
+                      3, avg ? _sysprof_format_duration (avg) : "—",
+                      -1);
 }

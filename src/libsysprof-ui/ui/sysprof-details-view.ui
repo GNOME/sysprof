@@ -202,9 +202,94 @@
                 <property name="row">6</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkFrame">
+                <property name="visible">True</property>
+                <property name="shadow-type">in</property>
+                <property name="margin-bottom">12</property>
+                <child>
+                  <object class="GtkTreeView" id="marks_tree_view">
+                    <property name="model">marks_store</property>
+                    <property name="width-request">500</property>
+                    <property name="height-request">100</property>
+                    <property name="enable-grid-lines">both</property>
+                    <property name="visible">true</property>
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="expand">true</property>
+                        <property name="title" translatable="yes">Mark</property>
+                        <child>
+                          <object class="GtkCellRendererText">
+                            <property name="xalign">0.0</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="title" translatable="yes">Min</property>
+                        <child>
+                          <object class="GtkCellRendererText">
+                            <property name="xalign">0.0</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="title" translatable="yes">Max</property>
+                        <child>
+                          <object class="GtkCellRendererText">
+                            <property name="xalign">0.0</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="title" translatable="yes">Avg</property>
+                        <child>
+                          <object class="GtkCellRendererText">
+                            <property name="xalign">0.0</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">3</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="column">center</property>
+                <property name="row">7</property>
+              </packing>
+            </child>
           </object>
         </child>
       </object>
     </child>
   </template>
+  <object class="GtkListStore" id="marks_store">
+    <columns>
+      <!-- column-name Mark -->
+      <column type="gchararray"/>
+      <!-- column-name Min -->
+      <column type="gchararray"/>
+      <!-- column-name Max -->
+      <column type="gchararray"/>
+      <!-- column-name Avg -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
 </interface>

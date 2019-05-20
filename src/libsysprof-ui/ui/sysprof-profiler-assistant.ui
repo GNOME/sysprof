@@ -4,6 +4,13 @@
   <object class="SysprofCpuAid" id="cpu_aid"/>
   <object class="SysprofMemoryAid" id="memory_aid"/>
   <object class="SysprofCallgraphAid" id="callgraph_aid"/>
+  <object class="SysprofProxyAid" id="mutter_aid">
+    <property name="object-path">/org/gnome/Sysprof3/Profiler</property>
+    <property name="bus-type">session</property>
+    <property name="bus-name">org.gnome.Mutter</property>
+    <property name="display-name">Display Compositor</property>
+    <property name="icon-name">org.gnome.Sysprof-symbolic</property>
+  </object>
   <template class="SysprofProfilerAssistant" parent="GtkBin">
     <child>
       <object class="GtkScrolledWindow">
@@ -63,6 +70,12 @@
                     <child>
                       <object class="SysprofAidIcon">
                         <property name="aid">memory_aid</property>
+                        <property name="visible">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="SysprofAidIcon">
+                        <property name="aid">mutter_aid</property>
                         <property name="visible">true</property>
                       </object>
                     </child>

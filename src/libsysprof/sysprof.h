@@ -38,6 +38,7 @@ G_BEGIN_DECLS
 # include "sysprof-jitmap-symbol-resolver.h"
 # include "sysprof-kernel-symbol-resolver.h"
 # include "sysprof-kernel-symbol.h"
+# include "sysprof-proxy-source.h"
 # include "sysprof-symbol-dirs.h"
 # include "sysprof-symbol-resolver.h"
 # include "sysprof-map-lookaside.h"

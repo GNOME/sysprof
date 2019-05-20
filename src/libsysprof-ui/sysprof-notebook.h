@@ -51,5 +51,7 @@ void            sysprof_notebook_open          (SysprofNotebook *self,
                                                 GFile           *file);
 SYSPROF_AVAILABLE_IN_ALL
 void            sysprof_notebook_save          (SysprofNotebook *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean        sysprof_notebook_get_can_save  (SysprofNotebook *self);
 
 G_END_DECLS

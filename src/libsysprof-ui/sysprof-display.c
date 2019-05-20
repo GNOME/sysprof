@@ -76,6 +76,24 @@ sysprof_display_new (void)
 }
 
 static void
+sysprof_display_load_cb (SysprofCaptureView *view,
+                         GAsyncResult       *result,
+                         gpointer            user_data)
+{
+  g_autoptr(SysprofDisplay) self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_CAPTURE_VIEW (view));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_DISPLAY (self));
+
+  if (!sysprof_capture_view_load_finish (view, result, &error))
+    g_warning ("Failed to load capture: %s", error->message);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_SAVE]);
+}
+
+static void
 sysprof_display_profiler_failed_cb (SysprofDisplay  *self,
                                     const GError    *error,
                                     SysprofProfiler *profiler)
@@ -120,7 +138,11 @@ sysprof_display_profiler_stopped_cb (SysprofDisplay  *self,
           goto notify;
         }
 
-      sysprof_capture_view_load_async (priv->capture_view, reader, NULL, NULL, NULL);
+      sysprof_capture_view_load_async (priv->capture_view,
+                                       reader,
+                                       NULL,
+                                       (GAsyncReadyCallback) sysprof_display_load_cb,
+                                       g_object_ref (self));
       gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->capture_view));
     }
 
@@ -294,19 +316,6 @@ sysprof_display_get_property (GObject    *object,
 }
 
 static void
-sysprof_display_set_property (GObject      *object,
-                              guint         prop_id,
-                              const GValue *value,
-                              GParamSpec   *pspec)
-{
-  switch (prop_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
 sysprof_display_class_init (SysprofDisplayClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
@@ -314,7 +323,6 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
 
   object_class->finalize = sysprof_display_finalize;
   object_class->get_property = sysprof_display_get_property;
-  object_class->set_property = sysprof_display_set_property;
 
   widget_class->parent_set = sysprof_display_parent_set;
 
@@ -436,7 +444,11 @@ sysprof_display_open_cb (GObject      *object,
       return;
     }
 
-  sysprof_capture_view_load_async (priv->capture_view, reader, NULL, NULL, NULL);
+  sysprof_capture_view_load_async (priv->capture_view,
+                                   reader,
+                                   NULL,
+                                   (GAsyncReadyCallback) sysprof_display_load_cb,
+                                   g_object_ref (self));
   gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->capture_view));
 }
 

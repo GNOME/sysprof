@@ -627,6 +627,7 @@ sysprof_helpers_authorize_finish (SysprofHelpers  *self,
 gboolean
 sysprof_helpers_get_process_info (SysprofHelpers  *self,
                                   const gchar     *attributes,
+                                  gboolean         no_proxy,
                                   GCancellable    *cancellable,
                                   GVariant       **info,
                                   GError         **error)
@@ -635,6 +636,12 @@ sysprof_helpers_get_process_info (SysprofHelpers  *self,
   g_assert (attributes != NULL);
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
   g_assert (info != NULL);
+
+  if (no_proxy)
+    {
+      *info = helpers_get_process_info (attributes);
+      return TRUE;
+    }
 
   return ipc_service_call_get_process_info_sync (self->proxy, attributes, info, cancellable, error);
 }

@@ -143,6 +143,7 @@ test_process (void)
 
   filter = sysprof_model_filter_new (G_LIST_MODEL (model));
 
+  sysprof_process_model_set_no_proxy (model, TRUE);
   sysprof_process_model_reload (model);
 
   for (guint i = 0; i < G_N_ELEMENTS (searches); i++)

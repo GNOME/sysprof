@@ -238,150 +238,18 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
 }
 
 static gboolean
-needs_escape (const gchar *str)
-{
-  for (; *str; str++)
-    {
-      if (g_ascii_isspace (*str) || *str == '\'' || *str == '"')
-        return TRUE;
-    }
-
-  return FALSE;
-}
-
-static void
-postprocess_cmdline (gchar **str,
-                     gsize   len)
-{
-  g_autoptr(GPtrArray) parts = g_ptr_array_new_with_free_func (g_free);
-  g_autofree gchar *instr = NULL;
-  const gchar *begin = NULL;
-
-  if (len == 0)
-    return;
-
-  instr = *str;
-
-  for (gsize i = 0; i < len; i++)
-    {
-      if (!begin && instr[i])
-        {
-          begin = &instr[i];
-        }
-      else if (begin && instr[i] == '\0')
-        {
-          if (needs_escape (begin))
-            g_ptr_array_add (parts, g_shell_quote (begin));
-          else
-            g_ptr_array_add (parts, g_strdup (begin));
-
-          begin = NULL;
-        }
-    }
-
-  /* If the last byte was not \0, as can happen with prctl(), then we need
-   * to add it here manually.
-   */
-  if (begin)
-    {
-      if (needs_escape (begin))
-        g_ptr_array_add (parts, g_shell_quote (begin));
-      else
-        g_ptr_array_add (parts, g_strdup (begin));
-    }
-
-  g_ptr_array_add (parts, NULL);
-
-  *str = g_strjoinv (" ", (gchar **)parts->pdata);
-}
-
-static void
-postprocess_rstrip (gchar **str,
-                    gsize   len)
-{
-  g_strchomp (*str);
-}
-
-static void
-add_pid_proc_file_to (gint          pid,
-                      const gchar  *name,
-                      GVariantDict *dict,
-                      void (*postprocess) (gchar **, gsize))
-{
-  g_autofree gchar *path = NULL;
-  g_autofree gchar *contents = NULL;
-  gsize len;
-
-  g_assert (pid > -1);
-  g_assert (name != NULL);
-  g_assert (dict != NULL);
-
-  path = g_strdup_printf ("/proc/%d/%s", pid, name);
-
-  if (g_file_get_contents (path, &contents, &len, NULL))
-    {
-      if (postprocess)
-        postprocess (&contents, len);
-      g_variant_dict_insert (dict, name, "s", contents);
-    }
-}
-
-static gboolean
 ipc_service_impl_handle_get_process_info (IpcService            *service,
                                           GDBusMethodInvocation *invocation,
                                           const gchar           *attributes)
 {
-  GVariantBuilder builder;
-  g_autofree gint *processes = NULL;
-  gsize n_processes = 0;
-  gboolean want_statm;
-  gboolean want_cmdline;
-  gboolean want_comm;
-  gboolean want_maps;
-  gboolean want_mountinfo;
+  g_autoptr(GVariant) res = NULL;
 
   g_assert (IPC_IS_SERVICE (service));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
   g_assert (attributes != NULL);
 
-  want_statm = !!strstr (attributes, "statm");
-  want_cmdline = !!strstr (attributes, "cmdline");
-  want_maps = !!strstr (attributes, "maps");
-  want_mountinfo = !!strstr (attributes, "mountinfo");
-  want_comm = !!strstr (attributes, "comm");
-
-  g_variant_builder_init (&builder, G_VARIANT_TYPE ("aa{sv}"));
-
-  if (helpers_list_processes (&processes, &n_processes))
-    {
-      for (guint i = 0; i < n_processes; i++)
-        {
-          gint pid = processes[i];
-          GVariantDict dict;
-
-          g_variant_dict_init (&dict, NULL);
-          g_variant_dict_insert (&dict, "pid", "i", pid, NULL);
-
-          if (want_statm)
-            add_pid_proc_file_to (pid, "statm", &dict, postprocess_rstrip);
-
-          if (want_cmdline)
-            add_pid_proc_file_to (pid, "cmdline", &dict, postprocess_cmdline);
-
-          if (want_comm)
-            add_pid_proc_file_to (pid, "comm", &dict, postprocess_rstrip);
-
-          if (want_maps)
-            add_pid_proc_file_to (pid, "maps", &dict, postprocess_rstrip);
-
-          if (want_mountinfo)
-            add_pid_proc_file_to (pid, "mountinfo", &dict, postprocess_rstrip);
-
-          g_variant_builder_add_value (&builder, g_variant_dict_end (&dict));
-        }
-    }
-
-  ipc_service_complete_get_process_info (service, invocation, g_variant_builder_end (&builder));
+  res = helpers_get_process_info (attributes);
+  ipc_service_complete_get_process_info (service, invocation, res);
 
   return TRUE;
 }

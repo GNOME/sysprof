@@ -113,6 +113,7 @@ libsysprof_dep = declare_dependency(
 )
 
 pkgconfig.generate(
+    libraries: [libsysprof],
       subdirs: [ sysprof_header_subdir ],
       version: meson.project_version(),
          name: 'sysprof-@0@'.format(libsysprof_api_version),

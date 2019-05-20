@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include <glib/gi18n.h>
+#include <dazzle.h>
 #include <sysprof-ui.h>
 
 #include "sysprof-window.h"
@@ -30,6 +31,8 @@
 struct _SysprofWindow
 {
   GtkApplicationWindow  parent_instance;
+
+  DzlBindingGroup      *bindings;
 
   SysprofNotebook      *notebook;
   GtkMenuButton        *menu_button;
@@ -134,6 +137,11 @@ save_capture_cb (GSimpleAction *action,
 static void
 sysprof_window_finalize (GObject *object)
 {
+  SysprofWindow *self = (SysprofWindow *)object;
+
+  dzl_binding_group_set_source (self->bindings, NULL);
+  g_clear_object (&self->bindings);
+
   G_OBJECT_CLASS (sysprof_window_parent_class)->finalize (object);
 }
 
@@ -176,6 +184,11 @@ sysprof_window_init (SysprofWindow *self)
                            G_CALLBACK (sysprof_window_notify_can_save_cb),
                            self,
                            G_CONNECT_SWAPPED);
+
+  self->bindings = dzl_binding_group_new ();
+  dzl_binding_group_bind (self->bindings, "title", self, "title", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (self->notebook, "current", self->bindings, "source",
+                          G_BINDING_SYNC_CREATE);
 
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "save-capture",
                              "enabled", FALSE,

@@ -79,6 +79,7 @@ enum {
   COLUMN_SELF,
   COLUMN_TOTAL,
   COLUMN_POINTER,
+  COLUMN_HITS,
 };
 
 
@@ -961,6 +962,7 @@ append_to_tree_and_free (SysprofCallgraphView *self,
                       COLUMN_SELF, item->self * 100.0 / (gdouble)profile_size,
                       COLUMN_TOTAL, item->cumulative * 100.0 / (gdouble)profile_size,
                       COLUMN_POINTER, node,
+                      COLUMN_HITS, (guint)item->cumulative,
                       -1);
 
   if (item->siblings != NULL)
@@ -974,7 +976,7 @@ append_to_tree_and_free (SysprofCallgraphView *self,
 
 static void
 sysprof_callgraph_view_update_descendants (SysprofCallgraphView *self,
-                                      StackNode       *node)
+                                           StackNode            *node)
 {
   SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
   GtkTreeStore *store;
@@ -984,11 +986,12 @@ sysprof_callgraph_view_update_descendants (SysprofCallgraphView *self,
   if (g_queue_peek_head (priv->history) != node)
     g_queue_push_head (priv->history, node);
 
-  store = gtk_tree_store_new (4,
+  store = gtk_tree_store_new (5,
                               G_TYPE_STRING,
                               G_TYPE_DOUBLE,
                               G_TYPE_DOUBLE,
-                              G_TYPE_POINTER);
+                              G_TYPE_POINTER,
+                              G_TYPE_UINT);
 
   if (priv->profile != NULL)
   {

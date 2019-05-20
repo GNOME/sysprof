@@ -128,7 +128,10 @@ filter_keyword_cb (GObject  *object,
   const gchar *haystack = sysprof_process_model_item_get_command_line (item);
   const gchar *needle = user_data;
 
-  return strstr (haystack, needle) != NULL;
+  if (haystack && needle)
+    return strstr (haystack, needle) != NULL;
+
+  return FALSE;
 }
 
 static void

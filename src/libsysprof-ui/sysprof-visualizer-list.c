@@ -300,7 +300,7 @@ handle_capture_results (GObject      *object,
       GtkWidget *row = g_object_new (SYSPROF_TYPE_CPU_VISUALIZER_ROW,
                                      /* Translators: CPU is the processor. */
                                      "title", _("CPU"),
-                                     "height-request", 50,
+                                     "height-request", 35,
                                      "selectable", FALSE,
                                      "visible", TRUE,
                                      "y-lower", 0.0,
@@ -313,7 +313,7 @@ handle_capture_results (GObject      *object,
     {
       GtkWidget *row = g_object_new (SYSPROF_TYPE_DEPTH_VISUALIZER_ROW,
                                      "zoom-manager", priv->zoom_manager,
-                                     "height-request", 50,
+                                     "height-request", 35,
                                      "selectable", FALSE,
                                      "visible", TRUE,
                                      NULL);

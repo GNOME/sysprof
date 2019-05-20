@@ -192,7 +192,7 @@ sysprof_callgraph_profile_set_reader (SysprofProfile       *profile,
 
 static const gchar *
 sysprof_callgraph_profile_intern_string_take (SysprofCallgraphProfile *self,
-                                         gchar              *str)
+                                              gchar                   *str)
 {
   const gchar *ret;
 
@@ -206,7 +206,7 @@ sysprof_callgraph_profile_intern_string_take (SysprofCallgraphProfile *self,
 
 static const gchar *
 sysprof_callgraph_profile_intern_string (SysprofCallgraphProfile *self,
-                                    const gchar        *str)
+                                         const gchar             *str)
 {
   g_assert (SYSPROF_IS_CALLGRAPH_PROFILE (self));
   g_assert (str != NULL);
@@ -216,9 +216,9 @@ sysprof_callgraph_profile_intern_string (SysprofCallgraphProfile *self,
 
 static void
 sysprof_callgraph_profile_generate_worker (GTask        *task,
-                                      gpointer      source_object,
-                                      gpointer      task_data,
-                                      GCancellable *cancellable)
+                                           gpointer      source_object,
+                                           gpointer      task_data,
+                                           GCancellable *cancellable)
 {
   SysprofCallgraphProfile *self = source_object;
   Generate *gen = task_data;

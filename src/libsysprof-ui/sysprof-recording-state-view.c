@@ -25,8 +25,9 @@
 typedef struct
 {
   SysprofProfiler *profiler;
-  gulong      notify_elapsed_handler;
-  GtkLabel   *elapsed;
+  GtkLabel        *elapsed;
+  GtkLabel        *samples;
+  gulong           notify_elapsed_handler;
 } SysprofRecordingStateViewPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofRecordingStateView, sysprof_recording_state_view, GTK_TYPE_BIN)
@@ -47,11 +48,12 @@ sysprof_recording_state_view_new (void)
 
 static void
 sysprof_recording_state_view_notify_elapsed (SysprofRecordingStateView *self,
-                                        GParamSpec           *pspec,
-                                        SysprofProfiler           *profiler)
+                                             GParamSpec                *pspec,
+                                             SysprofProfiler           *profiler)
 {
   SysprofRecordingStateViewPrivate *priv = sysprof_recording_state_view_get_instance_private (self);
   g_autofree gchar *str = NULL;
+  SysprofCaptureWriter *writer;
   gint64 elapsed;
   guint hours;
   guint minutes;
@@ -59,6 +61,16 @@ sysprof_recording_state_view_notify_elapsed (SysprofRecordingStateView *self,
 
   g_assert (SYSPROF_IS_RECORDING_STATE_VIEW (self));
   g_assert (SYSPROF_IS_PROFILER (profiler));
+
+  if ((writer = sysprof_profiler_get_writer (profiler)))
+    {
+      SysprofCaptureStat st;
+      g_autofree gchar *samples = NULL;
+
+      sysprof_capture_writer_stat (writer, &st);
+      samples = g_strdup_printf ("%"G_GINT64_FORMAT, st.frame_count[SYSPROF_CAPTURE_FRAME_SAMPLE]);
+      gtk_label_set_label (priv->samples, samples);
+    }
 
   elapsed = (gint64)sysprof_profiler_get_elapsed (profiler);
 
@@ -94,9 +106,9 @@ sysprof_recording_state_view_destroy (GtkWidget *widget)
 
 static void
 sysprof_recording_state_view_get_property (GObject    *object,
-                                      guint       prop_id,
-                                      GValue     *value,
-                                      GParamSpec *pspec)
+                                           guint       prop_id,
+                                           GValue     *value,
+                                           GParamSpec *pspec)
 {
   SysprofRecordingStateView *self = SYSPROF_RECORDING_STATE_VIEW (object);
   SysprofRecordingStateViewPrivate *priv = sysprof_recording_state_view_get_instance_private (self);
@@ -114,9 +126,9 @@ sysprof_recording_state_view_get_property (GObject    *object,
 
 static void
 sysprof_recording_state_view_set_property (GObject      *object,
-                                      guint         prop_id,
-                                      const GValue *value,
-                                      GParamSpec   *pspec)
+                                           guint         prop_id,
+                                           const GValue *value,
+                                           GParamSpec   *pspec)
 {
   SysprofRecordingStateView *self = SYSPROF_RECORDING_STATE_VIEW (object);
 
@@ -164,7 +176,7 @@ sysprof_recording_state_view_init (SysprofRecordingStateView *self)
 
 void
 sysprof_recording_state_view_set_profiler (SysprofRecordingStateView *self,
-                                      SysprofProfiler           *profiler)
+                                           SysprofProfiler           *profiler)
 {
   SysprofRecordingStateViewPrivate *priv = sysprof_recording_state_view_get_instance_private (self);
 

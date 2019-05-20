@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "sysprof-callgraph-view.h"
 #include "sysprof-marks-view.h"
 #include "sysprof-visualizer-view.h"
 
@@ -46,6 +47,7 @@ void             _sysprof_rounded_rectangle               (cairo_t              
                                                            gint                   x_radius,
                                                            gint                   y_radius);
 gchar           *_sysprof_format_duration                 (gint64                 duration);
+void             _sysprof_callgraph_view_set_failed       (SysprofCallgraphView  *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofMarkStat, _sysprof_mark_stat_free)
 

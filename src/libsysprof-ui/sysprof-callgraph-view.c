@@ -211,6 +211,16 @@ sysprof_callgraph_view_load (SysprofCallgraphView    *self,
   g_clear_object (&functions);
 }
 
+void
+_sysprof_callgraph_view_set_failed (SysprofCallgraphView *self)
+{
+  SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+}
+
 static void
 sysprof_callgraph_view_unload (SysprofCallgraphView *self)
 {

@@ -197,7 +197,7 @@
             <property name="icon-name">computer-fail-symbolic</property>
             <property name="title" translatable="yes">Not Enough Samples</property>
             <property name="subtitle" translatable="yes">More samples are necessary to display a callgraph.</property>
-            <property name="visible">true</property>
+            <property name="visible">false</property>
           </object>
           <packing>
             <property name="name">empty-state</property>

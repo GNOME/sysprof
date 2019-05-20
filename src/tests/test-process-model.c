@@ -78,6 +78,7 @@ main (gint argc,
   gtk_container_add (GTK_CONTAINER (scroller), list);
 
   model = sysprof_process_model_new ();
+  sysprof_process_model_set_no_proxy (model, TRUE);
   filter = sysprof_model_filter_new (G_LIST_MODEL (model));
   gtk_list_box_bind_model (GTK_LIST_BOX (list), G_LIST_MODEL (filter), create_row, NULL, NULL);
 

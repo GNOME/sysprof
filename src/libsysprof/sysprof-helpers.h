@@ -75,6 +75,7 @@ gboolean        sysprof_helpers_get_proc_file_finish   (SysprofHelpers          
                                                         GError                 **error);
 gboolean        sysprof_helpers_get_process_info       (SysprofHelpers          *self,
                                                         const gchar             *attributes,
+                                                        gboolean                 no_proxy,
                                                         GCancellable            *cancellable,
                                                         GVariant               **info,
                                                         GError                 **error);

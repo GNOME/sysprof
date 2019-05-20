@@ -32,8 +32,9 @@
 struct _SysprofProcessModel
 {
   GObject    parent_instance;
-  guint      reload_source;
   GPtrArray *items;
+  guint      reload_source;
+  guint      no_proxy : 1;
 };
 
 static void list_model_iface_init (GListModelInterface *iface);
@@ -181,6 +182,7 @@ sysprof_process_model_reload_worker (GTask        *task,
                                      gpointer      task_data,
                                      GCancellable *cancellable)
 {
+  SysprofProcessModel *self = source_object;
   SysprofHelpers *helpers = sysprof_helpers_get_default ();
   g_autoptr(GPtrArray) ret = NULL;
   g_autoptr(GVariant) info = NULL;
@@ -190,7 +192,7 @@ sysprof_process_model_reload_worker (GTask        *task,
 
   ret = g_ptr_array_new_with_free_func (g_object_unref);
 
-  if (sysprof_helpers_get_process_info (helpers, "pid,cmdline,comm", NULL, &info, NULL))
+  if (sysprof_helpers_get_process_info (helpers, "pid,cmdline,comm", self->no_proxy, NULL, &info, NULL))
     {
       gsize n_children = g_variant_n_children (info);
 
@@ -293,4 +295,13 @@ list_model_iface_init (GListModelInterface *iface)
   iface->get_item_type = sysprof_process_model_get_item_type;
   iface->get_n_items = sysprof_process_model_get_n_items;
   iface->get_item = sysprof_process_model_get_item;
+}
+
+void
+sysprof_process_model_set_no_proxy (SysprofProcessModel *self,
+                                    gboolean             no_proxy)
+{
+  g_return_if_fail (SYSPROF_IS_PROCESS_MODEL (self));
+
+  self->no_proxy = !!no_proxy;
 }

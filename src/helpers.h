@@ -27,26 +27,27 @@
 
 G_BEGIN_DECLS
 
-gboolean helpers_can_see_pids          (void);
-gboolean helpers_list_processes        (gint32              **processes,
-                                        gsize                *n_processes);
-void     helpers_list_processes_async  (GCancellable         *cancellable,
-                                        GAsyncReadyCallback   callback,
-                                        gpointer              user_data);
-gboolean helpers_list_processes_finish (GAsyncResult         *result,
-                                        gint32              **processes,
-                                        gsize                *n_processes,
-                                        GError              **error);
-gboolean helpers_perf_event_open       (GVariant             *options,
-                                        gint32                pid,
-                                        gint32                cpu,
-                                        gint                  group_fd,
-                                        guint64               flags,
-                                        gint                 *out_fd);
-gboolean helpers_get_proc_file         (const gchar          *path,
-                                        gchar               **contents,
-                                        gsize                *len);
-gboolean helpers_get_proc_fd           (const gchar          *path,
-                                        gint                 *out_fd);
+gboolean  helpers_can_see_pids          (void);
+gboolean  helpers_list_processes        (gint32              **processes,
+                                         gsize                *n_processes);
+void      helpers_list_processes_async  (GCancellable         *cancellable,
+                                         GAsyncReadyCallback   callback,
+                                         gpointer              user_data);
+gboolean  helpers_list_processes_finish (GAsyncResult         *result,
+                                         gint32              **processes,
+                                         gsize                *n_processes,
+                                         GError              **error);
+gboolean  helpers_perf_event_open       (GVariant             *options,
+                                         gint32                pid,
+                                         gint32                cpu,
+                                         gint                  group_fd,
+                                         guint64               flags,
+                                         gint                 *out_fd);
+gboolean  helpers_get_proc_file         (const gchar          *path,
+                                         gchar               **contents,
+                                         gsize                *len);
+gboolean  helpers_get_proc_fd           (const gchar          *path,
+                                         gint                 *out_fd);
+GVariant *helpers_get_process_info      (const gchar          *attributes);
 
 G_END_DECLS

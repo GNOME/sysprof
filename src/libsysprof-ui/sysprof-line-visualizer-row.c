@@ -96,11 +96,11 @@ typedef struct
 
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofLineVisualizerRow, sysprof_line_visualizer_row, SYSPROF_TYPE_VISUALIZER_ROW)
 
-static void            sysprof_line_visualizer_row_load_data_async   (SysprofLineVisualizerRow  *self,
+static void       sysprof_line_visualizer_row_load_data_async   (SysprofLineVisualizerRow  *self,
                                                                  GCancellable         *cancellable,
                                                                  GAsyncReadyCallback   callback,
                                                                  gpointer              user_data);
-static PointCache      *sysprof_line_visualizer_row_load_data_finish (SysprofLineVisualizerRow  *self,
+static PointCache *sysprof_line_visualizer_row_load_data_finish (SysprofLineVisualizerRow  *self,
                                                                  GAsyncResult         *result,
                                                                  GError              **error);
 
@@ -142,7 +142,7 @@ copy_array (GArray *ar)
 
 static gboolean
 sysprof_line_visualizer_row_draw (GtkWidget *widget,
-                             cairo_t   *cr)
+                                  cairo_t   *cr)
 {
   SysprofLineVisualizerRow *self = (SysprofLineVisualizerRow *)widget;
   SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
@@ -184,10 +184,10 @@ sysprof_line_visualizer_row_draw (GtkWidget *widget,
           points = g_new0 (SysprofVisualizerRowAbsolutePoint, n_fpoints);
 
           sysprof_visualizer_row_translate_points (SYSPROF_VISUALIZER_ROW (self),
-                                              (const SysprofVisualizerRowRelativePoint *)fpoints,
-                                              n_fpoints,
-                                              points,
-                                              n_fpoints);
+                                                   (const SysprofVisualizerRowRelativePoint *)fpoints,
+                                                   n_fpoints,
+                                                   points,
+                                                   n_fpoints);
 
           last_x = points[0].x;
           last_y = points[0].y;
@@ -244,8 +244,8 @@ sysprof_line_visualizer_row_draw (GtkWidget *widget,
 
 static void
 sysprof_line_visualizer_row_load_data_cb (GObject      *object,
-                                     GAsyncResult *result,
-                                     gpointer      user_data)
+                                          GAsyncResult *result,
+                                          gpointer      user_data)
 {
   SysprofLineVisualizerRow *self = (SysprofLineVisualizerRow *)object;
   SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
@@ -307,7 +307,7 @@ sysprof_line_visualizer_row_queue_reload (SysprofLineVisualizerRow *self)
 
 static void
 sysprof_line_visualizer_row_set_reader (SysprofVisualizerRow *row,
-                                   SysprofCaptureReader *reader)
+                                        SysprofCaptureReader *reader)
 {
   SysprofLineVisualizerRow *self = (SysprofLineVisualizerRow *)row;
   SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
@@ -350,9 +350,9 @@ sysprof_line_visualizer_row_finalize (GObject *object)
 
 static void
 sysprof_line_visualizer_row_get_property (GObject    *object,
-                                     guint       prop_id,
-                                     GValue     *value,
-                                     GParamSpec *pspec)
+                                          guint       prop_id,
+                                          GValue     *value,
+                                          GParamSpec *pspec)
 {
   SysprofLineVisualizerRow *self = SYSPROF_LINE_VISUALIZER_ROW (object);
   SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
@@ -378,9 +378,9 @@ sysprof_line_visualizer_row_get_property (GObject    *object,
 
 static void
 sysprof_line_visualizer_row_set_property (GObject      *object,
-                                     guint         prop_id,
-                                     const GValue *value,
-                                     GParamSpec   *pspec)
+                                          guint         prop_id,
+                                          const GValue *value,
+                                          GParamSpec   *pspec)
 {
   SysprofLineVisualizerRow *self = SYSPROF_LINE_VISUALIZER_ROW (object);
   SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
@@ -474,8 +474,8 @@ sysprof_line_visualizer_row_init (SysprofLineVisualizerRow *self)
 
 void
 sysprof_line_visualizer_row_add_counter (SysprofLineVisualizerRow *self,
-                                    guint                counter_id,
-                                    const GdkRGBA       *color)
+                                         guint                     counter_id,
+                                         const GdkRGBA            *color)
 {
   SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
   LineInfo line_info = { 0 };
@@ -570,7 +570,7 @@ calc_y_int64 (gint64 lower,
 
 static gboolean
 sysprof_line_visualizer_row_load_data_frame_cb (const SysprofCaptureFrame *frame,
-                                           gpointer              user_data)
+                                                gpointer                   user_data)
 {
   LoadData *load = user_data;
 
@@ -612,7 +612,7 @@ sysprof_line_visualizer_row_load_data_frame_cb (const SysprofCaptureFrame *frame
 
 static gboolean
 sysprof_line_visualizer_row_load_data_range_cb (const SysprofCaptureFrame *frame,
-                                           gpointer              user_data)
+                                                gpointer                   user_data)
 {
   LoadData *load = user_data;
 
@@ -659,9 +659,9 @@ sysprof_line_visualizer_row_load_data_range_cb (const SysprofCaptureFrame *frame
 
 static void
 sysprof_line_visualizer_row_load_data_worker (GTask        *task,
-                                         gpointer      source_object,
-                                         gpointer      task_data,
-                                         GCancellable *cancellable)
+                                              gpointer      source_object,
+                                              gpointer      task_data,
+                                              GCancellable *cancellable)
 {
   LoadData *load = task_data;
   g_autoptr(GArray) counter_ids = NULL;
@@ -679,8 +679,8 @@ sysprof_line_visualizer_row_load_data_worker (GTask        *task,
     }
 
   sysprof_capture_cursor_add_condition (load->cursor,
-                                   sysprof_capture_condition_new_where_counter_in (counter_ids->len,
-                                                                              (guint *)(gpointer)counter_ids->data));
+                                        sysprof_capture_condition_new_where_counter_in (counter_ids->len,
+                                                                                        (guint *)(gpointer)counter_ids->data));
 
   /* If y boundaries are not set, we need to discover them by scaning the data. */
   if (!load->y_lower_set || !load->y_upper_set)
@@ -699,9 +699,9 @@ sysprof_line_visualizer_row_load_data_worker (GTask        *task,
 
 static void
 sysprof_line_visualizer_row_load_data_async (SysprofLineVisualizerRow *self,
-                                        GCancellable        *cancellable,
-                                        GAsyncReadyCallback  callback,
-                                        gpointer             user_data)
+                                             GCancellable             *cancellable,
+                                             GAsyncReadyCallback       callback,
+                                             gpointer                  user_data)
 {
   SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
   g_autoptr(GTask) task = NULL;
@@ -747,8 +747,8 @@ sysprof_line_visualizer_row_load_data_async (SysprofLineVisualizerRow *self,
 
 static PointCache *
 sysprof_line_visualizer_row_load_data_finish (SysprofLineVisualizerRow  *self,
-                                         GAsyncResult         *result,
-                                         GError              **error)
+                                              GAsyncResult              *result,
+                                              GError                   **error)
 {
   SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
   LoadData *state;
@@ -775,8 +775,8 @@ sysprof_line_visualizer_row_load_data_finish (SysprofLineVisualizerRow  *self,
 
 void
 sysprof_line_visualizer_row_set_line_width (SysprofLineVisualizerRow *self,
-                                       guint                counter_id,
-                                       gdouble              width)
+                                            guint                     counter_id,
+                                            gdouble                   width)
 {
   SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
 
@@ -797,8 +797,8 @@ sysprof_line_visualizer_row_set_line_width (SysprofLineVisualizerRow *self,
 
 void
 sysprof_line_visualizer_row_set_fill (SysprofLineVisualizerRow *self,
-                                 guint                counter_id,
-                                 const GdkRGBA       *color)
+                                      guint                     counter_id,
+                                      const GdkRGBA            *color)
 {
   SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
 

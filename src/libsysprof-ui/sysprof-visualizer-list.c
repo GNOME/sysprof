@@ -71,7 +71,7 @@ discovery_free (Discovery *state)
 
 static void
 sysprof_visualizer_list_add (GtkContainer *container,
-                        GtkWidget    *widget)
+                             GtkWidget    *widget)
 {
   SysprofVisualizerList *self = (SysprofVisualizerList *)container;
   SysprofVisualizerListPrivate *priv = sysprof_visualizer_list_get_instance_private (self);
@@ -98,9 +98,9 @@ sysprof_visualizer_list_finalize (GObject *object)
 
 static void
 sysprof_visualizer_list_get_property (GObject    *object,
-                                 guint       prop_id,
-                                 GValue     *value,
-                                 GParamSpec *pspec)
+                                      guint       prop_id,
+                                      GValue     *value,
+                                      GParamSpec *pspec)
 {
   SysprofVisualizerList *self = SYSPROF_VISUALIZER_LIST (object);
 
@@ -121,9 +121,9 @@ sysprof_visualizer_list_get_property (GObject    *object,
 
 static void
 sysprof_visualizer_list_set_property (GObject      *object,
-                                 guint         prop_id,
-                                 const GValue *value,
-                                 GParamSpec   *pspec)
+                                      guint         prop_id,
+                                      const GValue *value,
+                                      GParamSpec   *pspec)
 {
   SysprofVisualizerList *self = SYSPROF_VISUALIZER_LIST (object);
 
@@ -201,7 +201,7 @@ sysprof_visualizer_list_get_reader (SysprofVisualizerList *self)
 
 static gboolean
 discover_new_rows_frame_cb (const SysprofCaptureFrame *frame,
-                            gpointer              user_data)
+                            gpointer                   user_data)
 {
   Discovery *state = user_data;
 

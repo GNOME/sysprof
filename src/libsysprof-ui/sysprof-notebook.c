@@ -31,6 +31,7 @@ G_DEFINE_TYPE (SysprofNotebook, sysprof_notebook, GTK_TYPE_NOTEBOOK)
 enum {
   PROP_0,
   PROP_CAN_SAVE,
+  PROP_CURRENT,
   N_PROPS
 };
 
@@ -84,6 +85,7 @@ sysprof_notebook_page_added (GtkNotebook *notebook,
                                G_CONNECT_SWAPPED);
 
       g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_SAVE]);
+      g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CURRENT]);
     }
 
   gtk_notebook_set_show_tabs (notebook,
@@ -112,6 +114,7 @@ sysprof_notebook_page_removed (GtkNotebook *notebook,
                                             notebook);
 
       g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_SAVE]);
+      g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CURRENT]);
     }
 
   gtk_notebook_set_show_tabs (notebook,
@@ -129,6 +132,7 @@ sysprof_notebook_switch_page (GtkNotebook *notebook,
   GTK_NOTEBOOK_CLASS (sysprof_notebook_parent_class)->switch_page (notebook, widget, page);
 
   g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_SAVE]);
+  g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CURRENT]);
 }
 
 static void
@@ -143,6 +147,10 @@ sysprof_notebook_get_property (GObject    *object,
     {
     case PROP_CAN_SAVE:
       g_value_set_boolean (value, sysprof_notebook_get_can_save (self));
+      break;
+
+    case PROP_CURRENT:
+      g_value_set_object (value, sysprof_notebook_get_current (self));
       break;
 
     default:
@@ -168,6 +176,15 @@ sysprof_notebook_class_init (SysprofNotebookClass *klass)
                           "If the current display can save a recording",
                           FALSE,
                           (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_CURRENT] =
+    g_param_spec_object ("current",
+                         "Current",
+                         "The current display",
+                         SYSPROF_TYPE_DISPLAY,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void

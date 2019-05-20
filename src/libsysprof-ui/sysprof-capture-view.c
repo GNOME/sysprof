@@ -919,6 +919,7 @@ void
 sysprof_capture_view_fit_to_width (SysprofCaptureView *self)
 {
   SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+  GtkWidget *toplevel;
   GtkAllocation alloc;
   gdouble zoom;
   gint64 duration;
@@ -936,8 +937,20 @@ sysprof_capture_view_fit_to_width (SysprofCaptureView *self)
 
   priv->needs_fit = FALSE;
 
-  /* Trim a bit off the width to avoid drawing past edges */
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
+
+  /* If we got here before we got any sort of backing allocations
+   * created, then we will just try to guess the right size based
+   * on the window's default sizes.
+   */
+  if ((toplevel = gtk_widget_get_toplevel (GTK_WIDGET (self))) &&
+      GTK_IS_WINDOW (toplevel) &&
+      alloc.width <= 1)
+    g_object_get (toplevel,
+                  "default-width", &alloc.width,
+                  NULL);
+
+  /* Trim a bit off the width to avoid drawing past edges */
   width = MAX (100, alloc.width - 25);
 
   zoom = sysprof_zoom_manager_fit_zoom_for_duration (priv->zoom_manager, duration, width);

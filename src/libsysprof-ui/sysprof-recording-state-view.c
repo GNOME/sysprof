@@ -166,6 +166,7 @@ sysprof_recording_state_view_class_init (SysprofRecordingStateViewClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/org/gnome/sysprof/ui/sysprof-recording-state-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofRecordingStateView, elapsed);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofRecordingStateView, samples);
 }
 
 static void

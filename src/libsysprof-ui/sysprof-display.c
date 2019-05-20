@@ -213,7 +213,7 @@ sysprof_display_dup_title (SysprofDisplay *self)
       const gchar *filename;
 
       if ((filename = sysprof_capture_reader_get_filename (reader)))
-        return g_strdup (filename);
+        return g_path_get_basename (filename);
     }
 
   return g_strdup (_("New Recording"));
@@ -559,6 +559,7 @@ sysprof_display_save (SysprofDisplay *self)
       break;
     }
 
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
   gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (native));
 }
 

@@ -294,7 +294,7 @@ sysprof_visualizer_row_translate_points (SysprofVisualizerRow                   
   for (guint i = 0; i < n_in_points; i++)
     {
       out_points[i].x = (in_points[i].x * graph_width);
-      out_points[i].y = alloc.height - (in_points[i].y * alloc.height);
+      out_points[i].y = alloc.height - (ABS (in_points[i].y) * alloc.height);
     }
 }
 

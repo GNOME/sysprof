@@ -279,9 +279,9 @@ sysprof_local_profiler_finalize (GObject *object)
 
 static void
 sysprof_local_profiler_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
-                                GParamSpec *pspec)
+                                     guint       prop_id,
+                                     GValue     *value,
+                                     GParamSpec *pspec)
 {
   SysprofLocalProfiler *self = SYSPROF_LOCAL_PROFILER (object);
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
@@ -327,9 +327,9 @@ sysprof_local_profiler_get_property (GObject    *object,
 
 static void
 sysprof_local_profiler_set_property (GObject      *object,
-                                guint         prop_id,
-                                const GValue *value,
-                                GParamSpec   *pspec)
+                                     guint         prop_id,
+                                     const GValue *value,
+                                     GParamSpec   *pspec)
 {
   SysprofLocalProfiler *self = SYSPROF_LOCAL_PROFILER (object);
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
@@ -631,7 +631,7 @@ sysprof_local_profiler_set_writer (SysprofProfiler      *profiler,
 
 static void
 sysprof_local_profiler_track_completed (SysprofLocalProfiler *self,
-                                   SysprofSource        *source)
+                                        SysprofSource        *source)
 {
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
   gint i;
@@ -676,7 +676,7 @@ sysprof_local_profiler_track_completed (SysprofLocalProfiler *self,
 
 static void
 sysprof_local_profiler_source_finished (SysprofLocalProfiler *self,
-                                   SysprofSource        *source)
+                                        SysprofSource        *source)
 {
   g_assert (SYSPROF_IS_LOCAL_PROFILER (self));
   g_assert (SYSPROF_IS_SOURCE (source));
@@ -686,7 +686,7 @@ sysprof_local_profiler_source_finished (SysprofLocalProfiler *self,
 
 static void
 sysprof_local_profiler_source_ready (SysprofLocalProfiler *self,
-                                SysprofSource        *source)
+                                     SysprofSource        *source)
 {
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
   guint i;
@@ -712,8 +712,8 @@ sysprof_local_profiler_source_ready (SysprofLocalProfiler *self,
 
 static void
 sysprof_local_profiler_source_failed (SysprofLocalProfiler *self,
-                                 const GError    *reason,
-                                 SysprofSource        *source)
+                                      const GError         *reason,
+                                      SysprofSource        *source)
 {
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
 
@@ -739,7 +739,7 @@ sysprof_local_profiler_source_failed (SysprofLocalProfiler *self,
 
 static void
 sysprof_local_profiler_add_source (SysprofProfiler *profiler,
-                              SysprofSource   *source)
+                                   SysprofSource   *source)
 {
   SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
@@ -774,7 +774,7 @@ sysprof_local_profiler_add_source (SysprofProfiler *profiler,
 
 static void
 sysprof_local_profiler_add_pid (SysprofProfiler *profiler,
-                           GPid        pid)
+                                GPid             pid)
 {
   SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
@@ -790,7 +790,7 @@ sysprof_local_profiler_add_pid (SysprofProfiler *profiler,
 
 static void
 sysprof_local_profiler_remove_pid (SysprofProfiler *profiler,
-                              GPid        pid)
+                                   GPid             pid)
 {
   SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
@@ -816,7 +816,7 @@ sysprof_local_profiler_remove_pid (SysprofProfiler *profiler,
 
 static const GPid *
 sysprof_local_profiler_get_pids (SysprofProfiler *profiler,
-                            guint      *n_pids)
+                                 guint           *n_pids)
 {
   SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);

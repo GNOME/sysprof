@@ -31,8 +31,9 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofAidIcon, sysprof_aid_icon, SYSPROF, AID_ICON, GtkFlowBoxChild)
 
-GtkWidget  *sysprof_aid_icon_new     (SysprofAid     *aid);
-SysprofAid *sysprof_aid_icon_get_aid (SysprofAidIcon *self);
-void        sysprof_aid_icon_toggle  (SysprofAidIcon *self);
+GtkWidget  *sysprof_aid_icon_new         (SysprofAid     *aid);
+SysprofAid *sysprof_aid_icon_get_aid     (SysprofAidIcon *self);
+void        sysprof_aid_icon_toggle      (SysprofAidIcon *self);
+gboolean    sysprof_aid_icon_is_selected (SysprofAidIcon *self);
 
 G_END_DECLS

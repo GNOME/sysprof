@@ -63,6 +63,14 @@ sysprof_aid_icon_new (SysprofAid *aid)
                        NULL);
 }
 
+gboolean
+sysprof_aid_icon_is_selected (SysprofAidIcon *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_AID_ICON (self), FALSE);
+
+  return gtk_widget_get_visible (GTK_WIDGET (self->check));
+}
+
 /**
  * sysprof_aid_icon_get_aid:
  *

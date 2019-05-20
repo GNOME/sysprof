@@ -898,6 +898,9 @@ sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
       to_write -= written;
     }
 
+  if (self->filename == NULL)
+    self->filename = g_strdup (filename);
+
   close (fd);
 
   return TRUE;

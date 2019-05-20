@@ -36,6 +36,7 @@ libsysprof_ui_private_sources = [
   'sysprof-cairo.c',
   'sysprof-cell-renderer-duration.c',
   'sysprof-cell-renderer-percent.c',
+  'sysprof-depth-visualizer-row.c',
   'sysprof-environ-editor-row.c',
   'sysprof-environ-editor.c',
   'sysprof-environ-variable.c',

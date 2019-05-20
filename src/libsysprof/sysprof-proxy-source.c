@@ -47,7 +47,7 @@ sysprof_proxy_source_get_is_ready (SysprofSource *source)
 
   g_assert (SYSPROF_IS_PROXY_SOURCE (self));
 
-  return FALSE;
+  return TRUE;
 }
 
 static void

@@ -53,6 +53,7 @@ libsysprof_capture_dep = declare_dependency(
 )
 
 pkgconfig.generate(
+    libraries: [libsysprof_capture],
       subdirs: [ sysprof_header_subdir ],
       version: meson.project_version(),
          name: 'sysprof-capture-@0@'.format(libsysprof_api_version),

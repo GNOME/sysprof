@@ -88,7 +88,7 @@ sysprof_aid_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_DISPLAY_NAME:
-      sysprof_aid_set_display_name (self, g_value_get_object (value));
+      sysprof_aid_set_display_name (self, g_value_get_string (value));
       break;
 
     case PROP_ICON:

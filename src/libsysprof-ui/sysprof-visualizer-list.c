@@ -26,6 +26,7 @@
 #include <sysprof.h>
 
 #include "sysprof-cpu-visualizer-row.h"
+#include "sysprof-depth-visualizer-row.h"
 #include "sysprof-visualizer-list.h"
 #include "sysprof-visualizer-row.h"
 #include "sysprof-mark-visualizer-row.h"
@@ -45,6 +46,7 @@ typedef struct
   guint pixels_counter;
   GArray *memory;
   guint has_cpu : 1;
+  guint has_sample : 1;
 } Discovery;
 
 enum {
@@ -214,15 +216,18 @@ discover_new_rows_frame_cb (const SysprofCaptureFrame *frame,
    * and widget views to be displayed.
    */
 
-  if (frame->type == SYSPROF_CAPTURE_FRAME_MARK)
+  if (frame->type == SYSPROF_CAPTURE_FRAME_SAMPLE)
+    {
+      state->has_sample = TRUE;
+    }
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_MARK)
     {
       const SysprofCaptureMark *mark = (const SysprofCaptureMark *)frame;
 
       if (!g_hash_table_contains (state->mark_groups, mark->group))
         g_hash_table_add (state->mark_groups, g_strdup (mark->group));
     }
-
-  if (frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF)
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF)
     {
       const SysprofCaptureFrameCounterDefine *def = (const SysprofCaptureFrameCounterDefine *)frame;
 
@@ -272,6 +277,7 @@ handle_capture_results (GObject      *object,
                         gpointer      user_data)
 {
   SysprofVisualizerList *self = (SysprofVisualizerList *)object;
+  SysprofVisualizerListPrivate *priv = sysprof_visualizer_list_get_instance_private (self);
   Discovery *state;
   const gchar *key;
 
@@ -299,6 +305,17 @@ handle_capture_results (GObject      *object,
                                      "visible", TRUE,
                                      "y-lower", 0.0,
                                      "y-upper", 100.0,
+                                     NULL);
+      gtk_container_add (GTK_CONTAINER (self), row);
+    }
+
+  if (state->has_sample)
+    {
+      GtkWidget *row = g_object_new (SYSPROF_TYPE_DEPTH_VISUALIZER_ROW,
+                                     "zoom-manager", priv->zoom_manager,
+                                     "height-request", 50,
+                                     "selectable", FALSE,
+                                     "visible", TRUE,
                                      NULL);
       gtk_container_add (GTK_CONTAINER (self), row);
     }
@@ -382,7 +399,11 @@ static void
 discover_new_rows (SysprofVisualizerList *self,
                    SysprofCaptureReader  *reader)
 {
-  static const SysprofCaptureFrameType types[] = { SYSPROF_CAPTURE_FRAME_CTRDEF, SYSPROF_CAPTURE_FRAME_MARK };
+  static const SysprofCaptureFrameType types[] = {
+    SYSPROF_CAPTURE_FRAME_CTRDEF,
+    SYSPROF_CAPTURE_FRAME_MARK,
+    SYSPROF_CAPTURE_FRAME_SAMPLE,
+  };
   g_autoptr(SysprofCaptureCursor) cursor = NULL;
   g_autoptr(GTask) task = NULL;
   SysprofCaptureCondition *condition;

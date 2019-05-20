@@ -219,6 +219,8 @@ sysprof_depth_visualizer_row_draw (GtkWidget *widget,
   GtkAllocation alloc;
   const Point *points;
   guint n_points = 0;
+  GdkRGBA user;
+  GdkRGBA system;
 
   g_assert (SYSPROF_IS_DEPTH_VISUALIZER_ROW (self));
   g_assert (cr != NULL);
@@ -228,6 +230,9 @@ sysprof_depth_visualizer_row_draw (GtkWidget *widget,
   if (self->points == NULL)
     return GDK_EVENT_PROPAGATE;
 
+  gdk_rgba_parse (&user, "#2e3436");
+  gdk_rgba_parse (&system, "#ef2929");
+
   gtk_widget_get_allocation (widget, &alloc);
 
   if ((points = point_cache_get_points (self->points, 1, &n_points)))
@@ -235,18 +240,16 @@ sysprof_depth_visualizer_row_draw (GtkWidget *widget,
       g_autofree SysprofVisualizerRowAbsolutePoint *out_points = NULL;
       gint last = 1;
 
-      //g_print ("Points : %p   %d\n", points, n_points);
-
       out_points = g_new (SysprofVisualizerRowAbsolutePoint, n_points);
       sysprof_visualizer_row_translate_points (SYSPROF_VISUALIZER_ROW (widget),
                                                (const SysprofVisualizerRowRelativePoint *)points,
                                                n_points, out_points, n_points);
 
       cairo_set_line_width (cr, 1.0);
-      cairo_set_source_rgb (cr, 0, 0, 0);
+      gdk_cairo_set_source_rgba (cr, &user);
 
       if (n_points > 0 && points[0].y < 0)
-        cairo_set_source_rgb (cr, 1, 0, 0);
+        gdk_cairo_set_source_rgba (cr, &system);
 
       for (guint i = 0; i < n_points; i++)
         {
@@ -256,13 +259,13 @@ sysprof_depth_visualizer_row_draw (GtkWidget *widget,
 
           last = points[i].y > 0 ? 1 : -1;
 
-          cairo_move_to (cr, alloc.x + (guint)out_points[i].x, alloc.height);
-          cairo_line_to (cr, alloc.x + out_points[i].x, out_points[i].y);
+          cairo_move_to (cr, .5 + alloc.x + (guint)out_points[i].x, alloc.height);
+          cairo_line_to (cr, .5 + alloc.x + out_points[i].x, out_points[i].y);
 
           if (last > 0)
-            cairo_set_source_rgb (cr, 0, 0, 0);
+            gdk_cairo_set_source_rgba (cr, &user);
           else
-            cairo_set_source_rgb (cr, 1, 0, 0);
+            gdk_cairo_set_source_rgba (cr, &system);
         }
 
       cairo_stroke (cr);

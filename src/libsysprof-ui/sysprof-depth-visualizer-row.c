@@ -85,6 +85,26 @@ build_point_cache_cb (const SysprofCaptureFrame *frame,
 
   x = (frame->time - st->begin_time) / (gdouble)st->duration;
   y = sample->n_addrs / (gdouble)st->max_n_addrs;
+
+  /* If this contains a context-switch (meaning we're going into the kernel
+   * to do some work, use a negative value for Y so that we know later on
+   * that we should draw it with a different color (after removing the negation
+   * on the value.
+   *
+   * We skip past the first index, which is always a context switch as it is
+   * our perf handler.
+   */
+  for (guint i = 1; i < sample->n_addrs; i++)
+    {
+      SysprofAddressContext kind;
+
+      if (sysprof_address_is_context_switch (sample->addrs[i], &kind))
+        {
+          y = -y;
+          break;
+        }
+    }
+
   point_cache_add_point_to_set (st->pc, 1, x, y);
 
   return TRUE;
@@ -213,6 +233,7 @@ sysprof_depth_visualizer_row_draw (GtkWidget *widget,
   if ((points = point_cache_get_points (self->points, 1, &n_points)))
     {
       g_autofree SysprofVisualizerRowAbsolutePoint *out_points = NULL;
+      gint last = 1;
 
       //g_print ("Points : %p   %d\n", points, n_points);
 
@@ -221,14 +242,29 @@ sysprof_depth_visualizer_row_draw (GtkWidget *widget,
                                                (const SysprofVisualizerRowRelativePoint *)points,
                                                n_points, out_points, n_points);
 
-      for (guint i = 0; i < n_points; i++)
-        {
-          cairo_move_to (cr, alloc.x + (guint)out_points[i].x, alloc.height);
-          cairo_line_to (cr, alloc.x + (guint)out_points[i].x, out_points[i].y);
-        }
-
       cairo_set_line_width (cr, 1.0);
       cairo_set_source_rgb (cr, 0, 0, 0);
+
+      if (n_points > 0 && points[0].y < 0)
+        cairo_set_source_rgb (cr, 1, 0, 0);
+
+      for (guint i = 0; i < n_points; i++)
+        {
+          if ((points[i].y < 0 && last > 0) ||
+              (points[i].y > 0 && last < 0))
+            cairo_stroke (cr);
+
+          last = points[i].y > 0 ? 1 : -1;
+
+          cairo_move_to (cr, alloc.x + (guint)out_points[i].x, alloc.height);
+          cairo_line_to (cr, alloc.x + out_points[i].x, out_points[i].y);
+
+          if (last > 0)
+            cairo_set_source_rgb (cr, 0, 0, 0);
+          else
+            cairo_set_source_rgb (cr, 1, 0, 0);
+        }
+
       cairo_stroke (cr);
     }
 

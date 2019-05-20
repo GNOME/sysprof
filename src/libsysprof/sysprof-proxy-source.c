@@ -62,11 +62,20 @@ sysprof_proxy_source_set_writer (SysprofSource        *source,
 }
 
 static void
+sysprof_proxy_source_stop (SysprofSource *source)
+{
+  g_assert (SYSPROF_IS_PROXY_SOURCE (source));
+
+  sysprof_source_emit_finished (source);
+}
+
+static void
 source_iface_init (SysprofSourceInterface *iface)
 {
   iface->prepare = sysprof_proxy_source_prepare;
   iface->set_writer = sysprof_proxy_source_set_writer;
   iface->get_is_ready = sysprof_proxy_source_get_is_ready;
+  iface->stop = sysprof_proxy_source_stop;
 }
 
 G_DEFINE_TYPE_WITH_CODE (SysprofProxySource, sysprof_proxy_source, G_TYPE_OBJECT,

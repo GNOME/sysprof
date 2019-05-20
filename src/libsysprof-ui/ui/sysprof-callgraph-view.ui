@@ -172,7 +172,7 @@
                         <property name="expand">false</property>
                         <property name="sizing">fixed</property>
                         <property name="sort-column-id">2</property>
-                        <property name="title" translatable="yes">Cumulative</property>
+                        <property name="title" translatable="yes">Total</property>
                         <child>
                           <object class="GtkCellRendererProgress">
                             <property name="width">65</property>

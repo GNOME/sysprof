@@ -169,9 +169,12 @@ sysprof_profiler_assistant_foreach_cb (GtkWidget       *widget,
     }
   else if (SYSPROF_IS_AID_ICON (widget))
     {
-      SysprofAid *aid = sysprof_aid_icon_get_aid (SYSPROF_AID_ICON (widget));
+      if (sysprof_aid_icon_is_selected (SYSPROF_AID_ICON (widget)))
+        {
+          SysprofAid *aid = sysprof_aid_icon_get_aid (SYSPROF_AID_ICON (widget));
 
-      sysprof_aid_prepare (aid, profiler);
+          sysprof_aid_prepare (aid, profiler);
+        }
     }
 }
 

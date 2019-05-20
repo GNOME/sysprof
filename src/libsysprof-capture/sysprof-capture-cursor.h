@@ -36,7 +36,7 @@ typedef struct _SysprofCaptureCursor SysprofCaptureCursor;
  * Functions matching this typedef should return %TRUE if they want the
  * the caller to stop iteration of cursor.
  *
- * Returns: %TRUE if iteration should stop, otherwise %FALSE.
+ * Returns: %TRUE if iteration should continue, otherwise %FALSE.
  */
 typedef gboolean (*SysprofCaptureCursorCallback) (const SysprofCaptureFrame *frame,
                                                   gpointer                   user_data);

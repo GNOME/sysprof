@@ -183,6 +183,21 @@
                         </child>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="function_hits_column">
+                        <property name="expand">false</property>
+                        <property name="sizing">fixed</property>
+                        <property name="title" translatable="yes">Hits</property>
+                        <child>
+                          <object class="GtkCellRendererText">
+                            <property name="xalign">1.0</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">4</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>

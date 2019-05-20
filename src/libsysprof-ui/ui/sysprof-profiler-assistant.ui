@@ -8,7 +8,8 @@
     <property name="object-path">/org/gnome/Sysprof3/Profiler</property>
     <property name="bus-type">session</property>
     <property name="bus-name">org.gnome.Mutter</property>
-    <property name="display-name">Display Compositor</property>
+    <!-- translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular -->
+    <property name="display-name" translatable="yes">Compositor</property>
     <property name="icon-name">org.gnome.Sysprof-symbolic</property>
   </object>
   <template class="SysprofProfilerAssistant" parent="GtkBin">

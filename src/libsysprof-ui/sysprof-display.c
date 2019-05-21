@@ -421,6 +421,7 @@ sysprof_display_is_empty (SysprofDisplay *self)
 
   return priv->file == NULL &&
          priv->profiler == NULL &&
+         gtk_stack_get_visible_child (priv->stack) == GTK_WIDGET (priv->assistant) &&
          NULL == sysprof_capture_view_get_reader (priv->capture_view);
 }
 

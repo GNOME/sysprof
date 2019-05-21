@@ -24,6 +24,8 @@
 
 #include <sysprof.h>
 
+#include "sysprof-platform.h"
+
 #include "sysprof-aid-icon.h"
 #include "sysprof-cpu-aid.h"
 #include "sysprof-environ-editor.h"
@@ -184,16 +186,28 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
                                               GtkButton                *button)
 {
   g_autoptr(SysprofProfiler) profiler = NULL;
+  g_autoptr(SysprofCaptureWriter) writer = NULL;
 #ifdef __linux__
   g_autoptr(SysprofSource) proc_source = NULL;
 #endif
+  gint fd;
 
   g_assert (SYSPROF_IS_PROFILER_ASSISTANT (self));
   g_assert (GTK_IS_BUTTON (button));
 
   gtk_widget_set_sensitive (GTK_WIDGET (self), FALSE);
 
+  /* Setup a writer immediately */
+  if (-1 == (fd = sysprof_memfd_create ("[sysprof-capture]")) ||
+      !(writer = sysprof_capture_writer_new_from_fd (fd, 0)))
+    {
+      if (fd != -1)
+        close (fd);
+      return;
+    }
+
   profiler = sysprof_local_profiler_new ();
+  sysprof_profiler_set_writer (profiler, writer);
 
   /* Add pids to profiler */
   gtk_container_foreach (GTK_CONTAINER (self->process_list_box),

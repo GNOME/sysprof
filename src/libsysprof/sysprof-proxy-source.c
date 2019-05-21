@@ -388,7 +388,13 @@ sysprof_proxy_source_cat (SysprofProxySource   *self,
   g_assert (SYSPROF_IS_PROXY_SOURCE (self));
   g_assert (reader != NULL);
 
-  g_warning ("TODO: join reader");
+  if (self->writer != NULL)
+    {
+      g_autoptr(GError) error = NULL;
+
+      if (!sysprof_capture_writer_cat (self->writer, reader, &error))
+        g_warning ("Failed to join reader: %s\n", error->message);
+    }
 }
 
 static void

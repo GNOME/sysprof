@@ -18,6 +18,7 @@ libsysprof_capture_sources = files([
   'sysprof-capture-reader.c',
   'sysprof-capture-util.c',
   'sysprof-capture-writer.c',
+  'sysprof-capture-writer-cat.c',
   'sysprof-clock.c',
   'sysprof-platform.c',
 ])

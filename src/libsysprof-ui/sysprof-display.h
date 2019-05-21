@@ -41,19 +41,21 @@ struct _SysprofDisplayClass
 } __attribute__((aligned(8)));
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget       *sysprof_display_new          (void);
+GtkWidget       *sysprof_display_new            (void);
 SYSPROF_AVAILABLE_IN_ALL
-gchar           *sysprof_display_dup_title    (SysprofDisplay *self);
+gchar           *sysprof_display_dup_title      (SysprofDisplay *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofProfiler *sysprof_display_get_profiler (SysprofDisplay *self);
+SysprofProfiler *sysprof_display_get_profiler   (SysprofDisplay *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_display_is_empty     (SysprofDisplay *self);
+gboolean         sysprof_display_is_empty       (SysprofDisplay *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_display_open         (SysprofDisplay *self,
-                                               GFile          *file);
+void             sysprof_display_open           (SysprofDisplay *self,
+                                                 GFile          *file);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_display_save         (SysprofDisplay *self);
+void             sysprof_display_save           (SysprofDisplay *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_display_get_can_save (SysprofDisplay *self);
+gboolean         sysprof_display_get_can_save   (SysprofDisplay *self);
+SYSPROF_AVAILABLE_IN_ALL
+void             sysprof_display_stop_recording (SysprofDisplay *self);
 
 G_END_DECLS

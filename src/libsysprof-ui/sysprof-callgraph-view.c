@@ -758,11 +758,15 @@ sysprof_callgraph_view_copy_cb (GtkWidget            *widget,
 
   if (!(toplevel = gtk_widget_get_toplevel (widget)) ||
       !GTK_IS_WINDOW (toplevel) ||
-      !(focus = gtk_window_get_focus (GTK_WINDOW (toplevel))) ||
-      focus != GTK_WIDGET (priv->descendants_view))
+      !(focus = gtk_window_get_focus (GTK_WINDOW (toplevel))))
     return;
 
-  copy_tree_view_selection (priv->descendants_view);
+  if (focus == GTK_WIDGET (priv->descendants_view))
+    copy_tree_view_selection (priv->descendants_view);
+  else if (focus == GTK_WIDGET (priv->callers_view))
+    copy_tree_view_selection (priv->callers_view);
+  else if (focus == GTK_WIDGET (priv->functions_view))
+    copy_tree_view_selection (priv->functions_view);
 }
 
 static void

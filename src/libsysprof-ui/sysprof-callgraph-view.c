@@ -664,6 +664,33 @@ sysprof_callgraph_view_real_go_previous (SysprofCallgraphView *self)
 }
 
 static void
+descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
+                                 GtkMovementStep  step,
+                                 int              direction,
+                                 gpointer         user_data)
+{
+  if (step == GTK_MOVEMENT_VISUAL_POSITIONS)
+    {
+      GtkTreePath *path;
+
+      gtk_tree_view_get_cursor (descendants_view, &path, NULL);
+
+      if (direction == 1)
+        {
+          gtk_tree_view_expand_row (descendants_view, path, FALSE);
+          g_signal_stop_emission_by_name (descendants_view, "move-cursor");
+        }
+      else if (direction == -1)
+        {
+          gtk_tree_view_collapse_row (descendants_view, path);
+          g_signal_stop_emission_by_name (descendants_view, "move-cursor");
+        }
+
+      gtk_tree_path_free (path);
+    }
+}
+
+static void
 sysprof_callgraph_view_finalize (GObject *object)
 {
   SysprofCallgraphView *self = (SysprofCallgraphView *)object;
@@ -711,33 +738,6 @@ sysprof_callgraph_view_set_property (GObject      *object,
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
-descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
-                                 GtkMovementStep  step,
-                                 int              direction,
-                                 gpointer         user_data)
-{
-  if (step == GTK_MOVEMENT_VISUAL_POSITIONS)
-    {
-      GtkTreePath *path;
-
-      gtk_tree_view_get_cursor (descendants_view, &path, NULL);
-
-      if (direction == 1)
-        {
-          gtk_tree_view_expand_row (descendants_view, path, FALSE);
-          g_signal_stop_emission_by_name (descendants_view, "move-cursor");
-        }
-      else if (direction == -1)
-        {
-          gtk_tree_view_collapse_row (descendants_view, path);
-          g_signal_stop_emission_by_name (descendants_view, "move-cursor");
-        }
-
-      gtk_tree_path_free (path);
     }
 }
 

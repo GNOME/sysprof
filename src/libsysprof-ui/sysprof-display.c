@@ -33,6 +33,7 @@
 #include "sysprof-display.h"
 #include "sysprof-empty-state-view.h"
 #include "sysprof-recording-state-view.h"
+#include "sysprof-ui-private.h"
 
 typedef struct
 {
@@ -580,4 +581,14 @@ sysprof_display_stop_recording (SysprofDisplay *self)
 
   if (priv->profiler != NULL)
     sysprof_profiler_stop (priv->profiler);
+}
+
+void
+_sysprof_display_focus_record (SysprofDisplay *self)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
+
+  _sysprof_profiler_assistant_focus_record (priv->assistant);
 }

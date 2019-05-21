@@ -39,6 +39,7 @@
 
 #include "config.h"
 
+#include <dazzle.h>
 #include <glib/gi18n.h>
 
 #include "../stackstash.h"
@@ -691,6 +692,80 @@ descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
 }
 
 static void
+copy_tree_view_selection_cb (GtkTreeModel *model,
+                             GtkTreePath  *path,
+                             GtkTreeIter  *iter,
+                             gpointer      data)
+{
+  g_autofree gchar *name = NULL;
+  gchar sstr[16];
+  gchar tstr[16];
+  GString *str = data;
+  gdouble self;
+  gdouble total;
+  gint depth;
+
+  g_assert (GTK_IS_TREE_MODEL (model));
+  g_assert (path != NULL);
+  g_assert (iter != NULL);
+  g_assert (str != NULL);
+
+  depth = gtk_tree_path_get_depth (path);
+  gtk_tree_model_get (model, iter,
+                      COLUMN_NAME, &name,
+                      COLUMN_SELF, &self,
+                      COLUMN_TOTAL, &total,
+                      -1);
+
+  g_snprintf (sstr, sizeof sstr, "%.2lf%%", self);
+  g_snprintf (tstr, sizeof tstr, "%.2lf%%", total);
+
+  g_string_append_printf (str, "[%8s] [%8s]    ", sstr, tstr);
+
+  for (gint i = 1; i < depth; i++)
+    g_string_append (str, "  ");
+  g_string_append (str, name);
+  g_string_append_c (str, '\n');
+}
+
+static void
+copy_tree_view_selection (GtkTreeView *tree_view)
+{
+  g_autoptr(GString) str = NULL;
+  GtkClipboard *clipboard;
+
+  g_assert (GTK_IS_TREE_VIEW (tree_view));
+
+  str = g_string_new ("      SELF      TOTAL    FUNCTION\n");
+  gtk_tree_selection_selected_foreach (gtk_tree_view_get_selection (tree_view),
+                                       copy_tree_view_selection_cb,
+                                       str);
+
+  clipboard = gtk_widget_get_clipboard (GTK_WIDGET (tree_view), GDK_SELECTION_CLIPBOARD);
+  gtk_clipboard_set_text (clipboard, str->str, str->len);
+}
+
+static void
+sysprof_callgraph_view_copy_cb (GtkWidget            *widget,
+                                SysprofCallgraphView *self)
+{
+  SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
+  GtkWidget *toplevel;
+  GtkWidget *focus;
+
+  g_assert (GTK_IS_WIDGET (widget));
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  if (!(toplevel = gtk_widget_get_toplevel (widget)) ||
+      !GTK_IS_WINDOW (toplevel) ||
+      !(focus = gtk_window_get_focus (GTK_WINDOW (toplevel))) ||
+      focus != GTK_WIDGET (priv->descendants_view))
+    return;
+
+  copy_tree_view_selection (priv->descendants_view);
+}
+
+static void
 sysprof_callgraph_view_finalize (GObject *object)
 {
   SysprofCallgraphView *self = (SysprofCallgraphView *)object;
@@ -789,6 +864,7 @@ static void
 sysprof_callgraph_view_init (SysprofCallgraphView *self)
 {
   SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
+  DzlShortcutController *controller;
   GtkTreeSelection *selection;
   GtkCellRenderer *cell;
 
@@ -839,6 +915,19 @@ sysprof_callgraph_view_init (SysprofCallgraphView *self)
   gtk_tree_view_column_set_cell_data_func (priv->descendants_name_column, cell,
                                            sysprof_callgraph_view_tag_data_func,
                                            self, NULL);
+
+  gtk_tree_selection_set_mode (gtk_tree_view_get_selection (priv->descendants_view),
+                               GTK_SELECTION_MULTIPLE);
+
+  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
+
+  dzl_shortcut_controller_add_command_callback (controller,
+                                                "org.gnome.sysprof3.capture.copy",
+                                                "<Control>c",
+                                                DZL_SHORTCUT_PHASE_BUBBLE,
+                                                (GtkCallback) sysprof_callgraph_view_copy_cb,
+                                                self,
+                                                NULL);
 }
 
 typedef struct _Descendant Descendant;

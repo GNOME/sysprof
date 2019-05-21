@@ -134,6 +134,21 @@ save_capture_cb (GSimpleAction *action,
 }
 
 static void
+stop_recording_cb (GSimpleAction *action,
+                   GVariant      *param,
+                   gpointer       user_data)
+{
+  SysprofWindow *self = user_data;
+  SysprofDisplay *current;
+
+  g_assert (G_IS_SIMPLE_ACTION (action));
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if ((current = sysprof_notebook_get_current (self->notebook)))
+    sysprof_display_stop_recording (current);
+}
+
+static void
 sysprof_window_finalize (GObject *object)
 {
   SysprofWindow *self = (SysprofWindow *)object;
@@ -164,11 +179,13 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 static void
 sysprof_window_init (SysprofWindow *self)
 {
+  DzlShortcutController *controller;
   static GActionEntry actions[] = {
     { "close-tab", close_tab_cb },
     { "new-tab", new_tab_cb },
     { "switch-tab", switch_tab_cb, "i" },
     { "save-capture", save_capture_cb },
+    { "stop-recording", stop_recording_cb },
   };
 
   gtk_widget_init_template (GTK_WIDGET (self));
@@ -188,6 +205,13 @@ sysprof_window_init (SysprofWindow *self)
   dzl_binding_group_bind (self->bindings, "title", self, "title", G_BINDING_SYNC_CREATE);
   g_object_bind_property (self->notebook, "current", self->bindings, "source",
                           G_BINDING_SYNC_CREATE);
+
+  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
+  dzl_shortcut_controller_add_command_action (controller,
+                                              "org.gnome.sysprof3.stop-recording",
+                                              "Escape",
+                                              DZL_SHORTCUT_PHASE_BUBBLE,
+                                              "win.stop-recording");
 
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "save-capture",
                              "enabled", FALSE,

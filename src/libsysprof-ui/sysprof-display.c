@@ -254,13 +254,11 @@ stop_recording_cb (GSimpleAction *action,
                    gpointer       user_data)
 {
   SysprofDisplay *self = user_data;
-  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
 
   g_assert (G_IS_SIMPLE_ACTION (action));
   g_assert (SYSPROF_IS_DISPLAY (self));
 
-  if (priv->profiler != NULL)
-    sysprof_profiler_stop (priv->profiler);
+  sysprof_display_stop_recording (self);
 }
 
 static void
@@ -571,4 +569,15 @@ sysprof_display_get_can_save (SysprofDisplay *self)
   g_return_val_if_fail (SYSPROF_IS_DISPLAY (self), FALSE);
 
   return sysprof_capture_view_get_reader (priv->capture_view) != NULL;
+}
+
+void
+sysprof_display_stop_recording (SysprofDisplay *self)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
+
+  if (priv->profiler != NULL)
+    sysprof_profiler_stop (priv->profiler);
 }

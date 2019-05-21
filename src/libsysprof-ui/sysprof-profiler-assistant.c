@@ -30,6 +30,7 @@
 #include "sysprof-profiler-assistant.h"
 #include "sysprof-proxy-aid.h"
 #include "sysprof-process-model-row.h"
+#include "sysprof-ui-private.h"
 
 struct _SysprofProfilerAssistant
 {
@@ -313,4 +314,12 @@ sysprof_profiler_assistant_init (SysprofProfilerAssistant *self)
                            G_CONNECT_SWAPPED);
 
   sysprof_environ_editor_set_environ (self->environ_editor, environ);
+}
+
+void
+_sysprof_profiler_assistant_focus_record (SysprofProfilerAssistant *self)
+{
+  g_return_if_fail (SYSPROF_IS_PROFILER_ASSISTANT (self));
+
+  gtk_widget_grab_focus (GTK_WIDGET (self->record_button));
 }

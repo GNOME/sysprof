@@ -25,6 +25,7 @@
 #include "sysprof-display.h"
 #include "sysprof-notebook.h"
 #include "sysprof-tab.h"
+#include "sysprof-ui-private.h"
 
 G_DEFINE_TYPE (SysprofNotebook, sysprof_notebook, GTK_TYPE_NOTEBOOK)
 
@@ -71,6 +72,9 @@ sysprof_notebook_page_added (GtkNotebook *notebook,
   g_assert (SYSPROF_IS_NOTEBOOK (notebook));
   g_assert (GTK_IS_WIDGET (child));
 
+  gtk_notebook_set_show_tabs (notebook,
+                              gtk_notebook_get_n_pages (notebook) > 1);
+
   if (SYSPROF_IS_DISPLAY (child))
     {
       GtkWidget *tab = sysprof_tab_new (SYSPROF_DISPLAY (child));
@@ -86,10 +90,9 @@ sysprof_notebook_page_added (GtkNotebook *notebook,
 
       g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_SAVE]);
       g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CURRENT]);
-    }
 
-  gtk_notebook_set_show_tabs (notebook,
-                              gtk_notebook_get_n_pages (notebook) > 1);
+      _sysprof_display_focus_record (SYSPROF_DISPLAY (child));
+    }
 }
 
 static void

@@ -133,6 +133,10 @@ SYSPROF_AVAILABLE_IN_ALL
 gboolean              sysprof_capture_writer_splice          (SysprofCaptureWriter              *self,
                                                               SysprofCaptureWriter              *dest,
                                                               GError                           **error);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean              sysprof_capture_writer_cat             (SysprofCaptureWriter              *self,
+                                                              SysprofCaptureReader              *reader,
+                                                              GError                           **error);
 G_GNUC_INTERNAL
 gboolean              _sysprof_capture_writer_splice_from_fd (SysprofCaptureWriter              *self,
                                                               int                                fd,

@@ -68,11 +68,11 @@ sysprof_recording_state_view_notify_elapsed (SysprofRecordingStateView *self,
       g_autofree gchar *samples = NULL;
       gint64 count;
 
+      sysprof_capture_writer_stat (writer, &st);
       count = st.frame_count[SYSPROF_CAPTURE_FRAME_SAMPLE] +
               st.frame_count[SYSPROF_CAPTURE_FRAME_MARK] +
               st.frame_count[SYSPROF_CAPTURE_FRAME_CTRSET];
 
-      sysprof_capture_writer_stat (writer, &st);
       samples = g_strdup_printf ("%"G_GINT64_FORMAT, count);
       gtk_label_set_label (priv->samples, samples);
     }

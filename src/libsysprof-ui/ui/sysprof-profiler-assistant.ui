@@ -12,6 +12,14 @@
     <property name="display-name" translatable="yes">Compositor</property>
     <property name="icon-name">org.gnome.Sysprof-symbolic</property>
   </object>
+  <object class="SysprofProxyAid" id="gtk_aid">
+    <property name="object-path">/org/gtk/Profiler</property>
+    <property name="bus-type">session</property>
+    <property name="bus-name"></property>
+    <!-- translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular -->
+    <property name="display-name" translatable="yes">GTK</property>
+    <property name="icon-name">gtk3-demo-symbolic.symbolic</property>
+  </object>
   <template class="SysprofProfilerAssistant" parent="GtkBin">
     <child>
       <object class="GtkScrolledWindow">
@@ -81,6 +89,12 @@
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">mutter_aid</property>
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="SysprofAidIcon">
+                            <property name="aid">gtk_aid</property>
                             <property name="visible">true</property>
                           </object>
                         </child>

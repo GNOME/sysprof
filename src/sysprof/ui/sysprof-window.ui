@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <interface>
-  <template class="SysprofWindow" parent="GtkApplicationWindow">
+  <template class="SysprofWindow" parent="DzlApplicationWindow">
     <property name="default-height">700</property>
     <property name="default-width">1200</property>
     <property name="icon-name">org.gnome.Sysprof-symbolic</property>

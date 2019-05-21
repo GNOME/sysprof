@@ -23,14 +23,13 @@
 #include "config.h"
 
 #include <glib/gi18n.h>
-#include <dazzle.h>
 #include <sysprof-ui.h>
 
 #include "sysprof-window.h"
 
 struct _SysprofWindow
 {
-  GtkApplicationWindow  parent_instance;
+  DzlApplicationWindow  parent_instance;
 
   DzlBindingGroup      *bindings;
 
@@ -38,7 +37,7 @@ struct _SysprofWindow
   GtkMenuButton        *menu_button;
 };
 
-G_DEFINE_TYPE (SysprofWindow, sysprof_window, GTK_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE (SysprofWindow, sysprof_window, DZL_TYPE_APPLICATION_WINDOW)
 
 /**
  * sysprof_window_new:

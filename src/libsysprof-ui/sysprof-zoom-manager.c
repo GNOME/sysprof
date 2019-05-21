@@ -95,6 +95,19 @@ sysprof_zoom_manager_zoom_one_action (GSimpleAction *action,
 }
 
 static void
+sysprof_zoom_manager_zoom_action (GSimpleAction *action,
+                                  GVariant      *param,
+                                  gpointer       user_data)
+{
+  SysprofZoomManager *self = user_data;
+
+  g_assert (SYSPROF_IS_ZOOM_MANAGER (self));
+  g_assert (g_variant_is_of_type (param, G_VARIANT_TYPE_DOUBLE));
+
+  sysprof_zoom_manager_set_zoom (self, g_variant_get_double (param));
+}
+
+static void
 sysprof_zoom_manager_get_property (GObject    *object,
                                    guint       prop_id,
                                    GValue     *value,
@@ -224,6 +237,7 @@ sysprof_zoom_manager_init (SysprofZoomManager *self)
     { "zoom-in", sysprof_zoom_manager_zoom_in_action },
     { "zoom-out", sysprof_zoom_manager_zoom_out_action },
     { "zoom-one", sysprof_zoom_manager_zoom_one_action },
+    { "zoom", NULL, "d", "1.0", sysprof_zoom_manager_zoom_action },
   };
   GAction *action;
 
@@ -399,7 +413,15 @@ sysprof_zoom_manager_set_zoom (SysprofZoomManager *self,
 
   if (zoom != self->zoom)
     {
+      g_autoptr(GVariant) state = NULL;
+
       self->zoom = zoom;
+      state = g_variant_take_ref (g_variant_new_double (zoom));
+
+      g_object_set (g_action_map_lookup_action (G_ACTION_MAP (self->actions), "zoom"),
+                    "state", state,
+                    NULL);
+
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ZOOM]);
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_ZOOM_IN]);
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_ZOOM_OUT]);

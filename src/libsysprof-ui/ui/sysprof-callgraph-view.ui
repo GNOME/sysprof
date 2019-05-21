@@ -42,11 +42,11 @@
                             <property name="sort-column-id">1</property>
                             <property name="title" translatable="yes">Self</property>
                             <child>
-                              <object class="SysprofCellRendererPercent">
-                                <property name="xpad">6</property>
+                              <object class="GtkCellRendererProgress">
+                                <property name="width">65</property>
                               </object>
                               <attributes>
-                                <attribute name="percent">1</attribute>
+                                <attribute name="value">1</attribute>
                               </attributes>
                             </child>
                           </object>
@@ -58,11 +58,11 @@
                             <property name="sort-column-id">2</property>
                             <property name="title" translatable="yes">Total</property>
                             <child>
-                              <object class="SysprofCellRendererPercent">
-                                <property name="xpad">6</property>
+                              <object class="GtkCellRendererProgress">
+                                <property name="width">65</property>
                               </object>
                               <attributes>
-                                <attribute name="percent">2</attribute>
+                                <attribute name="value">2</attribute>
                               </attributes>
                             </child>
                           </object>
@@ -103,11 +103,11 @@
                             <property name="sort-column-id">1</property>
                             <property name="title" translatable="yes">Self</property>
                             <child>
-                              <object class="SysprofCellRendererPercent">
-                                <property name="xpad">6</property>
+                              <object class="GtkCellRendererProgress">
+                                <property name="width">65</property>
                               </object>
                               <attributes>
-                                <attribute name="percent">1</attribute>
+                                <attribute name="value">1</attribute>
                               </attributes>
                             </child>
                           </object>
@@ -119,11 +119,11 @@
                             <property name="sort-column-id">2</property>
                             <property name="title" translatable="yes">Total</property>
                             <child>
-                              <object class="SysprofCellRendererPercent">
-                                <property name="xpad">6</property>
+                              <object class="GtkCellRendererProgress">
+                                <property name="width">65</property>
                               </object>
                               <attributes>
-                                <attribute name="percent">2</attribute>
+                                <attribute name="value">2</attribute>
                               </attributes>
                             </child>
                           </object>

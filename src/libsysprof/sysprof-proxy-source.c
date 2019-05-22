@@ -149,7 +149,7 @@ sysprof_proxy_source_take_monitor (SysprofProxySource *self,
   g_assert (SYSPROF_IS_PROXY_SOURCE (self));
   g_assert (monitor != NULL);
   g_assert (monitor->self == self);
-  g_assert (G_IS_DBUS_CONNECTION (monitor->bus));
+  g_assert (monitor->bus == NULL || G_IS_DBUS_CONNECTION (monitor->bus));
 
   if (g_cancellable_is_cancelled (self->cancellable))
     monitor_free (monitor);
@@ -200,7 +200,7 @@ sysprof_proxy_source_monitor (SysprofProxySource *self,
   gint handle;
 
   g_assert (SYSPROF_IS_PROXY_SOURCE (self));
-  g_assert (G_IS_DBUS_CONNECTION (self));
+  g_assert (G_IS_DBUS_CONNECTION (bus));
   g_assert (bus_name != NULL);
 
   if (g_cancellable_is_cancelled (self->cancellable))
@@ -398,12 +398,30 @@ sysprof_proxy_source_cat (SysprofProxySource   *self,
 }
 
 static void
+sysprof_proxy_source_complete_monitor (SysprofProxySource *self,
+                                       Monitor            *monitor)
+{
+  g_autoptr(SysprofCaptureReader) reader = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_PROXY_SOURCE (self));
+  g_assert (monitor != NULL);
+  g_assert (monitor->self == self);
+
+  g_print ("completing with FD: %d\n", monitor->fd);
+
+  if (!(reader = sysprof_capture_reader_new_from_fd (steal_fd (&monitor->fd), &error)))
+    g_warning ("Failed to load reader from peer FD: %s", error->message);
+  else
+    sysprof_proxy_source_cat (self, reader);
+}
+
+static void
 sysprof_proxy_source_stop_cb (GObject      *object,
                               GAsyncResult *result,
                               gpointer      user_data)
 {
   GDBusConnection *bus = (GDBusConnection *)object;
-  g_autoptr(SysprofCaptureReader) reader = NULL;
   g_autoptr(Monitor) monitor = user_data;
   g_autoptr(GVariant) reply = NULL;
   g_autoptr(GError) error = NULL;
@@ -417,12 +435,7 @@ sysprof_proxy_source_stop_cb (GObject      *object,
   reply = g_dbus_connection_call_finish (bus, result, &error);
   monitor->needs_stop = FALSE;
 
-  /* TODO: Read back memfd containing data from peer */
-
-  if (!(reader = sysprof_capture_reader_new_from_fd (steal_fd (&monitor->fd), &error)))
-    g_warning ("Failed to load reader from peer FD: %s", error->message);
-  else
-    sysprof_proxy_source_cat (self, reader);
+  sysprof_proxy_source_complete_monitor (self, monitor);
 
   self->stopping_count--;
 
@@ -463,7 +476,7 @@ sysprof_proxy_source_stop (SysprofSource *source)
         }
       else
         {
-          /* Do nothing, as we never got the data setup */
+          sysprof_proxy_source_complete_monitor (self, monitor);
         }
     }
 
@@ -487,6 +500,39 @@ sysprof_proxy_source_add_pid (SysprofSource *source,
 }
 
 static void
+sysprof_proxy_source_modify_spawn (SysprofSource       *source,
+                                   GSubprocessLauncher *launcher,
+                                   GPtrArray           *argv)
+{
+  SysprofProxySource *self = (SysprofProxySource *)source;
+  gchar fdstr[12];
+  Monitor *monitor;
+  gint fd;
+
+  g_assert (SYSPROF_IS_PROXY_SOURCE (self));
+  g_assert (G_IS_SUBPROCESS_LAUNCHER (launcher));
+  g_assert (argv != NULL);
+
+  /* We need to create a new FD for the peer process to write
+   * to and notify it via SYSPROF_TRACE_FD. We will largely
+   * ignore things until the capture has finished.
+   */
+
+  if (-1 == (fd = sysprof_memfd_create ("[sysprof-proxy-capture]")))
+    return;
+
+  monitor = g_slice_new0 (Monitor);
+  monitor->self = g_object_ref (self);
+  monitor->fd = dup (fd);
+
+  g_snprintf (fdstr, sizeof fdstr, "%d", fd);
+  g_subprocess_launcher_setenv (launcher, "SYSPROF_TRACE_FD", fdstr, TRUE);
+  g_subprocess_launcher_take_fd (launcher, fd, fd);
+
+  sysprof_proxy_source_take_monitor (self, g_steal_pointer (&monitor));
+}
+
+static void
 source_iface_init (SysprofSourceInterface *iface)
 {
   iface->add_pid = sysprof_proxy_source_add_pid;
@@ -495,6 +541,7 @@ source_iface_init (SysprofSourceInterface *iface)
   iface->get_is_ready = sysprof_proxy_source_get_is_ready;
   iface->stop = sysprof_proxy_source_stop;
   iface->start = sysprof_proxy_source_start;
+  iface->modify_spawn = sysprof_proxy_source_modify_spawn;
 }
 
 G_DEFINE_TYPE_WITH_CODE (SysprofProxySource, sysprof_proxy_source, G_TYPE_OBJECT,
@@ -542,6 +589,9 @@ sysprof_proxy_source_new (GBusType     bus_type,
   g_return_val_if_fail (bus_type == G_BUS_TYPE_SESSION || bus_type == G_BUS_TYPE_SYSTEM, NULL);
   g_return_val_if_fail (bus_name != NULL, NULL);
   g_return_val_if_fail (object_path != NULL, NULL);
+
+  if (bus_name && !*bus_name)
+    bus_name = NULL;
 
   self = g_object_new (SYSPROF_TYPE_PROXY_SOURCE, NULL);
   self->bus_type = bus_type;

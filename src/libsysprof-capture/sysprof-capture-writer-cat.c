@@ -308,7 +308,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
 
         case SYSPROF_CAPTURE_FRAME_CTRDEF:
           {
-            const SysprofCaptureFrameCounterDefine *frame;
+            const SysprofCaptureCounterDefine *frame;
 
             if (!(frame = sysprof_capture_reader_read_counter_define (reader)))
               goto panic;
@@ -344,7 +344,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
 
         case SYSPROF_CAPTURE_FRAME_CTRSET:
           {
-            const SysprofCaptureFrameCounterSet *frame;
+            const SysprofCaptureCounterSet *frame;
 
             if (!(frame = sysprof_capture_reader_read_counter_set (reader)))
               goto panic;

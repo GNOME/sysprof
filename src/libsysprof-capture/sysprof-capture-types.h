@@ -202,7 +202,7 @@ typedef struct
   guint32               padding1 : 16;
   guint32               padding2;
   SysprofCaptureCounter counters[0];
-} SysprofCaptureFrameCounterDefine
+} SysprofCaptureCounterDefine
 SYSPROF_ALIGNED_END(1);
 
 SYSPROF_ALIGNED_BEGIN(1)
@@ -226,7 +226,7 @@ typedef struct
   guint32                     padding1 : 16;
   guint32                     padding2;
   SysprofCaptureCounterValues values[0];
-} SysprofCaptureFrameCounterSet
+} SysprofCaptureCounterSet
 SYSPROF_ALIGNED_END(1);
 
 SYSPROF_ALIGNED_BEGIN(1)
@@ -260,8 +260,8 @@ G_STATIC_ASSERT (sizeof (SysprofCaptureExit) == 24);
 G_STATIC_ASSERT (sizeof (SysprofCaptureTimestamp) == 24);
 G_STATIC_ASSERT (sizeof (SysprofCaptureCounter) == 128);
 G_STATIC_ASSERT (sizeof (SysprofCaptureCounterValues) == 96);
-G_STATIC_ASSERT (sizeof (SysprofCaptureFrameCounterDefine) == 32);
-G_STATIC_ASSERT (sizeof (SysprofCaptureFrameCounterSet) == 32);
+G_STATIC_ASSERT (sizeof (SysprofCaptureCounterDefine) == 32);
+G_STATIC_ASSERT (sizeof (SysprofCaptureCounterSet) == 32);
 G_STATIC_ASSERT (sizeof (SysprofCaptureMark) == 96);
 G_STATIC_ASSERT (sizeof (SysprofCaptureMetadata) == 64);
 

@@ -105,7 +105,7 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
     case SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN:
       if (frame->type == SYSPROF_CAPTURE_FRAME_CTRSET)
         {
-          const SysprofCaptureFrameCounterSet *set = (SysprofCaptureFrameCounterSet *)frame;
+          const SysprofCaptureCounterSet *set = (SysprofCaptureCounterSet *)frame;
 
           for (guint i = 0; i < self->u.where_counter_in->len; i++)
             {
@@ -127,7 +127,7 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
         }
       else if (frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF)
         {
-          const SysprofCaptureFrameCounterDefine *def = (SysprofCaptureFrameCounterDefine *)frame;
+          const SysprofCaptureCounterDefine *def = (SysprofCaptureCounterDefine *)frame;
 
           for (guint i = 0; i < self->u.where_counter_in->len; i++)
             {

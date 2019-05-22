@@ -189,7 +189,7 @@ main (gint argc,
 
         case SYSPROF_CAPTURE_FRAME_CTRDEF:
           {
-            const SysprofCaptureFrameCounterDefine *def = sysprof_capture_reader_read_counter_define (reader);
+            const SysprofCaptureCounterDefine *def = sysprof_capture_reader_read_counter_define (reader);
             guint i;
 
             g_print ("NEW COUNTERS: pid=%d time=%"G_GINT64_FORMAT"\n", def->frame.pid, def->frame.time);
@@ -211,7 +211,7 @@ main (gint argc,
 
         case SYSPROF_CAPTURE_FRAME_CTRSET:
           {
-            const SysprofCaptureFrameCounterSet *set = sysprof_capture_reader_read_counter_set (reader);
+            const SysprofCaptureCounterSet *set = sysprof_capture_reader_read_counter_set (reader);
             guint i;
 
             g_print ("SET COUNTERS: pid=%d time=%"G_GINT64_FORMAT"\n", set->frame.pid, set->frame.time);

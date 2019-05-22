@@ -74,9 +74,9 @@ const SysprofCaptureSample             *sysprof_capture_reader_read_sample      
 SYSPROF_AVAILABLE_IN_ALL
 GHashTable                             *sysprof_capture_reader_read_jitmap         (SysprofCaptureReader     *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureFrameCounterDefine *sysprof_capture_reader_read_counter_define (SysprofCaptureReader     *self);
+const SysprofCaptureCounterDefine *sysprof_capture_reader_read_counter_define (SysprofCaptureReader     *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureFrameCounterSet    *sysprof_capture_reader_read_counter_set    (SysprofCaptureReader     *self);
+const SysprofCaptureCounterSet    *sysprof_capture_reader_read_counter_set    (SysprofCaptureReader     *self);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean                                sysprof_capture_reader_reset               (SysprofCaptureReader     *self);
 SYSPROF_AVAILABLE_IN_ALL

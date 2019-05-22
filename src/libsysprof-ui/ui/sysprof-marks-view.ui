@@ -13,54 +13,6 @@
                 <property name="enable-grid-lines">horizontal</property>
                 <property name="visible">true</property>
                 <child>
-                  <object class="GtkTreeViewColumn">
-                    <property name="title" translatable="yes">Group</property>
-                    <property name="resizable">true</property>
-                    <property name="expand">false</property>
-                    <property name="visible">false</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="text_cell">
-                        <property name="xalign">0</property>
-                      </object>
-                      <attributes>
-                        <attribute name="text">0</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn">
-                    <property name="title" translatable="yes">Name</property>
-                    <property name="resizable">true</property>
-                    <property name="expand">false</property>
-                    <property name="visible">false</property>
-                    <child>
-                      <object class="GtkCellRendererText">
-                        <property name="xalign">0</property>
-                      </object>
-                      <attributes>
-                        <attribute name="text">1</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="elapsed_column">
-                    <property name="title" translatable="yes">Elapsed</property>
-                    <property name="resizable">true</property>
-                    <property name="expand">false</property>
-                    <property name="visible">false</property>
-                    <child>
-                      <object class="GtkCellRendererText">
-                        <property name="xalign">0</property>
-                      </object>
-                      <attributes>
-                        <attribute name="text">4</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
                   <object class="GtkTreeViewColumn" id="duration_column">
                     <property name="title" translatable="yes">Duration</property>
                     <property name="expand">true</property>

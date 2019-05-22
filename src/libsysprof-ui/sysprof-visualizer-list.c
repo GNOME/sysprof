@@ -229,7 +229,7 @@ discover_new_rows_frame_cb (const SysprofCaptureFrame *frame,
     }
   else if (frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF)
     {
-      const SysprofCaptureFrameCounterDefine *def = (const SysprofCaptureFrameCounterDefine *)frame;
+      const SysprofCaptureCounterDefine *def = (const SysprofCaptureCounterDefine *)frame;
 
       for (guint i = 0; i < def->n_counters; i++)
         {

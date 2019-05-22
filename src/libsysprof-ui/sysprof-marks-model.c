@@ -333,7 +333,7 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
     }
   else if (frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF)
     {
-      SysprofCaptureFrameCounterDefine *ctrdef = (SysprofCaptureFrameCounterDefine *)frame;
+      SysprofCaptureCounterDefine *ctrdef = (SysprofCaptureCounterDefine *)frame;
 
       for (guint i = 0; i < ctrdef->n_counters; i++)
         {
@@ -346,7 +346,7 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
     }
   else if (frame->type == SYSPROF_CAPTURE_FRAME_CTRSET)
     {
-      SysprofCaptureFrameCounterSet *ctrset = (SysprofCaptureFrameCounterSet *)frame;
+      SysprofCaptureCounterSet *ctrset = (SysprofCaptureCounterSet *)frame;
 
       for (guint i = 0; i < ctrset->n_values; i++)
         {

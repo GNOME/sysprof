@@ -721,10 +721,10 @@ sysprof_capture_reader_read_sample (SysprofCaptureReader *self)
   return sample;
 }
 
-const SysprofCaptureFrameCounterDefine *
+const SysprofCaptureCounterDefine *
 sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
 {
-  SysprofCaptureFrameCounterDefine *def;
+  SysprofCaptureCounterDefine *def;
 
   g_assert (self != NULL);
   g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
@@ -733,7 +733,7 @@ sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *def))
     return NULL;
 
-  def = (SysprofCaptureFrameCounterDefine *)(gpointer)&self->buf[self->pos];
+  def = (SysprofCaptureCounterDefine *)(gpointer)&self->buf[self->pos];
 
   if (def->frame.type != SYSPROF_CAPTURE_FRAME_CTRDEF)
     return NULL;
@@ -744,13 +744,13 @@ sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
   if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
     def->n_counters = GUINT16_SWAP_LE_BE (def->n_counters);
 
-  if (def->frame.len < (sizeof *def + (sizeof (SysprofCaptureFrameCounterDefine) * def->n_counters)))
+  if (def->frame.len < (sizeof *def + (sizeof (SysprofCaptureCounterDefine) * def->n_counters)))
     return NULL;
 
   if (!sysprof_capture_reader_ensure_space_for (self, def->frame.len))
     return NULL;
 
-  def = (SysprofCaptureFrameCounterDefine *)(gpointer)&self->buf[self->pos];
+  def = (SysprofCaptureCounterDefine *)(gpointer)&self->buf[self->pos];
 
   if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
     {
@@ -768,10 +768,10 @@ sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
   return def;
 }
 
-const SysprofCaptureFrameCounterSet *
+const SysprofCaptureCounterSet *
 sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
 {
-  SysprofCaptureFrameCounterSet *set;
+  SysprofCaptureCounterSet *set;
 
   g_assert (self != NULL);
   g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
@@ -780,7 +780,7 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *set))
     return NULL;
 
-  set = (SysprofCaptureFrameCounterSet *)(gpointer)&self->buf[self->pos];
+  set = (SysprofCaptureCounterSet *)(gpointer)&self->buf[self->pos];
 
   if (set->frame.type != SYSPROF_CAPTURE_FRAME_CTRSET)
     return NULL;
@@ -797,7 +797,7 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, set->frame.len))
     return NULL;
 
-  set = (SysprofCaptureFrameCounterSet *)(gpointer)&self->buf[self->pos];
+  set = (SysprofCaptureCounterSet *)(gpointer)&self->buf[self->pos];
 
   if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
     {

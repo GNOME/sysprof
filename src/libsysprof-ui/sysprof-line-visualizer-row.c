@@ -581,7 +581,7 @@ sysprof_line_visualizer_row_load_data_frame_cb (const SysprofCaptureFrame *frame
 
   if (frame->type == SYSPROF_CAPTURE_FRAME_CTRSET)
     {
-      const SysprofCaptureFrameCounterSet *set = (SysprofCaptureFrameCounterSet *)frame;
+      const SysprofCaptureCounterSet *set = (SysprofCaptureCounterSet *)frame;
       gdouble x = calc_x (load->begin_time, load->end_time, frame->time);
 
       for (guint i = 0; i < set->n_values; i++)
@@ -625,7 +625,7 @@ sysprof_line_visualizer_row_load_data_range_cb (const SysprofCaptureFrame *frame
 
   if (frame->type == SYSPROF_CAPTURE_FRAME_CTRSET)
     {
-      const SysprofCaptureFrameCounterSet *set = (SysprofCaptureFrameCounterSet *)frame;
+      const SysprofCaptureCounterSet *set = (SysprofCaptureCounterSet *)frame;
 
       for (guint i = 0; i < set->n_values; i++)
         {

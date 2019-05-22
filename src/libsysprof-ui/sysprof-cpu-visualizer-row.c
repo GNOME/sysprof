@@ -39,7 +39,7 @@ static gboolean
 sysprof_cpu_visualizer_counter_found (const SysprofCaptureFrame *frame,
                                       gpointer                   user_data)
 {
-  const SysprofCaptureFrameCounterDefine *def = (SysprofCaptureFrameCounterDefine *)frame;
+  const SysprofCaptureCounterDefine *def = (SysprofCaptureCounterDefine *)frame;
   GArray *counters = user_data;
   gboolean found = FALSE;
 

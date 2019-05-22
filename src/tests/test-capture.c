@@ -216,7 +216,7 @@ test_reader_basic (void)
   sysprof_capture_writer_flush (writer);
 
   {
-    const SysprofCaptureFrameCounterDefine *def;
+    const SysprofCaptureCounterDefine *def;
 
     def = sysprof_capture_reader_read_counter_define (reader);
     g_assert (def != NULL);
@@ -247,7 +247,7 @@ test_reader_basic (void)
 
   for (i = 0; i < 1000; i++)
     {
-      const SysprofCaptureFrameCounterSet *set;
+      const SysprofCaptureCounterSet *set;
 
       set = sysprof_capture_reader_read_counter_set (reader);
       g_assert (set != NULL);

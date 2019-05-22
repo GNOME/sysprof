@@ -1111,7 +1111,7 @@ sysprof_capture_writer_define_counters (SysprofCaptureWriter        *self,
                                         const SysprofCaptureCounter *counters,
                                         guint                        n_counters)
 {
-  SysprofCaptureFrameCounterDefine *def;
+  SysprofCaptureCounterDefine *def;
   gsize len;
   guint i;
 
@@ -1123,7 +1123,7 @@ sysprof_capture_writer_define_counters (SysprofCaptureWriter        *self,
 
   len = sizeof *def + (sizeof *counters * n_counters);
 
-  def = (SysprofCaptureFrameCounterDefine *)sysprof_capture_writer_allocate (self, &len);
+  def = (SysprofCaptureCounterDefine *)sysprof_capture_writer_allocate (self, &len);
   if (!def)
     return FALSE;
 
@@ -1162,7 +1162,7 @@ sysprof_capture_writer_set_counters (SysprofCaptureWriter             *self,
                                      const SysprofCaptureCounterValue *values,
                                      guint                             n_counters)
 {
-  SysprofCaptureFrameCounterSet *set;
+  SysprofCaptureCounterSet *set;
   gsize len;
   guint n_groups;
   guint group;
@@ -1183,7 +1183,7 @@ sysprof_capture_writer_set_counters (SysprofCaptureWriter             *self,
 
   len = sizeof *set + (n_groups * sizeof (SysprofCaptureCounterValues));
 
-  set = (SysprofCaptureFrameCounterSet *)sysprof_capture_writer_allocate (self, &len);
+  set = (SysprofCaptureCounterSet *)sysprof_capture_writer_allocate (self, &len);
   if (!set)
     return FALSE;
 

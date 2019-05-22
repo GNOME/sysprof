@@ -763,6 +763,10 @@ sysprof_local_profiler_source_failed (SysprofLocalProfiler *self,
   g_assert (reason != NULL);
   g_assert (SYSPROF_IS_SOURCE (source));
 
+  g_warning ("%s failed: %s",
+             G_OBJECT_TYPE_NAME (source),
+             reason ? reason->message : "unknown error");
+
   sysprof_local_profiler_track_completed (self, source);
 
   /* Failure emitted out of band */

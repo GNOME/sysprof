@@ -56,6 +56,7 @@ typedef struct
   GtkStack               *stack;
   SysprofCallgraphView   *callgraph_view;
   SysprofDetailsView     *details_view;
+  SysprofMarksView       *counters_view;
   SysprofMarksView       *marks_view;
   SysprofVisualizerView  *visualizer_view;
   SysprofZoomManager     *zoom_manager;
@@ -455,6 +456,9 @@ sysprof_capture_view_scan_finish (SysprofCaptureView  *self,
   if (!priv->features.has_marks)
     gtk_widget_hide (GTK_WIDGET (priv->marks_view));
 
+  if (!priv->features.has_counters)
+    gtk_widget_hide (GTK_WIDGET (priv->counters_view));
+
   g_clear_pointer (&priv->mark_stats, g_hash_table_unref);
   if ((stats = g_object_get_data (G_OBJECT (result), "MARK_STAT")))
     priv->mark_stats = g_hash_table_ref (stats);
@@ -575,6 +579,17 @@ sysprof_capture_view_load_scan_cb (GObject      *object,
     }
 
   sysprof_visualizer_view_set_reader (priv->visualizer_view, state->reader);
+
+  if (priv->features.has_counters)
+    {
+      state->n_active++;
+      sysprof_marks_view_load_async (priv->counters_view,
+                                     state->reader,
+                                     state->selection,
+                                     g_task_get_cancellable (task),
+                                     sysprof_capture_view_load_marks_cb,
+                                     g_object_ref (task));
+    }
 
   state->n_active++;
   sysprof_marks_view_load_async (priv->marks_view,
@@ -774,6 +789,7 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-capture-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, callgraph_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, details_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, counters_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, marks_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, stack);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, stack_switcher);

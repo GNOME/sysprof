@@ -29,6 +29,8 @@
 
 typedef struct
 {
+  SysprofMarksModelKind        kind;
+
   SysprofZoomManager          *zoom_manager;
 
   gint64                       capture_begin_time;
@@ -44,6 +46,7 @@ typedef struct
 
 enum {
   PROP_0,
+  PROP_KIND,
   PROP_ZOOM_MANAGER,
   N_PROPS
 };
@@ -188,6 +191,10 @@ sysprof_marks_view_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_KIND:
+      g_value_set_enum (value, priv->kind);
+      break;
+
     case PROP_ZOOM_MANAGER:
       g_value_set_object (value, priv->zoom_manager);
       break;
@@ -208,6 +215,10 @@ sysprof_marks_view_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_KIND:
+      priv->kind = g_value_get_enum (value);
+      break;
+
     case PROP_ZOOM_MANAGER:
       if (g_set_object (&priv->zoom_manager, g_value_get_object (value)))
         {
@@ -245,6 +256,12 @@ sysprof_marks_view_class_init (SysprofMarksViewClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, duration_column);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksView, stack);
 
+  properties [PROP_KIND] =
+    g_param_spec_enum ("kind", NULL, NULL,
+                       SYSPROF_TYPE_MARKS_MODEL_KIND,
+                       SYSPROF_MARKS_MODEL_MARKS,
+                       (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_ZOOM_MANAGER] =
     g_param_spec_object ("zoom-manager", NULL, NULL,
                          SYSPROF_TYPE_ZOOM_MANAGER,
@@ -259,6 +276,8 @@ static void
 sysprof_marks_view_init (SysprofMarksView *self)
 {
   SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
+
+  priv->kind = SYSPROF_MARKS_MODEL_MARKS;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -338,6 +357,7 @@ sysprof_marks_view_load_async (SysprofMarksView     *self,
                                GAsyncReadyCallback   callback,
                                gpointer              user_data)
 {
+  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
   g_autoptr(GTask) task = NULL;
 
   g_return_if_fail (SYSPROF_IS_MARKS_VIEW (self));
@@ -352,6 +372,7 @@ sysprof_marks_view_load_async (SysprofMarksView     *self,
                         (GDestroyNotify) sysprof_capture_reader_unref);
 
   sysprof_marks_model_new_async (reader,
+                                 priv->kind,
                                  selection,
                                  cancellable,
                                  sysprof_marks_view_load_cb,

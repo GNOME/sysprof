@@ -25,7 +25,8 @@
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_MARKS_MODEL (sysprof_marks_model_get_type())
+#define SYSPROF_TYPE_MARKS_MODEL      (sysprof_marks_model_get_type())
+#define SYSPROF_TYPE_MARKS_MODEL_KIND (sysprof_marks_model_kind_get_type())
 
 typedef enum
 {
@@ -34,21 +35,31 @@ typedef enum
   SYSPROF_MARKS_MODEL_COLUMN_BEGIN_TIME,
   SYSPROF_MARKS_MODEL_COLUMN_END_TIME,
   SYSPROF_MARKS_MODEL_COLUMN_DURATION,
+  SYSPROF_MARKS_MODEL_COLUMN_TEXT,
 } SysprofMarksModelColumn;
 
-#define SYSPROF_MARKS_MODEL_COLUMN_LAST (SYSPROF_MARKS_MODEL_COLUMN_DURATION+1)
+typedef enum
+{
+  SYSPROF_MARKS_MODEL_MARKS = 1,
+  SYSPROF_MARKS_MODEL_COUNTERS,
+  SYSPROF_MARKS_MODEL_BOTH = SYSPROF_MARKS_MODEL_MARKS | SYSPROF_MARKS_MODEL_COUNTERS,
+} SysprofMarksModelKind;
+
+#define SYSPROF_MARKS_MODEL_COLUMN_LAST (SYSPROF_MARKS_MODEL_COLUMN_TEXT+1)
 
 G_DECLARE_FINAL_TYPE (SysprofMarksModel, sysprof_marks_model, SYSPROF, MARKS_MODEL, GObject)
 
-void               sysprof_marks_model_new_async  (SysprofCaptureReader  *reader,
-                                                   SysprofSelection      *selection,
-                                                   GCancellable          *cancellable,
-                                                   GAsyncReadyCallback    callback,
-                                                   gpointer               user_data);
-SysprofMarksModel *sysprof_marks_model_new_finish (GAsyncResult          *result,
-                                                   GError               **error);
-void               sysprof_marks_model_get_range  (SysprofMarksModel     *self,
-                                                   gint64                *begin_time,
-                                                   gint64                *end_time);
+GType              sysprof_marks_model_kind_get_type (void) G_GNUC_CONST;
+void               sysprof_marks_model_new_async     (SysprofCaptureReader   *reader,
+                                                      SysprofMarksModelKind   kind,
+                                                      SysprofSelection       *selection,
+                                                      GCancellable           *cancellable,
+                                                      GAsyncReadyCallback     callback,
+                                                      gpointer                user_data);
+SysprofMarksModel *sysprof_marks_model_new_finish    (GAsyncResult           *result,
+                                                      GError                **error);
+void               sysprof_marks_model_get_range     (SysprofMarksModel      *self,
+                                                      gint64                 *begin_time,
+                                                      gint64                 *end_time);
 
 G_END_DECLS

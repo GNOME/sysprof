@@ -181,14 +181,20 @@ guess_tag (SysprofElfSymbolResolver *self,
       else if (strstr (map->filename, "/libgirepository-1.0."))
         tag = g_quark_from_static_string ("Introspection");
 
+      else if (strstr (map->filename, "/libgtk-4."))
+        tag = g_quark_from_static_string ("Gtk 4");
+
       else if (strstr (map->filename, "/libgtk-3."))
-        tag = g_quark_from_static_string ("Gtk+");
+        tag = g_quark_from_static_string ("Gtk 3");
 
       else if (strstr (map->filename, "/libgdk-3."))
-        tag = g_quark_from_static_string ("Gdk");
+        tag = g_quark_from_static_string ("Gdk 3");
 
       else if (strstr (map->filename, "/libgtksourceview-3.0"))
-        tag = g_quark_from_static_string ("GtkSourceView");
+        tag = g_quark_from_static_string ("GtkSourceView-3");
+
+      else if (strstr (map->filename, "/libgtksourceview-4"))
+        tag = g_quark_from_static_string ("GtkSourceView-4");
 
       else if (strstr (map->filename, "/libpixman-1"))
         tag = g_quark_from_static_string ("Pixman");

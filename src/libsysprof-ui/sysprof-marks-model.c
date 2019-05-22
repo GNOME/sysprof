@@ -30,17 +30,27 @@ struct _SysprofMarksModel
 {
   GObject       parent_instance;
   GStringChunk *chunks;
+  GHashTable   *counters;
   GArray       *items;
   gint64        max_end_time;
 };
 
 typedef struct
 {
-  gint64       begin_time;
-  gint64       end_time;
-  const gchar *group;
-  const gchar *name;
+  gint64                      begin_time;
+  gint64                      end_time;
+  const gchar                *group;
+  const gchar                *name;
+  SysprofCaptureCounterValue  value;
+  guint                       is_counter : 1;
+  guint                       counter_type : 8;
 } Item;
+
+static void
+counter_free (gpointer data)
+{
+  g_slice_free (SysprofCaptureCounter, data);
+}
 
 static gint
 sysprof_marks_model_get_n_columns (GtkTreeModel *model)
@@ -68,6 +78,9 @@ sysprof_marks_model_get_column_type (GtkTreeModel *model,
 
     case SYSPROF_MARKS_MODEL_COLUMN_DURATION:
       return G_TYPE_DOUBLE;
+
+    case SYSPROF_MARKS_MODEL_COLUMN_TEXT:
+      return G_TYPE_STRING;
 
     default:
       return 0;
@@ -214,6 +227,25 @@ sysprof_marks_model_get_value (GtkTreeModel *model,
         g_value_set_double (value, (item->end_time - item->begin_time) / (double)(G_USEC_PER_SEC * 1000));
       break;
 
+    case SYSPROF_MARKS_MODEL_COLUMN_TEXT:
+      g_value_init (value, G_TYPE_STRING);
+      if (item->is_counter)
+        {
+          gchar *val = NULL;
+
+          if (item->counter_type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
+            val = g_strdup_printf ("%s — %s = %.4lf", item->group, item->name, item->value.vdbl);
+          else if (item->counter_type == SYSPROF_CAPTURE_COUNTER_INT64)
+            val = g_strdup_printf ("%s — %s = %"G_GINT64_FORMAT, item->group, item->name, item->value.v64);
+
+          g_value_take_string (value, g_steal_pointer (&val));
+        }
+      else
+        {
+          g_value_set_string (value, item->name);
+        }
+      break;
+
     default:
       break;
     }
@@ -242,6 +274,7 @@ sysprof_marks_model_finalize (GObject *object)
 {
   SysprofMarksModel *self = (SysprofMarksModel *)object;
 
+  g_clear_pointer (&self->counters, g_hash_table_unref);
   g_clear_pointer (&self->items, g_array_unref);
   g_clear_pointer (&self->chunks, g_string_chunk_free);
 
@@ -259,6 +292,7 @@ sysprof_marks_model_class_init (SysprofMarksModelClass *klass)
 static void
 sysprof_marks_model_init (SysprofMarksModel *self)
 {
+  self->counters = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, counter_free);
   self->chunks = g_string_chunk_new (4096*16);
   self->items = g_array_new (FALSE, FALSE, sizeof (Item));
 }
@@ -268,21 +302,75 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
                    gpointer                   user_data)
 {
   SysprofMarksModel *self = user_data;
-  SysprofCaptureMark *mark = (SysprofCaptureMark *)frame;
   Item item;
 
   g_assert (SYSPROF_IS_MARKS_MODEL (self));
-  g_assert (frame->type == SYSPROF_CAPTURE_FRAME_MARK);
+  g_assert (frame->type == SYSPROF_CAPTURE_FRAME_MARK ||
+            frame->type == SYSPROF_CAPTURE_FRAME_CTRSET ||
+            frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF);
 
-  item.begin_time = frame->time;
-  item.end_time = item.begin_time + mark->duration;
-  item.group = g_string_chunk_insert_const (self->chunks, mark->group);
-  item.name = g_string_chunk_insert_const (self->chunks, mark->name);
+  if (frame->type == SYSPROF_CAPTURE_FRAME_MARK)
+    {
+      SysprofCaptureMark *mark = (SysprofCaptureMark *)frame;
 
-  if G_LIKELY (item.end_time > self->max_end_time)
-    self->max_end_time = item.end_time;
+      item.begin_time = frame->time;
+      item.end_time = item.begin_time + mark->duration;
+      item.group = g_string_chunk_insert_const (self->chunks, mark->group);
+      item.name = g_string_chunk_insert_const (self->chunks, mark->name);
+      item.value.v64 = 0;
+      item.is_counter = FALSE;
+      item.counter_type = 0;
 
-  g_array_append_val (self->items, item);
+      if G_LIKELY (item.end_time > self->max_end_time)
+        self->max_end_time = item.end_time;
+
+      g_array_append_val (self->items, item);
+    }
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF)
+    {
+      SysprofCaptureFrameCounterDefine *ctrdef = (SysprofCaptureFrameCounterDefine *)frame;
+
+      for (guint i = 0; i < ctrdef->n_counters; i++)
+        {
+          SysprofCaptureCounter *ctr = &ctrdef->counters[i];
+
+          g_hash_table_insert (self->counters,
+                               GUINT_TO_POINTER ((guint)ctr->id),
+                               g_slice_dup (SysprofCaptureCounter, ctr));
+        }
+    }
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_CTRSET)
+    {
+      SysprofCaptureFrameCounterSet *ctrset = (SysprofCaptureFrameCounterSet *)frame;
+
+      for (guint i = 0; i < ctrset->n_values; i++)
+        {
+          SysprofCaptureCounterValues *values = &ctrset->values[i];
+
+          for (guint j = 0; j < G_N_ELEMENTS (values->ids); j++)
+            {
+              guint32 id = values->ids[j];
+              SysprofCaptureCounter *ctr = NULL;
+
+              if (id == 0)
+                break;
+
+              if ((ctr = g_hash_table_lookup (self->counters, GUINT_TO_POINTER (id))))
+                {
+                  item.begin_time = frame->time;
+                  item.end_time = frame->time;
+                  item.group = ctr->category;
+                  item.name = ctr->name;
+                  item.value = values->values[j];
+                  item.is_counter = TRUE;
+                  item.counter_type = ctr->type;
+
+                  g_array_append_val (self->items, item);
+                }
+            }
+
+        }
+    }
 
   return TRUE;
 }
@@ -343,20 +431,22 @@ sysprof_marks_model_selection_foreach_cb (SysprofSelection *selection,
 
   c = sysprof_capture_condition_new_where_time_between (begin, end);
 
-  if (*condition)
-    *condition = sysprof_capture_condition_new_or (c, *condition);
+  if (*condition != NULL)
+    *condition = sysprof_capture_condition_new_or (g_steal_pointer (&c),
+                                                   g_steal_pointer (condition));
   else
-    *condition = c;
+    *condition = g_steal_pointer (&c);
 }
 
 void
-sysprof_marks_model_new_async (SysprofCaptureReader *reader,
-                               SysprofSelection     *selection,
-                               GCancellable         *cancellable,
-                               GAsyncReadyCallback   callback,
-                               gpointer              user_data)
+sysprof_marks_model_new_async (SysprofCaptureReader  *reader,
+                               SysprofMarksModelKind  kind,
+                               SysprofSelection      *selection,
+                               GCancellable          *cancellable,
+                               GAsyncReadyCallback    callback,
+                               gpointer               user_data)
 {
-  const SysprofCaptureFrameType types[] = { SYSPROF_CAPTURE_FRAME_MARK };
+  static const SysprofCaptureFrameType ctrset[] = { SYSPROF_CAPTURE_FRAME_CTRDEF };
   g_autoptr(SysprofCaptureCursor) cursor = NULL;
   g_autoptr(GTask) task = NULL;
   SysprofCaptureCondition *c;
@@ -367,7 +457,36 @@ sysprof_marks_model_new_async (SysprofCaptureReader *reader,
 
   cursor = sysprof_capture_cursor_new (reader);
 
-  c = sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
+  if (kind == SYSPROF_MARKS_MODEL_BOTH)
+    {
+      static const SysprofCaptureFrameType types[] = {
+        SYSPROF_CAPTURE_FRAME_CTRSET,
+        SYSPROF_CAPTURE_FRAME_MARK,
+      };
+
+      c = sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
+    }
+  else if (kind == SYSPROF_MARKS_MODEL_MARKS)
+    {
+      static const SysprofCaptureFrameType types[] = { SYSPROF_CAPTURE_FRAME_MARK };
+
+      c = sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
+    }
+  else if (kind == SYSPROF_MARKS_MODEL_COUNTERS)
+    {
+      static const SysprofCaptureFrameType types[] = { SYSPROF_CAPTURE_FRAME_CTRSET };
+
+      c = sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
+    }
+  else
+    {
+      g_task_report_new_error (NULL, callback, user_data,
+                               sysprof_marks_model_new_async,
+                               G_IO_ERROR,
+                               G_IO_ERROR_INVAL,
+                               "Invalid arguments");
+      return;
+    }
 
   if (selection)
     {
@@ -377,7 +496,14 @@ sysprof_marks_model_new_async (SysprofCaptureReader *reader,
                                  sysprof_marks_model_selection_foreach_cb,
                                  &condition);
       if (condition)
-        c = sysprof_capture_condition_new_and (c, condition);
+        c = sysprof_capture_condition_new_and (c, g_steal_pointer (&condition));
+    }
+
+  if (kind & SYSPROF_MARKS_MODEL_COUNTERS)
+    {
+      c = sysprof_capture_condition_new_or (
+        sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (ctrset), ctrset),
+        g_steal_pointer (&c));
     }
 
   sysprof_capture_cursor_add_condition (cursor, g_steal_pointer (&c));
@@ -416,4 +542,24 @@ sysprof_marks_model_get_range (SysprofMarksModel *self,
 
   if (end_time != NULL)
     *end_time = self->max_end_time;
+}
+
+GType
+sysprof_marks_model_kind_get_type (void)
+{
+  static GType type_id;
+
+  if (g_once_init_enter (&type_id))
+    {
+      static const GEnumValue values[] = {
+        { SYSPROF_MARKS_MODEL_MARKS, "SYSPROF_MARKS_MODEL_MARKS", "marks" },
+        { SYSPROF_MARKS_MODEL_COUNTERS, "SYSPROF_MARKS_MODEL_COUNTERS", "counters" },
+        { SYSPROF_MARKS_MODEL_BOTH, "SYSPROF_MARKS_MODEL_BOTH", "both" },
+        { 0 },
+      };
+      GType _type_id = g_enum_register_static ("SysprofMarksModelKind", values);
+      g_once_init_leave (&type_id, _type_id);
+    }
+
+  return type_id;
 }

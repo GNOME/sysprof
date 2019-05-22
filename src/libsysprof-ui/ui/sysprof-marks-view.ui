@@ -70,7 +70,7 @@
                         <property name="ypad">1</property>
                       </object>
                       <attributes>
-                        <attribute name="text">1</attribute>
+                        <attribute name="text">5</attribute>
                         <attribute name="begin-time">2</attribute>
                         <attribute name="end-time">3</attribute>
                       </attributes>

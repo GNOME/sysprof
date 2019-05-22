@@ -361,9 +361,10 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
                   item.end_time = frame->time;
                   item.group = ctr->category;
                   item.name = ctr->name;
-                  item.value = values->values[j];
                   item.is_counter = TRUE;
                   item.counter_type = ctr->type;
+
+                  memcpy (&item.value, &values->values[j], sizeof item.value);
 
                   g_array_append_val (self->items, item);
                 }

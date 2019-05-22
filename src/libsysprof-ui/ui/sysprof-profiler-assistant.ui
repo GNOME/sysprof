@@ -7,9 +7,9 @@
   <object class="SysprofProxyAid" id="mutter_aid">
     <property name="object-path">/org/gnome/Sysprof3/Profiler</property>
     <property name="bus-type">session</property>
-    <property name="bus-name">org.gnome.Mutter</property>
+    <property name="bus-name">org.gnome.Shell</property>
     <!-- translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular -->
-    <property name="display-name" translatable="yes">Compositor</property>
+    <property name="display-name" translatable="yes">GNOME Shell</property>
     <property name="icon-name">org.gnome.Sysprof-symbolic</property>
   </object>
   <object class="SysprofProxyAid" id="gtk_aid">

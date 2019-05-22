@@ -35,7 +35,7 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofCellRendererPercent, sysprof_cell_renderer_percent, GTK_TYPE_CELL_RENDERER_TEXT)
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofCellRendererPercent, sysprof_cell_renderer_percent, GTK_TYPE_CELL_RENDERER_PROGRESS)
 
 static GParamSpec *properties [N_PROPS];
 
@@ -100,7 +100,7 @@ sysprof_cell_renderer_percent_class_init (SysprofCellRendererPercentClass *klass
 static void
 sysprof_cell_renderer_percent_init (SysprofCellRendererPercent *self)
 {
-  g_object_set (self, "xalign", 1.0f, NULL);
+  g_object_set (self, "text-xalign", 1.0f, NULL);
 }
 
 gdouble
@@ -125,14 +125,17 @@ sysprof_cell_renderer_percent_set_percent (SysprofCellRendererPercent *self,
 
   if (percent != priv->percent)
     {
-      gchar text[128];
+      gchar text[8];
 
       priv->percent = percent;
 
-      g_snprintf (text, sizeof text, "%.2lf<span size='smaller'><span size='smaller'> </span>%%</span>", percent);
+      g_snprintf (text, sizeof text, "%.2lf%%", percent);
       text [sizeof text - 1] = '\0';
 
-      g_object_set (self, "markup", text, NULL);
+      g_object_set (self,
+                    "value", (guint)percent,
+                    "text", text,
+                    NULL);
 
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_PERCENT]);
     }

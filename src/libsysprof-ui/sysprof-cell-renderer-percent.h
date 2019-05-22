@@ -43,12 +43,12 @@ typedef struct _SysprofCellRendererPercentClass SysprofCellRendererPercentClass;
 
 struct _SysprofCellRendererPercent
 {
-  GtkCellRendererText parent;
+  GtkCellRendererProgress parent;
 };
 
 struct _SysprofCellRendererPercentClass
 {
-  GtkCellRendererTextClass parent_class;
+  GtkCellRendererProgressClass parent_class;
 
   gpointer padding[4];
 };

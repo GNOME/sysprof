@@ -336,7 +336,7 @@ sysprof_proxy_source_get_bus_cb (GObject      *object,
       return;
     }
 
-  if (self->bus_name != NULL)
+  if (self->bus_name != NULL && self->bus_name[0])
     {
       sysprof_proxy_source_monitor (self, bus, self->bus_name);
       return;
@@ -375,6 +375,12 @@ sysprof_proxy_source_start (SysprofSource *source)
 
   self->has_started = TRUE;
 
+  /* If we're doing subprocess monitoring, we don't need to do
+   * anything special here to connect to a bus.
+   */
+  if (self->monitors->len > 0)
+    return;
+
   g_bus_get (self->bus_type,
              self->cancellable,
              sysprof_proxy_source_get_bus_cb,
@@ -407,8 +413,6 @@ sysprof_proxy_source_complete_monitor (SysprofProxySource *self,
   g_assert (SYSPROF_IS_PROXY_SOURCE (self));
   g_assert (monitor != NULL);
   g_assert (monitor->self == self);
-
-  g_print ("completing with FD: %d\n", monitor->fd);
 
   if (!(reader = sysprof_capture_reader_new_from_fd (steal_fd (&monitor->fd), &error)))
     g_warning ("Failed to load reader from peer FD: %s", error->message);
@@ -577,6 +581,7 @@ sysprof_proxy_source_init (SysprofProxySource *self)
   self->pids = g_array_new (FALSE, FALSE, sizeof (GPid));
   self->monitors = g_ptr_array_new_with_free_func ((GDestroyNotify) monitor_free);
   self->is_whole_system = TRUE;
+  self->bus_type = G_BUS_TYPE_SESSION;
 }
 
 SysprofSource *
@@ -592,6 +597,9 @@ sysprof_proxy_source_new (GBusType     bus_type,
 
   if (bus_name && !*bus_name)
     bus_name = NULL;
+
+  if (object_path && !*object_path)
+    object_path = NULL;
 
   self = g_object_new (SYSPROF_TYPE_PROXY_SOURCE, NULL);
   self->bus_type = bus_type;

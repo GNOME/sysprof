@@ -24,7 +24,7 @@
 # error "Only <sysprof.h> can be included directly."
 #endif
 
-#include <glib-object.h>
+#include <gio/gio.h>
 
 #include "sysprof-capture-writer.h"
 
@@ -119,6 +119,19 @@ struct _SysprofSourceInterface
    * sysprof_source_emit_finished() must be called from the main-thread.
    */
   void (*stop) (SysprofSource *self);
+
+  /**
+   * SysprofSource::modify-spawn:
+   * @self: a #SysprofSource
+   * @launcher: a #GSubprocessLauncher
+   * @argv: (element-type utf8): arguments for spawning
+   *
+   * Allows the source to modify the launcher or argv before the
+   * process is spawned.
+   */
+  void (*modify_spawn) (SysprofSource       *self,
+                        GSubprocessLauncher *launcher,
+                        GPtrArray           *argv);
 };
 
 SYSPROF_AVAILABLE_IN_ALL
@@ -142,5 +155,9 @@ SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_start         (SysprofSource        *self);
 SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_stop          (SysprofSource        *self);
+SYSPROF_AVAILABLE_IN_ALL
+void     sysprof_source_modify_spawn  (SysprofSource        *self,
+                                       GSubprocessLauncher  *launcher,
+                                       GPtrArray            *argv);
 
 G_END_DECLS

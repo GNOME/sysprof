@@ -468,6 +468,25 @@ sysprof_local_profiler_finish_startup (SysprofLocalProfiler *self)
 }
 
 static void
+sysprof_local_profiler_wait_cb (GObject      *object,
+                                GAsyncResult *result,
+                                gpointer      user_data)
+{
+  GSubprocess *subprocess = (GSubprocess *)object;
+  g_autoptr(SysprofLocalProfiler) self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (G_IS_SUBPROCESS (subprocess));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_LOCAL_PROFILER (self));
+
+  if (!g_subprocess_wait_finish (subprocess, result, &error))
+    g_warning ("Wait on subprocess failed: %s", error->message);
+
+  sysprof_local_profiler_stop (SYSPROF_PROFILER (self));
+}
+
+static void
 sysprof_local_profiler_authorize_cb (GObject      *object,
                                      GAsyncResult *result,
                                      gpointer      user_data)
@@ -521,7 +540,10 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
 
   if (priv->spawn && priv->spawn_argv && priv->spawn_argv[0])
     {
-      g_autoptr(GPtrArray) ar = g_ptr_array_new_with_free_func (g_free);
+      g_autoptr(GPtrArray) env = g_ptr_array_new_with_free_func (g_free);
+      g_autoptr(GPtrArray) argv = g_ptr_array_new_with_free_func (g_free);
+      g_autoptr(GSubprocessLauncher) launcher = NULL;
+      g_autoptr(GSubprocess) subprocess = NULL;
       GPid pid;
 
       if (priv->spawn_inherit_environ)
@@ -529,41 +551,61 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
           gchar **environ = g_get_environ ();
 
           for (guint i = 0; environ[i]; i++)
-            g_ptr_array_add (ar, environ[i]);
+            g_ptr_array_add (env, environ[i]);
           g_free (environ);
         }
 
       if (priv->spawn_env)
         {
           for (guint i = 0; priv->spawn_env[i]; i++)
-            g_ptr_array_add (ar, g_strdup (priv->spawn_env[i]));
+            g_ptr_array_add (env, g_strdup (priv->spawn_env[i]));
         }
 
-      g_ptr_array_add (ar, NULL);
+      g_ptr_array_add (env, NULL);
 
-      if (!g_spawn_async (g_get_home_dir (),
-                          priv->spawn_argv,
-                          (gchar **)ar->pdata,
-                          (G_SPAWN_SEARCH_PATH |
-                           G_SPAWN_STDOUT_TO_DEV_NULL |
-                           G_SPAWN_STDOUT_TO_DEV_NULL),
-                          NULL,
-                          NULL,
-                          &pid,
-                          &error))
-        g_ptr_array_add (priv->failures, g_steal_pointer (&error));
+      launcher = g_subprocess_launcher_new (0);
+      g_subprocess_launcher_set_environ (launcher, (gchar **)env->pdata);
+      g_subprocess_launcher_set_cwd (launcher, g_get_home_dir ());
+
+      if (priv->spawn_argv)
+        {
+          for (guint i = 0; priv->spawn_argv[i]; i++)
+            g_ptr_array_add (argv, g_strdup (priv->spawn_argv[i]));
+        }
+
+      for (guint i = 0; i < priv->sources->len; i++)
+        {
+          SysprofSource *source = g_ptr_array_index (priv->sources, i);
+          sysprof_source_modify_spawn (source, launcher, argv);
+        }
+
+      g_ptr_array_add (argv, NULL);
+
+      if (!(subprocess = g_subprocess_launcher_spawnv (launcher,
+                                                       (const gchar * const *)argv->pdata,
+                                                       &error)))
+        {
+          g_ptr_array_add (priv->failures, g_steal_pointer (&error));
+        }
       else
-        g_array_append_val (priv->pids, pid);
+        {
+          const gchar *ident = g_subprocess_get_identifier (subprocess);
+          pid = atoi (ident);
+          g_array_append_val (priv->pids, pid);
+          g_subprocess_wait_async (subprocess,
+                                   NULL,
+                                   sysprof_local_profiler_wait_cb,
+                                   g_object_ref (self));
+        }
     }
 
   for (guint i = 0; i < priv->sources->len; i++)
     {
       SysprofSource *source = g_ptr_array_index (priv->sources, i);
-      guint j;
 
       if (priv->whole_system == FALSE)
         {
-          for (j = 0; j < priv->pids->len; j++)
+          for (guint j = 0; j < priv->pids->len; j++)
             {
               GPid pid = g_array_index (priv->pids, GPid, j);
 

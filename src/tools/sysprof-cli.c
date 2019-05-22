@@ -76,6 +76,7 @@ main (gint   argc,
   gboolean no_cpu = FALSE;
   gboolean version = FALSE;
   gboolean force = FALSE;
+  gboolean use_trace_fd = FALSE;
   int pid = -1;
   int fd;
   int flags;
@@ -85,6 +86,7 @@ main (gint   argc,
     { "force", 'f', 0, G_OPTION_ARG_NONE, &force, N_("Force overwrite the capture file") },
     { "no-cpu", 0, 0, G_OPTION_ARG_NONE, &no_cpu, N_("Disable recording of CPU statistics") },
     { "no-memory", 0, 0, G_OPTION_ARG_NONE, &no_memory, N_("Disable recording of memory statistics") },
+    { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
   };
@@ -161,6 +163,7 @@ main (gint   argc,
   if (command != NULL)
     {
       g_auto(GStrv) child_argv = NULL;
+      g_auto(GStrv) env = g_get_environ ();
       gint child_argc;
 
       if (!g_shell_parse_argv (command, &child_argc, &child_argv, &error))
@@ -169,22 +172,20 @@ main (gint   argc,
           return EXIT_FAILURE;
         }
 
-      if (!g_spawn_async (NULL, child_argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, &pid, &error))
-        {
-          g_printerr ("Invalid command: %s\n", error->message);
-          return EXIT_FAILURE;
-        }
-
-      /* Stop the process until we are setup */
-      if (0 != kill (pid, SIGSTOP))
-        {
-          g_printerr ("Failed to pause inferior during setup\n");
-          return EXIT_FAILURE;
-        }
+      sysprof_profiler_set_spawn (profiler, TRUE);
+      sysprof_profiler_set_spawn_argv (profiler, (const gchar * const *)child_argv);
+      sysprof_profiler_set_spawn_env (profiler, (const gchar * const *)env);
     }
 
   writer = sysprof_capture_writer_new_from_fd (fd, 0);
   sysprof_profiler_set_writer (profiler, writer);
+
+  if (use_trace_fd)
+    {
+      source = sysprof_proxy_source_new (G_BUS_TYPE_SESSION, "", "");
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
 
   source = sysprof_proc_source_new ();
   sysprof_profiler_add_source (profiler, source);
@@ -215,10 +216,6 @@ main (gint   argc,
     }
 
   sysprof_profiler_start (profiler);
-
-  /* Restore the process if we stopped it */
-  if (command)
-    kill (pid, SIGCONT);
 
   g_printerr ("Recording, press ^C to exit\n");
 

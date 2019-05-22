@@ -36,7 +36,8 @@ void       sysprof_details_view_add_mark   (SysprofDetailsView   *self,
                                             const gchar          *mark,
                                             gint64                min,
                                             gint64                max,
-                                            gint64                avg);
+                                            gint64                avg,
+                                            gint64                hits);
 void       sysprof_details_view_add_item   (SysprofDetailsView   *self,
                                             GtkWidget            *left,
                                             GtkWidget            *center);

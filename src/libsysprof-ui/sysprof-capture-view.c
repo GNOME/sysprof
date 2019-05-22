@@ -162,7 +162,12 @@ add_marks_to_details (SysprofCaptureView *self)
       const gchar *name = k;
       const SysprofMarkStat *st = v;
 
-      sysprof_details_view_add_mark (priv->details_view, name, st->min, st->max, st->avg);
+      sysprof_details_view_add_mark (priv->details_view,
+                                     name,
+                                     st->min,
+                                     st->max,
+                                     st->avg,
+                                     st->count);
     }
 }
 

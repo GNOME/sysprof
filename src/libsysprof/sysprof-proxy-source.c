@@ -476,7 +476,8 @@ sysprof_proxy_source_stop (SysprofSource *source)
                                   -1,
                                   NULL,
                                   sysprof_proxy_source_stop_cb,
-                                  g_steal_pointer (&monitor));
+                                  monitor);
+          monitor = NULL; /* stolen */
         }
       else
         {

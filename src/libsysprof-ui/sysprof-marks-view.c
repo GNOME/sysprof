@@ -95,9 +95,9 @@ sysprof_marks_view_tree_view_key_press_event_cb (SysprofMarksView  *self,
 }
 
 static gboolean
-get_selected (GtkTreeSelection  *selection,
-              GtkTreeModel     **model,
-              GtkTreeIter       *iter)
+get_first_selected (GtkTreeSelection  *selection,
+                    GtkTreeModel     **model,
+                    GtkTreeIter       *iter)
 {
   GtkTreeModel *m;
 
@@ -131,7 +131,7 @@ sysprof_marks_view_selection_changed_cb (SysprofMarksView *self,
   g_assert (SYSPROF_IS_MARKS_VIEW (self));
   g_assert (GTK_IS_TREE_SELECTION (selection));
 
-  if (get_selected (selection, &model, &iter))
+  if (get_first_selected (selection, &model, &iter))
     {
       GtkAdjustment *adj;
       gdouble x;

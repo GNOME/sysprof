@@ -41,6 +41,7 @@ typedef struct
   gint64                      end_time;
   const gchar                *group;
   const gchar                *name;
+  const gchar                *message;
   SysprofCaptureCounterValue  value;
   guint                       is_counter : 1;
   guint                       counter_type : 8;
@@ -242,7 +243,10 @@ sysprof_marks_model_get_value (GtkTreeModel *model,
         }
       else
         {
-          g_value_set_string (value, item->name);
+          if (item->message && item->message[0])
+            g_value_take_string (value, g_strdup_printf ("%s — %s", item->name, item->message));
+          else
+            g_value_set_string (value, item->name);
         }
       break;
 
@@ -317,6 +321,7 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
       item.end_time = item.begin_time + mark->duration;
       item.group = g_string_chunk_insert_const (self->chunks, mark->group);
       item.name = g_string_chunk_insert_const (self->chunks, mark->name);
+      item.message = g_string_chunk_insert_const (self->chunks, mark->message);
       item.value.v64 = 0;
       item.is_counter = FALSE;
       item.counter_type = 0;
@@ -361,6 +366,7 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
                   item.end_time = frame->time;
                   item.group = ctr->category;
                   item.name = ctr->name;
+                  item.message = NULL;
                   item.is_counter = TRUE;
                   item.counter_type = ctr->type;
 

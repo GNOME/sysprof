@@ -230,6 +230,19 @@
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn">
+                        <property name="title" translatable="yes">Hits</property>
+                        <child>
+                          <object class="GtkCellRendererText">
+                            <property name="xalign">0.0</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">4</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn">
                         <property name="title" translatable="yes">Min</property>
                         <child>
                           <object class="GtkCellRendererText">
@@ -290,6 +303,8 @@
       <column type="gchararray"/>
       <!-- column-name Avg -->
       <column type="gchararray"/>
+      <!-- column-name Hits -->
+      <column type="gint64"/>
     </columns>
   </object>
 </interface>

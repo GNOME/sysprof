@@ -199,7 +199,8 @@ sysprof_details_view_add_mark (SysprofDetailsView *self,
                                const gchar        *mark,
                                gint64              min,
                                gint64              max,
-                               gint64              avg)
+                               gint64              avg,
+                               gint64              hits)
 {
   GtkTreeIter iter;
 
@@ -211,5 +212,6 @@ sysprof_details_view_add_mark (SysprofDetailsView *self,
                       1, min ? _sysprof_format_duration (min) : "—",
                       2, max ? _sysprof_format_duration (max) : "—",
                       3, avg ? _sysprof_format_duration (avg) : "—",
+                      4, hits,
                       -1);
 }

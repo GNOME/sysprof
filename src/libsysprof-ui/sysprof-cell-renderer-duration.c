@@ -134,7 +134,7 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
       g_autofree gchar *fmt = _sysprof_format_duration (priv->end_time - priv->begin_time);
 
       if (str->len)
-        g_string_append_c (str, ' ');
+        g_string_append (str, " — ");
       off = str->len;
       g_string_append (str, fmt);
     }
@@ -186,8 +186,6 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
           if (state & GTK_CELL_RENDERER_SELECTED)
             rgba.alpha = 0.6;
         }
-      else if ((state & GTK_CELL_RENDERER_SELECTED) == 0)
-        rgba.alpha = 0.4;
 
       gdk_cairo_set_source_rgba (cr, &rgba);
       pango_cairo_show_layout (cr, layout);

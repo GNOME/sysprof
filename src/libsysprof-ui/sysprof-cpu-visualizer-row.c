@@ -31,7 +31,18 @@ struct _SysprofCpuVisualizerRow
 {
   SysprofLineVisualizerRow parent_instance;
   SysprofColorCycle *colors;
+  gchar *category;
+  guint use_dash : 1;
 };
+
+enum {
+  PROP_0,
+  PROP_CATEGORY,
+  PROP_USE_DASH,
+  N_PROPS
+};
+
+static GParamSpec *properties [N_PROPS];
 
 G_DEFINE_TYPE (SysprofCpuVisualizerRow, sysprof_cpu_visualizer_row, SYSPROF_TYPE_LINE_VISUALIZER_ROW)
 
@@ -40,10 +51,14 @@ sysprof_cpu_visualizer_counter_found (const SysprofCaptureFrame *frame,
                                       gpointer                   user_data)
 {
   const SysprofCaptureCounterDefine *def = (SysprofCaptureCounterDefine *)frame;
-  GArray *counters = user_data;
+  struct {
+    SysprofCpuVisualizerRow *self;
+    GArray *counters;
+  } *state = user_data;
   gboolean found = FALSE;
 
   g_assert (frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF);
+  g_assert (state != NULL);
 
   /*
    * In practice, all the CPU counters are defined at once, so we can avoid
@@ -52,10 +67,10 @@ sysprof_cpu_visualizer_counter_found (const SysprofCaptureFrame *frame,
 
   for (guint i = 0; i < def->n_counters; i++)
     {
-      if (g_str_equal (def->counters[i].category, "CPU Percent"))
+      if (g_str_equal (def->counters[i].category, state->self->category))
         {
           guint id = def->counters[i].id;
-          g_array_append_val (counters, id);
+          g_array_append_val (state->counters, id);
           found = TRUE;
         }
     }
@@ -73,15 +88,23 @@ sysprof_cpu_visualizer_row_discover_counters (GTask        *task,
   SysprofCaptureReader *reader = task_data;
   g_autoptr(SysprofCaptureCursor) cursor = NULL;
   g_autoptr(GArray) counters = NULL;
+  struct {
+    SysprofCpuVisualizerRow *self;
+    GArray *counters;
+  } state;
 
   g_assert (G_IS_TASK (task));
   g_assert (SYSPROF_IS_CPU_VISUALIZER_ROW (source_object));
   g_assert (reader != NULL);
 
   counters = g_array_new (FALSE, FALSE, sizeof (guint));
+
+  state.self = source_object;
+  state.counters = counters;
+
   cursor = sysprof_capture_cursor_new (reader);
   sysprof_capture_cursor_add_condition (cursor, sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types));
-  sysprof_capture_cursor_foreach (cursor, sysprof_cpu_visualizer_counter_found, counters);
+  sysprof_capture_cursor_foreach (cursor, sysprof_cpu_visualizer_counter_found, &state);
   g_task_return_pointer (task, g_steal_pointer (&counters), (GDestroyNotify)g_array_unref);
 }
 
@@ -107,6 +130,9 @@ complete_counters (GObject      *object,
 
           sysprof_color_cycle_next (self->colors, &color);
           sysprof_line_visualizer_row_add_counter (SYSPROF_LINE_VISUALIZER_ROW (self), counter_id, &color);
+
+          if (self->use_dash)
+            sysprof_line_visualizer_row_set_dash (SYSPROF_LINE_VISUALIZER_ROW (self), counter_id, TRUE);
         }
     }
 
@@ -145,8 +171,33 @@ sysprof_cpu_visualizer_row_finalize (GObject *object)
   SysprofCpuVisualizerRow *self = (SysprofCpuVisualizerRow *)object;
 
   g_clear_pointer (&self->colors, sysprof_color_cycle_unref);
+  g_clear_pointer (&self->category, g_free);
 
   G_OBJECT_CLASS (sysprof_cpu_visualizer_row_parent_class)->finalize (object);
+}
+
+static void
+sysprof_cpu_visualizer_row_set_property (GObject      *object,
+                                         guint         prop_id,
+                                         const GValue *value,
+                                         GParamSpec   *pspec)
+{
+  SysprofCpuVisualizerRow *self = SYSPROF_CPU_VISUALIZER_ROW (object);
+
+  switch (prop_id)
+    {
+    case PROP_CATEGORY:
+      g_free (self->category);
+      self->category = g_value_dup_string (value);
+      break;
+
+    case PROP_USE_DASH:
+      self->use_dash = g_value_get_boolean (value);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
 static void
@@ -156,13 +207,27 @@ sysprof_cpu_visualizer_row_class_init (SysprofCpuVisualizerRowClass *klass)
   SysprofVisualizerRowClass *row_class = SYSPROF_VISUALIZER_ROW_CLASS (klass);
 
   object_class->finalize = sysprof_cpu_visualizer_row_finalize;
+  object_class->set_property = sysprof_cpu_visualizer_row_set_property;
 
   row_class->set_reader = sysprof_cpu_visualizer_row_set_reader;
+
+  properties [PROP_CATEGORY] =
+    g_param_spec_string ("category", NULL, NULL,
+                         "CPU Percent",
+                         (G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_USE_DASH] =
+    g_param_spec_boolean ("use-dash", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+  
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
 sysprof_cpu_visualizer_row_init (SysprofCpuVisualizerRow *self)
 {
+  self->category = g_strdup ("CPU Percent");
   self->colors = sysprof_color_cycle_new ();
 }
 

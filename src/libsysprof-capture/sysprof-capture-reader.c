@@ -523,7 +523,8 @@ sysprof_capture_reader_read_mark (SysprofCaptureReader *self)
 
   /* Ensure trailing \0 in name and message */
   mark->name[sizeof mark->name - 1] = 0;
-  self->buf[self->pos + mark->frame.len - 1] = 0;
+  if (mark->frame.len > sizeof *mark)
+    ((gchar *)mark)[mark->frame.len - 1] = 0;
 
   /* Maybe update end-time */
   if G_UNLIKELY ((mark->frame.time + mark->duration) > self->end_time)
@@ -566,7 +567,8 @@ sysprof_capture_reader_read_metadata (SysprofCaptureReader *self)
 
   /* Ensure trailing \0 in .id and .metadata */
   metadata->id[sizeof metadata->id - 1] = 0;
-  self->buf[self->pos + metadata->frame.len - 1] = 0;
+  if (metadata->frame.len > sizeof *metadata)
+    ((gchar *)metadata)[metadata->frame.len - 1] = 0;
 
   return metadata;
 }

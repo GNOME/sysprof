@@ -73,7 +73,6 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
   GdkRGBA rgba;
   GdkRectangle r;
   gint64 duration;
-  gint off = -1;
 
   g_assert (SYSPROF_IS_CELL_RENDERER_DURATION (self));
   g_assert (cr != NULL);
@@ -127,17 +126,16 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
       cairo_stroke (cr);
     }
 
-  str = g_string_new (priv->text);
+  str = g_string_new (NULL);
 
   if (priv->begin_time != priv->end_time)
     {
       g_autofree gchar *fmt = _sysprof_format_duration (priv->end_time - priv->begin_time);
-
-      if (str->len)
-        g_string_append (str, " — ");
-      off = str->len;
-      g_string_append (str, fmt);
+      g_string_append_printf (str, "%s — ", fmt);
     }
+
+  if (priv->text != NULL)
+    g_string_append (str, priv->text);
 
   if (str->len)
     {
@@ -157,17 +155,6 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
         cairo_move_to (cr, r.x + r.width, r.y + ((r.height - h) / 2));
       else
         cairo_move_to (cr, r.x - w, r.y + ((r.height - h) / 2));
-
-      if (off > -1)
-        {
-          PangoAttrList *list = pango_attr_list_new ();
-          PangoAttribute *attr = pango_attr_scale_new (0.8333);
-          attr->start_index = off;
-          attr->end_index = str->len;
-          pango_attr_list_insert (list, g_steal_pointer (&attr));
-          pango_layout_set_attributes (layout, list);
-          pango_attr_list_unref (list);
-        }
 
       if (priv->end_time < priv->begin_time)
         {

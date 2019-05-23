@@ -79,6 +79,7 @@ typedef struct
   GdkRGBA background;
   guint use_default_style : 1;
   guint fill : 1;
+  guint use_dash : 1;
 } LineInfo;
 
 typedef struct
@@ -113,6 +114,7 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
+static gdouble dashes[] = { 1.0, 2.0 };
 
 static void
 load_data_free (gpointer data)
@@ -222,6 +224,9 @@ sysprof_line_visualizer_row_draw (GtkWidget *widget,
             }
 
           cairo_set_line_width (cr, line_info->line_width);
+
+          if (line_info->use_dash)
+            cairo_set_dash (cr, dashes, G_N_ELEMENTS (dashes), 0);
 
           if (line_info->fill)
             {
@@ -813,6 +818,28 @@ sysprof_line_visualizer_row_set_fill (SysprofLineVisualizerRow *self,
           info->fill = !!color;
           if (color != NULL)
             info->background = *color;
+          sysprof_line_visualizer_row_queue_reload (self);
+          break;
+        }
+    }
+}
+
+void
+sysprof_line_visualizer_row_set_dash (SysprofLineVisualizerRow *self,
+                                      guint                     counter_id,
+                                      gboolean                  use_dash)
+{
+  SysprofLineVisualizerRowPrivate *priv = sysprof_line_visualizer_row_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_LINE_VISUALIZER_ROW (self));
+
+  for (guint i = 0; i < priv->lines->len; i++)
+    {
+      LineInfo *info = &g_array_index (priv->lines, LineInfo, i);
+
+      if (info->id == counter_id)
+        {
+          info->use_dash = !!use_dash;
           sysprof_line_visualizer_row_queue_reload (self);
           break;
         }

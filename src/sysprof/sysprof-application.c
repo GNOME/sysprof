@@ -44,6 +44,7 @@ struct {
   { "zoom.zoom-one",      { "<Primary>0", "<Primary>KP_0", NULL } },
   { "win.new-tab",        { "<Primary>t", NULL } },
   { "win.close-tab",      { "<Primary>w", NULL } },
+  { "win.replay-capture", { "<Primary>r", NULL } },
   { "win.save-capture",   { "<Primary>s", NULL } },
   { "win.switch-tab(1)",  { "<Alt>1", NULL } },
   { "win.switch-tab(2)",  { "<Alt>2", NULL } },

@@ -25,6 +25,13 @@
         <attribute name="accel">&lt;primary&gt;s</attribute>
       </item>
     </section>
+    <section id="win-menu-replay">
+      <item>
+        <attribute name="label" translatable="yes">Record Again</attribute>
+        <attribute name="action">win.replay-capture</attribute>
+        <attribute name="accel">&lt;primary&gt;r</attribute>
+      </item>
+    </section>
     <section id="win-menu-close">
       <item>
         <attribute name="label" translatable="yes">Close</attribute>

@@ -57,5 +57,9 @@ SYSPROF_AVAILABLE_IN_ALL
 gboolean         sysprof_display_get_can_save   (SysprofDisplay *self);
 SYSPROF_AVAILABLE_IN_ALL
 void             sysprof_display_stop_recording (SysprofDisplay *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean         sysprof_display_get_can_replay (SysprofDisplay *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDisplay  *sysprof_display_replay         (SysprofDisplay *self);
 
 G_END_DECLS

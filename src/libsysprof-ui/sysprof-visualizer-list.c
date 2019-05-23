@@ -298,6 +298,7 @@ handle_capture_results (GObject      *object,
   if (state->has_cpu)
     {
       GtkWidget *row = g_object_new (SYSPROF_TYPE_CPU_VISUALIZER_ROW,
+                                     "category", "CPU Percent",
                                      /* Translators: CPU is the processor. */
                                      "title", _("CPU"),
                                      "height-request", 35,
@@ -305,6 +306,22 @@ handle_capture_results (GObject      *object,
                                      "visible", TRUE,
                                      "y-lower", 0.0,
                                      "y-upper", 100.0,
+                                     NULL);
+      gtk_container_add (GTK_CONTAINER (self), row);
+    }
+
+  if (state->has_cpu)
+    {
+      GtkWidget *row = g_object_new (SYSPROF_TYPE_CPU_VISUALIZER_ROW,
+                                     "category", "CPU Frequency",
+                                     /* Translators: CPU is the processor. */
+                                     "title", _("CPU Frequency"),
+                                     "height-request", 35,
+                                     "selectable", FALSE,
+                                     "visible", TRUE,
+                                     "y-lower", 0.0,
+                                     "y-upper", 100.0,
+                                     "use-dash", TRUE,
                                      NULL);
       gtk_container_add (GTK_CONTAINER (self), row);
     }

@@ -149,7 +149,7 @@
                   </object>
                   <packing>
                     <!-- translators: the _ is used to denote the accelerator key -->
-                    <property name="title" translatable="yes">_Counters</property>
+                    <property name="title" translatable="yes">C_ounters</property>
                     <property name="name">counters</property>
                   </packing>
                 </child>

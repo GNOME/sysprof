@@ -152,22 +152,11 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
       pango_layout_set_text (layout, str->str, str->len);
       pango_layout_get_pixel_size (layout, &w, &h);
 
-      if (r.x < (cell_area->x + (cell_area->width / 8 * 5)))
-        {
-          /* This is if we're in the first half of screen */
-          if ((r.x + r.width + w) < (cell_area->x + cell_area->width))
-            cairo_move_to (cr, r.x + r.width, r.y + ((r.height - h) / 2));
-          else
-            cairo_move_to (cr, r.x - w, r.y + ((r.height - h) / 2));
-        }
+      if ((r.x + r.width + w) < (cell_area->x + cell_area->width) ||
+          ((cell_area->x + w) > r.x))
+        cairo_move_to (cr, r.x + r.width, r.y + ((r.height - h) / 2));
       else
-        {
-          /* This is if we're in the second half of screen, do opposite */
-          if ((r.x - r.width) >= cell_area->x)
-            cairo_move_to (cr, r.x - w, r.y + ((r.height - h) / 2));
-          else
-            cairo_move_to (cr, r.x + r.width, r.y + ((r.height - h) / 2));
-        }
+        cairo_move_to (cr, r.x - w, r.y + ((r.height - h) / 2));
 
       if (off > -1)
         {

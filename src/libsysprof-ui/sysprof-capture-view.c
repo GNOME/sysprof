@@ -847,6 +847,7 @@ sysprof_capture_view_init (SysprofCaptureView *self)
                                   G_ACTION_GROUP (group));
 
   _sysprof_marks_view_set_hadjustment (priv->marks_view, priv->time_adj);
+  _sysprof_marks_view_set_hadjustment (priv->counters_view, priv->time_adj);
   _sysprof_visualizer_view_set_hadjustment (priv->visualizer_view, priv->time_adj);
 }
 

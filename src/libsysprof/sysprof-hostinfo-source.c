@@ -22,6 +22,7 @@
 
 #include <ctype.h>
 #include <fcntl.h>
+#include <glib/gstdio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,22 +35,23 @@
 
 struct _SysprofHostinfoSource
 {
-  GObject          parent_instance;
+  GObject               parent_instance;
 
-  guint            handler;
-  gint             n_cpu;
-  gint             stat_fd;
+  guint                 handler;
+  gint                  n_cpu;
+  gint                  stat_fd;
+
+  GArray               *freqs;
 
   SysprofCaptureWriter *writer;
-  GArray          *cpu_info;
-  gchar           *stat_buf;
+  GArray               *cpu_info;
+  gchar                *stat_buf;
 };
 
 typedef struct
 {
   gint    counter_base;
   gdouble total;
-  gdouble freq;
   glong   last_user;
   glong   last_idle;
   glong   last_system;
@@ -61,6 +63,12 @@ typedef struct
   glong   last_guest;
   glong   last_guest_nice;
 } CpuInfo;
+
+typedef struct
+{
+  gint   stat_fd;
+  gint64 max;
+} CpuFreq;
 
 static void source_iface_init (SysprofSourceInterface *iface);
 
@@ -195,6 +203,40 @@ poll_cpu (SysprofHostinfoSource *self)
     }
 }
 
+static gdouble
+get_cpu_freq (SysprofHostinfoSource *self,
+              guint                  cpu)
+{
+  const CpuFreq *freq;
+
+  g_assert (SYSPROF_IS_HOSTINFO_SOURCE (self));
+  g_assert (cpu < self->freqs->len);
+
+  freq = &g_array_index (self->freqs, CpuFreq, cpu);
+
+  if (freq->stat_fd > -1)
+    {
+      gchar buf[128];
+      gssize len;
+
+      lseek (freq->stat_fd, SEEK_SET, 0);
+      len = read (freq->stat_fd, buf, sizeof buf - 1);
+
+      if (len > 0 && len < sizeof buf)
+        {
+          gint64 val;
+
+          buf[len] = 0;
+          g_strstrip (buf);
+          val = g_ascii_strtoll (buf, NULL, 10);
+
+          return (gdouble)val / (gdouble)freq->max * 100.0;
+        }
+    }
+
+  return 0.0;
+}
+
 static void
 publish_cpu (SysprofHostinfoSource *self)
 {
@@ -217,16 +259,16 @@ publish_cpu (SysprofHostinfoSource *self)
       value++;
 
       *id = info->counter_base + 1;
-      value->vdbl = info->freq;
+      value->vdbl = get_cpu_freq (self, i);
     }
 
   sysprof_capture_writer_set_counters (self->writer,
-                                  SYSPROF_CAPTURE_CURRENT_TIME,
-                                  -1,
-                                  getpid (),
-                                  counter_ids,
-                                  counter_values,
-                                  self->n_cpu * 2);
+                                       SYSPROF_CAPTURE_CURRENT_TIME,
+                                       -1,
+                                       getpid (),
+                                       counter_ids,
+                                       counter_values,
+                                       self->n_cpu * 2);
 }
 
 static gboolean
@@ -256,6 +298,7 @@ sysprof_hostinfo_source_finalize (GObject *object)
   g_clear_pointer (&self->writer, sysprof_capture_writer_unref);
   g_clear_pointer (&self->cpu_info, g_array_unref);
   g_clear_pointer (&self->stat_buf, g_free);
+  g_clear_pointer (&self->freqs, g_array_unref);
 
   G_OBJECT_CLASS (sysprof_hostinfo_source_parent_class)->finalize (object);
 }
@@ -274,6 +317,7 @@ sysprof_hostinfo_source_init (SysprofHostinfoSource *self)
   self->stat_fd = -1;
   self->cpu_info = g_array_new (FALSE, TRUE, sizeof (CpuInfo));
   self->stat_buf = g_malloc (PROC_STAT_BUF_SIZE);
+  self->freqs = g_array_new (FALSE, FALSE, sizeof (CpuFreq));
 }
 
 static void
@@ -316,6 +360,17 @@ sysprof_hostinfo_source_stop (SysprofSource *source)
       self->stat_fd = -1;
     }
 
+  for (guint i = 0; i < self->freqs->len; i++)
+    {
+      CpuFreq *freq = &g_array_index (self->freqs, CpuFreq, i);
+
+      if (freq->stat_fd != -1)
+        close (freq->stat_fd);
+    }
+
+  if (self->freqs->len > 0)
+    g_array_remove_range (self->freqs, 0, self->freqs->len);
+
   sysprof_source_emit_finished (SYSPROF_SOURCE (self));
 }
 
@@ -336,8 +391,12 @@ sysprof_hostinfo_source_prepare (SysprofSource *source)
 
   for (guint i = 0; i < self->n_cpu; i++)
     {
+      g_autofree gchar *max_path = NULL;
+      g_autofree gchar *cur_path = NULL;
+      g_autofree gchar *maxstr = NULL;
       SysprofCaptureCounter *ctr = &counters[i*2];
       CpuInfo info = { 0 };
+      CpuFreq freq = { 0 };
 
       /*
        * Request 2 counter values.
@@ -357,6 +416,18 @@ sysprof_hostinfo_source_prepare (SysprofSource *source)
                   "Total CPU usage %d", i);
 
       ctr++;
+
+      max_path = g_strdup_printf ("/sys/devices/system/cpu/cpu%u/cpufreq/scaling_max_freq", i);
+      cur_path = g_strdup_printf ("/sys/devices/system/cpu/cpu%u/cpufreq/scaling_cur_freq", i);
+
+      if (g_file_get_contents (max_path, &maxstr, NULL, NULL))
+        {
+          g_strstrip (maxstr);
+          freq.max = g_ascii_strtoll (maxstr, NULL, 10);
+        }
+
+      freq.stat_fd = g_open (cur_path, O_RDONLY);
+      g_array_append_val (self->freqs, freq);
 
       ctr->id = info.counter_base + 1;
       ctr->type = SYSPROF_CAPTURE_COUNTER_DOUBLE;

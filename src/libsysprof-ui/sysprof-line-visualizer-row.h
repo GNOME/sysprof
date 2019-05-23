@@ -62,5 +62,9 @@ SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_line_visualizer_row_set_fill       (SysprofLineVisualizerRow *self,
                                                        guint                     counter_id,
                                                        const GdkRGBA            *color);
+SYSPROF_AVAILABLE_IN_ALL
+void       sysprof_line_visualizer_row_set_dash       (SysprofLineVisualizerRow *self,
+                                                       guint                     counter_id,
+                                                       gboolean                  use_dash);
 
 G_END_DECLS

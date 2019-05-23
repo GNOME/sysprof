@@ -39,6 +39,13 @@ struct _IpcServiceImpl
   IpcServiceSkeleton parent_instance;
 };
 
+enum {
+  ACTIVITY,
+  N_SIGNALS
+};
+
+static guint signals [N_SIGNALS];
+
 static gboolean
 ipc_service_impl_handle_list_processes (IpcService            *service,
                                         GDBusMethodInvocation *invocation)
@@ -210,17 +217,19 @@ ipc_service_impl_g_authorize_method (GDBusInterfaceSkeleton *skeleton,
   g_assert (IPC_IS_SERVICE_IMPL (skeleton));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
 
+  g_signal_emit (skeleton, signals [ACTIVITY], 0);
+
   peer_name = g_dbus_method_invocation_get_sender (invocation);
 
   if (!(authority = polkit_authority_get_sync (NULL, NULL)) ||
       !(subject = polkit_system_bus_name_new (peer_name)) ||
       !(res = polkit_authority_check_authorization_sync (authority,
-                                                  POLKIT_SUBJECT (subject),
-                                                  "org.gnome.sysprof3.profile",
-                                                  NULL,
-                                                  POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION,
-                                                  NULL,
-                                                  NULL)) ||
+                                                         POLKIT_SUBJECT (subject),
+                                                         "org.gnome.sysprof3.profile",
+                                                         NULL,
+                                                         POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION,
+                                                         NULL,
+                                                         NULL)) ||
       !polkit_authorization_result_get_is_authorized (res))
     {
       g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
@@ -273,6 +282,17 @@ ipc_service_impl_class_init (IpcServiceImplClass *klass)
   GDBusInterfaceSkeletonClass *skeleton_class = G_DBUS_INTERFACE_SKELETON_CLASS (klass);
 
   skeleton_class->g_authorize_method = ipc_service_impl_g_authorize_method;
+
+  signals [ACTIVITY] =
+    g_signal_new ("activity",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0, NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
+  g_signal_set_va_marshaller (signals [ACTIVITY],
+                              G_TYPE_FROM_CLASS (klass),
+                              g_cclosure_marshal_VOID__VOIDv);
 }
 
 static void

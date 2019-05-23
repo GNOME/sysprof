@@ -38,6 +38,7 @@ struct _SysprofDetailsView
   DzlThreeGrid *three_grid;
   GtkListStore *marks_store;
   GtkTreeView  *marks_view;
+  GtkLabel     *counters;
   GtkLabel     *duration;
   GtkLabel     *filename;
   GtkLabel     *forks;
@@ -89,6 +90,7 @@ sysprof_details_view_class_init (SysprofDetailsViewClass *klass)
   object_class->finalize = sysprof_details_view_finalize;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-details-view.ui");
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, counters);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, duration);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, filename);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, forks);
@@ -165,6 +167,7 @@ sysprof_details_view_set_reader (SysprofDetailsView   *self,
       SET_FRAME_COUNT (marks, SYSPROF_CAPTURE_FRAME_MARK);
       SET_FRAME_COUNT (processes, SYSPROF_CAPTURE_FRAME_PROCESS);
       SET_FRAME_COUNT (forks, SYSPROF_CAPTURE_FRAME_FORK);
+      SET_FRAME_COUNT (counters, SYSPROF_CAPTURE_FRAME_CTRSET);
 
 #undef SET_FRAME_COUNT
     }

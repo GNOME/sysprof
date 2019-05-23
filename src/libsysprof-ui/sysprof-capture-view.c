@@ -41,6 +41,7 @@ typedef struct
   guint has_samples : 1;
   guint has_counters : 1;
   guint has_marks : 1;
+  guint can_replay : 1;
 } SysprofCaptureFeatures;
 
 typedef struct
@@ -64,6 +65,7 @@ typedef struct
 
   guint                   busy;
 
+  guint                   can_replay : 1;
   guint                   needs_fit : 1;
 } SysprofCaptureViewPrivate;
 
@@ -318,7 +320,17 @@ sysprof_capture_view_scan_worker (GTask        *task,
 
       st_buf.frame_count[frame.type]++;
 
-      if (frame.type == SYSPROF_CAPTURE_FRAME_MARK)
+      if (frame.type == SYSPROF_CAPTURE_FRAME_METADATA)
+        {
+          const SysprofCaptureMetadata *meta;
+
+          if ((meta = sysprof_capture_reader_read_metadata (reader)))
+            {
+              if (g_strcmp0 (meta->id, "local-profiler") == 0)
+                features.can_replay = TRUE;
+            }
+        }
+      else if (frame.type == SYSPROF_CAPTURE_FRAME_MARK)
         {
           const SysprofCaptureMark *mark;
 
@@ -996,4 +1008,14 @@ sysprof_capture_view_get_reader (SysprofCaptureView *self)
   g_return_val_if_fail (SYSPROF_IS_CAPTURE_VIEW (self), NULL);
 
   return priv->reader;
+}
+
+gboolean
+sysprof_capture_view_get_can_replay (SysprofCaptureView *self)
+{
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_CAPTURE_VIEW (self), FALSE);
+
+  return priv->features.can_replay;
 }

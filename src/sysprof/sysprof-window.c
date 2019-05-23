@@ -55,6 +55,19 @@ sysprof_window_new (SysprofApplication *application)
 }
 
 static void
+sysprof_window_notify_can_replay_cb (SysprofWindow   *self,
+                                     GParamSpec      *pspec,
+                                     SysprofNotebook *notebook)
+{
+  g_assert (SYSPROF_IS_WINDOW (self));
+  g_assert (SYSPROF_IS_NOTEBOOK (notebook));
+
+  dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "replay-capture",
+                             "enabled", sysprof_notebook_get_can_replay (notebook),
+                             NULL);
+}
+
+static void
 sysprof_window_notify_can_save_cb (SysprofWindow   *self,
                                    GParamSpec      *pspec,
                                    SysprofNotebook *notebook)
@@ -122,14 +135,22 @@ close_tab_cb (GSimpleAction *action,
 }
 
 static void
+replay_capture_cb (GSimpleAction *action,
+                   GVariant      *param,
+                   gpointer       user_data)
+{
+  SysprofWindow *self = user_data;
+  g_return_if_fail (SYSPROF_IS_WINDOW (self));
+  sysprof_notebook_replay (self->notebook);
+}
+
+static void
 save_capture_cb (GSimpleAction *action,
                  GVariant      *param,
                  gpointer       user_data)
 {
   SysprofWindow *self = user_data;
-
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
-
   sysprof_notebook_save (self->notebook);
 }
 
@@ -184,6 +205,7 @@ sysprof_window_init (SysprofWindow *self)
     { "close-tab", close_tab_cb },
     { "new-tab", new_tab_cb },
     { "switch-tab", switch_tab_cb, "i" },
+    { "replay-capture", replay_capture_cb },
     { "save-capture", save_capture_cb },
     { "stop-recording", stop_recording_cb },
   };
@@ -194,6 +216,12 @@ sysprof_window_init (SysprofWindow *self)
                                    actions,
                                    G_N_ELEMENTS (actions),
                                    self);
+
+  g_signal_connect_object (self->notebook,
+                           "notify::can-replay",
+                           G_CALLBACK (sysprof_window_notify_can_replay_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 
   g_signal_connect_object (self->notebook,
                            "notify::can-save",
@@ -214,6 +242,9 @@ sysprof_window_init (SysprofWindow *self)
                                               "win.stop-recording");
 
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "save-capture",
+                             "enabled", FALSE,
+                             NULL);
+  dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "replay-capture",
                              "enabled", FALSE,
                              NULL);
 }

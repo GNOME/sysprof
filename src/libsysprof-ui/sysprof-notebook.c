@@ -31,6 +31,7 @@ G_DEFINE_TYPE (SysprofNotebook, sysprof_notebook, GTK_TYPE_NOTEBOOK)
 
 enum {
   PROP_0,
+  PROP_CAN_REPLAY,
   PROP_CAN_SAVE,
   PROP_CURRENT,
   N_PROPS
@@ -65,6 +66,17 @@ sysprof_notebook_notify_can_save_cb (SysprofNotebook *self,
 }
 
 static void
+sysprof_notebook_notify_can_replay_cb (SysprofNotebook *self,
+                                       GParamSpec      *pspec,
+                                       SysprofDisplay  *display)
+{
+  g_assert (SYSPROF_IS_NOTEBOOK (self));
+  g_assert (SYSPROF_IS_DISPLAY (display));
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_REPLAY]);
+}
+
+static void
 sysprof_notebook_page_added (GtkNotebook *notebook,
                              GtkWidget   *child,
                              guint        page_num)
@@ -83,11 +95,18 @@ sysprof_notebook_page_added (GtkNotebook *notebook,
       gtk_notebook_set_tab_reorderable (notebook, child, TRUE);
 
       g_signal_connect_object (child,
+                               "notify::can-replay",
+                               G_CALLBACK (sysprof_notebook_notify_can_replay_cb),
+                               notebook,
+                               G_CONNECT_SWAPPED);
+
+      g_signal_connect_object (child,
                                "notify::can-save",
                                G_CALLBACK (sysprof_notebook_notify_can_save_cb),
                                notebook,
                                G_CONNECT_SWAPPED);
 
+      g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_REPLAY]);
       g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_SAVE]);
       g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CURRENT]);
 
@@ -116,6 +135,7 @@ sysprof_notebook_page_removed (GtkNotebook *notebook,
                                             G_CALLBACK (sysprof_notebook_notify_can_save_cb),
                                             notebook);
 
+      g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_REPLAY]);
       g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_SAVE]);
       g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CURRENT]);
     }
@@ -134,6 +154,7 @@ sysprof_notebook_switch_page (GtkNotebook *notebook,
 
   GTK_NOTEBOOK_CLASS (sysprof_notebook_parent_class)->switch_page (notebook, widget, page);
 
+  g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_REPLAY]);
   g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_SAVE]);
   g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CURRENT]);
 }
@@ -148,6 +169,10 @@ sysprof_notebook_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_CAN_REPLAY:
+      g_value_set_boolean (value, sysprof_notebook_get_can_replay (self));
+      break;
+
     case PROP_CAN_SAVE:
       g_value_set_boolean (value, sysprof_notebook_get_can_save (self));
       break;
@@ -172,6 +197,13 @@ sysprof_notebook_class_init (SysprofNotebookClass *klass)
   notebook_class->page_added = sysprof_notebook_page_added;
   notebook_class->page_removed = sysprof_notebook_page_removed;
   notebook_class->switch_page = sysprof_notebook_switch_page;
+
+  properties [PROP_CAN_REPLAY] =
+    g_param_spec_boolean ("can-replay",
+                          "Can Replay",
+                          "If the current display can replay a recording",
+                          FALSE,
+                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_CAN_SAVE] =
     g_param_spec_boolean ("can-save",
@@ -292,4 +324,35 @@ sysprof_notebook_get_can_save (SysprofNotebook *self)
     return sysprof_display_get_can_save (display);
 
   return FALSE;
+}
+
+gboolean
+sysprof_notebook_get_can_replay (SysprofNotebook *self)
+{
+  SysprofDisplay *display;
+
+  g_return_val_if_fail (SYSPROF_IS_NOTEBOOK (self), FALSE);
+
+  if ((display = sysprof_notebook_get_current (self)))
+    return sysprof_display_get_can_replay (display);
+
+  return FALSE;
+}
+
+void
+sysprof_notebook_replay (SysprofNotebook *self)
+{
+  SysprofDisplay *display;
+  SysprofDisplay *replay;
+
+  g_return_if_fail (SYSPROF_IS_NOTEBOOK (self));
+
+  if (!(display = sysprof_notebook_get_current (self)) ||
+      !sysprof_display_get_can_replay (display) ||
+      !(replay = sysprof_display_replay (display)))
+    return;
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (replay));
+
+  gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (replay));
 }

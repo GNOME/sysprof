@@ -53,6 +53,7 @@ G_DEFINE_TYPE_WITH_PRIVATE (SysprofDisplay, sysprof_display, GTK_TYPE_BIN)
 
 enum {
   PROP_0,
+  PROP_CAN_REPLAY,
   PROP_CAN_SAVE,
   PROP_RECORDING,
   PROP_TITLE,
@@ -91,6 +92,7 @@ sysprof_display_load_cb (SysprofCaptureView *view,
   if (!sysprof_capture_view_load_finish (view, result, &error))
     g_warning ("Failed to load capture: %s", error->message);
 
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_REPLAY]);
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_SAVE]);
 }
 
@@ -148,6 +150,7 @@ sysprof_display_profiler_stopped_cb (SysprofDisplay  *self,
     }
 
 notify:
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_REPLAY]);
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_SAVE]);
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_RECORDING]);
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
@@ -297,6 +300,10 @@ sysprof_display_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_CAN_REPLAY:
+      g_value_set_boolean (value, sysprof_display_get_can_replay (self));
+      break;
+
     case PROP_CAN_SAVE:
       g_value_set_boolean (value, sysprof_display_get_can_save (self));
       break;
@@ -324,6 +331,13 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
   object_class->get_property = sysprof_display_get_property;
 
   widget_class->parent_set = sysprof_display_parent_set;
+
+  properties [PROP_CAN_REPLAY] =
+    g_param_spec_boolean ("can-replay",
+                          "Can Replay",
+                          "If the capture contains enough information to re-run the recording",
+                          FALSE,
+                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_CAN_SAVE] =
     g_param_spec_boolean ("can-save",
@@ -592,4 +606,23 @@ _sysprof_display_focus_record (SysprofDisplay *self)
   g_return_if_fail (SYSPROF_IS_DISPLAY (self));
 
   _sysprof_profiler_assistant_focus_record (priv->assistant);
+}
+
+gboolean
+sysprof_display_get_can_replay (SysprofDisplay *self)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_DISPLAY (self), FALSE);
+
+  return !sysprof_display_is_empty (self) &&
+          sysprof_capture_view_get_can_replay (priv->capture_view);
+}
+
+SysprofDisplay *
+sysprof_display_replay (SysprofDisplay *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DISPLAY (self), NULL);
+
+  return NULL;
 }

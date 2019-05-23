@@ -69,5 +69,7 @@ SYSPROF_AVAILABLE_IN_ALL
 gboolean              sysprof_capture_view_get_busy         (SysprofCaptureView    *self);
 SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_view_fit_to_width     (SysprofCaptureView    *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean              sysprof_capture_view_get_can_replay   (SysprofCaptureView    *self);
 
 G_END_DECLS

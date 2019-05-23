@@ -147,7 +147,7 @@ main (gint argc,
 
             g_print ("METADATA: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
                      "       id = %s\n"
-                     "\"\"\"\n%s\n\"\"\"",
+                     "\"\"\"\n%s\n\"\"\"\n",
                      metadata->frame.pid, metadata->frame.time, ptime,
                      metadata->id, metadata->metadata);
 
@@ -190,9 +190,10 @@ main (gint argc,
         case SYSPROF_CAPTURE_FRAME_CTRDEF:
           {
             const SysprofCaptureCounterDefine *def = sysprof_capture_reader_read_counter_define (reader);
+            gdouble ptime = (def->frame.time - begin_time) / (gdouble)NSEC_PER_SEC;
             guint i;
 
-            g_print ("NEW COUNTERS: pid=%d time=%"G_GINT64_FORMAT"\n", def->frame.pid, def->frame.time);
+            g_print ("NEW COUNTERS: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n", def->frame.pid, def->frame.time, ptime);
 
             for (i = 0; i < def->n_counters; i++)
               {
@@ -200,7 +201,10 @@ main (gint argc,
 
                 SET_CTR_TYPE (ctr->id, ctr->type);
 
-                g_print ("  COUNTER(%d): %s\n           %s\n           %s\n\n",
+                g_print ("  COUNTER(%d): %s\n"
+                         "              %s\n"
+                         "              %s\n"
+                         "\n",
                          ctr->id,
                          ctr->category,
                          ctr->name,
@@ -212,9 +216,10 @@ main (gint argc,
         case SYSPROF_CAPTURE_FRAME_CTRSET:
           {
             const SysprofCaptureCounterSet *set = sysprof_capture_reader_read_counter_set (reader);
+            gdouble ptime = (set->frame.time - begin_time) / (gdouble)NSEC_PER_SEC;
             guint i;
 
-            g_print ("SET COUNTERS: pid=%d time=%"G_GINT64_FORMAT"\n", set->frame.pid, set->frame.time);
+            g_print ("SET COUNTERS: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n", set->frame.pid, set->frame.time, ptime);
 
             for (i = 0; i < set->n_values; i++)
               {

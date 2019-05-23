@@ -31,10 +31,35 @@
 #define BUS_NAME                "org.gnome.Sysprof3"
 #define OBJECT_PATH             "/org/gnome/Sysprof3"
 #define NAME_ACQUIRE_DELAY_SECS 3
+#define INACTIVITY_TIMEOUT_SECS 120
 
 static GMainLoop *main_loop;
 static gboolean   name_acquired;
 static gint       exit_status = EXIT_SUCCESS;
+
+static guint inactivity;
+static G_LOCK_DEFINE (activity);
+
+static gboolean
+inactivity_cb (gpointer data)
+{
+  inactivity = 0;
+  g_main_loop_quit (main_loop);
+  return G_SOURCE_REMOVE;
+}
+
+static void
+activity_cb (IpcService *service,
+             gpointer    user_data)
+{
+  G_LOCK (activity);
+  if (inactivity)
+    g_source_remove (inactivity);
+  inactivity = g_timeout_add_seconds (INACTIVITY_TIMEOUT_SECS,
+                                      inactivity_cb,
+                                      NULL);
+  G_UNLOCK (activity);
+}
 
 static void
 name_acquired_cb (GDBusConnection *connection,
@@ -92,6 +117,13 @@ main (gint   argc,
   if ((bus = g_bus_get_sync (bus_type, NULL, &error)))
     {
       g_autoptr(IpcService) service = ipc_service_impl_new ();
+
+      g_signal_connect (service,
+                        "activity",
+                        G_CALLBACK (activity_cb),
+                        NULL);
+
+      activity_cb (service, NULL);
 
       if (g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (service),
                                             bus,

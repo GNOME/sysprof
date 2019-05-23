@@ -27,3 +27,8 @@ sysprof_profiler_ctl = executable('sysprof-profiler-ctl',
   dependencies: [ tools_deps, gio_unix_dep ],
        install: false,
 )
+
+list_threads = executable('list-threads', ['list-threads.c'],
+  dependencies: [ tools_deps ],
+       install: false,
+)

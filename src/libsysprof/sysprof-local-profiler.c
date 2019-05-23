@@ -494,7 +494,10 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
   SysprofHelpers *helpers = (SysprofHelpers *)object;
   g_autoptr(SysprofLocalProfiler) self = user_data;
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
+  g_autofree gchar *keydata = NULL;
   g_autoptr(GError) error = NULL;
+  g_autoptr(GKeyFile) keyfile = NULL;
+  gsize keylen = 0;
 
   g_assert (SYSPROF_IS_HELPERS (helpers));
   g_assert (G_IS_ASYNC_RESULT (result));
@@ -505,6 +508,8 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
       sysprof_profiler_emit_failed (SYSPROF_PROFILER (self), error);
       return;
     }
+
+  keyfile = g_key_file_new ();
 
   if (priv->writer == NULL)
     {
@@ -538,6 +543,14 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
   if (priv->failures->len > 0)
     g_ptr_array_remove_range (priv->failures, 0, priv->failures->len);
 
+  g_key_file_set_boolean (keyfile, "profiler", "whole-system", priv->whole_system);
+  if (priv->pids->len > 0)
+    g_key_file_set_integer_list (keyfile, "profiler", "pids",
+                                 (gint *)(gpointer)priv->pids->data,
+                                 priv->pids->len);
+  g_key_file_set_boolean (keyfile, "profiler", "spawn", priv->spawn);
+  g_key_file_set_boolean (keyfile, "profiler", "spawn-inherit-environ", priv->spawn_inherit_environ);
+
   if (priv->spawn && priv->spawn_argv && priv->spawn_argv[0])
     {
       g_autoptr(GPtrArray) env = g_ptr_array_new_with_free_func (g_free);
@@ -557,6 +570,9 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
 
       if (priv->spawn_env)
         {
+          g_key_file_set_string_list (keyfile, "profiler", "spawn-env",
+                                      (const gchar * const *)priv->spawn_env,
+                                      g_strv_length (priv->spawn_env));
           for (guint i = 0; priv->spawn_env[i]; i++)
             g_ptr_array_add (env, g_strdup (priv->spawn_env[i]));
         }
@@ -572,6 +588,13 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
           for (guint i = 0; priv->spawn_argv[i]; i++)
             g_ptr_array_add (argv, g_strdup (priv->spawn_argv[i]));
         }
+
+      /* Save argv before modifying */
+      g_key_file_set_string_list (keyfile,
+                                  "profiler",
+                                  "spawn-argv",
+                                  (const gchar * const *)argv->pdata,
+                                  argv->len);
 
       for (guint i = 0; i < priv->sources->len; i++)
         {
@@ -602,6 +625,10 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
   for (guint i = 0; i < priv->sources->len; i++)
     {
       SysprofSource *source = g_ptr_array_index (priv->sources, i);
+      g_autofree gchar *name = g_strdup_printf ("Source.%s", G_OBJECT_TYPE_NAME (source));
+
+      /* TODO: Allow sources to add information here */
+      g_key_file_set_boolean (keyfile, name, "enabled", TRUE);
 
       if (priv->whole_system == FALSE)
         {
@@ -624,6 +651,15 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
       if (!sysprof_source_get_is_ready (source))
         g_ptr_array_add (priv->starting, g_object_ref (source));
     }
+
+  if ((keydata = g_key_file_to_data (keyfile, &keylen, NULL)))
+    sysprof_capture_writer_add_metadata (priv->writer,
+                                         SYSPROF_CAPTURE_CURRENT_TIME,
+                                         -1,
+                                         -1,
+                                         "local-profiler",
+                                         keydata,
+                                         keylen);
 
   if (priv->starting->len == 0)
     sysprof_local_profiler_finish_startup (self);

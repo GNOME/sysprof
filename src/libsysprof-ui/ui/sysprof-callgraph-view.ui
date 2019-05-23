@@ -146,7 +146,7 @@
                     <child>
                       <object class="GtkTreeViewColumn" id="descendants_name_column">
                         <property name="expand">true</property>
-                        <property name="sizing">fixed</property>
+                        <property name="sizing">autosize</property>
                         <property name="sort-column-id">0</property>
                         <property name="title" translatable="yes">Descendants</property>
                       </object>

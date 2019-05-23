@@ -216,6 +216,7 @@ sysprof_depth_visualizer_row_draw (GtkWidget *widget,
                                    cairo_t   *cr)
 {
   SysprofDepthVisualizerRow *self = (SysprofDepthVisualizerRow *)widget;
+  GtkStyleContext *style_context;
   GtkAllocation alloc;
   const Point *points;
   guint n_points = 0;
@@ -230,7 +231,10 @@ sysprof_depth_visualizer_row_draw (GtkWidget *widget,
   if (self->points == NULL)
     return GDK_EVENT_PROPAGATE;
 
-  gdk_rgba_parse (&user, "#2e3436");
+  style_context = gtk_widget_get_style_context (widget);
+  gtk_style_context_get_color (style_context,
+                               gtk_style_context_get_state (style_context),
+                               &user);
   gdk_rgba_parse (&system, "#ef2929");
 
   gtk_widget_get_allocation (widget, &alloc);

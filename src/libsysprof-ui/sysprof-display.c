@@ -524,7 +524,7 @@ sysprof_display_save (SysprofDisplay *self)
   gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (native), TRUE);
   gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (native), TRUE);
   gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER (native), TRUE);
-  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (native), "capture.sysprof");
+  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (native), "capture.syscap");
 
   res = gtk_native_dialog_run (GTK_NATIVE_DIALOG (native));
 

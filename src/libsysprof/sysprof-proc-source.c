@@ -350,6 +350,9 @@ sysprof_proc_source_populate (SysprofProcSource *self,
   g_assert (info != NULL);
   g_assert (g_variant_is_of_type (info, G_VARIANT_TYPE ("aa{sv}")));
 
+  if (self->writer == NULL)
+    return;
+
   if (!(mounts = proc_readlines ("/proc/mounts")))
     return;
 
@@ -443,7 +446,7 @@ sysprof_proc_source_stop (SysprofSource *source)
 
 static void
 sysprof_proc_source_set_writer (SysprofSource        *source,
-                           SysprofCaptureWriter *writer)
+                                SysprofCaptureWriter *writer)
 {
   SysprofProcSource *self = (SysprofProcSource *)source;
 

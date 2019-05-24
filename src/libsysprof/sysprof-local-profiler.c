@@ -33,6 +33,13 @@
 #include "sysprof-local-profiler.h"
 #include "sysprof-platform.h"
 
+#include "sysprof-hostinfo-source.h"
+#ifdef __linux__
+# include "sysprof-perf-source.h"
+#endif
+#include "sysprof-proc-source.h"
+#include "sysprof-proxy-source.h"
+
 #define CSTRV(s) ((const gchar * const *)s)
 
 typedef struct
@@ -386,6 +393,13 @@ sysprof_local_profiler_class_init (SysprofLocalProfilerClass *klass)
   g_object_class_override_property (object_class, PROP_SPAWN_ENV, "spawn-env");
   g_object_class_override_property (object_class, PROP_SPAWN_INHERIT_ENVIRON, "spawn-inherit-environ");
   g_object_class_override_property (object_class, PROP_WHOLE_SYSTEM, "whole-system");
+
+  g_type_ensure (SYSPROF_TYPE_HOSTINFO_SOURCE);
+  g_type_ensure (SYSPROF_TYPE_PROC_SOURCE);
+#ifdef __linux__
+  g_type_ensure (SYSPROF_TYPE_PERF_SOURCE);
+#endif
+  g_type_ensure (SYSPROF_TYPE_PROXY_SOURCE);
 }
 
 static void
@@ -627,13 +641,15 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
         }
     }
 
+  g_key_file_set_integer (keyfile, "profiler", "n-sources", priv->sources->len);
+
   for (guint i = 0; i < priv->sources->len; i++)
     {
       SysprofSource *source = g_ptr_array_index (priv->sources, i);
-      g_autofree gchar *name = g_strdup_printf ("Source.%s", G_OBJECT_TYPE_NAME (source));
+      g_autofree gchar *group = g_strdup_printf ("source-%u", i);
 
-      /* TODO: Allow sources to add information here */
-      g_key_file_set_boolean (keyfile, name, "enabled", TRUE);
+      g_key_file_set_string (keyfile, group, "gtype", G_OBJECT_TYPE_NAME (source));
+      sysprof_source_serialize (source, keyfile, group);
 
       if (priv->whole_system == FALSE)
         {
@@ -980,6 +996,7 @@ sysprof_local_profiler_new_replay (SysprofCaptureReader *reader)
   g_auto(GStrv) env = NULL;
   gboolean inherit;
   gboolean spawn;
+  gint n_sources;
 
   g_return_val_if_fail (reader != NULL, NULL);
 
@@ -997,11 +1014,29 @@ sysprof_local_profiler_new_replay (SysprofCaptureReader *reader)
   inherit = g_key_file_get_boolean (keyfile, "profiler", "spawn-inherit-environ", NULL);
   argv = g_key_file_get_string_list (keyfile, "profiler", "spawn-argv", NULL, NULL);
   env = g_key_file_get_string_list (keyfile, "profiler", "spawn-env", NULL, NULL);
+  n_sources = g_key_file_get_integer (keyfile, "profiler", "n-sources", NULL);
 
   sysprof_profiler_set_spawn (SYSPROF_PROFILER (self), spawn);
   sysprof_profiler_set_spawn_argv (SYSPROF_PROFILER (self), CSTRV (argv));
   sysprof_profiler_set_spawn_env (SYSPROF_PROFILER (self), CSTRV (env));
   sysprof_profiler_set_spawn_inherit_environ (SYSPROF_PROFILER (self), inherit);
+
+  for (guint i = 0; i < n_sources; i++)
+    {
+      g_autofree gchar *group = g_strdup_printf ("source-%u", i);
+      g_autofree gchar *type_name = NULL;
+      g_autoptr(SysprofSource) source = NULL;
+      GType gtype;
+
+      if (!g_key_file_has_group (keyfile, group) ||
+          !(type_name = g_key_file_get_string (keyfile, group, "gtype", NULL)) ||
+          !(gtype = g_type_from_name (type_name)) ||
+          !(source = g_object_new (gtype, NULL)))
+        continue;
+
+      sysprof_source_deserialize (source, keyfile, group);
+      sysprof_local_profiler_add_source (SYSPROF_PROFILER (self), source);
+    }
 
   return SYSPROF_PROFILER (g_steal_pointer (&self));
 }

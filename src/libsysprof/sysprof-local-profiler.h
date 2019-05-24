@@ -41,6 +41,8 @@ struct _SysprofLocalProfilerClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofProfiler *sysprof_local_profiler_new (void);
+SysprofProfiler *sysprof_local_profiler_new        (void);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofProfiler *sysprof_local_profiler_new_replay (SysprofCaptureReader *reader);
 
 G_END_DECLS

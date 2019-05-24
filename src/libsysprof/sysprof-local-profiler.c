@@ -18,17 +18,22 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#define G_LOG_DOMAIN "sysprof-local-profiler"
+
 #include "config.h"
 
+#include <errno.h>
+#include <gio/gio.h>
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <gio/gio.h>
-#include <errno.h>
+#include <sysprof-capture.h>
 #include <unistd.h>
 
 #include "sysprof-helpers.h"
 #include "sysprof-local-profiler.h"
 #include "sysprof-platform.h"
+
+#define CSTRV(s) ((const gchar * const *)s)
 
 typedef struct
 {
@@ -934,4 +939,69 @@ profiler_iface_init (SysprofProfilerInterface *iface)
   iface->start = sysprof_local_profiler_start;
   iface->stop = sysprof_local_profiler_stop;
   iface->stopped = sysprof_local_profiler_real_stopped;
+}
+
+static gboolean
+find_profiler_meta_cb (const SysprofCaptureFrame *frame,
+                       gpointer                   user_data)
+{
+  const SysprofCaptureMetadata *meta = (const SysprofCaptureMetadata *)frame;
+  GKeyFile **keyfile = user_data;
+
+  g_assert (frame != NULL);
+  g_assert (frame->type == SYSPROF_CAPTURE_FRAME_METADATA);
+  g_assert (keyfile != NULL);
+  g_assert (*keyfile == NULL);
+
+  if (g_strcmp0 (meta->id, "local-profiler") == 0)
+    {
+      g_autoptr(GKeyFile) kf = g_key_file_new ();
+
+      /* Metadata is guaranteed to be \0 terminated by marshaller */
+      if (g_key_file_load_from_data (kf, meta->metadata, -1, 0, NULL))
+        *keyfile = g_steal_pointer (&kf);
+
+      return *keyfile == NULL;
+    }
+
+  return TRUE;
+}
+
+SysprofProfiler *
+sysprof_local_profiler_new_replay (SysprofCaptureReader *reader)
+{
+  static const SysprofCaptureFrameType mtype[] = {
+    SYSPROF_CAPTURE_FRAME_METADATA,
+  };
+  g_autoptr(SysprofLocalProfiler) self = NULL;
+  g_autoptr(SysprofCaptureCursor) cursor = NULL;
+  g_autoptr(GKeyFile) keyfile = NULL;
+  g_auto(GStrv) argv = NULL;
+  g_auto(GStrv) env = NULL;
+  gboolean inherit;
+  gboolean spawn;
+
+  g_return_val_if_fail (reader != NULL, NULL);
+
+  self = g_object_new (SYSPROF_TYPE_LOCAL_PROFILER, NULL);
+
+  cursor = sysprof_capture_cursor_new (reader);
+  sysprof_capture_cursor_add_condition (cursor, sysprof_capture_condition_new_where_type_in (1, mtype));
+  sysprof_capture_cursor_foreach (cursor, find_profiler_meta_cb, &keyfile);
+
+  /* No metadata, bail */
+  if (keyfile == NULL)
+    return NULL;
+
+  spawn = g_key_file_get_boolean (keyfile, "profiler", "spawn", NULL);
+  inherit = g_key_file_get_boolean (keyfile, "profiler", "spawn-inherit-environ", NULL);
+  argv = g_key_file_get_string_list (keyfile, "profiler", "spawn-argv", NULL, NULL);
+  env = g_key_file_get_string_list (keyfile, "profiler", "spawn-env", NULL, NULL);
+
+  sysprof_profiler_set_spawn (SYSPROF_PROFILER (self), spawn);
+  sysprof_profiler_set_spawn_argv (SYSPROF_PROFILER (self), CSTRV (argv));
+  sysprof_profiler_set_spawn_env (SYSPROF_PROFILER (self), CSTRV (env));
+  sysprof_profiler_set_spawn_inherit_environ (SYSPROF_PROFILER (self), inherit);
+
+  return SYSPROF_PROFILER (g_steal_pointer (&self));
 }

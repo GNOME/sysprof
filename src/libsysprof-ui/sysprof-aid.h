@@ -46,6 +46,9 @@ struct _SysprofAidClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
+SysprofAid  *sysprof_aid_new              (const gchar     *display_name,
+                                           const gchar     *icon_name);
+SYSPROF_AVAILABLE_IN_ALL
 const gchar *sysprof_aid_get_display_name (SysprofAid      *self);
 SYSPROF_AVAILABLE_IN_ALL
 void         sysprof_aid_set_display_name (SysprofAid      *self,

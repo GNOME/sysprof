@@ -152,3 +152,29 @@ sysprof_source_modify_spawn (SysprofSource       *self,
   if (SYSPROF_SOURCE_GET_IFACE (self)->modify_spawn)
     SYSPROF_SOURCE_GET_IFACE (self)->modify_spawn (self, launcher, argv);
 }
+
+void
+sysprof_source_serialize (SysprofSource *self,
+                          GKeyFile      *keyfile,
+                          const gchar   *group)
+{
+  g_return_if_fail (SYSPROF_IS_SOURCE (self));
+  g_return_if_fail (keyfile != NULL);
+  g_return_if_fail (group != NULL);
+
+  if (SYSPROF_SOURCE_GET_IFACE (self)->serialize)
+    SYSPROF_SOURCE_GET_IFACE (self)->serialize (self, keyfile, group);
+}
+
+void
+sysprof_source_deserialize (SysprofSource *self,
+                            GKeyFile      *keyfile,
+                            const gchar   *group)
+{
+  g_return_if_fail (SYSPROF_IS_SOURCE (self));
+  g_return_if_fail (keyfile != NULL);
+  g_return_if_fail (group != NULL);
+
+  if (SYSPROF_SOURCE_GET_IFACE (self)->deserialize)
+    SYSPROF_SOURCE_GET_IFACE (self)->deserialize (self, keyfile, group);
+}

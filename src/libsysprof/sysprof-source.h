@@ -132,6 +132,31 @@ struct _SysprofSourceInterface
   void (*modify_spawn) (SysprofSource       *self,
                         GSubprocessLauncher *launcher,
                         GPtrArray           *argv);
+
+  /**
+   * SysprofSource::serialize:
+   * @self: a #SysprofSource
+   * @keyfile: a #GKeyFile
+   * @group: the keyfile group to use
+   *
+   * Requests that the source serialize itself into the keyfile
+   * so that it may be replayed at a future point in time.
+   */
+  void (*serialize) (SysprofSource *self,
+                     GKeyFile      *keyfile,
+                     const gchar   *group);
+
+  /**
+   * SysprofSource::deserialize:
+   * @self: a #SysprofSource
+   * @keyfile: a #GKeyFile
+   * @group: the keyfile group to use
+   *
+   * Deserialize from the saved state.
+   */
+  void (*deserialize) (SysprofSource *self,
+                       GKeyFile      *keyfile,
+                       const gchar   *group);
 };
 
 SYSPROF_AVAILABLE_IN_ALL
@@ -159,5 +184,13 @@ SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_modify_spawn  (SysprofSource        *self,
                                        GSubprocessLauncher  *launcher,
                                        GPtrArray            *argv);
+SYSPROF_AVAILABLE_IN_ALL
+void     sysprof_source_serialize     (SysprofSource        *self,
+                                       GKeyFile             *keyfile,
+                                       const gchar          *group);
+SYSPROF_AVAILABLE_IN_ALL
+void     sysprof_source_deserialize   (SysprofSource        *self,
+                                       GKeyFile             *keyfile,
+                                       const gchar          *group);
 
 G_END_DECLS

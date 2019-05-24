@@ -344,8 +344,11 @@ sysprof_helpers_get_proc_file (SysprofHelpers  *self,
   g_return_val_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable), FALSE);
 
   /* try locally first if we can */
-  if (helpers_can_see_pids ())
-    return helpers_get_proc_file (path, contents, &len);
+  if (!g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS))
+    {
+      if (helpers_get_proc_file (path, contents, &len))
+        return TRUE;
+    }
 
   if (self->proxy != NULL)
     {
@@ -641,7 +644,7 @@ sysprof_helpers_get_process_info (SysprofHelpers  *self,
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
   g_assert (info != NULL);
 
-  if (no_proxy || helpers_can_see_pids ())
+  if (no_proxy)
     {
       *info = helpers_get_process_info (attributes);
       return TRUE;
@@ -669,32 +672,6 @@ sysprof_helpers_get_process_info_cb (IpcService   *service,
     g_task_return_pointer (task, g_steal_pointer (&info), (GDestroyNotify)g_variant_unref);
 }
 
-static void
-sysprof_helpers_get_process_info_worker (GTask        *task,
-                                         gpointer      source_object,
-                                         gpointer      task_data,
-                                         GCancellable *cancellable)
-{
-  const gchar *attributes = task_data;
-  g_autoptr(GError) error = NULL;
-  g_autoptr(GVariant) ret = NULL;
-
-  g_assert (G_IS_TASK (task));
-  g_assert (SYSPROF_IS_HELPERS (source_object));
-  g_assert (attributes != NULL);
-  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
-
-  if ((ret = helpers_get_process_info (attributes)))
-    g_task_return_pointer (task,
-                           g_steal_pointer (&ret),
-                           (GDestroyNotify) g_variant_unref);
-  else
-    g_task_return_new_error (task,
-                             G_IO_ERROR,
-                             G_IO_ERROR_FAILED,
-                             "Failed to retrieve proc info");
-}
-
 void
 sysprof_helpers_get_process_info_async (SysprofHelpers      *self,
                                         const gchar         *attributes,
@@ -710,13 +687,6 @@ sysprof_helpers_get_process_info_async (SysprofHelpers      *self,
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_helpers_get_process_info_async);
-
-  if (helpers_can_see_pids ())
-    {
-      g_task_set_task_data (task, g_strdup (attributes), g_free);
-      g_task_run_in_thread (task, sysprof_helpers_get_process_info_worker);
-      return;
-    }
 
   ipc_service_call_get_process_info (self->proxy,
                                      attributes,

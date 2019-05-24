@@ -258,6 +258,8 @@ sysprof_tracefd_source_stop (SysprofSource *source)
 
       if ((reader = sysprof_capture_reader_new_from_fd (priv->tracefd, 0)))
         sysprof_capture_writer_cat (priv->writer, reader, NULL);
+
+      priv->tracefd = -1;
     }
 
   sysprof_source_emit_finished (source);

@@ -22,15 +22,22 @@
 
 #include "config.h"
 
+#include <gtk/gtk.h>
+
 #include "sysprof-aid.h"
 
 typedef struct
 {
-  gchar *display_name;
-  GIcon *icon;
+  GPtrArray *sources;
+  gchar     *display_name;
+  GIcon     *icon;
 } SysprofAidPrivate;
 
-G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (SysprofAid, sysprof_aid, G_TYPE_OBJECT)
+static void buildable_iface_init (GtkBuildableIface *iface);
+
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (SysprofAid, sysprof_aid, G_TYPE_OBJECT,
+                                  G_ADD_PRIVATE (SysprofAid)
+                                  G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
 
 enum {
   PROP_0,
@@ -48,6 +55,7 @@ sysprof_aid_finalize (GObject *object)
   SysprofAid *self = (SysprofAid *)object;
   SysprofAidPrivate *priv = sysprof_aid_get_instance_private (self);
 
+  g_clear_pointer (&priv->sources, g_ptr_array_unref);
   g_clear_pointer (&priv->display_name, g_free);
   g_clear_object (&priv->icon);
 
@@ -227,9 +235,56 @@ void
 sysprof_aid_prepare (SysprofAid      *self,
                      SysprofProfiler *profiler)
 {
+  SysprofAidPrivate *priv = sysprof_aid_get_instance_private (self);
+
   g_return_if_fail (SYSPROF_IS_AID (self));
   g_return_if_fail (SYSPROF_IS_PROFILER (profiler));
 
+  if (priv->sources != NULL)
+    {
+      for (guint i = 0; i < priv->sources->len; i++)
+        {
+          SysprofSource *source = g_ptr_array_index (priv->sources, i);
+
+          sysprof_profiler_add_source (profiler, source);
+        }
+
+      if (priv->sources->len > 0)
+        g_ptr_array_remove_range (priv->sources, 0, priv->sources->len);
+    }
+
   if (SYSPROF_AID_GET_CLASS (self)->prepare)
     SYSPROF_AID_GET_CLASS (self)->prepare (self, profiler);
+}
+
+static void
+sysprof_aid_add_child (GtkBuildable *buildable,
+                       GtkBuilder   *builder,
+                       GObject      *object,
+                       const gchar  *type)
+{
+  SysprofAid *self = (SysprofAid *)buildable;
+  SysprofAidPrivate *priv = sysprof_aid_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_AID (self));
+  g_assert (GTK_IS_BUILDER (builder));
+  g_assert (G_IS_OBJECT (object));
+
+  if (SYSPROF_IS_SOURCE (object))
+    {
+      if (priv->sources == NULL)
+        priv->sources = g_ptr_array_new_with_free_func (g_object_unref);
+      g_ptr_array_add (priv->sources, g_object_ref (object));
+      return;
+    }
+
+  g_warning ("Unsupported child type of %s: %s",
+             G_OBJECT_TYPE_NAME (self),
+             G_OBJECT_TYPE_NAME (object));
+}
+
+static void
+buildable_iface_init (GtkBuildableIface *iface)
+{
+  iface->add_child = sysprof_aid_add_child;
 }

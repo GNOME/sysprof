@@ -9,7 +9,37 @@
         <child>
           <object class="GtkShortcutsGroup">
             <property name="visible">1</property>
+            <property name="title" translatable="yes" context="shortcut window">Files</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="title" translatable="yes" context="shortcut window">Save Recording</property>
+                <property name="subtitle" translatable="yes" context="shortcut window">Saves the current recording</property>
+                <property name="accelerator">&lt;Primary&gt;s</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="title" translatable="yes" context="shortcut window">Open recording</property>
+                <property name="subtitle" translatable="yes" context="shortcut window">Opens a previously saved recording</property>
+                <property name="accelerator">&lt;Primary&gt;o</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="visible">1</property>
             <property name="title" translatable="yes" context="shortcut window">Recording</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="visible">1</property>
+                <property name="title" translatable="yes" context="shortcut window">Record again</property>
+                <property name="subtitle" translatable="yes" context="shortcut window">Starts a new recording</property>
+                <property name="accelerator">&lt;Primary&gt;r</property>
+              </object>
+            </child>
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="visible">1</property>

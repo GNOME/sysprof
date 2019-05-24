@@ -25,6 +25,7 @@
     <file preprocess="xml-stripblanks">ui/sysprof-profiler-menu-button.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-recording-state-view.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-tab.ui</file>
+    <file preprocess="xml-stripblanks">ui/sysprof-time-label.ui</file>
     <file preprocess="xml-stripblanks">ui/sysprof-visualizer-view.ui</file>
   </gresource>
 </gresources>

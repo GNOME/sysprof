@@ -20,17 +20,11 @@
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="elapsed">
-            <property name="label" translatable="yes">00:00</property>
+          <object class="SysprofTimeLabel" id="elapsed">
             <property name="visible">true</property>
             <style>
               <class name="dim-label"/>
             </style>
-            <attributes>
-              <attribute name="scale" value="4"/>
-              <attribute name="weight" value="bold"/>
-              <attribute name="font-features" value="font-feature-settings: &apos;tnum&apos;"/>
-            </attributes>
           </object>
         </child>
         <child>

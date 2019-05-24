@@ -375,12 +375,6 @@ sysprof_proxy_source_start (SysprofSource *source)
 
   self->has_started = TRUE;
 
-  /* If we're doing subprocess monitoring, we don't need to do
-   * anything special here to connect to a bus.
-   */
-  if (self->monitors->len > 0)
-    return;
-
   g_bus_get (self->bus_type,
              self->cancellable,
              sysprof_proxy_source_get_bus_cb,
@@ -505,39 +499,6 @@ sysprof_proxy_source_add_pid (SysprofSource *source,
 }
 
 static void
-sysprof_proxy_source_modify_spawn (SysprofSource       *source,
-                                   GSubprocessLauncher *launcher,
-                                   GPtrArray           *argv)
-{
-  SysprofProxySource *self = (SysprofProxySource *)source;
-  gchar fdstr[12];
-  Monitor *monitor;
-  gint fd;
-
-  g_assert (SYSPROF_IS_PROXY_SOURCE (self));
-  g_assert (G_IS_SUBPROCESS_LAUNCHER (launcher));
-  g_assert (argv != NULL);
-
-  /* We need to create a new FD for the peer process to write
-   * to and notify it via SYSPROF_TRACE_FD. We will largely
-   * ignore things until the capture has finished.
-   */
-
-  if (-1 == (fd = sysprof_memfd_create ("[sysprof-proxy-capture]")))
-    return;
-
-  monitor = g_slice_new0 (Monitor);
-  monitor->self = g_object_ref (self);
-  monitor->fd = dup (fd);
-
-  g_snprintf (fdstr, sizeof fdstr, "%d", fd);
-  g_subprocess_launcher_setenv (launcher, "SYSPROF_TRACE_FD", fdstr, TRUE);
-  g_subprocess_launcher_take_fd (launcher, fd, fd);
-
-  sysprof_proxy_source_take_monitor (self, g_steal_pointer (&monitor));
-}
-
-static void
 sysprof_proxy_source_serialize (SysprofSource *source,
                                 GKeyFile      *keyfile,
                                 const gchar   *group)
@@ -585,7 +546,6 @@ source_iface_init (SysprofSourceInterface *iface)
   iface->get_is_ready = sysprof_proxy_source_get_is_ready;
   iface->stop = sysprof_proxy_source_stop;
   iface->start = sysprof_proxy_source_start;
-  iface->modify_spawn = sysprof_proxy_source_modify_spawn;
   iface->serialize = sysprof_proxy_source_serialize;
   iface->deserialize = sysprof_proxy_source_deserialize;
 }

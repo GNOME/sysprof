@@ -344,6 +344,7 @@ sysprof_notebook_replay (SysprofNotebook *self)
 {
   SysprofDisplay *display;
   SysprofDisplay *replay;
+  gint page;
 
   g_return_if_fail (SYSPROF_IS_NOTEBOOK (self));
 
@@ -354,5 +355,8 @@ sysprof_notebook_replay (SysprofNotebook *self)
 
   g_return_if_fail (SYSPROF_IS_DISPLAY (replay));
 
+  gtk_widget_show (GTK_WIDGET (replay));
   gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (replay));
+  page = gtk_notebook_page_num (GTK_NOTEBOOK (self), GTK_WIDGET (replay));
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (self), page);
 }

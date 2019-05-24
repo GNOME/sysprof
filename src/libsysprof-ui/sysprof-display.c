@@ -165,7 +165,7 @@ sysprof_display_start_recording_cb (SysprofDisplay           *self,
 
   g_assert (SYSPROF_IS_DISPLAY (self));
   g_assert (SYSPROF_IS_PROFILER (profiler));
-  g_assert (SYSPROF_IS_PROFILER_ASSISTANT (assistant));
+  g_assert (!assistant || SYSPROF_IS_PROFILER_ASSISTANT (assistant));
   g_assert (sysprof_display_is_empty (self));
 
   if (g_set_object (&priv->profiler, profiler))
@@ -619,10 +619,37 @@ sysprof_display_get_can_replay (SysprofDisplay *self)
           sysprof_capture_view_get_can_replay (priv->capture_view);
 }
 
+/**
+ * sysprof_display_replay:
+ * @self: a #SysprofDisplay
+ *
+ * Gets a new display that will re-run the previous recording that is being
+ * viewed. This requires a capture file which contains enough information to
+ * replay the operation.
+ *
+ * Returns: (nullable) (transfer full): a #SysprofDisplay or %NULL
+ *
+ * Since: 3.34
+ */
 SysprofDisplay *
 sysprof_display_replay (SysprofDisplay *self)
 {
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+  g_autoptr(SysprofProfiler) profiler = NULL;
+  SysprofCaptureReader *reader;
+  SysprofDisplay *copy;
+
   g_return_val_if_fail (SYSPROF_IS_DISPLAY (self), NULL);
 
-  return NULL;
+  reader = sysprof_capture_view_get_reader (priv->capture_view);
+  g_return_val_if_fail (reader != NULL, NULL);
+
+  profiler = sysprof_local_profiler_new_replay (reader);
+  g_return_val_if_fail (profiler != NULL, NULL);
+  g_return_val_if_fail (SYSPROF_IS_LOCAL_PROFILER (profiler), NULL);
+
+  copy = g_object_new (SYSPROF_TYPE_DISPLAY, NULL);
+  sysprof_display_start_recording_cb (copy, profiler, NULL);
+
+  return g_steal_pointer (&copy);
 }

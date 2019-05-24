@@ -35,9 +35,9 @@ typedef struct
 
 static void buildable_iface_init (GtkBuildableIface *iface);
 
-G_DEFINE_ABSTRACT_TYPE_WITH_CODE (SysprofAid, sysprof_aid, G_TYPE_OBJECT,
-                                  G_ADD_PRIVATE (SysprofAid)
-                                  G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
+G_DEFINE_TYPE_WITH_CODE (SysprofAid, sysprof_aid, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (SysprofAid)
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
 
 enum {
   PROP_0,
@@ -287,4 +287,14 @@ static void
 buildable_iface_init (GtkBuildableIface *iface)
 {
   iface->add_child = sysprof_aid_add_child;
+}
+
+SysprofAid *
+sysprof_aid_new (const gchar *display_name,
+                 const gchar *icon_name)
+{
+  return g_object_new (SYSPROF_TYPE_AID,
+                       "display-aid", display_name,
+                       "icon-name", icon_name,
+                       NULL);
 }

@@ -323,18 +323,18 @@ sysprof_perf_source_handle_event (SysprofPerfCounterEvent *event,
       memcpy (&time, event->comm.comm + offset, sizeof time);
 
       sysprof_capture_writer_add_process (self->writer,
-                                     time,
-                                     cpu,
-                                     event->comm.pid,
-                                     event->comm.comm);
+                                          time,
+                                          cpu,
+                                          event->comm.pid,
+                                          event->comm.comm);
 
       break;
 
     case PERF_RECORD_EXIT:
       sysprof_capture_writer_add_exit (self->writer,
-                                  event->exit.time,
-                                  cpu,
-                                  event->exit.pid);
+                                       event->exit.time,
+                                       cpu,
+                                       event->exit.pid);
 
       if (g_hash_table_contains (self->pids, GINT_TO_POINTER (event->exit.pid)))
         {
@@ -352,10 +352,10 @@ sysprof_perf_source_handle_event (SysprofPerfCounterEvent *event,
 
     case PERF_RECORD_FORK:
       sysprof_capture_writer_add_fork (self->writer,
-                                  event->fork.time,
-                                  cpu,
-                                  event->fork.ppid,
-                                  event->fork.pid);
+                                       event->fork.time,
+                                       cpu,
+                                       event->fork.ppid,
+                                       event->fork.pid);
 
       /*
        * TODO: We should add support for "follow fork" of the GPid if we are

@@ -1031,6 +1031,7 @@ sysprof_local_profiler_new_replay (SysprofCaptureReader *reader)
       if (!g_key_file_has_group (keyfile, group) ||
           !(type_name = g_key_file_get_string (keyfile, group, "gtype", NULL)) ||
           !(gtype = g_type_from_name (type_name)) ||
+          !g_type_is_a (gtype, SYSPROF_TYPE_SOURCE) ||
           !(source = g_object_new (gtype, NULL)))
         continue;
 

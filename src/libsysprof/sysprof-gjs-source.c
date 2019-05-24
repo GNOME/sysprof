@@ -28,11 +28,11 @@
 
 struct _SysprofGjsSource
 {
-  GObject          parent_instance;
+  GObject               parent_instance;
 
   SysprofCaptureWriter *writer;
-  GArray          *pids;
-  GArray          *enabled;
+  GArray               *pids;
+  GArray               *enabled;
 };
 
 #define ENABLE_PROFILER  0x1
@@ -72,8 +72,8 @@ sysprof_gjs_source_init (SysprofGjsSource *self)
 
 static void
 sysprof_gjs_source_process_capture (SysprofGjsSource *self,
-                               GPid         pid,
-                               const gchar *path)
+                                    GPid              pid,
+                                    const gchar      *path)
 {
   g_autoptr(GError) error = NULL;
   g_autoptr(SysprofCaptureReader) reader = NULL;
@@ -118,7 +118,7 @@ sysprof_gjs_source_process_captures (SysprofGjsSource *self)
 
 static void
 sysprof_gjs_source_set_writer (SysprofSource        *source,
-                          SysprofCaptureWriter *writer)
+                               SysprofCaptureWriter *writer)
 {
   SysprofGjsSource *self = (SysprofGjsSource *)source;
 
@@ -155,7 +155,7 @@ pid_is_profileable (GPid pid)
 
 static void
 sysprof_gjs_source_enable_pid (SysprofGjsSource *self,
-                          GPid         pid)
+                               GPid              pid)
 {
   union sigval si;
 
@@ -172,7 +172,7 @@ sysprof_gjs_source_enable_pid (SysprofGjsSource *self,
 
 static void
 sysprof_gjs_source_disable_pid (SysprofGjsSource *self,
-                           GPid         pid)
+                                GPid              pid)
 {
   union sigval si;
 
@@ -189,11 +189,10 @@ static void
 sysprof_gjs_source_start (SysprofSource *source)
 {
   SysprofGjsSource *self = (SysprofGjsSource *)source;
-  guint i;
 
   g_assert (SYSPROF_IS_GJS_SOURCE (self));
 
-  for (i = 0; i < self->pids->len; i++)
+  for (guint i = 0; i < self->pids->len; i++)
     {
       GPid pid = g_array_index (self->pids, GPid, i);
 
@@ -206,11 +205,10 @@ static void
 sysprof_gjs_source_stop (SysprofSource *source)
 {
   SysprofGjsSource *self = (SysprofGjsSource *)source;
-  guint i;
 
   g_assert (SYSPROF_IS_GJS_SOURCE (self));
 
-  for (i = 0; i < self->pids->len; i++)
+  for (guint i = 0; i < self->pids->len; i++)
     {
       GPid pid = g_array_index (self->pids, GPid, i);
 
@@ -223,7 +221,7 @@ sysprof_gjs_source_stop (SysprofSource *source)
 
 static void
 sysprof_gjs_source_add_pid (SysprofSource *source,
-                       GPid      pid)
+                            GPid           pid)
 {
   SysprofGjsSource *self = (SysprofGjsSource *)source;
 

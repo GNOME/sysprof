@@ -12,13 +12,32 @@
     <property name="display-name" translatable="yes">GNOME Shell</property>
     <property name="icon-name">org.gnome.Sysprof-symbolic</property>
   </object>
-  <object class="SysprofProxyAid" id="gtk_aid">
-    <property name="object-path">/org/gtk/Profiler</property>
-    <property name="bus-type">session</property>
-    <property name="bus-name"></property>
-    <!-- translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular -->
-    <property name="display-name" translatable="yes">GTK</property>
+  <object class="SysprofAid" id="gtk_aid">
+    <property name="display-name">GTK</property>
     <property name="icon-name">gtk3-demo-symbolic.symbolic</property>
+    <child>
+      <object class="SysprofTracefdSource">
+        <property name="envvar">GTK_TRACE_FD</property>
+      </object>
+    </child>
+  </object>
+  <object class="SysprofAid" id="gjs_aid">
+    <property name="display-name">GJS</property>
+    <property name="icon-name">org.gnome.Sysprof-symbolic</property>
+    <child>
+      <object class="SysprofTracefdSource">
+        <property name="envvar">GJS_TRACE_FD</property>
+      </object>
+    </child>
+  </object>
+  <object class="SysprofAid" id="app_aid">
+    <property name="display-name">Application</property>
+    <property name="icon-name">sysprof-trace-app</property>
+    <child>
+      <object class="SysprofTracefdSource">
+        <property name="envvar">SYSPROF_TRACE_FD</property>
+      </object>
+    </child>
   </object>
   <template class="SysprofProfilerAssistant" parent="GtkBin">
     <child>
@@ -95,6 +114,18 @@
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">gtk_aid</property>
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="SysprofAidIcon">
+                            <property name="aid">gjs_aid</property>
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="SysprofAidIcon">
+                            <property name="aid">app_aid</property>
                             <property name="visible">true</property>
                           </object>
                         </child>

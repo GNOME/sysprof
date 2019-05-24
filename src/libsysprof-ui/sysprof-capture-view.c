@@ -40,6 +40,7 @@ typedef struct
   gint64 end_time;
   guint has_samples : 1;
   guint has_counters : 1;
+  guint has_forks : 1;
   guint has_marks : 1;
   guint can_replay : 1;
 } SysprofCaptureFeatures;
@@ -330,6 +331,11 @@ sysprof_capture_view_scan_worker (GTask        *task,
                 features.can_replay = TRUE;
             }
         }
+      else if (frame.type == SYSPROF_CAPTURE_FRAME_FORK)
+        {
+          features.has_forks = TRUE;
+          sysprof_capture_reader_read_fork (reader);
+        }
       else if (frame.type == SYSPROF_CAPTURE_FRAME_MARK)
         {
           const SysprofCaptureMark *mark;
@@ -465,7 +471,7 @@ sysprof_capture_view_scan_finish (SysprofCaptureView  *self,
   if (!priv->features.has_samples)
     gtk_widget_hide (GTK_WIDGET (priv->callgraph_view));
 
-  if (!priv->features.has_marks)
+  if (!priv->features.has_marks && !priv->features.has_forks)
     gtk_widget_hide (GTK_WIDGET (priv->marks_view));
 
   if (!priv->features.has_counters)

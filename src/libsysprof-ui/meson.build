@@ -42,6 +42,7 @@ libsysprof_ui_private_sources = [
   'sysprof-environ-variable.c',
   'sysprof-environ.c',
   'sysprof-tab.c',
+  'sysprof-time-label.c',
   'sysprof-theme-manager.c',
   '../stackstash.c',
 ]

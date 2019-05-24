@@ -21,13 +21,14 @@
 #include "config.h"
 
 #include "sysprof-recording-state-view.h"
+#include "sysprof-time-label.h"
 
 typedef struct
 {
-  SysprofProfiler *profiler;
-  GtkLabel        *elapsed;
-  GtkLabel        *samples;
-  gulong           notify_elapsed_handler;
+  SysprofProfiler  *profiler;
+  SysprofTimeLabel *elapsed;
+  GtkLabel         *samples;
+  gulong            notify_elapsed_handler;
 } SysprofRecordingStateViewPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofRecordingStateView, sysprof_recording_state_view, GTK_TYPE_BIN)
@@ -55,9 +56,6 @@ sysprof_recording_state_view_notify_elapsed (SysprofRecordingStateView *self,
   g_autofree gchar *str = NULL;
   SysprofCaptureWriter *writer;
   gint64 elapsed;
-  guint hours;
-  guint minutes;
-  guint seconds;
 
   g_assert (SYSPROF_IS_RECORDING_STATE_VIEW (self));
   g_assert (SYSPROF_IS_PROFILER (profiler));
@@ -78,20 +76,7 @@ sysprof_recording_state_view_notify_elapsed (SysprofRecordingStateView *self,
     }
 
   elapsed = (gint64)sysprof_profiler_get_elapsed (profiler);
-
-  hours = elapsed / (60 * 60);
-  if (hours > 0)
-    minutes = (elapsed % (hours * 60 * 60)) / 60;
-  else
-    minutes = elapsed / 60;
-  seconds = elapsed % 60;
-
-  if (hours == 0)
-    str = g_strdup_printf ("%02u:%02u", minutes, seconds);
-  else
-    str = g_strdup_printf ("%02u:%02u:%02u", hours, minutes, seconds);
-
-  gtk_label_set_label (priv->elapsed, str);
+  sysprof_time_label_set_duration (priv->elapsed, elapsed);
 }
 
 static void
@@ -168,10 +153,11 @@ sysprof_recording_state_view_class_init (SysprofRecordingStateViewClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class,
-                                               "/org/gnome/sysprof/ui/sysprof-recording-state-view.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-recording-state-view.ui");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofRecordingStateView, elapsed);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofRecordingStateView, samples);
+
+  g_type_ensure (SYSPROF_TYPE_TIME_LABEL);
 }
 
 static void
@@ -189,7 +175,7 @@ sysprof_recording_state_view_set_profiler (SysprofRecordingStateView *self,
   g_assert (SYSPROF_IS_RECORDING_STATE_VIEW (self));
   g_assert (!profiler || SYSPROF_IS_PROFILER (profiler));
 
-  gtk_label_set_label (priv->elapsed, "00:00");
+  sysprof_time_label_set_duration (priv->elapsed, 0);
 
   if (profiler != priv->profiler)
     {
@@ -198,8 +184,6 @@ sysprof_recording_state_view_set_profiler (SysprofRecordingStateView *self,
           g_signal_handler_disconnect (priv->profiler, priv->notify_elapsed_handler);
           g_clear_object (&priv->profiler);
         }
-
-      gtk_label_set_label (priv->elapsed, "00:00");
 
       if (profiler != NULL)
         {

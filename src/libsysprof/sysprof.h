@@ -43,6 +43,7 @@ G_BEGIN_DECLS
 # include "sysprof-symbol-resolver.h"
 # include "sysprof-map-lookaside.h"
 # include "sysprof-selection.h"
+# include "sysprof-tracefd-source.h"
 
 #ifdef __linux__
 # include "sysprof-gjs-source.h"

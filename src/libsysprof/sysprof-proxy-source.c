@@ -538,6 +538,45 @@ sysprof_proxy_source_modify_spawn (SysprofSource       *source,
 }
 
 static void
+sysprof_proxy_source_serialize (SysprofSource *source,
+                                GKeyFile      *keyfile,
+                                const gchar   *group)
+{
+  SysprofProxySource *self = (SysprofProxySource *)source;
+
+  g_assert (SYSPROF_IS_PROXY_SOURCE (self));
+  g_assert (keyfile != NULL);
+  g_assert (group != NULL);
+
+  g_key_file_set_string (keyfile, group, "bus-name", self->bus_name ?: "");
+  g_key_file_set_string (keyfile, group, "object-path", self->object_path ?: "");
+  g_key_file_set_integer (keyfile, group, "bus-type", self->bus_type);
+}
+
+static void
+sysprof_proxy_source_deserialize (SysprofSource *source,
+                                  GKeyFile      *keyfile,
+                                  const gchar   *group)
+{
+  SysprofProxySource *self = (SysprofProxySource *)source;
+  gint bus_type;
+
+  g_assert (SYSPROF_IS_PROXY_SOURCE (self));
+  g_assert (keyfile != NULL);
+  g_assert (group != NULL);
+
+  g_clear_pointer (&self->bus_name, g_free);
+  g_clear_pointer (&self->object_path, g_free);
+
+  self->bus_name = g_key_file_get_string (keyfile, group, "bus-name", NULL);
+  self->object_path = g_key_file_get_string (keyfile, group, "object-path", NULL);
+
+  bus_type = g_key_file_get_integer (keyfile, group, "bus-type", NULL);
+  if (bus_type == G_BUS_TYPE_SESSION || bus_type == G_BUS_TYPE_SYSTEM)
+    self->bus_type = bus_type;
+}
+
+static void
 source_iface_init (SysprofSourceInterface *iface)
 {
   iface->add_pid = sysprof_proxy_source_add_pid;
@@ -547,6 +586,8 @@ source_iface_init (SysprofSourceInterface *iface)
   iface->stop = sysprof_proxy_source_stop;
   iface->start = sysprof_proxy_source_start;
   iface->modify_spawn = sysprof_proxy_source_modify_spawn;
+  iface->serialize = sysprof_proxy_source_serialize;
+  iface->deserialize = sysprof_proxy_source_deserialize;
 }
 
 G_DEFINE_TYPE_WITH_CODE (SysprofProxySource, sysprof_proxy_source, G_TYPE_OBJECT,

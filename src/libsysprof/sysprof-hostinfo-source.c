@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "sysprof-helpers.h"
 #include "sysprof-hostinfo-source.h"
 
 #define PROC_STAT_BUF_SIZE 4096
@@ -426,7 +427,9 @@ sysprof_hostinfo_source_prepare (SysprofSource *source)
           freq.max = g_ascii_strtoll (maxstr, NULL, 10);
         }
 
-      freq.stat_fd = g_open (cur_path, O_RDONLY);
+      freq.stat_fd = -1;
+      sysprof_helpers_get_proc_fd (sysprof_helpers_get_default (),
+                                   cur_path, NULL, &freq.stat_fd, NULL);
       g_array_append_val (self->freqs, freq);
 
       ctr->id = info.counter_base + 1;

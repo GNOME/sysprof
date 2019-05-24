@@ -311,7 +311,8 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
   g_assert (SYSPROF_IS_MARKS_MODEL (self));
   g_assert (frame->type == SYSPROF_CAPTURE_FRAME_MARK ||
             frame->type == SYSPROF_CAPTURE_FRAME_CTRSET ||
-            frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF);
+            frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF ||
+            frame->type == SYSPROF_CAPTURE_FRAME_FORK);
 
   if (frame->type == SYSPROF_CAPTURE_FRAME_MARK)
     {
@@ -328,6 +329,22 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
 
       if G_LIKELY (item.end_time > self->max_end_time)
         self->max_end_time = item.end_time;
+
+      g_array_append_val (self->items, item);
+    }
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_FORK)
+    {
+      SysprofCaptureFork *fk = (SysprofCaptureFork *)frame;
+      g_autofree gchar *message = g_strdup_printf ("PID: %d, Child PID: %d", frame->pid, fk->child_pid);
+
+      item.begin_time = frame->time;
+      item.end_time = item.begin_time;
+      item.group = g_string_chunk_insert_const (self->chunks, "fork");
+      item.name = g_string_chunk_insert_const (self->chunks, "Fork");
+      item.message = g_string_chunk_insert_const (self->chunks, message);
+      item.value.v64 = 0;
+      item.is_counter = FALSE;
+      item.counter_type = 0;
 
       g_array_append_val (self->items, item);
     }
@@ -475,7 +492,10 @@ sysprof_marks_model_new_async (SysprofCaptureReader  *reader,
     }
   else if (kind == SYSPROF_MARKS_MODEL_MARKS)
     {
-      static const SysprofCaptureFrameType types[] = { SYSPROF_CAPTURE_FRAME_MARK };
+      static const SysprofCaptureFrameType types[] = {
+        SYSPROF_CAPTURE_FRAME_MARK,
+        SYSPROF_CAPTURE_FRAME_FORK,
+      };
 
       c = sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
     }

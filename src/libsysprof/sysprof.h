@@ -46,7 +46,6 @@ G_BEGIN_DECLS
 # include "sysprof-tracefd-source.h"
 
 #ifdef __linux__
-# include "sysprof-gjs-source.h"
 # include "sysprof-hostinfo-source.h"
 # include "sysprof-memory-source.h"
 # include "sysprof-perf-source.h"

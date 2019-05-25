@@ -69,7 +69,6 @@ libsysprof_deps = [
 
 if host_machine.system() == 'linux'
   libsysprof_public_sources += [
-    'sysprof-gjs-source.c',
     'sysprof-memory-source.c',
     'sysprof-perf-counter.c',
     'sysprof-perf-source.c',
@@ -77,7 +76,6 @@ if host_machine.system() == 'linux'
   ]
 
   libsysprof_public_headers += [
-    'sysprof-gjs-source.h',
     'sysprof-memory-source.h',
     'sysprof-perf-counter.h',
     'sysprof-perf-source.h',

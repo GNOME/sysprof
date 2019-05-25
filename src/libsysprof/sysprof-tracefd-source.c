@@ -290,3 +290,9 @@ source_iface_init (SysprofSourceInterface *iface)
   iface->set_writer = sysprof_tracefd_source_set_writer;
   iface->stop = sysprof_tracefd_source_stop;
 }
+
+SysprofSource *
+sysprof_tracefd_source_new (void)
+{
+  return g_object_new (SYSPROF_TYPE_TRACEFD_SOURCE, NULL);
+}

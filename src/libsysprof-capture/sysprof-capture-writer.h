@@ -36,6 +36,8 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureWriter *sysprof_capture_writer_new_from_fd     (int                                fd,
                                                               gsize                              buffer_size);
 SYSPROF_AVAILABLE_IN_ALL
+gsize                 sysprof_capture_writer_get_buffer_size (SysprofCaptureWriter              *self);
+SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureWriter *sysprof_capture_writer_ref             (SysprofCaptureWriter              *self);
 SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_writer_unref           (SysprofCaptureWriter              *self);

@@ -1296,3 +1296,11 @@ sysprof_capture_writer_new_from_env (gsize buffer_size)
 
   return sysprof_capture_writer_new_from_fd (dup (fd), buffer_size);
 }
+
+gsize
+sysprof_capture_writer_get_buffer_size (SysprofCaptureWriter *self)
+{
+  g_return_val_if_fail (self != NULL, 0);
+
+  return self->len;
+}

@@ -68,10 +68,8 @@ gint
 main (gint   argc,
       gchar *argv[])
 {
-  const gchar *unique_name = NULL;
   PolkitAgentListener *polkit = NULL;
   PolkitSubject *subject = NULL;
-  GDBusConnection *bus = NULL;
   SysprofCaptureWriter *writer;
   SysprofSource *source;
   GMainContext *main_context;
@@ -137,15 +135,24 @@ main (gint   argc,
 
   /* Start polkit agent so that we can elevate privileges from a TTY */
   if (g_getenv ("DESKTOP_SESSION") == NULL &&
-      (bus = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL)) &&
-      (unique_name = g_dbus_connection_get_unique_name (bus)) &&
-      (subject = polkit_system_bus_name_new (unique_name)))
+      (subject = polkit_unix_process_new_for_owner (getpid (), 0, -1)))
     {
+      g_autoptr(GError) pkerror = NULL;
+
       polkit = polkit_agent_text_listener_new (NULL, NULL);
       polkit_agent_listener_register (polkit,
                                       POLKIT_AGENT_REGISTER_FLAGS_NONE,
                                       subject,
-                                      NULL, NULL, NULL);
+                                      NULL,
+                                      NULL,
+                                      &pkerror);
+
+      if (pkerror != NULL)
+        {
+          g_dbus_error_strip_remote_error (pkerror);
+          g_printerr ("Failed to register polkit agent: %s\n",
+                      pkerror->message);
+        }
     }
 
   profiler = sysprof_local_profiler_new ();

@@ -294,9 +294,9 @@ sysprof_capture_reader_ensure_space_for (SysprofCaptureReader *self,
 
           /* Read into our buffer after our current read position */
           r = _sysprof_pread (self->fd,
-                         &self->buf[self->len],
-                         self->bufsz - self->len,
-                         self->fd_off);
+                              &self->buf[self->len],
+                              self->bufsz - self->len,
+                              self->fd_off);
 
           if (r <= 0)
             break;

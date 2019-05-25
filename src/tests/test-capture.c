@@ -36,6 +36,7 @@ test_reader_basic (void)
 
   writer = sysprof_capture_writer_new ("capture-file", 0);
   g_assert (writer != NULL);
+  g_assert_cmpint (sysprof_capture_writer_get_buffer_size (writer), ==, 4096*64);
 
   sysprof_capture_writer_flush (writer);
 

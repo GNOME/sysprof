@@ -50,6 +50,8 @@ void             _sysprof_rounded_rectangle               (cairo_t              
                                                            gint                      y_radius);
 gchar           *_sysprof_format_duration                 (gint64                    duration);
 void             _sysprof_callgraph_view_set_failed       (SysprofCallgraphView     *self);
+void             _sysprof_callgraph_view_set_loading      (SysprofCallgraphView     *self,
+                                                           gboolean                  loading);
 void             _sysprof_display_focus_record            (SysprofDisplay           *self);
 void             _sysprof_profiler_assistant_focus_record (SysprofProfilerAssistant *self);
 

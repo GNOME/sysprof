@@ -72,6 +72,7 @@ main (gint   argc,
   const gchar *filename = "capture.syscap";
   GError *error = NULL;
   gchar *command = NULL;
+  gboolean gjs = FALSE;
   gboolean no_memory = FALSE;
   gboolean no_cpu = FALSE;
   gboolean version = FALSE;
@@ -87,6 +88,7 @@ main (gint   argc,
     { "no-cpu", 0, 0, G_OPTION_ARG_NONE, &no_cpu, N_("Disable recording of CPU statistics") },
     { "no-memory", 0, 0, G_OPTION_ARG_NONE, &no_memory, N_("Disable recording of memory statistics") },
     { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
+    { "gjs", 'g', 0, G_OPTION_ARG_NONE, &gjs, N_("Set GJS_TRACE_FD environment to trace GJS processes") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
   };
@@ -182,7 +184,15 @@ main (gint   argc,
 
   if (use_trace_fd)
     {
-      source = sysprof_proxy_source_new (G_BUS_TYPE_SESSION, "", "");
+      source = sysprof_tracefd_source_new ();
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
+
+  if (gjs)
+    {
+      source = sysprof_tracefd_source_new ();
+      sysprof_tracefd_source_set_envvar (SYSPROF_TRACEFD_SOURCE (source), "GJS_TRACE_FD");
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }

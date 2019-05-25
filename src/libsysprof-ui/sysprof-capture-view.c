@@ -254,6 +254,7 @@ sysprof_capture_view_generate_callgraph_async (SysprofCaptureView   *self,
                                                GAsyncReadyCallback   callback,
                                                gpointer              user_data)
 {
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
   g_autoptr(SysprofCaptureReader) copy = NULL;
   g_autoptr(SysprofProfile) callgraph = NULL;
   g_autoptr(GTask) task = NULL;
@@ -266,6 +267,8 @@ sysprof_capture_view_generate_callgraph_async (SysprofCaptureView   *self,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_capture_view_generate_callgraph_async);
   sysprof_capture_view_monitor_task (self, task);
+
+  _sysprof_callgraph_view_set_loading (priv->callgraph_view, TRUE);
 
   copy = sysprof_capture_reader_copy (reader);
   callgraph = sysprof_callgraph_profile_new_with_selection (selection);
@@ -281,8 +284,12 @@ sysprof_capture_view_generate_callgraph_finish (SysprofCaptureView  *self,
                                                 GAsyncResult        *result,
                                                 GError             **error)
 {
+  SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+
   g_assert (SYSPROF_IS_CAPTURE_VIEW (self));
   g_assert (G_IS_TASK (result));
+
+  _sysprof_callgraph_view_set_loading (priv->callgraph_view, FALSE);
 
   return g_task_propagate_boolean (G_TASK (result), error);
 }

@@ -60,6 +60,7 @@ typedef struct
   GQueue                   *history;
 
   guint                     profile_size;
+  guint                     loading;
 } SysprofCallgraphViewPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofCallgraphView, sysprof_callgraph_view, GTK_TYPE_BIN)
@@ -1202,4 +1203,23 @@ sysprof_callgraph_view_get_n_functions (SysprofCallgraphView *self)
     ret = gtk_tree_model_iter_n_children (model, NULL);
 
   return ret;
+}
+
+void
+_sysprof_callgraph_view_set_loading (SysprofCallgraphView *self,
+                                     gboolean              loading)
+{
+  SysprofCallgraphViewPrivate *priv = sysprof_callgraph_view_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  if (loading)
+    priv->loading++;
+  else
+    priv->loading--;
+
+  if (priv->loading)
+    gtk_stack_set_visible_child_name (priv->stack, "loading");
+  else
+    gtk_stack_set_visible_child_name (priv->stack, "callgraph");
 }

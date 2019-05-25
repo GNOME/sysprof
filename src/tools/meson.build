@@ -4,7 +4,7 @@ tools_deps = [
 
 if host_machine.system() == 'linux'
   sysprof_cli = executable('sysprof-cli', 'sysprof-cli.c',
-    dependencies: tools_deps + [libsysprof_dep],
+    dependencies: tools_deps + [libsysprof_dep, polkit_dep, polkit_agent_dep],
      install_dir: get_option('bindir'),
          install: true,
   )

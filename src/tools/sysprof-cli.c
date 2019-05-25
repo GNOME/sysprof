@@ -24,6 +24,9 @@
 #include <glib-unix.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
+#include <polkit/polkit.h>
+#define POLKIT_AGENT_I_KNOW_API_IS_SUBJECT_TO_CHANGE
+#include <polkitagent/polkitagent.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/eventfd.h>
@@ -65,6 +68,10 @@ gint
 main (gint   argc,
       gchar *argv[])
 {
+  const gchar *unique_name = NULL;
+  PolkitAgentListener *polkit = NULL;
+  PolkitSubject *subject = NULL;
+  GDBusConnection *bus = NULL;
   SysprofCaptureWriter *writer;
   SysprofSource *source;
   GMainContext *main_context;
@@ -127,6 +134,19 @@ main (gint   argc,
     }
 
   main_loop = g_main_loop_new (NULL, FALSE);
+
+  /* Start polkit agent so that we can elevate privileges from a TTY */
+  if (g_getenv ("DESKTOP_SESSION") == NULL &&
+      (bus = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL)) &&
+      (unique_name = g_dbus_connection_get_unique_name (bus)) &&
+      (subject = polkit_system_bus_name_new (unique_name)))
+    {
+      polkit = polkit_agent_text_listener_new (NULL, NULL);
+      polkit_agent_listener_register (polkit,
+                                      POLKIT_AGENT_REGISTER_FLAGS_NONE,
+                                      subject,
+                                      NULL, NULL, NULL);
+    }
 
   profiler = sysprof_local_profiler_new ();
 

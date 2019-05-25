@@ -61,6 +61,7 @@ if polkit_dep.found()
 else
   polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version)
 endif
+polkit_agent_dep = dependency('polkit-agent-1')
 
 debugdir = get_option('debugdir')
 if debugdir == ''

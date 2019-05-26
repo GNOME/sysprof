@@ -108,6 +108,21 @@ main (gint argc,
             break;
           }
 
+        case SYSPROF_CAPTURE_FRAME_LOG:
+          {
+            const SysprofCaptureLog *log = sysprof_capture_reader_read_log (reader);
+            gdouble ptime = (log->frame.time - begin_time) / (gdouble)NSEC_PER_SEC;
+
+            g_print ("LOG: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
+                     " severity = %d\n"
+                     "   domain = %s\n"
+                     "  message = %s\n",
+                     log->frame.pid, log->frame.time, ptime,
+                     log->severity, log->domain, log->message);
+
+            break;
+          }
+
         case SYSPROF_CAPTURE_FRAME_MAP:
           {
             const SysprofCaptureMap *map = sysprof_capture_reader_read_map (reader);

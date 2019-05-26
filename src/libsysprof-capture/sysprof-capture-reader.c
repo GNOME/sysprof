@@ -233,6 +233,17 @@ sysprof_capture_reader_bswap_frame (SysprofCaptureReader *self,
 }
 
 static inline void
+sysprof_capture_reader_bswap_log (SysprofCaptureReader *self,
+                                  SysprofCaptureLog    *log)
+{
+  g_assert (self != NULL);
+  g_assert (log != NULL);
+
+  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+    log->severity = GUINT16_SWAP_LE_BE (log->severity);
+}
+
+static inline void
 sysprof_capture_reader_bswap_map (SysprofCaptureReader *self,
                                   SysprofCaptureMap    *map)
 {
@@ -485,6 +496,48 @@ sysprof_capture_reader_read_map (SysprofCaptureReader *self)
     return NULL;
 
   return map;
+}
+
+const SysprofCaptureLog *
+sysprof_capture_reader_read_log (SysprofCaptureReader *self)
+{
+  SysprofCaptureLog *log;
+
+  g_assert (self != NULL);
+  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  g_assert (self->pos <= self->bufsz);
+
+  if (!sysprof_capture_reader_ensure_space_for (self, sizeof *log))
+    return NULL;
+
+  log = (SysprofCaptureLog *)(gpointer)&self->buf[self->pos];
+
+  sysprof_capture_reader_bswap_frame (self, &log->frame);
+
+  if (log->frame.type != SYSPROF_CAPTURE_FRAME_LOG)
+    return NULL;
+
+  if (log->frame.len < (sizeof *log + 1))
+    return NULL;
+
+  if (!sysprof_capture_reader_ensure_space_for (self, log->frame.len))
+    return NULL;
+
+  log = (SysprofCaptureLog *)(gpointer)&self->buf[self->pos];
+
+  sysprof_capture_reader_bswap_log (self, log);
+
+  self->pos += log->frame.len;
+
+  if ((self->pos % SYSPROF_CAPTURE_ALIGN) != 0)
+    return NULL;
+
+  /* Ensure trailing \0 in domain and message */
+  log->domain[sizeof log->domain - 1] = 0;
+  if (log->frame.len > sizeof *log)
+    ((gchar *)log)[log->frame.len - 1] = 0;
+
+  return log;
 }
 
 const SysprofCaptureMark *

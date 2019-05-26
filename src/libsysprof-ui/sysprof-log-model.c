@@ -23,15 +23,19 @@
 #include "config.h"
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 #include <string.h>
 
 #include "sysprof-log-model.h"
+
+#define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
 
 struct _SysprofLogModel
 {
   GObject       parent_instance;
   GStringChunk *chunks;
   GArray       *items;
+  gint64        begin_time;
 };
 
 typedef struct
@@ -58,10 +62,9 @@ sysprof_log_model_get_column_type (GtkTreeModel *model,
       return G_TYPE_INT64;
 
     case SYSPROF_LOG_MODEL_COLUMN_SEVERITY:
-      return G_TYPE_UINT;
-
     case SYSPROF_LOG_MODEL_COLUMN_DOMAIN:
     case SYSPROF_LOG_MODEL_COLUMN_MESSAGE:
+    case SYSPROF_LOG_MODEL_COLUMN_TIME_STRING:
       return G_TYPE_STRING;
 
     default:
@@ -183,14 +186,50 @@ sysprof_log_model_get_value (GtkTreeModel *model,
 
   switch (column)
     {
+    case SYSPROF_LOG_MODEL_COLUMN_TIME_STRING:
+      {
+        gint64 offset = item->time - self->begin_time;
+        gint min = offset / (NSEC_PER_SEC * 60L);
+        gint seconds = (offset - (min * NSEC_PER_SEC)) / NSEC_PER_SEC;
+        gint msec = (offset % NSEC_PER_SEC) / (NSEC_PER_SEC / 1000L);
+
+        g_value_init (value, G_TYPE_STRING);
+        g_value_take_string (value,
+                             g_strdup_printf ("%02d:%02d.%03d", min, seconds, msec));
+      }
+      break;
+
     case SYSPROF_LOG_MODEL_COLUMN_TIME:
       g_value_init (value, G_TYPE_INT64);
       g_value_set_int64 (value, item->time);
       break;
 
     case SYSPROF_LOG_MODEL_COLUMN_SEVERITY:
-      g_value_init (value, G_TYPE_UINT);
-      g_value_set_uint (value, item->severity);
+      g_value_init (value, G_TYPE_STRING);
+      switch (item->severity)
+        {
+        case G_LOG_LEVEL_MESSAGE:
+          g_value_set_static_string (value, _("Message"));
+          break;
+        case G_LOG_LEVEL_INFO:
+          g_value_set_static_string (value, _("Info"));
+          break;
+        case G_LOG_LEVEL_CRITICAL:
+          g_value_set_static_string (value, _("Critical"));
+          break;
+        case G_LOG_LEVEL_ERROR:
+          g_value_set_static_string (value, _("Error"));
+          break;
+        case G_LOG_LEVEL_DEBUG:
+          g_value_set_static_string (value, _("Debug"));
+          break;
+        case G_LOG_LEVEL_WARNING:
+          g_value_set_static_string (value, _("Warning"));
+          break;
+        default:
+          g_value_set_static_string (value, "");
+          break;
+        }
       break;
 
     case SYSPROF_LOG_MODEL_COLUMN_DOMAIN:
@@ -296,11 +335,16 @@ sysprof_log_model_new_worker (GTask        *task,
 {
   g_autoptr(SysprofLogModel) self = NULL;
   SysprofCaptureCursor *cursor = task_data;
+  SysprofCaptureReader *reader;
 
   g_assert (G_IS_TASK (task));
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   self = g_object_new (SYSPROF_TYPE_LOG_MODEL, NULL);
+
+  reader = sysprof_capture_cursor_get_reader (cursor);
+  self->begin_time = sysprof_capture_reader_get_start_time (reader);
+
   sysprof_capture_cursor_foreach (cursor, cursor_foreach_cb, self);
   g_array_sort (self->items, item_compare);
 

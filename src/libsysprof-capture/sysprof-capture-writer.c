@@ -1304,3 +1304,48 @@ sysprof_capture_writer_get_buffer_size (SysprofCaptureWriter *self)
 
   return self->len;
 }
+
+gboolean
+sysprof_capture_writer_add_log (SysprofCaptureWriter *self,
+                                gint64                time,
+                                gint                  cpu,
+                                gint32                pid,
+                                GLogLevelFlags        severity,
+                                const gchar          *domain,
+                                const gchar          *message)
+{
+  SysprofCaptureLog *ev;
+  gsize message_len;
+  gsize len;
+
+  g_assert (self != NULL);
+
+  if (domain == NULL)
+    domain = "";
+
+  if (message == NULL)
+    message = "";
+  message_len = strlen (message) + 1;
+
+  len = sizeof *ev + message_len;
+  ev = (SysprofCaptureLog *)sysprof_capture_writer_allocate (self, &len);
+  if (!ev)
+    return FALSE;
+
+  sysprof_capture_writer_frame_init (&ev->frame,
+                                     len,
+                                     cpu,
+                                     pid,
+                                     time,
+                                     SYSPROF_CAPTURE_FRAME_LOG);
+
+  ev->severity = severity & 0xFFFF;
+  ev->padding1 = 0;
+  ev->padding2 = 0;
+  g_strlcpy (ev->domain, domain, sizeof ev->domain);
+  memcpy (ev->message, message, message_len);
+
+  self->stat.frame_count[SYSPROF_CAPTURE_FRAME_LOG]++;
+
+  return TRUE;
+}

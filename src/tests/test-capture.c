@@ -562,6 +562,60 @@ test_reader_splice (void)
 }
 
 static void
+test_reader_writer_log (void)
+{
+  SysprofCaptureWriter *writer;
+  SysprofCaptureReader *reader;
+  const SysprofCaptureLog *log;
+  SysprofCaptureFrameType type;
+  GError *error = NULL;
+  gint r;
+
+  writer = sysprof_capture_writer_new ("log1.syscap", 0);
+
+  sysprof_capture_writer_add_log (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, G_LOG_LEVEL_DEBUG, "my-domain-1", "log message 1");
+  sysprof_capture_writer_add_log (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, G_LOG_LEVEL_DEBUG, "my-domain-2", "log message 2");
+  sysprof_capture_writer_add_log (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, G_LOG_LEVEL_DEBUG, "my-domain-3", "log message 3");
+
+  g_clear_pointer (&writer, sysprof_capture_writer_unref);
+
+  reader = sysprof_capture_reader_new ("log1.syscap", &error);
+  g_assert_no_error (error);
+  g_assert (reader != NULL);
+
+  log = sysprof_capture_reader_read_log (reader);
+  g_assert_nonnull (log);
+  g_assert_cmpstr (log->domain, ==, "my-domain-1");
+  g_assert_cmpint (log->severity, ==, G_LOG_LEVEL_DEBUG);
+  g_assert_cmpstr (log->message, ==, "log message 1");
+  g_assert_cmpint (log->frame.time, >, 0);
+  g_assert_cmpint (log->frame.cpu, ==, -1);
+
+  log = sysprof_capture_reader_read_log (reader);
+  g_assert_nonnull (log);
+  g_assert_cmpstr (log->domain, ==, "my-domain-2");
+  g_assert_cmpint (log->severity, ==, G_LOG_LEVEL_DEBUG);
+  g_assert_cmpstr (log->message, ==, "log message 2");
+  g_assert_cmpint (log->frame.time, >, 0);
+  g_assert_cmpint (log->frame.cpu, ==, -1);
+
+  log = sysprof_capture_reader_read_log (reader);
+  g_assert_nonnull (log);
+  g_assert_cmpstr (log->domain, ==, "my-domain-3");
+  g_assert_cmpint (log->severity, ==, G_LOG_LEVEL_DEBUG);
+  g_assert_cmpstr (log->message, ==, "log message 3");
+  g_assert_cmpint (log->frame.time, >, 0);
+  g_assert_cmpint (log->frame.cpu, ==, -1);
+
+  r = sysprof_capture_reader_peek_type (reader, &type);
+  g_assert_cmpint (r, ==, FALSE);
+
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
+
+  g_unlink ("log1.syscap");
+}
+
+static void
 test_reader_writer_mark (void)
 {
   SysprofCaptureWriter *writer;
@@ -663,6 +717,7 @@ main (int argc,
   g_test_add_func ("/SysprofCapture/ReaderWriter", test_reader_basic);
   g_test_add_func ("/SysprofCapture/Writer/splice", test_writer_splice);
   g_test_add_func ("/SysprofCapture/Reader/splice", test_reader_splice);
+  g_test_add_func ("/SysprofCapture/ReaderWriter/log", test_reader_writer_log);
   g_test_add_func ("/SysprofCapture/ReaderWriter/mark", test_reader_writer_mark);
   g_test_add_func ("/SysprofCapture/ReaderWriter/metadata", test_reader_writer_metadata);
   return g_test_run ();

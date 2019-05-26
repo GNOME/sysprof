@@ -151,6 +151,23 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
             break;
           }
 
+        case SYSPROF_CAPTURE_FRAME_LOG:
+          {
+            const SysprofCaptureLog *frame;
+
+            if (!(frame = sysprof_capture_reader_read_log (reader)))
+              goto panic;
+
+            sysprof_capture_writer_add_log (self,
+                                            frame->frame.time,
+                                            frame->frame.cpu,
+                                            frame->frame.pid,
+                                            frame->severity,
+                                            frame->domain,
+                                            frame->message);
+            break;
+          }
+
         case SYSPROF_CAPTURE_FRAME_MAP:
           {
             const SysprofCaptureMap *frame;

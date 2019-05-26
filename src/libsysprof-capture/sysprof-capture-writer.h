@@ -120,6 +120,14 @@ gboolean              sysprof_capture_writer_set_counters    (SysprofCaptureWrit
                                                               const SysprofCaptureCounterValue  *values,
                                                               guint                              n_counters);
 SYSPROF_AVAILABLE_IN_ALL
+gboolean              sysprof_capture_writer_add_log         (SysprofCaptureWriter              *self,
+                                                              gint64                             time,
+                                                              gint                               cpu,
+                                                              gint32                             pid,
+                                                              GLogLevelFlags                     severity,
+                                                              const gchar                       *domain,
+                                                              const gchar                       *message);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean              sysprof_capture_writer_flush           (SysprofCaptureWriter              *self);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean              sysprof_capture_writer_save_as         (SysprofCaptureWriter              *self,

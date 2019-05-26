@@ -56,6 +56,8 @@ SYSPROF_AVAILABLE_IN_ALL
 gboolean                                sysprof_capture_reader_peek_frame          (SysprofCaptureReader     *self,
                                                                                     SysprofCaptureFrame      *frame);
 SYSPROF_AVAILABLE_IN_ALL
+const SysprofCaptureLog                *sysprof_capture_reader_read_log            (SysprofCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureMap                *sysprof_capture_reader_read_map            (SysprofCaptureReader     *self);
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureMark               *sysprof_capture_reader_read_mark           (SysprofCaptureReader     *self);

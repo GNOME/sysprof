@@ -154,6 +154,16 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="SysprofLogsView" id="logs_view">
+                    <property name="visible">true</property>
+                  </object>
+                  <packing>
+                    <!-- translators: the _ is used to denote the accelerator key -->
+                    <property name="title" translatable="yes">_Logs</property>
+                    <property name="name">logs</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="SysprofDetailsView" id="details_view">
                     <property name="visible">true</property>
                   </object>

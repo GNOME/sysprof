@@ -28,6 +28,7 @@
 #include "sysprof-callgraph-view.h"
 #include "sysprof-capture-view.h"
 #include "sysprof-details-view.h"
+#include "sysprof-logs-view.h"
 #include "sysprof-marks-view.h"
 #include "sysprof-ui-private.h"
 #include "sysprof-visualizer-view.h"
@@ -41,6 +42,7 @@ typedef struct
   guint has_samples : 1;
   guint has_counters : 1;
   guint has_forks : 1;
+  guint has_logs : 1;
   guint has_marks : 1;
   guint can_replay : 1;
 } SysprofCaptureFeatures;
@@ -58,6 +60,7 @@ typedef struct
   GtkStack               *stack;
   SysprofCallgraphView   *callgraph_view;
   SysprofDetailsView     *details_view;
+  SysprofLogsView        *logs_view;
   SysprofMarksView       *counters_view;
   SysprofMarksView       *marks_view;
   SysprofVisualizerView  *visualizer_view;
@@ -387,6 +390,11 @@ sysprof_capture_view_scan_worker (GTask        *task,
           features.has_counters = TRUE;
           sysprof_capture_reader_skip (reader);
         }
+      else if (frame.type == SYSPROF_CAPTURE_FRAME_LOG)
+        {
+          features.has_logs = TRUE;
+          sysprof_capture_reader_skip (reader);
+        }
       else if (frame.type == SYSPROF_CAPTURE_FRAME_SAMPLE)
         {
           features.has_samples = TRUE;
@@ -568,6 +576,38 @@ sysprof_capture_view_load_callgraph_cb (GObject      *object,
 }
 
 static void
+sysprof_capture_view_load_logs_cb (GObject      *object,
+                                   GAsyncResult *result,
+                                   gpointer      user_data)
+{
+  g_autoptr(SysprofLogModel) model = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+  LoadAsync *state;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  state = g_task_get_task_data (task);
+  g_assert (state != NULL);
+  g_assert (state->reader != NULL);
+  g_assert (state->n_active > 0);
+
+  if ((model = sysprof_log_model_new_finish (result, &error)))
+    {
+      SysprofCaptureView *self = g_task_get_source_object (task);
+      SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
+
+      sysprof_logs_view_set_model (priv->logs_view, model);
+    }
+
+  state->n_active--;
+
+  if (state->n_active == 0)
+    g_task_return_boolean (task, TRUE);
+}
+
+static void
 sysprof_capture_view_load_scan_cb (GObject      *object,
                                    GAsyncResult *result,
                                    gpointer      user_data)
@@ -601,6 +641,16 @@ sysprof_capture_view_load_scan_cb (GObject      *object,
                                                      g_task_get_cancellable (task),
                                                      sysprof_capture_view_load_callgraph_cb,
                                                      g_object_ref (task));
+    }
+
+  if (priv->features.has_logs)
+    {
+      state->n_active++;
+      sysprof_log_model_new_async (state->reader,
+                                   state->selection,
+                                   g_task_get_cancellable (task),
+                                   sysprof_capture_view_load_logs_cb,
+                                   g_object_ref (task));
     }
 
   sysprof_visualizer_view_set_reader (priv->visualizer_view, state->reader);
@@ -815,6 +865,7 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, callgraph_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, details_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, counters_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, logs_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, marks_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, stack);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCaptureView, stack_switcher);
@@ -833,6 +884,9 @@ sysprof_capture_view_class_init (SysprofCaptureViewClass *klass)
 
   g_type_ensure (DZL_TYPE_MULTI_PANED);
   g_type_ensure (SYSPROF_TYPE_DETAILS_VIEW);
+  g_type_ensure (SYSPROF_TYPE_LOGS_VIEW);
+  g_type_ensure (SYSPROF_TYPE_MARKS_VIEW);
+  g_type_ensure (SYSPROF_TYPE_CALLGRAPH_VIEW);
 }
 
 static void

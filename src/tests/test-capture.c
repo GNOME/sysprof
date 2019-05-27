@@ -27,6 +27,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "sysprof-platform.h"
+
 static void
 test_reader_basic (void)
 {
@@ -725,6 +727,7 @@ test_reader_writer_file (void)
   gsize data_len;
   guint count = 0;
   gint fd;
+  gint new_fd;
   gint r;
 
   writer = sysprof_capture_writer_new ("file1.syscap", 0);
@@ -778,6 +781,15 @@ test_reader_writer_file (void)
   g_assert_nonnull (files);
   g_assert_cmpstr (files[0], ==, "/proc/kallsyms");
   g_assert_null (files[1]);
+
+  sysprof_capture_reader_reset (reader);
+  new_fd = sysprof_memfd_create ("[sysprof-capture-file]");
+  g_assert_cmpint (new_fd, !=, -1);
+
+  r = sysprof_capture_reader_read_file_fd (reader, "/proc/kallsyms", new_fd);
+  g_assert_true (r);
+
+  close (new_fd);
 
   g_clear_pointer (&reader, sysprof_capture_reader_unref);
   g_clear_pointer (&buf, g_byte_array_unref);

@@ -99,6 +99,10 @@ void                                    sysprof_capture_reader_set_stat         
                                                                                     const SysprofCaptureStat *st_buf);
 SYSPROF_AVAILABLE_IN_ALL
 gchar                                 **sysprof_capture_reader_list_files          (SysprofCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean                                sysprof_capture_reader_read_file_fd        (SysprofCaptureReader     *self,
+                                                                                    const gchar              *path,
+                                                                                    gint                      fd);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
 

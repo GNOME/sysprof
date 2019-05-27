@@ -580,11 +580,12 @@ sysprof_capture_view_load_logs_cb (GObject      *object,
                                    GAsyncResult *result,
                                    gpointer      user_data)
 {
-  g_autoptr(SysprofLogModel) model = NULL;
+  SysprofLogsView *logs_view = (SysprofLogsView *)object;
   g_autoptr(GError) error = NULL;
   g_autoptr(GTask) task = user_data;
   LoadAsync *state;
 
+  g_assert (SYSPROF_IS_LOGS_VIEW (logs_view));
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
 
@@ -593,13 +594,8 @@ sysprof_capture_view_load_logs_cb (GObject      *object,
   g_assert (state->reader != NULL);
   g_assert (state->n_active > 0);
 
-  if ((model = sysprof_log_model_new_finish (result, &error)))
-    {
-      SysprofCaptureView *self = g_task_get_source_object (task);
-      SysprofCaptureViewPrivate *priv = sysprof_capture_view_get_instance_private (self);
-
-      sysprof_logs_view_set_model (priv->logs_view, model);
-    }
+  if (!sysprof_logs_view_load_finish (logs_view, result, &error))
+    g_warning ("Failed to load logs: %s", error->message);
 
   state->n_active--;
 
@@ -646,11 +642,12 @@ sysprof_capture_view_load_scan_cb (GObject      *object,
   if (priv->features.has_logs)
     {
       state->n_active++;
-      sysprof_log_model_new_async (state->reader,
-                                   state->selection,
-                                   g_task_get_cancellable (task),
-                                   sysprof_capture_view_load_logs_cb,
-                                   g_object_ref (task));
+      sysprof_logs_view_load_async (priv->logs_view,
+                                    state->reader,
+                                    state->selection,
+                                    g_task_get_cancellable (task),
+                                    sysprof_capture_view_load_logs_cb,
+                                    g_object_ref (task));
     }
 
   sysprof_visualizer_view_set_reader (priv->visualizer_view, state->reader);
@@ -765,6 +762,10 @@ sysprof_capture_view_selection_changed_cb (SysprofCaptureView *self,
                                                  priv->reader,
                                                  selection,
                                                  NULL, NULL, NULL);
+  sysprof_logs_view_load_async (priv->logs_view,
+                                priv->reader,
+                                selection,
+                                NULL, NULL, NULL);
   sysprof_marks_view_load_async (priv->marks_view,
                                  priv->reader,
                                  selection,

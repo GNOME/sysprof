@@ -49,12 +49,64 @@ sysprof_logs_view_init (SysprofLogsView *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
-void
-sysprof_logs_view_set_model (SysprofLogsView *self,
-                             SysprofLogModel *model)
+static void
+sysprof_logs_view_load_cb (GObject      *object,
+                           GAsyncResult *result,
+                           gpointer      user_data)
 {
-  g_return_if_fail (SYSPROF_IS_LOGS_VIEW (self));
-  g_return_if_fail (!model || SYSPROF_IS_LOG_MODEL (model));
+  g_autoptr(SysprofLogModel) model = NULL;
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(GError) error = NULL;
 
-  gtk_tree_view_set_model (GTK_TREE_VIEW (self->tree_view), GTK_TREE_MODEL (model));
-} 
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (!(model = sysprof_log_model_new_finish (result, &error)))
+    {
+      g_task_return_error (task, g_steal_pointer (&error));
+    }
+  else
+    {
+      SysprofLogsView *self;
+
+      self = g_task_get_source_object (task);
+      gtk_tree_view_set_model (GTK_TREE_VIEW (self->tree_view), GTK_TREE_MODEL (model));
+      g_task_return_boolean (task, TRUE);
+    }
+}
+
+void
+sysprof_logs_view_load_async (SysprofLogsView      *self,
+                              SysprofCaptureReader *reader,
+                              SysprofSelection     *selection,
+                              GCancellable         *cancellable,
+                              GAsyncReadyCallback   callback,
+                              gpointer              user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SYSPROF_IS_LOGS_VIEW (self));
+  g_return_if_fail (reader != NULL);
+  g_return_if_fail (!selection || SYSPROF_IS_SELECTION (selection));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_logs_view_load_async);
+
+  sysprof_log_model_new_async (reader,
+                               selection,
+                               cancellable,
+                               sysprof_logs_view_load_cb,
+                               g_steal_pointer (&task));
+}
+
+gboolean
+sysprof_logs_view_load_finish (SysprofLogsView  *self,
+                               GAsyncResult     *result,
+                               GError          **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_LOGS_VIEW (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}

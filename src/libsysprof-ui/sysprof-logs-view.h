@@ -30,7 +30,14 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofLogsView, sysprof_logs_view, SYSPROF, LOGS_VIEW, GtkBin)
 
-void sysprof_logs_view_set_model (SysprofLogsView *self,
-                                  SysprofLogModel *model);
+void     sysprof_logs_view_load_async  (SysprofLogsView       *self,
+                                        SysprofCaptureReader  *reader,
+                                        SysprofSelection      *selection,
+                                        GCancellable          *cancellable,
+                                        GAsyncReadyCallback    callback,
+                                        gpointer               user_data);
+gboolean sysprof_logs_view_load_finish (SysprofLogsView       *self,
+                                        GAsyncResult          *result,
+                                        GError               **error);
 
 G_END_DECLS

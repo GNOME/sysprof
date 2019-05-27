@@ -1173,3 +1173,39 @@ sysprof_capture_reader_read_file (SysprofCaptureReader *self)
 
   return file_chunk;
 }
+
+gchar **
+sysprof_capture_reader_list_files (SysprofCaptureReader *self)
+{
+  g_autoptr(GHashTable) files = NULL;
+  g_autoptr(GPtrArray) ar = NULL;
+  SysprofCaptureFrameType type;
+  GHashTableIter iter;
+  const gchar *key;
+
+  g_assert (self != NULL);
+
+  ar = g_ptr_array_new_with_free_func (g_free);
+  files = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
+  while (sysprof_capture_reader_peek_type (self, &type))
+    {
+      const SysprofCaptureFileChunk *file;
+
+      if (type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+        continue;
+
+      if (!(file = sysprof_capture_reader_read_file (self)))
+        break;
+
+      if (!g_hash_table_contains (files, file->path))
+        g_hash_table_insert (files, g_strdup (file->path), NULL);
+    }
+
+  g_hash_table_iter_init (&iter, files);
+  while (g_hash_table_iter_next (&iter, (gpointer *)&key, NULL))
+    g_ptr_array_add (ar, g_strdup (key));
+  g_ptr_array_add (ar, NULL);
+
+  return (gchar **)g_ptr_array_free (g_steal_pointer (&ar), FALSE);
+}

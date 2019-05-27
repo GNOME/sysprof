@@ -486,6 +486,9 @@ sysprof_capture_view_scan_finish (SysprofCaptureView  *self,
   if (!priv->features.has_samples)
     gtk_widget_hide (GTK_WIDGET (priv->callgraph_view));
 
+  if (!priv->features.has_logs)
+    gtk_widget_hide (GTK_WIDGET (priv->logs_view));
+
   if (!priv->features.has_marks && !priv->features.has_forks)
     gtk_widget_hide (GTK_WIDGET (priv->marks_view));
 

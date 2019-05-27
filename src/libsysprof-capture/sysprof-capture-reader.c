@@ -1168,6 +1168,10 @@ sysprof_capture_reader_read_file (SysprofCaptureReader *self)
   if ((self->pos % SYSPROF_CAPTURE_ALIGN) != 0)
     return NULL;
 
+  /* Make sure len is < the extra frame data */
+  if (file_chunk->len > (file_chunk->frame.len - sizeof *file_chunk))
+    return NULL;
+
   /* Ensure trailing \0 in .path */
   file_chunk->path[sizeof file_chunk->path - 1] = 0;
 
@@ -1208,4 +1212,65 @@ sysprof_capture_reader_list_files (SysprofCaptureReader *self)
   g_ptr_array_add (ar, NULL);
 
   return (gchar **)g_ptr_array_free (g_steal_pointer (&ar), FALSE);
+}
+
+gboolean
+sysprof_capture_reader_read_file_fd (SysprofCaptureReader *self,
+                                     const gchar          *path,
+                                     gint                  fd)
+{
+  g_assert (self != NULL);
+  g_assert (path != NULL);
+  g_assert (fd > -1);
+
+  for (;;)
+    {
+      SysprofCaptureFrameType type;
+      const SysprofCaptureFileChunk *file;
+      const guint8 *buf;
+      gsize to_write;
+
+      if (!sysprof_capture_reader_peek_type (self, &type))
+        return FALSE;
+
+      if (type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+        goto skip;
+
+      if (!(file = sysprof_capture_reader_read_file (self)))
+        return FALSE;
+
+      if (g_strcmp0 (path, file->path) != 0)
+        goto skip;
+
+      buf = file->data;
+      to_write = file->len;
+
+      while (to_write > 0)
+        {
+          gssize written;
+
+          written = _sysprof_write (fd, buf, to_write);
+          if (written < 0)
+            return FALSE;
+
+          if (written == 0 && errno != EAGAIN)
+            return FALSE;
+
+          g_assert (written <= (gssize)to_write);
+
+          buf += written;
+          to_write -= written;
+        }
+
+      if (!file->is_last)
+        continue;
+
+      return TRUE;
+
+    skip:
+      if (!sysprof_capture_reader_skip (self))
+        return FALSE;
+    }
+
+  g_return_val_if_reached (FALSE);
 }

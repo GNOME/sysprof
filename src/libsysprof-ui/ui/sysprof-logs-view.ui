@@ -6,6 +6,7 @@
         <property name="visible">true</property>
         <child>
           <object class="GtkTreeView" id="tree_view">
+            <property name="tooltip-column">3</property>
             <property name="headers-visible">true</property>
             <property name="visible">true</property>
             <child>

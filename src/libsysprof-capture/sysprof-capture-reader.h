@@ -97,6 +97,8 @@ gboolean                                sysprof_capture_reader_get_stat         
 SYSPROF_AVAILABLE_IN_ALL
 void                                    sysprof_capture_reader_set_stat            (SysprofCaptureReader     *self,
                                                                                     const SysprofCaptureStat *st_buf);
+SYSPROF_AVAILABLE_IN_ALL
+gchar                                 **sysprof_capture_reader_list_files          (SysprofCaptureReader     *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
 

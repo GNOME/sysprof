@@ -716,6 +716,7 @@ test_reader_writer_file (void)
 {
   g_autofree gchar *data = NULL;
   GByteArray *buf = g_byte_array_new ();
+  g_auto(GStrv) files = NULL;
   SysprofCaptureWriter *writer;
   SysprofCaptureReader *reader;
   SysprofCaptureFrameType type;
@@ -771,6 +772,12 @@ test_reader_writer_file (void)
 
   r = sysprof_capture_reader_peek_type (reader, &type);
   g_assert_cmpint (r, ==, FALSE);
+
+  sysprof_capture_reader_reset (reader);
+  files = sysprof_capture_reader_list_files (reader);
+  g_assert_nonnull (files);
+  g_assert_cmpstr (files[0], ==, "/proc/kallsyms");
+  g_assert_null (files[1]);
 
   g_clear_pointer (&reader, sysprof_capture_reader_unref);
   g_clear_pointer (&buf, g_byte_array_unref);

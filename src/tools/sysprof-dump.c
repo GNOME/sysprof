@@ -139,6 +139,21 @@ main (gint argc,
             break;
           }
 
+        case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
+          {
+            const SysprofCaptureFileChunk *file_chunk = sysprof_capture_reader_read_file (reader);
+            gdouble ptime = (file_chunk->frame.time - begin_time) / (gdouble)NSEC_PER_SEC;
+
+            g_print ("FILE_CHUNK: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
+                     "     path = %s\n"
+                     "  is_last = %d\n"
+                     "    bytes = %d\n",
+                     file_chunk->frame.pid, file_chunk->frame.time, ptime,
+                     file_chunk->path, file_chunk->is_last, file_chunk->len);
+
+            break;
+          }
+
         case SYSPROF_CAPTURE_FRAME_MARK:
           {
             const SysprofCaptureMark *mark = sysprof_capture_reader_read_mark (reader);

@@ -233,6 +233,17 @@ sysprof_capture_reader_bswap_frame (SysprofCaptureReader *self,
 }
 
 static inline void
+sysprof_capture_reader_bswap_file_chunk (SysprofCaptureReader    *self,
+                                         SysprofCaptureFileChunk *file_chunk)
+{
+  g_assert (self != NULL);
+  g_assert (file_chunk != NULL);
+
+  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+    file_chunk->len = GUINT16_SWAP_LE_BE (file_chunk->len);
+}
+
+static inline void
 sysprof_capture_reader_bswap_log (SysprofCaptureReader *self,
                                   SysprofCaptureLog    *log)
 {
@@ -1121,4 +1132,44 @@ sysprof_capture_reader_get_stat (SysprofCaptureReader *self,
     *st_buf = self->st_buf;
 
   return self->st_buf_set;
+}
+
+const SysprofCaptureFileChunk *
+sysprof_capture_reader_read_file (SysprofCaptureReader *self)
+{
+  SysprofCaptureFileChunk *file_chunk;
+
+  g_assert (self != NULL);
+  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  g_assert (self->pos <= self->bufsz);
+
+  if (!sysprof_capture_reader_ensure_space_for (self, sizeof *file_chunk))
+    return NULL;
+
+  file_chunk = (SysprofCaptureFileChunk *)(gpointer)&self->buf[self->pos];
+
+  sysprof_capture_reader_bswap_frame (self, &file_chunk->frame);
+
+  if (file_chunk->frame.type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+    return NULL;
+
+  if (file_chunk->frame.len < sizeof *file_chunk)
+    return NULL;
+
+  if (!sysprof_capture_reader_ensure_space_for (self, file_chunk->frame.len))
+    return NULL;
+
+  file_chunk = (SysprofCaptureFileChunk *)(gpointer)&self->buf[self->pos];
+
+  sysprof_capture_reader_bswap_file_chunk (self, file_chunk);
+
+  self->pos += file_chunk->frame.len;
+
+  if ((self->pos % SYSPROF_CAPTURE_ALIGN) != 0)
+    return NULL;
+
+  /* Ensure trailing \0 in .path */
+  file_chunk->path[sizeof file_chunk->path - 1] = 0;
+
+  return file_chunk;
 }

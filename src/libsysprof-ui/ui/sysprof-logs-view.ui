@@ -11,7 +11,7 @@
             <child>
               <object class="GtkTreeViewColumn">
                 <property name="expand">false</property>
-                <property name="title" translatable="yes">Offset</property>
+                <property name="title" translatable="yes">Time</property>
                 <child>
                   <object class="GtkCellRendererText">
                     <property name="xalign">0.0</property>

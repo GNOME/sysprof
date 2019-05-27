@@ -151,6 +151,24 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
             break;
           }
 
+        case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
+          {
+            const SysprofCaptureFileChunk *frame;
+
+            if (!(frame = sysprof_capture_reader_read_file (reader)))
+              goto panic;
+
+            sysprof_capture_writer_add_file (self,
+                                             frame->frame.time,
+                                             frame->frame.cpu,
+                                             frame->frame.pid,
+                                             frame->path,
+                                             frame->is_last,
+                                             frame->data,
+                                             frame->len);
+            break;
+          }
+
         case SYSPROF_CAPTURE_FRAME_LOG:
           {
             const SysprofCaptureLog *frame;

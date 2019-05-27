@@ -45,6 +45,22 @@ SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_writer_stat            (SysprofCaptureWriter              *self,
                                                               SysprofCaptureStat                *stat);
 SYSPROF_AVAILABLE_IN_ALL
+gboolean              sysprof_capture_writer_add_file        (SysprofCaptureWriter              *self,
+                                                              gint64                             time,
+                                                              gint                               cpu,
+                                                              gint32                             pid,
+                                                              const gchar                       *path,
+                                                              gboolean                           is_last,
+                                                              const guint8                      *data,
+                                                              gsize                              data_len);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean              sysprof_capture_writer_add_file_fd     (SysprofCaptureWriter              *self,
+                                                              gint64                             time,
+                                                              gint                               cpu,
+                                                              gint32                             pid,
+                                                              const gchar                       *path,
+                                                              gint                               fd);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean              sysprof_capture_writer_add_map         (SysprofCaptureWriter              *self,
                                                               gint64                             time,
                                                               gint                               cpu,

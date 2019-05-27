@@ -1349,3 +1349,75 @@ sysprof_capture_writer_add_log (SysprofCaptureWriter *self,
 
   return TRUE;
 }
+
+gboolean
+sysprof_capture_writer_add_file (SysprofCaptureWriter *self,
+                                 gint64                time,
+                                 gint                  cpu,
+                                 gint32                pid,
+                                 const gchar          *path,
+                                 gboolean              is_last,
+                                 const guint8         *data,
+                                 gsize                 data_len)
+{
+  SysprofCaptureFileChunk *ev;
+  gsize len;
+
+  g_assert (self != NULL);
+
+  len = sizeof *ev + data_len;
+  ev = (SysprofCaptureFileChunk *)sysprof_capture_writer_allocate (self, &len);
+  if (!ev)
+    return FALSE;
+
+  sysprof_capture_writer_frame_init (&ev->frame,
+                                     len,
+                                     cpu,
+                                     pid,
+                                     time,
+                                     SYSPROF_CAPTURE_FRAME_FILE_CHUNK);
+
+  ev->padding1 = 0;
+  ev->is_last = !!is_last;
+  ev->len = data_len;
+  g_strlcpy (ev->path, path, sizeof ev->path);
+  memcpy (ev->data, data, data_len);
+
+  self->stat.frame_count[SYSPROF_CAPTURE_FRAME_FILE_CHUNK]++;
+
+  return TRUE;
+}
+
+gboolean
+sysprof_capture_writer_add_file_fd (SysprofCaptureWriter *self,
+                                    gint64                time,
+                                    gint                  cpu,
+                                    gint32                pid,
+                                    const gchar          *path,
+                                    gint                  fd)
+{
+  guint8 data[(4096*4L) - sizeof(SysprofCaptureFileChunk)];
+
+  g_assert (self != NULL);
+
+  for (;;)
+    {
+      gboolean is_last;
+      gssize n_read;
+
+    again:
+      n_read = read (fd, data, sizeof data);
+      if (n_read < 0 && errno == EAGAIN)
+        goto again;
+
+      is_last = n_read == 0;
+
+      if (!sysprof_capture_writer_add_file (self, time, cpu, pid, path, is_last, data, n_read))
+        return FALSE;
+
+      if (is_last)
+        break;
+    }
+
+  return TRUE;
+}

@@ -79,18 +79,19 @@ typedef union
 
 typedef enum
 {
-  SYSPROF_CAPTURE_FRAME_TIMESTAMP = 1,
-  SYSPROF_CAPTURE_FRAME_SAMPLE    = 2,
-  SYSPROF_CAPTURE_FRAME_MAP       = 3,
-  SYSPROF_CAPTURE_FRAME_PROCESS   = 4,
-  SYSPROF_CAPTURE_FRAME_FORK      = 5,
-  SYSPROF_CAPTURE_FRAME_EXIT      = 6,
-  SYSPROF_CAPTURE_FRAME_JITMAP    = 7,
-  SYSPROF_CAPTURE_FRAME_CTRDEF    = 8,
-  SYSPROF_CAPTURE_FRAME_CTRSET    = 9,
-  SYSPROF_CAPTURE_FRAME_MARK      = 10,
-  SYSPROF_CAPTURE_FRAME_METADATA  = 11,
-  SYSPROF_CAPTURE_FRAME_LOG       = 12,
+  SYSPROF_CAPTURE_FRAME_TIMESTAMP  = 1,
+  SYSPROF_CAPTURE_FRAME_SAMPLE     = 2,
+  SYSPROF_CAPTURE_FRAME_MAP        = 3,
+  SYSPROF_CAPTURE_FRAME_PROCESS    = 4,
+  SYSPROF_CAPTURE_FRAME_FORK       = 5,
+  SYSPROF_CAPTURE_FRAME_EXIT       = 6,
+  SYSPROF_CAPTURE_FRAME_JITMAP     = 7,
+  SYSPROF_CAPTURE_FRAME_CTRDEF     = 8,
+  SYSPROF_CAPTURE_FRAME_CTRSET     = 9,
+  SYSPROF_CAPTURE_FRAME_MARK       = 10,
+  SYSPROF_CAPTURE_FRAME_METADATA   = 11,
+  SYSPROF_CAPTURE_FRAME_LOG        = 12,
+  SYSPROF_CAPTURE_FRAME_FILE_CHUNK = 13,
 } SysprofCaptureFrameType;
 
 SYSPROF_ALIGNED_BEGIN(1)
@@ -262,6 +263,18 @@ typedef struct
 } SysprofCaptureLog
 SYSPROF_ALIGNED_END(1);
 
+SYSPROF_ALIGNED_BEGIN(1)
+typedef struct
+{
+  SysprofCaptureFrame frame;
+  guint32             is_last : 1;
+  guint32             padding1 : 15;
+  guint32             len : 16;
+  gchar               path[256];
+  guint8              data[0];
+} SysprofCaptureFileChunk
+SYSPROF_ALIGNED_END(1);
+
 G_STATIC_ASSERT (sizeof (SysprofCaptureFileHeader) == 256);
 G_STATIC_ASSERT (sizeof (SysprofCaptureFrame) == 24);
 G_STATIC_ASSERT (sizeof (SysprofCaptureMap) == 56);
@@ -278,6 +291,7 @@ G_STATIC_ASSERT (sizeof (SysprofCaptureCounterSet) == 32);
 G_STATIC_ASSERT (sizeof (SysprofCaptureMark) == 96);
 G_STATIC_ASSERT (sizeof (SysprofCaptureMetadata) == 64);
 G_STATIC_ASSERT (sizeof (SysprofCaptureLog) == 64);
+G_STATIC_ASSERT (sizeof (SysprofCaptureFileChunk) == 284);
 
 static inline gint
 sysprof_capture_address_compare (SysprofCaptureAddress a,

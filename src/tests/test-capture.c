@@ -20,9 +20,12 @@
 
 #include "config.h"
 
+#include <fcntl.h>
 #include <glib/gstdio.h>
 #include <string.h>
 #include <sysprof-capture.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 static void
 test_reader_basic (void)
@@ -708,6 +711,73 @@ test_reader_writer_metadata (void)
   g_unlink ("metadata1.syscap");
 }
 
+static void
+test_reader_writer_file (void)
+{
+  g_autofree gchar *data = NULL;
+  GByteArray *buf = g_byte_array_new ();
+  SysprofCaptureWriter *writer;
+  SysprofCaptureReader *reader;
+  SysprofCaptureFrameType type;
+  GError *error = NULL;
+  gssize len;
+  gsize data_len;
+  guint count = 0;
+  gint fd;
+  gint r;
+
+  writer = sysprof_capture_writer_new ("file1.syscap", 0);
+  fd = g_open ("/proc/kallsyms", O_RDONLY);
+
+  r = g_file_get_contents ("/proc/kallsyms", &data, &data_len, NULL);
+  g_assert_true (r);
+
+  len = lseek (fd, SEEK_END, 0);
+  g_assert_cmpint (len, >, 0);
+
+  lseek (fd, SEEK_SET, 0);
+  sysprof_capture_writer_add_file_fd (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, "/proc/kallsyms", fd);
+
+  lseek (fd, SEEK_SET, 0);
+  sysprof_capture_writer_add_file_fd (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, "/proc/kallsyms", fd);
+
+  close (fd);
+
+  g_clear_pointer (&writer, sysprof_capture_writer_unref);
+
+  reader = sysprof_capture_reader_new ("file1.syscap", &error);
+  g_assert_no_error (error);
+  g_assert (reader != NULL);
+
+  while (count < 2)
+    {
+      const SysprofCaptureFileChunk *file;
+
+      r = sysprof_capture_reader_peek_type (reader, &type);
+      g_assert_true (r);
+      g_assert_cmpint (type, ==, SYSPROF_CAPTURE_FRAME_FILE_CHUNK);
+
+      file = sysprof_capture_reader_read_file (reader);
+      g_assert_nonnull (file);
+      g_assert_cmpstr (file->path, ==, "/proc/kallsyms");
+
+      if (count == 0)
+        g_byte_array_append (buf, file->data, file->len);
+
+      count += file->is_last;
+    }
+
+  g_assert_cmpint (0, ==, memcmp (data, buf->data, data_len));
+
+  r = sysprof_capture_reader_peek_type (reader, &type);
+  g_assert_cmpint (r, ==, FALSE);
+
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
+  g_clear_pointer (&buf, g_byte_array_unref);
+
+  g_unlink ("file1.syscap");
+}
+
 int
 main (int argc,
       char *argv[])
@@ -720,5 +790,6 @@ main (int argc,
   g_test_add_func ("/SysprofCapture/ReaderWriter/log", test_reader_writer_log);
   g_test_add_func ("/SysprofCapture/ReaderWriter/mark", test_reader_writer_mark);
   g_test_add_func ("/SysprofCapture/ReaderWriter/metadata", test_reader_writer_metadata);
+  g_test_add_func ("/SysprofCapture/ReaderWriter/file", test_reader_writer_file);
   return g_test_run ();
 }

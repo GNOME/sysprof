@@ -805,10 +805,20 @@ elf_parser_owns_symbol (ElfParser *parser,
 }
 
 gulong
-elf_parser_get_sym_address (ElfParser *parser,
+elf_parser_get_sym_address (ElfParser    *parser,
                             const ElfSym *sym)
 {
     return sym->address - parser->text_section->load_address;
+}
+
+void
+elf_parser_get_sym_address_range (ElfParser    *parser,
+                                  const ElfSym *sym,
+                                  gulong       *begin,
+                                  gulong       *end)
+{
+    *begin = sym->address - parser->text_section->load_address;
+    *end = *begin + st_size (parser, sym->table, sym->offset);
 }
 
 /*

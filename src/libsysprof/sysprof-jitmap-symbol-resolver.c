@@ -64,7 +64,7 @@ sysprof_jitmap_symbol_resolver_init (SysprofJitmapSymbolResolver *self)
 
 static void
 sysprof_jitmap_symbol_resolver_load (SysprofSymbolResolver *resolver,
-                                SysprofCaptureReader  *reader)
+                                     SysprofCaptureReader  *reader)
 {
   SysprofJitmapSymbolResolver *self = (SysprofJitmapSymbolResolver *)resolver;
   SysprofCaptureFrameType type;

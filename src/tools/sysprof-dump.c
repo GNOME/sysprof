@@ -18,22 +18,38 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sysprof-capture.h>
 
 #define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
 
+static gboolean list_files = FALSE;
+static const GOptionEntry main_entries[] = {
+  { "list-files", 'l', 0, G_OPTION_ARG_NONE, &list_files, "List files within the capture" },
+  { 0 }
+};
+
 gint
 main (gint argc,
       gchar *argv[])
 {
+  g_autoptr(GOptionContext) context = g_option_context_new ("- dump capture data");
+  g_autoptr(GError) error = NULL;
   SysprofCaptureReader *reader;
   SysprofCaptureFrameType type;
   GHashTable *ctrtypes;
-  GError *error = NULL;
   gint64 begin_time;
   gint64 end_time;
+
+  g_option_context_add_main_entries (context, main_entries, NULL);
+  if (!g_option_context_parse (context, &argc, &argv, &error))
+    {
+      g_printerr ("%s\n", error->message);
+      return EXIT_FAILURE;
+    }
 
   if (argc != 2)
     {
@@ -42,6 +58,17 @@ main (gint argc,
     }
 
   reader = sysprof_capture_reader_new (argv[1], &error);
+
+  if (list_files)
+    {
+      g_auto(GStrv) files = sysprof_capture_reader_list_files (reader);
+
+      for (guint i = 0; files[i]; i++)
+        g_print ("%s\n", files[i]);
+
+      return EXIT_SUCCESS;
+    }
+
   ctrtypes = g_hash_table_new (NULL, NULL);
 
   begin_time = sysprof_capture_reader_get_start_time (reader);

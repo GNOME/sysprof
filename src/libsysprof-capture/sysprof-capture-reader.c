@@ -1277,3 +1277,11 @@ sysprof_capture_reader_read_file_fd (SysprofCaptureReader *self,
 
   g_return_val_if_reached (FALSE);
 }
+
+gint
+sysprof_capture_reader_get_byte_order (SysprofCaptureReader *self)
+{
+  g_return_val_if_fail (self != NULL, 0);
+
+  return self->endian;
+}

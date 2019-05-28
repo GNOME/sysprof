@@ -40,6 +40,8 @@ SysprofCaptureReader                   *sysprof_capture_reader_ref              
 SYSPROF_AVAILABLE_IN_ALL
 void                                    sysprof_capture_reader_unref               (SysprofCaptureReader     *self);
 SYSPROF_AVAILABLE_IN_ALL
+gint                                    sysprof_capture_reader_get_byte_order      (SysprofCaptureReader     *self);
+SYSPROF_AVAILABLE_IN_ALL
 const gchar                            *sysprof_capture_reader_get_filename        (SysprofCaptureReader     *self);
 SYSPROF_AVAILABLE_IN_ALL
 const gchar                            *sysprof_capture_reader_get_time            (SysprofCaptureReader     *self);

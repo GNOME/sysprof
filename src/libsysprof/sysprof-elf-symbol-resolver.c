@@ -83,7 +83,7 @@ sysprof_elf_symbol_resolver_init (SysprofElfSymbolResolver *self)
 
 static void
 sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
-                             SysprofCaptureReader  *reader)
+                                  SysprofCaptureReader  *reader)
 {
   SysprofElfSymbolResolver *self = (SysprofElfSymbolResolver *)resolver;
   SysprofCaptureFrameType type;
@@ -128,7 +128,7 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
 
 static bin_file_t *
 sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
-                                     const gchar         *filename)
+                                          const gchar              *filename)
 {
   bin_file_t *bin_file;
 
@@ -261,11 +261,11 @@ guess_tag (SysprofElfSymbolResolver *self,
 
 static gchar *
 sysprof_elf_symbol_resolver_resolve_with_context (SysprofSymbolResolver *resolver,
-                                             guint64           time,
-                                             GPid              pid,
-                                             SysprofAddressContext  context,
-                                             SysprofCaptureAddress  address,
-                                             GQuark           *tag)
+                                                  guint64                time,
+                                                  GPid                   pid,
+                                                  SysprofAddressContext  context,
+                                                  SysprofCaptureAddress  address,
+                                                  GQuark                *tag)
 {
   SysprofElfSymbolResolver *self = (SysprofElfSymbolResolver *)resolver;
   const bin_symbol_t *bin_sym;

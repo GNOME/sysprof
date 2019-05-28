@@ -27,7 +27,6 @@ G_BEGIN_DECLS
 # include "sysprof-callgraph-profile.h"
 # include "sysprof-capture-gobject.h"
 # include "sysprof-local-profiler.h"
-# include "sysprof-kallsyms.h"
 # include "sysprof-profile.h"
 # include "sysprof-profiler.h"
 # include "sysprof-map-lookaside.h"

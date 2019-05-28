@@ -51,6 +51,7 @@ struct _SysprofProcSource
   GObject               parent_instance;
   SysprofCaptureWriter *writer;
   GArray               *pids;
+  gint                  kallsyms_fd;
 };
 
 static void    source_iface_init (SysprofSourceInterface *iface);
@@ -406,16 +407,24 @@ sysprof_proc_source_get_process_info_cb (GObject      *object,
   g_assert (SYSPROF_IS_HELPERS (helpers));
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
+  g_assert (self->kallsyms_fd == -1);
 
   if (!sysprof_helpers_get_process_info_finish (helpers, result, &info, &error))
     {
       sysprof_source_emit_failed (SYSPROF_SOURCE (self), error);
+      return;
     }
-  else
-    {
-      sysprof_proc_source_populate (self, info);
-      sysprof_source_emit_finished (SYSPROF_SOURCE (self));
-    }
+
+  sysprof_proc_source_populate (self, info);
+
+  /* TODO: Make this optional? */
+  sysprof_helpers_get_proc_fd (helpers,
+                               "/proc/kallsyms",
+                               NULL,
+                               &self->kallsyms_fd,
+                               NULL);
+
+  sysprof_source_emit_finished (SYSPROF_SOURCE (self));
 }
 
 static void
@@ -440,6 +449,21 @@ sysprof_proc_source_stop (SysprofSource *source)
   SysprofProcSource *self = (SysprofProcSource *)source;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
+
+  /* We opened kallsyms when starting the capture, now read it and
+   * save it to the end of the file.
+   */
+  if (self->kallsyms_fd != -1)
+    {
+      sysprof_capture_writer_add_file_fd (self->writer,
+                                          SYSPROF_CAPTURE_CURRENT_TIME,
+                                          -1,
+                                          -1,
+                                          "/proc/kallsyms",
+                                          self->kallsyms_fd);
+      close (self->kallsyms_fd);
+      self->kallsyms_fd = -1;
+    }
 
   g_clear_pointer (&self->writer, sysprof_capture_writer_unref);
 }
@@ -491,6 +515,12 @@ sysprof_proc_source_finalize (GObject *object)
 {
   SysprofProcSource *self = (SysprofProcSource *)object;
 
+  if (self->kallsyms_fd != -1)
+    {
+      close (self->kallsyms_fd);
+      self->kallsyms_fd = -1;
+    }
+
   g_clear_pointer (&self->writer, sysprof_capture_writer_unref);
   g_clear_pointer (&self->pids, g_array_unref);
 
@@ -509,6 +539,7 @@ static void
 sysprof_proc_source_init (SysprofProcSource *self)
 {
   self->pids = g_array_new (FALSE, FALSE, sizeof (GPid));
+  self->kallsyms_fd = -1;
 }
 
 SysprofSource *

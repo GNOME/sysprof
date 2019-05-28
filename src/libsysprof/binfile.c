@@ -519,7 +519,7 @@ bin_symbol_get_name (bin_file_t *file,
 }
 
 gulong
-bin_symbol_get_address (bin_file_t      *file,
+bin_symbol_get_address (bin_file_t         *file,
                         const bin_symbol_t *symbol)
 {
     if (file->undefined_name == (char *)symbol)
@@ -534,5 +534,26 @@ bin_symbol_get_address (bin_file_t      *file,
         sym = get_elf_sym (file, symbol, &elf);
 
         return elf_parser_get_sym_address (elf, sym);
+    }
+}
+
+void
+bin_symbol_get_address_range (bin_file_t         *file,
+                              const bin_symbol_t *symbol,
+                              gulong             *begin,
+                              gulong             *end)
+{
+    if (file->undefined_name == (char *)symbol)
+    {
+        *begin = 0;
+        *end = 0;
+    }
+    else
+    {
+        ElfParser *elf;
+        const ElfSym *sym;
+
+        sym = get_elf_sym (file, symbol, &elf);
+        elf_parser_get_sym_address_range (elf, sym, begin, end);
     }
 }

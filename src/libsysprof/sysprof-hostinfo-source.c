@@ -380,8 +380,22 @@ sysprof_hostinfo_source_prepare (SysprofSource *source)
 {
   SysprofHostinfoSource *self = (SysprofHostinfoSource *)source;
   SysprofCaptureCounter *counters;
+  gint cpuinfo_fd;
 
   g_assert (SYSPROF_IS_HOSTINFO_SOURCE (self));
+  g_assert (self->writer != NULL);
+
+  /* We can generally get this even in containers */
+  if (-1 != (cpuinfo_fd = g_open ("/proc/cpuinfo", O_RDONLY)))
+    {
+      sysprof_capture_writer_add_file_fd (self->writer,
+                                          SYSPROF_CAPTURE_CURRENT_TIME,
+                                          -1,
+                                          -1,
+                                          "/proc/cpuinfo",
+                                          cpuinfo_fd);
+      close (cpuinfo_fd);
+    }
 
   self->stat_fd = open ("/proc/stat", O_RDONLY);
   self->n_cpu = g_get_num_processors ();

@@ -1197,7 +1197,10 @@ sysprof_capture_reader_list_files (SysprofCaptureReader *self)
       const SysprofCaptureFileChunk *file;
 
       if (type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
-        continue;
+        {
+          sysprof_capture_reader_skip (self);
+          continue;
+        }
 
       if (!(file = sysprof_capture_reader_read_file (self)))
         break;

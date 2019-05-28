@@ -28,11 +28,12 @@
 #include "sysprof-helpers.h"
 #include "sysprof-kallsyms.h"
 #include "sysprof-kernel-symbol.h"
+#include "sysprof-private.h"
 
-static GArray *kernel_symbols;
+static G_LOCK_DEFINE (kernel_lock);
 static GStringChunk *kernel_symbol_strs;
-static GHashTable *kernel_symbols_skip_hash;
-static const gchar *kernel_symbols_skip[] = {
+static GHashTable   *kernel_symbols_skip_hash;
+static const gchar  *kernel_symbols_skip[] = {
   /* IRQ stack */
   "common_interrupt",
   "apic_timer_interrupt",
@@ -65,6 +66,13 @@ static const gchar *kernel_symbols_skip[] = {
   "perf_callchain",
 };
 
+static inline gboolean
+type_is_ignored (guint8 type)
+{
+  /* Only allow symbols in the text (code) section */
+  return (type != 't' && type != 'T');
+}
+
 static gint
 sysprof_kernel_symbol_compare (gconstpointer a,
                                gconstpointer b)
@@ -80,37 +88,41 @@ sysprof_kernel_symbol_compare (gconstpointer a,
     return -1;
 }
 
-static inline gboolean
-type_is_ignored (guint8 type)
+static void
+do_shared_init (void)
 {
-  /* Only allow symbols in the text (code) section */
-  return (type != 't' && type != 'T');
+  static gsize once;
+  
+  if (g_once_init_enter (&once))
+    {
+      g_autoptr(GHashTable) skip = NULL;
+
+      kernel_symbol_strs = g_string_chunk_new (4096 * 4);
+
+      skip = g_hash_table_new (g_str_hash, g_str_equal);
+      for (guint i = 0; i < G_N_ELEMENTS (kernel_symbols_skip); i++)
+        g_hash_table_insert (skip, (gchar *)kernel_symbols_skip[i], NULL);
+      kernel_symbols_skip_hash = g_steal_pointer (&skip);
+
+      g_once_init_leave (&once, TRUE);
+    }
 }
 
-static gboolean
-sysprof_kernel_symbol_load (void)
+SysprofKernelSymbols *
+_sysprof_kernel_symbols_new_from_kallsyms (SysprofKallsyms *kallsyms)
 {
-  SysprofHelpers *helpers = sysprof_helpers_get_default ();
-  g_autoptr(SysprofKallsyms) kallsyms = NULL;
-  g_autoptr(GHashTable) skip = NULL;
-  g_autoptr(GArray) ar = NULL;
-  g_autofree gchar *contents = NULL;
+  SysprofKernelSymbols *self;
   const gchar *name;
   guint64 addr;
   guint8 type;
 
-  skip = g_hash_table_new (g_str_hash, g_str_equal);
-  for (guint i = 0; i < G_N_ELEMENTS (kernel_symbols_skip); i++)
-    g_hash_table_insert (skip, (gchar *)kernel_symbols_skip[i], NULL);
-  kernel_symbols_skip_hash = g_steal_pointer (&skip);
+  do_shared_init ();
 
-  if (!sysprof_helpers_get_proc_file (helpers, "/proc/kallsyms", NULL, &contents, NULL))
-    return FALSE;
+  g_return_val_if_fail (kallsyms != NULL, NULL);
 
-  kernel_symbol_strs = g_string_chunk_new (4096 * 4);
-  kallsyms = sysprof_kallsyms_new_take (g_steal_pointer (&contents));
-  ar = g_array_new (FALSE, FALSE, sizeof (SysprofKernelSymbol));
+  self = g_array_new (FALSE, FALSE, sizeof (SysprofKernelSymbol));
 
+  G_LOCK (kernel_lock);
   while (sysprof_kallsyms_next (kallsyms, &name, &addr, &type))
     {
       if (!type_is_ignored (type))
@@ -120,25 +132,34 @@ sysprof_kernel_symbol_load (void)
           sym.address = addr;
           sym.name = g_string_chunk_insert_const (kernel_symbol_strs, name);
 
-          g_array_append_val (ar, sym);
+          g_array_append_val (self, sym);
+        }
+    }
+  G_UNLOCK (kernel_lock);
+
+  g_array_sort (self, sysprof_kernel_symbol_compare);
+
+  return g_steal_pointer (&self);
+}
+
+SysprofKernelSymbols *
+_sysprof_kernel_symbols_ref_shared (void)
+{
+  static SysprofKernelSymbols *shared;
+
+  if (shared == NULL)
+    {
+      SysprofHelpers *helpers = sysprof_helpers_get_default ();
+      g_autofree gchar *contents = NULL;
+
+      if (sysprof_helpers_get_proc_file (helpers, "/proc/kallsyms", NULL, &contents, NULL))
+        {
+          g_autoptr(SysprofKallsyms) kallsyms = sysprof_kallsyms_new_take (g_steal_pointer (&contents));
+          shared = _sysprof_kernel_symbols_new_from_kallsyms (kallsyms);
         }
     }
 
-  g_array_sort (ar, sysprof_kernel_symbol_compare);
-
-#if 0
-  g_print ("First: 0x%lx  Last: 0x%lx\n",
-           g_array_index (ar, SysprofKernelSymbol, 0).address,
-           g_array_index (ar, SysprofKernelSymbol, ar->len - 1).address);
-#endif
-
-  if (ar->len > 0)
-    {
-      kernel_symbols = g_steal_pointer (&ar);
-      return TRUE;
-    }
-
-  return FALSE;
+  return g_array_ref (shared);
 }
 
 static const SysprofKernelSymbol *
@@ -174,8 +195,9 @@ sysprof_kernel_symbol_lookup (SysprofKernelSymbol   *symbols,
     }
 }
 
-/**
- * sysprof_kernel_symbol_from_address:
+/*
+ * sysprof_kernel_symbols_lookup:
+ * @self: the symbol data to lookup
  * @address: the address of the instruction pointer
  *
  * Locates the kernel symbol that contains @address.
@@ -183,37 +205,26 @@ sysprof_kernel_symbol_lookup (SysprofKernelSymbol   *symbols,
  * Returns: (transfer none): An #SysprofKernelSymbol or %NULL.
  */
 const SysprofKernelSymbol *
-sysprof_kernel_symbol_from_address (SysprofCaptureAddress address)
+_sysprof_kernel_symbols_lookup (const SysprofKernelSymbols *self,
+                                SysprofCaptureAddress       address)
 {
   const SysprofKernelSymbol *first;
   const SysprofKernelSymbol *ret;
 
-  if G_UNLIKELY (kernel_symbols == NULL)
-    {
-      static gboolean failed;
+  g_assert (self != NULL);
 
-      if (failed)
-        return NULL;
-
-      if (!sysprof_kernel_symbol_load ())
-        {
-          failed = TRUE;
-          return NULL;
-        }
-    }
-
-  g_assert (kernel_symbols != NULL);
-  g_assert (kernel_symbols->len > 0);
+  if (self->len == 0)
+    return NULL;
 
   /* Short circuit if this is out of range */
-  first = &g_array_index (kernel_symbols, SysprofKernelSymbol, 0);
+  first = &g_array_index (self, SysprofKernelSymbol, 0);
   if (address < first->address)
     return NULL;
 
-  ret = sysprof_kernel_symbol_lookup ((SysprofKernelSymbol *)(gpointer)kernel_symbols->data,
+  ret = sysprof_kernel_symbol_lookup ((SysprofKernelSymbol *)(gpointer)self->data,
                                       address,
                                       0,
-                                      kernel_symbols->len - 1);
+                                      self->len - 1);
 
   /* We resolve all symbols, including ignored symbols so that we
    * don't give back the wrong function juxtapose an ignored func.

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <sysprof.h>
 
+#include "sysprof-kallsyms.h"
+
 int
 main (gint argc,
       gchar *argv[])

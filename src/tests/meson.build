@@ -27,12 +27,6 @@ test_capture_cursor = executable('test-capture-cursor', 'test-capture-cursor.c',
 test('test-capture', test_capture, env: test_env)
 test('test-capture-cursor', test_capture_cursor, env: test_env)
 
-# Use ./tests/test-kallsyms /proc/kallsyms to test (as user or root)
-test_kallsyms = executable('test-kallsyms', 'test-kallsyms.c',
-        c_args: test_cflags,
-  dependencies: test_deps,
-)
-
 if get_option('enable_gtk')
 
   test_ui_deps = [

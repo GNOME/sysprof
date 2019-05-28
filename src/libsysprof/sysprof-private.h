@@ -1,6 +1,6 @@
-/* sysprof-kernel-symbol.h
+/* sysprof-private.h
  *
- * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
+ * Copyright 2019 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,20 @@
 
 #pragma once
 
-#if !defined (SYSPROF_INSIDE) && !defined (SYSPROF_COMPILATION)
-# error "Only <sysprof.h> can be included directly."
-#endif
+#include <sysprof-capture.h>
 
-#include "sysprof-capture-types.h"
+#include "sysprof.h"
+#include "sysprof-kallsyms.h"
 
 G_BEGIN_DECLS
 
-typedef struct
-{
-  SysprofCaptureAddress  address;
-  const gchar           *name;
-} SysprofKernelSymbol;
+typedef GArray SysprofKernelSymbols;
+
+SysprofKernelSymbols      *_sysprof_kernel_symbols_ref_shared        (void);
+SysprofKernelSymbols      *_sysprof_kernel_symbols_new_from_kallsyms (SysprofKallsyms            *kallsyms);
+const SysprofKernelSymbol *_sysprof_kernel_symbols_lookup            (const SysprofKernelSymbols *self,
+                                                                      SysprofCaptureAddress       address);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofKernelSymbols, g_array_unref)
 
 G_END_DECLS

@@ -18,14 +18,23 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#define G_LOG_DOMAIN "sysprof-kernel-symbol-resolver"
+
 #include "config.h"
 
+#include <unistd.h>
+
+#include "sysprof-kallsyms.h"
 #include "sysprof-kernel-symbol.h"
 #include "sysprof-kernel-symbol-resolver.h"
+#include "sysprof-private.h"
+
+#include "sysprof-platform.h"
 
 struct _SysprofKernelSymbolResolver
 {
-  GObject parent_instance;
+  GObject               parent_instance;
+  SysprofKernelSymbols *symbols;
 };
 
 static GQuark linux_quark;
@@ -38,16 +47,19 @@ sysprof_kernel_symbol_resolver_resolve_with_context (SysprofSymbolResolver *reso
                                                      SysprofCaptureAddress  address,
                                                      GQuark                *tag)
 {
+  SysprofKernelSymbolResolver *self = (SysprofKernelSymbolResolver *)resolver;
   const SysprofKernelSymbol *sym;
 
-  g_assert (SYSPROF_IS_SYMBOL_RESOLVER (resolver));
+  g_assert (SYSPROF_IS_SYMBOL_RESOLVER (self));
+  g_assert (tag != NULL);
 
   if (context != SYSPROF_ADDRESS_CONTEXT_KERNEL)
     return NULL;
 
-  sym = sysprof_kernel_symbol_from_address (address);
+  if (self->symbols == NULL)
+    return NULL;
 
-  if (sym != NULL)
+  if ((sym = _sysprof_kernel_symbols_lookup (self->symbols, address)))
     {
       *tag = linux_quark;
       return g_strdup (sym->name);
@@ -57,8 +69,58 @@ sysprof_kernel_symbol_resolver_resolve_with_context (SysprofSymbolResolver *reso
 }
 
 static void
+sysprof_kernel_symbol_resolver_load (SysprofSymbolResolver *resolver,
+                                     SysprofCaptureReader  *reader)
+{
+  static const guint8 zero[] = {0};
+  SysprofKernelSymbolResolver *self = (SysprofKernelSymbolResolver *)resolver;
+  g_autoptr(GByteArray) bytes = NULL;
+  g_autoptr(SysprofKallsyms) kallsyms = NULL;
+  guint8 buf[4096];
+  gint data_fd;
+
+  g_assert (SYSPROF_IS_KERNEL_SYMBOL_RESOLVER (self));
+  g_assert (reader != NULL);
+
+  if (-1 == (data_fd = sysprof_memfd_create ("[sysprof-kallsyms]")) ||
+      !sysprof_capture_reader_read_file_fd (reader, "/proc/kallsyms", data_fd))
+    {
+      if (data_fd != -1)
+        close (data_fd);
+      self->symbols = _sysprof_kernel_symbols_ref_shared ();
+      return;
+    }
+
+  bytes = g_byte_array_new ();
+  lseek (data_fd, 0, SEEK_SET);
+
+  for (;;)
+    {
+      gssize len = read (data_fd, buf, sizeof buf);
+
+      if (len <= 0)
+        break;
+
+      g_byte_array_append (bytes, buf, len);
+    }
+
+  g_byte_array_append (bytes, zero, 1);
+
+  if (bytes->len > 1)
+    {
+      kallsyms = sysprof_kallsyms_new_take ((gchar *)g_byte_array_free (g_steal_pointer (&bytes), FALSE));
+      self->symbols = _sysprof_kernel_symbols_new_from_kallsyms (kallsyms);
+    }
+  else
+    {
+      self->symbols = _sysprof_kernel_symbols_ref_shared ();
+    }
+}
+
+static void
 symbol_resolver_iface_init (SysprofSymbolResolverInterface *iface)
 {
+  iface->load = sysprof_kernel_symbol_resolver_load;
   iface->resolve_with_context = sysprof_kernel_symbol_resolver_resolve_with_context;
 }
 
@@ -69,8 +131,22 @@ G_DEFINE_TYPE_WITH_CODE (SysprofKernelSymbolResolver,
                                                 symbol_resolver_iface_init))
 
 static void
+sysprof_kernel_symbol_resolver_finalize (GObject *object)
+{
+  SysprofKernelSymbolResolver *self = (SysprofKernelSymbolResolver *)object;
+
+  g_clear_pointer (&self->symbols, g_array_unref);
+
+  G_OBJECT_CLASS (sysprof_kernel_symbol_resolver_parent_class)->finalize (object);
+}
+
+static void
 sysprof_kernel_symbol_resolver_class_init (SysprofKernelSymbolResolverClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+  object_class->finalize = sysprof_kernel_symbol_resolver_finalize;
+
   linux_quark = g_quark_from_static_string ("Kernel");
 }
 

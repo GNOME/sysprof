@@ -187,6 +187,7 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
 {
   g_autoptr(SysprofProfiler) profiler = NULL;
   g_autoptr(SysprofCaptureWriter) writer = NULL;
+  g_autoptr(SysprofSource) symbols_source = NULL;
 #ifdef __linux__
   g_autoptr(SysprofSource) proc_source = NULL;
 #endif
@@ -244,6 +245,10 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
   proc_source = sysprof_proc_source_new ();
   sysprof_profiler_add_source (profiler, proc_source);
 #endif
+
+  /* Always add symbol decoder to save to file immediately */
+  symbols_source = sysprof_symbols_source_new ();
+  sysprof_profiler_add_source (profiler, symbols_source);
 
   /* Now allow the aids to add their sources */
   gtk_container_foreach (GTK_CONTAINER (self->aid_flow_box),

@@ -35,6 +35,16 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofElfSymbolResolver, sysprof_elf_symbol_resolver, SYSPROF, ELF_SYMBOL_RESOLVER, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofSymbolResolver *sysprof_elf_symbol_resolver_new (void);
+SysprofSymbolResolver *sysprof_elf_symbol_resolver_new          (void);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean               sysprof_elf_symbol_resolver_resolve_full (SysprofElfSymbolResolver  *self,
+                                                                 guint64                    time,
+                                                                 GPid                       pid,
+                                                                 SysprofAddressContext      context,
+                                                                 SysprofCaptureAddress      address,
+                                                                 SysprofCaptureAddress     *begin,
+                                                                 SysprofCaptureAddress     *end,
+                                                                 gchar                    **name,
+                                                                 GQuark                    *tag);
 
 G_END_DECLS

@@ -259,33 +259,42 @@ guess_tag (SysprofElfSymbolResolver *self,
   return GPOINTER_TO_SIZE (g_hash_table_lookup (self->tag_cache, map->filename));
 }
 
-static gchar *
-sysprof_elf_symbol_resolver_resolve_with_context (SysprofSymbolResolver *resolver,
-                                                  guint64                time,
-                                                  GPid                   pid,
-                                                  SysprofAddressContext  context,
-                                                  SysprofCaptureAddress  address,
-                                                  GQuark                *tag)
+gboolean
+sysprof_elf_symbol_resolver_resolve_full (SysprofElfSymbolResolver *self,
+                                          guint64                   time,
+                                          GPid                      pid,
+                                          SysprofAddressContext     context,
+                                          SysprofCaptureAddress     address,
+                                          SysprofCaptureAddress    *begin,
+                                          SysprofCaptureAddress    *end,
+                                          gchar                   **name,
+                                          GQuark                   *tag)
 {
-  SysprofElfSymbolResolver *self = (SysprofElfSymbolResolver *)resolver;
-  const bin_symbol_t *bin_sym;
   SysprofMapLookaside *lookaside;
+  const bin_symbol_t *bin_sym;
   const gchar *bin_sym_name;
   const SysprofMap *map;
   bin_file_t *bin_file;
+  gulong ubegin;
+  gulong uend;
 
   g_assert (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self));
+  g_assert (name != NULL);
+  g_assert (begin != NULL);
+  g_assert (end != NULL);
+
+  *name = NULL;
 
   if (context != SYSPROF_ADDRESS_CONTEXT_USER)
-    return NULL;
+    return FALSE;
 
   lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (pid));
-  if (lookaside == NULL)
-    return NULL;
+  if G_UNLIKELY (lookaside == NULL)
+    return FALSE;
 
   map = sysprof_map_lookaside_lookup (lookaside, address);
-  if (map == NULL)
-    return NULL;
+  if G_UNLIKELY (map == NULL)
+    return FALSE;
 
   address -= map->start;
   address += map->offset;
@@ -294,16 +303,49 @@ sysprof_elf_symbol_resolver_resolve_with_context (SysprofSymbolResolver *resolve
 
   g_assert (bin_file != NULL);
 
-  if (map->inode && !bin_file_check_inode (bin_file, map->inode))
-    return g_strdup_printf ("%s: inode mismatch", map->filename);
+  if G_UNLIKELY (map->inode && !bin_file_check_inode (bin_file, map->inode))
+    {
+      *name = g_strdup_printf ("%s: inode mismatch", map->filename);
+      return TRUE;
+    }
 
   bin_sym = bin_file_lookup_symbol (bin_file, address);
   bin_sym_name = bin_symbol_get_name (bin_file, bin_sym);
 
-  if (map->filename)
+  if G_LIKELY (map->filename)
     *tag = guess_tag (self, map);
 
-  return elf_demangle (bin_sym_name);
+  *name = elf_demangle (bin_sym_name);
+  bin_symbol_get_address_range (bin_file, bin_sym, &ubegin, &uend);
+
+  *begin = ubegin;
+  *end = uend;
+
+  return TRUE;
+}
+
+static gchar *
+sysprof_elf_symbol_resolver_resolve_with_context (SysprofSymbolResolver *resolver,
+                                                  guint64                time,
+                                                  GPid                   pid,
+                                                  SysprofAddressContext  context,
+                                                  SysprofCaptureAddress  address,
+                                                  GQuark                *tag)
+{
+  gchar *name = NULL;
+  SysprofCaptureAddress begin, end;
+
+  sysprof_elf_symbol_resolver_resolve_full (SYSPROF_ELF_SYMBOL_RESOLVER (resolver),
+                                            time,
+                                            pid,
+                                            context,
+                                            address,
+                                            &begin,
+                                            &end,
+                                            &name,
+                                            tag);
+
+  return g_steal_pointer (&name);
 }
 
 static void

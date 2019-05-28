@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include "sysprof-elf-symbol-resolver.h"
+#include "sysprof-private.h"
 #include "sysprof-symbols-source.h"
 
 #include "sysprof-platform.h"
@@ -123,10 +124,12 @@ sysprof_symbols_source_supplement (SysprofSource        *source,
 {
   SysprofSymbolsSource *self = (SysprofSymbolsSource *)source;
   g_autoptr(SysprofSymbolResolver) native = NULL;
+  g_autoptr(SysprofKernelSymbols) kernel = NULL;
   g_autoptr(GByteArray) strings = NULL;
   g_autoptr(GHashTable) seen = NULL;
   g_autoptr(GSequence) symbols = NULL;
   SysprofCaptureFrameType type;
+  GQuark kquark;
   guint base;
   gint fd = -1;
 
@@ -137,6 +140,9 @@ sysprof_symbols_source_supplement (SysprofSource        *source,
   if (-1 == (fd = sysprof_memfd_create ("[sysprof-decode]")))
     return;
 
+  kquark = g_quark_from_static_string ("Kernel");
+
+  kernel = _sysprof_kernel_symbols_ref_shared ();
   strings = g_byte_array_new ();
   symbols = g_sequence_new ((GDestroyNotify) symbol_free);
   seen = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
@@ -161,6 +167,7 @@ sysprof_symbols_source_supplement (SysprofSource        *source,
       for (guint i = 0; i < sample->n_addrs; i++)
         {
           g_autofree gchar *str = NULL;
+          const SysprofKernelSymbol *ksym;
           SysprofCaptureAddress addr = sample->addrs[i];
           SysprofCaptureAddress begin, end;
           SysprofAddressContext context;
@@ -176,24 +183,33 @@ sysprof_symbols_source_supplement (SysprofSource        *source,
               continue;
             }
 
-          if (!sysprof_elf_symbol_resolver_resolve_full ((SysprofElfSymbolResolver *)native,
-                                                         sample->frame.time,
-                                                         sample->frame.pid,
-                                                         last_context,
-                                                         addr,
-                                                         &begin,
-                                                         &end,
-                                                         &str,
-                                                         &tag))
-            continue;
-
-          g_assert (str != NULL);
-
           sym.pid = sample->frame.pid;
           sym.begin = begin;
           sym.end = end;
           sym.offset = 0;
           sym.tag_offset = 0;
+
+          if ((ksym = _sysprof_kernel_symbols_lookup (kernel, addr)))
+            {
+              str = g_strdup (ksym->name);
+              begin = ksym->address;
+              tag = kquark;
+
+              /* The symols array always has a trailing node that is empty */
+              end = (ksym + 1)->address;
+            }
+          else if (!sysprof_elf_symbol_resolver_resolve_full ((SysprofElfSymbolResolver *)native,
+                                                              sample->frame.time,
+                                                              sample->frame.pid,
+                                                              last_context,
+                                                              addr,
+                                                              &begin,
+                                                              &end,
+                                                              &str,
+                                                              &tag))
+            continue;
+
+          g_assert (str != NULL);
 
           /* Lookup (but get us the next position on miss so we can insert
            * without a second lookup for the same position.

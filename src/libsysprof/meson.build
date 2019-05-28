@@ -19,6 +19,7 @@ libsysprof_public_sources = [
   'sysprof-source.c',
   'sysprof-symbol-dirs.c',
   'sysprof-symbol-resolver.c',
+  'sysprof-symbols-source.c',
   'sysprof-tracefd-source.c',
 ]
 
@@ -41,6 +42,7 @@ libsysprof_public_headers = [
   'sysprof-source.h',
   'sysprof-symbol-dirs.h',
   'sysprof-symbol-resolver.h',
+  'sysprof-symbols-source.h',
   'sysprof-tracefd-source.h',
   'sysprof.h',
 ]

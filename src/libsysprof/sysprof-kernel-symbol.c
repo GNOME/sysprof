@@ -111,6 +111,7 @@ do_shared_init (void)
 SysprofKernelSymbols *
 _sysprof_kernel_symbols_new_from_kallsyms (SysprofKallsyms *kallsyms)
 {
+  static const SysprofKernelSymbol empty = {0};
   SysprofKernelSymbols *self;
   const gchar *name;
   guint64 addr;
@@ -123,6 +124,7 @@ _sysprof_kernel_symbols_new_from_kallsyms (SysprofKallsyms *kallsyms)
   self = g_array_new (FALSE, FALSE, sizeof (SysprofKernelSymbol));
 
   G_LOCK (kernel_lock);
+
   while (sysprof_kallsyms_next (kallsyms, &name, &addr, &type))
     {
       if (!type_is_ignored (type))
@@ -135,9 +137,13 @@ _sysprof_kernel_symbols_new_from_kallsyms (SysprofKallsyms *kallsyms)
           g_array_append_val (self, sym);
         }
     }
-  G_UNLOCK (kernel_lock);
 
   g_array_sort (self, sysprof_kernel_symbol_compare);
+
+  /* Always add a trailing node */
+  g_array_append_val (self, empty);
+
+  G_UNLOCK (kernel_lock);
 
   return g_steal_pointer (&self);
 }
@@ -224,7 +230,8 @@ _sysprof_kernel_symbols_lookup (const SysprofKernelSymbols *self,
   ret = sysprof_kernel_symbol_lookup ((SysprofKernelSymbol *)(gpointer)self->data,
                                       address,
                                       0,
-                                      self->len - 1);
+                                      /* 1 for right-most, 1 for empty node */
+                                      self->len - 2);
 
   /* We resolve all symbols, including ignored symbols so that we
    * don't give back the wrong function juxtapose an ignored func.

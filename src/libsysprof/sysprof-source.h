@@ -134,6 +134,20 @@ struct _SysprofSourceInterface
                         GPtrArray           *argv);
 
   /**
+   * SysprofSource::supplement:
+   *
+   * The "supplement" vfunc is called when a source should attempt to add
+   * any additional data to the trace file based on existing data within
+   * the trace file. A #SysprofCaptureReader is provided to simplify this
+   * process for the vfunc. It should write to the writer provided in
+   * sysprof_source_set_writer().
+   *
+   * This function must finish synchronously.
+   */
+  void (*supplement) (SysprofSource        *self,
+                      SysprofCaptureReader *reader);
+
+  /**
    * SysprofSource::serialize:
    * @self: a #SysprofSource
    * @keyfile: a #GKeyFile
@@ -192,5 +206,8 @@ SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_deserialize   (SysprofSource        *self,
                                        GKeyFile             *keyfile,
                                        const gchar          *group);
+SYSPROF_AVAILABLE_IN_ALL
+void     sysprof_source_supplement    (SysprofSource        *self,
+                                       SysprofCaptureReader *reader);
 
 G_END_DECLS

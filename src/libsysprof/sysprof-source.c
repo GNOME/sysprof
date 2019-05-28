@@ -178,3 +178,14 @@ sysprof_source_deserialize (SysprofSource *self,
   if (SYSPROF_SOURCE_GET_IFACE (self)->deserialize)
     SYSPROF_SOURCE_GET_IFACE (self)->deserialize (self, keyfile, group);
 }
+
+void
+sysprof_source_supplement (SysprofSource        *self,
+                           SysprofCaptureReader *reader)
+{
+  g_return_if_fail (SYSPROF_IS_SOURCE (self));
+  g_return_if_fail (reader != NULL);
+
+  if (SYSPROF_SOURCE_GET_IFACE (self)->supplement)
+    SYSPROF_SOURCE_GET_IFACE (self)->supplement (self, reader);
+}

@@ -12,14 +12,12 @@ endif
 
 sysprof_cat = executable('sysprof-cat', 'sysprof-cat.c',
   dependencies: tools_deps,
-   install_dir: get_option('bindir'),
-       install: true,
+       install: false,
 )
 
 sysprof_dump = executable('sysprof-dump', 'sysprof-dump.c',
   dependencies: tools_deps,
-   install_dir: get_option('bindir'),
-       install: true,
+       install: false,
 )
 
 sysprof_profiler_ctl = executable('sysprof-profiler-ctl',

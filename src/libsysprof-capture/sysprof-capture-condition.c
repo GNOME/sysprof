@@ -45,6 +45,7 @@ typedef enum
   SYSPROF_CAPTURE_CONDITION_WHERE_TIME_BETWEEN,
   SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN,
   SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN,
+  SYSPROF_CAPTURE_CONDITION_WHERE_FILE,
 } SysprofCaptureConditionType;
 
 struct _SysprofCaptureCondition
@@ -63,12 +64,13 @@ struct _SysprofCaptureCondition
       SysprofCaptureCondition *left;
       SysprofCaptureCondition *right;
     } and, or;
+    gchar *where_file;
   } u;
 };
 
 gboolean
 sysprof_capture_condition_match (const SysprofCaptureCondition *self,
-                            const SysprofCaptureFrame     *frame)
+                                 const SysprofCaptureFrame     *frame)
 {
   g_assert (self != NULL);
   g_assert (frame != NULL);
@@ -143,6 +145,12 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
 
       return FALSE;
 
+    case SYSPROF_CAPTURE_CONDITION_WHERE_FILE:
+      if (frame->type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+        return FALSE;
+
+      return g_strcmp0 (((const SysprofCaptureFileChunk *)frame)->path, self->u.where_file) == 0;
+
     default:
       break;
     }
@@ -166,11 +174,6 @@ sysprof_capture_condition_init (void)
 SysprofCaptureCondition *
 sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
 {
-  SysprofCaptureCondition *copy;
-
-  copy = sysprof_capture_condition_init ();
-  copy->type = self->type;
-
   switch (self->type)
     {
     case SYSPROF_CAPTURE_CONDITION_AND:
@@ -189,7 +192,9 @@ sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
           (const SysprofCaptureFrameType *)(gpointer)self->u.where_type_in->data);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TIME_BETWEEN:
-      break;
+      return sysprof_capture_condition_new_where_time_between (
+        self->u.where_time_between.begin,
+        self->u.where_time_between.end);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN:
       return sysprof_capture_condition_new_where_pid_in (
@@ -201,12 +206,14 @@ sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
           self->u.where_counter_in->len,
           (const guint *)(gpointer)self->u.where_counter_in->data);
 
+    case SYSPROF_CAPTURE_CONDITION_WHERE_FILE:
+      return sysprof_capture_condition_new_where_file (self->u.where_file);
+
     default:
-      g_assert_not_reached ();
       break;
     }
 
-  return copy;
+  g_return_val_if_reached (NULL);
 }
 
 static void
@@ -237,6 +244,10 @@ sysprof_capture_condition_finalize (SysprofCaptureCondition *self)
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN:
       g_array_free (self->u.where_counter_in, TRUE);
+      break;
+
+    case SYSPROF_CAPTURE_CONDITION_WHERE_FILE:
+      g_free (self->u.where_file);
       break;
 
     default:
@@ -393,6 +404,29 @@ sysprof_capture_condition_new_or (SysprofCaptureCondition *left,
   self->type = SYSPROF_CAPTURE_CONDITION_OR;
   self->u.or.left = left;
   self->u.or.right = right;
+
+  return self;
+}
+
+/**
+ * sysprof_capture_condition_new_where_file:
+ * @path: a file path to lookup
+ *
+ * Creates a new condition that matches #SysprofCaptureFileChunk frames
+ * which contain the path @path.
+ *
+ * Returns: (transfer full): a new #SysprofCaptureCondition
+ */
+SysprofCaptureCondition *
+sysprof_capture_condition_new_where_file (const gchar *path)
+{
+  SysprofCaptureCondition *self;
+
+  g_return_val_if_fail (path != NULL, NULL);
+
+  self = sysprof_capture_condition_init ();
+  self->type = SYSPROF_CAPTURE_CONDITION_WHERE_FILE;
+  self->u.where_file = g_strdup (path);
 
   return self;
 }

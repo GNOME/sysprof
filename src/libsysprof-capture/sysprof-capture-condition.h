@@ -50,6 +50,8 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCondition *sysprof_capture_condition_new_where_counter_in   (guint                          n_counters,
                                                                            const guint                   *counters);
 SYSPROF_AVAILABLE_IN_ALL
+SysprofCaptureCondition *sysprof_capture_condition_new_where_file         (const gchar                   *path);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean                 sysprof_capture_condition_match                  (const SysprofCaptureCondition *self,
                                                                            const SysprofCaptureFrame     *frame);
 

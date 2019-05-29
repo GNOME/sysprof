@@ -103,7 +103,10 @@ sysprof_capture_symbol_resolver_load (SysprofSymbolResolver *resolver,
     return;
 
   if (sysprof_capture_reader_read_file_fd (reader, "__symbols__", fd))
-    sysprof_symbol_map_deserialize (self->map, byte_order, fd);
+    {
+      lseek (fd, 0, SEEK_SET);
+      sysprof_symbol_map_deserialize (self->map, byte_order, fd);
+    }
 
   close (fd);
 }

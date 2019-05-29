@@ -723,7 +723,6 @@ test_reader_writer_file (void)
   SysprofCaptureReader *reader;
   SysprofCaptureFrameType type;
   GError *error = NULL;
-  gssize len;
   gsize data_len;
   guint count = 0;
   gint fd;
@@ -731,19 +730,16 @@ test_reader_writer_file (void)
   gint r;
 
   writer = sysprof_capture_writer_new ("file1.syscap", 0);
-  fd = g_open ("/proc/kallsyms", O_RDONLY);
+  fd = g_open ("/proc/cpuinfo", O_RDONLY);
 
-  r = g_file_get_contents ("/proc/kallsyms", &data, &data_len, NULL);
+  r = g_file_get_contents ("/proc/cpuinfo", &data, &data_len, NULL);
   g_assert_true (r);
 
-  len = lseek (fd, SEEK_END, 0);
-  g_assert_cmpint (len, >, 0);
+  lseek (fd, 0L, SEEK_SET);
+  sysprof_capture_writer_add_file_fd (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, "/proc/cpuinfo", fd);
 
-  lseek (fd, SEEK_SET, 0);
-  sysprof_capture_writer_add_file_fd (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, "/proc/kallsyms", fd);
-
-  lseek (fd, SEEK_SET, 0);
-  sysprof_capture_writer_add_file_fd (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, "/proc/kallsyms", fd);
+  lseek (fd, 0L, SEEK_SET);
+  sysprof_capture_writer_add_file_fd (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, "/proc/cpuinfo", fd);
 
   close (fd);
 
@@ -763,7 +759,7 @@ test_reader_writer_file (void)
 
       file = sysprof_capture_reader_read_file (reader);
       g_assert_nonnull (file);
-      g_assert_cmpstr (file->path, ==, "/proc/kallsyms");
+      g_assert_cmpstr (file->path, ==, "/proc/cpuinfo");
 
       if (count == 0)
         g_byte_array_append (buf, file->data, file->len);
@@ -779,14 +775,14 @@ test_reader_writer_file (void)
   sysprof_capture_reader_reset (reader);
   files = sysprof_capture_reader_list_files (reader);
   g_assert_nonnull (files);
-  g_assert_cmpstr (files[0], ==, "/proc/kallsyms");
+  g_assert_cmpstr (files[0], ==, "/proc/cpuinfo");
   g_assert_null (files[1]);
 
   sysprof_capture_reader_reset (reader);
   new_fd = sysprof_memfd_create ("[sysprof-capture-file]");
   g_assert_cmpint (new_fd, !=, -1);
 
-  r = sysprof_capture_reader_read_file_fd (reader, "/proc/kallsyms", new_fd);
+  r = sysprof_capture_reader_read_file_fd (reader, "/proc/cpuinfo", new_fd);
   g_assert_true (r);
 
   close (new_fd);

@@ -37,7 +37,7 @@ resolve_in_thread (gpointer data)
 
   /* Reset some state */
   sysprof_capture_reader_reset (reader);
-  lseek (fd, SEEK_SET, 0);
+  lseek (fd, 0, SEEK_SET);
 
   /* Now desrialize it */
   map = sysprof_symbol_map_new ();

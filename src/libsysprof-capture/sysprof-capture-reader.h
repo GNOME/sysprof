@@ -100,6 +100,9 @@ SYSPROF_AVAILABLE_IN_ALL
 void                                    sysprof_capture_reader_set_stat            (SysprofCaptureReader     *self,
                                                                                     const SysprofCaptureStat *st_buf);
 SYSPROF_AVAILABLE_IN_ALL
+const SysprofCaptureFileChunk          *sysprof_capture_reader_find_file           (SysprofCaptureReader     *self,
+                                                                                    const gchar              *path);
+SYSPROF_AVAILABLE_IN_ALL
 gchar                                 **sysprof_capture_reader_list_files          (SysprofCaptureReader     *self);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean                                sysprof_capture_reader_read_file_fd        (SysprofCaptureReader     *self,

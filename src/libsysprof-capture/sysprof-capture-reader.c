@@ -1285,3 +1285,34 @@ sysprof_capture_reader_get_byte_order (SysprofCaptureReader *self)
 
   return self->endian;
 }
+
+const SysprofCaptureFileChunk *
+sysprof_capture_reader_find_file (SysprofCaptureReader *self,
+                                  const gchar          *path)
+{
+  SysprofCaptureFrameType type;
+
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (path != NULL, NULL);
+
+  while (sysprof_capture_reader_peek_type (self, &type))
+    {
+      if (type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+        {
+          const SysprofCaptureFileChunk *fc;
+
+          if (!(fc = sysprof_capture_reader_read_file (self)))
+            break;
+
+          if (g_strcmp0 (path, fc->path) == 0)
+            return fc;
+
+          continue;
+        }
+
+      if (!sysprof_capture_reader_skip (self))
+        break;
+    }
+
+  return NULL;
+}

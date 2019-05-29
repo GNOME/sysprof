@@ -24,6 +24,7 @@
 
 #include "sysprof-elf-symbol-resolver.h"
 #include "sysprof-private.h"
+#include "sysprof-symbol-map.h"
 #include "sysprof-symbols-source.h"
 
 #include "sysprof-platform.h"
@@ -75,63 +76,15 @@ sysprof_symbols_source_set_writer (SysprofSource        *source,
   self->writer = sysprof_capture_writer_ref (writer);
 }
 
-SYSPROF_ALIGNED_BEGIN(1)
-typedef struct
-{
-  SysprofCaptureAddress  begin;
-  SysprofCaptureAddress  end;
-  guint32                pid;
-  guint32                offset;
-  guint32                tag_offset;
-  guint32                padding;
-} Symbol
-SYSPROF_ALIGNED_END(1);
-
-G_STATIC_ASSERT (sizeof (Symbol) == 32);
-
-static void
-symbol_free (Symbol *sym)
-{
-  g_slice_free (Symbol, sym);
-}
-
-static gint
-symbol_compare (gconstpointer          a,
-                gconstpointer          b,
-                G_GNUC_UNUSED gpointer unused)
-{
-  const Symbol *aa = a;
-  const Symbol *bb = b;
-
-  if (aa->pid < bb->pid)
-    return -1;
-
-  if (aa->pid > bb->pid)
-    return 1;
-
-  if (aa->begin < bb->begin)
-    return -1;
-
-  if (aa->begin > bb->begin)
-    return -1;
-
-  return 0;
-}
-
 static void
 sysprof_symbols_source_supplement (SysprofSource        *source,
                                    SysprofCaptureReader *reader)
 {
   SysprofSymbolsSource *self = (SysprofSymbolsSource *)source;
   g_autoptr(SysprofSymbolResolver) native = NULL;
-  g_autoptr(SysprofKernelSymbols) kernel = NULL;
-  g_autoptr(GByteArray) strings = NULL;
-  g_autoptr(GHashTable) seen = NULL;
-  g_autoptr(GSequence) symbols = NULL;
-  SysprofCaptureFrameType type;
-  GQuark kquark;
-  guint base;
-  gint fd = -1;
+  g_autoptr(SysprofSymbolResolver) kernel = NULL;
+  SysprofSymbolMap *map;
+  gint fd;
 
   g_assert (SYSPROF_IS_SYMBOLS_SOURCE (self));
   g_assert (reader != NULL);
@@ -140,143 +93,15 @@ sysprof_symbols_source_supplement (SysprofSource        *source,
   if (-1 == (fd = sysprof_memfd_create ("[sysprof-decode]")))
     return;
 
-  kquark = g_quark_from_static_string ("Kernel");
-
-  kernel = _sysprof_kernel_symbols_ref_shared ();
-  strings = g_byte_array_new ();
-  symbols = g_sequence_new ((GDestroyNotify) symbol_free);
-  seen = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-
+  kernel = sysprof_kernel_symbol_resolver_new ();
   native = sysprof_elf_symbol_resolver_new ();
-  sysprof_symbol_resolver_load (native, reader);
-  sysprof_capture_reader_reset (reader);
 
-  while (sysprof_capture_reader_peek_type (reader, &type))
-    {
-      SysprofAddressContext last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
-      const SysprofCaptureSample *sample;
-
-      if (type != SYSPROF_CAPTURE_FRAME_SAMPLE)
-        {
-          sysprof_capture_reader_skip (reader);
-          continue;
-        }
-
-      sample = sysprof_capture_reader_read_sample (reader);
-
-      for (guint i = 0; i < sample->n_addrs; i++)
-        {
-          g_autofree gchar *str = NULL;
-          const SysprofKernelSymbol *ksym;
-          SysprofCaptureAddress addr = sample->addrs[i];
-          SysprofCaptureAddress begin, end;
-          SysprofAddressContext context;
-          GSequenceIter *iter;
-          const gchar *qstr;
-          Symbol sym;
-          GQuark tag = 0;
-          gpointer poff;
-
-          if (sysprof_address_is_context_switch (addr, &context))
-            {
-              last_context = context;
-              continue;
-            }
-
-          sym.pid = sample->frame.pid;
-          sym.begin = begin;
-          sym.end = end;
-          sym.offset = 0;
-          sym.tag_offset = 0;
-
-          if ((ksym = _sysprof_kernel_symbols_lookup (kernel, addr)))
-            {
-              str = g_strdup (ksym->name);
-              begin = ksym->address;
-              tag = kquark;
-
-              /* The symols array always has a trailing node that is empty */
-              end = (ksym + 1)->address;
-            }
-          else if (!sysprof_elf_symbol_resolver_resolve_full ((SysprofElfSymbolResolver *)native,
-                                                              sample->frame.time,
-                                                              sample->frame.pid,
-                                                              last_context,
-                                                              addr,
-                                                              &begin,
-                                                              &end,
-                                                              &str,
-                                                              &tag))
-            continue;
-
-          g_assert (str != NULL);
-
-          /* Lookup (but get us the next position on miss so we can insert
-           * without a second lookup for the same position.
-           */
-          iter = g_sequence_search (symbols, &sym, symbol_compare, NULL);
-
-          /* Skip if we found it */
-          if (!g_sequence_iter_is_end (iter) &&
-              symbol_compare (&sym, g_sequence_get (iter), NULL) == 0)
-            continue;
-
-          /* Add the string if we haven't seen it */
-          if (!g_hash_table_lookup_extended (seen, str, NULL, &poff))
-            {
-              sym.offset = strings->len;
-              g_byte_array_append (strings, (guint8 *)str, strlen (str) + 1);
-              g_hash_table_insert (seen, g_steal_pointer (&str), GUINT_TO_POINTER (sym.offset));
-            }
-          else
-            {
-              sym.offset = GPOINTER_TO_UINT (poff);
-            }
-
-          /* And the tag */
-          if (tag != 0 &&
-              (qstr = g_quark_to_string (tag)) &&
-              !g_hash_table_lookup_extended (seen, qstr, NULL, &poff))
-            {
-              sym.tag_offset = strings->len;
-              g_byte_array_append (strings, (guint8 *)qstr, strlen (qstr) + 1);
-              g_hash_table_insert (seen, g_strdup (qstr), GUINT_TO_POINTER (sym.tag_offset));
-            }
-          else
-            {
-              sym.tag_offset = GPOINTER_TO_UINT (poff);
-            }
-
-          g_sequence_insert_before (iter, g_slice_dup (Symbol, &sym));
-        }
-    }
-
-  g_debug ("Writing supplemental %d symbols with %u bytes of strings",
-           g_sequence_get_length (symbols),
-           strings->len);
-
-  base = (g_sequence_get_length (symbols) + 1) * sizeof (Symbol);
-
-  for (GSequenceIter *iter = g_sequence_get_begin_iter (symbols);
-       !g_sequence_iter_is_end (iter);
-       iter = g_sequence_iter_next (iter))
-    {
-      Symbol *sym = g_sequence_get (iter);
-
-      sym->offset += base;
-      sym->tag_offset += base;
-
-      write (fd, sym, sizeof *sym);
-    }
-
-  /* Write tailing empty symbol */
-    {
-      static const Symbol zero = {0};
-      write (fd, &zero, sizeof zero);
-    }
-
-  write (fd, strings->data, strings->len);
-  lseek (fd, 0, SEEK_SET);
+  map = sysprof_symbol_map_new ();
+  sysprof_symbol_map_add_resolver (map, kernel);
+  sysprof_symbol_map_add_resolver (map, native);
+  sysprof_symbol_map_resolve (map, reader);
+  sysprof_symbol_map_serialize (map, fd);
+  sysprof_symbol_map_free (map);
 
   sysprof_capture_writer_add_file_fd (self->writer,
                                       SYSPROF_CAPTURE_CURRENT_TIME,

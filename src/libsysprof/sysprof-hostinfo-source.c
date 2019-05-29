@@ -220,7 +220,7 @@ get_cpu_freq (SysprofHostinfoSource *self,
       gchar buf[128];
       gssize len;
 
-      lseek (freq->stat_fd, SEEK_SET, 0);
+      lseek (freq->stat_fd, 0, SEEK_SET);
       len = read (freq->stat_fd, buf, sizeof buf - 1);
 
       if (len > 0 && len < sizeof buf)

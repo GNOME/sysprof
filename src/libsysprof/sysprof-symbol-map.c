@@ -451,6 +451,8 @@ sysprof_symbol_map_serialize (SysprofSymbolMap *self,
   g_string_chunk_clear (self->chunk);
   g_hash_table_remove_all (self->lookasides);
 
+  lseek (fd, 0L, SEEK_SET);
+
   return TRUE;
 }
 

@@ -172,6 +172,12 @@ guess_tag (SysprofElfSymbolResolver *self,
       if (strstr (map->filename, "/libgobject-2.0."))
         tag = g_quark_from_static_string ("GObject");
 
+      else if (strstr (map->filename, "/libc.so.6"))
+        tag = g_quark_from_static_string ("libc");
+
+      else if (strstr (map->filename, "/libstdc++.so.6"))
+        tag = g_quark_from_static_string ("stdc++");
+
       else if (strstr (map->filename, "/libglib-2.0."))
         tag = g_quark_from_static_string ("GLib");
 

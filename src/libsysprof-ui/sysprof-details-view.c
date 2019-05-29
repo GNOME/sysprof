@@ -18,12 +18,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
+
 #define G_LOG_DOMAIN "sysprof-details-view"
 
 #include "config.h"
 
 #include <dazzle.h>
 #include <glib/gi18n.h>
+#include <string.h>
 
 #include "sysprof-details-view.h"
 #include "sysprof-ui-private.h"
@@ -46,6 +51,7 @@ struct _SysprofDetailsView
   GtkLabel     *processes;
   GtkLabel     *samples;
   GtkLabel     *start_time;
+  GtkLabel     *cpu_label;
 
   guint         next_row;
 };
@@ -91,6 +97,7 @@ sysprof_details_view_class_init (SysprofDetailsViewClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-details-view.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, counters);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, cpu_label);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, duration);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, filename);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsView, forks);
@@ -122,6 +129,85 @@ sysprof_details_view_new (void)
   return g_object_new (SYSPROF_TYPE_DETAILS_VIEW, NULL);
 }
 
+static void
+update_cpu_info_cb (GObject      *object,
+                    GAsyncResult *result,
+                    gpointer      user_data)
+{
+  g_autoptr(SysprofDetailsView) self = user_data;
+  g_autofree gchar *str = NULL;
+
+  g_assert (SYSPROF_IS_DETAILS_VIEW (self));
+  g_assert (G_IS_TASK (result));
+
+  if ((str = g_task_propagate_pointer (G_TASK (result), NULL)))
+    gtk_label_set_label (self->cpu_label, str);
+}
+
+static gboolean
+cpu_info_cb (const SysprofCaptureFrame *frame,
+             gpointer                   user_data)
+{
+  const SysprofCaptureFileChunk *fc = (gpointer)frame;
+  const gchar *endptr;
+  const gchar *line;
+  gchar **str = user_data;
+
+  endptr = (gchar *)fc->data + fc->len;
+  line = memmem ((gchar *)fc->data, fc->len, "model name", 10);
+  endptr = memchr (line, '\n', endptr - line);
+
+  if (endptr)
+    {
+      gchar *tmp = *str = g_strndup (line, endptr - line);
+      for (; *tmp && *tmp != ':'; tmp++)
+        *tmp = ' ';
+      if (*tmp == ':')
+        *tmp = ' ';
+      g_strstrip (*str);
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+static void
+sysprof_details_view_update_cpu_info_worker (GTask        *task,
+                                             gpointer      source_object,
+                                             gpointer      task_data,
+                                             GCancellable *cancellable)
+{
+  SysprofCaptureCursor *cursor = task_data;
+  gchar *str = NULL;
+
+  g_assert (G_IS_TASK (task));
+  g_assert (cursor != NULL);
+
+  sysprof_capture_cursor_foreach (cursor, cpu_info_cb, &str);
+  g_task_return_pointer (task, g_steal_pointer (&str), g_free);
+}
+
+static void
+sysprof_details_view_update_cpu_info (SysprofDetailsView   *self,
+                                      SysprofCaptureReader *reader)
+{
+  g_autoptr(SysprofCaptureCursor) cursor = NULL;
+  g_autoptr(GTask) task = NULL;
+
+  g_assert (SYSPROF_IS_DETAILS_VIEW (self));
+  g_assert (reader != NULL);
+
+  cursor = sysprof_capture_cursor_new (reader);
+  sysprof_capture_cursor_add_condition (cursor,
+                                        sysprof_capture_condition_new_where_file ("/proc/cpuinfo"));
+
+  task = g_task_new (NULL, NULL, update_cpu_info_cb, g_object_ref (self));
+  g_task_set_task_data (task,
+                        g_steal_pointer (&cursor),
+                        (GDestroyNotify) sysprof_capture_cursor_unref);
+  g_task_run_in_thread (task, sysprof_details_view_update_cpu_info_worker);
+}
+
 void
 sysprof_details_view_set_reader (SysprofDetailsView   *self,
                                  SysprofCaptureReader *reader)
@@ -136,6 +222,8 @@ sysprof_details_view_set_reader (SysprofDetailsView   *self,
 
   g_return_if_fail (SYSPROF_IS_DETAILS_VIEW (self));
   g_return_if_fail (reader != NULL);
+
+  sysprof_details_view_update_cpu_info (self, reader);
 
   if (!(filename = sysprof_capture_reader_get_filename (reader)))
     filename = _("Memory Capture");

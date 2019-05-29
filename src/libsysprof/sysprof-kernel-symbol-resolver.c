@@ -82,6 +82,14 @@ sysprof_kernel_symbol_resolver_load (SysprofSymbolResolver *resolver,
   g_assert (SYSPROF_IS_KERNEL_SYMBOL_RESOLVER (self));
   g_assert (reader != NULL);
 
+  /* If there is an embedded __symbols__ file, then we won't do anything
+   * because we want to use the symbols from the peer.
+   */
+  if (sysprof_capture_reader_find_file (reader, "__symbols__"))
+    return;
+
+  sysprof_capture_reader_reset (reader);
+
   if (-1 == (data_fd = sysprof_memfd_create ("[sysprof-kallsyms]")) ||
       !sysprof_capture_reader_read_file_fd (reader, "/proc/kallsyms", data_fd))
     {

@@ -174,6 +174,9 @@ sysprof_kernel_symbol_lookup (SysprofKernelSymbol   *symbols,
                               guint                  first,
                               guint                  last)
 {
+  if (symbols == NULL)
+    return NULL;
+
   if (address >= symbols [last].address)
     {
       return &symbols [last];

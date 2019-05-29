@@ -26,8 +26,10 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_CAPTURE_SYMBOL_RESOLVER (sysprof_capture_symbol_resolver_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofCaptureSymbolResolver, sysprof_capture_symbol_resolver, SYSPROF, CAPTURE_SYMBOL_RESOLVER, GObject)
 
+SYSPROF_AVAILABLE_IN_ALL
 SysprofSymbolResolver *sysprof_capture_symbol_resolver_new (void);
 
 G_END_DECLS

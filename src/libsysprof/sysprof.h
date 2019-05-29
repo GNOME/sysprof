@@ -26,6 +26,7 @@ G_BEGIN_DECLS
 
 # include "sysprof-callgraph-profile.h"
 # include "sysprof-capture-gobject.h"
+# include "sysprof-capture-symbol-resolver.h"
 # include "sysprof-elf-symbol-resolver.h"
 # include "sysprof-jitmap-symbol-resolver.h"
 # include "sysprof-kernel-symbol-resolver.h"

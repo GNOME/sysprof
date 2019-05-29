@@ -47,6 +47,7 @@
 
 #include "sysprof-callgraph-profile.h"
 #include "sysprof-capture-reader.h"
+#include "sysprof-capture-symbol-resolver.h"
 #include "sysprof-elf-symbol-resolver.h"
 #include "sysprof-jitmap-symbol-resolver.h"
 #include "sysprof-kernel-symbol-resolver.h"
@@ -248,6 +249,7 @@ sysprof_callgraph_profile_generate_worker (GTask        *task,
   resolved_stash = stack_stash_new (NULL);
 
   resolvers = g_ptr_array_new_with_free_func (g_object_unref);
+  g_ptr_array_add (resolvers, sysprof_capture_symbol_resolver_new ());
   g_ptr_array_add (resolvers, sysprof_kernel_symbol_resolver_new ());
   g_ptr_array_add (resolvers, sysprof_elf_symbol_resolver_new ());
   g_ptr_array_add (resolvers, sysprof_jitmap_symbol_resolver_new ());

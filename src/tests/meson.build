@@ -23,6 +23,11 @@ test_addr_map = executable('test-addr-map',
   dependencies: test_deps,
 )
 
+test_addr_decode = executable('test-addr-decode', 'test-addr-decode.c',
+        c_args: test_cflags,
+  dependencies: test_deps,
+)
+
 test_capture = executable('test-capture', 'test-capture.c',
         c_args: test_cflags,
   dependencies: test_deps,

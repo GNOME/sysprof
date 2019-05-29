@@ -3,6 +3,7 @@ libsysprof_c_args = [ '-DSYSPROF_COMPILATION' ]
 libsysprof_public_sources = [
   'sysprof-callgraph-profile.c',
   'sysprof-capture-gobject.c',
+  'sysprof-capture-symbol-resolver.c',
   'sysprof-elf-symbol-resolver.c',
   'sysprof-hostinfo-source.c',
   'sysprof-jitmap-symbol-resolver.c',
@@ -25,6 +26,7 @@ libsysprof_public_sources = [
 libsysprof_public_headers = [
   'sysprof-callgraph-profile.h',
   'sysprof-capture-gobject.h',
+  'sysprof-capture-symbol-resolver.h',
   'sysprof-elf-symbol-resolver.h',
   'sysprof-hostinfo-source.h',
   'sysprof-jitmap-symbol-resolver.h',

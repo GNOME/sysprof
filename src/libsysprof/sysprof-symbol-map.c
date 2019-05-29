@@ -144,6 +144,10 @@ sysprof_symbol_map_free (SysprofSymbolMap *self)
   g_clear_pointer (&self->chunk, g_string_chunk_free);
   g_clear_pointer (&self->samples, g_ptr_array_unref);
   g_clear_pointer (&self->mapped, g_mapped_file_unref);
+  self->beginptr = NULL;
+  self->endptr = NULL;
+  self->symbols = NULL;
+  self->n_symbols = 0;
   g_slice_free (SysprofSymbolMap, self);
 }
 
@@ -461,6 +465,7 @@ sysprof_symbol_map_deserialize (SysprofSymbolMap *self,
                                 gint              byte_order,
                                 gint              fd)
 {
+  g_autoptr(GError) error = NULL;
   gboolean needs_swap = byte_order != G_BYTE_ORDER;
   gchar *beginptr;
   gchar *endptr;
@@ -468,8 +473,11 @@ sysprof_symbol_map_deserialize (SysprofSymbolMap *self,
   g_return_val_if_fail (self != NULL, FALSE);
   g_return_val_if_fail (self->mapped == NULL, FALSE);
 
-  if (!(self->mapped = g_mapped_file_new_from_fd (fd, TRUE, NULL)))
-    return FALSE;
+  if (!(self->mapped = g_mapped_file_new_from_fd (fd, TRUE, &error)))
+    {
+      g_warning ("Failed to map file: %s\n", error->message);
+      return FALSE;
+    }
 
   beginptr = g_mapped_file_get_contents (self->mapped);
   endptr = beginptr + g_mapped_file_get_length (self->mapped);
@@ -500,7 +508,7 @@ sysprof_symbol_map_deserialize (SysprofSymbolMap *self,
 
 #if 0
       g_print ("Added pid=%d  begin=%p  end=%p\n",
-               sym->pid, (gpointer)sym->begin, (gpointer)sym->end);
+               sym->pid, (gpointer)sym->addr_begin, (gpointer)sym->addr_end);
 #endif
     }
 

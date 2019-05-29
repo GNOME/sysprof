@@ -92,6 +92,7 @@ sysprof_cell_renderer_percent_class_init (SysprofCellRendererPercentClass *klass
                          0.0,
                          100.0,
                          0.0,
+                         /* Doesn't notify to avoid signal emission */
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
@@ -118,25 +119,19 @@ sysprof_cell_renderer_percent_set_percent (SysprofCellRendererPercent *self,
                                            gdouble                     percent)
 {
   SysprofCellRendererPercentPrivate *priv = sysprof_cell_renderer_percent_get_instance_private (self);
+  gchar text[8];
 
   g_return_if_fail (SYSPROF_IS_CELL_RENDERER_PERCENT (self));
   g_return_if_fail (percent >= 0.0);
   g_return_if_fail (percent <= 100.0);
 
-  if (percent != priv->percent)
-    {
-      gchar text[8];
+  priv->percent = percent;
 
-      priv->percent = percent;
+  g_snprintf (text, sizeof text, "%.2lf%%", percent);
+  text [sizeof text - 1] = '\0';
 
-      g_snprintf (text, sizeof text, "%.2lf%%", percent);
-      text [sizeof text - 1] = '\0';
-
-      g_object_set (self,
-                    "value", (guint)percent,
-                    "text", text,
-                    NULL);
-
-      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_PERCENT]);
-    }
+  g_object_set (self,
+                "value", (guint)percent,
+                "text", text,
+                NULL);
 }

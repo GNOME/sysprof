@@ -62,6 +62,7 @@ profiler_failed (SysprofProfiler *profiler_,
 
   g_printerr ("Failure: %s\n", reason->message);
   exit_code = EXIT_FAILURE;
+  g_main_loop_quit (main_loop_);
 }
 
 gint

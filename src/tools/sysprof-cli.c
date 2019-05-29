@@ -80,6 +80,7 @@ main (gint   argc,
   gboolean gjs = FALSE;
   gboolean no_memory = FALSE;
   gboolean no_cpu = FALSE;
+  gboolean no_decode = FALSE;
   gboolean version = FALSE;
   gboolean force = FALSE;
   gboolean use_trace_fd = FALSE;
@@ -91,6 +92,7 @@ main (gint   argc,
     { "command", 'c', 0, G_OPTION_ARG_STRING, &command, N_("Run a command and profile the process"), N_("COMMAND") },
     { "force", 'f', 0, G_OPTION_ARG_NONE, &force, N_("Force overwrite the capture file") },
     { "no-cpu", 0, 0, G_OPTION_ARG_NONE, &no_cpu, N_("Disable recording of CPU statistics") },
+    { "no-decode", 0, 0, G_OPTION_ARG_NONE, &no_decode, N_("Do not append symbol name information from local machine") },
     { "no-memory", 0, 0, G_OPTION_ARG_NONE, &no_memory, N_("Disable recording of memory statistics") },
     { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
     { "gjs", 0, 0, G_OPTION_ARG_NONE, &gjs, N_("Set GJS_TRACE_FD environment to trace GJS processes") },
@@ -231,6 +233,16 @@ main (gint   argc,
   source = sysprof_perf_source_new ();
   sysprof_profiler_add_source (profiler, source);
   g_object_unref (source);
+
+  if (!no_decode)
+    {
+      /* Add __symbols__ rollup after recording to avoid loading
+       * symbols from the maching viewing the capture.
+       */
+      source = sysprof_symbols_source_new ();
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
 
   if (!no_cpu)
     {

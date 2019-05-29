@@ -222,7 +222,7 @@ _sysprof_kernel_symbols_lookup (const SysprofKernelSymbols *self,
 
   g_assert (self != NULL);
 
-  if (self->len == 0)
+  if (self->len < 2)
     return NULL;
 
   /* Short circuit if this is out of range */

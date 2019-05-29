@@ -61,7 +61,7 @@ main (gint argc,
                   g_print ("%u: %s [%s]\n",
                            i,
                            name ? name : "-- missing --",
-                           tag ? g_quark_to_string (tag) : "");
+                           tag ? g_quark_to_string (tag) : "No Tag");
                 }
 
               g_print ("======\n");

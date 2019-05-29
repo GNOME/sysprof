@@ -205,11 +205,14 @@ sysprof_symbol_map_lookup (SysprofSymbolMap      *self,
                  sizeof *ret,
                  search_for_symbol_cb);
 
-  if (ret == NULL)
+  if (ret == NULL || ret->offset == 0)
     return NULL;
 
-  if (tag != NULL && ret->tag_offset < (self->endptr - self->beginptr))
-    *tag = g_quark_from_string (&self->beginptr[ret->tag_offset]);
+  if (tag != NULL && ret->tag_offset > 0)
+    {
+      if (ret->tag_offset < (self->endptr - self->beginptr))
+        *tag = g_quark_from_string (&self->beginptr[ret->tag_offset]);
+    }
 
   if (ret->offset < (self->endptr - self->beginptr))
     return &self->beginptr[ret->offset];
@@ -350,6 +353,9 @@ get_string_offset (GByteArray  *ar,
 {
   gpointer ret;
 
+  if (str == NULL)
+    return 0;
+
   if G_UNLIKELY (!g_hash_table_lookup_extended (seen, str, NULL, &ret))
     {
       ret = GUINT_TO_POINTER (ar->len);
@@ -386,19 +392,6 @@ sysprof_symbol_map_serialize (SysprofSymbolMap *self,
   for (guint i = 0; i < self->samples->len; i++)
     {
       Element *ele = g_ptr_array_index (self->samples, i);
-
-      if (!g_hash_table_contains (seen, ele->name))
-        {
-          const gchar *str = ele->name;
-          gpointer ptr = GUINT_TO_POINTER (ar->len);
-          g_byte_array_append (ar, (guint8 *)str, strlen (str) + 1);
-          g_hash_table_insert (seen, (gpointer)str, ptr);
-        }
-    }
-
-  for (guint i = 0; i < self->samples->len; i++)
-    {
-      Element *ele = g_ptr_array_index (self->samples, i);
       Decoded dec;
 
       if (begin == 0)
@@ -418,8 +411,15 @@ sysprof_symbol_map_serialize (SysprofSymbolMap *self,
       dec.pid = ele->pid;
       dec.offset = get_string_offset (ar, seen, ele->name);
 
+      g_assert (!dec.offset || g_strcmp0 (ele->name, (gchar *)&ar->data[dec.offset]) == 0);
+
       if (ele->tag)
-        dec.tag_offset = get_string_offset (ar, seen, g_quark_to_string (ele->tag));
+        {
+          const gchar *tagstr = g_quark_to_string (ele->tag);
+
+          dec.tag_offset = get_string_offset (ar, seen, tagstr);
+          g_assert (g_strcmp0 (tagstr, (gchar *)&ar->data[dec.tag_offset]) == 0);
+        }
       else
         dec.tag_offset = 0;
 
@@ -428,16 +428,16 @@ sysprof_symbol_map_serialize (SysprofSymbolMap *self,
       begin = 0;
     }
 
-  offset = sizeof empty * decoded->len;
+  offset = sizeof (Decoded) * (gsize)decoded->len;
 
   for (guint i = 0; i < decoded->len; i++)
     {
       Decoded *dec = &g_array_index (decoded, Decoded, i);
 
-      if (dec->offset)
+      if (dec->offset > 0)
         dec->offset += offset;
 
-      if (dec->tag_offset)
+      if (dec->tag_offset > 0)
         dec->tag_offset += offset;
     }
 
@@ -481,6 +481,10 @@ sysprof_symbol_map_deserialize (SysprofSymbolMap *self,
 
   beginptr = g_mapped_file_get_contents (self->mapped);
   endptr = beginptr + g_mapped_file_get_length (self->mapped);
+
+  /* Ensure trialing \0 */
+  if (endptr > beginptr)
+    *(endptr - 1) = 0;
 
   for (gchar *ptr = beginptr;
        ptr < endptr && (ptr + sizeof (Decoded)) < endptr;

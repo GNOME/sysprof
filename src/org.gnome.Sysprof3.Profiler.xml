@@ -3,6 +3,17 @@
 <node>
   <interface name="org.gnome.Sysprof3.Profiler">
     <!--
+      Capabilities:
+
+      The "Capabilities" property contains an a{sv} of capabilities
+      the profiler supports. This is implementation specific and allows
+      for peers to configure the profiler when calling Start() based on
+      what the profiler supports.
+
+      The contents of Capabilities are implementation specific.
+    -->
+    <property name="Capabilities" type="a{sv}" access="read"/>
+    <!--
       Start:
       @options: an a{sv} of implementation specific options
       @fd: a file-descriptor for the profiler to write to
@@ -14,6 +25,8 @@
 
       It is also suggested that implementations disable profiling if
       they lose the peer connection.
+
+      The contents of @options are implementation specific.
     -->
     <method name="Start">
       <arg type="a{sv}" name="options" direction="in"/>

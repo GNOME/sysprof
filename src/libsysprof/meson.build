@@ -53,6 +53,7 @@ libsysprof_private_sources = [
   'sysprof-kallsyms.c',
   'sysprof-line-reader.c',
   'sysprof-map-lookaside.c',
+  'sysprof-symbol-map.c',
   ipc_service_src,
   stackstash_sources,
   helpers_sources,

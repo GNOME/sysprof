@@ -12,7 +12,16 @@ test_deps = [
 
 test_cflags = [
   '-DTEST_DATA_DIR="@0@/data/"'.format(meson.current_source_dir()),
+  '-DSYSPROF_COMPILATION=1',
 ]
+
+test_addr_map = executable('test-addr-map',
+  ['test-addr-map.c',
+   '../libsysprof/sysprof-map-lookaside.c',
+   '../libsysprof/sysprof-symbol-map.c'],
+        c_args: test_cflags,
+  dependencies: test_deps,
+)
 
 test_capture = executable('test-capture', 'test-capture.c',
         c_args: test_cflags,

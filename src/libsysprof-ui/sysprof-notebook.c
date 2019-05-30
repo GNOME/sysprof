@@ -27,10 +27,16 @@
 #include "sysprof-tab.h"
 #include "sysprof-ui-private.h"
 
-G_DEFINE_TYPE (SysprofNotebook, sysprof_notebook, GTK_TYPE_NOTEBOOK)
+typedef struct
+{
+  guint always_show_tabs : 1;
+} SysprofNotebookPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofNotebook, sysprof_notebook, GTK_TYPE_NOTEBOOK)
 
 enum {
   PROP_0,
+  PROP_ALWAYS_SHOW_TABS,
   PROP_CAN_REPLAY,
   PROP_CAN_SAVE,
   PROP_CURRENT,
@@ -81,11 +87,15 @@ sysprof_notebook_page_added (GtkNotebook *notebook,
                              GtkWidget   *child,
                              guint        page_num)
 {
-  g_assert (SYSPROF_IS_NOTEBOOK (notebook));
+  SysprofNotebook *self = (SysprofNotebook *)notebook;
+  SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_NOTEBOOK (self));
   g_assert (GTK_IS_WIDGET (child));
 
   gtk_notebook_set_show_tabs (notebook,
-                              gtk_notebook_get_n_pages (notebook) > 1);
+                              (priv->always_show_tabs ||
+                               gtk_notebook_get_n_pages (notebook) > 1));
 
   if (SYSPROF_IS_DISPLAY (child))
     {
@@ -119,7 +129,10 @@ sysprof_notebook_page_removed (GtkNotebook *notebook,
                                GtkWidget   *child,
                                guint        page_num)
 {
-  g_assert (SYSPROF_IS_NOTEBOOK (notebook));
+  SysprofNotebook *self = (SysprofNotebook *)notebook;
+  SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_NOTEBOOK (self));
   g_assert (GTK_IS_WIDGET (child));
 
   if (gtk_widget_in_destruction (GTK_WIDGET (notebook)))
@@ -141,7 +154,8 @@ sysprof_notebook_page_removed (GtkNotebook *notebook,
     }
 
   gtk_notebook_set_show_tabs (notebook,
-                              gtk_notebook_get_n_pages (notebook) > 1);
+                              (priv->always_show_tabs ||
+                               gtk_notebook_get_n_pages (notebook) > 1));
 }
 
 static void
@@ -169,6 +183,10 @@ sysprof_notebook_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_ALWAYS_SHOW_TABS:
+      g_value_set_boolean (value, sysprof_notebook_get_always_show_tabs (self));
+      break;
+
     case PROP_CAN_REPLAY:
       g_value_set_boolean (value, sysprof_notebook_get_can_replay (self));
       break;
@@ -187,16 +205,43 @@ sysprof_notebook_get_property (GObject    *object,
 }
 
 static void
+sysprof_notebook_set_property (GObject      *object,
+                               guint         prop_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
+{
+  SysprofNotebook *self = (SysprofNotebook *)object;
+
+  switch (prop_id)
+    {
+    case PROP_ALWAYS_SHOW_TABS:
+      sysprof_notebook_set_always_show_tabs (self, g_value_get_boolean (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
 sysprof_notebook_class_init (SysprofNotebookClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkNotebookClass *notebook_class = GTK_NOTEBOOK_CLASS (klass);
 
   object_class->get_property = sysprof_notebook_get_property;
+  object_class->set_property = sysprof_notebook_set_property;
 
   notebook_class->page_added = sysprof_notebook_page_added;
   notebook_class->page_removed = sysprof_notebook_page_removed;
   notebook_class->switch_page = sysprof_notebook_switch_page;
+
+  properties [PROP_ALWAYS_SHOW_TABS] =
+    g_param_spec_boolean ("always-show-tabs",
+                          "Always Show Tabs",
+                          "Always Show Tabs",
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_CAN_REPLAY] =
     g_param_spec_boolean ("can-replay",
@@ -377,4 +422,34 @@ sysprof_notebook_add_profiler (SysprofNotebook *self,
   gtk_container_add (GTK_CONTAINER (self), display);
   page = gtk_notebook_page_num (GTK_NOTEBOOK (self), display);
   gtk_notebook_set_current_page (GTK_NOTEBOOK (self), page);
+}
+
+gboolean
+sysprof_notebook_get_always_show_tabs (SysprofNotebook *self)
+{
+  SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_NOTEBOOK (self), FALSE);
+
+  return priv->always_show_tabs;
+}
+
+void
+sysprof_notebook_set_always_show_tabs (SysprofNotebook *self,
+                                       gboolean         always_show_tabs)
+{
+  SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_NOTEBOOK (self));
+
+  always_show_tabs = !!always_show_tabs;
+
+  if (always_show_tabs != priv->always_show_tabs)
+    {
+      priv->always_show_tabs = always_show_tabs;
+      gtk_notebook_set_show_tabs (GTK_NOTEBOOK (self),
+                                  (priv->always_show_tabs ||
+                                   gtk_notebook_get_n_pages (GTK_NOTEBOOK (self)) > 1));
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ALWAYS_SHOW_TABS]);
+    }
 }

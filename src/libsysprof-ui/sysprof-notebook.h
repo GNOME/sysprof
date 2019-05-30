@@ -61,5 +61,10 @@ gboolean        sysprof_notebook_get_can_replay (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
 void            sysprof_notebook_add_profiler   (SysprofNotebook *self,
                                                  SysprofProfiler *profiler);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean        sysprof_notebook_get_always_show_tabs (SysprofNotebook *self);
+SYSPROF_AVAILABLE_IN_ALL
+void            sysprof_notebook_set_always_show_tabs (SysprofNotebook *self,
+                                                       gboolean         always_show_tabs);
 
 G_END_DECLS

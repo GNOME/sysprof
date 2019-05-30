@@ -42,25 +42,25 @@ struct _SysprofNotebookClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget      *sysprof_notebook_new            (void);
+GtkWidget      *sysprof_notebook_new                  (void);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofDisplay *sysprof_notebook_get_current    (SysprofNotebook *self);
+SysprofDisplay *sysprof_notebook_get_current          (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
-void            sysprof_notebook_close_current  (SysprofNotebook *self);
+void            sysprof_notebook_close_current        (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
-void            sysprof_notebook_open           (SysprofNotebook *self,
-                                                 GFile           *file);
+void            sysprof_notebook_open                 (SysprofNotebook *self,
+                                                       GFile           *file);
 SYSPROF_AVAILABLE_IN_ALL
-void            sysprof_notebook_save           (SysprofNotebook *self);
+void            sysprof_notebook_save                 (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean        sysprof_notebook_get_can_save   (SysprofNotebook *self);
+gboolean        sysprof_notebook_get_can_save         (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
-void            sysprof_notebook_replay         (SysprofNotebook *self);
+void            sysprof_notebook_replay               (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean        sysprof_notebook_get_can_replay (SysprofNotebook *self);
+gboolean        sysprof_notebook_get_can_replay       (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
-void            sysprof_notebook_add_profiler   (SysprofNotebook *self,
-                                                 SysprofProfiler *profiler);
+void            sysprof_notebook_add_profiler         (SysprofNotebook *self,
+                                                       SysprofProfiler *profiler);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean        sysprof_notebook_get_always_show_tabs (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL

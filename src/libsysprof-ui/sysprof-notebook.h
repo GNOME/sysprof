@@ -21,6 +21,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
+#include <sysprof.h>
 
 #include "sysprof-display.h"
 #include "sysprof-version-macros.h"
@@ -57,5 +58,8 @@ SYSPROF_AVAILABLE_IN_ALL
 void            sysprof_notebook_replay         (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean        sysprof_notebook_get_can_replay (SysprofNotebook *self);
+SYSPROF_AVAILABLE_IN_ALL
+void            sysprof_notebook_add_profiler   (SysprofNotebook *self,
+                                                 SysprofProfiler *profiler);
 
 G_END_DECLS

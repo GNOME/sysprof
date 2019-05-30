@@ -360,3 +360,21 @@ sysprof_notebook_replay (SysprofNotebook *self)
   page = gtk_notebook_page_num (GTK_NOTEBOOK (self), GTK_WIDGET (replay));
   gtk_notebook_set_current_page (GTK_NOTEBOOK (self), page);
 }
+
+void
+sysprof_notebook_add_profiler (SysprofNotebook *self,
+                               SysprofProfiler *profiler)
+{
+  GtkWidget *display;
+  gint page;
+
+  g_return_if_fail (SYSPROF_IS_NOTEBOOK (self));
+  g_return_if_fail (SYSPROF_IS_PROFILER (profiler));
+
+  display = sysprof_display_new_for_profiler (profiler);
+
+  gtk_widget_show (display);
+  gtk_container_add (GTK_CONTAINER (self), display);
+  page = gtk_notebook_page_num (GTK_NOTEBOOK (self), display);
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (self), page);
+}

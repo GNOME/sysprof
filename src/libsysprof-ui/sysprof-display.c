@@ -157,39 +157,48 @@ notify:
 }
 
 static void
-sysprof_display_start_recording_cb (SysprofDisplay           *self,
-                                    SysprofProfiler          *profiler,
-                                    SysprofProfilerAssistant *assistant)
+sysprof_display_set_profiler (SysprofDisplay  *self,
+                              SysprofProfiler *profiler)
 {
   SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
 
   g_assert (SYSPROF_IS_DISPLAY (self));
   g_assert (SYSPROF_IS_PROFILER (profiler));
-  g_assert (!assistant || SYSPROF_IS_PROFILER_ASSISTANT (assistant));
-  g_assert (sysprof_display_is_empty (self));
 
   if (g_set_object (&priv->profiler, profiler))
     {
       sysprof_recording_state_view_set_profiler (priv->recording_view, profiler);
       gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->recording_view));
 
-      g_signal_connect_object (priv->profiler,
+      g_signal_connect_object (profiler,
                                "stopped",
                                G_CALLBACK (sysprof_display_profiler_stopped_cb),
                                self,
                                G_CONNECT_SWAPPED);
 
-      g_signal_connect_object (priv->profiler,
+      g_signal_connect_object (profiler,
                                "failed",
                                G_CALLBACK (sysprof_display_profiler_failed_cb),
                                self,
                                G_CONNECT_SWAPPED);
-
-      sysprof_profiler_start (priv->profiler);
     }
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_RECORDING]);
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
+}
+
+static void
+sysprof_display_start_recording_cb (SysprofDisplay           *self,
+                                    SysprofProfiler          *profiler,
+                                    SysprofProfilerAssistant *assistant)
+{
+  g_assert (SYSPROF_IS_DISPLAY (self));
+  g_assert (SYSPROF_IS_PROFILER (profiler));
+  g_assert (!assistant || SYSPROF_IS_PROFILER_ASSISTANT (assistant));
+  g_assert (sysprof_display_is_empty (self));
+
+  sysprof_display_set_profiler (self, profiler);
+  sysprof_profiler_start (profiler);
 }
 
 gchar *
@@ -649,7 +658,21 @@ sysprof_display_replay (SysprofDisplay *self)
   g_return_val_if_fail (SYSPROF_IS_LOCAL_PROFILER (profiler), NULL);
 
   copy = g_object_new (SYSPROF_TYPE_DISPLAY, NULL);
-  sysprof_display_start_recording_cb (copy, profiler, NULL);
+  sysprof_display_set_profiler (copy, profiler);
+  sysprof_profiler_start (profiler);
 
   return g_steal_pointer (&copy);
+}
+
+GtkWidget *
+sysprof_display_new_for_profiler (SysprofProfiler *profiler)
+{
+  SysprofDisplay *self;
+
+  g_return_val_if_fail (SYSPROF_IS_PROFILER (profiler), NULL);
+
+  self = g_object_new (SYSPROF_TYPE_DISPLAY, NULL);
+  sysprof_display_set_profiler (self, profiler);
+
+  return GTK_WIDGET (g_steal_pointer (&self));
 }

@@ -32,34 +32,38 @@ G_BEGIN_DECLS
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SysprofDisplay, sysprof_display, SYSPROF, DISPLAY, GtkBin)
 
+SYSPROF_ALIGNED_BEGIN(8)
 struct _SysprofDisplayClass
 {
   GtkBinClass parent_class;
 
   /*< private >*/
   gpointer _reserved[16];
-} __attribute__((aligned(8)));
+}
+SYSPROF_ALIGNED_END(8);
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget       *sysprof_display_new            (void);
+GtkWidget       *sysprof_display_new              (void);
 SYSPROF_AVAILABLE_IN_ALL
-gchar           *sysprof_display_dup_title      (SysprofDisplay *self);
+GtkWidget       *sysprof_display_new_for_profiler (SysprofProfiler *profiler);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofProfiler *sysprof_display_get_profiler   (SysprofDisplay *self);
+gchar           *sysprof_display_dup_title        (SysprofDisplay  *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_display_is_empty       (SysprofDisplay *self);
+SysprofProfiler *sysprof_display_get_profiler     (SysprofDisplay  *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_display_open           (SysprofDisplay *self,
-                                                 GFile          *file);
+gboolean         sysprof_display_is_empty         (SysprofDisplay  *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_display_save           (SysprofDisplay *self);
+void             sysprof_display_open             (SysprofDisplay  *self,
+                                                   GFile           *file);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_display_get_can_save   (SysprofDisplay *self);
+void             sysprof_display_save             (SysprofDisplay  *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_display_stop_recording (SysprofDisplay *self);
+gboolean         sysprof_display_get_can_save     (SysprofDisplay  *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_display_get_can_replay (SysprofDisplay *self);
+void             sysprof_display_stop_recording   (SysprofDisplay  *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofDisplay  *sysprof_display_replay         (SysprofDisplay *self);
+gboolean         sysprof_display_get_can_replay   (SysprofDisplay  *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDisplay  *sysprof_display_replay           (SysprofDisplay  *self);
 
 G_END_DECLS

@@ -11,6 +11,8 @@ libsysprof_capture_headers = files([
   'sysprof-version-macros.h',
 ])
 
+install_headers(libsysprof_capture_headers, subdir: sysprof_header_subdir)
+
 libsysprof_capture_sources = files([
   'sysprof-address.c',
   'sysprof-capture-condition.c',

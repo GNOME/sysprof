@@ -64,7 +64,6 @@ libsysprof_private_sources = [
 ]
 
 libsysprof_public_sources += libsysprof_capture_sources
-libsysprof_public_headers += libsysprof_capture_headers
 
 libsysprof_deps = [
   gio_dep,

@@ -51,17 +51,22 @@ endif
 glib_dep = dependency('glib-2.0', version: glib_req_version)
 gio_dep = dependency('gio-2.0', version: glib_req_version)
 gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version)
-gtk_dep = dependency('gtk+-3.0', version: gtk_req_version)
-dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version)
+
+if get_option('enable_gtk')
+  gtk_dep = dependency('gtk+-3.0', version: gtk_req_version)
+  dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version)
+endif
 
 # If we find polkit 0.114, we don't need to backport autoptr cleanups
-polkit_dep = dependency('polkit-gobject-1', version: '>= 0.114', required: false)
-if polkit_dep.found()
-  config_h.set10('HAVE_POLKIT_AUTOPTR', true)
-else
-  polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version)
+if get_option('libsysprof') or get_option('with_sysprofd') == 'bundled'
+  polkit_dep = dependency('polkit-gobject-1', version: '>= 0.114', required: false)
+  if polkit_dep.found()
+    config_h.set10('HAVE_POLKIT_AUTOPTR', true)
+  else
+    polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version)
+  endif
+  polkit_agent_dep = dependency('polkit-agent-1')
 endif
-polkit_agent_dep = dependency('polkit-agent-1')
 
 debugdir = get_option('debugdir')
 if debugdir == ''

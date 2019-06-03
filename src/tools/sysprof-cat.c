@@ -22,10 +22,13 @@
 
 #include "config.h"
 
+#include <errno.h>
 #include <glib/gstdio.h>
 #include <stdlib.h>
 #include <sysprof-capture.h>
 #include <unistd.h>
+
+#include "sysprof-capture-util-private.h"
 
 gint
 main (gint   argc,
@@ -84,7 +87,27 @@ main (gint   argc,
     }
 
   if (g_file_get_contents (tmpname, &contents, &len, NULL))
-    write (STDOUT_FILENO, contents, len);
+    {
+      const gchar *buf = contents;
+      gsize to_write = len;
+
+      while (to_write > 0)
+        {
+          gssize n_written;
+
+          n_written = _sysprof_write (STDOUT_FILENO, buf, to_write);
+
+          if (n_written < 0)
+            {
+              g_printerr ("%s\n", g_strerror (errno));
+              g_unlink (tmpname);
+              return EXIT_FAILURE;
+            }
+
+          buf += n_written;
+          to_write -= n_written;
+        }
+    }
 
   g_unlink (tmpname);
 

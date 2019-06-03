@@ -6,13 +6,28 @@ test_env = [
   'MALLOC_CHECK_=2',
 ]
 
-test_deps = [
-  libsysprof_dep,
-]
-
 test_cflags = [
   '-DTEST_DATA_DIR="@0@/data/"'.format(meson.current_source_dir()),
   '-DSYSPROF_COMPILATION=1',
+]
+
+test_capture = executable('test-capture', 'test-capture.c',
+        c_args: test_cflags,
+  dependencies: [libsysprof_capture_dep],
+)
+
+test_capture_cursor = executable('test-capture-cursor', 'test-capture-cursor.c',
+        c_args: test_cflags,
+  dependencies: [libsysprof_capture_dep],
+)
+
+test('test-capture', test_capture, env: test_env)
+test('test-capture-cursor', test_capture_cursor, env: test_env)
+
+if get_option('libsysprof')
+
+test_deps = [
+  libsysprof_dep,
 ]
 
 test_addr_map = executable('test-addr-map',
@@ -28,18 +43,6 @@ test_addr_decode = executable('test-addr-decode', 'test-addr-decode.c',
   dependencies: test_deps,
 )
 
-test_capture = executable('test-capture', 'test-capture.c',
-        c_args: test_cflags,
-  dependencies: test_deps,
-)
-
-test_capture_cursor = executable('test-capture-cursor', 'test-capture-cursor.c',
-        c_args: test_cflags,
-  dependencies: test_deps,
-)
-
-test('test-capture', test_capture, env: test_env)
-test('test-capture-cursor', test_capture_cursor, env: test_env)
 
 if get_option('enable_gtk')
 
@@ -71,4 +74,5 @@ if get_option('enable_gtk')
   test('test-model-filter', test_model_filter, env: test_env)
   test('test-zoom', test_zoom, env: test_env)
 
+endif
 endif

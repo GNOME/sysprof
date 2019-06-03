@@ -3,6 +3,9 @@
 # server scenarios.
 option('enable_gtk', type: 'boolean')
 
+# Disable libsysprof/ui (in situations you only want sysprof-capture)
+option('libsysprof', type: 'boolean')
+
 # Optionally compile sysprofd, which is needed to get elevated privileges.
 # You only really want to ignore this if you are running from a container
 # and are talking to a host daemon. Also, if you're compiling for something

@@ -1,4 +1,4 @@
-if get_option('enable_gtk')
+if get_option('enable_gtk') and get_option('libsysprof')
 
 sysprof_sources = [
   'sysprof.c',

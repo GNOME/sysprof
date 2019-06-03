@@ -427,7 +427,7 @@ sysprof_capture_writer_new_from_fd (int   fd,
   g_assert (buffer_size % _sysprof_getpagesize() == 0);
 
   /* This is only useful on files, memfd, etc */
-  ftruncate (fd, 0);
+  if (ftruncate (fd, 0) != 0) { /* Do Nothing */ }
 
   self = g_new0 (SysprofCaptureWriter, 1);
   self->ref_count = 1;

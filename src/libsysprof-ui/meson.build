@@ -1,3 +1,5 @@
+if get_option('enable_gtk')
+
 libsysprof_ui_public_sources = [
   'sysprof-aid.c',
   'sysprof-capture-view.c',
@@ -123,3 +125,5 @@ pkgconfig.generate(
 )
 
 install_headers(libsysprof_ui_public_headers, subdir: sysprof_header_subdir)
+
+endif

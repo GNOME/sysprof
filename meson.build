@@ -174,6 +174,7 @@ configure_file(
 
 subdir('src')
 subdir('data')
+subdir('examples')
 subdir('help')
 subdir('po')
 

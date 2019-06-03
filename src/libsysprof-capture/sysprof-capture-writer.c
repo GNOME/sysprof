@@ -426,8 +426,8 @@ sysprof_capture_writer_new_from_fd (int   fd,
   g_assert (fd != -1);
   g_assert (buffer_size % _sysprof_getpagesize() == 0);
 
-  if (ftruncate (fd, 0) != 0)
-    return NULL;
+  /* This is only useful on files, memfd, etc */
+  ftruncate (fd, 0);
 
   self = g_new0 (SysprofCaptureWriter, 1);
   self->ref_count = 1;
@@ -1286,6 +1286,9 @@ sysprof_capture_writer_new_from_env (gsize buffer_size)
 
   if (!(fdstr = g_getenv ("SYSPROF_TRACE_FD")))
     return NULL;
+
+  /* Make sure the clock is initialized */
+  sysprof_clock_init ();
 
   if (!(fd = atoi (fdstr)))
     return NULL;

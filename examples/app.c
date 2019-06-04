@@ -7,7 +7,10 @@
 
 #define _GNU_SOURCE
 
-#include <sched.h>
+#ifdef __linux__
+# include <sched.h>
+#endif
+
 #include <signal.h>
 #include <sysprof-capture.h>
 #include <unistd.h>
@@ -68,7 +71,11 @@ do_some_work (SysprofCaptureWriter *writer)
 
       sysprof_capture_writer_add_mark (writer,
                                        begin_time_nsec,            /* Begin time in nsec */
+#ifdef __linux__
                                        sched_getcpu (),            /* -1 to ignore */
+#else
+                                       -1,
+#endif
                                        getpid (),                  /* -1 to ignore */
                                        real_duration,              /* duration in nsec */
                                        "Example",                  /* Group name, 23 chars+\0 */

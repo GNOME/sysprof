@@ -221,8 +221,7 @@ main (gint   argc,
 
   if (gjs)
     {
-      source = sysprof_tracefd_source_new ();
-      sysprof_tracefd_source_set_envvar (SYSPROF_TRACEFD_SOURCE (source), "GJS_TRACE_FD");
+      source = sysprof_gjs_source_new ();
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }

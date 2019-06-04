@@ -25,9 +25,7 @@
     <property name="display-name">GJS</property>
     <property name="icon-name">org.gnome.Sysprof-symbolic</property>
     <child>
-      <object class="SysprofTracefdSource">
-        <property name="envvar">GJS_TRACE_FD</property>
-      </object>
+      <object class="SysprofGjsSource"/>
     </child>
   </object>
   <object class="SysprofAid" id="app_aid">

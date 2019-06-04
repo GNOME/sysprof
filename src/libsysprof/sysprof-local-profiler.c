@@ -33,6 +33,7 @@
 #include "sysprof-local-profiler.h"
 #include "sysprof-platform.h"
 
+#include "sysprof-gjs-source.h"
 #include "sysprof-hostinfo-source.h"
 #ifdef __linux__
 # include "sysprof-perf-source.h"
@@ -405,6 +406,7 @@ sysprof_local_profiler_class_init (SysprofLocalProfilerClass *klass)
   g_object_class_override_property (object_class, PROP_SPAWN_INHERIT_ENVIRON, "spawn-inherit-environ");
   g_object_class_override_property (object_class, PROP_WHOLE_SYSTEM, "whole-system");
 
+  g_type_ensure (SYSPROF_TYPE_GJS_SOURCE);
   g_type_ensure (SYSPROF_TYPE_HOSTINFO_SOURCE);
   g_type_ensure (SYSPROF_TYPE_PROC_SOURCE);
 #ifdef __linux__

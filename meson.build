@@ -57,15 +57,18 @@ if get_option('enable_gtk')
   dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version)
 endif
 
-# If we find polkit 0.114, we don't need to backport autoptr cleanups
-if get_option('libsysprof') or get_option('with_sysprofd') == 'bundled'
-  polkit_dep = dependency('polkit-gobject-1', version: '>= 0.114', required: false)
-  if polkit_dep.found()
-    config_h.set10('HAVE_POLKIT_AUTOPTR', true)
-  else
-    polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version)
+polkit_dep = dependency('polkit-gobject-1', version: '>= 0.114', required: false)
+if polkit_dep.found()
+  config_h.set10('HAVE_POLKIT_AUTOPTR', true)
+endif
+polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
+
+if polkit_dep.found()
+  config_h.set10('HAVE_POLKIT', true)
+else
+  if get_option('with_sysprofd') == 'bundled'
+    error('sysprofd requires polkit @0@'.format(polkit_req_version))
   endif
-  polkit_agent_dep = dependency('polkit-agent-1')
 endif
 
 debugdir = get_option('debugdir')

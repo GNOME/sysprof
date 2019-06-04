@@ -46,7 +46,6 @@ G_BEGIN_DECLS
 # include "sysprof-notebook.h"
 # include "sysprof-process-model-row.h"
 # include "sysprof-profiler-assistant.h"
-# include "sysprof-profiler-menu-button.h"
 # include "sysprof-proxy-aid.h"
 # include "sysprof-recording-state-view.h"
 # include "sysprof-visualizer-row.h"

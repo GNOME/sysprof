@@ -92,7 +92,7 @@ endif
 
 if host_machine.system() == 'darwin'
   libsysprof_deps += [ dependency('libelf') ]
-  libsysprof_c_args = [ '-DNT_GNU_BUILD_ID=3', '-DELF_NOTE_GNU="GNU"', '-D__LIBELF_INTERNAL__' ]
+  libsysprof_c_args += [ '-DNT_GNU_BUILD_ID=3', '-DELF_NOTE_GNU="GNU"', '-D__LIBELF_INTERNAL__' ]
 endif
 
 if host_machine.system() != 'darwin'

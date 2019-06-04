@@ -90,7 +90,6 @@ sysprof_capture_symbol_resolver_load (SysprofSymbolResolver *resolver,
                                       SysprofCaptureReader  *reader)
 {
   SysprofCaptureSymbolResolver *self = (SysprofCaptureSymbolResolver *)resolver;
-  g_autoptr(GError) error = NULL;
   gint byte_order;
   gint fd;
 

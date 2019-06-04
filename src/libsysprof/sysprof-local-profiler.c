@@ -407,9 +407,9 @@ sysprof_local_profiler_class_init (SysprofLocalProfilerClass *klass)
   g_object_class_override_property (object_class, PROP_WHOLE_SYSTEM, "whole-system");
 
   g_type_ensure (SYSPROF_TYPE_GJS_SOURCE);
+#ifdef __linux__
   g_type_ensure (SYSPROF_TYPE_HOSTINFO_SOURCE);
   g_type_ensure (SYSPROF_TYPE_PROC_SOURCE);
-#ifdef __linux__
   g_type_ensure (SYSPROF_TYPE_PERF_SOURCE);
 #endif
   g_type_ensure (SYSPROF_TYPE_PROXY_SOURCE);

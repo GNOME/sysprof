@@ -52,6 +52,7 @@ static void
 sysprof_cpu_aid_prepare (SysprofAid      *self,
                          SysprofProfiler *profiler)
 {
+#ifdef __linux__
   g_autoptr(SysprofSource) source = NULL;
 
   g_assert (SYSPROF_IS_CPU_AID (self));
@@ -59,6 +60,7 @@ sysprof_cpu_aid_prepare (SysprofAid      *self,
 
   source = sysprof_hostinfo_source_new ();
   sysprof_profiler_add_source (profiler, source);
+#endif
 }
 
 static void

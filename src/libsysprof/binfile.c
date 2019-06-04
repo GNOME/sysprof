@@ -272,6 +272,7 @@ get_lines (const char *format,
            ...)
   G_GNUC_PRINTF (1, 2);
 
+#ifdef __linux__
 static char **
 get_lines (const char *format,
            ...)
@@ -296,6 +297,7 @@ get_lines (const char *format,
 
     return result;
 }
+#endif
 
 static const uint8_t *
 get_vdso_bytes (size_t *length)

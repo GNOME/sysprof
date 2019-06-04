@@ -23,7 +23,6 @@
 #include "config.h"
 
 #include <gio/gunixfdlist.h>
-#include <polkit/polkit.h>
 
 #include "sysprof-helpers.h"
 #include "sysprof-polkit-private.h"
@@ -549,7 +548,6 @@ sysprof_helpers_authorize_async (SysprofHelpers      *self,
                                  gpointer             user_data)
 {
   g_autoptr(GTask) task = NULL;
-  g_autoptr(PolkitSubject) subject = NULL;
   GDBusConnection *bus;
 
   g_return_if_fail (SYSPROF_IS_HELPERS (self));

@@ -53,7 +53,6 @@ sysprof_recording_state_view_notify_elapsed (SysprofRecordingStateView *self,
                                              SysprofProfiler           *profiler)
 {
   SysprofRecordingStateViewPrivate *priv = sysprof_recording_state_view_get_instance_private (self);
-  g_autofree gchar *str = NULL;
   SysprofCaptureWriter *writer;
   gint64 elapsed;
 

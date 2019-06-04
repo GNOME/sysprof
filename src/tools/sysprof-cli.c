@@ -85,6 +85,7 @@ main (gint   argc,
   gboolean version = FALSE;
   gboolean force = FALSE;
   gboolean use_trace_fd = FALSE;
+  gboolean gnome_shell = FALSE;
   int pid = -1;
   int fd;
   int flags;
@@ -97,6 +98,7 @@ main (gint   argc,
     { "no-memory", 0, 0, G_OPTION_ARG_NONE, &no_memory, N_("Disable recording of memory statistics") },
     { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
     { "gjs", 0, 0, G_OPTION_ARG_NONE, &gjs, N_("Set GJS_TRACE_FD environment to trace GJS processes") },
+    { "gnome-shell", 0, 0, G_OPTION_ARG_NONE, &gnome_shell, N_("Connect to org.gnome.Shell for profiler statistics") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
   };
@@ -254,6 +256,15 @@ main (gint   argc,
   if (!no_memory)
     {
       source = sysprof_memory_source_new ();
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
+
+  if (gnome_shell)
+    {
+      source = sysprof_proxy_source_new (G_BUS_TYPE_SESSION,
+                                         "org.gnome.Shell",
+                                         "/org/gnome/Sysprof3/Profiler");
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }

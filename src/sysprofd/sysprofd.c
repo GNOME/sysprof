@@ -109,9 +109,6 @@ main (gint   argc,
   g_set_prgname ("sysprofd");
   g_set_application_name ("sysprofd");
 
-  if (g_getenv ("SYSPROFD_USE_SESSION_BUS"))
-    bus_type = G_BUS_TYPE_SESSION;
-
   main_loop = g_main_loop_new (NULL, FALSE);
 
   if ((bus = g_bus_get_sync (bus_type, NULL, &error)))

@@ -878,9 +878,9 @@ sysprof_capture_writer_flush (SysprofCaptureWriter *self)
 {
   g_assert (self != NULL);
 
-  return (sysprof_capture_writer_flush_jitmap (self) &&
-          sysprof_capture_writer_flush_data (self) &&
-          sysprof_capture_writer_flush_end_time (self));
+  return sysprof_capture_writer_flush_jitmap (self) &&
+         sysprof_capture_writer_flush_data (self) &&
+         sysprof_capture_writer_flush_end_time (self);
 }
 
 /**

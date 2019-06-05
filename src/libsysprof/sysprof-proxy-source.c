@@ -70,6 +70,13 @@ steal_fd (gint *fd)
 }
 
 static void
+_g_weak_ref_free (GWeakRef *wr)
+{
+  g_weak_ref_clear (wr);
+  g_slice_free (GWeakRef, wr);
+}
+
+static void
 peer_free (Peer *peer)
 {
   g_assert (peer != NULL);
@@ -318,6 +325,35 @@ sysprof_proxy_source_list_names_cb (GObject      *object,
 }
 
 static void
+sysprof_proxy_source_name_owner_changed_cb (GDBusConnection *connection,
+                                            const gchar     *sender_name,
+                                            const gchar     *object_path,
+                                            const gchar     *interface_name,
+                                            const gchar     *signal_name,
+                                            GVariant        *params,
+                                            gpointer         user_data)
+{
+  GWeakRef *wr = user_data;
+  g_autoptr(SysprofProxySource) self = NULL;
+  const gchar *name;
+  const gchar *old_name;
+  const gchar *new_name;
+
+  g_assert (G_IS_DBUS_CONNECTION (connection));
+  g_assert (params != NULL);
+  g_assert (g_variant_is_of_type (params, G_VARIANT_TYPE ("(sss)")));
+  g_assert (wr != NULL);
+
+  g_variant_get (params, "(&s&s&s)", &name, &old_name, &new_name);
+
+  if (!(self = g_weak_ref_get (wr)))
+    return;
+
+  if (self->bus_name != NULL && g_strcmp0 (name, self->bus_name) == 0)
+    sysprof_proxy_source_monitor (self, connection, new_name);
+}
+
+static void
 sysprof_proxy_source_get_bus_cb (GObject      *object,
                                  GAsyncResult *result,
                                  gpointer      user_data)
@@ -336,10 +372,28 @@ sysprof_proxy_source_get_bus_cb (GObject      *object,
       return;
     }
 
-  if (self->bus_name != NULL && self->bus_name[0])
+  if (self->bus_name != NULL && g_dbus_is_name (self->bus_name))
     {
+      GWeakRef *wr;
+
+      /* Try to monitor immediately */
       sysprof_proxy_source_monitor (self, bus, self->bus_name);
-      return;
+
+      /* Watch for changes in case the program isn't started yet and
+       * we want to monitor it after it is available.
+       */
+      wr = g_slice_new0 (GWeakRef);
+      g_weak_ref_init (wr, self);
+      g_dbus_connection_signal_subscribe (bus,
+                                          NULL,
+                                          "org.freedesktop.DBus",
+                                          "NameOwnerChanged",
+                                          NULL,
+                                          NULL,
+                                          0,
+                                          sysprof_proxy_source_name_owner_changed_cb,
+                                          g_steal_pointer (&wr),
+                                          (GDestroyNotify)_g_weak_ref_free);
     }
 
   if (self->pids->len > 0)
@@ -362,8 +416,6 @@ sysprof_proxy_source_get_bus_cb (GObject      *object,
                               g_object_ref (self));
       return;
     }
-
-  g_warning ("Improperly configured %s", G_OBJECT_TYPE_NAME (self));
 }
 
 static void

@@ -165,7 +165,13 @@ sysprof_capture_writer_finalize (SysprofCaptureWriter *self)
   if (self != NULL)
     {
       sysprof_capture_writer_flush (self);
-      close (self->fd);
+
+      if (self->fd != -1)
+        {
+          close (self->fd);
+          self->fd = -1;
+        }
+
       g_free (self->buf);
       g_free (self);
     }

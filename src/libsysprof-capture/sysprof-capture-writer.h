@@ -81,6 +81,10 @@ SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_writer_stat            (SysprofCaptureWriter              *self,
                                                               SysprofCaptureStat                *stat);
 SYSPROF_AVAILABLE_IN_ALL
+void                  sysprof_capture_writer_set_flush_delay (SysprofCaptureWriter              *self,
+                                                              GMainContext                      *main_context,
+                                                              guint                              timeout_seconds);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean              sysprof_capture_writer_add_file        (SysprofCaptureWriter              *self,
                                                               gint64                             time,
                                                               gint                               cpu,

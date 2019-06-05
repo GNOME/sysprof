@@ -94,9 +94,9 @@ size_t
 
 ssize_t
 (_sysprof_pread) (int     fd,
-             void   *buf,
-             size_t  count,
-             off_t   offset)
+                  void   *buf,
+                  size_t  count,
+                  off_t   offset)
 {
 #ifdef G_OS_WIN32
   ssize_t ret = -1;
@@ -116,9 +116,9 @@ ssize_t
 
 ssize_t
 (_sysprof_pwrite) (int         fd,
-              const void *buf,
-              size_t      count,
-              off_t       offset)
+                   const void *buf,
+                   size_t      count,
+                   off_t       offset)
 {
 #ifdef G_OS_WIN32
   ssize_t ret = -1;
@@ -138,8 +138,8 @@ ssize_t
 
 ssize_t
 (_sysprof_write) (int         fd,
-             const void *buf,
-             size_t      count)
+                  const void *buf,
+                  size_t      count)
 {
 #ifdef G_OS_WIN32
   ssize_t ret = -1;
@@ -168,9 +168,9 @@ gint32
 
 ssize_t
 (_sysprof_sendfile) (int     out_fd,
-                int     in_fd,
-                off_t  *offset,
-                size_t  count)
+                     int     in_fd,
+                     off_t  *offset,
+                     size_t  count)
 {
   ssize_t total = 0;
   off_t wpos = 0;

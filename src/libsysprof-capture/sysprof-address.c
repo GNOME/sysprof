@@ -66,7 +66,7 @@
 
 gboolean
 sysprof_address_is_context_switch (SysprofAddress         address,
-                              SysprofAddressContext *context)
+                                   SysprofAddressContext *context)
 {
   SysprofAddressContext dummy;
 

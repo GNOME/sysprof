@@ -203,6 +203,9 @@ sysprof_capture_writer_flush_data (SysprofCaptureWriter *self)
   g_assert (self->pos <= self->len);
   g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
 
+  if (self->pos == 0)
+    return TRUE;
+
   buf = self->buf;
   to_write = self->pos;
 

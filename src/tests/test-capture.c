@@ -827,6 +827,7 @@ test_reader_writer_cat_jitmap (void)
   SysprofCaptureWriter *writer2;
   SysprofCaptureWriter *res;
   SysprofCaptureReader *reader;
+  const SysprofCaptureSample *sample;
   GError *error = NULL;
   SysprofCaptureAddress addrs[20];
   gboolean r;
@@ -879,6 +880,16 @@ test_reader_writer_cat_jitmap (void)
   g_assert_no_error (error);
   g_assert_true (r);
   sysprof_capture_writer_unref (writer2);
+  sysprof_capture_reader_unref (reader);
+
+  reader = sysprof_capture_writer_create_reader (res, &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (reader);
+  g_hash_table_unref (sysprof_capture_reader_read_jitmap (reader));
+  sample = sysprof_capture_reader_read_sample (reader);
+  g_assert_cmpint (sample->frame.pid, ==, getpid ());
+  g_assert_cmpint (sample->n_addrs, ==, G_N_ELEMENTS (addrs));
+  g_assert_cmpint (sample->addrs[0], !=, sample->addrs[1]);
   sysprof_capture_reader_unref (reader);
 
   sysprof_capture_writer_unref (res);

@@ -111,7 +111,7 @@ translate_table_add (GArray  **tables,
                      guint64   src,
                      guint64   dst)
 {
-  TranslateItem item = { src, dst };
+  const TranslateItem item = { src, dst };
 
   if (tables[table] == NULL)
     tables[table] = g_array_new (FALSE, FALSE, sizeof (TranslateItem));
@@ -126,6 +126,9 @@ translate_table_translate (GArray  **tables,
 {
   const TranslateItem *item;
   TranslateItem key = { src, 0 };
+
+  if ((src & SYSPROF_CAPTURE_JITMAP_MARK) == 0)
+    return src;
 
   if (!tables[table])
     return src;
@@ -160,6 +163,42 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
 
   if (start_time < first_start_time)
     first_start_time = start_time;
+
+  /* First we need to find all the JIT maps so that we can translate
+   * addresses later on and have the correct value.
+   */
+  while (sysprof_capture_reader_peek_type (reader, &type))
+    {
+      g_autoptr(GHashTable) jitmap = NULL;
+      GHashTableIter iter;
+      const gchar *name;
+      guint64 addr;
+
+      if (type != SYSPROF_CAPTURE_FRAME_JITMAP)
+        {
+          if (!sysprof_capture_reader_skip (reader))
+            goto panic;
+          continue;
+        }
+
+      if (!(jitmap = sysprof_capture_reader_read_jitmap (reader)))
+        goto panic;
+
+      g_hash_table_iter_init (&iter, jitmap);
+      while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&name))
+        {
+          guint64 replace = sysprof_capture_writer_add_jitmap (self, name);
+          /* We need to keep a table of replacement addresses so that
+           * we can translate the samples into the destination address
+           * space that we synthesized for the address identifier.
+           */
+          translate_table_add (tables, TRANSLATE_ADDR, addr, replace);
+        }
+    }
+
+  translate_table_sort (tables, TRANSLATE_ADDR);
+
+  sysprof_capture_reader_reset (reader);
 
   while (sysprof_capture_reader_peek_type (reader, &type))
     {
@@ -324,34 +363,6 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
             break;
           }
 
-        case SYSPROF_CAPTURE_FRAME_JITMAP:
-          {
-            GHashTable *jitmap;
-            GHashTableIter iter;
-            const gchar *name;
-            guint64 addr;
-
-            if (!(jitmap = sysprof_capture_reader_read_jitmap (reader)))
-              goto panic;
-
-            g_hash_table_iter_init (&iter, jitmap);
-            while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&name))
-              {
-                guint64 replace = sysprof_capture_writer_add_jitmap (self, name);
-                /* We need to keep a table of replacement addresses so that
-                 * we can translate the samples into the destination address
-                 * space that we synthesized for the address identifier.
-                 */
-                translate_table_add (tables, TRANSLATE_ADDR, addr, replace);
-              }
-
-            translate_table_sort (tables, TRANSLATE_ADDR);
-
-            g_hash_table_unref (jitmap);
-
-            break;
-          }
-
         case SYSPROF_CAPTURE_FRAME_SAMPLE:
           {
             const SysprofCaptureSample *frame;
@@ -455,7 +466,17 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
             break;
           }
 
+        case SYSPROF_CAPTURE_FRAME_JITMAP:
+          /* We already did this */
+          if (!sysprof_capture_reader_skip (reader))
+            goto panic;
+          break;
+
         default:
+          /* Silently drop, which is better than looping. We could potentially
+           * copy this over using the raw bytes at some point.
+           */
+          sysprof_capture_reader_skip (reader);
           break;
         }
     }

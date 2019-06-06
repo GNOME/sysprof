@@ -820,6 +820,74 @@ test_reader_writer_file (void)
   g_unlink ("file1.syscap");
 }
 
+static void
+test_reader_writer_cat_jitmap (void)
+{
+  SysprofCaptureWriter *writer1;
+  SysprofCaptureWriter *writer2;
+  SysprofCaptureWriter *res;
+  SysprofCaptureReader *reader;
+  GError *error = NULL;
+  SysprofCaptureAddress addrs[20];
+  gboolean r;
+
+  writer1 = sysprof_capture_writer_new ("jitmap1.syscap", 0);
+  writer2 = sysprof_capture_writer_new ("jitmap2.syscap", 0);
+  res = sysprof_capture_writer_new ("jitmap-joined.syscap", 0);
+
+  for (guint i = 0; i < G_N_ELEMENTS (addrs); i++)
+    {
+      g_autofree gchar *str = g_strdup_printf ("jitmap_%d (writer1)", i);
+      addrs[i] = sysprof_capture_writer_add_jitmap (writer1, str);
+    }
+
+  sysprof_capture_writer_add_sample (writer1,
+                                     SYSPROF_CAPTURE_CURRENT_TIME,
+                                     -1,
+                                     getpid (),
+                                     -1,
+                                     addrs,
+                                     G_N_ELEMENTS (addrs));
+
+  for (guint i = 0; i < G_N_ELEMENTS (addrs); i++)
+    {
+      g_autofree gchar *str = g_strdup_printf ("jitmap_%d (writer2)", i);
+      addrs[i] = sysprof_capture_writer_add_jitmap (writer2, str);
+    }
+
+  sysprof_capture_writer_add_sample (writer2,
+                                     SYSPROF_CAPTURE_CURRENT_TIME,
+                                     -1,
+                                     getpid (),
+                                     -1,
+                                     addrs,
+                                     G_N_ELEMENTS (addrs));
+
+  reader = sysprof_capture_writer_create_reader (writer1, &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (reader);
+  r = sysprof_capture_writer_cat (res, reader, &error);
+  g_assert_no_error (error);
+  g_assert_true (r);
+  sysprof_capture_writer_unref (writer1);
+  sysprof_capture_reader_unref (reader);
+
+  reader = sysprof_capture_writer_create_reader (writer2, &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (reader);
+  r = sysprof_capture_writer_cat (res, reader, &error);
+  g_assert_no_error (error);
+  g_assert_true (r);
+  sysprof_capture_writer_unref (writer2);
+  sysprof_capture_reader_unref (reader);
+
+  sysprof_capture_writer_unref (res);
+
+  g_unlink ("jitmap1.syscap");
+  g_unlink ("jitmap2.syscap");
+  g_unlink ("jitmap-joined.syscap");
+}
+
 int
 main (int argc,
       char *argv[])
@@ -833,5 +901,6 @@ main (int argc,
   g_test_add_func ("/SysprofCapture/ReaderWriter/mark", test_reader_writer_mark);
   g_test_add_func ("/SysprofCapture/ReaderWriter/metadata", test_reader_writer_metadata);
   g_test_add_func ("/SysprofCapture/ReaderWriter/file", test_reader_writer_file);
+  g_test_add_func ("/SysprofCapture/ReaderWriter/cat-jitmap", test_reader_writer_cat_jitmap);
   return g_test_run ();
 }

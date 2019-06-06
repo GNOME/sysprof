@@ -87,7 +87,7 @@ compare_by_src (gconstpointer a,
                 gconstpointer b)
 {
   const TranslateItem *itema = a;
-  const TranslateItem *itemb = a;
+  const TranslateItem *itemb = b;
 
   if (itema->src < itemb->src)
     return -1;

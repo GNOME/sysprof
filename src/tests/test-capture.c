@@ -30,10 +30,23 @@
 #include "sysprof-platform.h"
 
 static void
+copy_into (GHashTable *src,
+           GHashTable *dst)
+{
+  GHashTableIter iter;
+  gpointer k, v;
+
+  g_hash_table_iter_init (&iter, src);
+  while (g_hash_table_iter_next (&iter, &k, &v))
+    g_hash_table_insert (dst, k, g_strdup ((gchar *)v));
+}
+
+static void
 test_reader_basic (void)
 {
   SysprofCaptureReader *reader;
   SysprofCaptureWriter *writer;
+  g_autoptr(GHashTable) jmap = NULL;
   GError *error = NULL;
   gint64 t = SYSPROF_CAPTURE_CURRENT_TIME;
   guint i;
@@ -298,6 +311,8 @@ test_reader_basic (void)
 
   i = 0;
 
+  jmap = g_hash_table_new_full (NULL, NULL, NULL, g_free);
+
   for (;;)
     {
       SysprofCaptureFrameType type = -1;
@@ -312,9 +327,21 @@ test_reader_basic (void)
       g_assert (ret != NULL);
 
       i += g_hash_table_size (ret);
+
+      copy_into (ret, jmap);
     }
 
   g_assert_cmpint (1000, ==, i);
+
+  for (i = 0; i < 1000; i++)
+    {
+      SysprofCaptureAddress addr = ((SysprofCaptureAddress)i + 1L) | SYSPROF_CAPTURE_JITMAP_MARK;
+      const gchar *mapped = g_hash_table_lookup (jmap, (gpointer)addr);
+      gchar str[32];
+
+      g_snprintf (str, sizeof str, "jitstring-%d", i);
+      g_assert_cmpstr (str, ==, mapped);
+    }
 
   {
     SysprofCaptureFrameType type = -1;

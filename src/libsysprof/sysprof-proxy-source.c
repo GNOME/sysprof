@@ -61,6 +61,16 @@ typedef struct
   guint                 needs_stop : 1;
 } Monitor;
 
+enum {
+  PROP_0,
+  PROP_BUS_NAME,
+  PROP_BUS_TYPE,
+  PROP_OBJECT_PATH,
+  N_PROPS
+};
+
+static GParamSpec *properties[N_PROPS];
+
 static inline gint
 steal_fd (gint *fd)
 {
@@ -621,11 +631,87 @@ sysprof_proxy_source_finalize (GObject *object)
 }
 
 static void
+sysprof_proxy_source_get_property (GObject    *object,
+                                   guint       prop_id,
+                                   GValue     *value,
+                                   GParamSpec *pspec)
+{
+  SysprofProxySource *self = SYSPROF_PROXY_SOURCE (object);
+
+  switch (prop_id)
+    {
+    case PROP_BUS_TYPE:
+      g_value_set_enum (value, self->bus_type);
+      break;
+
+    case PROP_BUS_NAME:
+      g_value_set_string (value, self->bus_name);
+      break;
+
+    case PROP_OBJECT_PATH:
+      g_value_set_string (value, self->object_path);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
+sysprof_proxy_source_set_property (GObject      *object,
+                                   guint         prop_id,
+                                   const GValue *value,
+                                   GParamSpec   *pspec)
+{
+  SysprofProxySource *self = SYSPROF_PROXY_SOURCE (object);
+
+  switch (prop_id)
+    {
+    case PROP_BUS_TYPE:
+      self->bus_type = g_value_get_enum (value);
+      break;
+
+    case PROP_BUS_NAME:
+      g_free (self->bus_name);
+      self->bus_name = g_value_dup_string (value);
+      break;
+
+    case PROP_OBJECT_PATH:
+      g_free (self->object_path);
+      self->object_path = g_value_dup_string (value);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
 sysprof_proxy_source_class_init (SysprofProxySourceClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = sysprof_proxy_source_finalize;
+  object_class->get_property = sysprof_proxy_source_get_property;
+  object_class->set_property = sysprof_proxy_source_set_property;
+
+  properties [PROP_BUS_TYPE] =
+    g_param_spec_enum ("bus-type", NULL, NULL,
+                       G_TYPE_BUS_TYPE,
+                       G_BUS_TYPE_SESSION,
+                       (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_BUS_NAME] =
+    g_param_spec_string ("bus-name", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_OBJECT_PATH] =
+    g_param_spec_string ("object-path", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
@@ -655,10 +741,11 @@ sysprof_proxy_source_new (GBusType     bus_type,
   if (object_path && !*object_path)
     object_path = NULL;
 
-  self = g_object_new (SYSPROF_TYPE_PROXY_SOURCE, NULL);
-  self->bus_type = bus_type;
-  self->bus_name = g_strdup (bus_name);
-  self->object_path = g_strdup (object_path);
+  self = g_object_new (SYSPROF_TYPE_PROXY_SOURCE,
+                       "bus-type", bus_type,
+                       "bus-name", bus_name,
+                       "object-path", object_path,
+                       NULL);
 
   return SYSPROF_SOURCE (g_steal_pointer (&self));
 }

@@ -20,6 +20,12 @@
         <property name="envvar">GTK_TRACE_FD</property>
       </object>
     </child>
+    <child>
+      <object class="SysprofProxySource">
+        <property name="bus-type">session</property>
+        <property name="object-path">/org/gtk/Profiler</property>
+      </object>
+    </child>
   </object>
   <object class="SysprofAid" id="gjs_aid">
     <property name="display-name">GJS</property>

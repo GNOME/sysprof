@@ -1220,7 +1220,7 @@ sysprof_capture_writer_set_counters (SysprofCaptureWriter             *self,
   guint i;
 
   g_assert (self != NULL);
-  g_assert (counters_ids != NULL);
+  g_assert (counters_ids != NULL || n_counters == 0);
   g_assert (values != NULL || !n_counters);
 
   if (n_counters == 0)

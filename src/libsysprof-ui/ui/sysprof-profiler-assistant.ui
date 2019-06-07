@@ -94,42 +94,49 @@
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">callgraph_aid</property>
+                            <property name="selected">true</property>
                             <property name="visible">true</property>
                           </object>
                         </child>
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">cpu_aid</property>
+                            <property name="selected">true</property>
                             <property name="visible">true</property>
                           </object>
                         </child>
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">memory_aid</property>
+                            <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>
                         </child>
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">mutter_aid</property>
+                            <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>
                         </child>
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">gtk_aid</property>
+                            <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>
                         </child>
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">gjs_aid</property>
+                            <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>
                         </child>
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">app_aid</property>
+                            <property name="selected">true</property>
                             <property name="visible">true</property>
                           </object>
                         </child>

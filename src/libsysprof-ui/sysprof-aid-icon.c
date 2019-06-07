@@ -41,6 +41,7 @@ G_DEFINE_TYPE (SysprofAidIcon, sysprof_aid_icon, GTK_TYPE_FLOW_BOX_CHILD)
 enum {
   PROP_0,
   PROP_AID,
+  PROP_SELECTED,
   N_PROPS
 };
 
@@ -129,6 +130,10 @@ sysprof_aid_icon_get_property (GObject    *object,
       g_value_set_object (value, sysprof_aid_icon_get_aid (self));
       break;
 
+    case PROP_SELECTED:
+      g_value_set_boolean (value, gtk_widget_get_visible (GTK_WIDGET (self->check)));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -146,6 +151,10 @@ sysprof_aid_icon_set_property (GObject      *object,
     {
     case PROP_AID:
       sysprof_aid_icon_set_aid (self, g_value_get_object (value));
+      break;
+
+    case PROP_SELECTED:
+      gtk_widget_set_visible (GTK_WIDGET (self->check), g_value_get_boolean (value));
       break;
 
     default:
@@ -169,6 +178,13 @@ sysprof_aid_icon_class_init (SysprofAidIconClass *klass)
                          "The aid for the icon",
                          SYSPROF_TYPE_AID,
                          (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_SELECTED] =
+    g_param_spec_boolean ("selected",
+                          "Selected",
+                          "If the item is selected",
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 

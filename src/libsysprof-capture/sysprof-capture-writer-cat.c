@@ -127,10 +127,13 @@ translate_table_translate (GArray  **tables,
   const TranslateItem *item;
   TranslateItem key = { src, 0 };
 
-  if ((src & SYSPROF_CAPTURE_JITMAP_MARK) == 0)
-    return src;
+  if (table == TRANSLATE_ADDR)
+    {
+      if ((src & SYSPROF_CAPTURE_JITMAP_MARK) == 0)
+        return src;
+    }
 
-  if (!tables[table])
+  if (tables[table] == NULL)
     return src;
 
   item = bsearch (&key,

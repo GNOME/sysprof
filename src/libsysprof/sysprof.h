@@ -24,6 +24,7 @@ G_BEGIN_DECLS
 
 #define SYSPROF_INSIDE
 
+# include "sysprof-battery-source.h"
 # include "sysprof-callgraph-profile.h"
 # include "sysprof-capture-gobject.h"
 # include "sysprof-capture-symbol-resolver.h"

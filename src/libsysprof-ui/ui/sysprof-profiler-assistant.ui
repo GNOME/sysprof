@@ -43,6 +43,13 @@
       </object>
     </child>
   </object>
+  <object class="SysprofAid" id="battery_aid">
+    <property name="display-name">Battery</property>
+    <property name="icon-name">battery-low-charging-symbolic</property>
+    <child>
+      <object class="SysprofBatterySource"/>
+    </child>
+  </object>
   <template class="SysprofProfilerAssistant" parent="GtkBin">
     <child>
       <object class="GtkScrolledWindow">
@@ -137,6 +144,13 @@
                           <object class="SysprofAidIcon">
                             <property name="aid">app_aid</property>
                             <property name="selected">true</property>
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="SysprofAidIcon">
+                            <property name="aid">battery_aid</property>
+                            <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>
                         </child>

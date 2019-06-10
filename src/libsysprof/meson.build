@@ -3,6 +3,7 @@ if get_option('libsysprof')
 libsysprof_c_args = [ '-DSYSPROF_COMPILATION' ]
 
 libsysprof_public_sources = [
+  'sysprof-battery-source.c',
   'sysprof-callgraph-profile.c',
   'sysprof-capture-gobject.c',
   'sysprof-capture-symbol-resolver.c',
@@ -27,6 +28,7 @@ libsysprof_public_sources = [
 ]
 
 libsysprof_public_headers = [
+  'sysprof-battery-source.h',
   'sysprof-callgraph-profile.h',
   'sysprof-capture-gobject.h',
   'sysprof-capture-symbol-resolver.h',

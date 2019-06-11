@@ -22,6 +22,8 @@
 
 #include "config.h"
 
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "sysprof-map-lookaside.h"

@@ -26,6 +26,7 @@
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <stdlib.h>
 #include <sysprof-capture.h>
 #include <unistd.h>
 

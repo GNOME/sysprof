@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "sysprof-backport-autocleanups.h"
 #include "sysprof-battery-source.h"
 #include "sysprof-helpers.h"
 

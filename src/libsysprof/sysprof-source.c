@@ -56,7 +56,7 @@ sysprof_source_default_init (SysprofSourceInterface *iface)
 
 void
 sysprof_source_add_pid (SysprofSource *self,
-                   GPid      pid)
+                        GPid      pid)
 {
   g_return_if_fail (SYSPROF_IS_SOURCE (self));
   g_return_if_fail (pid != FALSE);
@@ -75,7 +75,7 @@ sysprof_source_emit_finished (SysprofSource *self)
 
 void
 sysprof_source_emit_failed (SysprofSource     *self,
-                       const GError *error)
+                            const GError *error)
 {
   g_return_if_fail (SYSPROF_IS_SOURCE (self));
   g_return_if_fail (error != NULL);
@@ -113,7 +113,7 @@ sysprof_source_prepare (SysprofSource *self)
 
 void
 sysprof_source_set_writer (SysprofSource        *self,
-                      SysprofCaptureWriter *writer)
+                           SysprofCaptureWriter *writer)
 {
   g_return_if_fail (SYSPROF_IS_SOURCE (self));
   g_return_if_fail (writer != NULL);

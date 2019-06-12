@@ -163,18 +163,17 @@ sysprof_tracefd_source_set_envvar (SysprofTracefdSource *self,
 }
 
 static void
-sysprof_tracefd_source_modify_spawn (SysprofSource       *source,
-                                     GSubprocessLauncher *launcher,
-                                     GPtrArray           *argv)
+sysprof_tracefd_source_modify_spawn (SysprofSource    *source,
+                                     SysprofSpawnable *spawnable)
 {
   SysprofTracefdSource *self = (SysprofTracefdSource *)source;
   SysprofTracefdSourcePrivate *priv = sysprof_tracefd_source_get_instance_private (self);
   gchar fdstr[12];
+  gint dest_fd;
   gint fd;
 
   g_assert (SYSPROF_IS_TRACEFD_SOURCE (self));
-  g_assert (G_IS_SUBPROCESS_LAUNCHER (launcher));
-  g_assert (argv != NULL);
+  g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
   g_assert (priv->tracefd == -1);
 
   if (-1 == (fd = sysprof_memfd_create ("[sysprof-proxy-capture]")))
@@ -192,9 +191,9 @@ sysprof_tracefd_source_modify_spawn (SysprofSource       *source,
       return;
     }
 
-  g_snprintf (fdstr, sizeof fdstr, "%d", fd);
-  g_subprocess_launcher_setenv (launcher, priv->envvar, fdstr, TRUE);
-  g_subprocess_launcher_take_fd (launcher, fd, fd);
+  dest_fd = sysprof_spawnable_take_fd (spawnable, fd, -1);
+  g_snprintf (fdstr, sizeof fdstr, "%d", dest_fd);
+  sysprof_spawnable_setenv (spawnable, priv->envvar, fdstr);
 }
 
 static void

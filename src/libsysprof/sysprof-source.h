@@ -25,8 +25,9 @@
 #endif
 
 #include <gio/gio.h>
+#include <sysprof-capture.h>
 
-#include "sysprof-capture-writer.h"
+#include "sysprof-spawnable.h"
 
 G_BEGIN_DECLS
 
@@ -123,15 +124,13 @@ struct _SysprofSourceInterface
   /**
    * SysprofSource::modify-spawn:
    * @self: a #SysprofSource
-   * @launcher: a #GSubprocessLauncher
-   * @argv: (element-type utf8): arguments for spawning
+   * @spawnable: a #SysprofSpawnable
    *
    * Allows the source to modify the launcher or argv before the
    * process is spawned.
    */
-  void (*modify_spawn) (SysprofSource       *self,
-                        GSubprocessLauncher *launcher,
-                        GPtrArray           *argv);
+  void (*modify_spawn) (SysprofSource    *self,
+                        SysprofSpawnable *spawnable);
 
   /**
    * SysprofSource::supplement:
@@ -196,8 +195,7 @@ SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_stop          (SysprofSource        *self);
 SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_modify_spawn  (SysprofSource        *self,
-                                       GSubprocessLauncher  *launcher,
-                                       GPtrArray            *argv);
+                                       SysprofSpawnable     *spawnable);
 SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_source_serialize     (SysprofSource        *self,
                                        GKeyFile             *keyfile,

@@ -141,16 +141,14 @@ sysprof_source_stop (SysprofSource *self)
 }
 
 void
-sysprof_source_modify_spawn (SysprofSource       *self,
-                             GSubprocessLauncher *launcher,
-                             GPtrArray           *argv)
+sysprof_source_modify_spawn (SysprofSource    *self,
+                             SysprofSpawnable *spawnable)
 {
   g_return_if_fail (SYSPROF_IS_SOURCE (self));
-  g_return_if_fail (G_IS_SUBPROCESS_LAUNCHER (launcher));
-  g_return_if_fail (argv != NULL);
+  g_return_if_fail (SYSPROF_IS_SPAWNABLE (spawnable));
 
   if (SYSPROF_SOURCE_GET_IFACE (self)->modify_spawn)
-    SYSPROF_SOURCE_GET_IFACE (self)->modify_spawn (self, launcher, argv);
+    SYSPROF_SOURCE_GET_IFACE (self)->modify_spawn (self, spawnable);
 }
 
 void

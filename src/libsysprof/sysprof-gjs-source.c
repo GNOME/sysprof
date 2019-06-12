@@ -32,12 +32,11 @@ struct _SysprofGjsSource
 static SysprofSourceInterface *parent_iface;
 
 static void
-sysprof_gjs_source_modify_spawn (SysprofSource       *source,
-                                 GSubprocessLauncher *launcher,
-                                 GPtrArray           *argv)
+sysprof_gjs_source_modify_spawn (SysprofSource    *source,
+                                 SysprofSpawnable *spawnable)
 {
-  g_subprocess_launcher_setenv (launcher, "GJS_ENABLE_PROFILER", "1", FALSE);
-  parent_iface->modify_spawn (source, launcher, argv);
+  sysprof_spawnable_setenv (spawnable, "GJS_ENABLE_PROFILER", "1");
+  parent_iface->modify_spawn (source, spawnable);
 }
 
 static void

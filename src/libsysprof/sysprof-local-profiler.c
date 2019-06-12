@@ -587,8 +587,7 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
   if (priv->spawn && priv->spawn_argv && priv->spawn_argv[0])
     {
       g_autoptr(GPtrArray) env = g_ptr_array_new_with_free_func (g_free);
-      g_autoptr(GPtrArray) argv = g_ptr_array_new_with_free_func (g_free);
-      g_autoptr(GSubprocessLauncher) launcher = NULL;
+      g_autoptr(SysprofSpawnable) spawnable = sysprof_spawnable_new ();
       g_autoptr(GSubprocess) subprocess = NULL;
       GPid pid;
 
@@ -612,34 +611,25 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
 
       g_ptr_array_add (env, NULL);
 
-      launcher = g_subprocess_launcher_new (0);
-      g_subprocess_launcher_set_environ (launcher, (gchar **)env->pdata);
-      g_subprocess_launcher_set_cwd (launcher, g_get_home_dir ());
-
-      if (priv->spawn_argv)
-        {
-          for (guint i = 0; priv->spawn_argv[i]; i++)
-            g_ptr_array_add (argv, g_strdup (priv->spawn_argv[i]));
-        }
+      sysprof_spawnable_set_environ (spawnable, (const gchar * const *)env->pdata);
+      sysprof_spawnable_append_args (spawnable, (const gchar * const *)priv->spawn_argv);
 
       /* Save argv before modifying */
-      g_key_file_set_string_list (keyfile,
-                                  "profiler",
-                                  "spawn-argv",
-                                  (const gchar * const *)argv->pdata,
-                                  argv->len);
+      if (priv->spawn_argv != NULL)
+        g_key_file_set_string_list (keyfile,
+                                    "profiler",
+                                    "spawn-argv",
+                                    (const gchar * const *)priv->spawn_argv,
+                                    g_strv_length (priv->spawn_argv));
 
       for (guint i = 0; i < priv->sources->len; i++)
         {
           SysprofSource *source = g_ptr_array_index (priv->sources, i);
-          sysprof_source_modify_spawn (source, launcher, argv);
+
+          sysprof_source_modify_spawn (source, spawnable);
         }
 
-      g_ptr_array_add (argv, NULL);
-
-      if (!(subprocess = g_subprocess_launcher_spawnv (launcher,
-                                                       (const gchar * const *)argv->pdata,
-                                                       &error)))
+      if (!(subprocess = sysprof_spawnable_spawn (spawnable, &error)))
         {
           g_ptr_array_add (priv->failures, g_steal_pointer (&error));
         }

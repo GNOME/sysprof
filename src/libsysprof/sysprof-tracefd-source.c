@@ -168,6 +168,7 @@ sysprof_tracefd_source_modify_spawn (SysprofSource    *source,
 {
   SysprofTracefdSource *self = (SysprofTracefdSource *)source;
   SysprofTracefdSourcePrivate *priv = sysprof_tracefd_source_get_instance_private (self);
+  g_autofree gchar *name = NULL;
   g_autofree gchar *fdstr = NULL;
   gint dest_fd;
   gint fd;
@@ -176,7 +177,9 @@ sysprof_tracefd_source_modify_spawn (SysprofSource    *source,
   g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
   g_assert (priv->tracefd == -1);
 
-  if (-1 == (fd = sysprof_memfd_create ("[sysprof-proxy-capture]")))
+  name = g_strdup_printf ("[sysprof-tracefd:%s]", priv->envvar);
+
+  if (-1 == (fd = sysprof_memfd_create (name)))
     {
       g_warning ("Failed to create FD for tracefd capture: %s",
                  g_strerror (errno));

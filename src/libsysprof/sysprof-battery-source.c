@@ -129,7 +129,7 @@ sysprof_battery_source_prepare (SysprofSource *source)
 
       bat.counter_id = sysprof_capture_writer_request_counter (self->writer, 1);
 
-      g_strlcpy (ctr.category, "Battery Change", sizeof ctr.category);
+      g_strlcpy (ctr.category, "Battery Charge", sizeof ctr.category);
       g_strlcpy (ctr.name, bat.id, sizeof ctr.name);
       g_strlcpy (ctr.description, bat.name, sizeof ctr.description);
       ctr.id = bat.counter_id;

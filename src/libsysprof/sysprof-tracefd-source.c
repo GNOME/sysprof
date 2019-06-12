@@ -168,7 +168,7 @@ sysprof_tracefd_source_modify_spawn (SysprofSource    *source,
 {
   SysprofTracefdSource *self = (SysprofTracefdSource *)source;
   SysprofTracefdSourcePrivate *priv = sysprof_tracefd_source_get_instance_private (self);
-  gchar fdstr[12];
+  g_autofree gchar *fdstr = NULL;
   gint dest_fd;
   gint fd;
 
@@ -192,7 +192,7 @@ sysprof_tracefd_source_modify_spawn (SysprofSource    *source,
     }
 
   dest_fd = sysprof_spawnable_take_fd (spawnable, fd, -1);
-  g_snprintf (fdstr, sizeof fdstr, "%d", dest_fd);
+  fdstr = g_strdup_printf ("%u", dest_fd);
   sysprof_spawnable_setenv (spawnable, priv->envvar, fdstr);
 }
 

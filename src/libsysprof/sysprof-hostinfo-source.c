@@ -41,6 +41,7 @@ struct _SysprofHostinfoSource
   guint                 handler;
   gint                  n_cpu;
   gint                  stat_fd;
+  guint                 combined_id;
 
   GArray               *freqs;
 
@@ -243,9 +244,10 @@ publish_cpu (SysprofHostinfoSource *self)
 {
   SysprofCaptureCounterValue *counter_values;
   guint *counter_ids;
+  glong total_usage = 0;
 
-  counter_ids = alloca (sizeof *counter_ids * self->n_cpu * 2);
-  counter_values = alloca (sizeof *counter_values * self->n_cpu * 2);
+  counter_ids = alloca (sizeof *counter_ids * (self->n_cpu * 2 + 1));
+  counter_values = alloca (sizeof *counter_values * (self->n_cpu * 2 + 1));
 
   for (guint i = 0; i < self->n_cpu; i++)
     {
@@ -261,15 +263,21 @@ publish_cpu (SysprofHostinfoSource *self)
 
       *id = info->counter_base + 1;
       value->vdbl = get_cpu_freq (self, i);
+
+      total_usage += info->total;
     }
+
+  /* Add combined counter */
+  counter_ids[self->n_cpu * 2] = self->combined_id;
+  counter_values[self->n_cpu * 2].vdbl = total_usage / (gdouble)self->n_cpu;
 
   sysprof_capture_writer_set_counters (self->writer,
                                        SYSPROF_CAPTURE_CURRENT_TIME,
                                        -1,
-                                       getpid (),
+                                       -1,
                                        counter_ids,
                                        counter_values,
-                                       self->n_cpu * 2);
+                                       self->n_cpu * 2 + 1);
 }
 
 static gboolean
@@ -380,6 +388,7 @@ sysprof_hostinfo_source_prepare (SysprofSource *source)
 {
   SysprofHostinfoSource *self = (SysprofHostinfoSource *)source;
   SysprofCaptureCounter *counters;
+  SysprofCaptureCounter *combined;
   gint cpuinfo_fd;
 
   g_assert (SYSPROF_IS_HOSTINFO_SOURCE (self));
@@ -402,7 +411,7 @@ sysprof_hostinfo_source_prepare (SysprofSource *source)
 
   g_array_set_size (self->cpu_info, 0);
 
-  counters = alloca (sizeof *counters * self->n_cpu * 2);
+  counters = alloca (sizeof *counters * (self->n_cpu * 2 + 1));
 
   for (guint i = 0; i < self->n_cpu; i++)
     {
@@ -457,12 +466,22 @@ sysprof_hostinfo_source_prepare (SysprofSource *source)
       g_array_append_val (self->cpu_info, info);
     }
 
+  /* Now add combined counter */
+  self->combined_id = sysprof_capture_writer_request_counter (self->writer, 1);
+  combined = &counters[self->n_cpu * 2];
+  combined->id = self->combined_id;
+  combined->type = SYSPROF_CAPTURE_COUNTER_DOUBLE;
+  combined->value.vdbl = 0;
+  g_strlcpy (combined->category, "CPU Percent", sizeof combined->category);
+  g_snprintf (combined->name, sizeof combined->name, "Combined");
+  g_snprintf (combined->description, sizeof combined->description, "Combined CPU usage");
+
   sysprof_capture_writer_define_counters (self->writer,
-                                     SYSPROF_CAPTURE_CURRENT_TIME,
-                                     -1,
-                                     getpid (),
-                                     counters,
-                                     self->n_cpu * 2);
+                                          SYSPROF_CAPTURE_CURRENT_TIME,
+                                          -1,
+                                          -1,
+                                          counters,
+                                          self->n_cpu * 2 + 1);
 
   sysprof_source_emit_ready (SYSPROF_SOURCE (self));
 }

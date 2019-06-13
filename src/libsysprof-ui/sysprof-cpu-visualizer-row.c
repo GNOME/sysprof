@@ -67,7 +67,8 @@ sysprof_cpu_visualizer_counter_found (const SysprofCaptureFrame *frame,
 
   for (guint i = 0; i < def->n_counters; i++)
     {
-      if (g_str_equal (def->counters[i].category, state->self->category))
+      if (strcmp (def->counters[i].category, state->self->category) == 0 &&
+          strstr (def->counters[i].name, "(Combined)") == NULL)
         {
           guint id = def->counters[i].id;
           g_array_append_val (state->counters, id);

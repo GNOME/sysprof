@@ -44,6 +44,7 @@ typedef struct
   GHashTable *mark_groups;
   guint fps_counter;
   guint pixels_counter;
+  guint combined_cpu_counter;
   GArray *memory;
   guint has_cpu : 1;
   guint has_sample : 1;
@@ -235,7 +236,11 @@ discover_new_rows_frame_cb (const SysprofCaptureFrame *frame,
         {
           const SysprofCaptureCounter *ctr = &def->counters[i];
 
-          if (!state->has_cpu &&
+          if (!state->combined_cpu_counter &&
+              strcmp (ctr->category, "CPU Percent") == 0 &&
+              strcmp (ctr->name, "Combined") == 0)
+            state->combined_cpu_counter = ctr->id;
+          else if (!state->has_cpu &&
               strstr (ctr->category, "CPU Percent") != NULL)
             state->has_cpu = TRUE;
           else if (!state->fps_counter &&
@@ -295,7 +300,30 @@ handle_capture_results (GObject      *object,
    *       select what sort of data collections they'd like to see.
    */
 
-  if (state->has_cpu)
+  if (state->combined_cpu_counter != 0)
+    {
+      GdkRGBA rgba;
+
+      GtkWidget *row = g_object_new (SYSPROF_TYPE_LINE_VISUALIZER_ROW,
+                                     /* Translators: CPU is the processor. */
+                                     "title", _("CPU (Combined)"),
+                                     "height-request", 35,
+                                     "selectable", FALSE,
+                                     "visible", TRUE,
+                                     "y-lower", 0.0,
+                                     "y-upper", 100.0,
+                                     NULL);
+      gdk_rgba_parse (&rgba, "#3465a4");
+      sysprof_line_visualizer_row_add_counter (SYSPROF_LINE_VISUALIZER_ROW (row),
+                                               state->combined_cpu_counter,
+                                               &rgba);
+      rgba.alpha = 0.5;
+      sysprof_line_visualizer_row_set_fill (SYSPROF_LINE_VISUALIZER_ROW (row),
+                                            state->combined_cpu_counter,
+                                            &rgba);
+      gtk_container_add (GTK_CONTAINER (self), row);
+    }
+  else if (state->has_cpu)
     {
       GtkWidget *row = g_object_new (SYSPROF_TYPE_CPU_VISUALIZER_ROW,
                                      "category", "CPU Percent",

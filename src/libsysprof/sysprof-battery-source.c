@@ -96,7 +96,6 @@ sysprof_battery_source_prepare (SysprofSource *source)
       g_autofree gchar *type_data = NULL;
       g_autofree gchar *model_data = NULL;
       g_autofree gchar *charge_full_data = NULL;
-      g_autofree gchar *charge_now_data = NULL;
       SysprofCaptureCounter ctr;
       Battery bat = {0};
 
@@ -116,8 +115,8 @@ sysprof_battery_source_prepare (SysprofSource *source)
       if (g_file_get_contents (charge_full_path, &charge_full_data, NULL, NULL))
         bat.charge_full = atoi (charge_full_data);
 
-      if (g_file_get_contents (charge_now_path, &charge_now_data, NULL, NULL))
-        bat.charge_now = atoi (charge_now_data);
+      /* Wait for first polling */
+      bat.charge_now = 0;
 
       g_strstrip (bat.id);
       g_strstrip (bat.name);

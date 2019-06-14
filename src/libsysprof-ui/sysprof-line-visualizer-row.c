@@ -74,6 +74,7 @@ typedef struct
 typedef struct
 {
   guint id;
+  guint type;
   gdouble line_width;
   GdkRGBA foreground;
   GdkRGBA background;
@@ -490,6 +491,7 @@ sysprof_line_visualizer_row_add_counter (SysprofLineVisualizerRow *self,
 
   line_info.id = counter_id;
   line_info.line_width = 1.0;
+  line_info.type = SYSPROF_CAPTURE_COUNTER_DOUBLE;
 
   if (color != NULL)
     {
@@ -530,6 +532,7 @@ contains_id (GArray *ar,
   for (guint i = 0; i < ar->len; i++)
     {
       const LineInfo *info = &g_array_index (ar, LineInfo, i);
+
       if (info->id == id)
         return TRUE;
     }
@@ -541,11 +544,14 @@ static inline guint8
 counter_type (LoadData *load,
               guint     counter_id)
 {
-  /* TODO: Support other counter types
-   *
-   * We need to keep some information on the counter (by id) so that we
-   * can track the counters type (which is a 1-byte type id).
-   */
+  for (guint i = 0; i < load->lines->len; i++)
+    {
+      const LineInfo *info = &g_array_index (load->lines, LineInfo, i);
+
+      if (info->id == counter_id)
+        return info->type;
+    }
+
   return SYSPROF_CAPTURE_COUNTER_DOUBLE;
 }
 
@@ -628,7 +634,27 @@ sysprof_line_visualizer_row_load_data_range_cb (const SysprofCaptureFrame *frame
   g_assert (load->y_upper_set == FALSE ||
             load->y_lower_set == FALSE);
 
-  if (frame->type == SYSPROF_CAPTURE_FRAME_CTRSET)
+  if (frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF)
+    {
+      const SysprofCaptureCounterDefine *def = (SysprofCaptureCounterDefine *)frame;
+
+      for (guint i = 0; i < def->n_counters; i++)
+        {
+          const SysprofCaptureCounter *ctr = &def->counters[i];
+
+          for (guint j = 0; j < load->lines->len; j++)
+            {
+              LineInfo *info = &g_array_index (load->lines, LineInfo, j);
+
+              if (info->id == ctr->id)
+                {
+                  info->type = ctr->type;
+                  break;
+                }
+            }
+        }
+    }
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_CTRSET)
     {
       const SysprofCaptureCounterSet *set = (SysprofCaptureCounterSet *)frame;
 

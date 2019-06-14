@@ -240,6 +240,9 @@ sysprof_battery_source_start (SysprofSource *source)
   g_assert (SYSPROF_IS_BATTERY_SOURCE (self));
 
   self->poll_source = g_timeout_add_seconds (1, sysprof_battery_source_poll_cb, self);
+
+  /* Poll immediately */
+  sysprof_battery_source_poll_cb (self);
 }
 
 static void

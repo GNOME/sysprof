@@ -157,6 +157,7 @@ static gboolean
 battery_poll (Battery                    *battery,
               SysprofCaptureCounterValue *value)
 {
+  gint64 val;
   gssize len;
   gchar buf[32];
 
@@ -183,11 +184,16 @@ battery_poll (Battery                    *battery,
 
   buf [len] = 0;
 
-  battery->charge_now = atoi (buf);
+  val = atoi (buf);
 
-  value->v64 = battery->charge_now;
+  if (val != battery->charge_now)
+    {
+      battery->charge_now = val;
+      value->v64 = val;
+      return TRUE;
+    }
 
-  return TRUE;
+  return FALSE;
 }
 
 static gboolean

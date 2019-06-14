@@ -39,6 +39,7 @@ struct _SysprofProfilerAssistant
   GtkBin                parent_instance;
 
   /* Template Objects */
+  GtkSwitch            *allow_throttling;
   GtkButton            *record_button;
   GtkEntry             *command_line;
   GtkRevealer          *process_revealer;
@@ -246,6 +247,12 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
   sysprof_profiler_add_source (profiler, proc_source);
 #endif
 
+  if (!gtk_switch_get_active (self->allow_throttling))
+    {
+      g_autoptr(SysprofSource) governor = sysprof_governor_source_new ();
+      sysprof_profiler_add_source (profiler, governor);
+    }
+
   /* Always add symbol decoder to save to file immediately */
   symbols_source = sysprof_symbols_source_new ();
   sysprof_profiler_add_source (profiler, symbols_source);
@@ -279,6 +286,7 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
                   G_TYPE_NONE, 1, SYSPROF_TYPE_PROFILER);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-profiler-assistant.ui");
+  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, allow_throttling);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, aid_flow_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, command_line);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, environ_editor);

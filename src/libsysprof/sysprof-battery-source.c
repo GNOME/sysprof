@@ -251,6 +251,9 @@ sysprof_battery_source_stop (SysprofSource *source)
 
   g_assert (SYSPROF_IS_BATTERY_SOURCE (self));
 
+  /* Poll one last time */
+  sysprof_battery_source_poll_cb (self);
+
   g_clear_handle_id (&self->poll_source, g_source_remove);
 
   sysprof_source_emit_finished (source);

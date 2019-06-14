@@ -311,5 +311,5 @@ sysprof_battery_source_init (SysprofBatterySource *self)
 SysprofSource *
 sysprof_battery_source_new (void)
 {
-  return g_object_new (SYSPROF_TYPE_SOURCE, NULL);
+  return g_object_new (SYSPROF_TYPE_BATTERY_SOURCE, NULL);
 }

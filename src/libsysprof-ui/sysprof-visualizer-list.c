@@ -46,6 +46,8 @@ typedef struct
   guint pixels_counter;
   guint combined_cpu_counter;
   GArray *memory;
+  guint batteries[4];
+  guint has_battery : 1;
   guint has_cpu : 1;
   guint has_sample : 1;
 } Discovery;
@@ -200,6 +202,20 @@ sysprof_visualizer_list_get_reader (SysprofVisualizerList *self)
   return priv->reader;
 }
 
+static void
+add_battery_id (Discovery *state,
+                guint      battery_id)
+{
+  for (guint i = 0; i < G_N_ELEMENTS (state->batteries); i++)
+    {
+      if (state->batteries[i] == 0)
+        {
+          state->batteries[i] = battery_id;
+          break;
+        }
+    }
+}
+
 static gboolean
 discover_new_rows_frame_cb (const SysprofCaptureFrame *frame,
                             gpointer                   user_data)
@@ -249,6 +265,11 @@ discover_new_rows_frame_cb (const SysprofCaptureFrame *frame,
           else if (!state->pixels_counter &&
                    strstr (ctr->category, "gtk") != NULL && strstr (ctr->name, "frame pixels") != NULL)
             state->pixels_counter = ctr->id;
+          else if (strcmp (ctr->category, "Battery Charge") == 0)
+            {
+              state->has_battery = TRUE;
+              add_battery_id (state, ctr->id);
+            }
           else if (strcmp ("Memory", ctr->category) == 0 &&
                    strcmp ("Used", ctr->name) == 0)
             {
@@ -352,6 +373,29 @@ handle_capture_results (GObject      *object,
                                      "use-dash", TRUE,
                                      NULL);
       gtk_container_add (GTK_CONTAINER (self), row);
+    }
+
+  if (state->has_battery)
+    {
+      for (guint i = 0; i < G_N_ELEMENTS (state->batteries); i++)
+        {
+          GtkWidget *row;
+
+          if (state->batteries[i] == 0)
+            break;
+
+          row = g_object_new (SYSPROF_TYPE_LINE_VISUALIZER_ROW,
+                              /* Translators: CPU is the processor. */
+                              "title", _("Battery Charge"),
+                              "height-request", 35,
+                              "selectable", FALSE,
+                              "visible", TRUE,
+                              NULL);
+          sysprof_line_visualizer_row_add_counter (SYSPROF_LINE_VISUALIZER_ROW (row),
+                                                   state->batteries[i],
+                                                   NULL);
+          gtk_container_add (GTK_CONTAINER (self), row);
+        }
     }
 
   if (state->has_sample)

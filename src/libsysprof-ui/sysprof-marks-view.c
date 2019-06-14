@@ -25,7 +25,10 @@
 #include "sysprof-cell-renderer-duration.h"
 #include "sysprof-marks-model.h"
 #include "sysprof-marks-view.h"
+#include "sysprof-ui-private.h"
 #include "sysprof-zoom-manager.h"
+
+#define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
 
 typedef struct
 {
@@ -169,6 +172,62 @@ sysprof_marks_view_selection_changed_cb (SysprofMarksView *self,
     }
 }
 
+static gboolean
+sysprof_marks_view_tree_view_query_tooltip_cb (SysprofMarksView *self,
+                                               gint              x,
+                                               gint              y,
+                                               gboolean          keyboard_mode,
+                                               GtkTooltip       *tooltip,
+                                               GtkTreeView      *tree_view)
+{
+  SysprofMarksViewPrivate *priv = sysprof_marks_view_get_instance_private (self);
+  g_autoptr(GtkTreePath) path = NULL;
+  GtkTreeViewColumn *column;
+  gint cell_x, cell_y;
+
+  g_assert (SYSPROF_IS_MARKS_VIEW (self));
+  g_assert (GTK_IS_TOOLTIP (tooltip));
+  g_assert (GTK_IS_TREE_VIEW (tree_view));
+
+  if (gtk_tree_view_get_path_at_pos (tree_view, x, y, &path, &column, &cell_x, &cell_y))
+    {
+      GtkTreeModel *model = gtk_tree_view_get_model (tree_view);
+      GtkTreeIter iter;
+
+      if (gtk_tree_model_get_iter (model, &iter, path))
+        {
+          g_autofree gchar *text = NULL;
+          g_autofree gchar *timestr = NULL;
+          g_autofree gchar *tooltip_text = NULL;
+          g_autofree gchar *durationstr = NULL;
+          gint64 begin_time;
+          gint64 duration;
+
+          gtk_tree_model_get (model, &iter,
+                              SYSPROF_MARKS_MODEL_COLUMN_BEGIN_TIME, &begin_time,
+                              SYSPROF_MARKS_MODEL_COLUMN_DURATION, &duration,
+                              SYSPROF_MARKS_MODEL_COLUMN_TEXT, &text,
+                              -1);
+
+          begin_time -= priv->capture_begin_time;
+          durationstr = _sysprof_format_duration (duration);
+
+          if (duration != 0)
+            timestr = g_strdup_printf ("%0.4lf (%s)", begin_time / (gdouble)NSEC_PER_SEC, durationstr);
+          else
+            timestr = g_strdup_printf ("%0.4lf", begin_time / (gdouble)NSEC_PER_SEC);
+
+          tooltip_text = g_strdup_printf ("%s: %s", timestr, text);
+
+          gtk_tooltip_set_text (tooltip, tooltip_text);
+
+          return TRUE;
+        }
+    }
+
+  return FALSE;
+}
+
 static void
 sysprof_marks_view_finalize (GObject *object)
 {
@@ -287,6 +346,12 @@ sysprof_marks_view_init (SysprofMarksView *self)
   g_signal_connect_object (priv->tree_view,
                            "key-press-event",
                            G_CALLBACK (sysprof_marks_view_tree_view_key_press_event_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (priv->tree_view,
+                           "query-tooltip",
+                           G_CALLBACK (sysprof_marks_view_tree_view_query_tooltip_cb),
                            self,
                            G_CONNECT_SWAPPED);
 

@@ -11,6 +11,7 @@
               <object class="GtkTreeView" id="tree_view">
                 <property name="headers-visible">false</property>
                 <property name="enable-grid-lines">horizontal</property>
+                <property name="has-tooltip">true</property>
                 <property name="visible">true</property>
                 <child>
                   <object class="GtkTreeViewColumn" id="duration_column">

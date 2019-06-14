@@ -671,3 +671,69 @@ sysprof_helpers_get_process_info_finish (SysprofHelpers  *self,
 
   return FALSE;
 }
+
+static void
+sysprof_helpers_set_governor_cb (GObject      *object,
+                                 GAsyncResult *result,
+                                 gpointer      user_data)
+{
+  IpcService *proxy = (IpcService *)object;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+  gchar *old_governor = NULL;
+
+  g_assert (IPC_IS_SERVICE (proxy));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (!ipc_service_call_set_governor_finish (proxy, &old_governor, result, &error))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    g_task_return_pointer (task, old_governor, g_free);
+}
+
+void
+sysprof_helpers_set_governor_async (SysprofHelpers      *self,
+                                    const gchar         *governor,
+                                    GCancellable        *cancellable,
+                                    GAsyncReadyCallback  callback,
+                                    gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SYSPROF_IS_HELPERS (self));
+  g_return_if_fail (governor != NULL);
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_helpers_set_governor_async);
+
+  if (fail_if_no_proxy (self, task))
+    return;
+
+  ipc_service_call_set_governor (self->proxy,
+                                 governor,
+                                 cancellable,
+                                 sysprof_helpers_set_governor_cb,
+                                 g_steal_pointer (&task));
+}
+
+gboolean
+sysprof_helpers_set_governor_finish (SysprofHelpers  *self,
+                                     GAsyncResult    *result,
+                                     gchar          **old_governer,
+                                     GError         **error)
+{
+  g_autofree gchar *ret = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_HELPERS (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  if ((ret = g_task_propagate_pointer (G_TASK (result), error)))
+    {
+      if (old_governer != NULL)
+        *old_governer = g_steal_pointer (&ret);
+      return TRUE;
+    }
+
+  return FALSE;
+}

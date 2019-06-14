@@ -47,6 +47,54 @@ enum {
 static guint signals [N_SIGNALS];
 
 static gboolean
+file_set_contents_no_backup (const gchar  *path,
+                             const gchar  *contents,
+                             gssize        len,
+                             GError      **error)
+{
+  int fd;
+
+  g_return_val_if_fail (path != NULL, FALSE);
+
+  if (contents == NULL)
+    contents = "";
+
+  if (len < 0)
+    len = strlen (contents);
+
+  /* This is only for setting files in /sys, which need to be a single
+   * write anyway, so don't try to incrementally write at all.
+   */
+
+  fd = open (path, O_WRONLY, 0644);
+
+  if (fd == -1)
+    {
+      int errsv = errno;
+      g_set_error (error,
+                   G_FILE_ERROR,
+                   g_file_error_from_errno (errsv),
+                   "%s", g_strerror (errsv));
+      return FALSE;
+    }
+
+  if (write (fd, contents, len) != len)
+    {
+      int errsv = errno;
+      g_set_error (error,
+                   G_FILE_ERROR,
+                   g_file_error_from_errno (errsv),
+                   "%s", g_strerror (errsv));
+      close (fd);
+      return FALSE;
+    }
+
+  close (fd);
+
+  return TRUE;
+}
+
+static gboolean
 ipc_service_impl_handle_list_processes (IpcService            *service,
                                         GDBusMethodInvocation *invocation)
 {
@@ -263,6 +311,69 @@ ipc_service_impl_handle_get_process_info (IpcService            *service,
   return TRUE;
 }
 
+static gboolean
+ipc_service_impl_handle_set_governor (IpcService            *service,
+                                      GDBusMethodInvocation *invocation,
+                                      const gchar           *governor)
+{
+  g_autoptr(GVariant) res = NULL;
+  g_autofree gchar *available = NULL;
+  g_autofree gchar *previous = NULL;
+  gboolean had_error = FALSE;
+  guint n_procs;
+
+  g_assert (IPC_IS_SERVICE (service));
+  g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+  g_assert (governor != NULL);
+
+  if (!g_file_get_contents ("/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors", &available, NULL, NULL))
+    {
+      g_warning ("Failed to discover available governors");
+      had_error = TRUE;
+      goto finish;
+    }
+
+  if (strstr (available, governor) == NULL)
+    {
+      /* No such governor */
+      g_warning ("No such governor \"%s\"", governor);
+      had_error = TRUE;
+      goto finish;
+    }
+
+  if (g_file_get_contents ("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor", &previous, NULL, NULL))
+    g_strstrip (previous);
+  else
+    previous = g_strdup ("unknown");
+
+  n_procs = g_get_num_processors ();
+
+  for (guint i = 0; i < n_procs; i++)
+    {
+      g_autofree gchar *path = g_strdup_printf ("/sys/devices/system/cpu/cpu%u/cpufreq/scaling_governor", i);
+      g_autoptr(GError) error = NULL;
+
+      if (!file_set_contents_no_backup (path, governor, -1, &error))
+        {
+          g_warning ("Failed to set governor on CPU %u: %s", i, error->message);
+          had_error = TRUE;
+        }
+    }
+
+finish:
+  if (had_error)
+    g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
+                                           G_DBUS_ERROR,
+                                           G_DBUS_ERROR_FAILED,
+                                           "Failed to set governor");
+  else
+    ipc_service_complete_set_governor (service,
+                                       g_steal_pointer (&invocation),
+                                       previous);
+
+  return TRUE;
+}
+
 static void
 init_service_iface (IpcServiceIface *iface)
 {
@@ -271,6 +382,7 @@ init_service_iface (IpcServiceIface *iface)
   iface->handle_get_proc_fd = ipc_service_impl_handle_get_proc_fd;
   iface->handle_perf_event_open = ipc_service_impl_handle_perf_event_open;
   iface->handle_get_process_info = ipc_service_impl_handle_get_process_info;
+  iface->handle_set_governor = ipc_service_impl_handle_set_governor;
 }
 
 G_DEFINE_TYPE_WITH_CODE (IpcServiceImpl, ipc_service_impl, IPC_TYPE_SERVICE_SKELETON,

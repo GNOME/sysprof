@@ -92,5 +92,17 @@
       <arg name="attributes" type="s" direction="in"/>
       <arg name="processes" type="aa{sv}" direction="out"/>
     </method>
+
+    <!--
+      SetGovernor:
+      @governor: the new governor to use (such as "performance").
+      @old_governor: the governor that was in use before setting
+
+      Sets the CPU governor to be used on the system.
+    -->
+    <method name="SetGovernor">
+      <arg name="governor" type="s" direction="in"/>
+      <arg name="old_governor" type="s" direction="out"/>
+    </method>
   </interface>
 </node>

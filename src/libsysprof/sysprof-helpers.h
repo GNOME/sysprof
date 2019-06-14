@@ -99,5 +99,14 @@ gboolean        sysprof_helpers_perf_event_open        (SysprofHelpers          
                                                         gint                    *out_fd,
                                                         GError                 **error);
 #endif
+void            sysprof_helpers_set_governor_async     (SysprofHelpers          *self,
+                                                        const gchar             *governor,
+                                                        GCancellable            *cancellable,
+                                                        GAsyncReadyCallback      callback,
+                                                        gpointer                 user_data);
+gboolean        sysprof_helpers_set_governor_finish    (SysprofHelpers          *self,
+                                                        GAsyncResult            *result,
+                                                        gchar                  **old_governor,
+                                                        GError                 **error);
 
 G_END_DECLS

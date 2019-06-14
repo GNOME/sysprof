@@ -721,7 +721,7 @@ sysprof_line_visualizer_row_load_data_worker (GTask        *task,
 
       /* Add extra boundary for some space above the graph line */
       if (G_MAXDOUBLE - load->y_upper > (load->y_upper * .25))
-        load->y_upper *= 1.25;
+        load->y_upper = load->y_upper + ((load->y_upper - load->y_lower) * .25);
     }
 
   sysprof_capture_cursor_foreach (load->cursor, sysprof_line_visualizer_row_load_data_frame_cb, load);
@@ -756,8 +756,8 @@ sysprof_line_visualizer_row_load_data_async (SysprofLineVisualizerRow *self,
 
   load = g_slice_new0 (LoadData);
   load->cache = point_cache_new ();
-  load->y_lower = priv->y_lower;
-  load->y_upper = priv->y_upper;
+  load->y_lower = priv->y_lower_set ? priv->y_lower : G_MAXDOUBLE;
+  load->y_upper = priv->y_upper_set ? priv->y_upper : -G_MAXDOUBLE;
   load->y_lower_set = priv->y_lower_set;
   load->y_upper_set = priv->y_upper_set;
   load->begin_time = sysprof_capture_reader_get_start_time (priv->reader);

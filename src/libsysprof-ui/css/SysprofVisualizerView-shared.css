@@ -1,7 +1,7 @@
 visualizers.selection {
   background: none;
   background-color: alpha(@theme_selected_bg_color, 0.35);
-  border: 1px solid @theme_selected_bg_color;
+  box-shadow: 0 0 0 1px @theme_selected_bg_color inset;
 }
 visualizers.selection:backdrop {
   background: none;

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2019-05-31 19:01+0000\n"
-"PO-Revision-Date: 2019-06-02 14:33+0200\n"
+"POT-Creation-Date: 2019-06-16 13:55+0200\n"
+"PO-Revision-Date: 2019-06-16 14:00+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -133,7 +133,7 @@ msgstr "Wystąpił błąd podczas uzyskiwania dostępu do liczników wydajności
 msgid "Callgraph"
 msgstr "Wykres wywołań"
 
-#: src/libsysprof-ui/sysprof-cpu-aid.c:75
+#: src/libsysprof-ui/sysprof-cpu-aid.c:77
 msgid "CPU Usage"
 msgstr "Użycie procesora"
 
@@ -171,7 +171,7 @@ msgid "Save"
 msgstr "Zapisz"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:546 src/sysprof/sysprof-window.c:278
+#: src/libsysprof-ui/sysprof-display.c:546 src/sysprof/sysprof-window.c:277
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -209,61 +209,41 @@ msgstr "Debugowanie"
 msgid "Warning"
 msgstr "Ostrzeżenie"
 
-#: src/libsysprof-ui/sysprof-memory-aid.c:75
+#: src/libsysprof-ui/sysprof-memory-aid.c:77
 msgid "Memory Usage"
 msgstr "Użycie pamięci"
 
-#: src/libsysprof-ui/sysprof-profiler-menu-button.c:119
-#: src/libsysprof-ui/sysprof-profiler-menu-button.c:134
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:142
-msgid "All Processes"
-msgstr "Wszystkie procesy"
-
-#: src/libsysprof-ui/sysprof-profiler-menu-button.c:121
-#: src/libsysprof-ui/ui/sysprof-profiler-menu-button.ui:204
-msgid "New Process"
-msgstr "Nowy proces"
-
-#. Translators: %d is the PID of the process.
-#: src/libsysprof-ui/sysprof-profiler-menu-button.c:141
-#, c-format
-msgid "Process %d"
-msgstr "Proces %d"
-
-#. Translators: %u is the number (amount) of processes.
-#: src/libsysprof-ui/sysprof-profiler-menu-button.c:147
-#, c-format
-msgid "%u Process"
-msgid_plural "%u Processes"
-msgstr[0] "%u proces"
-msgstr[1] "%u procesy"
-msgstr[2] "%u procesów"
-
-#: src/libsysprof-ui/sysprof-profiler-menu-button.c:820
-msgid "The command line arguments provided are invalid"
-msgstr "Podane parametry wiersza poleceń są nieprawidłowe"
+#. Translators: CPU is the processor.
+#: src/libsysprof-ui/sysprof-visualizer-list.c:330
+msgid "CPU (Combined)"
+msgstr "Procesor (połączone)"
 
 #. Translators: CPU is the processor.
-#: src/libsysprof-ui/sysprof-visualizer-list.c:303
+#: src/libsysprof-ui/sysprof-visualizer-list.c:352
 msgid "CPU"
 msgstr "Procesor"
 
 #. Translators: CPU is the processor.
-#: src/libsysprof-ui/sysprof-visualizer-list.c:318
+#: src/libsysprof-ui/sysprof-visualizer-list.c:367
 msgid "CPU Frequency"
 msgstr "Częstotliwość procesora"
 
-#: src/libsysprof-ui/sysprof-visualizer-list.c:345
+#. Translators: CPU is the processor.
+#: src/libsysprof-ui/sysprof-visualizer-list.c:389
+msgid "Battery Charge"
+msgstr "Poziom naładowania akumulatora"
+
+#: src/libsysprof-ui/sysprof-visualizer-list.c:417
 msgid "Memory Used"
 msgstr "Użyta pamięć"
 
 #. Translators: FPS is frames per second.
-#: src/libsysprof-ui/sysprof-visualizer-list.c:363
+#: src/libsysprof-ui/sysprof-visualizer-list.c:435
 msgid "FPS"
 msgstr "FPS"
 
 #. Translators: amount of pixels drawn per frame.
-#: src/libsysprof-ui/sysprof-visualizer-list.c:382
+#: src/libsysprof-ui/sysprof-visualizer-list.c:454
 msgid "Pixel Bandwidth"
 msgstr "Przepustowość pikseli"
 
@@ -358,7 +338,7 @@ msgid "Captured at"
 msgstr "Utworzono"
 
 #: src/libsysprof-ui/ui/sysprof-details-view.ui:50
-#: src/libsysprof-ui/ui/sysprof-marks-view.ui:17
+#: src/libsysprof-ui/ui/sysprof-marks-view.ui:18
 msgid "Duration"
 msgstr "Czas trwania"
 
@@ -442,11 +422,11 @@ msgstr "Ważność"
 msgid "Domain"
 msgstr "Domena"
 
-#: src/libsysprof-ui/ui/sysprof-marks-view.ui:45
+#: src/libsysprof-ui/ui/sysprof-marks-view.ui:46
 msgid "No Timings Available"
 msgstr "Brak dostępnych czasów"
 
-#: src/libsysprof-ui/ui/sysprof-marks-view.ui:46
+#: src/libsysprof-ui/ui/sysprof-marks-view.ui:47
 msgid "No timing data was collected."
 msgstr "Nie zebrano żadnych danych o czasach."
 
@@ -455,11 +435,15 @@ msgstr "Nie zebrano żadnych danych o czasach."
 msgid "GNOME Shell"
 msgstr "Powłoka GNOME"
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:66
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:77
 msgid "Profilers"
 msgstr "Profilery"
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:172
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:167
+msgid "All Processes"
+msgstr "Wszystkie procesy"
+
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:197
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
 "not be possible on some system system configurations."
@@ -467,38 +451,36 @@ msgstr ""
 "Wszystkie programy i jądro systemu operacyjnego na wykresie wywołań. Może to "
 "nie być możliwe w przypadku niektórych konfiguracji komputera."
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:200
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:225
 msgid "Search Processes…"
 msgstr "Wyszukiwanie procesów…"
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:219
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:244
 msgid "Loading Processes…"
 msgstr "Wczytywanie procesów…"
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:243
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:268
 msgid "Launch Application"
 msgstr "Uruchomienie programu"
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:272
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:297
 msgid "Enable to launch a program of your choosing before profiling."
 msgstr ""
 "Włączenie umożliwi uruchomienie wybranego programu przed profilowaniem."
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:300
-#: src/libsysprof-ui/ui/sysprof-profiler-menu-button.ui:120
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:325
 msgid "Command Line"
 msgstr "Wiersz poleceń"
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:319
-#: src/libsysprof-ui/ui/sysprof-profiler-menu-button.ui:139
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:344
 msgid "Environment"
 msgstr "Środowisko"
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:345
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:370
 msgid "Inherit Environment"
 msgstr "Dziedziczenie środowiska"
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:369
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:394
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other "
 "desktop environment settings."
@@ -506,36 +488,21 @@ msgstr ""
 "Włączenie zapewni, że program współdzieli ekran, magistralę komunikatów "
 "i inne ustawienia środowiska."
 
-#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:395
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:420
+msgid "Allow CPU Throttling"
+msgstr "Ograniczanie procesora"
+
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:448
+msgid ""
+"If disabled, your CPU will be placed in performance mode. It will be "
+"restored after profiling."
+msgstr ""
+"Wyłączenie spowoduje przejście procesora do trybu wydajności. Po ukończeniu "
+"profilowania zostanie przywrócony zwykły tryb."
+
+#: src/libsysprof-ui/ui/sysprof-profiler-assistant.ui:469
 msgid "_Record"
 msgstr "_Nagrywaj"
-
-#. Translators: This is the description for a switch.
-#: src/libsysprof-ui/ui/sysprof-profiler-menu-button.ui:47
-msgid "Profile my _entire system"
-msgstr "Profilowanie _całego systemu"
-
-#. Translators: This is the placeholder in a search entry.
-#: src/libsysprof-ui/ui/sysprof-profiler-menu-button.ui:84
-msgid "Search"
-msgstr "Wyszukiwanie"
-
-#: src/libsysprof-ui/ui/sysprof-profiler-menu-button.ui:110
-msgid "Existing Process"
-msgstr "Istniejący proces"
-
-#. Translators: This is a check button.
-#: src/libsysprof-ui/ui/sysprof-profiler-menu-button.ui:153
-msgid "Inherit current environment"
-msgstr "Dziedziczenie obecnego środowiska"
-
-#: src/libsysprof-ui/ui/sysprof-profiler-menu-button.ui:171
-msgid "Key"
-msgstr "Klucz"
-
-#: src/libsysprof-ui/ui/sysprof-profiler-menu-button.ui:186
-msgid "Value"
-msgstr "Wartość"
 
 #: src/libsysprof-ui/ui/sysprof-recording-state-view.ui:32
 msgid ""
@@ -718,77 +685,86 @@ msgid "Learn more about Sysprof"
 msgstr "Więcej informacji o Sysprof"
 
 #. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:272
+#: src/sysprof/sysprof-window.c:271
 msgid "Open Capture…"
 msgstr "Otwarcie przechwytywania…"
 
 #. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:276
+#: src/sysprof/sysprof-window.c:275
 msgid "Open"
 msgstr "Otwórz"
 
-#: src/sysprof/sysprof-window.c:283
+#: src/sysprof/sysprof-window.c:282
 msgid "Sysprof Captures"
 msgstr "Przechwytywania Sysprof"
 
-#: src/sysprof/sysprof-window.c:288
+#: src/sysprof/sysprof-window.c:287
 msgid "All Files"
 msgstr "Wszystkie pliki"
 
-#: src/tools/sysprof-cli.c:92
+#: src/tools/sysprof-cli.c:94
 msgid "Make sysprof specific to a task"
 msgstr "Sysprof dla konkretnego zadania"
 
-#: src/tools/sysprof-cli.c:92
+#: src/tools/sysprof-cli.c:94
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:93
+#: src/tools/sysprof-cli.c:95
 msgid "Run a command and profile the process"
 msgstr "Wykonuje polecenie i profiluje proces"
 
-#: src/tools/sysprof-cli.c:93
+#: src/tools/sysprof-cli.c:95
 msgid "COMMAND"
 msgstr "POLECENIE"
 
-#: src/tools/sysprof-cli.c:94
+#: src/tools/sysprof-cli.c:96
 msgid "Force overwrite the capture file"
 msgstr "Wymusza zastąpienie pliku przechwytywania"
 
-#: src/tools/sysprof-cli.c:95
+#: src/tools/sysprof-cli.c:97
 msgid "Disable recording of CPU statistics"
 msgstr "Wyłącza nagrywanie statystyk procesora"
 
-#: src/tools/sysprof-cli.c:96
+#: src/tools/sysprof-cli.c:98
+msgid "Do not record stacktraces using Linux perf"
+msgstr "Bez nagrywania śladów stosu za pomocą podsystemu perf jądra Linux"
+
+#: src/tools/sysprof-cli.c:99
 msgid "Do not append symbol name information from local machine"
 msgstr "Bez dołączania informacji o nazwach symboli z lokalnego komputera"
 
-#: src/tools/sysprof-cli.c:97
+#: src/tools/sysprof-cli.c:100
 msgid "Disable recording of memory statistics"
 msgstr "Wyłącza nagrywanie statystyk pamięci"
 
-#: src/tools/sysprof-cli.c:98
+#: src/tools/sysprof-cli.c:101
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Ustawia środowisko SYSPROF_TRACE_FD dla podprocesu"
 
-#: src/tools/sysprof-cli.c:99
+#: src/tools/sysprof-cli.c:102
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Ustawia środowisko GJS_TRACE_FD do śledzenia procesów GJS"
 
-#: src/tools/sysprof-cli.c:100
+#: src/tools/sysprof-cli.c:103
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "Łączy z org.gnome.Shell, aby uzyskać statystyki profilera"
+
+#: src/tools/sysprof-cli.c:104
 msgid "Print the sysprof-cli version and exit"
 msgstr "Wyświetla wersję sysprof-cli i kończy działanie"
 
-#: src/tools/sysprof-cli.c:109
+#: src/tools/sysprof-cli.c:113
 msgid "[CAPTURE_FILE] — Sysprof"
 msgstr "[PLIK_PRZECHWYTYWANIA] — Sysprof"
 
-#: src/tools/sysprof-cli.c:128
+#: src/tools/sysprof-cli.c:132
+#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Przekazano za dużo parametrów do polecenia sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:185
+#: src/tools/sysprof-cli.c:189
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "Plik „%s” istnieje. Użycie opcji „--force” go zastąpi\n"

@@ -306,3 +306,30 @@ sysprof_selection_copy (const SysprofSelection *self)
 
   return copy;
 }
+
+guint
+sysprof_selection_get_n_ranges (SysprofSelection *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SELECTION (self), 0);
+  return self->ranges ? self->ranges->len : 0;
+}
+
+void
+sysprof_selection_get_nth_range (SysprofSelection *self,
+                                 guint             nth,
+                                 gint64           *begin_time,
+                                 gint64           *end_time)
+{
+  Range r = {0};
+
+  g_return_if_fail (SYSPROF_IS_SELECTION (self));
+
+  if (self->ranges && nth < self->ranges->len)
+    r = g_array_index (self->ranges, Range, nth);
+
+  if (begin_time)
+    *begin_time = r.begin;
+
+  if (end_time)
+    *end_time = r.end;
+}

@@ -54,6 +54,13 @@ void              sysprof_selection_unselect_range    (SysprofSelection         
                                                        gint64                       begin,
                                                        gint64                       end);
 SYSPROF_AVAILABLE_IN_ALL
+guint             sysprof_selection_get_n_ranges      (SysprofSelection            *self);
+SYSPROF_AVAILABLE_IN_ALL
+void              sysprof_selection_get_nth_range     (SysprofSelection            *self,
+                                                       guint                        nth,
+                                                       gint64                      *begin_time,
+                                                       gint64                      *end_time);
+SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_selection_unselect_all      (SysprofSelection            *self);
 SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_selection_foreach           (SysprofSelection            *self,

@@ -146,8 +146,8 @@ sysprof_selection_get_has_selection (SysprofSelection *self)
  */
 void
 sysprof_selection_foreach (SysprofSelection            *self,
-                      SysprofSelectionForeachFunc  foreach_func,
-                      gpointer                user_data)
+                           SysprofSelectionForeachFunc  foreach_func,
+                           gpointer                     user_data)
 {
   g_return_if_fail (SYSPROF_IS_SELECTION (self));
   g_return_if_fail (foreach_func != NULL);
@@ -159,10 +159,60 @@ sysprof_selection_foreach (SysprofSelection            *self,
     }
 }
 
+static gint
+range_compare (gconstpointer a,
+               gconstpointer b)
+{
+  const Range *ra = a;
+  const Range *rb = b;
+
+  if (ra->begin < rb->begin)
+    return -1;
+
+  if (rb->begin < ra->begin)
+    return 1;
+
+  if (ra->end < rb->end)
+    return -1;
+
+  if (rb->end < ra->end)
+    return 1;
+
+  return 0;
+}
+
+static void
+join_overlapping (GArray *ranges)
+{
+  if (ranges->len > 1)
+    {
+      guint i = 0;
+
+      while (i < ranges->len - 1)
+        {
+          Range *range;
+          Range next;
+
+          range = &g_array_index (ranges, Range, i);
+          next = g_array_index (ranges, Range, i + 1);
+
+          if (range->end > next.begin)
+            {
+              range->end = next.end;
+              g_array_remove_index (ranges, i + 1);
+            }
+          else
+            {
+              i++;
+            }
+        }
+    }
+}
+
 void
 sysprof_selection_select_range (SysprofSelection *self,
-                           gint64       begin_time,
-                           gint64       end_time)
+                                gint64            begin_time,
+                                gint64            end_time)
 {
   Range range = { 0 };
 
@@ -174,16 +224,19 @@ sysprof_selection_select_range (SysprofSelection *self,
   range.end = end_time;
 
   g_array_append_val (self->ranges, range);
+  g_array_sort (self->ranges, range_compare);
+  join_overlapping (self->ranges);
 
   if (self->ranges->len == 1)
     g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_HAS_SELECTION]);
+
   g_signal_emit (self, signals [CHANGED], 0);
 }
 
 void
 sysprof_selection_unselect_range (SysprofSelection *self,
-                             gint64       begin,
-                             gint64       end)
+                                  gint64            begin,
+                                  gint64            end)
 {
   g_return_if_fail (SYSPROF_IS_SELECTION (self));
 

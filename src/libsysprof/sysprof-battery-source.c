@@ -37,6 +37,7 @@ struct _SysprofBatterySource
   SysprofCaptureWriter *writer;
   GArray               *batteries;
 
+  guint                 combined_id;
   guint                 poll_source;
 };
 
@@ -138,13 +139,28 @@ sysprof_battery_source_prepare (SysprofSource *source)
       g_array_append_val (counters, ctr);
     }
 
-  if (counters->len)
-    sysprof_capture_writer_define_counters (self->writer,
-                                            SYSPROF_CAPTURE_CURRENT_TIME,
-                                            -1,
-                                            -1,
-                                            (gpointer)counters->data,
-                                            counters->len);
+  if (counters->len > 0)
+    {
+      SysprofCaptureCounter ctr = {0};
+
+      self->combined_id = sysprof_capture_writer_request_counter (self->writer, 1);
+
+      /* Add combined counter */
+      g_strlcpy (ctr.category, "Battery Charge", sizeof ctr.category);
+      g_strlcpy (ctr.name, "Combined", sizeof ctr.name);
+      g_snprintf (ctr.description, sizeof ctr.description, "Combined Battery Charge (µAh)");
+      ctr.id = self->combined_id;
+      ctr.type = SYSPROF_CAPTURE_COUNTER_INT64;
+
+      g_array_append_val (counters, ctr);
+
+      sysprof_capture_writer_define_counters (self->writer,
+                                              SYSPROF_CAPTURE_CURRENT_TIME,
+                                              -1,
+                                              -1,
+                                              (gpointer)counters->data,
+                                              counters->len);
+    }
 
 #undef BAT_BASE_PATH
 
@@ -201,6 +217,7 @@ sysprof_battery_source_poll_cb (gpointer data)
   SysprofBatterySource *self = data;
   g_autoptr(GArray) values = NULL;
   g_autoptr(GArray) ids = NULL;
+  gint64 combined = 0;
 
   g_assert (SYSPROF_IS_BATTERY_SOURCE (self));
 
@@ -214,19 +231,30 @@ sysprof_battery_source_poll_cb (gpointer data)
 
       if G_LIKELY (battery_poll (battery, &value))
         {
+          combined += value.v64;
           g_array_append_val (ids, battery->counter_id);
           g_array_append_val (values, value);
         }
     }
 
   if (values->len > 0)
-    sysprof_capture_writer_set_counters (self->writer,
-                                         SYSPROF_CAPTURE_CURRENT_TIME,
-                                         -1,
-                                         -1,
-                                         (gconstpointer)ids->data,
-                                         (gconstpointer)values->data,
-                                         ids->len);
+    {
+      if (self->combined_id != 0)
+        {
+          SysprofCaptureCounterValue value = { .v64 = combined, };
+
+          g_array_append_val (ids, self->combined_id);
+          g_array_append_val (values, value);
+        }
+
+      sysprof_capture_writer_set_counters (self->writer,
+                                           SYSPROF_CAPTURE_CURRENT_TIME,
+                                           -1,
+                                           -1,
+                                           (gconstpointer)ids->data,
+                                           (gconstpointer)values->data,
+                                           ids->len);
+    }
 
   return G_SOURCE_CONTINUE;
 }

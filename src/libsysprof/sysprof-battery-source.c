@@ -130,7 +130,7 @@ sysprof_battery_source_prepare (SysprofSource *source)
 
       g_strlcpy (ctr.category, "Battery Charge", sizeof ctr.category);
       g_strlcpy (ctr.name, bat.id, sizeof ctr.name);
-      g_strlcpy (ctr.description, bat.name, sizeof ctr.description);
+      g_snprintf (ctr.description, sizeof ctr.description, "%s (µAh)", bat.name);
       ctr.id = bat.counter_id;
       ctr.type = SYSPROF_CAPTURE_COUNTER_INT64;
 

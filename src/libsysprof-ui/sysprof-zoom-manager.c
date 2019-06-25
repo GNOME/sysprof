@@ -24,6 +24,7 @@
 
 #include <glib/gi18n.h>
 #include <gio/gio.h>
+#include <math.h>
 
 #include "sysprof-zoom-manager.h"
 
@@ -34,6 +35,7 @@ struct _SysprofZoomManager
 {
   GObject parent_instance;
 
+  GtkAdjustment *adjustment;
   GSimpleActionGroup *actions;
 
   gdouble min_zoom;
@@ -108,6 +110,38 @@ sysprof_zoom_manager_zoom_action (GSimpleAction *action,
 }
 
 static void
+sysprof_zoom_manager_value_changed_cb (SysprofZoomManager *self,
+                                       GtkAdjustment      *adjustment)
+{
+  gdouble value;
+
+  g_assert (SYSPROF_IS_ZOOM_MANAGER (self));
+  g_assert (GTK_IS_ADJUSTMENT (adjustment));
+
+  value = gtk_adjustment_get_value (adjustment);
+
+  if (value == 0.0)
+    value = 1.0;
+  else if (value > 0.0)
+    value = (value + 1.0) * (value + 1.0);
+  else
+    value = 1.0 / ABS (value);
+
+  sysprof_zoom_manager_set_zoom (self, value);
+}
+
+static void
+sysprof_zoom_manager_finalize (GObject *object)
+{
+  SysprofZoomManager *self = (SysprofZoomManager *)object;
+
+  g_clear_object (&self->actions);
+  g_clear_object (&self->adjustment);
+
+  G_OBJECT_CLASS (sysprof_zoom_manager_parent_class)->finalize (object);
+}
+
+static void
 sysprof_zoom_manager_get_property (GObject    *object,
                                    guint       prop_id,
                                    GValue     *value,
@@ -178,6 +212,7 @@ sysprof_zoom_manager_class_init (SysprofZoomManagerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->finalize = sysprof_zoom_manager_finalize;
   object_class->get_property = sysprof_zoom_manager_get_property;
   object_class->set_property = sysprof_zoom_manager_set_property;
 
@@ -241,9 +276,17 @@ sysprof_zoom_manager_init (SysprofZoomManager *self)
   };
   GAction *action;
 
-  self->min_zoom = 0.0;
-  self->max_zoom = 0.0;
+  self->min_zoom = 0.00001;
+  self->max_zoom = 10000.0;
   self->zoom = 1.0;
+
+  self->adjustment = g_object_ref_sink (gtk_adjustment_new (0, -10, 10, 1, 3, 0));
+
+  g_signal_connect_object (self->adjustment,
+                           "value-changed",
+                           G_CALLBACK (sysprof_zoom_manager_value_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 
   self->actions = g_simple_action_group_new ();
   g_action_map_add_action_entries (G_ACTION_MAP (self->actions),
@@ -414,6 +457,7 @@ sysprof_zoom_manager_set_zoom (SysprofZoomManager *self,
   if (zoom != self->zoom)
     {
       g_autoptr(GVariant) state = NULL;
+      gdouble adj;
 
       self->zoom = zoom;
       state = g_variant_take_ref (g_variant_new_double (zoom));
@@ -421,6 +465,20 @@ sysprof_zoom_manager_set_zoom (SysprofZoomManager *self,
       g_object_set (g_action_map_lookup_action (G_ACTION_MAP (self->actions), "zoom"),
                     "state", state,
                     NULL);
+
+      /* Convert to form used by adjustment */
+      if (zoom == 1.0)
+        adj = 0.0;
+      else if (zoom > 1.0)
+        adj = sqrt (zoom) - 1.0;
+      else
+        adj = -1 / zoom;
+
+      g_signal_handlers_block_matched (self->adjustment, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+                                       sysprof_zoom_manager_value_changed_cb, self);
+      gtk_adjustment_set_value (self->adjustment, adj);
+      g_signal_handlers_unblock_matched (self->adjustment, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+                                         sysprof_zoom_manager_value_changed_cb, self);
 
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ZOOM]);
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_ZOOM_IN]);
@@ -583,4 +641,21 @@ _sysprof_format_duration (gint64 duration)
     return g_strdup_printf ("%s%.4lf seconds",
                             negative ? "-" : "",
                             (duration / (gdouble)NSEC_PER_SEC));
+}
+
+/**
+ * sysprof_zoom_manager_get_adjustment:
+ *
+ * Gets an adjustment for zoom controls.
+ *
+ * Returns: (transfer none): a #GtkAdjustment
+ *
+ * Since: 3.34
+ */
+GtkAdjustment *
+sysprof_zoom_manager_get_adjustment (SysprofZoomManager *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_ZOOM_MANAGER (self), NULL);
+
+  return self->adjustment;
 }

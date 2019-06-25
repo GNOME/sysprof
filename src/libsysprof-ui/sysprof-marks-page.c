@@ -212,9 +212,10 @@ sysprof_marks_page_tree_view_query_tooltip_cb (SysprofMarksPage *self,
                                                GtkTreeView      *tree_view)
 {
   SysprofMarksPagePrivate *priv = sysprof_marks_page_get_instance_private (self);
-  g_autoptr(GtkTreePath) path = NULL;
   GtkTreeViewColumn *column;
+  GtkTreePath *path = NULL;
   gint cell_x, cell_y;
+  gboolean ret = FALSE;
 
   g_assert (SYSPROF_IS_MARKS_PAGE (self));
   g_assert (GTK_IS_TOOLTIP (tooltip));
@@ -252,11 +253,13 @@ sysprof_marks_page_tree_view_query_tooltip_cb (SysprofMarksPage *self,
 
           gtk_tooltip_set_text (tooltip, tooltip_text);
 
-          return TRUE;
+          ret = TRUE;
         }
     }
 
-  return FALSE;
+  gtk_tree_path_free (path);
+
+  return ret;
 }
 
 static void

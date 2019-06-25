@@ -202,9 +202,9 @@ sysprof_theme_manager_get_default (void)
 
 guint
 sysprof_theme_manager_register_resource (SysprofThemeManager *self,
-                                    const gchar    *theme_name,
-                                    const gchar    *variant,
-                                    const gchar    *resource)
+                                         const gchar         *theme_name,
+                                         const gchar         *variant,
+                                         const gchar         *resource)
 {
   ThemeResource *theme_resource;
   static guint counter;

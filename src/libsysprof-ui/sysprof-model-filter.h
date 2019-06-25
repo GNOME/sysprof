@@ -33,7 +33,7 @@ G_BEGIN_DECLS
 #define SYSPROF_TYPE_MODEL_FILTER (sysprof_model_filter_get_type())
 
 typedef gboolean (*SysprofModelFilterFunc) (GObject  *object,
-                                       gpointer  user_data);
+                                            gpointer  user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SysprofModelFilter, sysprof_model_filter, SYSPROF, MODEL_FILTER, GObject)

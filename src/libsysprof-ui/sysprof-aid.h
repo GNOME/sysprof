@@ -20,49 +20,57 @@
 
 #pragma once
 
-#if !defined (SYSPROF_UI_INSIDE) && !defined (SYSPROF_UI_COMPILATION)
-# error "Only <sysprof-ui.h> can be included directly."
-#endif
-
 #include <gio/gio.h>
 #include <sysprof.h>
+
+#include "sysprof-display.h"
 
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_AID (sysprof_aid_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SysprofAid, sysprof_aid, SYSPROF, AID, GObject)
 
 struct _SysprofAidClass
 {
   GObjectClass parent_class;
 
-  void (*prepare) (SysprofAid      *self,
-                   SysprofProfiler *profiler);
+  void     (*prepare)        (SysprofAid           *self,
+                              SysprofProfiler      *profiler);
+  void     (*present_async)  (SysprofAid           *self,
+                              SysprofCaptureReader *reader,
+                              SysprofDisplay       *display,
+                              GCancellable         *cancellable,
+                              GAsyncReadyCallback   callback,
+                              gpointer              user_data);
+  gboolean (*present_finish) (SysprofAid           *self,
+                              GAsyncResult         *result,
+                              GError              **error);
 
-  /*< gpointer >*/
+  /*< private >*/
   gpointer _reserved[16];
 };
 
-SYSPROF_AVAILABLE_IN_ALL
-SysprofAid  *sysprof_aid_new              (const gchar     *display_name,
-                                           const gchar     *icon_name);
-SYSPROF_AVAILABLE_IN_ALL
-const gchar *sysprof_aid_get_display_name (SysprofAid      *self);
-SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_aid_set_display_name (SysprofAid      *self,
-                                           const gchar     *display_name);
-SYSPROF_AVAILABLE_IN_ALL
-GIcon       *sysprof_aid_get_icon         (SysprofAid      *self);
-SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_aid_set_icon         (SysprofAid      *self,
-                                           GIcon           *icon);
-SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_aid_set_icon_name    (SysprofAid      *self,
-                                           const gchar     *icon_name);
-SYSPROF_AVAILABLE_IN_ALL
-void         sysprof_aid_prepare          (SysprofAid      *self,
-                                           SysprofProfiler *profiler);
+SysprofAid  *sysprof_aid_new              (const gchar          *display_name,
+                                           const gchar          *icon_name);
+const gchar *sysprof_aid_get_display_name (SysprofAid           *self);
+void         sysprof_aid_set_display_name (SysprofAid           *self,
+                                           const gchar          *display_name);
+GIcon       *sysprof_aid_get_icon         (SysprofAid           *self);
+void         sysprof_aid_set_icon         (SysprofAid           *self,
+                                           GIcon                *icon);
+void         sysprof_aid_set_icon_name    (SysprofAid           *self,
+                                           const gchar          *icon_name);
+void         sysprof_aid_prepare          (SysprofAid           *self,
+                                           SysprofProfiler      *profiler);
+void         sysprof_aid_present_async    (SysprofAid           *self,
+                                           SysprofCaptureReader *reader,
+                                           SysprofDisplay       *display,
+                                           GCancellable         *cancellable,
+                                           GAsyncReadyCallback   callback,
+                                           gpointer              user_data);
+gboolean     sysprof_aid_present_finish   (SysprofAid           *self,
+                                           GAsyncResult         *result,
+                                           GError              **error);
 
 G_END_DECLS

@@ -20,10 +20,6 @@
 
 #pragma once
 
-#if !defined (SYSPROF_UI_INSIDE) && !defined (SYSPROF_UI_COMPILATION)
-# error "Only <sysprof-ui.h> can be included directly."
-#endif
-
 #include <gtk/gtk.h>
 #include <sysprof.h>
 
@@ -31,7 +27,6 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_EMPTY_STATE_VIEW (sysprof_empty_state_view_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SysprofEmptyStateView, sysprof_empty_state_view, SYSPROF, EMPTY_STATE_VIEW, GtkBin)
 
 struct _SysprofEmptyStateViewClass
@@ -41,7 +36,6 @@ struct _SysprofEmptyStateViewClass
   gpointer padding[4];
 };
 
-SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sysprof_empty_state_view_new (void);
 
 G_END_DECLS

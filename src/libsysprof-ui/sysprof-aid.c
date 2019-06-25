@@ -50,6 +50,29 @@ enum {
 static GParamSpec *properties [N_PROPS];
 
 static void
+sysprof_aid_real_present_async (SysprofAid           *self,
+                                SysprofCaptureReader *reader,
+                                SysprofDisplay       *display,
+                                GCancellable         *cancellable,
+                                GAsyncReadyCallback   callback,
+                                gpointer              user_data)
+{
+  g_task_report_new_error (self, callback, user_data,
+                           sysprof_aid_real_present_async,
+                           G_IO_ERROR,
+                           G_IO_ERROR_NOT_SUPPORTED,
+                           "Not supported");
+}
+
+static gboolean
+sysprof_aid_real_present_finish (SysprofAid    *self,
+                                 GAsyncResult  *result,
+                                 GError       **error)
+{
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
 sysprof_aid_finalize (GObject *object)
 {
   SysprofAid *self = (SysprofAid *)object;
@@ -121,6 +144,9 @@ sysprof_aid_class_init (SysprofAidClass *klass)
   object_class->get_property = sysprof_aid_get_property;
   object_class->set_property = sysprof_aid_set_property;
 
+  klass->present_async = sysprof_aid_real_present_async;
+  klass->present_finish = sysprof_aid_real_present_finish;
+
   properties [PROP_DISPLAY_NAME] =
     g_param_spec_string ("display-name",
                          "Display Name",
@@ -146,7 +172,7 @@ sysprof_aid_class_init (SysprofAidClass *klass)
 }
 
 static void
-sysprof_aid_init (SysprofAid *self)
+sysprof_aid_init (SysprofAid *self G_GNUC_UNUSED)
 {
 }
 
@@ -258,10 +284,10 @@ sysprof_aid_prepare (SysprofAid      *self,
 }
 
 static void
-sysprof_aid_add_child (GtkBuildable *buildable,
-                       GtkBuilder   *builder,
-                       GObject      *object,
-                       const gchar  *type)
+sysprof_aid_add_child (GtkBuildable       *buildable,
+                       GtkBuilder         *builder,
+                       GObject            *object,
+                       const gchar        *type G_GNUC_UNUSED)
 {
   SysprofAid *self = (SysprofAid *)buildable;
   SysprofAidPrivate *priv = sysprof_aid_get_instance_private (self);
@@ -297,4 +323,31 @@ sysprof_aid_new (const gchar *display_name,
                        "display-aid", display_name,
                        "icon-name", icon_name,
                        NULL);
+}
+
+void
+sysprof_aid_present_async (SysprofAid           *self,
+                           SysprofCaptureReader *reader,
+                           SysprofDisplay       *display,
+                           GCancellable         *cancellable,
+                           GAsyncReadyCallback   callback,
+                           gpointer              user_data)
+{
+  g_return_if_fail (SYSPROF_IS_AID (self));
+  g_return_if_fail (reader != NULL);
+  g_return_if_fail (SYSPROF_IS_DISPLAY (display));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  SYSPROF_AID_GET_CLASS (self)->present_async (self, reader, display, cancellable, callback, user_data);
+}
+
+gboolean
+sysprof_aid_present_finish (SysprofAid    *self,
+                            GAsyncResult  *result,
+                            GError       **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_AID (self), FALSE);
+  g_return_val_if_fail (G_IS_ASYNC_RESULT (result), FALSE);
+
+  return SYSPROF_AID_GET_CLASS (self)->present_finish (self, result, error);
 }

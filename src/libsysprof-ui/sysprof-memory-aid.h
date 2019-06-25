@@ -26,10 +26,8 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_MEMORY_AID (sysprof_memory_aid_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofMemoryAid, sysprof_memory_aid, SYSPROF, MEMORY_AID, SysprofAid)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofAid *sysprof_memory_aid_new (void);
 
 G_END_DECLS

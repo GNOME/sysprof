@@ -20,42 +20,18 @@
 
 #pragma once
 
-#include "sysprof-callgraph-view.h"
+#include "sysprof-callgraph-page.h"
 #include "sysprof-display.h"
-#include "sysprof-marks-view.h"
 #include "sysprof-profiler-assistant.h"
-#include "sysprof-visualizer-view.h"
 
 G_BEGIN_DECLS
 
-typedef struct
-{
-  gchar   *name;
-  guint64  count;
-  gint64   max;
-  gint64   min;
-  gint64   avg;
-  guint64  avg_count;
-} SysprofMarkStat;
-
-SysprofMarkStat *_sysprof_mark_stat_new                   (const gchar              *name);
-void             _sysprof_mark_stat_free                  (SysprofMarkStat          *self);
-void             _sysprof_marks_view_set_hadjustment      (SysprofMarksView         *self,
-                                                           GtkAdjustment            *hadjustment);
-void             _sysprof_visualizer_view_set_hadjustment (SysprofVisualizerView    *self,
-                                                           GtkAdjustment            *hadjustment);
-void             _sysprof_rounded_rectangle               (cairo_t                  *cr,
-                                                           const GdkRectangle       *rect,
-                                                           gint                      x_radius,
-                                                           gint                      y_radius);
-gchar           *_sysprof_format_duration                 (gint64                    duration);
-void             _sysprof_callgraph_view_set_failed       (SysprofCallgraphView     *self);
-void             _sysprof_callgraph_view_set_loading      (SysprofCallgraphView     *self,
-                                                           gboolean                  loading);
-void             _sysprof_display_focus_record            (SysprofDisplay           *self);
-void             _sysprof_profiler_assistant_focus_record (SysprofProfilerAssistant *self);
-
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofMarkStat, _sysprof_mark_stat_free)
+void   _sysprof_callgraph_page_set_failed       (SysprofCallgraphPage     *self);
+void   _sysprof_callgraph_page_set_loading      (SysprofCallgraphPage     *self,
+                                                 gboolean                  loading);
+void   _sysprof_display_focus_record            (SysprofDisplay           *self);
+void   _sysprof_profiler_assistant_focus_record (SysprofProfilerAssistant *self);
+gchar *_sysprof_format_duration                 (gint64                    duration);
 
 #if !GLIB_CHECK_VERSION(2, 56, 0)
 # define g_clear_weak_pointer(ptr) \

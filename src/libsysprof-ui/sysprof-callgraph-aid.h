@@ -26,10 +26,8 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_CALLGRAPH_AID (sysprof_callgraph_aid_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofCallgraphAid, sysprof_callgraph_aid, SYSPROF, CALLGRAPH_AID, SysprofAid)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofAid *sysprof_callgraph_aid_new (void);
 
 G_END_DECLS

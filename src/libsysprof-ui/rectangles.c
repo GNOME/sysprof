@@ -20,7 +20,7 @@
 
 #include "rectangles.h"
 #include "sysprof-color-cycle.h"
-#include "sysprof-visualizer-row.h"
+#include "sysprof-visualizer.h"
 
 typedef struct
 {
@@ -153,18 +153,18 @@ rectangles_draw (Rectangles *self,
 {
   GtkAllocation alloc;
   gdouble range;
-  guint n_rows;
+  guint ns;
 
   g_assert (self != NULL);
-  g_assert (SYSPROF_IS_VISUALIZER_ROW (row));
+  g_assert (SYSPROF_IS_VISUALIZER (row));
   g_assert (cr != NULL);
 
   if (!self->sorted)
     rectangles_sort (self);
 
   gtk_widget_get_allocation (row, &alloc);
-  n_rows = g_hash_table_size (self->y_indexes);
-  if (n_rows == 0 || alloc.height == 0)
+  ns = g_hash_table_size (self->y_indexes);
+  if (ns == 0 || alloc.height == 0)
     return;
 
   range = self->end_time - self->begin_time;
@@ -173,24 +173,24 @@ rectangles_draw (Rectangles *self,
     {
       Rectangle *rect = &g_array_index (self->rectangles, Rectangle, i);
       guint y_index = GPOINTER_TO_UINT (g_hash_table_lookup (self->y_indexes, rect->name));
-      SysprofVisualizerRowRelativePoint in_points[2];
-      SysprofVisualizerRowAbsolutePoint out_points[2];
+      SysprofVisualizerRelativePoint in_points[2];
+      SysprofVisualizerAbsolutePoint out_points[2];
       GdkRectangle r;
       GdkRGBA *rgba;
 
       g_assert (y_index > 0);
-      g_assert (y_index <= n_rows);
+      g_assert (y_index <= ns);
 
       in_points[0].x = (rect->begin - self->begin_time) / range;
-      in_points[0].y = (y_index - 1) / (gdouble)n_rows;
+      in_points[0].y = (y_index - 1) / (gdouble)ns;
       in_points[1].x = (rect->end - self->begin_time) / range;
       in_points[1].y = 0;
 
-      sysprof_visualizer_row_translate_points (SYSPROF_VISUALIZER_ROW (row),
+      sysprof_visualizer_translate_points (SYSPROF_VISUALIZER (row),
                                                in_points, G_N_ELEMENTS (in_points),
                                                out_points, G_N_ELEMENTS (out_points));
 
-      r.height = alloc.height / (gdouble)n_rows;
+      r.height = alloc.height / (gdouble)ns;
       r.x = out_points[0].x;
       r.y = out_points[0].y - r.height;
 

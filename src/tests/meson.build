@@ -61,7 +61,8 @@ if get_option('enable_gtk')
     dependencies: test_ui_deps,
   )
 
-  test_zoom = executable('test-zoom', 'test-zoom.c',
+  test_zoom = executable('test-zoom',
+    ['test-zoom.c', '../libsysprof-ui/sysprof-zoom-manager.c'],
           c_args: test_cflags,
     dependencies: test_ui_deps,
   )

@@ -2,9 +2,7 @@
 <gresources>
   <gresource prefix="/org/gnome/sysprof">
     <file compressed="true">css/SysprofEnvironEditor-shared.css</file>
-    <file compressed="true">css/SysprofVisualizerView-shared.css</file>
-    <file compressed="true">css/SysprofVisualizerView-Adwaita.css</file>
-    <file compressed="true">css/SysprofVisualizerView-Adwaita-dark.css</file>
+    <file compressed="true">css/SysprofDisplay-shared.css</file>
 
     <!-- Application icons -->
     <file alias="icons/scalable/apps/org.gnome.Sysprof.svg">../../data/icons/scalable/apps/org.gnome.Sysprof.svg</file>
@@ -14,20 +12,18 @@
 
   <gresource prefix="/org/gnome/sysprof/ui">
     <file preprocess="xml-stripblanks">sysprof-aid-icon.ui</file>
-    <file preprocess="xml-stripblanks">sysprof-callgraph-view.ui</file>
-    <file preprocess="xml-stripblanks">sysprof-capture-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-callgraph-page.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-details-page.ui</file>
     <file preprocess="xml-stripblanks">sysprof-display.ui</file>
-    <file preprocess="xml-stripblanks">sysprof-details-view.ui</file>
-    <file preprocess="xml-stripblanks">sysprof-empty-state-view.ui</file>
     <file preprocess="xml-stripblanks">sysprof-environ-editor-row.ui</file>
     <file preprocess="xml-stripblanks">sysprof-failed-state-view.ui</file>
-    <file preprocess="xml-stripblanks">sysprof-logs-view.ui</file>
-    <file preprocess="xml-stripblanks">sysprof-marks-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-logs-page.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-marks-page.ui</file>
     <file preprocess="xml-stripblanks">sysprof-process-model-row.ui</file>
     <file preprocess="xml-stripblanks">sysprof-profiler-assistant.ui</file>
     <file preprocess="xml-stripblanks">sysprof-recording-state-view.ui</file>
     <file preprocess="xml-stripblanks">sysprof-tab.ui</file>
     <file preprocess="xml-stripblanks">sysprof-time-label.ui</file>
-    <file preprocess="xml-stripblanks">sysprof-visualizer-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-visualizers-frame.ui</file>
   </gresource>
 </gresources>

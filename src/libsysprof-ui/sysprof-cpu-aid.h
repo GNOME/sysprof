@@ -26,10 +26,8 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_CPU_AID (sysprof_cpu_aid_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofCpuAid, sysprof_cpu_aid, SYSPROF, CPU_AID, SysprofAid)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofAid *sysprof_cpu_aid_new (void);
 
 G_END_DECLS

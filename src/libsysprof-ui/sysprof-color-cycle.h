@@ -20,13 +20,7 @@
 
 #pragma once
 
-#if !defined (SYSPROF_UI_INSIDE) && !defined (SYSPROF_UI_COMPILATION)
-# error "Only <sysprof-ui.h> can be included directly."
-#endif
-
 #include <gtk/gtk.h>
-
-#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -34,18 +28,14 @@ G_BEGIN_DECLS
 
 typedef struct _SysprofColorCycle SysprofColorCycle;
 
-SYSPROF_AVAILABLE_IN_ALL
 GType              sysprof_color_cycle_get_type (void);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofColorCycle *sysprof_color_cycle_ref      (SysprofColorCycle *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_color_cycle_unref    (SysprofColorCycle *self);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofColorCycle *sysprof_color_cycle_new      (void);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_color_cycle_reset    (SysprofColorCycle *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_color_cycle_next     (SysprofColorCycle *self,
                                                  GdkRGBA           *rgba);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofColorCycle, sysprof_color_cycle_unref)
 
 G_END_DECLS

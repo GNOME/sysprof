@@ -36,13 +36,10 @@ struct _SysprofProxyAidClass
   gpointer _reserved[8];
 };
 
-SYSPROF_AVAILABLE_IN_ALL
 void sysprof_proxy_aid_set_bus_type    (SysprofProxyAid *self,
                                         GBusType         bus_type);
-SYSPROF_AVAILABLE_IN_ALL
 void sysprof_proxy_aid_set_bus_name    (SysprofProxyAid *self,
                                         const gchar     *bus_name);
-SYSPROF_AVAILABLE_IN_ALL
 void sysprof_proxy_aid_set_object_path (SysprofProxyAid *self,
                                         const gchar     *obj_path);
 

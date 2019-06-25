@@ -27,12 +27,16 @@
 #include "sysprof-platform.h"
 
 #include "sysprof-aid-icon.h"
-#include "sysprof-cpu-aid.h"
 #include "sysprof-environ-editor.h"
 #include "sysprof-profiler-assistant.h"
-#include "sysprof-proxy-aid.h"
 #include "sysprof-process-model-row.h"
 #include "sysprof-ui-private.h"
+
+#include "sysprof-battery-aid.h"
+#include "sysprof-callgraph-aid.h"
+#include "sysprof-cpu-aid.h"
+#include "sysprof-memory-aid.h"
+#include "sysprof-proxy-aid.h"
 
 struct _SysprofProfilerAssistant
 {
@@ -298,9 +302,12 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, inherit_switch);
 
   g_type_ensure (SYSPROF_TYPE_AID_ICON);
+  g_type_ensure (SYSPROF_TYPE_BATTERY_AID);
   g_type_ensure (SYSPROF_TYPE_CPU_AID);
+  g_type_ensure (SYSPROF_TYPE_MEMORY_AID);
   g_type_ensure (SYSPROF_TYPE_PROXY_AID);
   g_type_ensure (SYSPROF_TYPE_ENVIRON_EDITOR);
+  g_type_ensure (SYSPROF_TYPE_CALLGRAPH_AID);
 }
 
 static void

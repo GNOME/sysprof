@@ -110,7 +110,7 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
 
   if (r.width > 3)
     {
-      _sysprof_rounded_rectangle (cr, &r, 2, 2);
+      dzl_cairo_rounded_rectangle (cr, &r, 2, 2);
       cairo_fill (cr);
     }
   else if (r.width > 1)

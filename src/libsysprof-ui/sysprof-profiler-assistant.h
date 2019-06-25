@@ -28,10 +28,8 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_PROFILER_ASSISTANT (sysprof_profiler_assistant_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofProfilerAssistant, sysprof_profiler_assistant, SYSPROF, PROFILER_ASSISTANT, GtkBin)
 
-SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sysprof_profiler_assistant_new (void);
 
 G_END_DECLS

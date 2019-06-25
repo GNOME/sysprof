@@ -14,11 +14,40 @@
           </packing>
         </child>
         <child>
-          <object class="SysprofCaptureView" id="capture_view">
+          <object class="DzlMultiPaned">
+            <property name="orientation">vertical</property>
             <property name="visible">true</property>
+            <child>
+              <object class="SysprofVisualizersFrame" id="visualizers">
+                <property name="vexpand">false</property>
+                <property name="visible">true</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator">
+                <property name="orientation">horizontal</property>
+                <property name="visible">true</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStack" id="pages">
+                <property name="homogeneous">false</property>
+                <property name="vexpand">true</property>
+                <property name="visible">true</property>
+                <child>
+                  <object class="SysprofDetailsPage" id="details">
+                    <property name="visible">true</property>
+                  </object>
+                  <packing>
+                    <property name="title" translatable="yes">Details</property>
+                    <property name="name">details</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
           </object>
           <packing>
-            <property name="name">capture</property>
+            <property name="name">view</property>
           </packing>
         </child>
         <child>
@@ -26,14 +55,11 @@
             <property name="visible">true</property>
           </object>
           <packing>
-            <property name="name">recording</property>
+            <property name="name">record</property>
           </packing>
         </child>
         <child>
-          <object class="SysprofEmptyStateView" id="failed_view">
-            <property name="icon-name">computer-fail-symbolic</property>
-            <property name="title" translatable="yes">Something went wrong</property>
-            <property name="subtitle" translatable="yes">Sysprof failed to access the requested performance data.</property>
+          <object class="SysprofFailedStateView" id="failed_view">
             <property name="visible">true</property>
           </object>
           <packing>

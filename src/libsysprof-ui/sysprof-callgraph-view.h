@@ -20,10 +20,6 @@
 
 #pragma once
 
-#if !defined (SYSPROF_UI_INSIDE) && !defined (SYSPROF_UI_COMPILATION)
-# error "Only <sysprof-ui.h> can be included directly."
-#endif
-
 #include <gtk/gtk.h>
 #include <sysprof.h>
 
@@ -31,7 +27,6 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_CALLGRAPH_VIEW (sysprof_callgraph_view_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SysprofCallgraphView, sysprof_callgraph_view, SYSPROF, CALLGRAPH_VIEW, GtkBin)
 
 struct _SysprofCallgraphViewClass
@@ -39,20 +34,13 @@ struct _SysprofCallgraphViewClass
   GtkBinClass parent_class;
 
   void (*go_previous) (SysprofCallgraphView *self);
-
-  gpointer padding[8];
 };
 
-SYSPROF_AVAILABLE_IN_ALL
 GtkWidget               *sysprof_callgraph_view_new             (void);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofCallgraphProfile *sysprof_callgraph_view_get_profile     (SysprofCallgraphView    *self);
-SYSPROF_AVAILABLE_IN_ALL
 void                     sysprof_callgraph_view_set_profile     (SysprofCallgraphView    *self,
                                                                  SysprofCallgraphProfile *profile);
-SYSPROF_AVAILABLE_IN_ALL
 gchar                   *sysprof_callgraph_view_screenshot      (SysprofCallgraphView    *self);
-SYSPROF_AVAILABLE_IN_ALL
 guint                    sysprof_callgraph_view_get_n_functions (SysprofCallgraphView    *self);
 
 G_END_DECLS

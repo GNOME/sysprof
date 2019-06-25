@@ -27,30 +27,47 @@
 G_DEFINE_BOXED_TYPE (SysprofColorCycle, sysprof_color_cycle, sysprof_color_cycle_ref, sysprof_color_cycle_unref)
 
 static const gchar *default_colors[] = {
-  "#73d216",
-  "#f57900",
-  "#3465a4",
-  "#ef2929",
-  "#75507b",
-  "#ce5c00",
-  "#c17d11",
-  "#cc0000",
-  "#edd400",
-  "#555753",
-  "#4e9a06",
-  "#204a87",
-  "#5c3566",
-  "#a40000",
-  "#c4a000",
-  "#8f5902",
-  "#2e3436",
-  "#8ae234",
-  "#729fcf",
-  "#ad7fa8",
-  "#fce94f",
-  "#fcaf3e",
-  "#e9b96e",
-  "#888a85",
+
+  "#1a5fb4", /* Blue 5 */
+  "#26a269", /* Green 5 */
+  "#e5a50a", /* Yellow 5 */
+  "#c64600", /* Orange 5 */
+  "#a51d2d", /* Red 5 */
+  "#613583", /* Purple 5 */
+  "#63452c", /* Brown 5 */
+
+  "#1c71d8", /* Blue 4 */
+  "#2ec27e", /* Green 4 */
+  "#f5c211", /* Yellow 4 */
+  "#e66100", /* Orange 4 */
+  "#c01c28", /* Red 4 */
+  "#813d9c", /* Purple 4 */
+  "#865e3c", /* Brown 4 */
+
+  "#3584e4", /* Blue 3 */
+  "#33d17a", /* Green 3 */
+  "#f6d32d", /* Yellow 3 */
+  "#ff7800", /* Orange 3 */
+  "#e01b24", /* Red 3 */
+  "#9141ac", /* Purple 3 */
+  "#986a44", /* Brown 3 */
+
+  "#62a0ea", /* Blue 2 */
+  "#57e389", /* Green 2 */
+  "#f8e45c", /* Yellow 2 */
+  "#ffa348", /* Orange 2 */
+  "#ed333b", /* Red 2 */
+  "#c061cb", /* Purple 2 */
+  "#b5835a", /* Brown 2 */
+
+  "#99c1f1", /* Blue 1 */
+  "#8ff0a4", /* Green 1 */
+  "#f9f06b", /* Yellow 1 */
+  "#ffbe6f", /* Orange 1 */
+  "#f66151", /* Red 1 */
+  "#dc8add", /* Purple 1 */
+  "#cdab8f", /* Brown 1 */
+
   NULL
 };
 

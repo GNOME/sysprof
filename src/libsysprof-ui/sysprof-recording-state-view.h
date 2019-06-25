@@ -20,10 +20,6 @@
 
 #pragma once
 
-#if !defined (SYSPROF_UI_INSIDE) && !defined (SYSPROF_UI_COMPILATION)
-# error "Only <sysprof-ui.h> can be included directly."
-#endif
-
 #include <gtk/gtk.h>
 #include <sysprof.h>
 
@@ -31,7 +27,6 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_RECORDING_STATE_VIEW (sysprof_recording_state_view_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SysprofRecordingStateView, sysprof_recording_state_view, SYSPROF, RECORDING_STATE_VIEW, GtkBin)
 
 struct _SysprofRecordingStateViewClass
@@ -41,9 +36,7 @@ struct _SysprofRecordingStateViewClass
   gpointer padding[4];
 };
 
-SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sysprof_recording_state_view_new          (void);
-SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_recording_state_view_set_profiler (SysprofRecordingStateView *self,
                                                       SysprofProfiler           *profiler);
 

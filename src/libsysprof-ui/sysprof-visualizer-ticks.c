@@ -18,19 +18,24 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#define G_LOG_DOMAIN "sysprof-visualizer-ticks"
+
 #include "config.h"
 
 #include <glib/gi18n.h>
+#include <sysprof.h>
 
 #include "sysprof-visualizer-ticks.h"
 
 #define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
-#define NSEC_PER_HOUR (NSEC_PER_SEC * 60 * 60)
-#define NSEC_PER_MIN (NSEC_PER_SEC * 60)
+#define NSEC_PER_DAY (NSEC_PER_SEC * 60L * 60L * 24L)
+#define NSEC_PER_HOUR (NSEC_PER_SEC * 60L * 60L)
+#define NSEC_PER_MIN (NSEC_PER_SEC * 60L)
 #define NSEC_PER_MSEC (NSEC_PER_SEC/G_GINT64_CONSTANT(1000))
 #define MIN_TICK_DISTANCE 20
-#define LABEL_HEIGHT_PX 8
+#define LABEL_HEIGHT_PX 10
 
+SYSPROF_ALIGNED_BEGIN (8)
 struct _SysprofVisualizerTicks
 {
   GtkDrawingArea parent_instance;
@@ -38,7 +43,7 @@ struct _SysprofVisualizerTicks
   gint64 epoch;
   gint64 begin_time;
   gint64 end_time;
-} __attribute__((aligned(8)));
+} SYSPROF_ALIGNED_END (8);
 
 enum {
   TICK_MINUTES,
@@ -50,6 +55,7 @@ enum {
   TICK_TENTHS,
   TICK_HUNDREDTHS,
   TICK_THOUSANDTHS,
+  TICK_TEN_THOUSANDTHS,
   N_TICKS
 };
 
@@ -67,6 +73,7 @@ struct {
   { 1, 5, NSEC_PER_SEC / 10 },
   { 1, 4, NSEC_PER_SEC / 100 },
   { 1, 3, NSEC_PER_SEC / 1000 },
+  { 1, 1, NSEC_PER_SEC / 10000 },
 };
 
 G_DEFINE_TYPE (SysprofVisualizerTicks, sysprof_visualizer_ticks, GTK_TYPE_DRAWING_AREA)
@@ -82,12 +89,19 @@ update_label_text (PangoLayout *layout,
   gint hours = 0;
   gint min = 0;
   gint sec = 0;
+  G_GNUC_UNUSED gint days = 0;
 
   g_assert (PANGO_IS_LAYOUT (layout));
 
   tmp = time % NSEC_PER_SEC;
   time -= tmp;
   msec = tmp / 100000L;
+
+  if (time >= NSEC_PER_DAY)
+    {
+      days = time / NSEC_PER_DAY;
+      time %= NSEC_PER_DAY;
+    }
 
   if (time >= NSEC_PER_HOUR)
     {
@@ -135,18 +149,6 @@ get_x_for_time (SysprofVisualizerTicks   *self,
   return alloc->width * x_ratio;
 }
 
-#if 0
-static inline gint64
-get_time_at_x (SysprofVisualizerTicks   *self,
-               const GtkAllocation *alloc,
-               gdouble              x)
-{
-  return self->begin_time
-       - self->epoch
-       + ((self->end_time - self->begin_time) / (gdouble)alloc->width * x);
-}
-#endif
-
 static gboolean
 draw_ticks (SysprofVisualizerTicks *self,
             cairo_t           *cr,
@@ -186,14 +188,18 @@ draw_ticks (SysprofVisualizerTicks *self,
       PangoLayout *layout;
       PangoFontDescription *font_desc;
       gboolean want_msec;
+      gint last_x2 = G_MININT;
+      gint w, h;
 
-      layout = gtk_widget_create_pango_layout (GTK_WIDGET (self), "00:10:00");
+      layout = gtk_widget_create_pango_layout (GTK_WIDGET (self), "00:10:00.0000");
 
       font_desc = pango_font_description_new ();
       pango_font_description_set_family_static (font_desc, "Monospace");
       pango_font_description_set_absolute_size (font_desc, LABEL_HEIGHT_PX * PANGO_SCALE);
       pango_layout_set_font_description (layout, font_desc);
       pango_font_description_free (font_desc);
+
+      pango_layout_get_pixel_size (layout, &w, &h);
 
       /* If we are operating on smaller than seconds here, then we want
        * to ensure we include msec with the timestamps.
@@ -206,9 +212,15 @@ draw_ticks (SysprofVisualizerTicks *self,
         {
           gdouble x = get_x_for_time (self, &alloc, t);
 
-          cairo_move_to (cr, (gint)x + .5 - (gint)half, alloc.height - LABEL_HEIGHT_PX);
+          if (x < (last_x2 + MIN_TICK_DISTANCE))
+            continue;
+
+          cairo_move_to (cr, (gint)x + 2.5 - (gint)half, 2);
           update_label_text (layout, t - self->epoch, want_msec);
+          pango_layout_get_pixel_size (layout, &w, &h);
           pango_cairo_show_layout (cr, layout);
+
+          last_x2 = x + w;
         }
 
       g_clear_object (&layout);
@@ -221,8 +233,8 @@ draw_ticks (SysprofVisualizerTicks *self,
         {
           gdouble x = get_x_for_time (self, &alloc, t);
 
-          cairo_move_to (cr, (gint)x - .5 - (gint)half, 0);
-          cairo_line_to (cr, (gint)x - .5 - (gint)half, tick_sizing[ticks].height);
+          cairo_move_to (cr, (gint)x - .5 - (gint)half, alloc.height);
+          cairo_line_to (cr, (gint)x - .5 - (gint)half, alloc.height - tick_sizing[ticks].height);
           count++;
         }
 
@@ -235,7 +247,7 @@ draw_ticks (SysprofVisualizerTicks *self,
 
 static gboolean
 sysprof_visualizer_ticks_draw (GtkWidget *widget,
-                          cairo_t   *cr)
+                               cairo_t   *cr)
 {
   SysprofVisualizerTicks *self = SYSPROF_VISUALIZER_TICKS (widget);
   GtkStyleContext *style;
@@ -250,9 +262,12 @@ sysprof_visualizer_ticks_draw (GtkWidget *widget,
   if (0 == (timespan = self->end_time - self->begin_time))
     return GDK_EVENT_PROPAGATE;
 
+  style = gtk_widget_get_style_context (widget);
+
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
 
-  style = gtk_widget_get_style_context (widget);
+  gtk_render_background (style, cr, 0, 0, alloc.width, alloc.height);
+
   state = gtk_widget_get_state_flags (widget);
   gtk_style_context_get_color (style, state, &color);
 
@@ -290,8 +305,8 @@ sysprof_visualizer_ticks_draw (GtkWidget *widget,
 
 static void
 sysprof_visualizer_ticks_get_preferred_height (GtkWidget *widget,
-                                          gint      *min_height,
-                                          gint      *nat_height)
+                                               gint      *min_height,
+                                               gint      *nat_height)
 {
   g_assert (SYSPROF_IS_VISUALIZER_TICKS (widget));
 
@@ -306,7 +321,7 @@ sysprof_visualizer_ticks_class_init (SysprofVisualizerTicksClass *klass)
   widget_class->draw = sysprof_visualizer_ticks_draw;
   widget_class->get_preferred_height = sysprof_visualizer_ticks_get_preferred_height;
 
-  gtk_widget_class_set_css_name (widget_class, "ticks");
+  gtk_widget_class_set_css_name (widget_class, "SysprofVisualizerTicks");
 }
 
 static void
@@ -325,8 +340,8 @@ sysprof_visualizer_ticks_new (void)
 
 void
 sysprof_visualizer_ticks_get_time_range (SysprofVisualizerTicks *self,
-                                    gint64            *begin_time,
-                                    gint64            *end_time)
+                                         gint64                 *begin_time,
+                                         gint64                 *end_time)
 {
   g_return_if_fail (SYSPROF_IS_VISUALIZER_TICKS (self));
   g_return_if_fail (begin_time != NULL || end_time != NULL);
@@ -340,8 +355,8 @@ sysprof_visualizer_ticks_get_time_range (SysprofVisualizerTicks *self,
 
 void
 sysprof_visualizer_ticks_set_time_range (SysprofVisualizerTicks *self,
-                                    gint64             begin_time,
-                                    gint64             end_time)
+                                         gint64                  begin_time,
+                                         gint64                  end_time)
 {
   g_return_if_fail (SYSPROF_IS_VISUALIZER_TICKS (self));
 
@@ -389,4 +404,12 @@ sysprof_visualizer_ticks_set_epoch (SysprofVisualizerTicks *self,
       self->epoch = epoch;
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }
+}
+
+gint64
+sysprof_visualizer_ticks_get_duration (SysprofVisualizerTicks *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_VISUALIZER_TICKS (self), 0);
+
+  return self->end_time - self->begin_time;
 }

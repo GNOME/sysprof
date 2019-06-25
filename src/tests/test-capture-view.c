@@ -25,7 +25,7 @@ main (gint argc,
       gchar *argv[])
 {
   GtkWindow *window;
-  SysprofCaptureView *view;
+  SysprofDisplay *view;
   SysprofCaptureReader *reader;
   g_autoptr(GError) error = NULL;
 
@@ -44,16 +44,16 @@ main (gint argc,
     }
 
   window = g_object_new (GTK_TYPE_WINDOW,
-                         "title", "SysprofCaptureView",
+                         "title", "SysprofDisplay",
                          "default-width", 800,
                          "default-height", 600,
                          NULL);
-  view = g_object_new (SYSPROF_TYPE_CAPTURE_VIEW,
+  view = g_object_new (SYSPROF_TYPE_DISPLAY,
                        "visible", TRUE,
                        NULL);
   gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (view));
 
-  sysprof_capture_view_load_async (view, reader, NULL, NULL, NULL);
+  sysprof_display_load_async (view, reader, NULL, NULL, NULL);
 
   g_signal_connect (window, "delete-event", gtk_main_quit, NULL);
   gtk_window_present (GTK_WINDOW (window));

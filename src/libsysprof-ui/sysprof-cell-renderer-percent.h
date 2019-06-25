@@ -20,13 +20,7 @@
 
 #pragma once
 
-#if !defined (SYSPROF_UI_INSIDE) && !defined (SYSPROF_UI_COMPILATION)
-# error "Only <sysprof-ui.h> can be included directly."
-#endif
-
 #include <gtk/gtk.h>
-
-#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
@@ -50,16 +44,13 @@ struct _SysprofCellRendererPercentClass
 {
   GtkCellRendererProgressClass parent_class;
 
-  gpointer padding[4];
+  /*< private >*/
+  gpointer _reserved[4];
 };
 
-SYSPROF_AVAILABLE_IN_ALL
 GType            sysprof_cell_renderer_percent_get_type    (void);
-SYSPROF_AVAILABLE_IN_ALL
 GtkCellRenderer *sysprof_cell_renderer_percent_new         (void);
-SYSPROF_AVAILABLE_IN_ALL
 gdouble          sysprof_cell_renderer_percent_get_percent (SysprofCellRendererPercent *self);
-SYSPROF_AVAILABLE_IN_ALL
 void             sysprof_cell_renderer_percent_set_percent (SysprofCellRendererPercent *self,
                                                             gdouble                     percent);
 

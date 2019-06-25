@@ -23,7 +23,9 @@
 #include <gtk/gtk.h>
 #include <sysprof.h>
 
-#include "sysprof-version-macros.h"
+#include "sysprof-page.h"
+#include "sysprof-visualizer-group.h"
+#include "sysprof-zoom-manager.h"
 
 G_BEGIN_DECLS
 
@@ -32,38 +34,59 @@ G_BEGIN_DECLS
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SysprofDisplay, sysprof_display, SYSPROF, DISPLAY, GtkBin)
 
-SYSPROF_ALIGNED_BEGIN(8)
 struct _SysprofDisplayClass
 {
   GtkBinClass parent_class;
 
   /*< private >*/
   gpointer _reserved[16];
-}
-SYSPROF_ALIGNED_END(8);
+};
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget       *sysprof_display_new              (void);
+GtkWidget          *sysprof_display_new              (void);
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget       *sysprof_display_new_for_profiler (SysprofProfiler *profiler);
+GtkWidget          *sysprof_display_new_for_profiler (SysprofProfiler         *profiler);
 SYSPROF_AVAILABLE_IN_ALL
-gchar           *sysprof_display_dup_title        (SysprofDisplay  *self);
+char               *sysprof_display_dup_title        (SysprofDisplay          *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofProfiler *sysprof_display_get_profiler     (SysprofDisplay  *self);
+SysprofProfiler    *sysprof_display_get_profiler     (SysprofDisplay          *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_display_is_empty         (SysprofDisplay  *self);
+void                sysprof_display_add_group        (SysprofDisplay          *self,
+                                                      SysprofVisualizerGroup  *group);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_display_open             (SysprofDisplay  *self,
-                                                   GFile           *file);
+void                sysprof_display_add_page         (SysprofDisplay          *self,
+                                                      SysprofPage             *page);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_display_save             (SysprofDisplay  *self);
+SysprofPage        *sysprof_display_get_visible_page (SysprofDisplay          *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_display_get_can_save     (SysprofDisplay  *self);
+void                sysprof_display_set_visible_page (SysprofDisplay          *self,
+                                                      SysprofPage             *page);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_display_stop_recording   (SysprofDisplay  *self);
+SysprofZoomManager *sysprof_display_get_zoom_manager (SysprofDisplay          *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean         sysprof_display_get_can_replay   (SysprofDisplay  *self);
+void                sysprof_display_load_async       (SysprofDisplay          *self,
+                                                      SysprofCaptureReader    *reader,
+                                                      GCancellable            *cancellable,
+                                                      GAsyncReadyCallback      callback,
+                                                      gpointer                 user_data);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofDisplay  *sysprof_display_replay           (SysprofDisplay  *self);
+gboolean            sysprof_display_load_finish      (SysprofDisplay          *self,
+                                                      GAsyncResult            *result,
+                                                      GError                 **error);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean            sysprof_display_is_empty         (SysprofDisplay          *self);
+SYSPROF_AVAILABLE_IN_ALL
+void                sysprof_display_open             (SysprofDisplay          *self,
+                                                      GFile                   *file);
+SYSPROF_AVAILABLE_IN_ALL
+void                sysprof_display_save             (SysprofDisplay          *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean            sysprof_display_get_can_save     (SysprofDisplay          *self);
+SYSPROF_AVAILABLE_IN_ALL
+void                sysprof_display_stop_recording   (SysprofDisplay          *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean            sysprof_display_get_can_replay   (SysprofDisplay          *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDisplay     *sysprof_display_replay           (SysprofDisplay          *self);
 
 G_END_DECLS

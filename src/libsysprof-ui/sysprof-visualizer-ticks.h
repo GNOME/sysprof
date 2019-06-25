@@ -20,10 +20,6 @@
 
 #pragma once
 
-#if !defined (SYSPROF_UI_INSIDE) && !defined (SYSPROF_UI_COMPILATION)
-# error "Only <sysprof-ui.h> can be included directly."
-#endif
-
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
@@ -42,5 +38,6 @@ void       sysprof_visualizer_ticks_get_time_range (SysprofVisualizerTicks *self
 void       sysprof_visualizer_ticks_set_time_range (SysprofVisualizerTicks *self,
                                                     gint64                  begin_time,
                                                     gint64                  end_time);
+gint64     sysprof_visualizer_ticks_get_duration   (SysprofVisualizerTicks *self);
 
 G_END_DECLS

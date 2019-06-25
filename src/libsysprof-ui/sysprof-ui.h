@@ -27,31 +27,14 @@ G_BEGIN_DECLS
 
 #define SYSPROF_UI_INSIDE
 
-# include "sysprof-aid.h"
-# include "sysprof-callgraph-view.h"
-# include "sysprof-capture-view.h"
-# include "sysprof-callgraph-aid.h"
-# include "sysprof-cell-renderer-percent.h"
 # include "sysprof-check.h"
-# include "sysprof-cpu-aid.h"
-# include "sysprof-cpu-visualizer-row.h"
 # include "sysprof-display.h"
-# include "sysprof-empty-state-view.h"
-# include "sysprof-failed-state-view.h"
-# include "sysprof-line-visualizer-row.h"
-# include "sysprof-marks-model.h"
-# include "sysprof-marks-view.h"
-# include "sysprof-mark-visualizer-row.h"
-# include "sysprof-memory-aid.h"
 # include "sysprof-model-filter.h"
 # include "sysprof-notebook.h"
+# include "sysprof-page.h"
 # include "sysprof-process-model-row.h"
-# include "sysprof-profiler-assistant.h"
-# include "sysprof-proxy-aid.h"
-# include "sysprof-recording-state-view.h"
-# include "sysprof-visualizer-row.h"
-# include "sysprof-visualizer-view.h"
-# include "sysprof-zoom-manager.h"
+# include "sysprof-visualizer-group.h"
+# include "sysprof-visualizer.h"
 
 #undef SYSPROF_UI_INSIDE
 

@@ -1,9 +1,12 @@
 if get_option('with_sysprofd') == 'bundled'
 
 sysprofd_sources = [
+  '../libsysprof/sysprof-kallsyms.c',
   'sysprofd.c',
+  'ipc-legacy-impl.c',
   'ipc-service-impl.c',
   helpers_sources,
+  ipc_legacy_src,
   ipc_service_src,
 ]
 
@@ -27,6 +30,15 @@ sysprofd = executable('sysprofd', sysprofd_sources,
 sysprofdconf = configuration_data()
 sysprofdconf.set('sysprofdprivdir', pkglibexecdir)
 
+systemdunitdir = get_option('systemdunitdir')
+if systemdunitdir == ''
+  systemdunitdir = dependency('systemd').get_pkgconfig_variable('systemdsystemunitdir')
+endif
+
+#
+# For org.gnome.Sysprof3
+#
+
 configure_file(
           input: 'org.gnome.Sysprof3.service.in',
          output: 'org.gnome.Sysprof3.service',
@@ -41,10 +53,6 @@ configure_file(
     install_dir: join_paths(datadir, 'dbus-1/system.d'),
 )
 
-systemdunitdir = get_option('systemdunitdir')
-if systemdunitdir == ''
-  systemdunitdir = dependency('systemd').get_pkgconfig_variable('systemdsystemunitdir')
-endif
 configure_file(
           input: 'sysprof3.service.in',
          output: 'sysprof3.service',
@@ -58,6 +66,31 @@ i18n.merge_file(
        po_dir: podir,
       install: true,
   install_dir: join_paths(datadir, 'polkit-1/actions'),
+)
+
+#
+# For org.gnome.Sysprof2 Compatibility
+#
+
+configure_file(
+          input: 'org.gnome.Sysprof2.service.in',
+         output: 'org.gnome.Sysprof2.service',
+  configuration: sysprofdconf,
+    install_dir: join_paths(datadir, 'dbus-1/system-services'),
+)
+
+configure_file(
+          input: 'org.gnome.Sysprof2.conf.in',
+         output: 'org.gnome.Sysprof2.conf',
+  configuration: sysprofdconf,
+    install_dir: join_paths(datadir, 'dbus-1/system.d'),
+)
+
+configure_file(
+          input: 'sysprof2.service.in',
+         output: 'sysprof2.service',
+  configuration: sysprofdconf,
+    install_dir: systemdunitdir,
 )
 
 endif

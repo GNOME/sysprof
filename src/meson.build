@@ -19,6 +19,12 @@ ipc_service_src = gnome.gdbus_codegen('ipc-service',
          namespace: 'Ipc',
 )
 
+ipc_legacy_src = gnome.gdbus_codegen('ipc-legacy',
+           sources: 'org.gnome.Sysprof2.xml',
+  interface_prefix: 'org.gnome.',
+         namespace: 'IpcLegacy',
+)
+
 install_data(['org.gnome.Sysprof3.Profiler.xml',
               'org.gnome.Sysprof3.Service.xml'],
   install_dir: join_paths(datadir, 'dbus-1/interfaces'),

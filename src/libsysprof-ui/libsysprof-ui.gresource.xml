@@ -10,22 +10,24 @@
     <file alias="icons/scalable/apps/org.gnome.Sysprof.svg">../../data/icons/scalable/apps/org.gnome.Sysprof.svg</file>
     <file alias="icons/scalable/apps/org.gnome.Sysprof-symbolic.svg">../../data/icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg</file>
     <file alias="icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg">../../data/icons/symbolic/apps/org.gnome.Sysprof-symbolic.svg</file>
+  </gresource>
 
-    <file preprocess="xml-stripblanks">ui/sysprof-aid-icon.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-callgraph-view.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-capture-view.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-display.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-details-view.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-empty-state-view.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-environ-editor-row.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-failed-state-view.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-logs-view.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-marks-view.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-process-model-row.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-profiler-assistant.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-recording-state-view.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-tab.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-time-label.ui</file>
-    <file preprocess="xml-stripblanks">ui/sysprof-visualizer-view.ui</file>
+  <gresource prefix="/org/gnome/sysprof/ui">
+    <file preprocess="xml-stripblanks">sysprof-aid-icon.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-callgraph-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-capture-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-display.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-details-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-empty-state-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-environ-editor-row.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-failed-state-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-logs-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-marks-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-process-model-row.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-profiler-assistant.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-recording-state-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-tab.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-time-label.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-visualizer-view.ui</file>
   </gresource>
 </gresources>

@@ -32,11 +32,12 @@
   <provides>
     <binary>sysprof</binary>
     <binary>sysprof-cli</binary>
+    <dbus type="system">org.gnome.Sysprof2</dbus>
     <dbus type="system">org.gnome.Sysprof3</dbus>
   </provides>
 
   <releases>
-    <release version="3.31.91" date="2019-02-18"/>
+    <release version="3.33.3" date="2019-06-25"/>
   </releases>
 
   <metadata_license>CC0-1.0</metadata_license>

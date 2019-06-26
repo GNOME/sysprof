@@ -79,6 +79,7 @@ main (gint   argc,
   GError *error = NULL;
   gchar *command = NULL;
   gboolean gjs = FALSE;
+  gboolean no_battery = FALSE;
   gboolean no_cpu = FALSE;
   gboolean no_decode = FALSE;
   gboolean no_memory = FALSE;
@@ -95,6 +96,7 @@ main (gint   argc,
     { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task"), N_("PID") },
     { "command", 'c', 0, G_OPTION_ARG_STRING, &command, N_("Run a command and profile the process"), N_("COMMAND") },
     { "force", 'f', 0, G_OPTION_ARG_NONE, &force, N_("Force overwrite the capture file") },
+    { "no-battery", 0, 0, G_OPTION_ARG_NONE, &no_cpu, N_("Disable recording of battery statistics") },
     { "no-cpu", 0, 0, G_OPTION_ARG_NONE, &no_cpu, N_("Disable recording of CPU statistics") },
     { "no-perf", 0, 0, G_OPTION_ARG_NONE, &no_perf, N_("Do not record stacktraces using Linux perf") },
     { "no-decode", 0, 0, G_OPTION_ARG_NONE, &no_decode, N_("Do not append symbol name information from local machine") },
@@ -265,6 +267,13 @@ main (gint   argc,
   if (!no_memory)
     {
       source = sysprof_memory_source_new ();
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
+
+  if (!no_battery)
+    {
+      source = sysprof_battery_source_new ();
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }

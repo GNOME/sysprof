@@ -15,6 +15,7 @@ libsysprof_public_sources = [
   'sysprof-kernel-symbol.c',
   'sysprof-kernel-symbol-resolver.c',
   'sysprof-local-profiler.c',
+  'sysprof-netdev-source.c',
   'sysprof-process-model.c',
   'sysprof-process-model-item.c',
   'sysprof-profile.c',

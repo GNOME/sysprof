@@ -4,6 +4,13 @@
   <object class="SysprofCpuAid" id="cpu_aid"/>
   <object class="SysprofMemoryAid" id="memory_aid"/>
   <object class="SysprofCallgraphAid" id="callgraph_aid"/>
+  <object class="SysprofAid" id="network_aid">
+    <property name="display-name" translatable="yes">Network</property>
+    <property name="icon-name">preferences-system-network-symbolic</property>
+    <child>
+      <object class="SysprofNetdevSource"/>
+    </child>
+  </object>
   <object class="SysprofProxyAid" id="mutter_aid">
     <property name="object-path">/org/gnome/Sysprof3/Profiler</property>
     <property name="bus-type">session</property>
@@ -144,6 +151,13 @@
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">battery_aid</property>
+                            <property name="selected">false</property>
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="SysprofAidIcon">
+                            <property name="aid">network_aid</property>
                             <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>

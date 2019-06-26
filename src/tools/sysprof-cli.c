@@ -79,9 +79,10 @@ main (gint   argc,
   GError *error = NULL;
   gchar *command = NULL;
   gboolean gjs = FALSE;
-  gboolean no_memory = FALSE;
   gboolean no_cpu = FALSE;
   gboolean no_decode = FALSE;
+  gboolean no_memory = FALSE;
+  gboolean no_network = FALSE;
   gboolean no_perf = FALSE;
   gboolean version = FALSE;
   gboolean force = FALSE;
@@ -98,6 +99,7 @@ main (gint   argc,
     { "no-perf", 0, 0, G_OPTION_ARG_NONE, &no_perf, N_("Do not record stacktraces using Linux perf") },
     { "no-decode", 0, 0, G_OPTION_ARG_NONE, &no_decode, N_("Do not append symbol name information from local machine") },
     { "no-memory", 0, 0, G_OPTION_ARG_NONE, &no_memory, N_("Disable recording of memory statistics") },
+    { "no-network", 0, 0, G_OPTION_ARG_NONE, &no_network, N_("Disable recording of network statistics") },
     { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
     { "gjs", 0, 0, G_OPTION_ARG_NONE, &gjs, N_("Set GJS_TRACE_FD environment to trace GJS processes") },
     { "gnome-shell", 0, 0, G_OPTION_ARG_NONE, &gnome_shell, N_("Connect to org.gnome.Shell for profiler statistics") },
@@ -263,6 +265,13 @@ main (gint   argc,
   if (!no_memory)
     {
       source = sysprof_memory_source_new ();
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
+
+  if (!no_network)
+    {
+      source = sysprof_netdev_source_new ();
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }

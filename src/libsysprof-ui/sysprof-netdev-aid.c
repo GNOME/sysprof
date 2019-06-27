@@ -212,6 +212,7 @@ sysprof_netdev_aid_present_finish (SysprofAid    *aid,
           if (g_str_has_prefix (ctr->name, "RX Bytes"))
             {
               g_autofree gchar *title = NULL;
+              gboolean is_combined;
               GtkWidget *row;
               GdkRGBA rgba;
               guint other_id;
@@ -219,16 +220,22 @@ sysprof_netdev_aid_present_finish (SysprofAid    *aid,
               if (!(other_id = find_other_id (counters, ctr->name)))
                 continue;
 
-              title = g_strdup_printf ("Network Bytes%s", ctr->name + strlen ("RX Bytes"));
+              is_combined = g_str_equal (ctr->description, "Combined");
+
+              if (is_combined)
+                title = g_strdup ("Network Bytes (All)");
+              else
+                title = g_strdup_printf ("Network Bytes%s", ctr->name + strlen ("RX Bytes"));
+
               row = g_object_new (SYSPROF_TYPE_DUPLEX_VISUALIZER,
                                   "title", title,
                                   "height-request", 35,
-                                  "visible", TRUE,
+                                  "visible", is_combined,
                                   NULL);
               sysprof_color_cycle_next (cycle, &rgba);
               sysprof_duplex_visualizer_set_counters  (SYSPROF_DUPLEX_VISUALIZER (row), ctr->id, other_id);
               sysprof_duplex_visualizer_set_colors (SYSPROF_DUPLEX_VISUALIZER (row), &rgba, &rgba);
-              sysprof_visualizer_group_insert (group, SYSPROF_VISUALIZER (row), -1, TRUE);
+              sysprof_visualizer_group_insert (group, SYSPROF_VISUALIZER (row), is_combined ? 0 : -1, !is_combined);
             }
         }
 

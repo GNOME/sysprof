@@ -41,6 +41,10 @@ struct _SysprofNetdevSource
   SysprofCaptureWriter *writer;
   GArray               *netdevs;
 
+  /* Combined (all devices) rx/tx counters */
+  guint                 combined_rx_id;
+  guint                 combined_tx_id;
+
   /* FD for /proc/net/dev contents */
   gint                  netdev_fd;
 
@@ -150,8 +154,8 @@ static void
 sysprof_netdev_source_prepare (SysprofSource *source)
 {
   SysprofNetdevSource *self = (SysprofNetdevSource *)source;
-  g_autoptr(GArray) counters = NULL;
   g_autoptr(GError) error = NULL;
+  SysprofCaptureCounter ctr[2] = {0};
 
   g_assert (SYSPROF_IS_NETDEV_SOURCE (self));
 
@@ -168,7 +172,28 @@ sysprof_netdev_source_prepare (SysprofSource *source)
       return;
     }
 
-  counters = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounter));
+  self->combined_rx_id = sysprof_capture_writer_request_counter (self->writer, 1);
+  self->combined_tx_id = sysprof_capture_writer_request_counter (self->writer, 1);
+
+  g_strlcpy (ctr[0].category, "Network", sizeof ctr[0].category);
+  g_strlcpy (ctr[0].name, "RX Bytes", sizeof ctr[0].name);
+  g_strlcpy (ctr[0].description, "Combined", sizeof ctr[0].description);
+  ctr[0].id = self->combined_rx_id;
+  ctr[0].type = SYSPROF_CAPTURE_COUNTER_INT64;
+  ctr[0].value.v64 = 0;
+
+  g_strlcpy (ctr[1].category, "Network", sizeof ctr[1].category);
+  g_strlcpy (ctr[1].name, "TX Bytes", sizeof ctr[1].name);
+  g_strlcpy (ctr[1].description, "Combined", sizeof ctr[1].description);
+  ctr[1].id = self->combined_tx_id;
+  ctr[1].type = SYSPROF_CAPTURE_COUNTER_INT64;
+  ctr[1].value.v64 = 0;
+
+  sysprof_capture_writer_define_counters (self->writer,
+                                          SYSPROF_CAPTURE_CURRENT_TIME,
+                                          -1,
+                                          -1,
+                                          ctr, G_N_ELEMENTS (ctr));
 
   sysprof_source_emit_ready (source);
 }
@@ -181,6 +206,8 @@ sysprof_netdev_source_poll_cb (gpointer data)
   g_autoptr(GArray) counters = NULL;
   g_autoptr(GArray) values = NULL;
   gchar buf[4096*4];
+  gint64 combined_rx = 0;
+  gint64 combined_tx = 0;
   gssize len;
   gsize line_len;
   gchar *line;
@@ -277,6 +304,9 @@ Inter-|   Receive                                                |  Transmit
               &nd->tx_carrier,
               &nd->tx_compressed);
 
+      combined_rx += nd->rx_bytes;
+      combined_tx += nd->tx_bytes;
+
       g_array_append_val (counters, nd->rx_bytes_id);
       g_array_append_val (values, nd->rx_bytes);
 
@@ -284,14 +314,19 @@ Inter-|   Receive                                                |  Transmit
       g_array_append_val (values, nd->tx_bytes);
     }
 
-  if (counters->len)
-    sysprof_capture_writer_set_counters (self->writer,
-                                         SYSPROF_CAPTURE_CURRENT_TIME,
-                                         -1,
-                                         -1,
-                                         (const guint *)(gpointer)counters->data,
-                                         (const SysprofCaptureCounterValue *)(gpointer)values->data,
-                                         counters->len);
+  g_array_append_val (counters, self->combined_rx_id);
+  g_array_append_val (values, combined_rx);
+
+  g_array_append_val (counters, self->combined_tx_id);
+  g_array_append_val (values, combined_tx);
+
+  sysprof_capture_writer_set_counters (self->writer,
+                                       SYSPROF_CAPTURE_CURRENT_TIME,
+                                       -1,
+                                       -1,
+                                       (const guint *)(gpointer)counters->data,
+                                       (const SysprofCaptureCounterValue *)(gpointer)values->data,
+                                       counters->len);
 
   return G_SOURCE_CONTINUE;
 }

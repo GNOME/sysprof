@@ -109,7 +109,7 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
-static gdouble dashes[] = { 1.0, 2.0 };
+static const gdouble dashes[] = { 1.0, 2.0 };
 
 static void
 load_data_free (gpointer data)

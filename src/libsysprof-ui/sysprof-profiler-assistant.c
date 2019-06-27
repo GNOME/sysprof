@@ -36,6 +36,7 @@
 #include "sysprof-callgraph-aid.h"
 #include "sysprof-cpu-aid.h"
 #include "sysprof-memory-aid.h"
+#include "sysprof-netdev-aid.h"
 #include "sysprof-proxy-aid.h"
 
 struct _SysprofProfilerAssistant
@@ -303,11 +304,12 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
 
   g_type_ensure (SYSPROF_TYPE_AID_ICON);
   g_type_ensure (SYSPROF_TYPE_BATTERY_AID);
-  g_type_ensure (SYSPROF_TYPE_CPU_AID);
-  g_type_ensure (SYSPROF_TYPE_MEMORY_AID);
-  g_type_ensure (SYSPROF_TYPE_PROXY_AID);
-  g_type_ensure (SYSPROF_TYPE_ENVIRON_EDITOR);
   g_type_ensure (SYSPROF_TYPE_CALLGRAPH_AID);
+  g_type_ensure (SYSPROF_TYPE_CPU_AID);
+  g_type_ensure (SYSPROF_TYPE_ENVIRON_EDITOR);
+  g_type_ensure (SYSPROF_TYPE_MEMORY_AID);
+  g_type_ensure (SYSPROF_TYPE_NETDEV_AID);
+  g_type_ensure (SYSPROF_TYPE_PROXY_AID);
 }
 
 static void

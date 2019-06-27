@@ -303,7 +303,7 @@ sysprof_netdev_source_start (SysprofSource *source)
 
   g_assert (SYSPROF_IS_NETDEV_SOURCE (self));
 
-  self->poll_source = g_timeout_add_seconds (1, sysprof_netdev_source_poll_cb, self);
+  self->poll_source = g_timeout_add (200, sysprof_netdev_source_poll_cb, self);
 
   /* Poll immediately */
   sysprof_netdev_source_poll_cb (self);

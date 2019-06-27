@@ -303,12 +303,19 @@ sysprof_duplex_visualizer_draw (GtkWidget *widget,
 
   ret = GTK_WIDGET_CLASS (sysprof_duplex_visualizer_parent_class)->draw (widget, cr);
 
+  style_context = gtk_widget_get_style_context (widget);
+  gtk_style_context_get_color (style_context,
+                               gtk_style_context_get_state (style_context),
+                               &fg);
+  fg.alpha *= 0.4;
+
   /* Draw our center line */
   cairo_save (cr);
   cairo_set_line_width (cr, 1.0);
   cairo_set_dash (cr, dashes, G_N_ELEMENTS (dashes), 0);
   cairo_move_to (cr, 0, mid);
   cairo_line_to (cr, alloc.width, mid);
+  gdk_cairo_set_source_rgba (cr, &fg);
   cairo_stroke (cr);
   cairo_restore (cr);
 
@@ -466,11 +473,6 @@ sysprof_duplex_visualizer_draw (GtkWidget *widget,
   pango_font_description_set_absolute_size (font_desc, LABEL_HEIGHT_PX * PANGO_SCALE);
   pango_layout_set_font_description (layout, font_desc);
 
-  style_context = gtk_widget_get_style_context (widget);
-  gtk_style_context_get_color (style_context,
-                               gtk_style_context_get_state (style_context),
-                               &fg);
-  fg.alpha = 0.5;
   gdk_cairo_set_source_rgba (cr, &fg);
 
   cairo_move_to (cr, 2, 2);

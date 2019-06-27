@@ -40,6 +40,7 @@ libsysprof_public_headers = [
   'sysprof-governor-source.h',
   'sysprof-hostinfo-source.h',
   'sysprof-jitmap-symbol-resolver.h',
+  'sysprof-netdev-source.h',
   'sysprof-kernel-symbol.h',
   'sysprof-kernel-symbol-resolver.h',
   'sysprof-local-profiler.h',

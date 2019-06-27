@@ -18,15 +18,22 @@
             <property name="orientation">vertical</property>
             <property name="visible">true</property>
             <child>
-              <object class="SysprofVisualizersFrame" id="visualizers">
+              <object class="GtkBox">
                 <property name="vexpand">false</property>
+                <property name="orientation">vertical</property>
                 <property name="visible">true</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkSeparator">
-                <property name="orientation">horizontal</property>
-                <property name="visible">true</property>
+                <child>
+                  <object class="SysprofVisualizersFrame" id="visualizers">
+                    <property name="vexpand">true</property>
+                    <property name="visible">true</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkSeparator">
+                    <property name="orientation">horizontal</property>
+                    <property name="visible">true</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>

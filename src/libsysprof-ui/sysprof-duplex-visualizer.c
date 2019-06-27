@@ -164,9 +164,9 @@ collect_values_cb (const SysprofCaptureFrame *frame,
                   if (state->last_tx_val != G_MININT64)
                     val = v64 - state->last_tx_val;
 
-                  /* RX goes upward from half point */
+                  /* TX goes downward from half point */
                   if (state->max_change != 0)
-                    y += (gdouble)val / (gdouble)state->max_change / 2.0;
+                    y -= (gdouble)val / (gdouble)state->max_change / 2.0;
 
                   state->last_tx_val = v64;
                 }

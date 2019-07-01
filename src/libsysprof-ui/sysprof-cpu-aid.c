@@ -27,6 +27,7 @@
 #include "sysprof-color-cycle.h"
 #include "sysprof-cpu-aid.h"
 #include "sysprof-line-visualizer.h"
+#include "sysprof-procs-visualizer.h"
 
 struct _SysprofCpuAid
 {
@@ -37,6 +38,8 @@ typedef struct
 {
   SysprofCaptureCursor *cursor;
   SysprofDisplay       *display;
+  GArray               *counters;
+  guint                 has_processes : 1;
 } Present;
 
 G_DEFINE_TYPE (SysprofCpuAid, sysprof_cpu_aid, SYSPROF_TYPE_AID)
@@ -47,6 +50,7 @@ present_free (gpointer data)
   Present *p = data;
 
   g_clear_pointer (&p->cursor, sysprof_capture_cursor_unref);
+  g_clear_pointer (&p->counters, g_array_unref);
   g_clear_object (&p->display);
   g_slice_free (Present, p);
 }
@@ -82,23 +86,32 @@ sysprof_cpu_aid_prepare (SysprofAid      *self,
 }
 
 static gboolean
-collect_cpu_counters (const SysprofCaptureFrame *frame,
-                      gpointer                   user_data)
+collect_info (const SysprofCaptureFrame *frame,
+              gpointer                   user_data)
 {
   SysprofCaptureCounterDefine *def = (SysprofCaptureCounterDefine *)frame;
-  GArray *counters = user_data;
+  Present *p = user_data;
 
   g_assert (frame != NULL);
-  g_assert (frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF);
-  g_assert (counters != NULL);
+  g_assert (p != NULL);
+  g_assert (p->counters != NULL);
 
-  for (guint i = 0; i < def->n_counters; i++)
+  if (frame->type == SYSPROF_CAPTURE_FRAME_CTRDEF)
     {
-      const SysprofCaptureCounter *counter = &def->counters[i];
+      for (guint i = 0; i < def->n_counters; i++)
+        {
+          const SysprofCaptureCounter *counter = &def->counters[i];
 
-      if (g_strcmp0 (counter->category, "CPU Percent") == 0 ||
-          g_strcmp0 (counter->category, "CPU Frequency") == 0)
-        g_array_append_vals (counters, counter, 1);
+          if (g_strcmp0 (counter->category, "CPU Percent") == 0 ||
+              g_strcmp0 (counter->category, "CPU Frequency") == 0)
+            g_array_append_vals (p->counters, counter, 1);
+        }
+    }
+  else if (!p->has_processes &&
+           (frame->type == SYSPROF_CAPTURE_FRAME_PROCESS ||
+            frame->type == SYSPROF_CAPTURE_FRAME_EXIT))
+    {
+      p->has_processes = TRUE;
     }
 
   return TRUE;
@@ -111,17 +124,15 @@ sysprof_cpu_aid_present_worker (GTask        *task,
                                 GCancellable *cancellable)
 {
   Present *present = task_data;
-  g_autoptr(GArray) counters = NULL;
 
   g_assert (G_IS_TASK (task));
   g_assert (SYSPROF_IS_CPU_AID (source_object));
   g_assert (present != NULL);
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
-  counters = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounter));
-  sysprof_capture_cursor_foreach (present->cursor, collect_cpu_counters, counters);
+  sysprof_capture_cursor_foreach (present->cursor, collect_info, present);
   g_task_return_pointer (task,
-                         g_steal_pointer (&counters),
+                         g_steal_pointer (&present->counters),
                          (GDestroyNotify) g_array_unref);
 }
 
@@ -133,7 +144,11 @@ sysprof_cpu_aid_present_async (SysprofAid           *aid,
                                GAsyncReadyCallback   callback,
                                gpointer              user_data)
 {
-  static const SysprofCaptureFrameType types[] = { SYSPROF_CAPTURE_FRAME_CTRDEF };
+  static const SysprofCaptureFrameType types[] = {
+    SYSPROF_CAPTURE_FRAME_CTRDEF,
+    SYSPROF_CAPTURE_FRAME_PROCESS,
+    SYSPROF_CAPTURE_FRAME_EXIT,
+  };
   g_autoptr(SysprofCaptureCondition) condition = NULL;
   g_autoptr(SysprofCaptureCursor) cursor = NULL;
   g_autoptr(GTask) task = NULL;
@@ -144,12 +159,14 @@ sysprof_cpu_aid_present_async (SysprofAid           *aid,
   g_assert (SYSPROF_IS_DISPLAY (display));
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
-  condition = sysprof_capture_condition_new_where_type_in (1, types);
+  condition = sysprof_capture_condition_new_where_type_in (G_N_ELEMENTS (types), types);
   cursor = sysprof_capture_cursor_new (reader);
   sysprof_capture_cursor_add_condition (cursor, g_steal_pointer (&condition));
 
   present.cursor = g_steal_pointer (&cursor);
   present.display = g_object_ref (display);
+  present.counters = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounter));
+  present.has_processes = FALSE;
 
   task = g_task_new (aid, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_cpu_aid_present_async);

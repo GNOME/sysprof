@@ -331,6 +331,10 @@ sysprof_perf_source_handle_event (SysprofPerfCounterEvent *event,
       break;
 
     case PERF_RECORD_EXIT:
+      /* Ignore fork exits for now */
+      if (event->exit.tid != event->exit.pid)
+        break;
+
       sysprof_capture_writer_add_exit (self->writer,
                                        event->exit.time,
                                        cpu,

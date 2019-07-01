@@ -15,6 +15,7 @@ src/libsysprof-ui/sysprof-cpu-aid.c
 src/libsysprof-ui/sysprof-depth-visualizer.c
 src/libsysprof-ui/sysprof-details-page.c
 src/libsysprof-ui/sysprof-details-page.ui
+src/libsysprof-ui/sysprof-diskstat-aid.c
 src/libsysprof-ui/sysprof-display.c
 src/libsysprof-ui/sysprof-display.ui
 src/libsysprof-ui/sysprof-environ-editor-row.ui

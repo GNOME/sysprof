@@ -236,6 +236,7 @@ sysprof_diskstat_aid_present_finish (SysprofAid    *aid,
               sysprof_color_cycle_next (cycle, &rgba);
               sysprof_duplex_visualizer_set_counters  (SYSPROF_DUPLEX_VISUALIZER (row), ctr->id, other_id);
               sysprof_duplex_visualizer_set_colors (SYSPROF_DUPLEX_VISUALIZER (row), &rgba, &rgba);
+              sysprof_duplex_visualizer_set_labels (SYSPROF_DUPLEX_VISUALIZER (row), _("Reads"), _("Writes"));
               sysprof_duplex_visualizer_set_use_diff (SYSPROF_DUPLEX_VISUALIZER (row), FALSE);
               sysprof_visualizer_group_insert (group, SYSPROF_VISUALIZER (row), is_combined ? 0 : -1, !is_combined);
             }

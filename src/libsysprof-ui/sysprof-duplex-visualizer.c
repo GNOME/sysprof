@@ -40,12 +40,14 @@ struct _SysprofDuplexVisualizer
   GdkRGBA rx_rgba;
   GdkRGBA tx_rgba;
 
-  guint rx_rgba_set : 1;
-  guint tx_rgba_set : 1;
-
-  guint use_diff : 1;
+  gchar *rx_label;
+  gchar *tx_label;
 
   PointCache *cache;
+
+  guint rx_rgba_set : 1;
+  guint tx_rgba_set : 1;
+  guint use_diff : 1;
 };
 
 typedef struct
@@ -492,11 +494,17 @@ sysprof_duplex_visualizer_draw (GtkWidget *widget,
   gdk_cairo_set_source_rgba (cr, &fg);
 
   cairo_move_to (cr, 2, 2);
-  pango_layout_set_text (layout, "RX", 2);
+  if (self->rx_label != NULL)
+    pango_layout_set_text (layout, self->rx_label, -1);
+  else
+    pango_layout_set_text (layout, "RX", 2);
   pango_cairo_show_layout (cr, layout);
 
   cairo_move_to (cr, 2, mid + 2);
-  pango_layout_set_text (layout, "TX", 2);
+  if (self->tx_label != NULL)
+    pango_layout_set_text (layout, self->tx_label, -1);
+  else
+    pango_layout_set_text (layout, "TX", 2);
   pango_cairo_show_layout (cr, layout);
 
   pango_font_description_free (font_desc);
@@ -511,6 +519,8 @@ sysprof_duplex_visualizer_finalize (GObject *object)
   SysprofDuplexVisualizer *self = (SysprofDuplexVisualizer *)object;
 
   g_clear_pointer (&self->cache, point_cache_unref);
+  g_clear_pointer (&self->rx_label, g_free);
+  g_clear_pointer (&self->tx_label, g_free);
 
   G_OBJECT_CLASS (sysprof_duplex_visualizer_parent_class)->finalize (object);
 }
@@ -588,4 +598,26 @@ sysprof_duplex_visualizer_set_use_diff (SysprofDuplexVisualizer *self,
 
   self->use_diff = !!use_diff;
   gtk_widget_queue_allocate (GTK_WIDGET (self));
+}
+
+void
+sysprof_duplex_visualizer_set_labels (SysprofDuplexVisualizer *self,
+                                      const gchar             *rx_label,
+                                      const gchar             *tx_label)
+{
+  g_return_if_fail (SYSPROF_IS_DUPLEX_VISUALIZER (self));
+
+  if (g_strcmp0 (rx_label, self->rx_label) != 0)
+    {
+      g_free (self->rx_label);
+      self->rx_label = g_strdup (rx_label);
+    }
+
+  if (g_strcmp0 (tx_label, self->tx_label) != 0)
+    {
+      g_free (self->tx_label);
+      self->tx_label = g_strdup (tx_label);
+    }
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
 }

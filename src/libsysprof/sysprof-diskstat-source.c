@@ -130,14 +130,14 @@ register_counters_by_name (SysprofDiskstatSource *self,
   g_strlcpy (ds.device, name, sizeof ds.device);
 
   g_strlcpy (ctr[0].category, "Disk", sizeof ctr[0].category);
-  g_snprintf (ctr[0].name, sizeof ctr[0].name, "Reads (%s)", name);
+  g_snprintf (ctr[0].name, sizeof ctr[0].name, "Total Reads (%s)", name);
   g_strlcpy (ctr[0].description, name, sizeof ctr[0].description);
   ctr[0].id = ds.reads_total_id;
   ctr[0].type = SYSPROF_CAPTURE_COUNTER_INT64;
   ctr[0].value.v64 = 0;
 
   g_strlcpy (ctr[1].category, "Disk", sizeof ctr[1].category);
-  g_snprintf (ctr[1].name, sizeof ctr[1].name, "Writes (%s)", name);
+  g_snprintf (ctr[1].name, sizeof ctr[1].name, "Total Writes (%s)", name);
   g_strlcpy (ctr[1].description, name, sizeof ctr[1].description);
   ctr[1].id = ds.writes_total_id;
   ctr[1].type = SYSPROF_CAPTURE_COUNTER_INT64;

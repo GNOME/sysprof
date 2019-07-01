@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 # include "sysprof-callgraph-profile.h"
 # include "sysprof-capture-gobject.h"
 # include "sysprof-capture-symbol-resolver.h"
+# include "sysprof-diskstat-source.h"
 # include "sysprof-elf-symbol-resolver.h"
 # include "sysprof-gjs-source.h"
 # include "sysprof-governor-source.h"

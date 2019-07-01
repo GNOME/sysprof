@@ -43,6 +43,8 @@ struct _SysprofDuplexVisualizer
   guint rx_rgba_set : 1;
   guint tx_rgba_set : 1;
 
+  guint use_diff : 1;
+
   PointCache *cache;
 };
 
@@ -62,6 +64,9 @@ typedef struct
   /* Counter IDs */
   guint       rx;
   guint       tx;
+
+  /* Do we need to subtract previous value */
+  guint       use_diff : 1;
 } Collect;
 
 G_DEFINE_TYPE (SysprofDuplexVisualizer, sysprof_duplex_visualizer, SYSPROF_TYPE_VISUALIZER)
@@ -142,7 +147,7 @@ collect_values_cb (const SysprofCaptureFrame *frame,
             {
               gint64 v64 = values->values[j].v64;
               guint id = values->ids[j];
-              gint64 val = 0;
+              gint64 val = v64;
               gdouble y = 0.5;
 
               if (id == 0)
@@ -150,8 +155,13 @@ collect_values_cb (const SysprofCaptureFrame *frame,
 
               if (id == state->rx)
                 {
-                  if (state->last_rx_val != G_MININT64)
-                    val = v64 - state->last_rx_val;
+                  if (state->use_diff)
+                    {
+                      if (state->last_rx_val == G_MININT64)
+                        val = 0;
+                      else
+                        val -= state->last_rx_val;
+                    }
 
                   /* RX goes upward from half point */
                   if (state->max_change != 0)
@@ -161,8 +171,13 @@ collect_values_cb (const SysprofCaptureFrame *frame,
                 }
               else if (id == state->tx)
                 {
-                  if (state->last_tx_val != G_MININT64)
-                    val = v64 - state->last_tx_val;
+                  if (state->use_diff)
+                    {
+                      if (state->last_tx_val == G_MININT64)
+                        val = 0;
+                      else
+                        val -= state->last_tx_val;
+                    }
 
                   /* TX goes downward from half point */
                   if (state->max_change != 0)
@@ -206,6 +221,7 @@ sysprof_duplex_visualizer_worker (GTask        *task,
   state.last_rx_val = G_MININT64;
   state.last_tx_val = G_MININT64;
   state.max_change = 0;
+  state.use_diff = self->use_diff;
 
   point_cache_add_set (state.cache, state.rx);
   point_cache_add_set (state.cache, state.tx);
@@ -516,6 +532,7 @@ sysprof_duplex_visualizer_class_init (SysprofDuplexVisualizerClass *klass)
 static void
 sysprof_duplex_visualizer_init (SysprofDuplexVisualizer *self)
 {
+  self->use_diff = TRUE;
 }
 
 GtkWidget *
@@ -553,4 +570,22 @@ sysprof_duplex_visualizer_set_colors (SysprofDuplexVisualizer *self,
   self->tx_rgba_set = !!tx_rgba;
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+gboolean
+sysprof_duplex_visualizer_get_use_diff (SysprofDuplexVisualizer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DUPLEX_VISUALIZER (self), FALSE);
+
+  return self->use_diff;
+}
+
+void
+sysprof_duplex_visualizer_set_use_diff (SysprofDuplexVisualizer *self,
+                                        gboolean                 use_diff)
+{
+  g_return_if_fail (SYSPROF_IS_DUPLEX_VISUALIZER (self));
+
+  self->use_diff = !!use_diff;
+  gtk_widget_queue_allocate (GTK_WIDGET (self));
 }

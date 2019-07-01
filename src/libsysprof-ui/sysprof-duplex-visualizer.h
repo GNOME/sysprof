@@ -29,6 +29,9 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (SysprofDuplexVisualizer, sysprof_duplex_visualizer, SYSPROF, DUPLEX_VISUALIZER, SysprofVisualizer)
 
 GtkWidget *sysprof_duplex_visualizer_new          (void);
+gboolean   sysprof_duplex_visualizer_get_use_diff (SysprofDuplexVisualizer *self);
+void       sysprof_duplex_visualizer_set_use_diff (SysprofDuplexVisualizer *self,
+                                                   gboolean                 use_diff);
 void       sysprof_duplex_visualizer_set_counters (SysprofDuplexVisualizer *self,
                                                    guint                    rx_counter,
                                                    guint                    tx_counter);

@@ -45,6 +45,13 @@
     </child>
   </object>
   <object class="SysprofBatteryAid" id="battery_aid"/>
+  <object class="SysprofAid" id="diskstat_aid">
+    <property name="display-name">Disk</property>
+    <property name="icon-name">drive-harddisk-system-symbolic</property>
+    <child>
+      <object class="SysprofDiskstatSource"/>
+    </child>
+  </object>
   <template class="SysprofProfilerAssistant" parent="GtkBin">
     <child>
       <object class="GtkScrolledWindow">
@@ -152,6 +159,13 @@
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">network_aid</property>
+                            <property name="selected">false</property>
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="SysprofAidIcon">
+                            <property name="aid">diskstat_aid</property>
                             <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>

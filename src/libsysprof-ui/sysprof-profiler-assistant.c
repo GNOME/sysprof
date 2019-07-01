@@ -306,6 +306,7 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   g_type_ensure (SYSPROF_TYPE_BATTERY_AID);
   g_type_ensure (SYSPROF_TYPE_CALLGRAPH_AID);
   g_type_ensure (SYSPROF_TYPE_CPU_AID);
+  g_type_ensure (SYSPROF_TYPE_DISKSTAT_SOURCE);
   g_type_ensure (SYSPROF_TYPE_ENVIRON_EDITOR);
   g_type_ensure (SYSPROF_TYPE_MEMORY_AID);
   g_type_ensure (SYSPROF_TYPE_NETDEV_AID);

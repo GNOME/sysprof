@@ -28,6 +28,7 @@ libsysprof_ui_private_sources = [
   'sysprof-cpu-aid.c',
   'sysprof-depth-visualizer.c',
   'sysprof-details-page.c',
+  'sysprof-diskstat-aid.c',
   'sysprof-display.c',
   'sysprof-duplex-visualizer.c',
   'sysprof-environ.c',

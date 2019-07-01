@@ -39,6 +39,7 @@
 #include "sysprof-callgraph-aid.h"
 #include "sysprof-counters-aid.h"
 #include "sysprof-cpu-aid.h"
+#include "sysprof-diskstat-aid.h"
 #include "sysprof-logs-aid.h"
 #include "sysprof-marks-aid.h"
 #include "sysprof-netdev-aid.h"
@@ -631,6 +632,7 @@ sysprof_display_present_async (SysprofDisplay       *self,
   g_ptr_array_add (aids, sysprof_counters_aid_new ());
   g_ptr_array_add (aids, sysprof_cpu_aid_new ());
   g_ptr_array_add (aids, sysprof_callgraph_aid_new ());
+  g_ptr_array_add (aids, sysprof_diskstat_aid_new ());
   g_ptr_array_add (aids, sysprof_logs_aid_new ());
   g_ptr_array_add (aids, sysprof_marks_aid_new ());
   g_ptr_array_add (aids, sysprof_netdev_aid_new ());

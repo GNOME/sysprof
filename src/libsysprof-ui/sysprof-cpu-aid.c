@@ -308,6 +308,18 @@ sysprof_cpu_aid_present_finish (SysprofAid    *aid,
             }
         }
 
+      if (present->has_processes)
+        {
+          GtkWidget *row;
+
+          row = g_object_new (SYSPROF_TYPE_PROCS_VISUALIZER,
+                              "title", _("Processes"),
+                              "height-request", 35,
+                              "visible", FALSE,
+                              NULL);
+          sysprof_visualizer_group_insert (usage, SYSPROF_VISUALIZER (row), -1, TRUE);
+        }
+
       if (has_usage && !found_combined)
         sysprof_visualizer_group_insert (usage, over_row, 0, FALSE);
       else

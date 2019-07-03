@@ -342,9 +342,9 @@ sysprof_symbol_map_printf (SysprofSymbolMap *self)
       Element *ele = g_ptr_array_index (self->samples, i);
 
       if (ele->tag)
-        g_print ("%-5d: %p: %s [%s]\n", ele->pid, (gpointer)ele->addr, ele->name, g_quark_to_string (ele->tag));
+        g_print ("%-5d: %"G_GUINT64_FORMAT": %s [%s]\n", ele->pid, ele->addr, ele->name, g_quark_to_string (ele->tag));
       else
-        g_print ("%-5d: %p: %s\n", ele->pid, (gpointer)ele->addr, ele->name);
+        g_print ("%-5d: %"G_GUINT64_FORMAT": %s\n", ele->pid, ele->addr, ele->name);
     }
 }
 

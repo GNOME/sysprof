@@ -110,7 +110,7 @@ helpers_perf_event_open (GVariant *options,
                          gint32    pid,
                          gint32    cpu,
                          gint      group_fd,
-                         gulong    flags,
+                         guint64   flags,
                          gint     *out_fd)
 {
 #ifndef __linux__

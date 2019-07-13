@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
+
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <sysprof.h>
@@ -30,6 +32,12 @@ main (gint argc,
   gint ret;
 
   sysprof_clock_init ();
+
+  /* Set up gettext translations */
+  setlocale (LC_ALL, "");
+  bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+  textdomain (GETTEXT_PACKAGE);
 
   app = sysprof_application_new ();
   ret = g_application_run (G_APPLICATION (app), argc, argv);

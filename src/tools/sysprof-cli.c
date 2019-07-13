@@ -117,6 +117,12 @@ main (gint   argc,
   g_unix_signal_add (SIGINT, sigint_handler, main_loop);
   g_unix_signal_add (SIGTERM, sigint_handler, main_loop);
 
+  /* Set up gettext translations */
+  setlocale (LC_ALL, "");
+  bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+  textdomain (GETTEXT_PACKAGE);
+
   /* Before we start processing argv, look for "--" and take everything after
    * it as arguments as a "-c" replacement.
    */

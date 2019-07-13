@@ -69,6 +69,7 @@ gint
 main (gint   argc,
       gchar *argv[])
 {
+  g_auto(GStrv) child_argv = NULL;
   PolkitAgentListener *polkit = NULL;
   PolkitSubject *subject = NULL;
   SysprofCaptureWriter *writer;
@@ -116,7 +117,25 @@ main (gint   argc,
   g_unix_signal_add (SIGINT, sigint_handler, main_loop);
   g_unix_signal_add (SIGTERM, sigint_handler, main_loop);
 
-  context = g_option_context_new (_("[CAPTURE_FILE] — Sysprof"));
+  /* Before we start processing argv, look for "--" and take everything after
+   * it as arguments as a "-c" replacement.
+   */
+  for (guint i = 1; i < argc; i++)
+    {
+      if (g_str_equal (argv[i], "--"))
+        {
+          GPtrArray *ar = g_ptr_array_new ();
+          for (guint j = i + 1; j < argc; j++)
+            g_ptr_array_add (ar, g_strdup (argv[j]));
+          g_ptr_array_add (ar, NULL);
+          child_argv = (gchar **)g_ptr_array_free (ar, FALSE);
+          /* Skip everything from -- beyond */
+          argc = i;
+          break;
+        }
+    }
+
+  context = g_option_context_new (_("[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"));
   g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
 
   if (!g_option_context_parse (context, &argc, &argv, &error))
@@ -202,13 +221,16 @@ main (gint   argc,
       return EXIT_FAILURE;
     }
 
-  if (command != NULL)
+  if (command != NULL || child_argv != NULL)
     {
-      g_auto(GStrv) child_argv = NULL;
       g_auto(GStrv) env = g_get_environ ();
       gint child_argc;
 
-      if (!g_shell_parse_argv (command, &child_argc, &child_argv, &error))
+      if (child_argv != NULL)
+        {
+          child_argc = g_strv_length (child_argv);
+        }
+      else if (command && !g_shell_parse_argv (command, &child_argc, &child_argv, &error))
         {
           g_printerr ("Invalid command: %s\n", error->message);
           return EXIT_FAILURE;

@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include <fcntl.h>
+#include <locale.h>
 #include <glib-unix.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>

@@ -33,8 +33,6 @@
 #include "sysprof-details-page.h"
 #include "sysprof-ui-private.h"
 
-#define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
-
 struct _SysprofDetailsPage
 {
   SysprofPage   parent_instance;
@@ -231,7 +229,7 @@ sysprof_details_page_set_reader (SysprofDetailsPage   *self,
 
   duration = sysprof_capture_reader_get_end_time (reader) -
              sysprof_capture_reader_get_start_time (reader);
-  duration_str = g_strdup_printf (_("%0.4lf seconds"), duration / (gdouble)NSEC_PER_SEC);
+  duration_str = g_strdup_printf (_("%0.4lf seconds"), duration / (gdouble)SYSPROF_NSEC_PER_SEC);
   gtk_label_set_label (self->duration, duration_str);
 
   if (sysprof_capture_reader_get_stat (reader, &st_buf))

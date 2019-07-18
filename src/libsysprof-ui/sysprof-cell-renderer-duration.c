@@ -26,8 +26,6 @@
 #include "sysprof-ui-private.h"
 #include "sysprof-zoom-manager.h"
 
-#define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
-
 typedef struct
 {
   gint64 capture_begin_time;

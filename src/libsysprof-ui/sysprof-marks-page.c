@@ -28,8 +28,6 @@
 #include "sysprof-ui-private.h"
 #include "sysprof-zoom-manager.h"
 
-#define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
-
 typedef struct
 {
   SysprofMarksModelKind        kind;
@@ -245,9 +243,9 @@ sysprof_marks_page_tree_view_query_tooltip_cb (SysprofMarksPage *self,
           durationstr = _sysprof_format_duration (duration);
 
           if (duration != 0)
-            timestr = g_strdup_printf ("%0.4lf (%s)", begin_time / (gdouble)NSEC_PER_SEC, durationstr);
+            timestr = g_strdup_printf ("%0.4lf (%s)", begin_time / (gdouble)SYSPROF_NSEC_PER_SEC, durationstr);
           else
-            timestr = g_strdup_printf ("%0.4lf", begin_time / (gdouble)NSEC_PER_SEC);
+            timestr = g_strdup_printf ("%0.4lf", begin_time / (gdouble)SYSPROF_NSEC_PER_SEC);
 
           tooltip_text = g_strdup_printf ("%s: %s", timestr, text);
 

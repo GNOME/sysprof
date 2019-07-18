@@ -28,8 +28,6 @@
 
 #include "sysprof-log-model.h"
 
-#define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
-
 struct _SysprofLogModel
 {
   GObject       parent_instance;
@@ -189,9 +187,9 @@ sysprof_log_model_get_value (GtkTreeModel *model,
     case SYSPROF_LOG_MODEL_COLUMN_TIME_STRING:
       {
         gint64 offset = item->time - self->begin_time;
-        gint min = offset / (NSEC_PER_SEC * 60L);
-        gint seconds = (offset - (min * NSEC_PER_SEC)) / NSEC_PER_SEC;
-        gint msec = (offset % NSEC_PER_SEC) / (NSEC_PER_SEC / 1000L);
+        gint min = offset / SYSPROF_NSEC_PER_SEC / 60L;
+        gint seconds = (offset - (min * SYSPROF_NSEC_PER_SEC)) / SYSPROF_NSEC_PER_SEC;
+        gint msec = (offset % SYSPROF_NSEC_PER_SEC) / (SYSPROF_NSEC_PER_SEC / 1000L);
 
         g_value_init (value, G_TYPE_STRING);
         g_value_take_string (value,

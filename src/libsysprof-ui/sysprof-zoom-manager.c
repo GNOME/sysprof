@@ -25,11 +25,11 @@
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 #include <math.h>
+#include <sysprof-capture.h>
 
 #include "sysprof-zoom-manager.h"
 
 #define DEFAULT_PIXELS_PER_SEC (20.0)
-#define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
 
 struct _SysprofZoomManager
 {
@@ -584,7 +584,7 @@ sysprof_zoom_manager_get_duration_for_width (SysprofZoomManager *self,
 {
   g_return_val_if_fail (SYSPROF_IS_ZOOM_MANAGER (self), 0);
 
-  return NSEC_PER_SEC * ((gdouble)width / (DEFAULT_PIXELS_PER_SEC * self->zoom));
+  return SYSPROF_NSEC_PER_SEC * ((gdouble)width / (DEFAULT_PIXELS_PER_SEC * self->zoom));
 }
 
 gint
@@ -593,7 +593,7 @@ sysprof_zoom_manager_get_width_for_duration (SysprofZoomManager *self,
 {
   g_return_val_if_fail (SYSPROF_IS_ZOOM_MANAGER (self), 0);
 
-  return (gdouble)duration / (gdouble)NSEC_PER_SEC * DEFAULT_PIXELS_PER_SEC * self->zoom;
+  return (gdouble)duration / (gdouble)SYSPROF_NSEC_PER_SEC * DEFAULT_PIXELS_PER_SEC * self->zoom;
 }
 
 gdouble
@@ -605,7 +605,7 @@ sysprof_zoom_manager_fit_zoom_for_duration (SysprofZoomManager *self,
   g_return_val_if_fail (duration >= 0, 1.0);
   g_return_val_if_fail (width >= 0, 1.0);
 
-  return (width / DEFAULT_PIXELS_PER_SEC) / (duration / (gdouble)NSEC_PER_SEC);
+  return (width / DEFAULT_PIXELS_PER_SEC) / (duration / (gdouble)SYSPROF_NSEC_PER_SEC);
 }
 
 gdouble
@@ -633,14 +633,14 @@ _sysprof_format_duration (gint64 duration)
 
   duration = ABS (duration);
 
-  if (duration < NSEC_PER_SEC)
+  if (duration < SYSPROF_NSEC_PER_SEC)
     return g_strdup_printf ("%s%.2lf msec",
                             negative ? "-" : "",
                             (duration / 1000000.0));
   else
     return g_strdup_printf ("%s%.4lf seconds",
                             negative ? "-" : "",
-                            (duration / (gdouble)NSEC_PER_SEC));
+                            (duration / (gdouble)SYSPROF_NSEC_PER_SEC));
 }
 
 /**

@@ -24,8 +24,6 @@
 
 #include "sysprof-time-label.h"
 
-#define NSEC_PER_SEC (G_USEC_PER_SEC * 1000L)
-
 struct _SysprofTimeLabel
 {
   GtkBox parent;

@@ -27,11 +27,10 @@
 
 #include "sysprof-visualizer-ticks.h"
 
-#define NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
-#define NSEC_PER_DAY (NSEC_PER_SEC * 60L * 60L * 24L)
-#define NSEC_PER_HOUR (NSEC_PER_SEC * 60L * 60L)
-#define NSEC_PER_MIN (NSEC_PER_SEC * 60L)
-#define NSEC_PER_MSEC (NSEC_PER_SEC/G_GINT64_CONSTANT(1000))
+#define NSEC_PER_DAY (SYSPROF_NSEC_PER_SEC * 60L * 60L * 24L)
+#define NSEC_PER_HOUR (SYSPROF_NSEC_PER_SEC * 60L * 60L)
+#define NSEC_PER_MIN (SYSPROF_NSEC_PER_SEC * 60L)
+#define NSEC_PER_MSEC (SYSPROF_NSEC_PER_SEC/G_GINT64_CONSTANT(1000))
 #define MIN_TICK_DISTANCE 20
 #define LABEL_HEIGHT_PX 10
 
@@ -64,16 +63,16 @@ struct {
   gint height;
   gint64 span;
 } tick_sizing[N_TICKS] = {
-  { 1, 12, NSEC_PER_SEC * 60 },
-  { 1, 11, NSEC_PER_SEC * 30 },
-  { 1, 10, NSEC_PER_SEC * 5 },
-  { 1, 9, NSEC_PER_SEC },
-  { 1, 8, NSEC_PER_SEC / 2 },
-  { 1, 6, NSEC_PER_SEC / 4 },
-  { 1, 5, NSEC_PER_SEC / 10 },
-  { 1, 4, NSEC_PER_SEC / 100 },
-  { 1, 3, NSEC_PER_SEC / 1000 },
-  { 1, 1, NSEC_PER_SEC / 10000 },
+  { 1, 12, SYSPROF_NSEC_PER_SEC * 60 },
+  { 1, 11, SYSPROF_NSEC_PER_SEC * 30 },
+  { 1, 10, SYSPROF_NSEC_PER_SEC * 5 },
+  { 1, 9, SYSPROF_NSEC_PER_SEC },
+  { 1, 8, SYSPROF_NSEC_PER_SEC / 2 },
+  { 1, 6, SYSPROF_NSEC_PER_SEC / 4 },
+  { 1, 5, SYSPROF_NSEC_PER_SEC / 10 },
+  { 1, 4, SYSPROF_NSEC_PER_SEC / 100 },
+  { 1, 3, SYSPROF_NSEC_PER_SEC / 1000 },
+  { 1, 1, SYSPROF_NSEC_PER_SEC / 10000 },
 };
 
 G_DEFINE_TYPE (SysprofVisualizerTicks, sysprof_visualizer_ticks, GTK_TYPE_DRAWING_AREA)
@@ -93,7 +92,7 @@ update_label_text (PangoLayout *layout,
 
   g_assert (PANGO_IS_LAYOUT (layout));
 
-  tmp = time % NSEC_PER_SEC;
+  tmp = time % SYSPROF_NSEC_PER_SEC;
   time -= tmp;
   msec = tmp / 100000L;
 
@@ -115,10 +114,10 @@ update_label_text (PangoLayout *layout,
       time %= NSEC_PER_MIN;
     }
 
-  if (time >= NSEC_PER_SEC)
+  if (time >= SYSPROF_NSEC_PER_SEC)
     {
-      sec = time / NSEC_PER_SEC;
-      time %= NSEC_PER_SEC;
+      sec = time / SYSPROF_NSEC_PER_SEC;
+      time %= SYSPROF_NSEC_PER_SEC;
     }
 
   if (want_msec || (!hours && !min && !sec && msec))
@@ -204,7 +203,7 @@ draw_ticks (SysprofVisualizerTicks *self,
       /* If we are operating on smaller than seconds here, then we want
        * to ensure we include msec with the timestamps.
        */
-      want_msec = tick_sizing[ticks].span < NSEC_PER_SEC;
+      want_msec = tick_sizing[ticks].span < SYSPROF_NSEC_PER_SEC;
 
       for (gint64 t = self->begin_time - x_offset;
            t <= self->end_time;

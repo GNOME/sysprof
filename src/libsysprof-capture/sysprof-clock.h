@@ -67,6 +67,8 @@ typedef gint SysprofClock;
 typedef gint64 SysprofTimeStamp;
 typedef gint32 SysprofTimeSysprofan;
 
+#define SYSPROF_NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
+
 SYSPROF_AVAILABLE_IN_ALL
 SysprofClock sysprof_clock;
 
@@ -80,7 +82,7 @@ sysprof_clock_get_current_time (void)
     clock = CLOCK_MONOTONIC;
   clock_gettime (clock, &ts);
 
-  return (ts.tv_sec * G_GINT64_CONSTANT (1000000000)) + ts.tv_nsec;
+  return (ts.tv_sec * SYSPROF_NSEC_PER_SEC) + ts.tv_nsec;
 }
 
 static inline SysprofTimeSysprofan

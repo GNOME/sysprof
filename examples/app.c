@@ -23,6 +23,8 @@ main (int   argc,
 {
   SysprofCaptureWriter *writer;
 
+  sysprof_clock_init ();
+
   /* Ignore SIGPIPE because we might get a pipe from the environment and we
    * don't want to trap if write() is used on it.
    */

@@ -81,6 +81,7 @@ main (gint   argc,
   GError *error = NULL;
   gchar *command = NULL;
   gboolean gjs = FALSE;
+  gboolean gtk = FALSE;
   gboolean no_battery = FALSE;
   gboolean no_cpu = FALSE;
   gboolean no_decode = FALSE;
@@ -108,6 +109,7 @@ main (gint   argc,
     { "no-network", 0, 0, G_OPTION_ARG_NONE, &no_network, N_("Disable recording of network statistics") },
     { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
     { "gjs", 0, 0, G_OPTION_ARG_NONE, &gjs, N_("Set GJS_TRACE_FD environment to trace GJS processes") },
+    { "gtk", 0, 0, G_OPTION_ARG_NONE, &gtk, N_("Set GTK_TRACE_FD environment to trace a GTK application") },
     { "gnome-shell", 0, 0, G_OPTION_ARG_NONE, &gnome_shell, N_("Connect to org.gnome.Shell for profiler statistics") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
@@ -261,6 +263,14 @@ main (gint   argc,
   if (gjs)
     {
       source = sysprof_gjs_source_new ();
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
+
+  if (gtk)
+    {
+      source = sysprof_tracefd_source_new ();
+      sysprof_tracefd_source_set_envvar (SYSPROF_TRACEFD_SOURCE (source), "GTK_TRACE_FD");
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }

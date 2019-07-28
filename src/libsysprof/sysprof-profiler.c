@@ -103,6 +103,13 @@ sysprof_profiler_default_init (SysprofProfilerInterface *iface)
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
   g_object_interface_install_property (iface,
+      g_param_spec_string ("spawn-cwd",
+                           "Spawn Working Directory",
+                           "The directory to spawn the application from",
+                           NULL,
+                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_interface_install_property (iface,
       g_param_spec_boxed ("spawn-env",
                           "Sysprofawn Environment",
                           "The environment for the spawn child",
@@ -164,8 +171,16 @@ sysprof_profiler_get_spawn (SysprofProfiler *self)
 }
 
 void
+sysprof_profiler_set_spawn_cwd (SysprofProfiler *self,
+                                const gchar     *spawn_cwd)
+{
+  g_return_if_fail (SYSPROF_IS_PROFILER (self));
+  g_object_set (self, "spawn-cwd", spawn_cwd, NULL);
+}
+
+void
 sysprof_profiler_set_spawn (SysprofProfiler *self,
-                       gboolean    spawn)
+                            gboolean    spawn)
 {
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_object_set (self, "spawn", !!spawn, NULL);

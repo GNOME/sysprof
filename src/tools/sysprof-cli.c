@@ -233,6 +233,7 @@ main (gint   argc,
   if (command != NULL || child_argv != NULL)
     {
       g_auto(GStrv) env = g_get_environ ();
+      g_autofree gchar *cwd = NULL;
       gint child_argc;
 
       if (child_argv != NULL)
@@ -245,7 +246,10 @@ main (gint   argc,
           return EXIT_FAILURE;
         }
 
+      cwd = g_get_current_dir ();
+
       sysprof_profiler_set_spawn (profiler, TRUE);
+      sysprof_profiler_set_spawn_cwd (profiler, cwd);
       sysprof_profiler_set_spawn_argv (profiler, (const gchar * const *)child_argv);
       sysprof_profiler_set_spawn_env (profiler, (const gchar * const *)env);
     }

@@ -38,6 +38,7 @@ struct _SysprofSpawnable
   GArray     *fds;
   GPtrArray  *argv;
   gchar     **environ;
+  gchar      *cwd;
   gint        next_fd;
 };
 
@@ -270,7 +271,11 @@ sysprof_spawnable_spawn (SysprofSpawnable  *self,
   launcher = g_subprocess_launcher_new (0);
 
   g_subprocess_launcher_set_environ (launcher, self->environ);
-  g_subprocess_launcher_set_cwd (launcher, g_get_home_dir ());
+
+  if (self->cwd != NULL)
+    g_subprocess_launcher_set_cwd (launcher, self->cwd);
+  else
+    g_subprocess_launcher_set_cwd (launcher, g_get_home_dir ());
 
   for (guint i = 0; i < self->fds->len; i++)
     {
@@ -283,4 +288,17 @@ sysprof_spawnable_spawn (SysprofSpawnable  *self,
   argv = sysprof_spawnable_get_argv (self);
 
   return g_subprocess_launcher_spawnv (launcher, argv, error);
+}
+
+void
+sysprof_spawnable_set_cwd (SysprofSpawnable *self,
+                           const gchar      *cwd)
+{
+  g_return_if_fail (SYSPROF_IS_SPAWNABLE (self));
+
+  if (g_strcmp0 (cwd, self->cwd) != 0)
+    {
+      g_free (self->cwd);
+      self->cwd = g_strdup (cwd);
+    }
 }

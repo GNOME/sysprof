@@ -47,6 +47,9 @@ SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_append_args     (SysprofSpawnable          *self,
                                                         const gchar * const       *argv);
 SYSPROF_AVAILABLE_IN_ALL
+void                 sysprof_spawnable_set_cwd         (SysprofSpawnable          *self,
+                                                        const gchar               *cwd);
+SYSPROF_AVAILABLE_IN_ALL
 const gchar * const *sysprof_spawnable_get_argv        (SysprofSpawnable          *self);
 SYSPROF_AVAILABLE_IN_ALL
 const gchar * const *sysprof_spawnable_get_environ     (SysprofSpawnable          *self);

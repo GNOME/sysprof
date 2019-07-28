@@ -162,6 +162,9 @@ SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_profiler_set_spawn_env             (SysprofProfiler      *self,
                                                                   const gchar * const  *spawn_env);
 SYSPROF_AVAILABLE_IN_ALL
+void                  sysprof_profiler_set_spawn_cwd             (SysprofProfiler      *self,
+                                                                  const gchar          *cwd);
+SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_profiler_add_source                (SysprofProfiler      *self,
                                                                   SysprofSource        *source);
 SYSPROF_AVAILABLE_IN_ALL

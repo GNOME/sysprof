@@ -73,6 +73,7 @@ typedef struct
   /* Arguments and environment variables for spawning */
   gchar **spawn_argv;
   gchar **spawn_env;
+  gchar *spawn_cwd;
 
   /* State flags */
   guint is_running : 1;
@@ -118,6 +119,7 @@ enum {
   PROP_IS_RUNNING,
   PROP_SPAWN,
   PROP_SPAWN_ARGV,
+  PROP_SPAWN_CWD,
   PROP_SPAWN_ENV,
   PROP_SPAWN_INHERIT_ENVIRON,
   PROP_WHOLE_SYSTEM,
@@ -341,6 +343,10 @@ sysprof_local_profiler_get_property (GObject    *object,
       g_value_set_boxed (value, priv->spawn_argv);
       break;
 
+    case PROP_SPAWN_CWD:
+      g_value_set_string (value, priv->spawn_cwd);
+      break;
+
     case PROP_SPAWN_ENV:
       g_value_set_boxed (value, priv->spawn_env);
       break;
@@ -378,6 +384,11 @@ sysprof_local_profiler_set_property (GObject      *object,
       priv->spawn_argv = g_value_dup_boxed (value);
       break;
 
+    case PROP_SPAWN_CWD:
+      g_free (priv->spawn_cwd);
+      priv->spawn_cwd = g_value_dup_string (value);
+      break;
+
     case PROP_SPAWN_ENV:
       g_strfreev (priv->spawn_env);
       priv->spawn_env = g_value_dup_boxed (value);
@@ -403,6 +414,7 @@ sysprof_local_profiler_class_init (SysprofLocalProfilerClass *klass)
   g_object_class_override_property (object_class, PROP_IS_RUNNING, "is-running");
   g_object_class_override_property (object_class, PROP_SPAWN, "spawn");
   g_object_class_override_property (object_class, PROP_SPAWN_ARGV, "spawn-argv");
+  g_object_class_override_property (object_class, PROP_SPAWN_CWD, "spawn-cwd");
   g_object_class_override_property (object_class, PROP_SPAWN_ENV, "spawn-env");
   g_object_class_override_property (object_class, PROP_SPAWN_INHERIT_ENVIRON, "spawn-inherit-environ");
   g_object_class_override_property (object_class, PROP_WHOLE_SYSTEM, "whole-system");
@@ -583,6 +595,7 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
                                  priv->pids->len);
   g_key_file_set_boolean (keyfile, "profiler", "spawn", priv->spawn);
   g_key_file_set_boolean (keyfile, "profiler", "spawn-inherit-environ", priv->spawn_inherit_environ);
+  g_key_file_set_string (keyfile, "profiler", "spawn-cwd", priv->spawn_cwd ? priv->spawn_cwd : "");
 
   if (priv->spawn && priv->spawn_argv && priv->spawn_argv[0])
     {
@@ -613,6 +626,9 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
 
       sysprof_spawnable_set_environ (spawnable, (const gchar * const *)env->pdata);
       sysprof_spawnable_append_args (spawnable, (const gchar * const *)priv->spawn_argv);
+
+      if (priv->spawn_cwd != NULL)
+        sysprof_spawnable_set_cwd (spawnable, priv->spawn_cwd);
 
       /* Save argv before modifying */
       if (priv->spawn_argv != NULL)
@@ -996,6 +1012,7 @@ sysprof_local_profiler_new_replay (SysprofCaptureReader *reader)
   g_autoptr(SysprofLocalProfiler) self = NULL;
   g_autoptr(SysprofCaptureCursor) cursor = NULL;
   g_autoptr(GKeyFile) keyfile = NULL;
+  g_autofree gchar *cwd = NULL;
   g_auto(GStrv) argv = NULL;
   g_auto(GStrv) env = NULL;
   gboolean inherit;
@@ -1018,10 +1035,16 @@ sysprof_local_profiler_new_replay (SysprofCaptureReader *reader)
   inherit = g_key_file_get_boolean (keyfile, "profiler", "spawn-inherit-environ", NULL);
   argv = g_key_file_get_string_list (keyfile, "profiler", "spawn-argv", NULL, NULL);
   env = g_key_file_get_string_list (keyfile, "profiler", "spawn-env", NULL, NULL);
+  cwd = g_key_file_get_string (keyfile, "profiler", "spawn-cwd", NULL);
   n_sources = g_key_file_get_integer (keyfile, "profiler", "n-sources", NULL);
+
+  /* Ignore empty string */
+  if (cwd != NULL && *cwd == 0)
+    g_clear_pointer (&cwd, g_free);
 
   sysprof_profiler_set_spawn (SYSPROF_PROFILER (self), spawn);
   sysprof_profiler_set_spawn_argv (SYSPROF_PROFILER (self), CSTRV (argv));
+  sysprof_profiler_set_spawn_cwd (SYSPROF_PROFILER (self), cwd);
   sysprof_profiler_set_spawn_env (SYSPROF_PROFILER (self), CSTRV (env));
   sysprof_profiler_set_spawn_inherit_environ (SYSPROF_PROFILER (self), inherit);
 

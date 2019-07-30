@@ -4,9 +4,12 @@ sysprofd_sources = [
   '../libsysprof/sysprof-kallsyms.c',
   'sysprofd.c',
   'ipc-legacy-impl.c',
+  'ipc-rapl-profiler.c',
   'ipc-service-impl.c',
+  'sysprof-turbostat.c',
   helpers_sources,
   ipc_legacy_src,
+  ipc_profiler_src,
   ipc_service_src,
 ]
 
@@ -17,6 +20,7 @@ sysprofd_deps = [
   gio_dep,
   gio_unix_dep,
   polkit_dep,
+  libsysprof_capture_dep,
 ]
 
 sysprofd = executable('sysprofd', sysprofd_sources,

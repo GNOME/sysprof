@@ -24,15 +24,18 @@
 
 #include <gio/gio.h>
 #include <stdlib.h>
+#include <sysprof-capture.h>
 
 #include "ipc-legacy.h"
 #include "ipc-service.h"
 
 #include "ipc-legacy-impl.h"
+#include "ipc-rapl-profiler.h"
 #include "ipc-service-impl.h"
 
 #define V2_PATH                 "/org/gnome/Sysprof2"
 #define V3_PATH                 "/org/gnome/Sysprof3"
+#define RAPL_PATH               "/org/gnome/Sysprof3/RAPL"
 #define NAME_ACQUIRE_DELAY_SECS 3
 #define INACTIVITY_TIMEOUT_SECS 120
 
@@ -115,6 +118,8 @@ main (gint   argc,
   g_autoptr(GError) error = NULL;
   GBusType bus_type = G_BUS_TYPE_SYSTEM;
 
+  sysprof_clock_init ();
+
   g_set_prgname ("sysprofd");
   g_set_application_name ("sysprofd");
 
@@ -123,15 +128,18 @@ main (gint   argc,
   if ((bus = g_bus_get_sync (bus_type, NULL, &error)))
     {
       g_autoptr(IpcLegacySysprof2) v2_service = ipc_legacy_impl_new ();
+      g_autoptr(IpcProfiler) rapl = ipc_rapl_profiler_new ();
       g_autoptr(IpcService) v3_service = ipc_service_impl_new ();
 
       g_signal_connect (v3_service, "activity", G_CALLBACK (activity_cb), NULL);
       g_signal_connect (v2_service, "activity", G_CALLBACK (activity_cb), NULL);
+      g_signal_connect (rapl, "activity", G_CALLBACK (activity_cb), NULL);
 
       activity_cb (NULL, NULL);
 
       if (g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (v3_service), bus, V3_PATH, &error) &&
-          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (v2_service), bus, V2_PATH, &error))
+          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (v2_service), bus, V2_PATH, &error) &&
+          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (rapl), bus, RAPL_PATH, &error))
         {
           for (guint i = 0; i < G_N_ELEMENTS (bus_names); i++)
             {

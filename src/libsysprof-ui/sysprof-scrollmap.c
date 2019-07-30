@@ -78,7 +78,7 @@ sysprof_scrollmap_recalculate_worker (GTask        *task,
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   duration = state->end_time - state->begin_time;
-  n_buckets = MAX (1, state->width / (BOX_SIZE + 1));
+  n_buckets = MAX (10, state->width / (BOX_SIZE + 1));
   buckets = g_array_sized_new (FALSE, TRUE, sizeof (gint), n_buckets);
   g_array_set_size (buckets, n_buckets);
 
@@ -90,7 +90,7 @@ sysprof_scrollmap_recalculate_worker (GTask        *task,
       if (t < state->begin_time || t > state->end_time)
         continue;
 
-      n = ((t - state->begin_time) / (gdouble)duration) * n_buckets;
+      n = MIN (n_buckets - 1, ((t - state->begin_time) / (gdouble)duration) * n_buckets);
 
       g_assert (n < n_buckets);
 

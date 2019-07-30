@@ -400,11 +400,8 @@ ipc_service_impl_class_init (IpcServiceImplClass *klass)
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
-                  g_cclosure_marshal_VOID__VOID,
+                  NULL,
                   G_TYPE_NONE, 0);
-  g_signal_set_va_marshaller (signals [ACTIVITY],
-                              G_TYPE_FROM_CLASS (klass),
-                              g_cclosure_marshal_VOID__VOIDv);
 }
 
 static void

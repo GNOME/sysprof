@@ -49,6 +49,7 @@ libsysprof_ui_private_sources = [
   'sysprof-procs-visualizer.c',
   'sysprof-profiler-assistant.c',
   'sysprof-proxy-aid.c',
+  'sysprof-rapl-aid.c',
   'sysprof-recording-state-view.c',
   'sysprof-scrollmap.c',
   'sysprof-tab.c',

@@ -5,13 +5,7 @@
   <object class="SysprofMemoryAid" id="memory_aid"/>
   <object class="SysprofCallgraphAid" id="callgraph_aid"/>
   <object class="SysprofNetdevAid" id="network_aid"/>
-  <object class="SysprofProxyAid" id="energy_aid">
-    <property name="object-path">/org/gnome/Sysprof3/RAPL</property>
-    <property name="bus-type">system</property>
-    <property name="bus-name">org.gnome.Sysprof3</property>
-    <property name="display-name" translatable="yes">Energy Usage</property>
-    <property name="icon-name">battery-low-charging-symbolic</property>
-  </object>
+  <object class="SysprofRaplAid" id="rapl_aid"/>
   <object class="SysprofProxyAid" id="mutter_aid">
     <property name="object-path">/org/gnome/Sysprof3/Profiler</property>
     <property name="bus-type">session</property>
@@ -158,7 +152,7 @@
                         </child>
                         <child>
                           <object class="SysprofAidIcon">
-                            <property name="aid">energy_aid</property>
+                            <property name="aid">rapl_aid</property>
                             <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>

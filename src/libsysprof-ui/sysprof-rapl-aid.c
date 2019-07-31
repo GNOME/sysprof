@@ -164,6 +164,7 @@ sysprof_rapl_aid_present_finish (SysprofAid    *aid,
   if ((counters = g_task_propagate_pointer (G_TASK (result), error)))
     {
       g_autoptr(SysprofColorCycle) cycle = sysprof_color_cycle_new ();
+      g_autoptr(GHashTable) cat_to_row = g_hash_table_new (g_str_hash, g_str_equal);
       SysprofVisualizerGroup *energy;
       SysprofVisualizer *all;
 
@@ -193,6 +194,28 @@ sysprof_rapl_aid_present_finish (SysprofAid    *aid,
 
               sysprof_color_cycle_next (cycle, &rgba);
               sysprof_line_visualizer_add_counter (SYSPROF_LINE_VISUALIZER (all), ctr->id, &rgba);
+            }
+          else if (g_str_has_prefix (ctr->category, "RAPL "))
+            {
+              SysprofVisualizer *row;
+              GdkRGBA rgba;
+
+              row = g_hash_table_lookup (cat_to_row, ctr->category);
+
+              if (row == NULL)
+                {
+                  row = g_object_new (SYSPROF_TYPE_LINE_VISUALIZER,
+                                      "title", ctr->category,
+                                      "height-request", 20,
+                                      "visible", FALSE,
+                                      "y-lower", 0.0,
+                                      NULL);
+                  g_hash_table_insert (cat_to_row, (gchar *)ctr->category, row);
+                  sysprof_visualizer_group_insert (energy, SYSPROF_VISUALIZER (row), -1, TRUE);
+                }
+
+              sysprof_color_cycle_next (cycle, &rgba);
+              sysprof_line_visualizer_add_counter (SYSPROF_LINE_VISUALIZER (row), ctr->id, &rgba);
             }
         }
 

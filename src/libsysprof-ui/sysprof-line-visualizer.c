@@ -49,6 +49,9 @@ typedef struct
    */
   PointCache *cache;
 
+  /* The format for units (such as mHz, Watts, etc). */
+  gchar *units;
+
   /*
    * Range of the scale for lower and upper.
    */
@@ -105,6 +108,7 @@ enum {
   PROP_0,
   PROP_Y_LOWER,
   PROP_Y_UPPER,
+  PROP_UNITS,
   N_PROPS
 };
 
@@ -141,9 +145,12 @@ static gboolean
 sysprof_line_visualizer_draw (GtkWidget *widget,
                               cairo_t   *cr)
 {
+  static PangoAttrList *attrs = NULL;
   SysprofLineVisualizer *self = (SysprofLineVisualizer *)widget;
   SysprofLineVisualizerPrivate *priv = sysprof_line_visualizer_get_instance_private (self);
+  g_autofree gchar *upper = NULL;
   GtkStyleContext *style_context;
+  PangoLayout *layout;
   GtkStateFlags flags;
   GtkAllocation alloc;
   GdkRectangle clip;
@@ -260,6 +267,28 @@ sysprof_line_visualizer_draw (GtkWidget *widget,
         }
     }
 
+  if (!attrs)
+    {
+      attrs = pango_attr_list_new ();
+      pango_attr_list_insert (attrs, pango_attr_scale_new (0.666));
+    }
+
+  if (priv->y_upper != 100.0)
+    {
+      if (priv->units)
+        upper = g_strdup_printf ("%lg %s", priv->y_upper, priv->units);
+      else
+        upper = g_strdup_printf ("%lg", priv->y_upper);
+
+      layout = gtk_widget_create_pango_layout (widget, upper);
+      pango_layout_set_attributes (layout, attrs);
+      cairo_move_to (cr, 2, 2);
+      foreground.alpha *= 0.5;
+      gdk_cairo_set_source_rgba (cr, &foreground);
+      pango_cairo_show_layout (cr, layout);
+      g_clear_object (&layout);
+    }
+
   return ret;
 }
 
@@ -356,6 +385,7 @@ sysprof_line_visualizer_finalize (GObject *object)
   SysprofLineVisualizer *self = (SysprofLineVisualizer *)object;
   SysprofLineVisualizerPrivate *priv = sysprof_line_visualizer_get_instance_private (self);
 
+  g_clear_pointer (&priv->units, g_free);
   g_clear_pointer (&priv->lines, g_array_unref);
   g_clear_pointer (&priv->cache, point_cache_unref);
   g_clear_pointer (&priv->reader, sysprof_capture_reader_unref);
@@ -388,6 +418,10 @@ sysprof_line_visualizer_get_property (GObject    *object,
       g_value_set_double (value, priv->y_upper);
       break;
 
+    case PROP_UNITS:
+      g_value_set_string (value, priv->units);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -407,13 +441,19 @@ sysprof_line_visualizer_set_property (GObject      *object,
     case PROP_Y_LOWER:
       priv->y_lower = g_value_get_double (value);
       priv->y_lower_set = TRUE;
-      gtk_widget_queue_resize (GTK_WIDGET (self));
+      gtk_widget_queue_allocate (GTK_WIDGET (self));
       break;
 
     case PROP_Y_UPPER:
       priv->y_upper = g_value_get_double (value);
       priv->y_upper_set = TRUE;
-      gtk_widget_queue_resize (GTK_WIDGET (self));
+      gtk_widget_queue_allocate (GTK_WIDGET (self));
+      break;
+
+    case PROP_UNITS:
+      g_free (priv->units);
+      priv->units = g_value_dup_string (value);
+      gtk_widget_queue_allocate (GTK_WIDGET (self));
       break;
 
     default:
@@ -452,6 +492,13 @@ sysprof_line_visualizer_class_init (SysprofLineVisualizerClass *klass)
                          -G_MAXDOUBLE,
                          G_MAXDOUBLE,
                          100.0,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_UNITS] =
+    g_param_spec_string ("units",
+                         "Units",
+                         "The format for units (mHz, Watts, etc)",
+                         NULL,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);

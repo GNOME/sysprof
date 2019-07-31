@@ -23,19 +23,12 @@
 #include "sysprof-turbostat.h"
 
 #include <errno.h>
-#include <fcntl.h>
 #include <glib-unix.h>
 #include <math.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ioctl.h>
-#include <termios.h>
 #include <unistd.h>
-
-#ifdef __linux__
-# include <sys/prctl.h>
-#endif
 
 struct _SysprofTurbostat
 {
@@ -83,14 +76,6 @@ void
 sysprof_turbostat_free (SysprofTurbostat *self)
 {
   g_rc_box_release_full (self, sysprof_turbostat_finalize);
-}
-
-static void
-child_setup_cb (gpointer data)
-{
-#ifdef __linux__
-  prctl (PR_SET_PDEATHSIG, SIGTERM);
-#endif
 }
 
 static gboolean
@@ -237,7 +222,7 @@ sysprof_turbostat_start (SysprofTurbostat  *self,
                                 (gchar **)argv,
                                 env,
                                 (G_SPAWN_SEARCH_PATH | G_SPAWN_STDERR_TO_DEV_NULL),
-                                child_setup_cb,
+                                NULL,
                                 NULL,
                                 &self->pid,
                                 NULL,

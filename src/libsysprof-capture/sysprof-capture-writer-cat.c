@@ -159,6 +159,8 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
   g_return_val_if_fail (self != NULL, FALSE);
   g_return_val_if_fail (reader != NULL, FALSE);
 
+  sysprof_capture_reader_reset (reader);
+
   translate_table_clear (tables, TRANSLATE_CTR);
   translate_table_clear (tables, TRANSLATE_ADDR);
 

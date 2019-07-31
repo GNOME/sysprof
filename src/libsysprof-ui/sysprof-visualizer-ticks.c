@@ -326,7 +326,7 @@ sysprof_visualizer_ticks_class_init (SysprofVisualizerTicksClass *klass)
 static void
 sysprof_visualizer_ticks_init (SysprofVisualizerTicks *self)
 {
-  self->end_time = G_GINT64_CONSTANT (1000000000) * 60;
+  self->end_time = SYSPROF_NSEC_PER_SEC * 60;
 
   gtk_widget_set_has_window (GTK_WIDGET (self), FALSE);
 }
@@ -394,7 +394,7 @@ sysprof_visualizer_ticks_get_epoch (SysprofVisualizerTicks *self)
  */
 void
 sysprof_visualizer_ticks_set_epoch (SysprofVisualizerTicks *self,
-                               gint64             epoch)
+                                    gint64                  epoch)
 {
   g_return_if_fail (SYSPROF_IS_VISUALIZER_TICKS (self));
 

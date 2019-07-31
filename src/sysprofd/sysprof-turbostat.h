@@ -36,11 +36,12 @@ typedef struct
   gdouble ram_watt;
 } SysprofTurbostatSample;
 
-SysprofTurbostat *sysprof_turbostat_new    (void);
+SysprofTurbostat *sysprof_turbostat_new    (GFunc              sample_func,
+                                            gpointer           sample_data);
 gboolean          sysprof_turbostat_start  (SysprofTurbostat  *self,
                                             GError           **error);
 void              sysprof_turbostat_stop   (SysprofTurbostat  *self);
-GArray           *sysprof_turbostat_sample (SysprofTurbostat  *self,
+gboolean          sysprof_turbostat_sample (SysprofTurbostat  *self,
                                             GError           **error);
 void              sysprof_turbostat_free   (SysprofTurbostat  *self);
 

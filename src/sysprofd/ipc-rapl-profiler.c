@@ -77,6 +77,8 @@ ipc_rapl_profiler_stop_locked (IpcRaplProfiler *self)
 {
   g_assert (IPC_IS_RAPL_PROFILER (self));
 
+  g_message ("Stopping RAPL monitor");
+
   g_clear_handle_id (&self->poll_source, g_source_remove);
 
   if (self->turbostat != NULL)
@@ -84,6 +86,13 @@ ipc_rapl_profiler_stop_locked (IpcRaplProfiler *self)
 
   g_clear_pointer (&self->turbostat, sysprof_turbostat_free);
   g_clear_pointer (&self->counter_ids, g_array_unref);
+
+  if (self->writer != NULL)
+    {
+      sysprof_capture_writer_flush (self->writer);
+      sysprof_capture_writer_unref (self->writer);
+      self->writer = NULL;
+    }
 }
 
 static guint
@@ -263,7 +272,6 @@ ipc_rapl_profiler_poll_cb (gpointer data)
 {
   IpcRaplProfiler *self = data;
   g_autoptr(GMutexLocker) locker = NULL;
-  g_autoptr(GArray) samples = NULL;
   g_autoptr(GError) error = NULL;
 
   g_assert (IPC_IS_RAPL_PROFILER (self));
@@ -273,13 +281,35 @@ ipc_rapl_profiler_poll_cb (gpointer data)
   locker = g_mutex_locker_new (&self->mutex);
 
   if (self->turbostat == NULL)
-    return G_SOURCE_REMOVE;
+    goto failure;
 
   g_assert (self->counter_ids != NULL);
   g_assert (self->writer != NULL);
 
-  if (!(samples = sysprof_turbostat_sample (self->turbostat, &error)))
-    return G_SOURCE_REMOVE;
+  if (!sysprof_turbostat_sample (self->turbostat, &error))
+    {
+      ipc_rapl_profiler_stop_locked (self);
+      goto failure;
+    }
+
+  return G_SOURCE_CONTINUE;
+
+failure:
+  self->poll_source = 0;
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+on_sample_cb (gpointer data,
+              gpointer user_data)
+{
+  IpcRaplProfiler *self = user_data;
+  GArray *samples = data;
+
+  g_assert (IPC_IS_RAPL_PROFILER (self));
+  g_assert (samples != NULL);
+  g_assert (samples->len > 0);
 
   for (guint i = 0; i < samples->len; i++)
     {
@@ -305,11 +335,11 @@ ipc_rapl_profiler_poll_cb (gpointer data)
       if (r == FALSE)
         {
           ipc_rapl_profiler_stop_locked (self);
-          return G_SOURCE_REMOVE;
+          return;
         }
     }
 
-  return G_SOURCE_CONTINUE;
+  sysprof_capture_writer_flush (self->writer);
 }
 
 static gboolean
@@ -369,7 +399,7 @@ ipc_rapl_profiler_handle_start (IpcProfiler           *profiler,
       return TRUE;
     }
 
-  turbostat = sysprof_turbostat_new ();
+  turbostat = sysprof_turbostat_new (on_sample_cb, self);
 
   if (!sysprof_turbostat_start (turbostat, &error))
     {
@@ -380,9 +410,10 @@ ipc_rapl_profiler_handle_start (IpcProfiler           *profiler,
       return TRUE;
     }
 
-  /* A small buffer size is fine for our use case. */
-  self->writer = sysprof_capture_writer_new_from_fd (fd, 4096);
+  self->writer = sysprof_capture_writer_new_from_fd (fd, 0);
   self->counter_ids = g_array_new (FALSE, FALSE, sizeof (CounterId));
+
+  g_message ("Starting RAPL monitor");
 
   self->turbostat = g_steal_pointer (&turbostat);
   self->poll_source = g_timeout_add_seconds (DEFAULT_POLL_FREQ_SECONDS,

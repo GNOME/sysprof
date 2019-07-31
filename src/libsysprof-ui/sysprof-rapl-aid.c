@@ -180,6 +180,7 @@ sysprof_rapl_aid_present_finish (SysprofAid    *aid,
                           "height-request", 35,
                           "visible", TRUE,
                           "y-lower", 0.0,
+                          "units", "Watts",
                           NULL);
       sysprof_visualizer_group_insert (energy, SYSPROF_VISUALIZER (all), 0, FALSE);
 
@@ -209,6 +210,7 @@ sysprof_rapl_aid_present_finish (SysprofAid    *aid,
                                       "height-request", 20,
                                       "visible", FALSE,
                                       "y-lower", 0.0,
+                                      "units", "Watts",
                                       NULL);
                   g_hash_table_insert (cat_to_row, (gchar *)ctr->category, row);
                   sysprof_visualizer_group_insert (energy, SYSPROF_VISUALIZER (row), -1, TRUE);

@@ -26,7 +26,7 @@ SysprofVisualizersFrame box.horizontal.inline-toolbar {
 
 SysprofVisualizersFrame viewport.visualizers {
   border-right: 1px solid @borders;
-  box-shadow: 1px 1px 10px @borders;
+  box-shadow: 1px 1px 3px alpha(@borders, 0.5);
   }
 
 SysprofVisualizersFrame scrollbar.horizontal {

@@ -34,15 +34,10 @@
 #define MIN_TICK_DISTANCE 20
 #define LABEL_HEIGHT_PX 10
 
-SYSPROF_ALIGNED_BEGIN (8)
 struct _SysprofVisualizerTicks
 {
-  GtkDrawingArea parent_instance;
-
-  gint64 epoch;
-  gint64 begin_time;
-  gint64 end_time;
-} SYSPROF_ALIGNED_END (8);
+  SysprofVisualizer parent_instance;
+};
 
 enum {
   TICK_MINUTES,
@@ -75,7 +70,7 @@ struct {
   { 1, 1, SYSPROF_NSEC_PER_SEC / 10000 },
 };
 
-G_DEFINE_TYPE (SysprofVisualizerTicks, sysprof_visualizer_ticks, GTK_TYPE_DRAWING_AREA)
+G_DEFINE_TYPE (SysprofVisualizerTicks, sysprof_visualizer_ticks, SYSPROF_TYPE_VISUALIZER)
 
 static void
 update_label_text (PangoLayout *layout,
@@ -138,16 +133,6 @@ update_label_text (PangoLayout *layout,
   pango_layout_set_text (layout, str, -1);
 }
 
-static inline gdouble
-get_x_for_time (SysprofVisualizerTicks   *self,
-                const GtkAllocation *alloc,
-                gint64               t)
-{
-  gint64 timespan = self->end_time - self->begin_time;
-  gdouble x_ratio = (gdouble)(t - self->begin_time) / (gdouble)timespan;
-  return alloc->width * x_ratio;
-}
-
 static gboolean
 draw_ticks (SysprofVisualizerTicks *self,
             cairo_t           *cr,
@@ -156,8 +141,8 @@ draw_ticks (SysprofVisualizerTicks *self,
             gboolean           label_mode)
 {
   GtkAllocation alloc;
+  gint64 begin_time, end_time;
   gdouble half;
-  gint64 x_offset;
   gint count = 0;
 
   g_assert (SYSPROF_IS_VISUALIZER_TICKS (self));
@@ -165,6 +150,9 @@ draw_ticks (SysprofVisualizerTicks *self,
   g_assert (area != NULL);
   g_assert (ticks >= 0);
   g_assert (ticks < N_TICKS);
+
+  begin_time = sysprof_visualizer_get_begin_time (SYSPROF_VISUALIZER (self));
+  end_time = sysprof_visualizer_get_end_time (SYSPROF_VISUALIZER (self));
 
   /*
    * If we are in label_model, we don't draw the ticks but only the labels.
@@ -175,17 +163,12 @@ draw_ticks (SysprofVisualizerTicks *self,
 
   half = tick_sizing[ticks].width / 2.0;
 
-  /* Take our epoch into account to calculate the offset of the
-   * first tick, which might not align perfectly when the beginning
-   * of the visible area.
-   */
-  x_offset = (self->begin_time - self->epoch) % tick_sizing[ticks].span;
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
 
   if G_UNLIKELY (label_mode)
     {
-      PangoLayout *layout;
       PangoFontDescription *font_desc;
+      PangoLayout *layout;
       gboolean want_msec;
       gint last_x2 = G_MININT;
       gint w, h;
@@ -205,17 +188,15 @@ draw_ticks (SysprofVisualizerTicks *self,
        */
       want_msec = tick_sizing[ticks].span < SYSPROF_NSEC_PER_SEC;
 
-      for (gint64 t = self->begin_time - x_offset;
-           t <= self->end_time;
-           t += tick_sizing[ticks].span)
+      for (gint64 t = begin_time; t <= end_time; t += tick_sizing[ticks].span)
         {
-          gdouble x = get_x_for_time (self, &alloc, t);
+          gdouble x = sysprof_visualizer_get_x_for_time (SYSPROF_VISUALIZER (self), t);
 
           if (x < (last_x2 + MIN_TICK_DISTANCE))
             continue;
 
           cairo_move_to (cr, (gint)x + 2.5 - (gint)half, 2);
-          update_label_text (layout, t - self->epoch, want_msec);
+          update_label_text (layout, t - begin_time, want_msec);
           pango_layout_get_pixel_size (layout, &w, &h);
           pango_cairo_show_layout (cr, layout);
 
@@ -226,12 +207,9 @@ draw_ticks (SysprofVisualizerTicks *self,
     }
   else
     {
-      for (gint64 t = self->begin_time - x_offset;
-           t <= self->end_time;
-           t += tick_sizing[ticks].span)
+      for (gint64 t = begin_time; t <= end_time; t += tick_sizing[ticks].span)
         {
-          gdouble x = get_x_for_time (self, &alloc, t);
-
+          gdouble x = sysprof_visualizer_get_x_for_time (SYSPROF_VISUALIZER (self), t);
           cairo_move_to (cr, (gint)x - .5 - (gint)half, alloc.height);
           cairo_line_to (cr, (gint)x - .5 - (gint)half, alloc.height - tick_sizing[ticks].height);
           count++;
@@ -258,12 +236,15 @@ sysprof_visualizer_ticks_draw (GtkWidget *widget,
   g_assert (SYSPROF_IS_VISUALIZER_TICKS (self));
   g_assert (cr != NULL);
 
-  if (0 == (timespan = self->end_time - self->begin_time))
+  timespan = sysprof_visualizer_get_duration (SYSPROF_VISUALIZER (self));
+  if (timespan == 0)
     return GDK_EVENT_PROPAGATE;
 
   style = gtk_widget_get_style_context (widget);
 
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
+  alloc.x = 0;
+  alloc.y = 0;
 
   gtk_render_background (style, cr, 0, 0, alloc.width, alloc.height);
 
@@ -326,89 +307,10 @@ sysprof_visualizer_ticks_class_init (SysprofVisualizerTicksClass *klass)
 static void
 sysprof_visualizer_ticks_init (SysprofVisualizerTicks *self)
 {
-  self->end_time = SYSPROF_NSEC_PER_SEC * 60;
-
-  gtk_widget_set_has_window (GTK_WIDGET (self), FALSE);
 }
 
 GtkWidget *
 sysprof_visualizer_ticks_new (void)
 {
   return g_object_new (SYSPROF_TYPE_VISUALIZER_TICKS, NULL);
-}
-
-void
-sysprof_visualizer_ticks_get_time_range (SysprofVisualizerTicks *self,
-                                         gint64                 *begin_time,
-                                         gint64                 *end_time)
-{
-  g_return_if_fail (SYSPROF_IS_VISUALIZER_TICKS (self));
-  g_return_if_fail (begin_time != NULL || end_time != NULL);
-
-  if (begin_time != NULL)
-    *begin_time = self->begin_time;
-
-  if (end_time != NULL)
-    *end_time = self->end_time;
-}
-
-void
-sysprof_visualizer_ticks_set_time_range (SysprofVisualizerTicks *self,
-                                         gint64                  begin_time,
-                                         gint64                  end_time)
-{
-  g_return_if_fail (SYSPROF_IS_VISUALIZER_TICKS (self));
-
-  if (begin_time > end_time)
-    {
-      gint64 tmp = begin_time;
-      begin_time = end_time;
-      end_time = tmp;
-    }
-
-  self->begin_time = begin_time;
-  self->end_time = end_time;
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
-}
-
-gint64
-sysprof_visualizer_ticks_get_epoch (SysprofVisualizerTicks *self)
-{
-  g_return_val_if_fail (SYSPROF_IS_VISUALIZER_TICKS (self), 0);
-
-  return self->epoch;
-}
-
-/*
- * Sets the epoch for the visualizer ticks.
- *
- * The epoch is the "real" starting time of the capture, where as the
- * sysprof_visualizer_ticks_set_time_range() function sets the visible range
- * of the capture.
- *
- * This is used to calculate the offset of the beginning of the capture
- * from begin_time so that the ticks appear in the proper location.
- *
- * This function should only need to be called when the reader is changed.
- */
-void
-sysprof_visualizer_ticks_set_epoch (SysprofVisualizerTicks *self,
-                                    gint64                  epoch)
-{
-  g_return_if_fail (SYSPROF_IS_VISUALIZER_TICKS (self));
-
-  if (self->epoch != epoch)
-    {
-      self->epoch = epoch;
-      gtk_widget_queue_draw (GTK_WIDGET (self));
-    }
-}
-
-gint64
-sysprof_visualizer_ticks_get_duration (SysprofVisualizerTicks *self)
-{
-  g_return_val_if_fail (SYSPROF_IS_VISUALIZER_TICKS (self), 0);
-
-  return self->end_time - self->begin_time;
 }

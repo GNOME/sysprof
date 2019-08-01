@@ -67,6 +67,12 @@ gint64       sysprof_visualizer_get_begin_time   (SysprofVisualizer             
 SYSPROF_AVAILABLE_IN_ALL
 gint64       sysprof_visualizer_get_end_time     (SysprofVisualizer                    *self);
 SYSPROF_AVAILABLE_IN_ALL
+void         sysprof_visualizer_set_time_range   (SysprofVisualizer                    *self,
+                                                  gint64                                begin_time,
+                                                  gint64                                end_time);
+SYSPROF_AVAILABLE_IN_ALL
+gint64       sysprof_visualizer_get_duration     (SysprofVisualizer                    *self);
+SYSPROF_AVAILABLE_IN_ALL
 void         sysprof_visualizer_set_reader       (SysprofVisualizer                    *self,
                                                   SysprofCaptureReader                 *reader);
 SYSPROF_AVAILABLE_IN_ALL

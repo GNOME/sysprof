@@ -438,27 +438,6 @@ sysprof_visualizer_group_insert (SysprofVisualizerGroup *self,
     }
 }
 
-static void
-propagate_data_width_cb (GtkWidget *widget,
-                         gpointer   user_data)
-{
-  _sysprof_visualizer_set_data_width (SYSPROF_VISUALIZER (widget),
-                                      GPOINTER_TO_INT (user_data));
-}
-
-void
-_sysprof_visualizer_group_set_data_width (SysprofVisualizerGroup *self,
-                                          gint                    width)
-{
-  SysprofVisualizerGroupPrivate *priv = sysprof_visualizer_group_get_instance_private (self);
-
-  g_return_if_fail (SYSPROF_IS_VISUALIZER_GROUP (self));
-
-  gtk_container_foreach (GTK_CONTAINER (priv->visualizers),
-                         propagate_data_width_cb,
-                         GINT_TO_POINTER (width));
-}
-
 gint
 sysprof_visualizer_group_get_priority (SysprofVisualizerGroup *self)
 {

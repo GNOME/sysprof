@@ -24,6 +24,11 @@ SysprofVisualizersFrame box.horizontal.inline-toolbar {
   border-width: 0;
   }
 
+SysprofVisualizersFrame viewport.visualizers {
+  border-right: 1px solid @borders;
+  box-shadow: 1px 1px 10px @borders;
+  }
+
 SysprofVisualizersFrame scrollbar.horizontal {
   color: mix(@theme_fg_color, @theme_selected_bg_color, 0.5);
   background: transparent;

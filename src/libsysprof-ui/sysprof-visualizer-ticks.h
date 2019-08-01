@@ -22,22 +22,14 @@
 
 #include <gtk/gtk.h>
 
+#include "sysprof-visualizer.h"
+
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_VISUALIZER_TICKS (sysprof_visualizer_ticks_get_type())
 
-G_DECLARE_FINAL_TYPE (SysprofVisualizerTicks, sysprof_visualizer_ticks, SYSPROF, VISUALIZER_TICKS, GtkDrawingArea)
+G_DECLARE_FINAL_TYPE (SysprofVisualizerTicks, sysprof_visualizer_ticks, SYSPROF, VISUALIZER_TICKS, SysprofVisualizer)
 
-GtkWidget *sysprof_visualizer_ticks_new            (void);
-void       sysprof_visualizer_ticks_set_epoch      (SysprofVisualizerTicks *self,
-                                                    gint64                  epoch);
-gint64     sysprof_visualizer_ticks_get_epoch      (SysprofVisualizerTicks *self);
-void       sysprof_visualizer_ticks_get_time_range (SysprofVisualizerTicks *self,
-                                                    gint64                 *begin_time,
-                                                    gint64                 *end_time);
-void       sysprof_visualizer_ticks_set_time_range (SysprofVisualizerTicks *self,
-                                                    gint64                  begin_time,
-                                                    gint64                  end_time);
-gint64     sysprof_visualizer_ticks_get_duration   (SysprofVisualizerTicks *self);
+GtkWidget *sysprof_visualizer_ticks_new (void);
 
 G_END_DECLS

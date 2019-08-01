@@ -27,10 +27,6 @@
 
 G_BEGIN_DECLS
 
-void                          _sysprof_visualizer_set_data_width          (SysprofVisualizer            *self,
-                                                                           gint                          width);
-void                          _sysprof_visualizer_group_set_data_width    (SysprofVisualizerGroup       *self,
-                                                                           gint                          width);
 void                          _sysprof_visualizer_group_set_reader        (SysprofVisualizerGroup       *self,
                                                                            SysprofCaptureReader         *reader);
 SysprofVisualizerGroupHeader *_sysprof_visualizer_group_header_new        (void);

@@ -57,6 +57,8 @@ struct _SysprofVisualizersFrame
   SysprofZoomManager     *zoom_manager;
   GtkScale               *zoom_scale;
   GtkSizeGroup           *left_column;
+  GtkViewport            *ticks_viewport;
+  GtkViewport            *visualizers_viewport;
 };
 
 typedef struct
@@ -91,7 +93,7 @@ get_time_from_x (SysprofVisualizersFrame *self,
   g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
 
   gtk_widget_get_allocation (GTK_WIDGET (self->ticks), &alloc);
-  duration = sysprof_visualizer_ticks_get_duration (self->ticks);
+  duration = sysprof_visualizer_get_duration (SYSPROF_VISUALIZER (self->ticks));
 
   if (alloc.width < 1)
     return 0;
@@ -147,7 +149,7 @@ visualizers_draw_after_cb (SysprofVisualizersFrame *self,
   draw.list = list;
   draw.cr = cr;
   draw.begin_time = self->begin_time;
-  draw.duration = sysprof_visualizer_ticks_get_duration (self->ticks);
+  draw.duration = sysprof_visualizer_get_duration (SYSPROF_VISUALIZER (self->ticks));
 
   if (draw.duration == 0)
     return GDK_EVENT_PROPAGATE;
@@ -265,11 +267,21 @@ visualizers_motion_notify_event_cb (SysprofVisualizersFrame *self,
 }
 
 static void
-propagate_data_width_cb (GtkWidget *widget,
-                         gpointer   user_data)
+set_children_width_request_cb (GtkWidget *widget,
+                               gpointer   data)
 {
-  _sysprof_visualizer_group_set_data_width (SYSPROF_VISUALIZER_GROUP (widget),
-                                            GPOINTER_TO_INT (user_data));
+  gtk_widget_set_size_request (widget, GPOINTER_TO_INT (data), -1);
+}
+
+static void
+set_children_width_request (GtkContainer *container,
+                            gint          width)
+{
+  g_assert (GTK_IS_CONTAINER (container));
+
+  gtk_container_foreach (container,
+                         set_children_width_request_cb,
+                         GINT_TO_POINTER (width));
 }
 
 static void
@@ -277,36 +289,16 @@ sysprof_visualizers_frame_notify_zoom (SysprofVisualizersFrame *self,
                                        GParamSpec              *pspec,
                                        SysprofZoomManager      *zoom_manager)
 {
+  gint64 duration;
   gint data_width;
 
   g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
   g_assert (SYSPROF_IS_ZOOM_MANAGER (zoom_manager));
 
-  data_width = sysprof_zoom_manager_get_width_for_duration (self->zoom_manager,
-                                                            self->end_time - self->begin_time);
-  gtk_container_foreach (GTK_CONTAINER (self->visualizers),
-                         propagate_data_width_cb,
-                         GINT_TO_POINTER (data_width));
-  gtk_widget_queue_allocate (GTK_WIDGET (self));
-}
-
-static void
-sysprof_visualizers_frame_apply_zoom (SysprofVisualizersFrame *self,
-                                      const GtkAllocation     *alloc)
-{
-  gint64 duration;
-  gint64 end_time;
-
-  g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
-
-  duration = sysprof_zoom_manager_get_duration_for_width (self->zoom_manager, alloc->width);
-  end_time = self->begin_time + duration;
-
-  sysprof_scrollmap_set_time_range (self->hscrollbar,
-                                    self->begin_time,
-                                    MAX (self->end_time, end_time));
-  sysprof_visualizer_ticks_set_epoch (self->ticks, self->begin_time);
-  sysprof_visualizer_ticks_set_time_range (self->ticks, self->begin_time, end_time);
+  duration = self->end_time - self->begin_time;
+  data_width = sysprof_zoom_manager_get_width_for_duration (self->zoom_manager, duration);
+  set_children_width_request (GTK_CONTAINER (self->ticks_viewport), data_width);
+  set_children_width_request (GTK_CONTAINER (self->visualizers_viewport), data_width);
 }
 
 static gint
@@ -373,27 +365,6 @@ sysprof_visualizers_frame_add (GtkContainer *container,
 }
 
 static void
-sysprof_visualizers_frame_size_allocate (GtkWidget     *widget,
-                                         GtkAllocation *alloc)
-{
-  SysprofVisualizersFrame *self = (SysprofVisualizersFrame *)widget;
-  gdouble zoom;
-
-  g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
-  g_assert (alloc != NULL);
-
-  GTK_WIDGET_CLASS (sysprof_visualizers_frame_parent_class)->size_allocate (widget, alloc);
-
-  zoom = sysprof_zoom_manager_get_zoom (self->zoom_manager);
-
-  if (alloc->width != self->last_alloc.width || zoom != self->last_zoom)
-    sysprof_visualizers_frame_apply_zoom (self, alloc);
-
-  self->last_alloc = *alloc;
-  self->last_zoom = zoom;
-}
-
-static void
 sysprof_visualizers_frame_selection_changed (SysprofVisualizersFrame *self,
                                              SysprofSelection        *selection)
 {
@@ -418,6 +389,20 @@ sysprof_visualizers_frame_group_activated_cb (SysprofVisualizersFrame      *self
   g_assert (SYSPROF_IS_VISUALIZER_GROUP (group));
 
   g_signal_emit_by_name (group, "group-activated");
+}
+
+static void
+sysprof_visualizers_frame_size_allocate (GtkWidget     *widget,
+                                         GtkAllocation *alloc)
+{
+  SysprofVisualizersFrame *self = (SysprofVisualizersFrame *)widget;
+
+  g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
+  g_assert (alloc != NULL);
+
+  sysprof_scrollmap_set_time_range (self->hscrollbar, self->begin_time, self->end_time);
+
+  GTK_WIDGET_CLASS (sysprof_visualizers_frame_parent_class)->size_allocate (widget, alloc);
 }
 
 static void
@@ -479,6 +464,8 @@ sysprof_visualizers_frame_class_init (SysprofVisualizersFrameClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofVisualizersFrame, vscroller);
   gtk_widget_class_bind_template_child (widget_class, SysprofVisualizersFrame, zoom_manager);
   gtk_widget_class_bind_template_child (widget_class, SysprofVisualizersFrame, zoom_scale);
+  gtk_widget_class_bind_template_child (widget_class, SysprofVisualizersFrame, ticks_viewport);
+  gtk_widget_class_bind_template_child (widget_class, SysprofVisualizersFrame, visualizers_viewport);
 
   properties [PROP_SELECTED_GROUP] =
     g_param_spec_object ("selected-group",
@@ -681,9 +668,6 @@ sysprof_visualizers_frame_load_async (SysprofVisualizersFrame *self,
   self->begin_time = sysprof_capture_reader_get_start_time (reader);
   self->end_time = sysprof_capture_reader_get_end_time (reader);
 
-  if (alloc.width)
-    sysprof_visualizers_frame_apply_zoom (self, &alloc);
-
    /* Now we need to run through the frames and index their times
     * so that we can calculate the number of items per bucket when
     * drawing the scrollbar.
@@ -708,11 +692,9 @@ sysprof_visualizers_frame_load_finish (SysprofVisualizersFrame  *self,
 
   if ((timings = g_task_propagate_pointer (G_TASK (result), error)))
     {
-      GtkAllocation alloc;
-
-      gtk_widget_get_allocation (GTK_WIDGET (self->ticks), &alloc);
       sysprof_scrollmap_set_timings (self->hscrollbar, timings);
-      sysprof_visualizers_frame_apply_zoom (self, &alloc);
+      sysprof_scrollmap_set_time_range (self->hscrollbar, self->begin_time, self->end_time);
+      sysprof_visualizer_set_time_range (SYSPROF_VISUALIZER (self->ticks), self->begin_time, self->end_time);
       gtk_widget_queue_resize (GTK_WIDGET (self));
 
       return TRUE;

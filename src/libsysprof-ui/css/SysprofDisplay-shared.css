@@ -53,7 +53,7 @@ SysprofVisualizersFrame scrollbar.horizontal contents trough slider {
 
 SysprofVisualizerTicks {
   color: mix(@theme_fg_color, @borders, 0.5);
-  background-color: @theme_bg_color;
+  background-color: @content_view_bg;
   }
 
 SysprofVisualizersFrame list {

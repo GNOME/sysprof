@@ -198,7 +198,9 @@ draw_ticks (SysprofVisualizerTicks *self,
           cairo_move_to (cr, (gint)x + 2.5 - (gint)half, 2);
           update_label_text (layout, t - begin_time, want_msec);
           pango_layout_get_pixel_size (layout, &w, &h);
-          pango_cairo_show_layout (cr, layout);
+
+          if (x + w <= alloc.width)
+            pango_cairo_show_layout (cr, layout);
 
           last_x2 = x + w;
         }

@@ -126,6 +126,21 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
     }
 }
 
+static gboolean
+is_flatpak (void)
+{
+  static gsize did_init = FALSE;
+  static gboolean ret;
+
+  if (g_once_init_enter (&did_init))
+    {
+      ret = g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS);
+      g_once_init_leave (&did_init, TRUE);
+    }
+
+  return ret;
+}
+
 static bin_file_t *
 sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
                                           const gchar              *filename)
@@ -151,7 +166,16 @@ sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
       if (g_str_has_prefix (filename, "/newroot/"))
         alternate += strlen ("/newroot");
 
-      bin_file = bin_file_new (alternate);
+      if (is_flatpak () && g_str_has_prefix (filename, "/usr/"))
+        {
+          g_autofree gchar *path = g_build_filename ("/var/run/host", alternate, NULL);
+          bin_file = bin_file_new (path);
+        }
+      else
+        {
+          bin_file = bin_file_new (alternate);
+        }
+
       g_hash_table_insert (self->bin_files, g_strdup (filename), bin_file);
     }
 

@@ -356,14 +356,18 @@ get_vdso_bytes (size_t *length)
 bin_file_t *
 bin_file_new (const char *filename)
 {
+    const gchar *real_filename = filename;
     ElfParser *elf = NULL;
     bin_file_t *bf;
+
+    if (g_str_has_prefix (filename, "/var/run/host"))
+      real_filename = filename + strlen ("/var/run/host");
 
     bf = g_new0 (bin_file_t, 1);
 
     bf->inode_check = FALSE;
     bf->filename = g_strdup (filename);
-    bf->undefined_name = g_strdup_printf ("In file %s", filename);
+    bf->undefined_name = g_strdup_printf ("In file %s", real_filename);
     bf->ref_count = 1;
     bf->elf_files = NULL;
 

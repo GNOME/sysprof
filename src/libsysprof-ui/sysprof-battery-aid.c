@@ -68,7 +68,7 @@ sysprof_battery_aid_new (void)
 
 static void
 sysprof_battery_aid_prepare (SysprofAid      *self,
-                         SysprofProfiler *profiler)
+                             SysprofProfiler *profiler)
 {
 #ifdef __linux__
   g_autoptr(SysprofSource) source = NULL;
@@ -175,6 +175,7 @@ sysprof_battery_aid_present_finish (SysprofAid    *aid,
     {
       g_autoptr(SysprofColorCycle) cycle = sysprof_color_cycle_new ();
       SysprofVisualizerGroup *group;
+      guint found = 0;
 
       group = g_object_new (SYSPROF_TYPE_VISUALIZER_GROUP,
                             "can-focus", TRUE,
@@ -209,10 +210,12 @@ sysprof_battery_aid_present_finish (SysprofAid    *aid,
                                                SYSPROF_VISUALIZER (row),
                                                is_combined ? 0 : -1,
                                                !is_combined);
+
+              found++;
             }
         }
 
-      if (counters->len > 0)
+      if (found > 0)
         sysprof_display_add_group (present->display, group);
       else
         gtk_widget_destroy (GTK_WIDGET (group));

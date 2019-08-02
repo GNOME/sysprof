@@ -167,6 +167,7 @@ sysprof_rapl_aid_present_finish (SysprofAid    *aid,
       g_autoptr(GHashTable) cat_to_row = g_hash_table_new (g_str_hash, g_str_equal);
       SysprofVisualizerGroup *energy;
       SysprofVisualizer *all;
+      guint found = 0;
 
       energy = g_object_new (SYSPROF_TYPE_VISUALIZER_GROUP,
                              "can-focus", TRUE,
@@ -195,6 +196,7 @@ sysprof_rapl_aid_present_finish (SysprofAid    *aid,
 
               sysprof_color_cycle_next (cycle, &rgba);
               sysprof_line_visualizer_add_counter (SYSPROF_LINE_VISUALIZER (all), ctr->id, &rgba);
+              found++;
             }
           else if (g_str_has_prefix (ctr->category, "RAPL "))
             {
@@ -218,10 +220,14 @@ sysprof_rapl_aid_present_finish (SysprofAid    *aid,
 
               sysprof_color_cycle_next (cycle, &rgba);
               sysprof_line_visualizer_add_counter (SYSPROF_LINE_VISUALIZER (row), ctr->id, &rgba);
+              found++;
             }
         }
 
-      sysprof_display_add_group (present->display, energy);
+      if (found > 0)
+        sysprof_display_add_group (present->display, energy);
+      else
+        gtk_widget_destroy (GTK_WIDGET (energy));
     }
 
   return counters != NULL;

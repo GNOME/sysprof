@@ -44,6 +44,7 @@
 #include <string.h>
 
 #include "sysprof-helpers.h"
+#include "sysprof-mountinfo.h"
 #include "sysprof-proc-source.h"
 
 struct _SysprofProcSource
@@ -51,37 +52,13 @@ struct _SysprofProcSource
   GObject               parent_instance;
   SysprofCaptureWriter *writer;
   GArray               *pids;
+  SysprofMountinfo     *mountinfo;
 };
 
-static void    source_iface_init (SysprofSourceInterface *iface);
-static gchar **proc_readlines    (const gchar       *format,
-                                  ...)
-  G_GNUC_PRINTF (1, 2);
+static void source_iface_init (SysprofSourceInterface *iface);
 
 G_DEFINE_TYPE_EXTENDED (SysprofProcSource, sysprof_proc_source, G_TYPE_OBJECT, 0,
                         G_IMPLEMENT_INTERFACE (SYSPROF_TYPE_SOURCE, source_iface_init))
-
-static gchar **
-proc_readlines (const gchar *format,
-                ...)
-{
-  SysprofHelpers *helpers = sysprof_helpers_get_default ();
-  g_autofree gchar *filename = NULL;
-  g_autofree gchar *contents = NULL;
-  gchar **ret = NULL;
-  va_list args;
-
-  g_assert (format != NULL);
-
-  va_start (args, format);
-  filename = g_strdup_vprintf (format, args);
-  va_end (args);
-
-  if (sysprof_helpers_get_proc_file (helpers, filename, NULL, &contents, NULL))
-    ret = g_strsplit (contents, "\n", 0);
-
-  return g_steal_pointer (&ret);
-}
 
 static void
 sysprof_proc_source_populate_process (SysprofProcSource *self,
@@ -98,151 +75,9 @@ sysprof_proc_source_populate_process (SysprofProcSource *self,
                                       cmdline);
 }
 
-static gboolean
-strv_at_least_len (GStrv strv,
-                   guint len)
-{
-  for (guint i = 0; i < len; i++)
-    {
-      if (strv[i] == NULL)
-        return FALSE;
-    }
-
-  return TRUE;
-}
-
-static gchar *
-find_mount (GStrv        mounts,
-            const gchar *mount)
-{
-  gsize len = strlen (mount);
-
-  for (guint i = 0; mounts[i]; i++)
-    {
-      const gchar *endptr;
-      const gchar *begin;
-
-      if (!g_str_has_prefix (mounts[i], mount))
-        continue;
-
-      if (mounts[i][len] != ' ')
-        continue;
-
-      begin = &mounts[i][len + 1];
-      endptr = strchr (begin, ' ');
-      if (endptr == NULL)
-        continue;
-
-      return g_strndup (begin, endptr - begin);
-    }
-
-  return NULL;
-}
-
-/**
- * sysprof_proc_source_translate_path:
- * @file: the path to the file inside target mount namespace
- * @mountinfo: mount info to locate translated path
- * @out_file: (out): location for the translated path
- * @out_file_len: length of @out_file
- *
- * This function will use @mountinfo to locate the longest common prefix
- * to determine which mount contains @file. That will be used to translate
- * the path pointed to by @file into the host namespace.
- *
- * The result is stored in @out_file and will always be NULL terminated.
- */
-static void
-sysprof_proc_source_translate_path (const gchar *file,
-                                    GStrv        mountinfo,
-                                    GStrv        mounts,
-                                    gchar       *out_file,
-                                    gsize        out_file_len)
-{
-  g_autofree gchar *closest_host = NULL;
-  g_autofree gchar *closest_guest = NULL;
-  g_autofree gchar *closest_mount = NULL;
-  gsize closest_len = 0;
-
-  g_assert (file != NULL);
-  g_assert (g_str_has_prefix (file, "/newroot/"));
-  g_assert (mountinfo != NULL);
-  g_assert (out_file != NULL);
-
-  if (!g_str_has_prefix (file, "/newroot/"))
-    goto failure;
-
-  file += strlen ("/newroot");
-
-  for (guint i = 0; mountinfo[i] != NULL; i++)
-    {
-      g_auto(GStrv) parts = g_strsplit (mountinfo[i], " ", 11);
-      const gchar *host;
-      const gchar *guest;
-      const gchar *mount;
-
-      /*
-       * Not ideal to do the string split here, but it is much easier
-       * to just do that until we get this right, and then improve
-       * things later when a strok()/etc parser.
-       */
-
-      if (!strv_at_least_len (parts, 10))
-        continue;
-
-      host = parts[3];
-      guest = parts[4];
-      mount = parts[9];
-
-      if (g_str_has_prefix (file, guest))
-        {
-          gsize len = strlen (guest);
-
-          if (len > closest_len && (file[len] == '\0' || file[len] == '/'))
-            {
-              g_free (closest_host);
-              g_free (closest_guest);
-              g_free (closest_mount);
-
-              closest_guest = g_strdup (guest);
-              closest_host = g_strdup (host);
-              closest_mount = g_strdup (mount);
-
-              closest_len = len;
-            }
-        }
-    }
-
-  if (closest_len > 0)
-    {
-      /*
-       * The translated path is relative to the mount. So we need to add that
-       * prefix to this as well, based on matching it from the closest_mount.
-       */
-      g_autofree gchar *mount = NULL;
-
-      mount = find_mount (mounts, closest_mount);
-
-      if (mount != NULL)
-        {
-          g_autofree gchar *path = NULL;
-
-          path = g_build_filename (mount, closest_host, file + strlen (closest_guest), NULL);
-          g_strlcpy (out_file, path, out_file_len);
-
-          return;
-        }
-    }
-
-failure:
-  /* Fallback to just copying the source */
-  g_strlcpy (out_file, file, out_file_len);
-}
-
 static void
 sysprof_proc_source_populate_maps (SysprofProcSource *self,
                                    GPid               pid,
-                                   GStrv              mounts,
                                    const gchar       *mapsstr,
                                    const gchar       *mountinfostr)
 {
@@ -255,13 +90,15 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
   g_assert (mountinfostr != NULL);
   g_assert (pid > 0);
 
+  sysprof_mountinfo_reset (self->mountinfo);
+  sysprof_mountinfo_parse_mountinfo (self->mountinfo, mountinfostr);
+
   maps = g_strsplit (mapsstr, "\n", 0);
-  mountinfo = g_strsplit (mountinfostr, "\n", 0);
 
   for (i = 0; maps [i] != NULL; i++)
     {
-      gchar file[256];
-      gchar translated[256];
+      g_autofree gchar *translated = NULL;
+      gchar file[512];
       const gchar *fileptr = file;
       gulong start;
       gulong end;
@@ -270,9 +107,8 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
       gint r;
 
       r = sscanf (maps [i],
-                  "%lx-%lx %*15s %lx %*x:%*x %lu %255s",
+                  "%lx-%lx %*15s %lx %*x:%*x %lu %512s",
                   &start, &end, &offset, &inode, file);
-
       file [sizeof file - 1] = '\0';
 
       if (r != 5)
@@ -293,23 +129,9 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
           inode = 0;
         }
 
-      if (g_str_has_prefix (file, "/newroot/"))
-        {
-          /*
-           * If this file starts with /newroot/, then it is in a different
-           * mount-namespace from our profiler process. This means that we need
-           * to translate the filename to the real path on disk inside our
-           * (hopefully the default) mount-namespace. To do this, we have to
-           * look at /proc/$pid/mountinfo to locate the longest-common-prefix
-           * for the path.
-           */
-          sysprof_proc_source_translate_path (file,
-                                              mountinfo,
-                                              mounts,
-                                              translated,
-                                              sizeof translated);
-          fileptr = translated;
-        }
+      /* Possibly translate the path based on mounts/mountinfo data */
+      if ((translated = sysprof_mountinfo_translate (self->mountinfo, file)))
+        fileptr = translated;
 
       sysprof_capture_writer_add_map (self->writer,
                                       SYSPROF_CAPTURE_CURRENT_TIME,
@@ -343,7 +165,8 @@ static void
 sysprof_proc_source_populate (SysprofProcSource *self,
                               GVariant          *info)
 {
-  g_auto(GStrv) mounts = NULL;
+  g_autofree gchar *mounts = NULL;
+  SysprofHelpers *helpers;
   gsize n_pids = 0;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
@@ -353,8 +176,11 @@ sysprof_proc_source_populate (SysprofProcSource *self,
   if (self->writer == NULL)
     return;
 
-  if (!(mounts = proc_readlines ("/proc/mounts")))
+  helpers = sysprof_helpers_get_default ();
+  if (!sysprof_helpers_get_proc_file (helpers, "/proc/mounts", NULL, &mounts, NULL))
     return;
+
+  sysprof_mountinfo_parse_mounts (self->mountinfo, mounts);
 
   n_pids = g_variant_n_children (info);
   for (gsize i = 0; i < n_pids; i++)
@@ -386,7 +212,7 @@ sysprof_proc_source_populate (SysprofProcSource *self,
         maps = "";
 
       sysprof_proc_source_populate_process (self, pid, *cmdline ? cmdline : comm);
-      sysprof_proc_source_populate_maps (self, pid, mounts, maps, mountinfo);
+      sysprof_proc_source_populate_maps (self, pid, maps, mountinfo);
 
       skip:
         g_variant_dict_clear (&dict);
@@ -492,6 +318,7 @@ sysprof_proc_source_finalize (GObject *object)
 
   g_clear_pointer (&self->writer, sysprof_capture_writer_unref);
   g_clear_pointer (&self->pids, g_array_unref);
+  g_clear_pointer (&self->mountinfo, sysprof_mountinfo_free);
 
   G_OBJECT_CLASS (sysprof_proc_source_parent_class)->finalize (object);
 }
@@ -508,6 +335,7 @@ static void
 sysprof_proc_source_init (SysprofProcSource *self)
 {
   self->pids = g_array_new (FALSE, FALSE, sizeof (GPid));
+  self->mountinfo = sysprof_mountinfo_new ();
 }
 
 SysprofSource *

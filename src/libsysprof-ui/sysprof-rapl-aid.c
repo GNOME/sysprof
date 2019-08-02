@@ -161,7 +161,7 @@ sysprof_rapl_aid_present_finish (SysprofAid    *aid,
 
   present = g_task_get_task_data (G_TASK (result));
 
-  if ((counters = g_task_propagate_pointer (G_TASK (result), error)))
+  if ((counters = g_task_propagate_pointer (G_TASK (result), error)) && counters->len)
     {
       g_autoptr(SysprofColorCycle) cycle = sysprof_color_cycle_new ();
       g_autoptr(GHashTable) cat_to_row = g_hash_table_new (g_str_hash, g_str_equal);

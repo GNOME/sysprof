@@ -110,7 +110,7 @@ sysprof_symbol_dirs_remove (const gchar *path)
  */
 gchar **
 sysprof_symbol_dirs_get_paths (const gchar *dir,
-                          const gchar *name)
+                               const gchar *name)
 {
   GPtrArray *ret = g_ptr_array_new ();
   GPtrArray *ar;

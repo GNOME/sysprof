@@ -43,6 +43,13 @@ test_addr_decode = executable('test-addr-decode', 'test-addr-decode.c',
   dependencies: test_deps,
 )
 
+test_mountinfo = executable('test-mountinfo',
+  [ 'test-mountinfo.c',
+    '../libsysprof/sysprof-mountinfo.c'],
+        c_args: test_cflags,
+  dependencies: test_deps,
+)
+
 
 if get_option('enable_gtk')
 

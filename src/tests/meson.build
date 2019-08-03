@@ -57,6 +57,12 @@ test_flatpak = executable('test-flatpak',
   dependencies: test_deps,
 )
 
+test_resolvers = executable('test-resolvers',
+  [ 'test-resolvers.c' ],
+        c_args: test_cflags,
+  dependencies: test_deps,
+)
+
 
 if get_option('enable_gtk')
 

@@ -26,30 +26,27 @@
 
 #define ETC_INSTALLATIONS_D "/etc/flatpak/installations.d"
 
-gchar **
-get_installations (void)
+static void
+add_from_installations_d (GPtrArray   *ret,
+                          const gchar *path,
+                          const gchar *prefix)
 {
-  GPtrArray *ret = g_ptr_array_new ();
   g_autoptr(GDir) dir = NULL;
 
-  /* We might be running from a container, so ignore XDG_DATA_HOME as
-   * that will likely be different that what we care about the host.
-   * TODO: Can we find a way to support non-standard XDG_DATA_HOME?
-   */
-  g_ptr_array_add (ret, g_build_filename (g_get_home_dir (), ".local", "share", "flatpak", NULL));
-  g_ptr_array_add (ret, g_strdup ("/var/lib/flatpak"));
+  g_assert (ret != NULL);
+  g_assert (path != NULL);
 
   /* Now look at /etc/flatpak/installations.d for keyfiles with Path= */
-  if ((dir = g_dir_open (ETC_INSTALLATIONS_D, 0, NULL)))
+  if ((dir = g_dir_open (path, 0, NULL)))
     {
       const gchar *name;
 
       while ((name = g_dir_read_name (dir)))
         {
-          g_autofree gchar *path = g_build_filename (ETC_INSTALLATIONS_D, name, NULL);
+          g_autofree gchar *key_path = g_build_filename (path, name, NULL);
           g_autoptr(GKeyFile) kf = g_key_file_new ();
 
-          if (g_key_file_load_from_file (kf, path, G_KEY_FILE_NONE, NULL))
+          if (g_key_file_load_from_file (kf, key_path, G_KEY_FILE_NONE, NULL))
             {
               g_auto(GStrv) groups = g_key_file_get_groups (kf, NULL);
 
@@ -60,12 +57,33 @@ get_installations (void)
                       gchar *val = g_key_file_get_string (kf, groups[i], "Path", NULL);
 
                       if (val)
-                        g_ptr_array_add (ret, g_steal_pointer (&val));
+                        {
+                          if (prefix)
+                            g_ptr_array_add (ret, g_build_filename (prefix, val, NULL));
+                          else
+                            g_ptr_array_add (ret, g_steal_pointer (&val));
+                        }
                     }
                 }
             }
         }
     }
+}
+
+gchar **
+get_installations (void)
+{
+  GPtrArray *ret = g_ptr_array_new ();
+
+  /* We might be running from a container, so ignore XDG_DATA_HOME as
+   * that will likely be different that what we care about the host.
+   * TODO: Can we find a way to support non-standard XDG_DATA_HOME?
+   */
+  g_ptr_array_add (ret, g_build_filename (g_get_home_dir (), ".local", "share", "flatpak", NULL));
+  g_ptr_array_add (ret, g_strdup ("/var/lib/flatpak"));
+
+  add_from_installations_d (ret, ETC_INSTALLATIONS_D, NULL);
+  add_from_installations_d (ret, "/var/run/host" ETC_INSTALLATIONS_D, "/var/run/host");
 
   g_ptr_array_add (ret, NULL);
   return (gchar **)g_ptr_array_free (ret, FALSE);

@@ -45,7 +45,6 @@ G_BEGIN_DECLS
 # include "sysprof-selection.h"
 # include "sysprof-source.h"
 # include "sysprof-spawnable.h"
-# include "sysprof-symbol-dirs.h"
 # include "sysprof-symbol-resolver.h"
 # include "sysprof-symbols-source.h"
 # include "sysprof-tracefd-source.h"

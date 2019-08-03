@@ -66,7 +66,7 @@ main (gint  argc,
 
            if (sysprof_address_is_context_switch (addr, &context))
              {
-               g_print ("  %02d: %016lx: Context Switch\n", a, addr);
+               g_print ("  %02d: %016"G_GINT64_MODIFIER"x: Context Switch\n", a, addr);
                last_context = context;
                continue;
              }
@@ -86,14 +86,14 @@ main (gint  argc,
 
               if (symbol != NULL)
                 {
-                  g_print ("  %02d: %016lx: %s\n", a, addr, symbol);
+                  g_print ("  %02d: %016"G_GINT64_MODIFIER"x: %s\n", a, addr, symbol);
                   found = TRUE;
                   break;
                 }
             }
 
           if (!found)
-            g_print ("  %02d: %016lx: \n", a, addr);
+            g_print ("  %02d: %016"G_GINT64_MODIFIER"x: \n", a, addr);
         }
     }
 

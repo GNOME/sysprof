@@ -108,6 +108,10 @@ _sysprof_flatpak_debug_dirs (GPtrArray *dirs)
 
   get_arch (arch, sizeof arch);
 
+  g_ptr_array_add (dirs, g_strdup ("/var/run/host/usr/lib/debug"));
+  g_ptr_array_add (dirs, g_strdup ("/var/run/host/usr/lib32/debug"));
+  g_ptr_array_add (dirs, g_strdup ("/var/run/host/usr/lib64/debug"));
+
   /* For each of the installations, we want to look at all of the runtimes that
    * exist within it. Of those runtimes, we want to limit ourselves to the active
    * version of each runtime, and see if we have a deployment for the current

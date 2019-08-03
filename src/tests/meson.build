@@ -50,6 +50,13 @@ test_mountinfo = executable('test-mountinfo',
   dependencies: test_deps,
 )
 
+test_flatpak = executable('test-flatpak',
+  [ 'test-flatpak.c',
+    '../libsysprof/sysprof-flatpak.c'],
+        c_args: test_cflags,
+  dependencies: test_deps,
+)
+
 
 if get_option('enable_gtk')
 

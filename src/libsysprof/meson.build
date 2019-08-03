@@ -65,6 +65,7 @@ libsysprof_private_sources = [
   'binfile.c',
   'demangle.cpp',
   'elfparser.c',
+  'sysprof-flatpak.c',
   'sysprof-helpers.c',
   'sysprof-kallsyms.c',
   'sysprof-line-reader.c',

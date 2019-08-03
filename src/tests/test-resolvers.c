@@ -39,6 +39,7 @@ main (gint  argc,
   filename = argv[1];
   resolvers = g_ptr_array_new_with_free_func (g_object_unref);
   g_ptr_array_add (resolvers, sysprof_elf_symbol_resolver_new ());
+  g_ptr_array_add (resolvers, sysprof_jitmap_symbol_resolver_new ());
   g_ptr_array_add (resolvers, sysprof_kernel_symbol_resolver_new ());
 
   if (!(reader = sysprof_capture_reader_new (filename, &error)))

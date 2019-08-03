@@ -32,19 +32,20 @@ typedef struct bin_symbol_t bin_symbol_t;
 
 /* Binary File */
 
-bin_file_t         *bin_file_new                 (const char         *filename);
-void                bin_file_free                (bin_file_t         *bin_file);
-const bin_symbol_t *bin_file_lookup_symbol       (bin_file_t         *bin_file,
-                                                  gulong              address);
-gboolean            bin_file_check_inode         (bin_file_t         *bin_file,
-                                                  ino_t               inode);
-const char         *bin_symbol_get_name          (bin_file_t         *bin_file,
-                                                  const bin_symbol_t *symbol);
-gulong              bin_symbol_get_address       (bin_file_t         *bin_file,
-                                                  const bin_symbol_t *symbol);
-void                bin_symbol_get_address_range (bin_file_t         *bin_file,
-                                                  const bin_symbol_t *symbol,
-                                                  gulong             *begin,
-                                                  gulong             *end);
+bin_file_t         *bin_file_new                 (const char          *filename,
+                                                  const gchar * const *debug_dirs);
+void                bin_file_free                (bin_file_t          *bin_file);
+const bin_symbol_t *bin_file_lookup_symbol       (bin_file_t          *bin_file,
+                                                  gulong               address);
+gboolean            bin_file_check_inode         (bin_file_t          *bin_file,
+                                                  ino_t                inode);
+const char         *bin_symbol_get_name          (bin_file_t          *bin_file,
+                                                  const bin_symbol_t  *symbol);
+gulong              bin_symbol_get_address       (bin_file_t          *bin_file,
+                                                  const bin_symbol_t  *symbol);
+void                bin_symbol_get_address_range (bin_file_t          *bin_file,
+                                                  const bin_symbol_t  *symbol,
+                                                  gulong              *begin,
+                                                  gulong              *end);
 
 #endif

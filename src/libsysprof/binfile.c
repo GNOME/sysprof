@@ -145,14 +145,14 @@ get_build_id_file (ElfParser *elf)
 }
 
 static ElfParser *
-get_debuglink_file (ElfParser   *elf,
-                    const char  *filename,
-                    char       **new_name)
+get_debuglink_file (ElfParser            *elf,
+                    const char           *filename,
+                    char                **new_name,
+                    const gchar * const  *debug_dirs)
 {
     const char *basename;
     char *dir;
     guint32 crc32;
-    gchar **tries;
     ElfParser *result = NULL;
     const char *build_id;
     guint i;
@@ -173,11 +173,9 @@ get_debuglink_file (ElfParser   *elf,
 
     dir = g_path_get_dirname (filename);
 
-    tries = sysprof_symbol_dirs_get_paths (dir, basename);
-
-    for (i = 0; tries[i]; i++)
+    for (i = 0; debug_dirs[i]; i++)
     {
-        const char *name = tries[i];
+        const char *name = debug_dirs[i];
         ElfParser *parser = elf_parser_new (name, NULL);
         guint32 file_crc;
         const char *file_build_id;
@@ -215,15 +213,15 @@ get_debuglink_file (ElfParser   *elf,
     }
 
     g_free (dir);
-    g_strfreev (tries);
 
     return result;
 }
 
 static GList *
-get_debug_binaries (GList      *files,
-                    ElfParser  *elf,
-                    const char *filename)
+get_debug_binaries (GList               *files,
+                    ElfParser           *elf,
+                    const char          *filename,
+                    const gchar * const *debug_dirs)
 {
     ElfParser *build_id_file;
     GHashTable *seen_names;
@@ -249,7 +247,7 @@ get_debug_binaries (GList      *files,
 
         g_hash_table_insert (seen_names, (char *)filename, (char *)filename);
 
-        elf = get_debuglink_file (elf, filename, &debug_name);
+        elf = get_debuglink_file (elf, filename, &debug_name, debug_dirs);
 
         if (elf)
         {
@@ -354,7 +352,8 @@ get_vdso_bytes (size_t *length)
 }
 
 bin_file_t *
-bin_file_new (const char *filename)
+bin_file_new (const char          *filename,
+              const gchar * const *debug_dirs)
 {
     const gchar *real_filename = filename;
     ElfParser *elf = NULL;
@@ -393,7 +392,7 @@ bin_file_new (const char *filename)
          */
         bf->text_offset = elf_parser_get_text_offset (elf);
 
-        bf->elf_files = get_debug_binaries (bf->elf_files, elf, filename);
+        bf->elf_files = get_debug_binaries (bf->elf_files, elf, filename, debug_dirs);
         bf->elf_files = g_list_append (bf->elf_files, elf);
 
         bf->inode = read_inode (filename);
@@ -417,7 +416,7 @@ bin_file_free (bin_file_t *bin_file)
 }
 
 const bin_symbol_t *
-bin_file_lookup_symbol (bin_file_t    *bin_file,
+bin_file_lookup_symbol (bin_file_t *bin_file,
                         gulong      address)
 {
     GList *list;

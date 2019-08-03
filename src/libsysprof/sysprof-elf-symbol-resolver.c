@@ -25,12 +25,14 @@
 #include "binfile.h"
 #include "elfparser.h"
 #include "sysprof-elf-symbol-resolver.h"
+#include "sysprof-flatpak.h"
 #include "sysprof-map-lookaside.h"
 
 struct _SysprofElfSymbolResolver
 {
   GObject     parent_instance;
 
+  GArray     *debug_dirs;
   GHashTable *lookasides;
   GHashTable *bin_files;
   GHashTable *tag_cache;
@@ -45,6 +47,21 @@ G_DEFINE_TYPE_EXTENDED (SysprofElfSymbolResolver,
                         G_IMPLEMENT_INTERFACE (SYSPROF_TYPE_SYMBOL_RESOLVER,
                                                symbol_resolver_iface_init))
 
+static gboolean
+is_flatpak (void)
+{
+  static gsize did_init = FALSE;
+  static gboolean ret;
+
+  if (g_once_init_enter (&did_init))
+    {
+      ret = g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS);
+      g_once_init_leave (&did_init, TRUE);
+    }
+
+  return ret;
+}
+
 static void
 sysprof_elf_symbol_resolver_finalize (GObject *object)
 {
@@ -53,6 +70,7 @@ sysprof_elf_symbol_resolver_finalize (GObject *object)
   g_clear_pointer (&self->bin_files, g_hash_table_unref);
   g_clear_pointer (&self->lookasides, g_hash_table_unref);
   g_clear_pointer (&self->tag_cache, g_hash_table_unref);
+  g_clear_pointer (&self->debug_dirs, g_array_unref);
 
   G_OBJECT_CLASS (sysprof_elf_symbol_resolver_parent_class)->finalize (object);
 }
@@ -66,8 +84,28 @@ sysprof_elf_symbol_resolver_class_init (SysprofElfSymbolResolverClass *klass)
 }
 
 static void
+free_element_string (gpointer data)
+{
+  g_free (*(gchar **)data);
+}
+
+static void
 sysprof_elf_symbol_resolver_init (SysprofElfSymbolResolver *self)
 {
+  self->debug_dirs = g_array_new (TRUE, FALSE, sizeof (gchar *));
+  g_array_set_clear_func (self->debug_dirs, free_element_string);
+  sysprof_elf_symbol_resolver_add_debug_dir (self, "/usr/lib/debug");
+  sysprof_elf_symbol_resolver_add_debug_dir (self, "/usr/lib32/debug");
+  sysprof_elf_symbol_resolver_add_debug_dir (self, "/usr/lib64/debug");
+
+  if (is_flatpak ())
+    {
+      g_auto(GStrv) debug_dirs = sysprof_flatpak_debug_dirs ();
+
+      for (guint i = 0; debug_dirs[i]; i++)
+        sysprof_elf_symbol_resolver_add_debug_dir (self, debug_dirs[i]);
+    }
+
   self->lookasides = g_hash_table_new_full (NULL,
                                             NULL,
                                             NULL,
@@ -126,21 +164,6 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
     }
 }
 
-static gboolean
-is_flatpak (void)
-{
-  static gsize did_init = FALSE;
-  static gboolean ret;
-
-  if (g_once_init_enter (&did_init))
-    {
-      ret = g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS);
-      g_once_init_leave (&did_init, TRUE);
-    }
-
-  return ret;
-}
-
 static bin_file_t *
 sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
                                           const gchar              *filename)
@@ -154,6 +177,9 @@ sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
   if (bin_file == NULL)
     {
       const gchar *alternate = filename;
+      const gchar * const *dirs;
+
+      dirs = (const gchar * const *)(gpointer)self->debug_dirs->data;
 
       /*
        * If we are in a new mount namespace, then rely on the sysprof_symbol_dirs
@@ -169,11 +195,11 @@ sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
       if (is_flatpak () && g_str_has_prefix (filename, "/usr/"))
         {
           g_autofree gchar *path = g_build_filename ("/var/run/host", alternate, NULL);
-          bin_file = bin_file_new (path);
+          bin_file = bin_file_new (path, dirs);
         }
       else
         {
-          bin_file = bin_file_new (alternate);
+          bin_file = bin_file_new (alternate, dirs);
         }
 
       g_hash_table_insert (self->bin_files, g_strdup (filename), bin_file);
@@ -389,4 +415,28 @@ SysprofSymbolResolver *
 sysprof_elf_symbol_resolver_new (void)
 {
   return g_object_new (SYSPROF_TYPE_ELF_SYMBOL_RESOLVER, NULL);
+}
+
+void
+sysprof_elf_symbol_resolver_add_debug_dir (SysprofElfSymbolResolver *self,
+                                           const gchar              *debug_dir)
+{
+  gchar *val;
+
+  g_return_if_fail (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self));
+  g_return_if_fail (debug_dir != NULL);
+
+  if (!g_file_test (debug_dir, G_FILE_TEST_EXISTS))
+    return;
+
+  for (guint i = 0; i < self->debug_dirs->len; i++)
+    {
+      gchar * const *str = &g_array_index (self->debug_dirs, gchar *, i);
+
+      if (g_strcmp0 (*str, debug_dir) == 0)
+        return;
+    }
+
+  val = g_strdup (debug_dir);
+  g_array_append_val (self->debug_dirs, val);
 }

@@ -37,14 +37,17 @@ G_DECLARE_FINAL_TYPE (SysprofElfSymbolResolver, sysprof_elf_symbol_resolver, SYS
 SYSPROF_AVAILABLE_IN_ALL
 SysprofSymbolResolver *sysprof_elf_symbol_resolver_new          (void);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean               sysprof_elf_symbol_resolver_resolve_full (SysprofElfSymbolResolver  *self,
-                                                                 guint64                    time,
-                                                                 GPid                       pid,
-                                                                 SysprofAddressContext      context,
-                                                                 SysprofCaptureAddress      address,
-                                                                 SysprofCaptureAddress     *begin,
-                                                                 SysprofCaptureAddress     *end,
-                                                                 gchar                    **name,
-                                                                 GQuark                    *tag);
+void                   sysprof_elf_symbol_resolver_add_debug_dir (SysprofElfSymbolResolver  *self,
+                                                                  const gchar               *debug_dir);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean               sysprof_elf_symbol_resolver_resolve_full  (SysprofElfSymbolResolver  *self,
+                                                                  guint64                    time,
+                                                                  GPid                       pid,
+                                                                  SysprofAddressContext      context,
+                                                                  SysprofCaptureAddress      address,
+                                                                  SysprofCaptureAddress     *begin,
+                                                                  SysprofCaptureAddress     *end,
+                                                                  gchar                    **name,
+                                                                  GQuark                    *tag);
 
 G_END_DECLS

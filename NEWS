@@ -1,3 +1,14 @@
+Overview of changes in Sysprof 3.33.90
+======================================
+
+ • Tweak CSS styling a bit
+ • Hide RAPL rows if no counters were discovered
+ • Fix --no-battery in sysprof-cli
+ • Improve parsing of /proc/mounts and /proc/pid/mountinfo
+ • Improve support for using libsysprof from Flatpak
+ • Symbol directories are removed from public ABI and consumers should
+   now add directories to SysprofElfSymbolResolver directly
+
 Overview of changes in Sysprof 3.33.4
 =====================================
 

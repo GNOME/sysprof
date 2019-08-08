@@ -93,6 +93,7 @@ main (gint   argc,
   gboolean force = FALSE;
   gboolean use_trace_fd = FALSE;
   gboolean gnome_shell = FALSE;
+  gboolean rapl = FALSE;
   int pid = -1;
   int fd;
   int flags;
@@ -110,6 +111,7 @@ main (gint   argc,
     { "use-trace-fd", 0, 0, G_OPTION_ARG_NONE, &use_trace_fd, N_("Set SYSPROF_TRACE_FD environment for subprocess") },
     { "gjs", 0, 0, G_OPTION_ARG_NONE, &gjs, N_("Set GJS_TRACE_FD environment to trace GJS processes") },
     { "gtk", 0, 0, G_OPTION_ARG_NONE, &gtk, N_("Set GTK_TRACE_FD environment to trace a GTK application") },
+    { "rapl", 0, 0, G_OPTION_ARG_NONE, &rapl, N_("Include RAPL energy statistics") },
     { "gnome-shell", 0, 0, G_OPTION_ARG_NONE, &gnome_shell, N_("Connect to org.gnome.Shell for profiler statistics") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
@@ -326,6 +328,15 @@ main (gint   argc,
   if (!no_battery)
     {
       source = sysprof_battery_source_new ();
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
+
+  if (rapl)
+    {
+      source = sysprof_proxy_source_new (G_BUS_TYPE_SYSTEM,
+                                         "org.gnome.Sysprof3",
+                                         "/org/gnome/Sysprof3/RAPL");
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }

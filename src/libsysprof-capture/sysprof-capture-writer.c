@@ -462,9 +462,9 @@ sysprof_capture_writer_new_from_fd (int   fd,
                                     gsize buffer_size)
 {
   g_autofree gchar *nowstr = NULL;
+  g_autoptr(GDateTime) now = NULL;
   SysprofCaptureWriter *self;
   SysprofCaptureFileHeader *header;
-  GTimeVal tv;
   gsize header_len = sizeof(*header);
 
   if (fd < 0)
@@ -486,8 +486,8 @@ sysprof_capture_writer_new_from_fd (int   fd,
   self->len = buffer_size;
   self->next_counter_id = 1;
 
-  g_get_current_time (&tv);
-  nowstr = g_time_val_to_iso8601 (&tv);
+  now = g_date_time_new_now_local ();
+  nowstr = g_date_time_format_iso8601 (now);
 
   header = sysprof_capture_writer_allocate (self, &header_len);
 

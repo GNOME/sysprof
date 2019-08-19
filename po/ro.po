@@ -1,0 +1,574 @@
+# Romanian translation for sysprof.
+# Copyright (C) 2019 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Florentina Mușat <florentina.musat.28@gmail.com>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof sysprof-3-32\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2019-08-17 15:07+0000\n"
+"PO-Revision-Date: 2019-08-19 15:16+0200\n"
+"Last-Translator: Daniel Șerbănescu <daniel [at] serbanescu [dot] dk>\n"
+"Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2);\n"
+"X-Generator: Poedit 2.2.3\n"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:5
+#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
+#: src/resources/ui/sp-window.ui:20 src/sp-application.c:192
+#: src/sp-application.c:339
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:6
+msgid "Profiler for an application or entire system"
+msgstr "Profiler pentru o aplicație sau un sistem întreg"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "Fundația GNOME"
+
+#: data/org.gnome.Sysprof2.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof vă permite să profilați aplicații pentru a vă ajuta la depanare și "
+"optimizare."
+
+#: data/org.gnome.Sysprof2.desktop.in:5
+msgid "Profiler"
+msgstr "Profiler"
+
+#: data/org.gnome.Sysprof2.desktop.in:6
+msgid "Profile an application or entire system."
+msgstr "Profilați o aplicație sau un sistem întreg."
+
+#: data/org.gnome.sysprof2.gschema.xml:5
+msgid "Window size"
+msgstr "Dimensiune fereastră"
+
+#: data/org.gnome.sysprof2.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "Dimensiune fereastră (lățime și înălțime)."
+
+#: data/org.gnome.sysprof2.gschema.xml:10
+msgid "Window position"
+msgstr "Poziție fereastră"
+
+#: data/org.gnome.sysprof2.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "Poziție fereastră (x și y)."
+
+#: data/org.gnome.sysprof2.gschema.xml:15
+msgid "Window maximized"
+msgstr "Fereastră maximizată"
+
+#: data/org.gnome.sysprof2.gschema.xml:16
+msgid "Window maximized state"
+msgstr "Stare fereastră maximizată"
+
+#: data/org.gnome.sysprof2.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr "Ultimul program de creare"
+
+#: data/org.gnome.sysprof2.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+"Ultimul program creat, care va fi stabilit în UI după repornirea aplicației."
+
+#: data/org.gnome.sysprof2.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr "Ultimul mediu moștenitor de creare"
+
+#: data/org.gnome.sysprof2.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr "Dacă ultimul mediu creat moștenește mediul superiorului."
+
+#: data/org.gnome.sysprof2.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr "Ultimul mediu de creare"
+
+#: data/org.gnome.sysprof2.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+"Ultimul mediu creat, care va fi stabilit în UI după repornirea aplicației."
+
+#: data/org.gnome.sysprof2.policy.in:13
+msgid "Open a perf event stream"
+msgstr "Deschide un flux de eveniment perf"
+
+#: data/org.gnome.sysprof2.policy.in:14
+msgid "Authentication is required to access system performance counters."
+msgstr ""
+"Este necesară autentificarea pentru a accesa contoarele de performanță ale "
+"sistemului."
+
+#: data/org.gnome.sysprof2.policy.in:24
+msgid "Get a list of kernel symbols and their address"
+msgstr "Obține o listă cu toate simbolurile nucleului și adresele acestora"
+
+#: data/org.gnome.sysprof2.policy.in:25
+msgid "Authentication is required to access Linux kernel information."
+msgstr ""
+"Este necesară autentificarea pentru a accesa informațiile nucleului Linux."
+
+#: lib/callgraph/sp-callgraph-profile.c:426
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
+"Sysprof nu a putut să genereze un graf de apelări din captura sistemului."
+
+#: lib/resources/ui/sp-callgraph-view.ui:24
+msgid "Functions"
+msgstr "Funcții"
+
+#: lib/resources/ui/sp-callgraph-view.ui:40
+#: lib/resources/ui/sp-callgraph-view.ui:101
+#: lib/resources/ui/sp-callgraph-view.ui:156
+msgid "Self"
+msgstr "Sine"
+
+#: lib/resources/ui/sp-callgraph-view.ui:56
+#: lib/resources/ui/sp-callgraph-view.ui:117
+msgid "Total"
+msgstr "Total"
+
+#: lib/resources/ui/sp-callgraph-view.ui:85
+msgid "Callers"
+msgstr "Apelanți"
+
+#: lib/resources/ui/sp-callgraph-view.ui:148
+msgid "Descendants"
+msgstr "Descendenți"
+
+#: lib/resources/ui/sp-callgraph-view.ui:172
+msgid "Cumulative"
+msgstr "Cumulativ"
+
+#: lib/resources/ui/sp-empty-state-view.ui:22
+msgid "Welcome to Sysprof"
+msgstr "Bine ați venit la Sysprof"
+
+#: lib/resources/ui/sp-empty-state-view.ui:39
+msgid "Start profiling your system with the <b>Record</b> button above"
+msgstr ""
+"Începeți să profilați sistemul cu butonul <b>Înregistrează</b> de deasupra"
+
+#: lib/resources/ui/sp-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "Au, asta a durut!"
+
+#: lib/resources/ui/sp-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr "Ceva neașteptat a mers greșit în timpul profilării sistemului."
+
+#. Translators: This is the description for a switch.
+#: lib/resources/ui/sp-profiler-menu-button.ui:58
+msgid "Profile my _entire system"
+msgstr "Profilează într_egul sistem"
+
+#. Translators: This is the placeholder in a search entry.
+#: lib/resources/ui/sp-profiler-menu-button.ui:95
+msgid "Search"
+msgstr "Caută"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:121
+msgid "Existing Process"
+msgstr "Proces existent"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:131
+msgid "Command Line"
+msgstr "Linie de comandă"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:150
+msgid "Environment"
+msgstr "Mediu"
+
+#. Translators: This is a check button.
+#: lib/resources/ui/sp-profiler-menu-button.ui:164
+msgid "Inherit current environment"
+msgstr "Moștenește mediul curent"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:182
+msgid "Key"
+msgstr "Cheie"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:197
+msgid "Value"
+msgstr "Valoare"
+
+#: lib/resources/ui/sp-profiler-menu-button.ui:215
+#: lib/widgets/sp-profiler-menu-button.c:118
+msgid "New Process"
+msgstr "Proces nou"
+
+#: lib/resources/ui/sp-recording-state-view.ui:22
+msgid "00:00"
+msgstr "00:00"
+
+#: lib/resources/ui/sp-recording-state-view.ui:39
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"Știați că puteți utiliza <a href=\"help:sysprof\">sysprof-cli</a> pentru a "
+"înregistra?"
+
+#: lib/sources/sp-perf-source.c:478
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Sysprof nu a găsit câmpul „%s”."
+
+#: lib/sources/sp-perf-source.c:491
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Sysprof nu a reușit să parseze decalajul pentru „%s”."
+
+#: lib/sources/sp-perf-source.c:555
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Sysprof nu a reușit să obțină ID-ul perf_event."
+
+#: lib/sources/sp-perf-source.c:664
+#, c-format
+msgid ""
+"Sysprof requires authorization to access your computers performance counters."
+msgstr ""
+"Sysprof necesită autorizare pentru a accesa contoarele de performanță ale "
+"calculatorului."
+
+#: lib/sources/sp-perf-source.c:669
+#, c-format
+msgid "An error occurred while attempting to access performance counters: %s"
+msgstr "A apărut o eroare în timpul accesării contoarelor de performanță: %s"
+
+#. Translators: CPU is the processor.
+#: lib/visualizers/sp-visualizer-list.c:294
+msgid "CPU"
+msgstr "CPU"
+
+#: lib/visualizers/sp-visualizer-list.c:309
+msgid "Memory Used"
+msgstr "Memorie utilizată"
+
+#. Translators: FPS is frames per second.
+#: lib/visualizers/sp-visualizer-list.c:327
+msgid "FPS"
+msgstr "FPS"
+
+#: lib/widgets/sp-profiler-menu-button.c:116
+#: lib/widgets/sp-profiler-menu-button.c:131
+msgid "All Processes"
+msgstr "Toate procesele"
+
+#. Translators: %d is the PID of the process.
+#: lib/widgets/sp-profiler-menu-button.c:138
+#, c-format
+msgid "Process %d"
+msgstr "Procesul %d"
+
+#. Translators: %u is the number (amount) of processes.
+#: lib/widgets/sp-profiler-menu-button.c:144
+#, c-format
+msgid "%u Process"
+msgid_plural "%u Processes"
+msgstr[0] "%u proces"
+msgstr[1] "%u procese"
+msgstr[2] "%u de procese"
+
+#: lib/widgets/sp-profiler-menu-button.c:815
+msgid "The command line arguments provided are invalid"
+msgstr "Argumentele liniei de comandă furnizate nu sunt valide"
+
+#: src/resources/gtk/help-overlay.ui:8
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Scurtături Sysprof"
+
+#: src/resources/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Înregistrare"
+
+#: src/resources/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Oprește înregistrarea"
+
+#: src/resources/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Graf de apelări"
+
+#: src/resources/gtk/help-overlay.ui:29
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Extinde funcția"
+
+#: src/resources/gtk/help-overlay.ui:30
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "Arată descendenții direcți ai funcției callgraph"
+
+#: src/resources/gtk/help-overlay.ui:37
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Contractă funcția"
+
+#: src/resources/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr "Ascunde toți descendenții callgraph sub funcția selectată"
+
+#: src/resources/gtk/help-overlay.ui:45
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "Intră în funcție"
+
+#: src/resources/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr ""
+"Selectează funcția sau fișierul ca și capătul de sus al grafului de apelări"
+
+#: src/resources/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Vizualizatori"
+
+#: src/resources/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Mărește"
+
+#: src/resources/gtk/help-overlay.ui:66
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Micșorează"
+
+#: src/resources/gtk/help-overlay.ui:73
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Restabilește focalizarea"
+
+#: src/resources/ui/sp-window.ui:30 src/sp-window.c:321
+msgid "Not running"
+msgstr "Nu rulează"
+
+#. Translators: This is a button.
+#: src/resources/ui/sp-window.ui:44
+msgid "_Record"
+msgstr "În_registrează"
+
+#. Translators: This is a button.
+#: src/resources/ui/sp-window.ui:118
+msgid "_Close"
+msgstr "În_chide"
+
+#. Translators: This is a tooltip.
+#: src/resources/ui/sp-window.ui:212
+msgid "Zoom out (Ctrl+-)"
+msgstr "Micșorează (Ctrl+-)"
+
+#. Translators: This is a tooltip.
+#: src/resources/ui/sp-window.ui:228
+msgid "Reset zoom level (Ctrl+0)"
+msgstr "Restabilește nivelul focalizării (Ctrl+0)"
+
+#. Translators: This is a tooltip.
+#: src/resources/ui/sp-window.ui:242
+msgid "Zoom in (Ctrl++)"
+msgstr "Mărește (Ctrl++)"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:267
+msgid "New Window"
+msgstr "Fereastră nouă"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:280
+msgctxt "menu label"
+msgid "Open Capture…"
+msgstr "Deschide captura…"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:287
+msgid "Save As…"
+msgstr "Salvează ca…"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:300
+msgid "Screenshot"
+msgstr "Captură de ecran"
+
+#. Translators: This is a menu label.
+#: src/resources/ui/sp-window.ui:313
+msgid "Close"
+msgstr "Închide"
+
+#: src/resources/ui/sp-window.ui:326
+msgid "Keyboard Shortcuts"
+msgstr "Scurtături de tastatură"
+
+#: src/resources/ui/sp-window.ui:333
+msgid "Help"
+msgstr "Ajutor"
+
+#: src/resources/ui/sp-window.ui:340
+msgid "About Sysprof"
+msgstr "Despre Sysprof"
+
+#: src/sp-application.c:184
+msgid "A system profiler"
+msgstr "Un profilator de sistem"
+
+#: src/sp-application.c:189
+msgid "translator-credits"
+msgstr "Florentina Mușat <florentina.musat.28 [at] gmail [dot] com>, 2019"
+
+#: src/sp-application.c:195
+msgid "Learn more about Sysprof"
+msgstr "Aflați mai multe despre Sysprof"
+
+#. Translators: %u is the number (amount) of samples.
+#: src/sp-window.c:154
+#, c-format
+msgid "Samples: %u"
+msgstr "Mostre: %u"
+
+#: src/sp-window.c:187
+msgid "[Memory Capture]"
+msgstr "[Captură de memorie]"
+
+#. Translators: The first %s is a file name, the second is the date and time.
+#: src/sp-window.c:201
+#, c-format
+msgid "%s — %s"
+msgstr "%s — %s"
+
+#: src/sp-window.c:239
+msgid "Not enough samples were collected to generate a callgraph"
+msgstr "Nu au fost colectate destule mostre pentru a genera un graf de apelări"
+
+#. Translators: This is a button.
+#: src/sp-window.c:313 src/sp-window.c:359
+msgid "Record"
+msgstr "Înregistrează"
+
+#. Translators: This is a button.
+#: src/sp-window.c:334
+msgid "Stop"
+msgstr "Oprește"
+
+#: src/sp-window.c:339
+msgid "Recording…"
+msgstr "Se înregistrează…"
+
+#: src/sp-window.c:350
+msgid "Building profile…"
+msgstr "Se generează profilul…"
+
+#. SpProfiler::stopped will move us to generating
+#: src/sp-window.c:456
+msgid "Stopping…"
+msgstr "Se oprește…"
+
+#. Translators: This is a window title.
+#: src/sp-window.c:609
+msgid "Save Capture As…"
+msgstr "Salvează captura ca…"
+
+#. Translators: This is a button.
+#: src/sp-window.c:613
+msgid "Save"
+msgstr "Salvează"
+
+#. Translators: This is a button.
+#: src/sp-window.c:615 src/sp-window.c:1036
+msgid "Cancel"
+msgstr "Anulează"
+
+#. Translators: %s is the error message.
+#: src/sp-window.c:646
+#, c-format
+msgid "An error occurred while attempting to save your capture: %s"
+msgstr "A apărut o eroare în timpul încercării de salvare a capturii: %s"
+
+#: src/sp-window.c:1002
+#, c-format
+msgid "The file “%s” could not be opened. Only local files are supported."
+msgstr ""
+"Fișierul „%s” nu a putut fi deschis. Doar fișierele locale sunt suportate."
+
+#. Translators: This is a window title.
+#: src/sp-window.c:1030
+msgid "Open Capture…"
+msgstr "Deschide captura…"
+
+#. Translators: This is a button.
+#: src/sp-window.c:1034
+msgid "Open"
+msgstr "Deschide"
+
+#: src/sp-window.c:1039
+msgid "Sysprof Captures"
+msgstr "Capturi Sysprof"
+
+#: src/sp-window.c:1044
+msgid "All Files"
+msgstr "Toate fișierele"
+
+#: tools/sysprof-cli.c:99
+msgid "Make sysprof specific to a task"
+msgstr "Face ca sysprof să fie specific unei sarcini"
+
+#: tools/sysprof-cli.c:99
+msgid "PID"
+msgstr "PID"
+
+#: tools/sysprof-cli.c:100
+msgid "Run a command and profile the process"
+msgstr "Rulează o comandă și profilează procesul"
+
+#: tools/sysprof-cli.c:100
+msgid "COMMAND"
+msgstr "COMANDĂ"
+
+#: tools/sysprof-cli.c:101
+msgid "Force overwrite the capture file"
+msgstr "Forțează suprascrierea fișierului de captură"
+
+#: tools/sysprof-cli.c:102
+msgid "Disable recording of CPU statistics"
+msgstr "Dezactivează înregistrarea statisticilor CPU"
+
+#: tools/sysprof-cli.c:103
+msgid "Disable recording of memory statistics"
+msgstr "Dezactivează înregistrarea statisticilor memoriei"
+
+#: tools/sysprof-cli.c:104
+msgid "Print the sysprof-cli version and exit"
+msgstr "Tipărește versiunea sysprof-cli și ieși"
+
+#: tools/sysprof-cli.c:110
+msgid "[CAPTURE_FILE] — Sysprof"
+msgstr "[FIȘIER_CAPTURĂ] — Sysprof"
+
+#: tools/sysprof-cli.c:129
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "Prea multe argumente au fost trimise la sysprof-cli:"
+
+#. Translators: %s is a file name.
+#: tools/sysprof-cli.c:170
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s există. Utilizați --force pentru a suprascrie\n"

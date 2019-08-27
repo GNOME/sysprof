@@ -1,26 +1,26 @@
 # Spanish translation for sysprof.
 # Copyright (C) 2018 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2018.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2018-2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-28\n"
-"POT-Creation-Date: 2018-06-19 22:07+0000\n"
-"PO-Revision-Date: 2018-08-21 10:21+0200\n"
+"POT-Creation-Date: 2019-08-19 13:18+0000\n"
+"PO-Revision-Date: 2019-08-27 12:07+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
-"Language-Team: es <gnome-es-list@gnome.org>\n"
+"Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Gtranslator 3.32.1\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
-msgstr "Daniel Mustieles <daniel.musiteles@gmail.com>, 2018"
+msgstr "Daniel Mustieles <daniel.musiteles@gmail.com>, 2018, 2019"
 
 #. (itstool) path: page/title
 #: C/index.page:12
@@ -63,11 +63,13 @@ msgid ""
 "<app>Sysprof</app> is a system profiler for Linux that targets the GNOME "
 "desktop."
 msgstr ""
+"<app>Sysprof</app> es un perfilador de sistemas para Linux que se centra en "
+"el escritorio GNOME."
 
 #. (itstool) path: info/desc
 #: C/introduction.page:33
 msgid "Differences between tracing and sampling"
-msgstr ""
+msgstr "Diferencias entre rastreo y muestreo"
 
 #. (itstool) path: section/title
 #: C/introduction.page:35
@@ -81,6 +83,9 @@ msgid ""
 "or system while it runs. That information can be explored to gain insight "
 "into how the application could be changed to perform better."
 msgstr ""
+"Un perfilador es una aplicación que guarda información sobre una aplicación "
+"o sistema mientras se ejecuta. Esa información se puede analizar para ver "
+"como se podría mejorar el rendimiento de la aplicación."
 
 #. (itstool) path: section/p
 #: C/introduction.page:42
@@ -105,7 +110,7 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/introduction.page:54
 msgid "<app>Sysprof</app> is a sampling profiler."
-msgstr ""
+msgstr "<app>Sysprof</app> es un perfilador de muestreo."
 
 #. (itstool) path: section/title
 #: C/profiling.page:10
@@ -129,6 +134,8 @@ msgid ""
 "To profile your entire system, ensure the target button is set to <em>All "
 "Processes</em> and click <em>Record</em>."
 msgstr ""
+"Para perfilar el sistema completo asegúrese de que el botón de objetivo "
+"indica <em>Todos los procesos</em> y pulse <em>Grabar</em>."
 
 #. (itstool) path: section/p
 #: C/profiling.page:21
@@ -137,6 +144,9 @@ msgid ""
 "system. This is required as the Linux kernel's perf implementation requires "
 "root to perform whole-system profiling."
 msgstr ""
+"En este punto se le pedirá que <em>autorice</em> el acceso para perfila el "
+"sistema. Esto es necesario ya que la implementación del núcleo Linux de "
+"«perf» requiere root para realizar el perfilado del sistema completo."
 
 #. (itstool) path: section/p
 #: C/profiling.page:25
@@ -145,6 +155,9 @@ msgid ""
 "has been active. Clicking the <em>Record</em> button again will stop the "
 "profiling session. Afterwhich, the callgraph will be displayed."
 msgstr ""
+"Durante el perfilado verá el número de segundo que el perfil ha estado "
+"activo. Al pulsar el botón <em>Grabar</em> otra vez se detendrá el "
+"perfilado. Después de esto se mostrará un gráfico de llamadas."
 
 #. (itstool) path: note/p
 #: C/profiling.page:31
@@ -185,6 +198,8 @@ msgid ""
 "After selecting your target processes, click the <em>Record</em> button to "
 "start profiling."
 msgstr ""
+"Después de seleccionar los procesos objetivos pulse <em>Grabar</em> para "
+"empezar el perfilado."
 
 #. (itstool) path: section/p
 #: C/profiling.page:57
@@ -192,6 +207,8 @@ msgid ""
 "When you have completed, click the <em>Record</em> button again to stop "
 "profiling."
 msgstr ""
+"Cuando haya terminado pulse el botón <em>Grabar</em> de nuevo para detener "
+"el perfilado."
 
 #. (itstool) path: section/title
 #: C/profiling.page:69
@@ -214,11 +231,14 @@ msgid ""
 "such as a GTK+ application, you will want to make sure <em>Inherit current "
 "environment</em> is set."
 msgstr ""
+"Si está lanzando procesos que requieran acceso a su pantalla actual, como "
+"puede ser una aplicación GTK+, querrá asegurarse de que la opción "
+"<em>Heredar entorno actual</em> está activada."
 
 #. (itstool) path: section/title
 #: C/profiling.page:88
 msgid "Profiling with the sysprof-cli command line tool"
-msgstr ""
+msgstr "Perfilar con la herramienta de línea de comandos sysprof-cli"
 
 #. (itstool) path: section/p
 #: C/profiling.page:90
@@ -235,6 +255,8 @@ msgid ""
 "You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
 "cmd>."
 msgstr ""
+"También puede considerar la opción de unirse a un proceso existente usando "
+"<cmd>sysprof-cli -p pid</cmd>."
 
 #. (itstool) path: section/p
 #: C/profiling.page:98
@@ -243,6 +265,9 @@ msgid ""
 "cmd> to specify a command to be launched. The command will inherit the "
 "current environment."
 msgstr ""
+"Si quiere lanzar un proceso nuevo use <cmd>sysprof-cli -c «comando»</cmd> "
+"para especificar el comando que lanzar. Este comando heredará el entorno "
+"actual."
 
 #. (itstool) path: section/title
 #: C/profiling.page:108
@@ -256,6 +281,10 @@ msgid ""
 "On the top left is a list of all the functions profiled. They are sorted by "
 "how often they were called during the recording."
 msgstr ""
+"Los resultados del perfilado en <app>Sysprof</app> se dividen en tres "
+"secciones. En la parte superior izquierda hay una lista de todas las "
+"funciones perfiladas. Se ordenan por la frecuencia con la que se han llamado "
+"durante la grabación."
 
 #. (itstool) path: note/p
 #: C/profiling.page:115
@@ -265,6 +294,11 @@ msgid ""
 "The percentage is calculated by determining how often that function showed "
 "up in the current stacktrace when a sample was recorded."
 msgstr ""
+"Es importante tener en cuenta que la cantidad de tiempo usada por cada "
+"función no se captura. Esto requeriría un perfilador de rastreo para grabar "
+"con precisión. El porcentaje se calcula determinando la frecuencia con la "
+"que cada función aparecía en la pila de llamadas actual cuando se grabó la "
+"muestra."
 
 #. (itstool) path: section/p
 #: C/profiling.page:121
@@ -274,6 +308,10 @@ msgid ""
 "sorted by the percentage of samples that included that function in the "
 "stacktrace."
 msgstr ""
+"Después de seleccionar una función en la lista todas las llamadas a esa "
+"función grabadas se mostrarán en la parte izquierda. También se ordenarán "
+"por el porcentaje de muestras que han incluido esa función en la pila de "
+"llamadas."
 
 #. (itstool) path: section/p
 #: C/profiling.page:126
@@ -288,6 +326,8 @@ msgid ""
 "You can jump into a function by activating a row in the tree of descendants "
 "with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
 msgstr ""
+"Puede saltar a una función activando la fila en el árbol con una doble "
+"pulsación o pulsando <key>Intro</key> o <key>Espacio</key>."
 
 #. (itstool) path: note/p
 #: C/profiling.page:133
@@ -296,11 +336,14 @@ msgid ""
 "application transitioned into or from the Linux kernel. There can be many "
 "reasons for this such as a <em>syscall</em> or <em>signal</em>."
 msgstr ""
+"Si ve <em>- - kernel - -</em> en sus resultados significa que la aplicación "
+"ha pasado a o del núcleo Linux. Esto puede ser por varias razones, como una "
+"<em>llamada del sistema</em> o <em>señal</em>."
 
 #. (itstool) path: page/title
 #: C/faq.page:9
 msgid "What does heap mean?"
-msgstr ""
+msgstr "¿Qué es la pila?"
 
 #. (itstool) path: section/title
 #: C/faq.page:12
@@ -328,6 +371,9 @@ msgid ""
 "and store it in the heap. Sysprof is accurately reporting the situation in "
 "this case."
 msgstr ""
+"Los lenguajes como Java pueden generar código ejecutable mientras se ejecuta "
+"un programa y guardarlo en la pila. Sysprof informa de manera precisa de la "
+"situación en este caso."
 
 #. (itstool) path: section/title
 #: C/faq.page:30
@@ -341,6 +387,10 @@ msgid ""
 "function's caller, so it is mistaken for [heap]. You can still tell how "
 "often each function is called by the program, but not always from where."
 msgstr ""
+"Los compiladores de C y C++ pueden optimizar la información necesaria para "
+"determinado quién ha llamado a una función, lo que es incorrecto para la "
+"pila. Todavía puede saber con qué frecuencia el programa llama a cada "
+"función, pero no siempre desde aquí."
 
 #. (itstool) path: note/p
 #: C/faq.page:38
@@ -349,6 +399,9 @@ msgid ""
 "optimization. The flag is not always needed, for example on x86_64 machines "
 "it is only needed with -O3 optimization."
 msgstr ""
+"En gcc, la opción <code>-fno-omit-frame-pointer</code> evitará esta "
+"optimización. La opción no se necesita siempre. Por ejemplo, en máquinas "
+"x86_64 machines sólo se necesita con optimización -O3."
 
 #. (itstool) path: note/p
 #: C/faq.page:44
@@ -356,6 +409,8 @@ msgid ""
 "To get the most detailed and accurate call tree from un-optimized code, use "
 "these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
 msgstr ""
+"Para obtener un árbol de llamadas más detallado y preciso de un código no "
+"optimizado, use las opciones: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
 
 #. (itstool) path: p/link
 #: C/legal.xml:5

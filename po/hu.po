@@ -3,38 +3,37 @@
 # This file is distributed under the same license as the sysprof package.
 #
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2016.
-# Balázs Úr <urbalazs at gmail dot com>, 2017, 2018, 2019.
+# Balázs Úr <ur.balazs at fsf dot hu>, 2017, 2018, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2019-01-30 22:27+0000\n"
-"PO-Revision-Date: 2019-02-02 09:14+0100\n"
-"Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
+"POT-Creation-Date: 2019-08-19 13:18+0000\n"
+"PO-Revision-Date: 2019-09-01 06:51+0200\n"
+"Last-Translator: Balázs Úr <ur.balazs at fsf dot hu>\n"
 "Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 1.2\n"
+"X-Generator: Lokalize 18.12.3\n"
 
-#: data/org.gnome.Sysprof2.appdata.xml.in:5
-#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:192
-#: src/sp-application.c:339
+#: data/org.gnome.Sysprof3.appdata.xml.in:5
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/ui/sysprof-window.ui:12
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof2.appdata.xml.in:6
-msgid "Profiler for an application or entire system"
-msgstr "Profilozó egy alkalmazáshoz vagy egy egész rendszerhez"
+#: data/org.gnome.Sysprof3.appdata.xml.in:6
+#| msgid "Profile an application or entire system."
+msgid "Profile an application or entire system"
+msgstr "Alkalmazás vagy egész rendszer profilozása"
 
-#: data/org.gnome.Sysprof2.appdata.xml.in:9
+#: data/org.gnome.Sysprof3.appdata.xml.in:9
 msgid "The GNOME Foundation"
 msgstr "A GNOME Alapítvány"
 
-#: data/org.gnome.Sysprof2.appdata.xml.in:12
+#: data/org.gnome.Sysprof3.appdata.xml.in:12
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
@@ -42,48 +41,43 @@ msgstr ""
 "A Sysprof lehetővé teszi az alkalmazások profilozását a hibakeresés és az "
 "optimalizáció támogatáshoz."
 
-#: data/org.gnome.Sysprof2.desktop.in:5
+#: data/org.gnome.Sysprof3.desktop.in:5
 msgid "Profiler"
 msgstr "Profilozó"
 
-#: data/org.gnome.Sysprof2.desktop.in:6
+#: data/org.gnome.Sysprof3.desktop.in:6
 msgid "Profile an application or entire system."
 msgstr "Alkalmazás vagy egész rendszer profilozása."
 
-#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: data/org.gnome.Sysprof2.desktop.in:10
-msgid "org.gnome.Sysprof"
-msgstr "org.gnome.Sysprof"
-
-#: data/org.gnome.sysprof2.gschema.xml:5
+#: data/org.gnome.sysprof3.gschema.xml:5
 msgid "Window size"
 msgstr "Ablakméret"
 
-#: data/org.gnome.sysprof2.gschema.xml:6
+#: data/org.gnome.sysprof3.gschema.xml:6
 msgid "Window size (width and height)."
 msgstr "Ablak mérete (szélesség és magasság)."
 
-#: data/org.gnome.sysprof2.gschema.xml:10
+#: data/org.gnome.sysprof3.gschema.xml:10
 msgid "Window position"
 msgstr "Ablakpozíció"
 
-#: data/org.gnome.sysprof2.gschema.xml:11
+#: data/org.gnome.sysprof3.gschema.xml:11
 msgid "Window position (x and y)."
 msgstr "Ablakpozíció (x és y)."
 
-#: data/org.gnome.sysprof2.gschema.xml:15
+#: data/org.gnome.sysprof3.gschema.xml:15
 msgid "Window maximized"
 msgstr "Ablak teljes méretű"
 
-#: data/org.gnome.sysprof2.gschema.xml:16
+#: data/org.gnome.sysprof3.gschema.xml:16
 msgid "Window maximized state"
 msgstr "Az ablak maximalizált állapota"
 
-#: data/org.gnome.sysprof2.gschema.xml:20
+#: data/org.gnome.sysprof3.gschema.xml:20
 msgid "Last Spawn Program"
 msgstr "Legutóbb indított program"
 
-#: data/org.gnome.sysprof2.gschema.xml:21
+#: data/org.gnome.sysprof3.gschema.xml:21
 msgid ""
 "The last spawned program, which will be set in the UI upon restart of the "
 "application."
@@ -91,19 +85,19 @@ msgstr ""
 "A legutóbb indított program, amely az alkalmazás újraindításakor kerül "
 "beállításra a felületen."
 
-#: data/org.gnome.sysprof2.gschema.xml:25
+#: data/org.gnome.sysprof3.gschema.xml:25
 msgid "Last Spawn Inherit Environment"
 msgstr "Legutóbb indított örökli a környezetet"
 
-#: data/org.gnome.sysprof2.gschema.xml:26
+#: data/org.gnome.sysprof3.gschema.xml:26
 msgid "If the last spawned environment inherits the parent environment."
 msgstr "A legutóbb indított környezet örökli-e a szülőkörnyezetet."
 
-#: data/org.gnome.sysprof2.gschema.xml:30
+#: data/org.gnome.sysprof3.gschema.xml:30
 msgid "Last Spawn Environment"
 msgstr "Legutóbb indított környezet"
 
-#: data/org.gnome.sysprof2.gschema.xml:31
+#: data/org.gnome.sysprof3.gschema.xml:31
 msgid ""
 "The last spawned environment, which will be set in the UI upon restart of "
 "the application."
@@ -111,470 +105,440 @@ msgstr ""
 "A legutóbb indított környezet, amely az alkalmazás újraindításakor kerül "
 "beállításra a felületen."
 
-#: data/org.gnome.sysprof2.policy.in:13
-msgid "Open a perf event stream"
-msgstr "Egy perf eseményfolyam megnyitása"
-
-#: data/org.gnome.sysprof2.policy.in:14
-msgid "Authentication is required to access system performance counters."
-msgstr "Hitelesítés szükséges a rendszerteljesítmény számlálók eléréséhez."
-
-#: data/org.gnome.sysprof2.policy.in:24
-msgid "Get a list of kernel symbols and their address"
-msgstr "Rendszermagszimbólumok listájának és azok címének lekérése"
-
-#: data/org.gnome.sysprof2.policy.in:25
-msgid "Authentication is required to access Linux kernel information."
-msgstr "Hitelesítés szükséges a Linux rendszermag információinak eléréséhez."
-
-#: lib/callgraph/sp-callgraph-profile.c:426
-msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr ""
-"A Sysprof nem volt képes hívási gráfot generálni a rendszerrögzítésből."
-
-#: lib/resources/ui/sp-callgraph-view.ui:24
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:27
 msgid "Functions"
 msgstr "Függvények"
 
-#: lib/resources/ui/sp-callgraph-view.ui:40
-#: lib/resources/ui/sp-callgraph-view.ui:101
-#: lib/resources/ui/sp-callgraph-view.ui:156
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:43
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:104
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:159
 msgid "Self"
 msgstr "Önmaga"
 
-#: lib/resources/ui/sp-callgraph-view.ui:56
-#: lib/resources/ui/sp-callgraph-view.ui:117
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:59
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:120
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:175
 msgid "Total"
 msgstr "Összesen"
 
-#: lib/resources/ui/sp-callgraph-view.ui:85
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:88
 msgid "Callers"
 msgstr "Hívók"
 
-#: lib/resources/ui/sp-callgraph-view.ui:148
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:151
 msgid "Descendants"
 msgstr "Leszármazottak"
 
-#: lib/resources/ui/sp-callgraph-view.ui:172
-msgid "Cumulative"
-msgstr "Kumulatív"
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:190
+#: src/libsysprof-ui/sysprof-details-page.ui:295
+msgid "Hits"
+msgstr "Találatok"
 
-#: lib/resources/ui/sp-empty-state-view.ui:22
-msgid "Welcome to Sysprof"
-msgstr "Üdvözöljük a Sysprofban"
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:213
+#| msgctxt "shortcut window"
+#| msgid "Callgraph"
+msgid "Generating Callgraph"
+msgstr "Hívási gráf előállítása"
 
-#: lib/resources/ui/sp-empty-state-view.ui:39
-msgid "Start profiling your system with the <b>Record</b> button above"
-msgstr "Kezdje el a rendszer profilozását a fenti <b>Rögzítés</b> gombbal"
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:214
+msgid "Sysprof is busy creating the selected callgraph."
+msgstr "A Sysprof a kiválasztott hívási gráf létrehozásán dolgozik."
 
-#: lib/resources/ui/sp-failed-state-view.ui:22
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:224
+msgid "Not Enough Samples"
+msgstr "Nincs elég minta"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:225
+#| msgid "Not enough samples were collected to generate a callgraph"
+msgid "More samples are necessary to display a callgraph."
+msgstr "Több minta szükséges a hívási gráf megjelenítéséhez."
+
+#: src/libsysprof-ui/sysprof-details-page.ui:21
+msgid "Filename"
+msgstr "Fájlnév"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:35
+msgid "Captured at"
+msgstr "Rögzítve:"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:50
+#: src/libsysprof-ui/sysprof-marks-page.ui:81
+#: src/libsysprof-ui/sysprof-marks-page.ui:191
+msgid "Duration"
+msgstr "Időtartam"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:65
+msgid "CPU Model"
+msgstr "CPU modell"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:80
+#| msgid "Samples: %u"
+msgid "Samples Captured"
+msgstr "Rögzített minták"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:94
+#| msgid "[Memory Capture]"
+msgid "Marks Captured"
+msgstr "Rögzített jelek"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:108
+#| msgid "Process %d"
+msgid "Processes Captured"
+msgstr "Rögzített folyamatok"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:122
+#| msgid "[Memory Capture]"
+msgid "Forks Captured"
+msgstr "Rögzített elágaztatások"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:137
+#| msgid "[Memory Capture]"
+msgid "Counters Captured"
+msgstr "Rögzített számlálók"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:282
+#: src/libsysprof-ui/sysprof-marks-page.ui:52
+msgid "Mark"
+msgstr "Jel"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:308
+msgid "Min"
+msgstr "Min"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:321
+msgid "Max"
+msgstr "Max"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:334
+msgid "Avg"
+msgstr "Átlag"
+
+#: src/libsysprof-ui/sysprof-display.ui:49
+#: src/libsysprof-ui/sysprof-marks-page.ui:19
+msgid "Details"
+msgstr "Részletek"
+
+#: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
+msgid "Remove environment variable"
+msgstr "Környezeti változó eltávolítása"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:22
 msgid "Ouch, that hurt!"
 msgstr "Jaj, ez fájt!"
 
-#: lib/resources/ui/sp-failed-state-view.ui:39
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:39
 msgid "Something unexpectedly went wrong while trying to profile your system."
-msgstr "Valami váratlanul elromlott a rendszer profilozási kísérlete során."
+msgstr "Valami váratlan hiba történt a rendszer profilozási kísérlete során."
 
-#. Translators: This is the description for a switch.
-#: lib/resources/ui/sp-profiler-menu-button.ui:58
-msgid "Profile my _entire system"
-msgstr "A _teljes rendszer profilozása"
+#: src/libsysprof-ui/sysprof-logs-page.ui:15
+#: src/libsysprof-ui/sysprof-marks-page.ui:67
+msgid "Time"
+msgstr "Idő"
 
-#. Translators: This is the placeholder in a search entry.
-#: lib/resources/ui/sp-profiler-menu-button.ui:95
-msgid "Search"
-msgstr "Keresés"
+#: src/libsysprof-ui/sysprof-logs-page.ui:29
+msgid "Severity"
+msgstr "Súlyosság"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:121
-msgid "Existing Process"
-msgstr "Létező folyamat"
+#: src/libsysprof-ui/sysprof-logs-page.ui:44
+msgid "Domain"
+msgstr "Tartomány"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:131
+#: src/libsysprof-ui/sysprof-logs-page.ui:58
+#: src/libsysprof-ui/sysprof-marks-page.ui:95
+msgid "Message"
+msgstr "Üzenet"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:38
+msgid "Group"
+msgstr "Csoport"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:221
+msgid "No Timings Available"
+msgstr "Nincs elérhető időzítés"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:222
+msgid "No timing data was found for the current selection"
+msgstr "Nem található időzítési adat a jelenlegi kiválasztáshoz"
+
+#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:14
+msgid "GNOME Shell"
+msgstr "GNOME Shell"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:80
+#| msgid "Profiler"
+msgid "Profilers"
+msgstr "Profilozók"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:191
+msgid "All Processes"
+msgstr "Minden folyamat"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:221
+msgid ""
+"Include all applications and operating system kernel in callgraph. This may "
+"not be possible on some system system configurations."
+msgstr ""
+"Az összes alkalmazás és az operációs rendszer kernel felvétele a hívási "
+"gráfba. Előfordulhat, hogy egyes rendszer-konfigurációkon ez nem lehetséges."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:249
+#| msgid "All Processes"
+msgid "Search Processes…"
+msgstr "Folyamatok keresése…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
+#| msgid "Existing Process"
+msgid "Loading Processes…"
+msgstr "Folyamatok betöltése…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:292
+msgid "Launch Application"
+msgstr "Alkalmazás indítása"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:321
+msgid "Enable to launch a program of your choosing before profiling."
+msgstr "A profilozás előtt engedélyezze a választott a program futtatását."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:349
 msgid "Command Line"
 msgstr "Parancssor"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:150
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
 msgid "Environment"
 msgstr "Környezet"
 
-#. Translators: This is a check button.
-#: lib/resources/ui/sp-profiler-menu-button.ui:164
-msgid "Inherit current environment"
-msgstr "Jelenlegi környezet öröklése"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:394
+#| msgid "Inherit current environment"
+msgid "Inherit Environment"
+msgstr "Környezet öröklése"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:182
-msgid "Key"
-msgstr "Kulcs"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:418
+msgid ""
+"Enable to ensure your application shares the display, message-bus, and other "
+"desktop environment settings."
+msgstr ""
+"Engedélyezze annak biztosításához, hogy az alkalmazás megossza a kijelző-, "
+"üzenetbusz- és egyéb asztali környezet beállításait."
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:197
-msgid "Value"
-msgstr "Érték"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:444
+msgid "Allow CPU Throttling"
+msgstr "CPU visszafogás engedélyezése"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:215
-#: lib/widgets/sp-profiler-menu-button.c:118
-msgid "New Process"
-msgstr "Új folyamat"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:472
+msgid ""
+"If disabled, your CPU will be placed in performance mode. It will be "
+"restored after profiling."
+msgstr ""
+"Ha le van tiltva, akkor a CPU teljesítmény-központú módba lesz állítva. "
+"Profilozás után helyre lesz állítva."
 
-#: lib/resources/ui/sp-recording-state-view.ui:22
-msgid "00:00"
-msgstr "00:00"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:493
+msgid "_Record"
+msgstr "_Felvétel"
 
-#: lib/resources/ui/sp-recording-state-view.ui:39
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
 msgid ""
 "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
 msgstr ""
 "Tudta, hogy használhatja a <a href=\"help:sysprof\">sysprof-cli</a> "
 "programot is a rögzítéshez?"
 
-#: lib/sources/sp-perf-source.c:478
-#, c-format
-msgid "Sysprof failed to find field “%s”."
-msgstr "A Sysprofnak nem sikerült megtalálnia a(z) „%s” mezőt."
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:47
+msgid "Events"
+msgstr "Események"
 
-#: lib/sources/sp-perf-source.c:491
-#, c-format
-msgid "Sysprof failed to parse offset for “%s”."
-msgstr "A Sysprofnak nem sikerült feldolgoznia a(z) „%s” eltolást."
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:73
+#| msgctxt "shortcut window"
+#| msgid "Stop recording"
+msgid "_Stop Recording"
+msgstr "Felvétel _leállítása"
 
-#: lib/sources/sp-perf-source.c:555
-#, c-format
-msgid "Sysprof failed to get perf_event ID."
-msgstr "A Sysprofnak nem sikerült lekérnie a perf_event azonosítót."
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+msgid "Instruments"
+msgstr "Műszerek"
 
-#: lib/sources/sp-perf-source.c:664
-#, c-format
-msgid ""
-"Sysprof requires authorization to access your computers performance counters."
-msgstr ""
-"A Sysprofnak jogosultságra van szüksége a számítógép "
-"teljesítményszámlálóinak hozzáféréséhez."
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
+msgid "Select for more details"
+msgstr "További részletekért válassza ki"
 
-#: lib/sources/sp-perf-source.c:669
-#, c-format
-msgid "An error occurred while attempting to access performance counters: %s"
-msgstr ""
-"Hiba történt a teljesítményszámlálókhoz történő hozzáférés kísérlete során: "
-"%s"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+#| msgid "Profile my _entire system"
+msgid "Profile the system"
+msgstr "A rendszer profilozása"
 
-#. Translators: CPU is the processor.
-#: lib/visualizers/sp-visualizer-list.c:294
-msgid "CPU"
-msgstr "CPU"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+#| msgid "Authentication is required to access system performance counters."
+msgid "Authentication is required to profile the system."
+msgstr "Hitelesítés szükséges a rendszer profilozásához."
 
-#: lib/visualizers/sp-visualizer-list.c:309
-msgid "Memory Used"
-msgstr "Használt memória"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:26
+msgid "Open a perf event stream"
+msgstr "Egy perf eseményfolyam megnyitása"
 
-#. Translators: FPS is frames per second.
-#: lib/visualizers/sp-visualizer-list.c:327
-msgid "FPS"
-msgstr "FPS"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:27
+msgid "Authentication is required to access system performance counters."
+msgstr "Hitelesítés szükséges a rendszerteljesítmény számlálók eléréséhez."
 
-#: lib/widgets/sp-profiler-menu-button.c:116
-#: lib/widgets/sp-profiler-menu-button.c:131
-msgid "All Processes"
-msgstr "Minden folyamat"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:37
+msgid "Get a list of kernel symbols and their address"
+msgstr "Rendszermagszimbólumok listájának és azok címének lekérése"
 
-#. Translators: %d is the PID of the process.
-#: lib/widgets/sp-profiler-menu-button.c:138
-#, c-format
-msgid "Process %d"
-msgstr "%d. folyamat"
+#: src/sysprofd/org.gnome.sysprof3.policy.in:38
+msgid "Authentication is required to access Linux kernel information."
+msgstr "Hitelesítés szükséges a Linux rendszermag információinak eléréséhez."
 
-#. Translators: %u is the number (amount) of processes.
-#: lib/widgets/sp-profiler-menu-button.c:144
-#, c-format
-msgid "%u Process"
-msgid_plural "%u Processes"
-msgstr[0] "%u folyamat"
-msgstr[1] "%u folyamat"
-
-#: lib/widgets/sp-profiler-menu-button.c:815
-msgid "The command line arguments provided are invalid"
-msgstr "A megadott parancssori argumentumok érvénytelenek"
-
-#: src/resources/gtk/help-overlay.ui:8
+#: src/sysprof/gtk/help-overlay.ui:8
 msgctxt "shortcut window"
 msgid "Sysprof Shortcuts"
 msgstr "Sysprof gyorsbillentyűk"
 
-#: src/resources/gtk/help-overlay.ui:12
+#: src/sysprof/gtk/help-overlay.ui:12
+#| msgid "All Files"
+msgctxt "shortcut window"
+msgid "Files"
+msgstr "Fájlok"
+
+#: src/sysprof/gtk/help-overlay.ui:16
+#| msgctxt "shortcut window"
+#| msgid "Recording"
+msgctxt "shortcut window"
+msgid "Save Recording"
+msgstr "Felvétel mentése"
+
+#: src/sysprof/gtk/help-overlay.ui:17
+msgctxt "shortcut window"
+msgid "Saves the current recording"
+msgstr "Elmenti a jelenlegi felvételt"
+
+#: src/sysprof/gtk/help-overlay.ui:24
+#| msgctxt "shortcut window"
+#| msgid "Stop recording"
+msgctxt "shortcut window"
+msgid "Open recording"
+msgstr "Felvétel megnyitása"
+
+#: src/sysprof/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Opens a previously saved recording"
+msgstr "Megnyitja az előzőleg mentett felvételt"
+
+#: src/sysprof/gtk/help-overlay.ui:34
 msgctxt "shortcut window"
 msgid "Recording"
 msgstr "Felvétel"
 
-#: src/resources/gtk/help-overlay.ui:16
+#: src/sysprof/gtk/help-overlay.ui:38
+#| msgctxt "shortcut window"
+#| msgid "Recording"
+msgctxt "shortcut window"
+msgid "Record again"
+msgstr "Felvétel ismét"
+
+#: src/sysprof/gtk/help-overlay.ui:39
+#| msgctxt "shortcut window"
+#| msgid "Stop recording"
+msgctxt "shortcut window"
+msgid "Starts a new recording"
+msgstr "Új felvételt indít"
+
+#: src/sysprof/gtk/help-overlay.ui:46
 msgctxt "shortcut window"
 msgid "Stop recording"
 msgstr "Felvétel leállítása"
 
-#: src/resources/gtk/help-overlay.ui:25
+#: src/sysprof/gtk/help-overlay.ui:55
 msgctxt "shortcut window"
 msgid "Callgraph"
 msgstr "Hívási gráf"
 
-#: src/resources/gtk/help-overlay.ui:29
+#: src/sysprof/gtk/help-overlay.ui:59
 msgctxt "shortcut window"
 msgid "Expand function"
 msgstr "Függvény kibontása"
 
-#: src/resources/gtk/help-overlay.ui:30
+#: src/sysprof/gtk/help-overlay.ui:60
 msgctxt "shortcut window"
 msgid "Shows the direct descendants of the callgraph function"
 msgstr "Megjeleníti a függvény közvetlen leszármazottait a hívási gráfban"
 
-#: src/resources/gtk/help-overlay.ui:37
+#: src/sysprof/gtk/help-overlay.ui:67
 msgctxt "shortcut window"
 msgid "Collapse function"
 msgstr "Függvény összecsukása"
 
-#: src/resources/gtk/help-overlay.ui:38
+#: src/sysprof/gtk/help-overlay.ui:68
 msgctxt "shortcut window"
 msgid "Hides all callgraph descendants below the selected function"
 msgstr ""
 "Elrejti a kiválasztott függyvény minden leszármazottját a hívási gráfban"
 
-#: src/resources/gtk/help-overlay.ui:45
+#: src/sysprof/gtk/help-overlay.ui:75
 msgctxt "shortcut window"
 msgid "Jump into function"
 msgstr "Ugrás a függvénybe"
 
-#: src/resources/gtk/help-overlay.ui:46
+#: src/sysprof/gtk/help-overlay.ui:76
 msgctxt "shortcut window"
 msgid "Selects the function or file as the top of the callgraph"
 msgstr "Kiválasztja a függvényt vagy fájlt a hívási gráf csúcsaként"
 
-#: src/resources/gtk/help-overlay.ui:55
+#: src/sysprof/gtk/help-overlay.ui:85
 msgctxt "shortcut window"
 msgid "Visualizers"
 msgstr "Megjelenítők"
 
-#: src/resources/gtk/help-overlay.ui:59
+#: src/sysprof/gtk/help-overlay.ui:89
 msgctxt "shortcut window"
 msgid "Zoom in"
 msgstr "Nagyítás"
 
-#: src/resources/gtk/help-overlay.ui:66
+#: src/sysprof/gtk/help-overlay.ui:96
 msgctxt "shortcut window"
 msgid "Zoom out"
 msgstr "Kicsinyítés"
 
-#: src/resources/gtk/help-overlay.ui:73
+#: src/sysprof/gtk/help-overlay.ui:103
 msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Nagyítás visszaállítása"
 
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:321
-msgid "Not running"
-msgstr "Nem fut"
+#: src/sysprof/gtk/menus.ui:6
+msgid "New Tab"
+msgstr "Új lap"
 
-#. Translators: This is a button.
-#: src/resources/ui/sp-window.ui:44
-msgid "_Record"
-msgstr "_Felvétel"
-
-#. Translators: This is a button.
-#: src/resources/ui/sp-window.ui:118
-msgid "_Close"
-msgstr "_Bezárás"
-
-#. Translators: This is a tooltip.
-#: src/resources/ui/sp-window.ui:212
-msgid "Zoom out (Ctrl+-)"
-msgstr "Kicsinyítés (Ctrl+-)"
-
-#. Translators: This is a tooltip.
-#: src/resources/ui/sp-window.ui:228
-msgid "Reset zoom level (Ctrl+0)"
-msgstr "Nagyítási szint visszállítása (Ctrl+0)"
-
-#. Translators: This is a tooltip.
-#: src/resources/ui/sp-window.ui:242
-msgid "Zoom in (Ctrl++)"
-msgstr "Nagyítás (Ctrl++)"
-
-#. Translators: This is a menu label.
-#: src/resources/ui/sp-window.ui:267
+#: src/sysprof/gtk/menus.ui:11
 msgid "New Window"
 msgstr "Új ablak"
 
-#. Translators: This is a menu label.
-#: src/resources/ui/sp-window.ui:280
-msgctxt "menu label"
-msgid "Open Capture…"
-msgstr "Rögzítés megnyitása…"
+#: src/sysprof/gtk/menus.ui:18
+#| msgid "Recording…"
+msgid "Open Recording…"
+msgstr "Felvétel megnyitása…"
 
-#. Translators: This is a menu label.
-#: src/resources/ui/sp-window.ui:287
-msgid "Save As…"
-msgstr "Mentés másként…"
+#: src/sysprof/gtk/menus.ui:23
+#| msgid "Recording…"
+msgid "Save Recording…"
+msgstr "Felvétel mentése…"
 
-#. Translators: This is a menu label.
-#: src/resources/ui/sp-window.ui:300
-msgid "Screenshot"
-msgstr "Képernyőkép"
+#: src/sysprof/gtk/menus.ui:30
+#| msgctxt "shortcut window"
+#| msgid "Recording"
+msgid "Record Again"
+msgstr "Felvétel ismét"
 
-#. Translators: This is a menu label.
-#: src/resources/ui/sp-window.ui:313
+#: src/sysprof/gtk/menus.ui:37
 msgid "Close"
 msgstr "Bezárás"
 
-#: src/resources/ui/sp-window.ui:326
+#: src/sysprof/gtk/menus.ui:44
 msgid "Keyboard Shortcuts"
 msgstr "Gyorsbillentyűk"
 
-#: src/resources/ui/sp-window.ui:333
+#: src/sysprof/gtk/menus.ui:49
 msgid "Help"
 msgstr "Súgó"
 
-#: src/resources/ui/sp-window.ui:340
+#: src/sysprof/gtk/menus.ui:54
 msgid "About Sysprof"
 msgstr "A Sysprof névjegye"
-
-#: src/sp-application.c:184
-msgid "A system profiler"
-msgstr "Egy rendszerprofilozó"
-
-#: src/sp-application.c:189
-msgid "translator-credits"
-msgstr ""
-"Kelemen Gábor <kelemeng at ubuntu dot com>\n"
-"Meskó Balázs <meskobalazs at gmail dot com>"
-
-#: src/sp-application.c:195
-msgid "Learn more about Sysprof"
-msgstr "Tudjon meg többet a Sysprofról"
-
-#. Translators: %u is the number (amount) of samples.
-#: src/sp-window.c:154
-#, c-format
-msgid "Samples: %u"
-msgstr "Minták: %u"
-
-#: src/sp-window.c:187
-msgid "[Memory Capture]"
-msgstr "[Memóriarögzítés]"
-
-#. Translators: The first %s is a file name, the second is the date and time.
-#: src/sp-window.c:201
-#, c-format
-msgid "%s — %s"
-msgstr "%s – %s"
-
-#: src/sp-window.c:239
-msgid "Not enough samples were collected to generate a callgraph"
-msgstr "Nincs elég begyűjtött minta a hívási gráf generálásához"
-
-#. Translators: This is a button.
-#: src/sp-window.c:313 src/sp-window.c:359
-msgid "Record"
-msgstr "Felvétel"
-
-#. Translators: This is a button.
-#: src/sp-window.c:334
-msgid "Stop"
-msgstr "Leállítás"
-
-#: src/sp-window.c:339
-msgid "Recording…"
-msgstr "Felvétel…"
-
-#: src/sp-window.c:350
-msgid "Building profile…"
-msgstr "Profil összeállítása…"
-
-#. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:456
-msgid "Stopping…"
-msgstr "Leállítás…"
-
-#. Translators: This is a window title.
-#: src/sp-window.c:609
-msgid "Save Capture As…"
-msgstr "Rögzítés mentése másként…"
-
-#. Translators: This is a button.
-#: src/sp-window.c:613
-msgid "Save"
-msgstr "Mentés"
-
-#. Translators: This is a button.
-#: src/sp-window.c:615 src/sp-window.c:1036
-msgid "Cancel"
-msgstr "Mégse"
-
-#. Translators: %s is the error message.
-#: src/sp-window.c:646
-#, c-format
-msgid "An error occurred while attempting to save your capture: %s"
-msgstr "Hiba történt a rögzítés mentési kísérlete során: %s"
-
-#: src/sp-window.c:1002
-#, c-format
-msgid "The file “%s” could not be opened. Only local files are supported."
-msgstr "A(z) „%s” fájl nem nyitható meg. Csak a helyi fájlok támogatottak."
-
-#. Translators: This is a window title.
-#: src/sp-window.c:1030
-msgid "Open Capture…"
-msgstr "Rögzítés megnyitása…"
-
-#. Translators: This is a button.
-#: src/sp-window.c:1034
-msgid "Open"
-msgstr "Megnyitás"
-
-#: src/sp-window.c:1039
-msgid "Sysprof Captures"
-msgstr "Sysprof rögzítések"
-
-#: src/sp-window.c:1044
-msgid "All Files"
-msgstr "Minden fájl"
-
-#: tools/sysprof-cli.c:99
-msgid "Make sysprof specific to a task"
-msgstr "A sysprof egy feladathoz rendelése"
-
-#: tools/sysprof-cli.c:99
-msgid "PID"
-msgstr "PID"
-
-#: tools/sysprof-cli.c:100
-msgid "Run a command and profile the process"
-msgstr "Parancs futtatása, és a folyamat profilozása"
-
-#: tools/sysprof-cli.c:100
-msgid "COMMAND"
-msgstr "PARANCS"
-
-#: tools/sysprof-cli.c:101
-msgid "Force overwrite the capture file"
-msgstr "A rögzítésfájl erőltetett felülírása"
-
-#: tools/sysprof-cli.c:102
-msgid "Disable recording of CPU statistics"
-msgstr "Processzorstatisztikák rögzítésének letiltása"
-
-#: tools/sysprof-cli.c:103
-msgid "Disable recording of memory statistics"
-msgstr "Memóriastatisztikák rögzítésének letiltása"
-
-#: tools/sysprof-cli.c:104
-msgid "Print the sysprof-cli version and exit"
-msgstr "A sysprof-cli verzió kiírása és kilépés"
-
-#: tools/sysprof-cli.c:110
-msgid "[CAPTURE_FILE] — Sysprof"
-msgstr "[RÖGZÍTÉS_FÁJL] – Sysprof"
-
-#: tools/sysprof-cli.c:129
-msgid "Too many arguments were passed to sysprof-cli:"
-msgstr "Túl sok argumentum lett átadva a sysprof-cli-nek:"
-
-#. Translators: %s is a file name.
-#: tools/sysprof-cli.c:170
-#, c-format
-msgid "%s exists. Use --force to overwrite\n"
-msgstr "A(z) %s létezik. Használja a --force kapcsolót a felülíráshoz\n"
-

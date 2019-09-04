@@ -17,7 +17,7 @@ version_split = meson.project_version().split('.')
 datadir = get_option('datadir')
 podir = join_paths(meson.source_root(), 'po')
 
-glib_req_version = '>= 2.62'
+glib_req_version = '>= 2.61.3'
 gtk_req_version = '>= 3.22'
 polkit_req_version = '>= 0.105'
 dazzle_req_version = '>= 3.30.0'

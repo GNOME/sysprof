@@ -1,3 +1,11 @@
+Overview of changes in Sysprof 3.33.92
+======================================
+
+ • Check for GLib 2.61.3 or newer for features used when removing deprecated
+   API usage from GLib.
+ • Require meson 0.50
+ • Translation updates
+
 Overview of changes in Sysprof 3.33.90
 ======================================
 

@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-28\n"
-"POT-Creation-Date: 2019-08-19 13:18+0000\n"
-"PO-Revision-Date: 2019-08-27 12:07+0200\n"
+"POT-Creation-Date: 2019-08-27 10:08+0000\n"
+"PO-Revision-Date: 2019-09-06 16:15+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -97,6 +97,12 @@ msgid ""
 "frequency and therefore does not see every function call executed by the "
 "program."
 msgstr ""
+"Existen dos categorías de software de perfilado, normalmente en función de "
+"si son perfiladores de trazas o de muestras. Un perfilador de trazas en el "
+"se conoce cada llamada a una función que ejecuta el programa. Un perfilador "
+"de muestras funciona inspeccionando el estado de los programas con cierta "
+"frecuencia y por lo tanto no ve cada una de las llamadas a funciones "
+"ejecutadas por el programa."
 
 #. (itstool) path: section/p
 #: C/introduction.page:49
@@ -106,6 +112,9 @@ msgid ""
 "of a tracing profiler, making it easier to use for software that requires "
 "interactivity."
 msgstr ""
+"Ambos tipos de perfiladores tienen sus ventajas. La gran ventaja del "
+"perfilador de muestras es que es más ligero que el de trazas, haciendo que "
+"sea más sencillo de usar en software que requiere interactividad."
 
 #. (itstool) path: section/p
 #: C/introduction.page:54
@@ -127,6 +136,12 @@ msgid ""
 "success by using <app>Sysprof</app> to <link href=\"profiling#new-process-"
 "profiling\">spawn a new process</link>."
 msgstr ""
+"Cuando <app>Sysprof</app> perfila su sistema guarda información apilada "
+"sobre todas las aplicaciones en ejecución, incluyendo el núcleo Linux. Esto "
+"puede ser confuso algunas veces si sólo quiere ver un único proceso. Si su "
+"aplicación no interactúa mucho con el equipo anfitrión puede que resulte "
+"mejor usar <app>Sysprof</app> para <link href=\"profiling#new-process-"
+"profiling\">lanzar un proceso nuevo</link>."
 
 #. (itstool) path: section/p
 #: C/profiling.page:18
@@ -167,6 +182,10 @@ msgid ""
 "<cmd>sysprof-cli</cmd>. This is a command line program that will capture "
 "your profiling session to disk to be viewed at a later time."
 msgstr ""
+"Si considera que la aplicación <app>sysprof</app> se está mostrando en su "
+"gráfico de llamadas de perfilado pued considerar guardar la sesión de "
+"perfilado con <cmd>sysprof-cli</cmd>. Este programa de línea de comandos "
+"guardará su sesión de perfilado en disco para verla posteriormente."
 
 #. (itstool) path: section/p
 #: C/profiling.page:37 C/profiling.page:60
@@ -191,6 +210,12 @@ msgid ""
 "is displayed. Next, select as many processes as you'd like to profile. "
 "Processes selected for profiling will have a checkmark next to their name."
 msgstr ""
+"Con <app>Sysprof</app>, puede perfilar uno o más procesos existentes en su "
+"sistema. Primero, pulse el botón <em>objetivo del perfilado</em> junto al "
+"botón <em>Grabar</em>. Seleccione <em>Proceso existente</em> en la ventana "
+"emergente que se muestra. A continuación seleccione todos los procesos que "
+"quiera perfilar. Los procesos seleccionados tendrán una marca junto a su "
+"nombre."
 
 #. (itstool) path: section/p
 #: C/profiling.page:54
@@ -223,6 +248,10 @@ msgid ""
 "Next, select <em>New Process</em> and fill out the necessary information to "
 "spawn the process."
 msgstr ""
+"A menudo es necesario lanzar un proceso nuevo para perfilarlo. Primero, "
+"pulse el botón <em>objetivo del perfilado</em> junto al botón <em>Grabar</"
+"em>. Luego seleccione <em>Proceso nuevo</em> y complete la información "
+"necesaria para lanzar el proceso."
 
 #. (itstool) path: note/p
 #: C/profiling.page:77
@@ -248,6 +277,11 @@ msgid ""
 "entire system and save the output to <file>capture.syscap</file>. This file "
 "can be opened with the <app>Sysprof</app> application to view the callgraph."
 msgstr ""
+"Para simplificar, puede considerar usar la herramienta de línea de comandos "
+"<cmd>sysprof-cli</cmd>. Cuando se ejecuta sin argumentos perfila el sistema "
+"completo y guarda los resultados en <file>capture.syscap</file>. Este "
+"archivo se puede abrir con la aplicación <app>Sysprof</app> para ver la "
+"lista de llamadas."
 
 #. (itstool) path: section/p
 #: C/profiling.page:95
@@ -319,6 +353,8 @@ msgid ""
 "On the right, are all of the decendants of a selected function. You can "
 "select a function either from the functions list, or the callers list."
 msgstr ""
+"A la derecha están todos los descendientes de la función seleccionada. Puede "
+"elegir una función bien de la fista de funciones o de la lista de llamadas."
 
 #. (itstool) path: section/p
 #: C/profiling.page:129
@@ -348,7 +384,7 @@ msgstr "¿Qué es la pila?"
 #. (itstool) path: section/title
 #: C/faq.page:12
 msgid "What does \"In file [heap]\" mean?"
-msgstr ""
+msgstr "¿Qué significa «en el archivo de pila»?"
 
 #. (itstool) path: section/p
 #: C/faq.page:14
@@ -358,11 +394,15 @@ msgid ""
 "code section (where executable code normally lives.) There are several "
 "possible explanations."
 msgstr ""
+"Esto significa que sysprof cree que se ha llamado a una función desde alguna "
+"parte de la pila del programa (donde <code>malloc</code> reserva memoria) en "
+"lugar de desde la sección del código (donde normalmente está el código "
+"ejecutable). Hay varias explicaciones posibles para esto."
 
 #. (itstool) path: section/title
 #: C/faq.page:22
 msgid "JIT (Just in Time) compilers"
-msgstr ""
+msgstr "Compiladores JIT (Just in time)"
 
 #. (itstool) path: section/p
 #: C/faq.page:24

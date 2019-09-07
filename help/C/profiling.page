@@ -3,6 +3,8 @@
       type="topic"
       id="profiling">
 
+    <title>Profiling</title>
+
   <section id="system-profiling">
     <info>
       <link type="guide" xref="index#profiling"/>

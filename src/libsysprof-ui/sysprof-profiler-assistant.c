@@ -20,6 +20,10 @@
 
 #define G_LOG_DOMAIN "sysprof-profiler-assistant"
 
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
+
 #include "config.h"
 
 #include <sysprof.h>
@@ -28,6 +32,7 @@
 
 #include "sysprof-aid-icon.h"
 #include "sysprof-environ-editor.h"
+#include "sysprof-model-filter.h"
 #include "sysprof-profiler-assistant.h"
 #include "sysprof-process-model-row.h"
 #include "sysprof-ui-private.h"
@@ -44,10 +49,13 @@ struct _SysprofProfilerAssistant
 {
   GtkBin                parent_instance;
 
+  SysprofProcessModel  *process_model;
+
   /* Template Objects */
   GtkSwitch            *allow_throttling;
   GtkButton            *record_button;
   GtkEntry             *command_line;
+  GtkSearchEntry       *search_entry;
   GtkRevealer          *process_revealer;
   GtkListBox           *process_list_box;
   SysprofEnvironEditor *environ_editor;
@@ -112,16 +120,14 @@ sysprof_profiler_assistant_notify_reveal_child_cb (SysprofProfilerAssistant *sel
   g_assert (SYSPROF_IS_PROFILER_ASSISTANT (self));
   g_assert (GTK_IS_REVEALER (revealer));
 
-  if (gtk_revealer_get_reveal_child (revealer))
+  if (self->process_model == NULL)
     {
-      g_autoptr(SysprofProcessModel) model = NULL;
-
-      model = sysprof_process_model_new ();
+      self->process_model = sysprof_process_model_new ();
       gtk_list_box_bind_model (self->process_list_box,
-                               G_LIST_MODEL (model),
+                               G_LIST_MODEL (self->process_model),
                                create_process_row_cb,
                                NULL, NULL);
-      sysprof_process_model_reload (model);
+      sysprof_process_model_reload (self->process_model);
     }
 }
 
@@ -271,10 +277,90 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
   g_signal_emit (self, signals [START_RECORDING], 0, profiler);
 }
 
+static gboolean
+filter_by_search_text (GObject  *object,
+                       gpointer  user_data)
+{
+  SysprofProcessModelItem *item = SYSPROF_PROCESS_MODEL_ITEM (object);
+  const gchar *haystack;
+  const gchar * const *argv;
+  const gchar *text = user_data;
+
+  haystack = sysprof_process_model_item_get_command_line (item);
+
+  if (haystack)
+    {
+      if (strcasestr (haystack, text) != NULL)
+        return TRUE;
+    }
+
+  argv = sysprof_process_model_item_get_argv (item);
+
+  if (argv)
+    {
+      for (guint i = 0; argv[i]; i++)
+        {
+          if (strcasestr (argv[i], text) != NULL)
+            return TRUE;
+        }
+    }
+
+  return FALSE;
+}
+
+static void
+sysprof_profiler_assistant_search_changed_cb (SysprofProfilerAssistant *self,
+                                              GtkSearchEntry           *search_entry)
+{
+  g_autoptr(SysprofModelFilter) filter = NULL;
+  const gchar *text;
+
+  g_assert (SYSPROF_IS_PROFILER_ASSISTANT (self));
+  g_assert (GTK_IS_SEARCH_ENTRY (search_entry));
+
+  if (self->process_model == NULL)
+    return;
+
+  sysprof_process_model_queue_reload (self->process_model);
+
+  text = gtk_entry_get_text (GTK_ENTRY (search_entry));
+
+  if (text[0] == 0)
+    {
+      gtk_list_box_bind_model (self->process_list_box,
+                               G_LIST_MODEL (self->process_model),
+                               create_process_row_cb,
+                               NULL, NULL);
+      return;
+    }
+
+  filter = sysprof_model_filter_new (G_LIST_MODEL (self->process_model));
+  sysprof_model_filter_set_filter_func (filter,
+                                        filter_by_search_text,
+                                        g_strdup (text),
+                                        g_free);
+  gtk_list_box_bind_model (self->process_list_box,
+                           G_LIST_MODEL (filter),
+                           create_process_row_cb,
+                           NULL, NULL);
+}
+
+static void
+sysprof_profiler_assistant_destroy (GtkWidget *widget)
+{
+  SysprofProfilerAssistant *self = (SysprofProfilerAssistant *)widget;
+
+  g_clear_object (&self->process_model);
+
+  GTK_WIDGET_CLASS (sysprof_profiler_assistant_parent_class)->destroy (widget);
+}
+
 static void
 sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+
+  widget_class->destroy = sysprof_profiler_assistant_destroy;
 
   /**
    * SysprofProfilerAssistant::start-recording:
@@ -302,6 +388,7 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, whole_system_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, launch_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, inherit_switch);
+  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, search_entry);
 
   g_type_ensure (SYSPROF_TYPE_AID_ICON);
   g_type_ensure (SYSPROF_TYPE_BATTERY_AID);
@@ -349,6 +436,12 @@ sysprof_profiler_assistant_init (SysprofProfilerAssistant *self)
   g_signal_connect_object (self->aid_flow_box,
                            "child-activated",
                            G_CALLBACK (sysprof_profiler_assistant_aid_activated_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (self->search_entry,
+                           "changed",
+                           G_CALLBACK (sysprof_profiler_assistant_search_changed_cb),
                            self,
                            G_CONNECT_SWAPPED);
 

@@ -245,7 +245,7 @@
                               <class name="linked"/>
                             </style>
                             <child>
-                              <object class="GtkSearchEntry">
+                              <object class="GtkSearchEntry" id="search_entry">
                                 <property name="placeholder-text" translatable="yes">Search Processes…</property>
                                 <property name="visible">true</property>
                               </object>

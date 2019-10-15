@@ -25,11 +25,18 @@ ipc_legacy_src = gnome.gdbus_codegen('ipc-legacy',
          namespace: 'IpcLegacy',
 )
 
-install_data(['org.gnome.Sysprof3.Profiler.xml',
-              'org.gnome.Sysprof3.Service.xml',
-              'org.gnome.Sysprof2.xml'],
-  install_dir: join_paths(datadir, 'dbus-1/interfaces'),
-)
+if get_option('with_sysprofd') == 'bundled'
+  install_data(['org.gnome.Sysprof3.Service.xml',
+                'org.gnome.Sysprof2.xml'],
+    install_dir: join_paths(datadir, 'dbus-1/interfaces'),
+  )
+endif
+
+if get_option('libsysprof')
+  install_data(['org.gnome.Sysprof3.Profiler.xml'],
+    install_dir: join_paths(datadir, 'dbus-1/interfaces'),
+  )
+endif
 
 ipc_include_dirs = include_directories('.')
 

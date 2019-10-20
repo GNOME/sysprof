@@ -6,8 +6,8 @@
 msgid ""
 msgstr "Project-Id-Version: sysprof sysprof-3-30\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2019-03-11 18:25+0000\n"
-"PO-Revision-Date: 2019-05-28 10:00+0100\n"
+"POT-Creation-Date: 2019-10-19 12:37+0000\n"
+"PO-Revision-Date: 2019-10-20 10:00+0100\n"
 "Last-Translator: Asier Sarasua Garmendia <asier.sarasua@gmail.com>\n"
 "Language-Team: Basque <librezale@librezale.eus>\n"
 "Language: eu\n"
@@ -16,508 +16,482 @@ msgstr "Project-Id-Version: sysprof sysprof-3-30\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: data/org.gnome.Sysprof2.appdata.xml.in:5
-#: data/org.gnome.Sysprof2.desktop.in:4 src/resources/ui/sp-window.ui:12
-#: src/resources/ui/sp-window.ui:20 src/sp-application.c:181
-#: src/sp-application.c:328
+#: data/org.gnome.Sysprof3.appdata.xml.in:5
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/ui/sysprof-window.ui:12
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof2.appdata.xml.in:6
-msgid "Profiler for an application or entire system"
-msgstr "Aplikazio baterako edo sistema osorako profilatzailea"
+#: data/org.gnome.Sysprof3.appdata.xml.in:6
+msgid "Profile an application or entire system"
+msgstr "Profilatu aplikazio bat edo sistema oso bat"
 
-#: data/org.gnome.Sysprof2.appdata.xml.in:9
+#: data/org.gnome.Sysprof3.appdata.xml.in:9
 msgid "The GNOME Foundation"
 msgstr "GNOME fundazioa"
 
-#: data/org.gnome.Sysprof2.appdata.xml.in:12
+#: data/org.gnome.Sysprof3.appdata.xml.in:12
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr "Aplikazioak profilatzea ahalbidetzen du arazketan eta optimizazioetan laguntzeko."
 
-#: data/org.gnome.Sysprof2.desktop.in:5
+#: data/org.gnome.Sysprof3.desktop.in:5
 msgid "Profiler"
 msgstr "Profilatzailea"
 
-#: data/org.gnome.Sysprof2.desktop.in:6
+#: data/org.gnome.Sysprof3.desktop.in:6
 msgid "Profile an application or entire system."
 msgstr "Profilatu aplikazio bat edo sistema oso bat."
 
-#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: data/org.gnome.Sysprof2.desktop.in:10
-msgid "sysprof"
-msgstr "sysprof"
-
-#: data/org.gnome.sysprof2.gschema.xml:5
+#: data/org.gnome.sysprof3.gschema.xml:5
 msgid "Window size"
 msgstr "Leihoaren tamaina"
 
-#: data/org.gnome.sysprof2.gschema.xml:6
+#: data/org.gnome.sysprof3.gschema.xml:6
 msgid "Window size (width and height)."
 msgstr "Leihoaren tamaina (zabalera eta altuera)."
 
-#: data/org.gnome.sysprof2.gschema.xml:10
+#: data/org.gnome.sysprof3.gschema.xml:10
 msgid "Window position"
 msgstr "Leihoaren posizioa"
 
-#: data/org.gnome.sysprof2.gschema.xml:11
+#: data/org.gnome.sysprof3.gschema.xml:11
 msgid "Window position (x and y)."
 msgstr "Leihoaren posizioa (x eta y)."
 
-#: data/org.gnome.sysprof2.gschema.xml:15
+#: data/org.gnome.sysprof3.gschema.xml:15
 msgid "Window maximized"
 msgstr "Leihoa maximizatuta"
 
-#: data/org.gnome.sysprof2.gschema.xml:16
+#: data/org.gnome.sysprof3.gschema.xml:16
 msgid "Window maximized state"
 msgstr "Leiho maximizatuaren egoera"
 
-#: data/org.gnome.sysprof2.gschema.xml:20
+#: data/org.gnome.sysprof3.gschema.xml:20
 msgid "Last Spawn Program"
 msgstr "Abiarazitako azken programa"
 
-#: data/org.gnome.sysprof2.gschema.xml:21
+#: data/org.gnome.sysprof3.gschema.xml:21
 msgid ""
 "The last spawned program, which will be set in the UI upon restart of the "
 "application."
-msgstr ""
+msgstr "Abiarazitako azken programa, erabiltzaile-interfazean ezarriko dena aplikazioa berrabiarazi ondoren."
 
-#: data/org.gnome.sysprof2.gschema.xml:25
+#: data/org.gnome.sysprof3.gschema.xml:25
 msgid "Last Spawn Inherit Environment"
-msgstr ""
+msgstr "Abiarazitako azken ingurunea heredatua"
 
-#: data/org.gnome.sysprof2.gschema.xml:26
+#: data/org.gnome.sysprof3.gschema.xml:26
 msgid "If the last spawned environment inherits the parent environment."
-msgstr ""
+msgstr "Abiarazitako azken inguruneak ingurune gurasoa heredatzen duen ala ez"
 
-#: data/org.gnome.sysprof2.gschema.xml:30
+#: data/org.gnome.sysprof3.gschema.xml:30
 msgid "Last Spawn Environment"
-msgstr ""
+msgstr "Abiarazitako azken ingurunea"
 
-#: data/org.gnome.sysprof2.gschema.xml:31
+#: data/org.gnome.sysprof3.gschema.xml:31
 msgid ""
 "The last spawned environment, which will be set in the UI upon restart of "
 "the application."
-msgstr ""
+msgstr "Abiarazitako azken ingurunea, erabiltzaile-interfazean ezarriko dena aplikazioa berrabiarazi ondoren."
 
-#: data/org.gnome.sysprof2.policy.in:13
-msgid "Open a perf event stream"
-msgstr ""
-
-#: data/org.gnome.sysprof2.policy.in:14
-msgid "Authentication is required to access system performance counters."
-msgstr ""
-
-#: data/org.gnome.sysprof2.policy.in:24
-msgid "Get a list of kernel symbols and their address"
-msgstr ""
-
-#: data/org.gnome.sysprof2.policy.in:25
-msgid "Authentication is required to access Linux kernel information."
-msgstr ""
-
-#: lib/callgraph/sp-callgraph-profile.c:426
-msgid "Sysprof was unable to generate a callgraph from the system capture."
-msgstr ""
-
-#: lib/resources/ui/sp-callgraph-view.ui:24
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:27
 msgid "Functions"
 msgstr "Funtzioak"
 
-#: lib/resources/ui/sp-callgraph-view.ui:40
-#: lib/resources/ui/sp-callgraph-view.ui:101
-#: lib/resources/ui/sp-callgraph-view.ui:156
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:43
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:104
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:159
 msgid "Self"
 msgstr "Norberarena"
 
-#: lib/resources/ui/sp-callgraph-view.ui:56
-#: lib/resources/ui/sp-callgraph-view.ui:117
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:59
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:120
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:175
 msgid "Total"
 msgstr "Guztira"
 
-#: lib/resources/ui/sp-callgraph-view.ui:85
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:88
 msgid "Callers"
 msgstr "Deitzaileak"
 
-#: lib/resources/ui/sp-callgraph-view.ui:148
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:151
 msgid "Descendants"
 msgstr "Ondorengoak"
 
-#: lib/resources/ui/sp-callgraph-view.ui:172
-msgid "Cumulative"
-msgstr "Metakorra"
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:190
+#: src/libsysprof-ui/sysprof-details-page.ui:295
+msgid "Hits"
+msgstr "Bisitak"
 
-#: lib/resources/ui/sp-empty-state-view.ui:22
-msgid "Welcome to Sysprof"
-msgstr "Ongi egorri Sysprof-era"
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:213
+msgid "Generating Callgraph"
+msgstr "Dei-grafoa sortzen"
 
-#: lib/resources/ui/sp-empty-state-view.ui:39
-msgid "Start profiling your system with the <b>Record</b> button above"
-msgstr "Hasi zure sistema profilatzen goiko <b>Grabatu</b> botoiarekin"
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:214
+msgid "Sysprof is busy creating the selected callgraph."
+msgstr "Sysprof hautatutako dei-grafoa sortzen ari da."
 
-#: lib/resources/ui/sp-failed-state-view.ui:22
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:224
+msgid "Not Enough Samples"
+msgstr "Ez dago nahikoa laginik"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:225
+msgid "More samples are necessary to display a callgraph."
+msgstr "Lagin gehiago behar dira dei-grafo bat bistaratzeko."
+
+#: src/libsysprof-ui/sysprof-details-page.ui:21
+msgid "Filename"
+msgstr "Fitxategia"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:35
+msgid "Captured at"
+msgstr "Hemen kapturatua:"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:50
+#: src/libsysprof-ui/sysprof-marks-page.ui:81
+#: src/libsysprof-ui/sysprof-marks-page.ui:191
+msgid "Duration"
+msgstr "Iraupena"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:65
+msgid "CPU Model"
+msgstr "PUZ eredua"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:80
+msgid "Samples Captured"
+msgstr "Kapturatutako laginak"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:94
+msgid "Marks Captured"
+msgstr "Kapturatutako markak"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:108
+msgid "Processes Captured"
+msgstr "Kapturatutako prozesuak"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:122
+msgid "Forks Captured"
+msgstr "Kapturatutako sardexkak"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:137
+msgid "Counters Captured"
+msgstr "Kapturatutako zenbatzaileak"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:282
+#: src/libsysprof-ui/sysprof-marks-page.ui:52
+msgid "Mark"
+msgstr "Markatu"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:308
+msgid "Min"
+msgstr "Min"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:321
+msgid "Max"
+msgstr "Max"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:334
+msgid "Avg"
+msgstr "Batezbestekoa"
+
+#: src/libsysprof-ui/sysprof-display.ui:49
+#: src/libsysprof-ui/sysprof-marks-page.ui:19
+msgid "Details"
+msgstr "Xehetasunak"
+
+#: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
+msgid "Remove environment variable"
+msgstr "Kendu inguruneko aldagaia"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:22
 msgid "Ouch, that hurt!"
 msgstr "Horrek min ematen du!"
 
-#: lib/resources/ui/sp-failed-state-view.ui:39
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:39
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr "Zerbait gaizki joan da zure sistema profilatzen saiatzean."
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:58
-msgid "Profile my _entire system"
-msgstr "Profilatu nire sistema _osoa"
+#: src/libsysprof-ui/sysprof-logs-page.ui:15
+#: src/libsysprof-ui/sysprof-marks-page.ui:67
+msgid "Time"
+msgstr "Ordua"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:95
-msgid "Search"
-msgstr "Bilatu"
+#: src/libsysprof-ui/sysprof-logs-page.ui:29
+msgid "Severity"
+msgstr "Larritasuna"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:121
-msgid "Existing Process"
-msgstr "Dagoen prozesua"
+#: src/libsysprof-ui/sysprof-logs-page.ui:44
+msgid "Domain"
+msgstr "Domeinua"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:131
-msgid "Command Line"
-msgstr "Komando-lerroa"
+#: src/libsysprof-ui/sysprof-logs-page.ui:58
+#: src/libsysprof-ui/sysprof-marks-page.ui:95
+msgid "Message"
+msgstr "Mezua"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:150
-msgid "Environment"
-msgstr "Ingurunea"
+#: src/libsysprof-ui/sysprof-marks-page.ui:38
+msgid "Group"
+msgstr "Taldea"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:164
-msgid "Inherit current environment"
-msgstr "Heredatu uneko ingurunea"
+#: src/libsysprof-ui/sysprof-marks-page.ui:221
+msgid "No Timings Available"
+msgstr "Ez dago tenporizaziorik erabilgarri"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:182
-msgid "Key"
-msgstr "Gakoa"
+#: src/libsysprof-ui/sysprof-marks-page.ui:222
+msgid "No timing data was found for the current selection"
+msgstr "Ez da tenporizazio-daturik aurkitu uneko hautapenean"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:197
-msgid "Value"
-msgstr "Balioa"
+#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:14
+msgid "GNOME Shell"
+msgstr "GNOME Shell"
 
-#: lib/resources/ui/sp-profiler-menu-button.ui:215
-#: lib/widgets/sp-profiler-menu-button.c:118
-msgid "New Process"
-msgstr "Prozesu berria"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:80
+msgid "Profilers"
+msgstr "Profilatzaileak"
 
-#: lib/resources/ui/sp-recording-state-view.ui:22
-msgid "00:00"
-msgstr "00:00"
-
-#: lib/resources/ui/sp-recording-state-view.ui:39
-msgid ""
-"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
-msgstr ""
-
-#: lib/sources/sp-perf-source.c:478
-#, c-format
-msgid "Sysprof failed to find field “%s”."
-msgstr ""
-
-#: lib/sources/sp-perf-source.c:491
-#, c-format
-msgid "Sysprof failed to parse offset for “%s”."
-msgstr ""
-
-#: lib/sources/sp-perf-source.c:555
-#, c-format
-msgid "Sysprof failed to get perf_event ID."
-msgstr ""
-
-#: lib/sources/sp-perf-source.c:664
-#, c-format
-msgid ""
-"Sysprof requires authorization to access your computers performance counters."
-msgstr ""
-
-#: lib/sources/sp-perf-source.c:669
-#, c-format
-msgid "An error occurred while attempting to access performance counters: %s"
-msgstr ""
-
-#: lib/visualizers/sp-visualizer-list.c:275
-msgid "CPU"
-msgstr "PUZ"
-
-#: lib/visualizers/sp-visualizer-list.c:289
-msgid "FPS"
-msgstr "FPS"
-
-#: lib/widgets/sp-profiler-menu-button.c:116
-#: lib/widgets/sp-profiler-menu-button.c:131
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:191
 msgid "All Processes"
 msgstr "Prozesu guztiak"
 
-#: lib/widgets/sp-profiler-menu-button.c:137
-#, c-format
-msgid "Process %d"
-msgstr "%d prozesua"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:221
+msgid ""
+"Include all applications and operating system kernel in callgraph. This may "
+"not be possible on some system system configurations."
+msgstr "Sartu dei-grafoan aplikazio guztiak eta sistema eragileko kernela. Beharbada ez da posible hori egitea zenbait sistematako konfigurazioen ondorioz."
 
-#: lib/widgets/sp-profiler-menu-button.c:142
-#, c-format
-msgid "%u Process"
-msgid_plural "%u Processes"
-msgstr[0] "Prozesu %u"
-msgstr[1] "%u prozesu"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:249
+msgid "Search Processes…"
+msgstr "Bilatu prozesuak…"
 
-#: lib/widgets/sp-profiler-menu-button.c:813
-msgid "The command line arguments provided are invalid"
-msgstr "Emandako komando-lerroko argumentuak baliogabeak dira"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
+msgid "Loading Processes…"
+msgstr "Prozesuak kargatzen…"
 
-#: src/resources/gtk/help-overlay.ui:8
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:292
+msgid "Launch Application"
+msgstr "Abiarazi aplikazioa"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:321
+msgid "Enable to launch a program of your choosing before profiling."
+msgstr "Gaitu aukerako programa bat abiaraztea profilatzea hasi baino lehen."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:349
+msgid "Command Line"
+msgstr "Komando-lerroa"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
+msgid "Environment"
+msgstr "Ingurunea"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:394
+msgid "Inherit Environment"
+msgstr "Heredatu ingurunea"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:418
+msgid ""
+"Enable to ensure your application shares the display, message-bus, and other "
+"desktop environment settings."
+msgstr "Gaitu zure aplikazioak bistaratzea, mezu-busa eta mahaigaineko beste ingurune-ezarpen batzuk partekatzen dituela."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:444
+msgid "Allow CPU Throttling"
+msgstr "Onartu PUZa bizkortzea"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:472
+msgid ""
+"If disabled, your CPU will be placed in performance mode. It will be "
+"restored after profiling."
+msgstr "Desgaituta badago, zure PUZa performantzia moduan kokatuko da. Profilatzearen ondoren leheneratuko da."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:493
+msgid "_Record"
+msgstr "_Grabatu"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr "Ba al zenekien <a href=\"help:sysprof\">sysprof-cli</a> erabili dezakezula grabatzeko?"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:47
+msgid "Events"
+msgstr "Gertaerak"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:73
+msgid "_Stop Recording"
+msgstr "_Utzi grabatzeari"
+
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+msgid "Instruments"
+msgstr "Tresnak"
+
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
+msgid "Select for more details"
+msgstr "Hautatu xehetasun gehiagorako"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Profilatu sistema"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Autentifikazioa behar da sistema profilatzeko."
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:26
+msgid "Open a perf event stream"
+msgstr "Ireki performantzia-gertaera baten korrontea"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:27
+msgid "Authentication is required to access system performance counters."
+msgstr "Autentifikazioa behar da sistemaren performantzia-zenbatzaileak atzitzeko."
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:37
+msgid "Get a list of kernel symbols and their address"
+msgstr "Eskuratu kernel-ikurren eta haien helbideen zerrenda bat"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:38
+msgid "Authentication is required to access Linux kernel information."
+msgstr "Autentifikazioa behar da Linux kernelaren informazioa atzitzeko."
+
+#: src/sysprof/gtk/help-overlay.ui:8
 msgctxt "shortcut window"
 msgid "Sysprof Shortcuts"
 msgstr "Sysprof lasterbideak"
 
-#: src/resources/gtk/help-overlay.ui:12
+#: src/sysprof/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Files"
+msgstr "Fitxategiak"
+
+#: src/sysprof/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Save Recording"
+msgstr "Gorde grabazioa"
+
+#: src/sysprof/gtk/help-overlay.ui:17
+msgctxt "shortcut window"
+msgid "Saves the current recording"
+msgstr "Uneko grabazioa gordetzen du"
+
+#: src/sysprof/gtk/help-overlay.ui:24
+msgctxt "shortcut window"
+msgid "Open recording"
+msgstr "Ireki grabazioa"
+
+#: src/sysprof/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Opens a previously saved recording"
+msgstr "Gordetako grabazio bat irekitzen du"
+
+#: src/sysprof/gtk/help-overlay.ui:34
 msgctxt "shortcut window"
 msgid "Recording"
 msgstr "Grabazioa"
 
-#: src/resources/gtk/help-overlay.ui:16
+#: src/sysprof/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Record again"
+msgstr "Grabatu berriro"
+
+#: src/sysprof/gtk/help-overlay.ui:39
+msgctxt "shortcut window"
+msgid "Starts a new recording"
+msgstr "Grabazio berri bati ekiten dio"
+
+#: src/sysprof/gtk/help-overlay.ui:46
 msgctxt "shortcut window"
 msgid "Stop recording"
 msgstr "Utzi grabatzeari"
 
-#: src/resources/gtk/help-overlay.ui:25
+#: src/sysprof/gtk/help-overlay.ui:55
 msgctxt "shortcut window"
 msgid "Callgraph"
-msgstr ""
+msgstr "Dei-grafoa"
 
-#: src/resources/gtk/help-overlay.ui:29
+#: src/sysprof/gtk/help-overlay.ui:59
 msgctxt "shortcut window"
 msgid "Expand function"
 msgstr "Zabaldu funtzioa"
 
-#: src/resources/gtk/help-overlay.ui:30
+#: src/sysprof/gtk/help-overlay.ui:60
 msgctxt "shortcut window"
 msgid "Shows the direct descendants of the callgraph function"
-msgstr ""
+msgstr "Dei-grafoaren funtzioaren ondorengo zuzenak erakusten ditu"
 
-#: src/resources/gtk/help-overlay.ui:37
+#: src/sysprof/gtk/help-overlay.ui:67
 msgctxt "shortcut window"
 msgid "Collapse function"
 msgstr "Tolestu funtzioa"
 
-#: src/resources/gtk/help-overlay.ui:38
+#: src/sysprof/gtk/help-overlay.ui:68
 msgctxt "shortcut window"
 msgid "Hides all callgraph descendants below the selected function"
-msgstr ""
+msgstr "Dei-grafoaren ondorengo guztiak ezkutatzen ditu hautatutako funtzioaren azpian"
 
-#: src/resources/gtk/help-overlay.ui:45
+#: src/sysprof/gtk/help-overlay.ui:75
 msgctxt "shortcut window"
 msgid "Jump into function"
 msgstr "Joan funtziora"
 
-#: src/resources/gtk/help-overlay.ui:46
+#: src/sysprof/gtk/help-overlay.ui:76
 msgctxt "shortcut window"
 msgid "Selects the function or file as the top of the callgraph"
-msgstr ""
+msgstr "Funtzioa edo fitxategia dei-grafoaren goiko alde gisa hautatzen du"
 
-#: src/resources/gtk/help-overlay.ui:55
+#: src/sysprof/gtk/help-overlay.ui:85
 msgctxt "shortcut window"
 msgid "Visualizers"
-msgstr ""
+msgstr "Bistaratzaileak"
 
-#: src/resources/gtk/help-overlay.ui:59
+#: src/sysprof/gtk/help-overlay.ui:89
 msgctxt "shortcut window"
 msgid "Zoom in"
 msgstr "Handiagotu"
 
-#: src/resources/gtk/help-overlay.ui:66
+#: src/sysprof/gtk/help-overlay.ui:96
 msgctxt "shortcut window"
 msgid "Zoom out"
 msgstr "Txikiagotu"
 
-#: src/resources/gtk/help-overlay.ui:73
+#: src/sysprof/gtk/help-overlay.ui:103
 msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Berrezarri zooma"
 
-#: src/resources/gtk/menus.ui:6
-msgid "_New Window"
+#: src/sysprof/gtk/menus.ui:6
+msgid "New Tab"
+msgstr "Fitxa berria"
+
+#: src/sysprof/gtk/menus.ui:11
+msgid "New Window"
 msgstr "_Leiho berria"
 
-#: src/resources/gtk/menus.ui:12
-msgid "_Open Capture"
-msgstr "_Ireki Capture"
+#: src/sysprof/gtk/menus.ui:18
+msgid "Open Recording…"
+msgstr "Ireki grabazioa…"
 
-#: src/resources/gtk/menus.ui:18
-msgid "About"
-msgstr "Honi buruz"
+#: src/sysprof/gtk/menus.ui:23
+msgid "Save Recording…"
+msgstr "Gorde grabazioa…"
 
-#: src/resources/gtk/menus.ui:22
-msgid "Help"
-msgstr "Laguntza"
+#: src/sysprof/gtk/menus.ui:30
+msgid "Record Again"
+msgstr "Grabatu berriro"
 
-#: src/resources/gtk/menus.ui:26
-msgid "Keyboard Shortcuts"
-msgstr "Laster-teklak"
-
-#: src/resources/gtk/menus.ui:30
-msgid "_Quit"
-msgstr "I_rten"
-
-#: src/resources/ui/sp-window.ui:30 src/sp-window.c:314
-msgid "Not running"
-msgstr "Ez dago exekutatzen"
-
-#: src/resources/ui/sp-window.ui:44
-msgid "_Record"
-msgstr "_Grabatu"
-
-#: src/resources/ui/sp-window.ui:118
-msgid "_Close"
-msgstr "_Itxi"
-
-#: src/resources/ui/sp-window.ui:212
-msgid "Zoom out (Ctrl+-)"
-msgstr "Txikiagotu (Ctrl+-)"
-
-#: src/resources/ui/sp-window.ui:228
-msgid "Reset zoom level (Ctrl+0)"
-msgstr "Berrezarri zoom maila (Ctrl+0)"
-
-#: src/resources/ui/sp-window.ui:242
-msgid "Zoom in (Ctrl++)"
-msgstr "Handiagotu (Ctrl++)"
-
-#: src/resources/ui/sp-window.ui:267 src/sp-window.c:1011
-msgid "Open"
-msgstr "Ireki"
-
-#: src/resources/ui/sp-window.ui:274
-msgid "Save As"
-msgstr "Gorde honela"
-
-#: src/resources/ui/sp-window.ui:287
-msgid "Screenshot"
-msgstr "Pantaila-argazkia"
-
-#: src/resources/ui/sp-window.ui:300
+#: src/sysprof/gtk/menus.ui:37
 msgid "Close"
 msgstr "Itxi"
 
-#: src/sp-application.c:173
-msgid "A system profiler"
-msgstr "Sistemaren profilatzaile bat"
+#: src/sysprof/gtk/menus.ui:44
+msgid "Keyboard Shortcuts"
+msgstr "Laster-teklak"
 
-#: src/sp-application.c:178
-msgid "translator-credits"
-msgstr "Asier Sarasua Garmendia <asier.sarasua@gmail.com>"
+#: src/sysprof/gtk/menus.ui:49
+msgid "Help"
+msgstr "Laguntza"
 
-#: src/sp-application.c:184
-msgid "Learn more about Sysprof"
-msgstr "Ikasi gehiago Sysprof-i buruz"
+#: src/sysprof/gtk/menus.ui:54
+msgid "About Sysprof"
+msgstr "Sysprof aplikazioari buruz"
 
-#: src/sp-window.c:149
-#, c-format
-msgid "Samples: %u"
-msgstr "Laginak: %u"
-
-#: src/sp-window.c:182
-msgid "[Memory Capture]"
-msgstr ""
-
-#: src/sp-window.c:195
-#, c-format
-msgid "%s — %s"
-msgstr "%s — %s"
-
-#: src/sp-window.c:233
-msgid "Not enough samples were collected to generate a callgraph"
-msgstr ""
-
-#: src/sp-window.c:306 src/sp-window.c:350
-msgid "Record"
-msgstr "Grabatu"
-
-#: src/sp-window.c:326
-msgid "Stop"
-msgstr "Gelditu"
-
-#: src/sp-window.c:331
-msgid "Recording…"
-msgstr "Grabatzen…"
-
-#: src/sp-window.c:342
-msgid "Building profile…"
-msgstr "Profila eraikitzen..."
-
-#. SpProfiler::stopped will move us to generating
-#: src/sp-window.c:443
-msgid "Stopping…"
-msgstr "Gelditzen..."
-
-#: src/sp-window.c:595
-msgid "Save Capture As"
-msgstr "Gorde kaptura honela"
-
-#: src/sp-window.c:598
-msgid "Save"
-msgstr "Gorde"
-
-#: src/sp-window.c:599 src/sp-window.c:1012
-msgid "Cancel"
-msgstr "Utzi"
-
-#: src/sp-window.c:629
-#, c-format
-msgid "An error occurred while attempting to save your capture: %s"
-msgstr "Errorea gertatu du zure kaptura gordetzean: %s"
-
-#: src/sp-window.c:981
-#, c-format
-msgid "The file “%s” could not be opened. Only local files are supported."
-msgstr "“%s” ezin izan da ireki. Fitxategi lokalak soilik onartzen dira."
-
-#: src/sp-window.c:1008
-msgid "Open Capture"
-msgstr "Ireki kaptura"
-
-#: src/sp-window.c:1015
-msgid "Sysprof Captures"
-msgstr "Sysprof Captures"
-
-#: src/sp-window.c:1020
-msgid "All Files"
-msgstr "Fitxategi guztiak"
-
-#: tools/sysprof-cli.c:97
-msgid "Make sysprof specific to a task"
-msgstr ""
-
-#: tools/sysprof-cli.c:97
-msgid "PID"
-msgstr "PIDa"
-
-#: tools/sysprof-cli.c:98
-msgid "Run a command and profile the process"
-msgstr "Exekutatu komando bat eta profilatu prozesua"
-
-#: tools/sysprof-cli.c:98
-msgid "COMMAND"
-msgstr "KOMANDOA"
-
-#: tools/sysprof-cli.c:99
-msgid "Force overwrite the capture file"
-msgstr "Behartu kaptura-fitxategia gainidaztea"
-
-#: tools/sysprof-cli.c:100
-msgid "Print the sysprof-cli version and exit"
-msgstr "Inprimatu sysprof-cli bertsioa eta irten"
-
-#: tools/sysprof-cli.c:106
-msgid "[CAPTURE_FILE] — Sysprof"
-msgstr ""
-
-#: tools/sysprof-cli.c:125
-msgid "Too many arguments were passed to sysprof-cli:"
-msgstr ""
-
-#: tools/sysprof-cli.c:165
-#, c-format
-msgid "%s exists. Use --force to overwrite\n"
-msgstr ""

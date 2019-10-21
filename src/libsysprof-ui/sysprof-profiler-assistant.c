@@ -235,7 +235,7 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
     {
       g_auto(GStrv) argv = NULL;
       g_auto(GStrv) env = NULL;
-      SysprofEnviron *environ;
+      SysprofEnviron *environ_;
       const gchar *command;
       gint argc;
 
@@ -245,8 +245,8 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
       sysprof_profiler_set_spawn (profiler, TRUE);
       sysprof_profiler_set_spawn_argv (profiler, (const gchar * const *)argv);
 
-      environ = sysprof_environ_editor_get_environ (self->environ_editor);
-      env = sysprof_environ_get_environ (environ);
+      environ_ = sysprof_environ_editor_get_environ (self->environ_editor);
+      env = sysprof_environ_get_environ (environ_);
       sysprof_profiler_set_spawn_env (profiler, (const gchar * const *)env);
 
       sysprof_profiler_set_spawn_inherit_environ (profiler,
@@ -405,7 +405,7 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
 static void
 sysprof_profiler_assistant_init (SysprofProfilerAssistant *self)
 {
-  g_autoptr(SysprofEnviron) environ = sysprof_environ_new ();
+  g_autoptr(SysprofEnviron) environ_ = sysprof_environ_new ();
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -445,7 +445,7 @@ sysprof_profiler_assistant_init (SysprofProfilerAssistant *self)
                            self,
                            G_CONNECT_SWAPPED);
 
-  sysprof_environ_editor_set_environ (self->environ_editor, environ);
+  sysprof_environ_editor_set_environ (self->environ_editor, environ_);
 }
 
 void

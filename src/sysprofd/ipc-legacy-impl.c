@@ -50,6 +50,7 @@ static guint signals [N_SIGNALS];
 static gboolean
 ipc_legacy_impl_handle_perf_event_open (IpcLegacySysprof2     *service,
                                         GDBusMethodInvocation *invocation,
+                                        GUnixFDList           *fd_list,
                                         GVariant              *options,
                                         gint32                 pid,
                                         gint32                 cpu,
@@ -86,9 +87,10 @@ ipc_legacy_impl_handle_perf_event_open (IpcLegacySysprof2     *service,
         }
       else
         {
-          g_dbus_method_invocation_return_value_with_unix_fd_list (g_steal_pointer (&invocation),
-                                                                   g_variant_new ("(h)", handle),
-                                                                   out_fd_list);
+          ipc_legacy_sysprof2_complete_perf_event_open (service,
+                                                        g_steal_pointer (&invocation),
+                                                        out_fd_list,
+                                                        g_variant_new ("h", handle));
         }
     }
 

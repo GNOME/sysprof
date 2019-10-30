@@ -147,6 +147,7 @@ ipc_service_impl_handle_get_proc_file (IpcService            *service,
 static gboolean
 ipc_service_impl_handle_get_proc_fd (IpcService            *service,
                                      GDBusMethodInvocation *invocation,
+                                     GUnixFDList           *in_fd_list,
                                      const gchar           *path)
 {
   g_autoptr(GFile) file = NULL;
@@ -172,9 +173,10 @@ ipc_service_impl_handle_get_proc_fd (IpcService            *service,
 
           if (handle != -1)
             {
-              g_dbus_method_invocation_return_value_with_unix_fd_list (g_steal_pointer (&invocation),
-                                                                       g_variant_new ("(h)", handle),
-                                                                       fd_list);
+              ipc_service_complete_get_proc_fd (service,
+                                                g_steal_pointer (&invocation),
+                                                fd_list,
+                                                g_variant_new ("h", handle));
               return TRUE;
             }
         }
@@ -191,14 +193,13 @@ ipc_service_impl_handle_get_proc_fd (IpcService            *service,
 static gboolean
 ipc_service_impl_handle_perf_event_open (IpcService            *service,
                                          GDBusMethodInvocation *invocation,
+                                         GUnixFDList           *in_fd_list,
                                          GVariant              *options,
                                          gint32                 pid,
                                          gint32                 cpu,
                                          GVariant              *group_fdv,
                                          guint64                flags)
 {
-  GUnixFDList *in_fd_list = NULL;
-  GDBusMessage *message;
   gint group_fd = -1;
   gint out_fd = -1;
   gint handle;
@@ -209,8 +210,7 @@ ipc_service_impl_handle_perf_event_open (IpcService            *service,
   g_message ("PerfEventOpen(pid=%d, cpu=%d)", pid, cpu);
 
   /* Get the group_fd if provided */
-  message = g_dbus_method_invocation_get_message (invocation);
-  if ((in_fd_list = g_dbus_message_get_unix_fd_list (message)) &&
+  if (in_fd_list != NULL &&
       (handle = g_variant_get_handle (group_fdv)) > -1)
     group_fd = g_unix_fd_list_get (in_fd_list, handle, NULL);
 
@@ -237,9 +237,10 @@ ipc_service_impl_handle_perf_event_open (IpcService            *service,
         }
       else
         {
-          g_dbus_method_invocation_return_value_with_unix_fd_list (g_steal_pointer (&invocation),
-                                                                   g_variant_new ("(h)", handle),
-                                                                   out_fd_list);
+          ipc_service_complete_perf_event_open (service,
+                                                g_steal_pointer (&invocation),
+                                                out_fd_list,
+                                                g_variant_new ("h", handle));
         }
     }
 

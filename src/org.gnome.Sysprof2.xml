@@ -18,7 +18,9 @@
    <arg name="pid" type="i" direction="in"/>
    <arg name="cpu" type="i" direction="in"/>
    <arg name="flags" type="t" direction="in"/>
-   <arg name="perf_stream_fd" type="h" direction="out"/>
+   <arg name="perf_stream_fd" type="h" direction="out">
+     <annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
+   </arg>
   </method>
 
   <!--

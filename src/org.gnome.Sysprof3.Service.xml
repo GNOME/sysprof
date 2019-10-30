@@ -18,9 +18,13 @@
       <arg name="options" type="a{sv}" direction="in"/>
       <arg name="pid" type="i" direction="in"/>
       <arg name="cpu" type="i" direction="in"/>
-      <arg name="group_fd" type="h" direction="in"/>
+      <arg name="group_fd" type="h" direction="in">
+        <annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
+      </arg>
       <arg name="flags" type="t" direction="in"/>
-      <arg name="perf_stream_fd" type="h" direction="out"/>
+      <arg name="perf_stream_fd" type="h" direction="out">
+        <annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
+      </arg>
     </method>
 
     <!--
@@ -55,7 +59,9 @@
     -->
     <method name="GetProcFd">
       <arg name="path" type="ay" direction="in"/>
-      <arg name="fd" type="h" direction="out"/>
+      <arg name="fd" type="h" direction="out">
+        <annotation name="org.gtk.GDBus.C.UnixFD" value="true"/>
+      </arg>
     </method>
 
     <!--

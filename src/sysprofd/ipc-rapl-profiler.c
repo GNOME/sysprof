@@ -345,6 +345,7 @@ on_sample_cb (gpointer data,
 static gboolean
 ipc_rapl_profiler_handle_start (IpcProfiler           *profiler,
                                 GDBusMethodInvocation *invocation,
+                                GUnixFDList           *in_fd_list,
                                 GVariant              *arg_options,
                                 GVariant              *arg_fd)
 {
@@ -353,8 +354,6 @@ ipc_rapl_profiler_handle_start (IpcProfiler           *profiler,
   g_autoptr(GMutexLocker) locker = NULL;
   g_autoptr(GError) error = NULL;
   g_autofree gchar *path = NULL;
-  GDBusMessage *message;
-  GUnixFDList *in_fd_list = NULL;
   gint fd = -1;
   gint handle;
 
@@ -374,8 +373,7 @@ ipc_rapl_profiler_handle_start (IpcProfiler           *profiler,
     }
 
   /* Get the FD for capture writing */
-  message = g_dbus_method_invocation_get_message (invocation);
-  if ((in_fd_list = g_dbus_message_get_unix_fd_list (message)) &&
+  if (in_fd_list != NULL &&
       (handle = g_variant_get_handle (arg_fd)) > -1)
     fd = g_unix_fd_list_get (in_fd_list, handle, NULL);
 
@@ -420,7 +418,7 @@ ipc_rapl_profiler_handle_start (IpcProfiler           *profiler,
                                              ipc_rapl_profiler_poll_cb,
                                              self);
 
-  ipc_profiler_complete_start (profiler, g_steal_pointer (&invocation));
+  ipc_profiler_complete_start (profiler, g_steal_pointer (&invocation), NULL);
 
   return TRUE;
 }

@@ -43,6 +43,7 @@ libsysprof_capture = static_library(
            dependencies: libsysprof_capture_deps,
                  c_args: [ '-DSYSPROF_CAPTURE_COMPILATION' ],
             install_dir: get_option('libdir'),
+    include_directories: [ conf_include_dirs ],
                 install: true,
   gnu_symbol_visibility: 'hidden',
 )

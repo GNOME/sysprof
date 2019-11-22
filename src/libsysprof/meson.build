@@ -115,7 +115,9 @@ libsysprof = shared_library(
 
     include_directories: [include_directories('.'),
                           ipc_include_dirs,
-                          libsysprof_capture_include_dirs],
+                          libsysprof_capture_include_dirs,
+                          conf_include_dirs,
+                         ],
            dependencies: libsysprof_deps,
                  c_args: libsysprof_c_args,
                 install: true,

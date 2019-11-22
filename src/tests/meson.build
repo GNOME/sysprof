@@ -13,7 +13,8 @@ test_cflags = [
 ]
 
 test_capture = executable('test-capture', 'test-capture.c',
-        c_args: test_cflags,
+  c_args: test_cflags,
+  include_directories: [ conf_include_dirs ],
   dependencies: [libsysprof_capture_dep],
 )
 
@@ -35,7 +36,8 @@ test_addr_map = executable('test-addr-map',
   ['test-addr-map.c',
    '../libsysprof/sysprof-map-lookaside.c',
    '../libsysprof/sysprof-symbol-map.c'],
-        c_args: test_cflags,
+  c_args: test_cflags,
+  include_directories: [ conf_include_dirs ],
   dependencies: test_deps,
 )
 
@@ -47,14 +49,16 @@ test_addr_decode = executable('test-addr-decode', 'test-addr-decode.c',
 test_mountinfo = executable('test-mountinfo',
   [ 'test-mountinfo.c',
     '../libsysprof/sysprof-mountinfo.c'],
-        c_args: test_cflags,
+    c_args: test_cflags,
+  include_directories: [ conf_include_dirs ],
   dependencies: test_deps,
 )
 
 test_flatpak = executable('test-flatpak',
   [ 'test-flatpak.c',
     '../libsysprof/sysprof-flatpak.c'],
-        c_args: test_cflags,
+  c_args: test_cflags,
+  include_directories: [ conf_include_dirs ],
   dependencies: test_deps,
 )
 
@@ -84,7 +88,8 @@ if get_option('enable_gtk')
 
   test_zoom = executable('test-zoom',
     ['test-zoom.c', '../libsysprof-ui/sysprof-zoom-manager.c'],
-          c_args: test_cflags,
+    c_args: test_cflags,
+    include_directories: [ conf_include_dirs ],
     dependencies: test_ui_deps,
   )
 

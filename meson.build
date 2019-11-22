@@ -91,10 +91,6 @@ if has_use_clockid and has_clockid
   config_h.set10('HAVE_PERF_CLOCKID', true)
 endif
 
-add_global_arguments([
-  '-I' + meson.build_root(), # config.h
-], language: 'c')
-
 global_c_args = []
 test_c_args = [
   '-Wcast-align',
@@ -174,6 +170,8 @@ int main(void) {
 ''')
   error('Sysprof requires a C compiler with stdatomic support such as GCC 4.9 or newer')
 endif
+
+conf_include_dirs = include_directories('.')
 
 configure_file(
          output: 'config.h',

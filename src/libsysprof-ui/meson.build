@@ -94,6 +94,7 @@ libsysprof_ui = shared_library(
 
            dependencies: libsysprof_ui_deps,
             install_dir: get_option('libdir'),
+    include_directories: [ conf_include_dirs ],
                 install: true,
                  c_args: [ '-DSYSPROF_UI_COMPILATION' ],
   gnu_symbol_visibility: 'hidden',

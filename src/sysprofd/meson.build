@@ -28,7 +28,11 @@ sysprofd = executable('sysprofd', sysprofd_sources,
               install: true,
           install_dir: pkglibexecdir,
                   pie: true,
-  include_directories: [include_directories('.'), ipc_include_dirs],
+  include_directories: [
+    include_directories('.'),
+    ipc_include_dirs,
+    conf_include_dirs,
+  ],
 )
 
 sysprofdconf = configuration_data()

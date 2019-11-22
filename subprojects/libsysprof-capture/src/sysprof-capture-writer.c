@@ -56,7 +56,7 @@
 
 #define G_LOG_DOMAIN "sysprof-capture-writer"
 
-#include "config.h"
+#include "capture-config.h"
 
 #ifndef _GNU_SOURCE
 # define _GNU_SOURCE

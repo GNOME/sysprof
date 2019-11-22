@@ -1,21 +1,16 @@
-project('sysprof', ['c', 'cpp'],
-          license: ['GPL3+', 'GPL2+'],
+project('sysprof-capture', ['c', 'cpp'],
+          license: ['BSD-2-Clause-Patent'],
           version: '3.35.1',
     meson_version: '>=0.50.0',
   default_options: [ 'c_std=gnu11',
-                     'cpp_std=c++11',
                      'warning_level=2',
   ]
 )
 
-gnome = import('gnome')
 pkgconfig = import('pkgconfig')
-i18n = import('i18n')
 
 libsysprof_api_version = 3
 version_split = meson.project_version().split('.')
-datadir = get_option('datadir')
-podir = join_paths(meson.source_root(), 'po')
 
 glib_req_version = '>= 2.61.3'
 gtk_req_version = '>= 3.22'
@@ -26,13 +21,6 @@ cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')
 
 config_h = configuration_data()
-config_h.set_quoted('PACKAGE_NAME', 'sysprof')
-config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
-config_h.set_quoted('PACKAGE_STRING', 'sysprof-' + meson.project_version())
-config_h.set_quoted('PACKAGE_BUGREPORT', 'https://bugzilla.gnome.org/enter_bug.cgi?product=sysprof')
-config_h.set('PACKAGE_TARNAME', 'PACKAGE_STRING')
-config_h.set('PACKAGE', 'PACKAGE_NAME')
-config_h.set('VERSION', 'PACKAGE_VERSION')
 
 # Detect and set symbol visibility
 if get_option('default_library') != 'static'
@@ -49,53 +37,6 @@ if get_option('default_library') != 'static'
 endif
 
 glib_dep = dependency('glib-2.0', version: glib_req_version)
-gio_dep = dependency('gio-2.0', version: glib_req_version)
-gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version)
-
-libsysprof_capture_dep = dependency(
-  'sysprof-capture-3',
-  version: '== @0@'.format(meson.project_version()),
-  fallback : ['libsysprof-capture', 'libsysprof_capture_dep'],
-)
-
-if get_option('enable_gtk')
-  gtk_dep = dependency('gtk+-3.0', version: gtk_req_version)
-  dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version)
-endif
-
-polkit_dep = dependency('polkit-gobject-1', version: '>= 0.114', required: false)
-if polkit_dep.found()
-  config_h.set10('HAVE_POLKIT_AUTOPTR', true)
-endif
-polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
-
-if polkit_dep.found()
-  config_h.set10('HAVE_POLKIT', true)
-else
-  if get_option('with_sysprofd') == 'bundled'
-    error('sysprofd requires polkit @0@'.format(polkit_req_version))
-  endif
-endif
-
-debugdir = get_option('debugdir')
-if debugdir == ''
-  debugdir = join_paths(get_option('prefix'), get_option('libdir'), 'debug')
-endif
-config_h.set_quoted('DEBUGDIR', debugdir)
-
-config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
-config_h.set10('ENABLE_NLS', true)
-config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
-config_h.set('LOCALEDIR', 'PACKAGE_LOCALE_DIR')
-
-# Development build setup
-config_h.set('DEVELOPMENT_BUILD', version_split[1].to_int().is_odd())
-
-has_use_clockid = cc.has_member('struct perf_event_attr', 'use_clockid', prefix: '#include <linux/perf_event.h>')
-has_clockid = cc.has_member('struct perf_event_attr', 'clockid', prefix: '#include <linux/perf_event.h>')
-if has_use_clockid and has_clockid
-  config_h.set10('HAVE_PERF_CLOCKID', true)
-endif
 
 global_c_args = []
 test_c_args = [
@@ -180,14 +121,8 @@ endif
 conf_include_dirs = include_directories('.')
 
 configure_file(
-         output: 'config.h',
+         output: 'capture-config.h',
   configuration: config_h
 )
 
 subdir('src')
-subdir('data')
-subdir('examples')
-subdir('help')
-subdir('po')
-
-meson.add_install_script('build-aux/meson/post_install.sh')

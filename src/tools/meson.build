@@ -14,7 +14,10 @@ endif
 
 sysprof_cat = executable('sysprof-cat', 'sysprof-cat.c',
   dependencies: tools_deps,
-  include_directories: [ conf_include_dirs ],
+  include_directories: [
+    conf_include_dirs,
+    include_directories('../../subprojects/libsysprof-capture/src')
+  ],
   install: false,
 )
 

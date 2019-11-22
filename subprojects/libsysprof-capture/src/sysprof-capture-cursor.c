@@ -56,7 +56,7 @@
 
 #define G_LOG_DOMAIN "sysprof-capture-cursor"
 
-#include "config.h"
+#include "capture-config.h"
 
 #include "sysprof-capture-condition.h"
 #include "sysprof-capture-cursor.h"

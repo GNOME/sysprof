@@ -76,12 +76,11 @@ libsysprof_private_sources = [
   helpers_sources,
 ]
 
-libsysprof_public_sources += libsysprof_capture_sources
-
 libsysprof_deps = [
   gio_dep,
   gio_unix_dep,
   polkit_dep,
+  libsysprof_capture_dep,
 ]
 
 if host_machine.system() == 'linux'
@@ -115,7 +114,6 @@ libsysprof = shared_library(
 
     include_directories: [include_directories('.'),
                           ipc_include_dirs,
-                          libsysprof_capture_include_dirs,
                           conf_include_dirs,
                          ],
            dependencies: libsysprof_deps,
@@ -128,7 +126,7 @@ libsysprof = shared_library(
 libsysprof_dep = declare_dependency(
             link_with: libsysprof,
          dependencies: libsysprof_deps,
-  include_directories: [include_directories('.'), libsysprof_capture_include_dirs],
+  include_directories: include_directories('.'),
 )
 
 pkgconfig.generate(

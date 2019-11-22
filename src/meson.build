@@ -48,7 +48,6 @@ helpers_sources = files([
   'helpers.c',
 ])
 
-subdir('libsysprof-capture')
 subdir('sysprofd')
 subdir('libsysprof')
 subdir('libsysprof-ui')

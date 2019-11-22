@@ -56,7 +56,7 @@
 
 #define G_LOG_DOMAIN "sysprof-capture-condition"
 
-#include "config.h"
+#include "capture-config.h"
 
 #include <string.h>
 

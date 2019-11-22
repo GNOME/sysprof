@@ -1,3 +1,12 @@
+sysprof_header_subdir = 'sysprof-@0@'.format(libsysprof_api_version)
+
+sysprof_version_conf = configuration_data()
+sysprof_version = meson.project_version().split('.')
+sysprof_version_conf.set('MAJOR_VERSION', sysprof_version[0])
+sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
+sysprof_version_conf.set('MICRO_VERSION', sysprof_version[2])
+sysprof_version_conf.set('VERSION', meson.project_version())
+
 libsysprof_capture_headers = files([
   'sysprof-address.h',
   'sysprof-clock.h',

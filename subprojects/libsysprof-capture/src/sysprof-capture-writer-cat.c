@@ -56,7 +56,7 @@
 
 #define G_LOG_DOMAIN "sysprof-cat"
 
-#include "config.h"
+#include "capture-config.h"
 
 #include <glib/gstdio.h>
 #include <stdlib.h>

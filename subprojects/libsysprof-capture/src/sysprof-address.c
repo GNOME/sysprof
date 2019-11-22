@@ -1,4 +1,4 @@
-/* sysprof-clock.c
+/* sysprof-address.c
  *
  * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
  *
@@ -54,41 +54,82 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#define G_LOG_DOMAIN "sysprof-clock"
+#include "capture-config.h"
 
-#include "config.h"
-
-#include "sysprof-clock.h"
-
-gint sysprof_clock = -1;
-
-void
-sysprof_clock_init (void)
-{
-  static const gint clock_ids[] = {
-    CLOCK_MONOTONIC,
-    CLOCK_MONOTONIC_RAW,
 #ifdef __linux__
-    CLOCK_MONOTONIC_COARSE,
-    CLOCK_REALTIME_COARSE,
+# include <linux/perf_event.h>
+#else
+# include "sysprof-address-fallback.h"
 #endif
-    CLOCK_REALTIME,
-  };
 
-  if (sysprof_clock != -1)
-    return;
+#include "sysprof-address.h"
 
-  for (guint i = 0; i < G_N_ELEMENTS (clock_ids); i++)
+gboolean
+sysprof_address_is_context_switch (SysprofAddress         address,
+                                   SysprofAddressContext *context)
+{
+  SysprofAddressContext dummy;
+
+  if (context == NULL)
+    context = &dummy;
+
+  switch (address)
     {
-      struct timespec ts;
-      int clock_id = clock_ids [i];
+    case PERF_CONTEXT_HV:
+      *context = SYSPROF_ADDRESS_CONTEXT_HYPERVISOR;
+      return TRUE;
 
-      if (0 == clock_gettime (clock_id, &ts))
-        {
-          sysprof_clock = clock_id;
-          return;
-        }
+    case PERF_CONTEXT_KERNEL:
+      *context = SYSPROF_ADDRESS_CONTEXT_KERNEL;
+      return TRUE;
+
+    case PERF_CONTEXT_USER:
+      *context = SYSPROF_ADDRESS_CONTEXT_USER;
+      return TRUE;
+
+    case PERF_CONTEXT_GUEST:
+      *context = SYSPROF_ADDRESS_CONTEXT_GUEST;
+      return TRUE;
+
+    case PERF_CONTEXT_GUEST_KERNEL:
+      *context = SYSPROF_ADDRESS_CONTEXT_GUEST_KERNEL;
+      return TRUE;
+
+    case PERF_CONTEXT_GUEST_USER:
+      *context = SYSPROF_ADDRESS_CONTEXT_GUEST_USER;
+      return TRUE;
+
+    default:
+      *context = SYSPROF_ADDRESS_CONTEXT_NONE;
+      return FALSE;
     }
+}
 
-  g_assert_not_reached ();
+const gchar *
+sysprof_address_context_to_string (SysprofAddressContext context)
+{
+  switch (context)
+    {
+      case SYSPROF_ADDRESS_CONTEXT_HYPERVISOR:
+        return "- - hypervisor - -";
+
+      case SYSPROF_ADDRESS_CONTEXT_KERNEL:
+        return "- - kernel - -";
+
+      case SYSPROF_ADDRESS_CONTEXT_USER:
+        return "- - user - -";
+
+      case SYSPROF_ADDRESS_CONTEXT_GUEST:
+        return "- - guest - -";
+
+      case SYSPROF_ADDRESS_CONTEXT_GUEST_KERNEL:
+        return "- - guest kernel - -";
+
+      case SYSPROF_ADDRESS_CONTEXT_GUEST_USER:
+        return "- - guest user - -";
+
+      case SYSPROF_ADDRESS_CONTEXT_NONE:
+      default:
+        return "- - unknown - -";
+    }
 }

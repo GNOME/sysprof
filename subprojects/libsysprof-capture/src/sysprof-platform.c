@@ -56,7 +56,7 @@
 
 #define G_LOG_DOMAIN "sysprof-platform"
 
-#include "config.h"
+#include "capture-config.h"
 
 #include <glib.h>
 #include <glib/gstdio.h>

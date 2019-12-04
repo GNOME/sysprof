@@ -64,4 +64,7 @@ pkgconfig.generate(
   description: 'The static capture library for tools that generate profiling capture data',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
      requires: [ 'glib-2.0' ],
+     variables: [
+       'datadir=' + datadir_for_pc_file,
+     ],
 )

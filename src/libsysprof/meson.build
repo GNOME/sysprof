@@ -138,6 +138,9 @@ pkgconfig.generate(
   description: 'The library for console applications embedding sysprof',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
      requires: [ 'gio-2.0' ],
+     variables: [
+       'datadir=' + datadir_for_pc_file,
+     ],
 )
 
 install_headers(libsysprof_public_headers, subdir: sysprof_header_subdir)

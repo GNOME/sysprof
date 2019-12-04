@@ -15,6 +15,7 @@ i18n = import('i18n')
 libsysprof_api_version = 3
 version_split = meson.project_version().split('.')
 datadir = get_option('datadir')
+datadir_for_pc_file = join_paths('${prefix}', datadir)
 podir = join_paths(meson.source_root(), 'po')
 
 glib_req_version = '>= 2.61.3'

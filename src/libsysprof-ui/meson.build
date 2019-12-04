@@ -114,6 +114,9 @@ pkgconfig.generate(
   description: 'The UI library for GTK applications embedding sysprof',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
      requires: [ 'gio-2.0', 'gtk+-3.0' ],
+     variables: [
+       'datadir=' + datadir_for_pc_file,
+     ],
 )
 
 install_headers(libsysprof_ui_public_headers, subdir: sysprof_header_subdir)

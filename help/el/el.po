@@ -1,0 +1,365 @@
+# Greek translation for sysprof.
+# Copyright (C) 2019 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Efstathios Iosifidis <iosifidis@opensuse.org>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof sysprof-3-34\n"
+"POT-Creation-Date: 2019-11-25 11:43+0000\n"
+"PO-Revision-Date: 2019-12-08 00:23+0200\n"
+"Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
+"Language-Team: Greek, Modern (1453-) <gnome-el-list@gnome.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: el\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.2.4\n"
+
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr ""
+"Ελληνική μεταφραστική ομάδα GNOME\n"
+" Ευστάθιος Ιωσηφίδης <iosifidis@opensuse.org>\n"
+"\n"
+"Για περισσότερες πληροφορίες, επισκεφθείτε την σελίδα\n"
+"http://gnome.gr/"
+
+#. (itstool) path: page/title
+#: C/faq.page:9
+msgid "What does heap mean?"
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/faq.page:12
+msgid "What does \"In file [heap]\" mean?"
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/faq.page:14
+msgid ""
+"This means that sysprof believes a function was called from somewhere in the "
+"program's heap (where <code>malloc</code> allocates memory) rather than the "
+"code section (where executable code normally lives.) There are several "
+"possible explanations."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/faq.page:22
+msgid "JIT (Just in Time) compilers"
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/faq.page:24
+msgid ""
+"Languages like Java can generate executable code while a program is running "
+"and store it in the heap. Sysprof is accurately reporting the situation in "
+"this case."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/faq.page:30
+msgid "Optimizing compilers"
+msgstr "Βελτιστοποίηση μεταγλωττιστών"
+
+#. (itstool) path: section/p
+#: C/faq.page:32
+msgid ""
+"C and C++ compilers can optimize away information needed to determine a "
+"function's caller, so it is mistaken for [heap]. You can still tell how "
+"often each function is called by the program, but not always from where."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/faq.page:38
+msgid ""
+"For gcc, the flag <code>-fno-omit-frame-pointer</code> will prevent this "
+"optimization. The flag is not always needed, for example on x86_64 machines "
+"it is only needed with -O3 optimization."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/faq.page:44
+msgid ""
+"To get the most detailed and accurate call tree from un-optimized code, use "
+"these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
+msgstr ""
+
+#. (itstool) path: credit/name
+#: C/introduction.page:15
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
+
+#. (itstool) path: credit/years
+#: C/introduction.page:17
+msgid "2016"
+msgstr "2016"
+
+#. (itstool) path: info/desc
+#: C/introduction.page:22
+msgid "Welcome to <app>Sysprof</app>!"
+msgstr "Καλώς ήλθατε στο <app>Sysprof</app>!"
+
+#. (itstool) path: page/title
+#: C/introduction.page:25
+msgid "Introduction"
+msgstr "Εισαγωγή"
+
+#. (itstool) path: page/p
+#: C/introduction.page:27
+msgid ""
+"<app>Sysprof</app> is a system profiler for Linux that targets the GNOME "
+"desktop."
+msgstr ""
+
+#. (itstool) path: info/desc
+#: C/introduction.page:33
+msgid "Differences between tracing and sampling"
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/introduction.page:35
+msgid "What is a Profiler?"
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/introduction.page:37
+msgid ""
+"A profiler is an application that records information about an application "
+"or system while it runs. That information can be explored to gain insight "
+"into how the application could be changed to perform better."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/introduction.page:42
+msgid ""
+"Two common categories of software profilers exist, commonly referred to as "
+"either tracing or sampling profilers. What is meant by tracing profiler is "
+"that every function call executed by the program is known to the profiler. A "
+"sampling profiler works by inspecting the state of the program on a regular "
+"frequency and therefore does not see every function call executed by the "
+"program."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/introduction.page:49
+msgid ""
+"Both tracing and sampling profilers have their advantages. A notable "
+"advantage of a sampling profiler is that the overhead is much less than that "
+"of a tracing profiler, making it easier to use for software that requires "
+"interactivity."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/introduction.page:54
+msgid "<app>Sysprof</app> is a sampling profiler."
+msgstr ""
+
+#. (itstool) path: page/title
+#: C/index.page:12
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: section/title
+#. (itstool) path: page/title
+#: C/index.page:15 C/profiling.page:6
+msgid "Profiling"
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/index.page:19
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/profiling.page:12
+msgid "How to profile your system"
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:13
+msgid ""
+"When <app>Sysprof</app> profiles your system, it records stack information "
+"for all applications executing, including the Linux kernel. This can "
+"sometimes be confusing if you only want to look at a single process. If your "
+"application does not interact much with the host system, you may have more "
+"success by using <app>Sysprof</app> to <link href=\"profiling#new-process-"
+"profiling\">spawn a new process</link>."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:20
+msgid ""
+"To profile your entire system, ensure the target button is set to <em>All "
+"Processes</em> and click <em>Record</em>."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:23
+msgid ""
+"At this point, you may be asked to <em>authorize</em> access to profile the "
+"system. This is required as the Linux kernel's perf implementation requires "
+"root to perform whole-system profiling."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:27
+msgid ""
+"During the profiling session, you will see the number of seconds the profile "
+"has been active. Clicking the <em>Record</em> button again will stop the "
+"profiling session. Afterwhich, the callgraph will be displayed."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/profiling.page:33
+msgid ""
+"If you find that the <app>sysprof</app> application is showing up in your "
+"profiling callgraph, you might consider recording the profiling session with "
+"<cmd>sysprof-cli</cmd>. This is a command line program that will capture "
+"your profiling session to disk to be viewed at a later time."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:39 C/profiling.page:62
+msgid ""
+"See <link href=\"profiling#interpreting-results\">interpreting results</"
+"link> for more guidance."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/profiling.page:48
+msgid "Profile an existing process"
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:49
+msgid ""
+"With <app>Sysprof</app>, you can profile one or more existing processes on "
+"your system. First, select the <em>profiling target</em> button next to the "
+"<em>Record</em> button. Select <em>Existing Process</em> in the popover that "
+"is displayed. Next, select as many processes as you'd like to profile. "
+"Processes selected for profiling will have a checkmark next to their name."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:56
+msgid ""
+"After selecting your target processes, click the <em>Record</em> button to "
+"start profiling."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:59
+msgid ""
+"When you have completed, click the <em>Record</em> button again to stop "
+"profiling."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/profiling.page:71
+msgid "Profile a new process"
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:73
+msgid ""
+"Often times, you may need to spawn a new process to profile. First, select "
+"the <em>profiling target</em> button next to the <em>Record</em> button. "
+"Next, select <em>New Process</em> and fill out the necessary information to "
+"spawn the process."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/profiling.page:79
+msgid ""
+"If you are spawning a process that requires access to your current display, "
+"such as a GTK+ application, you will want to make sure <em>Inherit current "
+"environment</em> is set."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/profiling.page:90
+msgid "Profiling with the sysprof-cli command line tool"
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:92
+msgid ""
+"For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
+"command line tool. When run without any arguments, it will record your "
+"entire system and save the output to <file>capture.syscap</file>. This file "
+"can be opened with the <app>Sysprof</app> application to view the callgraph."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:97
+msgid ""
+"You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
+"cmd>."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:100
+msgid ""
+"If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
+"cmd> to specify a command to be launched. The command will inherit the "
+"current environment."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/profiling.page:110
+msgid "Interpreting results"
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:112
+msgid ""
+"The profiling results in <app>Sysprof</app> are split into three sections. "
+"On the top left is a list of all the functions profiled. They are sorted by "
+"how often they were called during the recording."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/profiling.page:117
+msgid ""
+"It is important to note that the amount of time spent in each function is "
+"not captured. That would require a tracing profiler to accurately record. "
+"The percentage is calculated by determining how often that function showed "
+"up in the current stacktrace when a sample was recorded."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:123
+msgid ""
+"After selecting a function from the functions list, all of the recorded "
+"callers of that function will be displayed on the bottom left. They are also "
+"sorted by the percentage of samples that included that function in the "
+"stacktrace."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:128
+msgid ""
+"On the right, are all of the decendants of a selected function. You can "
+"select a function either from the functions list, or the callers list."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/profiling.page:131
+msgid ""
+"You can jump into a function by activating a row in the tree of descendants "
+"with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
+msgstr ""
+"Μπορείτε να μεταβείτε σε μια λειτουργία ενεργοποιώντας μια σειρά στο δέντρο "
+"των απογόνων με ένα διπλό κλικ ή πατώντας το πλήκτρο <key>Enter</key> ή "
+"<key>Κενό</key>."
+
+#. (itstool) path: note/p
+#: C/profiling.page:135
+msgid ""
+"If you see <em>- - kernel - -</em> in your results, that means that the "
+"application transitioned into or from the Linux kernel. There can be many "
+"reasons for this such as a <em>syscall</em> or <em>signal</em>."
+msgstr ""

@@ -1,3 +1,11 @@
+Overview of changes in Sysprof 3.35.2
+=====================================
+
+ * Build and test fixes
+ * Track changes to gdbus-codegen
+ * Include additional pkg-config variable for access to D-Bus data
+ * Translation updates
+
 Overview of changes in Sysprof 3.34.1
 =====================================
 

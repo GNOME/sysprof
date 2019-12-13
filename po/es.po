@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2019-11-23 19:12+0000\n"
-"PO-Revision-Date: 2019-11-25 12:42+0100\n"
+"POT-Creation-Date: 2019-12-12 20:40+0000\n"
+"PO-Revision-Date: 2019-12-13 09:50+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -125,8 +125,6 @@ msgstr "Sysprof no pudo obtener el ID de perf_event."
 
 #: src/libsysprof/sysprof-perf-source.c:659
 #, c-format
-#| msgid ""
-#| "An error occurred while attempting to access performance counters: %s"
 msgid "An error occurred while attempting to access performance counters"
 msgstr ""
 "Ha ocurrido un error al intentar acceder a los contadores de rendimiento"
@@ -146,7 +144,6 @@ msgstr "Batería"
 
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:212
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:218
-#| msgid "Stack Depth"
 msgid "Stack Traces"
 msgstr "Trazas de la pila"
 
@@ -210,7 +207,6 @@ msgstr "Se necesitan más muestras para generar un gráfico."
 
 #: src/libsysprof-ui/sysprof-counters-aid.c:185
 #: src/libsysprof-ui/sysprof-counters-aid.c:190
-#| msgid "C_ounters"
 msgid "Counters"
 msgstr "Contadores"
 
@@ -224,19 +220,16 @@ msgid "CPU Frequency"
 msgstr "Frecuencia de la CPU"
 
 #: src/libsysprof-ui/sysprof-cpu-aid.c:218
-#| msgid "CPU Frequency"
 msgid "CPU Frequency (All)"
 msgstr "Frecuencia de la CPU (todo)"
 
 #. Translators: CPU is the processor.
 #: src/libsysprof-ui/sysprof-cpu-aid.c:227
 #: src/libsysprof-ui/sysprof-cpu-aid.c:250
-#| msgid "CPU Usage"
 msgid "CPU Usage (All)"
 msgstr "Uso de CPU (todo)"
 
 #: src/libsysprof-ui/sysprof-cpu-aid.c:316
-#| msgid "All Processes"
 msgid "Processes"
 msgstr "Procesos"
 
@@ -398,7 +391,6 @@ msgstr "Advertencia"
 #: src/libsysprof-ui/sysprof-logs-aid.c:199
 #: src/libsysprof-ui/sysprof-logs-aid.c:204
 #: src/libsysprof-ui/sysprof-logs-aid.c:210
-#| msgid "_Logs"
 msgid "Logs"
 msgstr "Registros"
 
@@ -417,7 +409,6 @@ msgstr "Dominio"
 
 #: src/libsysprof-ui/sysprof-marks-aid.c:237
 #: src/libsysprof-ui/sysprof-marks-aid.c:242
-#| msgid "_Timings"
 msgid "Timings"
 msgstr "Tiempos"
 
@@ -517,12 +508,10 @@ msgstr "_Grabar"
 
 #: src/libsysprof-ui/sysprof-rapl-aid.c:175
 #: src/libsysprof-ui/sysprof-rapl-aid.c:248
-#| msgid "Memory Usage"
 msgid "Energy Usage"
 msgstr "Uso de energía"
 
 #: src/libsysprof-ui/sysprof-rapl-aid.c:180
-#| msgid "Memory Usage"
 msgid "Energy Usage (All)"
 msgstr "Uso de energía (todo)"
 
@@ -546,7 +535,8 @@ msgid "Select for more details"
 msgstr "Seleccione para obtener más detalles"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
-msgid "Display supplimental graphs"
+#| msgid "Display supplimental graphs"
+msgid "Display supplemental graphs"
 msgstr "Mostrar gráficos suplementarios"
 
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
@@ -773,7 +763,6 @@ msgid "Force overwrite the capture file"
 msgstr "Forzar la sobrescritura del archivo de captura"
 
 #: src/tools/sysprof-cli.c:104
-#| msgid "Disable recording of memory statistics"
 msgid "Disable recording of battery statistics"
 msgstr "Desactivar registro de estadísticas de batería"
 
@@ -782,7 +771,6 @@ msgid "Disable recording of CPU statistics"
 msgstr "Desactivar registro de estadísticas de CPU"
 
 #: src/tools/sysprof-cli.c:106
-#| msgid "Disable recording of CPU statistics"
 msgid "Disable recording of Disk statistics"
 msgstr "Desactivar registro de estadísticas de disco"
 
@@ -799,7 +787,6 @@ msgid "Disable recording of memory statistics"
 msgstr "Desactivar registro de estadísticas de memoria"
 
 #: src/tools/sysprof-cli.c:110
-#| msgid "Disable recording of memory statistics"
 msgid "Disable recording of network statistics"
 msgstr "Desactivar registro de estadísticas de red"
 
@@ -830,7 +817,6 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Mostrar la versión de sysprof-cli y salir"
 
 #: src/tools/sysprof-cli.c:149
-#| msgid "[CAPTURE_FILE] — Sysprof"
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[ARCHIVO_CAPTURA] [-- COMANDO ARGUMENTOS] — Sysprof"
 
@@ -857,7 +843,6 @@ msgid "Connect to the given D-Bus address"
 msgstr "Conectar a la dirección de D-Bus proporcionada"
 
 #: src/tools/sysprof-profiler-ctl.c:48
-#| msgid "Object path to invoke method on"
 msgid "Destination D-Bus name to invoke method on"
 msgstr "Nombre del D-Bus destino sobre el que invocar el método"
 

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2019-11-23 19:12+0000\n"
-"PO-Revision-Date: 2019-11-24 22:14-0300\n"
+"POT-Creation-Date: 2019-12-12 20:40+0000\n"
+"PO-Revision-Date: 2019-12-14 08:53-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -123,14 +123,11 @@ msgstr "Sysprof não conseguiu analisar o deslocamento para “%s”."
 
 #: src/libsysprof/sysprof-perf-source.c:553
 #, c-format
-#| msgid "Sysprof failed to parse offset for “%s”."
 msgid "Sysprof failed to get perf_event ID."
 msgstr "Sysprof falhou em obter o ID do perf_event."
 
 #: src/libsysprof/sysprof-perf-source.c:659
 #, c-format
-#| msgid ""
-#| "An error occurred while attempting to access performance counters: %s"
 msgid "An error occurred while attempting to access performance counters"
 msgstr "Ocorreu um erro enquanto tentava acessar contadores de desempenho"
 
@@ -162,8 +159,6 @@ msgstr "Rastros de pilha (no Usuário)"
 
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:243
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:273
-#| msgctxt "shortcut window"
-#| msgid "Callgraph"
 msgid "Callgraph"
 msgstr "Gráfico de chamadas"
 
@@ -214,7 +209,6 @@ msgstr "Mais amostras são necessárias para exibir um gráfico de chamadas."
 
 #: src/libsysprof-ui/sysprof-counters-aid.c:185
 #: src/libsysprof-ui/sysprof-counters-aid.c:190
-#| msgid "C_ounters"
 msgid "Counters"
 msgstr "Contadores"
 
@@ -238,12 +232,10 @@ msgid "CPU Usage (All)"
 msgstr "Uso de CPU (Todos)"
 
 #: src/libsysprof-ui/sysprof-cpu-aid.c:316
-#| msgid "All Processes"
 msgid "Processes"
 msgstr "Processos"
 
 #: src/libsysprof-ui/sysprof-details-page.c:218
-#| msgid "Marks Captured"
 msgid "Memory Capture"
 msgstr "Captura de memória"
 
@@ -321,26 +313,18 @@ msgid "Writes"
 msgstr "Escritas"
 
 #: src/libsysprof-ui/sysprof-display.c:227
-#| msgctxt "shortcut window"
-#| msgid "Recording"
 msgid "Recording Failed"
 msgstr "Gravação falhou"
 
 #: src/libsysprof-ui/sysprof-display.c:232
-#| msgctxt "shortcut window"
-#| msgid "Recording"
 msgid "Recording…"
 msgstr "Gravação…"
 
 #: src/libsysprof-ui/sysprof-display.c:246
-#| msgctxt "shortcut window"
-#| msgid "Recording"
 msgid "New Recording"
 msgstr "Nova gravação"
 
 #: src/libsysprof-ui/sysprof-display.c:1151
-#| msgctxt "shortcut window"
-#| msgid "Save Recording"
 msgid "Save Recording"
 msgstr "Salvar gravação"
 
@@ -409,7 +393,6 @@ msgstr "Aviso"
 #: src/libsysprof-ui/sysprof-logs-aid.c:199
 #: src/libsysprof-ui/sysprof-logs-aid.c:204
 #: src/libsysprof-ui/sysprof-logs-aid.c:210
-#| msgid "_Logs"
 msgid "Logs"
 msgstr "Logs"
 
@@ -428,7 +411,6 @@ msgstr "Domínio"
 
 #: src/libsysprof-ui/sysprof-marks-aid.c:237
 #: src/libsysprof-ui/sysprof-marks-aid.c:242
-#| msgid "_Timings"
 msgid "Timings"
 msgstr "Tempos"
 
@@ -445,7 +427,6 @@ msgid "No timing data was found for the current selection"
 msgstr "Nenhum dado de tempos foi encontrado para a seleção atual"
 
 #: src/libsysprof-ui/sysprof-memory-aid.c:77
-#| msgid "Memory Used"
 msgid "Memory Usage"
 msgstr "Uso de memória"
 
@@ -529,7 +510,6 @@ msgstr "G_ravar"
 
 #: src/libsysprof-ui/sysprof-rapl-aid.c:175
 #: src/libsysprof-ui/sysprof-rapl-aid.c:248
-#| msgid "Memory Used"
 msgid "Energy Usage"
 msgstr "Uso de energia"
 
@@ -558,7 +538,8 @@ msgid "Select for more details"
 msgstr "Selecione para mais detalhes"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
-msgid "Display supplimental graphs"
+#| msgid "Display supplimental graphs"
+msgid "Display supplemental graphs"
 msgstr "Exibe gráficos suplementares"
 
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
@@ -764,8 +745,6 @@ msgid "Sysprof Captures"
 msgstr "Capturas do Sysprof"
 
 #: src/sysprof/sysprof-window.c:287
-#| msgctxt "shortcut window"
-#| msgid "Files"
 msgid "All Files"
 msgstr "Todos arquivos"
 
@@ -790,7 +769,6 @@ msgid "Force overwrite the capture file"
 msgstr "Força sobrescrever o arquivo de captura"
 
 #: src/tools/sysprof-cli.c:104
-#| msgid "Disable recording of memory statistics"
 msgid "Disable recording of battery statistics"
 msgstr "Desabilita gravação de estatísticas de bateria"
 
@@ -799,7 +777,6 @@ msgid "Disable recording of CPU statistics"
 msgstr "Desabilita gravação de estatísticas de CPU"
 
 #: src/tools/sysprof-cli.c:106
-#| msgid "Disable recording of CPU statistics"
 msgid "Disable recording of Disk statistics"
 msgstr "Desabilita gravação de estatísticas de disco"
 
@@ -816,7 +793,6 @@ msgid "Disable recording of memory statistics"
 msgstr "Desabilita gravação de estatísticas de memória"
 
 #: src/tools/sysprof-cli.c:110
-#| msgid "Disable recording of memory statistics"
 msgid "Disable recording of network statistics"
 msgstr "Desabilita gravação de estatísticas de rede"
 
@@ -845,7 +821,6 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Emite a versão do sysprof-cli e sai"
 
 #: src/tools/sysprof-cli.c:149
-#| msgid "[CAPTURE_FILE] — Sysprof"
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[ARQUIVO_CAPTURA] [-- COMANDO ARGS] — Sysprof"
 
@@ -860,7 +835,6 @@ msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existe. Use --force para sobrescrevê-lo\n"
 
 #: src/tools/sysprof-profiler-ctl.c:45
-#| msgid "Profile the system"
 msgid "Connect to the system bus"
 msgstr "Conecta ao barramento do sistema"
 
@@ -881,7 +855,6 @@ msgid "Object path to invoke method on"
 msgstr "Caminho do objeto para chamado o método"
 
 #: src/tools/sysprof-profiler-ctl.c:49
-#| msgid "org.gnome.Sysprof"
 msgid "/org/gnome/Sysprof3/Profiler"
 msgstr "/org/gnome/Sysprof3/Profiler"
 

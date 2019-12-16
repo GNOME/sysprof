@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2019-11-23 19:12+0000\n"
-"PO-Revision-Date: 2019-12-12 14:55+0100\n"
+"POT-Creation-Date: 2019-12-14 11:57+0000\n"
+"PO-Revision-Date: 2019-12-16 12:04+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -535,9 +535,8 @@ msgstr "_Sluta spela in"
 msgid "Select for more details"
 msgstr "Välj för mer detaljer"
 
-# TODO: supplemental
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
-msgid "Display supplimental graphs"
+msgid "Display supplemental graphs"
 msgstr "Visa stöddiagram"
 
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
@@ -815,7 +814,6 @@ msgid "Print the sysprof-cli version and exit"
 msgstr "Skriv ut version för sysprof-cli och avsluta"
 
 #: src/tools/sysprof-cli.c:149
-#| msgid "[CAPTURE_FILE] — Sysprof"
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[FÅNGSTFIL] [-- KOMMANDO ARGUMENT] — Sysprof"
 
@@ -850,7 +848,6 @@ msgid "Object path to invoke method on"
 msgstr "Objektsökväg att anropa metod på"
 
 #: src/tools/sysprof-profiler-ctl.c:49
-#| msgid "org.gnome.Sysprof"
 msgid "/org/gnome/Sysprof3/Profiler"
 msgstr "/org/gnome/Sysprof3/Profiler"
 

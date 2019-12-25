@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2019-08-11 14:38+0200\n"
-"PO-Revision-Date: 2019-08-11 14:42+0200\n"
+"POT-Creation-Date: 2019-12-12 20:40+0000\n"
+"PO-Revision-Date: 2019-12-25 16:39+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -537,7 +537,7 @@ msgid "Select for more details"
 msgstr "Zaznaczenie wyświetli więcej informacji"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
-msgid "Display supplimental graphs"
+msgid "Display supplemental graphs"
 msgstr "Wyświetla wykresy uzupełniające"
 
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
@@ -824,7 +824,6 @@ msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[PLIK_PRZECHWYTYWANIA] [-- POLECENIE PARAMETRY] — Sysprof"
 
 #: src/tools/sysprof-cli.c:168
-#, c-format
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Przekazano za dużo parametrów do polecenia sysprof-cli:"
 

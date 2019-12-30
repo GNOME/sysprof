@@ -142,8 +142,12 @@ cpu_info_cb (const SysprofCaptureFrame *frame,
   const gchar *line;
   gchar **str = user_data;
 
-  endptr = (gchar *)fc->data + fc->len;
   line = memmem ((gchar *)fc->data, fc->len, "model name", 10);
+
+  if (!line)
+    return FALSE;
+
+  endptr = (gchar *)fc->data + fc->len;
   endptr = memchr (line, '\n', endptr - line);
 
   if (endptr)

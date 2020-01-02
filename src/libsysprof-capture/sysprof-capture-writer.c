@@ -499,7 +499,7 @@ sysprof_capture_writer_new_from_fd (int   fd,
 
   header->magic = SYSPROF_CAPTURE_MAGIC;
   header->version = 1;
-#ifdef G_LITTLE_ENDIAN
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
   header->little_endian = TRUE;
 #else
   header->little_endian = FALSE;

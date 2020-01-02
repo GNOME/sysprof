@@ -61,15 +61,12 @@ sysprof_helpers_init (SysprofHelpers *self)
 {
   g_autoptr(GDBusConnection) bus = NULL;
 
-  bus = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL);
-  g_return_if_fail (bus != NULL);
-
-  self->proxy = ipc_service_proxy_new_sync (bus,
-                                            G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION,
-                                            "org.gnome.Sysprof3",
-                                            "/org/gnome/Sysprof3",
-                                            NULL, NULL);
-  g_return_if_fail (self->proxy != NULL);
+  if ((bus = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, NULL)))
+    self->proxy = ipc_service_proxy_new_sync (bus,
+                                              G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION,
+                                              "org.gnome.Sysprof3",
+                                              "/org/gnome/Sysprof3",
+                                              NULL, NULL);
 }
 
 SysprofHelpers *
@@ -178,7 +175,7 @@ sysprof_helpers_list_processes (SysprofHelpers  *self,
         return TRUE;
     }
 
-  if (ipc_service_call_list_processes_sync (self->proxy, &fixed_ar, cancellable, NULL))
+  if (self->proxy && ipc_service_call_list_processes_sync (self->proxy, &fixed_ar, cancellable, NULL))
     {
       const gint32 *data;
       gsize len;
@@ -191,6 +188,7 @@ sysprof_helpers_list_processes (SysprofHelpers  *self,
     }
 
   helpers_list_processes (processes, n_processes);
+
   return TRUE;
 }
 

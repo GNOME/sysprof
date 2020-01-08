@@ -35,6 +35,8 @@ struct _SysprofDepthVisualizer
   guint                 reload_source;
   guint                 mode;
   GtkAllocation         last_alloc;
+  guint                 reloading : 1;
+  guint                 needs_reload : 1;
 };
 
 typedef struct
@@ -47,6 +49,8 @@ typedef struct
   guint                 max_n_addrs;
   guint                 mode;
 } State;
+
+static void sysprof_depth_visualizer_reload (SysprofDepthVisualizer *self);
 
 G_DEFINE_TYPE (SysprofDepthVisualizer, sysprof_depth_visualizer, SYSPROF_TYPE_VISUALIZER)
 
@@ -165,12 +169,17 @@ apply_point_cache_cb (GObject      *object,
   g_assert (SYSPROF_IS_DEPTH_VISUALIZER (self));
   g_assert (G_IS_TASK (result));
 
+  self->reloading = FALSE;
+
   if ((pc = g_task_propagate_pointer (G_TASK (result), NULL)))
     {
       g_clear_pointer (&self->points, point_cache_unref);
       self->points = g_steal_pointer (&pc);
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }
+
+  if (self->needs_reload)
+    sysprof_depth_visualizer_reload (self);
 }
 
 static void
@@ -181,6 +190,14 @@ sysprof_depth_visualizer_reload (SysprofDepthVisualizer *self)
   State *st;
 
   g_assert (SYSPROF_IS_DEPTH_VISUALIZER (self));
+
+  self->needs_reload = TRUE;
+
+  if (self->reloading)
+    return;
+
+  self->reloading = TRUE;
+  self->needs_reload = FALSE;
 
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
 

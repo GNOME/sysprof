@@ -24,31 +24,25 @@
 
 struct _PointCache
 {
-  volatile gint ref_count;
   GHashTable *sets;
 };
 
 static void
-point_cache_destroy (PointCache *self)
+point_cache_clear (PointCache *self)
 {
   g_clear_pointer (&self->sets, g_hash_table_unref);
-  g_slice_free (PointCache, self);
 }
 
 PointCache *
 point_cache_ref (PointCache *self)
 {
-  g_return_val_if_fail (self->ref_count > 0, NULL);
-  g_atomic_int_inc (&self->ref_count);
-  return self;
+  return g_atomic_rc_box_acquire (self);
 }
 
 void
 point_cache_unref (PointCache *self)
 {
-  g_return_if_fail (self->ref_count > 0);
-  if (g_atomic_int_dec_and_test (&self->ref_count))
-    point_cache_destroy (self);
+  g_atomic_rc_box_release_full (self, (GDestroyNotify) point_cache_clear);
 }
 
 PointCache *
@@ -56,8 +50,7 @@ point_cache_new (void)
 {
   PointCache *self;
 
-  self = g_slice_new0 (PointCache);
-  self->ref_count = 1;
+  self = g_atomic_rc_box_new0 (PointCache);
   self->sets = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_array_unref);
 
   return self;

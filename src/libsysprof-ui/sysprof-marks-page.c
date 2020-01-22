@@ -47,6 +47,7 @@ typedef struct
   GtkLabel                    *group;
   GtkLabel                    *mark;
   GtkLabel                    *time;
+  GtkLabel                    *end;
   GtkLabel                    *duration;
   GtkTextView                 *message;
 } SysprofMarksPagePrivate;
@@ -147,12 +148,14 @@ sysprof_marks_page_selection_changed_cb (SysprofMarksPage *self,
       g_autofree gchar *name = NULL;
       g_autofree gchar *duration_str = NULL;
       g_autofree gchar *time_str = NULL;
+      g_autofree gchar *end_str = NULL;
       g_autofree gchar *text = NULL;
       GtkAdjustment *adj;
       gdouble x;
       gint64 begin_time;
       gint64 end_time;
       gint64 duration;
+      gint64 etime;
       gint64 otime;
       gdouble lower;
       gdouble upper;
@@ -174,10 +177,14 @@ sysprof_marks_page_selection_changed_cb (SysprofMarksPage *self,
       otime = begin_time - priv->capture_begin_time;
       time_str = _sysprof_format_duration (otime);
 
+      etime = end_time - priv->capture_begin_time;
+      end_str = _sysprof_format_duration (etime);
+
       gtk_label_set_label (priv->group, group);
       gtk_label_set_label (priv->mark, name);
       gtk_label_set_label (priv->duration, duration_str);
       gtk_label_set_label (priv->time, time_str);
+      gtk_label_set_label (priv->end, end_str);
 
       gtk_text_buffer_set_text (gtk_text_view_get_buffer (priv->message), text, -1);
 
@@ -462,6 +469,7 @@ sysprof_marks_page_class_init (SysprofMarksPageClass *klass)
   page_class->set_size_group = sysprof_marks_page_set_size_group;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-marks-page.ui");
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksPage, end);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksPage, details_box);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksPage, duration_cell);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksPage, duration_column);

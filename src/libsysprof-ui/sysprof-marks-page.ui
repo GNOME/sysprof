@@ -78,7 +78,7 @@
                     </child>
                     <child>
                       <object class="GtkLabel">
-                        <property name="label" translatable="yes">Duration</property>
+                        <property name="label" translatable="yes">End</property>
                         <property name="visible">true</property>
                         <property name="xalign">1</property>
                         <style>
@@ -87,6 +87,20 @@
                       </object>
                       <packing>
                         <property name="top-attach">3</property>
+                        <property name="left-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Duration</property>
+                        <property name="visible">true</property>
+                        <property name="xalign">1</property>
+                        <style>
+                          <class name="dim-label"/>
+                        </style>
+                      </object>
+                      <packing>
+                        <property name="top-attach">4</property>
                         <property name="left-attach">0</property>
                       </packing>
                     </child>
@@ -101,7 +115,7 @@
                         </style>
                       </object>
                       <packing>
-                        <property name="top-attach">4</property>
+                        <property name="top-attach">5</property>
                         <property name="left-attach">0</property>
                       </packing>
                     </child>
@@ -139,12 +153,22 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="duration">
+                      <object class="GtkLabel" id="end">
                         <property name="visible">true</property>
                         <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="top-attach">3</property>
+                        <property name="left-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="duration">
+                        <property name="visible">true</property>
+                        <property name="xalign">0</property>
+                      </object>
+                      <packing>
+                        <property name="top-attach">4</property>
                         <property name="left-attach">1</property>
                       </packing>
                     </child>
@@ -161,7 +185,7 @@
                         </child>
                       </object>
                       <packing>
-                        <property name="top-attach">4</property>
+                        <property name="top-attach">5</property>
                         <property name="left-attach">1</property>
                       </packing>
                     </child>

@@ -87,6 +87,42 @@ sysprof_counters_aid_prepare (SysprofAid      *self,
 {
 }
 
+static gchar *
+build_title (const SysprofCaptureCounter *ctr)
+{
+  GString *str;
+
+  str = g_string_new (NULL);
+
+  if (ctr->category[0] != 0)
+    {
+      if (str->len)
+        g_string_append_c (str, ' ');
+      g_string_append (str, ctr->category);
+    }
+
+  if (ctr->name[0] != 0)
+    {
+      if (str->len)
+        g_string_append (str, " — ");
+      g_string_append (str, ctr->name);
+    }
+
+  if (ctr->description[0] != 0)
+    {
+      if (str->len)
+        g_string_append_printf (str, " (%s)", ctr->description);
+      else
+        g_string_append (str, ctr->description);
+    }
+
+  if (str->len == 0)
+    /* this is untranslated on purpose */
+    g_string_append_printf (str, "Counter %d", ctr->id);
+
+  return g_string_free (str, FALSE);
+}
+
 static gboolean
 collect_counters (const SysprofCaptureFrame *frame,
                   gpointer                   user_data)
@@ -196,7 +232,7 @@ sysprof_counters_aid_present_finish (SysprofAid    *aid,
       for (guint i = 0; i < counters->len; i++)
         {
           const SysprofCaptureCounter *ctr = &g_array_index (counters, SysprofCaptureCounter, i);
-          g_autofree gchar *title = g_strdup_printf ("%s — %s", ctr->category, ctr->name);
+          g_autofree gchar *title = build_title (ctr);
           GtkWidget *row;
           GdkRGBA rgba;
 

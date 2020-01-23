@@ -455,3 +455,22 @@ _sysprof_profiler_assistant_focus_record (SysprofProfilerAssistant *self)
 
   gtk_widget_grab_focus (GTK_WIDGET (self->record_button));
 }
+
+void
+sysprof_profiler_assistant_set_executable (SysprofProfilerAssistant *self,
+                                           const gchar              *path)
+{
+  g_return_if_fail (SYSPROF_IS_PROFILER_ASSISTANT (self));
+
+  if (path == NULL || path[0] == 0)
+    {
+      gtk_entry_set_text (GTK_ENTRY (self->command_line), "");
+      gtk_switch_set_active (self->launch_switch, FALSE);
+    }
+  else
+    {
+      gtk_entry_set_text (GTK_ENTRY (self->command_line), path);
+      gtk_switch_set_active (self->launch_switch, TRUE);
+      gtk_widget_grab_focus (GTK_WIDGET (self->command_line));
+    }
+}

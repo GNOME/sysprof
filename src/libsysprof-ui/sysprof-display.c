@@ -1032,9 +1032,18 @@ sysprof_display_open (SysprofDisplay *self,
   g_return_if_fail (g_file_is_native (file));
   g_return_if_fail (sysprof_display_is_empty (self));
 
-  g_set_object (&priv->file, file);
-
   path = g_file_get_path (file);
+
+  /* If the file is executable, just set the path to the binary
+   * in the profiler assistant.
+   */
+  if (g_file_test (path, G_FILE_TEST_IS_EXECUTABLE))
+    {
+      sysprof_profiler_assistant_set_executable (priv->assistant, path);
+      return;
+    }
+
+  g_set_object (&priv->file, file);
 
   if (!(reader = sysprof_capture_reader_new (path, &error)))
     g_warning ("Failed to open capture: %s", error->message);

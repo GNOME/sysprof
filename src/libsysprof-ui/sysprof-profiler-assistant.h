@@ -30,6 +30,8 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofProfilerAssistant, sysprof_profiler_assistant, SYSPROF, PROFILER_ASSISTANT, GtkBin)
 
-GtkWidget *sysprof_profiler_assistant_new (void);
+GtkWidget *sysprof_profiler_assistant_new            (void);
+void       sysprof_profiler_assistant_set_executable (SysprofProfilerAssistant *self,
+                                                      const gchar              *path);
 
 G_END_DECLS

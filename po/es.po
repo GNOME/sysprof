@@ -1,14 +1,14 @@
 # Spanish translation for sysprof.
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2016-2019.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2016-2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2019-12-12 20:40+0000\n"
-"PO-Revision-Date: 2019-12-13 09:50+0100\n"
+"POT-Creation-Date: 2020-01-22 20:01+0000\n"
+"PO-Revision-Date: 2020-01-23 12:43+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -138,7 +138,7 @@ msgid "Battery Charge (All)"
 msgstr "Carga de la batería (todo)"
 
 #: src/libsysprof-ui/sysprof-battery-aid.c:240
-#: src/libsysprof-ui/sysprof-counters-aid.c:246
+#: src/libsysprof-ui/sysprof-counters-aid.c:282
 msgid "Battery"
 msgstr "Batería"
 
@@ -205,8 +205,8 @@ msgstr "No hay muestras suficientes"
 msgid "More samples are necessary to display a callgraph."
 msgstr "Se necesitan más muestras para generar un gráfico."
 
-#: src/libsysprof-ui/sysprof-counters-aid.c:185
-#: src/libsysprof-ui/sysprof-counters-aid.c:190
+#: src/libsysprof-ui/sysprof-counters-aid.c:221
+#: src/libsysprof-ui/sysprof-counters-aid.c:226
 msgid "Counters"
 msgstr "Contadores"
 
@@ -233,11 +233,11 @@ msgstr "Uso de CPU (todo)"
 msgid "Processes"
 msgstr "Procesos"
 
-#: src/libsysprof-ui/sysprof-details-page.c:218
+#: src/libsysprof-ui/sysprof-details-page.c:222
 msgid "Memory Capture"
 msgstr "Captura de memoria"
 
-#: src/libsysprof-ui/sysprof-details-page.c:232
+#: src/libsysprof-ui/sysprof-details-page.c:236
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf segundos"
@@ -251,8 +251,8 @@ msgid "Captured at"
 msgstr "Capturado a las"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:50
-#: src/libsysprof-ui/sysprof-marks-page.ui:81
-#: src/libsysprof-ui/sysprof-marks-page.ui:191
+#: src/libsysprof-ui/sysprof-marks-page.ui:95
+#: src/libsysprof-ui/sysprof-marks-page.ui:215
 msgid "Duration"
 msgstr "Duración"
 
@@ -363,7 +363,7 @@ msgstr "Algo ha ido mal de manera inesperada al intentar perfilar su sistema."
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
 #: src/libsysprof-ui/sysprof-logs-page.ui:58
-#: src/libsysprof-ui/sysprof-marks-page.ui:95
+#: src/libsysprof-ui/sysprof-marks-page.ui:109
 msgid "Message"
 msgstr "Mensaje"
 
@@ -416,11 +416,15 @@ msgstr "Tiempos"
 msgid "Group"
 msgstr "Grupo"
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:221
+#: src/libsysprof-ui/sysprof-marks-page.ui:81
+msgid "End"
+msgstr "Fin"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:245
 msgid "No Timings Available"
 msgstr "No hay tiempos disponibles"
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:222
+#: src/libsysprof-ui/sysprof-marks-page.ui:246
 msgid "No timing data was found for the current selection"
 msgstr "No se han recolectado datos de tiempos para la selección actual"
 
@@ -535,7 +539,6 @@ msgid "Select for more details"
 msgstr "Seleccione para obtener más detalles"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
-#| msgid "Display supplimental graphs"
 msgid "Display supplemental graphs"
 msgstr "Mostrar gráficos suplementarios"
 

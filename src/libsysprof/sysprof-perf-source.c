@@ -358,8 +358,8 @@ sysprof_perf_source_handle_event (SysprofPerfCounterEvent *event,
       sysprof_capture_writer_add_fork (self->writer,
                                        event->fork.time,
                                        cpu,
-                                       event->fork.ppid,
-                                       event->fork.pid);
+                                       event->fork.ptid,
+                                       event->fork.tid);
 
       /*
        * TODO: We should add support for "follow fork" of the GPid if we are

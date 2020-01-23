@@ -327,7 +327,11 @@ change_page_cb (GSimpleAction *action,
   if (g_variant_is_of_type (param, G_VARIANT_TYPE_STRING))
     {
       const gchar *str = g_variant_get_string (param, NULL);
+
       gtk_stack_set_visible_child_name (priv->pages, str);
+
+      if (g_str_equal (str, "details"))
+        sysprof_visualizers_frame_unselect_row (priv->visualizers);
     }
 }
 

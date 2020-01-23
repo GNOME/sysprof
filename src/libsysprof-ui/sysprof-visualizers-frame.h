@@ -45,5 +45,6 @@ gboolean                sysprof_visualizers_frame_load_finish        (SysprofVis
                                                                       GError                  **error);
 GtkSizeGroup           *sysprof_visualizers_frame_get_size_group     (SysprofVisualizersFrame  *self);
 GtkAdjustment          *sysprof_visualizers_frame_get_hadjustment    (SysprofVisualizersFrame  *self);
+void                    sysprof_visualizers_frame_unselect_row       (SysprofVisualizersFrame  *self);
 
 G_END_DECLS

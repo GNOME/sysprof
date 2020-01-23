@@ -193,7 +193,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="hexpand">False</property>
-                        <property name="selection_mode">browse</property>
+                        <property name="selection_mode">single</property>
                         <style>
                           <class name="left-column"/>
                           <class name="visualizer-groups"/>

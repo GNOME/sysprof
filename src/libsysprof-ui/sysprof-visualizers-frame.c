@@ -747,3 +747,11 @@ sysprof_visualizers_frame_get_hadjustment (SysprofVisualizersFrame *self)
 
   return gtk_range_get_adjustment (GTK_RANGE (self->hscrollbar));
 }
+
+void
+sysprof_visualizers_frame_unselect_row (SysprofVisualizersFrame *self)
+{
+  g_return_if_fail (SYSPROF_IS_VISUALIZERS_FRAME (self));
+
+  gtk_list_box_unselect_all (self->groups);
+}

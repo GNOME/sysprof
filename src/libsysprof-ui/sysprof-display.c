@@ -237,10 +237,24 @@ sysprof_display_dup_title (SysprofDisplay *self)
 
   if (priv->reader != NULL)
     {
+      g_autoptr(GDateTime) dt = NULL;
       const gchar *filename;
+      const gchar *capture_time;
 
       if ((filename = sysprof_capture_reader_get_filename (priv->reader)))
         return g_path_get_basename (filename);
+
+      /* This recording is not yet on disk, but the time it was recorded
+       * is much more useful than "New Recording".
+       */
+      capture_time = sysprof_capture_reader_get_time (priv->reader);
+
+      if ((dt = g_date_time_new_from_iso8601 (capture_time, NULL)))
+        {
+          g_autofree gchar *formatted = g_date_time_format (dt, "%X");
+          /* translators: %s is replaced with locale specific time of recording */
+          return g_strdup_printf (_("Recording at %s"), formatted);
+        }
     }
 
   return g_strdup (_("New Recording"));

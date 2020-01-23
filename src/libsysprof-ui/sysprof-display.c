@@ -1025,7 +1025,6 @@ sysprof_display_open (SysprofDisplay *self,
   SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
   g_autoptr(SysprofCaptureReader) reader = NULL;
   g_autoptr(GError) error = NULL;
-  g_autoptr(GTask) task = NULL;
   g_autofree gchar *path = NULL;
 
   g_return_if_fail (SYSPROF_IS_DISPLAY (self));

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-01-22 20:01+0000\n"
-"PO-Revision-Date: 2020-01-23 12:43+0100\n"
+"POT-Creation-Date: 2020-01-23 20:47+0000\n"
+"PO-Revision-Date: 2020-01-24 12:37+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -318,24 +318,32 @@ msgstr "Falló la grabación"
 msgid "Recording…"
 msgstr "Grabando…"
 
-#: src/libsysprof-ui/sysprof-display.c:246
+#. translators: %s is replaced with locale specific time of recording
+#: src/libsysprof-ui/sysprof-display.c:256
+#, c-format
+#| msgctxt "shortcut window"
+#| msgid "Recording"
+msgid "Recording at %s"
+msgstr "Grabando a las %s"
+
+#: src/libsysprof-ui/sysprof-display.c:260
 msgid "New Recording"
 msgstr "Nueva grabación"
 
-#: src/libsysprof-ui/sysprof-display.c:1151
+#: src/libsysprof-ui/sysprof-display.c:1177
 msgid "Save Recording"
 msgstr "Guardar grabación"
 
-#: src/libsysprof-ui/sysprof-display.c:1154
+#: src/libsysprof-ui/sysprof-display.c:1180
 msgid "Save"
 msgstr "Guardar"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1155 src/sysprof/sysprof-window.c:277
+#: src/libsysprof-ui/sysprof-display.c:1181 src/sysprof/sysprof-window.c:277
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/libsysprof-ui/sysprof-display.c:1181
+#: src/libsysprof-ui/sysprof-display.c:1207
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Falló al guardar la grabación: %s"

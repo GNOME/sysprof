@@ -69,6 +69,7 @@ libsysprof_private_sources = [
   'sysprof-line-reader.c',
   'sysprof-map-lookaside.c',
   'sysprof-mountinfo.c',
+  'sysprof-podman.c',
   'sysprof-polkit.c',
   'sysprof-symbol-map.c',
   ipc_service_src,

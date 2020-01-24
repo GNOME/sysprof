@@ -27,6 +27,7 @@
 #include "sysprof-elf-symbol-resolver.h"
 #include "sysprof-flatpak.h"
 #include "sysprof-map-lookaside.h"
+#include "sysprof-podman.h"
 
 struct _SysprofElfSymbolResolver
 {
@@ -92,11 +93,19 @@ free_element_string (gpointer data)
 static void
 sysprof_elf_symbol_resolver_init (SysprofElfSymbolResolver *self)
 {
+  g_auto(GStrv) podman_dirs = NULL;
+
   self->debug_dirs = g_array_new (TRUE, FALSE, sizeof (gchar *));
   g_array_set_clear_func (self->debug_dirs, free_element_string);
+
   sysprof_elf_symbol_resolver_add_debug_dir (self, "/usr/lib/debug");
   sysprof_elf_symbol_resolver_add_debug_dir (self, "/usr/lib32/debug");
   sysprof_elf_symbol_resolver_add_debug_dir (self, "/usr/lib64/debug");
+
+  /* The user may have podman/toolbox containers */
+  podman_dirs = sysprof_podman_debug_dirs ();
+  for (guint i = 0; podman_dirs[i]; i++)
+    sysprof_elf_symbol_resolver_add_debug_dir (self, podman_dirs[i]);
 
   if (is_flatpak ())
     {

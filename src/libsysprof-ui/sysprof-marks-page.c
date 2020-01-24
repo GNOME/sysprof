@@ -238,14 +238,16 @@ sysprof_marks_page_tree_view_query_tooltip_cb (SysprofMarksPage *self,
           g_autofree gchar *tooltip_text = NULL;
           g_autofree gchar *durationstr = NULL;
           gint64 begin_time;
+          gint64 end_time;
           gint64 duration;
 
           gtk_tree_model_get (model, &iter,
                               SYSPROF_MARKS_MODEL_COLUMN_BEGIN_TIME, &begin_time,
-                              SYSPROF_MARKS_MODEL_COLUMN_DURATION, &duration,
+                              SYSPROF_MARKS_MODEL_COLUMN_END_TIME, &end_time,
                               SYSPROF_MARKS_MODEL_COLUMN_TEXT, &text,
                               -1);
 
+          duration = end_time - begin_time;
           begin_time -= priv->capture_begin_time;
           durationstr = _sysprof_format_duration (duration);
 

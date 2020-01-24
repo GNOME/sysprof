@@ -30,8 +30,8 @@ struct _SysprofMapLookaside
 
 static gint
 sysprof_map_compare (gconstpointer a,
-                gconstpointer b,
-                gpointer      user_data)
+                     gconstpointer b,
+                     gpointer      user_data)
 {
   const SysprofMap *map_a = a;
   const SysprofMap *map_b = b;
@@ -41,8 +41,8 @@ sysprof_map_compare (gconstpointer a,
 
 static gint
 sysprof_map_compare_in_range (gconstpointer a,
-                         gconstpointer b,
-                         gpointer      user_data)
+                              gconstpointer b,
+                              gpointer      user_data)
 {
   const SysprofMap *map_a = a;
   const SysprofMap *map_b = b;
@@ -88,7 +88,7 @@ sysprof_map_lookaside_free (SysprofMapLookaside *self)
 
 void
 sysprof_map_lookaside_insert (SysprofMapLookaside *self,
-                         const SysprofMap    *map)
+                              const SysprofMap    *map)
 {
   SysprofMap *copy;
 
@@ -107,7 +107,7 @@ sysprof_map_lookaside_insert (SysprofMapLookaside *self,
 
 const SysprofMap *
 sysprof_map_lookaside_lookup (SysprofMapLookaside   *self,
-                         SysprofCaptureAddress  address)
+                              SysprofCaptureAddress  address)
 {
   SysprofMap map = { address };
   GSequenceIter *iter;

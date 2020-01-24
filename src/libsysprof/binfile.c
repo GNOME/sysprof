@@ -358,7 +358,7 @@ bin_file_new (const char          *filename,
     ElfParser *elf = NULL;
     bin_file_t *bf;
 
-    if (g_str_has_prefix (filename, "/var/run/host"))
+    if (g_str_has_prefix (filename, "/var/run/host/"))
       real_filename = filename + strlen ("/var/run/host");
 
     bf = g_new0 (bin_file_t, 1);

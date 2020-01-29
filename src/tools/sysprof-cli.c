@@ -35,6 +35,8 @@
 #include <signal.h>
 #include <sysprof.h>
 
+#include "sysprof-capture-util-private.h"
+
 static GMainLoop  *main_loop;
 static SysprofProfiler *profiler;
 static int exit_code = EXIT_SUCCESS;
@@ -66,6 +68,99 @@ profiler_failed (SysprofProfiler *profiler_,
   g_main_loop_quit (main_loop_);
 }
 
+static gint
+merge_files (gint             argc,
+             gchar          **argv,
+             GOptionContext  *context)
+{
+  g_autoptr(SysprofCaptureWriter) writer = NULL;
+  g_autofree gchar *contents = NULL;
+  g_autofree gchar *tmpname = NULL;
+  gsize len;
+  gint fd;
+
+  if (argc < 3)
+    {
+      g_autofree gchar *help = NULL;
+
+      help = g_option_context_get_help (context, FALSE, NULL);
+      g_printerr (_("--merge requires at least 2 filename arguments"));
+      g_printerr ("\n\n%s\n", help);
+
+      return EXIT_FAILURE;
+    }
+
+  if (isatty (STDOUT_FILENO))
+    {
+      g_printerr ("stdout is a TTY, refusing to write binary data to stdout.\n");
+      return EXIT_FAILURE;
+    }
+
+  for (guint i = 1; i < argc; i++)
+    {
+      if (!g_file_test (argv[i], G_FILE_TEST_IS_REGULAR))
+        {
+          g_printerr ("\"%s\" is not a regular file.\n", argv[i]);
+          return EXIT_FAILURE;
+        }
+    }
+
+  if (-1 == (fd = g_file_open_tmp (".sysprof-cat-XXXXXX", &tmpname, NULL)))
+    {
+      g_printerr ("Failed to create memfd for capture file.\n");
+      return EXIT_FAILURE;
+    }
+
+  writer = sysprof_capture_writer_new_from_fd (fd, 4096*4);
+
+  for (guint i = 1; i < argc; i++)
+    {
+      g_autoptr(SysprofCaptureReader) reader = NULL;
+      g_autoptr(GError) error = NULL;
+
+      if (!(reader = sysprof_capture_reader_new (argv[i], &error)))
+        {
+          g_printerr ("Failed to create reader for \"%s\": %s\n",
+                      argv[i], error->message);
+          return EXIT_FAILURE;
+        }
+
+      if (!sysprof_capture_writer_cat (writer, reader, &error))
+        {
+          g_printerr ("Failed to join \"%s\": %s\n",
+                      argv[i], error->message);
+          return EXIT_FAILURE;
+        }
+    }
+
+  if (g_file_get_contents (tmpname, &contents, &len, NULL))
+    {
+      const gchar *buf = contents;
+      gsize to_write = len;
+
+      while (to_write > 0)
+        {
+          gssize n_written;
+
+          n_written = _sysprof_write (STDOUT_FILENO, buf, to_write);
+
+          if (n_written < 0)
+            {
+              g_printerr ("%s\n", g_strerror (errno));
+              g_unlink (tmpname);
+              return EXIT_FAILURE;
+            }
+
+          buf += n_written;
+          to_write -= n_written;
+        }
+    }
+
+  g_unlink (tmpname);
+
+  return EXIT_SUCCESS;
+}
+
 gint
 main (gint   argc,
       gchar *argv[])
@@ -94,6 +189,7 @@ main (gint   argc,
   gboolean use_trace_fd = FALSE;
   gboolean gnome_shell = FALSE;
   gboolean rapl = FALSE;
+  gboolean merge = FALSE;
   int pid = -1;
   int fd;
   int flags;
@@ -113,6 +209,7 @@ main (gint   argc,
     { "gtk", 0, 0, G_OPTION_ARG_NONE, &gtk, N_("Set GTK_TRACE_FD environment to trace a GTK application") },
     { "rapl", 0, 0, G_OPTION_ARG_NONE, &rapl, N_("Include RAPL energy statistics") },
     { "gnome-shell", 0, 0, G_OPTION_ARG_NONE, &gnome_shell, N_("Connect to org.gnome.Shell for profiler statistics") },
+    { "merge", 0, 0, G_OPTION_ARG_NONE, &merge, N_("Merge all provided *.syscap files and write to stdout") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
   };
@@ -149,6 +246,17 @@ main (gint   argc,
   context = g_option_context_new (_("[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"));
   g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
 
+  g_option_context_set_summary (context, N_("\n\
+Examples:\n\
+\n\
+  # Record gtk4-widget-factory using trace-fd to get application provided\n\
+  # data as well as GTK and GNOME Shell data providers\n\
+  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n\
+\n\
+  # Merge multiple syscap files into one\n\
+  sysprof-cli --merge a.syscap b.syscap > c.syscap\n\
+"));
+
   if (!g_option_context_parse (context, &argc, &argv, &error))
     {
       g_printerr ("%s\n", error->message);
@@ -160,6 +268,12 @@ main (gint   argc,
       g_print ("Sysprof "PACKAGE_VERSION"\n");
       return EXIT_SUCCESS;
     }
+
+  /* If merge is set, we aren't recording, but instead merging a bunch of
+   * files together into a single syscap.
+   */
+  if (merge)
+    return merge_files (argc, argv, context);
 
   if (argc > 2)
     {

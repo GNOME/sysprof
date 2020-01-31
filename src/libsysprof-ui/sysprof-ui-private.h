@@ -29,6 +29,9 @@ G_BEGIN_DECLS
 void   _sysprof_callgraph_page_set_failed       (SysprofCallgraphPage     *self);
 void   _sysprof_callgraph_page_set_loading      (SysprofCallgraphPage     *self,
                                                  gboolean                  loading);
+void   _sysprof_memory_page_set_failed          (SysprofCallgraphPage     *self);
+void   _sysprof_memory_page_set_loading         (SysprofCallgraphPage     *self,
+                                                 gboolean                  loading);
 void   _sysprof_display_focus_record            (SysprofDisplay           *self);
 void   _sysprof_profiler_assistant_focus_record (SysprofProfilerAssistant *self);
 gchar *_sysprof_format_duration                 (gint64                    duration);

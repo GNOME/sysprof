@@ -3,6 +3,7 @@
   <requires lib="gtk+" version="3.22"/>
   <object class="SysprofCpuAid" id="cpu_aid"/>
   <object class="SysprofMemoryAid" id="memory_aid"/>
+  <object class="SysprofMemprofAid" id="memprof_aid"/>
   <object class="SysprofCallgraphAid" id="callgraph_aid"/>
   <object class="SysprofNetdevAid" id="network_aid"/>
   <object class="SysprofRaplAid" id="rapl_aid"/>
@@ -174,6 +175,14 @@
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">diskstat_aid</property>
+                            <property name="selected">false</property>
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="SysprofAidIcon">
+                            <property name="tooltip-text" translatable="yes">Track application memory allocations (Sysprof must launch target application)</property>
+                            <property name="aid">memprof_aid</property>
                             <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>

@@ -19,6 +19,7 @@
     <file preprocess="xml-stripblanks">sysprof-failed-state-view.ui</file>
     <file preprocess="xml-stripblanks">sysprof-logs-page.ui</file>
     <file preprocess="xml-stripblanks">sysprof-marks-page.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-memprof-page.ui</file>
     <file preprocess="xml-stripblanks">sysprof-process-model-row.ui</file>
     <file preprocess="xml-stripblanks">sysprof-profiler-assistant.ui</file>
     <file preprocess="xml-stripblanks">sysprof-recording-state-view.ui</file>

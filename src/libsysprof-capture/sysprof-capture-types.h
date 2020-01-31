@@ -115,19 +115,20 @@ typedef union
 
 typedef enum
 {
-  SYSPROF_CAPTURE_FRAME_TIMESTAMP  = 1,
-  SYSPROF_CAPTURE_FRAME_SAMPLE     = 2,
-  SYSPROF_CAPTURE_FRAME_MAP        = 3,
-  SYSPROF_CAPTURE_FRAME_PROCESS    = 4,
-  SYSPROF_CAPTURE_FRAME_FORK       = 5,
-  SYSPROF_CAPTURE_FRAME_EXIT       = 6,
-  SYSPROF_CAPTURE_FRAME_JITMAP     = 7,
-  SYSPROF_CAPTURE_FRAME_CTRDEF     = 8,
-  SYSPROF_CAPTURE_FRAME_CTRSET     = 9,
-  SYSPROF_CAPTURE_FRAME_MARK       = 10,
-  SYSPROF_CAPTURE_FRAME_METADATA   = 11,
-  SYSPROF_CAPTURE_FRAME_LOG        = 12,
-  SYSPROF_CAPTURE_FRAME_FILE_CHUNK = 13,
+  SYSPROF_CAPTURE_FRAME_TIMESTAMP    = 1,
+  SYSPROF_CAPTURE_FRAME_SAMPLE       = 2,
+  SYSPROF_CAPTURE_FRAME_MAP          = 3,
+  SYSPROF_CAPTURE_FRAME_PROCESS      = 4,
+  SYSPROF_CAPTURE_FRAME_FORK         = 5,
+  SYSPROF_CAPTURE_FRAME_EXIT         = 6,
+  SYSPROF_CAPTURE_FRAME_JITMAP       = 7,
+  SYSPROF_CAPTURE_FRAME_CTRDEF       = 8,
+  SYSPROF_CAPTURE_FRAME_CTRSET       = 9,
+  SYSPROF_CAPTURE_FRAME_MARK         = 10,
+  SYSPROF_CAPTURE_FRAME_METADATA     = 11,
+  SYSPROF_CAPTURE_FRAME_LOG          = 12,
+  SYSPROF_CAPTURE_FRAME_FILE_CHUNK   = 13,
+  SYSPROF_CAPTURE_FRAME_ALLOCATION   = 14,
 } SysprofCaptureFrameType;
 
 SYSPROF_ALIGNED_BEGIN(1)
@@ -311,6 +312,19 @@ typedef struct
 } SysprofCaptureFileChunk
 SYSPROF_ALIGNED_END(1);
 
+SYSPROF_ALIGNED_BEGIN(1)
+typedef struct
+{
+  SysprofCaptureFrame   frame;
+  SysprofCaptureAddress alloc_addr;
+  gint64                alloc_size;
+  gint32                tid;
+  guint32               n_addrs : 16;
+  guint32               padding1 : 16;
+  SysprofCaptureAddress addrs[0];
+} SysprofCaptureAllocation
+SYSPROF_ALIGNED_END(1);
+
 G_STATIC_ASSERT (sizeof (SysprofCaptureFileHeader) == 256);
 G_STATIC_ASSERT (sizeof (SysprofCaptureFrame) == 24);
 G_STATIC_ASSERT (sizeof (SysprofCaptureMap) == 56);
@@ -328,6 +342,8 @@ G_STATIC_ASSERT (sizeof (SysprofCaptureMark) == 96);
 G_STATIC_ASSERT (sizeof (SysprofCaptureMetadata) == 64);
 G_STATIC_ASSERT (sizeof (SysprofCaptureLog) == 64);
 G_STATIC_ASSERT (sizeof (SysprofCaptureFileChunk) == 284);
+G_STATIC_ASSERT (sizeof (SysprofCaptureAllocation) == 48);
+G_STATIC_ASSERT ((G_STRUCT_OFFSET (SysprofCaptureAllocation, addrs) % 8) == 0);
 
 static inline gint
 sysprof_capture_address_compare (SysprofCaptureAddress a,

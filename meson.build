@@ -27,10 +27,12 @@ cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')
 
 config_h = configuration_data()
+config_h.set_quoted('API_VERSION_S', '@0@'.format(libsysprof_api_version))
 config_h.set_quoted('PACKAGE_NAME', 'sysprof')
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
 config_h.set_quoted('PACKAGE_STRING', 'sysprof-' + meson.project_version())
 config_h.set_quoted('PACKAGE_BUGREPORT', 'https://bugzilla.gnome.org/enter_bug.cgi?product=sysprof')
+config_h.set_quoted('PACKAGE_LIBEXECDIR', join_paths(get_option('prefix'), get_option('libexecdir')))
 config_h.set('PACKAGE_TARNAME', 'PACKAGE_STRING')
 config_h.set('PACKAGE', 'PACKAGE_NAME')
 config_h.set('VERSION', 'PACKAGE_VERSION')
@@ -82,6 +84,15 @@ config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
 config_h.set10('ENABLE_NLS', true)
 config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
 config_h.set('LOCALEDIR', 'PACKAGE_LOCALE_DIR')
+
+if cc.has_header('execinfo.h')
+  config_h.set10('HAVE_EXECINFO_H', true)
+endif
+
+libunwind_dep = dependency('libunwind-generic', required: false)
+if libunwind_dep.found()
+  config_h.set10('ENABLE_LIBUNWIND', libunwind_dep.found())
+endif
 
 # Development build setup
 config_h.set('DEVELOPMENT_BUILD', version_split[1].to_int().is_odd())
@@ -179,16 +190,16 @@ int main(void) {
   error('Sysprof requires a C compiler with stdatomic support such as GCC 4.9 or newer')
 endif
 
-configure_file(
-         output: 'config.h',
-  configuration: config_h
-)
-
 subdir('src')
 subdir('data')
 subdir('examples')
 subdir('help')
 subdir('po')
+
+configure_file(
+         output: 'config.h',
+  configuration: config_h
+)
 
 if get_option('enable_gtk')
   meson.add_install_script('build-aux/meson/post_install.sh')

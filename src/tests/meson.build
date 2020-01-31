@@ -64,6 +64,30 @@ test_resolvers = executable('test-resolvers',
   dependencies: test_deps,
 )
 
+allocs_by_size = executable('allocs-by-size',
+  ['allocs-by-size.c'],
+        c_args: test_cflags,
+  dependencies: test_deps,
+)
+
+cross_thread_frees = executable('cross-thread-frees',
+  ['cross-thread-frees.c'],
+        c_args: test_cflags,
+  dependencies: test_deps,
+)
+
+memory_stack_stash = executable('memory-stack-stash',
+  ['memory-stack-stash.c'],
+        c_args: test_cflags,
+  dependencies: test_deps,
+)
+
+show_page_usage = executable('show-page-usage',
+  [ 'show-page-usage.c' ],
+        c_args: test_cflags,
+  dependencies: test_deps + [ librax_dep,
+                              dependency('cairo') ],
+)
 
 if get_option('enable_gtk')
 

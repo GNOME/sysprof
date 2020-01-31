@@ -1352,3 +1352,52 @@ sysprof_capture_reader_find_file (SysprofCaptureReader *self,
 
   return NULL;
 }
+
+const SysprofCaptureAllocation *
+sysprof_capture_reader_read_allocation (SysprofCaptureReader *self)
+{
+  SysprofCaptureAllocation *ma;
+
+  g_assert (self != NULL);
+  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  g_assert (self->pos <= self->bufsz);
+
+  if (!sysprof_capture_reader_ensure_space_for (self, sizeof *ma))
+    return NULL;
+
+  ma = (SysprofCaptureAllocation *)(gpointer)&self->buf[self->pos];
+
+  sysprof_capture_reader_bswap_frame (self, &ma->frame);
+
+  if (ma->frame.type != SYSPROF_CAPTURE_FRAME_ALLOCATION)
+    return NULL;
+
+  if (ma->frame.len < sizeof *ma)
+    return NULL;
+
+  if (self->endian != G_BYTE_ORDER)
+    {
+      ma->n_addrs = GUINT16_SWAP_LE_BE (ma->n_addrs);
+      ma->alloc_size = GUINT64_SWAP_LE_BE (ma->alloc_size);
+      ma->alloc_addr = GUINT64_SWAP_LE_BE (ma->alloc_addr);
+      ma->tid = GUINT32_SWAP_LE_BE (ma->tid);
+    }
+
+  if (ma->frame.len < (sizeof *ma + (sizeof(SysprofCaptureAddress) * ma->n_addrs)))
+    return NULL;
+
+  if (!sysprof_capture_reader_ensure_space_for (self, ma->frame.len))
+    return NULL;
+
+  ma = (SysprofCaptureAllocation *)(gpointer)&self->buf[self->pos];
+
+  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+    {
+      for (guint i = 0; i < ma->n_addrs; i++)
+        ma->addrs[i] = GUINT64_SWAP_LE_BE (ma->addrs[i]);
+    }
+
+  self->pos += ma->frame.len;
+
+  return ma;
+}

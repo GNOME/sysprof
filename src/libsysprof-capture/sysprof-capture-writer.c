@@ -78,6 +78,7 @@
 #define DEFAULT_BUFFER_SIZE (_sysprof_getpagesize() * 64L)
 #define INVALID_ADDRESS     (G_GUINT64_CONSTANT(0))
 #define MAX_COUNTERS        ((1 << 24) - 1)
+#define MAX_UNWIND_DEPTH    128
 
 typedef struct
 {
@@ -1509,4 +1510,102 @@ sysprof_capture_writer_set_flush_delay (SysprofCaptureWriter *self,
   self->periodic_flush = g_steal_pointer (&source);
 
   g_source_attach (self->periodic_flush, main_context);
+}
+
+gboolean
+sysprof_capture_writer_add_allocation (SysprofCaptureWriter  *self,
+                                       gint64                 time,
+                                       gint                   cpu,
+                                       gint32                 pid,
+                                       gint32                 tid,
+                                       SysprofCaptureAddress  alloc_addr,
+                                       gint64                 alloc_size,
+                                       SysprofBacktraceFunc   backtrace_func,
+                                       gpointer               backtrace_data)
+{
+  SysprofCaptureAllocation *ev;
+  gsize len;
+  guint n_addrs;
+
+  g_assert (self != NULL);
+  g_assert (backtrace_func != NULL);
+
+  len = sizeof *ev + (MAX_UNWIND_DEPTH * sizeof (SysprofCaptureAddress));
+  ev = (SysprofCaptureAllocation *)sysprof_capture_writer_allocate (self, &len);
+  if (!ev)
+    return FALSE;
+
+  sysprof_capture_writer_frame_init (&ev->frame,
+                                     len,
+                                     cpu,
+                                     pid,
+                                     time,
+                                     SYSPROF_CAPTURE_FRAME_ALLOCATION);
+
+  ev->alloc_size = alloc_size;
+  ev->alloc_addr = alloc_addr;
+  ev->padding1 = 0;
+  ev->tid = tid;
+  ev->n_addrs = 0;
+
+  n_addrs = backtrace_func (ev->addrs, MAX_UNWIND_DEPTH, backtrace_data);
+
+  if (n_addrs <= MAX_UNWIND_DEPTH)
+    ev->n_addrs = n_addrs;
+
+  if (ev->n_addrs < MAX_UNWIND_DEPTH)
+    {
+      gsize diff = (sizeof (SysprofCaptureAddress) * (MAX_UNWIND_DEPTH - ev->n_addrs));
+
+      ev->frame.len -= diff;
+      self->pos -= diff;
+    }
+
+  self->stat.frame_count[SYSPROF_CAPTURE_FRAME_ALLOCATION]++;
+
+  return TRUE;
+}
+
+gboolean
+sysprof_capture_writer_add_allocation_copy (SysprofCaptureWriter        *self,
+                                            gint64                       time,
+                                            gint                         cpu,
+                                            gint32                       pid,
+                                            gint32                       tid,
+                                            SysprofCaptureAddress        alloc_addr,
+                                            gint64                       alloc_size,
+                                            const SysprofCaptureAddress *addrs,
+                                            guint                        n_addrs)
+{
+  SysprofCaptureAllocation *ev;
+  gsize len;
+
+  g_assert (self != NULL);
+
+  if (n_addrs > 0xFFF)
+    n_addrs = 0xFFF;
+
+  len = sizeof *ev + (n_addrs * sizeof (SysprofCaptureAddress));
+  ev = (SysprofCaptureAllocation *)sysprof_capture_writer_allocate (self, &len);
+  if (!ev)
+    return FALSE;
+
+  sysprof_capture_writer_frame_init (&ev->frame,
+                                     len,
+                                     cpu,
+                                     pid,
+                                     time,
+                                     SYSPROF_CAPTURE_FRAME_ALLOCATION);
+
+  ev->alloc_size = alloc_size;
+  ev->alloc_addr = alloc_addr;
+  ev->padding1 = 0;
+  ev->tid = tid;
+  ev->n_addrs = n_addrs;
+
+  memcpy (ev->addrs, addrs, sizeof (SysprofCaptureAddress) * n_addrs);
+
+  self->stat.frame_count[SYSPROF_CAPTURE_FRAME_ALLOCATION]++;
+
+  return TRUE;
 }

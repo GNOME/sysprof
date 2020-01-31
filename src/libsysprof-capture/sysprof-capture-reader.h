@@ -64,86 +64,88 @@ G_BEGIN_DECLS
 typedef struct _SysprofCaptureReader SysprofCaptureReader;
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureReader                   *sysprof_capture_reader_new                 (const gchar              *filename,
-                                                                                    GError                  **error);
+SysprofCaptureReader               *sysprof_capture_reader_new                 (const gchar               *filename,
+                                                                                GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureReader                   *sysprof_capture_reader_new_from_fd         (int                       fd,
-                                                                                    GError                  **error);
+SysprofCaptureReader               *sysprof_capture_reader_new_from_fd         (int                        fd,
+                                                                                GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureReader                   *sysprof_capture_reader_copy                (SysprofCaptureReader     *self);
+SysprofCaptureReader               *sysprof_capture_reader_copy                (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureReader                   *sysprof_capture_reader_ref                 (SysprofCaptureReader     *self);
+SysprofCaptureReader               *sysprof_capture_reader_ref                 (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void                                    sysprof_capture_reader_unref               (SysprofCaptureReader     *self);
+void                                sysprof_capture_reader_unref               (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gint                                    sysprof_capture_reader_get_byte_order      (SysprofCaptureReader     *self);
+gint                                sysprof_capture_reader_get_byte_order      (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar                            *sysprof_capture_reader_get_filename        (SysprofCaptureReader     *self);
+const gchar                        *sysprof_capture_reader_get_filename        (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar                            *sysprof_capture_reader_get_time            (SysprofCaptureReader     *self);
+const gchar                        *sysprof_capture_reader_get_time            (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gint64                                  sysprof_capture_reader_get_start_time      (SysprofCaptureReader     *self);
+gint64                              sysprof_capture_reader_get_start_time      (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gint64                                  sysprof_capture_reader_get_end_time        (SysprofCaptureReader     *self);
+gint64                              sysprof_capture_reader_get_end_time        (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                                sysprof_capture_reader_skip                (SysprofCaptureReader     *self);
+gboolean                            sysprof_capture_reader_skip                (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                                sysprof_capture_reader_peek_type           (SysprofCaptureReader     *self,
-                                                                                    SysprofCaptureFrameType  *type);
+gboolean                            sysprof_capture_reader_peek_type           (SysprofCaptureReader      *self,
+                                                                                SysprofCaptureFrameType   *type);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                                sysprof_capture_reader_peek_frame          (SysprofCaptureReader     *self,
-                                                                                    SysprofCaptureFrame      *frame);
+gboolean                            sysprof_capture_reader_peek_frame          (SysprofCaptureReader      *self,
+                                                                                SysprofCaptureFrame       *frame);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureLog                *sysprof_capture_reader_read_log            (SysprofCaptureReader     *self);
+const SysprofCaptureLog            *sysprof_capture_reader_read_log            (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureMap                *sysprof_capture_reader_read_map            (SysprofCaptureReader     *self);
+const SysprofCaptureMap            *sysprof_capture_reader_read_map            (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureMark               *sysprof_capture_reader_read_mark           (SysprofCaptureReader     *self);
+const SysprofCaptureMark           *sysprof_capture_reader_read_mark           (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureMetadata           *sysprof_capture_reader_read_metadata       (SysprofCaptureReader     *self);
+const SysprofCaptureMetadata       *sysprof_capture_reader_read_metadata       (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureExit               *sysprof_capture_reader_read_exit           (SysprofCaptureReader     *self);
+const SysprofCaptureExit           *sysprof_capture_reader_read_exit           (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureFork               *sysprof_capture_reader_read_fork           (SysprofCaptureReader     *self);
+const SysprofCaptureFork           *sysprof_capture_reader_read_fork           (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureTimestamp          *sysprof_capture_reader_read_timestamp      (SysprofCaptureReader     *self);
+const SysprofCaptureTimestamp      *sysprof_capture_reader_read_timestamp      (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureProcess            *sysprof_capture_reader_read_process        (SysprofCaptureReader     *self);
+const SysprofCaptureProcess        *sysprof_capture_reader_read_process        (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureSample             *sysprof_capture_reader_read_sample         (SysprofCaptureReader     *self);
+const SysprofCaptureSample         *sysprof_capture_reader_read_sample         (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-GHashTable                             *sysprof_capture_reader_read_jitmap         (SysprofCaptureReader     *self);
+GHashTable                         *sysprof_capture_reader_read_jitmap         (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureCounterDefine      *sysprof_capture_reader_read_counter_define (SysprofCaptureReader     *self);
+const SysprofCaptureCounterDefine  *sysprof_capture_reader_read_counter_define (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureCounterSet         *sysprof_capture_reader_read_counter_set    (SysprofCaptureReader     *self);
+const SysprofCaptureCounterSet     *sysprof_capture_reader_read_counter_set    (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureFileChunk          *sysprof_capture_reader_read_file           (SysprofCaptureReader     *self);
+const SysprofCaptureFileChunk      *sysprof_capture_reader_read_file           (SysprofCaptureReader      *self);
+SYSPROF_AVAILABLE_IN_3_36
+const SysprofCaptureAllocation     *sysprof_capture_reader_read_allocation     (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                                sysprof_capture_reader_reset               (SysprofCaptureReader     *self);
+gboolean                            sysprof_capture_reader_reset               (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                                sysprof_capture_reader_splice              (SysprofCaptureReader     *self,
-                                                                                    SysprofCaptureWriter     *dest,
-                                                                                    GError                  **error);
+gboolean                            sysprof_capture_reader_splice              (SysprofCaptureReader      *self,
+                                                                                SysprofCaptureWriter      *dest,
+                                                                                GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                                sysprof_capture_reader_save_as             (SysprofCaptureReader     *self,
-                                                                                    const gchar              *filename,
-                                                                                    GError                  **error);
+gboolean                            sysprof_capture_reader_save_as             (SysprofCaptureReader      *self,
+                                                                                const gchar               *filename,
+                                                                                GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                                sysprof_capture_reader_get_stat            (SysprofCaptureReader     *self,
-                                                                                    SysprofCaptureStat       *st_buf);
+gboolean                            sysprof_capture_reader_get_stat            (SysprofCaptureReader      *self,
+                                                                                SysprofCaptureStat        *st_buf);
 SYSPROF_AVAILABLE_IN_ALL
-void                                    sysprof_capture_reader_set_stat            (SysprofCaptureReader     *self,
-                                                                                    const SysprofCaptureStat *st_buf);
+void                                sysprof_capture_reader_set_stat            (SysprofCaptureReader      *self,
+                                                                                const SysprofCaptureStat  *st_buf);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofCaptureFileChunk          *sysprof_capture_reader_find_file           (SysprofCaptureReader     *self,
-                                                                                    const gchar              *path);
+const SysprofCaptureFileChunk      *sysprof_capture_reader_find_file           (SysprofCaptureReader      *self,
+                                                                                const gchar               *path);
 SYSPROF_AVAILABLE_IN_ALL
-gchar                                 **sysprof_capture_reader_list_files          (SysprofCaptureReader     *self);
+gchar                             **sysprof_capture_reader_list_files          (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                                sysprof_capture_reader_read_file_fd        (SysprofCaptureReader     *self,
-                                                                                    const gchar              *path,
-                                                                                    gint                      fd);
+gboolean                            sysprof_capture_reader_read_file_fd        (SysprofCaptureReader      *self,
+                                                                                const gchar               *path,
+                                                                                gint                       fd);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
 

@@ -41,6 +41,7 @@
 #include "sysprof-callgraph-aid.h"
 #include "sysprof-cpu-aid.h"
 #include "sysprof-memory-aid.h"
+#include "sysprof-memprof-aid.h"
 #include "sysprof-netdev-aid.h"
 #include "sysprof-proxy-aid.h"
 #include "sysprof-rapl-aid.h"
@@ -397,6 +398,7 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   g_type_ensure (SYSPROF_TYPE_DISKSTAT_SOURCE);
   g_type_ensure (SYSPROF_TYPE_ENVIRON_EDITOR);
   g_type_ensure (SYSPROF_TYPE_MEMORY_AID);
+  g_type_ensure (SYSPROF_TYPE_MEMPROF_AID);
   g_type_ensure (SYSPROF_TYPE_NETDEV_AID);
   g_type_ensure (SYSPROF_TYPE_PROXY_AID);
   g_type_ensure (SYSPROF_TYPE_RAPL_AID);

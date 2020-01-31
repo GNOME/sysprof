@@ -189,6 +189,7 @@ main (gint   argc,
   gboolean use_trace_fd = FALSE;
   gboolean gnome_shell = FALSE;
   gboolean rapl = FALSE;
+  gboolean memprof = FALSE;
   gboolean merge = FALSE;
   int pid = -1;
   int fd;
@@ -208,6 +209,7 @@ main (gint   argc,
     { "gjs", 0, 0, G_OPTION_ARG_NONE, &gjs, N_("Set GJS_TRACE_FD environment to trace GJS processes") },
     { "gtk", 0, 0, G_OPTION_ARG_NONE, &gtk, N_("Set GTK_TRACE_FD environment to trace a GTK application") },
     { "rapl", 0, 0, G_OPTION_ARG_NONE, &rapl, N_("Include RAPL energy statistics") },
+    { "memprof", 0, 0, G_OPTION_ARG_NONE, &memprof, N_("Profile memory allocations and frees") },
     { "gnome-shell", 0, 0, G_OPTION_ARG_NONE, &gnome_shell, N_("Connect to org.gnome.Shell for profiler statistics") },
     { "merge", 0, 0, G_OPTION_ARG_NONE, &merge, N_("Merge all provided *.syscap files and write to stdout") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
@@ -467,6 +469,13 @@ Examples:\n\
       source = sysprof_proxy_source_new (G_BUS_TYPE_SESSION,
                                          "org.gnome.Shell",
                                          "/org/gnome/Sysprof3/Profiler");
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
+
+  if (memprof)
+    {
+      source = sysprof_memprof_source_new ();
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }

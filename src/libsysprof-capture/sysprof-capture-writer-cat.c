@@ -477,6 +477,24 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
             goto panic;
           break;
 
+        case SYSPROF_CAPTURE_FRAME_ALLOCATION: {
+          const SysprofCaptureAllocation *frame;
+
+          if (!(frame = sysprof_capture_reader_read_allocation (reader)))
+            goto panic;
+
+          sysprof_capture_writer_add_allocation_copy (self,
+                                                      frame->frame.time,
+                                                      frame->frame.cpu,
+                                                      frame->frame.pid,
+                                                      frame->tid,
+                                                      frame->alloc_addr,
+                                                      frame->alloc_size,
+                                                      frame->addrs,
+                                                      frame->n_addrs);
+          break;
+        }
+
         default:
           /* Silently drop, which is better than looping. We could potentially
            * copy this over using the raw bytes at some point.

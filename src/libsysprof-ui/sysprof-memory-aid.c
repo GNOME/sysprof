@@ -33,15 +33,6 @@ struct _SysprofMemoryAid
 
 G_DEFINE_TYPE (SysprofMemoryAid, sysprof_memory_aid, SYSPROF_TYPE_AID)
 
-/**
- * sysprof_memory_aid_new:
- *
- * Create a new #SysprofMemoryAid.
- *
- * Returns: (transfer full): a newly created #SysprofMemoryAid
- *
- * Since: 3.34
- */
 SysprofAid *
 sysprof_memory_aid_new (void)
 {
@@ -50,7 +41,7 @@ sysprof_memory_aid_new (void)
 
 static void
 sysprof_memory_aid_prepare (SysprofAid      *self,
-                         SysprofProfiler *profiler)
+                            SysprofProfiler *profiler)
 {
 #ifdef __linux__
   g_autoptr(SysprofSource) source = NULL;

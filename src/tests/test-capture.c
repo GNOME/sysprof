@@ -900,6 +900,67 @@ test_reader_writer_cat_jitmap (void)
   g_unlink ("jitmap-joined.syscap");
 }
 
+static void
+test_writer_memory_alloc_free (void)
+{
+  SysprofCaptureWriter *writer;
+  SysprofCaptureReader *reader;
+  GError *error = NULL;
+  SysprofCaptureAddress addrs[20] = {
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15, 16, 17, 18, 19,
+  };
+  gboolean r;
+
+  writer = sysprof_capture_writer_new ("memory.syscap", 0);
+
+  for (guint i = 0; i < 20; i++)
+    {
+      r = sysprof_capture_writer_add_allocation_copy (writer,
+                                                      SYSPROF_CAPTURE_CURRENT_TIME,
+                                                      i % 4,
+                                                      i % 3,
+                                                      i % 7,
+                                                      i,
+                                                      i * 2,
+                                                      addrs,
+                                                      i);
+      g_assert_true (r);
+    }
+
+  sysprof_capture_writer_flush (writer);
+
+  reader = sysprof_capture_writer_create_reader (writer, &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (reader);
+
+  for (guint i = 0; i < 20; i++)
+    {
+      const SysprofCaptureAllocation *ev;
+
+      ev = sysprof_capture_reader_read_allocation (reader);
+      g_assert_nonnull (ev);
+      g_assert_cmpint (ev->frame.type, ==, SYSPROF_CAPTURE_FRAME_ALLOCATION);
+
+      g_assert_cmpint (ev->frame.cpu, ==, i % 4);
+      g_assert_cmpint (ev->frame.pid, ==, i % 3);
+      g_assert_cmpint (ev->tid, ==, i % 7);
+      g_assert_cmpint (ev->alloc_addr, ==, i);
+      g_assert_cmpint (ev->alloc_size, ==, i * 2);
+      g_assert_cmpint (ev->n_addrs, ==, i);
+
+      for (guint j = 0; j < i; j++)
+        {
+          g_assert_cmpint (ev->addrs[j], ==, j);
+        }
+    }
+
+  sysprof_capture_writer_unref (writer);
+  sysprof_capture_reader_unref (reader);
+
+  g_unlink ("memory.syscap");
+}
+
 int
 main (int argc,
       char *argv[])
@@ -907,6 +968,7 @@ main (int argc,
   sysprof_clock_init ();
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/SysprofCapture/ReaderWriter", test_reader_basic);
+  g_test_add_func ("/SysprofCapture/ReaderWriter/alloc_free", test_writer_memory_alloc_free);
   g_test_add_func ("/SysprofCapture/Writer/splice", test_writer_splice);
   g_test_add_func ("/SysprofCapture/Reader/splice", test_reader_splice);
   g_test_add_func ("/SysprofCapture/ReaderWriter/log", test_reader_writer_log);

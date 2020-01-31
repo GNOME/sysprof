@@ -116,9 +116,9 @@ sysprof_callgraph_profile_finalize (GObject *object)
 
 static void
 sysprof_callgraph_profile_get_property (GObject    *object,
-                                   guint       prop_id,
-                                   GValue     *value,
-                                   GParamSpec *pspec)
+                                        guint       prop_id,
+                                        GValue     *value,
+                                        GParamSpec *pspec)
 {
   SysprofCallgraphProfile *self = SYSPROF_CALLGRAPH_PROFILE (object);
 
@@ -135,9 +135,9 @@ sysprof_callgraph_profile_get_property (GObject    *object,
 
 static void
 sysprof_callgraph_profile_set_property (GObject      *object,
-                                   guint         prop_id,
-                                   const GValue *value,
-                                   GParamSpec   *pspec)
+                                        guint         prop_id,
+                                        const GValue *value,
+                                        GParamSpec   *pspec)
 {
   SysprofCallgraphProfile *self = SYSPROF_CALLGRAPH_PROFILE (object);
 
@@ -180,7 +180,7 @@ sysprof_callgraph_profile_init (SysprofCallgraphProfile *self)
 
 static void
 sysprof_callgraph_profile_set_reader (SysprofProfile       *profile,
-                                 SysprofCaptureReader *reader)
+                                      SysprofCaptureReader *reader)
 {
   SysprofCallgraphProfile *self = (SysprofCallgraphProfile *)profile;
 
@@ -446,10 +446,10 @@ generate_free (Generate *generate)
 }
 
 static void
-sysprof_callgraph_profile_generate (SysprofProfile           *profile,
-                               GCancellable        *cancellable,
-                               GAsyncReadyCallback  callback,
-                               gpointer             user_data)
+sysprof_callgraph_profile_generate (SysprofProfile      *profile,
+                                    GCancellable        *cancellable,
+                                    GAsyncReadyCallback  callback,
+                                    gpointer             user_data)
 {
   SysprofCallgraphProfile *self = (SysprofCallgraphProfile *)profile;
   Generate *gen;
@@ -469,9 +469,9 @@ sysprof_callgraph_profile_generate (SysprofProfile           *profile,
 }
 
 static gboolean
-sysprof_callgraph_profile_generate_finish (SysprofProfile     *profile,
-                                      GAsyncResult  *result,
-                                      GError       **error)
+sysprof_callgraph_profile_generate_finish (SysprofProfile  *profile,
+                                           GAsyncResult    *result,
+                                           GError         **error)
 {
   SysprofCallgraphProfile *self = (SysprofCallgraphProfile *)profile;
   StackStash *stash;

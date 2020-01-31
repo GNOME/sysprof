@@ -155,6 +155,9 @@ if not get_option('buildtype').startswith('debug')
   test_link_args += [
     '-Wl,-Bsymbolic',
     '-fno-plt',
+    '-Wl,-z,relro',
+    '-Wl,-z,defs',
+    '-Wl,-z,now',
   ]
 endif
 

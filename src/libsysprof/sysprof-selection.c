@@ -272,7 +272,7 @@ sysprof_selection_unselect_all (SysprofSelection *self)
 
 gboolean
 sysprof_selection_contains (SysprofSelection *self,
-                       gint64       time_at)
+                            gint64            time_at)
 {
   if (self == NULL || self->ranges->len == 0)
     return TRUE;

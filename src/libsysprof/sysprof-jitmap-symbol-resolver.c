@@ -97,10 +97,10 @@ sysprof_jitmap_symbol_resolver_load (SysprofSymbolResolver *resolver,
 
 static gchar *
 sysprof_jitmap_symbol_resolver_resolve (SysprofSymbolResolver *resolver,
-                                   guint64           time,
-                                   GPid              pid,
-                                   SysprofCaptureAddress  address,
-                                   GQuark           *tag)
+                                        guint64                time,
+                                        GPid                   pid,
+                                        SysprofCaptureAddress  address,
+                                        GQuark                *tag)
 {
   SysprofJitmapSymbolResolver *self = (SysprofJitmapSymbolResolver *)resolver;
 

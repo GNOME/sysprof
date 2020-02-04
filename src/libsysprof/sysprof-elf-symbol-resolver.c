@@ -400,6 +400,14 @@ sysprof_elf_symbol_resolver_resolve_with_context (SysprofSymbolResolver *resolve
   gchar *name = NULL;
   SysprofCaptureAddress begin, end;
 
+  /* If not user context, nothing we can do here */
+  if (context != SYSPROF_ADDRESS_CONTEXT_USER)
+    return NULL;
+
+  /* If this is a jitmap entry, bail early to save some cycles */
+  if ((address & SYSPROF_CAPTURE_JITMAP_MARK) == SYSPROF_CAPTURE_JITMAP_MARK)
+    return NULL;
+
   sysprof_elf_symbol_resolver_resolve_full (SYSPROF_ELF_SYMBOL_RESOLVER (resolver),
                                             time,
                                             pid,

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-34\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-01-13 08:09+0000\n"
-"PO-Revision-Date: 2020-01-14 19:54+0700\n"
+"POT-Creation-Date: 2020-01-29 16:17+0000\n"
+"PO-Revision-Date: 2020-02-04 14:38+0700\n"
 "Last-Translator: Kukuh Syafaat <kukuhsyafaat@gnome.org>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural= n!=1;\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.3\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
 #: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:199
@@ -137,7 +137,7 @@ msgid "Battery Charge (All)"
 msgstr "Muatan Baterai (Semua)"
 
 #: src/libsysprof-ui/sysprof-battery-aid.c:240
-#: src/libsysprof-ui/sysprof-counters-aid.c:246
+#: src/libsysprof-ui/sysprof-counters-aid.c:282
 msgid "Battery"
 msgstr "Baterai"
 
@@ -204,8 +204,8 @@ msgstr "Tidak Cukup Cuplikan"
 msgid "More samples are necessary to display a callgraph."
 msgstr "Perlu lebih cuplikan untuk menampilkan suatu callgraph."
 
-#: src/libsysprof-ui/sysprof-counters-aid.c:185
-#: src/libsysprof-ui/sysprof-counters-aid.c:190
+#: src/libsysprof-ui/sysprof-counters-aid.c:221
+#: src/libsysprof-ui/sysprof-counters-aid.c:226
 msgid "Counters"
 msgstr "Pencacah"
 
@@ -250,8 +250,8 @@ msgid "Captured at"
 msgstr "Ditangkap pada"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:50
-#: src/libsysprof-ui/sysprof-marks-page.ui:81
-#: src/libsysprof-ui/sysprof-marks-page.ui:191
+#: src/libsysprof-ui/sysprof-marks-page.ui:95
+#: src/libsysprof-ui/sysprof-marks-page.ui:215
 msgid "Duration"
 msgstr "Durasi"
 
@@ -317,24 +317,30 @@ msgstr "Perekaman Gagal"
 msgid "Recording…"
 msgstr "Merekam…"
 
-#: src/libsysprof-ui/sysprof-display.c:246
+#. translators: %s is replaced with locale specific time of recording
+#: src/libsysprof-ui/sysprof-display.c:256
+#, c-format
+msgid "Recording at %s"
+msgstr "Merekam pada %s"
+
+#: src/libsysprof-ui/sysprof-display.c:260
 msgid "New Recording"
 msgstr "Perekaman Baru"
 
-#: src/libsysprof-ui/sysprof-display.c:1151
+#: src/libsysprof-ui/sysprof-display.c:1177
 msgid "Save Recording"
 msgstr "Simpan Rekaman"
 
-#: src/libsysprof-ui/sysprof-display.c:1154
+#: src/libsysprof-ui/sysprof-display.c:1180
 msgid "Save"
 msgstr "Simpan"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1155 src/sysprof/sysprof-window.c:277
+#: src/libsysprof-ui/sysprof-display.c:1181 src/sysprof/sysprof-window.c:277
 msgid "Cancel"
 msgstr "Batal"
 
-#: src/libsysprof-ui/sysprof-display.c:1181
+#: src/libsysprof-ui/sysprof-display.c:1207
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Gagal menyimpan rekaman: %s"
@@ -364,7 +370,7 @@ msgstr ""
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
 #: src/libsysprof-ui/sysprof-logs-page.ui:58
-#: src/libsysprof-ui/sysprof-marks-page.ui:95
+#: src/libsysprof-ui/sysprof-marks-page.ui:109
 msgid "Message"
 msgstr "Pesan"
 
@@ -417,11 +423,15 @@ msgstr "Pengaturan waktu"
 msgid "Group"
 msgstr "Grup"
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:221
+#: src/libsysprof-ui/sysprof-marks-page.ui:81
+msgid "End"
+msgstr "Akhir"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:245
 msgid "No Timings Available"
 msgstr "Tidak Ada Pengaturan Waktu"
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:222
+#: src/libsysprof-ui/sysprof-marks-page.ui:246
 msgid "No timing data was found for the current selection"
 msgstr "Tidak ada data waktu yang ditemukan untuk pemilihan saat ini"
 
@@ -742,88 +752,118 @@ msgstr "Tangkapan Sysprof"
 msgid "All Files"
 msgstr "Semua Berkas"
 
-#: src/tools/sysprof-cli.c:101
+#: src/tools/sysprof-cli.c:87
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge membutuhkan setidaknya 2 argumen nama berkas"
+
+#: src/tools/sysprof-cli.c:197
 msgid "Make sysprof specific to a task"
 msgstr "Membuat sysprof spesifik ke suatu tugas"
 
-#: src/tools/sysprof-cli.c:101
+#: src/tools/sysprof-cli.c:197
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:102
+#: src/tools/sysprof-cli.c:198
 msgid "Run a command and profile the process"
 msgstr "Menjalankan suatu perintah dan membuat profil proses tersebut"
 
-#: src/tools/sysprof-cli.c:102
+#: src/tools/sysprof-cli.c:198
 msgid "COMMAND"
 msgstr "PERINTAH"
 
-#: src/tools/sysprof-cli.c:103
+#: src/tools/sysprof-cli.c:199
 msgid "Force overwrite the capture file"
 msgstr "Paksa menimpa berkas tangkapan"
 
-#: src/tools/sysprof-cli.c:104
+#: src/tools/sysprof-cli.c:200
 msgid "Disable recording of battery statistics"
 msgstr "Nonaktifkan perekaman statistik baterai"
 
-#: src/tools/sysprof-cli.c:105
+#: src/tools/sysprof-cli.c:201
 msgid "Disable recording of CPU statistics"
 msgstr "Nonaktifkan perekaman statistik CPU"
 
-#: src/tools/sysprof-cli.c:106
+#: src/tools/sysprof-cli.c:202
 msgid "Disable recording of Disk statistics"
 msgstr "Nonaktifkan perekaman statistik Diska"
 
-#: src/tools/sysprof-cli.c:107
+#: src/tools/sysprof-cli.c:203
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Jangan rekam jejak stack memakai perf Linux"
 
-#: src/tools/sysprof-cli.c:108
+#: src/tools/sysprof-cli.c:204
 msgid "Do not append symbol name information from local machine"
 msgstr "Jangan imbuhkan informasi nama simbol dari mesin lokal"
 
-#: src/tools/sysprof-cli.c:109
+#: src/tools/sysprof-cli.c:205
 msgid "Disable recording of memory statistics"
 msgstr "Nonaktifkan perekaman statistik memori"
 
-#: src/tools/sysprof-cli.c:110
+#: src/tools/sysprof-cli.c:206
 msgid "Disable recording of network statistics"
 msgstr "Nonaktifkan perekaman statistik jaringan"
 
-#: src/tools/sysprof-cli.c:111
+#: src/tools/sysprof-cli.c:207
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Atur lingkungan SYSPROF_TRACE_FD untuk subproses"
 
-#: src/tools/sysprof-cli.c:112
+#: src/tools/sysprof-cli.c:208
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Atur lingkungan GJS_TRACE_FD untuk melacak proses-proses GJS"
 
-#: src/tools/sysprof-cli.c:113
+#: src/tools/sysprof-cli.c:209
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Atur lingkungan GJS_TRACE_FD untuk melacak suatu aplikasi GTK"
 
-#: src/tools/sysprof-cli.c:114
+#: src/tools/sysprof-cli.c:210
 msgid "Include RAPL energy statistics"
 msgstr "Sertakan statistik energi RAPL"
 
-#: src/tools/sysprof-cli.c:115
+#: src/tools/sysprof-cli.c:211
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Menyambung ke org.gnome.Shell untuk statistik pembuat profil"
 
-#: src/tools/sysprof-cli.c:116
+#: src/tools/sysprof-cli.c:212
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr "Gabungkan semua berkas * .syscap yang disediakan dan tulis ke stdout"
+
+#: src/tools/sysprof-cli.c:213
 msgid "Print the sysprof-cli version and exit"
 msgstr "Cetak versi sysprof-cli dan keluar"
 
-#: src/tools/sysprof-cli.c:149
+#: src/tools/sysprof-cli.c:246
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[BERKAS_TANGKAPAN] [-- PERINTAH ARG] — Sysprof"
 
-#: src/tools/sysprof-cli.c:168
+#: src/tools/sysprof-cli.c:249
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+msgstr ""
+"\n"
+"Contoh:\n"
+"\n"
+"   # Rekam gtk4-widget-factory menggunakan trace-fd untuk mendapatkan data\n"
+"   # yang disediakan aplikasi serta penyedia data GTK dan GNOME Shell\n"
+"   sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"   # Gabungkan banyak berkas syscap menjadi satu\n"
+"   sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+
+#: src/tools/sysprof-cli.c:282
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Terlalu banyak argumen yang disampaikan ke sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:225
+#: src/tools/sysprof-cli.c:339
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s sudah ada. Gunakan —force untuk menimpa\n"

@@ -190,4 +190,6 @@ subdir('examples')
 subdir('help')
 subdir('po')
 
-meson.add_install_script('build-aux/meson/post_install.sh')
+if get_option('enable_gtk')
+  meson.add_install_script('build-aux/meson/post_install.sh')
+endif

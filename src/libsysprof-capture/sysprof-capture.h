@@ -56,7 +56,7 @@
 
 #pragma once
 
-#include <glib.h>
+#include <gio/gio.h>
 
 G_BEGIN_DECLS
 
@@ -68,6 +68,7 @@ G_BEGIN_DECLS
 # include "sysprof-capture-reader.h"
 # include "sysprof-capture-writer.h"
 # include "sysprof-clock.h"
+# include "sysprof-collector.h"
 # include "sysprof-version.h"
 # include "sysprof-version-macros.h"
 

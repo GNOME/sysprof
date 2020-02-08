@@ -6,6 +6,7 @@ libsysprof_capture_headers = files([
   'sysprof-capture-reader.h',
   'sysprof-capture-types.h',
   'sysprof-capture-writer.h',
+  'sysprof-collector.h',
   'sysprof-platform.h',
   'sysprof-capture.h',
   'sysprof-version-macros.h',
@@ -21,6 +22,7 @@ libsysprof_capture_sources = files([
   'sysprof-capture-util.c',
   'sysprof-capture-writer.c',
   'sysprof-capture-writer-cat.c',
+  'sysprof-collector.c',
   'sysprof-clock.c',
   'sysprof-platform.c',
   'mmap-writer.c',
@@ -35,6 +37,8 @@ configure_file(
 
 libsysprof_capture_deps = [
   glib_dep,
+  gio_dep,
+  gio_unix_dep,
 ]
 
 libsysprof_capture = static_library(

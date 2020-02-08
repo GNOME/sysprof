@@ -1,0 +1,121 @@
+/* sysprof-collector.h
+ *
+ * Copyright 2020 Christian Hergert <chergert@redhat.com>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * Subject to the terms and conditions of this license, each copyright holder
+ * and contributor hereby grants to those receiving rights under this license
+ * a perpetual, worldwide, non-exclusive, no-charge, royalty-free,
+ * irrevocable (except for failure to satisfy the conditions of this license)
+ * patent license to make, have made, use, offer to sell, sell, import, and
+ * otherwise transfer this software, where such license applies only to those
+ * patent claims, already acquired or hereafter acquired, licensable by such
+ * copyright holder or contributor that are necessarily infringed by:
+ *
+ * (a) their Contribution(s) (the licensed copyrights of copyright holders
+ *     and non-copyrightable additions of contributors, in source or binary
+ *     form) alone; or
+ *
+ * (b) combination of their Contribution(s) with the work of authorship to
+ *     which such Contribution(s) was added by such copyright holder or
+ *     contributor, if, at the time the Contribution is added, such addition
+ *     causes such combination to be necessarily infringed. The patent license
+ *     shall not apply to any other combinations which include the
+ *     Contribution.
+ *
+ * Except as expressly stated above, no rights or licenses from any copyright
+ * holder or contributor is granted under this license, whether expressly, by
+ * implication, estoppel or otherwise.
+ *
+ * DISCLAIMER
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * SPDX-License-Identifier: BSD-2-Clause-Patent
+ */
+
+#pragma once
+
+#include "sysprof-capture-types.h"
+#include "sysprof-version-macros.h"
+
+G_BEGIN_DECLS
+
+typedef struct _SysprofCollector SysprofCollector;
+
+SYSPROF_AVAILABLE_IN_3_36
+SysprofCollector      *sysprof_collector_get_thread_default (void);
+SYSPROF_AVAILABLE_IN_3_36
+void                   sysprof_collector_embed_file         (SysprofCollector                 *collector,
+                                                             const gchar                      *path,
+                                                             const guint8                     *data,
+                                                             gsize                             data_len);
+SYSPROF_AVAILABLE_IN_3_36
+void                   sysprof_collector_embed_file_fd      (SysprofCollector                 *collector,
+                                                             const gchar                      *path,
+                                                             gint                              fd);
+SYSPROF_AVAILABLE_IN_3_36
+void                   sysprof_collector_mark               (SysprofCollector                 *collector,
+                                                             gint64                            time,
+                                                             guint64                           duration,
+                                                             const gchar                      *group,
+                                                             const gchar                      *name,
+                                                             const gchar                      *mesage);
+SYSPROF_AVAILABLE_IN_3_36
+void                   sysprof_collector_set_metadata       (SysprofCollector                 *collector,
+                                                             const gchar                      *id,
+                                                             const gchar                      *value,
+                                                             gssize                            value_len);
+SYSPROF_AVAILABLE_IN_3_36
+void                   sysprof_collector_sample             (SysprofCollector                 *collector,
+                                                             gint64                            time,
+                                                             const SysprofCaptureAddress      *addrs,
+                                                             guint                             n_addrs);
+SYSPROF_AVAILABLE_IN_3_36
+void                   sysprof_collector_log                (SysprofCollector                 *collector,
+                                                             GLogLevelFlags                    severity,
+                                                             const gchar                      *domain,
+                                                             const gchar                      *message);
+SYSPROF_AVAILABLE_IN_3_36
+SysprofCaptureAddress  sysprof_collector_map_jitted_ip      (SysprofCollector                 *collector,
+                                                             const gchar                      *name);
+SYSPROF_AVAILABLE_IN_3_36
+void                   sysprof_collector_allocate           (SysprofCollector                 *collector,
+                                                             SysprofCaptureAddress             alloc_addr,
+                                                             gint64                            alloc_size,
+                                                             SysprofBacktraceFunc              backtrace_func,
+                                                             gpointer                          backtrace_data);
+SYSPROF_AVAILABLE_IN_3_36
+guint                  sysprof_collector_reserve_counters   (SysprofCollector                 *collector,
+                                                             guint                             n_counters);
+SYSPROF_AVAILABLE_IN_3_36
+void                   sysprof_collector_define_counters    (SysprofCollector                 *collector,
+                                                             const SysprofCaptureCounter      *counters,
+                                                             guint                             n_counters);
+SYSPROF_AVAILABLE_IN_3_36
+void                   sysprof_collector_publish_counters   (SysprofCollector                 *collector,
+                                                             const guint                      *counters_ids,
+                                                             const SysprofCaptureCounterValue *values,
+                                                             guint                             n_counters);
+
+G_END_DECLS

@@ -57,65 +57,50 @@
 #pragma once
 
 #include "sysprof-capture-types.h"
-#include "sysprof-version-macros.h"
+#include "sysprof-capture-writer.h"
 
 G_BEGIN_DECLS
 
-typedef struct _SysprofCollector SysprofCollector;
-
 SYSPROF_AVAILABLE_IN_3_36
-SysprofCollector      *sysprof_collector_get_thread_default (void);
+void                  sysprof_collector_embed_file       (const gchar                      *path,
+                                                          const guint8                     *data,
+                                                          gsize                             data_len);
 SYSPROF_AVAILABLE_IN_3_36
-void                   sysprof_collector_embed_file         (SysprofCollector                 *collector,
-                                                             const gchar                      *path,
-                                                             const guint8                     *data,
-                                                             gsize                             data_len);
+void                  sysprof_collector_embed_file_fd    (const gchar                      *path,
+                                                          gint                              fd);
 SYSPROF_AVAILABLE_IN_3_36
-void                   sysprof_collector_embed_file_fd      (SysprofCollector                 *collector,
-                                                             const gchar                      *path,
-                                                             gint                              fd);
+void                  sysprof_collector_mark             (gint64                            time,
+                                                          guint64                           duration,
+                                                          const gchar                      *group,
+                                                          const gchar                      *name,
+                                                          const gchar                      *mesage);
 SYSPROF_AVAILABLE_IN_3_36
-void                   sysprof_collector_mark               (SysprofCollector                 *collector,
-                                                             gint64                            time,
-                                                             guint64                           duration,
-                                                             const gchar                      *group,
-                                                             const gchar                      *name,
-                                                             const gchar                      *mesage);
+void                  sysprof_collector_set_metadata     (const gchar                      *id,
+                                                          const gchar                      *value,
+                                                          gssize                            value_len);
 SYSPROF_AVAILABLE_IN_3_36
-void                   sysprof_collector_set_metadata       (SysprofCollector                 *collector,
-                                                             const gchar                      *id,
-                                                             const gchar                      *value,
-                                                             gssize                            value_len);
+void                  sysprof_collector_sample           (gint64                            time,
+                                                          const SysprofCaptureAddress      *addrs,
+                                                          guint                             n_addrs);
 SYSPROF_AVAILABLE_IN_3_36
-void                   sysprof_collector_sample             (SysprofCollector                 *collector,
-                                                             gint64                            time,
-                                                             const SysprofCaptureAddress      *addrs,
-                                                             guint                             n_addrs);
+void                  sysprof_collector_log              (GLogLevelFlags                    severity,
+                                                          const gchar                      *domain,
+                                                          const gchar                      *message);
 SYSPROF_AVAILABLE_IN_3_36
-void                   sysprof_collector_log                (SysprofCollector                 *collector,
-                                                             GLogLevelFlags                    severity,
-                                                             const gchar                      *domain,
-                                                             const gchar                      *message);
+SysprofCaptureAddress sysprof_collector_map_jitted_ip    (const gchar                      *name);
 SYSPROF_AVAILABLE_IN_3_36
-SysprofCaptureAddress  sysprof_collector_map_jitted_ip      (SysprofCollector                 *collector,
-                                                             const gchar                      *name);
+void                  sysprof_collector_allocate         (SysprofCaptureAddress             alloc_addr,
+                                                          gint64                            alloc_size,
+                                                          SysprofBacktraceFunc              backtrace_func,
+                                                          gpointer                          backtrace_data);
 SYSPROF_AVAILABLE_IN_3_36
-void                   sysprof_collector_allocate           (SysprofCollector                 *collector,
-                                                             SysprofCaptureAddress             alloc_addr,
-                                                             gint64                            alloc_size,
-                                                             SysprofBacktraceFunc              backtrace_func,
-                                                             gpointer                          backtrace_data);
+guint                 sysprof_collector_reserve_counters (guint                             n_counters);
 SYSPROF_AVAILABLE_IN_3_36
-guint                  sysprof_collector_reserve_counters   (SysprofCollector                 *collector,
-                                                             guint                             n_counters);
+void                  sysprof_collector_define_counters  (const SysprofCaptureCounter      *counters,
+                                                          guint                             n_counters);
 SYSPROF_AVAILABLE_IN_3_36
-void                   sysprof_collector_define_counters    (SysprofCollector                 *collector,
-                                                             const SysprofCaptureCounter      *counters,
-                                                             guint                             n_counters);
-SYSPROF_AVAILABLE_IN_3_36
-void                   sysprof_collector_publish_counters   (SysprofCollector                 *collector,
-                                                             const guint                      *counters_ids,
-                                                             const SysprofCaptureCounterValue *values,
-                                                             guint                             n_counters);
+void                  sysprof_collector_publish_counters (const guint                      *counters_ids,
+                                                          const SysprofCaptureCounterValue *values,
+                                                          guint                             n_counters);
 
 G_END_DECLS

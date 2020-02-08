@@ -75,12 +75,13 @@
 #include "sysprof-capture-writer.h"
 #include "sysprof-collector.h"
 
-struct _SysprofCollector
+typedef struct
 {
   SysprofCaptureWriter *writer;
+  gboolean is_shared;
   int tid;
   int pid;
-};
+} SysprofCollector;
 
 #ifdef __linux__
 # define sysprof_current_cpu (sched_getcpu())
@@ -88,20 +89,26 @@ struct _SysprofCollector
 # define sysprof_current_cpu (-1)
 #endif
 
-static SysprofCaptureWriter *request_writer         (void);
-static void                  sysprof_collector_free (gpointer data);
-static SysprofCollector     *sysprof_collector_get  (void);
+static SysprofCaptureWriter   *request_writer         (void);
+static void                    sysprof_collector_free (gpointer data);
+static const SysprofCollector *sysprof_collector_get  (void);
 
+static G_LOCK_DEFINE (control_fd);
 static GPrivate collector_key = G_PRIVATE_INIT (sysprof_collector_free);
+static GPrivate single_trace_key = G_PRIVATE_INIT (NULL);
+static SysprofCollector *shared_collector;
+
+static inline gboolean
+use_single_trace (void)
+{
+  return GPOINTER_TO_INT (g_private_get (&single_trace_key));
+}
 
 static SysprofCaptureWriter *
 request_writer (void)
 {
-  static G_LOCK_DEFINE (control_fd);
   static GDBusConnection *peer;
   SysprofCaptureWriter *writer = NULL;
-
-  G_LOCK (control_fd);
 
   if (peer == NULL)
     {
@@ -171,8 +178,6 @@ request_writer (void)
         }
     }
 
-  G_UNLOCK (control_fd);
-
   return g_steal_pointer (&writer);
 }
 
@@ -189,228 +194,221 @@ sysprof_collector_free (gpointer data)
     }
 }
 
-static SysprofCollector *
+static const SysprofCollector *
 sysprof_collector_get (void)
 {
-  SysprofCollector *collector = g_private_get (&collector_key);
+  const SysprofCollector *collector = g_private_get (&collector_key);
 
-  if G_UNLIKELY (collector == NULL)
-    {
-      collector = g_slice_new0 (SysprofCollector);
-      collector->writer = request_writer ();
-      collector->pid = getpid ();
+  if G_LIKELY (collector != NULL)
+    return collector;
+
+  if (use_single_trace () && shared_collector != NULL)
+    return shared_collector;
+
+  {
+    SysprofCollector *self;
+
+    G_LOCK (control_fd);
+
+    self = g_slice_new0 (SysprofCollector);
+    self->pid = getpid ();
 #ifdef __linux__
-      collector->tid = syscall (__NR_gettid, 0);
+    self->tid = syscall (__NR_gettid, 0);
 #endif
-      g_private_replace (&collector_key, collector);
-    }
 
-  return collector;
+    /* If we are not profiling under Sysprof directly, then we want to
+     * require synchronization from our threads to a single writer which
+     * matches "capture.$pid.syscap".
+     */
+    if (g_getenv ("SYSPROF_CONTROL_FD") != NULL)
+      {
+        self->writer = request_writer ();
+      }
+    else
+      {
+        /* TODO: Fix envvar name */
+        const gchar *trace_fd = g_getenv ("SYSPROF_TRACE_FD");
+
+        if (trace_fd != NULL)
+          {
+            int fd = atoi (trace_fd);
+
+            if (fd > 0)
+              {
+                self->writer = sysprof_capture_writer_new_from_fd (fd, 0);
+                self->is_shared = TRUE;
+              }
+          }
+
+        if (self->writer == NULL && g_getenv ("SYSPROF_TRACE") != NULL)
+          {
+            g_autofree gchar *filename = g_strdup_printf ("capture.%d.syscap", (int)getpid ());
+
+            self->writer = sysprof_capture_writer_new (filename, 0);
+            self->is_shared = TRUE;
+          }
+      }
+
+    if (self->is_shared)
+      shared_collector = self;
+    else
+      g_private_replace (&collector_key, self);
+
+    G_UNLOCK (control_fd);
+
+    return self;
+  }
 }
 
-SysprofCollector *
-sysprof_collector_get_thread_default (void)
+#define ADD_TO_COLLECTOR(func)                                    \
+  G_STMT_START {                                                  \
+    const SysprofCollector *collector = sysprof_collector_get (); \
+    if (collector->is_shared) { G_LOCK (control_fd); }            \
+    if (collector->writer != NULL) { func; }                      \
+    if (collector->is_shared) { G_UNLOCK (control_fd); }          \
+  } G_STMT_END
+
+void
+sysprof_collector_embed_file (const gchar  *path,
+                              const guint8 *data,
+                              gsize         data_len)
 {
-  return sysprof_collector_get ();
+  ADD_TO_COLLECTOR (sysprof_capture_writer_add_file (collector->writer,
+                                                     SYSPROF_CAPTURE_CURRENT_TIME,
+                                                     sysprof_current_cpu,
+                                                     collector->pid,
+                                                     path,
+                                                     TRUE,
+                                                     data,
+                                                     data_len));
 }
 
 void
-sysprof_collector_embed_file (SysprofCollector *collector,
-                              const gchar      *path,
-                              const guint8     *data,
-                              gsize             data_len)
+sysprof_collector_embed_file_fd (const gchar *path,
+                                 int          fd)
 {
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    sysprof_capture_writer_add_file (collector->writer,
-                                     SYSPROF_CAPTURE_CURRENT_TIME,
-                                     sysprof_current_cpu,
-                                     collector->pid,
-                                     path,
-                                     TRUE,
-                                     data,
-                                     data_len);
+  ADD_TO_COLLECTOR(sysprof_capture_writer_add_file_fd (collector->writer,
+                                                       SYSPROF_CAPTURE_CURRENT_TIME,
+                                                       sysprof_current_cpu,
+                                                       collector->pid,
+                                                       path,
+                                                       fd));
 }
 
 void
-sysprof_collector_embed_file_fd (SysprofCollector *collector,
-                                 const gchar      *path,
-                                 int               fd)
+sysprof_collector_mark (gint64       time,
+                        guint64      duration,
+                        const gchar *group,
+                        const gchar *name,
+                        const gchar *message)
 {
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    sysprof_capture_writer_add_file_fd (collector->writer,
-                                        SYSPROF_CAPTURE_CURRENT_TIME,
-                                        sysprof_current_cpu,
-                                        collector->pid,
-                                        path,
-                                        fd);
+  ADD_TO_COLLECTOR (sysprof_capture_writer_add_mark (collector->writer,
+                                                     SYSPROF_CAPTURE_CURRENT_TIME,
+                                                     sysprof_current_cpu,
+                                                     collector->pid,
+                                                     duration,
+                                                     group,
+                                                     name,
+                                                     message));
 }
 
 void
-sysprof_collector_mark (SysprofCollector *collector,
-                        gint64            time,
-                        guint64           duration,
-                        const gchar      *group,
-                        const gchar      *name,
-                        const gchar      *message)
+sysprof_collector_set_metadata (const gchar *id,
+                                const gchar *value,
+                                gssize       value_len)
 {
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    sysprof_capture_writer_add_mark (collector->writer,
-                                     SYSPROF_CAPTURE_CURRENT_TIME,
-                                     sysprof_current_cpu,
-                                     collector->pid,
-                                     duration,
-                                     group,
-                                     name,
-                                     message);
+  ADD_TO_COLLECTOR (sysprof_capture_writer_add_metadata (collector->writer,
+                                                         SYSPROF_CAPTURE_CURRENT_TIME,
+                                                         sysprof_current_cpu,
+                                                         collector->pid,
+                                                         id,
+                                                         value,
+                                                         value_len));
 }
 
 void
-sysprof_collector_set_metadata (SysprofCollector *collector,
-                                const gchar      *id,
-                                const gchar      *value,
-                                gssize            value_len)
-{
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    sysprof_capture_writer_add_metadata (collector->writer,
-                                         SYSPROF_CAPTURE_CURRENT_TIME,
-                                         sysprof_current_cpu,
-                                         collector->pid,
-                                         id,
-                                         value,
-                                         value_len);
-}
-
-void
-sysprof_collector_sample (SysprofCollector            *collector,
-                          gint64                       time,
+sysprof_collector_sample (gint64                       time,
                           const SysprofCaptureAddress *addrs,
                           guint                        n_addrs)
 {
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    sysprof_capture_writer_add_sample (collector->writer,
-                                       time,
-                                       sysprof_current_cpu,
-                                       collector->pid,
-                                       collector->tid,
-                                       addrs,
-                                       n_addrs);
+  ADD_TO_COLLECTOR (sysprof_capture_writer_add_sample (collector->writer,
+                                                       time,
+                                                       sysprof_current_cpu,
+                                                       collector->pid,
+                                                       collector->tid,
+                                                       addrs,
+                                                       n_addrs));
 }
 
 void
-sysprof_collector_log (SysprofCollector *collector,
-                       GLogLevelFlags    severity,
-                       const gchar      *domain,
-                       const gchar      *message)
+sysprof_collector_log (GLogLevelFlags          severity,
+                       const gchar            *domain,
+                       const gchar            *message)
 {
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    sysprof_capture_writer_add_log (collector->writer,
-                                    SYSPROF_CAPTURE_CURRENT_TIME,
-                                    sysprof_current_cpu,
-                                    collector->pid,
-                                    severity,
-                                    domain,
-                                    message);
+  ADD_TO_COLLECTOR (sysprof_capture_writer_add_log (collector->writer,
+                                                    SYSPROF_CAPTURE_CURRENT_TIME,
+                                                    sysprof_current_cpu,
+                                                    collector->pid,
+                                                    severity,
+                                                    domain,
+                                                    message));
 }
 
 SysprofCaptureAddress
-sysprof_collector_map_jitted_ip (SysprofCollector *collector,
-                                 const gchar      *name)
+sysprof_collector_map_jitted_ip (const gchar *name)
 {
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    return sysprof_capture_writer_add_jitmap (collector->writer, name);
-
-  return 0;
+  SysprofCaptureAddress ret = 0;
+  ADD_TO_COLLECTOR ((ret = sysprof_capture_writer_add_jitmap (collector->writer, name)));
+  return ret;
 }
 
 void
-sysprof_collector_allocate (SysprofCollector      *collector,
-                            SysprofCaptureAddress  alloc_addr,
-                            gint64                 alloc_size,
-                            SysprofBacktraceFunc   backtrace_func,
-                            gpointer               backtrace_data)
+sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
+                            gint64                  alloc_size,
+                            SysprofBacktraceFunc    backtrace_func,
+                            gpointer                backtrace_data)
 {
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    sysprof_capture_writer_add_allocation (collector->writer,
-                                           SYSPROF_CAPTURE_CURRENT_TIME,
-                                           sysprof_current_cpu,
-                                           collector->pid,
-                                           collector->tid,
-                                           alloc_addr,
-                                           alloc_size,
-                                           backtrace_func,
-                                           backtrace_data);
+  ADD_TO_COLLECTOR (sysprof_capture_writer_add_allocation (collector->writer,
+                                                           SYSPROF_CAPTURE_CURRENT_TIME,
+                                                           sysprof_current_cpu,
+                                                           collector->pid,
+                                                           collector->tid,
+                                                           alloc_addr,
+                                                           alloc_size,
+                                                           backtrace_func,
+                                                           backtrace_data));
 }
 
 guint
-sysprof_collector_reserve_counters (SysprofCollector *collector,
-                                    guint             n_counters)
+sysprof_collector_reserve_counters (guint n_counters)
 {
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    return sysprof_capture_writer_request_counter (collector->writer,
-                                                   n_counters);
-
-  return 1;
+  guint ret = 1;
+  ADD_TO_COLLECTOR ((ret = sysprof_capture_writer_request_counter (collector->writer, n_counters)));
+  return ret;
 }
 
 void
-sysprof_collector_define_counters (SysprofCollector            *collector,
-                                   const SysprofCaptureCounter *counters,
+sysprof_collector_define_counters (const SysprofCaptureCounter *counters,
                                    guint                        n_counters)
 {
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    sysprof_capture_writer_define_counters (collector->writer,
-                                            SYSPROF_CAPTURE_CURRENT_TIME,
-                                            sysprof_current_cpu,
-                                            collector->pid,
-                                            counters,
-                                            n_counters);
+  ADD_TO_COLLECTOR (sysprof_capture_writer_define_counters (collector->writer,
+                                                            SYSPROF_CAPTURE_CURRENT_TIME,
+                                                            sysprof_current_cpu,
+                                                            collector->pid,
+                                                            counters,
+                                                            n_counters));
 }
 
 void
-sysprof_collector_publish_counters (SysprofCollector                 *collector,
-                                    const guint                      *counters_ids,
+sysprof_collector_publish_counters (const guint                      *counters_ids,
                                     const SysprofCaptureCounterValue *values,
                                     guint                             n_counters)
 {
-  if (collector == NULL)
-    collector = sysprof_collector_get ();
-
-  if (collector->writer != NULL)
-    sysprof_capture_writer_set_counters (collector->writer,
-                                         SYSPROF_CAPTURE_CURRENT_TIME,
-                                         sysprof_current_cpu,
-                                         collector->pid,
-                                         counters_ids,
-                                         values,
-                                         n_counters);
+  ADD_TO_COLLECTOR (sysprof_capture_writer_set_counters (collector->writer,
+                                                         SYSPROF_CAPTURE_CURRENT_TIME,
+                                                         sysprof_current_cpu,
+                                                         collector->pid,
+                                                         counters_ids,
+                                                         values,
+                                                         n_counters));
 }

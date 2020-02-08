@@ -27,6 +27,9 @@ src/libsysprof-ui/sysprof-logs-page.ui
 src/libsysprof-ui/sysprof-marks-aid.c
 src/libsysprof-ui/sysprof-marks-page.ui
 src/libsysprof-ui/sysprof-memory-aid.c
+src/libsysprof-ui/sysprof-memprof-aid.c
+src/libsysprof-ui/sysprof-memprof-page.ui
+src/libsysprof-ui/sysprof-memprof-visualizer.c
 src/libsysprof-ui/sysprof-netdev-aid.c
 src/libsysprof-ui/sysprof-profiler-assistant.ui
 src/libsysprof-ui/sysprof-rapl-aid.c

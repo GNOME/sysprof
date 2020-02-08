@@ -22,24 +22,32 @@
 
 #include "config.h"
 
+#include <fcntl.h>
+#include <gio/gunixfdlist.h>
 #include <gio/gunixinputstream.h>
 #include <gio/gunixoutputstream.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 
+#include "ipc-collector.h"
+
 #include "sysprof-control-source.h"
 
 struct _SysprofControlSource
 {
-  GObject          parent_instance;
-  GDBusConnection *conn;
-  GPtrArray       *files;
+  GObject               parent_instance;
+  IpcCollector         *collector;
+  GDBusConnection      *conn;
+  SysprofCaptureWriter *writer;
+  GPtrArray            *files;
 };
 
 static void source_iface_init (SysprofSourceInterface *iface);
 
 G_DEFINE_TYPE_WITH_CODE (SysprofControlSource, sysprof_control_source, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (SYSPROF_TYPE_SOURCE, source_iface_init))
+
+static SysprofSourceInterface *parent_iface;
 
 SysprofControlSource *
 sysprof_control_source_new (void)
@@ -53,6 +61,7 @@ sysprof_control_source_finalize (GObject *object)
   SysprofControlSource *self = (SysprofControlSource *)object;
 
   g_clear_object (&self->conn);
+  g_clear_object (&self->collector);
   g_clear_pointer (&self->files, g_ptr_array_unref);
 
   G_OBJECT_CLASS (sysprof_control_source_parent_class)->finalize (object);
@@ -70,6 +79,44 @@ static void
 sysprof_control_source_init (SysprofControlSource *self)
 {
   self->files = g_ptr_array_new_with_free_func (g_free);
+}
+
+static gboolean
+on_handle_create_writer_cb (IpcCollector          *collector,
+                            GDBusMethodInvocation *invocation,
+                            GUnixFDList           *in_fd_list,
+                            SysprofControlSource  *self)
+{
+  gchar writer_tmpl[] = "sysprof-collector-XXXXXX";
+  int fd;
+
+  g_assert (IPC_IS_COLLECTOR (collector));
+  g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+
+  fd = g_mkstemp_full (writer_tmpl, O_CLOEXEC, 0);
+
+  if (fd > -1)
+    {
+      g_autoptr(GUnixFDList) out_fd_list = g_unix_fd_list_new_from_array (&fd, 1);
+
+      if (out_fd_list != NULL)
+        {
+          g_ptr_array_add (self->files, g_strdup (writer_tmpl));
+          ipc_collector_complete_create_writer (collector,
+                                                g_steal_pointer (&invocation),
+                                                out_fd_list,
+                                                g_variant_new_handle (0));
+          return TRUE;
+        }
+    }
+
+  g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
+                                         G_DBUS_ERROR,
+                                         G_DBUS_ERROR_FAILED,
+                                         "Failed to create FD for writer");
+
+  return TRUE;
 }
 
 static void
@@ -111,14 +158,85 @@ sysprof_control_source_modify_spawn (SysprofSource    *source,
 
   g_set_object (&self->conn, conn);
 
-  /* TODO */
-  //g_dbus_interface_skeleton_export (GDBusInterfaceSkeleton *interface_, GDBusConnection *connection, const gchar *object_path, GError **error)
+  self->collector = ipc_collector_skeleton_new ();
+
+  g_signal_connect_object (self->collector,
+                           "handle-create-writer",
+                           G_CALLBACK (on_handle_create_writer_cb),
+                           self,
+                           0);
+
+  g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (self->collector),
+                                    conn,
+                                    "/org/gnome/Sysprof3/Collector",
+                                    NULL);
 
   g_dbus_connection_start_message_processing (conn);
 }
 
 static void
+sysprof_control_source_stop (SysprofSource *source)
+{
+  SysprofControlSource *self = (SysprofControlSource *)source;
+
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+
+  if (self->conn != NULL)
+    {
+      g_dbus_connection_close_sync (self->conn, NULL, NULL);
+      g_clear_object (&self->conn);
+    }
+
+  if (parent_iface->stop)
+    parent_iface->stop (source);
+}
+
+static void
+sysprof_control_source_set_writer (SysprofSource        *source,
+                                   SysprofCaptureWriter *writer)
+{
+  SysprofControlSource *self = (SysprofControlSource *)source;
+
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+
+  g_clear_pointer (&self->writer, sysprof_capture_writer_unref);
+
+  if (writer != NULL)
+    self->writer = sysprof_capture_writer_ref (writer);
+}
+
+static void
+sysprof_control_source_supplement (SysprofSource        *source,
+                                   SysprofCaptureReader *reader)
+{
+  SysprofControlSource *self = (SysprofControlSource *)source;
+
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+
+  for (guint i = 0; i < self->files->len; i++)
+    {
+      const gchar *filename = g_ptr_array_index (self->files, i);
+      int fd = open (filename, O_RDONLY);
+
+      /* TODO: We can't simply splice these until we've forced the process
+       * to flush the buffers (unless they've already exited).
+       */
+
+      if (fd > -1)
+        {
+          _sysprof_capture_writer_splice_from_fd (self->writer, fd, NULL);
+          close (fd);
+        }
+    }
+}
+
+static void
 source_iface_init (SysprofSourceInterface *iface)
 {
+  parent_iface = g_type_interface_peek_parent (iface);
+
+  iface->set_writer = sysprof_control_source_set_writer;
   iface->modify_spawn = sysprof_control_source_modify_spawn;
+  iface->stop = sysprof_control_source_stop;
+  iface->supplement = sysprof_control_source_supplement;
 }

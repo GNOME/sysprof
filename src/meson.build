@@ -19,6 +19,12 @@ ipc_service_src = gnome.gdbus_codegen('ipc-service',
          namespace: 'Ipc',
 )
 
+ipc_collector_src = gnome.gdbus_codegen('ipc-collector',
+           sources: 'org.gnome.Sysprof3.Collector.xml',
+  interface_prefix: 'org.gnome.Sysprof3.',
+         namespace: 'Ipc',
+)
+
 ipc_legacy_src = gnome.gdbus_codegen('ipc-legacy',
            sources: 'org.gnome.Sysprof2.xml',
   interface_prefix: 'org.gnome.',

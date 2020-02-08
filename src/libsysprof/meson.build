@@ -78,6 +78,7 @@ libsysprof_private_sources = [
   'sysprof-podman.c',
   'sysprof-polkit.c',
   'sysprof-symbol-map.c',
+  ipc_collector_src,
   ipc_service_src,
   stackstash_sources,
   helpers_sources,

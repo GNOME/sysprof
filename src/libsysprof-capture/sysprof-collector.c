@@ -191,6 +191,7 @@ sysprof_collector_free (gpointer data)
       if (collector->writer != NULL)
         sysprof_capture_writer_flush (collector->writer);
       g_clear_pointer (&collector->writer, sysprof_capture_writer_unref);
+      g_slice_free (SysprofCollector, collector);
     }
 }
 

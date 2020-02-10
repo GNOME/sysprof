@@ -334,7 +334,20 @@ sysprof_capture_reader_ensure_space_for (SysprofCaptureReader *self,
 {
   g_assert (self != NULL);
   g_assert (self->pos <= self->len);
-  g_assert (len > 0);
+  g_assert (len >= sizeof (SysprofCaptureFrame));
+
+  /* If we have a writer that is loading data using mmap(), then there is a
+   * chance that we could hit zero section up to the end of the file. We can
+   * retry the buffered read though in that case so that we allow reading
+   * a file (without mmap) at the same time as writing with mmap. This is
+   * not really a common case except for in unit-testing.
+   */
+  if ((self->len - self->pos) >= sizeof (guint16) &&
+      *(guint16 *)(gpointer)&self->buf[self->pos] == 0)
+    {
+      self->fd_off -= (self->len - self->pos);
+      self->len = self->pos;
+    }
 
   if ((self->len - self->pos) < len)
     {
@@ -364,7 +377,17 @@ sysprof_capture_reader_ensure_space_for (SysprofCaptureReader *self,
         }
     }
 
-  return (self->len - self->pos) >= len;
+  if ((self->len - self->pos) >= len)
+    {
+      /* Make sure we got valid frame data back from the
+       * FD or else we might be in the zero-fill section
+       * up to the end of the file.
+       */
+      if (*(guint16 *)(gpointer)&self->buf[self->pos] >= len)
+        return TRUE;
+    }
+
+  return FALSE;
 }
 
 gboolean
@@ -419,6 +442,10 @@ sysprof_capture_reader_peek_frame (SysprofCaptureReader *self,
 
   sysprof_capture_reader_bswap_frame (self, frame);
 
+  /* In case the capture did not update the end_time during normal usage,
+   * we can update our cached known end_time based on the greatest frame
+   * we come across.
+   */
   if (frame->time > self->end_time)
     self->end_time = frame->time;
 
@@ -741,6 +768,7 @@ sysprof_capture_reader_read_jitmap (SysprofCaptureReader *self)
     return NULL;
 
   jitmap = (SysprofCaptureJitmap *)(gpointer)&self->buf[self->pos];
+  g_assert (jitmap->frame.len > 0);
 
   ret = g_hash_table_new_full (NULL, NULL, NULL, g_free);
 
@@ -961,26 +989,9 @@ sysprof_capture_reader_splice (SysprofCaptureReader  *self,
                                GError               **error)
 {
   g_assert (self != NULL);
-  g_assert (self->fd != -1);
   g_assert (dest != NULL);
 
-  /* Flush before writing anything to ensure consistency */
-  if (!sysprof_capture_writer_flush (dest))
-    {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   g_file_error_from_errno (errno),
-                   "%s", g_strerror (errno));
-      return FALSE;
-    }
-
-  /*
-   * We don't need to track position because writer will
-   * track the current position to avoid reseting it.
-   */
-
-  /* Perform the splice */
-  return _sysprof_capture_writer_splice_from_fd (dest, self->fd, error);
+  return sysprof_capture_writer_cat (dest, self, error);
 }
 
 /**

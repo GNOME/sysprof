@@ -23,6 +23,7 @@ libsysprof_capture_sources = files([
   'sysprof-capture-writer-cat.c',
   'sysprof-clock.c',
   'sysprof-platform.c',
+  'mmap-writer.c',
 ])
 
 configure_file(

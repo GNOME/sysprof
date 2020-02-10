@@ -35,10 +35,10 @@ main (gint argc,
       gchar *argv[])
 {
   g_autoptr(GOptionContext) context = g_option_context_new ("- dump capture data");
+  g_autoptr(GHashTable) ctrtypes = NULL;
   g_autoptr(GError) error = NULL;
   SysprofCaptureReader *reader;
   SysprofCaptureFrameType type;
-  GHashTable *ctrtypes;
   gint64 begin_time;
   gint64 end_time;
 

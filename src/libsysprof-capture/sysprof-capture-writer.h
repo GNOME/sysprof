@@ -237,10 +237,6 @@ gboolean              sysprof_capture_writer_cat                             (Sy
                                                                               SysprofCaptureReader              *reader,
                                                                               GError                           **error);
 G_GNUC_INTERNAL
-gboolean              _sysprof_capture_writer_splice_from_fd                 (SysprofCaptureWriter              *self,
-                                                                              int                                fd,
-                                                                              GError                           **error) G_GNUC_INTERNAL;
-G_GNUC_INTERNAL
 gboolean              _sysprof_capture_writer_set_time_range                 (SysprofCaptureWriter              *self,
                                                                               gint64                             start_time,
                                                                               gint64                             end_time) G_GNUC_INTERNAL;

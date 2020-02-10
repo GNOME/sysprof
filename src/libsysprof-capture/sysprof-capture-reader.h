@@ -126,7 +126,8 @@ gboolean                            sysprof_capture_reader_reset               (
 SYSPROF_AVAILABLE_IN_ALL
 gboolean                            sysprof_capture_reader_splice              (SysprofCaptureReader      *self,
                                                                                 SysprofCaptureWriter      *dest,
-                                                                                GError                   **error);
+                                                                                GError                   **error)
+  G_GNUC_DEPRECATED_FOR (sysprof_capture_writer_cat);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean                            sysprof_capture_reader_save_as             (SysprofCaptureReader      *self,
                                                                                 const gchar               *filename,

@@ -214,7 +214,7 @@ test_reader_basic (void)
     }
 
   {
-    SysprofCaptureCounter counters[10];
+    SysprofCaptureCounter counters[10] = {0};
     guint base = sysprof_capture_writer_request_counter (writer, G_N_ELEMENTS (counters));
 
     t = SYSPROF_CAPTURE_CURRENT_TIME;
@@ -239,7 +239,7 @@ test_reader_basic (void)
     const SysprofCaptureCounterDefine *def;
 
     def = sysprof_capture_reader_read_counter_define (reader);
-    g_assert (def != NULL);
+    g_assert_nonnull (def);
     g_assert_cmpint (def->n_counters, ==, 10);
 
     for (i = 0; i < def->n_counters; i++)
@@ -421,7 +421,16 @@ test_reader_basic (void)
     g_assert_cmpint (buf1len, >, 0);
     g_assert_cmpint (buf2len, >, 0);
 
-    g_assert_cmpint (buf1len, ==, buf2len);
+    /* Make sure the sizes match or else there is only zero padding
+     * at the end of our capture file that is truncated from the
+     * backup file.
+     */
+    if (buf1len != buf2len)
+      {
+        for (gsize j = buf1len; j < buf2len; j++)
+          g_assert_cmpint (buf2[j], ==, 0);
+      }
+
     g_assert_true (0 == memcmp (buf1, buf2, buf1len));
   }
 
@@ -544,7 +553,9 @@ test_reader_splice (void)
   r = sysprof_capture_reader_peek_type (reader, &type);
   g_assert_cmpint (r, ==, FALSE);
 
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   r = sysprof_capture_reader_splice (reader, writer2, &error);
+  G_GNUC_END_IGNORE_DEPRECATIONS
   g_assert_no_error (error);
   g_assert_cmpint (r, ==, TRUE);
 
@@ -831,6 +842,7 @@ test_reader_writer_cat_jitmap (void)
   const SysprofCaptureSample *sample;
   GError *error = NULL;
   SysprofCaptureAddress addrs[20];
+  GHashTable *ht;
   gboolean r;
 
   writer1 = sysprof_capture_writer_new ("jitmap1.syscap", 0);
@@ -886,11 +898,13 @@ test_reader_writer_cat_jitmap (void)
   reader = sysprof_capture_writer_create_reader (res, &error);
   g_assert_no_error (error);
   g_assert_nonnull (reader);
-  g_hash_table_unref (sysprof_capture_reader_read_jitmap (reader));
   sample = sysprof_capture_reader_read_sample (reader);
   g_assert_cmpint (sample->frame.pid, ==, getpid ());
   g_assert_cmpint (sample->n_addrs, ==, G_N_ELEMENTS (addrs));
   g_assert_cmpint (sample->addrs[0], !=, sample->addrs[1]);
+  ht = sysprof_capture_reader_read_jitmap (reader);
+  g_assert_nonnull (ht);
+  g_clear_pointer (&ht, g_hash_table_unref);
   sysprof_capture_reader_unref (reader);
 
   sysprof_capture_writer_unref (res);

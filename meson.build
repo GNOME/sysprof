@@ -89,6 +89,10 @@ if cc.has_header('execinfo.h')
   config_h.set10('HAVE_EXECINFO_H', true)
 endif
 
+if cc.has_header('sys/mman.h')
+  config_h.set10('HAVE_SYS_MMAN_H', true)
+endif
+
 libunwind_dep = dependency('libunwind-generic', required: false)
 if libunwind_dep.found()
   config_h.set10('ENABLE_LIBUNWIND', libunwind_dep.found())

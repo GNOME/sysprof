@@ -71,6 +71,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "mmap-writer.h"
+
 #include "sysprof-capture-reader.h"
 #include "sysprof-capture-util-private.h"
 #include "sysprof-capture-writer.h"
@@ -91,48 +93,34 @@ typedef struct
 
 struct _SysprofCaptureWriter
 {
-  /*
-   * This is our buffer location for incoming strings. This is used
-   * similarly to GStringChunk except there is only one-page, and after
-   * it fills, we flush to disk.
+  /* Our hashtable for JIT deduplication.
    *
-   * This is paired with a closed hash table for deduplication.
-   */
-  gchar addr_buf[4096*4];
-
-  /* Our hashtable for deduplication. */
-  SysprofCaptureJitmapBucket addr_hash[512];
-
-  /* We keep the large fields above so that our allocation will be page
-   * alinged for the write buffer. This improves the performance of large
-   * writes to the target file-descriptor.
-   */
-  volatile gint ref_count;
-
-  /*
-   * Our address sequence counter. The value that comes from
+   * Our address sequence counter is the value that comes from
    * monotonically increasing this is OR'd with JITMAP_MARK to denote
    * the address name should come from the JIT map.
-   */
-  gsize addr_seq;
-
-  /* Our position in addr_buf. */
-  gsize addr_buf_pos;
-
-  /*
-   * The number of hash table items in @addr_hash. This is an
-   * optimization so that we can avoid calculating the number of strings
+   *
+   * The addr_hash_size is the number of items in @addr_hash. This is
+   * an optimization so that we avoid calculating the number of strings
    * when flushing out the jitmap.
    */
+  guint8 addr_buf[3584];
+  SysprofCaptureJitmapBucket addr_hash[512];
+  gsize addr_buf_pos;
+  gsize addr_seq;
   guint addr_hash_size;
 
-  /* Capture file handle */
-  int fd;
-
-  /* Our write buffer for fd */
-  guint8 *buf;
-  gsize pos;
-  gsize len;
+  /* The MmapWriter abstracts writing to a memory mapped file which is
+   * persisted to underlying storage. The goal here is to ensure that as
+   * we write data, it can be retrieved in case our program crashes. This
+   * is particularly useful when the external Sysprof profiler stops the
+   * profiler but the inferior process does not exit. The profiler can
+   * read up to the known data and then skip any unfinished data when
+   * muxing the streams.
+   *
+   * To make updating the SysprofCaptureFileHeader faster the MmapWriter
+   * keeps the head page around and available.
+   */
+  MmapWriter *writer;
 
   /* GSource for periodic flush */
   GSource *periodic_flush;
@@ -152,8 +140,6 @@ sysprof_capture_writer_frame_init (SysprofCaptureFrame     *frame_,
                                    gint64                   time_,
                                    SysprofCaptureFrameType  type)
 {
-  g_assert (frame_ != NULL);
-
   frame_->len = len;
   frame_->cpu = cpu;
   frame_->pid = pid;
@@ -169,74 +155,30 @@ sysprof_capture_writer_finalize (SysprofCaptureWriter *self)
   if (self != NULL)
     {
       g_clear_pointer (&self->periodic_flush, g_source_destroy);
-
       sysprof_capture_writer_flush (self);
-
-      if (self->fd != -1)
-        {
-          close (self->fd);
-          self->fd = -1;
-        }
-
-      g_free (self->buf);
-      g_free (self);
+      g_clear_pointer (&self->writer, mmap_writer_destroy);
     }
 }
 
 SysprofCaptureWriter *
 sysprof_capture_writer_ref (SysprofCaptureWriter *self)
 {
-  g_assert (self != NULL);
-  g_assert (self->ref_count > 0);
-
-  g_atomic_int_inc (&self->ref_count);
-
-  return self;
+  return g_atomic_rc_box_acquire (self);
 }
 
 void
 sysprof_capture_writer_unref (SysprofCaptureWriter *self)
 {
-  g_assert (self != NULL);
-  g_assert (self->ref_count > 0);
-
-  if (g_atomic_int_dec_and_test (&self->ref_count))
-    sysprof_capture_writer_finalize (self);
+  g_atomic_rc_box_release_full (self, (GDestroyNotify)sysprof_capture_writer_finalize);
 }
 
 static gboolean
 sysprof_capture_writer_flush_data (SysprofCaptureWriter *self)
 {
-  const guint8 *buf;
-  gssize written;
-  gsize to_write;
-
   g_assert (self != NULL);
-  g_assert (self->pos <= self->len);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
 
-  if (self->pos == 0)
-    return TRUE;
-
-  buf = self->buf;
-  to_write = self->pos;
-
-  while (to_write > 0)
-    {
-      written = _sysprof_write (self->fd, buf, to_write);
-      if (written < 0)
-        return FALSE;
-
-      if (written == 0 && errno != EAGAIN)
-        return FALSE;
-
-      g_assert (written <= (gssize)to_write);
-
-      buf += written;
-      to_write -= written;
-    }
-
-  self->pos = 0;
+  if (self->writer != NULL)
+    mmap_writer_flush (self->writer);
 
   return TRUE;
 }
@@ -247,52 +189,23 @@ sysprof_capture_writer_realign (gsize *pos)
   *pos = (*pos + SYSPROF_CAPTURE_ALIGN - 1) & ~(SYSPROF_CAPTURE_ALIGN - 1);
 }
 
-static inline gboolean
-sysprof_capture_writer_ensure_space_for (SysprofCaptureWriter *self,
-                                         gsize                 len)
-{
-  /* Check for max frame size */
-  if (len > G_MAXUSHORT)
-    return FALSE;
-
-  if ((self->len - self->pos) < len)
-    {
-      if (!sysprof_capture_writer_flush_data (self))
-        return FALSE;
-    }
-
-  return TRUE;
-}
-
 static inline gpointer
 sysprof_capture_writer_allocate (SysprofCaptureWriter *self,
                                  gsize                *len)
 {
-  gpointer p;
-
   g_assert (self != NULL);
   g_assert (len != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  g_assert (self->writer != NULL);
 
   sysprof_capture_writer_realign (len);
 
-  if (!sysprof_capture_writer_ensure_space_for (self, *len))
-    return NULL;
-
-  p = (gpointer)&self->buf[self->pos];
-
-  self->pos += *len;
-
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-
-  return p;
+  return mmap_writer_advance (self->writer, *len);
 }
 
 static gboolean
 sysprof_capture_writer_flush_jitmap (SysprofCaptureWriter *self)
 {
-  SysprofCaptureJitmap jitmap;
-  gssize r;
+  SysprofCaptureJitmap *jitmap;
   gsize len;
 
   g_assert (self != NULL);
@@ -302,24 +215,20 @@ sysprof_capture_writer_flush_jitmap (SysprofCaptureWriter *self)
 
   g_assert (self->addr_buf_pos > 0);
 
-  len = sizeof jitmap + self->addr_buf_pos;
-
+  len = sizeof *jitmap + self->addr_buf_pos;
   sysprof_capture_writer_realign (&len);
 
-  sysprof_capture_writer_frame_init (&jitmap.frame,
+  jitmap = mmap_writer_advance (self->writer, len);
+  sysprof_capture_writer_frame_init (&jitmap->frame,
                                      len,
                                      -1,
                                      _sysprof_getpid (),
                                      SYSPROF_CAPTURE_CURRENT_TIME,
                                      SYSPROF_CAPTURE_FRAME_JITMAP);
-  jitmap.n_jitmaps = self->addr_hash_size;
+  jitmap->n_jitmaps = self->addr_hash_size;
 
-  if (sizeof jitmap != _sysprof_write (self->fd, &jitmap, sizeof jitmap))
-    return FALSE;
-
-  r = _sysprof_write (self->fd, self->addr_buf, len - sizeof jitmap);
-  if (r < 0 || (gsize)r != (len - sizeof jitmap))
-    return FALSE;
+  /* Copy the jitmap buffer into the frame data */
+  memcpy (jitmap->data, self->addr_buf, self->addr_buf_pos);
 
   self->addr_buf_pos = 0;
   self->addr_hash_size = 0;
@@ -387,7 +296,6 @@ sysprof_capture_writer_insert_jitmap (SysprofCaptureWriter *self,
 
   g_assert (self != NULL);
   g_assert (str != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
 
   len = sizeof addr + strlen (str) + 1;
 
@@ -466,7 +374,6 @@ sysprof_capture_writer_new_from_fd (int   fd,
   g_autoptr(GDateTime) now = NULL;
   SysprofCaptureWriter *self;
   SysprofCaptureFileHeader *header;
-  gsize header_len = sizeof(*header);
 
   if (fd < 0)
     return NULL;
@@ -480,19 +387,14 @@ sysprof_capture_writer_new_from_fd (int   fd,
   /* This is only useful on files, memfd, etc */
   if (ftruncate (fd, 0) != 0) { /* Do Nothing */ }
 
-  self = g_new0 (SysprofCaptureWriter, 1);
-  self->ref_count = 1;
-  self->fd = fd;
-  self->buf = (guint8 *)g_malloc0 (buffer_size);
-  self->len = buffer_size;
+  self = g_atomic_rc_box_new0 (SysprofCaptureWriter);
+  self->writer = mmap_writer_new_for_fd (fd, buffer_size);
   self->next_counter_id = 1;
 
   now = g_date_time_new_now_local ();
   nowstr = g_date_time_format_iso8601 (now);
 
-  header = sysprof_capture_writer_allocate (self, &header_len);
-
-  if (header == NULL)
+  if (!(header = mmap_writer_get_file_header (self->writer)))
     {
       sysprof_capture_writer_finalize (self);
       return NULL;
@@ -511,18 +413,7 @@ sysprof_capture_writer_new_from_fd (int   fd,
   header->end_time = 0;
   memset (header->suffix, 0, sizeof header->suffix);
 
-  if (!sysprof_capture_writer_flush_data (self))
-    {
-      sysprof_capture_writer_finalize (self);
-      return NULL;
-    }
-
-  g_assert (self->pos == 0);
-  g_assert (self->len > 0);
-  g_assert (self->len % _sysprof_getpagesize() == 0);
-  g_assert (self->buf != NULL);
-  g_assert (self->addr_hash_size == 0);
-  g_assert (self->fd != -1);
+  mmap_writer_flush (self->writer);
 
   return self;
 }
@@ -570,9 +461,7 @@ sysprof_capture_writer_add_map (SysprofCaptureWriter *self,
   g_assert (filename != NULL);
 
   len = sizeof *ev + strlen (filename) + 1;
-
-  ev = (SysprofCaptureMap *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -617,8 +506,7 @@ sysprof_capture_writer_add_mark (SysprofCaptureWriter *self,
   message_len = strlen (message) + 1;
 
   len = sizeof *ev + message_len;
-  ev = (SysprofCaptureMark *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -663,8 +551,7 @@ sysprof_capture_writer_add_metadata (SysprofCaptureWriter *self,
     metadata_len = strlen (metadata);
 
   len = sizeof *ev + metadata_len + 1;
-  ev = (SysprofCaptureMetadata *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -718,9 +605,7 @@ sysprof_capture_writer_add_process (SysprofCaptureWriter *self,
   g_assert (cmdline != NULL);
 
   len = sizeof *ev + strlen (cmdline) + 1;
-
-  ev = (SysprofCaptureProcess *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -753,9 +638,7 @@ sysprof_capture_writer_add_sample (SysprofCaptureWriter        *self,
   g_assert (self != NULL);
 
   len = sizeof *ev + (n_addrs * sizeof (SysprofCaptureAddress));
-
-  ev = (SysprofCaptureSample *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -782,12 +665,12 @@ sysprof_capture_writer_add_fork (SysprofCaptureWriter *self,
                                  gint32           child_pid)
 {
   SysprofCaptureFork *ev;
-  gsize len = sizeof *ev;
+  gsize len;
 
   g_assert (self != NULL);
 
-  ev = (SysprofCaptureFork *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  len = sizeof *ev;
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -810,12 +693,12 @@ sysprof_capture_writer_add_exit (SysprofCaptureWriter *self,
                                  gint32                pid)
 {
   SysprofCaptureExit *ev;
-  gsize len = sizeof *ev;
+  gsize len;
 
   g_assert (self != NULL);
 
-  ev = (SysprofCaptureExit *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  len = sizeof *ev;
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -837,12 +720,12 @@ sysprof_capture_writer_add_timestamp (SysprofCaptureWriter *self,
                                       gint32                pid)
 {
   SysprofCaptureTimestamp *ev;
-  gsize len = sizeof *ev;
+  gsize len;
 
   g_assert (self != NULL);
 
-  ev = (SysprofCaptureTimestamp *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  len = sizeof *ev;
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -860,21 +743,12 @@ sysprof_capture_writer_add_timestamp (SysprofCaptureWriter *self,
 static gboolean
 sysprof_capture_writer_flush_end_time (SysprofCaptureWriter *self)
 {
-  gint64 end_time = SYSPROF_CAPTURE_CURRENT_TIME;
-  ssize_t ret;
+  SysprofCaptureFileHeader *header;
 
   g_assert (self != NULL);
 
-  /* This field is opportunistic, so a failure is okay. */
-
-again:
-  ret = _sysprof_pwrite (self->fd,
-                         &end_time,
-                         sizeof (end_time),
-                         G_STRUCT_OFFSET (SysprofCaptureFileHeader, end_time));
-
-  if (ret < 0 && errno == EAGAIN)
-    goto again;
+  header = mmap_writer_get_file_header (self->writer);
+  header->end_time = SYSPROF_CAPTURE_CURRENT_TIME;
 
   return TRUE;
 }
@@ -910,10 +784,11 @@ sysprof_capture_writer_save_as (SysprofCaptureWriter  *self,
   gsize to_write;
   off_t in_off;
   off_t pos;
+  int writer_fd;
   int fd = -1;
 
   g_assert (self != NULL);
-  g_assert (self->fd != -1);
+  g_assert (self->writer != NULL);
   g_assert (filename != NULL);
 
   if (-1 == (fd = open (filename, O_CREAT | O_RDWR, 0640)))
@@ -922,8 +797,8 @@ sysprof_capture_writer_save_as (SysprofCaptureWriter  *self,
   if (!sysprof_capture_writer_flush (self))
     goto handle_errno;
 
-  if (-1 == (pos = lseek (self->fd, 0L, SEEK_CUR)))
-    goto handle_errno;
+  writer_fd = mmap_writer_get_fd (self->writer);
+  pos = mmap_writer_tell (self->writer);
 
   to_write = pos;
   in_off = 0;
@@ -932,7 +807,7 @@ sysprof_capture_writer_save_as (SysprofCaptureWriter  *self,
     {
       gssize written;
 
-      written = _sysprof_sendfile (fd, self->fd, &in_off, pos);
+      written = _sysprof_sendfile (fd, writer_fd, &in_off, to_write);
 
       if (written < 0)
         goto handle_errno;
@@ -965,77 +840,6 @@ handle_errno:
 }
 
 /**
- * _sysprof_capture_writer_splice_from_fd:
- * @self: An #SysprofCaptureWriter
- * @fd: the fd to read from.
- * @error: A location for a #GError, or %NULL.
- *
- * This is internal API for SysprofCaptureWriter and SysprofCaptureReader to
- * communicate when splicing a reader into a writer.
- *
- * This should not be used outside of #SysprofCaptureReader or
- * #SysprofCaptureWriter.
- *
- * This will not advance the position of @fd.
- *
- * Returns: %TRUE if successful; otherwise %FALSE and @error is set.
- */
-gboolean
-_sysprof_capture_writer_splice_from_fd (SysprofCaptureWriter  *self,
-                                        int                    fd,
-                                        GError               **error)
-{
-  struct stat stbuf;
-  off_t in_off;
-  gsize to_write;
-
-  g_assert (self != NULL);
-  g_assert (self->fd != -1);
-
-  if (-1 == fstat (fd, &stbuf))
-    goto handle_errno;
-
-  if (stbuf.st_size < 256)
-    {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   G_FILE_ERROR_INVAL,
-                   "Cannot splice, possibly corrupt file.");
-      return FALSE;
-    }
-
-  in_off = 256;
-  to_write = stbuf.st_size - in_off;
-
-  while (to_write > 0)
-    {
-      gssize written;
-
-      written = _sysprof_sendfile (self->fd, fd, &in_off, to_write);
-
-      if (written < 0)
-        goto handle_errno;
-
-      if (written == 0 && errno != EAGAIN)
-        goto handle_errno;
-
-      g_assert (written <= (gssize)to_write);
-
-      to_write -= written;
-    }
-
-  return TRUE;
-
-handle_errno:
-  g_set_error (error,
-               G_FILE_ERROR,
-               g_file_error_from_errno (errno),
-               "%s", g_strerror (errno));
-
-  return FALSE;
-}
-
-/**
  * sysprof_capture_writer_splice:
  * @self: An #SysprofCaptureWriter
  * @dest: An #SysprofCaptureWriter
@@ -1053,41 +857,20 @@ sysprof_capture_writer_splice (SysprofCaptureWriter  *self,
                                SysprofCaptureWriter  *dest,
                                GError               **error)
 {
+  SysprofCaptureReader *reader;
   gboolean ret;
-  off_t pos;
 
   g_assert (self != NULL);
-  g_assert (self->fd != -1);
   g_assert (dest != NULL);
-  g_assert (dest->fd != -1);
 
-  /* Flush before writing anything to ensure consistency */
-  if (!sysprof_capture_writer_flush (self) || !sysprof_capture_writer_flush (dest))
-    goto handle_errno;
+  if (!(reader = sysprof_capture_writer_create_reader (self, error)))
+    return FALSE;
 
-  /* Track our current position so we can reset */
-  if ((off_t)-1 == (pos = lseek (self->fd, 0L, SEEK_CUR)))
-    goto handle_errno;
+  ret = sysprof_capture_writer_cat (dest, reader, error);
 
-  /* Perform the splice */
-  ret = _sysprof_capture_writer_splice_from_fd (dest, self->fd, error);
-
-  /* Now reset or file-descriptor position (it should be the same */
-  if (pos != lseek (self->fd, pos, SEEK_SET))
-    {
-      ret = FALSE;
-      goto handle_errno;
-    }
+  sysprof_capture_reader_unref (reader);
 
   return ret;
-
-handle_errno:
-  g_set_error (error,
-               G_FILE_ERROR,
-               g_file_error_from_errno (errno),
-               "%s", g_strerror (errno));
-
-  return FALSE;
 }
 
 /**
@@ -1109,25 +892,21 @@ sysprof_capture_writer_create_reader (SysprofCaptureWriter  *self,
                                       GError               **error)
 {
   SysprofCaptureReader *ret;
+  int fd;
   int copy;
 
   g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (self->fd != -1, NULL);
+  g_return_val_if_fail (self->writer != NULL, NULL);
 
-  if (!sysprof_capture_writer_flush (self))
-    {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   g_file_error_from_errno (errno),
-                   "%s", g_strerror (errno));
-      return NULL;
-    }
+  sysprof_capture_writer_flush (self);
+
+  fd = mmap_writer_get_fd (self->writer);
 
   /*
    * We don't care about the write position, since the reader
    * uses positioned reads.
    */
-  if (-1 == (copy = dup (self->fd)))
+  if (-1 == (copy = dup (fd)))
     return NULL;
 
   if ((ret = sysprof_capture_reader_new_from_fd (copy, error)))
@@ -1173,9 +952,7 @@ sysprof_capture_writer_define_counters (SysprofCaptureWriter        *self,
     return TRUE;
 
   len = sizeof *def + (sizeof *counters * n_counters);
-
-  def = (SysprofCaptureCounterDefine *)sysprof_capture_writer_allocate (self, &len);
-  if (!def)
+  if (!(def = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&def->frame,
@@ -1234,11 +1011,8 @@ sysprof_capture_writer_set_counters (SysprofCaptureWriter             *self,
 
   len = sizeof *set + (n_groups * sizeof (SysprofCaptureCounterValues));
 
-  set = (SysprofCaptureCounterSet *)sysprof_capture_writer_allocate (self, &len);
-  if (!set)
+  if (!(set = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
-
-  memset (set, 0, len);
 
   sysprof_capture_writer_frame_init (&set->frame,
                                      len,
@@ -1304,27 +1078,15 @@ _sysprof_capture_writer_set_time_range (SysprofCaptureWriter *self,
                                         gint64                start_time,
                                         gint64                end_time)
 {
-  ssize_t ret;
+  SysprofCaptureFileHeader *header;
 
   g_assert (self != NULL);
 
-do_start:
-  ret = _sysprof_pwrite (self->fd,
-                         &start_time,
-                         sizeof (start_time),
-                         G_STRUCT_OFFSET (SysprofCaptureFileHeader, time));
-
-  if (ret < 0 && errno == EAGAIN)
-    goto do_start;
-
-do_end:
-  ret = _sysprof_pwrite (self->fd,
-                         &end_time,
-                         sizeof (end_time),
-                         G_STRUCT_OFFSET (SysprofCaptureFileHeader, end_time));
-
-  if (ret < 0 && errno == EAGAIN)
-    goto do_end;
+  if ((header = mmap_writer_get_file_header (self->writer)))
+    {
+      header->time = start_time;
+      header->end_time = end_time;
+    }
 
   return TRUE;
 }
@@ -1356,7 +1118,7 @@ sysprof_capture_writer_get_buffer_size (SysprofCaptureWriter *self)
 {
   g_return_val_if_fail (self != NULL, 0);
 
-  return self->len;
+  return mmap_writer_get_buffer_size (self->writer);
 }
 
 gboolean
@@ -1382,8 +1144,7 @@ sysprof_capture_writer_add_log (SysprofCaptureWriter *self,
   message_len = strlen (message) + 1;
 
   len = sizeof *ev + message_len;
-  ev = (SysprofCaptureLog *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -1420,8 +1181,7 @@ sysprof_capture_writer_add_file (SysprofCaptureWriter *self,
   g_assert (self != NULL);
 
   len = sizeof *ev + data_len;
-  ev = (SysprofCaptureFileChunk *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -1531,8 +1291,7 @@ sysprof_capture_writer_add_allocation (SysprofCaptureWriter  *self,
   g_assert (backtrace_func != NULL);
 
   len = sizeof *ev + (MAX_UNWIND_DEPTH * sizeof (SysprofCaptureAddress));
-  ev = (SysprofCaptureAllocation *)sysprof_capture_writer_allocate (self, &len);
-  if (!ev)
+  if (!(ev = sysprof_capture_writer_allocate (self, &len)))
     return FALSE;
 
   sysprof_capture_writer_frame_init (&ev->frame,
@@ -1557,8 +1316,14 @@ sysprof_capture_writer_add_allocation (SysprofCaptureWriter  *self,
     {
       gsize diff = (sizeof (SysprofCaptureAddress) * (MAX_UNWIND_DEPTH - ev->n_addrs));
 
-      ev->frame.len -= diff;
-      self->pos -= diff;
+      /* We can simply rewind the length to what we used here because
+       * SYSPROF_CAPTURE_ALIGN matches sizeof(SysprofCaptureAddress).
+       */
+      if (diff > 0)
+        {
+          ev->frame.len -= diff;
+          mmap_writer_rewind (self->writer, diff);
+        }
     }
 
   self->stat.frame_count[SYSPROF_CAPTURE_FRAME_ALLOCATION]++;
@@ -1586,7 +1351,7 @@ sysprof_capture_writer_add_allocation_copy (SysprofCaptureWriter        *self,
     n_addrs = 0xFFF;
 
   len = sizeof *ev + (n_addrs * sizeof (SysprofCaptureAddress));
-  ev = (SysprofCaptureAllocation *)sysprof_capture_writer_allocate (self, &len);
+  ev = sysprof_capture_writer_allocate (self, &len);
   if (!ev)
     return FALSE;
 

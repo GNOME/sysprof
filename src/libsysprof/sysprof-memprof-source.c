@@ -45,9 +45,16 @@ sysprof_memprof_source_modify_spawn (SysprofSource    *source,
 }
 
 static void
+sysprof_memprof_source_stop (SysprofSource *source)
+{
+  sysprof_source_emit_finished (source);
+}
+
+static void
 source_iface_init (SysprofSourceInterface *iface)
 {
   iface->modify_spawn = sysprof_memprof_source_modify_spawn;
+  iface->stop = sysprof_memprof_source_stop;
 }
 
 G_DEFINE_TYPE_WITH_CODE (SysprofMemprofSource, sysprof_memprof_source, G_TYPE_OBJECT,

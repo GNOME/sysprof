@@ -34,6 +34,7 @@
 #include "sysprof-local-profiler.h"
 #include "sysprof-platform.h"
 
+#include "sysprof-control-source.h"
 #include "sysprof-gjs-source.h"
 #include "sysprof-hostinfo-source.h"
 #ifdef __linux__
@@ -712,6 +713,7 @@ sysprof_local_profiler_start (SysprofProfiler *profiler)
   SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
   SysprofHelpers *helpers = sysprof_helpers_get_default ();
+  g_autoptr(SysprofControlSource) control_source = NULL;
 
   g_return_if_fail (SYSPROF_IS_LOCAL_PROFILER (self));
   g_return_if_fail (priv->is_running == FALSE);
@@ -720,6 +722,9 @@ sysprof_local_profiler_start (SysprofProfiler *profiler)
 
   g_clear_pointer (&priv->timer, g_timer_destroy);
   g_object_notify (G_OBJECT (self), "elapsed");
+
+  control_source = sysprof_control_source_new ();
+  sysprof_profiler_add_source (SYSPROF_PROFILER (self), SYSPROF_SOURCE (control_source));
 
   sysprof_helpers_authorize_async (helpers,
                                    NULL,

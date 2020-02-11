@@ -162,7 +162,7 @@ request_writer (void)
                                                              g_variant_new ("()"),
                                                              G_VARIANT_TYPE ("(h)"),
                                                              G_DBUS_CALL_FLAGS_NONE,
-                                                             1000, /* 1 second */
+                                                             -1,
                                                              NULL,
                                                              &out_fd_list,
                                                              NULL,

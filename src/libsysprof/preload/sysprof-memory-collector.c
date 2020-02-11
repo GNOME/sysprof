@@ -36,10 +36,8 @@ static void *scratch_realloc (void *, size_t);
 static void *scratch_calloc  (size_t, size_t);
 static void  scratch_free    (void *);
 
-static G_LOCK_DEFINE (writer);
-static SysprofCaptureWriter *writer;
+static int collector_ready;
 static int hooked;
-static int pid;
 static ScratchAlloc scratch;
 static RealCalloc real_calloc = scratch_calloc;
 static RealFree real_free = scratch_free;
@@ -135,18 +133,8 @@ scratch_free (void *ptr)
 }
 
 static void
-flush_writer (void)
-{
-  G_LOCK (writer);
-  sysprof_capture_writer_flush (writer);
-  G_UNLOCK (writer);
-}
-
-static void
 hook_memtable (void)
 {
-  const gchar *env;
-
   if (hooked)
     return;
 
@@ -162,69 +150,30 @@ hook_memtable (void)
 
   unsetenv ("LD_PRELOAD");
 
-  pid = getpid ();
+  sysprof_collector_init ();
 
-  /* TODO: We want an API that let's us create a new writer
-   * per-thread instead of something like this (or using an
-   * environment variable). That will require a control channel
-   * to sysprof to request new writer/muxed APIs.
-   */
-
-  env = getenv ("MEMPROF_TRACE_FD");
-
-  if (env != NULL)
-    {
-      int fd = atoi (env);
-
-      if (fd > 0)
-        writer = sysprof_capture_writer_new_from_fd (fd, 0);
-    }
-
-  if (writer == NULL)
-    writer = sysprof_capture_writer_new ("memory.syscap", 0);
-
-  atexit (flush_writer);
+  g_atomic_int_set (&collector_ready, TRUE);
 }
-
-#define gettid() syscall(__NR_gettid, 0)
 
 static inline void
 track_malloc (void   *ptr,
               size_t  size)
 {
-  if G_UNLIKELY (!writer)
-    return;
-
-  G_LOCK (writer);
-  sysprof_capture_writer_add_allocation (writer,
-                                         SYSPROF_CAPTURE_CURRENT_TIME,
-                                         sched_getcpu (),
-                                         pid,
-                                         gettid(),
-                                         GPOINTER_TO_SIZE (ptr),
-                                         size,
-                                         backtrace_func,
-                                         NULL);
-  G_UNLOCK (writer);
+  if G_LIKELY (collector_ready != FALSE)
+    sysprof_collector_allocate (GPOINTER_TO_SIZE (ptr),
+                                size,
+                                backtrace_func,
+                                NULL);
 }
 
 static inline void
 track_free (void *ptr)
 {
-  if G_UNLIKELY (!writer)
-    return;
-
-  G_LOCK (writer);
-  sysprof_capture_writer_add_allocation (writer,
-                                         SYSPROF_CAPTURE_CURRENT_TIME,
-                                         sched_getcpu (),
-                                         pid,
-                                         gettid(),
-                                         GPOINTER_TO_SIZE (ptr),
-                                         0,
-                                         backtrace_func,
-                                         0);
-  G_UNLOCK (writer);
+  if G_LIKELY (collector_ready != FALSE)
+    sysprof_collector_allocate (GPOINTER_TO_SIZE (ptr),
+                                0,
+                                backtrace_func,
+                                NULL);
 }
 
 void *

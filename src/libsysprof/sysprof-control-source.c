@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include <fcntl.h>
+#include <glib-unix.h>
 #include <gio/gunixfdlist.h>
 #include <gio/gunixinputstream.h>
 #include <gio/gunixoutputstream.h>
@@ -139,6 +140,9 @@ sysprof_control_source_modify_spawn (SysprofSource    *source,
   if (socketpair (PF_LOCAL, SOCK_STREAM, 0, fds) != 0)
     return;
 
+  g_unix_set_fd_nonblocking (fds[0], TRUE, NULL);
+  g_unix_set_fd_nonblocking (fds[1], TRUE, NULL);
+
   /* @child_no is assigned the FD the child will receive. We can
    * use that to set the environment vaiable of the control FD.
    */
@@ -218,13 +222,16 @@ sysprof_control_source_supplement (SysprofSource        *source,
       const gchar *filename = g_ptr_array_index (self->files, i);
       int fd = open (filename, O_RDONLY);
 
-      /* TODO: We can't simply splice these until we've forced the process
-       * to flush the buffers (unless they've already exited).
-       */
-
       if (fd > -1)
         {
-          _sysprof_capture_writer_splice_from_fd (self->writer, fd, NULL);
+          SysprofCaptureReader *worker = sysprof_capture_reader_new_from_fd (fd, NULL);
+
+          if (reader != NULL)
+            {
+              sysprof_capture_writer_cat (self->writer, worker, NULL);
+              sysprof_capture_reader_unref (worker);
+            }
+
           close (fd);
         }
     }

@@ -89,6 +89,8 @@ typedef struct
 # define sysprof_current_cpu (-1)
 #endif
 
+#define COLLECTOR_MAGIC_CREATING GSIZE_TO_POINTER(0xE0E0E0E1)
+
 static SysprofCaptureWriter   *request_writer         (void);
 static void                    sysprof_collector_free (gpointer data);
 static const SysprofCollector *sysprof_collector_get  (void);
@@ -186,12 +188,12 @@ sysprof_collector_free (gpointer data)
 {
   SysprofCollector *collector = data;
 
-  if (collector != NULL)
+  if (collector != NULL && collector != COLLECTOR_MAGIC_CREATING)
     {
       if (collector->writer != NULL)
         sysprof_capture_writer_flush (collector->writer);
       g_clear_pointer (&collector->writer, sysprof_capture_writer_unref);
-      g_slice_free (SysprofCollector, collector);
+      g_free (collector);
     }
 }
 
@@ -199,6 +201,10 @@ static const SysprofCollector *
 sysprof_collector_get (void)
 {
   const SysprofCollector *collector = g_private_get (&collector_key);
+
+  /* We might have gotten here recursively */
+  if G_UNLIKELY (collector == COLLECTOR_MAGIC_CREATING)
+    return NULL;
 
   if G_LIKELY (collector != NULL)
     return collector;
@@ -211,7 +217,9 @@ sysprof_collector_get (void)
 
     G_LOCK (control_fd);
 
-    self = g_slice_new0 (SysprofCollector);
+    g_private_replace (&collector_key, COLLECTOR_MAGIC_CREATING);
+
+    self = g_new0 (SysprofCollector, 1);
     self->pid = getpid ();
 #ifdef __linux__
     self->tid = syscall (__NR_gettid, 0);
@@ -261,12 +269,27 @@ sysprof_collector_get (void)
   }
 }
 
+void
+sysprof_collector_init (void)
+{
+  static gsize once_init;
+
+  if (g_once_init_enter (&once_init))
+    {
+      (void)sysprof_collector_get ();
+      g_once_init_leave (&once_init, TRUE);
+    }
+}
+
 #define ADD_TO_COLLECTOR(func)                                    \
   G_STMT_START {                                                  \
     const SysprofCollector *collector = sysprof_collector_get (); \
-    if (collector->is_shared) { G_LOCK (control_fd); }            \
-    if (collector->writer != NULL) { func; }                      \
-    if (collector->is_shared) { G_UNLOCK (control_fd); }          \
+    if (collector != NULL)                                        \
+      {                                                           \
+        if (collector->is_shared) { G_LOCK (control_fd); }        \
+        if (collector->writer != NULL) { func; }                  \
+        if (collector->is_shared) { G_UNLOCK (control_fd); }      \
+      }                                                           \
   } G_STMT_END
 
 void

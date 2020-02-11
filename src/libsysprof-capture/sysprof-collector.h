@@ -62,6 +62,8 @@
 G_BEGIN_DECLS
 
 SYSPROF_AVAILABLE_IN_3_36
+void                  sysprof_collector_init             (void);
+SYSPROF_AVAILABLE_IN_3_36
 void                  sysprof_collector_embed_file       (const gchar                      *path,
                                                           const guint8                     *data,
                                                           gsize                             data_len);

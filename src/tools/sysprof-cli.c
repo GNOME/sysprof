@@ -44,7 +44,15 @@ static int exit_code = EXIT_SUCCESS;
 static gboolean
 sigint_handler (gpointer user_data)
 {
-  g_main_loop_quit (main_loop);
+  static int count;
+
+  if (count == 0)
+    sysprof_profiler_stop (profiler);
+  else if (count > 2)
+    g_main_loop_quit (main_loop);
+
+  count++;
+
   return G_SOURCE_REMOVE;
 }
 
@@ -52,7 +60,7 @@ static void
 profiler_stopped (SysprofProfiler *profiler_,
                   GMainLoop       *main_loop_)
 {
-  g_main_loop_quit (main_loop_);
+  g_main_loop_quit (main_loop);
 }
 
 static void

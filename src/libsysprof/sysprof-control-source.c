@@ -194,7 +194,6 @@ sysprof_control_source_modify_spawn (SysprofSource    *source,
   SysprofControlSource *self = (SysprofControlSource *)source;
   g_autofree gchar *child_no_str = NULL;
   g_autoptr(GSocketConnection) stream = NULL;
-  g_autoptr(GDBusConnection) conn = NULL;
   g_autoptr(GSocket) sock = NULL;
   g_autofree gchar *guid = g_dbus_generate_guid ();
   int fds[2];
@@ -251,6 +250,8 @@ sysprof_control_source_stop (SysprofSource *source)
       g_dbus_connection_close_sync (self->conn, NULL, NULL);
       g_clear_object (&self->conn);
     }
+
+  sysprof_source_emit_finished (source);
 }
 
 static void

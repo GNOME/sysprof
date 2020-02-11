@@ -48,8 +48,6 @@ static void source_iface_init (SysprofSourceInterface *iface);
 G_DEFINE_TYPE_WITH_CODE (SysprofControlSource, sysprof_control_source, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (SYSPROF_TYPE_SOURCE, source_iface_init))
 
-static SysprofSourceInterface *parent_iface;
-
 SysprofControlSource *
 sysprof_control_source_new (void)
 {
@@ -190,9 +188,6 @@ sysprof_control_source_stop (SysprofSource *source)
       g_dbus_connection_close_sync (self->conn, NULL, NULL);
       g_clear_object (&self->conn);
     }
-
-  if (parent_iface->stop)
-    parent_iface->stop (source);
 }
 
 static void
@@ -240,8 +235,6 @@ sysprof_control_source_supplement (SysprofSource        *source,
 static void
 source_iface_init (SysprofSourceInterface *iface)
 {
-  parent_iface = g_type_interface_peek_parent (iface);
-
   iface->set_writer = sysprof_control_source_set_writer;
   iface->modify_spawn = sysprof_control_source_modify_spawn;
   iface->stop = sysprof_control_source_stop;

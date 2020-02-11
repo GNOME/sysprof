@@ -141,7 +141,8 @@ on_bus_closed_cb (GDBusConnection      *connection,
                   const GError         *error,
                   SysprofControlSource *self)
 {
-  g_printerr ("Bus connection closed: %s\n", error->message);
+  if (error != NULL)
+    g_warning ("Bus connection prematurely closed: %s\n", error->message);
 }
 
 static void

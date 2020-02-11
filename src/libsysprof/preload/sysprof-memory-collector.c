@@ -16,6 +16,8 @@
 #include <sysprof-capture.h>
 #include <unistd.h>
 
+#include "gconstructor.h"
+
 typedef void *(* RealMalloc)        (size_t);
 typedef void  (* RealFree)          (void *);
 typedef void *(* RealCalloc)        (size_t, size_t);
@@ -46,6 +48,22 @@ static RealRealloc real_realloc = scratch_realloc;
 static RealAlignedAlloc real_aligned_alloc;
 static RealPosixMemalign real_posix_memalign;
 static RealMemalign real_memalign;
+
+#if defined (G_HAS_CONSTRUCTORS)
+# ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
+#  pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(collector_init_ctor)
+# endif
+G_DEFINE_CONSTRUCTOR(collector_init_ctor)
+#else
+# error Your platform/compiler is missing constructor support
+#endif
+
+static void
+collector_init_ctor (void)
+{
+  sysprof_collector_init ();
+  g_atomic_int_set (&collector_ready, TRUE);
+}
 
 static guint
 backtrace_func (SysprofCaptureAddress *addrs,
@@ -149,10 +167,6 @@ hook_memtable (void)
   real_memalign = dlsym (RTLD_NEXT, "memalign");
 
   unsetenv ("LD_PRELOAD");
-
-  sysprof_collector_init ();
-
-  g_atomic_int_set (&collector_ready, TRUE);
 }
 
 static inline void

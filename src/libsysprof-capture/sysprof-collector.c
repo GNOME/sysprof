@@ -122,31 +122,29 @@ request_writer (void)
 
       if (peer_fd > 0)
         {
-          GInputStream *in_stream;
-          GOutputStream *out_stream;
-          GIOStream *io_stream;
+          GSocketConnection *stream;
+          GSocket *sock;
 
           g_unix_set_fd_nonblocking (peer_fd, TRUE, NULL);
 
-          in_stream = g_unix_input_stream_new (dup (peer_fd), TRUE);
-          out_stream = g_unix_output_stream_new (dup (peer_fd), TRUE);
-          io_stream = g_simple_io_stream_new (in_stream, out_stream);
-          peer = g_dbus_connection_new_sync (io_stream,
-                                             NULL,
-                                             G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING,
-                                             NULL,
-                                             NULL,
-                                             NULL);
-
-          if (peer != NULL)
+          if ((sock = g_socket_new_from_fd (peer_fd, NULL)))
             {
-              g_dbus_connection_set_exit_on_close (peer, FALSE);
-              g_dbus_connection_start_message_processing (peer);
+              stream = g_socket_connection_factory_create_connection (sock);
+              g_printerr ("COLLECTOR TYPE: %s\n", G_OBJECT_TYPE_NAME (stream));
+              peer = g_dbus_connection_new_sync (G_IO_STREAM (stream), NULL,
+                                                 (G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT |
+                                                  G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_ALLOW_ANONYMOUS |
+                                                  G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING),
+                                                 NULL, NULL, NULL);
+              if (peer != NULL)
+                {
+                  g_dbus_connection_set_exit_on_close (peer, FALSE);
+                  g_dbus_connection_start_message_processing (peer);
+                }
+
+              g_clear_object (&stream);
+              g_clear_object (&sock);
             }
-          
-          g_clear_object (&in_stream);
-          g_clear_object (&out_stream);
-          g_clear_object (&io_stream);
         }
     }
 
@@ -154,6 +152,7 @@ request_writer (void)
     {
       GUnixFDList *out_fd_list = NULL;
       GVariant *reply;
+      GError *error = NULL;
 
       reply = g_dbus_connection_call_with_unix_fd_list_sync (peer,
                                                              NULL,
@@ -163,21 +162,37 @@ request_writer (void)
                                                              g_variant_new ("()"),
                                                              G_VARIANT_TYPE ("(h)"),
                                                              G_DBUS_CALL_FLAGS_NONE,
-                                                             -1,
+                                                             1000, /* 1 second */
                                                              NULL,
                                                              &out_fd_list,
                                                              NULL,
-                                                             NULL);
+                                                             &error);
+
+      if (error != NULL)
+        {
+          g_printerr ("ERROR: %s\n", error->message);
+          g_error_free (error);
+        }
 
       if (reply != NULL)
         {
-          int fd = g_unix_fd_list_get (out_fd_list, 0, NULL);
+          int handle = -1;
+          int fd;
 
-          if (fd > -1)
-            writer = sysprof_capture_writer_new_from_fd (fd, 0);
+          g_variant_get (reply, "(h)", &handle, NULL);
+
+          if (handle > -1)
+            {
+              fd = g_unix_fd_list_get (out_fd_list, handle, NULL);
+
+              if (fd > -1)
+                writer = sysprof_capture_writer_new_from_fd (fd, 0);
+            }
 
           g_variant_unref (reply);
         }
+
+      g_printerr ("Writer: %p\n", writer);
     }
 
   return g_steal_pointer (&writer);
@@ -204,12 +219,12 @@ sysprof_collector_get (void)
 
   /* We might have gotten here recursively */
   if G_UNLIKELY (collector == COLLECTOR_MAGIC_CREATING)
-    return NULL;
+    return COLLECTOR_MAGIC_CREATING;
 
   if G_LIKELY (collector != NULL)
     return collector;
 
-  if (use_single_trace () && shared_collector != NULL)
+  if (use_single_trace () && shared_collector != COLLECTOR_MAGIC_CREATING)
     return shared_collector;
 
   {
@@ -284,7 +299,7 @@ sysprof_collector_init (void)
 #define ADD_TO_COLLECTOR(func)                                    \
   G_STMT_START {                                                  \
     const SysprofCollector *collector = sysprof_collector_get (); \
-    if (collector != NULL)                                        \
+    if (collector != COLLECTOR_MAGIC_CREATING)                    \
       {                                                           \
         if (collector->is_shared) { G_LOCK (control_fd); }        \
         if (collector->writer != NULL) { func; }                  \

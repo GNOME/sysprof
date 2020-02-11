@@ -87,80 +87,90 @@ on_handle_create_writer_cb (IpcCollector          *collector,
                             SysprofControlSource  *self)
 {
   gchar writer_tmpl[] = "sysprof-collector-XXXXXX";
+  g_autoptr(GError) error = NULL;
   int fd;
 
   g_assert (IPC_IS_COLLECTOR (collector));
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
   g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
 
-  fd = g_mkstemp_full (writer_tmpl, O_CLOEXEC, 0);
+  g_printerr ("Request for new writer\n");
+
+  fd = g_mkstemp_full (writer_tmpl, O_RDWR | O_CLOEXEC, 0640);
 
   if (fd > -1)
     {
-      g_autoptr(GUnixFDList) out_fd_list = g_unix_fd_list_new_from_array (&fd, 1);
+      g_autoptr(GUnixFDList) out_fd_list = g_unix_fd_list_new ();
+      gint handle;
 
-      if (out_fd_list != NULL)
+      handle = g_unix_fd_list_append (out_fd_list, fd, &error);
+      close (fd);
+
+      if (handle > -1)
         {
+          g_print ("New fd list with reply %d (fd=%d) %s %p\n", handle, fd, writer_tmpl, out_fd_list);
+
           g_ptr_array_add (self->files, g_strdup (writer_tmpl));
           ipc_collector_complete_create_writer (collector,
                                                 g_steal_pointer (&invocation),
                                                 out_fd_list,
-                                                g_variant_new_handle (0));
+                                                g_variant_new_handle (handle));
+
+          g_printerr ("Sent\n");
+
           return TRUE;
         }
     }
 
-  g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
-                                         G_DBUS_ERROR,
-                                         G_DBUS_ERROR_FAILED,
-                                         "Failed to create FD for writer");
+  g_printerr ("Womp sending failure\n");
+
+  if (error != NULL)
+    g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
+  else
+    g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
+                                           G_DBUS_ERROR,
+                                           G_DBUS_ERROR_FAILED,
+                                           "Failed to create FD for writer");
 
   return TRUE;
 }
 
 static void
-sysprof_control_source_modify_spawn (SysprofSource    *source,
-                                     SysprofSpawnable *spawnable)
+on_bus_closed_cb (GDBusConnection      *connection,
+                  gboolean              remote_peer_vanished,
+                  const GError         *error,
+                  SysprofControlSource *self)
 {
-  SysprofControlSource *self = (SysprofControlSource *)source;
-  g_autofree gchar *child_no_str = NULL;
-  g_autoptr(GInputStream) in_stream = NULL;
-  g_autoptr(GOutputStream) out_stream = NULL;
-  g_autoptr(GIOStream) io_stream = NULL;
+  g_printerr ("Bus connection closed: %s\n", error->message);
+}
+
+static void
+new_connection_cb (GObject      *object,
+                   GAsyncResult *result,
+                   gpointer      user_data)
+{
   g_autoptr(GDBusConnection) conn = NULL;
-  int fds[2];
-  int child_no;
+  g_autoptr(SysprofControlSource) self = user_data;
+  g_autoptr(GError) error = NULL;
 
-  g_assert (SYSPROF_IS_SOURCE (source));
-  g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
 
-  /* Create a socket pair to communicate D-Bus protocol over */
-  if (socketpair (PF_LOCAL, SOCK_STREAM, 0, fds) != 0)
-    return;
-
-  g_unix_set_fd_nonblocking (fds[0], TRUE, NULL);
-  g_unix_set_fd_nonblocking (fds[1], TRUE, NULL);
-
-  /* @child_no is assigned the FD the child will receive. We can
-   * use that to set the environment vaiable of the control FD.
-   */
-  child_no = sysprof_spawnable_take_fd (spawnable, fds[1], -1);
-  child_no_str = g_strdup_printf ("%d", child_no);
-  sysprof_spawnable_setenv (spawnable, "SYSPROF_CONTROL_FD", child_no_str);
-
-  /* Create our D-Bus connection for our side and export our service
-   * that can create new writers.
-   */
-  in_stream = g_unix_input_stream_new (dup (fds[0]), TRUE);
-  out_stream = g_unix_output_stream_new (fds[0], TRUE);
-  io_stream = g_simple_io_stream_new (in_stream, out_stream);
-  conn = g_dbus_connection_new_sync (io_stream, NULL,
-                                     G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING,
-                                     NULL, NULL, NULL);
+  if (!(conn = g_dbus_connection_new_finish (result, &error)))
+    {
+      sysprof_source_emit_failed (SYSPROF_SOURCE (self), error);
+      return;
+    }
 
   g_set_object (&self->conn, conn);
 
   self->collector = ipc_collector_skeleton_new ();
+
+  g_signal_connect_object (conn,
+                           "closed",
+                           G_CALLBACK (on_bus_closed_cb),
+                           self,
+                           0);
 
   g_signal_connect_object (self->collector,
                            "handle-create-writer",
@@ -174,6 +184,58 @@ sysprof_control_source_modify_spawn (SysprofSource    *source,
                                     NULL);
 
   g_dbus_connection_start_message_processing (conn);
+}
+
+static void
+sysprof_control_source_modify_spawn (SysprofSource    *source,
+                                     SysprofSpawnable *spawnable)
+{
+  SysprofControlSource *self = (SysprofControlSource *)source;
+  g_autofree gchar *child_no_str = NULL;
+  g_autoptr(GSocketConnection) stream = NULL;
+  g_autoptr(GDBusConnection) conn = NULL;
+  g_autoptr(GSocket) sock = NULL;
+  g_autofree gchar *guid = g_dbus_generate_guid ();
+  int fds[2];
+  int child_no;
+
+  g_assert (SYSPROF_IS_SOURCE (source));
+  g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
+
+  /* Create a socket pair to communicate D-Bus protocol over */
+  if (socketpair (AF_LOCAL, SOCK_STREAM, 0, fds) != 0)
+    return;
+
+  g_unix_set_fd_nonblocking (fds[0], TRUE, NULL);
+  g_unix_set_fd_nonblocking (fds[1], TRUE, NULL);
+
+  /* @child_no is assigned the FD the child will receive. We can
+   * use that to set the environment vaiable of the control FD.
+   */
+  child_no = sysprof_spawnable_take_fd (spawnable, fds[1], -1);
+  child_no_str = g_strdup_printf ("%d", child_no);
+  sysprof_spawnable_setenv (spawnable, "SYSPROF_CONTROL_FD", child_no_str);
+
+  /* We need an IOStream for GDBusConnection to use. Since we need
+   * the ability to pass FDs, it must be a GUnixSocketConnection.
+   */
+  if (!(sock = g_socket_new_from_fd (fds[0], NULL)))
+    {
+      close (fds[0]);
+      g_critical ("Failed to create GSocket");
+      return;
+    }
+
+  stream = g_socket_connection_factory_create_connection (sock);
+  g_dbus_connection_new (G_IO_STREAM (stream),
+                         guid,
+                         (G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_SERVER |
+                          G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_ALLOW_ANONYMOUS |
+                          G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING),
+                         NULL,
+                         NULL,
+                         new_connection_cb,
+                         g_object_ref (self));
 }
 
 static void

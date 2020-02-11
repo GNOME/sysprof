@@ -24,6 +24,7 @@
 
 #include <fcntl.h>
 #include <glib-unix.h>
+#include <glib/gstdio.h>
 #include <gio/gunixfdlist.h>
 #include <gio/gunixinputstream.h>
 #include <gio/gunixoutputstream.h>
@@ -293,6 +294,8 @@ sysprof_control_source_supplement (SysprofSource        *source,
 
           close (fd);
         }
+
+      g_unlink (filename);
     }
 }
 

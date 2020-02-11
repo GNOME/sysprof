@@ -46,20 +46,30 @@ sigint_handler (gpointer user_data)
 {
   static int count;
 
+  if (count >= 2)
+    {
+      g_main_loop_quit (main_loop);
+      return G_SOURCE_REMOVE;
+    }
+
+  g_printerr ("\n");
+
   if (count == 0)
-    sysprof_profiler_stop (profiler);
-  else if (count > 2)
-    g_main_loop_quit (main_loop);
+    {
+      sysprof_profiler_stop (profiler);
+      g_printerr ("%s\n", _("Stopping profiler. Press twice more ^C to force exit."));
+    }
 
   count++;
 
-  return G_SOURCE_REMOVE;
+  return G_SOURCE_CONTINUE;
 }
 
 static void
 profiler_stopped (SysprofProfiler *profiler_,
                   GMainLoop       *main_loop_)
 {
+  g_printerr ("%s\n", _("Profiler stopped."));
   g_main_loop_quit (main_loop);
 }
 

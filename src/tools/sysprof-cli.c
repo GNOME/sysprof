@@ -44,15 +44,33 @@ static int exit_code = EXIT_SUCCESS;
 static gboolean
 sigint_handler (gpointer user_data)
 {
-  g_main_loop_quit (main_loop);
-  return G_SOURCE_REMOVE;
+  static int count;
+
+  if (count >= 2)
+    {
+      g_main_loop_quit (main_loop);
+      return G_SOURCE_REMOVE;
+    }
+
+  g_printerr ("\n");
+
+  if (count == 0)
+    {
+      g_printerr ("%s\n", _("Stopping profiler. Press twice more ^C to force exit."));
+      sysprof_profiler_stop (profiler);
+    }
+
+  count++;
+
+  return G_SOURCE_CONTINUE;
 }
 
 static void
 profiler_stopped (SysprofProfiler *profiler_,
                   GMainLoop       *main_loop_)
 {
-  g_main_loop_quit (main_loop_);
+  g_printerr ("%s\n", _("Profiler stopped."));
+  g_main_loop_quit (main_loop);
 }
 
 static void

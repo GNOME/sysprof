@@ -42,6 +42,7 @@ struct _SysprofControlSource
   GDBusConnection      *conn;
   SysprofCaptureWriter *writer;
   GPtrArray            *files;
+  guint                 stopped : 1;
 };
 
 static void source_iface_init (SysprofSourceInterface *iface);
@@ -95,8 +96,6 @@ on_handle_create_writer_cb (IpcCollector          *collector,
   g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
   g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
 
-  g_printerr ("Request for new writer\n");
-
   fd = g_mkstemp_full (writer_tmpl, O_RDWR | O_CLOEXEC, 0640);
 
   if (fd > -1)
@@ -109,21 +108,15 @@ on_handle_create_writer_cb (IpcCollector          *collector,
 
       if (handle > -1)
         {
-          g_print ("New fd list with reply %d (fd=%d) %s %p\n", handle, fd, writer_tmpl, out_fd_list);
-
           g_ptr_array_add (self->files, g_strdup (writer_tmpl));
           ipc_collector_complete_create_writer (collector,
                                                 g_steal_pointer (&invocation),
                                                 out_fd_list,
                                                 g_variant_new_handle (handle));
 
-          g_printerr ("Sent\n");
-
           return TRUE;
         }
     }
-
-  g_printerr ("Womp sending failure\n");
 
   if (error != NULL)
     g_dbus_method_invocation_return_gerror (g_steal_pointer (&invocation), error);
@@ -142,7 +135,7 @@ on_bus_closed_cb (GDBusConnection      *connection,
                   const GError         *error,
                   SysprofControlSource *self)
 {
-  if (error != NULL)
+  if (!self->stopped && error != NULL)
     g_warning ("Bus connection prematurely closed: %s\n", error->message);
 }
 
@@ -245,6 +238,8 @@ sysprof_control_source_stop (SysprofSource *source)
   SysprofControlSource *self = (SysprofControlSource *)source;
 
   g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+
+  self->stopped = TRUE;
 
   if (self->conn != NULL)
     {

@@ -419,6 +419,10 @@ sysprof_capture_reader_peek_frame (SysprofCaptureReader *self,
 
   sysprof_capture_reader_bswap_frame (self, frame);
 
+  /* In case the capture did not update the end_time during normal usage,
+   * we can update our cached known end_time based on the greatest frame
+   * we come across.
+   */
   if (frame->time > self->end_time)
     self->end_time = frame->time;
 

@@ -233,9 +233,62 @@ sysprof_symbol_map_add_resolver (SysprofSymbolMap      *self,
 }
 
 static void
-sysprof_symbol_map_do_sample (SysprofSymbolMap     *self,
-                              SysprofCaptureReader *reader,
-                              GHashTable           *seen)
+sysprof_symbol_map_do_alloc (SysprofSymbolMap     *self,
+                             SysprofCaptureReader *reader,
+                             GHashTable           *seen)
+{
+  const SysprofCaptureAllocation *ev;
+
+  g_assert (self != NULL);
+  g_assert (reader != NULL);
+  g_assert (seen != NULL);
+
+  if (!(ev = sysprof_capture_reader_read_allocation (reader)))
+    return;
+
+  for (guint i = 0; i < ev->n_addrs; i++)
+    {
+      SysprofCaptureAddress addr = ev->addrs[i];
+
+      for (guint j = 0; j < self->resolvers->len; j++)
+        {
+          SysprofSymbolResolver *resolver = g_ptr_array_index (self->resolvers, j);
+          g_autofree gchar *name = NULL;
+          const gchar *cname;
+          Element ele;
+          GQuark tag = 0;
+
+          name = sysprof_symbol_resolver_resolve_with_context (resolver,
+                                                               ev->frame.time,
+                                                               ev->frame.pid,
+                                                               SYSPROF_ADDRESS_CONTEXT_USER,
+                                                               addr,
+                                                               &tag);
+
+          if (name == NULL)
+            continue;
+
+          cname = g_string_chunk_insert_const (self->chunk, name);
+
+          ele.addr = addr;
+          ele.pid = ev->frame.pid;
+          ele.name = cname;
+          ele.tag = tag;
+
+          if (!g_hash_table_contains (seen, &ele))
+            {
+              Element *cpy = g_slice_dup (Element, &ele);
+              g_hash_table_add (seen, cpy);
+              g_ptr_array_add (self->samples, cpy);
+            }
+        }
+    }
+}
+
+static void
+sysprof_symbol_map_do_sample (SysprofSymbolMap        *self,
+                              SysprofCaptureReader    *reader,
+                              GHashTable              *seen)
 {
   SysprofAddressContext last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
   const SysprofCaptureSample *sample;
@@ -321,6 +374,11 @@ sysprof_symbol_map_resolve (SysprofSymbolMap     *self,
       if (type == SYSPROF_CAPTURE_FRAME_SAMPLE)
         {
           sysprof_symbol_map_do_sample (self, reader, seen);
+          continue;
+        }
+      else if (type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
+        {
+          sysprof_symbol_map_do_alloc (self, reader, seen);
           continue;
         }
 

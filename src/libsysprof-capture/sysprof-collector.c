@@ -280,6 +280,7 @@ sysprof_collector_init (void)
 
   if (g_once_init_enter (&once_init))
     {
+      sysprof_clock_init ();
       (void)sysprof_collector_get ();
       g_once_init_leave (&once_init, TRUE);
     }

@@ -56,8 +56,8 @@ sigint_handler (gpointer user_data)
 
   if (count == 0)
     {
-      sysprof_profiler_stop (profiler);
       g_printerr ("%s\n", _("Stopping profiler. Press twice more ^C to force exit."));
+      sysprof_profiler_stop (profiler);
     }
 
   count++;

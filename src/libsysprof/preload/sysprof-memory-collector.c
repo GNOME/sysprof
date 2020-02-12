@@ -62,7 +62,7 @@ static void
 collector_init_ctor (void)
 {
   sysprof_collector_init ();
-  g_atomic_int_set (&collector_ready, TRUE);
+  collector_ready = TRUE;
 }
 
 static guint
@@ -70,7 +70,8 @@ backtrace_func (SysprofCaptureAddress *addrs,
                 guint                  n_addrs,
                 gpointer               user_data)
 {
-#if defined(ENABLE_LIBUNWIND)
+#if 0
+//#if defined(ENABLE_LIBUNWIND)
   unw_context_t uc;
   unw_cursor_t cursor;
   unw_word_t ip;

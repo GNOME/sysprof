@@ -1307,7 +1307,10 @@ sysprof_capture_writer_add_allocation (SysprofCaptureWriter  *self,
   ev->tid = tid;
   ev->n_addrs = 0;
 
-  n_addrs = backtrace_func (ev->addrs, MAX_UNWIND_DEPTH, backtrace_data);
+  if (backtrace_func != NULL)
+    n_addrs = backtrace_func (ev->addrs, MAX_UNWIND_DEPTH, backtrace_data);
+  else
+    n_addrs = 0;
 
   if (n_addrs <= MAX_UNWIND_DEPTH)
     ev->n_addrs = n_addrs;

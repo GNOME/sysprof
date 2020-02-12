@@ -130,7 +130,6 @@ request_writer (void)
           if ((sock = g_socket_new_from_fd (peer_fd, NULL)))
             {
               stream = g_socket_connection_factory_create_connection (sock);
-              g_printerr ("COLLECTOR TYPE: %s\n", G_OBJECT_TYPE_NAME (stream));
               peer = g_dbus_connection_new_sync (G_IO_STREAM (stream), NULL,
                                                  (G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT |
                                                   G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_ALLOW_ANONYMOUS |
@@ -152,7 +151,6 @@ request_writer (void)
     {
       GUnixFDList *out_fd_list = NULL;
       GVariant *reply;
-      GError *error = NULL;
 
       reply = g_dbus_connection_call_with_unix_fd_list_sync (peer,
                                                              NULL,
@@ -166,24 +164,17 @@ request_writer (void)
                                                              NULL,
                                                              &out_fd_list,
                                                              NULL,
-                                                             &error);
-
-      if (error != NULL)
-        {
-          g_printerr ("ERROR: %s\n", error->message);
-          g_error_free (error);
-        }
+                                                             NULL);
 
       if (reply != NULL)
         {
           int handle = -1;
-          int fd;
 
           g_variant_get (reply, "(h)", &handle, NULL);
 
           if (handle > -1)
             {
-              fd = g_unix_fd_list_get (out_fd_list, handle, NULL);
+              int fd = g_unix_fd_list_get (out_fd_list, handle, NULL);
 
               if (fd > -1)
                 writer = sysprof_capture_writer_new_from_fd (fd, 0);
@@ -191,8 +182,6 @@ request_writer (void)
 
           g_variant_unref (reply);
         }
-
-      g_printerr ("Writer: %p\n", writer);
     }
 
   return g_steal_pointer (&writer);

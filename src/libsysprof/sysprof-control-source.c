@@ -286,7 +286,7 @@ sysprof_control_source_supplement (SysprofSource        *source,
         {
           SysprofCaptureReader *worker = sysprof_capture_reader_new_from_fd (fd, NULL);
 
-          if (reader != NULL)
+          if (worker != NULL)
             {
               sysprof_capture_writer_cat (self->writer, worker, NULL);
               sysprof_capture_reader_unref (worker);

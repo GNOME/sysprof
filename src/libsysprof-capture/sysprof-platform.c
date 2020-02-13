@@ -63,6 +63,7 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 
+#include "sysprof-capture-util-private.h"
 #include "sysprof-platform.h"
 
 /**
@@ -104,4 +105,19 @@ sysprof_memfd_create (const gchar *name)
 
   return fd;
 #endif
+}
+
+/**
+ * sysprof_getpagesize:
+ *
+ * Gets the page size using platform specific APIs.
+ *
+ * Returns: the system page size
+ *
+ * Since: 3.36
+ */
+gsize
+sysprof_getpagesize (void)
+{
+  return _sysprof_getpagesize ();
 }

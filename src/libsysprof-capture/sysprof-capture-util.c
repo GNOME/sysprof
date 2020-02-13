@@ -60,6 +60,7 @@
 
 #include <errno.h>
 #include <glib.h>
+#include <unistd.h>
 
 #ifdef G_OS_WIN32
 # include <process.h>
@@ -85,7 +86,7 @@ size_t
       GetSystemInfo (&system_info);
       pgsz = system_info.dwPageSize;
 #else
-      pgsz = getpagesize ();
+      pgsz = sysconf (_SC_PAGESIZE);
 #endif
     }
 

@@ -22,8 +22,14 @@ test_capture_cursor = executable('test-capture-cursor', 'test-capture-cursor.c',
   dependencies: [libsysprof_capture_dep],
 )
 
+test_mapped_ring_buffer = executable('test-mapped-ring-buffer', 'test-mapped-ring-buffer.c',
+        c_args: test_cflags,
+  dependencies: [libsysprof_capture_dep],
+)
+
 test('test-capture', test_capture, env: test_env)
 test('test-capture-cursor', test_capture_cursor, env: test_env)
+test('test-mapped-ring-buffer', test_mapped_ring_buffer, env: test_env)
 
 if get_option('libsysprof')
 

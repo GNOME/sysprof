@@ -14,6 +14,7 @@ libsysprof_capture_headers = files([
 install_headers(libsysprof_capture_headers, subdir: sysprof_header_subdir)
 
 libsysprof_capture_sources = files([
+  'mapped-ring-buffer.c',
   'sysprof-address.c',
   'sysprof-capture-condition.c',
   'sysprof-capture-cursor.c',

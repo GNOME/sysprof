@@ -725,7 +725,8 @@ sysprof_display_scan_worker (GTask        *task,
 
   while (sysprof_capture_reader_peek_frame (reader, &frame))
     {
-      st.frame_count[frame.type]++;
+      if (frame.type < G_N_ELEMENTS (st.frame_count))
+        st.frame_count[frame.type]++;
 
       if (frame.type == SYSPROF_CAPTURE_FRAME_METADATA)
         {

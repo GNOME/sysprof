@@ -237,6 +237,9 @@ gboolean              sysprof_capture_writer_cat                             (Sy
                                                                               SysprofCaptureReader              *reader,
                                                                               GError                           **error);
 G_GNUC_INTERNAL
+gboolean              _sysprof_capture_writer_add_raw                        (SysprofCaptureWriter              *self,
+                                                                              const SysprofCaptureFrame         *frame);
+G_GNUC_INTERNAL
 gboolean              _sysprof_capture_writer_splice_from_fd                 (SysprofCaptureWriter              *self,
                                                                               int                                fd,
                                                                               GError                           **error) G_GNUC_INTERNAL;

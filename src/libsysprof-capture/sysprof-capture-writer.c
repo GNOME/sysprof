@@ -1609,3 +1609,30 @@ sysprof_capture_writer_add_allocation_copy (SysprofCaptureWriter        *self,
 
   return TRUE;
 }
+
+gboolean
+_sysprof_capture_writer_add_raw (SysprofCaptureWriter      *self,
+                                 const SysprofCaptureFrame *fr)
+{
+  gpointer begin;
+  gsize len;
+
+  g_assert (self != NULL);
+  g_assert ((fr->len & 0x7) == 0);
+  g_assert (fr->type < SYSPROF_CAPTURE_FRAME_LAST);
+
+  len = fr->len;
+
+  if (!(begin = sysprof_capture_writer_allocate (self, &len)))
+    return FALSE;
+
+  g_assert (fr->len == len);
+  g_assert (fr->type < 16);
+
+  memcpy (begin, fr, fr->len);
+
+  if (fr->type < G_N_ELEMENTS (self->stat.frame_count))
+    self->stat.frame_count[fr->type]++;
+
+  return TRUE;
+}

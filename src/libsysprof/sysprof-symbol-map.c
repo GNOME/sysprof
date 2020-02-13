@@ -232,7 +232,7 @@ sysprof_symbol_map_add_resolver (SysprofSymbolMap      *self,
   g_ptr_array_add (self->resolvers, g_object_ref (resolver));
 }
 
-static void
+static gboolean
 sysprof_symbol_map_do_alloc (SysprofSymbolMap     *self,
                              SysprofCaptureReader *reader,
                              GHashTable           *seen)
@@ -244,7 +244,7 @@ sysprof_symbol_map_do_alloc (SysprofSymbolMap     *self,
   g_assert (seen != NULL);
 
   if (!(ev = sysprof_capture_reader_read_allocation (reader)))
-    return;
+    return FALSE;
 
   for (guint i = 0; i < ev->n_addrs; i++)
     {
@@ -283,9 +283,11 @@ sysprof_symbol_map_do_alloc (SysprofSymbolMap     *self,
             }
         }
     }
+
+  return TRUE;
 }
 
-static void
+static gboolean
 sysprof_symbol_map_do_sample (SysprofSymbolMap        *self,
                               SysprofCaptureReader    *reader,
                               GHashTable              *seen)
@@ -298,7 +300,7 @@ sysprof_symbol_map_do_sample (SysprofSymbolMap        *self,
   g_assert (seen != NULL);
 
   if (!(sample = sysprof_capture_reader_read_sample (reader)))
-    return;
+    return FALSE;
 
   for (guint i = 0; i < sample->n_addrs; i++)
     {
@@ -344,6 +346,8 @@ sysprof_symbol_map_do_sample (SysprofSymbolMap        *self,
             }
         }
     }
+
+  return TRUE;
 }
 
 void
@@ -373,12 +377,14 @@ sysprof_symbol_map_resolve (SysprofSymbolMap     *self,
     {
       if (type == SYSPROF_CAPTURE_FRAME_SAMPLE)
         {
-          sysprof_symbol_map_do_sample (self, reader, seen);
+          if (!sysprof_symbol_map_do_sample (self, reader, seen))
+            break;
           continue;
         }
       else if (type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
         {
-          sysprof_symbol_map_do_alloc (self, reader, seen);
+          if (!sysprof_symbol_map_do_alloc (self, reader, seen))
+            break;
           continue;
         }
 

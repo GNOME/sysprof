@@ -131,6 +131,9 @@ typedef enum
   SYSPROF_CAPTURE_FRAME_ALLOCATION   = 14,
 } SysprofCaptureFrameType;
 
+/* Not part of ABI */
+#define SYSPROF_CAPTURE_FRAME_LAST 15
+
 SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {

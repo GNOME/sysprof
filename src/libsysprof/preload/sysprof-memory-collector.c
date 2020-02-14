@@ -16,6 +16,8 @@
 #include <sysprof-capture.h>
 #include <unistd.h>
 
+#include "gconstructor.h"
+
 typedef void *(* RealMalloc)        (size_t);
 typedef void  (* RealFree)          (void *);
 typedef void *(* RealCalloc)        (size_t, size_t);
@@ -36,10 +38,8 @@ static void *scratch_realloc (void *, size_t);
 static void *scratch_calloc  (size_t, size_t);
 static void  scratch_free    (void *);
 
-static G_LOCK_DEFINE (writer);
-static SysprofCaptureWriter *writer;
+static int collector_ready;
 static int hooked;
-static int pid;
 static ScratchAlloc scratch;
 static RealCalloc real_calloc = scratch_calloc;
 static RealFree real_free = scratch_free;
@@ -48,6 +48,22 @@ static RealRealloc real_realloc = scratch_realloc;
 static RealAlignedAlloc real_aligned_alloc;
 static RealPosixMemalign real_posix_memalign;
 static RealMemalign real_memalign;
+
+#if defined (G_HAS_CONSTRUCTORS)
+# ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
+#  pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(collector_init_ctor)
+# endif
+G_DEFINE_CONSTRUCTOR(collector_init_ctor)
+#else
+# error Your platform/compiler is missing constructor support
+#endif
+
+static void
+collector_init_ctor (void)
+{
+  sysprof_collector_init ();
+  collector_ready = TRUE;
+}
 
 static guint
 backtrace_func (SysprofCaptureAddress *addrs,
@@ -135,18 +151,8 @@ scratch_free (void *ptr)
 }
 
 static void
-flush_writer (void)
-{
-  G_LOCK (writer);
-  sysprof_capture_writer_flush (writer);
-  G_UNLOCK (writer);
-}
-
-static void
 hook_memtable (void)
 {
-  const gchar *env;
-
   if (hooked)
     return;
 
@@ -161,70 +167,27 @@ hook_memtable (void)
   real_memalign = dlsym (RTLD_NEXT, "memalign");
 
   unsetenv ("LD_PRELOAD");
-
-  pid = getpid ();
-
-  /* TODO: We want an API that let's us create a new writer
-   * per-thread instead of something like this (or using an
-   * environment variable). That will require a control channel
-   * to sysprof to request new writer/muxed APIs.
-   */
-
-  env = getenv ("MEMPROF_TRACE_FD");
-
-  if (env != NULL)
-    {
-      int fd = atoi (env);
-
-      if (fd > 0)
-        writer = sysprof_capture_writer_new_from_fd (fd, 0);
-    }
-
-  if (writer == NULL)
-    writer = sysprof_capture_writer_new ("memory.syscap", 0);
-
-  atexit (flush_writer);
 }
-
-#define gettid() syscall(__NR_gettid, 0)
 
 static inline void
 track_malloc (void   *ptr,
               size_t  size)
 {
-  if G_UNLIKELY (!writer)
-    return;
-
-  G_LOCK (writer);
-  sysprof_capture_writer_add_allocation (writer,
-                                         SYSPROF_CAPTURE_CURRENT_TIME,
-                                         sched_getcpu (),
-                                         pid,
-                                         gettid(),
-                                         GPOINTER_TO_SIZE (ptr),
-                                         size,
-                                         backtrace_func,
-                                         NULL);
-  G_UNLOCK (writer);
+  if G_LIKELY (ptr && collector_ready)
+    sysprof_collector_allocate (GPOINTER_TO_SIZE (ptr),
+                                size,
+                                backtrace_func,
+                                NULL);
 }
 
 static inline void
 track_free (void *ptr)
 {
-  if G_UNLIKELY (!writer)
-    return;
-
-  G_LOCK (writer);
-  sysprof_capture_writer_add_allocation (writer,
-                                         SYSPROF_CAPTURE_CURRENT_TIME,
-                                         sched_getcpu (),
-                                         pid,
-                                         gettid(),
-                                         GPOINTER_TO_SIZE (ptr),
-                                         0,
-                                         backtrace_func,
-                                         0);
-  G_UNLOCK (writer);
+  if G_LIKELY (ptr && collector_ready)
+    sysprof_collector_allocate (GPOINTER_TO_SIZE (ptr),
+                                0,
+                                backtrace_func,
+                                NULL);
 }
 
 void *

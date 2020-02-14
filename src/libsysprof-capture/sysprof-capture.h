@@ -68,6 +68,7 @@ G_BEGIN_DECLS
 # include "sysprof-capture-reader.h"
 # include "sysprof-capture-writer.h"
 # include "sysprof-clock.h"
+# include "sysprof-platform.h"
 # include "sysprof-version.h"
 # include "sysprof-version-macros.h"
 

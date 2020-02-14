@@ -1,0 +1,303 @@
+/* sysprof-control-source.c
+ *
+ * Copyright 2020 Christian Hergert <chergert@redhat.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+#define G_LOG_DOMAIN "sysprof-control-source"
+
+#include "config.h"
+
+#include <fcntl.h>
+#include <glib-unix.h>
+#include <glib/gstdio.h>
+#include <gio/gunixfdlist.h>
+#include <gio/gunixinputstream.h>
+#include <gio/gunixoutputstream.h>
+#include <gio/gunixconnection.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+
+#include "mapped-ring-buffer.h"
+
+#include "sysprof-control-source.h"
+
+#define CREATRING      "CreatRing\0"
+#define CREATRING_LEN  10
+
+struct _SysprofControlSource
+{
+  GObject               parent_instance;
+  SysprofCaptureWriter *writer;
+  GArray               *source_ids;
+
+#ifdef G_OS_UNIX
+  GUnixConnection      *conn;
+#endif
+
+  GCancellable         *cancellable;
+
+  /* Control messages are 10 bytes */
+  gchar                 read_buf[10];
+
+  guint                 stopped : 1;
+
+};
+
+static void source_iface_init (SysprofSourceInterface *iface);
+
+G_DEFINE_TYPE_WITH_CODE (SysprofControlSource, sysprof_control_source, G_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (SYSPROF_TYPE_SOURCE, source_iface_init))
+
+SysprofControlSource *
+sysprof_control_source_new (void)
+{
+  return g_object_new (SYSPROF_TYPE_CONTROL_SOURCE, NULL);
+}
+
+static void
+remove_source_id (gpointer data)
+{
+  guint *id = data;
+  g_source_remove (*id);
+}
+
+static void
+sysprof_control_source_finalize (GObject *object)
+{
+  SysprofControlSource *self = (SysprofControlSource *)object;
+
+#ifdef G_OS_UNIX
+  g_clear_object (&self->conn);
+#endif
+
+  if (self->source_ids->len > 0)
+    g_array_remove_range (self->source_ids, 0, self->source_ids->len);
+
+  g_clear_pointer (&self->source_ids, g_array_unref);
+
+  G_OBJECT_CLASS (sysprof_control_source_parent_class)->finalize (object);
+}
+
+static void
+sysprof_control_source_class_init (SysprofControlSourceClass *klass)
+{
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+  object_class->finalize = sysprof_control_source_finalize;
+}
+
+static void
+sysprof_control_source_init (SysprofControlSource *self)
+{
+  self->cancellable = g_cancellable_new ();
+  self->source_ids = g_array_new (FALSE, FALSE, sizeof (guint));
+  g_array_set_clear_func (self->source_ids, remove_source_id);
+}
+
+static gboolean
+event_frame_cb (gconstpointer data,
+                gsize         length,
+                gpointer      user_data)
+{
+  SysprofControlSource *self = user_data;
+  const SysprofCaptureFrame *fr = data;
+
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+
+  if (self->writer != NULL)
+    _sysprof_capture_writer_add_raw (self->writer, fr);
+
+  return G_SOURCE_CONTINUE;
+}
+
+#if 0
+  g_autoptr(GUnixFDList) out_fd_list = NULL;
+  g_autoptr(GError) error = NULL;
+  MappedRingBuffer *reader = NULL;
+  guint id;
+  gint fd;
+  gint handle;
+
+  g_assert (IPC_IS_COLLECTOR (collector));
+  g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+
+  if (self->stopped)
+    goto failure;
+
+  if (!(reader = mapped_ring_buffer_new_reader (0)))
+    goto failure;
+
+  fd = mapped_ring_buffer_get_fd (reader);
+  out_fd_list = g_unix_fd_list_new ();
+  handle = g_unix_fd_list_append (out_fd_list, fd, &error);
+  if (handle == -1)
+    goto failure;
+
+  id = mapped_ring_buffer_create_source (reader, event_frame_cb, self);
+  g_array_append_val (self->source_ids, id);
+  g_clear_pointer (&reader, mapped_ring_buffer_unref);
+
+  ipc_collector_complete_create_writer (collector,
+                                        g_steal_pointer (&invocation),
+                                        out_fd_list,
+                                        g_variant_new_handle (handle));
+#endif
+
+#ifdef G_OS_UNIX
+static void
+sysprof_control_source_read_cb (GObject      *object,
+                                GAsyncResult *result,
+                                gpointer      user_data)
+{
+  g_autoptr(SysprofControlSource) self = user_data;
+  GInputStream *input_stream = (GInputStream *)object;
+  gssize ret;
+
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_INPUT_STREAM (input_stream));
+
+  ret = g_input_stream_read_finish (G_INPUT_STREAM (input_stream), result, NULL);
+
+  if (ret == sizeof self->read_buf)
+    {
+      if (memcmp (self->read_buf, CREATRING, CREATRING_LEN) == 0)
+        {
+          g_autoptr(MappedRingBuffer) buffer = NULL;
+
+          if ((buffer = mapped_ring_buffer_new_reader (0)))
+            {
+              int fd = mapped_ring_buffer_get_fd (buffer);
+              guint id = mapped_ring_buffer_create_source (buffer, event_frame_cb, self);
+
+              g_array_append_val (self->source_ids, id);
+              g_unix_connection_send_fd (self->conn, fd, NULL, NULL);
+            }
+        }
+
+      if (!g_cancellable_is_cancelled (self->cancellable))
+        g_input_stream_read_async (G_INPUT_STREAM (input_stream),
+                                   self->read_buf,
+                                   sizeof self->read_buf,
+                                   G_PRIORITY_HIGH,
+                                   self->cancellable,
+                                   sysprof_control_source_read_cb,
+                                   g_object_ref (self));
+    }
+}
+#endif
+
+static void
+sysprof_control_source_modify_spawn (SysprofSource    *source,
+                                     SysprofSpawnable *spawnable)
+{
+#ifdef G_OS_UNIX
+  SysprofControlSource *self = (SysprofControlSource *)source;
+  g_autofree gchar *child_no_str = NULL;
+  g_autoptr(GSocketConnection) stream = NULL;
+  g_autoptr(GSocket) sock = NULL;
+  GInputStream *input_stream;
+  int fds[2];
+  int child_no;
+
+  g_assert (SYSPROF_IS_SOURCE (source));
+  g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
+
+  /* Create a socket pair to communicate D-Bus protocol over */
+  if (socketpair (AF_LOCAL, SOCK_STREAM, 0, fds) != 0)
+    return;
+
+  g_unix_set_fd_nonblocking (fds[0], TRUE, NULL);
+  g_unix_set_fd_nonblocking (fds[1], TRUE, NULL);
+
+  /* @child_no is assigned the FD the child will receive. We can
+   * use that to set the environment vaiable of the control FD.
+   */
+  child_no = sysprof_spawnable_take_fd (spawnable, fds[1], -1);
+  child_no_str = g_strdup_printf ("%d", child_no);
+  sysprof_spawnable_setenv (spawnable, "SYSPROF_CONTROL_FD", child_no_str);
+
+  /* We need an IOStream for GDBusConnection to use. Since we need
+   * the ability to pass FDs, it must be a GUnixSocketConnection.
+   */
+  if (!(sock = g_socket_new_from_fd (fds[0], NULL)))
+    {
+      close (fds[0]);
+      g_critical ("Failed to create GSocket");
+      return;
+    }
+
+  g_socket_set_blocking (sock, FALSE);
+
+  stream = g_socket_connection_factory_create_connection (sock);
+
+  g_assert (G_IS_UNIX_CONNECTION (stream));
+
+  self->conn = g_object_ref (G_UNIX_CONNECTION (stream));
+
+  input_stream = g_io_stream_get_input_stream (G_IO_STREAM (stream));
+
+  g_input_stream_read_async (input_stream,
+                             self->read_buf,
+                             sizeof self->read_buf,
+                             G_PRIORITY_HIGH,
+                             self->cancellable,
+                             sysprof_control_source_read_cb,
+                             g_object_ref (self));
+#endif
+}
+
+static void
+sysprof_control_source_stop (SysprofSource *source)
+{
+  SysprofControlSource *self = (SysprofControlSource *)source;
+
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+
+  self->stopped = TRUE;
+
+  g_cancellable_cancel (self->cancellable);
+
+  if (self->source_ids->len > 0)
+    g_array_remove_range (self->source_ids, 0, self->source_ids->len);
+
+  sysprof_source_emit_finished (source);
+}
+
+static void
+sysprof_control_source_set_writer (SysprofSource        *source,
+                                   SysprofCaptureWriter *writer)
+{
+  SysprofControlSource *self = (SysprofControlSource *)source;
+
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+
+  g_clear_pointer (&self->writer, sysprof_capture_writer_unref);
+
+  if (writer != NULL)
+    self->writer = sysprof_capture_writer_ref (writer);
+}
+
+static void
+source_iface_init (SysprofSourceInterface *iface)
+{
+  iface->set_writer = sysprof_control_source_set_writer;
+  iface->modify_spawn = sysprof_control_source_modify_spawn;
+  iface->stop = sysprof_control_source_stop;
+}

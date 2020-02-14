@@ -26,10 +26,8 @@
 
 struct _SysprofMemprofSource
 {
-  SysprofTracefdSource parent_instance;
+  GObject parent_instance;
 };
-
-static SysprofSourceInterface *parent_iface;
 
 static void
 sysprof_memprof_source_modify_spawn (SysprofSource    *source,
@@ -37,8 +35,6 @@ sysprof_memprof_source_modify_spawn (SysprofSource    *source,
 {
   g_assert (SYSPROF_IS_SOURCE (source));
   g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
-
-  parent_iface->modify_spawn (source, spawnable);
 
 #ifdef __linux__
   sysprof_spawnable_setenv (spawnable, "G_SLICE", "always-malloc");
@@ -49,14 +45,19 @@ sysprof_memprof_source_modify_spawn (SysprofSource    *source,
 }
 
 static void
-source_iface_init (SysprofSourceInterface *iface)
+sysprof_memprof_source_stop (SysprofSource *source)
 {
-  parent_iface = g_type_interface_peek_parent (iface);
-
-  iface->modify_spawn = sysprof_memprof_source_modify_spawn;
+  sysprof_source_emit_finished (source);
 }
 
-G_DEFINE_TYPE_WITH_CODE (SysprofMemprofSource, sysprof_memprof_source, SYSPROF_TYPE_TRACEFD_SOURCE,
+static void
+source_iface_init (SysprofSourceInterface *iface)
+{
+  iface->modify_spawn = sysprof_memprof_source_modify_spawn;
+  iface->stop = sysprof_memprof_source_stop;
+}
+
+G_DEFINE_TYPE_WITH_CODE (SysprofMemprofSource, sysprof_memprof_source, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (SYSPROF_TYPE_SOURCE, source_iface_init))
 
 static void
@@ -67,7 +68,6 @@ sysprof_memprof_source_class_init (SysprofMemprofSourceClass *klass)
 static void
 sysprof_memprof_source_init (SysprofMemprofSource *self)
 {
-  sysprof_tracefd_source_set_envvar (SYSPROF_TRACEFD_SOURCE (self), "MEMPROF_TRACE_FD");
 }
 
 SysprofSource *

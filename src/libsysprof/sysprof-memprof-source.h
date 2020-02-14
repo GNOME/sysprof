@@ -27,7 +27,7 @@ G_BEGIN_DECLS
 #define SYSPROF_TYPE_MEMPROF_SOURCE (sysprof_memprof_source_get_type())
 
 SYSPROF_AVAILABLE_IN_3_36
-G_DECLARE_FINAL_TYPE (SysprofMemprofSource, sysprof_memprof_source, SYSPROF, MEMPROF_SOURCE, SysprofTracefdSource)
+G_DECLARE_FINAL_TYPE (SysprofMemprofSource, sysprof_memprof_source, SYSPROF, MEMPROF_SOURCE, GObject)
 
 SYSPROF_AVAILABLE_IN_3_36
 SysprofSource *sysprof_memprof_source_new (void);

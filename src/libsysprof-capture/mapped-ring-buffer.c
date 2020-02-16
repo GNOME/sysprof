@@ -575,7 +575,7 @@ mapped_ring_source_prepare (GSource *source,
   if (g_atomic_int_get (&header->head) != g_atomic_int_get (&header->tail))
     return TRUE;
 
-  *timeout_ = 1000 / 20; /* 20x a second */
+  *timeout_ = 5;
 
   return FALSE;
 }

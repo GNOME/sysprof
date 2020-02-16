@@ -156,16 +156,36 @@ sysprof_capture_reader_discover_end_time (SysprofCaptureReader *self)
     {
       gint64 end_time = frame.time;
 
-      if (frame.type == SYSPROF_CAPTURE_FRAME_MARK)
+      switch (frame.type)
         {
-          const SysprofCaptureMark *mark = NULL;
+        case SYSPROF_CAPTURE_FRAME_MARK: {
+            const SysprofCaptureMark *mark = NULL;
 
-          if ((mark = sysprof_capture_reader_read_mark (self)))
-            end_time = frame.time + MAX (0, mark->duration);
+            if ((mark = sysprof_capture_reader_read_mark (self)))
+              end_time = frame.time + MAX (0, mark->duration);
+          }
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_ALLOCATION:
+        case SYSPROF_CAPTURE_FRAME_CTRSET:
+        case SYSPROF_CAPTURE_FRAME_EXIT:
+        case SYSPROF_CAPTURE_FRAME_FORK:
+        case SYSPROF_CAPTURE_FRAME_LOG:
+        case SYSPROF_CAPTURE_FRAME_PROCESS:
+        case SYSPROF_CAPTURE_FRAME_SAMPLE:
+        case SYSPROF_CAPTURE_FRAME_TIMESTAMP:
+          if (end_time > self->end_time)
+            self->end_time = end_time;
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_MAP:
+        case SYSPROF_CAPTURE_FRAME_JITMAP:
+        case SYSPROF_CAPTURE_FRAME_CTRDEF:
+        case SYSPROF_CAPTURE_FRAME_METADATA:
+        case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
+        default:
+          break;
         }
-
-      if (end_time > self->end_time)
-        self->end_time = end_time;
 
       if (!sysprof_capture_reader_skip (self))
         break;

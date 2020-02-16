@@ -54,25 +54,25 @@ typedef gboolean (*MappedRingBufferCallback) (gconstpointer  data,
                                               gpointer       user_data);
 
 G_GNUC_INTERNAL
-MappedRingBuffer *mapped_ring_buffer_new_reader    (gsize                     buffer_size);
+MappedRingBuffer *mapped_ring_buffer_new_reader         (gsize                     buffer_size);
 G_GNUC_INTERNAL
-MappedRingBuffer *mapped_ring_buffer_new_writer    (gint                      fd);
+MappedRingBuffer *mapped_ring_buffer_new_writer         (gint                      fd);
 G_GNUC_INTERNAL
-gint              mapped_ring_buffer_get_fd        (MappedRingBuffer         *self);
+gint              mapped_ring_buffer_get_fd             (MappedRingBuffer         *self);
 G_GNUC_INTERNAL
-MappedRingBuffer *mapped_ring_buffer_ref           (MappedRingBuffer         *self);
+MappedRingBuffer *mapped_ring_buffer_ref                (MappedRingBuffer         *self);
 G_GNUC_INTERNAL
-void              mapped_ring_buffer_unref         (MappedRingBuffer         *self);
+void              mapped_ring_buffer_unref              (MappedRingBuffer         *self);
 G_GNUC_INTERNAL
-gpointer          mapped_ring_buffer_allocate      (MappedRingBuffer         *self,
-                                                    gsize                     length);
+gpointer          mapped_ring_buffer_allocate           (MappedRingBuffer         *self,
+                                                         gsize                     length);
 G_GNUC_INTERNAL
-void              mapped_ring_buffer_advance       (MappedRingBuffer         *self,
-                                                    gsize                     length);
+void              mapped_ring_buffer_advance            (MappedRingBuffer         *self,
+                                                         gsize                     length);
 G_GNUC_INTERNAL
-gboolean          mapped_ring_buffer_drain         (MappedRingBuffer         *self,
-                                                    MappedRingBufferCallback  callback,
-                                                    gpointer                  user_data);
+gboolean          mapped_ring_buffer_drain              (MappedRingBuffer         *self,
+                                                         MappedRingBufferCallback  callback,
+                                                         gpointer                  user_data);
 G_GNUC_INTERNAL
 guint             mapped_ring_buffer_create_source      (MappedRingBuffer         *self,
                                                          MappedRingBufferCallback  callback,

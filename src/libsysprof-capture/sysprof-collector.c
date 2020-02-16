@@ -185,13 +185,36 @@ request_writer (void)
 }
 
 static void
+write_final_frame (MappedRingBuffer *ring)
+{
+  SysprofCaptureFrame *fr;
+
+  g_assert (ring != NULL);
+
+  if ((fr = mapped_ring_buffer_allocate (ring, sizeof *fr)))
+    {
+      fr->len = sizeof *fr; /* aligned */
+      fr->type = 0xFF;      /* Invalid */
+      fr->cpu = -1;
+      fr->pid = -1;
+      fr->time = SYSPROF_CAPTURE_CURRENT_TIME;
+      mapped_ring_buffer_advance (ring, fr->len);
+    }
+}
+
+static void
 sysprof_collector_free (gpointer data)
 {
   SysprofCollector *collector = data;
 
   if (collector != NULL && collector != COLLECTOR_MAGIC_CREATING)
     {
-      g_clear_pointer (&collector->buffer, mapped_ring_buffer_unref);
+      if (collector->buffer != NULL)
+        {
+          write_final_frame (collector->buffer);
+          g_clear_pointer (&collector->buffer, mapped_ring_buffer_unref);
+        }
+
       g_free (collector);
     }
 }

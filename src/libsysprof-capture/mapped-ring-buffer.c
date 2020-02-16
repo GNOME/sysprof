@@ -462,7 +462,6 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
   MappedRingHeader *header;
   gsize headpos;
   gsize tailpos;
-  gboolean ret = FALSE;
 
   g_return_val_if_fail (self != NULL, FALSE);
   g_return_val_if_fail (self->mode == MODE_READER, FALSE);
@@ -492,26 +491,20 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
       gsize len = tailpos - headpos;
 
       if (!callback (data, &len, user_data))
-        goto short_circuit;
+        return FALSE;
 
       if (len > (tailpos - headpos))
-        goto short_circuit;
+        return FALSE;
 
       headpos += len;
+
+      if (headpos >= self->body_size)
+        g_atomic_int_set (&header->head, headpos - self->body_size);
+      else
+        g_atomic_int_set (&header->head, headpos);
     }
 
-  ret = TRUE;
-
-short_circuit:
-
-  if (headpos >= self->body_size)
-    headpos -= self->body_size;
-
-  g_assert (headpos < self->body_size);
-
-  g_atomic_int_set (&header->head, headpos);
-
-  return ret;
+  return TRUE;
 }
 
 typedef struct _MappedRingSource
@@ -597,8 +590,6 @@ mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
 
   g_return_val_if_fail (self != NULL, 0);
   g_return_val_if_fail (source_func != NULL, 0);
-
-  /* TODO: Can we use G_IO_IN with the memfd? */
 
   source = (MappedRingSource *)g_source_new (&mapped_ring_source_funcs, sizeof (MappedRingSource));
   source->self = mapped_ring_buffer_ref (self);

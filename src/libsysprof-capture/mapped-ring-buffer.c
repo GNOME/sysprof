@@ -587,6 +587,7 @@ mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
                                        GDestroyNotify            destroy)
 {
   MappedRingSource *source;
+  guint ret;
 
   g_return_val_if_fail (self != NULL, 0);
   g_return_val_if_fail (source_func != NULL, 0);
@@ -595,8 +596,10 @@ mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
   source->self = mapped_ring_buffer_ref (self);
   g_source_set_callback ((GSource *)source, (GSourceFunc)source_func, user_data, destroy);
   g_source_set_name ((GSource *)source, "MappedRingSource");
+  ret = g_source_attach ((GSource *)source, g_main_context_default ());
+  g_source_unref ((GSource *)source);
 
-  return g_source_attach ((GSource *)source, g_main_context_default ());
+  return ret;
 }
 
 guint

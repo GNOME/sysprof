@@ -426,7 +426,7 @@ sysprof_capture_reader_peek_frame (SysprofCaptureReader *self,
   if (frame->time > self->end_time)
     self->end_time = frame->time;
 
-  return TRUE;
+  return frame->type > 0 && frame->type < SYSPROF_CAPTURE_FRAME_LAST;
 }
 
 gboolean
@@ -443,7 +443,7 @@ sysprof_capture_reader_peek_type (SysprofCaptureReader    *self,
 
   *type = frame.type;
 
-  return TRUE;
+  return frame.type > 0 && frame.type < SYSPROF_CAPTURE_FRAME_LAST;
 }
 
 static const SysprofCaptureFrame *

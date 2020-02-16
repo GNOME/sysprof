@@ -56,6 +56,8 @@ typedef gboolean (*MappedRingBufferCallback) (gconstpointer  data,
 G_GNUC_INTERNAL
 MappedRingBuffer *mapped_ring_buffer_new_reader         (gsize                     buffer_size);
 G_GNUC_INTERNAL
+MappedRingBuffer *mapped_ring_buffer_new_readwrite      (gsize                     buffer_size);
+G_GNUC_INTERNAL
 MappedRingBuffer *mapped_ring_buffer_new_writer         (gint                      fd);
 G_GNUC_INTERNAL
 gint              mapped_ring_buffer_get_fd             (MappedRingBuffer         *self);

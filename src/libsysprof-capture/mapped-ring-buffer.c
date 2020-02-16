@@ -36,8 +36,9 @@
 #define BUFFER_MAX_SIZE ((G_MAXUINT32/2)-_sysprof_getpagesize())
 
 enum {
-  MODE_READER = 1,
-  MODE_WRITER = 2,
+  MODE_READER    = 1,
+  MODE_WRITER    = 2,
+  MODE_READWRITE = 3,
 };
 
 /*
@@ -209,6 +210,17 @@ mapped_ring_buffer_new_reader (gsize buffer_size)
   return g_steal_pointer (&self);
 }
 
+MappedRingBuffer *
+mapped_ring_buffer_new_readwrite (gsize buffer_size)
+{
+  MappedRingBuffer *self;
+
+  if ((self = mapped_ring_buffer_new_reader (buffer_size)))
+    self->mode = MODE_READWRITE;
+
+  return self;
+}
+
 /**
  * mapped_ring_buffer_new_writer:
  * @fd: a FD to map
@@ -363,7 +375,7 @@ mapped_ring_buffer_allocate (MappedRingBuffer *self,
   gsize tailpos;
 
   g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (self->mode == MODE_WRITER, NULL);
+  g_return_val_if_fail (self->mode & MODE_WRITER, NULL);
   g_return_val_if_fail (length > 0, NULL);
   g_return_val_if_fail (length < self->body_size, NULL);
   g_return_val_if_fail ((length & 0x7) == 0, NULL);
@@ -419,7 +431,7 @@ mapped_ring_buffer_advance (MappedRingBuffer *self,
   guint32 tail;
 
   g_return_if_fail (self != NULL);
-  g_return_if_fail (self->mode == MODE_WRITER);
+  g_return_if_fail (self->mode & MODE_WRITER);
   g_return_if_fail (length > 0);
   g_return_if_fail (length < self->body_size);
   g_return_if_fail ((length & 0x7) == 0);
@@ -464,7 +476,7 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
   gsize tailpos;
 
   g_return_val_if_fail (self != NULL, FALSE);
-  g_return_val_if_fail (self->mode == MODE_READER, FALSE);
+  g_return_val_if_fail (self->mode & MODE_READER, FALSE);
   g_return_val_if_fail (callback != NULL, FALSE);
 
   header = get_header (self);

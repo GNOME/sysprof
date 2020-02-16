@@ -164,12 +164,33 @@ test_threaded_movements (void)
   g_thread_join (thread2);
 }
 
+static void
+test_readwrite (void)
+{
+  MappedRingBuffer *ring;
+  gint64 *ptr;
+
+  ring = mapped_ring_buffer_new_readwrite (4096*16);
+  g_assert_nonnull (ring);
+
+  real_count = 0;
+  while ((ptr = mapped_ring_buffer_allocate (ring, sizeof *ptr)))
+    {
+      static gint64 count;
+      g_assert ((GPOINTER_TO_SIZE(ptr) & 0x7) == 0);
+      *ptr = ++count;
+      mapped_ring_buffer_advance (ring, sizeof *ptr);
+    }
+  mapped_ring_buffer_drain (ring, drain_count_cb, NULL);
+}
+
 gint
 main (gint argc,
       gchar *argv[])
 {
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/MappedRingBuffer/basic_movements", test_basic_movements);
+  g_test_add_func ("/MappedRingBuffer/readwrite", test_readwrite);
   g_test_add_func ("/MappedRingBuffer/threaded_movements", test_threaded_movements);
   return g_test_run ();
 }

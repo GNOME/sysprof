@@ -66,6 +66,8 @@ MappedRingBuffer *mapped_ring_buffer_ref                (MappedRingBuffer       
 G_GNUC_INTERNAL
 void              mapped_ring_buffer_unref              (MappedRingBuffer         *self);
 G_GNUC_INTERNAL
+void              mapped_ring_buffer_clear              (MappedRingBuffer         *self);
+G_GNUC_INTERNAL
 gpointer          mapped_ring_buffer_allocate           (MappedRingBuffer         *self,
                                                          gsize                     length);
 G_GNUC_INTERNAL

@@ -621,3 +621,25 @@ mapped_ring_buffer_create_source (MappedRingBuffer         *self,
 {
   return mapped_ring_buffer_create_source_full (self, source_func, user_data, NULL);
 }
+
+/**
+ * mapped_ring_buffer_clear:
+ * @self: a #MappedRingBuffer
+ *
+ * Resets the head and tail positions back to 0.
+ *
+ * This function is only safe to call when you control both the reader
+ * and writer sides with mapped_ring_buffer_new_readwrite(), or are in
+ * control of when each side reads or writes.
+ */
+void
+mapped_ring_buffer_clear (MappedRingBuffer *self)
+{
+  MappedRingHeader *header;
+
+  g_return_if_fail (self != NULL);
+
+  header = get_header (self);
+  header->head = 0;
+  header->tail = 0;
+}

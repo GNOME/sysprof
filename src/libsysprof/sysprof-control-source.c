@@ -142,6 +142,8 @@ event_frame_cb (gconstpointer  data,
 
   _sysprof_capture_writer_add_raw (rd->self->writer, fr);
 
+  *length = fr->len;
+
   return G_SOURCE_CONTINUE;
 
 remove_source:

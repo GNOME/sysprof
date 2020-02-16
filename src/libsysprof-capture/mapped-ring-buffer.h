@@ -29,25 +29,29 @@ typedef struct _MappedRingBuffer MappedRingBuffer;
 /**
  * MappedRingBufferCallback:
  * @data: a pointer into the mapped buffer containing the data frame
- * @length: the size of @data in bytes
+ * @length: (inout): the number of bytes to advance
  * @user_data: closure data provided to mapped_ring_buffer_drain()
  *
  * Functions matching this prototype will be called from the
- * mapped_ring_buffer_drain() function for each data frame read from
- * the underlying memory mapping.
+ * mapped_ring_buffer_drain() function for each data frame read from the
+ * underlying memory mapping.
  *
- * If frames were lost because the reader could not keep up, then
- * @data will be NULL and @length will be the number of frames that
- * were known to be lost by the peer.
+ * @length is initially set to the max bytes that @data could contain, but
+ * should be set by the caller to the amount of bytes known to have been
+ * consumed. This allows MappedRingBuffer to avoid storing length data or
+ * framing information as that can come from the buffer content.
+ *
+ * The callback should shorten @length if it knows the frame is less than
+ * what was provided.
  *
  * This function can also be used with mapped_ring_buffer_create_source()
  * to automatically drain the ring buffer as part of the main loop progress.
  *
  * Returns: %TRUE to coninue draining, otherwise %FALSE and draining stops
  */
-typedef gboolean (*MappedRingBufferCallback) (gconstpointer data,
-                                              gsize         length,
-                                              gpointer      user_data);
+typedef gboolean (*MappedRingBufferCallback) (gconstpointer  data,
+                                              gsize         *length,
+                                              gpointer       user_data);
 
 G_GNUC_INTERNAL
 MappedRingBuffer *mapped_ring_buffer_new_reader    (gsize                     buffer_size);
@@ -70,9 +74,14 @@ gboolean          mapped_ring_buffer_drain         (MappedRingBuffer         *se
                                                     MappedRingBufferCallback  callback,
                                                     gpointer                  user_data);
 G_GNUC_INTERNAL
-guint             mapped_ring_buffer_create_source (MappedRingBuffer         *self,
-                                                    MappedRingBufferCallback  callback,
-                                                    gpointer                  user_data);
+guint             mapped_ring_buffer_create_source      (MappedRingBuffer         *self,
+                                                         MappedRingBufferCallback  callback,
+                                                         gpointer                  user_data);
+G_GNUC_INTERNAL
+guint             mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
+                                                         MappedRingBufferCallback  callback,
+                                                         gpointer                  user_data,
+                                                         GDestroyNotify            destroy);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (MappedRingBuffer, mapped_ring_buffer_unref)
 

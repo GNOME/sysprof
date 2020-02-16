@@ -41,18 +41,6 @@ enum {
 };
 
 /*
- * MappedRingFrame is the header on each buffer entry so that
- * we can stay 8-byte aligned.
- */
-typedef struct _MappedRingFrame
-{
-  guint64 len : 32;
-  guint64 padding : 32;
-} MappedRingFrame;
-
-G_STATIC_ASSERT (sizeof (MappedRingFrame) == 8);
-
-/*
  * MappedRingHeader is the header of the first page of the
  * buffer. We use the whole buffer so that we can double map
  * the body of the buffer.
@@ -90,7 +78,7 @@ static inline gpointer
 get_body_at_pos (MappedRingBuffer *self,
                  gsize             pos)
 {
-  g_assert (pos < (self->body_size + self->body_size - sizeof (MappedRingFrame)));
+  g_assert (pos < (self->body_size + self->body_size));
 
   return (guint8 *)self->map + self->page_size + pos;
 }
@@ -380,8 +368,6 @@ mapped_ring_buffer_allocate (MappedRingBuffer *self,
   g_return_val_if_fail (length < self->body_size, NULL);
   g_return_val_if_fail ((length & 0x7) == 0, NULL);
 
-  length += sizeof (MappedRingFrame);
-
   header = get_header (self);
   headpos = g_atomic_int_get (&header->head);
   tailpos = g_atomic_int_get (&header->tail);
@@ -396,13 +382,13 @@ mapped_ring_buffer_allocate (MappedRingBuffer *self,
    */
 
   if (tailpos == headpos)
-    return get_body_at_pos (self, tailpos + sizeof (MappedRingFrame));
+    return get_body_at_pos (self, tailpos);
 
   if (headpos < tailpos)
     headpos += self->body_size;
 
   if (tailpos + length < headpos)
-    return get_body_at_pos (self, tailpos + sizeof (MappedRingFrame));
+    return get_body_at_pos (self, tailpos);
 
   return NULL;
 }
@@ -430,7 +416,6 @@ mapped_ring_buffer_advance (MappedRingBuffer *self,
                             gsize             length)
 {
   MappedRingHeader *header;
-  MappedRingFrame *fr;
   guint32 tail;
 
   g_return_if_fail (self != NULL);
@@ -442,13 +427,8 @@ mapped_ring_buffer_advance (MappedRingBuffer *self,
   header = get_header (self);
   tail = header->tail;
 
-  /* First write the frame header with the data length */
-  fr = get_body_at_pos (self, tail);
-  fr->len = length;
-  fr->padding = 0;
-
-  /* Now calculate the new tail position */
-  tail = tail + sizeof *fr + length;
+  /* Calculate the new tail position */
+  tail = tail + length;
   if (tail >= self->body_size)
     tail -= self->body_size;
 
@@ -508,13 +488,16 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
 
   while (headpos < tailpos)
     {
-      const MappedRingFrame *fr = get_body_at_pos (self, headpos);
-      gconstpointer data = (guint8 *)fr + sizeof *fr;
+      gconstpointer data = get_body_at_pos (self, headpos);
+      gsize len = tailpos - headpos;
 
-      headpos = headpos + sizeof *fr + fr->len;
-
-      if (!callback (data, fr->len, user_data))
+      if (!callback (data, &len, user_data))
         goto short_circuit;
+
+      if (len > (tailpos - headpos))
+        goto short_circuit;
+
+      headpos += len;
     }
 
   ret = TRUE;
@@ -605,9 +588,10 @@ static GSourceFuncs mapped_ring_source_funcs = {
 };
 
 guint
-mapped_ring_buffer_create_source (MappedRingBuffer         *self,
-                                  MappedRingBufferCallback  source_func,
-                                  gpointer                  user_data)
+mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
+                                       MappedRingBufferCallback  source_func,
+                                       gpointer                  user_data,
+                                       GDestroyNotify            destroy)
 {
   MappedRingSource *source;
 
@@ -618,8 +602,16 @@ mapped_ring_buffer_create_source (MappedRingBuffer         *self,
 
   source = (MappedRingSource *)g_source_new (&mapped_ring_source_funcs, sizeof (MappedRingSource));
   source->self = mapped_ring_buffer_ref (self);
-  g_source_set_callback ((GSource *)source, (GSourceFunc)source_func, user_data, NULL);
+  g_source_set_callback ((GSource *)source, (GSourceFunc)source_func, user_data, destroy);
   g_source_set_name ((GSource *)source, "MappedRingSource");
 
   return g_source_attach ((GSource *)source, g_main_context_default ());
+}
+
+guint
+mapped_ring_buffer_create_source (MappedRingBuffer         *self,
+                                  MappedRingBufferCallback  source_func,
+                                  gpointer                  user_data)
+{
+  return mapped_ring_buffer_create_source_full (self, source_func, user_data, NULL);
 }

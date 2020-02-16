@@ -58,10 +58,23 @@ struct _SysprofControlSource
 
 };
 
+typedef struct
+{
+  SysprofControlSource *self;
+  guint id;
+} RingData;
+
 static void source_iface_init (SysprofSourceInterface *iface);
 
 G_DEFINE_TYPE_WITH_CODE (SysprofControlSource, sysprof_control_source, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (SYSPROF_TYPE_SOURCE, source_iface_init))
+
+static void
+ring_data_free (RingData *rd)
+{
+  g_clear_object (&rd->self);
+  g_slice_free (RingData, rd);
+}
 
 SysprofControlSource *
 sysprof_control_source_new (void)
@@ -110,54 +123,41 @@ sysprof_control_source_init (SysprofControlSource *self)
 }
 
 static gboolean
-event_frame_cb (gconstpointer data,
-                gsize         length,
-                gpointer      user_data)
+event_frame_cb (gconstpointer  data,
+                gsize         *length,
+                gpointer       user_data)
 {
-  SysprofControlSource *self = user_data;
   const SysprofCaptureFrame *fr = data;
+  RingData *rd = user_data;
 
-  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
+  g_assert (rd != NULL);
+  g_assert (SYSPROF_IS_CONTROL_SOURCE (rd->self));
+  g_assert (rd->id > 0);
 
-  if (self->writer != NULL)
-    _sysprof_capture_writer_add_raw (self->writer, fr);
+  if G_UNLIKELY (rd->self->writer == NULL ||
+                 *length < sizeof *fr ||
+                 *length < fr->len ||
+                 fr->type >= SYSPROF_CAPTURE_FRAME_LAST)
+    goto remove_source;
+
+  _sysprof_capture_writer_add_raw (rd->self->writer, fr);
 
   return G_SOURCE_CONTINUE;
+
+remove_source:
+  for (guint i = 0; i < rd->self->source_ids->len; i++)
+    {
+      guint id = g_array_index (rd->self->source_ids, guint, i);
+
+      if (id == rd->id)
+        {
+          g_array_remove_index (rd->self->source_ids, i);
+          break;
+        }
+    }
+
+  return G_SOURCE_REMOVE;
 }
-
-#if 0
-  g_autoptr(GUnixFDList) out_fd_list = NULL;
-  g_autoptr(GError) error = NULL;
-  MappedRingBuffer *reader = NULL;
-  guint id;
-  gint fd;
-  gint handle;
-
-  g_assert (IPC_IS_COLLECTOR (collector));
-  g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
-  g_assert (SYSPROF_IS_CONTROL_SOURCE (self));
-
-  if (self->stopped)
-    goto failure;
-
-  if (!(reader = mapped_ring_buffer_new_reader (0)))
-    goto failure;
-
-  fd = mapped_ring_buffer_get_fd (reader);
-  out_fd_list = g_unix_fd_list_new ();
-  handle = g_unix_fd_list_append (out_fd_list, fd, &error);
-  if (handle == -1)
-    goto failure;
-
-  id = mapped_ring_buffer_create_source (reader, event_frame_cb, self);
-  g_array_append_val (self->source_ids, id);
-  g_clear_pointer (&reader, mapped_ring_buffer_unref);
-
-  ipc_collector_complete_create_writer (collector,
-                                        g_steal_pointer (&invocation),
-                                        out_fd_list,
-                                        g_variant_new_handle (handle));
-#endif
 
 #ifdef G_OS_UNIX
 static void
@@ -184,9 +184,16 @@ sysprof_control_source_read_cb (GObject      *object,
           if ((buffer = mapped_ring_buffer_new_reader (0)))
             {
               int fd = mapped_ring_buffer_get_fd (buffer);
-              guint id = mapped_ring_buffer_create_source (buffer, event_frame_cb, self);
+              RingData *rd;
 
-              g_array_append_val (self->source_ids, id);
+              rd = g_slice_new0 (RingData);
+              rd->self = g_object_ref (self);
+              rd->id = mapped_ring_buffer_create_source_full (buffer,
+                                                              event_frame_cb,
+                                                              rd,
+                                                              (GDestroyNotify)ring_data_free);
+
+              g_array_append_val (self->source_ids, rd->id);
               g_unix_connection_send_fd (self->conn, fd, NULL, NULL);
             }
         }

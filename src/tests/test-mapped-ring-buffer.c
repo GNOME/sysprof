@@ -5,25 +5,27 @@
 static gsize real_count;
 
 static gboolean
-drain_nth_cb (gconstpointer data,
-              gsize         len,
-              gpointer      user_data)
+drain_nth_cb (gconstpointer  data,
+              gsize         *len,
+              gpointer       user_data)
 {
   const gint64 *v64 = data;
-  g_assert_cmpint (len, ==, 8);
+  g_assert_cmpint (*len, >=, 8);
   g_assert_cmpint (*v64, ==, GPOINTER_TO_SIZE (user_data));
+  *len = sizeof *v64;
   return G_SOURCE_CONTINUE;
 }
 
 static gboolean
-drain_count_cb (gconstpointer data,
-                gsize         len,
-                gpointer      user_data)
+drain_count_cb (gconstpointer  data,
+                gsize         *len,
+                gpointer       user_data)
 {
   const gint64 *v64 = data;
-  g_assert_cmpint (len, ==, 8);
+  g_assert_cmpint (*len, >=, 8);
   ++real_count;
   g_assert_cmpint (real_count, ==, *v64);
+  *len = sizeof *v64;
   return G_SOURCE_CONTINUE;
 }
 
@@ -91,13 +93,14 @@ typedef struct
 } ThreadedMessage;
 
 static gboolean
-handle_msg (gconstpointer data,
-            gsize         length,
-            gpointer      user_data)
+handle_msg (gconstpointer  data,
+            gsize         *length,
+            gpointer       user_data)
 {
   const ThreadedMessage *msg = data;
   gboolean *done = user_data;
   *done = msg->done;
+  *length = sizeof *msg;
   return G_SOURCE_CONTINUE;
 }
 

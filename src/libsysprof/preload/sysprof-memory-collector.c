@@ -7,6 +7,7 @@
 # include <execinfo.h>
 #endif
 #ifdef ENABLE_LIBUNWIND
+# define UNW_LOCAL_ONLY
 # include <libunwind.h>
 #endif
 #include <sched.h>

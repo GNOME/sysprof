@@ -1,8 +1,11 @@
 libsysprof_memory_preload_deps = [
   cc.find_library('dl', required: false),
   libsysprof_capture_dep,
-  libunwind_dep,
 ]
+
+if get_option('libunwind')
+  libsysprof_memory_preload_deps += [libunwind_dep]
+endif
 
 libsysprof_memory_preload_sources = [
   'sysprof-memory-collector.c',

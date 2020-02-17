@@ -89,9 +89,11 @@ if cc.has_header('execinfo.h')
   config_h.set10('HAVE_EXECINFO_H', true)
 endif
 
-libunwind_dep = dependency('libunwind-generic', required: false)
-if libunwind_dep.found()
-  config_h.set10('ENABLE_LIBUNWIND', libunwind_dep.found())
+if get_option('libunwind')
+  libunwind_dep = dependency('libunwind-generic', required: false)
+  if libunwind_dep.found()
+    config_h.set10('ENABLE_LIBUNWIND', libunwind_dep.found())
+  endif
 endif
 
 # Development build setup

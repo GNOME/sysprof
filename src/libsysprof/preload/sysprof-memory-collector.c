@@ -187,7 +187,7 @@ track_free (void *ptr)
   if G_LIKELY (ptr && collector_ready)
     sysprof_collector_allocate (GPOINTER_TO_SIZE (ptr),
                                 0,
-                                backtrace_func,
+                                NULL,
                                 NULL);
 }
 

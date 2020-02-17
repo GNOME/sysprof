@@ -78,7 +78,7 @@
 #define DEFAULT_BUFFER_SIZE (_sysprof_getpagesize() * 64L)
 #define INVALID_ADDRESS     (G_GUINT64_CONSTANT(0))
 #define MAX_COUNTERS        ((1 << 24) - 1)
-#define MAX_UNWIND_DEPTH    128
+#define MAX_UNWIND_DEPTH    64
 
 typedef struct
 {

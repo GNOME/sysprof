@@ -64,6 +64,7 @@ collector_init_ctor (void)
 {
 #if ENABLE_LIBUNWIND
   unw_set_caching_policy (unw_local_addr_space, UNW_CACHE_PER_THREAD);
+  unw_set_cache_size (unw_local_addr_space, 1024, 0);
 #endif
   sysprof_collector_init ();
   collector_ready = TRUE;

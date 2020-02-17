@@ -62,6 +62,9 @@ G_DEFINE_CONSTRUCTOR(collector_init_ctor)
 static void
 collector_init_ctor (void)
 {
+#if ENABLE_LIBUNWIND
+  unw_set_caching_policy (unw_local_addr_space, UNW_CACHE_PER_THREAD);
+#endif
   sysprof_collector_init ();
   collector_ready = TRUE;
 }

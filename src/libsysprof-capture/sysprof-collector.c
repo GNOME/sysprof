@@ -88,7 +88,7 @@ typedef struct
   int pid;
 } SysprofCollector;
 
-#define COLLECTOR_MAGIC_CREATING ((gpointer)&creating)
+#define COLLECTOR_INVALID ((gpointer)&invalid)
 
 static MappedRingBuffer       *request_writer         (void);
 static void                    sysprof_collector_free (gpointer data);
@@ -98,7 +98,7 @@ static G_LOCK_DEFINE (control_fd);
 static GPrivate collector_key = G_PRIVATE_INIT (sysprof_collector_free);
 static GPrivate single_trace_key = G_PRIVATE_INIT (NULL);
 static SysprofCollector *shared_collector;
-static SysprofCollector creating;
+static SysprofCollector invalid;
 
 static inline gboolean
 use_single_trace (void)
@@ -201,12 +201,14 @@ sysprof_collector_free (gpointer data)
 {
   SysprofCollector *collector = data;
 
-  if (collector != NULL && collector != COLLECTOR_MAGIC_CREATING)
+  if (collector != NULL && collector != COLLECTOR_INVALID)
     {
-      if (collector->buffer != NULL)
+      MappedRingBuffer *buffer = g_steal_pointer (&collector->buffer);
+
+      if (buffer != NULL)
         {
-          write_final_frame (collector->buffer);
-          g_clear_pointer (&collector->buffer, mapped_ring_buffer_unref);
+          write_final_frame (buffer);
+          mapped_ring_buffer_unref (buffer);
         }
 
       g_free (collector);
@@ -219,19 +221,19 @@ sysprof_collector_get (void)
   const SysprofCollector *collector = g_private_get (&collector_key);
 
   /* We might have gotten here recursively */
-  if G_UNLIKELY (collector == COLLECTOR_MAGIC_CREATING)
-    return COLLECTOR_MAGIC_CREATING;
+  if G_UNLIKELY (collector == COLLECTOR_INVALID)
+    return COLLECTOR_INVALID;
 
   if G_LIKELY (collector != NULL)
     return collector;
 
-  if (use_single_trace () && shared_collector != COLLECTOR_MAGIC_CREATING)
+  if (use_single_trace () && shared_collector != COLLECTOR_INVALID)
     return shared_collector;
 
   {
     SysprofCollector *self;
 
-    g_private_replace (&collector_key, COLLECTOR_MAGIC_CREATING);
+    g_private_replace (&collector_key, COLLECTOR_INVALID);
 
     G_LOCK (control_fd);
 

@@ -88,12 +88,6 @@ typedef struct
   int pid;
 } SysprofCollector;
 
-#ifdef __linux__
-# define sysprof_current_cpu (sched_getcpu())
-#else
-# define sysprof_current_cpu (-1)
-#endif
-
 #define COLLECTOR_MAGIC_CREATING ((gpointer)&creating)
 
 static MappedRingBuffer       *request_writer         (void);

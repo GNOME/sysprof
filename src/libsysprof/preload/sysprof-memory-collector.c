@@ -76,29 +76,15 @@ backtrace_func (SysprofCaptureAddress *addrs,
                 gpointer               user_data)
 {
 #if defined(ENABLE_LIBUNWIND)
-  unw_context_t uc;
-  unw_cursor_t cursor;
-  unw_word_t ip;
-
-  unw_getcontext (&uc);
-  unw_init_local (&cursor, &uc);
-
-  /* Skip past caller frames */
-  if (unw_step (&cursor) > 0 && unw_step (&cursor) > 0)
-    {
-      guint n = 0;
-
-      /* Now walk the stack frames back */
-      while (n < n_addrs && unw_step (&cursor) > 0)
-        {
-          unw_get_reg (&cursor, UNW_REG_IP, &ip);
-          addrs[n++] = ip;
-        }
-
-      return n;
-    }
-
-  return 0;
+# if GLIB_SIZEOF_VOID_P == 8
+  return unw_backtrace ((void **)addrs, n_addrs);
+# else
+  void **stack = alloca (n_addrs * sizeof (gpointer));
+  guint n = unw_backtrace (stack, n_addrs);
+  for (guint i = 0; i < n; i++)
+    addrs[i] = GPOINTER_TO_SIZE (stack[i]);
+  return n;
+# endif
 #elif defined(HAVE_EXECINFO_H)
 # if GLIB_SIZEOF_VOID_P == 8
   return backtrace ((void **)addrs, n_addrs);

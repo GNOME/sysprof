@@ -275,7 +275,6 @@ sysprof_callgraph_profile_generate_worker (GTask        *task,
   while (sysprof_capture_reader_peek_type (reader, &type))
     {
       const SysprofCaptureProcess *pr;
-      const gchar *cmdline;
 
       if (type != SYSPROF_CAPTURE_FRAME_PROCESS)
         {
@@ -287,10 +286,13 @@ sysprof_callgraph_profile_generate_worker (GTask        *task,
       if (NULL == (pr = sysprof_capture_reader_read_process (reader)))
         goto failure;
 
-      cmdline = g_strdup_printf ("[%s]", pr->cmdline);
-      g_hash_table_insert (cmdlines,
-                           GINT_TO_POINTER (pr->frame.pid),
-                           (gchar *)sysprof_callgraph_profile_intern_string (self, cmdline));
+      if (!g_hash_table_contains (cmdlines, GINT_TO_POINTER (pr->frame.pid)))
+        {
+          g_autofree gchar *cmdline = g_strdup_printf ("[%s]", pr->cmdline);
+          g_hash_table_insert (cmdlines,
+                               GINT_TO_POINTER (pr->frame.pid),
+                               (gchar *)sysprof_callgraph_profile_intern_string (self, cmdline));
+        }
     }
 
   if (g_task_return_error_if_cancelled (task))

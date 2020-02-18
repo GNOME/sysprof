@@ -82,9 +82,9 @@ backtrace_func (SysprofCaptureAddress *addrs,
    * and subtract an offset from addrs to avoid having to
    * copy frame pointers around.
    */
-  return unw_backtrace ((void **)addrs - 1, n_addrs) - 1;
+  return unw_backtrace ((void **)addrs - 2, n_addrs) - 2;
 # else
-  static const gint skip = 1;
+  static const gint skip = 2;
   void **stack = alloca (n_addrs * sizeof (gpointer));
   gint n = unw_backtrace (stack, n_addrs);
   for (guint i = skip; i < n; i++)
@@ -94,9 +94,9 @@ backtrace_func (SysprofCaptureAddress *addrs,
 #elif defined(HAVE_EXECINFO_H)
 # if GLIB_SIZEOF_VOID_P == 8
   /* See note on unw_backtrace() */
-  return backtrace ((void **)addrs - 1, n_addrs) - 1;
+  return backtrace ((void **)addrs - 2, n_addrs) - 2;
 # else /* GLIB_SIZEOF_VOID_P != 8 */
-  static const gint skip = 1;
+  static const gint skip = 2;
   void **stack = alloca (n_addrs * sizeof (gpointer));
   gint n = backtrace (stack, n_addrs);
   for (guint i = skip; i < n; i++)

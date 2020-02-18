@@ -241,6 +241,8 @@ sysprof_collector_get (void)
     self->pid = getpid ();
 #ifdef __linux__
     self->tid = syscall (__NR_gettid, 0);
+#else
+    self->tid = self->pid;
 #endif
 
     if (g_getenv ("SYSPROF_CONTROL_FD") != NULL)

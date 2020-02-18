@@ -27,6 +27,11 @@ test_mapped_ring_buffer = executable('test-mapped-ring-buffer', 'test-mapped-rin
   dependencies: [libsysprof_capture_dep],
 )
 
+find_temp_allocs = executable('find-temp-allocs', 'find-temp-allocs.c',
+        c_args: test_cflags,
+  dependencies: [libsysprof_capture_dep],
+)
+
 test('test-capture', test_capture, env: test_env)
 test('test-capture-cursor', test_capture_cursor, env: test_env)
 test('test-mapped-ring-buffer', test_mapped_ring_buffer, env: test_env)

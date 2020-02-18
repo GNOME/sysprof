@@ -72,9 +72,9 @@ typedef struct _SysprofCaptureWriter SysprofCaptureWriter;
  *
  * Returns: the number of addresses filled in @addrs
  */
-typedef guint (*SysprofBacktraceFunc) (SysprofCaptureAddress *addrs,
-                                       guint                  n_addrs,
-                                       gpointer               user_data);
+typedef gint (*SysprofBacktraceFunc) (SysprofCaptureAddress *addrs,
+                                      guint                  n_addrs,
+                                      gpointer               user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureWriter *sysprof_capture_writer_new_from_env                    (gsize                              buffer_size);

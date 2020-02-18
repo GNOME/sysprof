@@ -70,7 +70,7 @@ collector_init_ctor (void)
   collector_ready = TRUE;
 }
 
-static guint
+static gint
 backtrace_func (SysprofCaptureAddress *addrs,
                 guint                  n_addrs,
                 gpointer               user_data)
@@ -82,7 +82,7 @@ backtrace_func (SysprofCaptureAddress *addrs,
    * and subtract an offset from addrs to avoid having to
    * copy frame pointers around.
    */
-  return unw_backtrace ((void **)addrs - 1, n_addrs);
+  return unw_backtrace ((void **)addrs - 1, n_addrs) - 1;
 # else
   static const gint skip = 1;
   void **stack = alloca (n_addrs * sizeof (gpointer));
@@ -94,13 +94,14 @@ backtrace_func (SysprofCaptureAddress *addrs,
 #elif defined(HAVE_EXECINFO_H)
 # if GLIB_SIZEOF_VOID_P == 8
   /* See note on unw_backtrace() */
-  return backtrace ((void **)addrs - 1, n_addrs);
+  return backtrace ((void **)addrs - 1, n_addrs) - 1;
 # else /* GLIB_SIZEOF_VOID_P != 8 */
+  static const gint skip = 1;
   void **stack = alloca (n_addrs * sizeof (gpointer));
-  guint n = backtrace (stack, n_addrs);
-  for (guint i = 0; i < n; i++)
-    addrs[i] = GPOINTER_TO_SIZE (stack[i]);
-  return n;
+  gint n = backtrace (stack, n_addrs);
+  for (guint i = skip; i < n; i++)
+    addrs[i-skip] = GPOINTER_TO_SIZE (stack[i]);
+  return MAX (0, n - skip);
 # endif /* GLIB_SIZEOF_VOID_P */
 #else
   return 0;

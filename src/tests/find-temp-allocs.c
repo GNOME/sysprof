@@ -32,6 +32,7 @@ typedef struct
 {
   gint                  pid;
   gint                  tid;
+  gint64                time;
   SysprofCaptureAddress addr;
   gint64                size;
 } Alloc;
@@ -51,6 +52,11 @@ compare_alloc (gconstpointer a,
   if (aptr->tid < bptr->tid)
     return -1;
   else if (aptr->tid > bptr->tid)
+    return 1;
+
+  if (aptr->time < bptr->time)
+    return -1;
+  else if (aptr->time > bptr->time)
     return 1;
 
   if (aptr->addr < bptr->addr)
@@ -84,6 +90,7 @@ find_temp_allocs (SysprofCaptureReader *reader)
 
           a.pid = ev->frame.pid;
           a.tid = ev->tid;
+          a.time = ev->frame.time;
           a.addr = ev->alloc_addr;
           a.size = ev->alloc_size;
 

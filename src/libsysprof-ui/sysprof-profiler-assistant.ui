@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="3.22"/>
-  <object class="SysprofCpuAid" id="cpu_aid"/>
-  <object class="SysprofMemoryAid" id="memory_aid"/>
-  <object class="SysprofMemprofAid" id="memprof_aid"/>
-  <object class="SysprofCallgraphAid" id="callgraph_aid"/>
-  <object class="SysprofNetdevAid" id="network_aid"/>
-  <object class="SysprofRaplAid" id="rapl_aid"/>
+  <object class="SysprofCpuAid" id="cpu_aid">
+    <property name="icon-name">sysprof-cpu</property>
+  </object>
+  <object class="SysprofMemoryAid" id="memory_aid">
+    <property name="icon-name">sysprof-memory</property>
+  </object>
+  <object class="SysprofMemprofAid" id="memprof_aid">
+    <property name="icon-name">sysprof-allocations</property>
+  </object>
+  <object class="SysprofCallgraphAid" id="callgraph_aid">
+    <property name="icon-name">sysprof-calgraph</property>
+  </object>
+  <object class="SysprofNetdevAid" id="network_aid">
+    <property name="icon-name">sysprof-networking</property>
+  </object>
+  <object class="SysprofRaplAid" id="rapl_aid">
+    <property name="icon-name">sysprof-rapl</property>
+  </object>
   <object class="SysprofProxyAid" id="mutter_aid">
     <property name="object-path">/org/gnome/Sysprof3/Profiler</property>
     <property name="bus-type">session</property>
     <property name="bus-name">org.gnome.Shell</property>
     <!-- translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular -->
     <property name="display-name" translatable="yes">GNOME Shell</property>
-    <property name="icon-name">org.gnome.Sysprof-symbolic</property>
+    <property name="icon-name">sysprof-library</property>
   </object>
   <object class="SysprofAid" id="gtk_aid">
     <property name="display-name">GTK</property>
-    <property name="icon-name">gtk3-demo-symbolic.symbolic</property>
+    <property name="icon-name">sysprof-gtk</property>
     <child>
       <object class="SysprofTracefdSource">
         <property name="envvar">GTK_TRACE_FD</property>
@@ -32,7 +44,7 @@
   </object>
   <object class="SysprofAid" id="gjs_aid">
     <property name="display-name">GJS</property>
-    <property name="icon-name">org.gnome.Sysprof-symbolic</property>
+    <property name="icon-name">sysprof-cli</property>
     <child>
       <object class="SysprofGjsSource"/>
     </child>
@@ -46,10 +58,12 @@
       </object>
     </child>
   </object>
-  <object class="SysprofBatteryAid" id="battery_aid"/>
+  <object class="SysprofBatteryAid" id="battery_aid">
+    <property name="icon-name">sysprof-battery</property>
+  </object>
   <object class="SysprofAid" id="diskstat_aid">
     <property name="display-name">Disk</property>
-    <property name="icon-name">drive-harddisk-system-symbolic</property>
+    <property name="icon-name">sysprof-disk</property>
     <child>
       <object class="SysprofDiskstatSource"/>
     </child>

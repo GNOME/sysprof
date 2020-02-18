@@ -384,6 +384,19 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
 
     if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
       {
+        /* First take a backtrace, so that backtrace_func() can overwrite
+         * a little bit of data *BEFORE* ev->addrs as stratch space. This
+         * is useful to allow using unw_backtrace() or backtrace() to skip
+         * a small number of frames.
+         *
+         * We fill in all the other data afterwards which overwrites that
+         * scratch space anyway.
+         */
+        if (backtrace_func)
+          ev->n_addrs = backtrace_func (ev->addrs, MAX_UNWIND_DEPTH, backtrace_data);
+        else
+          ev->n_addrs = 0;
+
         ev->frame.type = SYSPROF_CAPTURE_FRAME_ALLOCATION;
         ev->frame.len = len;
         ev->frame.cpu = _do_getcpu ();
@@ -392,10 +405,6 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
         ev->tid = collector->tid;
         ev->alloc_addr = alloc_addr;
         ev->alloc_size = alloc_size;
-        ev->n_addrs = 0;
-
-        if (backtrace_func)
-          ev->n_addrs = backtrace_func (ev->addrs, MAX_UNWIND_DEPTH, backtrace_data);
 
         len = sizeof *ev + sizeof (SysprofCaptureAddress) * ev->n_addrs;
         _realign (&len);

@@ -77,17 +77,24 @@ backtrace_func (SysprofCaptureAddress *addrs,
 {
 #if defined(ENABLE_LIBUNWIND)
 # if GLIB_SIZEOF_VOID_P == 8
-  return unw_backtrace ((void **)addrs, n_addrs);
+  /* We know that collector will overwrite fields *AFTER* it
+   * has called the backtrace function allowing us to cheat
+   * and subtract an offset from addrs to avoid having to
+   * copy frame pointers around.
+   */
+  return unw_backtrace ((void **)addrs - 1, n_addrs);
 # else
+  static const gint skip = 1;
   void **stack = alloca (n_addrs * sizeof (gpointer));
-  guint n = unw_backtrace (stack, n_addrs);
-  for (guint i = 0; i < n; i++)
-    addrs[i] = GPOINTER_TO_SIZE (stack[i]);
-  return n;
+  gint n = unw_backtrace (stack, n_addrs);
+  for (guint i = skip; i < n; i++)
+    addrs[i-skip] = GPOINTER_TO_SIZE (stack[i]);
+  return MAX (0, n - skip);
 # endif
 #elif defined(HAVE_EXECINFO_H)
 # if GLIB_SIZEOF_VOID_P == 8
-  return backtrace ((void **)addrs, n_addrs);
+  /* See note on unw_backtrace() */
+  return backtrace ((void **)addrs - 1, n_addrs);
 # else /* GLIB_SIZEOF_VOID_P != 8 */
   void **stack = alloca (n_addrs * sizeof (gpointer));
   guint n = backtrace (stack, n_addrs);

@@ -136,6 +136,8 @@ request_writer (void)
       if (fdstr != NULL)
         peer_fd = atoi (fdstr);
 
+      g_unsetenv ("SYSPROF_CONTROL_FD");
+
       if (peer_fd > 0)
         {
           g_autoptr(GSocket) sock = NULL;

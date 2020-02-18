@@ -218,11 +218,7 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
   g_assert (frame->type == SYSPROF_CAPTURE_FRAME_ALLOCATION ||
             frame->type == SYSPROF_CAPTURE_FRAME_PROCESS);
 
-  /* Short-circuit if we don't care about this frame */
-  if (!sysprof_selection_contains (g->selection, frame->time))
-    return TRUE;
-
-  if (frame->type == SYSPROF_CAPTURE_FRAME_PROCESS)
+  if G_UNLIKELY (frame->type == SYSPROF_CAPTURE_FRAME_PROCESS)
     {
       const SysprofCaptureProcess *pr = (const SysprofCaptureProcess *)frame;
       g_autofree gchar *cmdline = g_strdup_printf ("[%s]", pr->cmdline);
@@ -233,6 +229,10 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
 
       return TRUE;
     }
+
+  /* Short-circuit if we don't care about this frame */
+  if (!sysprof_selection_contains (g->selection, frame->time))
+    return TRUE;
 
   if (frame->type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
     {

@@ -116,7 +116,7 @@ _do_getcpu (void)
 #endif
 }
 
-static void
+static inline void
 _realign (gsize *pos)
 {
   *pos = (*pos + SYSPROF_CAPTURE_ALIGN - 1) & ~(SYSPROF_CAPTURE_ALIGN - 1);
@@ -380,7 +380,6 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
     gsize len;
 
     len = sizeof *ev + (sizeof (SysprofCaptureAllocation) * MAX_UNWIND_DEPTH);
-    _realign (&len);
 
     if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
       {
@@ -397,8 +396,8 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
         else
           ev->n_addrs = 0;
 
+        ev->frame.len = sizeof *ev + sizeof (SysprofCaptureAddress) * ev->n_addrs;
         ev->frame.type = SYSPROF_CAPTURE_FRAME_ALLOCATION;
-        ev->frame.len = len;
         ev->frame.cpu = _do_getcpu ();
         ev->frame.pid = collector->pid;
         ev->frame.time = SYSPROF_CAPTURE_CURRENT_TIME;
@@ -406,11 +405,7 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
         ev->alloc_addr = alloc_addr;
         ev->alloc_size = alloc_size;
 
-        len = sizeof *ev + sizeof (SysprofCaptureAddress) * ev->n_addrs;
-        _realign (&len);
-        ev->frame.len = len;
-
-        mapped_ring_buffer_advance (collector->buffer, len);
+        mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
       }
 
   } COLLECTOR_END;

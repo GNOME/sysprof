@@ -221,11 +221,14 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
   if G_UNLIKELY (frame->type == SYSPROF_CAPTURE_FRAME_PROCESS)
     {
       const SysprofCaptureProcess *pr = (const SysprofCaptureProcess *)frame;
-      g_autofree gchar *cmdline = g_strdup_printf ("[%s]", pr->cmdline);
 
-      g_hash_table_insert (g->cmdlines,
-                           GINT_TO_POINTER (frame->pid),
-                           (gchar *)g_string_chunk_insert_const (g->symbols, cmdline));
+      if (!g_hash_table_contains (g->cmdlines, GINT_TO_POINTER (frame->pid)))
+        {
+          g_autofree gchar *cmdline = g_strdup_printf ("[%s]", pr->cmdline);
+          g_hash_table_insert (g->cmdlines,
+                               GINT_TO_POINTER (frame->pid),
+                               (gchar *)g_string_chunk_insert_const (g->symbols, cmdline));
+        }
 
       return TRUE;
     }

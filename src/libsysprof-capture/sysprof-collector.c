@@ -398,6 +398,7 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
         else
           n_addrs = 0;
 
+        ev->n_addrs = CLAMP (n_addrs, 0, MAX_UNWIND_DEPTH);
         ev->frame.len = sizeof *ev + sizeof (SysprofCaptureAddress) * ev->n_addrs;
         ev->frame.type = SYSPROF_CAPTURE_FRAME_ALLOCATION;
         ev->frame.cpu = _do_getcpu ();
@@ -406,7 +407,6 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
         ev->tid = collector->tid;
         ev->alloc_addr = alloc_addr;
         ev->alloc_size = alloc_size;
-        ev->n_addrs = CLAMP (n_addrs, 0, MAX_UNWIND_DEPTH);
 
         mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
       }

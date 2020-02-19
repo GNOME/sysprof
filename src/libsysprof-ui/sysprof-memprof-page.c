@@ -155,7 +155,7 @@ build_functions_store (StackNode *node,
 
 static void
 sysprof_memprof_page_load (SysprofMemprofPage    *self,
-                          SysprofMemprofProfile *profile)
+                           SysprofMemprofProfile *profile)
 {
   SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
   GtkListStore *functions;

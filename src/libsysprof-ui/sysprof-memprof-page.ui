@@ -4,193 +4,253 @@
       <object class="GtkStack" id="stack">
         <property name="visible">true</property>
         <child>
-          <object class="GtkPaned">
-            <property name="orientation">horizontal</property>
-            <property name="position">450</property>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
             <property name="visible">true</property>
             <child>
-              <object class="GtkPaned">
-                <property name="orientation">vertical</property>
+              <object class="GtkBox">
+                <property name="orientation">horizontal</property>
                 <property name="visible">true</property>
-                <child>
-                  <object class="GtkScrolledWindow">
+                <child type="center">
+                  <object class="GtkBox">
+                    <property name="margin-top">6</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="orientation">horizontal</property>
+                    <property name="homogeneous">true</property>
                     <property name="visible">true</property>
+                    <style>
+                      <class name="linked"/>
+                    </style>
                     <child>
-                      <object class="GtkTreeView" id="functions_view">
-                        <property name="fixed-height-mode">true</property>
+                      <object class="GtkRadioButton" id="summary">
+                        <property name="label" translatable="yes">Summary</property>
+                        <property name="draw-indicator">false</property>
+                        <property name="visible">false</property>
+                        <property name="active">false</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkRadioButton" id="all_allocs">
+                        <property name="label" translatable="yes">All Allocations</property>
+                        <property name="draw-indicator">false</property>
                         <property name="visible">true</property>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="function_name_column">
-                            <property name="expand">true</property>
-                            <property name="sizing">fixed</property>
-                            <property name="sort-column-id">0</property>
-                            <property name="title" translatable="yes">Functions</property>
-                            <child>
-                              <object class="GtkCellRendererText">
-                                <property name="ellipsize">middle</property>
-                              </object>
-                              <attributes>
-                                <attribute name="text">0</attribute>
-                              </attributes>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="function_self_column">
-                            <property name="expand">false</property>
-                            <property name="sizing">fixed</property>
-                            <property name="sort-column-id">1</property>
-                            <property name="title" translatable="yes">Self</property>
-                            <child>
-                              <object class="SysprofCellRendererPercent">
-                                <property name="width">65</property>
-                              </object>
-                              <attributes>
-                                <attribute name="percent">1</attribute>
-                              </attributes>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="function_total_column">
-                            <property name="expand">false</property>
-                            <property name="sizing">fixed</property>
-                            <property name="sort-column-id">2</property>
-                            <property name="title" translatable="yes">Total</property>
-                            <child>
-                              <object class="SysprofCellRendererPercent">
-                                <property name="width">65</property>
-                              </object>
-                              <attributes>
-                                <attribute name="percent">2</attribute>
-                              </attributes>
-                            </child>
-                          </object>
-                        </child>
+                        <property name="group">summary</property>
+                        <property name="active">true</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkRadioButton" id="temp_allocs">
+                        <property name="label" translatable="yes">Temporary Allocations</property>
+                        <property name="draw-indicator">false</property>
+                        <property name="visible">true</property>
+                        <property name="active">false</property>
+                        <property name="group">summary</property>
                       </object>
                     </child>
                   </object>
-                  <packing>
-                    <property name="resize">true</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkScrolledWindow">
-                    <property name="visible">true</property>
-                    <child>
-                      <object class="GtkTreeView" id="callers_view">
-                        <property name="visible">true</property>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="callers_name_column">
-                            <property name="expand">true</property>
-                            <property name="sizing">fixed</property>
-                            <property name="sort-column-id">0</property>
-                            <property name="title" translatable="yes">Callers</property>
-                            <child>
-                              <object class="GtkCellRendererText">
-                                <property name="ellipsize">middle</property>
-                              </object>
-                              <attributes>
-                                <attribute name="text">0</attribute>
-                              </attributes>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="callers_self_column">
-                            <property name="expand">false</property>
-                            <property name="sizing">fixed</property>
-                            <property name="sort-column-id">1</property>
-                            <property name="title" translatable="yes">Self</property>
-                            <child>
-                              <object class="SysprofCellRendererPercent">
-                                <property name="width">65</property>
-                              </object>
-                              <attributes>
-                                <attribute name="percent">1</attribute>
-                              </attributes>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="callers_total_column">
-                            <property name="expand">false</property>
-                            <property name="sizing">fixed</property>
-                            <property name="sort-column-id">2</property>
-                            <property name="title" translatable="yes">Total</property>
-                            <child>
-                              <object class="SysprofCellRendererPercent">
-                                <property name="width">65</property>
-                              </object>
-                              <attributes>
-                                <attribute name="percent">2</attribute>
-                              </attributes>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="resize">true</property>
-                  </packing>
                 </child>
               </object>
             </child>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkSeparator">
+                <property name="orientation">horizontal</property>
+                <property name="visible">true</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkPaned">
+                <property name="orientation">horizontal</property>
+                <property name="position">450</property>
+                <property name="expand">true</property>
                 <property name="visible">true</property>
                 <child>
-                  <object class="GtkTreeView" id="descendants_view">
+                  <object class="GtkPaned">
+                    <property name="orientation">vertical</property>
                     <property name="visible">true</property>
                     <child>
-                      <object class="GtkTreeViewColumn" id="descendants_name_column">
-                        <property name="expand">true</property>
-                        <property name="sizing">autosize</property>
-                        <property name="sort-column-id">0</property>
-                        <property name="title" translatable="yes">Descendants</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="descendants_self_column">
-                        <property name="expand">false</property>
-                        <property name="sizing">fixed</property>
-                        <property name="sort-column-id">1</property>
-                        <property name="title" translatable="yes">Self</property>
+                      <object class="GtkScrolledWindow">
+                        <property name="visible">true</property>
                         <child>
-                          <object class="SysprofCellRendererPercent">
-                            <property name="width">65</property>
+                          <object class="GtkTreeView" id="functions_view">
+                            <property name="fixed-height-mode">true</property>
+                            <property name="visible">true</property>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="function_name_column">
+                                <property name="expand">true</property>
+                                <property name="sizing">fixed</property>
+                                <property name="sort-column-id">0</property>
+                                <property name="title" translatable="yes">Functions</property>
+                                <child>
+                                  <object class="GtkCellRendererText">
+                                    <property name="ellipsize">middle</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="function_self_column">
+                                <property name="visible">false</property>
+                                <property name="expand">false</property>
+                                <property name="sizing">fixed</property>
+                                <property name="sort-column-id">1</property>
+                                <property name="title" translatable="yes">Self</property>
+                                <child>
+                                  <object class="SysprofCellRendererPercent">
+                                    <property name="width">65</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="percent">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="function_total_column">
+                                <property name="expand">false</property>
+                                <property name="sizing">fixed</property>
+                                <property name="sort-column-id">2</property>
+                                <property name="title" translatable="yes">Total</property>
+                                <child>
+                                  <object class="SysprofCellRendererPercent">
+                                    <property name="width">65</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="percent">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
                           </object>
-                          <attributes>
-                            <attribute name="percent">1</attribute>
-                          </attributes>
                         </child>
                       </object>
+                      <packing>
+                        <property name="resize">true</property>
+                      </packing>
                     </child>
                     <child>
-                      <object class="GtkTreeViewColumn" id="descendants_total_column">
-                        <property name="expand">false</property>
-                        <property name="sizing">fixed</property>
-                        <property name="sort-column-id">2</property>
-                        <property name="title" translatable="yes">Total</property>
+                      <object class="GtkScrolledWindow">
+                        <property name="visible">true</property>
                         <child>
-                          <object class="SysprofCellRendererPercent">
-                            <property name="width">65</property>
+                          <object class="GtkTreeView" id="callers_view">
+                            <property name="visible">true</property>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="callers_name_column">
+                                <property name="expand">true</property>
+                                <property name="sizing">fixed</property>
+                                <property name="sort-column-id">0</property>
+                                <property name="title" translatable="yes">Callers</property>
+                                <child>
+                                  <object class="GtkCellRendererText">
+                                    <property name="ellipsize">middle</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="callers_self_column">
+                                <property name="visible">false</property>
+                                <property name="expand">false</property>
+                                <property name="sizing">fixed</property>
+                                <property name="sort-column-id">1</property>
+                                <property name="title" translatable="yes">Self</property>
+                                <child>
+                                  <object class="SysprofCellRendererPercent">
+                                    <property name="width">65</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="percent">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="callers_total_column">
+                                <property name="expand">false</property>
+                                <property name="sizing">fixed</property>
+                                <property name="sort-column-id">2</property>
+                                <property name="title" translatable="yes">Total</property>
+                                <child>
+                                  <object class="SysprofCellRendererPercent">
+                                    <property name="width">65</property>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="percent">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
                           </object>
-                          <attributes>
-                            <attribute name="percent">2</attribute>
-                          </attributes>
                         </child>
                       </object>
+                      <packing>
+                        <property name="resize">true</property>
+                      </packing>
                     </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="visible">true</property>
                     <child>
-                      <object class="GtkTreeViewColumn" id="function_size_column">
-                        <property name="expand">false</property>
-                        <property name="sizing">fixed</property>
-                        <property name="title" translatable="yes">Size</property>
+                      <object class="GtkTreeView" id="descendants_view">
+                        <property name="visible">true</property>
                         <child>
-                          <object class="GtkCellRendererText" id="function_size_cell">
-                            <property name="xalign">1.0</property>
+                          <object class="GtkTreeViewColumn" id="descendants_name_column">
+                            <property name="expand">true</property>
+                            <property name="sizing">autosize</property>
+                            <property name="sort-column-id">0</property>
+                            <property name="title" translatable="yes">Descendants</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="descendants_self_column">
+                            <property name="visible">false</property>
+                            <property name="expand">false</property>
+                            <property name="sizing">fixed</property>
+                            <property name="sort-column-id">1</property>
+                            <property name="title" translatable="yes">Self</property>
+                            <child>
+                              <object class="SysprofCellRendererPercent">
+                                <property name="width">65</property>
+                              </object>
+                              <attributes>
+                                <attribute name="percent">1</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="descendants_total_column">
+                            <property name="expand">false</property>
+                            <property name="sizing">fixed</property>
+                            <property name="sort-column-id">2</property>
+                            <property name="title" translatable="yes">Total</property>
+                            <child>
+                              <object class="SysprofCellRendererPercent">
+                                <property name="width">65</property>
+                              </object>
+                              <attributes>
+                                <attribute name="percent">2</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkTreeViewColumn" id="function_size_column">
+                            <property name="expand">false</property>
+                            <property name="sizing">fixed</property>
+                            <property name="title" translatable="yes">Size</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="function_size_cell">
+                                <property name="xalign">1.0</property>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>

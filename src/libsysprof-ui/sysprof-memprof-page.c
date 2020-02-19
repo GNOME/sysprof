@@ -59,8 +59,13 @@ typedef struct
   GtkTreeViewColumn        *function_size_column;
   GtkCellRendererText      *function_size_cell;
   GtkStack                 *stack;
+  GtkRadioButton           *summary;
+  GtkRadioButton           *all_allocs;
+  GtkRadioButton           *temp_allocs;
 
   GQueue                   *history;
+
+  SysprofMemprofMode        mode;
 
   guint                     profile_size;
   guint                     loading;
@@ -795,6 +800,7 @@ sysprof_memprof_page_generate_cb (GObject      *object,
 {
   SysprofProfile *profile = (SysprofProfile *)object;
   SysprofMemprofPage *self;
+  SysprofMemprofPagePrivate *priv;
   g_autoptr(GTask) task = user_data;
   g_autoptr(GError) error = NULL;
 
@@ -803,11 +809,14 @@ sysprof_memprof_page_generate_cb (GObject      *object,
   g_assert (G_IS_TASK (task));
 
   self = g_task_get_source_object (task);
+  priv = sysprof_memprof_page_get_instance_private (self);
 
   if (!sysprof_profile_generate_finish (profile, result, &error))
     g_task_return_error (task, g_steal_pointer (&error));
   else
     sysprof_memprof_page_set_profile (self, SYSPROF_MEMPROF_PROFILE (profile));
+
+  gtk_stack_set_visible_child_name (priv->stack, "callgraph");
 }
 
 static void
@@ -820,6 +829,7 @@ sysprof_memprof_page_load_async (SysprofPage             *page,
                                 gpointer                 user_data)
 {
   SysprofMemprofPage *self = (SysprofMemprofPage *)page;
+  SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
   g_autoptr(SysprofCaptureReader) copy = NULL;
   g_autoptr(SysprofProfile) profile = NULL;
   g_autoptr(GTask) task = NULL;
@@ -829,12 +839,15 @@ sysprof_memprof_page_load_async (SysprofPage             *page,
   g_assert (SYSPROF_IS_SELECTION (selection));
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
+  gtk_stack_set_visible_child_name (priv->stack, "loading");
+
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_memprof_page_load_async);
 
   copy = sysprof_capture_reader_copy (reader);
 
   profile = sysprof_memprof_profile_new_with_selection (selection);
+  sysprof_memprof_profile_set_mode (SYSPROF_MEMPROF_PROFILE (profile), priv->mode);
   sysprof_profile_set_reader (profile, reader);
   sysprof_profile_generate (profile,
                             cancellable,
@@ -851,6 +864,51 @@ sysprof_memprof_page_load_finish (SysprofPage   *page,
   g_return_val_if_fail (G_IS_TASK (result), FALSE);
 
   return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
+do_summary (SysprofMemprofPage *self)
+{
+#if 0
+  SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
+
+  gtk_stack_set_visible_child_name (priv->stack, "summary");
+#endif
+}
+
+static void
+do_allocs (SysprofMemprofPage *self,
+           SysprofMemprofMode  mode)
+{
+  SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
+
+  priv->mode = mode;
+  sysprof_page_reload (SYSPROF_PAGE (self));
+}
+
+static void
+mode_notify_active (SysprofMemprofPage *self,
+                    GParamSpec         *pspec,
+                    GtkRadioButton     *button)
+{
+  SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
+  g_assert (GTK_IS_RADIO_BUTTON (button));
+
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
+    {
+      if (button == priv->summary)
+        do_summary (self);
+      else if (button == priv->all_allocs)
+        do_allocs (self, SYSPROF_MEMPROF_MODE_ALL_ALLOCS);
+      else if (button == priv->temp_allocs)
+        do_allocs (self, SYSPROF_MEMPROF_MODE_TEMP_ALLOCS);
+    }
 }
 
 static void
@@ -947,6 +1005,9 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, descendants_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, descendants_name_column);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, stack);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, all_allocs);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, temp_allocs);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, summary);
 
   bindings = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
@@ -963,10 +1024,27 @@ sysprof_memprof_page_init (SysprofMemprofPage *self)
   GtkCellRenderer *cell;
 
   priv->history = g_queue_new ();
+  priv->mode = SYSPROF_MEMPROF_MODE_ALL_ALLOCS;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
   gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+
+  g_signal_connect_object (priv->all_allocs,
+                           "notify::active",
+                           G_CALLBACK (mode_notify_active),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (priv->temp_allocs,
+                           "notify::active",
+                           G_CALLBACK (mode_notify_active),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (priv->summary,
+                           "notify::active",
+                           G_CALLBACK (mode_notify_active),
+                           self,
+                           G_CONNECT_SWAPPED);
 
   selection = gtk_tree_view_get_selection (priv->functions_view);
 

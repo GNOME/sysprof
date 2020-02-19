@@ -71,6 +71,8 @@ SYSPROF_AVAILABLE_IN_ALL
 gboolean     sysprof_page_load_finish     (SysprofPage              *self,
                                            GAsyncResult             *result,
                                            GError                  **error);
+SYSPROF_AVAILABLE_IN_3_36
+void         sysprof_page_reload          (SysprofPage              *self);
 SYSPROF_AVAILABLE_IN_ALL
 const gchar *sysprof_page_get_title       (SysprofPage              *self);
 SYSPROF_AVAILABLE_IN_ALL

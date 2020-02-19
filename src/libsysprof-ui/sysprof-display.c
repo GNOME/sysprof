@@ -1225,3 +1225,23 @@ sysprof_display_save (SysprofDisplay *self)
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
   gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (native));
 }
+
+void
+_sysprof_display_reload_page (SysprofDisplay *self,
+                              SysprofPage    *page)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+  SysprofSelection *selection;
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
+  g_return_if_fail (SYSPROF_IS_PAGE (page));
+  g_return_if_fail (priv->reader != NULL);
+
+  selection = sysprof_visualizers_frame_get_selection (priv->visualizers);
+
+  sysprof_page_load_async (page,
+                           priv->reader,
+                           selection,
+                           priv->filter,
+                           NULL, NULL, NULL);
+}

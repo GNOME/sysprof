@@ -22,7 +22,9 @@
 
 #include "config.h"
 
+#include "sysprof-display.h"
 #include "sysprof-page.h"
+#include "sysprof-ui-private.h"
 
 typedef struct
 {
@@ -232,4 +234,15 @@ sysprof_page_set_hadjustment (SysprofPage   *self,
 
   if (SYSPROF_PAGE_GET_CLASS (self)->set_hadjustment)
     SYSPROF_PAGE_GET_CLASS (self)->set_hadjustment (self, hadjustment);
+}
+
+void
+sysprof_page_reload (SysprofPage *self)
+{
+  GtkWidget *display;
+
+  g_return_if_fail (SYSPROF_IS_PAGE (self));
+
+  if ((display = gtk_widget_get_ancestor (GTK_WIDGET (self), SYSPROF_TYPE_DISPLAY)))
+    _sysprof_display_reload_page (SYSPROF_DISPLAY (display), self);
 }

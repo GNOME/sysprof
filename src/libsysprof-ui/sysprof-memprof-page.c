@@ -63,6 +63,8 @@ typedef struct
   GtkRadioButton           *all_allocs;
   GtkRadioButton           *temp_allocs;
 
+  GCancellable             *cancellable;
+
   GQueue                   *history;
 
   SysprofMemprofMode        mode;
@@ -812,11 +814,12 @@ sysprof_memprof_page_generate_cb (GObject      *object,
   priv = sysprof_memprof_page_get_instance_private (self);
 
   if (!sysprof_profile_generate_finish (profile, result, &error))
-    g_task_return_error (task, g_steal_pointer (&error));
+    g_task_return_error (task, g_error_copy (error));
   else
     sysprof_memprof_page_set_profile (self, SYSPROF_MEMPROF_PROFILE (profile));
 
-  gtk_stack_set_visible_child_name (priv->stack, "callgraph");
+  if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+    gtk_stack_set_visible_child_name (priv->stack, "callgraph");
 }
 
 static void
@@ -838,6 +841,13 @@ sysprof_memprof_page_load_async (SysprofPage             *page,
   g_assert (reader != NULL);
   g_assert (SYSPROF_IS_SELECTION (selection));
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  g_cancellable_cancel (priv->cancellable);
+
+  if (cancellable == NULL)
+    cancellable = priv->cancellable = g_cancellable_new ();
+  else
+    g_set_object (&priv->cancellable, cancellable);
 
   gtk_stack_set_visible_child_name (priv->stack, "loading");
 
@@ -874,6 +884,7 @@ do_summary (SysprofMemprofPage *self)
 
   g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
 
+  g_cancellable_cancel (priv->cancellable);
   gtk_stack_set_visible_child_name (priv->stack, "summary");
 #endif
 }
@@ -919,6 +930,7 @@ sysprof_memprof_page_finalize (GObject *object)
 
   g_clear_pointer (&priv->history, g_queue_free);
   g_clear_object (&priv->profile);
+  g_clear_object (&priv->cancellable);
 
   G_OBJECT_CLASS (sysprof_memprof_page_parent_class)->finalize (object);
 }

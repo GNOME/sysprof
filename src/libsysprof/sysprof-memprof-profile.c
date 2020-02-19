@@ -442,6 +442,10 @@ temp_allocs_worker (Generate *g)
 
           frame_num++;
 
+          /* Short-circuit if we don't care about this frame */
+          if (!sysprof_selection_contains (g->selection, ev->frame.time))
+            continue;
+
           a.pid = ev->frame.pid;
           a.tid = ev->tid;
           a.time = ev->frame.time;

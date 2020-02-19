@@ -33,21 +33,32 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_MEMPROF_PROFILE (sysprof_memprof_profile_get_type())
 
+typedef enum
+{
+  SYSPROF_MEMPROF_MODE_ALL_ALLOCS = 1,
+  SYSPROF_MEMPROF_MODE_TEMP_ALLOCS = 2,
+} SysprofMemprofMode;
+
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofMemprofProfile, sysprof_memprof_profile, SYSPROF, MEMPROF_PROFILE, GObject)
 
 SYSPROF_AVAILABLE_IN_3_36
-SysprofProfile *sysprof_memprof_profile_new                (void);
+SysprofProfile     *sysprof_memprof_profile_new                (void);
 SYSPROF_AVAILABLE_IN_3_36
-SysprofProfile *sysprof_memprof_profile_new_with_selection (SysprofSelection *selection);
+SysprofProfile     *sysprof_memprof_profile_new_with_selection (SysprofSelection      *selection);
 SYSPROF_AVAILABLE_IN_3_36
-gpointer        sysprof_memprof_profile_get_native         (SysprofMemprofProfile *self);
+SysprofMemprofMode  sysprof_memprof_profile_get_mode           (SysprofMemprofProfile *self);
 SYSPROF_AVAILABLE_IN_3_36
-gpointer        sysprof_memprof_profile_get_stash          (SysprofMemprofProfile *self);
+void                sysprof_memprof_profile_set_mode           (SysprofMemprofProfile *self,
+                                                                SysprofMemprofMode     mode);
 SYSPROF_AVAILABLE_IN_3_36
-gboolean        sysprof_memprof_profile_is_empty           (SysprofMemprofProfile *self);
+gpointer            sysprof_memprof_profile_get_native         (SysprofMemprofProfile *self);
 SYSPROF_AVAILABLE_IN_3_36
-GQuark          sysprof_memprof_profile_get_tag            (SysprofMemprofProfile *self,
-                                                            const gchar          *symbol);
+gpointer            sysprof_memprof_profile_get_stash          (SysprofMemprofProfile *self);
+SYSPROF_AVAILABLE_IN_3_36
+gboolean            sysprof_memprof_profile_is_empty           (SysprofMemprofProfile *self);
+SYSPROF_AVAILABLE_IN_3_36
+GQuark              sysprof_memprof_profile_get_tag            (SysprofMemprofProfile *self,
+                                                                const gchar           *symbol);
 
 G_END_DECLS

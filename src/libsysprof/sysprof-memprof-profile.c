@@ -35,6 +35,16 @@
 
 typedef struct
 {
+  gint                  pid;
+  gint                  tid;
+  gint64                time;
+  SysprofCaptureAddress addr;
+  gint64                size;
+  guint64               frame_num;
+} Alloc;
+
+typedef struct
+{
   SysprofSelection     *selection;
   SysprofCaptureReader *reader;
   GPtrArray            *resolvers;
@@ -45,6 +55,7 @@ typedef struct
   StackStash           *building;
   rax                  *rax;
   GArray               *resolved;
+  SysprofMemprofMode    mode;
 } Generate;
 
 struct _SysprofMemprofProfile
@@ -53,6 +64,7 @@ struct _SysprofMemprofProfile
   SysprofSelection     *selection;
   SysprofCaptureReader *reader;
   Generate             *g;
+  SysprofMemprofMode    mode;
 };
 
 static void profile_iface_init (SysprofProfileInterface *iface);
@@ -167,6 +179,24 @@ sysprof_memprof_profile_class_init (SysprofMemprofProfileClass *klass)
 static void
 sysprof_memprof_profile_init (SysprofMemprofProfile *self)
 {
+  self->mode = SYSPROF_MEMPROF_MODE_ALL_ALLOCS;
+}
+
+SysprofMemprofMode
+sysprof_memprof_profile_get_mode (SysprofMemprofProfile *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_MEMPROF_PROFILE (self), 0);
+
+  return self->mode;
+}
+
+void
+sysprof_memprof_profile_set_mode (SysprofMemprofProfile *self,
+                                  SysprofMemprofMode     mode)
+{
+  g_return_if_fail (SYSPROF_IS_MEMPROF_PROFILE (self));
+
+  self->mode = mode;
 }
 
 SysprofProfile *
@@ -209,8 +239,8 @@ create_cursor (SysprofCaptureReader *reader)
 }
 
 static gboolean
-cursor_foreach_cb (const SysprofCaptureFrame *frame,
-                   gpointer                   user_data)
+all_allocs_foreach_cb (const SysprofCaptureFrame *frame,
+                       gpointer                   user_data)
 {
   Generate *g = user_data;
 
@@ -321,13 +351,260 @@ cursor_foreach_cb (const SysprofCaptureFrame *frame,
   return TRUE;
 }
 
+static gint
+compare_frame_num_reverse (gconstpointer a,
+                           gconstpointer b)
+{
+  const Alloc *aptr = a;
+  const Alloc *bptr = b;
+
+  if (aptr->frame_num < bptr->frame_num)
+    return 1;
+  else if (aptr->frame_num > bptr->frame_num)
+    return -1;
+  else
+    return 0;
+}
+
+
+static gint
+compare_alloc (gconstpointer a,
+               gconstpointer b)
+{
+  const Alloc *aptr = a;
+  const Alloc *bptr = b;
+
+  if (aptr->pid < bptr->pid)
+    return -1;
+  else if (aptr->pid > bptr->pid)
+    return 1;
+
+  if (aptr->tid < bptr->tid)
+    return -1;
+  else if (aptr->tid > bptr->tid)
+    return 1;
+
+  if (aptr->time < bptr->time)
+    return -1;
+  else if (aptr->time > bptr->time)
+    return 1;
+
+  if (aptr->addr < bptr->addr)
+    return -1;
+  else if (aptr->addr > bptr->addr)
+    return 1;
+  else
+    return 0;
+}
+
+static void
+temp_allocs_worker (Generate *g)
+{
+  g_autoptr(GArray) temp_allocs = NULL;
+  g_autoptr(GArray) all_allocs = NULL;
+  StackNode *node;
+  SysprofCaptureFrameType type;
+  SysprofCaptureAddress last_addr = 0;
+  guint64 frame_num = 0;
+
+  g_assert (g != NULL);
+  g_assert (g->reader != NULL);
+
+  temp_allocs = g_array_new (FALSE, FALSE, sizeof (Alloc));
+  all_allocs = g_array_new (FALSE, FALSE, sizeof (Alloc));
+
+  sysprof_capture_reader_reset (g->reader);
+
+  while (sysprof_capture_reader_peek_type (g->reader, &type))
+    {
+      if G_UNLIKELY (type == SYSPROF_CAPTURE_FRAME_PROCESS)
+        {
+          const SysprofCaptureProcess *pr;
+
+          if (!(pr = sysprof_capture_reader_read_process (g->reader)))
+            break;
+
+          if (!g_hash_table_contains (g->cmdlines, GINT_TO_POINTER (pr->frame.pid)))
+            {
+              g_autofree gchar *cmdline = g_strdup_printf ("[%s]", pr->cmdline);
+              g_hash_table_insert (g->cmdlines,
+                                   GINT_TO_POINTER (pr->frame.pid),
+                                   (gchar *)g_string_chunk_insert_const (g->symbols, cmdline));
+            }
+        }
+      else if (type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
+        {
+          const SysprofCaptureAllocation *ev;
+          Alloc a;
+
+          if (!(ev = sysprof_capture_reader_read_allocation (g->reader)))
+            break;
+
+          frame_num++;
+
+          a.pid = ev->frame.pid;
+          a.tid = ev->tid;
+          a.time = ev->frame.time;
+          a.addr = ev->alloc_addr;
+          a.size = ev->alloc_size;
+          a.frame_num = frame_num;
+
+          g_array_append_val (all_allocs, a);
+        }
+      else
+        {
+          if (!sysprof_capture_reader_skip (g->reader))
+            break;
+        }
+    }
+
+  /* Ensure items are in order because threads may be writing
+   * data into larger buffers, which are flushed in whole by
+   * the event marshalling from control fds.
+   */
+  g_array_sort (all_allocs, compare_alloc);
+
+  for (guint i = 0; i < all_allocs->len; i++)
+    {
+      const Alloc *a = &g_array_index (all_allocs, Alloc, i);
+
+      if (a->size <= 0)
+        {
+          if (a->addr == last_addr && last_addr)
+            {
+              const Alloc *prev = a - 1;
+              g_array_append_vals (temp_allocs, prev, 1);
+            }
+
+          last_addr = 0;
+        }
+      else
+        {
+          last_addr = a->addr;
+        }
+    }
+
+  if (temp_allocs->len == 0)
+    return;
+
+  /* Now sort by frame number so we can walk the reader and get the stack
+   * for each allocation as we count frames.  We can skip frames until we
+   * get to the matching frame_num for the next alloc.
+   *
+   * We sort in reverse so that we can just keep shortening the array as
+   * we match each frame to save having to keep a secondary position
+   * variable.
+   */
+  g_array_sort (temp_allocs, compare_frame_num_reverse);
+  sysprof_capture_reader_reset (g->reader);
+  frame_num = 0;
+  while (sysprof_capture_reader_peek_type (g->reader, &type))
+    {
+      if (type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
+        {
+          const SysprofCaptureAllocation *ev;
+          const Alloc *tail;
+
+          if (!(ev = sysprof_capture_reader_read_allocation (g->reader)))
+            break;
+
+          frame_num++;
+
+          tail = &g_array_index (temp_allocs, Alloc, temp_allocs->len - 1);
+
+          if G_UNLIKELY (tail->frame_num == frame_num)
+            {
+              SysprofAddressContext last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
+              const gchar *cmdline;
+              guint len = 5;
+
+              node = stack_stash_add_trace (g->building, ev->addrs, ev->n_addrs, ev->alloc_size);
+
+              for (const StackNode *iter = node; iter != NULL; iter = iter->parent)
+                len++;
+
+              if (G_UNLIKELY (g->resolved->len < len))
+                g_array_set_size (g->resolved, len);
+
+              len = 0;
+
+              for (const StackNode *iter = node; iter != NULL; iter = iter->parent)
+                {
+                  SysprofAddressContext context = SYSPROF_ADDRESS_CONTEXT_NONE;
+                  SysprofAddress address = iter->data;
+                  const gchar *symbol = NULL;
+
+                  if (sysprof_address_is_context_switch (address, &context))
+                    {
+                      if (last_context)
+                        symbol = sysprof_address_context_to_string (last_context);
+                      else
+                        symbol = NULL;
+
+                      last_context = context;
+                    }
+                  else
+                    {
+                      for (guint i = 0; i < g->resolvers->len; i++)
+                        {
+                          SysprofSymbolResolver *resolver = g_ptr_array_index (g->resolvers, i);
+                          GQuark tag = 0;
+                          gchar *str;
+
+                          str = sysprof_symbol_resolver_resolve_with_context (resolver,
+                                                                              ev->frame.time,
+                                                                              ev->frame.pid,
+                                                                              last_context,
+                                                                              address,
+                                                                              &tag);
+
+                          if (str != NULL)
+                            {
+                              symbol = g_string_chunk_insert_const (g->symbols, str);
+                              g_free (str);
+
+                              if (tag != 0 && !g_hash_table_contains (g->tags, symbol))
+                                g_hash_table_insert (g->tags, (gchar *)symbol, GSIZE_TO_POINTER (tag));
+
+                              break;
+                            }
+                        }
+                    }
+
+                  if (symbol != NULL)
+                    g_array_index (g->resolved, SysprofAddress, len++) = POINTER_TO_U64 (symbol);
+                }
+
+              if ((cmdline = g_hash_table_lookup (g->cmdlines, GINT_TO_POINTER (ev->frame.pid))))
+                g_array_index (g->resolved, guint64, len++) = POINTER_TO_U64 (cmdline);
+
+              g_array_index (g->resolved, guint64, len++) = POINTER_TO_U64 ("[Everything]");
+
+              stack_stash_add_trace (g->stash,
+                                     (gpointer)g->resolved->data,
+                                     len,
+                                     ev->alloc_size);
+
+              g_array_set_size (temp_allocs, temp_allocs->len - 1);
+
+              if (temp_allocs->len == 0)
+                break;
+            }
+        }
+      else
+        {
+          if (!sysprof_capture_reader_skip (g->reader))
+            break;
+        }
+    }
+}
+
 static void
 sysprof_memprof_profile_generate_worker (GTask        *task,
                                          gpointer      source_object,
                                          gpointer      task_data,
                                          GCancellable *cancellable)
 {
-  SysprofCaptureCursor *cursor;
   Generate *g = task_data;
 
   g_assert (G_IS_TASK (task));
@@ -347,8 +624,17 @@ sysprof_memprof_profile_generate_worker (GTask        *task,
       sysprof_capture_reader_reset (g->reader);
     }
 
-  cursor = create_cursor (g->reader);
-  sysprof_capture_cursor_foreach (cursor, cursor_foreach_cb, g);
+  if (g->mode == SYSPROF_MEMPROF_MODE_ALL_ALLOCS)
+    {
+      g_autoptr(SysprofCaptureCursor) cursor = NULL;
+
+      cursor = create_cursor (g->reader);
+      sysprof_capture_cursor_foreach (cursor, all_allocs_foreach_cb, g);
+    }
+  else if (g->mode == SYSPROF_MEMPROF_MODE_TEMP_ALLOCS)
+    {
+      temp_allocs_worker (g);
+    }
 
   /* Release some data we don't need anymore */
   g_clear_pointer (&g->resolved, g_array_unref);
@@ -397,6 +683,7 @@ sysprof_memprof_profile_generate (SysprofProfile      *profile,
   g->symbols = g_string_chunk_new (4096*4);
   g->tags = g_hash_table_new (g_str_hash, g_str_equal);
   g->resolved = g_array_new (FALSE, TRUE, sizeof (guint64));
+  g->mode = self->mode;
 
   g_ptr_array_add (g->resolvers, sysprof_capture_symbol_resolver_new ());
   g_ptr_array_add (g->resolvers, sysprof_kernel_symbol_resolver_new ());

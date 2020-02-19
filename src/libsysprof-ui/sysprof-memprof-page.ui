@@ -22,7 +22,7 @@
                   <object class="GtkRadioButton" id="summary">
                     <property name="label" translatable="yes">Summary</property>
                     <property name="draw-indicator">false</property>
-                    <property name="visible">false</property>
+                    <property name="visible">true</property>
                     <property name="active">false</property>
                   </object>
                 </child>
@@ -57,6 +57,160 @@
         <child>
           <object class="GtkStack" id="stack">
             <property name="visible">true</property>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="hscrollbar-policy">never</property>
+                <property name="visible">true</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="margin">16</property>
+                    <property name="orientation">vertical</property>
+                    <property name="visible">true</property>
+                    <child>
+                      <object class="DzlThreeGrid">
+                        <property name="expand">true</property>
+                        <property name="row-spacing">6</property>
+                        <property name="column-spacing">18</property>
+                        <property name="visible">true</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Peak Allocation</property>
+                            <property name="halign">end</property>
+                            <property name="visible">false</property>
+                            <style>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="column">left</property>
+                            <property name="row">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="peak_allocs">
+                            <property name="xalign">0</property>
+                            <property name="selectable">true</property>
+                            <property name="visible">false</property>
+                          </object>
+                          <packing>
+                            <property name="column">center</property>
+                            <property name="row">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Number of Allocations</property>
+                            <property name="halign">end</property>
+                            <property name="visible">true</property>
+                            <style>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="column">left</property>
+                            <property name="row">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="num_allocs">
+                            <property name="xalign">0</property>
+                            <property name="selectable">true</property>
+                            <property name="visible">true</property>
+                          </object>
+                          <packing>
+                            <property name="column">center</property>
+                            <property name="row">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Leaked Allocations</property>
+                            <property name="halign">end</property>
+                            <property name="visible">false</property>
+                            <style>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="column">left</property>
+                            <property name="row">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="leaked_allocs">
+                            <property name="xalign">0</property>
+                            <property name="selectable">true</property>
+                            <property name="visible">false</property>
+                          </object>
+                          <packing>
+                            <property name="column">center</property>
+                            <property name="row">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Temporary Allocations</property>
+                            <property name="halign">end</property>
+                            <property name="visible">true</property>
+                            <style>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="column">left</property>
+                            <property name="row">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="temp_allocs_count">
+                            <property name="xalign">0</property>
+                            <property name="selectable">true</property>
+                            <property name="width-chars">50</property>
+                            <property name="visible">true</property>
+                          </object>
+                          <packing>
+                            <property name="column">center</property>
+                            <property name="row">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Allocations by Size</property>
+                            <property name="halign">end</property>
+                            <property name="valign">start</property>
+                            <property name="visible">true</property>
+                            <style>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="column">left</property>
+                            <property name="row">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="visible">true</property>
+                            <child>
+                              <object class="GtkListBox" id="by_size">
+                                <property name="visible">true</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="column">center</property>
+                            <property name="row">4</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="name">summary</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkPaned">
                 <property name="orientation">horizontal</property>
@@ -265,8 +419,8 @@
             <child>
               <object class="DzlEmptyState">
                 <property name="icon-name">content-loading-symbolic</property>
-                <property name="title" translatable="yes">Generating Callgraph</property>
-                <property name="subtitle" translatable="yes">Sysprof is busy creating the selected callgraph.</property>
+                <property name="title" translatable="yes">Analyzing Memory Allocations</property>
+                <property name="subtitle" translatable="yes">Sysprof is busy analyzing memory allocations.</property>
                 <property name="visible">true</property>
               </object>
               <packing>

@@ -56,6 +56,7 @@ typedef struct
   rax                  *rax;
   GArray               *resolved;
   SysprofMemprofMode    mode;
+  SysprofMemprofStats   stats;
 } Generate;
 
 struct _SysprofMemprofProfile
@@ -397,6 +398,131 @@ compare_alloc (gconstpointer a,
     return 0;
 }
 
+static guint
+get_bucket (gint64 size)
+{
+  if (size <= 32)
+    return 0;
+  if (size <= 64)
+    return 1;
+  if (size <= 128)
+    return 2;
+  if (size <= 256)
+    return 3;
+  if (size <= 512)
+    return 4;
+  if (size <= 1024)
+    return 5;
+  if (size <= 4096)
+    return 6;
+  if (size <= 4096*4)
+    return 7;
+  if (size <= 4096*8)
+    return 8;
+  if (size <= 4096*16)
+    return 9;
+  if (size <= 4096*32)
+    return 10;
+  if (size <= 4096*64)
+    return 11;
+  if (size <= 4096*256)
+    return 12;
+  return 13;
+}
+
+static void
+summary_worker (Generate *g)
+{
+  g_autoptr(GArray) allocs = NULL;
+  SysprofCaptureFrameType type;
+  SysprofCaptureAddress last_addr = 0;
+  guint last_bucket = 0;
+
+  g_assert (g != NULL);
+  g_assert (g->reader != NULL);
+
+  allocs = g_array_new (FALSE, FALSE, sizeof (Alloc));
+
+  sysprof_capture_reader_reset (g->reader);
+
+  g->stats.by_size[0].bucket = 32;
+  g->stats.by_size[1].bucket = 64;
+  g->stats.by_size[2].bucket = 128;
+  g->stats.by_size[3].bucket = 256;
+  g->stats.by_size[4].bucket = 512;
+  g->stats.by_size[5].bucket = 1024;
+  g->stats.by_size[6].bucket = 4096;
+  g->stats.by_size[7].bucket = 4096*4;
+  g->stats.by_size[8].bucket = 4096*8;
+  g->stats.by_size[9].bucket = 4096*16;
+  g->stats.by_size[10].bucket = 4096*32;
+  g->stats.by_size[11].bucket = 4096*64;
+  g->stats.by_size[12].bucket = 4096*256;
+  g->stats.by_size[13].bucket = 4096*256;
+
+  while (sysprof_capture_reader_peek_type (g->reader, &type))
+    {
+      if (type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
+        {
+          const SysprofCaptureAllocation *ev;
+          Alloc a;
+
+          if (!(ev = sysprof_capture_reader_read_allocation (g->reader)))
+            break;
+
+          a.pid = ev->frame.pid;
+          a.tid = ev->tid;
+          a.time = ev->frame.time;
+          a.addr = ev->alloc_addr;
+          a.size = ev->alloc_size;
+          a.frame_num = 0;
+
+          g_array_append_val (allocs, a);
+
+          if (a.size > 0)
+            g->stats.n_allocs++;
+        }
+      else
+        {
+          if (!sysprof_capture_reader_skip (g->reader))
+            break;
+        }
+    }
+
+  g_array_sort (allocs, compare_alloc);
+
+  for (guint i = 0; i < allocs->len; i++)
+    {
+      const Alloc *a = &g_array_index (allocs, Alloc, i);
+
+      if (a->size <= 0)
+        {
+          if (last_addr == a->addr)
+            {
+              g->stats.temp_allocs++;
+              g->stats.by_size[last_bucket].temp_allocs++;
+            }
+
+          g->stats.leaked_allocs--;
+
+          last_addr = 0;
+          last_bucket = 0;
+        }
+      else
+        {
+          guint b = get_bucket (a->size);
+
+          g->stats.n_allocs++;
+          g->stats.leaked_allocs++;
+          g->stats.by_size[b].n_allocs++;
+          g->stats.by_size[b].allocated += a->size;
+
+          last_addr = a->addr;
+          last_bucket = b;
+        }
+    }
+}
+
 static void
 temp_allocs_worker (Generate *g)
 {
@@ -639,6 +765,10 @@ sysprof_memprof_profile_generate_worker (GTask        *task,
     {
       temp_allocs_worker (g);
     }
+  else if (g->mode == SYSPROF_MEMPROF_MODE_SUMMARY)
+    {
+      summary_worker (g);
+    }
 
   /* Release some data we don't need anymore */
   g_clear_pointer (&g->resolved, g_array_unref);
@@ -780,4 +910,17 @@ sysprof_memprof_profile_new_with_selection (SysprofSelection *selection)
   return g_object_new (SYSPROF_TYPE_MEMPROF_PROFILE,
                        "selection", selection,
                        NULL);
+}
+
+void
+sysprof_memprof_profile_get_stats (SysprofMemprofProfile *self,
+                                   SysprofMemprofStats   *stats)
+{
+  g_return_if_fail (SYSPROF_IS_MEMPROF_PROFILE (self));
+  g_return_if_fail (stats != NULL);
+
+  if (self->g != NULL)
+    *stats = self->g->stats;
+  else
+    memset (stats, 0, sizeof *stats);
 }

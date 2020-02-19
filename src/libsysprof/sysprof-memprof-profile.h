@@ -35,9 +35,27 @@ G_BEGIN_DECLS
 
 typedef enum
 {
+  SYSPROF_MEMPROF_MODE_SUMMARY = 0,
   SYSPROF_MEMPROF_MODE_ALL_ALLOCS = 1,
   SYSPROF_MEMPROF_MODE_TEMP_ALLOCS = 2,
 } SysprofMemprofMode;
+
+typedef struct
+{
+  gint64 n_allocs;
+  gint64 leaked_allocs;
+  gint64 leaked_allocs_size;
+  gint64 temp_allocs;
+  gint64 temp_allocs_size;
+  struct {
+    gint64 bucket;
+    gint64 n_allocs;
+    gint64 temp_allocs;
+    gint64 allocated;
+  } by_size[14];
+  /*< private >*/
+  gint64 _reserved[32];
+} SysprofMemprofStats;
 
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofMemprofProfile, sysprof_memprof_profile, SYSPROF, MEMPROF_PROFILE, GObject)
@@ -46,6 +64,9 @@ SYSPROF_AVAILABLE_IN_3_36
 SysprofProfile     *sysprof_memprof_profile_new                (void);
 SYSPROF_AVAILABLE_IN_3_36
 SysprofProfile     *sysprof_memprof_profile_new_with_selection (SysprofSelection      *selection);
+SYSPROF_AVAILABLE_IN_3_36
+void                sysprof_memprof_profile_get_stats          (SysprofMemprofProfile *self,
+                                                                SysprofMemprofStats   *stats);
 SYSPROF_AVAILABLE_IN_3_36
 SysprofMemprofMode  sysprof_memprof_profile_get_mode           (SysprofMemprofProfile *self);
 SYSPROF_AVAILABLE_IN_3_36

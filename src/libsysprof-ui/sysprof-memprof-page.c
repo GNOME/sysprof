@@ -62,6 +62,11 @@ typedef struct
   GtkRadioButton           *summary;
   GtkRadioButton           *all_allocs;
   GtkRadioButton           *temp_allocs;
+  GtkLabel                 *temp_allocs_count;
+  GtkLabel                 *num_allocs;
+  GtkLabel                 *leaked_allocs;
+  GtkLabel                 *peak_allocs;
+  GtkListBox               *by_size;
 
   GCancellable             *cancellable;
 
@@ -161,6 +166,117 @@ build_functions_store (StackNode *node,
 }
 
 static void
+update_summary (SysprofMemprofPage    *self,
+                SysprofMemprofProfile *profile)
+{
+  SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
+  SysprofMemprofStats stats;
+  g_autoptr(GString) str = NULL;
+
+  g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
+  g_assert (SYSPROF_IS_MEMPROF_PROFILE (profile));
+
+  sysprof_memprof_profile_get_stats (profile, &stats);
+
+  str = g_string_new (NULL);
+
+  g_string_append_printf (str, "%"G_GINT64_FORMAT, stats.n_allocs);
+  gtk_label_set_label (priv->num_allocs, str->str);
+  g_string_truncate (str, 0);
+
+  g_string_append_printf (str, "%"G_GINT64_FORMAT, stats.leaked_allocs);
+  gtk_label_set_label (priv->leaked_allocs, str->str);
+  g_string_truncate (str, 0);
+
+  g_string_append_printf (str, "%"G_GINT64_FORMAT, stats.temp_allocs);
+  gtk_label_set_label (priv->temp_allocs_count, str->str);
+  g_string_truncate (str, 0);
+
+  gtk_container_foreach (GTK_CONTAINER (priv->by_size),
+                         (GtkCallback)gtk_widget_destroy,
+                         NULL);
+
+  for (guint i = 0; i < G_N_ELEMENTS (stats.by_size); i++)
+    {
+      g_autofree gchar *prevstr = NULL;
+      g_autofree gchar *sizestr = NULL;
+      g_autofree gchar *title_str = NULL;
+      g_autofree gchar *subtitle_str = NULL;
+      g_autofree gchar *allocstr = NULL;
+      g_autofree gchar *tempstr = NULL;
+      g_autofree gchar *leakedstr = NULL;
+      g_autofree gchar *allstr = NULL;
+      GtkWidget *row;
+      GtkWidget *title;
+      GtkWidget *subtitle;
+      GtkWidget *prog;
+      GtkWidget *box;
+
+      if (stats.by_size[i].n_allocs == 0)
+        continue;
+
+      row = gtk_list_box_row_new ();
+      title = gtk_label_new (NULL);
+      subtitle = gtk_label_new (NULL);
+      prog = gtk_level_bar_new_for_interval (0, stats.n_allocs);
+      box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 3);
+
+      sizestr = g_format_size_full (stats.by_size[i].bucket, G_FORMAT_SIZE_IEC_UNITS);
+      if (i == 0)
+        {
+          title_str = g_strdup_printf ("≤ %s", sizestr);
+        }
+      else
+        {
+          /* translators: %s is replaced with a memory size such as "32 bytes" */
+          prevstr = g_format_size_full (stats.by_size[i-1].bucket, G_FORMAT_SIZE_IEC_UNITS);
+          /* translators: %s is replaced with the the lower and upper bound memory sizes in bytes */
+          title_str = g_strdup_printf (_("> %s to %s"), prevstr, sizestr);
+        }
+
+      gtk_label_set_label (GTK_LABEL (title), title_str);
+      gtk_label_set_xalign (GTK_LABEL (title), 0);
+      dzl_gtk_widget_add_style_class (title, "dim-label");
+
+      gtk_widget_set_margin_start (box, 6);
+      gtk_widget_set_margin_end (box, 6);
+
+      gtk_widget_set_margin_top (prog, 1);
+      gtk_widget_set_margin_bottom (prog, 1);
+
+      allocstr = g_strdup_printf ("%"G_GINT64_FORMAT, stats.by_size[i].n_allocs);
+      tempstr = g_strdup_printf ("%"G_GINT64_FORMAT, stats.by_size[i].temp_allocs);
+      allstr = g_format_size_full (stats.by_size[i].allocated,
+                                   G_FORMAT_SIZE_IEC_UNITS);
+      subtitle_str = g_strdup_printf ("%s allocations, %s temporary, %s",
+                                      allocstr, tempstr, allstr);
+
+      gtk_label_set_label (GTK_LABEL (subtitle), subtitle_str);
+      gtk_label_set_xalign (GTK_LABEL (subtitle), 0);
+
+#if 0
+      /* TODO: Make this chunked by [temp][rest]... */
+      gtk_level_bar_add_offset_value (GTK_LEVEL_BAR (prog),
+                                      GTK_LEVEL_BAR_OFFSET_HIGH,
+                                      stats.by_size[i].temp_allocs);
+      gtk_level_bar_add_offset_value (GTK_LEVEL_BAR (prog),
+                                      GTK_LEVEL_BAR_OFFSET_LOW,
+                                      stats.by_size[i].n_allocs);
+#endif
+      gtk_level_bar_set_value (GTK_LEVEL_BAR (prog),
+                               stats.by_size[i].n_allocs);
+
+      gtk_container_add (GTK_CONTAINER (row), box);
+      gtk_container_add (GTK_CONTAINER (box), title);
+      gtk_container_add (GTK_CONTAINER (box), prog);
+      gtk_container_add (GTK_CONTAINER (box), subtitle);
+      gtk_container_add (GTK_CONTAINER (priv->by_size), row);
+
+      gtk_widget_show_all (row);
+    }
+}
+
+static void
 sysprof_memprof_page_load (SysprofMemprofPage    *self,
                            SysprofMemprofProfile *profile)
 {
@@ -189,8 +305,13 @@ sysprof_memprof_page_load (SysprofMemprofPage    *self,
   if (!g_set_object (&priv->profile, profile))
     return;
 
+  update_summary (self, profile);
+
   if (sysprof_memprof_profile_is_empty (profile))
-    return;
+    {
+      gtk_stack_set_visible_child_name (priv->stack, "summary");
+      return;
+    }
 
   stash = sysprof_memprof_profile_get_stash (profile);
 
@@ -802,7 +923,6 @@ sysprof_memprof_page_generate_cb (GObject      *object,
 {
   SysprofProfile *profile = (SysprofProfile *)object;
   SysprofMemprofPage *self;
-  SysprofMemprofPagePrivate *priv;
   g_autoptr(GTask) task = user_data;
   g_autoptr(GError) error = NULL;
 
@@ -811,15 +931,11 @@ sysprof_memprof_page_generate_cb (GObject      *object,
   g_assert (G_IS_TASK (task));
 
   self = g_task_get_source_object (task);
-  priv = sysprof_memprof_page_get_instance_private (self);
 
   if (!sysprof_profile_generate_finish (profile, result, &error))
     g_task_return_error (task, g_error_copy (error));
   else
     sysprof_memprof_page_set_profile (self, SYSPROF_MEMPROF_PROFILE (profile));
-
-  if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
-    gtk_stack_set_visible_child_name (priv->stack, "callgraph");
 }
 
 static void
@@ -877,19 +993,6 @@ sysprof_memprof_page_load_finish (SysprofPage   *page,
 }
 
 static void
-do_summary (SysprofMemprofPage *self)
-{
-#if 0
-  SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
-
-  g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
-
-  g_cancellable_cancel (priv->cancellable);
-  gtk_stack_set_visible_child_name (priv->stack, "summary");
-#endif
-}
-
-static void
 do_allocs (SysprofMemprofPage *self,
            SysprofMemprofMode  mode)
 {
@@ -914,12 +1017,25 @@ mode_notify_active (SysprofMemprofPage *self,
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
     {
       if (button == priv->summary)
-        do_summary (self);
+        do_allocs (self, SYSPROF_MEMPROF_MODE_SUMMARY);
       else if (button == priv->all_allocs)
         do_allocs (self, SYSPROF_MEMPROF_MODE_ALL_ALLOCS);
       else if (button == priv->temp_allocs)
         do_allocs (self, SYSPROF_MEMPROF_MODE_TEMP_ALLOCS);
     }
+}
+
+static void
+sep_header_func (GtkListBoxRow *row,
+                 GtkListBoxRow *before,
+                 gpointer       user_data)
+{
+  if (before != NULL)
+    gtk_list_box_row_set_header (row,
+                                 g_object_new (GTK_TYPE_SEPARATOR,
+                                               "orientation", GTK_ORIENTATION_HORIZONTAL,
+                                               "visible", TRUE,
+                                               NULL));
 }
 
 static void
@@ -1010,6 +1126,7 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/org/gnome/sysprof/ui/sysprof-memprof-page.ui");
 
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, by_size);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, callers_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, function_size_cell);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, function_size_column);
@@ -1020,6 +1137,10 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, all_allocs);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, temp_allocs);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, summary);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, temp_allocs_count);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, num_allocs);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, leaked_allocs);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, peak_allocs);
 
   bindings = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
@@ -1041,6 +1162,8 @@ sysprof_memprof_page_init (SysprofMemprofPage *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 
   gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+
+  gtk_list_box_set_header_func (priv->by_size, sep_header_func, NULL, NULL);
 
   g_signal_connect_object (priv->all_allocs,
                            "notify::active",

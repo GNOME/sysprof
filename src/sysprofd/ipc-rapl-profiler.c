@@ -84,7 +84,7 @@ ipc_rapl_profiler_stop_locked (IpcRaplProfiler *self)
   if (self->turbostat != NULL)
     sysprof_turbostat_stop (self->turbostat);
 
-  g_clear_pointer (&self->turbostat, sysprof_turbostat_free);
+  g_clear_pointer (&self->turbostat, sysprof_turbostat_unref);
   g_clear_pointer (&self->counter_ids, g_array_unref);
 
   if (self->writer != NULL)

@@ -32,11 +32,12 @@
 
 struct _SysprofTurbostat
 {
-  GPid        pid;
-  GIOChannel *channel;
-  guint       channel_watch;
-  GFunc       sample_func;
-  gpointer    sample_data;
+  volatile gint ref_count;
+  GPid          pid;
+  GIOChannel   *channel;
+  guint         channel_watch;
+  GFunc         sample_func;
+  gpointer      sample_data;
 };
 
 enum {
@@ -51,7 +52,8 @@ sysprof_turbostat_new (GFunc    sample_func,
 {
   SysprofTurbostat *self;
 
-  self = g_rc_box_new0 (SysprofTurbostat);
+  self = g_slice_new0 (SysprofTurbostat);
+  self->ref_count = 1;
   self->pid = 0;
   self->channel = NULL;
   self->sample_func = sample_func;
@@ -61,21 +63,36 @@ sysprof_turbostat_new (GFunc    sample_func,
 }
 
 static void
-sysprof_turbostat_finalize (gpointer data)
+sysprof_turbostat_finalize (SysprofTurbostat *self)
 {
-  SysprofTurbostat *self = data;
-
   if (self->pid != 0)
     sysprof_turbostat_stop (self);
 
   g_assert (self->pid == 0);
   g_assert (self->channel == NULL);
+
+  g_slice_free (SysprofTurbostat, self);
+}
+
+SysprofTurbostat *
+sysprof_turbostat_ref (SysprofTurbostat *self)
+{
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (self->ref_count > 0, NULL);
+
+  g_atomic_int_inc (&self->ref_count);
+
+  return self;
 }
 
 void
-sysprof_turbostat_free (SysprofTurbostat *self)
+sysprof_turbostat_unref (SysprofTurbostat *self)
 {
-  g_rc_box_release_full (self, sysprof_turbostat_finalize);
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (self->ref_count > 1);
+
+  if (g_atomic_int_dec_and_test (&self->ref_count))
+    sysprof_turbostat_finalize (self);
 }
 
 static gboolean

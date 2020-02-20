@@ -43,8 +43,9 @@ gboolean          sysprof_turbostat_start  (SysprofTurbostat  *self,
 void              sysprof_turbostat_stop   (SysprofTurbostat  *self);
 gboolean          sysprof_turbostat_sample (SysprofTurbostat  *self,
                                             GError           **error);
-void              sysprof_turbostat_free   (SysprofTurbostat  *self);
+SysprofTurbostat *sysprof_turbostat_ref    (SysprofTurbostat  *self);
+void              sysprof_turbostat_unref  (SysprofTurbostat  *self);
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofTurbostat, sysprof_turbostat_free)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofTurbostat, sysprof_turbostat_unref)
 
 G_END_DECLS

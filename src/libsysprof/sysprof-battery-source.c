@@ -98,7 +98,7 @@ sysprof_battery_source_prepare (SysprofSource *source)
       g_autofree gchar *model_data = NULL;
       g_autofree gchar *charge_full_data = NULL;
       SysprofCaptureCounter ctr;
-      Battery bat = {0};
+      Battery bat = {{0}};
 
       /* We dn't care about AC */
       if (g_strcmp0 (name, "AC") == 0)
@@ -141,7 +141,7 @@ sysprof_battery_source_prepare (SysprofSource *source)
 
   if (counters->len > 0)
     {
-      SysprofCaptureCounter ctr = {0};
+      SysprofCaptureCounter ctr = {{0}};
 
       self->combined_id = sysprof_capture_writer_request_counter (self->writer, 1);
 

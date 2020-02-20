@@ -117,7 +117,7 @@ static Diskstat *
 register_counters_by_name (SysprofDiskstatSource *self,
                            const gchar           *name)
 {
-  SysprofCaptureCounter ctr[2] = {0};
+  SysprofCaptureCounter ctr[2] = {{{0}}};
   Diskstat ds = {0};
 
   g_assert (SYSPROF_IS_DISKSTAT_SOURCE (self));

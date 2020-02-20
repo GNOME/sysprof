@@ -104,7 +104,7 @@ static Netdev *
 register_counters_by_name (SysprofNetdevSource *self,
                            const gchar         *name)
 {
-  SysprofCaptureCounter ctr[2] = {0};
+  SysprofCaptureCounter ctr[2] = {{{0}}};
   g_autofree gchar *rx = NULL;
   g_autofree gchar *tx = NULL;
   Netdev nd = {0};
@@ -155,7 +155,7 @@ sysprof_netdev_source_prepare (SysprofSource *source)
 {
   SysprofNetdevSource *self = (SysprofNetdevSource *)source;
   g_autoptr(GError) error = NULL;
-  SysprofCaptureCounter ctr[2] = {0};
+  SysprofCaptureCounter ctr[2] = {{{0}}};
 
   g_assert (SYSPROF_IS_NETDEV_SOURCE (self));
 

@@ -61,11 +61,12 @@ G_STATIC_ASSERT (sizeof (MappedRingHeader) == 16);
  */
 struct _MappedRingBuffer
 {
-  int    mode;
-  int    fd;
-  void  *map;
-  gsize  body_size;
-  gsize  page_size;
+  volatile gint ref_count;
+  int           mode;
+  int           fd;
+  void         *map;
+  gsize         body_size;
+  gsize         page_size;
 };
 
 static inline MappedRingHeader *
@@ -199,7 +200,8 @@ mapped_ring_buffer_new_reader (gsize buffer_size)
   header->offset = page_size;
   header->size = buffer_size - page_size;
 
-  self = g_atomic_rc_box_new0 (MappedRingBuffer);
+  self = g_slice_new0 (MappedRingBuffer);
+  self->ref_count = 1;
   self->mode = MODE_READER;
   self->body_size = buffer_size - page_size;
   self->fd = fd;
@@ -296,7 +298,8 @@ mapped_ring_buffer_new_writer (gint fd)
       return NULL;
     }
 
-  self = g_atomic_rc_box_new0 (MappedRingBuffer);
+  self = g_slice_new0 (MappedRingBuffer);
+  self->ref_count = 1;
   self->mode = MODE_WRITER;
   self->fd = fd;
   self->body_size = buffer_size - page_size;
@@ -325,13 +328,22 @@ mapped_ring_buffer_finalize (MappedRingBuffer *self)
 void
 mapped_ring_buffer_unref (MappedRingBuffer *self)
 {
-  g_atomic_rc_box_release_full (self, (GDestroyNotify)mapped_ring_buffer_finalize);
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (self->ref_count > 0);
+
+  if (g_atomic_int_dec_and_test (&self->ref_count))
+    mapped_ring_buffer_finalize (self);
 }
 
 MappedRingBuffer *
 mapped_ring_buffer_ref (MappedRingBuffer *self)
 {
-  return g_atomic_rc_box_acquire (self);
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (self->ref_count > 0, NULL);
+
+  g_atomic_int_inc (&self->ref_count);
+
+  return self;
 }
 
 gint

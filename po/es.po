@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-02-19 08:17+0000\n"
-"PO-Revision-Date: 2020-02-19 11:47+0100\n"
+"POT-Creation-Date: 2020-02-19 16:58+0000\n"
+"PO-Revision-Date: 2020-02-20 12:28+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -462,17 +462,21 @@ msgstr "Reservas de memoria"
 msgid "Track Allocations"
 msgstr "Analizar reservas"
 
+#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
+#: src/libsysprof-ui/sysprof-memprof-page.c:234
+#, c-format
+msgid "> %s to %s"
+msgstr "> %s a %s"
+
 #: src/libsysprof-ui/sysprof-memprof-page.ui:23
 msgid "Summary"
 msgstr "Resumen"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:31
-#| msgid "Track Allocations"
 msgid "All Allocations"
 msgstr "Todas las reservas"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:40
-#| msgid "Memory Allocations"
 msgid "Temporary Allocations"
 msgstr "Reservas temporales"
 
@@ -481,12 +485,10 @@ msgid "Size"
 msgstr "Tamaño"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:422
-#| msgid "Memory Allocations"
 msgid "Analyzing Memory Allocations"
 msgstr "Analizando reservas de memoria"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:423
-#| msgid "Sysprof is busy creating the selected callgraph."
 msgid "Sysprof is busy analyzing memory allocations."
 msgstr "Sysprof está ocupado analizando reservas de memoria."
 

@@ -45,6 +45,7 @@ typedef struct
 
 typedef struct
 {
+  volatile gint         ref_count;
   SysprofSelection     *selection;
   SysprofCaptureReader *reader;
   GPtrArray            *resolvers;
@@ -82,7 +83,7 @@ enum {
 static GParamSpec *properties[N_PROPS];
 
 static void
-generate_free (Generate *g)
+generate_finalize (Generate *g)
 {
   g_clear_pointer (&g->reader, sysprof_capture_reader_unref);
   g_clear_pointer (&g->rax, raxFree);
@@ -94,18 +95,28 @@ generate_free (Generate *g)
   g_clear_pointer (&g->resolved, g_array_unref);
   g_clear_pointer (&g->cmdlines, g_hash_table_unref);
   g_clear_object (&g->selection);
+  g_slice_free (Generate, g);
 }
 
 static Generate *
 generate_ref (Generate *g)
 {
-  return g_atomic_rc_box_acquire (g);
+  g_return_val_if_fail (g != NULL, NULL);
+  g_return_val_if_fail (g->ref_count > 0, NULL);
+
+  g_atomic_int_inc (&g->ref_count);
+
+  return g;
 }
 
 static void
 generate_unref (Generate *g)
 {
-  g_atomic_rc_box_release_full (g, (GDestroyNotify)generate_free);
+  g_return_if_fail (g != NULL);
+  g_return_if_fail (g->ref_count > 0);
+
+  if (g_atomic_int_dec_and_test (&g->ref_count))
+    generate_finalize (g);
 }
 
 static void
@@ -806,7 +817,8 @@ sysprof_memprof_profile_generate (SysprofProfile      *profile,
       return;
     }
 
-  g = g_atomic_rc_box_new0 (Generate);
+  g = g_slice_new0 (Generate);
+  g->ref_count = 1;
   g->reader = sysprof_capture_reader_copy (self->reader);
   g->selection = sysprof_selection_copy (self->selection);
   g->cmdlines = g_hash_table_new (NULL, NULL);

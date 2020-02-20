@@ -22,7 +22,6 @@
 
 #include "config.h"
 
-#include <stdatomic.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <unistd.h>

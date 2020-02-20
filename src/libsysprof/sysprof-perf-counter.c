@@ -42,7 +42,9 @@
 #include <errno.h>
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
-#include <stdatomic.h>
+#ifdef HAVE_STDATOMIC_H
+# include <stdatomic.h>
+#endif
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -219,7 +221,11 @@ sysprof_perf_counter_flush (SysprofPerfCounter     *self,
   tail = info->tail;
   head = info->map->data_head;
 
+#ifdef HAVE_STDATOMIC_H
   atomic_thread_fence (memory_order_acquire);
+#elif G_GNUC_CHECK_VERSION(3, 0)
+  __sync_synchronize ();
+#endif
 
   if (head < tail)
     tail = head;
@@ -285,7 +291,12 @@ sysprof_perf_counter_flush (SysprofPerfCounter     *self,
 
   info->tail = tail;
 
+#ifdef HAVE_STDATOMIC_H
   atomic_thread_fence (memory_order_seq_cst);
+#elif G_GNUC_CHECK_VERSION(3, 0)
+  __sync_synchronize ();
+#endif
+
   info->map->data_tail = tail;
 }
 

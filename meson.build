@@ -181,7 +181,7 @@ foreach link_arg: test_link_args
 endforeach
 add_project_link_arguments(global_link_args, language: 'c')
 
-if not cc.links('''
+if cc.links('''
 #include <stdatomic.h>
 int main(void) {
   atomic_thread_fence(memory_order_acquire);
@@ -189,7 +189,7 @@ int main(void) {
   return 0;
 }
 ''')
-  error('Sysprof requires a C compiler with stdatomic support such as GCC 4.9 or newer')
+  config_h.set10('HAVE_STDATOMIC_H', 1)
 endif
 
 subdir('src')

@@ -93,6 +93,9 @@ if get_option('libunwind')
   libunwind_dep = dependency('libunwind-generic', required: false)
   if libunwind_dep.found()
     config_h.set10('ENABLE_LIBUNWIND', libunwind_dep.found())
+    if cc.has_header_symbol('libunwind.h', 'unw_set_cache_size', dependencies: [libunwind_dep])
+      config_h.set10('HAVE_UNW_SET_CACHE_SIZE', 1)
+    endif
   endif
 endif
 

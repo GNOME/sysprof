@@ -55,16 +55,11 @@ static void sysprof_depth_visualizer_reload (SysprofDepthVisualizer *self);
 G_DEFINE_TYPE (SysprofDepthVisualizer, sysprof_depth_visualizer, SYSPROF_TYPE_VISUALIZER)
 
 static void
-state_clear (State *st)
+state_free (State *st)
 {
   g_clear_pointer (&st->reader, sysprof_capture_reader_unref);
   g_clear_pointer (&st->pc, point_cache_unref);
-}
-
-static void
-state_unref (State *st)
-{
-  g_atomic_rc_box_release_full (st, (GDestroyNotify) state_clear);
+  g_slice_free (State, st);
 }
 
 static gboolean
@@ -201,7 +196,7 @@ sysprof_depth_visualizer_reload (SysprofDepthVisualizer *self)
 
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
 
-  st = g_atomic_rc_box_new0 (State);
+  st = g_slice_new0 (State);
   st->reader = sysprof_capture_reader_ref (self->reader);
   st->pc = point_cache_new ();
   st->max_n_addrs = 0;
@@ -215,7 +210,7 @@ sysprof_depth_visualizer_reload (SysprofDepthVisualizer *self)
 
   task = g_task_new (self, NULL, apply_point_cache_cb, NULL);
   g_task_set_source_tag (task, sysprof_depth_visualizer_reload);
-  g_task_set_task_data (task, st, (GDestroyNotify) state_unref);
+  g_task_set_task_data (task, st, (GDestroyNotify) state_free);
   g_task_run_in_thread (task, sysprof_depth_visualizer_worker);
 }
 

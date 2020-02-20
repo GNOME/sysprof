@@ -142,8 +142,8 @@ build_functions_store (StackNode *node,
   } *state = user_data;
   GtkTreeIter iter;
   const StackNode *n;
-  guint size = 0;
-  guint total = 0;
+  guint64 size = 0;
+  guint64 total = 0;
 
   g_assert (state != NULL);
   g_assert (GTK_IS_LIST_STORE (state->store));
@@ -157,10 +157,11 @@ build_functions_store (StackNode *node,
 
   gtk_list_store_append (state->store, &iter);
   gtk_list_store_set (state->store, &iter,
-                      COLUMN_NAME, U64_TO_POINTER(node->data),
+                      COLUMN_NAME, U64_TO_POINTER (node->data),
                       COLUMN_SELF, 100.0 * size / state->profile_size,
                       COLUMN_TOTAL, 100.0 * total / state->profile_size,
                       COLUMN_POINTER, node,
+                      COLUMN_SIZE, (guint64)total,
                       -1);
 
 }
@@ -318,7 +319,12 @@ sysprof_memprof_page_load (SysprofMemprofPage    *self,
   for (n = stack_stash_get_root (stash); n; n = n->siblings)
     state.profile_size += n->total;
 
-  functions = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_POINTER);
+  functions = gtk_list_store_new (5,
+                                  G_TYPE_STRING,
+                                  G_TYPE_DOUBLE,
+                                  G_TYPE_DOUBLE,
+                                  G_TYPE_POINTER,
+                                  G_TYPE_UINT64);
 
   state.store = functions;
   stack_stash_foreach_by_address (stash, build_functions_store, &state);
@@ -563,11 +569,12 @@ sysprof_memprof_page_function_selection_changed (SysprofMemprofPage *self,
 
   sysprof_memprof_page_update_descendants (self, callees);
 
-  callers_store = gtk_list_store_new (4,
+  callers_store = gtk_list_store_new (5,
                                       G_TYPE_STRING,
                                       G_TYPE_DOUBLE,
                                       G_TYPE_DOUBLE,
-                                      G_TYPE_POINTER);
+                                      G_TYPE_POINTER,
+                                      G_TYPE_UINT64);
 
   callers = g_hash_table_new_full (NULL, NULL, NULL, caller_free);
   processed = g_hash_table_new (NULL, NULL);
@@ -628,7 +635,7 @@ sysprof_memprof_page_function_selection_changed (SysprofMemprofPage *self,
   {
     GHashTableIter hiter;
     gpointer key, value;
-    guint size = 0;
+    guint64 size = 0;
 
     size = MAX (1, sysprof_memprof_page_get_profile_size (self));
 
@@ -644,6 +651,7 @@ sysprof_memprof_page_function_selection_changed (SysprofMemprofPage *self,
                             COLUMN_SELF, c->self * 100.0 / size,
                             COLUMN_TOTAL, c->total * 100.0 / size,
                             COLUMN_POINTER, c->node,
+                            COLUMN_SIZE, (guint64)c->total,
                             -1);
       }
   }
@@ -845,11 +853,11 @@ copy_tree_view_selection_cb (GtkTreeModel *model,
                              gpointer      data)
 {
   g_autofree gchar *name = NULL;
-  gchar sstr[16];
+  g_autofree gchar *size_str = NULL;
   gchar tstr[16];
   GString *str = data;
-  gdouble self;
   gdouble total;
+  guint64 size;
   gint depth;
 
   g_assert (GTK_IS_TREE_MODEL (model));
@@ -860,14 +868,14 @@ copy_tree_view_selection_cb (GtkTreeModel *model,
   depth = gtk_tree_path_get_depth (path);
   gtk_tree_model_get (model, iter,
                       COLUMN_NAME, &name,
-                      COLUMN_SELF, &self,
                       COLUMN_TOTAL, &total,
+                      COLUMN_SIZE, &size,
                       -1);
 
-  g_snprintf (sstr, sizeof sstr, "%.2lf%%", self);
+  size_str = g_format_size_full (size, G_FORMAT_SIZE_IEC_UNITS);
   g_snprintf (tstr, sizeof tstr, "%.2lf%%", total);
 
-  g_string_append_printf (str, "[%8s] [%8s]    ", sstr, tstr);
+  g_string_append_printf (str, "[%12s] [%8s]    ", size_str, tstr);
 
   for (gint i = 1; i < depth; i++)
     g_string_append (str, "  ");
@@ -883,7 +891,7 @@ copy_tree_view_selection (GtkTreeView *tree_view)
 
   g_assert (GTK_IS_TREE_VIEW (tree_view));
 
-  str = g_string_new ("      SELF      TOTAL    FUNCTION\n");
+  str = g_string_new ("    ALLOCATED      TOTAL    FUNCTION\n");
   gtk_tree_selection_selected_foreach (gtk_tree_view_get_selection (tree_view),
                                        copy_tree_view_selection_cb,
                                        str);

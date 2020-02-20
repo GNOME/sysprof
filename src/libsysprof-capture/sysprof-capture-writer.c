@@ -488,7 +488,17 @@ sysprof_capture_writer_new_from_fd (int   fd,
   self->next_counter_id = 1;
 
   now = g_date_time_new_now_local ();
+
+#if GLIB_CHECK_VERSION(2, 62, 0)
   nowstr = g_date_time_format_iso8601 (now);
+#else
+  {
+    GTimeVal tv;
+
+    g_date_time_to_timeval (now, &tv);
+    nowstr = g_time_val_to_iso8601 (&tv);
+  }
+#endif
 
   header = sysprof_capture_writer_allocate (self, &header_len);
 

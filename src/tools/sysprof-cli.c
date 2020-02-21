@@ -184,6 +184,7 @@ main (gint   argc,
       gchar *argv[])
 {
   g_auto(GStrv) child_argv = NULL;
+  g_auto(GStrv) envs = NULL;
   PolkitAgentListener *polkit = NULL;
   PolkitSubject *subject = NULL;
   SysprofCaptureWriter *writer;
@@ -215,6 +216,7 @@ main (gint   argc,
   GOptionEntry entries[] = {
     { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task"), N_("PID") },
     { "command", 'c', 0, G_OPTION_ARG_STRING, &command, N_("Run a command and profile the process"), N_("COMMAND") },
+    { "env", 'e', 0, G_OPTION_ARG_STRING_ARRAY, &envs, N_("Set environment variable for spawned process. Can be used multiple times."), N_("VAR=VALUE") },
     { "force", 'f', 0, G_OPTION_ARG_NONE, &force, N_("Force overwrite the capture file") },
     { "no-battery", 0, 0, G_OPTION_ARG_NONE, &no_battery, N_("Disable recording of battery statistics") },
     { "no-cpu", 0, 0, G_OPTION_ARG_NONE, &no_cpu, N_("Disable recording of CPU statistics") },
@@ -383,6 +385,24 @@ Examples:\n\
         }
 
       cwd = g_get_current_dir ();
+
+      if (envs != NULL)
+        {
+          for (guint e = 0; envs[e]; e++)
+            {
+              const gchar *eq = strchr (envs[e], '=');
+
+              if (eq == NULL)
+                {
+                  env = g_environ_setenv (env, envs[e], "", TRUE);
+                }
+              else
+                {
+                  g_autofree gchar *key = g_strndup (envs[e], eq - envs[e]);
+                  env = g_environ_setenv (env, key, eq+1, TRUE);
+                }
+            }
+        }
 
       sysprof_profiler_set_spawn (profiler, TRUE);
       sysprof_profiler_set_spawn_cwd (profiler, cwd);

@@ -36,11 +36,21 @@ sysprof_memprof_source_modify_spawn (SysprofSource    *source,
   g_assert (SYSPROF_IS_SOURCE (source));
   g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
 
-#ifdef __linux__
   sysprof_spawnable_setenv (spawnable, "G_SLICE", "always-malloc");
-  sysprof_spawnable_setenv (spawnable,
-                            "LD_PRELOAD",
-                            PACKAGE_LIBEXECDIR"/libsysprof-memory-"API_VERSION_S".so");
+
+#ifdef __linux__
+  {
+    static const gchar so_path[] = PACKAGE_LIBEXECDIR"/libsysprof-memory-"API_VERSION_S".so";
+    g_autofree gchar *freeme = NULL;
+    const gchar *ld_preload;
+
+    if (!(ld_preload = sysprof_spawnable_getenv (spawnable, "LD_PRELOAD")))
+      sysprof_spawnable_setenv (spawnable, "LD_PRELOAD", so_path);
+    else
+      sysprof_spawnable_setenv (spawnable,
+                                "LD_PRELOAD",
+                                (freeme = g_strdup_printf ("%s:%s", so_path, ld_preload)));
+  }
 #endif
 }
 

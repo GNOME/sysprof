@@ -133,7 +133,6 @@
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
-                <property name="margin-bottom">12</property>
                 <property name="label" translatable="yes">Counters Captured</property>
                 <property name="xalign">1</property>
                 <style>
@@ -143,6 +142,21 @@
               <packing>
                 <property name="column">left</property>
                 <property name="row">8</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="margin-bottom">12</property>
+                <property name="label" translatable="yes">Allocations Captured</property>
+                <property name="xalign">1</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+              </object>
+              <packing>
+                <property name="column">left</property>
+                <property name="row">9</property>
               </packing>
             </child>
             <child>
@@ -255,13 +269,26 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="ellipsize">start</property>
-                <property name="margin-bottom">12</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
               </object>
               <packing>
                 <property name="column">center</property>
                 <property name="row">8</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="allocations">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="ellipsize">start</property>
+                <property name="margin-bottom">12</property>
+                <property name="xalign">0</property>
+                <property name="selectable">True</property>
+              </object>
+              <packing>
+                <property name="column">center</property>
+                <property name="row">9</property>
               </packing>
             </child>
             <child>
@@ -347,7 +374,7 @@
               </object>
               <packing>
                 <property name="column">center</property>
-                <property name="row">9</property>
+                <property name="row">10</property>
               </packing>
             </child>
           </object>

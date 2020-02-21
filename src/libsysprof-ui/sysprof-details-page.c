@@ -44,6 +44,7 @@ struct _SysprofDetailsPage
   GtkLabel     *counters;
   GtkLabel     *duration;
   GtkLabel     *filename;
+  GtkLabel     *allocations;
   GtkLabel     *forks;
   GtkLabel     *marks;
   GtkLabel     *processes;
@@ -85,6 +86,7 @@ sysprof_details_page_class_init (SysprofDetailsPageClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-details-page.ui");
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, allocations);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, counters);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, cpu_label);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, duration);
@@ -250,6 +252,7 @@ sysprof_details_page_set_reader (SysprofDetailsPage   *self,
       SET_FRAME_COUNT (processes, SYSPROF_CAPTURE_FRAME_PROCESS);
       SET_FRAME_COUNT (forks, SYSPROF_CAPTURE_FRAME_FORK);
       SET_FRAME_COUNT (counters, SYSPROF_CAPTURE_FRAME_CTRSET);
+      SET_FRAME_COUNT (allocations, SYSPROF_CAPTURE_FRAME_ALLOCATION);
 
 #undef SET_FRAME_COUNT
     }

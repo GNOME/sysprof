@@ -356,6 +356,9 @@ sysprof_capture_reader_ensure_space_for (SysprofCaptureReader *self,
   g_assert (self->pos <= self->len);
   g_assert (len > 0);
 
+  /* Ensure alignment of length to read */
+  len = (len + SYSPROF_CAPTURE_ALIGN - 1) & ~(SYSPROF_CAPTURE_ALIGN - 1);
+
   if ((self->len - self->pos) < len)
     {
       gssize r;

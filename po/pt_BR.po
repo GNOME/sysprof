@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-02-19 16:58+0000\n"
-"PO-Revision-Date: 2020-02-20 19:39-0300\n"
+"POT-Creation-Date: 2020-02-21 20:41+0000\n"
+"PO-Revision-Date: 2020-02-23 03:23-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -196,7 +196,7 @@ msgid "Descendants"
 msgstr "Descendentes"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:190
-#: src/libsysprof-ui/sysprof-details-page.ui:295
+#: src/libsysprof-ui/sysprof-details-page.ui:322
 msgid "Hits"
 msgstr "Acertos"
 
@@ -246,11 +246,11 @@ msgstr "Uso de CPU (Todos)"
 msgid "Processes"
 msgstr "Processos"
 
-#: src/libsysprof-ui/sysprof-details-page.c:222
+#: src/libsysprof-ui/sysprof-details-page.c:224
 msgid "Memory Capture"
 msgstr "Captura de memória"
 
-#: src/libsysprof-ui/sysprof-details-page.c:236
+#: src/libsysprof-ui/sysprof-details-page.c:238
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf segundos"
@@ -289,24 +289,29 @@ msgstr "Processos capturados"
 msgid "Forks Captured"
 msgstr "Forks capturados"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:137
+#: src/libsysprof-ui/sysprof-details-page.ui:136
 msgid "Counters Captured"
 msgstr "Contadores capturados"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:282
+#: src/libsysprof-ui/sysprof-details-page.ui:151
+#| msgid "Counters Captured"
+msgid "Allocations Captured"
+msgstr "Alocações capturadas"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:309
 #: src/libsysprof-ui/sysprof-marks-page.ui:52
 msgid "Mark"
 msgstr "Marca"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:308
+#: src/libsysprof-ui/sysprof-details-page.ui:335
 msgid "Min"
 msgstr "Mín"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:321
+#: src/libsysprof-ui/sysprof-details-page.ui:348
 msgid "Max"
 msgstr "Máx"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:334
+#: src/libsysprof-ui/sysprof-details-page.ui:361
 msgid "Avg"
 msgstr "Méd"
 
@@ -465,7 +470,7 @@ msgid "Track Allocations"
 msgstr "Rastrear alocações"
 
 #. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:234
+#: src/libsysprof-ui/sysprof-memprof-page.c:235
 #, c-format
 msgid "> %s to %s"
 msgstr "> %s para %s"
@@ -475,12 +480,10 @@ msgid "Summary"
 msgstr "Resumo"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:31
-#| msgid "Track Allocations"
 msgid "All Allocations"
 msgstr "Todas alocações"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:40
-#| msgid "Memory Allocations"
 msgid "Temporary Allocations"
 msgstr "Alocações temporárias"
 
@@ -489,12 +492,10 @@ msgid "Size"
 msgstr "Tamanho"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:422
-#| msgid "Memory Allocations"
 msgid "Analyzing Memory Allocations"
 msgstr "Analisando alocações de memória"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:423
-#| msgid "Sysprof is busy creating the selected callgraph."
 msgid "Sysprof is busy analyzing memory allocations."
 msgstr "Sysprof está ocupado analisando alocações de memória."
 
@@ -839,91 +840,102 @@ msgstr "Perfilador parado."
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge requer pelo menos 2 argumentos de nome de arquivo."
 
-#: src/tools/sysprof-cli.c:216
+#: src/tools/sysprof-cli.c:217
 msgid "Make sysprof specific to a task"
 msgstr "Usa o sysprof especificamente para uma tarefa"
 
-#: src/tools/sysprof-cli.c:216
+#: src/tools/sysprof-cli.c:217
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:217
+#: src/tools/sysprof-cli.c:218
 msgid "Run a command and profile the process"
 msgstr "Executa um comando e perfila seu processo"
 
-#: src/tools/sysprof-cli.c:217
+#: src/tools/sysprof-cli.c:218
 msgid "COMMAND"
 msgstr "COMANDO"
 
-#: src/tools/sysprof-cli.c:218
+#: src/tools/sysprof-cli.c:219
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+"Define variável de ambiente para processo iniciado. Pode ser usado várias "
+"vezes."
+
+#: src/tools/sysprof-cli.c:219
+msgid "VAR=VALUE"
+msgstr "VARIÁVEL=VALOR"
+
+#: src/tools/sysprof-cli.c:220
 msgid "Force overwrite the capture file"
 msgstr "Força sobrescrever o arquivo de captura"
 
-#: src/tools/sysprof-cli.c:219
+#: src/tools/sysprof-cli.c:221
 msgid "Disable recording of battery statistics"
 msgstr "Desabilita gravação de estatísticas de bateria"
 
-#: src/tools/sysprof-cli.c:220
+#: src/tools/sysprof-cli.c:222
 msgid "Disable recording of CPU statistics"
 msgstr "Desabilita gravação de estatísticas de CPU"
 
-#: src/tools/sysprof-cli.c:221
+#: src/tools/sysprof-cli.c:223
 msgid "Disable recording of Disk statistics"
 msgstr "Desabilita gravação de estatísticas de disco"
 
-#: src/tools/sysprof-cli.c:222
+#: src/tools/sysprof-cli.c:224
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Não grava rastros de pilha usando perf do Linux"
 
-#: src/tools/sysprof-cli.c:223
+#: src/tools/sysprof-cli.c:225
 msgid "Do not append symbol name information from local machine"
 msgstr "Não anexa informações do nome do símbolo da máquina local"
 
-#: src/tools/sysprof-cli.c:224
+#: src/tools/sysprof-cli.c:226
 msgid "Disable recording of memory statistics"
 msgstr "Desabilita gravação de estatísticas de memória"
 
-#: src/tools/sysprof-cli.c:225
+#: src/tools/sysprof-cli.c:227
 msgid "Disable recording of network statistics"
 msgstr "Desabilita gravação de estatísticas de rede"
 
-#: src/tools/sysprof-cli.c:226
+#: src/tools/sysprof-cli.c:228
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Define ambiente de SYSPROF_TRACE_FD para subprocesso"
 
-#: src/tools/sysprof-cli.c:227
+#: src/tools/sysprof-cli.c:229
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Define ambiente de GJS_TRACE_FD para rastrear processos de GJS"
 
-#: src/tools/sysprof-cli.c:228
+#: src/tools/sysprof-cli.c:230
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Define ambiente de GTK_TRACE_FD para rastrear um aplicativo GTK"
 
-#: src/tools/sysprof-cli.c:229
+#: src/tools/sysprof-cli.c:231
 msgid "Include RAPL energy statistics"
 msgstr "Inclui estatísticas de energia RAPL"
 
-#: src/tools/sysprof-cli.c:230
+#: src/tools/sysprof-cli.c:232
 msgid "Profile memory allocations and frees"
 msgstr "Perfila alocações de memória e livres"
 
-#: src/tools/sysprof-cli.c:231
+#: src/tools/sysprof-cli.c:233
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Conecta a org.gnome.Shell para estatísticas de perfilador"
 
-#: src/tools/sysprof-cli.c:232
+#: src/tools/sysprof-cli.c:234
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Mescla todos os arquivos *.syscap fornecidos e escreve para stdout"
 
-#: src/tools/sysprof-cli.c:233
+#: src/tools/sysprof-cli.c:235
 msgid "Print the sysprof-cli version and exit"
 msgstr "Emite a versão do sysprof-cli e sai"
 
-#: src/tools/sysprof-cli.c:266
+#: src/tools/sysprof-cli.c:268
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[ARQUIVO_CAPTURA] [-- COMANDO ARGS] — Sysprof"
 
-#: src/tools/sysprof-cli.c:269
+#: src/tools/sysprof-cli.c:271
 msgid ""
 "\n"
 "Examples:\n"
@@ -945,12 +957,12 @@ msgstr ""
 "  # Mescla vários arquivos syscap em um\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/tools/sysprof-cli.c:302
+#: src/tools/sysprof-cli.c:304
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Argumentos demais foram passados para o sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:359
+#: src/tools/sysprof-cli.c:361
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existe. Use --force para sobrescrevê-lo\n"

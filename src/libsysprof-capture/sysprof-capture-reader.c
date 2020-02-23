@@ -491,6 +491,9 @@ sysprof_capture_reader_read_basic (SysprofCaptureReader    *self,
   if (frame->type != type)
     return NULL;
 
+  if (frame->len > (self->len - self->pos))
+    return NULL;
+
   self->pos += frame->len;
 
   return frame;

@@ -163,17 +163,18 @@ allocs_within_mark (SysprofCaptureReader *reader,
       t1 = (iv->begin - begin) / (gdouble)SYSPROF_NSEC_PER_SEC;
       t2 = (iv->end - begin) / (gdouble)SYSPROF_NSEC_PER_SEC;
 
-      g_print ("%lf-%lf: %s\n",
-               t1, t2, size);
+      g_print ("%lf-%lf: %s\n", t1, t2, size);
     }
 
   if (intervals->len)
     {
+      const Interval *iv = &g_array_index (intervals, Interval, intervals->len/2);
       g_autofree gchar *minstr = g_format_size_full (st.min, G_FORMAT_SIZE_IEC_UNITS);
       g_autofree gchar *maxstr = g_format_size_full (st.max, G_FORMAT_SIZE_IEC_UNITS);
       g_autofree gchar *avgstr = g_format_size_full (st.total/(gdouble)intervals->len, G_FORMAT_SIZE_IEC_UNITS);
+      g_autofree gchar *medstr = g_format_size_full (iv->allocated, G_FORMAT_SIZE_IEC_UNITS);
 
-      g_print ("Min: %s, Max: %s, Avg: %s\n", minstr, maxstr, avgstr);
+      g_print ("Min: %s, Max: %s, Avg: %s, Median: %s\n", minstr, maxstr, avgstr, medstr);
     }
 }
 

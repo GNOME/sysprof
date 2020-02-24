@@ -113,6 +113,7 @@ allocs_within_mark (SysprofCaptureReader *reader,
           iv = &g_array_index (intervals, Interval, intervals->len - 1);
           iv->begin = ev->frame.time;
           iv->end = ev->frame.time + ev->duration;
+          iv->allocated = 0;
         }
       else if (!sysprof_capture_reader_skip (reader))
         break;

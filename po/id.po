@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-34\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-01-29 16:17+0000\n"
-"PO-Revision-Date: 2020-02-04 14:38+0700\n"
+"POT-Creation-Date: 2020-02-21 20:41+0000\n"
+"PO-Revision-Date: 2020-02-23 21:03+0700\n"
 "Last-Translator: Kukuh Syafaat <kukuhsyafaat@gnome.org>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
@@ -104,7 +104,7 @@ msgstr ""
 "Lingkungan yang terakhir di-spawn, yang akan ditata dalam UI saat start "
 "ulang aplikasi."
 
-#: src/libsysprof/sysprof-callgraph-profile.c:431
+#: src/libsysprof/sysprof-callgraph-profile.c:433
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr "Sysprof tidak dapat menghasilkan callgraph dari tangkapan sistem."
 
@@ -160,31 +160,40 @@ msgid "Callgraph"
 msgstr "Callgraph"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:27
+#: src/libsysprof-ui/sysprof-memprof-page.ui:236
 msgid "Functions"
 msgstr "Fungsi"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:43
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:104
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:159
+#: src/libsysprof-ui/sysprof-memprof-page.ui:253
+#: src/libsysprof-ui/sysprof-memprof-page.ui:315
+#: src/libsysprof-ui/sysprof-memprof-page.ui:371
 msgid "Self"
 msgstr "Self"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:59
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:120
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:175
+#: src/libsysprof-ui/sysprof-memprof-page.ui:269
+#: src/libsysprof-ui/sysprof-memprof-page.ui:331
+#: src/libsysprof-ui/sysprof-memprof-page.ui:387
 msgid "Total"
 msgstr "Total"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:88
+#: src/libsysprof-ui/sysprof-memprof-page.ui:298
 msgid "Callers"
 msgstr "Pemanggil"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:151
+#: src/libsysprof-ui/sysprof-memprof-page.ui:362
 msgid "Descendants"
 msgstr "Turunan"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:190
-#: src/libsysprof-ui/sysprof-details-page.ui:295
+#: src/libsysprof-ui/sysprof-details-page.ui:322
 msgid "Hits"
 msgstr "Hit"
 
@@ -197,10 +206,12 @@ msgid "Sysprof is busy creating the selected callgraph."
 msgstr "Sysprof sibuk menciptakan callgraph yang dipilih."
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:224
+#: src/libsysprof-ui/sysprof-memprof-page.ui:433
 msgid "Not Enough Samples"
 msgstr "Tidak Cukup Cuplikan"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:225
+#: src/libsysprof-ui/sysprof-memprof-page.ui:434
 msgid "More samples are necessary to display a callgraph."
 msgstr "Perlu lebih cuplikan untuk menampilkan suatu callgraph."
 
@@ -232,11 +243,11 @@ msgstr "Penggunaan CPU (semua)"
 msgid "Processes"
 msgstr "Proses"
 
-#: src/libsysprof-ui/sysprof-details-page.c:222
+#: src/libsysprof-ui/sysprof-details-page.c:224
 msgid "Memory Capture"
 msgstr "Tangkapan Memori"
 
-#: src/libsysprof-ui/sysprof-details-page.c:236
+#: src/libsysprof-ui/sysprof-details-page.c:238
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf detik"
@@ -275,24 +286,28 @@ msgstr "Proses Yang Ditangkap"
 msgid "Forks Captured"
 msgstr "Fork Ditangkap"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:137
+#: src/libsysprof-ui/sysprof-details-page.ui:136
 msgid "Counters Captured"
 msgstr "Pencacah Ditangkap"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:282
+#: src/libsysprof-ui/sysprof-details-page.ui:151
+msgid "Allocations Captured"
+msgstr "Alokasi Ditangkap"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:309
 #: src/libsysprof-ui/sysprof-marks-page.ui:52
 msgid "Mark"
 msgstr "Tandai"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:308
+#: src/libsysprof-ui/sysprof-details-page.ui:335
 msgid "Min"
 msgstr "Min"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:321
+#: src/libsysprof-ui/sysprof-details-page.ui:348
 msgid "Max"
 msgstr "Maks"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:334
+#: src/libsysprof-ui/sysprof-details-page.ui:361
 msgid "Avg"
 msgstr "Rata-rata"
 
@@ -309,38 +324,38 @@ msgstr "Baca"
 msgid "Writes"
 msgstr "Tulis"
 
-#: src/libsysprof-ui/sysprof-display.c:227
+#: src/libsysprof-ui/sysprof-display.c:229
 msgid "Recording Failed"
 msgstr "Perekaman Gagal"
 
-#: src/libsysprof-ui/sysprof-display.c:232
+#: src/libsysprof-ui/sysprof-display.c:234
 msgid "Recording…"
 msgstr "Merekam…"
 
 #. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:256
+#: src/libsysprof-ui/sysprof-display.c:258
 #, c-format
 msgid "Recording at %s"
 msgstr "Merekam pada %s"
 
-#: src/libsysprof-ui/sysprof-display.c:260
+#: src/libsysprof-ui/sysprof-display.c:262
 msgid "New Recording"
 msgstr "Perekaman Baru"
 
-#: src/libsysprof-ui/sysprof-display.c:1177
+#: src/libsysprof-ui/sysprof-display.c:1182
 msgid "Save Recording"
 msgstr "Simpan Rekaman"
 
-#: src/libsysprof-ui/sysprof-display.c:1180
+#: src/libsysprof-ui/sysprof-display.c:1185
 msgid "Save"
 msgstr "Simpan"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1181 src/sysprof/sysprof-window.c:277
+#: src/libsysprof-ui/sysprof-display.c:1186 src/sysprof/sysprof-window.c:277
 msgid "Cancel"
 msgstr "Batal"
 
-#: src/libsysprof-ui/sysprof-display.c:1207
+#: src/libsysprof-ui/sysprof-display.c:1212
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Gagal menyimpan rekaman: %s"
@@ -435,9 +450,56 @@ msgstr "Tidak Ada Pengaturan Waktu"
 msgid "No timing data was found for the current selection"
 msgstr "Tidak ada data waktu yang ditemukan untuk pemilihan saat ini"
 
-#: src/libsysprof-ui/sysprof-memory-aid.c:77
+#: src/libsysprof-ui/sysprof-memory-aid.c:68
 msgid "Memory Usage"
 msgstr "Penggunaan Memori"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:182
+msgid "Memory"
+msgstr "Memori"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:193
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Allocations"
+msgstr "Alokasi Memori"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:224
+msgid "Track Allocations"
+msgstr "Alokasi Trek"
+
+#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
+#: src/libsysprof-ui/sysprof-memprof-page.c:235
+#, c-format
+msgid "> %s to %s"
+msgstr "> %s ke %s"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:23
+msgid "Summary"
+msgstr "Ringkasan"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+msgid "All Allocations"
+msgstr "Semua Alokasi"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:40
+msgid "Temporary Allocations"
+msgstr "Alokasi Temporer"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+msgid "Size"
+msgstr "Ukuran"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:422
+msgid "Analyzing Memory Allocations"
+msgstr "Menganalisis Alokasi Memori"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:423
+msgid "Sysprof is busy analyzing memory allocations."
+msgstr "Sysprof sibuk menganalisis alokasi memori."
+
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Used"
+msgstr "Memori yang Digunakan"
 
 #: src/libsysprof-ui/sysprof-netdev-aid.c:204
 #: src/libsysprof-ui/sysprof-netdev-aid.c:264
@@ -445,19 +507,25 @@ msgid "Network"
 msgstr "Jaringan"
 
 #. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:14
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
 msgid "GNOME Shell"
 msgstr "GNOME Shell"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:80
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:95
 msgid "Profilers"
 msgstr "Pembuat profil"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:191
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:198
+msgid ""
+"Track application memory allocations (Sysprof must launch target application)"
+msgstr ""
+"Lacak alokasi memori aplikasi (Sysprof harus meluncurkan aplikasi target)"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:214
 msgid "All Processes"
 msgstr "Semua Proses"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:221
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:244
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
 "not be possible on some system system configurations."
@@ -465,36 +533,36 @@ msgstr ""
 "Sertakan semua aplikasi dan kernel sistem operasi dalam callgraph. Hal ini "
 "barangkali tidak mungkin pada beberapa konfigurasi sistem."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:249
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:272
 msgid "Search Processes…"
 msgstr "Cari Proses…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:291
 msgid "Loading Processes…"
 msgstr "Memuat Proses…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:292
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:315
 msgid "Launch Application"
 msgstr "Luncurkan Aplikasi"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:321
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:344
 msgid "Enable to launch a program of your choosing before profiling."
 msgstr ""
 "Fungsikan untuk meluncurkan program pilihan Anda sebelum membuat profil."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:349
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:372
 msgid "Command Line"
 msgstr "Baris Perintah"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:391
 msgid "Environment"
 msgstr "Lingkungan"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:394
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:417
 msgid "Inherit Environment"
 msgstr "Warisi Lingkungan"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:418
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:441
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other "
 "desktop environment settings."
@@ -502,11 +570,11 @@ msgstr ""
 "Fungsikan untuk memastikan bahwa aplikasi Anda memakai bersama tampilan, "
 "message-bus, dan pengaturan lingkungan desktop lain."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:444
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:467
 msgid "Allow CPU Throttling"
 msgstr "Izinkan Pencekikan CPU"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:472
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:495
 msgid ""
 "If disabled, your CPU will be placed in performance mode. It will be "
 "restored after profiling."
@@ -514,7 +582,7 @@ msgstr ""
 "Bila dinonaktifkan, CPU Anda akan diatur pada mode kinerja. Itu akan "
 "dipulihkan setelah pembuatan profil."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:493
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:516
 msgid "_Record"
 msgstr "_Rekam"
 
@@ -752,91 +820,115 @@ msgstr "Tangkapan Sysprof"
 msgid "All Files"
 msgstr "Semua Berkas"
 
-#: src/tools/sysprof-cli.c:87
+#: src/tools/sysprof-cli.c:59
+msgid "Stopping profiler. Press twice more ^C to force exit."
+msgstr ""
+"Menghentikan pembuat profil. Tekan dua kali lagi ^C untuk memaksa keluar."
+
+#: src/tools/sysprof-cli.c:72
+msgid "Profiler stopped."
+msgstr "Pembuat profil berhenti."
+
+#: src/tools/sysprof-cli.c:105
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge membutuhkan setidaknya 2 argumen nama berkas"
 
-#: src/tools/sysprof-cli.c:197
+#: src/tools/sysprof-cli.c:217
 msgid "Make sysprof specific to a task"
 msgstr "Membuat sysprof spesifik ke suatu tugas"
 
-#: src/tools/sysprof-cli.c:197
+#: src/tools/sysprof-cli.c:217
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:198
+#: src/tools/sysprof-cli.c:218
 msgid "Run a command and profile the process"
 msgstr "Menjalankan suatu perintah dan membuat profil proses tersebut"
 
-#: src/tools/sysprof-cli.c:198
+#: src/tools/sysprof-cli.c:218
 msgid "COMMAND"
 msgstr "PERINTAH"
 
-#: src/tools/sysprof-cli.c:199
+#: src/tools/sysprof-cli.c:219
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+"Tetapkan variabel lingkungan untuk proses spawned. Dapat digunakan beberapa "
+"kali."
+
+#: src/tools/sysprof-cli.c:219
+msgid "VAR=VALUE"
+msgstr "VAR=NILAI"
+
+#: src/tools/sysprof-cli.c:220
 msgid "Force overwrite the capture file"
 msgstr "Paksa menimpa berkas tangkapan"
 
-#: src/tools/sysprof-cli.c:200
+#: src/tools/sysprof-cli.c:221
 msgid "Disable recording of battery statistics"
 msgstr "Nonaktifkan perekaman statistik baterai"
 
-#: src/tools/sysprof-cli.c:201
+#: src/tools/sysprof-cli.c:222
 msgid "Disable recording of CPU statistics"
 msgstr "Nonaktifkan perekaman statistik CPU"
 
-#: src/tools/sysprof-cli.c:202
+#: src/tools/sysprof-cli.c:223
 msgid "Disable recording of Disk statistics"
 msgstr "Nonaktifkan perekaman statistik Diska"
 
-#: src/tools/sysprof-cli.c:203
+#: src/tools/sysprof-cli.c:224
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Jangan rekam jejak stack memakai perf Linux"
 
-#: src/tools/sysprof-cli.c:204
+#: src/tools/sysprof-cli.c:225
 msgid "Do not append symbol name information from local machine"
 msgstr "Jangan imbuhkan informasi nama simbol dari mesin lokal"
 
-#: src/tools/sysprof-cli.c:205
+#: src/tools/sysprof-cli.c:226
 msgid "Disable recording of memory statistics"
 msgstr "Nonaktifkan perekaman statistik memori"
 
-#: src/tools/sysprof-cli.c:206
+#: src/tools/sysprof-cli.c:227
 msgid "Disable recording of network statistics"
 msgstr "Nonaktifkan perekaman statistik jaringan"
 
-#: src/tools/sysprof-cli.c:207
+#: src/tools/sysprof-cli.c:228
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Atur lingkungan SYSPROF_TRACE_FD untuk subproses"
 
-#: src/tools/sysprof-cli.c:208
+#: src/tools/sysprof-cli.c:229
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Atur lingkungan GJS_TRACE_FD untuk melacak proses-proses GJS"
 
-#: src/tools/sysprof-cli.c:209
+#: src/tools/sysprof-cli.c:230
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Atur lingkungan GJS_TRACE_FD untuk melacak suatu aplikasi GTK"
 
-#: src/tools/sysprof-cli.c:210
+#: src/tools/sysprof-cli.c:231
 msgid "Include RAPL energy statistics"
 msgstr "Sertakan statistik energi RAPL"
 
-#: src/tools/sysprof-cli.c:211
+#: src/tools/sysprof-cli.c:232
+msgid "Profile memory allocations and frees"
+msgstr "Profil alokasi memori dan bebas"
+
+#: src/tools/sysprof-cli.c:233
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Menyambung ke org.gnome.Shell untuk statistik pembuat profil"
 
-#: src/tools/sysprof-cli.c:212
+#: src/tools/sysprof-cli.c:234
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Gabungkan semua berkas * .syscap yang disediakan dan tulis ke stdout"
 
-#: src/tools/sysprof-cli.c:213
+#: src/tools/sysprof-cli.c:235
 msgid "Print the sysprof-cli version and exit"
 msgstr "Cetak versi sysprof-cli dan keluar"
 
-#: src/tools/sysprof-cli.c:246
+#: src/tools/sysprof-cli.c:268
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[BERKAS_TANGKAPAN] [-- PERINTAH ARG] — Sysprof"
 
-#: src/tools/sysprof-cli.c:249
+#: src/tools/sysprof-cli.c:271
 msgid ""
 "\n"
 "Examples:\n"
@@ -858,12 +950,12 @@ msgstr ""
 "   # Gabungkan banyak berkas syscap menjadi satu\n"
 "   sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/tools/sysprof-cli.c:282
+#: src/tools/sysprof-cli.c:304
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Terlalu banyak argumen yang disampaikan ke sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:339
+#: src/tools/sysprof-cli.c:361
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s sudah ada. Gunakan —force untuk menimpa\n"

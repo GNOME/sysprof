@@ -81,6 +81,12 @@ allocs_by_size = executable('allocs-by-size',
   dependencies: test_deps,
 )
 
+allocs_within_mark = executable('allocs-within-mark',
+  ['allocs-within-mark.c'],
+        c_args: test_cflags,
+  dependencies: test_deps,
+)
+
 cross_thread_frees = executable('cross-thread-frees',
   ['cross-thread-frees.c'],
         c_args: test_cflags,

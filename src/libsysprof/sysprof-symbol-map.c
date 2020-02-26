@@ -313,6 +313,10 @@ sysprof_symbol_map_do_sample (SysprofSymbolMap        *self,
           continue;
         }
 
+      /* Handle backtrace() style backtraces with no context switch */
+      if (last_context == SYSPROF_ADDRESS_CONTEXT_NONE)
+        last_context = SYSPROF_ADDRESS_CONTEXT_USER;
+
       for (guint j = 0; j < self->resolvers->len; j++)
         {
           SysprofSymbolResolver *resolver = g_ptr_array_index (self->resolvers, j);

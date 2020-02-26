@@ -624,7 +624,10 @@ sysprof_display_present_cb (GObject      *object,
   g_assert (G_IS_TASK (task));
 
   if (!sysprof_aid_present_finish (aid, result, &error))
-    g_warning ("Failed to present aid %s: %s", G_OBJECT_TYPE_NAME (aid), error->message);
+    {
+      if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED))
+        g_warning ("Failed to present aid %s: %s", G_OBJECT_TYPE_NAME (aid), error->message);
+    }
 
   n_active = g_task_get_task_data (task);
 

@@ -339,6 +339,13 @@ sysprof_callgraph_profile_generate_worker (GTask        *task,
 
       cmdline = g_hash_table_lookup (cmdlines, GINT_TO_POINTER (sample->frame.pid));
 
+      if (cmdline == NULL)
+        {
+          gchar *pidstr = g_strdup_printf ("[Process %d]", sample->frame.pid);
+          g_hash_table_insert (cmdlines, GINT_TO_POINTER (sample->frame.pid), pidstr);
+          cmdline = pidstr;
+        }
+
 #if 0
       /* This assertion appears to hold true, but since we're taking in
        * untrusted data from capture files, it's not safe to assume. But in
@@ -413,9 +420,7 @@ sysprof_callgraph_profile_generate_worker (GTask        *task,
           g_array_index (resolved, SysprofAddress, len++) = POINTER_TO_U64 (name);
         }
 
-      if (cmdline != NULL)
-        g_array_index (resolved, guint64, len++) = POINTER_TO_U64 (cmdline);
-
+      g_array_index (resolved, guint64, len++) = POINTER_TO_U64 (cmdline);
       g_array_index (resolved, guint64, len++) = POINTER_TO_U64 ("[Everything]");
 
       stack_stash_add_trace (resolved_stash, (gpointer)resolved->data, len, 1);

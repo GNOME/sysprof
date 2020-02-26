@@ -382,6 +382,13 @@ sysprof_callgraph_profile_generate_worker (GTask        *task,
             }
           else
             {
+              /* In case we get plain backtraces that aren't coming from perf,
+               * we might never get a context switch into user-space. This ensures
+               * that we still get traces for things from backtrace().
+               */
+              if (last_context == SYSPROF_ADDRESS_CONTEXT_NONE)
+                last_context = SYSPROF_ADDRESS_CONTEXT_USER;
+
               for (guint j = 0; j < resolvers->len; j++)
                 {
                   SysprofSymbolResolver *resolver = g_ptr_array_index (resolvers, j);

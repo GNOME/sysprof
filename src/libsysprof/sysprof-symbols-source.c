@@ -33,6 +33,7 @@ struct _SysprofSymbolsSource
 {
   GObject               parent_instance;
   SysprofCaptureWriter *writer;
+  guint                 user_only : 1;
 };
 
 static void source_iface_init (SysprofSourceInterface *iface);
@@ -93,12 +94,17 @@ sysprof_symbols_source_supplement (SysprofSource        *source,
   if (-1 == (fd = sysprof_memfd_create ("[sysprof-decode]")))
     return;
 
-  kernel = sysprof_kernel_symbol_resolver_new ();
-  native = sysprof_elf_symbol_resolver_new ();
-
   map = sysprof_symbol_map_new ();
-  sysprof_symbol_map_add_resolver (map, kernel);
+
+  native = sysprof_elf_symbol_resolver_new ();
   sysprof_symbol_map_add_resolver (map, native);
+
+  if (!self->user_only)
+    {
+      kernel = sysprof_kernel_symbol_resolver_new ();
+      sysprof_symbol_map_add_resolver (map, kernel);
+    }
+
   sysprof_symbol_map_resolve (map, reader);
   sysprof_symbol_map_serialize (map, fd);
   sysprof_symbol_map_free (map);
@@ -142,4 +148,21 @@ SysprofSource *
 sysprof_symbols_source_new (void)
 {
   return g_object_new (SYSPROF_TYPE_SYMBOLS_SOURCE, NULL);
+}
+
+void
+sysprof_symbols_source_set_user_only (SysprofSymbolsSource *self,
+                                      gboolean              user_only)
+{
+  g_return_if_fail (SYSPROF_IS_SYMBOLS_SOURCE (self));
+
+  self->user_only = !!user_only;
+}
+
+gboolean
+sysprof_symbols_source_get_user_only (SysprofSymbolsSource *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SYMBOLS_SOURCE (self), FALSE);
+
+  return self->user_only;
 }

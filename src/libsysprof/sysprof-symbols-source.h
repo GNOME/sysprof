@@ -30,6 +30,11 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofSymbolsSource, sysprof_symbols_source, SYSPROF, SYMBOLS_SOURCE, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofSource *sysprof_symbols_source_new (void);
+SysprofSource *sysprof_symbols_source_new           (void);
+SYSPROF_AVAILABLE_IN_3_36
+void           sysprof_symbols_source_set_user_only (SysprofSymbolsSource *self,
+                                                     gboolean              user_only);
+SYSPROF_AVAILABLE_IN_3_36
+gboolean       sysprof_symbols_source_get_user_only (SysprofSymbolsSource *self);
 
 G_END_DECLS

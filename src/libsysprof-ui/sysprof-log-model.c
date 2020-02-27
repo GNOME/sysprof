@@ -188,7 +188,7 @@ sysprof_log_model_get_value (GtkTreeModel *model,
       {
         gint64 offset = item->time - self->begin_time;
         gint min = offset / SYSPROF_NSEC_PER_SEC / 60L;
-        gint seconds = (offset - (min * SYSPROF_NSEC_PER_SEC)) / SYSPROF_NSEC_PER_SEC;
+        gint seconds = ((offset - (min * SYSPROF_NSEC_PER_SEC)) / SYSPROF_NSEC_PER_SEC) % 60;
         gint msec = (offset % SYSPROF_NSEC_PER_SEC) / (SYSPROF_NSEC_PER_SEC / 1000L);
 
         g_value_init (value, G_TYPE_STRING);

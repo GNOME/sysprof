@@ -64,45 +64,9 @@ G_BEGIN_DECLS
 SYSPROF_AVAILABLE_IN_3_36
 void                  sysprof_collector_init             (void);
 SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_embed_file       (const gchar                      *path,
-                                                          const guint8                     *data,
-                                                          gsize                             data_len);
-SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_embed_file_fd    (const gchar                      *path,
-                                                          gint                              fd);
-SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_mark             (gint64                            time,
-                                                          guint64                           duration,
-                                                          const gchar                      *group,
-                                                          const gchar                      *name,
-                                                          const gchar                      *mesage);
-SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_set_metadata     (const gchar                      *id,
-                                                          const gchar                      *value,
-                                                          gssize                            value_len);
-SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_sample           (gint64                            time,
-                                                          const SysprofCaptureAddress      *addrs,
-                                                          guint                             n_addrs);
-SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_log              (GLogLevelFlags                    severity,
-                                                          const gchar                      *domain,
-                                                          const gchar                      *message);
-SYSPROF_AVAILABLE_IN_3_36
-SysprofCaptureAddress sysprof_collector_map_jitted_ip    (const gchar                      *name);
-SYSPROF_AVAILABLE_IN_3_36
 void                  sysprof_collector_allocate         (SysprofCaptureAddress             alloc_addr,
                                                           gint64                            alloc_size,
                                                           SysprofBacktraceFunc              backtrace_func,
                                                           gpointer                          backtrace_data);
-SYSPROF_AVAILABLE_IN_3_36
-guint                 sysprof_collector_reserve_counters (guint                             n_counters);
-SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_define_counters  (const SysprofCaptureCounter      *counters,
-                                                          guint                             n_counters);
-SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_publish_counters (const guint                      *counters_ids,
-                                                          const SysprofCaptureCounterValue *values,
-                                                          guint                             n_counters);
 
 G_END_DECLS

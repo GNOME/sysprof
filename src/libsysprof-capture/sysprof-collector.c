@@ -321,55 +321,6 @@ sysprof_collector_init (void)
   } G_STMT_END
 
 void
-sysprof_collector_embed_file (const gchar  *path,
-                              const guint8 *data,
-                              gsize         data_len)
-{
-}
-
-void
-sysprof_collector_embed_file_fd (const gchar *path,
-                                 int          fd)
-{
-}
-
-void
-sysprof_collector_mark (gint64       time,
-                        guint64      duration,
-                        const gchar *group,
-                        const gchar *name,
-                        const gchar *message)
-{
-}
-
-void
-sysprof_collector_set_metadata (const gchar *id,
-                                const gchar *value,
-                                gssize       value_len)
-{
-}
-
-void
-sysprof_collector_sample (gint64                       time,
-                          const SysprofCaptureAddress *addrs,
-                          guint                        n_addrs)
-{
-}
-
-void
-sysprof_collector_log (GLogLevelFlags          severity,
-                       const gchar            *domain,
-                       const gchar            *message)
-{
-}
-
-SysprofCaptureAddress
-sysprof_collector_map_jitted_ip (const gchar *name)
-{
-  return 0;
-}
-
-void
 sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
                             gint64                  alloc_size,
                             SysprofBacktraceFunc    backtrace_func,
@@ -412,23 +363,4 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
       }
 
   } COLLECTOR_END;
-}
-
-guint
-sysprof_collector_reserve_counters (guint n_counters)
-{
-  return 0;
-}
-
-void
-sysprof_collector_define_counters (const SysprofCaptureCounter *counters,
-                                   guint                        n_counters)
-{
-}
-
-void
-sysprof_collector_publish_counters (const guint                      *counters_ids,
-                                    const SysprofCaptureCounterValue *values,
-                                    guint                             n_counters)
-{
 }

@@ -1,3 +1,34 @@
+Overview of changes in Sysprof 3.35.92
+======================================
+
+ * A new profiler for tracking memory allocations within processes
+   that are spawned by Sysprof. Select "Track Allocations" to use
+   an LD_PRELOAD module which monitors allocations within the target
+   process. A callgraph is provided with allocations and their stack
+   traces. This brings the main features of the venerable "Memprof"
+   into Sysprof.
+ * Port Sysprof to work on RHEL 7
+ * Improvements to marks and counters displays
+ * A new data frame in libsysprof-capture for memory allocations
+   with stack traces.
+ * sysprof-cli --merge can now be used to merge multiple syscap
+   files together.
+ * sysprof <program-path> can now be used to open Sysprof directly
+   to a program to execute.
+ * Sysprof now builds with additional security protections and
+   optimization flags such as -Bsymbolic, -Wl,-z,defs, -Wl,-z,now,
+   and -Wl,-z,relro.
+ * Fixes for macOS
+ * The ELF symbol resolver is faster
+ * sysprof-cli now properly adds supplemental information to the
+   capture file such as decoded symbols. This makes sharing syscap
+   files across machines easier and more reliable.
+ * A new mmap()'d ring buffer can be shared between processes for
+   faster data transfer to sysprof. We expect more features around
+   this SysprofCollector interface in future releases.
+ * A new set if icons has been provided for the collectors
+ * Translation updates
+
 Overview of changes in Sysprof 3.35.2
 =====================================
 

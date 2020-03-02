@@ -57,7 +57,7 @@ gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version)
 
 if get_option('enable_gtk')
   gtk_dep = dependency('gtk+-3.0', version: gtk_req_version)
-  dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version)
+  dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version, fallback: ['libdazzle', 'libdazzle_dep'])
 endif
 
 polkit_dep = dependency('polkit-gobject-1', version: '>= 0.114', required: false)
@@ -108,7 +108,7 @@ if has_use_clockid and has_clockid
   config_h.set10('HAVE_PERF_CLOCKID', true)
 endif
 
-add_global_arguments([
+add_project_arguments([
   '-I' + meson.build_root(), # config.h
 ], language: 'c')
 

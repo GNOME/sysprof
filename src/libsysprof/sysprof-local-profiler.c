@@ -1020,6 +1020,7 @@ sysprof_local_profiler_new_replay (SysprofCaptureReader *reader)
   g_autofree gchar *cwd = NULL;
   g_auto(GStrv) argv = NULL;
   g_auto(GStrv) env = NULL;
+  gboolean whole_system;
   gboolean inherit;
   gboolean spawn;
   gint n_sources;
@@ -1042,6 +1043,7 @@ sysprof_local_profiler_new_replay (SysprofCaptureReader *reader)
   env = g_key_file_get_string_list (keyfile, "profiler", "spawn-env", NULL, NULL);
   cwd = g_key_file_get_string (keyfile, "profiler", "spawn-cwd", NULL);
   n_sources = g_key_file_get_integer (keyfile, "profiler", "n-sources", NULL);
+  whole_system = g_key_file_get_boolean (keyfile, "profiler", "whole-system", NULL);
 
   /* Ignore empty string */
   if (cwd != NULL && *cwd == 0)
@@ -1052,6 +1054,7 @@ sysprof_local_profiler_new_replay (SysprofCaptureReader *reader)
   sysprof_profiler_set_spawn_cwd (SYSPROF_PROFILER (self), cwd);
   sysprof_profiler_set_spawn_env (SYSPROF_PROFILER (self), CSTRV (env));
   sysprof_profiler_set_spawn_inherit_environ (SYSPROF_PROFILER (self), inherit);
+  sysprof_profiler_set_whole_system (SYSPROF_PROFILER (self), whole_system);
 
   for (guint i = 0; i < n_sources; i++)
     {

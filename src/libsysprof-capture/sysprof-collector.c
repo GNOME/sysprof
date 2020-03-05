@@ -248,35 +248,7 @@ sysprof_collector_get (void)
 #endif
 
     if (g_getenv ("SYSPROF_CONTROL_FD") != NULL)
-      {
-        self->buffer = request_writer ();
-      }
-#if 0
-    else
-      {
-        /* TODO: Fix envvar name */
-        const gchar *trace_fd = g_getenv ("SYSPROF_TRACE_FD");
-
-        if (trace_fd != NULL)
-          {
-            int fd = atoi (trace_fd);
-
-            if (fd > 0)
-              {
-                self->writer = sysprof_capture_writer_new_from_fd (fd, 0);
-                self->is_shared = TRUE;
-              }
-          }
-
-        if (self->writer == NULL && g_getenv ("SYSPROF_TRACE") != NULL)
-          {
-            g_autofree gchar *filename = g_strdup_printf ("capture.%d.syscap", (int)getpid ());
-
-            self->writer = sysprof_capture_writer_new (filename, 0);
-            self->is_shared = TRUE;
-          }
-      }
-#endif
+      self->buffer = request_writer ();
 
     if (self->is_shared)
       shared_collector = self;

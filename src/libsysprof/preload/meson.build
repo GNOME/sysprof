@@ -15,5 +15,5 @@ libsysprof_memory_preload = shared_library('sysprof-memory-@0@'.format(libsyspro
   libsysprof_memory_preload_sources,
   dependencies: libsysprof_memory_preload_deps,
        install: true,
-   install_dir: get_option('libexecdir'),
+   install_dir: get_option('libdir'),
 )

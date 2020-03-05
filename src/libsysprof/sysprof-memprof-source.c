@@ -40,7 +40,7 @@ sysprof_memprof_source_modify_spawn (SysprofSource    *source,
 
 #ifdef __linux__
   {
-    static const gchar so_path[] = PACKAGE_LIBEXECDIR"/libsysprof-memory-"API_VERSION_S".so";
+    static const gchar so_path[] = PACKAGE_LIBDIR"/libsysprof-memory-"API_VERSION_S".so";
     g_autofree gchar *freeme = NULL;
     const gchar *ld_preload;
 

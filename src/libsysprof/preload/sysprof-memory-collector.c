@@ -77,6 +77,10 @@ backtrace_func (SysprofCaptureAddress *addrs,
                 guint                  n_addrs,
                 gpointer               user_data)
 {
+  /* Ensure we have at least two pointers to steal temporarily below */
+  G_STATIC_ASSERT (G_STRUCT_OFFSET (SysprofCaptureSample, addrs) >= 16);
+  G_STATIC_ASSERT (G_STRUCT_OFFSET (SysprofCaptureAllocation, addrs) >= 16);
+
 #if defined(ENABLE_LIBUNWIND)
 # if GLIB_SIZEOF_VOID_P == 8
   /* We know that collector will overwrite fields *AFTER* it

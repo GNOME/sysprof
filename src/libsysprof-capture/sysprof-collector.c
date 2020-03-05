@@ -358,6 +358,7 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
         ev->tid = collector->tid;
         ev->alloc_addr = alloc_addr;
         ev->alloc_size = alloc_size;
+        ev->padding1 = 0;
 
         mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
       }
@@ -392,6 +393,7 @@ sysprof_collector_sample (SysprofBacktraceFunc backtrace_func,
         ev->frame.pid = collector->pid;
         ev->frame.time = SYSPROF_CAPTURE_CURRENT_TIME;
         ev->tid = collector->tid;
+        ev->padding1 = 0;
 
         mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
       }

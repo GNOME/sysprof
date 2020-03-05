@@ -68,5 +68,8 @@ void                  sysprof_collector_allocate         (SysprofCaptureAddress 
                                                           gint64                            alloc_size,
                                                           SysprofBacktraceFunc              backtrace_func,
                                                           gpointer                          backtrace_data);
+SYSPROF_AVAILABLE_IN_3_36
+void                  sysprof_collector_sample           (SysprofBacktraceFunc              backtrace_func,
+                                                          gpointer                          backtrace_data);
 
 G_END_DECLS

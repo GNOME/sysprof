@@ -364,3 +364,37 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
 
   } COLLECTOR_END;
 }
+
+void
+sysprof_collector_sample (SysprofBacktraceFunc backtrace_func,
+                          gpointer             backtrace_data)
+{
+  COLLECTOR_BEGIN {
+    SysprofCaptureSample *ev;
+    gsize len;
+
+    len = sizeof *ev + (sizeof (SysprofCaptureSample) * MAX_UNWIND_DEPTH);
+
+    if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
+      {
+        gint n_addrs;
+
+        /* See comment from sysprof_collector_allocate(). */
+        if (backtrace_func)
+          n_addrs = backtrace_func (ev->addrs, MAX_UNWIND_DEPTH, backtrace_data);
+        else
+          n_addrs = 0;
+
+        ev->n_addrs = CLAMP (n_addrs, 0, MAX_UNWIND_DEPTH);
+        ev->frame.len = sizeof *ev + sizeof (SysprofCaptureAddress) * ev->n_addrs;
+        ev->frame.type = SYSPROF_CAPTURE_FRAME_SAMPLE;
+        ev->frame.cpu = _do_getcpu ();
+        ev->frame.pid = collector->pid;
+        ev->frame.time = SYSPROF_CAPTURE_CURRENT_TIME;
+        ev->tid = collector->tid;
+
+        mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
+      }
+
+  } COLLECTOR_END;
+}

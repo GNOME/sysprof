@@ -116,10 +116,10 @@ _do_getcpu (void)
 #endif
 }
 
-static inline void
-_realign (gsize *pos)
+static inline gsize
+realign (gsize size)
 {
-  *pos = (*pos + SYSPROF_CAPTURE_ALIGN - 1) & ~(SYSPROF_CAPTURE_ALIGN - 1);
+  return (size + SYSPROF_CAPTURE_ALIGN - 1) & ~(SYSPROF_CAPTURE_ALIGN - 1);
 }
 
 static MappedRingBuffer *
@@ -366,6 +366,88 @@ sysprof_collector_sample (SysprofBacktraceFunc backtrace_func,
         ev->frame.time = SYSPROF_CAPTURE_CURRENT_TIME;
         ev->tid = collector->tid;
         ev->padding1 = 0;
+
+        mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
+      }
+
+  } COLLECTOR_END;
+}
+
+void
+sysprof_collector_mark (gint64       time,
+                        gint64       duration,
+                        const gchar *group,
+                        const gchar *mark,
+                        const gchar *message)
+{
+  COLLECTOR_BEGIN {
+    SysprofCaptureMark *ev;
+    gsize len;
+    gsize sl;
+
+    if (group == NULL)
+      group = "";
+
+    if (mark == NULL)
+      mark = "";
+
+    if (message == NULL)
+      message = "";
+
+    sl = strlen (message);
+    len = realign (sizeof *ev + sl + 1);
+
+    if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
+      {
+        ev->frame.len = len;
+        ev->frame.type = SYSPROF_CAPTURE_FRAME_MARK;
+        ev->frame.cpu = _do_getcpu ();
+        ev->frame.pid = collector->pid;
+        ev->frame.time = time;
+        ev->duration = duration;
+        g_strlcpy (ev->group, group, sizeof ev->group);
+        g_strlcpy (ev->name, message, sizeof ev->name);
+        memcpy (ev->message, message, sl);
+        ev->message[sl] = 0;
+
+        mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
+      }
+
+  } COLLECTOR_END;
+}
+
+void
+sysprof_collector_log (GLogLevelFlags  severity,
+                       const gchar    *domain,
+                       const gchar    *message)
+{
+  COLLECTOR_BEGIN {
+    SysprofCaptureLog *ev;
+    gsize len;
+    gsize sl;
+
+    if (domain == NULL)
+      domain = "";
+
+    if (message == NULL)
+      message = "";
+
+    sl = strlen (message);
+    len = realign (sizeof *ev + sl + 1);
+
+    if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
+      {
+        ev->frame.len = len;
+        ev->frame.type = SYSPROF_CAPTURE_FRAME_LOG;
+        ev->frame.cpu = _do_getcpu ();
+        ev->frame.pid = collector->pid;
+        ev->frame.time = SYSPROF_CAPTURE_CURRENT_TIME;
+        ev->severity = severity & 0xFFFF;
+        ev->padding1 = 0;
+        ev->padding2 = 0;
+        g_strlcpy (ev->domain, domain, sizeof ev->domain);
+        memcpy (ev->message, message, sl);
+        ev->message[sl] = 0;
 
         mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
       }

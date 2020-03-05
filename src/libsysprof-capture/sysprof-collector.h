@@ -62,14 +62,24 @@
 G_BEGIN_DECLS
 
 SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_init             (void);
+void sysprof_collector_init     (void);
 SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_allocate         (SysprofCaptureAddress             alloc_addr,
-                                                          gint64                            alloc_size,
-                                                          SysprofBacktraceFunc              backtrace_func,
-                                                          gpointer                          backtrace_data);
+void sysprof_collector_allocate (SysprofCaptureAddress  alloc_addr,
+                                 gint64                 alloc_size,
+                                 SysprofBacktraceFunc   backtrace_func,
+                                 gpointer               backtrace_data);
 SYSPROF_AVAILABLE_IN_3_36
-void                  sysprof_collector_sample           (SysprofBacktraceFunc              backtrace_func,
-                                                          gpointer                          backtrace_data);
+void sysprof_collector_sample   (SysprofBacktraceFunc   backtrace_func,
+                                 gpointer               backtrace_data);
+SYSPROF_AVAILABLE_IN_3_36
+void sysprof_collector_mark     (gint64                 time,
+                                 gint64                 duration,
+                                 const gchar           *group,
+                                 const gchar           *mark,
+                                 const gchar           *message);
+SYSPROF_AVAILABLE_IN_3_36
+void sysprof_collector_log      (GLogLevelFlags         severity,
+                                 const gchar           *domain,
+                                 const gchar           *message);
 
 G_END_DECLS

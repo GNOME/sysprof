@@ -17,6 +17,7 @@ sysprof_deps = [
   libsysprof_capture_dep,
   libsysprof_dep,
   libsysprof_ui_dep,
+  pangoft2_dep,
 ]
 
 sysprof = executable('sysprof', sysprof_resources + sysprof_sources,

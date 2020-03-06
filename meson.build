@@ -55,6 +55,7 @@ endif
 glib_dep = dependency('glib-2.0', version: glib_req_version)
 gio_dep = dependency('gio-2.0', version: glib_req_version)
 gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version)
+pangoft2_dep = dependency('pangoft2', required: false)
 
 if get_option('enable_gtk')
   gtk_dep = dependency('gtk+-3.0', version: gtk_req_version)

@@ -111,6 +111,9 @@ if get_option('enable_gtk')
   test_ui_deps = [
     libsysprof_dep,
     libsysprof_ui_dep,
+    gtk_dep,
+    dazzle_dep,
+    pangoft2_dep,
   ]
 
   test_model_filter = executable('test-model-filter', 'test-model-filter.c',

@@ -1,3 +1,13 @@
+Overview of changes in Sysprof 3.36.0
+=====================================
+
+ * Preload library has been moved to $libdir from $libexecdir
+ * Build system improvements
+ * Fix whole-system capture setting when using "Record Again" feature
+ * New SysprofCollector interfaces for samples, marks, and logs to
+   sit alongside allocations
+ * Translation updates
+
 Overview of changes in Sysprof 3.35.92
 ======================================
 

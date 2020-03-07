@@ -109,7 +109,7 @@ allocs_by_size (SysprofCaptureReader *reader)
     {
       const Item *item = &g_array_index (ar, Item, i);
 
-      g_print ("%"G_GUINT64_FORMAT",%"G_GUINT64_FORMAT",%"G_GUINT64_FORMAT"\n",
+      g_print ("%"G_GSIZE_FORMAT",%"G_GSIZE_FORMAT",%"G_GSIZE_FORMAT"\n",
                item->size, item->cmp, item->count);
     }
 }

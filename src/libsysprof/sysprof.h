@@ -40,6 +40,7 @@ G_BEGIN_DECLS
 # include "sysprof-memprof-profile.h"
 # include "sysprof-memprof-source.h"
 # include "sysprof-netdev-source.h"
+# include "sysprof-preload-source.h"
 # include "sysprof-process-model-item.h"
 # include "sysprof-process-model.h"
 # include "sysprof-profile.h"

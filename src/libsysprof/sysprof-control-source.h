@@ -26,8 +26,10 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_CONTROL_SOURCE (sysprof_control_source_get_type())
 
+SYSPROF_AVAILABLE_IN_3_38
 G_DECLARE_FINAL_TYPE (SysprofControlSource, sysprof_control_source, SYSPROF, CONTROL_SOURCE, GObject)
 
+SYSPROF_AVAILABLE_IN_3_38
 SysprofControlSource *sysprof_control_source_new (void);
 
 G_END_DECLS

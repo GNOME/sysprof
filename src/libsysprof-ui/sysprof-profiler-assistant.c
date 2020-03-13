@@ -31,6 +31,7 @@
 #include "sysprof-platform.h"
 
 #include "sysprof-aid-icon.h"
+#include "sysprof-control-source.h"
 #include "sysprof-environ-editor.h"
 #include "sysprof-model-filter.h"
 #include "sysprof-profiler-assistant.h"
@@ -394,6 +395,7 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   g_type_ensure (SYSPROF_TYPE_AID_ICON);
   g_type_ensure (SYSPROF_TYPE_BATTERY_AID);
   g_type_ensure (SYSPROF_TYPE_CALLGRAPH_AID);
+  g_type_ensure (SYSPROF_TYPE_CONTROL_SOURCE);
   g_type_ensure (SYSPROF_TYPE_CPU_AID);
   g_type_ensure (SYSPROF_TYPE_DISKSTAT_SOURCE);
   g_type_ensure (SYSPROF_TYPE_ENVIRON_EDITOR);

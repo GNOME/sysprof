@@ -40,6 +40,8 @@ static int     hook_close     (int fd);
 static int     hook_fsync     (int fd);
 static int     hook_fdatasync (int fd);
 static int     hook_msync     (void *addr, size_t length, int flags);
+static void    hook_sync      (void);
+static int     hook_syncfs    (int fd);
 static ssize_t hook_read      (int fd, void *buf, size_t nbyte);
 static ssize_t hook_write     (int fd, const void *buf, size_t nbyte);
 
@@ -51,6 +53,8 @@ static int (*real_fdatasync) (int fd) = hook_fdatasync;
 static int (*real_msync) (void *addr, size_t length, int flags) = hook_msync;
 static ssize_t (*real_read) (int fd, void *buf, size_t nbyte) = hook_read;
 static ssize_t (*real_write) (int fd, const void *buf, size_t nbyte) = hook_write;
+static void (*real_sync) (void) = hook_sync;
+static int (*real_syncfs) (int fd) = hook_syncfs;
 
 static inline gboolean
 is_capturing (void)
@@ -365,4 +369,72 @@ hook_write (int         fd,
 {
   hook_func ((void **)&real_write, "write");
   return real_write (fd, buf, nbyte);
+}
+
+void
+sync (void)
+{
+  if (is_capturing ())
+    {
+      gint64 begin;
+      gint64 end;
+
+      rec_guard = TRUE;
+
+      begin = SYSPROF_CAPTURE_CURRENT_TIME;
+      real_sync ();
+      end = SYSPROF_CAPTURE_CURRENT_TIME;
+
+      sysprof_collector_sample (backtrace_func, NULL);
+      sysprof_collector_mark (begin, end - begin, "speedtrack", "sync", "");
+
+      rec_guard = FALSE;
+
+      return;
+    }
+
+  real_sync ();
+}
+
+static void
+hook_sync (void)
+{
+  hook_func ((void **)&real_sync, "sync");
+  real_sync ();
+}
+
+int
+syncfs (int fd)
+{
+  if (is_capturing ())
+    {
+      gint64 begin;
+      gint64 end;
+      gchar str[32];
+      int ret;
+
+      rec_guard = TRUE;
+
+      begin = SYSPROF_CAPTURE_CURRENT_TIME;
+      ret = real_syncfs (fd);
+      end = SYSPROF_CAPTURE_CURRENT_TIME;
+
+      g_snprintf (str, sizeof str, "fd = %d => %d", fd, ret);
+
+      sysprof_collector_sample (backtrace_func, NULL);
+      sysprof_collector_mark (begin, end - begin, "speedtrack", "syncfs", str);
+
+      rec_guard = FALSE;
+
+      return ret;
+    }
+
+  return real_syncfs (fd);
+}
+
+static int
+hook_syncfs (int fd)
+{
+  hook_func ((void **)&real_syncfs, "syncfs");
+  return real_syncfs (fd);
 }

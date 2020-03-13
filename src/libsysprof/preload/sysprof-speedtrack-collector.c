@@ -34,16 +34,17 @@
 
 #include "backtrace-helper.h"
 
-static void    hook_func      (void **addr, const char *name);
-static int     hook_open      (const char *filename, int flags, ...);
-static int     hook_close     (int fd);
-static int     hook_fsync     (int fd);
-static int     hook_fdatasync (int fd);
-static int     hook_msync     (void *addr, size_t length, int flags);
-static void    hook_sync      (void);
-static int     hook_syncfs    (int fd);
-static ssize_t hook_read      (int fd, void *buf, size_t nbyte);
-static ssize_t hook_write     (int fd, const void *buf, size_t nbyte);
+static void     hook_func      (void **addr, const char *name);
+static int      hook_open      (const char *filename, int flags, ...);
+static int      hook_close     (int fd);
+static int      hook_fsync     (int fd);
+static int      hook_fdatasync (int fd);
+static int      hook_msync     (void *addr, size_t length, int flags);
+static void     hook_sync      (void);
+static int      hook_syncfs    (int fd);
+static ssize_t  hook_read      (int fd, void *buf, size_t nbyte);
+static ssize_t  hook_write     (int fd, const void *buf, size_t nbyte);
+static gboolean hook_iteration (GMainContext *context, gboolean may_block);
 
 static __thread gboolean rec_guard;
 static int (*real_open) (const char *filename, int flags, ...) = hook_open;
@@ -55,6 +56,7 @@ static ssize_t (*real_read) (int fd, void *buf, size_t nbyte) = hook_read;
 static ssize_t (*real_write) (int fd, const void *buf, size_t nbyte) = hook_write;
 static void (*real_sync) (void) = hook_sync;
 static int (*real_syncfs) (int fd) = hook_syncfs;
+static gboolean (*real_iteration) (GMainContext *context, gboolean may_block) = hook_iteration;
 
 static inline gboolean
 is_capturing (void)
@@ -437,4 +439,36 @@ hook_syncfs (int fd)
 {
   hook_func ((void **)&real_syncfs, "syncfs");
   return real_syncfs (fd);
+}
+
+gboolean
+g_main_context_iteration (GMainContext *context,
+                          gboolean      may_block)
+{
+  if (is_capturing ())
+    {
+      gint64 begin;
+      gint64 end;
+      gchar str[128];
+      gboolean ret;
+
+      begin = SYSPROF_CAPTURE_CURRENT_TIME;
+      ret = real_iteration (context, may_block);
+      end = SYSPROF_CAPTURE_CURRENT_TIME;
+
+      g_snprintf (str, sizeof str, "context = %p, may_block = %d => %d", context, may_block, ret);
+      sysprof_collector_mark (begin, end - begin, "speedtrack", "g_main_context_iteration", str);
+
+      return ret;
+    }
+
+  return real_iteration (context, may_block);
+}
+
+static gboolean
+hook_iteration (GMainContext *context,
+                gboolean      may_block)
+{
+  hook_func ((void **)&real_iteration, "g_main_context_iteration");
+  return real_iteration (context, may_block);
 }

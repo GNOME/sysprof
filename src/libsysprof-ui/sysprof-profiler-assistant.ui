@@ -27,6 +27,18 @@
     <property name="display-name" translatable="yes">GNOME Shell</property>
     <property name="icon-name">sysprof-library</property>
   </object>
+  <object class="SysprofAid" id="speedtrack_aid">
+    <property name="display-name">Speedtrack</property>
+    <property name="icon-name">sysprof-gtk</property>
+    <child>
+      <object class="SysprofControlSource"/>
+    </child>
+    <child>
+      <object class="SysprofPreloadSource">
+        <property name="preload">libsysprof-speedtrack-3.so</property>
+      </object>
+    </child>
+  </object>
   <object class="SysprofAid" id="gtk_aid">
     <property name="display-name">GTK</property>
     <property name="icon-name">sysprof-gtk</property>
@@ -197,6 +209,14 @@
                           <object class="SysprofAidIcon">
                             <property name="tooltip-text" translatable="yes">Track application memory allocations (Sysprof must launch target application)</property>
                             <property name="aid">memprof_aid</property>
+                            <property name="selected">false</property>
+                            <property name="visible">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="SysprofAidIcon">
+                            <property name="tooltip-text" translatable="yes">Track slow operations on your applications main loop</property>
+                            <property name="aid">speedtrack_aid</property>
                             <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>

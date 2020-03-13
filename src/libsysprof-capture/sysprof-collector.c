@@ -406,7 +406,7 @@ sysprof_collector_mark (gint64       time,
         ev->frame.time = time;
         ev->duration = duration;
         g_strlcpy (ev->group, group, sizeof ev->group);
-        g_strlcpy (ev->name, message, sizeof ev->name);
+        g_strlcpy (ev->name, mark, sizeof ev->name);
         memcpy (ev->message, message, sl);
         ev->message[sl] = 0;
 

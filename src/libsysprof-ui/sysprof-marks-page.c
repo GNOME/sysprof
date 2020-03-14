@@ -385,6 +385,38 @@ sysprof_marks_page_set_size_group (SysprofPage  *page,
 }
 
 static void
+sysprof_marks_page_tree_view_row_activated_cb (SysprofMarksPage  *self,
+                                               GtkTreePath       *path,
+                                               GtkTreeViewColumn *column,
+                                               GtkTreeView       *tree_view)
+{
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+
+  g_assert (SYSPROF_IS_MARKS_PAGE (self));
+  g_assert (path != NULL);
+  g_assert (GTK_IS_TREE_VIEW_COLUMN (column));
+  g_assert (GTK_IS_TREE_VIEW (tree_view));
+
+  model = gtk_tree_view_get_model (tree_view);
+
+  if (gtk_tree_model_get_iter (model, &iter, path))
+    {
+      SysprofDisplay *display;
+      gint64 begin_time;
+      gint64 end_time;
+
+      gtk_tree_model_get (model, &iter,
+                          SYSPROF_MARKS_MODEL_COLUMN_BEGIN_TIME, &begin_time,
+                          SYSPROF_MARKS_MODEL_COLUMN_END_TIME, &end_time,
+                          -1);
+
+      display = SYSPROF_DISPLAY (gtk_widget_get_ancestor (GTK_WIDGET (self), SYSPROF_TYPE_DISPLAY));
+      sysprof_display_add_to_selection (display, begin_time, end_time);
+    }
+}
+
+static void
 sysprof_marks_page_finalize (GObject *object)
 {
   SysprofMarksPage *self = (SysprofMarksPage *)object;
@@ -515,6 +547,12 @@ sysprof_marks_page_init (SysprofMarksPage *self)
   g_signal_connect_object (priv->tree_view,
                            "key-press-event",
                            G_CALLBACK (sysprof_marks_page_tree_view_key_press_event_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  g_signal_connect_object (priv->tree_view,
+                           "row-activated",
+                           G_CALLBACK (sysprof_marks_page_tree_view_row_activated_cb),
                            self,
                            G_CONNECT_SWAPPED);
 

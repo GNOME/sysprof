@@ -88,5 +88,9 @@ SYSPROF_AVAILABLE_IN_ALL
 gboolean            sysprof_display_get_can_replay   (SysprofDisplay          *self);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofDisplay     *sysprof_display_replay           (SysprofDisplay          *self);
+SYSPROF_AVAILABLE_IN_3_38
+void                sysprof_display_add_to_selection (SysprofDisplay          *self,
+                                                      gint64                   begin_time,
+                                                      gint64                   end_time);
 
 G_END_DECLS

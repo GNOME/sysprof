@@ -1248,3 +1248,17 @@ _sysprof_display_reload_page (SysprofDisplay *self,
                            priv->filter,
                            NULL, NULL, NULL);
 }
+
+void
+sysprof_display_add_to_selection (SysprofDisplay *self,
+                                  gint64          begin_time,
+                                  gint64          end_time)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+  SysprofSelection *selection;
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
+
+  selection = sysprof_visualizers_frame_get_selection (priv->visualizers);
+  sysprof_selection_select_range (selection, begin_time, end_time);
+}

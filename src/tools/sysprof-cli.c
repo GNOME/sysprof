@@ -210,6 +210,7 @@ main (gint   argc,
   gboolean rapl = FALSE;
   gboolean memprof = FALSE;
   gboolean merge = FALSE;
+  gboolean speedtrack = FALSE;
   int pid = -1;
   int fd;
   int flags;
@@ -231,6 +232,7 @@ main (gint   argc,
     { "rapl", 0, 0, G_OPTION_ARG_NONE, &rapl, N_("Include RAPL energy statistics") },
     { "memprof", 0, 0, G_OPTION_ARG_NONE, &memprof, N_("Profile memory allocations and frees") },
     { "gnome-shell", 0, 0, G_OPTION_ARG_NONE, &gnome_shell, N_("Connect to org.gnome.Shell for profiler statistics") },
+    { "speedtrack", 0, 0, G_OPTION_ARG_NONE, &speedtrack, N_("Track performance of the applications main loop") },
     { "merge", 0, 0, G_OPTION_ARG_NONE, &merge, N_("Merge all provided *.syscap files and write to stdout") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
@@ -514,6 +516,15 @@ Examples:\n\
   if (memprof)
     {
       source = sysprof_memprof_source_new ();
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
+
+  if (speedtrack)
+    {
+      source = g_object_new (SYSPROF_TYPE_PRELOAD_SOURCE,
+                             "preload", "libsysprof-speedtrack-3.so",
+                             NULL);
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }

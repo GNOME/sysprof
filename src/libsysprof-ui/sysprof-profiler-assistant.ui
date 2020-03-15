@@ -31,9 +31,6 @@
     <property name="display-name">Speedtrack</property>
     <property name="icon-name">sysprof-gtk</property>
     <child>
-      <object class="SysprofControlSource"/>
-    </child>
-    <child>
       <object class="SysprofPreloadSource">
         <property name="preload">libsysprof-speedtrack-3.so</property>
       </object>

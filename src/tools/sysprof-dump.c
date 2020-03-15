@@ -83,7 +83,7 @@ main (gint argc,
   begin_time = sysprof_capture_reader_get_start_time (reader);
   end_time = sysprof_capture_reader_get_end_time (reader);
 
-  g_print ("Capture Time Range: %"G_GUINT64_FORMAT" to %"G_GUINT64_FORMAT" (%lf)\n",
+  g_print ("Capture Time Range: %" G_GUINT64_FORMAT " to %" G_GUINT64_FORMAT " (%lf)\n",
            begin_time, end_time, (end_time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC);
 
   while (sysprof_capture_reader_peek_type (reader, &type))
@@ -128,7 +128,7 @@ main (gint argc,
 
             g_hash_table_iter_init (&iter, ret);
             while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&str))
-              g_print ("  "SYSPROF_CAPTURE_ADDRESS_FORMAT" : %s\n", addr, str);
+              g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " : %s\n", addr, str);
 
             break;
           }
@@ -138,7 +138,7 @@ main (gint argc,
             const SysprofCaptureLog *log = sysprof_capture_reader_read_log (reader);
             gdouble ptime = (log->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
 
-            g_print ("LOG: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
+            g_print ("LOG: pid=%d time=%" G_GINT64_FORMAT " (%lf)\n"
                      " severity = %d\n"
                      "   domain = %s\n"
                      "  message = %s\n",
@@ -152,11 +152,11 @@ main (gint argc,
           {
             const SysprofCaptureMap *map = sysprof_capture_reader_read_map (reader);
 
-            g_print ("MAP: pid=%d time=%"G_GINT64_FORMAT"\n"
-                     "   start  = %"G_GUINT64_FORMAT"\n"
-                     "     end  = %"G_GUINT64_FORMAT"\n"
-                     "   offset = %"G_GUINT64_FORMAT"\n"
-                     "    inode = %"G_GUINT64_FORMAT"\n"
+            g_print ("MAP: pid=%d time=%" G_GINT64_FORMAT "\n"
+                     "   start  = %" G_GUINT64_FORMAT "\n"
+                     "     end  = %" G_GUINT64_FORMAT "\n"
+                     "   offset = %" G_GUINT64_FORMAT "\n"
+                     "    inode = %" G_GUINT64_FORMAT "\n"
                      " filename = %s\n",
                      map->frame.pid, map->frame.time,
                      map->start, map->end, map->offset, map->inode, map->filename);
@@ -169,7 +169,7 @@ main (gint argc,
             const SysprofCaptureFileChunk *file_chunk = sysprof_capture_reader_read_file (reader);
             gdouble ptime = (file_chunk->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
 
-            g_print ("FILE_CHUNK: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
+            g_print ("FILE_CHUNK: pid=%d time=%" G_GINT64_FORMAT " (%lf)\n"
                      "     path = %s\n"
                      "  is_last = %d\n"
                      "    bytes = %d\n",
@@ -184,10 +184,10 @@ main (gint argc,
             const SysprofCaptureMark *mark = sysprof_capture_reader_read_mark (reader);
             gdouble ptime = (mark->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
 
-            g_print ("MARK: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
+            g_print ("MARK: pid=%d time=%" G_GINT64_FORMAT " (%lf)\n"
                      "    group = %s\n"
                      "     name = %s\n"
-                     " duration = %"G_GUINT64_FORMAT"\n"
+                     " duration = %" G_GUINT64_FORMAT "\n"
                      "  message = %s\n",
                      mark->frame.pid, mark->frame.time, ptime,
                      mark->group, mark->name, mark->duration, mark->message);
@@ -200,7 +200,7 @@ main (gint argc,
             const SysprofCaptureMetadata *metadata = sysprof_capture_reader_read_metadata (reader);
             gdouble ptime = (metadata->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
 
-            g_print ("METADATA: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n"
+            g_print ("METADATA: pid=%d time=%" G_GINT64_FORMAT " (%lf)\n"
                      "       id = %s\n"
                      "\"\"\"\n%s\n\"\"\"\n",
                      metadata->frame.pid, metadata->frame.time, ptime,
@@ -216,7 +216,7 @@ main (gint argc,
             if (pr == NULL)
               perror ("Failed to read process");
 
-            g_print ("PROCESS: pid=%d cmdline=%s time=%"G_GINT64_FORMAT"\n", pr->frame.pid, pr->cmdline, pr->frame.time);
+            g_print ("PROCESS: pid=%d cmdline=%s time=%" G_GINT64_FORMAT "\n", pr->frame.pid, pr->cmdline, pr->frame.time);
 
             break;
           }
@@ -227,10 +227,10 @@ main (gint argc,
             gdouble ptime = (s->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
             guint i;
 
-            g_print ("SAMPLE: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n", s->frame.pid, s->frame.time, ptime);
+            g_print ("SAMPLE: pid=%d time=%" G_GINT64_FORMAT " (%lf)\n", s->frame.pid, s->frame.time, ptime);
 
             for (i = 0; i < s->n_addrs; i++)
-              g_print ("  "SYSPROF_CAPTURE_ADDRESS_FORMAT"\n", s->addrs[i]);
+              g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT "\n", s->addrs[i]);
 
             break;
           }
@@ -238,7 +238,7 @@ main (gint argc,
         case SYSPROF_CAPTURE_FRAME_TIMESTAMP:
           {
             const SysprofCaptureTimestamp *ts =  sysprof_capture_reader_read_timestamp (reader);
-            g_print ("TIMESTAMP: pid=%d time=%"G_GINT64_FORMAT"\n", ts->frame.pid, ts->frame.time);
+            g_print ("TIMESTAMP: pid=%d time=%" G_GINT64_FORMAT "\n", ts->frame.pid, ts->frame.time);
             break;
           }
 
@@ -248,7 +248,7 @@ main (gint argc,
             gdouble ptime = (def->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
             guint i;
 
-            g_print ("NEW COUNTERS: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n", def->frame.pid, def->frame.time, ptime);
+            g_print ("NEW COUNTERS: pid=%d time=%" G_GINT64_FORMAT " (%lf)\n", def->frame.pid, def->frame.time, ptime);
 
             for (i = 0; i < def->n_counters; i++)
               {
@@ -274,7 +274,7 @@ main (gint argc,
             gdouble ptime = (set->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
             guint i;
 
-            g_print ("SET COUNTERS: pid=%d time=%"G_GINT64_FORMAT" (%lf)\n", set->frame.pid, set->frame.time, ptime);
+            g_print ("SET COUNTERS: pid=%d time=%" G_GINT64_FORMAT " (%lf)\n", set->frame.pid, set->frame.time, ptime);
 
             for (i = 0; i < set->n_values; i++)
               {
@@ -286,7 +286,7 @@ main (gint argc,
                     if (values->ids[j])
                       {
                         if (GET_CTR_TYPE (values->ids[j]) == SYSPROF_CAPTURE_COUNTER_INT64)
-                          g_print ("  COUNTER(%d): %"G_GINT64_FORMAT"\n",
+                          g_print ("  COUNTER(%d): %" G_GINT64_FORMAT "\n",
                                    values->ids[j],
                                    values->values[j].v64);
                         else if (GET_CTR_TYPE (values->ids[j]) == SYSPROF_CAPTURE_COUNTER_DOUBLE)
@@ -304,7 +304,7 @@ main (gint argc,
             const SysprofCaptureAllocation *ev = sysprof_capture_reader_read_allocation (reader);
             gdouble ptime = (ev->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
 
-            g_print ("%s: pid=%d tid=%d addr=0x%"G_GINT64_MODIFIER"x size=%"G_GINT64_FORMAT" time=%"G_GINT64_FORMAT" (%lf)\n",
+            g_print ("%s: pid=%d tid=%d addr=0x%" G_GINT64_MODIFIER "x size=%" G_GINT64_FORMAT " time=%" G_GINT64_FORMAT " (%lf)\n",
                      ev->alloc_size > 0 ? "ALLOC" : "FREE",
                      ev->frame.pid, ev->tid,
                      ev->alloc_addr, ev->alloc_size,

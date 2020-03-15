@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-02-21 20:41+0000\n"
-"PO-Revision-Date: 2020-02-23 12:49+0100\n"
+"POT-Creation-Date: 2020-03-13 22:52+0000\n"
+"PO-Revision-Date: 2020-03-15 14:45+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -105,7 +105,7 @@ msgstr ""
 "Ostatnio uruchomione środowisko, które zostanie ustawione w interfejsie po "
 "ponownym uruchomieniu."
 
-#: src/libsysprof/sysprof-callgraph-profile.c:433
+#: src/libsysprof/sysprof-callgraph-profile.c:445
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr "Nie można utworzyć wykresu wywołań z przechwytywania systemu."
 
@@ -343,20 +343,20 @@ msgstr "Nagranie z %s"
 msgid "New Recording"
 msgstr "Nowe nagranie"
 
-#: src/libsysprof-ui/sysprof-display.c:1182
+#: src/libsysprof-ui/sysprof-display.c:1185
 msgid "Save Recording"
 msgstr "Zapis nagrania"
 
-#: src/libsysprof-ui/sysprof-display.c:1185
+#: src/libsysprof-ui/sysprof-display.c:1188
 msgid "Save"
 msgstr "Zapisz"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1186 src/sysprof/sysprof-window.c:277
+#: src/libsysprof-ui/sysprof-display.c:1189 src/sysprof/sysprof-window.c:277
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/libsysprof-ui/sysprof-display.c:1212
+#: src/libsysprof-ui/sysprof-display.c:1215
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Zapisanie nagrania się nie powiodło: %s"
@@ -510,21 +510,25 @@ msgstr "Sieć"
 msgid "GNOME Shell"
 msgstr "Powłoka GNOME"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:95
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:107
 msgid "Profilers"
 msgstr "Profilery"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:198
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:210
 msgid ""
 "Track application memory allocations (Sysprof must launch target application)"
 msgstr ""
 "Śledzi przydziały pamięci programu (Sysprof musi uruchomić program docelowy)"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:214
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:218
+msgid "Track slow operations on your applications main loop"
+msgstr "Śledzi wolne działania na pętli głównej programu"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:234
 msgid "All Processes"
 msgstr "Wszystkie procesy"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:244
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:264
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
 "not be possible on some system system configurations."
@@ -532,36 +536,36 @@ msgstr ""
 "Wszystkie programy i jądro systemu operacyjnego na wykresie wywołań. Może to "
 "nie być możliwe w przypadku niektórych konfiguracji komputera."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:272
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:292
 msgid "Search Processes…"
 msgstr "Wyszukiwanie procesów…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:291
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:311
 msgid "Loading Processes…"
 msgstr "Wczytywanie procesów…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:315
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:335
 msgid "Launch Application"
 msgstr "Uruchomienie programu"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:344
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:364
 msgid "Enable to launch a program of your choosing before profiling."
 msgstr ""
 "Włączenie umożliwi uruchomienie wybranego programu przed profilowaniem."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:372
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:392
 msgid "Command Line"
 msgstr "Wiersz poleceń"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:391
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:411
 msgid "Environment"
 msgstr "Środowisko"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:417
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:437
 msgid "Inherit Environment"
 msgstr "Dziedziczenie środowiska"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:441
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:461
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other "
 "desktop environment settings."
@@ -569,11 +573,11 @@ msgstr ""
 "Włączenie zapewni, że program współdzieli ekran, magistralę komunikatów "
 "i inne ustawienia środowiska."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:467
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:487
 msgid "Allow CPU Throttling"
 msgstr "Ograniczanie procesora"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:495
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:515
 msgid ""
 "If disabled, your CPU will be placed in performance mode. It will be "
 "restored after profiling."
@@ -581,7 +585,7 @@ msgstr ""
 "Wyłączenie spowoduje przejście procesora do trybu wydajności. Po ukończeniu "
 "profilowania zostanie przywrócony zwykły tryb."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:516
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:536
 msgid "_Record"
 msgstr "_Nagrywaj"
 

@@ -461,12 +461,38 @@ sysprof_collector_log_printf (GLogLevelFlags  severity,
                               const gchar    *format,
                               ...)
 {
-  g_autofree gchar *formatted = NULL;
-  va_list args;
+  COLLECTOR_BEGIN {
+    g_autofree gchar *formatted = NULL;
+    SysprofCaptureLog *ev;
+    va_list args;
+    gsize len;
+    gsize sl;
 
-  va_start (args, format);
-  formatted = g_strdup_vprintf (format, args);
-  va_end (args);
+    va_start (args, format);
+    formatted = g_strdup_vprintf (format, args);
+    va_end (args);
 
-  sysprof_collector_log (severity, domain, formatted);
+    if (domain == NULL)
+      domain = "";
+
+    sl = strlen (formatted);
+    len = realign (sizeof *ev + sl + 1);
+
+    if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
+      {
+        ev->frame.len = len;
+        ev->frame.type = SYSPROF_CAPTURE_FRAME_LOG;
+        ev->frame.cpu = _do_getcpu ();
+        ev->frame.pid = collector->pid;
+        ev->frame.time = SYSPROF_CAPTURE_CURRENT_TIME;
+        ev->severity = severity & 0xFFFF;
+        ev->padding1 = 0;
+        ev->padding2 = 0;
+        g_strlcpy (ev->domain, domain, sizeof ev->domain);
+        memcpy (ev->message, formatted, sl);
+        ev->message[sl] = 0;
+
+        mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
+      }
+  } COLLECTOR_END;
 }

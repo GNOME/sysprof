@@ -81,5 +81,10 @@ SYSPROF_AVAILABLE_IN_3_36
 void sysprof_collector_log      (GLogLevelFlags         severity,
                                  const gchar           *domain,
                                  const gchar           *message);
+SYSPROF_AVAILABLE_IN_3_38
+void sysprof_collector_log_printf (GLogLevelFlags         severity,
+                                   const gchar           *domain,
+                                   const gchar           *format,
+                                   ...) G_GNUC_PRINTF (3, 4);
 
 G_END_DECLS

@@ -454,3 +454,19 @@ sysprof_collector_log (GLogLevelFlags  severity,
 
   } COLLECTOR_END;
 }
+
+void
+sysprof_collector_log_printf (GLogLevelFlags  severity,
+                              const gchar    *domain,
+                              const gchar    *format,
+                              ...)
+{
+  g_autofree gchar *formatted = NULL;
+  va_list args;
+
+  va_start (args, format);
+  formatted = g_strdup_vprintf (format, args);
+  va_end (args);
+
+  sysprof_collector_log (severity, domain, formatted);
+}

@@ -203,6 +203,7 @@ main (gint   argc,
   gboolean no_memory = FALSE;
   gboolean no_network = FALSE;
   gboolean no_perf = FALSE;
+  gboolean no_throttle = FALSE;
   gboolean version = FALSE;
   gboolean force = FALSE;
   gboolean use_trace_fd = FALSE;
@@ -215,6 +216,7 @@ main (gint   argc,
   int fd;
   int flags;
   GOptionEntry entries[] = {
+    { "no-throttle", 0, 0, G_OPTION_ARG_NONE, &no_throttle, N_("Disable CPU throttling while profiling") },
     { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task"), N_("PID") },
     { "command", 'c', 0, G_OPTION_ARG_STRING, &command, N_("Run a command and profile the process"), N_("COMMAND") },
     { "env", 'e', 0, G_OPTION_ARG_STRING_ARRAY, &envs, N_("Set environment variable for spawned process. Can be used multiple times."), N_("VAR=VALUE") },
@@ -500,6 +502,14 @@ Examples:\n\
   if (!no_network)
     {
       source = sysprof_netdev_source_new ();
+      sysprof_profiler_add_source (profiler, source);
+      g_object_unref (source);
+    }
+
+  if (no_throttle)
+    {
+      source = sysprof_governor_source_new ();
+      sysprof_governor_source_set_disable_governor (SYSPROF_GOVERNOR_SOURCE (source), TRUE);
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }

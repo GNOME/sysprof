@@ -1,0 +1,1003 @@
+# Ukrainian translation for sysprof.
+# Copyright (C) 2020 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+#
+# Yuri Chornoivan <yurchor@ukr.net>, 2020.
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof sysprof-3-36\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2020-03-15 20:23+0000\n"
+"PO-Revision-Date: 2020-03-29 17:58+0300\n"
+"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
+"Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Lokalize 20.03.70\n"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:5
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:199
+#: src/sysprof/sysprof-application.c:326 src/sysprof/ui/sysprof-window.ui:12
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:6
+msgid "Profile an application or entire system"
+msgstr "Профілювання програми або усієї системи"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "Фундація GNOME"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"За допомогою Sysprof ви зможете профілювати програми з метою діагностики та"
+" оптимізації."
+
+#: data/org.gnome.Sysprof3.desktop.in:5
+msgid "Profiler"
+msgstr "Profiler"
+
+#: data/org.gnome.Sysprof3.desktop.in:6
+msgid "Profile an application or entire system."
+msgstr "Профілювання програми або усієї системи."
+
+#: data/org.gnome.sysprof3.gschema.xml:5
+msgid "Window size"
+msgstr "Розмір вікна"
+
+#: data/org.gnome.sysprof3.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "Розмір вікна (ширина і висота)."
+
+#: data/org.gnome.sysprof3.gschema.xml:10
+msgid "Window position"
+msgstr "Розташування вікна"
+
+#: data/org.gnome.sysprof3.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "Розташування вікна (x та y)."
+
+#: data/org.gnome.sysprof3.gschema.xml:15
+msgid "Window maximized"
+msgstr "Вікно розгорнуто"
+
+#: data/org.gnome.sysprof3.gschema.xml:16
+msgid "Window maximized state"
+msgstr "Стан розгорнутого вікна"
+
+#: data/org.gnome.sysprof3.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr "Остання запущена програма"
+
+#: data/org.gnome.sysprof3.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+"Остання запущена програма, яку буде встановлено у інтерфейсі користувача"
+" після перезапуску програми."
+
+#: data/org.gnome.sysprof3.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr "Остання запущена успадковує середовище"
+
+#: data/org.gnome.sysprof3.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr "Чи успадковує остання запущена програма батьківське середовище."
+
+#: data/org.gnome.sysprof3.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr "Середовище останньої запущеної"
+
+#: data/org.gnome.sysprof3.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+"Середовище останньої запущеної програми, яке буде встановлено у інтерфейсі"
+" користувача після перезапуску програми."
+
+#: src/libsysprof/sysprof-callgraph-profile.c:445
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "Sysprof не вдалося створити граф викликів із записаних даних системи."
+
+#: src/libsysprof/sysprof-perf-source.c:476
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Sysprof не вдалося знайти поле «%s»."
+
+#: src/libsysprof/sysprof-perf-source.c:489
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Sysprof не вдалося обробити зсув для «%s»."
+
+#: src/libsysprof/sysprof-perf-source.c:553
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Sysprof не вдалося отримати ідентифікатор perf_event."
+
+#: src/libsysprof/sysprof-perf-source.c:659
+#, c-format
+msgid "An error occurred while attempting to access performance counters"
+msgstr ""
+"Під час спроби отримати доступ до лічильників швидкодії сталася помилка"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:182
+msgid "Battery Charge"
+msgstr "Заряд акумулятора"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:198
+msgid "Battery Charge (All)"
+msgstr "Заряд акумулятора (усе)"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:240
+#: src/libsysprof-ui/sysprof-counters-aid.c:282
+msgid "Battery"
+msgstr "Акумулятор"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:212
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:218
+msgid "Stack Traces"
+msgstr "Трасування стека"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:226
+msgid "Stack Traces (In Kernel)"
+msgstr "Трасування стека (у ядрі)"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:234
+msgid "Stack Traces (In User)"
+msgstr "Трасування стека (для користувача)"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:243
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:273
+msgid "Callgraph"
+msgstr "Граф викликів"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:27
+#: src/libsysprof-ui/sysprof-memprof-page.ui:236
+msgid "Functions"
+msgstr "Функції"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:43
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:104
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:159
+#: src/libsysprof-ui/sysprof-memprof-page.ui:253
+#: src/libsysprof-ui/sysprof-memprof-page.ui:315
+#: src/libsysprof-ui/sysprof-memprof-page.ui:371
+msgid "Self"
+msgstr "Набутий"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:59
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:120
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:175
+#: src/libsysprof-ui/sysprof-memprof-page.ui:269
+#: src/libsysprof-ui/sysprof-memprof-page.ui:331
+#: src/libsysprof-ui/sysprof-memprof-page.ui:387
+msgid "Total"
+msgstr "Разом"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:88
+#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+msgid "Callers"
+msgstr "Зовнішні виклики"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:151
+#: src/libsysprof-ui/sysprof-memprof-page.ui:362
+msgid "Descendants"
+msgstr "Похідні"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:190
+#: src/libsysprof-ui/sysprof-details-page.ui:322
+msgid "Hits"
+msgstr "Вдалі спроби"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:213
+msgid "Generating Callgraph"
+msgstr "Створюємо граф викликів"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:214
+msgid "Sysprof is busy creating the selected callgraph."
+msgstr "Sysprof зайнято створенням вибраного графу викликів."
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:224
+#: src/libsysprof-ui/sysprof-memprof-page.ui:433
+msgid "Not Enough Samples"
+msgstr "Недостатньо зразків"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:225
+#: src/libsysprof-ui/sysprof-memprof-page.ui:434
+msgid "More samples are necessary to display a callgraph."
+msgstr "Для показу графу викликів потрібно більше зразків."
+
+#: src/libsysprof-ui/sysprof-counters-aid.c:221
+#: src/libsysprof-ui/sysprof-counters-aid.c:226
+msgid "Counters"
+msgstr "Лічильники"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:207
+#: src/libsysprof-ui/sysprof-cpu-aid.c:355
+msgid "CPU Usage"
+msgstr "Вжиток процесора"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:214
+msgid "CPU Frequency"
+msgstr "Частота процесора"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:218
+msgid "CPU Frequency (All)"
+msgstr "Частота процесора (усе)"
+
+#. Translators: CPU is the processor.
+#: src/libsysprof-ui/sysprof-cpu-aid.c:227
+#: src/libsysprof-ui/sysprof-cpu-aid.c:250
+msgid "CPU Usage (All)"
+msgstr "Вжиток процесора (усе)"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:316
+msgid "Processes"
+msgstr "Процеси"
+
+#: src/libsysprof-ui/sysprof-details-page.c:224
+msgid "Memory Capture"
+msgstr "Захоплення даних пам'яті"
+
+#: src/libsysprof-ui/sysprof-details-page.c:238
+#, c-format
+msgid "%0.4lf seconds"
+msgstr "%0.4lf секунд"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:21
+msgid "Filename"
+msgstr "Назва файла"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:35
+msgid "Captured at"
+msgstr "Захоплено о"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:50
+#: src/libsysprof-ui/sysprof-marks-page.ui:95
+#: src/libsysprof-ui/sysprof-marks-page.ui:215
+msgid "Duration"
+msgstr "Тривалість"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:65
+msgid "CPU Model"
+msgstr "Модель процесора"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:80
+msgid "Samples Captured"
+msgstr "Захоплено зразків"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:94
+msgid "Marks Captured"
+msgstr "Захоплено позначок"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:108
+msgid "Processes Captured"
+msgstr "Захоплено процесів"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:122
+msgid "Forks Captured"
+msgstr "Захоплено відгалужень"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:136
+msgid "Counters Captured"
+msgstr "Захоплено лічильників"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:151
+msgid "Allocations Captured"
+msgstr "Захоплено розміщень"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:309
+#: src/libsysprof-ui/sysprof-marks-page.ui:52
+msgid "Mark"
+msgstr "Позначка"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:335
+msgid "Min"
+msgstr "Мін."
+
+#: src/libsysprof-ui/sysprof-details-page.ui:348
+msgid "Max"
+msgstr "Макс."
+
+#: src/libsysprof-ui/sysprof-details-page.ui:361
+msgid "Avg"
+msgstr "Сер."
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:205
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+msgid "Disk"
+msgstr "Диск"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Reads"
+msgstr "Читання"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Writes"
+msgstr "Записи"
+
+#: src/libsysprof-ui/sysprof-display.c:229
+msgid "Recording Failed"
+msgstr "Не вдалося записати"
+
+#: src/libsysprof-ui/sysprof-display.c:234
+msgid "Recording…"
+msgstr "Записування…"
+
+#. translators: %s is replaced with locale specific time of recording
+#: src/libsysprof-ui/sysprof-display.c:258
+#, c-format
+msgid "Recording at %s"
+msgstr "Записано о %s"
+
+#: src/libsysprof-ui/sysprof-display.c:262
+msgid "New Recording"
+msgstr "Новий запис"
+
+#: src/libsysprof-ui/sysprof-display.c:1185
+msgid "Save Recording"
+msgstr "Зберегти запис"
+
+#: src/libsysprof-ui/sysprof-display.c:1188
+msgid "Save"
+msgstr "Зберегти"
+
+#. Translators: This is a button.
+#: src/libsysprof-ui/sysprof-display.c:1189 src/sysprof/sysprof-window.c:277
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: src/libsysprof-ui/sysprof-display.c:1215
+#, c-format
+msgid "Failed to save recording: %s"
+msgstr "Не вдалося зберегти запис: %s"
+
+#: src/libsysprof-ui/sysprof-display.ui:49
+#: src/libsysprof-ui/sysprof-marks-page.ui:19
+msgid "Details"
+msgstr "Подробиці"
+
+#: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
+msgid "Remove environment variable"
+msgstr "Вилучити змінну середовища"
+
+#: src/libsysprof-ui/sysprof-environ-editor.c:71
+msgid "New variable…"
+msgstr "Створити змінну…"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "Йой, боляче!"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr ""
+"Під час спроби профілювання вашої системи сталося щось неочікувано погане."
+
+#: src/libsysprof-ui/sysprof-log-model.c:210
+#: src/libsysprof-ui/sysprof-logs-page.ui:58
+#: src/libsysprof-ui/sysprof-marks-page.ui:109
+msgid "Message"
+msgstr "Повідомлення"
+
+#: src/libsysprof-ui/sysprof-log-model.c:213
+msgid "Info"
+msgstr "Інформація"
+
+#: src/libsysprof-ui/sysprof-log-model.c:216
+msgid "Critical"
+msgstr "Критичний"
+
+#: src/libsysprof-ui/sysprof-log-model.c:219
+msgid "Error"
+msgstr "Помилка"
+
+#: src/libsysprof-ui/sysprof-log-model.c:222
+msgid "Debug"
+msgstr "Діагностика"
+
+#: src/libsysprof-ui/sysprof-log-model.c:225
+msgid "Warning"
+msgstr "Попередження"
+
+#: src/libsysprof-ui/sysprof-logs-aid.c:195
+#: src/libsysprof-ui/sysprof-logs-aid.c:199
+#: src/libsysprof-ui/sysprof-logs-aid.c:204
+#: src/libsysprof-ui/sysprof-logs-aid.c:210
+msgid "Logs"
+msgstr "Журнали"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:15
+#: src/libsysprof-ui/sysprof-marks-page.ui:67
+msgid "Time"
+msgstr "Час"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:29
+msgid "Severity"
+msgstr "Важливість"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:44
+msgid "Domain"
+msgstr "Домен"
+
+#: src/libsysprof-ui/sysprof-marks-aid.c:237
+#: src/libsysprof-ui/sysprof-marks-aid.c:242
+msgid "Timings"
+msgstr "Хронометражі"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:38
+msgid "Group"
+msgstr "Група"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:81
+msgid "End"
+msgstr "Кінець"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:245
+msgid "No Timings Available"
+msgstr "Немає доступних хронометражів"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:246
+msgid "No timing data was found for the current selection"
+msgstr "У поточних вибраних даних не знайдено даних хронометражу"
+
+#: src/libsysprof-ui/sysprof-memory-aid.c:68
+msgid "Memory Usage"
+msgstr "Використання пам'яті"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:182
+msgid "Memory"
+msgstr "Пам'ять"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:193
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Allocations"
+msgstr "Розміщення у пам'яті"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:224
+msgid "Track Allocations"
+msgstr "Стежити за розміщеннями"
+
+#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
+#: src/libsysprof-ui/sysprof-memprof-page.c:235
+#, c-format
+msgid "> %s to %s"
+msgstr "> від %s до %s"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:23
+msgid "Summary"
+msgstr "Резюме"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+msgid "All Allocations"
+msgstr "Усі розміщення"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:40
+msgid "Temporary Allocations"
+msgstr "Тимчасові розміщення"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+msgid "Size"
+msgstr "Розмір"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:422
+msgid "Analyzing Memory Allocations"
+msgstr "Аналізуємо розміщення у пам'яті"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:423
+msgid "Sysprof is busy analyzing memory allocations."
+msgstr "Sysprof зайнято аналізом розміщення даних у пам'яті."
+
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Used"
+msgstr "Використано пам'яті"
+
+#: src/libsysprof-ui/sysprof-netdev-aid.c:204
+#: src/libsysprof-ui/sysprof-netdev-aid.c:264
+msgid "Network"
+msgstr "Мережа"
+
+#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
+msgid "GNOME Shell"
+msgstr "GNOME Shell"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:95
+msgid "Profilers"
+msgstr "Засоби профілювання"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:198
+msgid ""
+"Track application memory allocations (Sysprof must launch target application)"
+msgstr ""
+"Стежити за розміщенням програмою даних у пам'яті (Sysprof має запустити"
+" цільову програму)"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:214
+msgid "All Processes"
+msgstr "Усі процеси"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:244
+msgid ""
+"Include all applications and operating system kernel in callgraph. This may "
+"not be possible on some system system configurations."
+msgstr ""
+"Включити до графу викликів усі програми і ядро операційної системи. Це може"
+" бути неможливим у деяких конфігураціях системи."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:272
+msgid "Search Processes…"
+msgstr "Пошук процесів…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:291
+msgid "Loading Processes…"
+msgstr "Завантажуємо процеси…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:315
+msgid "Launch Application"
+msgstr "Запустити програму"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:344
+msgid "Enable to launch a program of your choosing before profiling."
+msgstr "Увімкнути запуск вибраної вами програми до профілювання."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:372
+msgid "Command Line"
+msgstr "Командний рядок"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:391
+msgid "Environment"
+msgstr "Середовище"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:417
+msgid "Inherit Environment"
+msgstr "Успадкувати середовище"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:441
+msgid ""
+"Enable to ensure your application shares the display, message-bus, and other "
+"desktop environment settings."
+msgstr ""
+"Увімкніть, щоб забезпечити успадкування вашою програмою дисплея, шини"
+" повідомлень та інших параметрів стільничного середовища."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:467
+msgid "Allow CPU Throttling"
+msgstr "Дозволити дроселювання процесора"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:495
+msgid ""
+"If disabled, your CPU will be placed in performance mode. It will be "
+"restored after profiling."
+msgstr ""
+"Якщо вимкнено, ваш процесор буде переведено у режим максимальної швидкодії."
+" Стан процесора буде відновлено після профілювання."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:516
+msgid "_Record"
+msgstr "_Записати"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:175
+#: src/libsysprof-ui/sysprof-rapl-aid.c:248
+msgid "Energy Usage"
+msgstr "Споживання енергії"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:180
+msgid "Energy Usage (All)"
+msgstr "Споживання енергії (усе)"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"Чи знали ви, що ви можете скористатися <a href=\"help:sysprof\">sysprof-cli<"
+"/a> для записування?"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:47
+msgid "Events"
+msgstr "Події"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:73
+msgid "_Stop Recording"
+msgstr "З_упинити запис"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:119
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
+msgid "Select for more details"
+msgstr "Виберіть, щоб переглянути подробиці"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
+msgid "Display supplemental graphs"
+msgstr "Показати допоміжні графи"
+
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+msgid "Instruments"
+msgstr "Інструменти"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Профілювання системи"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr ""
+"Для отримання доступу до профілювання системи слід пройти розпізнавання."
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:26
+msgid "Open a perf event stream"
+msgstr "Відкриття потоку подій швидкодії"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:27
+msgid "Authentication is required to access system performance counters."
+msgstr ""
+"Для доступу до лічильників швидкодії системи слід пройти розпізнавання."
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:37
+msgid "Get a list of kernel symbols and their address"
+msgstr "Отримання списку символів ядра та їхніх адрес"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:38
+msgid "Authentication is required to access Linux kernel information."
+msgstr "Для доступу до даних ядра Linux слід пройти розпізнавання."
+
+#: src/sysprof/gtk/help-overlay.ui:8
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Клавіатурні скорочення Sysprof"
+
+#: src/sysprof/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Files"
+msgstr "Файли"
+
+#: src/sysprof/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Save Recording"
+msgstr "Зберегти запис"
+
+#: src/sysprof/gtk/help-overlay.ui:17
+msgctxt "shortcut window"
+msgid "Saves the current recording"
+msgstr "Зберігає поточний запис"
+
+#: src/sysprof/gtk/help-overlay.ui:24
+msgctxt "shortcut window"
+msgid "Open recording"
+msgstr "Відкрити запис"
+
+#: src/sysprof/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Opens a previously saved recording"
+msgstr "Відкриває раніше збережений запис"
+
+#: src/sysprof/gtk/help-overlay.ui:34
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Запис"
+
+#: src/sysprof/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Record again"
+msgstr "Записати ще раз"
+
+#: src/sysprof/gtk/help-overlay.ui:39
+msgctxt "shortcut window"
+msgid "Starts a new recording"
+msgstr "Запускає нове записування"
+
+#: src/sysprof/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Зупинити записування"
+
+#: src/sysprof/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Граф викликів"
+
+#: src/sysprof/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Розгорнути функцію"
+
+#: src/sysprof/gtk/help-overlay.ui:60
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "Показує безпосередні похідні функції графу викликів"
+
+#: src/sysprof/gtk/help-overlay.ui:67
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Згорнути функцію"
+
+#: src/sysprof/gtk/help-overlay.ui:68
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr "Приховує усі похідні графу виклику під вибраною функцією"
+
+#: src/sysprof/gtk/help-overlay.ui:75
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "Перейти до функції"
+
+#: src/sysprof/gtk/help-overlay.ui:76
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr "Вибирає функцію або файл як вершину графу викликів"
+
+#: src/sysprof/gtk/help-overlay.ui:85
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Візуалізатори"
+
+#: src/sysprof/gtk/help-overlay.ui:89
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Збільшити"
+
+#: src/sysprof/gtk/help-overlay.ui:96
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Зменшити"
+
+#: src/sysprof/gtk/help-overlay.ui:103
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Відновити масштаб"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "New Tab"
+msgstr "Нова вкладка"
+
+#: src/sysprof/gtk/menus.ui:11
+msgid "New Window"
+msgstr "Нове вікно"
+
+#: src/sysprof/gtk/menus.ui:18
+msgid "Open Recording…"
+msgstr "Відкрити записане…"
+
+#: src/sysprof/gtk/menus.ui:23
+msgid "Save Recording…"
+msgstr "Зберегти записане…"
+
+#: src/sysprof/gtk/menus.ui:30
+msgid "Record Again"
+msgstr "Записати ще раз"
+
+#: src/sysprof/gtk/menus.ui:37
+msgid "Close"
+msgstr "Закрити"
+
+#: src/sysprof/gtk/menus.ui:44
+msgid "Keyboard Shortcuts"
+msgstr "Клавіатурні скорочення"
+
+#: src/sysprof/gtk/menus.ui:49
+msgid "Help"
+msgstr "Довідка"
+
+#: src/sysprof/gtk/menus.ui:54
+msgid "About Sysprof"
+msgstr "Про Sysprof"
+
+#: src/sysprof/sysprof-application.c:191
+msgid "A system profiler"
+msgstr "Засіб профілювання системи"
+
+#: src/sysprof/sysprof-application.c:196
+msgid "translator-credits"
+msgstr "Юрій Чорноіван <yurchor@ukr.net>"
+
+#: src/sysprof/sysprof-application.c:202
+msgid "Learn more about Sysprof"
+msgstr "Дізнатися більше про Sysprof"
+
+#. Translators: This is a window title.
+#: src/sysprof/sysprof-window.c:271
+msgid "Open Capture…"
+msgstr "Відкриття захоплення…"
+
+#. Translators: This is a button.
+#: src/sysprof/sysprof-window.c:275
+msgid "Open"
+msgstr "Відкрити"
+
+#: src/sysprof/sysprof-window.c:282
+msgid "Sysprof Captures"
+msgstr "захоплення Sysprof"
+
+#: src/sysprof/sysprof-window.c:287
+msgid "All Files"
+msgstr "усі файли"
+
+#: src/tools/sysprof-cli.c:59
+msgid "Stopping profiler. Press twice more ^C to force exit."
+msgstr ""
+"Зупиняємо засіб профілювання. Натисніть ^C ще два рази для примусового виходу."
+
+#: src/tools/sysprof-cli.c:72
+msgid "Profiler stopped."
+msgstr "Засіб профілювання зупинено."
+
+#: src/tools/sysprof-cli.c:105
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge потребує принаймні 2 аргументів назв файлів"
+
+#: src/tools/sysprof-cli.c:217
+msgid "Make sysprof specific to a task"
+msgstr "Налаштувати sysprof на виконання специфічного завдання"
+
+#: src/tools/sysprof-cli.c:217
+msgid "PID"
+msgstr "PID"
+
+#: src/tools/sysprof-cli.c:218
+msgid "Run a command and profile the process"
+msgstr "Виконати команду і профілювати процес"
+
+#: src/tools/sysprof-cli.c:218
+msgid "COMMAND"
+msgstr "КОМАНДА"
+
+#: src/tools/sysprof-cli.c:219
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+"Встановити змінну середовища для запущеного процесу. Можна вказувати декілька"
+" разів."
+
+#: src/tools/sysprof-cli.c:219
+msgid "VAR=VALUE"
+msgstr "ЗМІННА=ЗНАЧЕННЯ"
+
+#: src/tools/sysprof-cli.c:220
+msgid "Force overwrite the capture file"
+msgstr "Примусово перезаписати файл захоплених даних"
+
+#: src/tools/sysprof-cli.c:221
+msgid "Disable recording of battery statistics"
+msgstr "Вимкнути записування статистичних даних щодо акумулятора"
+
+#: src/tools/sysprof-cli.c:222
+msgid "Disable recording of CPU statistics"
+msgstr "Вимкнути записування статистичних даних щодо процесора"
+
+#: src/tools/sysprof-cli.c:223
+msgid "Disable recording of Disk statistics"
+msgstr "Вимкнути записування статистичних даних щодо диска"
+
+#: src/tools/sysprof-cli.c:224
+msgid "Do not record stacktraces using Linux perf"
+msgstr "Не записувати трасування стека за допомогою perf Linux"
+
+#: src/tools/sysprof-cli.c:225
+msgid "Do not append symbol name information from local machine"
+msgstr "Не долучати дані щодо назви символів з локальної машини"
+
+#: src/tools/sysprof-cli.c:226
+msgid "Disable recording of memory statistics"
+msgstr "Вимкнути записування статистичних даних щодо пам'яті"
+
+#: src/tools/sysprof-cli.c:227
+msgid "Disable recording of network statistics"
+msgstr "Вимкнути записування статистичних даних щодо мережі"
+
+#: src/tools/sysprof-cli.c:228
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "Встановити середовище SYSPROF_TRACE_FD для підпроцесу"
+
+#: src/tools/sysprof-cli.c:229
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "Встановити середовище GJS_TRACE_FD для трасування процесів GJS"
+
+#: src/tools/sysprof-cli.c:230
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr ""
+"Встановити середовище GTK_TRACE_FD для трасування програми на основі GTK"
+
+#: src/tools/sysprof-cli.c:231
+msgid "Include RAPL energy statistics"
+msgstr "Включити статистичні дані щодо споживання енергії RAPL"
+
+#: src/tools/sysprof-cli.c:232
+msgid "Profile memory allocations and frees"
+msgstr "Профілювати розміщення даних у пам'яті і звільнення пам'яті"
+
+#: src/tools/sysprof-cli.c:233
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr ""
+"З'єднатися із org.gnome.Shell для отримання статистичних даних профілювання"
+
+#: src/tools/sysprof-cli.c:234
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr "Об'єднати усі надані файли *.syscap і записати до stdout"
+
+#: src/tools/sysprof-cli.c:235
+msgid "Print the sysprof-cli version and exit"
+msgstr "Вивести дані щодо версії sysprof-cli і вийти"
+
+#: src/tools/sysprof-cli.c:268
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[ФАЙЛ_ЗАХОПЛЕННЯ] [-- КОМАНДА АРГУМЕНТИ] — Sysprof"
+
+#: src/tools/sysprof-cli.c:271
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+msgstr ""
+"\n"
+"Приклади:\n"
+"\n"
+"  # Записати gtk4-widget-factory з використанням trace-fd для отримання"
+" наданих\n"
+"  # програмою даних та даних, які надає GTK і GNOME Shell\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Об'єднати декілька файлів syscap у один\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+
+#: src/tools/sysprof-cli.c:304
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "sysprof-cli передано забагато аргументів:"
+
+#. Translators: %s is a file name.
+#: src/tools/sysprof-cli.c:361
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s вже існує. Скорисайтеся --force, щоб його перезаписати.\n"
+
+#: src/tools/sysprof-profiler-ctl.c:45
+msgid "Connect to the system bus"
+msgstr "Під'єднатися до системної шини"
+
+#: src/tools/sysprof-profiler-ctl.c:46
+msgid "Connect to the session bus"
+msgstr "Під'єднатися до користувацької шини"
+
+#: src/tools/sysprof-profiler-ctl.c:47
+msgid "Connect to the given D-Bus address"
+msgstr "З'єднатися із вказаною адресою D-Bus"
+
+#: src/tools/sysprof-profiler-ctl.c:48
+msgid "Destination D-Bus name to invoke method on"
+msgstr "Назва D-Bus призначення для виклику методу на ньому"
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "Object path to invoke method on"
+msgstr "Об'єктний шлях, для якого викликається метод"
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "/org/gnome/Sysprof3/Profiler"
+msgstr "/org/gnome/Sysprof3/Profiler"
+
+#: src/tools/sysprof-profiler-ctl.c:50
+msgid "Timeout in seconds"
+msgstr "Час очікування у секундах"
+
+#: src/tools/sysprof-profiler-ctl.c:51
+msgid "Overwrite FILENAME if it exists"
+msgstr "Перезаписати файл НАЗВА_ФАЙЛА, якщо він існує"
+
+#: src/tools/sysprof-profiler-ctl.c:79
+msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+msgstr ""
+"--dest=НАЗВА_ШИНИ [НАЗВА_ФАЙЛА] - з'єднатися із вбудованим засобом"
+" профілювання sysprof"

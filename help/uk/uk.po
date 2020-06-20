@@ -1,0 +1,463 @@
+# Ukrainian translation for sysprof.
+# Copyright (C) 2020 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+#
+# Yuri Chornoivan <yurchor@ukr.net>, 2020.
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof sysprof-3-36\n"
+"POT-Creation-Date: 2020-03-29 15:01+0000\n"
+"PO-Revision-Date: 2020-06-20 19:48+0300\n"
+"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
+"Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: uk\n"
+"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Lokalize 20.07.70\n"
+
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2020"
+
+#. (itstool) path: page/title
+#: C/faq.page:9
+msgid "What does heap mean?"
+msgstr "Що таке «купа»?"
+
+#. (itstool) path: section/title
+#: C/faq.page:12
+msgid "What does \"In file [heap]\" mean?"
+msgstr "Що означає «У файлі [купа]»?"
+
+#. (itstool) path: section/p
+#: C/faq.page:14
+msgid ""
+"This means that sysprof believes a function was called from somewhere in the "
+"program's heap (where <code>malloc</code> allocates memory) rather than the "
+"code section (where executable code normally lives.) There are several "
+"possible explanations."
+msgstr ""
+"Це означає, що sysprof вважає, що функцію було викликано звідкись з купи"
+" програми (області, де пам'ять розподіляє <code>malloc</code>), а не з"
+" розділу коду (де зазвичай міститься виконуваний код). У цього може бути"
+" декілька пояснень."
+
+#. (itstool) path: section/title
+#: C/faq.page:22
+msgid "JIT (Just in Time) compilers"
+msgstr "Компілятори JIT («на льоту»)"
+
+#. (itstool) path: section/p
+#: C/faq.page:24
+msgid ""
+"Languages like Java can generate executable code while a program is running "
+"and store it in the heap. Sysprof is accurately reporting the situation in "
+"this case."
+msgstr ""
+"Для мов, подібних до Java, можливе створення виконуваного коду безпосередньо"
+" під час запуску програми із збереженням його у купі. Sysprof у цьому випадку"
+" точно повідомляє про стан речей."
+
+#. (itstool) path: section/title
+#: C/faq.page:30
+msgid "Optimizing compilers"
+msgstr "Компілятори із оптимізацією"
+
+#. (itstool) path: section/p
+#: C/faq.page:32
+msgid ""
+"C and C++ compilers can optimize away information needed to determine a "
+"function's caller, so it is mistaken for [heap]. You can still tell how "
+"often each function is called by the program, but not always from where."
+msgstr ""
+"Компілятори C і C++ можуть оптимізувати (вилучати) дані, потрібні для"
+" визначення джерела виклику функції, тому таке джерело для [купи] буде"
+" помилковим. Ви зможете визначати, як часто викликається певна функція у"
+" програмі, але не завжди зможете визначити, звідки її виликають."
+
+#. (itstool) path: note/p
+#: C/faq.page:38
+msgid ""
+"For gcc, the flag <code>-fno-omit-frame-pointer</code> will prevent this "
+"optimization. The flag is not always needed, for example on x86_64 machines "
+"it is only needed with -O3 optimization."
+msgstr ""
+"У gcc прапорець <code>-fno-omit-frame-pointer</code> вимикає оптимізацію"
+" такого різновиду. Явним чином вказувати цей прапорець не завжди потрібно."
+" Наприклад, на архітектурі x86_64 він потрібен лише із оптимізацією -O3."
+
+#. (itstool) path: note/p
+#: C/faq.page:44
+msgid ""
+"To get the most detailed and accurate call tree from un-optimized code, use "
+"these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
+msgstr ""
+"Щоб отримати найдокладніше і найточніше дерево викликів з неоптимізованого"
+" коду, скористайтеся такими прапорцями: <code>-ggdb -fno-omit-frame-pointer"
+" -O0</code>"
+
+#. (itstool) path: page/title
+#: C/index.page:12
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: section/title
+#. (itstool) path: page/title
+#: C/index.page:15 C/profiling.page:6
+msgid "Profiling"
+msgstr "Профілювання"
+
+#. (itstool) path: section/title
+#: C/index.page:19
+msgid "Frequently Asked Questions"
+msgstr "Поширені запитання"
+
+#. (itstool) path: credit/name
+#: C/introduction.page:15
+msgid "Christian Hergert"
+msgstr "Christian Hergert"
+
+#. (itstool) path: credit/years
+#: C/introduction.page:17
+msgid "2016"
+msgstr "2016"
+
+#. (itstool) path: info/desc
+#: C/introduction.page:22
+msgid "Welcome to <app>Sysprof</app>!"
+msgstr "Вітаємо у <app>Sysprof</app>!"
+
+#. (itstool) path: page/title
+#: C/introduction.page:25
+msgid "Introduction"
+msgstr "Вступ"
+
+#. (itstool) path: page/p
+#: C/introduction.page:27
+msgid ""
+"<app>Sysprof</app> is a system profiler for Linux that targets the GNOME "
+"desktop."
+msgstr ""
+"<app>Sysprof</app> — засіб профілювання системи для Linux, який призначено"
+" для стільничного середовища GNOME."
+
+#. (itstool) path: info/desc
+#: C/introduction.page:33
+msgid "Differences between tracing and sampling"
+msgstr "Відмінності між трасуванням та вибірковим дослідження"
+
+#. (itstool) path: section/title
+#: C/introduction.page:35
+msgid "What is a Profiler?"
+msgstr "Для чого призначено засіб профілювання?"
+
+#. (itstool) path: section/p
+#: C/introduction.page:37
+msgid ""
+"A profiler is an application that records information about an application "
+"or system while it runs. That information can be explored to gain insight "
+"into how the application could be changed to perform better."
+msgstr ""
+"Засіб профілювання — програма, яка під час своєї роботи записує дані щодо"
+" програми або системи. Ці дані можна вивчити для того, щоб змінити програму"
+" так, щоб вона працювала оптимальніше."
+
+#. (itstool) path: section/p
+#: C/introduction.page:42
+msgid ""
+"Two common categories of software profilers exist, commonly referred to as "
+"either tracing or sampling profilers. What is meant by tracing profiler is "
+"that every function call executed by the program is known to the profiler. A "
+"sampling profiler works by inspecting the state of the program on a regular "
+"frequency and therefore does not see every function call executed by the "
+"program."
+msgstr ""
+"Існує дві загальні категорії засобів профілювання програмного забезпечення,"
+" які називають засобами профілювання із трасуванням та засоби профілювання із"
+" вибірковим дослідженням. Це означає, що засіб профілювання із трасуванням"
+" визначає параметри кожного виклику функції у програмі. Засіб профілювання із"
+" вибірковим дослідженням працює шляхом вивчення стану програми із регулярною"
+" частотою, тому не може визначити моменти виконання кожного виклику функції"
+" програмі."
+
+#. (itstool) path: section/p
+#: C/introduction.page:49
+msgid ""
+"Both tracing and sampling profilers have their advantages. A notable "
+"advantage of a sampling profiler is that the overhead is much less than that "
+"of a tracing profiler, making it easier to use for software that requires "
+"interactivity."
+msgstr ""
+"У кожного з типів засобів профілювання, із трасуванням та із вибірковим"
+" дослідженням, є свої переваги. Помітною перевагою засобу профілювання із"
+" вибірковим дослідженням є те, що накладні витрати ресурсів системи у ньому є"
+" набагато меншими за витрати у засобі профілювання із трасуванням, що спрощує"
+" його використання для програмного забезпечення, яке потребує інтерактивності."
+
+#. (itstool) path: section/p
+#: C/introduction.page:54
+msgid "<app>Sysprof</app> is a sampling profiler."
+msgstr "<app>Sysprof</app> є засобом профілювання із вибірковим дослідженням."
+
+#. (itstool) path: section/title
+#: C/profiling.page:12
+msgid "How to profile your system"
+msgstr "Як виконати профілювання вашої системи"
+
+#. (itstool) path: section/p
+#: C/profiling.page:13
+msgid ""
+"When <app>Sysprof</app> profiles your system, it records stack information "
+"for all applications executing, including the Linux kernel. This can "
+"sometimes be confusing if you only want to look at a single process. If your "
+"application does not interact much with the host system, you may have more "
+"success by using <app>Sysprof</app> to <link href=\"profiling#new-process-"
+"profiling\">spawn a new process</link>."
+msgstr ""
+"Коли <app>Sysprof</app> виконує профілювання вашої системи, вона записує дані"
+" стека для програм, які виконуються, включно із ядром Linux. Іноді,"
+" користуватися отриманими значенням незручно, якщо вам потрібні лише дані"
+" окремого процесу. Якщо досліджувана програма не надто взаємодії із основною"
+" системою, можливо, доцільнішим буде використання <app>Sysprof</app> для <"
+"link href=\"profiling#new-process-"
+"profiling\">породження нового процесу</link>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:20
+msgid ""
+"To profile your entire system, ensure the target button is set to <em>All "
+"Processes</em> and click <em>Record</em>."
+msgstr ""
+"Щоб виконати профілювання усієї системи, переконайтеся, що кнопку цілі"
+" встановлено у значення <em>Усі процеси</em>, і натисніть <em>Записати</em>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:23
+msgid ""
+"At this point, you may be asked to <em>authorize</em> access to profile the "
+"system. This is required as the Linux kernel's perf implementation requires "
+"root to perform whole-system profiling."
+msgstr ""
+"На цьому кроці система може попросити вас пройти <em>уповноваження</em> для"
+" доступу до профілювання системи. Таке уповноваження потрібне, оскільки"
+" реалізація perf у ядрі Linux потребує прав доступу адміністратора (root) для"
+" виконання профілювання на рівні усієї системи."
+
+#. (itstool) path: section/p
+#: C/profiling.page:27
+msgid ""
+"During the profiling session, you will see the number of seconds the profile "
+"has been active. Clicking the <em>Record</em> button again will stop the "
+"profiling session. Afterwhich, the callgraph will be displayed."
+msgstr ""
+"Під час сеансу профілювання ви побачите кількість секунд, протягом яких був"
+" активним профіль. Повторне натискання кнопки <em>Записати</em> зупинить"
+" сеанс профілювання. Після цього буде показано граф викликів."
+
+#. (itstool) path: note/p
+#: C/profiling.page:33
+msgid ""
+"If you find that the <app>sysprof</app> application is showing up in your "
+"profiling callgraph, you might consider recording the profiling session with "
+"<cmd>sysprof-cli</cmd>. This is a command line program that will capture "
+"your profiling session to disk to be viewed at a later time."
+msgstr ""
+"Якщо у вашому графі викликів профілювання ви побачите пункт програми <app"
+">sysprof</app>, вам варто спробувати записати сеанс профілювання за допомогою"
+" програми <cmd>sysprof-cli</cmd>. Ця програма є засобом командного рядка,"
+" який виконає запис вашого сеансу профілювання на диск для подальшого"
+" перегляду."
+
+#. (itstool) path: section/p
+#: C/profiling.page:39 C/profiling.page:62
+msgid ""
+"See <link href=\"profiling#interpreting-results\">interpreting results</"
+"link> for more guidance."
+msgstr ""
+"Щоб дізнатися більше, ознайомтеся із розділом щодо <link"
+" href=\"profiling#interpreting-results\">інтерпретації результатів</link>."
+
+#. (itstool) path: section/title
+#: C/profiling.page:48
+msgid "Profile an existing process"
+msgstr "Профілювання наявного процесу"
+
+#. (itstool) path: section/p
+#: C/profiling.page:49
+msgid ""
+"With <app>Sysprof</app>, you can profile one or more existing processes on "
+"your system. First, select the <em>profiling target</em> button next to the "
+"<em>Record</em> button. Select <em>Existing Process</em> in the popover that "
+"is displayed. Next, select as many processes as you'd like to profile. "
+"Processes selected for profiling will have a checkmark next to their name."
+msgstr ""
+"За допомогою <app>Sysprof</app> ви зможете виконати профілювання одного або"
+" декількох наявних процесів у вашій системі. Для початку, скористайтеся"
+" кнопкою <em>ціль профілювання</em>, яку розташовано поруч із кнопкою <em"
+">Записати</em>. На контекстній панелі, яку буде показано, виберіть пункт <em"
+">Наявний процес</em>. Далі, виберіть процеси, які ви хочете профілювати."
+" Перед пунктами процесів, які ви виберете для профілювання, буде показано"
+" позначки."
+
+#. (itstool) path: section/p
+#: C/profiling.page:56
+msgid ""
+"After selecting your target processes, click the <em>Record</em> button to "
+"start profiling."
+msgstr ""
+"Після вибору процесів-цілей натисніть кнопку <em>Записати</em>, щоб розпочати"
+" профілювання."
+
+#. (itstool) path: section/p
+#: C/profiling.page:59
+msgid ""
+"When you have completed, click the <em>Record</em> button again to stop "
+"profiling."
+msgstr ""
+"У момент, коли профілювання слід завершити, натисніть кнопку <em>Записати</em"
+"> ще раз, щоб припинити профілювання."
+
+#. (itstool) path: section/title
+#: C/profiling.page:71
+msgid "Profile a new process"
+msgstr "Профілювання нового процесу"
+
+#. (itstool) path: section/p
+#: C/profiling.page:73
+msgid ""
+"Often times, you may need to spawn a new process to profile. First, select "
+"the <em>profiling target</em> button next to the <em>Record</em> button. "
+"Next, select <em>New Process</em> and fill out the necessary information to "
+"spawn the process."
+msgstr ""
+"Часто у вас може виникнути потреба у запуску нового процесу для профілювання."
+" Спочатку натисніть кнопку <em>ціль профілювання</em>, яку розташовано поряд"
+" із кнопкою <em>Записати</em>. Далі, виберіть <em>Новий процес</em> і"
+" заповніть необхідні відомості щодо процесу, який слід запустити."
+
+#. (itstool) path: note/p
+#: C/profiling.page:79
+msgid ""
+"If you are spawning a process that requires access to your current display, "
+"such as a GTK+ application, you will want to make sure <em>Inherit current "
+"environment</em> is set."
+msgstr ""
+"Якщо ви запускаєте процес, який потребує доступу до вашого поточного дисплея,"
+" зокрема програму на основі GTK+, вам варто позначити пункт <em>Успадкувати"
+" середовище</em>."
+
+#. (itstool) path: section/title
+#: C/profiling.page:90
+msgid "Profiling with the sysprof-cli command line tool"
+msgstr "Профілювання за допомогою засобу командного рядка sysprof-cli"
+
+#. (itstool) path: section/p
+#: C/profiling.page:92
+msgid ""
+"For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
+"command line tool. When run without any arguments, it will record your "
+"entire system and save the output to <file>capture.syscap</file>. This file "
+"can be opened with the <app>Sysprof</app> application to view the callgraph."
+msgstr ""
+"Для мінімізації накладних витрат вам варто скористатися засобом командного"
+" рядка <cmd>sysprof-cli</cmd>. Якщо програму буде запущено без аргументів,"
+" вона запише дані усієї системи із збереже виведені дані до файла <file"
+">capture.syscap</file>. Цей файл може бути відкрито за допомогою програми <"
+"app>Sysprof</app> для перегляду графу викликів."
+
+#. (itstool) path: section/p
+#: C/profiling.page:97
+msgid ""
+"You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
+"cmd>."
+msgstr ""
+"Ви також можете долучити програму до наявного процесу за допомогою команди <"
+"cmd>sysprof-cli -p pid</cmd>."
+
+#. (itstool) path: section/p
+#: C/profiling.page:100
+msgid ""
+"If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
+"cmd> to specify a command to be launched. The command will inherit the "
+"current environment."
+msgstr ""
+"Якщо ви хочете запустити новий процес, скористайтеся командою <cmd"
+">sysprof-cli -c 'команда'</cmd>, щоб вказати команду, яку буде запущено."
+" Команда успадкує поточне середовище."
+
+#. (itstool) path: section/title
+#: C/profiling.page:110
+msgid "Interpreting results"
+msgstr "Інтерпретація результатів"
+
+#. (itstool) path: section/p
+#: C/profiling.page:112
+msgid ""
+"The profiling results in <app>Sysprof</app> are split into three sections. "
+"On the top left is a list of all the functions profiled. They are sorted by "
+"how often they were called during the recording."
+msgstr ""
+"Результати профілювання у <app>Sysprof</app> поділено на три розділи. У"
+" верхній лівій частині буде показано список усіх профільованих функцій. Їх"
+" буде упорядковано за частотою їхнього виклику під час записування даних."
+
+#. (itstool) path: note/p
+#: C/profiling.page:117
+msgid ""
+"It is important to note that the amount of time spent in each function is "
+"not captured. That would require a tracing profiler to accurately record. "
+"The percentage is calculated by determining how often that function showed "
+"up in the current stacktrace when a sample was recorded."
+msgstr ""
+"Важливо зауважити, що обсяг часу, витрачений у кожній з функцій, не"
+" записуватиметься. Для точного запису цих даних потрібен засіб профілювання"
+" із трасуванням. Відсоток для кожної функції буде обчислено за тим, наскільки"
+" часто цю функцію буде показано у поточному трасуванні стеку, коли було"
+" записано вибірку даних."
+
+#. (itstool) path: section/p
+#: C/profiling.page:123
+msgid ""
+"After selecting a function from the functions list, all of the recorded "
+"callers of that function will be displayed on the bottom left. They are also "
+"sorted by the percentage of samples that included that function in the "
+"stacktrace."
+msgstr ""
+"Після вибору функції зі списку функцій усі дані із записаних джерел викликів"
+" цієї функції буде показано у нижній лівій частині вікна. Їх також буде"
+" упорядковано за відсотком вибірок, до трасування стеку яких включено цю"
+" функцію."
+
+#. (itstool) path: section/p
+#: C/profiling.page:128
+msgid ""
+"On the right, are all of the decendants of a selected function. You can "
+"select a function either from the functions list, or the callers list."
+msgstr ""
+"Праворуч буде показано усі спадкоємців вибраної функції. Ви можете вибрати"
+" функцію або зі списку функцій, або зі списку джерел виклику."
+
+#. (itstool) path: section/p
+#: C/profiling.page:131
+msgid ""
+"You can jump into a function by activating a row in the tree of descendants "
+"with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
+msgstr ""
+"Ви можете перейти всередину функції активацією рядка у ієрархії спадкоємців"
+" подвійним клацанням лівою кнопкою миші або натисканням клавіш <key>Enter<"
+"/key> або <key>Пробіл</key>."
+
+#. (itstool) path: note/p
+#: C/profiling.page:135
+msgid ""
+"If you see <em>- - kernel - -</em> in your results, that means that the "
+"application transitioned into or from the Linux kernel. There can be many "
+"reasons for this such as a <em>syscall</em> or <em>signal</em>."
+msgstr ""
+"Якщо ви бачите у результатах записи <em>- - kernel - -</em>, це означає, що"
+" програма передає керування ядру Linux або навпаки. Для цього може бути"
+" багато причин, зокрема <em>системний виклик</em> або <em>сигнал</em>."

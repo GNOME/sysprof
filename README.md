@@ -4,10 +4,13 @@ stacktraces which are then interpreted by the userspace program
 
 See the [Sysprof homepage](http://sysprof.com/) for more information.
 
-Questions, patches and bug reports should be sent to the sysprof
-mailing list [sysprof-list@gnome.org](mailto:sysprof-list@gnome.org).
+Merge requests and bug reports should be sent to sysprof's [repository on
+GNOME's GitLab instance](https://gitlab.gnome.org/GNOME/sysprof). For general
+discussion and questions, you can create a new topic in [GNOME's
+Discourse](https://discourse.gnome.org).
 
-The list is archived in <https://mail.gnome.org/archives/sysprof-list/>.
+The former mailing list is archived in
+<https://mail.gnome.org/archives/sysprof-list/>.
 
 Debugging symbols
 -----------------

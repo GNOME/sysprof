@@ -23,8 +23,6 @@ main (int   argc,
 {
   SysprofCaptureWriter *writer;
 
-  sysprof_clock_init ();
-
   /* Ignore SIGPIPE because we might get a pipe from the environment and we
    * don't want to trap if write() is used on it.
    */
@@ -82,7 +80,7 @@ do_some_work (SysprofCaptureWriter *writer)
                                        real_duration,              /* duration in nsec */
                                        "Example",                  /* Group name, 23 chars+\0 */
                                        "Sleep",                    /* Name, 39 chars+\0 */
-                                       "Anscillary message data"); /* UTF-8 Message data, limited to
+                                       "Ancillary message data"); /* UTF-8 Message data, limited to
                                                                       64kb-frame size. */
     }
 }

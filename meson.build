@@ -62,21 +62,14 @@ config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
 config_h.set10('ENABLE_NLS', true)
 config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
 config_h.set('LOCALEDIR', 'PACKAGE_LOCALE_DIR')
-
-if cc.has_header('execinfo.h')
-  config_h.set10('HAVE_EXECINFO_H', true)
-endif
+config_h.set('HAVE_EXECINFO_H', cc.has_header('execinfo.h'))
 
 config_h.set('HAVE_STRLCPY', cc.has_function('strlcpy'))
 
 if get_option('libunwind')
   libunwind_dep = dependency('libunwind-generic', required: false)
-  if libunwind_dep.found()
-    config_h.set10('ENABLE_LIBUNWIND', libunwind_dep.found())
-    if cc.has_header_symbol('libunwind.h', 'unw_set_cache_size', dependencies: [libunwind_dep])
-      config_h.set10('HAVE_UNW_SET_CACHE_SIZE', 1)
-    endif
-  endif
+  config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())
+  config_h.set('HAVE_UNW_SET_CACHE_SIZE', libunwind_dep.found() and cc.has_header_symbol('libunwind.h', 'unw_set_cache_size', dependencies: [libunwind_dep]))
 endif
 
 # Development build setup
@@ -84,9 +77,7 @@ config_h.set('DEVELOPMENT_BUILD', version_split[1].to_int().is_odd())
 
 has_use_clockid = cc.has_member('struct perf_event_attr', 'use_clockid', prefix: '#include <linux/perf_event.h>')
 has_clockid = cc.has_member('struct perf_event_attr', 'clockid', prefix: '#include <linux/perf_event.h>')
-if has_use_clockid and has_clockid
-  config_h.set10('HAVE_PERF_CLOCKID', true)
-endif
+config_h.set('HAVE_PERF_CLOCKID', has_use_clockid and has_clockid)
 
 add_project_arguments([
   '-I' + meson.build_root(), # config.h

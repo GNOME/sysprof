@@ -30,9 +30,7 @@ main (int   argc,
 
   /* This will check for SYSPROF_TRACE_FD=N, parse the FD number, and use it as
    * the backing file for the trace data. It may be a file, socket, pipe,
-   * memfd, etc. To reduce chances of the FD being used a second time, this
-   * function will also set the environment variable to "" by overwriting the
-   * first byte to \0.
+   * memfd, etc. The FD must not be used a second time.
    */
   writer = sysprof_capture_writer_new_from_env (0);
 

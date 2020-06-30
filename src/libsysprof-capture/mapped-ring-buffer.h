@@ -78,15 +78,6 @@ gboolean          mapped_ring_buffer_drain              (MappedRingBuffer       
                                                          MappedRingBufferCallback  callback,
                                                          gpointer                  user_data);
 G_GNUC_INTERNAL
-guint             mapped_ring_buffer_create_source      (MappedRingBuffer         *self,
-                                                         MappedRingBufferCallback  callback,
-                                                         gpointer                  user_data);
-G_GNUC_INTERNAL
-guint             mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
-                                                         MappedRingBufferCallback  callback,
-                                                         gpointer                  user_data,
-                                                         GDestroyNotify            destroy);
-
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (MappedRingBuffer, mapped_ring_buffer_unref)
+gboolean          mapped_ring_buffer_is_empty           (MappedRingBuffer         *self);
 
 G_END_DECLS

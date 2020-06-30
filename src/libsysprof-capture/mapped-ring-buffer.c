@@ -530,107 +530,29 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
   return TRUE;
 }
 
-typedef struct _MappedRingSource
+/**
+ * mapped_ring_buffer_is_empty:
+ * @self: a #MappedRingBuffer
+ *
+ * Checks whether the ring buffer is currently empty.
+ *
+ * This should only be called by a reader created with
+ * mapped_ring_buffer_new_reader().
+ *
+ * Returns: %TRUE if the buffer is empty, %FALSE otherwise
+ */
+gboolean
+mapped_ring_buffer_is_empty (MappedRingBuffer *self)
 {
-  GSource           source;
-  MappedRingBuffer *self;
-} MappedRingSource;
-
-static gboolean
-mapped_ring_source_dispatch (GSource     *source,
-                             GSourceFunc  callback,
-                             gpointer     user_data)
-{
-  MappedRingSource *real_source = (MappedRingSource *)source;
-
-  g_assert (source != NULL);
-
-  return mapped_ring_buffer_drain (real_source->self,
-                                   (MappedRingBufferCallback)callback,
-                                   user_data);
-}
-
-static void
-mapped_ring_source_finalize (GSource *source)
-{
-  MappedRingSource *real_source = (MappedRingSource *)source;
-
-  if (real_source != NULL)
-    g_clear_pointer (&real_source->self, mapped_ring_buffer_unref);
-}
-
-static gboolean
-mapped_ring_source_check (GSource *source)
-{
-  MappedRingSource *real_source = (MappedRingSource *)source;
   MappedRingHeader *header;
+  guint32 headpos, tailpos;
 
-  g_assert (real_source != NULL);
-  g_assert (real_source->self != NULL);
+  header = get_header (self);
 
-  header = get_header (real_source->self);
+  headpos = g_atomic_int_get (&header->head);
+  tailpos = g_atomic_int_get (&header->tail);
 
-  if (g_atomic_int_get (&header->head) != g_atomic_int_get (&header->tail))
-    return TRUE;
-
-  return FALSE;
-}
-
-static gboolean
-mapped_ring_source_prepare (GSource *source,
-                            gint    *timeout_)
-{
-  MappedRingSource *real_source = (MappedRingSource *)source;
-  MappedRingHeader *header;
-
-  g_assert (real_source != NULL);
-  g_assert (real_source->self != NULL);
-
-  header = get_header (real_source->self);
-
-  if (g_atomic_int_get (&header->head) != g_atomic_int_get (&header->tail))
-    return TRUE;
-
-  *timeout_ = 5;
-
-  return FALSE;
-}
-
-static GSourceFuncs mapped_ring_source_funcs = {
-  .prepare  = mapped_ring_source_prepare,
-  .check    = mapped_ring_source_check,
-  .dispatch = mapped_ring_source_dispatch,
-  .finalize = mapped_ring_source_finalize,
-};
-
-guint
-mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
-                                       MappedRingBufferCallback  source_func,
-                                       gpointer                  user_data,
-                                       GDestroyNotify            destroy)
-{
-  MappedRingSource *source;
-  guint ret;
-
-  g_return_val_if_fail (self != NULL, 0);
-  g_return_val_if_fail (source_func != NULL, 0);
-
-  source = (MappedRingSource *)g_source_new (&mapped_ring_source_funcs, sizeof (MappedRingSource));
-  source->self = mapped_ring_buffer_ref (self);
-  g_source_set_callback ((GSource *)source, (GSourceFunc)source_func, user_data, destroy);
-  g_source_set_name ((GSource *)source, "MappedRingSource");
-  ret = g_source_attach ((GSource *)source, g_main_context_default ());
-  g_source_unref ((GSource *)source);
-
-  return ret;
-}
-
-guint
-mapped_ring_buffer_create_source (MappedRingBuffer         *self,
-                                  MappedRingBufferCallback  source_func,
-                                  gpointer                  user_data)
-{
-  return mapped_ring_buffer_create_source_full (self, source_func, user_data, NULL);
+  return headpos == tailpos;
 }
 
 /**

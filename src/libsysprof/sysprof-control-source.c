@@ -33,6 +33,7 @@
 #include <sys/types.h>
 
 #include "mapped-ring-buffer.h"
+#include "mapped-ring-buffer-source.h"
 
 #include "sysprof-control-source.h"
 

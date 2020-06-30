@@ -11,6 +11,7 @@
 # include <sched.h>
 #endif
 
+#include <glib.h>
 #include <signal.h>
 #include <sysprof-capture.h>
 #include <unistd.h>

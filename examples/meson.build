@@ -1,3 +1,3 @@
 app = executable('example-app', 'app.c',
-  dependencies: [libsysprof_capture_dep],
+  dependencies: [dependency('glib-2.0'), libsysprof_capture_dep],
 )

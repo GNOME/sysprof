@@ -91,6 +91,4 @@ SYSPROF_AVAILABLE_IN_ALL
 gboolean                 sysprof_capture_condition_match                  (const SysprofCaptureCondition *self,
                                                                            const SysprofCaptureFrame     *frame);
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureCondition, sysprof_capture_condition_unref)
-
 G_END_DECLS

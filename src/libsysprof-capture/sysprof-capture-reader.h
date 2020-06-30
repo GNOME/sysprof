@@ -147,6 +147,5 @@ gboolean                            sysprof_capture_reader_read_file_fd        (
                                                                                 const gchar               *path,
                                                                                 gint                       fd);
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
 
 G_END_DECLS

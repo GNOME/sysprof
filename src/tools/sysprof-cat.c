@@ -29,6 +29,7 @@
 #include <sysprof-capture.h>
 #include <unistd.h>
 
+#include "../libsysprof/sysprof-capture-autocleanups.h"
 #include "sysprof-capture-util-private.h"
 
 gint

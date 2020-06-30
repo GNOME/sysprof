@@ -97,6 +97,4 @@ SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_cursor_add_condition (SysprofCaptureCursor         *self,
                                                             SysprofCaptureCondition      *condition);
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureCursor, sysprof_capture_cursor_unref)
-
 G_END_DECLS

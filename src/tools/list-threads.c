@@ -24,6 +24,8 @@
 #include <sysprof-capture.h>
 #include <unistd.h>
 
+#include "../libsysprof/sysprof-capture-autocleanups.h"
+
 static gboolean
 foreach_cb (const SysprofCaptureFrame *frame,
             gpointer                   user_data)

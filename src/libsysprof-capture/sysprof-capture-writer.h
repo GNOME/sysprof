@@ -249,6 +249,4 @@ gboolean              _sysprof_capture_writer_set_time_range                 (Sy
                                                                               gint64                             end_time) G_GNUC_INTERNAL;
 
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
-
 G_END_DECLS

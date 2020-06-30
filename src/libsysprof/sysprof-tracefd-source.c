@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <sysprof-capture.h>
 
+#include "sysprof-capture-autocleanups.h"
 #include "sysprof-platform.h"
 #include "sysprof-tracefd-source.h"
 

@@ -24,6 +24,7 @@
 
 #include <sysprof-capture.h>
 
+#include "sysprof-capture-autocleanups.h"
 #include "sysprof-capture-symbol-resolver.h"
 #include "sysprof-elf-symbol-resolver.h"
 #include "sysprof-kernel-symbol-resolver.h"

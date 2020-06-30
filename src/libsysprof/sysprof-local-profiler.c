@@ -34,6 +34,7 @@
 #include "sysprof-local-profiler.h"
 #include "sysprof-platform.h"
 
+#include "sysprof-capture-autocleanups.h"
 #include "sysprof-control-source.h"
 #include "sysprof-gjs-source.h"
 #include "sysprof-hostinfo-source.h"

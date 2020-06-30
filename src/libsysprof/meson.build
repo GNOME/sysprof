@@ -37,6 +37,7 @@ libsysprof_public_sources = [
 libsysprof_public_headers = [
   'sysprof-battery-source.h',
   'sysprof-callgraph-profile.h',
+  'sysprof-capture-autocleanups.h',
   'sysprof-capture-gobject.h',
   'sysprof-capture-symbol-resolver.h',
   'sysprof-control-source.h',

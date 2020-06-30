@@ -1,5 +1,6 @@
 #include "mapped-ring-buffer.h"
 
+#include <glib.h>
 #include <stdint.h>
 
 static gsize real_count;

@@ -18,6 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include <glib.h>
 #include <glib/gstdio.h>
 #include <sysprof-capture.h>
 

@@ -1,3 +1,4 @@
+#include <glib.h>
 #include <sysprof.h>
 
 static const SysprofCaptureSample *

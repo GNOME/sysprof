@@ -12,24 +12,29 @@ test_cflags = [
   '-DSYSPROF_COMPILATION=1',
 ]
 
+test_capture_deps = [
+  dependency('glib-2.0'),
+  libsysprof_capture_dep,
+]
+
 test_capture = executable('test-capture', 'test-capture.c',
         c_args: test_cflags,
-  dependencies: [libsysprof_capture_dep],
+  dependencies: test_capture_deps,
 )
 
 test_capture_cursor = executable('test-capture-cursor', 'test-capture-cursor.c',
         c_args: test_cflags,
-  dependencies: [libsysprof_capture_dep],
+  dependencies: test_capture_deps,
 )
 
 test_mapped_ring_buffer = executable('test-mapped-ring-buffer', 'test-mapped-ring-buffer.c',
         c_args: test_cflags,
-  dependencies: [libsysprof_capture_dep],
+  dependencies: test_capture_deps,
 )
 
 find_temp_allocs = executable('find-temp-allocs', 'find-temp-allocs.c',
         c_args: test_cflags,
-  dependencies: [libsysprof_capture_dep],
+  dependencies: test_capture_deps,
 )
 
 test('test-capture', test_capture, env: test_env)

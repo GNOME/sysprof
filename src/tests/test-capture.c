@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include <fcntl.h>
+#include <glib.h>
 #include <glib/gstdio.h>
 #include <string.h>
 #include <sysprof-capture.h>

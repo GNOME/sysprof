@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <glib.h>
 #include <sysprof-capture.h>
 
 static struct {

@@ -1,4 +1,5 @@
 tools_deps = [
+  dependency('glib-2.0'),
   libsysprof_capture_dep,
 ]
 

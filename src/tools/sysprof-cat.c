@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include <errno.h>
+#include <glib.h>
 #include <glib/gstdio.h>
 #include <stdlib.h>
 #include <sysprof-capture.h>

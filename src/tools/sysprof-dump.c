@@ -56,7 +56,11 @@ main (gint argc,
       return EXIT_FAILURE;
     }
 
-  reader = sysprof_capture_reader_new (argv[1], &error);
+  if ((reader = sysprof_capture_reader_new (argv[1], &error)) == NULL)
+    {
+      g_printerr ("%s\n", error->message);
+      return EXIT_FAILURE;
+    }
 
   if (list_files)
     {
@@ -74,12 +78,6 @@ main (gint argc,
 
 #define SET_CTR_TYPE(i,t) g_hash_table_insert(ctrtypes, GINT_TO_POINTER(i), GINT_TO_POINTER(t))
 #define GET_CTR_TYPE(i) GPOINTER_TO_INT(g_hash_table_lookup(ctrtypes, GINT_TO_POINTER(i)))
-
-  if (reader == NULL)
-    {
-      g_printerr ("%s\n", error->message);
-      return EXIT_FAILURE;
-    }
 
   begin_time = sysprof_capture_reader_get_start_time (reader);
   end_time = sysprof_capture_reader_get_end_time (reader);

@@ -24,6 +24,7 @@
 # error "Only <sysprof.h> can be included directly."
 #endif
 
+#include <glib.h>
 #include <gio/gio.h>
 #include <sysprof-capture.h>
 

@@ -24,6 +24,8 @@
 # error "Only <sysprof.h> can be included directly."
 #endif
 
+#include <glib.h>
+
 #include "sysprof-capture-types.h"
 
 G_BEGIN_DECLS

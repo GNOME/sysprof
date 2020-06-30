@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <glib.h>
+
 #include "sysprof-map-lookaside.h"
 
 struct _SysprofMapLookaside

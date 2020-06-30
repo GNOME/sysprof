@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include <dlfcn.h>
+#include <glib.h>
 #include <sched.h>
 #include <stdlib.h>
 #include <sys/syscall.h>

@@ -240,17 +240,16 @@ SYSPROF_AVAILABLE_IN_ALL
 bool                  sysprof_capture_writer_cat                             (SysprofCaptureWriter              *self,
                                                                               SysprofCaptureReader              *reader,
                                                                               GError                           **error);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 bool                  _sysprof_capture_writer_add_raw                        (SysprofCaptureWriter              *self,
                                                                               const SysprofCaptureFrame         *frame);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 bool                  _sysprof_capture_writer_splice_from_fd                 (SysprofCaptureWriter              *self,
                                                                               int                                fd,
-                                                                              GError                           **error) G_GNUC_INTERNAL;
-G_GNUC_INTERNAL
+                                                                              GError                           **error) SYSPROF_INTERNAL;
+SYSPROF_INTERNAL
 bool                  _sysprof_capture_writer_set_time_range                 (SysprofCaptureWriter              *self,
                                                                               int64_t                            start_time,
-                                                                              int64_t                            end_time) G_GNUC_INTERNAL;
-
+                                                                              int64_t                            end_time) SYSPROF_INTERNAL;
 
 SYSPROF_END_DECLS

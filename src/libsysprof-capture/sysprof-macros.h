@@ -66,3 +66,9 @@
 #define SYSPROF_BEGIN_DECLS
 #define SYSPROF_END_DECLS
 #endif
+
+#if defined (__GNUC__)
+#define SYSPROF_INTERNAL __attribute__((visibility("hidden")))
+#else
+#define SYSPROF_INTERNAL
+#endif

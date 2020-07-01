@@ -57,31 +57,31 @@ typedef bool (*MappedRingBufferCallback) (const void    *data,
                                           size_t        *length,
                                           void          *user_data);
 
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 MappedRingBuffer *mapped_ring_buffer_new_reader         (size_t                    buffer_size);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 MappedRingBuffer *mapped_ring_buffer_new_readwrite      (size_t                    buffer_size);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 MappedRingBuffer *mapped_ring_buffer_new_writer         (int                       fd);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 int               mapped_ring_buffer_get_fd             (MappedRingBuffer         *self);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 MappedRingBuffer *mapped_ring_buffer_ref                (MappedRingBuffer         *self);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 void              mapped_ring_buffer_unref              (MappedRingBuffer         *self);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 void              mapped_ring_buffer_clear              (MappedRingBuffer         *self);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 void             *mapped_ring_buffer_allocate           (MappedRingBuffer         *self,
                                                          size_t                    length);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 void              mapped_ring_buffer_advance            (MappedRingBuffer         *self,
                                                          size_t                    length);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 bool              mapped_ring_buffer_drain              (MappedRingBuffer         *self,
                                                          MappedRingBufferCallback  callback,
                                                          void                     *user_data);
-G_GNUC_INTERNAL
+SYSPROF_INTERNAL
 bool              mapped_ring_buffer_is_empty           (MappedRingBuffer         *self);
 
 SYSPROF_END_DECLS

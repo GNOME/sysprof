@@ -77,6 +77,7 @@
 
 #include "sysprof-capture-util-private.h"
 #include "sysprof-collector.h"
+#include "sysprof-macros-internal.h"
 
 #define MAX_UNWIND_DEPTH 128
 #define CREATRING      "CreatRing\0"
@@ -179,7 +180,7 @@ request_writer (void)
         }
     }
 
-  return g_steal_pointer (&buffer);
+  return sysprof_steal_pointer (&buffer);
 }
 
 static void
@@ -207,7 +208,7 @@ sysprof_collector_free (void *data)
 
   if (collector != NULL && collector != COLLECTOR_INVALID)
     {
-      MappedRingBuffer *buffer = g_steal_pointer (&collector->buffer);
+      MappedRingBuffer *buffer = sysprof_steal_pointer (&collector->buffer);
 
       if (buffer != NULL)
         {

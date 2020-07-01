@@ -171,7 +171,7 @@ sysprof_capture_writer_finalize (SysprofCaptureWriter *self)
 {
   if (self != NULL)
     {
-      g_clear_pointer (&self->periodic_flush, g_source_destroy);
+      sysprof_clear_pointer (&self->periodic_flush, g_source_destroy);
 
       sysprof_capture_writer_flush (self);
 
@@ -1154,7 +1154,7 @@ sysprof_capture_writer_create_reader (SysprofCaptureWriter  *self,
   if ((ret = sysprof_capture_reader_new_from_fd (copy, error)))
     sysprof_capture_reader_set_stat (ret, &self->stat);
 
-  return g_steal_pointer (&ret);
+  return sysprof_steal_pointer (&ret);
 }
 
 /**
@@ -1516,7 +1516,7 @@ sysprof_capture_writer_set_flush_delay (SysprofCaptureWriter *self,
 
   g_return_if_fail (self != NULL);
 
-  g_clear_pointer (&self->periodic_flush, g_source_destroy);
+  sysprof_clear_pointer (&self->periodic_flush, g_source_destroy);
 
   if (timeout_seconds == 0)
     return;

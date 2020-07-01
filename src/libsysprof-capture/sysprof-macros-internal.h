@@ -60,3 +60,14 @@
 #pragma once
 
 #define sysprof_assert_not_reached() assert (false)
+
+#define sysprof_steal_pointer(pp) __extension__ ({__typeof(*(pp)) _p = *(pp); *(pp) = NULL; _p;})
+
+#define sysprof_clear_pointer(pp, destroy) \
+  do { \
+    __typeof((pp)) _pp = (pp); \
+    __typeof(*(pp)) _p = *_pp; \
+    *_pp = NULL; \
+    if (_p != NULL) \
+      (destroy) (_p); \
+  } while (0)

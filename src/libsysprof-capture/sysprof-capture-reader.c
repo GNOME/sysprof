@@ -820,7 +820,7 @@ sysprof_capture_reader_read_jitmap (SysprofCaptureReader *self)
 
   self->pos += jitmap->frame.len;
 
-  return g_steal_pointer (&ret);
+  return sysprof_steal_pointer (&ret);
 }
 
 const SysprofCaptureSample *
@@ -1309,7 +1309,7 @@ sysprof_capture_reader_list_files (SysprofCaptureReader *self)
     g_ptr_array_add (ar, g_strdup (key));
   g_ptr_array_add (ar, NULL);
 
-  return (char **)g_ptr_array_free (g_steal_pointer (&ar), FALSE);
+  return (char **)g_ptr_array_free (sysprof_steal_pointer (&ar), FALSE);
 }
 
 bool

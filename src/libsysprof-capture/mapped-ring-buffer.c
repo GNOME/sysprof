@@ -30,6 +30,7 @@
 #include <unistd.h>
 
 #include "sysprof-capture-util-private.h"
+#include "sysprof-macros-internal.h"
 #include "sysprof-platform.h"
 
 #include "mapped-ring-buffer.h"
@@ -214,7 +215,7 @@ mapped_ring_buffer_new_reader (size_t buffer_size)
   self->map = map;
   self->page_size = page_size;
 
-  return g_steal_pointer (&self);
+  return sysprof_steal_pointer (&self);
 }
 
 MappedRingBuffer *
@@ -319,7 +320,7 @@ mapped_ring_buffer_new_writer (int fd)
   self->map = map;
   self->page_size = page_size;
 
-  return g_steal_pointer (&self);
+  return sysprof_steal_pointer (&self);
 }
 
 static void

@@ -65,6 +65,8 @@
 #include <sysprof-capture.h>
 #include <unistd.h>
 
+#include "sysprof-macros-internal.h"
+
 typedef struct
 {
   uint64_t src;
@@ -81,7 +83,7 @@ static void
 translate_table_clear (GArray       **tables,
                        unsigned int   table)
 {
-  g_clear_pointer (&tables[table], g_array_unref);
+  sysprof_clear_pointer (&tables[table], g_array_unref);
 }
 
 static int

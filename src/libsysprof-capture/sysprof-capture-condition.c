@@ -221,7 +221,7 @@ sysprof_capture_condition_init (void)
 
   self->ref_count = 1;
 
-  return g_steal_pointer (&self);
+  return sysprof_steal_pointer (&self);
 }
 
 /* Returns NULL on allocation failure. */

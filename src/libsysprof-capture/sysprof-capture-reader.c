@@ -127,7 +127,7 @@ sysprof_capture_reader_finalize (SysprofCaptureReader *self)
     {
       close (self->fd);
       free (self->buf);
-      g_free (self->filename);
+      free (self->filename);
       free (self);
     }
 }
@@ -283,7 +283,7 @@ sysprof_capture_reader_new (const char   *filename,
       return NULL;
     }
 
-  self->filename = g_strdup (filename);
+  self->filename = strdup (filename);
 
   return self;
 }
@@ -1086,7 +1086,7 @@ sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
     }
 
   if (self->filename == NULL)
-    self->filename = g_strdup (filename);
+    self->filename = strdup (filename);
 
   close (fd);
 
@@ -1179,7 +1179,7 @@ sysprof_capture_reader_copy (SysprofCaptureReader *self)
   *copy = *self;
 
   copy->ref_count = 1;
-  copy->filename = g_strdup (self->filename);
+  copy->filename = strdup (self->filename);
   copy->fd = fd;
   copy->end_time = self->end_time;
   copy->st_buf = self->st_buf;
@@ -1189,7 +1189,7 @@ sysprof_capture_reader_copy (SysprofCaptureReader *self)
   if (copy->buf == NULL)
     {
       close (fd);
-      g_free (copy->filename);
+      free (copy->filename);
       free (copy);
       return NULL;
     }
@@ -1337,7 +1337,7 @@ sysprof_capture_reader_read_file_fd (SysprofCaptureReader *self,
       if (!(file = sysprof_capture_reader_read_file (self)))
         return false;
 
-      if (g_strcmp0 (path, file->path) != 0)
+      if (strcmp (path, file->path) != 0)
         goto skip;
 
       buf = file->data;
@@ -1399,7 +1399,7 @@ sysprof_capture_reader_find_file (SysprofCaptureReader *self,
           if (!(fc = sysprof_capture_reader_read_file (self)))
             break;
 
-          if (g_strcmp0 (path, fc->path) == 0)
+          if (strcmp (path, fc->path) == 0)
             return fc;
 
           continue;

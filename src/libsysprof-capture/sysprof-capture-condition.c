@@ -199,7 +199,10 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
       if (frame->type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
         return false;
 
-      return g_strcmp0 (((const SysprofCaptureFileChunk *)frame)->path, self->u.where_file) == 0;
+      if (self->u.where_file == NULL)
+        return false;
+
+      return strcmp (((const SysprofCaptureFileChunk *)frame)->path, self->u.where_file) == 0;
 
     default:
       break;
@@ -301,7 +304,7 @@ sysprof_capture_condition_finalize (SysprofCaptureCondition *self)
       break;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_FILE:
-      g_free (self->u.where_file);
+      free (self->u.where_file);
       break;
 
     default:
@@ -518,7 +521,12 @@ sysprof_capture_condition_new_where_file (const char *path)
     return NULL;
 
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_FILE;
-  self->u.where_file = g_strdup (path);
+  self->u.where_file = strdup (path);
+  if (self->u.where_file == NULL)
+    {
+      free (self);
+      return NULL;
+    }
 
   return self;
 }

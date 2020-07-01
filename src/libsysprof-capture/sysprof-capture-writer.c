@@ -333,6 +333,19 @@ sysprof_capture_writer_flush_jitmap (SysprofCaptureWriter *self)
   return true;
 }
 
+/* djb hash */
+static unsigned int
+str_hash (const char *str)
+{
+  const uint8_t *p;
+  uint32_t h = 5381;
+
+  for (p = (const uint8_t *) str; *p != '\0'; p++)
+    h = (h << 5) + h + *p;
+
+  return h;
+}
+
 static bool
 sysprof_capture_writer_lookup_jitmap (SysprofCaptureWriter  *self,
                                       const char            *name,
@@ -345,7 +358,7 @@ sysprof_capture_writer_lookup_jitmap (SysprofCaptureWriter  *self,
   assert (name != NULL);
   assert (addr != NULL);
 
-  hash = g_str_hash (name) % G_N_ELEMENTS (self->addr_hash);
+  hash = str_hash (name) % G_N_ELEMENTS (self->addr_hash);
 
   for (i = hash; i < G_N_ELEMENTS (self->addr_hash); i++)
     {
@@ -426,7 +439,7 @@ sysprof_capture_writer_insert_jitmap (SysprofCaptureWriter *self,
   assert (self->addr_buf_pos <= sizeof self->addr_buf);
 
   /* Now place the address into the hashtable */
-  hash = g_str_hash (str) % G_N_ELEMENTS (self->addr_hash);
+  hash = str_hash (str) % G_N_ELEMENTS (self->addr_hash);
 
   /* Start from the current hash bucket and go forward */
   for (i = hash; i < G_N_ELEMENTS (self->addr_hash); i++)

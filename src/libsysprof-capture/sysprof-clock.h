@@ -60,9 +60,10 @@
 #include <stdint.h>
 #include <time.h>
 
+#include "sysprof-macros.h"
 #include "sysprof-version-macros.h"
 
-G_BEGIN_DECLS
+SYSPROF_BEGIN_DECLS
 
 typedef int SysprofClock;
 typedef int64_t SysprofTimeStamp;
@@ -95,4 +96,4 @@ sysprof_clock_get_relative_time (SysprofTimeStamp epoch)
 SYSPROF_AVAILABLE_IN_ALL
 void sysprof_clock_init (void);
 
-G_END_DECLS
+SYSPROF_END_DECLS

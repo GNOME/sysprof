@@ -63,8 +63,9 @@
 #include <stdint.h>
 
 #include "sysprof-clock.h"
+#include "sysprof-macros.h"
 
-G_BEGIN_DECLS
+SYSPROF_BEGIN_DECLS
 
 #define SYSPROF_CAPTURE_MAGIC (GUINT32_TO_LE(0xFDCA975E))
 #define SYSPROF_CAPTURE_ALIGN (sizeof(SysprofCaptureAddress))
@@ -366,4 +367,4 @@ sysprof_capture_address_compare (SysprofCaptureAddress a,
     return 0;
 }
 
-G_END_DECLS
+SYSPROF_END_DECLS

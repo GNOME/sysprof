@@ -59,9 +59,10 @@
 #include <stdbool.h>
 
 #include "sysprof-capture-types.h"
+#include "sysprof-macros.h"
 #include "sysprof-version-macros.h"
 
-G_BEGIN_DECLS
+SYSPROF_BEGIN_DECLS
 
 typedef struct _SysprofCaptureCursor SysprofCaptureCursor;
 
@@ -99,4 +100,4 @@ SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_cursor_add_condition (SysprofCaptureCursor         *self,
                                                             SysprofCaptureCondition      *condition);
 
-G_END_DECLS
+SYSPROF_END_DECLS

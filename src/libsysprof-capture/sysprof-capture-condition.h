@@ -59,9 +59,10 @@
 #include <stdbool.h>
 
 #include "sysprof-capture-types.h"
+#include "sysprof-macros.h"
 #include "sysprof-version-macros.h"
 
-G_BEGIN_DECLS
+SYSPROF_BEGIN_DECLS
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCondition *sysprof_capture_condition_copy                   (const SysprofCaptureCondition *self);
@@ -93,4 +94,4 @@ SYSPROF_AVAILABLE_IN_ALL
 bool                     sysprof_capture_condition_match                  (const SysprofCaptureCondition *self,
                                                                            const SysprofCaptureFrame     *frame);
 
-G_END_DECLS
+SYSPROF_END_DECLS

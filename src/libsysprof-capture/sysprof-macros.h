@@ -1,6 +1,9 @@
-/* sysprof-address.h
+/* sysprof-macros.h
  *
- * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
+ * Copyright 2020 Endless OS Foundation
+ *
+ * Author:
+ *  - Philip Withnall <withnall@endlessm.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -56,47 +59,10 @@
 
 #pragma once
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdint.h>
-
-#include "sysprof-macros.h"
-#include "sysprof-version-macros.h"
-
-SYSPROF_BEGIN_DECLS
-
-typedef uint64_t SysprofAddress;
-
-static_assert (sizeof (SysprofAddress) >= sizeof (void *),
-               "Address space is too big");
-
-typedef enum
-{
-  SYSPROF_ADDRESS_CONTEXT_NONE = 0,
-  SYSPROF_ADDRESS_CONTEXT_HYPERVISOR,
-  SYSPROF_ADDRESS_CONTEXT_KERNEL,
-  SYSPROF_ADDRESS_CONTEXT_USER,
-  SYSPROF_ADDRESS_CONTEXT_GUEST,
-  SYSPROF_ADDRESS_CONTEXT_GUEST_KERNEL,
-  SYSPROF_ADDRESS_CONTEXT_GUEST_USER,
-} SysprofAddressContext;
-
-SYSPROF_AVAILABLE_IN_ALL
-bool         sysprof_address_is_context_switch (SysprofAddress         address,
-                                                SysprofAddressContext *context);
-SYSPROF_AVAILABLE_IN_ALL
-const char  *sysprof_address_context_to_string (SysprofAddressContext  context);
-
-static inline int
-sysprof_address_compare (SysprofAddress a,
-                         SysprofAddress b)
-{
-  if (a < b)
-    return -1;
-  else if (a == b)
-    return 0;
-  else
-    return 1;
-}
-
-SYSPROF_END_DECLS
+#ifdef __cplusplus
+#define SYSPROF_BEGIN_DECLS extern "C" {
+#define SYSPROF_END_DECLS }
+#else
+#define SYSPROF_BEGIN_DECLS
+#define SYSPROF_END_DECLS
+#endif

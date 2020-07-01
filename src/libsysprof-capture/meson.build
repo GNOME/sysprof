@@ -7,6 +7,7 @@ libsysprof_capture_headers = files([
   'sysprof-capture-types.h',
   'sysprof-capture-writer.h',
   'sysprof-collector.h',
+  'sysprof-macros.h',
   'sysprof-platform.h',
   'sysprof-capture.h',
   'sysprof-version-macros.h',

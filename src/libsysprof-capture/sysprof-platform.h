@@ -60,12 +60,13 @@
 #include <string.h>
 
 #include "sysprof-version-macros.h"
+#include "sysprof-macros.h"
 
-G_BEGIN_DECLS
+SYSPROF_BEGIN_DECLS
 
 SYSPROF_AVAILABLE_IN_ALL
 int   sysprof_memfd_create (const char *desc);
 SYSPROF_AVAILABLE_IN_3_36
 size_t sysprof_getpagesize (void);
 
-G_END_DECLS
+SYSPROF_END_DECLS

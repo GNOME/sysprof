@@ -57,8 +57,9 @@
 #pragma once
 
 #include "sysprof-capture-types.h"
+#include "sysprof-macros.h"
 
-G_BEGIN_DECLS
+SYSPROF_BEGIN_DECLS
 
 SYSPROF_AVAILABLE_IN_3_36
 void sysprof_collector_init     (void);
@@ -86,4 +87,4 @@ void sysprof_collector_log_printf (int                  severity,
                                    const char          *format,
                                    ...) G_GNUC_PRINTF (3, 4);
 
-G_END_DECLS
+SYSPROF_END_DECLS

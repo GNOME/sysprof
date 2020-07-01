@@ -24,7 +24,9 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-G_BEGIN_DECLS
+#include "sysprof-macros.h"
+
+SYSPROF_BEGIN_DECLS
 
 typedef struct _MappedRingBuffer MappedRingBuffer;
 
@@ -82,4 +84,4 @@ bool              mapped_ring_buffer_drain              (MappedRingBuffer       
 G_GNUC_INTERNAL
 bool              mapped_ring_buffer_is_empty           (MappedRingBuffer         *self);
 
-G_END_DECLS
+SYSPROF_END_DECLS

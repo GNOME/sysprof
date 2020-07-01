@@ -63,7 +63,7 @@
 #include "sysprof-capture-types.h"
 #include "sysprof-version-macros.h"
 
-G_BEGIN_DECLS
+SYSPROF_BEGIN_DECLS
 
 typedef struct _SysprofCaptureWriter SysprofCaptureWriter;
 
@@ -253,4 +253,4 @@ bool                  _sysprof_capture_writer_set_time_range                 (Sy
                                                                               int64_t                            end_time) G_GNUC_INTERNAL;
 
 
-G_END_DECLS
+SYSPROF_END_DECLS

@@ -58,8 +58,6 @@
 
 #include <glib.h>
 
-G_BEGIN_DECLS
-
 #define SYSPROF_CAPTURE_INSIDE
 
 # include "sysprof-address.h"
@@ -74,5 +72,3 @@ G_BEGIN_DECLS
 # include "sysprof-version-macros.h"
 
 #undef SYSPROF_CAPTURE_INSIDE
-
-G_END_DECLS

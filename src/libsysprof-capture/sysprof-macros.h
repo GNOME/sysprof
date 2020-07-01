@@ -72,3 +72,11 @@
 #else
 #define SYSPROF_INTERNAL
 #endif
+
+#if defined(__GNUC__)
+#define SYSPROF_LIKELY(expr) (__builtin_expect (!!(expr), 1))
+#define SYSPROF_UNLIKELY(expr) (__builtin_expect (!!(expr), 0))
+#else
+#define SYSPROF_LIKELY(expr) (expr)
+#define SYSPROF_UNLIKELY(expr) (expr)
+#endif

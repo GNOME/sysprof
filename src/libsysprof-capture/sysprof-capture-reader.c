@@ -282,7 +282,7 @@ sysprof_capture_reader_bswap_frame (SysprofCaptureReader *self,
   assert (self != NULL);
   assert (frame!= NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     {
       frame->len = GUINT16_SWAP_LE_BE (frame->len);
       frame->cpu = GUINT16_SWAP_LE_BE (frame->cpu);
@@ -298,7 +298,7 @@ sysprof_capture_reader_bswap_file_chunk (SysprofCaptureReader    *self,
   assert (self != NULL);
   assert (file_chunk != NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     file_chunk->len = GUINT16_SWAP_LE_BE (file_chunk->len);
 }
 
@@ -309,7 +309,7 @@ sysprof_capture_reader_bswap_log (SysprofCaptureReader *self,
   assert (self != NULL);
   assert (log != NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     log->severity = GUINT16_SWAP_LE_BE (log->severity);
 }
 
@@ -320,7 +320,7 @@ sysprof_capture_reader_bswap_map (SysprofCaptureReader *self,
   assert (self != NULL);
   assert (map != NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     {
       map->start = GUINT64_SWAP_LE_BE (map->start);
       map->end = GUINT64_SWAP_LE_BE (map->end);
@@ -336,7 +336,7 @@ sysprof_capture_reader_bswap_mark (SysprofCaptureReader *self,
   assert (self != NULL);
   assert (mark != NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     mark->duration = GUINT64_SWAP_LE_BE (mark->duration);
 }
 
@@ -347,7 +347,7 @@ sysprof_capture_reader_bswap_jitmap (SysprofCaptureReader *self,
   assert (self != NULL);
   assert (jitmap != NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     jitmap->n_jitmaps = GUINT64_SWAP_LE_BE (jitmap->n_jitmaps);
 }
 
@@ -531,7 +531,7 @@ sysprof_capture_reader_read_fork (SysprofCaptureReader *self)
 
   if (fk != NULL)
     {
-      if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+      if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
         fk->child_pid = GUINT32_SWAP_LE_BE (fk->child_pid);
     }
 
@@ -660,7 +660,7 @@ sysprof_capture_reader_read_mark (SysprofCaptureReader *self)
     ((char *)mark)[mark->frame.len - 1] = 0;
 
   /* Maybe update end-time */
-  if G_UNLIKELY ((mark->frame.time + mark->duration) > self->end_time)
+  if SYSPROF_UNLIKELY ((mark->frame.time + mark->duration) > self->end_time)
     self->end_time = mark->frame.time + mark->duration;
 
   return mark;
@@ -843,7 +843,7 @@ sysprof_capture_reader_read_sample (SysprofCaptureReader *self)
 
   sample = (SysprofCaptureSample *)(void *)&self->buf[self->pos];
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     {
       unsigned int i;
 
@@ -876,7 +876,7 @@ sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
   if (def->frame.len < sizeof *def)
     return NULL;
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     def->n_counters = GUINT16_SWAP_LE_BE (def->n_counters);
 
   if (def->frame.len < (sizeof *def + (sizeof (SysprofCaptureCounterDefine) * def->n_counters)))
@@ -887,7 +887,7 @@ sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
 
   def = (SysprofCaptureCounterDefine *)(void *)&self->buf[self->pos];
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     {
       unsigned int i;
 
@@ -934,7 +934,7 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
 
   set = (SysprofCaptureCounterSet *)(void *)&self->buf[self->pos];
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     {
       unsigned int i;
 
@@ -1424,7 +1424,7 @@ sysprof_capture_reader_read_allocation (SysprofCaptureReader *self)
 
   ma = (SysprofCaptureAllocation *)(void *)&self->buf[self->pos];
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
     {
       for (unsigned int i = 0; i < ma->n_addrs; i++)
         ma->addrs[i] = GUINT64_SWAP_LE_BE (ma->addrs[i]);

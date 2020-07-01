@@ -80,7 +80,7 @@ sysprof_clock_get_current_time (void)
   struct timespec ts;
   SysprofClock clock = sysprof_clock;
 
-  if G_UNLIKELY (clock == -1)
+  if SYSPROF_UNLIKELY (clock == -1)
     clock = CLOCK_MONOTONIC;
   clock_gettime (clock, &ts);
 

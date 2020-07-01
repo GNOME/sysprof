@@ -433,7 +433,7 @@ sysprof_capture_writer_insert_jitmap (SysprofCaptureWriter *self,
     {
       SysprofCaptureJitmapBucket *bucket = &self->addr_hash[i];
 
-      if (G_LIKELY (bucket->str == NULL))
+      if (SYSPROF_LIKELY (bucket->str == NULL))
         {
           bucket->str = dst;
           bucket->addr = addr;
@@ -447,7 +447,7 @@ sysprof_capture_writer_insert_jitmap (SysprofCaptureWriter *self,
     {
       SysprofCaptureJitmapBucket *bucket = &self->addr_hash[i];
 
-      if (G_LIKELY (bucket->str == NULL))
+      if (SYSPROF_LIKELY (bucket->str == NULL))
         {
           bucket->str = dst;
           bucket->addr = addr;

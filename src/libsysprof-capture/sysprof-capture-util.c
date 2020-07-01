@@ -70,6 +70,7 @@
 #endif
 
 #include "sysprof-capture-util-private.h"
+#include "sysprof-macros.h"
 
 #ifdef G_OS_WIN32
 static G_LOCK_DEFINE (_sysprof_io_sync);
@@ -80,7 +81,7 @@ size_t
 {
   static size_t pgsz = 0;
 
-  if G_UNLIKELY (pgsz == 0)
+  if SYSPROF_UNLIKELY (pgsz == 0)
     {
 #ifdef G_OS_WIN32
       SYSTEM_INFO system_info;

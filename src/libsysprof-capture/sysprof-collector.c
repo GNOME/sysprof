@@ -224,10 +224,10 @@ sysprof_collector_get (void)
   const SysprofCollector *collector = g_private_get (&collector_key);
 
   /* We might have gotten here recursively */
-  if G_UNLIKELY (collector == COLLECTOR_INVALID)
+  if SYSPROF_UNLIKELY (collector == COLLECTOR_INVALID)
     return COLLECTOR_INVALID;
 
-  if G_LIKELY (collector != NULL)
+  if SYSPROF_LIKELY (collector != NULL)
     return collector;
 
   if (use_single_trace () && shared_collector != COLLECTOR_INVALID)
@@ -278,9 +278,9 @@ sysprof_collector_init (void)
 #define COLLECTOR_BEGIN                                           \
   G_STMT_START {                                                  \
     const SysprofCollector *collector = sysprof_collector_get (); \
-    if G_LIKELY (collector->buffer)                               \
+    if SYSPROF_LIKELY (collector->buffer)                         \
       {                                                           \
-        if G_UNLIKELY (collector->is_shared)                      \
+        if SYSPROF_UNLIKELY (collector->is_shared)                \
           G_LOCK (control_fd);                                    \
                                                                   \
         {
@@ -288,7 +288,7 @@ sysprof_collector_init (void)
 #define COLLECTOR_END                                             \
         }                                                         \
                                                                   \
-        if G_UNLIKELY (collector->is_shared)                      \
+        if SYSPROF_UNLIKELY (collector->is_shared)                \
           G_UNLOCK (control_fd);                                  \
       }                                                           \
   } G_STMT_END

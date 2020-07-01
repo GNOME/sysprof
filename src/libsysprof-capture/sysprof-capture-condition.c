@@ -340,7 +340,7 @@ sysprof_capture_condition_new_where_time_between (int64_t begin_time,
 {
   SysprofCaptureCondition *self;
 
-  if G_UNLIKELY (begin_time > end_time)
+  if SYSPROF_UNLIKELY (begin_time > end_time)
     {
       int64_t tmp = begin_time;
       begin_time = end_time;

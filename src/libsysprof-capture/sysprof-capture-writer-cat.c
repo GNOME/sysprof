@@ -158,8 +158,8 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
   int64_t first_start_time = INT64_MAX;
   int64_t end_time = -1;
 
-  g_return_val_if_fail (self != NULL, FALSE);
-  g_return_val_if_fail (reader != NULL, FALSE);
+  assert (self != NULL);
+  assert (reader != NULL);
 
   sysprof_capture_reader_reset (reader);
 
@@ -459,7 +459,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
                     }
                 }
 
-              g_assert (ids->len == values->len);
+              assert (ids->len == values->len);
 
               sysprof_capture_writer_set_counters (self,
                                                    frame->frame.time,

@@ -58,9 +58,11 @@
 
 #include "config.h"
 
+#include <assert.h>
 #include <stdbool.h>
 
 #include "sysprof-clock.h"
+#include "sysprof-macros-internal.h"
 
 int sysprof_clock = -1;
 
@@ -92,5 +94,5 @@ sysprof_clock_init (void)
         }
     }
 
-  g_assert_not_reached ();
+  sysprof_assert_not_reached ();
 }

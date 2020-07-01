@@ -58,6 +58,8 @@
 
 #include "config.h"
 
+#include <assert.h>
+
 #include "sysprof-capture-condition.h"
 #include "sysprof-capture-cursor.h"
 #include "sysprof-capture-reader.h"
@@ -105,8 +107,8 @@ sysprof_capture_cursor_init (void)
 SysprofCaptureCursor *
 sysprof_capture_cursor_ref (SysprofCaptureCursor *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (self->ref_count > 0, NULL);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
   g_atomic_int_inc (&self->ref_count);
   return self;
@@ -121,8 +123,8 @@ sysprof_capture_cursor_ref (SysprofCaptureCursor *self)
 void
 sysprof_capture_cursor_unref (SysprofCaptureCursor *self)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (self->ref_count > 0);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
   if (g_atomic_int_dec_and_test (&self->ref_count))
     sysprof_capture_cursor_finalize (self);
@@ -140,9 +142,9 @@ sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
                                 SysprofCaptureCursorCallback  callback,
                                 void                         *user_data)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (self->reader != NULL);
-  g_return_if_fail (callback != NULL);
+  assert (self != NULL);
+  assert (self->reader != NULL);
+  assert (callback != NULL);
 
   for (;;)
     {
@@ -249,8 +251,8 @@ sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
 void
 sysprof_capture_cursor_reset (SysprofCaptureCursor *self)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (self->reader != NULL);
+  assert (self != NULL);
+  assert (self->reader != NULL);
 
   sysprof_capture_reader_reset (self->reader);
 }
@@ -258,7 +260,7 @@ sysprof_capture_cursor_reset (SysprofCaptureCursor *self)
 void
 sysprof_capture_cursor_reverse (SysprofCaptureCursor *self)
 {
-  g_return_if_fail (self != NULL);
+  assert (self != NULL);
 
   self->reversed = !self->reversed;
 }
@@ -275,8 +277,8 @@ void
 sysprof_capture_cursor_add_condition (SysprofCaptureCursor    *self,
                                       SysprofCaptureCondition *condition)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (condition != NULL);
+  assert (self != NULL);
+  assert (condition != NULL);
 
   g_ptr_array_add (self->conditions, condition);
 }
@@ -292,7 +294,7 @@ sysprof_capture_cursor_new (SysprofCaptureReader *reader)
 {
   SysprofCaptureCursor *self;
 
-  g_return_val_if_fail (reader != NULL, NULL);
+  assert (reader != NULL);
 
   self = sysprof_capture_cursor_init ();
   self->reader = sysprof_capture_reader_copy (reader);
@@ -311,7 +313,7 @@ sysprof_capture_cursor_new (SysprofCaptureReader *reader)
 SysprofCaptureReader *
 sysprof_capture_cursor_get_reader (SysprofCaptureCursor *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
+  assert (self != NULL);
 
   return self->reader;
 }

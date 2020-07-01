@@ -56,6 +56,7 @@
 
 #pragma once
 
+#include <assert.h>
 #include <glib.h>
 #include <inttypes.h>
 #include <stddef.h>
@@ -331,27 +332,27 @@ typedef struct
 } SysprofCaptureAllocation
 SYSPROF_ALIGNED_END(1);
 
-G_STATIC_ASSERT (sizeof (SysprofCaptureFileHeader) == 256);
-G_STATIC_ASSERT (sizeof (SysprofCaptureFrame) == 24);
-G_STATIC_ASSERT (sizeof (SysprofCaptureMap) == 56);
-G_STATIC_ASSERT (sizeof (SysprofCaptureJitmap) == 28);
-G_STATIC_ASSERT (sizeof (SysprofCaptureProcess) == 24);
-G_STATIC_ASSERT (sizeof (SysprofCaptureSample) == 32);
-G_STATIC_ASSERT (sizeof (SysprofCaptureFork) == 28);
-G_STATIC_ASSERT (sizeof (SysprofCaptureExit) == 24);
-G_STATIC_ASSERT (sizeof (SysprofCaptureTimestamp) == 24);
-G_STATIC_ASSERT (sizeof (SysprofCaptureCounter) == 128);
-G_STATIC_ASSERT (sizeof (SysprofCaptureCounterValues) == 96);
-G_STATIC_ASSERT (sizeof (SysprofCaptureCounterDefine) == 32);
-G_STATIC_ASSERT (sizeof (SysprofCaptureCounterSet) == 32);
-G_STATIC_ASSERT (sizeof (SysprofCaptureMark) == 96);
-G_STATIC_ASSERT (sizeof (SysprofCaptureMetadata) == 64);
-G_STATIC_ASSERT (sizeof (SysprofCaptureLog) == 64);
-G_STATIC_ASSERT (sizeof (SysprofCaptureFileChunk) == 284);
-G_STATIC_ASSERT (sizeof (SysprofCaptureAllocation) == 48);
+static_assert (sizeof (SysprofCaptureFileHeader) == 256, "SysprofCaptureFileHeader changed size");
+static_assert (sizeof (SysprofCaptureFrame) == 24, "SysprofCaptureFrame changed size");
+static_assert (sizeof (SysprofCaptureMap) == 56, "SysprofCaptureMap changed size");
+static_assert (sizeof (SysprofCaptureJitmap) == 28, "SysprofCaptureJitmap changed size");
+static_assert (sizeof (SysprofCaptureProcess) == 24, "SysprofCaptureProcess changed size");
+static_assert (sizeof (SysprofCaptureSample) == 32, "SysprofCaptureSample changed size");
+static_assert (sizeof (SysprofCaptureFork) == 28, "SysprofCaptureFork changed size");
+static_assert (sizeof (SysprofCaptureExit) == 24, "SysprofCaptureExit changed size");
+static_assert (sizeof (SysprofCaptureTimestamp) == 24, "SysprofCaptureTimestamp changed size");
+static_assert (sizeof (SysprofCaptureCounter) == 128, "SysprofCaptureCounter changed size");
+static_assert (sizeof (SysprofCaptureCounterValues) == 96, "SysprofCaptureCounterValues changed size");
+static_assert (sizeof (SysprofCaptureCounterDefine) == 32, "SysprofCaptureCounterDefine changed size");
+static_assert (sizeof (SysprofCaptureCounterSet) == 32, "SysprofCaptureCounterSet changed size");
+static_assert (sizeof (SysprofCaptureMark) == 96, "SysprofCaptureMark changed size");
+static_assert (sizeof (SysprofCaptureMetadata) == 64, "SysprofCaptureMetadata changed size");
+static_assert (sizeof (SysprofCaptureLog) == 64, "SysprofCaptureLog changed size");
+static_assert (sizeof (SysprofCaptureFileChunk) == 284, "SysprofCaptureFileChunk changed size");
+static_assert (sizeof (SysprofCaptureAllocation) == 48, "SysprofCaptureAllocation changed size");
 
-G_STATIC_ASSERT ((G_STRUCT_OFFSET (SysprofCaptureAllocation, addrs) % SYSPROF_CAPTURE_ALIGN) == 0);
-G_STATIC_ASSERT ((G_STRUCT_OFFSET (SysprofCaptureSample, addrs) % SYSPROF_CAPTURE_ALIGN) == 0);
+static_assert ((offsetof (SysprofCaptureAllocation, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureAllocation.addrs is not aligned");
+static_assert ((offsetof (SysprofCaptureSample, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureSample.addrs is not aligned");
 
 static inline int
 sysprof_capture_address_compare (SysprofCaptureAddress a,

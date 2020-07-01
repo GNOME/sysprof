@@ -58,6 +58,7 @@
 
 #include "config.h"
 
+#include <assert.h>
 #include <errno.h>
 #include <glib.h>
 #include <unistd.h>
@@ -205,14 +206,14 @@ ssize_t
       if (n_read <= 0)
         return -1;
 
-      g_assert (count >= n_read);
+      assert (count >= n_read);
 
       count -= n_read;
       rpos += n_read;
 
       while (wpos < rpos)
         {
-          g_assert (off < sizeof buf);
+          assert (off < sizeof buf);
 
           errno = 0;
           n_written = write (out_fd, &buf[off], rpos - wpos);
@@ -226,7 +227,7 @@ ssize_t
         }
     }
 
-  g_assert (count == 0);
+  assert (count == 0);
 
   if (offset != NULL)
     *offset = rpos;

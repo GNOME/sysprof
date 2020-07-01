@@ -58,10 +58,12 @@
 
 #include "config.h"
 
+#include <assert.h>
 #include <stdbool.h>
 #include <string.h>
 
 #include "sysprof-capture-condition.h"
+#include "sysprof-macros-internal.h"
 
 /**
  * SECTION:sysprof-capture-condition
@@ -109,8 +111,8 @@ bool
 sysprof_capture_condition_match (const SysprofCaptureCondition *self,
                                  const SysprofCaptureFrame     *frame)
 {
-  g_assert (self != NULL);
-  g_assert (frame != NULL);
+  assert (self != NULL);
+  assert (frame != NULL);
 
   switch (self->type)
     {
@@ -192,7 +194,7 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
       break;
     }
 
-  g_assert_not_reached ();
+  sysprof_assert_not_reached ();
 
   return false;
 }
@@ -250,7 +252,7 @@ sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
       break;
     }
 
-  g_return_val_if_reached (NULL);
+  sysprof_assert_not_reached ();
 }
 
 static void
@@ -288,7 +290,7 @@ sysprof_capture_condition_finalize (SysprofCaptureCondition *self)
       break;
 
     default:
-      g_assert_not_reached ();
+      sysprof_assert_not_reached ();
       break;
     }
 
@@ -298,8 +300,8 @@ sysprof_capture_condition_finalize (SysprofCaptureCondition *self)
 SysprofCaptureCondition *
 sysprof_capture_condition_ref (SysprofCaptureCondition *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (self->ref_count > 0, NULL);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
   g_atomic_int_inc (&self->ref_count);
   return self;
@@ -308,8 +310,8 @@ sysprof_capture_condition_ref (SysprofCaptureCondition *self)
 void
 sysprof_capture_condition_unref (SysprofCaptureCondition *self)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (self->ref_count > 0);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
   if (g_atomic_int_dec_and_test (&self->ref_count))
     sysprof_capture_condition_finalize (self);
@@ -321,7 +323,7 @@ sysprof_capture_condition_new_where_type_in (unsigned int                   n_ty
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (types != NULL, NULL);
+  assert (types != NULL);
 
   self = sysprof_capture_condition_init ();
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN;
@@ -359,7 +361,7 @@ sysprof_capture_condition_new_where_pid_in (unsigned int   n_pids,
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (pids != NULL, NULL);
+  assert (pids != NULL);
 
   self = sysprof_capture_condition_init ();
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN;
@@ -376,7 +378,7 @@ sysprof_capture_condition_new_where_counter_in (unsigned int        n_counters,
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (counters != NULL || n_counters == 0, NULL);
+  assert (counters != NULL || n_counters == 0);
 
   self = sysprof_capture_condition_init ();
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN;
@@ -407,8 +409,8 @@ sysprof_capture_condition_new_and (SysprofCaptureCondition *left,
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (left != NULL, NULL);
-  g_return_val_if_fail (right != NULL, NULL);
+  assert (left != NULL);
+  assert (right != NULL);
 
   self = sysprof_capture_condition_init ();
   self->type = SYSPROF_CAPTURE_CONDITION_AND;
@@ -434,8 +436,8 @@ sysprof_capture_condition_new_or (SysprofCaptureCondition *left,
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (left != NULL, NULL);
-  g_return_val_if_fail (right != NULL, NULL);
+  assert (left != NULL);
+  assert (right != NULL);
 
   self = sysprof_capture_condition_init ();
   self->type = SYSPROF_CAPTURE_CONDITION_OR;
@@ -459,7 +461,7 @@ sysprof_capture_condition_new_where_file (const char *path)
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (path != NULL, NULL);
+  assert (path != NULL);
 
   self = sysprof_capture_condition_init ();
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_FILE;

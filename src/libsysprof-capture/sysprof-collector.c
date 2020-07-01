@@ -60,6 +60,7 @@
 # define _GNU_SOURCE
 #endif
 
+#include <assert.h>
 #include <glib-unix.h>
 #include <gio/gio.h>
 #include <gio/gunixconnection.h>
@@ -185,7 +186,7 @@ write_final_frame (MappedRingBuffer *ring)
 {
   SysprofCaptureFrame *fr;
 
-  g_assert (ring != NULL);
+  assert (ring != NULL);
 
   if ((fr = mapped_ring_buffer_allocate (ring, sizeof *fr)))
     {

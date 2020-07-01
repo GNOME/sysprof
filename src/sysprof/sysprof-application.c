@@ -94,10 +94,13 @@ sysprof_application_open (GApplication  *app,
 
   window = sysprof_window_new (SYSPROF_APPLICATION (app));
 
+  /* Present window before opening files so that message dialogs
+   * always display above the window.
+   */
+  gtk_window_present (GTK_WINDOW (window));
+
   for (gint i = 0; i < n_files; i++)
     sysprof_window_open (SYSPROF_WINDOW (window), files[i]);
-
-  gtk_window_present (GTK_WINDOW (window));
 
   if (n_files == 0)
     sysprof_application_activate (app);

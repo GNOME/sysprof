@@ -56,6 +56,8 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 #include "sysprof-capture-types.h"
 #include "sysprof-version-macros.h"
 
@@ -88,7 +90,7 @@ SysprofCaptureCondition *sysprof_capture_condition_new_where_counter_in   (unsig
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCondition *sysprof_capture_condition_new_where_file         (const char                    *path);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                 sysprof_capture_condition_match                  (const SysprofCaptureCondition *self,
+bool                     sysprof_capture_condition_match                  (const SysprofCaptureCondition *self,
                                                                            const SysprofCaptureFrame     *frame);
 
 G_END_DECLS

@@ -22,13 +22,13 @@
 #include <glib/gstdio.h>
 #include <sysprof-capture.h>
 
-static gboolean
+static bool
 increment (const SysprofCaptureFrame *frame,
-           gpointer              user_data)
+           void                      *user_data)
 {
   gint *count= user_data;
   (*count)++;
-  return TRUE;
+  return true;
 }
 
 static void

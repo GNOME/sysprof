@@ -87,7 +87,7 @@ struct _SysprofCaptureReader
   unsigned int              st_buf_set : 1;
 };
 
-static gboolean
+static bool
 sysprof_capture_reader_read_file_header (SysprofCaptureReader      *self,
                                          SysprofCaptureFileHeader  *header,
                                          GError                   **error)
@@ -101,7 +101,7 @@ sysprof_capture_reader_read_file_header (SysprofCaptureReader      *self,
                    G_FILE_ERROR,
                    g_file_error_from_errno (errno),
                    "%s", g_strerror (errno));
-      return FALSE;
+      return false;
     }
 
   if (header->magic != SYSPROF_CAPTURE_MAGIC)
@@ -110,12 +110,12 @@ sysprof_capture_reader_read_file_header (SysprofCaptureReader      *self,
                    G_FILE_ERROR,
                    G_FILE_ERROR_FAILED,
                    "Capture file magic does not match");
-      return FALSE;
+      return false;
     }
 
   header->capture_time[sizeof header->capture_time - 1] = '\0';
 
-  return TRUE;
+  return true;
 }
 
 static void
@@ -349,7 +349,7 @@ sysprof_capture_reader_bswap_jitmap (SysprofCaptureReader *self,
     jitmap->n_jitmaps = GUINT64_SWAP_LE_BE (jitmap->n_jitmaps);
 }
 
-static gboolean
+static bool
 sysprof_capture_reader_ensure_space_for (SysprofCaptureReader *self,
                                          size_t                len)
 {
@@ -391,7 +391,7 @@ sysprof_capture_reader_ensure_space_for (SysprofCaptureReader *self,
   return (self->len - self->pos) >= len;
 }
 
-gboolean
+bool
 sysprof_capture_reader_skip (SysprofCaptureReader *self)
 {
   SysprofCaptureFrame *frame;
@@ -400,28 +400,28 @@ sysprof_capture_reader_skip (SysprofCaptureReader *self)
   g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof (SysprofCaptureFrame)))
-    return FALSE;
+    return false;
 
   frame = (SysprofCaptureFrame *)(void *)&self->buf[self->pos];
   sysprof_capture_reader_bswap_frame (self, frame);
 
   if (frame->len < sizeof (SysprofCaptureFrame))
-    return FALSE;
+    return false;
 
   if (!sysprof_capture_reader_ensure_space_for (self, frame->len))
-    return FALSE;
+    return false;
 
   frame = (SysprofCaptureFrame *)(void *)&self->buf[self->pos];
 
   self->pos += frame->len;
 
   if ((self->pos % SYSPROF_CAPTURE_ALIGN) != 0)
-    return FALSE;
+    return false;
 
-  return TRUE;
+  return true;
 }
 
-gboolean
+bool
 sysprof_capture_reader_peek_frame (SysprofCaptureReader *self,
                                    SysprofCaptureFrame  *frame)
 {
@@ -433,7 +433,7 @@ sysprof_capture_reader_peek_frame (SysprofCaptureReader *self,
   g_assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *real_frame))
-    return FALSE;
+    return false;
 
   g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
 
@@ -453,7 +453,7 @@ sysprof_capture_reader_peek_frame (SysprofCaptureReader *self,
   return frame->type > 0 && frame->type < SYSPROF_CAPTURE_FRAME_LAST;
 }
 
-gboolean
+bool
 sysprof_capture_reader_peek_type (SysprofCaptureReader    *self,
                                   SysprofCaptureFrameType *type)
 {
@@ -463,7 +463,7 @@ sysprof_capture_reader_peek_type (SysprofCaptureReader    *self,
   g_assert (type != NULL);
 
   if (!sysprof_capture_reader_peek_frame (self, &frame))
-    return FALSE;
+    return false;
 
   *type = frame.type;
 
@@ -953,7 +953,7 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
   return set;
 }
 
-gboolean
+bool
 sysprof_capture_reader_reset (SysprofCaptureReader *self)
 {
   g_assert (self != NULL);
@@ -962,7 +962,7 @@ sysprof_capture_reader_reset (SysprofCaptureReader *self)
   self->pos = 0;
   self->len = 0;
 
-  return TRUE;
+  return true;
 }
 
 SysprofCaptureReader *
@@ -986,7 +986,7 @@ sysprof_capture_reader_unref (SysprofCaptureReader *self)
     sysprof_capture_reader_finalize (self);
 }
 
-gboolean
+bool
 sysprof_capture_reader_splice (SysprofCaptureReader  *self,
                                SysprofCaptureWriter  *dest,
                                GError               **error)
@@ -1002,7 +1002,7 @@ sysprof_capture_reader_splice (SysprofCaptureReader  *self,
                    G_FILE_ERROR,
                    g_file_error_from_errno (errno),
                    "%s", g_strerror (errno));
-      return FALSE;
+      return false;
     }
 
   /*
@@ -1025,7 +1025,7 @@ sysprof_capture_reader_splice (SysprofCaptureReader  *self,
  *
  * Returns: %TRUE on success; otherwise %FALSE and @error is set.
  */
-gboolean
+bool
 sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
                                 const char            *filename,
                                 GError               **error)
@@ -1075,7 +1075,7 @@ sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
 
   close (fd);
 
-  return TRUE;
+  return true;
 
 handle_errno:
   if (fd != -1)
@@ -1086,7 +1086,7 @@ handle_errno:
                g_file_error_from_errno (errno),
                "%s", g_strerror (errno));
 
-  return FALSE;
+  return false;
 }
 
 int64_t
@@ -1180,16 +1180,16 @@ sysprof_capture_reader_set_stat (SysprofCaptureReader     *self,
   if (st_buf != NULL)
     {
       self->st_buf = *st_buf;
-      self->st_buf_set = TRUE;
+      self->st_buf_set = true;
     }
   else
     {
       memset (&self->st_buf, 0, sizeof (self->st_buf));
-      self->st_buf_set = FALSE;
+      self->st_buf_set = false;
     }
 }
 
-gboolean
+bool
 sysprof_capture_reader_get_stat (SysprofCaptureReader *self,
                                  SysprofCaptureStat   *st_buf)
 {
@@ -1284,7 +1284,7 @@ sysprof_capture_reader_list_files (SysprofCaptureReader *self)
   return (char **)g_ptr_array_free (g_steal_pointer (&ar), FALSE);
 }
 
-gboolean
+bool
 sysprof_capture_reader_read_file_fd (SysprofCaptureReader *self,
                                      const char           *path,
                                      int                   fd)
@@ -1301,13 +1301,13 @@ sysprof_capture_reader_read_file_fd (SysprofCaptureReader *self,
       size_t to_write;
 
       if (!sysprof_capture_reader_peek_type (self, &type))
-        return FALSE;
+        return false;
 
       if (type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
         goto skip;
 
       if (!(file = sysprof_capture_reader_read_file (self)))
-        return FALSE;
+        return false;
 
       if (g_strcmp0 (path, file->path) != 0)
         goto skip;
@@ -1321,10 +1321,10 @@ sysprof_capture_reader_read_file_fd (SysprofCaptureReader *self,
 
           written = _sysprof_write (fd, buf, to_write);
           if (written < 0)
-            return FALSE;
+            return false;
 
           if (written == 0 && errno != EAGAIN)
-            return FALSE;
+            return false;
 
           g_assert (written <= (ssize_t)to_write);
 
@@ -1335,11 +1335,11 @@ sysprof_capture_reader_read_file_fd (SysprofCaptureReader *self,
       if (!file->is_last)
         continue;
 
-      return TRUE;
+      return true;
 
     skip:
       if (!sysprof_capture_reader_skip (self))
-        return FALSE;
+        return false;
     }
 
   g_return_val_if_reached (FALSE);

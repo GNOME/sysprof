@@ -983,9 +983,9 @@ profiler_iface_init (SysprofProfilerInterface *iface)
   iface->stopped = sysprof_local_profiler_real_stopped;
 }
 
-static gboolean
+static bool
 find_profiler_meta_cb (const SysprofCaptureFrame *frame,
-                       gpointer                   user_data)
+                       void                      *user_data)
 {
   const SysprofCaptureMetadata *meta = (const SysprofCaptureMetadata *)frame;
   GKeyFile **keyfile = user_data;
@@ -1006,7 +1006,7 @@ find_profiler_meta_cb (const SysprofCaptureFrame *frame,
       return *keyfile == NULL;
     }
 
-  return TRUE;
+  return true;
 }
 
 SysprofProfiler *

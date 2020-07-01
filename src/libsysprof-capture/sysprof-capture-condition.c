@@ -58,6 +58,7 @@
 
 #include "config.h"
 
+#include <stdbool.h>
 #include <string.h>
 
 #include "sysprof-capture-condition.h"
@@ -104,7 +105,7 @@ struct _SysprofCaptureCondition
   } u;
 };
 
-gboolean
+bool
 sysprof_capture_condition_match (const SysprofCaptureCondition *self,
                                  const SysprofCaptureFrame     *frame)
 {
@@ -125,9 +126,9 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
       for (size_t i = 0; i < self->u.where_type_in->len; i++)
         {
           if (frame->type == g_array_index (self->u.where_type_in, SysprofCaptureFrameType, i))
-            return TRUE;
+            return true;
         }
-      return FALSE;
+      return false;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TIME_BETWEEN:
       return (frame->time >= self->u.where_time_between.begin && frame->time <= self->u.where_time_between.end);
@@ -136,9 +137,9 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
       for (size_t i = 0; i < self->u.where_pid_in->len; i++)
         {
           if (frame->pid == g_array_index (self->u.where_pid_in, int32_t, i))
-            return TRUE;
+            return true;
         }
-      return FALSE;
+      return false;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN:
       if (frame->type == SYSPROF_CAPTURE_FRAME_CTRSET)
@@ -159,7 +160,7 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
                       counter == set->values[j].ids[5] ||
                       counter == set->values[j].ids[6] ||
                       counter == set->values[j].ids[7])
-                    return TRUE;
+                    return true;
                 }
             }
         }
@@ -174,16 +175,16 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
               for (unsigned int j = 0; j < def->n_counters; j++)
                 {
                   if (def->counters[j].id == counter)
-                    return TRUE;
+                    return true;
                 }
             }
         }
 
-      return FALSE;
+      return false;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_FILE:
       if (frame->type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
-        return FALSE;
+        return false;
 
       return g_strcmp0 (((const SysprofCaptureFileChunk *)frame)->path, self->u.where_file) == 0;
 
@@ -193,7 +194,7 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
 
   g_assert_not_reached ();
 
-  return FALSE;
+  return false;
 }
 
 static SysprofCaptureCondition *

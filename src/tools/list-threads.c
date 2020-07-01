@@ -26,9 +26,9 @@
 
 #include "../libsysprof/sysprof-capture-autocleanups.h"
 
-static gboolean
+static bool
 foreach_cb (const SysprofCaptureFrame *frame,
-            gpointer                   user_data)
+            void                      *user_data)
 {
   const SysprofCaptureSample *sample = (SysprofCaptureSample *)frame;
   GHashTable *seen = user_data;
@@ -38,7 +38,7 @@ foreach_cb (const SysprofCaptureFrame *frame,
                          GINT_TO_POINTER (sample->tid),
                          GINT_TO_POINTER (frame->pid));
 
-  return TRUE;
+  return true;
 }
 
 gint

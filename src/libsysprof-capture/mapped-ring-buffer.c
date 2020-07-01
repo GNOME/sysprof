@@ -478,7 +478,7 @@ mapped_ring_buffer_advance (MappedRingBuffer *self,
  * Returns: %TRUE if the buffer was drained, %FALSE if @callback prematurely
  *   returned while draining.
  */
-gboolean
+bool
 mapped_ring_buffer_drain (MappedRingBuffer         *self,
                           MappedRingBufferCallback  callback,
                           void                     *user_data)
@@ -499,7 +499,7 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
   g_assert (tailpos < self->body_size);
 
   if (headpos == tailpos)
-    return TRUE;
+    return true;
 
   /* If head needs to wrap around to get to tail, we can just rely on
    * our double mapping instead actually manually wrapping/copying data.
@@ -515,10 +515,10 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
       size_t len = tailpos - headpos;
 
       if (!callback (data, &len, user_data))
-        return FALSE;
+        return false;
 
       if (len > (tailpos - headpos))
-        return FALSE;
+        return false;
 
       headpos += len;
 
@@ -528,7 +528,7 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
         g_atomic_int_set (&header->head, headpos);
     }
 
-  return TRUE;
+  return true;
 }
 
 /**
@@ -542,7 +542,7 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
  *
  * Returns: %TRUE if the buffer is empty, %FALSE otherwise
  */
-gboolean
+bool
 mapped_ring_buffer_is_empty (MappedRingBuffer *self)
 {
   MappedRingHeader *header;

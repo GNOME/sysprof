@@ -56,6 +56,8 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 #include "sysprof-capture-types.h"
 #include "sysprof-version-macros.h"
 
@@ -74,8 +76,8 @@ typedef struct _SysprofCaptureCursor SysprofCaptureCursor;
  *
  * Returns: %TRUE if iteration should continue, otherwise %FALSE.
  */
-typedef gboolean (*SysprofCaptureCursorCallback) (const SysprofCaptureFrame *frame,
-                                                  void                      *user_data);
+typedef bool (*SysprofCaptureCursorCallback) (const SysprofCaptureFrame *frame,
+                                              void                      *user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCursor *sysprof_capture_cursor_new           (SysprofCaptureReader         *reader);

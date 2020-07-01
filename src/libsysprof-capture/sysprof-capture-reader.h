@@ -56,6 +56,8 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 #include "sysprof-capture-types.h"
 #include "sysprof-version-macros.h"
 
@@ -86,12 +88,12 @@ int64_t                             sysprof_capture_reader_get_start_time      (
 SYSPROF_AVAILABLE_IN_ALL
 int64_t                             sysprof_capture_reader_get_end_time        (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                            sysprof_capture_reader_skip                (SysprofCaptureReader      *self);
+bool                                sysprof_capture_reader_skip                (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                            sysprof_capture_reader_peek_type           (SysprofCaptureReader      *self,
+bool                                sysprof_capture_reader_peek_type           (SysprofCaptureReader      *self,
                                                                                 SysprofCaptureFrameType   *type);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                            sysprof_capture_reader_peek_frame          (SysprofCaptureReader      *self,
+bool                                sysprof_capture_reader_peek_frame          (SysprofCaptureReader      *self,
                                                                                 SysprofCaptureFrame       *frame);
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureLog            *sysprof_capture_reader_read_log            (SysprofCaptureReader      *self);
@@ -122,17 +124,17 @@ const SysprofCaptureFileChunk      *sysprof_capture_reader_read_file           (
 SYSPROF_AVAILABLE_IN_3_36
 const SysprofCaptureAllocation     *sysprof_capture_reader_read_allocation     (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                            sysprof_capture_reader_reset               (SysprofCaptureReader      *self);
+bool                                sysprof_capture_reader_reset               (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                            sysprof_capture_reader_splice              (SysprofCaptureReader      *self,
+bool                                sysprof_capture_reader_splice              (SysprofCaptureReader      *self,
                                                                                 SysprofCaptureWriter      *dest,
                                                                                 GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                            sysprof_capture_reader_save_as             (SysprofCaptureReader      *self,
+bool                                sysprof_capture_reader_save_as             (SysprofCaptureReader      *self,
                                                                                 const char                *filename,
                                                                                 GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                            sysprof_capture_reader_get_stat            (SysprofCaptureReader      *self,
+bool                                sysprof_capture_reader_get_stat            (SysprofCaptureReader      *self,
                                                                                 SysprofCaptureStat        *st_buf);
 SYSPROF_AVAILABLE_IN_ALL
 void                                sysprof_capture_reader_set_stat            (SysprofCaptureReader      *self,
@@ -143,7 +145,7 @@ const SysprofCaptureFileChunk      *sysprof_capture_reader_find_file           (
 SYSPROF_AVAILABLE_IN_ALL
 char                              **sysprof_capture_reader_list_files          (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean                            sysprof_capture_reader_read_file_fd        (SysprofCaptureReader      *self,
+bool                                sysprof_capture_reader_read_file_fd        (SysprofCaptureReader      *self,
                                                                                 const char                *path,
                                                                                 int                        fd);
 

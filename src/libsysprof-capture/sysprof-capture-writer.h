@@ -56,6 +56,7 @@
 
 #pragma once
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <sys/types.h>
 
@@ -101,23 +102,23 @@ void                  sysprof_capture_writer_set_flush_delay                 (Sy
                                                                               GMainContext                      *main_context,
                                                                               unsigned int                       timeout_seconds);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_file                        (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_file                        (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
                                                                               const char                        *path,
-                                                                              gboolean                           is_last,
+                                                                              bool                               is_last,
                                                                               const uint8_t                     *data,
                                                                               size_t                             data_len);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_file_fd                     (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_file_fd                     (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
                                                                               const char                        *path,
                                                                               int                                fd);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_map                         (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_map                         (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
@@ -127,7 +128,7 @@ gboolean              sysprof_capture_writer_add_map                         (Sy
                                                                               uint64_t                           inode,
                                                                               const char                        *filename);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_mark                        (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_mark                        (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
@@ -136,7 +137,7 @@ gboolean              sysprof_capture_writer_add_mark                        (Sy
                                                                               const char                        *name,
                                                                               const char                        *message);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_metadata                    (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_metadata                    (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
@@ -147,13 +148,13 @@ SYSPROF_AVAILABLE_IN_ALL
 uint64_t              sysprof_capture_writer_add_jitmap                      (SysprofCaptureWriter              *self,
                                                                               const char                        *name);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_process                     (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_process                     (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
                                                                               const char                        *cmdline);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_sample                      (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_sample                      (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
@@ -161,30 +162,30 @@ gboolean              sysprof_capture_writer_add_sample                      (Sy
                                                                               const SysprofCaptureAddress       *addrs,
                                                                               unsigned int                       n_addrs);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_fork                        (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_fork                        (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
                                                                               int32_t                            child_pid);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_exit                        (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_exit                        (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_timestamp                   (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_timestamp                   (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_define_counters                 (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_define_counters                 (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
                                                                               const SysprofCaptureCounter       *counters,
                                                                               unsigned int                       n_counters);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_set_counters                    (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_set_counters                    (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
@@ -192,7 +193,7 @@ gboolean              sysprof_capture_writer_set_counters                    (Sy
                                                                               const SysprofCaptureCounterValue  *values,
                                                                               unsigned int                       n_counters);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_add_log                         (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_log                         (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
@@ -200,7 +201,7 @@ gboolean              sysprof_capture_writer_add_log                         (Sy
                                                                               const char                        *domain,
                                                                               const char                        *message);
 SYSPROF_AVAILABLE_IN_3_36
-gboolean              sysprof_capture_writer_add_allocation                  (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_allocation                  (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
@@ -210,7 +211,7 @@ gboolean              sysprof_capture_writer_add_allocation                  (Sy
                                                                               SysprofBacktraceFunc               backtrace_func,
                                                                               void                              *backtrace_data);
 SYSPROF_AVAILABLE_IN_3_36
-gboolean              sysprof_capture_writer_add_allocation_copy             (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_add_allocation_copy             (SysprofCaptureWriter              *self,
                                                                               int64_t                            time,
                                                                               int                                cpu,
                                                                               int32_t                            pid,
@@ -220,9 +221,9 @@ gboolean              sysprof_capture_writer_add_allocation_copy             (Sy
                                                                               const SysprofCaptureAddress       *addrs,
                                                                               unsigned int                       n_addrs);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_flush                           (SysprofCaptureWriter              *self);
+bool                  sysprof_capture_writer_flush                           (SysprofCaptureWriter              *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_save_as                         (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_save_as                         (SysprofCaptureWriter              *self,
                                                                               const char                        *filename,
                                                                               GError                           **error);
 SYSPROF_AVAILABLE_IN_ALL
@@ -232,22 +233,22 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureReader *sysprof_capture_writer_create_reader                   (SysprofCaptureWriter              *self,
                                                                               GError                           **error);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_splice                          (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_splice                          (SysprofCaptureWriter              *self,
                                                                               SysprofCaptureWriter              *dest,
                                                                               GError                           **error);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean              sysprof_capture_writer_cat                             (SysprofCaptureWriter              *self,
+bool                  sysprof_capture_writer_cat                             (SysprofCaptureWriter              *self,
                                                                               SysprofCaptureReader              *reader,
                                                                               GError                           **error);
 G_GNUC_INTERNAL
-gboolean              _sysprof_capture_writer_add_raw                        (SysprofCaptureWriter              *self,
+bool                  _sysprof_capture_writer_add_raw                        (SysprofCaptureWriter              *self,
                                                                               const SysprofCaptureFrame         *frame);
 G_GNUC_INTERNAL
-gboolean              _sysprof_capture_writer_splice_from_fd                 (SysprofCaptureWriter              *self,
+bool                  _sysprof_capture_writer_splice_from_fd                 (SysprofCaptureWriter              *self,
                                                                               int                                fd,
                                                                               GError                           **error) G_GNUC_INTERNAL;
 G_GNUC_INTERNAL
-gboolean              _sysprof_capture_writer_set_time_range                 (SysprofCaptureWriter              *self,
+bool                  _sysprof_capture_writer_set_time_range                 (SysprofCaptureWriter              *self,
                                                                               int64_t                            start_time,
                                                                               int64_t                            end_time) G_GNUC_INTERNAL;
 

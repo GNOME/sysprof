@@ -56,6 +56,7 @@
 
 #pragma once
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "sysprof-version-macros.h"
@@ -78,7 +79,7 @@ typedef enum
 } SysprofAddressContext;
 
 SYSPROF_AVAILABLE_IN_ALL
-gboolean     sysprof_address_is_context_switch (SysprofAddress         address,
+bool         sysprof_address_is_context_switch (SysprofAddress         address,
                                                 SysprofAddressContext *context);
 SYSPROF_AVAILABLE_IN_ALL
 const char  *sysprof_address_context_to_string (SysprofAddressContext  context);

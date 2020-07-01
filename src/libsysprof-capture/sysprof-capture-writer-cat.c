@@ -59,6 +59,7 @@
 #include "config.h"
 
 #include <glib/gstdio.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <sysprof-capture.h>
@@ -146,7 +147,7 @@ translate_table_translate (GArray       **tables,
   return item != NULL ? item->dst : src;
 }
 
-gboolean
+bool
 sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
                             SysprofCaptureReader  *reader,
                             GError               **error)
@@ -513,7 +514,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
   translate_table_clear (tables, TRANSLATE_ADDR);
   translate_table_clear (tables, TRANSLATE_CTR);
 
-  return TRUE;
+  return true;
 
 panic:
   g_set_error (error,
@@ -524,5 +525,5 @@ panic:
   translate_table_clear (tables, TRANSLATE_ADDR);
   translate_table_clear (tables, TRANSLATE_CTR);
 
-  return FALSE;
+  return false;
 }

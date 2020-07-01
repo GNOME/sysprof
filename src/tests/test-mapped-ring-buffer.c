@@ -5,10 +5,10 @@
 
 static gsize real_count;
 
-static gboolean
-drain_nth_cb (gconstpointer  data,
-              gsize         *len,
-              gpointer       user_data)
+static bool
+drain_nth_cb (const void *data,
+              size_t     *len,
+              void       *user_data)
 {
   const gint64 *v64 = data;
   g_assert_cmpint (*len, >=, 8);
@@ -17,10 +17,10 @@ drain_nth_cb (gconstpointer  data,
   return G_SOURCE_CONTINUE;
 }
 
-static gboolean
-drain_count_cb (gconstpointer  data,
-                gsize         *len,
-                gpointer       user_data)
+static bool
+drain_count_cb (const void *data,
+                size_t     *len,
+                void       *user_data)
 {
   const gint64 *v64 = data;
   g_assert_cmpint (*len, >=, 8);
@@ -93,10 +93,10 @@ typedef struct
   gint64 done;
 } ThreadedMessage;
 
-static gboolean
-handle_msg (gconstpointer  data,
-            gsize         *length,
-            gpointer       user_data)
+static bool
+handle_msg (const void *data,
+            size_t     *length,
+            void       *user_data)
 {
   const ThreadedMessage *msg = data;
   gboolean *done = user_data;

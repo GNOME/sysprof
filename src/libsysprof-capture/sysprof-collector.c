@@ -66,6 +66,7 @@
 #ifdef __linux__
 # include <sched.h>
 #endif
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/syscall.h>
@@ -82,7 +83,7 @@
 typedef struct
 {
   MappedRingBuffer *buffer;
-  gboolean is_shared;
+  bool is_shared;
   int tid;
   int pid;
 } SysprofCollector;
@@ -99,7 +100,7 @@ static GPrivate single_trace_key = G_PRIVATE_INIT (NULL);
 static SysprofCollector *shared_collector;
 static SysprofCollector invalid;
 
-static inline gboolean
+static inline bool
 use_single_trace (void)
 {
   return GPOINTER_TO_INT (g_private_get (&single_trace_key));

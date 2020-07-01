@@ -58,6 +58,8 @@
 
 #include "config.h"
 
+#include <stdbool.h>
+
 #include "sysprof-clock.h"
 
 int sysprof_clock = -1;

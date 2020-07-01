@@ -21,6 +21,7 @@
 #pragma once
 
 #include <glib.h>
+#include <stdbool.h>
 #include <stddef.h>
 
 G_BEGIN_DECLS
@@ -50,9 +51,9 @@ typedef struct _MappedRingBuffer MappedRingBuffer;
  *
  * Returns: %TRUE to coninue draining, otherwise %FALSE and draining stops
  */
-typedef gboolean (*MappedRingBufferCallback) (const void    *data,
-                                              size_t        *length,
-                                              void          *user_data);
+typedef bool (*MappedRingBufferCallback) (const void    *data,
+                                          size_t        *length,
+                                          void          *user_data);
 
 G_GNUC_INTERNAL
 MappedRingBuffer *mapped_ring_buffer_new_reader         (size_t                    buffer_size);
@@ -75,10 +76,10 @@ G_GNUC_INTERNAL
 void              mapped_ring_buffer_advance            (MappedRingBuffer         *self,
                                                          size_t                    length);
 G_GNUC_INTERNAL
-gboolean          mapped_ring_buffer_drain              (MappedRingBuffer         *self,
+bool              mapped_ring_buffer_drain              (MappedRingBuffer         *self,
                                                          MappedRingBufferCallback  callback,
                                                          void                     *user_data);
 G_GNUC_INTERNAL
-gboolean          mapped_ring_buffer_is_empty           (MappedRingBuffer         *self);
+bool              mapped_ring_buffer_is_empty           (MappedRingBuffer         *self);
 
 G_END_DECLS

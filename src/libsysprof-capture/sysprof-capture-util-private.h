@@ -89,5 +89,12 @@ ssize_t _sysprof_sendfile    (int         out_fd,
                               int         in_fd,
                               off_t      *offset,
                               size_t      count);
+#endif
 
+#ifdef HAVE_STRLCPY
+# define _sysprof_strlcpy(d,s,ds) strlcpy(d,s,ds)
+#else
+size_t  _sysprof_strlcpy     (char       *dest,
+                              const char *src,
+                              size_t      dest_size);
 #endif

@@ -406,8 +406,8 @@ sysprof_collector_mark (int64_t     time,
         ev->frame.pid = collector->pid;
         ev->frame.time = time;
         ev->duration = duration;
-        g_strlcpy (ev->group, group, sizeof ev->group);
-        g_strlcpy (ev->name, mark, sizeof ev->name);
+        _sysprof_strlcpy (ev->group, group, sizeof ev->group);
+        _sysprof_strlcpy (ev->name, mark, sizeof ev->name);
         memcpy (ev->message, message, sl);
         ev->message[sl] = 0;
 
@@ -446,7 +446,7 @@ sysprof_collector_log (int             severity,
         ev->severity = severity & 0xFFFF;
         ev->padding1 = 0;
         ev->padding2 = 0;
-        g_strlcpy (ev->domain, domain, sizeof ev->domain);
+        _sysprof_strlcpy (ev->domain, domain, sizeof ev->domain);
         memcpy (ev->message, message, sl);
         ev->message[sl] = 0;
 
@@ -489,7 +489,7 @@ sysprof_collector_log_printf (int             severity,
         ev->severity = severity & 0xFFFF;
         ev->padding1 = 0;
         ev->padding2 = 0;
-        g_strlcpy (ev->domain, domain, sizeof ev->domain);
+        _sysprof_strlcpy (ev->domain, domain, sizeof ev->domain);
         memcpy (ev->message, formatted, sl);
         ev->message[sl] = 0;
 

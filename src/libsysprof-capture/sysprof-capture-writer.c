@@ -519,7 +519,7 @@ sysprof_capture_writer_new_from_fd (int    fd,
   header->little_endian = false;
 #endif
   header->padding = 0;
-  g_strlcpy (header->capture_time, nowstr, sizeof header->capture_time);
+  _sysprof_strlcpy (header->capture_time, now_str, sizeof header->capture_time);
   header->time = SYSPROF_CAPTURE_CURRENT_TIME;
   header->end_time = 0;
   memset (header->suffix, 0, sizeof header->suffix);
@@ -599,7 +599,7 @@ sysprof_capture_writer_add_map (SysprofCaptureWriter *self,
   ev->offset = offset;
   ev->inode = inode;
 
-  g_strlcpy (ev->filename, filename, len - sizeof *ev);
+  _sysprof_strlcpy (ev->filename, filename, len - sizeof *ev);
   ev->filename[len - sizeof *ev - 1] = '\0';
 
   self->stat.frame_count[SYSPROF_CAPTURE_FRAME_MAP]++;
@@ -642,8 +642,8 @@ sysprof_capture_writer_add_mark (SysprofCaptureWriter *self,
                                      SYSPROF_CAPTURE_FRAME_MARK);
 
   ev->duration = duration;
-  g_strlcpy (ev->group, group, sizeof ev->group);
-  g_strlcpy (ev->name, name, sizeof ev->name);
+  _sysprof_strlcpy (ev->group, group, sizeof ev->group);
+  _sysprof_strlcpy (ev->name, name, sizeof ev->name);
   memcpy (ev->message, message, message_len);
 
   self->stat.frame_count[SYSPROF_CAPTURE_FRAME_MARK]++;
@@ -687,7 +687,7 @@ sysprof_capture_writer_add_metadata (SysprofCaptureWriter *self,
                                      time,
                                      SYSPROF_CAPTURE_FRAME_METADATA);
 
-  g_strlcpy (ev->id, id, sizeof ev->id);
+  _sysprof_strlcpy (ev->id, id, sizeof ev->id);
   memcpy (ev->metadata, metadata, metadata_len);
   ev->metadata[metadata_len] = 0;
 
@@ -743,7 +743,7 @@ sysprof_capture_writer_add_process (SysprofCaptureWriter *self,
                                      time,
                                      SYSPROF_CAPTURE_FRAME_PROCESS);
 
-  g_strlcpy (ev->cmdline, cmdline, len - sizeof *ev);
+  _sysprof_strlcpy (ev->cmdline, cmdline, len - sizeof *ev);
   ev->cmdline[len - sizeof *ev - 1] = '\0';
 
   self->stat.frame_count[SYSPROF_CAPTURE_FRAME_PROCESS]++;
@@ -1409,7 +1409,7 @@ sysprof_capture_writer_add_log (SysprofCaptureWriter *self,
   ev->severity = severity & 0xFFFF;
   ev->padding1 = 0;
   ev->padding2 = 0;
-  g_strlcpy (ev->domain, domain, sizeof ev->domain);
+  _sysprof_strlcpy (ev->domain, domain, sizeof ev->domain);
   memcpy (ev->message, message, message_len);
 
   self->stat.frame_count[SYSPROF_CAPTURE_FRAME_LOG]++;
@@ -1447,7 +1447,7 @@ sysprof_capture_writer_add_file (SysprofCaptureWriter *self,
   ev->padding1 = 0;
   ev->is_last = !!is_last;
   ev->len = data_len;
-  g_strlcpy (ev->path, path, sizeof ev->path);
+  _sysprof_strlcpy (ev->path, path, sizeof ev->path);
   memcpy (ev->data, data, data_len);
 
   self->stat.frame_count[SYSPROF_CAPTURE_FRAME_FILE_CHUNK]++;

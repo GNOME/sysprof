@@ -236,3 +236,23 @@ ssize_t
   errno = 0;
   return total;
 }
+
+size_t
+(_sysprof_strlcpy) (char       *dest,
+                    const char *src,
+                    size_t      dest_size)
+{
+  size_t i = 0;
+
+  if (dest_size > 0)
+    {
+      for (; i < dest_size - 1 && src[i] != '\0'; i++)
+        dest[i] = src[i];
+      dest[i] = '\0';
+    }
+
+  for (; src[i] != '\0'; i++)
+    ;
+
+  return i;
+}

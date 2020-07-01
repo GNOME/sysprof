@@ -91,6 +91,8 @@ if cc.has_header('execinfo.h')
   config_h.set10('HAVE_EXECINFO_H', true)
 endif
 
+config_h.set('HAVE_STRLCPY', cc.has_function('strlcpy'))
+
 if get_option('libunwind')
   libunwind_dep = dependency('libunwind-generic', required: false)
   if libunwind_dep.found()

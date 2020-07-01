@@ -34,6 +34,7 @@ struct _SysprofWindow
   DzlBindingGroup      *bindings;
 
   SysprofNotebook      *notebook;
+  GtkButton            *open_button;
   GtkMenuButton        *menu_button;
 };
 
@@ -190,6 +191,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-window.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, menu_button);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, open_button);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, notebook);
 
   g_type_ensure (SYSPROF_TYPE_NOTEBOOK);

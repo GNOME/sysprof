@@ -25,6 +25,17 @@
           </packing>
         </child>
         <child>
+          <object class="GtkButton" id="open_button">
+            <property name="label" translatable="yes">_Open</property>
+            <property name="action_name">app.open-capture</property>
+            <property name="use_underline">true</property>
+            <property name="visible">true</property>
+          </object>
+          <packing>
+            <property name="pack-type">start</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkLabel" id="stat_label">
             <property name="margin-end">12</property>
             <property name="xalign">1</property>

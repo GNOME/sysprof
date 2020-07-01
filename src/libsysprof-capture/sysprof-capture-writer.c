@@ -192,7 +192,7 @@ sysprof_capture_writer_ref (SysprofCaptureWriter *self)
   assert (self != NULL);
   assert (self->ref_count > 0);
 
-  g_atomic_int_inc (&self->ref_count);
+  __atomic_fetch_add (&self->ref_count, 1, __ATOMIC_SEQ_CST);
 
   return self;
 }
@@ -203,7 +203,7 @@ sysprof_capture_writer_unref (SysprofCaptureWriter *self)
   assert (self != NULL);
   assert (self->ref_count > 0);
 
-  if (g_atomic_int_dec_and_test (&self->ref_count))
+  if (__atomic_fetch_sub (&self->ref_count, 1, __ATOMIC_SEQ_CST) == 1)
     sysprof_capture_writer_finalize (self);
 }
 

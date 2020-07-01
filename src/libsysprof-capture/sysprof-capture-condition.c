@@ -303,7 +303,7 @@ sysprof_capture_condition_ref (SysprofCaptureCondition *self)
   assert (self != NULL);
   assert (self->ref_count > 0);
 
-  g_atomic_int_inc (&self->ref_count);
+  __atomic_fetch_add (&self->ref_count, 1, __ATOMIC_SEQ_CST);
   return self;
 }
 
@@ -313,7 +313,7 @@ sysprof_capture_condition_unref (SysprofCaptureCondition *self)
   assert (self != NULL);
   assert (self->ref_count > 0);
 
-  if (g_atomic_int_dec_and_test (&self->ref_count))
+  if (__atomic_fetch_sub (&self->ref_count, 1, __ATOMIC_SEQ_CST) == 1)
     sysprof_capture_condition_finalize (self);
 }
 

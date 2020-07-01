@@ -334,7 +334,7 @@ mapped_ring_buffer_unref (MappedRingBuffer *self)
   assert (self != NULL);
   assert (self->ref_count > 0);
 
-  if (g_atomic_int_dec_and_test (&self->ref_count))
+  if (__atomic_fetch_sub (&self->ref_count, 1, __ATOMIC_SEQ_CST) == 1)
     mapped_ring_buffer_finalize (self);
 }
 
@@ -344,7 +344,7 @@ mapped_ring_buffer_ref (MappedRingBuffer *self)
   assert (self != NULL);
   assert (self->ref_count > 0);
 
-  g_atomic_int_inc (&self->ref_count);
+  __atomic_fetch_add (&self->ref_count, 1, __ATOMIC_SEQ_CST);
 
   return self;
 }
@@ -395,8 +395,8 @@ mapped_ring_buffer_allocate (MappedRingBuffer *self,
   assert ((length & 0x7) == 0);
 
   header = get_header (self);
-  headpos = g_atomic_int_get (&header->head);
-  tailpos = g_atomic_int_get (&header->tail);
+  __atomic_load (&header->head, &headpos, __ATOMIC_SEQ_CST);
+  __atomic_load (&header->tail, &tailpos, __ATOMIC_SEQ_CST);
 
   /* We need to check that there is enough space for @length at the
    * current position in the write buffer. We cannot fully catch up
@@ -463,7 +463,7 @@ mapped_ring_buffer_advance (MappedRingBuffer *self,
    * we just update the position as the only way the head could have
    * moved is forward.
    */
-  g_atomic_int_set (&header->tail, tail);
+  __atomic_store (&header->tail, &tail, __ATOMIC_SEQ_CST);
 }
 
 /**
@@ -494,8 +494,8 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
   assert (callback != NULL);
 
   header = get_header (self);
-  headpos = g_atomic_int_get (&header->head);
-  tailpos = g_atomic_int_get (&header->tail);
+  __atomic_load (&header->head, &headpos, __ATOMIC_SEQ_CST);
+  __atomic_load (&header->tail, &tailpos, __ATOMIC_SEQ_CST);
 
   assert (headpos < self->body_size);
   assert (tailpos < self->body_size);
@@ -515,6 +515,7 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
     {
       const void *data = get_body_at_pos (self, headpos);
       size_t len = tailpos - headpos;
+      uint32_t new_headpos;
 
       if (!callback (data, &len, user_data))
         return false;
@@ -525,9 +526,11 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
       headpos += len;
 
       if (headpos >= self->body_size)
-        g_atomic_int_set (&header->head, headpos - self->body_size);
+        new_headpos = headpos - self->body_size;
       else
-        g_atomic_int_set (&header->head, headpos);
+        new_headpos = headpos;
+
+      __atomic_store (&header->head, &new_headpos, __ATOMIC_SEQ_CST);
     }
 
   return true;
@@ -552,8 +555,8 @@ mapped_ring_buffer_is_empty (MappedRingBuffer *self)
 
   header = get_header (self);
 
-  headpos = g_atomic_int_get (&header->head);
-  tailpos = g_atomic_int_get (&header->tail);
+  __atomic_load (&header->head, &headpos, __ATOMIC_SEQ_CST);
+  __atomic_load (&header->tail, &tailpos, __ATOMIC_SEQ_CST);
 
   return headpos == tailpos;
 }

@@ -59,14 +59,15 @@
 #include "config.h"
 
 #include <glib/gstdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <sysprof-capture.h>
 #include <unistd.h>
 
 typedef struct
 {
-  guint64 src;
-  guint64 dst;
+  uint64_t src;
+  uint64_t dst;
 } TranslateItem;
 
 enum {
@@ -76,15 +77,15 @@ enum {
 };
 
 static void
-translate_table_clear (GArray **tables,
-                       guint    table)
+translate_table_clear (GArray       **tables,
+                       unsigned int   table)
 {
   g_clear_pointer (&tables[table], g_array_unref);
 }
 
-static gint
-compare_by_src (gconstpointer a,
-                gconstpointer b)
+static int
+compare_by_src (const void *a,
+                const void *b)
 {
   const TranslateItem *itema = a;
   const TranslateItem *itemb = b;
@@ -98,18 +99,18 @@ compare_by_src (gconstpointer a,
 }
 
 static void
-translate_table_sort (GArray **tables,
-                      guint    table)
+translate_table_sort (GArray       **tables,
+                      unsigned int   table)
 {
   if (tables[table])
     g_array_sort (tables[table], compare_by_src);
 }
 
 static void
-translate_table_add (GArray  **tables,
-                     guint     table,
-                     guint64   src,
-                     guint64   dst)
+translate_table_add (GArray       **tables,
+                     unsigned int   table,
+                     uint64_t       src,
+                     uint64_t       dst)
 {
   const TranslateItem item = { src, dst };
 
@@ -119,10 +120,10 @@ translate_table_add (GArray  **tables,
   g_array_append_val (tables[table], item);
 }
 
-static guint64
-translate_table_translate (GArray  **tables,
-                           guint     table,
-                           guint64   src)
+static uint64_t
+translate_table_translate (GArray       **tables,
+                           unsigned int   table,
+                           uint64_t       src)
 {
   const TranslateItem *item;
   TranslateItem key = { src, 0 };
@@ -152,9 +153,9 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
 {
   GArray *tables[N_TRANSLATE] = { NULL };
   SysprofCaptureFrameType type;
-  gint64 start_time;
-  gint64 first_start_time = G_MAXINT64;
-  gint64 end_time = -1;
+  int64_t start_time;
+  int64_t first_start_time = INT64_MAX;
+  int64_t end_time = -1;
 
   g_return_val_if_fail (self != NULL, FALSE);
   g_return_val_if_fail (reader != NULL, FALSE);
@@ -176,8 +177,8 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
     {
       g_autoptr(GHashTable) jitmap = NULL;
       GHashTableIter iter;
-      const gchar *name;
-      guint64 addr;
+      const char *name;
+      uint64_t addr;
 
       if (type != SYSPROF_CAPTURE_FRAME_JITMAP)
         {
@@ -192,7 +193,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
       g_hash_table_iter_init (&iter, jitmap);
       while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&name))
         {
-          guint64 replace = sysprof_capture_writer_add_jitmap (self, name);
+          uint64_t replace = sysprof_capture_writer_add_jitmap (self, name);
           /* We need to keep a table of replacement addresses so that
            * we can translate the samples into the destination address
            * space that we synthesized for the address identifier.
@@ -378,7 +379,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
             {
               SysprofCaptureAddress addrs[frame->n_addrs];
 
-              for (guint z = 0; z < frame->n_addrs; z++)
+              for (unsigned int z = 0; z < frame->n_addrs; z++)
                 addrs[z] = translate_table_translate (tables, TRANSLATE_ADDR, frame->addrs[z]);
 
               sysprof_capture_writer_add_sample (self,
@@ -403,10 +404,10 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
             {
               g_autoptr(GArray) counter = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounter));
 
-              for (guint z = 0; z < frame->n_counters; z++)
+              for (unsigned int z = 0; z < frame->n_counters; z++)
                 {
                   SysprofCaptureCounter c = frame->counters[z];
-                  guint src = c.id;
+                  unsigned int src = c.id;
 
                   c.id = sysprof_capture_writer_request_counter (self, 1);
 
@@ -440,15 +441,15 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
               g_autoptr(GArray) ids = g_array_new (FALSE, FALSE, sizeof (guint));
               g_autoptr(GArray) values = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounterValue));
 
-              for (guint z = 0; z < frame->n_values; z++)
+              for (unsigned int z = 0; z < frame->n_values; z++)
                 {
                   const SysprofCaptureCounterValues *v = &frame->values[z];
 
-                  for (guint y = 0; y < G_N_ELEMENTS (v->ids); y++)
+                  for (unsigned int y = 0; y < G_N_ELEMENTS (v->ids); y++)
                     {
                       if (v->ids[y])
                         {
-                          guint dst = translate_table_translate (tables, TRANSLATE_CTR, v->ids[y]);
+                          unsigned int dst = translate_table_translate (tables, TRANSLATE_CTR, v->ids[y]);
                           SysprofCaptureCounterValue value = v->values[y];
 
                           g_array_append_val (ids, dst);
@@ -463,8 +464,8 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
                                                    frame->frame.time,
                                                    frame->frame.cpu,
                                                    frame->frame.pid,
-                                                   (const guint *)(gpointer)ids->data,
-                                                   (const SysprofCaptureCounterValue *)(gpointer)values->data,
+                                                   (const unsigned int *)(void *)ids->data,
+                                                   (const SysprofCaptureCounterValue *)(void *)values->data,
                                                    ids->len);
             }
 

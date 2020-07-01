@@ -105,7 +105,7 @@ sysprof_address_is_context_switch (SysprofAddress         address,
     }
 }
 
-const gchar *
+const char *
 sysprof_address_context_to_string (SysprofAddressContext context)
 {
   switch (context)

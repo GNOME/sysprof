@@ -87,10 +87,10 @@ typedef struct
   int pid;
 } SysprofCollector;
 
-#define COLLECTOR_INVALID ((gpointer)&invalid)
+#define COLLECTOR_INVALID ((void *)&invalid)
 
 static MappedRingBuffer       *request_writer         (void);
-static void                    sysprof_collector_free (gpointer data);
+static void                    sysprof_collector_free (void *data);
 static const SysprofCollector *sysprof_collector_get  (void);
 
 static G_LOCK_DEFINE (control_fd);
@@ -115,8 +115,8 @@ _do_getcpu (void)
 #endif
 }
 
-static inline gsize
-realign (gsize size)
+static inline size_t
+realign (size_t size)
 {
   return (size + SYSPROF_CAPTURE_ALIGN - 1) & ~(SYSPROF_CAPTURE_ALIGN - 1);
 }
@@ -129,7 +129,7 @@ request_writer (void)
 
   if (conn == NULL)
     {
-      const gchar *fdstr = g_getenv ("SYSPROF_CONTROL_FD");
+      const char *fdstr = g_getenv ("SYSPROF_CONTROL_FD");
       int peer_fd = -1;
 
       if (fdstr != NULL)
@@ -166,7 +166,7 @@ request_writer (void)
       if (g_output_stream_write_all (G_OUTPUT_STREAM (out_stream), CREATRING, CREATRING_LEN, &len, NULL, NULL) &&
           len == CREATRING_LEN)
         {
-          gint ring_fd = g_unix_connection_receive_fd (conn, NULL, NULL);
+          int ring_fd = g_unix_connection_receive_fd (conn, NULL, NULL);
 
           if (ring_fd > -1)
             {
@@ -198,7 +198,7 @@ write_final_frame (MappedRingBuffer *ring)
 }
 
 static void
-sysprof_collector_free (gpointer data)
+sysprof_collector_free (void *data)
 {
   SysprofCollector *collector = data;
 
@@ -263,7 +263,7 @@ sysprof_collector_get (void)
 void
 sysprof_collector_init (void)
 {
-  static gsize once_init;
+  static size_t once_init;
 
   if (g_once_init_enter (&once_init))
     {
@@ -293,19 +293,19 @@ sysprof_collector_init (void)
 
 void
 sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
-                            gint64                  alloc_size,
+                            int64_t                 alloc_size,
                             SysprofBacktraceFunc    backtrace_func,
-                            gpointer                backtrace_data)
+                            void                   *backtrace_data)
 {
   COLLECTOR_BEGIN {
     SysprofCaptureAllocation *ev;
-    gsize len;
+    size_t len;
 
     len = sizeof *ev + (sizeof (SysprofCaptureAllocation) * MAX_UNWIND_DEPTH);
 
     if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
       {
-        gint n_addrs;
+        int n_addrs;
 
         /* First take a backtrace, so that backtrace_func() can overwrite
          * a little bit of data *BEFORE* ev->addrs as stratch space. This
@@ -338,18 +338,18 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
 }
 
 void
-sysprof_collector_sample (SysprofBacktraceFunc backtrace_func,
-                          gpointer             backtrace_data)
+sysprof_collector_sample (SysprofBacktraceFunc  backtrace_func,
+                          void                 *backtrace_data)
 {
   COLLECTOR_BEGIN {
     SysprofCaptureSample *ev;
-    gsize len;
+    size_t len;
 
     len = sizeof *ev + (sizeof (SysprofCaptureSample) * MAX_UNWIND_DEPTH);
 
     if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
       {
-        gint n_addrs;
+        int n_addrs;
 
         /* See comment from sysprof_collector_allocate(). */
         if (backtrace_func)
@@ -373,16 +373,16 @@ sysprof_collector_sample (SysprofBacktraceFunc backtrace_func,
 }
 
 void
-sysprof_collector_mark (gint64       time,
-                        gint64       duration,
-                        const gchar *group,
-                        const gchar *mark,
-                        const gchar *message)
+sysprof_collector_mark (int64_t     time,
+                        int64_t     duration,
+                        const char *group,
+                        const char *mark,
+                        const char *message)
 {
   COLLECTOR_BEGIN {
     SysprofCaptureMark *ev;
-    gsize len;
-    gsize sl;
+    size_t len;
+    size_t sl;
 
     if (group == NULL)
       group = "";
@@ -416,14 +416,14 @@ sysprof_collector_mark (gint64       time,
 }
 
 void
-sysprof_collector_log (GLogLevelFlags  severity,
-                       const gchar    *domain,
-                       const gchar    *message)
+sysprof_collector_log (int             severity,
+                       const char     *domain,
+                       const char     *message)
 {
   COLLECTOR_BEGIN {
     SysprofCaptureLog *ev;
-    gsize len;
-    gsize sl;
+    size_t len;
+    size_t sl;
 
     if (domain == NULL)
       domain = "";
@@ -455,17 +455,17 @@ sysprof_collector_log (GLogLevelFlags  severity,
 }
 
 void
-sysprof_collector_log_printf (GLogLevelFlags  severity,
-                              const gchar    *domain,
-                              const gchar    *format,
+sysprof_collector_log_printf (int             severity,
+                              const char     *domain,
+                              const char     *format,
                               ...)
 {
   COLLECTOR_BEGIN {
-    g_autofree gchar *formatted = NULL;
+    g_autofree char *formatted = NULL;
     SysprofCaptureLog *ev;
     va_list args;
-    gsize len;
-    gsize sl;
+    size_t len;
+    size_t sl;
 
     va_start (args, format);
     formatted = g_strdup_vprintf (format, args);

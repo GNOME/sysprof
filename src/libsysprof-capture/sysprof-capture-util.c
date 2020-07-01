@@ -157,7 +157,7 @@ ssize_t
 #endif
 }
 
-gint32
+int32_t
 (_sysprof_getpid) (void)
 {
 #ifdef G_OS_WIN32

@@ -56,13 +56,16 @@
 
 #pragma once
 
+#include <stdint.h>
+#include <string.h>
+
 #include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
 SYSPROF_AVAILABLE_IN_ALL
-int   sysprof_memfd_create (const gchar *desc);
+int   sysprof_memfd_create (const char *desc);
 SYSPROF_AVAILABLE_IN_3_36
-gsize sysprof_getpagesize   (void);
+size_t sysprof_getpagesize (void);
 
 G_END_DECLS

@@ -68,10 +68,10 @@ typedef const SysprofCaptureFrame *(*ReadDelegate) (SysprofCaptureReader *);
 
 struct _SysprofCaptureCursor
 {
-  volatile gint         ref_count;
+  volatile int          ref_count;
   GPtrArray            *conditions;
   SysprofCaptureReader *reader;
-  guint                 reversed : 1;
+  unsigned int          reversed : 1;
 };
 
 static void
@@ -138,7 +138,7 @@ sysprof_capture_cursor_unref (SysprofCaptureCursor *self)
 void
 sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
                                 SysprofCaptureCursorCallback  callback,
-                                gpointer                      user_data)
+                                void                         *user_data)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (self->reader != NULL);
@@ -231,7 +231,7 @@ sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
         }
       else
         {
-          for (guint i = 0; i < self->conditions->len; i++)
+          for (size_t i = 0; i < self->conditions->len; i++)
             {
               const SysprofCaptureCondition *condition = g_ptr_array_index (self->conditions, i);
 

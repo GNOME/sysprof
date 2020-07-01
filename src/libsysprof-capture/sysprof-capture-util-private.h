@@ -84,7 +84,7 @@ ssize_t _sysprof_pwrite      (int         fd,
 ssize_t _sysprof_write       (int         fd,
                               const void *buf,
                               size_t      count);
-gint32  _sysprof_getpid      (void);
+int32_t _sysprof_getpid      (void);
 ssize_t _sysprof_sendfile    (int         out_fd,
                               int         in_fd,
                               off_t      *offset,

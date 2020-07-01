@@ -86,13 +86,13 @@ typedef enum
 
 struct _SysprofCaptureCondition
 {
-  volatile gint ref_count;
+  volatile int ref_count;
   SysprofCaptureConditionType type;
   union {
     GArray *where_type_in;
     struct {
-      gint64 begin;
-      gint64 end;
+      int64_t begin;
+      int64_t end;
     } where_time_between;
     GArray *where_pid_in;
     GArray *where_counter_in;
@@ -100,7 +100,7 @@ struct _SysprofCaptureCondition
       SysprofCaptureCondition *left;
       SysprofCaptureCondition *right;
     } and, or;
-    gchar *where_file;
+    char *where_file;
   } u;
 };
 
@@ -122,7 +122,7 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
              sysprof_capture_condition_match (self->u.or.right, frame);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN:
-      for (guint i = 0; i < self->u.where_type_in->len; i++)
+      for (size_t i = 0; i < self->u.where_type_in->len; i++)
         {
           if (frame->type == g_array_index (self->u.where_type_in, SysprofCaptureFrameType, i))
             return TRUE;
@@ -133,9 +133,9 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
       return (frame->time >= self->u.where_time_between.begin && frame->time <= self->u.where_time_between.end);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN:
-      for (guint i = 0; i < self->u.where_pid_in->len; i++)
+      for (size_t i = 0; i < self->u.where_pid_in->len; i++)
         {
-          if (frame->pid == g_array_index (self->u.where_pid_in, gint32, i))
+          if (frame->pid == g_array_index (self->u.where_pid_in, int32_t, i))
             return TRUE;
         }
       return FALSE;
@@ -145,11 +145,11 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
         {
           const SysprofCaptureCounterSet *set = (SysprofCaptureCounterSet *)frame;
 
-          for (guint i = 0; i < self->u.where_counter_in->len; i++)
+          for (size_t i = 0; i < self->u.where_counter_in->len; i++)
             {
-              guint counter = g_array_index (self->u.where_counter_in, guint, i);
+              unsigned int counter = g_array_index (self->u.where_counter_in, unsigned int, i);
 
-              for (guint j = 0; j < set->n_values; j++)
+              for (unsigned int j = 0; j < set->n_values; j++)
                 {
                   if (counter == set->values[j].ids[0] ||
                       counter == set->values[j].ids[1] ||
@@ -167,11 +167,11 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
         {
           const SysprofCaptureCounterDefine *def = (SysprofCaptureCounterDefine *)frame;
 
-          for (guint i = 0; i < self->u.where_counter_in->len; i++)
+          for (size_t i = 0; i < self->u.where_counter_in->len; i++)
             {
-              guint counter = g_array_index (self->u.where_counter_in, guint, i);
+              unsigned int counter = g_array_index (self->u.where_counter_in, unsigned int, i);
 
-              for (guint j = 0; j < def->n_counters; j++)
+              for (unsigned int j = 0; j < def->n_counters; j++)
                 {
                   if (def->counters[j].id == counter)
                     return TRUE;
@@ -225,7 +225,7 @@ sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
     case SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN:
       return sysprof_capture_condition_new_where_type_in (
           self->u.where_type_in->len,
-          (const SysprofCaptureFrameType *)(gpointer)self->u.where_type_in->data);
+          (const SysprofCaptureFrameType *)(void *)self->u.where_type_in->data);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TIME_BETWEEN:
       return sysprof_capture_condition_new_where_time_between (
@@ -235,12 +235,12 @@ sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
     case SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN:
       return sysprof_capture_condition_new_where_pid_in (
           self->u.where_pid_in->len,
-          (const gint32 *)(gpointer)self->u.where_pid_in->data);
+          (const int32_t *)(void *)self->u.where_pid_in->data);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN:
       return sysprof_capture_condition_new_where_counter_in (
           self->u.where_counter_in->len,
-          (const guint *)(gpointer)self->u.where_counter_in->data);
+          (const unsigned int *)(void *)self->u.where_counter_in->data);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_FILE:
       return sysprof_capture_condition_new_where_file (self->u.where_file);
@@ -315,8 +315,8 @@ sysprof_capture_condition_unref (SysprofCaptureCondition *self)
 }
 
 SysprofCaptureCondition *
-sysprof_capture_condition_new_where_type_in (guint                     n_types,
-                                        const SysprofCaptureFrameType *types)
+sysprof_capture_condition_new_where_type_in (unsigned int                   n_types,
+                                             const SysprofCaptureFrameType *types)
 {
   SysprofCaptureCondition *self;
 
@@ -332,14 +332,14 @@ sysprof_capture_condition_new_where_type_in (guint                     n_types,
 }
 
 SysprofCaptureCondition *
-sysprof_capture_condition_new_where_time_between (gint64 begin_time,
-                                             gint64 end_time)
+sysprof_capture_condition_new_where_time_between (int64_t begin_time,
+                                                  int64_t end_time)
 {
   SysprofCaptureCondition *self;
 
   if G_UNLIKELY (begin_time > end_time)
     {
-      gint64 tmp = begin_time;
+      int64_t tmp = begin_time;
       begin_time = end_time;
       end_time = tmp;
     }
@@ -353,8 +353,8 @@ sysprof_capture_condition_new_where_time_between (gint64 begin_time,
 }
 
 SysprofCaptureCondition *
-sysprof_capture_condition_new_where_pid_in (guint         n_pids,
-                                       const gint32 *pids)
+sysprof_capture_condition_new_where_pid_in (unsigned int   n_pids,
+                                            const int32_t *pids)
 {
   SysprofCaptureCondition *self;
 
@@ -362,16 +362,16 @@ sysprof_capture_condition_new_where_pid_in (guint         n_pids,
 
   self = sysprof_capture_condition_init ();
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN;
-  self->u.where_pid_in = g_array_sized_new (FALSE, FALSE, sizeof (gint32), n_pids);
+  self->u.where_pid_in = g_array_sized_new (FALSE, FALSE, sizeof (int32_t), n_pids);
   g_array_set_size (self->u.where_pid_in, n_pids);
-  memcpy (self->u.where_pid_in->data, pids, sizeof (gint32) * n_pids);
+  memcpy (self->u.where_pid_in->data, pids, sizeof (int32_t) * n_pids);
 
   return self;
 }
 
 SysprofCaptureCondition *
-sysprof_capture_condition_new_where_counter_in (guint        n_counters,
-                                           const guint *counters)
+sysprof_capture_condition_new_where_counter_in (unsigned int        n_counters,
+                                                const unsigned int *counters)
 {
   SysprofCaptureCondition *self;
 
@@ -379,12 +379,12 @@ sysprof_capture_condition_new_where_counter_in (guint        n_counters,
 
   self = sysprof_capture_condition_init ();
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN;
-  self->u.where_counter_in = g_array_sized_new (FALSE, FALSE, sizeof (guint), n_counters);
+  self->u.where_counter_in = g_array_sized_new (FALSE, FALSE, sizeof (unsigned int), n_counters);
 
   if (n_counters > 0)
     {
       g_array_set_size (self->u.where_counter_in, n_counters);
-      memcpy (self->u.where_counter_in->data, counters, sizeof (guint) * n_counters);
+      memcpy (self->u.where_counter_in->data, counters, sizeof (unsigned int) * n_counters);
     }
 
   return self;
@@ -454,7 +454,7 @@ sysprof_capture_condition_new_or (SysprofCaptureCondition *left,
  * Returns: (transfer full): a new #SysprofCaptureCondition
  */
 SysprofCaptureCondition *
-sysprof_capture_condition_new_where_file (const gchar *path)
+sysprof_capture_condition_new_where_file (const char *path)
 {
   SysprofCaptureCondition *self;
 

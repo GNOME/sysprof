@@ -57,15 +57,16 @@
 #pragma once
 
 #include <glib.h>
+#include <stdint.h>
 #include <time.h>
 
 #include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
-typedef gint SysprofClock;
-typedef gint64 SysprofTimeStamp;
-typedef gint32 SysprofTimeSysprofan;
+typedef int SysprofClock;
+typedef int64_t SysprofTimeStamp;
+typedef int32_t SysprofTimeSysprofan;
 
 #define SYSPROF_NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
 

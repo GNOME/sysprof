@@ -77,7 +77,7 @@
  * Returns: An fd if successful; otherwise -1 and errno is set.
  */
 int
-sysprof_memfd_create (const gchar *name)
+sysprof_memfd_create (const char *name)
 {
 #ifdef __NR_memfd_create
   if (name == NULL)
@@ -116,7 +116,7 @@ sysprof_memfd_create (const gchar *name)
  *
  * Since: 3.36
  */
-gsize
+size_t
 sysprof_getpagesize (void)
 {
   return _sysprof_getpagesize ();

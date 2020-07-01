@@ -60,12 +60,12 @@
 
 #include "sysprof-clock.h"
 
-gint sysprof_clock = -1;
+int sysprof_clock = -1;
 
 void
 sysprof_clock_init (void)
 {
-  static const gint clock_ids[] = {
+  static const int clock_ids[] = {
     CLOCK_MONOTONIC,
     CLOCK_MONOTONIC_RAW,
 #ifdef __linux__
@@ -78,7 +78,7 @@ sysprof_clock_init (void)
   if (sysprof_clock != -1)
     return;
 
-  for (guint i = 0; i < G_N_ELEMENTS (clock_ids); i++)
+  for (unsigned int i = 0; i < G_N_ELEMENTS (clock_ids); i++)
     {
       struct timespec ts;
       int clock_id = clock_ids [i];

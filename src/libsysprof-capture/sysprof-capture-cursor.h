@@ -75,7 +75,7 @@ typedef struct _SysprofCaptureCursor SysprofCaptureCursor;
  * Returns: %TRUE if iteration should continue, otherwise %FALSE.
  */
 typedef gboolean (*SysprofCaptureCursorCallback) (const SysprofCaptureFrame *frame,
-                                                  gpointer                   user_data);
+                                                  void                      *user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCursor *sysprof_capture_cursor_new           (SysprofCaptureReader         *reader);
@@ -88,7 +88,7 @@ SysprofCaptureReader *sysprof_capture_cursor_get_reader    (SysprofCaptureCursor
 SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_cursor_foreach       (SysprofCaptureCursor         *self,
                                                             SysprofCaptureCursorCallback  callback,
-                                                            gpointer                      user_data);
+                                                            void                         *user_data);
 SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_cursor_reset         (SysprofCaptureCursor         *self);
 SYSPROF_AVAILABLE_IN_ALL

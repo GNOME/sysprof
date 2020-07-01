@@ -74,19 +74,19 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCondition *sysprof_capture_condition_new_or                 (SysprofCaptureCondition       *left,
                                                                            SysprofCaptureCondition       *right);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCondition *sysprof_capture_condition_new_where_type_in      (guint                          n_types,
+SysprofCaptureCondition *sysprof_capture_condition_new_where_type_in      (unsigned int                   n_types,
                                                                            const SysprofCaptureFrameType *types);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCondition *sysprof_capture_condition_new_where_time_between (gint64                         begin_time,
-                                                                           gint64                         end_time);
+SysprofCaptureCondition *sysprof_capture_condition_new_where_time_between (int64_t                        begin_time,
+                                                                           int64_t                        end_time);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCondition *sysprof_capture_condition_new_where_pid_in       (guint                          n_pids,
-                                                                           const gint32                  *pids);
+SysprofCaptureCondition *sysprof_capture_condition_new_where_pid_in       (unsigned int                   n_pids,
+                                                                           const int32_t                 *pids);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCondition *sysprof_capture_condition_new_where_counter_in   (guint                          n_counters,
-                                                                           const guint                   *counters);
+SysprofCaptureCondition *sysprof_capture_condition_new_where_counter_in   (unsigned int                   n_counters,
+                                                                           const unsigned int            *counters);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureCondition *sysprof_capture_condition_new_where_file         (const gchar                   *path);
+SysprofCaptureCondition *sysprof_capture_condition_new_where_file         (const char                    *path);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean                 sysprof_capture_condition_match                  (const SysprofCaptureCondition *self,
                                                                            const SysprofCaptureFrame     *frame);

@@ -56,13 +56,15 @@
 
 #pragma once
 
+#include <stdint.h>
+
 #include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
-typedef guint64 SysprofAddress;
+typedef uint64_t SysprofAddress;
 
-G_STATIC_ASSERT (sizeof (SysprofAddress) >= sizeof (gpointer));
+G_STATIC_ASSERT (sizeof (SysprofAddress) >= sizeof (void *));
 
 typedef enum
 {
@@ -79,9 +81,9 @@ SYSPROF_AVAILABLE_IN_ALL
 gboolean     sysprof_address_is_context_switch (SysprofAddress         address,
                                                 SysprofAddressContext *context);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar *sysprof_address_context_to_string (SysprofAddressContext  context);
+const char  *sysprof_address_context_to_string (SysprofAddressContext  context);
 
-static inline gint
+static inline int
 sysprof_address_compare (SysprofAddress a,
                          SysprofAddress b)
 {

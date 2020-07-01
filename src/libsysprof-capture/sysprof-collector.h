@@ -64,26 +64,26 @@ SYSPROF_AVAILABLE_IN_3_36
 void sysprof_collector_init     (void);
 SYSPROF_AVAILABLE_IN_3_36
 void sysprof_collector_allocate (SysprofCaptureAddress  alloc_addr,
-                                 gint64                 alloc_size,
+                                 int64_t                alloc_size,
                                  SysprofBacktraceFunc   backtrace_func,
-                                 gpointer               backtrace_data);
+                                 void                  *backtrace_data);
 SYSPROF_AVAILABLE_IN_3_36
 void sysprof_collector_sample   (SysprofBacktraceFunc   backtrace_func,
-                                 gpointer               backtrace_data);
+                                 void                  *backtrace_data);
 SYSPROF_AVAILABLE_IN_3_36
-void sysprof_collector_mark     (gint64                 time,
-                                 gint64                 duration,
-                                 const gchar           *group,
-                                 const gchar           *mark,
-                                 const gchar           *message);
+void sysprof_collector_mark     (int64_t                time,
+                                 int64_t                duration,
+                                 const char            *group,
+                                 const char            *mark,
+                                 const char            *message);
 SYSPROF_AVAILABLE_IN_3_36
-void sysprof_collector_log      (GLogLevelFlags         severity,
-                                 const gchar           *domain,
-                                 const gchar           *message);
+void sysprof_collector_log      (int                    severity,
+                                 const char            *domain,
+                                 const char            *message);
 SYSPROF_AVAILABLE_IN_3_38
-void sysprof_collector_log_printf (GLogLevelFlags         severity,
-                                   const gchar           *domain,
-                                   const gchar           *format,
+void sysprof_collector_log_printf (int                  severity,
+                                   const char          *domain,
+                                   const char          *format,
                                    ...) G_GNUC_PRINTF (3, 4);
 
 G_END_DECLS

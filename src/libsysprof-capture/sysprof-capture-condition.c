@@ -63,6 +63,7 @@
 #include <string.h>
 
 #include "sysprof-capture-condition.h"
+#include "sysprof-capture-util-private.h"
 #include "sysprof-macros-internal.h"
 
 /**
@@ -204,7 +205,10 @@ sysprof_capture_condition_init (void)
 {
   SysprofCaptureCondition *self;
 
-  self = g_slice_new0 (SysprofCaptureCondition);
+  self = sysprof_malloc0 (sizeof (SysprofCaptureCondition));
+  if (self == NULL)
+    return NULL;
+
   self->ref_count = 1;
 
   return g_steal_pointer (&self);
@@ -294,7 +298,7 @@ sysprof_capture_condition_finalize (SysprofCaptureCondition *self)
       break;
     }
 
-  g_slice_free (SysprofCaptureCondition, self);
+  free (self);
 }
 
 SysprofCaptureCondition *

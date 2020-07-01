@@ -203,7 +203,10 @@ mapped_ring_buffer_new_reader (size_t buffer_size)
   header->offset = page_size;
   header->size = buffer_size - page_size;
 
-  self = g_slice_new0 (MappedRingBuffer);
+  self = sysprof_malloc0 (sizeof (MappedRingBuffer));
+  if (self == NULL)
+    return NULL;
+
   self->ref_count = 1;
   self->mode = MODE_READER;
   self->body_size = buffer_size - page_size;
@@ -301,7 +304,14 @@ mapped_ring_buffer_new_writer (int fd)
       return NULL;
     }
 
-  self = g_slice_new0 (MappedRingBuffer);
+  self = sysprof_malloc0 (sizeof (MappedRingBuffer));
+  if (self == NULL)
+    {
+      munmap (map, page_size + ((buffer_size - page_size) * 2));
+      close (fd);
+      return NULL;
+    }
+
   self->ref_count = 1;
   self->mode = MODE_WRITER;
   self->fd = fd;

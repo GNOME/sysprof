@@ -63,6 +63,7 @@
 #include "sysprof-capture-condition.h"
 #include "sysprof-capture-cursor.h"
 #include "sysprof-capture-reader.h"
+#include "sysprof-capture-util-private.h"
 
 #define READ_DELEGATE(f) ((ReadDelegate)(f))
 
@@ -81,7 +82,7 @@ sysprof_capture_cursor_finalize (SysprofCaptureCursor *self)
 {
   g_clear_pointer (&self->conditions, g_ptr_array_unref);
   g_clear_pointer (&self->reader, sysprof_capture_reader_unref);
-  g_slice_free (SysprofCaptureCursor, self);
+  free (self);
 }
 
 static SysprofCaptureCursor *
@@ -89,7 +90,10 @@ sysprof_capture_cursor_init (void)
 {
   SysprofCaptureCursor *self;
 
-  self = g_slice_new0 (SysprofCaptureCursor);
+  self = sysprof_malloc0 (sizeof (SysprofCaptureCursor));
+  if (self == NULL)
+    return NULL;
+
   self->conditions = g_ptr_array_new_with_free_func ((GDestroyNotify) sysprof_capture_condition_unref);
   self->ref_count = 1;
 

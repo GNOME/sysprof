@@ -181,8 +181,8 @@ sysprof_capture_writer_finalize (SysprofCaptureWriter *self)
           self->fd = -1;
         }
 
-      g_free (self->buf);
-      g_free (self);
+      free (self->buf);
+      free (self);
     }
 }
 
@@ -483,10 +483,18 @@ sysprof_capture_writer_new_from_fd (int    fd,
   /* This is only useful on files, memfd, etc */
   if (ftruncate (fd, 0) != 0) { /* Do Nothing */ }
 
-  self = g_new0 (SysprofCaptureWriter, 1);
+  self = sysprof_malloc0 (sizeof (SysprofCaptureWriter));
+  if (self == NULL)
+    return NULL;
+
   self->ref_count = 1;
   self->fd = fd;
-  self->buf = (guint8 *)g_malloc0 (buffer_size);
+  self->buf = (uint8_t *) sysprof_malloc0 (buffer_size);
+  if (self->buf == NULL)
+    {
+      free (self);
+      return NULL;
+    }
   self->len = buffer_size;
   self->next_counter_id = 1;
 

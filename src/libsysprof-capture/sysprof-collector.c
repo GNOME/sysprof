@@ -75,6 +75,7 @@
 
 #include "mapped-ring-buffer.h"
 
+#include "sysprof-capture-util-private.h"
 #include "sysprof-collector.h"
 
 #define MAX_UNWIND_DEPTH 128
@@ -214,7 +215,7 @@ sysprof_collector_free (void *data)
           mapped_ring_buffer_unref (buffer);
         }
 
-      g_free (collector);
+      free (collector);
     }
 }
 
@@ -238,9 +239,12 @@ sysprof_collector_get (void)
 
     g_private_replace (&collector_key, COLLECTOR_INVALID);
 
+    self = sysprof_malloc0 (sizeof (SysprofCollector));
+    if (self == NULL)
+      return COLLECTOR_INVALID;
+
     G_LOCK (control_fd);
 
-    self = g_new0 (SysprofCollector, 1);
     self->pid = getpid ();
 #ifdef __linux__
     self->tid = syscall (__NR_gettid, 0);

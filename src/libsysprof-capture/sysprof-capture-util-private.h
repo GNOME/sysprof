@@ -62,7 +62,19 @@
 # include <sys/sendfile.h>
 #endif
 
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
+
+static inline void *
+sysprof_malloc0 (size_t size)
+{
+  void *ptr = malloc (size);
+  if (ptr == NULL)
+    return NULL;
+  memset (ptr, 0, size);
+  return ptr;
+}
 
 #ifdef __linux__
 # define _sysprof_getpagesize()     getpagesize()

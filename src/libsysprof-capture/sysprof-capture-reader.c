@@ -126,9 +126,9 @@ sysprof_capture_reader_finalize (SysprofCaptureReader *self)
   if (self != NULL)
     {
       close (self->fd);
-      g_free (self->buf);
+      free (self->buf);
       g_free (self->filename);
-      g_free (self);
+      free (self);
     }
 }
 
@@ -216,10 +216,23 @@ sysprof_capture_reader_new_from_fd (int      fd,
 
   assert (fd > -1);
 
-  self = g_new0 (SysprofCaptureReader, 1);
+  self = sysprof_malloc0 (sizeof (SysprofCaptureReader));
+  if (self == NULL)
+    {
+      g_set_error_literal (error, G_FILE_ERROR, G_FILE_ERROR_NOMEM, "No memory");
+      return NULL;
+    }
+
   self->ref_count = 1;
   self->bufsz = USHRT_MAX * 2;
-  self->buf = g_malloc (self->bufsz);
+  self->buf = sysprof_malloc0 (self->bufsz);
+  if (self->buf == NULL)
+    {
+      free (self);
+      g_set_error_literal (error, G_FILE_ERROR, G_FILE_ERROR_NOMEM, "No memory");
+      return NULL;
+    }
+
   self->len = 0;
   self->pos = 0;
   self->fd = fd;
@@ -1156,7 +1169,12 @@ sysprof_capture_reader_copy (SysprofCaptureReader *self)
   if (-1 == (fd = dup (self->fd)))
     return NULL;
 
-  copy = g_new0 (SysprofCaptureReader, 1);
+  copy = sysprof_malloc0 (sizeof (SysprofCaptureReader));
+  if (copy == NULL)
+    {
+      close (fd);
+      return NULL;
+    }
 
   *copy = *self;
 
@@ -1167,7 +1185,15 @@ sysprof_capture_reader_copy (SysprofCaptureReader *self)
   copy->st_buf = self->st_buf;
   copy->st_buf_set = self->st_buf_set;
 
-  copy->buf = g_malloc (self->bufsz);
+  copy->buf = malloc (self->bufsz);
+  if (copy->buf == NULL)
+    {
+      close (fd);
+      g_free (copy->filename);
+      free (copy);
+      return NULL;
+    }
+
   memcpy (copy->buf, self->buf, self->bufsz);
 
   return copy;

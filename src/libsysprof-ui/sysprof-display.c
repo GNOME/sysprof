@@ -1072,10 +1072,35 @@ sysprof_display_open (SysprofDisplay *self,
   g_set_object (&priv->file, file);
 
   if (!(reader = sysprof_capture_reader_new (path, &error)))
-    g_warning ("Failed to open capture: %s", error->message);
-  else
-    sysprof_display_load_async (self, reader, NULL, NULL, NULL);
+    {
+      GtkWidget *dialog;
+      GtkWidget *window;
 
+      g_warning ("Failed to open capture: %s", error->message);
+
+      window = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_WINDOW);
+      dialog = gtk_message_dialog_new (NULL,
+                                       GTK_DIALOG_MODAL,
+                                       GTK_MESSAGE_WARNING,
+                                       GTK_BUTTONS_CLOSE,
+                                       "%s",
+                                       _("The capture could not be opened"));
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+                                                "%s",
+                                                error->message);
+      g_signal_connect (dialog,
+                        "response",
+                        G_CALLBACK (gtk_widget_destroy),
+                        NULL);
+      gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+      gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+      gtk_window_present (GTK_WINDOW (dialog));
+      gtk_widget_destroy (GTK_WIDGET (self));
+
+      return;
+    }
+
+  sysprof_display_load_async (self, reader, NULL, NULL, NULL);
   update_title_child_property (self);
 }
 

@@ -24,6 +24,7 @@
 
 #include <assert.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -251,35 +252,35 @@ mapped_ring_buffer_new_writer (int fd)
   /* Make our own copy of the FD */
   if ((fd = dup (fd)) < 0)
     {
-      g_printerr ("Failed to dup() fd, cannot continue\n");
+      fprintf (stderr, "Failed to dup() fd, cannot continue\n");
       return NULL;
     }
 
   /* Seek to end to get buffer size */
   if ((buffer_size = lseek (fd, 0, SEEK_END)) < 0)
     {
-      g_printerr ("Failed to seek to end of file. Cannot determine buffer size.\n");
+      fprintf (stderr, "Failed to seek to end of file. Cannot determine buffer size.\n");
       return NULL;
     }
 
   /* Ensure non-zero sized buffer */
   if (buffer_size < (page_size + page_size))
     {
-      g_printerr ("Buffer is too small, cannot continue.\n");
+      fprintf (stderr, "Buffer is too small, cannot continue.\n");
       return NULL;
     }
 
   /* Make sure it is less than our max size */
   if ((buffer_size - page_size) > BUFFER_MAX_SIZE)
     {
-      g_printerr ("Buffer is too large, cannot continue.\n");
+      fprintf (stderr, "Buffer is too large, cannot continue.\n");
       return NULL;
     }
 
   /* Ensure we have page-aligned buffer */
   if ((buffer_size % page_size) != 0)
     {
-      g_printerr ("Invalid buffer size, not page aligned.\n");
+      fprintf (stderr, "Invalid buffer size, not page aligned.\n");
       return NULL;
     }
 

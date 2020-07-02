@@ -904,7 +904,7 @@ again:
   ret = _sysprof_pwrite (self->fd,
                          &end_time,
                          sizeof (end_time),
-                         G_STRUCT_OFFSET (SysprofCaptureFileHeader, end_time));
+                         offsetof (SysprofCaptureFileHeader, end_time));
 
   if (ret < 0 && errno == EAGAIN)
     goto again;
@@ -1341,7 +1341,7 @@ do_start:
   ret = _sysprof_pwrite (self->fd,
                          &start_time,
                          sizeof (start_time),
-                         G_STRUCT_OFFSET (SysprofCaptureFileHeader, time));
+                         offsetof (SysprofCaptureFileHeader, time));
 
   if (ret < 0 && errno == EAGAIN)
     goto do_start;
@@ -1350,7 +1350,7 @@ do_end:
   ret = _sysprof_pwrite (self->fd,
                          &end_time,
                          sizeof (end_time),
-                         G_STRUCT_OFFSET (SysprofCaptureFileHeader, end_time));
+                         offsetof (SysprofCaptureFileHeader, end_time));
 
   if (ret < 0 && errno == EAGAIN)
     goto do_end;

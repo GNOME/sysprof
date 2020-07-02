@@ -366,7 +366,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
                                                  frame->frame.pid,
                                                  frame->id,
                                                  frame->metadata,
-                                                 frame->frame.len - G_STRUCT_OFFSET (SysprofCaptureMetadata, metadata));
+                                                 frame->frame.len - offsetof (SysprofCaptureMetadata, metadata));
             break;
           }
 

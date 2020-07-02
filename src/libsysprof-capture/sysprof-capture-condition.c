@@ -519,7 +519,7 @@ sysprof_capture_condition_new_where_file (const char *path)
     return NULL;
 
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_FILE;
-  self->u.where_file = strdup (path);
+  self->u.where_file = sysprof_strdup (path);
   if (self->u.where_file == NULL)
     {
       free (self);

@@ -284,7 +284,7 @@ sysprof_capture_reader_new (const char   *filename,
       return NULL;
     }
 
-  self->filename = strdup (filename);
+  self->filename = sysprof_strdup (filename);
 
   return self;
 }
@@ -1080,7 +1080,7 @@ sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
     }
 
   if (self->filename == NULL)
-    self->filename = strdup (filename);
+    self->filename = sysprof_strdup (filename);
 
   close (fd);
 
@@ -1173,7 +1173,7 @@ sysprof_capture_reader_copy (SysprofCaptureReader *self)
   *copy = *self;
 
   copy->ref_count = 1;
-  copy->filename = strdup (self->filename);
+  copy->filename = sysprof_strdup (self->filename);
   copy->fd = fd;
   copy->end_time = self->end_time;
   copy->st_buf = self->st_buf;

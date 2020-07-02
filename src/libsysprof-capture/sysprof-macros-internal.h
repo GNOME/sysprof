@@ -73,3 +73,5 @@
     if (_p != NULL) \
       (destroy) (_p); \
   } while (0)
+
+#define sysprof_strdup(s) ((s) ? strdup(s) : NULL)

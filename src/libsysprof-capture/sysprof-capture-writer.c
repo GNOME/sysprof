@@ -918,24 +918,26 @@ sysprof_capture_writer_flush (SysprofCaptureWriter *self)
  * sysprof_capture_writer_save_as:
  * @self: A #SysprofCaptureWriter
  * @filename: the file to save the capture as
- * @error: a location for a #GError or %NULL.
  *
  * Saves the captured data as the file @filename.
  *
  * This is primarily useful if the writer was created with a memory-backed
  * file-descriptor such as a memfd or tmpfs file on Linux.
  *
- * Returns: %TRUE if successful, otherwise %FALSE and @error is set.
+ * `errno` is set on error, to any of the errors returned by `open()`,
+ * sysprof_capture_writer_flush(), `lseek()` or `sendfile()`.
+ *
+ * Returns: %TRUE if successful, otherwise %FALSE and `errno` is set.
  */
 bool
-sysprof_capture_writer_save_as (SysprofCaptureWriter  *self,
-                                const char            *filename,
-                                GError               **error)
+sysprof_capture_writer_save_as (SysprofCaptureWriter *self,
+                                const char           *filename)
 {
   size_t to_write;
   off_t in_off;
   off_t pos;
   int fd = -1;
+  int errsv;
 
   assert (self != NULL);
   assert (self->fd != -1);
@@ -975,16 +977,15 @@ sysprof_capture_writer_save_as (SysprofCaptureWriter  *self,
   return true;
 
 handle_errno:
-  g_set_error (error,
-               G_FILE_ERROR,
-               g_file_error_from_errno (errno),
-               "%s", g_strerror (errno));
+  errsv = errno;
 
   if (fd != -1)
     {
       close (fd);
       unlink (filename);
     }
+
+  errno = errsv;
 
   return false;
 }
@@ -993,7 +994,6 @@ handle_errno:
  * _sysprof_capture_writer_splice_from_fd:
  * @self: An #SysprofCaptureWriter
  * @fd: the fd to read from.
- * @error: A location for a #GError, or %NULL.
  *
  * This is internal API for SysprofCaptureWriter and SysprofCaptureReader to
  * communicate when splicing a reader into a writer.
@@ -1003,12 +1003,14 @@ handle_errno:
  *
  * This will not advance the position of @fd.
  *
- * Returns: %TRUE if successful; otherwise %FALSE and @error is set.
+ * `errno` is set on error, to any of the errors returned by `fstat()` or
+ * `sendfile()`, or `EBADMSG` if the file is corrupt.
+ *
+ * Returns: %TRUE if successful; otherwise %FALSE and `errno` is set.
  */
 bool
-_sysprof_capture_writer_splice_from_fd (SysprofCaptureWriter  *self,
-                                        int                    fd,
-                                        GError               **error)
+_sysprof_capture_writer_splice_from_fd (SysprofCaptureWriter *self,
+                                        int                   fd)
 {
   struct stat stbuf;
   off_t in_off;
@@ -1022,10 +1024,7 @@ _sysprof_capture_writer_splice_from_fd (SysprofCaptureWriter  *self,
 
   if (stbuf.st_size < 256)
     {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   G_FILE_ERROR_INVAL,
-                   "Cannot splice, possibly corrupt file.");
+      errno = EBADMSG;
       return false;
     }
 
@@ -1052,11 +1051,7 @@ _sysprof_capture_writer_splice_from_fd (SysprofCaptureWriter  *self,
   return true;
 
 handle_errno:
-  g_set_error (error,
-               G_FILE_ERROR,
-               g_file_error_from_errno (errno),
-               "%s", g_strerror (errno));
-
+  /* errno is propagated */
   return false;
 }
 
@@ -1064,22 +1059,25 @@ handle_errno:
  * sysprof_capture_writer_splice:
  * @self: An #SysprofCaptureWriter
  * @dest: An #SysprofCaptureWriter
- * @error: A location for a #GError, or %NULL.
  *
  * This function will copy the capture @self into the capture @dest.  This
  * tries to be semi-efficient by using sendfile() to copy the contents between
  * the captures. @self and @dest will be flushed before the contents are copied
  * into the @dest file-descriptor.
  *
- * Returns: %TRUE if successful, otherwise %FALSE and and @error is set.
+ * `errno` is set on error, to any of the errors returned by
+ * sysprof_capture_writer_flush(), `lseek()` or
+ * _sysprof_capture_writer_splice_from_fd().
+ *
+ * Returns: %TRUE if successful, otherwise %FALSE and and `errno` is set.
  */
 bool
-sysprof_capture_writer_splice (SysprofCaptureWriter  *self,
-                               SysprofCaptureWriter  *dest,
-                               GError               **error)
+sysprof_capture_writer_splice (SysprofCaptureWriter *self,
+                               SysprofCaptureWriter *dest)
 {
   bool ret;
   off_t pos;
+  int errsv;
 
   assert (self != NULL);
   assert (self->fd != -1);
@@ -1095,30 +1093,25 @@ sysprof_capture_writer_splice (SysprofCaptureWriter  *self,
     goto handle_errno;
 
   /* Perform the splice */
-  ret = _sysprof_capture_writer_splice_from_fd (dest, self->fd, error);
+  ret = _sysprof_capture_writer_splice_from_fd (dest, self->fd);
+  errsv = errno;
 
   /* Now reset or file-descriptor position (it should be the same */
   if (pos != lseek (self->fd, pos, SEEK_SET))
-    {
-      ret = false;
-      goto handle_errno;
-    }
+    goto handle_errno;
 
+  if (!ret)
+    errno = errsv;
   return ret;
 
 handle_errno:
-  g_set_error (error,
-               G_FILE_ERROR,
-               g_file_error_from_errno (errno),
-               "%s", g_strerror (errno));
-
+  /* errno is propagated */
   return false;
 }
 
 /**
  * sysprof_capture_writer_create_reader:
  * @self: A #SysprofCaptureWriter
- * @error: a location for a #GError, or %NULL
  *
  * Creates a new reader for the writer.
  *
@@ -1127,11 +1120,14 @@ handle_errno:
  * also consuming from the reader, you could get transient failures unless you
  * synchronize the operations.
  *
+ * `errno` is set on error, to any of the errors returned by
+ * sysprof_capture_writer_flush(), `dup()` or
+ * sysprof_capture_reader_new_from_fd().
+ *
  * Returns: (transfer full): A #SysprofCaptureReader.
  */
 SysprofCaptureReader *
-sysprof_capture_writer_create_reader (SysprofCaptureWriter  *self,
-                                      GError               **error)
+sysprof_capture_writer_create_reader (SysprofCaptureWriter *self)
 {
   SysprofCaptureReader *ret;
   int copy;
@@ -1141,10 +1137,7 @@ sysprof_capture_writer_create_reader (SysprofCaptureWriter  *self,
 
   if (!sysprof_capture_writer_flush (self))
     {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   g_file_error_from_errno (errno),
-                   "%s", g_strerror (errno));
+      /* errno is propagated */
       return NULL;
     }
 
@@ -1153,10 +1146,18 @@ sysprof_capture_writer_create_reader (SysprofCaptureWriter  *self,
    * uses positioned reads.
    */
   if (-1 == (copy = dup (self->fd)))
-    return NULL;
+    {
+      /* errno is propagated */
+      return NULL;
+    }
 
-  if ((ret = sysprof_capture_reader_new_from_fd (copy, error)))
-    sysprof_capture_reader_set_stat (ret, &self->stat);
+  if (!(ret = sysprof_capture_reader_new_from_fd (copy)))
+    {
+      /* errno is propagated */
+      return NULL;
+    }
+
+  sysprof_capture_reader_set_stat (ret, &self->stat);
 
   return sysprof_steal_pointer (&ret);
 }

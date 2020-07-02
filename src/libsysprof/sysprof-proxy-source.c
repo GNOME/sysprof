@@ -450,12 +450,11 @@ sysprof_proxy_source_cat (SysprofProxySource   *self,
   g_assert (SYSPROF_IS_PROXY_SOURCE (self));
   g_assert (reader != NULL);
 
-  if (self->writer != NULL)
+  if (self->writer != NULL &&
+      !sysprof_capture_writer_cat (self->writer, reader))
     {
-      g_autoptr(GError) error = NULL;
-
-      if (!sysprof_capture_writer_cat (self->writer, reader, &error))
-        g_warning ("Failed to join reader: %s\n", error->message);
+      int errsv = errno;
+      g_warning ("Failed to join reader: %s", g_strerror (errsv));
     }
 }
 

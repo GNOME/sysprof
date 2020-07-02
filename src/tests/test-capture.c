@@ -399,9 +399,8 @@ test_reader_basic (void)
       g_assert_not_reached ();
   }
 
-  r = sysprof_capture_writer_save_as (writer, "capture-file.bak", &error);
-  g_assert_no_error (error);
-  g_assert (r);
+  r = sysprof_capture_writer_save_as (writer, "capture-file.bak");
+  g_assert_true (r);
   g_assert (g_file_test ("capture-file.bak", G_FILE_TEST_IS_REGULAR));
 
   /* make sure contents are equal */
@@ -462,7 +461,6 @@ test_writer_splice (void)
   SysprofCaptureWriter *writer2;
   SysprofCaptureReader *reader;
   SysprofCaptureFrameType type;
-  GError *error = NULL;
   guint i;
   gint r;
 
@@ -472,9 +470,8 @@ test_writer_splice (void)
   for (i = 0; i < 1000; i++)
     sysprof_capture_writer_add_timestamp (writer1, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1);
 
-  r = sysprof_capture_writer_splice (writer1, writer2, &error);
-  g_assert_no_error (error);
-  g_assert (r == TRUE);
+  r = sysprof_capture_writer_splice (writer1, writer2);
+  g_assert_true (r);
 
   g_clear_pointer (&writer1, sysprof_capture_writer_unref);
   g_clear_pointer (&writer2, sysprof_capture_writer_unref);
@@ -815,7 +812,6 @@ test_reader_writer_cat_jitmap (void)
   SysprofCaptureWriter *res;
   SysprofCaptureReader *reader;
   const SysprofCaptureSample *sample;
-  GError *error = NULL;
   SysprofCaptureAddress addrs[20];
   gboolean r;
 
@@ -851,26 +847,21 @@ test_reader_writer_cat_jitmap (void)
                                      addrs,
                                      G_N_ELEMENTS (addrs));
 
-  reader = sysprof_capture_writer_create_reader (writer1, &error);
-  g_assert_no_error (error);
+  reader = sysprof_capture_writer_create_reader (writer1);
   g_assert_nonnull (reader);
-  r = sysprof_capture_writer_cat (res, reader, &error);
-  g_assert_no_error (error);
+  r = sysprof_capture_writer_cat (res, reader);
   g_assert_true (r);
   sysprof_capture_writer_unref (writer1);
   sysprof_capture_reader_unref (reader);
 
-  reader = sysprof_capture_writer_create_reader (writer2, &error);
-  g_assert_no_error (error);
+  reader = sysprof_capture_writer_create_reader (writer2);
   g_assert_nonnull (reader);
-  r = sysprof_capture_writer_cat (res, reader, &error);
-  g_assert_no_error (error);
+  r = sysprof_capture_writer_cat (res, reader);
   g_assert_true (r);
   sysprof_capture_writer_unref (writer2);
   sysprof_capture_reader_unref (reader);
 
-  reader = sysprof_capture_writer_create_reader (res, &error);
-  g_assert_no_error (error);
+  reader = sysprof_capture_writer_create_reader (res);
   g_assert_nonnull (reader);
   sysprof_capture_reader_read_jitmap (reader);
   sample = sysprof_capture_reader_read_sample (reader);
@@ -891,7 +882,6 @@ test_writer_memory_alloc_free (void)
 {
   SysprofCaptureWriter *writer;
   SysprofCaptureReader *reader;
-  GError *error = NULL;
   SysprofCaptureAddress addrs[20] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
     11, 12, 13, 14, 15, 16, 17, 18, 19,
@@ -916,8 +906,7 @@ test_writer_memory_alloc_free (void)
 
   sysprof_capture_writer_flush (writer);
 
-  reader = sysprof_capture_writer_create_reader (writer, &error);
-  g_assert_no_error (error);
+  reader = sysprof_capture_writer_create_reader (writer);
   g_assert_nonnull (reader);
 
   for (guint i = 0; i < 20; i++)

@@ -81,10 +81,11 @@ main (gint   argc,
           return EXIT_FAILURE;
         }
 
-      if (!sysprof_capture_writer_cat (writer, reader, &error))
+      if (!sysprof_capture_writer_cat (writer, reader))
         {
+          int errsv = errno;
           g_printerr ("Failed to join \"%s\": %s\n",
-                      argv[i], error->message);
+                      argv[i], g_strerror (errsv));
           return EXIT_FAILURE;
         }
     }

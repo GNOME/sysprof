@@ -57,6 +57,7 @@
 #include "config.h"
 
 #include <assert.h>
+#include <errno.h>
 #include <glib/gstdio.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -169,9 +170,8 @@ translate_table_translate (TranslateTable *tables,
 }
 
 bool
-sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
-                            SysprofCaptureReader  *reader,
-                            GError               **error)
+sysprof_capture_writer_cat (SysprofCaptureWriter *self,
+                            SysprofCaptureReader *reader)
 {
   TranslateTable tables[N_TRANSLATE] = { 0, };
   SysprofCaptureFrameType type;
@@ -552,13 +552,9 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
   return true;
 
 panic:
-  g_set_error (error,
-               G_FILE_ERROR,
-               G_FILE_ERROR_FAILED,
-               "Failed to write data");
-
   translate_table_clear (tables, TRANSLATE_ADDR);
   translate_table_clear (tables, TRANSLATE_CTR);
 
+  errno = EIO;
   return false;
 }

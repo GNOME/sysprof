@@ -207,29 +207,24 @@ SYSPROF_AVAILABLE_IN_ALL
 bool                  sysprof_capture_writer_flush                           (SysprofCaptureWriter              *self);
 SYSPROF_AVAILABLE_IN_ALL
 bool                  sysprof_capture_writer_save_as                         (SysprofCaptureWriter              *self,
-                                                                              const char                        *filename,
-                                                                              GError                           **error);
+                                                                              const char                        *filename);
 SYSPROF_AVAILABLE_IN_ALL
 unsigned int          sysprof_capture_writer_request_counter                 (SysprofCaptureWriter              *self,
                                                                               unsigned int                       n_counters);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureReader *sysprof_capture_writer_create_reader                   (SysprofCaptureWriter              *self,
-                                                                              GError                           **error);
+SysprofCaptureReader *sysprof_capture_writer_create_reader                   (SysprofCaptureWriter              *self);
 SYSPROF_AVAILABLE_IN_ALL
 bool                  sysprof_capture_writer_splice                          (SysprofCaptureWriter              *self,
-                                                                              SysprofCaptureWriter              *dest,
-                                                                              GError                           **error);
+                                                                              SysprofCaptureWriter              *dest);
 SYSPROF_AVAILABLE_IN_ALL
 bool                  sysprof_capture_writer_cat                             (SysprofCaptureWriter              *self,
-                                                                              SysprofCaptureReader              *reader,
-                                                                              GError                           **error);
+                                                                              SysprofCaptureReader              *reader);
 SYSPROF_INTERNAL
 bool                  _sysprof_capture_writer_add_raw                        (SysprofCaptureWriter              *self,
                                                                               const SysprofCaptureFrame         *frame);
 SYSPROF_INTERNAL
 bool                  _sysprof_capture_writer_splice_from_fd                 (SysprofCaptureWriter              *self,
-                                                                              int                                fd,
-                                                                              GError                           **error) SYSPROF_INTERNAL;
+                                                                              int                                fd) SYSPROF_INTERNAL;
 SYSPROF_INTERNAL
 bool                  _sysprof_capture_writer_set_time_range                 (SysprofCaptureWriter              *self,
                                                                               int64_t                            start_time,

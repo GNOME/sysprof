@@ -198,7 +198,8 @@ sysprof_local_profiler_finish_stopping (SysprofLocalProfiler *self)
   g_assert (priv->is_stopping == TRUE);
   g_assert (priv->stopping->len == 0);
 
-  reader = sysprof_capture_writer_create_reader (priv->writer, 0);
+  reader = sysprof_capture_writer_create_reader (priv->writer);
+  g_assert (reader != NULL);
 
   for (guint i = 0; i < priv->sources->len; i++)
     {

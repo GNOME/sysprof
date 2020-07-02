@@ -56,6 +56,7 @@
 
 #include "config.h"
 
+#include <assert.h>
 #include <glib/gstdio.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -71,6 +72,13 @@ typedef struct
   uint64_t dst;
 } TranslateItem;
 
+typedef struct
+{
+  TranslateItem *items;
+  size_t n_items;
+  size_t n_items_allocated;
+} TranslateTable;
+
 enum {
   TRANSLATE_ADDR,
   TRANSLATE_CTR,
@@ -78,10 +86,14 @@ enum {
 };
 
 static void
-translate_table_clear (GArray       **tables,
-                       unsigned int   table)
+translate_table_clear (TranslateTable *tables,
+                       unsigned int    table)
 {
-  sysprof_clear_pointer (&tables[table], g_array_unref);
+  TranslateTable *table_ptr = &tables[table];
+
+  sysprof_clear_pointer (&table_ptr->items, free);
+  table_ptr->n_items = 0;
+  table_ptr->n_items_allocated = 0;
 }
 
 static int
@@ -100,32 +112,41 @@ compare_by_src (const void *a,
 }
 
 static void
-translate_table_sort (GArray       **tables,
-                      unsigned int   table)
+translate_table_sort (TranslateTable *tables,
+                      unsigned int    table)
 {
-  if (tables[table])
-    g_array_sort (tables[table], compare_by_src);
+  TranslateTable *table_ptr = &tables[table];
+
+  if (table_ptr->items)
+    qsort (table_ptr->items, table_ptr->n_items, sizeof (*table_ptr->items), compare_by_src);
 }
 
 static void
-translate_table_add (GArray       **tables,
-                     unsigned int   table,
-                     uint64_t       src,
-                     uint64_t       dst)
+translate_table_add (TranslateTable *tables,
+                     unsigned int    table,
+                     uint64_t        src,
+                     uint64_t        dst)
 {
+  TranslateTable *table_ptr = &tables[table];
   const TranslateItem item = { src, dst };
 
-  if (tables[table] == NULL)
-    tables[table] = g_array_new (FALSE, FALSE, sizeof (TranslateItem));
+  if (table_ptr->n_items == table_ptr->n_items_allocated)
+    {
+      table_ptr->n_items_allocated = (table_ptr->n_items_allocated > 0) ? table_ptr->n_items_allocated * 2 : 4;
+      table_ptr->items = reallocarray (table_ptr->items, table_ptr->n_items_allocated, sizeof (*table_ptr->items));
+      assert (table_ptr->items != NULL);
+    }
 
-  g_array_append_val (tables[table], item);
+  table_ptr->items[table_ptr->n_items++] = item;
+  assert (table_ptr->n_items <= table_ptr->n_items_allocated);
 }
 
 static uint64_t
-translate_table_translate (GArray       **tables,
-                           unsigned int   table,
-                           uint64_t       src)
+translate_table_translate (TranslateTable *tables,
+                           unsigned int    table,
+                           uint64_t        src)
 {
+  TranslateTable *table_ptr = &tables[table];
   const TranslateItem *item;
   TranslateItem key = { src, 0 };
 
@@ -135,13 +156,13 @@ translate_table_translate (GArray       **tables,
         return src;
     }
 
-  if (tables[table] == NULL)
+  if (table_ptr->items == NULL)
     return src;
 
   item = bsearch (&key,
-                  tables[table]->data,
-                  tables[table]->len,
-                  sizeof (TranslateItem),
+                  table_ptr->items,
+                  table_ptr->n_items,
+                  sizeof (*table_ptr->items),
                   compare_by_src);
 
   return item != NULL ? item->dst : src;
@@ -152,7 +173,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
                             SysprofCaptureReader  *reader,
                             GError               **error)
 {
-  GArray *tables[N_TRANSLATE] = { NULL };
+  TranslateTable tables[N_TRANSLATE] = { 0, };
   SysprofCaptureFrameType type;
   int64_t start_time;
   int64_t first_start_time = INT64_MAX;

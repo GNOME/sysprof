@@ -214,6 +214,7 @@ sysprof_capture_condition_init (void)
   return g_steal_pointer (&self);
 }
 
+/* Returns NULL on allocation failure. */
 SysprofCaptureCondition *
 sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
 {
@@ -321,6 +322,7 @@ sysprof_capture_condition_unref (SysprofCaptureCondition *self)
     sysprof_capture_condition_finalize (self);
 }
 
+/* Returns NULL on allocation failure. */
 SysprofCaptureCondition *
 sysprof_capture_condition_new_where_type_in (unsigned int                   n_types,
                                              const SysprofCaptureFrameType *types)
@@ -330,6 +332,9 @@ sysprof_capture_condition_new_where_type_in (unsigned int                   n_ty
   assert (types != NULL);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN;
   self->u.where_type_in = g_array_sized_new (FALSE, FALSE, sizeof (SysprofCaptureFrameType), n_types);
   g_array_set_size (self->u.where_type_in, n_types);
@@ -338,6 +343,7 @@ sysprof_capture_condition_new_where_type_in (unsigned int                   n_ty
   return self;
 }
 
+/* Returns NULL on allocation failure. */
 SysprofCaptureCondition *
 sysprof_capture_condition_new_where_time_between (int64_t begin_time,
                                                   int64_t end_time)
@@ -352,6 +358,9 @@ sysprof_capture_condition_new_where_time_between (int64_t begin_time,
     }
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_TIME_BETWEEN;
   self->u.where_time_between.begin = begin_time;
   self->u.where_time_between.end = end_time;
@@ -359,6 +368,7 @@ sysprof_capture_condition_new_where_time_between (int64_t begin_time,
   return self;
 }
 
+/* Returns NULL on allocation failure. */
 SysprofCaptureCondition *
 sysprof_capture_condition_new_where_pid_in (unsigned int   n_pids,
                                             const int32_t *pids)
@@ -368,6 +378,9 @@ sysprof_capture_condition_new_where_pid_in (unsigned int   n_pids,
   assert (pids != NULL);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN;
   self->u.where_pid_in = g_array_sized_new (FALSE, FALSE, sizeof (int32_t), n_pids);
   g_array_set_size (self->u.where_pid_in, n_pids);
@@ -376,6 +389,7 @@ sysprof_capture_condition_new_where_pid_in (unsigned int   n_pids,
   return self;
 }
 
+/* Returns NULL on allocation failure. */
 SysprofCaptureCondition *
 sysprof_capture_condition_new_where_counter_in (unsigned int        n_counters,
                                                 const unsigned int *counters)
@@ -385,6 +399,9 @@ sysprof_capture_condition_new_where_counter_in (unsigned int        n_counters,
   assert (counters != NULL || n_counters == 0);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN;
   self->u.where_counter_in = g_array_sized_new (FALSE, FALSE, sizeof (unsigned int), n_counters);
 
@@ -405,7 +422,8 @@ sysprof_capture_condition_new_where_counter_in (unsigned int        n_counters,
  * Creates a new #SysprofCaptureCondition that requires both left and right
  * to evaluate to %TRUE.
  *
- * Returns: (transfer full): A new #SysprofCaptureCondition.
+ * Returns: (transfer full) (nullable): A new #SysprofCaptureCondition, or %NULL
+ *    on allocation failure.
  */
 SysprofCaptureCondition *
 sysprof_capture_condition_new_and (SysprofCaptureCondition *left,
@@ -417,6 +435,9 @@ sysprof_capture_condition_new_and (SysprofCaptureCondition *left,
   assert (right != NULL);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_AND;
   self->u.and.left = left;
   self->u.and.right = right;
@@ -432,7 +453,8 @@ sysprof_capture_condition_new_and (SysprofCaptureCondition *left,
  * Creates a new #SysprofCaptureCondition that requires either left and right
  * to evaluate to %TRUE.
  *
- * Returns: (transfer full): A new #SysprofCaptureCondition.
+ * Returns: (transfer full) (nullable): A new #SysprofCaptureCondition, or %NULL
+ *    on allocation failure.
  */
 SysprofCaptureCondition *
 sysprof_capture_condition_new_or (SysprofCaptureCondition *left,
@@ -444,6 +466,9 @@ sysprof_capture_condition_new_or (SysprofCaptureCondition *left,
   assert (right != NULL);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_OR;
   self->u.or.left = left;
   self->u.or.right = right;
@@ -458,7 +483,8 @@ sysprof_capture_condition_new_or (SysprofCaptureCondition *left,
  * Creates a new condition that matches #SysprofCaptureFileChunk frames
  * which contain the path @path.
  *
- * Returns: (transfer full): a new #SysprofCaptureCondition
+ * Returns: (transfer full) (nullable): a new #SysprofCaptureCondition, or %NULL
+ *    on allocation failure.
  */
 SysprofCaptureCondition *
 sysprof_capture_condition_new_where_file (const char *path)
@@ -468,6 +494,9 @@ sysprof_capture_condition_new_where_file (const char *path)
   assert (path != NULL);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_FILE;
   self->u.where_file = g_strdup (path);
 

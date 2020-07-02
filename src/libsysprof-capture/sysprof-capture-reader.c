@@ -57,6 +57,8 @@
 #include "config.h"
 
 #include <assert.h>
+#include <byteswap.h>
+#include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -243,9 +245,9 @@ sysprof_capture_reader_new_from_fd (int      fd,
     }
 
   if (self->header.little_endian)
-    self->endian = G_LITTLE_ENDIAN;
+    self->endian = __LITTLE_ENDIAN;
   else
-    self->endian = G_BIG_ENDIAN;
+    self->endian = __BIG_ENDIAN;
 
   /* If we detect a capture file that did not get an end time, or an erroneous
    * end time, then we need to take a performance hit here and scan the file
@@ -293,12 +295,12 @@ sysprof_capture_reader_bswap_frame (SysprofCaptureReader *self,
   assert (self != NULL);
   assert (frame!= NULL);
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
-      frame->len = GUINT16_SWAP_LE_BE (frame->len);
-      frame->cpu = GUINT16_SWAP_LE_BE (frame->cpu);
-      frame->pid = GUINT32_SWAP_LE_BE (frame->pid);
-      frame->time = GUINT64_SWAP_LE_BE (frame->time);
+      frame->len = bswap_16 (frame->len);
+      frame->cpu = bswap_16 (frame->cpu);
+      frame->pid = bswap_32 (frame->pid);
+      frame->time = bswap_64 (frame->time);
     }
 }
 
@@ -309,8 +311,8 @@ sysprof_capture_reader_bswap_file_chunk (SysprofCaptureReader    *self,
   assert (self != NULL);
   assert (file_chunk != NULL);
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
-    file_chunk->len = GUINT16_SWAP_LE_BE (file_chunk->len);
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    file_chunk->len = bswap_16 (file_chunk->len);
 }
 
 static inline void
@@ -320,8 +322,8 @@ sysprof_capture_reader_bswap_log (SysprofCaptureReader *self,
   assert (self != NULL);
   assert (log != NULL);
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
-    log->severity = GUINT16_SWAP_LE_BE (log->severity);
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    log->severity = bswap_16 (log->severity);
 }
 
 static inline void
@@ -331,12 +333,12 @@ sysprof_capture_reader_bswap_map (SysprofCaptureReader *self,
   assert (self != NULL);
   assert (map != NULL);
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
-      map->start = GUINT64_SWAP_LE_BE (map->start);
-      map->end = GUINT64_SWAP_LE_BE (map->end);
-      map->offset = GUINT64_SWAP_LE_BE (map->offset);
-      map->inode = GUINT64_SWAP_LE_BE (map->inode);
+      map->start = bswap_64 (map->start);
+      map->end = bswap_64 (map->end);
+      map->offset = bswap_64 (map->offset);
+      map->inode = bswap_64 (map->inode);
     }
 }
 
@@ -347,8 +349,8 @@ sysprof_capture_reader_bswap_mark (SysprofCaptureReader *self,
   assert (self != NULL);
   assert (mark != NULL);
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
-    mark->duration = GUINT64_SWAP_LE_BE (mark->duration);
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    mark->duration = bswap_64 (mark->duration);
 }
 
 static inline void
@@ -358,8 +360,8 @@ sysprof_capture_reader_bswap_jitmap (SysprofCaptureReader *self,
   assert (self != NULL);
   assert (jitmap != NULL);
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
-    jitmap->n_jitmaps = GUINT64_SWAP_LE_BE (jitmap->n_jitmaps);
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    jitmap->n_jitmaps = bswap_64 (jitmap->n_jitmaps);
 }
 
 static bool
@@ -542,8 +544,8 @@ sysprof_capture_reader_read_fork (SysprofCaptureReader *self)
 
   if (fk != NULL)
     {
-      if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
-        fk->child_pid = GUINT32_SWAP_LE_BE (fk->child_pid);
+      if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+        fk->child_pid = bswap_32 (fk->child_pid);
     }
 
   return fk;
@@ -843,8 +845,8 @@ sysprof_capture_reader_read_sample (SysprofCaptureReader *self)
   if (sample->frame.len < sizeof *sample)
     return NULL;
 
-  if (self->endian != G_BYTE_ORDER)
-    sample->n_addrs = GUINT16_SWAP_LE_BE (sample->n_addrs);
+  if (self->endian != __BYTE_ORDER)
+    sample->n_addrs = bswap_16 (sample->n_addrs);
 
   if (sample->frame.len < (sizeof *sample + (sizeof(SysprofCaptureAddress) * sample->n_addrs)))
     return NULL;
@@ -854,12 +856,12 @@ sysprof_capture_reader_read_sample (SysprofCaptureReader *self)
 
   sample = (SysprofCaptureSample *)(void *)&self->buf[self->pos];
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
       unsigned int i;
 
       for (i = 0; i < sample->n_addrs; i++)
-        sample->addrs[i] = GUINT64_SWAP_LE_BE (sample->addrs[i]);
+        sample->addrs[i] = bswap_64 (sample->addrs[i]);
     }
 
   self->pos += sample->frame.len;
@@ -887,8 +889,8 @@ sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
   if (def->frame.len < sizeof *def)
     return NULL;
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
-    def->n_counters = GUINT16_SWAP_LE_BE (def->n_counters);
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    def->n_counters = bswap_16 (def->n_counters);
 
   if (def->frame.len < (sizeof *def + (sizeof (SysprofCaptureCounterDefine) * def->n_counters)))
     return NULL;
@@ -898,14 +900,14 @@ sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
 
   def = (SysprofCaptureCounterDefine *)(void *)&self->buf[self->pos];
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
       unsigned int i;
 
       for (i = 0; i < def->n_counters; i++)
         {
-          def->counters[i].id = GUINT32_SWAP_LE_BE (def->counters[i].id);
-          def->counters[i].value.v64 = GUINT64_SWAP_LE_BE (def->counters[i].value.v64);
+          def->counters[i].id = bswap_32 (def->counters[i].id);
+          def->counters[i].value.v64 = bswap_64 (def->counters[i].value.v64);
         }
     }
 
@@ -934,8 +936,8 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
   if (set->frame.len < sizeof *set)
     return NULL;
 
-  if (self->endian != G_BYTE_ORDER)
-    set->n_values = GUINT16_SWAP_LE_BE (set->n_values);
+  if (self->endian != __BYTE_ORDER)
+    set->n_values = bswap_16 (set->n_values);
 
   if (set->frame.len < (sizeof *set + (sizeof (SysprofCaptureCounterValues) * set->n_values)))
     return NULL;
@@ -945,7 +947,7 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
 
   set = (SysprofCaptureCounterSet *)(void *)&self->buf[self->pos];
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
       unsigned int i;
 
@@ -955,8 +957,8 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
 
           for (j = 0; j < SYSPROF_N_ELEMENTS (set->values[0].values); j++)
             {
-              set->values[i].ids[j] = GUINT32_SWAP_LE_BE (set->values[i].ids[j]);
-              set->values[i].values[j].v64 = GUINT64_SWAP_LE_BE (set->values[i].values[j].v64);
+              set->values[i].ids[j] = bswap_32 (set->values[i].ids[j]);
+              set->values[i].values[j].v64 = bswap_64 (set->values[i].values[j].v64);
             }
         }
     }
@@ -1107,8 +1109,8 @@ sysprof_capture_reader_get_start_time (SysprofCaptureReader *self)
 {
   assert (self != NULL);
 
-  if (self->endian != G_BYTE_ORDER)
-    return GUINT64_SWAP_LE_BE (self->header.time);
+  if (self->endian != __BYTE_ORDER)
+    return bswap_64 (self->header.time);
 
   return self->header.time;
 }
@@ -1137,8 +1139,8 @@ sysprof_capture_reader_get_end_time (SysprofCaptureReader *self)
 
   if (self->header.end_time != 0)
     {
-      if (self->endian != G_BYTE_ORDER)
-        end_time = GUINT64_SWAP_LE_BE (self->header.end_time);
+      if (self->endian != __BYTE_ORDER)
+        end_time = bswap_64 (self->header.end_time);
       else
         end_time = self->header.end_time;
     }
@@ -1432,12 +1434,12 @@ sysprof_capture_reader_read_allocation (SysprofCaptureReader *self)
   if (ma->frame.len < sizeof *ma)
     return NULL;
 
-  if (self->endian != G_BYTE_ORDER)
+  if (self->endian != __BYTE_ORDER)
     {
-      ma->n_addrs = GUINT16_SWAP_LE_BE (ma->n_addrs);
-      ma->alloc_size = GUINT64_SWAP_LE_BE (ma->alloc_size);
-      ma->alloc_addr = GUINT64_SWAP_LE_BE (ma->alloc_addr);
-      ma->tid = GUINT32_SWAP_LE_BE (ma->tid);
+      ma->n_addrs = bswap_16 (ma->n_addrs);
+      ma->alloc_size = bswap_64 (ma->alloc_size);
+      ma->alloc_addr = bswap_64 (ma->alloc_addr);
+      ma->tid = bswap_32 (ma->tid);
     }
 
   if (ma->frame.len < (sizeof *ma + (sizeof(SysprofCaptureAddress) * ma->n_addrs)))
@@ -1448,10 +1450,10 @@ sysprof_capture_reader_read_allocation (SysprofCaptureReader *self)
 
   ma = (SysprofCaptureAllocation *)(void *)&self->buf[self->pos];
 
-  if (SYSPROF_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
       for (unsigned int i = 0; i < ma->n_addrs; i++)
-        ma->addrs[i] = GUINT64_SWAP_LE_BE (ma->addrs[i]);
+        ma->addrs[i] = bswap_64 (ma->addrs[i]);
     }
 
   self->pos += ma->frame.len;

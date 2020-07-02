@@ -57,6 +57,7 @@
 #pragma once
 
 #include <assert.h>
+#include <endian.h>
 #include <glib.h>
 #include <inttypes.h>
 #include <stddef.h>
@@ -67,7 +68,7 @@
 
 SYSPROF_BEGIN_DECLS
 
-#define SYSPROF_CAPTURE_MAGIC (GUINT32_TO_LE(0xFDCA975E))
+#define SYSPROF_CAPTURE_MAGIC (htole32(0xFDCA975E))
 #define SYSPROF_CAPTURE_ALIGN (sizeof(SysprofCaptureAddress))
 
 #if defined(_MSC_VER)

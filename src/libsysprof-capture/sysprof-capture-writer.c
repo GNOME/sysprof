@@ -61,6 +61,7 @@
 #endif
 
 #include <assert.h>
+#include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <glib/gstdio.h>
@@ -532,7 +533,7 @@ sysprof_capture_writer_new_from_fd (int    fd,
 
   header->magic = SYSPROF_CAPTURE_MAGIC;
   header->version = 1;
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+#if __BYTE_ORDER == __LITTLE_ENDIAN
   header->little_endian = true;
 #else
   header->little_endian = false;

@@ -52,30 +52,6 @@ if get_option('default_library') != 'static'
   endif
 endif
 
-glib_dep = dependency('glib-2.0', version: glib_req_version)
-gio_dep = dependency('gio-2.0', version: glib_req_version)
-gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version)
-pangoft2_dep = dependency('pangoft2', required: false)
-
-if get_option('enable_gtk')
-  gtk_dep = dependency('gtk+-3.0', version: gtk_req_version)
-  dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version, fallback: ['libdazzle', 'libdazzle_dep'])
-endif
-
-polkit_dep = dependency('polkit-gobject-1', version: '>= 0.114', required: false)
-if polkit_dep.found()
-  config_h.set10('HAVE_POLKIT_AUTOPTR', true)
-endif
-polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
-
-if polkit_dep.found()
-  config_h.set10('HAVE_POLKIT', true)
-else
-  if get_option('with_sysprofd') == 'bundled'
-    error('sysprofd requires polkit @0@'.format(polkit_req_version))
-  endif
-endif
-
 debugdir = get_option('debugdir')
 if debugdir == ''
   debugdir = join_paths(get_option('prefix'), get_option('libdir'), 'debug')

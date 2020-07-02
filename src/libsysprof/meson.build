@@ -100,10 +100,19 @@ librax_dep = declare_dependency(
   include_directories: include_directories('.'),
 )
 
+polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
+if polkit_dep.found()
+  libsysprof_c_args += ['-DHAVE_POLKIT']
+endif
+
+if dependency('polkit-gobject-1', version: '>= 0.114', required: false).found()
+  libsysprof_c_args += ['-DHAVE_POLKIT_AUTOPTR']
+endif
+
 libsysprof_deps = [
   libsysprof_capture_deps,
-  gio_dep,
-  gio_unix_dep,
+  dependency('gio-2.0', version: glib_req_version),
+  dependency('gio-unix-2.0', version: glib_req_version),
   polkit_dep,
   librax_dep,
 ]

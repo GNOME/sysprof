@@ -475,7 +475,7 @@ collector_init_cb (void)
 void
 sysprof_collector_init (void)
 {
-  if (pthread_once (&collector_init, collector_init_cb) != 0)
+  if SYSPROF_UNLIKELY (pthread_once (&collector_init, collector_init_cb) != 0)
     abort ();
 }
 

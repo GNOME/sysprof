@@ -356,9 +356,9 @@ sysprof_capture_writer_lookup_jitmap (SysprofCaptureWriter  *self,
   assert (name != NULL);
   assert (addr != NULL);
 
-  hash = str_hash (name) % G_N_ELEMENTS (self->addr_hash);
+  hash = str_hash (name) % SYSPROF_N_ELEMENTS (self->addr_hash);
 
-  for (i = hash; i < G_N_ELEMENTS (self->addr_hash); i++)
+  for (i = hash; i < SYSPROF_N_ELEMENTS (self->addr_hash); i++)
     {
       SysprofCaptureJitmapBucket *bucket = &self->addr_hash[i];
 
@@ -405,7 +405,7 @@ sysprof_capture_writer_insert_jitmap (SysprofCaptureWriter *self,
 
   len = sizeof addr + strlen (str) + 1;
 
-  if ((self->addr_hash_size == G_N_ELEMENTS (self->addr_hash)) ||
+  if ((self->addr_hash_size == SYSPROF_N_ELEMENTS (self->addr_hash)) ||
       ((sizeof self->addr_buf - self->addr_buf_pos) < len))
     {
       if (!sysprof_capture_writer_flush_jitmap (self))
@@ -415,7 +415,7 @@ sysprof_capture_writer_insert_jitmap (SysprofCaptureWriter *self,
       assert (self->addr_buf_pos == 0);
     }
 
-  assert (self->addr_hash_size < G_N_ELEMENTS (self->addr_hash));
+  assert (self->addr_hash_size < SYSPROF_N_ELEMENTS (self->addr_hash));
   assert (len > sizeof addr);
 
   /* Allocate the next unique address */
@@ -437,10 +437,10 @@ sysprof_capture_writer_insert_jitmap (SysprofCaptureWriter *self,
   assert (self->addr_buf_pos <= sizeof self->addr_buf);
 
   /* Now place the address into the hashtable */
-  hash = str_hash (str) % G_N_ELEMENTS (self->addr_hash);
+  hash = str_hash (str) % SYSPROF_N_ELEMENTS (self->addr_hash);
 
   /* Start from the current hash bucket and go forward */
-  for (i = hash; i < G_N_ELEMENTS (self->addr_hash); i++)
+  for (i = hash; i < SYSPROF_N_ELEMENTS (self->addr_hash); i++)
     {
       SysprofCaptureJitmapBucket *bucket = &self->addr_hash[i];
 
@@ -1256,8 +1256,8 @@ sysprof_capture_writer_set_counters (SysprofCaptureWriter             *self,
     return true;
 
   /* Determine how many value groups we need */
-  n_groups = n_counters / G_N_ELEMENTS (set->values[0].values);
-  if ((n_groups * G_N_ELEMENTS (set->values[0].values)) != n_counters)
+  n_groups = n_counters / SYSPROF_N_ELEMENTS (set->values[0].values);
+  if ((n_groups * SYSPROF_N_ELEMENTS (set->values[0].values)) != n_counters)
     n_groups++;
 
   len = sizeof *set + (n_groups * sizeof (SysprofCaptureCounterValues));
@@ -1285,7 +1285,7 @@ sysprof_capture_writer_set_counters (SysprofCaptureWriter             *self,
 
       field++;
 
-      if (field == G_N_ELEMENTS (set->values[0].values))
+      if (field == SYSPROF_N_ELEMENTS (set->values[0].values))
         {
           field = 0;
           group++;
@@ -1659,7 +1659,7 @@ _sysprof_capture_writer_add_raw (SysprofCaptureWriter      *self,
 
   memcpy (begin, fr, fr->len);
 
-  if (fr->type < G_N_ELEMENTS (self->stat.frame_count))
+  if (fr->type < SYSPROF_N_ELEMENTS (self->stat.frame_count))
     self->stat.frame_count[fr->type]++;
 
   return true;

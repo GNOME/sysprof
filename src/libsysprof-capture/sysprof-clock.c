@@ -80,7 +80,7 @@ sysprof_clock_init (void)
   if (sysprof_clock != -1)
     return;
 
-  for (unsigned int i = 0; i < G_N_ELEMENTS (clock_ids); i++)
+  for (unsigned int i = 0; i < SYSPROF_N_ELEMENTS (clock_ids); i++)
     {
       struct timespec ts;
       int clock_id = clock_ids [i];

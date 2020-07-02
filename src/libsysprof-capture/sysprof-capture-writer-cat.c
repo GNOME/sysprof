@@ -446,7 +446,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
                 {
                   const SysprofCaptureCounterValues *v = &frame->values[z];
 
-                  for (unsigned int y = 0; y < G_N_ELEMENTS (v->ids); y++)
+                  for (unsigned int y = 0; y < SYSPROF_N_ELEMENTS (v->ids); y++)
                     {
                       if (v->ids[y])
                         {

@@ -953,7 +953,7 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
         {
           unsigned int j;
 
-          for (j = 0; j < G_N_ELEMENTS (set->values[0].values); j++)
+          for (j = 0; j < SYSPROF_N_ELEMENTS (set->values[0].values); j++)
             {
               set->values[i].ids[j] = GUINT32_SWAP_LE_BE (set->values[i].ids[j]);
               set->values[i].values[j].v64 = GUINT64_SWAP_LE_BE (set->values[i].values[j].v64);

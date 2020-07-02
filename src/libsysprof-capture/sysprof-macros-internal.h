@@ -61,6 +61,8 @@
 
 #define sysprof_assert_not_reached() assert (false)
 
+#define SYSPROF_N_ELEMENTS(a) (sizeof (a) / sizeof (*a))
+
 #define sysprof_steal_pointer(pp) __extension__ ({__typeof(*(pp)) _p = *(pp); *(pp) = NULL; _p;})
 
 #define sysprof_clear_pointer(pp, destroy) \

@@ -65,7 +65,9 @@
 #ifdef __linux__
 # include <sched.h>
 #endif
+#include <stdarg.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/syscall.h>
@@ -466,14 +468,14 @@ sysprof_collector_log_printf (int             severity,
                               ...)
 {
   COLLECTOR_BEGIN {
-    g_autofree char *formatted = NULL;
+    char formatted[2048];
     SysprofCaptureLog *ev;
     va_list args;
     size_t len;
     size_t sl;
 
     va_start (args, format);
-    formatted = g_strdup_vprintf (format, args);
+    vsnprintf (formatted, sizeof (formatted), format, args);
     va_end (args);
 
     if (domain == NULL)

@@ -18,8 +18,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "mapped-ring-buffer"
-
 #include "config.h"
 
 #include <assert.h>

@@ -54,8 +54,6 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#define G_LOG_DOMAIN "sysprof-capture-writer"
-
 #include "config.h"
 
 #ifndef _GNU_SOURCE

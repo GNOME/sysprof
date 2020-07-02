@@ -54,8 +54,6 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#define G_LOG_DOMAIN "sysprof-collector"
-
 #ifndef _GNU_SOURCE
 # define _GNU_SOURCE
 #endif

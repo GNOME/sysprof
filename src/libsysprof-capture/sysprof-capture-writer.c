@@ -137,9 +137,6 @@ struct _SysprofCaptureWriter
   size_t pos;
   size_t len;
 
-  /* GSource for periodic flush */
-  GSource *periodic_flush;
-
   /* counter id sequence */
   int next_counter_id;
 
@@ -171,8 +168,6 @@ sysprof_capture_writer_finalize (SysprofCaptureWriter *self)
 {
   if (self != NULL)
     {
-      sysprof_clear_pointer (&self->periodic_flush, g_source_destroy);
-
       sysprof_capture_writer_flush (self);
 
       if (self->fd != -1)
@@ -1500,42 +1495,6 @@ sysprof_capture_writer_add_file_fd (SysprofCaptureWriter *self,
     }
 
   return true;
-}
-
-static gboolean
-sysprof_capture_writer_auto_flush_cb (SysprofCaptureWriter *self)
-{
-  g_assert (self != NULL);
-
-  sysprof_capture_writer_flush (self);
-
-  return G_SOURCE_CONTINUE;
-}
-
-void
-sysprof_capture_writer_set_flush_delay (SysprofCaptureWriter *self,
-                                        GMainContext         *main_context,
-                                        guint                 timeout_seconds)
-{
-  GSource *source;
-
-  g_return_if_fail (self != NULL);
-
-  sysprof_clear_pointer (&self->periodic_flush, g_source_destroy);
-
-  if (timeout_seconds == 0)
-    return;
-
-  source = g_timeout_source_new_seconds (timeout_seconds);
-  g_source_set_name (source, "[sysprof-capture-writer-flush]");
-  g_source_set_priority (source, G_PRIORITY_LOW + 100);
-  g_source_set_callback (source,
-                         (GSourceFunc) sysprof_capture_writer_auto_flush_cb,
-                         self, NULL);
-
-  self->periodic_flush = g_steal_pointer (&source);
-
-  g_source_attach (self->periodic_flush, main_context);
 }
 
 bool

@@ -61,9 +61,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <sysprof-capture.h>
 #include <unistd.h>
 
+#include "sysprof-capture.h"
 #include "sysprof-macros-internal.h"
 
 typedef struct

@@ -57,6 +57,7 @@
 #include "config.h"
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include "sysprof-capture-condition.h"
 #include "sysprof-capture-cursor.h"
@@ -71,7 +72,8 @@ typedef const SysprofCaptureFrame *(*ReadDelegate) (SysprofCaptureReader *);
 struct _SysprofCaptureCursor
 {
   volatile int          ref_count;
-  GPtrArray            *conditions;
+  SysprofCaptureCondition **conditions;  /* (nullable) (owned) */
+  size_t                    n_conditions;
   SysprofCaptureReader *reader;
   unsigned int          reversed : 1;
 };
@@ -79,7 +81,9 @@ struct _SysprofCaptureCursor
 static void
 sysprof_capture_cursor_finalize (SysprofCaptureCursor *self)
 {
-  sysprof_clear_pointer (&self->conditions, g_ptr_array_unref);
+  for (size_t i = 0; i < self->n_conditions; i++)
+    sysprof_capture_condition_unref (self->conditions[i]);
+  sysprof_clear_pointer (&self->conditions, free);
   sysprof_clear_pointer (&self->reader, sysprof_capture_reader_unref);
   free (self);
 }
@@ -93,7 +97,8 @@ sysprof_capture_cursor_init (void)
   if (self == NULL)
     return NULL;
 
-  self->conditions = g_ptr_array_new_with_free_func ((GDestroyNotify) sysprof_capture_condition_unref);
+  self->conditions = NULL;
+  self->n_conditions = 0;
   self->ref_count = 1;
 
   return sysprof_steal_pointer (&self);
@@ -229,16 +234,16 @@ sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
       if (NULL == (frame = delegate (self->reader)))
         return;
 
-      if (self->conditions->len == 0)
+      if (self->n_conditions == 0)
         {
           if (!callback (frame, user_data))
             return;
         }
       else
         {
-          for (size_t i = 0; i < self->conditions->len; i++)
+          for (size_t i = 0; i < self->n_conditions; i++)
             {
-              const SysprofCaptureCondition *condition = g_ptr_array_index (self->conditions, i);
+              const SysprofCaptureCondition *condition = self->conditions[i];
 
               if (sysprof_capture_condition_match (condition, frame))
                 {
@@ -283,7 +288,15 @@ sysprof_capture_cursor_add_condition (SysprofCaptureCursor    *self,
   assert (self != NULL);
   assert (condition != NULL);
 
-  g_ptr_array_add (self->conditions, condition);
+  /* Grow the array linearly to keep the code simple: there are typically 0 or 1
+   * conditions applied to a given cursor, just after it’s constructed.
+   *
+   * FIXME: There’s currently no error reporting from this function, so ENOMEM
+   * results in an abort. */
+  self->conditions = reallocarray (self->conditions, ++self->n_conditions, sizeof (*self->conditions));
+  assert (self->conditions != NULL);
+
+  self->conditions[self->n_conditions - 1] = sysprof_steal_pointer (&condition);
 }
 
 /**

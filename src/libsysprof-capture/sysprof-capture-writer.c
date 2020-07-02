@@ -1361,7 +1361,7 @@ sysprof_capture_writer_new_from_env (size_t buffer_size)
   const char *fdstr;
   int fd;
 
-  if (!(fdstr = g_getenv ("SYSPROF_TRACE_FD")))
+  if (!(fdstr = getenv ("SYSPROF_TRACE_FD")))
     return NULL;
 
   /* Make sure the clock is initialized */

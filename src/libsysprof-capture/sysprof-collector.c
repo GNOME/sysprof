@@ -131,13 +131,13 @@ request_writer (void)
 
   if (conn == NULL)
     {
-      const char *fdstr = g_getenv ("SYSPROF_CONTROL_FD");
+      const char *fdstr = getenv ("SYSPROF_CONTROL_FD");
       int peer_fd = -1;
 
       if (fdstr != NULL)
         peer_fd = atoi (fdstr);
 
-      g_unsetenv ("SYSPROF_CONTROL_FD");
+      unsetenv ("SYSPROF_CONTROL_FD");
 
       if (peer_fd > 0)
         {
@@ -251,7 +251,7 @@ sysprof_collector_get (void)
     self->tid = self->pid;
 #endif
 
-    if (g_getenv ("SYSPROF_CONTROL_FD") != NULL)
+    if (getenv ("SYSPROF_CONTROL_FD") != NULL)
       self->buffer = request_writer ();
 
     if (self->is_shared)

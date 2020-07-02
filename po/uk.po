@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-03-29 15:01+0000\n"
-"PO-Revision-Date: 2020-03-29 18:04+0300\n"
+"POT-Creation-Date: 2020-07-02 00:51+0000\n"
+"PO-Revision-Date: 2020-07-02 12:55+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Lokalize 20.03.70\n"
+"X-Generator: Lokalize 20.07.70\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
-#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:199
-#: src/sysprof/sysprof-application.c:326 src/sysprof/ui/sysprof-window.ui:12
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:12
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -344,20 +344,24 @@ msgstr "Записано о %s"
 msgid "New Recording"
 msgstr "Новий запис"
 
-#: src/libsysprof-ui/sysprof-display.c:1185
+#: src/libsysprof-ui/sysprof-display.c:1087
+msgid "The recording could not be opened"
+msgstr "Не вдалося відкрити запис"
+
+#: src/libsysprof-ui/sysprof-display.c:1210
 msgid "Save Recording"
 msgstr "Зберегти запис"
 
-#: src/libsysprof-ui/sysprof-display.c:1188
+#: src/libsysprof-ui/sysprof-display.c:1213
 msgid "Save"
 msgstr "Зберегти"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1189 src/sysprof/sysprof-window.c:277
+#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/libsysprof-ui/sysprof-display.c:1215
+#: src/libsysprof-ui/sysprof-display.c:1240
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Не вдалося зберегти запис: %s"
@@ -795,35 +799,45 @@ msgstr "Довідка"
 msgid "About Sysprof"
 msgstr "Про Sysprof"
 
-#: src/sysprof/sysprof-application.c:191
+#: src/sysprof/sysprof-application.c:194
 msgid "A system profiler"
 msgstr "Засіб профілювання системи"
 
-#: src/sysprof/sysprof-application.c:196
+#: src/sysprof/sysprof-application.c:199
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>"
 
-#: src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:205
 msgid "Learn more about Sysprof"
 msgstr "Дізнатися більше про Sysprof"
 
 #. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:271
+#: src/sysprof/sysprof-window.c:273
 msgid "Open Capture…"
 msgstr "Відкриття захоплення…"
 
 #. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:275
+#: src/sysprof/sysprof-window.c:277
 msgid "Open"
 msgstr "Відкрити"
 
-#: src/sysprof/sysprof-window.c:282
+#: src/sysprof/sysprof-window.c:284
 msgid "Sysprof Captures"
 msgstr "захоплення Sysprof"
 
-#: src/sysprof/sysprof-window.c:287
+#: src/sysprof/sysprof-window.c:289
 msgid "All Files"
 msgstr "усі файли"
+
+#: src/sysprof/ui/sysprof-window.ui:29
+#| msgid "Open"
+msgid "_Open"
+msgstr "Від_крити"
+
+#: src/sysprof/ui/sysprof-window.ui:32
+#| msgid "Open Recording…"
+msgid "Open Recording… (Ctrl+O)"
+msgstr "Відкрити записане… (Ctrl+O)"
 
 #: src/tools/sysprof-cli.c:59
 msgid "Stopping profiler. Press twice more ^C to force exit."

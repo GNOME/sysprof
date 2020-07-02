@@ -115,18 +115,18 @@ main (gint argc,
 
         case SYSPROF_CAPTURE_FRAME_JITMAP:
           {
-            g_autoptr(GHashTable) ret = sysprof_capture_reader_read_jitmap (reader);
-            GHashTableIter iter;
+            const SysprofCaptureJitmap *jitmap = sysprof_capture_reader_read_jitmap (reader);
+            SysprofCaptureJitmapIter iter;
             SysprofCaptureAddress addr;
             const gchar *str;
 
-            if (ret == NULL)
+            if (jitmap == NULL)
               return EXIT_FAILURE;
 
             g_print ("JITMAP:\n");
 
-            g_hash_table_iter_init (&iter, ret);
-            while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&str))
+            sysprof_capture_jitmap_iter_init (&iter, jitmap);
+            while (sysprof_capture_jitmap_iter_next (&iter, &addr, &str))
               g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " : %s\n", addr, str);
 
             break;

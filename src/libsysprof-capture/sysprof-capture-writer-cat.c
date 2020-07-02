@@ -197,10 +197,10 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
    */
   while (sysprof_capture_reader_peek_type (reader, &type))
     {
-      g_autoptr(GHashTable) jitmap = NULL;
-      GHashTableIter iter;
+      const SysprofCaptureJitmap *jitmap;
+      SysprofCaptureJitmapIter iter;
+      SysprofCaptureAddress addr;
       const char *name;
-      uint64_t addr;
 
       if (type != SYSPROF_CAPTURE_FRAME_JITMAP)
         {
@@ -212,8 +212,8 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
       if (!(jitmap = sysprof_capture_reader_read_jitmap (reader)))
         goto panic;
 
-      g_hash_table_iter_init (&iter, jitmap);
-      while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&name))
+      sysprof_capture_jitmap_iter_init (&iter, jitmap);
+      while (sysprof_capture_jitmap_iter_next (&iter, &addr, &name))
         {
           uint64_t replace = sysprof_capture_writer_add_jitmap (self, name);
           /* We need to keep a table of replacement addresses so that

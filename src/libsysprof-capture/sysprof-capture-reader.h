@@ -115,7 +115,7 @@ const SysprofCaptureProcess        *sysprof_capture_reader_read_process        (
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureSample         *sysprof_capture_reader_read_sample         (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
-GHashTable                         *sysprof_capture_reader_read_jitmap         (SysprofCaptureReader      *self);
+const SysprofCaptureJitmap         *sysprof_capture_reader_read_jitmap         (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureCounterDefine  *sysprof_capture_reader_read_counter_define (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
@@ -150,5 +150,21 @@ bool                                sysprof_capture_reader_read_file_fd        (
                                                                                 const char                *path,
                                                                                 int                        fd);
 
+typedef struct {
+  /*< private >*/
+  void *p1;
+  void *p2;
+  unsigned int u1;
+  void *p3;
+  void *p4;
+} SysprofCaptureJitmapIter;
+
+SYSPROF_AVAILABLE_IN_3_38
+void                                sysprof_capture_jitmap_iter_init           (SysprofCaptureJitmapIter    *iter,
+                                                                                const SysprofCaptureJitmap  *jitmap);
+SYSPROF_AVAILABLE_IN_3_38
+bool                                sysprof_capture_jitmap_iter_next           (SysprofCaptureJitmapIter    *iter,
+                                                                                SysprofCaptureAddress       *addr,
+                                                                                const char                 **path);
 
 SYSPROF_END_DECLS

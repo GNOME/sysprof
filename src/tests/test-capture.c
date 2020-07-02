@@ -32,15 +32,16 @@
 #include "sysprof-capture-util-private.h"
 
 static void
-copy_into (GHashTable *src,
-           GHashTable *dst)
+copy_into (const SysprofCaptureJitmap *src,
+           GHashTable                 *dst)
 {
-  GHashTableIter iter;
-  gpointer k, v;
+  SysprofCaptureJitmapIter iter;
+  SysprofCaptureAddress addr;
+  const char *name;
 
-  g_hash_table_iter_init (&iter, src);
-  while (g_hash_table_iter_next (&iter, &k, &v))
-    g_hash_table_insert (dst, k, g_strdup ((gchar *)v));
+  sysprof_capture_jitmap_iter_init (&iter, src);
+  while (sysprof_capture_jitmap_iter_next (&iter, &addr, &name))
+    g_hash_table_insert (dst, GSIZE_TO_POINTER (addr), g_strdup (name));
 }
 
 static void
@@ -318,19 +319,19 @@ test_reader_basic (void)
   for (;;)
     {
       SysprofCaptureFrameType type = -1;
-      g_autoptr(GHashTable) ret = NULL;
+      const SysprofCaptureJitmap *jitmap;
 
       if (sysprof_capture_reader_peek_type (reader, &type))
         g_assert_cmpint (type, ==, SYSPROF_CAPTURE_FRAME_JITMAP);
       else
         break;
 
-      ret = sysprof_capture_reader_read_jitmap (reader);
-      g_assert (ret != NULL);
+      jitmap = sysprof_capture_reader_read_jitmap (reader);
+      g_assert_nonnull (jitmap);
 
-      i += g_hash_table_size (ret);
+      i += jitmap->n_jitmaps;
 
-      copy_into (ret, jmap);
+      copy_into (jitmap, jmap);
     }
 
   g_assert_cmpint (1000, ==, i);
@@ -887,7 +888,7 @@ test_reader_writer_cat_jitmap (void)
   reader = sysprof_capture_writer_create_reader (res, &error);
   g_assert_no_error (error);
   g_assert_nonnull (reader);
-  g_hash_table_unref (sysprof_capture_reader_read_jitmap (reader));
+  sysprof_capture_reader_read_jitmap (reader);
   sample = sysprof_capture_reader_read_sample (reader);
   g_assert_cmpint (sample->frame.pid, ==, getpid ());
   g_assert_cmpint (sample->n_addrs, ==, G_N_ELEMENTS (addrs));

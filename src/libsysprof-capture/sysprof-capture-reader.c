@@ -758,10 +758,9 @@ sysprof_capture_reader_read_process (SysprofCaptureReader *self)
   return process;
 }
 
-GHashTable *
+const SysprofCaptureJitmap *
 sysprof_capture_reader_read_jitmap (SysprofCaptureReader *self)
 {
-  g_autoptr(GHashTable) ret = NULL;
   SysprofCaptureJitmap *jitmap;
   uint8_t *buf;
   uint8_t *endptr;
@@ -787,17 +786,15 @@ sysprof_capture_reader_read_jitmap (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, jitmap->frame.len))
     return NULL;
 
-  jitmap = (SysprofCaptureJitmap *)(gpointer)&self->buf[self->pos];
-
-  ret = g_hash_table_new_full (NULL, NULL, NULL, g_free);
+  jitmap = (SysprofCaptureJitmap *)(void *)&self->buf[self->pos];
 
   buf = jitmap->data;
   endptr = &self->buf[self->pos + jitmap->frame.len];
 
+  /* Check the strings are all nul-terminated. */
   for (i = 0; i < jitmap->n_jitmaps; i++)
     {
       SysprofCaptureAddress addr;
-      const char *str;
 
       if (buf + sizeof addr >= endptr)
         return NULL;
@@ -805,23 +802,19 @@ sysprof_capture_reader_read_jitmap (SysprofCaptureReader *self)
       memcpy (&addr, buf, sizeof addr);
       buf += sizeof addr;
 
-      str = (char *)buf;
-
       buf = memchr (buf, '\0', (endptr - buf));
 
       if (buf == NULL)
         return NULL;
 
       buf++;
-
-      g_hash_table_insert (ret, GSIZE_TO_POINTER (addr), g_strdup (str));
     }
 
   sysprof_capture_reader_bswap_jitmap (self, jitmap);
 
   self->pos += jitmap->frame.len;
 
-  return sysprof_steal_pointer (&ret);
+  return jitmap;
 }
 
 const SysprofCaptureSample *
@@ -1511,4 +1504,54 @@ sysprof_capture_reader_read_allocation (SysprofCaptureReader *self)
   self->pos += ma->frame.len;
 
   return ma;
+}
+
+typedef struct {
+  const SysprofCaptureJitmap *jitmap;
+  const uint8_t *buf;
+  unsigned int i;
+
+  void *padding1;
+  void *padding2;
+} RealSysprofCaptureJitmapIter;
+
+void
+sysprof_capture_jitmap_iter_init (SysprofCaptureJitmapIter   *iter,
+                                  const SysprofCaptureJitmap *jitmap)
+{
+  RealSysprofCaptureJitmapIter *real_iter = (RealSysprofCaptureJitmapIter *) iter;
+
+  assert (iter != NULL);
+  assert (jitmap != NULL);
+
+  real_iter->jitmap = jitmap;
+  real_iter->buf = jitmap->data;
+  real_iter->i = 0;
+}
+
+bool
+sysprof_capture_jitmap_iter_next (SysprofCaptureJitmapIter  *iter,
+                                  SysprofCaptureAddress     *addr,
+                                  const char               **name)
+{
+  RealSysprofCaptureJitmapIter *real_iter = (RealSysprofCaptureJitmapIter *) iter;
+  const char *_name;
+
+  assert (iter != NULL);
+
+  if (real_iter->i >= real_iter->jitmap->n_jitmaps)
+    return false;
+
+  if (addr != NULL)
+    memcpy (addr, real_iter->buf, sizeof (*addr));
+  real_iter->buf += sizeof (*addr);
+
+  _name = (const char *) real_iter->buf;
+  if (name != NULL)
+    *name = _name;
+  real_iter->buf += strlen (_name) + 1;
+
+  real_iter->i++;
+
+  return true;
 }

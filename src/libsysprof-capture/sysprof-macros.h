@@ -80,3 +80,9 @@
 #define SYSPROF_LIKELY(expr) (expr)
 #define SYSPROF_UNLIKELY(expr) (expr)
 #endif
+
+#if defined(__GNUC__)
+#define SYSPROF_PRINTF(format_idx, arg_idx) __attribute__((format(printf, format_idx, arg_idx)))
+#else
+#define SYSPROF_PRINTF(format_idx, arg_idx)
+#endif

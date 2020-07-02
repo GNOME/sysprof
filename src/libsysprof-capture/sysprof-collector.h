@@ -85,6 +85,6 @@ SYSPROF_AVAILABLE_IN_3_38
 void sysprof_collector_log_printf (int                  severity,
                                    const char          *domain,
                                    const char          *format,
-                                   ...) G_GNUC_PRINTF (3, 4);
+                                   ...) SYSPROF_PRINTF (3, 4);
 
 SYSPROF_END_DECLS

@@ -67,19 +67,6 @@ SYSPROF_BEGIN_DECLS
 
 typedef struct _SysprofCaptureWriter SysprofCaptureWriter;
 
-/**
- * SysprofBacktraceFunc:
- * @addrs: (inout) (array length=n_addrs): an array to place addresses
- *   into the capture frame
- * @n_addrs: the length of @addrs
- * @user_data: (scope call): closure data for the callback
- *
- * Returns: the number of addresses filled in @addrs
- */
-typedef int (*SysprofBacktraceFunc) (SysprofCaptureAddress *addrs,
-                                     unsigned int           n_addrs,
-                                     void                  *user_data);
-
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureWriter *sysprof_capture_writer_new_from_env                    (size_t                             buffer_size);
 SYSPROF_AVAILABLE_IN_ALL

@@ -424,7 +424,10 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
               goto panic;
 
             {
-              g_autoptr(GArray) counter = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounter));
+              SysprofCaptureCounter *counters = calloc (frame->n_counters, sizeof (*counters));
+              size_t n_counters = 0;
+              if (counters == NULL)
+                goto panic;
 
               for (unsigned int z = 0; z < frame->n_counters; z++)
                 {
@@ -436,15 +439,15 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
                   if (c.id != src)
                     translate_table_add (tables, TRANSLATE_CTR, src, c.id);
 
-                  g_array_append_val (counter, c);
+                  counters[n_counters++] = c;
                 }
 
               sysprof_capture_writer_define_counters (self,
                                                       frame->frame.time,
                                                       frame->frame.cpu,
                                                       frame->frame.pid,
-                                                      (gpointer)counter->data,
-                                                      counter->len);
+                                                      counters,
+                                                      n_counters);
 
               translate_table_sort (tables, TRANSLATE_CTR);
             }
@@ -460,8 +463,10 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
               goto panic;
 
             {
-              g_autoptr(GArray) ids = g_array_new (FALSE, FALSE, sizeof (guint));
-              g_autoptr(GArray) values = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounterValue));
+              unsigned int *ids = NULL;
+              SysprofCaptureCounterValue *values = NULL;
+              size_t n_elements = 0;
+              size_t n_elements_allocated = 0;
 
               for (unsigned int z = 0; z < frame->n_values; z++)
                 {
@@ -474,21 +479,30 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
                           unsigned int dst = translate_table_translate (tables, TRANSLATE_CTR, v->ids[y]);
                           SysprofCaptureCounterValue value = v->values[y];
 
-                          g_array_append_val (ids, dst);
-                          g_array_append_val (values, value);
+                          if (n_elements == n_elements_allocated)
+                            {
+                              n_elements_allocated = (n_elements_allocated > 0) ? n_elements_allocated * 2 : 4;
+                              ids = reallocarray (ids, n_elements_allocated, sizeof (*ids));
+                              values = reallocarray (values, n_elements_allocated, sizeof (*values));
+                              if (ids == NULL || values == NULL)
+                                goto panic;
+                            }
+
+                          ids[n_elements] = dst;
+                          values[n_elements] = value;
+                          n_elements++;
+                          assert (n_elements <= n_elements_allocated);
                         }
                     }
                 }
-
-              assert (ids->len == values->len);
 
               sysprof_capture_writer_set_counters (self,
                                                    frame->frame.time,
                                                    frame->frame.cpu,
                                                    frame->frame.pid,
-                                                   (const unsigned int *)(void *)ids->data,
-                                                   (const SysprofCaptureCounterValue *)(void *)values->data,
-                                                   ids->len);
+                                                   ids,
+                                                   values,
+                                                   n_elements);
             }
 
             break;

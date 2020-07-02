@@ -622,6 +622,73 @@ sysprof_collector_mark (int64_t     time,
 }
 
 void
+sysprof_collector_mark_printf (int64_t     time,
+                               int64_t     duration,
+                               const char *group,
+                               const char *mark,
+                               const char *message_format,
+                               ...)
+{
+  va_list args;
+
+  va_start (args, message_format);
+  sysprof_collector_mark_vprintf (time, duration, group, mark, message_format, args);
+  va_end (args);
+}
+
+void
+sysprof_collector_mark_vprintf (int64_t     time,
+                                int64_t     duration,
+                                const char *group,
+                                const char *mark,
+                                const char *message_format,
+                                va_list     args)
+{
+  COLLECTOR_BEGIN {
+    SysprofCaptureMark *ev;
+    size_t len;
+    size_t sl;
+    va_list args2;
+
+    /* Need to take a copy of @args since we iterate through it twice, once to
+     * work out the formatted string length, and once to format it. */
+    va_copy (args2, args);
+
+    if (group == NULL)
+      group = "";
+
+    if (mark == NULL)
+      mark = "";
+
+    if (message_format == NULL)
+      message_format = "";
+
+    /* Work out the formatted message length */
+    sl = vsnprintf (NULL, 0, message_format, args);
+
+    len = realign (sizeof *ev + sl + 1);
+
+    if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
+      {
+        ev->frame.len = len;
+        ev->frame.type = SYSPROF_CAPTURE_FRAME_MARK;
+        ev->frame.cpu = _do_getcpu ();
+        ev->frame.pid = collector->pid;
+        ev->frame.time = time;
+        ev->duration = duration;
+        _sysprof_strlcpy (ev->group, group, sizeof ev->group);
+        _sysprof_strlcpy (ev->name, mark, sizeof ev->name);
+        vsnprintf (ev->message, sl + 1, message_format, args2);
+        ev->message[sl] = 0;
+
+        mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
+      }
+
+    va_end (args2);
+  } COLLECTOR_END;
+}
+
+void
 sysprof_collector_log (int             severity,
                        const char     *domain,
                        const char     *message)

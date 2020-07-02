@@ -56,6 +56,8 @@
 
 #pragma once
 
+#include <stdarg.h>
+
 #include "sysprof-capture-types.h"
 #include "sysprof-macros.h"
 
@@ -77,6 +79,20 @@ void sysprof_collector_mark     (int64_t                time,
                                  const char            *group,
                                  const char            *mark,
                                  const char            *message);
+SYSPROF_AVAILABLE_IN_3_38
+void sysprof_collector_mark_printf  (int64_t     time,
+                                     int64_t     duration,
+                                     const char *group,
+                                     const char *mark,
+                                     const char *message_format,
+                                     ...) SYSPROF_PRINTF(5, 6);
+SYSPROF_AVAILABLE_IN_3_38
+void sysprof_collector_mark_vprintf (int64_t     time,
+                                     int64_t     duration,
+                                     const char *group,
+                                     const char *mark,
+                                     const char *message_format,
+                                     va_list     args) SYSPROF_PRINTF(5, 0);
 SYSPROF_AVAILABLE_IN_3_36
 void sysprof_collector_log      (int                    severity,
                                  const char            *domain,

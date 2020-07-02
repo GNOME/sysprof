@@ -58,11 +58,33 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <stdlib.h>
 #include <sys/syscall.h>
 #include <unistd.h>
 
 #include "sysprof-capture-util-private.h"
 #include "sysprof-platform.h"
+
+#ifndef __NR_memfd_create
+static const char *
+get_tmpdir (void)
+{
+  const char *tmpdir = NULL;
+
+  if (tmpdir == NULL || *tmpdir == '\0')
+    tmpdir = getenv ("TMPDIR");
+
+#ifdef P_tmpdir
+  if (tmpdir == NULL || *tmpdir == '\0')
+    tmpdir = P_tmpdir;
+#endif
+
+  if (tmpdir == NULL || *tmpdir == '\0')
+    tmpdir = "/tmp";
+
+  return tmpdir;
+}
+#endif  /* !__NR_memfd_create */
 
 /**
  * sysprof_memfd_create:
@@ -82,8 +104,10 @@ sysprof_memfd_create (const char *name)
     name = "[sysprof]";
   return syscall (__NR_memfd_create, name, 0);
 #else
-  gchar *name_used = NULL;
   int fd;
+  const char *tmpdir;
+  char *template = NULL;
+  size_t template_len = 0;
 
   /*
    * TODO: It would be nice to ensure tmpfs
@@ -93,13 +117,27 @@ sysprof_memfd_create (const char *name)
    * that the tmpfile we open is on tmpfs so that we get anonymous backed
    * pages after unlinking.
    */
-  fd = g_file_open_tmp (NULL, &name_used, NULL);
 
-  if (name_used != NULL)
+  tmpdir = get_tmpdir ();
+  template_len = strlen (tmpdir) + 1 + strlen ("sysprof-XXXXXX") + 1;
+  template = sysprof_malloc0 (template_len);
+  if (template == NULL)
     {
-      g_unlink (name_used);
-      g_free (name_used);
+      errno = ENOMEM;
+      return -1;
     }
+
+  snprintf (template, template_len, "%s/sysprof-XXXXXX", tmpdir);
+
+  fd = TEMP_FAILURE_RETRY (mkostemp (template, O_BINARY | O_CLOEXEC));
+  if (fd < 0)
+    {
+      free (template);
+      return -1;
+    }
+
+  unlink (template);
+  free (template);
 
   return fd;
 #endif

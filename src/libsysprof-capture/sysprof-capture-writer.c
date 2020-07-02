@@ -1224,12 +1224,8 @@ sysprof_capture_writer_define_counters (SysprofCaptureWriter        *self,
 
   for (i = 0; i < n_counters; i++)
     {
-      if (counters[i].id >= self->next_counter_id)
-        {
-          g_warning ("Counter %u has not been registered.", counters[i].id);
-          continue;
-        }
-
+      /* Has the counter been registered? */
+      assert (counters[i].id < self->next_counter_id);
       def->counters[i] = counters[i];
     }
 

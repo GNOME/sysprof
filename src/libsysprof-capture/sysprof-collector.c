@@ -281,7 +281,7 @@ sysprof_collector_init (void)
 }
 
 #define COLLECTOR_BEGIN                                           \
-  G_STMT_START {                                                  \
+  do {                                                  \
     const SysprofCollector *collector = sysprof_collector_get (); \
     if SYSPROF_LIKELY (collector->buffer)                         \
       {                                                           \
@@ -296,7 +296,7 @@ sysprof_collector_init (void)
         if SYSPROF_UNLIKELY (collector->is_shared)                \
           G_UNLOCK (control_fd);                                  \
       }                                                           \
-  } G_STMT_END
+  } while (0)
 
 void
 sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,

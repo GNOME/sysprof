@@ -57,7 +57,6 @@
 #pragma once
 
 #include "sysprof-capture-types.h"
-#include "sysprof-capture-writer.h"
 
 G_BEGIN_DECLS
 

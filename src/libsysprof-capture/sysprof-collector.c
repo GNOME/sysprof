@@ -73,7 +73,6 @@
 
 #include "mapped-ring-buffer.h"
 
-#include "sysprof-capture-writer.h"
 #include "sysprof-collector.h"
 
 #define MAX_UNWIND_DEPTH 128

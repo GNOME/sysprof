@@ -76,9 +76,10 @@
 #include "sysprof-capture-util-private.h"
 #include "sysprof-capture-writer.h"
 #include "sysprof-macros-internal.h"
+#include "sysprof-macros.h"
 
 #define DEFAULT_BUFFER_SIZE (_sysprof_getpagesize() * 64L)
-#define INVALID_ADDRESS     (G_GUINT64_CONSTANT(0))
+#define INVALID_ADDRESS     (SYSPROF_UINT64_CONSTANT(0))
 #define MAX_COUNTERS        ((1 << 24) - 1)
 #define MAX_UNWIND_DEPTH    64
 

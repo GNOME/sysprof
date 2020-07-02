@@ -59,6 +59,16 @@
 
 #pragma once
 
+#include <limits.h>
+
+#if INT_MAX == LONG_MAX
+#define SYSPROF_INT64_CONSTANT(x) x##ULL
+#define SYSPROF_UINT64_CONSTANT(x) x##LL
+#else
+#define SYSPROF_INT64_CONSTANT(x) x##UL
+#define SYSPROF_UINT64_CONSTANT(x) x##L
+#endif
+
 #ifdef __cplusplus
 #define SYSPROF_BEGIN_DECLS extern "C" {
 #define SYSPROF_END_DECLS }

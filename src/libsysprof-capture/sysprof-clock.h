@@ -69,7 +69,7 @@ typedef int SysprofClock;
 typedef int64_t SysprofTimeStamp;
 typedef int32_t SysprofTimeSysprofan;
 
-#define SYSPROF_NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
+#define SYSPROF_NSEC_PER_SEC SYSPROF_INT64_CONSTANT(1000000000)
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofClock sysprof_clock;

@@ -56,7 +56,6 @@
 
 #pragma once
 
-#include <glib.h>
 #include <stdint.h>
 #include <time.h>
 

@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <glib.h>
 #include <stdbool.h>
 #include <stddef.h>
 

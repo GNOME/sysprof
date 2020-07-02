@@ -58,7 +58,6 @@
 
 #include <assert.h>
 #include <errno.h>
-#include <glib/gstdio.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>

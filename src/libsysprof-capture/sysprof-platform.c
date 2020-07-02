@@ -56,8 +56,6 @@
 
 #include "config.h"
 
-#include <glib.h>
-#include <glib/gstdio.h>
 #include <stdlib.h>
 #include <sys/syscall.h>
 #include <unistd.h>

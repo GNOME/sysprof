@@ -56,8 +56,6 @@
 
 #pragma once
 
-#include <glib.h>
-
 #define SYSPROF_CAPTURE_INSIDE
 
 # include "sysprof-address.h"

@@ -56,8 +56,6 @@
 
 #pragma once
 
-#include <glib.h>
-
 #include "sysprof-version.h"
 
 #ifndef _SYSPROF_EXTERN

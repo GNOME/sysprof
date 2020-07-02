@@ -58,7 +58,6 @@
 
 #include <assert.h>
 #include <errno.h>
-#include <glib.h>
 #include <unistd.h>
 
 #ifdef _WIN32

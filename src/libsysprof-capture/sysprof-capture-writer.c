@@ -64,7 +64,6 @@
 #include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <glib/gstdio.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>

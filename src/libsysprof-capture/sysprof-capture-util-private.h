@@ -56,8 +56,6 @@
 
 #pragma once
 
-#include <glib.h>
-
 #ifdef __linux__
 # include <sys/sendfile.h>
 #endif

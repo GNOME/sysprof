@@ -37,9 +37,6 @@ configure_file(
 )
 
 libsysprof_capture_deps = [
-  glib_dep,
-  gio_dep,
-  gio_unix_dep,
   dependency('threads'),
 ]
 
@@ -70,7 +67,6 @@ pkgconfig.generate(
      filebase: 'sysprof-capture-@0@'.format(libsysprof_api_version),
   description: 'The static capture library for tools that generate profiling capture data',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
-     requires: [ 'glib-2.0' ],
      variables: [
        'datadir=' + datadir_for_pc_file,
      ],

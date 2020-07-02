@@ -1,3 +1,5 @@
+if get_option('enable_tools')
+
 tools_deps = [
   dependency('glib-2.0'),
   libsysprof_capture_dep,
@@ -42,3 +44,5 @@ list_threads = executable('list-threads', ['list-threads.c'],
         c_args: tools_cflags,
        install: false,
 )
+
+endif

@@ -73,7 +73,7 @@ typedef struct
 
 G_DEFINE_TYPE (SysprofDuplexVisualizer, sysprof_duplex_visualizer, SYSPROF_TYPE_VISUALIZER)
 
-static gboolean
+static bool
 collect_ranges_cb (const SysprofCaptureFrame *frame,
                    gpointer                   data)
 {
@@ -126,7 +126,7 @@ collect_ranges_cb (const SysprofCaptureFrame *frame,
   return TRUE;
 }
 
-static gboolean
+static bool
 collect_values_cb (const SysprofCaptureFrame *frame,
                    gpointer                   data)
 {

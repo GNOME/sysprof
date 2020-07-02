@@ -81,7 +81,7 @@ sysprof_battery_aid_prepare (SysprofAid      *self,
 #endif
 }
 
-static gboolean
+static bool
 collect_battery_counters (const SysprofCaptureFrame *frame,
                           gpointer                   user_data)
 {

@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <glib.h>
 #include <sysprof-capture.h>
 
 G_BEGIN_DECLS

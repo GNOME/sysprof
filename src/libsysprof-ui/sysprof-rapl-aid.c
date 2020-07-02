@@ -69,7 +69,7 @@ sysprof_rapl_aid_new (void)
   return g_object_new (SYSPROF_TYPE_RAPL_AID, NULL);
 }
 
-static gboolean
+static bool
 collect_info (const SysprofCaptureFrame *frame,
               gpointer                   user_data)
 {

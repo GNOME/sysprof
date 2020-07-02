@@ -143,7 +143,7 @@ sysprof_display_profiler_stopped_cb (SysprofDisplay  *self,
       g_autoptr(SysprofCaptureReader) reader = NULL;
       g_autoptr(GError) error = NULL;
 
-      if (!(reader = sysprof_capture_writer_create_reader (writer, &error)))
+      if (!(reader = sysprof_capture_writer_create_reader_with_error (writer, &error)))
         {
           g_warning ("Failed to create capture creader: %s\n", error->message);
           gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->failed_view));
@@ -1071,7 +1071,7 @@ sysprof_display_open (SysprofDisplay *self,
 
   g_set_object (&priv->file, file);
 
-  if (!(reader = sysprof_capture_reader_new (path, &error)))
+  if (!(reader = sysprof_capture_reader_new_with_error (path, &error)))
     {
       GtkWidget *dialog;
       GtkWidget *window;
@@ -1229,7 +1229,7 @@ sysprof_display_save (SysprofDisplay *self)
           g_autofree gchar *path = g_file_get_path (file);
           g_autoptr(GError) error = NULL;
 
-          if (!sysprof_capture_reader_save_as (priv->reader, path, &error))
+          if (!sysprof_capture_reader_save_as_with_error (priv->reader, path, &error))
             {
               GtkWidget *msg;
 

@@ -37,7 +37,7 @@ main (gint argc,
       return 1;
     }
 
-  if (!(reader = sysprof_capture_reader_new (argv[1], &error)))
+  if (!(reader = sysprof_capture_reader_new_with_error (argv[1], &error)))
     {
       g_printerr ("Failed to load reader: %s\n", error->message);
       return 1;

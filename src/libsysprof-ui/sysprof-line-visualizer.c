@@ -613,7 +613,7 @@ calc_y_int64 (gint64 lower,
   return (gdouble)(value - lower) / (gdouble)(upper - lower);
 }
 
-static gboolean
+static bool
 sysprof_line_visualizer_load_data_frame_cb (const SysprofCaptureFrame *frame,
                                             gpointer                   user_data)
 {
@@ -655,7 +655,7 @@ sysprof_line_visualizer_load_data_frame_cb (const SysprofCaptureFrame *frame,
   return TRUE;
 }
 
-static gboolean
+static bool
 sysprof_line_visualizer_load_data_range_cb (const SysprofCaptureFrame *frame,
                                             gpointer                   user_data)
 {

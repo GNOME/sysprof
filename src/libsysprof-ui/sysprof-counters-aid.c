@@ -123,7 +123,7 @@ build_title (const SysprofCaptureCounter *ctr)
   return g_string_free (str, FALSE);
 }
 
-static gboolean
+static bool
 collect_counters (const SysprofCaptureFrame *frame,
                   gpointer                   user_data)
 {

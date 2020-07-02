@@ -144,7 +144,7 @@ SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureFileChunk      *sysprof_capture_reader_find_file           (SysprofCaptureReader      *self,
                                                                                 const char                *path);
 SYSPROF_AVAILABLE_IN_ALL
-char                              **sysprof_capture_reader_list_files          (SysprofCaptureReader      *self);
+const char                        **sysprof_capture_reader_list_files          (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
 bool                                sysprof_capture_reader_read_file_fd        (SysprofCaptureReader      *self,
                                                                                 const char                *path,

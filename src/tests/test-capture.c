@@ -747,7 +747,7 @@ test_reader_writer_file (void)
 {
   g_autofree gchar *data = NULL;
   GByteArray *buf = g_byte_array_new ();
-  g_auto(GStrv) files = NULL;
+  g_autofree const gchar **files = NULL;
   SysprofCaptureWriter *writer;
   SysprofCaptureReader *reader;
   SysprofCaptureFrameType type;

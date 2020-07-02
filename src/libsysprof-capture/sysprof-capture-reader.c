@@ -62,6 +62,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -1273,19 +1274,59 @@ sysprof_capture_reader_read_file (SysprofCaptureReader *self)
   return file_chunk;
 }
 
-char **
+static bool
+array_append (const char ***files,
+              size_t       *n_files,
+              size_t       *n_files_allocated,
+              const char   *new_element)
+{
+  if (*n_files == *n_files_allocated)
+    {
+      const char **new_files;
+
+      *n_files_allocated = (*n_files_allocated > 0) ? 2 * *n_files_allocated : 4;
+      new_files = reallocarray (*files, *n_files_allocated, sizeof (**files));
+      if (new_files == NULL)
+        return false;
+      *files = new_files;
+    }
+
+  (*files)[*n_files] = new_element;
+  *n_files = *n_files + 1;
+  assert (*n_files <= *n_files_allocated);
+
+  return true;
+}
+
+static void
+array_deduplicate (const char **files,
+                   size_t      *n_files)
+{
+  size_t last_written, next_to_read;
+
+  if (*n_files == 0)
+    return;
+
+  for (last_written = 0, next_to_read = 1; last_written <= next_to_read && next_to_read < *n_files;)
+    {
+      if (strcmp (files[next_to_read], files[last_written]) == 0)
+        next_to_read++;
+      else
+        files[++last_written] = files[next_to_read++];
+    }
+
+  assert (last_written + 1 <= *n_files);
+  *n_files = last_written + 1;
+}
+
+const char **
 sysprof_capture_reader_list_files (SysprofCaptureReader *self)
 {
-  g_autoptr(GHashTable) files = NULL;
-  g_autoptr(GPtrArray) ar = NULL;
+  const char **files = NULL;
+  size_t n_files = 0, n_files_allocated = 0;
   SysprofCaptureFrameType type;
-  GHashTableIter iter;
-  const gchar *key;
 
   assert (self != NULL);
-
-  ar = g_ptr_array_new_with_free_func (g_free);
-  files = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
   while (sysprof_capture_reader_peek_type (self, &type))
     {
@@ -1300,16 +1341,27 @@ sysprof_capture_reader_list_files (SysprofCaptureReader *self)
       if (!(file = sysprof_capture_reader_read_file (self)))
         break;
 
-      if (!g_hash_table_contains (files, file->path))
-        g_hash_table_insert (files, g_strdup (file->path), NULL);
+      if (!array_append (&files, &n_files, &n_files_allocated, file->path))
+        {
+          free (files);
+          errno = ENOMEM;
+          return NULL;
+        }
     }
 
-  g_hash_table_iter_init (&iter, files);
-  while (g_hash_table_iter_next (&iter, (gpointer *)&key, NULL))
-    g_ptr_array_add (ar, g_strdup (key));
-  g_ptr_array_add (ar, NULL);
+  /* Sort and deduplicate the files array. */
+  qsort (files, n_files, sizeof (*files), (int (*)(const void *, const void *)) strcmp);
+  array_deduplicate (files, &n_files);
 
-  return (char **)g_ptr_array_free (sysprof_steal_pointer (&ar), FALSE);
+  /* Add a null terminator */
+  if (!array_append (&files, &n_files, &n_files_allocated, NULL))
+    {
+      free (files);
+      errno = ENOMEM;
+      return NULL;
+    }
+
+  return sysprof_steal_pointer (&files);
 }
 
 bool

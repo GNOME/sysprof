@@ -64,9 +64,9 @@ main (gint argc,
 
   if (list_files)
     {
-      g_auto(GStrv) files = sysprof_capture_reader_list_files (reader);
+      g_autofree const gchar **files = sysprof_capture_reader_list_files (reader);
 
-      for (guint i = 0; files[i]; i++)
+      for (gsize i = 0; files[i]; i++)
         g_print ("%s\n", files[i]);
 
       return EXIT_SUCCESS;

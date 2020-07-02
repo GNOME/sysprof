@@ -120,8 +120,6 @@ scratch_calloc (size_t nmemb,
 static void
 scratch_free (void *ptr)
 {
-  if ((char *)ptr >= scratch.buf && (char *)ptr < scratch.buf + scratch.off)
-    return;
 }
 
 static void

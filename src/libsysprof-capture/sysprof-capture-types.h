@@ -81,12 +81,14 @@ SYSPROF_BEGIN_DECLS
 
 #define SYSPROF_CAPTURE_ADDRESS_FORMAT "0x%016" PRIx64
 
-#if GLIB_SIZEOF_VOID_P == 8
+static_assert (sizeof (void *) == sizeof (uintptr_t),
+               "UINTPTR_MAX can’t be used to determine sizeof(void*) at compile time");
+#if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFFu
 # define SYSPROF_CAPTURE_JITMAP_MARK    SYSPROF_UINT64_CONSTANT(0xE000000000000000)
-#elif GLIB_SIZEOF_VOID_P == 4
+#elif UINTPTR_MAX == 0xFFFFFFFF
 # define SYSPROF_CAPTURE_JITMAP_MARK    SYSPROF_UINT64_CONSTANT(0xE0000000)
 #else
-#error Unknown GLIB_SIZEOF_VOID_P
+#error Unknown UINTPTR_MAX
 #endif
 
 #define SYSPROF_CAPTURE_CURRENT_TIME   (sysprof_clock_get_current_time())

@@ -165,7 +165,7 @@ sysprof_capture_reader_discover_end_time (SysprofCaptureReader *self)
             const SysprofCaptureMark *mark = NULL;
 
             if ((mark = sysprof_capture_reader_read_mark (self)))
-              end_time = frame.time + MAX (0, mark->duration);
+              end_time = frame.time + ((mark->duration > 0) ? mark->duration : 0);
           }
           break;
 
@@ -1145,7 +1145,7 @@ sysprof_capture_reader_get_end_time (SysprofCaptureReader *self)
         end_time = self->header.end_time;
     }
 
-  return MAX (self->end_time, end_time);
+  return (self->end_time > end_time) ? self->end_time : end_time;
 }
 
 /**

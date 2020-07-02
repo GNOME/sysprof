@@ -478,8 +478,8 @@ SysprofCaptureWriter *
 sysprof_capture_writer_new_from_fd (int    fd,
                                     size_t buffer_size)
 {
-  g_autofree gchar *nowstr = NULL;
-  g_autoptr(GDateTime) now = NULL;
+  time_t now;
+  char now_str[sizeof ("2020-06-30T14:34:00Z")];
   SysprofCaptureWriter *self;
   SysprofCaptureFileHeader *header;
   size_t header_len = sizeof(*header);
@@ -511,18 +511,14 @@ sysprof_capture_writer_new_from_fd (int    fd,
   self->len = buffer_size;
   self->next_counter_id = 1;
 
-  now = g_date_time_new_now_local ();
-
-#if GLIB_CHECK_VERSION(2, 62, 0)
-  nowstr = g_date_time_format_iso8601 (now);
-#else
-  {
-    GTimeVal tv;
-
-    g_date_time_to_timeval (now, &tv);
-    nowstr = g_time_val_to_iso8601 (&tv);
-  }
-#endif
+  /* Format the time as ISO 8601, in UTC */
+  time (&now);
+  if (strftime (now_str, sizeof (now_str), "%FT%TZ", gmtime (&now)) == 0)
+    {
+      free (self->buf);
+      free (self);
+      return NULL;
+    }
 
   header = sysprof_capture_writer_allocate (self, &header_len);
 

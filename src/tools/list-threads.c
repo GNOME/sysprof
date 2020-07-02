@@ -59,9 +59,9 @@ main (gint   argc,
     }
 
   if (g_strcmp0 ("-", argv[1]) == 0)
-    reader = sysprof_capture_reader_new_from_fd (dup (STDIN_FILENO), 0);
+    reader = sysprof_capture_reader_new_from_fd (dup (STDIN_FILENO));
   else
-    reader = sysprof_capture_reader_new (argv[1], 0);
+    reader = sysprof_capture_reader_new (argv[1]);
 
   if (reader == NULL)
     {

@@ -136,10 +136,11 @@ merge_files (gint             argc,
       g_autoptr(SysprofCaptureReader) reader = NULL;
       g_autoptr(GError) error = NULL;
 
-      if (!(reader = sysprof_capture_reader_new (argv[i], &error)))
+      if (!(reader = sysprof_capture_reader_new (argv[i])))
         {
+          int errsv = errno;
           g_printerr ("Failed to create reader for \"%s\": %s\n",
-                      argv[i], error->message);
+                      argv[i], g_strerror (errsv));
           return EXIT_FAILURE;
         }
 

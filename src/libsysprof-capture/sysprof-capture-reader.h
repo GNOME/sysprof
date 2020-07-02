@@ -67,11 +67,9 @@ SYSPROF_BEGIN_DECLS
 typedef struct _SysprofCaptureReader SysprofCaptureReader;
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureReader               *sysprof_capture_reader_new                 (const char                *filename,
-                                                                                GError                   **error);
+SysprofCaptureReader               *sysprof_capture_reader_new                 (const char                *filename);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureReader               *sysprof_capture_reader_new_from_fd         (int                        fd,
-                                                                                GError                   **error);
+SysprofCaptureReader               *sysprof_capture_reader_new_from_fd         (int                        fd);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureReader               *sysprof_capture_reader_copy                (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
@@ -128,12 +126,10 @@ SYSPROF_AVAILABLE_IN_ALL
 bool                                sysprof_capture_reader_reset               (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
 bool                                sysprof_capture_reader_splice              (SysprofCaptureReader      *self,
-                                                                                SysprofCaptureWriter      *dest,
-                                                                                GError                   **error);
+                                                                                SysprofCaptureWriter      *dest);
 SYSPROF_AVAILABLE_IN_ALL
 bool                                sysprof_capture_reader_save_as             (SysprofCaptureReader      *self,
-                                                                                const char                *filename,
-                                                                                GError                   **error);
+                                                                                const char                *filename);
 SYSPROF_AVAILABLE_IN_ALL
 bool                                sysprof_capture_reader_get_stat            (SysprofCaptureReader      *self,
                                                                                 SysprofCaptureStat        *st_buf);

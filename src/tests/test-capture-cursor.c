@@ -37,20 +37,18 @@ test_cursor_basic (void)
   SysprofCaptureReader *reader;
   SysprofCaptureWriter *writer;
   SysprofCaptureCursor *cursor;
-  GError *error = NULL;
   gint64 t = SYSPROF_CAPTURE_CURRENT_TIME;
   guint i;
   gint r;
   gint count = 0;
 
   writer = sysprof_capture_writer_new ("capture-cursor-file", 0);
-  g_assert (writer != NULL);
+  g_assert_nonnull (writer);
 
   sysprof_capture_writer_flush (writer);
 
-  reader = sysprof_capture_reader_new ("capture-cursor-file", &error);
-  g_assert_no_error (error);
-  g_assert (reader != NULL);
+  reader = sysprof_capture_reader_new ("capture-cursor-file");
+  g_assert_nonnull (reader);
 
   for (i = 0; i < 100; i++)
     {

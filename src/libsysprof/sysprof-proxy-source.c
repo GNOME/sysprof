@@ -464,14 +464,16 @@ sysprof_proxy_source_complete_monitor (SysprofProxySource *self,
                                        Monitor            *monitor)
 {
   g_autoptr(SysprofCaptureReader) reader = NULL;
-  g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_PROXY_SOURCE (self));
   g_assert (monitor != NULL);
   g_assert (monitor->self == self);
 
-  if (!(reader = sysprof_capture_reader_new_from_fd (steal_fd (&monitor->fd), &error)))
-    g_warning ("Failed to load reader from peer FD: %s", error->message);
+  if (!(reader = sysprof_capture_reader_new_from_fd (steal_fd (&monitor->fd))))
+    {
+      int errsv = errno;
+      g_warning ("Failed to load reader from peer FD: %s", g_strerror (errsv));
+    }
   else
     sysprof_proxy_source_cat (self, reader);
 }

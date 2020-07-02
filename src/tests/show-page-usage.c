@@ -168,7 +168,6 @@ main (gint   argc,
   SysprofCaptureReader *reader;
   const gchar *filename = argv[1];
   g_autoptr(SysprofProfile) memprof = NULL;
-  g_autoptr(GError) error = NULL;
 
   if (argc < 2)
     {
@@ -178,9 +177,10 @@ main (gint   argc,
 
   main_loop = g_main_loop_new (NULL, FALSE);
 
-  if (!(reader = sysprof_capture_reader_new (filename, &error)))
+  if (!(reader = sysprof_capture_reader_new (filename)))
     {
-      g_printerr ("%s\n", error->message);
+      int errsv = errno;
+      g_printerr ("%s\n", g_strerror (errsv));
       return EXIT_FAILURE;
     }
 

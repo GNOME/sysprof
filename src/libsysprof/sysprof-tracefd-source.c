@@ -259,7 +259,7 @@ sysprof_tracefd_source_stop (SysprofSource *source)
     {
       g_autoptr(SysprofCaptureReader) reader = NULL;
 
-      if ((reader = sysprof_capture_reader_new_from_fd (priv->tracefd, 0)))
+      if ((reader = sysprof_capture_reader_new_from_fd (priv->tracefd)))
         sysprof_capture_writer_cat (priv->writer, reader, NULL);
 
       priv->tracefd = -1;

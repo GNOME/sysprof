@@ -90,29 +90,24 @@ struct _SysprofCaptureReader
   unsigned int              st_buf_set : 1;
 };
 
+/* Sets @errno on failure. Sets @errno to EBADMSG if the file magic doesn’t
+ * match, and otherwise can return any error as for read(). */
 static bool
-sysprof_capture_reader_read_file_header (SysprofCaptureReader      *self,
-                                         SysprofCaptureFileHeader  *header,
-                                         GError                   **error)
+sysprof_capture_reader_read_file_header (SysprofCaptureReader     *self,
+                                         SysprofCaptureFileHeader *header)
 {
   assert (self != NULL);
   assert (header != NULL);
 
   if (sizeof *header != _sysprof_pread (self->fd, header, sizeof *header, 0L))
     {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   g_file_error_from_errno (errno),
-                   "%s", g_strerror (errno));
+      /* errno is propagated */
       return false;
     }
 
   if (header->magic != SYSPROF_CAPTURE_MAGIC)
     {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   G_FILE_ERROR_FAILED,
-                   "Capture file magic does not match");
+      errno = EBADMSG;
       return false;
     }
 
@@ -201,17 +196,17 @@ sysprof_capture_reader_discover_end_time (SysprofCaptureReader *self)
 /**
  * sysprof_capture_reader_new_from_fd:
  * @fd: an fd to take ownership from
- * @error: a location for a #GError or %NULL
  *
  * Creates a new reader using the file-descriptor.
  *
  * This is useful if you don't necessarily have access to the filename itself.
  *
+ * If this function fails, `errno` is set.
+ *
  * Returns: (transfer full): an #SysprofCaptureReader or %NULL upon failure.
  */
 SysprofCaptureReader *
-sysprof_capture_reader_new_from_fd (int      fd,
-                                    GError **error)
+sysprof_capture_reader_new_from_fd (int fd)
 {
   SysprofCaptureReader *self;
 
@@ -220,7 +215,7 @@ sysprof_capture_reader_new_from_fd (int      fd,
   self = sysprof_malloc0 (sizeof (SysprofCaptureReader));
   if (self == NULL)
     {
-      g_set_error_literal (error, G_FILE_ERROR, G_FILE_ERROR_NOMEM, "No memory");
+      errno = ENOMEM;
       return NULL;
     }
 
@@ -230,7 +225,7 @@ sysprof_capture_reader_new_from_fd (int      fd,
   if (self->buf == NULL)
     {
       free (self);
-      g_set_error_literal (error, G_FILE_ERROR, G_FILE_ERROR_NOMEM, "No memory");
+      errno = ENOMEM;
       return NULL;
     }
 
@@ -239,9 +234,11 @@ sysprof_capture_reader_new_from_fd (int      fd,
   self->fd = fd;
   self->fd_off = sizeof (SysprofCaptureFileHeader);
 
-  if (!sysprof_capture_reader_read_file_header (self, &self->header, error))
+  if (!sysprof_capture_reader_read_file_header (self, &self->header))
     {
+      int errsv = errno;
       sysprof_capture_reader_finalize (self);
+      errno = errsv;
       return NULL;
     }
 
@@ -261,8 +258,7 @@ sysprof_capture_reader_new_from_fd (int      fd,
 }
 
 SysprofCaptureReader *
-sysprof_capture_reader_new (const char   *filename,
-                            GError      **error)
+sysprof_capture_reader_new (const char *filename)
 {
   SysprofCaptureReader *self;
   int fd;
@@ -271,16 +267,15 @@ sysprof_capture_reader_new (const char   *filename,
 
   if (-1 == (fd = open (filename, O_RDONLY, 0)))
     {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   g_file_error_from_errno (errno),
-                   "%s", g_strerror (errno));
+      /* errno is propagated */
       return NULL;
     }
 
-  if (NULL == (self = sysprof_capture_reader_new_from_fd (fd, error)))
+  if (NULL == (self = sysprof_capture_reader_new_from_fd (fd)))
     {
+      int errsv = errno;
       close (fd);
+      errno = errsv;
       return NULL;
     }
 
@@ -996,9 +991,8 @@ sysprof_capture_reader_unref (SysprofCaptureReader *self)
 }
 
 bool
-sysprof_capture_reader_splice (SysprofCaptureReader  *self,
-                               SysprofCaptureWriter  *dest,
-                               GError               **error)
+sysprof_capture_reader_splice (SysprofCaptureReader *self,
+                               SysprofCaptureWriter *dest)
 {
   assert (self != NULL);
   assert (self->fd != -1);
@@ -1007,10 +1001,7 @@ sysprof_capture_reader_splice (SysprofCaptureReader  *self,
   /* Flush before writing anything to ensure consistency */
   if (!sysprof_capture_writer_flush (dest))
     {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   g_file_error_from_errno (errno),
-                   "%s", g_strerror (errno));
+      /* errno is propagated */
       return false;
     }
 
@@ -1019,30 +1010,32 @@ sysprof_capture_reader_splice (SysprofCaptureReader  *self,
    * track the current position to avoid reseting it.
    */
 
-  /* Perform the splice */
-  return _sysprof_capture_writer_splice_from_fd (dest, self->fd, error);
+  /* Perform the splice; errno is propagated on failure */
+  return _sysprof_capture_writer_splice_from_fd (dest, self->fd);
 }
 
 /**
  * sysprof_capture_reader_save_as:
  * @self: An #SysprofCaptureReader
  * @filename: the file to save the capture as
- * @error: a location for a #GError or %NULL.
  *
  * This is a convenience function for copying a capture file for which
  * you may have already discarded the writer for.
  *
- * Returns: %TRUE on success; otherwise %FALSE and @error is set.
+ * `errno` is set on failure. It may be any of the errors returned by
+ * `open()`, `fstat()`, `ftruncate()`, `lseek()` or `sendfile()`.
+ *
+ * Returns: %TRUE on success; otherwise %FALSE.
  */
 bool
-sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
-                                const char            *filename,
-                                GError               **error)
+sysprof_capture_reader_save_as (SysprofCaptureReader *self,
+                                const char           *filename)
 {
   struct stat stbuf;
   off_t in_off;
   size_t to_write;
   int fd = -1;
+  int errsv;
 
   assert (self != NULL);
   assert (filename != NULL);
@@ -1087,13 +1080,12 @@ sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
   return true;
 
 handle_errno:
+  errsv = errno;
+
   if (fd != -1)
     close (fd);
 
-  g_set_error (error,
-               G_FILE_ERROR,
-               g_file_error_from_errno (errno),
-               "%s", g_strerror (errno));
+  errno = errsv;
 
   return false;
 }

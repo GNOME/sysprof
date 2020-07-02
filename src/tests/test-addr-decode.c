@@ -11,7 +11,6 @@ main (gint argc,
 {
   g_autoptr(SysprofCaptureReader) reader = NULL;
   g_autoptr(SysprofSymbolResolver) resolver = NULL;
-  g_autoptr(GError) error = NULL;
   SysprofCaptureFrameType type;
 
   if (argc != 2)
@@ -20,9 +19,10 @@ main (gint argc,
       return 1;
     }
 
-  if (!(reader = sysprof_capture_reader_new (argv[1], &error)))
+  if (!(reader = sysprof_capture_reader_new (argv[1])))
     {
-      g_printerr ("%s\n", error->message);
+      int errsv = errno;
+      g_printerr ("%s\n", g_strerror (errsv));
       return 1;
     }
 

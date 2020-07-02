@@ -92,9 +92,10 @@ main (gint argc,
       return 1;
     }
 
-  if (!(reader = sysprof_capture_reader_new (argv[1], &error)))
+  if (!(reader = sysprof_capture_reader_new (argv[1])))
     {
-      g_printerr ("%s\n", error->message);
+      int errsv = errno;
+      g_printerr ("%s\n", g_strerror (errsv));
       return 1;
     }
 

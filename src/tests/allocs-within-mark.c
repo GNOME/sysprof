@@ -205,9 +205,10 @@ main (gint   argc,
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
   textdomain (GETTEXT_PACKAGE);
 
-  if (!(reader = sysprof_capture_reader_new (filename, &error)))
+  if (!(reader = sysprof_capture_reader_new (filename)))
     {
-      g_printerr ("%s\n", error->message);
+      int errsv = errno;
+      g_printerr ("%s\n", g_strerror (errsv));
       return EXIT_FAILURE;
     }
 

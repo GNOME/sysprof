@@ -56,9 +56,10 @@ main (gint argc,
       return EXIT_FAILURE;
     }
 
-  if ((reader = sysprof_capture_reader_new (argv[1], &error)) == NULL)
+  if ((reader = sysprof_capture_reader_new (argv[1])) == NULL)
     {
-      g_printerr ("%s\n", error->message);
+      int errsv = errno;
+      g_printerr ("%s\n", g_strerror (errsv));
       return EXIT_FAILURE;
     }
 

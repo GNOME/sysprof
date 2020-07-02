@@ -988,7 +988,7 @@ handle_errno:
   if (fd != -1)
     {
       close (fd);
-      g_unlink (filename);
+      unlink (filename);
     }
 
   return false;

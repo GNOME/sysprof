@@ -197,8 +197,12 @@ realloc (void   *ptr,
 void
 free (void *ptr)
 {
-  real_free (ptr);
-  track_free (ptr);
+  if G_LIKELY (ptr < (void *)scratch.buf ||
+               ptr >= (void *)&scratch.buf[sizeof scratch.buf])
+    {
+      real_free (ptr);
+      track_free (ptr);
+    }
 }
 
 void *

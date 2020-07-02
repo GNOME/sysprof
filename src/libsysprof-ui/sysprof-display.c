@@ -1084,7 +1084,7 @@ sysprof_display_open (SysprofDisplay *self,
                                        GTK_MESSAGE_WARNING,
                                        GTK_BUTTONS_CLOSE,
                                        "%s",
-                                       _("The capture could not be opened"));
+                                       _("The recording could not be opened"));
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                                 "%s",
                                                 error->message);

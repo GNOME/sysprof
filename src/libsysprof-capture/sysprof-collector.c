@@ -410,6 +410,12 @@ sysprof_collector_get (void)
   {
     SysprofCollector *self, *old_collector;
 
+    /* First set the collector to invalid so anything recursive
+     * here fails instead of becoming re-entrant.
+     */
+    pthread_setspecific (collector_key, COLLECTOR_INVALID);
+
+    /* Now we can malloc without ending up here again */
     self = sysprof_malloc0 (sizeof (SysprofCollector));
     if (self == NULL)
       return COLLECTOR_INVALID;

@@ -61,7 +61,7 @@
 #include <glib.h>
 #include <unistd.h>
 
-#ifdef G_OS_WIN32
+#ifdef _WIN32
 # include <process.h>
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
@@ -70,7 +70,7 @@
 #include "sysprof-capture-util-private.h"
 #include "sysprof-macros.h"
 
-#ifdef G_OS_WIN32
+#ifdef _WIN32
 static G_LOCK_DEFINE (_sysprof_io_sync);
 #endif
 
@@ -81,7 +81,7 @@ size_t
 
   if SYSPROF_UNLIKELY (pgsz == 0)
     {
-#ifdef G_OS_WIN32
+#ifdef _WIN32
       SYSTEM_INFO system_info;
       GetSystemInfo (&system_info);
       pgsz = system_info.dwPageSize;
@@ -99,7 +99,7 @@ ssize_t
                   size_t  count,
                   off_t   offset)
 {
-#ifdef G_OS_WIN32
+#ifdef _WIN32
   ssize_t ret = -1;
 
   G_LOCK (_sysprof_io_sync);
@@ -121,7 +121,7 @@ ssize_t
                    size_t      count,
                    off_t       offset)
 {
-#ifdef G_OS_WIN32
+#ifdef _WIN32
   ssize_t ret = -1;
 
   G_LOCK (_sysprof_io_sync);
@@ -142,7 +142,7 @@ ssize_t
                   const void *buf,
                   size_t      count)
 {
-#ifdef G_OS_WIN32
+#ifdef _WIN32
   ssize_t ret = -1;
 
   G_LOCK (_sysprof_io_sync);
@@ -160,7 +160,7 @@ ssize_t
 int32_t
 (_sysprof_getpid) (void)
 {
-#ifdef G_OS_WIN32
+#ifdef _WIN32
   return _getpid ();
 #else
   return getpid ();

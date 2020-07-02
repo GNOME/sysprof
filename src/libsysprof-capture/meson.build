@@ -40,6 +40,7 @@ libsysprof_capture_deps = [
   glib_dep,
   gio_dep,
   gio_unix_dep,
+  dependency('threads'),
 ]
 
 libsysprof_capture = static_library(

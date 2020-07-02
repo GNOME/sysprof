@@ -62,6 +62,7 @@
 #include <glib-unix.h>
 #include <gio/gio.h>
 #include <gio/gunixconnection.h>
+#include <pthread.h>
 #ifdef __linux__
 # include <sched.h>
 #endif
@@ -97,16 +98,17 @@ static MappedRingBuffer       *request_writer         (void);
 static void                    sysprof_collector_free (void *data);
 static const SysprofCollector *sysprof_collector_get  (void);
 
-static G_LOCK_DEFINE (control_fd);
-static GPrivate collector_key = G_PRIVATE_INIT (sysprof_collector_free);
-static GPrivate single_trace_key = G_PRIVATE_INIT (NULL);
+static pthread_mutex_t control_fd_lock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_key_t collector_key;  /* initialised in sysprof_collector_init() */
+static pthread_key_t single_trace_key;  /* initialised in sysprof_collector_init() */
+static pthread_once_t collector_init = PTHREAD_ONCE_INIT;
 static SysprofCollector *shared_collector;
 static SysprofCollector invalid;
 
 static inline bool
 use_single_trace (void)
 {
-  return GPOINTER_TO_INT (g_private_get (&single_trace_key));
+  return (bool) pthread_getspecific (single_trace_key);
 }
 
 static inline int
@@ -223,7 +225,10 @@ sysprof_collector_free (void *data)
 static const SysprofCollector *
 sysprof_collector_get (void)
 {
-  const SysprofCollector *collector = g_private_get (&collector_key);
+  const SysprofCollector *collector;
+
+  sysprof_collector_init ();
+  collector = pthread_getspecific (collector_key);
 
   /* We might have gotten here recursively */
   if SYSPROF_UNLIKELY (collector == COLLECTOR_INVALID)
@@ -236,15 +241,11 @@ sysprof_collector_get (void)
     return shared_collector;
 
   {
-    SysprofCollector *self;
-
-    g_private_replace (&collector_key, COLLECTOR_INVALID);
+    SysprofCollector *self, *old_collector;
 
     self = sysprof_malloc0 (sizeof (SysprofCollector));
     if (self == NULL)
       return COLLECTOR_INVALID;
-
-    G_LOCK (control_fd);
 
     self->pid = getpid ();
 #ifdef __linux__
@@ -253,31 +254,56 @@ sysprof_collector_get (void)
     self->tid = self->pid;
 #endif
 
+    pthread_mutex_lock (&control_fd_lock);
+
     if (getenv ("SYSPROF_CONTROL_FD") != NULL)
       self->buffer = request_writer ();
 
-    if (self->is_shared)
-      shared_collector = self;
-    else
-      g_private_replace (&collector_key, self);
+    /* Update the stored collector */
+    old_collector = pthread_getspecific (collector_key);
 
-    G_UNLOCK (control_fd);
+    if (self->is_shared)
+      {
+        if (pthread_setspecific (collector_key, COLLECTOR_INVALID) != 0)
+          goto fail;
+        sysprof_collector_free (old_collector);
+        shared_collector = self;
+      }
+    else
+      {
+        if (pthread_setspecific (collector_key, self) != 0)
+          goto fail;
+        sysprof_collector_free (old_collector);
+      }
+
+    pthread_mutex_unlock (&control_fd_lock);
 
     return self;
+
+fail:
+    pthread_mutex_unlock (&control_fd_lock);
+    sysprof_collector_free (self);
+
+    return COLLECTOR_INVALID;
   }
+}
+
+static void
+collector_init_cb (void)
+{
+  if (SYSPROF_UNLIKELY (pthread_key_create (&collector_key, sysprof_collector_free) != 0))
+    abort ();
+  if (SYSPROF_UNLIKELY (pthread_key_create (&single_trace_key, NULL) != 0))
+    abort ();
+
+  sysprof_clock_init ();
 }
 
 void
 sysprof_collector_init (void)
 {
-  static size_t once_init;
-
-  if (g_once_init_enter (&once_init))
-    {
-      sysprof_clock_init ();
-      (void)sysprof_collector_get ();
-      g_once_init_leave (&once_init, TRUE);
-    }
+  if (pthread_once (&collector_init, collector_init_cb) != 0)
+    abort ();
 }
 
 #define COLLECTOR_BEGIN                                           \
@@ -286,7 +312,7 @@ sysprof_collector_init (void)
     if SYSPROF_LIKELY (collector->buffer)                         \
       {                                                           \
         if SYSPROF_UNLIKELY (collector->is_shared)                \
-          G_LOCK (control_fd);                                    \
+          pthread_mutex_lock (&control_fd_lock);                  \
                                                                   \
         {
 
@@ -294,7 +320,7 @@ sysprof_collector_init (void)
         }                                                         \
                                                                   \
         if SYSPROF_UNLIKELY (collector->is_shared)                \
-          G_UNLOCK (control_fd);                                  \
+          pthread_mutex_unlock (&control_fd_lock);                \
       }                                                           \
   } while (0)
 

@@ -71,7 +71,7 @@
 #include "sysprof-macros.h"
 
 #ifdef _WIN32
-static G_LOCK_DEFINE (_sysprof_io_sync);
+static void *_sysprof_io_sync_lock = SRWLOCK_INIT;
 #endif
 
 size_t
@@ -102,11 +102,11 @@ ssize_t
 #ifdef _WIN32
   ssize_t ret = -1;
 
-  G_LOCK (_sysprof_io_sync);
+  AcquireSRWLockExclusive (_sysprof_io_sync_lock);
   errno = 0;
   if (lseek (fd, offset, SEEK_SET) != -1)
     ret = read (fd, buf, count);
-  G_UNLOCK (_sysprof_io_sync);
+  ReleaseSRWLockExclusive (_sysprof_io_sync_lock);
 
   return ret;
 #else
@@ -124,11 +124,11 @@ ssize_t
 #ifdef _WIN32
   ssize_t ret = -1;
 
-  G_LOCK (_sysprof_io_sync);
+  AcquireSRWLockExclusive (_sysprof_io_sync_lock);
   errno = 0;
   if (lseek (fd, offset, SEEK_SET) != -1)
     ret = write (fd, buf, count);
-  G_UNLOCK (_sysprof_io_sync);
+  ReleaseSRWLockExclusive (_sysprof_io_sync_lock);
 
   return ret;
 #else
@@ -145,10 +145,10 @@ ssize_t
 #ifdef _WIN32
   ssize_t ret = -1;
 
-  G_LOCK (_sysprof_io_sync);
+  AcquireSRWLockExclusive (_sysprof_io_sync_lock);
   errno = 0;
   ret = write (fd, buf, count);
-  G_UNLOCK (_sysprof_io_sync);
+  ReleaseSRWLockExclusive (_sysprof_io_sync_lock);
 
   return ret;
 #else

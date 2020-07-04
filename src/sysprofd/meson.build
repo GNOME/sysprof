@@ -16,10 +16,10 @@ sysprofd_sources = [
 pkglibexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
 
 sysprofd_deps = [
-  glib_dep,
-  gio_dep,
-  gio_unix_dep,
-  polkit_dep,
+  dependency('glib-2.0', version: glib_req_version),
+  dependency('gio-2.0', version: glib_req_version),
+  dependency('gio-unix-2.0', version: glib_req_version),
+  dependency('polkit-gobject-1', version: polkit_req_version),
   libsysprof_capture_dep,
 ]
 

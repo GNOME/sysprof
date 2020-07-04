@@ -7,25 +7,25 @@ sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
 sysprof_version_conf.set('MICRO_VERSION', sysprof_version[2])
 sysprof_version_conf.set('VERSION', meson.project_version())
 
-ipc_profiler_src = gnome.gdbus_codegen('ipc-profiler',
-           sources: 'org.gnome.Sysprof3.Profiler.xml',
-  interface_prefix: 'org.gnome.Sysprof3.',
-         namespace: 'Ipc',
-)
+if get_option('with_sysprofd') == 'bundled' or get_option('libsysprof')
+  ipc_profiler_src = gnome.gdbus_codegen('ipc-profiler',
+             sources: 'org.gnome.Sysprof3.Profiler.xml',
+    interface_prefix: 'org.gnome.Sysprof3.',
+           namespace: 'Ipc',
+  )
 
-ipc_service_src = gnome.gdbus_codegen('ipc-service',
-           sources: 'org.gnome.Sysprof3.Service.xml',
-  interface_prefix: 'org.gnome.Sysprof3.',
-         namespace: 'Ipc',
-)
+  ipc_service_src = gnome.gdbus_codegen('ipc-service',
+             sources: 'org.gnome.Sysprof3.Service.xml',
+    interface_prefix: 'org.gnome.Sysprof3.',
+           namespace: 'Ipc',
+  )
 
-ipc_legacy_src = gnome.gdbus_codegen('ipc-legacy',
-           sources: 'org.gnome.Sysprof2.xml',
-  interface_prefix: 'org.gnome.',
-         namespace: 'IpcLegacy',
-)
+  ipc_legacy_src = gnome.gdbus_codegen('ipc-legacy',
+             sources: 'org.gnome.Sysprof2.xml',
+    interface_prefix: 'org.gnome.',
+           namespace: 'IpcLegacy',
+  )
 
-if get_option('with_sysprofd') == 'bundled'
   install_data(['org.gnome.Sysprof3.Service.xml',
                 'org.gnome.Sysprof2.xml'],
     install_dir: join_paths(datadir, 'dbus-1/interfaces'),

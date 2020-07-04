@@ -13,7 +13,9 @@ libsysprof_capture_headers = files([
   'sysprof-version-macros.h',
 ])
 
-install_headers(libsysprof_capture_headers, subdir: sysprof_header_subdir)
+if not meson.is_subproject()
+  install_headers(libsysprof_capture_headers, subdir: sysprof_header_subdir)
+endif
 
 libsysprof_capture_sources = files([
   'mapped-ring-buffer.c',
@@ -34,6 +36,7 @@ configure_file(
          output: 'sysprof-version.h',
   configuration: sysprof_version_conf,
     install_dir: join_paths(get_option('includedir'), sysprof_header_subdir),
+        install: not meson.is_subproject(),
 )
 
 libsysprof_capture_deps = [
@@ -47,7 +50,7 @@ libsysprof_capture = static_library(
            dependencies: libsysprof_capture_deps,
                  c_args: [ '-DSYSPROF_CAPTURE_COMPILATION' ],
             install_dir: get_option('libdir'),
-                install: true,
+                install: not meson.is_subproject(),
   gnu_symbol_visibility: 'hidden',
 )
 
@@ -59,15 +62,17 @@ libsysprof_capture_dep = declare_dependency(
   include_directories: libsysprof_capture_include_dirs,
 )
 
-pkgconfig.generate(
-    libraries: [libsysprof_capture],
-      subdirs: [ sysprof_header_subdir ],
-      version: meson.project_version(),
-         name: 'sysprof-capture-@0@'.format(libsysprof_api_version),
-     filebase: 'sysprof-capture-@0@'.format(libsysprof_api_version),
-  description: 'The static capture library for tools that generate profiling capture data',
-  install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
-     variables: [
-       'datadir=' + datadir_for_pc_file,
-     ],
-)
+if not meson.is_subproject()
+  pkgconfig.generate(
+      libraries: [libsysprof_capture],
+        subdirs: [ sysprof_header_subdir ],
+        version: meson.project_version(),
+           name: 'sysprof-capture-@0@'.format(libsysprof_api_version),
+       filebase: 'sysprof-capture-@0@'.format(libsysprof_api_version),
+    description: 'The static capture library for tools that generate profiling capture data',
+    install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
+       variables: [
+         'datadir=' + datadir_for_pc_file,
+       ],
+  )
+endif

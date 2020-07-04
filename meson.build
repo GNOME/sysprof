@@ -52,30 +52,6 @@ if get_option('default_library') != 'static'
   endif
 endif
 
-glib_dep = dependency('glib-2.0', version: glib_req_version)
-gio_dep = dependency('gio-2.0', version: glib_req_version)
-gio_unix_dep = dependency('gio-unix-2.0', version: glib_req_version)
-pangoft2_dep = dependency('pangoft2', required: false)
-
-if get_option('enable_gtk')
-  gtk_dep = dependency('gtk+-3.0', version: gtk_req_version)
-  dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version, fallback: ['libdazzle', 'libdazzle_dep'])
-endif
-
-polkit_dep = dependency('polkit-gobject-1', version: '>= 0.114', required: false)
-if polkit_dep.found()
-  config_h.set10('HAVE_POLKIT_AUTOPTR', true)
-endif
-polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
-
-if polkit_dep.found()
-  config_h.set10('HAVE_POLKIT', true)
-else
-  if get_option('with_sysprofd') == 'bundled'
-    error('sysprofd requires polkit @0@'.format(polkit_req_version))
-  endif
-endif
-
 debugdir = get_option('debugdir')
 if debugdir == ''
   debugdir = join_paths(get_option('prefix'), get_option('libdir'), 'debug')
@@ -86,21 +62,14 @@ config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
 config_h.set10('ENABLE_NLS', true)
 config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
 config_h.set('LOCALEDIR', 'PACKAGE_LOCALE_DIR')
-
-if cc.has_header('execinfo.h')
-  config_h.set10('HAVE_EXECINFO_H', true)
-endif
+config_h.set('HAVE_EXECINFO_H', cc.has_header('execinfo.h'))
 
 config_h.set('HAVE_STRLCPY', cc.has_function('strlcpy'))
 
 if get_option('libunwind')
   libunwind_dep = dependency('libunwind-generic', required: false)
-  if libunwind_dep.found()
-    config_h.set10('ENABLE_LIBUNWIND', libunwind_dep.found())
-    if cc.has_header_symbol('libunwind.h', 'unw_set_cache_size', dependencies: [libunwind_dep])
-      config_h.set10('HAVE_UNW_SET_CACHE_SIZE', 1)
-    endif
-  endif
+  config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())
+  config_h.set('HAVE_UNW_SET_CACHE_SIZE', libunwind_dep.found() and cc.has_header_symbol('libunwind.h', 'unw_set_cache_size', dependencies: [libunwind_dep]))
 endif
 
 # Development build setup
@@ -108,9 +77,7 @@ config_h.set('DEVELOPMENT_BUILD', version_split[1].to_int().is_odd())
 
 has_use_clockid = cc.has_member('struct perf_event_attr', 'use_clockid', prefix: '#include <linux/perf_event.h>')
 has_clockid = cc.has_member('struct perf_event_attr', 'clockid', prefix: '#include <linux/perf_event.h>')
-if has_use_clockid and has_clockid
-  config_h.set10('HAVE_PERF_CLOCKID', true)
-endif
+config_h.set('HAVE_PERF_CLOCKID', has_use_clockid and has_clockid)
 
 add_project_arguments([
   '-I' + meson.build_root(), # config.h

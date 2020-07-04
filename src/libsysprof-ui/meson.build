@@ -85,9 +85,9 @@ libsysprof_ui_resources = gnome.compile_resources(
 )
 
 libsysprof_ui_deps = [
-  gio_dep,
-  gtk_dep,
-  dazzle_dep,
+  dependency('gio-2.0', version: glib_req_version),
+  dependency('gtk+-3.0', version: gtk_req_version),
+  dependency('libdazzle-1.0', version: dazzle_req_version, fallback: ['libdazzle', 'libdazzle_dep']),
   libsysprof_dep,
 ]
 

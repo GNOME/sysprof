@@ -1,3 +1,5 @@
+if get_option('enable_tests')
+
 test_env = [
   'G_TEST_SRCDIR="@0@"'.format(meson.current_source_dir()),
   'G_TEST_BUILDDIR="@0@"'.format(meson.current_build_dir()),
@@ -116,9 +118,9 @@ if get_option('enable_gtk')
   test_ui_deps = [
     libsysprof_dep,
     libsysprof_ui_dep,
-    gtk_dep,
-    dazzle_dep,
-    pangoft2_dep,
+    dependency('gtk+-3.0', version: gtk_req_version),
+    dependency('libdazzle-1.0', version: dazzle_req_version, fallback: ['libdazzle', 'libdazzle_dep']),
+    dependency('pangoft2', required: false),
   ]
 
   test_model_filter = executable('test-model-filter', 'test-model-filter.c',
@@ -145,5 +147,6 @@ if get_option('enable_gtk')
   test('test-model-filter', test_model_filter, env: test_env)
   test('test-zoom', test_zoom, env: test_env)
 
+endif
 endif
 endif

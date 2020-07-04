@@ -32,3 +32,15 @@ option('help', type: 'boolean')
 
 # Disable use of libunwind
 option('libunwind', type: 'boolean')
+
+# Optionally disable the tools (this is mostly only useful for building only
+# libsysprof-capture as a subproject)
+option('enable_tools', type: 'boolean')
+
+# Optionally disable the tests (this is mostly only useful for building only
+# libsysprof-capture as a subproject)
+option('enable_tests', type: 'boolean')
+
+# Optionally disable the examples (this is mostly only useful for building only
+# libsysprof-capture as a subproject)
+option('enable_examples', type: 'boolean')

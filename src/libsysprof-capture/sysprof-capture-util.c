@@ -54,24 +54,23 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#define G_LOG_DOMAIN "sysprof-capture-util"
-
 #include "config.h"
 
+#include <assert.h>
 #include <errno.h>
-#include <glib.h>
 #include <unistd.h>
 
-#ifdef G_OS_WIN32
+#ifdef _WIN32
 # include <process.h>
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
 #endif
 
 #include "sysprof-capture-util-private.h"
+#include "sysprof-macros.h"
 
-#ifdef G_OS_WIN32
-static G_LOCK_DEFINE (_sysprof_io_sync);
+#ifdef _WIN32
+static void *_sysprof_io_sync_lock = SRWLOCK_INIT;
 #endif
 
 size_t
@@ -79,9 +78,9 @@ size_t
 {
   static size_t pgsz = 0;
 
-  if G_UNLIKELY (pgsz == 0)
+  if SYSPROF_UNLIKELY (pgsz == 0)
     {
-#ifdef G_OS_WIN32
+#ifdef _WIN32
       SYSTEM_INFO system_info;
       GetSystemInfo (&system_info);
       pgsz = system_info.dwPageSize;
@@ -99,14 +98,14 @@ ssize_t
                   size_t  count,
                   off_t   offset)
 {
-#ifdef G_OS_WIN32
+#ifdef _WIN32
   ssize_t ret = -1;
 
-  G_LOCK (_sysprof_io_sync);
+  AcquireSRWLockExclusive (_sysprof_io_sync_lock);
   errno = 0;
   if (lseek (fd, offset, SEEK_SET) != -1)
     ret = read (fd, buf, count);
-  G_UNLOCK (_sysprof_io_sync);
+  ReleaseSRWLockExclusive (_sysprof_io_sync_lock);
 
   return ret;
 #else
@@ -121,14 +120,14 @@ ssize_t
                    size_t      count,
                    off_t       offset)
 {
-#ifdef G_OS_WIN32
+#ifdef _WIN32
   ssize_t ret = -1;
 
-  G_LOCK (_sysprof_io_sync);
+  AcquireSRWLockExclusive (_sysprof_io_sync_lock);
   errno = 0;
   if (lseek (fd, offset, SEEK_SET) != -1)
     ret = write (fd, buf, count);
-  G_UNLOCK (_sysprof_io_sync);
+  ReleaseSRWLockExclusive (_sysprof_io_sync_lock);
 
   return ret;
 #else
@@ -142,13 +141,13 @@ ssize_t
                   const void *buf,
                   size_t      count)
 {
-#ifdef G_OS_WIN32
+#ifdef _WIN32
   ssize_t ret = -1;
 
-  G_LOCK (_sysprof_io_sync);
+  AcquireSRWLockExclusive (_sysprof_io_sync_lock);
   errno = 0;
   ret = write (fd, buf, count);
-  G_UNLOCK (_sysprof_io_sync);
+  ReleaseSRWLockExclusive (_sysprof_io_sync_lock);
 
   return ret;
 #else
@@ -157,10 +156,10 @@ ssize_t
 #endif
 }
 
-gint32
+int32_t
 (_sysprof_getpid) (void)
 {
-#ifdef G_OS_WIN32
+#ifdef _WIN32
   return _getpid ();
 #else
   return getpid ();
@@ -205,14 +204,14 @@ ssize_t
       if (n_read <= 0)
         return -1;
 
-      g_assert (count >= n_read);
+      assert (count >= n_read);
 
       count -= n_read;
       rpos += n_read;
 
       while (wpos < rpos)
         {
-          g_assert (off < sizeof buf);
+          assert (off < sizeof buf);
 
           errno = 0;
           n_written = write (out_fd, &buf[off], rpos - wpos);
@@ -226,11 +225,31 @@ ssize_t
         }
     }
 
-  g_assert (count == 0);
+  assert (count == 0);
 
   if (offset != NULL)
     *offset = rpos;
 
   errno = 0;
   return total;
+}
+
+size_t
+(_sysprof_strlcpy) (char       *dest,
+                    const char *src,
+                    size_t      dest_size)
+{
+  size_t i = 0;
+
+  if (dest_size > 0)
+    {
+      for (; i < dest_size - 1 && src[i] != '\0'; i++)
+        dest[i] = src[i];
+      dest[i] = '\0';
+    }
+
+  for (; src[i] != '\0'; i++)
+    ;
+
+  return i;
 }

@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sysprof-capture.h>
@@ -55,13 +56,18 @@ main (gint argc,
       return EXIT_FAILURE;
     }
 
-  reader = sysprof_capture_reader_new (argv[1], &error);
+  if ((reader = sysprof_capture_reader_new (argv[1])) == NULL)
+    {
+      int errsv = errno;
+      g_printerr ("%s\n", g_strerror (errsv));
+      return EXIT_FAILURE;
+    }
 
   if (list_files)
     {
-      g_auto(GStrv) files = sysprof_capture_reader_list_files (reader);
+      g_autofree const gchar **files = sysprof_capture_reader_list_files (reader);
 
-      for (guint i = 0; files[i]; i++)
+      for (gsize i = 0; files[i]; i++)
         g_print ("%s\n", files[i]);
 
       return EXIT_SUCCESS;
@@ -73,12 +79,6 @@ main (gint argc,
 
 #define SET_CTR_TYPE(i,t) g_hash_table_insert(ctrtypes, GINT_TO_POINTER(i), GINT_TO_POINTER(t))
 #define GET_CTR_TYPE(i) GPOINTER_TO_INT(g_hash_table_lookup(ctrtypes, GINT_TO_POINTER(i)))
-
-  if (reader == NULL)
-    {
-      g_printerr ("%s\n", error->message);
-      return EXIT_FAILURE;
-    }
 
   begin_time = sysprof_capture_reader_get_start_time (reader);
   end_time = sysprof_capture_reader_get_end_time (reader);
@@ -116,18 +116,18 @@ main (gint argc,
 
         case SYSPROF_CAPTURE_FRAME_JITMAP:
           {
-            g_autoptr(GHashTable) ret = sysprof_capture_reader_read_jitmap (reader);
-            GHashTableIter iter;
+            const SysprofCaptureJitmap *jitmap = sysprof_capture_reader_read_jitmap (reader);
+            SysprofCaptureJitmapIter iter;
             SysprofCaptureAddress addr;
             const gchar *str;
 
-            if (ret == NULL)
+            if (jitmap == NULL)
               return EXIT_FAILURE;
 
             g_print ("JITMAP:\n");
 
-            g_hash_table_iter_init (&iter, ret);
-            while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&str))
+            sysprof_capture_jitmap_iter_init (&iter, jitmap);
+            while (sysprof_capture_jitmap_iter_next (&iter, &addr, &str))
               g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " : %s\n", addr, str);
 
             break;

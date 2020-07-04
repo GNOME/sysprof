@@ -87,7 +87,7 @@ sysprof_memprof_aid_prepare (SysprofAid      *self,
 #endif
 }
 
-static gboolean
+static bool
 discover_samples_cb (const SysprofCaptureFrame *frame,
                      gpointer                   user_data)
 {

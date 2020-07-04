@@ -608,7 +608,7 @@ compare_gint64 (const gint64 *a,
     return 0;
 }
 
-static gboolean
+static bool
 index_frame_times_frame_cb (const SysprofCaptureFrame *frame,
                             gpointer                   user_data)
 {

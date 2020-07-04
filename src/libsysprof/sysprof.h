@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <glib.h>
 #include <sysprof-capture.h>
 
 G_BEGIN_DECLS
@@ -26,6 +27,7 @@ G_BEGIN_DECLS
 
 # include "sysprof-battery-source.h"
 # include "sysprof-callgraph-profile.h"
+# include "sysprof-capture-autocleanups.h"
 # include "sysprof-capture-gobject.h"
 # include "sysprof-capture-symbol-resolver.h"
 # include "sysprof-control-source.h"

@@ -382,7 +382,7 @@ calc_x (gint64 lower,
   return (gdouble)(value - lower) / (gdouble)(upper - lower);
 }
 
-static gboolean
+static bool
 sysprof_time_visualizer_load_data_frame_cb (const SysprofCaptureFrame *frame,
                                             gpointer                   user_data)
 {

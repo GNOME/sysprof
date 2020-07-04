@@ -56,10 +56,13 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 #include "sysprof-capture-types.h"
+#include "sysprof-macros.h"
 #include "sysprof-version-macros.h"
 
-G_BEGIN_DECLS
+SYSPROF_BEGIN_DECLS
 
 typedef struct _SysprofCaptureCursor SysprofCaptureCursor;
 
@@ -74,8 +77,8 @@ typedef struct _SysprofCaptureCursor SysprofCaptureCursor;
  *
  * Returns: %TRUE if iteration should continue, otherwise %FALSE.
  */
-typedef gboolean (*SysprofCaptureCursorCallback) (const SysprofCaptureFrame *frame,
-                                                  gpointer                   user_data);
+typedef bool (*SysprofCaptureCursorCallback) (const SysprofCaptureFrame *frame,
+                                              void                      *user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureCursor *sysprof_capture_cursor_new           (SysprofCaptureReader         *reader);
@@ -88,7 +91,7 @@ SysprofCaptureReader *sysprof_capture_cursor_get_reader    (SysprofCaptureCursor
 SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_cursor_foreach       (SysprofCaptureCursor         *self,
                                                             SysprofCaptureCursorCallback  callback,
-                                                            gpointer                      user_data);
+                                                            void                         *user_data);
 SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_cursor_reset         (SysprofCaptureCursor         *self);
 SYSPROF_AVAILABLE_IN_ALL
@@ -97,6 +100,4 @@ SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_capture_cursor_add_condition (SysprofCaptureCursor         *self,
                                                             SysprofCaptureCondition      *condition);
 
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureCursor, sysprof_capture_cursor_unref)
-
-G_END_DECLS
+SYSPROF_END_DECLS

@@ -74,8 +74,8 @@ sysprof_jitmap_symbol_resolver_load (SysprofSymbolResolver *resolver,
 
   while (sysprof_capture_reader_peek_type (reader, &type))
     {
-      g_autoptr(GHashTable) jitmap = NULL;
-      GHashTableIter iter;
+      const SysprofCaptureJitmap *jitmap;
+      SysprofCaptureJitmapIter iter;
       SysprofCaptureAddress addr;
       const gchar *str;
 
@@ -89,8 +89,8 @@ sysprof_jitmap_symbol_resolver_load (SysprofSymbolResolver *resolver,
       if (!(jitmap = sysprof_capture_reader_read_jitmap (reader)))
         return;
 
-      g_hash_table_iter_init (&iter, jitmap);
-      while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&str))
+      sysprof_capture_jitmap_iter_init (&iter, jitmap);
+      while (sysprof_capture_jitmap_iter_next (&iter, &addr, &str))
         g_hash_table_insert (self->jitmap, GSIZE_TO_POINTER (addr), g_strdup (str));
     }
 }

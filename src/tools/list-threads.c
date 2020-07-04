@@ -24,9 +24,11 @@
 #include <sysprof-capture.h>
 #include <unistd.h>
 
-static gboolean
+#include "../libsysprof/sysprof-capture-autocleanups.h"
+
+static bool
 foreach_cb (const SysprofCaptureFrame *frame,
-            gpointer                   user_data)
+            void                      *user_data)
 {
   const SysprofCaptureSample *sample = (SysprofCaptureSample *)frame;
   GHashTable *seen = user_data;
@@ -36,7 +38,7 @@ foreach_cb (const SysprofCaptureFrame *frame,
                          GINT_TO_POINTER (sample->tid),
                          GINT_TO_POINTER (frame->pid));
 
-  return TRUE;
+  return true;
 }
 
 gint
@@ -57,9 +59,9 @@ main (gint   argc,
     }
 
   if (g_strcmp0 ("-", argv[1]) == 0)
-    reader = sysprof_capture_reader_new_from_fd (dup (STDIN_FILENO), 0);
+    reader = sysprof_capture_reader_new_from_fd (dup (STDIN_FILENO));
   else
-    reader = sysprof_capture_reader_new (argv[1], 0);
+    reader = sysprof_capture_reader_new (argv[1]);
 
   if (reader == NULL)
     {

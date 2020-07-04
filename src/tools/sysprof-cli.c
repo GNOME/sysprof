@@ -134,19 +134,20 @@ merge_files (gint             argc,
   for (guint i = 1; i < argc; i++)
     {
       g_autoptr(SysprofCaptureReader) reader = NULL;
-      g_autoptr(GError) error = NULL;
 
-      if (!(reader = sysprof_capture_reader_new (argv[i], &error)))
+      if (!(reader = sysprof_capture_reader_new (argv[i])))
         {
+          int errsv = errno;
           g_printerr ("Failed to create reader for \"%s\": %s\n",
-                      argv[i], error->message);
+                      argv[i], g_strerror (errsv));
           return EXIT_FAILURE;
         }
 
-      if (!sysprof_capture_writer_cat (writer, reader, &error))
+      if (!sysprof_capture_writer_cat (writer, reader))
         {
+          int errsv = errno;
           g_printerr ("Failed to join \"%s\": %s\n",
-                      argv[i], error->message);
+                      argv[i], g_strerror (errsv));
           return EXIT_FAILURE;
         }
     }

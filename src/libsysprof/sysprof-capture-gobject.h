@@ -41,4 +41,18 @@ GType sysprof_capture_writer_get_type (void);
 SYSPROF_AVAILABLE_IN_ALL
 GType sysprof_capture_cursor_get_type (void);
 
+SYSPROF_AVAILABLE_IN_3_38
+SysprofCaptureReader *sysprof_capture_reader_new_with_error           (const char            *filename,
+                                                                       GError               **error);
+SYSPROF_AVAILABLE_IN_3_38
+SysprofCaptureReader *sysprof_capture_reader_new_from_fd_with_error   (int                    fd,
+                                                                       GError               **error);
+SYSPROF_AVAILABLE_IN_3_38
+SysprofCaptureReader *sysprof_capture_writer_create_reader_with_error (SysprofCaptureWriter  *self,
+                                                                       GError               **error);
+SYSPROF_AVAILABLE_IN_3_38
+bool                  sysprof_capture_reader_save_as_with_error       (SysprofCaptureReader  *self,
+                                                                       const char            *filename,
+                                                                       GError               **error);
+
 G_END_DECLS

@@ -84,7 +84,7 @@ sysprof_marks_aid_new (void)
   return g_object_new (SYSPROF_TYPE_MARKS_AID, NULL);
 }
 
-static gboolean
+static bool
 find_marks_cb (const SysprofCaptureFrame *frame,
                gpointer                   user_data)
 {

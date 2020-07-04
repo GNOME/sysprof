@@ -7,6 +7,7 @@ libsysprof_capture_headers = files([
   'sysprof-capture-types.h',
   'sysprof-capture-writer.h',
   'sysprof-collector.h',
+  'sysprof-macros.h',
   'sysprof-platform.h',
   'sysprof-capture.h',
   'sysprof-version-macros.h',
@@ -36,9 +37,7 @@ configure_file(
 )
 
 libsysprof_capture_deps = [
-  glib_dep,
-  gio_dep,
-  gio_unix_dep,
+  dependency('threads'),
 ]
 
 libsysprof_capture = static_library(
@@ -68,7 +67,6 @@ pkgconfig.generate(
      filebase: 'sysprof-capture-@0@'.format(libsysprof_api_version),
   description: 'The static capture library for tools that generate profiling capture data',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
-     requires: [ 'glib-2.0' ],
      variables: [
        'datadir=' + datadir_for_pc_file,
      ],

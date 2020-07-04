@@ -56,13 +56,18 @@
 
 #pragma once
 
-#include <glib.h>
+#include <assert.h>
+#include <endian.h>
+#include <inttypes.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #include "sysprof-clock.h"
+#include "sysprof-macros.h"
 
-G_BEGIN_DECLS
+SYSPROF_BEGIN_DECLS
 
-#define SYSPROF_CAPTURE_MAGIC (GUINT32_TO_LE(0xFDCA975E))
+#define SYSPROF_CAPTURE_MAGIC (htole32(0xFDCA975E))
 #define SYSPROF_CAPTURE_ALIGN (sizeof(SysprofCaptureAddress))
 
 #if defined(_MSC_VER)
@@ -73,14 +78,16 @@ G_BEGIN_DECLS
 # define SYSPROF_ALIGNED_END(_N) __attribute__((aligned ((_N))))
 #endif
 
-#define SYSPROF_CAPTURE_ADDRESS_FORMAT "0x%016" G_GINT64_MODIFIER "x"
+#define SYSPROF_CAPTURE_ADDRESS_FORMAT "0x%016" PRIx64
 
-#if GLIB_SIZEOF_VOID_P == 8
-# define SYSPROF_CAPTURE_JITMAP_MARK    G_GUINT64_CONSTANT(0xE000000000000000)
-#elif GLIB_SIZEOF_VOID_P == 4
-# define SYSPROF_CAPTURE_JITMAP_MARK    G_GUINT64_CONSTANT(0xE0000000)
+static_assert (sizeof (void *) == sizeof (uintptr_t),
+               "UINTPTR_MAX can’t be used to determine sizeof(void*) at compile time");
+#if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFFu
+# define SYSPROF_CAPTURE_JITMAP_MARK    SYSPROF_UINT64_CONSTANT(0xE000000000000000)
+#elif UINTPTR_MAX == 0xFFFFFFFF
+# define SYSPROF_CAPTURE_JITMAP_MARK    SYSPROF_UINT64_CONSTANT(0xE0000000)
 #else
-#error Unknown GLIB_SIZEOF_VOID_P
+#error Unknown UINTPTR_MAX
 #endif
 
 #define SYSPROF_CAPTURE_CURRENT_TIME   (sysprof_clock_get_current_time())
@@ -92,25 +99,25 @@ typedef struct _SysprofCaptureWriter    SysprofCaptureWriter;
 typedef struct _SysprofCaptureCursor    SysprofCaptureCursor;
 typedef struct _SysprofCaptureCondition SysprofCaptureCondition;
 
-typedef guint64 SysprofCaptureAddress;
+typedef uint64_t SysprofCaptureAddress;
 
 typedef struct
 {
   /*
    * The number of frames indexed by SysprofCaptureFrameType
    */
-  gsize frame_count[16];
+  size_t frame_count[16];
 
   /*
    * Padding for future expansion.
    */
-  gsize padding[48];
+  size_t padding[48];
 } SysprofCaptureStat;
 
 typedef union
 {
-  gint64  v64;
-  gdouble vdbl;
+  int64_t v64;
+  double  vdbl;
 } SysprofCaptureCounterValue;
 
 typedef enum
@@ -137,28 +144,28 @@ typedef enum
 SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
-  guint32 magic;
-  guint32 version : 8;
-  guint32 little_endian : 1;
-  guint32 padding : 23;
-  gchar   capture_time[64];
-  gint64  time;
-  gint64  end_time;
-  gchar   suffix[168];
+  uint32_t magic;
+  uint32_t version : 8;
+  uint32_t little_endian : 1;
+  uint32_t padding : 23;
+  char     capture_time[64];
+  int64_t  time;
+  int64_t  end_time;
+  char     suffix[168];
 } SysprofCaptureFileHeader
 SYSPROF_ALIGNED_END(1);
 
 SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
-  guint16 len;
-  gint16  cpu;
-  gint32  pid;
-  gint64  time;
-  guint32 type : 8;
-  guint32 padding1 : 24;
-  guint32 padding2;
-  guint8  data[0];
+  uint16_t len;
+  int16_t  cpu;
+  int32_t  pid;
+  int64_t  time;
+  uint32_t type : 8;
+  uint32_t padding1 : 24;
+  uint32_t padding2;
+  uint8_t  data[0];
 } SysprofCaptureFrame
 SYSPROF_ALIGNED_END(1);
 
@@ -166,11 +173,11 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame frame;
-  guint64             start;
-  guint64             end;
-  guint64             offset;
-  guint64             inode;
-  gchar               filename[0];
+  uint64_t            start;
+  uint64_t            end;
+  uint64_t            offset;
+  uint64_t            inode;
+  char                filename[0];
 } SysprofCaptureMap
 SYSPROF_ALIGNED_END(1);
 
@@ -178,8 +185,8 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame frame;
-  guint32             n_jitmaps;
-  guint8              data[0];
+  uint32_t            n_jitmaps;
+  uint8_t             data[0];
 } SysprofCaptureJitmap
 SYSPROF_ALIGNED_END(1);
 
@@ -187,7 +194,7 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame frame;
-  gchar               cmdline[0];
+  char                cmdline[0];
 } SysprofCaptureProcess
 SYSPROF_ALIGNED_END(1);
 
@@ -195,9 +202,9 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame   frame;
-  guint32               n_addrs : 16;
-  guint32               padding1 : 16;
-  gint32                tid;
+  uint32_t              n_addrs : 16;
+  uint32_t              padding1 : 16;
+  int32_t               tid;
   SysprofCaptureAddress addrs[0];
 } SysprofCaptureSample
 SYSPROF_ALIGNED_END(1);
@@ -206,7 +213,7 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame frame;
-  gint32              child_pid;
+  int32_t             child_pid;
 } SysprofCaptureFork
 SYSPROF_ALIGNED_END(1);
 
@@ -227,11 +234,11 @@ SYSPROF_ALIGNED_END(1);
 SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
-  gchar                      category[32];
-  gchar                      name[32];
-  gchar                      description[52];
-  guint32                    id : 24;
-  guint32                    type : 8;
+  char                       category[32];
+  char                       name[32];
+  char                       description[52];
+  uint32_t                   id : 24;
+  uint32_t                   type : 8;
   SysprofCaptureCounterValue value;
 } SysprofCaptureCounter
 SYSPROF_ALIGNED_END(1);
@@ -240,9 +247,9 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame   frame;
-  guint32               n_counters : 16;
-  guint32               padding1 : 16;
-  guint32               padding2;
+  uint32_t              n_counters : 16;
+  uint32_t              padding1 : 16;
+  uint32_t              padding2;
   SysprofCaptureCounter counters[0];
 } SysprofCaptureCounterDefine
 SYSPROF_ALIGNED_END(1);
@@ -255,7 +262,7 @@ typedef struct
    * bytes.  So this makes a nice 2-cacheline aligned size which is
    * useful when the number of counters is rather small.
    */
-  guint32                    ids[8];
+  uint32_t                   ids[8];
   SysprofCaptureCounterValue values[8];
 } SysprofCaptureCounterValues
 SYSPROF_ALIGNED_END(1);
@@ -264,9 +271,9 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame         frame;
-  guint32                     n_values : 16;
-  guint32                     padding1 : 16;
-  guint32                     padding2;
+  uint32_t                    n_values : 16;
+  uint32_t                    padding1 : 16;
+  uint32_t                    padding2;
   SysprofCaptureCounterValues values[0];
 } SysprofCaptureCounterSet
 SYSPROF_ALIGNED_END(1);
@@ -275,10 +282,10 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame frame;
-  gint64              duration;
-  gchar               group[24];
-  gchar               name[40];
-  gchar               message[0];
+  int64_t             duration;
+  char                group[24];
+  char                name[40];
+  char                message[0];
 } SysprofCaptureMark
 SYSPROF_ALIGNED_END(1);
 
@@ -286,8 +293,8 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame frame;
-  gchar               id[40];
-  gchar               metadata[0];
+  char                id[40];
+  char                metadata[0];
 } SysprofCaptureMetadata
 SYSPROF_ALIGNED_END(1);
 
@@ -295,11 +302,11 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame frame;
-  guint32             severity : 16;
-  guint32             padding1 : 16;
-  guint32             padding2 : 32;
-  gchar               domain[32];
-  gchar               message[0];
+  uint32_t            severity : 16;
+  uint32_t            padding1 : 16;
+  uint32_t            padding2 : 32;
+  char                domain[32];
+  char                message[0];
 } SysprofCaptureLog
 SYSPROF_ALIGNED_END(1);
 
@@ -307,11 +314,11 @@ SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
 {
   SysprofCaptureFrame frame;
-  guint32             is_last : 1;
-  guint32             padding1 : 15;
-  guint32             len : 16;
-  gchar               path[256];
-  guint8              data[0];
+  uint32_t            is_last : 1;
+  uint32_t            padding1 : 15;
+  uint32_t            len : 16;
+  char                path[256];
+  uint8_t             data[0];
 } SysprofCaptureFileChunk
 SYSPROF_ALIGNED_END(1);
 
@@ -320,37 +327,37 @@ typedef struct
 {
   SysprofCaptureFrame   frame;
   SysprofCaptureAddress alloc_addr;
-  gint64                alloc_size;
-  gint32                tid;
-  guint32               n_addrs : 16;
-  guint32               padding1 : 16;
+  int64_t               alloc_size;
+  int32_t               tid;
+  uint32_t              n_addrs : 16;
+  uint32_t              padding1 : 16;
   SysprofCaptureAddress addrs[0];
 } SysprofCaptureAllocation
 SYSPROF_ALIGNED_END(1);
 
-G_STATIC_ASSERT (sizeof (SysprofCaptureFileHeader) == 256);
-G_STATIC_ASSERT (sizeof (SysprofCaptureFrame) == 24);
-G_STATIC_ASSERT (sizeof (SysprofCaptureMap) == 56);
-G_STATIC_ASSERT (sizeof (SysprofCaptureJitmap) == 28);
-G_STATIC_ASSERT (sizeof (SysprofCaptureProcess) == 24);
-G_STATIC_ASSERT (sizeof (SysprofCaptureSample) == 32);
-G_STATIC_ASSERT (sizeof (SysprofCaptureFork) == 28);
-G_STATIC_ASSERT (sizeof (SysprofCaptureExit) == 24);
-G_STATIC_ASSERT (sizeof (SysprofCaptureTimestamp) == 24);
-G_STATIC_ASSERT (sizeof (SysprofCaptureCounter) == 128);
-G_STATIC_ASSERT (sizeof (SysprofCaptureCounterValues) == 96);
-G_STATIC_ASSERT (sizeof (SysprofCaptureCounterDefine) == 32);
-G_STATIC_ASSERT (sizeof (SysprofCaptureCounterSet) == 32);
-G_STATIC_ASSERT (sizeof (SysprofCaptureMark) == 96);
-G_STATIC_ASSERT (sizeof (SysprofCaptureMetadata) == 64);
-G_STATIC_ASSERT (sizeof (SysprofCaptureLog) == 64);
-G_STATIC_ASSERT (sizeof (SysprofCaptureFileChunk) == 284);
-G_STATIC_ASSERT (sizeof (SysprofCaptureAllocation) == 48);
+static_assert (sizeof (SysprofCaptureFileHeader) == 256, "SysprofCaptureFileHeader changed size");
+static_assert (sizeof (SysprofCaptureFrame) == 24, "SysprofCaptureFrame changed size");
+static_assert (sizeof (SysprofCaptureMap) == 56, "SysprofCaptureMap changed size");
+static_assert (sizeof (SysprofCaptureJitmap) == 28, "SysprofCaptureJitmap changed size");
+static_assert (sizeof (SysprofCaptureProcess) == 24, "SysprofCaptureProcess changed size");
+static_assert (sizeof (SysprofCaptureSample) == 32, "SysprofCaptureSample changed size");
+static_assert (sizeof (SysprofCaptureFork) == 28, "SysprofCaptureFork changed size");
+static_assert (sizeof (SysprofCaptureExit) == 24, "SysprofCaptureExit changed size");
+static_assert (sizeof (SysprofCaptureTimestamp) == 24, "SysprofCaptureTimestamp changed size");
+static_assert (sizeof (SysprofCaptureCounter) == 128, "SysprofCaptureCounter changed size");
+static_assert (sizeof (SysprofCaptureCounterValues) == 96, "SysprofCaptureCounterValues changed size");
+static_assert (sizeof (SysprofCaptureCounterDefine) == 32, "SysprofCaptureCounterDefine changed size");
+static_assert (sizeof (SysprofCaptureCounterSet) == 32, "SysprofCaptureCounterSet changed size");
+static_assert (sizeof (SysprofCaptureMark) == 96, "SysprofCaptureMark changed size");
+static_assert (sizeof (SysprofCaptureMetadata) == 64, "SysprofCaptureMetadata changed size");
+static_assert (sizeof (SysprofCaptureLog) == 64, "SysprofCaptureLog changed size");
+static_assert (sizeof (SysprofCaptureFileChunk) == 284, "SysprofCaptureFileChunk changed size");
+static_assert (sizeof (SysprofCaptureAllocation) == 48, "SysprofCaptureAllocation changed size");
 
-G_STATIC_ASSERT ((G_STRUCT_OFFSET (SysprofCaptureAllocation, addrs) % SYSPROF_CAPTURE_ALIGN) == 0);
-G_STATIC_ASSERT ((G_STRUCT_OFFSET (SysprofCaptureSample, addrs) % SYSPROF_CAPTURE_ALIGN) == 0);
+static_assert ((offsetof (SysprofCaptureAllocation, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureAllocation.addrs is not aligned");
+static_assert ((offsetof (SysprofCaptureSample, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureSample.addrs is not aligned");
 
-static inline gint
+static inline int
 sysprof_capture_address_compare (SysprofCaptureAddress a,
                                  SysprofCaptureAddress b)
 {
@@ -362,4 +369,17 @@ sysprof_capture_address_compare (SysprofCaptureAddress a,
     return 0;
 }
 
-G_END_DECLS
+/**
+ * SysprofBacktraceFunc:
+ * @addrs: (inout) (array length=n_addrs): an array to place addresses
+ *   into the capture frame
+ * @n_addrs: the length of @addrs
+ * @user_data: (scope call): closure data for the callback
+ *
+ * Returns: the number of addresses filled in @addrs
+ */
+typedef int (*SysprofBacktraceFunc) (SysprofCaptureAddress *addrs,
+                                     unsigned int           n_addrs,
+                                     void                  *user_data);
+
+SYSPROF_END_DECLS

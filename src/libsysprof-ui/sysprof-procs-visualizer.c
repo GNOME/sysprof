@@ -65,7 +65,7 @@ discovery_ref (Discovery *d)
   return d;
 }
 
-static gboolean
+static bool
 discover_max_cb (const SysprofCaptureFrame *frame,
                  gpointer                   user_data)
 {
@@ -85,7 +85,7 @@ discover_max_cb (const SysprofCaptureFrame *frame,
   return TRUE;
 }
 
-static gboolean
+static bool
 calc_points_cb (const SysprofCaptureFrame *frame,
                 gpointer                   user_data)
 {

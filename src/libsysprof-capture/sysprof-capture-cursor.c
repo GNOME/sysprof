@@ -54,13 +54,16 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#define G_LOG_DOMAIN "sysprof-capture-cursor"
-
 #include "config.h"
+
+#include <assert.h>
+#include <stdlib.h>
 
 #include "sysprof-capture-condition.h"
 #include "sysprof-capture-cursor.h"
 #include "sysprof-capture-reader.h"
+#include "sysprof-capture-util-private.h"
+#include "sysprof-macros-internal.h"
 
 #define READ_DELEGATE(f) ((ReadDelegate)(f))
 
@@ -68,18 +71,21 @@ typedef const SysprofCaptureFrame *(*ReadDelegate) (SysprofCaptureReader *);
 
 struct _SysprofCaptureCursor
 {
-  volatile gint         ref_count;
-  GPtrArray            *conditions;
+  volatile int          ref_count;
+  SysprofCaptureCondition **conditions;  /* (nullable) (owned) */
+  size_t                    n_conditions;
   SysprofCaptureReader *reader;
-  guint                 reversed : 1;
+  unsigned int          reversed : 1;
 };
 
 static void
 sysprof_capture_cursor_finalize (SysprofCaptureCursor *self)
 {
-  g_clear_pointer (&self->conditions, g_ptr_array_unref);
-  g_clear_pointer (&self->reader, sysprof_capture_reader_unref);
-  g_slice_free (SysprofCaptureCursor, self);
+  for (size_t i = 0; i < self->n_conditions; i++)
+    sysprof_capture_condition_unref (self->conditions[i]);
+  sysprof_clear_pointer (&self->conditions, free);
+  sysprof_clear_pointer (&self->reader, sysprof_capture_reader_unref);
+  free (self);
 }
 
 static SysprofCaptureCursor *
@@ -87,11 +93,15 @@ sysprof_capture_cursor_init (void)
 {
   SysprofCaptureCursor *self;
 
-  self = g_slice_new0 (SysprofCaptureCursor);
-  self->conditions = g_ptr_array_new_with_free_func ((GDestroyNotify) sysprof_capture_condition_unref);
+  self = sysprof_malloc0 (sizeof (SysprofCaptureCursor));
+  if (self == NULL)
+    return NULL;
+
+  self->conditions = NULL;
+  self->n_conditions = 0;
   self->ref_count = 1;
 
-  return g_steal_pointer (&self);
+  return sysprof_steal_pointer (&self);
 }
 
 /**
@@ -105,10 +115,10 @@ sysprof_capture_cursor_init (void)
 SysprofCaptureCursor *
 sysprof_capture_cursor_ref (SysprofCaptureCursor *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (self->ref_count > 0, NULL);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
-  g_atomic_int_inc (&self->ref_count);
+  __atomic_fetch_add (&self->ref_count, 1, __ATOMIC_SEQ_CST);
   return self;
 }
 
@@ -121,10 +131,10 @@ sysprof_capture_cursor_ref (SysprofCaptureCursor *self)
 void
 sysprof_capture_cursor_unref (SysprofCaptureCursor *self)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (self->ref_count > 0);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
-  if (g_atomic_int_dec_and_test (&self->ref_count))
+  if (__atomic_fetch_sub (&self->ref_count, 1, __ATOMIC_SEQ_CST) == 1)
     sysprof_capture_cursor_finalize (self);
 }
 
@@ -138,11 +148,11 @@ sysprof_capture_cursor_unref (SysprofCaptureCursor *self)
 void
 sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
                                 SysprofCaptureCursorCallback  callback,
-                                gpointer                      user_data)
+                                void                         *user_data)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (self->reader != NULL);
-  g_return_if_fail (callback != NULL);
+  assert (self != NULL);
+  assert (self->reader != NULL);
+  assert (callback != NULL);
 
   for (;;)
     {
@@ -224,16 +234,16 @@ sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
       if (NULL == (frame = delegate (self->reader)))
         return;
 
-      if (self->conditions->len == 0)
+      if (self->n_conditions == 0)
         {
           if (!callback (frame, user_data))
             return;
         }
       else
         {
-          for (guint i = 0; i < self->conditions->len; i++)
+          for (size_t i = 0; i < self->n_conditions; i++)
             {
-              const SysprofCaptureCondition *condition = g_ptr_array_index (self->conditions, i);
+              const SysprofCaptureCondition *condition = self->conditions[i];
 
               if (sysprof_capture_condition_match (condition, frame))
                 {
@@ -249,8 +259,8 @@ sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
 void
 sysprof_capture_cursor_reset (SysprofCaptureCursor *self)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (self->reader != NULL);
+  assert (self != NULL);
+  assert (self->reader != NULL);
 
   sysprof_capture_reader_reset (self->reader);
 }
@@ -258,7 +268,7 @@ sysprof_capture_cursor_reset (SysprofCaptureCursor *self)
 void
 sysprof_capture_cursor_reverse (SysprofCaptureCursor *self)
 {
-  g_return_if_fail (self != NULL);
+  assert (self != NULL);
 
   self->reversed = !self->reversed;
 }
@@ -275,10 +285,18 @@ void
 sysprof_capture_cursor_add_condition (SysprofCaptureCursor    *self,
                                       SysprofCaptureCondition *condition)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (condition != NULL);
+  assert (self != NULL);
+  assert (condition != NULL);
 
-  g_ptr_array_add (self->conditions, condition);
+  /* Grow the array linearly to keep the code simple: there are typically 0 or 1
+   * conditions applied to a given cursor, just after it’s constructed.
+   *
+   * FIXME: There’s currently no error reporting from this function, so ENOMEM
+   * results in an abort. */
+  self->conditions = reallocarray (self->conditions, ++self->n_conditions, sizeof (*self->conditions));
+  assert (self->conditions != NULL);
+
+  self->conditions[self->n_conditions - 1] = sysprof_steal_pointer (&condition);
 }
 
 /**
@@ -292,7 +310,7 @@ sysprof_capture_cursor_new (SysprofCaptureReader *reader)
 {
   SysprofCaptureCursor *self;
 
-  g_return_val_if_fail (reader != NULL, NULL);
+  assert (reader != NULL);
 
   self = sysprof_capture_cursor_init ();
   self->reader = sysprof_capture_reader_copy (reader);
@@ -311,7 +329,7 @@ sysprof_capture_cursor_new (SysprofCaptureReader *reader)
 SysprofCaptureReader *
 sysprof_capture_cursor_get_reader (SysprofCaptureCursor *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
+  assert (self != NULL);
 
   return self->reader;
 }

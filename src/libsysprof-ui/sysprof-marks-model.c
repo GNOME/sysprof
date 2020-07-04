@@ -301,7 +301,7 @@ sysprof_marks_model_init (SysprofMarksModel *self)
   self->items = g_array_new (FALSE, FALSE, sizeof (Item));
 }
 
-static gboolean
+static bool
 cursor_foreach_cb (const SysprofCaptureFrame *frame,
                    gpointer                   user_data)
 {

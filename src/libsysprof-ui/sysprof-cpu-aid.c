@@ -85,7 +85,7 @@ sysprof_cpu_aid_prepare (SysprofAid      *self,
 #endif
 }
 
-static gboolean
+static bool
 collect_info (const SysprofCaptureFrame *frame,
               gpointer                   user_data)
 {

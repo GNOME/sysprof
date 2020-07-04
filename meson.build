@@ -12,7 +12,7 @@ gnome = import('gnome')
 pkgconfig = import('pkgconfig')
 i18n = import('i18n')
 
-libsysprof_api_version = 3
+libsysprof_api_version = 4
 version_split = meson.project_version().split('.')
 datadir = get_option('datadir')
 datadir_for_pc_file = join_paths('${prefix}', datadir)
@@ -90,6 +90,8 @@ config_h.set('LOCALEDIR', 'PACKAGE_LOCALE_DIR')
 if cc.has_header('execinfo.h')
   config_h.set10('HAVE_EXECINFO_H', true)
 endif
+
+config_h.set('HAVE_STRLCPY', cc.has_function('strlcpy'))
 
 if get_option('libunwind')
   libunwind_dep = dependency('libunwind-generic', required: false)

@@ -37,6 +37,7 @@ libsysprof_public_sources = [
 libsysprof_public_headers = [
   'sysprof-battery-source.h',
   'sysprof-callgraph-profile.h',
+  'sysprof-capture-autocleanups.h',
   'sysprof-capture-gobject.h',
   'sysprof-capture-symbol-resolver.h',
   'sysprof-control-source.h',
@@ -71,6 +72,7 @@ libsysprof_private_sources = [
   'binfile.c',
   'demangle.cpp',
   'elfparser.c',
+  'mapped-ring-buffer-source.c',
   'sysprof-flatpak.c',
   'sysprof-helpers.c',
   'sysprof-kallsyms.c',

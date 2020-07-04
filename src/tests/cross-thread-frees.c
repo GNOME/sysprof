@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <glib.h>
 #include <stddef.h>
 #include <rax.h>
 #include <sysprof.h>
@@ -115,7 +116,6 @@ main (gint   argc,
 {
   SysprofCaptureReader *reader;
   const gchar *filename = argv[1];
-  g_autoptr(GError) error = NULL;
 
   if (argc < 2)
     {
@@ -123,9 +123,10 @@ main (gint   argc,
       return EXIT_FAILURE;
     }
 
-  if (!(reader = sysprof_capture_reader_new (filename, &error)))
+  if (!(reader = sysprof_capture_reader_new (filename)))
     {
-      g_printerr ("%s\n", error->message);
+      int errsv = errno;
+      g_printerr ("%s\n", g_strerror (errsv));
       return EXIT_FAILURE;
     }
 

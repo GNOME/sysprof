@@ -24,6 +24,7 @@
 
 #include <dlfcn.h>
 #include <fcntl.h>
+#include <glib.h>
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/stat.h>

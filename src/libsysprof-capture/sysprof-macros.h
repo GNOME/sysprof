@@ -1,6 +1,9 @@
-/* sysprof-address.h
+/* sysprof-macros.h
  *
- * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
+ * Copyright 2020 Endless OS Foundation
+ *
+ * Author:
+ *  - Philip Withnall <withnall@endlessm.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -56,47 +59,40 @@
 
 #pragma once
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include <limits.h>
 
-#include "sysprof-macros.h"
-#include "sysprof-version-macros.h"
+#if INT_MAX == LONG_MAX
+#define SYSPROF_INT64_CONSTANT(x) x##ULL
+#define SYSPROF_UINT64_CONSTANT(x) x##LL
+#else
+#define SYSPROF_INT64_CONSTANT(x) x##UL
+#define SYSPROF_UINT64_CONSTANT(x) x##L
+#endif
 
-SYSPROF_BEGIN_DECLS
+#ifdef __cplusplus
+#define SYSPROF_BEGIN_DECLS extern "C" {
+#define SYSPROF_END_DECLS }
+#else
+#define SYSPROF_BEGIN_DECLS
+#define SYSPROF_END_DECLS
+#endif
 
-typedef uint64_t SysprofAddress;
+#if defined (__GNUC__)
+#define SYSPROF_INTERNAL __attribute__((visibility("hidden")))
+#else
+#define SYSPROF_INTERNAL
+#endif
 
-static_assert (sizeof (SysprofAddress) >= sizeof (void *),
-               "Address space is too big");
+#if defined(__GNUC__)
+#define SYSPROF_LIKELY(expr) (__builtin_expect (!!(expr), 1))
+#define SYSPROF_UNLIKELY(expr) (__builtin_expect (!!(expr), 0))
+#else
+#define SYSPROF_LIKELY(expr) (expr)
+#define SYSPROF_UNLIKELY(expr) (expr)
+#endif
 
-typedef enum
-{
-  SYSPROF_ADDRESS_CONTEXT_NONE = 0,
-  SYSPROF_ADDRESS_CONTEXT_HYPERVISOR,
-  SYSPROF_ADDRESS_CONTEXT_KERNEL,
-  SYSPROF_ADDRESS_CONTEXT_USER,
-  SYSPROF_ADDRESS_CONTEXT_GUEST,
-  SYSPROF_ADDRESS_CONTEXT_GUEST_KERNEL,
-  SYSPROF_ADDRESS_CONTEXT_GUEST_USER,
-} SysprofAddressContext;
-
-SYSPROF_AVAILABLE_IN_ALL
-bool         sysprof_address_is_context_switch (SysprofAddress         address,
-                                                SysprofAddressContext *context);
-SYSPROF_AVAILABLE_IN_ALL
-const char  *sysprof_address_context_to_string (SysprofAddressContext  context);
-
-static inline int
-sysprof_address_compare (SysprofAddress a,
-                         SysprofAddress b)
-{
-  if (a < b)
-    return -1;
-  else if (a == b)
-    return 0;
-  else
-    return 1;
-}
-
-SYSPROF_END_DECLS
+#if defined(__GNUC__)
+#define SYSPROF_PRINTF(format_idx, arg_idx) __attribute__((format(printf, format_idx, arg_idx)))
+#else
+#define SYSPROF_PRINTF(format_idx, arg_idx)
+#endif

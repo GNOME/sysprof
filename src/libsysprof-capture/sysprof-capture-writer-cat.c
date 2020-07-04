@@ -54,20 +54,30 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#define G_LOG_DOMAIN "sysprof-cat"
-
 #include "config.h"
 
-#include <glib/gstdio.h>
+#include <assert.h>
+#include <errno.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
-#include <sysprof-capture.h>
 #include <unistd.h>
+
+#include "sysprof-capture.h"
+#include "sysprof-macros-internal.h"
 
 typedef struct
 {
-  guint64 src;
-  guint64 dst;
+  uint64_t src;
+  uint64_t dst;
 } TranslateItem;
+
+typedef struct
+{
+  TranslateItem *items;
+  size_t n_items;
+  size_t n_items_allocated;
+} TranslateTable;
 
 enum {
   TRANSLATE_ADDR,
@@ -76,15 +86,19 @@ enum {
 };
 
 static void
-translate_table_clear (GArray **tables,
-                       guint    table)
+translate_table_clear (TranslateTable *tables,
+                       unsigned int    table)
 {
-  g_clear_pointer (&tables[table], g_array_unref);
+  TranslateTable *table_ptr = &tables[table];
+
+  sysprof_clear_pointer (&table_ptr->items, free);
+  table_ptr->n_items = 0;
+  table_ptr->n_items_allocated = 0;
 }
 
-static gint
-compare_by_src (gconstpointer a,
-                gconstpointer b)
+static int
+compare_by_src (const void *a,
+                const void *b)
 {
   const TranslateItem *itema = a;
   const TranslateItem *itemb = b;
@@ -98,32 +112,41 @@ compare_by_src (gconstpointer a,
 }
 
 static void
-translate_table_sort (GArray **tables,
-                      guint    table)
+translate_table_sort (TranslateTable *tables,
+                      unsigned int    table)
 {
-  if (tables[table])
-    g_array_sort (tables[table], compare_by_src);
+  TranslateTable *table_ptr = &tables[table];
+
+  if (table_ptr->items)
+    qsort (table_ptr->items, table_ptr->n_items, sizeof (*table_ptr->items), compare_by_src);
 }
 
 static void
-translate_table_add (GArray  **tables,
-                     guint     table,
-                     guint64   src,
-                     guint64   dst)
+translate_table_add (TranslateTable *tables,
+                     unsigned int    table,
+                     uint64_t        src,
+                     uint64_t        dst)
 {
+  TranslateTable *table_ptr = &tables[table];
   const TranslateItem item = { src, dst };
 
-  if (tables[table] == NULL)
-    tables[table] = g_array_new (FALSE, FALSE, sizeof (TranslateItem));
+  if (table_ptr->n_items == table_ptr->n_items_allocated)
+    {
+      table_ptr->n_items_allocated = (table_ptr->n_items_allocated > 0) ? table_ptr->n_items_allocated * 2 : 4;
+      table_ptr->items = reallocarray (table_ptr->items, table_ptr->n_items_allocated, sizeof (*table_ptr->items));
+      assert (table_ptr->items != NULL);
+    }
 
-  g_array_append_val (tables[table], item);
+  table_ptr->items[table_ptr->n_items++] = item;
+  assert (table_ptr->n_items <= table_ptr->n_items_allocated);
 }
 
-static guint64
-translate_table_translate (GArray  **tables,
-                           guint     table,
-                           guint64   src)
+static uint64_t
+translate_table_translate (TranslateTable *tables,
+                           unsigned int    table,
+                           uint64_t        src)
 {
+  TranslateTable *table_ptr = &tables[table];
   const TranslateItem *item;
   TranslateItem key = { src, 0 };
 
@@ -133,31 +156,30 @@ translate_table_translate (GArray  **tables,
         return src;
     }
 
-  if (tables[table] == NULL)
+  if (table_ptr->items == NULL)
     return src;
 
   item = bsearch (&key,
-                  tables[table]->data,
-                  tables[table]->len,
-                  sizeof (TranslateItem),
+                  table_ptr->items,
+                  table_ptr->n_items,
+                  sizeof (*table_ptr->items),
                   compare_by_src);
 
   return item != NULL ? item->dst : src;
 }
 
-gboolean
-sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
-                            SysprofCaptureReader  *reader,
-                            GError               **error)
+bool
+sysprof_capture_writer_cat (SysprofCaptureWriter *self,
+                            SysprofCaptureReader *reader)
 {
-  GArray *tables[N_TRANSLATE] = { NULL };
+  TranslateTable tables[N_TRANSLATE] = { 0, };
   SysprofCaptureFrameType type;
-  gint64 start_time;
-  gint64 first_start_time = G_MAXINT64;
-  gint64 end_time = -1;
+  int64_t start_time;
+  int64_t first_start_time = INT64_MAX;
+  int64_t end_time = -1;
 
-  g_return_val_if_fail (self != NULL, FALSE);
-  g_return_val_if_fail (reader != NULL, FALSE);
+  assert (self != NULL);
+  assert (reader != NULL);
 
   sysprof_capture_reader_reset (reader);
 
@@ -174,10 +196,10 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
    */
   while (sysprof_capture_reader_peek_type (reader, &type))
     {
-      g_autoptr(GHashTable) jitmap = NULL;
-      GHashTableIter iter;
-      const gchar *name;
-      guint64 addr;
+      const SysprofCaptureJitmap *jitmap;
+      SysprofCaptureJitmapIter iter;
+      SysprofCaptureAddress addr;
+      const char *name;
 
       if (type != SYSPROF_CAPTURE_FRAME_JITMAP)
         {
@@ -189,10 +211,10 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
       if (!(jitmap = sysprof_capture_reader_read_jitmap (reader)))
         goto panic;
 
-      g_hash_table_iter_init (&iter, jitmap);
-      while (g_hash_table_iter_next (&iter, (gpointer *)&addr, (gpointer *)&name))
+      sysprof_capture_jitmap_iter_init (&iter, jitmap);
+      while (sysprof_capture_jitmap_iter_next (&iter, &addr, &name))
         {
-          guint64 replace = sysprof_capture_writer_add_jitmap (self, name);
+          uint64_t replace = sysprof_capture_writer_add_jitmap (self, name);
           /* We need to keep a table of replacement addresses so that
            * we can translate the samples into the destination address
            * space that we synthesized for the address identifier.
@@ -364,7 +386,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
                                                  frame->frame.pid,
                                                  frame->id,
                                                  frame->metadata,
-                                                 frame->frame.len - G_STRUCT_OFFSET (SysprofCaptureMetadata, metadata));
+                                                 frame->frame.len - offsetof (SysprofCaptureMetadata, metadata));
             break;
           }
 
@@ -378,7 +400,7 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
             {
               SysprofCaptureAddress addrs[frame->n_addrs];
 
-              for (guint z = 0; z < frame->n_addrs; z++)
+              for (unsigned int z = 0; z < frame->n_addrs; z++)
                 addrs[z] = translate_table_translate (tables, TRANSLATE_ADDR, frame->addrs[z]);
 
               sysprof_capture_writer_add_sample (self,
@@ -401,27 +423,30 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
               goto panic;
 
             {
-              g_autoptr(GArray) counter = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounter));
+              SysprofCaptureCounter *counters = calloc (frame->n_counters, sizeof (*counters));
+              size_t n_counters = 0;
+              if (counters == NULL)
+                goto panic;
 
-              for (guint z = 0; z < frame->n_counters; z++)
+              for (unsigned int z = 0; z < frame->n_counters; z++)
                 {
                   SysprofCaptureCounter c = frame->counters[z];
-                  guint src = c.id;
+                  unsigned int src = c.id;
 
                   c.id = sysprof_capture_writer_request_counter (self, 1);
 
                   if (c.id != src)
                     translate_table_add (tables, TRANSLATE_CTR, src, c.id);
 
-                  g_array_append_val (counter, c);
+                  counters[n_counters++] = c;
                 }
 
               sysprof_capture_writer_define_counters (self,
                                                       frame->frame.time,
                                                       frame->frame.cpu,
                                                       frame->frame.pid,
-                                                      (gpointer)counter->data,
-                                                      counter->len);
+                                                      counters,
+                                                      n_counters);
 
               translate_table_sort (tables, TRANSLATE_CTR);
             }
@@ -437,35 +462,46 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
               goto panic;
 
             {
-              g_autoptr(GArray) ids = g_array_new (FALSE, FALSE, sizeof (guint));
-              g_autoptr(GArray) values = g_array_new (FALSE, FALSE, sizeof (SysprofCaptureCounterValue));
+              unsigned int *ids = NULL;
+              SysprofCaptureCounterValue *values = NULL;
+              size_t n_elements = 0;
+              size_t n_elements_allocated = 0;
 
-              for (guint z = 0; z < frame->n_values; z++)
+              for (unsigned int z = 0; z < frame->n_values; z++)
                 {
                   const SysprofCaptureCounterValues *v = &frame->values[z];
 
-                  for (guint y = 0; y < G_N_ELEMENTS (v->ids); y++)
+                  for (unsigned int y = 0; y < SYSPROF_N_ELEMENTS (v->ids); y++)
                     {
                       if (v->ids[y])
                         {
-                          guint dst = translate_table_translate (tables, TRANSLATE_CTR, v->ids[y]);
+                          unsigned int dst = translate_table_translate (tables, TRANSLATE_CTR, v->ids[y]);
                           SysprofCaptureCounterValue value = v->values[y];
 
-                          g_array_append_val (ids, dst);
-                          g_array_append_val (values, value);
+                          if (n_elements == n_elements_allocated)
+                            {
+                              n_elements_allocated = (n_elements_allocated > 0) ? n_elements_allocated * 2 : 4;
+                              ids = reallocarray (ids, n_elements_allocated, sizeof (*ids));
+                              values = reallocarray (values, n_elements_allocated, sizeof (*values));
+                              if (ids == NULL || values == NULL)
+                                goto panic;
+                            }
+
+                          ids[n_elements] = dst;
+                          values[n_elements] = value;
+                          n_elements++;
+                          assert (n_elements <= n_elements_allocated);
                         }
                     }
                 }
-
-              g_assert (ids->len == values->len);
 
               sysprof_capture_writer_set_counters (self,
                                                    frame->frame.time,
                                                    frame->frame.cpu,
                                                    frame->frame.pid,
-                                                   (const guint *)(gpointer)ids->data,
-                                                   (const SysprofCaptureCounterValue *)(gpointer)values->data,
-                                                   ids->len);
+                                                   ids,
+                                                   values,
+                                                   n_elements);
             }
 
             break;
@@ -512,16 +548,12 @@ sysprof_capture_writer_cat (SysprofCaptureWriter  *self,
   translate_table_clear (tables, TRANSLATE_ADDR);
   translate_table_clear (tables, TRANSLATE_CTR);
 
-  return TRUE;
+  return true;
 
 panic:
-  g_set_error (error,
-               G_FILE_ERROR,
-               G_FILE_ERROR_FAILED,
-               "Failed to write data");
-
   translate_table_clear (tables, TRANSLATE_ADDR);
   translate_table_clear (tables, TRANSLATE_CTR);
 
-  return FALSE;
+  errno = EIO;
+  return false;
 }

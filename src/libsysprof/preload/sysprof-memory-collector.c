@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include <dlfcn.h>
+#include <glib.h>
 #include <sched.h>
 #include <stdlib.h>
 #include <sys/syscall.h>
@@ -119,8 +120,6 @@ scratch_calloc (size_t nmemb,
 static void
 scratch_free (void *ptr)
 {
-  if ((char *)ptr >= scratch.buf && (char *)ptr < scratch.buf + scratch.off)
-    return;
 }
 
 static void
@@ -198,8 +197,12 @@ realloc (void   *ptr,
 void
 free (void *ptr)
 {
-  real_free (ptr);
-  track_free (ptr);
+  if G_LIKELY (ptr < (void *)scratch.buf ||
+               ptr >= (void *)&scratch.buf[sizeof scratch.buf])
+    {
+      real_free (ptr);
+      track_free (ptr);
+    }
 }
 
 void *

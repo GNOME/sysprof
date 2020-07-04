@@ -79,7 +79,7 @@ sysprof_netdev_aid_prepare (SysprofAid      *self,
   sysprof_profiler_add_source (profiler, source);
 }
 
-static gboolean
+static bool
 collect_netdev_counters (const SysprofCaptureFrame *frame,
                          gpointer                   user_data)
 {

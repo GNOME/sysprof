@@ -61,10 +61,12 @@
 #else
 # include "sysprof-address-fallback.h"
 #endif
+#include <stdbool.h>
+#include <stddef.h>
 
 #include "sysprof-address.h"
 
-gboolean
+bool
 sysprof_address_is_context_switch (SysprofAddress         address,
                                    SysprofAddressContext *context)
 {
@@ -77,35 +79,35 @@ sysprof_address_is_context_switch (SysprofAddress         address,
     {
     case PERF_CONTEXT_HV:
       *context = SYSPROF_ADDRESS_CONTEXT_HYPERVISOR;
-      return TRUE;
+      return true;
 
     case PERF_CONTEXT_KERNEL:
       *context = SYSPROF_ADDRESS_CONTEXT_KERNEL;
-      return TRUE;
+      return true;
 
     case PERF_CONTEXT_USER:
       *context = SYSPROF_ADDRESS_CONTEXT_USER;
-      return TRUE;
+      return true;
 
     case PERF_CONTEXT_GUEST:
       *context = SYSPROF_ADDRESS_CONTEXT_GUEST;
-      return TRUE;
+      return true;
 
     case PERF_CONTEXT_GUEST_KERNEL:
       *context = SYSPROF_ADDRESS_CONTEXT_GUEST_KERNEL;
-      return TRUE;
+      return true;
 
     case PERF_CONTEXT_GUEST_USER:
       *context = SYSPROF_ADDRESS_CONTEXT_GUEST_USER;
-      return TRUE;
+      return true;
 
     default:
       *context = SYSPROF_ADDRESS_CONTEXT_NONE;
-      return FALSE;
+      return false;
     }
 }
 
-const gchar *
+const char *
 sysprof_address_context_to_string (SysprofAddressContext context)
 {
   switch (context)

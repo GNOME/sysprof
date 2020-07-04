@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <glib.h>
+
 #include "sysprof-capture-types.h"
 
 G_BEGIN_DECLS

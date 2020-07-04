@@ -54,12 +54,15 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#define G_LOG_DOMAIN "sysprof-capture-reader"
-
 #include "config.h"
 
+#include <assert.h>
+#include <byteswap.h>
+#include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -68,53 +71,49 @@
 #include "sysprof-capture-reader.h"
 #include "sysprof-capture-util-private.h"
 #include "sysprof-capture-writer.h"
+#include "sysprof-macros-internal.h"
 
 struct _SysprofCaptureReader
 {
-  volatile gint             ref_count;
-  gchar                    *filename;
-  guint8                   *buf;
-  gsize                     bufsz;
-  gsize                     len;
-  gsize                     pos;
-  gsize                     fd_off;
+  volatile int              ref_count;
+  char                     *filename;
+  uint8_t                  *buf;
+  size_t                    bufsz;
+  size_t                    len;
+  size_t                    pos;
+  size_t                    fd_off;
   int                       fd;
-  gint                      endian;
+  int                       endian;
   SysprofCaptureFileHeader  header;
-  gint64                    end_time;
+  int64_t                   end_time;
   SysprofCaptureStat        st_buf;
-  guint                     st_buf_set : 1;
+  unsigned int              st_buf_set : 1;
 };
 
-static gboolean
-sysprof_capture_reader_read_file_header (SysprofCaptureReader      *self,
-                                         SysprofCaptureFileHeader  *header,
-                                         GError                   **error)
+/* Sets @errno on failure. Sets @errno to EBADMSG if the file magic doesn’t
+ * match, and otherwise can return any error as for read(). */
+static bool
+sysprof_capture_reader_read_file_header (SysprofCaptureReader     *self,
+                                         SysprofCaptureFileHeader *header)
 {
-  g_assert (self != NULL);
-  g_assert (header != NULL);
+  assert (self != NULL);
+  assert (header != NULL);
 
   if (sizeof *header != _sysprof_pread (self->fd, header, sizeof *header, 0L))
     {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   g_file_error_from_errno (errno),
-                   "%s", g_strerror (errno));
-      return FALSE;
+      /* errno is propagated */
+      return false;
     }
 
   if (header->magic != SYSPROF_CAPTURE_MAGIC)
     {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   G_FILE_ERROR_FAILED,
-                   "Capture file magic does not match");
-      return FALSE;
+      errno = EBADMSG;
+      return false;
     }
 
   header->capture_time[sizeof header->capture_time - 1] = '\0';
 
-  return TRUE;
+  return true;
 }
 
 static void
@@ -123,24 +122,24 @@ sysprof_capture_reader_finalize (SysprofCaptureReader *self)
   if (self != NULL)
     {
       close (self->fd);
-      g_free (self->buf);
-      g_free (self->filename);
-      g_free (self);
+      free (self->buf);
+      free (self->filename);
+      free (self);
     }
 }
 
-const gchar *
+const char *
 sysprof_capture_reader_get_time (SysprofCaptureReader *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
+  assert (self != NULL);
 
   return self->header.capture_time;
 }
 
-const gchar *
+const char *
 sysprof_capture_reader_get_filename (SysprofCaptureReader *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
+  assert (self != NULL);
 
   return self->filename;
 }
@@ -150,11 +149,11 @@ sysprof_capture_reader_discover_end_time (SysprofCaptureReader *self)
 {
   SysprofCaptureFrame frame;
 
-  g_assert (self != NULL);
+  assert (self != NULL);
 
   while (sysprof_capture_reader_peek_frame (self, &frame))
     {
-      gint64 end_time = frame.time;
+      int64_t end_time = frame.time;
 
       switch (frame.type)
         {
@@ -162,7 +161,7 @@ sysprof_capture_reader_discover_end_time (SysprofCaptureReader *self)
             const SysprofCaptureMark *mark = NULL;
 
             if ((mark = sysprof_capture_reader_read_mark (self)))
-              end_time = frame.time + MAX (0, mark->duration);
+              end_time = frame.time + ((mark->duration > 0) ? mark->duration : 0);
           }
           break;
 
@@ -197,41 +196,56 @@ sysprof_capture_reader_discover_end_time (SysprofCaptureReader *self)
 /**
  * sysprof_capture_reader_new_from_fd:
  * @fd: an fd to take ownership from
- * @error: a location for a #GError or %NULL
  *
  * Creates a new reader using the file-descriptor.
  *
  * This is useful if you don't necessarily have access to the filename itself.
  *
+ * If this function fails, `errno` is set.
+ *
  * Returns: (transfer full): an #SysprofCaptureReader or %NULL upon failure.
  */
 SysprofCaptureReader *
-sysprof_capture_reader_new_from_fd (int      fd,
-                                    GError **error)
+sysprof_capture_reader_new_from_fd (int fd)
 {
   SysprofCaptureReader *self;
 
-  g_assert (fd > -1);
+  assert (fd > -1);
 
-  self = g_new0 (SysprofCaptureReader, 1);
+  self = sysprof_malloc0 (sizeof (SysprofCaptureReader));
+  if (self == NULL)
+    {
+      errno = ENOMEM;
+      return NULL;
+    }
+
   self->ref_count = 1;
-  self->bufsz = G_MAXUSHORT * 2;
-  self->buf = g_malloc (self->bufsz);
+  self->bufsz = USHRT_MAX * 2;
+  self->buf = sysprof_malloc0 (self->bufsz);
+  if (self->buf == NULL)
+    {
+      free (self);
+      errno = ENOMEM;
+      return NULL;
+    }
+
   self->len = 0;
   self->pos = 0;
   self->fd = fd;
   self->fd_off = sizeof (SysprofCaptureFileHeader);
 
-  if (!sysprof_capture_reader_read_file_header (self, &self->header, error))
+  if (!sysprof_capture_reader_read_file_header (self, &self->header))
     {
+      int errsv = errno;
       sysprof_capture_reader_finalize (self);
+      errno = errsv;
       return NULL;
     }
 
   if (self->header.little_endian)
-    self->endian = G_LITTLE_ENDIAN;
+    self->endian = __LITTLE_ENDIAN;
   else
-    self->endian = G_BIG_ENDIAN;
+    self->endian = __BIG_ENDIAN;
 
   /* If we detect a capture file that did not get an end time, or an erroneous
    * end time, then we need to take a performance hit here and scan the file
@@ -244,30 +258,28 @@ sysprof_capture_reader_new_from_fd (int      fd,
 }
 
 SysprofCaptureReader *
-sysprof_capture_reader_new (const gchar  *filename,
-                            GError      **error)
+sysprof_capture_reader_new (const char *filename)
 {
   SysprofCaptureReader *self;
   int fd;
 
-  g_assert (filename != NULL);
+  assert (filename != NULL);
 
   if (-1 == (fd = open (filename, O_RDONLY, 0)))
     {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   g_file_error_from_errno (errno),
-                   "%s", g_strerror (errno));
+      /* errno is propagated */
       return NULL;
     }
 
-  if (NULL == (self = sysprof_capture_reader_new_from_fd (fd, error)))
+  if (NULL == (self = sysprof_capture_reader_new_from_fd (fd)))
     {
+      int errsv = errno;
       close (fd);
+      errno = errsv;
       return NULL;
     }
 
-  self->filename = g_strdup (filename);
+  self->filename = sysprof_strdup (filename);
 
   return self;
 }
@@ -276,15 +288,15 @@ static inline void
 sysprof_capture_reader_bswap_frame (SysprofCaptureReader *self,
                                     SysprofCaptureFrame  *frame)
 {
-  g_assert (self != NULL);
-  g_assert (frame!= NULL);
+  assert (self != NULL);
+  assert (frame!= NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
-      frame->len = GUINT16_SWAP_LE_BE (frame->len);
-      frame->cpu = GUINT16_SWAP_LE_BE (frame->cpu);
-      frame->pid = GUINT32_SWAP_LE_BE (frame->pid);
-      frame->time = GUINT64_SWAP_LE_BE (frame->time);
+      frame->len = bswap_16 (frame->len);
+      frame->cpu = bswap_16 (frame->cpu);
+      frame->pid = bswap_32 (frame->pid);
+      frame->time = bswap_64 (frame->time);
     }
 }
 
@@ -292,37 +304,37 @@ static inline void
 sysprof_capture_reader_bswap_file_chunk (SysprofCaptureReader    *self,
                                          SysprofCaptureFileChunk *file_chunk)
 {
-  g_assert (self != NULL);
-  g_assert (file_chunk != NULL);
+  assert (self != NULL);
+  assert (file_chunk != NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
-    file_chunk->len = GUINT16_SWAP_LE_BE (file_chunk->len);
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    file_chunk->len = bswap_16 (file_chunk->len);
 }
 
 static inline void
 sysprof_capture_reader_bswap_log (SysprofCaptureReader *self,
                                   SysprofCaptureLog    *log)
 {
-  g_assert (self != NULL);
-  g_assert (log != NULL);
+  assert (self != NULL);
+  assert (log != NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
-    log->severity = GUINT16_SWAP_LE_BE (log->severity);
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    log->severity = bswap_16 (log->severity);
 }
 
 static inline void
 sysprof_capture_reader_bswap_map (SysprofCaptureReader *self,
                                   SysprofCaptureMap    *map)
 {
-  g_assert (self != NULL);
-  g_assert (map != NULL);
+  assert (self != NULL);
+  assert (map != NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
-      map->start = GUINT64_SWAP_LE_BE (map->start);
-      map->end = GUINT64_SWAP_LE_BE (map->end);
-      map->offset = GUINT64_SWAP_LE_BE (map->offset);
-      map->inode = GUINT64_SWAP_LE_BE (map->inode);
+      map->start = bswap_64 (map->start);
+      map->end = bswap_64 (map->end);
+      map->offset = bswap_64 (map->offset);
+      map->inode = bswap_64 (map->inode);
     }
 }
 
@@ -330,38 +342,38 @@ static inline void
 sysprof_capture_reader_bswap_mark (SysprofCaptureReader *self,
                                    SysprofCaptureMark   *mark)
 {
-  g_assert (self != NULL);
-  g_assert (mark != NULL);
+  assert (self != NULL);
+  assert (mark != NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
-    mark->duration = GUINT64_SWAP_LE_BE (mark->duration);
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    mark->duration = bswap_64 (mark->duration);
 }
 
 static inline void
 sysprof_capture_reader_bswap_jitmap (SysprofCaptureReader *self,
                                      SysprofCaptureJitmap *jitmap)
 {
-  g_assert (self != NULL);
-  g_assert (jitmap != NULL);
+  assert (self != NULL);
+  assert (jitmap != NULL);
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
-    jitmap->n_jitmaps = GUINT64_SWAP_LE_BE (jitmap->n_jitmaps);
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    jitmap->n_jitmaps = bswap_64 (jitmap->n_jitmaps);
 }
 
-static gboolean
+static bool
 sysprof_capture_reader_ensure_space_for (SysprofCaptureReader *self,
-                                         gsize                 len)
+                                         size_t                len)
 {
-  g_assert (self != NULL);
-  g_assert (self->pos <= self->len);
-  g_assert (len > 0);
+  assert (self != NULL);
+  assert (self->pos <= self->len);
+  assert (len > 0);
 
   /* Ensure alignment of length to read */
   len = (len + SYSPROF_CAPTURE_ALIGN - 1) & ~(SYSPROF_CAPTURE_ALIGN - 1);
 
   if ((self->len - self->pos) < len)
     {
-      gssize r;
+      ssize_t r;
 
       if (self->len > self->pos)
         memmove (self->buf, &self->buf[self->pos], self->len - self->pos);
@@ -370,8 +382,8 @@ sysprof_capture_reader_ensure_space_for (SysprofCaptureReader *self,
 
       while (self->len < len)
         {
-          g_assert ((self->pos + self->len) < self->bufsz);
-          g_assert (self->len < self->bufsz);
+          assert ((self->pos + self->len) < self->bufsz);
+          assert (self->len < self->bufsz);
 
           /* Read into our buffer after our current read position */
           r = _sysprof_pread (self->fd,
@@ -390,53 +402,53 @@ sysprof_capture_reader_ensure_space_for (SysprofCaptureReader *self,
   return (self->len - self->pos) >= len;
 }
 
-gboolean
+bool
 sysprof_capture_reader_skip (SysprofCaptureReader *self)
 {
   SysprofCaptureFrame *frame;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof (SysprofCaptureFrame)))
-    return FALSE;
+    return false;
 
-  frame = (SysprofCaptureFrame *)(gpointer)&self->buf[self->pos];
+  frame = (SysprofCaptureFrame *)(void *)&self->buf[self->pos];
   sysprof_capture_reader_bswap_frame (self, frame);
 
   if (frame->len < sizeof (SysprofCaptureFrame))
-    return FALSE;
+    return false;
 
   if (!sysprof_capture_reader_ensure_space_for (self, frame->len))
-    return FALSE;
+    return false;
 
-  frame = (SysprofCaptureFrame *)(gpointer)&self->buf[self->pos];
+  frame = (SysprofCaptureFrame *)(void *)&self->buf[self->pos];
 
   self->pos += frame->len;
 
   if ((self->pos % SYSPROF_CAPTURE_ALIGN) != 0)
-    return FALSE;
+    return false;
 
-  return TRUE;
+  return true;
 }
 
-gboolean
+bool
 sysprof_capture_reader_peek_frame (SysprofCaptureReader *self,
                                    SysprofCaptureFrame  *frame)
 {
   SysprofCaptureFrame *real_frame;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->len);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->len);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *real_frame))
-    return FALSE;
+    return false;
 
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
 
-  real_frame = (SysprofCaptureFrame *)(gpointer)&self->buf[self->pos];
+  real_frame = (SysprofCaptureFrame *)(void *)&self->buf[self->pos];
 
   *frame = *real_frame;
 
@@ -452,17 +464,17 @@ sysprof_capture_reader_peek_frame (SysprofCaptureReader *self,
   return frame->type > 0 && frame->type < SYSPROF_CAPTURE_FRAME_LAST;
 }
 
-gboolean
+bool
 sysprof_capture_reader_peek_type (SysprofCaptureReader    *self,
                                   SysprofCaptureFrameType *type)
 {
   SysprofCaptureFrame frame;
 
-  g_assert (self != NULL);
-  g_assert (type != NULL);
+  assert (self != NULL);
+  assert (type != NULL);
 
   if (!sysprof_capture_reader_peek_frame (self, &frame))
-    return FALSE;
+    return false;
 
   *type = frame.type;
 
@@ -472,19 +484,19 @@ sysprof_capture_reader_peek_type (SysprofCaptureReader    *self,
 static const SysprofCaptureFrame *
 sysprof_capture_reader_read_basic (SysprofCaptureReader    *self,
                                    SysprofCaptureFrameType  type,
-                                   gsize                    extra)
+                                   size_t                   extra)
 {
   SysprofCaptureFrame *frame;
-  gsize len = sizeof *frame + extra;
+  size_t len = sizeof *frame + extra;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, len))
     return NULL;
 
-  frame = (SysprofCaptureFrame *)(gpointer)&self->buf[self->pos];
+  frame = (SysprofCaptureFrame *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, frame);
 
@@ -521,15 +533,15 @@ sysprof_capture_reader_read_fork (SysprofCaptureReader *self)
 {
   SysprofCaptureFork *fk;
 
-  g_assert (self != NULL);
+  assert (self != NULL);
 
   fk = (SysprofCaptureFork *)
-    sysprof_capture_reader_read_basic (self, SYSPROF_CAPTURE_FRAME_FORK, sizeof(guint32));
+    sysprof_capture_reader_read_basic (self, SYSPROF_CAPTURE_FRAME_FORK, sizeof (uint32_t));
 
   if (fk != NULL)
     {
-      if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
-        fk->child_pid = GUINT32_SWAP_LE_BE (fk->child_pid);
+      if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+        fk->child_pid = bswap_32 (fk->child_pid);
     }
 
   return fk;
@@ -540,14 +552,14 @@ sysprof_capture_reader_read_map (SysprofCaptureReader *self)
 {
   SysprofCaptureMap *map;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *map))
     return NULL;
 
-  map = (SysprofCaptureMap *)(gpointer)&self->buf[self->pos];
+  map = (SysprofCaptureMap *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, &map->frame);
 
@@ -560,7 +572,7 @@ sysprof_capture_reader_read_map (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, map->frame.len))
     return NULL;
 
-  map = (SysprofCaptureMap *)(gpointer)&self->buf[self->pos];
+  map = (SysprofCaptureMap *)(void *)&self->buf[self->pos];
 
   if (self->buf[self->pos + map->frame.len - 1] != '\0')
     return NULL;
@@ -580,14 +592,14 @@ sysprof_capture_reader_read_log (SysprofCaptureReader *self)
 {
   SysprofCaptureLog *log;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *log))
     return NULL;
 
-  log = (SysprofCaptureLog *)(gpointer)&self->buf[self->pos];
+  log = (SysprofCaptureLog *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, &log->frame);
 
@@ -600,7 +612,7 @@ sysprof_capture_reader_read_log (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, log->frame.len))
     return NULL;
 
-  log = (SysprofCaptureLog *)(gpointer)&self->buf[self->pos];
+  log = (SysprofCaptureLog *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_log (self, log);
 
@@ -612,7 +624,7 @@ sysprof_capture_reader_read_log (SysprofCaptureReader *self)
   /* Ensure trailing \0 in domain and message */
   log->domain[sizeof log->domain - 1] = 0;
   if (log->frame.len > sizeof *log)
-    ((gchar *)log)[log->frame.len - 1] = 0;
+    ((char *)log)[log->frame.len - 1] = 0;
 
   return log;
 }
@@ -622,14 +634,14 @@ sysprof_capture_reader_read_mark (SysprofCaptureReader *self)
 {
   SysprofCaptureMark *mark;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *mark))
     return NULL;
 
-  mark = (SysprofCaptureMark *)(gpointer)&self->buf[self->pos];
+  mark = (SysprofCaptureMark *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, &mark->frame);
 
@@ -642,7 +654,7 @@ sysprof_capture_reader_read_mark (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, mark->frame.len))
     return NULL;
 
-  mark = (SysprofCaptureMark *)(gpointer)&self->buf[self->pos];
+  mark = (SysprofCaptureMark *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_mark (self, mark);
 
@@ -654,10 +666,10 @@ sysprof_capture_reader_read_mark (SysprofCaptureReader *self)
   /* Ensure trailing \0 in name and message */
   mark->name[sizeof mark->name - 1] = 0;
   if (mark->frame.len > sizeof *mark)
-    ((gchar *)mark)[mark->frame.len - 1] = 0;
+    ((char *)mark)[mark->frame.len - 1] = 0;
 
   /* Maybe update end-time */
-  if G_UNLIKELY ((mark->frame.time + mark->duration) > self->end_time)
+  if SYSPROF_UNLIKELY ((mark->frame.time + mark->duration) > self->end_time)
     self->end_time = mark->frame.time + mark->duration;
 
   return mark;
@@ -668,14 +680,14 @@ sysprof_capture_reader_read_metadata (SysprofCaptureReader *self)
 {
   SysprofCaptureMetadata *metadata;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *metadata))
     return NULL;
 
-  metadata = (SysprofCaptureMetadata *)(gpointer)&self->buf[self->pos];
+  metadata = (SysprofCaptureMetadata *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, &metadata->frame);
 
@@ -688,7 +700,7 @@ sysprof_capture_reader_read_metadata (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, metadata->frame.len))
     return NULL;
 
-  metadata = (SysprofCaptureMetadata *)(gpointer)&self->buf[self->pos];
+  metadata = (SysprofCaptureMetadata *)(void *)&self->buf[self->pos];
 
   self->pos += metadata->frame.len;
 
@@ -698,7 +710,7 @@ sysprof_capture_reader_read_metadata (SysprofCaptureReader *self)
   /* Ensure trailing \0 in .id and .metadata */
   metadata->id[sizeof metadata->id - 1] = 0;
   if (metadata->frame.len > sizeof *metadata)
-    ((gchar *)metadata)[metadata->frame.len - 1] = 0;
+    ((char *)metadata)[metadata->frame.len - 1] = 0;
 
   return metadata;
 }
@@ -708,14 +720,14 @@ sysprof_capture_reader_read_process (SysprofCaptureReader *self)
 {
   SysprofCaptureProcess *process;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *process))
     return NULL;
 
-  process = (SysprofCaptureProcess *)(gpointer)&self->buf[self->pos];
+  process = (SysprofCaptureProcess *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, &process->frame);
 
@@ -728,7 +740,7 @@ sysprof_capture_reader_read_process (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, process->frame.len))
     return NULL;
 
-  process = (SysprofCaptureProcess *)(gpointer)&self->buf[self->pos];
+  process = (SysprofCaptureProcess *)(void *)&self->buf[self->pos];
 
   if (self->buf[self->pos + process->frame.len - 1] != '\0')
     return NULL;
@@ -741,23 +753,22 @@ sysprof_capture_reader_read_process (SysprofCaptureReader *self)
   return process;
 }
 
-GHashTable *
+const SysprofCaptureJitmap *
 sysprof_capture_reader_read_jitmap (SysprofCaptureReader *self)
 {
-  g_autoptr(GHashTable) ret = NULL;
   SysprofCaptureJitmap *jitmap;
-  guint8 *buf;
-  guint8 *endptr;
-  guint i;
+  uint8_t *buf;
+  uint8_t *endptr;
+  unsigned int i;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *jitmap))
     return NULL;
 
-  jitmap = (SysprofCaptureJitmap *)(gpointer)&self->buf[self->pos];
+  jitmap = (SysprofCaptureJitmap *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, &jitmap->frame);
 
@@ -770,17 +781,15 @@ sysprof_capture_reader_read_jitmap (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, jitmap->frame.len))
     return NULL;
 
-  jitmap = (SysprofCaptureJitmap *)(gpointer)&self->buf[self->pos];
-
-  ret = g_hash_table_new_full (NULL, NULL, NULL, g_free);
+  jitmap = (SysprofCaptureJitmap *)(void *)&self->buf[self->pos];
 
   buf = jitmap->data;
   endptr = &self->buf[self->pos + jitmap->frame.len];
 
+  /* Check the strings are all nul-terminated. */
   for (i = 0; i < jitmap->n_jitmaps; i++)
     {
       SysprofCaptureAddress addr;
-      const gchar *str;
 
       if (buf + sizeof addr >= endptr)
         return NULL;
@@ -788,23 +797,19 @@ sysprof_capture_reader_read_jitmap (SysprofCaptureReader *self)
       memcpy (&addr, buf, sizeof addr);
       buf += sizeof addr;
 
-      str = (gchar *)buf;
-
       buf = memchr (buf, '\0', (endptr - buf));
 
       if (buf == NULL)
         return NULL;
 
       buf++;
-
-      g_hash_table_insert (ret, GSIZE_TO_POINTER (addr), g_strdup (str));
     }
 
   sysprof_capture_reader_bswap_jitmap (self, jitmap);
 
   self->pos += jitmap->frame.len;
 
-  return g_steal_pointer (&ret);
+  return jitmap;
 }
 
 const SysprofCaptureSample *
@@ -812,14 +817,14 @@ sysprof_capture_reader_read_sample (SysprofCaptureReader *self)
 {
   SysprofCaptureSample *sample;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *sample))
     return NULL;
 
-  sample = (SysprofCaptureSample *)(gpointer)&self->buf[self->pos];
+  sample = (SysprofCaptureSample *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, &sample->frame);
 
@@ -829,8 +834,8 @@ sysprof_capture_reader_read_sample (SysprofCaptureReader *self)
   if (sample->frame.len < sizeof *sample)
     return NULL;
 
-  if (self->endian != G_BYTE_ORDER)
-    sample->n_addrs = GUINT16_SWAP_LE_BE (sample->n_addrs);
+  if (self->endian != __BYTE_ORDER)
+    sample->n_addrs = bswap_16 (sample->n_addrs);
 
   if (sample->frame.len < (sizeof *sample + (sizeof(SysprofCaptureAddress) * sample->n_addrs)))
     return NULL;
@@ -838,14 +843,14 @@ sysprof_capture_reader_read_sample (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, sample->frame.len))
     return NULL;
 
-  sample = (SysprofCaptureSample *)(gpointer)&self->buf[self->pos];
+  sample = (SysprofCaptureSample *)(void *)&self->buf[self->pos];
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
-      guint i;
+      unsigned int i;
 
       for (i = 0; i < sample->n_addrs; i++)
-        sample->addrs[i] = GUINT64_SWAP_LE_BE (sample->addrs[i]);
+        sample->addrs[i] = bswap_64 (sample->addrs[i]);
     }
 
   self->pos += sample->frame.len;
@@ -858,14 +863,14 @@ sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
 {
   SysprofCaptureCounterDefine *def;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *def))
     return NULL;
 
-  def = (SysprofCaptureCounterDefine *)(gpointer)&self->buf[self->pos];
+  def = (SysprofCaptureCounterDefine *)(void *)&self->buf[self->pos];
 
   if (def->frame.type != SYSPROF_CAPTURE_FRAME_CTRDEF)
     return NULL;
@@ -873,8 +878,8 @@ sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
   if (def->frame.len < sizeof *def)
     return NULL;
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
-    def->n_counters = GUINT16_SWAP_LE_BE (def->n_counters);
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    def->n_counters = bswap_16 (def->n_counters);
 
   if (def->frame.len < (sizeof *def + (sizeof (SysprofCaptureCounterDefine) * def->n_counters)))
     return NULL;
@@ -882,16 +887,16 @@ sysprof_capture_reader_read_counter_define (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, def->frame.len))
     return NULL;
 
-  def = (SysprofCaptureCounterDefine *)(gpointer)&self->buf[self->pos];
+  def = (SysprofCaptureCounterDefine *)(void *)&self->buf[self->pos];
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
-      guint i;
+      unsigned int i;
 
       for (i = 0; i < def->n_counters; i++)
         {
-          def->counters[i].id = GUINT32_SWAP_LE_BE (def->counters[i].id);
-          def->counters[i].value.v64 = GUINT64_SWAP_LE_BE (def->counters[i].value.v64);
+          def->counters[i].id = bswap_32 (def->counters[i].id);
+          def->counters[i].value.v64 = bswap_64 (def->counters[i].value.v64);
         }
     }
 
@@ -905,14 +910,14 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
 {
   SysprofCaptureCounterSet *set;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *set))
     return NULL;
 
-  set = (SysprofCaptureCounterSet *)(gpointer)&self->buf[self->pos];
+  set = (SysprofCaptureCounterSet *)(void *)&self->buf[self->pos];
 
   if (set->frame.type != SYSPROF_CAPTURE_FRAME_CTRSET)
     return NULL;
@@ -920,8 +925,8 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
   if (set->frame.len < sizeof *set)
     return NULL;
 
-  if (self->endian != G_BYTE_ORDER)
-    set->n_values = GUINT16_SWAP_LE_BE (set->n_values);
+  if (self->endian != __BYTE_ORDER)
+    set->n_values = bswap_16 (set->n_values);
 
   if (set->frame.len < (sizeof *set + (sizeof (SysprofCaptureCounterValues) * set->n_values)))
     return NULL;
@@ -929,20 +934,20 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, set->frame.len))
     return NULL;
 
-  set = (SysprofCaptureCounterSet *)(gpointer)&self->buf[self->pos];
+  set = (SysprofCaptureCounterSet *)(void *)&self->buf[self->pos];
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
-      guint i;
+      unsigned int i;
 
       for (i = 0; i < set->n_values; i++)
         {
-          guint j;
+          unsigned int j;
 
-          for (j = 0; j < G_N_ELEMENTS (set->values[0].values); j++)
+          for (j = 0; j < SYSPROF_N_ELEMENTS (set->values[0].values); j++)
             {
-              set->values[i].ids[j] = GUINT32_SWAP_LE_BE (set->values[i].ids[j]);
-              set->values[i].values[j].v64 = GUINT64_SWAP_LE_BE (set->values[i].values[j].v64);
+              set->values[i].ids[j] = bswap_32 (set->values[i].ids[j]);
+              set->values[i].values[j].v64 = bswap_64 (set->values[i].values[j].v64);
             }
         }
     }
@@ -952,25 +957,25 @@ sysprof_capture_reader_read_counter_set (SysprofCaptureReader *self)
   return set;
 }
 
-gboolean
+bool
 sysprof_capture_reader_reset (SysprofCaptureReader *self)
 {
-  g_assert (self != NULL);
+  assert (self != NULL);
 
   self->fd_off = sizeof (SysprofCaptureFileHeader);
   self->pos = 0;
   self->len = 0;
 
-  return TRUE;
+  return true;
 }
 
 SysprofCaptureReader *
 sysprof_capture_reader_ref (SysprofCaptureReader *self)
 {
-  g_assert (self != NULL);
-  g_assert (self->ref_count > 0);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
-  g_atomic_int_inc (&self->ref_count);
+  __atomic_fetch_add (&self->ref_count, 1, __ATOMIC_SEQ_CST);
 
   return self;
 }
@@ -978,30 +983,26 @@ sysprof_capture_reader_ref (SysprofCaptureReader *self)
 void
 sysprof_capture_reader_unref (SysprofCaptureReader *self)
 {
-  g_assert (self != NULL);
-  g_assert (self->ref_count > 0);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
-  if (g_atomic_int_dec_and_test (&self->ref_count))
+  if (__atomic_fetch_sub (&self->ref_count, 1, __ATOMIC_SEQ_CST) == 1)
     sysprof_capture_reader_finalize (self);
 }
 
-gboolean
-sysprof_capture_reader_splice (SysprofCaptureReader  *self,
-                               SysprofCaptureWriter  *dest,
-                               GError               **error)
+bool
+sysprof_capture_reader_splice (SysprofCaptureReader *self,
+                               SysprofCaptureWriter *dest)
 {
-  g_assert (self != NULL);
-  g_assert (self->fd != -1);
-  g_assert (dest != NULL);
+  assert (self != NULL);
+  assert (self->fd != -1);
+  assert (dest != NULL);
 
   /* Flush before writing anything to ensure consistency */
   if (!sysprof_capture_writer_flush (dest))
     {
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   g_file_error_from_errno (errno),
-                   "%s", g_strerror (errno));
-      return FALSE;
+      /* errno is propagated */
+      return false;
     }
 
   /*
@@ -1009,33 +1010,35 @@ sysprof_capture_reader_splice (SysprofCaptureReader  *self,
    * track the current position to avoid reseting it.
    */
 
-  /* Perform the splice */
-  return _sysprof_capture_writer_splice_from_fd (dest, self->fd, error);
+  /* Perform the splice; errno is propagated on failure */
+  return _sysprof_capture_writer_splice_from_fd (dest, self->fd);
 }
 
 /**
  * sysprof_capture_reader_save_as:
  * @self: An #SysprofCaptureReader
  * @filename: the file to save the capture as
- * @error: a location for a #GError or %NULL.
  *
  * This is a convenience function for copying a capture file for which
  * you may have already discarded the writer for.
  *
- * Returns: %TRUE on success; otherwise %FALSE and @error is set.
+ * `errno` is set on failure. It may be any of the errors returned by
+ * `open()`, `fstat()`, `ftruncate()`, `lseek()` or `sendfile()`.
+ *
+ * Returns: %TRUE on success; otherwise %FALSE.
  */
-gboolean
-sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
-                                const gchar           *filename,
-                                GError               **error)
+bool
+sysprof_capture_reader_save_as (SysprofCaptureReader *self,
+                                const char           *filename)
 {
   struct stat stbuf;
   off_t in_off;
-  gsize to_write;
+  size_t to_write;
   int fd = -1;
+  int errsv;
 
-  g_assert (self != NULL);
-  g_assert (filename != NULL);
+  assert (self != NULL);
+  assert (filename != NULL);
 
   if (-1 == (fd = open (filename, O_CREAT | O_WRONLY, 0640)))
     goto handle_errno;
@@ -1054,7 +1057,7 @@ sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
 
   while (to_write > 0)
     {
-      gssize written;
+      ssize_t written;
 
       written = _sysprof_sendfile (fd, self->fd, &in_off, to_write);
 
@@ -1064,37 +1067,36 @@ sysprof_capture_reader_save_as (SysprofCaptureReader  *self,
       if (written == 0 && errno != EAGAIN)
         goto handle_errno;
 
-      g_assert (written <= (gssize)to_write);
+      assert (written <= (ssize_t)to_write);
 
       to_write -= written;
     }
 
   if (self->filename == NULL)
-    self->filename = g_strdup (filename);
+    self->filename = sysprof_strdup (filename);
 
   close (fd);
 
-  return TRUE;
+  return true;
 
 handle_errno:
+  errsv = errno;
+
   if (fd != -1)
     close (fd);
 
-  g_set_error (error,
-               G_FILE_ERROR,
-               g_file_error_from_errno (errno),
-               "%s", g_strerror (errno));
+  errno = errsv;
 
-  return FALSE;
+  return false;
 }
 
-gint64
+int64_t
 sysprof_capture_reader_get_start_time (SysprofCaptureReader *self)
 {
-  g_return_val_if_fail (self != NULL, 0);
+  assert (self != NULL);
 
-  if (self->endian != G_BYTE_ORDER)
-    return GUINT64_SWAP_LE_BE (self->header.time);
+  if (self->endian != __BYTE_ORDER)
+    return bswap_64 (self->header.time);
 
   return self->header.time;
 }
@@ -1114,22 +1116,22 @@ sysprof_capture_reader_get_start_time (SysprofCaptureReader *self)
  *
  * Since: 3.22.1
  */
-gint64
+int64_t
 sysprof_capture_reader_get_end_time (SysprofCaptureReader *self)
 {
-  gint64 end_time = 0;
+  int64_t end_time = 0;
 
-  g_return_val_if_fail (self != NULL, 0);
+  assert (self != NULL);
 
   if (self->header.end_time != 0)
     {
-      if (self->endian != G_BYTE_ORDER)
-        end_time = GUINT64_SWAP_LE_BE (self->header.end_time);
+      if (self->endian != __BYTE_ORDER)
+        end_time = bswap_64 (self->header.end_time);
       else
         end_time = self->header.end_time;
     }
 
-  return MAX (self->end_time, end_time);
+  return (self->end_time > end_time) ? self->end_time : end_time;
 }
 
 /**
@@ -1148,23 +1150,36 @@ sysprof_capture_reader_copy (SysprofCaptureReader *self)
   SysprofCaptureReader *copy;
   int fd;
 
-  g_return_val_if_fail (self != NULL, NULL);
+  assert (self != NULL);
 
   if (-1 == (fd = dup (self->fd)))
     return NULL;
 
-  copy = g_new0 (SysprofCaptureReader, 1);
+  copy = sysprof_malloc0 (sizeof (SysprofCaptureReader));
+  if (copy == NULL)
+    {
+      close (fd);
+      return NULL;
+    }
 
   *copy = *self;
 
   copy->ref_count = 1;
-  copy->filename = g_strdup (self->filename);
+  copy->filename = sysprof_strdup (self->filename);
   copy->fd = fd;
   copy->end_time = self->end_time;
   copy->st_buf = self->st_buf;
   copy->st_buf_set = self->st_buf_set;
 
-  copy->buf = g_malloc (self->bufsz);
+  copy->buf = malloc (self->bufsz);
+  if (copy->buf == NULL)
+    {
+      close (fd);
+      free (copy->filename);
+      free (copy);
+      return NULL;
+    }
+
   memcpy (copy->buf, self->buf, self->bufsz);
 
   return copy;
@@ -1174,25 +1189,25 @@ void
 sysprof_capture_reader_set_stat (SysprofCaptureReader     *self,
                                  const SysprofCaptureStat *st_buf)
 {
-  g_return_if_fail (self != NULL);
+  assert (self != NULL);
 
   if (st_buf != NULL)
     {
       self->st_buf = *st_buf;
-      self->st_buf_set = TRUE;
+      self->st_buf_set = true;
     }
   else
     {
       memset (&self->st_buf, 0, sizeof (self->st_buf));
-      self->st_buf_set = FALSE;
+      self->st_buf_set = false;
     }
 }
 
-gboolean
+bool
 sysprof_capture_reader_get_stat (SysprofCaptureReader *self,
                                  SysprofCaptureStat   *st_buf)
 {
-  g_return_val_if_fail (self != NULL, FALSE);
+  assert (self != NULL);
 
   if (st_buf != NULL)
     *st_buf = self->st_buf;
@@ -1205,14 +1220,14 @@ sysprof_capture_reader_read_file (SysprofCaptureReader *self)
 {
   SysprofCaptureFileChunk *file_chunk;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *file_chunk))
     return NULL;
 
-  file_chunk = (SysprofCaptureFileChunk *)(gpointer)&self->buf[self->pos];
+  file_chunk = (SysprofCaptureFileChunk *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, &file_chunk->frame);
 
@@ -1225,7 +1240,7 @@ sysprof_capture_reader_read_file (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, file_chunk->frame.len))
     return NULL;
 
-  file_chunk = (SysprofCaptureFileChunk *)(gpointer)&self->buf[self->pos];
+  file_chunk = (SysprofCaptureFileChunk *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_file_chunk (self, file_chunk);
 
@@ -1244,19 +1259,59 @@ sysprof_capture_reader_read_file (SysprofCaptureReader *self)
   return file_chunk;
 }
 
-gchar **
+static bool
+array_append (const char ***files,
+              size_t       *n_files,
+              size_t       *n_files_allocated,
+              const char   *new_element)
+{
+  if (*n_files == *n_files_allocated)
+    {
+      const char **new_files;
+
+      *n_files_allocated = (*n_files_allocated > 0) ? 2 * *n_files_allocated : 4;
+      new_files = reallocarray (*files, *n_files_allocated, sizeof (**files));
+      if (new_files == NULL)
+        return false;
+      *files = new_files;
+    }
+
+  (*files)[*n_files] = new_element;
+  *n_files = *n_files + 1;
+  assert (*n_files <= *n_files_allocated);
+
+  return true;
+}
+
+static void
+array_deduplicate (const char **files,
+                   size_t      *n_files)
+{
+  size_t last_written, next_to_read;
+
+  if (*n_files == 0)
+    return;
+
+  for (last_written = 0, next_to_read = 1; last_written <= next_to_read && next_to_read < *n_files;)
+    {
+      if (strcmp (files[next_to_read], files[last_written]) == 0)
+        next_to_read++;
+      else
+        files[++last_written] = files[next_to_read++];
+    }
+
+  assert (last_written + 1 <= *n_files);
+  *n_files = last_written + 1;
+}
+
+const char **
 sysprof_capture_reader_list_files (SysprofCaptureReader *self)
 {
-  g_autoptr(GHashTable) files = NULL;
-  g_autoptr(GPtrArray) ar = NULL;
+  const char **files = NULL;
+  size_t n_files = 0, n_files_allocated = 0;
   SysprofCaptureFrameType type;
-  GHashTableIter iter;
-  const gchar *key;
 
-  g_assert (self != NULL);
-
-  ar = g_ptr_array_new_with_free_func (g_free);
-  files = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  assert (self != NULL);
 
   while (sysprof_capture_reader_peek_type (self, &type))
     {
@@ -1271,44 +1326,55 @@ sysprof_capture_reader_list_files (SysprofCaptureReader *self)
       if (!(file = sysprof_capture_reader_read_file (self)))
         break;
 
-      if (!g_hash_table_contains (files, file->path))
-        g_hash_table_insert (files, g_strdup (file->path), NULL);
+      if (!array_append (&files, &n_files, &n_files_allocated, file->path))
+        {
+          free (files);
+          errno = ENOMEM;
+          return NULL;
+        }
     }
 
-  g_hash_table_iter_init (&iter, files);
-  while (g_hash_table_iter_next (&iter, (gpointer *)&key, NULL))
-    g_ptr_array_add (ar, g_strdup (key));
-  g_ptr_array_add (ar, NULL);
+  /* Sort and deduplicate the files array. */
+  qsort (files, n_files, sizeof (*files), (int (*)(const void *, const void *)) strcmp);
+  array_deduplicate (files, &n_files);
 
-  return (gchar **)g_ptr_array_free (g_steal_pointer (&ar), FALSE);
+  /* Add a null terminator */
+  if (!array_append (&files, &n_files, &n_files_allocated, NULL))
+    {
+      free (files);
+      errno = ENOMEM;
+      return NULL;
+    }
+
+  return sysprof_steal_pointer (&files);
 }
 
-gboolean
+bool
 sysprof_capture_reader_read_file_fd (SysprofCaptureReader *self,
-                                     const gchar          *path,
-                                     gint                  fd)
+                                     const char           *path,
+                                     int                   fd)
 {
-  g_assert (self != NULL);
-  g_assert (path != NULL);
-  g_assert (fd > -1);
+  assert (self != NULL);
+  assert (path != NULL);
+  assert (fd > -1);
 
   for (;;)
     {
       SysprofCaptureFrameType type;
       const SysprofCaptureFileChunk *file;
-      const guint8 *buf;
-      gsize to_write;
+      const uint8_t *buf;
+      size_t to_write;
 
       if (!sysprof_capture_reader_peek_type (self, &type))
-        return FALSE;
+        return false;
 
       if (type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
         goto skip;
 
       if (!(file = sysprof_capture_reader_read_file (self)))
-        return FALSE;
+        return false;
 
-      if (g_strcmp0 (path, file->path) != 0)
+      if (strcmp (path, file->path) != 0)
         goto skip;
 
       buf = file->data;
@@ -1316,16 +1382,16 @@ sysprof_capture_reader_read_file_fd (SysprofCaptureReader *self,
 
       while (to_write > 0)
         {
-          gssize written;
+          ssize_t written;
 
           written = _sysprof_write (fd, buf, to_write);
           if (written < 0)
-            return FALSE;
+            return false;
 
           if (written == 0 && errno != EAGAIN)
-            return FALSE;
+            return false;
 
-          g_assert (written <= (gssize)to_write);
+          assert (written <= (ssize_t)to_write);
 
           buf += written;
           to_write -= written;
@@ -1334,32 +1400,32 @@ sysprof_capture_reader_read_file_fd (SysprofCaptureReader *self,
       if (!file->is_last)
         continue;
 
-      return TRUE;
+      return true;
 
     skip:
       if (!sysprof_capture_reader_skip (self))
-        return FALSE;
+        return false;
     }
 
-  g_return_val_if_reached (FALSE);
+  sysprof_assert_not_reached ();
 }
 
-gint
+int
 sysprof_capture_reader_get_byte_order (SysprofCaptureReader *self)
 {
-  g_return_val_if_fail (self != NULL, 0);
+  assert (self != NULL);
 
   return self->endian;
 }
 
 const SysprofCaptureFileChunk *
 sysprof_capture_reader_find_file (SysprofCaptureReader *self,
-                                  const gchar          *path)
+                                  const char           *path)
 {
   SysprofCaptureFrameType type;
 
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (path != NULL, NULL);
+  assert (self != NULL);
+  assert (path != NULL);
 
   while (sysprof_capture_reader_peek_type (self, &type))
     {
@@ -1370,7 +1436,7 @@ sysprof_capture_reader_find_file (SysprofCaptureReader *self,
           if (!(fc = sysprof_capture_reader_read_file (self)))
             break;
 
-          if (g_strcmp0 (path, fc->path) == 0)
+          if (strcmp (path, fc->path) == 0)
             return fc;
 
           continue;
@@ -1388,14 +1454,14 @@ sysprof_capture_reader_read_allocation (SysprofCaptureReader *self)
 {
   SysprofCaptureAllocation *ma;
 
-  g_assert (self != NULL);
-  g_assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
-  g_assert (self->pos <= self->bufsz);
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
 
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *ma))
     return NULL;
 
-  ma = (SysprofCaptureAllocation *)(gpointer)&self->buf[self->pos];
+  ma = (SysprofCaptureAllocation *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, &ma->frame);
 
@@ -1405,12 +1471,12 @@ sysprof_capture_reader_read_allocation (SysprofCaptureReader *self)
   if (ma->frame.len < sizeof *ma)
     return NULL;
 
-  if (self->endian != G_BYTE_ORDER)
+  if (self->endian != __BYTE_ORDER)
     {
-      ma->n_addrs = GUINT16_SWAP_LE_BE (ma->n_addrs);
-      ma->alloc_size = GUINT64_SWAP_LE_BE (ma->alloc_size);
-      ma->alloc_addr = GUINT64_SWAP_LE_BE (ma->alloc_addr);
-      ma->tid = GUINT32_SWAP_LE_BE (ma->tid);
+      ma->n_addrs = bswap_16 (ma->n_addrs);
+      ma->alloc_size = bswap_64 (ma->alloc_size);
+      ma->alloc_addr = bswap_64 (ma->alloc_addr);
+      ma->tid = bswap_32 (ma->tid);
     }
 
   if (ma->frame.len < (sizeof *ma + (sizeof(SysprofCaptureAddress) * ma->n_addrs)))
@@ -1419,15 +1485,65 @@ sysprof_capture_reader_read_allocation (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, ma->frame.len))
     return NULL;
 
-  ma = (SysprofCaptureAllocation *)(gpointer)&self->buf[self->pos];
+  ma = (SysprofCaptureAllocation *)(void *)&self->buf[self->pos];
 
-  if (G_UNLIKELY (self->endian != G_BYTE_ORDER))
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
     {
-      for (guint i = 0; i < ma->n_addrs; i++)
-        ma->addrs[i] = GUINT64_SWAP_LE_BE (ma->addrs[i]);
+      for (unsigned int i = 0; i < ma->n_addrs; i++)
+        ma->addrs[i] = bswap_64 (ma->addrs[i]);
     }
 
   self->pos += ma->frame.len;
 
   return ma;
+}
+
+typedef struct {
+  const SysprofCaptureJitmap *jitmap;
+  const uint8_t *buf;
+  unsigned int i;
+
+  void *padding1;
+  void *padding2;
+} RealSysprofCaptureJitmapIter;
+
+void
+sysprof_capture_jitmap_iter_init (SysprofCaptureJitmapIter   *iter,
+                                  const SysprofCaptureJitmap *jitmap)
+{
+  RealSysprofCaptureJitmapIter *real_iter = (RealSysprofCaptureJitmapIter *) iter;
+
+  assert (iter != NULL);
+  assert (jitmap != NULL);
+
+  real_iter->jitmap = jitmap;
+  real_iter->buf = jitmap->data;
+  real_iter->i = 0;
+}
+
+bool
+sysprof_capture_jitmap_iter_next (SysprofCaptureJitmapIter  *iter,
+                                  SysprofCaptureAddress     *addr,
+                                  const char               **name)
+{
+  RealSysprofCaptureJitmapIter *real_iter = (RealSysprofCaptureJitmapIter *) iter;
+  const char *_name;
+
+  assert (iter != NULL);
+
+  if (real_iter->i >= real_iter->jitmap->n_jitmaps)
+    return false;
+
+  if (addr != NULL)
+    memcpy (addr, real_iter->buf, sizeof (*addr));
+  real_iter->buf += sizeof (*addr);
+
+  _name = (const char *) real_iter->buf;
+  if (name != NULL)
+    *name = _name;
+  real_iter->buf += strlen (_name) + 1;
+
+  real_iter->i++;
+
+  return true;
 }

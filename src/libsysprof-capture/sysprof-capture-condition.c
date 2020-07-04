@@ -54,13 +54,16 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#define G_LOG_DOMAIN "sysprof-capture-condition"
-
 #include "config.h"
 
+#include <assert.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "sysprof-capture-condition.h"
+#include "sysprof-capture-util-private.h"
+#include "sysprof-macros-internal.h"
 
 /**
  * SECTION:sysprof-capture-condition
@@ -86,30 +89,39 @@ typedef enum
 
 struct _SysprofCaptureCondition
 {
-  volatile gint ref_count;
+  volatile int ref_count;
   SysprofCaptureConditionType type;
   union {
-    GArray *where_type_in;
     struct {
-      gint64 begin;
-      gint64 end;
+      SysprofCaptureFrameType *data;
+      size_t len;
+    } where_type_in;
+    struct {
+      int64_t begin;
+      int64_t end;
     } where_time_between;
-    GArray *where_pid_in;
-    GArray *where_counter_in;
+    struct {
+      int32_t *data;
+      size_t len;
+    } where_pid_in;
+    struct {
+      unsigned int *data;
+      size_t len;
+    } where_counter_in;
     struct {
       SysprofCaptureCondition *left;
       SysprofCaptureCondition *right;
     } and, or;
-    gchar *where_file;
+    char *where_file;
   } u;
 };
 
-gboolean
+bool
 sysprof_capture_condition_match (const SysprofCaptureCondition *self,
                                  const SysprofCaptureFrame     *frame)
 {
-  g_assert (self != NULL);
-  g_assert (frame != NULL);
+  assert (self != NULL);
+  assert (frame != NULL);
 
   switch (self->type)
     {
@@ -122,34 +134,34 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
              sysprof_capture_condition_match (self->u.or.right, frame);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN:
-      for (guint i = 0; i < self->u.where_type_in->len; i++)
+      for (size_t i = 0; i < self->u.where_type_in.len; i++)
         {
-          if (frame->type == g_array_index (self->u.where_type_in, SysprofCaptureFrameType, i))
-            return TRUE;
+          if (frame->type == self->u.where_type_in.data[i])
+            return true;
         }
-      return FALSE;
+      return false;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TIME_BETWEEN:
       return (frame->time >= self->u.where_time_between.begin && frame->time <= self->u.where_time_between.end);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN:
-      for (guint i = 0; i < self->u.where_pid_in->len; i++)
+      for (size_t i = 0; i < self->u.where_pid_in.len; i++)
         {
-          if (frame->pid == g_array_index (self->u.where_pid_in, gint32, i))
-            return TRUE;
+          if (frame->pid == self->u.where_pid_in.data[i])
+            return true;
         }
-      return FALSE;
+      return false;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN:
       if (frame->type == SYSPROF_CAPTURE_FRAME_CTRSET)
         {
           const SysprofCaptureCounterSet *set = (SysprofCaptureCounterSet *)frame;
 
-          for (guint i = 0; i < self->u.where_counter_in->len; i++)
+          for (size_t i = 0; i < self->u.where_counter_in.len; i++)
             {
-              guint counter = g_array_index (self->u.where_counter_in, guint, i);
+              unsigned int counter = self->u.where_counter_in.data[i];
 
-              for (guint j = 0; j < set->n_values; j++)
+              for (unsigned int j = 0; j < set->n_values; j++)
                 {
                   if (counter == set->values[j].ids[0] ||
                       counter == set->values[j].ids[1] ||
@@ -159,7 +171,7 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
                       counter == set->values[j].ids[5] ||
                       counter == set->values[j].ids[6] ||
                       counter == set->values[j].ids[7])
-                    return TRUE;
+                    return true;
                 }
             }
         }
@@ -167,33 +179,36 @@ sysprof_capture_condition_match (const SysprofCaptureCondition *self,
         {
           const SysprofCaptureCounterDefine *def = (SysprofCaptureCounterDefine *)frame;
 
-          for (guint i = 0; i < self->u.where_counter_in->len; i++)
+          for (size_t i = 0; i < self->u.where_counter_in.len; i++)
             {
-              guint counter = g_array_index (self->u.where_counter_in, guint, i);
+              unsigned int counter = self->u.where_counter_in.data[i];
 
-              for (guint j = 0; j < def->n_counters; j++)
+              for (unsigned int j = 0; j < def->n_counters; j++)
                 {
                   if (def->counters[j].id == counter)
-                    return TRUE;
+                    return true;
                 }
             }
         }
 
-      return FALSE;
+      return false;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_FILE:
       if (frame->type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
-        return FALSE;
+        return false;
 
-      return g_strcmp0 (((const SysprofCaptureFileChunk *)frame)->path, self->u.where_file) == 0;
+      if (self->u.where_file == NULL)
+        return false;
+
+      return strcmp (((const SysprofCaptureFileChunk *)frame)->path, self->u.where_file) == 0;
 
     default:
       break;
     }
 
-  g_assert_not_reached ();
+  sysprof_assert_not_reached ();
 
-  return FALSE;
+  return false;
 }
 
 static SysprofCaptureCondition *
@@ -201,12 +216,16 @@ sysprof_capture_condition_init (void)
 {
   SysprofCaptureCondition *self;
 
-  self = g_slice_new0 (SysprofCaptureCondition);
+  self = sysprof_malloc0 (sizeof (SysprofCaptureCondition));
+  if (self == NULL)
+    return NULL;
+
   self->ref_count = 1;
 
-  return g_steal_pointer (&self);
+  return sysprof_steal_pointer (&self);
 }
 
+/* Returns NULL on allocation failure. */
 SysprofCaptureCondition *
 sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
 {
@@ -224,8 +243,8 @@ sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN:
       return sysprof_capture_condition_new_where_type_in (
-          self->u.where_type_in->len,
-          (const SysprofCaptureFrameType *)(gpointer)self->u.where_type_in->data);
+          self->u.where_type_in.len,
+          self->u.where_type_in.data);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TIME_BETWEEN:
       return sysprof_capture_condition_new_where_time_between (
@@ -234,13 +253,13 @@ sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN:
       return sysprof_capture_condition_new_where_pid_in (
-          self->u.where_pid_in->len,
-          (const gint32 *)(gpointer)self->u.where_pid_in->data);
+          self->u.where_pid_in.len,
+          self->u.where_pid_in.data);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN:
       return sysprof_capture_condition_new_where_counter_in (
-          self->u.where_counter_in->len,
-          (const guint *)(gpointer)self->u.where_counter_in->data);
+          self->u.where_counter_in.len,
+          self->u.where_counter_in.data);
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_FILE:
       return sysprof_capture_condition_new_where_file (self->u.where_file);
@@ -249,7 +268,7 @@ sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
       break;
     }
 
-  g_return_val_if_reached (NULL);
+  sysprof_assert_not_reached ();
 }
 
 static void
@@ -268,83 +287,93 @@ sysprof_capture_condition_finalize (SysprofCaptureCondition *self)
       break;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN:
-      g_array_free (self->u.where_type_in, TRUE);
+      free (self->u.where_type_in.data);
       break;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_TIME_BETWEEN:
       break;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN:
-      g_array_free (self->u.where_pid_in, TRUE);
+      free (self->u.where_pid_in.data);
       break;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN:
-      g_array_free (self->u.where_counter_in, TRUE);
+      free (self->u.where_counter_in.data);
       break;
 
     case SYSPROF_CAPTURE_CONDITION_WHERE_FILE:
-      g_free (self->u.where_file);
+      free (self->u.where_file);
       break;
 
     default:
-      g_assert_not_reached ();
+      sysprof_assert_not_reached ();
       break;
     }
 
-  g_slice_free (SysprofCaptureCondition, self);
+  free (self);
 }
 
 SysprofCaptureCondition *
 sysprof_capture_condition_ref (SysprofCaptureCondition *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (self->ref_count > 0, NULL);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
-  g_atomic_int_inc (&self->ref_count);
+  __atomic_fetch_add (&self->ref_count, 1, __ATOMIC_SEQ_CST);
   return self;
 }
 
 void
 sysprof_capture_condition_unref (SysprofCaptureCondition *self)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (self->ref_count > 0);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
-  if (g_atomic_int_dec_and_test (&self->ref_count))
+  if (__atomic_fetch_sub (&self->ref_count, 1, __ATOMIC_SEQ_CST) == 1)
     sysprof_capture_condition_finalize (self);
 }
 
+/* Returns NULL on allocation failure. */
 SysprofCaptureCondition *
-sysprof_capture_condition_new_where_type_in (guint                     n_types,
-                                        const SysprofCaptureFrameType *types)
+sysprof_capture_condition_new_where_type_in (unsigned int                   n_types,
+                                             const SysprofCaptureFrameType *types)
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (types != NULL, NULL);
+  assert (types != NULL);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_TYPE_IN;
-  self->u.where_type_in = g_array_sized_new (FALSE, FALSE, sizeof (SysprofCaptureFrameType), n_types);
-  g_array_set_size (self->u.where_type_in, n_types);
-  memcpy (self->u.where_type_in->data, types, sizeof (SysprofCaptureFrameType) * n_types);
+  self->u.where_type_in.data = calloc (n_types, sizeof (SysprofCaptureFrameType));
+  if (self->u.where_type_in.data == NULL)
+    return NULL;
+  self->u.where_type_in.len = n_types;
+  memcpy (self->u.where_type_in.data, types, sizeof (SysprofCaptureFrameType) * n_types);
 
   return self;
 }
 
+/* Returns NULL on allocation failure. */
 SysprofCaptureCondition *
-sysprof_capture_condition_new_where_time_between (gint64 begin_time,
-                                             gint64 end_time)
+sysprof_capture_condition_new_where_time_between (int64_t begin_time,
+                                                  int64_t end_time)
 {
   SysprofCaptureCondition *self;
 
-  if G_UNLIKELY (begin_time > end_time)
+  if SYSPROF_UNLIKELY (begin_time > end_time)
     {
-      gint64 tmp = begin_time;
+      int64_t tmp = begin_time;
       begin_time = end_time;
       end_time = tmp;
     }
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_TIME_BETWEEN;
   self->u.where_time_between.begin = begin_time;
   self->u.where_time_between.end = end_time;
@@ -352,40 +381,56 @@ sysprof_capture_condition_new_where_time_between (gint64 begin_time,
   return self;
 }
 
+/* Returns NULL on allocation failure. */
 SysprofCaptureCondition *
-sysprof_capture_condition_new_where_pid_in (guint         n_pids,
-                                       const gint32 *pids)
+sysprof_capture_condition_new_where_pid_in (unsigned int   n_pids,
+                                            const int32_t *pids)
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (pids != NULL, NULL);
+  assert (pids != NULL);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_PID_IN;
-  self->u.where_pid_in = g_array_sized_new (FALSE, FALSE, sizeof (gint32), n_pids);
-  g_array_set_size (self->u.where_pid_in, n_pids);
-  memcpy (self->u.where_pid_in->data, pids, sizeof (gint32) * n_pids);
+  self->u.where_pid_in.data = calloc (n_pids, sizeof (int32_t));
+  if (self->u.where_pid_in.data == NULL)
+    {
+      free (self);
+      return NULL;
+    }
+  self->u.where_pid_in.len = n_pids;
+  memcpy (self->u.where_pid_in.data, pids, sizeof (int32_t) * n_pids);
 
   return self;
 }
 
+/* Returns NULL on allocation failure. */
 SysprofCaptureCondition *
-sysprof_capture_condition_new_where_counter_in (guint        n_counters,
-                                           const guint *counters)
+sysprof_capture_condition_new_where_counter_in (unsigned int        n_counters,
+                                                const unsigned int *counters)
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (counters != NULL || n_counters == 0, NULL);
+  assert (counters != NULL || n_counters == 0);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_COUNTER_IN;
-  self->u.where_counter_in = g_array_sized_new (FALSE, FALSE, sizeof (guint), n_counters);
+  self->u.where_counter_in.data = calloc (n_counters, sizeof (unsigned int));
+  if (n_counters > 0 && self->u.where_counter_in.data == NULL)
+    {
+      free (self);
+      return NULL;
+    }
+  self->u.where_counter_in.len = n_counters;
 
   if (n_counters > 0)
-    {
-      g_array_set_size (self->u.where_counter_in, n_counters);
-      memcpy (self->u.where_counter_in->data, counters, sizeof (guint) * n_counters);
-    }
+    memcpy (self->u.where_counter_in.data, counters, sizeof (unsigned int) * n_counters);
 
   return self;
 }
@@ -398,7 +443,8 @@ sysprof_capture_condition_new_where_counter_in (guint        n_counters,
  * Creates a new #SysprofCaptureCondition that requires both left and right
  * to evaluate to %TRUE.
  *
- * Returns: (transfer full): A new #SysprofCaptureCondition.
+ * Returns: (transfer full) (nullable): A new #SysprofCaptureCondition, or %NULL
+ *    on allocation failure.
  */
 SysprofCaptureCondition *
 sysprof_capture_condition_new_and (SysprofCaptureCondition *left,
@@ -406,10 +452,13 @@ sysprof_capture_condition_new_and (SysprofCaptureCondition *left,
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (left != NULL, NULL);
-  g_return_val_if_fail (right != NULL, NULL);
+  assert (left != NULL);
+  assert (right != NULL);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_AND;
   self->u.and.left = left;
   self->u.and.right = right;
@@ -425,7 +474,8 @@ sysprof_capture_condition_new_and (SysprofCaptureCondition *left,
  * Creates a new #SysprofCaptureCondition that requires either left and right
  * to evaluate to %TRUE.
  *
- * Returns: (transfer full): A new #SysprofCaptureCondition.
+ * Returns: (transfer full) (nullable): A new #SysprofCaptureCondition, or %NULL
+ *    on allocation failure.
  */
 SysprofCaptureCondition *
 sysprof_capture_condition_new_or (SysprofCaptureCondition *left,
@@ -433,10 +483,13 @@ sysprof_capture_condition_new_or (SysprofCaptureCondition *left,
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (left != NULL, NULL);
-  g_return_val_if_fail (right != NULL, NULL);
+  assert (left != NULL);
+  assert (right != NULL);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_OR;
   self->u.or.left = left;
   self->u.or.right = right;
@@ -451,18 +504,27 @@ sysprof_capture_condition_new_or (SysprofCaptureCondition *left,
  * Creates a new condition that matches #SysprofCaptureFileChunk frames
  * which contain the path @path.
  *
- * Returns: (transfer full): a new #SysprofCaptureCondition
+ * Returns: (transfer full) (nullable): a new #SysprofCaptureCondition, or %NULL
+ *    on allocation failure.
  */
 SysprofCaptureCondition *
-sysprof_capture_condition_new_where_file (const gchar *path)
+sysprof_capture_condition_new_where_file (const char *path)
 {
   SysprofCaptureCondition *self;
 
-  g_return_val_if_fail (path != NULL, NULL);
+  assert (path != NULL);
 
   self = sysprof_capture_condition_init ();
+  if (self == NULL)
+    return NULL;
+
   self->type = SYSPROF_CAPTURE_CONDITION_WHERE_FILE;
-  self->u.where_file = g_strdup (path);
+  self->u.where_file = sysprof_strdup (path);
+  if (self->u.where_file == NULL)
+    {
+      free (self);
+      return NULL;
+    }
 
   return self;
 }

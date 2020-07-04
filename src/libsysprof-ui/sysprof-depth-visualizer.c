@@ -62,7 +62,7 @@ state_free (State *st)
   g_slice_free (State, st);
 }
 
-static gboolean
+static bool
 discover_max_n_addr (const SysprofCaptureFrame *frame,
                      gpointer                   user_data)
 {
@@ -78,7 +78,7 @@ discover_max_n_addr (const SysprofCaptureFrame *frame,
   return TRUE;
 }
 
-static gboolean
+static bool
 build_point_cache_cb (const SysprofCaptureFrame *frame,
                       gpointer                   user_data)
 {

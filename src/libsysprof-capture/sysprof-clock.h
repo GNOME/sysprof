@@ -56,18 +56,19 @@
 
 #pragma once
 
-#include <glib.h>
+#include <stdint.h>
 #include <time.h>
 
+#include "sysprof-macros.h"
 #include "sysprof-version-macros.h"
 
-G_BEGIN_DECLS
+SYSPROF_BEGIN_DECLS
 
-typedef gint SysprofClock;
-typedef gint64 SysprofTimeStamp;
-typedef gint32 SysprofTimeSysprofan;
+typedef int SysprofClock;
+typedef int64_t SysprofTimeStamp;
+typedef int32_t SysprofTimeSysprofan;
 
-#define SYSPROF_NSEC_PER_SEC G_GINT64_CONSTANT(1000000000)
+#define SYSPROF_NSEC_PER_SEC SYSPROF_INT64_CONSTANT(1000000000)
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofClock sysprof_clock;
@@ -78,7 +79,7 @@ sysprof_clock_get_current_time (void)
   struct timespec ts;
   SysprofClock clock = sysprof_clock;
 
-  if G_UNLIKELY (clock == -1)
+  if SYSPROF_UNLIKELY (clock == -1)
     clock = CLOCK_MONOTONIC;
   clock_gettime (clock, &ts);
 
@@ -94,4 +95,4 @@ sysprof_clock_get_relative_time (SysprofTimeStamp epoch)
 SYSPROF_AVAILABLE_IN_ALL
 void sysprof_clock_init (void);
 
-G_END_DECLS
+SYSPROF_END_DECLS

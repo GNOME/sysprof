@@ -1,6 +1,9 @@
-/* sysprof-kernel-symbol.h
+/* sysprof-capture-gobject.h
  *
- * Copyright 2016-2019 Christian Hergert <chergert@redhat.com>
+ * Copyright 2020 Endless Mobile, Inc.
+ *
+ * Author:
+ *  - Philip Withnall <withnall@endlessm.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +29,13 @@
 
 #include <glib.h>
 
-#include "sysprof-capture-types.h"
+#include "sysprof-capture.h"
 
 G_BEGIN_DECLS
 
-typedef struct
-{
-  SysprofCaptureAddress  address;
-  const gchar           *name;
-} SysprofKernelSymbol;
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureCondition, sysprof_capture_condition_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureCursor, sysprof_capture_cursor_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
 
 G_END_DECLS

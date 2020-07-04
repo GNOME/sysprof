@@ -54,56 +54,70 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#define G_LOG_DOMAIN "sysprof-collector"
-
 #ifndef _GNU_SOURCE
 # define _GNU_SOURCE
 #endif
 
-#include <glib-unix.h>
-#include <gio/gio.h>
-#include <gio/gunixconnection.h>
+#include <assert.h>
+#include <errno.h>
+#include <poll.h>
+#include <pthread.h>
 #ifdef __linux__
 # include <sched.h>
 #endif
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
 #include <sys/syscall.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include "mapped-ring-buffer.h"
 
-#include "sysprof-capture-writer.h"
+#include "sysprof-capture-util-private.h"
 #include "sysprof-collector.h"
+#include "sysprof-macros-internal.h"
 
 #define MAX_UNWIND_DEPTH 128
 #define CREATRING      "CreatRing\0"
 #define CREATRING_LEN  10
 
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+
+#ifndef MSG_CMSG_CLOEXEC
+#define MSG_CMSG_CLOEXEC 0
+#endif
+
 typedef struct
 {
   MappedRingBuffer *buffer;
-  gboolean is_shared;
+  bool is_shared;
   int tid;
   int pid;
 } SysprofCollector;
 
-#define COLLECTOR_INVALID ((gpointer)&invalid)
+#define COLLECTOR_INVALID ((void *)&invalid)
 
 static MappedRingBuffer       *request_writer         (void);
-static void                    sysprof_collector_free (gpointer data);
+static void                    sysprof_collector_free (void *data);
 static const SysprofCollector *sysprof_collector_get  (void);
 
-static G_LOCK_DEFINE (control_fd);
-static GPrivate collector_key = G_PRIVATE_INIT (sysprof_collector_free);
-static GPrivate single_trace_key = G_PRIVATE_INIT (NULL);
+static pthread_mutex_t control_fd_lock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_key_t collector_key;  /* initialised in sysprof_collector_init() */
+static pthread_key_t single_trace_key;  /* initialised in sysprof_collector_init() */
+static pthread_once_t collector_init = PTHREAD_ONCE_INIT;
 static SysprofCollector *shared_collector;
 static SysprofCollector invalid;
 
-static inline gboolean
+static inline bool
 use_single_trace (void)
 {
-  return GPOINTER_TO_INT (g_private_get (&single_trace_key));
+  return (bool) pthread_getspecific (single_trace_key);
 }
 
 static inline int
@@ -116,60 +130,218 @@ _do_getcpu (void)
 #endif
 }
 
-static inline gsize
-realign (gsize size)
+static inline size_t
+realign (size_t size)
 {
   return (size + SYSPROF_CAPTURE_ALIGN - 1) & ~(SYSPROF_CAPTURE_ALIGN - 1);
 }
 
+static bool
+set_fd_blocking (int fd)
+{
+#ifdef F_GETFL
+  long fcntl_flags;
+  fcntl_flags = fcntl (peer_fd, F_GETFL);
+
+  if (fcntl_flags == -1)
+    return false;
+
+#ifdef O_NONBLOCK
+  fcntl_flags &= ~O_NONBLOCK;
+#else
+  fcntl_flags &= ~O_NDELAY;
+#endif
+
+  if (fcntl (peer_fd, F_SETFL, fcntl_flags) == -1)
+    return false;
+
+  return true;
+#else
+  return false;
+#endif
+}
+
+static bool
+block_on_poll (int fd,
+               int condition)
+{
+  struct pollfd poll_fd;
+
+  poll_fd.fd = fd;
+  poll_fd.events = condition;
+
+  return (TEMP_FAILURE_RETRY (poll (&poll_fd, 1, -1)) == 1);
+}
+
+static ssize_t
+send_blocking (int            fd,
+               const uint8_t *buffer,
+               size_t         buffer_len)
+{
+  ssize_t res;
+
+  while ((res = TEMP_FAILURE_RETRY (send (fd, buffer, buffer_len, MSG_NOSIGNAL))) < 0)
+    {
+      int errsv = errno;
+
+      if (errsv == EWOULDBLOCK ||
+          errsv == EAGAIN)
+        {
+          if (!block_on_poll (fd, POLLOUT))
+            return -1;
+        }
+      else
+        {
+          return -1;
+        }
+    }
+
+  return res;
+}
+
+static bool
+send_all_blocking (int            fd,
+                   const uint8_t *buffer,
+                   size_t         buffer_len,
+                   size_t        *bytes_written)
+{
+  size_t _bytes_written;
+
+  _bytes_written = 0;
+  while (_bytes_written < buffer_len)
+    {
+      ssize_t res = send_blocking (fd, buffer + _bytes_written, buffer_len - _bytes_written);
+      if (res == -1)
+        {
+          if (bytes_written != NULL)
+            *bytes_written = _bytes_written;
+          return false;
+        }
+      assert (res > 0);
+
+      _bytes_written += res;
+    }
+
+  if (bytes_written != NULL)
+    *bytes_written = _bytes_written;
+  return true;
+}
+
+static int
+receive_fd_blocking (int peer_fd)
+{
+  ssize_t res;
+  struct msghdr msg;
+  struct iovec one_vector;
+  char one_byte;
+  uint8_t cmsg_buffer[CMSG_SPACE (sizeof (int))];
+  struct cmsghdr *cmsg;
+  const int *fds = NULL;
+  size_t n_fds = 0;
+
+  one_vector.iov_base = &one_byte;
+  one_vector.iov_len = 1;
+
+  msg.msg_name = NULL;
+  msg.msg_namelen = 0;
+  msg.msg_iov = &one_vector;
+  msg.msg_iovlen = 1;
+  msg.msg_flags = MSG_CMSG_CLOEXEC;
+  msg.msg_control = &cmsg_buffer;
+  msg.msg_controllen = sizeof (cmsg_buffer);
+
+  while ((res = TEMP_FAILURE_RETRY (recvmsg (peer_fd, &msg, msg.msg_flags))) < 0)
+    {
+      int errsv = errno;
+
+      if (errsv == EWOULDBLOCK ||
+          errsv == EAGAIN)
+        {
+          if (!block_on_poll (peer_fd, POLLIN))
+            return -1;
+        }
+      else
+        {
+          return -1;
+        }
+    }
+
+  /* Decode the returned control message */
+  cmsg = CMSG_FIRSTHDR (&msg);
+  if (cmsg == NULL)
+    return -1;
+
+  if (cmsg->cmsg_level != SOL_SOCKET ||
+      cmsg->cmsg_type != SCM_RIGHTS)
+    return -1;
+
+  /* non-integer number of FDs */
+  if ((cmsg->cmsg_len - ((char *)CMSG_DATA (cmsg) - (char *)cmsg)) % 4 != 0)
+    return -1;
+
+  fds = (const int *) CMSG_DATA (cmsg);
+  n_fds = (cmsg->cmsg_len - ((char *)CMSG_DATA (cmsg) - (char *)cmsg)) / sizeof (*fds);
+
+  /* only expecting one FD */
+  if (n_fds != 1)
+    goto close_fds_err;
+
+  for (size_t i = 0; i < n_fds; i++)
+    {
+      if (fds[i] < 0)
+        goto close_fds_err;
+    }
+
+  /* only expecting one control message */
+  cmsg = CMSG_NXTHDR (&msg, cmsg);
+  if (cmsg != NULL)
+    goto close_fds_err;
+
+  return fds[0];
+
+close_fds_err:
+  for (size_t i = 0; i < n_fds; i++)
+    close (fds[i]);
+
+  return -1;
+}
+
+/* Called with @control_fd_lock held. */
 static MappedRingBuffer *
 request_writer (void)
 {
-  static GUnixConnection *conn;
+  static int peer_fd = -1;
   MappedRingBuffer *buffer = NULL;
 
-  if (conn == NULL)
+  if (peer_fd == -1)
     {
-      const gchar *fdstr = g_getenv ("SYSPROF_CONTROL_FD");
-      int peer_fd = -1;
+      const char *fdstr = getenv ("SYSPROF_CONTROL_FD");
 
       if (fdstr != NULL)
         peer_fd = atoi (fdstr);
 
-      g_unsetenv ("SYSPROF_CONTROL_FD");
+      unsetenv ("SYSPROF_CONTROL_FD");
 
       if (peer_fd > 0)
         {
-          g_autoptr(GSocket) sock = NULL;
+          (void) set_fd_blocking (peer_fd);
 
-          g_unix_set_fd_nonblocking (peer_fd, FALSE, NULL);
-
-          if ((sock = g_socket_new_from_fd (peer_fd, NULL)))
-            {
-              g_autoptr(GSocketConnection) scon = NULL;
-
-              g_socket_set_blocking (sock, TRUE);
-
-              if ((scon = g_socket_connection_factory_create_connection (sock)) &&
-                  G_IS_UNIX_CONNECTION (scon))
-                conn = g_object_ref (G_UNIX_CONNECTION (scon));
-            }
+#ifdef SO_NOSIGPIPE
+          {
+            int opt_value = 1;
+            (void) setsockopt (peer_fd, SOL_SOCKET, SO_NOSIGPIPE, &opt_value, sizeof (opt_value));
+          }
+#endif
         }
     }
 
-  if (conn != NULL)
+  if (peer_fd >= 0)
     {
-      GOutputStream *out_stream;
-      gsize len;
-
-      out_stream = g_io_stream_get_output_stream (G_IO_STREAM (conn));
-
-      if (g_output_stream_write_all (G_OUTPUT_STREAM (out_stream), CREATRING, CREATRING_LEN, &len, NULL, NULL) &&
-          len == CREATRING_LEN)
+      if (send_all_blocking (peer_fd, (const uint8_t *) CREATRING, CREATRING_LEN, NULL))
         {
-          gint ring_fd = g_unix_connection_receive_fd (conn, NULL, NULL);
+          int ring_fd = receive_fd_blocking (peer_fd);
 
-          if (ring_fd > -1)
+          if (ring_fd >= 0)
             {
               buffer = mapped_ring_buffer_new_writer (ring_fd);
               close (ring_fd);
@@ -177,7 +349,7 @@ request_writer (void)
         }
     }
 
-  return g_steal_pointer (&buffer);
+  return sysprof_steal_pointer (&buffer);
 }
 
 static void
@@ -185,7 +357,7 @@ write_final_frame (MappedRingBuffer *ring)
 {
   SysprofCaptureFrame *fr;
 
-  g_assert (ring != NULL);
+  assert (ring != NULL);
 
   if ((fr = mapped_ring_buffer_allocate (ring, sizeof *fr)))
     {
@@ -199,13 +371,13 @@ write_final_frame (MappedRingBuffer *ring)
 }
 
 static void
-sysprof_collector_free (gpointer data)
+sysprof_collector_free (void *data)
 {
   SysprofCollector *collector = data;
 
   if (collector != NULL && collector != COLLECTOR_INVALID)
     {
-      MappedRingBuffer *buffer = g_steal_pointer (&collector->buffer);
+      MappedRingBuffer *buffer = sysprof_steal_pointer (&collector->buffer);
 
       if (buffer != NULL)
         {
@@ -213,33 +385,41 @@ sysprof_collector_free (gpointer data)
           mapped_ring_buffer_unref (buffer);
         }
 
-      g_free (collector);
+      free (collector);
     }
 }
 
 static const SysprofCollector *
 sysprof_collector_get (void)
 {
-  const SysprofCollector *collector = g_private_get (&collector_key);
+  const SysprofCollector *collector;
+
+  sysprof_collector_init ();
+  collector = pthread_getspecific (collector_key);
 
   /* We might have gotten here recursively */
-  if G_UNLIKELY (collector == COLLECTOR_INVALID)
+  if SYSPROF_UNLIKELY (collector == COLLECTOR_INVALID)
     return COLLECTOR_INVALID;
 
-  if G_LIKELY (collector != NULL)
+  if SYSPROF_LIKELY (collector != NULL)
     return collector;
 
   if (use_single_trace () && shared_collector != COLLECTOR_INVALID)
     return shared_collector;
 
   {
-    SysprofCollector *self;
+    SysprofCollector *self, *old_collector;
 
-    g_private_replace (&collector_key, COLLECTOR_INVALID);
+    /* First set the collector to invalid so anything recursive
+     * here fails instead of becoming re-entrant.
+     */
+    pthread_setspecific (collector_key, COLLECTOR_INVALID);
 
-    G_LOCK (control_fd);
+    /* Now we can malloc without ending up here again */
+    self = sysprof_malloc0 (sizeof (SysprofCollector));
+    if (self == NULL)
+      return COLLECTOR_INVALID;
 
-    self = g_new0 (SysprofCollector, 1);
     self->pid = getpid ();
 #ifdef __linux__
     self->tid = syscall (__NR_gettid, 0);
@@ -247,66 +427,91 @@ sysprof_collector_get (void)
     self->tid = self->pid;
 #endif
 
-    if (g_getenv ("SYSPROF_CONTROL_FD") != NULL)
+    pthread_mutex_lock (&control_fd_lock);
+
+    if (getenv ("SYSPROF_CONTROL_FD") != NULL)
       self->buffer = request_writer ();
 
-    if (self->is_shared)
-      shared_collector = self;
-    else
-      g_private_replace (&collector_key, self);
+    /* Update the stored collector */
+    old_collector = pthread_getspecific (collector_key);
 
-    G_UNLOCK (control_fd);
+    if (self->is_shared)
+      {
+        if (pthread_setspecific (collector_key, COLLECTOR_INVALID) != 0)
+          goto fail;
+        sysprof_collector_free (old_collector);
+        shared_collector = self;
+      }
+    else
+      {
+        if (pthread_setspecific (collector_key, self) != 0)
+          goto fail;
+        sysprof_collector_free (old_collector);
+      }
+
+    pthread_mutex_unlock (&control_fd_lock);
 
     return self;
+
+fail:
+    pthread_mutex_unlock (&control_fd_lock);
+    sysprof_collector_free (self);
+
+    return COLLECTOR_INVALID;
   }
+}
+
+static void
+collector_init_cb (void)
+{
+  if (SYSPROF_UNLIKELY (pthread_key_create (&collector_key, sysprof_collector_free) != 0))
+    abort ();
+  if (SYSPROF_UNLIKELY (pthread_key_create (&single_trace_key, NULL) != 0))
+    abort ();
+
+  sysprof_clock_init ();
 }
 
 void
 sysprof_collector_init (void)
 {
-  static gsize once_init;
-
-  if (g_once_init_enter (&once_init))
-    {
-      sysprof_clock_init ();
-      (void)sysprof_collector_get ();
-      g_once_init_leave (&once_init, TRUE);
-    }
+  if SYSPROF_UNLIKELY (pthread_once (&collector_init, collector_init_cb) != 0)
+    abort ();
 }
 
 #define COLLECTOR_BEGIN                                           \
-  G_STMT_START {                                                  \
+  do {                                                  \
     const SysprofCollector *collector = sysprof_collector_get (); \
-    if G_LIKELY (collector->buffer)                               \
+    if SYSPROF_LIKELY (collector->buffer)                         \
       {                                                           \
-        if G_UNLIKELY (collector->is_shared)                      \
-          G_LOCK (control_fd);                                    \
+        if SYSPROF_UNLIKELY (collector->is_shared)                \
+          pthread_mutex_lock (&control_fd_lock);                  \
                                                                   \
         {
 
 #define COLLECTOR_END                                             \
         }                                                         \
                                                                   \
-        if G_UNLIKELY (collector->is_shared)                      \
-          G_UNLOCK (control_fd);                                  \
+        if SYSPROF_UNLIKELY (collector->is_shared)                \
+          pthread_mutex_unlock (&control_fd_lock);                \
       }                                                           \
-  } G_STMT_END
+  } while (0)
 
 void
 sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
-                            gint64                  alloc_size,
+                            int64_t                 alloc_size,
                             SysprofBacktraceFunc    backtrace_func,
-                            gpointer                backtrace_data)
+                            void                   *backtrace_data)
 {
   COLLECTOR_BEGIN {
     SysprofCaptureAllocation *ev;
-    gsize len;
+    size_t len;
 
     len = sizeof *ev + (sizeof (SysprofCaptureAllocation) * MAX_UNWIND_DEPTH);
 
     if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
       {
-        gint n_addrs;
+        int n_addrs;
 
         /* First take a backtrace, so that backtrace_func() can overwrite
          * a little bit of data *BEFORE* ev->addrs as stratch space. This
@@ -321,7 +526,7 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
         else
           n_addrs = 0;
 
-        ev->n_addrs = CLAMP (n_addrs, 0, MAX_UNWIND_DEPTH);
+        ev->n_addrs = ((n_addrs < 0) ? 0 : (n_addrs > MAX_UNWIND_DEPTH) ? MAX_UNWIND_DEPTH : n_addrs);
         ev->frame.len = sizeof *ev + sizeof (SysprofCaptureAddress) * ev->n_addrs;
         ev->frame.type = SYSPROF_CAPTURE_FRAME_ALLOCATION;
         ev->frame.cpu = _do_getcpu ();
@@ -339,18 +544,18 @@ sysprof_collector_allocate (SysprofCaptureAddress   alloc_addr,
 }
 
 void
-sysprof_collector_sample (SysprofBacktraceFunc backtrace_func,
-                          gpointer             backtrace_data)
+sysprof_collector_sample (SysprofBacktraceFunc  backtrace_func,
+                          void                 *backtrace_data)
 {
   COLLECTOR_BEGIN {
     SysprofCaptureSample *ev;
-    gsize len;
+    size_t len;
 
     len = sizeof *ev + (sizeof (SysprofCaptureSample) * MAX_UNWIND_DEPTH);
 
     if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
       {
-        gint n_addrs;
+        int n_addrs;
 
         /* See comment from sysprof_collector_allocate(). */
         if (backtrace_func)
@@ -358,7 +563,7 @@ sysprof_collector_sample (SysprofBacktraceFunc backtrace_func,
         else
           n_addrs = 0;
 
-        ev->n_addrs = CLAMP (n_addrs, 0, MAX_UNWIND_DEPTH);
+        ev->n_addrs = ((n_addrs < 0) ? 0 : (n_addrs > MAX_UNWIND_DEPTH) ? MAX_UNWIND_DEPTH : n_addrs);
         ev->frame.len = sizeof *ev + sizeof (SysprofCaptureAddress) * ev->n_addrs;
         ev->frame.type = SYSPROF_CAPTURE_FRAME_SAMPLE;
         ev->frame.cpu = _do_getcpu ();
@@ -374,16 +579,16 @@ sysprof_collector_sample (SysprofBacktraceFunc backtrace_func,
 }
 
 void
-sysprof_collector_mark (gint64       time,
-                        gint64       duration,
-                        const gchar *group,
-                        const gchar *mark,
-                        const gchar *message)
+sysprof_collector_mark (int64_t     time,
+                        int64_t     duration,
+                        const char *group,
+                        const char *mark,
+                        const char *message)
 {
   COLLECTOR_BEGIN {
     SysprofCaptureMark *ev;
-    gsize len;
-    gsize sl;
+    size_t len;
+    size_t sl;
 
     if (group == NULL)
       group = "";
@@ -405,8 +610,8 @@ sysprof_collector_mark (gint64       time,
         ev->frame.pid = collector->pid;
         ev->frame.time = time;
         ev->duration = duration;
-        g_strlcpy (ev->group, group, sizeof ev->group);
-        g_strlcpy (ev->name, mark, sizeof ev->name);
+        _sysprof_strlcpy (ev->group, group, sizeof ev->group);
+        _sysprof_strlcpy (ev->name, mark, sizeof ev->name);
         memcpy (ev->message, message, sl);
         ev->message[sl] = 0;
 
@@ -417,14 +622,14 @@ sysprof_collector_mark (gint64       time,
 }
 
 void
-sysprof_collector_log (GLogLevelFlags  severity,
-                       const gchar    *domain,
-                       const gchar    *message)
+sysprof_collector_log (int             severity,
+                       const char     *domain,
+                       const char     *message)
 {
   COLLECTOR_BEGIN {
     SysprofCaptureLog *ev;
-    gsize len;
-    gsize sl;
+    size_t len;
+    size_t sl;
 
     if (domain == NULL)
       domain = "";
@@ -445,7 +650,7 @@ sysprof_collector_log (GLogLevelFlags  severity,
         ev->severity = severity & 0xFFFF;
         ev->padding1 = 0;
         ev->padding2 = 0;
-        g_strlcpy (ev->domain, domain, sizeof ev->domain);
+        _sysprof_strlcpy (ev->domain, domain, sizeof ev->domain);
         memcpy (ev->message, message, sl);
         ev->message[sl] = 0;
 
@@ -456,20 +661,20 @@ sysprof_collector_log (GLogLevelFlags  severity,
 }
 
 void
-sysprof_collector_log_printf (GLogLevelFlags  severity,
-                              const gchar    *domain,
-                              const gchar    *format,
+sysprof_collector_log_printf (int             severity,
+                              const char     *domain,
+                              const char     *format,
                               ...)
 {
   COLLECTOR_BEGIN {
-    g_autofree gchar *formatted = NULL;
+    char formatted[2048];
     SysprofCaptureLog *ev;
     va_list args;
-    gsize len;
-    gsize sl;
+    size_t len;
+    size_t sl;
 
     va_start (args, format);
-    formatted = g_strdup_vprintf (format, args);
+    vsnprintf (formatted, sizeof (formatted), format, args);
     va_end (args);
 
     if (domain == NULL)
@@ -488,7 +693,7 @@ sysprof_collector_log_printf (GLogLevelFlags  severity,
         ev->severity = severity & 0xFFFF;
         ev->padding1 = 0;
         ev->padding2 = 0;
-        g_strlcpy (ev->domain, domain, sizeof ev->domain);
+        _sysprof_strlcpy (ev->domain, domain, sizeof ev->domain);
         memcpy (ev->message, formatted, sl);
         ev->message[sl] = 0;
 

@@ -33,6 +33,7 @@
 #include <sys/types.h>
 
 #include "mapped-ring-buffer.h"
+#include "mapped-ring-buffer-source.h"
 
 #include "sysprof-control-source.h"
 
@@ -122,10 +123,10 @@ sysprof_control_source_init (SysprofControlSource *self)
   g_array_set_clear_func (self->source_ids, remove_source_id);
 }
 
-static gboolean
-event_frame_cb (gconstpointer  data,
-                gsize         *length,
-                gpointer       user_data)
+static bool
+event_frame_cb (const void *data,
+                size_t     *length,
+                void       *user_data)
 {
   const SysprofCaptureFrame *fr = data;
   RingData *rd = user_data;

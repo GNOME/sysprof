@@ -135,7 +135,7 @@ update_cpu_info_cb (GObject      *object,
     gtk_label_set_label (self->cpu_label, str);
 }
 
-static gboolean
+static bool
 cpu_info_cb (const SysprofCaptureFrame *frame,
              gpointer                   user_data)
 {

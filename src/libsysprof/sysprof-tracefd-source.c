@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <sysprof-capture.h>
 
+#include "sysprof-capture-autocleanups.h"
 #include "sysprof-platform.h"
 #include "sysprof-tracefd-source.h"
 
@@ -258,8 +259,9 @@ sysprof_tracefd_source_stop (SysprofSource *source)
     {
       g_autoptr(SysprofCaptureReader) reader = NULL;
 
-      if ((reader = sysprof_capture_reader_new_from_fd (priv->tracefd, 0)))
-        sysprof_capture_writer_cat (priv->writer, reader, NULL);
+      /* FIXME: Error handling is ignored here */
+      if ((reader = sysprof_capture_reader_new_from_fd (priv->tracefd)))
+        sysprof_capture_writer_cat (priv->writer, reader);
 
       priv->tracefd = -1;
     }

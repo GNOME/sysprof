@@ -56,13 +56,23 @@
 
 #pragma once
 
-#include <glib.h>
-
 #ifdef __linux__
 # include <sys/sendfile.h>
 #endif
 
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
+
+static inline void *
+sysprof_malloc0 (size_t size)
+{
+  void *ptr = malloc (size);
+  if (ptr == NULL)
+    return NULL;
+  memset (ptr, 0, size);
+  return ptr;
+}
 
 #ifdef __linux__
 # define _sysprof_getpagesize()     getpagesize()
@@ -84,10 +94,17 @@ ssize_t _sysprof_pwrite      (int         fd,
 ssize_t _sysprof_write       (int         fd,
                               const void *buf,
                               size_t      count);
-gint32  _sysprof_getpid      (void);
+int32_t _sysprof_getpid      (void);
 ssize_t _sysprof_sendfile    (int         out_fd,
                               int         in_fd,
                               off_t      *offset,
                               size_t      count);
+#endif
 
+#ifdef HAVE_STRLCPY
+# define _sysprof_strlcpy(d,s,ds) strlcpy(d,s,ds)
+#else
+size_t  _sysprof_strlcpy     (char       *dest,
+                              const char *src,
+                              size_t      dest_size);
 #endif

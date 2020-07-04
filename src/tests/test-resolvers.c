@@ -1,3 +1,4 @@
+#include <glib.h>
 #include <sysprof.h>
 
 static const SysprofCaptureSample *
@@ -42,8 +43,12 @@ main (gint  argc,
   g_ptr_array_add (resolvers, sysprof_jitmap_symbol_resolver_new ());
   g_ptr_array_add (resolvers, sysprof_kernel_symbol_resolver_new ());
 
-  if (!(reader = sysprof_capture_reader_new (filename, &error)))
-    g_error ("%s", error->message);
+  if (!(reader = sysprof_capture_reader_new (filename)))
+    {
+      int errsv = errno;
+      g_error ("%s", g_strerror (errsv));
+      return 1;
+    }
 
   for (guint r = 0; r < resolvers->len; r++)
     {

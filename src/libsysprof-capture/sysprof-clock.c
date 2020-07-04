@@ -54,18 +54,20 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#define G_LOG_DOMAIN "sysprof-clock"
-
 #include "config.h"
 
-#include "sysprof-clock.h"
+#include <assert.h>
+#include <stdbool.h>
 
-gint sysprof_clock = -1;
+#include "sysprof-clock.h"
+#include "sysprof-macros-internal.h"
+
+int sysprof_clock = -1;
 
 void
 sysprof_clock_init (void)
 {
-  static const gint clock_ids[] = {
+  static const int clock_ids[] = {
     CLOCK_MONOTONIC,
     CLOCK_MONOTONIC_RAW,
 #ifdef __linux__
@@ -78,7 +80,7 @@ sysprof_clock_init (void)
   if (sysprof_clock != -1)
     return;
 
-  for (guint i = 0; i < G_N_ELEMENTS (clock_ids); i++)
+  for (unsigned int i = 0; i < SYSPROF_N_ELEMENTS (clock_ids); i++)
     {
       struct timespec ts;
       int clock_id = clock_ids [i];
@@ -90,5 +92,5 @@ sysprof_clock_init (void)
         }
     }
 
-  g_assert_not_reached ();
+  sysprof_assert_not_reached ();
 }

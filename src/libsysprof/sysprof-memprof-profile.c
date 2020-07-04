@@ -24,6 +24,7 @@
 
 #include <sysprof-capture.h>
 
+#include "sysprof-capture-autocleanups.h"
 #include "sysprof-capture-symbol-resolver.h"
 #include "sysprof-elf-symbol-resolver.h"
 #include "sysprof-kernel-symbol-resolver.h"
@@ -250,9 +251,9 @@ create_cursor (SysprofCaptureReader *reader)
   return cursor;
 }
 
-static gboolean
+static bool
 all_allocs_foreach_cb (const SysprofCaptureFrame *frame,
-                       gpointer                   user_data)
+                       void                      *user_data)
 {
   Generate *g = user_data;
 
@@ -272,12 +273,12 @@ all_allocs_foreach_cb (const SysprofCaptureFrame *frame,
                                (gchar *)g_string_chunk_insert_const (g->symbols, cmdline));
         }
 
-      return TRUE;
+      return true;
     }
 
   /* Short-circuit if we don't care about this frame */
   if (!sysprof_selection_contains (g->selection, frame->time))
-    return TRUE;
+    return true;
 
   if (frame->type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
     {
@@ -360,7 +361,7 @@ all_allocs_foreach_cb (const SysprofCaptureFrame *frame,
         }
     }
 
-  return TRUE;
+  return true;
 }
 
 static gint

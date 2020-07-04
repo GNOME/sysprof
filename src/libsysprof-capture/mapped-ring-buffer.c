@@ -18,21 +18,23 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#define G_LOG_DOMAIN "mapped-ring-buffer"
-
 #include "config.h"
 
+#include <assert.h>
+#include <stdint.h>
+#include <stdio.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 #include "sysprof-capture-util-private.h"
+#include "sysprof-macros-internal.h"
 #include "sysprof-platform.h"
 
 #include "mapped-ring-buffer.h"
 
 #define DEFAULT_N_PAGES 32
-#define BUFFER_MAX_SIZE ((G_MAXUINT32/2)-_sysprof_getpagesize())
+#define BUFFER_MAX_SIZE ((UINT32_MAX/2)-_sysprof_getpagesize())
 
 enum {
   MODE_READER    = 1,
@@ -47,13 +49,13 @@ enum {
  */
 typedef struct _MappedRingHeader
 {
-  guint32 head;
-  guint32 tail;
-  guint32 offset;
-  guint32 size;
+  uint32_t head;
+  uint32_t tail;
+  uint32_t offset;
+  uint32_t size;
 } MappedRingHeader;
 
-G_STATIC_ASSERT (sizeof (MappedRingHeader) == 16);
+static_assert (sizeof (MappedRingHeader) == 16, "MappedRingHeader changed size");
 
 /*
  * MappedRingBuffer is used to wrap both the reader and writer
@@ -61,12 +63,12 @@ G_STATIC_ASSERT (sizeof (MappedRingHeader) == 16);
  */
 struct _MappedRingBuffer
 {
-  volatile gint ref_count;
+  volatile int  ref_count;
   int           mode;
   int           fd;
   void         *map;
-  gsize         body_size;
-  gsize         page_size;
+  size_t        body_size;
+  size_t        page_size;
 };
 
 static inline MappedRingHeader *
@@ -75,19 +77,19 @@ get_header (MappedRingBuffer *self)
   return (MappedRingHeader *)self->map;
 }
 
-static inline gpointer
+static inline void *
 get_body_at_pos (MappedRingBuffer *self,
-                 gsize             pos)
+                 size_t            pos)
 {
-  g_assert (pos < (self->body_size + self->body_size));
+  assert (pos < (self->body_size + self->body_size));
 
-  return (guint8 *)self->map + self->page_size + pos;
+  return (uint8_t *)self->map + self->page_size + pos;
 }
 
-static gpointer
-map_head_and_body_twice (int   fd,
-                         gsize head_size,
-                         gsize body_size)
+static void *
+map_head_and_body_twice (int    fd,
+                         size_t head_size,
+                         size_t body_size)
 {
   void *map;
   void *second;
@@ -118,7 +120,7 @@ map_head_and_body_twice (int   fd,
    * By mmap()'ing over the old region, the previous region is automatically
    * munmap()'d for us.
    */
-  second = mmap ((guint8 *)map + head_size + body_size,
+  second = mmap ((uint8_t *)map + head_size + body_size,
                  body_size,
                  PROT_READ | PROT_WRITE,
                  MAP_SHARED | MAP_FIXED,
@@ -131,7 +133,7 @@ map_head_and_body_twice (int   fd,
       return NULL;
     }
 
-  g_assert (second == (gpointer)((guint8 *)map + head_size + body_size));
+  assert (second == (void *)((uint8_t *)map + head_size + body_size));
 
   return map;
 }
@@ -157,16 +159,16 @@ map_head_and_body_twice (int   fd,
  * Returns: (transfer full): a #MappedRingBuffer
  */
 MappedRingBuffer *
-mapped_ring_buffer_new_reader (gsize buffer_size)
+mapped_ring_buffer_new_reader (size_t buffer_size)
 {
   MappedRingBuffer *self;
   MappedRingHeader *header;
-  gsize page_size;
+  size_t page_size;
   void *map;
   int fd;
 
-  g_return_val_if_fail ((buffer_size % _sysprof_getpagesize ()) == 0, NULL);
-  g_return_val_if_fail (buffer_size < BUFFER_MAX_SIZE, NULL);
+  assert ((buffer_size % _sysprof_getpagesize ()) == 0);
+  assert (buffer_size < BUFFER_MAX_SIZE);
 
   page_size = _sysprof_getpagesize ();
 
@@ -200,7 +202,10 @@ mapped_ring_buffer_new_reader (gsize buffer_size)
   header->offset = page_size;
   header->size = buffer_size - page_size;
 
-  self = g_slice_new0 (MappedRingBuffer);
+  self = sysprof_malloc0 (sizeof (MappedRingBuffer));
+  if (self == NULL)
+    return NULL;
+
   self->ref_count = 1;
   self->mode = MODE_READER;
   self->body_size = buffer_size - page_size;
@@ -208,11 +213,11 @@ mapped_ring_buffer_new_reader (gsize buffer_size)
   self->map = map;
   self->page_size = page_size;
 
-  return g_steal_pointer (&self);
+  return sysprof_steal_pointer (&self);
 }
 
 MappedRingBuffer *
-mapped_ring_buffer_new_readwrite (gsize buffer_size)
+mapped_ring_buffer_new_readwrite (size_t buffer_size)
 {
   MappedRingBuffer *self;
 
@@ -234,50 +239,50 @@ mapped_ring_buffer_new_readwrite (gsize buffer_size)
  * Returns: (transfer full) (nullable): a new #MappedRingBuffer
  */
 MappedRingBuffer *
-mapped_ring_buffer_new_writer (gint fd)
+mapped_ring_buffer_new_writer (int fd)
 {
   MappedRingBuffer *self;
   MappedRingHeader *header;
-  gssize buffer_size;
-  gsize page_size;
+  ssize_t buffer_size;
+  size_t page_size;
   void *map;
 
-  g_return_val_if_fail (fd > -1, NULL);
+  assert (fd > -1);
 
   page_size = _sysprof_getpagesize ();
 
   /* Make our own copy of the FD */
   if ((fd = dup (fd)) < 0)
     {
-      g_printerr ("Failed to dup() fd, cannot continue\n");
+      fprintf (stderr, "Failed to dup() fd, cannot continue\n");
       return NULL;
     }
 
   /* Seek to end to get buffer size */
   if ((buffer_size = lseek (fd, 0, SEEK_END)) < 0)
     {
-      g_printerr ("Failed to seek to end of file. Cannot determine buffer size.\n");
+      fprintf (stderr, "Failed to seek to end of file. Cannot determine buffer size.\n");
       return NULL;
     }
 
   /* Ensure non-zero sized buffer */
   if (buffer_size < (page_size + page_size))
     {
-      g_printerr ("Buffer is too small, cannot continue.\n");
+      fprintf (stderr, "Buffer is too small, cannot continue.\n");
       return NULL;
     }
 
   /* Make sure it is less than our max size */
   if ((buffer_size - page_size) > BUFFER_MAX_SIZE)
     {
-      g_printerr ("Buffer is too large, cannot continue.\n");
+      fprintf (stderr, "Buffer is too large, cannot continue.\n");
       return NULL;
     }
 
   /* Ensure we have page-aligned buffer */
   if ((buffer_size % page_size) != 0)
     {
-      g_printerr ("Invalid buffer size, not page aligned.\n");
+      fprintf (stderr, "Invalid buffer size, not page aligned.\n");
       return NULL;
     }
 
@@ -298,7 +303,14 @@ mapped_ring_buffer_new_writer (gint fd)
       return NULL;
     }
 
-  self = g_slice_new0 (MappedRingBuffer);
+  self = sysprof_malloc0 (sizeof (MappedRingBuffer));
+  if (self == NULL)
+    {
+      munmap (map, page_size + ((buffer_size - page_size) * 2));
+      close (fd);
+      return NULL;
+    }
+
   self->ref_count = 1;
   self->mode = MODE_WRITER;
   self->fd = fd;
@@ -306,7 +318,7 @@ mapped_ring_buffer_new_writer (gint fd)
   self->map = map;
   self->page_size = page_size;
 
-  return g_steal_pointer (&self);
+  return sysprof_steal_pointer (&self);
 }
 
 static void
@@ -328,28 +340,28 @@ mapped_ring_buffer_finalize (MappedRingBuffer *self)
 void
 mapped_ring_buffer_unref (MappedRingBuffer *self)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (self->ref_count > 0);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
-  if (g_atomic_int_dec_and_test (&self->ref_count))
+  if (__atomic_fetch_sub (&self->ref_count, 1, __ATOMIC_SEQ_CST) == 1)
     mapped_ring_buffer_finalize (self);
 }
 
 MappedRingBuffer *
 mapped_ring_buffer_ref (MappedRingBuffer *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (self->ref_count > 0, NULL);
+  assert (self != NULL);
+  assert (self->ref_count > 0);
 
-  g_atomic_int_inc (&self->ref_count);
+  __atomic_fetch_add (&self->ref_count, 1, __ATOMIC_SEQ_CST);
 
   return self;
 }
 
-gint
+int
 mapped_ring_buffer_get_fd (MappedRingBuffer *self)
 {
-  g_return_val_if_fail (self != NULL, -1);
+  assert (self != NULL);
 
   return self->fd;
 }
@@ -377,23 +389,23 @@ mapped_ring_buffer_get_fd (MappedRingBuffer *self)
  * Returns: (nullable): a pointer to data of at least @length bytes
  *   or %NULL if there is not enough space.
  */
-gpointer
+void *
 mapped_ring_buffer_allocate (MappedRingBuffer *self,
-                             gsize             length)
+                             size_t            length)
 {
   MappedRingHeader *header;
-  gsize headpos;
-  gsize tailpos;
+  uint32_t headpos;
+  uint32_t tailpos;
 
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (self->mode & MODE_WRITER, NULL);
-  g_return_val_if_fail (length > 0, NULL);
-  g_return_val_if_fail (length < self->body_size, NULL);
-  g_return_val_if_fail ((length & 0x7) == 0, NULL);
+  assert (self != NULL);
+  assert (self->mode & MODE_WRITER);
+  assert (length > 0);
+  assert (length < self->body_size);
+  assert ((length & 0x7) == 0);
 
   header = get_header (self);
-  headpos = g_atomic_int_get (&header->head);
-  tailpos = g_atomic_int_get (&header->tail);
+  __atomic_load (&header->head, &headpos, __ATOMIC_SEQ_CST);
+  __atomic_load (&header->tail, &tailpos, __ATOMIC_SEQ_CST);
 
   /* We need to check that there is enough space for @length at the
    * current position in the write buffer. We cannot fully catch up
@@ -436,16 +448,16 @@ mapped_ring_buffer_allocate (MappedRingBuffer *self,
  */
 void
 mapped_ring_buffer_advance (MappedRingBuffer *self,
-                            gsize             length)
+                            size_t            length)
 {
   MappedRingHeader *header;
-  guint32 tail;
+  uint32_t tail;
 
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (self->mode & MODE_WRITER);
-  g_return_if_fail (length > 0);
-  g_return_if_fail (length < self->body_size);
-  g_return_if_fail ((length & 0x7) == 0);
+  assert (self != NULL);
+  assert (self->mode & MODE_WRITER);
+  assert (length > 0);
+  assert (length < self->body_size);
+  assert ((length & 0x7) == 0);
 
   header = get_header (self);
   tail = header->tail;
@@ -460,7 +472,7 @@ mapped_ring_buffer_advance (MappedRingBuffer *self,
    * we just update the position as the only way the head could have
    * moved is forward.
    */
-  g_atomic_int_set (&header->tail, tail);
+  __atomic_store (&header->tail, &tail, __ATOMIC_SEQ_CST);
 }
 
 /**
@@ -477,28 +489,28 @@ mapped_ring_buffer_advance (MappedRingBuffer *self,
  * Returns: %TRUE if the buffer was drained, %FALSE if @callback prematurely
  *   returned while draining.
  */
-gboolean
+bool
 mapped_ring_buffer_drain (MappedRingBuffer         *self,
                           MappedRingBufferCallback  callback,
-                          gpointer                  user_data)
+                          void                     *user_data)
 {
   MappedRingHeader *header;
-  gsize headpos;
-  gsize tailpos;
+  uint32_t headpos;
+  uint32_t tailpos;
 
-  g_return_val_if_fail (self != NULL, FALSE);
-  g_return_val_if_fail (self->mode & MODE_READER, FALSE);
-  g_return_val_if_fail (callback != NULL, FALSE);
+  assert (self != NULL);
+  assert (self->mode & MODE_READER);
+  assert (callback != NULL);
 
   header = get_header (self);
-  headpos = g_atomic_int_get (&header->head);
-  tailpos = g_atomic_int_get (&header->tail);
+  __atomic_load (&header->head, &headpos, __ATOMIC_SEQ_CST);
+  __atomic_load (&header->tail, &tailpos, __ATOMIC_SEQ_CST);
 
-  g_assert (headpos < self->body_size);
-  g_assert (tailpos < self->body_size);
+  assert (headpos < self->body_size);
+  assert (tailpos < self->body_size);
 
   if (headpos == tailpos)
-    return TRUE;
+    return true;
 
   /* If head needs to wrap around to get to tail, we can just rely on
    * our double mapping instead actually manually wrapping/copying data.
@@ -506,131 +518,56 @@ mapped_ring_buffer_drain (MappedRingBuffer         *self,
   if (tailpos < headpos)
     tailpos += self->body_size;
 
-  g_assert (headpos < tailpos);
+  assert (headpos < tailpos);
 
   while (headpos < tailpos)
     {
-      gconstpointer data = get_body_at_pos (self, headpos);
-      gsize len = tailpos - headpos;
+      const void *data = get_body_at_pos (self, headpos);
+      size_t len = tailpos - headpos;
+      uint32_t new_headpos;
 
       if (!callback (data, &len, user_data))
-        return FALSE;
+        return false;
 
       if (len > (tailpos - headpos))
-        return FALSE;
+        return false;
 
       headpos += len;
 
       if (headpos >= self->body_size)
-        g_atomic_int_set (&header->head, headpos - self->body_size);
+        new_headpos = headpos - self->body_size;
       else
-        g_atomic_int_set (&header->head, headpos);
+        new_headpos = headpos;
+
+      __atomic_store (&header->head, &new_headpos, __ATOMIC_SEQ_CST);
     }
 
-  return TRUE;
+  return true;
 }
 
-typedef struct _MappedRingSource
+/**
+ * mapped_ring_buffer_is_empty:
+ * @self: a #MappedRingBuffer
+ *
+ * Checks whether the ring buffer is currently empty.
+ *
+ * This should only be called by a reader created with
+ * mapped_ring_buffer_new_reader().
+ *
+ * Returns: %TRUE if the buffer is empty, %FALSE otherwise
+ */
+bool
+mapped_ring_buffer_is_empty (MappedRingBuffer *self)
 {
-  GSource           source;
-  MappedRingBuffer *self;
-} MappedRingSource;
-
-static gboolean
-mapped_ring_source_dispatch (GSource     *source,
-                             GSourceFunc  callback,
-                             gpointer     user_data)
-{
-  MappedRingSource *real_source = (MappedRingSource *)source;
-
-  g_assert (source != NULL);
-
-  return mapped_ring_buffer_drain (real_source->self,
-                                   (MappedRingBufferCallback)callback,
-                                   user_data);
-}
-
-static void
-mapped_ring_source_finalize (GSource *source)
-{
-  MappedRingSource *real_source = (MappedRingSource *)source;
-
-  if (real_source != NULL)
-    g_clear_pointer (&real_source->self, mapped_ring_buffer_unref);
-}
-
-static gboolean
-mapped_ring_source_check (GSource *source)
-{
-  MappedRingSource *real_source = (MappedRingSource *)source;
   MappedRingHeader *header;
+  uint32_t headpos, tailpos;
 
-  g_assert (real_source != NULL);
-  g_assert (real_source->self != NULL);
+  header = get_header (self);
 
-  header = get_header (real_source->self);
+  __atomic_load (&header->head, &headpos, __ATOMIC_SEQ_CST);
+  __atomic_load (&header->tail, &tailpos, __ATOMIC_SEQ_CST);
 
-  if (g_atomic_int_get (&header->head) != g_atomic_int_get (&header->tail))
-    return TRUE;
-
-  return FALSE;
-}
-
-static gboolean
-mapped_ring_source_prepare (GSource *source,
-                            gint    *timeout_)
-{
-  MappedRingSource *real_source = (MappedRingSource *)source;
-  MappedRingHeader *header;
-
-  g_assert (real_source != NULL);
-  g_assert (real_source->self != NULL);
-
-  header = get_header (real_source->self);
-
-  if (g_atomic_int_get (&header->head) != g_atomic_int_get (&header->tail))
-    return TRUE;
-
-  *timeout_ = 5;
-
-  return FALSE;
-}
-
-static GSourceFuncs mapped_ring_source_funcs = {
-  .prepare  = mapped_ring_source_prepare,
-  .check    = mapped_ring_source_check,
-  .dispatch = mapped_ring_source_dispatch,
-  .finalize = mapped_ring_source_finalize,
-};
-
-guint
-mapped_ring_buffer_create_source_full (MappedRingBuffer         *self,
-                                       MappedRingBufferCallback  source_func,
-                                       gpointer                  user_data,
-                                       GDestroyNotify            destroy)
-{
-  MappedRingSource *source;
-  guint ret;
-
-  g_return_val_if_fail (self != NULL, 0);
-  g_return_val_if_fail (source_func != NULL, 0);
-
-  source = (MappedRingSource *)g_source_new (&mapped_ring_source_funcs, sizeof (MappedRingSource));
-  source->self = mapped_ring_buffer_ref (self);
-  g_source_set_callback ((GSource *)source, (GSourceFunc)source_func, user_data, destroy);
-  g_source_set_name ((GSource *)source, "MappedRingSource");
-  ret = g_source_attach ((GSource *)source, g_main_context_default ());
-  g_source_unref ((GSource *)source);
-
-  return ret;
-}
-
-guint
-mapped_ring_buffer_create_source (MappedRingBuffer         *self,
-                                  MappedRingBufferCallback  source_func,
-                                  gpointer                  user_data)
-{
-  return mapped_ring_buffer_create_source_full (self, source_func, user_data, NULL);
+  return headpos == tailpos;
 }
 
 /**
@@ -648,7 +585,7 @@ mapped_ring_buffer_clear (MappedRingBuffer *self)
 {
   MappedRingHeader *header;
 
-  g_return_if_fail (self != NULL);
+  assert (self != NULL);
 
   header = get_header (self);
   header->head = 0;

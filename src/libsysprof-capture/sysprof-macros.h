@@ -61,6 +61,15 @@
 
 #include <limits.h>
 
+#ifdef __GNUC__
+#define SYSPROF_GNUC_CHECK_VERSION(major, minor) \
+    ((__GNUC__ > (major)) || \
+     ((__GNUC__ == (major)) && \
+      (__GNUC_MINOR__ >= (minor))))
+#else
+#define SYSPROF_GNUC_CHECK_VERSION(major, minor) 0
+#endif
+
 #if INT_MAX == LONG_MAX
 #define SYSPROF_INT64_CONSTANT(x) x##ULL
 #define SYSPROF_UINT64_CONSTANT(x) x##LL

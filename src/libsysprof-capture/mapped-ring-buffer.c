@@ -55,7 +55,7 @@ typedef struct _MappedRingHeader
   uint32_t size;
 } MappedRingHeader;
 
-static_assert (sizeof (MappedRingHeader) == 16, "MappedRingHeader changed size");
+SYSPROF_STATIC_ASSERT (sizeof (MappedRingHeader) == 16, "MappedRingHeader changed size");
 
 /*
  * MappedRingBuffer is used to wrap both the reader and writer

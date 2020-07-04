@@ -70,6 +70,12 @@
 #define SYSPROF_GNUC_CHECK_VERSION(major, minor) 0
 #endif
 
+#if SYSPROF_GNUC_CHECK_VERSION(4, 6)
+# define SYSPROF_STATIC_ASSERT(expr, msg) _Static_assert(expr, msg)
+#else
+# define SYSPROF_STATIC_ASSERT(expr, msg) ((void) sizeof (char[(expr) ? 1 : -1]))
+#endif
+
 #if INT_MAX == LONG_MAX
 #define SYSPROF_INT64_CONSTANT(x) x##ULL
 #define SYSPROF_UINT64_CONSTANT(x) x##LL

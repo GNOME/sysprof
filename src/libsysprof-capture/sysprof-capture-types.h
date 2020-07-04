@@ -80,8 +80,7 @@ SYSPROF_BEGIN_DECLS
 
 #define SYSPROF_CAPTURE_ADDRESS_FORMAT "0x%016" PRIx64
 
-static_assert (sizeof (void *) == sizeof (uintptr_t),
-               "UINTPTR_MAX can’t be used to determine sizeof(void*) at compile time");
+SYSPROF_STATIC_ASSERT (sizeof (void *) == sizeof (uintptr_t), "UINTPTR_MAX can’t be used to determine sizeof(void*) at compile time");
 #if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFFu
 # define SYSPROF_CAPTURE_JITMAP_MARK    SYSPROF_UINT64_CONSTANT(0xE000000000000000)
 #elif UINTPTR_MAX == 0xFFFFFFFF
@@ -335,27 +334,27 @@ typedef struct
 } SysprofCaptureAllocation
 SYSPROF_ALIGNED_END(1);
 
-static_assert (sizeof (SysprofCaptureFileHeader) == 256, "SysprofCaptureFileHeader changed size");
-static_assert (sizeof (SysprofCaptureFrame) == 24, "SysprofCaptureFrame changed size");
-static_assert (sizeof (SysprofCaptureMap) == 56, "SysprofCaptureMap changed size");
-static_assert (sizeof (SysprofCaptureJitmap) == 28, "SysprofCaptureJitmap changed size");
-static_assert (sizeof (SysprofCaptureProcess) == 24, "SysprofCaptureProcess changed size");
-static_assert (sizeof (SysprofCaptureSample) == 32, "SysprofCaptureSample changed size");
-static_assert (sizeof (SysprofCaptureFork) == 28, "SysprofCaptureFork changed size");
-static_assert (sizeof (SysprofCaptureExit) == 24, "SysprofCaptureExit changed size");
-static_assert (sizeof (SysprofCaptureTimestamp) == 24, "SysprofCaptureTimestamp changed size");
-static_assert (sizeof (SysprofCaptureCounter) == 128, "SysprofCaptureCounter changed size");
-static_assert (sizeof (SysprofCaptureCounterValues) == 96, "SysprofCaptureCounterValues changed size");
-static_assert (sizeof (SysprofCaptureCounterDefine) == 32, "SysprofCaptureCounterDefine changed size");
-static_assert (sizeof (SysprofCaptureCounterSet) == 32, "SysprofCaptureCounterSet changed size");
-static_assert (sizeof (SysprofCaptureMark) == 96, "SysprofCaptureMark changed size");
-static_assert (sizeof (SysprofCaptureMetadata) == 64, "SysprofCaptureMetadata changed size");
-static_assert (sizeof (SysprofCaptureLog) == 64, "SysprofCaptureLog changed size");
-static_assert (sizeof (SysprofCaptureFileChunk) == 284, "SysprofCaptureFileChunk changed size");
-static_assert (sizeof (SysprofCaptureAllocation) == 48, "SysprofCaptureAllocation changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFileHeader) == 256, "SysprofCaptureFileHeader changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFrame) == 24, "SysprofCaptureFrame changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureMap) == 56, "SysprofCaptureMap changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureJitmap) == 28, "SysprofCaptureJitmap changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureProcess) == 24, "SysprofCaptureProcess changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureSample) == 32, "SysprofCaptureSample changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFork) == 28, "SysprofCaptureFork changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureExit) == 24, "SysprofCaptureExit changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureTimestamp) == 24, "SysprofCaptureTimestamp changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureCounter) == 128, "SysprofCaptureCounter changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureCounterValues) == 96, "SysprofCaptureCounterValues changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureCounterDefine) == 32, "SysprofCaptureCounterDefine changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureCounterSet) == 32, "SysprofCaptureCounterSet changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureMark) == 96, "SysprofCaptureMark changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureMetadata) == 64, "SysprofCaptureMetadata changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureLog) == 64, "SysprofCaptureLog changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFileChunk) == 284, "SysprofCaptureFileChunk changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureAllocation) == 48, "SysprofCaptureAllocation changed size");
 
-static_assert ((offsetof (SysprofCaptureAllocation, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureAllocation.addrs is not aligned");
-static_assert ((offsetof (SysprofCaptureSample, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureSample.addrs is not aligned");
+SYSPROF_STATIC_ASSERT ((offsetof (SysprofCaptureAllocation, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureAllocation.addrs is not aligned");
+SYSPROF_STATIC_ASSERT ((offsetof (SysprofCaptureSample, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureSample.addrs is not aligned");
 
 static inline int
 sysprof_capture_address_compare (SysprofCaptureAddress a,

@@ -67,8 +67,8 @@ SYSPROF_BEGIN_DECLS
 
 typedef uint64_t SysprofAddress;
 
-static_assert (sizeof (SysprofAddress) >= sizeof (void *),
-               "Address space is too big");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofAddress) >= sizeof (void *),
+                       "Address space is too big");
 
 typedef enum
 {

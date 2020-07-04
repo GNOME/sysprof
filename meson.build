@@ -1,4 +1,4 @@
-project('sysprof', ['c', 'cpp'],
+project('sysprof', 'c',
           license: ['GPL3+', 'GPL2+'],
           version: '3.37.1',
     meson_version: '>=0.50.0',
@@ -24,7 +24,11 @@ polkit_req_version = '>= 0.105'
 dazzle_req_version = '>= 3.30.0'
 
 cc = meson.get_compiler('c')
-cxx = meson.get_compiler('cpp')
+
+if get_option('libsysprof')
+  add_languages('cpp')
+  cxx = meson.get_compiler('cpp')
+endif
 
 config_h = configuration_data()
 config_h.set_quoted('API_VERSION_S', '@0@'.format(libsysprof_api_version))

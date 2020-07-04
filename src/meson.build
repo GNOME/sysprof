@@ -32,8 +32,10 @@ if get_option('with_sysprofd') == 'bundled' or get_option('libsysprof')
   )
 endif
 
+org_gnome_Sysprof3_Profiler_xml = files(['org.gnome.Sysprof3.Profiler.xml'])
+
 if get_option('libsysprof')
-  install_data(['org.gnome.Sysprof3.Profiler.xml'],
+  install_data(org_gnome_Sysprof3_Profiler_xml,
     install_dir: join_paths(datadir, 'dbus-1/interfaces'),
   )
 endif

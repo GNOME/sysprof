@@ -5,7 +5,9 @@
  * to the capture from your application.
  */
 
-#define _GNU_SOURCE
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
 
 #ifdef __linux__
 # include <sched.h>

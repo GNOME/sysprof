@@ -87,7 +87,10 @@ add_project_arguments([
   '-I' + meson.build_root(), # config.h
 ], language: 'c')
 
-global_c_args = []
+global_c_args = [
+  '-D_GNU_SOURCE',
+  '-D_POSIX_C_SOURCE=200809L',
+]
 test_c_args = [
   '-Wcast-align',
   '-Wdeclaration-after-statement',

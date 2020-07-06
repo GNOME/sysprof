@@ -18,8 +18,6 @@
  * SPDX-License-ntifier: GPL-3.0-or-later
  */
 
-#define _GNU_SOURCE
-
 #include "sysprof-turbostat.h"
 
 #include <errno.h>

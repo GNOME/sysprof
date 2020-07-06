@@ -59,6 +59,8 @@
 
 #pragma once
 
+#include <string.h>
+
 #define sysprof_assert_not_reached() assert (false)
 
 #define SYSPROF_N_ELEMENTS(a) (sizeof (a) / sizeof (*a))

@@ -18,10 +18,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef _GNU_SOURCE
-# define _GNU_SOURCE
-#endif
-
 #define G_LOG_DOMAIN "sysprof-details-page"
 
 #include "config.h"

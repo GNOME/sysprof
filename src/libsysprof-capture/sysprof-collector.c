@@ -54,10 +54,6 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
-#ifndef _GNU_SOURCE
-# define _GNU_SOURCE
-#endif
-
 #include <assert.h>
 #include <errno.h>
 #include <poll.h>

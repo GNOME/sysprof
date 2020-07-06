@@ -20,10 +20,6 @@
 
 #define G_LOG_DOMAIN "sysprof-profiler-assistant"
 
-#ifndef _GNU_SOURCE
-# define _GNU_SOURCE
-#endif
-
 #include "config.h"
 
 #include <sysprof.h>

@@ -20,10 +20,6 @@
 
 #pragma once
 
-#ifndef _GNU_SOURCE
-# define _GNU_SOURCE
-#endif
-
 #ifdef HAVE_EXECINFO_H
 # include <execinfo.h>
 #endif

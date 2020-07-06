@@ -70,7 +70,9 @@
 #define SYSPROF_GNUC_CHECK_VERSION(major, minor) 0
 #endif
 
-#if SYSPROF_GNUC_CHECK_VERSION(4, 6)
+#ifdef __cpp_static_assert
+# define SYSPROF_GNUC_CHECK_VERSION(expr, msg) static_assert(expr, msg)
+#elif SYSPROF_GNUC_CHECK_VERSION(4, 6)
 # define SYSPROF_STATIC_ASSERT(expr, msg) _Static_assert(expr, msg)
 #else
 # define SYSPROF_STATIC_ASSERT(expr, msg) ((void) sizeof (char[(expr) ? 1 : -1]))

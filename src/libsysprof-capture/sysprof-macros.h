@@ -71,7 +71,7 @@
 #endif
 
 #ifdef __cpp_static_assert
-# define SYSPROF_GNUC_CHECK_VERSION(expr, msg) static_assert(expr, msg)
+# define SYSPROF_STATIC_ASSERT(expr, msg) static_assert(expr, msg)
 #elif SYSPROF_GNUC_CHECK_VERSION(4, 6)
 # define SYSPROF_STATIC_ASSERT(expr, msg) _Static_assert(expr, msg)
 #else

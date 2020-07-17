@@ -316,8 +316,6 @@ request_writer (void)
       if (fdstr != NULL)
         peer_fd = atoi (fdstr);
 
-      unsetenv ("SYSPROF_CONTROL_FD");
-
       if (peer_fd > 0)
         {
           (void) set_fd_blocking (peer_fd);

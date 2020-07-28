@@ -1,3 +1,12 @@
+Overview of changes in Sysprof 3.37.2
+=====================================
+
+ * sysprof-capture no longer requires GLib and therefore the ABI has
+   been bumped to 4. This allowed Sysprof to be used form GLib without
+   circular dependencies
+ * Various UI tweaks
+ * Support for use as a subproject
+
 Overview of changes in Sysprof 3.36.0
 =====================================
 

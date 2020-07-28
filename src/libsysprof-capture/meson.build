@@ -60,6 +60,9 @@ libsysprof_capture_dep = declare_dependency(
            link_whole: libsysprof_capture,
          dependencies: libsysprof_capture_deps,
   include_directories: libsysprof_capture_include_dirs,
+            variables: { 'profiler3_xml': join_paths(meson.current_source_dir(),
+                                                     '..',
+                                                     'org.gnome.Sysprof3.Profiler.xml') },
 )
 
 if not meson.is_subproject()
@@ -71,8 +74,6 @@ if not meson.is_subproject()
        filebase: 'sysprof-capture-@0@'.format(libsysprof_api_version),
     description: 'The static capture library for tools that generate profiling capture data',
     install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
-       variables: [
-         'datadir=' + datadir_for_pc_file,
-       ],
+      variables: [ 'datadir=' + datadir_for_pc_file ],
   )
 endif

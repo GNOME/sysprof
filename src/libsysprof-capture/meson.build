@@ -60,9 +60,6 @@ libsysprof_capture_dep = declare_dependency(
            link_whole: libsysprof_capture,
          dependencies: libsysprof_capture_deps,
   include_directories: libsysprof_capture_include_dirs,
-            variables: { 'profiler3_xml': join_paths(meson.current_source_dir(),
-                                                     '..',
-                                                     'org.gnome.Sysprof3.Profiler.xml') },
 )
 
 if not meson.is_subproject()

@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <glib.h>
 #include <sysprof.h>
 

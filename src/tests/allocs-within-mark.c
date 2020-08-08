@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <errno.h>
 #include <glib/gi18n.h>
 #include <locale.h>
 #include <stdlib.h>

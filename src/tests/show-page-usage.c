@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <errno.h>
 #include <cairo.h>
 #include <glib.h>
 #include <stddef.h>

@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <errno.h>
 #include <gio/gunixfdlist.h>
 #include <sysprof.h>
 

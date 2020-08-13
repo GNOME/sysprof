@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-03-29 15:06+0000\n"
-"PO-Revision-Date: 2020-04-06 08:28+0200\n"
+"POT-Creation-Date: 2020-07-02 00:51+0000\n"
+"PO-Revision-Date: 2020-08-13 10:52+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -19,8 +19,8 @@ msgstr ""
 "X-Generator: Gtranslator 3.36.0\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
-#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:199
-#: src/sysprof/sysprof-application.c:326 src/sysprof/ui/sysprof-window.ui:12
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:12
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -343,20 +343,24 @@ msgstr "Grabando a las %s"
 msgid "New Recording"
 msgstr "Nueva grabación"
 
-#: src/libsysprof-ui/sysprof-display.c:1185
+#: src/libsysprof-ui/sysprof-display.c:1087
+msgid "The recording could not be opened"
+msgstr "No se pudo abrir la grabación"
+
+#: src/libsysprof-ui/sysprof-display.c:1210
 msgid "Save Recording"
 msgstr "Guardar grabación"
 
-#: src/libsysprof-ui/sysprof-display.c:1188
+#: src/libsysprof-ui/sysprof-display.c:1213
 msgid "Save"
 msgstr "Guardar"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1189 src/sysprof/sysprof-window.c:277
+#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/libsysprof-ui/sysprof-display.c:1215
+#: src/libsysprof-ui/sysprof-display.c:1240
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Falló al guardar la grabación: %s"
@@ -794,35 +798,45 @@ msgstr "Ayuda"
 msgid "About Sysprof"
 msgstr "Acerca de Sysprof"
 
-#: src/sysprof/sysprof-application.c:191
+#: src/sysprof/sysprof-application.c:194
 msgid "A system profiler"
 msgstr "Un perfilador del sistema"
 
-#: src/sysprof/sysprof-application.c:196
+#: src/sysprof/sysprof-application.c:199
 msgid "translator-credits"
 msgstr "Daniel Mustieles <daniel.mustieles@gmail.com>, 2016-2020"
 
-#: src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:205
 msgid "Learn more about Sysprof"
 msgstr "Saber más sobre Sysprof"
 
 #. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:271
+#: src/sysprof/sysprof-window.c:273
 msgid "Open Capture…"
 msgstr "Abrir captura…"
 
 #. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:275
+#: src/sysprof/sysprof-window.c:277
 msgid "Open"
 msgstr "Abrir"
 
-#: src/sysprof/sysprof-window.c:282
+#: src/sysprof/sysprof-window.c:284
 msgid "Sysprof Captures"
 msgstr "Capturas de Sysprof"
 
-#: src/sysprof/sysprof-window.c:287
+#: src/sysprof/sysprof-window.c:289
 msgid "All Files"
 msgstr "Todos los archivos"
+
+#: src/sysprof/ui/sysprof-window.ui:29
+#| msgid "Open"
+msgid "_Open"
+msgstr "_Abrir"
+
+#: src/sysprof/ui/sysprof-window.ui:32
+#| msgid "Open Recording…"
+msgid "Open Recording… (Ctrl+O)"
+msgstr "Abrir grabación… (Ctrl+A)"
 
 #: src/tools/sysprof-cli.c:59
 msgid "Stopping profiler. Press twice more ^C to force exit."

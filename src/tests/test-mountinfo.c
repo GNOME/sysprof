@@ -26,7 +26,6 @@ main (gint   argc,
 {
   g_autoptr(SysprofMountinfo) info = NULL;
   g_autofree gchar *contents = NULL;
-  g_auto(GStrv) lines = NULL;
   g_autoptr(GError) error = NULL;
   g_autofree gchar *lookup = NULL;
   gsize len;

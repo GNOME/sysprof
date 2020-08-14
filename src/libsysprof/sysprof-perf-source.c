@@ -206,10 +206,8 @@ sysprof_perf_source_handle_tracepoint (SysprofPerfSource                       *
     {
     case DRM_VBLANK:
       message = g_strdup_printf ("crtc=%d, seq=%u",
-                                 *(gint *)(sample->raw +
-                                           tp_desc->field_offsets[0]),
-                                 *(guint *)(sample->raw +
-                                            tp_desc->field_offsets[1]));
+                                 *(gint *)(gpointer)(sample->raw + tp_desc->field_offsets[0]),
+                                 *(guint *)(gpointer)(sample->raw + tp_desc->field_offsets[1]));
 
       sysprof_capture_writer_add_mark (self->writer,
                                        sample->time,
@@ -224,12 +222,9 @@ sysprof_perf_source_handle_tracepoint (SysprofPerfSource                       *
     case DRM_I915_BEGIN:
     case DRM_I915_END:
       message = g_strdup_printf ("ctx=%u, ring=%u, seqno=%u",
-                                 *(guint *)(sample->raw +
-                                            tp_desc->field_offsets[0]),
-                                 *(guint *)(sample->raw +
-                                            tp_desc->field_offsets[1]),
-                                 *(guint *)(sample->raw +
-                                            tp_desc->field_offsets[2]));
+                                 *(guint *)(gpointer)(sample->raw + tp_desc->field_offsets[0]),
+                                 *(guint *)(gpointer)(sample->raw + tp_desc->field_offsets[1]),
+                                 *(guint *)(gpointer)(sample->raw + tp_desc->field_offsets[2]));
 
       sysprof_capture_writer_add_mark (self->writer,
                                        sample->time,

@@ -85,7 +85,6 @@ main (gint argc,
       gchar *argv[])
 {
   g_autoptr(SysprofCaptureReader) reader = NULL;
-  g_autoptr(GError) error = NULL;
 
   if (argc != 2)
     {

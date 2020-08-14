@@ -609,11 +609,11 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
 
       if (priv->spawn_inherit_environ)
         {
-          gchar **environ = g_get_environ ();
+          gchar **environ_ = g_get_environ ();
 
-          for (guint i = 0; environ[i]; i++)
-            g_ptr_array_add (env, environ[i]);
-          g_free (environ);
+          for (guint i = 0; environ_[i]; i++)
+            g_ptr_array_add (env, environ_[i]);
+          g_free (environ_);
         }
 
       if (priv->spawn_env)

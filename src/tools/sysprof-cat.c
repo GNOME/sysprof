@@ -71,7 +71,6 @@ main (gint   argc,
   for (guint i = 1; i < argc; i++)
     {
       g_autoptr(SysprofCaptureReader) reader = NULL;
-      g_autoptr(GError) error = NULL;
 
       if (!(reader = sysprof_capture_reader_new (argv[i])))
         {

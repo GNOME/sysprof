@@ -432,7 +432,6 @@ sysprof_perf_counter_open (SysprofPerfCounter     *self,
                            gulong                  flags)
 {
   SysprofHelpers *helpers = sysprof_helpers_get_default ();
-  g_autoptr(GError) error = NULL;
   gint out_fd = -1;
 
   g_return_val_if_fail (self != NULL, -1);

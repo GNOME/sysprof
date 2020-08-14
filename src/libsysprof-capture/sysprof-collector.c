@@ -275,7 +275,7 @@ receive_fd_blocking (int peer_fd)
   if ((cmsg->cmsg_len - ((char *)CMSG_DATA (cmsg) - (char *)cmsg)) % 4 != 0)
     return -1;
 
-  fds = (const int *) CMSG_DATA (cmsg);
+  fds = (const int *)(void *)CMSG_DATA (cmsg);
   n_fds = (cmsg->cmsg_len - ((char *)CMSG_DATA (cmsg) - (char *)cmsg)) / sizeof (*fds);
 
   /* only expecting one FD */

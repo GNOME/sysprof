@@ -121,7 +121,6 @@ main (gint   argc,
 {
   SysprofCaptureReader *reader;
   const gchar *filename = argv[1];
-  g_autoptr(GError) error = NULL;
 
   if (argc < 2)
     {

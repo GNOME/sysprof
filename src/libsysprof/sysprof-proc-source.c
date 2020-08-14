@@ -82,7 +82,6 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
                                    const gchar       *mountinfostr)
 {
   g_auto(GStrv) maps = NULL;
-  g_auto(GStrv) mountinfo = NULL;
   guint i;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));

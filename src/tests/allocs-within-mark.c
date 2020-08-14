@@ -186,7 +186,6 @@ main (gint   argc,
 {
   SysprofCaptureReader *reader;
   const gchar *filename;
-  g_autoptr(GError) error = NULL;
   const gchar *category;
   const gchar *name;
 

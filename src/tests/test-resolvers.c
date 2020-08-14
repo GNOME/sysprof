@@ -28,7 +28,6 @@ main (gint  argc,
 {
   g_autoptr(GPtrArray) resolvers = NULL;
   g_autoptr(SysprofCaptureReader) reader = NULL;
-  g_autoptr(GError) error = NULL;
   const SysprofCaptureSample *sample;
   const gchar *filename;
 
@@ -69,7 +68,7 @@ main (gint  argc,
         {
           SysprofAddress addr = sample->addrs[a];
           SysprofAddressContext context;
-          gboolean found;
+          gboolean found = FALSE;
 
            if (sysprof_address_is_context_switch (addr, &context))
              {

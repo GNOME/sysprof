@@ -205,7 +205,6 @@ update_summary (SysprofMemprofPage    *self,
       g_autofree gchar *subtitle_str = NULL;
       g_autofree gchar *allocstr = NULL;
       g_autofree gchar *tempstr = NULL;
-      g_autofree gchar *leakedstr = NULL;
       g_autofree gchar *allstr = NULL;
       GtkWidget *row;
       GtkWidget *title;

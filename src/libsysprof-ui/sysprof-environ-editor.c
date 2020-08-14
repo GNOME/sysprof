@@ -287,12 +287,12 @@ sysprof_environ_editor_new (void)
 
 void
 sysprof_environ_editor_set_environ (SysprofEnvironEditor *self,
-                                    SysprofEnviron       *environ)
+                                    SysprofEnviron       *environ_)
 {
   g_return_if_fail (SYSPROF_IS_ENVIRON_EDITOR (self));
-  g_return_if_fail (SYSPROF_IS_ENVIRON (environ));
+  g_return_if_fail (SYSPROF_IS_ENVIRON (environ_));
 
-  if (self->environ != environ)
+  if (self->environ != environ_)
     {
       if (self->environ != NULL)
         {
@@ -300,9 +300,9 @@ sysprof_environ_editor_set_environ (SysprofEnvironEditor *self,
           g_clear_object (&self->environ);
         }
 
-      if (environ != NULL)
+      if (environ_ != NULL)
         {
-          self->environ = g_object_ref (environ);
+          self->environ = g_object_ref (environ_);
           sysprof_environ_editor_connect (self);
         }
 

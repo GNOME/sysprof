@@ -166,14 +166,14 @@ sysprof_spawnable_setenv (SysprofSpawnable *self,
 
 void
 sysprof_spawnable_set_environ (SysprofSpawnable    *self,
-                               const gchar * const *environ)
+                               const gchar * const *environ_)
 {
   g_return_if_fail (SYSPROF_IS_SPAWNABLE (self));
 
-  if (environ != (const gchar * const *)self->environ)
+  if (environ_ != (const gchar * const *)self->environ)
     {
       g_strfreev (self->environ);
-      self->environ = g_strdupv ((gchar **)environ);
+      self->environ = g_strdupv ((gchar **)environ_);
     }
 }
 

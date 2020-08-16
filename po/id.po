@@ -5,22 +5,22 @@
 # Kukuh Syafaat <kukuhsyafaat@gnome.org>, 2018-2020.
 msgid ""
 msgstr ""
-"Project-Id-Version: sysprof sysprof-3-34\n"
+"Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-03-26 14:53+0000\n"
-"PO-Revision-Date: 2020-04-06 20:29+0700\n"
-"Last-Translator: Kukuh Syafaat <kukuhsyafaat@gnome.org>\n"
+"POT-Creation-Date: 2020-07-02 00:51+0000\n"
+"PO-Revision-Date: 2020-08-16 18:58+0700\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural= n!=1;\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
-#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:199
-#: src/sysprof/sysprof-application.c:326 src/sysprof/ui/sysprof-window.ui:12
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:12
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -342,20 +342,24 @@ msgstr "Merekam pada %s"
 msgid "New Recording"
 msgstr "Perekaman Baru"
 
-#: src/libsysprof-ui/sysprof-display.c:1185
+#: src/libsysprof-ui/sysprof-display.c:1087
+msgid "The recording could not be opened"
+msgstr "Rekaman tidak dapat dibuka"
+
+#: src/libsysprof-ui/sysprof-display.c:1210
 msgid "Save Recording"
 msgstr "Simpan Rekaman"
 
-#: src/libsysprof-ui/sysprof-display.c:1188
+#: src/libsysprof-ui/sysprof-display.c:1213
 msgid "Save"
 msgstr "Simpan"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1189 src/sysprof/sysprof-window.c:277
+#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
 msgid "Cancel"
 msgstr "Batal"
 
-#: src/libsysprof-ui/sysprof-display.c:1215
+#: src/libsysprof-ui/sysprof-display.c:1240
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Gagal menyimpan rekaman: %s"
@@ -792,37 +796,45 @@ msgstr "Bantuan"
 msgid "About Sysprof"
 msgstr "Tentang Sysprof"
 
-#: src/sysprof/sysprof-application.c:191
+#: src/sysprof/sysprof-application.c:194
 msgid "A system profiler"
 msgstr "Pembuat profil sistem"
 
-#: src/sysprof/sysprof-application.c:196
+#: src/sysprof/sysprof-application.c:199
 msgid "translator-credits"
 msgstr ""
 "Andika Triwidada <andika@gmail.com>, 2017-2020.\n"
 "Kukuh Syafaat <kukuhsyafaat@gnome.org>, 2018-2020."
 
-#: src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:205
 msgid "Learn more about Sysprof"
 msgstr "Pelajari lebih lanjut tentang Sysprof"
 
 #. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:271
+#: src/sysprof/sysprof-window.c:273
 msgid "Open Capture…"
 msgstr "Buka Tangkapan…"
 
 #. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:275
+#: src/sysprof/sysprof-window.c:277
 msgid "Open"
 msgstr "Buka"
 
-#: src/sysprof/sysprof-window.c:282
+#: src/sysprof/sysprof-window.c:284
 msgid "Sysprof Captures"
 msgstr "Tangkapan Sysprof"
 
-#: src/sysprof/sysprof-window.c:287
+#: src/sysprof/sysprof-window.c:289
 msgid "All Files"
 msgstr "Semua Berkas"
+
+#: src/sysprof/ui/sysprof-window.ui:29
+msgid "_Open"
+msgstr "_Buka"
+
+#: src/sysprof/ui/sysprof-window.ui:32
+msgid "Open Recording… (Ctrl+O)"
+msgstr "Buka Rekaman… (Ctrl+O)"
 
 #: src/tools/sysprof-cli.c:59
 msgid "Stopping profiler. Press twice more ^C to force exit."

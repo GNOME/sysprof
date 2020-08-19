@@ -762,3 +762,86 @@ sysprof_collector_log_printf (int             severity,
       }
   } COLLECTOR_END;
 }
+
+void
+sysprof_collector_define_counters (const SysprofCaptureCounter *counters,
+                                   unsigned int                 n_counters)
+{
+  if (counters == NULL || n_counters == 0)
+    return;
+
+  COLLECTOR_BEGIN {
+    SysprofCaptureCounterDefine *def;
+    size_t len;
+
+    len = realign (sizeof *def + (sizeof *counters * n_counters));
+
+    if ((def = mapped_ring_buffer_allocate (collector->buffer, len)))
+      {
+        def->frame.len = len;
+        def->frame.type = SYSPROF_CAPTURE_FRAME_CTRDEF;
+        def->frame.cpu = _do_getcpu ();
+        def->frame.pid = collector->pid;
+        def->frame.time = SYSPROF_CAPTURE_CURRENT_TIME;
+        def->padding1 = 0;
+        def->padding2 = 0;
+        def->n_counters = n_counters;
+        memcpy (def->counters, counters, sizeof *counters * n_counters);
+
+        mapped_ring_buffer_advance (collector->buffer, def->frame.len);
+      }
+  } COLLECTOR_END;
+}
+
+void
+sysprof_collector_set_counters (const unsigned int               *counters_ids,
+                                const SysprofCaptureCounterValue *values,
+                                unsigned int                      n_counters)
+{
+  if (n_counters == 0)
+    return;
+
+  COLLECTOR_BEGIN {
+    SysprofCaptureCounterSet *set;
+    size_t len;
+    unsigned int n_groups;
+    unsigned int group;
+    unsigned int field;
+    unsigned int i;
+
+    /* Determine how many value groups we need */
+    n_groups = n_counters / SYSPROF_N_ELEMENTS (set->values[0].values);
+    if ((n_groups * SYSPROF_N_ELEMENTS (set->values[0].values)) != n_counters)
+      n_groups++;
+
+    len = realign (sizeof *set + (n_groups * sizeof (SysprofCaptureCounterValues)));
+
+    if ((set = mapped_ring_buffer_allocate (collector->buffer, len)))
+      {
+        set->frame.len = len;
+        set->frame.type = SYSPROF_CAPTURE_FRAME_CTRSET;
+        set->frame.cpu = _do_getcpu ();
+        set->frame.pid = collector->pid;
+        set->frame.time = SYSPROF_CAPTURE_CURRENT_TIME;
+        set->padding1 = 0;
+        set->padding2 = 0;
+        set->n_values = n_groups;
+
+        for (i = 0, group = 0, field = 0; i < n_counters; i++)
+          {
+            set->values[group].ids[field] = counters_ids[i];
+            set->values[group].values[field] = values[i];
+
+            field++;
+
+            if (field == SYSPROF_N_ELEMENTS (set->values[0].values))
+              {
+                field = 0;
+                group++;
+              }
+          }
+
+        mapped_ring_buffer_advance (collector->buffer, set->frame.len);
+      }
+  } COLLECTOR_END;
+}

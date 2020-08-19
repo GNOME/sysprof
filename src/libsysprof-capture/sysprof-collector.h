@@ -65,6 +65,8 @@ SYSPROF_BEGIN_DECLS
 
 SYSPROF_AVAILABLE_IN_3_36
 void         sysprof_collector_init            (void);
+SYSPROF_AVAILABLE_IN_3_38
+bool         sysprof_collector_is_active       (void);
 SYSPROF_AVAILABLE_IN_3_36
 void         sysprof_collector_allocate        (SysprofCaptureAddress             alloc_addr,
                                                 int64_t                           alloc_size,

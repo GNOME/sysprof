@@ -863,3 +863,15 @@ sysprof_collector_request_counter (unsigned int n_counters)
 
   return ret;
 }
+
+bool
+sysprof_collector_is_active (void)
+{
+  bool ret = false;
+
+  COLLECTOR_BEGIN {
+    ret = true;
+  } COLLECTOR_END;
+
+  return ret;
+}

@@ -849,7 +849,7 @@ sysprof_collector_set_counters (const unsigned int               *counters_ids,
 }
 
 unsigned int
-sysprof_collector_request_counter (unsigned int n_counters)
+sysprof_collector_request_counters (unsigned int n_counters)
 {
   unsigned int ret = 0;
 

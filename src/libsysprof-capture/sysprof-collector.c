@@ -95,6 +95,7 @@ typedef struct
   bool is_shared;
   int tid;
   int pid;
+  int next_counter_id;
 } SysprofCollector;
 
 #define COLLECTOR_INVALID ((void *)&invalid)
@@ -420,6 +421,7 @@ sysprof_collector_get (void)
 #else
     self->tid = self->pid;
 #endif
+    self->next_counter_id = 1;
 
     pthread_mutex_lock (&control_fd_lock);
 
@@ -844,4 +846,20 @@ sysprof_collector_set_counters (const unsigned int               *counters_ids,
         mapped_ring_buffer_advance (collector->buffer, set->frame.len);
       }
   } COLLECTOR_END;
+}
+
+unsigned int
+sysprof_collector_request_counter (unsigned int n_counters)
+{
+  unsigned int ret = 0;
+
+  if (n_counters == 0)
+    return 0;
+
+  COLLECTOR_BEGIN {
+    ret = collector->next_counter_id;
+    ((SysprofCollector *)collector)->next_counter_id += n_counters;
+  } COLLECTOR_END;
+
+  return ret;
 }

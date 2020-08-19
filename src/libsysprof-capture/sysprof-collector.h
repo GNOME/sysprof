@@ -64,43 +64,43 @@
 SYSPROF_BEGIN_DECLS
 
 SYSPROF_AVAILABLE_IN_3_36
-void sysprof_collector_init     (void);
+void sysprof_collector_init         (void);
 SYSPROF_AVAILABLE_IN_3_36
-void sysprof_collector_allocate (SysprofCaptureAddress  alloc_addr,
-                                 int64_t                alloc_size,
-                                 SysprofBacktraceFunc   backtrace_func,
-                                 void                  *backtrace_data);
+void sysprof_collector_allocate     (SysprofCaptureAddress  alloc_addr,
+                                     int64_t                alloc_size,
+                                     SysprofBacktraceFunc   backtrace_func,
+                                     void                  *backtrace_data);
 SYSPROF_AVAILABLE_IN_3_36
-void sysprof_collector_sample   (SysprofBacktraceFunc   backtrace_func,
-                                 void                  *backtrace_data);
+void sysprof_collector_sample       (SysprofBacktraceFunc   backtrace_func,
+                                     void                  *backtrace_data);
 SYSPROF_AVAILABLE_IN_3_36
-void sysprof_collector_mark     (int64_t                time,
-                                 int64_t                duration,
-                                 const char            *group,
-                                 const char            *mark,
-                                 const char            *message);
+void sysprof_collector_mark         (int64_t                time,
+                                     int64_t                duration,
+                                     const char            *group,
+                                     const char            *mark,
+                                     const char            *message);
 SYSPROF_AVAILABLE_IN_3_38
-void sysprof_collector_mark_printf  (int64_t     time,
-                                     int64_t     duration,
-                                     const char *group,
-                                     const char *mark,
-                                     const char *message_format,
+void sysprof_collector_mark_printf  (int64_t                time,
+                                     int64_t                duration,
+                                     const char            *group,
+                                     const char            *mark,
+                                     const char            *message_format,
                                      ...) SYSPROF_PRINTF(5, 6);
 SYSPROF_AVAILABLE_IN_3_38
-void sysprof_collector_mark_vprintf (int64_t     time,
-                                     int64_t     duration,
-                                     const char *group,
-                                     const char *mark,
-                                     const char *message_format,
-                                     va_list     args) SYSPROF_PRINTF(5, 0);
+void sysprof_collector_mark_vprintf (int64_t                time,
+                                     int64_t                duration,
+                                     const char            *group,
+                                     const char            *mark,
+                                     const char            *message_format,
+                                     va_list                args) SYSPROF_PRINTF(5, 0);
 SYSPROF_AVAILABLE_IN_3_36
-void sysprof_collector_log      (int                    severity,
-                                 const char            *domain,
-                                 const char            *message);
+void sysprof_collector_log          (int                    severity,
+                                     const char            *domain,
+                                     const char            *message);
 SYSPROF_AVAILABLE_IN_3_38
-void sysprof_collector_log_printf (int                  severity,
-                                   const char          *domain,
-                                   const char          *format,
-                                   ...) SYSPROF_PRINTF (3, 4);
+void sysprof_collector_log_printf   (int                    severity,
+                                     const char            *domain,
+                                     const char            *format,
+                                     ...) SYSPROF_PRINTF (3, 4);
 
 SYSPROF_END_DECLS

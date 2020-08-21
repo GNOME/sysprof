@@ -87,7 +87,7 @@ void
 sysprof_turbostat_unref (SysprofTurbostat *self)
 {
   g_return_if_fail (self != NULL);
-  g_return_if_fail (self->ref_count > 1);
+  g_return_if_fail (self->ref_count > 0);
 
   if (g_atomic_int_dec_and_test (&self->ref_count))
     sysprof_turbostat_finalize (self);

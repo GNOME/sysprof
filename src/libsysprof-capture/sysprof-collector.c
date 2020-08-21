@@ -54,6 +54,8 @@
  * SPDX-License-Identifier: BSD-2-Clause-Patent
  */
 
+#include "config.h"
+
 #include <assert.h>
 #include <errno.h>
 #include <poll.h>

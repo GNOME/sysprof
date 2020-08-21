@@ -49,6 +49,7 @@
 #include <unistd.h>
 
 #include "sysprof-clock.h"
+#include "sysprof-helpers.h"
 #include "sysprof-line-reader.h"
 #include "sysprof-perf-counter.h"
 #include "sysprof-perf-source.h"
@@ -758,22 +759,44 @@ sysprof_perf_source_add_pid (SysprofSource *source,
 }
 
 static void
+sysprof_perf_source_auth_cb (GObject      *object,
+                             GAsyncResult *result,
+                             gpointer      user_data)
+{
+  SysprofHelpers *helpers = (SysprofHelpers *)object;
+  g_autoptr(SysprofPerfSource) self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_HELPERS (helpers));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_PERF_SOURCE (self));
+
+  if (!sysprof_helpers_authorize_finish (helpers, result, &error))
+    {
+      sysprof_source_emit_failed (SYSPROF_SOURCE (self), error);
+    }
+  else
+    {
+      self->is_ready = TRUE;
+      sysprof_source_emit_ready (SYSPROF_SOURCE (self));
+    }
+}
+
+static void
 sysprof_perf_source_prepare (SysprofSource *source)
 {
   g_assert (SYSPROF_IS_PERF_SOURCE (source));
 
-  SYSPROF_PERF_SOURCE (source)->is_ready = TRUE;
-  sysprof_source_emit_ready (source);
+  sysprof_helpers_authorize_async (sysprof_helpers_get_default (),
+                                   NULL,
+                                   sysprof_perf_source_auth_cb,
+                                   g_object_ref (source));
 }
 
 static gboolean
 sysprof_perf_source_get_is_ready (SysprofSource *source)
 {
-  SysprofPerfSource *self = (SysprofPerfSource *)source;
-
-  g_assert (SYSPROF_IS_PERF_SOURCE (self));
-
-  return self->is_ready;
+  return SYSPROF_PERF_SOURCE (source)->is_ready;
 }
 
 static void

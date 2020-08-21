@@ -535,27 +535,26 @@ sysprof_local_profiler_wait_cb (GObject      *object,
 }
 
 static void
-sysprof_local_profiler_authorize_cb (GObject      *object,
-                                     GAsyncResult *result,
-                                     gpointer      user_data)
+sysprof_local_profiler_start (SysprofProfiler *profiler)
 {
-  SysprofHelpers *helpers = (SysprofHelpers *)object;
-  g_autoptr(SysprofLocalProfiler) self = user_data;
+  SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
+  g_autoptr(SysprofControlSource) control_source = NULL;
   g_autofree gchar *keydata = NULL;
   g_autoptr(GError) error = NULL;
   g_autoptr(GKeyFile) keyfile = NULL;
   gsize keylen = 0;
 
-  g_assert (SYSPROF_IS_HELPERS (helpers));
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (SYSPROF_IS_LOCAL_PROFILER (self));
+  g_return_if_fail (SYSPROF_IS_LOCAL_PROFILER (self));
+  g_return_if_fail (priv->is_running == FALSE);
+  g_return_if_fail (priv->is_stopping == FALSE);
+  g_return_if_fail (priv->is_starting == FALSE);
 
-  if (!sysprof_helpers_authorize_finish (helpers, result, &error))
-    {
-      sysprof_profiler_emit_failed (SYSPROF_PROFILER (self), error);
-      return;
-    }
+  g_clear_pointer (&priv->timer, g_timer_destroy);
+  g_object_notify (G_OBJECT (self), "elapsed");
+
+  control_source = sysprof_control_source_new ();
+  sysprof_profiler_add_source (SYSPROF_PROFILER (self), SYSPROF_SOURCE (control_source));
 
   keyfile = g_key_file_new ();
 
@@ -707,31 +706,6 @@ sysprof_local_profiler_authorize_cb (GObject      *object,
 
   if (priv->starting->len == 0)
     sysprof_local_profiler_finish_startup (self);
-}
-
-static void
-sysprof_local_profiler_start (SysprofProfiler *profiler)
-{
-  SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
-  SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
-  SysprofHelpers *helpers = sysprof_helpers_get_default ();
-  g_autoptr(SysprofControlSource) control_source = NULL;
-
-  g_return_if_fail (SYSPROF_IS_LOCAL_PROFILER (self));
-  g_return_if_fail (priv->is_running == FALSE);
-  g_return_if_fail (priv->is_stopping == FALSE);
-  g_return_if_fail (priv->is_starting == FALSE);
-
-  g_clear_pointer (&priv->timer, g_timer_destroy);
-  g_object_notify (G_OBJECT (self), "elapsed");
-
-  control_source = sysprof_control_source_new ();
-  sysprof_profiler_add_source (SYSPROF_PROFILER (self), SYSPROF_SOURCE (control_source));
-
-  sysprof_helpers_authorize_async (helpers,
-                                   NULL,
-                                   sysprof_local_profiler_authorize_cb,
-                                   g_object_ref (self));
 }
 
 static void

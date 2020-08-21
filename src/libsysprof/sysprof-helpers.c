@@ -34,6 +34,8 @@ struct _SysprofHelpers
 {
   GObject     parent_instance;
   IpcService *proxy;
+  GQueue      auth_tasks;
+  guint       did_auth : 1;
 };
 
 G_DEFINE_TYPE (SysprofHelpers, sysprof_helpers, G_TYPE_OBJECT)
@@ -527,39 +529,49 @@ sysprof_helpers_authorize_cb (GObject      *object,
                               GAsyncResult *result,
                               gpointer      user_data)
 {
-  g_autoptr(GTask) task = user_data;
+  g_autoptr(SysprofHelpers) self = user_data;
   g_autoptr(GError) error = NULL;
 
   g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (G_IS_TASK (task));
+  g_assert (SYSPROF_IS_HELPERS (self));
 
   if (!_sysprof_polkit_authorize_for_bus_finish (result, &error))
-    g_task_return_error (task, g_steal_pointer (&error));
+    {
+      while (self->auth_tasks.length > 0)
+        {
+          g_autoptr(GTask) task = g_queue_pop_head (&self->auth_tasks);
+          g_task_return_error (task, g_error_copy (error));
+        }
+    }
   else
-    g_task_return_boolean (task, TRUE);
+    {
+      self->did_auth = TRUE;
+      while (self->auth_tasks.length > 0)
+        {
+          g_autoptr(GTask) task = g_queue_pop_head (&self->auth_tasks);
+          g_task_return_boolean (task, TRUE);
+        }
+    }
 }
 
-void
-sysprof_helpers_authorize_async (SysprofHelpers      *self,
-                                 GCancellable        *cancellable,
-                                 GAsyncReadyCallback  callback,
-                                 gpointer             user_data)
+static void
+sysprof_helpers_do_auth (SysprofHelpers *self)
 {
-  g_autoptr(GTask) task = NULL;
   GDBusConnection *bus;
 
-  g_return_if_fail (SYSPROF_IS_HELPERS (self));
-  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+  g_assert (SYSPROF_IS_HELPERS (self));
 
-  task = g_task_new (self, cancellable, callback, user_data);
-  g_task_set_source_tag (task, sysprof_helpers_authorize_async);
-
-  if (self->proxy == NULL)
+  if (self->proxy == NULL || self->did_auth)
     {
-      /* No D-Bus/Polkit? Just bail early and let the hard failure
-       * happen sooner.
+      /* No D-Bus/Polkit? Bail early, fail sooner. If we already successfully
+       * did auth, then short circuit to avoid spamming the user.
        */
-      g_task_return_boolean (task, TRUE);
+      while (self->auth_tasks.length > 0)
+        {
+          g_autoptr(GTask) task = g_queue_pop_head (&self->auth_tasks);
+          g_task_return_boolean (task, TRUE);
+        }
+
       return;
     }
 
@@ -569,9 +581,29 @@ sysprof_helpers_authorize_async (SysprofHelpers      *self,
                                            "org.gnome.sysprof3.profile",
                                            NULL,
                                            TRUE,
-                                           cancellable,
+                                           NULL,
                                            sysprof_helpers_authorize_cb,
-                                           g_steal_pointer (&task));
+                                           g_object_ref (self));
+}
+
+void
+sysprof_helpers_authorize_async (SysprofHelpers      *self,
+                                 GCancellable        *cancellable,
+                                 GAsyncReadyCallback  callback,
+                                 gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SYSPROF_IS_HELPERS (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_helpers_authorize_async);
+
+  g_queue_push_tail (&self->auth_tasks, g_steal_pointer (&task));
+
+  if (self->auth_tasks.length == 1)
+    sysprof_helpers_do_auth (self);
 }
 
 gboolean

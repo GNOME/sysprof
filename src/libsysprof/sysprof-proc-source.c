@@ -53,6 +53,7 @@ struct _SysprofProcSource
   SysprofCaptureWriter *writer;
   GArray               *pids;
   SysprofMountinfo     *mountinfo;
+  guint                 is_ready : 1;
 };
 
 static void source_iface_init (SysprofSourceInterface *iface);
@@ -302,12 +303,55 @@ sysprof_proc_source_add_pid (SysprofSource *source,
 }
 
 static void
+sysprof_proc_source_auth_cb (GObject      *object,
+                             GAsyncResult *result,
+                             gpointer      user_data)
+{
+  SysprofHelpers *helpers = (SysprofHelpers *)object;
+  g_autoptr(SysprofProcSource) self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_HELPERS (helpers));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_PROC_SOURCE (self));
+
+  if (!sysprof_helpers_authorize_finish (helpers, result, &error))
+    {
+      sysprof_source_emit_failed (SYSPROF_SOURCE (self), error);
+    }
+  else
+    {
+      self->is_ready = TRUE;
+      sysprof_source_emit_ready (SYSPROF_SOURCE (self));
+    }
+}
+
+static void
+sysprof_proc_source_prepare (SysprofSource *source)
+{
+  g_assert (SYSPROF_IS_PROC_SOURCE (source));
+
+  sysprof_helpers_authorize_async (sysprof_helpers_get_default (),
+                                   NULL,
+                                   sysprof_proc_source_auth_cb,
+                                   g_object_ref (source));
+}
+
+static gboolean
+sysprof_proc_source_get_is_ready (SysprofSource *source)
+{
+  return SYSPROF_PROC_SOURCE (source)->is_ready;
+}
+
+static void
 source_iface_init (SysprofSourceInterface *iface)
 {
   iface->set_writer = sysprof_proc_source_set_writer;
   iface->start = sysprof_proc_source_start;
   iface->stop = sysprof_proc_source_stop;
   iface->add_pid = sysprof_proc_source_add_pid;
+  iface->prepare = sysprof_proc_source_prepare;
+  iface->get_is_ready = sysprof_proc_source_get_is_ready;
 }
 
 static void

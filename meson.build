@@ -84,7 +84,7 @@ has_clockid = cc.has_member('struct perf_event_attr', 'clockid', prefix: '#inclu
 config_h.set('HAVE_PERF_CLOCKID', has_use_clockid and has_clockid)
 
 add_project_arguments([
-  '-I' + meson.build_root(), # config.h
+  '-I' + meson.current_build_dir(), # config.h
 ], language: 'c')
 
 global_c_args = [

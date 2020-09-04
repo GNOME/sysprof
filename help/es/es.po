@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-28\n"
-"POT-Creation-Date: 2019-08-27 10:08+0000\n"
+"POT-Creation-Date: 2020-06-20 16:51+0000\n"
 "PO-Revision-Date: 2019-09-06 16:15+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
@@ -22,21 +22,6 @@ msgctxt "_"
 msgid "translator-credits"
 msgstr "Daniel Mustieles <daniel.musiteles@gmail.com>, 2018, 2019"
 
-#. (itstool) path: page/title
-#: C/index.page:12
-msgid "Sysprof"
-msgstr "Sysprof"
-
-#. (itstool) path: section/title
-#: C/index.page:15
-msgid "Profiling"
-msgstr "Perfilado"
-
-#. (itstool) path: section/title
-#: C/index.page:19
-msgid "Frequently Asked Questions"
-msgstr "Preguntas más frecuentes"
-
 #. (itstool) path: credit/name
 #: C/introduction.page:15
 msgid "Christian Hergert"
@@ -50,7 +35,7 @@ msgstr "2016"
 #. (itstool) path: info/desc
 #: C/introduction.page:22
 msgid "Welcome to <app>Sysprof</app>!"
-msgstr "Bienvenido a <app>Sysprof</app>"
+msgstr "Bienvenido/a a <app>Sysprof</app>"
 
 #. (itstool) path: page/title
 #: C/introduction.page:25
@@ -121,13 +106,19 @@ msgstr ""
 msgid "<app>Sysprof</app> is a sampling profiler."
 msgstr "<app>Sysprof</app> es un perfilador de muestreo."
 
+#. (itstool) path: page/title
 #. (itstool) path: section/title
-#: C/profiling.page:10
+#: C/profiling.page:6 C/index.page:15
+msgid "Profiling"
+msgstr "Perfilado"
+
+#. (itstool) path: section/title
+#: C/profiling.page:12
 msgid "How to profile your system"
 msgstr "Cómo perfilar su sistema"
 
 #. (itstool) path: section/p
-#: C/profiling.page:11
+#: C/profiling.page:13
 msgid ""
 "When <app>Sysprof</app> profiles your system, it records stack information "
 "for all applications executing, including the Linux kernel. This can "
@@ -144,7 +135,7 @@ msgstr ""
 "profiling\">lanzar un proceso nuevo</link>."
 
 #. (itstool) path: section/p
-#: C/profiling.page:18
+#: C/profiling.page:20
 msgid ""
 "To profile your entire system, ensure the target button is set to <em>All "
 "Processes</em> and click <em>Record</em>."
@@ -153,7 +144,7 @@ msgstr ""
 "indica <em>Todos los procesos</em> y pulse <em>Grabar</em>."
 
 #. (itstool) path: section/p
-#: C/profiling.page:21
+#: C/profiling.page:23
 msgid ""
 "At this point, you may be asked to <em>authorize</em> access to profile the "
 "system. This is required as the Linux kernel's perf implementation requires "
@@ -164,7 +155,7 @@ msgstr ""
 "«perf» requiere root para realizar el perfilado del sistema completo."
 
 #. (itstool) path: section/p
-#: C/profiling.page:25
+#: C/profiling.page:27
 msgid ""
 "During the profiling session, you will see the number of seconds the profile "
 "has been active. Clicking the <em>Record</em> button again will stop the "
@@ -175,7 +166,7 @@ msgstr ""
 "perfilado. Después de esto se mostrará un gráfico de llamadas."
 
 #. (itstool) path: note/p
-#: C/profiling.page:31
+#: C/profiling.page:33
 msgid ""
 "If you find that the <app>sysprof</app> application is showing up in your "
 "profiling callgraph, you might consider recording the profiling session with "
@@ -188,7 +179,7 @@ msgstr ""
 "guardará su sesión de perfilado en disco para verla posteriormente."
 
 #. (itstool) path: section/p
-#: C/profiling.page:37 C/profiling.page:60
+#: C/profiling.page:39 C/profiling.page:62
 msgid ""
 "See <link href=\"profiling#interpreting-results\">interpreting results</"
 "link> for more guidance."
@@ -197,12 +188,12 @@ msgstr ""
 "resultados</link> para obtener más ayuda."
 
 #. (itstool) path: section/title
-#: C/profiling.page:46
+#: C/profiling.page:48
 msgid "Profile an existing process"
 msgstr "Perfilar un proceso existente"
 
 #. (itstool) path: section/p
-#: C/profiling.page:47
+#: C/profiling.page:49
 msgid ""
 "With <app>Sysprof</app>, you can profile one or more existing processes on "
 "your system. First, select the <em>profiling target</em> button next to the "
@@ -218,7 +209,7 @@ msgstr ""
 "nombre."
 
 #. (itstool) path: section/p
-#: C/profiling.page:54
+#: C/profiling.page:56
 msgid ""
 "After selecting your target processes, click the <em>Record</em> button to "
 "start profiling."
@@ -227,7 +218,7 @@ msgstr ""
 "empezar el perfilado."
 
 #. (itstool) path: section/p
-#: C/profiling.page:57
+#: C/profiling.page:59
 msgid ""
 "When you have completed, click the <em>Record</em> button again to stop "
 "profiling."
@@ -236,12 +227,12 @@ msgstr ""
 "el perfilado."
 
 #. (itstool) path: section/title
-#: C/profiling.page:69
+#: C/profiling.page:71
 msgid "Profile a new process"
 msgstr "Perfilar un proceso nuevo"
 
 #. (itstool) path: section/p
-#: C/profiling.page:71
+#: C/profiling.page:73
 msgid ""
 "Often times, you may need to spawn a new process to profile. First, select "
 "the <em>profiling target</em> button next to the <em>Record</em> button. "
@@ -254,7 +245,7 @@ msgstr ""
 "necesaria para lanzar el proceso."
 
 #. (itstool) path: note/p
-#: C/profiling.page:77
+#: C/profiling.page:79
 msgid ""
 "If you are spawning a process that requires access to your current display, "
 "such as a GTK+ application, you will want to make sure <em>Inherit current "
@@ -265,12 +256,12 @@ msgstr ""
 "<em>Heredar entorno actual</em> está activada."
 
 #. (itstool) path: section/title
-#: C/profiling.page:88
+#: C/profiling.page:90
 msgid "Profiling with the sysprof-cli command line tool"
 msgstr "Perfilar con la herramienta de línea de comandos sysprof-cli"
 
 #. (itstool) path: section/p
-#: C/profiling.page:90
+#: C/profiling.page:92
 msgid ""
 "For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
 "command line tool. When run without any arguments, it will record your "
@@ -284,7 +275,7 @@ msgstr ""
 "lista de llamadas."
 
 #. (itstool) path: section/p
-#: C/profiling.page:95
+#: C/profiling.page:97
 msgid ""
 "You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
 "cmd>."
@@ -293,7 +284,7 @@ msgstr ""
 "<cmd>sysprof-cli -p pid</cmd>."
 
 #. (itstool) path: section/p
-#: C/profiling.page:98
+#: C/profiling.page:100
 msgid ""
 "If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
 "cmd> to specify a command to be launched. The command will inherit the "
@@ -304,12 +295,12 @@ msgstr ""
 "actual."
 
 #. (itstool) path: section/title
-#: C/profiling.page:108
+#: C/profiling.page:110
 msgid "Interpreting results"
 msgstr "Interpretar los resultados"
 
 #. (itstool) path: section/p
-#: C/profiling.page:110
+#: C/profiling.page:112
 msgid ""
 "The profiling results in <app>Sysprof</app> are split into three sections. "
 "On the top left is a list of all the functions profiled. They are sorted by "
@@ -321,7 +312,7 @@ msgstr ""
 "durante la grabación."
 
 #. (itstool) path: note/p
-#: C/profiling.page:115
+#: C/profiling.page:117
 msgid ""
 "It is important to note that the amount of time spent in each function is "
 "not captured. That would require a tracing profiler to accurately record. "
@@ -335,7 +326,7 @@ msgstr ""
 "muestra."
 
 #. (itstool) path: section/p
-#: C/profiling.page:121
+#: C/profiling.page:123
 msgid ""
 "After selecting a function from the functions list, all of the recorded "
 "callers of that function will be displayed on the bottom left. They are also "
@@ -348,7 +339,7 @@ msgstr ""
 "llamadas."
 
 #. (itstool) path: section/p
-#: C/profiling.page:126
+#: C/profiling.page:128
 msgid ""
 "On the right, are all of the decendants of a selected function. You can "
 "select a function either from the functions list, or the callers list."
@@ -357,7 +348,7 @@ msgstr ""
 "elegir una función bien de la fista de funciones o de la lista de llamadas."
 
 #. (itstool) path: section/p
-#: C/profiling.page:129
+#: C/profiling.page:131
 msgid ""
 "You can jump into a function by activating a row in the tree of descendants "
 "with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
@@ -366,7 +357,7 @@ msgstr ""
 "pulsación o pulsando <key>Intro</key> o <key>Espacio</key>."
 
 #. (itstool) path: note/p
-#: C/profiling.page:133
+#: C/profiling.page:135
 msgid ""
 "If you see <em>- - kernel - -</em> in your results, that means that the "
 "application transitioned into or from the Linux kernel. There can be many "
@@ -452,23 +443,28 @@ msgstr ""
 "Para obtener un árbol de llamadas más detallado y preciso de un código no "
 "optimizado, use las opciones: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
 
-#. (itstool) path: p/link
-#: C/legal.xml:5
-msgid "Creative Commons Attribution-ShareAlike 4.0 International"
-msgstr "Creative Commons Atribución - Compartir igual 4.0 internacional"
+#. (itstool) path: page/title
+#: C/index.page:12
+msgid "Sysprof"
+msgstr "Sysprof"
 
-#. (itstool) path: license/p
-#: C/legal.xml:4
-msgid "This work is licensed under a <_:link-1/> license."
-msgstr "Este trabajo está licenciado bajo la <_:link-1/>."
+#. (itstool) path: section/title
+#: C/index.page:19
+msgid "Frequently Asked Questions"
+msgstr "Preguntas más frecuentes"
 
-#. (itstool) path: license/p
-#: C/legal.xml:8
-msgid ""
-"As a special exception, the copyright holders give you permission to copy, "
-"modify, and distribute the example code contained in this documentation "
-"under the terms of your choosing, without restriction."
-msgstr ""
-"Como excepción especial, los poseedores de los derechos de autor le dan "
-"permiso para copiar, modificar y distribuir el código de ejemplo contenido "
-"en este documento bajo los términos que usted elija, sin restricción."
+#~ msgid "Creative Commons Attribution-ShareAlike 4.0 International"
+#~ msgstr "Creative Commons Atribución - Compartir igual 4.0 internacional"
+
+#~ msgid "This work is licensed under a <_:link-1/> license."
+#~ msgstr "Este trabajo está licenciado bajo la <_:link-1/>."
+
+#~ msgid ""
+#~ "As a special exception, the copyright holders give you permission to "
+#~ "copy, modify, and distribute the example code contained in this "
+#~ "documentation under the terms of your choosing, without restriction."
+#~ msgstr ""
+#~ "Como excepción especial, los poseedores de los derechos de autor le dan "
+#~ "permiso para copiar, modificar y distribuir el código de ejemplo "
+#~ "contenido en este documento bajo los términos que usted elija, sin "
+#~ "restricción."

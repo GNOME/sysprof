@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-02-21 20:41+0000\n"
+"POT-Creation-Date: 2020-06-20 16:50+0000\n"
 "PO-Revision-Date: 2020-02-24 14:50+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
@@ -104,7 +104,7 @@ msgstr ""
 "El último entorno lanzado, que aparecerá en la IU tras el reinicio de la "
 "aplicación."
 
-#: src/libsysprof/sysprof-callgraph-profile.c:433
+#: src/libsysprof/sysprof-callgraph-profile.c:445
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr "Sysprof no ha podido generar un gráfico desde el sistema de captura."
 
@@ -292,7 +292,6 @@ msgid "Counters Captured"
 msgstr "Contadores capturados"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:151
-#| msgid "Counters Captured"
 msgid "Allocations Captured"
 msgstr "Reservas capturadas"
 
@@ -344,20 +343,20 @@ msgstr "Grabando a las %s"
 msgid "New Recording"
 msgstr "Nueva grabación"
 
-#: src/libsysprof-ui/sysprof-display.c:1182
+#: src/libsysprof-ui/sysprof-display.c:1185
 msgid "Save Recording"
 msgstr "Guardar grabación"
 
-#: src/libsysprof-ui/sysprof-display.c:1185
+#: src/libsysprof-ui/sysprof-display.c:1188
 msgid "Save"
 msgstr "Guardar"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1186 src/sysprof/sysprof-window.c:277
+#: src/libsysprof-ui/sysprof-display.c:1189 src/sysprof/sysprof-window.c:277
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/libsysprof-ui/sysprof-display.c:1212
+#: src/libsysprof-ui/sysprof-display.c:1215
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Falló al guardar la grabación: %s"
@@ -1026,7 +1025,7 @@ msgstr ""
 #~ "Sysprof falló al intentar acceder a los datos de rendimiento solicitados."
 
 #~ msgid "Welcome to Sysprof"
-#~ msgstr "Bienvenido a Sysprof"
+#~ msgstr "Bienvenido/a a Sysprof"
 
 #~ msgid "Start profiling your system with the <b>Record</b> button above"
 #~ msgstr "Empiece a perfilar su sistema con el botón <b>Grabar</b>"

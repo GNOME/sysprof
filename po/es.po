@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-07-02 00:51+0000\n"
+"POT-Creation-Date: 2020-08-13 08:59+0000\n"
 "PO-Revision-Date: 2020-08-13 10:52+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
@@ -244,11 +244,11 @@ msgstr "Uso de CPU (todo)"
 msgid "Processes"
 msgstr "Procesos"
 
-#: src/libsysprof-ui/sysprof-details-page.c:224
+#: src/libsysprof-ui/sysprof-details-page.c:220
 msgid "Memory Capture"
 msgstr "Captura de memoria"
 
-#: src/libsysprof-ui/sysprof-details-page.c:238
+#: src/libsysprof-ui/sysprof-details-page.c:234
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf segundos"
@@ -829,12 +829,10 @@ msgid "All Files"
 msgstr "Todos los archivos"
 
 #: src/sysprof/ui/sysprof-window.ui:29
-#| msgid "Open"
 msgid "_Open"
 msgstr "_Abrir"
 
 #: src/sysprof/ui/sysprof-window.ui:32
-#| msgid "Open Recording…"
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Abrir grabación… (Ctrl+A)"
 
@@ -851,114 +849,114 @@ msgstr "Perfilador detenido."
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge necesita al menos 2 argumentos de nombres de archivos"
 
-#: src/tools/sysprof-cli.c:219
+#: src/tools/sysprof-cli.c:220
 msgid "Disable CPU throttling while profiling"
 msgstr "Desactivar «throttling» de la CPU al perfilar"
 
-#: src/tools/sysprof-cli.c:220
+#: src/tools/sysprof-cli.c:221
 msgid "Make sysprof specific to a task"
 msgstr "Hacer que sysprof sea específico de una tarea"
 
-#: src/tools/sysprof-cli.c:220
+#: src/tools/sysprof-cli.c:221
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:221
+#: src/tools/sysprof-cli.c:222
 msgid "Run a command and profile the process"
 msgstr "Ejecutar un comando y perfila el proceso"
 
-#: src/tools/sysprof-cli.c:221
+#: src/tools/sysprof-cli.c:222
 msgid "COMMAND"
 msgstr "COMANDO"
 
-#: src/tools/sysprof-cli.c:222
+#: src/tools/sysprof-cli.c:223
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Establecer la variable de entorno para procesos lanzados. La pueden usar "
 "varios elementos."
 
-#: src/tools/sysprof-cli.c:222
+#: src/tools/sysprof-cli.c:223
 msgid "VAR=VALUE"
 msgstr "VAR=VALOR"
 
-#: src/tools/sysprof-cli.c:223
+#: src/tools/sysprof-cli.c:224
 msgid "Force overwrite the capture file"
 msgstr "Forzar la sobrescritura del archivo de captura"
 
-#: src/tools/sysprof-cli.c:224
+#: src/tools/sysprof-cli.c:225
 msgid "Disable recording of battery statistics"
 msgstr "Desactivar registro de estadísticas de batería"
 
-#: src/tools/sysprof-cli.c:225
+#: src/tools/sysprof-cli.c:226
 msgid "Disable recording of CPU statistics"
 msgstr "Desactivar registro de estadísticas de CPU"
 
-#: src/tools/sysprof-cli.c:226
+#: src/tools/sysprof-cli.c:227
 msgid "Disable recording of Disk statistics"
 msgstr "Desactivar registro de estadísticas de disco"
 
-#: src/tools/sysprof-cli.c:227
+#: src/tools/sysprof-cli.c:228
 msgid "Do not record stacktraces using Linux perf"
 msgstr "No registrar trazas de la pila usando Linux perf"
 
-#: src/tools/sysprof-cli.c:228
+#: src/tools/sysprof-cli.c:229
 msgid "Do not append symbol name information from local machine"
 msgstr "No añadir información sobre nombres de símbolos de la máquina local"
 
-#: src/tools/sysprof-cli.c:229
+#: src/tools/sysprof-cli.c:230
 msgid "Disable recording of memory statistics"
 msgstr "Desactivar registro de estadísticas de memoria"
 
-#: src/tools/sysprof-cli.c:230
+#: src/tools/sysprof-cli.c:231
 msgid "Disable recording of network statistics"
 msgstr "Desactivar registro de estadísticas de red"
 
-#: src/tools/sysprof-cli.c:231
+#: src/tools/sysprof-cli.c:232
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Establecer la variable de entorno SYSPROF_TRACE_FD para subprocesos"
 
-#: src/tools/sysprof-cli.c:232
+#: src/tools/sysprof-cli.c:233
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr ""
 "Establecer la variable de entorno GJS_TRACE_FD para trazar procesos GJS"
 
-#: src/tools/sysprof-cli.c:233
+#: src/tools/sysprof-cli.c:234
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr ""
 "Establecer la variable de entorno GTK_TRACE_FD para trazar una aplicación GTK"
 
-#: src/tools/sysprof-cli.c:234
+#: src/tools/sysprof-cli.c:235
 msgid "Include RAPL energy statistics"
 msgstr "Incluir estadísticas de energía RAPL"
 
-#: src/tools/sysprof-cli.c:235
+#: src/tools/sysprof-cli.c:236
 msgid "Profile memory allocations and frees"
 msgstr "Perfilar reservas y liberaciones de memoria"
 
-#: src/tools/sysprof-cli.c:236
+#: src/tools/sysprof-cli.c:237
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Conectar a org.gnome.Shell para estadísticas del perfilador"
 
-#: src/tools/sysprof-cli.c:237
+#: src/tools/sysprof-cli.c:238
 msgid "Track performance of the applications main loop"
 msgstr "Registrar el rendiminiento del bucle principal de las aplicaciones"
 
-#: src/tools/sysprof-cli.c:238
+#: src/tools/sysprof-cli.c:239
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 "Unir todos los archivos *.syscap proporcionados y escribir en la salida "
 "estándar"
 
-#: src/tools/sysprof-cli.c:239
+#: src/tools/sysprof-cli.c:240
 msgid "Print the sysprof-cli version and exit"
 msgstr "Mostrar la versión de sysprof-cli y salir"
 
-#: src/tools/sysprof-cli.c:272
+#: src/tools/sysprof-cli.c:273
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[ARCHIVO_CAPTURA] [-- ARGUMENTOS COMANDO] — Sysprof"
 
-#: src/tools/sysprof-cli.c:275
+#: src/tools/sysprof-cli.c:276
 msgid ""
 "\n"
 "Examples:\n"
@@ -982,12 +980,12 @@ msgstr ""
 "  # Unir varios archivos syscap en uno solo\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/tools/sysprof-cli.c:308
+#: src/tools/sysprof-cli.c:309
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Se han pasado demasiados argumentos a sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:365
+#: src/tools/sysprof-cli.c:366
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existe. Use --force para sobrescribir\n"
@@ -1051,7 +1049,7 @@ msgstr ""
 #~ "Sysprof falló al intentar acceder a los datos de rendimiento solicitados."
 
 #~ msgid "Welcome to Sysprof"
-#~ msgstr "Bienvenido a Sysprof"
+#~ msgstr "Bienvenido/a a Sysprof"
 
 #~ msgid "Start profiling your system with the <b>Record</b> button above"
 #~ msgstr "Empiece a perfilar su sistema con el botón <b>Grabar</b>"

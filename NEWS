@@ -1,3 +1,12 @@
+Overview of changes in Sysprof 3.37.92
+======================================
+
+ * Build system fixes
+ * Fix incorrect warnings
+ * Add various missing capture APIs for GTK
+ * Be more careful about when polkit is queried
+ * Translation updates
+
 Overview of changes in Sysprof 3.37.90
 ======================================
 

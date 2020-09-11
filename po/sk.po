@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-01-29 16:17+0000\n"
-"PO-Revision-Date: 2020-01-30 09:02+0100\n"
+"POT-Creation-Date: 2020-07-02 00:51+0000\n"
+"PO-Revision-Date: 2020-09-11 14:35+0200\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
@@ -16,19 +16,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
-#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:199
-#: src/sysprof/sysprof-application.c:326 src/sysprof/ui/sysprof-window.ui:12
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:12
 msgid "Sysprof"
 msgstr "Sysprof"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:6
-#, fuzzy
-#| msgid "Profile an application or entire system."
 msgid "Profile an application or entire system"
-msgstr "Vytvára profil aplikácie alebo celého systému."
+msgstr "Vytvára profil aplikácie alebo celého systému"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:9
 msgid "The GNOME Foundation"
@@ -104,7 +102,7 @@ msgstr ""
 "Posledné spustené prostredie, ktoré bude nastavené v používateľskom rozhraní "
 "po reštarte aplikácie."
 
-#: src/libsysprof/sysprof-callgraph-profile.c:431
+#: src/libsysprof/sysprof-callgraph-profile.c:445
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr ""
 "Aplikácia Sysprof nebola schopná vygenerovať graf volaní zo systémového "
@@ -113,12 +111,12 @@ msgstr ""
 #: src/libsysprof/sysprof-perf-source.c:476
 #, c-format
 msgid "Sysprof failed to find field “%s”."
-msgstr ""
+msgstr "Aplikácia Sysprof zlyhala pri hľadaní poľa „%s“."
 
 #: src/libsysprof/sysprof-perf-source.c:489
 #, c-format
 msgid "Sysprof failed to parse offset for “%s”."
-msgstr ""
+msgstr "Aplikácia Sysprof zlyhala pri analyzovaní posunu pre „%s“."
 
 #: src/libsysprof/sysprof-perf-source.c:553
 #, c-format
@@ -126,24 +124,22 @@ msgid "Sysprof failed to get perf_event ID."
 msgstr ""
 
 #: src/libsysprof/sysprof-perf-source.c:659
-#, fuzzy, c-format
-#| msgid ""
-#| "An error occurred while attempting to access performance counters: %s"
+#, c-format
 msgid "An error occurred while attempting to access performance counters"
-msgstr "Vyskytla sa chyba pri pokuse získať prístup k počítadlám výkonu: %s"
+msgstr "Vyskytla sa chyba pri pokuse získať prístup k počítadlám výkonu"
 
 #: src/libsysprof-ui/sysprof-battery-aid.c:182
 msgid "Battery Charge"
-msgstr ""
+msgstr "Nabitie batérie"
 
 #: src/libsysprof-ui/sysprof-battery-aid.c:198
 msgid "Battery Charge (All)"
-msgstr ""
+msgstr "Nabitie batérie (všetko)"
 
 #: src/libsysprof-ui/sysprof-battery-aid.c:240
 #: src/libsysprof-ui/sysprof-counters-aid.c:282
 msgid "Battery"
-msgstr ""
+msgstr "Batéria"
 
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:212
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:218
@@ -160,59 +156,64 @@ msgstr ""
 
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:243
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:273
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Callgraph"
 msgid "Callgraph"
 msgstr "Graf volaní"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:27
+#: src/libsysprof-ui/sysprof-memprof-page.ui:236
 msgid "Functions"
 msgstr "Funkcie"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:43
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:104
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:159
+#: src/libsysprof-ui/sysprof-memprof-page.ui:253
+#: src/libsysprof-ui/sysprof-memprof-page.ui:315
+#: src/libsysprof-ui/sysprof-memprof-page.ui:371
 msgid "Self"
 msgstr "Samotný"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:59
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:120
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:175
+#: src/libsysprof-ui/sysprof-memprof-page.ui:269
+#: src/libsysprof-ui/sysprof-memprof-page.ui:331
+#: src/libsysprof-ui/sysprof-memprof-page.ui:387
 msgid "Total"
 msgstr "Celkom"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:88
+#: src/libsysprof-ui/sysprof-memprof-page.ui:298
 msgid "Callers"
 msgstr "Volajúci"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:151
+#: src/libsysprof-ui/sysprof-memprof-page.ui:362
 msgid "Descendants"
 msgstr "Podradené procesy"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:190
-#: src/libsysprof-ui/sysprof-details-page.ui:295
+#: src/libsysprof-ui/sysprof-details-page.ui:322
 msgid "Hits"
 msgstr ""
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:213
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Callgraph"
 msgid "Generating Callgraph"
-msgstr "Graf volaní"
+msgstr "Generuje sa graf volaní"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:214
 msgid "Sysprof is busy creating the selected callgraph."
 msgstr ""
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:224
+#: src/libsysprof-ui/sysprof-memprof-page.ui:433
 msgid "Not Enough Samples"
-msgstr ""
+msgstr "Nedostatok vzoriek"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:225
+#: src/libsysprof-ui/sysprof-memprof-page.ui:434
 msgid "More samples are necessary to display a callgraph."
-msgstr "Je potrebných viac vzoriek na zobrazenie grafu volaní"
+msgstr "Je potrebných viac vzoriek na zobrazenie grafu volaní."
 
 #: src/libsysprof-ui/sysprof-counters-aid.c:221
 #: src/libsysprof-ui/sysprof-counters-aid.c:226
@@ -222,42 +223,38 @@ msgstr ""
 #: src/libsysprof-ui/sysprof-cpu-aid.c:207
 #: src/libsysprof-ui/sysprof-cpu-aid.c:355
 msgid "CPU Usage"
-msgstr ""
+msgstr "Využitie procesora"
 
 #: src/libsysprof-ui/sysprof-cpu-aid.c:214
 msgid "CPU Frequency"
-msgstr ""
+msgstr "Frekvencia procesora"
 
 #: src/libsysprof-ui/sysprof-cpu-aid.c:218
 msgid "CPU Frequency (All)"
-msgstr ""
+msgstr "Frekvencia procesora (všetko)"
 
 #. Translators: CPU is the processor.
 #: src/libsysprof-ui/sysprof-cpu-aid.c:227
 #: src/libsysprof-ui/sysprof-cpu-aid.c:250
 msgid "CPU Usage (All)"
-msgstr ""
+msgstr "Využitie procesora (všetko)"
 
 #: src/libsysprof-ui/sysprof-cpu-aid.c:316
-#, fuzzy
-#| msgid "All Processes"
 msgid "Processes"
-msgstr "Všetky procesy"
+msgstr "Procesy"
 
-#: src/libsysprof-ui/sysprof-details-page.c:222
-#, fuzzy
-#| msgid "[Memory Capture]"
+#: src/libsysprof-ui/sysprof-details-page.c:224
 msgid "Memory Capture"
-msgstr "[Záznam pamäte]"
+msgstr "Záznam pamäte"
 
-#: src/libsysprof-ui/sysprof-details-page.c:236
+#: src/libsysprof-ui/sysprof-details-page.c:238
 #, c-format
 msgid "%0.4lf seconds"
-msgstr ""
+msgstr "%0.4lf sekúnd"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:21
 msgid "Filename"
-msgstr ""
+msgstr "Názov súboru"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:35
 #, fuzzy
@@ -269,17 +266,15 @@ msgstr "Uloženie záznamu ako"
 #: src/libsysprof-ui/sysprof-marks-page.ui:95
 #: src/libsysprof-ui/sysprof-marks-page.ui:215
 msgid "Duration"
-msgstr ""
+msgstr "Trvanie"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:65
 msgid "CPU Model"
-msgstr ""
+msgstr "Model procesora"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:80
-#, fuzzy
-#| msgid "Open Capture"
 msgid "Samples Captured"
-msgstr "Otvorenie záznamu"
+msgstr "Zaznamenané vzorky"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:94
 #, fuzzy
@@ -299,85 +294,80 @@ msgstr "Proces č. %d"
 msgid "Forks Captured"
 msgstr "[Záznam pamäte]"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:137
-#, fuzzy
-#| msgid "Open Capture"
+#: src/libsysprof-ui/sysprof-details-page.ui:136
 msgid "Counters Captured"
-msgstr "Otvorenie záznamu"
+msgstr "Zaznamenané počítadlá"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:282
+#: src/libsysprof-ui/sysprof-details-page.ui:151
+msgid "Allocations Captured"
+msgstr "Zaznamenané pridelenia"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:309
 #: src/libsysprof-ui/sysprof-marks-page.ui:52
 msgid "Mark"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-details-page.ui:308
+#: src/libsysprof-ui/sysprof-details-page.ui:335
 msgid "Min"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-details-page.ui:321
+#: src/libsysprof-ui/sysprof-details-page.ui:348
 msgid "Max"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-details-page.ui:334
+#: src/libsysprof-ui/sysprof-details-page.ui:361
 msgid "Avg"
 msgstr ""
 
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:205
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:267
 msgid "Disk"
-msgstr ""
+msgstr "Disk"
 
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:239
 msgid "Reads"
-msgstr ""
+msgstr "Čítania"
 
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:239
 msgid "Writes"
-msgstr ""
+msgstr "Zápisy"
 
-#: src/libsysprof-ui/sysprof-display.c:227
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Recording"
+#: src/libsysprof-ui/sysprof-display.c:229
 msgid "Recording Failed"
-msgstr "Zaznamenávanie"
+msgstr "Zaznamenávanie zlyhalo"
 
-#: src/libsysprof-ui/sysprof-display.c:232
+#: src/libsysprof-ui/sysprof-display.c:234
 msgid "Recording…"
 msgstr "Zaznamenáva sa…"
 
 #. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:256
-#, fuzzy, c-format
-#| msgctxt "shortcut window"
-#| msgid "Recording"
+#: src/libsysprof-ui/sysprof-display.c:258
+#, c-format
 msgid "Recording at %s"
-msgstr "Zaznamenávanie"
+msgstr "Záznam o %s"
 
-#: src/libsysprof-ui/sysprof-display.c:260
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Recording"
+#: src/libsysprof-ui/sysprof-display.c:262
 msgid "New Recording"
-msgstr "Zaznamenávanie"
+msgstr "Nový záznam"
 
-#: src/libsysprof-ui/sysprof-display.c:1177
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Recording"
+#: src/libsysprof-ui/sysprof-display.c:1087
+msgid "The recording could not be opened"
+msgstr "Nepodarilo sa otvoriť záznam"
+
+#: src/libsysprof-ui/sysprof-display.c:1210
 msgid "Save Recording"
-msgstr "Zaznamenávanie"
+msgstr "Uloženie záznamu"
 
-#: src/libsysprof-ui/sysprof-display.c:1180
+#: src/libsysprof-ui/sysprof-display.c:1213
 msgid "Save"
 msgstr "Uložiť"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1181 src/sysprof/sysprof-window.c:277
+#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
 msgid "Cancel"
 msgstr "Zrušiť"
 
-#: src/libsysprof-ui/sysprof-display.c:1207
+#: src/libsysprof-ui/sysprof-display.c:1240
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Zlyhalo uloženie záznamu: %s"
@@ -385,15 +375,15 @@ msgstr "Zlyhalo uloženie záznamu: %s"
 #: src/libsysprof-ui/sysprof-display.ui:49
 #: src/libsysprof-ui/sysprof-marks-page.ui:19
 msgid "Details"
-msgstr ""
+msgstr "Podrobnosti"
 
 #: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
 msgid "Remove environment variable"
-msgstr ""
+msgstr "Odstráni premennú prostredia"
 
 #: src/libsysprof-ui/sysprof-environ-editor.c:71
 msgid "New variable…"
-msgstr ""
+msgstr "Nová premenná…"
 
 #: src/libsysprof-ui/sysprof-failed-state-view.ui:22
 msgid "Ouch, that hurt!"
@@ -440,7 +430,7 @@ msgstr "Záznamy"
 #: src/libsysprof-ui/sysprof-logs-page.ui:15
 #: src/libsysprof-ui/sysprof-marks-page.ui:67
 msgid "Time"
-msgstr ""
+msgstr "Čas"
 
 #: src/libsysprof-ui/sysprof-logs-page.ui:29
 msgid "Severity"
@@ -448,7 +438,7 @@ msgstr ""
 
 #: src/libsysprof-ui/sysprof-logs-page.ui:44
 msgid "Domain"
-msgstr ""
+msgstr "Doména"
 
 #: src/libsysprof-ui/sysprof-marks-aid.c:237
 #: src/libsysprof-ui/sysprof-marks-aid.c:242
@@ -457,7 +447,7 @@ msgstr ""
 
 #: src/libsysprof-ui/sysprof-marks-page.ui:38
 msgid "Group"
-msgstr ""
+msgstr "Skupina"
 
 #: src/libsysprof-ui/sysprof-marks-page.ui:81
 msgid "End"
@@ -471,96 +461,146 @@ msgstr ""
 msgid "No timing data was found for the current selection"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-memory-aid.c:77
-#, fuzzy
-#| msgid "[Memory Capture]"
+#: src/libsysprof-ui/sysprof-memory-aid.c:68
 msgid "Memory Usage"
-msgstr "[Záznam pamäte]"
+msgstr "Využitie pamäte"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:182
+msgid "Memory"
+msgstr "Pamäť"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:193
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Allocations"
+msgstr "Pridelenia pamäte"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:224
+msgid "Track Allocations"
+msgstr ""
+
+#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
+#: src/libsysprof-ui/sysprof-memprof-page.c:235
+#, c-format
+msgid "> %s to %s"
+msgstr "> %s do %s"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:23
+msgid "Summary"
+msgstr "Súhrn"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+msgid "All Allocations"
+msgstr "Všetky pridelenia"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:40
+msgid "Temporary Allocations"
+msgstr "Dočasné pridelenia"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+msgid "Size"
+msgstr "Veľkosť"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:422
+msgid "Analyzing Memory Allocations"
+msgstr "Analyzujú sa pridelenia pamäte"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:423
+msgid "Sysprof is busy analyzing memory allocations."
+msgstr "Aplikácia Sysprof je zaneprázdnená analyzovaním pridelení pamäte."
+
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Used"
+msgstr "Využitá pamäť"
 
 #: src/libsysprof-ui/sysprof-netdev-aid.c:204
 #: src/libsysprof-ui/sysprof-netdev-aid.c:264
 msgid "Network"
-msgstr ""
+msgstr "Sieť"
 
 #. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:14
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
 msgid "GNOME Shell"
+msgstr "Shell prostredia GNOME"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:104
+msgid "Profilers"
+msgstr "Nástroje na tvorbu profilov"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:207
+msgid ""
+"Track application memory allocations (Sysprof must launch target application)"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:80
-#, fuzzy
-#| msgid "Profiler"
-msgid "Profilers"
-msgstr "Nástroj na tvorbu profilov"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:215
+msgid "Track slow operations on your applications main loop"
+msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:191
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:231
 msgid "All Processes"
 msgstr "Všetky procesy"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:221
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:261
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
 "not be possible on some system system configurations."
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:249
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:289
 msgid "Search Processes…"
-msgstr "Vyhľadávajú sa procesy…"
+msgstr "Vyhľadajte procesy…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:308
 msgid "Loading Processes…"
 msgstr "Načítavajú sa procesy…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:292
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:332
 msgid "Launch Application"
-msgstr ""
+msgstr "Spustiť aplikáciu"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:321
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:361
 msgid "Enable to launch a program of your choosing before profiling."
-msgstr ""
+msgstr "Povolením spustíte pred profilovaním program podľa vlastného výberu."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:349
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:389
 msgid "Command Line"
 msgstr "Príkazový riadok"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:408
 msgid "Environment"
 msgstr "Prostredie"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:394
-#, fuzzy
-#| msgid "Inherit current environment"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:434
 msgid "Inherit Environment"
-msgstr "Zdediť aktuálne prostredie"
+msgstr "Zdediť prostredie"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:418
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:458
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other "
 "desktop environment settings."
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:444
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:484
 msgid "Allow CPU Throttling"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:472
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
 msgid ""
 "If disabled, your CPU will be placed in performance mode. It will be "
 "restored after profiling."
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:493
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:533
 msgid "_Record"
 msgstr "Zaz_namenať"
 
 #: src/libsysprof-ui/sysprof-rapl-aid.c:175
 #: src/libsysprof-ui/sysprof-rapl-aid.c:248
 msgid "Energy Usage"
-msgstr ""
+msgstr "Spotreba energie"
 
 #: src/libsysprof-ui/sysprof-rapl-aid.c:180
 msgid "Energy Usage (All)"
-msgstr ""
+msgstr "Spotreba energie (všetko)"
 
 #: src/libsysprof-ui/sysprof-recording-state-view.ui:32
 msgid ""
@@ -571,14 +611,11 @@ msgstr ""
 
 #: src/libsysprof-ui/sysprof-recording-state-view.ui:47
 msgid "Events"
-msgstr ""
+msgstr "Udalosti"
 
 #: src/libsysprof-ui/sysprof-recording-state-view.ui:73
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Stop recording"
 msgid "_Stop Recording"
-msgstr "Zastavenie zaznamenávania"
+msgstr "Za_staviť zaznamenávanie"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:119
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
@@ -594,18 +631,12 @@ msgid "Instruments"
 msgstr ""
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
-#, fuzzy
-#| msgid "Profile my _entire system"
 msgid "Profile the system"
-msgstr "Vytvoriť profil môjho _celého systému"
+msgstr "Vytvorenie profilu systému"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:14
-#, fuzzy
-#| msgid "Authentication is required to access system performance counters."
 msgid "Authentication is required to profile the system."
-msgstr ""
-"Vyžaduje sa overenie totožnosti na získanie prístupu k počítadlám výkonu "
-"vášho systému."
+msgstr "Vyžaduje sa overenie totožnosti na vytvorenie profilu systému."
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:26
 msgid "Open a perf event stream"
@@ -633,19 +664,14 @@ msgid "Sysprof Shortcuts"
 msgstr "Skratky aplikácie Sysprof"
 
 #: src/sysprof/gtk/help-overlay.ui:12
-#, fuzzy
-#| msgid "All Files"
 msgctxt "shortcut window"
 msgid "Files"
-msgstr "Všetky súbory"
+msgstr "Súbory"
 
 #: src/sysprof/gtk/help-overlay.ui:16
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Recording"
 msgctxt "shortcut window"
 msgid "Save Recording"
-msgstr "Zaznamenávanie"
+msgstr "Uloženie záznamu"
 
 #: src/sysprof/gtk/help-overlay.ui:17
 msgctxt "shortcut window"
@@ -653,12 +679,9 @@ msgid "Saves the current recording"
 msgstr "Uloženie aktuálneho záznamu"
 
 #: src/sysprof/gtk/help-overlay.ui:24
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Stop recording"
 msgctxt "shortcut window"
 msgid "Open recording"
-msgstr "Zastavenie zaznamenávania"
+msgstr "Otvorenie záznamu"
 
 #: src/sysprof/gtk/help-overlay.ui:25
 msgctxt "shortcut window"
@@ -671,20 +694,14 @@ msgid "Recording"
 msgstr "Zaznamenávanie"
 
 #: src/sysprof/gtk/help-overlay.ui:38
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Recording"
 msgctxt "shortcut window"
 msgid "Record again"
-msgstr "Zaznamenávanie"
+msgstr "Zaznamenanie znovu"
 
 #: src/sysprof/gtk/help-overlay.ui:39
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Stop recording"
 msgctxt "shortcut window"
 msgid "Starts a new recording"
-msgstr "Zastavenie zaznamenávania"
+msgstr "Spustenie nového zaznamenávania"
 
 #: src/sysprof/gtk/help-overlay.ui:46
 msgctxt "shortcut window"
@@ -748,32 +765,25 @@ msgstr "Obnovenie priblíženia"
 
 #: src/sysprof/gtk/menus.ui:6
 msgid "New Tab"
-msgstr ""
+msgstr "Nová karta"
 
 #: src/sysprof/gtk/menus.ui:11
-#, fuzzy
-#| msgid "_New Window"
 msgid "New Window"
-msgstr "_Nové okno"
+msgstr "Nové okno"
 
 #: src/sysprof/gtk/menus.ui:18
-#, fuzzy
 #| msgid "Recording…"
 msgid "Open Recording…"
-msgstr "Zaznamenáva sa…"
+msgstr "Otvoriť záznam…"
 
 #: src/sysprof/gtk/menus.ui:23
-#, fuzzy
 #| msgid "Recording…"
 msgid "Save Recording…"
-msgstr "Zaznamenáva sa…"
+msgstr "Uložiť záznam…"
 
 #: src/sysprof/gtk/menus.ui:30
-#, fuzzy
-#| msgctxt "shortcut window"
-#| msgid "Recording"
 msgid "Record Again"
-msgstr "Zaznamenávanie"
+msgstr "Zaznamenať znovu"
 
 #: src/sysprof/gtk/menus.ui:37
 msgid "Close"
@@ -788,128 +798,165 @@ msgid "Help"
 msgstr "Pomocník"
 
 #: src/sysprof/gtk/menus.ui:54
-#, fuzzy
-#| msgid "Sysprof"
 msgid "About Sysprof"
-msgstr "Sysprof"
+msgstr "O aplikácii Sysprof"
 
-#: src/sysprof/sysprof-application.c:191
+#: src/sysprof/sysprof-application.c:194
 msgid "A system profiler"
 msgstr "Nástroj na tvorbu systémových profilov"
 
-#: src/sysprof/sysprof-application.c:196
+#: src/sysprof/sysprof-application.c:199
 msgid "translator-credits"
 msgstr "Dušan Kazik <prescott66@gmail.com>"
 
-#: src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:205
 msgid "Learn more about Sysprof"
 msgstr "Zistite viac o aplikácii Sysprof"
 
 #. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:271
+#: src/sysprof/sysprof-window.c:273
 msgid "Open Capture…"
 msgstr "Otvorenie záznamu…"
 
 #. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:275
+#: src/sysprof/sysprof-window.c:277
 msgid "Open"
 msgstr "Otvoriť"
 
-#: src/sysprof/sysprof-window.c:282
+#: src/sysprof/sysprof-window.c:284
 msgid "Sysprof Captures"
 msgstr "Záznamy aplikácie Sysprof"
 
-#: src/sysprof/sysprof-window.c:287
+#: src/sysprof/sysprof-window.c:289
 msgid "All Files"
 msgstr "Všetky súbory"
 
-#: src/tools/sysprof-cli.c:87
+#: src/sysprof/ui/sysprof-window.ui:29
+msgid "_Open"
+msgstr "_Otvoriť"
+
+#: src/sysprof/ui/sysprof-window.ui:32
+#| msgid "Recording…"
+msgid "Open Recording… (Ctrl+O)"
+msgstr "Otvorí záznam… (Ctrl+O)"
+
+#: src/tools/sysprof-cli.c:59
+msgid "Stopping profiler. Press twice more ^C to force exit."
+msgstr ""
+
+#: src/tools/sysprof-cli.c:72
+msgid "Profiler stopped."
+msgstr "Nástroj na tvorbu profilov je zastavený."
+
+#: src/tools/sysprof-cli.c:105
 msgid "--merge requires at least 2 filename arguments"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:197
+#: src/tools/sysprof-cli.c:219
+msgid "Disable CPU throttling while profiling"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:220
 msgid "Make sysprof specific to a task"
 msgstr "Učiní program sysprof špecifickým danej úlohe"
 
-#: src/tools/sysprof-cli.c:197
+#: src/tools/sysprof-cli.c:220
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:198
+#: src/tools/sysprof-cli.c:221
 msgid "Run a command and profile the process"
 msgstr "Spustí príkaz a vytvorí profil procesu"
 
-#: src/tools/sysprof-cli.c:198
+#: src/tools/sysprof-cli.c:221
 msgid "COMMAND"
 msgstr "PRÍKAZ"
 
-#: src/tools/sysprof-cli.c:199
+#: src/tools/sysprof-cli.c:222
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+
+#: src/tools/sysprof-cli.c:222
+msgid "VAR=VALUE"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:223
 msgid "Force overwrite the capture file"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:200
+#: src/tools/sysprof-cli.c:224
 msgid "Disable recording of battery statistics"
-msgstr ""
+msgstr "Zakáže zaznamenávanie štatistík batérie"
 
-#: src/tools/sysprof-cli.c:201
+#: src/tools/sysprof-cli.c:225
 msgid "Disable recording of CPU statistics"
-msgstr ""
+msgstr "Zakáže zaznamenávanie štatistík procesora"
 
-#: src/tools/sysprof-cli.c:202
+#: src/tools/sysprof-cli.c:226
 msgid "Disable recording of Disk statistics"
-msgstr ""
+msgstr "Zakáže zaznamenávanie štatistík disku"
 
-#: src/tools/sysprof-cli.c:203
+#: src/tools/sysprof-cli.c:227
 msgid "Do not record stacktraces using Linux perf"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:204
+#: src/tools/sysprof-cli.c:228
 msgid "Do not append symbol name information from local machine"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:205
+#: src/tools/sysprof-cli.c:229
 msgid "Disable recording of memory statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:206
+#: src/tools/sysprof-cli.c:230
 msgid "Disable recording of network statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:207
+#: src/tools/sysprof-cli.c:231
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:208
+#: src/tools/sysprof-cli.c:232
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:209
+#: src/tools/sysprof-cli.c:233
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:210
+#: src/tools/sysprof-cli.c:234
 msgid "Include RAPL energy statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:211
+#: src/tools/sysprof-cli.c:235
+#, fuzzy
+#| msgid "Profiler for an application or entire system"
+msgid "Profile memory allocations and frees"
+msgstr "Nástroj na tvorbu profilov aplikácie alebo celého systému."
+
+#: src/tools/sysprof-cli.c:236
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:212
+#: src/tools/sysprof-cli.c:237
+msgid "Track performance of the applications main loop"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:238
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:213
+#: src/tools/sysprof-cli.c:239
 msgid "Print the sysprof-cli version and exit"
 msgstr "Vypíše verziu programu sysprof-cli a skončí"
 
-#: src/tools/sysprof-cli.c:246
-#, fuzzy
+#: src/tools/sysprof-cli.c:272
 #| msgid "[CAPTURE_FILE] — Sysprof"
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
-msgstr "[SÚBOR_ZÁZNAMU] — Sysprof"
+msgstr "[SÚBOR_ZÁZNAMU] [-- PARAMETRE PRÍKAZU] — Sysprof"
 
-#: src/tools/sysprof-cli.c:249
+#: src/tools/sysprof-cli.c:275
 msgid ""
 "\n"
 "Examples:\n"
@@ -922,12 +969,12 @@ msgid ""
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:282
+#: src/tools/sysprof-cli.c:308
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Programu sysprof-cli bolo odovzdaných príliš veľa parametrov:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:339
+#: src/tools/sysprof-cli.c:365
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s existuje. Použite parameter --force na prepísanie\n"
@@ -954,22 +1001,19 @@ msgstr ""
 
 #: src/tools/sysprof-profiler-ctl.c:49
 msgid "/org/gnome/Sysprof3/Profiler"
-msgstr ""
+msgstr "/org/gnome/Sysprof3/Profiler"
 
 #: src/tools/sysprof-profiler-ctl.c:50
 msgid "Timeout in seconds"
-msgstr ""
+msgstr "Časový limit v sekundách"
 
 #: src/tools/sysprof-profiler-ctl.c:51
 msgid "Overwrite FILENAME if it exists"
-msgstr ""
+msgstr "Prepíše NÁZOV_SÚBORU ak existuje"
 
 #: src/tools/sysprof-profiler-ctl.c:79
 msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
 msgstr ""
-
-#~ msgid "Profiler for an application or entire system"
-#~ msgstr "Nástroj na tvorbu profilov aplikácie alebo celého systému."
 
 #~ msgid "sysprof"
 #~ msgstr "sysprof"

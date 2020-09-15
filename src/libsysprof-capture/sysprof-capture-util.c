@@ -58,6 +58,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <stdint.h>
 #include <unistd.h>
 
 #ifdef _WIN32
@@ -252,4 +253,16 @@ size_t
     ;
 
   return i;
+}
+
+void *
+(_sysprof_reallocarray) (void   *ptr,
+                         size_t  m,
+                         size_t  n)
+{
+       if (n && m > (size_t)(-1) / n) {
+               errno = ENOMEM;
+               return NULL;
+       }
+       return realloc(ptr, m * n);
 }

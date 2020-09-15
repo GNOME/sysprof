@@ -1270,7 +1270,7 @@ array_append (const char ***files,
       const char **new_files;
 
       *n_files_allocated = (*n_files_allocated > 0) ? 2 * *n_files_allocated : 4;
-      new_files = reallocarray (*files, *n_files_allocated, sizeof (**files));
+      new_files = _sysprof_reallocarray (*files, *n_files_allocated, sizeof (**files));
       if (new_files == NULL)
         return false;
       *files = new_files;

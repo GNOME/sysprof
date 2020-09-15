@@ -108,3 +108,11 @@ size_t  _sysprof_strlcpy     (char       *dest,
                               const char *src,
                               size_t      dest_size);
 #endif
+
+#ifdef HAVE_REALLOCARRAY
+# define _sysprof_reallocarray(p,m,n) reallocarray(p,m,n)
+#else
+void *_sysprof_reallocarray  (void       *ptr,
+                              size_t      m,
+                              size_t      n);
+#endif

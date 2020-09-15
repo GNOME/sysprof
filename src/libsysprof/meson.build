@@ -109,12 +109,12 @@ if dependency('polkit-gobject-1', version: '>= 0.114', required: false).found()
   libsysprof_c_args += ['-DHAVE_POLKIT_AUTOPTR']
 endif
 
-libsysprof_deps = [
-  libsysprof_capture_deps,
+# Subset of dependencies used in generating the pkg-config file
+libsysprof_pkg_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('gio-unix-2.0', version: glib_req_version),
   polkit_dep,
-  librax_dep,
+  libsysprof_capture_deps,
 ]
 
 if host_machine.system() == 'linux'
@@ -134,12 +134,20 @@ if host_machine.system() == 'linux'
 endif
 
 if host_machine.system() == 'darwin'
-  libsysprof_deps += [ dependency('libelf') ]
+  libsysprof_pkg_deps += [ dependency('libelf') ]
   libsysprof_c_args += [ '-DNT_GNU_BUILD_ID=3', '-DELF_NOTE_GNU="GNU"', '-D__LIBELF_INTERNAL__' ]
 endif
 
+# Meson's pkgconfig module doesn't understand this one
+libsysprof_deps = libsysprof_pkg_deps + [
+  librax_dep,
+]
+
+libsysprof_libs_private = []
+
 if host_machine.system() != 'darwin'
   libsysprof_deps += [cxx.find_library('stdc++')]
+  libsysprof_libs_private += '-lstdc++'
 endif
 
 libsysprof = shared_library(
@@ -171,6 +179,8 @@ pkgconfig.generate(
   description: 'The library for console applications embedding sysprof',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
      requires: [ 'gio-2.0' ],
+     requires_private: libsysprof_pkg_deps,
+    libraries_private: libsysprof_libs_private,
      variables: [
        'datadir=' + datadir_for_pc_file,
      ],

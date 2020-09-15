@@ -84,12 +84,26 @@ libsysprof_ui_resources = gnome.compile_resources(
   c_name: 'lisysprof_ui',
 )
 
-libsysprof_ui_deps = [
+# Subset of dependencies used in generating the pkg-config file
+libsysprof_ui_pkg_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('gtk+-3.0', version: gtk_req_version),
-  dependency('libdazzle-1.0', version: dazzle_req_version, fallback: ['libdazzle', 'libdazzle_dep']),
+]
+
+libsysprof_ui_deps = libsysprof_ui_pkg_deps + [
   libsysprof_dep,
 ]
+
+# Meson's pkgconfig module wants to see a library here, not an internal
+# dependency object
+libsysprof_ui_pkg_deps += libsysprof
+
+dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version, fallback: ['libdazzle', 'libdazzle_dep'])
+libsysprof_ui_deps += dazzle_dep
+
+if dazzle_dep.type_name() == 'pkgconfig'
+  libsysprof_ui_pkg_deps += dazzle_dep
+endif
 
 libsysprof_ui = shared_library(
   'sysprof-ui-@0@'.format(libsysprof_api_version),
@@ -117,6 +131,7 @@ pkgconfig.generate(
   description: 'The UI library for GTK applications embedding sysprof',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
      requires: [ 'gio-2.0', 'gtk+-3.0' ],
+     requires_private: libsysprof_ui_pkg_deps,
      variables: [
        'datadir=' + datadir_for_pc_file,
      ],

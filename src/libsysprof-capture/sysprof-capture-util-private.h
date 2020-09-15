@@ -60,9 +60,18 @@
 # include <sys/sendfile.h>
 #endif
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#ifndef TEMP_FAILURE_RETRY
+#define TEMP_FAILURE_RETRY(expression)            \
+    ({ long int __result;                         \
+       do { __result = (long int) (expression); } \
+       while (__result == -1L && errno == EINTR); \
+       __result; })
+#endif
 
 static inline void *
 sysprof_malloc0 (size_t size)

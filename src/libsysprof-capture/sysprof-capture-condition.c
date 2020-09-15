@@ -269,6 +269,7 @@ sysprof_capture_condition_copy (const SysprofCaptureCondition *self)
     }
 
   sysprof_assert_not_reached ();
+  return NULL;
 }
 
 static void

@@ -64,6 +64,7 @@
 #include <unistd.h>
 
 #include "sysprof-capture.h"
+#include "sysprof-capture-util-private.h"
 #include "sysprof-macros-internal.h"
 
 typedef struct
@@ -133,7 +134,7 @@ translate_table_add (TranslateTable *tables,
   if (table_ptr->n_items == table_ptr->n_items_allocated)
     {
       table_ptr->n_items_allocated = (table_ptr->n_items_allocated > 0) ? table_ptr->n_items_allocated * 2 : 4;
-      table_ptr->items = reallocarray (table_ptr->items, table_ptr->n_items_allocated, sizeof (*table_ptr->items));
+      table_ptr->items = _sysprof_reallocarray (table_ptr->items, table_ptr->n_items_allocated, sizeof (*table_ptr->items));
       assert (table_ptr->items != NULL);
     }
 
@@ -481,8 +482,8 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
                           if (n_elements == n_elements_allocated)
                             {
                               n_elements_allocated = (n_elements_allocated > 0) ? n_elements_allocated * 2 : 4;
-                              ids = reallocarray (ids, n_elements_allocated, sizeof (*ids));
-                              values = reallocarray (values, n_elements_allocated, sizeof (*values));
+                              ids = _sysprof_reallocarray (ids, n_elements_allocated, sizeof (*ids));
+                              values = _sysprof_reallocarray (values, n_elements_allocated, sizeof (*values));
                               if (ids == NULL || values == NULL)
                                 goto panic;
                             }

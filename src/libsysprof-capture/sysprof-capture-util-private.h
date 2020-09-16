@@ -60,9 +60,18 @@
 # include <sys/sendfile.h>
 #endif
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#ifndef TEMP_FAILURE_RETRY
+#define TEMP_FAILURE_RETRY(expression)            \
+    ({ long int __result;                         \
+       do { __result = (long int) (expression); } \
+       while (__result == -1L && errno == EINTR); \
+       __result; })
+#endif
 
 static inline void *
 sysprof_malloc0 (size_t size)
@@ -107,4 +116,12 @@ ssize_t _sysprof_sendfile    (int         out_fd,
 size_t  _sysprof_strlcpy     (char       *dest,
                               const char *src,
                               size_t      dest_size);
+#endif
+
+#ifdef HAVE_REALLOCARRAY
+# define _sysprof_reallocarray(p,m,n) reallocarray(p,m,n)
+#else
+void *_sysprof_reallocarray  (void       *ptr,
+                              size_t      m,
+                              size_t      n);
 #endif

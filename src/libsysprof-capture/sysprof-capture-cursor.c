@@ -293,7 +293,9 @@ sysprof_capture_cursor_add_condition (SysprofCaptureCursor    *self,
    *
    * FIXME: There’s currently no error reporting from this function, so ENOMEM
    * results in an abort. */
-  self->conditions = reallocarray (self->conditions, ++self->n_conditions, sizeof (*self->conditions));
+  self->conditions = _sysprof_reallocarray (self->conditions,
+                                            ++self->n_conditions,
+                                            sizeof (*self->conditions));
   assert (self->conditions != NULL);
 
   self->conditions[self->n_conditions - 1] = sysprof_steal_pointer (&condition);

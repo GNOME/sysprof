@@ -75,7 +75,9 @@
 #elif SYSPROF_GNUC_CHECK_VERSION(4, 6)
 # define SYSPROF_STATIC_ASSERT(expr, msg) _Static_assert(expr, msg)
 #else
-# define SYSPROF_STATIC_ASSERT(expr, msg) char __static_assert_##__COUNTER__ [(expr) ? 0 : -1];
+# define _SYSPROF_STATIC_ASSERT2(expr, msg, id) typedef char __static_assert_##id[(expr) ? 0 : -1];
+# define _SYSPROF_STATIC_ASSERT(expr, msg, id) _SYSPROF_STATIC_ASSERT2(expr, msg, id)
+# define SYSPROF_STATIC_ASSERT(expr, msg) _SYSPROF_STATIC_ASSERT(expr, msg, __COUNTER__)
 #endif
 
 #if INT_MAX == LONG_MAX

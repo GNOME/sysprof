@@ -88,6 +88,8 @@ struct _SysprofCaptureReader
   int64_t                   end_time;
   SysprofCaptureStat        st_buf;
   unsigned int              st_buf_set : 1;
+  char                    **list_files;
+  size_t                    n_list_files;
 };
 
 /* Sets @errno on failure. Sets @errno to EBADMSG if the file magic doesn’t
@@ -1276,7 +1278,7 @@ array_append (const char ***files,
       *files = new_files;
     }
 
-  (*files)[*n_files] = new_element;
+  (*files)[*n_files] = new_element ? strdup (new_element) : NULL;
   *n_files = *n_files + 1;
   assert (*n_files <= *n_files_allocated);
 
@@ -1304,6 +1306,16 @@ array_deduplicate (const char **files,
   *n_files = last_written + 1;
 }
 
+static int
+compare_strings (const void *a,
+                 const void *b)
+{
+  const char * const *astr = a;
+  const char * const *bstr = b;
+
+  return strcmp (*astr, *bstr);
+}
+
 const char **
 sysprof_capture_reader_list_files (SysprofCaptureReader *self)
 {
@@ -1313,38 +1325,49 @@ sysprof_capture_reader_list_files (SysprofCaptureReader *self)
 
   assert (self != NULL);
 
-  while (sysprof_capture_reader_peek_type (self, &type))
+  /* Only generate the list of files once */
+  if (self->list_files == NULL)
     {
-      const SysprofCaptureFileChunk *file;
-
-      if (type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+      while (sysprof_capture_reader_peek_type (self, &type))
         {
-          sysprof_capture_reader_skip (self);
-          continue;
+          const SysprofCaptureFileChunk *file;
+
+          if (type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+            {
+              sysprof_capture_reader_skip (self);
+              continue;
+            }
+
+          if (!(file = sysprof_capture_reader_read_file (self)))
+            break;
+
+          if (!array_append (&files, &n_files, &n_files_allocated, file->path))
+            {
+              free (files);
+              errno = ENOMEM;
+              return NULL;
+            }
         }
 
-      if (!(file = sysprof_capture_reader_read_file (self)))
-        break;
+      /* Sort and deduplicate the files array. */
+      qsort (files, n_files, sizeof (*files), compare_strings);
+      array_deduplicate (files, &n_files);
 
-      if (!array_append (&files, &n_files, &n_files_allocated, file->path))
+      /* Add a null terminator */
+      if (!array_append (&files, &n_files, &n_files_allocated, NULL))
         {
           free (files);
           errno = ENOMEM;
           return NULL;
         }
+
+      self->list_files = (char **)sysprof_steal_pointer (&files);
+      self->n_list_files = n_files; /* including NULL */
     }
 
-  /* Sort and deduplicate the files array. */
-  qsort (files, n_files, sizeof (*files), (int (*)(const void *, const void *)) strcmp);
-  array_deduplicate (files, &n_files);
-
-  /* Add a null terminator */
-  if (!array_append (&files, &n_files, &n_files_allocated, NULL))
-    {
-      free (files);
-      errno = ENOMEM;
-      return NULL;
-    }
+  /* Now copy the list but not the strings */
+  files = malloc (sizeof (char *) * self->n_list_files);
+  memcpy (files, self->list_files, sizeof (char *) * self->n_list_files);
 
   return sysprof_steal_pointer (&files);
 }

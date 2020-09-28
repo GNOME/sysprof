@@ -123,6 +123,10 @@ sysprof_capture_reader_finalize (SysprofCaptureReader *self)
 {
   if (self != NULL)
     {
+      for (size_t i = 0; i < self->n_list_files; i++)
+        free (self->list_files[i]);
+      free (self->list_files);
+
       close (self->fd);
       free (self->buf);
       free (self->filename);

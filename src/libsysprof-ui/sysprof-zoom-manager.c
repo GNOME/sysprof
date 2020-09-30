@@ -634,9 +634,9 @@ _sysprof_format_duration (gint64 duration)
   duration = ABS (duration);
 
   if (duration < SYSPROF_NSEC_PER_SEC)
-    return g_strdup_printf ("%s%.2lf msec",
+    return g_strdup_printf ("%s%.3lf msec",
                             negative ? "-" : "",
-                            (duration / 1000000.0));
+                            (duration / (gdouble)SYSPROF_NSEC_PER_SEC * 1000L));
   else
     return g_strdup_printf ("%s%.4lf seconds",
                             negative ? "-" : "",

@@ -125,13 +125,10 @@ libsysprof_ui_dep = declare_dependency(
 pkgconfig.generate(
                libsysprof_ui,
       subdirs: [ sysprof_header_subdir ],
-      version: meson.project_version(),
-         name: 'sysprof-ui-@0@'.format(libsysprof_api_version),
-     filebase: 'sysprof-ui-@0@'.format(libsysprof_api_version),
   description: 'The UI library for GTK applications embedding sysprof',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
      requires: [ 'gio-2.0', 'gtk+-3.0' ],
-     requires_private: libsysprof_ui_pkg_deps,
+     libraries_private: libsysprof_ui_pkg_deps,
      variables: [
        'datadir=' + datadir_for_pc_file,
      ],

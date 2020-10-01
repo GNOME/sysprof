@@ -173,14 +173,10 @@ libsysprof_dep = declare_dependency(
 pkgconfig.generate(
                libsysprof,
       subdirs: [ sysprof_header_subdir ],
-      version: meson.project_version(),
-         name: 'sysprof-@0@'.format(libsysprof_api_version),
-     filebase: 'sysprof-@0@'.format(libsysprof_api_version),
   description: 'The library for console applications embedding sysprof',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
      requires: [ 'gio-2.0' ],
-     requires_private: libsysprof_pkg_deps,
-    libraries_private: libsysprof_libs_private,
+    libraries_private: [libsysprof_libs_private, libsysprof_pkg_deps],
      variables: [
        'datadir=' + datadir_for_pc_file,
      ],

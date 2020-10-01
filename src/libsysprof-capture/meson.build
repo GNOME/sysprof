@@ -66,12 +66,9 @@ if not meson.is_subproject()
   pkgconfig.generate(
                  libsysprof_capture,
         subdirs: [ sysprof_header_subdir ],
-        version: meson.project_version(),
-           name: 'sysprof-capture-@0@'.format(libsysprof_api_version),
-       filebase: 'sysprof-capture-@0@'.format(libsysprof_api_version),
     description: 'The static capture library for tools that generate profiling capture data',
     install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
       variables: [ 'datadir=' + datadir_for_pc_file ],
-    requires_private: libsysprof_capture_deps,
+    libraries_private: libsysprof_capture_deps,
   )
 endif

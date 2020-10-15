@@ -28,6 +28,7 @@ typedef struct
 {
   gchar *device;
   gchar *mountpoint;
+  gchar *subvol;
 } Mount;
 
 typedef struct
@@ -59,6 +60,7 @@ mount_clear (gpointer data)
 
   g_free (m->device);
   g_free (m->mountpoint);
+  g_free (m->subvol);
 }
 
 static void
@@ -136,6 +138,18 @@ sysprof_mountinfo_translate (SysprofMountinfo *self,
   return NULL;
 }
 
+static void
+decode_space (gchar **str)
+{
+  /* Replace encoded space "\040" with ' ' */
+  if (strstr (*str, "\\040"))
+    {
+      g_auto(GStrv) parts = g_strsplit (*str, "\\040", 0);
+      g_free (*str);
+      *str = g_strjoinv (" ", parts);
+    }
+}
+
 void
 sysprof_mountinfo_parse_mounts (SysprofMountinfo *self,
                                 const gchar      *contents)
@@ -150,23 +164,49 @@ sysprof_mountinfo_parse_mounts (SysprofMountinfo *self,
 
   for (guint i = 0; lines[i]; i++)
     {
-      g_auto(GStrv) parts = g_strsplit (lines[i], " ", 3);
+      g_auto(GStrv) parts = g_strsplit (lines[i], " ", 5);
+      g_autofree char *subvol = NULL;
+      const char *filesystem;
+      const char *mountpoint;
+      const char *device;
+      const char *options;
       Mount m;
 
-      /* Field 1 and 2 are "device" and "mountpoint" */
-      if (parts[0] == NULL || parts[1] == NULL)
+      /* Field 0: device
+       * Field 1: mountpoint
+       * Field 2: filesystem
+       * Field 3: Options
+       * .. Ignored ..
+       */
+      if (g_strv_length (parts) != 5)
         continue;
 
-      /* Replace encoded space "\040" with ' ' */
-      if (strstr (parts[1], "\\040") != NULL)
+      for (guint j = 0; parts[j]; j++)
+        decode_space (&parts[j]);
+
+      device = parts[0];
+      mountpoint = parts[1];
+      filesystem = parts[2];
+      options = parts[3];
+
+      if (g_strcmp0 (filesystem, "btrfs") == 0)
         {
-          g_auto(GStrv) ep = g_strsplit (parts[1], "\\040", 0);
-          g_free (parts[1]);
-          parts[1] = g_strjoinv (" ", ep);
+          g_auto(GStrv) opts = g_strsplit (options, ",", 0);
+
+          for (guint k = 0; opts[k]; k++)
+            {
+              if (g_str_has_prefix (opts[k], "subvol="))
+                {
+                  subvol = g_strdup (opts[k] + strlen ("subvol="));
+                  break;
+                }
+            }
         }
 
-      m.device = g_strdup (parts[0]);
-      m.mountpoint = g_strdup (parts[1]);
+      m.device = g_strdup (device);
+      m.mountpoint = g_strdup (mountpoint);
+      m.subvol = g_steal_pointer (&subvol);
+
       g_array_append_val (self->mounts, m);
     }
 }
@@ -233,8 +273,28 @@ sysprof_mountinfo_parse_mountinfo_line (SysprofMountinfo *self,
     return;
 
   prefix = get_device_mount (self, parts[i+2]);
-
   src = parts[COLUMN_ROOT];
+
+  /* If this references a subvolume, try to find the mount by matching
+   * the subvolumne using the "src". This isn't exactly correct, but it's
+   * good enough to get btrfs stuff working for common installs.
+   */
+  if (g_strcmp0 (parts[8], "btrfs") == 0)
+    {
+      const char *subvol = src;
+
+      for (i = 0; i < self->mounts->len; i++)
+        {
+          const Mount *mnt = &g_array_index (self->mounts, Mount, i);
+
+          if (g_strcmp0 (mnt->subvol, subvol) == 0)
+            {
+              src = mnt->mountpoint;
+              break;
+            }
+        }
+    }
+
   while (*src == '/')
     src++;
 

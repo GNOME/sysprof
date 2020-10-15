@@ -534,7 +534,7 @@ Examples:\n\
   if (speedtrack)
     {
       source = g_object_new (SYSPROF_TYPE_PRELOAD_SOURCE,
-                             "preload", "libsysprof-speedtrack-3.so",
+                             "preload", "libsysprof-speedtrack-4.so",
                              NULL);
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);

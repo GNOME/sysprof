@@ -1,3 +1,15 @@
+Overview of changes in Sysprof 3.38.1
+=====================================
+
+ * Support for translating paths to binary symbols has been improved when using
+   Btrfs subvolumes.
+ * Build system fixes
+ * Fixes for sysprof_capture_reader_list_files() to match expectations
+ * Load proper speedtrack library in LD_PRELOAD
+ * Fixes when generating pkg-config files
+ * Fixes when using musl libc
+ * Translation updates
+
 Overview of changes in Sysprof 3.38.0
 =====================================
 

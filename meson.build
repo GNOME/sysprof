@@ -114,7 +114,6 @@ test_c_args = [
   ['-Werror=format-security', '-Werror=format=2' ],
   '-Werror=empty-body',
   '-Werror=implicit-function-declaration',
-  '-Werror=incompatible-pointer-types',
   '-Werror=pointer-arith',
   '-Werror=init-self',
   '-Werror=int-conversion',
@@ -127,6 +126,14 @@ test_c_args = [
   '-Werror=strict-prototypes',
   '-Werror=undef',
 ]
+
+# Until GLib is fixed with regards to volatile type registration
+if cc.get_id() == 'clang'
+  test_c_args += ['-Wno-incompatible-pointer-types']
+else
+  test_c_args += ['-Werror=incompatible-pointer-types']
+endif
+
 if get_option('buildtype') != 'plain'
   test_c_args += '-fstack-protector-strong'
 endif

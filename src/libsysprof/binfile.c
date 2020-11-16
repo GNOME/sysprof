@@ -264,12 +264,8 @@ get_debug_binaries (GList               *files,
     return files;
 }
 
-static char **
-get_lines (const char *format,
-           ...)
-  G_GNUC_PRINTF (1, 2);
-
 #ifdef __linux__
+G_GNUC_PRINTF (1, 2)
 static char **
 get_lines (const char *format,
            ...)

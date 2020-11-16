@@ -56,6 +56,7 @@
 
 #include "config.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/syscall.h>
 #include <unistd.h>
@@ -103,6 +104,7 @@ sysprof_memfd_create (const char *name)
   return syscall (__NR_memfd_create, name, 0);
 #else
   int fd;
+  int flags;
   const char *tmpdir;
   char *template = NULL;
   size_t template_len = 0;
@@ -127,7 +129,13 @@ sysprof_memfd_create (const char *name)
 
   snprintf (template, template_len, "%s/sysprof-XXXXXX", tmpdir);
 
-  fd = TEMP_FAILURE_RETRY (mkostemp (template, O_BINARY | O_CLOEXEC));
+#ifdef __APPLE__
+  flags = 0;
+#else
+  flags = O_BINARY | O_CLOEXEC;
+#endif
+
+  fd = TEMP_FAILURE_RETRY (mkostemp (template, flags));
   if (fd < 0)
     {
       free (template);

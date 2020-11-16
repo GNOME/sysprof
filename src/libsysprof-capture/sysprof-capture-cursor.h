@@ -64,8 +64,6 @@
 
 SYSPROF_BEGIN_DECLS
 
-typedef struct _SysprofCaptureCursor SysprofCaptureCursor;
-
 /**
  * SysprofCaptureCursorCallback:
  *

@@ -64,8 +64,6 @@
 
 SYSPROF_BEGIN_DECLS
 
-typedef struct _SysprofCaptureReader SysprofCaptureReader;
-
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureReader               *sysprof_capture_reader_new                 (const char                *filename);
 SYSPROF_AVAILABLE_IN_ALL

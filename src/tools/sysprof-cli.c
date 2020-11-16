@@ -448,9 +448,11 @@ Examples:\n\
       g_object_unref (source);
     }
 
+#ifdef __linux__
   source = sysprof_proc_source_new ();
   sysprof_profiler_add_source (profiler, source);
   g_object_unref (source);
+#endif
 
 #ifdef __linux__
   if (!no_perf)
@@ -478,19 +480,23 @@ Examples:\n\
       g_object_unref (source);
     }
 
+#ifdef __linux__
   if (!no_cpu)
     {
       source = sysprof_hostinfo_source_new ();
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }
+#endif
 
+#ifdef __linux__
   if (!no_memory)
     {
       source = sysprof_memory_source_new ();
       sysprof_profiler_add_source (profiler, source);
       g_object_unref (source);
     }
+#endif
 
   if (!no_battery)
     {

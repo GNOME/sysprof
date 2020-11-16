@@ -45,6 +45,8 @@
 
 #include "../stackstash.h"
 
+#include "sysprof-capture-util-private.h"
+
 #include "sysprof-callgraph-profile.h"
 #include "sysprof-capture-reader.h"
 #include "sysprof-capture-symbol-resolver.h"
@@ -174,7 +176,7 @@ sysprof_callgraph_profile_class_init (SysprofCallgraphProfileClass *klass)
 static void
 sysprof_callgraph_profile_init (SysprofCallgraphProfile *self)
 {
-  self->symbols = g_string_chunk_new (getpagesize ());
+  self->symbols = g_string_chunk_new (_sysprof_getpagesize ());
   self->tags = g_hash_table_new (g_str_hash, g_str_equal);
 }
 

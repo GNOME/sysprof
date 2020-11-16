@@ -92,6 +92,9 @@ global_c_args = [
   '-D_GNU_SOURCE',
   '-D_POSIX_C_SOURCE=200809L',
 ]
+if host_machine.system() == 'darwin'
+  global_c_args += ['-D_DARWIN_C_SOURCE']
+endif
 test_c_args = [
   '-Wcast-align',
   '-Wdeclaration-after-statement',

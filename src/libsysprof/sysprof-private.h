@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 typedef GArray SysprofKernelSymbols;
 
-SysprofKernelSymbols      *_sysprof_kernel_symbols_ref_shared        (void);
+SysprofKernelSymbols      *_sysprof_kernel_symbols_get_shared        (void);
 SysprofKernelSymbols      *_sysprof_kernel_symbols_new_from_kallsyms (SysprofKallsyms            *kallsyms);
 const SysprofKernelSymbol *_sysprof_kernel_symbols_lookup            (const SysprofKernelSymbols *self,
                                                                       SysprofCaptureAddress       address);

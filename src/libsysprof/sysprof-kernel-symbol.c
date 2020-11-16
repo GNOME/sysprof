@@ -149,12 +149,14 @@ _sysprof_kernel_symbols_new_from_kallsyms (SysprofKallsyms *kallsyms)
 }
 
 SysprofKernelSymbols *
-_sysprof_kernel_symbols_ref_shared (void)
+_sysprof_kernel_symbols_get_shared (void)
 {
   static SysprofKernelSymbols *shared;
+  static SysprofKernelSymbols empty[] = { 0 };
 
   if (shared == NULL)
     {
+#ifdef __linux__
       SysprofHelpers *helpers = sysprof_helpers_get_default ();
       g_autofree gchar *contents = NULL;
 
@@ -163,9 +165,13 @@ _sysprof_kernel_symbols_ref_shared (void)
           g_autoptr(SysprofKallsyms) kallsyms = sysprof_kallsyms_new_take (g_steal_pointer (&contents));
           shared = _sysprof_kernel_symbols_new_from_kallsyms (kallsyms);
         }
+#endif
+
+      if (shared == NULL)
+        shared = empty;
     }
 
-  return g_array_ref (shared);
+  return shared;
 }
 
 static const SysprofKernelSymbol *

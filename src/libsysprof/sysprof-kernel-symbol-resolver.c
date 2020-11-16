@@ -95,7 +95,7 @@ sysprof_kernel_symbol_resolver_load (SysprofSymbolResolver *resolver,
     {
       if (data_fd != -1)
         close (data_fd);
-      self->symbols = _sysprof_kernel_symbols_ref_shared ();
+      self->symbols = _sysprof_kernel_symbols_get_shared ();
       return;
     }
 
@@ -121,7 +121,7 @@ sysprof_kernel_symbol_resolver_load (SysprofSymbolResolver *resolver,
     }
   else
     {
-      self->symbols = _sysprof_kernel_symbols_ref_shared ();
+      self->symbols = _sysprof_kernel_symbols_get_shared ();
     }
 }
 
@@ -139,22 +139,8 @@ G_DEFINE_TYPE_WITH_CODE (SysprofKernelSymbolResolver,
                                                 symbol_resolver_iface_init))
 
 static void
-sysprof_kernel_symbol_resolver_finalize (GObject *object)
-{
-  SysprofKernelSymbolResolver *self = (SysprofKernelSymbolResolver *)object;
-
-  g_clear_pointer (&self->symbols, g_array_unref);
-
-  G_OBJECT_CLASS (sysprof_kernel_symbol_resolver_parent_class)->finalize (object);
-}
-
-static void
 sysprof_kernel_symbol_resolver_class_init (SysprofKernelSymbolResolverClass *klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
-
-  object_class->finalize = sysprof_kernel_symbol_resolver_finalize;
-
   linux_quark = g_quark_from_static_string ("Kernel");
 }
 

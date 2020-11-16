@@ -57,7 +57,11 @@
 #pragma once
 
 #include <assert.h>
-#include <endian.h>
+#ifdef __APPLE__
+# include <machine/endian.h>
+#else
+# include <endian.h>
+#endif
 #include <inttypes.h>
 #include <stddef.h>
 #include <stdint.h>

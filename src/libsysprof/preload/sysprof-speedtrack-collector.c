@@ -67,7 +67,15 @@ is_capturing (void)
     return FALSE;
 
   if G_UNLIKELY (tid == 0)
-    tid = syscall (__NR_gettid, 0);
+    {
+#if defined(__linux__)
+      tid = syscall (__NR_gettid, 0);
+#elif defined(__APPLE__)
+      uint64_t threadid;
+      pthread_threadid_np (NULL, &threadid);
+      tid = threadid;
+#endif
+    }
 
   if G_UNLIKELY (pid == 0)
     pid = getpid ();
@@ -102,7 +110,7 @@ open (const char *filename,
   mode_t mode;
 
   va_start (args, flags);
-  mode = va_arg (args, mode_t);
+  mode = va_arg (args, int);
   va_end (args);
 
   if (is_capturing ())
@@ -139,7 +147,7 @@ hook_open (const char *filename, int flags, ...)
   mode_t mode;
 
   va_start (args, flags);
-  mode = va_arg (args, mode_t);
+  mode = va_arg (args, int);
   va_end (args);
 
   hook_func ((void **)&real_open, "open");

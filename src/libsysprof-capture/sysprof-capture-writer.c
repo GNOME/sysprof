@@ -57,7 +57,11 @@
 #include "config.h"
 
 #include <assert.h>
-#include <endian.h>
+#ifdef __APPLE__
+# include <machine/endian.h>
+#else
+# include <endian.h>
+#endif
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>

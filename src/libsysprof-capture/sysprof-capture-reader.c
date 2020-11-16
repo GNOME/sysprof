@@ -57,8 +57,6 @@
 #include "config.h"
 
 #include <assert.h>
-#include <byteswap.h>
-#include <endian.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>

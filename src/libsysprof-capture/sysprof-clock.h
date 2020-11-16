@@ -80,7 +80,11 @@ sysprof_clock_get_current_time (void)
   SysprofClock clock = sysprof_clock;
 
   if SYSPROF_UNLIKELY (clock == -1)
+#ifdef __APPLE__
+    clock = _CLOCK_MONOTONIC;
+#else
     clock = CLOCK_MONOTONIC;
+#endif
   clock_gettime (clock, &ts);
 
   return (ts.tv_sec * SYSPROF_NSEC_PER_SEC) + ts.tv_nsec;

@@ -68,9 +68,13 @@ void
 sysprof_clock_init (void)
 {
   static const int clock_ids[] = {
+#ifdef __APPLE__
+    _CLOCK_MONOTONIC,
+#else
     CLOCK_MONOTONIC,
-    CLOCK_MONOTONIC_RAW,
+#endif
 #ifdef __linux__
+    CLOCK_MONOTONIC_RAW,
     CLOCK_MONOTONIC_COARSE,
     CLOCK_REALTIME_COARSE,
 #endif

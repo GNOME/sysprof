@@ -61,6 +61,14 @@
 
 #include <string.h>
 
+#ifdef __APPLE__
+# include <libkern/OSByteOrder.h>
+# include <architecture/byte_order.h>
+#else
+# include <byteswap.h>
+# include <endian.h>
+#endif
+
 #define sysprof_assert_not_reached() assert (false)
 
 #define SYSPROF_N_ELEMENTS(a) (sizeof (a) / sizeof (*a))
@@ -77,3 +85,13 @@
   } while (0)
 
 #define sysprof_strdup(s) ((s) ? strdup(s) : NULL)
+
+#ifdef __APPLE__
+# define bswap_16 OSSwapInt16
+# define bswap_32 OSSwapInt32
+# define bswap_64 OSSwapInt64
+# define htole32  OSSwapHostToLittleInt32
+# define __BYTE_ORDER    __DARWIN_BYTE_ORDER
+# define __LITTLE_ENDIAN __DARWIN_LITTLE_ENDIAN
+# define __BIG_ENDIAN    __DARWIN_BIG_ENDIAN
+#endif

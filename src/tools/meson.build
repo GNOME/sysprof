@@ -7,9 +7,7 @@ tools_deps = [
 
 tools_cflags = [ '-DSYSPROF_COMPILATION ']
 
-if get_option('libsysprof') and host_machine.system() == 'linux'
-  polkit_agent_dep = dependency('polkit-agent-1')
-  polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
+if get_option('libsysprof')
   sysprof_cli = executable('sysprof-cli', 'sysprof-cli.c',
     dependencies: tools_deps + [libsysprof_dep, polkit_dep, polkit_agent_dep],
           c_args: tools_cflags,

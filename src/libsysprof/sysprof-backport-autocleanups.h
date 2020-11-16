@@ -4,7 +4,7 @@
 
 #include <glib.h>
 
-#ifdef HAVE_POLKIT
+#if HAVE_POLKIT
 # ifndef HAVE_POLKIT_AUTOPTR
 #  include <polkit/polkit.h>
 

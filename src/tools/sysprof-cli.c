@@ -25,15 +25,18 @@
 #include <glib-unix.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
-#include <polkit/polkit.h>
-#define POLKIT_AGENT_I_KNOW_API_IS_SUBJECT_TO_CHANGE
-#include <polkitagent/polkitagent.h>
 #include <signal.h>
 #include <stdlib.h>
-#include <sys/eventfd.h>
 #include <sys/types.h>
 #include <signal.h>
 #include <sysprof.h>
+
+#if HAVE_POLKIT && HAVE_POLKIT_AGENT
+# define POLKIT_AGENT_I_KNOW_API_IS_SUBJECT_TO_CHANGE
+# include <polkit/polkit.h>
+# include <polkitagent/polkitagent.h>
+# define USE_POLKIT
+#endif
 
 #include "sysprof-capture-util-private.h"
 
@@ -184,10 +187,13 @@ gint
 main (gint   argc,
       gchar *argv[])
 {
-  g_auto(GStrv) child_argv = NULL;
-  g_auto(GStrv) envs = NULL;
+#ifdef USE_POLKIT
   PolkitAgentListener *polkit = NULL;
   PolkitSubject *subject = NULL;
+#endif
+
+  g_auto(GStrv) child_argv = NULL;
+  g_auto(GStrv) envs = NULL;
   SysprofCaptureWriter *writer;
   SysprofSource *source;
   GMainContext *main_context;
@@ -317,6 +323,7 @@ Examples:\n\
 
   main_loop = g_main_loop_new (NULL, FALSE);
 
+#ifdef USE_POLKIT
   /* Start polkit agent so that we can elevate privileges from a TTY */
   if (g_getenv ("DESKTOP_SESSION") == NULL &&
       (subject = polkit_unix_process_new_for_owner (getpid (), 0, -1)))
@@ -338,6 +345,7 @@ Examples:\n\
                       pkerror->message);
         }
     }
+#endif
 
   profiler = sysprof_local_profiler_new ();
 

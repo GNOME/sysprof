@@ -71,6 +71,12 @@ config_h.set('HAVE_EXECINFO_H', cc.has_header('execinfo.h'))
 config_h.set('HAVE_STRLCPY', cc.has_function('strlcpy'))
 config_h.set('HAVE_REALLOCARRAY', cc.has_function('reallocarray'))
 
+polkit_agent_dep = dependency('polkit-agent-1', required: false)
+polkit_dep = dependency('polkit-gobject-1', version: polkit_req_version, required: false)
+
+config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
+config_h.set10('HAVE_POLKIT', polkit_dep.found())
+
 if get_option('libunwind')
   libunwind_dep = dependency('libunwind-generic', required: false)
   config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())

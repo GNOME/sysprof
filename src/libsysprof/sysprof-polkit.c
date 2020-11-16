@@ -22,14 +22,14 @@
 
 #include "config.h"
 
-#ifdef HAVE_POLKIT
+#if HAVE_POLKIT
 # include <polkit/polkit.h>
 #endif
 
 #include "sysprof-polkit-private.h"
 #include "sysprof-backport-autocleanups.h"
 
-#ifdef HAVE_POLKIT
+#if HAVE_POLKIT
 typedef struct
 {
   const gchar   *policy;
@@ -137,7 +137,7 @@ _sysprof_polkit_authorize_for_bus_async (GDBusConnection     *bus,
                                          gpointer             user_data)
 {
   g_autoptr(GTask) task = NULL;
-#ifdef HAVE_POLKIT
+#if HAVE_POLKIT
   const gchar *bus_name;
   Authorize *auth;
 #endif
@@ -149,7 +149,7 @@ _sysprof_polkit_authorize_for_bus_async (GDBusConnection     *bus,
   task = g_task_new (NULL, cancellable, callback, user_data);
   g_task_set_source_tag (task, _sysprof_polkit_authorize_for_bus_async);
 
-#ifdef HAVE_POLKIT
+#if HAVE_POLKIT
   bus_name = g_dbus_connection_get_unique_name (bus);
 
   auth = g_slice_new0 (Authorize);

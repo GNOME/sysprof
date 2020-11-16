@@ -65,8 +65,6 @@
 
 SYSPROF_BEGIN_DECLS
 
-typedef struct _SysprofCaptureWriter SysprofCaptureWriter;
-
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCaptureWriter *sysprof_capture_writer_new_from_env                    (size_t                             buffer_size);
 SYSPROF_AVAILABLE_IN_ALL

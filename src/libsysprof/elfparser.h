@@ -18,6 +18,10 @@
 
 #include <glib.h>
 
+#ifndef NT_GNU_BUILD_ID
+#define NT_GNU_BUILD_ID 3
+#endif
+
 typedef struct ElfSym ElfSym;
 typedef struct ElfParser ElfParser;
 

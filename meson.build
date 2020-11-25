@@ -140,10 +140,6 @@ else
   test_c_args += ['-Werror=incompatible-pointer-types']
 endif
 
-if get_option('buildtype') != 'plain'
-  test_c_args += '-fstack-protector-strong'
-endif
-
 foreach arg: test_c_args
   if cc.has_multi_arguments(arg)
     global_c_args += arg
@@ -158,6 +154,11 @@ test_link_args = [
   '-Wl,-z,relro',
   '-Wl,-z,now',
 ]
+
+if get_option('buildtype') != 'plain'
+  test_link_args += '-fstack-protector-strong'
+endif
+
 if not get_option('buildtype').startswith('debug')
   release_flags += [
     '-DG_DISABLE_CAST_CHECKS',

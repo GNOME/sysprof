@@ -1,3 +1,13 @@
+Overview of changes in Sysprof 3.39.90
+======================================
+
+ * Build fixes for macOS
+ * polkit is optional (again) for sysprof-cli
+ * Various fixes in kernel symbol resolving
+ * Fix build when stack-protector is not used
+ * Support elfparser on some interesting platforms
+ * Translation updates
+
 Overview of changes in Sysprof 3.38.1
 =====================================
 

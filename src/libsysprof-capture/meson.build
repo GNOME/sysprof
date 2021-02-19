@@ -52,6 +52,7 @@ libsysprof_capture = static_library(
             install_dir: get_option('libdir'),
                 install: not meson.is_subproject(),
   gnu_symbol_visibility: 'hidden',
+                    pic: true,
 )
 
 libsysprof_capture_include_dirs = include_directories('.')

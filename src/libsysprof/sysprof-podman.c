@@ -24,6 +24,12 @@
 
 #include "sysprof-podman.h"
 
+static const char *debug_dirs[] = {
+  "/usr/lib/debug",
+  "/usr/lib32/debug",
+  "/usr/lib64/debug",
+};
+
 void
 _sysprof_podman_debug_dirs (GPtrArray *dirs)
 {
@@ -44,14 +50,12 @@ _sysprof_podman_debug_dirs (GPtrArray *dirs)
 
   while ((name = g_dir_read_name (dir)))
     {
-      g_autofree gchar *debug_path = NULL;
-
-      debug_path = g_build_filename (base_path, name, "diff",
-                                     "usr", "lib", "debug",
-                                     NULL);
-
-      if (g_file_test (debug_path, G_FILE_TEST_IS_DIR))
-        g_ptr_array_add (dirs, g_steal_pointer (&debug_path));
+      for (guint i = 0; i < G_N_ELEMENTS (debug_dirs); i++)
+        {
+          g_autofree gchar *debug_path = g_build_filename (base_path, name, "diff", debug_dirs[i], NULL);
+          if (g_file_test (debug_path, G_FILE_TEST_IS_DIR))
+            g_ptr_array_add (dirs, g_steal_pointer (&debug_path));
+        }
     }
 }
 

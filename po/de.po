@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-03-01 13:52+0000\n"
-"PO-Revision-Date: 2021-02-09 22:33+0100\n"
+"POT-Creation-Date: 2021-02-16 17:01+0000\n"
+"PO-Revision-Date: 2021-02-16 18:04+0100\n"
 "Last-Translator: Christian Kirbach <christian.kirbach@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -476,7 +476,7 @@ msgstr "Anwendung starten"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:321
 msgid "Enable to launch a program of your choosing before profiling."
-msgstr "Erlauben, ein Programm Ihrer Wahl vor der Profilierung zu starten"
+msgstr "Erlauben, ein Programm Ihrer Wahl vor der Profilierung zu starten."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:349
 msgid "Command Line"
@@ -549,7 +549,7 @@ msgstr "Zusätzliche Graphen anzeigen"
 
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
 msgid "Instruments"
-msgstr ""
+msgstr "Werkzeuge"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
 msgid "Profile the system"

@@ -1,3 +1,13 @@
+Overview of changes in Sysprof 3.39.92
+======================================
+
+ * Use pic when compiling static libsysprof-capture
+ * Some changes to podman symbol decoding
+ * Handle NULL readers gracefully from capture cursors
+ * Use g_memdup2()
+ * UI tweaks
+ * Translation updates
+
 Overview of changes in Sysprof 3.39.90
 ======================================
 

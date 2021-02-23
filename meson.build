@@ -8,6 +8,8 @@ project('sysprof', 'c',
   ]
 )
 
+symbolic_version = '40.beta1'
+
 gnome = import('gnome')
 pkgconfig = import('pkgconfig')
 i18n = import('i18n')
@@ -31,6 +33,7 @@ if get_option('libsysprof')
 endif
 
 config_h = configuration_data()
+config_h.set_quoted('SYMBOLIC_VERSION', symbolic_version)
 config_h.set_quoted('API_VERSION_S', '@0@'.format(libsysprof_api_version))
 config_h.set_quoted('PACKAGE_NAME', 'sysprof')
 config_h.set_quoted('PACKAGE_VERSION', meson.project_version())

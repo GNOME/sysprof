@@ -200,7 +200,7 @@ sysprof_about (GSimpleAction *action,
                          "license-type", GTK_LICENSE_GPL_3_0,
                          "logo-icon-name", "org.gnome.Sysprof",
                          "program-name", _("Sysprof"),
-                         "version", PACKAGE_VERSION,
+                         "version", SYMBOLIC_VERSION "\n" "(" PACKAGE_VERSION ")",
                          "website", "https://wiki.gnome.org/Apps/Sysprof",
                          "website-label", _("Learn more about Sysprof"),
                          NULL);

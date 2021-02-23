@@ -193,7 +193,7 @@ sysprof_about (GSimpleAction *action,
                          "artists", sysprof_artists,
                          "comments", _("A system profiler"),
                          "copyright", "Copyright 2004-2009 Søren Sandmann Pedersen\n"
-                                      "Copyright 2016-2018 Christian Hergert",
+                                      "Copyright 2016-2021 Christian Hergert",
                          "transient-for", best_toplevel,
                          "modal", TRUE,
                          "translator-credits", _("translator-credits"),

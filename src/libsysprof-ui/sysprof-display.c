@@ -673,7 +673,7 @@ sysprof_display_present_async (SysprofDisplay       *self,
       return;
     }
 
-  g_task_set_task_data (task, g_memdup (&aids->len, sizeof aids->len), g_free);
+  g_task_set_task_data (task, g_memdup2 (&aids->len, sizeof aids->len), g_free);
 
   for (guint i = 0; i < aids->len; i++)
     {

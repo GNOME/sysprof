@@ -328,7 +328,7 @@ get_vdso_bytes (size_t *length)
                  * wrapper never returned that address. But since it
                  * is a legal mapping, it is legal to read it.
                  */
-                bytes = g_memdup ((uint8_t *)start, n_bytes);
+                bytes = g_memdup2 ((uint8_t *)start, n_bytes);
 
                 has_data = TRUE;
             }

@@ -18,7 +18,7 @@ datadir = get_option('datadir')
 datadir_for_pc_file = join_paths('${prefix}', datadir)
 podir = join_paths(meson.source_root(), 'po')
 
-glib_req_version = '>= 2.56'
+glib_req_version = '>= 2.67.4'
 gtk_req_version = '>= 3.22'
 polkit_req_version = '>= 0.105'
 dazzle_req_version = '>= 3.30.0'

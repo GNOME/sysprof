@@ -252,7 +252,7 @@ sysprof_mark_visualizer_set_group_rgba (SysprofMarkVisualizer *self,
 
   g_hash_table_insert (self->rgba_by_group,
                        g_strdup (group),
-                       g_memdup (rgba, sizeof *rgba));
+                       g_memdup2 (rgba, sizeof *rgba));
 }
 
 void

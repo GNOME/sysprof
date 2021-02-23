@@ -183,7 +183,7 @@ sysprof_helpers_list_processes (SysprofHelpers  *self,
       gsize len;
 
       data = g_variant_get_fixed_array (fixed_ar, &len, sizeof (gint32));
-      *processes = g_memdup (data, len * sizeof (gint32));
+      *processes = g_memdup2 (data, len * sizeof (gint32));
       *n_processes = len;
 
       return TRUE;
@@ -239,7 +239,7 @@ sysprof_helpers_list_processes_finish (SysprofHelpers  *self,
       p = g_variant_get_fixed_array (ret, &n, sizeof (gint32));
 
       if (processes != NULL)
-        *processes = g_memdup (p, n * sizeof (gint32));
+        *processes = g_memdup2 (p, n * sizeof (gint32));
 
       if (n_processes != NULL)
         *n_processes = n;

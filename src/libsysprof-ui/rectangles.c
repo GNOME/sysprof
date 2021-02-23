@@ -139,7 +139,7 @@ rectangles_sort (Rectangles *self)
 
           sysprof_color_cycle_next (self->cycle, &rgba);
           g_hash_table_insert (self->y_indexes, (gchar *)rect->name, GUINT_TO_POINTER (++sequence));
-          g_hash_table_insert (self->colors, (gchar *)rect->name, g_memdup (&rgba, sizeof rgba));
+          g_hash_table_insert (self->colors, (gchar *)rect->name, g_memdup2 (&rgba, sizeof rgba));
         }
     }
 

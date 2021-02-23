@@ -278,7 +278,7 @@ sysprof_marks_aid_present_finish (SysprofAid    *aid,
                   dzl_rgba_shade (&rgba, &kind_rgba, 1 + (ratio * span->kind));
                   g_hash_table_insert (seen,
                                        GUINT_TO_POINTER (span->kind),
-                                       g_memdup (&kind_rgba, sizeof kind_rgba));
+                                       g_memdup2 (&kind_rgba, sizeof kind_rgba));
                 }
             }
 

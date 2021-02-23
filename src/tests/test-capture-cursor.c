@@ -69,6 +69,16 @@ test_cursor_basic (void)
   g_unlink ("capture-cursor-file");
 }
 
+static void
+test_cursor_null (void)
+{
+  SysprofCaptureCursor *cursor = sysprof_capture_cursor_new (NULL);
+  gint count = 0;
+  sysprof_capture_cursor_foreach (cursor, increment, &count);
+  g_assert_cmpint (count, ==, 0);
+  g_clear_pointer (&cursor, sysprof_capture_cursor_unref);
+}
+
 int
 main (int argc,
       char *argv[])
@@ -76,5 +86,6 @@ main (int argc,
   sysprof_clock_init ();
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/SysprofCaptureCursor/basic", test_cursor_basic);
+  g_test_add_func ("/SysprofCaptureCursor/null", test_cursor_null);
   return g_test_run ();
 }

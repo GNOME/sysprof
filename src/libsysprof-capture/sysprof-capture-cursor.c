@@ -151,8 +151,10 @@ sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
                                 void                         *user_data)
 {
   assert (self != NULL);
-  assert (self->reader != NULL);
   assert (callback != NULL);
+
+  if (self->reader == NULL)
+    return;
 
   for (;;)
     {
@@ -260,9 +262,9 @@ void
 sysprof_capture_cursor_reset (SysprofCaptureCursor *self)
 {
   assert (self != NULL);
-  assert (self->reader != NULL);
 
-  sysprof_capture_reader_reset (self->reader);
+  if (self->reader != NULL)
+    sysprof_capture_reader_reset (self->reader);
 }
 
 void
@@ -305,18 +307,20 @@ sysprof_capture_cursor_add_condition (SysprofCaptureCursor    *self,
  * sysprof_capture_cursor_new:
  * @self: a #SysprofCaptureCursor
  *
- * Returns: (transfer full): a new cursor for @reader
+ * Returns: (transfer full) (nullable): a new cursor for @reader
  */
 SysprofCaptureCursor *
 sysprof_capture_cursor_new (SysprofCaptureReader *reader)
 {
   SysprofCaptureCursor *self;
 
-  assert (reader != NULL);
-
   self = sysprof_capture_cursor_init ();
-  self->reader = sysprof_capture_reader_copy (reader);
-  sysprof_capture_reader_reset (self->reader);
+
+  if (reader != NULL)
+    {
+      self->reader = sysprof_capture_reader_copy (reader);
+      sysprof_capture_reader_reset (self->reader);
+    }
 
   return self;
 }
@@ -326,7 +330,7 @@ sysprof_capture_cursor_new (SysprofCaptureReader *reader)
  *
  * Gets the underlying reader that is used by the cursor.
  *
- * Returns: (transfer none): An #SysprofCaptureReader
+ * Returns: (transfer none) (nullable): An #SysprofCaptureReader
  */
 SysprofCaptureReader *
 sysprof_capture_cursor_get_reader (SysprofCaptureCursor *self)

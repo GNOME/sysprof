@@ -767,3 +767,69 @@ sysprof_helpers_set_governor_finish (SysprofHelpers  *self,
 
   return FALSE;
 }
+
+static void
+sysprof_helpers_set_paranoid_cb (GObject      *object,
+                                 GAsyncResult *result,
+                                 gpointer      user_data)
+{
+  IpcService *proxy = (IpcService *)object;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+  int old_paranoid = G_MAXINT;
+
+  g_assert (IPC_IS_SERVICE (proxy));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (!ipc_service_call_set_paranoid_finish (proxy, &old_paranoid, result, &error))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    g_task_return_int (task, old_paranoid);
+}
+
+void
+sysprof_helpers_set_paranoid_async (SysprofHelpers      *self,
+                                    int                  paranoid,
+                                    GCancellable        *cancellable,
+                                    GAsyncReadyCallback  callback,
+                                    gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SYSPROF_IS_HELPERS (self));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_helpers_set_paranoid_async);
+
+  if (fail_if_no_proxy (self, task))
+    return;
+
+  ipc_service_call_set_paranoid (self->proxy,
+                                 paranoid,
+                                 cancellable,
+                                 sysprof_helpers_set_paranoid_cb,
+                                 g_steal_pointer (&task));
+}
+
+gboolean
+sysprof_helpers_set_paranoid_finish (SysprofHelpers  *self,
+                                     GAsyncResult    *result,
+                                     int             *old_paranoid,
+                                     GError         **error)
+{
+  g_autoptr(GError) local_error = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_HELPERS (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+
+  *old_paranoid = g_task_propagate_int (G_TASK (result), &local_error);
+
+  if (local_error)
+    {
+      g_propagate_error (error, g_steal_pointer (&local_error));
+      return FALSE;
+    }
+
+  return TRUE;
+}

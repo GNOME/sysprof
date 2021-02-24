@@ -108,5 +108,14 @@ gboolean        sysprof_helpers_set_governor_finish    (SysprofHelpers          
                                                         GAsyncResult            *result,
                                                         gchar                  **old_governor,
                                                         GError                 **error);
+void            sysprof_helpers_set_paranoid_async     (SysprofHelpers          *self,
+                                                        int                      paranoid,
+                                                        GCancellable            *cancellable,
+                                                        GAsyncReadyCallback      callback,
+                                                        gpointer                 user_data);
+gboolean        sysprof_helpers_set_paranoid_finish    (SysprofHelpers          *self,
+                                                        GAsyncResult            *result,
+                                                        int                     *old_paranoid,
+                                                        GError                 **error);
 
 G_END_DECLS

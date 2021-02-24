@@ -215,7 +215,7 @@ disable_paranoid_cb (GObject      *object,
   g_assert (SYSPROF_IS_GOVERNOR_SOURCE (self));
 
   if (!sysprof_helpers_set_paranoid_finish (helpers, result, &old_paranoid, &error))
-    g_warning ("Failed to change perf_event_paranoid: %s", error->message);
+    g_debug ("Failed to change perf_event_paranoid: %s", error->message);
   else
     self->old_paranoid = old_paranoid;
 
@@ -281,7 +281,7 @@ enable_paranoid_cb (GObject      *object,
   g_assert (SYSPROF_IS_GOVERNOR_SOURCE (self));
 
   if (!sysprof_helpers_set_paranoid_finish (helpers, result, &old_governor, &error))
-    g_warning ("Failed to change event_perf_paranoid: %s", error->message);
+    g_debug ("Failed to change event_perf_paranoid: %s", error->message);
 
   if (!self->disable_governor)
     sysprof_source_emit_finished (SYSPROF_SOURCE (self));

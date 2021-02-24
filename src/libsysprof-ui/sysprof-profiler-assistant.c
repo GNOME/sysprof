@@ -255,13 +255,14 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
   /* Always add the proc source */
   proc_source = sysprof_proc_source_new ();
   sysprof_profiler_add_source (profiler, proc_source);
-#endif
 
-  if (!gtk_switch_get_active (self->allow_throttling))
-    {
-      g_autoptr(SysprofSource) governor = sysprof_governor_source_new ();
-      sysprof_profiler_add_source (profiler, governor);
-    }
+  {
+    g_autoptr(SysprofSource) governor = sysprof_governor_source_new ();
+    sysprof_governor_source_set_disable_governor (SYSPROF_GOVERNOR_SOURCE (governor),
+                                                  !gtk_switch_get_active (self->allow_throttling));
+    sysprof_profiler_add_source (profiler, governor);
+  }
+#endif
 
   /* Always add symbol decoder to save to file immediately */
   symbols_source = sysprof_symbols_source_new ();

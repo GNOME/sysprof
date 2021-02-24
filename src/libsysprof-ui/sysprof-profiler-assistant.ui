@@ -36,21 +36,6 @@
       </object>
     </child>
   </object>
-  <object class="SysprofAid" id="gtk_aid">
-    <property name="display-name">GTK</property>
-    <property name="icon-name">sysprof-gtk</property>
-    <child>
-      <object class="SysprofTracefdSource">
-        <property name="envvar">GTK_TRACE_FD</property>
-      </object>
-    </child>
-    <child>
-      <object class="SysprofProxySource">
-        <property name="bus-type">session</property>
-        <property name="object-path">/org/gtk/Profiler</property>
-      </object>
-    </child>
-  </object>
   <object class="SysprofAid" id="gjs_aid">
     <property name="display-name">GJS</property>
     <property name="icon-name">sysprof-cli</property>
@@ -150,13 +135,6 @@
                         <child>
                           <object class="SysprofAidIcon">
                             <property name="aid">mutter_aid</property>
-                            <property name="selected">false</property>
-                            <property name="visible">true</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="SysprofAidIcon">
-                            <property name="aid">gtk_aid</property>
                             <property name="selected">false</property>
                             <property name="visible">true</property>
                           </object>

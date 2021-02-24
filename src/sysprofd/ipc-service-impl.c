@@ -78,6 +78,8 @@ file_set_contents_no_backup (const gchar  *path,
       return FALSE;
     }
 
+  ftruncate (fd, 0);
+
   if (write (fd, contents, len) != len)
     {
       int errsv = errno;

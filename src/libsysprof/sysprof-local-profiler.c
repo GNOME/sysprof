@@ -535,60 +535,17 @@ sysprof_local_profiler_wait_cb (GObject      *object,
 }
 
 static void
-sysprof_local_profiler_start (SysprofProfiler *profiler)
+sysprof_local_profiler_start_after_auth (SysprofLocalProfiler *self)
 {
-  SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
   SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
-  g_autoptr(SysprofControlSource) control_source = NULL;
   g_autofree gchar *keydata = NULL;
   g_autoptr(GError) error = NULL;
   g_autoptr(GKeyFile) keyfile = NULL;
   gsize keylen = 0;
 
-  g_return_if_fail (SYSPROF_IS_LOCAL_PROFILER (self));
-  g_return_if_fail (priv->is_running == FALSE);
-  g_return_if_fail (priv->is_stopping == FALSE);
-  g_return_if_fail (priv->is_starting == FALSE);
-
-  g_clear_pointer (&priv->timer, g_timer_destroy);
-  g_object_notify (G_OBJECT (self), "elapsed");
-
-  control_source = sysprof_control_source_new ();
-  sysprof_profiler_add_source (SYSPROF_PROFILER (self), SYSPROF_SOURCE (control_source));
+  g_assert (SYSPROF_IS_LOCAL_PROFILER (self));
 
   keyfile = g_key_file_new ();
-
-  if (priv->writer == NULL)
-    {
-      SysprofCaptureWriter *writer;
-      int fd;
-
-      if ((-1 == (fd = sysprof_memfd_create ("[sysprof]"))) ||
-          (NULL == (writer = sysprof_capture_writer_new_from_fd (fd, 0))))
-        {
-          const GError werror = {
-            G_FILE_ERROR,
-            g_file_error_from_errno (errno),
-            (gchar *)g_strerror (errno)
-          };
-
-          if (fd != -1)
-            close (fd);
-
-          sysprof_profiler_emit_failed (SYSPROF_PROFILER (self), &werror);
-
-          return;
-        }
-
-      sysprof_profiler_set_writer (SYSPROF_PROFILER (self), writer);
-      g_clear_pointer (&writer, sysprof_capture_writer_unref);
-    }
-
-  priv->is_running = TRUE;
-  priv->is_starting = TRUE;
-
-  if (priv->failures->len > 0)
-    g_ptr_array_remove_range (priv->failures, 0, priv->failures->len);
 
   g_key_file_set_boolean (keyfile, "profiler", "whole-system", priv->whole_system);
   if (priv->pids->len > 0)
@@ -706,6 +663,87 @@ sysprof_local_profiler_start (SysprofProfiler *profiler)
 
   if (priv->starting->len == 0)
     sysprof_local_profiler_finish_startup (self);
+}
+
+static void
+sysprof_local_profiler_preroll_cb (GObject      *object,
+                                   GAsyncResult *result,
+                                   gpointer      user_data)
+{
+  SysprofHelpers *helpers = (SysprofHelpers *)object;
+  g_autoptr(SysprofLocalProfiler) self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_HELPERS (helpers));
+  g_assert (SYSPROF_IS_LOCAL_PROFILER (self));
+
+  /* For almost everything at this point, we need to have authorization
+   * to the helper daemon. So if this fails, just assume we are going to
+   * fail in general. It doesn't really help us to optimize for the case
+   * of user-space only profiling since we are rarely used for that.
+   */
+
+  if (!sysprof_helpers_authorize_finish (helpers, result, &error))
+    sysprof_profiler_emit_failed (SYSPROF_PROFILER (self), error);
+  else
+    sysprof_local_profiler_start_after_auth (self);
+}
+
+static void
+sysprof_local_profiler_start (SysprofProfiler *profiler)
+{
+  SysprofLocalProfiler *self = (SysprofLocalProfiler *)profiler;
+  SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
+  g_autoptr(SysprofControlSource) control_source = NULL;
+
+  g_return_if_fail (SYSPROF_IS_LOCAL_PROFILER (self));
+  g_return_if_fail (priv->is_running == FALSE);
+  g_return_if_fail (priv->is_stopping == FALSE);
+  g_return_if_fail (priv->is_starting == FALSE);
+
+  g_clear_pointer (&priv->timer, g_timer_destroy);
+  g_object_notify (G_OBJECT (self), "elapsed");
+
+  control_source = sysprof_control_source_new ();
+  sysprof_profiler_add_source (SYSPROF_PROFILER (self), SYSPROF_SOURCE (control_source));
+
+  if (priv->writer == NULL)
+    {
+      SysprofCaptureWriter *writer;
+      int fd;
+
+      if ((-1 == (fd = sysprof_memfd_create ("[sysprof]"))) ||
+          (NULL == (writer = sysprof_capture_writer_new_from_fd (fd, 0))))
+        {
+          const GError werror = {
+            G_FILE_ERROR,
+            g_file_error_from_errno (errno),
+            (gchar *)g_strerror (errno)
+          };
+
+          if (fd != -1)
+            close (fd);
+
+          sysprof_profiler_emit_failed (SYSPROF_PROFILER (self), &werror);
+
+          return;
+        }
+
+      sysprof_profiler_set_writer (SYSPROF_PROFILER (self), writer);
+      g_clear_pointer (&writer, sysprof_capture_writer_unref);
+    }
+
+  priv->is_running = TRUE;
+  priv->is_starting = TRUE;
+
+  if (priv->failures->len > 0)
+    g_ptr_array_remove_range (priv->failures, 0, priv->failures->len);
+
+  /* Start by prefolling our authorization so that future calls are cheap */
+  sysprof_helpers_authorize_async (sysprof_helpers_get_default (),
+                                   NULL,
+                                   sysprof_local_profiler_preroll_cb,
+                                   g_object_ref (self));
 }
 
 static void

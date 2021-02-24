@@ -75,7 +75,7 @@ SysprofHelpers *
 sysprof_helpers_get_default (void)
 {
   static SysprofHelpers *instance;
-  
+
   if (g_once_init_enter (&instance))
     {
       SysprofHelpers *self = g_object_new (SYSPROF_TYPE_HELPERS, NULL);
@@ -750,7 +750,7 @@ sysprof_helpers_set_governor_async (SysprofHelpers      *self,
 gboolean
 sysprof_helpers_set_governor_finish (SysprofHelpers  *self,
                                      GAsyncResult    *result,
-                                     gchar          **old_governer,
+                                     gchar          **old_governor,
                                      GError         **error)
 {
   g_autofree gchar *ret = NULL;
@@ -760,8 +760,8 @@ sysprof_helpers_set_governor_finish (SysprofHelpers  *self,
 
   if ((ret = g_task_propagate_pointer (G_TASK (result), error)))
     {
-      if (old_governer != NULL)
-        *old_governer = g_steal_pointer (&ret);
+      if (old_governor != NULL)
+        *old_governor = g_steal_pointer (&ret);
       return TRUE;
     }
 

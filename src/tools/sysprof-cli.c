@@ -521,13 +521,13 @@ Examples:\n\
       g_object_unref (source);
     }
 
+#ifdef __linux__
+  source = sysprof_governor_source_new ();
   if (no_throttle)
-    {
-      source = sysprof_governor_source_new ();
-      sysprof_governor_source_set_disable_governor (SYSPROF_GOVERNOR_SOURCE (source), TRUE);
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
+    sysprof_governor_source_set_disable_governor (SYSPROF_GOVERNOR_SOURCE (source), TRUE);
+  sysprof_profiler_add_source (profiler, source);
+  g_object_unref (source);
+#endif
 
   if (gnome_shell)
     {

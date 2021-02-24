@@ -117,6 +117,7 @@ static void
 sysprof_governor_source_init (SysprofGovernorSource *self)
 {
   self->disable_governor = FALSE;
+  self->old_paranoid = 2;
 }
 
 SysprofSource *
@@ -178,28 +179,6 @@ sysprof_governor_source_deserialize (SysprofSource *source,
 }
 
 static void
-disable_paranoid_cb (GObject      *object,
-                     GAsyncResult *result,
-                     gpointer      user_data)
-{
-  SysprofHelpers *helpers = (SysprofHelpers *)object;
-  g_autoptr(SysprofGovernorSource) self = user_data;
-  g_autoptr(GError) error = NULL;
-  int old_paranoid;
-
-  g_assert (SYSPROF_IS_HELPERS (helpers));
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (SYSPROF_IS_GOVERNOR_SOURCE (self));
-
-  if (!sysprof_helpers_set_paranoid_finish (helpers, result, &old_paranoid, &error))
-    g_warning ("Failed to change perf_event_paranoid: %s", error->message);
-  else
-    self->old_paranoid = old_paranoid;
-
-  sysprof_source_emit_ready (SYSPROF_SOURCE (self));
-}
-
-static void
 disable_governor_cb (GObject      *object,
                      GAsyncResult *result,
                      gpointer      user_data)
@@ -218,14 +197,74 @@ disable_governor_cb (GObject      *object,
   else
     self->old_governor = g_steal_pointer (&old_governor);
 
-  /* Now tweak paranoid setting */
+  sysprof_source_emit_ready (SYSPROF_SOURCE (self));
+}
+
+static void
+disable_paranoid_cb (GObject      *object,
+                     GAsyncResult *result,
+                     gpointer      user_data)
+{
+  SysprofHelpers *helpers = (SysprofHelpers *)object;
+  g_autoptr(SysprofGovernorSource) self = user_data;
+  g_autoptr(GError) error = NULL;
+  int old_paranoid;
+
+  g_assert (SYSPROF_IS_HELPERS (helpers));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_GOVERNOR_SOURCE (self));
+
+  if (!sysprof_helpers_set_paranoid_finish (helpers, result, &old_paranoid, &error))
+    g_warning ("Failed to change perf_event_paranoid: %s", error->message);
+  else
+    self->old_paranoid = old_paranoid;
+
+  if (!self->disable_governor)
+    sysprof_source_emit_ready (SYSPROF_SOURCE (self));
+  else
+    sysprof_helpers_set_governor_async (helpers,
+                                        "performance",
+                                        NULL,
+                                        disable_governor_cb,
+                                        g_steal_pointer (&self));
+}
+
+static void
+sysprof_governor_source_prepare (SysprofSource *source)
+{
+  SysprofGovernorSource *self = (SysprofGovernorSource *)source;
+  SysprofHelpers *helpers = sysprof_helpers_get_default ();
+
+  g_assert (SYSPROF_IS_GOVERNOR_SOURCE (self));
+
   sysprof_helpers_set_paranoid_async (helpers,
                                       -1,
                                       NULL,
                                       disable_paranoid_cb,
-                                      g_steal_pointer (&self));
+                                      g_object_ref (self));
 }
 
+static void
+enable_governor_cb (GObject      *object,
+                    GAsyncResult *result,
+                    gpointer      user_data)
+{
+  SysprofHelpers *helpers = (SysprofHelpers *)object;
+  g_autoptr(SysprofGovernorSource) self = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autofree gchar *old_governor = NULL;
+
+  g_assert (SYSPROF_IS_HELPERS (helpers));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_GOVERNOR_SOURCE (self));
+
+  if (!sysprof_helpers_set_governor_finish (helpers, result, &old_governor, &error))
+    g_warning ("Failed to change governor: %s", error->message);
+
+  g_clear_pointer (&self->old_governor, g_free);
+
+  sysprof_source_emit_finished (SYSPROF_SOURCE (self));
+}
 
 static void
 enable_paranoid_cb (GObject      *object,
@@ -244,54 +283,14 @@ enable_paranoid_cb (GObject      *object,
   if (!sysprof_helpers_set_paranoid_finish (helpers, result, &old_governor, &error))
     g_warning ("Failed to change event_perf_paranoid: %s", error->message);
 
-  sysprof_source_emit_finished (SYSPROF_SOURCE (self));
-}
-
-static void
-enable_governor_cb (GObject      *object,
-                    GAsyncResult *result,
-                    gpointer      user_data)
-{
-  SysprofHelpers *helpers = (SysprofHelpers *)object;
-  g_autoptr(SysprofGovernorSource) self = user_data;
-  g_autoptr(GError) error = NULL;
-  g_autofree gchar *old_governor = NULL;
-  int previous;
-
-  g_assert (SYSPROF_IS_HELPERS (helpers));
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (SYSPROF_IS_GOVERNOR_SOURCE (self));
-
-  if (!sysprof_helpers_set_governor_finish (helpers, result, &old_governor, &error))
-    g_warning ("Failed to change governor: %s", error->message);
-
-  g_clear_pointer (&self->old_governor, g_free);
-
-  /* Restore paranoid setting */
-  previous = self->old_paranoid;
-  sysprof_helpers_set_paranoid_async (helpers,
-                                      previous,
-                                      NULL,
-                                      enable_paranoid_cb,
-                                      g_steal_pointer (&self));
-}
-
-static void
-sysprof_governor_source_prepare (SysprofSource *source)
-{
-  SysprofGovernorSource *self = (SysprofGovernorSource *)source;
-  SysprofHelpers *helpers = sysprof_helpers_get_default ();
-
-  g_assert (SYSPROF_IS_GOVERNOR_SOURCE (self));
-
   if (!self->disable_governor)
-    sysprof_source_emit_ready (source);
+    sysprof_source_emit_finished (SYSPROF_SOURCE (self));
   else
     sysprof_helpers_set_governor_async (helpers,
-                                        "performance",
+                                        self->old_governor,
                                         NULL,
-                                        disable_governor_cb,
-                                        g_object_ref (self));
+                                        enable_governor_cb,
+                                        g_steal_pointer (&self));
 }
 
 static void
@@ -302,14 +301,11 @@ sysprof_governor_source_stop (SysprofSource *source)
 
   g_assert (SYSPROF_IS_GOVERNOR_SOURCE (self));
 
-  if (self->old_governor == NULL)
-    sysprof_source_emit_finished (source);
-  else
-    sysprof_helpers_set_governor_async (helpers,
-                                        self->old_governor,
-                                        NULL,
-                                        enable_governor_cb,
-                                        g_object_ref (self));
+  sysprof_helpers_set_paranoid_async (helpers,
+                                      self->old_paranoid,
+                                      NULL,
+                                      enable_paranoid_cb,
+                                      g_object_ref (self));
 }
 
 static void

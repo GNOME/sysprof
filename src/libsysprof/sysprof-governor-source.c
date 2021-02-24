@@ -116,7 +116,7 @@ sysprof_governor_source_class_init (SysprofGovernorSourceClass *klass)
 static void
 sysprof_governor_source_init (SysprofGovernorSource *self)
 {
-  self->disable_governor = TRUE;
+  self->disable_governor = FALSE;
 }
 
 SysprofSource *

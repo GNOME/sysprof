@@ -106,5 +106,17 @@
       <arg name="governor" type="s" direction="in"/>
       <arg name="old_governor" type="s" direction="out"/>
     </method>
+
+    <!--
+      SetParanoid:
+      @governor: the new perf paranoid setting
+      @old_governor: the old perf paranoid setting
+
+      Sets the perf_event_paranoid setting for the system.
+    -->
+    <method name="SetParanoid">
+      <arg name="paranoid" type="i" direction="in"/>
+      <arg name="old_paranoid" type="i" direction="out"/>
+    </method>
   </interface>
 </node>

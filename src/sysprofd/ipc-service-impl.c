@@ -375,6 +375,52 @@ finish:
   return TRUE;
 }
 
+static gboolean
+ipc_service_impl_handle_set_paranoid (IpcService            *service,
+                                      GDBusMethodInvocation *invocation,
+                                      int                    paranoid)
+{
+  g_autoptr(GError) error = NULL;
+  g_autofree gchar *str = NULL;
+  int previous = G_MAXINT;
+
+  g_assert (IPC_IS_SERVICE (service));
+  g_assert (G_IS_DBUS_METHOD_INVOCATION (invocation));
+
+  paranoid = CLAMP (paranoid, -1, 2);
+
+  if (!g_file_get_contents ("/proc/sys/kernel/perf_event_paranoid", &str, NULL, &error))
+    {
+      g_warning ("Failed to discover previous perf_event_paranoid setting: %s", error->message);
+      goto finish;
+    }
+
+  previous = g_ascii_strtoll (str, NULL, 10);
+
+  if (previous != paranoid)
+    {
+      char paranoid_str[8];
+      gssize len = g_snprintf (paranoid_str, sizeof paranoid_str, "%d", paranoid);
+
+      if (!file_set_contents_no_backup ("/proc/sys/kernel/perf_event_paranoid", paranoid_str, len, &error))
+        g_warning ("Failed to set perf_event_paranoid: %s", error->message);
+    }
+
+finish:
+  if (error != NULL)
+    g_dbus_method_invocation_return_error (g_steal_pointer (&invocation),
+                                           G_DBUS_ERROR,
+                                           G_DBUS_ERROR_FAILED,
+                                           "Failed to set perf_event_paranoid: %s",
+                                           error->message);
+  else
+    ipc_service_complete_set_paranoid (service,
+                                       g_steal_pointer (&invocation),
+                                       previous);
+
+  return TRUE;
+}
+
 static void
 init_service_iface (IpcServiceIface *iface)
 {
@@ -384,6 +430,7 @@ init_service_iface (IpcServiceIface *iface)
   iface->handle_perf_event_open = ipc_service_impl_handle_perf_event_open;
   iface->handle_get_process_info = ipc_service_impl_handle_get_process_info;
   iface->handle_set_governor = ipc_service_impl_handle_set_governor;
+  iface->handle_set_paranoid = ipc_service_impl_handle_set_paranoid;
 }
 
 G_DEFINE_TYPE_WITH_CODE (IpcServiceImpl, ipc_service_impl, IPC_TYPE_SERVICE_SKELETON,

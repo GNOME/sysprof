@@ -339,7 +339,7 @@ sysprof_proc_source_populate_pid_root (SysprofProcSource *self,
    */
   if (flatpak == NULL)
     {
-      flatpak = g_regex_new ("app-flatpak-[a-zA-Z_\\-\\.]+-[0-9]+\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
+      flatpak = g_regex_new ("app-flatpak-([a-zA-Z_\\-\\.]+)-[0-9]+\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
       g_assert (flatpak != NULL);
     }
 

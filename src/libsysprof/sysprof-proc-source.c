@@ -267,7 +267,36 @@ sysprof_proc_source_populate_pid_podman (SysprofProcSource *self,
                                                i);
         }
     }
+}
 
+static void
+sysprof_proc_source_populate_pid_flatpak (SysprofProcSource *self,
+                                          GPid               pid,
+                                          const char        *app_id)
+{
+  g_autofree gchar *info_path = NULL;
+  g_autoptr(GKeyFile) key_file = NULL;
+  g_autofree gchar *app_path = NULL;
+  g_autofree gchar *runtime_path = NULL;
+  g_autofree gchar *contents = NULL;
+
+  g_assert (SYSPROF_IS_PROC_SOURCE (self));
+  g_assert (app_id != NULL);
+
+  info_path = g_strdup_printf ("/proc/%d/root/.flatpak-info", pid);
+  key_file = g_key_file_new ();
+
+  if (!sysprof_helpers_get_proc_file (sysprof_helpers_get_default (),
+                                      info_path, NULL, &contents, NULL))
+    return;
+
+  if (!g_key_file_load_from_data (key_file, contents, -1, 0, NULL) ||
+      !g_key_file_has_group (key_file, "Instance") ||
+      !(app_path = g_key_file_get_string (key_file, "Instance", "app-path", NULL)) ||
+      !(runtime_path = g_key_file_get_string (key_file, "Instance", "runtime-path", NULL)))
+    return;
+
+  /* TODO: Add host path mapping for Flatpak information */
 }
 
 static void
@@ -275,8 +304,11 @@ sysprof_proc_source_populate_pid_root (SysprofProcSource *self,
                                        GPid               pid,
                                        const char        *cgroup)
 {
-  static GRegex *regex;
-  GMatchInfo *match_info = NULL;
+  static GRegex *flatpak;
+  static GRegex *podman;
+
+  g_autoptr(GMatchInfo) podman_match = NULL;
+  g_autoptr(GMatchInfo) flatpak_match = NULL;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
   g_assert (cgroup != NULL);
@@ -293,21 +325,36 @@ sysprof_proc_source_populate_pid_root (SysprofProcSource *self,
    *
    * -- Christian
    */
-
-  if (regex == NULL)
+  if (podman == NULL)
     {
-      regex = g_regex_new ("libpod-([a-z0-9]{64})\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
-      g_assert (regex != NULL);
+      podman = g_regex_new ("libpod-([a-z0-9]{64})\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
+      g_assert (podman != NULL);
     }
 
-  if (g_regex_match (regex, cgroup, 0, &match_info))
+  /* If this looks like a cgroup associated with a Flatpak, then we can find
+   * information about the filesystem in /proc/$pid/root/.flatpak-info (assuming
+   * we can actually read that file. That is possible from the host, but not
+   * really if we are running in a Flatpak ourself, so we access it through
+   * the daemon to ensure we can access it.
+   */
+  if (flatpak == NULL)
     {
-      char *word = g_match_info_fetch (match_info, 1);
+      flatpak = g_regex_new ("app-flatpak-[a-zA-Z_\\-\\.]+-[0-9]+\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
+      g_assert (flatpak != NULL);
+    }
+
+  if (g_regex_match (podman, cgroup, 0, &podman_match))
+    {
+      char *word = g_match_info_fetch (podman_match, 1);
       sysprof_proc_source_populate_pid_podman (self, pid, word);
       g_free (word);
     }
-
-  g_match_info_free (match_info);
+  else if (g_regex_match (flatpak, cgroup, 0, &flatpak_match))
+    {
+      char *word = g_match_info_fetch (flatpak_match, 1);
+      sysprof_proc_source_populate_pid_flatpak (self, pid, word);
+      g_free (word);
+    }
 }
 
 static void

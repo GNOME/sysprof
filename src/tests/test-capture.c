@@ -730,31 +730,41 @@ static void
 test_reader_writer_file (void)
 {
   g_autofree gchar *data = NULL;
+  g_autofree gchar *testfile = NULL;
   GByteArray *buf = g_byte_array_new ();
   g_autofree const gchar **files = NULL;
   SysprofCaptureWriter *writer;
   SysprofCaptureReader *reader;
   SysprofCaptureFrameType type;
+  const char *srcdir;
   gsize data_len;
   guint count = 0;
   gint fd;
   gint new_fd;
   gint r;
 
-  writer = sysprof_capture_writer_new ("file1.syscap", 0);
-  fd = g_open ("/proc/cpuinfo", O_RDONLY);
+  srcdir = g_getenv ("G_TEST_SRCDIR");
+  g_assert_nonnull (srcdir);
 
-  r = g_file_get_contents ("/proc/cpuinfo", &data, &data_len, NULL);
+  /* We need a file that does not change from read to read */
+  testfile = g_build_filename (srcdir, "meson.build", NULL);
+  g_assert_nonnull (testfile);
+
+  writer = sysprof_capture_writer_new ("file1.syscap", 0);
+  fd = g_open (testfile, O_RDONLY);
+
+  r = g_file_get_contents (testfile, &data, &data_len, NULL);
   g_assert_true (r);
 
   lseek (fd, 0L, SEEK_SET);
-  sysprof_capture_writer_add_file_fd (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, "/proc/cpuinfo", fd);
+  sysprof_capture_writer_add_file_fd (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, testfile, fd);
 
   lseek (fd, 0L, SEEK_SET);
-  sysprof_capture_writer_add_file_fd (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, "/proc/cpuinfo", fd);
+  sysprof_capture_writer_add_file_fd (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, testfile, fd);
 
   close (fd);
 
+  sysprof_capture_writer_flush (writer);
   g_clear_pointer (&writer, sysprof_capture_writer_unref);
 
   reader = sysprof_capture_reader_new ("file1.syscap");
@@ -770,7 +780,7 @@ test_reader_writer_file (void)
 
       file = sysprof_capture_reader_read_file (reader);
       g_assert_nonnull (file);
-      g_assert_cmpstr (file->path, ==, "/proc/cpuinfo");
+      g_assert_cmpstr (file->path, ==, testfile);
 
       if (count == 0)
         g_byte_array_append (buf, file->data, file->len);
@@ -778,6 +788,7 @@ test_reader_writer_file (void)
       count += file->is_last;
     }
 
+  g_assert_cmpint (data_len, ==, buf->len);
   g_assert_cmpint (0, ==, memcmp (data, buf->data, data_len));
 
   r = sysprof_capture_reader_peek_type (reader, &type);
@@ -786,14 +797,14 @@ test_reader_writer_file (void)
   sysprof_capture_reader_reset (reader);
   files = sysprof_capture_reader_list_files (reader);
   g_assert_nonnull (files);
-  g_assert_cmpstr (files[0], ==, "/proc/cpuinfo");
+  g_assert_cmpstr (files[0], ==, testfile);
   g_assert_null (files[1]);
 
   sysprof_capture_reader_reset (reader);
   new_fd = sysprof_memfd_create ("[sysprof-capture-file]");
   g_assert_cmpint (new_fd, !=, -1);
 
-  r = sysprof_capture_reader_read_file_fd (reader, "/proc/cpuinfo", new_fd);
+  r = sysprof_capture_reader_read_file_fd (reader, testfile, new_fd);
   g_assert_true (r);
 
   close (new_fd);

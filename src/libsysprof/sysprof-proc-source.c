@@ -259,12 +259,9 @@ sysprof_proc_source_populate_pid_podman (SysprofProcSource *self,
                                                     info->layers[i],
                                                     "diff",
                                                     NULL);
-          sysprof_capture_writer_add_pid_root (self->writer,
-                                               SYSPROF_CAPTURE_CURRENT_TIME,
-                                               -1,
-                                               pid,
-                                               path,
-                                               i);
+          sysprof_capture_writer_add_overlay (self->writer,
+                                              SYSPROF_CAPTURE_CURRENT_TIME,
+                                              -1, pid, i, path, "/");
         }
     }
 }

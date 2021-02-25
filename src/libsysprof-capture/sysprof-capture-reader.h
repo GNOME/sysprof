@@ -121,7 +121,7 @@ const SysprofCaptureFileChunk      *sysprof_capture_reader_read_file           (
 SYSPROF_AVAILABLE_IN_3_36
 const SysprofCaptureAllocation     *sysprof_capture_reader_read_allocation     (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_3_40
-const SysprofCapturePidRoot        *sysprof_capture_reader_read_pid_root       (SysprofCaptureReader      *self);
+const SysprofCaptureOverlay        *sysprof_capture_reader_read_overlay       (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
 bool                                sysprof_capture_reader_reset               (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL

@@ -828,20 +828,27 @@ sysprof_capture_writer_add_fork (SysprofCaptureWriter *self,
 }
 
 bool
-sysprof_capture_writer_add_pid_root (SysprofCaptureWriter *self,
-                                     int64_t               time,
-                                     int                   cpu,
-                                     int32_t               pid,
-                                     const char           *path,
-                                     uint32_t              layer)
+sysprof_capture_writer_add_overlay (SysprofCaptureWriter *self,
+                                    int64_t               time,
+                                    int                   cpu,
+                                    int32_t               pid,
+                                    uint32_t              layer,
+                                    const char           *src,
+                                    const char           *dst)
 {
-  SysprofCapturePidRoot *ev;
-  size_t strl = strlen (path);
-  size_t len = sizeof *ev + strl + 1;
+  SysprofCaptureOverlay *ev;
+  size_t srclen = strlen (src);
+  size_t dstlen = strlen (dst);
+  size_t len = sizeof *ev + srclen + 1 + dstlen + 1;
 
   assert (self != NULL);
+  assert (src != NULL);
+  assert (dst != NULL);
 
-  ev = (SysprofCapturePidRoot *)sysprof_capture_writer_allocate (self, &len);
+  if (srclen > INT16_MAX || dstlen > INT16_MAX)
+    return false;
+
+  ev = (SysprofCaptureOverlay *)sysprof_capture_writer_allocate (self, &len);
   if (!ev)
     return false;
 
@@ -850,12 +857,19 @@ sysprof_capture_writer_add_pid_root (SysprofCaptureWriter *self,
                                      cpu,
                                      pid,
                                      time,
-                                     SYSPROF_CAPTURE_FRAME_PID_ROOT);
-  ev->layer = layer;
-  memcpy (ev->path, path, strl);
-  ev->path[strl] = 0;
+                                     SYSPROF_CAPTURE_FRAME_OVERLAY);
 
-  self->stat.frame_count[SYSPROF_CAPTURE_FRAME_PID_ROOT]++;
+  ev->layer = layer;
+  ev->src_len = srclen;
+  ev->dst_len = dstlen;
+
+  memcpy (&ev->data[0], src, srclen);
+  memcpy (&ev->data[srclen+1], dst, dstlen);
+
+  ev->data[srclen] = 0;
+  ev->data[srclen+1+dstlen] = 0;
+
+  self->stat.frame_count[SYSPROF_CAPTURE_FRAME_OVERLAY]++;
 
   return true;
 }

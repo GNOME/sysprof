@@ -162,10 +162,12 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
 
           sysprof_map_lookaside_insert (lookaside, &map);
         }
-      else if (type == SYSPROF_CAPTURE_FRAME_PID_ROOT)
+      else if (type == SYSPROF_CAPTURE_FRAME_OVERLAY)
         {
-          const SysprofCapturePidRoot *ev = sysprof_capture_reader_read_pid_root (reader);
+          const SysprofCaptureOverlay *ev = sysprof_capture_reader_read_overlay (reader);
           SysprofMapLookaside *lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (ev->frame.pid));
+          const char *src = ev->data;
+          const char *dst = &ev->data[ev->src_len+1];
 
           if (lookaside == NULL)
             {
@@ -173,11 +175,9 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
               g_hash_table_insert (self->lookasides, GINT_TO_POINTER (ev->frame.pid), lookaside);
             }
 
-          /* Someday we might need to support more layers, but currently
-           * only the base layer (0) is used.
-           */
-          if (ev->layer == 0)
-            sysprof_map_lookaside_set_root (lookaside, ev->path);
+          /* FIXME: use dst to map to things other than / */
+          if (ev->dst_len == 1 && *dst == '/')
+            sysprof_map_lookaside_set_root (lookaside, src);
         }
       else
         {

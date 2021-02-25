@@ -532,19 +532,28 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
           break;
         }
 
-        case SYSPROF_CAPTURE_FRAME_PID_ROOT:
+        case SYSPROF_CAPTURE_FRAME_OVERLAY:
           {
-            const SysprofCapturePidRoot *frame;
+            const SysprofCaptureOverlay *frame;
+            const char *src;
+            const char *dst;
 
-            if (!(frame = sysprof_capture_reader_read_pid_root (reader)))
+            if (!(frame = sysprof_capture_reader_read_overlay (reader)))
               goto panic;
 
-            sysprof_capture_writer_add_pid_root (self,
-                                                 frame->frame.time,
-                                                 frame->frame.cpu,
-                                                 frame->frame.pid,
-                                                 frame->path,
-                                                 frame->layer);
+            /* This should have been verified alrady when decoding */
+            assert (frame->frame.len >= (sizeof *frame + frame->src_len + 1 + frame->dst_len + 1));
+
+            src = &frame->data[0];
+            dst = &frame->data[frame->src_len+1];
+
+            sysprof_capture_writer_add_overlay (self,
+                                                frame->frame.time,
+                                                frame->frame.cpu,
+                                                frame->frame.pid,
+                                                frame->layer,
+                                                src,
+                                                dst);
             break;
           }
 

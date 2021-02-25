@@ -115,14 +115,16 @@ main (gint argc,
             break;
           }
 
-        case SYSPROF_CAPTURE_FRAME_PID_ROOT:
+        case SYSPROF_CAPTURE_FRAME_OVERLAY:
           {
-            const SysprofCapturePidRoot *pr = sysprof_capture_reader_read_pid_root (reader);
+            const SysprofCaptureOverlay *pr = sysprof_capture_reader_read_overlay (reader);
+            const char *src = pr->data;
+            const char *dst = &pr->data[pr->src_len+1];
 
             if (pr == NULL)
               return EXIT_FAILURE;
 
-            g_print ("PID ROOT: pid=%d layer=%u path=%s\n", pr->frame.pid, pr->layer, pr->path);
+            g_print ("OVERLAY: pid=%d layer=%u src=%s dst=%s\n", pr->frame.pid, pr->layer, src, dst);
 
             break;
           }

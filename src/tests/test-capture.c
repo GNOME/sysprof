@@ -947,6 +947,58 @@ test_writer_memory_alloc_free (void)
   g_unlink ("memory.syscap");
 }
 
+static void
+test_reader_writer_overlay (void)
+{
+  SysprofCaptureWriter *writer;
+  SysprofCaptureReader *reader;
+  const SysprofCaptureOverlay *ev;
+  SysprofCaptureFrameType type;
+  gint r;
+
+  writer = sysprof_capture_writer_new ("overlay1.syscap", 0);
+
+  sysprof_capture_writer_add_overlay (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, 123, "/foo", "/bar");
+  sysprof_capture_writer_add_overlay (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, 0, "/app", "/bin");
+  sysprof_capture_writer_add_overlay (writer, SYSPROF_CAPTURE_CURRENT_TIME, -1, -1, 7, "/home/user/.local/share/containers/storage/overlay/1111111111111111111111111111111111111111111111111111111111111111/diff", "/");
+
+  g_clear_pointer (&writer, sysprof_capture_writer_unref);
+
+  reader = sysprof_capture_reader_new ("overlay1.syscap");
+  g_assert_nonnull (reader);
+
+  ev = sysprof_capture_reader_read_overlay (reader);
+  g_assert_nonnull (ev);
+  g_assert_cmpint (ev->layer, ==, 123);
+  g_assert_cmpint (ev->src_len, ==, 4);
+  g_assert_cmpint (ev->dst_len, ==, 4);
+  g_assert_cmpstr (ev->data, ==, "/foo");
+  g_assert_cmpstr (ev->data+ev->src_len+1, ==, "/bar");
+
+  ev = sysprof_capture_reader_read_overlay (reader);
+  g_assert_nonnull (ev);
+  g_assert_cmpint (ev->layer, ==, 0);
+  g_assert_cmpint (ev->src_len, ==, 4);
+  g_assert_cmpint (ev->dst_len, ==, 4);
+  g_assert_cmpstr (ev->data, ==, "/app");
+  g_assert_cmpstr (ev->data+ev->src_len+1, ==, "/bin");
+
+  ev = sysprof_capture_reader_read_overlay (reader);
+  g_assert_nonnull (ev);
+  g_assert_cmpint (ev->layer, ==, 7);
+  g_assert_cmpint (ev->src_len, ==, 120);
+  g_assert_cmpint (ev->dst_len, ==, 1);
+  g_assert_cmpstr (ev->data, ==, "/home/user/.local/share/containers/storage/overlay/1111111111111111111111111111111111111111111111111111111111111111/diff");
+  g_assert_cmpstr (ev->data+ev->src_len+1, ==, "/");
+
+  r = sysprof_capture_reader_peek_type (reader, &type);
+  g_assert_cmpint (r, ==, FALSE);
+
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
+
+  g_unlink ("overlay1.syscap");
+}
+
 int
 main (int argc,
       char *argv[])
@@ -962,5 +1014,6 @@ main (int argc,
   g_test_add_func ("/SysprofCapture/ReaderWriter/metadata", test_reader_writer_metadata);
   g_test_add_func ("/SysprofCapture/ReaderWriter/file", test_reader_writer_file);
   g_test_add_func ("/SysprofCapture/ReaderWriter/cat-jitmap", test_reader_writer_cat_jitmap);
+  g_test_add_func ("/SysprofCapture/ReaderWriter/overlay", test_reader_writer_overlay);
   return g_test_run ();
 }

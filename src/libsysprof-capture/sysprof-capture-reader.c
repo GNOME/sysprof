@@ -354,14 +354,18 @@ sysprof_capture_reader_bswap_mark (SysprofCaptureReader *self,
 }
 
 static inline void
-sysprof_capture_reader_bswap_pid_root (SysprofCaptureReader  *self,
-                                       SysprofCapturePidRoot *pr)
+sysprof_capture_reader_bswap_overlay (SysprofCaptureReader  *self,
+                                       SysprofCaptureOverlay *pr)
 {
   assert (self != NULL);
   assert (pr != NULL);
 
   if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
-    pr->layer = bswap_32 (pr->layer);
+    {
+      pr->layer = bswap_32 (pr->layer);
+      pr->src_len = bswap_32 (pr->src_len);
+      pr->dst_len = bswap_32 (pr->dst_len);
+    }
 }
 
 static inline void
@@ -690,10 +694,10 @@ sysprof_capture_reader_read_mark (SysprofCaptureReader *self)
   return mark;
 }
 
-const SysprofCapturePidRoot *
-sysprof_capture_reader_read_pid_root (SysprofCaptureReader *self)
+const SysprofCaptureOverlay *
+sysprof_capture_reader_read_overlay (SysprofCaptureReader *self)
 {
-  SysprofCapturePidRoot *pr;
+  SysprofCaptureOverlay *pr;
 
   assert (self != NULL);
   assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
@@ -702,22 +706,30 @@ sysprof_capture_reader_read_pid_root (SysprofCaptureReader *self)
   if (!sysprof_capture_reader_ensure_space_for (self, sizeof *pr + 1))
     return NULL;
 
-  pr = (SysprofCapturePidRoot *)(void *)&self->buf[self->pos];
+  pr = (SysprofCaptureOverlay *)(void *)&self->buf[self->pos];
 
   sysprof_capture_reader_bswap_frame (self, &pr->frame);
 
-  if (pr->frame.type != SYSPROF_CAPTURE_FRAME_PID_ROOT)
+  if (pr->frame.type != SYSPROF_CAPTURE_FRAME_OVERLAY)
     return NULL;
 
-  if (pr->frame.len < (sizeof *pr + 1))
+  if (pr->frame.len < (sizeof *pr + 2))
     return NULL;
 
   if (!sysprof_capture_reader_ensure_space_for (self, pr->frame.len))
     return NULL;
 
-  pr = (SysprofCapturePidRoot *)(void *)&self->buf[self->pos];
+  pr = (SysprofCaptureOverlay *)(void *)&self->buf[self->pos];
 
-  sysprof_capture_reader_bswap_pid_root (self, pr);
+  sysprof_capture_reader_bswap_overlay (self, pr);
+
+  /* Make sure there is enough space for paths and trailing \0 */
+  if (((size_t)pr->src_len + (size_t)pr->dst_len) > (pr->frame.len - sizeof *pr - 2))
+    return NULL;
+
+  /* Enforce trailing \0 */
+  pr->data[pr->src_len] = 0;
+  pr->data[pr->src_len+1+pr->dst_len] = 0;
 
   self->pos += pr->frame.len;
 

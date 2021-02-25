@@ -24,12 +24,6 @@
 
 #include "sysprof-map-lookaside.h"
 
-struct _SysprofMapLookaside
-{
-  GSequence    *seq;
-  GStringChunk *chunk;
-};
-
 static gint
 sysprof_map_compare (gconstpointer a,
                      gconstpointer b,
@@ -105,6 +99,16 @@ sysprof_map_lookaside_insert (SysprofMapLookaside *self,
   copy->filename = g_string_chunk_insert_const (self->chunk, map->filename);
 
   g_sequence_insert_sorted (self->seq, copy, sysprof_map_compare, NULL);
+}
+
+void
+sysprof_map_lookaside_set_root (SysprofMapLookaside *self,
+                                const char          *root)
+{
+  g_assert (self != NULL);
+  g_assert (root != NULL);
+
+  self->root = g_string_chunk_insert_const (self->chunk, root);
 }
 
 const SysprofMap *

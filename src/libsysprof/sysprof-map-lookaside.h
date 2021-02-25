@@ -26,7 +26,12 @@
 
 G_BEGIN_DECLS
 
-typedef struct _SysprofMapLookaside SysprofMapLookaside;
+typedef struct _SysprofMapLookaside
+{
+  GSequence    *seq;
+  GStringChunk *chunk;
+  const gchar  *root;
+} SysprofMapLookaside;
 
 typedef struct
 {
@@ -37,12 +42,14 @@ typedef struct
   const gchar           *filename;
 } SysprofMap;
 
-SysprofMapLookaside *sysprof_map_lookaside_new    (void);
-void                 sysprof_map_lookaside_insert (SysprofMapLookaside   *self,
-                                                   const SysprofMap      *map);
-const SysprofMap    *sysprof_map_lookaside_lookup (SysprofMapLookaside   *self,
-                                                   SysprofCaptureAddress  address);
-void                 sysprof_map_lookaside_free   (SysprofMapLookaside   *self);
+SysprofMapLookaside *sysprof_map_lookaside_new      (void);
+void                 sysprof_map_lookaside_insert   (SysprofMapLookaside    *self,
+                                                     const SysprofMap       *map);
+void                 sysprof_map_lookaside_set_root (SysprofMapLookaside    *self,
+                                                     const gchar            *root);
+const SysprofMap    *sysprof_map_lookaside_lookup   (SysprofMapLookaside    *self,
+                                                     SysprofCaptureAddress   address);
+void                 sysprof_map_lookaside_free     (SysprofMapLookaside    *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofMapLookaside, sysprof_map_lookaside_free)
 

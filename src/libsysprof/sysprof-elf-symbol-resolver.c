@@ -142,34 +142,49 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
 
   while (sysprof_capture_reader_peek_type (reader, &type))
     {
-      const SysprofCaptureMap *ev;
-      SysprofMapLookaside *lookaside;
-      SysprofMap map;
+      if (type == SYSPROF_CAPTURE_FRAME_MAP)
+        {
+          const SysprofCaptureMap *ev = sysprof_capture_reader_read_map (reader);
+          SysprofMapLookaside *lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (ev->frame.pid));
+          SysprofMap map;
 
-      if (type != SYSPROF_CAPTURE_FRAME_MAP)
+          map.start = ev->start;
+          map.end = ev->end;
+          map.offset = ev->offset;
+          map.inode = ev->inode;
+          map.filename = ev->filename;
+
+          if (lookaside == NULL)
+            {
+              lookaside = sysprof_map_lookaside_new ();
+              g_hash_table_insert (self->lookasides, GINT_TO_POINTER (ev->frame.pid), lookaside);
+            }
+
+          sysprof_map_lookaside_insert (lookaside, &map);
+        }
+      else if (type == SYSPROF_CAPTURE_FRAME_PID_ROOT)
+        {
+          const SysprofCapturePidRoot *ev = sysprof_capture_reader_read_pid_root (reader);
+          SysprofMapLookaside *lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (ev->frame.pid));
+
+          if (lookaside == NULL)
+            {
+              lookaside = sysprof_map_lookaside_new ();
+              g_hash_table_insert (self->lookasides, GINT_TO_POINTER (ev->frame.pid), lookaside);
+            }
+
+          /* Someday we might need to support more layers, but currently
+           * only the base layer (0) is used.
+           */
+          if (ev->layer == 0)
+            sysprof_map_lookaside_set_root (lookaside, ev->path);
+        }
+      else
         {
           if (!sysprof_capture_reader_skip (reader))
             return;
           continue;
         }
-
-      ev = sysprof_capture_reader_read_map (reader);
-
-      map.start = ev->start;
-      map.end = ev->end;
-      map.offset = ev->offset;
-      map.inode = ev->inode;
-      map.filename = ev->filename;
-
-      lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (ev->frame.pid));
-
-      if (lookaside == NULL)
-        {
-          lookaside = sysprof_map_lookaside_new ();
-          g_hash_table_insert (self->lookasides, GINT_TO_POINTER (ev->frame.pid), lookaside);
-        }
-
-      sysprof_map_lookaside_insert (lookaside, &map);
     }
 }
 

@@ -190,6 +190,7 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
 
 static bin_file_t *
 sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
+                                          const gchar              *root,
                                           const gchar              *filename)
 {
   bin_file_t *bin_file;
@@ -200,31 +201,18 @@ sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
 
   if (bin_file == NULL)
     {
+      g_autofree gchar *path = NULL;
       const gchar *alternate = filename;
       const gchar * const *dirs;
 
       dirs = (const gchar * const *)(gpointer)self->debug_dirs->data;
 
-      /*
-       * If we are in a new mount namespace, then rely on the sysprof_symbol_dirs
-       * to find us a locate to resolve the file where the CRC will match.
-       *
-       * TODO: We need to translate the path here so that we can locate the
-       *       binary behind it (which then has links to the debug file in
-       *       the section header).
-       */
-      if (g_str_has_prefix (filename, "/newroot/"))
-        alternate += strlen ("/newroot");
+      if (root && filename[0] != '/' && filename[0] != '[')
+        alternate = path = g_build_filename (root, filename, NULL);
+      else if (is_flatpak () && g_str_has_prefix (filename, "/usr/"))
+        alternate = path = g_build_filename ("/var/run/host", alternate, NULL);
 
-      if (is_flatpak () && g_str_has_prefix (filename, "/usr/"))
-        {
-          g_autofree gchar *path = g_build_filename ("/var/run/host", alternate, NULL);
-          bin_file = bin_file_new (path, dirs);
-        }
-      else
-        {
-          bin_file = bin_file_new (alternate, dirs);
-        }
+      bin_file = bin_file_new (alternate, dirs);
 
       g_hash_table_insert (self->bin_files, g_strdup (filename), bin_file);
     }
@@ -379,7 +367,7 @@ sysprof_elf_symbol_resolver_resolve_full (SysprofElfSymbolResolver *self,
   address -= map->start;
   address += map->offset;
 
-  bin_file = sysprof_elf_symbol_resolver_get_bin_file (self, map->filename);
+  bin_file = sysprof_elf_symbol_resolver_get_bin_file (self, lookaside->root, map->filename);
 
   g_assert (bin_file != NULL);
 

@@ -113,6 +113,7 @@ endif
 libsysprof_pkg_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('gio-unix-2.0', version: glib_req_version),
+  dependency('json-glib-1.0'),
   polkit_dep,
   libsysprof_capture_deps,
 ]

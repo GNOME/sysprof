@@ -39,6 +39,7 @@
 
 #include "config.h"
 
+#include <json-glib/json-glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,8 +54,15 @@ struct _SysprofProcSource
   SysprofCaptureWriter *writer;
   GArray               *pids;
   SysprofMountinfo     *mountinfo;
+  GHashTable           *podman;
   guint                 is_ready : 1;
 };
+
+typedef struct
+{
+  char  *id;
+  char **layers;
+} PodmanInfo;
 
 static void source_iface_init (SysprofSourceInterface *iface);
 
@@ -162,6 +170,147 @@ pid_is_interesting (SysprofProcSource *self,
 }
 
 static void
+podman_info_free (gpointer data)
+{
+  PodmanInfo *info = data;
+
+  g_free (info->id);
+  g_strfreev (info->layers);
+  g_free (info);
+}
+
+static void
+update_containers_json (SysprofProcSource *self)
+{
+  g_autoptr(JsonParser) parser = NULL;
+  g_autofree gchar *path = NULL;
+  JsonNode *root;
+  JsonArray *ar;
+  guint n_items;
+
+  g_assert (SYSPROF_IS_PROC_SOURCE (self));
+
+  parser = json_parser_new ();
+  path = g_build_filename (g_get_user_data_dir (),
+                           "containers",
+                           "storage",
+                           "overlay-containers",
+                           "containers.json",
+                           NULL);
+
+  if (!json_parser_load_from_file (parser, path, NULL) ||
+      !(root = json_parser_get_root (parser)) ||
+      !JSON_NODE_HOLDS_ARRAY (root) ||
+      !(ar = json_node_get_array (root)))
+    return;
+
+  n_items = json_array_get_length (ar);
+
+  for (guint i = 0; i < n_items; i++)
+    {
+      JsonObject *item = json_array_get_object_element (ar, i);
+      PodmanInfo *info;
+      const char *id;
+      const char *layer;
+
+      if (item == NULL)
+        continue;
+
+      id = json_object_get_string_member (item, "id");
+      layer = json_object_get_string_member (item, "layer");
+
+      if (id == NULL || layer == NULL)
+        continue;
+
+      info = g_new0 (PodmanInfo, 1);
+      info->id = g_strdup (id);
+      info->layers = g_new0 (char *, 2);
+      info->layers[0] = g_strdup (layer);
+      info->layers[1] = NULL;
+
+      g_hash_table_insert (self->podman, info->id, info);
+    }
+}
+
+static void
+sysprof_proc_source_populate_pid_podman (SysprofProcSource *self,
+                                         GPid               pid,
+                                         const char        *container)
+{
+  PodmanInfo *info;
+
+  g_assert (SYSPROF_IS_PROC_SOURCE (self));
+  g_assert (container != NULL);
+
+  if (!(info = g_hash_table_lookup (self->podman, container)))
+    {
+      update_containers_json (self);
+      info = g_hash_table_lookup (self->podman, container);
+    }
+
+  if (info != NULL)
+    {
+      for (guint i = 0; info->layers[i]; i++)
+        {
+          g_autofree char *path = g_build_filename (g_get_user_data_dir (),
+                                                    "containers",
+                                                    "storage",
+                                                    "overlay",
+                                                    info->layers[i],
+                                                    "diff",
+                                                    NULL);
+          sysprof_capture_writer_add_pid_root (self->writer,
+                                               SYSPROF_CAPTURE_CURRENT_TIME,
+                                               -1,
+                                               pid,
+                                               path,
+                                               i);
+        }
+    }
+
+}
+
+static void
+sysprof_proc_source_populate_pid_root (SysprofProcSource *self,
+                                       GPid               pid,
+                                       const char        *cgroup)
+{
+  static GRegex *regex;
+  GMatchInfo *match_info = NULL;
+
+  g_assert (SYSPROF_IS_PROC_SOURCE (self));
+  g_assert (cgroup != NULL);
+
+  /* This function tries to discover the podman container that contains the
+   * process identified on the host as @pid. We can only do anything with this
+   * if the pids are in containers that the running user controls (so that we
+   * can actually access the overlays).
+   *
+   * This stuff, and I want to emphasize, is a giant hack. Just like containers
+   * are on Linux. But if we are really careful, we can make this work for the
+   * one particular use case I care about, which is podman/toolbox on Fedora
+   * Workstation/Silverblue.
+   *
+   * -- Christian
+   */
+
+  if (regex == NULL)
+    {
+      regex = g_regex_new ("libpod-([a-z0-9]{64})\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
+      g_assert (regex != NULL);
+    }
+
+  if (g_regex_match (regex, cgroup, 0, &match_info))
+    {
+      char *word = g_match_info_fetch (match_info, 1);
+      sysprof_proc_source_populate_pid_podman (self, pid, word);
+      g_free (word);
+    }
+
+  g_match_info_free (match_info);
+}
+
+static void
 sysprof_proc_source_populate (SysprofProcSource *self,
                               GVariant          *info)
 {
@@ -191,6 +340,7 @@ sysprof_proc_source_populate (SysprofProcSource *self,
       const gchar *comm;
       const gchar *mountinfo;
       const gchar *maps;
+      const gchar *cgroup;
       gint32 pid;
 
       g_variant_dict_init (&dict, pidinfo);
@@ -211,8 +361,12 @@ sysprof_proc_source_populate (SysprofProcSource *self,
       if (!g_variant_dict_lookup (&dict, "maps", "&s", &maps))
         maps = "";
 
+      if (!g_variant_dict_lookup (&dict, "cgroup", "&s", &cgroup))
+        cgroup = "";
+
       sysprof_proc_source_populate_process (self, pid, *cmdline ? cmdline : comm);
       sysprof_proc_source_populate_maps (self, pid, maps, mountinfo);
+      sysprof_proc_source_populate_pid_root (self, pid, cgroup);
 
       skip:
         g_variant_dict_clear (&dict);
@@ -253,7 +407,7 @@ sysprof_proc_source_start (SysprofSource *source)
   g_assert (self->writer != NULL);
 
   sysprof_helpers_get_process_info_async (helpers,
-                                          "pid,maps,mountinfo,cmdline,comm",
+                                          "pid,maps,mountinfo,cmdline,comm,cgroup",
                                           NULL,
                                           sysprof_proc_source_get_process_info_cb,
                                           g_object_ref (self));
@@ -362,6 +516,7 @@ sysprof_proc_source_finalize (GObject *object)
   g_clear_pointer (&self->writer, sysprof_capture_writer_unref);
   g_clear_pointer (&self->pids, g_array_unref);
   g_clear_pointer (&self->mountinfo, sysprof_mountinfo_free);
+  g_clear_pointer (&self->podman, g_hash_table_unref);
 
   G_OBJECT_CLASS (sysprof_proc_source_parent_class)->finalize (object);
 }
@@ -379,6 +534,7 @@ sysprof_proc_source_init (SysprofProcSource *self)
 {
   self->pids = g_array_new (FALSE, FALSE, sizeof (GPid));
   self->mountinfo = sysprof_mountinfo_new ();
+  self->podman = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, podman_info_free);
 }
 
 SysprofSource *

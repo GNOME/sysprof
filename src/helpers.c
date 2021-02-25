@@ -506,6 +506,7 @@ helpers_get_process_info (const gchar *attributes)
   gboolean want_comm;
   gboolean want_maps;
   gboolean want_mountinfo;
+  gboolean want_cgroup;
 
   if (attributes == NULL)
     attributes = "";
@@ -515,6 +516,7 @@ helpers_get_process_info (const gchar *attributes)
   want_maps = !!strstr (attributes, "maps");
   want_mountinfo = !!strstr (attributes, "mountinfo");
   want_comm = !!strstr (attributes, "comm");
+  want_cgroup = !!strstr (attributes, "cgroup");
 
   g_variant_builder_init (&builder, G_VARIANT_TYPE ("aa{sv}"));
 
@@ -542,6 +544,9 @@ helpers_get_process_info (const gchar *attributes)
 
           if (want_mountinfo)
             add_pid_proc_file_to (pid, "mountinfo", &dict, postprocess_rstrip);
+
+          if (want_cgroup)
+            add_pid_proc_file_to (pid, "cgroup", &dict, postprocess_rstrip);
 
           g_variant_builder_add_value (&builder, g_variant_dict_end (&dict));
         }

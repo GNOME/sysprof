@@ -293,7 +293,12 @@ sysprof_proc_source_populate_pid_flatpak (SysprofProcSource *self,
       !(runtime_path = g_key_file_get_string (key_file, "Instance", "runtime-path", NULL)))
     return;
 
-  /* TODO: Add host path mapping for Flatpak information */
+  sysprof_capture_writer_add_overlay (self->writer,
+                                      SYSPROF_CAPTURE_CURRENT_TIME,
+                                      -1, pid, 0, runtime_path, "/usr");
+  sysprof_capture_writer_add_overlay (self->writer,
+                                      SYSPROF_CAPTURE_CURRENT_TIME,
+                                      -1, pid, 0, app_path, "/app");
 }
 
 static void

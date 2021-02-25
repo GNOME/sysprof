@@ -67,9 +67,10 @@ sysprof_map_lookaside_new (void)
 {
   SysprofMapLookaside *ret;
 
-  ret = g_slice_new (SysprofMapLookaside);
+  ret = g_slice_new0 (SysprofMapLookaside);
   ret->seq = g_sequence_new (sysprof_map_free);
   ret->chunk = g_string_chunk_new (4096);
+  ret->overlays = NULL;
 
   return ret;
 }
@@ -101,14 +102,27 @@ sysprof_map_lookaside_insert (SysprofMapLookaside *self,
   g_sequence_insert_sorted (self->seq, copy, sysprof_map_compare, NULL);
 }
 
-void
-sysprof_map_lookaside_set_root (SysprofMapLookaside *self,
-                                const char          *root)
-{
-  g_assert (self != NULL);
-  g_assert (root != NULL);
 
-  self->root = g_string_chunk_insert_const (self->chunk, root);
+void
+sysprof_map_lookaside_overlay (SysprofMapLookaside *self,
+                               const gchar         *src,
+                               const gchar         *dst)
+{
+  SysprofMapOverlay overlay;
+
+  g_assert (self != NULL);
+  g_assert (src != NULL);
+  g_assert (dst != NULL);
+
+  if (!src[0] || !dst[0])
+    return;
+
+  if (self->overlays == NULL)
+    self->overlays = g_array_new (FALSE, FALSE, sizeof (SysprofMapOverlay));
+
+  overlay.src = g_string_chunk_insert_const (self->chunk, src);
+  overlay.dst = g_string_chunk_insert_const (self->chunk, dst);
+  g_array_append_val (self->overlays, overlay);
 }
 
 const SysprofMap *

@@ -26,11 +26,17 @@
 
 G_BEGIN_DECLS
 
+typedef struct _SysprofMapOverlay
+{
+  const char *src;
+  const char *dst;
+} SysprofMapOverlay;
+
 typedef struct _SysprofMapLookaside
 {
   GSequence    *seq;
   GStringChunk *chunk;
-  const gchar  *root;
+  GArray       *overlays;
 } SysprofMapLookaside;
 
 typedef struct
@@ -45,8 +51,9 @@ typedef struct
 SysprofMapLookaside *sysprof_map_lookaside_new      (void);
 void                 sysprof_map_lookaside_insert   (SysprofMapLookaside    *self,
                                                      const SysprofMap       *map);
-void                 sysprof_map_lookaside_set_root (SysprofMapLookaside    *self,
-                                                     const gchar            *root);
+void                 sysprof_map_lookaside_overlay  (SysprofMapLookaside    *self,
+                                                     const gchar            *src,
+                                                     const gchar            *dst);
 const SysprofMap    *sysprof_map_lookaside_lookup   (SysprofMapLookaside    *self,
                                                      SysprofCaptureAddress   address);
 void                 sysprof_map_lookaside_free     (SysprofMapLookaside    *self);

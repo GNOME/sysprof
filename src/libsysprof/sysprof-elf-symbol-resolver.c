@@ -175,9 +175,7 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
               g_hash_table_insert (self->lookasides, GINT_TO_POINTER (ev->frame.pid), lookaside);
             }
 
-          /* FIXME: use dst to map to things other than / */
-          if (ev->dst_len == 1 && *dst == '/')
-            sysprof_map_lookaside_set_root (lookaside, src);
+          sysprof_map_lookaside_overlay (lookaside, src, dst);
         }
       else
         {
@@ -190,7 +188,8 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
 
 static bin_file_t *
 sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
-                                          const gchar              *root,
+                                          const SysprofMapOverlay  *overlays,
+                                          guint                     n_overlays,
                                           const gchar              *filename)
 {
   bin_file_t *bin_file;
@@ -207,10 +206,21 @@ sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
 
       dirs = (const gchar * const *)(gpointer)self->debug_dirs->data;
 
-      if (root && filename[0] != '/' && filename[0] != '[')
-        alternate = path = g_build_filename (root, filename, NULL);
+      if (overlays && filename[0] != '/' && filename[0] != '[')
+        {
+          for (guint i = 0; i < n_overlays; i++)
+            {
+              if (g_str_has_prefix (filename, overlays[i].dst+1))
+                {
+                  alternate = path = g_build_filename (overlays[i].src, filename, NULL);
+                  break;
+                }
+            }
+        }
       else if (is_flatpak () && g_str_has_prefix (filename, "/usr/"))
-        alternate = path = g_build_filename ("/var/run/host", alternate, NULL);
+        {
+          alternate = path = g_build_filename ("/var/run/host", alternate, NULL);
+        }
 
       bin_file = bin_file_new (alternate, dirs);
 
@@ -339,12 +349,14 @@ sysprof_elf_symbol_resolver_resolve_full (SysprofElfSymbolResolver *self,
                                           GQuark                   *tag)
 {
   SysprofMapLookaside *lookaside;
+  const SysprofMapOverlay *overlays = NULL;
   const bin_symbol_t *bin_sym;
   const gchar *bin_sym_name;
   const SysprofMap *map;
   bin_file_t *bin_file;
   gulong ubegin;
   gulong uend;
+  guint n_overlays = 0;
 
   g_assert (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self));
   g_assert (name != NULL);
@@ -367,7 +379,13 @@ sysprof_elf_symbol_resolver_resolve_full (SysprofElfSymbolResolver *self,
   address -= map->start;
   address += map->offset;
 
-  bin_file = sysprof_elf_symbol_resolver_get_bin_file (self, lookaside->root, map->filename);
+  if (lookaside->overlays)
+    {
+      overlays = &g_array_index (lookaside->overlays, SysprofMapOverlay, 0);
+      n_overlays = lookaside->overlays->len;
+    }
+
+  bin_file = sysprof_elf_symbol_resolver_get_bin_file (self, overlays, n_overlays, map->filename);
 
   g_assert (bin_file != NULL);
 

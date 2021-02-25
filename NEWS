@@ -1,3 +1,20 @@
+Overview of changes in Sysprof 3.39.94
+======================================
+
+ * Fix some licenses in headers.
+ * Add API to sysprofd/libsysprof to tweak.
+   /proc/sys/kernel/perf_event_paranoid to improve capture quality.
+   Tooling will now always try to change this value while profiling
+   the system and ignore upon failure.
+ * ftruncate() before overwriting proc files.
+ * GTK aid has been removed as it is always enabled through the
+   use of control-fd now.
+ * Add a new Overlay capture frame type for mapping overlays between
+   the host and the process filesystem namespace.
+ * Use overlays to map podman containers to overlay directories
+ * Use overlays to map flatpak containers to overlay directories for
+   both /app and /usr.
+
 Overview of changes in Sysprof 3.39.92
 ======================================
 

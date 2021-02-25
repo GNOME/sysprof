@@ -139,10 +139,11 @@ typedef enum
   SYSPROF_CAPTURE_FRAME_LOG          = 12,
   SYSPROF_CAPTURE_FRAME_FILE_CHUNK   = 13,
   SYSPROF_CAPTURE_FRAME_ALLOCATION   = 14,
+  SYSPROF_CAPTURE_FRAME_PID_ROOT     = 15,
 } SysprofCaptureFrameType;
 
 /* Not part of ABI */
-#define SYSPROF_CAPTURE_FRAME_LAST 15
+#define SYSPROF_CAPTURE_FRAME_LAST 16
 
 SYSPROF_ALIGNED_BEGIN(1)
 typedef struct
@@ -170,6 +171,15 @@ typedef struct
   uint32_t padding2;
   uint8_t  data[0];
 } SysprofCaptureFrame
+SYSPROF_ALIGNED_END(1);
+
+SYSPROF_ALIGNED_BEGIN(1)
+typedef struct
+{
+  SysprofCaptureFrame frame;
+  uint32_t            layer;
+  char                path[0];
+} SysprofCapturePidRoot
 SYSPROF_ALIGNED_END(1);
 
 SYSPROF_ALIGNED_BEGIN(1)
@@ -356,6 +366,7 @@ SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureMetadata) == 64, "SysprofCaptureMet
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureLog) == 64, "SysprofCaptureLog changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureFileChunk) == 284, "SysprofCaptureFileChunk changed size");
 SYSPROF_STATIC_ASSERT (sizeof (SysprofCaptureAllocation) == 48, "SysprofCaptureAllocation changed size");
+SYSPROF_STATIC_ASSERT (sizeof (SysprofCapturePidRoot) == 28, "SysprofCapturePidRoot changed size");
 
 SYSPROF_STATIC_ASSERT ((offsetof (SysprofCaptureAllocation, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureAllocation.addrs is not aligned");
 SYSPROF_STATIC_ASSERT ((offsetof (SysprofCaptureSample, addrs) % SYSPROF_CAPTURE_ALIGN) == 0, "SysprofCaptureSample.addrs is not aligned");

@@ -828,6 +828,39 @@ sysprof_capture_writer_add_fork (SysprofCaptureWriter *self,
 }
 
 bool
+sysprof_capture_writer_add_pid_root (SysprofCaptureWriter *self,
+                                     int64_t               time,
+                                     int                   cpu,
+                                     int32_t               pid,
+                                     const char           *path,
+                                     uint32_t              layer)
+{
+  SysprofCapturePidRoot *ev;
+  size_t strl = strlen (path);
+  size_t len = sizeof *ev + strl + 1;
+
+  assert (self != NULL);
+
+  ev = (SysprofCapturePidRoot *)sysprof_capture_writer_allocate (self, &len);
+  if (!ev)
+    return false;
+
+  sysprof_capture_writer_frame_init (&ev->frame,
+                                     len,
+                                     cpu,
+                                     pid,
+                                     time,
+                                     SYSPROF_CAPTURE_FRAME_PID_ROOT);
+  ev->layer = layer;
+  memcpy (ev->path, path, strl);
+  ev->path[strl] = 0;
+
+  self->stat.frame_count[SYSPROF_CAPTURE_FRAME_PID_ROOT]++;
+
+  return true;
+}
+
+bool
 sysprof_capture_writer_add_exit (SysprofCaptureWriter *self,
                                  int64_t               time,
                                  int                   cpu,

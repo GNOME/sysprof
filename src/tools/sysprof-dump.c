@@ -115,6 +115,18 @@ main (gint argc,
             break;
           }
 
+        case SYSPROF_CAPTURE_FRAME_PID_ROOT:
+          {
+            const SysprofCapturePidRoot *pr = sysprof_capture_reader_read_pid_root (reader);
+
+            if (pr == NULL)
+              return EXIT_FAILURE;
+
+            g_print ("PID ROOT: pid=%d layer=%u path=%s\n", pr->frame.pid, pr->layer, pr->path);
+
+            break;
+          }
+
         case SYSPROF_CAPTURE_FRAME_JITMAP:
           {
             const SysprofCaptureJitmap *jitmap = sysprof_capture_reader_read_jitmap (reader);

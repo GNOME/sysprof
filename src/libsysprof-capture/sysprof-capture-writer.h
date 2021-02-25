@@ -201,6 +201,13 @@ bool                  sysprof_capture_writer_add_allocation_copy             (Sy
                                                                               int64_t                            alloc_size,
                                                                               const SysprofCaptureAddress       *addrs,
                                                                               unsigned int                       n_addrs);
+SYSPROF_AVAILABLE_IN_3_40
+bool                  sysprof_capture_writer_add_pid_root                    (SysprofCaptureWriter              *self,
+                                                                              int64_t                            time,
+                                                                              int                                cpu,
+                                                                              int32_t                            pid,
+                                                                              const char                        *path,
+                                                                              uint32_t                           layer);
 SYSPROF_AVAILABLE_IN_ALL
 bool                  sysprof_capture_writer_flush                           (SysprofCaptureWriter              *self);
 SYSPROF_AVAILABLE_IN_ALL

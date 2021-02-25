@@ -223,6 +223,10 @@ sysprof_capture_cursor_foreach (SysprofCaptureCursor         *self,
           delegate = READ_DELEGATE (sysprof_capture_reader_read_allocation);
           break;
 
+        case SYSPROF_CAPTURE_FRAME_PID_ROOT:
+          delegate = READ_DELEGATE (sysprof_capture_reader_read_pid_root);
+          break;
+
         default:
           if (!sysprof_capture_reader_skip (self->reader))
             return;

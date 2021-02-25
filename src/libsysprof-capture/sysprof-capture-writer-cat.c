@@ -108,7 +108,7 @@ compare_by_src (const void *a,
     return -1;
   else if (itema->src > itemb->src)
     return 1;
-  else 
+  else
     return 0;
 }
 
@@ -531,6 +531,22 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
                                                       frame->n_addrs);
           break;
         }
+
+        case SYSPROF_CAPTURE_FRAME_PID_ROOT:
+          {
+            const SysprofCapturePidRoot *frame;
+
+            if (!(frame = sysprof_capture_reader_read_pid_root (reader)))
+              goto panic;
+
+            sysprof_capture_writer_add_pid_root (self,
+                                                 frame->frame.time,
+                                                 frame->frame.cpu,
+                                                 frame->frame.pid,
+                                                 frame->path,
+                                                 frame->layer);
+            break;
+          }
 
         default:
           /* Silently drop, which is better than looping. We could potentially

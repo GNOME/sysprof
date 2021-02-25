@@ -354,6 +354,17 @@ sysprof_capture_reader_bswap_mark (SysprofCaptureReader *self,
 }
 
 static inline void
+sysprof_capture_reader_bswap_pid_root (SysprofCaptureReader  *self,
+                                       SysprofCapturePidRoot *pr)
+{
+  assert (self != NULL);
+  assert (pr != NULL);
+
+  if (SYSPROF_UNLIKELY (self->endian != __BYTE_ORDER))
+    pr->layer = bswap_32 (pr->layer);
+}
+
+static inline void
 sysprof_capture_reader_bswap_jitmap (SysprofCaptureReader *self,
                                      SysprofCaptureJitmap *jitmap)
 {
@@ -677,6 +688,46 @@ sysprof_capture_reader_read_mark (SysprofCaptureReader *self)
     self->end_time = mark->frame.time + mark->duration;
 
   return mark;
+}
+
+const SysprofCapturePidRoot *
+sysprof_capture_reader_read_pid_root (SysprofCaptureReader *self)
+{
+  SysprofCapturePidRoot *pr;
+
+  assert (self != NULL);
+  assert ((self->pos % SYSPROF_CAPTURE_ALIGN) == 0);
+  assert (self->pos <= self->bufsz);
+
+  if (!sysprof_capture_reader_ensure_space_for (self, sizeof *pr + 1))
+    return NULL;
+
+  pr = (SysprofCapturePidRoot *)(void *)&self->buf[self->pos];
+
+  sysprof_capture_reader_bswap_frame (self, &pr->frame);
+
+  if (pr->frame.type != SYSPROF_CAPTURE_FRAME_PID_ROOT)
+    return NULL;
+
+  if (pr->frame.len < (sizeof *pr + 1))
+    return NULL;
+
+  if (!sysprof_capture_reader_ensure_space_for (self, pr->frame.len))
+    return NULL;
+
+  pr = (SysprofCapturePidRoot *)(void *)&self->buf[self->pos];
+
+  sysprof_capture_reader_bswap_pid_root (self, pr);
+
+  self->pos += pr->frame.len;
+
+  if ((self->pos % SYSPROF_CAPTURE_ALIGN) != 0)
+    return NULL;
+
+  /* Ensure trailing \0 in name and message */
+  ((char *)pr)[pr->frame.len-1] = 0;
+
+  return pr;
 }
 
 const SysprofCaptureMetadata *

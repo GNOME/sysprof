@@ -154,7 +154,7 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
            * files as we see them inside the user-space view of the system.
            */
 
-          if (memcmp (ev->filename, "/sysroot/", 9) == 0)
+          if (strncmp (ev->filename, "/sysroot/", 9) == 0)
             filename = ev->filename + 9;
           else
             filename = ev->filename;

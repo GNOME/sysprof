@@ -146,13 +146,24 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
         {
           const SysprofCaptureMap *ev = sysprof_capture_reader_read_map (reader);
           SysprofMapLookaside *lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (ev->frame.pid));
+          const char *filename;
           SysprofMap map;
+
+          /* Some systems using OSTree will have /sysroot/ as a prefix for
+           * filenames, which we want to skip over so that we can resolve the
+           * files as we see them inside the user-space view of the system.
+           */
+
+          if (memcmp (ev->filename, "/sysroot/", 9) == 0)
+            filename = ev->filename + 9;
+          else
+            filename = ev->filename;
 
           map.start = ev->start;
           map.end = ev->end;
           map.offset = ev->offset;
           map.inode = ev->inode;
-          map.filename = ev->filename;
+          map.filename = filename;
 
           if (lookaside == NULL)
             {

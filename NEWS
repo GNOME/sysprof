@@ -1,3 +1,9 @@
+Overview of changes in Sysprof 3.40.0
+=====================================
+
+ * Improve symbol resolving on OSTree-based systems
+ * Translation updates
+
 Overview of changes in Sysprof 3.39.94
 ======================================
 

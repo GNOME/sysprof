@@ -1,14 +1,14 @@
 # Basque translation for sysprof.
 # Copyright (C) 2019 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Asier Sarasua Garmendia <asier.sarasua@gmail.com>, 2019, 2020.
+# Asier Sarasua Garmendia <asiersarasua@ni.eus>, 2019, 2020, 2021.
 #
 msgid ""
 msgstr "Project-Id-Version: sysprof sysprof-3-30\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-02-19 16:58+0000\n"
-"PO-Revision-Date: 2020-02-24 10:00+0100\n"
-"Last-Translator: Asier Sarasua Garmendia <asier.sarasua@gmail.com>\n"
+"POT-Creation-Date: 2021-03-14 13:25+0000\n"
+"PO-Revision-Date: 2021-03-20 10:00+0100\n"
+"Last-Translator: Asier Sarasua Garmendia <asiersarasua@ni.eus>\n"
 "Language-Team: Basque <librezale@librezale.eus>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
@@ -17,8 +17,8 @@ msgstr "Project-Id-Version: sysprof sysprof-3-30\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
-#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:199
-#: src/sysprof/sysprof-application.c:326 src/sysprof/ui/sysprof-window.ui:12
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:12
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -96,26 +96,26 @@ msgid ""
 "the application."
 msgstr "Abiarazitako azken ingurunea, erabiltzaile-interfazean ezarriko dena aplikazioa berrabiarazi ondoren."
 
-#: src/libsysprof/sysprof-callgraph-profile.c:433
+#: src/libsysprof/sysprof-callgraph-profile.c:445
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr "Sysprof aplikazioak ezin izan du dei-grafo bat sortu sistemaren kapturatik."
 
-#: src/libsysprof/sysprof-perf-source.c:476
+#: src/libsysprof/sysprof-perf-source.c:472
 #, c-format
 msgid "Sysprof failed to find field “%s”."
 msgstr "Sysprof aplikazioak huts egin du “%s” eremua aurkitzean."
 
-#: src/libsysprof/sysprof-perf-source.c:489
+#: src/libsysprof/sysprof-perf-source.c:485
 #, c-format
 msgid "Sysprof failed to parse offset for “%s”."
 msgstr "Sysprof aplikazioak huts egin du “%s” elementuaren desplazamendua analizatzean."
 
-#: src/libsysprof/sysprof-perf-source.c:553
+#: src/libsysprof/sysprof-perf-source.c:549
 #, c-format
 msgid "Sysprof failed to get perf_event ID."
 msgstr "Sysprof aplikazioak huts egin du perf_event IDa eskuratzean."
 
-#: src/libsysprof/sysprof-perf-source.c:659
+#: src/libsysprof/sysprof-perf-source.c:655
 #, c-format
 msgid "An error occurred while attempting to access performance counters"
 msgstr "Errorea gertatu da errendimendu-zenbatzaileak atzitzen saiatzean"
@@ -185,7 +185,7 @@ msgid "Descendants"
 msgstr "Ondorengoak"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:190
-#: src/libsysprof-ui/sysprof-details-page.ui:295
+#: src/libsysprof-ui/sysprof-details-page.ui:322
 msgid "Hits"
 msgstr "Bisitak"
 
@@ -235,11 +235,11 @@ msgstr "PUZ erabilera (dena)"
 msgid "Processes"
 msgstr "Prozesuak"
 
-#: src/libsysprof-ui/sysprof-details-page.c:222
+#: src/libsysprof-ui/sysprof-details-page.c:220
 msgid "Memory Capture"
 msgstr "Memoria-kaptura"
 
-#: src/libsysprof-ui/sysprof-details-page.c:236
+#: src/libsysprof-ui/sysprof-details-page.c:234
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf segundo"
@@ -278,24 +278,28 @@ msgstr "Kapturatutako prozesuak"
 msgid "Forks Captured"
 msgstr "Kapturatutako sardexkak"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:137
+#: src/libsysprof-ui/sysprof-details-page.ui:136
 msgid "Counters Captured"
 msgstr "Kapturatutako zenbatzaileak"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:282
+#: src/libsysprof-ui/sysprof-details-page.ui:151
+msgid "Allocations Captured"
+msgstr "Kapturatutako esleipenak"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:309
 #: src/libsysprof-ui/sysprof-marks-page.ui:52
 msgid "Mark"
 msgstr "Markatu"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:308
+#: src/libsysprof-ui/sysprof-details-page.ui:335
 msgid "Min"
 msgstr "Min"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:321
+#: src/libsysprof-ui/sysprof-details-page.ui:348
 msgid "Max"
 msgstr "Max"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:334
+#: src/libsysprof-ui/sysprof-details-page.ui:361
 msgid "Avg"
 msgstr "Batezbestekoa"
 
@@ -330,20 +334,24 @@ msgstr "Grabazioa %s orduan"
 msgid "New Recording"
 msgstr "Grabazio berria"
 
-#: src/libsysprof-ui/sysprof-display.c:1182
+#: src/libsysprof-ui/sysprof-display.c:1087
+msgid "The recording could not be opened"
+msgstr "Grabazioa ezin izan da ireki"
+
+#: src/libsysprof-ui/sysprof-display.c:1210
 msgid "Save Recording"
 msgstr "Gorde grabazioa"
 
-#: src/libsysprof-ui/sysprof-display.c:1185
+#: src/libsysprof-ui/sysprof-display.c:1213
 msgid "Save"
 msgstr "Gorde"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1186 src/sysprof/sysprof-window.c:277
+#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
 msgid "Cancel"
 msgstr "Utzi"
 
-#: src/libsysprof-ui/sysprof-display.c:1212
+#: src/libsysprof-ui/sysprof-display.c:1240
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Huts egin du grabazioa gordetzeak: %s"
@@ -497,70 +505,74 @@ msgstr "Sarea"
 msgid "GNOME Shell"
 msgstr "GNOME Shell"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:95
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:104
 msgid "Profilers"
 msgstr "Profilatzaileak"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:198
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:207
 msgid ""
 "Track application memory allocations (Sysprof must launch target application)"
 msgstr "Egin aplikazioen memoria-esleipenen jarraipena (Sysprof-ek helburuko aplikazioa abiarazi behar du)"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:214
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:215
+msgid "Track slow operations on your applications main loop"
+msgstr "Egin zure aplikazioaren begizta nagusiaren eragiketa motelen jarraipena"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:231
 msgid "All Processes"
 msgstr "Prozesu guztiak"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:244
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:261
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
 "not be possible on some system system configurations."
 msgstr "Sartu dei-grafoan aplikazio guztiak eta sistema eragileko kernela. Beharbada ez da posible hori egitea zenbait sistematako konfigurazioen ondorioz."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:272
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:289
 msgid "Search Processes…"
 msgstr "Bilatu prozesuak…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:291
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:308
 msgid "Loading Processes…"
 msgstr "Prozesuak kargatzen…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:315
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:332
 msgid "Launch Application"
 msgstr "Abiarazi aplikazioa"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:344
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:361
 msgid "Enable to launch a program of your choosing before profiling."
 msgstr "Gaitu aukerako programa bat abiaraztea profilatzea hasi baino lehen."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:372
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:389
 msgid "Command Line"
 msgstr "Komando-lerroa"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:391
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:408
 msgid "Environment"
 msgstr "Ingurunea"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:417
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:434
 msgid "Inherit Environment"
 msgstr "Heredatu ingurunea"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:441
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:458
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other "
 "desktop environment settings."
 msgstr "Gaitu zure aplikazioak bistaratzea, mezu-busa eta mahaigaineko beste ingurune-ezarpen batzuk partekatzen dituela."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:467
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:484
 msgid "Allow CPU Throttling"
 msgstr "Onartu PUZa bizkortzea"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:495
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
 msgid ""
 "If disabled, your CPU will be placed in performance mode. It will be "
 "restored after profiling."
 msgstr "Desgaituta badago, zure PUZa errendimendu moduan kokatuko da. Profilatzearen ondoren leheneratuko da."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:516
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:533
 msgid "_Record"
 msgstr "_Grabatu"
 
@@ -764,35 +776,43 @@ msgstr "Laguntza"
 msgid "About Sysprof"
 msgstr "Sysprof aplikazioari buruz"
 
-#: src/sysprof/sysprof-application.c:191
+#: src/sysprof/sysprof-application.c:194
 msgid "A system profiler"
 msgstr "Sistemaren profilatzaile bat"
 
-#: src/sysprof/sysprof-application.c:196
+#: src/sysprof/sysprof-application.c:199
 msgid "translator-credits"
 msgstr "translator-credits"
 
-#: src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:205
 msgid "Learn more about Sysprof"
 msgstr "Ikasi gehiago Sysprof-i buruz"
 
 #. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:271
+#: src/sysprof/sysprof-window.c:273
 msgid "Open Capture…"
 msgstr "Ireki kaptura…"
 
 #. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:275
+#: src/sysprof/sysprof-window.c:277
 msgid "Open"
 msgstr "Ireki"
 
-#: src/sysprof/sysprof-window.c:282
+#: src/sysprof/sysprof-window.c:284
 msgid "Sysprof Captures"
 msgstr "Sysprof Captures"
 
-#: src/sysprof/sysprof-window.c:287
+#: src/sysprof/sysprof-window.c:289
 msgid "All Files"
 msgstr "Fitxategi guztiak"
+
+#: src/sysprof/ui/sysprof-window.ui:29
+msgid "_Open"
+msgstr "_Ireki"
+
+#: src/sysprof/ui/sysprof-window.ui:32
+msgid "Open Recording… (Ctrl+O)"
+msgstr "Ireki grabazioa… (Ctrl+O)"
 
 #: src/tools/sysprof-cli.c:59
 msgid "Stopping profiler. Press twice more ^C to force exit."
@@ -806,91 +826,108 @@ msgstr "Profilatzailea gelditu da."
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge ekintzak gutxienez 2 fitxategi-izen behar ditu argumentu gisa"
 
-#: src/tools/sysprof-cli.c:216
+#: src/tools/sysprof-cli.c:220
+msgid "Disable CPU throttling while profiling"
+msgstr "Desgaitu PUZa bizkortzea profilatzen ari denean"
+
+#: src/tools/sysprof-cli.c:221
 msgid "Make sysprof specific to a task"
 msgstr "Bihurtu sysprof zeregin batekiko espezifiko"
 
-#: src/tools/sysprof-cli.c:216
+#: src/tools/sysprof-cli.c:221
 msgid "PID"
 msgstr "PIDa"
 
-#: src/tools/sysprof-cli.c:217
+#: src/tools/sysprof-cli.c:222
 msgid "Run a command and profile the process"
 msgstr "Exekutatu komando bat eta profilatu prozesua"
 
-#: src/tools/sysprof-cli.c:217
+#: src/tools/sysprof-cli.c:222
 msgid "COMMAND"
 msgstr "KOMANDOA"
 
-#: src/tools/sysprof-cli.c:218
+#: src/tools/sysprof-cli.c:223
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr "Ezarri ingurune-aldagaia abiarazitako prozesurako. Hainbat aldiz erabili daiteke."
+
+#: src/tools/sysprof-cli.c:223
+msgid "VAR=VALUE"
+msgstr "VAL=BALIOA"
+
+#: src/tools/sysprof-cli.c:224
 msgid "Force overwrite the capture file"
 msgstr "Behartu kaptura-fitxategia gainidaztea"
 
-#: src/tools/sysprof-cli.c:219
+#: src/tools/sysprof-cli.c:225
 msgid "Disable recording of battery statistics"
 msgstr "Desgaitu bateria-estatistiken grabazioa"
 
-#: src/tools/sysprof-cli.c:220
+#: src/tools/sysprof-cli.c:226
 msgid "Disable recording of CPU statistics"
 msgstr "Desgaitu PUZ estatistiken grabazioa"
 
-#: src/tools/sysprof-cli.c:221
+#: src/tools/sysprof-cli.c:227
 msgid "Disable recording of Disk statistics"
 msgstr "Desgaitu disko-estatistiken grabazioa"
 
-#: src/tools/sysprof-cli.c:222
+#: src/tools/sysprof-cli.c:228
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Ez grabatu pila-aztarnak Linux perf erabilita"
 
-#: src/tools/sysprof-cli.c:223
+#: src/tools/sysprof-cli.c:229
 msgid "Do not append symbol name information from local machine"
 msgstr "Ez erantsi ikur-izenaren informazioa makina lokaletik"
 
-#: src/tools/sysprof-cli.c:224
+#: src/tools/sysprof-cli.c:230
 msgid "Disable recording of memory statistics"
 msgstr "Desgaitu memoria-estatistiken grabazioa"
 
-#: src/tools/sysprof-cli.c:225
+#: src/tools/sysprof-cli.c:231
 msgid "Disable recording of network statistics"
 msgstr "Desgaitu sare-estatistiken grabazioa"
 
-#: src/tools/sysprof-cli.c:226
+#: src/tools/sysprof-cli.c:232
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Ezarri SYSPROF_TRACE_FD ingurunea azpiprozesurako"
 
-#: src/tools/sysprof-cli.c:227
+#: src/tools/sysprof-cli.c:233
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Ezarri GJS_TRACE_FD ingurunea GJS prozesuen aztarnari jarraitzeko"
 
-#: src/tools/sysprof-cli.c:228
+#: src/tools/sysprof-cli.c:234
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Ezarri GTK_TRACE_FD ingurunea GTK aplikazio baten aztarnari jarraitzeko"
 
-#: src/tools/sysprof-cli.c:229
+#: src/tools/sysprof-cli.c:235
 msgid "Include RAPL energy statistics"
 msgstr "Sartu RAPL energia-estatistikak"
 
-#: src/tools/sysprof-cli.c:230
+#: src/tools/sysprof-cli.c:236
 msgid "Profile memory allocations and frees"
 msgstr "Profilatu memoria-esleipenak eta libreak"
 
-#: src/tools/sysprof-cli.c:231
+#: src/tools/sysprof-cli.c:237
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Konektatu org.gnome.Shell-ekin profilatzailearen estatistiketarako"
 
-#: src/tools/sysprof-cli.c:232
+#: src/tools/sysprof-cli.c:238
+msgid "Track performance of the applications main loop"
+msgstr "Egin aplikazioen begizta nagusiaren errendimenduaren jarraipena"
+
+#: src/tools/sysprof-cli.c:239
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Batu emandako *.syscap fitxategi guztiak eta idatzi stdout-en"
 
-#: src/tools/sysprof-cli.c:233
+#: src/tools/sysprof-cli.c:240
 msgid "Print the sysprof-cli version and exit"
 msgstr "Inprimatu sysprof-cli bertsioa eta irten"
 
-#: src/tools/sysprof-cli.c:266
+#: src/tools/sysprof-cli.c:273
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[KAPTURA_FITXATEGIA] [-- KOMANDO-ARGUMENTUAK] — Sysprof"
 
-#: src/tools/sysprof-cli.c:269
+#: src/tools/sysprof-cli.c:276
 msgid ""
 "\n"
 "Examples:\n"
@@ -911,12 +948,12 @@ msgstr "\n"
 "  # Batu syscap fitxategi anitz bakarrean\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/tools/sysprof-cli.c:302
+#: src/tools/sysprof-cli.c:309
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Argumentu gehiegi pasatu zaizkio sysprof-cli aplikazioari:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:359
+#: src/tools/sysprof-cli.c:366
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s irteten da. Erabili --force gainidazteko\n"

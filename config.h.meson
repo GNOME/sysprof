@@ -1,0 +1,55 @@
+#mesondefine API_VERSION_S
+
+#mesondefine DEBUGDIR
+
+#mesondefine DEVELOPMENT_BUILD
+
+#mesondefine ENABLE_LIBUNWIND
+
+#mesondefine ENABLE_NLS
+
+#mesondefine GETTEXT_PACKAGE
+
+#mesondefine HAVE_EXECINFO_H
+
+#mesondefine HAVE_PERF_CLOCKID
+
+#mesondefine HAVE_POLKIT
+
+#mesondefine HAVE_POLKIT_AGENT
+
+#mesondefine HAVE_REALLOCARRAY
+
+#mesondefine HAVE_STDATOMIC_H
+
+#mesondefine HAVE_STRLCPY
+
+#mesondefine HAVE_UNW_SET_CACHE_SIZE
+
+#mesondefine LOCALEDIR
+
+#mesondefine PACKAGE
+
+#mesondefine PACKAGE_BUGREPORT
+
+#mesondefine PACKAGE_LIBDIR
+
+#mesondefine PACKAGE_LIBEXECDIR
+
+#mesondefine PACKAGE_LOCALE_DIR
+
+#mesondefine PACKAGE_NAME
+
+#mesondefine PACKAGE_STRING
+
+#mesondefine PACKAGE_TARNAME
+
+#mesondefine PACKAGE_VERSION
+
+#mesondefine SYMBOLIC_VERSION
+
+#mesondefine VERSION
+
+#ifndef SYSPROF_CAPTURE_COMPILATION
+#mesondefine _SYSPROF_EXTERN
+#endif

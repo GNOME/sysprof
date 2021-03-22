@@ -201,6 +201,7 @@ subdir('help')
 subdir('po')
 
 configure_file(
+          input: 'config.h.meson',
          output: 'config.h',
   configuration: config_h
 )

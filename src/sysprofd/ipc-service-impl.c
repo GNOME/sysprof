@@ -319,7 +319,6 @@ ipc_service_impl_handle_set_governor (IpcService            *service,
                                       GDBusMethodInvocation *invocation,
                                       const gchar           *governor)
 {
-  g_autoptr(GVariant) res = NULL;
   g_autofree gchar *available = NULL;
   g_autofree gchar *previous = NULL;
   gboolean had_error = FALSE;

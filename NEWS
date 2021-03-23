@@ -1,3 +1,10 @@
+Overview of changes in Sysprof 3.40.1
+=====================================
+
+ * Fix build system issue which caused symbols from libsysprof-capture.a to leak
+   into the ABI of libraries consuming it. This was due to inheritance of GNU
+   default symbol visibility. A recompilation of those libraries is necessary.
+
 Overview of changes in Sysprof 3.40.0
 =====================================
 

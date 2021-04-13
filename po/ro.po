@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-32\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2020-07-02 00:51+0000\n"
-"PO-Revision-Date: 2020-07-21 14:23+0300\n"
+"POT-Creation-Date: 2021-03-09 00:11+0000\n"
+"PO-Revision-Date: 2021-04-13 11:14+0200\n"
 "Last-Translator: Florentina Mușat <florentina.musat.28@gmail.com>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2);\n"
-"X-Generator: Poedit 2.3.1\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
 #: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
-#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:12
+#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:11
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -103,27 +103,27 @@ msgid ""
 msgstr ""
 "Ultimul mediu creat, care va fi stabilit în UI după repornirea aplicației."
 
-#: src/libsysprof/sysprof-callgraph-profile.c:445
+#: src/libsysprof/sysprof-callgraph-profile.c:447
 msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgstr ""
 "Sysprof nu a putut să genereze un graf de apelări din captura sistemului."
 
-#: src/libsysprof/sysprof-perf-source.c:476
+#: src/libsysprof/sysprof-perf-source.c:472
 #, c-format
 msgid "Sysprof failed to find field “%s”."
 msgstr "Sysprof nu a găsit câmpul „%s”."
 
-#: src/libsysprof/sysprof-perf-source.c:489
+#: src/libsysprof/sysprof-perf-source.c:485
 #, c-format
 msgid "Sysprof failed to parse offset for “%s”."
 msgstr "Sysprof nu a reușit să parseze decalajul pentru „%s”."
 
-#: src/libsysprof/sysprof-perf-source.c:553
+#: src/libsysprof/sysprof-perf-source.c:549
 #, c-format
 msgid "Sysprof failed to get perf_event ID."
 msgstr "Sysprof nu a reușit să obțină ID-ul perf_event."
 
-#: src/libsysprof/sysprof-perf-source.c:659
+#: src/libsysprof/sysprof-perf-source.c:655
 #, c-format
 msgid "An error occurred while attempting to access performance counters"
 msgstr ""
@@ -244,11 +244,11 @@ msgstr "Utilizare CPU (Toate)"
 msgid "Processes"
 msgstr "Procese"
 
-#: src/libsysprof-ui/sysprof-details-page.c:224
+#: src/libsysprof-ui/sysprof-details-page.c:220
 msgid "Memory Capture"
 msgstr "Captură de memorie"
 
-#: src/libsysprof-ui/sysprof-details-page.c:238
+#: src/libsysprof-ui/sysprof-details-page.c:234
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf secunde"
@@ -471,7 +471,7 @@ msgid "Track Allocations"
 msgstr "Alocări de pistă"
 
 #. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:235
+#: src/libsysprof-ui/sysprof-memprof-page.c:234
 #, c-format
 msgid "> %s to %s"
 msgstr "> %s la %s"
@@ -514,65 +514,65 @@ msgstr "Rețea"
 msgid "GNOME Shell"
 msgstr "Shell GNOME"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:104
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:90
 msgid "Profilers"
 msgstr "Profilatoare"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:207
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:186
 msgid ""
 "Track application memory allocations (Sysprof must launch target application)"
 msgstr ""
 "Urmărește alocările de memorie ale aplicației (Ssyprof trebuie să lanseze "
 "aplicația țintă)"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:215
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:194
 msgid "Track slow operations on your applications main loop"
 msgstr "Urmărește operațiile lente pe bucla principală a aplicațiilor"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:231
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:210
 msgid "All Processes"
 msgstr "Toate procesele"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:261
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
-"not be possible on some system system configurations."
+"not be possible on some system configurations."
 msgstr ""
 "Include toate aplicațiile și nucleul sistemului de operare în graful de "
 "apelare. Acest lucru poate să nu fie posibil pe anumite configurații de "
 "sistem."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:289
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
 msgid "Search Processes…"
 msgstr "Caută procese…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:308
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:287
 msgid "Loading Processes…"
 msgstr "Se încarcă procesele…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:332
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:311
 msgid "Launch Application"
 msgstr "Lansează aplicația"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:361
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:340
 msgid "Enable to launch a program of your choosing before profiling."
 msgstr ""
 "Activează pentru a lansa un program la alegerea dumneavoastră înaintea "
 "profilării."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:389
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
 msgid "Command Line"
 msgstr "Linie de comandă"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:408
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:387
 msgid "Environment"
 msgstr "Mediu"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:434
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:413
 msgid "Inherit Environment"
 msgstr "Moștenire mediu"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:458
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:437
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other "
 "desktop environment settings."
@@ -580,11 +580,11 @@ msgstr ""
 "Activează pentru a vă asigura că aplicația partajează afișajul, magistrala "
 "de mesaje, și alte configurări de mediu de desktop."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:484
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:463
 msgid "Allow CPU Throttling"
 msgstr "Permite throttling de CPU"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:491
 msgid ""
 "If disabled, your CPU will be placed in performance mode. It will be "
 "restored after profiling."
@@ -592,7 +592,7 @@ msgstr ""
 "Dacă este dezactivat, CPU-ul va fi plasat în modul performanță. Acesta va fi "
 "restaura după profilare."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:533
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
 msgid "_Record"
 msgstr "În_registrează"
 
@@ -834,131 +834,131 @@ msgstr "Capturi Sysprof"
 msgid "All Files"
 msgstr "Toate fișierele"
 
-#: src/sysprof/ui/sysprof-window.ui:29
+#: src/sysprof/ui/sysprof-window.ui:28
 msgid "_Open"
 msgstr "_Deschide"
 
-#: src/sysprof/ui/sysprof-window.ui:32
+#: src/sysprof/ui/sysprof-window.ui:31
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Deschide înregistrarea… (Ctrl+O)"
 
-#: src/tools/sysprof-cli.c:59
+#: src/tools/sysprof-cli.c:62
 msgid "Stopping profiler. Press twice more ^C to force exit."
 msgstr ""
 "Se oprește profilatorul. Apăsați încă de două ori ^C pentru a forța ieșirea."
 
-#: src/tools/sysprof-cli.c:72
+#: src/tools/sysprof-cli.c:75
 msgid "Profiler stopped."
 msgstr "Profilatorul s-a oprit."
 
-#: src/tools/sysprof-cli.c:105
+#: src/tools/sysprof-cli.c:108
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge necesită cel puțin 2 argumente de nume de fișier"
 
-#: src/tools/sysprof-cli.c:219
+#: src/tools/sysprof-cli.c:226
 msgid "Disable CPU throttling while profiling"
 msgstr "Dezactivează throttling de CPU în timpul profilării"
 
-#: src/tools/sysprof-cli.c:220
+#: src/tools/sysprof-cli.c:227
 msgid "Make sysprof specific to a task"
 msgstr "Face ca sysprof să fie specific unei sarcini"
 
-#: src/tools/sysprof-cli.c:220
+#: src/tools/sysprof-cli.c:227
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:221
+#: src/tools/sysprof-cli.c:228
 msgid "Run a command and profile the process"
 msgstr "Rulează o comandă și profilează procesul"
 
-#: src/tools/sysprof-cli.c:221
+#: src/tools/sysprof-cli.c:228
 msgid "COMMAND"
 msgstr "COMANDĂ"
 
-#: src/tools/sysprof-cli.c:222
+#: src/tools/sysprof-cli.c:229
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Stabilește variabila de mediu pentru procesul creat. Poate fi utilizat de "
 "mai multe ori."
 
-#: src/tools/sysprof-cli.c:222
+#: src/tools/sysprof-cli.c:229
 msgid "VAR=VALUE"
 msgstr "VAR=VALOARE"
 
-#: src/tools/sysprof-cli.c:223
+#: src/tools/sysprof-cli.c:230
 msgid "Force overwrite the capture file"
 msgstr "Forțează suprascrierea fișierului de captură"
 
-#: src/tools/sysprof-cli.c:224
+#: src/tools/sysprof-cli.c:231
 msgid "Disable recording of battery statistics"
 msgstr "Dezactivează înregistrarea statisticilor de baterie"
 
-#: src/tools/sysprof-cli.c:225
+#: src/tools/sysprof-cli.c:232
 msgid "Disable recording of CPU statistics"
 msgstr "Dezactivează înregistrarea statisticilor CPU"
 
-#: src/tools/sysprof-cli.c:226
+#: src/tools/sysprof-cli.c:233
 msgid "Disable recording of Disk statistics"
 msgstr "Dezactivează înregistrarea statisticilor de disc"
 
-#: src/tools/sysprof-cli.c:227
+#: src/tools/sysprof-cli.c:234
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Nu înregistra urmele de stivă utilizând perf Linux"
 
-#: src/tools/sysprof-cli.c:228
+#: src/tools/sysprof-cli.c:235
 msgid "Do not append symbol name information from local machine"
 msgstr "Nu atașa informațiile de nume de simbol de la mașina locală"
 
-#: src/tools/sysprof-cli.c:229
+#: src/tools/sysprof-cli.c:236
 msgid "Disable recording of memory statistics"
 msgstr "Dezactivează înregistrarea statisticilor memoriei"
 
-#: src/tools/sysprof-cli.c:230
+#: src/tools/sysprof-cli.c:237
 msgid "Disable recording of network statistics"
 msgstr "Dezactivează înregistrarea statisticilor de rețea"
 
-#: src/tools/sysprof-cli.c:231
+#: src/tools/sysprof-cli.c:238
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Stabilește mediul SYSPROF_TRACE_FD pentru subproces"
 
-#: src/tools/sysprof-cli.c:232
+#: src/tools/sysprof-cli.c:239
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Stabilește mediul GJS_TRACE_FD pentru a urmări procesele GJS"
 
-#: src/tools/sysprof-cli.c:233
+#: src/tools/sysprof-cli.c:240
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Stabilește mediul GTK_TRACE_FD pentru a urmări o aplicație GTK"
 
-#: src/tools/sysprof-cli.c:234
+#: src/tools/sysprof-cli.c:241
 msgid "Include RAPL energy statistics"
 msgstr "Include statisticile de energie RAPL"
 
-#: src/tools/sysprof-cli.c:235
+#: src/tools/sysprof-cli.c:242
 msgid "Profile memory allocations and frees"
 msgstr "Profilează alocările de memorie și eliberările"
 
-#: src/tools/sysprof-cli.c:236
+#: src/tools/sysprof-cli.c:243
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Conectează la org.gnome.Shell pentru statistici de profilator"
 
-#: src/tools/sysprof-cli.c:237
+#: src/tools/sysprof-cli.c:244
 msgid "Track performance of the applications main loop"
 msgstr "Urmărește performanța a buclei principale a aplicației"
 
-#: src/tools/sysprof-cli.c:238
+#: src/tools/sysprof-cli.c:245
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr "Fuzionează toate fișierele *.syscap furnizate și scrie la stdout"
 
-#: src/tools/sysprof-cli.c:239
+#: src/tools/sysprof-cli.c:246
 msgid "Print the sysprof-cli version and exit"
 msgstr "Tipărește versiunea sysprof-cli și ieși"
 
-#: src/tools/sysprof-cli.c:272
+#: src/tools/sysprof-cli.c:279
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[FIȘIER_CAPTURĂ] [-- COMANDĂ ARGUMENTE] — Sysprof"
 
-#: src/tools/sysprof-cli.c:275
+#: src/tools/sysprof-cli.c:282
 msgid ""
 "\n"
 "Examples:\n"
@@ -981,12 +981,12 @@ msgstr ""
 "  # Fuzionează fișiere syscap multiple într-un singur fișier\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/tools/sysprof-cli.c:308
+#: src/tools/sysprof-cli.c:315
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Prea multe argumente au fost trimise la sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:365
+#: src/tools/sysprof-cli.c:374
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s există. Utilizați --force pentru a suprascrie\n"

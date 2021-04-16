@@ -1,0 +1,1001 @@
+# Chinese (China) translation for sysprof.
+# Copyright (C) 2020 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Damned <damnedlies@163.com>, 2020.
+# Dingzhong Chen <wsxy162@gmail.com>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2020-08-21 22:20+0000\n"
+"PO-Revision-Date: 2020-10-09 18:04+0800\n"
+"Last-Translator: Dingzhong Chen <wsxy162@gmail.com>\n"
+"Language-Team: Chinese - China <i18n-zh@googlegroups.com>\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Gtranslator 3.36.0\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:5
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:12
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:6
+msgid "Profile an application or entire system"
+msgstr "对应用程序或整个系统进行性能分析"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "GNOME 基金会"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr "Sysprof 允许您对应用程序进行性能分析，以便调试及优化。"
+
+#: data/org.gnome.Sysprof3.desktop.in:5
+msgid "Profiler"
+msgstr "性能分析器"
+
+#: data/org.gnome.Sysprof3.desktop.in:6
+msgid "Profile an application or entire system."
+msgstr "对应用程序或整个系统进行性能分析。"
+
+#: data/org.gnome.sysprof3.gschema.xml:5
+msgid "Window size"
+msgstr "窗口大小"
+
+#: data/org.gnome.sysprof3.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "窗口大小（宽度和高度）。"
+
+#: data/org.gnome.sysprof3.gschema.xml:10
+msgid "Window position"
+msgstr "窗口位置"
+
+#: data/org.gnome.sysprof3.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "窗口位置（x 和 y）。"
+
+#: data/org.gnome.sysprof3.gschema.xml:15
+msgid "Window maximized"
+msgstr "窗口最大化"
+
+#: data/org.gnome.sysprof3.gschema.xml:16
+msgid "Window maximized state"
+msgstr "窗口最大化状态"
+
+#: data/org.gnome.sysprof3.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr "上一次生成的程序"
+
+#: data/org.gnome.sysprof3.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr "上一次生成的程序，会被设置于重新启动应用程序后的用户界面中。"
+
+#: data/org.gnome.sysprof3.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr "上一次生成继承环境"
+
+#: data/org.gnome.sysprof3.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr "上一次生成的环境是否继承上层环境。"
+
+#: data/org.gnome.sysprof3.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr "上一次生成的环境"
+
+#: data/org.gnome.sysprof3.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr "上一次生成的环境，会被设置于重新启动应用程序后的用户界面中。"
+
+#: src/libsysprof/sysprof-callgraph-profile.c:445
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "Sysprof 无法由系统采样生成调用图。"
+
+#: src/libsysprof/sysprof-perf-source.c:472
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Sysprof 无法找到字段“%s”。"
+
+#: src/libsysprof/sysprof-perf-source.c:485
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Sysprof 无法解析“%s”的偏移量。"
+
+#: src/libsysprof/sysprof-perf-source.c:549
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Sysprof 无法获取 perf_event ID。"
+
+#: src/libsysprof/sysprof-perf-source.c:655
+#, c-format
+msgid "An error occurred while attempting to access performance counters"
+msgstr "尝试访问性能计数器时发生了错误"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:182
+msgid "Battery Charge"
+msgstr "电池电量"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:198
+msgid "Battery Charge (All)"
+msgstr "电池电量（全部）"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:240
+#: src/libsysprof-ui/sysprof-counters-aid.c:282
+msgid "Battery"
+msgstr "电池"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:212
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:218
+msgid "Stack Traces"
+msgstr "栈轨迹"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:226
+msgid "Stack Traces (In Kernel)"
+msgstr "栈轨迹（内核中）"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:234
+msgid "Stack Traces (In User)"
+msgstr "栈轨迹（用户中）"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:243
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:273
+msgid "Callgraph"
+msgstr "调用图"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:27
+#: src/libsysprof-ui/sysprof-memprof-page.ui:236
+msgid "Functions"
+msgstr "函数"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:43
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:104
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:159
+#: src/libsysprof-ui/sysprof-memprof-page.ui:253
+#: src/libsysprof-ui/sysprof-memprof-page.ui:315
+#: src/libsysprof-ui/sysprof-memprof-page.ui:371
+msgid "Self"
+msgstr "自身"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:59
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:120
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:175
+#: src/libsysprof-ui/sysprof-memprof-page.ui:269
+#: src/libsysprof-ui/sysprof-memprof-page.ui:331
+#: src/libsysprof-ui/sysprof-memprof-page.ui:387
+msgid "Total"
+msgstr "总计"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:88
+#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+msgid "Callers"
+msgstr "调用者"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:151
+#: src/libsysprof-ui/sysprof-memprof-page.ui:362
+msgid "Descendants"
+msgstr "后代"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:190
+#: src/libsysprof-ui/sysprof-details-page.ui:322
+msgid "Hits"
+msgstr "采样数"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:213
+msgid "Generating Callgraph"
+msgstr "生成调用图"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:214
+msgid "Sysprof is busy creating the selected callgraph."
+msgstr "Sysprof 正在创建选定的调用图。"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:224
+#: src/libsysprof-ui/sysprof-memprof-page.ui:433
+msgid "Not Enough Samples"
+msgstr "样本不足"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:225
+#: src/libsysprof-ui/sysprof-memprof-page.ui:434
+msgid "More samples are necessary to display a callgraph."
+msgstr "需要更多样本才能显示调用图。"
+
+#: src/libsysprof-ui/sysprof-counters-aid.c:221
+#: src/libsysprof-ui/sysprof-counters-aid.c:226
+msgid "Counters"
+msgstr "计数器"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:207
+#: src/libsysprof-ui/sysprof-cpu-aid.c:355
+msgid "CPU Usage"
+msgstr "CPU 使用率"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:214
+msgid "CPU Frequency"
+msgstr "CPU 频率"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:218
+msgid "CPU Frequency (All)"
+msgstr "CPU 频率（全部）"
+
+#. Translators: CPU is the processor.
+#: src/libsysprof-ui/sysprof-cpu-aid.c:227
+#: src/libsysprof-ui/sysprof-cpu-aid.c:250
+msgid "CPU Usage (All)"
+msgstr "CPU 使用率（全部）"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:316
+msgid "Processes"
+msgstr "进程"
+
+#: src/libsysprof-ui/sysprof-details-page.c:220
+msgid "Memory Capture"
+msgstr "内存采集"
+
+#: src/libsysprof-ui/sysprof-details-page.c:234
+#, c-format
+msgid "%0.4lf seconds"
+msgstr "%0.4lf 秒"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:21
+msgid "Filename"
+msgstr "文件名"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:35
+msgid "Captured at"
+msgstr "采集于"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:50
+#: src/libsysprof-ui/sysprof-marks-page.ui:95
+#: src/libsysprof-ui/sysprof-marks-page.ui:215
+msgid "Duration"
+msgstr "持续时间"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:65
+msgid "CPU Model"
+msgstr "CPU 型号"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:80
+msgid "Samples Captured"
+msgstr "已采集的样本"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:94
+msgid "Marks Captured"
+msgstr "已采集的标记"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:108
+msgid "Processes Captured"
+msgstr "已采集的进程"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:122
+msgid "Forks Captured"
+msgstr "已采集的分支"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:136
+msgid "Counters Captured"
+msgstr "已采集的计数器"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:151
+msgid "Allocations Captured"
+msgstr "已采集的分配"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:309
+#: src/libsysprof-ui/sysprof-marks-page.ui:52
+msgid "Mark"
+msgstr "标记"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:335
+msgid "Min"
+msgstr "最小"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:348
+msgid "Max"
+msgstr "最大"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:361
+msgid "Avg"
+msgstr "平均"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:205
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+msgid "Disk"
+msgstr "磁盘"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Reads"
+msgstr "读取"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Writes"
+msgstr "写入"
+
+#: src/libsysprof-ui/sysprof-display.c:229
+msgid "Recording Failed"
+msgstr "记录失败"
+
+#: src/libsysprof-ui/sysprof-display.c:234
+msgid "Recording…"
+msgstr "正在记录……"
+
+#. translators: %s is replaced with locale specific time of recording
+#: src/libsysprof-ui/sysprof-display.c:258
+#, c-format
+msgid "Recording at %s"
+msgstr "%s 时的记录"
+
+#: src/libsysprof-ui/sysprof-display.c:262
+msgid "New Recording"
+msgstr "新建记录"
+
+#: src/libsysprof-ui/sysprof-display.c:1087
+msgid "The recording could not be opened"
+msgstr "无法打开记录"
+
+#: src/libsysprof-ui/sysprof-display.c:1210
+msgid "Save Recording"
+msgstr "保存记录"
+
+#: src/libsysprof-ui/sysprof-display.c:1213
+msgid "Save"
+msgstr "保存"
+
+#. Translators: This is a button.
+#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
+msgid "Cancel"
+msgstr "取消"
+
+#: src/libsysprof-ui/sysprof-display.c:1240
+#, c-format
+msgid "Failed to save recording: %s"
+msgstr "无法保存记录：%s"
+
+#: src/libsysprof-ui/sysprof-display.ui:49
+#: src/libsysprof-ui/sysprof-marks-page.ui:19
+msgid "Details"
+msgstr "详细信息"
+
+#: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
+msgid "Remove environment variable"
+msgstr "移除环境变量"
+
+#: src/libsysprof-ui/sysprof-environ-editor.c:71
+msgid "New variable…"
+msgstr "新建变量…"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "出错了！"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr "尝试对您的系统进行性能分析时发生了意外错误。"
+
+#: src/libsysprof-ui/sysprof-log-model.c:210
+#: src/libsysprof-ui/sysprof-logs-page.ui:58
+#: src/libsysprof-ui/sysprof-marks-page.ui:109
+msgid "Message"
+msgstr "消息"
+
+#: src/libsysprof-ui/sysprof-log-model.c:213
+msgid "Info"
+msgstr "信息"
+
+#: src/libsysprof-ui/sysprof-log-model.c:216
+msgid "Critical"
+msgstr "严重错误"
+
+#: src/libsysprof-ui/sysprof-log-model.c:219
+msgid "Error"
+msgstr "错误"
+
+#: src/libsysprof-ui/sysprof-log-model.c:222
+msgid "Debug"
+msgstr "调试"
+
+#: src/libsysprof-ui/sysprof-log-model.c:225
+msgid "Warning"
+msgstr "警告"
+
+#: src/libsysprof-ui/sysprof-logs-aid.c:195
+#: src/libsysprof-ui/sysprof-logs-aid.c:199
+#: src/libsysprof-ui/sysprof-logs-aid.c:204
+#: src/libsysprof-ui/sysprof-logs-aid.c:210
+msgid "Logs"
+msgstr "日志"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:15
+#: src/libsysprof-ui/sysprof-marks-page.ui:67
+msgid "Time"
+msgstr "时间"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:29
+msgid "Severity"
+msgstr "严重程度"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:44
+msgid "Domain"
+msgstr "域"
+
+#: src/libsysprof-ui/sysprof-marks-aid.c:237
+#: src/libsysprof-ui/sysprof-marks-aid.c:242
+msgid "Timings"
+msgstr "定时"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:38
+msgid "Group"
+msgstr "组"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:81
+msgid "End"
+msgstr "结束"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:245
+msgid "No Timings Available"
+msgstr "无可用定时"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:246
+msgid "No timing data was found for the current selection"
+msgstr "未找到当前选择项的定时数据"
+
+#: src/libsysprof-ui/sysprof-memory-aid.c:68
+msgid "Memory Usage"
+msgstr "内存用量"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:182
+msgid "Memory"
+msgstr "内存"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:193
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Allocations"
+msgstr "内存分配"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:224
+msgid "Track Allocations"
+msgstr "跟踪分配"
+
+#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
+#: src/libsysprof-ui/sysprof-memprof-page.c:234
+#, c-format
+msgid "> %s to %s"
+msgstr "> %s 到 %s"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:23
+msgid "Summary"
+msgstr "概要"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+msgid "All Allocations"
+msgstr "全部分配"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:40
+msgid "Temporary Allocations"
+msgstr "临时分配"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+msgid "Size"
+msgstr "大小"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:422
+msgid "Analyzing Memory Allocations"
+msgstr "分析内存分配"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:423
+msgid "Sysprof is busy analyzing memory allocations."
+msgstr "Sysprof 正在分析内存分配。"
+
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Used"
+msgstr "已用内存"
+
+#: src/libsysprof-ui/sysprof-netdev-aid.c:204
+#: src/libsysprof-ui/sysprof-netdev-aid.c:264
+msgid "Network"
+msgstr "网络"
+
+#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
+msgid "GNOME Shell"
+msgstr "GNOME Shell"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:104
+msgid "Profilers"
+msgstr "性能分析器"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:207
+msgid ""
+"Track application memory allocations (Sysprof must launch target application)"
+msgstr "跟踪应用程序的内存分配（Sysprof 必须启动目标应用程序）"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:215
+msgid "Track slow operations on your applications main loop"
+msgstr "跟踪您的应用程序主循环上的慢速操作"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:231
+msgid "All Processes"
+msgstr "全部进程"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:261
+msgid ""
+"Include all applications and operating system kernel in callgraph. This may "
+"not be possible on some system system configurations."
+msgstr ""
+"在调用图中包含全部应用程序和操作系统内核。这在某些系统配置上可能无法实现。"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:289
+msgid "Search Processes…"
+msgstr "搜索进程…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:308
+msgid "Loading Processes…"
+msgstr "正在载入进程……"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:332
+msgid "Launch Application"
+msgstr "启动应用程序"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:361
+msgid "Enable to launch a program of your choosing before profiling."
+msgstr "启用此选项以便在性能分析前启动您选择的程序。"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:389
+msgid "Command Line"
+msgstr "命令行"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:408
+msgid "Environment"
+msgstr "环境"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:434
+msgid "Inherit Environment"
+msgstr "继承环境"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:458
+msgid ""
+"Enable to ensure your application shares the display, message-bus, and other "
+"desktop environment settings."
+msgstr "启用此选项以保证您的应用程序共享显示、消息总线，以及其他桌面环境设置。"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:484
+msgid "Allow CPU Throttling"
+msgstr "允许 CPU 降频"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
+msgid ""
+"If disabled, your CPU will be placed in performance mode. It will be "
+"restored after profiling."
+msgstr "如果禁用此选项，您的 CPU 会被置于性能模式。在性能分析完成后会恢复。"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:533
+msgid "_Record"
+msgstr "记录 (_R)"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:175
+#: src/libsysprof-ui/sysprof-rapl-aid.c:248
+msgid "Energy Usage"
+msgstr "电量用量"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:180
+msgid "Energy Usage (All)"
+msgstr "电量用量（全部）"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"您知道您可以使用 <a href=\"help:sysprof\">sysprof-cli</a> 来进行记录吗？"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:47
+msgid "Events"
+msgstr "事件"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:73
+msgid "_Stop Recording"
+msgstr "停止记录 (_S)"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:119
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
+msgid "Select for more details"
+msgstr "选择更多详细信息"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
+msgid "Display supplemental graphs"
+msgstr "显示补充图表"
+
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+msgid "Instruments"
+msgstr "仪表"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "对系统进行性能分析"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "需要授权才能对系统进行性能分析。"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:26
+msgid "Open a perf event stream"
+msgstr "打开 perf 事件流"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:27
+msgid "Authentication is required to access system performance counters."
+msgstr "需要授权才能访问系统性能计数器。"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:37
+msgid "Get a list of kernel symbols and their address"
+msgstr "获取内核符号及其地址的列表"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:38
+msgid "Authentication is required to access Linux kernel information."
+msgstr "需要授权才能访问 Linux 内核信息。"
+
+#: src/sysprof/gtk/help-overlay.ui:8
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Sysprof 快捷键"
+
+#: src/sysprof/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Files"
+msgstr "文件"
+
+#: src/sysprof/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Save Recording"
+msgstr "保存记录"
+
+#: src/sysprof/gtk/help-overlay.ui:17
+msgctxt "shortcut window"
+msgid "Saves the current recording"
+msgstr "保存当前记录"
+
+#: src/sysprof/gtk/help-overlay.ui:24
+msgctxt "shortcut window"
+msgid "Open recording"
+msgstr "打开记录"
+
+#: src/sysprof/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Opens a previously saved recording"
+msgstr "打开以前保存的记录"
+
+#: src/sysprof/gtk/help-overlay.ui:34
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "记录"
+
+#: src/sysprof/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Record again"
+msgstr "再次记录"
+
+#: src/sysprof/gtk/help-overlay.ui:39
+msgctxt "shortcut window"
+msgid "Starts a new recording"
+msgstr "开始新记录"
+
+#: src/sysprof/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "停止记录"
+
+#: src/sysprof/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "调用图"
+
+#: src/sysprof/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "展开函数"
+
+#: src/sysprof/gtk/help-overlay.ui:60
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "在调用图中显示函数的直属后代"
+
+#: src/sysprof/gtk/help-overlay.ui:67
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "折叠函数"
+
+#: src/sysprof/gtk/help-overlay.ui:68
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr "在调用图中隐藏选定的函数下方的全部后代"
+
+#: src/sysprof/gtk/help-overlay.ui:75
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "跳转到函数内"
+
+#: src/sysprof/gtk/help-overlay.ui:76
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr "选择函数或文件作为调用图的顶端"
+
+#: src/sysprof/gtk/help-overlay.ui:85
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "可视化工具"
+
+#: src/sysprof/gtk/help-overlay.ui:89
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "放大"
+
+#: src/sysprof/gtk/help-overlay.ui:96
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "缩小"
+
+#: src/sysprof/gtk/help-overlay.ui:103
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "重置缩放"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "New Tab"
+msgstr "新建标签页"
+
+#: src/sysprof/gtk/menus.ui:11
+msgid "New Window"
+msgstr "新建窗口"
+
+#: src/sysprof/gtk/menus.ui:18
+msgid "Open Recording…"
+msgstr "打开记录…"
+
+#: src/sysprof/gtk/menus.ui:23
+msgid "Save Recording…"
+msgstr "保存记录…"
+
+#: src/sysprof/gtk/menus.ui:30
+msgid "Record Again"
+msgstr "再次记录"
+
+#: src/sysprof/gtk/menus.ui:37
+msgid "Close"
+msgstr "关闭"
+
+#: src/sysprof/gtk/menus.ui:44
+msgid "Keyboard Shortcuts"
+msgstr "键盘快捷键"
+
+#: src/sysprof/gtk/menus.ui:49
+msgid "Help"
+msgstr "帮助"
+
+#: src/sysprof/gtk/menus.ui:54
+msgid "About Sysprof"
+msgstr "关于 Sysprof"
+
+#: src/sysprof/sysprof-application.c:194
+msgid "A system profiler"
+msgstr "系统性能分析器"
+
+#: src/sysprof/sysprof-application.c:199
+msgid "translator-credits"
+msgstr "Damned <damnedlies@163.com>, 2020."
+
+#: src/sysprof/sysprof-application.c:205
+msgid "Learn more about Sysprof"
+msgstr "了解关于 Sysprof 的更多信息"
+
+#. Translators: This is a window title.
+#: src/sysprof/sysprof-window.c:273
+msgid "Open Capture…"
+msgstr "打开采集文件…"
+
+#. Translators: This is a button.
+#: src/sysprof/sysprof-window.c:277
+msgid "Open"
+msgstr "打开"
+
+#: src/sysprof/sysprof-window.c:284
+msgid "Sysprof Captures"
+msgstr "Sysprof 采集文件"
+
+#: src/sysprof/sysprof-window.c:289
+msgid "All Files"
+msgstr "全部文件"
+
+#: src/sysprof/ui/sysprof-window.ui:29
+msgid "_Open"
+msgstr "打开 (_O)"
+
+#: src/sysprof/ui/sysprof-window.ui:32
+msgid "Open Recording… (Ctrl+O)"
+msgstr "打开记录… (Ctrl+O)"
+
+#: src/tools/sysprof-cli.c:59
+msgid "Stopping profiler. Press twice more ^C to force exit."
+msgstr "正在停止性能分析器。再按两次 ^C 强制退出。"
+
+#: src/tools/sysprof-cli.c:72
+msgid "Profiler stopped."
+msgstr "性能分析器已停止。"
+
+#: src/tools/sysprof-cli.c:105
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge 至少需要 2 个文件名参数"
+
+#: src/tools/sysprof-cli.c:220
+msgid "Disable CPU throttling while profiling"
+msgstr "在性能分析时禁用 CPU 降频"
+
+#: src/tools/sysprof-cli.c:221
+msgid "Make sysprof specific to a task"
+msgstr "使 sysprof 特定于一项任务"
+
+#: src/tools/sysprof-cli.c:221
+msgid "PID"
+msgstr "进程号"
+
+#: src/tools/sysprof-cli.c:222
+msgid "Run a command and profile the process"
+msgstr "运行一个命令并对进程进行性能分析"
+
+#: src/tools/sysprof-cli.c:222
+msgid "COMMAND"
+msgstr "命令"
+
+#: src/tools/sysprof-cli.c:223
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr "为生成的进程设置环境变量。可以多次使用。"
+
+#: src/tools/sysprof-cli.c:223
+msgid "VAR=VALUE"
+msgstr "变量=值"
+
+#: src/tools/sysprof-cli.c:224
+msgid "Force overwrite the capture file"
+msgstr "强制覆盖采集文件"
+
+#: src/tools/sysprof-cli.c:225
+msgid "Disable recording of battery statistics"
+msgstr "禁用电池统计信息记录"
+
+#: src/tools/sysprof-cli.c:226
+msgid "Disable recording of CPU statistics"
+msgstr "禁用 CPU 统计信息记录"
+
+#: src/tools/sysprof-cli.c:227
+msgid "Disable recording of Disk statistics"
+msgstr "禁用磁盘统计信息记录"
+
+#: src/tools/sysprof-cli.c:228
+msgid "Do not record stacktraces using Linux perf"
+msgstr "不要使用 Linux perf 记录栈轨迹"
+
+#: src/tools/sysprof-cli.c:229
+msgid "Do not append symbol name information from local machine"
+msgstr "不要附加来自本地计算机的符号名称信息"
+
+#: src/tools/sysprof-cli.c:230
+msgid "Disable recording of memory statistics"
+msgstr "禁用内存统计信息记录"
+
+#: src/tools/sysprof-cli.c:231
+msgid "Disable recording of network statistics"
+msgstr "禁用网络统计信息记录"
+
+#: src/tools/sysprof-cli.c:232
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "为子进程设置 SYSPROF_TRACE_FD 环境"
+
+#: src/tools/sysprof-cli.c:233
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "设置 GJS_TRACE_FD 环境以跟踪 GJS 进程"
+
+#: src/tools/sysprof-cli.c:234
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "设置 GTK_TRACE_FD 环境以跟踪 GTK 应用程序"
+
+#: src/tools/sysprof-cli.c:235
+msgid "Include RAPL energy statistics"
+msgstr "包含 RAPL 电量统计信息"
+
+#: src/tools/sysprof-cli.c:236
+msgid "Profile memory allocations and frees"
+msgstr "对内存分配和释放进行性能分析"
+
+#: src/tools/sysprof-cli.c:237
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "连接到 org.gnome.Shell 以获取性能分析器统计信息"
+
+#: src/tools/sysprof-cli.c:238
+msgid "Track performance of the applications main loop"
+msgstr "跟踪应用程序主循环的性能"
+
+#: src/tools/sysprof-cli.c:239
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr "合并所有提供的 *.syscap 文件并写到标准输出"
+
+#: src/tools/sysprof-cli.c:240
+msgid "Print the sysprof-cli version and exit"
+msgstr "打印 sysprof-cli 的版本并退出"
+
+#: src/tools/sysprof-cli.c:273
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[采集文件] [-- 命令参数] — Sysprof"
+
+#: src/tools/sysprof-cli.c:276
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+msgstr ""
+"\n"
+"示例：\n"
+"\n"
+"  # 使用 trace-fd 记录 gtk4-widget-factory 以获取应用程序提供的\n"
+"  # 数据以及 GTK 和 GNOME Shell 数据提供者\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # 将多个 syscap 文件合并为一个\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+
+#: src/tools/sysprof-cli.c:309
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "向 sysprof-cli 传递的参数过多："
+
+#. Translators: %s is a file name.
+#: src/tools/sysprof-cli.c:366
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s 已存在。使用 --force 进行覆盖\n"
+
+#: src/tools/sysprof-profiler-ctl.c:45
+msgid "Connect to the system bus"
+msgstr "连接到系统总线"
+
+#: src/tools/sysprof-profiler-ctl.c:46
+msgid "Connect to the session bus"
+msgstr "连接到会话总线"
+
+#: src/tools/sysprof-profiler-ctl.c:47
+msgid "Connect to the given D-Bus address"
+msgstr "连接到给定的 D-Bus 地址"
+
+#: src/tools/sysprof-profiler-ctl.c:48
+msgid "Destination D-Bus name to invoke method on"
+msgstr "要在其上调用方法的目标 D-Bus 名称"
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "Object path to invoke method on"
+msgstr "要在其上调用方法的对象路径"
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "/org/gnome/Sysprof3/Profiler"
+msgstr "/org/gnome/Sysprof3/Profiler"
+
+#: src/tools/sysprof-profiler-ctl.c:50
+msgid "Timeout in seconds"
+msgstr "超时秒数"
+
+#: src/tools/sysprof-profiler-ctl.c:51
+msgid "Overwrite FILENAME if it exists"
+msgstr "若文件名存在则覆盖"
+
+#: src/tools/sysprof-profiler-ctl.c:79
+msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+msgstr "--dest=总线名称 [文件名] - 连接到嵌入的 sysprof 性能分析器"

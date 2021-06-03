@@ -323,7 +323,7 @@ sysprof_local_profiler_get_property (GObject    *object,
       break;
 
     case PROP_IS_MUTABLE:
-      g_value_set_boolean (value, !(priv->is_starting || priv->is_starting || priv->is_running));
+      g_value_set_boolean (value, !(priv->is_starting || priv->is_stopping || priv->is_running));
       break;
 
     case PROP_IS_RUNNING:

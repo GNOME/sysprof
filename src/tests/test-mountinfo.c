@@ -30,29 +30,29 @@ main (gint   argc,
   g_autofree gchar *lookup = NULL;
   gsize len;
 
-  if (argc != 3)
+  if (argc != 4)
     {
-      g_printerr ("usage: %s MOUNTINFO_FILE PATH_TO_TRANSLATE\n", argv[0]);
+      g_printerr ("usage: %s MOUNTS MOUNTINFO_FILE PATH_TO_TRANSLATE\n", argv[0]);
       return 1;
     }
 
   info = sysprof_mountinfo_new ();
 
-  if (!g_file_get_contents ("/proc/mounts", &contents, &len, &error))
+  if (!g_file_get_contents (argv[1], &contents, &len, &error))
     g_error ("%s", error->message);
   sysprof_mountinfo_parse_mounts (info, contents);
   g_free (g_steal_pointer (&contents));
 
-  if (!g_file_get_contents (argv[1], &contents, &len, &error))
+  if (!g_file_get_contents (argv[2], &contents, &len, &error))
     g_error ("%s", error->message);
   sysprof_mountinfo_parse_mountinfo (info, contents);
 
-  lookup = sysprof_mountinfo_translate (info, argv[2]);
+  lookup = sysprof_mountinfo_translate (info, argv[3]);
 
   if (lookup)
     g_print ("%s\n", lookup);
   else
-    g_print ("%s\n", argv[2]);
+    g_print ("%s\n", argv[3]);
 
   return 0;
 }

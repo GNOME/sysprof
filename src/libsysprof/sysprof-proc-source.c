@@ -45,7 +45,7 @@
 #include <string.h>
 
 #include "sysprof-helpers.h"
-#include "sysprof-mountinfo.h"
+#include "sysprof-podman.h"
 #include "sysprof-proc-source.h"
 
 struct _SysprofProcSource
@@ -53,16 +53,9 @@ struct _SysprofProcSource
   GObject               parent_instance;
   SysprofCaptureWriter *writer;
   GArray               *pids;
-  SysprofMountinfo     *mountinfo;
-  GHashTable           *podman;
+  SysprofPodman        *podman;
   guint                 is_ready : 1;
 };
-
-typedef struct
-{
-  char  *id;
-  char **layers;
-} PodmanInfo;
 
 static void source_iface_init (SysprofSourceInterface *iface);
 
@@ -87,34 +80,26 @@ sysprof_proc_source_populate_process (SysprofProcSource *self,
 static void
 sysprof_proc_source_populate_maps (SysprofProcSource *self,
                                    GPid               pid,
-                                   const gchar       *mapsstr,
-                                   const gchar       *mountinfostr)
+                                   const gchar       *mapsstr)
 {
-  g_auto(GStrv) maps = NULL;
-  guint i;
+  g_auto(GStrv) lines = NULL;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
   g_assert (mapsstr != NULL);
-  g_assert (mountinfostr != NULL);
   g_assert (pid > 0);
 
-  sysprof_mountinfo_reset (self->mountinfo);
-  sysprof_mountinfo_parse_mountinfo (self->mountinfo, mountinfostr);
+  lines = g_strsplit (mapsstr, "\n", 0);
 
-  maps = g_strsplit (mapsstr, "\n", 0);
-
-  for (i = 0; maps [i] != NULL; i++)
+  for (guint i = 0; lines[i] != NULL; i++)
     {
-      g_autofree gchar *translated = NULL;
       gchar file[512];
-      const gchar *fileptr = file;
       gulong start;
       gulong end;
       gulong offset;
       gulong inode;
       gint r;
 
-      r = sscanf (maps [i],
+      r = sscanf (lines[i],
                   "%lx-%lx %*15s %lx %*x:%*x %lu %512s",
                   &start, &end, &offset, &inode, file);
       file [sizeof file - 1] = '\0';
@@ -137,10 +122,6 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
           inode = 0;
         }
 
-      /* Possibly translate the path based on mounts/mountinfo data */
-      if ((translated = sysprof_mountinfo_translate (self->mountinfo, file)))
-        fileptr = translated;
-
       sysprof_capture_writer_add_map (self->writer,
                                       SYSPROF_CAPTURE_CURRENT_TIME,
                                       -1,
@@ -149,7 +130,7 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
                                       end,
                                       offset,
                                       inode,
-                                      fileptr);
+                                      file);
     }
 }
 
@@ -170,66 +151,42 @@ pid_is_interesting (SysprofProcSource *self,
 }
 
 static void
-podman_info_free (gpointer data)
+add_file (SysprofProcSource *self,
+          int                pid,
+          const char        *path,
+          const char        *data)
 {
-  PodmanInfo *info = data;
+  gsize to_write = strlen (data);
 
-  g_free (info->id);
-  g_strfreev (info->layers);
-  g_free (info);
+  while (to_write > 0)
+    {
+      gsize this_write = MIN (to_write, 4096 * 2);
+      to_write -= this_write;
+      sysprof_capture_writer_add_file (self->writer,
+                                       SYSPROF_CAPTURE_CURRENT_TIME,
+                                       -1,
+                                       pid,
+                                       path,
+                                       to_write > 0,
+                                       (const guint8 *)data,
+                                       this_write);
+      data += this_write;
+    }
 }
 
 static void
-update_containers_json (SysprofProcSource *self)
+sysprof_proc_source_populate_mountinfo (SysprofProcSource *self,
+                                        GPid               pid,
+                                        const char        *mountinfo)
 {
-  g_autoptr(JsonParser) parser = NULL;
-  g_autofree gchar *path = NULL;
-  JsonNode *root;
-  JsonArray *ar;
-  guint n_items;
+  g_autofree char *path = NULL;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
+  g_assert (self->writer != NULL);
+  g_assert (mountinfo != NULL);
 
-  parser = json_parser_new ();
-  path = g_build_filename (g_get_user_data_dir (),
-                           "containers",
-                           "storage",
-                           "overlay-containers",
-                           "containers.json",
-                           NULL);
-
-  if (!json_parser_load_from_file (parser, path, NULL) ||
-      !(root = json_parser_get_root (parser)) ||
-      !JSON_NODE_HOLDS_ARRAY (root) ||
-      !(ar = json_node_get_array (root)))
-    return;
-
-  n_items = json_array_get_length (ar);
-
-  for (guint i = 0; i < n_items; i++)
-    {
-      JsonObject *item = json_array_get_object_element (ar, i);
-      PodmanInfo *info;
-      const char *id;
-      const char *layer;
-
-      if (item == NULL)
-        continue;
-
-      id = json_object_get_string_member (item, "id");
-      layer = json_object_get_string_member (item, "layer");
-
-      if (id == NULL || layer == NULL)
-        continue;
-
-      info = g_new0 (PodmanInfo, 1);
-      info->id = g_strdup (id);
-      info->layers = g_new0 (char *, 2);
-      info->layers[0] = g_strdup (layer);
-      info->layers[1] = NULL;
-
-      g_hash_table_insert (self->podman, info->id, info);
-    }
+  path = g_strdup_printf ("/proc/%d/mountinfo", pid);
+  add_file (self, pid, path, mountinfo);
 }
 
 static void
@@ -237,83 +194,34 @@ sysprof_proc_source_populate_pid_podman (SysprofProcSource *self,
                                          GPid               pid,
                                          const char        *container)
 {
-  PodmanInfo *info;
+  g_auto(GStrv) layers = NULL;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
   g_assert (container != NULL);
 
-  if (!(info = g_hash_table_lookup (self->podman, container)))
-    {
-      update_containers_json (self);
-      info = g_hash_table_lookup (self->podman, container);
-    }
+  if (!(layers = sysprof_podman_get_layers (self->podman, container)))
+    return;
 
-  if (info != NULL)
-    {
-      for (guint i = 0; info->layers[i]; i++)
-        {
-          g_autofree char *path = g_build_filename (g_get_user_data_dir (),
-                                                    "containers",
-                                                    "storage",
-                                                    "overlay",
-                                                    info->layers[i],
-                                                    "diff",
-                                                    NULL);
-          sysprof_capture_writer_add_overlay (self->writer,
-                                              SYSPROF_CAPTURE_CURRENT_TIME,
-                                              -1, pid, i, path, "/");
-        }
-    }
+  for (guint i = 0; layers[i]; i++)
+    sysprof_capture_writer_add_overlay (self->writer,
+                                        SYSPROF_CAPTURE_CURRENT_TIME,
+                                        -1, pid, i, layers[i], "/");
 }
 
 static void
-sysprof_proc_source_populate_pid_flatpak (SysprofProcSource *self,
-                                          GPid               pid,
-                                          const char        *app_id)
-{
-  g_autofree gchar *info_path = NULL;
-  g_autoptr(GKeyFile) key_file = NULL;
-  g_autofree gchar *app_path = NULL;
-  g_autofree gchar *runtime_path = NULL;
-  g_autofree gchar *contents = NULL;
-
-  g_assert (SYSPROF_IS_PROC_SOURCE (self));
-  g_assert (app_id != NULL);
-
-  info_path = g_strdup_printf ("/proc/%d/root/.flatpak-info", pid);
-  key_file = g_key_file_new ();
-
-  if (!sysprof_helpers_get_proc_file (sysprof_helpers_get_default (),
-                                      info_path, NULL, &contents, NULL))
-    return;
-
-  if (!g_key_file_load_from_data (key_file, contents, -1, 0, NULL) ||
-      !g_key_file_has_group (key_file, "Instance") ||
-      !(app_path = g_key_file_get_string (key_file, "Instance", "app-path", NULL)) ||
-      !(runtime_path = g_key_file_get_string (key_file, "Instance", "runtime-path", NULL)))
-    return;
-
-  sysprof_capture_writer_add_overlay (self->writer,
-                                      SYSPROF_CAPTURE_CURRENT_TIME,
-                                      -1, pid, 0, runtime_path, "/usr");
-  sysprof_capture_writer_add_overlay (self->writer,
-                                      SYSPROF_CAPTURE_CURRENT_TIME,
-                                      -1, pid, 0, app_path, "/app");
-}
-
-static void
-sysprof_proc_source_populate_pid_root (SysprofProcSource *self,
+sysprof_proc_source_populate_overlays (SysprofProcSource *self,
                                        GPid               pid,
                                        const char        *cgroup)
 {
-  static GRegex *flatpak;
   static GRegex *podman;
 
   g_autoptr(GMatchInfo) podman_match = NULL;
-  g_autoptr(GMatchInfo) flatpak_match = NULL;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
   g_assert (cgroup != NULL);
+
+  if (strcmp (cgroup, ""))
+    return;
 
   /* This function tries to discover the podman container that contains the
    * process identified on the host as @pid. We can only do anything with this
@@ -327,35 +235,16 @@ sysprof_proc_source_populate_pid_root (SysprofProcSource *self,
    *
    * -- Christian
    */
-  if (podman == NULL)
+  if G_UNLIKELY (podman == NULL)
     {
       podman = g_regex_new ("libpod-([a-z0-9]{64})\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
       g_assert (podman != NULL);
     }
 
-  /* If this looks like a cgroup associated with a Flatpak, then we can find
-   * information about the filesystem in /proc/$pid/root/.flatpak-info (assuming
-   * we can actually read that file. That is possible from the host, but not
-   * really if we are running in a Flatpak ourself, so we access it through
-   * the daemon to ensure we can access it.
-   */
-  if (flatpak == NULL)
-    {
-      flatpak = g_regex_new ("app-flatpak-([a-zA-Z_\\-\\.]+)-[0-9]+\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
-      g_assert (flatpak != NULL);
-    }
-
   if (g_regex_match (podman, cgroup, 0, &podman_match))
     {
-      char *word = g_match_info_fetch (podman_match, 1);
+      g_autofree char *word = g_match_info_fetch (podman_match, 1);
       sysprof_proc_source_populate_pid_podman (self, pid, word);
-      g_free (word);
-    }
-  else if (g_regex_match (flatpak, cgroup, 0, &flatpak_match))
-    {
-      char *word = g_match_info_fetch (flatpak_match, 1);
-      sysprof_proc_source_populate_pid_flatpak (self, pid, word);
-      g_free (word);
     }
 }
 
@@ -374,11 +263,14 @@ sysprof_proc_source_populate (SysprofProcSource *self,
   if (self->writer == NULL)
     return;
 
+  if (self->podman == NULL)
+    self->podman = sysprof_podman_snapshot_current_user ();
+
   helpers = sysprof_helpers_get_default ();
   if (!sysprof_helpers_get_proc_file (helpers, "/proc/mounts", NULL, &mounts, NULL))
     return;
 
-  sysprof_mountinfo_parse_mounts (self->mountinfo, mounts);
+  add_file (self, -1, "/proc/mounts", mounts);
 
   n_pids = g_variant_n_children (info);
   for (gsize i = 0; i < n_pids; i++)
@@ -414,8 +306,9 @@ sysprof_proc_source_populate (SysprofProcSource *self,
         cgroup = "";
 
       sysprof_proc_source_populate_process (self, pid, *cmdline ? cmdline : comm);
-      sysprof_proc_source_populate_maps (self, pid, maps, mountinfo);
-      sysprof_proc_source_populate_pid_root (self, pid, cgroup);
+      sysprof_proc_source_populate_mountinfo (self, pid, mountinfo);
+      sysprof_proc_source_populate_maps (self, pid, maps);
+      sysprof_proc_source_populate_overlays (self, pid, cgroup);
 
       skip:
         g_variant_dict_clear (&dict);
@@ -564,8 +457,7 @@ sysprof_proc_source_finalize (GObject *object)
 
   g_clear_pointer (&self->writer, sysprof_capture_writer_unref);
   g_clear_pointer (&self->pids, g_array_unref);
-  g_clear_pointer (&self->mountinfo, sysprof_mountinfo_free);
-  g_clear_pointer (&self->podman, g_hash_table_unref);
+  g_clear_pointer (&self->podman, sysprof_podman_free);
 
   G_OBJECT_CLASS (sysprof_proc_source_parent_class)->finalize (object);
 }
@@ -582,8 +474,6 @@ static void
 sysprof_proc_source_init (SysprofProcSource *self)
 {
   self->pids = g_array_new (FALSE, FALSE, sizeof (GPid));
-  self->mountinfo = sysprof_mountinfo_new ();
-  self->podman = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, podman_info_free);
 }
 
 SysprofSource *

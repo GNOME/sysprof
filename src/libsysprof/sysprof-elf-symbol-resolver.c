@@ -140,6 +140,8 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
 
   sysprof_capture_reader_reset (reader);
 
+  /* Start by finding mount/mountinfo for processes */
+
   while (sysprof_capture_reader_peek_type (reader, &type))
     {
       if (type == SYSPROF_CAPTURE_FRAME_MAP)

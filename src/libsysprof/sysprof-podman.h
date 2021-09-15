@@ -24,6 +24,14 @@
 
 G_BEGIN_DECLS
 
-gchar **sysprof_podman_debug_dirs (void);
+typedef struct _SysprofPodman SysprofPodman;
+
+gchar         **sysprof_podman_debug_dirs            (void);
+SysprofPodman  *sysprof_podman_snapshot_current_user (void);
+gchar         **sysprof_podman_get_layers            (SysprofPodman *self,
+                                                      const char    *container);
+void            sysprof_podman_free                  (SysprofPodman *self);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofPodman, sysprof_podman_free)
 
 G_END_DECLS

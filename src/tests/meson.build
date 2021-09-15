@@ -113,6 +113,12 @@ show_page_usage = executable('show-page-usage',
                               dependency('cairo') ],
 )
 
+list_pid_maps = executable('list-all-maps', 'list-all-maps.c',
+        c_args: test_cflags,
+  dependencies: [libsysprof_static_dep],
+  include_directories: include_directories('..'),
+)
+
 if get_option('enable_gtk')
 
   test_ui_deps = [

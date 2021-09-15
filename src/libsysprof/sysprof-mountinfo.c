@@ -298,6 +298,9 @@ sysprof_mountinfo_parse_mountinfo_line (SysprofMountinfo *self,
   while (*src == '/')
     src++;
 
+  if (*src == 0)
+    return;
+
   if (prefix != NULL)
     m.host_path = g_build_filename (prefix, src, NULL);
   else
@@ -340,4 +343,10 @@ sysprof_mountinfo_parse_mountinfo (SysprofMountinfo *self,
     sysprof_mountinfo_parse_mountinfo_line (self, lines[i]);
 
   g_array_sort (self->mountinfos, sort_by_length);
+
+  for (guint i = 0; i < self->mountinfos->len; i++)
+    {
+      const Mountinfo *m = &g_array_index (self->mountinfos, Mountinfo, i);
+      g_print ("MM %s => %s\n", m->host_path, m->mount_path);
+    }
 }

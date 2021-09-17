@@ -39,6 +39,7 @@ find_temp_allocs = executable('find-temp-allocs', 'find-temp-allocs.c',
   dependencies: test_capture_deps,
 )
 
+
 test('test-capture', test_capture, env: test_env)
 test('test-capture-cursor', test_capture_cursor, env: test_env)
 test('test-mapped-ring-buffer', test_mapped_ring_buffer, env: test_env)
@@ -46,13 +47,10 @@ test('test-mapped-ring-buffer', test_mapped_ring_buffer, env: test_env)
 if get_option('libsysprof')
 
 test_deps = [
-  libsysprof_dep,
+  libsysprof_static_dep,
 ]
 
-test_addr_map = executable('test-addr-map',
-  ['test-addr-map.c',
-   '../libsysprof/sysprof-map-lookaside.c',
-   '../libsysprof/sysprof-symbol-map.c'],
+test_addr_map = executable('test-addr-map', 'test-addr-map.c',
         c_args: test_cflags,
   dependencies: test_deps,
 )
@@ -62,55 +60,44 @@ test_addr_decode = executable('test-addr-decode', 'test-addr-decode.c',
   dependencies: test_deps,
 )
 
-test_mountinfo = executable('test-mountinfo',
-  [ 'test-mountinfo.c',
-    '../libsysprof/sysprof-mountinfo.c'],
+test_mountinfo = executable('test-mountinfo', 'test-mountinfo.c',
         c_args: test_cflags,
   dependencies: test_deps,
 )
 
-test_flatpak = executable('test-flatpak',
-  [ 'test-flatpak.c',
-    '../libsysprof/sysprof-flatpak.c'],
+test_flatpak = executable('test-flatpak', 'test-flatpak.c',
         c_args: test_cflags,
   dependencies: test_deps,
 )
 
-test_resolvers = executable('test-resolvers',
-  [ 'test-resolvers.c' ],
+test_resolvers = executable('test-resolvers', 'test-resolvers.c',
         c_args: test_cflags,
   dependencies: test_deps,
 )
 
-allocs_by_size = executable('allocs-by-size',
-  ['allocs-by-size.c'],
+allocs_by_size = executable('allocs-by-size', 'allocs-by-size.c',
         c_args: test_cflags,
   dependencies: test_deps,
 )
 
-allocs_within_mark = executable('allocs-within-mark',
-  ['allocs-within-mark.c'],
+allocs_within_mark = executable('allocs-within-mark', 'allocs-within-mark.c',
         c_args: test_cflags,
   dependencies: test_deps,
 )
 
-cross_thread_frees = executable('cross-thread-frees',
-  ['cross-thread-frees.c'],
+cross_thread_frees = executable('cross-thread-frees', 'cross-thread-frees.c',
         c_args: test_cflags,
   dependencies: test_deps,
 )
 
-memory_stack_stash = executable('memory-stack-stash',
-  ['memory-stack-stash.c'],
+memory_stack_stash = executable('memory-stack-stash', 'memory-stack-stash.c',
         c_args: test_cflags,
   dependencies: test_deps,
 )
 
-show_page_usage = executable('show-page-usage',
-  [ 'show-page-usage.c' ],
+show_page_usage = executable('show-page-usage', 'show-page-usage.c',
         c_args: test_cflags,
-  dependencies: test_deps + [ librax_dep,
-                              dependency('cairo') ],
+  dependencies: test_deps + [dependency('cairo')],
 )
 
 list_pid_maps = executable('list-all-maps', 'list-all-maps.c',

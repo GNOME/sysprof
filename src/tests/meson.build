@@ -95,6 +95,11 @@ memory_stack_stash = executable('memory-stack-stash', 'memory-stack-stash.c',
   dependencies: test_deps,
 )
 
+read_build_id = executable('read-build-id', 'read-build-id.c',
+        c_args: test_cflags,
+  dependencies: test_deps,
+)
+
 show_page_usage = executable('show-page-usage', 'show-page-usage.c',
         c_args: test_cflags,
   dependencies: test_deps + [dependency('cairo')],

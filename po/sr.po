@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2021-01-16 06:28+0000\n"
-"PO-Revision-Date: 2021-01-19 11:41+0200\n"
+"POT-Creation-Date: 2021-04-13 09:15+0000\n"
+"PO-Revision-Date: 2021-09-18 09:07+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: српски <gnome-sr@googlegroups.org>\n"
 "Language: sr\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
 #: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
-#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:12
+#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:11
 msgid "Sysprof"
 msgstr "Профилатор система"
 
@@ -516,62 +516,65 @@ msgstr "Мрежа"
 msgid "GNOME Shell"
 msgstr "Гномова шкољка"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:104
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:90
 msgid "Profilers"
 msgstr "Профилатори"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:207
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:186
 msgid ""
 "Track application memory allocations (Sysprof must launch target application)"
 msgstr ""
 "Пратите расподелу меморије програма (Профилатор система мора да покрене "
 "циљни програм)"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:215
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:194
 msgid "Track slow operations on your applications main loop"
 msgstr "Пратите споре радње на главној петљи ваших програма"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:231
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:210
 msgid "All Processes"
 msgstr "Сви процеси"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:261
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
+#| msgid ""
+#| "Include all applications and operating system kernel in callgraph. This "
+#| "may not be possible on some system system configurations."
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
-"not be possible on some system system configurations."
+"not be possible on some system configurations."
 msgstr ""
 "Укључите све програме и кернел оперативног система у график позива. Ово неће "
-"бити могуће на неким системским подешавањима система."
+"бити могуће на неким подешавањима система."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:289
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
 msgid "Search Processes…"
 msgstr "Тражи процесе…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:308
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:287
 msgid "Loading Processes…"
 msgstr "учитавам процесе…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:332
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:311
 msgid "Launch Application"
 msgstr "Покрени програм"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:361
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:340
 msgid "Enable to launch a program of your choosing before profiling."
 msgstr "Укључите да покренете програм по вашем избору пре профилисања."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:389
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
 msgid "Command Line"
 msgstr "Линија наредби"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:408
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:387
 msgid "Environment"
 msgstr "Окружење"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:434
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:413
 msgid "Inherit Environment"
 msgstr "Наследи окружење"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:458
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:437
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other "
 "desktop environment settings."
@@ -579,11 +582,11 @@ msgstr ""
 "Укључите да осигурате да програми деле екран, сабирницу порука и друге "
 "поставке радног окружења."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:484
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:463
 msgid "Allow CPU Throttling"
 msgstr "Допушта пригушење процесора"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:491
 msgid ""
 "If disabled, your CPU will be placed in performance mode. It will be "
 "restored after profiling."
@@ -591,7 +594,7 @@ msgstr ""
 "Ако је искључено, ваш процесор ће бити стављен у режим учинковитости. Биће "
 "враћен након профилисања."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:533
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
 msgid "_Record"
 msgstr "_Сними"
 
@@ -832,13 +835,11 @@ msgstr "Снимци програма"
 msgid "All Files"
 msgstr "Све датотеке"
 
-#: src/sysprof/ui/sysprof-window.ui:29
-#| msgid "Open"
+#: src/sysprof/ui/sysprof-window.ui:28
 msgid "_Open"
 msgstr "_Отвори"
 
-#: src/sysprof/ui/sysprof-window.ui:32
-#| msgid "Open Recording…"
+#: src/sysprof/ui/sysprof-window.ui:31
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Отвори снимак… (Ctrl+O)"
 

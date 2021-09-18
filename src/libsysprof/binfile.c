@@ -89,7 +89,8 @@ already_warned (const char *name)
 }
 
 static ElfParser *
-get_build_id_file (ElfParser *elf)
+get_build_id_file (ElfParser          *elf,
+                   const char * const *debug_dirs)
 {
     const char *build_id;
     GList *tries = NULL, *list;
@@ -108,12 +109,14 @@ get_build_id_file (ElfParser *elf)
     init = g_strndup (build_id, 2);
     rest = g_strdup_printf ("%s%s", build_id + 2, ".debug");
 
-    tmp = g_build_filename (
-        "/usr", "lib", "debug", ".build-id", init, rest, NULL);
-    tries = g_list_append (tries, tmp);
-
-    tmp = g_build_filename (DEBUGDIR, ".build-id", init, rest, NULL);
-    tries = g_list_append (tries, tmp);
+    if (debug_dirs)
+      {
+        for (guint i = 0; debug_dirs[i]; i++)
+          {
+            tmp = g_build_filename (debug_dirs[i], ".build-id", init, rest, NULL);
+            tries = g_list_append (tries, tmp);
+          }
+      }
 
     for (list = tries; list != NULL; list = list->next)
     {
@@ -150,11 +153,10 @@ get_debuglink_file (ElfParser            *elf,
                     const gchar * const  *debug_dirs)
 {
     const char *basename;
-    char *dir;
     guint32 crc32;
     ElfParser *result = NULL;
     const char *build_id;
-    guint i;
+    char *dir;
 
     if (!elf)
         return NULL;
@@ -172,9 +174,9 @@ get_debuglink_file (ElfParser            *elf,
 
     dir = g_path_get_dirname (filename);
 
-    for (i = 0; debug_dirs[i]; i++)
+    for (guint i = 0; debug_dirs[i]; i++)
     {
-        const char *name = debug_dirs[i];
+        char *name = g_build_filename (debug_dirs[i], basename, NULL);
         ElfParser *parser = elf_parser_new (name, NULL);
         guint32 file_crc;
         const char *file_build_id;
@@ -194,7 +196,7 @@ get_debuglink_file (ElfParser            *elf,
             if (file_crc == crc32)
             {
                 result = parser;
-                *new_name = g_strdup (name);
+                *new_name = g_steal_pointer (&name);
                 break;
             }
             else
@@ -209,6 +211,8 @@ get_debuglink_file (ElfParser            *elf,
         skip:
             elf_parser_free (parser);
         }
+
+        g_free (name);
     }
 
     g_free (dir);
@@ -226,7 +230,7 @@ get_debug_binaries (GList               *files,
     GHashTable *seen_names;
     GList *free_us = NULL;
 
-    build_id_file = get_build_id_file (elf);
+    build_id_file = get_build_id_file (elf, debug_dirs);
 
     if (build_id_file)
         return g_list_prepend (files, build_id_file);
@@ -354,9 +358,6 @@ bin_file_new (const char          *filename,
     ElfParser *elf = NULL;
     bin_file_t *bf;
 
-    if (g_str_has_prefix (filename, "/var/run/host/"))
-      real_filename = filename + strlen ("/var/run/host");
-
     bf = g_new0 (bin_file_t, 1);
 
     bf->inode_check = FALSE;
@@ -475,9 +476,9 @@ bin_file_check_inode (bin_file_t *bin_file,
 }
 
 static const ElfSym *
-get_elf_sym (bin_file_t *file,
-             const bin_symbol_t *symbol,
-             ElfParser **elf_ret)
+get_elf_sym (bin_file_t          *file,
+             const bin_symbol_t  *symbol,
+             ElfParser          **elf_ret)
 {
     GList *list;
 
@@ -500,7 +501,7 @@ get_elf_sym (bin_file_t *file,
 }
 
 const char *
-bin_symbol_get_name (bin_file_t *file,
+bin_symbol_get_name (bin_file_t         *file,
                      const bin_symbol_t *symbol)
 {
     if (file->undefined_name == (char *)symbol)

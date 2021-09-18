@@ -213,14 +213,16 @@ sysprof_proc_source_populate_overlays (SysprofProcSource *self,
                                        GPid               pid,
                                        const char        *cgroup)
 {
+  static GRegex *flatpak;
   static GRegex *podman;
 
+  g_autoptr(GMatchInfo) flatpak_match = NULL;
   g_autoptr(GMatchInfo) podman_match = NULL;
 
   g_assert (SYSPROF_IS_PROC_SOURCE (self));
   g_assert (cgroup != NULL);
 
-  if (strcmp (cgroup, ""))
+  if (strcmp (cgroup, "") == 0)
     return;
 
   /* This function tries to discover the podman container that contains the
@@ -241,10 +243,33 @@ sysprof_proc_source_populate_overlays (SysprofProcSource *self,
       g_assert (podman != NULL);
     }
 
+  if (flatpak == NULL)
+    {
+      flatpak = g_regex_new ("app-flatpak-([a-zA-Z_\\-\\.]+)-[0-9]+\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
+      g_assert (flatpak != NULL);
+    }
+
   if (g_regex_match (podman, cgroup, 0, &podman_match))
     {
+      SysprofHelpers *helpers = sysprof_helpers_get_default ();
       g_autofree char *word = g_match_info_fetch (podman_match, 1);
+      g_autofree char *path = g_strdup_printf ("/proc/%d/root/run/.containerenv", pid);
+      g_autofree char *info = NULL;
+
       sysprof_proc_source_populate_pid_podman (self, pid, word);
+
+      if (sysprof_helpers_get_proc_file (helpers, path, NULL, &info, NULL))
+        add_file (self, pid, "/run/.containerenv", info);
+    }
+  else if (g_regex_match (flatpak, cgroup, 0, &flatpak_match))
+    {
+      SysprofHelpers *helpers = sysprof_helpers_get_default ();
+      g_autofree char *word = g_match_info_fetch (flatpak_match, 1);
+      g_autofree char *path = g_strdup_printf ("/proc/%d/root/.flatpak-info", pid);
+      g_autofree char *info = NULL;
+
+      if (sysprof_helpers_get_proc_file (helpers, path, NULL, &info, NULL))
+        add_file (self, pid, "/.flatpak-info", info);
     }
 }
 

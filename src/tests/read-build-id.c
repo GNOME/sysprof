@@ -32,6 +32,8 @@ main (int argc,
       const char *filename = argv[i];
       ElfParser *parser = elf_parser_new (filename, &error);
       const char *build_id;
+      const char *debug_link;
+      guint crc;
 
       if (parser == NULL)
         {
@@ -44,7 +46,10 @@ main (int argc,
         }
 
       build_id = elf_parser_get_build_id (parser);
-      g_print ("%s: %s\n", filename, build_id);
+      debug_link = elf_parser_get_debug_link (parser, &crc);
+
+      g_print ("%s: %s (%s)\n", filename, build_id, debug_link);
+
       elf_parser_free (parser);
     }
 

@@ -293,6 +293,18 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
 
               if (g_key_file_load_from_data (keyfile, pi->info, (gsize)-1, 0, NULL))
                 {
+                  if (g_key_file_has_group (keyfile, "Instance"))
+                    {
+                      g_autofree gchar *app_path = g_key_file_get_string (keyfile, "Instance", "app-path", NULL);
+                      g_autofree gchar *runtime_path = g_key_file_get_string (keyfile, "Instance", "runtime-path", NULL);
+
+                      pi->debug_dirs = g_new0 (gchar *, 3);
+                      pi->debug_dirs[0] = g_build_filename (app_path, "lib", "debug", NULL);
+                      pi->debug_dirs[1] = g_build_filename (runtime_path, "lib", "debug", NULL);
+                      pi->debug_dirs[2] = 0;
+
+                      /* TODO: Need to locate .Debug version of runtimes. Also, extensions? */
+                    }
                 }
             }
         }

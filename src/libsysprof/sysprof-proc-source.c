@@ -167,7 +167,7 @@ add_file (SysprofProcSource *self,
                                        -1,
                                        pid,
                                        path,
-                                       to_write > 0,
+                                       to_write == 0,
                                        (const guint8 *)data,
                                        this_write);
       data += this_write;

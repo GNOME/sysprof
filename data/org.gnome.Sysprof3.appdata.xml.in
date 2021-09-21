@@ -37,13 +37,7 @@
   </provides>
 
   <releases>
-    <release version="3.39.94" date="2021-02-25"/>
-    <release version="3.39.92" date="2021-02-23"/>
-    <release version="3.39.90" date="2021-01-14"/>
-    <release version="3.38.1" date="2020-10-15"/>
-    <release version="3.38.0" date="2020-09-12"/>
-    <release version="3.37.92" date="2020-09-06"/>
-    <release version="3.34.0" date="2019-09-09"/>
+    <release version="3.42.0" date="2021-09-21"/>
   </releases>
 
   <metadata_license>CC0-1.0</metadata_license>

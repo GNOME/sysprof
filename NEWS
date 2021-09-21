@@ -1,3 +1,9 @@
+Overview of changes in Sysprof 3.42.0
+=====================================
+
+ * Much work has been done to improve path resolution of maps found within
+   containers such as podman, toolbox, and flatpak.
+
 Overview of changes in Sysprof 3.40.1
 =====================================
 

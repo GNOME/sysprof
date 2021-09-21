@@ -36,10 +36,10 @@ read_inode (const char *filename)
       return (ino_t)-1;
 
     if (strcmp (filename, "[vdso]") == 0)
-        return (ino_t)0;
+      return (ino_t)0;
 
     if (stat (filename, &statbuf) < 0)
-        return (ino_t)-1;
+      return (ino_t)-1;
 
     return statbuf.st_ino;
 }

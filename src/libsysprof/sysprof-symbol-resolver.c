@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <unistd.h>
+
 #include "sysprof-platform.h"
 #include "sysprof-symbol-resolver.h"
 

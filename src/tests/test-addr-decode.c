@@ -60,10 +60,15 @@ main (gint argc,
                                                                        sample->addrs[i],
                                                                        &tag);
 
-                  g_print ("%u: %s [%s]\n",
-                           i,
-                           name ? name : "-- missing --",
-                           tag ? g_quark_to_string (tag) : "No Tag");
+                  if (tag)
+                    g_print ("%u: %s [%s]\n",
+                             i,
+                             name ? name : "-- missing --",
+                             g_quark_to_string (tag));
+                  else
+                    g_print ("%u: %s\n",
+                             i,
+                             name ? name : "-- missing --");
                 }
 
               g_print ("======\n");

@@ -42,7 +42,7 @@ _sysprof_podman_debug_dirs (GPtrArray *dirs)
   g_assert (dirs != NULL);
 
   base_path = g_build_filename (g_get_user_data_dir (),
-                                "containres",
+                                "containers",
                                 "storage",
                                 "overlay",
                                 NULL);

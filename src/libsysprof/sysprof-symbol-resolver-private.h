@@ -25,8 +25,7 @@
 
 G_BEGIN_DECLS
 
-char  *_sysprof_symbol_resolver_load_file        (SysprofCaptureReader *reader,
-                                                  const char           *path);
-char **_sysprof_symbol_resolver_guess_debug_dirs (const char           *path);
+char *_sysprof_symbol_resolver_load_file (SysprofCaptureReader *reader,
+                                          const char           *path);
 
 G_END_DECLS

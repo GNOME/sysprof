@@ -185,12 +185,3 @@ _sysprof_symbol_resolver_load_file (SysprofCaptureReader *reader,
 
   return g_steal_pointer (&data);
 }
-
-char **
-_sysprof_symbol_resolver_guess_debug_dirs (const char *path)
-{
-  if (path == NULL)
-    return NULL;
-
-  return NULL;
-}

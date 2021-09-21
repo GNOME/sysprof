@@ -80,7 +80,8 @@ sysprof_proc_source_populate_process (SysprofProcSource *self,
 static void
 sysprof_proc_source_populate_maps (SysprofProcSource *self,
                                    GPid               pid,
-                                   const gchar       *mapsstr)
+                                   const gchar       *mapsstr,
+                                   gboolean           ignore_inode)
 {
   g_auto(GStrv) lines = NULL;
 
@@ -107,7 +108,7 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
       if (r != 5)
         continue;
 
-      if (strcmp ("[vdso]", file) == 0)
+      if (ignore_inode || strcmp ("[vdso]", file) == 0)
         {
           /*
            * Søren Sandmann Pedersen says:
@@ -307,6 +308,7 @@ sysprof_proc_source_populate (SysprofProcSource *self,
       const gchar *mountinfo;
       const gchar *maps;
       const gchar *cgroup;
+      gboolean ignore_inode;
       gint32 pid;
 
       g_variant_dict_init (&dict, pidinfo);
@@ -330,9 +332,14 @@ sysprof_proc_source_populate (SysprofProcSource *self,
       if (!g_variant_dict_lookup (&dict, "cgroup", "&s", &cgroup))
         cgroup = "";
 
+      /* Ignore inodes from podman/toolbox because they appear
+       * to always be wrong. We'll have to rely on CRC instead.
+       */
+      ignore_inode = strstr (cgroup, "/libpod-") != NULL;
+
       sysprof_proc_source_populate_process (self, pid, *cmdline ? cmdline : comm);
       sysprof_proc_source_populate_mountinfo (self, pid, mountinfo);
-      sysprof_proc_source_populate_maps (self, pid, maps);
+      sysprof_proc_source_populate_maps (self, pid, maps, ignore_inode);
       sysprof_proc_source_populate_overlays (self, pid, cgroup);
 
       skip:

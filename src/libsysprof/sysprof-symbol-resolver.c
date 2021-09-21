@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-platform.h"
 #include "sysprof-symbol-resolver.h"
 
 G_DEFINE_INTERFACE (SysprofSymbolResolver, sysprof_symbol_resolver, G_TYPE_OBJECT)
@@ -125,11 +126,11 @@ sysprof_symbol_resolver_resolve (SysprofSymbolResolver *self,
  */
 gchar *
 sysprof_symbol_resolver_resolve_with_context (SysprofSymbolResolver *self,
-                                         guint64           time,
-                                         GPid              pid,
-                                         SysprofAddressContext  context,
-                                         SysprofCaptureAddress  address,
-                                         GQuark           *tag)
+                                              guint64                time,
+                                              GPid                   pid,
+                                              SysprofAddressContext  context,
+                                              SysprofCaptureAddress  address,
+                                              GQuark                *tag)
 {
   GQuark dummy;
 
@@ -141,4 +142,55 @@ sysprof_symbol_resolver_resolve_with_context (SysprofSymbolResolver *self,
   *tag = 0;
 
   return SYSPROF_SYMBOL_RESOLVER_GET_IFACE (self)->resolve_with_context (self, time, pid, context, address, tag);
+}
+
+char *
+_sysprof_symbol_resolver_load_file (SysprofCaptureReader *reader,
+                                    const char           *path)
+{
+  g_autofree char *data = NULL;
+  goffset len;
+  goffset pos = 0;
+  int fd;
+
+  g_assert (reader != NULL);
+  g_assert (path != NULL);
+
+  sysprof_capture_reader_reset (reader);
+
+  if (-1 == (fd = sysprof_memfd_create ("")) ||
+      !sysprof_capture_reader_read_file_fd (reader, path, fd))
+    {
+      if (fd != -1)
+        close (fd);
+      return NULL;
+    }
+
+  len = lseek (fd, 0L, SEEK_CUR);
+  data = g_malloc (len + 1);
+  lseek (fd, 0L, SEEK_SET);
+
+  while (pos < len)
+    {
+      gssize n_read = read (fd, data + pos, len - pos);
+
+      if (n_read < 0)
+        return NULL;
+
+      pos += n_read;
+    }
+
+  data[len] = 0;
+  close (fd);
+
+  return g_steal_pointer (&data);
+}
+
+char **
+_sysprof_symbol_resolver_guess_debug_dirs (const char *path)
+{
+  if (path == NULL)
+    return NULL;
+
+  return NULL;
 }

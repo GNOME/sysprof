@@ -1,6 +1,6 @@
-/* sysprof-podman.h
+/* sysprof-symbol-resolver-private.h
  *
- * Copyright 2020 Christian Hergert <chergert@redhat.com>
+ * Copyright 2021 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,17 +21,12 @@
 #pragma once
 
 #include <glib.h>
+#include <sysprof-capture.h>
 
 G_BEGIN_DECLS
 
-typedef struct _SysprofPodman SysprofPodman;
-
-gchar         **sysprof_podman_debug_dirs            (void);
-SysprofPodman  *sysprof_podman_snapshot_current_user (void);
-gchar         **sysprof_podman_get_layers            (SysprofPodman *self,
-                                                      const char    *container);
-void            sysprof_podman_free                  (SysprofPodman *self);
-
-G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofPodman, sysprof_podman_free)
+char  *_sysprof_symbol_resolver_load_file        (SysprofCaptureReader *reader,
+                                                  const char           *path);
+char **_sysprof_symbol_resolver_guess_debug_dirs (const char           *path);
 
 G_END_DECLS

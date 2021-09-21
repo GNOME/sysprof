@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #include "binfile.h"
@@ -27,16 +28,44 @@
 #include "sysprof-elf-symbol-resolver.h"
 #include "sysprof-flatpak.h"
 #include "sysprof-map-lookaside.h"
+#include "sysprof-path-resolver.h"
 #include "sysprof-podman.h"
+#include "sysprof-symbol-resolver-private.h"
+
+typedef enum
+{
+  PROCESS_KIND_STANDARD,
+  PROCESS_KIND_FLATPAK,
+  PROCESS_KIND_PODMAN,
+} ProcessKind;
+
+typedef struct
+{
+  char *on_host;
+  char *in_process;
+  int layer;
+} ProcessOverlay;
+
+typedef struct
+{
+  SysprofMapLookaside  *lookaside;
+  SysprofPathResolver  *resolver;
+  GByteArray           *mountinfo_data;
+  GArray               *overlays;
+  char                **debug_dirs;
+  char                 *info;
+  int                   pid;
+  guint                 kind : 2;
+} ProcessInfo;
 
 struct _SysprofElfSymbolResolver
 {
-  GObject     parent_instance;
+  GObject       parent_instance;
 
-  GArray     *debug_dirs;
-  GHashTable *lookasides;
-  GHashTable *bin_files;
-  GHashTable *tag_cache;
+  GHashTable   *processes;
+  GStringChunk *chunks;
+  GHashTable   *bin_files;
+  GHashTable   *tag_cache;
 };
 
 static void symbol_resolver_iface_init (SysprofSymbolResolverInterface *iface);
@@ -48,19 +77,34 @@ G_DEFINE_TYPE_EXTENDED (SysprofElfSymbolResolver,
                         G_IMPLEMENT_INTERFACE (SYSPROF_TYPE_SYMBOL_RESOLVER,
                                                symbol_resolver_iface_init))
 
-static gboolean
-is_flatpak (void)
+static void
+process_info_free (gpointer data)
 {
-  static gsize did_init = FALSE;
-  static gboolean ret;
+  ProcessInfo *pi = data;
 
-  if (g_once_init_enter (&did_init))
+  if (pi != NULL)
     {
-      ret = g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS);
-      g_once_init_leave (&did_init, TRUE);
+      g_clear_pointer (&pi->lookaside, sysprof_map_lookaside_free);
+      g_clear_pointer (&pi->resolver, _sysprof_path_resolver_free);
+      g_clear_pointer (&pi->mountinfo_data, g_byte_array_unref);
+      g_clear_pointer (&pi->overlays, g_array_unref);
+      g_clear_pointer (&pi->debug_dirs, g_strfreev);
+      g_clear_pointer (&pi->info, g_free);
+      g_slice_free (ProcessInfo, pi);
     }
+}
 
-  return ret;
+static const char * const *
+process_info_get_debug_dirs (const ProcessInfo *pi)
+{
+  static const char *standard[] = { "/usr/lib/debug", NULL };
+
+  if (pi->kind == PROCESS_KIND_FLATPAK)
+    return standard; /* TODO */
+  else if (pi->kind == PROCESS_KIND_PODMAN)
+    return standard; /* TODO */
+  else
+    return standard;
 }
 
 static void
@@ -69,9 +113,9 @@ sysprof_elf_symbol_resolver_finalize (GObject *object)
   SysprofElfSymbolResolver *self = (SysprofElfSymbolResolver *)object;
 
   g_clear_pointer (&self->bin_files, g_hash_table_unref);
-  g_clear_pointer (&self->lookasides, g_hash_table_unref);
   g_clear_pointer (&self->tag_cache, g_hash_table_unref);
-  g_clear_pointer (&self->debug_dirs, g_array_unref);
+  g_clear_pointer (&self->processes, g_hash_table_unref);
+  g_clear_pointer (&self->chunks, g_string_chunk_free);
 
   G_OBJECT_CLASS (sysprof_elf_symbol_resolver_parent_class)->finalize (object);
 }
@@ -85,47 +129,33 @@ sysprof_elf_symbol_resolver_class_init (SysprofElfSymbolResolverClass *klass)
 }
 
 static void
-free_element_string (gpointer data)
-{
-  g_free (*(gchar **)data);
-}
-
-static void
 sysprof_elf_symbol_resolver_init (SysprofElfSymbolResolver *self)
 {
-  g_auto(GStrv) podman_dirs = NULL;
-
-  self->debug_dirs = g_array_new (TRUE, FALSE, sizeof (gchar *));
-  g_array_set_clear_func (self->debug_dirs, free_element_string);
-
-  sysprof_elf_symbol_resolver_add_debug_dir (self, "/usr/lib/debug");
-  sysprof_elf_symbol_resolver_add_debug_dir (self, "/usr/lib32/debug");
-  sysprof_elf_symbol_resolver_add_debug_dir (self, "/usr/lib64/debug");
-
-  /* The user may have podman/toolbox containers */
-  podman_dirs = sysprof_podman_debug_dirs ();
-  for (guint i = 0; podman_dirs[i]; i++)
-    sysprof_elf_symbol_resolver_add_debug_dir (self, podman_dirs[i]);
-
-  if (is_flatpak ())
-    {
-      g_auto(GStrv) debug_dirs = sysprof_flatpak_debug_dirs ();
-
-      for (guint i = 0; debug_dirs[i]; i++)
-        sysprof_elf_symbol_resolver_add_debug_dir (self, debug_dirs[i]);
-    }
-
-  self->lookasides = g_hash_table_new_full (NULL,
-                                            NULL,
-                                            NULL,
-                                            (GDestroyNotify)sysprof_map_lookaside_free);
-
+  self->chunks = g_string_chunk_new (4096);
+  self->processes = g_hash_table_new_full (NULL, NULL, NULL, process_info_free);
   self->bin_files = g_hash_table_new_full (g_str_hash,
                                            g_str_equal,
                                            g_free,
                                            (GDestroyNotify)bin_file_free);
-
   self->tag_cache = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+}
+
+static ProcessInfo *
+sysprof_elf_symbol_resolver_get_process (SysprofElfSymbolResolver *self,
+                                         int                       pid)
+{
+  ProcessInfo *pi;
+
+  g_assert (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self));
+
+  if (!(pi = g_hash_table_lookup (self->processes, GINT_TO_POINTER (pid))))
+    {
+      pi = g_slice_new0 (ProcessInfo);
+      pi->pid = pid;
+      g_hash_table_insert (self->processes, GINT_TO_POINTER (pid), pi);
+    }
+
+  return pi;
 }
 
 static void
@@ -133,21 +163,181 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
                                   SysprofCaptureReader  *reader)
 {
   SysprofElfSymbolResolver *self = (SysprofElfSymbolResolver *)resolver;
+  static const guint8 zero[1] = {0};
   SysprofCaptureFrameType type;
+  g_autoptr(GByteArray) mounts = NULL;
+  g_autofree char *mounts_data = NULL;
+  GHashTableIter iter;
+  ProcessInfo *pi;
+  gpointer k, v;
 
-  g_assert (SYSPROF_IS_SYMBOL_RESOLVER (resolver));
+  g_assert (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self));
   g_assert (reader != NULL);
 
-  sysprof_capture_reader_reset (reader);
+  g_hash_table_remove_all (self->processes);
 
+  /* First we need to load all the /proc/{pid}/mountinfo files so that
+   * we can discover what files within the processes filesystem namespace
+   * were mapped and where. We can use that information later to build
+   * path resolvers that let us locate the files from the host.
+   */
+  sysprof_capture_reader_reset (reader);
+  while (sysprof_capture_reader_peek_type (reader, &type))
+    {
+      if (type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+        {
+          const SysprofCaptureFileChunk *ev;
+          int out_pid;
+
+          if (!(ev = sysprof_capture_reader_read_file (reader)))
+            break;
+
+          pi = sysprof_elf_symbol_resolver_get_process (self, ev->frame.pid);
+
+          if (strcmp (ev->path, "/.flatpak-info") == 0)
+            {
+              pi->kind = PROCESS_KIND_FLATPAK;
+              g_free (pi->info);
+              pi->info = g_strndup ((char *)ev->data, ev->len);
+            }
+          else if (strcmp (ev->path, "/run/.containerenv") == 0)
+            {
+              pi->kind = PROCESS_KIND_PODMAN;
+              g_free (pi->info);
+              pi->info = g_strndup ((char *)ev->data, ev->len);
+            }
+          else if (g_str_has_prefix (ev->path, "/proc/") &&
+              g_str_has_suffix (ev->path, "/mountinfo") &&
+              sscanf (ev->path, "/proc/%u/mountinfo", &out_pid) == 1)
+            {
+              if (pi->mountinfo_data == NULL)
+                pi->mountinfo_data = g_byte_array_new ();
+              if (ev->len)
+                g_byte_array_append (pi->mountinfo_data, ev->data, ev->len);
+            }
+          else if (g_str_equal (ev->path, "/proc/mounts"))
+            {
+              if (mounts == NULL)
+                mounts = g_byte_array_new ();
+              if (ev->len)
+                g_byte_array_append (mounts, ev->data, ev->len);
+            }
+        }
+      else if (type == SYSPROF_CAPTURE_FRAME_OVERLAY)
+        {
+          const SysprofCaptureOverlay *ev;
+          ProcessOverlay ov;
+
+          if (!(ev = sysprof_capture_reader_read_overlay (reader)))
+            break;
+
+          ov.on_host = g_string_chunk_insert_const (self->chunks, ev->data);
+          ov.in_process = g_string_chunk_insert_const (self->chunks, &ev->data[ev->src_len+1]);
+          ov.layer = ev->layer;
+
+          pi = sysprof_elf_symbol_resolver_get_process (self, ev->frame.pid);
+          if (pi->overlays == NULL)
+            pi->overlays = g_array_new (FALSE, FALSE, sizeof (ProcessOverlay));
+          g_array_append_val (pi->overlays, ov);
+        }
+      else
+        {
+          if (!sysprof_capture_reader_skip (reader))
+            break;
+        }
+    }
+
+  /* Now make sure we have access to /proc/mounts data. If we do not find it
+   * within the capture, assume we're running on the same host.
+   */
+  if (mounts != NULL)
+    {
+      g_byte_array_append (mounts, zero, 1);
+      mounts_data = (char *)g_byte_array_free (g_steal_pointer (&mounts), FALSE);
+    }
+
+  if (mounts_data == NULL)
+    g_file_get_contents ("/proc/mounts", &mounts_data, NULL, NULL);
+
+  /* Now that we loaded all the mountinfo data, we can create path resolvers
+   * for each of the processes. Once we have that data we can walk the file
+   * again to load the map events.
+   */
+  g_hash_table_iter_init (&iter, self->processes);
+  while (g_hash_table_iter_next (&iter, &k, &v))
+    {
+      pi = v;
+
+      if (pi->mountinfo_data == NULL)
+        continue;
+
+      g_byte_array_append (pi->mountinfo_data, zero, 1);
+
+      pi->resolver = _sysprof_path_resolver_new (mounts_data,
+                                                 (const char *)pi->mountinfo_data->data);
+
+      if (pi->overlays != NULL)
+        {
+          for (guint i = 0; i < pi->overlays->len; i++)
+            {
+              const ProcessOverlay *ov = &g_array_index (pi->overlays, ProcessOverlay, i);
+              _sysprof_path_resolver_add_overlay (pi->resolver, ov->in_process, ov->on_host, ov->layer);
+            }
+        }
+
+      if (pi->kind == PROCESS_KIND_FLATPAK)
+        {
+          if (pi->info != NULL)
+            {
+              g_autoptr(GKeyFile) keyfile = g_key_file_new ();
+
+              if (g_key_file_load_from_data (keyfile, pi->info, (gsize)-1, 0, NULL))
+                {
+                  if (g_key_file_has_group (keyfile, "Instance"))
+                    {
+                      g_autofree gchar *app_path = g_key_file_get_string (keyfile, "Instance", "app-path", NULL);
+                      g_autofree gchar *runtime_path = g_key_file_get_string (keyfile, "Instance", "runtime-path", NULL);
+
+                      pi->debug_dirs = g_new0 (gchar *, 3);
+                      pi->debug_dirs[0] = g_build_filename (app_path, "lib", "debug", NULL);
+                      pi->debug_dirs[1] = g_build_filename (runtime_path, "lib", "debug", NULL);
+                      pi->debug_dirs[2] = 0;
+
+                      /* TODO: Need to locate .Debug version of runtimes. Also, extensions? */
+                    }
+                }
+            }
+        }
+      else if (pi->kind == PROCESS_KIND_PODMAN)
+        {
+          pi->debug_dirs = g_new0 (gchar *, 2);
+          pi->debug_dirs[0] = _sysprof_path_resolver_resolve (pi->resolver, "/usr/lib/debug");
+          pi->debug_dirs[1] = 0;
+        }
+    }
+
+  /* Walk through the file again and extract maps so long as
+   * we have a resolver for them already.
+   */
+  sysprof_capture_reader_reset (reader);
   while (sysprof_capture_reader_peek_type (reader, &type))
     {
       if (type == SYSPROF_CAPTURE_FRAME_MAP)
         {
           const SysprofCaptureMap *ev = sysprof_capture_reader_read_map (reader);
-          SysprofMapLookaside *lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (ev->frame.pid));
           const char *filename = ev->filename;
+          g_autofree char *resolved = NULL;
           SysprofMap map;
+
+          pi = sysprof_elf_symbol_resolver_get_process (self, ev->frame.pid);
+
+          if (pi->resolver != NULL)
+            {
+              resolved = _sysprof_path_resolver_resolve (pi->resolver, filename);
+
+              if (resolved)
+                filename = resolved;
+            }
 
           map.start = ev->start;
           map.end = ev->end;
@@ -155,78 +345,40 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
           map.inode = ev->inode;
           map.filename = filename;
 
-          if (lookaside == NULL)
-            {
-              lookaside = sysprof_map_lookaside_new ();
-              g_hash_table_insert (self->lookasides, GINT_TO_POINTER (ev->frame.pid), lookaside);
-            }
+          if (pi->lookaside == NULL)
+            pi->lookaside = sysprof_map_lookaside_new ();
 
-          sysprof_map_lookaside_insert (lookaside, &map);
-        }
-      else if (type == SYSPROF_CAPTURE_FRAME_OVERLAY)
-        {
-          const SysprofCaptureOverlay *ev = sysprof_capture_reader_read_overlay (reader);
-          SysprofMapLookaside *lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (ev->frame.pid));
-          const char *src = ev->data;
-          const char *dst = &ev->data[ev->src_len+1];
-
-          if (lookaside == NULL)
-            {
-              lookaside = sysprof_map_lookaside_new ();
-              g_hash_table_insert (self->lookasides, GINT_TO_POINTER (ev->frame.pid), lookaside);
-            }
-
-          sysprof_map_lookaside_overlay (lookaside, src, dst);
+          sysprof_map_lookaside_insert (pi->lookaside, &map);
         }
       else
         {
           if (!sysprof_capture_reader_skip (reader))
             return;
-          continue;
         }
     }
 }
 
 static bin_file_t *
 sysprof_elf_symbol_resolver_get_bin_file (SysprofElfSymbolResolver *self,
-                                          const SysprofMapOverlay  *overlays,
-                                          guint                     n_overlays,
+                                          const ProcessInfo        *pi,
                                           const gchar              *filename)
 {
+  g_autofree char *alternate = NULL;
+  const char * const *debug_dirs;
+  g_autofree char *on_host = NULL;
   bin_file_t *bin_file;
 
   g_assert (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self));
 
-  bin_file = g_hash_table_lookup (self->bin_files, filename);
+  if ((bin_file = g_hash_table_lookup (self->bin_files, filename)))
+    return bin_file;
 
-  if (bin_file == NULL)
-    {
-      g_autofree gchar *path = NULL;
-      const gchar *alternate = filename;
-      const gchar * const *dirs;
-
-      dirs = (const gchar * const *)(gpointer)self->debug_dirs->data;
-
-      if (overlays && filename[0] != '/' && filename[0] != '[')
-        {
-          for (guint i = 0; i < n_overlays; i++)
-            {
-              if (g_str_has_prefix (filename, overlays[i].dst+1))
-                {
-                  alternate = path = g_build_filename (overlays[i].src, filename, NULL);
-                  break;
-                }
-            }
-        }
-      else if (is_flatpak () && g_str_has_prefix (filename, "/usr/"))
-        {
-          alternate = path = g_build_filename ("/var/run/host", alternate, NULL);
-        }
-
-      bin_file = bin_file_new (alternate, dirs);
-
-      g_hash_table_insert (self->bin_files, g_strdup (filename), bin_file);
-    }
+  /* Debug dirs are going to be dependent on the process as different
+   * containers may affect where the debug symbols are installed.
+   */
+  debug_dirs = process_info_get_debug_dirs (pi);
+  bin_file = bin_file_new (filename, (const char * const *)debug_dirs);
+  g_hash_table_insert (self->bin_files, g_strdup (filename), bin_file);
 
   return bin_file;
 }
@@ -349,15 +501,13 @@ sysprof_elf_symbol_resolver_resolve_full (SysprofElfSymbolResolver *self,
                                           gchar                   **name,
                                           GQuark                   *tag)
 {
-  SysprofMapLookaside *lookaside;
-  const SysprofMapOverlay *overlays = NULL;
   const bin_symbol_t *bin_sym;
   const gchar *bin_sym_name;
   const SysprofMap *map;
+  ProcessInfo *pi;
   bin_file_t *bin_file;
   gulong ubegin;
   gulong uend;
-  guint n_overlays = 0;
 
   g_assert (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self));
   g_assert (name != NULL);
@@ -369,27 +519,23 @@ sysprof_elf_symbol_resolver_resolve_full (SysprofElfSymbolResolver *self,
   if (context != SYSPROF_ADDRESS_CONTEXT_USER)
     return FALSE;
 
-  lookaside = g_hash_table_lookup (self->lookasides, GINT_TO_POINTER (pid));
-  if G_UNLIKELY (lookaside == NULL)
+  if (!(pi = g_hash_table_lookup (self->processes, GINT_TO_POINTER (pid))))
     return FALSE;
 
-  map = sysprof_map_lookaside_lookup (lookaside, address);
+  map = sysprof_map_lookaside_lookup (pi->lookaside, address);
   if G_UNLIKELY (map == NULL)
     return FALSE;
 
   address -= map->start;
   address += map->offset;
 
-  if (lookaside->overlays)
-    {
-      overlays = &g_array_index (lookaside->overlays, SysprofMapOverlay, 0);
-      n_overlays = lookaside->overlays->len;
-    }
-
-  bin_file = sysprof_elf_symbol_resolver_get_bin_file (self, overlays, n_overlays, map->filename);
+  bin_file = sysprof_elf_symbol_resolver_get_bin_file (self, pi, map->filename);
 
   g_assert (bin_file != NULL);
 
+  /* PERF_RECORD_MMAP doesn't provide an inode, so we can't rely on that
+   * until we can get PERF_RECORD_MMAP2.
+   */
   if G_UNLIKELY (map->inode && !bin_file_check_inode (bin_file, map->inode))
     {
       *name = g_strdup_printf ("%s: inode mismatch", map->filename);
@@ -460,22 +606,47 @@ void
 sysprof_elf_symbol_resolver_add_debug_dir (SysprofElfSymbolResolver *self,
                                            const gchar              *debug_dir)
 {
-  gchar *val;
+  /* Do Nothing */
+  /* XXX: Mark as deprecated post 41 or remove with Gtk4 port */
+}
 
-  g_return_if_fail (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self));
-  g_return_if_fail (debug_dir != NULL);
+char *
+_sysprof_elf_symbol_resolver_resolve_path (SysprofElfSymbolResolver *self,
+                                           GPid                      pid,
+                                           const char               *path)
+{
+  ProcessInfo *pi;
 
-  if (!g_file_test (debug_dir, G_FILE_TEST_EXISTS))
-    return;
+  g_return_val_if_fail (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self), NULL);
 
-  for (guint i = 0; i < self->debug_dirs->len; i++)
-    {
-      gchar * const *str = &g_array_index (self->debug_dirs, gchar *, i);
+  if (!(pi = g_hash_table_lookup (self->processes, GINT_TO_POINTER (pid))))
+    return NULL;
 
-      if (g_strcmp0 (*str, debug_dir) == 0)
-        return;
-    }
+  if (pi->resolver == NULL)
+    return NULL;
 
-  val = g_strdup (debug_dir);
-  g_array_append_val (self->debug_dirs, val);
+  return _sysprof_path_resolver_resolve (pi->resolver, path);
+}
+
+const char *
+_sysprof_elf_symbol_resolver_get_pid_kind (SysprofElfSymbolResolver *self,
+                                           GPid                      pid)
+{
+  ProcessInfo *pi;
+
+  g_return_val_if_fail (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self), NULL);
+
+  if (!(pi = g_hash_table_lookup (self->processes, GINT_TO_POINTER (pid))))
+    return "unknown";
+
+  if (pi->kind == PROCESS_KIND_FLATPAK)
+    return "Flatpak";
+
+  if (pi->kind == PROCESS_KIND_PODMAN)
+    return "Podman";
+
+  if (pi->kind == PROCESS_KIND_STANDARD)
+    return "Standard";
+
+  return "unknown";
 }

@@ -79,6 +79,7 @@ libsysprof_private_sources = [
   'sysprof-line-reader.c',
   'sysprof-map-lookaside.c',
   'sysprof-mountinfo.c',
+  'sysprof-path-resolver.c',
   'sysprof-podman.c',
   'sysprof-polkit.c',
   'sysprof-symbol-map.c',
@@ -90,9 +91,10 @@ libsysprof_private_sources = [
 libsysprof_public_sources += libsysprof_capture_sources
 
 librax = static_library('rax', ['rax.c'],
-               c_args: [ '-Wno-declaration-after-statement',
-                         '-Wno-format-nonliteral',
-                         '-Wno-shadow' ],
+  c_args: [ '-Wno-declaration-after-statement',
+            '-Wno-format-nonliteral',
+            '-Wno-shadow' ],
+  gnu_symbol_visibility: 'hidden',
 )
 
 librax_dep = declare_dependency(
@@ -139,10 +141,7 @@ if host_machine.system() == 'darwin'
   libsysprof_c_args += [ '-DNT_GNU_BUILD_ID=3', '-DELF_NOTE_GNU="GNU"', '-D__LIBELF_INTERNAL__' ]
 endif
 
-# Meson's pkgconfig module doesn't understand this one
-libsysprof_deps = libsysprof_pkg_deps + [
-  librax_dep,
-]
+libsysprof_deps = libsysprof_pkg_deps
 
 libsysprof_libs_private = []
 
@@ -151,8 +150,8 @@ if host_machine.system() != 'darwin'
   libsysprof_libs_private += '-lstdc++'
 endif
 
-libsysprof = shared_library(
-  'sysprof-@0@'.format(libsysprof_api_version),
+libsysprof_static = static_library(
+  'sysprof',
   libsysprof_public_sources + libsysprof_private_sources,
 
     include_directories: [include_directories('.'),
@@ -160,9 +159,19 @@ libsysprof = shared_library(
                           libsysprof_capture_include_dirs],
            dependencies: libsysprof_deps,
                  c_args: libsysprof_c_args,
+  gnu_symbol_visibility: 'hidden',
+)
+
+libsysprof_static_dep = declare_dependency(
+            link_whole: libsysprof_static,
+          dependencies: libsysprof_deps + [librax_dep],
+   include_directories: [include_directories('.'), libsysprof_capture_include_dirs],
+)
+
+libsysprof = shared_library('sysprof-@0@'.format(libsysprof_api_version),
+           dependencies: libsysprof_deps + [libsysprof_static_dep],
                 install: true,
             install_dir: get_option('libdir'),
-  gnu_symbol_visibility: 'hidden',
 )
 
 libsysprof_dep = declare_dependency(

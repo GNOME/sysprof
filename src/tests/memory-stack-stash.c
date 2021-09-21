@@ -28,7 +28,6 @@
 #include <sysprof.h>
 
 #include "../stackstash.h"
-#include "../stackstash.c"
 
 static void
 memory_stack_stash (SysprofCaptureReader *reader)

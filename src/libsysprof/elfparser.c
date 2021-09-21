@@ -124,6 +124,28 @@ MAKE_SYMBOL_ACCESSOR(st_value);
 MAKE_SYMBOL_ACCESSOR(st_size);
 MAKE_SYMBOL_ACCESSOR(st_shndx);
 
+static gboolean
+in_container (void)
+{
+    static gboolean _in_container;
+    static gboolean initialized;
+
+    if (!initialized)
+    {
+        /* Flatpak has /.flatpak-info
+         * Podman has /run/.containerenv
+         *
+         * Both have access to host files via /var/run/host.
+         */
+        _in_container = g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS) ||
+                        g_file_test ("/run/.containerenv", G_FILE_TEST_EXISTS);
+
+        initialized = TRUE;
+    }
+
+    return _in_container;
+}
+
 static void
 section_free (Section *section)
 {
@@ -252,17 +274,31 @@ elf_parser_new_from_data (const guchar *data,
     return parser;
 }
 
-ElfParser *
-elf_parser_new (const char *filename,
-                GError **err)
+static GMappedFile *
+open_mapped_file (const char  *filename,
+                  GError     **error)
 {
+    GMappedFile *file;
+    char *alternate = NULL;
+
+    if (in_container () && !g_str_has_prefix (filename, g_get_home_dir ()))
+        filename = alternate = g_build_filename ("/var/run/host", filename, NULL);
+    file = g_mapped_file_new (filename, FALSE, error);
+    g_free (alternate);
+
+    return file;
+}
+
+ElfParser *
+elf_parser_new (const char  *filename,
+                GError     **error)
+{
+    GMappedFile *file;
     const guchar *data;
     gsize length;
     ElfParser *parser;
 
-    GMappedFile *file = g_mapped_file_new (filename, FALSE, NULL);
-
-    if (!file)
+    if (!(file = open_mapped_file (filename, error)))
         return NULL;
 
 #if 0
@@ -284,6 +320,11 @@ elf_parser_new (const char *filename,
 
     if (!parser)
     {
+        g_set_error (error,
+                     G_FILE_ERROR,
+                     G_FILE_ERROR_FAILED,
+                     "Failed to load ELF from file %s",
+                     filename);
         g_mapped_file_unref (file);
         return NULL;
     }
@@ -730,7 +771,8 @@ elf_parser_get_build_id (ElfParser *parser)
 }
 
 const char *
-elf_parser_get_debug_link (ElfParser *parser, guint32 *crc32)
+elf_parser_get_debug_link (ElfParser *parser,
+                           guint32   *crc32)
 {
     guint64 offset;
     const Section *debug_link = find_section (parser, ".gnu_debuglink",
@@ -820,7 +862,3 @@ elf_parser_get_sym_address_range (ElfParser    *parser,
     *begin = sym->address - parser->text_section->load_address;
     *end = *begin + st_size (parser, sym->table, sym->offset);
 }
-
-/*
- * Utility functions
- */

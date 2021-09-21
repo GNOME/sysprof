@@ -65,10 +65,10 @@ list_maps (const char *filename)
           const SysprofCaptureMap *ev = sysprof_capture_reader_read_map (reader);
           g_autofree char *resolved = _sysprof_elf_symbol_resolver_resolve_path (SYSPROF_ELF_SYMBOL_RESOLVER (resolver), ev->frame.pid, ev->filename);
           const char *kind = _sysprof_elf_symbol_resolver_get_pid_kind (SYSPROF_ELF_SYMBOL_RESOLVER (resolver), ev->frame.pid);
-          ino_t inode = read_inode (resolved);
+          ino_t inode = read_inode (resolved ? resolved : ev->filename);
 
           g_print ("PID %u (%s): ", ev->frame.pid, kind);
-          g_print ("%s => %s", ev->filename, resolved ? resolved : "(NULL)");
+          g_print ("%s => %s", ev->filename, resolved ? resolved : ev->filename);
 
           if (inode == (ino_t)-1)
             g_print (" (missing)");

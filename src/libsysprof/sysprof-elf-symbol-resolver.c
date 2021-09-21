@@ -533,6 +533,9 @@ sysprof_elf_symbol_resolver_resolve_full (SysprofElfSymbolResolver *self,
 
   g_assert (bin_file != NULL);
 
+  /* PERF_RECORD_MMAP doesn't provide an inode, so we can't rely on that
+   * until we can get PERF_RECORD_MMAP2.
+   */
   if G_UNLIKELY (map->inode && !bin_file_check_inode (bin_file, map->inode))
     {
       *name = g_strdup_printf ("%s: inode mismatch", map->filename);

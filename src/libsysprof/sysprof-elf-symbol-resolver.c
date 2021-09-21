@@ -606,3 +606,44 @@ sysprof_elf_symbol_resolver_add_debug_dir (SysprofElfSymbolResolver *self,
   /* Do Nothing */
   /* XXX: Mark as deprecated post 41 or remove with Gtk4 port */
 }
+
+char *
+_sysprof_elf_symbol_resolver_resolve_path (SysprofElfSymbolResolver *self,
+                                           GPid                      pid,
+                                           const char               *path)
+{
+  ProcessInfo *pi;
+
+  g_return_val_if_fail (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self), NULL);
+
+  if (!(pi = g_hash_table_lookup (self->processes, GINT_TO_POINTER (pid))))
+    return NULL;
+
+  if (pi->resolver == NULL)
+    return NULL;
+
+  return _sysprof_path_resolver_resolve (pi->resolver, path);
+}
+
+const char *
+_sysprof_elf_symbol_resolver_get_pid_kind (SysprofElfSymbolResolver *self,
+                                           GPid                      pid)
+{
+  ProcessInfo *pi;
+
+  g_return_val_if_fail (SYSPROF_IS_ELF_SYMBOL_RESOLVER (self), NULL);
+
+  if (!(pi = g_hash_table_lookup (self->processes, GINT_TO_POINTER (pid))))
+    return "unknown";
+
+  if (pi->kind == PROCESS_KIND_FLATPAK)
+    return "Flatpak";
+
+  if (pi->kind == PROCESS_KIND_PODMAN)
+    return "Podman";
+
+  if (pi->kind == PROCESS_KIND_STANDARD)
+    return "Standard";
+
+  return "unknown";
+}

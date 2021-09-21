@@ -187,12 +187,12 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
       if (type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
         {
           const SysprofCaptureFileChunk *ev;
-          int pid;
+          int out_pid;
 
           if (!(ev = sysprof_capture_reader_read_file (reader)))
             break;
 
-          pi = sysprof_elf_symbol_resolver_get_process (self, pid);
+          pi = sysprof_elf_symbol_resolver_get_process (self, ev->frame.pid);
 
           if (strcmp (ev->path, "/.flatpak-info") == 0)
             {
@@ -208,7 +208,7 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
             }
           else if (g_str_has_prefix (ev->path, "/proc/") &&
               g_str_has_suffix (ev->path, "/mountinfo") &&
-              sscanf (ev->path, "/proc/%u/mountinfo", &pid) == 1)
+              sscanf (ev->path, "/proc/%u/mountinfo", &out_pid) == 1)
             {
               if (pi->mountinfo_data == NULL)
                 pi->mountinfo_data = g_byte_array_new ();

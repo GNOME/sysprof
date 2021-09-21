@@ -72,7 +72,7 @@ list_maps (const char *filename)
 
           if (inode == (ino_t)-1)
             g_print (" (missing)");
-          else if (inode != ev->inode)
+          else if (inode != 0 && inode != ev->inode)
             g_print (" (Inode mismatch, expected %lu got %lu)",
                      (gulong)ev->inode, (gulong)inode);
 

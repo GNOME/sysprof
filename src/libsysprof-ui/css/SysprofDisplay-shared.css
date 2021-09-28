@@ -1,7 +1,3 @@
-SysprofDisplay dzlmultipaned {
-  -DzlMultiPaned-handle-size: 0;
-  }
-
 SysprofVisualizer {
   background: @content_view_bg;
   }

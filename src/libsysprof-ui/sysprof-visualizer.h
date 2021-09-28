@@ -44,11 +44,11 @@ typedef struct
 #define SYSPROF_TYPE_VISUALIZER (sysprof_visualizer_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_DERIVABLE_TYPE (SysprofVisualizer, sysprof_visualizer, SYSPROF, VISUALIZER, GtkBin)
+G_DECLARE_DERIVABLE_TYPE (SysprofVisualizer, sysprof_visualizer, SYSPROF, VISUALIZER, GtkWidget)
 
 struct _SysprofVisualizerClass
 {
-  GtkBinClass parent_class;
+  GtkWidgetClass parent_class;
 
   void (*set_reader) (SysprofVisualizer    *self,
                       SysprofCaptureReader *reader);

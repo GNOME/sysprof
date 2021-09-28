@@ -39,7 +39,6 @@
 
 #include "config.h"
 
-#include <dazzle.h>
 #include <glib/gi18n.h>
 
 #include "../stackstash.h"
@@ -769,6 +768,25 @@ sysprof_callgraph_page_copy_cb (GtkWidget            *widget,
     copy_tree_view_selection (priv->functions_view);
 }
 
+static gboolean
+on_key_pressed_cb (SysprofCallgraphPage  *self,
+                   guint                  keyval,
+                   guint                  keycode,
+                   GdkModifierType        state,
+                   GtkEventControllerKey *controller)
+{
+  g_assert (SYSPROF_IS_CALLGRAPH_PAGE (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_KEY (controller));
+
+  if ((state & GDK_CONTROL_MASK) != 0 && keyval == GDK_KEY_c)
+    {
+      sysprof_callgraph_page_copy_cb (GTK_WIDGET (self), self);
+      return GDK_EVENT_STOP;
+    }
+
+  return GDK_EVENT_PROPAGATE;
+}
+
 static void
 sysprof_callgraph_page_generate_cb (GObject      *object,
                                     GAsyncResult *result,
@@ -937,7 +955,7 @@ static void
 sysprof_callgraph_page_init (SysprofCallgraphPage *self)
 {
   SysprofCallgraphPagePrivate *priv = sysprof_callgraph_page_get_instance_private (self);
-  DzlShortcutController *controller;
+  GtkEventController *controller;
   GtkTreeSelection *selection;
   GtkCellRenderer *cell;
 
@@ -992,15 +1010,14 @@ sysprof_callgraph_page_init (SysprofCallgraphPage *self)
   gtk_tree_selection_set_mode (gtk_tree_view_get_selection (priv->descendants_view),
                                GTK_SELECTION_MULTIPLE);
 
-  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
-
-  dzl_shortcut_controller_add_command_callback (controller,
-                                                "org.gnome.sysprof3.capture.copy",
-                                                "<Control>c",
-                                                DZL_SHORTCUT_PHASE_BUBBLE,
-                                                (GtkCallback) sysprof_callgraph_page_copy_cb,
-                                                self,
-                                                NULL);
+  controller = gtk_event_controller_key_new (GTK_WIDGET (self));
+  gtk_event_controller_set_propagation_phase (controller, GTK_PHASE_BUBBLE);
+  g_signal_connect_object (controller,
+                           "key-pressed",
+                           G_CALLBACK (on_key_pressed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_object_unref (controller);
 }
 
 typedef struct _Descendant Descendant;

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="3.22"/>
   <object class="SysprofCpuAid" id="cpu_aid">
     <property name="icon-name">sysprof-cpu</property>
   </object>
@@ -62,7 +61,7 @@
       <object class="SysprofDiskstatSource"/>
     </child>
   </object>
-  <template class="SysprofProfilerAssistant" parent="GtkBin">
+  <template class="SysprofProfilerAssistant" parent="GtkWidget">
     <child>
       <object class="GtkScrolledWindow">
         <property name="propagate-natural-width">true</property>

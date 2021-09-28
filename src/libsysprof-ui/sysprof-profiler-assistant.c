@@ -45,7 +45,7 @@
 
 struct _SysprofProfilerAssistant
 {
-  GtkBin                parent_instance;
+  GtkWidget             parent_instance;
 
   SysprofProcessModel  *process_model;
 
@@ -70,7 +70,7 @@ enum {
 
 static guint signals [N_SIGNALS];
 
-G_DEFINE_TYPE (SysprofProfilerAssistant, sysprof_profiler_assistant, GTK_TYPE_BIN)
+G_DEFINE_TYPE (SysprofProfilerAssistant, sysprof_profiler_assistant, GTK_TYPE_WIDGET)
 
 /**
  * sysprof_profiler_assistant_new:
@@ -155,12 +155,12 @@ sysprof_profiler_assistant_command_line_changed_cb (SysprofProfilerAssistant *se
   g_assert (GTK_IS_ENTRY (entry));
 
   style_context = gtk_widget_get_style_context (GTK_WIDGET (entry));
-  text = gtk_entry_get_text (entry);
+  text = gtk_editable_get_text (GTK_EDITABLE (entry));
 
   if (text == NULL || text[0] == 0 || g_shell_parse_argv (text, &argc, &argv, NULL))
-    gtk_style_context_remove_class (style_context, GTK_STYLE_CLASS_ERROR);
+    gtk_style_context_remove_class (style_context, "error");
   else
-    gtk_style_context_add_class (style_context, GTK_STYLE_CLASS_ERROR);
+    gtk_style_context_add_class (style_context, "error");
 }
 
 static void
@@ -222,9 +222,10 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
   sysprof_profiler_set_writer (profiler, writer);
 
   /* Add pids to profiler */
-  gtk_container_foreach (GTK_CONTAINER (self->process_list_box),
-                         (GtkCallback) sysprof_profiler_assistant_foreach_cb,
-                         profiler);
+  for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (self->process_list_box));
+       child;
+       child = gtk_widget_get_next_sibling (child))
+    sysprof_profiler_assistant_foreach_cb (child, profiler);
 
   /* Setup whole system profiling */
   sysprof_profiler_set_whole_system (profiler, gtk_switch_get_active (self->whole_system_switch));
@@ -237,7 +238,7 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
       const gchar *command;
       gint argc;
 
-      command = gtk_entry_get_text (self->command_line);
+      command = gtk_editable_get_text (GTK_EDITABLE (self->command_line));
       g_shell_parse_argv (command, &argc, &argv, NULL);
 
       sysprof_profiler_set_spawn (profiler, TRUE);
@@ -269,9 +270,10 @@ sysprof_profiler_assistant_record_clicked_cb (SysprofProfilerAssistant *self,
   sysprof_profiler_add_source (profiler, symbols_source);
 
   /* Now allow the aids to add their sources */
-  gtk_container_foreach (GTK_CONTAINER (self->aid_flow_box),
-                         (GtkCallback) sysprof_profiler_assistant_foreach_cb,
-                         profiler);
+  for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (self->aid_flow_box));
+       child;
+       child = gtk_widget_get_next_sibling (child))
+    sysprof_profiler_assistant_foreach_cb (child, profiler);
 
   g_signal_emit (self, signals [START_RECORDING], 0, profiler);
 }
@@ -322,7 +324,7 @@ sysprof_profiler_assistant_search_changed_cb (SysprofProfilerAssistant *self,
 
   sysprof_process_model_queue_reload (self->process_model);
 
-  text = gtk_entry_get_text (GTK_ENTRY (search_entry));
+  text = gtk_editable_get_text (GTK_EDITABLE (search_entry));
 
   if (text[0] == 0)
     {
@@ -345,21 +347,22 @@ sysprof_profiler_assistant_search_changed_cb (SysprofProfilerAssistant *self,
 }
 
 static void
-sysprof_profiler_assistant_destroy (GtkWidget *widget)
+sysprof_profiler_assistant_dispose (GObject *object)
 {
-  SysprofProfilerAssistant *self = (SysprofProfilerAssistant *)widget;
+  SysprofProfilerAssistant *self = (SysprofProfilerAssistant *)object;
 
   g_clear_object (&self->process_model);
 
-  GTK_WIDGET_CLASS (sysprof_profiler_assistant_parent_class)->destroy (widget);
+  G_OBJECT_CLASS (sysprof_profiler_assistant_parent_class)->dispose (object);
 }
 
 static void
 sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  widget_class->destroy = sysprof_profiler_assistant_destroy;
+  object_class->dispose = sysprof_profiler_assistant_dispose;
 
   /**
    * SysprofProfilerAssistant::start-recording:
@@ -377,6 +380,7 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
                   G_TYPE_NONE, 1, SYSPROF_TYPE_PROFILER);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-profiler-assistant.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, allow_throttling);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, aid_flow_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, command_line);
@@ -465,12 +469,12 @@ sysprof_profiler_assistant_set_executable (SysprofProfilerAssistant *self,
 
   if (path == NULL || path[0] == 0)
     {
-      gtk_entry_set_text (GTK_ENTRY (self->command_line), "");
+      gtk_editable_set_text (GTK_EDITABLE (self->command_line), "");
       gtk_switch_set_active (self->launch_switch, FALSE);
     }
   else
     {
-      gtk_entry_set_text (GTK_ENTRY (self->command_line), path);
+      gtk_editable_set_text (GTK_EDITABLE (self->command_line), path);
       gtk_switch_set_active (self->launch_switch, TRUE);
       gtk_widget_grab_focus (GTK_WIDGET (self->command_line));
     }

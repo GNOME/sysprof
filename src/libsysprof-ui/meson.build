@@ -99,13 +99,6 @@ libsysprof_ui_deps = libsysprof_ui_pkg_deps + [
 # dependency object
 libsysprof_ui_pkg_deps += libsysprof
 
-dazzle_dep = dependency('libdazzle-1.0', version: dazzle_req_version, fallback: ['libdazzle', 'libdazzle_dep'])
-libsysprof_ui_deps += dazzle_dep
-
-if dazzle_dep.type_name() == 'pkgconfig'
-  libsysprof_ui_pkg_deps += dazzle_dep
-endif
-
 libsysprof_ui = shared_library(
   'sysprof-ui-@0@'.format(libsysprof_api_version),
   libsysprof_ui_public_sources + libsysprof_ui_private_sources + libsysprof_ui_resources,

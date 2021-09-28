@@ -123,7 +123,6 @@ if get_option('enable_gtk')
     libsysprof_dep,
     libsysprof_ui_dep,
     dependency('gtk+-3.0', version: gtk_req_version),
-    dependency('libdazzle-1.0', version: dazzle_req_version, fallback: ['libdazzle', 'libdazzle_dep']),
     dependency('pangoft2', required: false),
   ]
 

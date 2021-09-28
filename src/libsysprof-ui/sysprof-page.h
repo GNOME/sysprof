@@ -32,11 +32,11 @@ G_BEGIN_DECLS
 #define SYSPROF_TYPE_PAGE (sysprof_page_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_DERIVABLE_TYPE (SysprofPage, sysprof_page, SYSPROF, PAGE, GtkBin)
+G_DECLARE_DERIVABLE_TYPE (SysprofPage, sysprof_page, SYSPROF, PAGE, GtkWidget)
 
 struct _SysprofPageClass
 {
-  GtkBinClass parent_class;
+  GtkWidgetClass parent_class;
 
   void     (*load_async)      (SysprofPage              *self,
                                SysprofCaptureReader     *reader,

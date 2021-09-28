@@ -30,13 +30,14 @@
 
 struct _SysprofEnvironEditor
 {
-  GtkListBox              parent_instance;
+  GtkWidget               parent_instance;
+  GtkListBox             *list_box;
   SysprofEnviron         *environ;
   GtkWidget              *dummy_row;
   SysprofEnvironVariable *dummy;
 };
 
-G_DEFINE_TYPE (SysprofEnvironEditor, sysprof_environ_editor, GTK_TYPE_LIST_BOX)
+G_DEFINE_TYPE (SysprofEnvironEditor, sysprof_environ_editor, GTK_TYPE_WIDGET)
 
 enum {
   PROP_0,
@@ -114,8 +115,7 @@ sysprof_environ_editor_disconnect (SysprofEnvironEditor *self)
   g_assert (SYSPROF_IS_ENVIRON_EDITOR (self));
   g_assert (SYSPROF_IS_ENVIRON (self->environ));
 
-  gtk_list_box_bind_model (GTK_LIST_BOX (self), NULL, NULL, NULL, NULL);
-
+  gtk_list_box_bind_model (self->list_box, NULL, NULL, NULL, NULL);
   g_clear_object (&self->dummy);
 }
 
@@ -125,12 +125,12 @@ sysprof_environ_editor_connect (SysprofEnvironEditor *self)
   g_assert (SYSPROF_IS_ENVIRON_EDITOR (self));
   g_assert (SYSPROF_IS_ENVIRON (self->environ));
 
-  gtk_list_box_bind_model (GTK_LIST_BOX (self),
+  gtk_list_box_bind_model (self->list_box,
                            G_LIST_MODEL (self->environ),
                            sysprof_environ_editor_create_row, self, NULL);
 
   self->dummy_row = sysprof_environ_editor_create_dummy_row (self);
-  gtk_container_add (GTK_CONTAINER (self), self->dummy_row);
+  gtk_list_box_append (self->list_box, self->dummy_row);
 }
 
 static void
@@ -168,17 +168,19 @@ find_row (SysprofEnvironEditor   *self,
   g_assert (SYSPROF_IS_ENVIRON_EDITOR (self));
   g_assert (SYSPROF_IS_ENVIRON_VARIABLE (variable));
 
-  gtk_container_foreach (GTK_CONTAINER (self), find_row_cb, &lookup);
+  for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (self->list_box));
+       child;
+       child = gtk_widget_get_next_sibling (child))
+    find_row_cb (child, &lookup);
 
   return lookup.row;
 }
 
 static void
-sysprof_environ_editor_row_activated (GtkListBox    *list_box,
-                                      GtkListBoxRow *row)
+sysprof_environ_editor_row_activated (SysprofEnvironEditor *self,
+                                      GtkListBoxRow        *row,
+                                      GtkListBox           *list_box)
 {
-  SysprofEnvironEditor *self = (SysprofEnvironEditor *)list_box;
-
   g_assert (GTK_IS_LIST_BOX (list_box));
   g_assert (GTK_IS_LIST_BOX_ROW (row));
 
@@ -196,13 +198,19 @@ sysprof_environ_editor_row_activated (GtkListBox    *list_box,
 }
 
 static void
-sysprof_environ_editor_destroy (GtkWidget *widget)
+sysprof_environ_editor_dispose (GObject *object)
 {
-  SysprofEnvironEditor *self = (SysprofEnvironEditor *)widget;
+  SysprofEnvironEditor *self = (SysprofEnvironEditor *)object;
 
-  GTK_WIDGET_CLASS (sysprof_environ_editor_parent_class)->destroy (widget);
+  if (self->list_box)
+    {
+      gtk_widget_unparent (GTK_WIDGET (self->list_box));
+      self->list_box = NULL;
+    }
 
   g_clear_object (&self->environ);
+
+  G_OBJECT_CLASS (sysprof_environ_editor_parent_class)->dispose (object);
 }
 
 static void
@@ -248,15 +256,11 @@ sysprof_environ_editor_class_init (SysprofEnvironEditorClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-  GtkListBoxClass *list_box_class = GTK_LIST_BOX_CLASS (klass);
   SysprofThemeManager *theme_manager = sysprof_theme_manager_get_default ();
 
+  object_class->dispose = sysprof_environ_editor_dispose;
   object_class->get_property = sysprof_environ_editor_get_property;
   object_class->set_property = sysprof_environ_editor_set_property;
-
-  widget_class->destroy = sysprof_environ_editor_destroy;
-
-  list_box_class->row_activated = sysprof_environ_editor_row_activated;
 
   properties [PROP_ENVIRON] =
     g_param_spec_object ("environ",
@@ -267,16 +271,26 @@ sysprof_environ_editor_class_init (SysprofEnvironEditorClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
+
   sysprof_theme_manager_register_resource (theme_manager, NULL, NULL, "/org/gnome/sysprof/css/SysprofEnvironEditor-shared.css");
 }
 
 static void
 sysprof_environ_editor_init (SysprofEnvironEditor *self)
 {
-  gtk_list_box_set_selection_mode (GTK_LIST_BOX (self), GTK_SELECTION_NONE);
+  self->list_box = GTK_LIST_BOX (gtk_list_box_new ());
+  gtk_widget_set_parent (GTK_WIDGET (self->list_box), GTK_WIDGET (self));
 
-  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (self)),
-                               "environ-editor");
+  gtk_list_box_set_selection_mode (self->list_box, GTK_SELECTION_NONE);
+
+  gtk_widget_add_css_class (GTK_WIDGET (self), "environ-editor");
+
+  g_signal_connect_object (self->list_box,
+                           "row-activated",
+                           G_CALLBACK (sysprof_environ_editor_row_activated),
+                           self,
+                           G_CONNECT_SWAPPED);
 }
 
 GtkWidget *

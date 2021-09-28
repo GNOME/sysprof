@@ -22,7 +22,6 @@
 
 #include "config.h"
 
-#include <dazzle.h>
 #include <glib/gi18n.h>
 
 #include "sysprof-details-page.h"
@@ -499,7 +498,6 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  g_type_ensure (DZL_TYPE_MULTI_PANED);
   g_type_ensure (SYSPROF_TYPE_DETAILS_PAGE);
   g_type_ensure (SYSPROF_TYPE_FAILED_STATE_VIEW);
   g_type_ensure (SYSPROF_TYPE_PROFILER_ASSISTANT);

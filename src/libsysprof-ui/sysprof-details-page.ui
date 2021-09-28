@@ -10,7 +10,7 @@
         <property name="propagate-natural-height">true</property>
         <property name="visible">true</property>
         <child>
-          <object class="DzlThreeGrid" id="three_grid">
+          <object class="EggThreeGrid" id="three_grid">
             <property name="margin">36</property>
             <property name="column-spacing">12</property>
             <property name="row-spacing">6</property>

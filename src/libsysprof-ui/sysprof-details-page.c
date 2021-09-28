@@ -22,19 +22,20 @@
 
 #include "config.h"
 
-#include <dazzle.h>
 #include <glib/gi18n.h>
 #include <string.h>
 
 #include "sysprof-details-page.h"
 #include "sysprof-ui-private.h"
 
+#include "egg-three-grid.h"
+
 struct _SysprofDetailsPage
 {
   SysprofPage   parent_instance;
 
   /* Template Objects */
-  DzlThreeGrid *three_grid;
+  EggThreeGrid *three_grid;
   GtkListStore *marks_store;
   GtkTreeView  *marks_view;
   GtkLabel     *counters;
@@ -96,7 +97,7 @@ sysprof_details_page_class_init (SysprofDetailsPageClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, start_time);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, three_grid);
 
-  g_type_ensure (DZL_TYPE_THREE_GRID);
+  g_type_ensure (EGG_TYPE_THREE_GRID);
 }
 
 static void
@@ -266,13 +267,13 @@ sysprof_details_page_add_item (SysprofDetailsPage *self,
   if (left)
     gtk_container_add_with_properties (GTK_CONTAINER (self->three_grid), left,
                                        "row", self->next_row,
-                                       "column", DZL_THREE_GRID_COLUMN_LEFT,
+                                       "column", EGG_THREE_GRID_COLUMN_LEFT,
                                        NULL);
 
   if (center)
     gtk_container_add_with_properties (GTK_CONTAINER (self->three_grid), center,
                                        "row", self->next_row,
-                                       "column", DZL_THREE_GRID_COLUMN_CENTER,
+                                       "column", EGG_THREE_GRID_COLUMN_CENTER,
                                        NULL);
 
   self->next_row++;

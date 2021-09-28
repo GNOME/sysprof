@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <dazzle.h>
+#include <gtk/gtk.h>
 #include <sysprof.h>
 
 G_BEGIN_DECLS

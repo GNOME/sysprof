@@ -1,6 +1,7 @@
 if get_option('enable_gtk') and get_option('libsysprof')
 
 sysprof_sources = [
+  'egg-binding-group.c',
   'sysprof.c',
   'sysprof-application.c',
   'sysprof-window.c',

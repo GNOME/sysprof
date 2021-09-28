@@ -88,7 +88,7 @@ libsysprof_ui_resources = gnome.compile_resources(
 # Subset of dependencies used in generating the pkg-config file
 libsysprof_ui_pkg_deps = [
   dependency('gio-2.0', version: glib_req_version),
-  dependency('gtk+-3.0', version: gtk_req_version),
+  dependency('gtk4', version: gtk_req_version),
 ]
 
 libsysprof_ui_deps = libsysprof_ui_pkg_deps + [
@@ -100,7 +100,7 @@ libsysprof_ui_deps = libsysprof_ui_pkg_deps + [
 libsysprof_ui_pkg_deps += libsysprof
 
 libsysprof_ui = shared_library(
-  'sysprof-ui-@0@'.format(libsysprof_api_version),
+  'sysprof-ui-@0@'.format(libsysprof_ui_api_version),
   libsysprof_ui_public_sources + libsysprof_ui_private_sources + libsysprof_ui_resources,
 
            dependencies: libsysprof_ui_deps + [librax_dep],
@@ -121,7 +121,7 @@ pkgconfig.generate(
       subdirs: [ sysprof_header_subdir ],
   description: 'The UI library for GTK applications embedding sysprof',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
-     requires: [ 'gio-2.0', 'gtk+-3.0' ],
+     requires: [ 'gio-2.0', 'gtk4' ],
      libraries_private: libsysprof_ui_pkg_deps,
      variables: [
        'datadir=' + datadir_for_pc_file,

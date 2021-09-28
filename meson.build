@@ -23,7 +23,6 @@ podir = join_paths(meson.current_source_dir(), 'po')
 glib_req_version = '>= 2.67.4'
 gtk_req_version = '>= 3.22'
 polkit_req_version = '>= 0.105'
-dazzle_req_version = '>= 3.30.0'
 
 cc = meson.get_compiler('c')
 

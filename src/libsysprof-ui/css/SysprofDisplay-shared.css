@@ -77,10 +77,6 @@ SysprofVisualizersFrame .left-column .small-button.flat:hover {
   border-color: @borders;
   }
 
-SysprofDisplay > dzlmultipaned > :nth-child(2) {
-  border-top: 1px solid @borders;
-  }
-
 SysprofVisualizersFrame .selection {
   border-radius: 3px;
   background-color: alpha(@theme_selected_bg_color, 0.35);

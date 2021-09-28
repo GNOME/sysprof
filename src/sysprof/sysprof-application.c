@@ -27,10 +27,10 @@
 
 struct _SysprofApplication
 {
-  DzlApplication parent_instance;
+  GtkApplication parent_instance;
 };
 
-G_DEFINE_TYPE (SysprofApplication, sysprof_application, DZL_TYPE_APPLICATION)
+G_DEFINE_TYPE (SysprofApplication, sysprof_application, GTK_TYPE_APPLICATION)
 
 struct {
   const gchar *action_name;

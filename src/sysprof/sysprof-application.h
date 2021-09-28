@@ -18,13 +18,13 @@
 
 #pragma once
 
-#include <dazzle.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_APPLICATION (sysprof_application_get_type())
 
-G_DECLARE_FINAL_TYPE (SysprofApplication, sysprof_application, SYSPROF, APPLICATION, DzlApplication)
+G_DECLARE_FINAL_TYPE (SysprofApplication, sysprof_application, SYSPROF, APPLICATION, GtkApplication)
 
 SysprofApplication *sysprof_application_new (void);
 

@@ -845,6 +845,7 @@ descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
     }
 }
 
+#if 0
 static void
 copy_tree_view_selection_cb (GtkTreeModel *model,
                              GtkTreePath  *path,
@@ -899,7 +900,6 @@ copy_tree_view_selection (GtkTreeView *tree_view)
   gtk_clipboard_set_text (clipboard, str->str, str->len);
 }
 
-#if 0
 /* use widget action */
 static void
 sysprof_memprof_page_copy_cb (GtkWidget         *widget,

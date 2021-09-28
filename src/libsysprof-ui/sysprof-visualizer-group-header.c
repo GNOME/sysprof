@@ -120,7 +120,7 @@ _sysprof_visualizer_group_header_add_row (SysprofVisualizerGroupHeader *self,
                             "pixel-size", 16,
                             "visible", TRUE,
                             NULL);
-      dzl_gtk_widget_add_style_class (GTK_WIDGET (image), "dim-label");
+      gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (image)), "dim-label");
       gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (image));
     }
 

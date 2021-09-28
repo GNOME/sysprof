@@ -11,9 +11,13 @@
         <property name="title" translatable="yes">Sysprof</property>
         <child>
           <object class="GtkMenuButton" id="menu_button">
-            <property name="icon-name">open-menu-symbolic</property>
-            <property name="show-accels">true</property>
             <property name="visible">true</property>
+            <child>
+              <object class="GtkImage">
+                <property name="icon-name">open-menu-symbolic</property>
+                <property name="visible">true</property>
+              </object>
+            </child>
             <style>
               <class name="image-button"/>
             </style>

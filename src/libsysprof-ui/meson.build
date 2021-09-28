@@ -13,6 +13,7 @@ libsysprof_ui_public_sources = [
 ]
 
 libsysprof_ui_private_sources = [
+  'egg-three-grid.c',
   'pointcache.c',
   'rectangles.c',
   'sysprof-aid.c',

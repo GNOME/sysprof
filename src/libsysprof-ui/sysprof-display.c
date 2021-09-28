@@ -71,7 +71,7 @@ typedef struct
   SysprofCaptureFlags        flags;
 } SysprofDisplayPrivate;
 
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofDisplay, sysprof_display, GTK_TYPE_BIN)
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofDisplay, sysprof_display, GTK_TYPE_WIDGET)
 
 enum {
   PROP_0,
@@ -452,6 +452,7 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
                                            "/org/gnome/sysprof/css/SysprofDisplay-shared.css");
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-display.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_set_css_name (widget_class, "SysprofDisplay");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, assistant);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, details);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="SysprofDisplay" parent="GtkBin">
+  <template class="SysprofDisplay" parent="GtkWidget">
     <child>
       <object class="GtkStack" id="stack">
         <property name="homogeneous">false</property>

@@ -25,20 +25,22 @@
 #include <glib/gi18n.h>
 #include <sysprof-ui.h>
 
+#include "egg-binding-group.h"
+
 #include "sysprof-window.h"
 
 struct _SysprofWindow
 {
-  DzlApplicationWindow  parent_instance;
+  GtkApplicationWindow  parent_instance;
 
-  DzlBindingGroup      *bindings;
+  EggBindingGroup      *bindings;
 
   SysprofNotebook      *notebook;
   GtkButton            *open_button;
   GtkMenuButton        *menu_button;
 };
 
-G_DEFINE_TYPE (SysprofWindow, sysprof_window, DZL_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE (SysprofWindow, sysprof_window, GTK_TYPE_APPLICATION_WINDOW)
 
 /**
  * sysprof_window_new:
@@ -63,9 +65,11 @@ sysprof_window_notify_can_replay_cb (SysprofWindow   *self,
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (SYSPROF_IS_NOTEBOOK (notebook));
 
+#if 0
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "replay-capture",
                              "enabled", sysprof_notebook_get_can_replay (notebook),
                              NULL);
+#endif
 }
 
 static void
@@ -76,9 +80,11 @@ sysprof_window_notify_can_save_cb (SysprofWindow   *self,
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (SYSPROF_IS_NOTEBOOK (notebook));
 
+#if 0
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "save-capture",
                              "enabled", sysprof_notebook_get_can_save (notebook),
                              NULL);
+#endif
 }
 
 static void
@@ -175,7 +181,7 @@ sysprof_window_finalize (GObject *object)
 {
   SysprofWindow *self = (SysprofWindow *)object;
 
-  dzl_binding_group_set_source (self->bindings, NULL);
+  egg_binding_group_set_source (self->bindings, NULL);
   g_clear_object (&self->bindings);
 
   G_OBJECT_CLASS (sysprof_window_parent_class)->finalize (object);
@@ -194,6 +200,17 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, open_button);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, notebook);
 
+#if 0
+  /* Switch to GtkShortcutController class bindings */
+  DzlShortcutController *controller;
+  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
+  dzl_shortcut_controller_add_command_action (controller,
+                                              "org.gnome.sysprof3.stop-recording",
+                                              "Escape",
+                                              DZL_SHORTCUT_PHASE_BUBBLE,
+                                              "win.stop-recording");
+#endif
+
   g_type_ensure (SYSPROF_TYPE_NOTEBOOK);
   g_type_ensure (SYSPROF_TYPE_DISPLAY);
 }
@@ -201,7 +218,6 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 static void
 sysprof_window_init (SysprofWindow *self)
 {
-  DzlShortcutController *controller;
   static GActionEntry actions[] = {
     { "close-tab", close_tab_cb },
     { "new-tab", new_tab_cb },
@@ -210,8 +226,12 @@ sysprof_window_init (SysprofWindow *self)
     { "save-capture", save_capture_cb },
     { "stop-recording", stop_recording_cb },
   };
+  GMenu *menu;
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  menu = gtk_application_get_menu_by_id (GTK_APPLICATION (g_application_get_default ()), "win-menu");
+  gtk_menu_button_set_menu_model (self->menu_button, G_MENU_MODEL (menu));
 
   g_action_map_add_action_entries (G_ACTION_MAP (self),
                                    actions,
@@ -230,24 +250,20 @@ sysprof_window_init (SysprofWindow *self)
                            self,
                            G_CONNECT_SWAPPED);
 
-  self->bindings = dzl_binding_group_new ();
-  dzl_binding_group_bind (self->bindings, "title", self, "title", G_BINDING_SYNC_CREATE);
+  self->bindings = egg_binding_group_new ();
+  egg_binding_group_bind (self->bindings, "title", self, "title", G_BINDING_SYNC_CREATE);
   g_object_bind_property (self->notebook, "current", self->bindings, "source",
                           G_BINDING_SYNC_CREATE);
 
-  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
-  dzl_shortcut_controller_add_command_action (controller,
-                                              "org.gnome.sysprof3.stop-recording",
-                                              "Escape",
-                                              DZL_SHORTCUT_PHASE_BUBBLE,
-                                              "win.stop-recording");
-
+#if 0
+  /* Switch to using gtk_widget_action_set_enabled() */
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "save-capture",
                              "enabled", FALSE,
                              NULL);
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "replay-capture",
                              "enabled", FALSE,
                              NULL);
+#endif
 }
 
 void

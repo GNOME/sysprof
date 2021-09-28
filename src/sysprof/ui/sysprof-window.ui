@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <interface>
-  <template class="SysprofWindow" parent="DzlApplicationWindow">
+  <template class="SysprofWindow" parent="GtkApplicationWindow">
     <property name="default-height">750</property>
     <property name="icon-name">org.gnome.Sysprof-symbolic</property>
     <property name="show-menubar">false</property>
@@ -10,10 +10,9 @@
         <property name="visible">true</property>
         <property name="title" translatable="yes">Sysprof</property>
         <child>
-          <object class="DzlMenuButton" id="menu_button">
+          <object class="GtkMenuButton" id="menu_button">
             <property name="icon-name">open-menu-symbolic</property>
             <property name="show-accels">true</property>
-            <property name="menu-id">win-menu</property>
             <property name="visible">true</property>
             <style>
               <class name="image-button"/>

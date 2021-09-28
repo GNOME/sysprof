@@ -20,15 +20,13 @@
 
 #pragma once
 
-#include <dazzle.h>
-
 #include "sysprof-application.h"
 
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_WINDOW (sysprof_window_get_type())
 
-G_DECLARE_FINAL_TYPE (SysprofWindow, sysprof_window, SYSPROF, WINDOW, DzlApplicationWindow)
+G_DECLARE_FINAL_TYPE (SysprofWindow, sysprof_window, SYSPROF, WINDOW, GtkApplicationWindow)
 
 GtkWidget *sysprof_window_new              (SysprofApplication *application);
 void       sysprof_window_new_tab          (SysprofWindow      *self);

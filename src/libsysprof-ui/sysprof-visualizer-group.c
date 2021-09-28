@@ -158,21 +158,6 @@ create_action_name (const gchar *str)
 }
 
 static void
-sysprof_visualizer_group_add (GtkContainer *container,
-                              GtkWidget    *child)
-{
-  SysprofVisualizerGroup *self = (SysprofVisualizerGroup *)container;
-
-  g_assert (SYSPROF_IS_VISUALIZER_GROUP (self));
-  g_assert (GTK_IS_WIDGET (child));
-
-  if (SYSPROF_IS_VISUALIZER (child))
-    sysprof_visualizer_group_insert (self, SYSPROF_VISUALIZER (child), -1, FALSE);
-  else
-    GTK_CONTAINER_CLASS (sysprof_visualizer_group_parent_class)->add (container, child);
-}
-
-static void
 sysprof_visualizer_group_finalize (GObject *object)
 {
   SysprofVisualizerGroup *self = (SysprofVisualizerGroup *)object;
@@ -257,13 +242,10 @@ sysprof_visualizer_group_class_init (SysprofVisualizerGroupClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-  GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
   object_class->finalize = sysprof_visualizer_group_finalize;
   object_class->get_property = sysprof_visualizer_group_get_property;
   object_class->set_property = sysprof_visualizer_group_set_property;
-
-  container_class->add = sysprof_visualizer_group_add;
 
   properties [PROP_HAS_PAGE] =
     g_param_spec_boolean ("has-page",

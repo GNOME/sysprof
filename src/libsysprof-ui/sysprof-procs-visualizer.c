@@ -183,24 +183,24 @@ sysprof_procs_visualizer_set_reader (SysprofVisualizer    *visualizer,
   g_task_run_in_thread (task, discovery_worker);
 }
 
-static gboolean
-sysprof_procs_visualizer_draw (GtkWidget *widget,
-                               cairo_t   *cr)
+static void
+sysprof_procs_visualizer_snapshot (GtkWidget   *widget,
+                                   GtkSnapshot *snapshot)
 {
   SysprofProcsVisualizer *self = (SysprofProcsVisualizer *)widget;
   g_autofree SysprofVisualizerAbsolutePoint *points = NULL;
-  gboolean ret = GDK_EVENT_PROPAGATE;
   GtkAllocation alloc;
   GdkRGBA background;
   GdkRGBA foreground;
   const Point *fpoints;
   guint n_fpoints = 0;
   Discovery *d;
+  cairo_t *cr;
   gdouble last_x = 0;
   gdouble last_y = 0;
 
   g_assert (SYSPROF_IS_PROCS_VISUALIZER (self));
-  g_assert (cr != NULL);
+  g_assert (snapshot != NULL);
 
   gtk_widget_get_allocation (widget, &alloc);
 
@@ -208,14 +208,17 @@ sysprof_procs_visualizer_draw (GtkWidget *widget,
   background = foreground;
   background.alpha *= .5;
 
-  ret = GTK_WIDGET_CLASS (sysprof_procs_visualizer_parent_class)->draw (widget, cr);
+  GTK_WIDGET_CLASS (sysprof_procs_visualizer_parent_class)->snapshot (widget, snapshot);
 
   if (!(d = self->discovery) || d->cache == NULL)
-    return ret;
+    return;
 
   if (!(fpoints = point_cache_get_points (d->cache, 1, &n_fpoints)))
-    return ret;
+    return;
 
+  /* This is all going to need offscreen drawing instead of new cairo every frame */
+
+  cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, alloc.width, alloc.height));
   points = g_new0 (SysprofVisualizerAbsolutePoint, n_fpoints);
 
   sysprof_visualizer_translate_points (SYSPROF_VISUALIZER (self),
@@ -254,7 +257,7 @@ sysprof_procs_visualizer_draw (GtkWidget *widget,
   gdk_cairo_set_source_rgba (cr, &foreground);
   cairo_stroke (cr);
 
-  return ret;
+  cairo_destroy (cr);
 }
 
 static void
@@ -276,7 +279,7 @@ sysprof_procs_visualizer_class_init (SysprofProcsVisualizerClass *klass)
 
   object_class->finalize = sysprof_procs_visualizer_finalize;
 
-  widget_class->draw = sysprof_procs_visualizer_draw;
+  widget_class->snapshot = sysprof_procs_visualizer_snapshot;
 
   visualizer_class->set_reader = sysprof_procs_visualizer_set_reader;
 }

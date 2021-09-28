@@ -38,7 +38,7 @@ typedef struct
   GtkAllocation cache_alloc;
 } SysprofVisualizerPrivate;
 
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofVisualizer, sysprof_visualizer, DZL_TYPE_BIN)
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofVisualizer, sysprof_visualizer, GTK_TYPE_BIN)
 
 enum {
   PROP_0,

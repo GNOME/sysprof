@@ -24,7 +24,7 @@
 # error "Only <sysprof-ui.h> can be included directly."
 #endif
 
-#include <dazzle.h>
+#include <gtk/gtk.h>
 #include <sysprof.h>
 
 G_BEGIN_DECLS
@@ -44,11 +44,11 @@ typedef struct
 #define SYSPROF_TYPE_VISUALIZER (sysprof_visualizer_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_DERIVABLE_TYPE (SysprofVisualizer, sysprof_visualizer, SYSPROF, VISUALIZER, DzlBin)
+G_DECLARE_DERIVABLE_TYPE (SysprofVisualizer, sysprof_visualizer, SYSPROF, VISUALIZER, GtkBin)
 
 struct _SysprofVisualizerClass
 {
-  DzlBinClass parent_class;
+  GtkBinClass parent_class;
 
   void (*set_reader) (SysprofVisualizer    *self,
                       SysprofCaptureReader *reader);

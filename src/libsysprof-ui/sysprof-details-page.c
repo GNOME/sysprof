@@ -32,7 +32,7 @@
 
 struct _SysprofDetailsPage
 {
-  SysprofPage   parent_instance;
+  GtkWidget     parent_instance;
 
   /* Template Objects */
   EggThreeGrid *three_grid;
@@ -52,7 +52,7 @@ struct _SysprofDetailsPage
   guint         next_row;
 };
 
-G_DEFINE_TYPE (SysprofDetailsPage, sysprof_details_page, GTK_TYPE_BIN)
+G_DEFINE_TYPE (SysprofDetailsPage, sysprof_details_page, GTK_TYPE_WIDGET)
 
 #if GLIB_CHECK_VERSION(2, 56, 0)
 # define _g_date_time_new_from_iso8601 g_date_time_new_from_iso8601
@@ -83,6 +83,7 @@ sysprof_details_page_class_init (SysprofDetailsPageClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-details-page.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, allocations);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, counters);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, cpu_label);

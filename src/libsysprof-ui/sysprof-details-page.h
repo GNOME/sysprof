@@ -39,7 +39,7 @@ SYSPROF_ALIGNED_END (8);
 
 #define SYSPROF_TYPE_DETAILS_PAGE (sysprof_details_page_get_type())
 
-G_DECLARE_FINAL_TYPE (SysprofDetailsPage, sysprof_details_page, SYSPROF, DETAILS_PAGE, GtkBin)
+G_DECLARE_FINAL_TYPE (SysprofDetailsPage, sysprof_details_page, SYSPROF, DETAILS_PAGE, GtkWidget)
 
 GtkWidget *sysprof_details_page_new        (void);
 void       sysprof_details_page_set_reader (SysprofDetailsPage    *self,

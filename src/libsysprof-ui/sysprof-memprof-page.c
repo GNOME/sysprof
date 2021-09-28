@@ -39,7 +39,6 @@
 
 #include "config.h"
 
-#include <dazzle.h>
 #include <glib/gi18n.h>
 
 #include "../stackstash.h"
@@ -237,7 +236,7 @@ update_summary (SysprofMemprofPage    *self,
 
       gtk_label_set_label (GTK_LABEL (title), title_str);
       gtk_label_set_xalign (GTK_LABEL (title), 0);
-      dzl_gtk_widget_add_style_class (title, "dim-label");
+      gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (title)), "dim-label");
 
       gtk_widget_set_margin_start (box, 6);
       gtk_widget_set_margin_end (box, 6);
@@ -900,6 +899,8 @@ copy_tree_view_selection (GtkTreeView *tree_view)
   gtk_clipboard_set_text (clipboard, str->str, str->len);
 }
 
+#if 0
+/* use widget action */
 static void
 sysprof_memprof_page_copy_cb (GtkWidget         *widget,
                              SysprofMemprofPage *self)
@@ -923,6 +924,7 @@ sysprof_memprof_page_copy_cb (GtkWidget         *widget,
   else if (focus == GTK_WIDGET (priv->functions_view))
     copy_tree_view_selection (priv->functions_view);
 }
+#endif
 
 static void
 sysprof_memprof_page_generate_cb (GObject      *object,
@@ -1157,13 +1159,26 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
 
   g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_PERCENT);
+
+#if 0
+  /* Use class shortcut/actions */
+  DzlShortcutController *controller;
+  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
+
+  dzl_shortcut_controller_add_command_callback (controller,
+                                                "org.gnome.sysprof3.capture.copy",
+                                                "<Control>c",
+                                                DZL_SHORTCUT_PHASE_BUBBLE,
+                                                (GtkCallback) sysprof_memprof_page_copy_cb,
+                                                self,
+                                                NULL);
+#endif
 }
 
 static void
 sysprof_memprof_page_init (SysprofMemprofPage *self)
 {
   SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
-  DzlShortcutController *controller;
   GtkTreeSelection *selection;
   GtkCellRenderer *cell;
 
@@ -1246,16 +1261,6 @@ sysprof_memprof_page_init (SysprofMemprofPage *self)
 
   gtk_tree_selection_set_mode (gtk_tree_view_get_selection (priv->descendants_view),
                                GTK_SELECTION_MULTIPLE);
-
-  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
-
-  dzl_shortcut_controller_add_command_callback (controller,
-                                                "org.gnome.sysprof3.capture.copy",
-                                                "<Control>c",
-                                                DZL_SHORTCUT_PHASE_BUBBLE,
-                                                (GtkCallback) sysprof_memprof_page_copy_cb,
-                                                self,
-                                                NULL);
 }
 
 typedef struct _Descendant Descendant;

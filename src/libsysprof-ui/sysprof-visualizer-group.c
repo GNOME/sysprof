@@ -22,7 +22,6 @@
 
 #include "config.h"
 
-#include <dazzle.h>
 #include <glib/gi18n.h>
 
 #include "sysprof-visualizer.h"
@@ -186,7 +185,7 @@ sysprof_visualizer_group_finalize (GObject *object)
   g_clear_object (&priv->rows_menu);
   g_clear_object (&priv->actions);
 
-  dzl_clear_weak_pointer (&priv->header);
+  g_clear_weak_pointer (&priv->header);
 
   G_OBJECT_CLASS (sysprof_visualizer_group_parent_class)->finalize (object);
 }
@@ -343,7 +342,7 @@ _sysprof_visualizer_group_set_header (SysprofVisualizerGroup       *self,
   g_return_if_fail (SYSPROF_IS_VISUALIZER_GROUP (self));
   g_return_if_fail (!header || SYSPROF_IS_VISUALIZER_GROUP_HEADER (header));
 
-  if (dzl_set_weak_pointer (&priv->header, header))
+  if (g_set_weak_pointer (&priv->header, header))
     {
       if (header != NULL)
         {

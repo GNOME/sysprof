@@ -31,7 +31,7 @@ typedef struct
   gulong            notify_elapsed_handler;
 } SysprofRecordingStateViewPrivate;
 
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofRecordingStateView, sysprof_recording_state_view, GTK_TYPE_BIN)
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofRecordingStateView, sysprof_recording_state_view, GTK_TYPE_WIDGET)
 
 enum {
   PROP_0,
@@ -153,6 +153,7 @@ sysprof_recording_state_view_class_init (SysprofRecordingStateViewClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-recording-state-view.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofRecordingStateView, elapsed);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofRecordingStateView, samples);
 

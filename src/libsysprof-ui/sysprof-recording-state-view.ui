@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <template class="SysprofRecordingStateView" parent="GtkBin">
+  <template class="SysprofRecordingStateView" parent="GtkWidget">
     <child>
       <object class="GtkBox">
         <property name="width-request">500</property>

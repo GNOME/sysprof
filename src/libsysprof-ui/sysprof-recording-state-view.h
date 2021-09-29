@@ -27,13 +27,11 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_RECORDING_STATE_VIEW (sysprof_recording_state_view_get_type())
 
-G_DECLARE_DERIVABLE_TYPE (SysprofRecordingStateView, sysprof_recording_state_view, SYSPROF, RECORDING_STATE_VIEW, GtkBin)
+G_DECLARE_DERIVABLE_TYPE (SysprofRecordingStateView, sysprof_recording_state_view, SYSPROF, RECORDING_STATE_VIEW, GtkWidget)
 
 struct _SysprofRecordingStateViewClass
 {
-  GtkBinClass parent;
-
-  gpointer padding[4];
+  GtkWidgetClass parent;
 };
 
 GtkWidget *sysprof_recording_state_view_new          (void);

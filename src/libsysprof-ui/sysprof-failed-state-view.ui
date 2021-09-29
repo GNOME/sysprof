@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <template class="SysprofFailedStateView" parent="GtkBin">
+  <template class="SysprofFailedStateView" parent="GtkWidget">
     <child>
       <object class="GtkBox">
         <property name="border-width">36</property>

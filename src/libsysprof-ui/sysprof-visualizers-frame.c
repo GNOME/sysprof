@@ -30,7 +30,7 @@
 
 struct _SysprofVisualizersFrame
 {
-  GtkBin                  parent_instance;
+  GtkWidget               parent_instance;
 
   /* Drag selection tracking */
   SysprofSelection       *selection;
@@ -65,13 +65,13 @@ typedef struct
 {
   GtkListBox      *list;
   GtkStyleContext *style_context;
-  cairo_t         *cr;
+  GtkSnapshot     *snapshot;
   GtkAllocation    alloc;
   gint64           begin_time;
   gint64           duration;
 } SelectionDraw;
 
-G_DEFINE_TYPE (SysprofVisualizersFrame, sysprof_visualizers_frame, GTK_TYPE_BIN)
+G_DEFINE_TYPE (SysprofVisualizersFrame, sysprof_visualizers_frame, GTK_TYPE_WIDGET)
 
 enum {
   PROP_0,
@@ -115,7 +115,7 @@ draw_selection_cb (SysprofSelection *selection,
 
   g_assert (SYSPROF_IS_SELECTION (selection));
   g_assert (draw != NULL);
-  g_assert (draw->cr != NULL);
+  g_assert (draw->snapshot != NULL);
   g_assert (GTK_IS_LIST_BOX (draw->list));
 
   x = (range_begin - draw->begin_time) / (gdouble)draw->duration;
@@ -132,29 +132,31 @@ draw_selection_cb (SysprofSelection *selection,
       area.x -= area.width;
     }
 
-  gtk_render_background (draw->style_context, draw->cr, area.x + 2, area.y + 2, area.width - 4, area.height - 4);
+  gtk_snapshot_render_background (draw->snapshot, draw->style_context, area.x + 2, area.y + 2, area.width - 4, area.height - 4);
 }
 
-static gboolean
-visualizers_draw_after_cb (SysprofVisualizersFrame *self,
-                           cairo_t                 *cr,
-                           GtkListBox              *list)
+static void
+sysprof_visualizers_frame_snapshot (GtkWidget   *widget,
+                                    GtkSnapshot *snapshot)
 {
+  SysprofVisualizersFrame *self = (SysprofVisualizersFrame *)widget;
   SelectionDraw draw;
 
   g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
-  g_assert (GTK_IS_LIST_BOX (list));
+  g_assert (GTK_IS_SNAPSHOT (snapshot));
 
-  draw.style_context = gtk_widget_get_style_context (GTK_WIDGET (list));
-  draw.list = list;
-  draw.cr = cr;
+  GTK_WIDGET_CLASS (sysprof_visualizers_frame_parent_class)->snapshot (widget, snapshot);
+
+  draw.style_context = gtk_widget_get_style_context (GTK_WIDGET (self->visualizers));
+  draw.list = self->visualizers;
+  draw.snapshot = snapshot;
   draw.begin_time = self->begin_time;
   draw.duration = sysprof_visualizer_get_duration (SYSPROF_VISUALIZER (self->ticks));
 
   if (draw.duration == 0)
-    return GDK_EVENT_PROPAGATE;
+    return;
 
-  gtk_widget_get_allocation (GTK_WIDGET (list), &draw.alloc);
+  gtk_widget_get_allocation (GTK_WIDGET (self->visualizers), &draw.alloc);
 
   if (sysprof_selection_get_has_selection (self->selection) || self->button_pressed)
     {
@@ -164,72 +166,59 @@ visualizers_draw_after_cb (SysprofVisualizersFrame *self,
         draw_selection_cb (self->selection, self->drag_begin_at, self->drag_selection_at, &draw);
       gtk_style_context_remove_class (draw.style_context, "selection");
     }
-
-  return GDK_EVENT_PROPAGATE;
 }
 
 static void
-visualizers_realize_after_cb (SysprofVisualizersFrame *self,
-                              GtkListBox              *list)
-{
-  GdkDisplay *display;
-  GdkWindow *window;
-  GdkCursor *cursor;
-
-  g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
-  g_assert (GTK_IS_LIST_BOX (list));
-
-  window = gtk_widget_get_window (GTK_WIDGET (list));
-  display = gdk_window_get_display (window);
-  cursor = gdk_cursor_new_from_name (display, "text");
-  gdk_window_set_cursor (window, cursor);
-  g_clear_object (&cursor);
-}
-
-static gboolean
 visualizers_button_press_event_cb (SysprofVisualizersFrame *self,
-                                   GdkEventButton          *ev,
-                                   GtkListBox              *visualizers)
+                                   int                      n_presses,
+                                   double                   x,
+                                   double                   y,
+                                   GtkGestureClick         *gesture)
 {
-  g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
-  g_assert (ev != NULL);
-  g_assert (GTK_IS_LIST_BOX (visualizers));
+  GdkModifierType state;
+  guint button;
 
-  if (ev->button != GDK_BUTTON_PRIMARY)
+  g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
+  g_assert (GTK_IS_GESTURE_CLICK (gesture));
+
+  button = gtk_gesture_single_get_button (GTK_GESTURE_SINGLE (gesture));
+
+  if (button != GDK_BUTTON_PRIMARY)
     {
       if (sysprof_selection_get_has_selection (self->selection))
-        {
-          sysprof_selection_unselect_all (self->selection);
-          return GDK_EVENT_STOP;
-        }
-
-      return GDK_EVENT_PROPAGATE;
+        sysprof_selection_unselect_all (self->selection);
+      return;
     }
 
-  if ((ev->state & GDK_SHIFT_MASK) == 0)
+  state = gtk_event_controller_get_current_event_state (GTK_EVENT_CONTROLLER (gesture));
+
+  if ((state & GDK_SHIFT_MASK) == 0)
     sysprof_selection_unselect_all (self->selection);
 
   self->button_pressed = TRUE;
 
-  self->drag_begin_at = get_time_from_x (self, ev->x);
+  self->drag_begin_at = get_time_from_x (self, x);
   self->drag_selection_at = self->drag_begin_at;
 
-  gtk_widget_queue_draw (GTK_WIDGET (visualizers));
-
-  return GDK_EVENT_PROPAGATE;
+  gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
-static gboolean
+static void
 visualizers_button_release_event_cb (SysprofVisualizersFrame *self,
-                                     GdkEventButton          *ev,
-                                     GtkListBox              *list)
+                                     int                      n_release,
+                                     double                   x,
+                                     double                   y,
+                                     GtkGestureClick         *gesture)
 {
-  g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
-  g_assert (ev != NULL);
-  g_assert (GTK_IS_LIST_BOX (list));
+  guint button;
 
-  if (!self->button_pressed || ev->button != GDK_BUTTON_PRIMARY)
-    return GDK_EVENT_PROPAGATE;
+  g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
+  g_assert (GTK_IS_GESTURE_CLICK (gesture));
+
+  button = gtk_gesture_single_get_button (GTK_GESTURE_SINGLE (gesture));
+
+  if (!self->button_pressed || button != GDK_BUTTON_PRIMARY)
+    return;
 
   self->button_pressed = FALSE;
 
@@ -242,46 +231,33 @@ visualizers_button_release_event_cb (SysprofVisualizersFrame *self,
       self->drag_selection_at = -1;
     }
 
-  gtk_widget_queue_draw (GTK_WIDGET (list));
-
-  return GDK_EVENT_STOP;
+  gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
-static gboolean
-visualizers_motion_notify_event_cb (SysprofVisualizersFrame *self,
-                                    GdkEventMotion          *ev,
-                                    GtkListBox              *list)
+static void
+visualizers_motion_notify_event_cb (SysprofVisualizersFrame  *self,
+                                    double                    x,
+                                    double                    y,
+                                    GtkEventControllerMotion *motion)
 {
   g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
-  g_assert (ev != NULL);
-  g_assert (GTK_IS_LIST_BOX (list));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
 
-  if (!self->button_pressed)
-    return GDK_EVENT_PROPAGATE;
-
-  self->drag_selection_at = get_time_from_x (self, ev->x);
-
-  gtk_widget_queue_draw (GTK_WIDGET (list));
-
-  return GDK_EVENT_PROPAGATE;
+  if (self->button_pressed)
+    {
+      self->drag_selection_at = get_time_from_x (self, x);
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
 }
 
 static void
-set_children_width_request_cb (GtkWidget *widget,
-                               gpointer   data)
+set_children_width_request (GtkWidget *widget,
+                            int        width)
 {
-  gtk_widget_set_size_request (widget, GPOINTER_TO_INT (data), -1);
-}
-
-static void
-set_children_width_request (GtkContainer *container,
-                            gint          width)
-{
-  g_assert (GTK_IS_CONTAINER (container));
-
-  gtk_container_foreach (container,
-                         set_children_width_request_cb,
-                         GINT_TO_POINTER (width));
+  for (GtkWidget *child = gtk_widget_get_first_child (widget);
+       child;
+       child = gtk_widget_get_next_sibling (child))
+    gtk_widget_set_size_request (child, width, -1);
 }
 
 static void
@@ -297,8 +273,8 @@ sysprof_visualizers_frame_notify_zoom (SysprofVisualizersFrame *self,
 
   duration = self->end_time - self->begin_time;
   data_width = sysprof_zoom_manager_get_width_for_duration (self->zoom_manager, duration);
-  set_children_width_request (GTK_CONTAINER (self->ticks_viewport), data_width);
-  set_children_width_request (GTK_CONTAINER (self->visualizers_viewport), data_width);
+  set_children_width_request (GTK_WIDGET (self->ticks_viewport), data_width);
+  set_children_width_request (GTK_WIDGET (self->visualizers_viewport), data_width);
 }
 
 static gint
@@ -306,17 +282,16 @@ find_pos (SysprofVisualizersFrame *self,
           const gchar             *title,
           gint                     priority)
 {
-  GList *list;
   gint pos = 0;
 
   if (title == NULL)
     return -1;
 
-  list = gtk_container_get_children (GTK_CONTAINER (self->visualizers));
-
-  for (const GList *iter = list; iter; iter = iter->next)
+  for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (self->visualizers));
+       child;
+       child = gtk_widget_get_next_sibling (child))
     {
-      SysprofVisualizerGroup *group = iter->data;
+      SysprofVisualizerGroup *group = SYSPROF_VISUALIZER_GROUP (child);
       gint prio = sysprof_visualizer_group_get_priority (group);
       const gchar *item = sysprof_visualizer_group_get_title (group);
 
@@ -327,41 +302,34 @@ find_pos (SysprofVisualizersFrame *self,
       pos++;
     }
 
-  g_list_free (list);
-
   return pos;
 }
 
-static void
-sysprof_visualizers_frame_add (GtkContainer *container,
-                               GtkWidget    *child)
+void
+sysprof_visualizers_frame_add_group (SysprofVisualizersFrame *self,
+                                     SysprofVisualizerGroup  *group)
 {
-  SysprofVisualizersFrame *self = (SysprofVisualizersFrame *)container;
+  SysprofVisualizerGroupHeader *header;
+  const char *title;
+  int priority;
+  int pos;
 
-  g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
-  g_assert (GTK_IS_WIDGET (child));
+  g_return_if_fail (SYSPROF_IS_VISUALIZERS_FRAME (self));
+  g_return_if_fail (SYSPROF_IS_VISUALIZER_GROUP (group));
 
-  if (SYSPROF_IS_VISUALIZER_GROUP (child))
-    {
-      SysprofVisualizerGroupHeader *header;
-      const gchar *title = sysprof_visualizer_group_get_title (SYSPROF_VISUALIZER_GROUP (child));
-      gint priority = sysprof_visualizer_group_get_priority (SYSPROF_VISUALIZER_GROUP (child));
-      gint pos = find_pos (self, title, priority);
+  title = sysprof_visualizer_group_get_title (group);
+  priority = sysprof_visualizer_group_get_priority (group);
+  pos = find_pos (self, title, priority);
 
-      gtk_list_box_insert (self->visualizers, child, pos);
+  gtk_list_box_insert (self->visualizers, GTK_WIDGET (group), pos);
 
-      header = _sysprof_visualizer_group_header_new ();
-      g_object_set_data (G_OBJECT (header), "VISUALIZER_GROUP", child);
-      gtk_list_box_insert (self->groups, GTK_WIDGET (header), pos);
-      _sysprof_visualizer_group_set_header (SYSPROF_VISUALIZER_GROUP (child), header);
-      gtk_widget_show (GTK_WIDGET (header));
+  header = _sysprof_visualizer_group_header_new ();
+  g_object_set_data (G_OBJECT (header), "VISUALIZER_GROUP", group);
+  gtk_list_box_insert (self->groups, GTK_WIDGET (header), pos);
+  _sysprof_visualizer_group_set_header (group, header);
+  gtk_widget_show (GTK_WIDGET (header));
 
-      sysprof_visualizers_frame_notify_zoom (self, NULL, self->zoom_manager);
-
-      return;
-    }
-
-  GTK_CONTAINER_CLASS (sysprof_visualizers_frame_parent_class)->add (container, child);
+  sysprof_visualizers_frame_notify_zoom (self, NULL, self->zoom_manager);
 }
 
 static void
@@ -392,17 +360,16 @@ sysprof_visualizers_frame_group_activated_cb (SysprofVisualizersFrame      *self
 }
 
 static void
-sysprof_visualizers_frame_size_allocate (GtkWidget     *widget,
-                                         GtkAllocation *alloc)
+sysprof_visualizers_frame_size_allocate (GtkWidget *widget,
+                                         int        width,
+                                         int        height,
+                                         int        baseline)
 {
   SysprofVisualizersFrame *self = (SysprofVisualizersFrame *)widget;
 
   g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
-  g_assert (alloc != NULL);
 
   sysprof_scrollmap_set_time_range (self->hscrollbar, self->begin_time, self->end_time);
-
-  GTK_WIDGET_CLASS (sysprof_visualizers_frame_parent_class)->size_allocate (widget, alloc);
 }
 
 static void
@@ -443,16 +410,15 @@ sysprof_visualizers_frame_class_init (SysprofVisualizersFrameClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-  GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
   object_class->finalize = sysprof_visualizers_frame_finalize;
   object_class->get_property = sysprof_visualizers_frame_get_property;
 
   widget_class->size_allocate = sysprof_visualizers_frame_size_allocate;
-
-  container_class->add = sysprof_visualizers_frame_add;
+  widget_class->snapshot = sysprof_visualizers_frame_snapshot;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-visualizers-frame.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_set_css_name (widget_class, "SysprofVisualizersFrame");
   gtk_widget_class_bind_template_child (widget_class, SysprofVisualizersFrame, groups);
   gtk_widget_class_bind_template_child (widget_class, SysprofVisualizersFrame, hscrollbar);
@@ -491,10 +457,35 @@ sysprof_visualizers_frame_class_init (SysprofVisualizersFrameClass *klass)
 static void
 sysprof_visualizers_frame_init (SysprofVisualizersFrame *self)
 {
+  GtkEventController *controller;
   GtkAdjustment *hadj;
   GtkAdjustment *zadj;
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_widget_set_cursor_from_name (GTK_WIDGET (self), "text");
+
+  controller = GTK_EVENT_CONTROLLER (gtk_gesture_click_new ());
+  g_signal_connect_object (controller,
+                           "pressed",
+                           G_CALLBACK (visualizers_button_press_event_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (controller,
+                           "released",
+                           G_CALLBACK (visualizers_button_release_event_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  gtk_event_controller_set_propagation_phase (controller, GTK_PHASE_CAPTURE);
+  gtk_widget_add_controller (GTK_WIDGET (self->visualizers), controller);
+
+  controller = gtk_event_controller_motion_new ();
+  g_signal_connect_object (controller,
+                           "motion",
+                           G_CALLBACK (visualizers_motion_notify_event_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  gtk_widget_add_controller (GTK_WIDGET (self->visualizers), controller);
 
   self->selection = g_object_new (SYSPROF_TYPE_SELECTION, NULL);
 
@@ -518,36 +509,6 @@ sysprof_visualizers_frame_init (SysprofVisualizersFrame *self)
   g_signal_connect_object (self->selection,
                            "changed",
                            G_CALLBACK (sysprof_visualizers_frame_selection_changed),
-                           self,
-                           G_CONNECT_SWAPPED);
-
-  g_signal_connect_object (self->visualizers,
-                           "draw",
-                           G_CALLBACK (visualizers_draw_after_cb),
-                           self,
-                           G_CONNECT_SWAPPED | G_CONNECT_AFTER);
-
-  g_signal_connect_object (self->visualizers,
-                           "realize",
-                           G_CALLBACK (visualizers_realize_after_cb),
-                           self,
-                           G_CONNECT_SWAPPED | G_CONNECT_AFTER);
-
-  g_signal_connect_object (self->visualizers,
-                           "button-press-event",
-                           G_CALLBACK (visualizers_button_press_event_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-
-  g_signal_connect_object (self->visualizers,
-                           "button-release-event",
-                           G_CALLBACK (visualizers_button_release_event_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-
-  g_signal_connect_object (self->visualizers,
-                           "motion-notify-event",
-                           G_CALLBACK (visualizers_motion_notify_event_cb),
                            self,
                            G_CONNECT_SWAPPED);
 

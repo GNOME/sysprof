@@ -30,8 +30,10 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_VISUALIZERS_FRAME (sysprof_visualizers_frame_get_type())
 
-G_DECLARE_FINAL_TYPE (SysprofVisualizersFrame, sysprof_visualizers_frame, SYSPROF, VISUALIZERS_FRAME, GtkBin)
+G_DECLARE_FINAL_TYPE (SysprofVisualizersFrame, sysprof_visualizers_frame, SYSPROF, VISUALIZERS_FRAME, GtkWidget)
 
+void                    sysprof_visualizers_frame_add_group          (SysprofVisualizersFrame  *self,
+                                                                      SysprofVisualizerGroup   *group);
 SysprofSelection       *sysprof_visualizers_frame_get_selection      (SysprofVisualizersFrame  *self);
 SysprofVisualizerGroup *sysprof_visualizers_frame_get_selected_group (SysprofVisualizersFrame  *self);
 SysprofZoomManager     *sysprof_visualizers_frame_get_zoom_manager   (SysprofVisualizersFrame  *self);

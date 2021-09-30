@@ -24,6 +24,7 @@ libsysprof_ui_private_sources = [
   'sysprof-callgraph-page.c',
   'sysprof-cell-renderer-duration.c',
   'sysprof-cell-renderer-percent.c',
+  'sysprof-cell-renderer-progress.c',
   'sysprof-color-cycle.c',
   'sysprof-counters-aid.c',
   'sysprof-cpu-aid.c',

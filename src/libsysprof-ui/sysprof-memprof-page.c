@@ -67,6 +67,10 @@ typedef struct
   GtkLabel                 *leaked_allocs;
   GtkLabel                 *peak_allocs;
   GtkListBox               *by_size;
+  GtkWidget                *callgraph;
+  GtkWidget                *summary_page;
+  GtkWidget                *loading_state;
+  GtkWidget                *empty_state;
 
   GCancellable             *cancellable;
 
@@ -307,7 +311,7 @@ sysprof_memprof_page_load (SysprofMemprofPage    *self,
 
   if (sysprof_memprof_profile_is_empty (profile))
     {
-      gtk_stack_set_visible_child_name (priv->stack, "summary");
+      gtk_stack_set_visible_child (priv->stack, priv->summary_page);
       return;
     }
 
@@ -342,7 +346,7 @@ sysprof_memprof_page_load (SysprofMemprofPage    *self,
       gtk_tree_selection_select_iter (selection, &iter);
     }
 
-  gtk_stack_set_visible_child_name (priv->stack, "callgraph");
+  gtk_stack_set_visible_child (priv->stack, priv->callgraph);
 
   g_clear_object (&functions);
 }
@@ -354,7 +358,7 @@ _sysprof_memprof_page_set_failed (SysprofMemprofPage *self)
 
   g_return_if_fail (SYSPROF_IS_MEMPROF_PAGE (self));
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 }
 
 static void
@@ -373,7 +377,7 @@ sysprof_memprof_page_unload (SysprofMemprofPage *self)
   gtk_tree_view_set_model (priv->functions_view, NULL);
   gtk_tree_view_set_model (priv->descendants_view, NULL);
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 }
 
 /**
@@ -971,7 +975,7 @@ sysprof_memprof_page_load_async (SysprofPage             *page,
   else
     g_set_object (&priv->cancellable, cancellable);
 
-  gtk_stack_set_visible_child_name (priv->stack, "loading");
+  gtk_stack_set_visible_child (priv->stack, priv->loading_state);
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_memprof_page_load_async);
@@ -1149,6 +1153,10 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, leaked_allocs);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, leaked_allocs_button);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, peak_allocs);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, loading_state);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, empty_state);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, summary_page);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, callgraph);
 
   gtk_widget_class_install_action (widget_class, "page.copy", NULL, sysprof_memprof_page_copy_cb);
 
@@ -1170,7 +1178,7 @@ sysprof_memprof_page_init (SysprofMemprofPage *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 
   gtk_list_box_set_header_func (priv->by_size, sep_header_func, NULL, NULL);
 
@@ -1530,7 +1538,7 @@ _sysprof_memprof_page_set_loading (SysprofMemprofPage *self,
     priv->loading--;
 
   if (priv->loading)
-    gtk_stack_set_visible_child_name (priv->stack, "loading");
+    gtk_stack_set_visible_child (priv->stack, priv->loading_state);
   else
-    gtk_stack_set_visible_child_name (priv->stack, "callgraph");
+    gtk_stack_set_visible_child (priv->stack, priv->callgraph);
 }

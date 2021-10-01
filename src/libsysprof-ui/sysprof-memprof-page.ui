@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="SysprofMemprofPage" parent="SysprofPage">
     <child>
@@ -67,7 +68,7 @@
           <object class="GtkStack" id="stack">
             <property name="visible">true</property>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkScrolledWindow" id="summary_page">
                 <property name="hscrollbar-policy">never</property>
                 <property name="visible">true</property>
                 <child>
@@ -79,7 +80,7 @@
                     <property name="orientation">vertical</property>
                     <property name="visible">true</property>
                     <child>
-                      <object class="DzlThreeGrid">
+                      <object class="EggThreeGrid">
                         <property name="expand">true</property>
                         <property name="row-spacing">6</property>
                         <property name="column-spacing">18</property>
@@ -92,22 +93,22 @@
                             <style>
                               <class name="dim-label"/>
                             </style>
+                            <layout>
+                              <property name="column">left</property>
+                              <property name="row">0</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">left</property>
-                            <property name="row">0</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="peak_allocs">
                             <property name="xalign">0</property>
                             <property name="selectable">true</property>
                             <property name="visible">false</property>
+                            <layout>
+                              <property name="column">center</property>
+                              <property name="row">0</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">center</property>
-                            <property name="row">0</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel">
@@ -117,22 +118,22 @@
                             <style>
                               <class name="dim-label"/>
                             </style>
+                            <layout>
+                              <property name="column">left</property>
+                              <property name="row">1</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">left</property>
-                            <property name="row">1</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="num_allocs">
                             <property name="xalign">0</property>
                             <property name="selectable">true</property>
                             <property name="visible">true</property>
+                            <layout>
+                              <property name="column">center</property>
+                              <property name="row">1</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">center</property>
-                            <property name="row">1</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel">
@@ -142,22 +143,22 @@
                             <style>
                               <class name="dim-label"/>
                             </style>
+                            <layout>
+                              <property name="column">left</property>
+                              <property name="row">2</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">left</property>
-                            <property name="row">2</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="leaked_allocs">
                             <property name="xalign">0</property>
                             <property name="selectable">true</property>
                             <property name="visible">false</property>
+                            <layout>
+                              <property name="column">center</property>
+                              <property name="row">2</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">center</property>
-                            <property name="row">2</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel">
@@ -167,11 +168,11 @@
                             <style>
                               <class name="dim-label"/>
                             </style>
+                            <layout>
+                              <property name="column">left</property>
+                              <property name="row">3</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">left</property>
-                            <property name="row">3</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="temp_allocs_count">
@@ -179,11 +180,11 @@
                             <property name="selectable">true</property>
                             <property name="width-chars">50</property>
                             <property name="visible">true</property>
+                            <layout>
+                              <property name="column">center</property>
+                              <property name="row">3</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">center</property>
-                            <property name="row">3</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel">
@@ -194,11 +195,11 @@
                             <style>
                               <class name="dim-label"/>
                             </style>
+                            <layout>
+                              <property name="column">left</property>
+                              <property name="row">4</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">left</property>
-                            <property name="row">4</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkFrame">
@@ -208,23 +209,20 @@
                                 <property name="visible">true</property>
                               </object>
                             </child>
+                            <layout>
+                              <property name="column">center</property>
+                              <property name="row">4</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">center</property>
-                            <property name="row">4</property>
-                          </packing>
                         </child>
                       </object>
                     </child>
                   </object>
                 </child>
               </object>
-              <packing>
-                <property name="name">summary</property>
-              </packing>
             </child>
             <child>
-              <object class="GtkPaned">
+              <object class="GtkPaned" id="callgraph">
                 <property name="orientation">horizontal</property>
                 <property name="position">450</property>
                 <property name="expand">true</property>
@@ -424,31 +422,20 @@
                   </object>
                 </child>
               </object>
-              <packing>
-                <property name="name">callgraph</property>
-              </packing>
             </child>
             <child>
-              <object class="DzlEmptyState">
+              <object class="AdwStatusPage" id="loading_state">
                 <property name="icon-name">content-loading-symbolic</property>
                 <property name="title" translatable="yes">Analyzing Memory Allocations</property>
-                <property name="subtitle" translatable="yes">Sysprof is busy analyzing memory allocations.</property>
-                <property name="visible">true</property>
+                <property name="description" translatable="yes">Sysprof is busy analyzing memory allocations.</property>
               </object>
-              <packing>
-                <property name="name">loading</property>
-              </packing>
             </child>
             <child>
-              <object class="DzlEmptyState">
+              <object class="AdwStatusPage" id="empty_state">
                 <property name="icon-name">computer-fail-symbolic</property>
                 <property name="title" translatable="yes">Not Enough Samples</property>
-                <property name="subtitle" translatable="yes">More samples are necessary to display a callgraph.</property>
-                <property name="visible">false</property>
+                <property name="description" translatable="yes">More samples are necessary to display a callgraph.</property>
               </object>
-              <packing>
-                <property name="name">empty-state</property>
-              </packing>
             </child>
           </object>
         </child>

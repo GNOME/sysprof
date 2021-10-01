@@ -528,3 +528,47 @@ buildable_iface_init (GtkBuildableIface *iface)
 {
   iface->add_child = sysprof_notebook_add_child;
 }
+
+guint
+sysprof_notebook_get_n_pages (SysprofNotebook *self)
+{
+  SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_NOTEBOOK (self), 0);
+
+  return gtk_notebook_get_n_pages (priv->notebook);
+}
+
+SysprofDisplay *
+sysprof_notebook_get_nth_page (SysprofNotebook *self,
+                               guint            nth)
+{
+  SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_NOTEBOOK (self), NULL);
+
+  return SYSPROF_DISPLAY (gtk_notebook_get_nth_page (priv->notebook, nth));
+}
+
+void
+sysprof_notebook_set_current_page (SysprofNotebook *self,
+                                   int              nth)
+{
+  SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_NOTEBOOK (self));
+
+  gtk_notebook_set_current_page (priv->notebook, nth);
+}
+
+int
+sysprof_notebook_append (SysprofNotebook *self,
+                         SysprofDisplay  *display)
+{
+  SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_NOTEBOOK (self), -1);
+  g_return_val_if_fail (SYSPROF_IS_DISPLAY (display), -1);
+
+  return gtk_notebook_append_page (priv->notebook, GTK_WIDGET (display), NULL);
+}

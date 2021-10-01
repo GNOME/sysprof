@@ -70,5 +70,16 @@ gboolean        sysprof_notebook_get_always_show_tabs (SysprofNotebook *self);
 SYSPROF_AVAILABLE_IN_ALL
 void            sysprof_notebook_set_always_show_tabs (SysprofNotebook *self,
                                                        gboolean         always_show_tabs);
+SYSPROF_AVAILABLE_IN_ALL
+guint           sysprof_notebook_get_n_pages          (SysprofNotebook *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDisplay *sysprof_notebook_get_nth_page         (SysprofNotebook *self,
+                                                       guint            nth);
+SYSPROF_AVAILABLE_IN_ALL
+void            sysprof_notebook_set_current_page     (SysprofNotebook *self,
+                                                       int              page);
+SYSPROF_AVAILABLE_IN_ALL
+int             sysprof_notebook_append               (SysprofNotebook *self,
+                                                       SysprofDisplay  *display);
 
 G_END_DECLS

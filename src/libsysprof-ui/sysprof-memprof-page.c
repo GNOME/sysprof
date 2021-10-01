@@ -43,6 +43,8 @@
 
 #include "../stackstash.h"
 
+#include "egg-three-grid.h"
+
 #include "sysprof-cell-renderer-percent.h"
 #include "sysprof-memprof-page.h"
 #include "sysprof-profile.h"
@@ -1163,6 +1165,7 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_c, GDK_CONTROL_MASK, "page.copy", NULL);
   gtk_widget_class_add_binding_signal (widget_class, GDK_KEY_Left, GDK_ALT_MASK, "go-previous", NULL);
 
+  g_type_ensure (EGG_TYPE_THREE_GRID);
   g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_PERCENT);
 }
 

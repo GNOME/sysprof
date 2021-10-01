@@ -331,52 +331,39 @@ sysprof_notebook_close_current (SysprofNotebook *self)
     gtk_notebook_remove_page (priv->notebook, page);
 }
 
-static void
-find_empty_display_cb (GtkWidget *widget,
-                       gpointer   user_data)
-{
-  GtkWidget **display = user_data;
-
-  g_assert (GTK_IS_WIDGET (widget));
-  g_assert (display != NULL);
-
-  if (*display != NULL)
-    return;
-
-  if (SYSPROF_IS_DISPLAY (widget) &&
-      sysprof_display_is_empty (SYSPROF_DISPLAY (widget)))
-    *display = widget;
-}
-
 void
 sysprof_notebook_open (SysprofNotebook *self,
                        GFile           *file)
 {
   SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
-  GtkWidget *display = NULL;
-  gint page;
+  SysprofDisplay *display = NULL;
+  int page;
 
   g_return_if_fail (SYSPROF_IS_NOTEBOOK (self));
   g_return_if_fail (g_file_is_native (file));
 
-  for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (priv->notebook));
-       child && !display;
-       child = gtk_widget_get_next_sibling (child))
-    find_empty_display_cb (child, &display);
+  for (page = 0; page < sysprof_notebook_get_n_pages (self); page++)
+    {
+      SysprofDisplay *child = sysprof_notebook_get_nth_page (self, page);
+
+      if (sysprof_display_is_empty (child))
+        {
+          display = child;
+          break;
+        }
+    }
 
   if (display == NULL)
     {
-
-      display = sysprof_display_new ();
-      page = gtk_notebook_insert_page (priv->notebook, display, NULL, -1);
-      gtk_widget_show (display);
+      display = SYSPROF_DISPLAY (sysprof_display_new ());
+      page = sysprof_notebook_append (self, display);
     }
   else
     {
-      page = gtk_notebook_page_num (priv->notebook, display);
+      page = gtk_notebook_page_num (priv->notebook, GTK_WIDGET (display));
     }
 
-  gtk_notebook_set_current_page (priv->notebook, page);
+  sysprof_notebook_set_current_page (self, page);
 
   sysprof_display_open (SYSPROF_DISPLAY (display), file);
 }

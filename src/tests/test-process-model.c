@@ -22,7 +22,7 @@ filter_cb (GObject  *object,
 }
 
 static void
-on_entry_changed (GtkEntry      *entry,
+on_entry_changed (GtkEntry           *entry,
                   SysprofModelFilter *filter)
 {
   const gchar *text;
@@ -30,7 +30,7 @@ on_entry_changed (GtkEntry      *entry,
   g_assert (GTK_IS_ENTRY (entry));
   g_assert (SYSPROF_IS_MODEL_FILTER (filter));
 
-  text = gtk_entry_get_text (entry);
+  text = gtk_editable_get_text (GTK_EDITABLE (entry));
   sysprof_model_filter_set_filter_func (filter, filter_cb, g_strdup (text), g_free);
 
   //gtk_list_box_bind_model (GTK_LIST_BOX (list), G_LIST_MODEL (filter), create_row, NULL, NULL);
@@ -46,8 +46,11 @@ main (gint argc,
   GtkWidget *box;
   GtkWidget *scroller;
   GtkWidget *entry;
+  GMainLoop *main_loop;
 
-  gtk_init (&argc, &argv);
+  gtk_init ();
+
+  main_loop = g_main_loop_new (NULL, FALSE);
 
   window = g_object_new (GTK_TYPE_WINDOW,
                          "title", "Sysprof Process List",
@@ -59,23 +62,23 @@ main (gint argc,
                       "orientation", GTK_ORIENTATION_VERTICAL,
                       "visible", TRUE,
                       NULL);
-  gtk_container_add (GTK_CONTAINER (window), box);
+  gtk_window_set_child (GTK_WINDOW (window), box);
 
   entry = g_object_new (GTK_TYPE_ENTRY,
                         "visible", TRUE,
                         NULL);
-  gtk_container_add (GTK_CONTAINER (box), entry);
+  gtk_box_append (GTK_BOX (box), entry);
 
   scroller = g_object_new (GTK_TYPE_SCROLLED_WINDOW,
                            "visible", TRUE,
                            "expand", TRUE,
                            NULL);
-  gtk_container_add (GTK_CONTAINER (box), scroller);
+  gtk_box_append (GTK_BOX (box), scroller);
 
   list = g_object_new (GTK_TYPE_LIST_BOX,
                        "visible", TRUE,
                        NULL);
-  gtk_container_add (GTK_CONTAINER (scroller), list);
+  gtk_scrolled_window_set_child (GTK_SCROLLED_WINDOW (scroller), list);
 
   model = sysprof_process_model_new ();
   sysprof_process_model_set_no_proxy (model, TRUE);
@@ -87,9 +90,9 @@ main (gint argc,
                     G_CALLBACK (on_entry_changed),
                     filter);
 
+  g_signal_connect_swapped (window, "request-close", G_CALLBACK (g_main_loop_quit), main_loop);
   gtk_window_present (GTK_WINDOW (window));
-  g_signal_connect (window, "delete-event", gtk_main_quit, NULL);
-  gtk_main ();
+  g_main_loop_run (main_loop);
 
   g_object_unref (model);
 

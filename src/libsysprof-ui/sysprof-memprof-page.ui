@@ -19,7 +19,7 @@
                   <class name="linked"/>
                 </style>
                 <child>
-                  <object class="GtkRadioButton" id="summary">
+                  <object class="GtkCheckButton" id="summary">
                     <property name="label" translatable="yes">Summary</property>
                     <property name="draw-indicator">false</property>
                     <property name="visible">true</property>
@@ -27,7 +27,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="all_allocs">
+                  <object class="GtkCheckButton" id="all_allocs">
                     <property name="label" translatable="yes">All Allocations</property>
                     <property name="draw-indicator">false</property>
                     <property name="visible">true</property>
@@ -36,7 +36,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="temp_allocs">
+                  <object class="GtkCheckButton" id="temp_allocs">
                     <property name="label" translatable="yes">Temporary Allocations</property>
                     <property name="draw-indicator">false</property>
                     <property name="visible">true</property>

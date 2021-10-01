@@ -58,10 +58,10 @@ typedef struct
   GtkTreeViewColumn        *function_size_column;
   GtkCellRendererText      *function_size_cell;
   GtkStack                 *stack;
-  GtkRadioButton           *summary;
-  GtkRadioButton           *all_allocs;
-  GtkRadioButton           *temp_allocs;
-  GtkRadioButton           *leaked_allocs_button;
+  GtkCheckButton           *summary;
+  GtkCheckButton           *all_allocs;
+  GtkCheckButton           *temp_allocs;
+  GtkCheckButton           *leaked_allocs_button;
   GtkLabel                 *temp_allocs_count;
   GtkLabel                 *num_allocs;
   GtkLabel                 *leaked_allocs;
@@ -173,6 +173,7 @@ update_summary (SysprofMemprofPage    *self,
   SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
   SysprofMemprofStats stats;
   g_autoptr(GString) str = NULL;
+  GtkWidget *child;
 
   g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
   g_assert (SYSPROF_IS_MEMPROF_PROFILE (profile));
@@ -193,9 +194,8 @@ update_summary (SysprofMemprofPage    *self,
   gtk_label_set_label (priv->temp_allocs_count, str->str);
   g_string_truncate (str, 0);
 
-  gtk_container_foreach (GTK_CONTAINER (priv->by_size),
-                         (GtkCallback)gtk_widget_destroy,
-                         NULL);
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (priv->by_size))))
+    gtk_list_box_remove (priv->by_size, child);
 
   for (guint i = 0; i < G_N_ELEMENTS (stats.by_size); i++)
     {
@@ -266,13 +266,11 @@ update_summary (SysprofMemprofPage    *self,
       gtk_level_bar_set_value (GTK_LEVEL_BAR (prog),
                                stats.by_size[i].n_allocs);
 
-      gtk_container_add (GTK_CONTAINER (row), box);
-      gtk_container_add (GTK_CONTAINER (box), title);
-      gtk_container_add (GTK_CONTAINER (box), prog);
-      gtk_container_add (GTK_CONTAINER (box), subtitle);
-      gtk_container_add (GTK_CONTAINER (priv->by_size), row);
-
-      gtk_widget_show_all (row);
+      gtk_list_box_row_set_child (GTK_LIST_BOX_ROW (row), box);
+      gtk_box_append (GTK_BOX (box), title);
+      gtk_box_append (GTK_BOX (box), prog);
+      gtk_box_append (GTK_BOX (box), subtitle);
+      gtk_list_box_append (priv->by_size, row);
     }
 }
 
@@ -845,7 +843,6 @@ descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
     }
 }
 
-#if 0
 static void
 copy_tree_view_selection_cb (GtkTreeModel *model,
                              GtkTreePath  *path,
@@ -887,7 +884,7 @@ static void
 copy_tree_view_selection (GtkTreeView *tree_view)
 {
   g_autoptr(GString) str = NULL;
-  GtkClipboard *clipboard;
+  GdkClipboard *clipboard;
 
   g_assert (GTK_IS_TREE_VIEW (tree_view));
 
@@ -896,25 +893,25 @@ copy_tree_view_selection (GtkTreeView *tree_view)
                                        copy_tree_view_selection_cb,
                                        str);
 
-  clipboard = gtk_widget_get_clipboard (GTK_WIDGET (tree_view), GDK_SELECTION_CLIPBOARD);
-  gtk_clipboard_set_text (clipboard, str->str, str->len);
+  clipboard = gtk_widget_get_clipboard (GTK_WIDGET (tree_view));
+  gdk_clipboard_set_text (clipboard, str->str);
 }
 
-/* use widget action */
 static void
-sysprof_memprof_page_copy_cb (GtkWidget         *widget,
-                             SysprofMemprofPage *self)
+sysprof_memprof_page_copy_cb (GtkWidget  *widget,
+                              const char *action_name,
+                              GVariant   *param)
 {
+  SysprofMemprofPage *self = (SysprofMemprofPage *)widget;
   SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
-  GtkWidget *toplevel;
   GtkWidget *focus;
+  GtkRoot *toplevel;
 
-  g_assert (GTK_IS_WIDGET (widget));
   g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
 
-  if (!(toplevel = gtk_widget_get_toplevel (widget)) ||
-      !GTK_IS_WINDOW (toplevel) ||
-      !(focus = gtk_window_get_focus (GTK_WINDOW (toplevel))))
+  if (!(toplevel = gtk_widget_get_root (widget)) ||
+      !GTK_IS_ROOT (toplevel) ||
+      !(focus = gtk_root_get_focus (toplevel)))
     return;
 
   if (focus == GTK_WIDGET (priv->descendants_view))
@@ -924,7 +921,6 @@ sysprof_memprof_page_copy_cb (GtkWidget         *widget,
   else if (focus == GTK_WIDGET (priv->functions_view))
     copy_tree_view_selection (priv->functions_view);
 }
-#endif
 
 static void
 sysprof_memprof_page_generate_cb (GObject      *object,
@@ -1017,14 +1013,14 @@ do_allocs (SysprofMemprofPage *self,
 static void
 mode_notify_active (SysprofMemprofPage *self,
                     GParamSpec         *pspec,
-                    GtkRadioButton     *button)
+                    GtkCheckButton     *button)
 {
   SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
 
   g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
-  g_assert (GTK_IS_RADIO_BUTTON (button));
+  g_assert (GTK_IS_CHECK_BUTTON (button));
 
-  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
+  if (gtk_check_button_get_active (GTK_CHECK_BUTTON (button)))
     {
       if (button == priv->summary)
         do_allocs (self, SYSPROF_MEMPROF_MODE_SUMMARY);
@@ -1108,7 +1104,6 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   SysprofPageClass *page_class = SYSPROF_PAGE_CLASS (klass);
-  GtkBindingSet *bindings;
 
   object_class->finalize = sysprof_memprof_page_finalize;
   object_class->get_property = sysprof_memprof_page_get_property;
@@ -1155,24 +1150,12 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, leaked_allocs_button);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, peak_allocs);
 
-  bindings = gtk_binding_set_by_class (klass);
-  gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
+  gtk_widget_class_install_action (widget_class, "page.copy", NULL, sysprof_memprof_page_copy_cb);
+
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_c, GDK_CONTROL_MASK, "page.copy", NULL);
+  gtk_widget_class_add_binding_signal (widget_class, GDK_KEY_Left, GDK_ALT_MASK, "go-previous", NULL);
 
   g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_PERCENT);
-
-#if 0
-  /* Use class shortcut/actions */
-  DzlShortcutController *controller;
-  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
-
-  dzl_shortcut_controller_add_command_callback (controller,
-                                                "org.gnome.sysprof3.capture.copy",
-                                                "<Control>c",
-                                                DZL_SHORTCUT_PHASE_BUBBLE,
-                                                (GtkCallback) sysprof_memprof_page_copy_cb,
-                                                self,
-                                                NULL);
-#endif
 }
 
 static void

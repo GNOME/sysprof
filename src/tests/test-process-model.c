@@ -18,7 +18,7 @@ filter_cb (GObject  *object,
   const gchar *needle = user_data;
   const gchar *command = sysprof_process_model_item_get_command_line (SYSPROF_PROCESS_MODEL_ITEM (object));
 
-  return !!strstr (command, needle);
+  return needle == NULL || needle[0] == 0 || strstr (command, needle) != NULL;
 }
 
 static void
@@ -33,7 +33,7 @@ on_entry_changed (GtkEntry           *entry,
   text = gtk_editable_get_text (GTK_EDITABLE (entry));
   sysprof_model_filter_set_filter_func (filter, filter_cb, g_strdup (text), g_free);
 
-  //gtk_list_box_bind_model (GTK_LIST_BOX (list), G_LIST_MODEL (filter), create_row, NULL, NULL);
+  gtk_list_box_bind_model (GTK_LIST_BOX (list), G_LIST_MODEL (filter), create_row, NULL, NULL);
 }
 
 gint
@@ -71,7 +71,8 @@ main (gint argc,
 
   scroller = g_object_new (GTK_TYPE_SCROLLED_WINDOW,
                            "visible", TRUE,
-                           "expand", TRUE,
+                           "vexpand", TRUE,
+                           "hexpand", TRUE,
                            NULL);
   gtk_box_append (GTK_BOX (box), scroller);
 
@@ -90,7 +91,7 @@ main (gint argc,
                     G_CALLBACK (on_entry_changed),
                     filter);
 
-  g_signal_connect_swapped (window, "request-close", G_CALLBACK (g_main_loop_quit), main_loop);
+  g_signal_connect_swapped (window, "close-request", G_CALLBACK (g_main_loop_quit), main_loop);
   gtk_window_present (GTK_WINDOW (window));
   g_main_loop_run (main_loop);
 

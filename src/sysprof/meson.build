@@ -5,7 +5,6 @@ sysprof_sources = [
   'sysprof.c',
   'sysprof-application.c',
   'sysprof-window.c',
-  'sysprof-window-settings.c',
 ]
 
 sysprof_resources = gnome.compile_resources('sysprof-resources', 'sysprof.gresource.xml',

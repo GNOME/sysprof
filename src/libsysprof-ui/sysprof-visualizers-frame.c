@@ -467,7 +467,7 @@ sysprof_visualizers_frame_init (SysprofVisualizersFrame *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  gtk_widget_set_cursor_from_name (GTK_WIDGET (self), "text");
+  gtk_widget_set_cursor_from_name (GTK_WIDGET (self->visualizers), "text");
 
   controller = GTK_EVENT_CONTROLLER (gtk_gesture_click_new ());
   g_signal_connect_object (controller,

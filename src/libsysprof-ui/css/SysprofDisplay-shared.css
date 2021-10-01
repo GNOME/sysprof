@@ -30,11 +30,11 @@ SysprofVisualizersFrame scrollbar.horizontal {
   background: transparent;
   }
 
-SysprofVisualizersFrame scrollbar.horizontal contents trough {
+SysprofVisualizersFrame scrollbar.horizontal range trough {
   background: transparent;
   }
 
-SysprofVisualizersFrame scrollbar.horizontal contents trough slider {
+SysprofVisualizersFrame scrollbar.horizontal range trough slider {
   margin-left: 1px;
   margin-right: 1px;
   padding: 6px;

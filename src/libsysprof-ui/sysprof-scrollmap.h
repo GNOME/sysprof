@@ -28,12 +28,13 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofScrollmap, sysprof_scrollmap, SYSPROF, SCROLLMAP, GtkWidget)
 
-void sysprof_scrollmap_set_adjustment (SysprofScrollmap *self,
-                                       GtkAdjustment    *adjustment);
-void sysprof_scrollmap_set_timings    (SysprofScrollmap *self,
-                                       GArray           *timings);
-void sysprof_scrollmap_set_time_range (SysprofScrollmap *self,
-                                       gint64            begin_time,
-                                       gint64            end_time);
+GtkAdjustment *sysprof_scrollmap_get_adjustment (SysprofScrollmap *self);
+void           sysprof_scrollmap_set_adjustment (SysprofScrollmap *self,
+                                                 GtkAdjustment    *adjustment);
+void           sysprof_scrollmap_set_timings    (SysprofScrollmap *self,
+                                                 GArray           *timings);
+void           sysprof_scrollmap_set_time_range (SysprofScrollmap *self,
+                                                 gint64            begin_time,
+                                                 gint64            end_time);
 
 G_END_DECLS

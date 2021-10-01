@@ -53,7 +53,11 @@ typedef struct
   int nat_below_baseline;
 } EggThreeGridRowInfo;
 
-G_DEFINE_TYPE_WITH_PRIVATE (EggThreeGrid, egg_three_grid, GTK_TYPE_WIDGET)
+static void buildable_iface_init (GtkBuildableIface *iface);
+
+G_DEFINE_TYPE_WITH_CODE (EggThreeGrid, egg_three_grid, GTK_TYPE_WIDGET,
+                         G_ADD_PRIVATE (EggThreeGrid)
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
 
 enum {
   PROP_0,
@@ -694,4 +698,22 @@ egg_three_grid_column_get_type (void)
     }
 
   return type_id;
+}
+
+static void
+egg_three_grid_add_child (GtkBuildable *buildable,
+                          GtkBuilder   *builder,
+                          GObject      *child,
+                          const char   *type)
+{
+  if (GTK_IS_WIDGET (child))
+    egg_three_grid_add (EGG_THREE_GRID (buildable), GTK_WIDGET (child), 0, EGG_THREE_GRID_COLUMN_LEFT);
+  else
+    g_warning ("%s cannot be added to %s", G_OBJECT_TYPE_NAME (child), G_OBJECT_TYPE_NAME (buildable));
+}
+
+static void
+buildable_iface_init (GtkBuildableIface *iface)
+{
+  iface->add_child = egg_three_grid_add_child;
 }

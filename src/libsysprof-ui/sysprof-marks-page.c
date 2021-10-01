@@ -50,6 +50,8 @@ typedef struct
   GtkLabel                    *end;
   GtkLabel                    *duration;
   GtkTextView                 *message;
+  GtkWidget                   *failed;
+  GtkWidget                   *marks;
 } SysprofMarksPagePrivate;
 
 enum {
@@ -310,9 +312,9 @@ sysprof_marks_page_load_cb (GObject      *object,
   gtk_tree_view_set_model (priv->tree_view, GTK_TREE_MODEL (model));
 
   if (gtk_tree_model_iter_n_children (GTK_TREE_MODEL (model), NULL) == 0)
-    gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+    gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->failed));
   else
-    gtk_stack_set_visible_child_name (priv->stack, "marks");
+    gtk_stack_set_visible_child (priv->stack, GTK_WIDGET (priv->marks));
 
   g_task_return_boolean (task, TRUE);
 }
@@ -517,6 +519,8 @@ sysprof_marks_page_class_init (SysprofMarksPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksPage, duration);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksPage, time);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksPage, message);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksPage, marks);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMarksPage, failed);
 
   properties [PROP_KIND] =
     g_param_spec_enum ("kind", NULL, NULL,

@@ -706,7 +706,7 @@ sysprof_visualizers_frame_get_hadjustment (SysprofVisualizersFrame *self)
 {
   g_return_val_if_fail (SYSPROF_IS_VISUALIZERS_FRAME (self), NULL);
 
-  return gtk_range_get_adjustment (GTK_RANGE (self->hscrollbar));
+  return sysprof_scrollmap_get_adjustment (self->hscrollbar);
 }
 
 void

@@ -318,3 +318,11 @@ sysprof_scrollmap_set_adjustment (SysprofScrollmap *self,
 
   gtk_scrollbar_set_adjustment (GTK_SCROLLBAR (self->scrollbar), adjustment);
 }
+
+GtkAdjustment *
+sysprof_scrollmap_get_adjustment (SysprofScrollmap *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SCROLLMAP (self), NULL);
+
+  return gtk_scrollbar_get_adjustment (GTK_SCROLLBAR (self->scrollbar));
+}

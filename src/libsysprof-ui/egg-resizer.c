@@ -90,7 +90,6 @@ egg_resizer_drag_begin_cb (EggResizer   *self,
       break;
     }
 
-deny_sequence:
   gtk_gesture_set_state (GTK_GESTURE (drag),
                          GTK_EVENT_SEQUENCE_DENIED);
 
@@ -323,8 +322,13 @@ egg_resizer_dispose (GObject *object)
 {
   EggResizer *self = (EggResizer *)object;
 
-  g_clear_pointer ((GtkWidget **)&self->handle, gtk_widget_unparent);
-  g_clear_pointer ((GtkWidget **)&self->child, gtk_widget_unparent);
+  if (self->handle)
+    gtk_widget_unparent (GTK_WIDGET (self->handle));
+  self->handle = NULL;
+
+  if (self->child)
+    gtk_widget_unparent (self->child);
+  self->child = NULL;
 
   G_OBJECT_CLASS (egg_resizer_parent_class)->dispose (object);
 }

@@ -227,6 +227,8 @@
                 <property name="position">450</property>
                 <property name="expand">true</property>
                 <property name="visible">true</property>
+                <property name="resize-start">true</property>
+                <property name="resize-end">true</property>
                 <child>
                   <object class="GtkPaned">
                     <property name="orientation">vertical</property>
@@ -290,9 +292,6 @@
                           </object>
                         </child>
                       </object>
-                      <packing>
-                        <property name="resize">true</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
@@ -352,9 +351,6 @@
                           </object>
                         </child>
                       </object>
-                      <packing>
-                        <property name="resize">true</property>
-                      </packing>
                     </child>
                   </object>
                 </child>

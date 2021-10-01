@@ -64,19 +64,21 @@ static GParamSpec *properties [N_PROPS];
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofMarksPage, sysprof_marks_page, SYSPROF_TYPE_PAGE)
 
 static gboolean
-sysprof_marks_page_tree_view_key_press_event_cb (SysprofMarksPage  *self,
-                                                 const GdkEventKey *key,
-                                                 GtkTreeView       *tree_view)
+sysprof_marks_page_tree_view_key_press_event_cb (SysprofMarksPage      *self,
+                                                 guint                  keyval,
+                                                 guint                  keycode,
+                                                 GdkModifierType        state,
+                                                 GtkEventControllerKey *controller)
 {
   SysprofMarksPagePrivate *priv = sysprof_marks_page_get_instance_private (self);
   gint dir = 0;
 
   g_assert (SYSPROF_MARKS_PAGE (self));
-  g_assert (key != NULL);
+  g_assert (GTK_IS_EVENT_CONTROLLER_KEY (controller));
 
-  if (key->state == 0)
+  if ((state & (GDK_SHIFT_MASK|GDK_CONTROL_MASK|GDK_ALT_MASK)) == 0)
     {
-      switch (key->keyval)
+      switch (keyval)
         {
         case GDK_KEY_Left:
           dir = -1;
@@ -536,6 +538,7 @@ static void
 sysprof_marks_page_init (SysprofMarksPage *self)
 {
   SysprofMarksPagePrivate *priv = sysprof_marks_page_get_instance_private (self);
+  GtkEventController *controller;
 
   priv->kind = SYSPROF_MARKS_MODEL_MARKS;
 
@@ -544,11 +547,14 @@ sysprof_marks_page_init (SysprofMarksPage *self)
   gtk_tree_selection_set_mode (gtk_tree_view_get_selection (priv->tree_view),
                                GTK_SELECTION_MULTIPLE);
 
-  g_signal_connect_object (priv->tree_view,
-                           "key-press-event",
+  controller = gtk_event_controller_key_new ();
+  gtk_event_controller_set_propagation_phase (controller, GTK_PHASE_CAPTURE);
+  g_signal_connect_object (controller,
+                           "key-pressed",
                            G_CALLBACK (sysprof_marks_page_tree_view_key_press_event_cb),
                            self,
                            G_CONNECT_SWAPPED);
+  gtk_widget_add_controller (GTK_WIDGET (self), controller);
 
   g_signal_connect_object (priv->tree_view,
                            "row-activated",

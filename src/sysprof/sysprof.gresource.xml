@@ -7,7 +7,6 @@
 
     <!-- Theme overrides -->
     <file compressed="true">theme/shared.css</file>
-    <file compressed="true">theme/Adwaita-shared.css</file>
   </gresource>
 
   <gresource prefix="/org/gnome/sysprof/ui">

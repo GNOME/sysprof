@@ -185,6 +185,7 @@ sysprof_page_class_init (SysprofPageClass *klass)
 static void
 sysprof_page_init (SysprofPage *self)
 {
+  gtk_widget_set_vexpand (GTK_WIDGET (self), TRUE);
 }
 
 /**

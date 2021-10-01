@@ -218,7 +218,7 @@ sysprof_battery_aid_present_finish (SysprofAid    *aid,
       if (found > 0)
         sysprof_display_add_group (present->display, group);
       else
-        gtk_widget_destroy (GTK_WIDGET (group));
+        g_object_unref (group);
     }
 
   return counters != NULL;

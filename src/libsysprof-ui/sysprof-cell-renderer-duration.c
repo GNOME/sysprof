@@ -104,37 +104,38 @@ rounded_rectangle (cairo_t            *cr,
 }
 
 static void
-sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
-                                       cairo_t              *cr,
-                                       GtkWidget            *widget,
-                                       const GdkRectangle   *bg_area,
-                                       const GdkRectangle   *cell_area,
-                                       GtkCellRendererState  state)
+sysprof_cell_renderer_duration_snapshot (GtkCellRenderer      *renderer,
+                                         GtkSnapshot          *snapshot,
+                                         GtkWidget            *widget,
+                                         const GdkRectangle   *bg_area,
+                                         const GdkRectangle   *cell_area,
+                                         GtkCellRendererState  state)
 {
   SysprofCellRendererDuration *self = (SysprofCellRendererDuration *)renderer;
   SysprofCellRendererDurationPrivate *priv = sysprof_cell_renderer_duration_get_instance_private (self);
   g_autoptr(GString) str = NULL;
   GtkStyleContext *style_context;
+  cairo_t *cr;
   gdouble x1, x2;
   GdkRGBA rgba;
   GdkRectangle r;
   gint64 duration;
 
   g_assert (SYSPROF_IS_CELL_RENDERER_DURATION (self));
-  g_assert (cr != NULL);
+  g_assert (snapshot != NULL);
   g_assert (GTK_IS_WIDGET (widget));
 
   if (priv->zoom_manager == NULL)
     return;
+
+  cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (cell_area->x, cell_area->y, cell_area->width, cell_area->height));
 
   style_context = gtk_widget_get_style_context (widget);
 
   if (priv->color_set)
     rgba = priv->color;
   else
-    gtk_style_context_get_color (style_context,
-                                 gtk_style_context_get_state (style_context),
-                                 &rgba);
+    gtk_style_context_get_color (style_context, &rgba);
 
   duration = sysprof_zoom_manager_get_duration_for_width (priv->zoom_manager, bg_area->width);
 
@@ -214,6 +215,8 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
 
       g_object_unref (layout);
     }
+
+  cairo_destroy (cr);
 }
 
 static GtkSizeRequestMode
@@ -390,7 +393,7 @@ sysprof_cell_renderer_duration_class_init (SysprofCellRendererDurationClass *kla
   cell_class->get_preferred_height_for_width = sysprof_cell_renderer_duration_get_preferred_height_for_width;
   cell_class->get_preferred_width = sysprof_cell_renderer_duration_get_preferred_width;
   cell_class->get_request_mode = sysprof_cell_renderer_duration_get_request_mode;
-  cell_class->render = sysprof_cell_renderer_duration_render;
+  cell_class->snapshot = sysprof_cell_renderer_duration_snapshot;
 
   /* Note we do not emit ::notify() for these properties */
 

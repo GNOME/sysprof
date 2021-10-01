@@ -2,7 +2,6 @@
 <interface>
   <template class="SysprofTab" parent="GtkWidget">
     <property name="hexpand">true</property>
-    <property name="spacing">6</property>
     <child>
       <object class="GtkCenterBox" id="center_box">
         <child type="start">
@@ -16,6 +15,8 @@
         </child>
         <child type="center">
           <object class="GtkLabel" id="title">
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
           </object>
         </child>
         <child type="end">

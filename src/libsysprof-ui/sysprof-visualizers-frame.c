@@ -493,7 +493,7 @@ sysprof_visualizers_frame_init (SysprofVisualizersFrame *self)
   hadj = gtk_scrolled_window_get_hadjustment (self->hscroller);
 
   gtk_scrolled_window_set_hadjustment (self->ticks_scroller, hadj);
-  gtk_range_set_adjustment (GTK_RANGE (self->hscrollbar), hadj);
+  sysprof_scrollmap_set_adjustment (self->hscrollbar, hadj);
   gtk_range_set_adjustment (GTK_RANGE (self->zoom_scale), zadj);
 
   gtk_widget_insert_action_group (GTK_WIDGET (self),

@@ -316,5 +316,5 @@ sysprof_scrollmap_set_adjustment (SysprofScrollmap *self,
   g_return_if_fail (SYSPROF_IS_SCROLLMAP (self));
   g_return_if_fail (!adjustment || GTK_IS_ADJUSTMENT (adjustment));
 
-  gtk_range_set_adjustment (GTK_RANGE (self->scrollbar), adjustment);
+  gtk_scrollbar_set_adjustment (GTK_SCROLLBAR (self->scrollbar), adjustment);
 }

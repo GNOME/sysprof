@@ -4,12 +4,12 @@
     <property name="default-height">750</property>
     <property name="icon-name">org.gnome.Sysprof-symbolic</property>
     <property name="show-menubar">false</property>
+    <property name="title" translatable="yes">Sysprof</property>
     <child type="titlebar">
       <object class="GtkHeaderBar">
-        <property name="show-close-button">true</property>
+        <property name="show-title-buttons">true</property>
         <property name="visible">true</property>
-        <property name="title" translatable="yes">Sysprof</property>
-        <child>
+        <child type="end">
           <object class="GtkMenuButton" id="menu_button">
             <property name="visible">true</property>
             <child>
@@ -22,11 +22,8 @@
               <class name="image-button"/>
             </style>
           </object>
-          <packing>
-            <property name="pack-type">end</property>
-          </packing>
         </child>
-        <child>
+        <child type="start">
           <object class="GtkButton" id="open_button">
             <property name="label" translatable="yes">_Open</property>
             <property name="action-name">app.open-capture</property>
@@ -34,11 +31,8 @@
             <property name="tooltip-text" translatable="yes">Open Recording… (Ctrl+O)</property>
             <property name="visible">true</property>
           </object>
-          <packing>
-            <property name="pack-type">start</property>
-          </packing>
         </child>
-        <child>
+        <child type="end">
           <object class="GtkLabel" id="stat_label">
             <property name="margin-end">12</property>
             <property name="xalign">1</property>
@@ -46,10 +40,6 @@
               <class name="dim-label"/>
             </style>
           </object>
-          <packing>
-            <property name="pack-type">end</property>
-            <property name="position">1</property>
-          </packing>
         </child>
       </object>
     </child>

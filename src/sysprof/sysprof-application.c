@@ -212,7 +212,7 @@ sysprof_about (GSimpleAction *action,
                          NULL);
 
   g_signal_connect (dialog,
-                    "response",
+                    "close-request",
                     G_CALLBACK (gtk_window_destroy),
                     NULL);
 

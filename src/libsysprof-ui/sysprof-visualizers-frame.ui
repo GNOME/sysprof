@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="SysprofVisualizersFrame" parent="GtkWidget">
-    <property name="can_focus">False</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <child>
               <object class="GtkBox" id="box1">
                 <property name="width_request">125</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkBox">
@@ -31,7 +27,6 @@
                     <child type="center">
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="margin_start">6</property>
                         <property name="margin_end">6</property>
                         <property name="margin_top">3</property>
@@ -45,7 +40,7 @@
                         </attributes>
                       </object>
                     </child>
-                    <child>
+                    <child type="end">
                       <object class="GtkButton">
                         <property name="action-name">display.page</property>
                         <property name="action-target">'details'</property>
@@ -64,57 +59,30 @@
                           </object>
                         </child>
                       </object>
-                      <packing>
-                        <property name="pack-type">end</property>
-                      </packing>
                     </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkSeparator">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
                 </child>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
             </child>
             <child>
               <object class="GtkSeparator">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
             </child>
             <child>
               <object class="GtkBox" id="ticks_box">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="vexpand">False</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkScrolledWindow" id="ticks_scroller">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
                     <property name="hscrollbar_policy">external</property>
@@ -122,74 +90,45 @@
                     <child>
                       <object class="GtkViewport" id="ticks_viewport">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="shadow_type">none</property>
                         <style>
                           <class name="visualizers"/>
                         </style>
                         <child>
                           <object class="SysprofVisualizerTicks" id="ticks">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
                           </object>
                         </child>
                       </object>
                     </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkSeparator">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
                 </child>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
         </child>
         <child>
           <object class="GtkScrolledWindow" id="vscroller">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
             <property name="vexpand">True</property>
             <property name="hscrollbar_policy">never</property>
             <property name="propagate_natural_height">True</property>
             <child>
               <object class="GtkViewport">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="shadow_type">none</property>
                 <child>
                   <object class="GtkBox">
                     <property name="orientation">horizontal</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <child>
                       <object class="GtkListBox" id="groups">
                         <property name="width_request">125</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="hexpand">False</property>
                         <property name="selection_mode">single</property>
                         <style>
@@ -197,28 +136,16 @@
                           <class name="visualizer-groups"/>
                         </style>
                       </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkSeparator">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
                       </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow" id="hscroller">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
                         <property name="hscrollbar_policy">external</property>
@@ -227,8 +154,6 @@
                         <child>
                           <object class="GtkViewport" id="visualizers_viewport">
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="shadow_type">none</property>
                             <property name="halign">start</property>
                             <style>
                               <class name="visualizers"/>
@@ -236,7 +161,6 @@
                             <child>
                               <object class="GtkListBox" id="visualizers">
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
                                 <property name="selection_mode">none</property>
                                 <property name="activate_on_single_click">False</property>
                               </object>
@@ -244,38 +168,21 @@
                           </object>
                         </child>
                       </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
                     </child>
                   </object>
                 </child>
               </object>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
         </child>
         <child>
           <object class="GtkSeparator">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
         </child>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <style>
               <class name="inline-toolbar"/>
             </style>
@@ -285,7 +192,6 @@
                 <property name="visible">True</property>
                 <property name="margin-start">6</property>
                 <property name="margin-end">6</property>
-                <property name="can_focus">False</property>
                 <property name="hexpand">False</property>
                 <style>
                   <class name="left-column"/>
@@ -294,13 +200,11 @@
                   <object class="GtkButton" id="zoom_out">
                     <property name="action-name">zoom.zoom-out</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="valign">center</property>
                     <child>
                       <object class="GtkImage">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="icon_name">zoom-out-symbolic</property>
                       </object>
                     </child>
@@ -310,17 +214,11 @@
                       <class name="flat"/>
                     </style>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkScale" id="zoom_scale">
                     <property name="width_request">175</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
                     <property name="round_digits">1</property>
                     <property name="draw_value">False</property>
@@ -328,24 +226,16 @@
                       <mark value="0.0" position="bottom"/>
                     </marks>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="zoom_in">
                     <property name="action-name">zoom.zoom-in</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="relief">none</property>
                     <property name="valign">center</property>
                     <child>
                       <object class="GtkImage">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="icon_name">zoom-in-symbolic</property>
                       </object>
                     </child>
@@ -355,48 +245,21 @@
                       <class name="flat"/>
                     </style>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
                 </child>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
             </child>
             <child>
               <object class="GtkSeparator">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
             </child>
             <child>
               <object class="SysprofScrollmap" id="hscrollbar">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
                 <property name="hexpand">True</property>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
         </child>
       </object>
     </child>

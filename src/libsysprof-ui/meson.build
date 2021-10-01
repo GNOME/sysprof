@@ -120,7 +120,7 @@ libsysprof_ui_dep = declare_dependency(
 
 pkgconfig.generate(
                libsysprof_ui,
-      subdirs: [ sysprof_header_subdir ],
+      subdirs: [ sysprof_ui_header_subdir ],
   description: 'The UI library for GTK applications embedding sysprof',
   install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
      requires: [ 'gio-2.0', 'gtk4' ],
@@ -130,6 +130,6 @@ pkgconfig.generate(
      ],
 )
 
-install_headers(libsysprof_ui_public_headers, subdir: sysprof_header_subdir)
+install_headers(libsysprof_ui_public_headers, subdir: sysprof_ui_header_subdir)
 
 endif

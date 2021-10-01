@@ -78,9 +78,24 @@ _g_date_time_new_from_iso8601 (const gchar *str,
 #endif
 
 static void
+sysprof_details_page_dispose (GObject *object)
+{
+  SysprofDetailsPage *self = (SysprofDetailsPage *)object;
+  GtkWidget *child;
+
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    gtk_widget_unparent (child);
+
+  G_OBJECT_CLASS (sysprof_details_page_parent_class)->dispose (object);
+}
+
+static void
 sysprof_details_page_class_init (SysprofDetailsPageClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+  object_class->dispose = sysprof_details_page_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-details-page.ui");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);

@@ -373,13 +373,17 @@ sysprof_visualizers_frame_size_allocate (GtkWidget *widget,
 }
 
 static void
-sysprof_visualizers_frame_finalize (GObject *object)
+sysprof_visualizers_frame_dispose (GObject *object)
 {
   SysprofVisualizersFrame *self = (SysprofVisualizersFrame *)object;
+  GtkWidget *child;
+
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    gtk_widget_unparent (child);
 
   g_clear_object (&self->selection);
 
-  G_OBJECT_CLASS (sysprof_visualizers_frame_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sysprof_visualizers_frame_parent_class)->dispose (object);
 }
 
 static void
@@ -411,7 +415,7 @@ sysprof_visualizers_frame_class_init (SysprofVisualizersFrameClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_visualizers_frame_finalize;
+  object_class->dispose = sysprof_visualizers_frame_dispose;
   object_class->get_property = sysprof_visualizers_frame_get_property;
 
   widget_class->size_allocate = sysprof_visualizers_frame_size_allocate;

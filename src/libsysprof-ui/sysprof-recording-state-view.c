@@ -83,6 +83,10 @@ sysprof_recording_state_view_dispose (GObject *object)
 {
   SysprofRecordingStateView *self = (SysprofRecordingStateView *)object;
   SysprofRecordingStateViewPrivate *priv = sysprof_recording_state_view_get_instance_private (self);
+  GtkWidget *child;
+
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    gtk_widget_unparent (child);
 
   if (priv->profiler != NULL)
     {

@@ -323,17 +323,17 @@ sysprof_cpu_aid_present_finish (SysprofAid    *aid,
       if (has_usage && !found_combined)
         sysprof_visualizer_group_insert (usage, over_row, 0, FALSE);
       else
-        g_object_unref (GTK_WIDGET (over_row));
+        g_object_unref (g_object_ref_sink (over_row));
 
       if (has_usage)
         sysprof_display_add_group (present->display, usage);
       else
-        g_object_unref (GTK_WIDGET (usage));
+        g_object_unref (g_object_ref_sink (usage));
 
       if (has_freq)
         sysprof_display_add_group (present->display, freq);
       else
-        g_object_unref (GTK_WIDGET (freq));
+        g_object_unref (g_object_ref_sink (freq));
     }
 
   return counters != NULL;

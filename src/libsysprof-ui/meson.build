@@ -90,6 +90,7 @@ libsysprof_ui_resources = gnome.compile_resources(
 libsysprof_ui_pkg_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('gtk4', version: gtk_req_version),
+  dependency('libadwaita-1'),
 ]
 
 libsysprof_ui_deps = libsysprof_ui_pkg_deps + [

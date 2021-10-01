@@ -25,7 +25,7 @@
 #include <glib/gi18n.h>
 
 #include "sysprof-details-page.h"
-#include "sysprof-display.h"
+#include "sysprof-display-private.h"
 #include "sysprof-profiler-assistant.h"
 #include "sysprof-failed-state-view.h"
 #include "sysprof-recording-state-view.h"
@@ -1070,7 +1070,6 @@ sysprof_display_open (SysprofDisplay *self,
 
   if (!(reader = sysprof_capture_reader_new_with_error (path, &error)))
     {
-      GtkWidget *parent;
       GtkWidget *dialog;
       GtkWidget *window;
 
@@ -1094,10 +1093,7 @@ sysprof_display_open (SysprofDisplay *self,
       gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
       gtk_window_present (GTK_WINDOW (dialog));
 
-      if ((parent = gtk_widget_get_parent (GTK_WIDGET (self))) &&
-          GTK_IS_NOTEBOOK (parent))
-        gtk_notebook_remove_page (GTK_NOTEBOOK (parent),
-                                  gtk_notebook_page_num (GTK_NOTEBOOK (parent), GTK_WIDGET (self)));
+      _sysprof_display_destroy (self);
 
       return;
     }
@@ -1308,4 +1304,16 @@ sysprof_display_add_to_selection (SysprofDisplay *self,
 
   selection = sysprof_visualizers_frame_get_selection (priv->visualizers);
   sysprof_selection_select_range (selection, begin_time, end_time);
+}
+
+void
+_sysprof_display_destroy (SysprofDisplay *self)
+{
+  GtkWidget *parent;
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
+
+  if ((parent = gtk_widget_get_parent (GTK_WIDGET (self))) && GTK_IS_NOTEBOOK (parent))
+    gtk_notebook_remove_page (GTK_NOTEBOOK (parent),
+                              gtk_notebook_page_num (GTK_NOTEBOOK (parent), GTK_WIDGET (self)));
 }

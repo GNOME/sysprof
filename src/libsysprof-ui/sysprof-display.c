@@ -1322,7 +1322,7 @@ _sysprof_display_destroy (SysprofDisplay *self)
 
   g_return_if_fail (SYSPROF_IS_DISPLAY (self));
 
-  if ((parent = gtk_widget_get_parent (GTK_WIDGET (self))) && GTK_IS_NOTEBOOK (parent))
+  if ((parent = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_NOTEBOOK)))
     gtk_notebook_remove_page (GTK_NOTEBOOK (parent),
                               gtk_notebook_page_num (GTK_NOTEBOOK (parent), GTK_WIDGET (self)));
 }

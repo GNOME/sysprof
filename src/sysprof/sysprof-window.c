@@ -111,7 +111,7 @@ switch_tab_cb (GSimpleAction *action,
   g_return_if_fail (g_variant_is_of_type (param, G_VARIANT_TYPE_INT32));
 
   page = g_variant_get_int32 (param);
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (self->notebook), page - 1);
+  sysprof_notebook_set_current_page (self->notebook, page - 1);
 }
 
 static void
@@ -120,15 +120,12 @@ close_tab_cb (GSimpleAction *action,
               gpointer       user_data)
 {
   SysprofWindow *self = user_data;
-  GtkNotebook *notebook;
 
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
 
-  notebook = GTK_NOTEBOOK (self->notebook);
-
-  if (gtk_notebook_get_n_pages (notebook) == 1)
+  if (sysprof_notebook_get_n_pages (self->notebook) == 1)
     {
-      GtkWidget *child = gtk_notebook_get_nth_page (notebook, 0);
+      SysprofDisplay *child = sysprof_notebook_get_nth_page (self->notebook, 0);
 
       if (SYSPROF_IS_DISPLAY (child) &&
           sysprof_display_is_empty (SYSPROF_DISPLAY (child)))
@@ -340,8 +337,6 @@ sysprof_window_new_tab (SysprofWindow *self)
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
 
   display = sysprof_display_new ();
-  page = gtk_notebook_insert_page (GTK_NOTEBOOK (self->notebook), display, NULL, -1);
-  gtk_widget_show (display);
-
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (self->notebook), page);
+  page = sysprof_notebook_append (self->notebook, SYSPROF_DISPLAY (display));
+  sysprof_notebook_set_current_page (self->notebook, page);
 }

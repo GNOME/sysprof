@@ -133,7 +133,7 @@ close_tab_cb (GSimpleAction *action,
       if (SYSPROF_IS_DISPLAY (child) &&
           sysprof_display_is_empty (SYSPROF_DISPLAY (child)))
         {
-          gtk_widget_destroy (GTK_WIDGET (self));
+          gtk_window_destroy (GTK_WINDOW (self));
           return;
         }
     }
@@ -276,12 +276,30 @@ sysprof_window_open (SysprofWindow *self,
   sysprof_notebook_open (self->notebook, file);
 }
 
+static void
+sysprof_window_open_from_dialog_cb (SysprofWindow        *self,
+                                    int                   response,
+                                    GtkFileChooserNative *dialog)
+{
+  g_assert (SYSPROF_IS_WINDOW (self));
+  g_assert (GTK_IS_FILE_CHOOSER_NATIVE (dialog));
+
+  if (response == GTK_RESPONSE_ACCEPT)
+    {
+      g_autoptr(GFile) file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+
+      if (g_file_is_native (file))
+        sysprof_window_open (self, file);
+    }
+
+  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dialog));
+}
+
 void
 sysprof_window_open_from_dialog (SysprofWindow *self)
 {
   GtkFileChooserNative *dialog;
   GtkFileFilter *filter;
-  gint response;
 
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
 
@@ -294,8 +312,6 @@ sysprof_window_open_from_dialog (SysprofWindow *self)
                                         /* Translators: This is a button. */
                                         _("Cancel"));
 
-  gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (dialog), TRUE);
-
   filter = gtk_file_filter_new ();
   gtk_file_filter_set_name (filter, _("Sysprof Captures"));
   gtk_file_filter_add_pattern (filter, "*.syscap");
@@ -306,17 +322,13 @@ sysprof_window_open_from_dialog (SysprofWindow *self)
   gtk_file_filter_add_pattern (filter, "*");
   gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
 
-  response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
+  g_signal_connect_object (dialog,
+                           "response",
+                           G_CALLBACK (sysprof_window_open_from_dialog_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 
-  if (response == GTK_RESPONSE_ACCEPT)
-    {
-      g_autoptr(GFile) file = NULL;
-
-      file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-      sysprof_window_open (self, file);
-    }
-
-  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dialog));
+  gtk_native_dialog_show (GTK_NATIVE_DIALOG (dialog));
 }
 
 void

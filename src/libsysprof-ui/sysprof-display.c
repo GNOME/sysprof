@@ -368,15 +368,21 @@ stop_recording_cb (GSimpleAction *action,
 }
 
 static void
-sysprof_display_finalize (GObject *object)
+sysprof_display_dispose (GObject *object)
 {
   SysprofDisplay *self = (SysprofDisplay *)object;
   SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
 
+  if (priv->stack)
+    {
+      gtk_widget_unparent (GTK_WIDGET (priv->stack));
+      priv->stack = NULL;
+    }
+
   g_clear_pointer (&priv->reader, sysprof_capture_reader_unref);
   g_clear_pointer (&priv->filter, sysprof_capture_condition_unref);
 
-  G_OBJECT_CLASS (sysprof_display_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sysprof_display_parent_class)->dispose (object);
 }
 
 static void
@@ -439,7 +445,7 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_display_finalize;
+  object_class->dispose = sysprof_display_dispose;
   object_class->get_property = sysprof_display_get_property;
   object_class->set_property = sysprof_display_set_property;
 

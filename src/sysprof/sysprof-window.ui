@@ -50,7 +50,7 @@
         </child>
         <child>
           <object class="SysprofNotebook" id="notebook">
-            <property name="visible">true</property>
+            <property name="vexpand">true</property>
             <child>
               <object class="SysprofDisplay">
                 <property name="visible">true</property>

@@ -5,7 +5,10 @@
       <object class="GtkBox">
         <property name="width-request">500</property>
         <property name="halign">center</property>
-        <property name="border-width">36</property>
+        <property name="margin-start">36</property>
+        <property name="margin-end">36</property>
+        <property name="margin-top">36</property>
+        <property name="margin-bottom">36</property>
         <property name="orientation">vertical</property>
         <property name="spacing">12</property>
         <property name="visible">true</property>

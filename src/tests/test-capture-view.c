@@ -58,7 +58,7 @@ main (gint argc,
 
   sysprof_display_load_async (view, reader, NULL, NULL, NULL);
 
-  g_signal_connect_swapped (window, "request-close", G_CALLBACK (g_main_loop_quit), main_loop);
+  g_signal_connect_swapped (window, "close-request", G_CALLBACK (g_main_loop_quit), main_loop);
   gtk_window_present (GTK_WINDOW (window));
   g_main_loop_run (main_loop);
 

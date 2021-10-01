@@ -4,19 +4,18 @@
       <object class="GtkStack" id="stack">
         <property name="visible">true</property>
         <child>
-          <object class="GtkPaned" id="callgraph">
+          <object class="EggPaned" id="callgraph">
             <property name="orientation">horizontal</property>
-            <property name="position">450</property>
             <property name="visible">true</property>
-            <property name="resize-start-child">true</property>
-            <property name="resize-end-child">true</property>
             <child>
-              <object class="GtkPaned">
+              <object class="EggPaned">
                 <property name="orientation">vertical</property>
                 <property name="visible">true</property>
+                <property name="width-request">400</property>
                 <child>
                   <object class="GtkScrolledWindow">
                     <property name="visible">true</property>
+                    <property name="vexpand">true</property>
                     <child>
                       <object class="GtkTreeView" id="functions_view">
                         <property name="fixed-height-mode">true</property>
@@ -76,6 +75,7 @@
                 <child>
                   <object class="GtkScrolledWindow">
                     <property name="visible">true</property>
+                    <property name="vexpand">true</property>
                     <child>
                       <object class="GtkTreeView" id="callers_view">
                         <property name="visible">true</property>
@@ -135,6 +135,7 @@
             </child>
             <child>
               <object class="GtkScrolledWindow">
+                <property name="hexpand">true</property>
                 <property name="visible">true</property>
                 <child>
                   <object class="GtkTreeView" id="descendants_view">

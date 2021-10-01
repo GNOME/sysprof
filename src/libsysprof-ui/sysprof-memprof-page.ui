@@ -222,15 +222,12 @@
               </object>
             </child>
             <child>
-              <object class="GtkPaned" id="callgraph">
+              <object class="EggPaned" id="callgraph">
                 <property name="orientation">horizontal</property>
-                <property name="position">450</property>
                 <property name="expand">true</property>
                 <property name="visible">true</property>
-                <property name="resize-start">true</property>
-                <property name="resize-end">true</property>
                 <child>
-                  <object class="GtkPaned">
+                  <object class="EggPaned">
                     <property name="orientation">vertical</property>
                     <property name="visible">true</property>
                     <child>

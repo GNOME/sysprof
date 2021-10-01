@@ -24,6 +24,8 @@
 
 #include <glib/gi18n.h>
 
+#include "egg-paned-private.h"
+
 #include "sysprof-details-page.h"
 #include "sysprof-display-private.h"
 #include "sysprof-profiler-assistant.h"
@@ -494,6 +496,7 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
+  g_type_ensure (EGG_TYPE_PANED);
   g_type_ensure (SYSPROF_TYPE_DETAILS_PAGE);
   g_type_ensure (SYSPROF_TYPE_FAILED_STATE_VIEW);
   g_type_ensure (SYSPROF_TYPE_PROFILER_ASSISTANT);

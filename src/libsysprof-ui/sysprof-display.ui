@@ -20,7 +20,7 @@
           <object class="GtkStackPage">
             <property name="name">view</property>
             <property name="child">
-              <object class="GtkPaned">
+              <object class="EggPaned">
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkBox">

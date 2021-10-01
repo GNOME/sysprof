@@ -31,7 +31,7 @@
 
 struct _SysprofWindow
 {
-  GtkApplicationWindow  parent_instance;
+  AdwApplicationWindow  parent_instance;
 
   EggBindingGroup      *bindings;
 
@@ -40,7 +40,7 @@ struct _SysprofWindow
   GtkMenuButton        *menu_button;
 };
 
-G_DEFINE_TYPE (SysprofWindow, sysprof_window, GTK_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE (SysprofWindow, sysprof_window, ADW_TYPE_APPLICATION_WINDOW)
 
 /**
  * sysprof_window_new:

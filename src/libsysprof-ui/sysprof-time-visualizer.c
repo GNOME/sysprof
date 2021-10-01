@@ -114,35 +114,39 @@ copy_array (GArray *ar)
   return ret;
 }
 
-static gboolean
-sysprof_time_visualizer_draw (GtkWidget *widget,
-                              cairo_t   *cr)
+static void
+sysprof_time_visualizer_snapshot (GtkWidget   *widget,
+                                  GtkSnapshot *snapshot)
 {
   SysprofTimeVisualizer *self = (SysprofTimeVisualizer *)widget;
   SysprofTimeVisualizerPrivate *priv = sysprof_time_visualizer_get_instance_private (self);
   GtkStyleContext *style_context;
-  GtkStateFlags flags;
+  cairo_t *cr;
   GtkAllocation alloc;
-  GdkRectangle clip;
   GdkRGBA foreground;
-  gboolean ret;
 
   g_assert (SYSPROF_IS_TIME_VISUALIZER (widget));
-  g_assert (cr != NULL);
+  g_assert (snapshot != NULL);
 
   gtk_widget_get_allocation (widget, &alloc);
 
-  ret = GTK_WIDGET_CLASS (sysprof_time_visualizer_parent_class)->draw (widget, cr);
+  GTK_WIDGET_CLASS (sysprof_time_visualizer_parent_class)->snapshot (widget, snapshot);
 
   if (priv->cache == NULL)
-    return ret;
+    return;
 
+#if 0
   if (!gdk_cairo_get_clip_rectangle (cr, &clip))
     return ret;
+#else
+  alloc.x = 0;
+  alloc.y = 0;
+#endif
 
   style_context = gtk_widget_get_style_context (widget);
-  flags = gtk_widget_get_state_flags (widget);
-  gtk_style_context_get_color (style_context, flags, &foreground);
+  gtk_style_context_get_color (style_context, &foreground);
+
+  cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, alloc.width, alloc.height));
 
   gdk_cairo_set_source_rgba (cr, &foreground);
 
@@ -187,7 +191,7 @@ sysprof_time_visualizer_draw (GtkWidget *widget,
         }
     }
 
-  return ret;
+  cairo_destroy (cr);
 }
 
 static void
@@ -243,10 +247,10 @@ sysprof_time_visualizer_queue_reload (SysprofTimeVisualizer *self)
 
   if (priv->queued_load == 0)
     priv->queued_load =
-      gdk_threads_add_idle_full (G_PRIORITY_LOW,
-                                 sysprof_time_visualizer_do_reload,
-                                 self,
-                                 NULL);
+      g_idle_add_full (G_PRIORITY_LOW,
+                       sysprof_time_visualizer_do_reload,
+                       self,
+                       NULL);
 }
 
 static void
@@ -283,11 +287,7 @@ sysprof_time_visualizer_finalize (GObject *object)
   g_clear_pointer (&priv->cache, point_cache_unref);
   g_clear_pointer (&priv->reader, sysprof_capture_reader_unref);
 
-  if (priv->queued_load != 0)
-    {
-      g_source_remove (priv->queued_load);
-      priv->queued_load = 0;
-    }
+  g_clear_handle_id (&priv->queued_load, g_source_remove);
 
   G_OBJECT_CLASS (sysprof_time_visualizer_parent_class)->finalize (object);
 }
@@ -301,7 +301,7 @@ sysprof_time_visualizer_class_init (SysprofTimeVisualizerClass *klass)
 
   object_class->finalize = sysprof_time_visualizer_finalize;
 
-  widget_class->draw = sysprof_time_visualizer_draw;
+  widget_class->snapshot = sysprof_time_visualizer_snapshot;
 
   visualizer_class->set_reader = sysprof_time_visualizer_set_reader;
 }

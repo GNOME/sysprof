@@ -34,7 +34,8 @@ struct _SysprofDepthVisualizer
   PointCache           *points;
   guint                 reload_source;
   guint                 mode;
-  GtkAllocation         last_alloc;
+  int                   last_width;
+  int                   last_height;
   guint                 reloading : 1;
   guint                 needs_reload : 1;
 };
@@ -238,34 +239,46 @@ sysprof_depth_visualizer_set_reader (SysprofVisualizer    *row,
     }
 }
 
-static gboolean
-sysprof_depth_visualizer_draw (GtkWidget *widget,
-                               cairo_t   *cr)
+static void
+sysprof_depth_visualizer_snapshot (GtkWidget   *widget,
+                                   GtkSnapshot *snapshot)
 {
   SysprofDepthVisualizer *self = (SysprofDepthVisualizer *)widget;
   GtkAllocation alloc;
   GdkRectangle clip;
   const Point *points;
-  gboolean ret;
+  cairo_t *cr;
   guint n_points = 0;
   GdkRGBA user;
   GdkRGBA system;
 
   g_assert (SYSPROF_IS_DEPTH_VISUALIZER (self));
-  g_assert (cr != NULL);
+  g_assert (snapshot != NULL);
 
-  ret = GTK_WIDGET_CLASS (sysprof_depth_visualizer_parent_class)->draw (widget, cr);
+  GTK_WIDGET_CLASS (sysprof_depth_visualizer_parent_class)->snapshot (widget, snapshot);
 
   if (self->points == NULL)
-    return ret;
+    return;
 
   gdk_rgba_parse (&user, "#1a5fb4");
   gdk_rgba_parse (&system, "#3584e4");
 
   gtk_widget_get_allocation (widget, &alloc);
 
+  cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, alloc.width, alloc.height));
+
+  /* FIXME: we should abstract visualizer drawing into regions so that we
+   * can still know the region we're drawing.
+   */
+#if 0
   if (!gdk_cairo_get_clip_rectangle (cr, &clip))
-    return ret;
+    return;
+#else
+  clip.x = alloc.x = 0;
+  clip.y = alloc.y = 0;
+  clip.width = alloc.width;
+  clip.height = alloc.height;
+#endif
 
   /* Draw user-space stacks */
   if (self->mode != SYSPROF_DEPTH_VISUALIZER_KERNEL_ONLY &&
@@ -355,7 +368,7 @@ sysprof_depth_visualizer_draw (GtkWidget *widget,
       cairo_stroke (cr);
     }
 
-  return ret;
+  cairo_destroy (cr);
 }
 
 static gboolean
@@ -372,25 +385,23 @@ sysprof_depth_visualizer_queue_reload (SysprofDepthVisualizer *self)
 {
   g_assert (SYSPROF_IS_DEPTH_VISUALIZER (self));
 
-  if (self->reload_source)
-    g_source_remove (self->reload_source);
-
-  self->reload_source = gdk_threads_add_idle (sysprof_depth_visualizer_do_reload, self);
+  g_clear_handle_id (&self->reload_source, g_source_remove);
+  self->reload_source = g_idle_add (sysprof_depth_visualizer_do_reload, self);
 }
 
 static void
-sysprof_depth_visualizer_size_allocate (GtkWidget     *widget,
-                                        GtkAllocation *alloc)
+sysprof_depth_visualizer_size_allocate (GtkWidget *widget,
+                                        int        width,
+                                        int        height,
+                                        int        baseline)
 {
   SysprofDepthVisualizer *self = (SysprofDepthVisualizer *)widget;
 
-  GTK_WIDGET_CLASS (sysprof_depth_visualizer_parent_class)->size_allocate (widget, alloc);
-
-  if (alloc->width != self->last_alloc.x ||
-      alloc->height != self->last_alloc.height)
+  if (width != self->last_width || height != self->last_height)
     {
       sysprof_depth_visualizer_queue_reload (SYSPROF_DEPTH_VISUALIZER (widget));
-      self->last_alloc = *alloc;
+      self->last_width = width;
+      self->last_height = height;
     }
 }
 
@@ -400,12 +411,7 @@ sysprof_depth_visualizer_finalize (GObject *object)
   SysprofDepthVisualizer *self = (SysprofDepthVisualizer *)object;
 
   g_clear_pointer (&self->reader, sysprof_capture_reader_unref);
-
-  if (self->reload_source)
-    {
-      g_source_remove (self->reload_source);
-      self->reload_source = 0;
-    }
+  g_clear_handle_id (&self->reload_source, g_source_remove);
 
   G_OBJECT_CLASS (sysprof_depth_visualizer_parent_class)->finalize (object);
 }
@@ -419,7 +425,7 @@ sysprof_depth_visualizer_class_init (SysprofDepthVisualizerClass *klass)
 
   object_class->finalize = sysprof_depth_visualizer_finalize;
 
-  widget_class->draw = sysprof_depth_visualizer_draw;
+  widget_class->snapshot = sysprof_depth_visualizer_snapshot;
   widget_class->size_allocate = sysprof_depth_visualizer_size_allocate;
 
   row_class->set_reader = sysprof_depth_visualizer_set_reader;

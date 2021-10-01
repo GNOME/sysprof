@@ -227,7 +227,7 @@ sysprof_rapl_aid_present_finish (SysprofAid    *aid,
       if (found > 0)
         sysprof_display_add_group (present->display, energy);
       else
-        gtk_widget_destroy (GTK_WIDGET (energy));
+        g_object_unref (energy);
     }
 
   return counters != NULL;

@@ -55,6 +55,9 @@ typedef struct
   GtkTreeView              *descendants_view;
   GtkTreeViewColumn        *descendants_name_column;
   GtkStack                 *stack;
+  GtkWidget                *empty_state;
+  GtkWidget                *loading_state;
+  GtkWidget                *callgraph;
 
   GQueue                   *history;
 
@@ -207,7 +210,7 @@ sysprof_callgraph_page_load (SysprofCallgraphPage    *self,
       gtk_tree_selection_select_iter (selection, &iter);
     }
 
-  gtk_stack_set_visible_child_name (priv->stack, "callgraph");
+  gtk_stack_set_visible_child (priv->stack, priv->callgraph);
 
   g_clear_object (&functions);
 }
@@ -219,7 +222,7 @@ _sysprof_callgraph_page_set_failed (SysprofCallgraphPage *self)
 
   g_return_if_fail (SYSPROF_IS_CALLGRAPH_PAGE (self));
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 }
 
 static void
@@ -238,7 +241,7 @@ sysprof_callgraph_page_unload (SysprofCallgraphPage *self)
   gtk_tree_view_set_model (priv->functions_view, NULL);
   gtk_tree_view_set_model (priv->descendants_view, NULL);
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 }
 
 /**
@@ -926,6 +929,9 @@ sysprof_callgraph_page_class_init (SysprofCallgraphPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, descendants_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, descendants_name_column);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, stack);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, callgraph);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, empty_state);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, loading_state);
 
   gtk_widget_class_install_action (widget_class, "page.copy", NULL, sysprof_callgraph_page_copy_cb);
 
@@ -946,7 +952,7 @@ sysprof_callgraph_page_init (SysprofCallgraphPage *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 
   selection = gtk_tree_view_get_selection (priv->functions_view);
 
@@ -1278,7 +1284,7 @@ _sysprof_callgraph_page_set_loading (SysprofCallgraphPage *self,
     priv->loading--;
 
   if (priv->loading)
-    gtk_stack_set_visible_child_name (priv->stack, "loading");
+    gtk_stack_set_visible_child (priv->stack, priv->loading_state);
   else
-    gtk_stack_set_visible_child_name (priv->stack, "callgraph");
+    gtk_stack_set_visible_child (priv->stack, priv->callgraph);
 }

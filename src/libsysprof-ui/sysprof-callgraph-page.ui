@@ -4,10 +4,12 @@
       <object class="GtkStack" id="stack">
         <property name="visible">true</property>
         <child>
-          <object class="GtkPaned">
+          <object class="GtkPaned" id="callgraph">
             <property name="orientation">horizontal</property>
             <property name="position">450</property>
             <property name="visible">true</property>
+            <property name="resize-start-child">true</property>
+            <property name="resize-end-child">true</property>
             <child>
               <object class="GtkPaned">
                 <property name="orientation">vertical</property>
@@ -70,9 +72,6 @@
                       </object>
                     </child>
                   </object>
-                  <packing>
-                    <property name="resize">true</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkScrolledWindow">
@@ -131,9 +130,6 @@
                       </object>
                     </child>
                   </object>
-                  <packing>
-                    <property name="resize">true</property>
-                  </packing>
                 </child>
               </object>
             </child>
@@ -203,31 +199,21 @@
               </object>
             </child>
           </object>
-          <packing>
-            <property name="name">callgraph</property>
-          </packing>
         </child>
         <child>
-          <object class="DzlEmptyState">
+          <object class="AdwStatusPage" id="loading_state">
             <property name="icon-name">content-loading-symbolic</property>
             <property name="title" translatable="yes">Generating Callgraph</property>
-            <property name="subtitle" translatable="yes">Sysprof is busy creating the selected callgraph.</property>
-            <property name="visible">true</property>
+            <property name="description" translatable="yes">Sysprof is busy creating the selected callgraph.</property>
           </object>
-          <packing>
-            <property name="name">loading</property>
-          </packing>
         </child>
         <child>
-          <object class="DzlEmptyState">
+          <object class="AdwStatusPage" id="empty_state">
             <property name="icon-name">computer-fail-symbolic</property>
             <property name="title" translatable="yes">Not Enough Samples</property>
             <property name="subtitle" translatable="yes">More samples are necessary to display a callgraph.</property>
             <property name="visible">false</property>
           </object>
-          <packing>
-            <property name="name">empty-state</property>
-          </packing>
         </child>
       </object>
     </child>

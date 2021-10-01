@@ -9,7 +9,10 @@
         <property name="visible">true</property>
         <child>
           <object class="EggThreeGrid" id="three_grid">
-            <property name="margin">36</property>
+            <property name="margin-start">36</property>
+            <property name="margin-end">36</property>
+            <property name="margin-top">36</property>
+            <property name="margin-bottom">36</property>
             <property name="column-spacing">12</property>
             <property name="row-spacing">6</property>
             <property name="visible">true</property>

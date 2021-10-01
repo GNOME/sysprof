@@ -24,6 +24,8 @@
 
 #include <sysprof.h>
 
+#include "egg-three-grid.h"
+
 #include "sysprof-platform.h"
 
 #include "sysprof-aid-icon.h"
@@ -61,6 +63,7 @@ struct _SysprofProfilerAssistant
   GtkSwitch            *whole_system_switch;
   GtkSwitch            *launch_switch;
   GtkSwitch            *inherit_switch;
+  GtkWidget            *scroller;
 };
 
 enum {
@@ -352,6 +355,7 @@ sysprof_profiler_assistant_dispose (GObject *object)
   SysprofProfilerAssistant *self = (SysprofProfilerAssistant *)object;
 
   g_clear_object (&self->process_model);
+  g_clear_pointer (&self->scroller, gtk_widget_unparent);
 
   G_OBJECT_CLASS (sysprof_profiler_assistant_parent_class)->dispose (object);
 }
@@ -392,6 +396,9 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, launch_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, inherit_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, search_entry);
+  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, scroller);
+
+  g_type_ensure (EGG_TYPE_THREE_GRID);
 
   g_type_ensure (SYSPROF_TYPE_AID_ICON);
   g_type_ensure (SYSPROF_TYPE_BATTERY_AID);

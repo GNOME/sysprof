@@ -63,19 +63,22 @@
   </object>
   <template class="SysprofProfilerAssistant" parent="GtkWidget">
     <child>
-      <object class="GtkScrolledWindow">
+      <object class="GtkScrolledWindow" id="scroller">
         <property name="propagate-natural-width">true</property>
         <property name="propagate-natural-height">true</property>
         <property name="hscrollbar-policy">never</property>
         <property name="visible">true</property>
         <child>
           <object class="GtkBox">
-            <property name="margin">36</property>
+            <property name="margin-top">36</property>
+            <property name="margin-bottom">36</property>
+            <property name="margin-start">36</property>
+            <property name="margin-end">36</property>
             <property name="spacing">12</property>
             <property name="orientation">vertical</property>
             <property name="visible">true</property>
             <child>
-              <object class="DzlThreeGrid" id="three_grid">
+              <object class="EggThreeGrid" id="three_grid">
                 <property name="column-spacing">12</property>
                 <property name="row-spacing">6</property>
                 <property name="visible">true</property>
@@ -198,11 +201,11 @@
                         </child>
                       </object>
                     </child>
+                    <layout>
+                      <property name="column">center</property>
+                      <property name="row">5</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="column">center</property>
-                    <property name="row">5</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkLabel" id="label1">
@@ -212,11 +215,11 @@
                     <style>
                       <class name="dim-label"/>
                     </style>
+                    <layout>
+                      <property name="column">left</property>
+                      <property name="row">0</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="column">left</property>
-                    <property name="row">0</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkSwitch" id="whole_system_switch">
@@ -224,11 +227,11 @@
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                     <property name="visible">true</property>
+                    <layout>
+                      <property name="column">center</property>
+                      <property name="row">0</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="column">center</property>
-                    <property name="row">0</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkBox">
@@ -270,7 +273,6 @@
                             </child>
                             <child>
                               <object class="GtkScrolledWindow">
-                                <property name="shadow-type">in</property>
                                 <property name="hscrollbar-policy">never</property>
                                 <property name="min-content-height">175</property>
                                 <property name="max-content-height">175</property>
@@ -281,8 +283,8 @@
                                     <property name="visible">true</property>
                                     <child type="placeholder">
                                       <object class="GtkLabel">
-                                        <property name="margin-left">12</property>
-                                        <property name="margin-right">12</property>
+                                        <property name="margin-start">12</property>
+                                        <property name="margin-end">12</property>
                                         <property name="label" translatable="yes">Loading Processes…</property>
                                         <property name="valign">center</property>
                                         <property name="visible">true</property>
@@ -299,11 +301,11 @@
                         </child>
                       </object>
                     </child>
+                    <layout>
+                      <property name="column">center</property>
+                      <property name="row">1</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="column">center</property>
-                    <property name="row">1</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkLabel" id="label2">
@@ -314,11 +316,11 @@
                     <style>
                       <class name="dim-label"/>
                     </style>
+                    <layout>
+                      <property name="column">left</property>
+                      <property name="row">2</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="column">left</property>
-                    <property name="row">2</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkBox">
@@ -398,7 +400,6 @@
                             </child>
                             <child>
                               <object class="GtkFrame">
-                                <property name="shadow-type">in</property>
                                 <property name="visible">true</property>
                                 <child>
                                   <object class="SysprofEnvironEditor" id="environ_editor">
@@ -451,11 +452,11 @@
                         </child>
                       </object>
                     </child>
+                    <layout>
+                      <property name="column">center</property>
+                      <property name="row">2</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="column">center</property>
-                    <property name="row">2</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkLabel" id="label3">
@@ -466,11 +467,11 @@
                     <style>
                       <class name="dim-label"/>
                     </style>
+                    <layout>
+                      <property name="column">left</property>
+                      <property name="row">3</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="column">left</property>
-                    <property name="row">3</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkBox">
@@ -500,11 +501,11 @@
                         </style>
                       </object>
                     </child>
+                    <layout>
+                      <property name="column">center</property>
+                      <property name="row">3</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="column">center</property>
-                    <property name="row">3</property>
-                  </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="record_button">
@@ -518,17 +519,13 @@
                     <style>
                       <class name="suggested-action"/>
                     </style>
+                    <layout>
+                      <property name="column">center</property>
+                      <property name="row">4</property>
+                    </layout>
                   </object>
-                  <packing>
-                    <property name="column">center</property>
-                    <property name="row">4</property>
-                  </packing>
                 </child>
               </object>
-              <packing>
-                <property name="pack-type">start</property>
-                <property name="position">2</property>
-              </packing>
             </child>
           </object>
         </child>

@@ -33,7 +33,11 @@ typedef struct
   guint always_show_tabs : 1;
 } SysprofNotebookPrivate;
 
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofNotebook, sysprof_notebook, GTK_TYPE_WIDGET)
+static void buildable_iface_init (GtkBuildableIface *iface);
+
+G_DEFINE_TYPE_WITH_CODE (SysprofNotebook, sysprof_notebook, GTK_TYPE_WIDGET,
+                         G_ADD_PRIVATE (SysprofNotebook)
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
 
 enum {
   PROP_0,
@@ -498,4 +502,29 @@ sysprof_notebook_set_always_show_tabs (SysprofNotebook *self,
                                    gtk_notebook_get_n_pages (priv->notebook) > 1));
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ALWAYS_SHOW_TABS]);
     }
+}
+
+static void
+sysprof_notebook_add_child (GtkBuildable *buildable,
+                            GtkBuilder   *builder,
+                            GObject      *child,
+                            const char   *type)
+{
+  SysprofNotebook *self = (SysprofNotebook *)buildable;
+  SysprofNotebookPrivate *priv = sysprof_notebook_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_NOTEBOOK (self));
+
+  if (SYSPROF_IS_DISPLAY (child))
+    gtk_notebook_append_page (priv->notebook, GTK_WIDGET (child), NULL);
+  else
+    g_warning ("Cannot add child of type %s to %s",
+               G_OBJECT_TYPE_NAME (child),
+               G_OBJECT_TYPE_NAME (self));
+}
+
+static void
+buildable_iface_init (GtkBuildableIface *iface)
+{
+  iface->add_child = sysprof_notebook_add_child;
 }

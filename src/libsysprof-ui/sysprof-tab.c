@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#include "sysprof-display.h"
+#include "sysprof-display-private.h"
 #include "sysprof-tab.h"
 #include "sysprof-ui-private.h"
 
@@ -62,18 +62,18 @@ sysprof_tab_close_clicked (SysprofTab *self,
   g_assert (SYSPROF_IS_TAB (self));
   g_assert (GTK_IS_BUTTON (button));
 
-  if (self->display != NULL)
-    gtk_widget_destroy (GTK_WIDGET (self->display));
+  if (self->display)
+    _sysprof_display_destroy (self->display);
 }
 
 static void
-sysprof_tab_finalize (GObject *object)
+sysprof_tab_dispose (GObject *object)
 {
   SysprofTab *self = (SysprofTab *)object;
 
   g_clear_weak_pointer (&self->display);
 
-  G_OBJECT_CLASS (sysprof_tab_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sysprof_tab_parent_class)->dispose (object);
 }
 
 static void
@@ -122,7 +122,7 @@ sysprof_tab_class_init (SysprofTabClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_tab_finalize;
+  object_class->dispose = sysprof_tab_dispose;
   object_class->get_property = sysprof_tab_get_property;
   object_class->set_property = sysprof_tab_set_property;
 

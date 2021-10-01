@@ -266,16 +266,10 @@ sysprof_details_page_add_item (SysprofDetailsPage *self,
   g_return_if_fail (!center || GTK_IS_WIDGET (center));
 
   if (left)
-    gtk_container_add_with_properties (GTK_CONTAINER (self->three_grid), left,
-                                       "row", self->next_row,
-                                       "column", EGG_THREE_GRID_COLUMN_LEFT,
-                                       NULL);
+    egg_three_grid_add (self->three_grid, left, self->next_row, EGG_THREE_GRID_COLUMN_LEFT);
 
   if (center)
-    gtk_container_add_with_properties (GTK_CONTAINER (self->three_grid), center,
-                                       "row", self->next_row,
-                                       "column", EGG_THREE_GRID_COLUMN_CENTER,
-                                       NULL);
+    egg_three_grid_add (self->three_grid, center, self->next_row, EGG_THREE_GRID_COLUMN_CENTER);
 
   self->next_row++;
 }

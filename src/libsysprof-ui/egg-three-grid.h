@@ -25,11 +25,11 @@ G_BEGIN_DECLS
 #define EGG_TYPE_THREE_GRID        (egg_three_grid_get_type())
 #define EGG_TYPE_THREE_GRID_COLUMN (egg_three_grid_column_get_type())
 
-G_DECLARE_DERIVABLE_TYPE (EggThreeGrid, egg_three_grid, EGG, THREE_GRID, GtkContainer)
+G_DECLARE_DERIVABLE_TYPE (EggThreeGrid, egg_three_grid, EGG, THREE_GRID, GtkWidget)
 
 struct _EggThreeGridClass
 {
-  GtkContainerClass parent_class;
+  GtkWidgetClass parent_class;
 };
 
 typedef enum
@@ -41,5 +41,11 @@ typedef enum
 
 GType      egg_three_grid_column_get_type (void);
 GtkWidget *egg_three_grid_new             (void);
+void       egg_three_grid_add             (EggThreeGrid       *self,
+                                           GtkWidget          *child,
+                                           guint               row,
+                                           EggThreeGridColumn  column);
+void       egg_three_grid_remove          (EggThreeGrid       *self,
+                                           GtkWidget          *child);
 
 G_END_DECLS

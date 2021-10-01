@@ -29,11 +29,11 @@ typedef struct
 {
   GtkWidget          *widget;
   EggThreeGridColumn  column;
-  gint                row;
-  gint                min_height;
-  gint                nat_height;
-  gint                min_baseline;
-  gint                nat_baseline;
+  int                 row;
+  int                 min_height;
+  int                 nat_height;
+  int                 min_baseline;
+  int                 nat_baseline;
 } EggThreeGridChild;
 
 typedef struct
@@ -46,14 +46,14 @@ typedef struct
 
 typedef struct
 {
-  gint row;
-  gint min_above_baseline;
-  gint min_below_baseline;
-  gint nat_above_baseline;
-  gint nat_below_baseline;
+  int row;
+  int min_above_baseline;
+  int min_below_baseline;
+  int nat_above_baseline;
+  int nat_below_baseline;
 } EggThreeGridRowInfo;
 
-G_DEFINE_TYPE_WITH_PRIVATE (EggThreeGrid, egg_three_grid, GTK_TYPE_CONTAINER)
+G_DEFINE_TYPE_WITH_PRIVATE (EggThreeGrid, egg_three_grid, GTK_TYPE_WIDGET)
 
 enum {
   PROP_0,
@@ -70,8 +70,6 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
-static GParamSpec *child_properties [N_CHILD_PROPS];
-static EggThreeGridChild dummy;
 
 static EggThreeGridChild *
 egg_three_grid_child_new (void)
@@ -88,31 +86,12 @@ egg_three_grid_child_free (gpointer data)
   g_slice_free (EggThreeGridChild, child);
 }
 
-static EggThreeGridChild *
-egg_three_grid_find_child (EggThreeGrid *self,
-                           GtkWidget    *widget)
+void
+egg_three_grid_add (EggThreeGrid       *self,
+                    GtkWidget          *widget,
+                    guint               row,
+                    EggThreeGridColumn  column)
 {
-  EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
-
-  g_assert (EGG_IS_THREE_GRID (self));
-  g_assert (GTK_IS_WIDGET (widget));
-
-  for (guint i = 0; i < priv->children->len; i++)
-    {
-      EggThreeGridChild *child = g_ptr_array_index (priv->children, i);
-
-      if (child->widget == widget)
-        return child;
-    }
-
-  return &dummy;
-}
-
-static void
-egg_three_grid_add (GtkContainer *container,
-                    GtkWidget    *widget)
-{
-  EggThreeGrid *self = (EggThreeGrid *)container;
   EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
   EggThreeGridChild *child;
 
@@ -121,16 +100,22 @@ egg_three_grid_add (GtkContainer *container,
 
   child = egg_three_grid_child_new ();
   child->widget = g_object_ref_sink (widget);
+  child->column = column;
+  child->row = row;
+  child->min_height = -1;
+  child->nat_height = -1;
+  child->min_baseline = -1;
+  child->nat_baseline = -1;
+
   g_ptr_array_add (priv->children, child);
 
   gtk_widget_set_parent (widget, GTK_WIDGET (self));
 }
 
-static void
-egg_three_grid_remove (GtkContainer *container,
+void
+egg_three_grid_remove (EggThreeGrid *self,
                        GtkWidget    *widget)
 {
-  EggThreeGrid *self = (EggThreeGrid *)container;
   EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
 
   g_assert (EGG_IS_THREE_GRID (self));
@@ -159,12 +144,12 @@ egg_three_grid_get_request_mode (GtkWidget *widget)
 static void
 egg_three_grid_get_column_width (EggThreeGrid       *self,
                                  EggThreeGridColumn  column,
-                                 gint               *min_width,
-                                 gint               *nat_width)
+                                 int                *min_width,
+                                 int                *nat_width)
 {
   EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
-  gint real_min_width = 0;
-  gint real_nat_width = 0;
+  int real_min_width = 0;
+  int real_nat_width = 0;
 
   g_assert (EGG_IS_THREE_GRID (self));
   g_assert (column >= EGG_THREE_GRID_COLUMN_LEFT);
@@ -178,10 +163,10 @@ egg_three_grid_get_column_width (EggThreeGrid       *self,
 
       if (child->column == column)
         {
-          gint child_min_width;
-          gint child_nat_width;
+          int child_min_width;
+          int child_nat_width;
 
-          gtk_widget_get_preferred_width (child->widget, &child_min_width, &child_nat_width);
+          gtk_widget_measure (child->widget, GTK_ORIENTATION_HORIZONTAL, -1, &child_min_width, &child_nat_width, NULL, NULL);
 
           real_min_width = MAX (real_min_width, child_min_width);
           real_nat_width = MAX (real_nat_width, child_nat_width);
@@ -194,33 +179,23 @@ egg_three_grid_get_column_width (EggThreeGrid       *self,
 
 static void
 egg_three_grid_get_preferred_width (GtkWidget *widget,
-                                    gint      *min_width,
-                                    gint      *nat_width)
+                                    int       *min_width,
+                                    int       *nat_width)
 {
   EggThreeGrid *self = (EggThreeGrid *)widget;
   EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
-  GtkStyleContext *style_context;
-  GtkBorder margin;
-  gint min_widths[3];
-  gint nat_widths[3];
-  gint border_width;
-  GtkStateFlags state;
+  int min_widths[3];
+  int nat_widths[3];
 
   g_assert (EGG_IS_THREE_GRID (self));
   g_assert (min_width != NULL);
   g_assert (nat_width != NULL);
 
-  style_context = gtk_widget_get_style_context (widget);
-  state = gtk_style_context_get_state (style_context);
-  gtk_style_context_get_margin (style_context, state, &margin);
-
   for (guint i = 0; i < 3; i++)
     egg_three_grid_get_column_width (self, i, &min_widths[i], &nat_widths[i]);
 
-  border_width = gtk_container_get_border_width (GTK_CONTAINER (self));
-
-  *min_width = MAX (min_widths[0], min_widths[2]) * 2 + min_widths[1] + margin.left + margin.right + (border_width * 2) + (priv->column_spacing * 2);
-  *nat_width = MAX (nat_widths[0], nat_widths[2]) * 2 + nat_widths[1] + margin.left + margin.right + (border_width * 2) + (priv->column_spacing * 2);
+  *min_width = MAX (min_widths[0], min_widths[2]) * 2 + min_widths[1] + (priv->column_spacing * 2);
+  *nat_width = MAX (nat_widths[0], nat_widths[2]) * 2 + nat_widths[1] + (priv->column_spacing * 2);
 }
 
 static void
@@ -292,38 +267,27 @@ update_row_info (GHashTable        *hashtable,
 
 static void
 egg_three_grid_get_preferred_height_for_width (GtkWidget *widget,
-                                               gint       width,
-                                               gint      *min_height,
-                                               gint      *nat_height)
+                                               int        width,
+                                               int       *min_height,
+                                               int       *nat_height)
 {
   EggThreeGrid *self = (EggThreeGrid *)widget;
   EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
   g_autoptr(GHashTable) row_infos = NULL;
   EggThreeGridRowInfo *row_info;
-  GtkStyleContext *style_context;
   GHashTableIter iter;
-  GtkStateFlags state;
-  GtkBorder margin;
-  gint real_min_height = 0;
-  gint real_nat_height = 0;
-  gint column_min_widths[3];
-  gint column_nat_widths[3];
-  gint widths[3];
-  gint border_width;
-  gint n_rows;
+  int real_min_height = 0;
+  int real_nat_height = 0;
+  int column_min_widths[3];
+  int column_nat_widths[3];
+  int widths[3];
+  int n_rows;
 
   g_assert (EGG_IS_THREE_GRID (self));
   g_assert (min_height != NULL);
   g_assert (nat_height != NULL);
 
-  border_width = gtk_container_get_border_width (GTK_CONTAINER (self));
-  width -= border_width * 2;
   width -= priv->column_spacing * 2;
-
-  style_context = gtk_widget_get_style_context (widget);
-  state = gtk_style_context_get_state (style_context);
-  gtk_style_context_get_margin (style_context, state, &margin);
-  width -= margin.left + margin.right;
 
   egg_three_grid_get_column_width (self, EGG_THREE_GRID_COLUMN_LEFT, &column_min_widths[0], &column_nat_widths[0]);
   egg_three_grid_get_column_width (self, EGG_THREE_GRID_COLUMN_CENTER, &column_min_widths[1], &column_nat_widths[1]);
@@ -353,12 +317,10 @@ egg_three_grid_get_preferred_height_for_width (GtkWidget *widget,
           !gtk_widget_get_child_visible (child->widget))
         continue;
 
-      gtk_widget_get_preferred_height_and_baseline_for_width (child->widget,
-                                                              widths[child->column],
-                                                              &child->min_height,
-                                                              &child->nat_height,
-                                                              &child->min_baseline,
-                                                              &child->nat_baseline);
+      gtk_widget_measure (child->widget, GTK_ORIENTATION_VERTICAL, widths[child->column],
+                          &child->min_height, &child->nat_height,
+                          &child->min_baseline, &child->nat_baseline);
+
       update_row_info (row_infos, child);
     }
 
@@ -377,12 +339,6 @@ egg_three_grid_get_preferred_height_for_width (GtkWidget *widget,
       real_min_height += row_info->min_above_baseline + row_info->min_below_baseline;
       real_nat_height += row_info->nat_above_baseline + row_info->nat_below_baseline;
     }
-
-  real_min_height += border_width * 2;
-  real_nat_height += border_width * 2;
-
-  real_min_height += margin.top + margin.bottom;
-  real_nat_height += margin.top + margin.bottom;
 
   n_rows = g_hash_table_size (row_infos);
 
@@ -406,7 +362,7 @@ egg_three_grid_get_preferred_height_for_width (GtkWidget *widget,
   priv->row_infos = g_steal_pointer (&row_infos);
 }
 
-static gint
+static int
 sort_by_row (gconstpointer a,
              gconstpointer b)
 {
@@ -419,9 +375,9 @@ sort_by_row (gconstpointer a,
 static void
 egg_three_grid_size_allocate_children (EggThreeGrid       *self,
                                        EggThreeGridColumn  column,
-                                       gint                row,
+                                       int                 row,
                                        GtkAllocation      *allocation,
-                                       gint                baseline)
+                                       int                 baseline)
 {
   EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
 
@@ -435,69 +391,52 @@ egg_three_grid_size_allocate_children (EggThreeGrid       *self,
       if (child->row == row && child->column == column)
         {
           GtkAllocation copy = *allocation;
-          gtk_widget_size_allocate_with_baseline (child->widget, &copy, baseline);
+          gtk_widget_size_allocate (child->widget, &copy, baseline);
         }
     }
 }
 
 static void
-egg_three_grid_size_allocate (GtkWidget     *widget,
-                              GtkAllocation *allocation)
+egg_three_grid_size_allocate (GtkWidget *widget,
+                              int        width,
+                              int        height,
+                              int        baseline)
 {
   EggThreeGrid *self = (EggThreeGrid *)widget;
   EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
   g_autofree GtkRequestedSize *rows = NULL;
   const GList *iter;
-  GtkStyleContext *style_context;
   GtkAllocation area;
   GtkTextDirection dir;
   GList *values;
-  GtkStateFlags state;
-  GtkBorder margin;
   guint i;
   guint n_rows;
-  gint min_height;
-  gint nat_height;
-  gint border_width;
-  gint left_min_width;
-  gint left_nat_width;
-  gint center_min_width;
-  gint center_nat_width;
-  gint right_min_width;
-  gint right_nat_width;
-  gint left;
-  gint center;
-  gint right;
+  int min_height;
+  int nat_height;
+  int left_min_width;
+  int left_nat_width;
+  int center_min_width;
+  int center_nat_width;
+  int right_min_width;
+  int right_nat_width;
+  int left;
+  int center;
+  int right;
 
   g_assert (EGG_IS_THREE_GRID (self));
-  g_assert (allocation != NULL);
 
-  area = *allocation;
-
-  style_context = gtk_widget_get_style_context (widget);
-  state = gtk_style_context_get_state (style_context);
-  gtk_style_context_get_margin (style_context, state, &margin);
-  border_width = gtk_container_get_border_width (GTK_CONTAINER (self));
-
-  area.x += border_width;
-  area.y += border_width;
-  area.width -= border_width * 2;
-  area.height -= border_width * 2;
-
-  area.x += margin.left;
-  area.width -= margin.right + margin.left;
-  area.y += margin.top;
-  area.height -= margin.top + margin.bottom;
-
-  gtk_widget_set_allocation (widget, &area);
+  area.x = 0;
+  area.y = 0;
+  area.width = width;
+  area.height = height;
 
   dir = gtk_widget_get_direction (widget);
 
-  egg_three_grid_get_preferred_height_for_width (widget, allocation->width, &min_height, &nat_height);
+  egg_three_grid_get_preferred_height_for_width (widget, width, &min_height, &nat_height);
 
-  if (min_height > allocation->height)
+  if (min_height > height)
     g_warning ("%s requested a minimum height of %d and got %d",
-               G_OBJECT_TYPE_NAME (widget), min_height, allocation->height);
+               G_OBJECT_TYPE_NAME (widget), min_height, height);
 
   if (priv->row_infos == NULL)
     return;
@@ -559,36 +498,36 @@ egg_three_grid_size_allocate (GtkWidget     *widget,
       GtkRequestedSize *size = &rows[i];
       EggThreeGridRowInfo *row_info = size->data;
       GtkAllocation child_alloc;
-      gint baseline;
+      int child_baseline;
 
       if (row_info->nat_above_baseline + row_info->nat_below_baseline < size->minimum_size)
-        baseline = row_info->nat_above_baseline;
+        child_baseline = row_info->nat_above_baseline;
       else
-        baseline = row_info->min_above_baseline;
+        child_baseline = row_info->min_above_baseline;
 
       child_alloc.x = area.x;
       child_alloc.width = left;
       child_alloc.y = area.y;
       child_alloc.height = size->minimum_size;
       if (dir == GTK_TEXT_DIR_LTR)
-        egg_three_grid_size_allocate_children (self, EGG_THREE_GRID_COLUMN_LEFT, row_info->row, &child_alloc, baseline);
+        egg_three_grid_size_allocate_children (self, EGG_THREE_GRID_COLUMN_LEFT, row_info->row, &child_alloc, child_baseline);
       else
-        egg_three_grid_size_allocate_children (self, EGG_THREE_GRID_COLUMN_RIGHT, row_info->row, &child_alloc, baseline);
+        egg_three_grid_size_allocate_children (self, EGG_THREE_GRID_COLUMN_RIGHT, row_info->row, &child_alloc, child_baseline);
 
       child_alloc.x = area.x + left + priv->column_spacing;
       child_alloc.width = center;
       child_alloc.y = area.y;
       child_alloc.height = size->minimum_size;
-      egg_three_grid_size_allocate_children (self, EGG_THREE_GRID_COLUMN_CENTER, row_info->row, &child_alloc, baseline);
+      egg_three_grid_size_allocate_children (self, EGG_THREE_GRID_COLUMN_CENTER, row_info->row, &child_alloc, child_baseline);
 
       child_alloc.x = area.x + area.width - right;
       child_alloc.width = right;
       child_alloc.y = area.y;
       child_alloc.height = size->minimum_size;
       if (dir == GTK_TEXT_DIR_LTR)
-        egg_three_grid_size_allocate_children (self, EGG_THREE_GRID_COLUMN_RIGHT, row_info->row, &child_alloc, baseline);
+        egg_three_grid_size_allocate_children (self, EGG_THREE_GRID_COLUMN_RIGHT, row_info->row, &child_alloc, child_baseline);
       else
-        egg_three_grid_size_allocate_children (self, EGG_THREE_GRID_COLUMN_LEFT, row_info->row, &child_alloc, baseline);
+        egg_three_grid_size_allocate_children (self, EGG_THREE_GRID_COLUMN_LEFT, row_info->row, &child_alloc, child_baseline);
 
       area.y += child_alloc.height + priv->row_spacing;
       area.height -= child_alloc.height + priv->row_spacing;
@@ -598,87 +537,41 @@ egg_three_grid_size_allocate (GtkWidget     *widget,
 }
 
 static void
-egg_three_grid_forall (GtkContainer *container,
-                       gboolean      include_internals,
-                       GtkCallback   callback,
-                       gpointer      user_data)
+egg_three_grid_measure (GtkWidget      *widget,
+                        GtkOrientation  orientation,
+                        int             for_size,
+                        int            *minimum,
+                        int            *natural,
+                        int            *minimum_baseline,
+                        int            *natural_baseline)
 {
-  EggThreeGrid *self = (EggThreeGrid *)container;
-  EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
+  EggThreeGrid *self = (EggThreeGrid *)widget;
 
-  g_assert (GTK_IS_CONTAINER (self));
-  g_assert (callback != NULL);
+  g_assert (EGG_IS_THREE_GRID (self));
 
-  for (guint i = priv->children->len; i > 0; i--)
-    {
-      EggThreeGridChild *child = g_ptr_array_index (priv->children, i - 1);
+  *minimum_baseline = -1;
+  *natural_baseline = -1;
 
-      callback (child->widget, user_data);
-    }
+  if (orientation == GTK_ORIENTATION_HORIZONTAL)
+    egg_three_grid_get_preferred_width (widget, minimum, natural);
+  else
+    egg_three_grid_get_preferred_height_for_width (widget, for_size, minimum, natural);
 }
 
 static void
-egg_three_grid_get_child_property (GtkContainer *container,
-                                   GtkWidget    *widget,
-                                   guint         prop_id,
-                                   GValue       *value,
-                                   GParamSpec   *pspec)
-{
-  EggThreeGrid *self = (EggThreeGrid *)container;
-  EggThreeGridChild *child = egg_three_grid_find_child (self, widget);
-
-  switch (prop_id)
-    {
-    case CHILD_PROP_COLUMN:
-      g_value_set_enum (value, child->column);
-      break;
-
-    case CHILD_PROP_ROW:
-      g_value_set_uint (value, child->row);
-      break;
-
-    default:
-      GTK_CONTAINER_WARN_INVALID_CHILD_PROPERTY_ID (container, prop_id, pspec);
-    }
-}
-
-static void
-egg_three_grid_set_child_property (GtkContainer *container,
-                                   GtkWidget    *widget,
-                                   guint         prop_id,
-                                   const GValue *value,
-                                   GParamSpec   *pspec)
-{
-  EggThreeGrid *self = (EggThreeGrid *)container;
-  EggThreeGridChild *child = egg_three_grid_find_child (self, widget);
-
-  switch (prop_id)
-    {
-    case CHILD_PROP_COLUMN:
-      child->column = g_value_get_enum (value);
-      break;
-
-    case CHILD_PROP_ROW:
-      child->row = g_value_get_uint (value);
-      break;
-
-    default:
-      GTK_CONTAINER_WARN_INVALID_CHILD_PROPERTY_ID (container, prop_id, pspec);
-    }
-
-  gtk_widget_queue_resize (GTK_WIDGET (container));
-}
-
-static void
-egg_three_grid_finalize (GObject *object)
+egg_three_grid_dispose (GObject *object)
 {
   EggThreeGrid *self = (EggThreeGrid *)object;
   EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
+  GtkWidget *child;
+
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    egg_three_grid_remove (self, child);
 
   g_clear_pointer (&priv->row_infos, g_hash_table_unref);
   g_clear_pointer (&priv->children, g_ptr_array_unref);
 
-  G_OBJECT_CLASS (egg_three_grid_parent_class)->finalize (object);
+  G_OBJECT_CLASS (egg_three_grid_parent_class)->dispose (object);
 }
 
 static void
@@ -736,22 +629,14 @@ egg_three_grid_class_init (EggThreeGridClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-  GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
-  object_class->finalize = egg_three_grid_finalize;
+  object_class->dispose = egg_three_grid_dispose;
   object_class->get_property = egg_three_grid_get_property;
   object_class->set_property = egg_three_grid_set_property;
 
   widget_class->get_request_mode = egg_three_grid_get_request_mode;
-  widget_class->get_preferred_height_for_width = egg_three_grid_get_preferred_height_for_width;
-  widget_class->get_preferred_width = egg_three_grid_get_preferred_width;
+  widget_class->measure = egg_three_grid_measure;
   widget_class->size_allocate = egg_three_grid_size_allocate;
-
-  container_class->add = egg_three_grid_add;
-  container_class->forall = egg_three_grid_forall;
-  container_class->get_child_property = egg_three_grid_get_child_property;
-  container_class->remove = egg_three_grid_remove;
-  container_class->set_child_property = egg_three_grid_set_child_property;
 
   properties [PROP_COLUMN_SPACING] =
     g_param_spec_uint ("column-spacing",
@@ -773,25 +658,6 @@ egg_three_grid_class_init (EggThreeGridClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  child_properties [CHILD_PROP_COLUMN] =
-    g_param_spec_enum ("column",
-                       "Column",
-                       "Column",
-                       EGG_TYPE_THREE_GRID_COLUMN,
-                       EGG_THREE_GRID_COLUMN_LEFT,
-                       (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-
-  child_properties [CHILD_PROP_ROW] =
-    g_param_spec_uint ("row",
-                       "Row",
-                       "Row",
-                       0,
-                       G_MAXUINT,
-                       0,
-                       (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-
-  gtk_container_class_install_child_properties (container_class, N_CHILD_PROPS, child_properties);
-
   gtk_widget_class_set_css_name (widget_class, "threegrid");
 }
 
@@ -801,8 +667,6 @@ egg_three_grid_init (EggThreeGrid *self)
   EggThreeGridPrivate *priv = egg_three_grid_get_instance_private (self);
 
   priv->children = g_ptr_array_new_with_free_func (egg_three_grid_child_free);
-
-  gtk_widget_set_has_window (GTK_WIDGET (self), FALSE);
 }
 
 GtkWidget *

@@ -28,8 +28,9 @@
 
 struct _SysprofTab
 {
-  GtkBox          parent_instance;
+  GtkWidget       parent_instance;
 
+  GtkWidget      *center_box;
   GtkButton      *close_button;
   GtkLabel       *title;
   GtkImage       *recording;
@@ -37,7 +38,7 @@ struct _SysprofTab
   SysprofDisplay *display;
 };
 
-G_DEFINE_TYPE (SysprofTab, sysprof_tab, GTK_TYPE_BOX)
+G_DEFINE_TYPE (SysprofTab, sysprof_tab, GTK_TYPE_WIDGET)
 
 enum {
   PROP_0,
@@ -71,6 +72,7 @@ sysprof_tab_dispose (GObject *object)
 {
   SysprofTab *self = (SysprofTab *)object;
 
+  g_clear_pointer (&self->center_box, gtk_widget_unparent);
   g_clear_weak_pointer (&self->display);
 
   G_OBJECT_CLASS (sysprof_tab_parent_class)->dispose (object);
@@ -127,6 +129,8 @@ sysprof_tab_class_init (SysprofTabClass *klass)
   object_class->set_property = sysprof_tab_set_property;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-tab.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
+  gtk_widget_class_bind_template_child (widget_class, SysprofTab, center_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofTab, close_button);
   gtk_widget_class_bind_template_child (widget_class, SysprofTab, recording);
   gtk_widget_class_bind_template_child (widget_class, SysprofTab, title);

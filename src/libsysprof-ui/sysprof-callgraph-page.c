@@ -955,7 +955,7 @@ sysprof_callgraph_page_init (SysprofCallgraphPage *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
+  gtk_stack_set_visible_child (priv->stack, priv->loading_state);
 
   selection = gtk_tree_view_get_selection (priv->functions_view);
 

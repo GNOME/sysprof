@@ -731,7 +731,7 @@ static void
 copy_tree_view_selection (GtkTreeView *tree_view)
 {
   g_autoptr(GString) str = NULL;
-  GtkClipboard *clipboard;
+  GdkClipboard *clipboard;
 
   g_assert (GTK_IS_TREE_VIEW (tree_view));
 
@@ -740,24 +740,26 @@ copy_tree_view_selection (GtkTreeView *tree_view)
                                        copy_tree_view_selection_cb,
                                        str);
 
-  clipboard = gtk_widget_get_clipboard (GTK_WIDGET (tree_view), GDK_SELECTION_CLIPBOARD);
-  gtk_clipboard_set_text (clipboard, str->str, str->len);
+  clipboard = gtk_widget_get_clipboard (GTK_WIDGET (tree_view));
+  gdk_clipboard_set_text (clipboard, str->str);
 }
 
 static void
-sysprof_callgraph_page_copy_cb (GtkWidget            *widget,
-                                SysprofCallgraphPage *self)
+sysprof_callgraph_page_copy_cb (GtkWidget  *widget,
+                                const char *action_name,
+                                GVariant   *param)
 {
+  SysprofCallgraphPage *self = (SysprofCallgraphPage *)widget;
   SysprofCallgraphPagePrivate *priv = sysprof_callgraph_page_get_instance_private (self);
-  GtkWidget *toplevel;
+  GtkRoot *toplevel;
   GtkWidget *focus;
 
   g_assert (GTK_IS_WIDGET (widget));
   g_assert (SYSPROF_IS_CALLGRAPH_PAGE (self));
 
-  if (!(toplevel = gtk_widget_get_toplevel (widget)) ||
-      !GTK_IS_WINDOW (toplevel) ||
-      !(focus = gtk_window_get_focus (GTK_WINDOW (toplevel))))
+  if (!(toplevel = gtk_widget_get_root (widget)) ||
+      !GTK_IS_ROOT (toplevel) ||
+      !(focus = gtk_root_get_focus (toplevel)))
     return;
 
   if (focus == GTK_WIDGET (priv->descendants_view))
@@ -766,25 +768,6 @@ sysprof_callgraph_page_copy_cb (GtkWidget            *widget,
     copy_tree_view_selection (priv->callers_view);
   else if (focus == GTK_WIDGET (priv->functions_view))
     copy_tree_view_selection (priv->functions_view);
-}
-
-static gboolean
-on_key_pressed_cb (SysprofCallgraphPage  *self,
-                   guint                  keyval,
-                   guint                  keycode,
-                   GdkModifierType        state,
-                   GtkEventControllerKey *controller)
-{
-  g_assert (SYSPROF_IS_CALLGRAPH_PAGE (self));
-  g_assert (GTK_IS_EVENT_CONTROLLER_KEY (controller));
-
-  if ((state & GDK_CONTROL_MASK) != 0 && keyval == GDK_KEY_c)
-    {
-      sysprof_callgraph_page_copy_cb (GTK_WIDGET (self), self);
-      return GDK_EVENT_STOP;
-    }
-
-  return GDK_EVENT_PROPAGATE;
 }
 
 static void
@@ -909,7 +892,6 @@ sysprof_callgraph_page_class_init (SysprofCallgraphPageClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   SysprofPageClass *page_class = SYSPROF_PAGE_CLASS (klass);
-  GtkBindingSet *bindings;
 
   object_class->finalize = sysprof_callgraph_page_finalize;
   object_class->get_property = sysprof_callgraph_page_get_property;
@@ -945,8 +927,10 @@ sysprof_callgraph_page_class_init (SysprofCallgraphPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, descendants_name_column);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, stack);
 
-  bindings = gtk_binding_set_by_class (klass);
-  gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
+  gtk_widget_class_install_action (widget_class, "page.copy", NULL, sysprof_callgraph_page_copy_cb);
+
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_c, GDK_CONTROL_MASK, "page.copy", NULL);
+  gtk_widget_class_add_binding_signal (widget_class, GDK_KEY_Left, GDK_ALT_MASK, "go-previous", NULL);
 
   g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_PERCENT);
 }
@@ -955,7 +939,6 @@ static void
 sysprof_callgraph_page_init (SysprofCallgraphPage *self)
 {
   SysprofCallgraphPagePrivate *priv = sysprof_callgraph_page_get_instance_private (self);
-  GtkEventController *controller;
   GtkTreeSelection *selection;
   GtkCellRenderer *cell;
 
@@ -1009,15 +992,6 @@ sysprof_callgraph_page_init (SysprofCallgraphPage *self)
 
   gtk_tree_selection_set_mode (gtk_tree_view_get_selection (priv->descendants_view),
                                GTK_SELECTION_MULTIPLE);
-
-  controller = gtk_event_controller_key_new (GTK_WIDGET (self));
-  gtk_event_controller_set_propagation_phase (controller, GTK_PHASE_BUBBLE);
-  g_signal_connect_object (controller,
-                           "key-pressed",
-                           G_CALLBACK (on_key_pressed_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-  g_object_unref (controller);
 }
 
 typedef struct _Descendant Descendant;

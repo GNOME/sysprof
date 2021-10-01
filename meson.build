@@ -8,7 +8,7 @@ project('sysprof', 'c',
   ]
 )
 
-symbolic_version = '42.0'
+symbolic_version = '43.alpha0'
 
 gnome = import('gnome')
 pkgconfig = import('pkgconfig')
@@ -45,6 +45,7 @@ config_h.set_quoted('PACKAGE_LIBDIR', join_paths(get_option('prefix'), get_optio
 config_h.set('PACKAGE_TARNAME', 'PACKAGE_STRING')
 config_h.set('PACKAGE', 'PACKAGE_NAME')
 config_h.set('VERSION', 'PACKAGE_VERSION')
+
 
 # Detect and set symbol visibility
 if get_option('default_library') != 'static'

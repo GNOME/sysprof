@@ -43,6 +43,8 @@
 
 #include "../stackstash.h"
 
+#include "egg-paned-private.h"
+
 #include "sysprof-callgraph-page.h"
 #include "sysprof-cell-renderer-percent.h"
 
@@ -938,6 +940,7 @@ sysprof_callgraph_page_class_init (SysprofCallgraphPageClass *klass)
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_c, GDK_CONTROL_MASK, "page.copy", NULL);
   gtk_widget_class_add_binding_signal (widget_class, GDK_KEY_Left, GDK_ALT_MASK, "go-previous", NULL);
 
+  g_type_ensure (EGG_TYPE_PANED);
   g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_PERCENT);
 }
 

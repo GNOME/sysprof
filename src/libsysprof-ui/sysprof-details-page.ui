@@ -24,11 +24,11 @@
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">left</property>
+                  <property name="row">0</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">0</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel">
@@ -38,11 +38,11 @@
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">left</property>
+                  <property name="row">1</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">1</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel">
@@ -53,11 +53,11 @@
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">left</property>
+                  <property name="row">2</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">2</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel">
@@ -68,11 +68,11 @@
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">left</property>
+                  <property name="row">3</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">3</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel">
@@ -83,11 +83,11 @@
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">left</property>
+                  <property name="row">4</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">4</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel">
@@ -97,11 +97,11 @@
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">left</property>
+                  <property name="row">5</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">5</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel">
@@ -111,11 +111,11 @@
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">left</property>
+                  <property name="row">6</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">6</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel">
@@ -125,11 +125,11 @@
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">left</property>
+                  <property name="row">7</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">7</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel">
@@ -139,11 +139,11 @@
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">left</property>
+                  <property name="row">8</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">8</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel">
@@ -154,11 +154,11 @@
                 <style>
                   <class name="dim-label"/>
                 </style>
+                <layout>
+                  <property name="column">left</property>
+                  <property name="row">9</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">left</property>
-                <property name="row">9</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel" id="filename">
@@ -168,11 +168,11 @@
                 <property name="ellipsize">start</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
+                <layout>
+                  <property name="column">1</property>
+                  <property name="row">0</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">1</property>
-                <property name="row">0</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel" id="start_time">
@@ -181,11 +181,11 @@
                 <property name="ellipsize">start</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
+                <layout>
+                  <property name="column">center</property>
+                  <property name="row">1</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">1</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel" id="duration">
@@ -193,11 +193,11 @@
                 <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
+                <layout>
+                  <property name="column">center</property>
+                  <property name="row">2</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">2</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel" id="cpu_label">
@@ -206,11 +206,11 @@
                 <property name="ellipsize">end</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
+                <layout>
+                  <property name="column">center</property>
+                  <property name="row">3</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">3</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel" id="samples">
@@ -220,11 +220,11 @@
                 <property name="ellipsize">start</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
+                <layout>
+                  <property name="column">center</property>
+                  <property name="row">4</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">4</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel" id="marks">
@@ -233,11 +233,11 @@
                 <property name="ellipsize">start</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
+                <layout>
+                  <property name="column">center</property>
+                  <property name="row">5</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">5</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel" id="processes">
@@ -246,11 +246,11 @@
                 <property name="ellipsize">start</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
+                <layout>
+                  <property name="column">center</property>
+                  <property name="row">6</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">6</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel" id="forks">
@@ -259,11 +259,11 @@
                 <property name="ellipsize">start</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
+                <layout>
+                  <property name="column">center</property>
+                  <property name="row">7</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">7</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel" id="counters">
@@ -272,11 +272,11 @@
                 <property name="ellipsize">start</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
+                <layout>
+                  <property name="column">center</property>
+                  <property name="row">8</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">8</property>
-              </packing>
             </child>
             <child>
               <object class="GtkLabel" id="allocations">
@@ -286,11 +286,11 @@
                 <property name="margin-bottom">12</property>
                 <property name="xalign">0</property>
                 <property name="selectable">True</property>
+                <layout>
+                  <property name="column">center</property>
+                  <property name="row">9</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">9</property>
-              </packing>
             </child>
             <child>
               <object class="GtkFrame">
@@ -372,11 +372,11 @@
                     </child>
                   </object>
                 </child>
+                <layout>
+                  <property name="column">center</property>
+                  <property name="row">10</property>
+                </layout>
               </object>
-              <packing>
-                <property name="column">center</property>
-                <property name="row">10</property>
-              </packing>
             </child>
           </object>
         </child>

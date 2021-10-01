@@ -3,7 +3,8 @@
   <template class="SysprofDisplay" parent="GtkWidget">
     <child>
       <object class="GtkStack" id="stack">
-        <property name="homogeneous">false</property>
+        <property name="hhomogeneous">false</property>
+        <property name="vhomogeneous">false</property>
         <property name="visible">true</property>
         <child>
           <object class="SysprofProfilerAssistant" id="assistant">
@@ -38,7 +39,8 @@
             </child>
             <child>
               <object class="GtkStack" id="pages">
-                <property name="homogeneous">false</property>
+                <property name="hhomogeneous">false</property>
+                <property name="vhomogeneous">false</property>
                 <property name="vexpand">true</property>
                 <property name="visible">true</property>
                 <child>

@@ -105,14 +105,18 @@ sysprof_page_real_load_finish (SysprofPage   *self,
 }
 
 static void
-sysprof_page_finalize (GObject *object)
+sysprof_page_dispose (GObject *object)
 {
   SysprofPage *self = (SysprofPage *)object;
   SysprofPagePrivate *priv = sysprof_page_get_instance_private (self);
+  GtkWidget *child;
 
   g_clear_pointer (&priv->title, g_free);
 
-  G_OBJECT_CLASS (sysprof_page_parent_class)->finalize (object);
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    gtk_widget_unparent (child);
+
+  G_OBJECT_CLASS (sysprof_page_parent_class)->dispose (object);
 }
 
 static void
@@ -159,7 +163,7 @@ sysprof_page_class_init (SysprofPageClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_page_finalize;
+  object_class->dispose = sysprof_page_dispose;
   object_class->get_property = sysprof_page_get_property;
   object_class->set_property = sysprof_page_set_property;
 

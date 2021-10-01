@@ -35,11 +35,11 @@ G_BEGIN_DECLS
 #define SYSPROF_TYPE_NOTEBOOK (sysprof_notebook_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_DERIVABLE_TYPE (SysprofNotebook, sysprof_notebook, SYSPROF, NOTEBOOK, GtkNotebook)
+G_DECLARE_DERIVABLE_TYPE (SysprofNotebook, sysprof_notebook, SYSPROF, NOTEBOOK, GtkWidget)
 
 struct _SysprofNotebookClass
 {
-  GtkNotebookClass parent_class;
+  GtkWidgetClass parent_class;
 
   /*< private >*/
   gpointer _reserved[16];

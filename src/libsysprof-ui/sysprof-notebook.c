@@ -113,13 +113,13 @@ sysprof_notebook_page_added (SysprofNotebook *self,
       g_signal_connect_object (child,
                                "notify::can-replay",
                                G_CALLBACK (sysprof_notebook_notify_can_replay_cb),
-                               notebook,
+                               self,
                                G_CONNECT_SWAPPED);
 
       g_signal_connect_object (child,
                                "notify::can-save",
                                G_CALLBACK (sysprof_notebook_notify_can_save_cb),
-                               notebook,
+                               self,
                                G_CONNECT_SWAPPED);
 
       g_object_notify_by_pspec (G_OBJECT (notebook), properties [PROP_CAN_REPLAY]);

@@ -1020,14 +1020,14 @@ do_allocs (SysprofMemprofPage *self,
 static void
 mode_notify_active (SysprofMemprofPage *self,
                     GParamSpec         *pspec,
-                    GtkCheckButton     *button)
+                    GtkToggleButton    *button)
 {
   SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
 
   g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
-  g_assert (GTK_IS_CHECK_BUTTON (button));
+  g_assert (GTK_IS_TOGGLE_BUTTON (button));
 
-  if (gtk_check_button_get_active (GTK_CHECK_BUTTON (button)))
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
     {
       if (button == priv->summary)
         do_allocs (self, SYSPROF_MEMPROF_MODE_SUMMARY);

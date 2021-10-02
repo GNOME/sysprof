@@ -6,7 +6,7 @@
         <property name="orientation">vertical</property>
         <property name="visible">true</property>
         <child>
-          <object class="GtkBox">
+          <object class="GtkCenterBox">
             <property name="orientation">horizontal</property>
             <property name="visible">true</property>
             <child type="center">
@@ -20,26 +20,23 @@
                   <class name="linked"/>
                 </style>
                 <child>
-                  <object class="GtkCheckButton" id="summary">
+                  <object class="GtkToggleButton" id="summary">
                     <property name="label" translatable="yes">Summary</property>
-                    <property name="draw-indicator">false</property>
                     <property name="visible">true</property>
                     <property name="active">false</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="all_allocs">
+                  <object class="GtkToggleButton" id="all_allocs">
                     <property name="label" translatable="yes">All Allocations</property>
-                    <property name="draw-indicator">false</property>
                     <property name="visible">true</property>
                     <property name="group">summary</property>
                     <property name="active">true</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="temp_allocs">
+                  <object class="GtkToggleButton" id="temp_allocs">
                     <property name="label" translatable="yes">Temporary Allocations</property>
-                    <property name="draw-indicator">false</property>
                     <property name="visible">true</property>
                     <property name="active">false</property>
                     <property name="group">summary</property>
@@ -81,7 +78,7 @@
                     <property name="visible">true</property>
                     <child>
                       <object class="EggThreeGrid">
-                        <property name="expand">true</property>
+                        <property name="hexpand">true</property>
                         <property name="row-spacing">6</property>
                         <property name="column-spacing">18</property>
                         <property name="visible">true</property>
@@ -224,10 +221,11 @@
             <child>
               <object class="EggPaned" id="callgraph">
                 <property name="orientation">horizontal</property>
-                <property name="expand">true</property>
+                <property name="vexpand">true</property>
                 <property name="visible">true</property>
                 <child>
                   <object class="EggPaned">
+                    <property name="width-request">400</property>
                     <property name="orientation">vertical</property>
                     <property name="visible">true</property>
                     <child>

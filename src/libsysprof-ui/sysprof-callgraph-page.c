@@ -668,10 +668,12 @@ sysprof_callgraph_page_real_go_previous (SysprofCallgraphPage *self)
     sysprof_callgraph_page_set_node (self, node);
 }
 
-static void
+static gboolean
 descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
                                  GtkMovementStep  step,
                                  int              direction,
+                                 gboolean         extend,
+                                 gboolean         modify,
                                  gpointer         user_data)
 {
   if (step == GTK_MOVEMENT_VISUAL_POSITIONS)
@@ -684,15 +686,19 @@ descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
         {
           gtk_tree_view_expand_row (descendants_view, path, FALSE);
           g_signal_stop_emission_by_name (descendants_view, "move-cursor");
+          return FALSE;
         }
       else if (direction == -1)
         {
           gtk_tree_view_collapse_row (descendants_view, path);
           g_signal_stop_emission_by_name (descendants_view, "move-cursor");
+          return FALSE;
         }
 
       gtk_tree_path_free (path);
     }
+
+  return TRUE;
 }
 
 static void

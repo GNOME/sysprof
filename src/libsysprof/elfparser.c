@@ -278,13 +278,21 @@ static GMappedFile *
 open_mapped_file (const char  *filename,
                   GError     **error)
 {
-    GMappedFile *file;
+    GMappedFile *file = NULL;
     char *alternate = NULL;
 
     if (in_container () && !g_str_has_prefix (filename, g_get_home_dir ()))
-        filename = alternate = g_build_filename ("/var/run/host", filename, NULL);
-    file = g_mapped_file_new (filename, FALSE, error);
-    g_free (alternate);
+      {
+        alternate = g_build_filename ("/var/run/host", filename, NULL);
+        file = g_mapped_file_new (alternate, FALSE, NULL);
+        g_free (alternate);
+      }
+
+    /* Flatpaks with filesystem=host don't have Silverblue's /sysroot in /var/run/host,
+     * yet they have it in /, which means the original path might work.
+     */
+    if (!file)
+      file = g_mapped_file_new (filename, FALSE, error);
 
     return file;
 }

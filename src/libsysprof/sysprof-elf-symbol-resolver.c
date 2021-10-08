@@ -99,12 +99,10 @@ process_info_get_debug_dirs (const ProcessInfo *pi)
 {
   static const char *standard[] = { "/usr/lib/debug", NULL };
 
-  if (pi->kind == PROCESS_KIND_FLATPAK)
-    return standard; /* TODO */
-  else if (pi->kind == PROCESS_KIND_PODMAN)
-    return standard; /* TODO */
-  else
-    return standard;
+  if (pi->debug_dirs)
+    return (const char * const *) pi->debug_dirs;
+
+  return standard;
 }
 
 static void

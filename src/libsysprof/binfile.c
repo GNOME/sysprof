@@ -426,7 +426,7 @@ bin_file_lookup_symbol (bin_file_t *bin_file,
     address -= bin_file->text_offset;
 
 #if 0
-    g_print ("lookup %d in %s\n", address, bin_file->filename);
+    g_print ("lookup %lx in %s\n", address, bin_file->filename);
 #endif
 
     for (list = bin_file->elf_files; list != NULL; list = list->next)
@@ -438,14 +438,14 @@ bin_file_lookup_symbol (bin_file_t *bin_file,
         {
 #if 0
             g_print ("found  %lx => %s\n", address,
-                     bin_symbol_get_name (bin_file, sym));
+                     bin_symbol_get_name (bin_file, (const bin_symbol_t *)sym));
 #endif
             return (const bin_symbol_t *)sym;
         }
     }
 
 #if 0
-    g_print ("%lx undefined in %s (textoffset %x)\n",
+    g_print ("%lx undefined in %s (textoffset %lx)\n",
              address + bin_file->text_offset,
              bin_file->filename,
              bin_file->text_offset);

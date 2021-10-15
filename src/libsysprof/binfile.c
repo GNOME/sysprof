@@ -157,6 +157,8 @@ get_debuglink_file (ElfParser            *elf,
     ElfParser *result = NULL;
     const char *build_id;
     char *dir;
+    const char *files;
+    const char *prefix = "";
 
     if (!elf)
         return NULL;
@@ -174,12 +176,28 @@ get_debuglink_file (ElfParser            *elf,
 
     dir = g_path_get_dirname (filename);
 
+    /* Flatpak paths have the form of ".../files/bin" or ".../files/lib/x86_64-linux-gnu". */
+    files = g_strrstr (dir, "/files/");
+    if (files)
+      prefix = files + sizeof ("/files/") - 1;
+
     for (guint i = 0; debug_dirs[i]; i++)
     {
-        char *name = g_build_filename (debug_dirs[i], basename, NULL);
+        /* Most files from Flatpak will be from .Platform, which usually has a prefix like "lib/x86_64-linux-gnu"
+         * but in the debug dir the files are under "usr/lib/x86_64-linux-gnu", so try with "usr" first. */
+        g_autofree char *name = g_build_filename (debug_dirs[i], "usr", prefix, basename, NULL);
         ElfParser *parser = elf_parser_new (name, NULL);
         guint32 file_crc;
         const char *file_build_id;
+
+        if (!parser)
+        {
+            /* Files from Flatpak com.example.App.Debug have prefixes like "bin" or "lib",
+             * and they don't need the "usr" for the debug dir, so try without "usr". */
+            g_free (name);
+            name = g_build_filename (debug_dirs[i], prefix, basename, NULL);
+            parser = elf_parser_new (name, NULL);
+        }
 
         if (parser)
         {
@@ -211,8 +229,6 @@ get_debuglink_file (ElfParser            *elf,
         skip:
             elf_parser_free (parser);
         }
-
-        g_free (name);
     }
 
     g_free (dir);
@@ -426,7 +442,7 @@ bin_file_lookup_symbol (bin_file_t *bin_file,
     address -= bin_file->text_offset;
 
 #if 0
-    g_print ("lookup %d in %s\n", address, bin_file->filename);
+    g_print ("lookup %lx in %s\n", address, bin_file->filename);
 #endif
 
     for (list = bin_file->elf_files; list != NULL; list = list->next)
@@ -438,14 +454,14 @@ bin_file_lookup_symbol (bin_file_t *bin_file,
         {
 #if 0
             g_print ("found  %lx => %s\n", address,
-                     bin_symbol_get_name (bin_file, sym));
+                     bin_symbol_get_name (bin_file, (const bin_symbol_t *)sym));
 #endif
             return (const bin_symbol_t *)sym;
         }
     }
 
 #if 0
-    g_print ("%lx undefined in %s (textoffset %x)\n",
+    g_print ("%lx undefined in %s (textoffset %lx)\n",
              address + bin_file->text_offset,
              bin_file->filename,
              bin_file->text_offset);

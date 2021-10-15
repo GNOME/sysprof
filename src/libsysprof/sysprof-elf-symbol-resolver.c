@@ -99,12 +99,10 @@ process_info_get_debug_dirs (const ProcessInfo *pi)
 {
   static const char *standard[] = { "/usr/lib/debug", NULL };
 
-  if (pi->kind == PROCESS_KIND_FLATPAK)
-    return standard; /* TODO */
-  else if (pi->kind == PROCESS_KIND_PODMAN)
-    return standard; /* TODO */
-  else
-    return standard;
+  if (pi->debug_dirs)
+    return (const char * const *) pi->debug_dirs;
+
+  return standard;
 }
 
 static void
@@ -297,13 +295,47 @@ sysprof_elf_symbol_resolver_load (SysprofSymbolResolver *resolver,
                     {
                       g_autofree gchar *app_path = g_key_file_get_string (keyfile, "Instance", "app-path", NULL);
                       g_autofree gchar *runtime_path = g_key_file_get_string (keyfile, "Instance", "runtime-path", NULL);
+                      g_autofree gchar *branch = g_key_file_get_string (keyfile, "Instance", "branch", NULL);
+                      g_autofree gchar *arch = g_key_file_get_string (keyfile, "Instance", "arch", NULL);
+                      g_autofree gchar *app_name = g_key_file_get_string (keyfile, "Application", "name", NULL);
+                      g_autofree gchar *manifest_dir = g_path_get_dirname (app_path);
+                      g_autofree gchar *manifest_path = g_build_filename (manifest_dir, "metadata", NULL);
+                      g_autoptr(GKeyFile) manifest = g_key_file_new ();
+                      GPtrArray *dirs = g_ptr_array_new ();
 
-                      pi->debug_dirs = g_new0 (gchar *, 3);
-                      pi->debug_dirs[0] = g_build_filename (app_path, "lib", "debug", NULL);
-                      pi->debug_dirs[1] = g_build_filename (runtime_path, "lib", "debug", NULL);
-                      pi->debug_dirs[2] = 0;
+                      /* TODO: extensions */
+                      g_ptr_array_add (dirs, g_build_filename (app_path, "lib", "debug", NULL));
+                      g_ptr_array_add (dirs, g_build_filename (runtime_path, "lib", "debug", NULL));
 
-                      /* TODO: Need to locate .Debug version of runtimes. Also, extensions? */
+                      /* Try to figure out flatpak runtime debug symbol paths. */
+                      if (g_key_file_load_from_file (manifest, manifest_path, 0, NULL))
+                        {
+                          /* Add the SDK debug extension. */
+                          g_autofree gchar *sdk = g_key_file_get_string (manifest, "Application", "sdk", NULL);
+                          if (sdk)
+                            {
+                              /* Go from a string like "org.gnome.Sdk/x86_64/41" to "org.gnome.Sdk.Debug/x86_64/41". */
+                              g_autoptr(GString) debug = g_string_new (sdk);
+                              g_string_replace (debug, "/", ".Debug/", 1);
+
+                              /* Construct a path like "/var/lib/flatpak/runtime/org.gnome.Sdk.Debug/x86_64/41/active/files". */
+                              g_ptr_array_add (dirs, g_build_filename ("/var/lib/flatpak/runtime", debug->str, "active/files", NULL));
+                            }
+
+                          /* Add the app's debug extension. */
+                          if (app_name && branch && arch)
+                            {
+                              /* Go from a string like "org.gnome.TextEditor" to "org.gnome.TextEditor.Debug". */
+                              g_autoptr(GString) debug = g_string_new (app_name);
+                              g_string_append (debug, ".Debug");
+
+                              /* Construct a path like "/var/lib/flatpak/runtime/org.gnome.TextEditor.Debug/x86_64/master/active/files". */
+                              g_ptr_array_add (dirs, g_build_filename ("/var/lib/flatpak/runtime", debug->str, arch, branch, "active/files", NULL));
+                            }
+                        }
+
+                      g_ptr_array_add (dirs, 0);
+                      pi->debug_dirs = (gchar**) g_ptr_array_free (dirs, FALSE);
                     }
                 }
             }

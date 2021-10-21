@@ -246,7 +246,7 @@ msgid ""
 msgstr ""
 "Sovint, és possible que hagueu de generar un nou procés per perfilar. "
 "Primer, seleccioneu el botó <em>perfilant la destinació</em>, al costat del "
-"botó <em>Registre. Tot seguit, seleccioneu Procés nou<em> i empleneu la "
+"botó <em>Registre</em>. Tot seguit, seleccioneu <em>Procés nou</em> i empleneu la "
 "informació necessària per generar el procés."
 
 #. (itstool) path: note/p

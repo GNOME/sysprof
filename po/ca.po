@@ -1,0 +1,449 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Jordi Mas i Hernàndez <jmas@softcatala.org>, 2021
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-10 14:37+0200\n"
+"PO-Revision-Date: 2019-10-10 14:38+0200\n"
+"Last-Translator: Jordi Mas i Hernàndez <jmas@softcatala.org>\n"
+"Language-Team: \n"
+"Language: ca\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:1
+msgid "Window size"
+msgstr "Mida de la finestra"
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:2
+msgid "Window size (width and height)."
+msgstr "Mida de la finestra (amplada i alçada)."
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:3
+msgid "Window position"
+msgstr "Posició de la finestra"
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:4
+msgid "Window position (x and y)."
+msgstr "Posició de la finestra (x i y)."
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:5
+msgid "Window maximized"
+msgstr "Finestra maximitzada"
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:6
+msgid "Window maximized state"
+msgstr "Estat de maximització de la finestra"
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:7
+msgid "Last Spawn Program"
+msgstr "Últim programa iniciat"
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:8
+
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+"L'últim programa iniciat, que s'establirà a la IU en reiniciar "
+"l'aplicació."
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:9
+#, fuzzy
+msgid "Last Spawn Inherit Environment"
+msgstr "Entorn heretat de l'última generació"
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:10
+#, fuzzy
+msgid "If the last spawned environment inherits the parent environment."
+msgstr "Si l'últim entorn generat hereta l'entorn pare."
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:11
+#, fuzzy
+msgid "Last Spawn Environment"
+msgstr "Entorn de l'última generació"
+
+#: ../data/org.gnome.sysprof3.gschema.xml.h:12
+#, fuzzy
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+"L'últim entorn generat, que s'establirà a la IU en reiniciar l'aplicació."
+
+#: ../src/libsysprof/sysprof-callgraph-profile.c:431
+#, fuzzy
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
+"Sysprof no ha pogut generar una cal·grafia a partir de la captura del "
+"sistema."
+
+#: ../src/libsysprof/sysprof-perf-source.c:476
+#, c-format 
+msgid "Sysprof failed to find field “%s”."
+msgstr "Sysprof no ha pogut trobar el camp «%s»."
+
+#: ../src/libsysprof/sysprof-perf-source.c:489
+#, c-format, fuzzy
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Sysprof no ha pogut analitzar el desplaçament per «%s»."
+
+#: ../src/libsysprof/sysprof-perf-source.c:553
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Sysprof no ha pogut obtenir l'ID de perf_event."
+
+#: ../src/libsysprof/sysprof-perf-source.c:659
+#, c-format
+msgid "An error occurred while attempting to access performance counters"
+msgstr "S'ha produït un error en intentar accedir als comptadors de rendiment"
+
+#: ../src/libsysprof-ui/sysprof-battery-aid.c:182
+msgid "Battery Charge"
+msgstr "Càrrega de la bateria"
+
+#: ../src/libsysprof-ui/sysprof-battery-aid.c:198
+msgid "Battery Charge (All)"
+msgstr "Càrrega de la bateria (totes)"
+
+#: ../src/libsysprof-ui/sysprof-battery-aid.c:240
+#: ../src/libsysprof-ui/sysprof-counters-aid.c:246
+msgid "Battery"
+msgstr "Bateria"
+
+#: ../src/libsysprof-ui/sysprof-callgraph-aid.c:212
+#: ../src/libsysprof-ui/sysprof-callgraph-aid.c:218
+msgid "Stack Traces"
+msgstr "Traces de la pila"
+
+#: ../src/libsysprof-ui/sysprof-callgraph-aid.c:226
+msgid "Stack Traces (In Kernel)"
+msgstr "Traces de la pila (en el nucli)"
+
+#: ../src/libsysprof-ui/sysprof-callgraph-aid.c:234
+msgid "Stack Traces (In User)"
+msgstr "Traces de la pila (en l'usuari)"
+
+#: ../src/libsysprof-ui/sysprof-callgraph-aid.c:243
+#: ../src/libsysprof-ui/sysprof-callgraph-aid.c:273
+msgid "Callgraph"
+msgstr "Callgraph"
+
+#: ../src/libsysprof-ui/sysprof-counters-aid.c:185
+#: ../src/libsysprof-ui/sysprof-counters-aid.c:190
+msgid "Counters"
+msgstr "Comptadors"
+
+#: ../src/libsysprof-ui/sysprof-cpu-aid.c:207
+#: ../src/libsysprof-ui/sysprof-cpu-aid.c:355
+msgid "CPU Usage"
+msgstr "Ús de la CPU"
+
+#: ../src/libsysprof-ui/sysprof-cpu-aid.c:214
+msgid "CPU Frequency"
+msgstr "Freqüència de la CPU"
+
+#: ../src/libsysprof-ui/sysprof-cpu-aid.c:218
+msgid "CPU Frequency (All)"
+msgstr "Freqüència de la CPU (totes)"
+
+#. Translators: CPU is the processor.
+#: ../src/libsysprof-ui/sysprof-cpu-aid.c:227
+#: ../src/libsysprof-ui/sysprof-cpu-aid.c:250
+msgid "CPU Usage (All)"
+msgstr "Ús de la CPU (tot)"
+
+#: ../src/libsysprof-ui/sysprof-cpu-aid.c:316
+msgid "Processes"
+msgstr "Processos"
+
+#: ../src/libsysprof-ui/sysprof-details-page.c:218
+msgid "Memory Capture"
+msgstr "Captura de memòria"
+
+#: ../src/libsysprof-ui/sysprof-details-page.c:232
+#, c-format
+msgid "%0.4lf seconds"
+msgstr "%0.4lf segons"
+
+#: ../src/libsysprof-ui/sysprof-diskstat-aid.c:205
+#: ../src/libsysprof-ui/sysprof-diskstat-aid.c:267
+msgid "Disk"
+msgstr "Disc"
+
+#: ../src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Reads"
+msgstr "Lectures"
+
+#: ../src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Writes"
+msgstr "Escriptures"
+
+#: ../src/libsysprof-ui/sysprof-display.c:227
+msgid "Recording Failed"
+msgstr "Ha fallat l'enregistrament"
+
+#: ../src/libsysprof-ui/sysprof-display.c:232
+msgid "Recording…"
+msgstr "S'està enregistrant…"
+
+#: ../src/libsysprof-ui/sysprof-display.c:246
+msgid "New Recording"
+msgstr "Enregistrament nou"
+
+#: ../src/libsysprof-ui/sysprof-display.c:1151
+msgid "Save Recording"
+msgstr "Desa l'enregistrament"
+
+#: ../src/libsysprof-ui/sysprof-display.c:1154
+msgid "Save"
+msgstr "Desa"
+
+#. Translators: This is a button.
+#: ../src/libsysprof-ui/sysprof-display.c:1155
+#: ../src/sysprof/sysprof-window.c:277
+msgid "Cancel"
+msgstr "Cancel·la"
+
+#: ../src/libsysprof-ui/sysprof-display.c:1181
+#, c-format
+msgid "Failed to save recording: %s"
+msgstr "No s'ha pogut desar l'enregistrament: %s"
+
+#: ../src/libsysprof-ui/sysprof-environ-editor.c:71
+msgid "New variable…"
+msgstr "Variable nova…"
+
+#: ../src/libsysprof-ui/sysprof-log-model.c:210
+msgid "Message"
+msgstr "Missatge"
+
+#: ../src/libsysprof-ui/sysprof-log-model.c:213
+msgid "Info"
+msgstr "Informació"
+
+#: ../src/libsysprof-ui/sysprof-log-model.c:216
+msgid "Critical"
+msgstr "Crític"
+
+#: ../src/libsysprof-ui/sysprof-log-model.c:219
+msgid "Error"
+msgstr "Error"
+
+#: ../src/libsysprof-ui/sysprof-log-model.c:222
+msgid "Debug"
+msgstr "Depuració"
+
+#: ../src/libsysprof-ui/sysprof-log-model.c:225
+msgid "Warning"
+msgstr "Avís"
+
+#: ../src/libsysprof-ui/sysprof-logs-aid.c:195
+#: ../src/libsysprof-ui/sysprof-logs-aid.c:199
+#: ../src/libsysprof-ui/sysprof-logs-aid.c:204
+#: ../src/libsysprof-ui/sysprof-logs-aid.c:210
+msgid "Logs"
+msgstr "Registres"
+
+#: ../src/libsysprof-ui/sysprof-marks-aid.c:237
+#: ../src/libsysprof-ui/sysprof-marks-aid.c:242
+msgid "Timings"
+msgstr "Temps"
+
+#: ../src/libsysprof-ui/sysprof-memory-aid.c:77
+msgid "Memory Usage"
+msgstr "Ús de la memòria"
+
+#: ../src/libsysprof-ui/sysprof-netdev-aid.c:204
+#: ../src/libsysprof-ui/sysprof-netdev-aid.c:264
+msgid "Network"
+msgstr "Xarxa"
+
+#: ../src/libsysprof-ui/sysprof-rapl-aid.c:175
+#: ../src/libsysprof-ui/sysprof-rapl-aid.c:248
+msgid "Energy Usage"
+msgstr "Ús d'energia"
+
+#: ../src/libsysprof-ui/sysprof-rapl-aid.c:180
+msgid "Energy Usage (All)"
+msgstr "Ús d'energia (tot)"
+
+#: ../src/libsysprof-ui/sysprof-visualizer-group-header.c:119
+msgid "Select for more details"
+msgstr "Seleccioneu per a més detalls"
+
+#: ../src/libsysprof-ui/sysprof-visualizer-group-header.c:141
+msgid "Display supplimental graphs"
+msgstr "Mostra els gràfics complementaris"
+
+#: ../src/sysprof/sysprof-application.c:191
+msgid "A system profiler"
+msgstr "Un analitzador de rendiment sistema"
+
+#: ../src/sysprof/sysprof-application.c:196
+msgid "translator-credits"
+msgstr "Jordi Mas i Hernàndez <jmas@softcatala.org>"
+
+#: ../src/sysprof/sysprof-application.c:199
+#: ../src/sysprof/sysprof-application.c:326
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: ../src/sysprof/sysprof-application.c:202
+msgid "Learn more about Sysprof"
+msgstr "Més informació sobre Sysprof"
+
+#. Translators: This is a window title.
+#: ../src/sysprof/sysprof-window.c:271
+msgid "Open Capture…"
+msgstr "Obre la captura…"
+
+#. Translators: This is a button.
+#: ../src/sysprof/sysprof-window.c:275
+msgid "Open"
+msgstr "Obre"
+
+#: ../src/sysprof/sysprof-window.c:282
+msgid "Sysprof Captures"
+msgstr "Captures del Sysprof"
+
+#: ../src/sysprof/sysprof-window.c:287
+msgid "All Files"
+msgstr "Tots els fitxers"
+
+#: ../src/tools/sysprof-cli.c:101
+msgid "Make sysprof specific to a task"
+msgstr "Fes que el sysprof sigui específic a una tasca"
+
+#: ../src/tools/sysprof-cli.c:101
+msgid "PID"
+msgstr "PID"
+
+#: ../src/tools/sysprof-cli.c:102
+msgid "Run a command and profile the process"
+msgstr "Executa una ordre i analitza el rendiment del procés"
+
+#: ../src/tools/sysprof-cli.c:102
+msgid "COMMAND"
+msgstr "ORDRE"
+
+#: ../src/tools/sysprof-cli.c:103
+msgid "Force overwrite the capture file"
+msgstr "Força la sobreescriptura del fitxer de captura"
+
+#: ../src/tools/sysprof-cli.c:104
+msgid "Disable recording of battery statistics"
+msgstr "Inhabilita l'enregistrament de les estadístiques de la bateria"
+
+#: ../src/tools/sysprof-cli.c:105
+msgid "Disable recording of CPU statistics"
+msgstr "Inhabilita l'enregistrament de les estadístiques de la CPU"
+
+#: ../src/tools/sysprof-cli.c:106
+msgid "Disable recording of Disk statistics"
+msgstr "Inhabilita l'enregistrament de les estadístiques del disc"
+
+#: ../src/tools/sysprof-cli.c:107
+#, fuzzy
+msgid "Do not record stacktraces using Linux perf"
+msgstr "No registris les traces de pila utilitzant Linux perf"
+
+#: ../src/tools/sysprof-cli.c:108
+#, fuzzy
+msgid "Do not append symbol name information from local machine"
+msgstr "No afegeixis la informació del nom del símbol de la màquina local"
+
+#: ../src/tools/sysprof-cli.c:109
+#, fuzzy
+msgid "Disable recording of memory statistics"
+msgstr "Inhabilita l'enregistrament d'estadístiques de memòria"
+
+#: ../src/tools/sysprof-cli.c:110
+#, fuzzy
+msgid "Disable recording of network statistics"
+msgstr "Inhabilita l'enregistrament d'estadístiques de xarxa"
+
+#: ../src/tools/sysprof-cli.c:111
+#, fuzzy
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "Estableix la variable d'entorn SYSPROFTRACEFD per al subprocés"
+
+#: ../src/tools/sysprof-cli.c:112
+#, fuzzy
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "Estableix la variable d'entorn GJSTRACEFD per a traçar els processos GJS"
+
+#: ../src/tools/sysprof-cli.c:113
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "Estableix la variable d'entorn del GTK_TRACE_FD per a seguir una aplicació GTK"
+
+#: ../src/tools/sysprof-cli.c:114
+msgid "Include RAPL energy statistics"
+msgstr "Inclou estadístiques d'energia RAPL"
+
+#: ../src/tools/sysprof-cli.c:115
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "Connecta a org.gnome.Shell per a les estadístiques de l'analitzador de rendiment"
+
+#: ../src/tools/sysprof-cli.c:116
+msgid "Print the sysprof-cli version and exit"
+msgstr "Mostra la versió del sysprof-cli i surt"
+
+#: ../src/tools/sysprof-cli.c:149
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+
+#: ../src/tools/sysprof-cli.c:168
+#, c-format
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "S'han passat massa arguments a sysprof-cli:"
+
+#. Translators: %s is a file name.
+#: ../src/tools/sysprof-cli.c:225
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s ja existeix. Useu --force per a sobreescriure\n"
+
+#: ../src/tools/sysprof-profiler-ctl.c:45
+msgid "Connect to the system bus"
+msgstr "Connecta al bus del sistema"
+
+#: ../src/tools/sysprof-profiler-ctl.c:46
+msgid "Connect to the session bus"
+msgstr "Connecta al bus de la sessió"
+
+#: ../src/tools/sysprof-profiler-ctl.c:47
+msgid "Connect to the given D-Bus address"
+msgstr "Connecta a l'adreça D-Bus indicada"
+
+#: ../src/tools/sysprof-profiler-ctl.c:48
+msgid "Destination D-Bus name to invoke method on"
+msgstr "Nom D-Bus de destinació on invocar el mètode"
+
+#: ../src/tools/sysprof-profiler-ctl.c:49
+msgid "Object path to invoke method on"
+msgstr "Camí a l'objecte on invocar el mètode"
+
+#: ../src/tools/sysprof-profiler-ctl.c:49
+msgid "/org/gnome/Sysprof3/Profiler"
+msgstr "/org/gnome/Sysprof3/Profiler"
+
+#: ../src/tools/sysprof-profiler-ctl.c:50
+msgid "Timeout in seconds"
+msgstr "Temps d'espera en segons"
+
+#: ../src/tools/sysprof-profiler-ctl.c:51
+msgid "Overwrite FILENAME if it exists"
+msgstr "Sobreescriu el nom de FITXER si existeix"
+
+#: ../src/tools/sysprof-profiler-ctl.c:79
+msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+msgstr ""
+"--dest=BUS_NAME [FILENAME] - connecta amb un perfilador de sysprof "
+"incrustat"

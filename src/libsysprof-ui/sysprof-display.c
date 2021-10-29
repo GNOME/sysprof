@@ -253,7 +253,14 @@ sysprof_display_dup_title (SysprofDisplay *self)
 
       if ((dt = g_date_time_new_from_iso8601 (capture_time, NULL)))
         {
-          g_autofree gchar *formatted = g_date_time_format (dt, "%X");
+          g_autoptr(GDateTime) local = g_date_time_to_local (dt);
+          g_autofree gchar *formatted = NULL;
+
+          if (local != NULL)
+            formatted = g_date_time_format (local, "%X");
+          else
+            formatted = g_date_time_format (dt, "%X");
+
           /* translators: %s is replaced with locale specific time of recording */
           return g_strdup_printf (_("Recording at %s"), formatted);
         }

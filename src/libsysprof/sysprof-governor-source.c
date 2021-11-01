@@ -286,11 +286,18 @@ enable_paranoid_cb (GObject      *object,
   if (!self->disable_governor)
     sysprof_source_emit_finished (SYSPROF_SOURCE (self));
   else
-    sysprof_helpers_set_governor_async (helpers,
-                                        self->old_governor,
-                                        NULL,
-                                        enable_governor_cb,
-                                        g_steal_pointer (&self));
+    {
+      sysprof_helpers_set_governor_async (helpers,
+					  self->old_governor,
+					  NULL,
+					  enable_governor_cb,
+					  self);
+
+      /* Can't use g_steal_pointer above, as that might set self = NULL before
+       * self->old_governor is evaluated → crash
+       */
+      self = NULL;
+    }
 }
 
 static void

@@ -53,7 +53,7 @@ msgid ""
 "<app>Sysprof</app> is a system profiler for Linux that targets the GNOME "
 "desktop."
 msgstr ""
-"El <app>Sysprof</app> és un perfilador de sistemes per a Linux adreçat a "
+"El <app>Sysprof</app> és un analitzador de rendiment per a Linux adreçat a "
 "l'escriptori GNOME."
 
 #. (itstool) path: info/desc
@@ -64,7 +64,7 @@ msgstr "Diferències entre seguiment i mostreig"
 #. (itstool) path: section/title
 #: C/introduction.page:35
 msgid "What is a Profiler?"
-msgstr "Què és un perfilador?"
+msgstr "Què és un analitzador de rendiment?"
 
 #. (itstool) path: section/p
 #: C/introduction.page:37
@@ -73,9 +73,9 @@ msgid ""
 "or system while it runs. That information can be explored to gain insight "
 "into how the application could be changed to perform better."
 msgstr ""
-"Un perfilador és una aplicació que registra informació sobre una aplicació o"
-" sistema mentre s’executa. Aquesta informació es pot explorar per obtenir "
-"informació sobre com es podria canviar l'aplicació per obtenir un millor "
+"Un analitzador de rendiment és una aplicació que registra informació sobre una aplicació o"
+" sistema mentre s'executa. Aquesta informació es pot explorar per a obtenir "
+"informació sobre com es podria canviar l'aplicació per a obtenir un millor "
 "rendiment."
 
 #. (itstool) path: section/p
@@ -88,10 +88,10 @@ msgid ""
 " frequency and therefore does not see every function call executed by the "
 "program."
 msgstr ""
-"Existeixen dues categories habituals de perfiladors de programari, coneguts "
-"habitualment com a perfiladors de seguiment o mostreig. El que s’entén per "
-"perfilador de seguiment és que totes les trucades de funció executades pel "
-"programa són conegudes pel perfilador. Un perfilador de mostreig funciona "
+"Existeixen dues categories habituals d'analitzadors de rendiment de programari, coneguts "
+"habitualment com a analitzadors de rendiment de seguiment o mostreig. El que s'entén per "
+"analitzador de rendiment de seguiment és que totes les trucades de funció executades pel "
+"programa són conegudes per l'analitzador. Un analitzador de rendiment de mostreig funciona "
 "inspeccionant l'estat del programa amb una freqüència regular i, per tant, "
 "no veu totes les crides de funcions executades pel programa."
 
@@ -103,21 +103,21 @@ msgid ""
 " of a tracing profiler, making it easier to use for software that requires "
 "interactivity."
 msgstr ""
-"Tant els perfiladors de seguiment com els de mostreig tenen els seus "
-"avantatges. Un avantatge notable d’un perfilador de mostreig és que la "
-"despesa general és molt inferior a la d’un perfilador de seguiment, cosa que"
-" facilita l’ús per a programes que requereixen interactivitat."
+"Tant els analitzadors de rendiment de seguiment com els de mostreig tenen els seus "
+"avantatges. Un avantatge notable d'un analitzador de rendiment de mostreig és que la "
+"despesa general és molt inferior a la d'un analitzador de rendiment de seguiment, cosa que"
+" facilita l'ús per a programes que requereixen interactivitat."
 
 #. (itstool) path: section/p
 #: C/introduction.page:54
 msgid "<app>Sysprof</app> is a sampling profiler."
-msgstr "El <app>Sysprof</app> és un perfilador de mostreig."
+msgstr "El <app>Sysprof</app> és un analitzador de rendiment de mostreig."
 
 #. (itstool) path: page/title
 #. (itstool) path: section/title
 #: C/profiling.page:6 C/index.page:15
 msgid "Profiling"
-msgstr "Utilitzant el perfilador"
+msgstr "Utilitzant l'analitzador de rendiment"
 
 #. (itstool) path: section/title
 #: C/profiling.page:12
@@ -135,7 +135,7 @@ msgid ""
 "profiling\">spawn a new process</link>."
 msgstr ""
 "Quan el <app>Sysprof</app> perfila el sistema, registra la informació de la "
-"pila per a totes les aplicacions que s’executen, inclòs el nucli Linux. De "
+"pila per a totes les aplicacions que s'executen, inclòs el nucli Linux. De "
 "vegades, això pot resultar confús si només voleu examinar un sol procés. Si "
 "la vostra aplicació no interactua gaire amb el sistema amfitrió, és possible"
 " que tinguis més èxit en utilitzar el <app>Sysprof</app> per <link "
@@ -159,7 +159,7 @@ msgid ""
 msgstr ""
 "Aleshores, si us pot demanar que <em>autoritzeu</em>l'accés per perfilar el "
 "sistema. Això és necessari, atès que cal la implementació del nucli Linux "
-"mitjançant permisos de superusuari per realitzar perfils de tot el sistema."
+"mitjançant permisos de superusuari per a realitzar perfils de tot el sistema."
 
 #. (itstool) path: section/p
 #: C/profiling.page:27
@@ -168,9 +168,9 @@ msgid ""
 " has been active. Clicking the <em>Record</em> button again will stop the "
 "profiling session. Afterwhich, the callgraph will be displayed."
 msgstr ""
-"Durant la sessió de perfilació, si us mostrarà la quantitat de segons que el"
-" perfilador ha estat actiu. En tornar a fer clic al botó <em>Registre</em>, "
-"s'aturarà la sessió del perfilador, per mostrar el callgraph."
+"Durant la sessió de perfilació, si us mostrarà la quantitat de segons que "
+" l'analitzador de rendiment ha estat actiu. En tornar a fer clic al botó <em>Registre</em>, "
+"s'aturarà la sessió de l'analitzador de rendiment, per a mostrar el callgraph."
 
 #. (itstool) path: note/p
 #: C/profiling.page:33
@@ -180,10 +180,10 @@ msgid ""
 " <cmd>sysprof-cli</cmd>. This is a command line program that will capture "
 "your profiling session to disk to be viewed at a later time."
 msgstr ""
-"Si l'aplicació <app>sysprof</app> apareix al vostre callgraph de "
-"perfiladors, és recomanable que deseu la sessió del perfilador amb <cmd"
+"Si l'aplicació <app>sysprof</app> apareix al callgraph de "
+"l'analitzador de rendiment, és recomanable que deseu la sessió de l'analitzador de rendiment amb <cmd"
 ">sysprof-cli</cmd>. És un programa de la línia d'ordres que capturarà la "
-"sessió del perfilador al disc per veure-la posteriorment."
+"sessió de l'analitzador de rendiment al disc per veure-la posteriorment."
 
 #. (itstool) path: section/p
 #: C/profiling.page:39 C/profiling.page:62
@@ -209,7 +209,7 @@ msgid ""
 "Processes selected for profiling will have a checkmark next to their name."
 msgstr ""
 "Amb el <app>Sysprof</app> podeu perfilar un o més processos existents al "
-"sistema. Trieu primer l'<em>objectiu del perfilador</em>, al costat del botó"
+"sistema. Trieu primer l'<em>objectiu de l'analitzador de rendiment</em>, al costat del botó"
 " <em>Registre</em>. Seleccioneu <em>Procés existent</em> a la finestra "
 "emergent que es mostra. A continuació, marqueu els processos que voleu "
 "perfilar. Aquests quedaran amb una marca de selecció al costat del seu nom."
@@ -221,7 +221,7 @@ msgid ""
 "start profiling."
 msgstr ""
 "Després de seleccionar els processos de destinació, feu clic al botó "
-"<em>Registre</em> per començar."
+"<em>Registre</em> per a començar."
 
 #. (itstool) path: section/p
 #: C/profiling.page:59
@@ -247,7 +247,7 @@ msgstr ""
 "Sovint, és possible que hagueu de generar un nou procés per perfilar. "
 "Primer, seleccioneu el botó <em>perfilant la destinació</em>, al costat del "
 "botó <em>Registre</em>. Tot seguit, seleccioneu <em>Procés nou</em> i empleneu la "
-"informació necessària per generar el procés."
+"informació necessària per a generar el procés."
 
 #. (itstool) path: note/p
 #: C/profiling.page:79
@@ -296,7 +296,7 @@ msgid ""
 "inherit the current environment."
 msgstr ""
 "Si voleu generar un procés nou, utilitzeu <cmd>sysprof-cli -c "
-"'command'</cmd> per especificar una ordre que s'iniciarà. L'ordre heretarà "
+"'command'</cmd> per a especificar una ordre que s'iniciarà. L'ordre heretarà "
 "l'entorn actual."
 
 #. (itstool) path: section/title
@@ -311,7 +311,7 @@ msgid ""
 "On the top left is a list of all the functions profiled. They are sorted by "
 "how often they were called during the recording."
 msgstr ""
-"Els resultats del perfilador a <app>Sysprof</app> es divideixen en tres "
+"Els resultats de l'analitzador de rendiment a <app>Sysprof</app> es divideixen en tres "
 "seccions. A la part superior esquerra hi ha una llista de totes les funcions"
 " perfilades. Estan ordenats segons la freqüència amb què es van cridar "
 "durant l'enregistrament."
@@ -325,7 +325,7 @@ msgid ""
 "up in the current stacktrace when a sample was recorded."
 msgstr ""
 "És important tenir en compte que la quantitat de temps dedicat a cada funció"
-" no es captura. Això requeriria un perfilador de seguiment per enregistrar "
+" no es captura. Això requeriria un analitzador de rendiment de seguiment per a enregistrar "
 "amb precisió. El percentatge es calcula determinant la freqüència amb què es"
 " va mostrar aquesta funció al seguiment de pila actual quan es va "
 "enregistrar una mostra."
@@ -340,7 +340,7 @@ msgid ""
 msgstr ""
 "Després de seleccionar una funció de la llista de funcions, es mostraran a "
 "la part inferior esquerra totes crides en funció d'aquesta funció. També "
-"s’ordenen pel percentatge de mostres que van incloure aquesta funció al "
+"s'ordenen pel percentatge de mostres que van incloure aquesta funció al "
 "seguiment de pila."
 
 #. (itstool) path: section/p
@@ -358,7 +358,7 @@ msgid ""
 "You can jump into a function by activating a row in the tree of descendants "
 "with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
 msgstr ""
-"Podeu accedir a una funció activant una fila a l’arbre dels descendents amb "
+"Podeu accedir a una funció activant una fila a l'arbre dels descendents amb "
 "un doble clic o prement <key>Retorn</key> o la <key>Barra espaiadora</key>."
 
 #. (itstool) path: note/p
@@ -407,7 +407,7 @@ msgid ""
 "and store it in the heap. Sysprof is accurately reporting the situation in "
 "this case."
 msgstr ""
-"Llenguatges com el Java poden generar codi executable mentre s’executa un "
+"Llenguatges com el Java poden generar codi executable mentre s'executa un "
 "programa i emmagatzemar-lo al monticle. El Sysprof informa amb exactitud de "
 "la situació en aquest cas."
 
@@ -426,7 +426,7 @@ msgstr ""
 "Els compiladors C i C++ poden optimitzar la informació necessària per "
 "determinar la persona que crida una funció, de manera que es confon amb "
 "[monticle]. Encara podeu saber amb quina freqüència el programa crida cada "
-"funció, però no sempre des d’on."
+"funció, però no sempre des d'on."
 
 #. (itstool) path: note/p
 #: C/faq.page:38
@@ -445,7 +445,7 @@ msgid ""
 "To get the most detailed and accurate call tree from un-optimized code, use "
 "these flags: <code>-ggdb -fno-omit-frame-pointer -O0</code>"
 msgstr ""
-"Per obtenir l'arbre de crides més detallat i precís a partir d'un codi no "
+"Per a obtenir l'arbre de crides més detallat i precís a partir d'un codi no "
 "optimitzat, utilitzeu aquests indicadors: 1<code>-ggdb -fno-omit-frame-"
 "pointer -O0</code>"
 

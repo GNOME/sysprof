@@ -1,3 +1,13 @@
+Overview of changes in Sysprof 3.42.1
+=====================================
+
+ * Build fixes for close()/lseek() usage
+ * Show recording time in local time instead of UTC
+ * Improve resolving of symbols in presence of toolbox, flatpak,
+   and btrfs
+ * Fix checking of paranoid state in Linux kernel
+ * Updated translations
+
 Overview of changes in Sysprof 3.42.0
 =====================================
 

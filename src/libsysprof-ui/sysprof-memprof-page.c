@@ -62,6 +62,7 @@ typedef struct
   GtkRadioButton           *summary;
   GtkRadioButton           *all_allocs;
   GtkRadioButton           *temp_allocs;
+  GtkRadioButton           *leaked_allocs_button;
   GtkLabel                 *temp_allocs_count;
   GtkLabel                 *num_allocs;
   GtkLabel                 *leaked_allocs;
@@ -1029,6 +1030,8 @@ mode_notify_active (SysprofMemprofPage *self,
         do_allocs (self, SYSPROF_MEMPROF_MODE_ALL_ALLOCS);
       else if (button == priv->temp_allocs)
         do_allocs (self, SYSPROF_MEMPROF_MODE_TEMP_ALLOCS);
+      else if (button == priv->leaked_allocs_button)
+        do_allocs (self, SYSPROF_MEMPROF_MODE_LEAKED_ALLOCS);
     }
 }
 
@@ -1147,6 +1150,7 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, temp_allocs_count);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, num_allocs);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, leaked_allocs);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, leaked_allocs_button);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, peak_allocs);
 
   bindings = gtk_binding_set_by_class (klass);
@@ -1178,6 +1182,11 @@ sysprof_memprof_page_init (SysprofMemprofPage *self)
                            self,
                            G_CONNECT_SWAPPED);
   g_signal_connect_object (priv->temp_allocs,
+                           "notify::active",
+                           G_CALLBACK (mode_notify_active),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (priv->leaked_allocs_button,
                            "notify::active",
                            G_CALLBACK (mode_notify_active),
                            self,

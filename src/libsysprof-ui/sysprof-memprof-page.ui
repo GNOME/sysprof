@@ -44,6 +44,15 @@
                     <property name="group">summary</property>
                   </object>
                 </child>
+                <child>
+                  <object class="GtkRadioButton" id="leaked_allocs_button">
+                    <property name="label" translatable="yes">Leaked Allocations</property>
+                    <property name="draw-indicator">false</property>
+                    <property name="visible">true</property>
+                    <property name="active">false</property>
+                    <property name="group">summary</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>

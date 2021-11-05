@@ -33,11 +33,24 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_MEMPROF_PROFILE (sysprof_memprof_profile_get_type())
 
+/**
+ * SysprofMemprofMode:
+ * @SYSPROF_MEMPROF_MODE_SUMMARY: The summary profile
+ * @SYSPROF_MEMPROF_MODE_ALL_ALLOCS: find all allocations
+ * @SYSPROF_MEMPROF_MODE_TEMP_ALLOCS: find temporary allocations
+ * @SYSPROF_MEMPROF_MODE_LEAKED_ALLOCS: find allocation leaks, Since 3.44
+ *
+ * The memprof profile mode.
+ *
+ * Since 3.44 @SYSPROF_MEMPROF_MODE_LEAKED_ALLOCS is available
+ * to find leaked allocations.
+ */
 typedef enum
 {
   SYSPROF_MEMPROF_MODE_SUMMARY = 0,
   SYSPROF_MEMPROF_MODE_ALL_ALLOCS = 1,
   SYSPROF_MEMPROF_MODE_TEMP_ALLOCS = 2,
+  SYSPROF_MEMPROF_MODE_LEAKED_ALLOCS = 3,
 } SysprofMemprofMode;
 
 typedef struct

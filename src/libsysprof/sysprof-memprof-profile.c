@@ -410,6 +410,31 @@ compare_alloc (gconstpointer a,
     return 0;
 }
 
+static gint
+compare_alloc_pid_addr_time (gconstpointer a,
+                             gconstpointer b)
+{
+  const Alloc *aptr = a;
+  const Alloc *bptr = b;
+
+  if (aptr->pid < bptr->pid)
+    return -1;
+  else if (aptr->pid > bptr->pid)
+    return 1;
+
+  if (aptr->addr < bptr->addr)
+    return -1;
+  else if (aptr->addr > bptr->addr)
+    return 1;
+
+  if (aptr->time < bptr->time)
+    return -1;
+  else if (aptr->time > bptr->time)
+    return 1;
+  else
+    return 0;
+}
+
 static guint
 get_bucket (gint64 size)
 {
@@ -742,6 +767,211 @@ temp_allocs_worker (Generate *g)
 }
 
 static void
+leaked_allocs_worker (Generate *g)
+{
+  g_autoptr(GArray) leak_allocs = NULL;
+  g_autoptr(GArray) all_allocs = NULL;
+  StackNode *node;
+  SysprofCaptureFrameType type;
+  guint64 frame_num = 0;
+
+  g_assert (g != NULL);
+  g_assert (g->reader != NULL);
+
+  leak_allocs = g_array_new (FALSE, FALSE, sizeof (Alloc));
+  all_allocs = g_array_new (FALSE, FALSE, sizeof (Alloc));
+
+  sysprof_capture_reader_reset (g->reader);
+
+  while (sysprof_capture_reader_peek_type (g->reader, &type))
+    {
+      if G_UNLIKELY (type == SYSPROF_CAPTURE_FRAME_PROCESS)
+        {
+          const SysprofCaptureProcess *pr;
+
+          if (!(pr = sysprof_capture_reader_read_process (g->reader)))
+            break;
+
+          if (!g_hash_table_contains (g->cmdlines, GINT_TO_POINTER (pr->frame.pid)))
+            {
+              g_autofree gchar *cmdline = g_strdup_printf ("[%s]", pr->cmdline);
+              g_hash_table_insert (g->cmdlines,
+                                   GINT_TO_POINTER (pr->frame.pid),
+                                   (gchar *)g_string_chunk_insert_const (g->symbols, cmdline));
+            }
+        }
+      else if (type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
+        {
+          const SysprofCaptureAllocation *ev;
+          Alloc a;
+
+          if (!(ev = sysprof_capture_reader_read_allocation (g->reader)))
+            break;
+
+          frame_num++;
+
+          /* Short-circuit if we don't care about this frame */
+          if (!sysprof_selection_contains (g->selection, ev->frame.time))
+            continue;
+
+          a.pid = ev->frame.pid;
+          a.tid = ev->tid;
+          a.time = ev->frame.time;
+          a.addr = ev->alloc_addr;
+          a.size = ev->alloc_size;
+          a.frame_num = frame_num;
+
+          g_array_append_val (all_allocs, a);
+        }
+      else
+        {
+          if (!sysprof_capture_reader_skip (g->reader))
+            break;
+        }
+    }
+
+  if (all_allocs->len == 0)
+    return;
+
+  /* Order so we can find frees right after alloc */
+  g_array_sort (all_allocs, compare_alloc_pid_addr_time);
+
+  for (guint i = 0; i < all_allocs->len; i++)
+    {
+      const Alloc *a = &g_array_index (all_allocs, Alloc, i);
+      const Alloc *next;
+
+      /* free()s are <= 0 */
+      if (a->size <= 0)
+        continue;
+
+      if (i + 1 == all_allocs->len)
+        goto leaked;
+
+      next = &g_array_index (all_allocs, Alloc, i+1);
+      if (a->addr == next->addr && a->pid == next->pid && next->size <= 0)
+        continue;
+
+    leaked:
+      g_array_append_vals (leak_allocs, a, 1);
+    }
+
+  if (leak_allocs->len == 0)
+    return;
+
+  /* Now sort by frame number so we can walk the reader and get the stack
+   * for each allocation as we count frames.  We can skip frames until we
+   * get to the matching frame_num for the next alloc.
+   *
+   * We sort in reverse so that we can just keep shortening the array as
+   * we match each frame to save having to keep a secondary position
+   * variable.
+   */
+  g_array_sort (leak_allocs, compare_frame_num_reverse);
+  sysprof_capture_reader_reset (g->reader);
+  frame_num = 0;
+  while (sysprof_capture_reader_peek_type (g->reader, &type))
+    {
+      if (type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
+        {
+          const SysprofCaptureAllocation *ev;
+          const Alloc *tail;
+
+          if (!(ev = sysprof_capture_reader_read_allocation (g->reader)))
+            break;
+
+          frame_num++;
+
+          tail = &g_array_index (leak_allocs, Alloc, leak_allocs->len - 1);
+
+          if G_UNLIKELY (tail->frame_num == frame_num)
+            {
+              SysprofAddressContext last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
+              const gchar *cmdline;
+              guint len = 5;
+
+              node = stack_stash_add_trace (g->building, ev->addrs, ev->n_addrs, ev->alloc_size);
+
+              for (const StackNode *iter = node; iter != NULL; iter = iter->parent)
+                len++;
+
+              if (G_UNLIKELY (g->resolved->len < len))
+                g_array_set_size (g->resolved, len);
+
+              len = 0;
+
+              for (const StackNode *iter = node; iter != NULL; iter = iter->parent)
+                {
+                  SysprofAddressContext context = SYSPROF_ADDRESS_CONTEXT_NONE;
+                  SysprofAddress address = iter->data;
+                  const gchar *symbol = NULL;
+
+                  if (sysprof_address_is_context_switch (address, &context))
+                    {
+                      if (last_context)
+                        symbol = sysprof_address_context_to_string (last_context);
+                      else
+                        symbol = NULL;
+
+                      last_context = context;
+                    }
+                  else
+                    {
+                      for (guint i = 0; i < g->resolvers->len; i++)
+                        {
+                          SysprofSymbolResolver *resolver = g_ptr_array_index (g->resolvers, i);
+                          GQuark tag = 0;
+                          gchar *str;
+
+                          str = sysprof_symbol_resolver_resolve_with_context (resolver,
+                                                                              ev->frame.time,
+                                                                              ev->frame.pid,
+                                                                              last_context,
+                                                                              address,
+                                                                              &tag);
+
+                          if (str != NULL)
+                            {
+                              symbol = g_string_chunk_insert_const (g->symbols, str);
+                              g_free (str);
+
+                              if (tag != 0 && !g_hash_table_contains (g->tags, symbol))
+                                g_hash_table_insert (g->tags, (gchar *)symbol, GSIZE_TO_POINTER (tag));
+
+                              break;
+                            }
+                        }
+                    }
+
+                  if (symbol != NULL)
+                    g_array_index (g->resolved, SysprofAddress, len++) = POINTER_TO_U64 (symbol);
+                }
+
+              if ((cmdline = g_hash_table_lookup (g->cmdlines, GINT_TO_POINTER (ev->frame.pid))))
+                g_array_index (g->resolved, guint64, len++) = POINTER_TO_U64 (cmdline);
+
+              g_array_index (g->resolved, guint64, len++) = POINTER_TO_U64 ("[Everything]");
+
+              stack_stash_add_trace (g->stash,
+                                     (gpointer)g->resolved->data,
+                                     len,
+                                     ev->alloc_size);
+
+              g_array_set_size (leak_allocs, leak_allocs->len - 1);
+
+              if (leak_allocs->len == 0)
+                break;
+            }
+        }
+      else
+        {
+          if (!sysprof_capture_reader_skip (g->reader))
+            break;
+        }
+    }
+}
+
+static void
 sysprof_memprof_profile_generate_worker (GTask        *task,
                                          gpointer      source_object,
                                          gpointer      task_data,
@@ -780,6 +1010,10 @@ sysprof_memprof_profile_generate_worker (GTask        *task,
   else if (g->mode == SYSPROF_MEMPROF_MODE_SUMMARY)
     {
       summary_worker (g);
+    }
+  else if (g->mode == SYSPROF_MEMPROF_MODE_LEAKED_ALLOCS)
+    {
+      leaked_allocs_worker (g);
     }
 
   /* Release some data we don't need anymore */

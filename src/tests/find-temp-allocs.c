@@ -130,10 +130,10 @@ find_temp_allocs (SysprofCaptureReader *reader)
         }
     }
 
-  g_printerr ("Allocations: %"G_GUINT64_FORMAT"\n", allocinfo.total);
-  g_printerr ("  Temporary: %"G_GUINT64_FORMAT" (%lf%%)\n",
+  g_printerr ("Allocations: %"G_GINT64_FORMAT"\n", allocinfo.total);
+  g_printerr ("  Temporary: %"G_GINT64_FORMAT" (%lf%%)\n",
               allocinfo.temp, allocinfo.temp / (gdouble)allocinfo.total * 100.0);
-  g_printerr ("     Leaked: %"G_GUINT64_FORMAT"\n", allocinfo.leaked);
+  g_printerr ("     Leaked: %"G_GINT64_FORMAT"\n", allocinfo.leaked);
 }
 
 gint

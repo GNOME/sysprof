@@ -168,7 +168,6 @@ msgstr "Callgraph"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:27
 #: src/libsysprof-ui/sysprof-memprof-page.ui:236
-#, fuzzy
 msgid "Functions"
 msgstr "Funcions"
 
@@ -372,10 +371,9 @@ msgstr "S'està enregistrant…"
 
 #. translators: %s is replaced with locale specific time of recording
 #: src/libsysprof-ui/sysprof-display.c:258
-#, fuzzy, c-format
-#| msgid "Recording Failed"
+#, c-format
 msgid "Recording at %s"
-msgstr "Ha fallat l'enregistrament"
+msgstr "Enregistrat a les %s"
 
 #: src/libsysprof-ui/sysprof-display.c:262
 msgid "New Recording"
@@ -600,38 +598,30 @@ msgstr ""
 "Segueix les operacions lentes en el bucle principal de les aplicacions"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:210
-#, fuzzy
-#| msgid "Processes"
 msgid "All Processes"
-msgstr "Processos"
+msgstr "Tots els processos"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
-#, fuzzy
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
 "not be possible on some system configurations."
 msgstr ""
-"Inclou totes les aplicacions i el nucli del sistema operatiu a la "
-"cal·grafia. Això pot no ser possible en algunes configuracions del sistema."
+"Inclou totes les aplicacions i el nucli del sistema operatiu al "
+"callgraph. Potser no és possible en algunes configuracions de sistema."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
-#, fuzzy
-#| msgid "Processes"
 msgid "Search Processes…"
-msgstr "Processos"
+msgstr "Cerca els processos…"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:287
-#, fuzzy
-#| msgid "Processes"
 msgid "Loading Processes…"
-msgstr "Processos"
+msgstr "S'estan carregant els processos…"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:311
 msgid "Launch Application"
-msgstr "Inicia l'aplicació"
+msgstr "Inicia una aplicació"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:340
-#, fuzzy
 msgid "Enable to launch a program of your choosing before profiling."
 msgstr ""
 "Permet llançar un programa de la vostra elecció abans de l'anàlisi de "
@@ -650,33 +640,28 @@ msgid "Inherit Environment"
 msgstr "Entorn heretat"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:437
-#, fuzzy
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other"
 " desktop environment settings."
 msgstr ""
-"Permet garantir que la vostra aplicació comparteixi la configuració de "
-"visualització, el bus de missatges i altres entorns d'escriptori."
+"Permet garantir que l'aplicació comparteixi la configuració de "
+"visualització, el bus de missatges i altres configuracions de l'escriptori."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:463
-#, fuzzy
 msgid "Allow CPU Throttling"
-msgstr "Permet l'enrotllament de la CPU"
+msgstr "Permet «throttling» de la CPU"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:491
-#, fuzzy
 msgid ""
 "If disabled, your CPU will be placed in performance mode. It will be "
 "restored after profiling."
 msgstr ""
-"Si està inhabilitat la CPU es col·locarà en mode de rendiment. Es restaurarà"
-" després de l'elaboració de perfils."
+"Si està inhabilitat, la CPU es col·locarà en mode de rendiment. Es restaurarà"
+" després de l'anàlisi del rendiment."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
-#, fuzzy
-#| msgid "Recording…"
 msgid "_Record"
-msgstr "S'està enregistrant…"
+msgstr "_Enregistra"
 
 #: src/libsysprof-ui/sysprof-rapl-aid.c:175
 #: src/libsysprof-ui/sysprof-rapl-aid.c:248
@@ -798,45 +783,34 @@ msgid "Opens a previously saved recording"
 msgstr "Obre un enregistrament desat anteriorment"
 
 #: src/sysprof/gtk/help-overlay.ui:34
-#, fuzzy
-#| msgid "Recording…"
 msgctxt "shortcut window"
 msgid "Recording"
-msgstr "S'està enregistrant…"
+msgstr "Enregistrament"
 
 #: src/sysprof/gtk/help-overlay.ui:38
-#, fuzzy
-#| msgid "Recording…"
 msgctxt "shortcut window"
 msgid "Record again"
-msgstr "S'està enregistrant…"
+msgstr "Torna a enregistrar"
 
 #: src/sysprof/gtk/help-overlay.ui:39
-#, fuzzy
-#| msgid "Save Recording"
 msgctxt "shortcut window"
 msgid "Starts a new recording"
-msgstr "Desa l'enregistrament"
+msgstr "Inicia l'enregistrament"
 
 #: src/sysprof/gtk/help-overlay.ui:46
-#, fuzzy
-#| msgid "Save Recording"
 msgctxt "shortcut window"
 msgid "Stop recording"
-msgstr "Desa l'enregistrament"
+msgstr "Atura l'enregistrament"
 
 #: src/sysprof/gtk/help-overlay.ui:55
-#, fuzzy
-#| msgid "Callgraph"
 msgctxt "shortcut window"
 msgid "Callgraph"
 msgstr "Callgraph"
 
 #: src/sysprof/gtk/help-overlay.ui:59
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Expand function"
-msgstr "Funció Expandeix"
+msgstr "Expandeix la funció"
 
 #: src/sysprof/gtk/help-overlay.ui:60
 #, fuzzy
@@ -845,7 +819,6 @@ msgid "Shows the direct descendants of the callgraph function"
 msgstr "Mostra els descendents directes de la funció de cal·graf"
 
 #: src/sysprof/gtk/help-overlay.ui:67
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Collapse function"
 msgstr "Redueix la funció"
@@ -859,7 +832,6 @@ msgstr ""
 "seleccionada"
 
 #: src/sysprof/gtk/help-overlay.ui:75
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Jump into function"
 msgstr "Salta a la funció"
@@ -871,77 +843,60 @@ msgid "Selects the function or file as the top of the callgraph"
 msgstr "Selecciona la funció o el fitxer com a part superior de la cal·grafia"
 
 #: src/sysprof/gtk/help-overlay.ui:85
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Visualizers"
 msgstr "Visualitzadors"
 
 #: src/sysprof/gtk/help-overlay.ui:89
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Zoom in"
 msgstr "Amplia"
 
 #: src/sysprof/gtk/help-overlay.ui:96
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Zoom out"
 msgstr "Allunya"
 
 #: src/sysprof/gtk/help-overlay.ui:103
-#, fuzzy
 msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Reinicia el zoom"
 
 #: src/sysprof/gtk/menus.ui:6
-#, fuzzy
 msgid "New Tab"
 msgstr "Pestanya nova"
 
 #: src/sysprof/gtk/menus.ui:11
-#, fuzzy
 msgid "New Window"
 msgstr "Finestra nova"
 
 #: src/sysprof/gtk/menus.ui:18
-#, fuzzy
-#| msgid "Recording…"
 msgid "Open Recording…"
-msgstr "S'està enregistrant…"
+msgstr "Obre l'enregistrament…"
 
 #: src/sysprof/gtk/menus.ui:23
-#, fuzzy
-#| msgid "Save Recording"
 msgid "Save Recording…"
-msgstr "Desa l'enregistrament"
+msgstr "Desa l'enregistrament…"
 
 #: src/sysprof/gtk/menus.ui:30
-#, fuzzy
-#| msgid "Recording…"
 msgid "Record Again"
-msgstr "S'està enregistrant…"
+msgstr "Torna a enregistrar"
 
 #: src/sysprof/gtk/menus.ui:37
-#, fuzzy
 msgid "Close"
 msgstr "Tanca"
 
 #: src/sysprof/gtk/menus.ui:44
-#, fuzzy
 msgid "Keyboard Shortcuts"
 msgstr "Dreceres de teclat"
 
 #: src/sysprof/gtk/menus.ui:49
-#, fuzzy
 msgid "Help"
 msgstr "Ajuda"
 
 #: src/sysprof/gtk/menus.ui:54
-#, fuzzy
-#| msgid "Sysprof"
 msgid "About Sysprof"
-msgstr "Sysprof"
+msgstr "Quant al Sysprof"
 
 #: src/sysprof/sysprof-application.c:194
 msgid "A system profiler"
@@ -974,16 +929,12 @@ msgid "All Files"
 msgstr "Tots els fitxers"
 
 #: src/sysprof/ui/sysprof-window.ui:28
-#, fuzzy
-#| msgid "Open"
 msgid "_Open"
-msgstr "Obre"
+msgstr "_Obre"
 
 #: src/sysprof/ui/sysprof-window.ui:31
-#, fuzzy
-#| msgid "Recording…"
 msgid "Open Recording… (Ctrl+O)"
-msgstr "S'està enregistrant…"
+msgstr "Obre enregistrament… (Ctrl+O)"
 
 #: src/tools/sysprof-cli.c:62
 msgid "Stopping profiler. Press twice more ^C to force exit."

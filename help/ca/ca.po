@@ -6,6 +6,7 @@
 # Translators:
 # Ma. Teresa Guix <maite.guix@gmail.com>, 2021
 # Benny Beat <bennybeat@gmail.com>, 2021
+# Jordi Mas i Hernàndez <jmas@softcatala.org>, 2021
 # 
 msgid ""
 msgstr ""
@@ -122,7 +123,7 @@ msgstr "Utilitzant l'analitzador de rendiment"
 #. (itstool) path: section/title
 #: C/profiling.page:12
 msgid "How to profile your system"
-msgstr "Com es perfila el sistema"
+msgstr "Com analitzar el rendiment el sistema"
 
 #. (itstool) path: section/p
 #: C/profiling.page:13
@@ -147,8 +148,8 @@ msgid ""
 "To profile your entire system, ensure the target button is set to <em>All "
 "Processes</em> and click <em>Record</em>."
 msgstr ""
-"Per perfilar tot el sistema, assegureu-vos que el botó de destinació s'ha "
-"definit a <em>Tots els processos</em> i feu clic a <em>Registre</em>."
+"Per a analitzar el rendiment de tot el sistema, assegureu-vos que el botó de destinació s'ha "
+"definit a <em>Tots els processos</em> i feu clic a <em>Enregistra</em>."
 
 #. (itstool) path: section/p
 #: C/profiling.page:23
@@ -157,9 +158,9 @@ msgid ""
 "system. This is required as the Linux kernel's perf implementation requires "
 "root to perform whole-system profiling."
 msgstr ""
-"Aleshores, si us pot demanar que <em>autoritzeu</em>l'accés per perfilar el "
-"sistema. Això és necessari, atès que cal la implementació del nucli Linux "
-"mitjançant permisos de superusuari per a realitzar perfils de tot el sistema."
+"Aleshores, se us pot demanar que <em>autoritzeu</em> l'accés per a analitzar el rendiment "
+"del sistema. Això és necessari, atès que la implementació del nucli Linux de «perf» "
+"requereix permisos de superusuari per a analitzar el rendiment de tot el sistema."
 
 #. (itstool) path: section/p
 #: C/profiling.page:27
@@ -168,8 +169,8 @@ msgid ""
 " has been active. Clicking the <em>Record</em> button again will stop the "
 "profiling session. Afterwhich, the callgraph will be displayed."
 msgstr ""
-"Durant la sessió de perfilació, si us mostrarà la quantitat de segons que "
-" l'analitzador de rendiment ha estat actiu. En tornar a fer clic al botó <em>Registre</em>, "
+"Durant la sessió d'anàlisis del rendiment, se us mostrarà la quantitat de segons que "
+" l'analitzador de rendiment ha estat actiu. En tornar a fer clic al botó <em>Enregistra</em>, "
 "s'aturarà la sessió de l'analitzador de rendiment, per a mostrar el callgraph."
 
 #. (itstool) path: note/p
@@ -183,7 +184,7 @@ msgstr ""
 "Si l'aplicació <app>sysprof</app> apareix al callgraph de "
 "l'analitzador de rendiment, és recomanable que deseu la sessió de l'analitzador de rendiment amb <cmd"
 ">sysprof-cli</cmd>. És un programa de la línia d'ordres que capturarà la "
-"sessió de l'analitzador de rendiment al disc per veure-la posteriorment."
+"sessió de l'analitzador de rendiment al disc per a veure-la posteriorment."
 
 #. (itstool) path: section/p
 #: C/profiling.page:39 C/profiling.page:62
@@ -197,7 +198,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/profiling.page:48
 msgid "Profile an existing process"
-msgstr "Perfilant un procés existent"
+msgstr "Analitzar el rendiment d'un procés existent"
 
 #. (itstool) path: section/p
 #: C/profiling.page:49
@@ -208,11 +209,11 @@ msgid ""
 " is displayed. Next, select as many processes as you'd like to profile. "
 "Processes selected for profiling will have a checkmark next to their name."
 msgstr ""
-"Amb el <app>Sysprof</app> podeu perfilar un o més processos existents al "
+"Amb el <app>Sysprof</app> podeu analitzar el rendiment d'un o més processos existents al "
 "sistema. Trieu primer l'<em>objectiu de l'analitzador de rendiment</em>, al costat del botó"
-" <em>Registre</em>. Seleccioneu <em>Procés existent</em> a la finestra "
+" <em>Enregistra</em>. Seleccioneu <em>Procés existent</em> a la finestra "
 "emergent que es mostra. A continuació, marqueu els processos que voleu "
-"perfilar. Aquests quedaran amb una marca de selecció al costat del seu nom."
+"analitzar el rendiment. Aquests quedaran amb una marca de selecció al costat del seu nom."
 
 #. (itstool) path: section/p
 #: C/profiling.page:56
@@ -221,7 +222,7 @@ msgid ""
 "start profiling."
 msgstr ""
 "Després de seleccionar els processos de destinació, feu clic al botó "
-"<em>Registre</em> per a començar."
+"<em>Enregistra</em> per a començar."
 
 #. (itstool) path: section/p
 #: C/profiling.page:59
@@ -229,12 +230,12 @@ msgid ""
 "When you have completed, click the <em>Record</em> button again to stop "
 "profiling."
 msgstr ""
-"En acabar, torneu a fer clic al botó <em>Registre</em> per finalitzar."
+"En acabar, torneu a fer clic al botó <em>Enregistra</em> per a finalitzar."
 
 #. (itstool) path: section/title
 #: C/profiling.page:71
 msgid "Profile a new process"
-msgstr "Perfilant un procés nou"
+msgstr "Analitzar el rendiment d'un procés nou"
 
 #. (itstool) path: section/p
 #: C/profiling.page:73
@@ -244,9 +245,9 @@ msgid ""
 "Next, select <em>New Process</em> and fill out the necessary information to "
 "spawn the process."
 msgstr ""
-"Sovint, és possible que hagueu de generar un nou procés per perfilar. "
-"Primer, seleccioneu el botó <em>perfilant la destinació</em>, al costat del "
-"botó <em>Registre</em>. Tot seguit, seleccioneu <em>Procés nou</em> i empleneu la "
+"Sovint, és possible que hagueu de generar un nou procés per a analitzar el rendiment. "
+"Primer, seleccioneu el botó <em>analitzar el rendiment de l'objectiu</em>, al costat del "
+"botó <em>Enregistra</em>. Tot seguit, seleccioneu <em>Procés nou</em> i empleneu la "
 "informació necessària per a generar el procés."
 
 #. (itstool) path: note/p
@@ -263,7 +264,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/profiling.page:90
 msgid "Profiling with the sysprof-cli command line tool"
-msgstr "Perfilant amb l'eina de línia d'ordres sysprof-cli"
+msgstr "Analitzar el rendiment amb l'eina de línia d'ordres sysprof-cli"
 
 #. (itstool) path: section/p
 #: C/profiling.page:92
@@ -359,7 +360,7 @@ msgid ""
 "with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
 msgstr ""
 "Podeu accedir a una funció activant una fila a l'arbre dels descendents amb "
-"un doble clic o prement <key>Retorn</key> o la <key>Barra espaiadora</key>."
+"un doble clic o prement <key>Retorn</key> o l'<key>Espai</key>."
 
 #. (itstool) path: note/p
 #: C/profiling.page:135
@@ -368,7 +369,7 @@ msgid ""
 "application transitioned into or from the Linux kernel. There can be many "
 "reasons for this such as a <em>syscall</em> or <em>signal</em>."
 msgstr ""
-"Si veieu<em>--nucli--</em>  als vostres resultats, vol dir que l'aplicació "
+"Si veieu <em>--nucli--</em> als vostres resultats, vol dir que l'aplicació "
 "ha passat al nucli o des del nucli Linux. Pot haver-hi molts motius, com ara"
 " <em>crida al sistema</em> o <em>senyal</em>."
 
@@ -414,7 +415,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/faq.page:30
 msgid "Optimizing compilers"
-msgstr "Optimitzant compiladors"
+msgstr "Optimització de compiladors"
 
 #. (itstool) path: section/p
 #: C/faq.page:32
@@ -423,7 +424,7 @@ msgid ""
 "function's caller, so it is mistaken for [heap]. You can still tell how "
 "often each function is called by the program, but not always from where."
 msgstr ""
-"Els compiladors C i C++ poden optimitzar la informació necessària per "
+"Els compiladors C i C++ poden optimitzar la informació necessària per a "
 "determinar la persona que crida una funció, de manera que es confon amb "
 "[monticle]. Encara podeu saber amb quina freqüència el programa crida cada "
 "funció, però no sempre des d'on."

@@ -1,15 +1,15 @@
 # Polish translation for sysprof.
-# Copyright © 2016-2020 the sysprof authors.
+# Copyright © 2016-2021 the sysprof authors.
 # This file is distributed under the same license as the sysprof package.
-# Piotr Drąg <piotrdrag@gmail.com>, 2016-2020.
-# Aviary.pl <community-poland@mozilla.org>, 2016-2020.
+# Piotr Drąg <piotrdrag@gmail.com>, 2016-2021.
+# Aviary.pl <community-poland@mozilla.org>, 2016-2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2021-03-09 00:11+0000\n"
-"PO-Revision-Date: 2020-07-05 11:58+0200\n"
+"POT-Creation-Date: 2021-11-05 04:10+0000\n"
+"PO-Revision-Date: 2021-11-07 13:47+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -161,35 +161,35 @@ msgid "Callgraph"
 msgstr "Wykres wywołań"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:27
-#: src/libsysprof-ui/sysprof-memprof-page.ui:236
+#: src/libsysprof-ui/sysprof-memprof-page.ui:245
 msgid "Functions"
 msgstr "Funkcje"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:43
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:104
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:159
-#: src/libsysprof-ui/sysprof-memprof-page.ui:253
-#: src/libsysprof-ui/sysprof-memprof-page.ui:315
-#: src/libsysprof-ui/sysprof-memprof-page.ui:371
+#: src/libsysprof-ui/sysprof-memprof-page.ui:262
+#: src/libsysprof-ui/sysprof-memprof-page.ui:324
+#: src/libsysprof-ui/sysprof-memprof-page.ui:380
 msgid "Self"
 msgstr "Własne"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:59
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:120
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:175
-#: src/libsysprof-ui/sysprof-memprof-page.ui:269
-#: src/libsysprof-ui/sysprof-memprof-page.ui:331
-#: src/libsysprof-ui/sysprof-memprof-page.ui:387
+#: src/libsysprof-ui/sysprof-memprof-page.ui:278
+#: src/libsysprof-ui/sysprof-memprof-page.ui:340
+#: src/libsysprof-ui/sysprof-memprof-page.ui:396
 msgid "Total"
 msgstr "Razem"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:88
-#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+#: src/libsysprof-ui/sysprof-memprof-page.ui:307
 msgid "Callers"
 msgstr "Wywołania"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:151
-#: src/libsysprof-ui/sysprof-memprof-page.ui:362
+#: src/libsysprof-ui/sysprof-memprof-page.ui:371
 msgid "Descendants"
 msgstr "Elementy potomne"
 
@@ -207,12 +207,12 @@ msgid "Sysprof is busy creating the selected callgraph."
 msgstr "Trwa tworzenie wybranego wykresu wywołań."
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:224
-#: src/libsysprof-ui/sysprof-memprof-page.ui:433
+#: src/libsysprof-ui/sysprof-memprof-page.ui:442
 msgid "Not Enough Samples"
 msgstr "Za mało próbek"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:225
-#: src/libsysprof-ui/sysprof-memprof-page.ui:434
+#: src/libsysprof-ui/sysprof-memprof-page.ui:443
 msgid "More samples are necessary to display a callgraph."
 msgstr "Do wyświetlenia wykresu wywołań potrzeba więcej próbek."
 
@@ -334,33 +334,33 @@ msgid "Recording…"
 msgstr "Nagrywanie…"
 
 #. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:258
+#: src/libsysprof-ui/sysprof-display.c:265
 #, c-format
 msgid "Recording at %s"
 msgstr "Nagranie z %s"
 
-#: src/libsysprof-ui/sysprof-display.c:262
+#: src/libsysprof-ui/sysprof-display.c:269
 msgid "New Recording"
 msgstr "Nowe nagranie"
 
-#: src/libsysprof-ui/sysprof-display.c:1087
+#: src/libsysprof-ui/sysprof-display.c:1094
 msgid "The recording could not be opened"
 msgstr "Nie można otworzyć nagrania"
 
-#: src/libsysprof-ui/sysprof-display.c:1210
+#: src/libsysprof-ui/sysprof-display.c:1217
 msgid "Save Recording"
 msgstr "Zapis nagrania"
 
-#: src/libsysprof-ui/sysprof-display.c:1213
+#: src/libsysprof-ui/sysprof-display.c:1220
 msgid "Save"
 msgstr "Zapisz"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
+#: src/libsysprof-ui/sysprof-display.c:1221 src/sysprof/sysprof-window.c:279
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/libsysprof-ui/sysprof-display.c:1240
+#: src/libsysprof-ui/sysprof-display.c:1247
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Zapisanie nagrania się nie powiodło: %s"
@@ -471,7 +471,7 @@ msgid "Track Allocations"
 msgstr "Śledzenie przydziałów"
 
 #. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:234
+#: src/libsysprof-ui/sysprof-memprof-page.c:235
 #, c-format
 msgid "> %s to %s"
 msgstr "> %s do %s"
@@ -488,15 +488,19 @@ msgstr "Wszystkie przydziały"
 msgid "Temporary Allocations"
 msgstr "Przydziały tymczasowe"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+#: src/libsysprof-ui/sysprof-memprof-page.ui:49
+msgid "Leaked Allocations"
+msgstr "Wyciekające przydziały"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:411
 msgid "Size"
 msgstr "Rozmiar"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:422
+#: src/libsysprof-ui/sysprof-memprof-page.ui:431
 msgid "Analyzing Memory Allocations"
 msgstr "Analizowanie przydziałów pamięci"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:423
+#: src/libsysprof-ui/sysprof-memprof-page.ui:432
 msgid "Sysprof is busy analyzing memory allocations."
 msgstr "Trwa analizowanie przydziałów pamięci."
 
@@ -808,8 +812,8 @@ msgstr "Profiler systemu"
 #: src/sysprof/sysprof-application.c:199
 msgid "translator-credits"
 msgstr ""
-"Piotr Drąg <piotrdrag@gmail.com>, 2016-2020\n"
-"Aviary.pl <community-poland@mozilla.org>, 2016-2020"
+"Piotr Drąg <piotrdrag@gmail.com>, 2016-2021\n"
+"Aviary.pl <community-poland@mozilla.org>, 2016-2021"
 
 #: src/sysprof/sysprof-application.c:205
 msgid "Learn more about Sysprof"

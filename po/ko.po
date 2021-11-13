@@ -1,0 +1,1009 @@
+# Korean translation for sysprof.
+# Copyright (C) 2021 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# Seong-ho Cho <shcho@gnome.org>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2021-09-21 23:52+0000\n"
+"PO-Revision-Date: 2021-10-01 11:58+0900\n"
+"Language-Team: Korean <gnome-kr@googlegroups.com>\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
+"X-Generator: Poedit 2.3.1\n"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:5
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:11
+msgid "Sysprof"
+msgstr "시스프롭"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:6
+msgid "Profile an application or entire system"
+msgstr "프로그램 또는 전체 시스템을 프로파일링합니다"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "그놈 재단"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr "시스프롭은 프로그램 디버깅 및 최적화 과정 프로파일을 도와줍니다."
+
+#: data/org.gnome.Sysprof3.desktop.in:5
+msgid "Profiler"
+msgstr "프로파일러"
+
+#: data/org.gnome.Sysprof3.desktop.in:6
+msgid "Profile an application or entire system."
+msgstr "프로그램 또는 전체 시스템을 프로파일링합니다."
+
+#: data/org.gnome.sysprof3.gschema.xml:5
+msgid "Window size"
+msgstr "창 크기"
+
+#: data/org.gnome.sysprof3.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "창 크기(너비 및 높이)."
+
+#: data/org.gnome.sysprof3.gschema.xml:10
+msgid "Window position"
+msgstr "창 위치"
+
+#: data/org.gnome.sysprof3.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "창 위치(가로 및 세로)."
+
+#: data/org.gnome.sysprof3.gschema.xml:15
+msgid "Window maximized"
+msgstr "창 최대화"
+
+#: data/org.gnome.sysprof3.gschema.xml:16
+msgid "Window maximized state"
+msgstr "창 최대화 크기"
+
+#: data/org.gnome.sysprof3.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr "최근 실행 프로그램"
+
+#: data/org.gnome.sysprof3.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+"프로그램을 다시 시작할 때 인터페이스에서 설정할 최근 실행 프로그램입니다."
+
+#: data/org.gnome.sysprof3.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr "최근 실행 종속 환경"
+
+#: data/org.gnome.sysprof3.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr "최근 실행 환경이 상위 환경에 종속하는 경우."
+
+#: data/org.gnome.sysprof3.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr "최근 실행 환경"
+
+#: data/org.gnome.sysprof3.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr "프로그램을 다시 시작할 떄 인터페이스에서 설정할 최근 실행 환경입니다."
+
+#: src/libsysprof/sysprof-callgraph-profile.c:447
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "시스프롭에서 시스템 캡쳐를 진행할 때 호출그래프를 그릴 수 없습니다."
+
+#: src/libsysprof/sysprof-perf-source.c:472
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "시스프롭에서 “%s” 필드 찾기에 실패했습니다."
+
+#: src/libsysprof/sysprof-perf-source.c:485
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "시스프롭에서 “%s” 오프셋 해석에 실패했습니다."
+
+#: src/libsysprof/sysprof-perf-source.c:549
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "시스프롭에서 perf_event ID 가져오기에 실패했습니다."
+
+#: src/libsysprof/sysprof-perf-source.c:655
+#, c-format
+msgid "An error occurred while attempting to access performance counters"
+msgstr "성능 카운터 접근을 시도하는 동안 오류 발생"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:182
+msgid "Battery Charge"
+msgstr "배터리 충전"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:198
+msgid "Battery Charge (All)"
+msgstr "배터리 충전 (모두)"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:240
+#: src/libsysprof-ui/sysprof-counters-aid.c:282
+msgid "Battery"
+msgstr "배터리"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:212
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:218
+msgid "Stack Traces"
+msgstr "스택 추적"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:226
+msgid "Stack Traces (In Kernel)"
+msgstr "스택 추적(커널)"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:234
+msgid "Stack Traces (In User)"
+msgstr "스택 추적(사용자)"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:243
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:273
+msgid "Callgraph"
+msgstr "호출그래프"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:27
+#: src/libsysprof-ui/sysprof-memprof-page.ui:236
+msgid "Functions"
+msgstr "함수"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:43
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:104
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:159
+#: src/libsysprof-ui/sysprof-memprof-page.ui:253
+#: src/libsysprof-ui/sysprof-memprof-page.ui:315
+#: src/libsysprof-ui/sysprof-memprof-page.ui:371
+msgid "Self"
+msgstr "자체"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:59
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:120
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:175
+#: src/libsysprof-ui/sysprof-memprof-page.ui:269
+#: src/libsysprof-ui/sysprof-memprof-page.ui:331
+#: src/libsysprof-ui/sysprof-memprof-page.ui:387
+msgid "Total"
+msgstr "총계"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:88
+#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+msgid "Callers"
+msgstr "호출자"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:151
+#: src/libsysprof-ui/sysprof-memprof-page.ui:362
+msgid "Descendants"
+msgstr "하위요소"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:190
+#: src/libsysprof-ui/sysprof-details-page.ui:322
+msgid "Hits"
+msgstr "히트 수"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:213
+msgid "Generating Callgraph"
+msgstr "호출그래프 그리는 중"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:214
+msgid "Sysprof is busy creating the selected callgraph."
+msgstr "시스프롭이 선택한 호출그래프를 그리는 중입니다."
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:224
+#: src/libsysprof-ui/sysprof-memprof-page.ui:433
+msgid "Not Enough Samples"
+msgstr "샘플 부족"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:225
+#: src/libsysprof-ui/sysprof-memprof-page.ui:434
+msgid "More samples are necessary to display a callgraph."
+msgstr "호출그래프를 그릴 때 더 많은 샘플이 필요합니다."
+
+#: src/libsysprof-ui/sysprof-counters-aid.c:221
+#: src/libsysprof-ui/sysprof-counters-aid.c:226
+msgid "Counters"
+msgstr "카운터"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:207
+#: src/libsysprof-ui/sysprof-cpu-aid.c:355
+msgid "CPU Usage"
+msgstr "CPU 사용량"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:214
+msgid "CPU Frequency"
+msgstr "CPU 주파수"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:218
+msgid "CPU Frequency (All)"
+msgstr "CPU 주파수 (모두)"
+
+#. Translators: CPU is the processor.
+#: src/libsysprof-ui/sysprof-cpu-aid.c:227
+#: src/libsysprof-ui/sysprof-cpu-aid.c:250
+msgid "CPU Usage (All)"
+msgstr "CPU 사용량 (모두)"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:316
+msgid "Processes"
+msgstr "프로세스"
+
+#: src/libsysprof-ui/sysprof-details-page.c:220
+msgid "Memory Capture"
+msgstr "메모리 캡쳐"
+
+#: src/libsysprof-ui/sysprof-details-page.c:234
+#, c-format
+msgid "%0.4lf seconds"
+msgstr "%0.4lf초"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:21
+msgid "Filename"
+msgstr "파일 이름"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:35
+msgid "Captured at"
+msgstr "캡쳐 시각"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:50
+#: src/libsysprof-ui/sysprof-marks-page.ui:95
+#: src/libsysprof-ui/sysprof-marks-page.ui:215
+msgid "Duration"
+msgstr "시간"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:65
+msgid "CPU Model"
+msgstr "CPU 모델"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:80
+msgid "Samples Captured"
+msgstr "캡쳐한 샘플"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:94
+msgid "Marks Captured"
+msgstr "캡쳐한 마크 수"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:108
+msgid "Processes Captured"
+msgstr "캡쳐한 프로세스"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:122
+msgid "Forks Captured"
+msgstr "캡쳐한 포크"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:136
+msgid "Counters Captured"
+msgstr "캡쳐한 카운터"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:151
+msgid "Allocations Captured"
+msgstr "캡쳐한 할당 항목"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:309
+#: src/libsysprof-ui/sysprof-marks-page.ui:52
+msgid "Mark"
+msgstr "마크"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:335
+msgid "Min"
+msgstr "최소"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:348
+msgid "Max"
+msgstr "최대"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:361
+msgid "Avg"
+msgstr "평균"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:205
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+msgid "Disk"
+msgstr "디스크"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Reads"
+msgstr "읽기"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Writes"
+msgstr "쓰기"
+
+#: src/libsysprof-ui/sysprof-display.c:229
+msgid "Recording Failed"
+msgstr "기록 실패"
+
+#: src/libsysprof-ui/sysprof-display.c:234
+msgid "Recording…"
+msgstr "기록중…"
+
+#. translators: %s is replaced with locale specific time of recording
+#: src/libsysprof-ui/sysprof-display.c:258
+#, c-format
+msgid "Recording at %s"
+msgstr "%s 기록중"
+
+#: src/libsysprof-ui/sysprof-display.c:262
+msgid "New Recording"
+msgstr "새 기록"
+
+#: src/libsysprof-ui/sysprof-display.c:1087
+msgid "The recording could not be opened"
+msgstr "기록을 열 수 없습니다"
+
+#: src/libsysprof-ui/sysprof-display.c:1210
+msgid "Save Recording"
+msgstr "기록 저장"
+
+#: src/libsysprof-ui/sysprof-display.c:1213
+msgid "Save"
+msgstr "저장"
+
+#. Translators: This is a button.
+#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
+msgid "Cancel"
+msgstr "취소"
+
+#: src/libsysprof-ui/sysprof-display.c:1240
+#, c-format
+msgid "Failed to save recording: %s"
+msgstr "기록 저장 실패: %s"
+
+#: src/libsysprof-ui/sysprof-display.ui:49
+#: src/libsysprof-ui/sysprof-marks-page.ui:19
+msgid "Details"
+msgstr "자세히"
+
+#: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
+msgid "Remove environment variable"
+msgstr "환경 변수 제거"
+
+#: src/libsysprof-ui/sysprof-environ-editor.c:71
+msgid "New variable…"
+msgstr "새 변수…"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "아, 아얏!"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr "시스템 프로파일링을 시도하던 중 예기치 않게 무언가가 잘못되었습니다."
+
+#: src/libsysprof-ui/sysprof-log-model.c:210
+#: src/libsysprof-ui/sysprof-logs-page.ui:58
+#: src/libsysprof-ui/sysprof-marks-page.ui:109
+msgid "Message"
+msgstr "메시지"
+
+#: src/libsysprof-ui/sysprof-log-model.c:213
+msgid "Info"
+msgstr "정보"
+
+#: src/libsysprof-ui/sysprof-log-model.c:216
+msgid "Critical"
+msgstr "치명"
+
+#: src/libsysprof-ui/sysprof-log-model.c:219
+msgid "Error"
+msgstr "오류"
+
+#: src/libsysprof-ui/sysprof-log-model.c:222
+msgid "Debug"
+msgstr "디버그"
+
+#: src/libsysprof-ui/sysprof-log-model.c:225
+msgid "Warning"
+msgstr "경고"
+
+#: src/libsysprof-ui/sysprof-logs-aid.c:195
+#: src/libsysprof-ui/sysprof-logs-aid.c:199
+#: src/libsysprof-ui/sysprof-logs-aid.c:204
+#: src/libsysprof-ui/sysprof-logs-aid.c:210
+msgid "Logs"
+msgstr "로그"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:15
+#: src/libsysprof-ui/sysprof-marks-page.ui:67
+msgid "Time"
+msgstr "시간"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:29
+msgid "Severity"
+msgstr "심각도"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:44
+msgid "Domain"
+msgstr "도메인"
+
+#: src/libsysprof-ui/sysprof-marks-aid.c:237
+#: src/libsysprof-ui/sysprof-marks-aid.c:242
+msgid "Timings"
+msgstr "타이밍"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:38
+msgid "Group"
+msgstr "그룹"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:81
+msgid "End"
+msgstr "끝"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:245
+msgid "No Timings Available"
+msgstr "타이밍 정보가 없습니다"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:246
+msgid "No timing data was found for the current selection"
+msgstr "현재 선택 내용에 타이밍 정보가 없습니다"
+
+#: src/libsysprof-ui/sysprof-memory-aid.c:68
+msgid "Memory Usage"
+msgstr "메모리 사용량"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:182
+msgid "Memory"
+msgstr "메모리"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:193
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Allocations"
+msgstr "메모리 할당"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:224
+msgid "Track Allocations"
+msgstr "할당 추적"
+
+#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
+#: src/libsysprof-ui/sysprof-memprof-page.c:234
+#, c-format
+msgid "> %s to %s"
+msgstr "> %s ~ %s"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:23
+msgid "Summary"
+msgstr "요약"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+msgid "All Allocations"
+msgstr "모든 할당 항목"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:40
+msgid "Temporary Allocations"
+msgstr "임시 할당"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+msgid "Size"
+msgstr "크기"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:422
+msgid "Analyzing Memory Allocations"
+msgstr "메모리 할당 분석"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:423
+msgid "Sysprof is busy analyzing memory allocations."
+msgstr "시스프롭이 메모리 할당 분석중입니다."
+
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Used"
+msgstr "사용 메모리"
+
+#: src/libsysprof-ui/sysprof-netdev-aid.c:204
+#: src/libsysprof-ui/sysprof-netdev-aid.c:264
+msgid "Network"
+msgstr "네트워크"
+
+#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
+msgid "GNOME Shell"
+msgstr "그놈 셸"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:90
+msgid "Profilers"
+msgstr "프로파일러"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:186
+msgid ""
+"Track application memory allocations (Sysprof must launch target application)"
+msgstr ""
+"프로그램 메모리 할당을 추적합니다(시스프롭에서 대상 프로그램을 실행해야 함)"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:194
+msgid "Track slow operations on your applications main loop"
+msgstr "프로그램 메인 루프에서 느린 실행 구간을 추적합니다"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:210
+msgid "All Processes"
+msgstr "모든 프로세스"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
+msgid ""
+"Include all applications and operating system kernel in callgraph. This may "
+"not be possible on some system configurations."
+msgstr ""
+"호출그래프에 모든 프로그램과 운영 체제 커널이 해당합니다. 일부 시스템 구성"
+"은 불가능할 수 있습니다."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
+msgid "Search Processes…"
+msgstr "프로세스 검색…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:287
+msgid "Loading Processes…"
+msgstr "프로세스 불러오는 중…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:311
+msgid "Launch Application"
+msgstr "프로그램 실행"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:340
+msgid "Enable to launch a program of your choosing before profiling."
+msgstr "프로파일링을 진행하기 전 선택한 프로그램을 실행할 수 있게 합니다."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
+msgid "Command Line"
+msgstr "명령행"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:387
+msgid "Environment"
+msgstr "환경"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:413
+msgid "Inherit Environment"
+msgstr "종속 환경"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:437
+msgid ""
+"Enable to ensure your application shares the display, message-bus, and other "
+"desktop environment settings."
+msgstr ""
+"프로그램에서 화면, 메시지버스, 기타 데스크톱 환경 설정을 공유할 수 있는지 확"
+"인합니다."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:463
+msgid "Allow CPU Throttling"
+msgstr "CPU 스로틀링 허용"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:491
+msgid ""
+"If disabled, your CPU will be placed in performance mode. It will be "
+"restored after profiling."
+msgstr ""
+"이 옵션을 끄면, CPU를 성능 모드로 가동합니다. 프로파일링이 끝나면 원 상태로 "
+"돌아갑니다."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
+msgid "_Record"
+msgstr "기록(_R)"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:175
+#: src/libsysprof-ui/sysprof-rapl-aid.c:248
+msgid "Energy Usage"
+msgstr "전력 사용"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:180
+msgid "Energy Usage (All)"
+msgstr "전력 사용 (모두)"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"기록에 <a href=\"help:sysprof\">sysprof-cli</a> 프로그램을 사용할 수 있음을 "
+"알고 계십니까?"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:47
+msgid "Events"
+msgstr "이벤트"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:73
+msgid "_Stop Recording"
+msgstr "기록 취소(_S)"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:119
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
+msgid "Select for more details"
+msgstr "자세한 내용 검색"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
+msgid "Display supplemental graphs"
+msgstr "추가 그래프 표시"
+
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+msgid "Instruments"
+msgstr "계측수단"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "시스템 프로파일링"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "시스템을 프로파일링 하려면 인증이 필요합니다."
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:26
+msgid "Open a perf event stream"
+msgstr "perf 이벤트 스트림 열기"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:27
+msgid "Authentication is required to access system performance counters."
+msgstr "시스템 성능 카운터에 접근하려면 인증이 필요합니다."
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:37
+msgid "Get a list of kernel symbols and their address"
+msgstr "커널 심볼 및 주소 목록 가져오기"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:38
+msgid "Authentication is required to access Linux kernel information."
+msgstr "리눅스 커널 정보에 접근하려면 인증이 필요합니다."
+
+#: src/sysprof/gtk/help-overlay.ui:8
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "시스프롭 바로 가기"
+
+#: src/sysprof/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Files"
+msgstr "파일"
+
+#: src/sysprof/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Save Recording"
+msgstr "기록 저장"
+
+#: src/sysprof/gtk/help-overlay.ui:17
+msgctxt "shortcut window"
+msgid "Saves the current recording"
+msgstr "현재 기록을 저장합니다"
+
+#: src/sysprof/gtk/help-overlay.ui:24
+msgctxt "shortcut window"
+msgid "Open recording"
+msgstr "기록 열기"
+
+#: src/sysprof/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Opens a previously saved recording"
+msgstr "이전에 저장한 기록을 엽니다"
+
+#: src/sysprof/gtk/help-overlay.ui:34
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "기록"
+
+#: src/sysprof/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Record again"
+msgstr "다시 기록"
+
+#: src/sysprof/gtk/help-overlay.ui:39
+msgctxt "shortcut window"
+msgid "Starts a new recording"
+msgstr "새 기록 시작"
+
+#: src/sysprof/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "기록 정지"
+
+#: src/sysprof/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "호출그래프"
+
+#: src/sysprof/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "함수 확장"
+
+#: src/sysprof/gtk/help-overlay.ui:60
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "호출그래프 함수의 직접 하위 요소 나타내기"
+
+#: src/sysprof/gtk/help-overlay.ui:67
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "함수 축소"
+
+#: src/sysprof/gtk/help-overlay.ui:68
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr "선택한 함수의 모든 호출그래프 하위 요소 숨기기"
+
+#: src/sysprof/gtk/help-overlay.ui:75
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "함수 내부로 건너뛰기"
+
+#: src/sysprof/gtk/help-overlay.ui:76
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr "호출그래프의 최상단인 함수 또는 파일 선택"
+
+#: src/sysprof/gtk/help-overlay.ui:85
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "시각"
+
+#: src/sysprof/gtk/help-overlay.ui:89
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "확대"
+
+#: src/sysprof/gtk/help-overlay.ui:96
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "축소"
+
+#: src/sysprof/gtk/help-overlay.ui:103
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "확대/축소 복귀"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "New Tab"
+msgstr "새 탭"
+
+#: src/sysprof/gtk/menus.ui:11
+msgid "New Window"
+msgstr "새 창"
+
+#: src/sysprof/gtk/menus.ui:18
+msgid "Open Recording…"
+msgstr "기록 열기…"
+
+#: src/sysprof/gtk/menus.ui:23
+msgid "Save Recording…"
+msgstr "기록 저장…"
+
+#: src/sysprof/gtk/menus.ui:30
+msgid "Record Again"
+msgstr "다시 기록"
+
+#: src/sysprof/gtk/menus.ui:37
+msgid "Close"
+msgstr "닫기"
+
+#: src/sysprof/gtk/menus.ui:44
+msgid "Keyboard Shortcuts"
+msgstr "키보드 바로 가기"
+
+#: src/sysprof/gtk/menus.ui:49
+msgid "Help"
+msgstr "도움말"
+
+#: src/sysprof/gtk/menus.ui:54
+msgid "About Sysprof"
+msgstr "시스프롭 정보"
+
+#: src/sysprof/sysprof-application.c:194
+msgid "A system profiler"
+msgstr "시스템 프로파일러"
+
+#: src/sysprof/sysprof-application.c:199
+msgid "translator-credits"
+msgstr "조성호 <shcho@gnome.org>, 2021"
+
+#: src/sysprof/sysprof-application.c:205
+msgid "Learn more about Sysprof"
+msgstr "시스프롭 더 알아보기"
+
+#. Translators: This is a window title.
+#: src/sysprof/sysprof-window.c:273
+msgid "Open Capture…"
+msgstr "캡쳐 열기…"
+
+#. Translators: This is a button.
+#: src/sysprof/sysprof-window.c:277
+msgid "Open"
+msgstr "열기"
+
+#: src/sysprof/sysprof-window.c:284
+msgid "Sysprof Captures"
+msgstr "시스프롭 캡쳐"
+
+#: src/sysprof/sysprof-window.c:289
+msgid "All Files"
+msgstr "모든 파일"
+
+#: src/sysprof/ui/sysprof-window.ui:28
+msgid "_Open"
+msgstr "열기(_O)"
+
+#: src/sysprof/ui/sysprof-window.ui:31
+msgid "Open Recording… (Ctrl+O)"
+msgstr "기록 열기… (Ctrl+O)"
+
+#: src/tools/sysprof-cli.c:62
+msgid "Stopping profiler. Press twice more ^C to force exit."
+msgstr ""
+"프로파일러를 멈추는 중입니다. 강제로 빠져나가려면 ^C를 두번 더 누르십시오."
+
+#: src/tools/sysprof-cli.c:75
+msgid "Profiler stopped."
+msgstr "프로파일러를 중단했습니다."
+
+#: src/tools/sysprof-cli.c:108
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge에 최소한 파일 이름 인자 2개가 필요합니다"
+
+#: src/tools/sysprof-cli.c:226
+msgid "Disable CPU throttling while profiling"
+msgstr "프로파일링을 진행하는 동안 CPU 스로틀링을 끕니다"
+
+#: src/tools/sysprof-cli.c:227
+msgid "Make sysprof specific to a task"
+msgstr "특정 작업을 프로파일링합니다"
+
+#: src/tools/sysprof-cli.c:227
+msgid "PID"
+msgstr "<PID>"
+
+#: src/tools/sysprof-cli.c:228
+msgid "Run a command and profile the process"
+msgstr "명령을 실행하고 프로세스를 프로파일링합니다"
+
+#: src/tools/sysprof-cli.c:228
+msgid "COMMAND"
+msgstr "<명령>"
+
+#: src/tools/sysprof-cli.c:229
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr "실행 프로세스용 환경 변수를 설정합니다. 여러 번 사용할 수 있습니다."
+
+#: src/tools/sysprof-cli.c:229
+msgid "VAR=VALUE"
+msgstr "<변수>=<값>"
+
+#: src/tools/sysprof-cli.c:230
+msgid "Force overwrite the capture file"
+msgstr "캡쳐 파일을 강제로 덮어씁니다"
+
+#: src/tools/sysprof-cli.c:231
+msgid "Disable recording of battery statistics"
+msgstr "배터리 통계 기록을 끕니다"
+
+#: src/tools/sysprof-cli.c:232
+msgid "Disable recording of CPU statistics"
+msgstr "CPU 통계 기록을 끕니다"
+
+#: src/tools/sysprof-cli.c:233
+msgid "Disable recording of Disk statistics"
+msgstr "디스크 통계 기록을 끕니다"
+
+#: src/tools/sysprof-cli.c:234
+msgid "Do not record stacktraces using Linux perf"
+msgstr "리눅스 perf로 스택 추적을 기록하지 않습니다"
+
+#: src/tools/sysprof-cli.c:235
+msgid "Do not append symbol name information from local machine"
+msgstr "로컬 머신의 심볼 이름 정보를 붙이지 않습니다"
+
+#: src/tools/sysprof-cli.c:236
+msgid "Disable recording of memory statistics"
+msgstr "메모리 통계 기록을 끕니다"
+
+#: src/tools/sysprof-cli.c:237
+msgid "Disable recording of network statistics"
+msgstr "네트워크 통계 기록을 끕니다"
+
+#: src/tools/sysprof-cli.c:238
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "하위 프로세스에 SYSPROF_TRACE_FD 환경 변수를 설정합니다"
+
+#: src/tools/sysprof-cli.c:239
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "GJS 프로세스를 추적하도록 GJS_TRACE_FD 환경을 설정합니다"
+
+#: src/tools/sysprof-cli.c:240
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "GTK 프로그램을 추적하도록 GTK_TRACE_FD 환경을 설정합니다"
+
+#: src/tools/sysprof-cli.c:241
+msgid "Include RAPL energy statistics"
+msgstr "RAPL 전력 통계 포함"
+
+#: src/tools/sysprof-cli.c:242
+msgid "Profile memory allocations and frees"
+msgstr "메모리 할당 및 해제 프로파일링"
+
+#: src/tools/sysprof-cli.c:243
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "프로파일러 통계시 org.gnome.Shell에 연결"
+
+#: src/tools/sysprof-cli.c:244
+msgid "Track performance of the applications main loop"
+msgstr "프로그램 메인 루프의 성능을 추적합니다"
+
+#: src/tools/sysprof-cli.c:245
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr "제공한 *.syscap 파일을 병합하여 표준 출력에 기록합니다"
+
+#: src/tools/sysprof-cli.c:246
+msgid "Print the sysprof-cli version and exit"
+msgstr "sysprof-cli 버전을 출력하고 빠져나갑니다"
+
+#: src/tools/sysprof-cli.c:279
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[<캡쳐_파일>] [-- <명령> <인자>] — Sysprof"
+
+#: src/tools/sysprof-cli.c:282
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+msgstr ""
+"\n"
+"예제:\n"
+"\n"
+"  # trace-fd를 활용하여 GTK, 그놈 셸 데이터 제공자에서 제공한\n"
+"  # 데이터 형식으로 gtk4-widget-factory 기록\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # 여러 syscap 파일을 하나로 병합\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+
+#: src/tools/sysprof-cli.c:315
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "sysprof-cli에 너무 많은 인자 값을 전달했습니다:"
+
+#. Translators: %s is a file name.
+#: src/tools/sysprof-cli.c:374
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s이(가) 있습니다. 덮어쓰려면 --force 옵션을 사용하십시오\n"
+
+#: src/tools/sysprof-profiler-ctl.c:45
+msgid "Connect to the system bus"
+msgstr "시스템 버스에 연결합니다"
+
+#: src/tools/sysprof-profiler-ctl.c:46
+msgid "Connect to the session bus"
+msgstr "세션 버스에 연겷바니다"
+
+#: src/tools/sysprof-profiler-ctl.c:47
+msgid "Connect to the given D-Bus address"
+msgstr "주어진 D-Bus 주소에 연결합니다"
+
+#: src/tools/sysprof-profiler-ctl.c:48
+msgid "Destination D-Bus name to invoke method on"
+msgstr "메서드를 실행할 대상 D-Bus 명칭"
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "Object path to invoke method on"
+msgstr "메서드를 실행할 객체 경로"
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "/org/gnome/Sysprof3/Profiler"
+msgstr "/org/gnome/Sysprof3/Profiler"
+
+#: src/tools/sysprof-profiler-ctl.c:50
+msgid "Timeout in seconds"
+msgstr "초 단위 제한 시간"
+
+#: src/tools/sysprof-profiler-ctl.c:51
+msgid "Overwrite FILENAME if it exists"
+msgstr "<파일_이름>이 있을 경우 덮어 쓰기"
+
+#: src/tools/sysprof-profiler-ctl.c:79
+msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+msgstr "--dest=<버스_이름> [<파일_이름>] - 내장 sysprof 프로파일러에 연결합니다"

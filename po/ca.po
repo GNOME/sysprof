@@ -24,22 +24,19 @@ msgid "Sysprof"
 msgstr "Sysprof"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:6
-#, fuzzy
 msgid "Profile an application or entire system"
-msgstr "Perfila una aplicació o un sistema sencer"
+msgstr "Analitzeu el rendiment d'una aplicació o del sistema sencer"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:9
-#, fuzzy
 msgid "The GNOME Foundation"
 msgstr "La Fundació GNOME"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:12
-#, fuzzy
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
-"Sysprof us permet perfilar aplicacions per ajudar en la depuració i "
+"Sysprof us permet analitzar el rendiment d'aplicacions per a ajudar-vos en la seva depuració i "
 "l'optimització."
 
 #: data/org.gnome.Sysprof3.desktop.in:5
@@ -187,7 +184,6 @@ msgstr "Self"
 #: src/libsysprof-ui/sysprof-memprof-page.ui:269
 #: src/libsysprof-ui/sysprof-memprof-page.ui:331
 #: src/libsysprof-ui/sysprof-memprof-page.ui:387
-#, fuzzy
 msgid "Total"
 msgstr "Total"
 
@@ -200,15 +196,13 @@ msgstr "Callgraph"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:151
 #: src/libsysprof-ui/sysprof-memprof-page.ui:362
-#, fuzzy
 msgid "Descendants"
 msgstr "Descendents"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:190
 #: src/libsysprof-ui/sysprof-details-page.ui:322
-#, fuzzy
 msgid "Hits"
-msgstr "Hits"
+msgstr "Vegades"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:213
 #, fuzzy
@@ -223,7 +217,6 @@ msgstr "Sysprof està ocupat creant la cal·grafia seleccionada."
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:224
 #: src/libsysprof-ui/sysprof-memprof-page.ui:433
-#, fuzzy
 msgid "Not Enough Samples"
 msgstr "No hi ha prou mostres"
 
@@ -468,12 +461,10 @@ msgid "Time"
 msgstr "Hora"
 
 #: src/libsysprof-ui/sysprof-logs-page.ui:29
-#, fuzzy
 msgid "Severity"
 msgstr "Severitat"
 
 #: src/libsysprof-ui/sysprof-logs-page.ui:44
-#, fuzzy
 msgid "Domain"
 msgstr "Domini"
 
@@ -483,7 +474,6 @@ msgid "Timings"
 msgstr "Temps"
 
 #: src/libsysprof-ui/sysprof-marks-page.ui:38
-#, fuzzy
 msgid "Group"
 msgstr "Grup"
 
@@ -507,10 +497,8 @@ msgid "Memory Usage"
 msgstr "Ús de la memòria"
 
 #: src/libsysprof-ui/sysprof-memprof-aid.c:182
-#, fuzzy
-#| msgid "Memory Usage"
 msgid "Memory"
-msgstr "Ús de la memòria"
+msgstr "Memòria"
 
 #: src/libsysprof-ui/sysprof-memprof-aid.c:193
 #: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
@@ -526,12 +514,11 @@ msgstr "Assignacions de la pista"
 #. translators: %s is replaced with the the lower and upper bound memory sizes
 #. in bytes
 #: src/libsysprof-ui/sysprof-memprof-page.c:234
-#, c-format, fuzzy
+#, c-format
 msgid "> %s to %s"
-msgstr "%0% a 1%s"
+msgstr "> %s a %s"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:23
-#, fuzzy
 msgid "Summary"
 msgstr "Resum"
 
@@ -546,7 +533,6 @@ msgid "Temporary Allocations"
 msgstr "Assignacions temporals"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:402
-#, fuzzy
 msgid "Size"
 msgstr "Mida"
 
@@ -561,8 +547,6 @@ msgid "Sysprof is busy analyzing memory allocations."
 msgstr "Sysprof està ocupat analitzant les assignacions de memòria."
 
 #: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
-#, fuzzy
-#| msgid "Memory Usage"
 msgid "Memory Used"
 msgstr "Ús de la memòria"
 
@@ -574,7 +558,6 @@ msgstr "Xarxa"
 #. translators: "Compositor" means desktop compositor, gnome-shell/mutter in
 #. particular
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
-#, fuzzy
 msgid "GNOME Shell"
 msgstr "GNOME Shell"
 
@@ -703,7 +686,6 @@ msgid "Display supplemental graphs"
 msgstr "Mostra els gràfics complementaris"
 
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
-#, fuzzy
 msgid "Instruments"
 msgstr "Instruments"
 
@@ -742,22 +724,16 @@ msgstr ""
 "Es requereix autenticació per accedir a la informació del nucli Linux."
 
 #: src/sysprof/gtk/help-overlay.ui:8
-#, fuzzy
-#| msgid "Sysprof Captures"
 msgctxt "shortcut window"
 msgid "Sysprof Shortcuts"
-msgstr "Captures del Sysprof"
+msgstr "Dreceres del Sysprof"
 
 #: src/sysprof/gtk/help-overlay.ui:12
-#, fuzzy
-#| msgid "All Files"
 msgctxt "shortcut window"
 msgid "Files"
-msgstr "Tots els fitxers"
+msgstr "Fitxers"
 
 #: src/sysprof/gtk/help-overlay.ui:16
-#, fuzzy
-#| msgid "Save Recording"
 msgctxt "shortcut window"
 msgid "Save Recording"
 msgstr "Desa l'enregistrament"
@@ -770,11 +746,9 @@ msgid "Saves the current recording"
 msgstr "Desa l'enregistrament"
 
 #: src/sysprof/gtk/help-overlay.ui:24
-#, fuzzy
-#| msgid "New Recording"
 msgctxt "shortcut window"
 msgid "Open recording"
-msgstr "Enregistrament nou"
+msgstr "Obre l'enregistrament"
 
 #: src/sysprof/gtk/help-overlay.ui:25
 #, fuzzy
@@ -1136,4 +1110,4 @@ msgstr "Sobreescriu el nom de FITXER si existeix"
 #: src/tools/sysprof-profiler-ctl.c:79
 msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
 msgstr ""
-"--dest=BUS_NAME [FILENAME] - connecta amb un perfilador de sysprof incrustat"
+"--dest=BUS_NAME [FILENAME] - connecta amb un analitzador de rendiment de sysprof incrustat"

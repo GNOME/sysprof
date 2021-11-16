@@ -32,7 +32,7 @@
     <property name="icon-name">sysprof-gtk</property>
     <child>
       <object class="SysprofPreloadSource">
-        <property name="preload">libsysprof-speedtrack-3.so</property>
+        <property name="preload">libsysprof-speedtrack-4.so</property>
       </object>
     </child>
   </object>

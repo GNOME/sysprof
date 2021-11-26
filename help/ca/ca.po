@@ -118,7 +118,7 @@ msgstr "El <app>Sysprof</app> és un analitzador de rendiment de mostreig."
 #. (itstool) path: section/title
 #: C/profiling.page:6 C/index.page:15
 msgid "Profiling"
-msgstr "Utilitzant l'analitzador de rendiment"
+msgstr "Utilitzar l'analitzador de rendiment"
 
 #. (itstool) path: section/title
 #: C/profiling.page:12
@@ -139,7 +139,7 @@ msgstr ""
 "pila per a totes les aplicacions que s'executen, inclòs el nucli Linux. De "
 "vegades, això pot resultar confús si només voleu examinar un sol procés. Si "
 "la vostra aplicació no interactua gaire amb el sistema amfitrió, és possible"
-" que tinguis més èxit en utilitzar el <app>Sysprof</app> per <link "
+" que tingueu més èxit en utilitzar el <app>Sysprof</app> per a <link "
 "href=\"profiling#new-process-profiling\">generar un procés nou</link>."
 
 #. (itstool) path: section/p
@@ -245,7 +245,7 @@ msgid ""
 "Next, select <em>New Process</em> and fill out the necessary information to "
 "spawn the process."
 msgstr ""
-"Sovint, és possible que hagueu de generar un nou procés per a analitzar el rendiment. "
+"Sovint, és possible que hàgeu de generar un nou procés per a analitzar el rendiment. "
 "Primer, seleccioneu el botó <em>analitzar el rendiment de l'objectiu</em>, al costat del "
 "botó <em>Enregistra</em>. Tot seguit, seleccioneu <em>Procés nou</em> i empleneu la "
 "informació necessària per a generar el procés."
@@ -277,7 +277,7 @@ msgstr ""
 "Per a una despesa general mínima, és recomanable utilitzar l'eina de línia "
 "d'ordres <cmd>sysprof-cli</cmd>. Si s'executa sense arguments, enregistrarà "
 "tot el sistema i desarà la sortida a <file>capture.syscap</file>. Aquest "
-"fitxer es pot obrir amb l'aplicació <app>Sysprof</app> per veure el "
+"fitxer es pot obrir amb l'aplicació <app>Sysprof</app> per a veure el "
 "callgraph."
 
 #. (itstool) path: section/p

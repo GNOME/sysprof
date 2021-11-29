@@ -101,9 +101,13 @@ sysprof_proc_source_populate_maps (SysprofProcSource *self,
       gint r;
 
       r = sscanf (lines[i],
-                  "%lx-%lx %*15s %lx %*x:%*x %lu %512s",
+                  "%lx-%lx %*15s %lx %*x:%*x %lu %511[^\n]",
                   &start, &end, &offset, &inode, file);
       file [sizeof file - 1] = '\0';
+
+      /* file has a " (deleted)" suffix if it was deleted from disk */
+      if (g_str_has_suffix (file, " (deleted)"))
+          file [strlen (file) - strlen (" (deleted)")] = '\0';
 
       if (r != 5)
         continue;

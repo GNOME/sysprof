@@ -1,0 +1,992 @@
+# Galician translation for sysprof.
+# Copyright (C) 2022 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2021-12-30 13:04+0000\n"
+"PO-Revision-Date: 2022-01-03 00:07+0100\n"
+"Last-Translator: \n"
+"Language-Team: Galician <gnome-gl-list@gnome.org>\n"
+"Language: gl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:5
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
+#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:11
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:6
+msgid "Profile an application or entire system"
+msgstr "Perfile unha aplicación ou o sistema enteiro"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:9
+msgid "The GNOME Foundation"
+msgstr "A Fundación GNOME"
+
+#: data/org.gnome.Sysprof3.appdata.xml.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+
+#: data/org.gnome.Sysprof3.desktop.in:5
+msgid "Profiler"
+msgstr "Perfíl"
+
+#: data/org.gnome.Sysprof3.desktop.in:6
+msgid "Profile an application or entire system."
+msgstr "Perfilar unha aplicación ou o sistema enteiro."
+
+#: data/org.gnome.sysprof3.gschema.xml:5
+msgid "Window size"
+msgstr "Tamaño da xanela"
+
+#: data/org.gnome.sysprof3.gschema.xml:6
+msgid "Window size (width and height)."
+msgstr "Tamaño do sistema (ancho e alto)."
+
+#: data/org.gnome.sysprof3.gschema.xml:10
+msgid "Window position"
+msgstr "Posición da xanela"
+
+#: data/org.gnome.sysprof3.gschema.xml:11
+msgid "Window position (x and y)."
+msgstr "Posición da xanela (x e y)"
+
+#: data/org.gnome.sysprof3.gschema.xml:15
+msgid "Window maximized"
+msgstr "Xanela maximizada"
+
+#: data/org.gnome.sysprof3.gschema.xml:16
+msgid "Window maximized state"
+msgstr "Estado maximizado da xanela"
+
+#: data/org.gnome.sysprof3.gschema.xml:20
+msgid "Last Spawn Program"
+msgstr ""
+
+#: data/org.gnome.sysprof3.gschema.xml:21
+msgid ""
+"The last spawned program, which will be set in the UI upon restart of the "
+"application."
+msgstr ""
+
+#: data/org.gnome.sysprof3.gschema.xml:25
+msgid "Last Spawn Inherit Environment"
+msgstr ""
+
+#: data/org.gnome.sysprof3.gschema.xml:26
+msgid "If the last spawned environment inherits the parent environment."
+msgstr ""
+
+#: data/org.gnome.sysprof3.gschema.xml:30
+msgid "Last Spawn Environment"
+msgstr ""
+
+#: data/org.gnome.sysprof3.gschema.xml:31
+msgid ""
+"The last spawned environment, which will be set in the UI upon restart of "
+"the application."
+msgstr ""
+
+#: src/libsysprof/sysprof-callgraph-profile.c:447
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr ""
+
+#: src/libsysprof/sysprof-perf-source.c:472
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr ""
+
+#: src/libsysprof/sysprof-perf-source.c:485
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr ""
+
+#: src/libsysprof/sysprof-perf-source.c:549
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr ""
+
+#: src/libsysprof/sysprof-perf-source.c:655
+#, c-format
+msgid "An error occurred while attempting to access performance counters"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:182
+msgid "Battery Charge"
+msgstr "Carga da batería"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:198
+msgid "Battery Charge (All)"
+msgstr "Carga da batería (Todo)"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:240
+#: src/libsysprof-ui/sysprof-counters-aid.c:282
+msgid "Battery"
+msgstr "Batería"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:212
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:218
+msgid "Stack Traces"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:226
+msgid "Stack Traces (In Kernel)"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:234
+msgid "Stack Traces (In User)"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:243
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:273
+msgid "Callgraph"
+msgstr "Gráfico de chamadas"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:27
+#: src/libsysprof-ui/sysprof-memprof-page.ui:245
+msgid "Functions"
+msgstr "Funcións"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:43
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:104
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:159
+#: src/libsysprof-ui/sysprof-memprof-page.ui:262
+#: src/libsysprof-ui/sysprof-memprof-page.ui:324
+#: src/libsysprof-ui/sysprof-memprof-page.ui:380
+msgid "Self"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:59
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:120
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:175
+#: src/libsysprof-ui/sysprof-memprof-page.ui:278
+#: src/libsysprof-ui/sysprof-memprof-page.ui:340
+#: src/libsysprof-ui/sysprof-memprof-page.ui:396
+msgid "Total"
+msgstr "Total"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:88
+#: src/libsysprof-ui/sysprof-memprof-page.ui:307
+msgid "Callers"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:151
+#: src/libsysprof-ui/sysprof-memprof-page.ui:371
+msgid "Descendants"
+msgstr "Descendentes"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:190
+#: src/libsysprof-ui/sysprof-details-page.ui:322
+msgid "Hits"
+msgstr "Impactos"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:213
+msgid "Generating Callgraph"
+msgstr "Xerando o gráfico de chamadas"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:214
+msgid "Sysprof is busy creating the selected callgraph."
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:224
+#: src/libsysprof-ui/sysprof-memprof-page.ui:442
+msgid "Not Enough Samples"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:225
+#: src/libsysprof-ui/sysprof-memprof-page.ui:443
+msgid "More samples are necessary to display a callgraph."
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-counters-aid.c:221
+#: src/libsysprof-ui/sysprof-counters-aid.c:226
+msgid "Counters"
+msgstr "Contadores"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:207
+#: src/libsysprof-ui/sysprof-cpu-aid.c:355
+msgid "CPU Usage"
+msgstr "Uso da CPU"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:214
+msgid "CPU Frequency"
+msgstr "Frecuencia de CPU"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:218
+msgid "CPU Frequency (All)"
+msgstr "Frecuencia da CPU (Todas)"
+
+#. Translators: CPU is the processor.
+#: src/libsysprof-ui/sysprof-cpu-aid.c:227
+#: src/libsysprof-ui/sysprof-cpu-aid.c:250
+msgid "CPU Usage (All)"
+msgstr "Uso da CPU (Todas)"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:316
+msgid "Processes"
+msgstr "Procesos"
+
+#: src/libsysprof-ui/sysprof-details-page.c:220
+msgid "Memory Capture"
+msgstr "Captura da memoria"
+
+#: src/libsysprof-ui/sysprof-details-page.c:234
+#, c-format
+msgid "%0.4lf seconds"
+msgstr "%0.4lf segundos"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:21
+msgid "Filename"
+msgstr "Nome do ficheiro"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:35
+msgid "Captured at"
+msgstr "Capturado en"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:50
+#: src/libsysprof-ui/sysprof-marks-page.ui:95
+#: src/libsysprof-ui/sysprof-marks-page.ui:215
+msgid "Duration"
+msgstr "Duración"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:65
+msgid "CPU Model"
+msgstr "Modelo da CPU"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:80
+msgid "Samples Captured"
+msgstr "Mostras capturadas"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:94
+msgid "Marks Captured"
+msgstr "Marcas capturadas"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:108
+msgid "Processes Captured"
+msgstr "Procesos capturados"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:122
+msgid "Forks Captured"
+msgstr "Forks capturados"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:136
+msgid "Counters Captured"
+msgstr "Contadores capturados"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:151
+msgid "Allocations Captured"
+msgstr "Reservas capturadas"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:309
+#: src/libsysprof-ui/sysprof-marks-page.ui:52
+msgid "Mark"
+msgstr "Marca"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:335
+msgid "Min"
+msgstr "Mín"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:348
+msgid "Max"
+msgstr "Máx"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:361
+msgid "Avg"
+msgstr "Med"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:205
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+msgid "Disk"
+msgstr "Disco"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Reads"
+msgstr "Lecturas"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Writes"
+msgstr "Escrituras"
+
+#: src/libsysprof-ui/sysprof-display.c:229
+msgid "Recording Failed"
+msgstr "Gravación fallida"
+
+#: src/libsysprof-ui/sysprof-display.c:234
+msgid "Recording…"
+msgstr "Gravando…"
+
+#. translators: %s is replaced with locale specific time of recording
+#: src/libsysprof-ui/sysprof-display.c:265
+#, c-format
+msgid "Recording at %s"
+msgstr "Gravando en %s"
+
+#: src/libsysprof-ui/sysprof-display.c:269
+msgid "New Recording"
+msgstr "Nova gravación"
+
+#: src/libsysprof-ui/sysprof-display.c:1094
+msgid "The recording could not be opened"
+msgstr "Non se puido empezar a gravación"
+
+#: src/libsysprof-ui/sysprof-display.c:1217
+msgid "Save Recording"
+msgstr "Gardar gravación"
+
+#: src/libsysprof-ui/sysprof-display.c:1220
+msgid "Save"
+msgstr "Gardar"
+
+#. Translators: This is a button.
+#: src/libsysprof-ui/sysprof-display.c:1221 src/sysprof/sysprof-window.c:279
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/libsysprof-ui/sysprof-display.c:1247
+#, c-format
+msgid "Failed to save recording: %s"
+msgstr "Produciuse un fallo ao gravar: %s"
+
+#: src/libsysprof-ui/sysprof-display.ui:49
+#: src/libsysprof-ui/sysprof-marks-page.ui:19
+msgid "Details"
+msgstr "Detalles"
+
+#: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
+msgid "Remove environment variable"
+msgstr "Quitar variable de ambiente"
+
+#: src/libsysprof-ui/sysprof-environ-editor.c:71
+msgid "New variable…"
+msgstr "Nova variábel…"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:22
+msgid "Ouch, that hurt!"
+msgstr "Recoiro, iso deu!"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:39
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-log-model.c:210
+#: src/libsysprof-ui/sysprof-logs-page.ui:58
+#: src/libsysprof-ui/sysprof-marks-page.ui:109
+msgid "Message"
+msgstr "Mensaxe"
+
+#: src/libsysprof-ui/sysprof-log-model.c:213
+msgid "Info"
+msgstr "Información"
+
+#: src/libsysprof-ui/sysprof-log-model.c:216
+msgid "Critical"
+msgstr "Crítico"
+
+#: src/libsysprof-ui/sysprof-log-model.c:219
+msgid "Error"
+msgstr "Erro"
+
+#: src/libsysprof-ui/sysprof-log-model.c:222
+msgid "Debug"
+msgstr "Depuración"
+
+#: src/libsysprof-ui/sysprof-log-model.c:225
+msgid "Warning"
+msgstr "Aviso"
+
+#: src/libsysprof-ui/sysprof-logs-aid.c:195
+#: src/libsysprof-ui/sysprof-logs-aid.c:199
+#: src/libsysprof-ui/sysprof-logs-aid.c:204
+#: src/libsysprof-ui/sysprof-logs-aid.c:210
+msgid "Logs"
+msgstr "Rexistros"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:15
+#: src/libsysprof-ui/sysprof-marks-page.ui:67
+msgid "Time"
+msgstr "Hora"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:29
+msgid "Severity"
+msgstr "Severidade"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:44
+msgid "Domain"
+msgstr "Dominio"
+
+#: src/libsysprof-ui/sysprof-marks-aid.c:237
+#: src/libsysprof-ui/sysprof-marks-aid.c:242
+msgid "Timings"
+msgstr "Tempos"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:38
+msgid "Group"
+msgstr "Grupos"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:81
+msgid "End"
+msgstr "Fin"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:245
+msgid "No Timings Available"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:246
+msgid "No timing data was found for the current selection"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-memory-aid.c:68
+msgid "Memory Usage"
+msgstr "Uso da memoria"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:182
+msgid "Memory"
+msgstr "Memoria"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:193
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Allocations"
+msgstr "Reservas de memoria"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:224
+msgid "Track Allocations"
+msgstr ""
+
+#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
+#: src/libsysprof-ui/sysprof-memprof-page.c:235
+#, c-format
+msgid "> %s to %s"
+msgstr "> %s a %s"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:23
+msgid "Summary"
+msgstr "Resumo"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+msgid "All Allocations"
+msgstr "Todas as reservas"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:40
+msgid "Temporary Allocations"
+msgstr "Reservas temporais"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:49
+msgid "Leaked Allocations"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:411
+msgid "Size"
+msgstr "Tamaño"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:431
+msgid "Analyzing Memory Allocations"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:432
+msgid "Sysprof is busy analyzing memory allocations."
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Used"
+msgstr "Memoria usada"
+
+#: src/libsysprof-ui/sysprof-netdev-aid.c:204
+#: src/libsysprof-ui/sysprof-netdev-aid.c:264
+msgid "Network"
+msgstr "Rede"
+
+#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
+msgid "GNOME Shell"
+msgstr "GNOME Shell"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:90
+msgid "Profilers"
+msgstr "Perfiladores"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:186
+msgid ""
+"Track application memory allocations (Sysprof must launch target application)"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:194
+msgid "Track slow operations on your applications main loop"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:210
+msgid "All Processes"
+msgstr "Todos os procesos"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
+msgid ""
+"Include all applications and operating system kernel in callgraph. This may "
+"not be possible on some system configurations."
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
+msgid "Search Processes…"
+msgstr "Buscar procesos…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:287
+msgid "Loading Processes…"
+msgstr "Cargando procesos…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:311
+msgid "Launch Application"
+msgstr "Iniciar aplicación"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:340
+msgid "Enable to launch a program of your choosing before profiling."
+msgstr "Active para iniciar un programa da súa elección antes de perfilar."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
+msgid "Command Line"
+msgstr "Liña de ordes"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:387
+msgid "Environment"
+msgstr "Ambiente"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:413
+msgid "Inherit Environment"
+msgstr "Herdar ambiente"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:437
+msgid ""
+"Enable to ensure your application shares the display, message-bus, and other "
+"desktop environment settings."
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:463
+msgid "Allow CPU Throttling"
+msgstr "Permitir a limitación de CPU"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:491
+msgid ""
+"If disabled, your CPU will be placed in performance mode. It will be "
+"restored after profiling."
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
+msgid "_Record"
+msgstr "_Gravar"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:175
+#: src/libsysprof-ui/sysprof-rapl-aid.c:248
+msgid "Energy Usage"
+msgstr "Uso de enerxía"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:180
+msgid "Energy Usage (All)"
+msgstr "Uso de enerxía (Toda)"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:47
+msgid "Events"
+msgstr "Eventos"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:73
+msgid "_Stop Recording"
+msgstr "_Deter gravación"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:119
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
+msgid "Select for more details"
+msgstr "Seleccionar para máis detalles"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
+msgid "Display supplemental graphs"
+msgstr "Mostrar grafos suplementarios"
+
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+msgid "Instruments"
+msgstr "Instrumentos"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Perfilar o sistema"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Requírese autenticación para perfilar o sistema."
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:26
+msgid "Open a perf event stream"
+msgstr "Abrir un fluxo de eventos de perfilado"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:27
+msgid "Authentication is required to access system performance counters."
+msgstr ""
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:37
+msgid "Get a list of kernel symbols and their address"
+msgstr ""
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:38
+msgid "Authentication is required to access Linux kernel information."
+msgstr ""
+
+#: src/sysprof/gtk/help-overlay.ui:8
+msgctxt "shortcut window"
+msgid "Sysprof Shortcuts"
+msgstr "Atallos de Sysprof"
+
+#: src/sysprof/gtk/help-overlay.ui:12
+msgctxt "shortcut window"
+msgid "Files"
+msgstr "Ficheiros"
+
+#: src/sysprof/gtk/help-overlay.ui:16
+msgctxt "shortcut window"
+msgid "Save Recording"
+msgstr "Gardar gravación"
+
+#: src/sysprof/gtk/help-overlay.ui:17
+msgctxt "shortcut window"
+msgid "Saves the current recording"
+msgstr "Garda a grabación actual"
+
+#: src/sysprof/gtk/help-overlay.ui:24
+msgctxt "shortcut window"
+msgid "Open recording"
+msgstr "Abrir gravación"
+
+#: src/sysprof/gtk/help-overlay.ui:25
+msgctxt "shortcut window"
+msgid "Opens a previously saved recording"
+msgstr "Abre unha grabación gardada anteriormente"
+
+#: src/sysprof/gtk/help-overlay.ui:34
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Gravando"
+
+#: src/sysprof/gtk/help-overlay.ui:38
+msgctxt "shortcut window"
+msgid "Record again"
+msgstr "Gravar de novo"
+
+#: src/sysprof/gtk/help-overlay.ui:39
+msgctxt "shortcut window"
+msgid "Starts a new recording"
+msgstr "Inicia unha nova gravación"
+
+#: src/sysprof/gtk/help-overlay.ui:46
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Gardar gravación"
+
+#: src/sysprof/gtk/help-overlay.ui:55
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Gráfica de chamadas"
+
+#: src/sysprof/gtk/help-overlay.ui:59
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "Expandir función"
+
+#: src/sysprof/gtk/help-overlay.ui:60
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr ""
+
+#: src/sysprof/gtk/help-overlay.ui:67
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "Colapsar función"
+
+#: src/sysprof/gtk/help-overlay.ui:68
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr ""
+
+#: src/sysprof/gtk/help-overlay.ui:75
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "Saltar nunha función"
+
+#: src/sysprof/gtk/help-overlay.ui:76
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr ""
+
+#: src/sysprof/gtk/help-overlay.ui:85
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Visualizadores"
+
+#: src/sysprof/gtk/help-overlay.ui:89
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Ampliar"
+
+#: src/sysprof/gtk/help-overlay.ui:96
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Afastar"
+
+#: src/sysprof/gtk/help-overlay.ui:103
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Reiniciar ampliación"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "New Tab"
+msgstr "Nova lapela"
+
+#: src/sysprof/gtk/menus.ui:11
+msgid "New Window"
+msgstr "Nova xanela"
+
+#: src/sysprof/gtk/menus.ui:18
+msgid "Open Recording…"
+msgstr "Abrir gravación…"
+
+#: src/sysprof/gtk/menus.ui:23
+msgid "Save Recording…"
+msgstr "Gardar gravación…"
+
+#: src/sysprof/gtk/menus.ui:30
+msgid "Record Again"
+msgstr "Gravar de novo"
+
+#: src/sysprof/gtk/menus.ui:37
+msgid "Close"
+msgstr "Pechar"
+
+#: src/sysprof/gtk/menus.ui:44
+msgid "Keyboard Shortcuts"
+msgstr "Atallos de teclado"
+
+#: src/sysprof/gtk/menus.ui:49
+msgid "Help"
+msgstr "Axuda"
+
+#: src/sysprof/gtk/menus.ui:54
+msgid "About Sysprof"
+msgstr "Sobre Sysprof"
+
+#: src/sysprof/sysprof-application.c:194
+msgid "A system profiler"
+msgstr "Un perfilador do sistema"
+
+#: src/sysprof/sysprof-application.c:199
+msgid "translator-credits"
+msgstr "Fran Diéguez <frandieguez@gnome.org>, 2021"
+
+#: src/sysprof/sysprof-application.c:205
+msgid "Learn more about Sysprof"
+msgstr "Saber máis sobre Sysprof"
+
+#. Translators: This is a window title.
+#: src/sysprof/sysprof-window.c:273
+msgid "Open Capture…"
+msgstr "Abrir captura…"
+
+#. Translators: This is a button.
+#: src/sysprof/sysprof-window.c:277
+msgid "Open"
+msgstr "Abrir"
+
+#: src/sysprof/sysprof-window.c:284
+msgid "Sysprof Captures"
+msgstr "Capturas de Sysprof"
+
+#: src/sysprof/sysprof-window.c:289
+msgid "All Files"
+msgstr "Todos os ficheiros"
+
+#: src/sysprof/ui/sysprof-window.ui:28
+msgid "_Open"
+msgstr "_Abrir"
+
+#: src/sysprof/ui/sysprof-window.ui:31
+msgid "Open Recording… (Ctrl+O)"
+msgstr "Abrir gravación… (Ctrl+O)"
+
+#: src/tools/sysprof-cli.c:62
+msgid "Stopping profiler. Press twice more ^C to force exit."
+msgstr ""
+
+#: src/tools/sysprof-cli.c:75
+msgid "Profiler stopped."
+msgstr ""
+
+#: src/tools/sysprof-cli.c:108
+msgid "--merge requires at least 2 filename arguments"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:226
+msgid "Disable CPU throttling while profiling"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:227
+msgid "Make sysprof specific to a task"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:227
+msgid "PID"
+msgstr "PID"
+
+#: src/tools/sysprof-cli.c:228
+msgid "Run a command and profile the process"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:228
+msgid "COMMAND"
+msgstr "ORDE"
+
+#: src/tools/sysprof-cli.c:229
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+
+#: src/tools/sysprof-cli.c:229
+msgid "VAR=VALUE"
+msgstr "VAR=VALOR"
+
+#: src/tools/sysprof-cli.c:230
+msgid "Force overwrite the capture file"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:231
+msgid "Disable recording of battery statistics"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:232
+msgid "Disable recording of CPU statistics"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:233
+msgid "Disable recording of Disk statistics"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:234
+msgid "Do not record stacktraces using Linux perf"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:235
+msgid "Do not append symbol name information from local machine"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:236
+msgid "Disable recording of memory statistics"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:237
+msgid "Disable recording of network statistics"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:238
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:239
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:240
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:241
+msgid "Include RAPL energy statistics"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:242
+msgid "Profile memory allocations and frees"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:243
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "Conectarse a org.gnome.Shell para obter"
+
+#: src/tools/sysprof-cli.c:244
+msgid "Track performance of the applications main loop"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:245
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:246
+msgid "Print the sysprof-cli version and exit"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:279
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:282
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+msgstr ""
+
+#: src/tools/sysprof-cli.c:315
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr ""
+
+#. Translators: %s is a file name.
+#: src/tools/sysprof-cli.c:374
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s existe. Use --force para sobrescribir\n"
+
+#: src/tools/sysprof-profiler-ctl.c:45
+msgid "Connect to the system bus"
+msgstr "Conectarse ao bus do sistema"
+
+#: src/tools/sysprof-profiler-ctl.c:46
+msgid "Connect to the session bus"
+msgstr "Conectarse ao bus de sesión"
+
+#: src/tools/sysprof-profiler-ctl.c:47
+msgid "Connect to the given D-Bus address"
+msgstr "Conectarse ao enderezo de D-Bus fornecido"
+
+#: src/tools/sysprof-profiler-ctl.c:48
+msgid "Destination D-Bus name to invoke method on"
+msgstr ""
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "Object path to invoke method on"
+msgstr ""
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "/org/gnome/Sysprof3/Profiler"
+msgstr "/org/gnome/Sysprof3/Profiler"
+
+#: src/tools/sysprof-profiler-ctl.c:50
+msgid "Timeout in seconds"
+msgstr "Tempo de espera en segundos"
+
+#: src/tools/sysprof-profiler-ctl.c:51
+msgid "Overwrite FILENAME if it exists"
+msgstr ""
+
+#: src/tools/sysprof-profiler-ctl.c:79
+msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+msgstr ""

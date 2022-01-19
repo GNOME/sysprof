@@ -73,7 +73,7 @@ msgstr "Estat de maximització de la finestra"
 
 #: data/org.gnome.sysprof3.gschema.xml:20
 msgid "Last Spawn Program"
-msgstr "Últim programa heretat"
+msgstr "Últim programa engendrat"
 
 #: data/org.gnome.sysprof3.gschema.xml:21
 msgid ""
@@ -84,22 +84,22 @@ msgstr ""
 
 #: data/org.gnome.sysprof3.gschema.xml:25
 msgid "Last Spawn Inherit Environment"
-msgstr "Entorn heretat de l'última generació"
+msgstr "Últim entorn engendrat heretat"
 
 #: data/org.gnome.sysprof3.gschema.xml:26
 msgid "If the last spawned environment inherits the parent environment."
-msgstr "Si l'últim entorn generat hereta l'entorn pare."
+msgstr "Si l'últim entorn engendrat hereta l'entorn pare."
 
 #: data/org.gnome.sysprof3.gschema.xml:30
 msgid "Last Spawn Environment"
-msgstr "Entorn de l'última generació"
+msgstr "Últim entorn engendrat"
 
 #: data/org.gnome.sysprof3.gschema.xml:31
 msgid ""
 "The last spawned environment, which will be set in the UI upon restart of "
 "the application."
 msgstr ""
-"L'últim entorn heretat, que s'establirà a la IU en reiniciar l'aplicació."
+"L'últim entorn engendrat, que s'establirà a la IU en reiniciar l'aplicació."
 
 #: src/libsysprof/sysprof-callgraph-profile.c:447
 msgid "Sysprof was unable to generate a callgraph from the system capture."
@@ -882,7 +882,7 @@ msgstr "ORDRE"
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
-"Estableix la variable d'entorn per al procés generat. Es pot utilitzar "
+"Estableix la variable d'entorn per al procés engendrat. Es pot utilitzar "
 "múltiples vegades."
 
 #: src/tools/sysprof-cli.c:229

@@ -1,14 +1,14 @@
 # Spanish translation for sysprof.
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2016-2021.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2016-2022.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2021-03-09 00:11+0000\n"
-"PO-Revision-Date: 2021-05-05 10:41+0200\n"
+"POT-Creation-Date: 2022-02-03 16:15+0000\n"
+"PO-Revision-Date: 2022-02-07 13:22+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 40.0\n"
+"X-Generator: Gtranslator 41.0\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
 #: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
@@ -161,35 +161,35 @@ msgid "Callgraph"
 msgstr "Gráfico"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:27
-#: src/libsysprof-ui/sysprof-memprof-page.ui:236
+#: src/libsysprof-ui/sysprof-memprof-page.ui:245
 msgid "Functions"
 msgstr "Funciones"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:43
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:104
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:159
-#: src/libsysprof-ui/sysprof-memprof-page.ui:253
-#: src/libsysprof-ui/sysprof-memprof-page.ui:315
-#: src/libsysprof-ui/sysprof-memprof-page.ui:371
+#: src/libsysprof-ui/sysprof-memprof-page.ui:262
+#: src/libsysprof-ui/sysprof-memprof-page.ui:324
+#: src/libsysprof-ui/sysprof-memprof-page.ui:380
 msgid "Self"
 msgstr "Propio"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:59
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:120
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:175
-#: src/libsysprof-ui/sysprof-memprof-page.ui:269
-#: src/libsysprof-ui/sysprof-memprof-page.ui:331
-#: src/libsysprof-ui/sysprof-memprof-page.ui:387
+#: src/libsysprof-ui/sysprof-memprof-page.ui:278
+#: src/libsysprof-ui/sysprof-memprof-page.ui:340
+#: src/libsysprof-ui/sysprof-memprof-page.ui:396
 msgid "Total"
 msgstr "Total"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:88
-#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+#: src/libsysprof-ui/sysprof-memprof-page.ui:307
 msgid "Callers"
 msgstr "Llamadores"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:151
-#: src/libsysprof-ui/sysprof-memprof-page.ui:362
+#: src/libsysprof-ui/sysprof-memprof-page.ui:371
 msgid "Descendants"
 msgstr "Descendientes"
 
@@ -207,12 +207,12 @@ msgid "Sysprof is busy creating the selected callgraph."
 msgstr "Sysprof está ocupado creando el gráfico seleccionado."
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:224
-#: src/libsysprof-ui/sysprof-memprof-page.ui:433
+#: src/libsysprof-ui/sysprof-memprof-page.ui:442
 msgid "Not Enough Samples"
 msgstr "No hay muestras suficientes"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:225
-#: src/libsysprof-ui/sysprof-memprof-page.ui:434
+#: src/libsysprof-ui/sysprof-memprof-page.ui:443
 msgid "More samples are necessary to display a callgraph."
 msgstr "Se necesitan más muestras para generar un gráfico."
 
@@ -334,33 +334,33 @@ msgid "Recording…"
 msgstr "Grabando…"
 
 #. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:258
+#: src/libsysprof-ui/sysprof-display.c:265
 #, c-format
 msgid "Recording at %s"
 msgstr "Grabando a las %s"
 
-#: src/libsysprof-ui/sysprof-display.c:262
+#: src/libsysprof-ui/sysprof-display.c:269
 msgid "New Recording"
 msgstr "Nueva grabación"
 
-#: src/libsysprof-ui/sysprof-display.c:1087
+#: src/libsysprof-ui/sysprof-display.c:1094
 msgid "The recording could not be opened"
 msgstr "No se pudo abrir la grabación"
 
-#: src/libsysprof-ui/sysprof-display.c:1210
+#: src/libsysprof-ui/sysprof-display.c:1217
 msgid "Save Recording"
 msgstr "Guardar grabación"
 
-#: src/libsysprof-ui/sysprof-display.c:1213
+#: src/libsysprof-ui/sysprof-display.c:1220
 msgid "Save"
 msgstr "Guardar"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
+#: src/libsysprof-ui/sysprof-display.c:1221 src/sysprof/sysprof-window.c:279
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/libsysprof-ui/sysprof-display.c:1240
+#: src/libsysprof-ui/sysprof-display.c:1247
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Falló al guardar la grabación: %s"
@@ -471,7 +471,7 @@ msgid "Track Allocations"
 msgstr "Analizar reservas"
 
 #. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:234
+#: src/libsysprof-ui/sysprof-memprof-page.c:235
 #, c-format
 msgid "> %s to %s"
 msgstr "> %s a %s"
@@ -488,15 +488,20 @@ msgstr "Todas las reservas"
 msgid "Temporary Allocations"
 msgstr "Reservas temporales"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+#: src/libsysprof-ui/sysprof-memprof-page.ui:49
+#| msgid "Track Allocations"
+msgid "Leaked Allocations"
+msgstr "Asignaciones filtradas"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:411
 msgid "Size"
 msgstr "Tamaño"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:422
+#: src/libsysprof-ui/sysprof-memprof-page.ui:431
 msgid "Analyzing Memory Allocations"
 msgstr "Analizando reservas de memoria"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:423
+#: src/libsysprof-ui/sysprof-memprof-page.ui:432
 msgid "Sysprof is busy analyzing memory allocations."
 msgstr "Sysprof está ocupado analizando reservas de memoria."
 
@@ -534,9 +539,6 @@ msgid "All Processes"
 msgstr "Todos los procesos"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
-#| msgid ""
-#| "Include all applications and operating system kernel in callgraph. This "
-#| "may not be possible on some system system configurations."
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
 "not be possible on some system configurations."

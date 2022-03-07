@@ -1,3 +1,13 @@
+Overview of changes in Sysprof 3.43.90
+======================================
+
+ * Require libunwind unless disabled manually to help ensure
+   distributions are doing the right thing.
+ * Add allocation leaks section to memprof.
+ * Fix preloading of speedtrack
+ * Fix capture of mapped path names with spaces
+ * Translation updates
+
 Overview of changes in Sysprof 3.42.1
 =====================================
 

@@ -1,16 +1,16 @@
 # Hungarian translation for sysprof.
-# Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021 Free Software Foundation, Inc.
+# Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022 Free Software Foundation, Inc.
 # This file is distributed under the same license as the sysprof package.
 #
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2016.
-# Balázs Úr <ur.balazs at fsf dot hu>, 2017, 2018, 2019, 2020, 2021.
+# Balázs Úr <ur.balazs at fsf dot hu>, 2017, 2018, 2019, 2020, 2021, 2022.
 # Balázs Meskó <mesko.balazs at fsf dot hu>, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2021-03-09 00:11+0000\n"
-"PO-Revision-Date: 2021-03-18 01:46+0100\n"
+"POT-Creation-Date: 2022-02-03 16:15+0000\n"
+"PO-Revision-Date: 2022-03-13 02:31+0100\n"
 "Last-Translator: Balázs Úr <ur.balazs at fsf dot hu>\n"
 "Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
 "Language: hu\n"
@@ -163,35 +163,35 @@ msgid "Callgraph"
 msgstr "Hívási gráf"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:27
-#: src/libsysprof-ui/sysprof-memprof-page.ui:236
+#: src/libsysprof-ui/sysprof-memprof-page.ui:245
 msgid "Functions"
 msgstr "Függvények"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:43
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:104
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:159
-#: src/libsysprof-ui/sysprof-memprof-page.ui:253
-#: src/libsysprof-ui/sysprof-memprof-page.ui:315
-#: src/libsysprof-ui/sysprof-memprof-page.ui:371
+#: src/libsysprof-ui/sysprof-memprof-page.ui:262
+#: src/libsysprof-ui/sysprof-memprof-page.ui:324
+#: src/libsysprof-ui/sysprof-memprof-page.ui:380
 msgid "Self"
 msgstr "Önmaga"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:59
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:120
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:175
-#: src/libsysprof-ui/sysprof-memprof-page.ui:269
-#: src/libsysprof-ui/sysprof-memprof-page.ui:331
-#: src/libsysprof-ui/sysprof-memprof-page.ui:387
+#: src/libsysprof-ui/sysprof-memprof-page.ui:278
+#: src/libsysprof-ui/sysprof-memprof-page.ui:340
+#: src/libsysprof-ui/sysprof-memprof-page.ui:396
 msgid "Total"
 msgstr "Összesen"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:88
-#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+#: src/libsysprof-ui/sysprof-memprof-page.ui:307
 msgid "Callers"
 msgstr "Hívók"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:151
-#: src/libsysprof-ui/sysprof-memprof-page.ui:362
+#: src/libsysprof-ui/sysprof-memprof-page.ui:371
 msgid "Descendants"
 msgstr "Leszármazottak"
 
@@ -209,12 +209,12 @@ msgid "Sysprof is busy creating the selected callgraph."
 msgstr "A Sysprof a kiválasztott hívási gráf létrehozásán dolgozik."
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:224
-#: src/libsysprof-ui/sysprof-memprof-page.ui:433
+#: src/libsysprof-ui/sysprof-memprof-page.ui:442
 msgid "Not Enough Samples"
 msgstr "Nincs elég minta"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:225
-#: src/libsysprof-ui/sysprof-memprof-page.ui:434
+#: src/libsysprof-ui/sysprof-memprof-page.ui:443
 msgid "More samples are necessary to display a callgraph."
 msgstr "Több minta szükséges a hívási gráf megjelenítéséhez."
 
@@ -336,33 +336,33 @@ msgid "Recording…"
 msgstr "Felvétel…"
 
 #. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:258
+#: src/libsysprof-ui/sysprof-display.c:265
 #, c-format
 msgid "Recording at %s"
 msgstr "Felvétel ekkor: %s"
 
-#: src/libsysprof-ui/sysprof-display.c:262
+#: src/libsysprof-ui/sysprof-display.c:269
 msgid "New Recording"
 msgstr "Új felvétel"
 
-#: src/libsysprof-ui/sysprof-display.c:1087
+#: src/libsysprof-ui/sysprof-display.c:1094
 msgid "The recording could not be opened"
 msgstr "A felvételt nem sikerült megnyitni"
 
-#: src/libsysprof-ui/sysprof-display.c:1210
+#: src/libsysprof-ui/sysprof-display.c:1217
 msgid "Save Recording"
 msgstr "Felvétel mentése"
 
-#: src/libsysprof-ui/sysprof-display.c:1213
+#: src/libsysprof-ui/sysprof-display.c:1220
 msgid "Save"
 msgstr "Mentés"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
+#: src/libsysprof-ui/sysprof-display.c:1221 src/sysprof/sysprof-window.c:279
 msgid "Cancel"
 msgstr "Mégse"
 
-#: src/libsysprof-ui/sysprof-display.c:1240
+#: src/libsysprof-ui/sysprof-display.c:1247
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "A felvétel mentése sikertelen: %s"
@@ -473,7 +473,7 @@ msgid "Track Allocations"
 msgstr "Memóriafoglalások követése"
 
 #. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:234
+#: src/libsysprof-ui/sysprof-memprof-page.c:235
 #, c-format
 msgid "> %s to %s"
 msgstr "> %s – %s"
@@ -490,15 +490,20 @@ msgstr "Összes memóriafoglalás"
 msgid "Temporary Allocations"
 msgstr "Ideiglenes memóriafoglalások"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+#: src/libsysprof-ui/sysprof-memprof-page.ui:49
+#| msgid "Track Allocations"
+msgid "Leaked Allocations"
+msgstr "Szivárgott memóriafoglalások"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:411
 msgid "Size"
 msgstr "Méret"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:422
+#: src/libsysprof-ui/sysprof-memprof-page.ui:431
 msgid "Analyzing Memory Allocations"
 msgstr "Memóriafoglalások elemzése"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:423
+#: src/libsysprof-ui/sysprof-memprof-page.ui:432
 msgid "Sysprof is busy analyzing memory allocations."
 msgstr "A Sysprof a memóriafoglalások elemzésén dolgozik."
 
@@ -536,9 +541,6 @@ msgid "All Processes"
 msgstr "Minden folyamat"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
-#| msgid ""
-#| "Include all applications and operating system kernel in callgraph. This "
-#| "may not be possible on some system system configurations."
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
 "not be possible on some system configurations."

@@ -161,7 +161,7 @@ draw_boxes (const GtkAllocation *alloc,
             int                  n_boxes,
             const GdkRGBA       *color)
 {
-  int y = alloc->height - BOX_SIZE;
+  int y = alloc->y + alloc->height - BOX_SIZE;
 
   for (int i = 0; i < n_boxes; i++)
     {
@@ -187,6 +187,10 @@ sysprof_scrollmap_snapshot (GtkWidget   *widget,
     goto chainup;
 
   gtk_widget_get_allocation (widget, &alloc);
+
+  alloc.y += 3;
+  alloc.height -= 6;
+
   max_boxes = alloc.height / (BOX_SIZE + 1) - 1;
 
   style_context = gtk_widget_get_style_context (widget);
@@ -265,6 +269,7 @@ sysprof_scrollmap_class_init (SysprofScrollmapClass *klass)
   widget_class->snapshot = sysprof_scrollmap_snapshot;
 
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
+  gtk_widget_class_set_css_name (widget_class, "scrollmap");
 }
 
 static void

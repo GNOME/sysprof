@@ -11,23 +11,21 @@
                 <property name="width_request">125</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkCenterBox">
                     <property name="orientation">horizontal</property>
                     <property name="visible">true</property>
                     <property name="margin-top">3</property>
                     <property name="margin-bottom">3</property>
                     <property name="margin-start">7</property>
                     <property name="margin-end">7</property>
+                    <property name="hexpand">false</property>
                     <style>
                       <class name="left-column"/>
                     </style>
                     <child type="center">
                       <object class="GtkLabel">
-                        <property name="margin_start">6</property>
-                        <property name="margin_end">6</property>
-                        <property name="margin_top">3</property>
-                        <property name="margin_bottom">3</property>
                         <property name="label" translatable="yes">Instruments</property>
+                        <property name="hexpand">true</property>
                         <style>
                           <class name="dim-label"/>
                         </style>

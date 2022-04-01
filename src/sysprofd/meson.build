@@ -36,7 +36,7 @@ sysprofdconf.set('sysprofdprivdir', pkglibexecdir)
 
 systemdunitdir = get_option('systemdunitdir')
 if systemdunitdir == ''
-  systemdunitdir = dependency('systemd').get_pkgconfig_variable('systemdsystemunitdir')
+  systemdunitdir = dependency('systemd').get_variable(pkgconfig: 'systemdsystemunitdir')
 endif
 
 #

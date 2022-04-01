@@ -66,7 +66,8 @@ typedef struct
   GtkListBox      *list;
   GtkStyleContext *style_context;
   GtkSnapshot     *snapshot;
-  GtkAllocation    alloc;
+  int              width;
+  int              height;
   gint64           begin_time;
   gint64           duration;
 } SelectionDraw;
@@ -121,10 +122,10 @@ draw_selection_cb (SysprofSelection *selection,
   x = (range_begin - draw->begin_time) / (gdouble)draw->duration;
   x2 = (range_end - draw->begin_time) / (gdouble)draw->duration;
 
-  area.x = x * draw->alloc.width;
-  area.width = (x2 * draw->alloc.width) - area.x;
+  area.x = x * draw->width;
+  area.width = (x2 * draw->width) - area.x;
   area.y = 0;
-  area.height = draw->alloc.height;
+  area.height = draw->height;
 
   if (area.width < 0)
     {
@@ -141,30 +142,43 @@ sysprof_visualizers_frame_snapshot (GtkWidget   *widget,
 {
   SysprofVisualizersFrame *self = (SysprofVisualizersFrame *)widget;
   SelectionDraw draw;
+  GtkAllocation alloc;
 
   g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
 
   GTK_WIDGET_CLASS (sysprof_visualizers_frame_parent_class)->snapshot (widget, snapshot);
 
+  draw.duration = sysprof_visualizer_get_duration (SYSPROF_VISUALIZER (self->ticks));
+  if (draw.duration == 0)
+    return;
+
   draw.style_context = gtk_widget_get_style_context (GTK_WIDGET (self->visualizers));
   draw.list = self->visualizers;
   draw.snapshot = snapshot;
   draw.begin_time = self->begin_time;
-  draw.duration = sysprof_visualizer_get_duration (SYSPROF_VISUALIZER (self->ticks));
 
-  if (draw.duration == 0)
-    return;
-
-  gtk_widget_get_allocation (GTK_WIDGET (self->visualizers), &draw.alloc);
+  gtk_widget_get_allocation (GTK_WIDGET (self->visualizers), &alloc);
+  draw.width = alloc.width;
+  draw.height = alloc.height;
 
   if (sysprof_selection_get_has_selection (self->selection) || self->button_pressed)
     {
+      double x, y;
+
+      gtk_snapshot_save (snapshot);
+      gtk_widget_translate_coordinates (GTK_WIDGET (self->visualizers),
+                                        GTK_WIDGET (self),
+                                        0, 0, &x, &y);
+      gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (x, y));
+
       gtk_style_context_add_class (draw.style_context, "selection");
       sysprof_selection_foreach (self->selection, draw_selection_cb, &draw);
       if (self->button_pressed)
         draw_selection_cb (self->selection, self->drag_begin_at, self->drag_selection_at, &draw);
       gtk_style_context_remove_class (draw.style_context, "selection");
+
+      gtk_snapshot_restore (snapshot);
     }
 }
 

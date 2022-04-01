@@ -11,7 +11,6 @@
             <property name="name">assistant</property>
             <property name="child">
               <object class="SysprofProfilerAssistant" id="assistant">
-                <property name="visible">true</property>
               </object>
             </property>
           </object>
@@ -41,14 +40,13 @@
                   <object class="GtkStack" id="pages">
                     <property name="hhomogeneous">0</property>
                     <property name="vhomogeneous">0</property>
-                    <property name="vexpand">1</property>
+                    <property name="vexpand">true</property>
                     <child>
                       <object class="GtkStackPage">
                         <property name="title" translatable="yes">Details</property>
                         <property name="name">details</property>
                         <property name="child">
                           <object class="SysprofDetailsPage" id="details">
-                            <property name="visible">true</property>
                           </object>
                         </property>
                       </object>
@@ -64,7 +62,6 @@
             <property name="name">record</property>
             <property name="child">
               <object class="SysprofRecordingStateView" id="recording_view">
-                <property name="visible">true</property>
               </object>
             </property>
           </object>
@@ -74,7 +71,6 @@
             <property name="name">failed</property>
             <property name="child">
               <object class="SysprofFailedStateView" id="failed_view">
-                <property name="visible">true</property>
               </object>
             </property>
           </object>

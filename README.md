@@ -24,9 +24,9 @@ Building Sysprof
 ----------------
 
 You need some packages installed. The package names may vary depending on your
-distribution, the following command works on Fedora 25:
+distribution, the following command works on Fedora 36:
 
-    sudo dnf install gcc gcc-c++ ninja-build gtk3-devel
+    sudo dnf install gcc gcc-c++ ninja-build gtk4-devel libadwaita-devel
 
 Then do the following:
 

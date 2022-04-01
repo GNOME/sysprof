@@ -22,7 +22,6 @@ sysprof_deps = [
 
 sysprof = executable('sysprof', sysprof_resources + sysprof_sources,
   dependencies: sysprof_deps,
-       gui_app: true,
    install_dir: get_option('bindir'),
        install: true,
 )

@@ -61,10 +61,10 @@ typedef struct
   GtkTreeViewColumn        *function_size_column;
   GtkCellRendererText      *function_size_cell;
   GtkStack                 *stack;
-  GtkCheckButton           *summary;
-  GtkCheckButton           *all_allocs;
-  GtkCheckButton           *temp_allocs;
-  GtkCheckButton           *leaked_allocs_button;
+  GtkToggleButton          *summary;
+  GtkToggleButton          *all_allocs;
+  GtkToggleButton          *temp_allocs;
+  GtkToggleButton          *leaked_allocs_button;
   GtkLabel                 *temp_allocs_count;
   GtkLabel                 *num_allocs;
   GtkLabel                 *leaked_allocs;

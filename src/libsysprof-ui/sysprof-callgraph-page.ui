@@ -2,24 +2,19 @@
   <template class="SysprofCallgraphPage" parent="SysprofPage">
     <child>
       <object class="GtkStack" id="stack">
-        <property name="visible">true</property>
         <child>
           <object class="EggPaned" id="callgraph">
             <property name="orientation">horizontal</property>
-            <property name="visible">true</property>
             <child>
               <object class="EggPaned">
                 <property name="orientation">vertical</property>
-                <property name="visible">true</property>
                 <property name="width-request">400</property>
                 <child>
                   <object class="GtkScrolledWindow">
-                    <property name="visible">true</property>
                     <property name="vexpand">true</property>
                     <child>
                       <object class="GtkTreeView" id="functions_view">
                         <property name="fixed-height-mode">true</property>
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkTreeViewColumn" id="function_name_column">
                             <property name="expand">true</property>
@@ -74,11 +69,9 @@
                 </child>
                 <child>
                   <object class="GtkScrolledWindow">
-                    <property name="visible">true</property>
                     <property name="vexpand">true</property>
                     <child>
                       <object class="GtkTreeView" id="callers_view">
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkTreeViewColumn" id="callers_name_column">
                             <property name="expand">true</property>
@@ -136,10 +129,8 @@
             <child>
               <object class="GtkScrolledWindow">
                 <property name="hexpand">true</property>
-                <property name="visible">true</property>
                 <child>
                   <object class="GtkTreeView" id="descendants_view">
-                    <property name="visible">true</property>
                     <child>
                       <object class="GtkTreeViewColumn" id="descendants_name_column">
                         <property name="expand">true</property>

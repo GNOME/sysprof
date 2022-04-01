@@ -4,32 +4,27 @@
     <child>
       <object class="GtkBox">
         <property name="orientation">vertical</property>
-        <property name="visible">true</property>
         <child>
           <object class="GtkCenterBox">
             <property name="orientation">horizontal</property>
-            <property name="visible">true</property>
             <child type="center">
               <object class="GtkBox">
                 <property name="margin-top">6</property>
                 <property name="margin-bottom">6</property>
                 <property name="orientation">horizontal</property>
                 <property name="homogeneous">true</property>
-                <property name="visible">true</property>
                 <style>
                   <class name="linked"/>
                 </style>
                 <child>
                   <object class="GtkToggleButton" id="summary">
                     <property name="label" translatable="yes">Summary</property>
-                    <property name="visible">true</property>
                     <property name="active">false</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkToggleButton" id="all_allocs">
                     <property name="label" translatable="yes">All Allocations</property>
-                    <property name="visible">true</property>
                     <property name="group">summary</property>
                     <property name="active">true</property>
                   </object>
@@ -37,7 +32,6 @@
                 <child>
                   <object class="GtkToggleButton" id="temp_allocs">
                     <property name="label" translatable="yes">Temporary Allocations</property>
-                    <property name="visible">true</property>
                     <property name="active">false</property>
                     <property name="group">summary</property>
                   </object>
@@ -46,7 +40,6 @@
                   <object class="GtkRadioButton" id="leaked_allocs_button">
                     <property name="label" translatable="yes">Leaked Allocations</property>
                     <property name="draw-indicator">false</property>
-                    <property name="visible">true</property>
                     <property name="active">false</property>
                     <property name="group">summary</property>
                   </object>
@@ -58,16 +51,13 @@
         <child>
           <object class="GtkSeparator">
             <property name="orientation">horizontal</property>
-            <property name="visible">true</property>
           </object>
         </child>
         <child>
           <object class="GtkStack" id="stack">
-            <property name="visible">true</property>
             <child>
               <object class="GtkScrolledWindow" id="summary_page">
                 <property name="hscrollbar-policy">never</property>
-                <property name="visible">true</property>
                 <child>
                   <object class="GtkBox">
                     <property name="margin-top">16</property>
@@ -75,13 +65,11 @@
                     <property name="margin-start">16</property>
                     <property name="margin-end">16</property>
                     <property name="orientation">vertical</property>
-                    <property name="visible">true</property>
                     <child>
                       <object class="EggThreeGrid">
                         <property name="hexpand">true</property>
                         <property name="row-spacing">6</property>
                         <property name="column-spacing">18</property>
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkLabel">
                             <property name="label">Peak Allocation</property>
@@ -111,7 +99,6 @@
                           <object class="GtkLabel">
                             <property name="label">Number of Allocations</property>
                             <property name="halign">end</property>
-                            <property name="visible">true</property>
                             <style>
                               <class name="dim-label"/>
                             </style>
@@ -125,7 +112,6 @@
                           <object class="GtkLabel" id="num_allocs">
                             <property name="xalign">0</property>
                             <property name="selectable">true</property>
-                            <property name="visible">true</property>
                             <layout>
                               <property name="column">center</property>
                               <property name="row">1</property>
@@ -161,7 +147,6 @@
                           <object class="GtkLabel">
                             <property name="label">Temporary Allocations</property>
                             <property name="halign">end</property>
-                            <property name="visible">true</property>
                             <style>
                               <class name="dim-label"/>
                             </style>
@@ -176,7 +161,6 @@
                             <property name="xalign">0</property>
                             <property name="selectable">true</property>
                             <property name="width-chars">50</property>
-                            <property name="visible">true</property>
                             <layout>
                               <property name="column">center</property>
                               <property name="row">3</property>
@@ -188,7 +172,6 @@
                             <property name="label">Allocations by Size</property>
                             <property name="halign">end</property>
                             <property name="valign">start</property>
-                            <property name="visible">true</property>
                             <style>
                               <class name="dim-label"/>
                             </style>
@@ -200,10 +183,8 @@
                         </child>
                         <child>
                           <object class="GtkFrame">
-                            <property name="visible">true</property>
                             <child>
                               <object class="GtkListBox" id="by_size">
-                                <property name="visible">true</property>
                               </object>
                             </child>
                             <layout>
@@ -222,19 +203,15 @@
               <object class="EggPaned" id="callgraph">
                 <property name="orientation">horizontal</property>
                 <property name="vexpand">true</property>
-                <property name="visible">true</property>
                 <child>
                   <object class="EggPaned">
                     <property name="width-request">400</property>
                     <property name="orientation">vertical</property>
-                    <property name="visible">true</property>
                     <child>
                       <object class="GtkScrolledWindow">
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkTreeView" id="functions_view">
                             <property name="fixed-height-mode">true</property>
-                            <property name="visible">true</property>
                             <child>
                               <object class="GtkTreeViewColumn" id="function_name_column">
                                 <property name="expand">true</property>
@@ -290,10 +267,8 @@
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkTreeView" id="callers_view">
-                            <property name="visible">true</property>
                             <child>
                               <object class="GtkTreeViewColumn" id="callers_name_column">
                                 <property name="expand">true</property>
@@ -351,10 +326,8 @@
                 </child>
                 <child>
                   <object class="GtkScrolledWindow">
-                    <property name="visible">true</property>
                     <child>
                       <object class="GtkTreeView" id="descendants_view">
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkTreeViewColumn" id="descendants_name_column">
                             <property name="expand">true</property>

@@ -70,25 +70,27 @@ sysprof_mark_visualizer_new (GHashTable *groups)
   return SYSPROF_VISUALIZER (g_steal_pointer (&self));
 }
 
-static gboolean
-sysprof_mark_visualizer_draw (GtkWidget *widget,
-                              cairo_t   *cr)
+static void
+sysprof_mark_visualizer_snapshot (GtkWidget   *widget,
+                                  GtkSnapshot *snapshot)
 {
   SysprofMarkVisualizer *self = (SysprofMarkVisualizer *)widget;
   SysprofVisualizer *vis = (SysprofVisualizer *)widget;
+  static const GdkRGBA black = {0,0,0,1};
+  const GdkRGBA *rgba = &black;
   GHashTableIter iter;
   GtkAllocation alloc;
   gpointer k, v;
-  gboolean ret;
-  gint n_groups = 0;
-  gint y = 0;
+  int n_groups = 0;
+  int y = 0;
 
   g_assert (SYSPROF_IS_MARK_VISUALIZER (self));
-  g_assert (cr != NULL);
+  g_assert (snapshot != NULL);
 
-  ret = GTK_WIDGET_CLASS (sysprof_mark_visualizer_parent_class)->draw (widget, cr);
+  GTK_WIDGET_CLASS (sysprof_mark_visualizer_parent_class)->snapshot (widget, snapshot);
+
   if (self->spans_by_group == NULL)
-    return ret;
+    return;
 
   gtk_widget_get_allocation (widget, &alloc);
 
@@ -117,19 +119,14 @@ sysprof_mark_visualizer_draw (GtkWidget *widget,
   g_hash_table_iter_init (&iter, self->spans_by_group);
   while (g_hash_table_iter_next (&iter, &k, &v))
     {
-      static const GdkRGBA black = {0, 0, 0, 1};
       SysprofMarkTimeSpan *span;
       const gchar *group = k;
       const GArray *spans = v;
-      const GdkRGBA *rgba;
       const GdkRGBA *kindrgba;
       const GdkRGBA *grouprgba;
 
       if ((grouprgba = g_hash_table_lookup (self->rgba_by_group, group)))
-        {
-          rgba = grouprgba;
-          gdk_cairo_set_source_rgba (cr, rgba);
-        }
+        rgba = grouprgba;
 
       for (guint i = 0; i < spans->len; i++)
         {
@@ -144,7 +141,6 @@ sysprof_mark_visualizer_draw (GtkWidget *widget,
                 rgba = kindrgba;
               else if ((grouprgba = g_hash_table_lookup (self->rgba_by_group, group)))
                 rgba = grouprgba;
-              gdk_cairo_set_source_rgba (cr, rgba);
             }
 
           x1 = span->x;
@@ -180,31 +176,24 @@ sysprof_mark_visualizer_draw (GtkWidget *widget,
               break;
             }
 
-          cairo_rectangle (cr, x1, y, x2 - x1, RECT_HEIGHT);
-
-          if (n_groups == 1)
-            cairo_fill (cr);
+          gtk_snapshot_append_color (snapshot, rgba, &GRAPHENE_RECT_INIT (x1, y, x2 - x1, RECT_HEIGHT));
         }
-
-      if (n_groups > 1)
-        cairo_fill (cr);
 
       y += RECT_HEIGHT + RECT_OVERLAP;
     }
-
-  return ret;
 }
 
 static void
-sysprof_mark_visualizer_size_allocate (GtkWidget     *widget,
-                                       GtkAllocation *alloc)
+sysprof_mark_visualizer_size_allocate (GtkWidget *widget,
+                                       int        width,
+                                       int        height,
+                                       int        baseline)
 {
   SysprofMarkVisualizer *self = (SysprofMarkVisualizer *)widget;
 
   g_assert (SYSPROF_IS_MARK_VISUALIZER (self));
-  g_assert (alloc != NULL);
 
-  GTK_WIDGET_CLASS (sysprof_mark_visualizer_parent_class)->size_allocate (widget, alloc);
+  GTK_WIDGET_CLASS (sysprof_mark_visualizer_parent_class)->size_allocate (widget, width, height, baseline);
 
   reset_positions (self);
 }
@@ -230,7 +219,7 @@ sysprof_mark_visualizer_class_init (SysprofMarkVisualizerClass *klass)
 
   object_class->finalize = sysprof_mark_visualizer_finalize;
 
-  widget_class->draw = sysprof_mark_visualizer_draw;
+  widget_class->snapshot = sysprof_mark_visualizer_snapshot;
   widget_class->size_allocate = sysprof_mark_visualizer_size_allocate;
 }
 

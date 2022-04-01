@@ -1,6 +1,6 @@
-/* sysprof-window-settings.h
+/* sysprof-display-private.h
  *
- * Copyright 2016 Christian Hergert <chergert@redhat.com>
+ * Copyright 2021 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,17 +14,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#ifndef SYSPROF_WINDOW_SETTINGS_H
-#define SYSPROF_WINDOW_SETTINGS_H
+#pragma once
 
-#include <gtk/gtk.h>
+#include "sysprof-display.h"
 
 G_BEGIN_DECLS
 
-void sysprof_window_settings_register (GtkWindow *window);
+void _sysprof_display_destroy (SysprofDisplay *self);
 
 G_END_DECLS
-
-#endif /* SYSPROF_WINDOW_SETTINGS_H */

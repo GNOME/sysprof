@@ -8,22 +8,23 @@ project('sysprof', 'c',
   ]
 )
 
-symbolic_version = '42.0'
+symbolic_version = '43.alpha0'
 
 gnome = import('gnome')
 pkgconfig = import('pkgconfig')
 i18n = import('i18n')
 
 libsysprof_api_version = 4
+libsysprof_ui_api_version = 5
+
 version_split = meson.project_version().split('.')
 datadir = get_option('datadir')
 datadir_for_pc_file = join_paths('${prefix}', datadir)
 podir = join_paths(meson.current_source_dir(), 'po')
 
-glib_req_version = '>= 2.67.4'
-gtk_req_version = '>= 3.22'
+glib_req_version = '>= 2.68.0'
+gtk_req_version = '>= 4.4'
 polkit_req_version = '>= 0.105'
-dazzle_req_version = '>= 3.30.0'
 
 cc = meson.get_compiler('c')
 
@@ -44,6 +45,7 @@ config_h.set_quoted('PACKAGE_LIBDIR', join_paths(get_option('prefix'), get_optio
 config_h.set('PACKAGE_TARNAME', 'PACKAGE_STRING')
 config_h.set('PACKAGE', 'PACKAGE_NAME')
 config_h.set('VERSION', 'PACKAGE_VERSION')
+
 
 # Detect and set symbol visibility
 if get_option('default_library') != 'static'

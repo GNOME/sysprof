@@ -32,11 +32,11 @@ G_BEGIN_DECLS
 #define SYSPROF_TYPE_DISPLAY (sysprof_display_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_DERIVABLE_TYPE (SysprofDisplay, sysprof_display, SYSPROF, DISPLAY, GtkBin)
+G_DECLARE_DERIVABLE_TYPE (SysprofDisplay, sysprof_display, SYSPROF, DISPLAY, GtkWidget)
 
 struct _SysprofDisplayClass
 {
-  GtkBinClass parent_class;
+  GtkWidgetClass parent_class;
 
   /*< private >*/
   gpointer _reserved[16];

@@ -1,7 +1,3 @@
-SysprofDisplay dzlmultipaned {
-  -DzlMultiPaned-handle-size: 0;
-  }
-
 SysprofVisualizer {
   background: @content_view_bg;
   }
@@ -34,11 +30,11 @@ SysprofVisualizersFrame scrollbar.horizontal {
   background: transparent;
   }
 
-SysprofVisualizersFrame scrollbar.horizontal contents trough {
+SysprofVisualizersFrame scrollbar.horizontal range trough {
   background: transparent;
   }
 
-SysprofVisualizersFrame scrollbar.horizontal contents trough slider {
+SysprofVisualizersFrame scrollbar.horizontal range trough slider {
   margin-left: 1px;
   margin-right: 1px;
   padding: 6px;
@@ -79,10 +75,6 @@ SysprofVisualizersFrame .left-column .small-button.flat {
 SysprofVisualizersFrame .left-column .small-button.flat:checked,
 SysprofVisualizersFrame .left-column .small-button.flat:hover {
   border-color: @borders;
-  }
-
-SysprofDisplay > dzlmultipaned > :nth-child(2) {
-  border-top: 1px solid @borders;
   }
 
 SysprofVisualizersFrame .selection {

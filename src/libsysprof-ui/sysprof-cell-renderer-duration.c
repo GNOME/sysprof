@@ -55,38 +55,87 @@ G_DEFINE_TYPE_WITH_PRIVATE (SysprofCellRendererDuration, sysprof_cell_renderer_d
 
 static GParamSpec *properties [N_PROPS];
 
+static inline void
+rounded_rectangle (cairo_t            *cr,
+                   const GdkRectangle *rect,
+                   int                 x_radius,
+                   int                 y_radius)
+{
+  int x;
+  int y;
+  int width;
+  int height;
+  int x1, x2;
+  int y1, y2;
+  int xr1, xr2;
+  int yr1, yr2;
+
+  g_assert (cr);
+  g_assert (rect);
+
+  x = rect->x;
+  y = rect->y;
+  width = rect->width;
+  height = rect->height;
+
+  x1 = x;
+  x2 = x1 + width;
+  y1 = y;
+  y2 = y1 + height;
+
+  x_radius = MIN (x_radius, width / 2.0);
+  y_radius = MIN (y_radius, width / 2.0);
+
+  xr1 = x_radius;
+  xr2 = x_radius / 2.0;
+  yr1 = y_radius;
+  yr2 = y_radius / 2.0;
+
+  cairo_move_to (cr, x1 + xr1, y1);
+  cairo_line_to (cr, x2 - xr1, y1);
+  cairo_curve_to (cr, x2 - xr2, y1, x2, y1 + yr2, x2, y1 + yr1);
+  cairo_line_to (cr, x2, y2 - yr1);
+  cairo_curve_to (cr, x2, y2 - yr2, x2 - xr2, y2, x2 - xr1, y2);
+  cairo_line_to (cr, x1 + xr1, y2);
+  cairo_curve_to (cr, x1 + xr2, y2, x1, y2 - yr2, x1, y2 - yr1);
+  cairo_line_to (cr, x1, y1 + yr1);
+  cairo_curve_to (cr, x1, y1 + yr2, x1 + xr2, y1, x1 + xr1, y1);
+  cairo_close_path (cr);
+}
+
 static void
-sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
-                                       cairo_t              *cr,
-                                       GtkWidget            *widget,
-                                       const GdkRectangle   *bg_area,
-                                       const GdkRectangle   *cell_area,
-                                       GtkCellRendererState  state)
+sysprof_cell_renderer_duration_snapshot (GtkCellRenderer      *renderer,
+                                         GtkSnapshot          *snapshot,
+                                         GtkWidget            *widget,
+                                         const GdkRectangle   *bg_area,
+                                         const GdkRectangle   *cell_area,
+                                         GtkCellRendererState  state)
 {
   SysprofCellRendererDuration *self = (SysprofCellRendererDuration *)renderer;
   SysprofCellRendererDurationPrivate *priv = sysprof_cell_renderer_duration_get_instance_private (self);
   g_autoptr(GString) str = NULL;
   GtkStyleContext *style_context;
+  cairo_t *cr;
   gdouble x1, x2;
   GdkRGBA rgba;
   GdkRectangle r;
   gint64 duration;
 
   g_assert (SYSPROF_IS_CELL_RENDERER_DURATION (self));
-  g_assert (cr != NULL);
+  g_assert (snapshot != NULL);
   g_assert (GTK_IS_WIDGET (widget));
 
   if (priv->zoom_manager == NULL)
     return;
+
+  cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (cell_area->x, cell_area->y, cell_area->width, cell_area->height));
 
   style_context = gtk_widget_get_style_context (widget);
 
   if (priv->color_set)
     rgba = priv->color;
   else
-    gtk_style_context_get_color (style_context,
-                                 gtk_style_context_get_state (style_context),
-                                 &rgba);
+    gtk_style_context_get_color (style_context, &rgba);
 
   duration = sysprof_zoom_manager_get_duration_for_width (priv->zoom_manager, bg_area->width);
 
@@ -108,7 +157,7 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
 
   if (r.width > 3)
     {
-      dzl_cairo_rounded_rectangle (cr, &r, 2, 2);
+      rounded_rectangle (cr, &r, 2, 2);
       cairo_fill (cr);
     }
   else if (r.width > 1)
@@ -166,6 +215,8 @@ sysprof_cell_renderer_duration_render (GtkCellRenderer      *renderer,
 
       g_object_unref (layout);
     }
+
+  cairo_destroy (cr);
 }
 
 static GtkSizeRequestMode
@@ -342,7 +393,7 @@ sysprof_cell_renderer_duration_class_init (SysprofCellRendererDurationClass *kla
   cell_class->get_preferred_height_for_width = sysprof_cell_renderer_duration_get_preferred_height_for_width;
   cell_class->get_preferred_width = sysprof_cell_renderer_duration_get_preferred_width;
   cell_class->get_request_mode = sysprof_cell_renderer_duration_get_request_mode;
-  cell_class->render = sysprof_cell_renderer_duration_render;
+  cell_class->snapshot = sysprof_cell_renderer_duration_snapshot;
 
   /* Note we do not emit ::notify() for these properties */
 

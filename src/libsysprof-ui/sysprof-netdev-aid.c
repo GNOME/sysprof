@@ -242,7 +242,7 @@ sysprof_netdev_aid_present_finish (SysprofAid    *aid,
       if (counters->len > 0)
         sysprof_display_add_group (present->display, group);
       else
-        gtk_widget_destroy (GTK_WIDGET (group));
+        g_object_unref (g_object_ref_sink (group));
     }
 
   return counters != NULL;

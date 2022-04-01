@@ -27,10 +27,10 @@
 
 struct _SysprofApplication
 {
-  DzlApplication parent_instance;
+  AdwApplication parent_instance;
 };
 
-G_DEFINE_TYPE (SysprofApplication, sysprof_application, DZL_TYPE_APPLICATION)
+G_DEFINE_TYPE (SysprofApplication, sysprof_application, ADW_TYPE_APPLICATION)
 
 struct {
   const gchar *action_name;
@@ -110,9 +110,6 @@ static void
 sysprof_application_startup (GApplication *application)
 {
   g_autoptr(GtkCssProvider) provider = NULL;
-#ifdef DEVELOPMENT_BUILD
-  g_autoptr(GtkCssProvider) adwaita = NULL;
-#endif
 
   g_assert (SYSPROF_IS_APPLICATION (application));
 
@@ -120,17 +117,9 @@ sysprof_application_startup (GApplication *application)
 
   provider = gtk_css_provider_new ();
   gtk_css_provider_load_from_resource (provider, "/org/gnome/sysprof/theme/shared.css");
-  gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
-                                             GTK_STYLE_PROVIDER (provider),
-                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-#ifdef DEVELOPMENT_BUILD
-  adwaita = gtk_css_provider_new ();
-  gtk_css_provider_load_from_resource (adwaita, "/org/gnome/sysprof/theme/Adwaita-shared.css");
-  gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
-                                             GTK_STYLE_PROVIDER (adwaita),
-                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-#endif
+  gtk_style_context_add_provider_for_display (gdk_display_get_default (),
+                                              GTK_STYLE_PROVIDER (provider),
+                                              GTK_STYLE_PROVIDER_PRIORITY_THEME+1);
 
   for (guint i = 0; default_accels[i].action_name; i++)
     gtk_application_set_accels_for_action (GTK_APPLICATION (application),
@@ -139,13 +128,30 @@ sysprof_application_startup (GApplication *application)
 }
 
 static void
+sysprof_application_window_added (GtkApplication *application,
+                                  GtkWindow      *window)
+{
+  g_assert (SYSPROF_IS_APPLICATION (application));
+  g_assert (GTK_IS_WINDOW (window));
+
+#ifdef DEVELOPMENT_BUILD
+  gtk_widget_add_css_class (GTK_WIDGET (window), "devel");
+#endif
+
+  GTK_APPLICATION_CLASS (sysprof_application_parent_class)->window_added (application, window);
+}
+
+static void
 sysprof_application_class_init (SysprofApplicationClass *klass)
 {
   GApplicationClass *app_class = G_APPLICATION_CLASS (klass);
+  GtkApplicationClass *gtk_app_class = GTK_APPLICATION_CLASS (klass);
 
   app_class->open = sysprof_application_open;
   app_class->startup = sysprof_application_startup;
   app_class->activate = sysprof_application_activate;
+
+  gtk_app_class->window_added = sysprof_application_window_added;
 }
 
 static void
@@ -206,8 +212,8 @@ sysprof_about (GSimpleAction *action,
                          NULL);
 
   g_signal_connect (dialog,
-                    "response",
-                    G_CALLBACK (gtk_widget_destroy),
+                    "close-request",
+                    G_CALLBACK (gtk_window_destroy),
                     NULL);
 
   gtk_window_present (dialog);
@@ -226,10 +232,7 @@ sysprof_help (GSimpleAction *action,
 
   window = gtk_application_get_active_window (GTK_APPLICATION (self));
 
-  gtk_show_uri_on_window (window,
-                          "help:sysprof",
-                          gtk_get_current_event_time (),
-                          NULL);
+  gtk_show_uri (window, "help:sysprof", GDK_CURRENT_TIME);
 }
 
 static void

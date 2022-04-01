@@ -296,35 +296,37 @@ sysprof_duplex_visualizer_set_reader (SysprofVisualizer    *visualizer,
   g_task_run_in_thread (task, sysprof_duplex_visualizer_worker);
 }
 
-static gboolean
-sysprof_duplex_visualizer_draw (GtkWidget *widget,
-                                cairo_t   *cr)
+static void
+sysprof_duplex_visualizer_snapshot (GtkWidget   *widget,
+                                    GtkSnapshot *snapshot)
 {
   static const gdouble dashes[] = { 1.0, 2.0 };
   SysprofDuplexVisualizer *self = (SysprofDuplexVisualizer *)widget;
   PangoFontDescription *font_desc;
   GtkStyleContext *style_context;
   PangoLayout *layout;
+  cairo_t *cr;
   GtkAllocation alloc;
-  GdkRectangle clip;
-  gboolean ret;
   GdkRGBA fg;
   guint mid;
 
   g_assert (SYSPROF_IS_DUPLEX_VISUALIZER (self));
-  g_assert (cr != NULL);
+  g_assert (snapshot != NULL);
+
+  /* FIXME: This should all be drawn offscreen and then drawn to the snapshot
+   * using GdkMemoryTexture so that we can avoid extra GPU uploads.
+   */
 
   gtk_widget_get_allocation (widget, &alloc);
-  gdk_cairo_get_clip_rectangle (cr, &clip);
 
   mid = alloc.height / 2;
 
-  ret = GTK_WIDGET_CLASS (sysprof_duplex_visualizer_parent_class)->draw (widget, cr);
+  GTK_WIDGET_CLASS (sysprof_duplex_visualizer_parent_class)->snapshot (widget, snapshot);
+
+  cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, alloc.width, alloc.height));
 
   style_context = gtk_widget_get_style_context (widget);
-  gtk_style_context_get_color (style_context,
-                               gtk_style_context_get_state (style_context),
-                               &fg);
+  gtk_style_context_get_color (style_context, &fg);
   fg.alpha *= 0.4;
 
   /* Draw our center line */
@@ -366,6 +368,7 @@ sysprof_duplex_visualizer_draw (GtkWidget *widget,
                                                n_fpoints);
 
           /* Skip past data that we won't see anyway */
+#if 0
           for (p = 0; p < n_fpoints; p++)
             {
               if (points[p].x >= clip.x)
@@ -373,7 +376,8 @@ sysprof_duplex_visualizer_draw (GtkWidget *widget,
             }
 
           if (p >= n_fpoints)
-            return ret;
+            return;
+#endif
 
           /* But get at least one data point to anchor out of view */
           if (p > 0)
@@ -398,8 +402,10 @@ sysprof_duplex_visualizer_draw (GtkWidget *widget,
               last_x = points[i].x;
               last_y = points[i].y;
 
+#if 0
               if (points[i].x > clip.x + clip.width)
                 break;
+#endif
             }
 
           cairo_line_to (cr, last_x, mid);
@@ -436,6 +442,7 @@ sysprof_duplex_visualizer_draw (GtkWidget *widget,
                                                points,
                                                n_fpoints);
 
+#if 0
           /* Skip past data that we won't see anyway */
           for (p = 0; p < n_fpoints; p++)
             {
@@ -445,6 +452,7 @@ sysprof_duplex_visualizer_draw (GtkWidget *widget,
 
           if (p >= n_fpoints)
             return ret;
+#endif
 
           /* But get at least one data point to anchor out of view */
           if (p > 0)
@@ -469,8 +477,10 @@ sysprof_duplex_visualizer_draw (GtkWidget *widget,
               last_x = points[i].x;
               last_y = points[i].y;
 
+#if 0
               if (points[i].x > clip.x + clip.width)
                 break;
+#endif
             }
 
           cairo_line_to (cr, last_x, mid);
@@ -510,7 +520,7 @@ sysprof_duplex_visualizer_draw (GtkWidget *widget,
   pango_font_description_free (font_desc);
   g_object_unref (layout);
 
-  return ret;
+  cairo_destroy (cr);
 }
 
 static void
@@ -534,7 +544,7 @@ sysprof_duplex_visualizer_class_init (SysprofDuplexVisualizerClass *klass)
 
   object_class->finalize = sysprof_duplex_visualizer_finalize;
 
-  widget_class->draw = sysprof_duplex_visualizer_draw;
+  widget_class->snapshot = sysprof_duplex_visualizer_snapshot;
 
   visualizer_class->set_reader = sysprof_duplex_visualizer_set_reader;
 }

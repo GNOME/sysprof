@@ -28,7 +28,7 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_TAB (sysprof_tab_get_type())
 
-G_DECLARE_FINAL_TYPE (SysprofTab, sysprof_tab, SYSPROF, TAB, GtkBox)
+G_DECLARE_FINAL_TYPE (SysprofTab, sysprof_tab, SYSPROF, TAB, GtkWidget)
 
 GtkWidget *sysprof_tab_new (SysprofDisplay *display);
 

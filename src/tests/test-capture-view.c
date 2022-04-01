@@ -28,8 +28,9 @@ main (gint argc,
   SysprofDisplay *view;
   SysprofCaptureReader *reader;
   g_autoptr(GError) error = NULL;
+  GMainLoop *main_loop;
 
-  gtk_init (&argc, &argv);
+  gtk_init ();
 
   if (argc != 2)
     {
@@ -43,6 +44,8 @@ main (gint argc,
       return 1;
     }
 
+  main_loop = g_main_loop_new (NULL, FALSE);
+
   window = g_object_new (GTK_TYPE_WINDOW,
                          "title", "SysprofDisplay",
                          "default-width", 800,
@@ -51,13 +54,13 @@ main (gint argc,
   view = g_object_new (SYSPROF_TYPE_DISPLAY,
                        "visible", TRUE,
                        NULL);
-  gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (view));
+  gtk_window_set_child (GTK_WINDOW (window), GTK_WIDGET (view));
 
   sysprof_display_load_async (view, reader, NULL, NULL, NULL);
 
-  g_signal_connect (window, "delete-event", gtk_main_quit, NULL);
+  g_signal_connect_swapped (window, "close-request", G_CALLBACK (g_main_loop_quit), main_loop);
   gtk_window_present (GTK_WINDOW (window));
-  gtk_main ();
+  g_main_loop_run (main_loop);
 
   return 0;
 }

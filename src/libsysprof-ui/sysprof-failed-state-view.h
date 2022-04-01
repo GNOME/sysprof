@@ -27,13 +27,11 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_FAILED_STATE_VIEW (sysprof_failed_state_view_get_type())
 
-G_DECLARE_DERIVABLE_TYPE (SysprofFailedStateView, sysprof_failed_state_view, SYSPROF, FAILED_STATE_VIEW, GtkBin)
+G_DECLARE_DERIVABLE_TYPE (SysprofFailedStateView, sysprof_failed_state_view, SYSPROF, FAILED_STATE_VIEW, GtkWidget)
 
 struct _SysprofFailedStateViewClass
 {
-  GtkBinClass parent;
-
-  gpointer padding[4];
+  GtkWidgetClass parent;
 };
 
 GtkWidget *sysprof_failed_state_view_new          (void);

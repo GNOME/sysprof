@@ -3,22 +3,21 @@
   <template class="SysprofMarksPage" parent="SysprofPage">
     <child>
       <object class="GtkStack" id="stack">
-        <property name="homogeneous">false</property>
-        <property name="visible">true</property>
+        <property name="hhomogeneous">false</property>
+        <property name="vhomogeneous">false</property>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="marks">
             <property name="orientation">horizontal</property>
-            <property name="visible">true</property>
             <child>
               <object class="GtkBox" id="details_box">
                 <property name="orientation">vertical</property>
-                <property name="margin">6</property>
-                <property name="visible">true</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="label" translatable="yes">Details</property>
                     <property name="xalign">0</property>
-                    <property name="visible">true</property>
+                    <property name="margin-top">6</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
                     <property name="margin-bottom">6</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
@@ -30,164 +29,150 @@
                     <property name="hexpand">false</property>
                     <property name="vexpand">true</property>
                     <property name="margin-start">6</property>
-                    <property name="visible">true</property>
+                    <property name="margin-end">6</property>
                     <property name="column-spacing">6</property>
                     <property name="row-spacing">3</property>
                     <child>
                       <object class="GtkLabel">
                         <property name="label" translatable="yes">Group</property>
-                        <property name="visible">true</property>
                         <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
+                        <layout>
+                          <property name="row">0</property>
+                          <property name="column">0</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">0</property>
-                        <property name="left-attach">0</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkLabel">
                         <property name="label" translatable="yes">Mark</property>
-                        <property name="visible">true</property>
                         <property name="xalign">1</property>
                         <property name="yalign">0</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
+                        <layout>
+                          <property name="row">1</property>
+                          <property name="column">0</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">1</property>
-                        <property name="left-attach">0</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkLabel">
                         <property name="label" translatable="yes">Time</property>
-                        <property name="visible">true</property>
                         <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
+                        <layout>
+                          <property name="row">2</property>
+                          <property name="column">0</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">2</property>
-                        <property name="left-attach">0</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkLabel">
                         <property name="label" translatable="yes">End</property>
-                        <property name="visible">true</property>
                         <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
+                        <layout>
+                          <property name="row">3</property>
+                          <property name="column">0</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">3</property>
-                        <property name="left-attach">0</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkLabel">
                         <property name="label" translatable="yes">Duration</property>
-                        <property name="visible">true</property>
                         <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
+                        <layout>
+                          <property name="row">4</property>
+                          <property name="column">0</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">4</property>
-                        <property name="left-attach">0</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkLabel">
                         <property name="label" translatable="yes">Message</property>
-                        <property name="visible">true</property>
                         <property name="xalign">1</property>
                         <property name="yalign">0</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
+                        <layout>
+                          <property name="row">5</property>
+                          <property name="column">0</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">5</property>
-                        <property name="left-attach">0</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkLabel" id="group">
-                        <property name="visible">true</property>
                         <property name="xalign">0</property>
                         <property name="wrap">true</property>
+                        <layout>
+                          <property name="row">0</property>
+                          <property name="column">1</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">0</property>
-                        <property name="left-attach">1</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkLabel" id="mark">
-                        <property name="visible">true</property>
                         <property name="xalign">0</property>
                         <property name="max-width-chars">5</property>
                         <property name="ellipsize">end</property>
+                        <layout>
+                          <property name="row">1</property>
+                          <property name="column">1</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">1</property>
-                        <property name="left-attach">1</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkLabel" id="time">
-                        <property name="visible">true</property>
                         <property name="xalign">0</property>
+                        <layout>
+                          <property name="row">2</property>
+                          <property name="column">1</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">2</property>
-                        <property name="left-attach">1</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkLabel" id="end">
-                        <property name="visible">true</property>
                         <property name="xalign">0</property>
+                        <layout>
+                          <property name="row">3</property>
+                          <property name="column">1</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">3</property>
-                        <property name="left-attach">1</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkLabel" id="duration">
-                        <property name="visible">true</property>
                         <property name="xalign">0</property>
+                        <layout>
+                          <property name="row">4</property>
+                          <property name="column">1</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">4</property>
-                        <property name="left-attach">1</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
                         <property name="hexpand">true</property>
-                        <property name="shadow-type">in</property>
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkTextView" id="message">
                             <property name="editable">false</property>
-                            <property name="visible">true</property>
                           </object>
                         </child>
+                        <layout>
+                          <property name="row">5</property>
+                          <property name="column">1</property>
+                        </layout>
                       </object>
-                      <packing>
-                        <property name="top-attach">5</property>
-                        <property name="left-attach">1</property>
-                      </packing>
                     </child>
                   </object>
                 </child>
@@ -196,20 +181,16 @@
             <child>
               <object class="GtkSeparator">
                 <property name="orientation">vertical</property>
-                <property name="visible">true</property>
               </object>
             </child>
             <child>
               <object class="GtkScrolledWindow" id="scroller">
                 <property name="hscrollbar-policy">external</property>
                 <property name="hexpand">true</property>
-                <property name="visible">true</property>
                 <child>
                   <object class="GtkTreeView" id="tree_view">
-                    <property name="headers-visible">false</property>
                     <property name="enable-grid-lines">horizontal</property>
                     <property name="has-tooltip">true</property>
-                    <property name="visible">true</property>
                     <child>
                       <object class="GtkTreeViewColumn" id="duration_column">
                         <property name="title" translatable="yes">Duration</property>
@@ -235,20 +216,42 @@
               </object>
             </child>
           </object>
-          <packing>
-            <property name="name">marks</property>
-          </packing>
         </child>
         <child>
-          <object class="DzlEmptyState">
-            <property name="icon-name">computer-fail-symbolic</property>
-            <property name="title" translatable="yes">No Timings Available</property>
-            <property name="subtitle" translatable="yes">No timing data was found for the current selection</property>
-            <property name="visible">true</property>
+          <object class="GtkBox" id="failed">
+            <property name="halign">center</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">12</property>
+            <property name="valign">center</property>
+            <child>
+              <object class="GtkImage">
+                <property name="icon-name">computer-fail-symbolic</property>
+                <property name="pixel-size">128</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="title">
+                <property name="label" translatable="yes">No Timings Available</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+                <attributes>
+                  <attribute name="scale" value="2.0"/>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="subtitle">
+                <property name="label" translatable="yes">No timing data was found for the current selection</property>
+                <property name="use-markup">true</property>
+                <property name="wrap">true</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+              </object>
+            </child>
           </object>
-          <packing>
-            <property name="name">empty-state</property>
-          </packing>
         </child>
       </object>
     </child>

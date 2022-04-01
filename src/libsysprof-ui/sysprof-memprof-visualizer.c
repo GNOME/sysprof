@@ -528,48 +528,45 @@ sysprof_memprof_visualizer_queue_redraw (SysprofMemprofVisualizer *self)
 }
 
 static void
-sysprof_memprof_visualizer_size_allocate (GtkWidget     *widget,
-                                          GtkAllocation *alloc)
+sysprof_memprof_visualizer_size_allocate (GtkWidget *widget,
+                                          int        width,
+                                          int        height,
+                                          int        baseline)
 {
-  SysprofMemprofVisualizer *self = (SysprofMemprofVisualizer *)widget;
-
-  g_assert (GTK_IS_WIDGET (widget));
-  g_assert (alloc != NULL);
-
-  GTK_WIDGET_CLASS (sysprof_memprof_visualizer_parent_class)->size_allocate (widget, alloc);
-
-  sysprof_memprof_visualizer_queue_redraw (self);
+  sysprof_memprof_visualizer_queue_redraw (SYSPROF_MEMPROF_VISUALIZER (widget));
 }
 
 static void
-sysprof_memprof_visualizer_destroy (GtkWidget *widget)
+sysprof_memprof_visualizer_dispose (GObject *object)
 {
-  SysprofMemprofVisualizer *self = (SysprofMemprofVisualizer *)widget;
+  SysprofMemprofVisualizer *self = (SysprofMemprofVisualizer *)object;
 
   g_clear_pointer (&self->reader, sysprof_capture_reader_unref);
   g_clear_pointer (&self->surface, cairo_surface_destroy);
   g_clear_handle_id (&self->queued_draw, g_source_remove);
 
-  GTK_WIDGET_CLASS (sysprof_memprof_visualizer_parent_class)->destroy (widget);
+  G_OBJECT_CLASS (sysprof_memprof_visualizer_parent_class)->dispose (object);
 }
 
-static gboolean
-sysprof_memprof_visualizer_draw (GtkWidget *widget,
-                                 cairo_t   *cr)
+static void
+sysprof_memprof_visualizer_snapshot (GtkWidget   *widget,
+                                     GtkSnapshot *snapshot)
 {
   SysprofMemprofVisualizer *self = (SysprofMemprofVisualizer *)widget;
-  gboolean ret;
 
   g_assert (SYSPROF_IS_MEMPROF_VISUALIZER (self));
-  g_assert (cr != NULL);
+  g_assert (GTK_IS_SNAPSHOT (snapshot));
 
-  ret = GTK_WIDGET_CLASS (sysprof_memprof_visualizer_parent_class)->draw (widget, cr);
+  GTK_WIDGET_CLASS (sysprof_memprof_visualizer_parent_class)->snapshot (widget, snapshot);
 
   if (self->surface != NULL)
     {
+      cairo_t *cr;
       GtkAllocation alloc;
 
       gtk_widget_get_allocation (widget, &alloc);
+
+      cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, alloc.width, alloc.height));
 
       cairo_save (cr);
       cairo_rectangle (cr, 0, 0, alloc.width, alloc.height);
@@ -590,19 +587,21 @@ sysprof_memprof_visualizer_draw (GtkWidget *widget,
       cairo_set_source_surface (cr, self->surface, 0, 0);
       cairo_paint (cr);
       cairo_restore (cr);
-    }
 
-  return ret;
+      cairo_destroy (cr);
+    }
 }
 
 static void
 sysprof_memprof_visualizer_class_init (SysprofMemprofVisualizerClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   SysprofVisualizerClass *visualizer_class = SYSPROF_VISUALIZER_CLASS (klass);
 
-  widget_class->destroy = sysprof_memprof_visualizer_destroy;
-  widget_class->draw = sysprof_memprof_visualizer_draw;
+  object_class->dispose = sysprof_memprof_visualizer_dispose;
+
+  widget_class->snapshot = sysprof_memprof_visualizer_snapshot;
   widget_class->size_allocate = sysprof_memprof_visualizer_size_allocate;
 
   visualizer_class->set_reader = sysprof_memprof_visualizer_set_reader;

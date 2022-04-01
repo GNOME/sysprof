@@ -58,8 +58,8 @@ theme_resource_free (gpointer data)
 
       if (theme_resource->provider != NULL)
         {
-          gtk_style_context_remove_provider_for_screen (gdk_screen_get_default (),
-                                                        GTK_STYLE_PROVIDER (theme_resource->provider));
+          gtk_style_context_remove_provider_for_display (gdk_display_get_default (),
+                                                         GTK_STYLE_PROVIDER (theme_resource->provider));
           g_clear_object (&theme_resource->provider);
         }
 
@@ -121,17 +121,17 @@ sysprof_theme_manager_do_reload (gpointer data)
             {
               theme_resource->provider = gtk_css_provider_new ();
               gtk_css_provider_load_from_resource (theme_resource->provider, theme_resource->resource);
-              gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
-                                                         GTK_STYLE_PROVIDER (theme_resource->provider),
-                                                         GTK_STYLE_PROVIDER_PRIORITY_APPLICATION - 1);
+              gtk_style_context_add_provider_for_display (gdk_display_get_default (),
+                                                          GTK_STYLE_PROVIDER (theme_resource->provider),
+                                                          GTK_STYLE_PROVIDER_PRIORITY_THEME+1);
             }
         }
       else
         {
           if (theme_resource->provider != NULL)
             {
-              gtk_style_context_remove_provider_for_screen (gdk_screen_get_default (),
-                                                            GTK_STYLE_PROVIDER (theme_resource->provider));
+              gtk_style_context_remove_provider_for_display (gdk_display_get_default (),
+                                                             GTK_STYLE_PROVIDER (theme_resource->provider));
               g_clear_object (&theme_resource->provider);
             }
         }
@@ -146,10 +146,10 @@ sysprof_theme_manager_queue_reload (SysprofThemeManager *self)
   g_assert (SYSPROF_IS_THEME_MANAGER (self));
 
   if (self->reload_source == 0)
-    self->reload_source = gdk_threads_add_idle_full (G_PRIORITY_LOW,
-                                                     sysprof_theme_manager_do_reload,
-                                                     self,
-                                                     NULL);
+    self->reload_source = g_idle_add_full (G_PRIORITY_LOW,
+                                           sysprof_theme_manager_do_reload,
+                                           self,
+                                           NULL);
 }
 
 static void
@@ -181,7 +181,8 @@ sysprof_theme_manager_init (SysprofThemeManager *self)
 {
   self->theme_resources = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, theme_resource_free);
 
-  gtk_icon_theme_add_resource_path (gtk_icon_theme_get_default (), "/org/gnome/sysprof/icons");
+  gtk_icon_theme_add_resource_path (gtk_icon_theme_get_for_display (gdk_display_get_default ()),
+                                    "/org/gnome/sysprof/icons");
 }
 
 /**

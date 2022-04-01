@@ -39,10 +39,11 @@
 
 #include "config.h"
 
-#include <dazzle.h>
 #include <glib/gi18n.h>
 
 #include "../stackstash.h"
+
+#include "egg-paned-private.h"
 
 #include "sysprof-callgraph-page.h"
 #include "sysprof-cell-renderer-percent.h"
@@ -56,6 +57,9 @@ typedef struct
   GtkTreeView              *descendants_view;
   GtkTreeViewColumn        *descendants_name_column;
   GtkStack                 *stack;
+  GtkWidget                *empty_state;
+  GtkWidget                *loading_state;
+  GtkWidget                *callgraph;
 
   GQueue                   *history;
 
@@ -208,7 +212,7 @@ sysprof_callgraph_page_load (SysprofCallgraphPage    *self,
       gtk_tree_selection_select_iter (selection, &iter);
     }
 
-  gtk_stack_set_visible_child_name (priv->stack, "callgraph");
+  gtk_stack_set_visible_child (priv->stack, priv->callgraph);
 
   g_clear_object (&functions);
 }
@@ -220,7 +224,7 @@ _sysprof_callgraph_page_set_failed (SysprofCallgraphPage *self)
 
   g_return_if_fail (SYSPROF_IS_CALLGRAPH_PAGE (self));
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 }
 
 static void
@@ -239,7 +243,7 @@ sysprof_callgraph_page_unload (SysprofCallgraphPage *self)
   gtk_tree_view_set_model (priv->functions_view, NULL);
   gtk_tree_view_set_model (priv->descendants_view, NULL);
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 }
 
 /**
@@ -664,10 +668,12 @@ sysprof_callgraph_page_real_go_previous (SysprofCallgraphPage *self)
     sysprof_callgraph_page_set_node (self, node);
 }
 
-static void
+static gboolean
 descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
                                  GtkMovementStep  step,
                                  int              direction,
+                                 gboolean         extend,
+                                 gboolean         modify,
                                  gpointer         user_data)
 {
   if (step == GTK_MOVEMENT_VISUAL_POSITIONS)
@@ -680,15 +686,19 @@ descendants_view_move_cursor_cb (GtkTreeView     *descendants_view,
         {
           gtk_tree_view_expand_row (descendants_view, path, FALSE);
           g_signal_stop_emission_by_name (descendants_view, "move-cursor");
+          return FALSE;
         }
       else if (direction == -1)
         {
           gtk_tree_view_collapse_row (descendants_view, path);
           g_signal_stop_emission_by_name (descendants_view, "move-cursor");
+          return FALSE;
         }
 
       gtk_tree_path_free (path);
     }
+
+  return TRUE;
 }
 
 static void
@@ -732,7 +742,7 @@ static void
 copy_tree_view_selection (GtkTreeView *tree_view)
 {
   g_autoptr(GString) str = NULL;
-  GtkClipboard *clipboard;
+  GdkClipboard *clipboard;
 
   g_assert (GTK_IS_TREE_VIEW (tree_view));
 
@@ -741,24 +751,26 @@ copy_tree_view_selection (GtkTreeView *tree_view)
                                        copy_tree_view_selection_cb,
                                        str);
 
-  clipboard = gtk_widget_get_clipboard (GTK_WIDGET (tree_view), GDK_SELECTION_CLIPBOARD);
-  gtk_clipboard_set_text (clipboard, str->str, str->len);
+  clipboard = gtk_widget_get_clipboard (GTK_WIDGET (tree_view));
+  gdk_clipboard_set_text (clipboard, str->str);
 }
 
 static void
-sysprof_callgraph_page_copy_cb (GtkWidget            *widget,
-                                SysprofCallgraphPage *self)
+sysprof_callgraph_page_copy_cb (GtkWidget  *widget,
+                                const char *action_name,
+                                GVariant   *param)
 {
+  SysprofCallgraphPage *self = (SysprofCallgraphPage *)widget;
   SysprofCallgraphPagePrivate *priv = sysprof_callgraph_page_get_instance_private (self);
-  GtkWidget *toplevel;
+  GtkRoot *toplevel;
   GtkWidget *focus;
 
   g_assert (GTK_IS_WIDGET (widget));
   g_assert (SYSPROF_IS_CALLGRAPH_PAGE (self));
 
-  if (!(toplevel = gtk_widget_get_toplevel (widget)) ||
-      !GTK_IS_WINDOW (toplevel) ||
-      !(focus = gtk_window_get_focus (GTK_WINDOW (toplevel))))
+  if (!(toplevel = gtk_widget_get_root (widget)) ||
+      !GTK_IS_ROOT (toplevel) ||
+      !(focus = gtk_root_get_focus (toplevel)))
     return;
 
   if (focus == GTK_WIDGET (priv->descendants_view))
@@ -891,7 +903,6 @@ sysprof_callgraph_page_class_init (SysprofCallgraphPageClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   SysprofPageClass *page_class = SYSPROF_PAGE_CLASS (klass);
-  GtkBindingSet *bindings;
 
   object_class->finalize = sysprof_callgraph_page_finalize;
   object_class->get_property = sysprof_callgraph_page_get_property;
@@ -926,10 +937,16 @@ sysprof_callgraph_page_class_init (SysprofCallgraphPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, descendants_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, descendants_name_column);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, stack);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, callgraph);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, empty_state);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, loading_state);
 
-  bindings = gtk_binding_set_by_class (klass);
-  gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
+  gtk_widget_class_install_action (widget_class, "page.copy", NULL, sysprof_callgraph_page_copy_cb);
 
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_c, GDK_CONTROL_MASK, "page.copy", NULL);
+  gtk_widget_class_add_binding_signal (widget_class, GDK_KEY_Left, GDK_ALT_MASK, "go-previous", NULL);
+
+  g_type_ensure (EGG_TYPE_PANED);
   g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_PERCENT);
 }
 
@@ -937,7 +954,6 @@ static void
 sysprof_callgraph_page_init (SysprofCallgraphPage *self)
 {
   SysprofCallgraphPagePrivate *priv = sysprof_callgraph_page_get_instance_private (self);
-  DzlShortcutController *controller;
   GtkTreeSelection *selection;
   GtkCellRenderer *cell;
 
@@ -945,7 +961,7 @@ sysprof_callgraph_page_init (SysprofCallgraphPage *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->loading_state);
 
   selection = gtk_tree_view_get_selection (priv->functions_view);
 
@@ -991,16 +1007,6 @@ sysprof_callgraph_page_init (SysprofCallgraphPage *self)
 
   gtk_tree_selection_set_mode (gtk_tree_view_get_selection (priv->descendants_view),
                                GTK_SELECTION_MULTIPLE);
-
-  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
-
-  dzl_shortcut_controller_add_command_callback (controller,
-                                                "org.gnome.sysprof3.capture.copy",
-                                                "<Control>c",
-                                                DZL_SHORTCUT_PHASE_BUBBLE,
-                                                (GtkCallback) sysprof_callgraph_page_copy_cb,
-                                                self,
-                                                NULL);
 }
 
 typedef struct _Descendant Descendant;
@@ -1287,7 +1293,7 @@ _sysprof_callgraph_page_set_loading (SysprofCallgraphPage *self,
     priv->loading--;
 
   if (priv->loading)
-    gtk_stack_set_visible_child_name (priv->stack, "loading");
+    gtk_stack_set_visible_child (priv->stack, priv->loading_state);
   else
-    gtk_stack_set_visible_child_name (priv->stack, "callgraph");
+    gtk_stack_set_visible_child (priv->stack, priv->callgraph);
 }

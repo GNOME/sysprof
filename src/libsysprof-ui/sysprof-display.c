@@ -22,11 +22,12 @@
 
 #include "config.h"
 
-#include <dazzle.h>
 #include <glib/gi18n.h>
 
+#include "egg-paned-private.h"
+
 #include "sysprof-details-page.h"
-#include "sysprof-display.h"
+#include "sysprof-display-private.h"
 #include "sysprof-profiler-assistant.h"
 #include "sysprof-failed-state-view.h"
 #include "sysprof-recording-state-view.h"
@@ -72,7 +73,7 @@ typedef struct
   SysprofCaptureFlags        flags;
 } SysprofDisplayPrivate;
 
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofDisplay, sysprof_display, GTK_TYPE_BIN)
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofDisplay, sysprof_display, GTK_TYPE_WIDGET)
 
 enum {
   PROP_0,
@@ -96,10 +97,7 @@ update_title_child_property (SysprofDisplay *self)
   if ((parent = gtk_widget_get_parent (GTK_WIDGET (self))) && GTK_IS_NOTEBOOK (parent))
     {
       g_autofree gchar *title = sysprof_display_dup_title (self);
-
-      gtk_container_child_set (GTK_CONTAINER (parent), GTK_WIDGET (self),
-                               "menu-label", title,
-                               NULL);
+      gtk_notebook_set_menu_label_text (GTK_NOTEBOOK (parent), GTK_WIDGET (self), title);
     }
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
@@ -319,19 +317,17 @@ sysprof_display_notify_selection_cb (SysprofDisplay          *self,
       /* Opportunistically load pages */
       if (priv->reader != NULL)
         {
-          GList *pages = gtk_container_get_children (GTK_CONTAINER (priv->pages));
-
-          for (const GList *iter = pages; iter; iter = iter->next)
+          for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (priv->pages));
+               child;
+               child = gtk_widget_get_next_sibling (child))
             {
-              if (SYSPROF_IS_PAGE (iter->data))
-                sysprof_page_load_async (iter->data,
+              if (SYSPROF_IS_PAGE (child))
+                sysprof_page_load_async (SYSPROF_PAGE (child),
                                          priv->reader,
                                          selection,
                                          priv->filter,
                                          NULL, NULL, NULL);
             }
-
-          g_list_free (pages);
         }
     }
 }
@@ -372,15 +368,21 @@ stop_recording_cb (GSimpleAction *action,
 }
 
 static void
-sysprof_display_finalize (GObject *object)
+sysprof_display_dispose (GObject *object)
 {
   SysprofDisplay *self = (SysprofDisplay *)object;
   SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
 
+  if (priv->stack)
+    {
+      gtk_widget_unparent (GTK_WIDGET (priv->stack));
+      priv->stack = NULL;
+    }
+
   g_clear_pointer (&priv->reader, sysprof_capture_reader_unref);
   g_clear_pointer (&priv->filter, sysprof_capture_condition_unref);
 
-  G_OBJECT_CLASS (sysprof_display_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sysprof_display_parent_class)->dispose (object);
 }
 
 static void
@@ -443,7 +445,7 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_display_finalize;
+  object_class->dispose = sysprof_display_dispose;
   object_class->get_property = sysprof_display_get_property;
   object_class->set_property = sysprof_display_set_property;
 
@@ -453,6 +455,7 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
                                            "/org/gnome/sysprof/css/SysprofDisplay-shared.css");
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-display.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_set_css_name (widget_class, "SysprofDisplay");
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, assistant);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofDisplay, details);
@@ -499,7 +502,7 @@ sysprof_display_class_init (SysprofDisplayClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  g_type_ensure (DZL_TYPE_MULTI_PANED);
+  g_type_ensure (EGG_TYPE_PANED);
   g_type_ensure (SYSPROF_TYPE_DETAILS_PAGE);
   g_type_ensure (SYSPROF_TYPE_FAILED_STATE_VIEW);
   g_type_ensure (SYSPROF_TYPE_PROFILER_ASSISTANT);
@@ -552,7 +555,7 @@ sysprof_display_add_group (SysprofDisplay         *self,
   if (priv->reader != NULL)
     _sysprof_visualizer_group_set_reader (group, priv->reader);
 
-  gtk_container_add (GTK_CONTAINER (priv->visualizers), GTK_WIDGET (group));
+  sysprof_visualizers_frame_add_group (priv->visualizers, group);
 }
 
 void
@@ -567,10 +570,7 @@ sysprof_display_add_page (SysprofDisplay *self,
   g_return_if_fail (SYSPROF_IS_PAGE (page));
 
   title = sysprof_page_get_title (page);
-
-  gtk_container_add_with_properties (GTK_CONTAINER (priv->pages), GTK_WIDGET (page),
-                                     "title", title,
-                                     NULL);
+  gtk_stack_add_titled (priv->pages, GTK_WIDGET (page), NULL, title);
 
   selection = sysprof_visualizers_frame_get_selection (priv->visualizers);
 
@@ -933,7 +933,6 @@ sysprof_display_load_scan_cb (GObject      *object,
   SysprofCaptureReader *reader;
   SysprofSelection *selection;
   GCancellable *cancellable;
-  GList *pages;
 
   g_assert (SYSPROF_IS_DISPLAY (self));
   g_assert (G_IS_ASYNC_RESULT (result));
@@ -956,17 +955,17 @@ sysprof_display_load_scan_cb (GObject      *object,
   sysprof_details_page_set_reader (priv->details, reader);
 
   /* Opportunistically load pages */
-  pages = gtk_container_get_children (GTK_CONTAINER (priv->pages));
-  for (const GList *iter = pages; iter; iter = iter->next)
+  for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (priv->pages));
+       child;
+       child = gtk_widget_get_next_sibling (child))
     {
-      if (SYSPROF_IS_PAGE (iter->data))
-        sysprof_page_load_async (iter->data,
+      if (SYSPROF_IS_PAGE (child))
+        sysprof_page_load_async (SYSPROF_PAGE (child),
                                  reader,
                                  selection,
                                  priv->filter,
                                  NULL, NULL, NULL);
     }
-  g_list_free (pages);
 
   gtk_stack_set_visible_child_name (priv->stack, "view");
 }
@@ -1097,12 +1096,13 @@ sysprof_display_open (SysprofDisplay *self,
                                                 error->message);
       g_signal_connect (dialog,
                         "response",
-                        G_CALLBACK (gtk_widget_destroy),
+                        G_CALLBACK (gtk_window_destroy),
                         NULL);
       gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
       gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
       gtk_window_present (GTK_WINDOW (dialog));
-      gtk_widget_destroy (GTK_WIDGET (self));
+
+      _sysprof_display_destroy (self);
 
       return;
     }
@@ -1200,36 +1200,21 @@ sysprof_display_new_for_profiler (SysprofProfiler *profiler)
   return GTK_WIDGET (g_steal_pointer (&self));
 }
 
-void
-sysprof_display_save (SysprofDisplay *self)
+static void
+on_save_response_cb (SysprofDisplay       *self,
+                     int                   res,
+                     GtkFileChooserNative *chooser)
 {
   SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
   g_autoptr(GFile) file = NULL;
-  GtkFileChooserNative *native;
-  GtkWindow *parent;
-  gint res;
 
-  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
-  g_return_if_fail (priv->reader != NULL);
-
-  parent = GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (self)));
-
-  native = gtk_file_chooser_native_new (_("Save Recording"),
-                                        parent,
-                                        GTK_FILE_CHOOSER_ACTION_SAVE,
-                                        _("Save"),
-                                        _("Cancel"));
-  gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (native), TRUE);
-  gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (native), TRUE);
-  gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER (native), TRUE);
-  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (native), "capture.syscap");
-
-  res = gtk_native_dialog_run (GTK_NATIVE_DIALOG (native));
+  g_assert (SYSPROF_IS_DISPLAY (self));
+  g_assert (GTK_IS_FILE_CHOOSER_NATIVE (chooser));
 
   switch (res)
     {
     case GTK_RESPONSE_ACCEPT:
-      file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (native));
+      file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (chooser));
 
       if (g_file_is_native (file))
         {
@@ -1239,16 +1224,23 @@ sysprof_display_save (SysprofDisplay *self)
           if (!sysprof_capture_reader_save_as_with_error (priv->reader, path, &error))
             {
               GtkWidget *msg;
+              GtkNative *root;
 
-              msg = gtk_message_dialog_new (parent,
+              root = gtk_widget_get_native (GTK_WIDGET (self));
+              msg = gtk_message_dialog_new (GTK_WINDOW (root),
                                             GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_USE_HEADER_BAR,
                                             GTK_MESSAGE_ERROR,
                                             GTK_BUTTONS_CLOSE,
                                             _("Failed to save recording: %s"),
                                             error->message);
               gtk_window_present (GTK_WINDOW (msg));
-              g_signal_connect (msg, "response", G_CALLBACK (gtk_widget_destroy), NULL);
+              g_signal_connect (msg, "response", G_CALLBACK (gtk_window_destroy), NULL);
             }
+        }
+      else
+        {
+          g_autofree char *uri = g_file_get_uri (file);
+          g_warning ("%s is not native, cannot open", uri);
         }
 
       break;
@@ -1258,7 +1250,35 @@ sysprof_display_save (SysprofDisplay *self)
     }
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
-  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (native));
+  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (chooser));
+}
+
+void
+sysprof_display_save (SysprofDisplay *self)
+{
+  SysprofDisplayPrivate *priv = sysprof_display_get_instance_private (self);
+  GtkFileChooserNative *native;
+  GtkNative *root;
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
+  g_return_if_fail (priv->reader != NULL);
+
+  root = gtk_widget_get_native (GTK_WIDGET (self));
+  native = gtk_file_chooser_native_new (_("Save Recording"),
+                                        GTK_WINDOW (root),
+                                        GTK_FILE_CHOOSER_ACTION_SAVE,
+                                        _("Save"),
+                                        _("Cancel"));
+  gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER (native), TRUE);
+  gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (native), "capture.syscap");
+
+  g_signal_connect_object (native,
+                           "response",
+                           G_CALLBACK (on_save_response_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+
+  gtk_native_dialog_show (GTK_NATIVE_DIALOG (native));
 }
 
 void
@@ -1293,4 +1313,16 @@ sysprof_display_add_to_selection (SysprofDisplay *self,
 
   selection = sysprof_visualizers_frame_get_selection (priv->visualizers);
   sysprof_selection_select_range (selection, begin_time, end_time);
+}
+
+void
+_sysprof_display_destroy (SysprofDisplay *self)
+{
+  GtkWidget *parent;
+
+  g_return_if_fail (SYSPROF_IS_DISPLAY (self));
+
+  if ((parent = gtk_widget_get_ancestor (GTK_WIDGET (self), GTK_TYPE_NOTEBOOK)))
+    gtk_notebook_remove_page (GTK_NOTEBOOK (parent),
+                              gtk_notebook_page_num (GTK_NOTEBOOK (parent), GTK_WIDGET (self)));
 }

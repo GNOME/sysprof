@@ -22,7 +22,6 @@
 
 #include "config.h"
 
-#include <dazzle.h>
 #include <glib/gi18n.h>
 
 #include "sysprof-visualizer.h"
@@ -159,21 +158,6 @@ create_action_name (const gchar *str)
 }
 
 static void
-sysprof_visualizer_group_add (GtkContainer *container,
-                              GtkWidget    *child)
-{
-  SysprofVisualizerGroup *self = (SysprofVisualizerGroup *)container;
-
-  g_assert (SYSPROF_IS_VISUALIZER_GROUP (self));
-  g_assert (GTK_IS_WIDGET (child));
-
-  if (SYSPROF_IS_VISUALIZER (child))
-    sysprof_visualizer_group_insert (self, SYSPROF_VISUALIZER (child), -1, FALSE);
-  else
-    GTK_CONTAINER_CLASS (sysprof_visualizer_group_parent_class)->add (container, child);
-}
-
-static void
 sysprof_visualizer_group_finalize (GObject *object)
 {
   SysprofVisualizerGroup *self = (SysprofVisualizerGroup *)object;
@@ -186,7 +170,7 @@ sysprof_visualizer_group_finalize (GObject *object)
   g_clear_object (&priv->rows_menu);
   g_clear_object (&priv->actions);
 
-  dzl_clear_weak_pointer (&priv->header);
+  g_clear_weak_pointer (&priv->header);
 
   G_OBJECT_CLASS (sysprof_visualizer_group_parent_class)->finalize (object);
 }
@@ -258,13 +242,10 @@ sysprof_visualizer_group_class_init (SysprofVisualizerGroupClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-  GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
   object_class->finalize = sysprof_visualizer_group_finalize;
   object_class->get_property = sysprof_visualizer_group_get_property;
   object_class->set_property = sysprof_visualizer_group_set_property;
-
-  container_class->add = sysprof_visualizer_group_add;
 
   properties [PROP_HAS_PAGE] =
     g_param_spec_boolean ("has-page",
@@ -331,7 +312,7 @@ sysprof_visualizer_group_init (SysprofVisualizerGroup *self)
                                     "orientation", GTK_ORIENTATION_VERTICAL,
                                     "visible", TRUE,
                                     NULL);
-  gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (priv->visualizers));
+  gtk_list_box_row_set_child (GTK_LIST_BOX_ROW (self), GTK_WIDGET (priv->visualizers));
 }
 
 void
@@ -343,11 +324,10 @@ _sysprof_visualizer_group_set_header (SysprofVisualizerGroup       *self,
   g_return_if_fail (SYSPROF_IS_VISUALIZER_GROUP (self));
   g_return_if_fail (!header || SYSPROF_IS_VISUALIZER_GROUP_HEADER (header));
 
-  if (dzl_set_weak_pointer (&priv->header, header))
+  if (g_set_weak_pointer (&priv->header, header))
     {
       if (header != NULL)
         {
-          GList *children;
           guint position = 0;
 
           gtk_widget_insert_action_group (GTK_WIDGET (header),
@@ -355,11 +335,11 @@ _sysprof_visualizer_group_set_header (SysprofVisualizerGroup       *self,
                                           G_ACTION_GROUP (priv->actions));
           gtk_size_group_add_widget (priv->size_group, GTK_WIDGET (header));
 
-          children = gtk_container_get_children (GTK_CONTAINER (priv->visualizers));
-
-          for (const GList *iter = children; iter; iter = iter->next)
+          for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (priv->visualizers));
+               child;
+               child = gtk_widget_get_next_sibling (child))
             {
-              SysprofVisualizer *vis = iter->data;
+              SysprofVisualizer *vis = SYSPROF_VISUALIZER (child);
               const gchar *title;
               GMenuModel *menu = NULL;
 
@@ -381,17 +361,8 @@ _sysprof_visualizer_group_set_header (SysprofVisualizerGroup       *self,
 
               position++;
             }
-
-          g_list_free (children);
         }
     }
-}
-
-static void
-sysprof_visualizer_group_set_reader_cb (SysprofVisualizer    *visualizer,
-                                        SysprofCaptureReader *reader)
-{
-  sysprof_visualizer_set_reader (visualizer, reader);
 }
 
 void
@@ -403,9 +374,10 @@ _sysprof_visualizer_group_set_reader (SysprofVisualizerGroup *self,
   g_return_if_fail (SYSPROF_IS_VISUALIZER_GROUP (self));
   g_return_if_fail (reader != NULL);
 
-  gtk_container_foreach (GTK_CONTAINER (priv->visualizers),
-                         (GtkCallback) sysprof_visualizer_group_set_reader_cb,
-                         reader);
+  for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (priv->visualizers));
+       child;
+       child = gtk_widget_get_next_sibling (child))
+    sysprof_visualizer_set_reader (SYSPROF_VISUALIZER (child), reader);
 }
 
 void
@@ -415,13 +387,18 @@ sysprof_visualizer_group_insert (SysprofVisualizerGroup *self,
                                  gboolean                can_toggle)
 {
   SysprofVisualizerGroupPrivate *priv = sysprof_visualizer_group_get_instance_private (self);
+  GtkWidget *sibling = NULL;
 
   g_return_if_fail (SYSPROF_IS_VISUALIZER_GROUP (self));
   g_return_if_fail (SYSPROF_IS_VISUALIZER (visualizer));
 
-  gtk_container_add_with_properties (GTK_CONTAINER (priv->visualizers), GTK_WIDGET (visualizer),
-                                     "position", position,
-                                     NULL);
+  sibling = gtk_widget_get_first_child (GTK_WIDGET (priv->visualizers));
+  while (position > 1 && sibling)
+    {
+      sibling = gtk_widget_get_next_sibling (sibling);
+      position--;
+    }
+  gtk_box_insert_child_after (priv->visualizers, GTK_WIDGET (visualizer), sibling);
 
   if (can_toggle)
     {

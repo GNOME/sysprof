@@ -221,7 +221,7 @@ sysprof_cpu_aid_present_finish (SysprofAid    *aid,
                                "y-lower", 0.0,
                                "y-upper", 100.0,
                                NULL);
-      gtk_container_add (GTK_CONTAINER (freq), GTK_WIDGET (freq_row));
+      sysprof_visualizer_group_insert (freq, freq_row, -1, FALSE);
 
       over_row = g_object_new (SYSPROF_TYPE_LINE_VISUALIZER,
                                "title", _("CPU Usage (All)"),
@@ -323,17 +323,17 @@ sysprof_cpu_aid_present_finish (SysprofAid    *aid,
       if (has_usage && !found_combined)
         sysprof_visualizer_group_insert (usage, over_row, 0, FALSE);
       else
-        gtk_widget_destroy (GTK_WIDGET (over_row));
+        g_object_unref (g_object_ref_sink (over_row));
 
       if (has_usage)
         sysprof_display_add_group (present->display, usage);
       else
-        gtk_widget_destroy (GTK_WIDGET (usage));
+        g_object_unref (g_object_ref_sink (usage));
 
       if (has_freq)
         sysprof_display_add_group (present->display, freq);
       else
-        gtk_widget_destroy (GTK_WIDGET (freq));
+        g_object_unref (g_object_ref_sink (freq));
     }
 
   return counters != NULL;

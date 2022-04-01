@@ -22,7 +22,7 @@
 
 #include "sysprof-failed-state-view.h"
 
-G_DEFINE_TYPE (SysprofFailedStateView, sysprof_failed_state_view, GTK_TYPE_BIN)
+G_DEFINE_TYPE (SysprofFailedStateView, sysprof_failed_state_view, GTK_TYPE_WIDGET)
 
 GtkWidget *
 sysprof_failed_state_view_new (void)
@@ -31,10 +31,26 @@ sysprof_failed_state_view_new (void)
 }
 
 static void
+sysprof_failed_state_view_dispose (GObject *object)
+{
+  SysprofFailedStateView *self = (SysprofFailedStateView *)object;
+  GtkWidget *child;
+
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    gtk_widget_unparent (child);
+
+  G_OBJECT_CLASS (sysprof_failed_state_view_parent_class)->dispose (object);
+}
+
+static void
 sysprof_failed_state_view_class_init (SysprofFailedStateViewClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
+  object_class->dispose = sysprof_failed_state_view_dispose;
+
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/org/gnome/sysprof/ui/sysprof-failed-state-view.ui");
 }

@@ -22,14 +22,15 @@
 
 #include "config.h"
 
-#include "sysprof-display.h"
+#include "sysprof-display-private.h"
 #include "sysprof-tab.h"
 #include "sysprof-ui-private.h"
 
 struct _SysprofTab
 {
-  GtkBox          parent_instance;
+  GtkWidget       parent_instance;
 
+  GtkWidget      *center_box;
   GtkButton      *close_button;
   GtkLabel       *title;
   GtkImage       *recording;
@@ -37,7 +38,7 @@ struct _SysprofTab
   SysprofDisplay *display;
 };
 
-G_DEFINE_TYPE (SysprofTab, sysprof_tab, GTK_TYPE_BOX)
+G_DEFINE_TYPE (SysprofTab, sysprof_tab, GTK_TYPE_WIDGET)
 
 enum {
   PROP_0,
@@ -62,18 +63,19 @@ sysprof_tab_close_clicked (SysprofTab *self,
   g_assert (SYSPROF_IS_TAB (self));
   g_assert (GTK_IS_BUTTON (button));
 
-  if (self->display != NULL)
-    gtk_widget_destroy (GTK_WIDGET (self->display));
+  if (self->display)
+    _sysprof_display_destroy (self->display);
 }
 
 static void
-sysprof_tab_finalize (GObject *object)
+sysprof_tab_dispose (GObject *object)
 {
   SysprofTab *self = (SysprofTab *)object;
 
+  g_clear_pointer (&self->center_box, gtk_widget_unparent);
   g_clear_weak_pointer (&self->display);
 
-  G_OBJECT_CLASS (sysprof_tab_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sysprof_tab_parent_class)->dispose (object);
 }
 
 static void
@@ -122,11 +124,13 @@ sysprof_tab_class_init (SysprofTabClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_tab_finalize;
+  object_class->dispose = sysprof_tab_dispose;
   object_class->get_property = sysprof_tab_get_property;
   object_class->set_property = sysprof_tab_set_property;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-tab.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
+  gtk_widget_class_bind_template_child (widget_class, SysprofTab, center_box);
   gtk_widget_class_bind_template_child (widget_class, SysprofTab, close_button);
   gtk_widget_class_bind_template_child (widget_class, SysprofTab, recording);
   gtk_widget_class_bind_template_child (widget_class, SysprofTab, title);

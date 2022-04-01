@@ -28,11 +28,11 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_ENVIRON_EDITOR (sysprof_environ_editor_get_type())
 
-G_DECLARE_FINAL_TYPE (SysprofEnvironEditor, sysprof_environ_editor, SYSPROF, ENVIRON_EDITOR, GtkListBox)
+G_DECLARE_FINAL_TYPE (SysprofEnvironEditor, sysprof_environ_editor, SYSPROF, ENVIRON_EDITOR, GtkWidget)
 
 GtkWidget      *sysprof_environ_editor_new         (void);
 SysprofEnviron *sysprof_environ_editor_get_environ (SysprofEnvironEditor *self);
 void            sysprof_environ_editor_set_environ (SysprofEnvironEditor *self,
-                                                        SysprofEnviron       *environ);
+                                                    SysprofEnviron       *environ);
 
 G_END_DECLS

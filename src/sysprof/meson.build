@@ -1,10 +1,10 @@
 if get_option('enable_gtk') and get_option('libsysprof')
 
 sysprof_sources = [
+  'egg-binding-group.c',
   'sysprof.c',
   'sysprof-application.c',
   'sysprof-window.c',
-  'sysprof-window-settings.c',
 ]
 
 sysprof_resources = gnome.compile_resources('sysprof-resources', 'sysprof.gresource.xml',
@@ -18,6 +18,7 @@ sysprof_deps = [
   libsysprof_dep,
   libsysprof_ui_dep,
   dependency('pangoft2', required: false),
+  dependency('libadwaita-1'),
 ]
 
 sysprof = executable('sysprof', sysprof_resources + sysprof_sources,

@@ -38,17 +38,28 @@ struct _SysprofVisualizerGroupHeader
 G_DEFINE_TYPE (SysprofVisualizerGroupHeader, sysprof_visualizer_group_header, GTK_TYPE_LIST_BOX_ROW)
 
 static void
-sysprof_visualizer_group_header_finalize (GObject *object)
+sysprof_visualizer_group_header_dispose (GObject *object)
 {
-  G_OBJECT_CLASS (sysprof_visualizer_group_header_parent_class)->finalize (object);
+  SysprofVisualizerGroupHeader *self = (SysprofVisualizerGroupHeader *)object;
+
+  if (self->box)
+    {
+      gtk_widget_unparent (GTK_WIDGET (self->box));
+      self->box = NULL;
+    }
+
+  G_OBJECT_CLASS (sysprof_visualizer_group_header_parent_class)->dispose (object);
 }
 
 static void
 sysprof_visualizer_group_header_class_init (SysprofVisualizerGroupHeaderClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_visualizer_group_header_finalize;
+  object_class->dispose = sysprof_visualizer_group_header_dispose;
+
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
 }
 
 static void
@@ -58,7 +69,7 @@ sysprof_visualizer_group_header_init (SysprofVisualizerGroupHeader *self)
                             "orientation", GTK_ORIENTATION_VERTICAL,
                             "visible", TRUE,
                             NULL);
-  gtk_container_add (GTK_CONTAINER (self), GTK_WIDGET (self->box));
+  gtk_widget_set_parent (GTK_WIDGET (self->box), GTK_WIDGET (self));
 }
 
 void
@@ -68,8 +79,9 @@ _sysprof_visualizer_group_header_add_row (SysprofVisualizerGroupHeader *self,
                                           GMenuModel                   *menu,
                                           GtkWidget                    *widget)
 {
-  GtkBox *box;
   GtkWidget *group;
+  GtkWidget *sibling;
+  GtkBox *box;
 
   g_return_if_fail (SYSPROF_IS_VISUALIZER_GROUP_HEADER (self));
   g_return_if_fail (SYSPROF_IS_VISUALIZER (widget));
@@ -81,9 +93,11 @@ _sysprof_visualizer_group_header_add_row (SysprofVisualizerGroupHeader *self,
                       "visible", TRUE,
                       NULL);
   g_object_bind_property (widget, "visible", box, "visible", G_BINDING_SYNC_CREATE);
-  gtk_container_add_with_properties (GTK_CONTAINER (self->box), GTK_WIDGET (box),
-                                     "position", position,
-                                     NULL);
+
+  sibling = gtk_widget_get_first_child (GTK_WIDGET (self->box));
+  for (; position > 1 && sibling; position--)
+    sibling = gtk_widget_get_next_sibling (sibling);
+  gtk_box_insert_child_after (self->box, GTK_WIDGET (box), sibling);
 
   if (title != NULL)
     {
@@ -95,13 +109,16 @@ _sysprof_visualizer_group_header_add_row (SysprofVisualizerGroupHeader *self,
       label = g_object_new (GTK_TYPE_LABEL,
                             "attributes", attrs,
                             "ellipsize", PANGO_ELLIPSIZE_MIDDLE,
-                            "margin", 6,
+                            "margin-top", 6,
+                            "margin-bottom", 6,
+                            "margin-start", 6,
+                            "margin-end", 6,
                             "hexpand", TRUE,
                             "label", title,
                             "visible", TRUE,
                             "xalign", 0.0f,
                             NULL);
-      gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (label));
+      gtk_box_append (box, GTK_WIDGET (label));
       pango_attr_list_unref (attrs);
 
       gtk_size_group_add_widget (size_group, widget);
@@ -120,8 +137,8 @@ _sysprof_visualizer_group_header_add_row (SysprofVisualizerGroupHeader *self,
                             "pixel-size", 16,
                             "visible", TRUE,
                             NULL);
-      dzl_gtk_widget_add_style_class (GTK_WIDGET (image), "dim-label");
-      gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (image));
+      gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (image)), "dim-label");
+      gtk_box_append (box, GTK_WIDGET (image));
     }
 
   if (menu != NULL)
@@ -134,12 +151,11 @@ _sysprof_visualizer_group_header_add_row (SysprofVisualizerGroupHeader *self,
                                                     "icon-name", "view-more-symbolic",
                                                     "visible", TRUE,
                                                     NULL),
-                             "margin-right", 6,
+                             "margin-end", 6,
                              "direction", GTK_ARROW_RIGHT,
                              "halign", GTK_ALIGN_CENTER,
                              "menu-model", menu,
                              "tooltip-text", _("Display supplemental graphs"),
-                             "use-popover", FALSE,
                              "valign", GTK_ALIGN_CENTER,
                              "visible", TRUE,
                              NULL);
@@ -148,7 +164,7 @@ _sysprof_visualizer_group_header_add_row (SysprofVisualizerGroupHeader *self,
       gtk_style_context_add_class (style_context, "small-button");
       gtk_style_context_add_class (style_context, "flat");
 
-      gtk_container_add (GTK_CONTAINER (box), GTK_WIDGET (button));
+      gtk_box_append (box, GTK_WIDGET (button));
     }
 }
 

@@ -31,7 +31,7 @@ typedef struct
   gulong            notify_elapsed_handler;
 } SysprofRecordingStateViewPrivate;
 
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofRecordingStateView, sysprof_recording_state_view, GTK_TYPE_BIN)
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofRecordingStateView, sysprof_recording_state_view, GTK_TYPE_WIDGET)
 
 enum {
   PROP_0,
@@ -79,18 +79,22 @@ sysprof_recording_state_view_notify_elapsed (SysprofRecordingStateView *self,
 }
 
 static void
-sysprof_recording_state_view_destroy (GtkWidget *widget)
+sysprof_recording_state_view_dispose (GObject *object)
 {
-  SysprofRecordingStateView *self = (SysprofRecordingStateView *)widget;
+  SysprofRecordingStateView *self = (SysprofRecordingStateView *)object;
   SysprofRecordingStateViewPrivate *priv = sysprof_recording_state_view_get_instance_private (self);
+  GtkWidget *child;
+
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    gtk_widget_unparent (child);
 
   if (priv->profiler != NULL)
     {
-      g_signal_handler_disconnect (priv->profiler, priv->notify_elapsed_handler);
+      g_clear_signal_handler (&priv->notify_elapsed_handler, priv->profiler);
       g_clear_object (&priv->profiler);
     }
 
-  GTK_WIDGET_CLASS (sysprof_recording_state_view_parent_class)->destroy (widget);
+  G_OBJECT_CLASS (sysprof_recording_state_view_parent_class)->dispose (object);
 }
 
 static void
@@ -138,10 +142,9 @@ sysprof_recording_state_view_class_init (SysprofRecordingStateViewClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
+  object_class->dispose = sysprof_recording_state_view_dispose;
   object_class->get_property = sysprof_recording_state_view_get_property;
   object_class->set_property = sysprof_recording_state_view_set_property;
-
-  widget_class->destroy = sysprof_recording_state_view_destroy;
 
   properties [PROP_PROFILER] =
     g_param_spec_object ("profiler",
@@ -153,6 +156,7 @@ sysprof_recording_state_view_class_init (SysprofRecordingStateViewClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-recording-state-view.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofRecordingStateView, elapsed);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofRecordingStateView, samples);
 

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include "sysprof-cell-renderer-progress.h"
 
 G_BEGIN_DECLS
 
@@ -37,12 +37,12 @@ typedef struct _SysprofCellRendererPercentClass SysprofCellRendererPercentClass;
 
 struct _SysprofCellRendererPercent
 {
-  GtkCellRendererProgress parent;
+  SysprofCellRendererProgress parent;
 };
 
 struct _SysprofCellRendererPercentClass
 {
-  GtkCellRendererProgressClass parent_class;
+  SysprofCellRendererProgressClass parent_class;
 
   /*< private >*/
   gpointer _reserved[4];

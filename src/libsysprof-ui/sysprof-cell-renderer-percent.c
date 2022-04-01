@@ -37,7 +37,7 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofCellRendererPercent, sysprof_cell_renderer_percent, GTK_TYPE_CELL_RENDERER_PROGRESS)
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofCellRendererPercent, sysprof_cell_renderer_percent, SYSPROF_TYPE_CELL_RENDERER_PROGRESS)
 
 static GParamSpec *properties [N_PROPS];
 

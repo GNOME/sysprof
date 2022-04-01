@@ -31,14 +31,9 @@ typedef struct
   gint64 begin_time;
   gint64 end_time;
   gint64 duration;
-
-  /* A cached allocation that has the borders subtracted so that
-   * we place the content within the expected area.
-   */
-  GtkAllocation cache_alloc;
 } SysprofVisualizerPrivate;
 
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofVisualizer, sysprof_visualizer, DZL_TYPE_BIN)
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofVisualizer, sysprof_visualizer, GTK_TYPE_WIDGET)
 
 enum {
   PROP_0,
@@ -49,53 +44,6 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
-
-static inline void
-subtract_border (GtkAllocation *alloc,
-                 GtkBorder     *border)
-{
-#if 0
-  g_print ("Border; %d %d %d %d\n", border->top, border->left, border->bottom, border->right);
-#endif
-
-  alloc->x += border->left;
-  alloc->y += border->top;
-  alloc->width -= border->left + border->right;
-  alloc->height -= border->top + border->bottom;
-}
-
-static void
-adjust_alloc_for_borders (SysprofVisualizer *self,
-                          GtkAllocation     *alloc)
-{
-  GtkStyleContext *style_context;
-  GtkBorder border;
-  GtkStateFlags state;
-
-  g_assert (SYSPROF_IS_VISUALIZER (self));
-  g_assert (alloc != NULL);
-
-  state = gtk_widget_get_state_flags (GTK_WIDGET (self));
-  style_context = gtk_widget_get_style_context (GTK_WIDGET (self));
-  gtk_style_context_get_border (style_context, state, &border);
-
-  subtract_border (alloc, &border);
-}
-
-static void
-sysprof_visualizer_size_allocate (GtkWidget     *widget,
-                                  GtkAllocation *alloc)
-{
-  SysprofVisualizer *self = (SysprofVisualizer *)widget;
-  SysprofVisualizerPrivate *priv = sysprof_visualizer_get_instance_private (self);
-
-  g_assert (SYSPROF_IS_VISUALIZER (self));
-
-  GTK_WIDGET_CLASS (sysprof_visualizer_parent_class)->size_allocate (widget, alloc);
-
-  priv->cache_alloc = *alloc;
-  adjust_alloc_for_borders (self, &priv->cache_alloc);
-}
 
 static void
 sysprof_visualizer_finalize (GObject *object)
@@ -174,8 +122,6 @@ sysprof_visualizer_class_init (SysprofVisualizerClass *klass)
   object_class->finalize = sysprof_visualizer_finalize;
   object_class->get_property = sysprof_visualizer_get_property;
   object_class->set_property = sysprof_visualizer_set_property;
-
-  widget_class->size_allocate = sysprof_visualizer_size_allocate;
 
   properties [PROP_BEGIN_TIME] =
     g_param_spec_int64 ("begin-time",
@@ -296,20 +242,21 @@ sysprof_visualizer_translate_points (SysprofVisualizer                    *self,
                                      SysprofVisualizerAbsolutePoint       *out_points,
                                      guint                                 n_out_points)
 {
-  SysprofVisualizerPrivate *priv = sysprof_visualizer_get_instance_private (self);
-  const GtkAllocation *a;
+  int width;
+  int height;
 
   g_return_if_fail (SYSPROF_IS_VISUALIZER (self));
   g_return_if_fail (in_points != NULL);
   g_return_if_fail (out_points != NULL);
   g_return_if_fail (n_in_points == n_out_points);
 
-  a = &priv->cache_alloc;
+  width = gtk_widget_get_width (GTK_WIDGET (self));
+  height = gtk_widget_get_height (GTK_WIDGET (self));
 
   for (guint i = 0; i < n_in_points; i++)
     {
-      out_points[i].x = (in_points[i].x * a->width);
-      out_points[i].y = a->height - (ABS (in_points[i].y) * a->height);
+      out_points[i].x = (in_points[i].x * width);
+      out_points[i].y = height - (ABS (in_points[i].y) * height);
     }
 }
 
@@ -319,7 +266,7 @@ sysprof_visualizer_get_x_for_time (SysprofVisualizer *self,
 {
   SysprofVisualizerPrivate *priv = sysprof_visualizer_get_instance_private (self);
 
-  return ((time - priv->begin_time) / (gdouble)priv->duration) * priv->cache_alloc.width;
+  return ((time - priv->begin_time) / (gdouble)priv->duration) * gtk_widget_get_width (GTK_WIDGET (self));
 }
 
 void

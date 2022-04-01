@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <template class="SysprofWindow" parent="AdwApplicationWindow">
+    <style>
+      <class name="org-gnome-Sysprof"/>
+    </style>
+    <property name="default-height">750</property>
+    <property name="icon-name">org.gnome.Sysprof-symbolic</property>
+    <property name="title" translatable="yes">Sysprof</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkHeaderBar">
+            <property name="show-title-buttons">true</property>
+            <property name="visible">true</property>
+            <child type="end">
+              <object class="GtkMenuButton" id="menu_button">
+                <property name="visible">true</property>
+                <child>
+                  <object class="GtkImage">
+                    <property name="icon-name">open-menu-symbolic</property>
+                    <property name="visible">true</property>
+                  </object>
+                </child>
+                <style>
+                  <class name="image-button"/>
+                </style>
+              </object>
+            </child>
+            <child type="start">
+              <object class="GtkButton" id="open_button">
+                <property name="label" translatable="yes">_Open</property>
+                <property name="action-name">app.open-capture</property>
+                <property name="use-underline">true</property>
+                <property name="tooltip-text" translatable="yes">Open Recording… (Ctrl+O)</property>
+                <property name="visible">true</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkLabel" id="stat_label">
+                <property name="margin-end">12</property>
+                <property name="xalign">1</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="SysprofNotebook" id="notebook">
+            <property name="vexpand">true</property>
+            <child>
+              <object class="SysprofDisplay">
+                <property name="visible">true</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

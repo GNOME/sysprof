@@ -141,9 +141,9 @@ copy_array (GArray *ar)
   return ret;
 }
 
-static gboolean
-sysprof_line_visualizer_draw (GtkWidget *widget,
-                              cairo_t   *cr)
+static void
+sysprof_line_visualizer_snapshot (GtkWidget   *widget,
+                                  GtkSnapshot *snapshot)
 {
   static PangoAttrList *attrs = NULL;
   SysprofLineVisualizer *self = (SysprofLineVisualizer *)widget;
@@ -151,28 +151,35 @@ sysprof_line_visualizer_draw (GtkWidget *widget,
   g_autofree gchar *upper = NULL;
   GtkStyleContext *style_context;
   PangoLayout *layout;
-  GtkStateFlags flags;
+  cairo_t *cr;
   GtkAllocation alloc;
   GdkRectangle clip;
   GdkRGBA foreground;
-  gboolean ret;
 
   g_assert (SYSPROF_IS_LINE_VISUALIZER (widget));
-  g_assert (cr != NULL);
+  g_assert (snapshot != NULL);
 
   gtk_widget_get_allocation (widget, &alloc);
 
-  ret = GTK_WIDGET_CLASS (sysprof_line_visualizer_parent_class)->draw (widget, cr);
+  GTK_WIDGET_CLASS (sysprof_line_visualizer_parent_class)->snapshot (widget, snapshot);
 
   if (priv->cache == NULL)
-    return ret;
+    return;
 
+#if 0
   if (!gdk_cairo_get_clip_rectangle (cr, &clip))
     return ret;
+#else
+  clip.x = 0;
+  clip.y = 0;
+  clip.width = alloc.width;
+  clip.height = alloc.height;
+#endif
+
+  cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, alloc.width, alloc.height));
 
   style_context = gtk_widget_get_style_context (widget);
-  flags = gtk_widget_get_state_flags (widget);
-  gtk_style_context_get_color (style_context, flags, &foreground);
+  gtk_style_context_get_color (style_context, &foreground);
 
   for (guint line = 0; line < priv->lines->len; line++)
     {
@@ -205,7 +212,7 @@ sysprof_line_visualizer_draw (GtkWidget *widget,
             }
 
           if (p >= n_fpoints)
-            return ret;
+            goto cleanup;
 
           if (p > 0)
             p--;
@@ -289,7 +296,8 @@ sysprof_line_visualizer_draw (GtkWidget *widget,
       g_clear_object (&layout);
     }
 
-  return ret;
+cleanup:
+  cairo_destroy (cr);
 }
 
 static void
@@ -347,12 +355,10 @@ sysprof_line_visualizer_queue_reload (SysprofLineVisualizer *self)
   g_assert (SYSPROF_IS_LINE_VISUALIZER (self));
 
   if (priv->queued_load == 0)
-    {
-      priv->queued_load = gdk_threads_add_idle_full (G_PRIORITY_LOW,
-                                                     sysprof_line_visualizer_do_reload,
-                                                     self,
-                                                     NULL);
-    }
+    priv->queued_load = g_idle_add_full (G_PRIORITY_LOW,
+                                         sysprof_line_visualizer_do_reload,
+                                         self,
+                                         NULL);
 }
 
 static void
@@ -390,11 +396,7 @@ sysprof_line_visualizer_finalize (GObject *object)
   g_clear_pointer (&priv->cache, point_cache_unref);
   g_clear_pointer (&priv->reader, sysprof_capture_reader_unref);
 
-  if (priv->queued_load != 0)
-    {
-      g_source_remove (priv->queued_load);
-      priv->queued_load = 0;
-    }
+  g_clear_handle_id (&priv->queued_load, g_source_remove);
 
   G_OBJECT_CLASS (sysprof_line_visualizer_parent_class)->finalize (object);
 }
@@ -472,7 +474,7 @@ sysprof_line_visualizer_class_init (SysprofLineVisualizerClass *klass)
   object_class->get_property = sysprof_line_visualizer_get_property;
   object_class->set_property = sysprof_line_visualizer_set_property;
 
-  widget_class->draw = sysprof_line_visualizer_draw;
+  widget_class->snapshot = sysprof_line_visualizer_snapshot;
 
   visualizer_class->set_reader = sysprof_line_visualizer_set_reader;
 

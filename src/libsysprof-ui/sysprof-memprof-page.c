@@ -39,10 +39,12 @@
 
 #include "config.h"
 
-#include <dazzle.h>
 #include <glib/gi18n.h>
 
 #include "../stackstash.h"
+
+#include "egg-paned-private.h"
+#include "egg-three-grid.h"
 
 #include "sysprof-cell-renderer-percent.h"
 #include "sysprof-memprof-page.h"
@@ -59,15 +61,19 @@ typedef struct
   GtkTreeViewColumn        *function_size_column;
   GtkCellRendererText      *function_size_cell;
   GtkStack                 *stack;
-  GtkRadioButton           *summary;
-  GtkRadioButton           *all_allocs;
-  GtkRadioButton           *temp_allocs;
-  GtkRadioButton           *leaked_allocs_button;
+  GtkToggleButton          *summary;
+  GtkToggleButton          *all_allocs;
+  GtkToggleButton          *temp_allocs;
+  GtkToggleButton          *leaked_allocs_button;
   GtkLabel                 *temp_allocs_count;
   GtkLabel                 *num_allocs;
   GtkLabel                 *leaked_allocs;
   GtkLabel                 *peak_allocs;
   GtkListBox               *by_size;
+  GtkWidget                *callgraph;
+  GtkWidget                *summary_page;
+  GtkWidget                *loading_state;
+  GtkWidget                *empty_state;
 
   GCancellable             *cancellable;
 
@@ -174,6 +180,7 @@ update_summary (SysprofMemprofPage    *self,
   SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
   SysprofMemprofStats stats;
   g_autoptr(GString) str = NULL;
+  GtkWidget *child;
 
   g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
   g_assert (SYSPROF_IS_MEMPROF_PROFILE (profile));
@@ -194,9 +201,8 @@ update_summary (SysprofMemprofPage    *self,
   gtk_label_set_label (priv->temp_allocs_count, str->str);
   g_string_truncate (str, 0);
 
-  gtk_container_foreach (GTK_CONTAINER (priv->by_size),
-                         (GtkCallback)gtk_widget_destroy,
-                         NULL);
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (priv->by_size))))
+    gtk_list_box_remove (priv->by_size, child);
 
   for (guint i = 0; i < G_N_ELEMENTS (stats.by_size); i++)
     {
@@ -237,7 +243,7 @@ update_summary (SysprofMemprofPage    *self,
 
       gtk_label_set_label (GTK_LABEL (title), title_str);
       gtk_label_set_xalign (GTK_LABEL (title), 0);
-      dzl_gtk_widget_add_style_class (title, "dim-label");
+      gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (title)), "dim-label");
 
       gtk_widget_set_margin_start (box, 6);
       gtk_widget_set_margin_end (box, 6);
@@ -267,13 +273,11 @@ update_summary (SysprofMemprofPage    *self,
       gtk_level_bar_set_value (GTK_LEVEL_BAR (prog),
                                stats.by_size[i].n_allocs);
 
-      gtk_container_add (GTK_CONTAINER (row), box);
-      gtk_container_add (GTK_CONTAINER (box), title);
-      gtk_container_add (GTK_CONTAINER (box), prog);
-      gtk_container_add (GTK_CONTAINER (box), subtitle);
-      gtk_container_add (GTK_CONTAINER (priv->by_size), row);
-
-      gtk_widget_show_all (row);
+      gtk_list_box_row_set_child (GTK_LIST_BOX_ROW (row), box);
+      gtk_box_append (GTK_BOX (box), title);
+      gtk_box_append (GTK_BOX (box), prog);
+      gtk_box_append (GTK_BOX (box), subtitle);
+      gtk_list_box_append (priv->by_size, row);
     }
 }
 
@@ -310,7 +314,7 @@ sysprof_memprof_page_load (SysprofMemprofPage    *self,
 
   if (sysprof_memprof_profile_is_empty (profile))
     {
-      gtk_stack_set_visible_child_name (priv->stack, "summary");
+      gtk_stack_set_visible_child (priv->stack, priv->summary_page);
       return;
     }
 
@@ -345,7 +349,7 @@ sysprof_memprof_page_load (SysprofMemprofPage    *self,
       gtk_tree_selection_select_iter (selection, &iter);
     }
 
-  gtk_stack_set_visible_child_name (priv->stack, "callgraph");
+  gtk_stack_set_visible_child (priv->stack, priv->callgraph);
 
   g_clear_object (&functions);
 }
@@ -357,7 +361,7 @@ _sysprof_memprof_page_set_failed (SysprofMemprofPage *self)
 
   g_return_if_fail (SYSPROF_IS_MEMPROF_PAGE (self));
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 }
 
 static void
@@ -376,7 +380,7 @@ sysprof_memprof_page_unload (SysprofMemprofPage *self)
   gtk_tree_view_set_model (priv->functions_view, NULL);
   gtk_tree_view_set_model (priv->descendants_view, NULL);
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 }
 
 /**
@@ -887,7 +891,7 @@ static void
 copy_tree_view_selection (GtkTreeView *tree_view)
 {
   g_autoptr(GString) str = NULL;
-  GtkClipboard *clipboard;
+  GdkClipboard *clipboard;
 
   g_assert (GTK_IS_TREE_VIEW (tree_view));
 
@@ -896,24 +900,25 @@ copy_tree_view_selection (GtkTreeView *tree_view)
                                        copy_tree_view_selection_cb,
                                        str);
 
-  clipboard = gtk_widget_get_clipboard (GTK_WIDGET (tree_view), GDK_SELECTION_CLIPBOARD);
-  gtk_clipboard_set_text (clipboard, str->str, str->len);
+  clipboard = gtk_widget_get_clipboard (GTK_WIDGET (tree_view));
+  gdk_clipboard_set_text (clipboard, str->str);
 }
 
 static void
-sysprof_memprof_page_copy_cb (GtkWidget         *widget,
-                             SysprofMemprofPage *self)
+sysprof_memprof_page_copy_cb (GtkWidget  *widget,
+                              const char *action_name,
+                              GVariant   *param)
 {
+  SysprofMemprofPage *self = (SysprofMemprofPage *)widget;
   SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
-  GtkWidget *toplevel;
   GtkWidget *focus;
+  GtkRoot *toplevel;
 
-  g_assert (GTK_IS_WIDGET (widget));
   g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
 
-  if (!(toplevel = gtk_widget_get_toplevel (widget)) ||
-      !GTK_IS_WINDOW (toplevel) ||
-      !(focus = gtk_window_get_focus (GTK_WINDOW (toplevel))))
+  if (!(toplevel = gtk_widget_get_root (widget)) ||
+      !GTK_IS_ROOT (toplevel) ||
+      !(focus = gtk_root_get_focus (toplevel)))
     return;
 
   if (focus == GTK_WIDGET (priv->descendants_view))
@@ -973,7 +978,7 @@ sysprof_memprof_page_load_async (SysprofPage             *page,
   else
     g_set_object (&priv->cancellable, cancellable);
 
-  gtk_stack_set_visible_child_name (priv->stack, "loading");
+  gtk_stack_set_visible_child (priv->stack, priv->loading_state);
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_memprof_page_load_async);
@@ -1015,12 +1020,12 @@ do_allocs (SysprofMemprofPage *self,
 static void
 mode_notify_active (SysprofMemprofPage *self,
                     GParamSpec         *pspec,
-                    GtkRadioButton     *button)
+                    GtkToggleButton    *button)
 {
   SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
 
   g_assert (SYSPROF_IS_MEMPROF_PAGE (self));
-  g_assert (GTK_IS_RADIO_BUTTON (button));
+  g_assert (GTK_IS_TOGGLE_BUTTON (button));
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
     {
@@ -1106,7 +1111,6 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   SysprofPageClass *page_class = SYSPROF_PAGE_CLASS (klass);
-  GtkBindingSet *bindings;
 
   object_class->finalize = sysprof_memprof_page_finalize;
   object_class->get_property = sysprof_memprof_page_get_property;
@@ -1152,10 +1156,18 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, leaked_allocs);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, leaked_allocs_button);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, peak_allocs);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, loading_state);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, empty_state);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, summary_page);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, callgraph);
 
-  bindings = gtk_binding_set_by_class (klass);
-  gtk_binding_entry_add_signal (bindings, GDK_KEY_Left, GDK_MOD1_MASK, "go-previous", 0);
+  gtk_widget_class_install_action (widget_class, "page.copy", NULL, sysprof_memprof_page_copy_cb);
 
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_c, GDK_CONTROL_MASK, "page.copy", NULL);
+  gtk_widget_class_add_binding_signal (widget_class, GDK_KEY_Left, GDK_ALT_MASK, "go-previous", NULL);
+
+  g_type_ensure (EGG_TYPE_PANED);
+  g_type_ensure (EGG_TYPE_THREE_GRID);
   g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_PERCENT);
 }
 
@@ -1163,7 +1175,6 @@ static void
 sysprof_memprof_page_init (SysprofMemprofPage *self)
 {
   SysprofMemprofPagePrivate *priv = sysprof_memprof_page_get_instance_private (self);
-  DzlShortcutController *controller;
   GtkTreeSelection *selection;
   GtkCellRenderer *cell;
 
@@ -1172,7 +1183,7 @@ sysprof_memprof_page_init (SysprofMemprofPage *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
-  gtk_stack_set_visible_child_name (priv->stack, "empty-state");
+  gtk_stack_set_visible_child (priv->stack, priv->empty_state);
 
   gtk_list_box_set_header_func (priv->by_size, sep_header_func, NULL, NULL);
 
@@ -1246,16 +1257,6 @@ sysprof_memprof_page_init (SysprofMemprofPage *self)
 
   gtk_tree_selection_set_mode (gtk_tree_view_get_selection (priv->descendants_view),
                                GTK_SELECTION_MULTIPLE);
-
-  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
-
-  dzl_shortcut_controller_add_command_callback (controller,
-                                                "org.gnome.sysprof3.capture.copy",
-                                                "<Control>c",
-                                                DZL_SHORTCUT_PHASE_BUBBLE,
-                                                (GtkCallback) sysprof_memprof_page_copy_cb,
-                                                self,
-                                                NULL);
 }
 
 typedef struct _Descendant Descendant;
@@ -1542,7 +1543,7 @@ _sysprof_memprof_page_set_loading (SysprofMemprofPage *self,
     priv->loading--;
 
   if (priv->loading)
-    gtk_stack_set_visible_child_name (priv->stack, "loading");
+    gtk_stack_set_visible_child (priv->stack, priv->loading_state);
   else
-    gtk_stack_set_visible_child_name (priv->stack, "callgraph");
+    gtk_stack_set_visible_child (priv->stack, priv->callgraph);
 }

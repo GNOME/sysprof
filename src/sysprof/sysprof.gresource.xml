@@ -7,9 +7,9 @@
 
     <!-- Theme overrides -->
     <file compressed="true">theme/shared.css</file>
-    <file compressed="true">theme/Adwaita-shared.css</file>
+  </gresource>
 
-    <!-- UI Files -->
-    <file preprocess="xml-stripblanks">ui/sysprof-window.ui</file>
+  <gresource prefix="/org/gnome/sysprof/ui">
+    <file preprocess="xml-stripblanks">sysprof-window.ui</file>
   </gresource>
 </gresources>

@@ -25,20 +25,22 @@
 #include <glib/gi18n.h>
 #include <sysprof-ui.h>
 
+#include "egg-binding-group.h"
+
 #include "sysprof-window.h"
 
 struct _SysprofWindow
 {
-  DzlApplicationWindow  parent_instance;
+  AdwApplicationWindow  parent_instance;
 
-  DzlBindingGroup      *bindings;
+  EggBindingGroup      *bindings;
 
   SysprofNotebook      *notebook;
   GtkButton            *open_button;
   GtkMenuButton        *menu_button;
 };
 
-G_DEFINE_TYPE (SysprofWindow, sysprof_window, DZL_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE (SysprofWindow, sysprof_window, ADW_TYPE_APPLICATION_WINDOW)
 
 /**
  * sysprof_window_new:
@@ -63,9 +65,11 @@ sysprof_window_notify_can_replay_cb (SysprofWindow   *self,
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (SYSPROF_IS_NOTEBOOK (notebook));
 
+#if 0
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "replay-capture",
                              "enabled", sysprof_notebook_get_can_replay (notebook),
                              NULL);
+#endif
 }
 
 static void
@@ -76,9 +80,11 @@ sysprof_window_notify_can_save_cb (SysprofWindow   *self,
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (SYSPROF_IS_NOTEBOOK (notebook));
 
+#if 0
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "save-capture",
                              "enabled", sysprof_notebook_get_can_save (notebook),
                              NULL);
+#endif
 }
 
 static void
@@ -105,7 +111,7 @@ switch_tab_cb (GSimpleAction *action,
   g_return_if_fail (g_variant_is_of_type (param, G_VARIANT_TYPE_INT32));
 
   page = g_variant_get_int32 (param);
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (self->notebook), page - 1);
+  sysprof_notebook_set_current_page (self->notebook, page - 1);
 }
 
 static void
@@ -114,20 +120,17 @@ close_tab_cb (GSimpleAction *action,
               gpointer       user_data)
 {
   SysprofWindow *self = user_data;
-  GtkNotebook *notebook;
 
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
 
-  notebook = GTK_NOTEBOOK (self->notebook);
-
-  if (gtk_notebook_get_n_pages (notebook) == 1)
+  if (sysprof_notebook_get_n_pages (self->notebook) == 1)
     {
-      GtkWidget *child = gtk_notebook_get_nth_page (notebook, 0);
+      SysprofDisplay *child = sysprof_notebook_get_nth_page (self->notebook, 0);
 
       if (SYSPROF_IS_DISPLAY (child) &&
           sysprof_display_is_empty (SYSPROF_DISPLAY (child)))
         {
-          gtk_widget_destroy (GTK_WIDGET (self));
+          gtk_window_destroy (GTK_WINDOW (self));
           return;
         }
     }
@@ -175,7 +178,7 @@ sysprof_window_finalize (GObject *object)
 {
   SysprofWindow *self = (SysprofWindow *)object;
 
-  dzl_binding_group_set_source (self->bindings, NULL);
+  egg_binding_group_set_source (self->bindings, NULL);
   g_clear_object (&self->bindings);
 
   G_OBJECT_CLASS (sysprof_window_parent_class)->finalize (object);
@@ -194,6 +197,17 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, open_button);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, notebook);
 
+#if 0
+  /* Switch to GtkShortcutController class bindings */
+  DzlShortcutController *controller;
+  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
+  dzl_shortcut_controller_add_command_action (controller,
+                                              "org.gnome.sysprof3.stop-recording",
+                                              "Escape",
+                                              DZL_SHORTCUT_PHASE_BUBBLE,
+                                              "win.stop-recording");
+#endif
+
   g_type_ensure (SYSPROF_TYPE_NOTEBOOK);
   g_type_ensure (SYSPROF_TYPE_DISPLAY);
 }
@@ -201,7 +215,6 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 static void
 sysprof_window_init (SysprofWindow *self)
 {
-  DzlShortcutController *controller;
   static GActionEntry actions[] = {
     { "close-tab", close_tab_cb },
     { "new-tab", new_tab_cb },
@@ -210,8 +223,12 @@ sysprof_window_init (SysprofWindow *self)
     { "save-capture", save_capture_cb },
     { "stop-recording", stop_recording_cb },
   };
+  GMenu *menu;
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  menu = gtk_application_get_menu_by_id (GTK_APPLICATION (g_application_get_default ()), "win-menu");
+  gtk_menu_button_set_menu_model (self->menu_button, G_MENU_MODEL (menu));
 
   g_action_map_add_action_entries (G_ACTION_MAP (self),
                                    actions,
@@ -230,24 +247,20 @@ sysprof_window_init (SysprofWindow *self)
                            self,
                            G_CONNECT_SWAPPED);
 
-  self->bindings = dzl_binding_group_new ();
-  dzl_binding_group_bind (self->bindings, "title", self, "title", G_BINDING_SYNC_CREATE);
+  self->bindings = egg_binding_group_new ();
+  egg_binding_group_bind (self->bindings, "title", self, "title", G_BINDING_SYNC_CREATE);
   g_object_bind_property (self->notebook, "current", self->bindings, "source",
                           G_BINDING_SYNC_CREATE);
 
-  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
-  dzl_shortcut_controller_add_command_action (controller,
-                                              "org.gnome.sysprof3.stop-recording",
-                                              "Escape",
-                                              DZL_SHORTCUT_PHASE_BUBBLE,
-                                              "win.stop-recording");
-
+#if 0
+  /* Switch to using gtk_widget_action_set_enabled() */
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "save-capture",
                              "enabled", FALSE,
                              NULL);
   dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "replay-capture",
                              "enabled", FALSE,
                              NULL);
+#endif
 }
 
 void
@@ -260,12 +273,30 @@ sysprof_window_open (SysprofWindow *self,
   sysprof_notebook_open (self->notebook, file);
 }
 
+static void
+sysprof_window_open_from_dialog_cb (SysprofWindow        *self,
+                                    int                   response,
+                                    GtkFileChooserNative *dialog)
+{
+  g_assert (SYSPROF_IS_WINDOW (self));
+  g_assert (GTK_IS_FILE_CHOOSER_NATIVE (dialog));
+
+  if (response == GTK_RESPONSE_ACCEPT)
+    {
+      g_autoptr(GFile) file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+
+      if (g_file_is_native (file))
+        sysprof_window_open (self, file);
+    }
+
+  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dialog));
+}
+
 void
 sysprof_window_open_from_dialog (SysprofWindow *self)
 {
   GtkFileChooserNative *dialog;
   GtkFileFilter *filter;
-  gint response;
 
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
 
@@ -278,8 +309,6 @@ sysprof_window_open_from_dialog (SysprofWindow *self)
                                         /* Translators: This is a button. */
                                         _("Cancel"));
 
-  gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (dialog), TRUE);
-
   filter = gtk_file_filter_new ();
   gtk_file_filter_set_name (filter, _("Sysprof Captures"));
   gtk_file_filter_add_pattern (filter, "*.syscap");
@@ -290,17 +319,13 @@ sysprof_window_open_from_dialog (SysprofWindow *self)
   gtk_file_filter_add_pattern (filter, "*");
   gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog), filter);
 
-  response = gtk_native_dialog_run (GTK_NATIVE_DIALOG (dialog));
+  g_signal_connect_object (dialog,
+                           "response",
+                           G_CALLBACK (sysprof_window_open_from_dialog_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 
-  if (response == GTK_RESPONSE_ACCEPT)
-    {
-      g_autoptr(GFile) file = NULL;
-
-      file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-      sysprof_window_open (self, file);
-    }
-
-  gtk_native_dialog_destroy (GTK_NATIVE_DIALOG (dialog));
+  gtk_native_dialog_show (GTK_NATIVE_DIALOG (dialog));
 }
 
 void
@@ -312,8 +337,6 @@ sysprof_window_new_tab (SysprofWindow *self)
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
 
   display = sysprof_display_new ();
-  page = gtk_notebook_insert_page (GTK_NOTEBOOK (self->notebook), display, NULL, -1);
-  gtk_widget_show (display);
-
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (self->notebook), page);
+  page = sysprof_notebook_append (self->notebook, SYSPROF_DISPLAY (display));
+  sysprof_notebook_set_current_page (self->notebook, page);
 }

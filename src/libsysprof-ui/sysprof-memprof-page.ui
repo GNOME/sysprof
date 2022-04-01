@@ -1,45 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="SysprofMemprofPage" parent="SysprofPage">
     <child>
       <object class="GtkBox">
         <property name="orientation">vertical</property>
-        <property name="visible">true</property>
         <child>
-          <object class="GtkBox">
+          <object class="GtkCenterBox">
             <property name="orientation">horizontal</property>
-            <property name="visible">true</property>
             <child type="center">
               <object class="GtkBox">
                 <property name="margin-top">6</property>
                 <property name="margin-bottom">6</property>
                 <property name="orientation">horizontal</property>
                 <property name="homogeneous">true</property>
-                <property name="visible">true</property>
                 <style>
                   <class name="linked"/>
                 </style>
                 <child>
-                  <object class="GtkRadioButton" id="summary">
+                  <object class="GtkToggleButton" id="summary">
                     <property name="label" translatable="yes">Summary</property>
-                    <property name="draw-indicator">false</property>
-                    <property name="visible">true</property>
                     <property name="active">false</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="all_allocs">
+                  <object class="GtkToggleButton" id="all_allocs">
                     <property name="label" translatable="yes">All Allocations</property>
-                    <property name="draw-indicator">false</property>
-                    <property name="visible">true</property>
                     <property name="group">summary</property>
                     <property name="active">true</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="temp_allocs">
+                  <object class="GtkToggleButton" id="temp_allocs">
                     <property name="label" translatable="yes">Temporary Allocations</property>
-                    <property name="draw-indicator">false</property>
-                    <property name="visible">true</property>
                     <property name="active">false</property>
                     <property name="group">summary</property>
                   </object>
@@ -48,7 +40,6 @@
                   <object class="GtkRadioButton" id="leaked_allocs_button">
                     <property name="label" translatable="yes">Leaked Allocations</property>
                     <property name="draw-indicator">false</property>
-                    <property name="visible">true</property>
                     <property name="active">false</property>
                     <property name="group">summary</property>
                   </object>
@@ -60,27 +51,25 @@
         <child>
           <object class="GtkSeparator">
             <property name="orientation">horizontal</property>
-            <property name="visible">true</property>
           </object>
         </child>
         <child>
           <object class="GtkStack" id="stack">
-            <property name="visible">true</property>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkScrolledWindow" id="summary_page">
                 <property name="hscrollbar-policy">never</property>
-                <property name="visible">true</property>
                 <child>
                   <object class="GtkBox">
-                    <property name="margin">16</property>
+                    <property name="margin-top">16</property>
+                    <property name="margin-bottom">16</property>
+                    <property name="margin-start">16</property>
+                    <property name="margin-end">16</property>
                     <property name="orientation">vertical</property>
-                    <property name="visible">true</property>
                     <child>
-                      <object class="DzlThreeGrid">
-                        <property name="expand">true</property>
+                      <object class="EggThreeGrid">
+                        <property name="hexpand">true</property>
                         <property name="row-spacing">6</property>
                         <property name="column-spacing">18</property>
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkLabel">
                             <property name="label">Peak Allocation</property>
@@ -89,47 +78,45 @@
                             <style>
                               <class name="dim-label"/>
                             </style>
+                            <layout>
+                              <property name="column">left</property>
+                              <property name="row">0</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">left</property>
-                            <property name="row">0</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="peak_allocs">
                             <property name="xalign">0</property>
                             <property name="selectable">true</property>
                             <property name="visible">false</property>
+                            <layout>
+                              <property name="column">center</property>
+                              <property name="row">0</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">center</property>
-                            <property name="row">0</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel">
                             <property name="label">Number of Allocations</property>
                             <property name="halign">end</property>
-                            <property name="visible">true</property>
                             <style>
                               <class name="dim-label"/>
                             </style>
+                            <layout>
+                              <property name="column">left</property>
+                              <property name="row">1</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">left</property>
-                            <property name="row">1</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="num_allocs">
                             <property name="xalign">0</property>
                             <property name="selectable">true</property>
-                            <property name="visible">true</property>
+                            <layout>
+                              <property name="column">center</property>
+                              <property name="row">1</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">center</property>
-                            <property name="row">1</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel">
@@ -139,104 +126,92 @@
                             <style>
                               <class name="dim-label"/>
                             </style>
+                            <layout>
+                              <property name="column">left</property>
+                              <property name="row">2</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">left</property>
-                            <property name="row">2</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="leaked_allocs">
                             <property name="xalign">0</property>
                             <property name="selectable">true</property>
                             <property name="visible">false</property>
+                            <layout>
+                              <property name="column">center</property>
+                              <property name="row">2</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">center</property>
-                            <property name="row">2</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel">
                             <property name="label">Temporary Allocations</property>
                             <property name="halign">end</property>
-                            <property name="visible">true</property>
                             <style>
                               <class name="dim-label"/>
                             </style>
+                            <layout>
+                              <property name="column">left</property>
+                              <property name="row">3</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">left</property>
-                            <property name="row">3</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="temp_allocs_count">
                             <property name="xalign">0</property>
                             <property name="selectable">true</property>
                             <property name="width-chars">50</property>
-                            <property name="visible">true</property>
+                            <layout>
+                              <property name="column">center</property>
+                              <property name="row">3</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">center</property>
-                            <property name="row">3</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkLabel">
                             <property name="label">Allocations by Size</property>
                             <property name="halign">end</property>
                             <property name="valign">start</property>
-                            <property name="visible">true</property>
                             <style>
                               <class name="dim-label"/>
                             </style>
+                            <layout>
+                              <property name="column">left</property>
+                              <property name="row">4</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">left</property>
-                            <property name="row">4</property>
-                          </packing>
                         </child>
                         <child>
                           <object class="GtkFrame">
-                            <property name="visible">true</property>
                             <child>
                               <object class="GtkListBox" id="by_size">
-                                <property name="visible">true</property>
                               </object>
                             </child>
+                            <layout>
+                              <property name="column">center</property>
+                              <property name="row">4</property>
+                            </layout>
                           </object>
-                          <packing>
-                            <property name="column">center</property>
-                            <property name="row">4</property>
-                          </packing>
                         </child>
                       </object>
                     </child>
                   </object>
                 </child>
               </object>
-              <packing>
-                <property name="name">summary</property>
-              </packing>
             </child>
             <child>
-              <object class="GtkPaned">
+              <object class="EggPaned" id="callgraph">
                 <property name="orientation">horizontal</property>
-                <property name="position">450</property>
-                <property name="expand">true</property>
-                <property name="visible">true</property>
+                <property name="vexpand">true</property>
                 <child>
-                  <object class="GtkPaned">
+                  <object class="EggPaned">
+                    <property name="width-request">400</property>
                     <property name="orientation">vertical</property>
-                    <property name="visible">true</property>
                     <child>
                       <object class="GtkScrolledWindow">
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkTreeView" id="functions_view">
                             <property name="fixed-height-mode">true</property>
-                            <property name="visible">true</property>
                             <child>
                               <object class="GtkTreeViewColumn" id="function_name_column">
                                 <property name="expand">true</property>
@@ -289,16 +264,11 @@
                           </object>
                         </child>
                       </object>
-                      <packing>
-                        <property name="resize">true</property>
-                      </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkTreeView" id="callers_view">
-                            <property name="visible">true</property>
                             <child>
                               <object class="GtkTreeViewColumn" id="callers_name_column">
                                 <property name="expand">true</property>
@@ -351,18 +321,13 @@
                           </object>
                         </child>
                       </object>
-                      <packing>
-                        <property name="resize">true</property>
-                      </packing>
                     </child>
                   </object>
                 </child>
                 <child>
                   <object class="GtkScrolledWindow">
-                    <property name="visible">true</property>
                     <child>
                       <object class="GtkTreeView" id="descendants_view">
-                        <property name="visible">true</property>
                         <child>
                           <object class="GtkTreeViewColumn" id="descendants_name_column">
                             <property name="expand">true</property>
@@ -421,31 +386,20 @@
                   </object>
                 </child>
               </object>
-              <packing>
-                <property name="name">callgraph</property>
-              </packing>
             </child>
             <child>
-              <object class="DzlEmptyState">
+              <object class="AdwStatusPage" id="loading_state">
                 <property name="icon-name">content-loading-symbolic</property>
                 <property name="title" translatable="yes">Analyzing Memory Allocations</property>
-                <property name="subtitle" translatable="yes">Sysprof is busy analyzing memory allocations.</property>
-                <property name="visible">true</property>
+                <property name="description" translatable="yes">Sysprof is busy analyzing memory allocations.</property>
               </object>
-              <packing>
-                <property name="name">loading</property>
-              </packing>
             </child>
             <child>
-              <object class="DzlEmptyState">
+              <object class="AdwStatusPage" id="empty_state">
                 <property name="icon-name">computer-fail-symbolic</property>
                 <property name="title" translatable="yes">Not Enough Samples</property>
-                <property name="subtitle" translatable="yes">More samples are necessary to display a callgraph.</property>
-                <property name="visible">false</property>
+                <property name="description" translatable="yes">More samples are necessary to display a callgraph.</property>
               </object>
-              <packing>
-                <property name="name">empty-state</property>
-              </packing>
             </child>
           </object>
         </child>

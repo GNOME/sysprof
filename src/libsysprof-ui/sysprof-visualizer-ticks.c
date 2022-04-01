@@ -135,10 +135,11 @@ update_label_text (PangoLayout *layout,
 
 static gboolean
 draw_ticks (SysprofVisualizerTicks *self,
-            cairo_t           *cr,
-            GtkAllocation     *area,
-            gint               ticks,
-            gboolean           label_mode)
+            GtkSnapshot            *snapshot,
+            GtkAllocation          *area,
+            gint                    ticks,
+            gboolean                label_mode,
+            const GdkRGBA          *color)
 {
   GtkAllocation alloc;
   gint64 begin_time, end_time;
@@ -146,7 +147,7 @@ draw_ticks (SysprofVisualizerTicks *self,
   gint count = 0;
 
   g_assert (SYSPROF_IS_VISUALIZER_TICKS (self));
-  g_assert (cr != NULL);
+  g_assert (snapshot != NULL);
   g_assert (area != NULL);
   g_assert (ticks >= 0);
   g_assert (ticks < N_TICKS);
@@ -195,12 +196,16 @@ draw_ticks (SysprofVisualizerTicks *self,
           if (x < (last_x2 + MIN_TICK_DISTANCE))
             continue;
 
-          cairo_move_to (cr, (gint)x + 2.5 - (gint)half, 2);
           update_label_text (layout, t - begin_time, want_msec);
           pango_layout_get_pixel_size (layout, &w, &h);
 
           if (x + w <= alloc.width)
-            pango_cairo_show_layout (cr, layout);
+            {
+              gtk_snapshot_save (snapshot);
+              gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT ((int)x + 2.5 - (int)half, 2));
+              gtk_snapshot_append_layout (snapshot, layout, color);
+              gtk_snapshot_restore (snapshot);
+            }
 
           last_x2 = x + w;
         }
@@ -212,48 +217,44 @@ draw_ticks (SysprofVisualizerTicks *self,
       for (gint64 t = begin_time; t <= end_time; t += tick_sizing[ticks].span)
         {
           gdouble x = sysprof_visualizer_get_x_for_time (SYSPROF_VISUALIZER (self), t);
-          cairo_move_to (cr, (gint)x - .5 - (gint)half, alloc.height);
-          cairo_line_to (cr, (gint)x - .5 - (gint)half, alloc.height - tick_sizing[ticks].height);
+
+          gtk_snapshot_append_color (snapshot, color,
+                                     &GRAPHENE_RECT_INIT ((int)x - .5 - (int)half,
+                                                          alloc.height,
+                                                          (int)x - .5 - (int)half + tick_sizing[ticks].width,
+                                                          alloc.height - tick_sizing[ticks].height));
           count++;
         }
-
-      cairo_set_line_width (cr, tick_sizing[ticks].width);
-      cairo_stroke (cr);
     }
 
   return count > 2;
 }
 
-static gboolean
-sysprof_visualizer_ticks_draw (GtkWidget *widget,
-                               cairo_t   *cr)
+static void
+sysprof_visualizer_ticks_snapshot (GtkWidget   *widget,
+                                   GtkSnapshot *snapshot)
 {
   SysprofVisualizerTicks *self = SYSPROF_VISUALIZER_TICKS (widget);
   GtkStyleContext *style;
   GtkAllocation alloc;
-  GtkStateFlags state;
   gint64 timespan;
   GdkRGBA color;
 
   g_assert (SYSPROF_IS_VISUALIZER_TICKS (self));
-  g_assert (cr != NULL);
+  g_assert (snapshot != NULL);
 
   timespan = sysprof_visualizer_get_duration (SYSPROF_VISUALIZER (self));
   if (timespan == 0)
-    return GDK_EVENT_PROPAGATE;
-
-  style = gtk_widget_get_style_context (widget);
+    return;
 
   gtk_widget_get_allocation (GTK_WIDGET (self), &alloc);
   alloc.x = 0;
   alloc.y = 0;
 
-  gtk_render_background (style, cr, 0, 0, alloc.width, alloc.height);
+  style = gtk_widget_get_style_context (widget);
+  gtk_style_context_get_color (style, &color);
 
-  state = gtk_widget_get_state_flags (widget);
-  gtk_style_context_get_color (style, state, &color);
-
-  gdk_cairo_set_source_rgba (cr, &color);
+  gtk_snapshot_render_background (snapshot, style, 0, 0, alloc.width, alloc.height);
 
   /*
    * We need to discover up to what level we will draw tick marks.
@@ -272,27 +273,32 @@ sysprof_visualizer_ticks_draw (GtkWidget *widget,
 
       for (guint j = i; j > 0; j--)
         {
-          if (draw_ticks (self, cr, &alloc, j - 1, FALSE))
+          if (draw_ticks (self, snapshot, &alloc, j - 1, FALSE, &color))
             largest_match = j - 1;
         }
 
       if (largest_match != -1)
-        draw_ticks (self, cr, &alloc, largest_match, TRUE);
+        draw_ticks (self, snapshot, &alloc, largest_match, TRUE, &color);
 
       break;
     }
-
-  return GDK_EVENT_PROPAGATE;
 }
 
 static void
-sysprof_visualizer_ticks_get_preferred_height (GtkWidget *widget,
-                                               gint      *min_height,
-                                               gint      *nat_height)
+sysprof_visualizer_ticks_measure (GtkWidget      *widget,
+                                  GtkOrientation  orientation,
+                                  int             for_size,
+                                  int            *minimum,
+                                  int            *natural,
+                                  int            *minimum_baseline,
+                                  int            *natural_baseline)
 {
   g_assert (SYSPROF_IS_VISUALIZER_TICKS (widget));
 
-  *min_height = *nat_height = tick_sizing[0].height + LABEL_HEIGHT_PX;
+  if (orientation == GTK_ORIENTATION_VERTICAL)
+    *minimum = *natural = tick_sizing[0].height + LABEL_HEIGHT_PX;
+  else
+    *minimum = *natural = 0;
 }
 
 static void
@@ -300,8 +306,8 @@ sysprof_visualizer_ticks_class_init (SysprofVisualizerTicksClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  widget_class->draw = sysprof_visualizer_ticks_draw;
-  widget_class->get_preferred_height = sysprof_visualizer_ticks_get_preferred_height;
+  widget_class->snapshot = sysprof_visualizer_ticks_snapshot;
+  widget_class->measure = sysprof_visualizer_ticks_measure;
 
   gtk_widget_class_set_css_name (widget_class, "SysprofVisualizerTicks");
 }

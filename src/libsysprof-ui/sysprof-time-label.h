@@ -26,7 +26,7 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_TIME_LABEL (sysprof_time_label_get_type())
 
-G_DECLARE_FINAL_TYPE (SysprofTimeLabel, sysprof_time_label, SYSPROF, TIME_LABEL, GtkBox)
+G_DECLARE_FINAL_TYPE (SysprofTimeLabel, sysprof_time_label, SYSPROF, TIME_LABEL, GtkWidget)
 
 void sysprof_time_label_set_duration (SysprofTimeLabel *self,
                                       guint             duration);

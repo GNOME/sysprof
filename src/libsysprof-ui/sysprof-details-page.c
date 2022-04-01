@@ -22,19 +22,20 @@
 
 #include "config.h"
 
-#include <dazzle.h>
 #include <glib/gi18n.h>
 #include <string.h>
 
 #include "sysprof-details-page.h"
 #include "sysprof-ui-private.h"
 
+#include "egg-three-grid.h"
+
 struct _SysprofDetailsPage
 {
-  SysprofPage   parent_instance;
+  GtkWidget     parent_instance;
 
   /* Template Objects */
-  DzlThreeGrid *three_grid;
+  EggThreeGrid *three_grid;
   GtkListStore *marks_store;
   GtkTreeView  *marks_view;
   GtkLabel     *counters;
@@ -51,7 +52,7 @@ struct _SysprofDetailsPage
   guint         next_row;
 };
 
-G_DEFINE_TYPE (SysprofDetailsPage, sysprof_details_page, GTK_TYPE_BIN)
+G_DEFINE_TYPE (SysprofDetailsPage, sysprof_details_page, GTK_TYPE_WIDGET)
 
 #if GLIB_CHECK_VERSION(2, 56, 0)
 # define _g_date_time_new_from_iso8601 g_date_time_new_from_iso8601
@@ -77,11 +78,27 @@ _g_date_time_new_from_iso8601 (const gchar *str,
 #endif
 
 static void
+sysprof_details_page_dispose (GObject *object)
+{
+  SysprofDetailsPage *self = (SysprofDetailsPage *)object;
+  GtkWidget *child;
+
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    gtk_widget_unparent (child);
+
+  G_OBJECT_CLASS (sysprof_details_page_parent_class)->dispose (object);
+}
+
+static void
 sysprof_details_page_class_init (SysprofDetailsPageClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+  object_class->dispose = sysprof_details_page_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-details-page.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, allocations);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, counters);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, cpu_label);
@@ -96,7 +113,7 @@ sysprof_details_page_class_init (SysprofDetailsPageClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, start_time);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, three_grid);
 
-  g_type_ensure (DZL_TYPE_THREE_GRID);
+  g_type_ensure (EGG_TYPE_THREE_GRID);
 }
 
 static void
@@ -264,16 +281,10 @@ sysprof_details_page_add_item (SysprofDetailsPage *self,
   g_return_if_fail (!center || GTK_IS_WIDGET (center));
 
   if (left)
-    gtk_container_add_with_properties (GTK_CONTAINER (self->three_grid), left,
-                                       "row", self->next_row,
-                                       "column", DZL_THREE_GRID_COLUMN_LEFT,
-                                       NULL);
+    egg_three_grid_add (self->three_grid, left, self->next_row, EGG_THREE_GRID_COLUMN_LEFT);
 
   if (center)
-    gtk_container_add_with_properties (GTK_CONTAINER (self->three_grid), center,
-                                       "row", self->next_row,
-                                       "column", DZL_THREE_GRID_COLUMN_CENTER,
-                                       NULL);
+    egg_three_grid_add (self->three_grid, center, self->next_row, EGG_THREE_GRID_COLUMN_CENTER);
 
   self->next_row++;
 }

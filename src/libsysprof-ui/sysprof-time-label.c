@@ -26,17 +26,37 @@
 
 struct _SysprofTimeLabel
 {
-  GtkBox parent;
-
-  GtkLabel *minutes;
-  GtkLabel *seconds;
+  GtkWidget     parent_instance;
+  GtkCenterBox *box;
+  GtkLabel     *minutes;
+  GtkLabel     *seconds;
 };
 
-G_DEFINE_TYPE (SysprofTimeLabel, sysprof_time_label, GTK_TYPE_BOX)
+G_DEFINE_TYPE (SysprofTimeLabel, sysprof_time_label, GTK_TYPE_WIDGET)
+
+static void
+sysprof_time_label_dispose (GObject *object)
+{
+  SysprofTimeLabel *self = (SysprofTimeLabel *)object;
+
+  if (self->box)
+    {
+      gtk_widget_unparent (GTK_WIDGET (self->box));
+      self->box = NULL;
+    }
+
+  G_OBJECT_CLASS (sysprof_time_label_parent_class)->dispose (object);
+}
 
 static void
 sysprof_time_label_class_init (SysprofTimeLabelClass *klass)
 {
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+  object_class->dispose = sysprof_time_label_dispose;
+
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
 }
 
 static void
@@ -48,36 +68,32 @@ sysprof_time_label_init (SysprofTimeLabel *self)
   pango_attr_list_insert (attrs, pango_attr_scale_new (4));
   pango_attr_list_insert (attrs, pango_attr_weight_new (PANGO_WEIGHT_BOLD));
 
-  gtk_box_set_spacing (GTK_BOX (self), 3);
+  self->box = GTK_CENTER_BOX (gtk_center_box_new ());
+  gtk_widget_set_parent (GTK_WIDGET (self->box), GTK_WIDGET (self));
 
   self->minutes = g_object_new (GTK_TYPE_LABEL,
                                 "attributes", attrs,
-                                "visible", TRUE,
                                 "xalign", 1.0f,
+                                "hexpand", TRUE,
                                 NULL);
-  gtk_container_add_with_properties (GTK_CONTAINER (self), GTK_WIDGET (self->minutes),
-                                     "pack-type", GTK_PACK_START,
-                                     "expand", TRUE,
-                                     "fill", TRUE,
-                                     NULL);
+  gtk_center_box_set_start_widget (self->box, GTK_WIDGET (self->minutes));
 
   sep = g_object_new (GTK_TYPE_LABEL,
+                      "margin-start", 3,
+                      "margin-end", 3,
                       "attributes", attrs,
                       "visible", TRUE,
                       "label", ":",
                       NULL);
-  gtk_box_set_center_widget (GTK_BOX (self), sep);
+  gtk_center_box_set_center_widget (self->box, sep);
 
   self->seconds = g_object_new (GTK_TYPE_LABEL,
                                 "attributes", attrs,
                                 "visible", TRUE,
                                 "xalign", 0.0f,
+                                "hexpand", TRUE,
                                 NULL);
-  gtk_container_add_with_properties (GTK_CONTAINER (self), GTK_WIDGET (self->seconds),
-                                     "pack-type", GTK_PACK_END,
-                                     "expand", TRUE,
-                                     "fill", TRUE,
-                                     NULL);
+  gtk_center_box_set_end_widget (self->box, GTK_WIDGET (self->seconds));
 }
 
 void

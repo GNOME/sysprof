@@ -28,7 +28,9 @@
 
 struct _SysprofScrollmap
 {
-  GtkScrollbar  parent_instance;
+  GtkWidget     parent_instance;
+
+  GtkWidget    *scrollbar;
 
   gint64        begin_time;
   gint64        end_time;
@@ -49,7 +51,7 @@ typedef struct
   gint    height;
 } Recalculate;
 
-G_DEFINE_TYPE (SysprofScrollmap, sysprof_scrollmap, GTK_TYPE_SCROLLBAR)
+G_DEFINE_TYPE (SysprofScrollmap, sysprof_scrollmap, GTK_TYPE_WIDGET)
 
 static void
 recalculate_free (gpointer data)
@@ -152,68 +154,62 @@ sysprof_scrollmap_recalculate_finish (SysprofScrollmap  *self,
   return g_task_propagate_pointer (G_TASK (result), error);
 }
 
-static void
+static inline void
 draw_boxes (const GtkAllocation *alloc,
-            cairo_t             *cr,
-            gint                 x,
-            gint                 n_boxes)
+            GtkSnapshot         *snapshot,
+            int                  x,
+            int                  n_boxes,
+            const GdkRGBA       *color)
 {
-  gint y;
+  int y = alloc->y + alloc->height - BOX_SIZE;
 
-  g_assert (cr != NULL);
-
-  y = alloc->height - BOX_SIZE;
-
-  for (gint i = 0; i < n_boxes; i++)
+  for (int i = 0; i < n_boxes; i++)
     {
-      cairo_rectangle (cr, x, y, BOX_SIZE, -BOX_SIZE);
+      gtk_snapshot_append_color (snapshot, color, &GRAPHENE_RECT_INIT (x, y, BOX_SIZE, -BOX_SIZE));
       y -= (BOX_SIZE + 1);
     }
-
-  cairo_fill (cr);
 }
 
-static gboolean
-sysprof_scrollmap_draw (GtkWidget *widget,
-                        cairo_t   *cr)
+static void
+sysprof_scrollmap_snapshot (GtkWidget   *widget,
+                            GtkSnapshot *snapshot)
 {
   SysprofScrollmap *self = (SysprofScrollmap *)widget;
   GtkStyleContext *style_context;
   GtkAllocation alloc;
   GdkRGBA color;
-  gint max_boxes;
+  int max_boxes;
 
   g_assert (SYSPROF_IS_SCROLLMAP (self));
-  g_assert (cr != NULL);
+  g_assert (GTK_IS_SNAPSHOT (snapshot));
 
   if (self->buckets == NULL)
     goto chainup;
 
   gtk_widget_get_allocation (widget, &alloc);
+
+  alloc.y += 3;
+  alloc.height -= 6;
+
   max_boxes = alloc.height / (BOX_SIZE + 1) - 1;
 
   style_context = gtk_widget_get_style_context (widget);
-  gtk_style_context_get_color (style_context,
-                               gtk_style_context_get_state (style_context),
-                               &color);
-  gdk_cairo_set_source_rgba (cr, &color);
+  gtk_style_context_get_color (style_context, &color);
 
   for (guint i = 0; i < self->buckets->len; i++)
     {
-      gint n = g_array_index (self->buckets, gint, i);
-      gint x = 1 + i * (BOX_SIZE + 1);
-      gint b = max_boxes * (n / (gdouble)self->most);
+      int n = g_array_index (self->buckets, gint, i);
+      int x = 1 + i * (BOX_SIZE + 1);
+      int b = max_boxes * (n / (gdouble)self->most);
 
-#if 1
       if (n > 0)
         b = MAX (b, 1);
-#endif
 
-      draw_boxes (&alloc, cr, x, b);
+      draw_boxes (&alloc, snapshot, x, b, &color);
     }
 
 chainup:
-  return GTK_WIDGET_CLASS (sysprof_scrollmap_parent_class)->draw (widget, cr);
+  GTK_WIDGET_CLASS (sysprof_scrollmap_parent_class)->snapshot (widget, snapshot);
 }
 
 static void
@@ -246,14 +242,20 @@ sysprof_scrollmap_recalculate_cb (GObject      *object,
 }
 
 static void
-sysprof_scrollmap_finalize (GObject *object)
+sysprof_scrollmap_dispose (GObject *object)
 {
   SysprofScrollmap *self = (SysprofScrollmap *)object;
+
+  if (self->scrollbar)
+    {
+      gtk_widget_unparent (GTK_WIDGET (self->scrollbar));
+      self->scrollbar = NULL;
+    }
 
   g_clear_pointer (&self->buckets, g_array_unref);
   g_clear_pointer (&self->timings, g_array_unref);
 
-  G_OBJECT_CLASS (sysprof_scrollmap_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sysprof_scrollmap_parent_class)->dispose (object);
 }
 
 static void
@@ -262,14 +264,21 @@ sysprof_scrollmap_class_init (SysprofScrollmapClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_scrollmap_finalize;
+  object_class->dispose = sysprof_scrollmap_dispose;
 
-  widget_class->draw = sysprof_scrollmap_draw;
+  widget_class->snapshot = sysprof_scrollmap_snapshot;
+
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
+  gtk_widget_class_set_css_name (widget_class, "scrollmap");
 }
 
 static void
 sysprof_scrollmap_init (SysprofScrollmap *self)
 {
+  self->scrollbar = g_object_new (GTK_TYPE_SCROLLBAR,
+                                  "orientation", GTK_ORIENTATION_HORIZONTAL,
+                                  NULL);
+  gtk_widget_set_parent (GTK_WIDGET (self->scrollbar), GTK_WIDGET (self));
 }
 
 void
@@ -303,4 +312,22 @@ sysprof_scrollmap_set_time_range (SysprofScrollmap *self,
                                        self->cancellable,
                                        sysprof_scrollmap_recalculate_cb,
                                        NULL);
+}
+
+void
+sysprof_scrollmap_set_adjustment (SysprofScrollmap *self,
+                                  GtkAdjustment    *adjustment)
+{
+  g_return_if_fail (SYSPROF_IS_SCROLLMAP (self));
+  g_return_if_fail (!adjustment || GTK_IS_ADJUSTMENT (adjustment));
+
+  gtk_scrollbar_set_adjustment (GTK_SCROLLBAR (self->scrollbar), adjustment);
+}
+
+GtkAdjustment *
+sysprof_scrollmap_get_adjustment (SysprofScrollmap *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SCROLLMAP (self), NULL);
+
+  return gtk_scrollbar_get_adjustment (GTK_SCROLLBAR (self->scrollbar));
 }

@@ -349,6 +349,8 @@ Examples:\n\
 
   profiler = sysprof_local_profiler_new ();
 
+  sysprof_local_profiler_set_inherit_stdin (SYSPROF_LOCAL_PROFILER (profiler), TRUE);
+
   g_signal_connect (profiler,
                     "failed",
                     G_CALLBACK (profiler_failed),

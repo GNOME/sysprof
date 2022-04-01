@@ -195,10 +195,13 @@ egg_resizer_measure (GtkWidget      *widget,
     {
       int handle_min, handle_nat;
 
-      if (self->drag_position > *minimum)
-        *natural = self->drag_position;
-      else if (self->drag_position < *minimum)
-        *natural = *minimum;
+      if (self->drag_position != 0)
+        {
+          if (self->drag_position > *minimum)
+            *natural = self->drag_position;
+          else if (self->drag_position < *minimum)
+            *natural = *minimum;
+        }
 
       if (gtk_widget_get_visible (GTK_WIDGET (self->handle)))
         {

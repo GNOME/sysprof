@@ -11,14 +11,13 @@
             <child>
               <object class="GtkBox" id="details_box">
                 <property name="orientation">vertical</property>
-                <property name="margin-top">6</property>
-                <property name="margin-bottom">6</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="label" translatable="yes">Details</property>
                     <property name="xalign">0</property>
+                    <property name="margin-top">6</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
                     <property name="margin-bottom">6</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
@@ -30,6 +29,7 @@
                     <property name="hexpand">false</property>
                     <property name="vexpand">true</property>
                     <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
                     <property name="column-spacing">6</property>
                     <property name="row-spacing">3</property>
                     <child>

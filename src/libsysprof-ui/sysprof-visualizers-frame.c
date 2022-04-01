@@ -374,19 +374,6 @@ sysprof_visualizers_frame_group_activated_cb (SysprofVisualizersFrame      *self
 }
 
 static void
-sysprof_visualizers_frame_size_allocate (GtkWidget *widget,
-                                         int        width,
-                                         int        height,
-                                         int        baseline)
-{
-  SysprofVisualizersFrame *self = (SysprofVisualizersFrame *)widget;
-
-  g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
-
-  sysprof_scrollmap_set_time_range (self->hscrollbar, self->begin_time, self->end_time);
-}
-
-static void
 sysprof_visualizers_frame_dispose (GObject *object)
 {
   SysprofVisualizersFrame *self = (SysprofVisualizersFrame *)object;
@@ -432,7 +419,6 @@ sysprof_visualizers_frame_class_init (SysprofVisualizersFrameClass *klass)
   object_class->dispose = sysprof_visualizers_frame_dispose;
   object_class->get_property = sysprof_visualizers_frame_get_property;
 
-  widget_class->size_allocate = sysprof_visualizers_frame_size_allocate;
   widget_class->snapshot = sysprof_visualizers_frame_snapshot;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-visualizers-frame.ui");

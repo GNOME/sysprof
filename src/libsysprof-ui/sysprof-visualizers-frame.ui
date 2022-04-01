@@ -136,6 +136,7 @@
                         <property name="propagate-natural-height">true</property>
                         <child>
                           <object class="GtkViewport" id="visualizers_viewport">
+                            <property name="halign">start</property>
                             <style>
                               <class name="visualizers"/>
                             </style>

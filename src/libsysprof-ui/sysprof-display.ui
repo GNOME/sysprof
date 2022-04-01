@@ -22,18 +22,8 @@
               <object class="EggPaned">
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkBox">
-                    <property name="vexpand">0</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="SysprofVisualizersFrame" id="visualizers">
-                        <property name="vexpand">true</property>
-                        <property name="visible">true</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkSeparator"/>
-                    </child>
+                  <object class="SysprofVisualizersFrame" id="visualizers">
+                    <property name="vexpand">false</property>
                   </object>
                 </child>
                 <child>

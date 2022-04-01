@@ -34,12 +34,13 @@ typedef struct
 
 struct _SysprofSpawnable
 {
-  GObject     parent_instance;
-  GArray     *fds;
-  GPtrArray  *argv;
-  gchar     **environ;
-  gchar      *cwd;
-  gint        next_fd;
+  GObject           parent_instance;
+  GArray           *fds;
+  GPtrArray        *argv;
+  char            **environ;
+  char             *cwd;
+  gint              next_fd;
+  GSubprocessFlags  flags;
 };
 
 G_DEFINE_TYPE (SysprofSpawnable, sysprof_spawnable, G_TYPE_OBJECT)
@@ -55,6 +56,41 @@ SysprofSpawnable *
 sysprof_spawnable_new (void)
 {
   return g_object_new (SYSPROF_TYPE_SPAWNABLE, NULL);
+}
+
+/**
+ * sysprof_spawnable_get_flags:
+ * @self: a #SysprofSpawnable
+ *
+ * Gets the subprocess flags for spawning.
+ *
+ * Returns: the #GSubprocessFlags bitwise-or'd
+ *
+ * Since: 3.46
+ */
+GSubprocessFlags
+sysprof_spawnable_get_flags (SysprofSpawnable *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SPAWNABLE (self), 0);
+
+  return self->flags;
+}
+
+/**
+ * sysprof_spawnable_set_flags:
+ * @self: a #SysprofSpawnable
+ *
+ * Set the flags to use when spawning the process.
+ *
+ * Since: 3.46
+ */
+void
+sysprof_spawnable_set_flags (SysprofSpawnable *self,
+                             GSubprocessFlags  flags)
+{
+  g_return_if_fail (SYSPROF_IS_SPAWNABLE (self));
+
+  self->flags = flags;
 }
 
 static void
@@ -268,7 +304,7 @@ sysprof_spawnable_spawn (SysprofSpawnable  *self,
 
   g_return_val_if_fail (SYSPROF_IS_SPAWNABLE (self), NULL);
 
-  launcher = g_subprocess_launcher_new (0);
+  launcher = g_subprocess_launcher_new (self->flags);
 
   g_subprocess_launcher_set_environ (launcher, self->environ);
 

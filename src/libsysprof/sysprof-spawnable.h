@@ -77,5 +77,10 @@ void                 sysprof_spawnable_set_starting_fd (SysprofSpawnable        
 SYSPROF_AVAILABLE_IN_ALL
 GSubprocess         *sysprof_spawnable_spawn           (SysprofSpawnable          *self,
                                                         GError                   **error);
+SYSPROF_AVAILABLE_IN_3_46
+GSubprocessFlags     sysprof_spawnable_get_flags       (SysprofSpawnable          *self);
+SYSPROF_AVAILABLE_IN_3_46
+void                 sysprof_spawnable_set_flags       (SysprofSpawnable          *self,
+                                                        GSubprocessFlags           flags);
 
 G_END_DECLS

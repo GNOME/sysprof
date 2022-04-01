@@ -41,8 +41,11 @@ struct _SysprofLocalProfilerClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofProfiler *sysprof_local_profiler_new        (void);
+SysprofProfiler *sysprof_local_profiler_new               (void);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofProfiler *sysprof_local_profiler_new_replay (SysprofCaptureReader *reader);
+SysprofProfiler *sysprof_local_profiler_new_replay        (SysprofCaptureReader *reader);
+SYSPROF_AVAILABLE_IN_3_46
+void             sysprof_local_profiler_set_inherit_stdin (SysprofLocalProfiler *self,
+                                                           gboolean              inherit_stdin);
 
 G_END_DECLS

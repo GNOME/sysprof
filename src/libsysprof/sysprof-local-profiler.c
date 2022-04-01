@@ -91,6 +91,9 @@ typedef struct
   /* If we should inherit the environment when spawning */
   guint spawn_inherit_environ : 1;
 
+  /* If we should inherit stdin from our process */
+  guint inherit_stdin : 1;
+
   /*
    * If we should profile the entire system. Setting this results in pids
    * being ignored. This is primarily useful for UI to toggle on/off the
@@ -114,6 +117,7 @@ G_DEFINE_TYPE_EXTENDED (SysprofLocalProfiler, sysprof_local_profiler, G_TYPE_OBJ
 
 enum {
   PROP_0,
+  PROP_INHERIT_STDIN,
   N_PROPS,
 
   PROP_ELAPSED,
@@ -126,6 +130,8 @@ enum {
   PROP_SPAWN_INHERIT_ENVIRON,
   PROP_WHOLE_SYSTEM,
 };
+
+static GParamSpec *properties [N_PROPS];
 
 static inline gint
 _g_ptr_array_find (GPtrArray *ar,
@@ -318,6 +324,10 @@ sysprof_local_profiler_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_INHERIT_STDIN:
+      g_value_set_boolean (value, priv->inherit_stdin);
+      break;
+
     case PROP_ELAPSED:
       g_value_set_double (value, priv->timer ? g_timer_elapsed (priv->timer, NULL) : 0.0);
       break;
@@ -370,6 +380,10 @@ sysprof_local_profiler_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_INHERIT_STDIN:
+      sysprof_local_profiler_set_inherit_stdin (self, g_value_get_boolean (value));
+      break;
+
     case PROP_WHOLE_SYSTEM:
       priv->whole_system = g_value_get_boolean (value);
       break;
@@ -421,6 +435,24 @@ sysprof_local_profiler_class_init (SysprofLocalProfilerClass *klass)
   g_object_class_override_property (object_class, PROP_SPAWN_ENV, "spawn-env");
   g_object_class_override_property (object_class, PROP_SPAWN_INHERIT_ENVIRON, "spawn-inherit-environ");
   g_object_class_override_property (object_class, PROP_WHOLE_SYSTEM, "whole-system");
+
+  /**
+   * SysprofLocalProfiler:inherit-stdin:
+   *
+   * Sets the profiler to inherit stdin from the calling process when spawning
+   * the subprocess. This has no effect if the #SysprofLocalProfiler is not
+   * responsible for spawning the process.
+   *
+   * Since: 3.46
+   */
+  properties [PROP_INHERIT_STDIN] =
+    g_param_spec_boolean ("inherit-stdin",
+                          "Inherit Stdin",
+                          "If stdin of the calling process should be inherited by the spawned process",
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   g_type_ensure (SYSPROF_TYPE_GJS_SOURCE);
 #ifdef __linux__
@@ -561,7 +593,11 @@ sysprof_local_profiler_start_after_auth (SysprofLocalProfiler *self)
       g_autoptr(GPtrArray) env = g_ptr_array_new_with_free_func (g_free);
       g_autoptr(SysprofSpawnable) spawnable = sysprof_spawnable_new ();
       g_autoptr(GSubprocess) subprocess = NULL;
+      GSubprocessFlags flags = 0;
       GPid pid;
+
+      if (priv->inherit_stdin)
+        flags |= G_SUBPROCESS_FLAGS_STDIN_INHERIT;
 
       if (priv->spawn_inherit_environ)
         {
@@ -1089,4 +1125,41 @@ sysprof_local_profiler_new_replay (SysprofCaptureReader *reader)
     }
 
   return SYSPROF_PROFILER (g_steal_pointer (&self));
+}
+
+/**
+ * sysprof_local_profiler_get_inherit_stdin:
+ *
+ * Since: 3.46
+ */
+gboolean
+sysprof_local_profiler_get_inherit_stdin (SysprofLocalProfiler *self)
+{
+  SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_LOCAL_PROFILER (self), FALSE);
+
+  return priv->inherit_stdin;
+}
+
+/**
+ * sysprof_local_profiler_set_inherit_stdin:
+ *
+ * Since: 3.46
+ */
+void
+sysprof_local_profiler_set_inherit_stdin (SysprofLocalProfiler *self,
+                                          gboolean              inherit_stdin)
+{
+  SysprofLocalProfilerPrivate *priv = sysprof_local_profiler_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_LOCAL_PROFILER (self));
+
+  inherit_stdin = !!inherit_stdin;
+
+  if (priv->inherit_stdin != inherit_stdin)
+    {
+      priv->inherit_stdin = inherit_stdin;
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_INHERIT_STDIN]);
+    }
 }

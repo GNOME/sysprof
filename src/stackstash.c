@@ -273,7 +273,10 @@ do_callback (StackNode *node,
     StackLink link;
 
     if (trace)
+    {
+        g_assert (trace->prev == NULL);
         trace->prev = &link;
+    }
 
     link.next = trace;
     link.prev = NULL;
@@ -291,7 +294,10 @@ do_callback (StackNode *node,
     }
 
     if (trace)
+    {
+        g_assert (trace->prev == &link);
         trace->prev = NULL;
+    }
 }
 
 void

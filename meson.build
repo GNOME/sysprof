@@ -83,7 +83,9 @@ config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())
 config_h.set10('HAVE_POLKIT', polkit_dep.found())
 
 if get_option('libunwind')
-  libunwind_dep = dependency('libunwind-generic')
+  # Force libunwind usage if it's specified to avoid back compiles
+  # and backtrace() showing up in builds
+  libunwind_dep = dependency('libunwind-generic', required: true)
   config_h.set('ENABLE_LIBUNWIND', libunwind_dep.found())
   config_h.set('HAVE_UNW_SET_CACHE_SIZE', libunwind_dep.found() and cc.has_header_symbol('libunwind.h', 'unw_set_cache_size', dependencies: [libunwind_dep]))
 endif

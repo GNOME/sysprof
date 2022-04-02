@@ -37,9 +37,8 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="leaked_allocs_button">
+                  <object class="GtkToggleButton" id="leaked_allocs_button">
                     <property name="label" translatable="yes">Leaked Allocations</property>
-                    <property name="draw-indicator">false</property>
                     <property name="active">false</property>
                     <property name="group">summary</property>
                   </object>

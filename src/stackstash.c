@@ -270,6 +270,9 @@ do_callback (StackNode *node,
              StackFunction func,
              gpointer data)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-pointer"
+
     StackLink link;
 
     if (trace)
@@ -298,6 +301,8 @@ do_callback (StackNode *node,
         g_assert (trace->prev == &link);
         trace->prev = NULL;
     }
+
+#pragma GCC diagnostic pop
 }
 
 void

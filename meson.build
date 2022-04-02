@@ -29,7 +29,7 @@ polkit_req_version = '>= 0.105'
 cc = meson.get_compiler('c')
 
 if get_option('libsysprof')
-  add_languages('cpp')
+  add_languages('cpp', native: false)
   cxx = meson.get_compiler('cpp')
 endif
 

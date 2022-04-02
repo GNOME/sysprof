@@ -208,6 +208,7 @@
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkScrolledWindow">
+                        <property name="vexpand">true</property>
                         <child>
                           <object class="GtkTreeView" id="functions_view">
                             <property name="fixed-height-mode">true</property>
@@ -266,6 +267,7 @@
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
+                        <property name="vexpand">true</property>
                         <child>
                           <object class="GtkTreeView" id="callers_view">
                             <child>

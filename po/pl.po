@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2021-11-05 04:10+0000\n"
+"POT-Creation-Date: 2022-04-03 11:18+0000\n"
 "PO-Revision-Date: 2021-11-07 13:47+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
@@ -20,8 +20,8 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2;\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
-#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
-#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:11
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:208
+#: src/sysprof/sysprof-application.c:332 src/sysprof/sysprof-window.ui:9
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -50,34 +50,10 @@ msgid "Profile an application or entire system."
 msgstr "Profilowanie programu lub całego systemu"
 
 #: data/org.gnome.sysprof3.gschema.xml:5
-msgid "Window size"
-msgstr "Rozmiar okna"
-
-#: data/org.gnome.sysprof3.gschema.xml:6
-msgid "Window size (width and height)."
-msgstr "Rozmiar okna (szerokość i wysokość)."
-
-#: data/org.gnome.sysprof3.gschema.xml:10
-msgid "Window position"
-msgstr "Położenie okna"
-
-#: data/org.gnome.sysprof3.gschema.xml:11
-msgid "Window position (x and y)."
-msgstr "Położenie okna (na osi X i Y)."
-
-#: data/org.gnome.sysprof3.gschema.xml:15
-msgid "Window maximized"
-msgstr "Maksymalizacja okna"
-
-#: data/org.gnome.sysprof3.gschema.xml:16
-msgid "Window maximized state"
-msgstr "Stan maksymalizacji okna"
-
-#: data/org.gnome.sysprof3.gschema.xml:20
 msgid "Last Spawn Program"
 msgstr "Ostatnio uruchomiony program"
 
-#: data/org.gnome.sysprof3.gschema.xml:21
+#: data/org.gnome.sysprof3.gschema.xml:6
 msgid ""
 "The last spawned program, which will be set in the UI upon restart of the "
 "application."
@@ -85,19 +61,19 @@ msgstr ""
 "Ostatnio uruchomiony program, który zostanie ustawiony w interfejsie po "
 "ponownym uruchomieniu."
 
-#: data/org.gnome.sysprof3.gschema.xml:25
+#: data/org.gnome.sysprof3.gschema.xml:10
 msgid "Last Spawn Inherit Environment"
 msgstr "Ostatnio uruchomione środowisko dziedziczy środowisko"
 
-#: data/org.gnome.sysprof3.gschema.xml:26
+#: data/org.gnome.sysprof3.gschema.xml:11
 msgid "If the last spawned environment inherits the parent environment."
 msgstr "Czy ostatnio uruchomione środowisko dziedziczy środowisko nadrzędne."
 
-#: data/org.gnome.sysprof3.gschema.xml:30
+#: data/org.gnome.sysprof3.gschema.xml:15
 msgid "Last Spawn Environment"
 msgstr "Ostatnio uruchomione środowisko"
 
-#: data/org.gnome.sysprof3.gschema.xml:31
+#: data/org.gnome.sysprof3.gschema.xml:16
 msgid ""
 "The last spawned environment, which will be set in the UI upon restart of "
 "the application."
@@ -160,61 +136,69 @@ msgstr "Ślady stosu (w przestrzeni użytkownika)"
 msgid "Callgraph"
 msgstr "Wykres wywołań"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:27
-#: src/libsysprof-ui/sysprof-memprof-page.ui:245
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:23
+#: src/libsysprof-ui/sysprof-memprof-page.ui:220
 msgid "Functions"
 msgstr "Funkcje"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:43
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:104
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:159
-#: src/libsysprof-ui/sysprof-memprof-page.ui:262
-#: src/libsysprof-ui/sysprof-memprof-page.ui:324
-#: src/libsysprof-ui/sysprof-memprof-page.ui:380
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:39
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:96
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:147
+#: src/libsysprof-ui/sysprof-memprof-page.ui:237
+#: src/libsysprof-ui/sysprof-memprof-page.ui:295
+#: src/libsysprof-ui/sysprof-memprof-page.ui:346
 msgid "Self"
 msgstr "Własne"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:59
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:120
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:175
-#: src/libsysprof-ui/sysprof-memprof-page.ui:278
-#: src/libsysprof-ui/sysprof-memprof-page.ui:340
-#: src/libsysprof-ui/sysprof-memprof-page.ui:396
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:55
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:112
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:163
+#: src/libsysprof-ui/sysprof-memprof-page.ui:253
+#: src/libsysprof-ui/sysprof-memprof-page.ui:311
+#: src/libsysprof-ui/sysprof-memprof-page.ui:362
 msgid "Total"
 msgstr "Razem"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:88
-#: src/libsysprof-ui/sysprof-memprof-page.ui:307
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:80
+#: src/libsysprof-ui/sysprof-memprof-page.ui:278
 msgid "Callers"
 msgstr "Wywołania"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:151
-#: src/libsysprof-ui/sysprof-memprof-page.ui:371
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:139
+#: src/libsysprof-ui/sysprof-memprof-page.ui:337
 msgid "Descendants"
 msgstr "Elementy potomne"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:190
-#: src/libsysprof-ui/sysprof-details-page.ui:322
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:178
+#: src/libsysprof-ui/sysprof-details-page.ui:309
 msgid "Hits"
 msgstr "Trafienia"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:213
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:198
 msgid "Generating Callgraph"
 msgstr "Tworzenie wykresu wywołań"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:214
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:199
 msgid "Sysprof is busy creating the selected callgraph."
 msgstr "Trwa tworzenie wybranego wykresu wywołań."
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:224
-#: src/libsysprof-ui/sysprof-memprof-page.ui:442
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:205
+#: src/libsysprof-ui/sysprof-memprof-page.ui:401
 msgid "Not Enough Samples"
 msgstr "Za mało próbek"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:225
-#: src/libsysprof-ui/sysprof-memprof-page.ui:443
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:206
+#: src/libsysprof-ui/sysprof-memprof-page.ui:402
 msgid "More samples are necessary to display a callgraph."
 msgstr "Do wyświetlenia wykresu wywołań potrzeba więcej próbek."
+
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:102
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:292
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:322
+#, c-format
+msgctxt "progress bar label"
+msgid "%d %%"
+msgstr "%d%%"
 
 #: src/libsysprof-ui/sysprof-counters-aid.c:221
 #: src/libsysprof-ui/sysprof-counters-aid.c:226
@@ -244,11 +228,11 @@ msgstr "Użycie procesora (wszystkie)"
 msgid "Processes"
 msgstr "Procesy"
 
-#: src/libsysprof-ui/sysprof-details-page.c:220
+#: src/libsysprof-ui/sysprof-details-page.c:237
 msgid "Memory Capture"
 msgstr "Przechwytywanie pamięci"
 
-#: src/libsysprof-ui/sysprof-details-page.c:234
+#: src/libsysprof-ui/sysprof-details-page.c:251
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf s"
@@ -261,54 +245,54 @@ msgstr "Nazwa pliku"
 msgid "Captured at"
 msgstr "Utworzono"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:50
-#: src/libsysprof-ui/sysprof-marks-page.ui:95
-#: src/libsysprof-ui/sysprof-marks-page.ui:215
+#: src/libsysprof-ui/sysprof-details-page.ui:49
+#: src/libsysprof-ui/sysprof-marks-page.ui:90
+#: src/libsysprof-ui/sysprof-marks-page.ui:196
 msgid "Duration"
 msgstr "Czas trwania"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:65
+#: src/libsysprof-ui/sysprof-details-page.ui:63
 msgid "CPU Model"
 msgstr "Model procesora"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:80
+#: src/libsysprof-ui/sysprof-details-page.ui:78
 msgid "Samples Captured"
 msgstr "Przechwycone próbki"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:94
+#: src/libsysprof-ui/sysprof-details-page.ui:92
 msgid "Marks Captured"
 msgstr "Przechwycone oznaczenia"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:108
+#: src/libsysprof-ui/sysprof-details-page.ui:106
 msgid "Processes Captured"
 msgstr "Przechwycone procesy"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:122
+#: src/libsysprof-ui/sysprof-details-page.ui:120
 msgid "Forks Captured"
 msgstr "Przechwycone rozwidlenia"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:136
+#: src/libsysprof-ui/sysprof-details-page.ui:134
 msgid "Counters Captured"
 msgstr "Przechwycone liczniki"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:151
+#: src/libsysprof-ui/sysprof-details-page.ui:149
 msgid "Allocations Captured"
 msgstr "Przechwycone przydziały"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:309
-#: src/libsysprof-ui/sysprof-marks-page.ui:52
+#: src/libsysprof-ui/sysprof-details-page.ui:296
+#: src/libsysprof-ui/sysprof-marks-page.ui:50
 msgid "Mark"
 msgstr "Oznaczenie"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:335
+#: src/libsysprof-ui/sysprof-details-page.ui:322
 msgid "Min"
 msgstr "Minimum"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:348
+#: src/libsysprof-ui/sysprof-details-page.ui:335
 msgid "Max"
 msgstr "Maksimum"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:361
+#: src/libsysprof-ui/sysprof-details-page.ui:348
 msgid "Avg"
 msgstr "Średnia"
 
@@ -325,70 +309,70 @@ msgstr "Odczyty"
 msgid "Writes"
 msgstr "Zapisy"
 
-#: src/libsysprof-ui/sysprof-display.c:229
+#: src/libsysprof-ui/sysprof-display.c:227
 msgid "Recording Failed"
 msgstr "Nagranie się nie powiodło"
 
-#: src/libsysprof-ui/sysprof-display.c:234
+#: src/libsysprof-ui/sysprof-display.c:232
 msgid "Recording…"
 msgstr "Nagrywanie…"
 
 #. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:265
+#: src/libsysprof-ui/sysprof-display.c:263
 #, c-format
 msgid "Recording at %s"
 msgstr "Nagranie z %s"
 
-#: src/libsysprof-ui/sysprof-display.c:269
+#: src/libsysprof-ui/sysprof-display.c:267
 msgid "New Recording"
 msgstr "Nowe nagranie"
 
-#: src/libsysprof-ui/sysprof-display.c:1094
+#: src/libsysprof-ui/sysprof-display.c:1093
 msgid "The recording could not be opened"
 msgstr "Nie można otworzyć nagrania"
 
-#: src/libsysprof-ui/sysprof-display.c:1217
-msgid "Save Recording"
-msgstr "Zapis nagrania"
-
-#: src/libsysprof-ui/sysprof-display.c:1220
-msgid "Save"
-msgstr "Zapisz"
-
-#. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1221 src/sysprof/sysprof-window.c:279
-msgid "Cancel"
-msgstr "Anuluj"
-
-#: src/libsysprof-ui/sysprof-display.c:1247
+#: src/libsysprof-ui/sysprof-display.c:1234
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Zapisanie nagrania się nie powiodło: %s"
 
-#: src/libsysprof-ui/sysprof-display.ui:49
-#: src/libsysprof-ui/sysprof-marks-page.ui:19
+#: src/libsysprof-ui/sysprof-display.c:1267
+msgid "Save Recording"
+msgstr "Zapis nagrania"
+
+#: src/libsysprof-ui/sysprof-display.c:1270
+msgid "Save"
+msgstr "Zapisz"
+
+#. Translators: This is a button.
+#: src/libsysprof-ui/sysprof-display.c:1271 src/sysprof/sysprof-window.c:310
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: src/libsysprof-ui/sysprof-display.ui:36
+#: src/libsysprof-ui/sysprof-marks-page.ui:16
 msgid "Details"
 msgstr "Szczegóły"
 
-#: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
+#: src/libsysprof-ui/sysprof-environ-editor-row.ui:29
 msgid "Remove environment variable"
 msgstr "Usuwa zmienną środowiskową"
 
-#: src/libsysprof-ui/sysprof-environ-editor.c:71
+#: src/libsysprof-ui/sysprof-environ-editor.c:72
 msgid "New variable…"
 msgstr "Nowa zmienna…"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:22
-msgid "Ouch, that hurt!"
-msgstr "Auć, to bolało!"
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:39
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:31
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr "Coś się nie powiodło podczas profilowania systemu."
 
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:41
+msgid "Ouch, that hurt!"
+msgstr "Auć, to bolało!"
+
 #: src/libsysprof-ui/sysprof-log-model.c:210
 #: src/libsysprof-ui/sysprof-logs-page.ui:58
-#: src/libsysprof-ui/sysprof-marks-page.ui:109
+#: src/libsysprof-ui/sysprof-marks-page.ui:103
 msgid "Message"
 msgstr "Komunikat"
 
@@ -420,7 +404,7 @@ msgid "Logs"
 msgstr "Dzienniki"
 
 #: src/libsysprof-ui/sysprof-logs-page.ui:15
-#: src/libsysprof-ui/sysprof-marks-page.ui:67
+#: src/libsysprof-ui/sysprof-marks-page.ui:64
 msgid "Time"
 msgstr "Czas"
 
@@ -432,20 +416,20 @@ msgstr "Ważność"
 msgid "Domain"
 msgstr "Domena"
 
-#: src/libsysprof-ui/sysprof-marks-aid.c:237
-#: src/libsysprof-ui/sysprof-marks-aid.c:242
+#: src/libsysprof-ui/sysprof-marks-aid.c:408
+#: src/libsysprof-ui/sysprof-marks-aid.c:413
 msgid "Timings"
 msgstr "Czasy"
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:38
+#: src/libsysprof-ui/sysprof-marks-page.ui:37
 msgid "Group"
 msgstr "Grupa"
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:81
+#: src/libsysprof-ui/sysprof-marks-page.ui:77
 msgid "End"
 msgstr "Koniec"
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:245
+#: src/libsysprof-ui/sysprof-marks-page.ui:234
 msgid "No Timings Available"
 msgstr "Brak dostępnych czasów"
 
@@ -471,36 +455,36 @@ msgid "Track Allocations"
 msgstr "Śledzenie przydziałów"
 
 #. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:235
+#: src/libsysprof-ui/sysprof-memprof-page.c:241
 #, c-format
 msgid "> %s to %s"
 msgstr "> %s do %s"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:23
+#: src/libsysprof-ui/sysprof-memprof-page.ui:21
 msgid "Summary"
 msgstr "Podsumowanie"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+#: src/libsysprof-ui/sysprof-memprof-page.ui:27
 msgid "All Allocations"
 msgstr "Wszystkie przydziały"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:40
+#: src/libsysprof-ui/sysprof-memprof-page.ui:34
 msgid "Temporary Allocations"
 msgstr "Przydziały tymczasowe"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:49
+#: src/libsysprof-ui/sysprof-memprof-page.ui:41
 msgid "Leaked Allocations"
 msgstr "Wyciekające przydziały"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:411
+#: src/libsysprof-ui/sysprof-memprof-page.ui:377
 msgid "Size"
 msgstr "Rozmiar"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:431
+#: src/libsysprof-ui/sysprof-memprof-page.ui:394
 msgid "Analyzing Memory Allocations"
 msgstr "Analizowanie przydziałów pamięci"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:432
+#: src/libsysprof-ui/sysprof-memprof-page.ui:395
 msgid "Sysprof is busy analyzing memory allocations."
 msgstr "Trwa analizowanie przydziałów pamięci."
 
@@ -514,29 +498,29 @@ msgid "Network"
 msgstr "Sieć"
 
 #. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:26
 msgid "GNOME Shell"
 msgstr "Powłoka GNOME"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:90
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:92
 msgid "Profilers"
 msgstr "Profilery"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:186
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:188
 msgid ""
 "Track application memory allocations (Sysprof must launch target application)"
 msgstr ""
 "Śledzi przydziały pamięci programu (Sysprof musi uruchomić program docelowy)"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:194
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:196
 msgid "Track slow operations on your applications main loop"
 msgstr "Śledzi wolne działania na pętli głównej programu"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:210
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:212
 msgid "All Processes"
 msgstr "Wszystkie procesy"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:242
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
 "not be possible on some system configurations."
@@ -544,28 +528,28 @@ msgstr ""
 "Wszystkie programy i jądro systemu operacyjnego na wykresie wywołań. Może to "
 "nie być możliwe w przypadku niektórych konfiguracji komputera."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:270
 msgid "Search Processes…"
 msgstr "Wyszukiwanie procesów…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:287
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:288
 msgid "Loading Processes…"
 msgstr "Wczytywanie procesów…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:311
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:312
 msgid "Launch Application"
 msgstr "Uruchomienie programu"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:340
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:341
 msgid "Enable to launch a program of your choosing before profiling."
 msgstr ""
 "Włączenie umożliwi uruchomienie wybranego programu przed profilowaniem."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:369
 msgid "Command Line"
 msgstr "Wiersz poleceń"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:387
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:388
 msgid "Environment"
 msgstr "Środowisko"
 
@@ -606,31 +590,31 @@ msgstr "Użycie energii"
 msgid "Energy Usage (All)"
 msgstr "Użycie energii (wszystkie)"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:35
 msgid ""
 "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
 msgstr ""
 "Do profilowania można używać także polecenia <a href=\"help:sysprof"
 "\">sysprof-cli</a>."
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:47
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:50
 msgid "Events"
 msgstr "Zdarzenia"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:73
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:76
 msgid "_Stop Recording"
 msgstr "_Zatrzymaj nagrywanie"
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:119
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:136
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
 msgid "Select for more details"
 msgstr "Zaznaczenie wyświetli więcej informacji"
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:158
 msgid "Display supplemental graphs"
 msgstr "Wyświetla wykresy uzupełniające"
 
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
 msgid "Instruments"
 msgstr "Przyrządy"
 
@@ -805,43 +789,43 @@ msgstr "Pomoc"
 msgid "About Sysprof"
 msgstr "O programie"
 
-#: src/sysprof/sysprof-application.c:194
+#: src/sysprof/sysprof-application.c:200
 msgid "A system profiler"
 msgstr "Profiler systemu"
 
-#: src/sysprof/sysprof-application.c:199
+#: src/sysprof/sysprof-application.c:205
 msgid "translator-credits"
 msgstr ""
 "Piotr Drąg <piotrdrag@gmail.com>, 2016-2021\n"
 "Aviary.pl <community-poland@mozilla.org>, 2016-2021"
 
-#: src/sysprof/sysprof-application.c:205
+#: src/sysprof/sysprof-application.c:211
 msgid "Learn more about Sysprof"
 msgstr "Więcej informacji o Sysprof"
 
 #. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:273
+#: src/sysprof/sysprof-window.c:304
 msgid "Open Capture…"
 msgstr "Otwarcie przechwytywania…"
 
 #. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:277
+#: src/sysprof/sysprof-window.c:308
 msgid "Open"
 msgstr "Otwórz"
 
-#: src/sysprof/sysprof-window.c:284
+#: src/sysprof/sysprof-window.c:313
 msgid "Sysprof Captures"
 msgstr "Przechwytywania Sysprof"
 
-#: src/sysprof/sysprof-window.c:289
+#: src/sysprof/sysprof-window.c:318
 msgid "All Files"
 msgstr "Wszystkie pliki"
 
-#: src/sysprof/ui/sysprof-window.ui:28
+#: src/sysprof/sysprof-window.ui:33
 msgid "_Open"
 msgstr "_Otwórz"
 
-#: src/sysprof/ui/sysprof-window.ui:31
+#: src/sysprof/sysprof-window.ui:36
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Otwiera nagranie… (Ctrl+O)"
 
@@ -989,7 +973,7 @@ msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Przekazano za dużo parametrów do polecenia sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:374
+#: src/tools/sysprof-cli.c:376
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "Plik „%s” istnieje. Użycie opcji „--force” go zastąpi\n"

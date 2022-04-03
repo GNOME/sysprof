@@ -10,6 +10,7 @@ src/libsysprof-ui/sysprof-callgraph-aid.c
 src/libsysprof-ui/sysprof-callgraph-page.c
 src/libsysprof-ui/sysprof-callgraph-page.ui
 src/libsysprof-ui/sysprof-cell-renderer-percent.c
+src/libsysprof-ui/sysprof-cell-renderer-progress.c
 src/libsysprof-ui/sysprof-counters-aid.c
 src/libsysprof-ui/sysprof-cpu-aid.c
 src/libsysprof-ui/sysprof-depth-visualizer.c
@@ -45,6 +46,6 @@ src/sysprof/gtk/help-overlay.ui
 src/sysprof/gtk/menus.ui
 src/sysprof/sysprof-application.c
 src/sysprof/sysprof-window.c
-src/sysprof/ui/sysprof-window.ui
+src/sysprof/sysprof-window.ui
 src/tools/sysprof-cli.c
 src/tools/sysprof-profiler-ctl.c

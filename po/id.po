@@ -2,13 +2,13 @@
 # Copyright (C) 2017 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 # Andika Triwidada <atriwidada@gnome.org>, 2017.
-# Kukuh Syafaat <kukuhsyafaat@gnome.org>, 2018-2021.
+# Kukuh Syafaat <kukuhsyafaat@gnome.org>, 2018-2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2021-03-09 00:11+0000\n"
-"PO-Revision-Date: 2021-03-14 19:21+0700\n"
+"POT-Creation-Date: 2022-04-03 11:18+0000\n"
+"PO-Revision-Date: 2022-04-19 10:31+0700\n"
 "Last-Translator: Kukuh Syafaat <kukuhsyafaat@gnome.org>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural= n!=1;\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
-#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
-#: src/sysprof/sysprof-application.c:329 src/sysprof/ui/sysprof-window.ui:11
+#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:208
+#: src/sysprof/sysprof-application.c:332 src/sysprof/sysprof-window.ui:9
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -49,34 +49,10 @@ msgid "Profile an application or entire system."
 msgstr "Memantau profil suatu aplikasi atau seluruh sistem."
 
 #: data/org.gnome.sysprof3.gschema.xml:5
-msgid "Window size"
-msgstr "Ukuran jendela"
-
-#: data/org.gnome.sysprof3.gschema.xml:6
-msgid "Window size (width and height)."
-msgstr "Ukuran jendela (lebar dan tinggi)."
-
-#: data/org.gnome.sysprof3.gschema.xml:10
-msgid "Window position"
-msgstr "Posisi jendela"
-
-#: data/org.gnome.sysprof3.gschema.xml:11
-msgid "Window position (x and y)."
-msgstr "Posisi jendela (x dan y)."
-
-#: data/org.gnome.sysprof3.gschema.xml:15
-msgid "Window maximized"
-msgstr "Jendela termaksimalkan"
-
-#: data/org.gnome.sysprof3.gschema.xml:16
-msgid "Window maximized state"
-msgstr "Keadaan jendela termaksimalkan"
-
-#: data/org.gnome.sysprof3.gschema.xml:20
 msgid "Last Spawn Program"
 msgstr "Program yang Terakhir Di-spawn"
 
-#: data/org.gnome.sysprof3.gschema.xml:21
+#: data/org.gnome.sysprof3.gschema.xml:6
 msgid ""
 "The last spawned program, which will be set in the UI upon restart of the "
 "application."
@@ -84,19 +60,19 @@ msgstr ""
 "Program yang terakhir di-spawn, yang akan ditata dalam UI saat start ulang "
 "aplikasi."
 
-#: data/org.gnome.sysprof3.gschema.xml:25
+#: data/org.gnome.sysprof3.gschema.xml:10
 msgid "Last Spawn Inherit Environment"
 msgstr "Lingkungan Warisan Spawn Terakhir"
 
-#: data/org.gnome.sysprof3.gschema.xml:26
+#: data/org.gnome.sysprof3.gschema.xml:11
 msgid "If the last spawned environment inherits the parent environment."
 msgstr "Apakah lingkungan yang di-spawn terakhir mewarisi lingkungan induk."
 
-#: data/org.gnome.sysprof3.gschema.xml:30
+#: data/org.gnome.sysprof3.gschema.xml:15
 msgid "Last Spawn Environment"
 msgstr "Lingkungan Spawn Terakhir"
 
-#: data/org.gnome.sysprof3.gschema.xml:31
+#: data/org.gnome.sysprof3.gschema.xml:16
 msgid ""
 "The last spawned environment, which will be set in the UI upon restart of "
 "the application."
@@ -159,61 +135,69 @@ msgstr "Jejak Stack (Di Pengguna)"
 msgid "Callgraph"
 msgstr "Callgraph"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:27
-#: src/libsysprof-ui/sysprof-memprof-page.ui:236
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:23
+#: src/libsysprof-ui/sysprof-memprof-page.ui:220
 msgid "Functions"
 msgstr "Fungsi"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:43
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:104
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:159
-#: src/libsysprof-ui/sysprof-memprof-page.ui:253
-#: src/libsysprof-ui/sysprof-memprof-page.ui:315
-#: src/libsysprof-ui/sysprof-memprof-page.ui:371
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:39
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:96
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:147
+#: src/libsysprof-ui/sysprof-memprof-page.ui:237
+#: src/libsysprof-ui/sysprof-memprof-page.ui:295
+#: src/libsysprof-ui/sysprof-memprof-page.ui:346
 msgid "Self"
 msgstr "Self"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:59
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:120
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:175
-#: src/libsysprof-ui/sysprof-memprof-page.ui:269
-#: src/libsysprof-ui/sysprof-memprof-page.ui:331
-#: src/libsysprof-ui/sysprof-memprof-page.ui:387
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:55
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:112
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:163
+#: src/libsysprof-ui/sysprof-memprof-page.ui:253
+#: src/libsysprof-ui/sysprof-memprof-page.ui:311
+#: src/libsysprof-ui/sysprof-memprof-page.ui:362
 msgid "Total"
 msgstr "Total"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:88
-#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:80
+#: src/libsysprof-ui/sysprof-memprof-page.ui:278
 msgid "Callers"
 msgstr "Pemanggil"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:151
-#: src/libsysprof-ui/sysprof-memprof-page.ui:362
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:139
+#: src/libsysprof-ui/sysprof-memprof-page.ui:337
 msgid "Descendants"
 msgstr "Turunan"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:190
-#: src/libsysprof-ui/sysprof-details-page.ui:322
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:178
+#: src/libsysprof-ui/sysprof-details-page.ui:309
 msgid "Hits"
 msgstr "Hit"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:213
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:198
 msgid "Generating Callgraph"
 msgstr "Membuat Callgraph"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:214
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:199
 msgid "Sysprof is busy creating the selected callgraph."
 msgstr "Sysprof sibuk menciptakan callgraph yang dipilih."
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:224
-#: src/libsysprof-ui/sysprof-memprof-page.ui:433
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:205
+#: src/libsysprof-ui/sysprof-memprof-page.ui:401
 msgid "Not Enough Samples"
 msgstr "Tidak Cukup Cuplikan"
 
-#: src/libsysprof-ui/sysprof-callgraph-page.ui:225
-#: src/libsysprof-ui/sysprof-memprof-page.ui:434
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:206
+#: src/libsysprof-ui/sysprof-memprof-page.ui:402
 msgid "More samples are necessary to display a callgraph."
 msgstr "Perlu lebih cuplikan untuk menampilkan suatu callgraph."
+
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:102
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:292
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:322
+#, c-format
+msgctxt "progress bar label"
+msgid "%d %%"
+msgstr "%d %%"
 
 #: src/libsysprof-ui/sysprof-counters-aid.c:221
 #: src/libsysprof-ui/sysprof-counters-aid.c:226
@@ -243,11 +227,11 @@ msgstr "Penggunaan CPU (semua)"
 msgid "Processes"
 msgstr "Proses"
 
-#: src/libsysprof-ui/sysprof-details-page.c:220
+#: src/libsysprof-ui/sysprof-details-page.c:237
 msgid "Memory Capture"
 msgstr "Tangkapan Memori"
 
-#: src/libsysprof-ui/sysprof-details-page.c:234
+#: src/libsysprof-ui/sysprof-details-page.c:251
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf detik"
@@ -260,54 +244,54 @@ msgstr "Nama berkas"
 msgid "Captured at"
 msgstr "Ditangkap pada"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:50
-#: src/libsysprof-ui/sysprof-marks-page.ui:95
-#: src/libsysprof-ui/sysprof-marks-page.ui:215
+#: src/libsysprof-ui/sysprof-details-page.ui:49
+#: src/libsysprof-ui/sysprof-marks-page.ui:90
+#: src/libsysprof-ui/sysprof-marks-page.ui:196
 msgid "Duration"
 msgstr "Durasi"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:65
+#: src/libsysprof-ui/sysprof-details-page.ui:63
 msgid "CPU Model"
 msgstr "Model CPU"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:80
+#: src/libsysprof-ui/sysprof-details-page.ui:78
 msgid "Samples Captured"
 msgstr "Cuplikan Yang Ditangkap"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:94
+#: src/libsysprof-ui/sysprof-details-page.ui:92
 msgid "Marks Captured"
 msgstr "Mark Ditangkap"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:108
+#: src/libsysprof-ui/sysprof-details-page.ui:106
 msgid "Processes Captured"
 msgstr "Proses Yang Ditangkap"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:122
+#: src/libsysprof-ui/sysprof-details-page.ui:120
 msgid "Forks Captured"
 msgstr "Fork Ditangkap"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:136
+#: src/libsysprof-ui/sysprof-details-page.ui:134
 msgid "Counters Captured"
 msgstr "Pencacah Ditangkap"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:151
+#: src/libsysprof-ui/sysprof-details-page.ui:149
 msgid "Allocations Captured"
 msgstr "Alokasi Ditangkap"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:309
-#: src/libsysprof-ui/sysprof-marks-page.ui:52
+#: src/libsysprof-ui/sysprof-details-page.ui:296
+#: src/libsysprof-ui/sysprof-marks-page.ui:50
 msgid "Mark"
 msgstr "Tandai"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:335
+#: src/libsysprof-ui/sysprof-details-page.ui:322
 msgid "Min"
 msgstr "Min"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:348
+#: src/libsysprof-ui/sysprof-details-page.ui:335
 msgid "Max"
 msgstr "Maks"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:361
+#: src/libsysprof-ui/sysprof-details-page.ui:348
 msgid "Avg"
 msgstr "Rata-rata"
 
@@ -324,72 +308,72 @@ msgstr "Baca"
 msgid "Writes"
 msgstr "Tulis"
 
-#: src/libsysprof-ui/sysprof-display.c:229
+#: src/libsysprof-ui/sysprof-display.c:227
 msgid "Recording Failed"
 msgstr "Perekaman Gagal"
 
-#: src/libsysprof-ui/sysprof-display.c:234
+#: src/libsysprof-ui/sysprof-display.c:232
 msgid "Recording…"
 msgstr "Merekam…"
 
 #. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:258
+#: src/libsysprof-ui/sysprof-display.c:263
 #, c-format
 msgid "Recording at %s"
 msgstr "Merekam pada %s"
 
-#: src/libsysprof-ui/sysprof-display.c:262
+#: src/libsysprof-ui/sysprof-display.c:267
 msgid "New Recording"
 msgstr "Perekaman Baru"
 
-#: src/libsysprof-ui/sysprof-display.c:1087
+#: src/libsysprof-ui/sysprof-display.c:1093
 msgid "The recording could not be opened"
 msgstr "Rekaman tidak dapat dibuka"
 
-#: src/libsysprof-ui/sysprof-display.c:1210
-msgid "Save Recording"
-msgstr "Simpan Rekaman"
-
-#: src/libsysprof-ui/sysprof-display.c:1213
-msgid "Save"
-msgstr "Simpan"
-
-#. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
-msgid "Cancel"
-msgstr "Batal"
-
-#: src/libsysprof-ui/sysprof-display.c:1240
+#: src/libsysprof-ui/sysprof-display.c:1234
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Gagal menyimpan rekaman: %s"
 
-#: src/libsysprof-ui/sysprof-display.ui:49
-#: src/libsysprof-ui/sysprof-marks-page.ui:19
+#: src/libsysprof-ui/sysprof-display.c:1267
+msgid "Save Recording"
+msgstr "Simpan Rekaman"
+
+#: src/libsysprof-ui/sysprof-display.c:1270
+msgid "Save"
+msgstr "Simpan"
+
+#. Translators: This is a button.
+#: src/libsysprof-ui/sysprof-display.c:1271 src/sysprof/sysprof-window.c:310
+msgid "Cancel"
+msgstr "Batal"
+
+#: src/libsysprof-ui/sysprof-display.ui:36
+#: src/libsysprof-ui/sysprof-marks-page.ui:16
 msgid "Details"
 msgstr "Rincian"
 
-#: src/libsysprof-ui/sysprof-environ-editor-row.ui:58
+#: src/libsysprof-ui/sysprof-environ-editor-row.ui:29
 msgid "Remove environment variable"
 msgstr "Hapus variabel lingkungan"
 
-#: src/libsysprof-ui/sysprof-environ-editor.c:71
+#: src/libsysprof-ui/sysprof-environ-editor.c:72
 msgid "New variable…"
 msgstr "Variabel baru…"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:22
-msgid "Ouch, that hurt!"
-msgstr "Aduh, sakit!"
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:39
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:31
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr ""
 "Sesuatu secara tak diduga mengacau ketika mencoba memantau profil sistem "
 "Anda."
 
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:41
+msgid "Ouch, that hurt!"
+msgstr "Aduh, sakit!"
+
 #: src/libsysprof-ui/sysprof-log-model.c:210
 #: src/libsysprof-ui/sysprof-logs-page.ui:58
-#: src/libsysprof-ui/sysprof-marks-page.ui:109
+#: src/libsysprof-ui/sysprof-marks-page.ui:103
 msgid "Message"
 msgstr "Pesan"
 
@@ -421,7 +405,7 @@ msgid "Logs"
 msgstr "Log"
 
 #: src/libsysprof-ui/sysprof-logs-page.ui:15
-#: src/libsysprof-ui/sysprof-marks-page.ui:67
+#: src/libsysprof-ui/sysprof-marks-page.ui:64
 msgid "Time"
 msgstr "Waktu"
 
@@ -433,20 +417,20 @@ msgstr "Keparahan"
 msgid "Domain"
 msgstr "Domain"
 
-#: src/libsysprof-ui/sysprof-marks-aid.c:237
-#: src/libsysprof-ui/sysprof-marks-aid.c:242
+#: src/libsysprof-ui/sysprof-marks-aid.c:408
+#: src/libsysprof-ui/sysprof-marks-aid.c:413
 msgid "Timings"
 msgstr "Pengaturan waktu"
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:38
+#: src/libsysprof-ui/sysprof-marks-page.ui:37
 msgid "Group"
 msgstr "Grup"
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:81
+#: src/libsysprof-ui/sysprof-marks-page.ui:77
 msgid "End"
 msgstr "Akhir"
 
-#: src/libsysprof-ui/sysprof-marks-page.ui:245
+#: src/libsysprof-ui/sysprof-marks-page.ui:234
 msgid "No Timings Available"
 msgstr "Tidak Ada Pengaturan Waktu"
 
@@ -472,32 +456,36 @@ msgid "Track Allocations"
 msgstr "Alokasi Trek"
 
 #. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:234
+#: src/libsysprof-ui/sysprof-memprof-page.c:241
 #, c-format
 msgid "> %s to %s"
 msgstr "> %s ke %s"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:23
+#: src/libsysprof-ui/sysprof-memprof-page.ui:21
 msgid "Summary"
 msgstr "Ringkasan"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+#: src/libsysprof-ui/sysprof-memprof-page.ui:27
 msgid "All Allocations"
 msgstr "Semua Alokasi"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:40
+#: src/libsysprof-ui/sysprof-memprof-page.ui:34
 msgid "Temporary Allocations"
 msgstr "Alokasi Temporer"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+#: src/libsysprof-ui/sysprof-memprof-page.ui:41
+msgid "Leaked Allocations"
+msgstr "Alokasi Bocor"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:377
 msgid "Size"
 msgstr "Ukuran"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:422
+#: src/libsysprof-ui/sysprof-memprof-page.ui:394
 msgid "Analyzing Memory Allocations"
 msgstr "Menganalisis Alokasi Memori"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:423
+#: src/libsysprof-ui/sysprof-memprof-page.ui:395
 msgid "Sysprof is busy analyzing memory allocations."
 msgstr "Sysprof sibuk menganalisis alokasi memori."
 
@@ -511,29 +499,29 @@ msgid "Network"
 msgstr "Jaringan"
 
 #. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:27
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:26
 msgid "GNOME Shell"
 msgstr "GNOME Shell"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:90
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:92
 msgid "Profilers"
 msgstr "Pembuat profil"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:186
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:188
 msgid ""
 "Track application memory allocations (Sysprof must launch target application)"
 msgstr ""
 "Lacak alokasi memori aplikasi (Sysprof harus meluncurkan aplikasi target)"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:194
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:196
 msgid "Track slow operations on your applications main loop"
 msgstr "Lacak operasi lambat pada loop utama aplikasi Anda"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:210
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:212
 msgid "All Processes"
 msgstr "Semua Proses"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:242
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
 "not be possible on some system configurations."
@@ -541,28 +529,28 @@ msgstr ""
 "Sertakan semua aplikasi dan kernel sistem operasi dalam callgraph. Hal ini "
 "barangkali tidak mungkin pada beberapa konfigurasi sistem."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:268
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:270
 msgid "Search Processes…"
 msgstr "Cari Proses…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:287
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:288
 msgid "Loading Processes…"
 msgstr "Memuat Proses…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:311
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:312
 msgid "Launch Application"
 msgstr "Luncurkan Aplikasi"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:340
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:341
 msgid "Enable to launch a program of your choosing before profiling."
 msgstr ""
 "Fungsikan untuk meluncurkan program pilihan Anda sebelum membuat profil."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:368
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:369
 msgid "Command Line"
 msgstr "Baris Perintah"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:387
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:388
 msgid "Environment"
 msgstr "Lingkungan"
 
@@ -603,31 +591,31 @@ msgstr "Penggunaan Energi"
 msgid "Energy Usage (All)"
 msgstr "Penggunaan Energi (Semua)"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:35
 msgid ""
 "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
 msgstr ""
 "Tahukah Anda bahwa Anda dapat memakai <a href=\"help:sysprof\">sysprof-cli</"
 "a> untuk merekam?"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:47
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:50
 msgid "Events"
 msgstr "Kejadian"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:73
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:76
 msgid "_Stop Recording"
 msgstr "_Berhenti Merekam"
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:119
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:54
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:136
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
 msgid "Select for more details"
 msgstr "Pilih untuk lebih banyak rincian"
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:141
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:158
 msgid "Display supplemental graphs"
 msgstr "Tampilkan grafik pelengkap"
 
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
 msgid "Instruments"
 msgstr "Instrumen"
 
@@ -796,43 +784,43 @@ msgstr "Bantuan"
 msgid "About Sysprof"
 msgstr "Tentang Sysprof"
 
-#: src/sysprof/sysprof-application.c:194
+#: src/sysprof/sysprof-application.c:200
 msgid "A system profiler"
 msgstr "Pembuat profil sistem"
 
-#: src/sysprof/sysprof-application.c:199
+#: src/sysprof/sysprof-application.c:205
 msgid "translator-credits"
 msgstr ""
 "Andika Triwidada <andika@gmail.com>, 2017-2020.\n"
-"Kukuh Syafaat <kukuhsyafaat@gnome.org>, 2018-2021."
+"Kukuh Syafaat <kukuhsyafaat@gnome.org>, 2018-2022."
 
-#: src/sysprof/sysprof-application.c:205
+#: src/sysprof/sysprof-application.c:211
 msgid "Learn more about Sysprof"
 msgstr "Pelajari lebih lanjut tentang Sysprof"
 
 #. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:273
+#: src/sysprof/sysprof-window.c:304
 msgid "Open Capture…"
 msgstr "Buka Tangkapan…"
 
 #. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:277
+#: src/sysprof/sysprof-window.c:308
 msgid "Open"
 msgstr "Buka"
 
-#: src/sysprof/sysprof-window.c:284
+#: src/sysprof/sysprof-window.c:313
 msgid "Sysprof Captures"
 msgstr "Tangkapan Sysprof"
 
-#: src/sysprof/sysprof-window.c:289
+#: src/sysprof/sysprof-window.c:318
 msgid "All Files"
 msgstr "Semua Berkas"
 
-#: src/sysprof/ui/sysprof-window.ui:28
+#: src/sysprof/sysprof-window.ui:33
 msgid "_Open"
 msgstr "_Buka"
 
-#: src/sysprof/ui/sysprof-window.ui:31
+#: src/sysprof/sysprof-window.ui:36
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Buka Rekaman… (Ctrl+O)"
 
@@ -979,7 +967,7 @@ msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Terlalu banyak argumen yang disampaikan ke sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:374
+#: src/tools/sysprof-cli.c:376
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "%s sudah ada. Gunakan —force untuk menimpa\n"
@@ -1021,3 +1009,21 @@ msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
 msgstr ""
 "--dest=NAMA_BUS [NAMABERKAS] - menyambung ke pembuat profil sysprof yang "
 "tertanam"
+
+#~ msgid "Window size"
+#~ msgstr "Ukuran jendela"
+
+#~ msgid "Window size (width and height)."
+#~ msgstr "Ukuran jendela (lebar dan tinggi)."
+
+#~ msgid "Window position"
+#~ msgstr "Posisi jendela"
+
+#~ msgid "Window position (x and y)."
+#~ msgstr "Posisi jendela (x dan y)."
+
+#~ msgid "Window maximized"
+#~ msgstr "Jendela termaksimalkan"
+
+#~ msgid "Window maximized state"
+#~ msgstr "Keadaan jendela termaksimalkan"

@@ -1107,6 +1107,12 @@ sysprof_display_open (SysprofDisplay *self,
       return;
     }
 
+  /* Jump right to the "view" page to avoid a quick view of the
+   * assistants page when loading.
+   */
+  if (g_strcmp0 ("assistant", gtk_stack_get_visible_child_name (priv->stack)) == 0)
+    gtk_stack_set_visible_child_name (priv->stack, "view");
+
   sysprof_display_load_async (self, reader, NULL, NULL, NULL);
   update_title_child_property (self);
 }

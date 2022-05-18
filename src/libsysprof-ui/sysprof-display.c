@@ -124,6 +124,7 @@ sysprof_display_profiler_failed_cb (SysprofDisplay  *self,
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_RECORDING]);
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_REPLAY]);
 }
 
 static void
@@ -868,6 +869,8 @@ sysprof_display_scan_finish (SysprofDisplay  *self,
     sysprof_details_page_add_marks (priv->details,
                                     (const SysprofMarkStat *)(gpointer)marks->data,
                                     marks->len);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CAN_REPLAY]);
 
   return g_task_propagate_boolean (G_TASK (result), error);
 }

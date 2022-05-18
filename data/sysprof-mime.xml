@@ -3,5 +3,6 @@
   <mime-type type="application/x-sysprof-capture">
     <comment>Sysprof Capture</comment>
     <glob pattern="*.syscap"/>
+    <generic-icon name="org.gnome.Sysprof"/>
   </mime-type>
 </mime-info>

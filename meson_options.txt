@@ -1,7 +1,7 @@
 # Optionally disable the GTK application in case you're building the
 # sysprof-cli only for your platform. Might be useful in IoT or various
 # server scenarios.
-option('enable_gtk', type: 'boolean')
+option('gtk', type: 'boolean')
 
 # Disable libsysprof/ui (in situations you only want sysprof-capture)
 option('libsysprof', type: 'boolean')
@@ -10,7 +10,7 @@ option('libsysprof', type: 'boolean')
 # You only really want to ignore this if you are running from a container
 # and are talking to a host daemon. Also, if you're compiling for something
 # other than Linux to allow viewing syscap files.
-option('with_sysprofd', type: 'combo',
+option('sysprofd', type: 'combo',
   choices: ['host', 'bundled', 'none'],
   value: 'bundled',
 )
@@ -35,12 +35,12 @@ option('libunwind', type: 'boolean')
 
 # Optionally disable the tools (this is mostly only useful for building only
 # libsysprof-capture as a subproject)
-option('enable_tools', type: 'boolean')
+option('tools', type: 'boolean')
 
 # Optionally disable the tests (this is mostly only useful for building only
 # libsysprof-capture as a subproject)
-option('enable_tests', type: 'boolean')
+option('tests', type: 'boolean')
 
 # Optionally disable the examples (this is mostly only useful for building only
 # libsysprof-capture as a subproject)
-option('enable_examples', type: 'boolean')
+option('examples', type: 'boolean')

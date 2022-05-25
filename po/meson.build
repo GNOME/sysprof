@@ -2,5 +2,5 @@
 i18n.gettext('sysprof-workaround', preset: 'glib', install: false)
 
 if get_option('libsysprof')
-i18n.gettext('sysprof', preset: 'glib')
+  i18n.gettext('sysprof', preset: 'glib')
 endif

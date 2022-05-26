@@ -1,5 +1,3 @@
-if get_option('with_sysprofd') == 'bundled'
-
 sysprofd_sources = [
   '../libsysprof/sysprof-kallsyms.c',
   'sysprofd.c',
@@ -96,5 +94,3 @@ configure_file(
   configuration: sysprofdconf,
     install_dir: systemdunitdir,
 )
-
-endif

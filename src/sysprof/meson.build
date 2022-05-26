@@ -1,5 +1,3 @@
-if get_option('enable_gtk') and get_option('libsysprof')
-
 sysprof_sources = [
   'egg-binding-group.c',
   'sysprof.c',
@@ -26,5 +24,3 @@ sysprof = executable('sysprof', sysprof_resources + sysprof_sources,
    install_dir: get_option('bindir'),
        install: true,
 )
-
-endif

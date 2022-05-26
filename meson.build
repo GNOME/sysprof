@@ -10,7 +10,7 @@ project('sysprof', 'c',
 
 symbolic_version = '43.alpha0'
 
-gnome = import('gnome')
+gnome = import('gnome', required: get_option('gtk'))
 pkgconfig = import('pkgconfig')
 i18n = import('i18n')
 
@@ -45,7 +45,6 @@ config_h.set_quoted('PACKAGE_LIBDIR', join_paths(get_option('prefix'), get_optio
 config_h.set('PACKAGE_TARNAME', 'PACKAGE_STRING')
 config_h.set('PACKAGE', 'PACKAGE_NAME')
 config_h.set('VERSION', 'PACKAGE_VERSION')
-
 
 # Detect and set symbol visibility
 if get_option('default_library') != 'static'
@@ -200,9 +199,15 @@ endif
 
 subdir('src')
 subdir('data')
-subdir('examples')
-subdir('help')
 subdir('po')
+
+if get_option('help')
+  subdir('help')
+endif
+
+if get_option('examples')
+  subdir('examples')
+endif
 
 configure_file(
           input: 'config.h.meson',
@@ -210,6 +215,10 @@ configure_file(
   configuration: config_h
 )
 
-if get_option('enable_gtk')
-  meson.add_install_script('build-aux/meson/post_install.sh')
+if get_option('gtk') and gnome.found()
+  gnome.post_install(
+       glib_compile_schemas: true,
+      gtk_update_icon_cache: true,
+    update_desktop_database: true
+  )
 endif

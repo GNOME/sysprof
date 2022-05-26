@@ -1,5 +1,4 @@
-if get_option('enable_gtk') and get_option('libsysprof')
-
+if get_option('gtk') and get_option('libsysprof')
   install_data('sysprof-mime.xml',
     install_dir: join_paths(datadir, 'mime/packages')
   )

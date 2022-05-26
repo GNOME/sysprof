@@ -1,5 +1,3 @@
-if get_option('enable_gtk') and get_option('libsysprof')
-
 libsysprof_ui_public_sources = [
   'sysprof-check.c',
   'sysprof-display.c',
@@ -135,5 +133,3 @@ pkgconfig.generate(
 )
 
 install_headers(libsysprof_ui_public_headers, subdir: sysprof_ui_header_subdir)
-
-endif

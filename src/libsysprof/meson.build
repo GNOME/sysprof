@@ -1,5 +1,3 @@
-if get_option('libsysprof')
-
 libsysprof_c_args = [ '-DSYSPROF_COMPILATION' ]
 
 libsysprof_public_sources = [
@@ -195,5 +193,3 @@ pkgconfig.generate(
 install_headers(libsysprof_public_headers, subdir: sysprof_header_subdir)
 
 subdir('preload')
-
-endif

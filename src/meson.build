@@ -8,7 +8,7 @@ sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
 sysprof_version_conf.set('MICRO_VERSION', sysprof_version[2])
 sysprof_version_conf.set('VERSION', meson.project_version())
 
-if get_option('with_sysprofd') == 'bundled' or get_option('libsysprof')
+if get_option('sysprofd') == 'bundled' or get_option('libsysprof')
   ipc_profiler_src = gnome.gdbus_codegen('ipc-profiler',
              sources: 'org.gnome.Sysprof3.Profiler.xml',
     interface_prefix: 'org.gnome.Sysprof3.',
@@ -43,18 +43,26 @@ endif
 
 ipc_include_dirs = include_directories('.')
 
-stackstash_sources = files([
-  'stackstash.c',
-])
+stackstash_sources = files('stackstash.c')
 
-helpers_sources = files([
-  'helpers.c',
-])
+helpers_sources = files('helpers.c')
 
 subdir('libsysprof-capture')
-subdir('sysprofd')
-subdir('libsysprof')
-subdir('libsysprof-ui')
-subdir('sysprof')
-subdir('tools')
-subdir('tests')
+if get_option('sysprofd') == 'bundled'
+  subdir('sysprofd')
+endif
+if get_option('libsysprof')
+  subdir('libsysprof')
+endif
+if get_option('gtk') and get_option('libsysprof')
+  subdir('libsysprof-ui')
+endif
+if get_option('gtk') and get_option('libsysprof')
+  subdir('sysprof')
+endif
+if get_option('tools')
+  subdir('tools')
+endif
+if get_option('tests')
+  subdir('tests')
+endif

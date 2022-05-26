@@ -1,5 +1,3 @@
-if get_option('enable_tools')
-
 tools_deps = [
   dependency('glib-2.0'),
   libsysprof_capture_dep,
@@ -28,7 +26,7 @@ sysprof_dump = executable('sysprof-dump', 'sysprof-dump.c',
        install: false,
 )
 
-if get_option('with_sysprofd') == 'bundled' or get_option('libsysprof')
+if get_option('sysprofd') == 'bundled' or get_option('libsysprof')
   sysprof_profiler_ctl = executable('sysprof-profiler-ctl',
     [ 'sysprof-profiler-ctl.c', ipc_profiler_src ],
     dependencies: [ tools_deps, dependency('gio-unix-2.0', version: glib_req_version) ],
@@ -42,5 +40,3 @@ list_threads = executable('list-threads', ['list-threads.c'],
         c_args: tools_cflags,
        install: false,
 )
-
-endif

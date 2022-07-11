@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <interface>
   <template class="SysprofFailedStateView" parent="GtkWidget">
+    <property name="vexpand">true</property>
+    <property name="valign">center</property>
     <child>
       <object class="GtkBox">
         <property name="margin-top">36</property>
@@ -22,8 +24,15 @@
         </child>
         <child type="end">
           <object class="GtkLabel">
-            <property name="vexpand">true</property>
+            <property name="label" translatable="yes">Ouch, that hurt!</property>
             <property name="visible">true</property>
+            <style>
+              <class name="dim-label"/>
+            </style>
+            <attributes>
+              <attribute name="scale" value="2"/>
+              <attribute name="weight" value="bold"/>
+            </attributes>
           </object>
         </child>
         <child type="end">
@@ -34,19 +43,6 @@
             <style>
               <class name="dim-label"/>
             </style>
-          </object>
-        </child>
-        <child type="end">
-          <object class="GtkLabel">
-            <property name="label" translatable="yes">Ouch, that hurt!</property>
-            <property name="visible">true</property>
-            <style>
-              <class name="dim-label"/>
-            </style>
-            <attributes>
-              <attribute name="scale" value="2"/>
-              <attribute name="weight" value="bold"/>
-            </attributes>
           </object>
         </child>
       </object>

@@ -11,8 +11,8 @@
             <property name="halign">center</property>
             <property name="child">
               <object class="GtkImage" id="image">
-                <property name="pixel_size">64</property>
-                <property name="width-request">92</property>
+                <property name="pixel_size">48</property>
+                <property name="width-request">64</property>
                 <property name="icon_name">org.gnome.Sysprof-symbolic</property>
               </object>
             </property>

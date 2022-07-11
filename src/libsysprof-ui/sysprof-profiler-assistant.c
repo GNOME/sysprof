@@ -25,8 +25,6 @@
 #include <adwaita.h>
 #include <sysprof.h>
 
-#include "egg-three-grid.h"
-
 #include "sysprof-platform.h"
 
 #include "sysprof-aid-icon.h"
@@ -400,8 +398,6 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, launch_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, inherit_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, search_entry);
-
-  g_type_ensure (EGG_TYPE_THREE_GRID);
 
   g_type_ensure (SYSPROF_TYPE_AID_ICON);
   g_type_ensure (SYSPROF_TYPE_BATTERY_AID);

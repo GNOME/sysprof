@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <adwaita.h>
 #include <sysprof.h>
 
 #include "egg-three-grid.h"
@@ -54,16 +55,14 @@ struct _SysprofProfilerAssistant
   /* Template Objects */
   GtkSwitch            *allow_throttling;
   GtkButton            *record_button;
-  GtkEntry             *command_line;
+  AdwEntryRow          *command_line;
   GtkSearchEntry       *search_entry;
-  GtkRevealer          *process_revealer;
   GtkListBox           *process_list_box;
   SysprofEnvironEditor *environ_editor;
   GtkFlowBox           *aid_flow_box;
   GtkSwitch            *whole_system_switch;
   GtkSwitch            *launch_switch;
   GtkSwitch            *inherit_switch;
-  GtkWidget            *scroller;
 };
 
 enum {
@@ -114,12 +113,15 @@ create_process_row_cb (gpointer item_,
 }
 
 static void
-sysprof_profiler_assistant_notify_reveal_child_cb (SysprofProfilerAssistant *self,
-                                                   GParamSpec               *pspec,
-                                                   GtkRevealer              *revealer)
+sysprof_profiler_assistant_notify_active_cb (SysprofProfilerAssistant *self,
+                                             GParamSpec               *pspec,
+                                             GtkSwitch                *switch_)
 {
   g_assert (SYSPROF_IS_PROFILER_ASSISTANT (self));
-  g_assert (GTK_IS_REVEALER (revealer));
+  g_assert (GTK_IS_SWITCH (switch_));
+
+  if (gtk_switch_get_active (switch_))
+    return;
 
   if (self->process_model == NULL)
     {
@@ -155,7 +157,7 @@ sysprof_profiler_assistant_command_line_changed_cb (SysprofProfilerAssistant *se
   gint argc;
 
   g_assert (SYSPROF_IS_PROFILER_ASSISTANT (self));
-  g_assert (GTK_IS_ENTRY (entry));
+  g_assert (ADW_IS_ENTRY_ROW (entry));
 
   style_context = gtk_widget_get_style_context (GTK_WIDGET (entry));
   text = gtk_editable_get_text (GTK_EDITABLE (entry));
@@ -314,13 +316,13 @@ filter_by_search_text (GObject  *object,
 
 static void
 sysprof_profiler_assistant_search_changed_cb (SysprofProfilerAssistant *self,
-                                              GtkSearchEntry           *search_entry)
+                                              GtkEditable              *search_entry)
 {
   g_autoptr(SysprofModelFilter) filter = NULL;
-  const gchar *text;
+  const char *text;
 
   g_assert (SYSPROF_IS_PROFILER_ASSISTANT (self));
-  g_assert (GTK_IS_SEARCH_ENTRY (search_entry));
+  g_assert (GTK_IS_EDITABLE (search_entry));
 
   if (self->process_model == NULL)
     return;
@@ -353,9 +355,12 @@ static void
 sysprof_profiler_assistant_dispose (GObject *object)
 {
   SysprofProfilerAssistant *self = (SysprofProfilerAssistant *)object;
+  GtkWidget *child;
 
   g_clear_object (&self->process_model);
-  g_clear_pointer (&self->scroller, gtk_widget_unparent);
+
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    gtk_widget_unparent (child);
 
   G_OBJECT_CLASS (sysprof_profiler_assistant_parent_class)->dispose (object);
 }
@@ -390,13 +395,11 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, command_line);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, environ_editor);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_list_box);
-  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, process_revealer);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, record_button);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, whole_system_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, launch_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, inherit_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, search_entry);
-  gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, scroller);
 
   g_type_ensure (EGG_TYPE_THREE_GRID);
 
@@ -439,9 +442,9 @@ sysprof_profiler_assistant_init (SysprofProfilerAssistant *self)
                            self,
                            G_CONNECT_SWAPPED);
 
-  g_signal_connect_object (self->process_revealer,
-                           "notify::reveal-child",
-                           G_CALLBACK (sysprof_profiler_assistant_notify_reveal_child_cb),
+  g_signal_connect_object (self->whole_system_switch,
+                           "notify::active",
+                           G_CALLBACK (sysprof_profiler_assistant_notify_active_cb),
                            self,
                            G_CONNECT_SWAPPED);
 

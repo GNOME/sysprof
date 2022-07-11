@@ -1,3 +1,16 @@
+Overview of changes in Sysprof 3.45.0
+=====================================
+
+This release of Sysprof is a development release and is not intended for
+end users.
+
+ * Initial port to GTK 4
+ * A number of build configuration options where simplified and will need
+   changing by distributions to match the new, more consistent, naming.
+ * Libadwaita has been added as a dependency
+ * The profiler assistant has received styling changes
+ * libsysprof-ui had it's ABI bumped to libsysprof-ui-5 which targets GTK 4.
+
 Overview of changes in Sysprof 3.44.0
 =====================================
 

@@ -65,11 +65,9 @@ sysprof_window_notify_can_replay_cb (SysprofWindow   *self,
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (SYSPROF_IS_NOTEBOOK (notebook));
 
-#if 0
-  dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "replay-capture",
-                             "enabled", sysprof_notebook_get_can_replay (notebook),
-                             NULL);
-#endif
+  gtk_widget_action_set_enabled (GTK_WIDGET (self),
+                                 "win.replay-capture",
+                                 sysprof_notebook_get_can_replay (notebook));
 }
 
 static void
@@ -80,19 +78,17 @@ sysprof_window_notify_can_save_cb (SysprofWindow   *self,
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (SYSPROF_IS_NOTEBOOK (notebook));
 
-#if 0
-  dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "save-capture",
-                             "enabled", sysprof_notebook_get_can_save (notebook),
-                             NULL);
-#endif
+  gtk_widget_action_set_enabled (GTK_WIDGET (self),
+                                 "win.save-capture",
+                                 sysprof_notebook_get_can_save (notebook));
 }
 
 static void
-new_tab_cb (GSimpleAction *action,
-            GVariant      *param,
-            gpointer       user_data)
+new_tab_cb (GtkWidget  *widget,
+            const char *action_name,
+            GVariant   *param)
 {
-  SysprofWindow *self = user_data;
+  SysprofWindow *self = (SysprofWindow *)widget;
 
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
 
@@ -100,12 +96,12 @@ new_tab_cb (GSimpleAction *action,
 }
 
 static void
-switch_tab_cb (GSimpleAction *action,
-               GVariant      *param,
-               gpointer       user_data)
+switch_tab_cb (GtkWidget  *widget,
+               const char *action_name,
+               GVariant   *param)
 {
-  SysprofWindow *self = user_data;
-  gint page;
+  SysprofWindow *self = (SysprofWindow *)widget;
+  int page;
 
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
   g_return_if_fail (g_variant_is_of_type (param, G_VARIANT_TYPE_INT32));
@@ -115,11 +111,11 @@ switch_tab_cb (GSimpleAction *action,
 }
 
 static void
-close_tab_cb (GSimpleAction *action,
-              GVariant      *param,
-              gpointer       user_data)
+close_tab_cb (GtkWidget  *widget,
+              const char *action_name,
+              GVariant   *param)
 {
-  SysprofWindow *self = user_data;
+  SysprofWindow *self = (SysprofWindow *)widget;
 
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
 
@@ -139,34 +135,37 @@ close_tab_cb (GSimpleAction *action,
 }
 
 static void
-replay_capture_cb (GSimpleAction *action,
-                   GVariant      *param,
-                   gpointer       user_data)
+replay_capture_cb (GtkWidget  *widget,
+                   const char *action_name,
+                   GVariant   *param)
 {
-  SysprofWindow *self = user_data;
+  SysprofWindow *self = (SysprofWindow *)widget;
+
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
+
   sysprof_notebook_replay (self->notebook);
 }
 
 static void
-save_capture_cb (GSimpleAction *action,
-                 GVariant      *param,
-                 gpointer       user_data)
+save_capture_cb (GtkWidget  *widget,
+                 const char *action_name,
+                 GVariant   *param)
 {
-  SysprofWindow *self = user_data;
+  SysprofWindow *self = (SysprofWindow *)widget;
+
   g_return_if_fail (SYSPROF_IS_WINDOW (self));
+
   sysprof_notebook_save (self->notebook);
 }
 
 static void
-stop_recording_cb (GSimpleAction *action,
-                   GVariant      *param,
-                   gpointer       user_data)
+stop_recording_cb (GtkWidget  *widget,
+                   const char *action_name,
+                   GVariant   *param)
 {
-  SysprofWindow *self = user_data;
+  SysprofWindow *self = (SysprofWindow *)widget;
   SysprofDisplay *current;
 
-  g_assert (G_IS_SIMPLE_ACTION (action));
   g_assert (SYSPROF_IS_WINDOW (self));
 
   if ((current = sysprof_notebook_get_current (self->notebook)))
@@ -197,16 +196,14 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, open_button);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, notebook);
 
-#if 0
-  /* Switch to GtkShortcutController class bindings */
-  DzlShortcutController *controller;
-  controller = dzl_shortcut_controller_find (GTK_WIDGET (self));
-  dzl_shortcut_controller_add_command_action (controller,
-                                              "org.gnome.sysprof3.stop-recording",
-                                              "Escape",
-                                              DZL_SHORTCUT_PHASE_BUBBLE,
-                                              "win.stop-recording");
-#endif
+  gtk_widget_class_install_action (widget_class, "win.close-tab", NULL, close_tab_cb);
+  gtk_widget_class_install_action (widget_class, "win.new-tab", NULL, new_tab_cb);
+  gtk_widget_class_install_action (widget_class, "win.switch-tab", "i", switch_tab_cb);
+  gtk_widget_class_install_action (widget_class, "win.replay-capture", NULL, replay_capture_cb);
+  gtk_widget_class_install_action (widget_class, "win.save-capture", NULL, save_capture_cb);
+  gtk_widget_class_install_action (widget_class, "win.stop-recording", NULL, stop_recording_cb);
+
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_Escape, 0, "win.stop-recording", NULL);
 
   g_type_ensure (SYSPROF_TYPE_NOTEBOOK);
   g_type_ensure (SYSPROF_TYPE_DISPLAY);
@@ -215,25 +212,12 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 static void
 sysprof_window_init (SysprofWindow *self)
 {
-  static GActionEntry actions[] = {
-    { "close-tab", close_tab_cb },
-    { "new-tab", new_tab_cb },
-    { "switch-tab", switch_tab_cb, "i" },
-    { "replay-capture", replay_capture_cb },
-    { "save-capture", save_capture_cb },
-    { "stop-recording", stop_recording_cb },
-  };
   GMenu *menu;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
   menu = gtk_application_get_menu_by_id (GTK_APPLICATION (g_application_get_default ()), "win-menu");
   gtk_menu_button_set_menu_model (self->menu_button, G_MENU_MODEL (menu));
-
-  g_action_map_add_action_entries (G_ACTION_MAP (self),
-                                   actions,
-                                   G_N_ELEMENTS (actions),
-                                   self);
 
   g_signal_connect_object (self->notebook,
                            "notify::can-replay",
@@ -252,15 +236,8 @@ sysprof_window_init (SysprofWindow *self)
   g_object_bind_property (self->notebook, "current", self->bindings, "source",
                           G_BINDING_SYNC_CREATE);
 
-#if 0
-  /* Switch to using gtk_widget_action_set_enabled() */
-  dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "save-capture",
-                             "enabled", FALSE,
-                             NULL);
-  dzl_gtk_widget_action_set (GTK_WIDGET (self), "win", "replay-capture",
-                             "enabled", FALSE,
-                             NULL);
-#endif
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.save-capture", FALSE);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self), "win.replay-capture", FALSE);
 }
 
 void

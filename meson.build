@@ -22,8 +22,8 @@ datadir = get_option('datadir')
 datadir_for_pc_file = join_paths('${prefix}', datadir)
 podir = join_paths(meson.current_source_dir(), 'po')
 
-glib_req_version = '>= 2.68.0'
-gtk_req_version = '>= 4.4'
+glib_req_version = '>= 2.73.0'
+gtk_req_version = '>= 4.6'
 polkit_req_version = '>= 0.105'
 
 cc = meson.get_compiler('c')

@@ -69,7 +69,7 @@ sysprof_environ_editor_create_dummy_row (SysprofEnvironEditor *self)
   g_assert (SYSPROF_IS_ENVIRON_EDITOR (self));
 
   label = g_object_new (GTK_TYPE_LABEL,
-                        "label", _("New variable…"),
+                        "label", _("New environment variable…"),
                         "margin-start", 6,
                         "margin-end", 6,
                         "margin-top", 6,

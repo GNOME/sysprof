@@ -5,6 +5,7 @@
       <class name="org-gnome-Sysprof"/>
     </style>
     <property name="default-height">750</property>
+    <property name="default-width">700</property>
     <property name="icon-name">org.gnome.Sysprof-symbolic</property>
     <property name="title" translatable="yes">Sysprof</property>
     <child>

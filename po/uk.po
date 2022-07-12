@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2022-04-03 12:00+0000\n"
-"PO-Revision-Date: 2022-04-03 20:16+0300\n"
+"POT-Creation-Date: 2022-07-11 20:12+0000\n"
+"PO-Revision-Date: 2022-07-12 09:53+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
 #: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:208
-#: src/sysprof/sysprof-application.c:332 src/sysprof/sysprof-window.ui:9
+#: src/sysprof/sysprof-application.c:332 src/sysprof/sysprof-window.ui:10
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -310,43 +310,43 @@ msgstr "Читання"
 msgid "Writes"
 msgstr "Записи"
 
-#: src/libsysprof-ui/sysprof-display.c:227
+#: src/libsysprof-ui/sysprof-display.c:228
 msgid "Recording Failed"
 msgstr "Не вдалося записати"
 
-#: src/libsysprof-ui/sysprof-display.c:232
+#: src/libsysprof-ui/sysprof-display.c:233
 msgid "Recording…"
 msgstr "Записування…"
 
 #. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:263
+#: src/libsysprof-ui/sysprof-display.c:264
 #, c-format
 msgid "Recording at %s"
 msgstr "Записано о %s"
 
-#: src/libsysprof-ui/sysprof-display.c:267
+#: src/libsysprof-ui/sysprof-display.c:268
 msgid "New Recording"
 msgstr "Новий запис"
 
-#: src/libsysprof-ui/sysprof-display.c:1093
+#: src/libsysprof-ui/sysprof-display.c:1096
 msgid "The recording could not be opened"
 msgstr "Не вдалося відкрити запис"
 
-#: src/libsysprof-ui/sysprof-display.c:1234
+#: src/libsysprof-ui/sysprof-display.c:1243
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Не вдалося зберегти запис: %s"
 
-#: src/libsysprof-ui/sysprof-display.c:1267
+#: src/libsysprof-ui/sysprof-display.c:1276
 msgid "Save Recording"
 msgstr "Зберегти запис"
 
-#: src/libsysprof-ui/sysprof-display.c:1270
+#: src/libsysprof-ui/sysprof-display.c:1279
 msgid "Save"
 msgstr "Зберегти"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1271 src/sysprof/sysprof-window.c:310
+#: src/libsysprof-ui/sysprof-display.c:1280 src/sysprof/sysprof-window.c:287
 msgid "Cancel"
 msgstr "Скасувати"
 
@@ -360,17 +360,18 @@ msgid "Remove environment variable"
 msgstr "Вилучити змінну середовища"
 
 #: src/libsysprof-ui/sysprof-environ-editor.c:72
-msgid "New variable…"
-msgstr "Створити змінну…"
+#| msgid "Remove environment variable"
+msgid "New environment variable…"
+msgstr "Створити змінну середовища…"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:31
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:27
+msgid "Ouch, that hurt!"
+msgstr "Йой, боляче!"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:40
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr ""
 "Під час спроби профілювання вашої системи сталося щось неочікувано погане."
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:41
-msgid "Ouch, that hurt!"
-msgstr "Йой, боляче!"
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
 #: src/libsysprof-ui/sysprof-logs-page.ui:58
@@ -504,62 +505,53 @@ msgstr "Мережа"
 msgid "GNOME Shell"
 msgstr "GNOME Shell"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:92
-msgid "Profilers"
-msgstr "Засоби профілювання"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
+msgid "Profiling Target"
+msgstr "Профілювання цілі"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:188
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:72
+#| msgid "Profile the system"
+msgid "Profile Entire System"
+msgstr "Профілювання усієї системи"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:73
+#| msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgid ""
-"Track application memory allocations (Sysprof must launch target application)"
+"Sysprof can generate callgraphs for one or more processes on your system."
 msgstr ""
-"Стежити за розміщенням програмою даних у пам'яті (Sysprof має запустити "
-"цільову програму)"
+"Sysprof може створювати графи викликів для одного або декількох процесів у"
+" вашій системі."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:196
-msgid "Track slow operations on your applications main loop"
-msgstr "Стежити за повільними діями у основному циклі ваших програм"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:84
+#| msgid "Search Processes…"
+msgid "Search Processes"
+msgstr "Пошук процесів"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:212
-msgid "All Processes"
-msgstr "Усі процеси"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:242
-msgid ""
-"Include all applications and operating system kernel in callgraph. This may "
-"not be possible on some system configurations."
-msgstr ""
-"Включити до графу викликів усі програми і ядро операційної системи. Це може "
-"бути неможливим у деяких конфігураціях системи."
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:270
-msgid "Search Processes…"
-msgstr "Пошук процесів…"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:288
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:99
 msgid "Loading Processes…"
 msgstr "Завантажуємо процеси…"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:312
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:114
 msgid "Launch Application"
 msgstr "Запустити програму"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:341
-msgid "Enable to launch a program of your choosing before profiling."
-msgstr "Увімкнути запуск вибраної вами програми до профілювання."
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:115
+msgid ""
+"Sysprof can launch an application to be profiled. The profiler will "
+"automatically stop when it exits."
+msgstr ""
+"Sysprof може запускати програми для профілювання. Засіб профілювання"
+" автоматично припинить роботу, якщо він працює."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:369
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:126
 msgid "Command Line"
 msgstr "Командний рядок"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:388
-msgid "Environment"
-msgstr "Середовище"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:413
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:135
 msgid "Inherit Environment"
 msgstr "Успадкувати середовище"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:437
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:136
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other "
 "desktop environment settings."
@@ -567,19 +559,38 @@ msgstr ""
 "Увімкніть, щоб забезпечити успадкування вашою програмою дисплея, шини "
 "повідомлень та інших параметрів стільничного середовища."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:463
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:153
+msgid "Performance"
+msgstr "Швидкодія"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:156
 msgid "Allow CPU Throttling"
 msgstr "Дозволити дроселювання процесора"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:491
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:157
 msgid ""
-"If disabled, your CPU will be placed in performance mode. It will be "
-"restored after profiling."
+"When enabled, your system is allowed to scale CPU frequency as necessary."
 msgstr ""
-"Якщо вимкнено, ваш процесор буде переведено у режим максимальної швидкодії. "
-"Стан процесора буде відновлено після профілювання."
+"Якщо позначено, вашій системі буде дозволено масштабувати частоту процесора,"
+" якщо це буде потрібно."
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:172
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
+msgid "Instruments"
+msgstr "Інструменти"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:245
+msgid ""
+"Track application memory allocations (Sysprof must launch target application)"
+msgstr ""
+"Стежити за розміщенням програмою даних у пам'яті (Sysprof має запустити "
+"цільову програму)"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:252
+msgid "Track slow operations on your applications main loop"
+msgstr "Стежити за повільними діями у основному циклі ваших програм"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:265
 msgid "_Record"
 msgstr "_Записати"
 
@@ -615,10 +626,6 @@ msgstr "Виберіть, щоб переглянути подробиці"
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:158
 msgid "Display supplemental graphs"
 msgstr "Показати допоміжні графи"
-
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
-msgid "Instruments"
-msgstr "Інструменти"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
 msgid "Profile the system"
@@ -800,28 +807,28 @@ msgid "Learn more about Sysprof"
 msgstr "Дізнатися більше про Sysprof"
 
 #. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:304
+#: src/sysprof/sysprof-window.c:281
 msgid "Open Capture…"
 msgstr "Відкриття захоплення…"
 
 #. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:308
+#: src/sysprof/sysprof-window.c:285
 msgid "Open"
 msgstr "Відкрити"
 
-#: src/sysprof/sysprof-window.c:313
+#: src/sysprof/sysprof-window.c:290
 msgid "Sysprof Captures"
 msgstr "захоплення Sysprof"
 
-#: src/sysprof/sysprof-window.c:318
+#: src/sysprof/sysprof-window.c:295
 msgid "All Files"
 msgstr "усі файли"
 
-#: src/sysprof/sysprof-window.ui:33
+#: src/sysprof/sysprof-window.ui:34
 msgid "_Open"
 msgstr "Від_крити"
 
-#: src/sysprof/sysprof-window.ui:36
+#: src/sysprof/sysprof-window.ui:37
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Відкрити записане… (Ctrl+O)"
 
@@ -1014,6 +1021,35 @@ msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
 msgstr ""
 "--dest=НАЗВА_ШИНИ [НАЗВА_ФАЙЛА] - з'єднатися із вбудованим засобом "
 "профілювання sysprof"
+
+#~ msgid "New variable…"
+#~ msgstr "Створити змінну…"
+
+#~ msgid "Profilers"
+#~ msgstr "Засоби профілювання"
+
+#~ msgid "All Processes"
+#~ msgstr "Усі процеси"
+
+#~ msgid ""
+#~ "Include all applications and operating system kernel in callgraph. This "
+#~ "may not be possible on some system configurations."
+#~ msgstr ""
+#~ "Включити до графу викликів усі програми і ядро операційної системи. Це "
+#~ "може бути неможливим у деяких конфігураціях системи."
+
+#~ msgid "Enable to launch a program of your choosing before profiling."
+#~ msgstr "Увімкнути запуск вибраної вами програми до профілювання."
+
+#~ msgid "Environment"
+#~ msgstr "Середовище"
+
+#~ msgid ""
+#~ "If disabled, your CPU will be placed in performance mode. It will be "
+#~ "restored after profiling."
+#~ msgstr ""
+#~ "Якщо вимкнено, ваш процесор буде переведено у режим максимальної "
+#~ "швидкодії. Стан процесора буде відновлено після профілювання."
 
 #~ msgid "Window size"
 #~ msgstr "Розмір вікна"

@@ -175,7 +175,6 @@ sysprof_about (GSimpleAction *action,
 {
   GtkApplication *app = user_data;
   GtkWindow *best_toplevel = NULL;
-  GtkWindow *dialog;
   GList *windows;
 
   g_assert (G_IS_APPLICATION (app));
@@ -193,30 +192,20 @@ sysprof_about (GSimpleAction *action,
         }
     }
 
-  dialog = g_object_new (GTK_TYPE_ABOUT_DIALOG,
-                         "application", app,
-                         "authors", sysprof_authors,
-                         "artists", sysprof_artists,
-                         "comments", _("A system profiler"),
+  adw_show_about_window(best_toplevel,
+                         "application-name", _("Sysprof"),
+                         "application-icon", "org.gnome.Sysprof",
+                         "version", "GNOME " SYMBOLIC_VERSION " (" PACKAGE_VERSION ")",
                          "copyright", "Copyright 2004-2009 Søren Sandmann Pedersen\n"
                                       "Copyright 2016-2021 Christian Hergert",
-                         "transient-for", best_toplevel,
-                         "modal", TRUE,
-                         "translator-credits", _("translator-credits"),
+                         "issue-url", "https://gitlab.gnome.org/GNOME/sysprof/-/issues/new",
                          "license-type", GTK_LICENSE_GPL_3_0,
-                         "logo-icon-name", "org.gnome.Sysprof",
-                         "program-name", _("Sysprof"),
-                         "version", "GNOME " SYMBOLIC_VERSION " (" PACKAGE_VERSION ")",
+                         "developers", sysprof_authors,
+                         "artists", sysprof_artists,
+                         "comments", _("A system profiler"),
+                         "translator-credits", _("translator-credits"),
                          "website", "https://wiki.gnome.org/Apps/Sysprof",
-                         "website-label", _("Learn more about Sysprof"),
                          NULL);
-
-  g_signal_connect (dialog,
-                    "close-request",
-                    G_CALLBACK (gtk_window_destroy),
-                    NULL);
-
-  gtk_window_present (dialog);
 }
 
 static void

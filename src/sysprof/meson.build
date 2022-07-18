@@ -16,7 +16,7 @@ sysprof_deps = [
   libsysprof_dep,
   libsysprof_ui_dep,
   dependency('pangoft2', required: false),
-  dependency('libadwaita-1'),
+  dependency('libadwaita-1', version: '>=  1.2.alpha'),
 ]
 
 sysprof = executable('sysprof', sysprof_resources + sysprof_sources,

@@ -283,9 +283,9 @@ enable_paranoid_cb (GObject      *object,
   if (!sysprof_helpers_set_paranoid_finish (helpers, result, &old_governor, &error))
     g_debug ("Failed to change event_perf_paranoid: %s", error->message);
 
-  if (!self->disable_governor)
+  if (!self->disable_governor || self->old_governor == NULL)
     sysprof_source_emit_finished (SYSPROF_SOURCE (self));
-  else if (self->old_governor != NULL)
+  else
     sysprof_helpers_set_governor_async (helpers,
                                         self->old_governor,
                                         NULL,

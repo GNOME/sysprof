@@ -131,7 +131,14 @@ enum {
   PROP_WHOLE_SYSTEM,
 };
 
+enum {
+  SUBPROCESS_SPAWNED,
+  SUBPROCESS_FINISHED,
+  N_SINGALS,
+};
+
 static GParamSpec *properties [N_PROPS];
+static guint signals [N_SINGALS];
 
 static inline gint
 _g_ptr_array_find (GPtrArray *ar,
@@ -426,6 +433,44 @@ sysprof_local_profiler_class_init (SysprofLocalProfilerClass *klass)
   object_class->get_property = sysprof_local_profiler_get_property;
   object_class->set_property = sysprof_local_profiler_set_property;
 
+  /**
+   * SysprofLocalProfiler::subprocess-spawned:
+   * @self: a #SysprofLocalProfiler
+   * @subprocess: a #GSubprocess
+   *
+   * This signal is emitted when #SysprofLocalProfiler spawns a process.
+   *
+   * Since: 3.46
+   */
+  signals [SUBPROCESS_SPAWNED] =
+    g_signal_new ("subprocess-spawned",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0,
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE, 1, G_TYPE_SUBPROCESS);
+
+  /**
+   * SysprofLocalProfiler::subprocess-finished:
+   * @self: a #SysprofLocalProfiler
+   * @subprocess: a #GSubprocess
+   *
+   * This signal is emitted when #SysprofLocalProfiler has determined that
+   * the subprocess either exited or was terminated by a signal. Use
+   * g_subprocess_get_if_exited() to determine if exited with exit code.
+   *
+   * Since: 3.46
+   */
+  signals [SUBPROCESS_FINISHED] =
+    g_signal_new ("subprocess-finished",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0,
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE, 1, G_TYPE_SUBPROCESS);
+
   g_object_class_override_property (object_class, PROP_ELAPSED, "elapsed");
   g_object_class_override_property (object_class, PROP_IS_MUTABLE, "is-mutable");
   g_object_class_override_property (object_class, PROP_IS_RUNNING, "is-running");
@@ -563,6 +608,8 @@ sysprof_local_profiler_wait_cb (GObject      *object,
   if (!g_subprocess_wait_finish (subprocess, result, &error))
     g_warning ("Wait on subprocess failed: %s", error->message);
 
+  g_signal_emit (self, signals[SUBPROCESS_FINISHED], 0, subprocess);
+
   sysprof_local_profiler_stop (SYSPROF_PROFILER (self));
 }
 
@@ -647,12 +694,16 @@ sysprof_local_profiler_start_after_auth (SysprofLocalProfiler *self)
       else
         {
           const gchar *ident = g_subprocess_get_identifier (subprocess);
+
           pid = atoi (ident);
           g_array_append_val (priv->pids, pid);
+
           g_subprocess_wait_async (subprocess,
                                    NULL,
                                    sysprof_local_profiler_wait_cb,
                                    g_object_ref (self));
+
+          g_signal_emit (self, signals[SUBPROCESS_SPAWNED], 0, subprocess);
         }
     }
 

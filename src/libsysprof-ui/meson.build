@@ -14,7 +14,6 @@ libsysprof_ui_private_sources = [
   'egg-handle.c',
   'egg-paned.c',
   'egg-resizer.c',
-  'egg-three-grid.c',
 
   'pointcache.c',
   'rectangles.c',

@@ -8,16 +8,16 @@ if get_option('gtk') and get_option('libsysprof')
   )
 
   i18n.merge_file(
-            input: 'org.gnome.Sysprof3.appdata.xml.in',
-           output: 'org.gnome.Sysprof3.appdata.xml',
+            input: 'org.gnome.Sysprof.appdata.xml.in',
+           output: 'org.gnome.Sysprof.appdata.xml',
            po_dir: podir,
           install: true,
       install_dir: join_paths(datadir, 'metainfo')
   )
 
   i18n.merge_file(
-            input: 'org.gnome.Sysprof3.desktop.in',
-           output: 'org.gnome.Sysprof3.desktop',
+            input: 'org.gnome.Sysprof.desktop.in',
+           output: 'org.gnome.Sysprof.desktop',
              type: 'desktop',
            po_dir: podir,
           install: true,

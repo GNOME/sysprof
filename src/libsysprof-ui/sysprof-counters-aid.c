@@ -279,6 +279,6 @@ sysprof_counters_aid_class_init (SysprofCountersAidClass *klass)
 static void
 sysprof_counters_aid_init (SysprofCountersAid *self)
 {
-  sysprof_aid_set_display_name (SYSPROF_AID (self), _("Battery"));
-  sysprof_aid_set_icon_name (SYSPROF_AID (self), "org.gnome.Sysprof3-symbolic");
+  sysprof_aid_set_display_name (SYSPROF_AID (self), _("Counters"));
+  sysprof_aid_set_icon_name (SYSPROF_AID (self), "org.gnome.Sysprof-symbolic");
 }

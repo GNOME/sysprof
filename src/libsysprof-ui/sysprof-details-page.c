@@ -28,14 +28,11 @@
 #include "sysprof-details-page.h"
 #include "sysprof-ui-private.h"
 
-#include "egg-three-grid.h"
-
 struct _SysprofDetailsPage
 {
   GtkWidget     parent_instance;
 
   /* Template Objects */
-  EggThreeGrid *three_grid;
   GtkListStore *marks_store;
   GtkTreeView  *marks_view;
   GtkLabel     *counters;
@@ -111,9 +108,6 @@ sysprof_details_page_class_init (SysprofDetailsPageClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, processes);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, samples);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, start_time);
-  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, three_grid);
-
-  g_type_ensure (EGG_TYPE_THREE_GRID);
 }
 
 static void
@@ -269,24 +263,6 @@ sysprof_details_page_set_reader (SysprofDetailsPage   *self,
 
 #undef SET_FRAME_COUNT
     }
-}
-
-void
-sysprof_details_page_add_item (SysprofDetailsPage *self,
-                               GtkWidget          *left,
-                               GtkWidget          *center)
-{
-  g_return_if_fail (SYSPROF_IS_DETAILS_PAGE (self));
-  g_return_if_fail (!left || GTK_IS_WIDGET (left));
-  g_return_if_fail (!center || GTK_IS_WIDGET (center));
-
-  if (left)
-    egg_three_grid_add (self->three_grid, left, self->next_row, EGG_THREE_GRID_COLUMN_LEFT);
-
-  if (center)
-    egg_three_grid_add (self->three_grid, center, self->next_row, EGG_THREE_GRID_COLUMN_CENTER);
-
-  self->next_row++;
 }
 
 void

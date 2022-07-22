@@ -2,294 +2,174 @@
 <interface>
   <template class="SysprofDetailsPage" parent="GtkWidget">
     <child>
-      <object class="GtkScrolledWindow">
-        <property name="hscrollbar-policy">never</property>
-        <property name="propagate-natural-height">true</property>
-        <property name="visible">true</property>
+      <object class="AdwPreferencesPage">
         <child>
-          <object class="EggThreeGrid" id="three_grid">
-            <property name="margin-start">36</property>
-            <property name="margin-end">36</property>
-            <property name="margin-top">36</property>
-            <property name="margin-bottom">36</property>
-            <property name="column-spacing">12</property>
-            <property name="row-spacing">6</property>
-            <property name="visible">true</property>
+          <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">Capture</property>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">true</property>
-                <property name="label" translatable="yes">Filename</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">left</property>
-                  <property name="row">0</property>
-                </layout>
+              <object class="AdwActionRow">
+                <property name="activatable">false</property>
+                <property name="title" translatable="yes">Location</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="filename">
+                    <property name="hexpand">true</property>
+                    <property name="xalign">1</property>
+                    <property name="ellipsize">start</property>
+                    <property name="selectable">true</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">true</property>
-                <property name="label" translatable="yes">Captured at</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">left</property>
-                  <property name="row">1</property>
-                </layout>
+              <object class="AdwActionRow">
+                <property name="activatable">false</property>
+                <property name="title" translatable="yes">Recorded At</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="start_time">
+                    <property name="hexpand">true</property>
+                    <property name="xalign">1</property>
+                    <property name="ellipsize">start</property>
+                    <property name="selectable">true</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Duration</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">left</property>
-                  <property name="row">2</property>
-                </layout>
+              <object class="AdwActionRow">
+                <property name="activatable">false</property>
+                <property name="title" translatable="yes">Duration</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="duration">
+                    <property name="hexpand">true</property>
+                    <property name="xalign">1</property>
+                    <property name="ellipsize">start</property>
+                    <property name="selectable">true</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">CPU Model</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">left</property>
-                  <property name="row">3</property>
-                </layout>
+              <object class="AdwActionRow">
+                <property name="activatable">false</property>
+                <property name="title" translatable="yes">CPU Model</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="cpu_label">
+                    <property name="hexpand">true</property>
+                    <property name="xalign">1</property>
+                    <property name="ellipsize">start</property>
+                    <property name="selectable">true</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">Statistics</property>
+            <child>
+              <object class="AdwActionRow">
+                <property name="activatable">false</property>
+                <property name="title" translatable="yes">Stack Traces</property>
+                <property name="subtitle" translatable="yes">Number of stack traces sampled for performance callgraphs</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="samples">
+                    <property name="hexpand">true</property>
+                    <property name="xalign">1</property>
+                    <property name="ellipsize">start</property>
+                    <property name="selectable">true</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="margin-top">12</property>
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Samples Captured</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">left</property>
-                  <property name="row">4</property>
-                </layout>
+              <object class="AdwActionRow">
+                <property name="activatable">false</property>
+                <property name="title" translatable="yes">Marks</property>
+                <property name="subtitle" translatable="yes">Number of marks seen</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="marks">
+                    <property name="hexpand">true</property>
+                    <property name="xalign">1</property>
+                    <property name="ellipsize">start</property>
+                    <property name="selectable">true</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Marks Captured</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">left</property>
-                  <property name="row">5</property>
-                </layout>
+              <object class="AdwActionRow">
+                <property name="activatable">false</property>
+                <property name="title" translatable="yes">Processes</property>
+                <property name="subtitle" translatable="yes">Number of processes seen</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="processes">
+                    <property name="hexpand">true</property>
+                    <property name="xalign">1</property>
+                    <property name="ellipsize">start</property>
+                    <property name="selectable">true</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Processes Captured</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">left</property>
-                  <property name="row">6</property>
-                </layout>
+              <object class="AdwActionRow">
+                <property name="activatable">false</property>
+                <property name="title" translatable="yes">Forks</property>
+                <property name="subtitle" translatable="yes">Number of times a process forked</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="forks">
+                    <property name="hexpand">true</property>
+                    <property name="xalign">1</property>
+                    <property name="ellipsize">start</property>
+                    <property name="selectable">true</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Forks Captured</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">left</property>
-                  <property name="row">7</property>
-                </layout>
+              <object class="AdwActionRow">
+                <property name="activatable">false</property>
+                <property name="title" translatable="yes">Memory Allocations</property>
+                <property name="subtitle" translatable="yes">Number of stack traces recorded for tracing memory allocations</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="allocations">
+                    <property name="hexpand">true</property>
+                    <property name="xalign">1</property>
+                    <property name="ellipsize">start</property>
+                    <property name="selectable">true</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Counters Captured</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">left</property>
-                  <property name="row">8</property>
-                </layout>
+              <object class="AdwActionRow">
+                <property name="activatable">false</property>
+                <property name="title" translatable="yes">Counters</property>
+                <property name="subtitle" translatable="yes">Number of recorded counter values</property>
+                <child type="suffix">
+                  <object class="GtkLabel" id="counters">
+                    <property name="hexpand">true</property>
+                    <property name="xalign">1</property>
+                    <property name="ellipsize">start</property>
+                    <property name="selectable">true</property>
+                  </object>
+                </child>
               </object>
             </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="margin-bottom">12</property>
-                <property name="label" translatable="yes">Allocations Captured</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-                <layout>
-                  <property name="column">left</property>
-                  <property name="row">9</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="filename">
-                <property name="width-chars">35</property>
-                <property name="visible">True</property>
-                <property name="ellipsize">start</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <layout>
-                  <property name="column">1</property>
-                  <property name="row">0</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="start_time">
-                <property name="visible">True</property>
-                <property name="ellipsize">start</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <layout>
-                  <property name="column">center</property>
-                  <property name="row">1</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="duration">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <layout>
-                  <property name="column">center</property>
-                  <property name="row">2</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="cpu_label">
-                <property name="visible">True</property>
-                <property name="ellipsize">end</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <layout>
-                  <property name="column">center</property>
-                  <property name="row">3</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="samples">
-                <property name="margin-top">12</property>
-                <property name="visible">True</property>
-                <property name="ellipsize">start</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <layout>
-                  <property name="column">center</property>
-                  <property name="row">4</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="marks">
-                <property name="visible">True</property>
-                <property name="ellipsize">start</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <layout>
-                  <property name="column">center</property>
-                  <property name="row">5</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="processes">
-                <property name="visible">True</property>
-                <property name="ellipsize">start</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <layout>
-                  <property name="column">center</property>
-                  <property name="row">6</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="forks">
-                <property name="visible">True</property>
-                <property name="ellipsize">start</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <layout>
-                  <property name="column">center</property>
-                  <property name="row">7</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="counters">
-                <property name="visible">True</property>
-                <property name="ellipsize">start</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <layout>
-                  <property name="column">center</property>
-                  <property name="row">8</property>
-                </layout>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="allocations">
-                <property name="visible">True</property>
-                <property name="ellipsize">start</property>
-                <property name="margin-bottom">12</property>
-                <property name="xalign">0</property>
-                <property name="selectable">True</property>
-                <layout>
-                  <property name="column">center</property>
-                  <property name="row">9</property>
-                </layout>
-              </object>
-            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">Statistics</property>
             <child>
               <object class="GtkFrame">
-                <property name="visible">True</property>
-                <property name="margin-bottom">12</property>
                 <child>
                   <object class="GtkTreeView" id="marks_view">
                     <property name="model">marks_store</property>
                     <property name="width-request">500</property>
                     <property name="height-request">100</property>
                     <property name="enable-grid-lines">both</property>
-                    <property name="visible">true</property>
                     <child>
                       <object class="GtkTreeViewColumn">
                         <property name="expand">true</property>
@@ -358,10 +238,6 @@
                     </child>
                   </object>
                 </child>
-                <layout>
-                  <property name="column">center</property>
-                  <property name="row">10</property>
-                </layout>
               </object>
             </child>
           </object>

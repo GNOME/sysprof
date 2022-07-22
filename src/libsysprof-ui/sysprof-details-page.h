@@ -53,8 +53,5 @@ void       sysprof_details_page_add_mark   (SysprofDetailsPage    *self,
                                             gint64                 max,
                                             gint64                 avg,
                                             gint64                 hits);
-void       sysprof_details_page_add_item   (SysprofDetailsPage    *self,
-                                            GtkWidget             *left,
-                                            GtkWidget             *center);
 
 G_END_DECLS

@@ -5,56 +5,6 @@
       <object class="GtkBox">
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkCenterBox">
-            <property name="orientation">horizontal</property>
-            <child type="center">
-              <object class="GtkBox">
-                <property name="margin-top">6</property>
-                <property name="margin-bottom">6</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="orientation">horizontal</property>
-                <property name="homogeneous">true</property>
-                <style>
-                  <class name="linked"/>
-                </style>
-                <child>
-                  <object class="GtkToggleButton" id="summary">
-                    <property name="label" translatable="yes">Summary</property>
-                    <property name="active">false</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkToggleButton" id="all_allocs">
-                    <property name="label" translatable="yes">All Allocations</property>
-                    <property name="group">summary</property>
-                    <property name="active">true</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkToggleButton" id="temp_allocs">
-                    <property name="label" translatable="yes">Temporary Allocations</property>
-                    <property name="active">false</property>
-                    <property name="group">summary</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkToggleButton" id="leaked_allocs_button">
-                    <property name="label" translatable="yes">Leaked Allocations</property>
-                    <property name="active">false</property>
-                    <property name="group">summary</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkSeparator">
-            <property name="orientation">horizontal</property>
-          </object>
-        </child>
-        <child>
           <object class="GtkStack" id="stack">
             <child>
               <object class="AdwPreferencesPage" id="summary_page">
@@ -320,6 +270,56 @@
                 <property name="icon-name">computer-fail-symbolic</property>
                 <property name="title" translatable="yes">Not Enough Samples</property>
                 <property name="description" translatable="yes">More samples are necessary to display a callgraph.</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="orientation">horizontal</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkCenterBox">
+            <property name="orientation">horizontal</property>
+            <child type="center">
+              <object class="GtkBox">
+                <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="orientation">horizontal</property>
+                <property name="homogeneous">true</property>
+                <style>
+                  <class name="linked"/>
+                </style>
+                <child>
+                  <object class="GtkToggleButton" id="summary">
+                    <property name="label" translatable="yes">Summary</property>
+                    <property name="active">false</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="all_allocs">
+                    <property name="label" translatable="yes">All Allocations</property>
+                    <property name="group">summary</property>
+                    <property name="active">true</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="temp_allocs">
+                    <property name="label" translatable="yes">Temporary Allocations</property>
+                    <property name="active">false</property>
+                    <property name="group">summary</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="leaked_allocs_button">
+                    <property name="label" translatable="yes">Leaked Allocations</property>
+                    <property name="active">false</property>
+                    <property name="group">summary</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>

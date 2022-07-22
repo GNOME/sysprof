@@ -2,24 +2,25 @@
 # Copyright (C) 2016 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 #
-# Tim Sabsch <tim@sabsch.com>, 2018, 2020.
+# Tim Sabsch <tim@sabsch.com>, 2018, 2020, 2022.
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2016-2018, 2021.
 # Philipp Kiemle <philipp.kiemle@gmail.com>, 2021.
+# Jürgen Benvenuti <gastornis@posteo.org>, 2022.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2021-02-24 22:30+0000\n"
-"PO-Revision-Date: 2021-02-25 23:08+0100\n"
-"Last-Translator: Philipp Kiemle <philipp.kiemle@gmail.com>\n"
+"POT-Creation-Date: 2022-05-09 02:14+0000\n"
+"PO-Revision-Date: 2022-07-22 10:12+0200\n"
+"Last-Translator: Tim Sabsch <tim@sabsch.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 3.1\n"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:5
 #: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:202
@@ -29,7 +30,7 @@ msgstr "Sysprof"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:6
 msgid "Profile an application or entire system"
-msgstr "Eine Anwendung oder ein gesamtes System analysieren"
+msgstr "Ein Profil einer Anwendung oder ein gesamtes Systems erstellen"
 
 #: data/org.gnome.Sysprof3.appdata.xml.in:9
 msgid "The GNOME Foundation"
@@ -40,8 +41,8 @@ msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr ""
-"Sysprof ermöglicht Ihnen das Profiling von Anwendungen zwecks Fehlerdiagnose "
-"und Optimierung."
+"Sysprof ermöglicht Ihnen die Profilerstellung von Anwendungen zwecks "
+"Fehlerdiagnose und Optimierung."
 
 #: data/org.gnome.Sysprof3.desktop.in:5
 msgid "Profiler"
@@ -49,7 +50,7 @@ msgstr "Profiler"
 
 #: data/org.gnome.Sysprof3.desktop.in:6
 msgid "Profile an application or entire system."
-msgstr "Eine Anwendung oder ein ganzes System analysieren."
+msgstr "Ein Profil einer Anwendung oder eines ganzes System erstellen."
 
 #: data/org.gnome.sysprof3.gschema.xml:5
 msgid "Window size"
@@ -167,35 +168,35 @@ msgid "Callgraph"
 msgstr "Aufrufgraph"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:27
-#: src/libsysprof-ui/sysprof-memprof-page.ui:236
+#: src/libsysprof-ui/sysprof-memprof-page.ui:245
 msgid "Functions"
 msgstr "Funktionen"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:43
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:104
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:159
-#: src/libsysprof-ui/sysprof-memprof-page.ui:253
-#: src/libsysprof-ui/sysprof-memprof-page.ui:315
-#: src/libsysprof-ui/sysprof-memprof-page.ui:371
+#: src/libsysprof-ui/sysprof-memprof-page.ui:262
+#: src/libsysprof-ui/sysprof-memprof-page.ui:324
+#: src/libsysprof-ui/sysprof-memprof-page.ui:380
 msgid "Self"
 msgstr "Selbst"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:59
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:120
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:175
-#: src/libsysprof-ui/sysprof-memprof-page.ui:269
-#: src/libsysprof-ui/sysprof-memprof-page.ui:331
-#: src/libsysprof-ui/sysprof-memprof-page.ui:387
+#: src/libsysprof-ui/sysprof-memprof-page.ui:278
+#: src/libsysprof-ui/sysprof-memprof-page.ui:340
+#: src/libsysprof-ui/sysprof-memprof-page.ui:396
 msgid "Total"
 msgstr "Gesamt"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:88
-#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+#: src/libsysprof-ui/sysprof-memprof-page.ui:307
 msgid "Callers"
 msgstr "Aufrufer"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:151
-#: src/libsysprof-ui/sysprof-memprof-page.ui:362
+#: src/libsysprof-ui/sysprof-memprof-page.ui:371
 msgid "Descendants"
 msgstr "Nachfolger"
 
@@ -214,12 +215,12 @@ msgstr ""
 "Sysprof ist damit beschäftigt, den ausgewählten Aufrufgraphen zu erstellen."
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:224
-#: src/libsysprof-ui/sysprof-memprof-page.ui:433
+#: src/libsysprof-ui/sysprof-memprof-page.ui:442
 msgid "Not Enough Samples"
 msgstr "Nicht genug Proben"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:225
-#: src/libsysprof-ui/sysprof-memprof-page.ui:434
+#: src/libsysprof-ui/sysprof-memprof-page.ui:443
 msgid "More samples are necessary to display a callgraph."
 msgstr ""
 "Weitere Proben sind erforderlich, um einen Aufrufgraphen anzeigen zu können."
@@ -342,33 +343,33 @@ msgid "Recording…"
 msgstr "Aufnahme läuft …"
 
 #. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:258
+#: src/libsysprof-ui/sysprof-display.c:265
 #, c-format
 msgid "Recording at %s"
 msgstr "Aufnahme vom %s"
 
-#: src/libsysprof-ui/sysprof-display.c:262
+#: src/libsysprof-ui/sysprof-display.c:269
 msgid "New Recording"
 msgstr "Neue Aufnahme"
 
-#: src/libsysprof-ui/sysprof-display.c:1087
+#: src/libsysprof-ui/sysprof-display.c:1094
 msgid "The recording could not be opened"
 msgstr "Die Aufnahme konnte nicht geöffnet werden"
 
-#: src/libsysprof-ui/sysprof-display.c:1210
+#: src/libsysprof-ui/sysprof-display.c:1217
 msgid "Save Recording"
 msgstr "Aufnahme speichern"
 
-#: src/libsysprof-ui/sysprof-display.c:1213
+#: src/libsysprof-ui/sysprof-display.c:1220
 msgid "Save"
 msgstr "Speichern"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1214 src/sysprof/sysprof-window.c:279
+#: src/libsysprof-ui/sysprof-display.c:1221 src/sysprof/sysprof-window.c:279
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/libsysprof-ui/sysprof-display.c:1240
+#: src/libsysprof-ui/sysprof-display.c:1247
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Fehler beim Speichern der Aufnahme: %s"
@@ -393,8 +394,8 @@ msgstr "Au, das tat weh!"
 #: src/libsysprof-ui/sysprof-failed-state-view.ui:39
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr ""
-"Es ist etwas unerwartet schief gelaufen beim Versuch Ihr System zu "
-"analysieren."
+"Es ist etwas unerwartet schief gelaufen beim Versuch, ein Profil Ihres "
+"Systems zu erstellen."
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
 #: src/libsysprof-ui/sysprof-logs-page.ui:58
@@ -481,7 +482,7 @@ msgid "Track Allocations"
 msgstr "Zuweisungen nachvollziehen"
 
 #. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:234
+#: src/libsysprof-ui/sysprof-memprof-page.c:235
 #, c-format
 msgid "> %s to %s"
 msgstr "> %s zu %s"
@@ -492,21 +493,25 @@ msgstr "Zusammenfassung"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:31
 msgid "All Allocations"
-msgstr "Alle Zuordnungen"
+msgstr "Alle Zuweisungen"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:40
 msgid "Temporary Allocations"
 msgstr "Vorübergehende Zuweisungen"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+#: src/libsysprof-ui/sysprof-memprof-page.ui:49
+msgid "Leaked Allocations"
+msgstr "Speicherlecks"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:411
 msgid "Size"
 msgstr "Größe"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:422
+#: src/libsysprof-ui/sysprof-memprof-page.ui:431
 msgid "Analyzing Memory Allocations"
 msgstr "Analysieren von Speicherzuweisungen"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:423
+#: src/libsysprof-ui/sysprof-memprof-page.ui:432
 msgid "Sysprof is busy analyzing memory allocations."
 msgstr "Sysprof ist damit beschäftigt, Speicherzuweisungen zu analysieren."
 
@@ -546,7 +551,7 @@ msgstr "Alle Prozesse"
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:240
 msgid ""
 "Include all applications and operating system kernel in callgraph. This may "
-"not be possible on some system system configurations."
+"not be possible on some system configurations."
 msgstr ""
 "Alle Anwendungen und den Betriebssystemkernel in den Aufrufgraphen "
 "einbeziehen. Dies ist gegebenenfalls nicht mit allen Systemkonfigurationen "
@@ -651,7 +656,7 @@ msgstr "Profil des Systems erstellen"
 #: src/sysprofd/org.gnome.sysprof3.policy.in:14
 msgid "Authentication is required to profile the system."
 msgstr ""
-"Es ist eine Authentifizierung erforderlich, um ein Profil des Systems zu "
+"Es ist eine Legitimierung erforderlich, um ein Profil des Systems zu "
 "erstellen."
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:26
@@ -818,14 +823,15 @@ msgstr "Info zu Sysprof"
 
 #: src/sysprof/sysprof-application.c:194
 msgid "A system profiler"
-msgstr "Eine System-Profiler"
+msgstr "Ein System-Profiler"
 
 #: src/sysprof/sysprof-application.c:199
 msgid "translator-credits"
 msgstr ""
 "Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Tim Sabsch <tim@sabsch.com>\n"
-"Philipp Kiemle <philipp.kiemle@gmail.com>"
+"Philipp Kiemle <philipp.kiemle@gmail.com>\n"
+"Jürgen Benvenuti <gastornis@posteo.org>"
 
 #: src/sysprof/sysprof-application.c:205
 msgid "Learn more about Sysprof"
@@ -871,9 +877,10 @@ msgstr "Profiler angehalten."
 msgid "--merge requires at least 2 filename arguments"
 msgstr "»--merge« erfordert mindestens 2 Dateinamenargumente"
 
+# s.o.
 #: src/tools/sysprof-cli.c:226
 msgid "Disable CPU throttling while profiling"
-msgstr "CPU-Drosselung während des Profilings deaktivieren"
+msgstr "CPU-Drosselung während der Profilerstellung deaktivieren"
 
 # Task ist ein Begriff aus der Informatik
 #: src/tools/sysprof-cli.c:227
@@ -886,7 +893,7 @@ msgstr "PID"
 
 #: src/tools/sysprof-cli.c:228
 msgid "Run a command and profile the process"
-msgstr "Einen Befehl ausführen und den Prozess analysieren"
+msgstr "Einen Befehl ausführen und ein Profil des Prozesses erstellen"
 
 #: src/tools/sysprof-cli.c:228
 msgid "COMMAND"
@@ -909,7 +916,7 @@ msgstr "Überschreiben der Aufzeichnungsdatei erzwingen"
 
 #: src/tools/sysprof-cli.c:231
 msgid "Disable recording of battery statistics"
-msgstr "Aufzeichnung von Batteriestatistiken deaktivieren"
+msgstr "Aufzeichnung von Akkustatistiken deaktivieren"
 
 #: src/tools/sysprof-cli.c:232
 msgid "Disable recording of CPU statistics"
@@ -1019,7 +1026,7 @@ msgstr "Mit dem Systembus verbinden"
 
 #: src/tools/sysprof-profiler-ctl.c:46
 msgid "Connect to the session bus"
-msgstr "Mit dem Session Bus verbinden"
+msgstr "Mit dem Sitzungsbus verbinden"
 
 #: src/tools/sysprof-profiler-ctl.c:47
 msgid "Connect to the given D-Bus address"

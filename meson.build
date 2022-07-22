@@ -197,10 +197,7 @@ int main(void) {
   config_h.set10('HAVE_STDATOMIC_H', true)
 endif
 
-if get_option('libsysprof') or get_option('agent')
-  needs_service_access = true
-endif
-
+needs_service_access = get_option('libsysprof') or get_option('agent')
 if needs_service_access or get_option('sysprofd') == 'bundled'
   install_service_files = true
 endif

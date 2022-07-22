@@ -1,5 +1,5 @@
 {
-    "app-id" : "org.gnome.Sysprof3",
+    "app-id" : "org.gnome.Sysprof.Devel",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "master",
     "sdk" : "org.gnome.Sdk",
@@ -7,29 +7,30 @@
     "tags" : [
         "nightly"
     ],
-    "desktop-file-name-prefix" : "(Nightly) ",
+    "desktop-file-name-suffix" : " (Nightly)",
     "finish-args" : [
-        "--require-version=0.10.0",
+        "--require-version=1.0.0",
         "--allow=devel",
+        "--talk-name=org.freedesktop.Flatpak",
+        "--device=dri",
         "--share=ipc",
-        "--socket=x11",
+        "--socket=fallback-x11",
         "--socket=wayland",
+        "--socket=session-bus",
+        "--socket=system-bus",
+        "--filesystem=home",
+        "--filesystem=host",
+        "--share=network",
         "--talk-name=org.gtk.vfs.*",
         "--system-talk-name=org.freedesktop.PolicyKit1",
         "--system-talk-name=org.gnome.Sysprof3",
-        "--filesystem=home",
-        "--filesystem=host",
-        "--filesystem=xdg-run/dconf",
-        "--filesystem=~/.config/dconf:ro",
-        "--talk-name=ca.desrt.dconf",
-        "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
+        "--system-talk-name=org.freedesktop.Avahi",
+        "--filesystem=xdg-run/gvfsd",
+        "--filesystem=/var/lib/flatpak"
     ],
     "build-options" : {
-        "cflags" : "-O2 -g",
-        "cxxflags" : "-O2 -g",
-        "env" : {
-            "V" : "1"
-        }
+        "cflags" : "-O2 -g -fno-omit-frame-pointer",
+        "cxxflags" : "-O2 -g -fno-omit-frame-pointer"
     },
     "cleanup" : [
         "/include",
@@ -88,11 +89,11 @@
                 },
                 {
                     "type" : "patch",
-                    "path" : "polkit-build-Add-option-to-build-without-polkitd.patch"
+                    "path" : "build-aux/flatpak/polkit-build-Add-option-to-build-without-polkitd.patch"
                 },
                 {
                     "type" : "file",
-                    "path" : "polkit-autogen",
+                    "path" : "build-aux/flatpak/polkit-autogen",
                     "dest-filename" : "autogen.sh"
                 }
             ]
@@ -102,6 +103,8 @@
             "config-opts" : [
                 "--libdir=/app/lib",
                 "--buildtype=debugoptimized",
+                "-Dagent=true",
+                "-Dlibsysprof=true",
                 "-Dgtk=true",
                 "-Dsysprofd=host"
             ],
@@ -110,7 +113,8 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "https://gitlab.gnome.org/GNOME/sysprof.git"
+                    "url" : "https://gitlab.gnome.org/GNOME/sysprof.git",
+                    "branch" : "master"
                 }
             ]
         }

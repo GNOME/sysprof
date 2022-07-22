@@ -194,7 +194,7 @@ sysprof_about (GSimpleAction *action,
 
   adw_show_about_window(best_toplevel,
                          "application-name", _("Sysprof"),
-                         "application-icon", "org.gnome.Sysprof",
+                         "application-icon", APP_ID_S,
                          "version", "GNOME " SYMBOLIC_VERSION " (" PACKAGE_VERSION ")",
                          "copyright", "Copyright 2004-2009 Søren Sandmann Pedersen\n"
                                       "Copyright 2016-2021 Christian Hergert",
@@ -329,7 +329,7 @@ SysprofApplication *
 sysprof_application_new (void)
 {
   return g_object_new (SYSPROF_TYPE_APPLICATION,
-                       "application-id", "org.gnome.Sysprof",
+                       "application-id", APP_ID_S,
                        "resource-base-path", "/org/gnome/sysprof",
                        "flags", G_APPLICATION_HANDLES_OPEN,
                        NULL);

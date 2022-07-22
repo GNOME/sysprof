@@ -14,6 +14,12 @@ gnome = import('gnome', required: get_option('gtk'))
 pkgconfig = import('pkgconfig')
 i18n = import('i18n')
 
+if get_option('development')
+  app_id = 'org.gnome.Sysprof.Devel'
+else
+  app_id = 'org.gnome.Sysprof'
+endif
+
 libsysprof_api_version = 4
 libsysprof_ui_api_version = 5
 
@@ -45,6 +51,8 @@ config_h.set_quoted('PACKAGE_LIBDIR', join_paths(get_option('prefix'), get_optio
 config_h.set('PACKAGE_TARNAME', 'PACKAGE_STRING')
 config_h.set('PACKAGE', 'PACKAGE_NAME')
 config_h.set('VERSION', 'PACKAGE_VERSION')
+config_h.set('APP_ID', app_id)
+config_h.set_quoted('APP_ID_S', app_id)
 
 # Detect and set symbol visibility
 if get_option('default_library') != 'static'

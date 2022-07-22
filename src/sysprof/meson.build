@@ -1,5 +1,4 @@
 sysprof_sources = [
-  'egg-binding-group.c',
   'sysprof.c',
   'sysprof-application.c',
   'sysprof-window.c',

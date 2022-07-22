@@ -25,15 +25,13 @@
 #include <glib/gi18n.h>
 #include <sysprof-ui.h>
 
-#include "egg-binding-group.h"
-
 #include "sysprof-window.h"
 
 struct _SysprofWindow
 {
   AdwApplicationWindow  parent_instance;
 
-  EggBindingGroup      *bindings;
+  GBindingGroup        *bindings;
 
   SysprofNotebook      *notebook;
   GtkButton            *open_button;
@@ -177,7 +175,7 @@ sysprof_window_finalize (GObject *object)
 {
   SysprofWindow *self = (SysprofWindow *)object;
 
-  egg_binding_group_set_source (self->bindings, NULL);
+  g_binding_group_set_source (self->bindings, NULL);
   g_clear_object (&self->bindings);
 
   G_OBJECT_CLASS (sysprof_window_parent_class)->finalize (object);
@@ -231,8 +229,8 @@ sysprof_window_init (SysprofWindow *self)
                            self,
                            G_CONNECT_SWAPPED);
 
-  self->bindings = egg_binding_group_new ();
-  egg_binding_group_bind (self->bindings, "title", self, "title", G_BINDING_SYNC_CREATE);
+  self->bindings = g_binding_group_new ();
+  g_binding_group_bind (self->bindings, "title", self, "title", G_BINDING_SYNC_CREATE);
   g_object_bind_property (self->notebook, "current", self->bindings, "source",
                           G_BINDING_SYNC_CREATE);
 

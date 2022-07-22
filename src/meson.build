@@ -8,7 +8,7 @@ sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
 sysprof_version_conf.set('MICRO_VERSION', sysprof_version[2])
 sysprof_version_conf.set('VERSION', meson.project_version())
 
-if get_option('sysprofd') == 'bundled' or get_option('libsysprof')
+if needs_service_access
   ipc_profiler_src = gnome.gdbus_codegen('ipc-profiler',
              sources: 'org.gnome.Sysprof3.Profiler.xml',
     interface_prefix: 'org.gnome.Sysprof3.',
@@ -32,18 +32,15 @@ if get_option('sysprofd') == 'bundled' or get_option('libsysprof')
     interface_prefix: 'org.gnome.Sysprof.',
            namespace: 'Ipc',
   )
-
-  install_data(['org.gnome.Sysprof3.Service.xml',
-                'org.gnome.Sysprof2.xml',
-                'org.gnome.Sysprof.Agent.xml'],
-    install_dir: join_paths(datadir, 'dbus-1/interfaces'),
-  )
 endif
 
-org_gnome_Sysprof3_Profiler_xml = files(['org.gnome.Sysprof3.Profiler.xml'])
-
-if get_option('libsysprof')
-  install_data(org_gnome_Sysprof3_Profiler_xml,
+if install_service_files
+  install_data([
+      'org.gnome.Sysprof2.xml',
+      'org.gnome.Sysprof3.Profiler.xml',
+      'org.gnome.Sysprof3.Service.xml',
+      'org.gnome.Sysprof.Agent.xml'
+    ],
     install_dir: join_paths(datadir, 'dbus-1/interfaces'),
   )
 endif

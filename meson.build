@@ -28,7 +28,7 @@ polkit_req_version = '>= 0.105'
 
 cc = meson.get_compiler('c')
 
-if get_option('libsysprof')
+if get_option('libsysprof') or get_option('agent')
   add_languages('cpp', native: false)
   cxx = meson.get_compiler('cpp')
 endif
@@ -195,6 +195,14 @@ int main(void) {
 }
 ''')
   config_h.set10('HAVE_STDATOMIC_H', true)
+endif
+
+if get_option('libsysprof') or get_option('agent')
+  needs_service_access = true
+endif
+
+if needs_service_access or get_option('sysprofd') == 'bundled'
+  install_service_files = true
 endif
 
 subdir('src')

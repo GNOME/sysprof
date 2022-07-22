@@ -44,7 +44,6 @@
 #include "../stackstash.h"
 
 #include "egg-paned-private.h"
-#include "egg-three-grid.h"
 
 #include "sysprof-cell-renderer-percent.h"
 #include "sysprof-memprof-page.h"
@@ -68,7 +67,6 @@ typedef struct
   GtkLabel                 *temp_allocs_count;
   GtkLabel                 *num_allocs;
   GtkLabel                 *leaked_allocs;
-  GtkLabel                 *peak_allocs;
   GtkListBox               *by_size;
   GtkWidget                *callgraph;
   GtkWidget                *summary_page;
@@ -226,7 +224,14 @@ update_summary (SysprofMemprofPage    *self,
       title = gtk_label_new (NULL);
       subtitle = gtk_label_new (NULL);
       prog = gtk_level_bar_new_for_interval (0, stats.n_allocs);
-      box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 3);
+      box = g_object_new (GTK_TYPE_BOX,
+                          "orientation", GTK_ORIENTATION_VERTICAL,
+                          "spacing", 6,
+                          "margin-top", 6,
+                          "margin-start", 6,
+                          "margin-bottom", 6,
+                          "margin-end", 6,
+                          NULL);
 
       sizestr = g_format_size_full (stats.by_size[i].bucket, G_FORMAT_SIZE_IEC_UNITS);
       if (i == 0)
@@ -1155,7 +1160,6 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, num_allocs);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, leaked_allocs);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, leaked_allocs_button);
-  gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, peak_allocs);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, loading_state);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, empty_state);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofMemprofPage, summary_page);
@@ -1167,7 +1171,6 @@ sysprof_memprof_page_class_init (SysprofMemprofPageClass *klass)
   gtk_widget_class_add_binding_signal (widget_class, GDK_KEY_Left, GDK_ALT_MASK, "go-previous", NULL);
 
   g_type_ensure (EGG_TYPE_PANED);
-  g_type_ensure (EGG_TYPE_THREE_GRID);
   g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_PERCENT);
 }
 

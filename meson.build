@@ -213,7 +213,6 @@ if get_option('examples')
 endif
 
 configure_file(
-          input: 'config.h.meson',
          output: 'config.h',
   configuration: config_h
 )

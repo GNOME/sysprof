@@ -220,7 +220,6 @@ configure_file(
 
 if get_option('gtk') and gnome.found()
   gnome.post_install(
-       glib_compile_schemas: true,
       gtk_update_icon_cache: true,
     update_desktop_database: true
   )

@@ -3,10 +3,6 @@ if get_option('gtk') and get_option('libsysprof')
     install_dir: join_paths(datadir, 'mime/packages')
   )
 
-  install_data('org.gnome.sysprof3.gschema.xml',
-    install_dir: join_paths(datadir, 'glib-2.0/schemas')
-  )
-
   i18n.merge_file(
             input: 'org.gnome.Sysprof.appdata.xml.in',
            output: 'org.gnome.Sysprof.appdata.xml',

@@ -12,6 +12,14 @@ if get_option('libsysprof')
      install_dir: get_option('bindir'),
          install: true,
   )
+
+  sysprof_agent = executable('sysprof-agent',
+    ['sysprof-agent.c', ipc_agent_src],
+    dependencies: [libsysprof_dep],
+          c_args: tools_cflags,
+     install_dir: get_option('bindir'),
+         install: true,
+  )
 endif
 
 sysprof_cat = executable('sysprof-cat', 'sysprof-cat.c',

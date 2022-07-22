@@ -27,8 +27,15 @@ if get_option('sysprofd') == 'bundled' or get_option('libsysprof')
            namespace: 'IpcLegacy',
   )
 
+  ipc_agent_src = gnome.gdbus_codegen('ipc-agent',
+             sources: 'org.gnome.Sysprof.Agent.xml',
+    interface_prefix: 'org.gnome.Sysprof.',
+           namespace: 'Ipc',
+  )
+
   install_data(['org.gnome.Sysprof3.Service.xml',
-                'org.gnome.Sysprof2.xml'],
+                'org.gnome.Sysprof2.xml',
+                'org.gnome.Sysprof.Agent.xml'],
     install_dir: join_paths(datadir, 'dbus-1/interfaces'),
   )
 endif

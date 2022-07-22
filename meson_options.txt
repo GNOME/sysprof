@@ -47,4 +47,4 @@ option('examples', type: 'boolean')
 
 # Optionally build the sysprof-agent tool to allow profiling inside of
 # containers from external system
-option('agent', type: 'boolean', description: 'Build the sysprof-agent utility')
+option('agent', type: 'boolean', value: false, description: 'Build the sysprof-agent utility')

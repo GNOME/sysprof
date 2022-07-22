@@ -11,6 +11,9 @@ option('gtk', type: 'boolean')
 # Disable libsysprof/ui (in situations you only want sysprof-capture)
 option('libsysprof', type: 'boolean')
 
+# Allow disabling the installation of libsysprof-capture*.a
+option('install-static', type: 'boolean')
+
 # Optionally compile sysprofd, which is needed to get elevated privileges.
 # You only really want to ignore this if you are running from a container
 # and are talking to a host daemon. Also, if you're compiling for something

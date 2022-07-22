@@ -50,7 +50,7 @@ libsysprof_capture = static_library(
            dependencies: libsysprof_capture_deps,
                  c_args: [ '-DSYSPROF_CAPTURE_COMPILATION' ],
             install_dir: get_option('libdir'),
-                install: not meson.is_subproject(),
+                install: not meson.is_subproject() and get_option('install-static'),
   gnu_symbol_visibility: 'hidden',
                     pic: true,
 )

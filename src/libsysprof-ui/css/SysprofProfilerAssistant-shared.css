@@ -1,0 +1,7 @@
+sysprofaidicon image.right.top {
+  border-radius: 9999px;
+  background-color: @theme_selected_bg_color;
+  color: @theme_selected_fg_color;
+  padding: 2px;
+  margin: 0px;
+}

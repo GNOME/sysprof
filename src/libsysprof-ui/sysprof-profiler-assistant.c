@@ -33,6 +33,7 @@
 #include "sysprof-model-filter.h"
 #include "sysprof-profiler-assistant.h"
 #include "sysprof-process-model-row.h"
+#include "sysprof-theme-manager.h"
 #include "sysprof-ui-private.h"
 
 #include "sysprof-battery-aid.h"
@@ -398,6 +399,11 @@ sysprof_profiler_assistant_class_init (SysprofProfilerAssistantClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, launch_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, inherit_switch);
   gtk_widget_class_bind_template_child (widget_class, SysprofProfilerAssistant, search_entry);
+
+  sysprof_theme_manager_register_resource (sysprof_theme_manager_get_default (),
+                                           NULL,
+                                           NULL,
+                                           "/org/gnome/sysprof/css/SysprofProfilerAssistant-shared.css");
 
   g_type_ensure (SYSPROF_TYPE_AID_ICON);
   g_type_ensure (SYSPROF_TYPE_BATTERY_AID);

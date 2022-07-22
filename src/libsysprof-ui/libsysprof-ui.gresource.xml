@@ -3,6 +3,7 @@
   <gresource prefix="/org/gnome/sysprof">
     <file compressed="true">css/SysprofEnvironEditor-shared.css</file>
     <file compressed="true">css/SysprofDisplay-shared.css</file>
+    <file compressed="true">css/SysprofProfilerAssistant-shared.css</file>
 
     <!-- Application icons -->
     <file alias="icons/scalable/apps/org.gnome.Sysprof.svg">../../data/icons/org.gnome.Sysprof.svg</file>

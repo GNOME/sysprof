@@ -104,6 +104,7 @@
                 "--libdir=/app/lib",
                 "--buildtype=debugoptimized",
                 "-Dagent=true",
+                "-Ddevelopment=true",
                 "-Dlibsysprof=true",
                 "-Dgtk=true",
                 "-Dsysprofd=host"

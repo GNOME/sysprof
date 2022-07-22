@@ -58,7 +58,7 @@ subdir('libsysprof-capture')
 if get_option('sysprofd') == 'bundled'
   subdir('sysprofd')
 endif
-if get_option('libsysprof')
+if get_option('libsysprof') or get_option('agent')
   subdir('libsysprof')
 endif
 if get_option('gtk') and get_option('libsysprof')

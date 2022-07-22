@@ -12,14 +12,6 @@ if get_option('libsysprof')
      install_dir: get_option('bindir'),
          install: true,
   )
-
-  sysprof_agent = executable('sysprof-agent',
-    ['sysprof-agent.c', ipc_agent_src],
-    dependencies: [libsysprof_dep],
-          c_args: tools_cflags,
-     install_dir: get_option('bindir'),
-         install: true,
-  )
 endif
 
 sysprof_cat = executable('sysprof-cat', 'sysprof-cat.c',
@@ -48,3 +40,13 @@ list_threads = executable('list-threads', ['list-threads.c'],
         c_args: tools_cflags,
        install: false,
 )
+
+if get_option('agent')
+  sysprof_agent = executable('sysprof-agent',
+    ['sysprof-agent.c', ipc_agent_src],
+    dependencies: [libsysprof_static_dep],
+          c_args: tools_cflags,
+     install_dir: get_option('bindir'),
+         install: true,
+  )
+endif

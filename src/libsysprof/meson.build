@@ -166,6 +166,7 @@ libsysprof_static_dep = declare_dependency(
    include_directories: [include_directories('.'), libsysprof_capture_include_dirs],
 )
 
+if get_option('libsysprof')
 libsysprof = shared_library('sysprof-@0@'.format(libsysprof_api_version),
            dependencies: libsysprof_deps + [libsysprof_static_dep],
                 install: true,
@@ -191,5 +192,6 @@ pkgconfig.generate(
 )
 
 install_headers(libsysprof_public_headers, subdir: sysprof_header_subdir)
+endif
 
 subdir('preload')

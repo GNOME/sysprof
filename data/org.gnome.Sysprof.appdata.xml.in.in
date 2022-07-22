@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>org.gnome.Sysprof.desktop</id>
+  <id>@APP_ID@.desktop</id>
   <translation type="gettext">sysprof</translation>
   <name>Sysprof</name>
   <summary>Profile an application or entire system</summary>

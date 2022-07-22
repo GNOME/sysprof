@@ -198,9 +198,7 @@ int main(void) {
 endif
 
 needs_service_access = get_option('libsysprof') or get_option('agent')
-if needs_service_access or get_option('sysprofd') == 'bundled'
-  install_service_files = true
-endif
+install_service_files = needs_service_access or get_option('sysprofd') == 'bundled'
 
 subdir('src')
 subdir('data')

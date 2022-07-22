@@ -30,11 +30,5 @@ if get_option('gtk') and get_option('libsysprof')
       install_dir: join_paths(datadir, 'applications')
   )
 
-  icon_sizes = ['scalable', 'symbolic']
-  foreach size: icon_sizes
-    install_subdir('icons/' + size,
-      install_dir: join_paths(datadir, 'icons/hicolor')
-    )
-  endforeach
-
+  subdir('icons')
 endif

@@ -1,8 +1,7 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-data/org.gnome.Sysprof3.appdata.xml.in
-data/org.gnome.Sysprof3.desktop.in
-data/org.gnome.sysprof3.gschema.xml
+data/org.gnome.Sysprof.appdata.xml.in.in
+data/org.gnome.Sysprof.desktop.in.in
 src/libsysprof/sysprof-callgraph-profile.c
 src/libsysprof/sysprof-perf-source.c
 src/libsysprof-ui/sysprof-battery-aid.c

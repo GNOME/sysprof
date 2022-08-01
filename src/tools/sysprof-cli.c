@@ -22,13 +22,14 @@
 
 #include <fcntl.h>
 #include <locale.h>
-#include <glib-unix.h>
-#include <glib/gi18n.h>
-#include <glib/gstdio.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <signal.h>
+
+#include <glib-unix.h>
+#include <glib/gi18n.h>
+#include <glib/gstdio.h>
+
 #include <sysprof.h>
 
 #if HAVE_POLKIT && HAVE_POLKIT_AGENT

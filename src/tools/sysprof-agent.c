@@ -412,6 +412,20 @@ create_connection (GIOStream  *stream,
   return ret;
 }
 
+static gboolean
+sigint_handler (gpointer user_data)
+{
+  SysprofProfiler *profiler = user_data;
+
+  g_assert (SYSPROF_IS_PROFILER (profiler));
+
+  g_printerr ("\n"
+              "Profiler stopped, extracting symbols and appending to capture.\n"
+              "Press ^C again to force exit.\n");
+  sysprof_profiler_stop (profiler);
+  return G_SOURCE_REMOVE;
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -605,6 +619,11 @@ main (int   argc,
                     "subprocess-finished",
                     G_CALLBACK (subprocess_finished_cb),
                     NULL);
+
+  /* SIGINT (keyboard ^C) should stop the profiler and append symbols
+   * to the SysprofCaptureWriter.
+   */
+  g_unix_signal_add (SIGINT, sigint_handler, profiler);
 
   /* Start the profiler */
   sysprof_profiler_start (profiler);

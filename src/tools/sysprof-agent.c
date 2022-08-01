@@ -541,6 +541,8 @@ main (int   argc,
 
       if (directory != NULL)
         sysprof_profiler_set_spawn_cwd (profiler, directory);
+      else
+        sysprof_profiler_set_spawn_cwd (profiler, ".");
     }
 
   /* Now open the writer for our session */

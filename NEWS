@@ -1,3 +1,20 @@
+Overview of changes in Sysprof 3.45.1
+=====================================
+
+This release of Sysprof is a development release and is not intended for
+end users.
+
+ * Addition of sysprof-agent to aid in cross-container profiling and
+   instrumentation. (Use -Dagent=(true|false) to control
+ * Additional porting to libadwaita
+ * Remove unused settings schemas
+ * Nightly Flatpak builds now use org.gnome.Sysprof.Devel as the
+   application-id
+ * The application now uses org.gnome.Sysprof as the application-id
+   instead of org.gnome.Sysprof3.
+ * Icon updates
+ * Translation updates
+
 Overview of changes in Sysprof 3.45.0
 =====================================
 

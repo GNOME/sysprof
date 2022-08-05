@@ -1,6 +1,6 @@
 project('sysprof', 'c',
           license: ['GPL3+', 'GPL2+'],
-          version: '3.45.1',
+          version: '3.45.2',
     meson_version: '>=0.59.0',
   default_options: [ 'c_std=gnu11',
                      'cpp_std=c++11',

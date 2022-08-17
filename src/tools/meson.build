@@ -5,14 +5,12 @@ tools_deps = [
 
 tools_cflags = [ '-DSYSPROF_COMPILATION ']
 
-if get_option('libsysprof')
-  sysprof_cli = executable('sysprof-cli', 'sysprof-cli.c',
-    dependencies: tools_deps + [libsysprof_dep, polkit_dep, polkit_agent_dep],
-          c_args: tools_cflags,
-     install_dir: get_option('bindir'),
-         install: true,
-  )
-endif
+sysprof_cli = executable('sysprof-cli', 'sysprof-cli.c',
+  dependencies: [libsysprof_static_dep, polkit_dep, polkit_agent_dep],
+        c_args: tools_cflags,
+   install_dir: get_option('bindir'),
+       install: true,
+)
 
 sysprof_cat = executable('sysprof-cat', 'sysprof-cat.c',
   dependencies: tools_deps,

@@ -1,5 +1,9 @@
 #mesondefine API_VERSION_S
 
+#mesondefine APP_ID
+
+#mesondefine APP_ID_S
+
 #mesondefine DEBUGDIR
 
 #mesondefine DEVELOPMENT_BUILD

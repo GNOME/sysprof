@@ -65,6 +65,7 @@ static gboolean aid_net;
 static gboolean aid_perf;
 static gboolean aid_tracefd;
 static gboolean no_throttle;
+static gboolean decode;
 static const GOptionEntry options[] = {
   { "read-fd", 0, 0, G_OPTION_ARG_INT, &read_fd, "The read side of the FD to use for D-Bus" },
   { "write-fd", 0, 0, G_OPTION_ARG_INT, &write_fd, "The write side of the FD to use for D-Bus" },
@@ -72,6 +73,7 @@ static const GOptionEntry options[] = {
   { "directory", 0, 0, G_OPTION_ARG_FILENAME, &directory, "The directory to run spawn the subprocess from", "PATH" },
   { "capture", 0, 0, G_OPTION_ARG_FILENAME, &capture_filename, "The filename to save the sysprof capture to", "PATH" },
   { "clear-env", 0, 0, G_OPTION_ARG_NONE, &clear_env, "Clear environment instead of inheriting" },
+  { "decode", 0, 0, G_OPTION_ARG_NONE, &decode, "Decode symbols at the end of the recording" },
   { "env", 0, 0, G_OPTION_ARG_STRING_ARRAY, &env, "Add an environment variable to the spawned process", "KEY=VALUE" },
   { "cpu", 0, 0, G_OPTION_ARG_NONE, &aid_cpu, "Track CPU usage and frequency" },
   { "gjs", 0, 0, G_OPTION_ARG_NONE, &aid_gjs, "Record stack traces within GJS" },
@@ -599,6 +601,7 @@ main (int   argc,
   add_source (profiler, no_throttle, SYSPROF_TYPE_GOVERNOR_SOURCE,
               "disable-governor", TRUE,
               NULL);
+  add_source (profiler, decode, SYSPROF_TYPE_SYMBOLS_SOURCE, NULL);
 
   /* Bail when we've failed or finished and track the subprocess
    * so that we can deliver signals to it.

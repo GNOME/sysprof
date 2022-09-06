@@ -554,8 +554,10 @@ sysprof_elf_symbol_resolver_resolve_full (SysprofElfSymbolResolver *self,
   if (!(pi = g_hash_table_lookup (self->processes, GINT_TO_POINTER (pid))))
     return FALSE;
 
-  map = sysprof_map_lookaside_lookup (pi->lookaside, address);
-  if G_UNLIKELY (map == NULL)
+  if (pi->lookaside == NULL)
+    return FALSE;
+
+  if (!(map = sysprof_map_lookaside_lookup (pi->lookaside, address)))
     return FALSE;
 
   address -= map->start;

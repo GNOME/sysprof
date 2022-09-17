@@ -1,3 +1,12 @@
+Overview of changes in Sysprof 3.46.0
+=====================================
+
+ * sysprof-cli is now statically linked
+ * sysprof-agent now has a --decode option to decode symbols at the end
+   of a capture, similar to what sysprof-cli can do.
+ * A crash in the Elf symbol resolver has been fixed.
+ * Translation updates
+
 Overview of changes in Sysprof 3.45.1
 =====================================
 

@@ -1,6 +1,6 @@
 project('sysprof', 'c',
           license: ['GPL3+', 'GPL2+'],
-          version: '3.45.2',
+          version: '3.46.0',
     meson_version: '>=0.59.0',
   default_options: [ 'c_std=gnu11',
                      'cpp_std=c++11',
@@ -8,7 +8,7 @@ project('sysprof', 'c',
   ]
 )
 
-symbolic_version = '43.alpha0'
+symbolic_version = '43.0'
 
 gnome = import('gnome', required: get_option('gtk'))
 pkgconfig = import('pkgconfig')

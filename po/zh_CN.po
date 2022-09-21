@@ -9,72 +9,44 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2022-04-03 12:00+0000\n"
-"PO-Revision-Date: 2022-04-13 20:54+0800\n"
+"POT-Creation-Date: 2022-07-24 06:22+0000\n"
+"PO-Revision-Date: 2022-09-21 22:55+0800\n"
 "Last-Translator: lumingzh <lumingzh@qq.com>\n"
 "Language-Team: Chinese - China <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Gtranslator 42.0\n"
+"X-Generator: Gtranslator 40.0\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:5
-#: data/org.gnome.Sysprof3.desktop.in:4 src/sysprof/sysprof-application.c:208
-#: src/sysprof/sysprof-application.c:332 src/sysprof/sysprof-window.ui:9
+#: data/org.gnome.Sysprof.appdata.xml.in.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:196
+#: src/sysprof/sysprof-application.c:321 src/sysprof/sysprof-window.ui:10
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:6
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
 msgid "Profile an application or entire system"
 msgstr "对应用程序或整个系统进行性能分析"
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:9
+#: data/org.gnome.Sysprof.appdata.xml.in.in:9
 msgid "The GNOME Foundation"
 msgstr "GNOME 基金会"
 
-#: data/org.gnome.Sysprof3.appdata.xml.in:12
+#: data/org.gnome.Sysprof.appdata.xml.in.in:12
 msgid ""
 "Sysprof allows you to profile applications to aid in debugging and "
 "optimization."
 msgstr "Sysprof 允许您对应用程序进行性能分析，以便调试及优化。"
 
-#: data/org.gnome.Sysprof3.desktop.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:5
 msgid "Profiler"
 msgstr "性能分析器"
 
-#: data/org.gnome.Sysprof3.desktop.in:6
+#: data/org.gnome.Sysprof.desktop.in.in:6
 msgid "Profile an application or entire system."
 msgstr "对应用程序或整个系统进行性能分析。"
-
-#: data/org.gnome.sysprof3.gschema.xml:5
-msgid "Last Spawn Program"
-msgstr "上一次生成的程序"
-
-#: data/org.gnome.sysprof3.gschema.xml:6
-msgid ""
-"The last spawned program, which will be set in the UI upon restart of the "
-"application."
-msgstr "上一次生成的程序，会被设置于重新启动应用程序后的用户界面中。"
-
-#: data/org.gnome.sysprof3.gschema.xml:10
-msgid "Last Spawn Inherit Environment"
-msgstr "上一次生成继承环境"
-
-#: data/org.gnome.sysprof3.gschema.xml:11
-msgid "If the last spawned environment inherits the parent environment."
-msgstr "上一次生成的环境是否继承上层环境。"
-
-#: data/org.gnome.sysprof3.gschema.xml:15
-msgid "Last Spawn Environment"
-msgstr "上一次生成的环境"
-
-#: data/org.gnome.sysprof3.gschema.xml:16
-msgid ""
-"The last spawned environment, which will be set in the UI upon restart of "
-"the application."
-msgstr "上一次生成的环境，会被设置于重新启动应用程序后的用户界面中。"
 
 #: src/libsysprof/sysprof-callgraph-profile.c:447
 msgid "Sysprof was unable to generate a callgraph from the system capture."
@@ -109,12 +81,12 @@ msgid "Battery Charge (All)"
 msgstr "电池电量（全部）"
 
 #: src/libsysprof-ui/sysprof-battery-aid.c:240
-#: src/libsysprof-ui/sysprof-counters-aid.c:282
 msgid "Battery"
 msgstr "电池"
 
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:212
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:218
+#: src/libsysprof-ui/sysprof-details-page.ui:73
 msgid "Stack Traces"
 msgstr "栈轨迹"
 
@@ -132,40 +104,40 @@ msgid "Callgraph"
 msgstr "调用图"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:23
-#: src/libsysprof-ui/sysprof-memprof-page.ui:220
+#: src/libsysprof-ui/sysprof-memprof-page.ui:90
 msgid "Functions"
 msgstr "函数"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:39
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:96
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:147
-#: src/libsysprof-ui/sysprof-memprof-page.ui:237
-#: src/libsysprof-ui/sysprof-memprof-page.ui:295
-#: src/libsysprof-ui/sysprof-memprof-page.ui:346
+#: src/libsysprof-ui/sysprof-memprof-page.ui:107
+#: src/libsysprof-ui/sysprof-memprof-page.ui:165
+#: src/libsysprof-ui/sysprof-memprof-page.ui:216
 msgid "Self"
 msgstr "自身"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:55
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:112
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:163
-#: src/libsysprof-ui/sysprof-memprof-page.ui:253
-#: src/libsysprof-ui/sysprof-memprof-page.ui:311
-#: src/libsysprof-ui/sysprof-memprof-page.ui:362
+#: src/libsysprof-ui/sysprof-memprof-page.ui:123
+#: src/libsysprof-ui/sysprof-memprof-page.ui:181
+#: src/libsysprof-ui/sysprof-memprof-page.ui:232
 msgid "Total"
 msgstr "总计"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:80
-#: src/libsysprof-ui/sysprof-memprof-page.ui:278
+#: src/libsysprof-ui/sysprof-memprof-page.ui:148
 msgid "Callers"
 msgstr "调用者"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:139
-#: src/libsysprof-ui/sysprof-memprof-page.ui:337
+#: src/libsysprof-ui/sysprof-memprof-page.ui:207
 msgid "Descendants"
 msgstr "后代"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:178
-#: src/libsysprof-ui/sysprof-details-page.ui:309
+#: src/libsysprof-ui/sysprof-details-page.ui:189
 msgid "Hits"
 msgstr "采样数"
 
@@ -178,12 +150,12 @@ msgid "Sysprof is busy creating the selected callgraph."
 msgstr "Sysprof 正在创建选定的调用图。"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:205
-#: src/libsysprof-ui/sysprof-memprof-page.ui:401
+#: src/libsysprof-ui/sysprof-memprof-page.ui:271
 msgid "Not Enough Samples"
 msgstr "样本不足"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:206
-#: src/libsysprof-ui/sysprof-memprof-page.ui:402
+#: src/libsysprof-ui/sysprof-memprof-page.ui:272
 msgid "More samples are necessary to display a callgraph."
 msgstr "需要更多样本才能显示调用图。"
 
@@ -197,6 +169,8 @@ msgstr "%d %%"
 
 #: src/libsysprof-ui/sysprof-counters-aid.c:221
 #: src/libsysprof-ui/sysprof-counters-aid.c:226
+#: src/libsysprof-ui/sysprof-counters-aid.c:282
+#: src/libsysprof-ui/sysprof-details-page.ui:148
 msgid "Counters"
 msgstr "计数器"
 
@@ -220,74 +194,102 @@ msgid "CPU Usage (All)"
 msgstr "CPU 使用率（全部）"
 
 #: src/libsysprof-ui/sysprof-cpu-aid.c:316
+#: src/libsysprof-ui/sysprof-details-page.ui:103
 msgid "Processes"
 msgstr "进程"
 
-#: src/libsysprof-ui/sysprof-details-page.c:237
+#: src/libsysprof-ui/sysprof-details-page.c:231
 msgid "Memory Capture"
 msgstr "内存采集"
 
-#: src/libsysprof-ui/sysprof-details-page.c:251
+#: src/libsysprof-ui/sysprof-details-page.c:245
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf 秒"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:21
-msgid "Filename"
-msgstr "文件名"
+#: src/libsysprof-ui/sysprof-details-page.ui:8
+#| msgid "Captured at"
+msgid "Capture"
+msgstr "采集"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:35
-msgid "Captured at"
-msgstr "采集于"
+#: src/libsysprof-ui/sysprof-details-page.ui:12
+#| msgid "Duration"
+msgid "Location"
+msgstr "位置"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:49
+#: src/libsysprof-ui/sysprof-details-page.ui:26
+#| msgid "Record Again"
+msgid "Recorded At"
+msgstr "记录于"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:40
 #: src/libsysprof-ui/sysprof-marks-page.ui:90
 #: src/libsysprof-ui/sysprof-marks-page.ui:196
 msgid "Duration"
 msgstr "持续时间"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:63
+#: src/libsysprof-ui/sysprof-details-page.ui:54
 msgid "CPU Model"
 msgstr "CPU 型号"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:78
-msgid "Samples Captured"
-msgstr "已采集的样本"
+#: src/libsysprof-ui/sysprof-details-page.ui:69
+#: src/libsysprof-ui/sysprof-details-page.ui:164
+msgid "Statistics"
+msgstr "统计信息"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:92
-msgid "Marks Captured"
-msgstr "已采集的标记"
+#: src/libsysprof-ui/sysprof-details-page.ui:74
+msgid "Number of stack traces sampled for performance callgraphs"
+msgstr "为性能调用图而采样的栈轨迹数量"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:106
-msgid "Processes Captured"
-msgstr "已采集的进程"
+#: src/libsysprof-ui/sysprof-details-page.ui:88
+#| msgid "Mark"
+msgid "Marks"
+msgstr "标记"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:120
-msgid "Forks Captured"
-msgstr "已采集的分支"
+#: src/libsysprof-ui/sysprof-details-page.ui:89
+msgid "Number of marks seen"
+msgstr "看到的标记数"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:104
+msgid "Number of processes seen"
+msgstr "看到的进程数"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:118
+msgid "Forks"
+msgstr "分叉"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:119
+msgid "Number of times a process forked"
+msgstr "进程分叉次数"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:133
+#: src/libsysprof-ui/sysprof-memprof-aid.c:193
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Allocations"
+msgstr "内存分配"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:134
-msgid "Counters Captured"
-msgstr "已采集的计数器"
+msgid "Number of stack traces recorded for tracing memory allocations"
+msgstr "为跟踪内存分配而记录的栈轨迹数量"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:149
-msgid "Allocations Captured"
-msgstr "已采集的分配"
+msgid "Number of recorded counter values"
+msgstr "记录的计数器值的数量"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:296
+#: src/libsysprof-ui/sysprof-details-page.ui:176
 #: src/libsysprof-ui/sysprof-marks-page.ui:50
 msgid "Mark"
 msgstr "标记"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:322
+#: src/libsysprof-ui/sysprof-details-page.ui:202
 msgid "Min"
 msgstr "最小"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:335
+#: src/libsysprof-ui/sysprof-details-page.ui:215
 msgid "Max"
 msgstr "最大"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:348
+#: src/libsysprof-ui/sysprof-details-page.ui:228
 msgid "Avg"
 msgstr "平均"
 
@@ -304,43 +306,43 @@ msgstr "读取"
 msgid "Writes"
 msgstr "写入"
 
-#: src/libsysprof-ui/sysprof-display.c:227
+#: src/libsysprof-ui/sysprof-display.c:228
 msgid "Recording Failed"
 msgstr "记录失败"
 
-#: src/libsysprof-ui/sysprof-display.c:232
+#: src/libsysprof-ui/sysprof-display.c:233
 msgid "Recording…"
 msgstr "正在记录……"
 
 #. translators: %s is replaced with locale specific time of recording
-#: src/libsysprof-ui/sysprof-display.c:263
+#: src/libsysprof-ui/sysprof-display.c:264
 #, c-format
 msgid "Recording at %s"
 msgstr "%s 时的记录"
 
-#: src/libsysprof-ui/sysprof-display.c:267
+#: src/libsysprof-ui/sysprof-display.c:268
 msgid "New Recording"
 msgstr "新建记录"
 
-#: src/libsysprof-ui/sysprof-display.c:1093
+#: src/libsysprof-ui/sysprof-display.c:1096
 msgid "The recording could not be opened"
 msgstr "无法打开记录"
 
-#: src/libsysprof-ui/sysprof-display.c:1234
+#: src/libsysprof-ui/sysprof-display.c:1243
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "无法保存记录：%s"
 
-#: src/libsysprof-ui/sysprof-display.c:1267
+#: src/libsysprof-ui/sysprof-display.c:1276
 msgid "Save Recording"
 msgstr "保存记录"
 
-#: src/libsysprof-ui/sysprof-display.c:1270
+#: src/libsysprof-ui/sysprof-display.c:1279
 msgid "Save"
 msgstr "保存"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1271 src/sysprof/sysprof-window.c:310
+#: src/libsysprof-ui/sysprof-display.c:1280 src/sysprof/sysprof-window.c:285
 msgid "Cancel"
 msgstr "取消"
 
@@ -354,16 +356,17 @@ msgid "Remove environment variable"
 msgstr "移除环境变量"
 
 #: src/libsysprof-ui/sysprof-environ-editor.c:72
-msgid "New variable…"
-msgstr "新建变量…"
+#| msgid "Remove environment variable"
+msgid "New environment variable…"
+msgstr "新建环境变量……"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:31
-msgid "Something unexpectedly went wrong while trying to profile your system."
-msgstr "尝试对您的系统进行性能分析时发生了意外错误。"
-
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:41
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:27
 msgid "Ouch, that hurt!"
 msgstr "出错了！"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:40
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr "尝试对您的系统进行性能分析时发生了意外错误。"
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
 #: src/libsysprof-ui/sysprof-logs-page.ui:58
@@ -440,48 +443,68 @@ msgstr "内存用量"
 msgid "Memory"
 msgstr "内存"
 
-#: src/libsysprof-ui/sysprof-memprof-aid.c:193
-#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
-msgid "Memory Allocations"
-msgstr "内存分配"
-
 #: src/libsysprof-ui/sysprof-memprof-aid.c:224
 msgid "Track Allocations"
 msgstr "跟踪分配"
 
 #. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
-#: src/libsysprof-ui/sysprof-memprof-page.c:241
+#: src/libsysprof-ui/sysprof-memprof-page.c:246
 #, c-format
 msgid "> %s to %s"
 msgstr "> %s 到 %s"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:21
-msgid "Summary"
-msgstr "概要"
+#: src/libsysprof-ui/sysprof-memprof-page.ui:16
+#| msgid "Memory Allocations"
+msgid "Number of Allocations"
+msgstr "分配数量"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:27
-msgid "All Allocations"
-msgstr "全部分配"
+#: src/libsysprof-ui/sysprof-memprof-page.ui:17
+#| msgid "Profile memory allocations and frees"
+msgid "Total number of allocation and free records"
+msgstr "分配和释放记录的总数"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:34
-msgid "Temporary Allocations"
-msgstr "临时分配"
-
-#: src/libsysprof-ui/sysprof-memprof-page.ui:41
+#: src/libsysprof-ui/sysprof-memprof-page.ui:30
+#: src/libsysprof-ui/sysprof-memprof-page.ui:318
 msgid "Leaked Allocations"
 msgstr "泄漏分配"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:377
+#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+msgid "Number of allocations without a free record"
+msgstr "没有释放记录的分配数量"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:44
+#: src/libsysprof-ui/sysprof-memprof-page.ui:311
+msgid "Temporary Allocations"
+msgstr "临时分配"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:45
+msgid "Number of allocations freed from similar stack trace"
+msgstr "从类似的栈轨迹释放的分配数量"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:59
+#| msgid "Allocations Captured"
+msgid "Allocations by Size"
+msgstr "分配大小"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:247
 msgid "Size"
 msgstr "大小"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:394
+#: src/libsysprof-ui/sysprof-memprof-page.ui:264
 msgid "Analyzing Memory Allocations"
 msgstr "分析内存分配"
 
-#: src/libsysprof-ui/sysprof-memprof-page.ui:395
+#: src/libsysprof-ui/sysprof-memprof-page.ui:265
 msgid "Sysprof is busy analyzing memory allocations."
 msgstr "Sysprof 正在分析内存分配。"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+msgid "Summary"
+msgstr "概要"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:304
+msgid "All Allocations"
+msgstr "全部分配"
 
 #: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
 msgid "Memory Used"
@@ -497,75 +520,83 @@ msgstr "网络"
 msgid "GNOME Shell"
 msgstr "GNOME Shell"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:92
-msgid "Profilers"
-msgstr "性能分析器"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
+msgid "Profiling Target"
+msgstr "性能分析目标"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:188
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:72
+#| msgid "Profile the system"
+msgid "Profile Entire System"
+msgstr "对整个系统进行性能分析"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:73
+#| msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgid ""
-"Track application memory allocations (Sysprof must launch target application)"
-msgstr "跟踪应用程序的内存分配（Sysprof 必须启动目标应用程序）"
+"Sysprof can generate callgraphs for one or more processes on your system."
+msgstr "Sysprof 可以为您的系统上的一个或多个进程生成调用图。"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:196
-msgid "Track slow operations on your applications main loop"
-msgstr "跟踪您的应用程序主循环上的慢速操作"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:84
+#| msgid "Search Processes…"
+msgid "Search Processes"
+msgstr "搜索进程"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:212
-msgid "All Processes"
-msgstr "全部进程"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:242
-msgid ""
-"Include all applications and operating system kernel in callgraph. This may "
-"not be possible on some system configurations."
-msgstr ""
-"在调用图中包含全部应用程序和操作系统内核。这在某些系统配置上可能无法实现。"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:270
-msgid "Search Processes…"
-msgstr "搜索进程…"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:288
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:99
 msgid "Loading Processes…"
 msgstr "正在载入进程……"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:312
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:114
 msgid "Launch Application"
 msgstr "启动应用程序"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:341
-msgid "Enable to launch a program of your choosing before profiling."
-msgstr "启用此选项以便在性能分析前启动您选择的程序。"
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:115
+msgid ""
+"Sysprof can launch an application to be profiled. The profiler will "
+"automatically stop when it exits."
+msgstr ""
+"Sysprof 可以启动要进行性能分析的应用程序。性能分析器将在它退出时自动停止。"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:369
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:126
 msgid "Command Line"
 msgstr "命令行"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:388
-msgid "Environment"
-msgstr "环境"
-
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:413
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:135
 msgid "Inherit Environment"
 msgstr "继承环境"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:437
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:136
 msgid ""
 "Enable to ensure your application shares the display, message-bus, and other "
 "desktop environment settings."
 msgstr "启用此选项以保证您的应用程序共享显示、消息总线，以及其他桌面环境设置。"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:463
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:153
+msgid "Performance"
+msgstr "性能"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:156
 msgid "Allow CPU Throttling"
 msgstr "允许 CPU 降频"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:491
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:157
 msgid ""
-"If disabled, your CPU will be placed in performance mode. It will be "
-"restored after profiling."
-msgstr "如果禁用此选项，您的 CPU 会被置于性能模式。在性能分析完成后会恢复。"
+"When enabled, your system is allowed to scale CPU frequency as necessary."
+msgstr "启用时，您的系统可以根据需要调整 CPU 频率。"
 
-#: src/libsysprof-ui/sysprof-profiler-assistant.ui:512
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:172
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
+msgid "Instruments"
+msgstr "仪表"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:245
+msgid ""
+"Track application memory allocations (Sysprof must launch target application)"
+msgstr "跟踪应用程序的内存分配（Sysprof 必须启动目标应用程序）"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:252
+msgid "Track slow operations on your applications main loop"
+msgstr "跟踪您的应用程序主循环上的慢速操作"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:265
 msgid "_Record"
 msgstr "记录 (_R)"
 
@@ -600,10 +631,6 @@ msgstr "选择更多详细信息"
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:158
 msgid "Display supplemental graphs"
 msgstr "显示补充图表"
-
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
-msgid "Instruments"
-msgstr "仪表"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
 msgid "Profile the system"
@@ -770,41 +797,37 @@ msgstr "帮助"
 msgid "About Sysprof"
 msgstr "关于 Sysprof"
 
-#: src/sysprof/sysprof-application.c:200
+#: src/sysprof/sysprof-application.c:205
 msgid "A system profiler"
 msgstr "系统性能分析器"
 
-#: src/sysprof/sysprof-application.c:205
+#: src/sysprof/sysprof-application.c:206
 msgid "translator-credits"
 msgstr "Damned <damnedlies@163.com>, 2020."
 
-#: src/sysprof/sysprof-application.c:211
-msgid "Learn more about Sysprof"
-msgstr "了解关于 Sysprof 的更多信息"
-
 #. Translators: This is a window title.
-#: src/sysprof/sysprof-window.c:304
+#: src/sysprof/sysprof-window.c:279
 msgid "Open Capture…"
 msgstr "打开采集文件…"
 
 #. Translators: This is a button.
-#: src/sysprof/sysprof-window.c:308
+#: src/sysprof/sysprof-window.c:283
 msgid "Open"
 msgstr "打开"
 
-#: src/sysprof/sysprof-window.c:313
+#: src/sysprof/sysprof-window.c:288
 msgid "Sysprof Captures"
 msgstr "Sysprof 采集文件"
 
-#: src/sysprof/sysprof-window.c:318
+#: src/sysprof/sysprof-window.c:293
 msgid "All Files"
 msgstr "全部文件"
 
-#: src/sysprof/sysprof-window.ui:33
+#: src/sysprof/sysprof-window.ui:34
 msgid "_Open"
 msgstr "打开 (_O)"
 
-#: src/sysprof/sysprof-window.ui:36
+#: src/sysprof/sysprof-window.ui:37
 msgid "Open Recording… (Ctrl+O)"
 msgstr "打开记录… (Ctrl+O)"
 
@@ -988,6 +1011,75 @@ msgstr "若文件名存在则覆盖"
 #: src/tools/sysprof-profiler-ctl.c:79
 msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
 msgstr "--dest=总线名称 [文件名] - 连接到嵌入的 sysprof 性能分析器"
+
+#~ msgid "Last Spawn Program"
+#~ msgstr "上一次生成的程序"
+
+#~ msgid ""
+#~ "The last spawned program, which will be set in the UI upon restart of the "
+#~ "application."
+#~ msgstr "上一次生成的程序，会被设置于重新启动应用程序后的用户界面中。"
+
+#~ msgid "Last Spawn Inherit Environment"
+#~ msgstr "上一次生成继承环境"
+
+#~ msgid "If the last spawned environment inherits the parent environment."
+#~ msgstr "上一次生成的环境是否继承上层环境。"
+
+#~ msgid "Last Spawn Environment"
+#~ msgstr "上一次生成的环境"
+
+#~ msgid ""
+#~ "The last spawned environment, which will be set in the UI upon restart of "
+#~ "the application."
+#~ msgstr "上一次生成的环境，会被设置于重新启动应用程序后的用户界面中。"
+
+#~ msgid "Filename"
+#~ msgstr "文件名"
+
+#~ msgid "Samples Captured"
+#~ msgstr "已采集的样本"
+
+#~ msgid "Marks Captured"
+#~ msgstr "已采集的标记"
+
+#~ msgid "Processes Captured"
+#~ msgstr "已采集的进程"
+
+#~ msgid "Forks Captured"
+#~ msgstr "已采集的分支"
+
+#~ msgid "Counters Captured"
+#~ msgstr "已采集的计数器"
+
+#~ msgid "New variable…"
+#~ msgstr "新建变量…"
+
+#~ msgid "Profilers"
+#~ msgstr "性能分析器"
+
+#~ msgid "All Processes"
+#~ msgstr "全部进程"
+
+#~ msgid ""
+#~ "Include all applications and operating system kernel in callgraph. This "
+#~ "may not be possible on some system configurations."
+#~ msgstr ""
+#~ "在调用图中包含全部应用程序和操作系统内核。这在某些系统配置上可能无法实现。"
+
+#~ msgid "Enable to launch a program of your choosing before profiling."
+#~ msgstr "启用此选项以便在性能分析前启动您选择的程序。"
+
+#~ msgid "Environment"
+#~ msgstr "环境"
+
+#~ msgid ""
+#~ "If disabled, your CPU will be placed in performance mode. It will be "
+#~ "restored after profiling."
+#~ msgstr "如果禁用此选项，您的 CPU 会被置于性能模式。在性能分析完成后会恢复。"
+
+#~ msgid "Learn more about Sysprof"
+#~ msgstr "了解关于 Sysprof 的更多信息"
 
 #~ msgid "Window size"
 #~ msgstr "窗口大小"

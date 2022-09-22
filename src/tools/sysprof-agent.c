@@ -342,6 +342,9 @@ subprocess_finished_cb (SysprofLocalProfiler *profiler,
   subprocess_finished = TRUE;
 
   message ("Process %s exited", subprocess_ident);
+
+  if (decode)
+    message ("Extracting symbols and attaching to capture");
 }
 
 static void
@@ -641,7 +644,7 @@ main (int   argc,
   g_main_loop_run (main_loop);
 
   /* Notify that some more work needs to proceed */
-  message ("Extracting callgraph symbols");
+  message ("Completing symbol extraction");
 
   /* Let anything in-flight finish */
   main_context = g_main_loop_get_context (main_loop);

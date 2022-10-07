@@ -666,6 +666,7 @@ sysprof_local_profiler_start_after_auth (SysprofLocalProfiler *self)
 
       g_ptr_array_add (env, NULL);
 
+      sysprof_spawnable_set_flags (spawnable, flags);
       sysprof_spawnable_set_environ (spawnable, (const gchar * const *)env->pdata);
       sysprof_spawnable_append_args (spawnable, (const gchar * const *)priv->spawn_argv);
 

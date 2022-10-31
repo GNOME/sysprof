@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: sysprof sysprof-3-44\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
 "POT-Creation-Date: 2022-10-10 21:43+0000\n"
-"PO-Revision-Date: 2022-10-21 23:51+1000\n"
+"PO-Revision-Date: 2022-10-27 21:48+1000\n"
 "Last-Translator: Ser82-png <asvmail.as@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
@@ -43,7 +43,7 @@ msgstr ""
 
 #: data/org.gnome.Sysprof.desktop.in.in:5
 msgid "Profiler"
-msgstr "Профайлер"
+msgstr "Профилировщик"
 
 #: data/org.gnome.Sysprof.desktop.in.in:6
 msgid "Profile an application or entire system."
@@ -71,7 +71,7 @@ msgstr "Sysprof не удалось получить идентификатор 
 #: src/libsysprof/sysprof-perf-source.c:655
 #, c-format
 msgid "An error occurred while attempting to access performance counters"
-msgstr "Произошла ошибка при попытке доступа к счетчикам производительности"
+msgstr "Произошла ошибка при попытке доступа к счётчикам производительности"
 
 #: src/libsysprof-ui/sysprof-battery-aid.c:182
 msgid "Battery Charge"
@@ -89,15 +89,15 @@ msgstr "Батарея"
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:218
 #: src/libsysprof-ui/sysprof-details-page.ui:73
 msgid "Stack Traces"
-msgstr "Следы стека"
+msgstr "Трассировка стека"
 
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:226
 msgid "Stack Traces (In Kernel)"
-msgstr "Следы стека (в ядре)"
+msgstr "Трассировка стека (в ядре)"
 
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:234
 msgid "Stack Traces (In User)"
-msgstr "Следы стека (пользовательские)"
+msgstr "Трассировка стека (для пользователя)"
 
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:243
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:273
@@ -153,7 +153,7 @@ msgstr "Sysprof занят созданием выбранного графа в
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:205
 #: src/libsysprof-ui/sysprof-memprof-page.ui:271
 msgid "Not Enough Samples"
-msgstr "Не достаточно образцов"
+msgstr "Недостаточно образцов"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:206
 #: src/libsysprof-ui/sysprof-memprof-page.ui:272
@@ -228,7 +228,7 @@ msgstr "Продолжительность"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:54
 msgid "CPU Model"
-msgstr "Модель ЦП"
+msgstr "Модель процессора"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:69
 #: src/libsysprof-ui/sysprof-details-page.ui:164
@@ -275,7 +275,7 @@ msgstr ""
 
 #: src/libsysprof-ui/sysprof-details-page.ui:149
 msgid "Number of recorded counter values"
-msgstr "Количество записанных значений счетчика"
+msgstr "Количество записанных значений счётчика"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:176
 #: src/libsysprof-ui/sysprof-marks-page.ui:50
@@ -309,7 +309,7 @@ msgstr "Записей"
 
 #: src/libsysprof-ui/sysprof-display.c:228
 msgid "Recording Failed"
-msgstr "Запись не успешна"
+msgstr "Запись не удалась"
 
 #: src/libsysprof-ui/sysprof-display.c:233
 msgid "Recording…"
@@ -366,7 +366,8 @@ msgstr "Ой-ой!"
 
 #: src/libsysprof-ui/sysprof-failed-state-view.ui:40
 msgid "Something unexpectedly went wrong while trying to profile your system."
-msgstr "Что-то неожиданно пошло не так при попытке профилировать вашу систему."
+msgstr ""
+"При попытке профилирования вашей системы неожиданно что-то пошло не так."
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
 #: src/libsysprof-ui/sysprof-logs-page.ui:58
@@ -558,7 +559,7 @@ msgstr "Командная строка"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:135
 msgid "Inherit Environment"
-msgstr "Унаследованное окружение"
+msgstr "Наследование окружения"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:136
 msgid ""
@@ -566,7 +567,7 @@ msgid ""
 "desktop environment settings."
 msgstr ""
 "Включите, чтобы обеспечить совместное использование приложением дисплея, "
-"шины сообщений и других параметров среды рабочего стола."
+"шины сообщений и других параметров окружения рабочего стола."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:153
 msgid "Performance"
@@ -610,14 +611,14 @@ msgstr "Потребление энергии"
 
 #: src/libsysprof-ui/sysprof-rapl-aid.c:180
 msgid "Energy Usage (All)"
-msgstr "Использование энергопотребления (всё)"
+msgstr "Потребление энергии (всё)"
 
 #: src/libsysprof-ui/sysprof-recording-state-view.ui:35
 msgid ""
 "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
 msgstr ""
-"Знаете ли вы, что вы можете использовать <a href=\"help:sysprof\">sysprof-"
-"cli</a> для записи?"
+"Знаете ли вы, что для записи можно использовать <a href=\"help:"
+"sysprof\">sysprof-cli</a>?"
 
 #: src/libsysprof-ui/sysprof-recording-state-view.ui:50
 msgid "Events"
@@ -630,19 +631,19 @@ msgstr "_Остановить запись"
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:136
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
 msgid "Select for more details"
-msgstr "Выберите для более подробной информации"
+msgstr "Выберите для получения более подробной информации"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:158
 msgid "Display supplemental graphs"
-msgstr "Показать дополнительные графики"
+msgstr "Показать дополнительные графы"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
 msgid "Profile the system"
-msgstr "Профилировать систему"
+msgstr "Профилирование системы"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:14
 msgid "Authentication is required to profile the system."
-msgstr "Необходима аутентификация для профилирования системы."
+msgstr "Для профилирования системы необходимо пройти аутентификацию."
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:26
 msgid "Open a perf event stream"
@@ -651,15 +652,16 @@ msgstr "Откройте поток событий производительн�
 #: src/sysprofd/org.gnome.sysprof3.policy.in:27
 msgid "Authentication is required to access system performance counters."
 msgstr ""
-"Для доступа к счетчикам производительности системы требуется аутентификация."
+"Для доступа к счётчикам производительности системы необходимо пройти "
+"аутентификацию."
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:37
 msgid "Get a list of kernel symbols and their address"
-msgstr "Получить список символов ядра и их адреса"
+msgstr "Получение списка символов ядра и их адреса"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:38
 msgid "Authentication is required to access Linux kernel information."
-msgstr "Аутентификация необходима для доступа к информации ядра Linux."
+msgstr "Для доступа к данным ядра Linux необходимо пройти аутентификацию."
 
 #: src/sysprof/gtk/help-overlay.ui:8
 msgctxt "shortcut window"
@@ -689,7 +691,7 @@ msgstr "Открыть запись"
 #: src/sysprof/gtk/help-overlay.ui:25
 msgctxt "shortcut window"
 msgid "Opens a previously saved recording"
-msgstr "Открыть предыдущую сохраненную запись"
+msgstr "Открыть предыдущую сохранённую запись"
 
 #: src/sysprof/gtk/help-overlay.ui:34
 msgctxt "shortcut window"
@@ -792,7 +794,7 @@ msgstr "Закрыть"
 
 #: src/sysprof/gtk/menus.ui:44
 msgid "Keyboard Shortcuts"
-msgstr "Комбинация клавиш"
+msgstr "Комбинации клавиш"
 
 #: src/sysprof/gtk/menus.ui:49
 msgid "Help"
@@ -804,7 +806,7 @@ msgstr "О приложении «Sysprof»"
 
 #: src/sysprof/sysprof-application.c:205
 msgid "A system profiler"
-msgstr "Системный профайлер"
+msgstr "Профилировщик системы"
 
 #: src/sysprof/sysprof-application.c:206
 msgid "translator-credits"
@@ -843,7 +845,7 @@ msgstr ""
 
 #: src/tools/sysprof-cli.c:76
 msgid "Profiler stopped."
-msgstr "Профайлер остановлен."
+msgstr "Профилировщик остановлен."
 
 #: src/tools/sysprof-cli.c:109
 msgid "--merge requires at least 2 filename arguments"
@@ -882,7 +884,7 @@ msgstr "ПЕРЕМЕННАЯ=ЗНАЧЕНИЕ"
 
 #: src/tools/sysprof-cli.c:231
 msgid "Force overwrite the capture file"
-msgstr "Насильно перезаписывать файлы захватов"
+msgstr "Принудительно перезаписывать файлы захватов"
 
 #: src/tools/sysprof-cli.c:232
 msgid "Disable recording of battery statistics"
@@ -898,11 +900,11 @@ msgstr "Выключить запись статистики диска"
 
 #: src/tools/sysprof-cli.c:235
 msgid "Do not record stacktraces using Linux perf"
-msgstr "Не записывать стековые трассы, используя Linux perf"
+msgstr "Не записывать трассировку стека с помощью Linux perf"
 
 #: src/tools/sysprof-cli.c:236
 msgid "Do not append symbol name information from local machine"
-msgstr "Не добавлять информацию имени символа с локального компьютера"
+msgstr "Не добавлять информацию о названии символа с локального компьютера"
 
 #: src/tools/sysprof-cli.c:237
 msgid "Disable recording of memory statistics"
@@ -932,11 +934,12 @@ msgstr "Включить статистику энергопотребления
 
 #: src/tools/sysprof-cli.c:243
 msgid "Profile memory allocations and frees"
-msgstr "Профилировать распределение памяти и состояние свободности"
+msgstr "Профилировать распределение и освобождения памяти"
 
 #: src/tools/sysprof-cli.c:244
 msgid "Connect to org.gnome.Shell for profiler statistics"
-msgstr "Присоединить к org.gnome.Shell для профилировщика статистики"
+msgstr ""
+"Присоединиться к org.gnome.Shell для получения статистики профилирования"
 
 #: src/tools/sysprof-cli.c:245
 msgid "Track performance of the applications main loop"
@@ -1021,8 +1024,8 @@ msgstr "Перезаписать НАЗВАНИЕФАЙЛА если сущес�
 #: src/tools/sysprof-profiler-ctl.c:79
 msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
 msgstr ""
-"--dest=НАЗВАНИЕ_ШИНЫ [НАЗВАНИЕФАЙЛА] - подключиться к встроенному профайлеру "
-"sysprof"
+"--dest=НАЗВАНИЕ_ШИНЫ [НАЗВАНИЕФАЙЛА] - подключиться к встроенному "
+"прифилировщику sysprof"
 
 #~ msgid "Window size"
 #~ msgstr "Размер окна"

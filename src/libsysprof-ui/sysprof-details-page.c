@@ -25,28 +25,30 @@
 #include <glib/gi18n.h>
 #include <string.h>
 
+#include "sysprof-mark-detail.h"
 #include "sysprof-details-page.h"
 #include "sysprof-ui-private.h"
 
 struct _SysprofDetailsPage
 {
-  GtkWidget     parent_instance;
+  GtkWidget     parent_instance  ;
 
   /* Template Objects */
-  GtkListStore *marks_store;
-  GtkTreeView  *marks_view;
-  GtkLabel     *counters;
-  GtkLabel     *duration;
-  GtkLabel     *filename;
-  GtkLabel     *allocations;
-  GtkLabel     *forks;
-  GtkLabel     *marks;
-  GtkLabel     *processes;
-  GtkLabel     *samples;
-  GtkLabel     *start_time;
-  GtkLabel     *cpu_label;
 
-  guint         next_row;
+  GListStore       *marks_store;
+  GtkSortListModel *mark_sort_model;
+  GtkLabel         *counters;
+  GtkLabel         *duration;
+  GtkLabel         *filename;
+  GtkLabel         *allocations;
+  GtkLabel         *forks;
+  GtkLabel         *marks;
+  GtkLabel         *processes;
+  GtkLabel         *samples;
+  GtkLabel         *start_time;
+  GtkLabel         *cpu_label;
+
+  guint             next_row;
 };
 
 G_DEFINE_TYPE (SysprofDetailsPage, sysprof_details_page, GTK_TYPE_WIDGET)
@@ -74,6 +76,13 @@ _g_date_time_new_from_iso8601 (const gchar *str,
 }
 #endif
 
+char *
+format_time (GObject *unused,
+             gint64   time)
+{
+  return time ? _sysprof_format_duration (time) : g_strdup("—");
+}
+
 static void
 sysprof_details_page_dispose (GObject *object)
 {
@@ -94,6 +103,7 @@ sysprof_details_page_class_init (SysprofDetailsPageClass *klass)
 
   object_class->dispose = sysprof_details_page_dispose;
 
+  g_type_ensure (SYSPROF_TYPE_MARK_DETAIL);
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/ui/sysprof-details-page.ui");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, allocations);
@@ -104,19 +114,17 @@ sysprof_details_page_class_init (SysprofDetailsPageClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, forks);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, marks);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, marks_store);
-  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, marks_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, mark_sort_model);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, processes);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, samples);
   gtk_widget_class_bind_template_child (widget_class, SysprofDetailsPage, start_time);
+  gtk_widget_class_bind_template_callback (widget_class, format_time);
 }
 
 static void
 sysprof_details_page_init (SysprofDetailsPage *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-
-  gtk_tree_selection_set_mode (gtk_tree_view_get_selection (self->marks_view),
-                               GTK_SELECTION_MULTIPLE);
 
   self->next_row = 8;
 }
@@ -273,18 +281,23 @@ sysprof_details_page_add_mark (SysprofDetailsPage *self,
                                gint64              avg,
                                gint64              hits)
 {
-  GtkTreeIter iter;
+  SysprofMarkDetail *detail;
 
   g_return_if_fail (SYSPROF_IS_DETAILS_PAGE (self));
 
-  gtk_list_store_append (self->marks_store, &iter);
+  detail = sysprof_mark_detail_new (mark, min, max, avg, hits);
+
+  g_list_store_append (self->marks_store, detail);
+  /*gtk_list_store_append (self->marks_store, &iter);
   gtk_list_store_set (self->marks_store, &iter,
                       0, mark,
                       1, min ? _sysprof_format_duration (min) : "—",
                       2, max ? _sysprof_format_duration (max) : "—",
                       3, avg ? _sysprof_format_duration (avg) : "—",
                       4, hits,
-                      -1);
+                      5, detail,
+                      -1);*/
+  g_object_unref (detail);
 }
 
 void

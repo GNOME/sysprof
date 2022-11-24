@@ -625,7 +625,7 @@ sysprof_display_present_cb (GObject      *object,
   SysprofAid *aid = (SysprofAid *)object;
   g_autoptr(GTask) task = user_data;
   g_autoptr(GError) error = NULL;
-  guint *n_active;
+  gatomicrefcount *n_active;
 
   g_assert (SYSPROF_IS_AID (aid));
   g_assert (G_IS_ASYNC_RESULT (result));
@@ -639,9 +639,7 @@ sysprof_display_present_cb (GObject      *object,
 
   n_active = g_task_get_task_data (task);
 
-  (*n_active)--;
-
-  if (n_active == 0)
+  if (g_atomic_ref_count_dec (n_active))
     g_task_return_boolean (task, TRUE);
 }
 
@@ -654,6 +652,7 @@ sysprof_display_present_async (SysprofDisplay       *self,
 {
   g_autoptr(GPtrArray) aids = NULL;
   g_autoptr(GTask) task = NULL;
+  g_autofree gatomicrefcount *aids_len = NULL;
 
   g_return_if_fail (SYSPROF_IS_DISPLAY (self));
   g_return_if_fail (reader != NULL);
@@ -681,7 +680,11 @@ sysprof_display_present_async (SysprofDisplay       *self,
       return;
     }
 
-  g_task_set_task_data (task, g_memdup2 (&aids->len, sizeof aids->len), g_free);
+  aids_len = g_new (gatomicrefcount, 1);
+  g_atomic_ref_count_init(aids_len);
+  *aids_len = aids->len;
+
+  g_task_set_task_data (task, g_steal_pointer (&aids_len), g_free);
 
   for (guint i = 0; i < aids->len; i++)
     {

@@ -5,50 +5,42 @@
       <item>
         <attribute name="label" translatable="yes">New Tab</attribute>
         <attribute name="action">win.new-tab</attribute>
-        <attribute name="accel">&lt;primary&gt;t</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">New Window</attribute>
         <attribute name="action">app.new-window</attribute>
-        <attribute name="accel">&lt;primary&gt;n</attribute>
       </item>
     </section>
     <section id="win-menu-file">
       <item>
         <attribute name="label" translatable="yes">Open Recording…</attribute>
         <attribute name="action">app.open-capture</attribute>
-        <attribute name="accel">&lt;primary&gt;o</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Save Recording…</attribute>
         <attribute name="action">win.save-capture</attribute>
-        <attribute name="accel">&lt;primary&gt;s</attribute>
       </item>
     </section>
     <section id="win-menu-replay">
       <item>
         <attribute name="label" translatable="yes">Record Again</attribute>
         <attribute name="action">win.replay-capture</attribute>
-        <attribute name="accel">&lt;primary&gt;r</attribute>
       </item>
     </section>
     <section id="win-menu-close">
       <item>
         <attribute name="label" translatable="yes">Close</attribute>
         <attribute name="action">win.close-tab</attribute>
-        <attribute name="accel">&lt;primary&gt;w</attribute>
       </item>
     </section>
     <section id="win-menu-misc">
       <item>
         <attribute name="label" translatable="yes">Keyboard Shortcuts</attribute>
-        <attribute name="action">app.show-help-overlay</attribute>
-        <attribute name="accel">&lt;primary&gt;question</attribute>
+        <attribute name="action">win.show-help-overlay</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Help</attribute>
         <attribute name="action">app.help</attribute>
-        <attribute name="accel">F1</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">About Sysprof</attribute>

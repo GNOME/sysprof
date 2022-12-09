@@ -37,6 +37,7 @@ struct {
   const gchar *accels[12];
 } default_accels[] = {
   { "app.help",           { "F1", NULL } },
+  { "app.quit",           { "<Primary>q", NULL } },
   { "app.new-window",     { "<Primary>n", NULL } },
   { "app.open-capture",   { "<Primary>o", NULL } },
   { "zoom.zoom-in",       { "<Primary>plus", "<Primary>KP_Add", "<Primary>equal", "ZoomIn", NULL } },
@@ -267,40 +268,6 @@ sysprof_open_capture (GSimpleAction *action,
 }
 
 static void
-sysprof_show_help_overlay (GSimpleAction *action,
-                           GVariant      *variant,
-                           gpointer       user_data)
-{
-  GtkApplication *app = user_data;
-  SysprofWindow *window = NULL;
-
-  g_assert (G_IS_APPLICATION (app));
-  g_assert (G_IS_SIMPLE_ACTION (action));
-  g_assert (variant == NULL);
-
-  for (GList *list = gtk_application_get_windows (app); list; list = list->next)
-    {
-      GtkWindow *element = list->data;
-
-      if (SYSPROF_IS_WINDOW (element))
-        {
-          window = SYSPROF_WINDOW (element);
-          break;
-        }
-    }
-
-  if (window == NULL)
-    {
-      window = SYSPROF_WINDOW (sysprof_window_new (SYSPROF_APPLICATION (app)));
-      gtk_window_present (GTK_WINDOW (window));
-    }
-
-  g_assert (g_action_group_has_action (G_ACTION_GROUP (window), "show-help-overlay"));
-
-  g_action_group_activate_action (G_ACTION_GROUP (window), "show-help-overlay", NULL);
-}
-
-static void
 sysprof_application_init (SysprofApplication *self)
 {
   static const GActionEntry actions[] = {
@@ -308,7 +275,6 @@ sysprof_application_init (SysprofApplication *self)
     { "new-window",        sysprof_new_window },
     { "open-capture",      sysprof_open_capture },
     { "help",              sysprof_help },
-    { "show-help-overlay", sysprof_show_help_overlay },
     { "quit",              sysprof_quit },
   };
 

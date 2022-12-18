@@ -178,6 +178,7 @@ libsysprof_dep = declare_dependency(
          dependencies: libsysprof_deps,
   include_directories: [include_directories('.'), libsysprof_capture_include_dirs],
 )
+meson.override_dependency('sysprof-@0@'.format(libsysprof_api_version), libsysprof_dep)
 
 pkgconfig.generate(
                libsysprof,

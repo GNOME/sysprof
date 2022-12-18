@@ -64,6 +64,7 @@ libsysprof_capture_dep = declare_dependency(
          dependencies: libsysprof_capture_deps,
   include_directories: libsysprof_capture_include_dirs,
 )
+meson.override_dependency('sysprof-capture-@0@'.format(libsysprof_api_version), libsysprof_capture_dep)
 
 if install_static
   pkgconfig.generate(

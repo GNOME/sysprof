@@ -118,6 +118,7 @@ libsysprof_ui_dep = declare_dependency(
             dependencies: libsysprof_ui_deps,
      include_directories: include_directories('.'),
 )
+meson.override_dependency('sysprof-ui-@0@'.format(libsysprof_api_version), libsysprof_ui_dep)
 
 pkgconfig.generate(
                libsysprof_ui,

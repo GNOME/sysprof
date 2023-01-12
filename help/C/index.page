@@ -4,12 +4,18 @@
       id="index">
 
   <info>
+    <title type="link" role="trail">Sysprof</title>
+    <title type="link">Sysprof</title>
+    <title type="text">Sysprof</title>
     <revision pkgversion="3.20" date="2016-01-23" status="stub" />
 
     <include href="legal.xml" xmlns="http://www.w3.org/2001/XInclude"/>
   </info>
 
-  <title>Sysprof</title>
+  <title>
+    <media type="image" its:translate="no" width="48px" height="48px"
+      src="figures/Sysprof.svg" /> Sysprof
+  </title>
 
   <section id="profiling" style="2column">
     <title>Profiling</title>

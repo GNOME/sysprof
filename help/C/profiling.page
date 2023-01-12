@@ -2,13 +2,11 @@
       xmlns:its="http://www.w3.org/2005/11/its"
       type="topic"
       id="profiling">
-
-    <title>Profiling</title>
-
-  <section id="system-profiling">
     <info>
       <link type="guide" xref="index#profiling"/>
     </info>
+    <title>Profiling</title>
+  <section id="system-profiling">
     <title>How to profile your system</title>
     <p>When <app>Sysprof</app> profiles your system, it records stack
 information for all applications executing, including the Linux kernel. This

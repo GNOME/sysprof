@@ -49,7 +49,7 @@ sysprof_memprof_source_modify_spawn (SysprofSource    *source,
     else
       sysprof_spawnable_setenv (spawnable,
                                 "LD_PRELOAD",
-                                (freeme = g_strdup_printf ("%s,%s", so_path, ld_preload)));
+                                (freeme = g_strdup_printf ("%s:%s", so_path, ld_preload)));
   }
 #endif
 }

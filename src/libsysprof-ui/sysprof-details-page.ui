@@ -163,79 +163,183 @@
           <object class="AdwPreferencesGroup">
             <property name="title" translatable="yes">Statistics</property>
             <child>
-              <object class="GtkFrame">
+              <object class="GtkColumnView" id="marks_view">
+                <property name="width-request">500</property>
+                <property name="height-request">100</property>
+                <property name="model">
+                  <object class="GtkNoSelection">
+                    <property name="model">mark_sort_model</property>
+                  </object>
+                </property>
+                <style>
+                  <class name="data-table"/>
+                  <class name="card"/>
+                </style>
                 <child>
-                  <object class="GtkTreeView" id="marks_view">
-                    <property name="model">marks_store</property>
-                    <property name="width-request">500</property>
-                    <property name="height-request">100</property>
-                    <property name="enable-grid-lines">both</property>
-                    <child>
-                      <object class="GtkTreeViewColumn">
-                        <property name="expand">true</property>
-                        <property name="title" translatable="yes">Mark</property>
-                        <child>
-                          <object class="GtkCellRendererText">
-                            <property name="xalign">0.0</property>
-                          </object>
-                          <attributes>
-                            <attribute name="text">0</attribute>
-                          </attributes>
-                        </child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="title" translatable="yes">Mark</property>
+                    <property name="expand">true</property>
+                    <property name="sorter">
+                      <object class="GtkStringSorter">
+                        <property name="expression">
+                          <lookup name="label" type="SysprofMarkDetail"/>
+                        </property>
                       </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn">
-                        <property name="title" translatable="yes">Hits</property>
-                        <child>
-                          <object class="GtkCellRendererText">
-                            <property name="xalign">0.0</property>
-                          </object>
-                          <attributes>
-                            <attribute name="text">4</attribute>
-                          </attributes>
-                        </child>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+<template class="GtkListItem">
+<property name="child">
+  <object class="GtkLabel">
+    <property name="xalign">0</property>
+    <property name="ellipsize">end</property>
+    <binding name="label">
+      <lookup name="label" type="SysprofMarkDetail">
+        <lookup name="item">GtkListItem</lookup>
+      </lookup>
+    </binding>
+  </object>
+</property>
+</template>
+</interface>
+                    ]]></property>
                       </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn">
-                        <property name="title" translatable="yes">Min</property>
-                        <child>
-                          <object class="GtkCellRendererText">
-                            <property name="xalign">0.0</property>
-                          </object>
-                          <attributes>
-                            <attribute name="text">1</attribute>
-                          </attributes>
-                        </child>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="title" translatable="yes">Hits</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="hits" type="SysprofMarkDetail"/>
+                        </property>
                       </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn">
-                        <property name="title" translatable="yes">Max</property>
-                        <child>
-                          <object class="GtkCellRendererText">
-                            <property name="xalign">0.0</property>
-                          </object>
-                          <attributes>
-                            <attribute name="text">2</attribute>
-                          </attributes>
-                        </child>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+<template class="GtkListItem">
+<property name="child">
+  <object class="GtkLabel">
+    <property name="xalign">0</property>
+    <binding name="label">
+      <lookup name="hits" type="SysprofMarkDetail">
+        <lookup name="item">GtkListItem</lookup>
+      </lookup>
+    </binding>
+  </object>
+</property>
+</template>
+</interface>
+                    ]]></property>
                       </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn">
-                        <property name="title" translatable="yes">Avg</property>
-                        <child>
-                          <object class="GtkCellRendererText">
-                            <property name="xalign">0.0</property>
-                          </object>
-                          <attributes>
-                            <attribute name="text">3</attribute>
-                          </attributes>
-                        </child>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="title" translatable="yes">Min</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="min" type="SysprofMarkDetail"/>
+                        </property>
                       </object>
-                    </child>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+<template class="GtkListItem">
+<property name="child">
+  <object class="GtkLabel">
+    <property name="xalign">0</property>
+    <binding name="label">
+      <closure type="gchararray" function="format_time">
+        <lookup name='min' type='SysprofMarkDetail'><lookup name='item'>GtkListItem</lookup></lookup>
+      </closure>
+    </binding>
+  </object>
+</property>
+</template>
+</interface>
+                    ]]></property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="title" translatable="yes">Max</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="max" type="SysprofMarkDetail"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+<template class="GtkListItem">
+<property name="child">
+  <object class="GtkLabel">
+    <property name="xalign">0</property>
+    <binding name="label">
+      <closure type="gchararray" function="format_time">
+        <lookup name='max' type='SysprofMarkDetail'><lookup name='item'>GtkListItem</lookup></lookup>
+      </closure>
+    </binding>
+  </object>
+</property>
+</template>
+</interface>
+                    ]]></property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="title" translatable="yes">Avg</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="average" type="SysprofMarkDetail"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+<template class="GtkListItem">
+<property name="child">
+  <object class="GtkLabel">
+    <property name="xalign">0</property>
+    <binding name="label">
+      <closure type="gchararray" function="format_time">
+        <lookup name='average' type='SysprofMarkDetail'><lookup name='item'>GtkListItem</lookup></lookup>
+      </closure>
+    </binding>
+  </object>
+</property>
+</template>
+</interface>
+                    ]]></property>
+                      </object>
+                    </property>
                   </object>
                 </child>
               </object>
@@ -245,18 +349,13 @@
       </object>
     </child>
   </template>
-  <object class="GtkListStore" id="marks_store">
-    <columns>
-      <!-- column-name Mark -->
-      <column type="gchararray"/>
-      <!-- column-name Min -->
-      <column type="gchararray"/>
-      <!-- column-name Max -->
-      <column type="gchararray"/>
-      <!-- column-name Avg -->
-      <column type="gchararray"/>
-      <!-- column-name Hits -->
-      <column type="gint64"/>
-    </columns>
+  <object class="GtkSortListModel" id="mark_sort_model">
+    <property name="model">marks_store</property>
+    <property name="incremental">true</property>
+    <binding name="sorter">
+      <lookup name="sorter">marks_view</lookup>
+    </binding>
+  </object>
+  <object class="GListStore" id="marks_store">
   </object>
 </interface>

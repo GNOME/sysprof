@@ -43,6 +43,7 @@ libsysprof_ui_private_sources = [
   'sysprof-log-model.c',
   'sysprof-logs-aid.c',
   'sysprof-logs-page.c',
+  'sysprof-mark-detail.c',
   'sysprof-marks-aid.c',
   'sysprof-marks-model.c',
   'sysprof-marks-page.c',

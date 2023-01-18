@@ -28,9 +28,13 @@ datadir = get_option('datadir')
 datadir_for_pc_file = join_paths('${prefix}', datadir)
 podir = join_paths(meson.current_source_dir(), 'po')
 
-glib_req_version = '>= 2.73.0'
-gtk_req_version = '>= 4.6'
-polkit_req_version = '>= 0.105'
+glib_req = '2.73.0'
+gtk_req = '4.6'
+polkit_req = '0.105'
+
+glib_req_version = '>= @0@'.format(glib_req)
+gtk_req_version = '>= @0@'.format(gtk_req)
+polkit_req_version = '>= @0@'.format(polkit_req)
 
 cc = meson.get_compiler('c')
 
@@ -110,10 +114,28 @@ add_project_arguments([
   '-I' + meson.current_build_dir(), # config.h
 ], language: 'c')
 
+glib_major = glib_req.split('.')[0].to_int()
+glib_minor = glib_req.split('.')[1].to_int()
+gtk_major = gtk_req.split('.')[0].to_int()
+gtk_minor = gtk_req.split('.')[1].to_int()
+
+if glib_minor % 2 == 1
+  glib_minor = glib_minor + 1
+endif
+if gtk_minor % 2 == 1
+  gtk_minor = gtk_minor + 1
+endif
+
+
 global_c_args = [
   '-D_GNU_SOURCE',
   '-D_POSIX_C_SOURCE=200809L',
+  '-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_@0@_@1@'.format(glib_major, glib_minor),
+  '-DGLIB_VERSION_MAX_ALLOWED=GLIB_VERSION_@0@_@1@'.format(glib_major, glib_minor),
+  '-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
+  '-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor),
 ]
+
 if host_machine.system() == 'darwin'
   global_c_args += ['-D_DARWIN_C_SOURCE']
 endif

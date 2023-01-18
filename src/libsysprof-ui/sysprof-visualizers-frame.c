@@ -337,8 +337,7 @@ sysprof_visualizers_frame_add_group (SysprofVisualizersFrame *self,
 
   gtk_list_box_insert (self->visualizers, GTK_WIDGET (group), pos);
 
-  header = _sysprof_visualizer_group_header_new ();
-  g_object_set_data (G_OBJECT (header), "VISUALIZER_GROUP", group);
+  header = _sysprof_visualizer_group_header_new (group);
   gtk_list_box_insert (self->groups, GTK_WIDGET (header), pos);
   _sysprof_visualizer_group_set_header (group, header);
   gtk_widget_show (GTK_WIDGET (header));
@@ -367,7 +366,7 @@ sysprof_visualizers_frame_group_activated_cb (SysprofVisualizersFrame      *self
   g_assert (SYSPROF_IS_VISUALIZERS_FRAME (self));
   g_assert (SYSPROF_IS_VISUALIZER_GROUP_HEADER (row));
 
-  group = g_object_get_data (G_OBJECT (row), "VISUALIZER_GROUP");
+  group = _sysprof_visualizer_group_header_get_group (row);
   g_assert (SYSPROF_IS_VISUALIZER_GROUP (group));
 
   g_signal_emit_by_name (group, "group-activated");

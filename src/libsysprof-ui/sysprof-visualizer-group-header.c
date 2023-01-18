@@ -27,15 +27,25 @@
 #include "sysprof-visualizer.h"
 #include "sysprof-visualizer-group.h"
 #include "sysprof-visualizer-group-header.h"
+#include "sysprof-visualizer-group-private.h"
 
 struct _SysprofVisualizerGroupHeader
 {
   GtkListBoxRow parent_instance;
 
+  SysprofVisualizerGroup *group;
   GtkBox *box;
 };
 
 G_DEFINE_TYPE (SysprofVisualizerGroupHeader, sysprof_visualizer_group_header, GTK_TYPE_LIST_BOX_ROW)
+
+enum {
+  PROP_0,
+  PROP_GROUP,
+  N_PROPS
+};
+
+static GParamSpec *properties [N_PROPS];
 
 static void
 sysprof_visualizer_group_header_dispose (GObject *object)
@@ -52,12 +62,61 @@ sysprof_visualizer_group_header_dispose (GObject *object)
 }
 
 static void
+sysprof_visualizer_group_header_get_property (GObject    *object,
+                                              guint       prop_id,
+                                              GValue     *value,
+                                              GParamSpec *pspec)
+{
+  SysprofVisualizerGroupHeader *self = SYSPROF_VISUALIZER_GROUP_HEADER (object);
+
+  switch (prop_id)
+    {
+    case PROP_GROUP:
+      g_value_set_object (value, _sysprof_visualizer_group_header_get_group (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
+sysprof_visualizer_group_header_set_property (GObject      *object,
+                                              guint         prop_id,
+                                              const GValue *value,
+                                              GParamSpec   *pspec)
+{
+  SysprofVisualizerGroupHeader *self = SYSPROF_VISUALIZER_GROUP_HEADER (object);
+
+  switch (prop_id)
+    {
+    case PROP_GROUP:
+      self->group = g_value_get_object (value);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
 sysprof_visualizer_group_header_class_init (SysprofVisualizerGroupHeaderClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->dispose = sysprof_visualizer_group_header_dispose;
+  object_class->get_property = sysprof_visualizer_group_header_get_property;
+  object_class->set_property = sysprof_visualizer_group_header_set_property;
+
+  properties [PROP_GROUP] =
+    g_param_spec_object ("group",
+                         "Group",
+                         "The group",
+                         SYSPROF_TYPE_VISUALIZER_GROUP,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
 }
@@ -79,7 +138,6 @@ _sysprof_visualizer_group_header_add_row (SysprofVisualizerGroupHeader *self,
                                           GMenuModel                   *menu,
                                           GtkWidget                    *widget)
 {
-  GtkWidget *group;
   GtkWidget *sibling;
   GtkBox *box;
 
@@ -125,9 +183,7 @@ _sysprof_visualizer_group_header_add_row (SysprofVisualizerGroupHeader *self,
       gtk_size_group_add_widget (size_group, GTK_WIDGET (box));
     }
 
-  group = gtk_widget_get_ancestor (widget, SYSPROF_TYPE_VISUALIZER_GROUP);
-
-  if (position == 0 && sysprof_visualizer_group_get_has_page (SYSPROF_VISUALIZER_GROUP (group)))
+  if (position == 0 && sysprof_visualizer_group_get_has_page (self->group))
     {
       GtkImage *image;
 
@@ -169,7 +225,17 @@ _sysprof_visualizer_group_header_add_row (SysprofVisualizerGroupHeader *self,
 }
 
 SysprofVisualizerGroupHeader *
-_sysprof_visualizer_group_header_new (void)
+_sysprof_visualizer_group_header_new (SysprofVisualizerGroup *group)
 {
-  return g_object_new (SYSPROF_TYPE_VISUALIZER_GROUP_HEADER, NULL);
+  return g_object_new (SYSPROF_TYPE_VISUALIZER_GROUP_HEADER,
+                       "group", group,
+                       NULL);
+}
+
+SysprofVisualizerGroup *
+_sysprof_visualizer_group_header_get_group (SysprofVisualizerGroupHeader *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_VISUALIZER_GROUP_HEADER(self), NULL);
+
+  return self->group;
 }

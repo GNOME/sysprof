@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 void                          _sysprof_visualizer_group_set_reader        (SysprofVisualizerGroup       *self,
                                                                            SysprofCaptureReader         *reader);
-SysprofVisualizerGroupHeader *_sysprof_visualizer_group_header_new        (void);
+SysprofVisualizerGroupHeader *_sysprof_visualizer_group_header_new        (SysprofVisualizerGroup       *group);
 void                          _sysprof_visualizer_group_header_add_row    (SysprofVisualizerGroupHeader *self,
                                                                            guint                         position,
                                                                            const gchar                  *title,
@@ -37,6 +37,7 @@ void                          _sysprof_visualizer_group_header_add_row    (Syspr
                                                                            GtkWidget                    *row);
 void                          _sysprof_visualizer_group_header_remove_row (SysprofVisualizerGroupHeader *self,
                                                                            guint                         row);
+SysprofVisualizerGroup       *_sysprof_visualizer_group_header_get_group  (SysprofVisualizerGroupHeader *self);
 void                          _sysprof_visualizer_group_set_header        (SysprofVisualizerGroup       *self,
                                                                            SysprofVisualizerGroupHeader *header);
 

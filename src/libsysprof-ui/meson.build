@@ -60,6 +60,7 @@ libsysprof_ui_private_sources = [
   'sysprof-rapl-aid.c',
   'sysprof-recording-state-view.c',
   'sysprof-scrollmap.c',
+  'sysprof-stack-node-item.c',
   'sysprof-tab.c',
   'sysprof-theme-manager.c',
   'sysprof-time-label.c',

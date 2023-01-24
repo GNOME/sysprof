@@ -47,13 +47,18 @@
 
 #include "sysprof-callgraph-page.h"
 #include "sysprof-cell-renderer-percent.h"
+#include "sysprof-stack-node-item.h"
+#include "sysprof-percent-label.h"
 
 typedef struct
 {
   SysprofCallgraphProfile  *profile;
 
   GtkTreeView              *callers_view;
-  GtkTreeView              *functions_view;
+  GtkColumnView            *functions_view;
+  GtkSingleSelection       *functions_selection_model;
+  GtkSortListModel         *functions_sort_model;
+  GtkColumnViewColumn      *function_total_column;
   GtkTreeView              *descendants_view;
   GtkTreeViewColumn        *descendants_name_column;
   GtkStack                 *stack;
@@ -126,32 +131,16 @@ build_functions_store (StackNode *node,
                        gpointer   user_data)
 {
   struct {
-    GtkListStore *store;
+    GListStore *store;
     gdouble profile_size;
   } *state = user_data;
-  GtkTreeIter iter;
-  const StackNode *n;
-  guint size = 0;
-  guint total = 0;
+  SysprofStackNodeItem *item;
 
   g_assert (state != NULL);
-  g_assert (GTK_IS_LIST_STORE (state->store));
+  g_assert (G_IS_LIST_STORE (state->store));
 
-  for (n = node; n != NULL; n = n->next)
-    {
-      size += n->size;
-      if (n->toplevel)
-        total += n->total;
-    }
-
-  gtk_list_store_append (state->store, &iter);
-  gtk_list_store_set (state->store, &iter,
-                      COLUMN_NAME, U64_TO_POINTER(node->data),
-                      COLUMN_SELF, 100.0 * size / state->profile_size,
-                      COLUMN_TOTAL, 100.0 * total / state->profile_size,
-                      COLUMN_POINTER, node,
-                      -1);
-
+  item = sysprof_stack_node_item_new (node, state->profile_size);
+  g_list_store_append (state->store, item);
 }
 
 static void
@@ -159,12 +148,11 @@ sysprof_callgraph_page_load (SysprofCallgraphPage    *self,
                              SysprofCallgraphProfile *profile)
 {
   SysprofCallgraphPagePrivate *priv = sysprof_callgraph_page_get_instance_private (self);
-  GtkListStore *functions;
+  GListStore *functions;
   StackStash *stash;
   StackNode *n;
-  GtkTreeIter iter;
   struct {
-    GtkListStore *store;
+    GListStore *store;
     gdouble profile_size;
   } state = { 0 };
 
@@ -191,26 +179,20 @@ sysprof_callgraph_page_load (SysprofCallgraphPage    *self,
   for (n = stack_stash_get_root (stash); n; n = n->siblings)
     state.profile_size += n->total;
 
-  functions = gtk_list_store_new (4, G_TYPE_STRING, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_POINTER);
-
+  functions = g_list_store_new (SYSPROF_TYPE_STACK_NODE_ITEM);
   state.store = functions;
   stack_stash_foreach_by_address (stash, build_functions_store, &state);
 
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (functions),
-                                        COLUMN_TOTAL,
-                                        GTK_SORT_DESCENDING);
+  gtk_column_view_sort_by_column (priv->functions_view,
+                                  priv->function_total_column,
+                                  GTK_SORT_DESCENDING);
 
-  gtk_tree_view_set_model (priv->functions_view, GTK_TREE_MODEL (functions));
+  gtk_sort_list_model_set_model (priv->functions_sort_model,
+                                 G_LIST_MODEL (functions));
   gtk_tree_view_set_model (priv->callers_view, NULL);
   gtk_tree_view_set_model (priv->descendants_view, NULL);
 
-  if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (functions), &iter))
-    {
-      GtkTreeSelection *selection;
-
-      selection = gtk_tree_view_get_selection (priv->functions_view);
-      gtk_tree_selection_select_iter (selection, &iter);
-    }
+  gtk_single_selection_set_selected (priv->functions_selection_model, 0);
 
   gtk_stack_set_visible_child (priv->stack, priv->callgraph);
 
@@ -240,7 +222,7 @@ sysprof_callgraph_page_unload (SysprofCallgraphPage *self)
   priv->profile_size = 0;
 
   gtk_tree_view_set_model (priv->callers_view, NULL);
-  gtk_tree_view_set_model (priv->functions_view, NULL);
+  gtk_sort_list_model_set_model (priv->functions_sort_model, NULL);
   gtk_tree_view_set_model (priv->descendants_view, NULL);
 
   gtk_stack_set_visible_child (priv->stack, priv->empty_state);
@@ -409,30 +391,32 @@ caller_free (gpointer data)
 
 static void
 sysprof_callgraph_page_function_selection_changed (SysprofCallgraphPage *self,
-                                                   GtkTreeSelection     *selection)
+                                                   guint                 position,
+                                                   guint                 n_items,
+                                                   GtkSelectionModel    *selection)
 {
   SysprofCallgraphPagePrivate *priv = sysprof_callgraph_page_get_instance_private (self);
-  GtkTreeModel *model = NULL;
   GtkTreeIter iter;
   GtkListStore *callers_store;
   g_autoptr(GHashTable) callers = NULL;
   g_autoptr(GHashTable) processed = NULL;
   StackNode *callees = NULL;
   StackNode *node;
+  GObject *selected_item;
 
   g_assert (SYSPROF_IS_CALLGRAPH_PAGE (self));
-  g_assert (GTK_IS_TREE_SELECTION (selection));
+  g_assert (GTK_IS_SINGLE_SELECTION (selection));
 
-  if (!gtk_tree_selection_get_selected (selection, &model, &iter))
+  selected_item = gtk_single_selection_get_selected_item (GTK_SINGLE_SELECTION (selection));
+  if (!selected_item)
     {
       gtk_tree_view_set_model (priv->callers_view, NULL);
       gtk_tree_view_set_model (priv->descendants_view, NULL);
       return;
     }
 
-  gtk_tree_model_get (model, &iter,
-                      COLUMN_POINTER, &callees,
-                      -1);
+  g_assert (SYSPROF_IS_STACK_NODE_ITEM (selected_item));
+  callees = sysprof_stack_node_item_get_node (SYSPROF_STACK_NODE_ITEM (selected_item));
 
   sysprof_callgraph_page_update_descendants (self, callees);
 
@@ -534,8 +518,8 @@ sysprof_callgraph_page_set_node (SysprofCallgraphPage *self,
                                  StackNode            *node)
 {
   SysprofCallgraphPagePrivate *priv = sysprof_callgraph_page_get_instance_private (self);
-  GtkTreeModel *model;
-  GtkTreeIter iter;
+  GListModel *model;
+  uint i;
 
   g_assert (SYSPROF_IS_CALLGRAPH_PAGE (self));
   g_assert (node != NULL);
@@ -543,29 +527,16 @@ sysprof_callgraph_page_set_node (SysprofCallgraphPage *self,
   if (priv->profile == NULL)
     return;
 
-  model = gtk_tree_view_get_model (priv->functions_view);
-
-  if (gtk_tree_model_get_iter_first (model, &iter))
+  model = G_LIST_MODEL (priv->functions_selection_model);
+  for (i = 0; i < g_list_model_get_n_items (model); i++)
     {
-      do
+      SysprofStackNodeItem *sysprof_item = g_list_model_get_item (model, i);
+      StackNode *item = sysprof_stack_node_item_get_node (sysprof_item);
+      if (item != NULL && item->data == node->data)
         {
-          StackNode *item = NULL;
-
-          gtk_tree_model_get (model, &iter,
-                              COLUMN_POINTER, &item,
-                              -1);
-
-          if (item != NULL && item->data == node->data)
-            {
-              GtkTreeSelection *selection;
-
-              selection = gtk_tree_view_get_selection (priv->functions_view);
-              gtk_tree_selection_select_iter (selection, &iter);
-
-              break;
-            }
+          gtk_single_selection_set_selected (priv->functions_selection_model, i);
+          break;
         }
-      while (gtk_tree_model_iter_next (model, &iter));
     }
 }
 
@@ -777,8 +748,8 @@ sysprof_callgraph_page_copy_cb (GtkWidget  *widget,
     copy_tree_view_selection (priv->descendants_view);
   else if (focus == GTK_WIDGET (priv->callers_view))
     copy_tree_view_selection (priv->callers_view);
-  else if (focus == GTK_WIDGET (priv->functions_view))
-    copy_tree_view_selection (priv->functions_view);
+  /*else if (focus == GTK_WIDGET (priv->functions_view))
+    copy_tree_view_selection (priv->functions_view);*/
 }
 
 static void
@@ -929,11 +900,19 @@ sysprof_callgraph_page_class_init (SysprofCallgraphPageClass *klass)
                   G_STRUCT_OFFSET (SysprofCallgraphPageClass, go_previous),
                   NULL, NULL, NULL, G_TYPE_NONE, 0);
 
+  g_type_ensure (EGG_TYPE_PANED);
+  g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_PERCENT);
+  g_type_ensure (SYSPROF_TYPE_STACK_NODE_ITEM);
+  g_type_ensure (SYSPROF_TYPE_PERCENT_LABEL);
+
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/org/gnome/sysprof/ui/sysprof-callgraph-page.ui");
 
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, callers_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, functions_view);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, functions_selection_model);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, functions_sort_model);
+  gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, function_total_column);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, descendants_view);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, descendants_name_column);
   gtk_widget_class_bind_template_child_private (widget_class, SysprofCallgraphPage, stack);
@@ -945,16 +924,12 @@ sysprof_callgraph_page_class_init (SysprofCallgraphPageClass *klass)
 
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_c, GDK_CONTROL_MASK, "page.copy", NULL);
   gtk_widget_class_add_binding_signal (widget_class, GDK_KEY_Left, GDK_ALT_MASK, "go-previous", NULL);
-
-  g_type_ensure (EGG_TYPE_PANED);
-  g_type_ensure (SYSPROF_TYPE_CELL_RENDERER_PERCENT);
 }
 
 static void
 sysprof_callgraph_page_init (SysprofCallgraphPage *self)
 {
   SysprofCallgraphPagePrivate *priv = sysprof_callgraph_page_get_instance_private (self);
-  GtkTreeSelection *selection;
   GtkCellRenderer *cell;
 
   priv->history = g_queue_new ();
@@ -963,10 +938,8 @@ sysprof_callgraph_page_init (SysprofCallgraphPage *self)
 
   gtk_stack_set_visible_child (priv->stack, priv->loading_state);
 
-  selection = gtk_tree_view_get_selection (priv->functions_view);
-
-  g_signal_connect_object (selection,
-                           "changed",
+  g_signal_connect_object (priv->functions_selection_model,
+                           "selection-changed",
                            G_CALLBACK (sysprof_callgraph_page_function_selection_changed),
                            self,
                            G_CONNECT_SWAPPED);
@@ -1268,13 +1241,13 @@ guint
 sysprof_callgraph_page_get_n_functions (SysprofCallgraphPage *self)
 {
   SysprofCallgraphPagePrivate *priv = sysprof_callgraph_page_get_instance_private (self);
-  GtkTreeModel *model;
+  GtkSelectionModel *model;
   guint ret = 0;
 
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_PAGE (self), 0);
 
-  if (NULL != (model = gtk_tree_view_get_model (priv->functions_view)))
-    ret = gtk_tree_model_iter_n_children (model, NULL);
+  if (NULL != (model = gtk_column_view_get_model (priv->functions_view)))
+    ret = g_list_model_get_n_items (G_LIST_MODEL (model));
 
   return ret;
 }
@@ -1297,3 +1270,4 @@ _sysprof_callgraph_page_set_loading (SysprofCallgraphPage *self,
   else
     gtk_stack_set_visible_child (priv->stack, priv->callgraph);
 }
+

@@ -13,54 +13,112 @@
                   <object class="GtkScrolledWindow">
                     <property name="vexpand">true</property>
                     <child>
-                      <object class="GtkTreeView" id="functions_view">
-                        <property name="fixed-height-mode">true</property>
+                      <object class="GtkColumnView" id="functions_view">
+                        <property name="model">
+                          <object class="GtkSingleSelection" id="functions_selection_model">
+                            <property name="model">functions_sort_model</property>
+                          </object>
+                        </property>
+                        <style>
+                          <class name="data-table"/>
+                        </style>
                         <child>
-                          <object class="GtkTreeViewColumn" id="function_name_column">
-                            <property name="expand">true</property>
-                            <property name="sizing">fixed</property>
-                            <property name="sort-column-id">0</property>
+                          <object class="GtkColumnViewColumn" id="function_name_column">
                             <property name="title" translatable="yes">Functions</property>
-                            <child>
-                              <object class="GtkCellRendererText">
-                                <property name="ellipsize">middle</property>
+                            <property name="expand">true</property>
+                            <property name="sorter">
+                              <object class="GtkStringSorter" id="function_name_sorter">
+                                <property name="expression">
+                                  <lookup name="name" type="SysprofStackNodeItem"/>
+                                </property>
                               </object>
-                              <attributes>
-                                <attribute name="text">0</attribute>
-                              </attributes>
-                            </child>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <template class="GtkListItem">
+        <property name="child">
+          <object class="GtkLabel">
+            <property name="xalign">0</property>
+            <property name="ellipsize">middle</property>
+            <binding name="label">
+              <lookup name="name" type="SysprofStackNodeItem">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </property>
+      </template>
+    </interface>
+                            ]]></property>
+                              </object>
+                            </property>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn" id="function_self_column">
-                            <property name="expand">false</property>
-                            <property name="sizing">fixed</property>
-                            <property name="sort-column-id">1</property>
+                          <object class="GtkColumnViewColumn" id="function_self_column">
                             <property name="title" translatable="yes">Self</property>
-                            <child>
-                              <object class="SysprofCellRendererPercent">
-                                <property name="width">65</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="expression">
+                                  <lookup name="size" type="SysprofStackNodeItem"/>
+                                </property>
                               </object>
-                              <attributes>
-                                <attribute name="percent">1</attribute>
-                              </attributes>
-                            </child>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <template class="GtkListItem">
+        <property name="child">
+          <object class="SysprofPercentLabel">
+            <binding name="percent">
+              <lookup name="size" type="SysprofStackNodeItem">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </property>
+      </template>
+    </interface>
+                            ]]></property>
+                              </object>
+                            </property>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn" id="function_total_column">
-                            <property name="expand">false</property>
-                            <property name="sizing">fixed</property>
-                            <property name="sort-column-id">2</property>
+                          <object class="GtkColumnViewColumn" id="function_total_column">
                             <property name="title" translatable="yes">Total</property>
-                            <child>
-                              <object class="SysprofCellRendererPercent">
-                                <property name="width">65</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="expression">
+                                  <lookup name="total" type="SysprofStackNodeItem"/>
+                                </property>
                               </object>
-                              <attributes>
-                                <attribute name="percent">2</attribute>
-                              </attributes>
-                            </child>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <template class="GtkListItem">
+        <property name="child">
+          <object class="SysprofPercentLabel">
+            <binding name="percent">
+              <lookup name="total" type="SysprofStackNodeItem">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </property>
+      </template>
+    </interface>
+                            ]]></property>
+                              </object>
+                            </property>
                           </object>
                         </child>
                       </object>
@@ -209,4 +267,10 @@
       </object>
     </child>
   </template>
+  <object class="GtkSortListModel" id="functions_sort_model">
+    <property name="incremental">true</property>
+    <binding name="sorter">
+      <lookup name="sorter">functions_view</lookup>
+    </binding>
+  </object>
 </interface>

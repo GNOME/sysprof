@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <template class="SysprofPercentLabel" parent="GtkWidget">
+    <child>
+      <object class="GtkProgressBar" id="progress_bar">
+        <style>
+          <class name="osd"/>
+        </style>
+        <property name="show-text">true</property>
+        <binding name="fraction">
+          <closure type="gdouble" function="percent_to_fraction">
+            <lookup name="percent" type="SysprofPercentLabel"/>
+          </closure>
+        </binding>
+        <binding name="text">
+          <closure type="gchararray" function="percent_label">
+            <lookup name="percent" type="SysprofPercentLabel"/>
+          </closure>
+        </binding>
+      </object>
+    </child>
+  </template>
+</interface>

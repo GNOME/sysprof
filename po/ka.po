@@ -2,24 +2,25 @@
 # Copyright (C) 2022 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
 # NorwayFun <temuri.doghonadze@gmail.com>, 2022.
+# Ekaterine Papava <papava.e@gtu.ge>, 2023
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2022-11-13 14:40+0000\n"
-"PO-Revision-Date: 2022-11-20 19:12+0100\n"
-"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
+"POT-Creation-Date: 2023-01-25 22:11+0000\n"
+"PO-Revision-Date: 2023-01-26 15:21+0100\n"
+"Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:196
-#: src/sysprof/sysprof-application.c:321 src/sysprof/sysprof-window.ui:10
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:197
+#: src/sysprof/sysprof-application.c:287 src/sysprof/sysprof-window.ui:10
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -134,7 +135,7 @@ msgid "Descendants"
 msgstr "შთამომავლები"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:178
-#: src/libsysprof-ui/sysprof-details-page.ui:189
+#: src/libsysprof-ui/sysprof-details-page.ui:215
 msgid "Hits"
 msgstr "მინიშნებები"
 
@@ -195,11 +196,11 @@ msgstr "CPU გამოყენება (ყველა)"
 msgid "Processes"
 msgstr "პროცესები"
 
-#: src/libsysprof-ui/sysprof-details-page.c:231
+#: src/libsysprof-ui/sysprof-details-page.c:239
 msgid "Memory Capture"
 msgstr "მეხსიერების გადაღება"
 
-#: src/libsysprof-ui/sysprof-details-page.c:245
+#: src/libsysprof-ui/sysprof-details-page.c:253
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf წამი"
@@ -269,20 +270,20 @@ msgstr ""
 msgid "Number of recorded counter values"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-details-page.ui:176
+#: src/libsysprof-ui/sysprof-details-page.ui:180
 #: src/libsysprof-ui/sysprof-marks-page.ui:50
 msgid "Mark"
 msgstr "დანიშვნა"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:202
+#: src/libsysprof-ui/sysprof-details-page.ui:248
 msgid "Min"
 msgstr "მინ"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:215
+#: src/libsysprof-ui/sysprof-details-page.ui:281
 msgid "Max"
 msgstr "მაქს"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:228
+#: src/libsysprof-ui/sysprof-details-page.ui:314
 msgid "Avg"
 msgstr "საშუალო"
 
@@ -317,25 +318,25 @@ msgstr ""
 msgid "New Recording"
 msgstr "ახალი ჩანაწერი"
 
-#: src/libsysprof-ui/sysprof-display.c:1096
+#: src/libsysprof-ui/sysprof-display.c:1099
 msgid "The recording could not be opened"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-display.c:1243
+#: src/libsysprof-ui/sysprof-display.c:1246
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-display.c:1276
+#: src/libsysprof-ui/sysprof-display.c:1279
 msgid "Save Recording"
 msgstr "ჩანაწერის შენახვა"
 
-#: src/libsysprof-ui/sysprof-display.c:1279
+#: src/libsysprof-ui/sysprof-display.c:1282
 msgid "Save"
 msgstr "შენახვა"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1280 src/sysprof/sysprof-window.c:285
+#: src/libsysprof-ui/sysprof-display.c:1283 src/sysprof/sysprof-window.c:285
 msgid "Cancel"
 msgstr "გაუქმება"
 
@@ -560,7 +561,7 @@ msgstr "წარმადობა"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:156
 msgid "Allow CPU Throttling"
-msgstr ""
+msgstr "CPU-ის შეზღუდვის დაშვება"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:157
 msgid ""
@@ -607,12 +608,12 @@ msgstr "მოვლენები"
 msgid "_Stop Recording"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:136
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
 msgid "Select for more details"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:158
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:214
 msgid "Display supplemental graphs"
 msgstr ""
 
@@ -640,152 +641,187 @@ msgstr ""
 msgid "Authentication is required to access Linux kernel information."
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:8
-msgctxt "shortcut window"
-msgid "Sysprof Shortcuts"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:12
+#: src/sysprof/gtk/help-overlay.ui:10
 msgctxt "shortcut window"
 msgid "Files"
 msgstr "ფაილები"
 
-#: src/sysprof/gtk/help-overlay.ui:16
+#: src/sysprof/gtk/help-overlay.ui:13
 msgctxt "shortcut window"
 msgid "Save Recording"
-msgstr ""
+msgstr "ჩანაწერის შენახვა"
 
-#: src/sysprof/gtk/help-overlay.ui:17
+#: src/sysprof/gtk/help-overlay.ui:14
 msgctxt "shortcut window"
 msgid "Saves the current recording"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:24
+#: src/sysprof/gtk/help-overlay.ui:20
 msgctxt "shortcut window"
 msgid "Open recording"
-msgstr ""
+msgstr "ჩანაწერის გახსნა"
 
-#: src/sysprof/gtk/help-overlay.ui:25
+#: src/sysprof/gtk/help-overlay.ui:21
 msgctxt "shortcut window"
 msgid "Opens a previously saved recording"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:34
+#: src/sysprof/gtk/help-overlay.ui:29
 msgctxt "shortcut window"
 msgid "Recording"
 msgstr "ჩაწერა"
 
-#: src/sysprof/gtk/help-overlay.ui:38
+#: src/sysprof/gtk/help-overlay.ui:32
 msgctxt "shortcut window"
 msgid "Record again"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:39
+#: src/sysprof/gtk/help-overlay.ui:33
 msgctxt "shortcut window"
 msgid "Starts a new recording"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:46
+#: src/sysprof/gtk/help-overlay.ui:39
 msgctxt "shortcut window"
 msgid "Stop recording"
 msgstr "ვიდეოს ჩაწერის გაჩერება"
 
-#: src/sysprof/gtk/help-overlay.ui:55
+#: src/sysprof/gtk/help-overlay.ui:47
 msgctxt "shortcut window"
 msgid "Callgraph"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:59
+#: src/sysprof/gtk/help-overlay.ui:50
 msgctxt "shortcut window"
 msgid "Expand function"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:60
+#: src/sysprof/gtk/help-overlay.ui:51
 msgctxt "shortcut window"
 msgid "Shows the direct descendants of the callgraph function"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:67
+#: src/sysprof/gtk/help-overlay.ui:57
 msgctxt "shortcut window"
 msgid "Collapse function"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:68
+#: src/sysprof/gtk/help-overlay.ui:58
 msgctxt "shortcut window"
 msgid "Hides all callgraph descendants below the selected function"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:75
+#: src/sysprof/gtk/help-overlay.ui:64
 msgctxt "shortcut window"
 msgid "Jump into function"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:76
+#: src/sysprof/gtk/help-overlay.ui:65
 msgctxt "shortcut window"
 msgid "Selects the function or file as the top of the callgraph"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:85
+#: src/sysprof/gtk/help-overlay.ui:73
 msgctxt "shortcut window"
 msgid "Visualizers"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:89
+#: src/sysprof/gtk/help-overlay.ui:76
 msgctxt "shortcut window"
 msgid "Zoom in"
 msgstr "გადიდება"
 
-#: src/sysprof/gtk/help-overlay.ui:96
+#: src/sysprof/gtk/help-overlay.ui:82
 msgctxt "shortcut window"
 msgid "Zoom out"
 msgstr "და_პატარავება"
 
-#: src/sysprof/gtk/help-overlay.ui:103
+#: src/sysprof/gtk/help-overlay.ui:88
 msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "გადიდების საწყისი პარამეტრები"
+
+#: src/sysprof/gtk/help-overlay.ui:96
+msgctxt "shortcut window"
+msgid "General"
+msgstr "ზოგადი"
+
+#: src/sysprof/gtk/help-overlay.ui:99
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "დახმარების ჩვენება"
+
+#: src/sysprof/gtk/help-overlay.ui:105
+msgctxt "shortcut window"
+msgid "Keyboard Shortcuts"
+msgstr "კლავიატურის მალსახმობები"
+
+#: src/sysprof/gtk/help-overlay.ui:111
+msgctxt "shortcut window"
+msgid "New Tab"
+msgstr "ახალი ჩანართი"
+
+#: src/sysprof/gtk/help-overlay.ui:117
+msgctxt "shortcut window"
+msgid "Switch Tab"
+msgstr "ჩანართზე გადართვა"
+
+#: src/sysprof/gtk/help-overlay.ui:123
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "ახალი ფანჯარა"
+
+#: src/sysprof/gtk/help-overlay.ui:129
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "ფანჯრის დახურვა"
+
+#: src/sysprof/gtk/help-overlay.ui:135
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "გამოსვლა"
 
 #: src/sysprof/gtk/menus.ui:6
 msgid "New Tab"
 msgstr "ახალი ჩანართი"
 
-#: src/sysprof/gtk/menus.ui:11
+#: src/sysprof/gtk/menus.ui:10
 msgid "New Window"
 msgstr "ახალი ფანჯარა"
 
-#: src/sysprof/gtk/menus.ui:18
+#: src/sysprof/gtk/menus.ui:16
 msgid "Open Recording…"
 msgstr ""
 
-#: src/sysprof/gtk/menus.ui:23
+#: src/sysprof/gtk/menus.ui:20
 msgid "Save Recording…"
 msgstr ""
 
-#: src/sysprof/gtk/menus.ui:30
+#: src/sysprof/gtk/menus.ui:26
 msgid "Record Again"
 msgstr "თავიდან ჩაწერა"
 
-#: src/sysprof/gtk/menus.ui:37
+#: src/sysprof/gtk/menus.ui:32
 msgid "Close"
 msgstr "დახურვა"
 
-#: src/sysprof/gtk/menus.ui:44
+#: src/sysprof/gtk/menus.ui:38
 msgid "Keyboard Shortcuts"
-msgstr "კლავიატურის მალსახსომები"
+msgstr "კლავიატურის მალსახმობები"
 
-#: src/sysprof/gtk/menus.ui:49
+#: src/sysprof/gtk/menus.ui:42
 msgid "Help"
 msgstr "დახმარება"
 
-#: src/sysprof/gtk/menus.ui:54
+#: src/sysprof/gtk/menus.ui:46
 msgid "About Sysprof"
 msgstr "Sysprof- ის შესახებ"
 
-#: src/sysprof/sysprof-application.c:205
+#: src/sysprof/sysprof-application.c:206
 msgid "A system profiler"
 msgstr "სისტემის პროფაილერი"
 
-#: src/sysprof/sysprof-application.c:206
+#: src/sysprof/sysprof-application.c:207
 msgid "translator-credits"
 msgstr "თემური დოღონაძე"
 
@@ -953,11 +989,11 @@ msgstr ""
 
 #: src/tools/sysprof-profiler-ctl.c:45
 msgid "Connect to the system bus"
-msgstr ""
+msgstr "სისტემურ მატარებელთან მიერთება"
 
 #: src/tools/sysprof-profiler-ctl.c:46
 msgid "Connect to the session bus"
-msgstr ""
+msgstr "სესიის მატარებელთან მიერთება"
 
 #: src/tools/sysprof-profiler-ctl.c:47
 msgid "Connect to the given D-Bus address"

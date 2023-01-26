@@ -1052,7 +1052,6 @@ int raxRemove(rax *rax, unsigned char *s, size_t len, void **old) {
             debugf("Freeing child %p [%.*s] key:%d\n", (void*)child,
                 (int)child->size, (char*)child->data, child->iskey);
             rax_free(child);
-            child = NULL;
             rax->numnodes--;
             h = raxStackPop(&ts);
              /* If this node has more then one child, or actually holds

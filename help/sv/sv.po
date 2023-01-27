@@ -1,13 +1,13 @@
 # Swedish translation for sysprof.
-# Copyright © 2016, 2018 sysprof's COPYRIGHT HOLDER
+# Copyright © 2016-2023 sysprof's COPYRIGHT HOLDER
 # This file is distributed under the same license as the sysprof package.
-# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016, 2018.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016, 2018, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2018-03-19 20:23+0000\n"
-"PO-Revision-Date: 2018-09-05 13:06+0200\n"
+"POT-Creation-Date: 2023-01-25 22:12+0000\n"
+"PO-Revision-Date: 2023-01-25 23:29+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -15,25 +15,47 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
 msgstr "Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016"
 
-#. (itstool) path: page/title
-#: C/index.page:12
+#. (itstool) path: info/title
+#: C/index.page:7
+#| msgid "Sysprof"
+msgctxt "link:trail"
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#. (itstool) path: section/title
+#. (itstool) path: info/title
+#: C/index.page:8
+#| msgid "Sysprof"
+msgctxt "link"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: info/title
+#: C/index.page:9
+#| msgid "Sysprof"
+msgctxt "text"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: page/title
 #: C/index.page:15
+msgid "<_:media-1/> Sysprof"
+msgstr "<_:media-1/> Sysprof"
+
+#. (itstool) path: section/title
+#. (itstool) path: page/title
+#: C/index.page:21 C/profiling.page:8
 msgid "Profiling"
 msgstr "Profilering"
 
 #. (itstool) path: section/title
-#: C/index.page:19
+#: C/index.page:25
 msgid "Frequently Asked Questions"
 msgstr "Vanliga frågor"
 

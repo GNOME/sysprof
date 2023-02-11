@@ -189,7 +189,7 @@ sysprof_rapl_aid_present_finish (SysprofAid    *aid,
         {
           const SysprofCaptureCounter *ctr = &g_array_index (counters, SysprofCaptureCounter, i);
 
-          /* The psuedo counters (core:-1 cpu:-1) have "RAPL" as the group */
+          /* The pseudo counters (core:-1 cpu:-1) have "RAPL" as the group */
           if (g_strcmp0 (ctr->category, "RAPL") == 0)
             {
               GdkRGBA rgba;

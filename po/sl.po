@@ -9,22 +9,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2022-07-23 11:09+0000\n"
-"PO-Revision-Date: 2022-10-04 16:31+0200\n"
+"POT-Creation-Date: 2023-02-12 18:16+0000\n"
+"PO-Revision-Date: 2023-02-12 19:30+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
-"%100==4 ? 3 : 0);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
+"n%100==4 ? 3 : 0);\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:196
-#: src/sysprof/sysprof-application.c:321 src/sysprof/sysprof-window.ui:10
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:197
+#: src/sysprof/sysprof-application.c:287 src/sysprof/sysprof-window.ui:10
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -46,11 +46,7 @@ msgstr ""
 #: data/org.gnome.Sysprof.desktop.in.in:5
 #, fuzzy
 msgid "Profiler"
-msgstr ""
-"Programnik Anjuta DevStudio je studio z naprednimi zmožnostmi za "
-"programiranje, vodenje projektov, čarovnikov, razhroščevalnika, urejevalnika "
-"kode, nadzora različic in oblikovalnika vmesnika. Zasnovan je z namenom biti "
-"enostaven in uporaben program z široko paleto razvojnih zmožnosti."
+msgstr "Profilnik"
 
 #: data/org.gnome.Sysprof.desktop.in.in:6
 #, fuzzy
@@ -110,8 +106,9 @@ msgstr ""
 
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:243
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:273
+#, fuzzy
 msgid "Callgraph"
-msgstr ""
+msgstr "Grafikon klicev"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:23
 #: src/libsysprof-ui/sysprof-memprof-page.ui:90
@@ -146,16 +143,17 @@ msgstr "Klicatelji"
 #: src/libsysprof-ui/sysprof-memprof-page.ui:207
 #, fuzzy
 msgid "Descendants"
-msgstr "Zanemari potomce"
+msgstr "Potomci"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:178
-#: src/libsysprof-ui/sysprof-details-page.ui:189
+#: src/libsysprof-ui/sysprof-details-page.ui:215
 msgid "Hits"
 msgstr "Zadetki"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:198
+#, fuzzy
 msgid "Generating Callgraph"
-msgstr ""
+msgstr "Tvorjenje grafikona klicev"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:199
 msgid "Sysprof is busy creating the selected callgraph."
@@ -174,10 +172,10 @@ msgstr ""
 #: src/libsysprof-ui/sysprof-cell-renderer-progress.c:102
 #: src/libsysprof-ui/sysprof-cell-renderer-progress.c:292
 #: src/libsysprof-ui/sysprof-cell-renderer-progress.c:322
-#, c-format
+#, fuzzy, c-format
 msgctxt "progress bar label"
 msgid "%d %%"
-msgstr ""
+msgstr "%d  %%"
 
 #: src/libsysprof-ui/sysprof-counters-aid.c:221
 #: src/libsysprof-ui/sysprof-counters-aid.c:226
@@ -210,11 +208,11 @@ msgstr "Uporaba CPE (vse)"
 msgid "Processes"
 msgstr "Procesi"
 
-#: src/libsysprof-ui/sysprof-details-page.c:231
+#: src/libsysprof-ui/sysprof-details-page.c:239
 msgid "Memory Capture"
 msgstr "Zajemanje pomnilnika"
 
-#: src/libsysprof-ui/sysprof-details-page.c:245
+#: src/libsysprof-ui/sysprof-details-page.c:253
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf s"
@@ -286,20 +284,20 @@ msgstr ""
 msgid "Number of recorded counter values"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-details-page.ui:176
+#: src/libsysprof-ui/sysprof-details-page.ui:180
 #: src/libsysprof-ui/sysprof-marks-page.ui:50
 msgid "Mark"
 msgstr ""
 
-#: src/libsysprof-ui/sysprof-details-page.ui:202
+#: src/libsysprof-ui/sysprof-details-page.ui:248
 msgid "Min"
 msgstr "Najm."
 
-#: src/libsysprof-ui/sysprof-details-page.ui:215
+#: src/libsysprof-ui/sysprof-details-page.ui:281
 msgid "Max"
 msgstr "Najv."
 
-#: src/libsysprof-ui/sysprof-details-page.ui:228
+#: src/libsysprof-ui/sysprof-details-page.ui:314
 msgid "Avg"
 msgstr "Povpr."
 
@@ -333,29 +331,28 @@ msgstr "Poteka snemanje ..."
 
 #: src/libsysprof-ui/sysprof-display.c:268
 #, fuzzy
-#| msgid "Recording…"
 msgid "New Recording"
-msgstr "Poteka snemanje ..."
+msgstr "Novo snemanje"
 
-#: src/libsysprof-ui/sysprof-display.c:1096
+#: src/libsysprof-ui/sysprof-display.c:1099
 msgid "The recording could not be opened"
 msgstr "Posnetka ni bilo mogoče odpreti"
 
-#: src/libsysprof-ui/sysprof-display.c:1243
+#: src/libsysprof-ui/sysprof-display.c:1246
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Shranjevanje posnetka ni uspelo: %s"
 
-#: src/libsysprof-ui/sysprof-display.c:1276
+#: src/libsysprof-ui/sysprof-display.c:1279
 msgid "Save Recording"
 msgstr "Shrani posnetek"
 
-#: src/libsysprof-ui/sysprof-display.c:1279
+#: src/libsysprof-ui/sysprof-display.c:1282
 msgid "Save"
 msgstr "Shrani"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1280 src/sysprof/sysprof-window.c:285
+#: src/libsysprof-ui/sysprof-display.c:1283 src/sysprof/sysprof-window.c:285
 msgid "Cancel"
 msgstr "Prekliči"
 
@@ -411,7 +408,7 @@ msgstr "Opozorilo"
 #: src/libsysprof-ui/sysprof-logs-aid.c:204
 #: src/libsysprof-ui/sysprof-logs-aid.c:210
 msgid "Logs"
-msgstr ""
+msgstr "Zapisniki"
 
 #: src/libsysprof-ui/sysprof-logs-page.ui:15
 #: src/libsysprof-ui/sysprof-marks-page.ui:64
@@ -428,8 +425,9 @@ msgstr "Domena"
 
 #: src/libsysprof-ui/sysprof-marks-aid.c:408
 #: src/libsysprof-ui/sysprof-marks-aid.c:413
+#, fuzzy
 msgid "Timings"
-msgstr ""
+msgstr "Časovne meritve"
 
 #: src/libsysprof-ui/sysprof-marks-page.ui:37
 msgid "Group"
@@ -570,9 +568,8 @@ msgid "Command Line"
 msgstr "Ukazna vrstica"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:135
-#, fuzzy
 msgid "Inherit Environment"
-msgstr "Podeduj okolje"
+msgstr "Deduj okolje"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:136
 msgid ""
@@ -582,7 +579,7 @@ msgstr ""
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:153
 msgid "Performance"
-msgstr ""
+msgstr "Hitrost delovanja"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:156
 msgid "Allow CPU Throttling"
@@ -634,19 +631,19 @@ msgstr "Dogodki"
 msgid "_Stop Recording"
 msgstr "_Ustavi snemanje"
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:136
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
 msgid "Select for more details"
 msgstr "Izberite za več podrobnosti"
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:158
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:214
 msgid "Display supplemental graphs"
 msgstr ""
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:13
 #, fuzzy
 msgid "Profile the system"
-msgstr "Izberite naziv, ki določa profil na vašem sistemu."
+msgstr "Profilirajte sistem"
 
 #: src/sysprofd/org.gnome.sysprof3.policy.in:14
 msgid "Authentication is required to profile the system."
@@ -668,159 +665,193 @@ msgstr ""
 msgid "Authentication is required to access Linux kernel information."
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:8
-msgctxt "shortcut window"
-msgid "Sysprof Shortcuts"
-msgstr ""
-
-#: src/sysprof/gtk/help-overlay.ui:12
+#: src/sysprof/gtk/help-overlay.ui:10
 msgctxt "shortcut window"
 msgid "Files"
 msgstr "Datoteke"
 
-#: src/sysprof/gtk/help-overlay.ui:16
+#: src/sysprof/gtk/help-overlay.ui:13
 msgctxt "shortcut window"
 msgid "Save Recording"
 msgstr "Shrani posnetek"
 
-#: src/sysprof/gtk/help-overlay.ui:17
+#: src/sysprof/gtk/help-overlay.ui:14
 msgctxt "shortcut window"
 msgid "Saves the current recording"
 msgstr "Shrani trenutni posnetek"
 
-#: src/sysprof/gtk/help-overlay.ui:24
+#: src/sysprof/gtk/help-overlay.ui:20
 msgctxt "shortcut window"
 msgid "Open recording"
 msgstr "Odpri posnetek"
 
-#: src/sysprof/gtk/help-overlay.ui:25
+#: src/sysprof/gtk/help-overlay.ui:21
 msgctxt "shortcut window"
 msgid "Opens a previously saved recording"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:34
+#: src/sysprof/gtk/help-overlay.ui:29
 #, fuzzy
-#| msgid "Recording…"
 msgctxt "shortcut window"
 msgid "Recording"
-msgstr "Poteka snemanje ..."
+msgstr "Beleženje"
 
-#: src/sysprof/gtk/help-overlay.ui:38
+#: src/sysprof/gtk/help-overlay.ui:32
 #, fuzzy
 msgctxt "shortcut window"
 msgid "Record again"
 msgstr "Znova posnemi"
 
-#: src/sysprof/gtk/help-overlay.ui:39
+#: src/sysprof/gtk/help-overlay.ui:33
 msgctxt "shortcut window"
 msgid "Starts a new recording"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:46
+#: src/sysprof/gtk/help-overlay.ui:39
 msgctxt "shortcut window"
 msgid "Stop recording"
 msgstr "Ustavi snemanje"
 
-#: src/sysprof/gtk/help-overlay.ui:55
+#: src/sysprof/gtk/help-overlay.ui:47
 msgctxt "shortcut window"
 msgid "Callgraph"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:59
+#: src/sysprof/gtk/help-overlay.ui:50
 msgctxt "shortcut window"
 msgid "Expand function"
 msgstr "Razpostri funkcijo"
 
-#: src/sysprof/gtk/help-overlay.ui:60
+#: src/sysprof/gtk/help-overlay.ui:51
 msgctxt "shortcut window"
 msgid "Shows the direct descendants of the callgraph function"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:67
+#: src/sysprof/gtk/help-overlay.ui:57
 msgctxt "shortcut window"
 msgid "Collapse function"
 msgstr "Strni funkcijo"
 
-#: src/sysprof/gtk/help-overlay.ui:68
+#: src/sysprof/gtk/help-overlay.ui:58
 msgctxt "shortcut window"
 msgid "Hides all callgraph descendants below the selected function"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:75
+#: src/sysprof/gtk/help-overlay.ui:64
 msgctxt "shortcut window"
 msgid "Jump into function"
 msgstr "Skoči v funkcijo"
 
-#: src/sysprof/gtk/help-overlay.ui:76
+#: src/sysprof/gtk/help-overlay.ui:65
 msgctxt "shortcut window"
 msgid "Selects the function or file as the top of the callgraph"
 msgstr ""
 
-#: src/sysprof/gtk/help-overlay.ui:85
+#: src/sysprof/gtk/help-overlay.ui:73
 msgctxt "shortcut window"
 msgid "Visualizers"
 msgstr "Vizualizatorji"
 
-#: src/sysprof/gtk/help-overlay.ui:89
+#: src/sysprof/gtk/help-overlay.ui:76
 msgctxt "shortcut window"
 msgid "Zoom in"
-msgstr ""
+msgstr "Približa pogled"
+
+#: src/sysprof/gtk/help-overlay.ui:82
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Oddalji pogled"
+
+#: src/sysprof/gtk/help-overlay.ui:88
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Ponastavi povečavo"
 
 #: src/sysprof/gtk/help-overlay.ui:96
 msgctxt "shortcut window"
-msgid "Zoom out"
-msgstr ""
+msgid "General"
+msgstr "Splošno"
 
-#: src/sysprof/gtk/help-overlay.ui:103
+#: src/sysprof/gtk/help-overlay.ui:99
 msgctxt "shortcut window"
-msgid "Reset zoom"
-msgstr ""
+msgid "Show Help"
+msgstr "Pokaže pomoč"
+
+#: src/sysprof/gtk/help-overlay.ui:105
+msgctxt "shortcut window"
+msgid "Keyboard Shortcuts"
+msgstr "Tipkovne bližnjice"
+
+#: src/sysprof/gtk/help-overlay.ui:111
+msgctxt "shortcut window"
+msgid "New Tab"
+msgstr "Nov zavihek"
+
+#: src/sysprof/gtk/help-overlay.ui:117
+msgctxt "shortcut window"
+msgid "Switch Tab"
+msgstr "Preklopi zavihek"
+
+#: src/sysprof/gtk/help-overlay.ui:123
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "Odpre novo okno"
+
+#: src/sysprof/gtk/help-overlay.ui:129
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Zapre okno"
+
+#: src/sysprof/gtk/help-overlay.ui:135
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Konča program"
 
 #: src/sysprof/gtk/menus.ui:6
 msgid "New Tab"
 msgstr "Nov zavihek"
 
-#: src/sysprof/gtk/menus.ui:11
+#: src/sysprof/gtk/menus.ui:10
 msgid "New Window"
 msgstr "Novo okno"
 
-#: src/sysprof/gtk/menus.ui:18
+#: src/sysprof/gtk/menus.ui:16
 #, fuzzy
 #| msgid "Recording…"
 msgid "Open Recording…"
 msgstr "Poteka snemanje ..."
 
-#: src/sysprof/gtk/menus.ui:23
+#: src/sysprof/gtk/menus.ui:20
 msgid "Save Recording…"
 msgstr "Shrani posnetek ..."
 
-#: src/sysprof/gtk/menus.ui:30
+#: src/sysprof/gtk/menus.ui:26
 #, fuzzy
 msgid "Record Again"
 msgstr "Znova posnemi"
 
-#: src/sysprof/gtk/menus.ui:37
+#: src/sysprof/gtk/menus.ui:32
 msgid "Close"
 msgstr "Zapri"
 
-#: src/sysprof/gtk/menus.ui:44
+#: src/sysprof/gtk/menus.ui:38
 msgid "Keyboard Shortcuts"
 msgstr "Tipke za bližnjice"
 
-#: src/sysprof/gtk/menus.ui:49
+#: src/sysprof/gtk/menus.ui:42
 msgid "Help"
 msgstr "Pomoč"
 
-#: src/sysprof/gtk/menus.ui:54
+#: src/sysprof/gtk/menus.ui:46
 msgid "About Sysprof"
 msgstr "O programu Sysprof"
 
-#: src/sysprof/sysprof-application.c:205
+#: src/sysprof/sysprof-application.c:206
 #, fuzzy
 msgid "A system profiler"
-msgstr "Sistemska datoteka"
+msgstr "Sistemski profilnik"
 
-#: src/sysprof/sysprof-application.c:206
+#: src/sysprof/sysprof-application.c:207
 msgid "translator-credits"
 msgstr ""
 "Matej Urbančič <mateju@src.gnome.org>\n"
@@ -853,128 +884,123 @@ msgstr "_Odpri"
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Odpri posnetek ... (krmilka+O)"
 
-#: src/tools/sysprof-cli.c:62
+#: src/tools/sysprof-cli.c:63
 msgid "Stopping profiler. Press twice more ^C to force exit."
 msgstr ""
 
-#: src/tools/sysprof-cli.c:75
+#: src/tools/sysprof-cli.c:76
 #, fuzzy
 msgid "Profiler stopped."
-msgstr ""
-"Programnik Anjuta DevStudio je studio z naprednimi zmožnostmi za "
-"programiranje, vodenje projektov, čarovnikov, razhroščevalnika, urejevalnika "
-"kode, nadzora različic in oblikovalnika vmesnika. Zasnovan je z namenom biti "
-"enostaven in uporaben program z široko paleto razvojnih zmožnosti."
+msgstr "Profilnik ustavljen."
 
-#: src/tools/sysprof-cli.c:108
+#: src/tools/sysprof-cli.c:109
 msgid "--merge requires at least 2 filename arguments"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:226
+#: src/tools/sysprof-cli.c:227
 msgid "Disable CPU throttling while profiling"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:227
+#: src/tools/sysprof-cli.c:228
 msgid "Make sysprof specific to a task"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:227
+#: src/tools/sysprof-cli.c:228
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:228
+#: src/tools/sysprof-cli.c:229
 #, fuzzy
 msgid "Run a command and profile the process"
-msgstr "_Zaženi ukaz kot prijavno lupino"
+msgstr "Zaženi ukaz in profiliraj proces"
 
-#: src/tools/sysprof-cli.c:228
+#: src/tools/sysprof-cli.c:229
 msgid "COMMAND"
 msgstr "UKAZ"
 
-#: src/tools/sysprof-cli.c:229
+#: src/tools/sysprof-cli.c:230
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 
-#: src/tools/sysprof-cli.c:229
+#: src/tools/sysprof-cli.c:230
 msgid "VAR=VALUE"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:230
+#: src/tools/sysprof-cli.c:231
 msgid "Force overwrite the capture file"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:231
+#: src/tools/sysprof-cli.c:232
 msgid "Disable recording of battery statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:232
+#: src/tools/sysprof-cli.c:233
 msgid "Disable recording of CPU statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:233
+#: src/tools/sysprof-cli.c:234
 msgid "Disable recording of Disk statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:234
+#: src/tools/sysprof-cli.c:235
 msgid "Do not record stacktraces using Linux perf"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:235
+#: src/tools/sysprof-cli.c:236
 msgid "Do not append symbol name information from local machine"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:236
+#: src/tools/sysprof-cli.c:237
 msgid "Disable recording of memory statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:237
+#: src/tools/sysprof-cli.c:238
 msgid "Disable recording of network statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:238
+#: src/tools/sysprof-cli.c:239
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:239
+#: src/tools/sysprof-cli.c:240
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:240
+#: src/tools/sysprof-cli.c:241
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:241
+#: src/tools/sysprof-cli.c:242
 msgid "Include RAPL energy statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:242
+#: src/tools/sysprof-cli.c:243
 msgid "Profile memory allocations and frees"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:243
+#: src/tools/sysprof-cli.c:244
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:244
+#: src/tools/sysprof-cli.c:245
 msgid "Track performance of the applications main loop"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:245
+#: src/tools/sysprof-cli.c:246
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:246
-#, fuzzy
+#: src/tools/sysprof-cli.c:247
 msgid "Print the sysprof-cli version and exit"
-msgstr "Izpiši podatke o različici in končaj"
+msgstr "Izpiši podatke o različici sysprof-cli in končaj"
 
-#: src/tools/sysprof-cli.c:279
+#: src/tools/sysprof-cli.c:280
 #, fuzzy
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "Zajemanje"
 
-#: src/tools/sysprof-cli.c:282
+#: src/tools/sysprof-cli.c:283
 msgid ""
 "\n"
 "Examples:\n"
@@ -987,12 +1013,12 @@ msgid ""
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 msgstr ""
 
-#: src/tools/sysprof-cli.c:315
+#: src/tools/sysprof-cli.c:316
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr ""
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:376
+#: src/tools/sysprof-cli.c:377
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr ""
@@ -1018,13 +1044,12 @@ msgid "Object path to invoke method on"
 msgstr ""
 
 #: src/tools/sysprof-profiler-ctl.c:49
-#, fuzzy
 msgid "/org/gnome/Sysprof3/Profiler"
 msgstr "/org/gnome/Sysprof3/Profiler"
 
 #: src/tools/sysprof-profiler-ctl.c:50
 msgid "Timeout in seconds"
-msgstr ""
+msgstr "Časovna omejitev v sekundah"
 
 #: src/tools/sysprof-profiler-ctl.c:51
 msgid "Overwrite FILENAME if it exists"

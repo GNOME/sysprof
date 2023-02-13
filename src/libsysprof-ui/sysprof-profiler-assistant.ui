@@ -27,7 +27,7 @@
     <property name="icon-name">sysprof-library</property>
   </object>
   <object class="SysprofAid" id="speedtrack_aid">
-    <property name="display-name">Speedtrack</property>
+    <property name="display-name" translatable="yes">Speedtrack</property>
     <property name="icon-name">sysprof-gtk</property>
     <child>
       <object class="SysprofPreloadSource">
@@ -36,14 +36,14 @@
     </child>
   </object>
   <object class="SysprofAid" id="gjs_aid">
-    <property name="display-name">GJS</property>
+    <property name="display-name" translatable="yes">GJS</property>
     <property name="icon-name">sysprof-cli</property>
     <child>
       <object class="SysprofGjsSource"/>
     </child>
   </object>
   <object class="SysprofAid" id="app_aid">
-    <property name="display-name">Application</property>
+    <property name="display-name" translatable="yes">Application</property>
     <property name="icon-name">sysprof-trace-app</property>
     <child>
       <object class="SysprofTracefdSource">
@@ -55,7 +55,7 @@
     <property name="icon-name">sysprof-battery</property>
   </object>
   <object class="SysprofAid" id="diskstat_aid">
-    <property name="display-name">Disk</property>
+    <property name="display-name" translatable="yes">Disk</property>
     <property name="icon-name">sysprof-disk</property>
     <child>
       <object class="SysprofDiskstatSource"/>

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-01-25 22:11+0000\n"
-"PO-Revision-Date: 2023-01-26 15:21+0100\n"
+"POT-Creation-Date: 2023-02-13 19:52+0000\n"
+"PO-Revision-Date: 2023-02-14 08:26+0100\n"
 "Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
 "Language-Team: Georgian <ka@li.org>\n"
 "Language: ka\n"
@@ -99,7 +99,7 @@ msgstr ""
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:243
 #: src/libsysprof-ui/sysprof-callgraph-aid.c:273
 msgid "Callgraph"
-msgstr ""
+msgstr "გამოძახებების გრაფის პანელი"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:23
 #: src/libsysprof-ui/sysprof-memprof-page.ui:90
@@ -289,6 +289,7 @@ msgstr "საშუალო"
 
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:205
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:58
 msgid "Disk"
 msgstr "დისკი"
 
@@ -510,6 +511,18 @@ msgstr "ქსელი"
 msgid "GNOME Shell"
 msgstr "GNOME-ის გარსი"
 
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:30
+msgid "Speedtrack"
+msgstr ""
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:39
+msgid "GJS"
+msgstr "GJS"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
+msgid "Application"
+msgstr "აპლიკაცია"
+
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
 msgid "Profiling Target"
 msgstr "სამიზნის პროფილირება"
@@ -606,12 +619,12 @@ msgstr "მოვლენები"
 
 #: src/libsysprof-ui/sysprof-recording-state-view.ui:76
 msgid "_Stop Recording"
-msgstr ""
+msgstr "_ჩაწერს შეჩერება"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
 msgid "Select for more details"
-msgstr ""
+msgstr "მონიშნეთ მეტი დეტალისთვის"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:214
 msgid "Display supplemental graphs"
@@ -674,7 +687,7 @@ msgstr "ჩაწერა"
 #: src/sysprof/gtk/help-overlay.ui:32
 msgctxt "shortcut window"
 msgid "Record again"
-msgstr ""
+msgstr "თავიდან ჩაწერა"
 
 #: src/sysprof/gtk/help-overlay.ui:33
 msgctxt "shortcut window"
@@ -689,12 +702,12 @@ msgstr "ვიდეოს ჩაწერის გაჩერება"
 #: src/sysprof/gtk/help-overlay.ui:47
 msgctxt "shortcut window"
 msgid "Callgraph"
-msgstr ""
+msgstr "გამოძახებების გრაფის პანელი"
 
 #: src/sysprof/gtk/help-overlay.ui:50
 msgctxt "shortcut window"
 msgid "Expand function"
-msgstr ""
+msgstr "ფუნქციის ამოკეცვა"
 
 #: src/sysprof/gtk/help-overlay.ui:51
 msgctxt "shortcut window"
@@ -704,7 +717,7 @@ msgstr ""
 #: src/sysprof/gtk/help-overlay.ui:57
 msgctxt "shortcut window"
 msgid "Collapse function"
-msgstr ""
+msgstr "ფუნქცის ჩაკეცვა"
 
 #: src/sysprof/gtk/help-overlay.ui:58
 msgctxt "shortcut window"
@@ -714,7 +727,7 @@ msgstr ""
 #: src/sysprof/gtk/help-overlay.ui:64
 msgctxt "shortcut window"
 msgid "Jump into function"
-msgstr ""
+msgstr "ფუნქციაზე გადასვლა"
 
 #: src/sysprof/gtk/help-overlay.ui:65
 msgctxt "shortcut window"
@@ -724,7 +737,7 @@ msgstr ""
 #: src/sysprof/gtk/help-overlay.ui:73
 msgctxt "shortcut window"
 msgid "Visualizers"
-msgstr ""
+msgstr "ვიზუალიზერები"
 
 #: src/sysprof/gtk/help-overlay.ui:76
 msgctxt "shortcut window"
@@ -791,11 +804,11 @@ msgstr "ახალი ფანჯარა"
 
 #: src/sysprof/gtk/menus.ui:16
 msgid "Open Recording…"
-msgstr ""
+msgstr "ჩანაწერის გახსნა…"
 
 #: src/sysprof/gtk/menus.ui:20
 msgid "Save Recording…"
-msgstr ""
+msgstr "ჩანაწერის შენახვა…"
 
 #: src/sysprof/gtk/menus.ui:26
 msgid "Record Again"

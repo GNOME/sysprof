@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-01-25 22:11+0000\n"
-"PO-Revision-Date: 2023-01-27 19:29+0200\n"
+"POT-Creation-Date: 2023-02-13 19:52+0000\n"
+"PO-Revision-Date: 2023-02-14 19:59+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -294,6 +294,7 @@ msgstr "Сер."
 
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:205
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:58
 msgid "Disk"
 msgstr "Диск"
 
@@ -515,6 +516,19 @@ msgstr "Мережа"
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:26
 msgid "GNOME Shell"
 msgstr "GNOME Shell"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:30
+msgid "Speedtrack"
+msgstr "Speedtrack"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:39
+msgid "GJS"
+msgstr "GJS"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
+#| msgid "Launch Application"
+msgid "Application"
+msgstr "Програма"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
 msgid "Profiling Target"
@@ -767,19 +781,16 @@ msgid "General"
 msgstr "Загальне"
 
 #: src/sysprof/gtk/help-overlay.ui:99
-#| msgid "Help"
 msgctxt "shortcut window"
 msgid "Show Help"
 msgstr "Показати довідку"
 
 #: src/sysprof/gtk/help-overlay.ui:105
-#| msgid "Keyboard Shortcuts"
 msgctxt "shortcut window"
 msgid "Keyboard Shortcuts"
 msgstr "Комбінації клавіш"
 
 #: src/sysprof/gtk/help-overlay.ui:111
-#| msgid "New Tab"
 msgctxt "shortcut window"
 msgid "New Tab"
 msgstr "Створити вкладку"
@@ -790,13 +801,11 @@ msgid "Switch Tab"
 msgstr "Перемкнути вкладку"
 
 #: src/sysprof/gtk/help-overlay.ui:123
-#| msgid "New Window"
 msgctxt "shortcut window"
 msgid "New Window"
 msgstr "Створити вікно"
 
 #: src/sysprof/gtk/help-overlay.ui:129
-#| msgid "New Window"
 msgctxt "shortcut window"
 msgid "Close Window"
 msgstr "Закрити вікно"

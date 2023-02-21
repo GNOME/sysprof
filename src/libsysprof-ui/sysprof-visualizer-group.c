@@ -392,11 +392,14 @@ sysprof_visualizer_group_insert (SysprofVisualizerGroup *self,
   g_return_if_fail (SYSPROF_IS_VISUALIZER_GROUP (self));
   g_return_if_fail (SYSPROF_IS_VISUALIZER (visualizer));
 
-  sibling = gtk_widget_get_first_child (GTK_WIDGET (priv->visualizers));
-  while (position > 1 && sibling)
+  if (position > 0)
     {
-      sibling = gtk_widget_get_next_sibling (sibling);
-      position--;
+      sibling = gtk_widget_get_first_child (GTK_WIDGET (priv->visualizers));
+      while (position > 1 && sibling)
+        {
+          sibling = gtk_widget_get_next_sibling (sibling);
+          position--;
+        }
     }
   gtk_box_insert_child_after (priv->visualizers, GTK_WIDGET (visualizer), sibling);
 

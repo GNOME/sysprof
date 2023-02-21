@@ -18,11 +18,19 @@ sysprof_cat = executable('sysprof-cat', 'sysprof-cat.c',
        install: false,
 )
 
-sysprof_dump = executable('sysprof-dump', 'sysprof-dump.c',
-  dependencies: [libsysprof_dep],
-        c_args: tools_cflags,
-       install: false,
-)
+if get_option('libsysprof')
+  sysprof_dump = executable('sysprof-dump', 'sysprof-dump.c',
+    dependencies: [libsysprof_dep],
+          c_args: tools_cflags,
+         install: false,
+  )
+
+  rewrite_pid = executable('rewrite-pid', ['rewrite-pid.c'],
+    dependencies: [libsysprof_dep],
+          c_args: tools_cflags,
+         install: false,
+  )
+endif
 
 if get_option('sysprofd') == 'bundled' or get_option('libsysprof')
   sysprof_profiler_ctl = executable('sysprof-profiler-ctl',

@@ -324,6 +324,9 @@ main (gint argc,
                      ev->frame.pid, ev->tid,
                      ev->alloc_addr, ev->alloc_size,
                      ev->frame.time, ptime);
+
+            for (guint i = 0; i < ev->n_addrs; i++)
+              g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT "\n", ev->addrs[i]);
           }
           break;
 

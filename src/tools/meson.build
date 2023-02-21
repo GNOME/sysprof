@@ -19,7 +19,7 @@ sysprof_cat = executable('sysprof-cat', 'sysprof-cat.c',
 )
 
 sysprof_dump = executable('sysprof-dump', 'sysprof-dump.c',
-  dependencies: tools_deps,
+  dependencies: [libsysprof_dep],
         c_args: tools_cflags,
        install: false,
 )

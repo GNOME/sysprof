@@ -21,10 +21,13 @@
 #include "config.h"
 
 #include <errno.h>
-#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <glib-object.h>
+
 #include <sysprof-capture.h>
+#include <sysprof.h>
 
 static gboolean list_files = FALSE;
 static const GOptionEntry main_entries[] = {
@@ -32,11 +35,41 @@ static const GOptionEntry main_entries[] = {
   { 0 }
 };
 
+static char *
+symbolize (GPtrArray                 *resolvers,
+           const SysprofCaptureFrame *frame,
+           SysprofAddressContext     *context,
+           SysprofAddress             address)
+{
+  SysprofAddressContext last_context = *context;
+
+  if (sysprof_address_is_context_switch (address, context))
+    return g_strdup (sysprof_address_context_to_string (last_context));
+
+  if (last_context == SYSPROF_ADDRESS_CONTEXT_NONE)
+    last_context = SYSPROF_ADDRESS_CONTEXT_USER;
+
+  for (guint j = 0; j < resolvers->len; j++)
+    {
+      SysprofSymbolResolver *resolver = g_ptr_array_index (resolvers, j);
+      GQuark tag = 0;
+      char *str;
+
+      str = sysprof_symbol_resolver_resolve_with_context (resolver, frame->time, frame->pid, last_context, address, &tag);
+
+      if (str != NULL)
+        return str;
+    }
+
+  return g_strdup ("??");
+}
+
 gint
 main (gint argc,
       gchar *argv[])
 {
-  g_autoptr(GOptionContext) context = g_option_context_new ("- dump capture data");
+  g_autoptr(GOptionContext) option_context = g_option_context_new ("- dump capture data");
+  g_autoptr(GPtrArray) resolvers = NULL;
   g_autoptr(GError) error = NULL;
   SysprofCaptureReader *reader;
   SysprofCaptureFrameType type;
@@ -44,8 +77,8 @@ main (gint argc,
   gint64 begin_time;
   gint64 end_time;
 
-  g_option_context_add_main_entries (context, main_entries, NULL);
-  if (!g_option_context_parse (context, &argc, &argv, &error))
+  g_option_context_add_main_entries (option_context, main_entries, NULL);
+  if (!g_option_context_parse (option_context, &argc, &argv, &error))
     {
       g_printerr ("%s\n", error->message);
       return EXIT_FAILURE;
@@ -73,6 +106,19 @@ main (gint argc,
 
       return EXIT_SUCCESS;
     }
+
+  resolvers = g_ptr_array_new_with_free_func (g_object_unref);
+  g_ptr_array_add (resolvers, sysprof_capture_symbol_resolver_new ());
+  g_ptr_array_add (resolvers, sysprof_kernel_symbol_resolver_new ());
+  g_ptr_array_add (resolvers, sysprof_elf_symbol_resolver_new ());
+
+  for (guint i = 0; i < resolvers->len; i++)
+    {
+      sysprof_capture_reader_reset (reader);
+      sysprof_symbol_resolver_load (g_ptr_array_index (resolvers, i), reader);
+    }
+
+  sysprof_capture_reader_reset (reader);
 
   ctrtypes = g_hash_table_new (NULL, NULL);
 
@@ -240,12 +286,16 @@ main (gint argc,
           {
             const SysprofCaptureSample *s =  sysprof_capture_reader_read_sample (reader);
             gdouble ptime = (s->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
-            guint i;
+            SysprofAddressContext context = SYSPROF_ADDRESS_CONTEXT_NONE;
 
             g_print ("SAMPLE: pid=%d time=%" G_GINT64_FORMAT " (%lf)\n", s->frame.pid, s->frame.time, ptime);
 
-            for (i = 0; i < s->n_addrs; i++)
-              g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT "\n", s->addrs[i]);
+            for (guint i = 0; i < s->n_addrs; i++)
+              {
+                g_autofree char *name = symbolize (resolvers, &s->frame, &context, s->addrs[i]);
+
+                g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " (%s)\n", s->addrs[i], name);
+              }
 
             break;
           }
@@ -318,6 +368,7 @@ main (gint argc,
           {
             const SysprofCaptureAllocation *ev = sysprof_capture_reader_read_allocation (reader);
             gdouble ptime = (ev->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
+            SysprofAddressContext context = SYSPROF_ADDRESS_CONTEXT_NONE;
 
             g_print ("%s: pid=%d tid=%d addr=0x%" G_GINT64_MODIFIER "x size=%" G_GINT64_FORMAT " time=%" G_GINT64_FORMAT " (%lf)\n",
                      ev->alloc_size > 0 ? "ALLOC" : "FREE",
@@ -326,7 +377,11 @@ main (gint argc,
                      ev->frame.time, ptime);
 
             for (guint i = 0; i < ev->n_addrs; i++)
-              g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT "\n", ev->addrs[i]);
+              {
+                g_autofree char *name = symbolize (resolvers, &ev->frame, &context, ev->addrs[i]);
+
+                g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " (%s)\n", ev->addrs[i], name);
+              }
           }
           break;
 

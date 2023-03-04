@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
-"POT-Creation-Date: 2022-10-31 12:22+0000\n"
-"PO-Revision-Date: 2022-11-05 00:02+1000\n"
+"POT-Creation-Date: 2023-01-25 22:12+0000\n"
+"PO-Revision-Date: 2023-02-09 22:29+1000\n"
 "Last-Translator: Ser82-png <asvmail.as@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
@@ -23,19 +23,37 @@ msgctxt "_"
 msgid "translator-credits"
 msgstr "Ser82-png <asvmail.as@gmail.com>, 2022"
 
-#. (itstool) path: page/title
-#: C/index.page:12
+#. (itstool) path: info/title
+#: C/index.page:7
+msgctxt "link:trail"
 msgid "Sysprof"
 msgstr "Sysprof"
 
+#. (itstool) path: info/title
+#: C/index.page:8
+msgctxt "link"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: info/title
+#: C/index.page:9
+msgctxt "text"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: page/title
+#: C/index.page:15
+msgid "<_:media-1/> Sysprof"
+msgstr "<_:media-1/> Sysprof"
+
 #. (itstool) path: section/title
 #. (itstool) path: page/title
-#: C/index.page:15 C/profiling.page:6
+#: C/index.page:21 C/profiling.page:8
 msgid "Profiling"
 msgstr "Профилирование"
 
 #. (itstool) path: section/title
-#: C/index.page:19
+#: C/index.page:25
 msgid "Frequently Asked Questions"
 msgstr "Часто задаваемые вопросы"
 
@@ -128,12 +146,12 @@ msgstr ""
 "<app>Sysprof</app> - это средство профилирования работающее по выборке."
 
 #. (itstool) path: section/title
-#: C/profiling.page:12
+#: C/profiling.page:10
 msgid "How to profile your system"
 msgstr "Как профилировать вашу систему"
 
 #. (itstool) path: section/p
-#: C/profiling.page:13
+#: C/profiling.page:11
 msgid ""
 "When <app>Sysprof</app> profiles your system, it records stack information "
 "for all applications executing, including the Linux kernel. This can "
@@ -150,7 +168,7 @@ msgstr ""
 "href=\"profiling#new-process-profiling\">создания нового процесса</link>."
 
 #. (itstool) path: section/p
-#: C/profiling.page:20
+#: C/profiling.page:18
 msgid ""
 "To profile your entire system, ensure the target button is set to <em>All "
 "Processes</em> and click <em>Record</em>."
@@ -159,7 +177,7 @@ msgstr ""
 "значение <em>Все процессы</em>, и нажмите <em>Начать запись</em>."
 
 #. (itstool) path: section/p
-#: C/profiling.page:23
+#: C/profiling.page:21
 msgid ""
 "At this point, you may be asked to <em>authorize</em> access to profile the "
 "system. This is required as the Linux kernel's perf implementation requires "
@@ -171,7 +189,7 @@ msgstr ""
 "профилирования на уровне всей системы."
 
 #. (itstool) path: section/p
-#: C/profiling.page:27
+#: C/profiling.page:25
 msgid ""
 "During the profiling session, you will see the number of seconds the profile "
 "has been active. Clicking the <em>Record</em> button again will stop the "
@@ -182,7 +200,7 @@ msgstr ""
 "em> остановит сеанс профилирования. После этого будет показан граф вызовов."
 
 #. (itstool) path: note/p
-#: C/profiling.page:33
+#: C/profiling.page:31
 msgid ""
 "If you find that the <app>sysprof</app> application is showing up in your "
 "profiling callgraph, you might consider recording the profiling session with "
@@ -195,7 +213,7 @@ msgstr ""
 "ваш сеанс профилирования на диск для последующего просмотра."
 
 #. (itstool) path: section/p
-#: C/profiling.page:39 C/profiling.page:62
+#: C/profiling.page:37 C/profiling.page:60
 msgid ""
 "See <link href=\"profiling#interpreting-results\">interpreting results</"
 "link> for more guidance."
@@ -204,12 +222,12 @@ msgstr ""
 "results\">интерпретация результатов</link>."
 
 #. (itstool) path: section/title
-#: C/profiling.page:48
+#: C/profiling.page:46
 msgid "Profile an existing process"
 msgstr "Профилирование существующего процесса"
 
 #. (itstool) path: section/p
-#: C/profiling.page:49
+#: C/profiling.page:47
 msgid ""
 "With <app>Sysprof</app>, you can profile one or more existing processes on "
 "your system. First, select the <em>profiling target</em> button next to the "
@@ -225,7 +243,7 @@ msgstr ""
 "профилирования, будут отмечены флажком рядом с их названием."
 
 #. (itstool) path: section/p
-#: C/profiling.page:56
+#: C/profiling.page:54
 msgid ""
 "After selecting your target processes, click the <em>Record</em> button to "
 "start profiling."
@@ -234,7 +252,7 @@ msgstr ""
 "профилирование."
 
 #. (itstool) path: section/p
-#: C/profiling.page:59
+#: C/profiling.page:57
 msgid ""
 "When you have completed, click the <em>Record</em> button again to stop "
 "profiling."
@@ -242,12 +260,12 @@ msgstr ""
 "Для того что бы завершить запись, нажмите кнопку <em>Остановить запись</em>."
 
 #. (itstool) path: section/title
-#: C/profiling.page:71
+#: C/profiling.page:69
 msgid "Profile a new process"
 msgstr "Профилирование нового процесса"
 
 #. (itstool) path: section/p
-#: C/profiling.page:73
+#: C/profiling.page:71
 msgid ""
 "Often times, you may need to spawn a new process to profile. First, select "
 "the <em>profiling target</em> button next to the <em>Record</em> button. "
@@ -261,7 +279,7 @@ msgstr ""
 "запустить."
 
 #. (itstool) path: note/p
-#: C/profiling.page:79
+#: C/profiling.page:77
 msgid ""
 "If you are spawning a process that requires access to your current display, "
 "such as a GTK+ application, you will want to make sure <em>Inherit current "
@@ -272,12 +290,12 @@ msgstr ""
 "<em>Наследование окружения</em>."
 
 #. (itstool) path: section/title
-#: C/profiling.page:90
+#: C/profiling.page:88
 msgid "Profiling with the sysprof-cli command line tool"
 msgstr "Профилирование с помощью инструмента командной строки sysprof-cli"
 
 #. (itstool) path: section/p
-#: C/profiling.page:92
+#: C/profiling.page:90
 msgid ""
 "For minimal overhead, you might consider using the <cmd>sysprof-cli</cmd> "
 "command line tool. When run without any arguments, it will record your "
@@ -291,7 +309,7 @@ msgstr ""
 "помощью приложения <app>Sysprof</app> для просмотра графа вызовов."
 
 #. (itstool) path: section/p
-#: C/profiling.page:97
+#: C/profiling.page:95
 msgid ""
 "You can also attach to an existing process using <cmd>sysprof-cli -p pid</"
 "cmd>."
@@ -300,7 +318,7 @@ msgstr ""
 "командой <cmd>sysprof-cli -p pid</cmd>."
 
 #. (itstool) path: section/p
-#: C/profiling.page:100
+#: C/profiling.page:98
 msgid ""
 "If you would like to spawn a new process, use <cmd>sysprof-cli -c 'command'</"
 "cmd> to specify a command to be launched. The command will inherit the "
@@ -311,12 +329,12 @@ msgstr ""
 "унаследует текущую среду."
 
 #. (itstool) path: section/title
-#: C/profiling.page:110
+#: C/profiling.page:108
 msgid "Interpreting results"
 msgstr "Интерпретация результатов"
 
 #. (itstool) path: section/p
-#: C/profiling.page:112
+#: C/profiling.page:110
 msgid ""
 "The profiling results in <app>Sysprof</app> are split into three sections. "
 "On the top left is a list of all the functions profiled. They are sorted by "
@@ -327,7 +345,7 @@ msgstr ""
 "отсортированы по тому, как часто вызывались во время записи."
 
 #. (itstool) path: note/p
-#: C/profiling.page:117
+#: C/profiling.page:115
 msgid ""
 "It is important to note that the amount of time spent in each function is "
 "not captured. That would require a tracing profiler to accurately record. "
@@ -341,7 +359,7 @@ msgstr ""
 "записи выборки."
 
 #. (itstool) path: section/p
-#: C/profiling.page:123
+#: C/profiling.page:121
 msgid ""
 "After selecting a function from the functions list, all of the recorded "
 "callers of that function will be displayed on the bottom left. They are also "
@@ -353,7 +371,7 @@ msgstr ""
 "выборок, в трассировку стека которых включена эта функция."
 
 #. (itstool) path: section/p
-#: C/profiling.page:128
+#: C/profiling.page:126
 msgid ""
 "On the right, are all of the decendants of a selected function. You can "
 "select a function either from the functions list, or the callers list."
@@ -362,7 +380,7 @@ msgstr ""
 "либо из списка функций, либо из списка источников вызовов."
 
 #. (itstool) path: section/p
-#: C/profiling.page:131
+#: C/profiling.page:129
 msgid ""
 "You can jump into a function by activating a row in the tree of descendants "
 "with a double-click or by pressing <key>Enter</key> or <key>Spacebar</key>."
@@ -371,7 +389,7 @@ msgstr ""
 "щелчком или нажав <key>Enter</key> или <key>Пробел</key>."
 
 #. (itstool) path: note/p
-#: C/profiling.page:135
+#: C/profiling.page:133
 msgid ""
 "If you see <em>- - kernel - -</em> in your results, that means that the "
 "application transitioned into or from the Linux kernel. There can be many "

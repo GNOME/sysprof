@@ -13,7 +13,6 @@
                 <child>
                   <object class="GtkCenterBox">
                     <property name="orientation">horizontal</property>
-                    <property name="visible">true</property>
                     <property name="margin-top">3</property>
                     <property name="margin-bottom">3</property>
                     <property name="margin-start">7</property>
@@ -48,7 +47,6 @@
                           <object class="GtkImage">
                             <property name="icon-name">preferences-system-details-symbolic</property>
                             <property name="pixel-size">16</property>
-                            <property name="visible">true</property>
                           </object>
                         </child>
                       </object>

@@ -11,12 +11,10 @@
         <property name="margin-end">36</property>
         <property name="orientation">vertical</property>
         <property name="spacing">12</property>
-        <property name="visible">true</property>
         <child type="center">
           <object class="GtkImage">
             <property name="icon-name">computer-fail-symbolic</property>
             <property name="pixel-size">256</property>
-            <property name="visible">true</property>
             <style>
               <class name="dim-label"/>
             </style>
@@ -25,7 +23,6 @@
         <child type="end">
           <object class="GtkLabel">
             <property name="label" translatable="yes">Ouch, that hurt!</property>
-            <property name="visible">true</property>
             <style>
               <class name="dim-label"/>
             </style>
@@ -39,7 +36,6 @@
           <object class="GtkLabel">
             <property name="label" translatable="yes">Something unexpectedly went wrong while trying to profile your system.</property>
             <property name="use-markup">true</property>
-            <property name="visible">true</property>
             <style>
               <class name="dim-label"/>
             </style>

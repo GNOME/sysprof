@@ -1,15 +1,15 @@
 # Polish translation for sysprof.
-# Copyright © 2016-2022 the sysprof authors.
+# Copyright © 2016-2023 the sysprof authors.
 # This file is distributed under the same license as the sysprof package.
-# Piotr Drąg <piotrdrag@gmail.com>, 2016-2022.
-# Aviary.pl <community-poland@mozilla.org>, 2016-2022.
+# Piotr Drąg <piotrdrag@gmail.com>, 2016-2023.
+# Aviary.pl <community-poland@mozilla.org>, 2016-2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2022-07-24 06:22+0000\n"
-"PO-Revision-Date: 2022-07-24 16:52+0200\n"
+"POT-Creation-Date: 2023-03-04 16:24+0000\n"
+"PO-Revision-Date: 2023-03-12 15:25+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -20,8 +20,8 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2;\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:196
-#: src/sysprof/sysprof-application.c:321 src/sysprof/sysprof-window.ui:10
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:197
+#: src/sysprof/sysprof-application.c:287 src/sysprof/sysprof-window.ui:10
 msgid "Sysprof"
 msgstr "Sysprof"
 
@@ -138,7 +138,7 @@ msgid "Descendants"
 msgstr "Elementy potomne"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:178
-#: src/libsysprof-ui/sysprof-details-page.ui:189
+#: src/libsysprof-ui/sysprof-details-page.ui:215
 msgid "Hits"
 msgstr "Trafienia"
 
@@ -199,11 +199,11 @@ msgstr "Użycie procesora (wszystkie)"
 msgid "Processes"
 msgstr "Procesy"
 
-#: src/libsysprof-ui/sysprof-details-page.c:231
+#: src/libsysprof-ui/sysprof-details-page.c:239
 msgid "Memory Capture"
 msgstr "Przechwytywanie pamięci"
 
-#: src/libsysprof-ui/sysprof-details-page.c:245
+#: src/libsysprof-ui/sysprof-details-page.c:253
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf s"
@@ -273,25 +273,26 @@ msgstr "Liczba śladów stosu nagranych do śledzenia przydziałów pamięci"
 msgid "Number of recorded counter values"
 msgstr "Liczba nagranych wartości liczników"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:176
+#: src/libsysprof-ui/sysprof-details-page.ui:180
 #: src/libsysprof-ui/sysprof-marks-page.ui:50
 msgid "Mark"
 msgstr "Oznaczenie"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:202
+#: src/libsysprof-ui/sysprof-details-page.ui:248
 msgid "Min"
 msgstr "Minimum"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:215
+#: src/libsysprof-ui/sysprof-details-page.ui:281
 msgid "Max"
 msgstr "Maksimum"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:228
+#: src/libsysprof-ui/sysprof-details-page.ui:314
 msgid "Avg"
 msgstr "Średnia"
 
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:205
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:58
 msgid "Disk"
 msgstr "Dysk"
 
@@ -321,25 +322,25 @@ msgstr "Nagranie z %s"
 msgid "New Recording"
 msgstr "Nowe nagranie"
 
-#: src/libsysprof-ui/sysprof-display.c:1096
+#: src/libsysprof-ui/sysprof-display.c:1099
 msgid "The recording could not be opened"
 msgstr "Nie można otworzyć nagrania"
 
-#: src/libsysprof-ui/sysprof-display.c:1243
+#: src/libsysprof-ui/sysprof-display.c:1246
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Zapisanie nagrania się nie powiodło: %s"
 
-#: src/libsysprof-ui/sysprof-display.c:1276
+#: src/libsysprof-ui/sysprof-display.c:1279
 msgid "Save Recording"
 msgstr "Zapis nagrania"
 
-#: src/libsysprof-ui/sysprof-display.c:1279
+#: src/libsysprof-ui/sysprof-display.c:1282
 msgid "Save"
 msgstr "Zapisz"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1280 src/sysprof/sysprof-window.c:285
+#: src/libsysprof-ui/sysprof-display.c:1283 src/sysprof/sysprof-window.c:285
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -513,6 +514,18 @@ msgstr "Sieć"
 msgid "GNOME Shell"
 msgstr "Powłoka GNOME"
 
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:30
+msgid "Speedtrack"
+msgstr "Speedtrack"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:39
+msgid "GJS"
+msgstr "GJS"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
+msgid "Application"
+msgstr "Program"
+
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
 msgid "Profiling Target"
 msgstr "Cel profilowania"
@@ -622,12 +635,12 @@ msgstr "Zdarzenia"
 msgid "_Stop Recording"
 msgstr "_Zatrzymaj nagrywanie"
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:136
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
 #: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
 msgid "Select for more details"
 msgstr "Zaznaczenie wyświetli więcej informacji"
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:158
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:214
 msgid "Display supplemental graphs"
 msgstr "Wyświetla wykresy uzupełniające"
 
@@ -659,158 +672,193 @@ msgstr ""
 "Wymagane jest uwierzytelnienie, aby uzyskać dostęp do informacji o jądrze "
 "Linux."
 
-#: src/sysprof/gtk/help-overlay.ui:8
-msgctxt "shortcut window"
-msgid "Sysprof Shortcuts"
-msgstr "Skróty programu Sysprof"
-
-#: src/sysprof/gtk/help-overlay.ui:12
+#: src/sysprof/gtk/help-overlay.ui:10
 msgctxt "shortcut window"
 msgid "Files"
 msgstr "Pliki"
 
-#: src/sysprof/gtk/help-overlay.ui:16
+#: src/sysprof/gtk/help-overlay.ui:13
 msgctxt "shortcut window"
 msgid "Save Recording"
 msgstr "Zapisanie nagrania"
 
-#: src/sysprof/gtk/help-overlay.ui:17
+#: src/sysprof/gtk/help-overlay.ui:14
 msgctxt "shortcut window"
 msgid "Saves the current recording"
 msgstr "Zapisuje obecne nagranie"
 
-#: src/sysprof/gtk/help-overlay.ui:24
+#: src/sysprof/gtk/help-overlay.ui:20
 msgctxt "shortcut window"
 msgid "Open recording"
 msgstr "Otwarcie nagrania"
 
-#: src/sysprof/gtk/help-overlay.ui:25
+#: src/sysprof/gtk/help-overlay.ui:21
 msgctxt "shortcut window"
 msgid "Opens a previously saved recording"
 msgstr "Otwiera poprzednio zapisane nagranie"
 
-#: src/sysprof/gtk/help-overlay.ui:34
+#: src/sysprof/gtk/help-overlay.ui:29
 msgctxt "shortcut window"
 msgid "Recording"
 msgstr "Nagrywanie"
 
-#: src/sysprof/gtk/help-overlay.ui:38
+#: src/sysprof/gtk/help-overlay.ui:32
 msgctxt "shortcut window"
 msgid "Record again"
 msgstr "Ponowne nagrywanie"
 
-#: src/sysprof/gtk/help-overlay.ui:39
+#: src/sysprof/gtk/help-overlay.ui:33
 msgctxt "shortcut window"
 msgid "Starts a new recording"
 msgstr "Rozpoczyna nowe nagranie"
 
-#: src/sysprof/gtk/help-overlay.ui:46
+#: src/sysprof/gtk/help-overlay.ui:39
 msgctxt "shortcut window"
 msgid "Stop recording"
 msgstr "Zatrzymanie nagrywania"
 
-#: src/sysprof/gtk/help-overlay.ui:55
+#: src/sysprof/gtk/help-overlay.ui:47
 msgctxt "shortcut window"
 msgid "Callgraph"
 msgstr "Wykres wywołań"
 
-#: src/sysprof/gtk/help-overlay.ui:59
+#: src/sysprof/gtk/help-overlay.ui:50
 msgctxt "shortcut window"
 msgid "Expand function"
 msgstr "Rozwinięcie funkcji"
 
-#: src/sysprof/gtk/help-overlay.ui:60
+#: src/sysprof/gtk/help-overlay.ui:51
 msgctxt "shortcut window"
 msgid "Shows the direct descendants of the callgraph function"
 msgstr "Wyświetlenie bezpośrednich elementów potomnych funkcji wykresu wywołań"
 
-#: src/sysprof/gtk/help-overlay.ui:67
+#: src/sysprof/gtk/help-overlay.ui:57
 msgctxt "shortcut window"
 msgid "Collapse function"
 msgstr "Zwinięcie funkcji"
 
-#: src/sysprof/gtk/help-overlay.ui:68
+#: src/sysprof/gtk/help-overlay.ui:58
 msgctxt "shortcut window"
 msgid "Hides all callgraph descendants below the selected function"
 msgstr ""
 "Ukrycie wszystkich elementów potomnych wykresu wywołań poniżej zaznaczonej "
 "funkcji"
 
-#: src/sysprof/gtk/help-overlay.ui:75
+#: src/sysprof/gtk/help-overlay.ui:64
 msgctxt "shortcut window"
 msgid "Jump into function"
 msgstr "Przejście do funkcji"
 
-#: src/sysprof/gtk/help-overlay.ui:76
+#: src/sysprof/gtk/help-overlay.ui:65
 msgctxt "shortcut window"
 msgid "Selects the function or file as the top of the callgraph"
 msgstr "Wybranie funkcji lub pliku jako górnego elementu wykresu wywołań"
 
-#: src/sysprof/gtk/help-overlay.ui:85
+#: src/sysprof/gtk/help-overlay.ui:73
 msgctxt "shortcut window"
 msgid "Visualizers"
 msgstr "Wizualizacja"
 
-#: src/sysprof/gtk/help-overlay.ui:89
+#: src/sysprof/gtk/help-overlay.ui:76
 msgctxt "shortcut window"
 msgid "Zoom in"
 msgstr "Powiększenie"
 
-#: src/sysprof/gtk/help-overlay.ui:96
+#: src/sysprof/gtk/help-overlay.ui:82
 msgctxt "shortcut window"
 msgid "Zoom out"
 msgstr "Pomniejszenie"
 
-#: src/sysprof/gtk/help-overlay.ui:103
+#: src/sysprof/gtk/help-overlay.ui:88
 msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Przywrócenie powiększenia"
+
+#: src/sysprof/gtk/help-overlay.ui:96
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Ogólne"
+
+#: src/sysprof/gtk/help-overlay.ui:99
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Wyświetlenie pomocy"
+
+#: src/sysprof/gtk/help-overlay.ui:105
+msgctxt "shortcut window"
+msgid "Keyboard Shortcuts"
+msgstr "Skróty klawiszowe"
+
+#: src/sysprof/gtk/help-overlay.ui:111
+msgctxt "shortcut window"
+msgid "New Tab"
+msgstr "Nowa karta"
+
+#: src/sysprof/gtk/help-overlay.ui:117
+msgctxt "shortcut window"
+msgid "Switch Tab"
+msgstr "Przełączenie karty"
+
+#: src/sysprof/gtk/help-overlay.ui:123
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "Nowe okno"
+
+#: src/sysprof/gtk/help-overlay.ui:129
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Zamknięcie okna"
+
+#: src/sysprof/gtk/help-overlay.ui:135
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Zakończenie działania"
 
 #: src/sysprof/gtk/menus.ui:6
 msgid "New Tab"
 msgstr "Nowa karta"
 
-#: src/sysprof/gtk/menus.ui:11
+#: src/sysprof/gtk/menus.ui:10
 msgid "New Window"
 msgstr "Nowe okno"
 
-#: src/sysprof/gtk/menus.ui:18
+#: src/sysprof/gtk/menus.ui:16
 msgid "Open Recording…"
 msgstr "Otwórz nagranie…"
 
-#: src/sysprof/gtk/menus.ui:23
+#: src/sysprof/gtk/menus.ui:20
 msgid "Save Recording…"
 msgstr "Zapisz nagranie…"
 
-#: src/sysprof/gtk/menus.ui:30
+#: src/sysprof/gtk/menus.ui:26
 msgid "Record Again"
 msgstr "Nagraj ponownie"
 
-#: src/sysprof/gtk/menus.ui:37
+#: src/sysprof/gtk/menus.ui:32
 msgid "Close"
 msgstr "Zamknij"
 
-#: src/sysprof/gtk/menus.ui:44
+#: src/sysprof/gtk/menus.ui:38
 msgid "Keyboard Shortcuts"
 msgstr "Skróty klawiszowe"
 
-#: src/sysprof/gtk/menus.ui:49
+#: src/sysprof/gtk/menus.ui:42
 msgid "Help"
 msgstr "Pomoc"
 
-#: src/sysprof/gtk/menus.ui:54
+#: src/sysprof/gtk/menus.ui:46
 msgid "About Sysprof"
 msgstr "O programie"
 
-#: src/sysprof/sysprof-application.c:205
+#: src/sysprof/sysprof-application.c:206
 msgid "A system profiler"
 msgstr "Profiler systemu"
 
-#: src/sysprof/sysprof-application.c:206
+#: src/sysprof/sysprof-application.c:207
 msgid "translator-credits"
 msgstr ""
-"Piotr Drąg <piotrdrag@gmail.com>, 2016-2022\n"
-"Aviary.pl <community-poland@mozilla.org>, 2016-2022"
+"Piotr Drąg <piotrdrag@gmail.com>, 2016-2023\n"
+"Aviary.pl <community-poland@mozilla.org>, 2016-2023"
 
 #. Translators: This is a window title.
 #: src/sysprof/sysprof-window.c:279
@@ -830,132 +878,136 @@ msgstr "Przechwytywania Sysprof"
 msgid "All Files"
 msgstr "Wszystkie pliki"
 
-#: src/sysprof/sysprof-window.ui:34
+#: src/sysprof/sysprof-window.ui:20
+msgid "Main Menu"
+msgstr "Menu główne"
+
+#: src/sysprof/sysprof-window.ui:36
 msgid "_Open"
 msgstr "_Otwórz"
 
-#: src/sysprof/sysprof-window.ui:37
+#: src/sysprof/sysprof-window.ui:39
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Otwiera nagranie… (Ctrl+O)"
 
-#: src/tools/sysprof-cli.c:62
+#: src/tools/sysprof-cli.c:63
 msgid "Stopping profiler. Press twice more ^C to force exit."
 msgstr ""
 "Zatrzymywanie profilera. Naciśnięcie ^C jeszcze dwa razy wymusi zakończenie."
 
-#: src/tools/sysprof-cli.c:75
+#: src/tools/sysprof-cli.c:76
 msgid "Profiler stopped."
 msgstr "Profiler został zatrzymany."
 
-#: src/tools/sysprof-cli.c:108
+#: src/tools/sysprof-cli.c:109
 msgid "--merge requires at least 2 filename arguments"
 msgstr "--merge wymaga co najmniej 2 parametrów nazw plików"
 
-#: src/tools/sysprof-cli.c:226
+#: src/tools/sysprof-cli.c:227
 msgid "Disable CPU throttling while profiling"
 msgstr "Wyłącza ograniczanie procesora podczas profilowania"
 
-#: src/tools/sysprof-cli.c:227
+#: src/tools/sysprof-cli.c:228
 msgid "Make sysprof specific to a task"
 msgstr "Sysprof dla konkretnego zadania"
 
-#: src/tools/sysprof-cli.c:227
+#: src/tools/sysprof-cli.c:228
 msgid "PID"
 msgstr "PID"
 
-#: src/tools/sysprof-cli.c:228
+#: src/tools/sysprof-cli.c:229
 msgid "Run a command and profile the process"
 msgstr "Wykonuje polecenie i profiluje proces"
 
-#: src/tools/sysprof-cli.c:228
+#: src/tools/sysprof-cli.c:229
 msgid "COMMAND"
 msgstr "POLECENIE"
 
-#: src/tools/sysprof-cli.c:229
+#: src/tools/sysprof-cli.c:230
 msgid ""
 "Set environment variable for spawned process. Can be used multiple times."
 msgstr ""
 "Ustawia zmienną środowiskową dla wywołanego procesu. Może być używane "
 "wielokrotnie."
 
-#: src/tools/sysprof-cli.c:229
+#: src/tools/sysprof-cli.c:230
 msgid "VAR=VALUE"
 msgstr "ZMIENNA=WARTOŚĆ"
 
-#: src/tools/sysprof-cli.c:230
+#: src/tools/sysprof-cli.c:231
 msgid "Force overwrite the capture file"
 msgstr "Wymusza zastąpienie pliku przechwytywania"
 
-#: src/tools/sysprof-cli.c:231
+#: src/tools/sysprof-cli.c:232
 msgid "Disable recording of battery statistics"
 msgstr "Wyłącza nagrywanie statystyk akumulatora"
 
-#: src/tools/sysprof-cli.c:232
+#: src/tools/sysprof-cli.c:233
 msgid "Disable recording of CPU statistics"
 msgstr "Wyłącza nagrywanie statystyk procesora"
 
-#: src/tools/sysprof-cli.c:233
+#: src/tools/sysprof-cli.c:234
 msgid "Disable recording of Disk statistics"
 msgstr "Wyłącza nagrywanie statystyk dysku"
 
-#: src/tools/sysprof-cli.c:234
+#: src/tools/sysprof-cli.c:235
 msgid "Do not record stacktraces using Linux perf"
 msgstr "Bez nagrywania śladów stosu za pomocą podsystemu perf jądra Linux"
 
-#: src/tools/sysprof-cli.c:235
+#: src/tools/sysprof-cli.c:236
 msgid "Do not append symbol name information from local machine"
 msgstr "Bez dołączania informacji o nazwach symboli z lokalnego komputera"
 
-#: src/tools/sysprof-cli.c:236
+#: src/tools/sysprof-cli.c:237
 msgid "Disable recording of memory statistics"
 msgstr "Wyłącza nagrywanie statystyk pamięci"
 
-#: src/tools/sysprof-cli.c:237
+#: src/tools/sysprof-cli.c:238
 msgid "Disable recording of network statistics"
 msgstr "Wyłącza nagrywanie statystyk sieci"
 
-#: src/tools/sysprof-cli.c:238
+#: src/tools/sysprof-cli.c:239
 msgid "Set SYSPROF_TRACE_FD environment for subprocess"
 msgstr "Ustawia środowisko SYSPROF_TRACE_FD dla podprocesu"
 
-#: src/tools/sysprof-cli.c:239
+#: src/tools/sysprof-cli.c:240
 msgid "Set GJS_TRACE_FD environment to trace GJS processes"
 msgstr "Ustawia środowisko GJS_TRACE_FD do śledzenia procesów GJS"
 
-#: src/tools/sysprof-cli.c:240
+#: src/tools/sysprof-cli.c:241
 msgid "Set GTK_TRACE_FD environment to trace a GTK application"
 msgstr "Ustawia środowisko GTK_TRACE_FD do śledzenia programu GTK"
 
-#: src/tools/sysprof-cli.c:241
+#: src/tools/sysprof-cli.c:242
 msgid "Include RAPL energy statistics"
 msgstr "Dołącza statystyki energii RAPL"
 
-#: src/tools/sysprof-cli.c:242
+#: src/tools/sysprof-cli.c:243
 msgid "Profile memory allocations and frees"
 msgstr "Profiluje przydziały i zwolnienia pamięci"
 
-#: src/tools/sysprof-cli.c:243
+#: src/tools/sysprof-cli.c:244
 msgid "Connect to org.gnome.Shell for profiler statistics"
 msgstr "Łączy z org.gnome.Shell, aby uzyskać statystyki profilera"
 
-#: src/tools/sysprof-cli.c:244
+#: src/tools/sysprof-cli.c:245
 msgid "Track performance of the applications main loop"
 msgstr "Śledzi wydajność pętli głównej programu"
 
-#: src/tools/sysprof-cli.c:245
+#: src/tools/sysprof-cli.c:246
 msgid "Merge all provided *.syscap files and write to stdout"
 msgstr ""
 "Łączy wszystkie podane pliki *.syscap i zapisuje do standardowego wyjścia"
 
-#: src/tools/sysprof-cli.c:246
+#: src/tools/sysprof-cli.c:247
 msgid "Print the sysprof-cli version and exit"
 msgstr "Wyświetla wersję sysprof-cli i kończy działanie"
 
-#: src/tools/sysprof-cli.c:279
+#: src/tools/sysprof-cli.c:280
 msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
 msgstr "[PLIK_PRZECHWYTYWANIA] [-- POLECENIE PARAMETRY] — Sysprof"
 
-#: src/tools/sysprof-cli.c:282
+#: src/tools/sysprof-cli.c:283
 msgid ""
 "\n"
 "Examples:\n"
@@ -977,12 +1029,12 @@ msgstr ""
 "  # Łączy wiele plików syscap w jeden\n"
 "  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
 
-#: src/tools/sysprof-cli.c:315
+#: src/tools/sysprof-cli.c:316
 msgid "Too many arguments were passed to sysprof-cli:"
 msgstr "Przekazano za dużo parametrów do polecenia sysprof-cli:"
 
 #. Translators: %s is a file name.
-#: src/tools/sysprof-cli.c:376
+#: src/tools/sysprof-cli.c:377
 #, c-format
 msgid "%s exists. Use --force to overwrite\n"
 msgstr "Plik „%s” istnieje. Użycie opcji „--force” go zastąpi\n"

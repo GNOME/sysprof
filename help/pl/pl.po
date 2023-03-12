@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sysprof-help\n"
-"POT-Creation-Date: 2018-06-10 18:48+0000\n"
+"POT-Creation-Date: 2023-01-25 22:12+0000\n"
 "PO-Revision-Date: 2019-02-21 18:11+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
@@ -25,18 +25,37 @@ msgstr ""
 "Piotr Drąg <piotrdrag@gmail.com>, 2017-2019\n"
 "Aviary.pl <community-poland@mozilla.org>, 2017-2019"
 
-#. (itstool) path: page/title
-#: C/index.page:12
+#. (itstool) path: info/title
+#: C/index.page:7
+msgctxt "link:trail"
 msgid "Sysprof"
 msgstr "Sysprof"
 
-#. (itstool) path: section/title
+#. (itstool) path: info/title
+#: C/index.page:8
+msgctxt "link"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: info/title
+#: C/index.page:9
+msgctxt "text"
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#. (itstool) path: page/title
 #: C/index.page:15
+msgid "<_:media-1/> Sysprof"
+msgstr "<_:media-1/> Sysprof"
+
+#. (itstool) path: section/title
+#. (itstool) path: page/title
+#: C/index.page:21 C/profiling.page:8
 msgid "Profiling"
 msgstr "Profilowanie"
 
 #. (itstool) path: section/title
-#: C/index.page:19
+#: C/index.page:25
 msgid "Frequently Asked Questions"
 msgstr "Najczęściej zadawane pytania"
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-36\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-02-13 19:52+0000\n"
-"PO-Revision-Date: 2023-02-14 19:59+0200\n"
+"POT-Creation-Date: 2023-03-04 16:24+0000\n"
+"PO-Revision-Date: 2023-03-13 22:32+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -526,7 +526,6 @@ msgid "GJS"
 msgstr "GJS"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
-#| msgid "Launch Application"
 msgid "Application"
 msgstr "Програма"
 
@@ -877,11 +876,15 @@ msgstr "захоплення Sysprof"
 msgid "All Files"
 msgstr "усі файли"
 
-#: src/sysprof/sysprof-window.ui:34
+#: src/sysprof/sysprof-window.ui:20
+msgid "Main Menu"
+msgstr "Головне меню"
+
+#: src/sysprof/sysprof-window.ui:36
 msgid "_Open"
 msgstr "Від_крити"
 
-#: src/sysprof/sysprof-window.ui:37
+#: src/sysprof/sysprof-window.ui:39
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Відкрити записане… (Ctrl+O)"
 

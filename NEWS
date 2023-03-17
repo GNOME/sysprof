@@ -1,3 +1,16 @@
+Overview of changes in Sysprof 3.48.0
+=====================================
+
+ * Various a11y improvements
+ * Some widgets ported to GtkColumnView
+ * Sysprof-dump can now symbolicate instruction pointers
+ * Visualizer group fixes for missing rows
+ * Fixes for inheriting stdin when spawning processes
+ * Build system fixes to improve use as a meson subproject
+ * Additional shortcuts added to shortcut overlay
+ * LD_PRELOAD syntax fixes
+ * Translation updates
+
 Overview of changes in Sysprof 3.46.0
 =====================================
 

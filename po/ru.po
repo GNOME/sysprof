@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof sysprof-3-44\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-02-14 07:27+0000\n"
-"PO-Revision-Date: 2023-02-14 19:57+1000\n"
+"POT-Creation-Date: 2023-04-10 06:52+0000\n"
+"PO-Revision-Date: 2023-04-15 07:52+1000\n"
 "Last-Translator: Ser82-png <asvmail.as@gmail.com>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
@@ -361,17 +361,17 @@ msgstr "Удалить переменную окружения"
 msgid "New environment variable…"
 msgstr "Новая переменная окружения…"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:27
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:25
 msgid "Ouch, that hurt!"
 msgstr "Ой-ой!"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:40
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:37
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr ""
 "При попытке профилирования вашей системы неожиданно что-то пошло не так."
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
-#: src/libsysprof-ui/sysprof-logs-page.ui:58
+#: src/libsysprof-ui/sysprof-logs-page.ui:56
 #: src/libsysprof-ui/sysprof-marks-page.ui:103
 msgid "Message"
 msgstr "Сообщение"
@@ -403,16 +403,16 @@ msgstr "Предупреждение"
 msgid "Logs"
 msgstr "Журналы"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:15
+#: src/libsysprof-ui/sysprof-logs-page.ui:13
 #: src/libsysprof-ui/sysprof-marks-page.ui:64
 msgid "Time"
 msgstr "Время"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:29
+#: src/libsysprof-ui/sysprof-logs-page.ui:27
 msgid "Severity"
 msgstr "Важность"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:44
+#: src/libsysprof-ui/sysprof-logs-page.ui:42
 msgid "Domain"
 msgstr "Домен"
 
@@ -598,7 +598,7 @@ msgstr ""
 "процессора по мере необходимости."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:172
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:26
 msgid "Instruments"
 msgstr "Инструменты"
 
@@ -626,23 +626,23 @@ msgstr "Потребление энергии"
 msgid "Energy Usage (All)"
 msgstr "Потребление энергии (всё)"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:35
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
 msgid ""
 "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
 msgstr ""
 "Знаете ли вы, что для записи можно использовать <a href=\"help:"
 "sysprof\">sysprof-cli</a>?"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:50
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:45
 msgid "Events"
 msgstr "События"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:76
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:68
 msgid "_Stop Recording"
 msgstr "_Остановить запись"
 
 #: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:40
 msgid "Select for more details"
 msgstr "Выберите для получения более подробной информации"
 
@@ -878,11 +878,15 @@ msgstr "Захваты Sysprof"
 msgid "All Files"
 msgstr "Все файлы"
 
-#: src/sysprof/sysprof-window.ui:34
+#: src/sysprof/sysprof-window.ui:19
+msgid "Main Menu"
+msgstr "Главное меню"
+
+#: src/sysprof/sysprof-window.ui:29
 msgid "_Open"
 msgstr "О_ткрыть"
 
-#: src/sysprof/sysprof-window.ui:37
+#: src/sysprof/sysprof-window.ui:32
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Открыть запись… (Ctrl+O)"
 
@@ -1074,102 +1078,3 @@ msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
 msgstr ""
 "--dest=НАЗВАНИЕ_ШИНЫ [НАЗВАНИЕФАЙЛА] - подключиться к встроенному "
 "прифилировщику sysprof"
-
-#~ msgctxt "shortcut window"
-#~ msgid "Sysprof Shortcuts"
-#~ msgstr "Комбинации клавиш Sysprof"
-
-#~ msgid "Window size"
-#~ msgstr "Размер окна"
-
-#~ msgid "Window size (width and height)."
-#~ msgstr "Размер окна (ширина и высота)."
-
-#~ msgid "Window position"
-#~ msgstr "Расположение окна"
-
-#~ msgid "Window position (x and y)."
-#~ msgstr "Расположение окна (x и y)."
-
-#~ msgid "Window maximized"
-#~ msgstr "Окно развёрнуто"
-
-#~ msgid "Window maximized state"
-#~ msgstr "Состояние развёрнутого окна"
-
-#~ msgid "Last Spawn Program"
-#~ msgstr "Последняя запущенная программа"
-
-#~ msgid ""
-#~ "The last spawned program, which will be set in the UI upon restart of the "
-#~ "application."
-#~ msgstr ""
-#~ "Последняя запущенная программа, которая будет установлена в "
-#~ "пользовательском интерфейсе при перезапуске приложения."
-
-#~ msgid "Last Spawn Inherit Environment"
-#~ msgstr "Последнее унаследованное запущенное окружение"
-
-#~ msgid "If the last spawned environment inherits the parent environment."
-#~ msgstr "Если последняя запущенная среда наследует родительскую среду."
-
-#~ msgid "Last Spawn Environment"
-#~ msgstr "Последняя запущенная среда"
-
-#~ msgid ""
-#~ "The last spawned environment, which will be set in the UI upon restart of "
-#~ "the application."
-#~ msgstr ""
-#~ "Последняя запущенная среда, которая будет установлена в пользовательском "
-#~ "интерфейсе при перезапуске приложения."
-
-#~ msgid "Filename"
-#~ msgstr "Файл"
-
-#~ msgid "Samples Captured"
-#~ msgstr "Образцов захвачено"
-
-#~ msgid "Marks Captured"
-#~ msgstr "Отметок захвачено"
-
-#~ msgid "Processes Captured"
-#~ msgstr "Процессов захвачено"
-
-#~ msgid "Forks Captured"
-#~ msgstr "Ответвлений захвачено"
-
-#~ msgid "Counters Captured"
-#~ msgstr "Счетчиков захвачено"
-
-#~ msgid "New variable…"
-#~ msgstr "Новая переменная…"
-
-#~ msgid "Profilers"
-#~ msgstr "Профайлеры"
-
-#~ msgid "All Processes"
-#~ msgstr "Все процессы"
-
-#~ msgid ""
-#~ "Include all applications and operating system kernel in callgraph. This "
-#~ "may not be possible on some system configurations."
-#~ msgstr ""
-#~ "Включить все приложения и ядро операционной системы в граф вызовов. В "
-#~ "некоторых конфигурациях системы это может быть невозможно."
-
-#~ msgid "Enable to launch a program of your choosing before profiling."
-#~ msgstr "Разрешить запуск программы по вашему выбору перед профилированием."
-
-#~ msgid "Environment"
-#~ msgstr "Окружение"
-
-#~ msgid ""
-#~ "If disabled, your CPU will be placed in performance mode. It will be "
-#~ "restored after profiling."
-#~ msgstr ""
-#~ "Если отключено, ваш процессор будет переведен в режим высокой "
-#~ "производительности. Его состояние будет восстановлено после "
-#~ "профилирования."
-
-#~ msgid "Learn more about Sysprof"
-#~ msgstr "Узнать больше о «Sysprof»"

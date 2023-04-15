@@ -1,0 +1,1073 @@
+# Turkish translation for sysprof.
+# Copyright (C) 2023 sysprof's COPYRIGHT HOLDER
+# This file is distributed under the same license as the sysprof package.
+#
+# Sabri Ünal <libreajans@gmail.com>, 2023.
+# Emin Tufan Çetin <etcetin@gmail.com>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sysprof master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
+"POT-Creation-Date: 2023-03-08 01:07+0000\n"
+"PO-Revision-Date: 2023-04-15 08:41+0300\n"
+"Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
+"Language-Team: Turkish <tr@li.org>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:5
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:197
+#: src/sysprof/sysprof-application.c:287 src/sysprof/sysprof-window.ui:10
+msgid "Sysprof"
+msgstr "Sysprof"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:6
+msgid "Profile an application or entire system"
+msgstr "Bir uygulamayı ya da tüm sistemi profille"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:9
+msgid "The GNOME Foundation"
+msgstr "GNOME Vakfı"
+
+#: data/org.gnome.Sysprof.appdata.xml.in.in:12
+msgid ""
+"Sysprof allows you to profile applications to aid in debugging and "
+"optimization."
+msgstr ""
+"Sysprof, hata ayıklama ve eniyilemeye yardımcı olmak için uygulamaları "
+"profillemenizi sağlar."
+
+#: data/org.gnome.Sysprof.desktop.in.in:5
+msgid "Profiler"
+msgstr "Profilleyici"
+
+#: data/org.gnome.Sysprof.desktop.in.in:6
+msgid "Profile an application or entire system."
+msgstr "Bir uygulamayı ya da tüm sistemi profille."
+
+#: src/libsysprof/sysprof-callgraph-profile.c:447
+msgid "Sysprof was unable to generate a callgraph from the system capture."
+msgstr "Sysprof, sistem yakalamasından çağrı grafiği oluşturamadı."
+
+#: src/libsysprof/sysprof-perf-source.c:472
+#, c-format
+msgid "Sysprof failed to find field “%s”."
+msgstr "Sysprof, “%s” alanını bulamadı."
+
+#: src/libsysprof/sysprof-perf-source.c:485
+#, c-format
+msgid "Sysprof failed to parse offset for “%s”."
+msgstr "Sysprof, “%s” için ofseti ayrıştıramadı."
+
+#: src/libsysprof/sysprof-perf-source.c:549
+#, c-format
+msgid "Sysprof failed to get perf_event ID."
+msgstr "Sysprof, perf_event kimliğini alamadı."
+
+#: src/libsysprof/sysprof-perf-source.c:655
+#, c-format
+msgid "An error occurred while attempting to access performance counters"
+msgstr "Başarım sayaçlarına erişmeye çalışırken hata oluştu"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:182
+msgid "Battery Charge"
+msgstr "Pil Doluluğu"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:198
+msgid "Battery Charge (All)"
+msgstr "Pil Doluluğu (Tümü)"
+
+#: src/libsysprof-ui/sysprof-battery-aid.c:240
+msgid "Battery"
+msgstr "Pil"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:212
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:218
+#: src/libsysprof-ui/sysprof-details-page.ui:73
+msgid "Stack Traces"
+msgstr "Yığın İzleri"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:226
+msgid "Stack Traces (In Kernel)"
+msgstr "Yıgın İzleri (Çekirdekte)"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:234
+msgid "Stack Traces (In User)"
+msgstr "Yıgın İzleri (Kullanıcıda)"
+
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:243
+#: src/libsysprof-ui/sysprof-callgraph-aid.c:273
+msgid "Callgraph"
+msgstr "Çağrı Grafiği"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:23
+#: src/libsysprof-ui/sysprof-memprof-page.ui:90
+msgid "Functions"
+msgstr "İşlevler"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:39
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:96
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:147
+#: src/libsysprof-ui/sysprof-memprof-page.ui:107
+#: src/libsysprof-ui/sysprof-memprof-page.ui:165
+#: src/libsysprof-ui/sysprof-memprof-page.ui:216
+msgid "Self"
+msgstr "Kendi"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:55
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:112
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:163
+#: src/libsysprof-ui/sysprof-memprof-page.ui:123
+#: src/libsysprof-ui/sysprof-memprof-page.ui:181
+#: src/libsysprof-ui/sysprof-memprof-page.ui:232
+msgid "Total"
+msgstr "Toplam"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:80
+#: src/libsysprof-ui/sysprof-memprof-page.ui:148
+msgid "Callers"
+msgstr "Çağrıcılar"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:139
+#: src/libsysprof-ui/sysprof-memprof-page.ui:207
+msgid "Descendants"
+msgstr "Alt Ögeler"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:178
+#: src/libsysprof-ui/sysprof-details-page.ui:215
+msgid "Hits"
+msgstr "Bulgular"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:198
+msgid "Generating Callgraph"
+msgstr "Çağrı Grafiği Oluşturuluyor"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:199
+msgid "Sysprof is busy creating the selected callgraph."
+msgstr "Sysprof, seçilen çağrı grafiğini oluşturmakla meşgul."
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:205
+#: src/libsysprof-ui/sysprof-memprof-page.ui:271
+msgid "Not Enough Samples"
+msgstr "Yeterli Örnek Yok"
+
+#: src/libsysprof-ui/sysprof-callgraph-page.ui:206
+#: src/libsysprof-ui/sysprof-memprof-page.ui:272
+msgid "More samples are necessary to display a callgraph."
+msgstr "Çağrı grafiği görüntülemek için daha çok örnek gerekli."
+
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:102
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:292
+#: src/libsysprof-ui/sysprof-cell-renderer-progress.c:322
+#, c-format
+msgctxt "progress bar label"
+msgid "%d %%"
+msgstr "%%%d"
+
+#: src/libsysprof-ui/sysprof-counters-aid.c:221
+#: src/libsysprof-ui/sysprof-counters-aid.c:226
+#: src/libsysprof-ui/sysprof-counters-aid.c:282
+#: src/libsysprof-ui/sysprof-details-page.ui:148
+msgid "Counters"
+msgstr "Sayaçlar"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:207
+#: src/libsysprof-ui/sysprof-cpu-aid.c:355
+msgid "CPU Usage"
+msgstr "İşlemci Kullanımı"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:214
+msgid "CPU Frequency"
+msgstr "İşlemci Frekansı"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:218
+msgid "CPU Frequency (All)"
+msgstr "İşlemci Frekansı (Tümü)"
+
+#. Translators: CPU is the processor.
+#: src/libsysprof-ui/sysprof-cpu-aid.c:227
+#: src/libsysprof-ui/sysprof-cpu-aid.c:250
+msgid "CPU Usage (All)"
+msgstr "İşlemci Kullanımını (Tümü)"
+
+#: src/libsysprof-ui/sysprof-cpu-aid.c:316
+#: src/libsysprof-ui/sysprof-details-page.ui:103
+msgid "Processes"
+msgstr "Süreçler"
+
+#: src/libsysprof-ui/sysprof-details-page.c:239
+msgid "Memory Capture"
+msgstr "Bellek Yakalama"
+
+#: src/libsysprof-ui/sysprof-details-page.c:253
+#, c-format
+msgid "%0.4lf seconds"
+msgstr "%0.4lf saniye"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:8
+msgid "Capture"
+msgstr "Yakala"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:12
+msgid "Location"
+msgstr "Konum"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:26
+msgid "Recorded At"
+msgstr "Kayıt Tarihi"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:40
+#: src/libsysprof-ui/sysprof-marks-page.ui:90
+#: src/libsysprof-ui/sysprof-marks-page.ui:196
+msgid "Duration"
+msgstr "Süre"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:54
+msgid "CPU Model"
+msgstr "İşlemci Modeli"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:69
+#: src/libsysprof-ui/sysprof-details-page.ui:164
+msgid "Statistics"
+msgstr "İstatistikler"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:74
+msgid "Number of stack traces sampled for performance callgraphs"
+msgstr "Başarım çağrı grafikleri için örneklenen yığın izleri sayısı"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:88
+msgid "Marks"
+msgstr "İmler"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:89
+msgid "Number of marks seen"
+msgstr "Görülen im sayısı"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:104
+msgid "Number of processes seen"
+msgstr "Görülen süreç sayısı"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:118
+msgid "Forks"
+msgstr "Çatallar"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:119
+msgid "Number of times a process forked"
+msgstr "Sürecin çatallanma sayısı"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:133
+#: src/libsysprof-ui/sysprof-memprof-aid.c:193
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Allocations"
+msgstr "Bellek Ayırmalar"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:134
+msgid "Number of stack traces recorded for tracing memory allocations"
+msgstr "Belleği ayırmaları izlemek için kaydedilen yığın izleri sayısı"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:149
+msgid "Number of recorded counter values"
+msgstr "Kaydedilen sayaç değerlerinin sayısı"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:180
+#: src/libsysprof-ui/sysprof-marks-page.ui:50
+msgid "Mark"
+msgstr "İmle"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:248
+msgid "Min"
+msgstr "Asgari"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:281
+msgid "Max"
+msgstr "Azami"
+
+#: src/libsysprof-ui/sysprof-details-page.ui:314
+msgid "Avg"
+msgstr "Ort."
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:205
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:58
+msgid "Disk"
+msgstr "Disk"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Reads"
+msgstr "Okuma"
+
+#: src/libsysprof-ui/sysprof-diskstat-aid.c:239
+msgid "Writes"
+msgstr "Yazma"
+
+#: src/libsysprof-ui/sysprof-display.c:228
+msgid "Recording Failed"
+msgstr "Kayıt Başarısız"
+
+#: src/libsysprof-ui/sysprof-display.c:233
+msgid "Recording…"
+msgstr "Kayıt…"
+
+#. translators: %s is replaced with locale specific time of recording
+#: src/libsysprof-ui/sysprof-display.c:264
+#, c-format
+msgid "Recording at %s"
+msgstr "Kayıt tarihi %s"
+
+#: src/libsysprof-ui/sysprof-display.c:268
+msgid "New Recording"
+msgstr "Yeni Kayıt"
+
+#: src/libsysprof-ui/sysprof-display.c:1099
+msgid "The recording could not be opened"
+msgstr "Kayıt açılamadı"
+
+#: src/libsysprof-ui/sysprof-display.c:1246
+#, c-format
+msgid "Failed to save recording: %s"
+msgstr "Kayıt kaydedilemedi: %s"
+
+#: src/libsysprof-ui/sysprof-display.c:1279
+msgid "Save Recording"
+msgstr "Kaydı Kaydet"
+
+#: src/libsysprof-ui/sysprof-display.c:1282
+msgid "Save"
+msgstr "Kaydet"
+
+#. Translators: This is a button.
+#: src/libsysprof-ui/sysprof-display.c:1283 src/sysprof/sysprof-window.c:285
+msgid "Cancel"
+msgstr "İptal Et"
+
+#: src/libsysprof-ui/sysprof-display.ui:36
+#: src/libsysprof-ui/sysprof-marks-page.ui:16
+msgid "Details"
+msgstr "Ayrıntılar"
+
+#: src/libsysprof-ui/sysprof-environ-editor-row.ui:29
+msgid "Remove environment variable"
+msgstr "Ortam değişkenini kaldır"
+
+#: src/libsysprof-ui/sysprof-environ-editor.c:72
+msgid "New environment variable…"
+msgstr "Yeni ortam değişkeni…"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:25
+msgid "Ouch, that hurt!"
+msgstr "­Of, bu acıttı!"
+
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:37
+msgid "Something unexpectedly went wrong while trying to profile your system."
+msgstr ""
+"Sisteminizin profili çıkarılırken beklenmedik biçimde bir şeyler ters gitti."
+
+#: src/libsysprof-ui/sysprof-log-model.c:210
+#: src/libsysprof-ui/sysprof-logs-page.ui:56
+#: src/libsysprof-ui/sysprof-marks-page.ui:103
+msgid "Message"
+msgstr "İleti"
+
+#: src/libsysprof-ui/sysprof-log-model.c:213
+msgid "Info"
+msgstr "Bilgi"
+
+#: src/libsysprof-ui/sysprof-log-model.c:216
+msgid "Critical"
+msgstr "Kritik"
+
+#: src/libsysprof-ui/sysprof-log-model.c:219
+msgid "Error"
+msgstr "Hata"
+
+#: src/libsysprof-ui/sysprof-log-model.c:222
+msgid "Debug"
+msgstr "Hata Ayıklama"
+
+#: src/libsysprof-ui/sysprof-log-model.c:225
+msgid "Warning"
+msgstr "Uyarı"
+
+#: src/libsysprof-ui/sysprof-logs-aid.c:195
+#: src/libsysprof-ui/sysprof-logs-aid.c:199
+#: src/libsysprof-ui/sysprof-logs-aid.c:204
+#: src/libsysprof-ui/sysprof-logs-aid.c:210
+msgid "Logs"
+msgstr "Günlükler"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:13
+#: src/libsysprof-ui/sysprof-marks-page.ui:64
+msgid "Time"
+msgstr "Saat"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:27
+msgid "Severity"
+msgstr "Şiddet"
+
+#: src/libsysprof-ui/sysprof-logs-page.ui:42
+msgid "Domain"
+msgstr "Etki Alanı"
+
+#: src/libsysprof-ui/sysprof-marks-aid.c:408
+#: src/libsysprof-ui/sysprof-marks-aid.c:413
+msgid "Timings"
+msgstr "Zamanlama"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:37
+msgid "Group"
+msgstr "Grup"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:77
+msgid "End"
+msgstr "Bitiş"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:234
+msgid "No Timings Available"
+msgstr "Zamanlama Yok"
+
+#: src/libsysprof-ui/sysprof-marks-page.ui:246
+msgid "No timing data was found for the current selection"
+msgstr "Geçerli seçim için zamanlama verisi bulunamadı"
+
+#: src/libsysprof-ui/sysprof-memory-aid.c:68
+msgid "Memory Usage"
+msgstr "Bellek Kullanımı"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:182
+msgid "Memory"
+msgstr "Bellek"
+
+#: src/libsysprof-ui/sysprof-memprof-aid.c:224
+msgid "Track Allocations"
+msgstr "İz Ayırmalar"
+
+#. translators: %s is replaced with the the lower and upper bound memory sizes in bytes
+#: src/libsysprof-ui/sysprof-memprof-page.c:246
+#, c-format
+msgid "> %s to %s"
+msgstr "> %s ile %s arası"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:16
+msgid "Number of Allocations"
+msgstr "Ayırma Sayısı"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:17
+msgid "Total number of allocation and free records"
+msgstr "Toplam ayırma ve boşaltılan kayıt sayısı"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:30
+#: src/libsysprof-ui/sysprof-memprof-page.ui:318
+msgid "Leaked Allocations"
+msgstr "Sızan Ayırmalar"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:31
+msgid "Number of allocations without a free record"
+msgstr "Boşaltılma kaydı olmayan ayırma sayısı"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:44
+#: src/libsysprof-ui/sysprof-memprof-page.ui:311
+msgid "Temporary Allocations"
+msgstr "Geçici Ayırmalar"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:45
+msgid "Number of allocations freed from similar stack trace"
+msgstr "Benzer yığın izlerinden boşaltılan ayırma sayısı"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:59
+msgid "Allocations by Size"
+msgstr "Ayırma Boyutları"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:247
+msgid "Size"
+msgstr "Boyut"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:264
+msgid "Analyzing Memory Allocations"
+msgstr "Bellek Ayırmalar İnceleniyor"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:265
+msgid "Sysprof is busy analyzing memory allocations."
+msgstr "Sysprof, bellek ayırmaları incelemekle meşgul."
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:298
+msgid "Summary"
+msgstr "Özet"
+
+#: src/libsysprof-ui/sysprof-memprof-page.ui:304
+msgid "All Allocations"
+msgstr "Tüm Ayırmalar"
+
+#: src/libsysprof-ui/sysprof-memprof-visualizer.c:113
+msgid "Memory Used"
+msgstr "Kullanılan Bellek"
+
+#: src/libsysprof-ui/sysprof-netdev-aid.c:204
+#: src/libsysprof-ui/sysprof-netdev-aid.c:264
+msgid "Network"
+msgstr "Ağ"
+
+#. translators: "Compositor" means desktop compositor, gnome-shell/mutter in particular
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:26
+msgid "GNOME Shell"
+msgstr "GNOME Shell"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:30
+msgid "Speedtrack"
+msgstr "Speedtrack"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:39
+msgid "GJS"
+msgstr "GJS"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
+msgid "Application"
+msgstr "Uygulama"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
+msgid "Profiling Target"
+msgstr "Profilleme Hedefi"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:72
+msgid "Profile Entire System"
+msgstr "Tüm Sistemi Profille"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:73
+msgid ""
+"Sysprof can generate callgraphs for one or more processes on your system."
+msgstr ""
+"Sysprof, sisteminizdeki bir ya da daha çok süreç için çağrı grafiği "
+"oluşturabilir."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:84
+msgid "Search Processes"
+msgstr "Süreç Ara"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:99
+msgid "Loading Processes…"
+msgstr "Süreçler Yükleniyor…"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:114
+msgid "Launch Application"
+msgstr "Uygulamayı Başlat"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:115
+msgid ""
+"Sysprof can launch an application to be profiled. The profiler will "
+"automatically stop when it exits."
+msgstr ""
+"Sysprof, profillenecek uygulamayı başlatabilir. Profilleyici çıktığında "
+"kendiliğinden duracaktır."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:126
+msgid "Command Line"
+msgstr "Komut Satırı"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:135
+msgid "Inherit Environment"
+msgstr "Ortamı Miras Al"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:136
+msgid ""
+"Enable to ensure your application shares the display, message-bus, and other "
+"desktop environment settings."
+msgstr ""
+"Uygulamanızın ekran, ileti yolu ve diğer masaüstü ortamı ayarlarını "
+"paylaştığından emin olmak için etkinleştirin."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:153
+msgid "Performance"
+msgstr "Başarım"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:156
+msgid "Allow CPU Throttling"
+msgstr "İşlemci Kısıtlamasına İzin Ver"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:157
+msgid ""
+"When enabled, your system is allowed to scale CPU frequency as necessary."
+msgstr ""
+"Etkinleştirildiğinde, sisteminizin işlemci frekansını gerektiği gibi "
+"ölçeklemesini sağlar."
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:172
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:26
+msgid "Instruments"
+msgstr "Araç Gereçler"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:245
+msgid ""
+"Track application memory allocations (Sysprof must launch target application)"
+msgstr ""
+"Uygulama belleği ayırmaları izle (Sysprof, hedef uygulamayı başlatmalıdır)"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:252
+msgid "Track slow operations on your applications main loop"
+msgstr "Uygulamalarının ana döngüsündeki yavaş işlemleri izle"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:265
+msgid "_Record"
+msgstr "_Kaydet"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:175
+#: src/libsysprof-ui/sysprof-rapl-aid.c:248
+msgid "Energy Usage"
+msgstr "Enerji Kullanımı"
+
+#: src/libsysprof-ui/sysprof-rapl-aid.c:180
+msgid "Energy Usage (All)"
+msgstr "Enerji Kullanımı (Tüm)"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
+msgid ""
+"Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
+msgstr ""
+"Kayıt için <a href=\"help:sysprof\">sysprof-cli</a> kullanabileceğinizi "
+"biliyor muydunuz?"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:45
+msgid "Events"
+msgstr "Olaylar"
+
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:68
+msgid "_Stop Recording"
+msgstr "Kaydı _Durdur"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:40
+msgid "Select for more details"
+msgstr "Daha çok ayrıntı ara"
+
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:214
+msgid "Display supplemental graphs"
+msgstr "Tamamlayıcı grafikleri göster"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:13
+msgid "Profile the system"
+msgstr "Sistemi profille"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:14
+msgid "Authentication is required to profile the system."
+msgstr "Sistemi profillemek için kimlik doğrulaması gereklidir."
+
+# pref event burada fonksiyonun adı galiba. Çevirmeyelim.
+#: src/sysprofd/org.gnome.sysprof3.policy.in:26
+msgid "Open a perf event stream"
+msgstr "perf event akışı aç"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:27
+msgid "Authentication is required to access system performance counters."
+msgstr "Sistem başarım sayaçlarına erişmek için kimlik doğrulaması gereklidir."
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:37
+msgid "Get a list of kernel symbols and their address"
+msgstr "Çekirdek simgelerinin ve adreslerinin listesini al"
+
+#: src/sysprofd/org.gnome.sysprof3.policy.in:38
+msgid "Authentication is required to access Linux kernel information."
+msgstr "Linux çekirdek bilgilerine erişmek için kimlik doğrulama gereklidir."
+
+#: src/sysprof/gtk/help-overlay.ui:10
+msgctxt "shortcut window"
+msgid "Files"
+msgstr "Dosyalar"
+
+#: src/sysprof/gtk/help-overlay.ui:13
+msgctxt "shortcut window"
+msgid "Save Recording"
+msgstr "Kaydı Kaydet"
+
+#: src/sysprof/gtk/help-overlay.ui:14
+msgctxt "shortcut window"
+msgid "Saves the current recording"
+msgstr "Geçerli kaydı kaydeder"
+
+#: src/sysprof/gtk/help-overlay.ui:20
+msgctxt "shortcut window"
+msgid "Open recording"
+msgstr "Kayıt aç"
+
+#: src/sysprof/gtk/help-overlay.ui:21
+msgctxt "shortcut window"
+msgid "Opens a previously saved recording"
+msgstr "Önceden kaydedilmiş kaydı açar"
+
+#: src/sysprof/gtk/help-overlay.ui:29
+msgctxt "shortcut window"
+msgid "Recording"
+msgstr "Kaydetme"
+
+#: src/sysprof/gtk/help-overlay.ui:32
+msgctxt "shortcut window"
+msgid "Record again"
+msgstr "Yeniden kaydet"
+
+#: src/sysprof/gtk/help-overlay.ui:33
+msgctxt "shortcut window"
+msgid "Starts a new recording"
+msgstr "Yeni kayıt başlatır"
+
+#: src/sysprof/gtk/help-overlay.ui:39
+msgctxt "shortcut window"
+msgid "Stop recording"
+msgstr "Kaydı durdur"
+
+#: src/sysprof/gtk/help-overlay.ui:47
+msgctxt "shortcut window"
+msgid "Callgraph"
+msgstr "Çağrı grafiği"
+
+#: src/sysprof/gtk/help-overlay.ui:50
+msgctxt "shortcut window"
+msgid "Expand function"
+msgstr "İşlevi genişlet"
+
+#: src/sysprof/gtk/help-overlay.ui:51
+msgctxt "shortcut window"
+msgid "Shows the direct descendants of the callgraph function"
+msgstr "Çağrı grafiği işlevinin doğrudan alt ögelerini gösterir"
+
+#: src/sysprof/gtk/help-overlay.ui:57
+msgctxt "shortcut window"
+msgid "Collapse function"
+msgstr "İşlevi daralt"
+
+#: src/sysprof/gtk/help-overlay.ui:58
+msgctxt "shortcut window"
+msgid "Hides all callgraph descendants below the selected function"
+msgstr "Seçili işlevin altındaki tüm çağrı grafiği alt ögelerini gizler"
+
+#: src/sysprof/gtk/help-overlay.ui:64
+msgctxt "shortcut window"
+msgid "Jump into function"
+msgstr "İşleve atla"
+
+#: src/sysprof/gtk/help-overlay.ui:65
+msgctxt "shortcut window"
+msgid "Selects the function or file as the top of the callgraph"
+msgstr "Çağrı grafiğinin üst kısmı olarak işlevi ya da dosyayı seçer"
+
+#: src/sysprof/gtk/help-overlay.ui:73
+msgctxt "shortcut window"
+msgid "Visualizers"
+msgstr "Görüntüleyiciler"
+
+#: src/sysprof/gtk/help-overlay.ui:76
+msgctxt "shortcut window"
+msgid "Zoom in"
+msgstr "Yakınlaştır"
+
+#: src/sysprof/gtk/help-overlay.ui:82
+msgctxt "shortcut window"
+msgid "Zoom out"
+msgstr "Uzaklaştır"
+
+#: src/sysprof/gtk/help-overlay.ui:88
+msgctxt "shortcut window"
+msgid "Reset zoom"
+msgstr "Yakınlaştırmayı sıfırla"
+
+#: src/sysprof/gtk/help-overlay.ui:96
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Genel"
+
+#: src/sysprof/gtk/help-overlay.ui:99
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Yardımı Göster"
+
+#: src/sysprof/gtk/help-overlay.ui:105
+msgctxt "shortcut window"
+msgid "Keyboard Shortcuts"
+msgstr "Klavye Kısayolları"
+
+#: src/sysprof/gtk/help-overlay.ui:111
+msgctxt "shortcut window"
+msgid "New Tab"
+msgstr "Yeni Sekme"
+
+#: src/sysprof/gtk/help-overlay.ui:117
+msgctxt "shortcut window"
+msgid "Switch Tab"
+msgstr "Sekmeye Geç"
+
+#: src/sysprof/gtk/help-overlay.ui:123
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "Yeni Pencere"
+
+#: src/sysprof/gtk/help-overlay.ui:129
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Pencereyi Kapat"
+
+#: src/sysprof/gtk/help-overlay.ui:135
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Çık"
+
+#: src/sysprof/gtk/menus.ui:6
+msgid "New Tab"
+msgstr "Yeni Sekme"
+
+#: src/sysprof/gtk/menus.ui:10
+msgid "New Window"
+msgstr "Yeni Pencere"
+
+#: src/sysprof/gtk/menus.ui:16
+msgid "Open Recording…"
+msgstr "Kayıt Aç…"
+
+#: src/sysprof/gtk/menus.ui:20
+msgid "Save Recording…"
+msgstr "Kaydı Kaydet…"
+
+#: src/sysprof/gtk/menus.ui:26
+msgid "Record Again"
+msgstr "Yeniden Kaydet"
+
+#: src/sysprof/gtk/menus.ui:32
+msgid "Close"
+msgstr "Kapat"
+
+#: src/sysprof/gtk/menus.ui:38
+msgid "Keyboard Shortcuts"
+msgstr "Klavye Kısayolları"
+
+#: src/sysprof/gtk/menus.ui:42
+msgid "Help"
+msgstr "Yardım"
+
+#: src/sysprof/gtk/menus.ui:46
+msgid "About Sysprof"
+msgstr "Sysprof hakkında"
+
+#: src/sysprof/sysprof-application.c:206
+msgid "A system profiler"
+msgstr "Sistem profilleyici"
+
+#: src/sysprof/sysprof-application.c:207
+msgid "translator-credits"
+msgstr ""
+"Sabri Ünal <libreajans@gmail.com>\n"
+"Emin Tufan Çetin <etcetin@gmail.com>"
+
+#. Translators: This is a window title.
+#: src/sysprof/sysprof-window.c:279
+msgid "Open Capture…"
+msgstr "Yakalama Aç…"
+
+#. Translators: This is a button.
+#: src/sysprof/sysprof-window.c:283
+msgid "Open"
+msgstr "Aç"
+
+#: src/sysprof/sysprof-window.c:288
+msgid "Sysprof Captures"
+msgstr "Sysprof Yakalamaları"
+
+#: src/sysprof/sysprof-window.c:293
+msgid "All Files"
+msgstr "Tüm Dosyalar"
+
+#: src/sysprof/sysprof-window.ui:19
+msgid "Main Menu"
+msgstr "Ana Menü"
+
+#: src/sysprof/sysprof-window.ui:29
+msgid "_Open"
+msgstr "_Aç"
+
+#: src/sysprof/sysprof-window.ui:32
+msgid "Open Recording… (Ctrl+O)"
+msgstr "Kayıt Aç… (Ctrl+O)"
+
+#: src/tools/sysprof-cli.c:63
+msgid "Stopping profiler. Press twice more ^C to force exit."
+msgstr ""
+"Profilleyici durduruluyor. Çıkmaya zorlamak için ^C’ye iki kez daha basın."
+
+#: src/tools/sysprof-cli.c:76
+msgid "Profiler stopped."
+msgstr "Profilleyici durduruldu."
+
+#: src/tools/sysprof-cli.c:109
+msgid "--merge requires at least 2 filename arguments"
+msgstr "--merge en az 2 dosya adı argümanı gerektirir"
+
+#: src/tools/sysprof-cli.c:227
+msgid "Disable CPU throttling while profiling"
+msgstr "Profillerken işlemci kısıtlamayı devre dışı bırak"
+
+#: src/tools/sysprof-cli.c:228
+msgid "Make sysprof specific to a task"
+msgstr "Sysprof’u göreve özel yap"
+
+#: src/tools/sysprof-cli.c:228
+msgid "PID"
+msgstr "PID"
+
+#: src/tools/sysprof-cli.c:229
+msgid "Run a command and profile the process"
+msgstr "Komut çalıştır ve süreci profille"
+
+#: src/tools/sysprof-cli.c:229
+msgid "COMMAND"
+msgstr "KOMUT"
+
+#: src/tools/sysprof-cli.c:230
+msgid ""
+"Set environment variable for spawned process. Can be used multiple times."
+msgstr ""
+"Ortaya çıkan süreç için ortam değişkenini ayarla. Birden çok kez "
+"kullanılabilir."
+
+#: src/tools/sysprof-cli.c:230
+msgid "VAR=VALUE"
+msgstr "DEĞİŞKEN=DEĞER"
+
+#: src/tools/sysprof-cli.c:231
+msgid "Force overwrite the capture file"
+msgstr "Yakalama dosyasının üzerine yazmaya zorla"
+
+#: src/tools/sysprof-cli.c:232
+msgid "Disable recording of battery statistics"
+msgstr "Pil istatistiklerinin kaydını devre dışı bırak"
+
+#: src/tools/sysprof-cli.c:233
+msgid "Disable recording of CPU statistics"
+msgstr "İşlemci istatistiklerinin kaydını devre dışı bırak"
+
+#: src/tools/sysprof-cli.c:234
+msgid "Disable recording of Disk statistics"
+msgstr "Disk istatistiklerinin kaydını devre dışı bırak"
+
+#: src/tools/sysprof-cli.c:235
+msgid "Do not record stacktraces using Linux perf"
+msgstr "Yığın izlerini Linux perf kullanarak kaydetme"
+
+#: src/tools/sysprof-cli.c:236
+msgid "Do not append symbol name information from local machine"
+msgstr "Yerel makineden simge adı bilgilerini ekleme"
+
+#: src/tools/sysprof-cli.c:237
+msgid "Disable recording of memory statistics"
+msgstr "Bellek istatistiklerinin kaydını devre dışı bırak"
+
+#: src/tools/sysprof-cli.c:238
+msgid "Disable recording of network statistics"
+msgstr "Ağ istatistiklerinin kaydını devre dışı bırak"
+
+#: src/tools/sysprof-cli.c:239
+msgid "Set SYSPROF_TRACE_FD environment for subprocess"
+msgstr "Alt süreç için SYSPROF_TRACE_FD ortamını ayarla"
+
+#: src/tools/sysprof-cli.c:240
+msgid "Set GJS_TRACE_FD environment to trace GJS processes"
+msgstr "GJS süreçlerini izlemek için GJS_TRACE_FD ortamını ayarla"
+
+#: src/tools/sysprof-cli.c:241
+msgid "Set GTK_TRACE_FD environment to trace a GTK application"
+msgstr "GTK uygulamasını izlemek için GTK_TRACE_FD ortamını ayarla"
+
+#: src/tools/sysprof-cli.c:242
+msgid "Include RAPL energy statistics"
+msgstr "RAPL enerji istatistiklerini içer"
+
+#: src/tools/sysprof-cli.c:243
+msgid "Profile memory allocations and frees"
+msgstr "Bellek ayırmaları ve boşaltmaları profille"
+
+#: src/tools/sysprof-cli.c:244
+msgid "Connect to org.gnome.Shell for profiler statistics"
+msgstr "Profilleyici istatistikleri için org.gnome.Shell’e bağlan"
+
+#: src/tools/sysprof-cli.c:245
+msgid "Track performance of the applications main loop"
+msgstr "Uygulama ana döngüsünün başarımını izle"
+
+#: src/tools/sysprof-cli.c:246
+msgid "Merge all provided *.syscap files and write to stdout"
+msgstr "Sağlanan tüm *.syscap dosyalarını birleştir ve stdout’a yaz"
+
+#: src/tools/sysprof-cli.c:247
+msgid "Print the sysprof-cli version and exit"
+msgstr "sysprof-cli sürümünü yazdır ve çık"
+
+#: src/tools/sysprof-cli.c:280
+msgid "[CAPTURE_FILE] [-- COMMAND ARGS] — Sysprof"
+msgstr "[YAKALAMA_DOSYASI] [-- KOMUT ARGÜMANLARI] — Sysprof"
+
+#: src/tools/sysprof-cli.c:283
+msgid ""
+"\n"
+"Examples:\n"
+"\n"
+"  # Record gtk4-widget-factory using trace-fd to get application provided\n"
+"  # data as well as GTK and GNOME Shell data providers\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Merge multiple syscap files into one\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+msgstr ""
+"\n"
+"Örnekler:\n"
+"\n"
+"  # Uygulamaca sağlanan verilerin yanı sıra GTK ve GNOME Shell veri\n"
+"  # sağlayıcılarını almak için trace-fd kullanarak gtk4-widget-factory’yi "
+"kaydet\n"
+"  sysprof-cli --gtk --gnome-shell --use-trace-fd -- gtk4-widget-factory\n"
+"\n"
+"  # Birden çok syscap dosyasını tek dosyaya birleştir\n"
+"  sysprof-cli --merge a.syscap b.syscap > c.syscap\n"
+
+#: src/tools/sysprof-cli.c:316
+msgid "Too many arguments were passed to sysprof-cli:"
+msgstr "sysprof-cli’ye çok fazla argüman iletildi:"
+
+#. Translators: %s is a file name.
+#: src/tools/sysprof-cli.c:377
+#, c-format
+msgid "%s exists. Use --force to overwrite\n"
+msgstr "%s var. Üzerine yazmak için --force kullan\n"
+
+#: src/tools/sysprof-profiler-ctl.c:45
+msgid "Connect to the system bus"
+msgstr "Sistem veriyoluna bağlan"
+
+#: src/tools/sysprof-profiler-ctl.c:46
+msgid "Connect to the session bus"
+msgstr "Oturum veriyoluna bağlan"
+
+#: src/tools/sysprof-profiler-ctl.c:47
+msgid "Connect to the given D-Bus address"
+msgstr "Verilen D-Bus adresine bağlan"
+
+#: src/tools/sysprof-profiler-ctl.c:48
+msgid "Destination D-Bus name to invoke method on"
+msgstr "Yöntemi çağırmak için hedef D-Bus adı"
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "Object path to invoke method on"
+msgstr "Yöntemin üzerinde çalıştırılacağı nesne yolu"
+
+#: src/tools/sysprof-profiler-ctl.c:49
+msgid "/org/gnome/Sysprof3/Profiler"
+msgstr "/org/gnome/Sysprof3/Profiler"
+
+#: src/tools/sysprof-profiler-ctl.c:50
+msgid "Timeout in seconds"
+msgstr "Saniye türünden zaman aşımı"
+
+#: src/tools/sysprof-profiler-ctl.c:51
+msgid "Overwrite FILENAME if it exists"
+msgstr "Varsa, FILENAME üzerine yaz"
+
+#: src/tools/sysprof-profiler-ctl.c:79
+msgid "--dest=BUS_NAME [FILENAME] - connect to an embedded sysprof profiler"
+msgstr "--dest=VERİYOLU_ADI [DOSYAADI] - gömülü sysprof profilleyiciye bağlan"

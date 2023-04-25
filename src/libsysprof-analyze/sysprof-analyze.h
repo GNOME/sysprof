@@ -26,7 +26,7 @@ G_BEGIN_DECLS
 
 #define SYSPROF_ANALYZE_INSIDE
 # include "sysprof-capture-frame-object.h"
-# include "sysprof-capture-model.h"
+# include "sysprof-document.h"
 #undef SYSPROF_ANALYZE_INSIDE
 
 G_END_DECLS

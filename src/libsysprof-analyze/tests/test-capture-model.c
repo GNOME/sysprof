@@ -6,11 +6,10 @@ int
 main (int argc,
       char *argv[])
 {
-  SysprofCaptureModel *model;
+  SysprofDocument *document;
   const char *filename;
   GError *error = NULL;
   guint n_items;
-  int fd;
 
   sysprof_clock_init ();
 
@@ -21,35 +20,26 @@ main (int argc,
     }
 
   filename = argv[1];
-  fd = open (filename, O_RDONLY|O_CLOEXEC);
 
-  if (fd == -1)
-    {
-      g_printerr ("Failed to open %s: %s\n",
-                  filename, g_strerror (errno));
-      return 1;
-    }
-
-  if (!(model = sysprof_capture_model_new_from_fd (fd, &error)))
+  if (!(document = sysprof_document_new (filename, &error)))
     {
       g_printerr ("Failed to load %s: %s\n",
                   filename, error->message);
       return 1;
     }
 
-  n_items = g_list_model_get_n_items (G_LIST_MODEL (model));
+  n_items = g_list_model_get_n_items (G_LIST_MODEL (document));
 
   g_print ("%u frames\n", n_items);
 
   for (guint i = 0; i < n_items; i++)
     {
-      SysprofCaptureFrameObject *obj = g_list_model_get_item (G_LIST_MODEL (model), i);
+      SysprofCaptureFrameObject *obj = g_list_model_get_item (G_LIST_MODEL (document), i);
 
       g_clear_object (&obj);
     }
 
-  close (fd);
-  g_clear_object (&model);
+  g_clear_object (&document);
 
   return 0;
 }

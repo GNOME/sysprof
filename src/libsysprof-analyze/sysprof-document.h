@@ -1,4 +1,4 @@
-/* sysprof-capture-model.h
+/* sysprof-document.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -22,17 +22,20 @@
 
 #include <gio/gio.h>
 
-#include <sysprof-capture.h>
+#include "sysprof-version-macros.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_CAPTURE_MODEL (sysprof_capture_model_get_type())
+#define SYSPROF_TYPE_DOCUMENT (sysprof_document_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofCaptureModel, sysprof_capture_model, SYSPROF, CAPTURE_MODEL, GObject)
+G_DECLARE_FINAL_TYPE (SysprofDocument, sysprof_document, SYSPROF, DOCUMENT, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureModel *sysprof_capture_model_new_from_fd (int      capture_fd,
-                                                        GError **error);
+SysprofDocument *sysprof_document_new         (const char  *filename,
+                                               GError     **error);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDocument *sysprof_document_new_from_fd (int          capture_fd,
+                                               GError     **error);
 
 G_END_DECLS

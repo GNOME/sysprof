@@ -1,4 +1,4 @@
-/* sysprof-capture-model.c
+/* sysprof-document.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,10 +20,14 @@
 
 #include "config.h"
 
-#include "sysprof-capture-frame-object-private.h"
-#include "sysprof-capture-model.h"
+#include <fcntl.h>
 
-struct _SysprofCaptureModel
+#include <glib/gstdio.h>
+
+#include "sysprof-capture-frame-object-private.h"
+#include "sysprof-document.h"
+
+struct _SysprofDocument
 {
   GObject                   parent_instance;
   GPtrArray                *frames;
@@ -33,22 +37,22 @@ struct _SysprofCaptureModel
 };
 
 static GType
-sysprof_capture_model_get_item_type (GListModel *model)
+sysprof_document_get_item_type (GListModel *model)
 {
   return SYSPROF_TYPE_CAPTURE_FRAME_OBJECT;
 }
 
 static guint
-sysprof_capture_model_get_n_items (GListModel *model)
+sysprof_document_get_n_items (GListModel *model)
 {
-  return SYSPROF_CAPTURE_MODEL (model)->frames->len;
+  return SYSPROF_DOCUMENT (model)->frames->len;
 }
 
 static gpointer
-sysprof_capture_model_get_item (GListModel *model,
+sysprof_document_get_item (GListModel *model,
                                 guint       position)
 {
-  SysprofCaptureModel *self = SYSPROF_CAPTURE_MODEL (model);
+  SysprofDocument *self = SYSPROF_DOCUMENT (model);
 
   if (position >= self->frames->len)
     return NULL;
@@ -61,40 +65,40 @@ sysprof_capture_model_get_item (GListModel *model,
 static void
 list_model_iface_init (GListModelInterface *iface)
 {
-  iface->get_item_type = sysprof_capture_model_get_item_type;
-  iface->get_n_items = sysprof_capture_model_get_n_items;
-  iface->get_item = sysprof_capture_model_get_item;
+  iface->get_item_type = sysprof_document_get_item_type;
+  iface->get_n_items = sysprof_document_get_n_items;
+  iface->get_item = sysprof_document_get_item;
 }
 
-G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofCaptureModel, sysprof_capture_model, G_TYPE_OBJECT,
+G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocument, sysprof_document, G_TYPE_OBJECT,
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
 static void
-sysprof_capture_model_finalize (GObject *object)
+sysprof_document_finalize (GObject *object)
 {
-  SysprofCaptureModel *self = (SysprofCaptureModel *)object;
+  SysprofDocument *self = (SysprofDocument *)object;
 
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_ptr_array_unref);
 
-  G_OBJECT_CLASS (sysprof_capture_model_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sysprof_document_parent_class)->finalize (object);
 }
 static void
-sysprof_capture_model_class_init (SysprofCaptureModelClass *klass)
+sysprof_document_class_init (SysprofDocumentClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = sysprof_capture_model_finalize;
+  object_class->finalize = sysprof_document_finalize;
 }
 
 static void
-sysprof_capture_model_init (SysprofCaptureModel *self)
+sysprof_document_init (SysprofDocument *self)
 {
   self->frames = g_ptr_array_new ();
 }
 
 static gboolean
-sysprof_capture_model_load (SysprofCaptureModel  *self,
+sysprof_document_load (SysprofDocument  *self,
                             int                   capture_fd,
                             GError              **error)
 {
@@ -102,7 +106,7 @@ sysprof_capture_model_load (SysprofCaptureModel  *self,
   goffset pos;
   gsize len;
 
-  g_assert (SYSPROF_IS_CAPTURE_MODEL (self));
+  g_assert (SYSPROF_IS_DOCUMENT (self));
   g_assert (capture_fd > -1);
 
   if (!(self->mapped_file = g_mapped_file_new_from_fd (capture_fd, FALSE, error)))
@@ -148,17 +152,73 @@ sysprof_capture_model_load (SysprofCaptureModel  *self,
   return TRUE;
 }
 
-SysprofCaptureModel *
-sysprof_capture_model_new_from_fd (int      capture_fd,
-                                   GError **error)
+/**
+ * sysprof_document_new_from_fd:
+ * @capture_fd: a file-descriptor to be mapped
+ * @error: a location for a #GError, or %NULL
+ *
+ * Creates a new memory map using @capture_fd to read the underlying
+ * Sysprof capture.
+ *
+ * No ownership of @capture_fd is transferred, and the caller may close
+ * @capture_fd after calling this function.
+ *
+ * Returns: A #SysprofDocument if successful; otherwise %NULL
+ *   and @error is set.
+ *
+ * Since: 45.0
+ */
+SysprofDocument *
+sysprof_document_new_from_fd (int      capture_fd,
+                              GError **error)
 {
-  g_autoptr(SysprofCaptureModel) self = NULL;
+  g_autoptr(SysprofDocument) self = NULL;
 
   g_return_val_if_fail (capture_fd > -1, NULL);
 
-  self = g_object_new (SYSPROF_TYPE_CAPTURE_MODEL, NULL);
+  self = g_object_new (SYSPROF_TYPE_DOCUMENT, NULL);
 
-  if (!sysprof_capture_model_load (self, capture_fd, error))
+  if (!sysprof_document_load (self, capture_fd, error))
+    return NULL;
+
+  return g_steal_pointer (&self);
+}
+
+/**
+ * sysprof_document_new:
+ * @filename: a path to a capture file
+ * @error: location for a #GError, or %NULL
+ *
+ * Similar to sysprof_document_new_from_fd() but opens the file found
+ * at @filename as a #GMappedFile.
+ *
+ * Returns: a #SysprofDocument if successful; otherwise %NULL
+ *   and @error is set.
+ *
+ * Since: 45.0
+ */
+SysprofDocument *
+sysprof_document_new (const char  *filename,
+                      GError     **error)
+{
+  g_autoptr(SysprofDocument) self = NULL;
+  g_autofd int capture_fd = -1;
+
+  g_return_val_if_fail (filename != NULL, NULL);
+
+  if (-1 == (capture_fd = g_open (filename, O_RDONLY|O_CLOEXEC, 0)))
+    {
+      int errsv = errno;
+      g_set_error (error,
+                   G_FILE_ERROR,
+                   g_file_error_from_errno (errsv),
+                   "%s", g_strerror (errsv));
+      return NULL;
+    }
+
+  self = g_object_new (SYSPROF_TYPE_DOCUMENT, NULL);
+
+  if (!sysprof_document_load (self, capture_fd, error))
     return NULL;
 
   return g_steal_pointer (&self);

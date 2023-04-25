@@ -1,11 +1,11 @@
 libsysprof_analyze_public_sources = [
-  'sysprof-capture-model.c',
+  'sysprof-document.c',
   'sysprof-capture-frame-object.c',
 ]
 
 libsysprof_analyze_public_headers = [
   'sysprof-analyze.h',
-  'sysprof-capture-model.h',
+  'sysprof-document.h',
   'sysprof-capture-frame-object.h',
 ]
 

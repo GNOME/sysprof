@@ -22,25 +22,64 @@
 
 #include "sysprof-document-frame-private.h"
 
-struct _SysprofDocumentFrame
+typedef struct _SysprofDocumentFramePrivate
 {
-  GObject parent_instance;
   GMappedFile *mapped_file;
   const SysprofCaptureFrame *frame;
   guint is_native : 1;
+} SysprofDocumentFramePrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (SysprofDocumentFrame, sysprof_document_frame, G_TYPE_OBJECT)
+
+enum {
+  PROP_0,
+  PROP_CPU,
+  PROP_PID,
+  PROP_TIME,
+  N_PROPS
 };
 
-G_DEFINE_FINAL_TYPE (SysprofDocumentFrame, sysprof_document_frame, G_TYPE_OBJECT)
+static GParamSpec *properties[N_PROPS];
 
 static void
 sysprof_document_frame_finalize (GObject *object)
 {
   SysprofDocumentFrame *self = (SysprofDocumentFrame *)object;
+  SysprofDocumentFramePrivate *priv = sysprof_document_frame_get_instance_private (self);
 
-  g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
-  self->frame = NULL;
+  g_clear_pointer (&priv->mapped_file, g_mapped_file_unref);
+
+  priv->frame = NULL;
+  priv->is_native = 0;
 
   G_OBJECT_CLASS (sysprof_document_frame_parent_class)->finalize (object);
+}
+
+static void
+sysprof_document_frame_get_property (GObject    *object,
+                                     guint       prop_id,
+                                     GValue     *value,
+                                     GParamSpec *pspec)
+{
+  SysprofDocumentFrame *self = SYSPROF_DOCUMENT_FRAME (object);
+
+  switch (prop_id)
+    {
+    case PROP_CPU:
+      g_value_set_int (value, sysprof_document_frame_get_cpu (self));
+      break;
+
+    case PROP_PID:
+      g_value_set_int (value, sysprof_document_frame_get_pid (self));
+      break;
+
+    case PROP_TIME:
+      g_value_set_int64 (value, sysprof_document_frame_get_time (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
 }
 
 static void
@@ -49,6 +88,30 @@ sysprof_document_frame_class_init (SysprofDocumentFrameClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = sysprof_document_frame_finalize;
+  object_class->get_property = sysprof_document_frame_get_property;
+
+  properties[PROP_CPU] =
+    g_param_spec_int ("cpu", NULL, NULL,
+                      G_MININT32,
+                      G_MAXINT32,
+                      -1,
+                      (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_PID] =
+    g_param_spec_int ("pid", NULL, NULL,
+                      G_MININT32,
+                      G_MAXINT32,
+                      -1,
+                      (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_TIME] =
+    g_param_spec_int64 ("time", NULL, NULL,
+                        G_MININT64,
+                        G_MAXINT64,
+                        0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
@@ -62,11 +125,62 @@ sysprof_document_frame_new (GMappedFile   *mapped_file,
                             gboolean       is_native)
 {
   SysprofDocumentFrame *self;
+  SysprofDocumentFramePrivate *priv;
 
   self = g_object_new (SYSPROF_TYPE_DOCUMENT_FRAME, NULL);
-  self->mapped_file = g_mapped_file_ref (mapped_file);
-  self->frame = data;
-  self->is_native = !!is_native;
+
+  priv = sysprof_document_frame_get_instance_private (self);
+  priv->mapped_file = g_mapped_file_ref (mapped_file);
+  priv->frame = data;
+  priv->is_native = !!is_native;
 
   return self;
+}
+
+int
+sysprof_document_frame_get_cpu (SysprofDocumentFrame *self)
+{
+  SysprofDocumentFramePrivate *priv = sysprof_document_frame_get_instance_private (self);
+  int ret;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
+
+  if G_LIKELY (priv->is_native)
+    ret = priv->frame->cpu;
+  else
+    ret = GUINT32_SWAP_LE_BE (priv->frame->cpu);
+
+  return ret;
+}
+
+int
+sysprof_document_frame_get_pid (SysprofDocumentFrame *self)
+{
+  SysprofDocumentFramePrivate *priv = sysprof_document_frame_get_instance_private (self);
+  int ret;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
+
+  if G_LIKELY (priv->is_native)
+    ret = priv->frame->pid;
+  else
+    ret = GUINT32_SWAP_LE_BE (priv->frame->pid);
+
+  return ret;
+}
+
+gint64
+sysprof_document_frame_get_time (SysprofDocumentFrame *self)
+{
+  SysprofDocumentFramePrivate *priv = sysprof_document_frame_get_instance_private (self);
+  gint64 ret;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
+
+  if G_LIKELY (priv->is_native)
+    ret = priv->frame->time;
+  else
+    ret = GUINT32_SWAP_LE_BE (priv->frame->time);
+
+  return ret;
 }

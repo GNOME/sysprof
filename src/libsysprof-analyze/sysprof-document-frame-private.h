@@ -26,6 +26,11 @@
 
 G_BEGIN_DECLS
 
+struct _SysprofDocumentFrameClass
+{
+  GObjectClass parent_class;
+};
+
 SysprofDocumentFrame *sysprof_document_frame_new (GMappedFile   *mapped,
                                                   gconstpointer  data,
                                                   gboolean       is_native);

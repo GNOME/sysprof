@@ -27,7 +27,13 @@ G_BEGIN_DECLS
 #define SYSPROF_TYPE_DOCUMENT_FRAME (sysprof_document_frame_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofDocumentFrame, sysprof_document_frame, SYSPROF, CAPTURE_FRAME_OBJECT, GObject)
+G_DECLARE_DERIVABLE_TYPE (SysprofDocumentFrame, sysprof_document_frame, SYSPROF, DOCUMENT_FRAME, GObject)
+
+SYSPROF_AVAILABLE_IN_ALL
+int    sysprof_document_frame_get_cpu  (SysprofDocumentFrame *self);
+SYSPROF_AVAILABLE_IN_ALL
+int    sysprof_document_frame_get_pid  (SysprofDocumentFrame *self);
+SYSPROF_AVAILABLE_IN_ALL
+gint64 sysprof_document_frame_get_time (SysprofDocumentFrame *self);
 
 G_END_DECLS
-

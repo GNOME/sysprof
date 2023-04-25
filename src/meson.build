@@ -3,6 +3,9 @@ sysprof_ui_header_subdir = 'sysprof-ui-@0@'.format(libsysprof_ui_api_version)
 
 sysprof_version_conf = configuration_data()
 sysprof_version = meson.project_version().split('.')
+if sysprof_version[1] in ['alpha', 'beta', 'rc']
+  sysprof_version = [sysprof_version[0], 0, 0]
+endif
 sysprof_version_conf.set('MAJOR_VERSION', sysprof_version[0])
 sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
 sysprof_version_conf.set('MICRO_VERSION', sysprof_version[2])

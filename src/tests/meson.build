@@ -56,6 +56,11 @@ if get_option('libsysprof')
     dependencies: test_deps,
   )
 
+  test_capture_model = executable('test-capture-model', 'test-capture-model.c',
+          c_args: test_cflags,
+    dependencies: test_deps,
+  )
+
   test_mountinfo = executable('test-mountinfo', 'test-mountinfo.c',
           c_args: test_cflags,
     dependencies: test_deps,

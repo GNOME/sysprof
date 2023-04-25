@@ -32,14 +32,19 @@ main (int argc,
 
   n_items = g_list_model_get_n_items (G_LIST_MODEL (document));
 
-  g_print ("%u frames\n", n_items);
-
   for (guint i = 0; i < n_items; i++)
     {
       SysprofDocumentFrame *frame = g_list_model_get_item (G_LIST_MODEL (document), i);
 
+      g_print ("%"G_GINT64_FORMAT" [pid %d] [cpu %d]\n",
+               sysprof_document_frame_get_time (frame),
+               sysprof_document_frame_get_pid (frame),
+               sysprof_document_frame_get_cpu (frame));
+
       g_clear_object (&frame);
     }
+
+  g_printerr ("%u frames\n", n_items);
 
   g_clear_object (&document);
 

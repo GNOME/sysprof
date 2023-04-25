@@ -1,4 +1,4 @@
-/* sysprof-capture-frame-object-private.h
+/* sysprof-document-frame-private.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,12 +18,16 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "sysprof-capture-frame-object.h"
+#pragma once
+
+#include <sysprof-capture.h>
+
+#include "sysprof-document-frame.h"
 
 G_BEGIN_DECLS
 
-SysprofCaptureFrameObject *sysprof_capture_frame_object_new (GMappedFile   *mapped,
-                                                             gconstpointer  data,
-                                                             gboolean       is_native);
+SysprofDocumentFrame *sysprof_document_frame_new (GMappedFile   *mapped,
+                                                  gconstpointer  data,
+                                                  gboolean       is_native);
 
 G_END_DECLS

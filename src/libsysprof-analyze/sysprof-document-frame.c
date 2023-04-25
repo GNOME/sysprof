@@ -1,4 +1,4 @@
-/* sysprof-capture-frame-object.c
+/* sysprof-document-frame.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,9 +20,9 @@
 
 #include "config.h"
 
-#include "sysprof-capture-frame-object-private.h"
+#include "sysprof-document-frame-private.h"
 
-struct _SysprofCaptureFrameObject
+struct _SysprofDocumentFrame
 {
   GObject parent_instance;
   GMappedFile *mapped_file;
@@ -30,40 +30,40 @@ struct _SysprofCaptureFrameObject
   guint is_native : 1;
 };
 
-G_DEFINE_FINAL_TYPE (SysprofCaptureFrameObject, sysprof_capture_frame_object, G_TYPE_OBJECT)
+G_DEFINE_FINAL_TYPE (SysprofDocumentFrame, sysprof_document_frame, G_TYPE_OBJECT)
 
 static void
-sysprof_capture_frame_object_finalize (GObject *object)
+sysprof_document_frame_finalize (GObject *object)
 {
-  SysprofCaptureFrameObject *self = (SysprofCaptureFrameObject *)object;
+  SysprofDocumentFrame *self = (SysprofDocumentFrame *)object;
 
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   self->frame = NULL;
 
-  G_OBJECT_CLASS (sysprof_capture_frame_object_parent_class)->finalize (object);
+  G_OBJECT_CLASS (sysprof_document_frame_parent_class)->finalize (object);
 }
 
 static void
-sysprof_capture_frame_object_class_init (SysprofCaptureFrameObjectClass *klass)
+sysprof_document_frame_class_init (SysprofDocumentFrameClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = sysprof_capture_frame_object_finalize;
+  object_class->finalize = sysprof_document_frame_finalize;
 }
 
 static void
-sysprof_capture_frame_object_init (SysprofCaptureFrameObject *self)
+sysprof_document_frame_init (SysprofDocumentFrame *self)
 {
 }
 
-SysprofCaptureFrameObject *
-sysprof_capture_frame_object_new (GMappedFile   *mapped_file,
-                                  gconstpointer  data,
-                                  gboolean       is_native)
+SysprofDocumentFrame *
+sysprof_document_frame_new (GMappedFile   *mapped_file,
+                            gconstpointer  data,
+                            gboolean       is_native)
 {
-  SysprofCaptureFrameObject *self;
+  SysprofDocumentFrame *self;
 
-  self = g_object_new (SYSPROF_TYPE_CAPTURE_FRAME_OBJECT, NULL);
+  self = g_object_new (SYSPROF_TYPE_DOCUMENT_FRAME, NULL);
   self->mapped_file = g_mapped_file_ref (mapped_file);
   self->frame = data;
   self->is_native = !!is_native;

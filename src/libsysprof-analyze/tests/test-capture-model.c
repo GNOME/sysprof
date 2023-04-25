@@ -1,6 +1,8 @@
 #include <errno.h>
 #include <fcntl.h>
+
 #include <sysprof-analyze.h>
+#include <sysprof-capture.h>
 
 int
 main (int argc,
@@ -34,9 +36,9 @@ main (int argc,
 
   for (guint i = 0; i < n_items; i++)
     {
-      SysprofCaptureFrameObject *obj = g_list_model_get_item (G_LIST_MODEL (document), i);
+      SysprofDocumentFrame *frame = g_list_model_get_item (G_LIST_MODEL (document), i);
 
-      g_clear_object (&obj);
+      g_clear_object (&frame);
     }
 
   g_clear_object (&document);

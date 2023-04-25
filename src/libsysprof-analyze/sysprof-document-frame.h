@@ -1,4 +1,4 @@
-/* sysprof-capture-frame-object.h
+/* sysprof-document-frame.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,18 +20,14 @@
 
 #pragma once
 
-#include <gio/gio.h>
-
-#include <sysprof-capture.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_CAPTURE_FRAME_OBJECT (sysprof_capture_frame_object_get_type())
+#define SYSPROF_TYPE_DOCUMENT_FRAME (sysprof_document_frame_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofCaptureFrameObject, sysprof_capture_frame_object, SYSPROF, CAPTURE_FRAME_OBJECT, GObject)
-
-SYSPROF_AVAILABLE_IN_ALL
-SysprofCaptureFrame *sysprof_capture_frame_object_get_frame (SysprofCaptureFrameObject *self);
+G_DECLARE_FINAL_TYPE (SysprofDocumentFrame, sysprof_document_frame, SYSPROF, CAPTURE_FRAME_OBJECT, GObject)
 
 G_END_DECLS
+

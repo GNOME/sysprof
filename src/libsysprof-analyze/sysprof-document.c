@@ -24,8 +24,8 @@
 
 #include <glib/gstdio.h>
 
-#include "sysprof-capture-frame-object-private.h"
 #include "sysprof-document.h"
+#include "sysprof-document-frame-private.h"
 
 struct _SysprofDocument
 {
@@ -39,7 +39,7 @@ struct _SysprofDocument
 static GType
 sysprof_document_get_item_type (GListModel *model)
 {
-  return SYSPROF_TYPE_CAPTURE_FRAME_OBJECT;
+  return SYSPROF_TYPE_DOCUMENT_FRAME;
 }
 
 static guint
@@ -57,9 +57,9 @@ sysprof_document_get_item (GListModel *model,
   if (position >= self->frames->len)
     return NULL;
 
-  return sysprof_capture_frame_object_new (self->mapped_file,
-                                           g_ptr_array_index (self->frames, position),
-                                           self->is_native);
+  return sysprof_document_frame_new (self->mapped_file,
+                                     g_ptr_array_index (self->frames, position),
+                                     self->is_native);
 }
 
 static void

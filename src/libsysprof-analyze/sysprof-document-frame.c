@@ -22,14 +22,7 @@
 
 #include "sysprof-document-frame-private.h"
 
-typedef struct _SysprofDocumentFramePrivate
-{
-  GMappedFile *mapped_file;
-  const SysprofCaptureFrame *frame;
-  guint needs_swap : 1;
-} SysprofDocumentFramePrivate;
-
-G_DEFINE_TYPE_WITH_PRIVATE (SysprofDocumentFrame, sysprof_document_frame, G_TYPE_OBJECT)
+G_DEFINE_TYPE (SysprofDocumentFrame, sysprof_document_frame, G_TYPE_OBJECT)
 
 enum {
   PROP_0,
@@ -45,12 +38,11 @@ static void
 sysprof_document_frame_finalize (GObject *object)
 {
   SysprofDocumentFrame *self = (SysprofDocumentFrame *)object;
-  SysprofDocumentFramePrivate *priv = sysprof_document_frame_get_instance_private (self);
 
-  g_clear_pointer (&priv->mapped_file, g_mapped_file_unref);
+  g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
 
-  priv->frame = NULL;
-  priv->needs_swap = 0;
+  self->frame = NULL;
+  self->needs_swap = 0;
 
   G_OBJECT_CLASS (sysprof_document_frame_parent_class)->finalize (object);
 }
@@ -125,14 +117,12 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
                              gboolean                   needs_swap)
 {
   SysprofDocumentFrame *self;
-  SysprofDocumentFramePrivate *priv;
 
   self = g_object_new (SYSPROF_TYPE_DOCUMENT_FRAME, NULL);
 
-  priv = sysprof_document_frame_get_instance_private (self);
-  priv->mapped_file = g_mapped_file_ref (mapped_file);
-  priv->frame = frame;
-  priv->needs_swap = !!needs_swap;
+  self->mapped_file = g_mapped_file_ref (mapped_file);
+  self->frame = frame;
+  self->needs_swap = !!needs_swap;
 
   return self;
 }
@@ -140,15 +130,14 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
 int
 sysprof_document_frame_get_cpu (SysprofDocumentFrame *self)
 {
-  SysprofDocumentFramePrivate *priv = sysprof_document_frame_get_instance_private (self);
   int ret;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
 
-  if G_LIKELY (priv->needs_swap)
-    ret = priv->frame->cpu;
+  if G_LIKELY (self->needs_swap)
+    ret = self->frame->cpu;
   else
-    ret = GUINT32_SWAP_LE_BE (priv->frame->cpu);
+    ret = GUINT32_SWAP_LE_BE (self->frame->cpu);
 
   return ret;
 }
@@ -156,15 +145,14 @@ sysprof_document_frame_get_cpu (SysprofDocumentFrame *self)
 int
 sysprof_document_frame_get_pid (SysprofDocumentFrame *self)
 {
-  SysprofDocumentFramePrivate *priv = sysprof_document_frame_get_instance_private (self);
   int ret;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
 
-  if G_LIKELY (priv->needs_swap)
-    ret = priv->frame->pid;
+  if G_LIKELY (self->needs_swap)
+    ret = self->frame->pid;
   else
-    ret = GUINT32_SWAP_LE_BE (priv->frame->pid);
+    ret = GUINT32_SWAP_LE_BE (self->frame->pid);
 
   return ret;
 }
@@ -172,15 +160,14 @@ sysprof_document_frame_get_pid (SysprofDocumentFrame *self)
 gint64
 sysprof_document_frame_get_time (SysprofDocumentFrame *self)
 {
-  SysprofDocumentFramePrivate *priv = sysprof_document_frame_get_instance_private (self);
   gint64 ret;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
 
-  if G_LIKELY (priv->needs_swap)
-    ret = priv->frame->time;
+  if G_LIKELY (self->needs_swap)
+    ret = self->frame->time;
   else
-    ret = GUINT32_SWAP_LE_BE (priv->frame->time);
+    ret = GUINT32_SWAP_LE_BE (self->frame->time);
 
   return ret;
 }

@@ -26,6 +26,14 @@
 
 G_BEGIN_DECLS
 
+struct _SysprofDocumentFrame
+{
+  GObject                    parent_instance;
+  GMappedFile               *mapped_file;
+  const SysprofCaptureFrame *frame;
+  guint                      needs_swap : 1;
+};
+
 struct _SysprofDocumentFrameClass
 {
   GObjectClass parent_class;

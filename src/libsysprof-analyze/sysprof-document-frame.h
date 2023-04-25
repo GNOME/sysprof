@@ -24,11 +24,16 @@
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_DOCUMENT_FRAME (sysprof_document_frame_get_type())
+#define SYSPROF_TYPE_DOCUMENT_FRAME         (sysprof_document_frame_get_type())
+#define SYSPROF_IS_DOCUMENT_FRAME(obj)      G_TYPE_CHECK_INSTANCE_TYPE(obj, SYSPROF_TYPE_DOCUMENT_FRAME)
+#define SYSPROF_DOCUMENT_FRAME(obj)         G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_DOCUMENT_FRAME, SysprofDocumentFrame)
+#define SYSPROF_DOCUMENT_FRAME_CLASS(klass) G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_DOCUMENT_FRAME, SysprofDocumentFrameClass)
+
+typedef struct _SysprofDocumentFrame      SysprofDocumentFrame;
+typedef struct _SysprofDocumentFrameClass SysprofDocumentFrameClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_DERIVABLE_TYPE (SysprofDocumentFrame, sysprof_document_frame, SYSPROF, DOCUMENT_FRAME, GObject)
-
+GType  sysprof_document_frame_get_type (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
 int    sysprof_document_frame_get_cpu  (SysprofDocumentFrame *self);
 SYSPROF_AVAILABLE_IN_ALL

@@ -20,8 +20,13 @@ else
   app_id = 'org.gnome.Sysprof'
 endif
 
-libsysprof_api_version = 4
-libsysprof_ui_api_version = 5
+# All libraries share an ABI revision as they are expected
+# to be updated as a set.
+soname_major_version = 6
+
+# Temporary until we update meson.build
+libsysprof_api_version = soname_major_version
+libsysprof_ui_api_version = soname_major_version
 
 version_split = meson.project_version().split('.')
 datadir = get_option('datadir')

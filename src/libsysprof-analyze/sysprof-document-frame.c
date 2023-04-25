@@ -26,7 +26,7 @@ typedef struct _SysprofDocumentFramePrivate
 {
   GMappedFile *mapped_file;
   const SysprofCaptureFrame *frame;
-  guint is_native : 1;
+  guint needs_swap : 1;
 } SysprofDocumentFramePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofDocumentFrame, sysprof_document_frame, G_TYPE_OBJECT)
@@ -50,7 +50,7 @@ sysprof_document_frame_finalize (GObject *object)
   g_clear_pointer (&priv->mapped_file, g_mapped_file_unref);
 
   priv->frame = NULL;
-  priv->is_native = 0;
+  priv->needs_swap = 0;
 
   G_OBJECT_CLASS (sysprof_document_frame_parent_class)->finalize (object);
 }
@@ -120,9 +120,9 @@ sysprof_document_frame_init (SysprofDocumentFrame *self)
 }
 
 SysprofDocumentFrame *
-sysprof_document_frame_new (GMappedFile   *mapped_file,
-                            gconstpointer  data,
-                            gboolean       is_native)
+_sysprof_document_frame_new (GMappedFile               *mapped_file,
+                             const SysprofCaptureFrame *frame,
+                             gboolean                   needs_swap)
 {
   SysprofDocumentFrame *self;
   SysprofDocumentFramePrivate *priv;
@@ -131,8 +131,8 @@ sysprof_document_frame_new (GMappedFile   *mapped_file,
 
   priv = sysprof_document_frame_get_instance_private (self);
   priv->mapped_file = g_mapped_file_ref (mapped_file);
-  priv->frame = data;
-  priv->is_native = !!is_native;
+  priv->frame = frame;
+  priv->needs_swap = !!needs_swap;
 
   return self;
 }
@@ -145,7 +145,7 @@ sysprof_document_frame_get_cpu (SysprofDocumentFrame *self)
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
 
-  if G_LIKELY (priv->is_native)
+  if G_LIKELY (priv->needs_swap)
     ret = priv->frame->cpu;
   else
     ret = GUINT32_SWAP_LE_BE (priv->frame->cpu);
@@ -161,7 +161,7 @@ sysprof_document_frame_get_pid (SysprofDocumentFrame *self)
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
 
-  if G_LIKELY (priv->is_native)
+  if G_LIKELY (priv->needs_swap)
     ret = priv->frame->pid;
   else
     ret = GUINT32_SWAP_LE_BE (priv->frame->pid);
@@ -177,7 +177,7 @@ sysprof_document_frame_get_time (SysprofDocumentFrame *self)
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
 
-  if G_LIKELY (priv->is_native)
+  if G_LIKELY (priv->needs_swap)
     ret = priv->frame->time;
   else
     ret = GUINT32_SWAP_LE_BE (priv->frame->time);

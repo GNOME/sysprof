@@ -33,7 +33,7 @@ struct _SysprofDocument
   GPtrArray                *frames;
   GMappedFile              *mapped_file;
   SysprofCaptureFileHeader  header;
-  guint                     is_native : 1;
+  guint                     needs_swap : 1;
 };
 
 static GType
@@ -57,9 +57,9 @@ sysprof_document_get_item (GListModel *model,
   if (position >= self->frames->len)
     return NULL;
 
-  return sysprof_document_frame_new (self->mapped_file,
-                                     g_ptr_array_index (self->frames, position),
-                                     self->is_native);
+  return _sysprof_document_frame_new (self->mapped_file,
+                                      g_ptr_array_index (self->frames, position),
+                                      self->needs_swap);
 }
 
 static void
@@ -121,12 +121,12 @@ sysprof_document_load (SysprofDocument  *self,
   /* Keep a copy of our header */
   memcpy (&self->header, data, sizeof self->header);
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-  self->is_native = !!self->header.little_endian;
+  self->needs_swap = !self->header.little_endian;
 #else
-  self->is_native = !self->header.little_endian;
+  self->needs_swap = !!self->header.little_endian;
 #endif
 
-  if (!self->is_native)
+  if (self->needs_swap)
     {
       self->header.time = GUINT64_SWAP_LE_BE (self->header.time);
       self->header.end_time = GUINT64_SWAP_LE_BE (self->header.end_time);
@@ -138,8 +138,8 @@ sysprof_document_load (SysprofDocument  *self,
       guint16 frame_len;
 
       memcpy (&frame_len, &data[pos], sizeof frame_len);
-      if (!self->is_native)
-        frame_len = GUINT16_SWAP_LE_BE (self->is_native);
+      if (self->needs_swap)
+        frame_len = GUINT16_SWAP_LE_BE (frame_len);
 
       if (frame_len < sizeof (SysprofCaptureFrame))
         break;

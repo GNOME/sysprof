@@ -31,8 +31,8 @@ struct _SysprofDocumentFrameClass
   GObjectClass parent_class;
 };
 
-SysprofDocumentFrame *sysprof_document_frame_new (GMappedFile   *mapped,
-                                                  gconstpointer  data,
-                                                  gboolean       is_native);
+SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *mapped,
+                                                   const SysprofCaptureFrame *frame,
+                                                   gboolean                   needs_swap);
 
 G_END_DECLS

@@ -33,8 +33,8 @@ datadir = get_option('datadir')
 datadir_for_pc_file = join_paths('${prefix}', datadir)
 podir = join_paths(meson.current_source_dir(), 'po')
 
-glib_req = '2.73.0'
-gtk_req = '4.6'
+glib_req = '2.76.0'
+gtk_req = '4.10'
 polkit_req = '0.105'
 
 glib_req_version = '>= @0@'.format(glib_req)

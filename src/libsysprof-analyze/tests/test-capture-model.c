@@ -1,7 +1,6 @@
 #include <errno.h>
 #include <fcntl.h>
-
-#include <sysprof.h>
+#include <sysprof-analyze.h>
 
 int
 main (int argc,

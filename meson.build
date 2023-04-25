@@ -133,6 +133,7 @@ endif
 
 
 global_c_args = [
+  '-DSYSPROF_COMPILATION',
   '-D_GNU_SOURCE',
   '-D_POSIX_C_SOURCE=200809L',
   '-DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_@0@_@1@'.format(glib_major, glib_minor),

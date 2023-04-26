@@ -30,11 +30,18 @@
 struct _SysprofDocument
 {
   GObject                   parent_instance;
-  GPtrArray                *frames;
+  GArray                   *frames;
   GMappedFile              *mapped_file;
+  const guint8             *base;
   SysprofCaptureFileHeader  header;
   guint                     needs_swap : 1;
 };
+
+typedef struct _SysprofDocumentFramePointer
+{
+  guint64 offset : 48;
+  guint64 length : 16;
+} SysprofDocumentFramePointer;
 
 static GType
 sysprof_document_get_item_type (GListModel *model)
@@ -50,15 +57,19 @@ sysprof_document_get_n_items (GListModel *model)
 
 static gpointer
 sysprof_document_get_item (GListModel *model,
-                                guint       position)
+                           guint       position)
 {
   SysprofDocument *self = SYSPROF_DOCUMENT (model);
+  SysprofDocumentFramePointer *ptr;
 
   if (position >= self->frames->len)
     return NULL;
 
+  ptr = &g_array_index (self->frames, SysprofDocumentFramePointer, position);
+
   return _sysprof_document_frame_new (self->mapped_file,
-                                      g_ptr_array_index (self->frames, position),
+                                      (gconstpointer)&self->base[ptr->offset],
+                                      ptr->length,
                                       self->needs_swap);
 }
 
@@ -79,7 +90,7 @@ sysprof_document_finalize (GObject *object)
   SysprofDocument *self = (SysprofDocument *)object;
 
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
-  g_clear_pointer (&self->frames, g_ptr_array_unref);
+  g_clear_pointer (&self->frames, g_array_unref);
 
   G_OBJECT_CLASS (sysprof_document_parent_class)->finalize (object);
 }
@@ -94,7 +105,7 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
 static void
 sysprof_document_init (SysprofDocument *self)
 {
-  self->frames = g_ptr_array_new ();
+  self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
 }
 
 static gboolean
@@ -102,7 +113,6 @@ sysprof_document_load (SysprofDocument  *self,
                             int                   capture_fd,
                             GError              **error)
 {
-  const guint8 *data;
   goffset pos;
   gsize len;
 
@@ -112,14 +122,14 @@ sysprof_document_load (SysprofDocument  *self,
   if (!(self->mapped_file = g_mapped_file_new_from_fd (capture_fd, FALSE, error)))
     return FALSE;
 
-  data = (const guint8 *)g_mapped_file_get_contents (self->mapped_file);
+  self->base = (const guint8 *)g_mapped_file_get_contents (self->mapped_file);
   len = g_mapped_file_get_length (self->mapped_file);
 
   if (len < sizeof self->header)
     return FALSE;
 
   /* Keep a copy of our header */
-  memcpy (&self->header, data, sizeof self->header);
+  memcpy (&self->header, self->base, sizeof self->header);
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
   self->needs_swap = !self->header.little_endian;
 #else
@@ -135,16 +145,19 @@ sysprof_document_load (SysprofDocument  *self,
   pos = sizeof self->header;
   while (pos < (len - sizeof(guint16)))
     {
+      SysprofDocumentFramePointer ptr;
       guint16 frame_len;
 
-      memcpy (&frame_len, &data[pos], sizeof frame_len);
+      memcpy (&frame_len, &self->base[pos], sizeof frame_len);
       if (self->needs_swap)
         frame_len = GUINT16_SWAP_LE_BE (frame_len);
 
       if (frame_len < sizeof (SysprofCaptureFrame))
         break;
 
-      g_ptr_array_add (self->frames, (gpointer)&data[pos]);
+      ptr.offset = pos;
+      ptr.length = frame_len;
+      g_array_append_val (self->frames, ptr);
 
       pos += frame_len;
     }

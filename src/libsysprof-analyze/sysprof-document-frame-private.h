@@ -28,10 +28,12 @@ G_BEGIN_DECLS
 
 struct _SysprofDocumentFrame
 {
-  GObject                    parent_instance;
+  GObject                    parent;
   GMappedFile               *mapped_file;
   const SysprofCaptureFrame *frame;
-  guint                      needs_swap : 1;
+  guint32                    frame_len : 16;
+  guint32                    needs_swap : 1;
+  guint32                    padding : 15;
 };
 
 struct _SysprofDocumentFrameClass
@@ -41,6 +43,7 @@ struct _SysprofDocumentFrameClass
 
 SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *mapped,
                                                    const SysprofCaptureFrame *frame,
+                                                   guint16                    frame_len,
                                                    gboolean                   needs_swap);
 
 #define SYSPROF_DOCUMENT_FRAME_GET(obj, type) \

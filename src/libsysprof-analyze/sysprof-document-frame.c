@@ -114,6 +114,7 @@ sysprof_document_frame_init (SysprofDocumentFrame *self)
 SysprofDocumentFrame *
 _sysprof_document_frame_new (GMappedFile               *mapped_file,
                              const SysprofCaptureFrame *frame,
+                             guint16                    frame_len,
                              gboolean                   needs_swap)
 {
   SysprofDocumentFrame *self;
@@ -122,6 +123,7 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
 
   self->mapped_file = g_mapped_file_ref (mapped_file);
   self->frame = frame;
+  self->frame_len = frame_len;
   self->needs_swap = !!needs_swap;
 
   return self;

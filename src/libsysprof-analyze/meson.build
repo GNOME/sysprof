@@ -1,12 +1,14 @@
 libsysprof_analyze_public_sources = [
   'sysprof-document.c',
   'sysprof-document-frame.c',
+  'sysprof-document-sample.c',
 ]
 
 libsysprof_analyze_public_headers = [
   'sysprof-analyze.h',
   'sysprof-document.h',
   'sysprof-document-frame.h',
+  'sysprof-document-sample.h',
 ]
 
 libsysprof_analyze_deps = [

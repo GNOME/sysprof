@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-document-frame-private.h"
+#include "sysprof-document-sample.h"
 
 G_DEFINE_TYPE (SysprofDocumentFrame, sysprof_document_frame, G_TYPE_OBJECT)
 
@@ -117,10 +118,13 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
                              guint16                    frame_len,
                              gboolean                   needs_swap)
 {
+  GType gtype = SYSPROF_TYPE_DOCUMENT_FRAME;
   SysprofDocumentFrame *self;
 
-  self = g_object_new (SYSPROF_TYPE_DOCUMENT_FRAME, NULL);
+  if (frame->type == SYSPROF_CAPTURE_FRAME_SAMPLE)
+    gtype = SYSPROF_TYPE_DOCUMENT_SAMPLE;
 
+  self = g_object_new (gtype, NULL);
   self->mapped_file = g_mapped_file_ref (mapped_file);
   self->frame = frame;
   self->frame_len = frame_len;

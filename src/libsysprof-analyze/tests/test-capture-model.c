@@ -36,10 +36,11 @@ main (int argc,
     {
       SysprofDocumentFrame *frame = g_list_model_get_item (G_LIST_MODEL (document), i);
 
-      g_print ("%"G_GINT64_FORMAT" [pid %d] [cpu %d]\n",
+      g_print ("%"G_GINT64_FORMAT" [pid %d] [cpu %d] (type %s)\n",
                sysprof_document_frame_get_time (frame),
                sysprof_document_frame_get_pid (frame),
-               sysprof_document_frame_get_cpu (frame));
+               sysprof_document_frame_get_cpu (frame),
+               G_OBJECT_TYPE_NAME (frame));
 
       g_clear_object (&frame);
     }

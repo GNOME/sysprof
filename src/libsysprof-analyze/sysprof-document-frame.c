@@ -132,44 +132,23 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
 int
 sysprof_document_frame_get_cpu (SysprofDocumentFrame *self)
 {
-  int ret;
-
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
 
-  if G_LIKELY (self->needs_swap)
-    ret = self->frame->cpu;
-  else
-    ret = GUINT32_SWAP_LE_BE (self->frame->cpu);
-
-  return ret;
+  return SYSPROF_DOCUMENT_FRAME_INT32 (self, self->frame->cpu);
 }
 
 int
 sysprof_document_frame_get_pid (SysprofDocumentFrame *self)
 {
-  int ret;
-
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
 
-  if G_LIKELY (self->needs_swap)
-    ret = self->frame->pid;
-  else
-    ret = GUINT32_SWAP_LE_BE (self->frame->pid);
-
-  return ret;
+  return SYSPROF_DOCUMENT_FRAME_INT32 (self, self->frame->pid);
 }
 
 gint64
 sysprof_document_frame_get_time (SysprofDocumentFrame *self)
 {
-  gint64 ret;
-
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
 
-  if G_LIKELY (self->needs_swap)
-    ret = self->frame->time;
-  else
-    ret = GUINT32_SWAP_LE_BE (self->frame->time);
-
-  return ret;
+  return SYSPROF_DOCUMENT_FRAME_INT64 (self, self->frame->time);
 }

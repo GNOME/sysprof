@@ -80,4 +80,19 @@ SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *ma
    (SYSPROF_DOCUMENT_FRAME_NEEDS_SWAP(obj) ? GINT64_TO_BE(val) : (val))
 #endif
 
+static inline const char *
+SYSPROF_DOCUMENT_FRAME_CSTRING (SysprofDocumentFrame *self,
+                                const char           *str)
+{
+  const char *endptr = (const char *)self->frame + self->frame_len;
+
+  for (const char *c = str; c < endptr; c++)
+    {
+      if (*c == 0)
+        return str;
+    }
+
+  return NULL;
+}
+
 G_END_DECLS

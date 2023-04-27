@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "sysprof-document-sample.h"
+#include "sysprof-document-frame.h"
 
 G_BEGIN_DECLS
 

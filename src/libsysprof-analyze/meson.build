@@ -36,7 +36,7 @@ libsysprof_analyze_deps = [
   libsysprof_capture_deps,
 ]
 
-libsysprof_analyze = library('sysprof-analyze',
+libsysprof_analyze = library('sysprof-analyze-@0@'.format(soname_major_version),
                              libsysprof_analyze_public_sources,
     include_directories: [include_directories('.'),
                           ipc_include_dirs,
@@ -45,6 +45,7 @@ libsysprof_analyze = library('sysprof-analyze',
   gnu_symbol_visibility: 'hidden',
                 version: '@0@.0.0'.format(soname_major_version),
         darwin_versions: '@0@.0'.format(soname_major_version),
+                install: true,
 )
 
 libsysprof_analyze_dep = declare_dependency(

@@ -35,6 +35,7 @@ G_BEGIN_DECLS
 # include "sysprof-document-metadata.h"
 # include "sysprof-document-mmap.h"
 # include "sysprof-document-process.h"
+# include "sysprof-document-process-list.h"
 # include "sysprof-document-sample.h"
 # include "sysprof-document-traceable.h"
 #undef SYSPROF_ANALYZE_INSIDE

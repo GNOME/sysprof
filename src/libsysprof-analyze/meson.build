@@ -9,6 +9,7 @@ libsysprof_analyze_public_sources = [
   'sysprof-document-metadata.c',
   'sysprof-document-mmap.c',
   'sysprof-document-process.c',
+  'sysprof-document-process-list.c',
   'sysprof-document-sample.c',
   'sysprof-document-traceable.c',
 ]
@@ -25,6 +26,7 @@ libsysprof_analyze_public_headers = [
   'sysprof-document-metadata.h',
   'sysprof-document-mmap.h',
   'sysprof-document-process.h',
+  'sysprof-document-process-list.h',
   'sysprof-document-sample.h',
   'sysprof-document-traceable.h',
 ]

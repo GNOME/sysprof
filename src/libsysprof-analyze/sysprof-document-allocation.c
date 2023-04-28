@@ -21,7 +21,9 @@
 #include "config.h"
 
 #include "sysprof-document-frame-private.h"
+
 #include "sysprof-document-allocation.h"
+#include "sysprof-document-traceable.h"
 
 struct _SysprofDocumentAllocation
 {
@@ -42,7 +44,32 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_FINAL_TYPE (SysprofDocumentAllocation, sysprof_document_allocation, SYSPROF_TYPE_DOCUMENT_FRAME)
+static guint
+sysprof_document_allocation_get_stack_depth (SysprofDocumentTraceable *traceable)
+{
+  const SysprofCaptureAllocation *allocation = SYSPROF_DOCUMENT_FRAME_GET (traceable, SysprofCaptureAllocation);
+
+  return SYSPROF_DOCUMENT_FRAME_UINT16 (traceable, allocation->n_addrs);
+}
+
+static guint64
+sysprof_document_allocation_get_stack_address (SysprofDocumentTraceable *traceable,
+                                               guint                     position)
+{
+  const SysprofCaptureAllocation *allocation = SYSPROF_DOCUMENT_FRAME_GET (traceable, SysprofCaptureAllocation);
+
+  return SYSPROF_DOCUMENT_FRAME_UINT64 (traceable, allocation->addrs[position]);
+}
+
+static void
+traceable_iface_init (SysprofDocumentTraceableInterface *iface)
+{
+  iface->get_stack_depth = sysprof_document_allocation_get_stack_depth;
+  iface->get_stack_address = sysprof_document_allocation_get_stack_address;
+}
+
+G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocumentAllocation, sysprof_document_allocation, SYSPROF_TYPE_DOCUMENT_FRAME,
+                               G_IMPLEMENT_INTERFACE (SYSPROF_TYPE_DOCUMENT_TRACEABLE, traceable_iface_init))
 
 static GParamSpec *properties [N_PROPS];
 

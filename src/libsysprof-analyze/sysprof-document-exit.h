@@ -1,4 +1,4 @@
-/* sysprof-analyze.h
+/* sysprof-document-exit.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,19 +20,20 @@
 
 #pragma once
 
-#include <glib.h>
+#include "sysprof-document-frame.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_ANALYZE_INSIDE
-# include "sysprof-document.h"
-# include "sysprof-document-exit.h"
-# include "sysprof-document-frame.h"
-# include "sysprof-document-log.h"
-# include "sysprof-document-mark.h"
-# include "sysprof-document-mmap.h"
-# include "sysprof-document-process.h"
-# include "sysprof-document-sample.h"
-#undef SYSPROF_ANALYZE_INSIDE
+#define SYSPROF_TYPE_DOCUMENT_EXIT         (sysprof_document_exit_get_type())
+#define SYSPROF_IS_DOCUMENT_EXIT(obj)      G_TYPE_CHECK_INSTANCE_TYPE(obj, SYSPROF_TYPE_DOCUMENT_EXIT)
+#define SYSPROF_DOCUMENT_EXIT(obj)         G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_DOCUMENT_EXIT, SysprofDocumentExit)
+#define SYSPROF_DOCUMENT_EXIT_CLASS(klass) G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_DOCUMENT_EXIT, SysprofDocumentExitClass)
+
+typedef struct _SysprofDocumentExit      SysprofDocumentExit;
+typedef struct _SysprofDocumentExitClass SysprofDocumentExitClass;
+
+SYSPROF_AVAILABLE_IN_ALL
+GType sysprof_document_exit_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS
+

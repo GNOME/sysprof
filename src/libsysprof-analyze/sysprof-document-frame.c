@@ -21,6 +21,8 @@
 #include "config.h"
 
 #include "sysprof-document-frame-private.h"
+
+#include "sysprof-document-exit.h"
 #include "sysprof-document-log.h"
 #include "sysprof-document-mark.h"
 #include "sysprof-document-mmap.h"
@@ -136,6 +138,8 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
     gtype = SYSPROF_TYPE_DOCUMENT_MARK;
   else if (frame->type == SYSPROF_CAPTURE_FRAME_PROCESS)
     gtype = SYSPROF_TYPE_DOCUMENT_PROCESS;
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_EXIT)
+    gtype = SYSPROF_TYPE_DOCUMENT_EXIT;
 
   self = g_object_new (gtype, NULL);
   self->mapped_file = g_mapped_file_ref (mapped_file);

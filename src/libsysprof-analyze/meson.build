@@ -1,5 +1,6 @@
 libsysprof_analyze_public_sources = [
   'sysprof-document.c',
+  'sysprof-document-allocation.c',
   'sysprof-document-exit.c',
   'sysprof-document-fork.c',
   'sysprof-document-frame.c',
@@ -14,6 +15,7 @@ libsysprof_analyze_public_sources = [
 libsysprof_analyze_public_headers = [
   'sysprof-analyze.h',
   'sysprof-document.h',
+  'sysprof-document-allocation.h',
   'sysprof-document-exit.h',
   'sysprof-document-fork.h',
   'sysprof-document-frame.h',

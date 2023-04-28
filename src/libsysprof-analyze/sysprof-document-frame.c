@@ -22,6 +22,7 @@
 
 #include "sysprof-document-frame-private.h"
 
+#include "sysprof-document-allocation.h"
 #include "sysprof-document-exit.h"
 #include "sysprof-document-fork.h"
 #include "sysprof-document-log.h"
@@ -156,6 +157,10 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
 
     case SYSPROF_CAPTURE_FRAME_FORK:
       gtype = SYSPROF_TYPE_DOCUMENT_FORK;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_ALLOCATION:
+      gtype = SYSPROF_TYPE_DOCUMENT_ALLOCATION;
       break;
 
     default:

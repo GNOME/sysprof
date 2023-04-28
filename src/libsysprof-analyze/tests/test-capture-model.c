@@ -61,6 +61,16 @@ main (int argc,
       else if (SYSPROF_IS_DOCUMENT_FORK (frame))
         g_print (" child-pid=%d",
                  sysprof_document_fork_get_child_pid (SYSPROF_DOCUMENT_FORK (frame)));
+      else if (SYSPROF_IS_DOCUMENT_ALLOCATION (frame))
+        {
+          if (sysprof_document_allocation_is_free (SYSPROF_DOCUMENT_ALLOCATION (frame)))
+            g_print (" 0x%016"G_GINT64_MODIFIER"x: free",
+                     sysprof_document_allocation_get_address (SYSPROF_DOCUMENT_ALLOCATION (frame)));
+          else
+            g_print (" 0x%016"G_GINT64_MODIFIER"x: allocate %"G_GUINT64_FORMAT" at ",
+                     sysprof_document_allocation_get_address (SYSPROF_DOCUMENT_ALLOCATION (frame)),
+                     sysprof_document_allocation_get_size (SYSPROF_DOCUMENT_ALLOCATION (frame)));
+        }
 
       g_print ("\n");
 

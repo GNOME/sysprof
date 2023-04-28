@@ -36,11 +36,26 @@ main (int argc,
     {
       SysprofDocumentFrame *frame = g_list_model_get_item (G_LIST_MODEL (document), i);
 
-      g_print ("%"G_GINT64_FORMAT" [pid %d] [cpu %d] (type %s)\n",
+      g_print ("%"G_GINT64_FORMAT" [pid %d] [cpu %d] (type %s)",
                sysprof_document_frame_get_time (frame),
                sysprof_document_frame_get_pid (frame),
                sysprof_document_frame_get_cpu (frame),
                G_OBJECT_TYPE_NAME (frame));
+
+      if (0) {}
+      else if (SYSPROF_IS_DOCUMENT_LOG (frame))
+        g_print (" domain=%s message=%s",
+                 sysprof_document_log_get_domain (SYSPROF_DOCUMENT_LOG (frame)),
+                 sysprof_document_log_get_message (SYSPROF_DOCUMENT_LOG (frame)));
+      else if (SYSPROF_IS_DOCUMENT_MARK (frame))
+        g_print (" group=%s name=%s message=%s",
+                 sysprof_document_mark_get_group (SYSPROF_DOCUMENT_MARK (frame)),
+                 sysprof_document_mark_get_name (SYSPROF_DOCUMENT_MARK (frame)),
+                 sysprof_document_mark_get_message (SYSPROF_DOCUMENT_MARK (frame)));
+      else if (SYSPROF_IS_DOCUMENT_PROCESS (frame))
+        g_print (" cmdline=%s", sysprof_document_process_get_command_line (SYSPROF_DOCUMENT_PROCESS (frame)));
+
+      g_print ("\n");
 
       g_clear_object (&frame);
     }

@@ -37,5 +37,7 @@ GType       sysprof_document_process_get_type         (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_process_get_command_line (SysprofDocumentProcess *self);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentProcess, g_object_unref)
+
 G_END_DECLS
 

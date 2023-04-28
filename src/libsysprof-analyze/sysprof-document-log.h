@@ -41,4 +41,6 @@ GLogLevelFlags  sysprof_document_log_get_severity (SysprofDocumentLog *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char     *sysprof_document_log_get_domain   (SysprofDocumentLog *self);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentLog, g_object_unref)
+
 G_END_DECLS

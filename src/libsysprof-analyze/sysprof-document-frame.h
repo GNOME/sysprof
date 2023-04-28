@@ -22,6 +22,8 @@
 
 #include <glib-object.h>
 
+#include <sysprof-capture.h>
+
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_DOCUMENT_FRAME         (sysprof_document_frame_get_type())
@@ -40,5 +42,7 @@ SYSPROF_AVAILABLE_IN_ALL
 int    sysprof_document_frame_get_pid  (SysprofDocumentFrame *self);
 SYSPROF_AVAILABLE_IN_ALL
 gint64 sysprof_document_frame_get_time (SysprofDocumentFrame *self);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentFrame, g_object_unref)
 
 G_END_DECLS

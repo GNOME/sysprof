@@ -43,5 +43,7 @@ const char *sysprof_document_mark_get_name     (SysprofDocumentMark *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_mark_get_message  (SysprofDocumentMark *self);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentMark, g_object_unref)
+
 G_END_DECLS
 

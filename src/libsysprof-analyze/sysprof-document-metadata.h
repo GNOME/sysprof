@@ -39,5 +39,7 @@ const char *sysprof_document_metadata_get_id    (SysprofDocumentMetadata *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_metadata_get_value (SysprofDocumentMetadata *self);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentMetadata, g_object_unref)
+
 G_END_DECLS
 

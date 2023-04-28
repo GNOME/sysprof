@@ -43,4 +43,6 @@ int      sysprof_document_allocation_get_tid     (SysprofDocumentAllocation *sel
 SYSPROF_AVAILABLE_IN_ALL
 gboolean sysprof_document_allocation_is_free     (SysprofDocumentAllocation *self);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentAllocation, g_object_unref)
+
 G_END_DECLS

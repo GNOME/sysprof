@@ -39,4 +39,6 @@ guint  sysprof_document_sample_get_depth (SysprofDocumentSample *self);
 SYSPROF_AVAILABLE_IN_ALL
 int    sysprof_document_sample_get_tid   (SysprofDocumentSample *self);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentSample, g_object_unref)
+
 G_END_DECLS

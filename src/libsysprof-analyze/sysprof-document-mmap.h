@@ -46,4 +46,6 @@ guint64     sysprof_document_mmap_get_file_offset   (SysprofDocumentMmap *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_mmap_get_file          (SysprofDocumentMmap *self);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentMmap, g_object_unref)
+
 G_END_DECLS

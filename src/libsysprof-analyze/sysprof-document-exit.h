@@ -35,5 +35,7 @@ typedef struct _SysprofDocumentExitClass SysprofDocumentExitClass;
 SYSPROF_AVAILABLE_IN_ALL
 GType sysprof_document_exit_get_type (void) G_GNUC_CONST;
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentExit, g_object_unref)
+
 G_END_DECLS
 

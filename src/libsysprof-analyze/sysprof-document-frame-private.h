@@ -81,8 +81,8 @@ SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *ma
 #endif
 
 static inline const char *
-SYSPROF_DOCUMENT_FRAME_CSTRING (SysprofDocumentFrame *self,
-                                const char           *str)
+_SYSPROF_DOCUMENT_FRAME_CSTRING (SysprofDocumentFrame *self,
+                                 const char           *str)
 {
   const char *endptr = (const char *)self->frame + self->frame_len;
 
@@ -94,5 +94,8 @@ SYSPROF_DOCUMENT_FRAME_CSTRING (SysprofDocumentFrame *self,
 
   return NULL;
 }
+
+#define SYSPROF_DOCUMENT_FRAME_CSTRING(obj,str) \
+  _SYSPROF_DOCUMENT_FRAME_CSTRING(SYSPROF_DOCUMENT_FRAME(obj),str)
 
 G_END_DECLS

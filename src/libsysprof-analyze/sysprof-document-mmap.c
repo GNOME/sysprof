@@ -180,5 +180,5 @@ sysprof_document_mmap_get_file (SysprofDocumentMmap *self)
 
   mmap = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureMap);
 
-  return SYSPROF_DOCUMENT_FRAME_CSTRING (SYSPROF_DOCUMENT_FRAME (self), mmap->filename);
+  return SYSPROF_DOCUMENT_FRAME_CSTRING (self, mmap->filename);
 }

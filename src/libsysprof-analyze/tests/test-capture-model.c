@@ -72,6 +72,10 @@ main (int argc,
                      sysprof_document_allocation_get_size (SYSPROF_DOCUMENT_ALLOCATION (frame)));
         }
 
+      if (SYSPROF_IS_DOCUMENT_TRACEABLE (frame))
+        g_print (" stack-depth=%u",
+                 sysprof_document_traceable_get_stack_depth (SYSPROF_DOCUMENT_TRACEABLE (frame)));
+
       g_print ("\n");
 
       g_clear_object (&frame);

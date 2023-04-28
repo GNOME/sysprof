@@ -22,6 +22,7 @@
 
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-log.h"
+#include "sysprof-document-mark.h"
 #include "sysprof-document-mmap.h"
 #include "sysprof-document-sample.h"
 
@@ -130,6 +131,8 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
     gtype = SYSPROF_TYPE_DOCUMENT_MMAP;
   else if (frame->type == SYSPROF_CAPTURE_FRAME_LOG)
     gtype = SYSPROF_TYPE_DOCUMENT_LOG;
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_MARK)
+    gtype = SYSPROF_TYPE_DOCUMENT_MARK;
 
   self = g_object_new (gtype, NULL);
   self->mapped_file = g_mapped_file_ref (mapped_file);

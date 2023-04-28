@@ -37,7 +37,7 @@ struct _SysprofDocumentSampleClass
 
 enum {
   PROP_0,
-  PROP_DEPTH,
+  PROP_STACK_DEPTH,
   PROP_TID,
   N_PROPS
 };
@@ -81,8 +81,8 @@ sysprof_document_sample_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_DEPTH:
-      g_value_set_uint (value, sysprof_document_sample_get_depth (self));
+    case PROP_STACK_DEPTH:
+      g_value_set_uint (value, sysprof_document_traceable_get_stack_depth (SYSPROF_DOCUMENT_TRACEABLE (self)));
       break;
 
     case PROP_TID:
@@ -116,14 +116,14 @@ sysprof_document_sample_class_init (SysprofDocumentSampleClass *klass)
                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   /**
-   * SysprofDocumentSample:depth:
+   * SysprofDocumentSample:stack-depth:
    *
    * The depth of the stack trace.
    *
    * Since: 45
    */
-  properties [PROP_DEPTH] =
-    g_param_spec_uint ("depth", NULL, NULL,
+  properties [PROP_STACK_DEPTH] =
+    g_param_spec_uint ("stack-depth", NULL, NULL,
                        0, G_MAXUINT32, 0,
                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -133,18 +133,6 @@ sysprof_document_sample_class_init (SysprofDocumentSampleClass *klass)
 static void
 sysprof_document_sample_init (SysprofDocumentSample *self)
 {
-}
-
-guint
-sysprof_document_sample_get_depth (SysprofDocumentSample *self)
-{
-  const SysprofCaptureSample *sample;
-
-  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_SAMPLE (self), 0);
-
-  sample = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureSample);
-
-  return SYSPROF_DOCUMENT_FRAME_UINT32 (self, sample->n_addrs);
 }
 
 int

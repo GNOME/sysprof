@@ -40,6 +40,7 @@ enum {
   PROP_ADDRESS,
   PROP_IS_FREE,
   PROP_SIZE,
+  PROP_STACK_DEPTH,
   PROP_TID,
   N_PROPS
 };
@@ -95,6 +96,10 @@ sysprof_document_allocation_get_property (GObject    *object,
       g_value_set_int64 (value, sysprof_document_allocation_get_size (self));
       break;
 
+    case PROP_STACK_DEPTH:
+      g_value_set_uint (value, sysprof_document_traceable_get_stack_depth (SYSPROF_DOCUMENT_TRACEABLE (self)));
+      break;
+
     case PROP_TID:
       g_value_set_int (value, sysprof_document_allocation_get_tid (self));
       break;
@@ -141,16 +146,38 @@ sysprof_document_allocation_class_init (SysprofDocumentAllocationClass *klass)
    * SysprofDocumentAllocation:size:
    *
    * The size of the memory that was allocated or freed.
+   *
+   * Since: 45
    */
   properties [PROP_SIZE] =
     g_param_spec_int64 ("size", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  /**
+   * SysprofDocumentAllocation:is-free:
+   *
+   * If this allocation record is a call to release
+   * #SysprofDocumentAllocation:address.
+   *
+   * Since: 45
+   */
   properties [PROP_IS_FREE] =
     g_param_spec_boolean ("is-free", NULL, NULL,
                           FALSE,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * SysprofDocumentAllocation:stack-depth:
+   *
+   * The depth of the stack trace.
+   *
+   * Since: 45
+   */
+  properties [PROP_STACK_DEPTH] =
+    g_param_spec_uint ("stack-depth", NULL, NULL,
+                       0, G_MAXUINT16, 0,
+                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

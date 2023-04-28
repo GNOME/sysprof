@@ -28,6 +28,21 @@ G_DEFINE_INTERFACE (SysprofDocumentTraceable, sysprof_document_traceable, SYSPRO
 static void
 sysprof_document_traceable_default_init (SysprofDocumentTraceableInterface *iface)
 {
+  /**
+   * SysprofDocumentTraceable:stack-depth:
+   *
+   * The "stack-depth" property contains the number of addresses collected
+   * in the backtrace.
+   *
+   * You may use this value to retrieve the addresses from 0 to ("stack-depth"-1)
+   * by calling sysprof_document_traceable_get_stack_address().
+   *
+   * Since: 45
+   */
+  g_object_interface_install_property (iface,
+                                       g_param_spec_uint ("stack-depth", NULL, NULL,
+                                                          0, G_MAXUINT16, 0,
+                                                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 }
 
 guint

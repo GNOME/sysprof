@@ -33,11 +33,9 @@ typedef struct _SysprofDocumentSample      SysprofDocumentSample;
 typedef struct _SysprofDocumentSampleClass SysprofDocumentSampleClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType  sysprof_document_sample_get_type  (void) G_GNUC_CONST;
+GType sysprof_document_sample_get_type (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
-guint  sysprof_document_sample_get_depth (SysprofDocumentSample *self);
-SYSPROF_AVAILABLE_IN_ALL
-int    sysprof_document_sample_get_tid   (SysprofDocumentSample *self);
+int   sysprof_document_sample_get_tid  (SysprofDocumentSample *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentSample, g_object_unref)
 

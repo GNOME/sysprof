@@ -30,6 +30,7 @@ G_BEGIN_DECLS
 # include "sysprof-document-frame.h"
 # include "sysprof-document-log.h"
 # include "sysprof-document-mark.h"
+# include "sysprof-document-metadata.h"
 # include "sysprof-document-mmap.h"
 # include "sysprof-document-process.h"
 # include "sysprof-document-sample.h"

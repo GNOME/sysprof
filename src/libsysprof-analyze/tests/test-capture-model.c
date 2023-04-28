@@ -54,6 +54,10 @@ main (int argc,
                  sysprof_document_mark_get_message (SYSPROF_DOCUMENT_MARK (frame)));
       else if (SYSPROF_IS_DOCUMENT_PROCESS (frame))
         g_print (" cmdline=%s", sysprof_document_process_get_command_line (SYSPROF_DOCUMENT_PROCESS (frame)));
+      else if (SYSPROF_IS_DOCUMENT_METADATA (frame))
+        g_print (" id=%s value=%s",
+                 sysprof_document_metadata_get_id (SYSPROF_DOCUMENT_METADATA (frame)),
+                 sysprof_document_metadata_get_value (SYSPROF_DOCUMENT_METADATA (frame)));
 
       g_print ("\n");
 

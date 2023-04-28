@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 #define SYSPROF_ANALYZE_INSIDE
 # include "sysprof-document.h"
 # include "sysprof-document-exit.h"
+# include "sysprof-document-fork.h"
 # include "sysprof-document-frame.h"
 # include "sysprof-document-log.h"
 # include "sysprof-document-mark.h"

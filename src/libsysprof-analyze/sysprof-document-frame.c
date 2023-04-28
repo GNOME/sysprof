@@ -23,6 +23,7 @@
 #include "sysprof-document-frame-private.h"
 
 #include "sysprof-document-exit.h"
+#include "sysprof-document-fork.h"
 #include "sysprof-document-log.h"
 #include "sysprof-document-mark.h"
 #include "sysprof-document-mmap.h"
@@ -124,22 +125,43 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
                              guint16                    frame_len,
                              gboolean                   needs_swap)
 {
-  GType gtype = SYSPROF_TYPE_DOCUMENT_FRAME;
   SysprofDocumentFrame *self;
+  GType gtype;
 
-  if (0) {}
-  else if (frame->type == SYSPROF_CAPTURE_FRAME_SAMPLE)
-    gtype = SYSPROF_TYPE_DOCUMENT_SAMPLE;
-  else if (frame->type == SYSPROF_CAPTURE_FRAME_MAP)
-    gtype = SYSPROF_TYPE_DOCUMENT_MMAP;
-  else if (frame->type == SYSPROF_CAPTURE_FRAME_LOG)
-    gtype = SYSPROF_TYPE_DOCUMENT_LOG;
-  else if (frame->type == SYSPROF_CAPTURE_FRAME_MARK)
-    gtype = SYSPROF_TYPE_DOCUMENT_MARK;
-  else if (frame->type == SYSPROF_CAPTURE_FRAME_PROCESS)
-    gtype = SYSPROF_TYPE_DOCUMENT_PROCESS;
-  else if (frame->type == SYSPROF_CAPTURE_FRAME_EXIT)
-    gtype = SYSPROF_TYPE_DOCUMENT_EXIT;
+  switch (frame->type)
+    {
+    case SYSPROF_CAPTURE_FRAME_SAMPLE:
+      gtype = SYSPROF_TYPE_DOCUMENT_SAMPLE;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_MAP:
+      gtype = SYSPROF_TYPE_DOCUMENT_MMAP;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_LOG:
+      gtype = SYSPROF_TYPE_DOCUMENT_LOG;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_MARK:
+      gtype = SYSPROF_TYPE_DOCUMENT_MARK;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_PROCESS:
+      gtype = SYSPROF_TYPE_DOCUMENT_PROCESS;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_EXIT:
+      gtype = SYSPROF_TYPE_DOCUMENT_EXIT;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_FORK:
+      gtype = SYSPROF_TYPE_DOCUMENT_FORK;
+      break;
+
+    default:
+      gtype = SYSPROF_TYPE_DOCUMENT_FRAME;
+      break;
+    }
 
   self = g_object_new (gtype, NULL);
   self->mapped_file = g_mapped_file_ref (mapped_file);

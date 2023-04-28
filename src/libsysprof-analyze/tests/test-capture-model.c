@@ -58,6 +58,9 @@ main (int argc,
         g_print (" id=%s value=%s",
                  sysprof_document_metadata_get_id (SYSPROF_DOCUMENT_METADATA (frame)),
                  sysprof_document_metadata_get_value (SYSPROF_DOCUMENT_METADATA (frame)));
+      else if (SYSPROF_IS_DOCUMENT_FORK (frame))
+        g_print (" child-pid=%d",
+                 sysprof_document_fork_get_child_pid (SYSPROF_DOCUMENT_FORK (frame)));
 
       g_print ("\n");
 

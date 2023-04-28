@@ -36,6 +36,7 @@ struct _SysprofDocumentAllocationClass
 enum {
   PROP_0,
   PROP_ADDRESS,
+  PROP_IS_FREE,
   PROP_SIZE,
   PROP_TID,
   N_PROPS
@@ -57,6 +58,10 @@ sysprof_document_allocation_get_property (GObject    *object,
     {
     case PROP_ADDRESS:
       g_value_set_uint64 (value, sysprof_document_allocation_get_address (self));
+      break;
+
+    case PROP_IS_FREE:
+      g_value_set_boolean (value, sysprof_document_allocation_is_free (self));
       break;
 
     case PROP_SIZE:
@@ -114,6 +119,11 @@ sysprof_document_allocation_class_init (SysprofDocumentAllocationClass *klass)
     g_param_spec_int64 ("size", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_IS_FREE] =
+    g_param_spec_boolean ("is-free", NULL, NULL,
+                          FALSE,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

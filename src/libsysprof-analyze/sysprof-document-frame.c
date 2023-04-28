@@ -24,6 +24,7 @@
 #include "sysprof-document-log.h"
 #include "sysprof-document-mark.h"
 #include "sysprof-document-mmap.h"
+#include "sysprof-document-process.h"
 #include "sysprof-document-sample.h"
 
 G_DEFINE_TYPE (SysprofDocumentFrame, sysprof_document_frame, G_TYPE_OBJECT)
@@ -133,6 +134,8 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
     gtype = SYSPROF_TYPE_DOCUMENT_LOG;
   else if (frame->type == SYSPROF_CAPTURE_FRAME_MARK)
     gtype = SYSPROF_TYPE_DOCUMENT_MARK;
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_PROCESS)
+    gtype = SYSPROF_TYPE_DOCUMENT_PROCESS;
 
   self = g_object_new (gtype, NULL);
   self->mapped_file = g_mapped_file_ref (mapped_file);

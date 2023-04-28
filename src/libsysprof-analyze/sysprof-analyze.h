@@ -30,6 +30,7 @@ G_BEGIN_DECLS
 # include "sysprof-document-log.h"
 # include "sysprof-document-mark.h"
 # include "sysprof-document-mmap.h"
+# include "sysprof-document-process.h"
 # include "sysprof-document-sample.h"
 #undef SYSPROF_ANALYZE_INSIDE
 

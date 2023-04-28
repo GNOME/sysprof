@@ -4,6 +4,7 @@ libsysprof_analyze_public_sources = [
   'sysprof-document-log.c',
   'sysprof-document-mark.c',
   'sysprof-document-mmap.c',
+  'sysprof-document-process.c',
   'sysprof-document-sample.c',
 ]
 
@@ -14,6 +15,7 @@ libsysprof_analyze_public_headers = [
   'sysprof-document-log.h',
   'sysprof-document-mark.h',
   'sysprof-document-mmap.h',
+  'sysprof-document-process.h',
   'sysprof-document-sample.h',
 ]
 

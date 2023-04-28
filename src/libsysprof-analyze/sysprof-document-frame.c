@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-document-frame-private.h"
+#include "sysprof-document-log.h"
 #include "sysprof-document-mmap.h"
 #include "sysprof-document-sample.h"
 
@@ -123,10 +124,12 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
   SysprofDocumentFrame *self;
 
   if (0) {}
-  else if (frame->type == SYSPROF_CAPTURE_FRAME_MAP)
-    gtype = SYSPROF_TYPE_DOCUMENT_MMAP;
   else if (frame->type == SYSPROF_CAPTURE_FRAME_SAMPLE)
     gtype = SYSPROF_TYPE_DOCUMENT_SAMPLE;
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_MAP)
+    gtype = SYSPROF_TYPE_DOCUMENT_MMAP;
+  else if (frame->type == SYSPROF_CAPTURE_FRAME_LOG)
+    gtype = SYSPROF_TYPE_DOCUMENT_LOG;
 
   self = g_object_new (gtype, NULL);
   self->mapped_file = g_mapped_file_ref (mapped_file);

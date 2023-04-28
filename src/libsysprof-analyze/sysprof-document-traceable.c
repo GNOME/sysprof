@@ -1,4 +1,5 @@
-/* sysprof-analyze.h
+/*
+ * sysprof-document-traceable.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,25 +19,26 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#pragma once
+#include "config.h"
 
-#include <glib.h>
+#include "sysprof-document-traceable.h"
 
-G_BEGIN_DECLS
+G_DEFINE_INTERFACE (SysprofDocumentTraceable, sysprof_document_traceable, SYSPROF_TYPE_DOCUMENT_FRAME)
 
-#define SYSPROF_ANALYZE_INSIDE
-# include "sysprof-document.h"
-# include "sysprof-document-allocation.h"
-# include "sysprof-document-exit.h"
-# include "sysprof-document-fork.h"
-# include "sysprof-document-frame.h"
-# include "sysprof-document-log.h"
-# include "sysprof-document-mark.h"
-# include "sysprof-document-metadata.h"
-# include "sysprof-document-mmap.h"
-# include "sysprof-document-process.h"
-# include "sysprof-document-sample.h"
-# include "sysprof-document-traceable.h"
-#undef SYSPROF_ANALYZE_INSIDE
+static void
+sysprof_document_traceable_default_init (SysprofDocumentTraceableInterface *iface)
+{
+}
 
-G_END_DECLS
+guint
+sysprof_document_traceable_get_stack_depth (SysprofDocumentTraceable *self)
+{
+  return SYSPROF_DOCUMENT_TRACEABLE_GET_IFACE (self)->get_stack_depth (self);
+}
+
+guint64
+sysprof_document_traceable_get_stack_address (SysprofDocumentTraceable *self,
+                                              guint                     position)
+{
+  return SYSPROF_DOCUMENT_TRACEABLE_GET_IFACE (self)->get_stack_address (self, position);
+}

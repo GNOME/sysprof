@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 #define SYSPROF_ANALYZE_INSIDE
 # include "sysprof-document.h"
 # include "sysprof-document-frame.h"
+# include "sysprof-document-mmap.h"
 # include "sysprof-document-sample.h"
 #undef SYSPROF_ANALYZE_INSIDE
 

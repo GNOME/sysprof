@@ -30,9 +30,14 @@
 struct _SysprofDocument
 {
   GObject                   parent_instance;
+
   GArray                   *frames;
   GMappedFile              *mapped_file;
   const guint8             *base;
+
+  GMutex                    strings_mutex;
+  GStringChunk             *strings;
+
   SysprofCaptureFileHeader  header;
   guint                     needs_swap : 1;
 };
@@ -91,6 +96,9 @@ sysprof_document_finalize (GObject *object)
 
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
+  g_clear_pointer (&self->strings, g_string_chunk_free);
+
+  g_mutex_clear (&self->strings_mutex);
 
   G_OBJECT_CLASS (sysprof_document_parent_class)->finalize (object);
 }
@@ -106,6 +114,8 @@ static void
 sysprof_document_init (SysprofDocument *self)
 {
   self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
+  self->strings = g_string_chunk_new (4096L * 4);
+  g_mutex_init (&self->strings_mutex);
 }
 
 static gboolean
@@ -235,4 +245,20 @@ sysprof_document_new (const char  *filename,
     return NULL;
 
   return g_steal_pointer (&self);
+}
+
+const char *
+sysprof_document_intern_string (SysprofDocument *self,
+                                const char      *name)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  if (name == NULL)
+    return NULL;
+
+  g_mutex_lock (&self->strings_mutex);
+  name = g_string_chunk_insert_const (self->strings, name);
+  g_mutex_unlock (&self->strings_mutex);
+
+  return name;
 }

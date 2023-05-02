@@ -1,4 +1,5 @@
-/* sysprof-analyze.h
+/*
+ * sysprof-symbol.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,25 +21,25 @@
 
 #pragma once
 
-#include <glib.h>
+#include <glib-object.h>
+
+#include <sysprof-capture.h>
 
 G_BEGIN_DECLS
 
-#define SYSPROF_ANALYZE_INSIDE
-# include "sysprof-document.h"
-# include "sysprof-document-allocation.h"
-# include "sysprof-document-exit.h"
-# include "sysprof-document-fork.h"
-# include "sysprof-document-frame.h"
-# include "sysprof-document-log.h"
-# include "sysprof-document-mark.h"
-# include "sysprof-document-metadata.h"
-# include "sysprof-document-mmap.h"
-# include "sysprof-document-process.h"
-# include "sysprof-document-process-list.h"
-# include "sysprof-document-sample.h"
-# include "sysprof-document-traceable.h"
-# include "sysprof-symbol.h"
-#undef SYSPROF_ANALYZE_INSIDE
+#define SYSPROF_TYPE_SYMBOL (sysprof_symbol_get_type())
+
+SYSPROF_AVAILABLE_IN_ALL
+G_DECLARE_FINAL_TYPE (SysprofSymbol, sysprof_symbol, SYSPROF, SYMBOL, GObject)
+
+SYSPROF_AVAILABLE_IN_ALL
+const char *sysprof_symbol_get_name        (SysprofSymbol       *self);
+SYSPROF_AVAILABLE_IN_ALL
+const char *sysprof_symbol_get_binary_nick (SysprofSymbol       *self);
+SYSPROF_AVAILABLE_IN_ALL
+const char *sysprof_symbol_get_binary_path (SysprofSymbol       *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean    sysprof_symbol_equal           (const SysprofSymbol *a,
+                                            const SysprofSymbol *b);
 
 G_END_DECLS

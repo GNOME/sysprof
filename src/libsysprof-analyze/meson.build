@@ -12,6 +12,7 @@ libsysprof_analyze_public_sources = [
   'sysprof-document-process-list.c',
   'sysprof-document-sample.c',
   'sysprof-document-traceable.c',
+  'sysprof-symbol.c',
 ]
 
 libsysprof_analyze_public_headers = [
@@ -29,6 +30,7 @@ libsysprof_analyze_public_headers = [
   'sysprof-document-process-list.h',
   'sysprof-document-sample.h',
   'sysprof-document-traceable.h',
+  'sysprof-symbol.h',
 ]
 
 libsysprof_analyze_deps = [

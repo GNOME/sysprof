@@ -1,4 +1,5 @@
-/* sysprof-analyze.h
+/*
+ * sysprof-symbol-private.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,25 +21,12 @@
 
 #pragma once
 
-#include <glib.h>
+#include "sysprof-symbol.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_ANALYZE_INSIDE
-# include "sysprof-document.h"
-# include "sysprof-document-allocation.h"
-# include "sysprof-document-exit.h"
-# include "sysprof-document-fork.h"
-# include "sysprof-document-frame.h"
-# include "sysprof-document-log.h"
-# include "sysprof-document-mark.h"
-# include "sysprof-document-metadata.h"
-# include "sysprof-document-mmap.h"
-# include "sysprof-document-process.h"
-# include "sysprof-document-process-list.h"
-# include "sysprof-document-sample.h"
-# include "sysprof-document-traceable.h"
-# include "sysprof-symbol.h"
-#undef SYSPROF_ANALYZE_INSIDE
+SysprofSymbol *_sysprof_symbol_new (char *name,
+                                    char *binary_nick,
+                                    char *binary_path);
 
 G_END_DECLS

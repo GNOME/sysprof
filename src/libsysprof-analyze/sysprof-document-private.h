@@ -20,9 +20,11 @@
 
 #pragma once
 
+#include "sysprof-document.h"
+
 G_BEGIN_DECLS
 
-const char *sysprof_document_intern_string (SysprofDocument *self,
-                                            const char      *name);
+char *_sysprof_document_ref_string (SysprofDocument *self,
+                                    const char      *name);
 
 G_END_DECLS

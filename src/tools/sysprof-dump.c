@@ -288,7 +288,8 @@ main (gint argc,
             gdouble ptime = (s->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
             SysprofAddressContext context = SYSPROF_ADDRESS_CONTEXT_NONE;
 
-            g_print ("SAMPLE: pid=%d time=%" G_GINT64_FORMAT " (%lf)\n", s->frame.pid, s->frame.time, ptime);
+            g_print ("SAMPLE: pid=%d tid=%d time=%" G_GINT64_FORMAT " (%lf)\n",
+                     s->frame.pid, s->tid, s->frame.time, ptime);
 
             for (guint i = 0; i < s->n_addrs; i++)
               {

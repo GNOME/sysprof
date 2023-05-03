@@ -20,9 +20,12 @@
 
 #pragma once
 
+#include "sysprof-document.h"
 #include "sysprof-symbolizer.h"
 
 G_BEGIN_DECLS
+
+#define SYSPROF_SYMBOLIZER_GET_CLASS(obj) G_TYPE_INSTANCE_GET_CLASS(obj, SYSPROF_TYPE_SYMBOLIZER, SysprofSymbolizerClass)
 
 struct _SysprofSymbolizer
 {
@@ -32,6 +35,25 @@ struct _SysprofSymbolizer
 struct _SysprofSymbolizerClass
 {
   GObjectClass parent_class;
+
+  void     (*prepare_async)  (SysprofSymbolizer    *self,
+                              SysprofDocument      *document,
+                              GCancellable         *cancellable,
+                              GAsyncReadyCallback   callback,
+                              gpointer              user_data);
+  gboolean (*prepare_finish) (SysprofSymbolizer    *self,
+                              GAsyncResult         *result,
+                              GError              **error);
 };
+
+
+void     _sysprof_symbolizer_prepare_async  (SysprofSymbolizer    *self,
+                                             SysprofDocument      *document,
+                                             GCancellable         *cancellable,
+                                             GAsyncReadyCallback   callback,
+                                             gpointer              user_data);
+gboolean _sysprof_symbolizer_prepare_finish (SysprofSymbolizer    *self,
+                                             GAsyncResult         *result,
+                                             GError              **error);
 
 G_END_DECLS

@@ -37,6 +37,87 @@ struct _SysprofMultiSymbolizerClass
 G_DEFINE_FINAL_TYPE (SysprofMultiSymbolizer, sysprof_multi_symbolizer, SYSPROF_TYPE_SYMBOLIZER)
 
 static void
+sysprof_multi_symbolizer_prepare_cb (GObject      *object,
+                                     GAsyncResult *result,
+                                     gpointer      user_data)
+{
+  SysprofSymbolizer *symbolizer = (SysprofSymbolizer *)object;
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(GError) error = NULL;
+  GPtrArray *state;
+
+  g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  state = g_task_get_task_data (task);
+
+  g_assert (state != NULL);
+  g_assert (state->len > 0);
+
+  if (!_sysprof_symbolizer_prepare_finish (symbolizer, result, &error))
+    g_warning ("Failed to initialize symbolizer: %s", error->message);
+
+  g_ptr_array_remove (state, symbolizer);
+
+  if (state->len == 0)
+    g_task_return_boolean (task, TRUE);
+}
+
+static void
+sysprof_multi_symbolizer_prepare_async (SysprofSymbolizer   *symbolizer,
+                                        SysprofDocument     *document,
+                                        GCancellable        *cancellable,
+                                        GAsyncReadyCallback  callback,
+                                        gpointer             user_data)
+{
+  SysprofMultiSymbolizer *self = (SysprofMultiSymbolizer *)symbolizer;
+  g_autoptr(GTask) task = NULL;
+  g_autoptr(GPtrArray) state = NULL;
+
+  g_assert (SYSPROF_IS_MULTI_SYMBOLIZER (self));
+  g_assert (SYSPROF_IS_DOCUMENT (document));
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  state = g_ptr_array_new_with_free_func (g_object_unref);
+  for (guint i = 0; i < self->symbolizers->len; i++)
+    g_ptr_array_add (state, g_object_ref (g_ptr_array_index (self->symbolizers, i)));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_multi_symbolizer_prepare_async);
+  g_task_set_task_data (task, g_ptr_array_ref (state), (GDestroyNotify)g_ptr_array_unref);
+
+  if (state->len == 0)
+    {
+      g_task_return_boolean (task, TRUE);
+      return;
+    }
+
+  for (guint i = 0; i < state->len; i++)
+    {
+      SysprofSymbolizer *child = g_ptr_array_index (state, i);
+
+      _sysprof_symbolizer_prepare_async (child,
+                                         document,
+                                         cancellable,
+                                         sysprof_multi_symbolizer_prepare_cb,
+                                         g_object_ref (task));
+    }
+}
+
+static gboolean
+sysprof_multi_symbolizer_prepare_finish (SysprofSymbolizer  *symbolizer,
+                                         GAsyncResult       *result,
+                                         GError            **error)
+{
+  g_assert (SYSPROF_IS_MULTI_SYMBOLIZER (symbolizer));
+  g_assert (G_IS_TASK (result));
+  g_assert (g_task_is_valid (result, symbolizer));
+
+  return g_task_propagate_boolean (G_TASK (result), error);
+}
+
+static void
 sysprof_multi_symbolizer_finalize (GObject *object)
 {
   SysprofMultiSymbolizer *self = (SysprofMultiSymbolizer *)object;
@@ -50,8 +131,12 @@ static void
 sysprof_multi_symbolizer_class_init (SysprofMultiSymbolizerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  SysprofSymbolizerClass *symbolizer_class = SYSPROF_SYMBOLIZER_CLASS (klass);
 
   object_class->finalize = sysprof_multi_symbolizer_finalize;
+
+  symbolizer_class->prepare_async = sysprof_multi_symbolizer_prepare_async;
+  symbolizer_class->prepare_finish = sysprof_multi_symbolizer_prepare_finish;
 }
 
 static void
@@ -72,6 +157,7 @@ sysprof_multi_symbolizer_add (SysprofMultiSymbolizer *self,
 {
   g_return_if_fail (SYSPROF_IS_MULTI_SYMBOLIZER (self));
   g_return_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer));
+  g_return_if_fail ((gpointer)self != (gpointer)symbolizer);
 
   g_ptr_array_add (self->symbolizers, g_object_ref (symbolizer));
 }

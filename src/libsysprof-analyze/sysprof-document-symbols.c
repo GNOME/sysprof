@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-document-symbols-private.h"
+#include "sysprof-symbolizer-private.h"
 
 struct _SysprofDocumentSymbols
 {

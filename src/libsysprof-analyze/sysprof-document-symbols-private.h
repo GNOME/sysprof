@@ -25,7 +25,12 @@
 
 G_BEGIN_DECLS
 
-SysprofDocumentSymbols *_sysprof_document_symbols_new (SysprofDocument   *document,
-                                                       SysprofSymbolizer *symbolizer);
+void                    _sysprof_document_symbols_new        (SysprofDocument      *document,
+                                                              SysprofSymbolizer    *symbolizer,
+                                                              GCancellable         *cancellable,
+                                                              GAsyncReadyCallback   callback,
+                                                              gpointer              user_data);
+SysprofDocumentSymbols *_sysprof_document_symbols_new_finish (GAsyncResult         *result,
+                                                              GError              **error);
 
 G_END_DECLS

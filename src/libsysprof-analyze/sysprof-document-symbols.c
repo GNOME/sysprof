@@ -24,8 +24,7 @@
 
 struct _SysprofDocumentSymbols
 {
-  GObject            parent_instance;
-  SysprofSymbolizer *symbolizer;
+  GObject parent_instance;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofDocumentSymbols, sysprof_document_symbols, G_TYPE_OBJECT)
@@ -33,10 +32,6 @@ G_DEFINE_FINAL_TYPE (SysprofDocumentSymbols, sysprof_document_symbols, G_TYPE_OB
 static void
 sysprof_document_symbols_finalize (GObject *object)
 {
-  SysprofDocumentSymbols *self = (SysprofDocumentSymbols *)object;
-
-  g_clear_object (&self->symbolizer);
-
   G_OBJECT_CLASS (sysprof_document_symbols_parent_class)->finalize (object);
 }
 
@@ -53,18 +48,70 @@ sysprof_document_symbols_init (SysprofDocumentSymbols *self)
 {
 }
 
-SysprofDocumentSymbols *
-_sysprof_document_symbols_new (SysprofDocument   *document,
-                               SysprofSymbolizer *symbolizer)
+typedef struct _Symbolize
 {
-  SysprofDocumentSymbols *self;
+  SysprofDocument   *document;
+  SysprofSymbolizer *symbolizer;
+} Symbolize;
 
-  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (document), NULL);
-  g_return_val_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer), NULL);
+static void
+symbolize_free (Symbolize *state)
+{
+  g_clear_object (&state->document);
+  g_clear_object (&state->symbolizer);
+  g_free (state);
+}
 
-  self = g_object_new (SYSPROF_TYPE_DOCUMENT_SYMBOLS, NULL);
+static void
+sysprof_document_symbols_worker (GTask        *task,
+                                 gpointer      source_object,
+                                 gpointer      task_data,
+                                 GCancellable *cancellable)
+{
+  Symbolize *state = task_data;
 
-  /* TODO: async generation of symbols */
+  g_assert (G_IS_TASK (task));
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+  g_assert (state != NULL);
+  g_assert (SYSPROF_IS_DOCUMENT (state->document));
+  g_assert (SYSPROF_IS_SYMBOLIZER (state->symbolizer));
 
-  return self;
+  g_task_return_new_error (task,
+                           G_IO_ERROR,
+                           G_IO_ERROR_NOT_SUPPORTED,
+                           "Not yet supported");
+}
+
+void
+_sysprof_document_symbols_new (SysprofDocument     *document,
+                               SysprofSymbolizer   *symbolizer,
+                               GCancellable        *cancellable,
+                               GAsyncReadyCallback  callback,
+                               gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  Symbolize *state;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (document));
+  g_return_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer));
+
+  state = g_new0 (Symbolize, 1);
+  state->document = g_object_ref (document);
+  state->symbolizer = g_object_ref (symbolizer);
+
+  task = g_task_new (NULL, cancellable, callback, user_data);
+  g_task_set_source_tag (task, _sysprof_document_symbols_new);
+  g_task_set_task_data (task, state, (GDestroyNotify)symbolize_free);
+  g_task_run_in_thread (task, sysprof_document_symbols_worker);
+}
+
+SysprofDocumentSymbols *
+_sysprof_document_symbols_new_finish (GAsyncResult  *result,
+                                      GError       **error)
+{
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+  g_return_val_if_fail (g_task_is_valid (result, NULL), NULL);
+  g_return_val_if_fail (g_task_get_source_tag (G_TASK (result)) == _sysprof_document_symbols_new, NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
 }

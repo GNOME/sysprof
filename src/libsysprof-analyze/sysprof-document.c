@@ -26,6 +26,7 @@
 
 #include "sysprof-document.h"
 #include "sysprof-document-frame-private.h"
+#include "sysprof-document-symbols-private.h"
 
 struct _SysprofDocument
 {
@@ -269,4 +270,59 @@ _sysprof_document_ref_string (SysprofDocument *self,
   g_mutex_unlock (&self->strings_mutex);
 
   return ret;
+}
+
+static void
+sysprof_document_symbolize_cb (GObject      *object,
+                               GAsyncResult *result,
+                               gpointer      user_data)
+{
+  g_autoptr(SysprofDocumentSymbols) symbols = NULL;
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if ((symbols = _sysprof_document_symbols_new_finish (result, &error)))
+    g_task_return_pointer (task, g_steal_pointer (&symbols), g_object_unref);
+  else
+    g_task_return_error (task, g_steal_pointer (&error));
+}
+
+void
+sysprof_document_symbolize_async (SysprofDocument     *self,
+                                  SysprofSymbolizer   *symbolizer,
+                                  GCancellable        *cancellable,
+                                  GAsyncReadyCallback  callback,
+                                  gpointer             user_data)
+{
+  g_autoptr(SysprofDocumentSymbols) symbols = NULL;
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
+  g_return_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer));
+  g_return_if_fail (!cancellable || SYSPROF_IS_SYMBOLIZER (symbolizer));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_document_symbolize_async);
+
+  _sysprof_document_symbols_new (self,
+                                 symbolizer,
+                                 cancellable,
+                                 sysprof_document_symbolize_cb,
+                                 g_steal_pointer (&task));
+}
+
+SysprofDocumentSymbols *
+sysprof_document_symbolize_finish (SysprofDocument  *self,
+                                   GAsyncResult     *result,
+                                   GError          **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+  g_return_val_if_fail (g_task_is_valid (result, self), NULL);
+  g_return_val_if_fail (g_task_get_source_tag (G_TASK (result)) == sysprof_document_symbolize_async, NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
 }

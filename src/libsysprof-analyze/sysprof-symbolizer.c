@@ -1,4 +1,4 @@
-/* sysprof-analyze.h
+/* sysprof-symbolizer.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,29 +18,27 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#pragma once
+#include "config.h"
 
-#include <glib.h>
+#include "sysprof-symbolizer-private.h"
 
-G_BEGIN_DECLS
+G_DEFINE_ABSTRACT_TYPE (SysprofSymbolizer, sysprof_symbolizer, G_TYPE_OBJECT)
 
-#define SYSPROF_ANALYZE_INSIDE
-# include "sysprof-document.h"
-# include "sysprof-document-allocation.h"
-# include "sysprof-document-exit.h"
-# include "sysprof-document-fork.h"
-# include "sysprof-document-frame.h"
-# include "sysprof-document-log.h"
-# include "sysprof-document-mark.h"
-# include "sysprof-document-metadata.h"
-# include "sysprof-document-mmap.h"
-# include "sysprof-document-process.h"
-# include "sysprof-document-process-list.h"
-# include "sysprof-document-sample.h"
-# include "sysprof-document-traceable.h"
-# include "sysprof-multi-symbolizer.h"
-# include "sysprof-symbol.h"
-# include "sysprof-symbolizer.h"
-#undef SYSPROF_ANALYZE_INSIDE
+static void
+sysprof_symbolizer_finalize (GObject *object)
+{
+  G_OBJECT_CLASS (sysprof_symbolizer_parent_class)->finalize (object);
+}
 
-G_END_DECLS
+static void
+sysprof_symbolizer_class_init (SysprofSymbolizerClass *klass)
+{
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+  object_class->finalize = sysprof_symbolizer_finalize;
+}
+
+static void
+sysprof_symbolizer_init (SysprofSymbolizer *self)
+{
+}

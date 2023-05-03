@@ -1,4 +1,4 @@
-/* sysprof-analyze.h
+/* sysprof-symbolizer-private.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,27 +20,18 @@
 
 #pragma once
 
-#include <glib.h>
+#include "sysprof-symbolizer.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_ANALYZE_INSIDE
-# include "sysprof-document.h"
-# include "sysprof-document-allocation.h"
-# include "sysprof-document-exit.h"
-# include "sysprof-document-fork.h"
-# include "sysprof-document-frame.h"
-# include "sysprof-document-log.h"
-# include "sysprof-document-mark.h"
-# include "sysprof-document-metadata.h"
-# include "sysprof-document-mmap.h"
-# include "sysprof-document-process.h"
-# include "sysprof-document-process-list.h"
-# include "sysprof-document-sample.h"
-# include "sysprof-document-traceable.h"
-# include "sysprof-multi-symbolizer.h"
-# include "sysprof-symbol.h"
-# include "sysprof-symbolizer.h"
-#undef SYSPROF_ANALYZE_INSIDE
+struct _SysprofSymbolizer
+{
+  GObject parent;
+};
+
+struct _SysprofSymbolizerClass
+{
+  GObjectClass parent_class;
+};
 
 G_END_DECLS

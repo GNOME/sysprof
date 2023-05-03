@@ -22,7 +22,10 @@
 
 #include <gio/gio.h>
 
-#include "sysprof-version-macros.h"
+#include <sysprof-capture.h>
+
+#include "sysprof-document-symbols.h"
+#include "sysprof-symbolizer.h"
 
 G_BEGIN_DECLS
 
@@ -32,10 +35,20 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDocument, sysprof_document, SYSPROF, DOCUMENT, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofDocument *sysprof_document_new         (const char  *filename,
-                                               GError     **error);
+SysprofDocument        *sysprof_document_new              (const char           *filename,
+                                                           GError              **error);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofDocument *sysprof_document_new_from_fd (int          capture_fd,
-                                               GError     **error);
+SysprofDocument        *sysprof_document_new_from_fd      (int                   capture_fd,
+                                                           GError              **error);
+SYSPROF_AVAILABLE_IN_ALL
+void                    sysprof_document_symbolize_async  (SysprofDocument      *self,
+                                                           SysprofSymbolizer    *symbolizer,
+                                                           GCancellable         *cancellable,
+                                                           GAsyncReadyCallback   callback,
+                                                           gpointer              user_data);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDocumentSymbols *sysprof_document_symbolize_finish (SysprofDocument      *self,
+                                                           GAsyncResult         *result,
+                                                           GError              **error);
 
 G_END_DECLS

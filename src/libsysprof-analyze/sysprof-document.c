@@ -24,7 +24,7 @@
 
 #include <glib/gstdio.h>
 
-#include "sysprof-document.h"
+#include "sysprof-document-private.h"
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-symbolizer-private.h"
@@ -36,6 +36,8 @@ struct _SysprofDocument
   GArray                   *frames;
   GMappedFile              *mapped_file;
   const guint8             *base;
+
+  GtkBitset                *samples;
 
   GMutex                    strings_mutex;
   GHashTable               *strings;
@@ -99,6 +101,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
   g_clear_pointer (&self->strings, g_hash_table_unref);
+  g_clear_pointer (&self->samples, gtk_bitset_unref);
 
   g_mutex_clear (&self->strings_mutex);
 
@@ -115,10 +118,12 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
 static void
 sysprof_document_init (SysprofDocument *self)
 {
+  g_mutex_init (&self->strings_mutex);
+
   self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
   self->strings = g_hash_table_new_full (g_str_hash, g_str_equal, NULL,
                                          (GDestroyNotify)g_ref_string_release);
-  g_mutex_init (&self->strings_mutex);
+  self->samples = gtk_bitset_new_empty ();
 }
 
 static gboolean
@@ -158,6 +163,7 @@ sysprof_document_load (SysprofDocument  *self,
   pos = sizeof self->header;
   while (pos < (len - sizeof(guint16)))
     {
+      const SysprofCaptureFrame *tainted;
       SysprofDocumentFramePointer ptr;
       guint16 frame_len;
 
@@ -170,9 +176,15 @@ sysprof_document_load (SysprofDocument  *self,
 
       ptr.offset = pos;
       ptr.length = frame_len;
-      g_array_append_val (self->frames, ptr);
+
+      tainted = (const SysprofCaptureFrame *)(gpointer)&self->base[pos];
+      if (tainted->type == SYSPROF_CAPTURE_FRAME_SAMPLE ||
+          tainted->type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
+        gtk_bitset_add (self->samples, self->frames->len);
 
       pos += frame_len;
+
+      g_array_append_val (self->frames, ptr);
     }
 
   return TRUE;
@@ -489,4 +501,12 @@ sysprof_document_lookup_file_finish (SysprofDocument  *self,
   g_return_val_if_fail (g_task_is_valid (result, self), NULL);
 
   return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+GtkBitset *
+_sysprof_document_samples (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return self->samples;
 }

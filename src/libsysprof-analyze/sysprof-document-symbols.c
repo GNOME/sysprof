@@ -20,7 +20,9 @@
 
 #include "config.h"
 
+#include "sysprof-document-private.h"
 #include "sysprof-document-symbols-private.h"
+#include "sysprof-document-traceable.h"
 #include "sysprof-symbolizer-private.h"
 
 struct _SysprofDocumentSymbols
@@ -72,6 +74,10 @@ sysprof_document_symbols_worker (GTask        *task,
                                  GCancellable *cancellable)
 {
   Symbolize *state = task_data;
+  GtkBitsetIter iter;
+  GtkBitset *bitset;
+  GListModel *model;
+  guint i;
 
   g_assert (source_object == NULL);
   g_assert (G_IS_TASK (task));
@@ -80,6 +86,21 @@ sysprof_document_symbols_worker (GTask        *task,
   g_assert (SYSPROF_IS_DOCUMENT (state->document));
   g_assert (SYSPROF_IS_SYMBOLIZER (state->symbolizer));
   g_assert (SYSPROF_IS_DOCUMENT_SYMBOLS (state->symbols));
+
+  bitset = _sysprof_document_samples (state->document);
+  model = G_LIST_MODEL (state->document);
+
+  if (gtk_bitset_iter_init_first (&iter, bitset, &i))
+    {
+      do
+        {
+          g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
+
+          if (!SYSPROF_IS_DOCUMENT_TRACEABLE (traceable))
+            continue;
+        }
+      while (gtk_bitset_iter_next (&iter, &i));
+    }
 
   g_task_return_new_error (task,
                            G_IO_ERROR,

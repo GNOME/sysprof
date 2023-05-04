@@ -43,6 +43,8 @@ libsysprof_analyze_public_headers = [
 
 libsysprof_analyze_deps = [
   dependency('gio-2.0', version: glib_req_version),
+  dependency('gtk4', version: gtk_req_version),
+
   libsysprof_capture_deps,
 ]
 

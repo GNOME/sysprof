@@ -122,8 +122,8 @@ sysprof_document_init (SysprofDocument *self)
 
 static gboolean
 sysprof_document_load (SysprofDocument  *self,
-                            int                   capture_fd,
-                            GError              **error)
+                       int               capture_fd,
+                       GError          **error)
 {
   goffset pos;
   gsize len;
@@ -325,4 +325,12 @@ sysprof_document_symbolize_finish (SysprofDocument  *self,
   g_return_val_if_fail (g_task_get_source_tag (G_TASK (result)) == sysprof_document_symbolize_async, NULL);
 
   return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+gboolean
+_sysprof_document_is_native (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), FALSE);
+
+  return self->needs_swap == FALSE;
 }

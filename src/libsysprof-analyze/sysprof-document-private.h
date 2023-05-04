@@ -24,7 +24,8 @@
 
 G_BEGIN_DECLS
 
-char *_sysprof_document_ref_string (SysprofDocument *self,
-                                    const char      *name);
+gboolean  _sysprof_document_is_native  (SysprofDocument *self);
+char     *_sysprof_document_ref_string (SysprofDocument *self,
+                                        const char      *name);
 
 G_END_DECLS

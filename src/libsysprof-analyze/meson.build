@@ -45,7 +45,7 @@ libsysprof_analyze_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('gtk4', version: gtk_req_version),
 
-  libsysprof_capture_deps,
+  libsysprof_capture_dep,
 ]
 
 libsysprof_analyze = library('sysprof-analyze-@0@'.format(soname_major_version),

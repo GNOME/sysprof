@@ -72,6 +72,7 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
                                         SysprofDocumentTraceable *traceable,
                                         SysprofSymbolizer        *symbolizer)
 {
+  SysprofAddressContext last_context;
   guint64 *addresses;
   guint n_addresses;
 
@@ -83,6 +84,18 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
   addresses = g_alloca (sizeof (guint64) * n_addresses);
   sysprof_document_traceable_get_stack_addresses (traceable, addresses, n_addresses);
 
+  last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
+
+  for (guint i = 0; i < n_addresses; i++)
+    {
+      SysprofAddress address = addresses[i];
+      SysprofAddressContext context;
+
+      if (sysprof_address_is_context_switch (address, &context))
+        g_print ("%d: %s\n", i, sysprof_address_context_to_string (context));
+      else
+        g_print ("%d: %p\n", i, (gpointer)address);
+    }
 }
 
 static void

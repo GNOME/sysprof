@@ -12,7 +12,8 @@ libsysprof_analyze_testsuite_c_args = [
 ]
 
 libsysprof_analyze_testsuite = {
-  'test-capture-model': {'skip': true},
+  'test-capture-model' : {'skip': true},
+  'test-symbolize'     : {'skip': true},
 }
 
 libsysprof_analyze_testsuite_deps = [

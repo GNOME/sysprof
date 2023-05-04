@@ -72,9 +72,16 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
                                         SysprofDocumentTraceable *traceable,
                                         SysprofSymbolizer        *symbolizer)
 {
+  guint64 *addresses;
+  guint n_addresses;
+
   g_assert (SYSPROF_IS_DOCUMENT_SYMBOLS (self));
   g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
+
+  n_addresses = sysprof_document_traceable_get_stack_depth (traceable);
+  addresses = g_alloca (sizeof (guint64) * n_addresses);
+  sysprof_document_traceable_get_stack_addresses (traceable, addresses, n_addresses);
 
 }
 

@@ -91,6 +91,17 @@ mapped_file_bsearch (gconstpointer keyptr,
   return 0;
 }
 
+/**
+ * sysprof_memory_map_new:
+ * @mapped_files: (transfer full): a #GPtrArray of #SysprofMappedFile
+ *
+ * Creates a new #SysprofMemoryMap that can be used to locate a mapped
+ * file which contains a particular address within a target process.
+ *
+ * You should use SysprofMemoryMapBuilder instead of this function.
+ *
+ * Returns: (transfer full): a #SysprofMemoryMap
+ */
 SysprofMemoryMap *
 sysprof_memory_map_new (GPtrArray *mapped_files)
 {
@@ -107,6 +118,16 @@ sysprof_memory_map_new (GPtrArray *mapped_files)
   return self;
 }
 
+/**
+ * sysprof_memory_map_find_at_address:
+ * @self: a #SysprofMemoryMap
+ * @address: an address
+ *
+ * Attempts to locate the #SysprofMappedFile which contains @address.
+ *
+ * Returns: (transfer none) (nullable): a #SysprofMappedFile if there
+ *   was a mapping containing @address, otherwise %NULL.
+ */
 SysprofMappedFile *
 sysprof_memory_map_find_at_address (SysprofMemoryMap *self,
                                     guint64           address)

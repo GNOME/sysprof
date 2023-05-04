@@ -68,6 +68,17 @@ symbolize_free (Symbolize *state)
 }
 
 static void
+sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
+                                        SysprofDocumentTraceable *traceable,
+                                        SysprofSymbolizer        *symbolizer)
+{
+  g_assert (SYSPROF_IS_DOCUMENT_SYMBOLS (self));
+  g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
+  g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
+
+}
+
+static void
 sysprof_document_symbols_worker (GTask        *task,
                                  gpointer      source_object,
                                  gpointer      task_data,
@@ -96,16 +107,17 @@ sysprof_document_symbols_worker (GTask        *task,
         {
           g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
 
-          if (!SYSPROF_IS_DOCUMENT_TRACEABLE (traceable))
-            continue;
+          if (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable))
+            sysprof_document_symbols_add_traceable (state->symbols,
+                                                    traceable,
+                                                    state->symbolizer);
         }
       while (gtk_bitset_iter_next (&iter, &i));
     }
 
-  g_task_return_new_error (task,
-                           G_IO_ERROR,
-                           G_IO_ERROR_NOT_SUPPORTED,
-                           "Not yet supported");
+  g_task_return_pointer (task,
+                         g_object_ref (state->symbols),
+                         g_object_unref);
 }
 
 void

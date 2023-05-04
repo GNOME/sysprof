@@ -25,6 +25,7 @@
 G_BEGIN_DECLS
 
 #define SYSPROF_ANALYZE_INSIDE
+# include "sysprof-bundled-symbolizer.h"
 # include "sysprof-document.h"
 # include "sysprof-document-allocation.h"
 # include "sysprof-document-exit.h"

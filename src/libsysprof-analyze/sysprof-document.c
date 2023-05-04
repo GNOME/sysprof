@@ -334,3 +334,135 @@ _sysprof_document_is_native (SysprofDocument *self)
 
   return self->needs_swap == FALSE;
 }
+
+static void
+sysprof_document_lookup_file (GTask        *task,
+                              gpointer      source_object,
+                              gpointer      task_data,
+                              GCancellable *cancellable)
+{
+  SysprofDocument *self = source_object;
+  g_autoptr(GByteArray) bytes = NULL;
+  const char *filename = task_data;
+  gboolean is_native;
+  int filename_len;
+
+  g_assert (G_IS_TASK (task));
+  g_assert (SYSPROF_IS_DOCUMENT (source_object));
+  g_assert (filename != NULL);
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  bytes = g_byte_array_new ();
+  is_native = self->needs_swap == FALSE;
+  filename_len = strlen (filename);
+
+  if (filename_len > 255)
+    {
+      g_task_return_new_error (task,
+                               G_IO_ERROR,
+                               G_IO_ERROR_INVALID_FILENAME,
+                               "Filename too long for storage in capture file");
+      return;
+    }
+
+  /* We can access capture data on a thread because the pointers to
+   * frames are created during construction and then never mutated.
+   *
+   * But do remember that frame data may not be byte-swapped. We do
+   * not need to swap frame->type becaues it's 1 byte.
+   */
+
+  for (guint i = 0; i < self->frames->len; i++)
+    {
+      const SysprofDocumentFramePointer *ptr = &g_array_index (self->frames, SysprofDocumentFramePointer, i);
+      const SysprofCaptureFrame *frame = (gpointer)&self->base[ptr->offset];
+      const SysprofCaptureFileChunk *chunk;
+      SysprofCaptureFrameType type = frame->type;
+      guint16 data_len;
+
+      /* Ignore everything but file chunks */
+      if (type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+        continue;
+
+      chunk = (const SysprofCaptureFileChunk *)(gpointer)frame;
+
+      /* Check path without being certain frame->path is \0 terminatd */
+      if (memcmp (filename, chunk->path, filename_len) !=  0 ||
+          chunk->path[filename_len] != 0)
+        continue;
+
+      if (is_native)
+        data_len = chunk->len;
+      else
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+        data_len = GUINT16_TO_LE (chunk->len);
+#else
+        data_len = GUINT16_TO_BE (chunk->len);
+#endif
+
+      /* Check for corrupted file chunk data length */
+      if (G_STRUCT_OFFSET (SysprofCaptureFileChunk, data) + data_len > ptr->length)
+        {
+          g_byte_array_set_size (bytes, 0);
+          break;
+        }
+
+      g_byte_array_append (bytes, chunk->data, data_len);
+
+      if (chunk->is_last)
+        break;
+    }
+
+  if (bytes->len == 0)
+    g_task_return_new_error (task,
+                             G_IO_ERROR,
+                             G_IO_ERROR_NOT_FOUND,
+                             "Failed to locate file \"%s\"", filename);
+  else
+    g_task_return_pointer (task,
+                           g_byte_array_free_to_bytes (g_steal_pointer (&bytes)),
+                           (GDestroyNotify)g_bytes_unref);
+}
+
+void
+sysprof_document_lookup_file_async (SysprofDocument     *self,
+                                    const char          *filename,
+                                    GCancellable        *cancellable,
+                                    GAsyncReadyCallback  callback,
+                                    gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
+  g_return_if_fail (filename != NULL);
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_document_lookup_file_async);
+  g_task_set_task_data (task, g_strdup (filename), g_free);
+  g_task_run_in_thread (task, sysprof_document_lookup_file);
+}
+
+/**
+ * sysprof_document_lookup_file_finish:
+ * @self: a #SysprofDocument
+ * @result: the #GAsyncResult provided to callback
+ * @error: a location for a #GError, or %NULL
+ *
+ * Completes a request to load the contents of a file that was
+ * embedded within the document.
+ *
+ * Returns: (transfer full): a #GBytes if successful; otherwise %NULL
+ *   and @error is set.
+ */
+GBytes *
+sysprof_document_lookup_file_finish (SysprofDocument  *self,
+                                     GAsyncResult     *result,
+                                     GError          **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+  g_return_val_if_fail (g_task_is_valid (result, self), NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}

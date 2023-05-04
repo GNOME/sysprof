@@ -19,6 +19,10 @@ libsysprof_analyze_public_sources = [
   'sysprof-symbolizer.c',
 ]
 
+libsysprof_analyze_private_sources = [
+  'sysprof-mapped-file.c',
+]
+
 libsysprof_analyze_public_headers = [
   'sysprof-analyze.h',
   'sysprof-bundled-symbolizer.h',
@@ -49,7 +53,8 @@ libsysprof_analyze_deps = [
 ]
 
 libsysprof_analyze = library('sysprof-analyze-@0@'.format(soname_major_version),
-                             libsysprof_analyze_public_sources,
+                             libsysprof_analyze_public_sources +
+                             libsysprof_analyze_private_sources,
     include_directories: [include_directories('.'),
                           ipc_include_dirs,
                           libsysprof_capture_include_dirs],

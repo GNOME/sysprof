@@ -151,6 +151,14 @@ sysprof_multi_symbolizer_new (void)
   return g_object_new (SYSPROF_TYPE_MULTI_SYMBOLIZER, NULL);
 }
 
+/**
+ * sysprof_multi_symbolizer_add:
+ * @self: a #SysprofMultiSymbolizer
+ * @symbolizer: (transfer full): a #SysprofSymbolizer
+ *
+ * Takes ownership of @symbolizer and adds it to the list of symbolizers
+ * that will be queried when @self is queried for symbols.
+ */
 void
 sysprof_multi_symbolizer_add (SysprofMultiSymbolizer *self,
                               SysprofSymbolizer      *symbolizer)
@@ -159,5 +167,5 @@ sysprof_multi_symbolizer_add (SysprofMultiSymbolizer *self,
   g_return_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer));
   g_return_if_fail ((gpointer)self != (gpointer)symbolizer);
 
-  g_ptr_array_add (self->symbolizers, g_object_ref (symbolizer));
+  g_ptr_array_add (self->symbolizers, symbolizer);
 }

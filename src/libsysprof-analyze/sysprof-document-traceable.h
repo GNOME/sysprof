@@ -40,9 +40,13 @@ struct _SysprofDocumentTraceableInterface
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-guint   sysprof_document_traceable_get_stack_depth   (SysprofDocumentTraceable *self);
+guint   sysprof_document_traceable_get_stack_depth     (SysprofDocumentTraceable *self);
 SYSPROF_AVAILABLE_IN_ALL
-guint64 sysprof_document_traceable_get_stack_address (SysprofDocumentTraceable *self,
-                                                      guint                     position);
+guint64 sysprof_document_traceable_get_stack_address   (SysprofDocumentTraceable *self,
+                                                        guint                     position);
+SYSPROF_AVAILABLE_IN_ALL
+guint   sysprof_document_traceable_get_stack_addresses (SysprofDocumentTraceable *self,
+                                                        guint64                  *addresses,
+                                                        guint                     n_addresses);
 
 G_END_DECLS

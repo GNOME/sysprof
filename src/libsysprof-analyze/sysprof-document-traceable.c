@@ -57,3 +57,24 @@ sysprof_document_traceable_get_stack_address (SysprofDocumentTraceable *self,
 {
   return SYSPROF_DOCUMENT_TRACEABLE_GET_IFACE (self)->get_stack_address (self, position);
 }
+
+guint
+sysprof_document_traceable_get_stack_addresses (SysprofDocumentTraceable *self,
+                                                guint64                  *addresses,
+                                                guint                     n_addresses)
+{
+  guint64 (*decoder) (SysprofDocumentTraceable *, guint);
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_TRACEABLE (self), 0);
+
+  if (addresses == NULL || n_addresses == 0)
+    return 0;
+
+  decoder = SYSPROF_DOCUMENT_TRACEABLE_GET_IFACE (self)->get_stack_address;
+  n_addresses = MIN (n_addresses, sysprof_document_traceable_get_stack_depth (self));
+
+  for (guint i = 0; i < n_addresses; i++)
+    addresses[i] = decoder (self, i);
+
+  return n_addresses;
+}

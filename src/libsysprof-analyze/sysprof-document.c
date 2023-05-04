@@ -27,6 +27,7 @@
 #include "sysprof-document.h"
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-symbols-private.h"
+#include "sysprof-symbolizer-private.h"
 
 struct _SysprofDocument
 {
@@ -273,9 +274,9 @@ _sysprof_document_ref_string (SysprofDocument *self,
 }
 
 static void
-sysprof_document_symbolize_cb (GObject      *object,
-                               GAsyncResult *result,
-                               gpointer      user_data)
+sysprof_document_symbolize_symbols_cb (GObject      *object,
+                                       GAsyncResult *result,
+                                       gpointer      user_data)
 {
   g_autoptr(SysprofDocumentSymbols) symbols = NULL;
   g_autoptr(GTask) task = user_data;
@@ -288,6 +289,29 @@ sysprof_document_symbolize_cb (GObject      *object,
     g_task_return_pointer (task, g_steal_pointer (&symbols), g_object_unref);
   else
     g_task_return_error (task, g_steal_pointer (&error));
+}
+
+static void
+sysprof_document_symbolize_prepare_cb (GObject      *object,
+                                       GAsyncResult *result,
+                                       gpointer      user_data)
+{
+  SysprofSymbolizer *symbolizer = (SysprofSymbolizer *)object;
+  g_autoptr(GTask) task = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (!_sysprof_symbolizer_prepare_finish (symbolizer, result, &error))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    _sysprof_document_symbols_new (g_task_get_source_object (task),
+                                   symbolizer,
+                                   g_task_get_cancellable (task),
+                                   sysprof_document_symbolize_symbols_cb,
+                                   g_object_ref (task));
 }
 
 void
@@ -307,11 +331,11 @@ sysprof_document_symbolize_async (SysprofDocument     *self,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_document_symbolize_async);
 
-  _sysprof_document_symbols_new (self,
-                                 symbolizer,
-                                 cancellable,
-                                 sysprof_document_symbolize_cb,
-                                 g_steal_pointer (&task));
+  _sysprof_symbolizer_prepare_async (symbolizer,
+                                     self,
+                                     cancellable,
+                                     sysprof_document_symbolize_prepare_cb,
+                                     g_steal_pointer (&task));
 }
 
 SysprofDocumentSymbols *

@@ -51,8 +51,9 @@ sysprof_document_symbols_init (SysprofDocumentSymbols *self)
 
 typedef struct _Symbolize
 {
-  SysprofDocument   *document;
-  SysprofSymbolizer *symbolizer;
+  SysprofDocument        *document;
+  SysprofSymbolizer      *symbolizer;
+  SysprofDocumentSymbols *symbols;
 } Symbolize;
 
 static void
@@ -60,6 +61,7 @@ symbolize_free (Symbolize *state)
 {
   g_clear_object (&state->document);
   g_clear_object (&state->symbolizer);
+  g_clear_object (&state->symbols);
   g_free (state);
 }
 
@@ -71,11 +73,13 @@ sysprof_document_symbols_worker (GTask        *task,
 {
   Symbolize *state = task_data;
 
+  g_assert (source_object == NULL);
   g_assert (G_IS_TASK (task));
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
   g_assert (state != NULL);
   g_assert (SYSPROF_IS_DOCUMENT (state->document));
   g_assert (SYSPROF_IS_SYMBOLIZER (state->symbolizer));
+  g_assert (SYSPROF_IS_DOCUMENT_SYMBOLS (state->symbols));
 
   g_task_return_new_error (task,
                            G_IO_ERROR,
@@ -99,6 +103,7 @@ _sysprof_document_symbols_new (SysprofDocument     *document,
   state = g_new0 (Symbolize, 1);
   state->document = g_object_ref (document);
   state->symbolizer = g_object_ref (symbolizer);
+  state->symbols = g_object_new (SYSPROF_TYPE_DOCUMENT_SYMBOLS, NULL);
 
   task = g_task_new (NULL, cancellable, callback, user_data);
   g_task_set_source_tag (task, _sysprof_document_symbols_new);

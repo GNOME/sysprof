@@ -387,6 +387,7 @@ sysprof_document_lookup_file (GTask        *task,
   g_autoptr(GByteArray) bytes = NULL;
   const char *filename = task_data;
   GtkBitsetIter iter;
+  gboolean was_found = FALSE;
   guint i;
 
   g_assert (G_IS_TASK (task));
@@ -422,6 +423,8 @@ sysprof_document_lookup_file (GTask        *task,
 
               g_byte_array_append (bytes, data, size);
 
+              was_found = TRUE;
+
               if (sysprof_document_file_chunk_get_is_last (file_chunk))
                 break;
             }
@@ -430,7 +433,7 @@ sysprof_document_lookup_file (GTask        *task,
       while (gtk_bitset_iter_next (&iter, &i));
     }
 
-  if (bytes->len == 0)
+  if (!was_found)
     g_task_return_new_error (task,
                              G_IO_ERROR,
                              G_IO_ERROR_NOT_FOUND,

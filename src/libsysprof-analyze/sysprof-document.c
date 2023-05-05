@@ -25,6 +25,7 @@
 #include <glib/gstdio.h>
 
 #include "sysprof-document-private.h"
+#include "sysprof-document-file-chunk.h"
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-symbolizer-private.h"
@@ -385,8 +386,8 @@ sysprof_document_lookup_file (GTask        *task,
   SysprofDocument *self = source_object;
   g_autoptr(GByteArray) bytes = NULL;
   const char *filename = task_data;
-  gboolean is_native;
-  int filename_len;
+  GtkBitsetIter iter;
+  guint i;
 
   g_assert (G_IS_TASK (task));
   g_assert (SYSPROF_IS_DOCUMENT (source_object));
@@ -394,17 +395,6 @@ sysprof_document_lookup_file (GTask        *task,
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   bytes = g_byte_array_new ();
-  is_native = self->needs_swap == FALSE;
-  filename_len = strlen (filename);
-
-  if (filename_len > 255)
-    {
-      g_task_return_new_error (task,
-                               G_IO_ERROR,
-                               G_IO_ERROR_INVALID_FILENAME,
-                               "Filename too long for storage in capture file");
-      return;
-    }
 
   /* We can access capture data on a thread because the pointers to
    * frames are created during construction and then never mutated.
@@ -413,45 +403,31 @@ sysprof_document_lookup_file (GTask        *task,
    * not need to swap frame->type becaues it's 1 byte.
    */
 
-  for (guint i = 0; i < self->frames->len; i++)
+  if (gtk_bitset_iter_init_first (&iter, self->file_chunks, &i))
     {
-      const SysprofDocumentFramePointer *ptr = &g_array_index (self->frames, SysprofDocumentFramePointer, i);
-      const SysprofCaptureFrame *frame = (gpointer)&self->base[ptr->offset];
-      const SysprofCaptureFileChunk *chunk;
-      SysprofCaptureFrameType type = frame->type;
-      guint16 data_len;
-
-      /* Ignore everything but file chunks */
-      if (type != SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
-        continue;
-
-      chunk = (const SysprofCaptureFileChunk *)(gpointer)frame;
-
-      /* Check path without being certain frame->path is \0 terminatd */
-      if (memcmp (filename, chunk->path, filename_len) !=  0 ||
-          chunk->path[filename_len] != 0)
-        continue;
-
-      if (is_native)
-        data_len = chunk->len;
-      else
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-        data_len = GUINT16_TO_LE (chunk->len);
-#else
-        data_len = GUINT16_TO_BE (chunk->len);
-#endif
-
-      /* Check for corrupted file chunk data length */
-      if (G_STRUCT_OFFSET (SysprofCaptureFileChunk, data) + data_len > ptr->length)
+      do
         {
-          g_byte_array_set_size (bytes, 0);
-          break;
+          g_autoptr(SysprofDocumentFileChunk) file_chunk = sysprof_document_get_item ((GListModel *)self, i);
+          const char *path;
+
+          if (!SYSPROF_IS_DOCUMENT_FILE_CHUNK (file_chunk))
+            continue;
+
+          path = sysprof_document_file_chunk_get_path (file_chunk);
+
+          if (g_strcmp0 (path, filename) == 0)
+            {
+              const guint8 *data = sysprof_document_file_chunk_get_data (file_chunk, NULL);
+              guint size = sysprof_document_file_chunk_get_size (file_chunk);
+
+              g_byte_array_append (bytes, data, size);
+
+              if (sysprof_document_file_chunk_get_is_last (file_chunk))
+                break;
+            }
+
         }
-
-      g_byte_array_append (bytes, chunk->data, data_len);
-
-      if (chunk->is_last)
-        break;
+      while (gtk_bitset_iter_next (&iter, &i));
     }
 
   if (bytes->len == 0)

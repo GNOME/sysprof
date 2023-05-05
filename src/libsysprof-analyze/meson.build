@@ -22,6 +22,8 @@ libsysprof_analyze_public_sources = [
 libsysprof_analyze_private_sources = [
   'sysprof-mapped-file.c',
   'sysprof-memory-map.c',
+  'sysprof-mount-device.c',
+  'sysprof-mount-namespace.c',
 ]
 
 libsysprof_analyze_public_headers = [

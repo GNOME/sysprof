@@ -118,7 +118,7 @@ sysprof_document_symbols_worker (GTask        *task,
   g_assert (SYSPROF_IS_SYMBOLIZER (state->symbolizer));
   g_assert (SYSPROF_IS_DOCUMENT_SYMBOLS (state->symbols));
 
-  bitset = _sysprof_document_samples (state->document);
+  bitset = _sysprof_document_traceables (state->document);
   model = G_LIST_MODEL (state->document);
 
   if (gtk_bitset_iter_init_first (&iter, bitset, &i))

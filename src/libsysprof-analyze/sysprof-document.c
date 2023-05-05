@@ -37,6 +37,7 @@ struct _SysprofDocument
   GMappedFile              *mapped_file;
   const guint8             *base;
 
+  GtkBitset                *file_chunks;
   GtkBitset                *traceables;
 
   GMutex                    strings_mutex;
@@ -102,6 +103,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->frames, g_array_unref);
   g_clear_pointer (&self->strings, g_hash_table_unref);
   g_clear_pointer (&self->traceables, gtk_bitset_unref);
+  g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
 
   g_mutex_clear (&self->strings_mutex);
 
@@ -124,6 +126,7 @@ sysprof_document_init (SysprofDocument *self)
   self->strings = g_hash_table_new_full (g_str_hash, g_str_equal, NULL,
                                          (GDestroyNotify)g_ref_string_release);
   self->traceables = gtk_bitset_new_empty ();
+  self->file_chunks = gtk_bitset_new_empty ();
 }
 
 static gboolean
@@ -181,6 +184,8 @@ sysprof_document_load (SysprofDocument  *self,
       if (tainted->type == SYSPROF_CAPTURE_FRAME_SAMPLE ||
           tainted->type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
         gtk_bitset_add (self->traceables, self->frames->len);
+      else if (tainted->type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+        gtk_bitset_add (self->file_chunks, self->frames->len);
 
       pos += frame_len;
 

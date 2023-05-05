@@ -421,7 +421,8 @@ sysprof_document_lookup_file (GTask        *task,
               const guint8 *data = sysprof_document_file_chunk_get_data (file_chunk, NULL);
               guint size = sysprof_document_file_chunk_get_size (file_chunk);
 
-              g_byte_array_append (bytes, data, size);
+              if (size > 0)
+                g_byte_array_append (bytes, data, size);
 
               was_found = TRUE;
 

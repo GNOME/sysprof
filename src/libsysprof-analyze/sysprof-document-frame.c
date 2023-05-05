@@ -24,6 +24,7 @@
 
 #include "sysprof-document-allocation.h"
 #include "sysprof-document-exit.h"
+#include "sysprof-document-file-chunk.h"
 #include "sysprof-document-fork.h"
 #include "sysprof-document-log.h"
 #include "sysprof-document-mark.h"
@@ -161,6 +162,10 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
 
     case SYSPROF_CAPTURE_FRAME_ALLOCATION:
       gtype = SYSPROF_TYPE_DOCUMENT_ALLOCATION;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
+      gtype = SYSPROF_TYPE_DOCUMENT_FILE_CHUNK;
       break;
 
     default:

@@ -43,28 +43,20 @@ symbolize_cb (GObject      *object,
       for (guint j = 0; j < depth; j++)
         {
           SysprofAddress address = sysprof_document_traceable_get_stack_address (traceable, j);
+          SysprofSymbol *symbol = sysprof_document_symbols_lookup (symbols, pid, last_context, address);
           SysprofAddressContext context;
 
-          if (!sysprof_address_is_context_switch (address, &context))
-            {
-              SysprofSymbol *symbol = sysprof_document_symbols_lookup (symbols, pid, last_context, address);
+          if (sysprof_address_is_context_switch (address, &context))
+            last_context = context;
 
-              if (symbol != NULL)
-                g_print ("  %02d: %p: %s [%s]\n",
-                         j,
-                         GSIZE_TO_POINTER (address),
-                         sysprof_symbol_get_name (symbol),
-                         sysprof_symbol_get_binary_path (symbol));
-              else
-                g_print ("  %02d: %p\n", j, GSIZE_TO_POINTER (address));
-            }
+          if (symbol != NULL)
+            g_print ("  %02d: %p: %s [%s]\n",
+                     j,
+                     GSIZE_TO_POINTER (address),
+                     sysprof_symbol_get_name (symbol),
+                     sysprof_symbol_get_binary_path (symbol) ?: "<unresolved>");
           else
-            {
-              last_context = context;
-              g_print ("  %02d: %s\n",
-                       j, sysprof_address_context_to_string (context));
-            }
-
+            g_print ("  %02d: %p\n", j, GSIZE_TO_POINTER (address));
         }
 
       g_print ("  ================\n");

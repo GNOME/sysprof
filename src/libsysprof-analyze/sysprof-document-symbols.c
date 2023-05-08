@@ -23,11 +23,14 @@
 #include "sysprof-document-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-document-traceable.h"
+#include "sysprof-symbol-private.h"
 #include "sysprof-symbolizer-private.h"
 
 struct _SysprofDocumentSymbols
 {
   GObject parent_instance;
+
+  SysprofSymbol *context_switches[SYSPROF_ADDRESS_CONTEXT_GUEST_USER+1];
 };
 
 G_DEFINE_FINAL_TYPE (SysprofDocumentSymbols, sysprof_document_symbols, G_TYPE_OBJECT)
@@ -35,6 +38,11 @@ G_DEFINE_FINAL_TYPE (SysprofDocumentSymbols, sysprof_document_symbols, G_TYPE_OB
 static void
 sysprof_document_symbols_finalize (GObject *object)
 {
+  SysprofDocumentSymbols *self = (SysprofDocumentSymbols *)object;
+
+  for (guint i = 0; i < G_N_ELEMENTS (self->context_switches); i++)
+    g_clear_object (&self->context_switches[i]);
+
   G_OBJECT_CLASS (sysprof_document_symbols_parent_class)->finalize (object);
 }
 
@@ -89,13 +97,14 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
   for (guint i = 0; i < n_addresses; i++)
     {
       SysprofAddress address = addresses[i];
-      SysprofAddressContext context;
-
-      /* TODO: */
+      SysprofAddressContext context = SYSPROF_ADDRESS_CONTEXT_NONE;
 
       if (sysprof_address_is_context_switch (address, &context))
         {
           last_context = context;
+        }
+      else
+        {
         }
     }
 }
@@ -106,6 +115,17 @@ sysprof_document_symbols_worker (GTask        *task,
                                  gpointer      task_data,
                                  GCancellable *cancellable)
 {
+  static const struct {
+    const char *name;
+    guint value;
+  } context_switches[] = {
+    { "- - Hypervisor - -", SYSPROF_ADDRESS_CONTEXT_HYPERVISOR },
+    { "- - Kernel - -", SYSPROF_ADDRESS_CONTEXT_KERNEL },
+    { "- - User - -", SYSPROF_ADDRESS_CONTEXT_USER },
+    { "- - Guest - -", SYSPROF_ADDRESS_CONTEXT_GUEST },
+    { "- - Guest Kernel - -", SYSPROF_ADDRESS_CONTEXT_GUEST_KERNEL },
+    { "- - Guest User - -", SYSPROF_ADDRESS_CONTEXT_GUEST_USER },
+  };
   Symbolize *state = task_data;
   GtkBitsetIter iter;
   GtkBitset *bitset;
@@ -123,6 +143,21 @@ sysprof_document_symbols_worker (GTask        *task,
   bitset = _sysprof_document_traceables (state->document);
   model = G_LIST_MODEL (state->document);
 
+  /* Create static symbols for context switch use */
+  for (guint cs = 0; cs < G_N_ELEMENTS (context_switches); cs++)
+    {
+      g_autoptr(GRefString) name = g_ref_string_new_intern (context_switches[cs].name);
+      g_autoptr(SysprofSymbol) symbol = _sysprof_symbol_new (name, NULL, NULL);
+
+      /* TODO: It would be nice if we had enough insight from the capture header
+       * as to the host system, so we can show "vmlinuz" and "Linux" respectively
+       * for binary-path and binary-nick when the capture came from Linux.
+       */
+
+      state->symbols->context_switches[context_switches[cs].value] = g_steal_pointer (&symbol);
+    }
+
+  /* Walk through the available traceables which need symbols extracted */
   if (gtk_bitset_iter_init_first (&iter, bitset, &i))
     {
       do
@@ -194,7 +229,13 @@ sysprof_document_symbols_lookup (SysprofDocumentSymbols *self,
                                  SysprofAddressContext   context,
                                  SysprofAddress          address)
 {
+  SysprofAddressContext new_context;
+
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_SYMBOLS (self), NULL);
+  g_return_val_if_fail (context <= SYSPROF_ADDRESS_CONTEXT_GUEST_USER, NULL);
+
+  if (sysprof_address_is_context_switch (address, &new_context))
+    return self->context_switches[new_context];
 
   return NULL;
 }

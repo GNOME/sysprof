@@ -60,5 +60,7 @@ SYSPROF_AVAILABLE_IN_ALL
 GBytes                 *sysprof_document_lookup_file_finish (SysprofDocument      *self,
                                                              GAsyncResult         *result,
                                                              GError              **error);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_traceables    (SysprofDocument      *self);
 
 G_END_DECLS

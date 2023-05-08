@@ -25,6 +25,8 @@
 #include <glib/gstdio.h>
 
 #include "sysprof-document-private.h"
+
+#include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-file-chunk.h"
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-symbols-private.h"
@@ -494,4 +496,21 @@ _sysprof_document_traceables (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return self->traceables;
+}
+
+/**
+ * sysprof_document_list_traceables:
+ * @self: a #SysprofDocument
+ *
+ * Gets a #GListModel containing #SysprofDocumentTraceable found within
+ * the #SysprofDocument.
+ *
+ * Returns: (transfer full): a #GListModel
+ */
+GListModel *
+sysprof_document_list_traceables (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->traceables);
 }

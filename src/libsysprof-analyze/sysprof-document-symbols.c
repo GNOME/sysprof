@@ -92,6 +92,11 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
       SysprofAddressContext context;
 
       /* TODO: */
+
+      if (sysprof_address_is_context_switch (address, &context))
+        {
+          last_context = context;
+        }
     }
 }
 
@@ -170,4 +175,26 @@ _sysprof_document_symbols_new_finish (GAsyncResult  *result,
   g_return_val_if_fail (g_task_get_source_tag (G_TASK (result)) == _sysprof_document_symbols_new, NULL);
 
   return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+/**
+ * sysprof_document_symbols_lookup:
+ * @self: a #SysprofDocumentSymbols
+ * @pid: the process identifier
+ * @context: the #SysprofAddressContext for the address
+ * @address: a #SysprofAddress to lookup the symbol for
+ *
+ * Locates the symbol that is found at @address within @context of @pid.
+ *
+ * Returns: (transfer none) (nullable): a #SysprofSymbol or %NULL
+ */
+SysprofSymbol *
+sysprof_document_symbols_lookup (SysprofDocumentSymbols *self,
+                                 int                     pid,
+                                 SysprofAddressContext   context,
+                                 SysprofAddress          address)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_SYMBOLS (self), NULL);
+
+  return NULL;
 }

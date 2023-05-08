@@ -91,10 +91,7 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
       SysprofAddress address = addresses[i];
       SysprofAddressContext context;
 
-      if (sysprof_address_is_context_switch (address, &context))
-        g_print ("%d: %s\n", i, sysprof_address_context_to_string (context));
-      else
-        g_print ("%d: %p\n", i, (gpointer)address);
+      /* TODO: */
     }
 }
 

@@ -21,6 +21,7 @@ libsysprof_analyze_public_sources = [
 ]
 
 libsysprof_analyze_private_sources = [
+  'sysprof-document-bitset-index.c',
   'sysprof-mapped-file.c',
   'sysprof-memory-map.c',
   'sysprof-mount-device.c',

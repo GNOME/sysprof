@@ -36,6 +36,7 @@ struct _SysprofDocumentMmapClass
 
 enum {
   PROP_0,
+  PROP_BUILD_ID,
   PROP_END_ADDRESS,
   PROP_FILE,
   PROP_FILE_INODE,
@@ -78,6 +79,10 @@ sysprof_document_mmap_get_property (GObject    *object,
       g_value_set_uint64 (value, sysprof_document_mmap_get_file_inode (self));
       break;
 
+    case PROP_BUILD_ID:
+      g_value_set_string (value, sysprof_document_mmap_get_build_id (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -113,6 +118,11 @@ sysprof_document_mmap_class_init (SysprofDocumentMmapClass *klass)
   properties [PROP_FILE_OFFSET] =
     g_param_spec_uint64 ("file-offset", NULL, NULL,
                          0, G_MAXUINT64, 0,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_BUILD_ID] =
+    g_param_spec_string ("build-id", NULL, NULL,
+                         NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
@@ -176,9 +186,38 @@ sysprof_document_mmap_get_file (SysprofDocumentMmap *self)
 {
   const SysprofCaptureMap *mmap;
 
-  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_MMAP (self), 0);
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_MMAP (self), NULL);
 
   mmap = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureMap);
 
   return SYSPROF_DOCUMENT_FRAME_CSTRING (self, mmap->filename);
+}
+
+const char *
+sysprof_document_mmap_get_build_id (SysprofDocumentMmap *self)
+{
+  const char *file;
+  const char *build_id;
+  gsize len;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_MMAP (self), NULL);
+
+  if (!(file = sysprof_document_mmap_get_file (self)))
+    return NULL;
+
+  /* The build-id may be tacked on after the filename if after the
+   * Nil byte we get '@'. SYSPROF_DOCUMENT_FRAME_CSTRING() will check
+   * for bounds so we can feed it a position we don't know is part
+   * of our frame or not. We expect "FILE\0@BUILD_ID_IN_HEX\0".
+   */
+
+  len = strlen (file);
+
+  if (!(build_id = SYSPROF_DOCUMENT_FRAME_CSTRING (self, &file[len+1])))
+    return NULL;
+
+  if (build_id[0] != '@')
+    return NULL;
+
+  return &build_id[1];
 }

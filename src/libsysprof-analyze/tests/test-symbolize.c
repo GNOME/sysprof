@@ -27,22 +27,44 @@ symbolize_cb (GObject      *object,
   for (guint i = 0; i < n_items; i++)
     {
       g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (traceables, i);
+      SysprofAddressContext last_context;
       guint depth;
+      int pid;
 
       g_assert (traceable != NULL);
       g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
 
+      last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
       depth = sysprof_document_traceable_get_stack_depth (traceable);
+      pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
 
       g_print ("%s depth=%u\n", G_OBJECT_TYPE_NAME (traceable), depth);
 
       for (guint j = 0; j < depth; j++)
         {
           SysprofAddress address = sysprof_document_traceable_get_stack_address (traceable, j);
+          SysprofAddressContext context;
 
-          g_print ("  %02d: %p\n", j, GSIZE_TO_POINTER (address));
+          if (!sysprof_address_is_context_switch (address, &context))
+            {
+              SysprofSymbol *symbol = sysprof_document_symbols_lookup (symbols, pid, last_context, address);
 
-          /* TODO: get symbol name from document symbols */
+              if (symbol != NULL)
+                g_print ("  %02d: %p: %s [%s]\n",
+                         j,
+                         GSIZE_TO_POINTER (address),
+                         sysprof_symbol_get_name (symbol),
+                         sysprof_symbol_get_binary_path (symbol));
+              else
+                g_print ("  %02d: %p\n", j, GSIZE_TO_POINTER (address));
+            }
+          else
+            {
+              last_context = context;
+              g_print ("  %02d: %s\n",
+                       j, sysprof_address_context_to_string (context));
+            }
+
         }
 
       g_print ("  ================\n");

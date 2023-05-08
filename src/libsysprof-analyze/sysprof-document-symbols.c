@@ -88,6 +88,20 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
   g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
 
+  /* TODO: We need to get the SysprofMountNamespace for the PID which must have
+   * already been compiled. We also need the list SysprofDocumentMmap so that we
+   * can get the build-id or inode to do various validation checks.
+   *
+   * It would be nice if that was all pre-compiled by time we get here and also
+   * re-usable on the SysprofDocument for other tooling that may need to access
+   * that.
+   *
+   * The symbolizer will need to gain API to use those too.
+   *
+   * Some of this will need to be done asynchronously as well because decoding
+   * from debuginfod could be quite costly in disk/network/time.
+   */
+
   n_addresses = sysprof_document_traceable_get_stack_depth (traceable);
   addresses = g_alloca (sizeof (guint64) * n_addresses);
   sysprof_document_traceable_get_stack_addresses (traceable, addresses, n_addresses);

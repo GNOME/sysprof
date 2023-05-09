@@ -43,6 +43,7 @@ struct _SysprofDocument
 
   GtkBitset                *file_chunks;
   GtkBitset                *traceables;
+  GtkBitset                *processes;
 
   GHashTable               *files_first_position;
 
@@ -117,6 +118,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->frames, g_array_unref);
   g_clear_pointer (&self->strings, g_hash_table_unref);
   g_clear_pointer (&self->traceables, gtk_bitset_unref);
+  g_clear_pointer (&self->processes, gtk_bitset_unref);
   g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
   g_clear_pointer (&self->files_first_position, g_hash_table_unref);
 
@@ -142,6 +144,7 @@ sysprof_document_init (SysprofDocument *self)
                                          (GDestroyNotify)g_ref_string_release);
   self->traceables = gtk_bitset_new_empty ();
   self->file_chunks = gtk_bitset_new_empty ();
+  self->processes = gtk_bitset_new_empty ();
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 }
@@ -212,14 +215,18 @@ sysprof_document_load (SysprofDocument  *self,
       ptr.length = frame_len;
 
       tainted = (const SysprofCaptureFrame *)(gpointer)&self->base[pos];
+
       if (tainted->type == SYSPROF_CAPTURE_FRAME_SAMPLE ||
           tainted->type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
         gtk_bitset_add (self->traceables, self->frames->len);
+      else if (tainted->type == SYSPROF_CAPTURE_FRAME_PROCESS)
+        gtk_bitset_add (self->processes, self->frames->len);
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
+        gtk_bitset_add (self->file_chunks, self->frames->len);
+
+      if (tainted->type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
         {
           const SysprofCaptureFileChunk *file_chunk = (const SysprofCaptureFileChunk *)tainted;
-
-          gtk_bitset_add (self->file_chunks, self->frames->len);
 
           if (has_null_byte (file_chunk->path, (const char *)file_chunk->data) &&
               !g_hash_table_contains (self->files_first_position, file_chunk->path))
@@ -539,4 +546,21 @@ sysprof_document_list_traceables (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->traceables);
+}
+
+/**
+ * sysprof_document_list_processes:
+ * @self: a #SysprofDocument
+ *
+ * Gets a #GListModel containing #SysprofDocumentProcess found within
+ * the #SysprofDocument.
+ *
+ * Returns: (transfer full): a #GListModel
+ */
+GListModel *
+sysprof_document_list_processes (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->processes);
 }

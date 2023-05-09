@@ -58,5 +58,7 @@ SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_files         (SysprofDocument      *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_traceables    (SysprofDocument      *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_processes     (SysprofDocument      *self);
 
 G_END_DECLS

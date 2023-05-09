@@ -30,6 +30,7 @@
 #include "sysprof-document-file-chunk.h"
 #include "sysprof-document-file-private.h"
 #include "sysprof-document-frame-private.h"
+#include "sysprof-document-mmap.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-symbolizer-private.h"
 
@@ -44,8 +45,10 @@ struct _SysprofDocument
   GtkBitset                *file_chunks;
   GtkBitset                *traceables;
   GtkBitset                *processes;
+  GtkBitset                *mmaps;
 
   GHashTable               *files_first_position;
+  GHashTable               *pid_to_mmaps;
 
   GMutex                    strings_mutex;
   GHashTable               *strings;
@@ -109,17 +112,34 @@ _sysprof_document_traceables (SysprofDocument *self)
   return self->traceables;
 }
 
+static inline gboolean
+has_null_byte (const char *str,
+               const char *endptr)
+{
+  for (const char *c = str; c < endptr; c++)
+    {
+      if (*c == '\0')
+        return TRUE;
+    }
+
+  return FALSE;
+}
+
 static void
 sysprof_document_finalize (GObject *object)
 {
   SysprofDocument *self = (SysprofDocument *)object;
 
+  g_clear_pointer (&self->pid_to_mmaps, g_hash_table_unref);
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
   g_clear_pointer (&self->strings, g_hash_table_unref);
+
   g_clear_pointer (&self->traceables, gtk_bitset_unref);
   g_clear_pointer (&self->processes, gtk_bitset_unref);
+  g_clear_pointer (&self->mmaps, gtk_bitset_unref);
   g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
+
   g_clear_pointer (&self->files_first_position, g_hash_table_unref);
 
   g_mutex_clear (&self->strings_mutex);
@@ -142,24 +162,68 @@ sysprof_document_init (SysprofDocument *self)
   self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
   self->strings = g_hash_table_new_full (g_str_hash, g_str_equal, NULL,
                                          (GDestroyNotify)g_ref_string_release);
+
   self->traceables = gtk_bitset_new_empty ();
   self->file_chunks = gtk_bitset_new_empty ();
   self->processes = gtk_bitset_new_empty ();
+  self->mmaps = gtk_bitset_new_empty ();
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  self->pid_to_mmaps = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_ptr_array_unref);
 }
 
-static inline gboolean
-has_null_byte (const char *str,
-               const char *endptr)
+static int
+compare_map (gconstpointer a,
+             gconstpointer b)
 {
-  for (const char *c = str; c < endptr; c++)
+  SysprofDocumentMmap * const *mmap_a = a;
+  SysprofDocumentMmap * const *mmap_b = b;
+  SysprofAddress addr_a = sysprof_document_mmap_get_start_address (*mmap_a);
+  SysprofAddress addr_b = sysprof_document_mmap_get_start_address (*mmap_b);
+
+  if (addr_a < addr_b)
+    return -1;
+  else if (addr_a > addr_b)
+    return 1;
+  else
+    return 0;
+}
+
+static void
+sysprof_document_load_memory_maps (SysprofDocument *self)
+{
+  GtkBitsetIter iter;
+  GHashTableIter hiter;
+  gpointer key, value;
+  guint i;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  if (gtk_bitset_iter_init_first (&iter, self->mmaps, &i))
     {
-      if (*c == '\0')
-        return TRUE;
+      do
+        {
+          g_autoptr(SysprofDocumentMmap) map = sysprof_document_get_item ((GListModel *)self, i);
+          int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (map));
+          GPtrArray *maps = g_hash_table_lookup (self->pid_to_mmaps, GINT_TO_POINTER (pid));
+
+          if G_UNLIKELY (maps == NULL)
+            {
+              maps = g_ptr_array_new_with_free_func (g_object_unref);
+              g_hash_table_insert (self->pid_to_mmaps, GINT_TO_POINTER (pid), maps);
+            }
+
+          g_ptr_array_add (maps, g_steal_pointer (&map));
+        }
+      while (gtk_bitset_iter_next (&iter, &i));
     }
 
-  return FALSE;
+  g_hash_table_iter_init (&hiter, self->pid_to_mmaps);
+  while (g_hash_table_iter_next (&hiter, &key, &value))
+    {
+      GPtrArray *ar = value;
+      g_ptr_array_sort (ar, compare_map);
+    }
 }
 
 static gboolean
@@ -223,6 +287,8 @@ sysprof_document_load (SysprofDocument  *self,
         gtk_bitset_add (self->processes, self->frames->len);
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
         gtk_bitset_add (self->file_chunks, self->frames->len);
+      else if (tainted->type == SYSPROF_CAPTURE_FRAME_MAP)
+        gtk_bitset_add (self->mmaps, self->frames->len);
 
       if (tainted->type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
         {
@@ -239,6 +305,8 @@ sysprof_document_load (SysprofDocument  *self,
 
       g_array_append_val (self->frames, ptr);
     }
+
+  sysprof_document_load_memory_maps (self);
 
   return TRUE;
 }

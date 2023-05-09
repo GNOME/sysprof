@@ -24,6 +24,7 @@
 
 #include <sysprof-capture.h>
 
+#include "sysprof-document-file.h"
 #include "sysprof-document-symbols.h"
 #include "sysprof-symbolizer.h"
 
@@ -51,17 +52,10 @@ SysprofDocumentSymbols *sysprof_document_symbolize_finish   (SysprofDocument    
                                                              GAsyncResult         *result,
                                                              GError              **error);
 SYSPROF_AVAILABLE_IN_ALL
+SysprofDocumentFile    *sysprof_document_lookup_file        (SysprofDocument      *self,
+                                                             const char           *path);
+SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_files         (SysprofDocument      *self);
-SYSPROF_AVAILABLE_IN_ALL
-void                    sysprof_document_lookup_file_async  (SysprofDocument      *self,
-                                                             const char           *filename,
-                                                             GCancellable         *cancellable,
-                                                             GAsyncReadyCallback   callback,
-                                                             gpointer              user_data);
-SYSPROF_AVAILABLE_IN_ALL
-GBytes                 *sysprof_document_lookup_file_finish (SysprofDocument      *self,
-                                                             GAsyncResult         *result,
-                                                             GError              **error);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_traceables    (SysprofDocument      *self);
 

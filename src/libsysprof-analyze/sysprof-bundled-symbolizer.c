@@ -47,49 +47,29 @@ sysprof_bundled_symbolizer_decode (SysprofBundledSymbolizer *self,
 }
 
 static void
-sysprof_bundled_symbolizer_prepare_cb (GObject      *object,
-                                       GAsyncResult *result,
-                                       gpointer      user_data)
-{
-  SysprofDocument *document = (SysprofDocument *)object;
-  g_autoptr(GTask) task = user_data;
-  g_autoptr(GError) error = NULL;
-  g_autoptr(GBytes) bytes = NULL;
-
-  g_assert (SYSPROF_IS_DOCUMENT (document));
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (G_IS_TASK (task));
-
-  if ((bytes = sysprof_document_lookup_file_finish (document, result, &error)))
-    sysprof_bundled_symbolizer_decode (g_task_get_source_object (task),
-                                       bytes,
-                                       _sysprof_document_is_native (document));
-
-  g_task_return_boolean (task, TRUE);
-}
-
-static void
 sysprof_bundled_symbolizer_prepare_async (SysprofSymbolizer   *symbolizer,
                                           SysprofDocument     *document,
                                           GCancellable        *cancellable,
                                           GAsyncReadyCallback  callback,
                                           gpointer             user_data)
 {
+  SysprofBundledSymbolizer *self = (SysprofBundledSymbolizer *)symbolizer;
+  g_autoptr(SysprofDocumentFile) file = NULL;
+  g_autoptr(GBytes) bytes = NULL;
   g_autoptr(GTask) task = NULL;
 
-  g_assert (SYSPROF_IS_BUNDLED_SYMBOLIZER (symbolizer));
+  g_assert (SYSPROF_IS_BUNDLED_SYMBOLIZER (self));
   g_assert (SYSPROF_IS_DOCUMENT (document));
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
-  task = g_task_new (symbolizer, cancellable, callback, user_data);
+  task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_bundled_symbolizer_prepare_async);
 
-  sysprof_document_lookup_file_async (document,
-                                      "__symbols__",
-                                      cancellable,
-                                      sysprof_bundled_symbolizer_prepare_cb,
-                                      g_steal_pointer (&task));
+  if ((file = sysprof_document_lookup_file (document, "__symbols__")) &&
+      (bytes = sysprof_document_file_dup_bytes (file)))
+    sysprof_bundled_symbolizer_decode (self, bytes, _sysprof_document_is_native (document));
 
+  g_task_return_boolean (task, TRUE);
 }
 
 static gboolean

@@ -417,122 +417,55 @@ _sysprof_document_is_native (SysprofDocument *self)
   return self->needs_swap == FALSE;
 }
 
-static void
-sysprof_document_lookup_file (GTask        *task,
-                              gpointer      source_object,
-                              gpointer      task_data,
-                              GCancellable *cancellable)
+/**
+ * sysprof_document_lookup_file:
+ * @self: a #SysprofDocument
+ * @path: the path of the file
+ *
+ * Locates @path within the document and returns a #SysprofDocumentFile if
+ * it was found which can be used to access the contents.
+ *
+ * Returns: (transfer full) (nullable): a #SysprofDocumentFile
+ */
+SysprofDocumentFile *
+sysprof_document_lookup_file (SysprofDocument *self,
+                              const char      *path)
 {
-  SysprofDocument *self = source_object;
-  g_autoptr(GByteArray) bytes = NULL;
-  const char *filename = task_data;
-  GtkBitsetIter iter;
-  guint target;
-  guint i;
+  gpointer key, value;
 
-  g_assert (G_IS_TASK (task));
-  g_assert (SYSPROF_IS_DOCUMENT (source_object));
-  g_assert (filename != NULL);
-  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (path != NULL, NULL);
 
-  bytes = g_byte_array_new ();
-  target = GPOINTER_TO_UINT (g_hash_table_lookup (self->files_first_position, filename));
-
-  /* We can access capture data on a thread because the pointers to
-   * frames are created during construction and then never mutated.
-   *
-   * But do remember that frame data may not be byte-swapped. We do
-   * not need to swap frame->type becaues it's 1 byte.
-   */
-
-  if (gtk_bitset_iter_init_at (&iter, self->file_chunks, target, &i))
+  if (g_hash_table_lookup_extended (self->files_first_position, path, &key, &value))
     {
-      do
+      g_autoptr(GPtrArray) file_chunks = g_ptr_array_new_with_free_func (g_object_unref);
+      GtkBitsetIter iter;
+      guint target = GPOINTER_TO_SIZE (value);
+      guint i;
+
+      if (gtk_bitset_iter_init_at (&iter, self->file_chunks, target, &i))
         {
-          g_autoptr(SysprofDocumentFileChunk) file_chunk = sysprof_document_get_item ((GListModel *)self, i);
-          const char *path;
-
-          if (!SYSPROF_IS_DOCUMENT_FILE_CHUNK (file_chunk))
-            continue;
-
-          path = sysprof_document_file_chunk_get_path (file_chunk);
-
-          if (g_strcmp0 (path, filename) == 0)
+          do
             {
-              const guint8 *data = sysprof_document_file_chunk_get_data (file_chunk, NULL);
-              guint size = sysprof_document_file_chunk_get_size (file_chunk);
+              g_autoptr(SysprofDocumentFileChunk) file_chunk = sysprof_document_get_item ((GListModel *)self, i);
 
-              if (size > 0)
-                g_byte_array_append (bytes, data, size);
+              if (g_strcmp0 (path, sysprof_document_file_chunk_get_path (file_chunk)) == 0)
+                {
+                  gboolean is_last = sysprof_document_file_chunk_get_is_last (file_chunk);
 
-              was_found = TRUE;
+                  g_ptr_array_add (file_chunks, g_steal_pointer (&file_chunk));
 
-              if (sysprof_document_file_chunk_get_is_last (file_chunk))
-                break;
+                  if (is_last)
+                    break;
+                }
             }
+          while (gtk_bitset_iter_next (&iter, &i));
         }
-      while (gtk_bitset_iter_next (&iter, &i));
+
+      return _sysprof_document_file_new (path, g_steal_pointer (&file_chunks));
     }
 
-  if (!was_found)
-    g_task_return_new_error (task,
-                             G_IO_ERROR,
-                             G_IO_ERROR_NOT_FOUND,
-                             "Failed to locate file \"%s\"", filename);
-  else
-    g_task_return_pointer (task,
-                           g_byte_array_free_to_bytes (g_steal_pointer (&bytes)),
-                           (GDestroyNotify)g_bytes_unref);
-}
-
-void
-sysprof_document_lookup_file_async (SysprofDocument     *self,
-                                    const char          *filename,
-                                    GCancellable        *cancellable,
-                                    GAsyncReadyCallback  callback,
-                                    gpointer             user_data)
-{
-  g_autoptr(GTask) task = NULL;
-
-  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
-  g_return_if_fail (filename != NULL);
-  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
-
-  task = g_task_new (self, cancellable, callback, user_data);
-  g_task_set_source_tag (task, sysprof_document_lookup_file_async);
-  g_task_set_task_data (task, g_strdup (filename), g_free);
-
-  if (!g_hash_table_contains (self->files_first_position, filename))
-    g_task_return_new_error (task,
-                             G_IO_ERROR,
-                             G_IO_ERROR_NOT_FOUND,
-                             "Filename could not be found");
-  else
-    g_task_run_in_thread (task, sysprof_document_lookup_file);
-}
-
-/**
- * sysprof_document_lookup_file_finish:
- * @self: a #SysprofDocument
- * @result: the #GAsyncResult provided to callback
- * @error: a location for a #GError, or %NULL
- *
- * Completes a request to load the contents of a file that was
- * embedded within the document.
- *
- * Returns: (transfer full): a #GBytes if successful; otherwise %NULL
- *   and @error is set.
- */
-GBytes *
-sysprof_document_lookup_file_finish (SysprofDocument  *self,
-                                     GAsyncResult     *result,
-                                     GError          **error)
-{
-  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
-  g_return_val_if_fail (G_IS_TASK (result), NULL);
-  g_return_val_if_fail (g_task_is_valid (result, self), NULL);
-
-  return g_task_propagate_pointer (G_TASK (result), error);
+  return NULL;
 }
 
 /**
@@ -570,7 +503,7 @@ sysprof_document_list_files (SysprofDocument *self)
             {
               g_autoptr(SysprofDocumentFileChunk) file_chunk = sysprof_document_get_item ((GListModel *)self, i);
 
-              if (g_strcmp0 (path, sysprof_document_file_chunk_get_path (file_chunk)) != 0)
+              if (g_strcmp0 (path, sysprof_document_file_chunk_get_path (file_chunk)) == 0)
                 {
                   gboolean is_last = sysprof_document_file_chunk_get_is_last (file_chunk);
 

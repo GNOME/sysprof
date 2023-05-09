@@ -21,6 +21,7 @@
 #pragma once
 
 #include "sysprof-document.h"
+#include "sysprof-symbol.h"
 #include "sysprof-symbolizer.h"
 
 G_BEGIN_DECLS
@@ -36,24 +37,32 @@ struct _SysprofSymbolizerClass
 {
   GObjectClass parent_class;
 
-  void     (*prepare_async)  (SysprofSymbolizer    *self,
-                              SysprofDocument      *document,
-                              GCancellable         *cancellable,
-                              GAsyncReadyCallback   callback,
-                              gpointer              user_data);
-  gboolean (*prepare_finish) (SysprofSymbolizer    *self,
-                              GAsyncResult         *result,
-                              GError              **error);
+  void     (*prepare_async)   (SysprofSymbolizer    *self,
+                               SysprofDocument      *document,
+                               GCancellable         *cancellable,
+                               GAsyncReadyCallback   callback,
+                               gpointer              user_data);
+  gboolean (*prepare_finish)  (SysprofSymbolizer    *self,
+                               GAsyncResult         *result,
+                               GError              **error);
+  SysprofSymbol *(*symbolize) (SysprofSymbolizer    *self,
+                               gint64                time,
+                               int                   pid,
+                               SysprofAddress        address);
 };
 
 
-void     _sysprof_symbolizer_prepare_async  (SysprofSymbolizer    *self,
-                                             SysprofDocument      *document,
-                                             GCancellable         *cancellable,
-                                             GAsyncReadyCallback   callback,
-                                             gpointer              user_data);
-gboolean _sysprof_symbolizer_prepare_finish (SysprofSymbolizer    *self,
-                                             GAsyncResult         *result,
-                                             GError              **error);
+void           _sysprof_symbolizer_prepare_async  (SysprofSymbolizer    *self,
+                                                   SysprofDocument      *document,
+                                                   GCancellable         *cancellable,
+                                                   GAsyncReadyCallback   callback,
+                                                   gpointer              user_data);
+gboolean       _sysprof_symbolizer_prepare_finish (SysprofSymbolizer    *self,
+                                                   GAsyncResult         *result,
+                                                   GError              **error);
+SysprofSymbol *_sysprof_symbolizer_symbolize      (SysprofSymbolizer    *self,
+                                                   gint64                time,
+                                                   int                   pid,
+                                                   SysprofAddress        address);
 
 G_END_DECLS

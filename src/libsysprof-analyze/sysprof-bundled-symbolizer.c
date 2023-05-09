@@ -23,10 +23,30 @@
 #include "sysprof-bundled-symbolizer.h"
 #include "sysprof-document-private.h"
 #include "sysprof-symbolizer-private.h"
+#include "sysprof-symbol-private.h"
+
+SYSPROF_ALIGNED_BEGIN(1)
+typedef struct
+{
+  SysprofCaptureAddress addr_begin;
+  SysprofCaptureAddress addr_end;
+  guint32               pid;
+  guint32               offset;
+  guint32               tag_offset;
+  guint32               padding;
+} Decoded
+SYSPROF_ALIGNED_END(1);
 
 struct _SysprofBundledSymbolizer
 {
-  SysprofSymbolizer parent_instance;
+  SysprofSymbolizer  parent_instance;
+
+  const Decoded     *symbols;
+  guint              n_symbols;
+
+  GBytes            *bytes;
+  const gchar       *beginptr;
+  const gchar       *endptr;
 };
 
 struct _SysprofBundledSymbolizerClass
@@ -41,9 +61,45 @@ sysprof_bundled_symbolizer_decode (SysprofBundledSymbolizer *self,
                                    GBytes                   *bytes,
                                    gboolean                  is_native)
 {
+  char *beginptr;
+  char *endptr;
+
   g_assert (SYSPROF_IS_BUNDLED_SYMBOLIZER (self));
   g_assert (bytes != NULL);
 
+  /* Our GBytes always contain a trialing \0 after what we think
+   * is the end of the buffer.
+   */
+  beginptr = (char *)g_bytes_get_data (bytes, NULL);
+  endptr = beginptr + g_bytes_get_size (bytes);
+
+  for (gchar *ptr = beginptr;
+       ptr < endptr && (ptr + sizeof (Decoded)) < endptr;
+       ptr += sizeof (Decoded))
+    {
+      Decoded *sym = (Decoded *)ptr;
+
+      if (sym->addr_begin == 0 &&
+          sym->addr_end == 0 &&
+          sym->pid == 0 &&
+          sym->offset == 0)
+        {
+          self->symbols = (const Decoded *)beginptr;
+          self->n_symbols = sym - self->symbols;
+          break;
+        }
+      else if (!is_native)
+        {
+          sym->addr_begin = GUINT64_SWAP_LE_BE (sym->addr_begin);
+          sym->addr_end = GUINT64_SWAP_LE_BE (sym->addr_end);
+          sym->pid = GUINT32_SWAP_LE_BE (sym->pid);
+          sym->offset = GUINT32_SWAP_LE_BE (sym->offset);
+          sym->tag_offset = GUINT32_SWAP_LE_BE (sym->tag_offset);
+        }
+    }
+
+  self->beginptr = beginptr;
+  self->endptr = endptr;
 }
 
 static void
@@ -84,9 +140,88 @@ sysprof_bundled_symbolizer_prepare_finish (SysprofSymbolizer  *symbolizer,
   return g_task_propagate_boolean (G_TASK (result), error);
 }
 
+static gint
+search_for_symbol_cb (gconstpointer a,
+                      gconstpointer b)
+{
+  const Decoded *key = a;
+  const Decoded *ele = b;
+
+  if (key->pid < ele->pid)
+    return -1;
+
+  if (key->pid > ele->pid)
+    return 1;
+
+  g_assert (key->pid == ele->pid);
+
+  if (key->addr_begin < ele->addr_begin)
+    return -1;
+
+  if (key->addr_begin > ele->addr_end)
+    return 1;
+
+  g_assert (key->addr_begin >= ele->addr_begin);
+  g_assert (key->addr_end <= ele->addr_end);
+
+  return 0;
+}
+
+static SysprofSymbol *
+sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer *symbolizer,
+                                      gint64             time,
+                                      int                pid,
+                                      SysprofAddress     address)
+{
+  SysprofBundledSymbolizer *self = SYSPROF_BUNDLED_SYMBOLIZER (symbolizer);
+  g_autoptr(GRefString) tag = NULL;
+  const Decoded *ret;
+  const Decoded key = {
+    .addr_begin = address,
+    .addr_end = address,
+    .pid = pid,
+    .offset = 0,
+    .tag_offset = 0,
+  };
+
+  if (self->n_symbols == 0)
+    return NULL;
+
+  ret = bsearch (&key,
+                 self->symbols,
+                 self->n_symbols,
+                 sizeof *ret,
+                 search_for_symbol_cb);
+
+  if (ret == NULL || ret->offset == 0)
+    return NULL;
+
+  if (ret->tag_offset > 0)
+    {
+      if (ret->tag_offset < (self->endptr - self->beginptr))
+        tag = g_ref_string_new (&self->beginptr[ret->tag_offset]);
+    }
+
+  if (ret->offset < (self->endptr - self->beginptr))
+    return _sysprof_symbol_new (g_ref_string_new (&self->beginptr[ret->offset]),
+                                g_steal_pointer (&tag),
+                                NULL);
+
+  return NULL;
+}
+
 static void
 sysprof_bundled_symbolizer_finalize (GObject *object)
 {
+  SysprofBundledSymbolizer *self = (SysprofBundledSymbolizer *)object;
+
+  self->symbols = NULL;
+  self->n_symbols = 0;
+  self->beginptr = NULL;
+  self->endptr = NULL;
+
+  g_clear_pointer (&self->bytes, g_bytes_unref);
+
   G_OBJECT_CLASS (sysprof_bundled_symbolizer_parent_class)->finalize (object);
 }
 
@@ -100,6 +235,7 @@ sysprof_bundled_symbolizer_class_init (SysprofBundledSymbolizerClass *klass)
 
   symbolizer_class->prepare_async = sysprof_bundled_symbolizer_prepare_async;
   symbolizer_class->prepare_finish = sysprof_bundled_symbolizer_prepare_finish;
+  symbolizer_class->symbolize = sysprof_bundled_symbolizer_symbolize;
 }
 
 static void

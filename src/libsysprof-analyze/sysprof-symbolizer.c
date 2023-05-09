@@ -89,3 +89,12 @@ _sysprof_symbolizer_prepare_finish (SysprofSymbolizer  *self,
 
   return SYSPROF_SYMBOLIZER_GET_CLASS (self)->prepare_finish (self, result, error);
 }
+
+SysprofSymbol *
+_sysprof_symbolizer_symbolize (SysprofSymbolizer *self,
+                               gint64             time,
+                               int                pid,
+                               SysprofAddress     address)
+{
+  return SYSPROF_SYMBOLIZER_GET_CLASS (self)->symbolize (self, time, pid, address);
+}

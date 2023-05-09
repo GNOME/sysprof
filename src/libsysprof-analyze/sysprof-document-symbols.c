@@ -83,10 +83,15 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
   SysprofAddressContext last_context;
   guint64 *addresses;
   guint n_addresses;
+  gint64 time;
+  int pid;
 
   g_assert (SYSPROF_IS_DOCUMENT_SYMBOLS (self));
   g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
+
+  time = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (traceable));
+  pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
 
   /* TODO: We need to get the SysprofMountNamespace for the PID which must have
    * already been compiled. We also need the list SysprofDocumentMmap so that we
@@ -119,6 +124,13 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
         }
       else
         {
+          g_autoptr(SysprofSymbol) symbol = _sysprof_symbolizer_symbolize (symbolizer, time, pid, address);
+
+          /* TODO: This isn't the API we'll use for symbolizing, it just gets
+           * some plumbing in place. Additionally, we'll probably cache all these
+           * values here so that we can skip calling the symbolizer at all for
+           * subsequent symbols within a given range.
+           */
         }
     }
 }

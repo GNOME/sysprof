@@ -25,8 +25,8 @@
 
 G_BEGIN_DECLS
 
-SysprofSymbol *_sysprof_symbol_new (char *name,
-                                    char *binary_nick,
-                                    char *binary_path);
+SysprofSymbol *_sysprof_symbol_new (GRefString *name,
+                                    GRefString *binary_nick,
+                                    GRefString *binary_path);
 
 G_END_DECLS

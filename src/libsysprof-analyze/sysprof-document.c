@@ -28,6 +28,7 @@
 
 #include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-file-chunk.h"
+#include "sysprof-document-file-private.h"
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-symbolizer-private.h"
@@ -42,6 +43,8 @@ struct _SysprofDocument
 
   GtkBitset                *file_chunks;
   GtkBitset                *traceables;
+
+  GHashTable               *files_first_position;
 
   GMutex                    strings_mutex;
   GHashTable               *strings;
@@ -97,6 +100,14 @@ list_model_iface_init (GListModelInterface *iface)
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocument, sysprof_document, G_TYPE_OBJECT,
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
+GtkBitset *
+_sysprof_document_traceables (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return self->traceables;
+}
+
 static void
 sysprof_document_finalize (GObject *object)
 {
@@ -107,6 +118,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->strings, g_hash_table_unref);
   g_clear_pointer (&self->traceables, gtk_bitset_unref);
   g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
+  g_clear_pointer (&self->files_first_position, g_hash_table_unref);
 
   g_mutex_clear (&self->strings_mutex);
 
@@ -130,6 +142,21 @@ sysprof_document_init (SysprofDocument *self)
                                          (GDestroyNotify)g_ref_string_release);
   self->traceables = gtk_bitset_new_empty ();
   self->file_chunks = gtk_bitset_new_empty ();
+
+  self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+}
+
+static inline gboolean
+has_null_byte (const char *str,
+               const char *endptr)
+{
+  for (const char *c = str; c < endptr; c++)
+    {
+      if (*c == '\0')
+        return TRUE;
+    }
+
+  return FALSE;
 }
 
 static gboolean
@@ -137,6 +164,7 @@ sysprof_document_load (SysprofDocument  *self,
                        int               capture_fd,
                        GError          **error)
 {
+  g_autoptr(GHashTable) files = NULL;
   goffset pos;
   gsize len;
 
@@ -188,7 +216,17 @@ sysprof_document_load (SysprofDocument  *self,
           tainted->type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
         gtk_bitset_add (self->traceables, self->frames->len);
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
-        gtk_bitset_add (self->file_chunks, self->frames->len);
+        {
+          const SysprofCaptureFileChunk *file_chunk = (const SysprofCaptureFileChunk *)tainted;
+
+          gtk_bitset_add (self->file_chunks, self->frames->len);
+
+          if (has_null_byte (file_chunk->path, (const char *)file_chunk->data) &&
+              !g_hash_table_contains (self->files_first_position, file_chunk->path))
+            g_hash_table_insert (self->files_first_position,
+                                 g_strdup (file_chunk->path),
+                                 GUINT_TO_POINTER (self->frames->len));
+        }
 
       pos += frame_len;
 
@@ -389,7 +427,7 @@ sysprof_document_lookup_file (GTask        *task,
   g_autoptr(GByteArray) bytes = NULL;
   const char *filename = task_data;
   GtkBitsetIter iter;
-  gboolean was_found = FALSE;
+  guint target;
   guint i;
 
   g_assert (G_IS_TASK (task));
@@ -398,6 +436,7 @@ sysprof_document_lookup_file (GTask        *task,
   g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   bytes = g_byte_array_new ();
+  target = GPOINTER_TO_UINT (g_hash_table_lookup (self->files_first_position, filename));
 
   /* We can access capture data on a thread because the pointers to
    * frames are created during construction and then never mutated.
@@ -406,7 +445,7 @@ sysprof_document_lookup_file (GTask        *task,
    * not need to swap frame->type becaues it's 1 byte.
    */
 
-  if (gtk_bitset_iter_init_first (&iter, self->file_chunks, &i))
+  if (gtk_bitset_iter_init_at (&iter, self->file_chunks, target, &i))
     {
       do
         {
@@ -431,7 +470,6 @@ sysprof_document_lookup_file (GTask        *task,
               if (sysprof_document_file_chunk_get_is_last (file_chunk))
                 break;
             }
-
         }
       while (gtk_bitset_iter_next (&iter, &i));
     }
@@ -463,7 +501,14 @@ sysprof_document_lookup_file_async (SysprofDocument     *self,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_document_lookup_file_async);
   g_task_set_task_data (task, g_strdup (filename), g_free);
-  g_task_run_in_thread (task, sysprof_document_lookup_file);
+
+  if (!g_hash_table_contains (self->files_first_position, filename))
+    g_task_return_new_error (task,
+                             G_IO_ERROR,
+                             G_IO_ERROR_NOT_FOUND,
+                             "Filename could not be found");
+  else
+    g_task_run_in_thread (task, sysprof_document_lookup_file);
 }
 
 /**
@@ -490,12 +535,60 @@ sysprof_document_lookup_file_finish (SysprofDocument  *self,
   return g_task_propagate_pointer (G_TASK (result), error);
 }
 
-GtkBitset *
-_sysprof_document_traceables (SysprofDocument *self)
+/**
+ * sysprof_document_list_files:
+ * @self: a #SysprofDocument
+ *
+ * Gets a #GListModel of #SysprofDocumentFile
+ *
+ * Returns: (transfer full): a #GListModel
+ */
+GListModel *
+sysprof_document_list_files (SysprofDocument *self)
 {
+  GHashTableIter hiter;
+  GtkBitsetIter iter;
+  GListStore *model;
+  gpointer key, value;
+
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
-  return self->traceables;
+  model = g_list_store_new (SYSPROF_TYPE_DOCUMENT_FILE);
+
+  g_hash_table_iter_init (&hiter, self->files_first_position);
+  while (g_hash_table_iter_next (&hiter, &key, &value))
+    {
+      g_autoptr(SysprofDocumentFile) file = NULL;
+      g_autoptr(GPtrArray) file_chunks = g_ptr_array_new_with_free_func (g_object_unref);
+      const char *path = key;
+      guint target = GPOINTER_TO_SIZE (value);
+      guint i;
+
+      if (gtk_bitset_iter_init_at (&iter, self->file_chunks, target, &i))
+        {
+          do
+            {
+              g_autoptr(SysprofDocumentFileChunk) file_chunk = sysprof_document_get_item ((GListModel *)self, i);
+
+              if (g_strcmp0 (path, sysprof_document_file_chunk_get_path (file_chunk)) != 0)
+                {
+                  gboolean is_last = sysprof_document_file_chunk_get_is_last (file_chunk);
+
+                  g_ptr_array_add (file_chunks, g_steal_pointer (&file_chunk));
+
+                  if (is_last)
+                    break;
+                }
+            }
+          while (gtk_bitset_iter_next (&iter, &i));
+        }
+
+      file = _sysprof_document_file_new (path, g_steal_pointer (&file_chunks));
+
+      g_list_store_append (model, file);
+    }
+
+  return G_LIST_MODEL (model);
 }
 
 /**

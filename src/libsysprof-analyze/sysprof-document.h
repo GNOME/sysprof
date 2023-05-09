@@ -51,6 +51,8 @@ SysprofDocumentSymbols *sysprof_document_symbolize_finish   (SysprofDocument    
                                                              GAsyncResult         *result,
                                                              GError              **error);
 SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_files         (SysprofDocument      *self);
+SYSPROF_AVAILABLE_IN_ALL
 void                    sysprof_document_lookup_file_async  (SysprofDocument      *self,
                                                              const char           *filename,
                                                              GCancellable         *cancellable,

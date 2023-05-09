@@ -14,6 +14,7 @@ libsysprof_analyze_testsuite_c_args = [
 libsysprof_analyze_testsuite = {
   'test-capture-model' : {'skip': true},
   'test-list-files'    : {'skip': true},
+  'test-print-file'    : {'skip': true},
   'test-symbolize'     : {'skip': true},
 }
 

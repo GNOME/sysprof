@@ -73,7 +73,7 @@ sysprof_bundled_symbolizer_decode (SysprofBundledSymbolizer *self,
   beginptr = (char *)g_bytes_get_data (bytes, NULL);
   endptr = beginptr + g_bytes_get_size (bytes);
 
-  for (gchar *ptr = beginptr;
+  for (char *ptr = beginptr;
        ptr < endptr && (ptr + sizeof (Decoded)) < endptr;
        ptr += sizeof (Decoded))
     {
@@ -100,6 +100,7 @@ sysprof_bundled_symbolizer_decode (SysprofBundledSymbolizer *self,
 
   self->beginptr = beginptr;
   self->endptr = endptr;
+  self->bytes = g_bytes_ref (bytes);
 }
 
 static void
@@ -187,10 +188,13 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer *symbolizer,
   if (self->n_symbols == 0)
     return NULL;
 
+  g_assert (self->symbols != NULL);
+  g_assert (self->n_symbols > 0);
+
   ret = bsearch (&key,
                  self->symbols,
                  self->n_symbols,
-                 sizeof *ret,
+                 sizeof (Decoded),
                  search_for_symbol_cb);
 
   if (ret == NULL || ret->offset == 0)

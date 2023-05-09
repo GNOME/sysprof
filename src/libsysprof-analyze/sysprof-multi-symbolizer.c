@@ -117,6 +117,26 @@ sysprof_multi_symbolizer_prepare_finish (SysprofSymbolizer  *symbolizer,
   return g_task_propagate_boolean (G_TASK (result), error);
 }
 
+static SysprofSymbol *
+sysprof_multi_symbolizer_symbolize (SysprofSymbolizer *symbolizer,
+                                    gint64             time,
+                                    int                pid,
+                                    SysprofAddress     address)
+{
+  SysprofMultiSymbolizer *self = SYSPROF_MULTI_SYMBOLIZER (symbolizer);
+
+  for (guint i = 0; i < self->symbolizers->len; i++)
+    {
+      SysprofSymbolizer *child = g_ptr_array_index (self->symbolizers, i);
+      SysprofSymbol *symbol = _sysprof_symbolizer_symbolize (child, time, pid, address);
+
+      if (symbol != NULL)
+        return symbol;
+    }
+
+  return NULL;
+}
+
 static void
 sysprof_multi_symbolizer_finalize (GObject *object)
 {
@@ -137,6 +157,7 @@ sysprof_multi_symbolizer_class_init (SysprofMultiSymbolizerClass *klass)
 
   symbolizer_class->prepare_async = sysprof_multi_symbolizer_prepare_async;
   symbolizer_class->prepare_finish = sysprof_multi_symbolizer_prepare_finish;
+  symbolizer_class->symbolize = sysprof_multi_symbolizer_symbolize;
 }
 
 static void

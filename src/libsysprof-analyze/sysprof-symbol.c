@@ -140,16 +140,16 @@ sysprof_symbol_get_binary_path (SysprofSymbol *self)
 }
 
 SysprofSymbol *
-_sysprof_symbol_new (char *name,
-                     char *binary_path,
-                     char *binary_nick)
+_sysprof_symbol_new (GRefString *name,
+                     GRefString *binary_path,
+                     GRefString *binary_nick)
 {
   SysprofSymbol *self;
 
   self = g_object_new (SYSPROF_TYPE_SYMBOL, NULL);
-  self->name = name ? g_ref_string_acquire (name) : NULL;
-  self->binary_path = binary_path ? g_ref_string_acquire (binary_path) : NULL;
-  self->binary_nick = binary_nick ? g_ref_string_acquire (binary_nick) : NULL;
+  self->name = name;
+  self->binary_path = binary_path;
+  self->binary_nick = binary_nick;
 
   return self;
 }

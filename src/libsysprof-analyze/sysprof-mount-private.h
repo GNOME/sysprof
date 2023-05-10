@@ -22,20 +22,23 @@
 
 #include <glib-object.h>
 
+#include "sysprof-strings-private.h"
+
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_MOUNT (sysprof_mount_get_type())
 
 G_DECLARE_FINAL_TYPE (SysprofMount, sysprof_mount, SYSPROF, MOUNT, GObject)
 
-SysprofMount *sysprof_mount_new_for_mountinfo     (const char   *mountinfo);
-int           sysprof_mount_get_device_major      (SysprofMount *self);
-int           sysprof_mount_get_device_minor      (SysprofMount *self);
-const char   *sysprof_mount_get_root              (SysprofMount *self);
-const char   *sysprof_mount_get_mount_path        (SysprofMount *self);
-const char   *sysprof_mount_get_mount_source      (SysprofMount *self);
-const char   *sysprof_mount_get_filesystem_type   (SysprofMount *self);
-const char   *sysprof_mount_get_superblock_option (SysprofMount *self,
-                                                   const char   *option);
+SysprofMount *sysprof_mount_new_for_mountinfo     (SysprofStrings *strings,
+                                                   const char     *mountinfo);
+int           sysprof_mount_get_device_major      (SysprofMount   *self);
+int           sysprof_mount_get_device_minor      (SysprofMount   *self);
+const char   *sysprof_mount_get_root              (SysprofMount   *self);
+const char   *sysprof_mount_get_mount_path        (SysprofMount   *self);
+const char   *sysprof_mount_get_mount_source      (SysprofMount   *self);
+const char   *sysprof_mount_get_filesystem_type   (SysprofMount   *self);
+const char   *sysprof_mount_get_superblock_option (SysprofMount   *self,
+                                                   const char     *option);
 
 G_END_DECLS

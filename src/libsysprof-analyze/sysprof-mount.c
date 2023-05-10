@@ -149,7 +149,8 @@ sysprof_mount_init (SysprofMount *self)
 }
 
 SysprofMount *
-sysprof_mount_new_for_mountinfo (const char *mountinfo)
+sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
+                                 const char     *mountinfo)
 {
   return NULL;
 }

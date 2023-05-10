@@ -354,9 +354,13 @@ sysprof_document_load_mountinfo (SysprofDocument *self,
 
       line[line_len] = 0;
 
-      if ((mount = sysprof_mount_new_for_mountinfo (line)))
+      if ((mount = sysprof_mount_new_for_mountinfo (self->strings, line)))
         sysprof_mount_namespace_add_mount (mount_namespace, g_steal_pointer (&mount));
     }
+
+  g_hash_table_insert (self->pid_to_mountinfo,
+                       GINT_TO_POINTER (pid),
+                       g_steal_pointer (&mount_namespace));
 }
 
 static void

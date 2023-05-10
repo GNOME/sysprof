@@ -32,6 +32,7 @@
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-mmap.h"
 #include "sysprof-document-symbols-private.h"
+#include "sysprof-mount-private.h"
 #include "sysprof-mount-device-private.h"
 #include "sysprof-mount-namespace-private.h"
 #include "sysprof-symbolizer-private.h"
@@ -328,29 +329,11 @@ sysprof_document_load_mounts (SysprofDocument *self)
 }
 
 static void
-sysprof_document_load_mountinfo_line (SysprofDocument *self,
-                                      int              pid,
-                                      const char      *line)
-{
-  g_auto(GStrv) parts = NULL;
-  gsize n_parts;
-
-  g_assert (SYSPROF_IS_DOCUMENT (self));
-  g_assert (line != NULL);
-
-  parts = g_strsplit (line, " ", 0);
-  n_parts = g_strv_length (parts);
-
-  if (n_parts < 10)
-    return;
-
-}
-
-static void
 sysprof_document_load_mountinfo (SysprofDocument *self,
                                  int              pid,
                                  GBytes          *bytes)
 {
+  g_autoptr(SysprofMountNamespace) mount_namespace = NULL;
   const char *contents;
   LineReader reader;
   gsize contents_len;
@@ -365,11 +348,17 @@ sysprof_document_load_mountinfo (SysprofDocument *self,
   g_assert (contents != NULL);
   g_assert (contents[contents_len] == 0);
 
+  mount_namespace = sysprof_mount_namespace_copy (self->mount_namespace);
+
   line_reader_init (&reader, (char *)contents, contents_len);
   while ((line = line_reader_next (&reader, &line_len)))
     {
+      g_autoptr(SysprofMount) mount = NULL;
+
       line[line_len] = 0;
-      sysprof_document_load_mountinfo_line (self, pid, line);
+
+      if ((mount = sysprof_mount_new_for_mountinfo (line)))
+        sysprof_mount_namespace_add_mount (mount_namespace, g_steal_pointer (&mount));
     }
 }
 

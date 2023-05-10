@@ -26,6 +26,7 @@ struct _SysprofMountNamespace
 {
   GObject    parent_instance;
   GPtrArray *devices;
+  GPtrArray *mounts;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofMountNamespace, sysprof_mount_namespace, G_TYPE_OBJECT)
@@ -36,6 +37,7 @@ sysprof_mount_namespace_finalize (GObject *object)
   SysprofMountNamespace *self = (SysprofMountNamespace *)object;
 
   g_clear_pointer (&self->devices, g_ptr_array_unref);
+  g_clear_pointer (&self->mounts, g_ptr_array_unref);
 
   G_OBJECT_CLASS (sysprof_mount_namespace_parent_class)->finalize (object);
 }
@@ -91,4 +93,20 @@ sysprof_mount_namespace_add_device (SysprofMountNamespace *self,
   g_return_if_fail (SYSPROF_IS_MOUNT_DEVICE (device));
 
   g_ptr_array_add (self->devices, device);
+}
+
+/**
+ * sysprof_mount_namespace_add_mount:
+ * @self: a #SysprofMountNamespace
+ * @mount: (transfer full): a #SysprofMount
+ *
+ */
+void
+sysprof_mount_namespace_add_mount (SysprofMountNamespace *self,
+                                   SysprofMount          *mount)
+{
+  g_return_if_fail (SYSPROF_IS_MOUNT_NAMESPACE (self));
+  g_return_if_fail (SYSPROF_IS_MOUNT (mount));
+
+  g_ptr_array_add (self->mounts, mount);
 }

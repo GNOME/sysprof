@@ -22,6 +22,7 @@
 
 #include <glib-object.h>
 
+#include "sysprof-mount-private.h"
 #include "sysprof-mount-device-private.h"
 
 G_BEGIN_DECLS
@@ -35,9 +36,7 @@ SysprofMountNamespace  *sysprof_mount_namespace_copy        (SysprofMountNamespa
 void                    sysprof_mount_namespace_add_device  (SysprofMountNamespace *self,
                                                              SysprofMountDevice    *mount);
 void                    sysprof_mount_namespace_add_mount   (SysprofMountNamespace *self,
-                                                             const char            *path,
-                                                             const char            *host_path,
-                                                             int                    layer);
+                                                             SysprofMount          *mount);
 char                  **sysprof_mount_namespace_translate   (SysprofMountNamespace *self,
                                                              const char            *path);
 GMappedFile            *sysprof_mount_namespace_open        (SysprofMountNamespace *self,

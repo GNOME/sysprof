@@ -53,6 +53,7 @@ struct _SysprofDocument
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_mmaps;
+  GHashTable               *pid_to_mountinfo;
 
   SysprofMountNamespace    *mount_namespace;
 
@@ -149,6 +150,7 @@ sysprof_document_finalize (GObject *object)
   SysprofDocument *self = (SysprofDocument *)object;
 
   g_clear_pointer (&self->pid_to_mmaps, g_hash_table_unref);
+  g_clear_pointer (&self->pid_to_mountinfo, g_hash_table_unref);
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
   g_clear_pointer (&self->strings, g_hash_table_unref);
@@ -190,6 +192,7 @@ sysprof_document_init (SysprofDocument *self)
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   self->pid_to_mmaps = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_ptr_array_unref);
+  self->pid_to_mountinfo = g_hash_table_new_full (NULL, NULL, NULL, g_object_unref);
 
   self->mount_namespace = sysprof_mount_namespace_new ();
 }
@@ -324,6 +327,76 @@ sysprof_document_load_mounts (SysprofDocument *self)
     }
 }
 
+static void
+sysprof_document_load_mountinfo_line (SysprofDocument *self,
+                                      int              pid,
+                                      const char      *line)
+{
+  g_auto(GStrv) parts = NULL;
+  gsize n_parts;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+  g_assert (line != NULL);
+
+  parts = g_strsplit (line, " ", 0);
+  n_parts = g_strv_length (parts);
+
+  if (n_parts < 10)
+    return;
+
+}
+
+static void
+sysprof_document_load_mountinfo (SysprofDocument *self,
+                                 int              pid,
+                                 GBytes          *bytes)
+{
+  const char *contents;
+  LineReader reader;
+  gsize contents_len;
+  gsize line_len;
+  char *line;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+  g_assert (bytes != NULL);
+
+  contents = g_bytes_get_data (bytes, &contents_len);
+
+  g_assert (contents != NULL);
+  g_assert (contents[contents_len] == 0);
+
+  line_reader_init (&reader, (char *)contents, contents_len);
+  while ((line = line_reader_next (&reader, &line_len)))
+    {
+      line[line_len] = 0;
+      sysprof_document_load_mountinfo_line (self, pid, line);
+    }
+}
+
+static void
+sysprof_document_load_mountinfos (SysprofDocument *self)
+{
+  GHashTableIter hiter;
+  gpointer key, value;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  g_hash_table_iter_init (&hiter, self->pid_to_mmaps);
+  while (g_hash_table_iter_next (&hiter, &key, &value))
+    {
+      g_autoptr(SysprofMountNamespace) mount_namespace = sysprof_mount_namespace_new ();
+      int pid = GPOINTER_TO_INT (key);
+      g_autofree char *path = g_strdup_printf ("/proc/%d/mountinfo", pid);
+      g_autoptr(SysprofDocumentFile) file = sysprof_document_lookup_file (self, path);
+
+      if (file != NULL)
+        {
+          g_autoptr(GBytes) bytes = sysprof_document_file_dup_bytes (file);
+          sysprof_document_load_mountinfo (self, pid, bytes);
+        }
+    }
+}
+
 static gboolean
 sysprof_document_load (SysprofDocument  *self,
                        int               capture_fd,
@@ -405,6 +478,7 @@ sysprof_document_load (SysprofDocument  *self,
     }
 
   sysprof_document_load_mounts (self);
+  sysprof_document_load_mountinfos (self);
   sysprof_document_load_memory_maps (self);
 
   return TRUE;

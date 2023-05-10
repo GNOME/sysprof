@@ -20,9 +20,11 @@
 
 #include "config.h"
 
+#include "sysprof-address-layout-private.h"
 #include "sysprof-document-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-document-traceable.h"
+#include "sysprof-mount-namespace-private.h"
 #include "sysprof-symbol-private.h"
 #include "sysprof-symbol-cache-private.h"
 #include "sysprof-symbolizer-private.h"
@@ -68,6 +70,8 @@ typedef struct _Symbolize
   SysprofDocument        *document;
   SysprofSymbolizer      *symbolizer;
   SysprofDocumentSymbols *symbols;
+  GHashTable             *pid_to_address_layouts;
+  GHashTable             *pid_to_mount_namespaces;
 } Symbolize;
 
 static void
@@ -76,48 +80,29 @@ symbolize_free (Symbolize *state)
   g_clear_object (&state->document);
   g_clear_object (&state->symbolizer);
   g_clear_object (&state->symbols);
+  g_clear_pointer (&state->pid_to_address_layouts, g_hash_table_unref);
+  g_clear_pointer (&state->pid_to_mount_namespaces, g_hash_table_unref);
   g_free (state);
 }
 
 static void
 sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
                                         SysprofDocumentTraceable *traceable,
-                                        SysprofSymbolizer        *symbolizer)
+                                        SysprofSymbolizer        *symbolizer,
+                                        SysprofMountNamespace    *mount_namespace,
+                                        SysprofAddressLayout     *address_layout,
+                                        SysprofSymbolCache       *symbol_cache)
 {
   SysprofAddressContext last_context;
-  SysprofSymbolCache *symbol_cache;
   guint64 *addresses;
   guint n_addresses;
-  gint64 time;
   int pid;
 
   g_assert (SYSPROF_IS_DOCUMENT_SYMBOLS (self));
   g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
 
-  time = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (traceable));
   pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
-
-  if (!(symbol_cache = g_hash_table_lookup (self->pid_to_symbol_cache, GINT_TO_POINTER (pid))))
-    {
-      symbol_cache = sysprof_symbol_cache_new ();
-      g_hash_table_insert (self->pid_to_symbol_cache, GINT_TO_POINTER (pid), symbol_cache);
-    }
-
-  /* TODO: We need to get the SysprofMountNamespace for the PID which must have
-   * already been compiled. We also need the list SysprofDocumentMmap so that we
-   * can get the build-id or inode to do various validation checks.
-   *
-   * It would be nice if that was all pre-compiled by time we get here and also
-   * re-usable on the SysprofDocument for other tooling that may need to access
-   * that.
-   *
-   * The symbolizer will need to gain API to use those too.
-   *
-   * Some of this will need to be done asynchronously as well because decoding
-   * from debuginfod could be quite costly in disk/network/time.
-   */
-
   n_addresses = sysprof_document_traceable_get_stack_depth (traceable);
   addresses = g_alloca (sizeof (guint64) * n_addresses);
   sysprof_document_traceable_get_stack_addresses (traceable, addresses, n_addresses);
@@ -139,16 +124,10 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
         }
       else
         {
-          g_autoptr(SysprofSymbol) symbol = _sysprof_symbolizer_symbolize (symbolizer, time, pid, address);
+          g_autoptr(SysprofSymbol) symbol = _sysprof_symbolizer_symbolize (symbolizer, mount_namespace, address_layout, pid, address);
 
           if (symbol != NULL)
             sysprof_symbol_cache_take (symbol_cache, g_steal_pointer (&symbol));
-
-          /* TODO: This isn't the API we'll use for symbolizing, it just gets
-           * some plumbing in place. Additionally, we'll probably cache all these
-           * values here so that we can skip calling the symbolizer at all for
-           * subsequent symbols within a given range.
-           */
         }
     }
 }
@@ -207,11 +186,20 @@ sysprof_document_symbols_worker (GTask        *task,
       do
         {
           g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
+          int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
+          SysprofMountNamespace *mount_namespace = g_hash_table_lookup (state->pid_to_mount_namespaces, GINT_TO_POINTER (pid));
+          SysprofAddressLayout *address_layout = g_hash_table_lookup (state->pid_to_address_layouts, GINT_TO_POINTER (pid));
+          SysprofSymbolCache *symbol_cache = g_hash_table_lookup (state->symbols->pid_to_symbol_cache, GINT_TO_POINTER (pid));
 
-          if (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable))
-            sysprof_document_symbols_add_traceable (state->symbols,
-                                                    traceable,
-                                                    state->symbolizer);
+          if (symbol_cache == NULL)
+            {
+              symbol_cache = sysprof_symbol_cache_new ();
+              g_hash_table_insert (state->symbols->pid_to_symbol_cache,
+                                   GINT_TO_POINTER (pid),
+                                   symbol_cache);
+            }
+
+          sysprof_document_symbols_add_traceable (state->symbols, traceable, state->symbolizer, mount_namespace, address_layout, symbol_cache);
         }
       while (gtk_bitset_iter_next (&iter, &i));
     }
@@ -224,6 +212,8 @@ sysprof_document_symbols_worker (GTask        *task,
 void
 _sysprof_document_symbols_new (SysprofDocument     *document,
                                SysprofSymbolizer   *symbolizer,
+                               GHashTable          *pid_to_mount_namespaces,
+                               GHashTable          *pid_to_address_layouts,
                                GCancellable        *cancellable,
                                GAsyncReadyCallback  callback,
                                gpointer             user_data)
@@ -238,6 +228,8 @@ _sysprof_document_symbols_new (SysprofDocument     *document,
   state->document = g_object_ref (document);
   state->symbolizer = g_object_ref (symbolizer);
   state->symbols = g_object_new (SYSPROF_TYPE_DOCUMENT_SYMBOLS, NULL);
+  state->pid_to_address_layouts = g_hash_table_ref (pid_to_address_layouts);
+  state->pid_to_mount_namespaces = g_hash_table_ref (pid_to_mount_namespaces);
 
   task = g_task_new (NULL, cancellable, callback, user_data);
   g_task_set_source_tag (task, _sysprof_document_symbols_new);

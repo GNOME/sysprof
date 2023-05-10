@@ -118,17 +118,18 @@ sysprof_multi_symbolizer_prepare_finish (SysprofSymbolizer  *symbolizer,
 }
 
 static SysprofSymbol *
-sysprof_multi_symbolizer_symbolize (SysprofSymbolizer *symbolizer,
-                                    gint64             time,
-                                    int                pid,
-                                    SysprofAddress     address)
+sysprof_multi_symbolizer_symbolize (SysprofSymbolizer     *symbolizer,
+                                    SysprofMountNamespace *mount_namespace,
+                                    SysprofAddressLayout  *address_layout,
+                                    int                    pid,
+                                    SysprofAddress         address)
 {
   SysprofMultiSymbolizer *self = SYSPROF_MULTI_SYMBOLIZER (symbolizer);
 
   for (guint i = 0; i < self->symbolizers->len; i++)
     {
       SysprofSymbolizer *child = g_ptr_array_index (self->symbolizers, i);
-      SysprofSymbol *symbol = _sysprof_symbolizer_symbolize (child, time, pid, address);
+      SysprofSymbol *symbol = _sysprof_symbolizer_symbolize (child, mount_namespace, address_layout, pid, address);
 
       if (symbol != NULL)
         return symbol;

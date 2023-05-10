@@ -56,8 +56,8 @@ struct _SysprofDocument
   GtkBitset                *mmaps;
 
   GHashTable               *files_first_position;
-  GHashTable               *pid_to_mmaps;
-  GHashTable               *pid_to_mountinfo;
+  GHashTable               *pid_to_address_layouts;
+  GHashTable               *pid_to_mount_namespaces;
 
   SysprofMountNamespace    *mount_namespace;
 
@@ -152,8 +152,8 @@ sysprof_document_finalize (GObject *object)
 
   g_clear_pointer (&self->strings, sysprof_strings_unref);
 
-  g_clear_pointer (&self->pid_to_mmaps, g_hash_table_unref);
-  g_clear_pointer (&self->pid_to_mountinfo, g_hash_table_unref);
+  g_clear_pointer (&self->pid_to_address_layouts, g_hash_table_unref);
+  g_clear_pointer (&self->pid_to_mount_namespaces, g_hash_table_unref);
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
 
@@ -189,35 +189,16 @@ sysprof_document_init (SysprofDocument *self)
   self->mmaps = gtk_bitset_new_empty ();
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-  self->pid_to_mmaps = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_ptr_array_unref);
-  self->pid_to_mountinfo = g_hash_table_new_full (NULL, NULL, NULL, g_object_unref);
+  self->pid_to_address_layouts = g_hash_table_new_full (NULL, NULL, NULL, g_object_unref);
+  self->pid_to_mount_namespaces = g_hash_table_new_full (NULL, NULL, NULL, g_object_unref);
 
   self->mount_namespace = sysprof_mount_namespace_new ();
-}
-
-static int
-compare_map (gconstpointer a,
-             gconstpointer b)
-{
-  SysprofDocumentMmap * const *mmap_a = a;
-  SysprofDocumentMmap * const *mmap_b = b;
-  SysprofAddress addr_a = sysprof_document_mmap_get_start_address (*mmap_a);
-  SysprofAddress addr_b = sysprof_document_mmap_get_start_address (*mmap_b);
-
-  if (addr_a < addr_b)
-    return -1;
-  else if (addr_a > addr_b)
-    return 1;
-  else
-    return 0;
 }
 
 static void
 sysprof_document_load_memory_maps (SysprofDocument *self)
 {
   GtkBitsetIter iter;
-  GHashTableIter hiter;
-  gpointer key, value;
   guint i;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
@@ -228,24 +209,17 @@ sysprof_document_load_memory_maps (SysprofDocument *self)
         {
           g_autoptr(SysprofDocumentMmap) map = sysprof_document_get_item ((GListModel *)self, i);
           int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (map));
-          GPtrArray *maps = g_hash_table_lookup (self->pid_to_mmaps, GINT_TO_POINTER (pid));
+          SysprofAddressLayout *address_layout = g_hash_table_lookup (self->pid_to_address_layouts, GINT_TO_POINTER (pid));
 
-          if G_UNLIKELY (maps == NULL)
+          if G_UNLIKELY (address_layout == NULL)
             {
-              maps = g_ptr_array_new_with_free_func (g_object_unref);
-              g_hash_table_insert (self->pid_to_mmaps, GINT_TO_POINTER (pid), maps);
+              address_layout = sysprof_address_layout_new ();
+              g_hash_table_insert (self->pid_to_address_layouts, GINT_TO_POINTER (pid), address_layout);
             }
 
-          g_ptr_array_add (maps, g_steal_pointer (&map));
+          sysprof_address_layout_take (address_layout, g_steal_pointer (&map));
         }
       while (gtk_bitset_iter_next (&iter, &i));
-    }
-
-  g_hash_table_iter_init (&hiter, self->pid_to_mmaps);
-  while (g_hash_table_iter_next (&hiter, &key, &value))
-    {
-      GPtrArray *ar = value;
-      g_ptr_array_sort (ar, compare_map);
     }
 }
 
@@ -358,7 +332,7 @@ sysprof_document_load_mountinfo (SysprofDocument *self,
         sysprof_mount_namespace_add_mount (mount_namespace, g_steal_pointer (&mount));
     }
 
-  g_hash_table_insert (self->pid_to_mountinfo,
+  g_hash_table_insert (self->pid_to_mount_namespaces,
                        GINT_TO_POINTER (pid),
                        g_steal_pointer (&mount_namespace));
 }
@@ -371,7 +345,7 @@ sysprof_document_load_mountinfos (SysprofDocument *self)
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
 
-  g_hash_table_iter_init (&hiter, self->pid_to_mmaps);
+  g_hash_table_iter_init (&hiter, self->pid_to_address_layouts);
   while (g_hash_table_iter_next (&hiter, &key, &value))
     {
       g_autoptr(SysprofMountNamespace) mount_namespace = sysprof_mount_namespace_new ();
@@ -581,16 +555,25 @@ sysprof_document_symbolize_prepare_cb (GObject      *object,
   SysprofSymbolizer *symbolizer = (SysprofSymbolizer *)object;
   g_autoptr(GTask) task = user_data;
   g_autoptr(GError) error = NULL;
+  SysprofDocument *self;
 
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+
+  g_assert (self != NULL);
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+  g_assert (self->pid_to_mount_namespaces != NULL);
 
   if (!_sysprof_symbolizer_prepare_finish (symbolizer, result, &error))
     g_task_return_error (task, g_steal_pointer (&error));
   else
     _sysprof_document_symbols_new (g_task_get_source_object (task),
                                    symbolizer,
+                                   self->pid_to_mount_namespaces,
+                                   self->pid_to_address_layouts,
                                    g_task_get_cancellable (task),
                                    sysprof_document_symbolize_symbols_cb,
                                    g_object_ref (task));

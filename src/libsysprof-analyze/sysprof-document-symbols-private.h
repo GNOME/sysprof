@@ -27,6 +27,8 @@ G_BEGIN_DECLS
 
 void                    _sysprof_document_symbols_new        (SysprofDocument      *document,
                                                               SysprofSymbolizer    *symbolizer,
+                                                              GHashTable           *pid_to_mount_namespaces,
+                                                              GHashTable           *pid_to_address_layouts,
                                                               GCancellable         *cancellable,
                                                               GAsyncReadyCallback   callback,
                                                               gpointer              user_data);

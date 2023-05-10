@@ -169,10 +169,11 @@ search_for_symbol_cb (gconstpointer a,
 }
 
 static SysprofSymbol *
-sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer *symbolizer,
-                                      gint64             time,
-                                      int                pid,
-                                      SysprofAddress     address)
+sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer     *symbolizer,
+                                      SysprofMountNamespace *mount_namespace,
+                                      SysprofAddressLayout  *address_layout,
+                                      int                    pid,
+                                      SysprofAddress         address)
 {
   SysprofBundledSymbolizer *self = SYSPROF_BUNDLED_SYMBOLIZER (symbolizer);
   g_autoptr(GRefString) tag = NULL;

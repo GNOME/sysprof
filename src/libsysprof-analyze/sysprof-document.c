@@ -32,7 +32,11 @@
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-mmap.h"
 #include "sysprof-document-symbols-private.h"
+#include "sysprof-mount-device-private.h"
+#include "sysprof-mount-namespace-private.h"
 #include "sysprof-symbolizer-private.h"
+
+#include "line-reader-private.h"
 
 struct _SysprofDocument
 {
@@ -49,6 +53,8 @@ struct _SysprofDocument
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_mmaps;
+
+  SysprofMountNamespace    *mount_namespace;
 
   GMutex                    strings_mutex;
   GHashTable               *strings;
@@ -112,6 +118,18 @@ _sysprof_document_traceables (SysprofDocument *self)
   return self->traceables;
 }
 
+static void
+decode_space (gchar **str)
+{
+  /* Replace encoded space "\040" with ' ' */
+  if (strstr (*str, "\\040"))
+    {
+      g_auto(GStrv) parts = g_strsplit (*str, "\\040", 0);
+      g_free (*str);
+      *str = g_strjoinv (" ", parts);
+    }
+}
+
 static inline gboolean
 has_null_byte (const char *str,
                const char *endptr)
@@ -139,6 +157,8 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->processes, gtk_bitset_unref);
   g_clear_pointer (&self->mmaps, gtk_bitset_unref);
   g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
+
+  g_clear_object (&self->mount_namespace);
 
   g_clear_pointer (&self->files_first_position, g_hash_table_unref);
 
@@ -170,6 +190,8 @@ sysprof_document_init (SysprofDocument *self)
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   self->pid_to_mmaps = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_ptr_array_unref);
+
+  self->mount_namespace = sysprof_mount_namespace_new ();
 }
 
 static int
@@ -223,6 +245,82 @@ sysprof_document_load_memory_maps (SysprofDocument *self)
     {
       GPtrArray *ar = value;
       g_ptr_array_sort (ar, compare_map);
+    }
+}
+
+static void
+sysprof_document_load_mounts (SysprofDocument *self)
+{
+  g_autoptr(SysprofDocumentFile) file = NULL;
+  g_autoptr(GBytes) bytes = NULL;
+  LineReader reader;
+  const char *contents;
+  gsize contents_len;
+  gsize line_len;
+  char *line;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  if (!(file = sysprof_document_lookup_file (self, "/proc/mounts")) ||
+      !(bytes = sysprof_document_file_dup_bytes (file)))
+    return;
+
+  contents = g_bytes_get_data (bytes, &contents_len);
+
+  g_assert (contents != NULL);
+  g_assert (contents[contents_len] == 0);
+
+  line_reader_init (&reader, (char *)contents, contents_len);
+  while ((line = line_reader_next (&reader, &line_len)))
+    {
+      g_autoptr(SysprofMountDevice) mount_device = NULL;
+      g_auto(GStrv) parts = NULL;
+      g_autofree char *subvol = NULL;
+      const char *filesystem;
+      const char *mountpoint;
+      const char *device;
+      const char *options;
+
+      line[line_len] = 0;
+
+      parts = g_strsplit (line, " ", 5);
+
+      /* Field 0: device
+       * Field 1: mountpoint
+       * Field 2: filesystem
+       * Field 3: Options
+       * .. Ignored ..
+       */
+      if (g_strv_length (parts) != 5)
+        continue;
+
+      for (guint j = 0; parts[j]; j++)
+        decode_space (&parts[j]);
+
+      device = parts[0];
+      mountpoint = parts[1];
+      filesystem = parts[2];
+      options = parts[3];
+
+      if (g_strcmp0 (filesystem, "btrfs") == 0)
+        {
+          g_auto(GStrv) opts = g_strsplit (options, ",", 0);
+
+          for (guint k = 0; opts[k]; k++)
+            {
+              if (g_str_has_prefix (opts[k], "subvol="))
+                {
+                  subvol = g_strdup (opts[k] + strlen ("subvol="));
+                  break;
+                }
+            }
+        }
+
+      mount_device = sysprof_mount_device_new ();
+      sysprof_mount_device_set_id (mount_device, device);
+      sysprof_mount_device_set_mount_path (mount_device, mountpoint);
+      sysprof_mount_device_set_subvolume (mount_device, subvol);
+      sysprof_mount_namespace_add_device (self->mount_namespace, g_steal_pointer (&mount_device));
     }
 }
 
@@ -306,6 +404,7 @@ sysprof_document_load (SysprofDocument  *self,
       g_array_append_val (self->frames, ptr);
     }
 
+  sysprof_document_load_mounts (self);
   sysprof_document_load_memory_maps (self);
 
   return TRUE;

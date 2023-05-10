@@ -140,6 +140,12 @@ sysprof_mount_device_init (SysprofMountDevice *self)
 {
 }
 
+SysprofMountDevice *
+sysprof_mount_device_new (void)
+{
+  return g_object_new (SYSPROF_TYPE_MOUNT_DEVICE, NULL);
+}
+
 const char *
 sysprof_mount_device_get_id (SysprofMountDevice *self)
 {

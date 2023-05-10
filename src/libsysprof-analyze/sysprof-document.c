@@ -35,6 +35,7 @@
 #include "sysprof-mount-private.h"
 #include "sysprof-mount-device-private.h"
 #include "sysprof-mount-namespace-private.h"
+#include "sysprof-strings-private.h"
 #include "sysprof-symbolizer-private.h"
 
 #include "line-reader-private.h"
@@ -47,6 +48,8 @@ struct _SysprofDocument
   GMappedFile              *mapped_file;
   const guint8             *base;
 
+  SysprofStrings           *strings;
+
   GtkBitset                *file_chunks;
   GtkBitset                *traceables;
   GtkBitset                *processes;
@@ -57,9 +60,6 @@ struct _SysprofDocument
   GHashTable               *pid_to_mountinfo;
 
   SysprofMountNamespace    *mount_namespace;
-
-  GMutex                    strings_mutex;
-  GHashTable               *strings;
 
   SysprofCaptureFileHeader  header;
   guint                     needs_swap : 1;
@@ -150,11 +150,12 @@ sysprof_document_finalize (GObject *object)
 {
   SysprofDocument *self = (SysprofDocument *)object;
 
+  g_clear_pointer (&self->strings, sysprof_strings_unref);
+
   g_clear_pointer (&self->pid_to_mmaps, g_hash_table_unref);
   g_clear_pointer (&self->pid_to_mountinfo, g_hash_table_unref);
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
-  g_clear_pointer (&self->strings, g_hash_table_unref);
 
   g_clear_pointer (&self->traceables, gtk_bitset_unref);
   g_clear_pointer (&self->processes, gtk_bitset_unref);
@@ -164,8 +165,6 @@ sysprof_document_finalize (GObject *object)
   g_clear_object (&self->mount_namespace);
 
   g_clear_pointer (&self->files_first_position, g_hash_table_unref);
-
-  g_mutex_clear (&self->strings_mutex);
 
   G_OBJECT_CLASS (sysprof_document_parent_class)->finalize (object);
 }
@@ -180,11 +179,9 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
 static void
 sysprof_document_init (SysprofDocument *self)
 {
-  g_mutex_init (&self->strings_mutex);
+  self->strings = sysprof_strings_new ();
 
   self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
-  self->strings = g_hash_table_new_full (g_str_hash, g_str_equal, NULL,
-                                         (GDestroyNotify)g_ref_string_release);
 
   self->traceables = gtk_bitset_new_empty ();
   self->file_chunks = gtk_bitset_new_empty ();
@@ -549,23 +546,9 @@ char *
 _sysprof_document_ref_string (SysprofDocument *self,
                               const char      *name)
 {
-  char *ret;
-
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
-  if (name == NULL)
-    return NULL;
-
-  g_mutex_lock (&self->strings_mutex);
-  if (!(ret = g_hash_table_lookup (self->strings, name)))
-    {
-      ret = g_ref_string_new (name);
-      g_hash_table_insert (self->strings, ret, ret);
-    }
-  ret = g_ref_string_acquire (ret);
-  g_mutex_unlock (&self->strings_mutex);
-
-  return ret;
+  return sysprof_strings_get (self->strings, name);
 }
 
 static void

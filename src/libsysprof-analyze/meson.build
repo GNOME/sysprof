@@ -28,6 +28,7 @@ libsysprof_analyze_private_sources = [
   'sysprof-mount.c',
   'sysprof-mount-device.c',
   'sysprof-mount-namespace.c',
+  'sysprof-strings.c',
 ]
 
 libsysprof_analyze_public_headers = [

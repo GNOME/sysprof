@@ -24,13 +24,14 @@
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-document-traceable.h"
 #include "sysprof-symbol-private.h"
+#include "sysprof-symbol-cache-private.h"
 #include "sysprof-symbolizer-private.h"
 
 struct _SysprofDocumentSymbols
 {
-  GObject parent_instance;
-
+  GObject       parent_instance;
   SysprofSymbol *context_switches[SYSPROF_ADDRESS_CONTEXT_GUEST_USER+1];
+  GHashTable    *pid_to_symbol_cache;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofDocumentSymbols, sysprof_document_symbols, G_TYPE_OBJECT)
@@ -42,6 +43,8 @@ sysprof_document_symbols_finalize (GObject *object)
 
   for (guint i = 0; i < G_N_ELEMENTS (self->context_switches); i++)
     g_clear_object (&self->context_switches[i]);
+
+  g_clear_pointer (&self->pid_to_symbol_cache, g_hash_table_unref);
 
   G_OBJECT_CLASS (sysprof_document_symbols_parent_class)->finalize (object);
 }
@@ -57,6 +60,7 @@ sysprof_document_symbols_class_init (SysprofDocumentSymbolsClass *klass)
 static void
 sysprof_document_symbols_init (SysprofDocumentSymbols *self)
 {
+  self->pid_to_symbol_cache = g_hash_table_new_full (NULL, NULL, NULL, g_object_unref);
 }
 
 typedef struct _Symbolize
@@ -81,6 +85,7 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
                                         SysprofSymbolizer        *symbolizer)
 {
   SysprofAddressContext last_context;
+  SysprofSymbolCache *symbol_cache;
   guint64 *addresses;
   guint n_addresses;
   gint64 time;
@@ -92,6 +97,12 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
 
   time = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (traceable));
   pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
+
+  if (!(symbol_cache = g_hash_table_lookup (self->pid_to_symbol_cache, GINT_TO_POINTER (pid))))
+    {
+      symbol_cache = sysprof_symbol_cache_new ();
+      g_hash_table_insert (self->pid_to_symbol_cache, GINT_TO_POINTER (pid), symbol_cache);
+    }
 
   /* TODO: We need to get the SysprofMountNamespace for the PID which must have
    * already been compiled. We also need the list SysprofDocumentMmap so that we
@@ -122,9 +133,16 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
         {
           last_context = context;
         }
+      else if (sysprof_symbol_cache_lookup (symbol_cache, address) != NULL)
+        {
+          continue;
+        }
       else
         {
           g_autoptr(SysprofSymbol) symbol = _sysprof_symbolizer_symbolize (symbolizer, time, pid, address);
+
+          if (symbol != NULL)
+            sysprof_symbol_cache_take (symbol_cache, g_steal_pointer (&symbol));
 
           /* TODO: This isn't the API we'll use for symbolizing, it just gets
            * some plumbing in place. Additionally, we'll probably cache all these
@@ -173,7 +191,7 @@ sysprof_document_symbols_worker (GTask        *task,
   for (guint cs = 0; cs < G_N_ELEMENTS (context_switches); cs++)
     {
       g_autoptr(GRefString) name = g_ref_string_new_intern (context_switches[cs].name);
-      g_autoptr(SysprofSymbol) symbol = _sysprof_symbol_new (name, NULL, NULL);
+      g_autoptr(SysprofSymbol) symbol = _sysprof_symbol_new (name, NULL, NULL, 0, 0);
 
       /* TODO: It would be nice if we had enough insight from the capture header
        * as to the host system, so we can show "vmlinuz" and "Linux" respectively

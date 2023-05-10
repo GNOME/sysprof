@@ -1,5 +1,4 @@
-/*
- * sysprof-symbol-private.h
+/* sysprof-symbol-cache-private.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -21,26 +20,20 @@
 
 #pragma once
 
+#include <glib-object.h>
+
 #include "sysprof-symbol.h"
 
 G_BEGIN_DECLS
 
-struct _SysprofSymbol
-{
-  GObject parent_instance;
+#define SYSPROF_TYPE_SYMBOL_CACHE (sysprof_symbol_cache_get_type())
 
-  GRefString *name;
-  GRefString *binary_path;
-  GRefString *binary_nick;
+G_DECLARE_FINAL_TYPE (SysprofSymbolCache, sysprof_symbol_cache, SYSPROF, SYMBOL_CACHE, GObject)
 
-  SysprofAddress begin_address;
-  SysprofAddress end_address;
-};
-
-SysprofSymbol *_sysprof_symbol_new (GRefString     *name,
-                                    GRefString     *binary_nick,
-                                    GRefString     *binary_path,
-                                    SysprofAddress  begin_address,
-                                    SysprofAddress  end_address);
+SysprofSymbolCache *sysprof_symbol_cache_new    (void);
+SysprofSymbol      *sysprof_symbol_cache_lookup (SysprofSymbolCache *self,
+                                                 SysprofAddress      address);
+void                sysprof_symbol_cache_take   (SysprofSymbolCache *self,
+                                                 SysprofSymbol      *symbol);
 
 G_END_DECLS

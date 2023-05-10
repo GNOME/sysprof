@@ -209,7 +209,9 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer *symbolizer,
   if (ret->offset < (self->endptr - self->beginptr))
     return _sysprof_symbol_new (g_ref_string_new (&self->beginptr[ret->offset]),
                                 g_steal_pointer (&tag),
-                                NULL);
+                                NULL,
+                                ret->addr_begin,
+                                ret->addr_end);
 
   return NULL;
 }

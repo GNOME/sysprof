@@ -21,17 +21,7 @@
 
 #include "config.h"
 
-#include "sysprof-symbol.h"
-
-struct _SysprofSymbol
-{
-  GObject parent_instance;
-
-  /* All are GRefString */
-  char *name;
-  char *binary_path;
-  char *binary_nick;
-};
+#include "sysprof-symbol-private.h"
 
 G_DEFINE_FINAL_TYPE (SysprofSymbol, sysprof_symbol, G_TYPE_OBJECT)
 
@@ -140,9 +130,11 @@ sysprof_symbol_get_binary_path (SysprofSymbol *self)
 }
 
 SysprofSymbol *
-_sysprof_symbol_new (GRefString *name,
-                     GRefString *binary_path,
-                     GRefString *binary_nick)
+_sysprof_symbol_new (GRefString     *name,
+                     GRefString     *binary_path,
+                     GRefString     *binary_nick,
+                     SysprofAddress  begin_address,
+                     SysprofAddress  end_address)
 {
   SysprofSymbol *self;
 
@@ -150,6 +142,8 @@ _sysprof_symbol_new (GRefString *name,
   self->name = name;
   self->binary_path = binary_path;
   self->binary_nick = binary_nick;
+  self->begin_address = begin_address;
+  self->end_address = end_address;
 
   return self;
 }

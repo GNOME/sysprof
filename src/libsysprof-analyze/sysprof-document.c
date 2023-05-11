@@ -31,10 +31,12 @@
 #include "sysprof-document-file-private.h"
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-mmap.h"
+#include "sysprof-document-process-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-mount-private.h"
 #include "sysprof-mount-device-private.h"
 #include "sysprof-mount-namespace-private.h"
+#include "sysprof-process-info-private.h"
 #include "sysprof-strings-private.h"
 #include "sysprof-symbolizer-private.h"
 
@@ -56,8 +58,7 @@ struct _SysprofDocument
   GtkBitset                *mmaps;
 
   GHashTable               *files_first_position;
-  GHashTable               *pid_to_address_layouts;
-  GHashTable               *pid_to_mount_namespaces;
+  GHashTable               *pid_to_process_info;
 
   SysprofMountNamespace    *mount_namespace;
 
@@ -89,16 +90,28 @@ sysprof_document_get_item (GListModel *model,
 {
   SysprofDocument *self = SYSPROF_DOCUMENT (model);
   SysprofDocumentFramePointer *ptr;
+  SysprofDocumentFrame *ret;
 
   if (position >= self->frames->len)
     return NULL;
 
   ptr = &g_array_index (self->frames, SysprofDocumentFramePointer, position);
+  ret = _sysprof_document_frame_new (self->mapped_file,
+                                     (gconstpointer)&self->base[ptr->offset],
+                                     ptr->length,
+                                     self->needs_swap);
 
-  return _sysprof_document_frame_new (self->mapped_file,
-                                      (gconstpointer)&self->base[ptr->offset],
-                                      ptr->length,
-                                      self->needs_swap);
+  /* Annotate processes with pre-calculated info */
+  if (SYSPROF_IS_DOCUMENT_PROCESS (ret))
+    {
+      int pid = sysprof_document_frame_get_pid (ret);
+      SysprofProcessInfo *process_info = g_hash_table_lookup (self->pid_to_process_info, GINT_TO_POINTER (pid));
+
+      if (process_info != NULL)
+        _sysprof_document_process_set_info (SYSPROF_DOCUMENT_PROCESS (ret), process_info);
+    }
+
+  return ret;
 }
 
 static void
@@ -118,6 +131,26 @@ _sysprof_document_traceables (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return self->traceables;
+}
+
+SysprofProcessInfo *
+_sysprof_document_process_info (SysprofDocument *self,
+                                int              pid,
+                                gboolean         may_create)
+{
+  SysprofProcessInfo *process_info;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  process_info = g_hash_table_lookup (self->pid_to_process_info, GINT_TO_POINTER (pid));
+
+  if (process_info == NULL && may_create)
+    {
+      process_info = sysprof_process_info_new (sysprof_mount_namespace_copy (self->mount_namespace), pid);
+      g_hash_table_insert (self->pid_to_process_info, GINT_TO_POINTER (pid), process_info);
+    }
+
+  return process_info;
 }
 
 static void
@@ -152,8 +185,7 @@ sysprof_document_finalize (GObject *object)
 
   g_clear_pointer (&self->strings, sysprof_strings_unref);
 
-  g_clear_pointer (&self->pid_to_address_layouts, g_hash_table_unref);
-  g_clear_pointer (&self->pid_to_mount_namespaces, g_hash_table_unref);
+  g_clear_pointer (&self->pid_to_process_info, g_hash_table_unref);
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
 
@@ -189,8 +221,7 @@ sysprof_document_init (SysprofDocument *self)
   self->mmaps = gtk_bitset_new_empty ();
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-  self->pid_to_address_layouts = g_hash_table_new_full (NULL, NULL, NULL, g_object_unref);
-  self->pid_to_mount_namespaces = g_hash_table_new_full (NULL, NULL, NULL, g_object_unref);
+  self->pid_to_process_info = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)sysprof_process_info_unref);
 
   self->mount_namespace = sysprof_mount_namespace_new ();
 }
@@ -209,15 +240,9 @@ sysprof_document_load_memory_maps (SysprofDocument *self)
         {
           g_autoptr(SysprofDocumentMmap) map = sysprof_document_get_item ((GListModel *)self, i);
           int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (map));
-          SysprofAddressLayout *address_layout = g_hash_table_lookup (self->pid_to_address_layouts, GINT_TO_POINTER (pid));
+          SysprofProcessInfo *process_info = _sysprof_document_process_info (self, pid, TRUE);
 
-          if G_UNLIKELY (address_layout == NULL)
-            {
-              address_layout = sysprof_address_layout_new ();
-              g_hash_table_insert (self->pid_to_address_layouts, GINT_TO_POINTER (pid), address_layout);
-            }
-
-          sysprof_address_layout_take (address_layout, g_steal_pointer (&map));
+          sysprof_address_layout_take (process_info->address_layout, g_steal_pointer (&map));
         }
       while (gtk_bitset_iter_next (&iter, &i));
     }
@@ -304,7 +329,7 @@ sysprof_document_load_mountinfo (SysprofDocument *self,
                                  int              pid,
                                  GBytes          *bytes)
 {
-  g_autoptr(SysprofMountNamespace) mount_namespace = NULL;
+  SysprofProcessInfo *process_info;
   const char *contents;
   LineReader reader;
   gsize contents_len;
@@ -319,7 +344,10 @@ sysprof_document_load_mountinfo (SysprofDocument *self,
   g_assert (contents != NULL);
   g_assert (contents[contents_len] == 0);
 
-  mount_namespace = sysprof_mount_namespace_copy (self->mount_namespace);
+  process_info = _sysprof_document_process_info (self, pid, FALSE);
+
+  g_assert (process_info != NULL);
+  g_assert (process_info->mount_namespace != NULL);
 
   line_reader_init (&reader, (char *)contents, contents_len);
   while ((line = line_reader_next (&reader, &line_len)))
@@ -329,12 +357,8 @@ sysprof_document_load_mountinfo (SysprofDocument *self,
       line[line_len] = 0;
 
       if ((mount = sysprof_mount_new_for_mountinfo (self->strings, line)))
-        sysprof_mount_namespace_add_mount (mount_namespace, g_steal_pointer (&mount));
+        sysprof_mount_namespace_add_mount (process_info->mount_namespace, g_steal_pointer (&mount));
     }
-
-  g_hash_table_insert (self->pid_to_mount_namespaces,
-                       GINT_TO_POINTER (pid),
-                       g_steal_pointer (&mount_namespace));
 }
 
 static void
@@ -345,10 +369,9 @@ sysprof_document_load_mountinfos (SysprofDocument *self)
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
 
-  g_hash_table_iter_init (&hiter, self->pid_to_address_layouts);
+  g_hash_table_iter_init (&hiter, self->pid_to_process_info);
   while (g_hash_table_iter_next (&hiter, &key, &value))
     {
-      g_autoptr(SysprofMountNamespace) mount_namespace = sysprof_mount_namespace_new ();
       int pid = GPOINTER_TO_INT (key);
       g_autofree char *path = g_strdup_printf ("/proc/%d/mountinfo", pid);
       g_autoptr(SysprofDocumentFile) file = sysprof_document_lookup_file (self, path);
@@ -565,15 +588,14 @@ sysprof_document_symbolize_prepare_cb (GObject      *object,
 
   g_assert (self != NULL);
   g_assert (SYSPROF_IS_DOCUMENT (self));
-  g_assert (self->pid_to_mount_namespaces != NULL);
+  g_assert (self->pid_to_process_info != NULL);
 
   if (!_sysprof_symbolizer_prepare_finish (symbolizer, result, &error))
     g_task_return_error (task, g_steal_pointer (&error));
   else
     _sysprof_document_symbols_new (g_task_get_source_object (task),
                                    symbolizer,
-                                   self->pid_to_mount_namespaces,
-                                   self->pid_to_address_layouts,
+                                   self->pid_to_process_info,
                                    g_task_get_cancellable (task),
                                    sysprof_document_symbolize_symbols_cb,
                                    g_object_ref (task));

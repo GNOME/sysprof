@@ -29,6 +29,7 @@ libsysprof_analyze_private_sources = [
   'sysprof-mount.c',
   'sysprof-mount-device.c',
   'sysprof-mount-namespace.c',
+  'sysprof-process-info.c',
   'sysprof-strings.c',
   'sysprof-symbol-cache.c',
 ]

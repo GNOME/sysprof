@@ -21,11 +21,12 @@
 #include "config.h"
 
 #include "sysprof-document-frame-private.h"
-#include "sysprof-document-process.h"
+#include "sysprof-document-process-private.h"
 
 struct _SysprofDocumentProcess
 {
-  SysprofDocumentFrame parent_instance;
+  SysprofDocumentFrame  parent_instance;
+  SysprofProcessInfo   *process_info;
 };
 
 struct _SysprofDocumentProcessClass
@@ -42,6 +43,16 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofDocumentProcess, sysprof_document_process, SYSPROF_TYPE_DOCUMENT_FRAME)
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+sysprof_document_process_finalize (GObject *object)
+{
+  SysprofDocumentProcess *self = (SysprofDocumentProcess *)object;
+
+  g_clear_pointer (&self->process_info, sysprof_process_info_unref);
+
+  G_OBJECT_CLASS (sysprof_document_process_parent_class)->finalize (object);
+}
 
 static void
 sysprof_document_process_get_property (GObject    *object,
@@ -67,6 +78,7 @@ sysprof_document_process_class_init (SysprofDocumentProcessClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->finalize = sysprof_document_process_finalize;
   object_class->get_property = sysprof_document_process_get_property;
 
   properties [PROP_COMMAND_LINE] =
@@ -92,4 +104,15 @@ sysprof_document_process_get_command_line (SysprofDocumentProcess *self)
   proc = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureProcess);
 
   return SYSPROF_DOCUMENT_FRAME_CSTRING (self, proc->cmdline);
+}
+
+void
+_sysprof_document_process_set_info (SysprofDocumentProcess *self,
+                                    SysprofProcessInfo     *process_info)
+{
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_PROCESS (self));
+  g_return_if_fail (process_info != NULL);
+  g_return_if_fail (self->process_info == NULL);
+
+  self->process_info = sysprof_process_info_ref (process_info);
 }

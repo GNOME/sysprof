@@ -169,11 +169,9 @@ search_for_symbol_cb (gconstpointer a,
 }
 
 static SysprofSymbol *
-sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer     *symbolizer,
-                                      SysprofMountNamespace *mount_namespace,
-                                      SysprofAddressLayout  *address_layout,
-                                      int                    pid,
-                                      SysprofAddress         address)
+sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
+                                      const SysprofProcessInfo *process_info,
+                                      SysprofAddress            address)
 {
   SysprofBundledSymbolizer *self = SYSPROF_BUNDLED_SYMBOLIZER (symbolizer);
   g_autoptr(GRefString) tag = NULL;
@@ -181,7 +179,7 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer     *symbolizer,
   const Decoded key = {
     .addr_begin = address,
     .addr_end = address,
-    .pid = pid,
+    .pid = process_info->pid,
     .offset = 0,
     .tag_offset = 0,
   };

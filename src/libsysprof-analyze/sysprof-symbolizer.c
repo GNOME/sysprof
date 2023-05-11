@@ -91,11 +91,9 @@ _sysprof_symbolizer_prepare_finish (SysprofSymbolizer  *self,
 }
 
 SysprofSymbol *
-_sysprof_symbolizer_symbolize (SysprofSymbolizer     *self,
-                               SysprofMountNamespace *mount_namespace,
-                               SysprofAddressLayout  *address_layout,
-                               int                    pid,
-                               SysprofAddress         address)
+_sysprof_symbolizer_symbolize (SysprofSymbolizer        *self,
+                               const SysprofProcessInfo *process_info,
+                               SysprofAddress            address)
 {
-  return SYSPROF_SYMBOLIZER_GET_CLASS (self)->symbolize (self, mount_namespace, address_layout, pid, address);
+  return SYSPROF_SYMBOLIZER_GET_CLASS (self)->symbolize (self, process_info, address);
 }

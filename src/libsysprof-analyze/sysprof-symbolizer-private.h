@@ -25,6 +25,7 @@
 #include "sysprof-symbol.h"
 #include "sysprof-symbolizer.h"
 #include "sysprof-mount-namespace-private.h"
+#include "sysprof-process-info-private.h"
 
 G_BEGIN_DECLS
 
@@ -39,34 +40,30 @@ struct _SysprofSymbolizerClass
 {
   GObjectClass parent_class;
 
-  void           (*prepare_async)  (SysprofSymbolizer      *self,
-                                    SysprofDocument        *document,
-                                    GCancellable           *cancellable,
-                                    GAsyncReadyCallback     callback,
-                                    gpointer                user_data);
-  gboolean       (*prepare_finish) (SysprofSymbolizer      *self,
-                                    GAsyncResult           *result,
-                                    GError                **error);
-  SysprofSymbol *(*symbolize)      (SysprofSymbolizer      *self,
-                                    SysprofMountNamespace  *mount_namespace,
-                                    SysprofAddressLayout   *address_layout,
-                                    int                     pid,
-                                    SysprofAddress          address);
+  void           (*prepare_async)  (SysprofSymbolizer         *self,
+                                    SysprofDocument           *document,
+                                    GCancellable              *cancellable,
+                                    GAsyncReadyCallback        callback,
+                                    gpointer                   user_data);
+  gboolean       (*prepare_finish) (SysprofSymbolizer         *self,
+                                    GAsyncResult              *result,
+                                    GError                   **error);
+  SysprofSymbol *(*symbolize)      (SysprofSymbolizer         *self,
+                                    const SysprofProcessInfo  *process_info,
+                                    SysprofAddress             address);
 };
 
 
-void           _sysprof_symbolizer_prepare_async  (SysprofSymbolizer      *self,
-                                                   SysprofDocument        *document,
-                                                   GCancellable           *cancellable,
-                                                   GAsyncReadyCallback     callback,
-                                                   gpointer                user_data);
-gboolean       _sysprof_symbolizer_prepare_finish (SysprofSymbolizer      *self,
-                                                   GAsyncResult           *result,
-                                                   GError                **error);
-SysprofSymbol *_sysprof_symbolizer_symbolize      (SysprofSymbolizer      *self,
-                                                   SysprofMountNamespace  *mount_namespace,
-                                                   SysprofAddressLayout   *address_layout,
-                                                   int                     pid,
-                                                   SysprofAddress          address);
+void           _sysprof_symbolizer_prepare_async  (SysprofSymbolizer         *self,
+                                                   SysprofDocument           *document,
+                                                   GCancellable              *cancellable,
+                                                   GAsyncReadyCallback        callback,
+                                                   gpointer                   user_data);
+gboolean       _sysprof_symbolizer_prepare_finish (SysprofSymbolizer         *self,
+                                                   GAsyncResult              *result,
+                                                   GError                   **error);
+SysprofSymbol *_sysprof_symbolizer_symbolize      (SysprofSymbolizer         *self,
+                                                   const SysprofProcessInfo  *process_info,
+                                                   SysprofAddress             address);
 
 G_END_DECLS

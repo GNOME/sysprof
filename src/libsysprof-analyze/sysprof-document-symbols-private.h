@@ -22,13 +22,13 @@
 
 #include "sysprof-document.h"
 #include "sysprof-document-symbols.h"
+#include "sysprof-process-info-private.h"
 
 G_BEGIN_DECLS
 
 void                    _sysprof_document_symbols_new        (SysprofDocument      *document,
                                                               SysprofSymbolizer    *symbolizer,
-                                                              GHashTable           *pid_to_mount_namespaces,
-                                                              GHashTable           *pid_to_address_layouts,
+                                                              GHashTable           *pid_to_process_info,
                                                               GCancellable         *cancellable,
                                                               GAsyncReadyCallback   callback,
                                                               gpointer              user_data);

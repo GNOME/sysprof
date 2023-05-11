@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <gio/gio.h>
+
 #include "sysprof-document-frame.h"
 
 G_BEGIN_DECLS
@@ -36,6 +38,8 @@ SYSPROF_AVAILABLE_IN_ALL
 GType       sysprof_document_process_get_type         (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_process_get_command_line (SysprofDocumentProcess *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel *sysprof_document_process_list_memory_maps (SysprofDocumentProcess *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentProcess, g_object_unref)
 

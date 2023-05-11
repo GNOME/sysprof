@@ -106,6 +106,25 @@ sysprof_document_process_get_command_line (SysprofDocumentProcess *self)
   return SYSPROF_DOCUMENT_FRAME_CSTRING (self, proc->cmdline);
 }
 
+/**
+ * sysprof_document_process_list_memory_maps:
+ * @self: a #SysprofDocumentProcess
+ *
+ * Lists the #SysprofDocumentMmap that are associated with the document.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentMmap
+ */
+GListModel *
+sysprof_document_process_list_memory_maps (SysprofDocumentProcess *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_PROCESS (self), NULL);
+
+  if (self->process_info == NULL)
+    return G_LIST_MODEL (g_list_store_new (SYSPROF_TYPE_DOCUMENT_MMAP));
+
+  return g_object_ref (G_LIST_MODEL (self->process_info->address_layout));
+}
+
 void
 _sysprof_document_process_set_info (SysprofDocumentProcess *self,
                                     SysprofProcessInfo     *process_info)

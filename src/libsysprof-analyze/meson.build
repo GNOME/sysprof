@@ -49,6 +49,7 @@ libsysprof_analyze_public_headers = [
   'sysprof-document-sample.h',
   'sysprof-document-symbols.h',
   'sysprof-document-traceable.h',
+  'sysprof-mount.h',
   'sysprof-multi-symbolizer.h',
   'sysprof-symbol.h',
   'sysprof-symbolizer.h',

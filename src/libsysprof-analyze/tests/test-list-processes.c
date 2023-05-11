@@ -48,22 +48,39 @@ main (int   argc,
     {
       g_autoptr(SysprofDocumentProcess) process = g_list_model_get_item (processes, i);
       g_autoptr(GListModel) memory_maps = sysprof_document_process_list_memory_maps (process);
+      g_autoptr(GListModel) mounts = sysprof_document_process_list_mounts (process);
       guint n_maps;
+      guint n_mounts;
 
       g_print ("%d: %s\n",
                sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process)),
                sysprof_document_process_get_command_line (process));
 
+      g_print ("  Address Layout:\n");
       n_maps = g_list_model_get_n_items (memory_maps);
-
       for (guint j = 0; j < n_maps; j++)
         {
           g_autoptr(SysprofDocumentMmap) map = g_list_model_get_item (memory_maps, j);
 
-          g_print ("  [0x%"G_GINT64_MODIFIER"x:0x%"G_GINT64_MODIFIER"x] %s\n",
+          g_print ("    [0x%"G_GINT64_MODIFIER"x:0x%"G_GINT64_MODIFIER"x] %s\n",
                    sysprof_document_mmap_get_start_address (map),
                    sysprof_document_mmap_get_end_address (map),
                    sysprof_document_mmap_get_file (map));
+        }
+
+      g_print ("  Mounts:\n");
+      n_mounts = g_list_model_get_n_items (mounts);
+      for (guint j = 0; j < n_mounts; j++)
+        {
+          g_autoptr(SysprofMount) mount = g_list_model_get_item (mounts, j);
+
+          g_print ("    %d %d %d:%d %s %s\n",
+                   sysprof_mount_get_mount_id (mount),
+                   sysprof_mount_get_parent_mount_id (mount),
+                   sysprof_mount_get_device_major (mount),
+                   sysprof_mount_get_device_minor (mount),
+                   sysprof_mount_get_root (mount),
+                   sysprof_mount_get_mount_point (mount));
         }
     }
 

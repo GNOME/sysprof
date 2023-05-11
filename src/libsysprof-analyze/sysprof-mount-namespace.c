@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <gio/gio.h>
+
 #include "sysprof-mount-namespace-private.h"
 
 struct _SysprofMountNamespace
@@ -29,7 +31,40 @@ struct _SysprofMountNamespace
   GPtrArray *mounts;
 };
 
-G_DEFINE_FINAL_TYPE (SysprofMountNamespace, sysprof_mount_namespace, G_TYPE_OBJECT)
+static GType
+sysprof_mount_namespace_get_item_type (GListModel *model)
+{
+  return SYSPROF_TYPE_MOUNT;
+}
+
+static guint
+sysprof_mount_namespace_get_n_items (GListModel *model)
+{
+  return SYSPROF_MOUNT_NAMESPACE (model)->mounts->len;
+}
+
+static gpointer
+sysprof_mount_namespace_get_item (GListModel *model,
+                                  guint       position)
+{
+  SysprofMountNamespace *self = SYSPROF_MOUNT_NAMESPACE (model);
+
+  if (position < self->mounts->len)
+    return g_object_ref (g_ptr_array_index (self->mounts, position));
+
+  return NULL;
+}
+
+static void
+list_model_iface_init (GListModelInterface *iface)
+{
+  iface->get_item_type = sysprof_mount_namespace_get_item_type;
+  iface->get_item = sysprof_mount_namespace_get_item;
+  iface->get_n_items = sysprof_mount_namespace_get_n_items;
+}
+
+G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofMountNamespace, sysprof_mount_namespace, G_TYPE_OBJECT,
+                               G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
 static void
 sysprof_mount_namespace_finalize (GObject *object)
@@ -54,6 +89,7 @@ static void
 sysprof_mount_namespace_init (SysprofMountNamespace *self)
 {
   self->devices = g_ptr_array_new_with_free_func (g_object_unref);
+  self->mounts = g_ptr_array_new_with_free_func (g_object_unref);
 }
 
 SysprofMountNamespace *

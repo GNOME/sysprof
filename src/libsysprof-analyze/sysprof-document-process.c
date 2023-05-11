@@ -22,6 +22,7 @@
 
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-process-private.h"
+#include "sysprof-mount.h"
 
 struct _SysprofDocumentProcess
 {
@@ -110,7 +111,7 @@ sysprof_document_process_get_command_line (SysprofDocumentProcess *self)
  * sysprof_document_process_list_memory_maps:
  * @self: a #SysprofDocumentProcess
  *
- * Lists the #SysprofDocumentMmap that are associated with the document.
+ * Lists the #SysprofDocumentMmap that are associated with the process.
  *
  * Returns: (transfer full): a #GListModel of #SysprofDocumentMmap
  */
@@ -123,6 +124,25 @@ sysprof_document_process_list_memory_maps (SysprofDocumentProcess *self)
     return G_LIST_MODEL (g_list_store_new (SYSPROF_TYPE_DOCUMENT_MMAP));
 
   return g_object_ref (G_LIST_MODEL (self->process_info->address_layout));
+}
+
+/**
+ * sysprof_document_process_list_mounts:
+ * @self: a #SysprofDocumentProcess
+ *
+ * Lists the #SysprofMount that are associated with the process.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofMount
+ */
+GListModel *
+sysprof_document_process_list_mounts (SysprofDocumentProcess *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_PROCESS (self), NULL);
+
+  if (self->process_info == NULL)
+    return G_LIST_MODEL (g_list_store_new (SYSPROF_TYPE_MOUNT));
+
+  return g_object_ref (G_LIST_MODEL (self->process_info->mount_namespace));
 }
 
 void

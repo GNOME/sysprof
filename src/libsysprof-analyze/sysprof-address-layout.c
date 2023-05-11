@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <gio/gio.h>
+
 #include "sysprof-address-layout-private.h"
 
 struct _SysprofAddressLayout
@@ -28,7 +30,41 @@ struct _SysprofAddressLayout
   GSequence *mmaps;
 };
 
-G_DEFINE_FINAL_TYPE (SysprofAddressLayout, sysprof_address_layout, G_TYPE_OBJECT)
+static guint
+sysprof_address_layout_get_n_items (GListModel *model)
+{
+  return g_sequence_get_length (SYSPROF_ADDRESS_LAYOUT (model)->mmaps);
+}
+
+static GType
+sysprof_address_layout_get_item_type (GListModel *model)
+{
+  return SYSPROF_TYPE_DOCUMENT_MMAP;
+}
+
+static gpointer
+sysprof_address_layout_get_item (GListModel *model,
+                                 guint       position)
+{
+  SysprofAddressLayout *self = SYSPROF_ADDRESS_LAYOUT (model);
+  GSequenceIter *iter = g_sequence_get_iter_at_pos (self->mmaps, position);
+
+  if (g_sequence_iter_is_end (iter))
+    return NULL;
+
+  return g_object_ref (g_sequence_get (iter));
+}
+
+static void
+list_model_iface_init (GListModelInterface *iface)
+{
+  iface->get_n_items = sysprof_address_layout_get_n_items;
+  iface->get_item = sysprof_address_layout_get_item;
+  iface->get_item_type = sysprof_address_layout_get_item_type;
+}
+
+G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofAddressLayout, sysprof_address_layout, G_TYPE_OBJECT,
+                               G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
 static void
 sysprof_address_layout_finalize (GObject *object)

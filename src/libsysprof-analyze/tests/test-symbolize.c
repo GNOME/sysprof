@@ -13,6 +13,7 @@ symbolize_cb (GObject      *object,
   g_autoptr(SysprofDocumentSymbols) symbols = NULL;
   g_autoptr(GListModel) traceables = NULL;
   g_autoptr(GError) error = NULL;
+  SysprofAddress addresses[128];
   guint n_items;
 
   g_assert (SYSPROF_IS_DOCUMENT (document));
@@ -38,11 +39,16 @@ symbolize_cb (GObject      *object,
       depth = sysprof_document_traceable_get_stack_depth (traceable);
       pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
 
-      g_print ("%s depth=%u\n", G_OBJECT_TYPE_NAME (traceable), depth);
+      g_print ("%s depth=%u pid=%u\n",
+               G_OBJECT_TYPE_NAME (traceable),
+               depth,
+               pid);
+
+      sysprof_document_traceable_get_stack_addresses (traceable, addresses, G_N_ELEMENTS (addresses));
 
       for (guint j = 0; j < depth; j++)
         {
-          SysprofAddress address = sysprof_document_traceable_get_stack_address (traceable, j);
+          SysprofAddress address = addresses[j];
           SysprofSymbol *symbol = sysprof_document_symbols_lookup (symbols, pid, last_context, address);
           SysprofAddressContext context;
 
@@ -56,7 +62,7 @@ symbolize_cb (GObject      *object,
                      sysprof_symbol_get_name (symbol),
                      sysprof_symbol_get_binary_path (symbol) ?: "<unresolved>");
           else
-            g_print ("  %02d: %p\n", j, GSIZE_TO_POINTER (address));
+            g_print ("  %02d: %p:\n", j, GSIZE_TO_POINTER (address));
         }
 
       g_print ("  ================\n");

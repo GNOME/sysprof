@@ -42,12 +42,13 @@ enum {
   PROP_0,
   PROP_DEVICE_MAJOR,
   PROP_DEVICE_MINOR,
-  PROP_ROOT,
+  PROP_FILESYSTEM_TYPE,
   PROP_MOUNT_ID,
   PROP_MOUNT_POINT,
   PROP_MOUNT_SOURCE,
   PROP_PARENT_MOUNT_ID,
-  PROP_FILESYSTEM_TYPE,
+  PROP_ROOT,
+  PROP_SUPERBLOCK_OPTIONS,
   N_PROPS
 };
 
@@ -111,6 +112,10 @@ sysprof_mount_get_property (GObject    *object,
       g_value_set_string (value, sysprof_mount_get_filesystem_type (self));
       break;
 
+    case PROP_SUPERBLOCK_OPTIONS:
+      g_value_set_string (value, sysprof_mount_get_superblock_options (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -164,6 +169,11 @@ sysprof_mount_class_init (SysprofMountClass *klass)
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_SUPERBLOCK_OPTIONS] =
+    g_param_spec_string ("superblock-options", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -179,6 +189,7 @@ sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
   g_autoptr(SysprofMount) self = NULL;
   g_auto(GStrv) parts = NULL;
   gsize n_parts;
+  guint i;
 
   g_return_val_if_fail (strings != NULL, NULL);
   g_return_val_if_fail (mountinfo != NULL, NULL);
@@ -196,6 +207,35 @@ sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
   self->root = sysprof_strings_get (strings, parts[3]);
   self->mount_point = sysprof_strings_get (strings, parts[4]);
 
+  /* Skip forward to end of optional fields */
+  for (i = 5; parts[i]; i++)
+    {
+      if (strcmp (parts[i], "-") == 0)
+        break;
+    }
+
+  if (parts[i] == NULL)
+    goto finish;
+
+  /* filesystem-type column */
+  i++;
+  if (parts[i] == NULL)
+    goto finish;
+  self->filesystem_type = sysprof_strings_get (strings, parts[i]);
+
+  /* mount-source column */
+  i++;
+  if (parts[i] == NULL)
+    goto finish;
+  self->mount_source = sysprof_strings_get (strings, parts[i]);
+
+  /* superblock options column */
+  i++;
+  if (parts[i] == NULL)
+    goto finish;
+  self->superblock_options = sysprof_strings_get (strings, parts[i]);
+
+finish:
   return g_steal_pointer (&self);
 }
 
@@ -233,6 +273,12 @@ const char *
 sysprof_mount_get_filesystem_type (SysprofMount *self)
 {
   return self->filesystem_type;
+}
+
+const char *
+sysprof_mount_get_superblock_options (SysprofMount *self)
+{
+  return self->superblock_options;
 }
 
 const char *

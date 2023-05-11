@@ -74,13 +74,16 @@ main (int   argc,
         {
           g_autoptr(SysprofMount) mount = g_list_model_get_item (mounts, j);
 
-          g_print ("    %d %d %d:%d %s %s\n",
+          g_print ("    %d %d %d:%d %s %s %s %s %s\n",
                    sysprof_mount_get_mount_id (mount),
                    sysprof_mount_get_parent_mount_id (mount),
                    sysprof_mount_get_device_major (mount),
                    sysprof_mount_get_device_minor (mount),
                    sysprof_mount_get_root (mount),
-                   sysprof_mount_get_mount_point (mount));
+                   sysprof_mount_get_mount_point (mount),
+                   sysprof_mount_get_mount_source (mount),
+                   sysprof_mount_get_filesystem_type (mount),
+                   sysprof_mount_get_superblock_options (mount));
         }
     }
 

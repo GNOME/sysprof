@@ -73,6 +73,7 @@ main (int   argc,
       for (guint j = 0; j < n_mounts; j++)
         {
           g_autoptr(SysprofMount) mount = g_list_model_get_item (mounts, j);
+          g_autofree char *subvol = sysprof_mount_get_superblock_option (mount, "subvol");
 
           g_print ("    %d %d %d:%d %s %s %s %s %s\n",
                    sysprof_mount_get_mount_id (mount),
@@ -84,6 +85,9 @@ main (int   argc,
                    sysprof_mount_get_mount_source (mount),
                    sysprof_mount_get_filesystem_type (mount),
                    sysprof_mount_get_superblock_options (mount));
+
+          if (subvol != NULL)
+            g_print ("      Had subvol superblock option: %s\n", subvol);
         }
     }
 

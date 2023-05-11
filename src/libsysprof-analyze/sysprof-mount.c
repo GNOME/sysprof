@@ -281,10 +281,42 @@ sysprof_mount_get_superblock_options (SysprofMount *self)
   return self->superblock_options;
 }
 
-const char *
+char *
 sysprof_mount_get_superblock_option (SysprofMount *self,
                                      const char   *option)
 {
+  gsize option_len;
+
+  g_return_val_if_fail (SYSPROF_IS_MOUNT (self), NULL);
+  g_return_val_if_fail (option != NULL, NULL);
+
+  if (self->superblock_options == NULL)
+    return NULL;
+
+  option_len = strlen (option);
+
+  for (const char *c = strstr (self->superblock_options, option);
+       c != NULL;
+       c = strstr (c+1, option))
+    {
+      if ((c == self->superblock_options || c[-1] == ',') &&
+          (c[option_len] == 0 || c[option_len] == '='))
+        {
+          const char *value;
+          const char *endptr;
+
+          if (c[option_len] == 0)
+            return g_strdup ("");
+
+          value = &c[option_len+1];
+
+          if (!(endptr = strchr (value, ',')))
+            return g_strdup (value);
+
+          return g_strndup (value, endptr - value);
+        }
+    }
+
   return NULL;
 }
 

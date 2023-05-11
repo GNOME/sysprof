@@ -50,7 +50,7 @@ const char   *sysprof_mount_get_filesystem_type    (SysprofMount   *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char   *sysprof_mount_get_superblock_options (SysprofMount   *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char   *sysprof_mount_get_superblock_option  (SysprofMount   *self,
+char         *sysprof_mount_get_superblock_option  (SysprofMount   *self,
                                                     const char     *option);
 
 G_END_DECLS

@@ -347,7 +347,7 @@ sysprof_document_load_mountinfo (SysprofDocument *self,
   g_assert (contents != NULL);
   g_assert (contents[contents_len] == 0);
 
-  process_info = _sysprof_document_process_info (self, pid, FALSE);
+  process_info = _sysprof_document_process_info (self, pid, TRUE);
 
   g_assert (process_info != NULL);
   g_assert (process_info->mount_namespace != NULL);
@@ -367,23 +367,26 @@ sysprof_document_load_mountinfo (SysprofDocument *self,
 static void
 sysprof_document_load_mountinfos (SysprofDocument *self)
 {
-  GHashTableIter hiter;
-  gpointer key, value;
+  GtkBitsetIter iter;
+  guint pid;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
 
-  g_hash_table_iter_init (&hiter, self->pid_to_process_info);
-  while (g_hash_table_iter_next (&hiter, &key, &value))
+  if (gtk_bitset_iter_init_first (&iter, self->pids, &pid))
     {
-      int pid = GPOINTER_TO_INT (key);
-      g_autofree char *path = g_strdup_printf ("/proc/%d/mountinfo", pid);
-      g_autoptr(SysprofDocumentFile) file = sysprof_document_lookup_file (self, path);
-
-      if (file != NULL)
+      do
         {
-          g_autoptr(GBytes) bytes = sysprof_document_file_dup_bytes (file);
-          sysprof_document_load_mountinfo (self, pid, bytes);
+          g_autofree char *path = g_strdup_printf ("/proc/%u/mountinfo", pid);
+          g_autoptr(SysprofDocumentFile) file = sysprof_document_lookup_file (self, path);
+
+          if (file != NULL)
+            {
+              g_autoptr(GBytes) bytes = sysprof_document_file_dup_bytes (file);
+
+              sysprof_document_load_mountinfo (self, pid, bytes);
+            }
         }
+      while (gtk_bitset_iter_next (&iter, &pid));
     }
 }
 

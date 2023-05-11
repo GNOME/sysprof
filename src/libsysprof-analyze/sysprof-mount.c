@@ -20,15 +20,19 @@
 
 #include "config.h"
 
+#include <stdio.h>
+
 #include "sysprof-mount-private.h"
 
 struct _SysprofMount
 {
   GObject parent_instance;
+  int mount_id;
+  int parent_mount_id;
   int device_major;
   int device_minor;
   GRefString *root;
-  GRefString *mount_path;
+  GRefString *mount_point;
   GRefString *mount_source;
   GRefString *filesystem_type;
   GRefString *superblock_options;
@@ -39,8 +43,10 @@ enum {
   PROP_DEVICE_MAJOR,
   PROP_DEVICE_MINOR,
   PROP_ROOT,
-  PROP_MOUNT_PATH,
+  PROP_MOUNT_ID,
+  PROP_MOUNT_POINT,
   PROP_MOUNT_SOURCE,
+  PROP_PARENT_MOUNT_ID,
   PROP_FILESYSTEM_TYPE,
   N_PROPS
 };
@@ -55,7 +61,7 @@ sysprof_mount_finalize (GObject *object)
   SysprofMount *self = (SysprofMount *)object;
 
   g_clear_pointer (&self->root, g_ref_string_release);
-  g_clear_pointer (&self->mount_path, g_ref_string_release);
+  g_clear_pointer (&self->mount_point, g_ref_string_release);
   g_clear_pointer (&self->mount_source, g_ref_string_release);
   g_clear_pointer (&self->filesystem_type, g_ref_string_release);
   g_clear_pointer (&self->superblock_options, g_ref_string_release);
@@ -85,12 +91,20 @@ sysprof_mount_get_property (GObject    *object,
       g_value_set_string (value, sysprof_mount_get_root (self));
       break;
 
-    case PROP_MOUNT_PATH:
-      g_value_set_string (value, sysprof_mount_get_mount_path (self));
+    case PROP_MOUNT_ID:
+      g_value_set_int (value, sysprof_mount_get_mount_id (self));
+      break;
+
+    case PROP_MOUNT_POINT:
+      g_value_set_string (value, sysprof_mount_get_mount_point (self));
       break;
 
     case PROP_MOUNT_SOURCE:
       g_value_set_string (value, sysprof_mount_get_mount_source (self));
+      break;
+
+    case PROP_PARENT_MOUNT_ID:
+      g_value_set_int (value, sysprof_mount_get_parent_mount_id (self));
       break;
 
     case PROP_FILESYSTEM_TYPE:
@@ -125,8 +139,18 @@ sysprof_mount_class_init (SysprofMountClass *klass)
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
-  properties[PROP_MOUNT_PATH] =
-    g_param_spec_string ("mount-path", NULL, NULL,
+  properties[PROP_MOUNT_ID] =
+    g_param_spec_int ("mount-id", NULL, NULL,
+                      G_MININT, G_MAXINT, 0,
+                      (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_PARENT_MOUNT_ID] =
+    g_param_spec_int ("parent-mount-id", NULL, NULL,
+                      G_MININT, G_MAXINT, 0,
+                      (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MOUNT_POINT] =
+    g_param_spec_string ("mount-point", NULL, NULL,
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -152,7 +176,27 @@ SysprofMount *
 sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
                                  const char     *mountinfo)
 {
-  return NULL;
+  g_autoptr(SysprofMount) self = NULL;
+  g_auto(GStrv) parts = NULL;
+  gsize n_parts;
+
+  g_return_val_if_fail (strings != NULL, NULL);
+  g_return_val_if_fail (mountinfo != NULL, NULL);
+
+  parts = g_strsplit (mountinfo, " ", 20);
+  n_parts = g_strv_length (parts);
+  if (n_parts < 10)
+    return NULL;
+
+  self = g_object_new (SYSPROF_TYPE_MOUNT, NULL);
+
+  self->mount_id = g_ascii_strtoll (parts[0], NULL, 10);
+  self->parent_mount_id = g_ascii_strtoll (parts[1], NULL, 10);
+  sscanf (parts[2], "%d:%d", &self->device_major, &self->device_minor);
+  self->root = sysprof_strings_get (strings, parts[3]);
+  self->mount_point = sysprof_strings_get (strings, parts[4]);
+
+  return g_steal_pointer (&self);
 }
 
 int
@@ -174,9 +218,9 @@ sysprof_mount_get_root (SysprofMount *self)
 }
 
 const char *
-sysprof_mount_get_mount_path (SysprofMount *self)
+sysprof_mount_get_mount_point (SysprofMount *self)
 {
-  return self->mount_path;
+  return self->mount_point;
 }
 
 const char *
@@ -196,4 +240,16 @@ sysprof_mount_get_superblock_option (SysprofMount *self,
                                      const char   *option)
 {
   return NULL;
+}
+
+int
+sysprof_mount_get_mount_id (SysprofMount *self)
+{
+  return self->mount_id;
+}
+
+int
+sysprof_mount_get_parent_mount_id (SysprofMount *self)
+{
+  return self->parent_mount_id;
 }

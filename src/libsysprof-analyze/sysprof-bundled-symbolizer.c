@@ -159,7 +159,7 @@ search_for_symbol_cb (gconstpointer a,
   if (key->addr_begin < ele->addr_begin)
     return -1;
 
-  if (key->addr_begin > ele->addr_end)
+  if (key->addr_begin >= ele->addr_end)
     return 1;
 
   g_assert (key->addr_begin >= ele->addr_begin);

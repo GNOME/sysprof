@@ -33,6 +33,7 @@ struct _SysprofDocumentSymbols
 {
   GObject        parent_instance;
   SysprofSymbol *context_switches[SYSPROF_ADDRESS_CONTEXT_GUEST_USER+1];
+  GHashTable    *pid_to_process_info;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofDocumentSymbols, sysprof_document_symbols, G_TYPE_OBJECT)
@@ -44,6 +45,8 @@ sysprof_document_symbols_finalize (GObject *object)
 
   for (guint i = 0; i < G_N_ELEMENTS (self->context_switches); i++)
     g_clear_object (&self->context_switches[i]);
+
+  g_clear_pointer (&self->pid_to_process_info, g_hash_table_unref);
 
   G_OBJECT_CLASS (sysprof_document_symbols_parent_class)->finalize (object);
 }
@@ -193,6 +196,8 @@ sysprof_document_symbols_worker (GTask        *task,
       while (gtk_bitset_iter_next (&iter, &i));
     }
 
+  state->symbols->pid_to_process_info = g_hash_table_ref (state->pid_to_process_info);
+
   g_task_return_pointer (task,
                          g_object_ref (state->symbols),
                          g_object_unref);
@@ -255,12 +260,20 @@ sysprof_document_symbols_lookup (SysprofDocumentSymbols *self,
                                  SysprofAddress          address)
 {
   SysprofAddressContext new_context;
+  SysprofProcessInfo *process_info;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_SYMBOLS (self), NULL);
   g_return_val_if_fail (context <= SYSPROF_ADDRESS_CONTEXT_GUEST_USER, NULL);
 
+  /* TODO: Much better to do decoding in a group of addresses than
+   *       one at a time, so should change this interface a bit.
+   */
+
   if (sysprof_address_is_context_switch (address, &new_context))
     return self->context_switches[new_context];
 
-  return NULL;
+  if (!(process_info = g_hash_table_lookup (self->pid_to_process_info, GINT_TO_POINTER (pid))))
+    return NULL;
+
+  return sysprof_symbol_cache_lookup (process_info->symbol_cache, address);
 }

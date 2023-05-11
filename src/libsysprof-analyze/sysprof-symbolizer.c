@@ -92,8 +92,9 @@ _sysprof_symbolizer_prepare_finish (SysprofSymbolizer  *self,
 
 SysprofSymbol *
 _sysprof_symbolizer_symbolize (SysprofSymbolizer        *self,
+                               SysprofStrings           *strings,
                                const SysprofProcessInfo *process_info,
                                SysprofAddress            address)
 {
-  return SYSPROF_SYMBOLIZER_GET_CLASS (self)->symbolize (self, process_info, address);
+  return SYSPROF_SYMBOLIZER_GET_CLASS (self)->symbolize (self, strings, process_info, address);
 }

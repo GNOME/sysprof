@@ -170,6 +170,7 @@ search_for_symbol_cb (gconstpointer a,
 
 static SysprofSymbol *
 sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
+                                      SysprofStrings           *strings,
                                       const SysprofProcessInfo *process_info,
                                       SysprofAddress            address)
 {
@@ -202,11 +203,11 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   if (ret->tag_offset > 0)
     {
       if (ret->tag_offset < (self->endptr - self->beginptr))
-        tag = g_ref_string_new (&self->beginptr[ret->tag_offset]);
+        tag = sysprof_strings_get (strings, &self->beginptr[ret->tag_offset]);
     }
 
   if (ret->offset < (self->endptr - self->beginptr))
-    return _sysprof_symbol_new (g_ref_string_new (&self->beginptr[ret->offset]),
+    return _sysprof_symbol_new (sysprof_strings_get (strings, &self->beginptr[ret->offset]),
                                 g_steal_pointer (&tag),
                                 NULL,
                                 ret->addr_begin,

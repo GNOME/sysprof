@@ -22,10 +22,11 @@
 
 #include "sysprof-address-layout-private.h"
 #include "sysprof-document.h"
-#include "sysprof-symbol.h"
-#include "sysprof-symbolizer.h"
 #include "sysprof-mount-namespace-private.h"
 #include "sysprof-process-info-private.h"
+#include "sysprof-strings-private.h"
+#include "sysprof-symbol.h"
+#include "sysprof-symbolizer.h"
 
 G_BEGIN_DECLS
 
@@ -49,6 +50,7 @@ struct _SysprofSymbolizerClass
                                     GAsyncResult              *result,
                                     GError                   **error);
   SysprofSymbol *(*symbolize)      (SysprofSymbolizer         *self,
+                                    SysprofStrings            *strings,
                                     const SysprofProcessInfo  *process_info,
                                     SysprofAddress             address);
 };
@@ -63,6 +65,7 @@ gboolean       _sysprof_symbolizer_prepare_finish (SysprofSymbolizer         *se
                                                    GAsyncResult              *result,
                                                    GError                   **error);
 SysprofSymbol *_sysprof_symbolizer_symbolize      (SysprofSymbolizer         *self,
+                                                   SysprofStrings            *strings,
                                                    const SysprofProcessInfo  *process_info,
                                                    SysprofAddress             address);
 

@@ -27,6 +27,7 @@
 G_BEGIN_DECLS
 
 void                    _sysprof_document_symbols_new        (SysprofDocument      *document,
+                                                              SysprofStrings       *strings,
                                                               SysprofSymbolizer    *symbolizer,
                                                               GHashTable           *pid_to_process_info,
                                                               GCancellable         *cancellable,

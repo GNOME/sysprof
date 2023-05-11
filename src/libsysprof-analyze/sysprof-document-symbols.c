@@ -66,6 +66,7 @@ typedef struct _Symbolize
   SysprofDocument        *document;
   SysprofSymbolizer      *symbolizer;
   SysprofDocumentSymbols *symbols;
+  SysprofStrings         *strings;
   GHashTable             *pid_to_process_info;
 } Symbolize;
 
@@ -75,27 +76,25 @@ symbolize_free (Symbolize *state)
   g_clear_object (&state->document);
   g_clear_object (&state->symbolizer);
   g_clear_object (&state->symbols);
+  g_clear_pointer (&state->strings, sysprof_strings_unref);
   g_clear_pointer (&state->pid_to_process_info, g_hash_table_unref);
   g_free (state);
 }
 
 static void
-sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
-                                        SysprofProcessInfo       *process_info,
-                                        SysprofDocumentTraceable *traceable,
-                                        SysprofSymbolizer        *symbolizer)
+add_traceable (SysprofStrings           *strings,
+               SysprofProcessInfo       *process_info,
+               SysprofDocumentTraceable *traceable,
+               SysprofSymbolizer        *symbolizer)
 {
   SysprofAddressContext last_context;
   guint64 *addresses;
   guint n_addresses;
-  int pid;
 
-  g_assert (SYSPROF_IS_DOCUMENT_SYMBOLS (self));
   g_assert (process_info != NULL);
   g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
 
-  pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
   n_addresses = sysprof_document_traceable_get_stack_depth (traceable);
   addresses = g_alloca (sizeof (guint64) * n_addresses);
   sysprof_document_traceable_get_stack_addresses (traceable, addresses, n_addresses);
@@ -117,7 +116,7 @@ sysprof_document_symbols_add_traceable (SysprofDocumentSymbols   *self,
         }
       else
         {
-          g_autoptr(SysprofSymbol) symbol = _sysprof_symbolizer_symbolize (symbolizer, process_info, address);
+          g_autoptr(SysprofSymbol) symbol = _sysprof_symbolizer_symbolize (symbolizer, strings, process_info, address);
 
           if (symbol != NULL)
             sysprof_symbol_cache_take (process_info->symbol_cache, g_steal_pointer (&symbol));
@@ -190,7 +189,7 @@ sysprof_document_symbols_worker (GTask        *task,
           if (process_info == NULL)
             continue;
 
-          sysprof_document_symbols_add_traceable (state->symbols, process_info, traceable, state->symbolizer);
+          add_traceable (state->strings, process_info, traceable, state->symbolizer);
         }
       while (gtk_bitset_iter_next (&iter, &i));
     }
@@ -202,6 +201,7 @@ sysprof_document_symbols_worker (GTask        *task,
 
 void
 _sysprof_document_symbols_new (SysprofDocument     *document,
+                               SysprofStrings      *strings,
                                SysprofSymbolizer   *symbolizer,
                                GHashTable          *pid_to_process_info,
                                GCancellable        *cancellable,
@@ -218,6 +218,7 @@ _sysprof_document_symbols_new (SysprofDocument     *document,
   state->document = g_object_ref (document);
   state->symbolizer = g_object_ref (symbolizer);
   state->symbols = g_object_new (SYSPROF_TYPE_DOCUMENT_SYMBOLS, NULL);
+  state->strings = sysprof_strings_ref (strings);
   state->pid_to_process_info = g_hash_table_ref (pid_to_process_info);
 
   task = g_task_new (NULL, cancellable, callback, user_data);

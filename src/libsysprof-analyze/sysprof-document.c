@@ -594,6 +594,7 @@ sysprof_document_symbolize_prepare_cb (GObject      *object,
     g_task_return_error (task, g_steal_pointer (&error));
   else
     _sysprof_document_symbols_new (g_task_get_source_object (task),
+                                   self->strings,
                                    symbolizer,
                                    self->pid_to_process_info,
                                    g_task_get_cancellable (task),

@@ -161,8 +161,7 @@ sysprof_document_symbols_worker (GTask        *task,
   /* Create static symbols for context switch use */
   for (guint cs = 0; cs < G_N_ELEMENTS (context_switches); cs++)
     {
-      g_autoptr(GRefString) name = g_ref_string_new_intern (context_switches[cs].name);
-      g_autoptr(SysprofSymbol) symbol = _sysprof_symbol_new (name, NULL, NULL, 0, 0);
+      g_autoptr(SysprofSymbol) symbol = _sysprof_symbol_new (g_ref_string_new_intern (context_switches[cs].name), NULL, NULL, 0, 0);
 
       /* TODO: It would be nice if we had enough insight from the capture header
        * as to the host system, so we can show "vmlinuz" and "Linux" respectively

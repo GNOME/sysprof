@@ -56,6 +56,7 @@ struct _SysprofDocument
   GtkBitset                *traceables;
   GtkBitset                *processes;
   GtkBitset                *mmaps;
+  GtkBitset                *pids;
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_process_info;
@@ -193,6 +194,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->processes, gtk_bitset_unref);
   g_clear_pointer (&self->mmaps, gtk_bitset_unref);
   g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
+  g_clear_pointer (&self->pids, gtk_bitset_unref);
 
   g_clear_object (&self->mount_namespace);
 
@@ -219,6 +221,7 @@ sysprof_document_init (SysprofDocument *self)
   self->file_chunks = gtk_bitset_new_empty ();
   self->processes = gtk_bitset_new_empty ();
   self->mmaps = gtk_bitset_new_empty ();
+  self->pids = gtk_bitset_new_empty ();
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   self->pid_to_process_info = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)sysprof_process_info_unref);
@@ -425,6 +428,7 @@ sysprof_document_load (SysprofDocument  *self,
       const SysprofCaptureFrame *tainted;
       SysprofDocumentFramePointer ptr;
       guint16 frame_len;
+      int pid;
 
       memcpy (&frame_len, &self->base[pos], sizeof frame_len);
       if (self->needs_swap)
@@ -437,6 +441,10 @@ sysprof_document_load (SysprofDocument  *self,
       ptr.length = frame_len;
 
       tainted = (const SysprofCaptureFrame *)(gpointer)&self->base[pos];
+
+      pid = self->needs_swap ? GUINT32_SWAP_LE_BE (tainted->pid) : tainted->pid;
+
+      gtk_bitset_add (self->pids, pid);
 
       if (tainted->type == SYSPROF_CAPTURE_FRAME_SAMPLE ||
           tainted->type == SYSPROF_CAPTURE_FRAME_ALLOCATION)

@@ -732,7 +732,7 @@ test_reader_writer_file (void)
   g_autofree gchar *data = NULL;
   g_autofree gchar *testfile = NULL;
   GByteArray *buf = g_byte_array_new ();
-  g_autofree const gchar **files = NULL;
+  const char **files;
   SysprofCaptureWriter *writer;
   SysprofCaptureReader *reader;
   SysprofCaptureFrameType type;
@@ -799,6 +799,7 @@ test_reader_writer_file (void)
   g_assert_nonnull (files);
   g_assert_cmpstr (files[0], ==, testfile);
   g_assert_null (files[1]);
+  free (files);
 
   sysprof_capture_reader_reset (reader);
   new_fd = sysprof_memfd_create ("[sysprof-capture-file]");

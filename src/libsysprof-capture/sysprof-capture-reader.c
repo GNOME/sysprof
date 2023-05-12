@@ -1343,7 +1343,7 @@ array_append (const char ***files,
       *files = new_files;
     }
 
-  (*files)[*n_files] = new_element ? strdup (new_element) : NULL;
+  (*files)[*n_files] = new_element ? sysprof_strdup (new_element) : NULL;
   *n_files = *n_files + 1;
   assert (*n_files <= *n_files_allocated);
 
@@ -1362,7 +1362,10 @@ array_deduplicate (const char **files,
   for (last_written = 0, next_to_read = 1; last_written <= next_to_read && next_to_read < *n_files;)
     {
       if (strcmp (files[next_to_read], files[last_written]) == 0)
-        next_to_read++;
+        {
+          free ((char *)files[next_to_read]);
+          next_to_read++;
+        }
       else
         files[++last_written] = files[next_to_read++];
     }

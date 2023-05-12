@@ -20,6 +20,8 @@
 
 #include <sysprof-analyze.h>
 
+#include "sysprof-document-private.h"
+
 int
 main (int   argc,
       char *argv[])
@@ -35,7 +37,7 @@ main (int   argc,
       return 1;
     }
 
-  if (!(document = sysprof_document_new (argv[1], &error)))
+  if (!(document = _sysprof_document_new (argv[1], &error)))
     {
       g_printerr ("Failed to open capture: %s\n", error->message);
       return 1;

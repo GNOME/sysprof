@@ -483,7 +483,7 @@ sysprof_document_load (SysprofDocument  *self,
 }
 
 /**
- * sysprof_document_new_from_fd:
+ * _sysprof_document_new_from_fd:
  * @capture_fd: a file-descriptor to be mapped
  * @error: a location for a #GError, or %NULL
  *
@@ -495,12 +495,10 @@ sysprof_document_load (SysprofDocument  *self,
  *
  * Returns: A #SysprofDocument if successful; otherwise %NULL
  *   and @error is set.
- *
- * Since: 45.0
  */
 SysprofDocument *
-sysprof_document_new_from_fd (int      capture_fd,
-                              GError **error)
+_sysprof_document_new_from_fd (int      capture_fd,
+                               GError **error)
 {
   g_autoptr(SysprofDocument) self = NULL;
 
@@ -528,8 +526,8 @@ sysprof_document_new_from_fd (int      capture_fd,
  * Since: 45.0
  */
 SysprofDocument *
-sysprof_document_new (const char  *filename,
-                      GError     **error)
+_sysprof_document_new (const char  *filename,
+                       GError     **error)
 {
   g_autoptr(SysprofDocument) self = NULL;
   g_autofd int capture_fd = -1;
@@ -614,11 +612,11 @@ sysprof_document_symbolize_prepare_cb (GObject      *object,
 }
 
 void
-sysprof_document_symbolize_async (SysprofDocument     *self,
-                                  SysprofSymbolizer   *symbolizer,
-                                  GCancellable        *cancellable,
-                                  GAsyncReadyCallback  callback,
-                                  gpointer             user_data)
+_sysprof_document_symbolize_async (SysprofDocument     *self,
+                                   SysprofSymbolizer   *symbolizer,
+                                   GCancellable        *cancellable,
+                                   GAsyncReadyCallback  callback,
+                                   gpointer             user_data)
 {
   g_autoptr(SysprofDocumentSymbols) symbols = NULL;
   g_autoptr(GTask) task = NULL;
@@ -628,7 +626,7 @@ sysprof_document_symbolize_async (SysprofDocument     *self,
   g_return_if_fail (!cancellable || SYSPROF_IS_SYMBOLIZER (symbolizer));
 
   task = g_task_new (self, cancellable, callback, user_data);
-  g_task_set_source_tag (task, sysprof_document_symbolize_async);
+  g_task_set_source_tag (task, _sysprof_document_symbolize_async);
 
   _sysprof_symbolizer_prepare_async (symbolizer,
                                      self,
@@ -638,14 +636,14 @@ sysprof_document_symbolize_async (SysprofDocument     *self,
 }
 
 SysprofDocumentSymbols *
-sysprof_document_symbolize_finish (SysprofDocument  *self,
-                                   GAsyncResult     *result,
-                                   GError          **error)
+_sysprof_document_symbolize_finish (SysprofDocument  *self,
+                                    GAsyncResult     *result,
+                                    GError          **error)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
   g_return_val_if_fail (G_IS_TASK (result), NULL);
   g_return_val_if_fail (g_task_is_valid (result, self), NULL);
-  g_return_val_if_fail (g_task_get_source_tag (G_TASK (result)) == sysprof_document_symbolize_async, NULL);
+  g_return_val_if_fail (g_task_get_source_tag (G_TASK (result)) == _sysprof_document_symbolize_async, NULL);
 
   return g_task_propagate_pointer (G_TASK (result), error);
 }

@@ -2,7 +2,8 @@
 #include <fcntl.h>
 
 #include <sysprof-analyze.h>
-#include <sysprof-capture.h>
+
+#include "sysprof-document-private.h"
 
 int
 main (int argc,
@@ -23,7 +24,7 @@ main (int argc,
 
   filename = argv[1];
 
-  if (!(document = sysprof_document_new (filename, &error)))
+  if (!(document = _sysprof_document_new (filename, &error)))
     {
       g_printerr ("Failed to load %s: %s\n",
                   filename, error->message);

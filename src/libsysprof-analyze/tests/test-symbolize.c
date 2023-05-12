@@ -2,6 +2,8 @@
 
 #include <sysprof-analyze.h>
 
+#include "sysprof-document-private.h"
+
 static GMainLoop *main_loop;
 
 static void
@@ -19,7 +21,7 @@ symbolize_cb (GObject      *object,
   g_assert (SYSPROF_IS_DOCUMENT (document));
   g_assert (G_IS_ASYNC_RESULT (result));
 
-  if (!(symbols = sysprof_document_symbolize_finish (document, result, &error)))
+  if (!(symbols = _sysprof_document_symbolize_finish (document, result, &error)))
     g_error ("Failed to symbolize: %s", error->message);
 
   traceables = sysprof_document_list_traceables (document);
@@ -88,7 +90,7 @@ main (int argc,
 
   filename = argv[1];
 
-  if (!(document = sysprof_document_new (filename, &error)))
+  if (!(document = _sysprof_document_new (filename, &error)))
     {
       g_printerr ("Failed to load document: %s\n", error->message);
       return 1;
@@ -97,11 +99,11 @@ main (int argc,
   multi = sysprof_multi_symbolizer_new ();
   sysprof_multi_symbolizer_add (multi, sysprof_bundled_symbolizer_new ());
 
-  sysprof_document_symbolize_async (document,
-                                    SYSPROF_SYMBOLIZER (multi),
-                                    NULL,
-                                    symbolize_cb,
-                                    NULL);
+  _sysprof_document_symbolize_async (document,
+                                     SYSPROF_SYMBOLIZER (multi),
+                                     NULL,
+                                     symbolize_cb,
+                                     NULL);
 
   g_main_loop_run (main_loop);
 

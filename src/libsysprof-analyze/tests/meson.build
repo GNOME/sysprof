@@ -17,11 +17,11 @@ libsysprof_analyze_testsuite = {
   'test-print-file'     : {'skip': true},
   'test-list-processes' : {'skip': true},
   'test-symbolize'      : {'skip': true},
+  'test-symbol-cache'   : {},
 }
 
 libsysprof_analyze_testsuite_deps = [
-  libsysprof_analyze_dep,
-  libsysprof_capture_dep,
+  libsysprof_analyze_static_dep,
 ]
 
 foreach test, params: libsysprof_analyze_testsuite

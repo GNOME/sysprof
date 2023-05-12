@@ -62,13 +62,27 @@ libsysprof_analyze_deps = [
   libsysprof_capture_dep,
 ]
 
-libsysprof_analyze = library('sysprof-analyze-@0@'.format(soname_major_version),
-                             libsysprof_analyze_public_sources +
-                             libsysprof_analyze_private_sources,
+libsysprof_analyze_static = static_library(
+  'sysprof-analyze-@0@'.format(soname_major_version),
+  libsysprof_analyze_public_sources +
+  libsysprof_analyze_private_sources,
+
     include_directories: [include_directories('.'),
                           ipc_include_dirs,
                           libsysprof_capture_include_dirs],
            dependencies: libsysprof_analyze_deps,
+  gnu_symbol_visibility: 'hidden',
+)
+
+libsysprof_analyze_static_dep = declare_dependency(
+            link_with: libsysprof_analyze_static,
+         dependencies: libsysprof_analyze_deps,
+  include_directories: [include_directories('.'),
+                        libsysprof_capture_include_dirs],
+)
+
+libsysprof_analyze = library('sysprof-analyze-@0@'.format(soname_major_version),
+           dependencies: [libsysprof_analyze_static_dep],
   gnu_symbol_visibility: 'hidden',
                 version: '@0@.0.0'.format(soname_major_version),
         darwin_versions: '@0@.0'.format(soname_major_version),

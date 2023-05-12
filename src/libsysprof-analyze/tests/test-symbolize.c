@@ -36,15 +36,11 @@ symbolize_cb (GObject      *object,
       g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
 
       last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
-      depth = sysprof_document_traceable_get_stack_depth (traceable);
       pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
+      depth = sysprof_document_traceable_get_stack_addresses (traceable, addresses, G_N_ELEMENTS (addresses));
 
       g_print ("%s depth=%u pid=%u\n",
-               G_OBJECT_TYPE_NAME (traceable),
-               depth,
-               pid);
-
-      sysprof_document_traceable_get_stack_addresses (traceable, addresses, G_N_ELEMENTS (addresses));
+               G_OBJECT_TYPE_NAME (traceable), depth, pid);
 
       for (guint j = 0; j < depth; j++)
         {

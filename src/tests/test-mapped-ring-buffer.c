@@ -163,6 +163,9 @@ test_threaded_movements (void)
 
   g_thread_join (thread1);
   g_thread_join (thread2);
+
+  mapped_ring_buffer_unref (writer);
+  mapped_ring_buffer_unref (reader);
 }
 
 static void
@@ -183,6 +186,8 @@ test_readwrite (void)
       mapped_ring_buffer_advance (ring, sizeof *ptr);
     }
   mapped_ring_buffer_drain (ring, drain_count_cb, NULL);
+
+  mapped_ring_buffer_unref (ring);
 }
 
 gint

@@ -18,6 +18,7 @@ libsysprof_analyze_public_sources = [
   'sysprof-document-traceable.c',
   'sysprof-kallsyms-symbolizer.c',
   'sysprof-multi-symbolizer.c',
+  'sysprof-no-symbolizer.c',
   'sysprof-symbol.c',
   'sysprof-symbolizer.c',
 ]
@@ -55,6 +56,7 @@ libsysprof_analyze_public_headers = [
   'sysprof-mount.h',
   'sysprof-kallsyms-symbolizer.h',
   'sysprof-multi-symbolizer.h',
+  'sysprof-no-symbolizer.h',
   'sysprof-symbol.h',
   'sysprof-symbolizer.h',
 ]

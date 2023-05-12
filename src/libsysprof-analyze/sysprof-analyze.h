@@ -45,6 +45,7 @@ G_BEGIN_DECLS
 # include "sysprof-mount.h"
 # include "sysprof-kallsyms-symbolizer.h"
 # include "sysprof-multi-symbolizer.h"
+# include "sysprof-no-symbolizer.h"
 # include "sysprof-symbol.h"
 # include "sysprof-symbolizer.h"
 #undef SYSPROF_ANALYZE_INSIDE

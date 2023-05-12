@@ -126,33 +126,6 @@ sysprof_symbol_cache_new (void)
   return g_object_new (SYSPROF_TYPE_SYMBOL_CACHE, NULL);
 }
 
-#if 0
-static void
-print_tree (SysprofSymbolCacheNode *node)
-{
-  SysprofSymbolCacheNode *left = RB_LEFT (node, link);
-  SysprofSymbolCacheNode *right = RB_RIGHT (node, link);
-
-  g_print ("[%lx:%lx max=%lx];\n", node->low, node->high, node->max);
-
-  if (left)
-    {
-      g_print ("[%lx:%lx]'L -> [%lx:%lx];\n",
-               node->low, node->high,
-               left->low, left->high);
-      print_tree (left);
-    }
-
-  if (right)
-    {
-      g_print ("[%lx:%lx]'R -> [%lx:%lx];\n",
-               node->low, node->high,
-               right->low, right->high);
-      print_tree (right);
-    }
-}
-#endif
-
 void
 sysprof_symbol_cache_take (SysprofSymbolCache *self,
                            SysprofSymbol      *symbol)
@@ -190,11 +163,6 @@ sysprof_symbol_cache_take (SysprofSymbolCache *self,
       node = parent;
       parent = RB_PARENT(parent, link);
     }
-
-#if 0
-  g_print ("=====\n");
-  print_tree (RB_ROOT (&self->head));
-#endif
 }
 
 SysprofSymbol *

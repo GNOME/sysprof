@@ -208,8 +208,8 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
 
   if (ret->offset < (self->endptr - self->beginptr))
     return _sysprof_symbol_new (sysprof_strings_get (strings, &self->beginptr[ret->offset]),
-                                g_steal_pointer (&tag),
                                 NULL,
+                                g_steal_pointer (&tag),
                                 ret->addr_begin,
                                 ret->addr_end);
 

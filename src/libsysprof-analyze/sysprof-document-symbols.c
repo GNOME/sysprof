@@ -25,6 +25,7 @@
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-document-traceable.h"
 #include "sysprof-mount-namespace-private.h"
+#include "sysprof-no-symbolizer.h"
 #include "sysprof-symbol-private.h"
 #include "sysprof-symbol-cache-private.h"
 #include "sysprof-symbolizer-private.h"
@@ -175,7 +176,8 @@ sysprof_document_symbols_worker (GTask        *task,
     }
 
   /* Walk through the available traceables which need symbols extracted */
-  if (gtk_bitset_iter_init_first (&iter, bitset, &i))
+  if (!SYSPROF_IS_NO_SYMBOLIZER (state->symbolizer) &&
+      gtk_bitset_iter_init_first (&iter, bitset, &i))
     {
       do
         {
@@ -243,7 +245,7 @@ _sysprof_document_symbols_new_finish (GAsyncResult  *result,
 }
 
 /**
- * sysprof_document_symbols_lookup:
+ * _sysprof_document_symbols_lookup:
  * @self: a #SysprofDocumentSymbols
  * @pid: the process identifier
  * @context: the #SysprofAddressContext for the address
@@ -254,10 +256,10 @@ _sysprof_document_symbols_new_finish (GAsyncResult  *result,
  * Returns: (transfer none) (nullable): a #SysprofSymbol or %NULL
  */
 SysprofSymbol *
-sysprof_document_symbols_lookup (SysprofDocumentSymbols *self,
-                                 int                     pid,
-                                 SysprofAddressContext   context,
-                                 SysprofAddress          address)
+_sysprof_document_symbols_lookup (SysprofDocumentSymbols *self,
+                                  int                     pid,
+                                  SysprofAddressContext   context,
+                                  SysprofAddress          address)
 {
   SysprofAddressContext new_context;
   SysprofProcessInfo *process_info;

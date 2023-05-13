@@ -25,8 +25,8 @@
 #include <sysprof-capture.h>
 
 #include "sysprof-document-file.h"
-#include "sysprof-document-symbols.h"
-#include "sysprof-symbolizer.h"
+#include "sysprof-document-traceable.h"
+#include "sysprof-symbol.h"
 
 G_BEGIN_DECLS
 
@@ -36,13 +36,18 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDocument, sysprof_document, SYSPROF, DOCUMENT, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofDocumentFile    *sysprof_document_lookup_file        (SysprofDocument      *self,
-                                                             const char           *path);
+SysprofDocumentFile    *sysprof_document_lookup_file         (SysprofDocument           *self,
+                                                              const char                *path);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_files         (SysprofDocument      *self);
+GListModel             *sysprof_document_list_files          (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_traceables    (SysprofDocument      *self);
+GListModel             *sysprof_document_list_traceables     (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_processes     (SysprofDocument      *self);
+GListModel             *sysprof_document_list_processes      (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+guint                   sysprof_document_symbolize_traceable (SysprofDocument           *self,
+                                                              SysprofDocumentTraceable  *traceable,
+                                                              SysprofSymbol            **symbols,
+                                                              guint                      n_symbols);
 
 G_END_DECLS

@@ -63,6 +63,8 @@ struct _SysprofDocument
 
   SysprofMountNamespace    *mount_namespace;
 
+  SysprofDocumentSymbols   *symbols;
+
   SysprofCaptureFileHeader  header;
   guint                     needs_swap : 1;
 };
@@ -197,6 +199,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->pids, gtk_bitset_unref);
 
   g_clear_object (&self->mount_namespace);
+  g_clear_object (&self->symbols);
 
   g_clear_pointer (&self->files_first_position, g_hash_table_unref);
 
@@ -390,26 +393,34 @@ sysprof_document_load_mountinfos (SysprofDocument *self)
     }
 }
 
-static gboolean
-sysprof_document_load (SysprofDocument  *self,
-                       int               capture_fd,
-                       GError          **error)
+static void
+sysprof_document_load_worker (GTask        *task,
+                              gpointer      source_object,
+                              gpointer      task_data,
+                              GCancellable *cancellable)
 {
+  g_autoptr(SysprofDocument) self = NULL;
   g_autoptr(GHashTable) files = NULL;
+  GMappedFile *mapped_file = task_data;
   goffset pos;
   gsize len;
 
-  g_assert (SYSPROF_IS_DOCUMENT (self));
-  g_assert (capture_fd > -1);
+  g_assert (source_object == NULL);
+  g_assert (mapped_file != NULL);
 
-  if (!(self->mapped_file = g_mapped_file_new_from_fd (capture_fd, FALSE, error)))
-    return FALSE;
-
-  self->base = (const guint8 *)g_mapped_file_get_contents (self->mapped_file);
-  len = g_mapped_file_get_length (self->mapped_file);
+  self = g_object_new (SYSPROF_TYPE_DOCUMENT, NULL);
+  self->mapped_file = g_mapped_file_ref (mapped_file);
+  self->base = (const guint8 *)g_mapped_file_get_contents (mapped_file);
+  len = g_mapped_file_get_length (mapped_file);
 
   if (len < sizeof self->header)
-    return FALSE;
+    {
+      g_task_return_new_error (task,
+                               G_IO_ERROR,
+                               G_IO_ERROR_INVALID_DATA,
+                               "File header too short");
+      return;
+    }
 
   /* Keep a copy of our header */
   memcpy (&self->header, self->base, sizeof self->header);
@@ -479,77 +490,39 @@ sysprof_document_load (SysprofDocument  *self,
   sysprof_document_load_mountinfos (self);
   sysprof_document_load_memory_maps (self);
 
-  return TRUE;
+  g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);
 }
 
-/**
- * _sysprof_document_new_from_fd:
- * @capture_fd: a file-descriptor to be mapped
- * @error: a location for a #GError, or %NULL
- *
- * Creates a new memory map using @capture_fd to read the underlying
- * Sysprof capture.
- *
- * No ownership of @capture_fd is transferred, and the caller may close
- * @capture_fd after calling this function.
- *
- * Returns: A #SysprofDocument if successful; otherwise %NULL
- *   and @error is set.
- */
-SysprofDocument *
-_sysprof_document_new_from_fd (int      capture_fd,
-                               GError **error)
+void
+_sysprof_document_new_async (GMappedFile         *mapped_file,
+                             GCancellable        *cancellable,
+                             GAsyncReadyCallback  callback,
+                             gpointer             user_data)
 {
-  g_autoptr(SysprofDocument) self = NULL;
+  g_autoptr(GTask) task = NULL;
 
-  g_return_val_if_fail (capture_fd > -1, NULL);
+  g_return_if_fail (mapped_file != NULL);
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
-  self = g_object_new (SYSPROF_TYPE_DOCUMENT, NULL);
-
-  if (!sysprof_document_load (self, capture_fd, error))
-    return NULL;
-
-  return g_steal_pointer (&self);
+  task = g_task_new (NULL, cancellable, callback, user_data);
+  g_task_set_source_tag (task, _sysprof_document_new_async);
+  g_task_set_task_data (task,
+                        g_mapped_file_ref (mapped_file),
+                        (GDestroyNotify)g_mapped_file_unref);
+  g_task_run_in_thread (task, sysprof_document_load_worker);
 }
 
-/**
- * sysprof_document_new:
- * @filename: a path to a capture file
- * @error: location for a #GError, or %NULL
- *
- * Similar to sysprof_document_new_from_fd() but opens the file found
- * at @filename as a #GMappedFile.
- *
- * Returns: a #SysprofDocument if successful; otherwise %NULL
- *   and @error is set.
- *
- * Since: 45.0
- */
 SysprofDocument *
-_sysprof_document_new (const char  *filename,
-                       GError     **error)
+_sysprof_document_new_finish (GAsyncResult  *result,
+                              GError       **error)
 {
-  g_autoptr(SysprofDocument) self = NULL;
-  g_autofd int capture_fd = -1;
+  SysprofDocument *ret;
 
-  g_return_val_if_fail (filename != NULL, NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+  ret = g_task_propagate_pointer (G_TASK (result), error);
+  g_return_val_if_fail (!ret || SYSPROF_IS_DOCUMENT (ret), NULL);
 
-  if (-1 == (capture_fd = g_open (filename, O_RDONLY|O_CLOEXEC, 0)))
-    {
-      int errsv = errno;
-      g_set_error (error,
-                   G_FILE_ERROR,
-                   g_file_error_from_errno (errsv),
-                   "%s", g_strerror (errsv));
-      return NULL;
-    }
-
-  self = g_object_new (SYSPROF_TYPE_DOCUMENT, NULL);
-
-  if (!sysprof_document_load (self, capture_fd, error))
-    return NULL;
-
-  return g_steal_pointer (&self);
+  return ret;
 }
 
 char *
@@ -569,14 +542,25 @@ sysprof_document_symbolize_symbols_cb (GObject      *object,
   g_autoptr(SysprofDocumentSymbols) symbols = NULL;
   g_autoptr(GTask) task = user_data;
   g_autoptr(GError) error = NULL;
+  SysprofDocument *self;
 
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
 
-  if ((symbols = _sysprof_document_symbols_new_finish (result, &error)))
-    g_task_return_pointer (task, g_steal_pointer (&symbols), g_object_unref);
-  else
-    g_task_return_error (task, g_steal_pointer (&error));
+  if (!(symbols = _sysprof_document_symbols_new_finish (result, &error)))
+    {
+      g_task_return_error (task, g_steal_pointer (&error));
+      return;
+    }
+
+  self = g_task_get_source_object (task);
+
+  g_assert (self != NULL);
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  g_set_object (&self->symbols, symbols);
+
+  g_task_return_boolean (task, TRUE);
 }
 
 static void
@@ -635,17 +619,17 @@ _sysprof_document_symbolize_async (SysprofDocument     *self,
                                      g_steal_pointer (&task));
 }
 
-SysprofDocumentSymbols *
+gboolean
 _sysprof_document_symbolize_finish (SysprofDocument  *self,
                                     GAsyncResult     *result,
                                     GError          **error)
 {
-  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
-  g_return_val_if_fail (G_IS_TASK (result), NULL);
-  g_return_val_if_fail (g_task_is_valid (result, self), NULL);
-  g_return_val_if_fail (g_task_get_source_tag (G_TASK (result)) == _sysprof_document_symbolize_async, NULL);
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), FALSE);
+  g_return_val_if_fail (G_IS_TASK (result), FALSE);
+  g_return_val_if_fail (g_task_is_valid (result, self), FALSE);
+  g_return_val_if_fail (g_task_get_source_tag (G_TASK (result)) == _sysprof_document_symbolize_async, FALSE);
 
-  return g_task_propagate_pointer (G_TASK (result), error);
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 gboolean
@@ -795,4 +779,52 @@ sysprof_document_list_processes (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->processes);
+}
+
+/**
+ * sysprof_document_symbolize_traceable: (skip)
+ * @self: a #SysprofDocument
+ * @traceable: the traceable to extract symbols for
+ * @symbols: an array to store #SysprofSymbols
+ * @n_symbols: the number of elements in @symbols
+ *
+ * Batch symbolizing of a traceable.
+ *
+ * No ownership is transfered into @symbols and may be cheaply
+ * discarded if using the stack for storage.
+ *
+ * Returns: The number of symbols or NULL set in @symbols.
+ */
+guint
+sysprof_document_symbolize_traceable (SysprofDocument           *self,
+                                      SysprofDocumentTraceable  *traceable,
+                                      SysprofSymbol            **symbols,
+                                      guint                      n_symbols)
+{
+  SysprofAddressContext last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
+  SysprofAddress *addresses;
+  guint n_addresses;
+  int pid;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), 0);
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable), 0);
+
+  if (n_symbols == 0 || symbols == NULL)
+    return 0;
+
+  pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
+  addresses = g_alloca (sizeof (SysprofAddress) * n_symbols);
+  n_addresses = sysprof_document_traceable_get_stack_addresses (traceable, addresses, n_symbols);
+
+  for (guint i = 0; i < n_addresses; i++)
+    {
+      SysprofAddressContext context;
+
+      symbols[i] = _sysprof_document_symbols_lookup (self->symbols, pid, last_context, addresses[i]);
+
+      if (sysprof_address_is_context_switch (addresses[i], &context))
+        last_context = context;
+    }
+
+  return n_addresses;
 }

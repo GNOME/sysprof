@@ -40,7 +40,6 @@ G_BEGIN_DECLS
 # include "sysprof-document-mmap.h"
 # include "sysprof-document-process.h"
 # include "sysprof-document-sample.h"
-# include "sysprof-document-symbols.h"
 # include "sysprof-document-traceable.h"
 # include "sysprof-mount.h"
 # include "sysprof-kallsyms-symbolizer.h"

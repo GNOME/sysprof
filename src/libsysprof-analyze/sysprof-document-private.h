@@ -23,24 +23,27 @@
 #include <gtk/gtk.h>
 
 #include "sysprof-document.h"
+#include "sysprof-symbolizer.h"
 
 G_BEGIN_DECLS
 
-SysprofDocument        *_sysprof_document_new                (const char           *filename,
-                                                              GError              **error);
-SysprofDocument        *_sysprof_document_new_from_fd        (int                   capture_fd,
-                                                              GError              **error);
-void                    _sysprof_document_symbolize_async    (SysprofDocument      *self,
-                                                              SysprofSymbolizer    *symbolizer,
-                                                              GCancellable         *cancellable,
-                                                              GAsyncReadyCallback   callback,
-                                                              gpointer              user_data);
-SysprofDocumentSymbols *_sysprof_document_symbolize_finish   (SysprofDocument      *self,
-                                                              GAsyncResult         *result,
-                                                              GError              **error);
-gboolean                _sysprof_document_is_native          (SysprofDocument      *self);
-char                   *_sysprof_document_ref_string         (SysprofDocument      *self,
-                                                              const char           *name);
-GtkBitset              *_sysprof_document_traceables         (SysprofDocument      *self);
+void             _sysprof_document_new_async        (GMappedFile          *mapped_file,
+                                                     GCancellable         *cancellable,
+                                                     GAsyncReadyCallback   callback,
+                                                     gpointer              user_data);
+SysprofDocument *_sysprof_document_new_finish       (GAsyncResult         *result,
+                                                     GError              **error);
+void             _sysprof_document_symbolize_async  (SysprofDocument      *self,
+                                                     SysprofSymbolizer    *symbolizer,
+                                                     GCancellable         *cancellable,
+                                                     GAsyncReadyCallback   callback,
+                                                     gpointer              user_data);
+gboolean         _sysprof_document_symbolize_finish (SysprofDocument      *self,
+                                                     GAsyncResult         *result,
+                                                     GError              **error);
+gboolean         _sysprof_document_is_native        (SysprofDocument      *self);
+char            *_sysprof_document_ref_string       (SysprofDocument      *self,
+                                                     const char           *name);
+GtkBitset       *_sysprof_document_traceables       (SysprofDocument      *self);
 
 G_END_DECLS

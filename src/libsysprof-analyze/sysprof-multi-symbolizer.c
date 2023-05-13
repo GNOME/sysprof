@@ -181,8 +181,8 @@ sysprof_multi_symbolizer_new (void)
  * that will be queried when @self is queried for symbols.
  */
 void
-sysprof_multi_symbolizer_add (SysprofMultiSymbolizer *self,
-                              SysprofSymbolizer      *symbolizer)
+sysprof_multi_symbolizer_take (SysprofMultiSymbolizer *self,
+                               SysprofSymbolizer      *symbolizer)
 {
   g_return_if_fail (SYSPROF_IS_MULTI_SYMBOLIZER (self));
   g_return_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer));

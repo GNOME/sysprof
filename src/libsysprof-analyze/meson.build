@@ -14,7 +14,6 @@ libsysprof_analyze_public_sources = [
   'sysprof-document-mmap.c',
   'sysprof-document-process.c',
   'sysprof-document-sample.c',
-  'sysprof-document-symbols.c',
   'sysprof-document-traceable.c',
   'sysprof-kallsyms-symbolizer.c',
   'sysprof-multi-symbolizer.c',
@@ -26,6 +25,7 @@ libsysprof_analyze_public_sources = [
 libsysprof_analyze_private_sources = [
   'sysprof-address-layout.c',
   'sysprof-document-bitset-index.c',
+  'sysprof-document-symbols.c',
   'sysprof-mount.c',
   'sysprof-mount-device.c',
   'sysprof-mount-namespace.c',
@@ -51,7 +51,6 @@ libsysprof_analyze_public_headers = [
   'sysprof-document-mmap.h',
   'sysprof-document-process.h',
   'sysprof-document-sample.h',
-  'sysprof-document-symbols.h',
   'sysprof-document-traceable.h',
   'sysprof-mount.h',
   'sysprof-kallsyms-symbolizer.h',

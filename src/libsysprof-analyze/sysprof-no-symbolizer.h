@@ -20,18 +20,23 @@
 
 #pragma once
 
-#include <glib-object.h>
-
 #include "sysprof-symbolizer.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_NO_SYMBOLIZER (sysprof_no_symbolizer_get_type())
+#define SYSPROF_TYPE_NO_SYMBOLIZER         (sysprof_no_symbolizer_get_type())
+#define SYSPROF_IS_NO_SYMBOLIZER(obj)      G_TYPE_CHECK_INSTANCE_TYPE(obj, SYSPROF_TYPE_NO_SYMBOLIZER)
+#define SYSPROF_NO_SYMBOLIZER(obj)         G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_NO_SYMBOLIZER, SysprofNoSymbolizer)
+#define SYSPROF_NO_SYMBOLIZER_CLASS(klass) G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_NO_SYMBOLIZER, SysprofNoSymbolizerClass)
+
+typedef struct _SysprofNoSymbolizer      SysprofNoSymbolizer;
+typedef struct _SysprofNoSymbolizerClass SysprofNoSymbolizerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_DERIVABLE_TYPE (SysprofNoSymbolizer, sysprof_no_symbolizer, SYSPROF, NO_SYMBOLIZER, SysprofSymbolizer)
-
+GType              sysprof_no_symbolizer_get_type (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
-SysprofSymbolizer *sysprof_no_symbolizer_new (void);
+SysprofSymbolizer *sysprof_no_symbolizer_get      (void);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofNoSymbolizer, g_object_unref)
 
 G_END_DECLS

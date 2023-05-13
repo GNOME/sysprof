@@ -37,7 +37,7 @@ GType                   sysprof_multi_symbolizer_get_type (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
 SysprofMultiSymbolizer *sysprof_multi_symbolizer_new      (void);
 SYSPROF_AVAILABLE_IN_ALL
-void                    sysprof_multi_symbolizer_add      (SysprofMultiSymbolizer *self,
+void                    sysprof_multi_symbolizer_take     (SysprofMultiSymbolizer *self,
                                                            SysprofSymbolizer      *symbolizer);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofMultiSymbolizer, g_object_unref)

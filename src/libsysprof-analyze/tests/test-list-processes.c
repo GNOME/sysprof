@@ -26,6 +26,7 @@ int
 main (int   argc,
       char *argv[])
 {
+  g_autoptr(SysprofDocumentLoader) loader  = NULL;
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(GListModel) processes = NULL;
   g_autoptr(GError) error = NULL;
@@ -37,7 +38,10 @@ main (int   argc,
       return 1;
     }
 
-  if (!(document = _sysprof_document_new (argv[1], &error)))
+  loader = sysprof_document_loader_new (argv[1]);
+  sysprof_document_loader_set_symbolizer (loader, sysprof_no_symbolizer_get ());
+
+  if (!(document = sysprof_document_loader_load (loader, NULL, &error)))
     {
       g_printerr ("Failed to open capture: %s\n", error->message);
       return 1;

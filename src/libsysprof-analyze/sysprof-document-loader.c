@@ -20,8 +20,13 @@
 
 #include "config.h"
 
+#include <errno.h>
+#include <unistd.h>
+
+#include "sysprof-bundled-symbolizer.h"
 #include "sysprof-document-loader.h"
 #include "sysprof-document-private.h"
+#include "sysprof-multi-symbolizer.h"
 
 struct _SysprofDocumentLoader
 {
@@ -44,6 +49,105 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofDocumentLoader, sysprof_document_loader, G_TYPE_OBJECT)
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+mapped_file_by_filename (GTask        *task,
+                         gpointer      source_object,
+                         gpointer      task_data,
+                         GCancellable *cancellable)
+{
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GMappedFile) mapped_file = g_mapped_file_new (task_data, FALSE, &error);
+
+  if (mapped_file != NULL)
+    g_task_return_pointer (task,
+                           g_steal_pointer (&mapped_file),
+                           (GDestroyNotify)g_mapped_file_unref);
+  else
+    g_task_return_error (task, g_steal_pointer (&error));
+}
+
+static void
+mapped_file_new_async (const char          *filename,
+                       GCancellable        *cancellable,
+                       GAsyncReadyCallback  callback,
+                       gpointer             user_data)
+{
+  g_autoptr(GTask) task = g_task_new (NULL, cancellable, callback, user_data);
+  g_task_set_task_data (task, g_strdup (filename), g_free);
+  g_task_run_in_thread (task, mapped_file_by_filename);
+}
+
+static void
+mapped_file_by_fd (GTask        *task,
+                   gpointer      source_object,
+                   gpointer      task_data,
+                   GCancellable *cancellable)
+{
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GMappedFile) mapped_file = g_mapped_file_new_from_fd (GPOINTER_TO_INT (task_data), FALSE, &error);
+
+  if (mapped_file != NULL)
+    g_task_return_pointer (task,
+                           g_steal_pointer (&mapped_file),
+                           (GDestroyNotify)g_mapped_file_unref);
+  else
+    g_task_return_error (task, g_steal_pointer (&error));
+}
+
+static void
+close_fd (gpointer data)
+{
+  int fd = GPOINTER_TO_INT (data);
+  close (fd);
+}
+
+static void
+mapped_file_new_from_fd_async (int                  fd,
+                               GCancellable        *cancellable,
+                               GAsyncReadyCallback  callback,
+                               gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  int copy_fd;
+
+  task = g_task_new (NULL, cancellable, callback, user_data);
+
+  if (-1 == (copy_fd = dup (fd)))
+    {
+      int errsv = errno;
+      g_task_return_new_error (task,
+                               G_IO_ERROR,
+                               g_io_error_from_errno (errsv),
+                               "%s",
+                               g_strerror (errsv));
+      return;
+    }
+
+  g_task_set_task_data (task, GINT_TO_POINTER (copy_fd), close_fd);
+  g_task_run_in_thread (task, mapped_file_by_fd);
+}
+
+static GMappedFile *
+mapped_file_new_finish (GAsyncResult  *result,
+                        GError       **error)
+{
+  return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+static void
+set_default_symbolizer (SysprofDocumentLoader *self)
+{
+  g_autoptr(SysprofMultiSymbolizer) multi = NULL;
+
+  g_assert (SYSPROF_IS_DOCUMENT_LOADER (self));
+
+  g_clear_object (&self->symbolizer);
+
+  multi = sysprof_multi_symbolizer_new ();
+  sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());
+  self->symbolizer = SYSPROF_SYMBOLIZER (g_steal_pointer (&multi));
+}
 
 static void
 sysprof_document_loader_finalize (GObject *object)
@@ -140,6 +244,8 @@ static void
 sysprof_document_loader_init (SysprofDocumentLoader *self)
 {
   self->fd = -1;
+
+  set_default_symbolizer (self);
 }
 
 SysprofDocumentLoader *
@@ -210,7 +316,11 @@ sysprof_document_loader_set_symbolizer (SysprofDocumentLoader *self,
   g_return_if_fail (SYSPROF_IS_DOCUMENT_LOADER (self));
 
   if (g_set_object (&self->symbolizer, symbolizer))
-    g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_SYMBOLIZER]);
+    {
+      if (self->symbolizer == NULL)
+        set_default_symbolizer (self);
+      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_SYMBOLIZER]);
+    }
 }
 
 /**
@@ -249,12 +359,11 @@ sysprof_document_loader_get_message (SysprofDocumentLoader *self)
 }
 
 static void
-sysprof_document_loader_load_cb (GObject      *object,
-                                 GAsyncResult *result,
-                                 gpointer      user_data)
+sysprof_document_loader_load_symbols_cb (GObject      *object,
+                                         GAsyncResult *result,
+                                         gpointer      user_data)
 {
   SysprofDocument *document = (SysprofDocument *)object;
-  g_autoptr(SysprofDocumentSymbols) symbols = NULL;
   g_autoptr(GError) error = NULL;
   g_autoptr(GTask) task = user_data;
 
@@ -262,10 +371,59 @@ sysprof_document_loader_load_cb (GObject      *object,
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
 
-  if (!(symbols = _sysprof_document_symbolize_finish (document, result, &error)))
+  if (!_sysprof_document_symbolize_finish (document, result, &error))
     g_task_return_error (task, g_steal_pointer (&error));
   else
     g_task_return_pointer (task, g_object_ref (document), g_object_unref);
+}
+
+static void
+sysprof_document_loader_load_document_cb (GObject      *object,
+                                          GAsyncResult *result,
+                                          gpointer      user_data)
+{
+  g_autoptr(SysprofDocument) document = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+  SysprofSymbolizer *symbolizer;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  symbolizer = g_task_get_task_data (task);
+
+  g_assert (symbolizer != NULL);
+  g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
+
+  if (!(document = _sysprof_document_new_finish (result, &error)))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    _sysprof_document_symbolize_async (document,
+                                       symbolizer,
+                                       g_task_get_cancellable (task),
+                                       sysprof_document_loader_load_symbols_cb,
+                                       g_object_ref (task));
+}
+
+static void
+sysprof_document_loader_load_mapped_file_cb (GObject      *object,
+                                             GAsyncResult *result,
+                                             gpointer      user_data)
+{
+  g_autoptr(GMappedFile) mapped_file = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (!(mapped_file = mapped_file_new_finish (result, &error)))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    _sysprof_document_new_async (mapped_file,
+                                 g_task_get_cancellable (task),
+                                 sysprof_document_loader_load_document_cb,
+                                 g_object_ref (task));
 }
 
 /**
@@ -285,43 +443,29 @@ sysprof_document_loader_load_async (SysprofDocumentLoader *self,
                                     GAsyncReadyCallback    callback,
                                     gpointer               user_data)
 {
-  g_autoptr(SysprofDocument) document = NULL;
+  g_autoptr(SysprofSymbolizer) symbolizer = NULL;
+  g_autoptr(GMappedFile) mapped_file = NULL;
   g_autoptr(GError) error = NULL;
   g_autoptr(GTask) task = NULL;
 
   g_return_if_fail (SYSPROF_IS_DOCUMENT_LOADER (self));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+  g_return_if_fail (self->filename != NULL || self->fd != -1);
 
   task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_task_data (task, g_object_ref (self->symbolizer), g_object_unref);
   g_task_set_source_tag (task, sysprof_document_loader_load_async);
 
-  if (self->fd == -1 && self->filename == NULL)
-    {
-      g_task_return_new_error (task,
-                               G_IO_ERROR,
-                               G_IO_ERROR_FAILED,
-                               "SysprofDocumentLoader disposition must have fd or filename set");
-      return;
-    }
-
   if (self->fd != -1)
-    document = _sysprof_document_new_from_fd (self->fd, &error);
-  else if (self->filename != NULL)
-    document = _sysprof_document_new (self->filename, &error);
+    mapped_file_new_from_fd_async (self->fd,
+                                   cancellable,
+                                   sysprof_document_loader_load_mapped_file_cb,
+                                   g_steal_pointer (&task));
   else
-    g_assert_not_reached ();
-
-  /* TODO: This will probably get renamed to load_async as we want
-   * to always have a symbolizer for loading. Additionally, the
-   * document will deal with caches directly instead of the symbols
-   * object.
-   */
-
-  _sysprof_document_symbolize_async (document,
-                                     self->symbolizer,
-                                     cancellable,
-                                     sysprof_document_loader_load_cb,
-                                     g_steal_pointer (&task));
+    mapped_file_new_async (self->filename,
+                           cancellable,
+                           sysprof_document_loader_load_mapped_file_cb,
+                           g_steal_pointer (&task));
 }
 
 /**

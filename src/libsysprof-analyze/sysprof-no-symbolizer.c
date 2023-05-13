@@ -21,10 +21,16 @@
 #include "config.h"
 
 #include "sysprof-no-symbolizer.h"
+#include "sysprof-symbolizer-private.h"
 
 struct _SysprofNoSymbolizer
 {
   SysprofSymbolizer parent_instance;
+};
+
+struct _SysprofNoSymbolizerClass
+{
+  SysprofSymbolizerClass parent_class;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofNoSymbolizer, sysprof_no_symbolizer, SYSPROF_TYPE_SYMBOLIZER)
@@ -51,8 +57,20 @@ sysprof_no_symbolizer_init (SysprofNoSymbolizer *self)
 {
 }
 
+/**
+ * sysprof_no_symbolizer_get:
+ *
+ * Gets a #SysprofSymbolizer that will never symbolize.
+ *
+ * Returns: (transfer none): a #SysprofSymbolizer
+ */
 SysprofSymbolizer *
-sysprof_no_symbolizer_new (void)
+sysprof_no_symbolizer_get (void)
 {
-  return g_object_new (SYSPROF_TYPE_NO_SYMBOLIZER, NULL);
+  static SysprofSymbolizer *instance;
+
+  if (g_once_init_enter (&instance))
+    g_once_init_leave (&instance, g_object_new (SYSPROF_TYPE_NO_SYMBOLIZER, NULL));
+
+  return instance;
 }

@@ -21,19 +21,28 @@
 #pragma once
 
 #include "sysprof-document.h"
-#include "sysprof-document-symbols.h"
 #include "sysprof-process-info-private.h"
+#include "sysprof-symbolizer.h"
+#include "sysprof-symbol.h"
 
 G_BEGIN_DECLS
 
-void                    _sysprof_document_symbols_new        (SysprofDocument      *document,
-                                                              SysprofStrings       *strings,
-                                                              SysprofSymbolizer    *symbolizer,
-                                                              GHashTable           *pid_to_process_info,
-                                                              GCancellable         *cancellable,
-                                                              GAsyncReadyCallback   callback,
-                                                              gpointer              user_data);
-SysprofDocumentSymbols *_sysprof_document_symbols_new_finish (GAsyncResult         *result,
-                                                              GError              **error);
+#define SYSPROF_TYPE_DOCUMENT_SYMBOLS (sysprof_document_symbols_get_type())
+
+G_DECLARE_FINAL_TYPE (SysprofDocumentSymbols, sysprof_document_symbols, SYSPROF, DOCUMENT_SYMBOLS, GObject)
+
+void                    _sysprof_document_symbols_new        (SysprofDocument         *document,
+                                                              SysprofStrings          *strings,
+                                                              SysprofSymbolizer       *symbolizer,
+                                                              GHashTable              *pid_to_process_info,
+                                                              GCancellable            *cancellable,
+                                                              GAsyncReadyCallback      callback,
+                                                              gpointer                 user_data);
+SysprofDocumentSymbols *_sysprof_document_symbols_new_finish (GAsyncResult            *result,
+                                                              GError                 **error);
+SysprofSymbol          *_sysprof_document_symbols_lookup     (SysprofDocumentSymbols  *symbols,
+                                                              int                      pid,
+                                                              SysprofAddressContext    context,
+                                                              SysprofAddress           address);
 
 G_END_DECLS

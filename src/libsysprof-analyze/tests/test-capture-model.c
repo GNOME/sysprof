@@ -9,9 +9,10 @@ int
 main (int argc,
       char *argv[])
 {
-  SysprofDocument *document;
+  g_autoptr(SysprofDocumentLoader) loader = NULL;
+  g_autoptr(SysprofDocument) document = NULL;
+  g_autoptr(GError) error = NULL;
   const char *filename;
-  GError *error = NULL;
   guint n_items;
 
   sysprof_clock_init ();
@@ -24,7 +25,10 @@ main (int argc,
 
   filename = argv[1];
 
-  if (!(document = _sysprof_document_new (filename, &error)))
+  loader = sysprof_document_loader_new (filename);
+  sysprof_document_loader_set_symbolizer (loader, sysprof_no_symbolizer_get ());
+
+  if (!(document = sysprof_document_loader_load (loader, NULL, &error)))
     {
       g_printerr ("Failed to load %s: %s\n",
                   filename, error->message);
@@ -87,8 +91,6 @@ main (int argc,
     }
 
   g_printerr ("%u frames\n", n_items);
-
-  g_clear_object (&document);
 
   return 0;
 }

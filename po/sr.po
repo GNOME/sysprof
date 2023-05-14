@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sysprof master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/sysprof/issues\n"
-"POT-Creation-Date: 2023-04-06 06:38+0000\n"
-"PO-Revision-Date: 2023-04-09 11:30+0200\n"
+"POT-Creation-Date: 2023-05-07 22:06+0000\n"
+"PO-Revision-Date: 2023-05-14 20:42+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <gnome-sr@googlegroups.org>\n"
 "Language: sr\n"
@@ -18,10 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : "
 "n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2\n"
 "X-Project-Style: gnome\n"
+"X-Generator: Gtranslator 41.0\n"
 
 #: data/org.gnome.Sysprof.appdata.xml.in.in:5
-#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:196
-#: src/sysprof/sysprof-application.c:321 src/sysprof/sysprof-window.ui:10
+#: data/org.gnome.Sysprof.desktop.in.in:4 src/sysprof/sysprof-application.c:197
+#: src/sysprof/sysprof-application.c:287 src/sysprof/sysprof-window.ui:10
 msgid "Sysprof"
 msgstr "Профилатор система"
 
@@ -140,7 +141,7 @@ msgid "Descendants"
 msgstr "Наследници"
 
 #: src/libsysprof-ui/sysprof-callgraph-page.ui:178
-#: src/libsysprof-ui/sysprof-details-page.ui:189
+#: src/libsysprof-ui/sysprof-details-page.ui:215
 msgid "Hits"
 msgstr "Погодака"
 
@@ -201,27 +202,24 @@ msgstr "Коришћење процесора (све)"
 msgid "Processes"
 msgstr "Процеси"
 
-#: src/libsysprof-ui/sysprof-details-page.c:231
+#: src/libsysprof-ui/sysprof-details-page.c:239
 msgid "Memory Capture"
 msgstr "Снимак меморије"
 
-#: src/libsysprof-ui/sysprof-details-page.c:245
+#: src/libsysprof-ui/sysprof-details-page.c:253
 #, c-format
 msgid "%0.4lf seconds"
 msgstr "%0.4lf секунде"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:8
-#| msgid "Captured at"
 msgid "Capture"
 msgstr "Снимак"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:12
-#| msgid "Duration"
 msgid "Location"
 msgstr "Место"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:26
-#| msgid "Record"
 msgid "Recorded At"
 msgstr "Снимњено у"
 
@@ -245,7 +243,6 @@ msgid "Number of stack traces sampled for performance callgraphs"
 msgstr "Број стаза спремника узоркованих за графике позива учинковитости"
 
 #: src/libsysprof-ui/sysprof-details-page.ui:88
-#| msgid "Mark"
 msgid "Marks"
 msgstr "Ознаке"
 
@@ -279,25 +276,26 @@ msgstr "Број снимљених стаза спремника за праћ�
 msgid "Number of recorded counter values"
 msgstr "Број снимљених вредности бројача"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:176
+#: src/libsysprof-ui/sysprof-details-page.ui:180
 #: src/libsysprof-ui/sysprof-marks-page.ui:50
 msgid "Mark"
 msgstr "Ознака"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:202
+#: src/libsysprof-ui/sysprof-details-page.ui:248
 msgid "Min"
 msgstr "Најмање"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:215
+#: src/libsysprof-ui/sysprof-details-page.ui:281
 msgid "Max"
 msgstr "Највише"
 
-#: src/libsysprof-ui/sysprof-details-page.ui:228
+#: src/libsysprof-ui/sysprof-details-page.ui:314
 msgid "Avg"
 msgstr "Просек"
 
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:205
 #: src/libsysprof-ui/sysprof-diskstat-aid.c:267
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:58
 msgid "Disk"
 msgstr "Диск"
 
@@ -327,25 +325,25 @@ msgstr "Снимам у %s"
 msgid "New Recording"
 msgstr "Нови снимак"
 
-#: src/libsysprof-ui/sysprof-display.c:1096
+#: src/libsysprof-ui/sysprof-display.c:1099
 msgid "The recording could not be opened"
 msgstr "Не могу да отворим снимак"
 
-#: src/libsysprof-ui/sysprof-display.c:1243
+#: src/libsysprof-ui/sysprof-display.c:1246
 #, c-format
 msgid "Failed to save recording: %s"
 msgstr "Нисам успео да сачувам снимак: %s"
 
-#: src/libsysprof-ui/sysprof-display.c:1276
+#: src/libsysprof-ui/sysprof-display.c:1279
 msgid "Save Recording"
 msgstr "Сачувај снимак"
 
-#: src/libsysprof-ui/sysprof-display.c:1279
+#: src/libsysprof-ui/sysprof-display.c:1282
 msgid "Save"
 msgstr "Сачувај"
 
 #. Translators: This is a button.
-#: src/libsysprof-ui/sysprof-display.c:1280 src/sysprof/sysprof-window.c:285
+#: src/libsysprof-ui/sysprof-display.c:1283 src/sysprof/sysprof-window.c:285
 msgid "Cancel"
 msgstr "Откажи"
 
@@ -359,21 +357,20 @@ msgid "Remove environment variable"
 msgstr "Уклони променљиву окружења"
 
 #: src/libsysprof-ui/sysprof-environ-editor.c:72
-#| msgid "Remove environment variable"
 msgid "New environment variable…"
 msgstr "Нова променљива окружења…"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:27
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:25
 msgid "Ouch, that hurt!"
 msgstr "Јао, што ово боли!"
 
-#: src/libsysprof-ui/sysprof-failed-state-view.ui:40
+#: src/libsysprof-ui/sysprof-failed-state-view.ui:37
 msgid "Something unexpectedly went wrong while trying to profile your system."
 msgstr ""
 "Нешто је неочекивано пошло наопако када сам покушао да профилишем ваш систем."
 
 #: src/libsysprof-ui/sysprof-log-model.c:210
-#: src/libsysprof-ui/sysprof-logs-page.ui:58
+#: src/libsysprof-ui/sysprof-logs-page.ui:56
 #: src/libsysprof-ui/sysprof-marks-page.ui:103
 msgid "Message"
 msgstr "Порука"
@@ -405,16 +402,16 @@ msgstr "Упозорење"
 msgid "Logs"
 msgstr "Дневници"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:15
+#: src/libsysprof-ui/sysprof-logs-page.ui:13
 #: src/libsysprof-ui/sysprof-marks-page.ui:64
 msgid "Time"
 msgstr "Време"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:29
+#: src/libsysprof-ui/sysprof-logs-page.ui:27
 msgid "Severity"
 msgstr "Озбиљност"
 
-#: src/libsysprof-ui/sysprof-logs-page.ui:44
+#: src/libsysprof-ui/sysprof-logs-page.ui:42
 msgid "Domain"
 msgstr "Домен"
 
@@ -458,12 +455,10 @@ msgid "> %s to %s"
 msgstr "> %s до %s"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:16
-#| msgid "Memory Allocations"
 msgid "Number of Allocations"
 msgstr "Број додела"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:17
-#| msgid "Profile memory allocations and frees"
 msgid "Total number of allocation and free records"
 msgstr "Укупан број додела и слободних снимака"
 
@@ -486,7 +481,6 @@ msgid "Number of allocations freed from similar stack trace"
 msgstr "Број додела ослобођених од сличних стаза спремника"
 
 #: src/libsysprof-ui/sysprof-memprof-page.ui:59
-#| msgid "Allocations Captured"
 msgid "Allocations by Size"
 msgstr "Додела по величини"
 
@@ -524,17 +518,28 @@ msgstr "Мрежа"
 msgid "GNOME Shell"
 msgstr "Гномова шкољка"
 
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:30
+msgid "Speedtrack"
+msgstr "Стаза брзине"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:39
+msgid "GJS"
+msgstr "ГЈС"
+
+#: src/libsysprof-ui/sysprof-profiler-assistant.ui:46
+#| msgid "Launch Application"
+msgid "Application"
+msgstr "Програм"
+
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:69
 msgid "Profiling Target"
 msgstr "Профилисање мете"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:72
-#| msgid "Profile the system"
 msgid "Profile Entire System"
 msgstr "Профилиши читав систем"
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:73
-#| msgid "Sysprof was unable to generate a callgraph from the system capture."
 msgid ""
 "Sysprof can generate callgraphs for one or more processes on your system."
 msgstr ""
@@ -542,7 +547,6 @@ msgstr ""
 "вашем систему."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:84
-#| msgid "Search Processes…"
 msgid "Search Processes"
 msgstr "Тражи процесе"
 
@@ -594,7 +598,7 @@ msgstr ""
 "процесора као што је потребно."
 
 #: src/libsysprof-ui/sysprof-profiler-assistant.ui:172
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:27
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:26
 msgid "Instruments"
 msgstr "Инструменти"
 
@@ -622,27 +626,27 @@ msgstr "Коришћење напајања"
 msgid "Energy Usage (All)"
 msgstr "Коришћење напајања (све)"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:35
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:32
 msgid ""
 "Did you know you can use <a href=\"help:sysprof\">sysprof-cli</a> to record?"
 msgstr ""
 "Да ли знате да можете користити „<a href=\"help:sysprof\">sysprof-cli</a>“ "
 "за снимање?"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:50
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:45
 msgid "Events"
 msgstr "Догађаји"
 
-#: src/libsysprof-ui/sysprof-recording-state-view.ui:76
+#: src/libsysprof-ui/sysprof-recording-state-view.ui:68
 msgid "_Stop Recording"
 msgstr "_Заустави снимање"
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:136
-#: src/libsysprof-ui/sysprof-visualizers-frame.ui:41
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:192
+#: src/libsysprof-ui/sysprof-visualizers-frame.ui:40
 msgid "Select for more details"
 msgstr "Изаберите за више појединости"
 
-#: src/libsysprof-ui/sysprof-visualizer-group-header.c:158
+#: src/libsysprof-ui/sysprof-visualizer-group-header.c:214
 msgid "Display supplemental graphs"
 msgstr "Прикажи додатне графике"
 
@@ -672,152 +676,193 @@ msgid "Authentication is required to access Linux kernel information."
 msgstr ""
 "Потребно је потврђивање идентитета за приступ подацима кернела Линукса."
 
-#: src/sysprof/gtk/help-overlay.ui:8
-msgctxt "shortcut window"
-msgid "Sysprof Shortcuts"
-msgstr "Пречице"
-
-#: src/sysprof/gtk/help-overlay.ui:12
+#: src/sysprof/gtk/help-overlay.ui:10
 msgctxt "shortcut window"
 msgid "Files"
 msgstr "Датотеке"
 
-#: src/sysprof/gtk/help-overlay.ui:16
+#: src/sysprof/gtk/help-overlay.ui:13
 msgctxt "shortcut window"
 msgid "Save Recording"
 msgstr "Сачувај снимање"
 
-#: src/sysprof/gtk/help-overlay.ui:17
+#: src/sysprof/gtk/help-overlay.ui:14
 msgctxt "shortcut window"
 msgid "Saves the current recording"
 msgstr "Сачуваће текуће снимање"
 
-#: src/sysprof/gtk/help-overlay.ui:24
+#: src/sysprof/gtk/help-overlay.ui:20
 msgctxt "shortcut window"
 msgid "Open recording"
 msgstr "Отвори снимање"
 
-#: src/sysprof/gtk/help-overlay.ui:25
+#: src/sysprof/gtk/help-overlay.ui:21
 msgctxt "shortcut window"
 msgid "Opens a previously saved recording"
 msgstr "Отвориће претходно сачувано снимање"
 
-#: src/sysprof/gtk/help-overlay.ui:34
+#: src/sysprof/gtk/help-overlay.ui:29
 msgctxt "shortcut window"
 msgid "Recording"
 msgstr "Снимам"
 
-#: src/sysprof/gtk/help-overlay.ui:38
+#: src/sysprof/gtk/help-overlay.ui:32
 msgctxt "shortcut window"
 msgid "Record again"
 msgstr "Сними опет"
 
-#: src/sysprof/gtk/help-overlay.ui:39
+#: src/sysprof/gtk/help-overlay.ui:33
 msgctxt "shortcut window"
 msgid "Starts a new recording"
 msgstr "Започеће ново снимање"
 
-#: src/sysprof/gtk/help-overlay.ui:46
+#: src/sysprof/gtk/help-overlay.ui:39
 msgctxt "shortcut window"
 msgid "Stop recording"
 msgstr "Заустави снимање"
 
-#: src/sysprof/gtk/help-overlay.ui:55
+#: src/sysprof/gtk/help-overlay.ui:47
 msgctxt "shortcut window"
 msgid "Callgraph"
 msgstr "График позива"
 
-#: src/sysprof/gtk/help-overlay.ui:59
+#: src/sysprof/gtk/help-overlay.ui:50
 msgctxt "shortcut window"
 msgid "Expand function"
 msgstr "Рашири функцију"
 
-#: src/sysprof/gtk/help-overlay.ui:60
+#: src/sysprof/gtk/help-overlay.ui:51
 msgctxt "shortcut window"
 msgid "Shows the direct descendants of the callgraph function"
 msgstr "Приказује директне наследнике функције графика позива"
 
-#: src/sysprof/gtk/help-overlay.ui:67
+#: src/sysprof/gtk/help-overlay.ui:57
 msgctxt "shortcut window"
 msgid "Collapse function"
 msgstr "Скупи функцију"
 
-#: src/sysprof/gtk/help-overlay.ui:68
+#: src/sysprof/gtk/help-overlay.ui:58
 msgctxt "shortcut window"
 msgid "Hides all callgraph descendants below the selected function"
 msgstr "Скрива све наследнике графика позива испод изабране функције"
 
-#: src/sysprof/gtk/help-overlay.ui:75
+#: src/sysprof/gtk/help-overlay.ui:64
 msgctxt "shortcut window"
 msgid "Jump into function"
 msgstr "Скочи у функцију"
 
-#: src/sysprof/gtk/help-overlay.ui:76
+#: src/sysprof/gtk/help-overlay.ui:65
 msgctxt "shortcut window"
 msgid "Selects the function or file as the top of the callgraph"
 msgstr "Бира функцију или датотеку као врх графика позива"
 
-#: src/sysprof/gtk/help-overlay.ui:85
+#: src/sysprof/gtk/help-overlay.ui:73
 msgctxt "shortcut window"
 msgid "Visualizers"
 msgstr "Приказивачи"
 
-#: src/sysprof/gtk/help-overlay.ui:89
+#: src/sysprof/gtk/help-overlay.ui:76
 msgctxt "shortcut window"
 msgid "Zoom in"
 msgstr "Увеличава"
 
-#: src/sysprof/gtk/help-overlay.ui:96
+#: src/sysprof/gtk/help-overlay.ui:82
 msgctxt "shortcut window"
 msgid "Zoom out"
 msgstr "Умањује"
 
-#: src/sysprof/gtk/help-overlay.ui:103
+#: src/sysprof/gtk/help-overlay.ui:88
 msgctxt "shortcut window"
 msgid "Reset zoom"
 msgstr "Враћа увеличање"
+
+#: src/sysprof/gtk/help-overlay.ui:96
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Опште"
+
+#: src/sysprof/gtk/help-overlay.ui:99
+#| msgid "Help"
+msgctxt "shortcut window"
+msgid "Show Help"
+msgstr "Прикз помоћи"
+
+#: src/sysprof/gtk/help-overlay.ui:105
+#| msgid "Keyboard Shortcuts"
+msgctxt "shortcut window"
+msgid "Keyboard Shortcuts"
+msgstr "Пречице тастатуре"
+
+#: src/sysprof/gtk/help-overlay.ui:111
+#| msgid "New Tab"
+msgctxt "shortcut window"
+msgid "New Tab"
+msgstr "Нови језичак"
+
+#: src/sysprof/gtk/help-overlay.ui:117
+msgctxt "shortcut window"
+msgid "Switch Tab"
+msgstr "Промена језичка"
+
+#: src/sysprof/gtk/help-overlay.ui:123
+#| msgid "New Window"
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "Нови прозор"
+
+#: src/sysprof/gtk/help-overlay.ui:129
+#| msgid "New Window"
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Затвара прозор"
+
+#: src/sysprof/gtk/help-overlay.ui:135
+#| msgid "_Quit"
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Излази"
 
 #: src/sysprof/gtk/menus.ui:6
 msgid "New Tab"
 msgstr "Нови језичак"
 
-#: src/sysprof/gtk/menus.ui:11
+#: src/sysprof/gtk/menus.ui:10
 msgid "New Window"
 msgstr "Нови прозор"
 
-#: src/sysprof/gtk/menus.ui:18
+#: src/sysprof/gtk/menus.ui:16
 msgid "Open Recording…"
 msgstr "Отвори снимак…"
 
-#: src/sysprof/gtk/menus.ui:23
+#: src/sysprof/gtk/menus.ui:20
 msgid "Save Recording…"
 msgstr "Сачувај снимак…"
 
-#: src/sysprof/gtk/menus.ui:30
+#: src/sysprof/gtk/menus.ui:26
 msgid "Record Again"
 msgstr "Сними опет"
 
-#: src/sysprof/gtk/menus.ui:37
+#: src/sysprof/gtk/menus.ui:32
 msgid "Close"
 msgstr "Затвори"
 
-#: src/sysprof/gtk/menus.ui:44
+#: src/sysprof/gtk/menus.ui:38
 msgid "Keyboard Shortcuts"
 msgstr "Пречице тастатуре"
 
-#: src/sysprof/gtk/menus.ui:49
+#: src/sysprof/gtk/menus.ui:42
 msgid "Help"
 msgstr "Помоћ"
 
-#: src/sysprof/gtk/menus.ui:54
+#: src/sysprof/gtk/menus.ui:46
 msgid "About Sysprof"
 msgstr "О Профилатору система"
 
-#: src/sysprof/sysprof-application.c:205
+#: src/sysprof/sysprof-application.c:206
 msgid "A system profiler"
 msgstr "Профилатор система"
 
-#: src/sysprof/sysprof-application.c:206
+#: src/sysprof/sysprof-application.c:207
 msgid "translator-credits"
 msgstr ""
 "Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
@@ -842,11 +887,15 @@ msgstr "Снимци програма"
 msgid "All Files"
 msgstr "Све датотеке"
 
-#: src/sysprof/sysprof-window.ui:34
+#: src/sysprof/sysprof-window.ui:19
+msgid "Main Menu"
+msgstr "Главни изборник"
+
+#: src/sysprof/sysprof-window.ui:29
 msgid "_Open"
 msgstr "_Отвори"
 
-#: src/sysprof/sysprof-window.ui:37
+#: src/sysprof/sysprof-window.ui:32
 msgid "Open Recording… (Ctrl+O)"
 msgstr "Отвори снимак… (Ctrl+O)"
 
@@ -1037,6 +1086,10 @@ msgstr ""
 "--dest=НАЗИВ_САБИРНИЦЕ [ДАТОТЕКА] – повезује се на угнежденог профилатора "
 "„sysprof“-а"
 
+#~ msgctxt "shortcut window"
+#~ msgid "Sysprof Shortcuts"
+#~ msgstr "Пречице"
+
 #~ msgid "Last Spawn Program"
 #~ msgstr "Последњи изрођени програм"
 
@@ -1185,9 +1238,6 @@ msgstr ""
 
 #~ msgid "About"
 #~ msgstr "О програму"
-
-#~ msgid "_Quit"
-#~ msgstr "_Изађи"
 
 #~ msgid "Not running"
 #~ msgstr "Није покренут"

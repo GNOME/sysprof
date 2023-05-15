@@ -72,6 +72,21 @@ sysprof_kallsyms_symbolizer_add (SysprofKallsymsSymbolizer *self,
   g_array_append_val (self->kallsyms, s);
 }
 
+static inline int
+sort_by_address (gconstpointer a,
+                 gconstpointer b)
+{
+  const KernelSymbol *sym_a = a;
+  const KernelSymbol *sym_b = b;
+
+  if (sym_a->address < sym_b->address)
+    return -1;
+  else if (sym_a->address > sym_b->address)
+    return 1;
+  else
+    return 0;
+}
+
 static void
 sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
                                             gpointer      source_object,
@@ -132,11 +147,11 @@ sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
       /* Make @name usable as C string */
       *iter = 0;
 
-      /* Only add this if we're after the previous address so that
-       * we can be sure our sort is proper and will not break the
-       * tight loop in lookup binary search.
+      /* Sometimes we get duplicates in kallsyms right after one another.
+       * Rather than try to deduplicate those all after they're in the
+       * array just detect the simple case and skip them now.
        */
-      if (address > last_address)
+      if (address != last_address)
         sysprof_kallsyms_symbolizer_add (self, address, type, name);
 
       last_address = address;
@@ -145,9 +160,10 @@ sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
       g_free (line);
     }
 
-  /* Symbols are already sorted in kallsyms, so no need to g_array_sort().
-   * We just trust that the kernel did that part correctly.
+  /* We cannot rely on sorting of kallsyms up-front from Linux in all
+   * cases so we must sort the resulting array now.
    */
+  g_array_sort (self->kallsyms, sort_by_address);
 
   /* Store a "best guess" at an lower/upper bound for the max address so that
    * we can avoid searching for anything unreasonably past the end of the last

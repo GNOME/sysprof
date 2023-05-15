@@ -181,7 +181,7 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   const Decoded key = {
     .addr_begin = address,
     .addr_end = address,
-    .pid = process_info->pid,
+    .pid = process_info ? process_info->pid : 0,
     .offset = 0,
     .tag_offset = 0,
   };

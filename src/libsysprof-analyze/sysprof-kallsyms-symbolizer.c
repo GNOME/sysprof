@@ -20,14 +20,24 @@
 
 #include "config.h"
 
+#include <errno.h>
+
 #include "sysprof-kallsyms-symbolizer.h"
 #include "sysprof-document-private.h"
+#include "sysprof-strings-private.h"
 #include "sysprof-symbolizer-private.h"
 #include "sysprof-symbol-private.h"
 
+typedef struct _KernelSymbol
+{
+  guint64     address;
+  GRefString *name;
+} KernelSymbol;
+
 struct _SysprofKallsymsSymbolizer
 {
-  SysprofSymbolizer parent_instance;
+  SysprofSymbolizer  parent_instance;
+  GArray            *kallsyms;
 };
 
 struct _SysprofKallsymsSymbolizerClass
@@ -36,6 +46,26 @@ struct _SysprofKallsymsSymbolizerClass
 };
 
 G_DEFINE_FINAL_TYPE (SysprofKallsymsSymbolizer, sysprof_kallsyms_symbolizer, SYSPROF_TYPE_SYMBOLIZER)
+
+static SysprofStrings *kallsym_strings;
+
+static void
+kernel_symbol_clear (gpointer data)
+{
+  KernelSymbol *symbol = data;
+
+  g_clear_pointer (&symbol->name, g_ref_string_release);
+}
+
+static inline void
+sysprof_kallsyms_symbolizer_add (SysprofKallsymsSymbolizer *self,
+                                 guint64                    address,
+                                 guint8                     type,
+                                 const char                *name)
+{
+  const KernelSymbol s = { address, sysprof_strings_get (kallsym_strings, name) };
+  g_array_append_val (self->kallsyms, s);
+}
 
 static void
 sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
@@ -55,10 +85,56 @@ sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
 
   while ((line = g_data_input_stream_read_line_utf8 (input, &len, cancellable, &error)))
     {
-      /* TODO: port kallsym parser from sysprof-kallsyms.c */
+      const char *endptr = &line[len];
+      const char *name;
+      guint64 address;
+      char *iter = line;
+      guint8 type;
 
+      address = g_ascii_strtoull (iter, &iter, 16);
+
+      if G_UNLIKELY ((address == 0 && errno == EINVAL) ||
+                     (address == G_MAXUINT64 && errno == ERANGE))
+        goto failure;
+
+      if G_UNLIKELY (iter[0] != ' ')
+        goto failure;
+
+      /* Swallow space */
+      iter++;
+      if (iter >= endptr)
+        goto failure;
+
+      /* Get type 'ABDRTVWabdrtw' */
+      type = iter[0];
+
+      /* Move past type and space */
+      iter++;
+      iter++;
+      if (iter >= endptr)
+        goto failure;
+
+      /* Name starts here */
+      name = iter;
+
+      /* Walk ahead to first space or \0 */
+      while (iter < endptr && !g_ascii_isspace (*iter))
+        iter++;
+      if (iter > endptr)
+        goto failure;
+
+      /* Make @name usable as C string */
+      *iter = 0;
+
+      sysprof_kallsyms_symbolizer_add (self, address, type, name);
+
+    failure:
       g_free (line);
     }
+
+  /* Symbols are already sorted in kallsyms, so no need to g_array_sort().
+   * We just trust that the kernel did that part correctly.
+   */
 
   g_task_return_boolean (task, TRUE);
 }
@@ -127,6 +203,10 @@ sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
 static void
 sysprof_kallsyms_symbolizer_finalize (GObject *object)
 {
+  SysprofKallsymsSymbolizer *self = (SysprofKallsymsSymbolizer *)object;
+
+  g_clear_pointer (&self->kallsyms, g_array_unref);
+
   G_OBJECT_CLASS (sysprof_kallsyms_symbolizer_parent_class)->finalize (object);
 }
 
@@ -141,11 +221,15 @@ sysprof_kallsyms_symbolizer_class_init (SysprofKallsymsSymbolizerClass *klass)
   symbolizer_class->prepare_async = sysprof_kallsyms_symbolizer_prepare_async;
   symbolizer_class->prepare_finish = sysprof_kallsyms_symbolizer_prepare_finish;
   symbolizer_class->symbolize = sysprof_kallsyms_symbolizer_symbolize;
+
+  kallsym_strings = sysprof_strings_new ();
 }
 
 static void
 sysprof_kallsyms_symbolizer_init (SysprofKallsymsSymbolizer *self)
 {
+  self->kallsyms = g_array_new (FALSE, FALSE, sizeof (KernelSymbol));
+  g_array_set_clear_func (self->kallsyms, kernel_symbol_clear);
 }
 
 SysprofSymbolizer *

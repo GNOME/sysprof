@@ -188,7 +188,7 @@ sysprof_document_file_read (SysprofDocumentFile *self)
       bytes = g_bytes_new_with_free_func (data,
                                           len,
                                           (GDestroyNotify)g_mapped_file_unref,
-                                          g_mapped_file_ref (SYSPROF_DOCUMENT_FRAME (self)->mapped_file));
+                                          g_mapped_file_ref (SYSPROF_DOCUMENT_FRAME (file_chunk)->mapped_file));
 
       g_memory_input_stream_add_bytes (G_MEMORY_INPUT_STREAM (input), bytes);
     }

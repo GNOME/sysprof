@@ -24,6 +24,9 @@ libsysprof_analyze_public_sources = [
 ]
 
 libsysprof_analyze_private_sources = [
+  '../libsysprof/binfile.c',
+  '../libsysprof/demangle.cpp',
+  '../libsysprof/elfparser.c',
   'sysprof-address-layout.c',
   'sysprof-document-bitset-index.c',
   'sysprof-document-symbols.c',

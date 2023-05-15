@@ -96,14 +96,29 @@ load_cb (GObject      *object,
   g_main_loop_quit (main_loop);
 }
 
+static gboolean no_bundled;
+static const GOptionEntry entries[] = {
+  { "no-bundled", 'b', 0, G_OPTION_ARG_NONE, &no_bundled, "Ignore symbols bundled in capture file" },
+  { 0 }
+};
+
 int
 main (int argc,
       char *argv[])
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
+  g_autoptr(GOptionContext) context = NULL;
   g_autoptr(GError) error = NULL;
 
   main_loop = g_main_loop_new (NULL, FALSE);
+  context = g_option_context_new ("- test document symbolization");
+  g_option_context_add_main_entries (context, entries, NULL);
+
+  if (!g_option_context_parse (context, &argc, &argv, &error))
+    {
+      g_printerr ("%s\n", error->message);
+      return 1;
+    }
 
   if (argc != 2 || !g_file_test (argv[1], G_FILE_TEST_EXISTS))
     {
@@ -112,6 +127,17 @@ main (int argc,
     }
 
   loader = sysprof_document_loader_new (argv[1]);
+
+  if (no_bundled)
+    {
+      g_autoptr(SysprofMultiSymbolizer) multi = sysprof_multi_symbolizer_new ();
+
+      //sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());
+      sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+
+      sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));
+    }
+
   sysprof_document_loader_load_async (loader, NULL, load_cb, NULL);
   g_main_loop_run (main_loop);
 

@@ -132,7 +132,7 @@ main (int argc,
     {
       g_autoptr(SysprofMultiSymbolizer) multi = sysprof_multi_symbolizer_new ();
 
-      //sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());
+      sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
       sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
 
       sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));

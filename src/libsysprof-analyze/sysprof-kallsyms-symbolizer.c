@@ -38,6 +38,8 @@ struct _SysprofKallsymsSymbolizer
 {
   SysprofSymbolizer  parent_instance;
   GArray            *kallsyms;
+  guint64            low;
+  guint64            high;
 };
 
 struct _SysprofKallsymsSymbolizerClass
@@ -48,6 +50,7 @@ struct _SysprofKallsymsSymbolizerClass
 G_DEFINE_FINAL_TYPE (SysprofKallsymsSymbolizer, sysprof_kallsyms_symbolizer, SYSPROF_TYPE_SYMBOLIZER)
 
 static SysprofStrings *kallsym_strings;
+static GRefString *linux_string;
 
 static void
 kernel_symbol_clear (gpointer data)
@@ -76,6 +79,7 @@ sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
   SysprofKallsymsSymbolizer *self = source_object;
   GDataInputStream *input = task_data;
   g_autoptr(GError) error = NULL;
+  guint64 last_address = 0;
   char *line;
   gsize len;
 
@@ -126,7 +130,14 @@ sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
       /* Make @name usable as C string */
       *iter = 0;
 
-      sysprof_kallsyms_symbolizer_add (self, address, type, name);
+      /* Only add this if we're after the previous address so that
+       * we can be sure our sort is proper and will not break the
+       * tight loop in lookup binary search.
+       */
+      if (address > last_address)
+        sysprof_kallsyms_symbolizer_add (self, address, type, name);
+
+      last_address = address;
 
     failure:
       g_free (line);
@@ -135,6 +146,19 @@ sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
   /* Symbols are already sorted in kallsyms, so no need to g_array_sort().
    * We just trust that the kernel did that part correctly.
    */
+
+  /* Store a "best guess" at an lower/upper bound for the max address so that
+   * we can avoid searching for anything unreasonably past the end of the last
+   * kernel symbol.
+   */
+  if (self->kallsyms->len > 0)
+    {
+      const KernelSymbol *head = &g_array_index (self->kallsyms, KernelSymbol, 0);
+      const KernelSymbol *tail = &g_array_index (self->kallsyms, KernelSymbol, self->kallsyms->len-1);
+
+      self->low = head->address;
+      self->high = tail->address + 0xFFFF;
+    }
 
   g_task_return_boolean (task, TRUE);
 }
@@ -198,7 +222,48 @@ sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                        SysprofAddressContext     context,
                                        SysprofAddress            address)
 {
-  return NULL;
+  SysprofKallsymsSymbolizer *self = (SysprofKallsymsSymbolizer *)symbolizer;
+  const KernelSymbol *symbols;
+  guint n_symbols;
+  guint left;
+  guint right;
+  guint mid;
+
+  if (context != SYSPROF_ADDRESS_CONTEXT_KERNEL)
+    return NULL;
+
+  if (address < self->low || address >= self->high)
+    return NULL;
+
+  symbols = &g_array_index (self->kallsyms, KernelSymbol, 0);
+  n_symbols = self->kallsyms->len;
+
+  left = 0;
+  right = n_symbols;
+  mid = n_symbols / 2;
+
+  for (;;)
+    {
+      const KernelSymbol *ksym = &symbols[mid];
+      const KernelSymbol *next = &symbols[mid+1];
+
+      if (address >= ksym->address &&
+          (address < next->address || next->address == 0))
+        return _sysprof_symbol_new (g_ref_string_acquire (ksym->name),
+                                    g_ref_string_acquire (linux_string),
+                                    NULL,
+                                    ksym->address,
+                                    next->address ? next->address : ksym->address + 0xFFFF);
+
+      if (address < ksym->address)
+        right = mid;
+      else
+        left = mid + 1;
+
+      mid = left + ((right-left) / 2);
+    }
+
+  g_assert_not_reached ();
 }
 
 static void
@@ -224,12 +289,13 @@ sysprof_kallsyms_symbolizer_class_init (SysprofKallsymsSymbolizerClass *klass)
   symbolizer_class->symbolize = sysprof_kallsyms_symbolizer_symbolize;
 
   kallsym_strings = sysprof_strings_new ();
+  linux_string = g_ref_string_new_intern ("Linux");
 }
 
 static void
 sysprof_kallsyms_symbolizer_init (SysprofKallsymsSymbolizer *self)
 {
-  self->kallsyms = g_array_new (FALSE, FALSE, sizeof (KernelSymbol));
+  self->kallsyms = g_array_new (TRUE, FALSE, sizeof (KernelSymbol));
   g_array_set_clear_func (self->kallsyms, kernel_symbol_clear);
 }
 

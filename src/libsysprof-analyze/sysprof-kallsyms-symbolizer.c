@@ -28,6 +28,8 @@
 #include "sysprof-symbolizer-private.h"
 #include "sysprof-symbol-private.h"
 
+#define LAST_SYMBOL_LEN 0xffff
+
 typedef struct _KernelSymbol
 {
   guint64     address;
@@ -157,7 +159,7 @@ sysprof_kallsyms_symbolizer_prepare_worker (GTask        *task,
       const KernelSymbol *tail = &g_array_index (self->kallsyms, KernelSymbol, self->kallsyms->len-1);
 
       self->low = head->address;
-      self->high = tail->address + 0xFFFF;
+      self->high = tail->address + LAST_SYMBOL_LEN;
     }
 
   g_task_return_boolean (task, TRUE);
@@ -253,7 +255,7 @@ sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                     g_ref_string_acquire (linux_string),
                                     NULL,
                                     ksym->address,
-                                    next->address ? next->address : ksym->address + 0xFFFF);
+                                    next->address ? next->address : ksym->address + LAST_SYMBOL_LEN);
 
       if (address < ksym->address)
         right = mid;

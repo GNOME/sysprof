@@ -12,12 +12,13 @@ libsysprof_analyze_testsuite_c_args = [
 ]
 
 libsysprof_analyze_testsuite = {
-  'test-capture-model'  : {'skip': true},
-  'test-list-files'     : {'skip': true},
-  'test-print-file'     : {'skip': true},
-  'test-list-processes' : {'skip': true},
-  'test-symbolize'      : {'skip': true},
-  'test-symbol-cache'   : {},
+  'test-capture-model'       : {'skip': true},
+  'test-list-files'          : {'skip': true},
+  'test-print-file'          : {'skip': true},
+  'test-list-processes'      : {'skip': true},
+  'test-list-address-layout' : {'skip': true},
+  'test-symbolize'           : {'skip': true},
+  'test-symbol-cache'        : {},
 }
 
 libsysprof_analyze_testsuite_deps = [

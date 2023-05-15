@@ -802,6 +802,7 @@ sysprof_document_symbolize_traceable (SysprofDocument           *self,
                                       guint                      n_symbols)
 {
   SysprofAddressContext last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
+  const SysprofProcessInfo *process_info;
   SysprofAddress *addresses;
   guint n_addresses;
   int pid;
@@ -813,6 +814,7 @@ sysprof_document_symbolize_traceable (SysprofDocument           *self,
     return 0;
 
   pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
+  process_info = g_hash_table_lookup (self->pid_to_process_info, GINT_TO_POINTER (pid));
   addresses = g_alloca (sizeof (SysprofAddress) * n_symbols);
   n_addresses = sysprof_document_traceable_get_stack_addresses (traceable, addresses, n_symbols);
 
@@ -820,7 +822,7 @@ sysprof_document_symbolize_traceable (SysprofDocument           *self,
     {
       SysprofAddressContext context;
 
-      symbols[i] = _sysprof_document_symbols_lookup (self->symbols, pid, last_context, addresses[i]);
+      symbols[i] = _sysprof_document_symbols_lookup (self->symbols, process_info, last_context, addresses[i]);
 
       if (sysprof_address_is_context_switch (addresses[i], &context))
         last_context = context;

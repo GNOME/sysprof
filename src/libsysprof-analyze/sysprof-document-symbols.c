@@ -32,9 +32,9 @@
 
 struct _SysprofDocumentSymbols
 {
-  GObject        parent_instance;
-  SysprofSymbol *context_switches[SYSPROF_ADDRESS_CONTEXT_GUEST_USER+1];
-  GHashTable    *pid_to_process_info;
+  GObject             parent_instance;
+  SysprofSymbol      *context_switches[SYSPROF_ADDRESS_CONTEXT_GUEST_USER+1];
+  SysprofSymbolCache *kernel_symbols;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofDocumentSymbols, sysprof_document_symbols, G_TYPE_OBJECT)
@@ -46,8 +46,6 @@ sysprof_document_symbols_finalize (GObject *object)
 
   for (guint i = 0; i < G_N_ELEMENTS (self->context_switches); i++)
     g_clear_object (&self->context_switches[i]);
-
-  g_clear_pointer (&self->pid_to_process_info, g_hash_table_unref);
 
   G_OBJECT_CLASS (sysprof_document_symbols_parent_class)->finalize (object);
 }
@@ -63,6 +61,7 @@ sysprof_document_symbols_class_init (SysprofDocumentSymbolsClass *klass)
 static void
 sysprof_document_symbols_init (SysprofDocumentSymbols *self)
 {
+  self->kernel_symbols = sysprof_symbol_cache_new ();
 }
 
 typedef struct _Symbolize
@@ -86,7 +85,8 @@ symbolize_free (Symbolize *state)
 }
 
 static void
-add_traceable (SysprofStrings           *strings,
+add_traceable (SysprofDocumentSymbols   *self,
+               SysprofStrings           *strings,
                SysprofProcessInfo       *process_info,
                SysprofDocumentTraceable *traceable,
                SysprofSymbolizer        *symbolizer)
@@ -95,7 +95,6 @@ add_traceable (SysprofStrings           *strings,
   guint64 *addresses;
   guint n_addresses;
 
-  g_assert (process_info != NULL);
   g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
 
@@ -113,16 +112,28 @@ add_traceable (SysprofStrings           *strings,
       if (sysprof_address_is_context_switch (address, &context))
         {
           last_context = context;
-        }
-      else if (sysprof_symbol_cache_lookup (process_info->symbol_cache, address) != NULL)
-        {
           continue;
+        }
+
+      if (last_context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
+        {
+          g_autoptr(SysprofSymbol) symbol = NULL;
+
+          if (sysprof_symbol_cache_lookup (self->kernel_symbols, address) != NULL)
+            continue;
+
+          if ((symbol = _sysprof_symbolizer_symbolize (symbolizer, strings, process_info, last_context, address)))
+            sysprof_symbol_cache_take (self->kernel_symbols, g_steal_pointer (&symbol));
         }
       else
         {
-          g_autoptr(SysprofSymbol) symbol = _sysprof_symbolizer_symbolize (symbolizer, strings, process_info, last_context, address);
+          g_autoptr(SysprofSymbol) symbol = NULL;
 
-          if (symbol != NULL)
+          if (process_info != NULL &&
+              sysprof_symbol_cache_lookup (process_info->symbol_cache, address) != NULL)
+            continue;
+
+          if ((symbol = _sysprof_symbolizer_symbolize (symbolizer, strings, process_info, last_context, address)))
             sysprof_symbol_cache_take (process_info->symbol_cache, g_steal_pointer (&symbol));
         }
     }
@@ -185,20 +196,14 @@ sysprof_document_symbols_worker (GTask        *task,
           int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
           SysprofProcessInfo *process_info = g_hash_table_lookup (state->pid_to_process_info, GINT_TO_POINTER (pid));
 
-          /* We might hit this if we have "Process 0" which may be useful to
-           * let users know can take processing time. For now, that will just
-           * get skipped unless we deem it really valuable (you'll just jump
-           * to "- - Kernel - -" anyway.
-           */
-          if (process_info == NULL)
-            continue;
-
-          add_traceable (state->strings, process_info, traceable, state->symbolizer);
+          add_traceable (state->symbols,
+                         state->strings,
+                         process_info,
+                         traceable,
+                         state->symbolizer);
         }
       while (gtk_bitset_iter_next (&iter, &i));
     }
-
-  state->symbols->pid_to_process_info = g_hash_table_ref (state->pid_to_process_info);
 
   g_task_return_pointer (task,
                          g_object_ref (state->symbols),
@@ -247,7 +252,7 @@ _sysprof_document_symbols_new_finish (GAsyncResult  *result,
 /**
  * _sysprof_document_symbols_lookup:
  * @self: a #SysprofDocumentSymbols
- * @pid: the process identifier
+ * @process_info: (nullable): the process info if necessary
  * @context: the #SysprofAddressContext for the address
  * @address: a #SysprofAddress to lookup the symbol for
  *
@@ -256,26 +261,24 @@ _sysprof_document_symbols_new_finish (GAsyncResult  *result,
  * Returns: (transfer none) (nullable): a #SysprofSymbol or %NULL
  */
 SysprofSymbol *
-_sysprof_document_symbols_lookup (SysprofDocumentSymbols *self,
-                                  int                     pid,
-                                  SysprofAddressContext   context,
-                                  SysprofAddress          address)
+_sysprof_document_symbols_lookup (SysprofDocumentSymbols   *self,
+                                  const SysprofProcessInfo *process_info,
+                                  SysprofAddressContext     context,
+                                  SysprofAddress            address)
 {
   SysprofAddressContext new_context;
-  SysprofProcessInfo *process_info;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_SYMBOLS (self), NULL);
   g_return_val_if_fail (context <= SYSPROF_ADDRESS_CONTEXT_GUEST_USER, NULL);
 
-  /* TODO: Much better to do decoding in a group of addresses than
-   *       one at a time, so should change this interface a bit.
-   */
-
   if (sysprof_address_is_context_switch (address, &new_context))
     return self->context_switches[new_context];
 
-  if (!(process_info = g_hash_table_lookup (self->pid_to_process_info, GINT_TO_POINTER (pid))))
-    return NULL;
+  if (context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
+    return sysprof_symbol_cache_lookup (self->kernel_symbols, address);
 
-  return sysprof_symbol_cache_lookup (process_info->symbol_cache, address);
+  if (process_info != NULL)
+    return sysprof_symbol_cache_lookup (process_info->symbol_cache, address);
+
+  return NULL;
 }

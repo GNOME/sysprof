@@ -39,10 +39,11 @@
 
 #include "config.h"
 
-#include <json-glib/json-glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <json-glib/json-glib.h>
 
 #include "sysprof-helpers.h"
 #include "sysprof-podman.h"
@@ -375,6 +376,86 @@ sysprof_proc_source_get_process_info_cb (GObject      *object,
   sysprof_source_emit_finished (SYSPROF_SOURCE (self));
 }
 
+typedef struct _StreamToCapture
+{
+  SysprofCaptureWriter *writer;
+  GInputStream *stream;
+  guint8 *buf;
+  gsize buflen;
+} StreamToCapture;
+
+static void
+stream_to_capture_free (StreamToCapture *state)
+{
+  g_clear_pointer (&state->writer, sysprof_capture_writer_unref);
+  g_clear_pointer (&state->buf, g_free);
+  g_clear_object (&state->stream);
+  g_free (state);
+}
+
+static gboolean
+stream_to_capture (StreamToCapture *state)
+{
+  gssize n_read;
+
+  g_assert (state != NULL);
+  g_assert (state->writer != NULL);
+  g_assert (state->buf != NULL);
+  g_assert (state->buflen > 0);
+  g_assert (G_IS_INPUT_STREAM (state->stream));
+
+  n_read = g_input_stream_read (state->stream, state->buf, state->buflen, NULL, NULL);
+
+  if (n_read >= 0)
+    sysprof_capture_writer_add_file (state->writer,
+                                     SYSPROF_CAPTURE_CURRENT_TIME,
+                                     -1,
+                                     -1,
+                                     "/proc/kallsyms.gz",
+                                     n_read == 0,
+                                     state->buf,
+                                     n_read);
+
+  return n_read > 0;
+}
+
+static void
+get_kallsyms_cb (GObject      *object,
+                 GAsyncResult *result,
+                 gpointer      user_data)
+{
+  SysprofHelpers *helpers = (SysprofHelpers *)object;
+  g_autoptr(SysprofProcSource) self = user_data;
+  g_autoptr(GZlibCompressor) compressor = NULL;
+  g_autoptr(GInputStream) base_stream = NULL;
+  g_autoptr(GInputStream) gz_stream = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autofree char *contents = NULL;
+  StreamToCapture *state;
+
+  g_assert (SYSPROF_IS_HELPERS (helpers));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_PROC_SOURCE (self));
+
+  if (!sysprof_helpers_get_proc_file_finish (helpers, result, &contents, &error))
+    return;
+
+  base_stream = g_memory_input_stream_new_from_data (g_steal_pointer (&contents), -1, g_free);
+  compressor = g_zlib_compressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP, 6);
+  gz_stream = g_converter_input_stream_new (base_stream, G_CONVERTER (compressor));
+
+  state = g_new0 (StreamToCapture, 1);
+  state->stream = g_object_ref (gz_stream);
+  state->writer = sysprof_capture_writer_ref (self->writer);
+  state->buflen = 16100; /* 16kb write buffer - framing overhead */
+  state->buf = g_malloc (state->buflen);
+
+  g_idle_add_full (G_PRIORITY_HIGH,
+                   (GSourceFunc)stream_to_capture,
+                   state,
+                   (GDestroyNotify)stream_to_capture_free);
+}
+
 static void
 sysprof_proc_source_start (SysprofSource *source)
 {
@@ -389,6 +470,19 @@ sysprof_proc_source_start (SysprofSource *source)
                                           NULL,
                                           sysprof_proc_source_get_process_info_cb,
                                           g_object_ref (self));
+
+  /* We must read kallsyms from sysprofd because if we ask for a FD and read
+   * it back from our current process, it's likely the kernel will censor our
+   * addresses making them useless.
+   *
+   * That means a pretty large (couple MB transfer) over D-Bus which is not
+   * great but also not the end of the world so long as we do it async.
+   */
+  sysprof_helpers_get_proc_file_async (helpers,
+                                       "/proc/kallsyms",
+                                       NULL,
+                                       get_kallsyms_cb,
+                                       g_object_ref (self));
 }
 
 static void

@@ -178,6 +178,13 @@ sysprof_symbol_cache_lookup (SysprofSymbolCache *self,
 
   node = RB_ROOT(&self->head);
 
+  /* The root node contains our calculated max as augmented in RBTree.
+   * Therefore, we can know if @address falls beyond the upper bound
+   * in O(1) without having to add a branch to the while loop below.
+   */
+  if (node == NULL || node->max < address)
+    return NULL;
+
   while (node != NULL)
     {
       g_assert (RB_LEFT(node, link) == NULL ||

@@ -70,6 +70,12 @@ main (int argc,
       else if (SYSPROF_IS_DOCUMENT_FORK (frame))
         g_print (" child-pid=%d",
                  sysprof_document_fork_get_child_pid (SYSPROF_DOCUMENT_FORK (frame)));
+      else if (SYSPROF_IS_DOCUMENT_MMAP (frame))
+        g_print (" begin=0x%"G_GINT64_MODIFIER"x end=0x%"G_GINT64_MODIFIER"x offset=0x%"G_GINT64_MODIFIER"x path=%s",
+                 sysprof_document_mmap_get_start_address (SYSPROF_DOCUMENT_MMAP (frame)),
+                 sysprof_document_mmap_get_end_address (SYSPROF_DOCUMENT_MMAP (frame)),
+                 sysprof_document_mmap_get_file_offset (SYSPROF_DOCUMENT_MMAP (frame)),
+                 sysprof_document_mmap_get_file (SYSPROF_DOCUMENT_MMAP (frame)));
       else if (SYSPROF_IS_DOCUMENT_ALLOCATION (frame))
         {
           if (sysprof_document_allocation_is_free (SYSPROF_DOCUMENT_ALLOCATION (frame)))

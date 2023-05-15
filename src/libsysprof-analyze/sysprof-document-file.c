@@ -195,3 +195,20 @@ sysprof_document_file_read (SysprofDocumentFile *self)
 
   return g_steal_pointer (&input);
 }
+
+gsize
+sysprof_document_file_get_size (SysprofDocumentFile *self)
+{
+  gsize size = 0;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FILE (self), 0);
+
+  for (guint i = 0; i < self->file_chunks->len; i++)
+    {
+      SysprofDocumentFileChunk *file_chunk = g_ptr_array_index (self->file_chunks, i);
+
+      size += sysprof_document_file_chunk_get_size (file_chunk);
+    }
+
+  return size;
+}

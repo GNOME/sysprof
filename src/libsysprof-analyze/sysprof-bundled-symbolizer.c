@@ -172,6 +172,7 @@ static SysprofSymbol *
 sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                       SysprofStrings           *strings,
                                       const SysprofProcessInfo *process_info,
+                                      SysprofAddressContext     context,
                                       SysprofAddress            address)
 {
   SysprofBundledSymbolizer *self = SYSPROF_BUNDLED_SYMBOLIZER (symbolizer);

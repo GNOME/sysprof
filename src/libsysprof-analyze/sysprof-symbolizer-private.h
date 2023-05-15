@@ -52,6 +52,7 @@ struct _SysprofSymbolizerClass
   SysprofSymbol *(*symbolize)      (SysprofSymbolizer         *self,
                                     SysprofStrings            *strings,
                                     const SysprofProcessInfo  *process_info,
+                                    SysprofAddressContext      context,
                                     SysprofAddress             address);
 };
 
@@ -67,6 +68,7 @@ gboolean       _sysprof_symbolizer_prepare_finish (SysprofSymbolizer         *se
 SysprofSymbol *_sysprof_symbolizer_symbolize      (SysprofSymbolizer         *self,
                                                    SysprofStrings            *strings,
                                                    const SysprofProcessInfo  *process_info,
+                                                   SysprofAddressContext      context,
                                                    SysprofAddress             address);
 
 G_END_DECLS

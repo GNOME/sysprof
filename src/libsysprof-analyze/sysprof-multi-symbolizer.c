@@ -121,6 +121,7 @@ static SysprofSymbol *
 sysprof_multi_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                     SysprofStrings           *strings,
                                     const SysprofProcessInfo *process_info,
+                                    SysprofAddressContext     context,
                                     SysprofAddress            address)
 {
   SysprofMultiSymbolizer *self = SYSPROF_MULTI_SYMBOLIZER (symbolizer);
@@ -128,7 +129,7 @@ sysprof_multi_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   for (guint i = 0; i < self->symbolizers->len; i++)
     {
       SysprofSymbolizer *child = g_ptr_array_index (self->symbolizers, i);
-      SysprofSymbol *symbol = _sysprof_symbolizer_symbolize (child, strings, process_info, address);
+      SysprofSymbol *symbol = _sysprof_symbolizer_symbolize (child, strings, process_info, context, address);
 
       if (symbol != NULL)
         return symbol;

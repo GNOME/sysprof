@@ -120,7 +120,7 @@ add_traceable (SysprofStrings           *strings,
         }
       else
         {
-          g_autoptr(SysprofSymbol) symbol = _sysprof_symbolizer_symbolize (symbolizer, strings, process_info, address);
+          g_autoptr(SysprofSymbol) symbol = _sysprof_symbolizer_symbolize (symbolizer, strings, process_info, last_context, address);
 
           if (symbol != NULL)
             sysprof_symbol_cache_take (process_info->symbol_cache, g_steal_pointer (&symbol));

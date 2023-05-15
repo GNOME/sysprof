@@ -195,6 +195,7 @@ static SysprofSymbol *
 sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                        SysprofStrings           *strings,
                                        const SysprofProcessInfo *process_info,
+                                       SysprofAddressContext     context,
                                        SysprofAddress            address)
 {
   return NULL;

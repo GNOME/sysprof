@@ -22,6 +22,7 @@
 
 #include "sysprof-document-file-chunk.h"
 #include "sysprof-document-file-private.h"
+#include "sysprof-document-frame-private.h"
 
 struct _SysprofDocumentFile
 {
@@ -154,4 +155,43 @@ sysprof_document_file_dup_bytes (SysprofDocumentFile *self)
   len = ar->len;
 
   return g_bytes_new_take (g_array_free (ar, FALSE), len);
+}
+
+/**
+ * sysprof_document_file_read:
+ * @self: a #SysprofDocumentFile
+ *
+ * Creates a new input stream containing the contents of the file
+ * within the document.
+ *
+ * Returns: (transfer full): a #GInputstream
+ */
+GInputStream *
+sysprof_document_file_read (SysprofDocumentFile *self)
+{
+  GInputStream *input;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FILE (self), NULL);
+
+  input = g_memory_input_stream_new ();
+
+  for (guint i = 0; i < self->file_chunks->len; i++)
+    {
+      g_autoptr(GBytes) bytes = NULL;
+      SysprofDocumentFileChunk *file_chunk;
+      const guint8 *data;
+      guint len;
+
+      file_chunk = g_ptr_array_index (self->file_chunks, i);
+      data = sysprof_document_file_chunk_get_data (file_chunk, &len);
+
+      bytes = g_bytes_new_with_free_func (data,
+                                          len,
+                                          (GDestroyNotify)g_mapped_file_unref,
+                                          g_mapped_file_ref (SYSPROF_DOCUMENT_FRAME (self)->mapped_file));
+
+      g_memory_input_stream_add_bytes (G_MEMORY_INPUT_STREAM (input), bytes);
+    }
+
+  return g_steal_pointer (&input);
 }

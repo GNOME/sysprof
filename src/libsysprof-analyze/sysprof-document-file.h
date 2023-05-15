@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <glib-object.h>
+#include <gio/gio.h>
 
 #include <sysprof-capture.h>
 
@@ -32,8 +32,10 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDocumentFile, sysprof_document_file, SYSPROF, DOCUMENT_FILE, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_document_file_get_path  (SysprofDocumentFile *self);
+const char   *sysprof_document_file_get_path  (SysprofDocumentFile *self);
 SYSPROF_AVAILABLE_IN_ALL
-GBytes     *sysprof_document_file_dup_bytes (SysprofDocumentFile *self);
+GBytes       *sysprof_document_file_dup_bytes (SysprofDocumentFile *self);
+SYSPROF_AVAILABLE_IN_ALL
+GInputStream *sysprof_document_file_read      (SysprofDocumentFile *self);
 
 G_END_DECLS

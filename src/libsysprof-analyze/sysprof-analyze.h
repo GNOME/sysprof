@@ -43,6 +43,7 @@ G_BEGIN_DECLS
 # include "sysprof-document-symbols.h"
 # include "sysprof-document-traceable.h"
 # include "sysprof-mount.h"
+# include "sysprof-kallsyms-symbolizer.h"
 # include "sysprof-multi-symbolizer.h"
 # include "sysprof-symbol.h"
 # include "sysprof-symbolizer.h"

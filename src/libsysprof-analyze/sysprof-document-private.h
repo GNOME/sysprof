@@ -42,7 +42,7 @@ gboolean         _sysprof_document_symbolize_finish (SysprofDocument      *self,
                                                      GAsyncResult         *result,
                                                      GError              **error);
 gboolean         _sysprof_document_is_native        (SysprofDocument      *self);
-char            *_sysprof_document_ref_string       (SysprofDocument      *self,
+GRefString      *_sysprof_document_ref_string       (SysprofDocument      *self,
                                                      const char           *name);
 GtkBitset       *_sysprof_document_traceables       (SysprofDocument      *self);
 

@@ -525,7 +525,7 @@ _sysprof_document_new_finish (GAsyncResult  *result,
   return ret;
 }
 
-char *
+GRefString *
 _sysprof_document_ref_string (SysprofDocument *self,
                               const char      *name)
 {

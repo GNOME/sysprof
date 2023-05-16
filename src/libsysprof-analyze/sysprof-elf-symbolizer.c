@@ -53,6 +53,7 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   g_autofree char *name = NULL;
   g_auto(GStrv) translations = NULL;
   GMappedFile *mapped_file = NULL;
+  guint64 relative_address;
   const char *path;
 
   if (process_info == NULL ||
@@ -110,17 +111,19 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
 fallback:
   /* Fallback, we failed to locate the symbol within a file we can
    * access, so tell the user about what file contained the symbol
-   * and the offset of the ELF section mapped.
+   * and where (relative to that file) the IP was.
    */
-  name = g_strdup_printf ("In file %s <+0x%"G_GINT64_MODIFIER"x>",
+  relative_address = sysprof_document_mmap_get_file_offset (map)
+                   + (address - sysprof_document_mmap_get_start_address (map));
+  name = g_strdup_printf ("In file %s+0x%"G_GINT64_MODIFIER"x",
                           sysprof_document_mmap_get_file (map),
-                          sysprof_document_mmap_get_file_offset (map));
+                          relative_address);
 
   return _sysprof_symbol_new (sysprof_strings_get (strings, name),
                               NULL,
                               NULL,
-                              sysprof_document_mmap_get_start_address (map),
-                              sysprof_document_mmap_get_end_address (map));
+                              address,
+                              address + 1);
 }
 
 static void

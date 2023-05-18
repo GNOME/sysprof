@@ -43,6 +43,12 @@ G_DEFINE_FINAL_TYPE (SysprofElfLoader, sysprof_elf_loader, G_TYPE_OBJECT)
 
 static GParamSpec *properties [N_PROPS];
 
+SysprofElfLoader *
+sysprof_elf_loader_new (void)
+{
+  return g_object_new (SYSPROF_TYPE_ELF_LOADER, NULL);
+}
+
 static void
 sysprof_elf_loader_finalize (GObject *object)
 {

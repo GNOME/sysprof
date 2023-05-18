@@ -34,4 +34,26 @@ GRefString     *sysprof_strings_get    (SysprofStrings *self,
 GRefString     *sysprof_strings_lookup (SysprofStrings *self,
                                         const char     *string);
 
+#define SYSPROF_STRV_INIT(...) ((const char * const[]){__VA_ARGS__,NULL})
+
+static inline gboolean
+sysprof_set_strv (char               ***dest,
+                  const char * const   *src)
+{
+  if ((const char * const *)*dest == src)
+    return FALSE;
+
+  if (*dest == NULL ||
+      src == NULL ||
+      !g_strv_equal ((const char * const *)*dest, src))
+    {
+      char **copy = g_strdupv ((char **)src);
+      g_strfreev (*dest);
+      *dest = copy;
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
 G_END_DECLS

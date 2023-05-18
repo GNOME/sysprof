@@ -25,7 +25,8 @@
 
 G_BEGIN_DECLS
 
-void _sysprof_document_process_set_info (SysprofDocumentProcess *self,
-                                         SysprofProcessInfo     *process_info);
+SysprofProcessInfo *_sysprof_document_process_get_info (SysprofDocumentProcess *self);
+void                _sysprof_document_process_set_info (SysprofDocumentProcess *self,
+                                                        SysprofProcessInfo     *process_info);
 
 G_END_DECLS

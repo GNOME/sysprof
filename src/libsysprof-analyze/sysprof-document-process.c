@@ -145,6 +145,14 @@ sysprof_document_process_list_mounts (SysprofDocumentProcess *self)
   return g_object_ref (G_LIST_MODEL (self->process_info->mount_namespace));
 }
 
+SysprofProcessInfo *
+_sysprof_document_process_get_info (SysprofDocumentProcess *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_PROCESS (self), NULL);
+
+  return self->process_info;
+}
+
 void
 _sysprof_document_process_set_info (SysprofDocumentProcess *self,
                                     SysprofProcessInfo     *process_info)

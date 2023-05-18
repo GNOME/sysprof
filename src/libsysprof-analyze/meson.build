@@ -30,6 +30,8 @@ libsysprof_analyze_private_sources = [
   'sysprof-address-layout.c',
   'sysprof-document-bitset-index.c',
   'sysprof-document-symbols.c',
+  'sysprof-elf.c',
+  'sysprof-elf-loader.c',
   'sysprof-mount.c',
   'sysprof-mount-device.c',
   'sysprof-mount-namespace.c',

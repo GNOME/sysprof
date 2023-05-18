@@ -146,3 +146,30 @@ sysprof_mount_namespace_add_mount (SysprofMountNamespace *self,
 
   g_ptr_array_add (self->mounts, mount);
 }
+
+/**
+ * sysprof_mount_namespace_translate:
+ * @self: a #SysprofMountNamespace
+ * @file: the path within the mount namespace to translate
+ *
+ * Attempts to translate a path within the mount namespace into a
+ * path available in our current mount namespace.
+ *
+ * As overlays are involved, multiple paths may be returned which
+ * could contain the target file. You should check these starting
+ * from the first element in the resulting array to the last.
+ *
+ * Returns: (transfer full) (nullable): a UTF-8 encoded string array
+ *   if successful; otherwise %NULL and @error is set.
+ */
+char **
+sysprof_mount_namespace_translate (SysprofMountNamespace *self,
+                                   const char            *file)
+{
+  g_return_val_if_fail (SYSPROF_IS_MOUNT_NAMESPACE (self), NULL);
+  g_return_val_if_fail (file != NULL, NULL);
+
+  /* TODO: */
+
+  return NULL;
+}

@@ -39,7 +39,5 @@ void                    sysprof_mount_namespace_add_mount   (SysprofMountNamespa
                                                              SysprofMount          *mount);
 char                  **sysprof_mount_namespace_translate   (SysprofMountNamespace *self,
                                                              const char            *path);
-GMappedFile            *sysprof_mount_namespace_open        (SysprofMountNamespace *self,
-                                                             const char            *path);
 
 G_END_DECLS

@@ -25,7 +25,7 @@
 
 G_BEGIN_DECLS
 
-SysprofMount *sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
-                                               const char     *mountinfo);
+SysprofMount *_sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
+                                                const char     *mountinfo);
 
 G_END_DECLS

@@ -183,8 +183,8 @@ sysprof_mount_init (SysprofMount *self)
 }
 
 SysprofMount *
-sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
-                                 const char     *mountinfo)
+_sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
+                                  const char     *mountinfo)
 {
   g_autoptr(SysprofMount) self = NULL;
   g_auto(GStrv) parts = NULL;

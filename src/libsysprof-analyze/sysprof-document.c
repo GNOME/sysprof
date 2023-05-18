@@ -362,7 +362,7 @@ sysprof_document_load_mountinfo (SysprofDocument *self,
 
       line[line_len] = 0;
 
-      if ((mount = sysprof_mount_new_for_mountinfo (self->strings, line)))
+      if ((mount = _sysprof_mount_new_for_mountinfo (self->strings, line)))
         sysprof_mount_namespace_add_mount (process_info->mount_namespace, g_steal_pointer (&mount));
     }
 }

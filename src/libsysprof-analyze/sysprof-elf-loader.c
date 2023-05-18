@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-elf-private.h"
 #include "sysprof-elf-loader-private.h"
 #include "sysprof-strings-private.h"
 
@@ -228,6 +229,29 @@ sysprof_elf_loader_set_external_debug_dirs (SysprofElfLoader   *self,
     g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_EXTERNAL_DEBUG_DIRS]);
 }
 
+static void
+sysprof_elf_loader_annotate (SysprofElfLoader      *self,
+                             SysprofMountNamespace *mount_namespace,
+                             SysprofElf            *elf,
+                             const char            *debug_link)
+{
+  g_assert (SYSPROF_IS_ELF_LOADER (self));
+  g_assert (SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace));
+  g_assert (SYSPROF_IS_ELF (elf));
+  g_assert (debug_link != NULL);
+
+  /* TODO: We want to use the debug_link to find a similar file that will
+   *       contain the various debugsymbols. We need to look for it in
+   *       any of the #SysprofElfLoader:debug-dirs (and translated via the
+   *       mount namespace) as well as any of the :external_debug_dirs
+   *       which is a path available to us from our application's mount
+   *       namespace. We recursively follow those debug_link (and must
+   *       protect against cycles) to get the final/best debuglink file.
+   *       That will get assigned via sysprof_elf_set_debug_link_elf().
+   */
+
+}
+
 /**
  * sysprof_elf_loader_load:
  * @self: a #SysprofElfLoader
@@ -252,7 +276,37 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
                          const char             *build_id,
                          GError                **error)
 {
+  g_auto(GStrv) paths = NULL;
+
   g_return_val_if_fail (SYSPROF_IS_ELF_LOADER (self), NULL);
+  g_return_val_if_fail (SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace), NULL);
+
+  /* We must translate the file into a number of paths that may possibly
+   * locate the file in the case that there are overlays in the mount
+   * namespace. Each of the paths could be in a lower overlay layer.
+   */
+  if (!(paths = sysprof_mount_namespace_translate (mount_namespace, file)))
+    goto failure;
+
+  for (guint i = 0; paths[i]; i++)
+    {
+      g_autoptr(GMappedFile) mapped_file = NULL;
+      g_autoptr(SysprofElf) elf = NULL;
+      g_autoptr(GError) local_error = NULL;
+      const char *path = paths[i];
+      const char *debug_link;
+
+      if (!(mapped_file = g_mapped_file_new (path, FALSE, NULL)))
+        continue;
+
+      if (!(elf = sysprof_elf_new (mapped_file, &local_error)))
+        continue;
+
+      if ((debug_link = sysprof_elf_get_debug_link (elf)))
+        sysprof_elf_loader_annotate (self, mount_namespace, elf, debug_link);
+
+      return g_steal_pointer (&elf);
+    }
 
 failure:
   g_set_error_literal (error,

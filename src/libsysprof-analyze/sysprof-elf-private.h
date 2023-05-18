@@ -28,17 +28,17 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofElf, sysprof_elf, SYSPROF, ELF, GObject)
 
-SysprofElf *sysprof_elf_new                   (const char  *filename,
-                                               GError     **error);
-const char *sysprof_elf_get_file              (SysprofElf  *self);
-const char *sysprof_elf_get_build_id          (SysprofElf  *self);
-const char *sysprof_elf_get_debug_link        (SysprofElf  *self);
-const char *sysprof_elf_get_symbol_at_address (SysprofElf  *self,
-                                               guint64      address,
-                                               guint64     *begin_address,
-                                               guint64     *end_address);
-SysprofElf *sysprof_elf_get_debug_link_elf    (SysprofElf  *self);
-void        sysprof_elf_set_debug_link_elf    (SysprofElf  *self,
-                                               SysprofElf  *debug_link_elf);
+SysprofElf *sysprof_elf_new                   (GMappedFile  *mapped_file,
+                                               GError      **error);
+const char *sysprof_elf_get_file              (SysprofElf   *self);
+const char *sysprof_elf_get_build_id          (SysprofElf   *self);
+const char *sysprof_elf_get_debug_link        (SysprofElf   *self);
+const char *sysprof_elf_get_symbol_at_address (SysprofElf   *self,
+                                               guint64       address,
+                                               guint64      *begin_address,
+                                               guint64      *end_address);
+SysprofElf *sysprof_elf_get_debug_link_elf    (SysprofElf   *self);
+void        sysprof_elf_set_debug_link_elf    (SysprofElf   *self,
+                                               SysprofElf   *debug_link_elf);
 
 G_END_DECLS

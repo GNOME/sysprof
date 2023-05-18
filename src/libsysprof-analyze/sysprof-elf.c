@@ -145,10 +145,10 @@ sysprof_elf_init (SysprofElf *self)
 }
 
 SysprofElf *
-sysprof_elf_new (const char  *filename,
-                 GError     **error)
+sysprof_elf_new (GMappedFile  *mapped_file,
+                 GError      **error)
 {
-  g_return_val_if_fail (filename != NULL, NULL);
+  g_return_val_if_fail (mapped_file != NULL, NULL);
 
   return NULL;
 }

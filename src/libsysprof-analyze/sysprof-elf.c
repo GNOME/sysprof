@@ -27,6 +27,7 @@ struct _SysprofElf
   GObject parent_instance;
   char *build_id;
   char *debug_link;
+  char *file;
   SysprofElf *debug_link_elf;
 };
 
@@ -35,6 +36,7 @@ enum {
   PROP_BUILD_ID,
   PROP_DEBUG_LINK,
   PROP_DEBUG_LINK_ELF,
+  PROP_FILE,
   N_PROPS
 };
 
@@ -49,6 +51,7 @@ sysprof_elf_finalize (GObject *object)
 
   g_clear_pointer (&self->build_id, g_free);
   g_clear_pointer (&self->debug_link, g_free);
+  g_clear_pointer (&self->file, g_free);
   g_clear_object (&self->debug_link_elf);
 
   G_OBJECT_CLASS (sysprof_elf_parent_class)->finalize (object);
@@ -74,6 +77,10 @@ sysprof_elf_get_property (GObject    *object,
 
     case PROP_DEBUG_LINK_ELF:
       g_value_set_object (value, sysprof_elf_get_debug_link_elf (self));
+      break;
+
+    case PROP_FILE:
+      g_value_set_string (value, sysprof_elf_get_file (self));
       break;
 
     default:
@@ -124,6 +131,11 @@ sysprof_elf_class_init (SysprofElfClass *klass)
                          SYSPROF_TYPE_ELF,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_FILE] =
+    g_param_spec_string ("file", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -139,6 +151,14 @@ sysprof_elf_new (const char  *filename,
   g_return_val_if_fail (filename != NULL, NULL);
 
   return NULL;
+}
+
+const char *
+sysprof_elf_get_file (SysprofElf *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
+
+  return self->file;
 }
 
 const char *

@@ -30,6 +30,7 @@ G_DECLARE_FINAL_TYPE (SysprofElf, sysprof_elf, SYSPROF, ELF, GObject)
 
 SysprofElf *sysprof_elf_new                   (const char  *filename,
                                                GError     **error);
+const char *sysprof_elf_get_file              (SysprofElf  *self);
 const char *sysprof_elf_get_build_id          (SysprofElf  *self);
 const char *sysprof_elf_get_debug_link        (SysprofElf  *self);
 const char *sysprof_elf_get_symbol_at_address (SysprofElf  *self,

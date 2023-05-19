@@ -29,6 +29,7 @@
 struct _SysprofElfLoader
 {
   GObject parent_instance;
+  GHashTable *cache;
   char **debug_dirs;
   char **external_debug_dirs;
 };
@@ -59,6 +60,7 @@ sysprof_elf_loader_finalize (GObject *object)
 
   g_clear_pointer (&self->debug_dirs, g_strfreev);
   g_clear_pointer (&self->external_debug_dirs, g_strfreev);
+  g_clear_pointer (&self->cache, g_hash_table_unref);
 
   G_OBJECT_CLASS (sysprof_elf_loader_parent_class)->finalize (object);
 }
@@ -138,6 +140,7 @@ static void
 sysprof_elf_loader_init (SysprofElfLoader *self)
 {
   self->debug_dirs = g_strdupv ((char **)DEFAULT_DEBUG_DIRS);
+  self->cache = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_object_unref);
 }
 
 /**
@@ -299,11 +302,15 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
       g_autoptr(SysprofElf) elf = NULL;
       g_autoptr(GError) local_error = NULL;
       g_autofree char *container_path = NULL;
+      SysprofElf *cached_elf;
       const char *path = paths[i];
       const char *debug_link;
 
       if ((in_flatpak && !g_str_has_prefix (path, "/home/")) || in_podman)
         path = container_path = g_build_filename ("/var/run/host", path, NULL);
+
+      if ((cached_elf = g_hash_table_lookup (self->cache, path)))
+        return g_object_ref (cached_elf);
 
       if (!(mapped_file = g_mapped_file_new (path, FALSE, NULL)))
         continue;
@@ -313,6 +320,8 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
 
       if ((debug_link = sysprof_elf_get_debug_link (elf)))
         sysprof_elf_loader_annotate (self, mount_namespace, elf, debug_link);
+
+      g_hash_table_insert (self->cache, g_strdup (path), g_object_ref (elf));
 
       return g_steal_pointer (&elf);
     }

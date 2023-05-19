@@ -25,9 +25,9 @@
 struct _SysprofMountDevice
 {
   GObject parent_instance;
-  char *id;
-  char *mount_point;
-  char *subvolume;
+  GRefString *id;
+  GRefString *mount_point;
+  GRefString *subvolume;
 };
 
 enum {
@@ -47,9 +47,9 @@ sysprof_mount_device_finalize (GObject *object)
 {
   SysprofMountDevice *self = (SysprofMountDevice *)object;
 
-  g_clear_pointer (&self->id, g_free);
-  g_clear_pointer (&self->mount_point, g_free);
-  g_clear_pointer (&self->subvolume, g_free);
+  g_clear_pointer (&self->id, g_ref_string_release);
+  g_clear_pointer (&self->mount_point, g_ref_string_release);
+  g_clear_pointer (&self->subvolume, g_ref_string_release);
 
   G_OBJECT_CLASS (sysprof_mount_device_parent_class)->finalize (object);
 }
@@ -82,55 +82,27 @@ sysprof_mount_device_get_property (GObject    *object,
 }
 
 static void
-sysprof_mount_device_set_property (GObject      *object,
-                                   guint         prop_id,
-                                   const GValue *value,
-                                   GParamSpec   *pspec)
-{
-  SysprofMountDevice *self = SYSPROF_MOUNT_DEVICE (object);
-
-  switch (prop_id)
-    {
-    case PROP_ID:
-      sysprof_mount_device_set_id (self, g_value_get_string (value));
-      break;
-
-    case PROP_MOUNT_POINT:
-      sysprof_mount_device_set_mount_point (self, g_value_get_string (value));
-      break;
-
-    case PROP_SUBVOLUME:
-      sysprof_mount_device_set_subvolume (self, g_value_get_string (value));
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
 sysprof_mount_device_class_init (SysprofMountDeviceClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = sysprof_mount_device_finalize;
   object_class->get_property = sysprof_mount_device_get_property;
-  object_class->set_property = sysprof_mount_device_set_property;
 
   properties [PROP_ID] =
     g_param_spec_string ("id", NULL, NULL,
                          NULL,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_MOUNT_POINT] =
     g_param_spec_string ("mount-point", NULL, NULL,
                          NULL,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_SUBVOLUME] =
     g_param_spec_string ("subvolume", NULL, NULL,
                          NULL,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -141,9 +113,18 @@ sysprof_mount_device_init (SysprofMountDevice *self)
 }
 
 SysprofMountDevice *
-sysprof_mount_device_new (void)
+sysprof_mount_device_new (GRefString *id,
+                          GRefString *mount_point,
+                          GRefString *subvolume)
 {
-  return g_object_new (SYSPROF_TYPE_MOUNT_DEVICE, NULL);
+  SysprofMountDevice *self;
+
+  self = g_object_new (SYSPROF_TYPE_MOUNT_DEVICE, NULL);
+  self->id = id;
+  self->mount_point = mount_point;
+  self->subvolume = subvolume;
+
+  return g_steal_pointer (&self);
 }
 
 const char *
@@ -154,16 +135,6 @@ sysprof_mount_device_get_id (SysprofMountDevice *self)
   return self->id;
 }
 
-void
-sysprof_mount_device_set_id (SysprofMountDevice *self,
-                             const char         *id)
-{
-  g_return_if_fail (SYSPROF_IS_MOUNT_DEVICE (self));
-
-  if (g_set_str (&self->id, id))
-    g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ID]);
-}
-
 const char *
 sysprof_mount_device_get_mount_point (SysprofMountDevice *self)
 {
@@ -172,30 +143,10 @@ sysprof_mount_device_get_mount_point (SysprofMountDevice *self)
   return self->mount_point;
 }
 
-void
-sysprof_mount_device_set_mount_point (SysprofMountDevice *self,
-                                      const char         *mount_point)
-{
-  g_return_if_fail (SYSPROF_IS_MOUNT_DEVICE (self));
-
-  if (g_set_str (&self->mount_point, mount_point))
-    g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_MOUNT_POINT]);
-}
-
 const char *
 sysprof_mount_device_get_subvolume (SysprofMountDevice *self)
 {
   g_return_val_if_fail (SYSPROF_IS_MOUNT_DEVICE (self), NULL);
 
   return self->subvolume;
-}
-
-void
-sysprof_mount_device_set_subvolume (SysprofMountDevice *self,
-                                    const char         *subvolume)
-{
-  g_return_if_fail (SYSPROF_IS_MOUNT_DEVICE (self));
-
-  if (g_set_str (&self->subvolume, subvolume))
-    g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_SUBVOLUME]);
 }

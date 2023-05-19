@@ -28,15 +28,11 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofMountDevice, sysprof_mount_device, SYSPROF, MOUNT_DEVICE, GObject)
 
-SysprofMountDevice *sysprof_mount_device_new             (void);
+SysprofMountDevice *sysprof_mount_device_new             (GRefString         *id,
+                                                          GRefString         *mount_point,
+                                                          GRefString         *subvolume);
 const char         *sysprof_mount_device_get_id          (SysprofMountDevice *self);
-void                sysprof_mount_device_set_id          (SysprofMountDevice *self,
-                                                          const char         *id);
 const char         *sysprof_mount_device_get_mount_point (SysprofMountDevice *self);
-void                sysprof_mount_device_set_mount_point (SysprofMountDevice *self,
-                                                          const char         *mount_point);
 const char         *sysprof_mount_device_get_subvolume   (SysprofMountDevice *self);
-void                sysprof_mount_device_set_subvolume   (SysprofMountDevice *self,
-                                                          const char         *subvolume);
 
 G_END_DECLS

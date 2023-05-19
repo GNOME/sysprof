@@ -279,9 +279,8 @@ sysprof_document_load_mounts (SysprofDocument *self)
   line_reader_init (&reader, (char *)contents, contents_len);
   while ((line = line_reader_next (&reader, &line_len)))
     {
-      g_autoptr(SysprofMountDevice) mount_device = NULL;
-      g_auto(GStrv) parts = NULL;
       g_autofree char *subvol = NULL;
+      g_auto(GStrv) parts = NULL;
       const char *filesystem;
       const char *mountpoint;
       const char *device;
@@ -322,11 +321,10 @@ sysprof_document_load_mounts (SysprofDocument *self)
             }
         }
 
-      mount_device = sysprof_mount_device_new ();
-      sysprof_mount_device_set_id (mount_device, device);
-      sysprof_mount_device_set_mount_point (mount_device, mountpoint);
-      sysprof_mount_device_set_subvolume (mount_device, subvol);
-      sysprof_mount_namespace_add_device (self->mount_namespace, g_steal_pointer (&mount_device));
+      sysprof_mount_namespace_add_device (self->mount_namespace,
+                                          sysprof_mount_device_new (sysprof_strings_get (self->strings, device),
+                                                                    sysprof_strings_get (self->strings, mountpoint),
+                                                                    sysprof_strings_get (self->strings, subvol)));
     }
 }
 

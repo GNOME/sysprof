@@ -56,6 +56,7 @@ struct _SysprofDocument
   GtkBitset                *traceables;
   GtkBitset                *processes;
   GtkBitset                *mmaps;
+  GtkBitset                *overlays;
   GtkBitset                *pids;
 
   GHashTable               *files_first_position;
@@ -192,11 +193,12 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
 
-  g_clear_pointer (&self->traceables, gtk_bitset_unref);
-  g_clear_pointer (&self->processes, gtk_bitset_unref);
-  g_clear_pointer (&self->mmaps, gtk_bitset_unref);
   g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
+  g_clear_pointer (&self->mmaps, gtk_bitset_unref);
+  g_clear_pointer (&self->overlays, gtk_bitset_unref);
   g_clear_pointer (&self->pids, gtk_bitset_unref);
+  g_clear_pointer (&self->processes, gtk_bitset_unref);
+  g_clear_pointer (&self->traceables, gtk_bitset_unref);
 
   g_clear_object (&self->mount_namespace);
   g_clear_object (&self->symbols);
@@ -220,11 +222,12 @@ sysprof_document_init (SysprofDocument *self)
 
   self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
 
-  self->traceables = gtk_bitset_new_empty ();
   self->file_chunks = gtk_bitset_new_empty ();
-  self->processes = gtk_bitset_new_empty ();
   self->mmaps = gtk_bitset_new_empty ();
+  self->overlays = gtk_bitset_new_empty ();
   self->pids = gtk_bitset_new_empty ();
+  self->processes = gtk_bitset_new_empty ();
+  self->traceables = gtk_bitset_new_empty ();
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   self->pid_to_process_info = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)sysprof_process_info_unref);
@@ -467,6 +470,8 @@ sysprof_document_load_worker (GTask        *task,
         gtk_bitset_add (self->file_chunks, self->frames->len);
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_MAP)
         gtk_bitset_add (self->mmaps, self->frames->len);
+      else if (tainted->type == SYSPROF_CAPTURE_FRAME_OVERLAY)
+        gtk_bitset_add (self->overlays, self->frames->len);
 
       if (tainted->type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
         {

@@ -43,6 +43,8 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofElfLoader, sysprof_elf_loader, G_TYPE_OBJECT)
 
 static GParamSpec *properties [N_PROPS];
+static gboolean in_flatpak;
+static gboolean in_podman;
 
 SysprofElfLoader *
 sysprof_elf_loader_new (void)
@@ -127,6 +129,9 @@ sysprof_elf_loader_class_init (SysprofElfLoaderClass *klass)
                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  in_flatpak = g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS);
+  in_podman = g_file_test ("/run/.containerenv", G_FILE_TEST_EXISTS);
 }
 
 static void
@@ -293,8 +298,12 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
       g_autoptr(GMappedFile) mapped_file = NULL;
       g_autoptr(SysprofElf) elf = NULL;
       g_autoptr(GError) local_error = NULL;
+      g_autofree char *container_path = NULL;
       const char *path = paths[i];
       const char *debug_link;
+
+      if ((in_flatpak && !g_str_has_prefix (path, "/home/")) || in_podman)
+        path = container_path = g_build_filename ("/var/run/host", path, NULL);
 
       if (!(mapped_file = g_mapped_file_new (path, FALSE, NULL)))
         continue;

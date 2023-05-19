@@ -30,6 +30,7 @@ G_DECLARE_FINAL_TYPE (SysprofElf, sysprof_elf, SYSPROF, ELF, GObject)
 
 SysprofElf *sysprof_elf_new                   (const char   *filename,
                                                GMappedFile  *mapped_file,
+                                               guint64       file_inode,
                                                GError      **error);
 gboolean    sysprof_elf_matches               (SysprofElf   *self,
                                                guint64       file_inode,

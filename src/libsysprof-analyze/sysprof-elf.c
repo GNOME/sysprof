@@ -150,6 +150,7 @@ sysprof_elf_init (SysprofElf *self)
 SysprofElf *
 sysprof_elf_new (const char   *filename,
                  GMappedFile  *mapped_file,
+                 guint64       file_inode,
                  GError      **error)
 {
   SysprofElf *self;
@@ -163,6 +164,7 @@ sysprof_elf_new (const char   *filename,
   self = g_object_new (SYSPROF_TYPE_ELF, NULL);
   self->file = g_strdup (filename);
   self->parser = g_steal_pointer (&parser);
+  self->file_inode = file_inode;
 
   return self;
 }

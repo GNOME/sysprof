@@ -20,6 +20,9 @@
 
 #include "config.h"
 
+#include <fcntl.h>
+#include <sys/stat.h>
+
 #include "sysprof-elf-private.h"
 #include "sysprof-elf-loader-private.h"
 #include "sysprof-strings-private.h"
@@ -285,6 +288,33 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
     sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
 }
 
+static gboolean
+get_file_and_inode (const char   *path,
+                    GMappedFile **mapped_file,
+                    guint64      *file_inode)
+{
+  struct stat stbuf;
+  int fd;
+
+  g_assert (path != NULL);
+  g_assert (mapped_file != NULL);
+  g_assert (file_inode != NULL);
+
+  *mapped_file = NULL;
+  *file_inode = 0;
+
+  fd = open (path, O_RDONLY|O_CLOEXEC, 0);
+  if (fd == -1)
+    return FALSE;
+
+  if (fstat (fd, &stbuf) == 0)
+    *file_inode = (guint64)stbuf.st_ino;
+  *mapped_file = g_mapped_file_new_from_fd (fd, FALSE, NULL);
+  close (fd);
+
+  return *mapped_file != NULL;
+}
+
 /**
  * sysprof_elf_loader_load:
  * @self: a #SysprofElfLoader
@@ -333,6 +363,7 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
       SysprofElf *cached_elf = NULL;
       const char *path = paths[i];
       const char *debug_link;
+      guint64 mapped_file_inode;
 
       if (in_flatpak || in_podman)
         path = container_path = access_path_from_container (path);
@@ -353,8 +384,8 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
        * store a failure record in the cache so that we don't attempt to load
        * it again.
        */
-      if ((mapped_file = g_mapped_file_new (path, FALSE, NULL)))
-        elf = sysprof_elf_new (path, g_steal_pointer (&mapped_file), &local_error);
+      if (get_file_and_inode (path, &mapped_file, &mapped_file_inode))
+        elf = sysprof_elf_new (path, g_steal_pointer (&mapped_file), mapped_file_inode, &local_error);
 
       g_hash_table_insert (self->cache,
                            g_strdup (path),

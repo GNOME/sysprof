@@ -298,6 +298,37 @@ open_mapped_file (const char  *filename,
 }
 
 ElfParser *
+elf_parser_new_from_mmap (GMappedFile  *file,
+                          GError      **error)
+{
+    const guchar *data;
+    gsize length;
+    ElfParser *parser;
+
+    if (file == NULL)
+      return NULL;
+
+    data = (guchar *)g_mapped_file_get_contents (file);
+    length = g_mapped_file_get_length (file);
+    parser = elf_parser_new_from_data (data, length);
+
+    if (!parser)
+    {
+        g_set_error (error,
+                     G_FILE_ERROR,
+                     G_FILE_ERROR_FAILED,
+                     "Failed to load ELF from mmap region");
+        g_mapped_file_unref (file);
+        return NULL;
+    }
+
+    parser->filename = NULL;
+    parser->file = file;
+
+    return parser;
+}
+
+ElfParser *
 elf_parser_new (const char  *filename,
                 GError     **error)
 {

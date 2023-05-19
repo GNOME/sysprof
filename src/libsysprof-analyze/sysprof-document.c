@@ -324,7 +324,7 @@ sysprof_document_load_mounts (SysprofDocument *self)
 
       mount_device = sysprof_mount_device_new ();
       sysprof_mount_device_set_id (mount_device, device);
-      sysprof_mount_device_set_mount_path (mount_device, mountpoint);
+      sysprof_mount_device_set_mount_point (mount_device, mountpoint);
       sysprof_mount_device_set_subvolume (mount_device, subvol);
       sysprof_mount_namespace_add_device (self->mount_namespace, g_steal_pointer (&mount_device));
     }

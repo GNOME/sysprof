@@ -26,14 +26,14 @@ struct _SysprofMountDevice
 {
   GObject parent_instance;
   char *id;
-  char *mount_path;
+  char *mount_point;
   char *subvolume;
 };
 
 enum {
   PROP_0,
   PROP_ID,
-  PROP_MOUNT_PATH,
+  PROP_MOUNT_POINT,
   PROP_SUBVOLUME,
   N_PROPS
 };
@@ -48,7 +48,7 @@ sysprof_mount_device_finalize (GObject *object)
   SysprofMountDevice *self = (SysprofMountDevice *)object;
 
   g_clear_pointer (&self->id, g_free);
-  g_clear_pointer (&self->mount_path, g_free);
+  g_clear_pointer (&self->mount_point, g_free);
   g_clear_pointer (&self->subvolume, g_free);
 
   G_OBJECT_CLASS (sysprof_mount_device_parent_class)->finalize (object);
@@ -68,8 +68,8 @@ sysprof_mount_device_get_property (GObject    *object,
       g_value_set_string (value, sysprof_mount_device_get_id (self));
       break;
 
-    case PROP_MOUNT_PATH:
-      g_value_set_string (value, sysprof_mount_device_get_mount_path (self));
+    case PROP_MOUNT_POINT:
+      g_value_set_string (value, sysprof_mount_device_get_mount_point (self));
       break;
 
     case PROP_SUBVOLUME:
@@ -95,8 +95,8 @@ sysprof_mount_device_set_property (GObject      *object,
       sysprof_mount_device_set_id (self, g_value_get_string (value));
       break;
 
-    case PROP_MOUNT_PATH:
-      sysprof_mount_device_set_mount_path (self, g_value_get_string (value));
+    case PROP_MOUNT_POINT:
+      sysprof_mount_device_set_mount_point (self, g_value_get_string (value));
       break;
 
     case PROP_SUBVOLUME:
@@ -122,7 +122,7 @@ sysprof_mount_device_class_init (SysprofMountDeviceClass *klass)
                          NULL,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_MOUNT_PATH] =
+  properties [PROP_MOUNT_POINT] =
     g_param_spec_string ("mount-path", NULL, NULL,
                          NULL,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
@@ -165,21 +165,21 @@ sysprof_mount_device_set_id (SysprofMountDevice *self,
 }
 
 const char *
-sysprof_mount_device_get_mount_path (SysprofMountDevice *self)
+sysprof_mount_device_get_mount_point (SysprofMountDevice *self)
 {
   g_return_val_if_fail (SYSPROF_IS_MOUNT_DEVICE (self), NULL);
 
-  return self->mount_path;
+  return self->mount_point;
 }
 
 void
-sysprof_mount_device_set_mount_path (SysprofMountDevice *self,
-                                     const char         *mount_path)
+sysprof_mount_device_set_mount_point (SysprofMountDevice *self,
+                                      const char         *mount_point)
 {
   g_return_if_fail (SYSPROF_IS_MOUNT_DEVICE (self));
 
-  if (g_set_str (&self->mount_path, mount_path))
-    g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_MOUNT_PATH]);
+  if (g_set_str (&self->mount_point, mount_point))
+    g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_MOUNT_POINT]);
 }
 
 const char *

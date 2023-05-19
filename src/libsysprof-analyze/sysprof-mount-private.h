@@ -27,5 +27,7 @@ G_BEGIN_DECLS
 
 SysprofMount *_sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
                                                 const char     *mountinfo);
+gboolean      _sysprof_mount_contains_path     (SysprofMount   *self,
+                                                const char     *path);
 
 G_END_DECLS

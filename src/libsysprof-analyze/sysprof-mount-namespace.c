@@ -147,6 +147,42 @@ sysprof_mount_namespace_add_mount (SysprofMountNamespace *self,
   g_ptr_array_add (self->mounts, mount);
 }
 
+static SysprofMountDevice *
+sysprof_mount_namespace_find_device (SysprofMountNamespace *self,
+                                     SysprofMount          *mount,
+                                     const char            *relative_path)
+{
+  const char *mount_source;
+  const char *subvolume;
+
+  g_assert (SYSPROF_IS_MOUNT_NAMESPACE (self));
+  g_assert (SYSPROF_IS_MOUNT (mount));
+
+  mount_source = sysprof_mount_get_mount_source (mount);
+  subvolume = sysprof_mount_get_superblock_option (mount, "subvol");
+
+  for (guint i = 0; i < self->devices->len; i++)
+    {
+      SysprofMountDevice *device = g_ptr_array_index (self->devices, i);
+      const char *fs_spec = sysprof_mount_device_get_fs_spec (device);
+
+      if (g_strcmp0 (fs_spec, mount_source) != 0)
+        continue;
+
+      if (subvolume != NULL)
+        {
+          const char *device_subvolume = sysprof_mount_device_get_subvolume (device);
+
+          if (g_strcmp0 (subvolume, device_subvolume) != 0)
+            continue;
+        }
+
+      return device;
+    }
+
+  return NULL;
+}
+
 /**
  * sysprof_mount_namespace_translate:
  * @self: a #SysprofMountNamespace
@@ -166,10 +202,40 @@ char **
 sysprof_mount_namespace_translate (SysprofMountNamespace *self,
                                    const char            *file)
 {
+  g_autoptr(GArray) strv = NULL;
+
   g_return_val_if_fail (SYSPROF_IS_MOUNT_NAMESPACE (self), NULL);
   g_return_val_if_fail (file != NULL, NULL);
 
-  /* TODO: */
+  strv = g_array_new (TRUE, FALSE, sizeof (char *));
 
-  return NULL;
+  for (guint i = 0; i < self->mounts->len; i++)
+    {
+      SysprofMount *mount = g_ptr_array_index (self->mounts, i);
+      SysprofMountDevice *device;
+      const char *device_mount_point;
+      const char *relative;
+      char *translated;
+
+      if (!(relative = _sysprof_mount_get_relative_path (mount, file)) ||
+          !(device = sysprof_mount_namespace_find_device (self, mount, relative)))
+        continue;
+
+      device_mount_point = sysprof_mount_device_get_mount_point (device);
+      translated = g_build_filename (device_mount_point, relative, NULL);
+
+      /* TODO: Still a bit to do here, because we need to handle overlays
+       * still as a SysprofMount. Additionally, we may need to adjust the
+       * paths a bit more based on subvolume, but I need a system such
+       * as Silverblue or GNOME OS to test that again to match or improve
+       * on existing behavior in libsysprof.
+       */
+
+      g_array_append_val (strv, translated);
+    }
+
+  if (strv->len == 0)
+    return NULL;
+
+  return (char **)g_array_free (g_steal_pointer (&strv), FALSE);
 }

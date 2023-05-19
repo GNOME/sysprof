@@ -20,8 +20,8 @@
 
 #include "config.h"
 
-#include "../libsysprof/binfile.h"
-
+#include "sysprof-elf-private.h"
+#include "sysprof-elf-loader-private.h"
 #include "sysprof-elf-symbolizer.h"
 #include "sysprof-document-private.h"
 #include "sysprof-strings-private.h"
@@ -31,7 +31,7 @@
 struct _SysprofElfSymbolizer
 {
   SysprofSymbolizer  parent_instance;
-  GHashTable        *bin_file_cache;
+  SysprofElfLoader  *loader;
 };
 
 struct _SysprofElfSymbolizerClass
@@ -49,12 +49,17 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                   SysprofAddress            address)
 {
   SysprofElfSymbolizer *self = (SysprofElfSymbolizer *)symbolizer;
+  g_autoptr(SysprofElf) elf = NULL;
   SysprofDocumentMmap *map;
   g_autofree char *name = NULL;
-  g_auto(GStrv) translations = NULL;
-  GMappedFile *mapped_file = NULL;
-  guint64 relative_address;
   const char *path;
+  const char *build_id;
+  guint64 start_address;
+  guint64 relative_address;
+  guint64 begin_address;
+  guint64 end_address;
+  guint64 file_inode;
+  guint64 file_offset;
 
   if (process_info == NULL ||
       process_info->address_layout == NULL ||
@@ -67,63 +72,51 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   if (!(map = sysprof_address_layout_lookup (process_info->address_layout, address)))
     return NULL;
 
-  /* The file could be available at a number of locations in case there
-   * is an overlayfs, flatpak runtime, etc. Additionally, we may need
-   * to resolve through various debug directories. All of those also
-   * need to get translated to a location where this process can access
-   * then (which itself might be via /var/run/host/... or similar).
-   */
   path = sysprof_document_mmap_get_file (map);
+  build_id = sysprof_document_mmap_get_build_id (map);
+  file_inode = sysprof_document_mmap_get_file_inode (map);
+  file_offset = sysprof_document_mmap_get_file_offset (map);
+  start_address = sysprof_document_mmap_get_start_address (map);
+  relative_address = file_offset + (address - start_address);
 
-  /* TODO:
-   *
-   * We need something like bin_file_t here that will let us look at
-   * all of our possible translations for the file (overlayfs, etc)
-   * and add debug directories on top of that. The debug directories
-   * can be used to follow .gnu_debuglink through debug dirs.
+  /* See if we can load an ELF at the path . It will be translated from the
+   * mount namespace into something hopefully we can access.
    */
-
-#if 0
-  if (!(translations = sysprof_mount_namespace_translate (process_info->mount_namespace, path)))
+  if (!(elf = sysprof_elf_loader_load (self->loader,
+                                       process_info->mount_namespace,
+                                       path,
+                                       build_id,
+                                       file_inode,
+                                       NULL)))
     goto fallback;
 
-  for (guint i = 0; translations[i]; i++)
-    {
-      /* If the file exists within our cache already, re-use that instead
-       * of re-opening a binfile.
-       */
-      if ((mapped_file = g_hash_table_lookup (self->bin_file_cache, translations[i])))
-        break;
-
-      if ((mapped_file = g_mapped_file_new (translations[i], FALSE, NULL)))
-        {
-          g_hash_table_insert (self->bin_file_cache,
-                               g_strdup (translations[i]),
-                               mapped_file);
-          break;
-        }
-    }
-
-  if (mapped_file == NULL)
+  /* Try to get the symbol name at the address and the begin/end address
+   * so that it can be inserted into our symbol cache.
+   */
+  if (!(name = sysprof_elf_get_symbol_at_address (elf,
+                                                  relative_address,
+                                                  &begin_address,
+                                                  &end_address)))
     goto fallback;
-#endif
+
+  return _sysprof_symbol_new (sysprof_strings_get (strings, name),
+                              NULL,
+                              sysprof_strings_get (strings, path),
+                              start_address + (begin_address - file_offset),
+                              start_address + (end_address - file_offset));
 
 fallback:
   /* Fallback, we failed to locate the symbol within a file we can
    * access, so tell the user about what file contained the symbol
    * and where (relative to that file) the IP was.
    */
-  relative_address = sysprof_document_mmap_get_file_offset (map)
-                   + (address - sysprof_document_mmap_get_start_address (map));
   name = g_strdup_printf ("In file %s+0x%"G_GINT64_MODIFIER"x",
                           sysprof_document_mmap_get_file (map),
                           relative_address);
-
+  begin_address = address;
+  end_address = address + 1;
   return _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                              NULL,
-                              NULL,
-                              address,
-                              address + 1);
+                              NULL, NULL, begin_address, end_address);
 }
 
 static void
@@ -131,7 +124,7 @@ sysprof_elf_symbolizer_finalize (GObject *object)
 {
   SysprofElfSymbolizer *self = (SysprofElfSymbolizer *)object;
 
-  g_clear_pointer (&self->bin_file_cache, g_hash_table_unref);
+  g_clear_object (&self->loader);
 
   G_OBJECT_CLASS (sysprof_elf_symbolizer_parent_class)->finalize (object);
 }
@@ -150,10 +143,7 @@ sysprof_elf_symbolizer_class_init (SysprofElfSymbolizerClass *klass)
 static void
 sysprof_elf_symbolizer_init (SysprofElfSymbolizer *self)
 {
-  self->bin_file_cache = g_hash_table_new_full (g_str_hash,
-                                                g_str_equal,
-                                                g_free,
-                                                (GDestroyNotify)bin_file_free);
+  self->loader = sysprof_elf_loader_new ();
 }
 
 SysprofSymbolizer *

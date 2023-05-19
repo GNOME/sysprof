@@ -34,7 +34,7 @@ SysprofElf *sysprof_elf_new                   (const char   *filename,
 const char *sysprof_elf_get_file              (SysprofElf   *self);
 const char *sysprof_elf_get_build_id          (SysprofElf   *self);
 const char *sysprof_elf_get_debug_link        (SysprofElf   *self);
-const char *sysprof_elf_get_symbol_at_address (SysprofElf   *self,
+char       *sysprof_elf_get_symbol_at_address (SysprofElf   *self,
                                                guint64       address,
                                                guint64      *begin_address,
                                                guint64      *end_address);

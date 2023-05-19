@@ -28,7 +28,6 @@ struct _SysprofElf
 {
   GObject parent_instance;
   char *build_id;
-  char *debug_link;
   char *file;
   SysprofElf *debug_link_elf;
   ElfParser *parser;
@@ -53,7 +52,6 @@ sysprof_elf_finalize (GObject *object)
   SysprofElf *self = (SysprofElf *)object;
 
   g_clear_pointer (&self->build_id, g_free);
-  g_clear_pointer (&self->debug_link, g_free);
   g_clear_pointer (&self->file, g_free);
   g_clear_pointer (&self->parser, elf_parser_free);
   g_clear_object (&self->debug_link_elf);
@@ -187,24 +185,51 @@ sysprof_elf_get_build_id (SysprofElf *self)
 const char *
 sysprof_elf_get_debug_link (SysprofElf *self)
 {
+  guint crc32;
+
   g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
 
-  return self->debug_link;
+  return elf_parser_get_debug_link (self->parser, &crc32);
 }
 
-const char *
+char *
 sysprof_elf_get_symbol_at_address (SysprofElf *self,
                                    guint64     address,
                                    guint64    *begin_address,
                                    guint64    *end_address)
 {
+  const ElfSym *symbol;
+  char *ret = NULL;
+  gulong begin = 0;
+  gulong end = 0;
+
   g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
-  g_return_val_if_fail (begin_address != NULL, NULL);
-  g_return_val_if_fail (end_address != NULL, NULL);
 
-  *begin_address = *end_address = 0;
+  if (self->debug_link_elf != NULL)
+    return sysprof_elf_get_symbol_at_address (self->debug_link_elf, address, begin_address, end_address);
 
-  return NULL;
+  if ((symbol = elf_parser_lookup_symbol (self->parser, address)))
+    {
+      const char *name;
+
+      if (begin_address || end_address)
+        elf_parser_get_sym_address_range (self->parser, symbol, &begin, &end);
+
+      name = elf_parser_get_sym_name (self->parser, symbol);
+
+      if (name != NULL && name[0] == '_' && name[1] == 'Z')
+        ret = elf_demangle (name);
+      else
+        ret = g_strdup (name);
+    }
+
+  if (begin_address)
+    *begin_address = begin;
+
+  if (end_address)
+    *end_address = end;
+
+  return ret;
 }
 
 /**

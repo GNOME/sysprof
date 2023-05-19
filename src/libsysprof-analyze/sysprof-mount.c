@@ -331,3 +331,33 @@ sysprof_mount_get_parent_mount_id (SysprofMount *self)
 {
   return self->parent_mount_id;
 }
+
+static inline gboolean
+mount_is_root (SysprofMount *self)
+{
+  return self->mount_point[0] == '/' && self->mount_point[1] == 0;
+}
+
+const char *
+_sysprof_mount_get_relative_path (SysprofMount *self,
+                                  const char   *path)
+{
+  gsize len;
+
+  g_return_val_if_fail (SYSPROF_IS_MOUNT (self), NULL);
+
+  if (path == NULL || self->mount_point == NULL)
+    return NULL;
+
+  len = g_ref_string_length (self->mount_point);
+
+  /* We don't care about directory paths, so ensure that we both
+   * have the proper prefix and that it is in a subdirectory of this
+   * mount point.
+   */
+  if (!mount_is_root (self) &&
+      (!g_str_has_prefix (path, self->mount_point) || path[len] != '/'))
+    return NULL;
+
+  return &path[len];
+}

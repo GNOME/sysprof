@@ -244,27 +244,43 @@ sysprof_elf_loader_set_external_debug_dirs (SysprofElfLoader   *self,
     g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_EXTERNAL_DEBUG_DIRS]);
 }
 
+static char *
+access_path_from_container (const char *path)
+{
+  if ((in_flatpak && !g_str_has_prefix (path, "/home/")) || in_podman)
+    return g_build_filename ("/var/run/host", path, NULL);
+  return g_strdup (path);
+}
+
+static SysprofElf *
+get_deepest_debuglink (SysprofElf *elf)
+{
+  SysprofElf *debug_link = sysprof_elf_get_debug_link_elf (elf);
+  return debug_link ? get_deepest_debuglink (debug_link) : elf;
+}
+
 static void
 sysprof_elf_loader_annotate (SysprofElfLoader      *self,
                              SysprofMountNamespace *mount_namespace,
+                             const char            *orig_file,
                              SysprofElf            *elf,
                              const char            *debug_link)
 {
+  g_autoptr(SysprofElf) debug_link_elf = NULL;
+  g_autofree char *directory_name = NULL;
+  g_autofree char *debug_path = NULL;
+  g_autofree char *container_path = NULL;
+
   g_assert (SYSPROF_IS_ELF_LOADER (self));
   g_assert (SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace));
   g_assert (SYSPROF_IS_ELF (elf));
   g_assert (debug_link != NULL);
 
-  /* TODO: We want to use the debug_link to find a similar file that will
-   *       contain the various debugsymbols. We need to look for it in
-   *       any of the #SysprofElfLoader:debug-dirs (and translated via the
-   *       mount namespace) as well as any of the :external_debug_dirs
-   *       which is a path available to us from our application's mount
-   *       namespace. We recursively follow those debug_link (and must
-   *       protect against cycles) to get the final/best debuglink file.
-   *       That will get assigned via sysprof_elf_set_debug_link_elf().
-   */
+  directory_name = g_path_get_dirname (orig_file);
+  debug_path = g_build_filename ("/usr/lib/debug", directory_name, debug_link, NULL);
 
+  if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, debug_path, NULL, NULL)))
+    sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
 }
 
 /**
@@ -313,29 +329,34 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
       const char *path = paths[i];
       const char *debug_link;
 
-      if ((in_flatpak && !g_str_has_prefix (path, "/home/")) || in_podman)
-        path = container_path = g_build_filename ("/var/run/host", path, NULL);
+      if (in_flatpak || in_podman)
+        path = container_path = access_path_from_container (path);
 
       /* Lookup to see if we've already parsed this ELF and handle cases where
        * we've failed to load it too. In the case we failed to load a key is
        * stored in the cache with a NULL value.
        */
       if (g_hash_table_lookup_extended (self->cache, path, NULL, (gpointer *)&cached_elf))
-        return cached_elf ? g_object_ref (cached_elf) : NULL;
+        {
+          if (cached_elf != NULL)
+            return g_object_ref (cached_elf);
+          continue;
+        }
 
       /* Try to mmap the file and parse it. If the parser fails to parse the
        * section headers, then this probably isn't an ELF file and we should
        * store a failure record in the cache so that we don't attempt to load
        * it again.
        */
-      if ((mapped_file = g_mapped_file_new (path, FALSE, NULL)) &&
-          (elf = sysprof_elf_new (path, g_steal_pointer (&mapped_file), &local_error)) &&
-          (debug_link = sysprof_elf_get_debug_link (elf)))
-        sysprof_elf_loader_annotate (self, mount_namespace, elf, debug_link);
+      if ((mapped_file = g_mapped_file_new (path, FALSE, NULL)))
+        elf = sysprof_elf_new (path, g_steal_pointer (&mapped_file), &local_error);
 
       g_hash_table_insert (self->cache,
                            g_strdup (path),
                            elf ? g_object_ref (elf) : NULL);
+
+      if (elf && (debug_link = sysprof_elf_get_debug_link (elf)))
+        sysprof_elf_loader_annotate (self, mount_namespace, file, elf, debug_link);
 
       return g_steal_pointer (&elf);
     }

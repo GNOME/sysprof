@@ -123,7 +123,7 @@ sysprof_mount_device_class_init (SysprofMountDeviceClass *klass)
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_MOUNT_POINT] =
-    g_param_spec_string ("mount-path", NULL, NULL,
+    g_param_spec_string ("mount-point", NULL, NULL,
                          NULL,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 

@@ -25,14 +25,14 @@
 struct _SysprofMountDevice
 {
   GObject parent_instance;
-  GRefString *id;
+  GRefString *fs_spec;
   GRefString *mount_point;
   GRefString *subvolume;
 };
 
 enum {
   PROP_0,
-  PROP_ID,
+  PROP_FS_SPEC,
   PROP_MOUNT_POINT,
   PROP_SUBVOLUME,
   N_PROPS
@@ -47,7 +47,7 @@ sysprof_mount_device_finalize (GObject *object)
 {
   SysprofMountDevice *self = (SysprofMountDevice *)object;
 
-  g_clear_pointer (&self->id, g_ref_string_release);
+  g_clear_pointer (&self->fs_spec, g_ref_string_release);
   g_clear_pointer (&self->mount_point, g_ref_string_release);
   g_clear_pointer (&self->subvolume, g_ref_string_release);
 
@@ -64,8 +64,8 @@ sysprof_mount_device_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_ID:
-      g_value_set_string (value, sysprof_mount_device_get_id (self));
+    case PROP_FS_SPEC:
+      g_value_set_string (value, sysprof_mount_device_get_fs_spec (self));
       break;
 
     case PROP_MOUNT_POINT:
@@ -89,8 +89,8 @@ sysprof_mount_device_class_init (SysprofMountDeviceClass *klass)
   object_class->finalize = sysprof_mount_device_finalize;
   object_class->get_property = sysprof_mount_device_get_property;
 
-  properties [PROP_ID] =
-    g_param_spec_string ("id", NULL, NULL,
+  properties [PROP_FS_SPEC] =
+    g_param_spec_string ("fs-spec", NULL, NULL,
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -113,14 +113,14 @@ sysprof_mount_device_init (SysprofMountDevice *self)
 }
 
 SysprofMountDevice *
-sysprof_mount_device_new (GRefString *id,
+sysprof_mount_device_new (GRefString *fs_spec,
                           GRefString *mount_point,
                           GRefString *subvolume)
 {
   SysprofMountDevice *self;
 
   self = g_object_new (SYSPROF_TYPE_MOUNT_DEVICE, NULL);
-  self->id = id;
+  self->fs_spec = fs_spec;
   self->mount_point = mount_point;
   self->subvolume = subvolume;
 
@@ -128,11 +128,11 @@ sysprof_mount_device_new (GRefString *id,
 }
 
 const char *
-sysprof_mount_device_get_id (SysprofMountDevice *self)
+sysprof_mount_device_get_fs_spec (SysprofMountDevice *self)
 {
   g_return_val_if_fail (SYSPROF_IS_MOUNT_DEVICE (self), NULL);
 
-  return self->id;
+  return self->fs_spec;
 }
 
 const char *

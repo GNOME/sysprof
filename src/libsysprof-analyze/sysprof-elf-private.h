@@ -35,6 +35,7 @@ SysprofElf *sysprof_elf_new                   (const char   *filename,
 gboolean    sysprof_elf_matches               (SysprofElf   *self,
                                                guint64       file_inode,
                                                const char   *build_id);
+const char *sysprof_elf_get_nick              (SysprofElf   *self);
 const char *sysprof_elf_get_file              (SysprofElf   *self);
 const char *sysprof_elf_get_build_id          (SysprofElf   *self);
 const char *sysprof_elf_get_debug_link        (SysprofElf   *self);

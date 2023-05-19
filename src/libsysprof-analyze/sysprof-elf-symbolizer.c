@@ -100,7 +100,7 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
     goto fallback;
 
   return _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                              NULL,
+                              sysprof_strings_get (strings, sysprof_elf_get_nick (elf)),
                               sysprof_strings_get (strings, path),
                               start_address + (begin_address - file_offset),
                               start_address + (end_address - file_offset));

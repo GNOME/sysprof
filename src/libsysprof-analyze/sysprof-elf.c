@@ -27,6 +27,7 @@
 struct _SysprofElf
 {
   GObject parent_instance;
+  const char *nick;
   char *build_id;
   char *file;
   SysprofElf *debug_link_elf;
@@ -46,6 +47,51 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofElf, sysprof_elf, G_TYPE_OBJECT)
 
 static GParamSpec *properties [N_PROPS];
+static GHashTable *nicks;
+static const struct {
+  const char *library;
+  const char *nick;
+} nick_table[] = {
+  { "libEGL.so", "EGL" },
+  { "libEGL_mesa.so", "Mesa EGL" },
+  { "libGL.so", "GL" },
+  { "libX11-xcb.so", "X11" },
+  { "libX11.so", "X11" },
+  { "libc.so", "libc" },
+  { "libcairo-gobject.so", "Cairo" },
+  { "libcairo.so", "Cairo" },
+  { "libclutter-1.0.so", "Clutter" },
+  { "libclutter-glx-1.0.so", "Clutter" },
+  { "libffi.so", "libffi" },
+  { "libgdk-3.so", "GDK 3" },
+  { "libgio-2.0.so", "Gio" },
+  { "libgirepository-1.0.so", "Introspection" },
+  { "libgjs.so", "GJS" },
+  { "libglib-2.0.so", "GLib" },
+  { "libgobject-2.0.so", "GObject" },
+  { "libgstreamer-1-0.so", "GStreamer" },
+  { "libgtk-3.so", "GTK 3" },
+  { "libgtk-4.so", "GTK 4" },
+  { "libgtksourceview-3.0.so", "GtkSourceView 3" },
+  { "libgtksourceview-4.so", "GtkSourceView 4" },
+  { "libgtksourceview-5.so", "GtkSourceView 5" },
+  { "libharfbuzz-cairo.so", "Harfbuzz" },
+  { "libharfbuzz-gobject.so", "Harfbuzz" },
+  { "libharfbuzz-icu.so", "Harfbuzz" },
+  { "libharfbuzz-subset.so", "Harfbuzz" },
+  { "libharfbuzz.so", "Harfbuzz" },
+  { "libinput.so", "Mutter" },
+  { "libmutter-12.so", "Mutter" },
+  { "libpango-1.0.so", "Pango" },
+  { "libpangocairo-1.0.so", "Pango" },
+  { "libpipewire-0.3.so", "Pipewire" },
+  { "libpixman-1.so", "Pixman" },
+  { "libstdc++.so", "libc" },
+  { "libwayland-client.so", "Wayland Client" },
+  { "libwayland-cursor.so", "Wayland Cursor" },
+  { "libwayland-egl.so", "Wayland EGL" },
+  { "libwayland-server.so", "Wayland Server" },
+};
 
 static void
 sysprof_elf_finalize (GObject *object)
@@ -140,11 +186,36 @@ sysprof_elf_class_init (SysprofElfClass *klass)
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  nicks = g_hash_table_new (g_str_hash, g_str_equal);
+  for (guint i = 0; i < G_N_ELEMENTS (nick_table); i++)
+    g_hash_table_insert (nicks,
+                         (char *)nick_table[i].library,
+                         (char *)nick_table[i].nick);
 }
 
 static void
 sysprof_elf_init (SysprofElf *self)
 {
+}
+
+static void
+guess_nick (SysprofElf *self,
+            const char *name,
+            const char *endptr)
+{
+  char key[32];
+
+  if (endptr <= name)
+    return;
+
+  if (endptr - name >= sizeof key)
+    return;
+
+  memcpy (key, name, endptr-name);
+  key[endptr-name] = 0;
+
+  self->nick = g_hash_table_lookup (nicks, key);
 }
 
 SysprofElf *
@@ -165,6 +236,20 @@ sysprof_elf_new (const char   *filename,
   self->file = g_strdup (filename);
   self->parser = g_steal_pointer (&parser);
   self->file_inode = file_inode;
+
+  if (filename != NULL)
+    {
+      const char *base;
+      const char *endptr;
+
+      if ((base = strrchr (filename, '/')))
+        {
+          endptr = strstr (++base, ".so");
+
+          if (endptr != NULL && (endptr[3] == 0 || endptr[3] == '.'))
+            guess_nick (self, base, &endptr[3]);
+        }
+    }
 
   return self;
 }
@@ -283,4 +368,12 @@ sysprof_elf_matches (SysprofElf *self,
     return FALSE;
 
   return TRUE;
+}
+
+const char *
+sysprof_elf_get_nick (SysprofElf *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
+
+  return self->nick;
 }

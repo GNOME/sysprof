@@ -231,6 +231,12 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
        * on existing behavior in libsysprof.
        */
 
+      /* TODO: After we've translated to what we'd expect to see on the
+       * host system, we'll need to translate once again to what we can
+       * actually access if we're inside a container ourselves, such as
+       * Toolbox or Flatpak and use /var/run/host or similar.
+       */
+
       g_array_append_val (strv, translated);
     }
 

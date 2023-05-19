@@ -294,7 +294,12 @@ sysprof_elf_get_symbol_at_address (SysprofElf *self,
   g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
 
   if (self->debug_link_elf != NULL)
-    return sysprof_elf_get_symbol_at_address (self->debug_link_elf, address, begin_address, end_address);
+    {
+      ret = sysprof_elf_get_symbol_at_address (self->debug_link_elf, address, begin_address, end_address);
+
+      if (ret != NULL)
+        return ret;
+    }
 
   if ((symbol = elf_parser_lookup_symbol (self->parser, address)))
     {

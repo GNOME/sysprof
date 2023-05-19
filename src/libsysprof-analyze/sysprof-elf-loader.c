@@ -270,6 +270,7 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
   g_autofree char *directory_name = NULL;
   g_autofree char *debug_path = NULL;
   g_autofree char *container_path = NULL;
+  const char *build_id;
 
   g_assert (SYSPROF_IS_ELF_LOADER (self));
   g_assert (SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace));
@@ -278,8 +279,9 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
 
   directory_name = g_path_get_dirname (orig_file);
   debug_path = g_build_filename ("/usr/lib/debug", directory_name, debug_link, NULL);
+  build_id = sysprof_elf_get_build_id (elf);
 
-  if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, debug_path, NULL, NULL)))
+  if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, debug_path, build_id, 0, NULL)))
     sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
 }
 
@@ -290,6 +292,8 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
  * @file: the path of the file to load within the mount namespace
  * @build_id: (nullable): an optional build-id that can be used to resolve
  *   the file alternatively to the file path
+ * @file_inode: expected inode for @file
+ * @error: a location for a #GError, or %NULL
  *
  * Attempts to load a #SysprofElf for @file (or optionally by @build_id).
  *
@@ -305,6 +309,7 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
                          SysprofMountNamespace  *mount_namespace,
                          const char             *file,
                          const char             *build_id,
+                         guint64                 file_inode,
                          GError                **error)
 {
   g_auto(GStrv) paths = NULL;
@@ -355,8 +360,20 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
                            g_strdup (path),
                            elf ? g_object_ref (elf) : NULL);
 
-      if (elf && (debug_link = sysprof_elf_get_debug_link (elf)))
-        sysprof_elf_loader_annotate (self, mount_namespace, file, elf, debug_link);
+      if (elf != NULL)
+        {
+          if ((debug_link = sysprof_elf_get_debug_link (elf)))
+            sysprof_elf_loader_annotate (self, mount_namespace, file, elf, debug_link);
+
+          /* If we loaded the ELF, but it doesn't match what this request is looking
+           * for in terms of inode/build-id, then we need to bail and not return it.
+           * We can, however, leave it in the cache incase another process/sample
+           * will need the ELF.
+           */
+          if (!sysprof_elf_matches (elf, file_inode, build_id))
+            g_clear_object (&elf);
+        }
+
 
       return g_steal_pointer (&elf);
     }

@@ -31,6 +31,7 @@ struct _SysprofElf
   char *file;
   SysprofElf *debug_link_elf;
   ElfParser *parser;
+  guint64 file_inode;
 };
 
 enum {
@@ -258,4 +259,26 @@ sysprof_elf_set_debug_link_elf (SysprofElf *self,
 
   if (g_set_object (&self->debug_link_elf, debug_link_elf))
     g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_DEBUG_LINK_ELF]);
+}
+
+gboolean
+sysprof_elf_matches (SysprofElf *self,
+                     guint64     file_inode,
+                     const char *build_id)
+{
+  g_return_val_if_fail (SYSPROF_IS_ELF (self), FALSE);
+
+  if (build_id != NULL)
+    {
+      const char *elf_build_id = elf_parser_get_build_id (self->parser);
+
+      /* Not matching build-id, you definitely don't want this ELF */
+      if (elf_build_id != NULL && !g_str_equal (build_id, elf_build_id))
+        return FALSE;
+    }
+
+  if (file_inode && self->file_inode && file_inode != self->file_inode)
+    return FALSE;
+
+  return TRUE;
 }

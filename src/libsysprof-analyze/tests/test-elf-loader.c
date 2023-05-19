@@ -69,7 +69,8 @@ main (int   argc,
           g_autoptr(SysprofDocumentMmap) memory_map = g_list_model_get_item (memory_maps, j);
           const char *file = sysprof_document_mmap_get_file (memory_map);
           const char *build_id = sysprof_document_mmap_get_build_id (memory_map);
-          g_autoptr(SysprofElf) elf = sysprof_elf_loader_load (elf_loader, info->mount_namespace, file, build_id, &error);
+          guint64 file_inode = sysprof_document_mmap_get_file_inode (memory_map);
+          g_autoptr(SysprofElf) elf = sysprof_elf_loader_load (elf_loader, info->mount_namespace, file, build_id, file_inode, &error);
 
           if (elf == NULL)
             g_print ("%u: %s [unresolved]\n", info->pid, file);

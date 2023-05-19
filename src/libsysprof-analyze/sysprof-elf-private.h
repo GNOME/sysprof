@@ -31,6 +31,9 @@ G_DECLARE_FINAL_TYPE (SysprofElf, sysprof_elf, SYSPROF, ELF, GObject)
 SysprofElf *sysprof_elf_new                   (const char   *filename,
                                                GMappedFile  *mapped_file,
                                                GError      **error);
+gboolean    sysprof_elf_matches               (SysprofElf   *self,
+                                               guint64       file_inode,
+                                               const char   *build_id);
 const char *sysprof_elf_get_file              (SysprofElf   *self);
 const char *sysprof_elf_get_build_id          (SysprofElf   *self);
 const char *sysprof_elf_get_debug_link        (SysprofElf   *self);

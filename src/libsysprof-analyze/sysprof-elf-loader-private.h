@@ -43,6 +43,7 @@ SysprofElf         *sysprof_elf_loader_load                    (SysprofElfLoader
                                                                 SysprofMountNamespace  *mount_namespace,
                                                                 const char             *file,
                                                                 const char             *build_id,
+                                                                guint64                 file_inode,
                                                                 GError                **error);
 
 

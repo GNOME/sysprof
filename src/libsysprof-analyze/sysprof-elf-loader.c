@@ -299,7 +299,7 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
       if (!(mapped_file = g_mapped_file_new (path, FALSE, NULL)))
         continue;
 
-      if (!(elf = sysprof_elf_new (mapped_file, &local_error)))
+      if (!(elf = sysprof_elf_new (path, g_steal_pointer (&mapped_file), &local_error)))
         continue;
 
       if ((debug_link = sysprof_elf_get_debug_link (elf)))

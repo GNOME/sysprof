@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include "../libsysprof/elfparser.h"
+
 #include "sysprof-elf-private.h"
 
 struct _SysprofElf
@@ -29,6 +31,7 @@ struct _SysprofElf
   char *debug_link;
   char *file;
   SysprofElf *debug_link_elf;
+  ElfParser *parser;
 };
 
 enum {
@@ -52,6 +55,7 @@ sysprof_elf_finalize (GObject *object)
   g_clear_pointer (&self->build_id, g_free);
   g_clear_pointer (&self->debug_link, g_free);
   g_clear_pointer (&self->file, g_free);
+  g_clear_pointer (&self->parser, elf_parser_free);
   g_clear_object (&self->debug_link_elf);
 
   G_OBJECT_CLASS (sysprof_elf_parent_class)->finalize (object);
@@ -145,12 +149,23 @@ sysprof_elf_init (SysprofElf *self)
 }
 
 SysprofElf *
-sysprof_elf_new (GMappedFile  *mapped_file,
+sysprof_elf_new (const char   *filename,
+                 GMappedFile  *mapped_file,
                  GError      **error)
 {
+  SysprofElf *self;
+  ElfParser *parser;
+
   g_return_val_if_fail (mapped_file != NULL, NULL);
 
-  return NULL;
+  if (!(parser = elf_parser_new_from_mmap (g_steal_pointer (&mapped_file), error)))
+    return NULL;
+
+  self = g_object_new (SYSPROF_TYPE_ELF, NULL);
+  self->file = g_strdup (filename);
+  self->parser = g_steal_pointer (&parser);
+
+  return self;
 }
 
 const char *

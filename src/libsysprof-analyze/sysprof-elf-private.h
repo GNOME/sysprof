@@ -28,7 +28,8 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofElf, sysprof_elf, SYSPROF, ELF, GObject)
 
-SysprofElf *sysprof_elf_new                   (GMappedFile  *mapped_file,
+SysprofElf *sysprof_elf_new                   (const char   *filename,
+                                               GMappedFile  *mapped_file,
                                                GError      **error);
 const char *sysprof_elf_get_file              (SysprofElf   *self);
 const char *sysprof_elf_get_build_id          (SysprofElf   *self);

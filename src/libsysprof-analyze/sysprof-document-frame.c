@@ -29,6 +29,7 @@
 #include "sysprof-document-log.h"
 #include "sysprof-document-mark.h"
 #include "sysprof-document-mmap.h"
+#include "sysprof-document-overlay.h"
 #include "sysprof-document-process.h"
 #include "sysprof-document-sample.h"
 
@@ -166,6 +167,10 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
 
     case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
       gtype = SYSPROF_TYPE_DOCUMENT_FILE_CHUNK;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_OVERLAY:
+      gtype = SYSPROF_TYPE_DOCUMENT_OVERLAY;
       break;
 
     default:

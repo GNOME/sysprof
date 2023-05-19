@@ -54,6 +54,13 @@ sysprof_elf_loader_new (void)
 }
 
 static void
+_g_object_xunref (gpointer data)
+{
+  if (data != NULL)
+    g_object_unref (data);
+}
+
+static void
 sysprof_elf_loader_finalize (GObject *object)
 {
   SysprofElfLoader *self = (SysprofElfLoader *)object;
@@ -140,7 +147,7 @@ static void
 sysprof_elf_loader_init (SysprofElfLoader *self)
 {
   self->debug_dirs = g_strdupv ((char **)DEFAULT_DEBUG_DIRS);
-  self->cache = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_object_unref);
+  self->cache = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, _g_object_xunref);
 }
 
 /**
@@ -302,26 +309,33 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
       g_autoptr(SysprofElf) elf = NULL;
       g_autoptr(GError) local_error = NULL;
       g_autofree char *container_path = NULL;
-      SysprofElf *cached_elf;
+      SysprofElf *cached_elf = NULL;
       const char *path = paths[i];
       const char *debug_link;
 
       if ((in_flatpak && !g_str_has_prefix (path, "/home/")) || in_podman)
         path = container_path = g_build_filename ("/var/run/host", path, NULL);
 
-      if ((cached_elf = g_hash_table_lookup (self->cache, path)))
-        return g_object_ref (cached_elf);
+      /* Lookup to see if we've already parsed this ELF and handle cases where
+       * we've failed to load it too. In the case we failed to load a key is
+       * stored in the cache with a NULL value.
+       */
+      if (g_hash_table_lookup_extended (self->cache, path, NULL, (gpointer *)&cached_elf))
+        return cached_elf ? g_object_ref (cached_elf) : NULL;
 
-      if (!(mapped_file = g_mapped_file_new (path, FALSE, NULL)))
-        continue;
-
-      if (!(elf = sysprof_elf_new (path, g_steal_pointer (&mapped_file), &local_error)))
-        continue;
-
-      if ((debug_link = sysprof_elf_get_debug_link (elf)))
+      /* Try to mmap the file and parse it. If the parser fails to parse the
+       * section headers, then this probably isn't an ELF file and we should
+       * store a failure record in the cache so that we don't attempt to load
+       * it again.
+       */
+      if ((mapped_file = g_mapped_file_new (path, FALSE, NULL)) &&
+          (elf = sysprof_elf_new (path, g_steal_pointer (&mapped_file), &local_error)) &&
+          (debug_link = sysprof_elf_get_debug_link (elf)))
         sysprof_elf_loader_annotate (self, mount_namespace, elf, debug_link);
 
-      g_hash_table_insert (self->cache, g_strdup (path), g_object_ref (elf));
+      g_hash_table_insert (self->cache,
+                           g_strdup (path),
+                           elf ? g_object_ref (elf) : NULL);
 
       return g_steal_pointer (&elf);
     }

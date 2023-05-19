@@ -70,6 +70,9 @@ sysprof_strings_get (SysprofStrings *self,
 {
   GRefString *ret;
 
+  if (string == NULL)
+    return NULL;
+
   g_mutex_lock (&self->mutex);
   if (!(ret = g_hash_table_lookup (self->hashtable, string)))
     {
@@ -87,6 +90,9 @@ sysprof_strings_lookup (SysprofStrings *self,
                         const char     *string)
 {
   GRefString *ret;
+
+  if (string == NULL)
+    return NULL;
 
   g_mutex_lock (&self->mutex);
   ret = g_hash_table_lookup (self->hashtable, string);

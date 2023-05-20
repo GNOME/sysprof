@@ -364,7 +364,9 @@ sysprof_kallsyms_symbolizer_new_for_symbols (GInputStream *symbols)
   g_return_val_if_fail (G_IS_INPUT_STREAM (symbols), NULL);
 
   self = g_object_new (SYSPROF_TYPE_KALLSYMS_SYMBOLIZER, NULL);
-  self->stream = symbols;
+  self->stream = G_INPUT_STREAM (g_data_input_stream_new (symbols));
+
+  g_object_unref (symbols);
 
   return SYSPROF_SYMBOLIZER (self);
 }

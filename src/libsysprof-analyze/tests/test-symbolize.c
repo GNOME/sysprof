@@ -8,10 +8,12 @@ static GMainLoop *main_loop;
 static gboolean silent;
 static gboolean no_bundled;
 static char **debug_dirs;
+static char *kallsyms_path;
 static const GOptionEntry entries[] = {
   { "no-bundled", 'b', 0, G_OPTION_ARG_NONE, &no_bundled, "Ignore symbols bundled in capture file" },
   { "silent", 's', 0, G_OPTION_ARG_NONE, &silent, "Do not print symbol information" },
-  { "debug-dir", 'd', 0, G_OPTION_ARG_STRING_ARRAY, &debug_dirs, "Specify external debug directory, may be repeated" },
+  { "debug-dir", 'd', 0, G_OPTION_ARG_FILENAME_ARRAY, &debug_dirs, "Specify external debug directory, may be repeated" },
+  { "kallsyms", 'k', 0, G_OPTION_ARG_FILENAME, &kallsyms_path, "Specify path to kallsyms for kernel symbolizing" },
   { 0 }
 };
 
@@ -138,16 +140,25 @@ main (int argc,
 
   loader = sysprof_document_loader_new (argv[1]);
 
-  if (no_bundled || (debug_dirs && g_strv_length (debug_dirs) > 0))
+  if (TRUE)
     {
       g_autoptr(SysprofMultiSymbolizer) multi = sysprof_multi_symbolizer_new ();
       SysprofSymbolizer *elf = sysprof_elf_symbolizer_new ();
+      g_autoptr(GFile) kallsyms_file = kallsyms_path ? g_file_new_for_path (kallsyms_path) : NULL;
+      GFileInputStream *kallsyms_stream = kallsyms_file ? g_file_read (kallsyms_file, NULL, NULL) : NULL;
 
       if (debug_dirs)
         sysprof_elf_symbolizer_set_external_debug_dirs (SYSPROF_ELF_SYMBOLIZER (elf),
                                                         (const char * const *)debug_dirs);
 
-      sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+      if (!no_bundled)
+        sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());
+
+      if (kallsyms_stream == NULL)
+        sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+      else
+        sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new_for_symbols (G_INPUT_STREAM (kallsyms_stream)));
+
       sysprof_multi_symbolizer_take (multi, elf);
       sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
 

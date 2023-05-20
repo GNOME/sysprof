@@ -147,6 +147,16 @@ sysprof_mount_namespace_add_mount (SysprofMountNamespace *self,
   g_ptr_array_add (self->mounts, mount);
 }
 
+void
+sysprof_mount_namespace_add_overlay (SysprofMountNamespace  *self,
+                                     SysprofDocumentOverlay *overlay)
+{
+  g_return_if_fail (SYSPROF_IS_MOUNT_NAMESPACE (self));
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_OVERLAY (overlay));
+
+  /* TODO */
+}
+
 static SysprofMountDevice *
 sysprof_mount_namespace_find_device (SysprofMountNamespace *self,
                                      SysprofMount          *mount,

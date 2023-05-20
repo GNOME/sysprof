@@ -146,6 +146,9 @@ _sysprof_document_process_info (SysprofDocument *self,
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
+  if (pid < 0)
+    return NULL;
+
   process_info = g_hash_table_lookup (self->pid_to_process_info, GINT_TO_POINTER (pid));
 
   if (process_info == NULL && may_create)
@@ -395,6 +398,29 @@ sysprof_document_load_mountinfos (SysprofDocument *self)
 }
 
 static void
+sysprof_document_load_overlays (SysprofDocument *self)
+{
+  GtkBitsetIter iter;
+  guint i;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  if (gtk_bitset_iter_init_first (&iter, self->overlays, &i))
+    {
+      do
+        {
+          g_autoptr(SysprofDocumentOverlay) overlay = g_list_model_get_item (G_LIST_MODEL (self), i);
+          int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (overlay));
+          SysprofProcessInfo *process_info = _sysprof_document_process_info (self, pid, TRUE);
+
+          if (process_info != NULL)
+            sysprof_mount_namespace_add_overlay (process_info->mount_namespace, overlay);
+        }
+      while (gtk_bitset_iter_next (&iter, &i));
+    }
+}
+
+static void
 sysprof_document_load_worker (GTask        *task,
                               gpointer      source_object,
                               gpointer      task_data,
@@ -492,6 +518,7 @@ sysprof_document_load_worker (GTask        *task,
   sysprof_document_load_mounts (self);
   sysprof_document_load_mountinfos (self);
   sysprof_document_load_memory_maps (self);
+  sysprof_document_load_overlays (self);
 
   g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);
 }

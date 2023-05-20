@@ -161,6 +161,9 @@ sysprof_mount_namespace_find_device (SysprofMountNamespace *self,
   g_assert (SYSPROF_IS_MOUNT_NAMESPACE (self));
   g_assert (SYSPROF_IS_MOUNT (mount));
 
+  while (relative_path[0] == '/')
+    relative_path++;
+
   mount_source = sysprof_mount_get_mount_source (mount);
   subvolume = sysprof_mount_get_superblock_option (mount, "subvol");
 

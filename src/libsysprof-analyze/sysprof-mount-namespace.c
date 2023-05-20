@@ -29,6 +29,7 @@ struct _SysprofMountNamespace
   GObject    parent_instance;
   GPtrArray *devices;
   GPtrArray *mounts;
+  guint      mounts_dirty : 1;
 };
 
 static GType
@@ -145,6 +146,8 @@ sysprof_mount_namespace_add_mount (SysprofMountNamespace *self,
   g_return_if_fail (SYSPROF_IS_MOUNT (mount));
 
   g_ptr_array_add (self->mounts, mount);
+
+  self->mounts_dirty = TRUE;
 }
 
 void
@@ -193,6 +196,23 @@ sysprof_mount_namespace_find_device (SysprofMountNamespace *self,
   return NULL;
 }
 
+static gint
+sort_by_length (gconstpointer a,
+                gconstpointer b)
+{
+  SysprofMount *mount_a = *(SysprofMount * const *)a;
+  SysprofMount *mount_b = *(SysprofMount * const *)b;
+  gsize alen = strlen (sysprof_mount_get_mount_point (mount_a));
+  gsize blen = strlen (sysprof_mount_get_mount_point (mount_b));
+
+  if (alen > blen)
+    return -1;
+  else if (blen > alen)
+    return 1;
+  else
+    return 0;
+}
+
 /**
  * sysprof_mount_namespace_translate:
  * @self: a #SysprofMountNamespace
@@ -216,6 +236,12 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
 
   g_return_val_if_fail (SYSPROF_IS_MOUNT_NAMESPACE (self), NULL);
   g_return_val_if_fail (file != NULL, NULL);
+
+  if (self->mounts_dirty)
+    {
+      g_ptr_array_sort (self->mounts, sort_by_length);
+      self->mounts_dirty = FALSE;
+    }
 
   strv = g_array_new (TRUE, FALSE, sizeof (char *));
 

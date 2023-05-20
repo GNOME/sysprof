@@ -280,11 +280,12 @@ sysprof_elf_get_debug_link (SysprofElf *self)
   return elf_parser_get_debug_link (self->parser, &crc32);
 }
 
-char *
-sysprof_elf_get_symbol_at_address (SysprofElf *self,
-                                   guint64     address,
-                                   guint64    *begin_address,
-                                   guint64    *end_address)
+static char *
+sysprof_elf_get_symbol_at_address_internal (SysprofElf *self,
+                                            const char *filename,
+                                            guint64     address,
+                                            guint64    *begin_address,
+                                            guint64    *end_address)
 {
   const ElfSym *symbol;
   char *ret = NULL;
@@ -295,7 +296,7 @@ sysprof_elf_get_symbol_at_address (SysprofElf *self,
 
   if (self->debug_link_elf != NULL)
     {
-      ret = sysprof_elf_get_symbol_at_address (self->debug_link_elf, address, begin_address, end_address);
+      ret = sysprof_elf_get_symbol_at_address_internal (self->debug_link_elf, filename, address, begin_address, end_address);
 
       if (ret != NULL)
         return ret;
@@ -315,6 +316,12 @@ sysprof_elf_get_symbol_at_address (SysprofElf *self,
       else
         ret = g_strdup (name);
     }
+  else
+    {
+      begin = address;
+      end = address + 1;
+      ret = g_strdup_printf ("In File %s+0x%"G_GINT64_MODIFIER"x", filename, address);
+    }
 
   if (begin_address)
     *begin_address = begin;
@@ -323,6 +330,19 @@ sysprof_elf_get_symbol_at_address (SysprofElf *self,
     *end_address = end;
 
   return ret;
+}
+
+char *
+sysprof_elf_get_symbol_at_address (SysprofElf *self,
+                                   guint64     address,
+                                   guint64    *begin_address,
+                                   guint64    *end_address)
+{
+  return sysprof_elf_get_symbol_at_address_internal (self,
+                                                     self->file,
+                                                     address,
+                                                     begin_address,
+                                                     end_address);
 }
 
 /**

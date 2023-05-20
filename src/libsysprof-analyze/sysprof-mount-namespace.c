@@ -277,7 +277,14 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
     }
 
   if (strv->len == 0)
-    return NULL;
+    {
+      /* Try to passthrough the path in case we had no matches just to give
+       * things a chance to decode. This can happen if we never recorded
+       * the contents of /proc/$$/mountinfo.
+       */
+      char *copy = g_strdup (file);
+      g_array_append_val (strv, copy);
+    }
 
   return (char **)g_array_free (g_steal_pointer (&strv), FALSE);
 }

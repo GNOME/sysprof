@@ -52,47 +52,115 @@ static const struct {
   const char *library;
   const char *nick;
 } nick_table[] = {
-  { "libEGL.so", "EGL" },
-  { "libEGL_mesa.so", "Mesa EGL" },
-  { "libGL.so", "GL" },
-  { "libX11-xcb.so", "X11" },
-  { "libX11.so", "X11" },
   { "libc.so", "libc" },
   { "libcairo-gobject.so", "Cairo" },
   { "libcairo.so", "Cairo" },
   { "libclutter-1.0.so", "Clutter" },
   { "libclutter-glx-1.0.so", "Clutter" },
   { "libffi.so", "libffi" },
-  { "libgdk-3.so", "GDK 3" },
-  { "libgio-2.0.so", "Gio" },
-  { "libgirepository-1.0.so", "Introspection" },
   { "libgjs.so", "GJS" },
+  { "libgstreamer-1-0.so", "GStreamer" },
+  { "libgudev-1.0.so", "udev" },
+  { "libibus-1.0.so", "IBus" },
+  { "libinput.so", "Mutter" },
+  { "ld-linux-x86-64.so", "glibc" },
+  { "libnss_sss.so", "NSS" },
+  { "libsss_debug.so", "SSSD" },
+  { "libsss_util.so", "SSSD" },
+  { "libnss_systemd.so", "NSS" },
+  { "libpcre2-8.so", "PCRE" },
+  { "libpixman-1.so", "Pixman" },
+  { "libpolkit-agent-1.so", "PolicyKit" },
+  { "libpolkit-gobject-1.so", "PolicyKit" },
+  { "libselinux.so", "SELinux" },
+  { "libssl3.so", "NSS" },
+  { "libstdc++.so", "libc" },
+  { "libsystemd.so", "systemd" },
+  { "libudev.so", "udev" },
+  { "libvte-2.91.so", "VTE" },
+  { "libvte-2.91-gtk4.so", "VTE" },
+  { "libxul.so", "XUL" },
+  { "libz.so", "Zlib" },
+  { "libzstd.so", "Zstd" },
+
+  /* GObject */
   { "libglib-2.0.so", "GLib" },
   { "libgobject-2.0.so", "GObject" },
-  { "libgstreamer-1-0.so", "GStreamer" },
-  { "libgtk-3.so", "GTK 3" },
-  { "libgtk-4.so", "GTK 4" },
-  { "libgtksourceview-3.0.so", "GtkSourceView 3" },
-  { "libgtksourceview-4.so", "GtkSourceView 4" },
-  { "libgtksourceview-5.so", "GtkSourceView 5" },
+  { "libgio-2.0.so", "Gio" },
+  { "libgirepository-1.0.so", "Introspection" },
+
+  /* Pango and Harfbuzz */
+  { "libfribidi.so", "Fribidi" },
+  { "libpango-1.0.so", "Pango" },
+  { "libpangocairo-1.0.so", "Pango" },
+  { "libpangoft2-1.0.so", "Pango" },
   { "libharfbuzz-cairo.so", "Harfbuzz" },
   { "libharfbuzz-gobject.so", "Harfbuzz" },
   { "libharfbuzz-icu.so", "Harfbuzz" },
   { "libharfbuzz-subset.so", "Harfbuzz" },
   { "libharfbuzz.so", "Harfbuzz" },
-  { "libinput.so", "Mutter" },
-  { "libmutter-12.so", "Mutter" },
-  { "libpango-1.0.so", "Pango" },
-  { "libpangocairo-1.0.so", "Pango" },
-  { "libpipewire-0.3.so", "Pipewire" },
-  { "libpixman-1.so", "Pixman" },
-  { "libpolkit-agent-1.so", "PolicyKit" },
-  { "libpolkit-gobject-1.so", "PolicyKit" },
-  { "libstdc++.so", "libc" },
+
+  /* GTK */
+  { "libgtk-3.so", "GTK 3" },
+  { "libgdk-3.so", "GTK 3" },
+  { "libgtk-4.so", "GTK 4" },
+  { "libgraphene-1.0.so", "Graphene" },
+
+  /* Xorg/X11 */
+  { "libX11-xcb.so", "X11" },
+  { "libX11.so", "X11" },
+  { "libxcb.so", "X11" },
+  { "libxkbcommon.so", "XKB" },
+
+  /* Wayland */
   { "libwayland-client.so", "Wayland Client" },
   { "libwayland-cursor.so", "Wayland Cursor" },
   { "libwayland-egl.so", "Wayland EGL" },
   { "libwayland-server.so", "Wayland Server" },
+
+  /* Mutter/Clutter/Shell */
+  { "libmutter-12.so", "Mutter" },
+  { "libmutter-cogl-12.so", "Mutter" },
+  { "libmutter-clutter-12.so", "Mutter" },
+  { "libst-12.so", "GNOME Shell" },
+
+  /* GtkSourceView */
+  { "libgtksourceview-3.0.so", "GtkSourceView" },
+  { "libgtksourceview-4.so", "GtkSourceView" },
+  { "libgtksourceview-5.so", "GtkSourceView" },
+
+  /* Pipewire and Legacy Audio modules */
+  { "libasound.so", "ALSA" },
+  { "libpipewire-0.3.so", "Pipewire" },
+  { "libpipewire-module-client-node.so", "Pipewire" },
+  { "libpipewire-module-protocol-pulse.so", "Pipewire" },
+  { "libpulse.so", "PulseAudio" },
+  { "libpulsecommon-16.1.so", "PulseAudio" },
+  { "libspa-alsa.so", "Pipewire" },
+  { "libspa-audioconvert.so", "Pipewire" },
+  { "libspa-support.so", "Pipewire" },
+
+  /* OpenGL base libraries */
+  { "libEGL.so", "EGL" },
+  { "libGL.so", "GL" },
+
+  /* Mesa and DRI Drivers */
+  { "crocus_dri.so", "Mesa" },
+  { "i915_dri.so", "Mesa" },
+  { "i965_drv_video.so", "Mesa" },
+  { "iHD_drv_video.so", "Mesa" },
+  { "iris_dri.so", "Mesa" },
+  { "kms_swrast_dri.so", "Mesa" },
+  { "libEGL_mesa.so", "Mesa" },
+  { "libdrm.so", "Mesa" },
+  { "nouveau_dri.so", "Mesa" },
+  { "r300_dri.so", "Mesa" },
+  { "r600_dri.so", "Mesa" },
+  { "radeonsi_dri.so", "Mesa" },
+  { "swrast_dri.so", "Mesa" },
+  { "virtio_gpu_dri.so", "Mesa" },
+  { "vmwgfx_dri.so", "Mesa" },
+  { "zink_dri.so", "Mesa" },
 };
 
 static void
@@ -191,9 +259,12 @@ sysprof_elf_class_init (SysprofElfClass *klass)
 
   nicks = g_hash_table_new (g_str_hash, g_str_equal);
   for (guint i = 0; i < G_N_ELEMENTS (nick_table); i++)
-    g_hash_table_insert (nicks,
-                         (char *)nick_table[i].library,
-                         (char *)nick_table[i].nick);
+    {
+      g_assert (g_str_has_suffix (nick_table[i].library, ".so"));
+      g_hash_table_insert (nicks,
+                           (char *)nick_table[i].library,
+                           (char *)nick_table[i].nick);
+    }
 }
 
 static void

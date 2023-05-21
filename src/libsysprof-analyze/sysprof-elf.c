@@ -86,6 +86,8 @@ static const struct {
   { "libpangocairo-1.0.so", "Pango" },
   { "libpipewire-0.3.so", "Pipewire" },
   { "libpixman-1.so", "Pixman" },
+  { "libpolkit-agent-1.so", "PolicyKit" },
+  { "libpolkit-gobject-1.so", "PolicyKit" },
   { "libstdc++.so", "libc" },
   { "libwayland-client.so", "Wayland Client" },
   { "libwayland-cursor.so", "Wayland Cursor" },

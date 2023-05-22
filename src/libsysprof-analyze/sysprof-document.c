@@ -487,17 +487,32 @@ sysprof_document_load_worker (GTask        *task,
 
       gtk_bitset_add (self->pids, pid);
 
-      if (tainted->type == SYSPROF_CAPTURE_FRAME_SAMPLE ||
-          tainted->type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
-        gtk_bitset_add (self->traceables, self->frames->len);
-      else if (tainted->type == SYSPROF_CAPTURE_FRAME_PROCESS)
-        gtk_bitset_add (self->processes, self->frames->len);
-      else if (tainted->type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
-        gtk_bitset_add (self->file_chunks, self->frames->len);
-      else if (tainted->type == SYSPROF_CAPTURE_FRAME_MAP)
-        gtk_bitset_add (self->mmaps, self->frames->len);
-      else if (tainted->type == SYSPROF_CAPTURE_FRAME_OVERLAY)
-        gtk_bitset_add (self->overlays, self->frames->len);
+      switch ((int)tainted->type)
+        {
+        case SYSPROF_CAPTURE_FRAME_ALLOCATION:
+        case SYSPROF_CAPTURE_FRAME_SAMPLE:
+          gtk_bitset_add (self->traceables, self->frames->len);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_PROCESS:
+          gtk_bitset_add (self->processes, self->frames->len);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
+          gtk_bitset_add (self->file_chunks, self->frames->len);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_MAP:
+          gtk_bitset_add (self->mmaps, self->frames->len);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_OVERLAY:
+          gtk_bitset_add (self->overlays, self->frames->len);
+          break;
+
+        default:
+          break;
+        }
 
       if (tainted->type == SYSPROF_CAPTURE_FRAME_FILE_CHUNK)
         {

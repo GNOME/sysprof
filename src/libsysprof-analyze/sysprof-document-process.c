@@ -57,9 +57,9 @@ sysprof_document_process_finalize (GObject *object)
 
 static void
 sysprof_document_process_get_property (GObject    *object,
-                                      guint       prop_id,
-                                      GValue     *value,
-                                      GParamSpec *pspec)
+                                       guint       prop_id,
+                                       GValue     *value,
+                                       GParamSpec *pspec)
 {
   SysprofDocumentProcess *self = SYSPROF_DOCUMENT_PROCESS (object);
 

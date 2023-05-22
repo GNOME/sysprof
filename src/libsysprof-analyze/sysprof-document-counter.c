@@ -228,7 +228,7 @@ sysprof_document_counter_get_value_type (SysprofDocumentCounter *self)
   if (self->type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
     return G_TYPE_DOUBLE;
 
-  return G_TYPE_INVALID;
+  g_return_val_if_reached (G_TYPE_INVALID);
 }
 
 guint

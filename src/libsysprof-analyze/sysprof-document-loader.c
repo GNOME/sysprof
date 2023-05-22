@@ -26,6 +26,7 @@
 #include "sysprof-bundled-symbolizer.h"
 #include "sysprof-document-loader.h"
 #include "sysprof-document-private.h"
+#include "sysprof-elf-symbolizer.h"
 #include "sysprof-kallsyms-symbolizer.h"
 #include "sysprof-multi-symbolizer.h"
 
@@ -148,6 +149,7 @@ set_default_symbolizer (SysprofDocumentLoader *self)
   multi = sysprof_multi_symbolizer_new ();
   sysprof_multi_symbolizer_take (multi, sysprof_bundled_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+  sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
   self->symbolizer = SYSPROF_SYMBOLIZER (g_steal_pointer (&multi));
 }
 

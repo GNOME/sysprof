@@ -28,6 +28,7 @@
 
 #include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-counter-private.h"
+#include "sysprof-document-ctrdef.h"
 #include "sysprof-document-file-chunk.h"
 #include "sysprof-document-file-private.h"
 #include "sysprof-document-frame-private.h"
@@ -51,6 +52,7 @@ struct _SysprofDocument
   GArray                   *frames;
   GMappedFile              *mapped_file;
   const guint8             *base;
+  GListStore               *counters;
 
   SysprofStrings           *strings;
 
@@ -209,6 +211,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->processes, gtk_bitset_unref);
   g_clear_pointer (&self->traceables, gtk_bitset_unref);
 
+  g_clear_object (&self->counters);
   g_clear_object (&self->mount_namespace);
   g_clear_object (&self->symbols);
 
@@ -230,6 +233,8 @@ sysprof_document_init (SysprofDocument *self)
   self->strings = sysprof_strings_new ();
 
   self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
+
+  self->counters = g_list_store_new (SYSPROF_TYPE_DOCUMENT_COUNTER);
 
   self->ctrdefs = gtk_bitset_new_empty ();
   self->file_chunks = gtk_bitset_new_empty ();
@@ -431,18 +436,43 @@ sysprof_document_load_overlays (SysprofDocument *self)
 static void
 sysprof_document_load_counters (SysprofDocument *self)
 {
+  g_autoptr(GPtrArray) counters = NULL;
   GtkBitsetIter iter;
   guint i;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
 
+  counters = g_ptr_array_new_with_free_func (g_object_unref);
+
   if (gtk_bitset_iter_init_first (&iter, self->ctrdefs, &i))
     {
       do
         {
+          g_autoptr(SysprofDocumentCtrdef) ctrdef = g_list_model_get_item (G_LIST_MODEL (self), i);
+          guint n_counters = sysprof_document_ctrdef_get_n_counters (ctrdef);
 
+          for (guint j = 0; j < n_counters; j++)
+            {
+              const char *category;
+              const char *name;
+              const char *description;
+              guint id;
+              guint type;
+
+              sysprof_document_ctrdef_get_counter (ctrdef, j, &id, &type, &category, &name, &description);
+
+              g_ptr_array_add (counters,
+                               _sysprof_document_counter_new (id,
+                                                              type,
+                                                              sysprof_strings_get (self->strings, category),
+                                                              sysprof_strings_get (self->strings, name),
+                                                              sysprof_strings_get (self->strings, description)));
+            }
         }
       while (gtk_bitset_iter_next (&iter, &i));
+
+      if (counters->len > 0)
+        g_list_store_splice (self->counters, 0, 0, counters->pdata, counters->len);
     }
 }
 
@@ -926,4 +956,18 @@ sysprof_document_symbolize_traceable (SysprofDocument           *self,
     }
 
   return n_addresses;
+}
+
+/**
+ * sysprof_document_list_counters:
+ * @self: a #SysprofDocument
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentCounter
+ */
+GListModel *
+sysprof_document_list_counters (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return g_object_ref (G_LIST_MODEL (self->counters));
 }

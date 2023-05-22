@@ -34,6 +34,7 @@ G_BEGIN_DECLS
 # include "sysprof-document-fork.h"
 # include "sysprof-document-frame.h"
 # include "sysprof-document-loader.h"
+# include "sysprof-document-jitmap.h"
 # include "sysprof-document-log.h"
 # include "sysprof-document-mark.h"
 # include "sysprof-document-metadata.h"

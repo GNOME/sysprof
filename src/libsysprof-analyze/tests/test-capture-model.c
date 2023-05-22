@@ -81,6 +81,9 @@ main (int argc,
                  sysprof_document_mmap_get_end_address (SYSPROF_DOCUMENT_MMAP (frame)),
                  sysprof_document_mmap_get_file_offset (SYSPROF_DOCUMENT_MMAP (frame)),
                  sysprof_document_mmap_get_file (SYSPROF_DOCUMENT_MMAP (frame)));
+      else if (SYSPROF_IS_DOCUMENT_JITMAP (frame))
+        g_print (" n_jitmaps=%u",
+                 sysprof_document_jitmap_get_size (SYSPROF_DOCUMENT_JITMAP (frame)));
       else if (SYSPROF_IS_DOCUMENT_ALLOCATION (frame))
         {
           if (sysprof_document_allocation_is_free (SYSPROF_DOCUMENT_ALLOCATION (frame)))

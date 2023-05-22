@@ -15,6 +15,7 @@ libsysprof_analyze_testsuite = {
   'test-capture-model'       : {'skip': true},
   'test-elf-loader'          : {'skip': true},
   'test-list-files'          : {'skip': true},
+  'test-list-jitmap'         : {'skip': true},
   'test-print-file'          : {'skip': true},
   'test-list-processes'      : {'skip': true},
   'test-list-address-layout' : {'skip': true},

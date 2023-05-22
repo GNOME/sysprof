@@ -46,6 +46,9 @@ SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *ma
                                                    guint16                    frame_len,
                                                    gboolean                   needs_swap);
 
+#define SYSPROF_DOCUMENT_FRAME_ENDPTR(obj) \
+  (&((const guint8 *)SYSPROF_DOCUMENT_FRAME(obj)->frame)[SYSPROF_DOCUMENT_FRAME(obj)->frame_len])
+
 #define SYSPROF_DOCUMENT_FRAME_GET(obj, type) \
   ((const type *)(SYSPROF_DOCUMENT_FRAME(obj)->frame))
 

@@ -31,12 +31,16 @@ main (int   argc,
   g_autoptr(GListModel) processes = NULL;
   g_autoptr(GError) error = NULL;
   guint n_items;
+  int pid = -1;
 
   if (argc < 2)
     {
-      g_printerr ("usage: %s CAPTURE_FILE\n", argv[0]);
+      g_printerr ("usage: %s CAPTURE_FILE [PID]\n", argv[0]);
       return 1;
     }
+
+  if (argc == 3)
+    pid = atoi (argv[2]);
 
   loader = sysprof_document_loader_new (argv[1]);
   sysprof_document_loader_set_symbolizer (loader, sysprof_no_symbolizer_get ());
@@ -57,6 +61,9 @@ main (int   argc,
       g_autoptr(GListModel) mounts = sysprof_document_process_list_mounts (process);
       guint n_maps;
       guint n_mounts;
+
+      if (pid != -1 && pid != sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process)))
+        continue;
 
       g_print ("%d: %s\n",
                sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process)),

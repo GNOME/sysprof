@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 # include "sysprof-bundled-symbolizer.h"
 # include "sysprof-document.h"
 # include "sysprof-document-allocation.h"
+# include "sysprof-document-counter.h"
 # include "sysprof-document-exit.h"
 # include "sysprof-document-file.h"
 # include "sysprof-document-file-chunk.h"

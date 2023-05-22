@@ -27,6 +27,7 @@
 #include "sysprof-document-private.h"
 
 #include "sysprof-document-bitset-index-private.h"
+#include "sysprof-document-counter-private.h"
 #include "sysprof-document-file-chunk.h"
 #include "sysprof-document-file-private.h"
 #include "sysprof-document-frame-private.h"
@@ -60,6 +61,7 @@ struct _SysprofDocument
   GtkBitset                *overlays;
   GtkBitset                *pids;
   GtkBitset                *jitmaps;
+  GtkBitset                *ctrdefs;
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_process_info;
@@ -198,6 +200,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
 
+  g_clear_pointer (&self->ctrdefs, gtk_bitset_unref);
   g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
   g_clear_pointer (&self->jitmaps, gtk_bitset_unref);
   g_clear_pointer (&self->mmaps, gtk_bitset_unref);
@@ -228,6 +231,7 @@ sysprof_document_init (SysprofDocument *self)
 
   self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
 
+  self->ctrdefs = gtk_bitset_new_empty ();
   self->file_chunks = gtk_bitset_new_empty ();
   self->jitmaps = gtk_bitset_new_empty ();
   self->mmaps = gtk_bitset_new_empty ();
@@ -425,6 +429,24 @@ sysprof_document_load_overlays (SysprofDocument *self)
 }
 
 static void
+sysprof_document_load_counters (SysprofDocument *self)
+{
+  GtkBitsetIter iter;
+  guint i;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  if (gtk_bitset_iter_init_first (&iter, self->ctrdefs, &i))
+    {
+      do
+        {
+
+        }
+      while (gtk_bitset_iter_next (&iter, &i));
+    }
+}
+
+static void
 sysprof_document_load_worker (GTask        *task,
                               gpointer      source_object,
                               gpointer      task_data,
@@ -506,6 +528,10 @@ sysprof_document_load_worker (GTask        *task,
           gtk_bitset_add (self->file_chunks, self->frames->len);
           break;
 
+        case SYSPROF_CAPTURE_FRAME_CTRDEF:
+          gtk_bitset_add (self->ctrdefs, self->frames->len);
+          break;
+
         case SYSPROF_CAPTURE_FRAME_JITMAP:
           gtk_bitset_add (self->jitmaps, self->frames->len);
           break;
@@ -542,6 +568,7 @@ sysprof_document_load_worker (GTask        *task,
   sysprof_document_load_mountinfos (self);
   sysprof_document_load_memory_maps (self);
   sysprof_document_load_overlays (self);
+  sysprof_document_load_counters (self);
 
   g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);
 }

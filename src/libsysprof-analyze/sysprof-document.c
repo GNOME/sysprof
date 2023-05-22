@@ -447,23 +447,39 @@ static void
 sysprof_document_load_counters (SysprofDocument *self)
 {
   g_autoptr(GPtrArray) counters = NULL;
+  g_autoptr(GtkBitset) swap_ids = NULL;
+  GListModel *model;
   GtkBitsetIter iter;
   guint i;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
 
-  counters = g_ptr_array_new_with_free_func (g_object_unref);
+  /* Cast up front to avoid many type checks later */
+  model = G_LIST_MODEL (self);
 
+  /* If we need to swap int64 (double does not need swapping), then keep
+   * a bitset of which counters need swapping. That way we have a fast
+   * lookup below we can use when reading in counter values.
+   */
+  if (self->needs_swap)
+    swap_ids = gtk_bitset_new_empty ();
+
+  /* First create our counter objects which we will use to hold values that
+   * were extracted from the capture file. We create the array first so that
+   * we can use g_list_store_splice() rather than have signal emission for
+   * each and every added counter.
+   */
+  counters = g_ptr_array_new_with_free_func (g_object_unref);
   if (gtk_bitset_iter_init_first (&iter, self->ctrdefs, &i))
     {
       do
         {
-          g_autoptr(SysprofDocumentCtrdef) ctrdef = g_list_model_get_item (G_LIST_MODEL (self), i);
+          g_autoptr(SysprofDocumentCtrdef) ctrdef = g_list_model_get_item (model, i);
           guint n_counters = sysprof_document_ctrdef_get_n_counters (ctrdef);
 
           for (guint j = 0; j < n_counters; j++)
             {
-              g_autoptr(GArray) values = g_array_new (FALSE, FALSE, 8);
+              g_autoptr(GArray) values = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentCounterValue));
               const char *category;
               const char *name;
               const char *description;
@@ -471,6 +487,10 @@ sysprof_document_load_counters (SysprofDocument *self)
               guint type;
 
               sysprof_document_ctrdef_get_counter (ctrdef, j, &id, &type, &category, &name, &description);
+
+              /* Keep track if this counter will need int64 endian swaps */
+              if (swap_ids != NULL && type == SYSPROF_CAPTURE_COUNTER_INT64)
+                gtk_bitset_add (swap_ids, id);
 
               g_hash_table_insert (self->counter_id_to_values,
                                    GUINT_TO_POINTER (id),
@@ -489,6 +509,42 @@ sysprof_document_load_counters (SysprofDocument *self)
 
       if (counters->len > 0)
         g_list_store_splice (self->counters, 0, 0, counters->pdata, counters->len);
+    }
+
+  /* Now find all the counter values and associate them with the counters
+   * that were previously defined.
+   */
+  if (gtk_bitset_iter_init_first (&iter, self->ctrsets, &i))
+    {
+      do
+        {
+          g_autoptr(SysprofDocumentCtrset) ctrset = g_list_model_get_item (model, i);
+          guint n_values = sysprof_document_ctrset_get_n_values (ctrset);
+          SysprofDocumentCounterValue ctrval;
+
+          ctrval.time = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (ctrset));
+
+          for (guint j = 0; j < n_values; j++)
+            {
+              GArray *values;
+              guint id;
+
+              sysprof_document_ctrset_get_raw_value (ctrset, j, &id, ctrval.v_raw);
+
+              if (swap_ids != NULL && gtk_bitset_contains (swap_ids, id))
+                {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+                  ctrval.v_int64 = GINT64_FROM_BE (ctrval.v_int64);
+#else
+                  ctrval.v_int64 = GINT64_FROM_LE (ctrval.v_int64);
+#endif
+                }
+
+              if ((values = g_hash_table_lookup (self->counter_id_to_values, GUINT_TO_POINTER (id))))
+                g_array_append_val (values, ctrval);
+            }
+        }
+      while (gtk_bitset_iter_next (&iter, &i));
     }
 }
 

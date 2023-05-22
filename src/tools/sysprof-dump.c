@@ -322,11 +322,12 @@ main (gint argc,
 
                 SET_CTR_TYPE (ctr->id, ctr->type);
 
-                g_print ("  COUNTER(%d): %s\n"
-                         "              %s\n"
-                         "              %s\n"
+                g_print ("  COUNTER(%03d<%s>): %s\n"
+                         "                     %s\n"
+                         "                     %s\n"
                          "\n",
                          ctr->id,
+                         ctr->type == SYSPROF_CAPTURE_COUNTER_INT64 ? "i64" : "f64",
                          ctr->category,
                          ctr->name,
                          ctr->description);

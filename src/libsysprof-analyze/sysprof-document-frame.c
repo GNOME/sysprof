@@ -23,6 +23,7 @@
 #include "sysprof-document-frame-private.h"
 
 #include "sysprof-document-allocation.h"
+#include "sysprof-document-ctrdef.h"
 #include "sysprof-document-exit.h"
 #include "sysprof-document-file-chunk.h"
 #include "sysprof-document-fork.h"
@@ -176,6 +177,10 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
 
     case SYSPROF_CAPTURE_FRAME_JITMAP:
       gtype = SYSPROF_TYPE_DOCUMENT_JITMAP;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_CTRDEF:
+      gtype = SYSPROF_TYPE_DOCUMENT_CTRDEF;
       break;
 
     default:

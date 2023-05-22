@@ -84,6 +84,25 @@ main (int argc,
       else if (SYSPROF_IS_DOCUMENT_JITMAP (frame))
         g_print (" n_jitmaps=%u",
                  sysprof_document_jitmap_get_size (SYSPROF_DOCUMENT_JITMAP (frame)));
+      else if (SYSPROF_IS_DOCUMENT_CTRDEF (frame))
+        {
+          guint n_counters = sysprof_document_ctrdef_get_n_counters (SYSPROF_DOCUMENT_CTRDEF (frame));
+
+          g_print (" n_counters=%u", n_counters);
+
+          for (guint j = 0; j < n_counters; j++)
+            {
+              const char *category, *name;
+              guint id, type;
+
+              sysprof_document_ctrdef_get_counter (SYSPROF_DOCUMENT_CTRDEF (frame),
+                                                   j, &id, &type, &category, &name, NULL);
+              g_print (" [%u<%s>:%s.%s]",
+                       id,
+                       type == SYSPROF_CAPTURE_COUNTER_INT64 ? "i64" : "f64",
+                       category, name);
+            }
+        }
       else if (SYSPROF_IS_DOCUMENT_ALLOCATION (frame))
         {
           if (sysprof_document_allocation_is_free (SYSPROF_DOCUMENT_ALLOCATION (frame)))

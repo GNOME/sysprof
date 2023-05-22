@@ -742,7 +742,7 @@ sysprof_document_lookup_file (SysprofDocument *self,
  *
  * Gets a #GListModel of #SysprofDocumentFile
  *
- * Returns: (transfer full): a #GListModel
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentFile
  */
 GListModel *
 sysprof_document_list_files (SysprofDocument *self)
@@ -799,7 +799,7 @@ sysprof_document_list_files (SysprofDocument *self)
  * Gets a #GListModel containing #SysprofDocumentTraceable found within
  * the #SysprofDocument.
  *
- * Returns: (transfer full): a #GListModel
+ * Returns: (transfer full): a #GListModel of #SysprofTraceable
  */
 GListModel *
 sysprof_document_list_traceables (SysprofDocument *self)
@@ -816,7 +816,7 @@ sysprof_document_list_traceables (SysprofDocument *self)
  * Gets a #GListModel containing #SysprofDocumentProcess found within
  * the #SysprofDocument.
  *
- * Returns: (transfer full): a #GListModel
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentProcess
  */
 GListModel *
 sysprof_document_list_processes (SysprofDocument *self)

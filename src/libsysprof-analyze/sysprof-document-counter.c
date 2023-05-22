@@ -28,6 +28,7 @@ struct _SysprofDocumentCounter
   GRefString *category;
   GRefString *description;
   GRefString *name;
+  GArray *values;
   guint id;
   guint type;
 };
@@ -53,6 +54,7 @@ sysprof_document_counter_finalize (GObject *object)
   g_clear_pointer (&self->category, g_ref_string_release);
   g_clear_pointer (&self->description, g_ref_string_release);
   g_clear_pointer (&self->name, g_ref_string_release);
+  g_clear_pointer (&self->values, g_array_unref);
 
   G_OBJECT_CLASS (sysprof_document_counter_parent_class)->finalize (object);
 }
@@ -129,7 +131,8 @@ _sysprof_document_counter_new (guint       id,
                                guint       type,
                                GRefString *category,
                                GRefString *name,
-                               GRefString *description)
+                               GRefString *description,
+                               GArray     *values)
 {
   SysprofDocumentCounter *self;
 
@@ -139,6 +142,7 @@ _sysprof_document_counter_new (guint       id,
   self->category = category;
   self->name = name;
   self->description = description;
+  self->values = values;
 
   return self;
 }

@@ -28,6 +28,7 @@ SysprofDocumentCounter *_sysprof_document_counter_new (guint       id,
                                                        guint       type,
                                                        GRefString *category,
                                                        GRefString *name,
-                                                       GRefString *description);
+                                                       GRefString *description,
+                                                       GArray     *values);
 
 G_END_DECLS

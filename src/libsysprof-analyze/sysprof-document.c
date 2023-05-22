@@ -52,7 +52,9 @@ struct _SysprofDocument
   GArray                   *frames;
   GMappedFile              *mapped_file;
   const guint8             *base;
+
   GListStore               *counters;
+  GHashTable               *counter_id_to_values;
 
   SysprofStrings           *strings;
 
@@ -212,6 +214,8 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->traceables, gtk_bitset_unref);
 
   g_clear_object (&self->counters);
+  g_clear_pointer (&self->counter_id_to_values, g_hash_table_unref);
+
   g_clear_object (&self->mount_namespace);
   g_clear_object (&self->symbols);
 
@@ -235,6 +239,8 @@ sysprof_document_init (SysprofDocument *self)
   self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
 
   self->counters = g_list_store_new (SYSPROF_TYPE_DOCUMENT_COUNTER);
+  self->counter_id_to_values = g_hash_table_new_full (NULL, NULL, NULL,
+                                                      (GDestroyNotify)g_array_unref);
 
   self->ctrdefs = gtk_bitset_new_empty ();
   self->file_chunks = gtk_bitset_new_empty ();
@@ -453,6 +459,7 @@ sysprof_document_load_counters (SysprofDocument *self)
 
           for (guint j = 0; j < n_counters; j++)
             {
+              g_autoptr(GArray) values = g_array_new (FALSE, FALSE, 8);
               const char *category;
               const char *name;
               const char *description;
@@ -461,12 +468,17 @@ sysprof_document_load_counters (SysprofDocument *self)
 
               sysprof_document_ctrdef_get_counter (ctrdef, j, &id, &type, &category, &name, &description);
 
+              g_hash_table_insert (self->counter_id_to_values,
+                                   GUINT_TO_POINTER (id),
+                                   g_array_ref (values));
+
               g_ptr_array_add (counters,
                                _sysprof_document_counter_new (id,
                                                               type,
                                                               sysprof_strings_get (self->strings, category),
                                                               sysprof_strings_get (self->strings, name),
-                                                              sysprof_strings_get (self->strings, description)));
+                                                              sysprof_strings_get (self->strings, description),
+                                                              g_steal_pointer (&values)));
             }
         }
       while (gtk_bitset_iter_next (&iter, &i));

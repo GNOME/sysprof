@@ -29,6 +29,7 @@
 #include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-counter-private.h"
 #include "sysprof-document-ctrdef.h"
+#include "sysprof-document-ctrset.h"
 #include "sysprof-document-file-chunk.h"
 #include "sysprof-document-file-private.h"
 #include "sysprof-document-frame-private.h"
@@ -66,6 +67,7 @@ struct _SysprofDocument
   GtkBitset                *pids;
   GtkBitset                *jitmaps;
   GtkBitset                *ctrdefs;
+  GtkBitset                *ctrsets;
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_process_info;
@@ -205,6 +207,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->frames, g_array_unref);
 
   g_clear_pointer (&self->ctrdefs, gtk_bitset_unref);
+  g_clear_pointer (&self->ctrsets, gtk_bitset_unref);
   g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
   g_clear_pointer (&self->jitmaps, gtk_bitset_unref);
   g_clear_pointer (&self->mmaps, gtk_bitset_unref);
@@ -243,6 +246,7 @@ sysprof_document_init (SysprofDocument *self)
                                                       (GDestroyNotify)g_array_unref);
 
   self->ctrdefs = gtk_bitset_new_empty ();
+  self->ctrsets = gtk_bitset_new_empty ();
   self->file_chunks = gtk_bitset_new_empty ();
   self->jitmaps = gtk_bitset_new_empty ();
   self->mmaps = gtk_bitset_new_empty ();
@@ -572,6 +576,10 @@ sysprof_document_load_worker (GTask        *task,
 
         case SYSPROF_CAPTURE_FRAME_CTRDEF:
           gtk_bitset_add (self->ctrdefs, self->frames->len);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_CTRSET:
+          gtk_bitset_add (self->ctrsets, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_JITMAP:

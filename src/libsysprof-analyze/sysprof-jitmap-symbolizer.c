@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <stdlib.h>
+
 #include "sysprof-document-jitmap.h"
 #include "sysprof-document-private.h"
 #include "sysprof-jitmap-symbolizer.h"
@@ -69,8 +71,8 @@ jitmap_clear (gpointer data)
 }
 
 static int
-sort_by_address (gconstpointer a,
-                 gconstpointer b)
+compare_by_address (gconstpointer a,
+                    gconstpointer b)
 {
   const Jitmap *jitmap_a = a;
   const Jitmap *jitmap_b = b;
@@ -120,7 +122,7 @@ sysprof_jitmap_symbolizer_prepare_worker (GTask        *task,
         }
     }
 
-  g_array_sort (self->jitmaps, sort_by_address);
+  g_array_sort (self->jitmaps, compare_by_address);
 
   g_task_return_boolean (task, TRUE);
 }
@@ -170,7 +172,9 @@ sysprof_jitmap_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                      SysprofAddress            address)
 {
   SysprofJitmapSymbolizer *self = (SysprofJitmapSymbolizer *)symbolizer;
+  const Jitmap key = { address, NULL };
   guint guess = (address & 0xFFFF) - 1;
+  const Jitmap *match;
 
   if (context != SYSPROF_ADDRESS_CONTEXT_NONE &&
       context != SYSPROF_ADDRESS_CONTEXT_USER)
@@ -186,19 +190,27 @@ sysprof_jitmap_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
    */
   if G_LIKELY (guess < self->jitmaps->len)
     {
-      const Jitmap *j = &g_array_index (self->jitmaps, Jitmap, guess);
+      match = &g_array_index (self->jitmaps, Jitmap, guess);
 
-      if G_LIKELY (j->address == address)
-        return _sysprof_symbol_new (g_ref_string_acquire (j->name),
-                                    NULL,
-                                    NULL,
-                                    j->address,
-                                    j->address + 1);
+      if G_LIKELY (match->address == address)
+        goto create_symbol;
     }
 
-  /* TODO: Binary search for match */
+  match = bsearch (&key,
+                   self->jitmaps->data,
+                   self->jitmaps->len,
+                   sizeof (Jitmap),
+                   compare_by_address);
 
-  return NULL;
+  if (match == NULL)
+    return NULL;
+
+create_symbol:
+  return _sysprof_symbol_new (g_ref_string_acquire (match->name),
+                              NULL,
+                              NULL,
+                              match->address,
+                              match->address + 1);
 }
 
 static void

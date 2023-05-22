@@ -139,13 +139,16 @@ sysprof_document_jitmap_get_mapping (SysprofDocumentJitmap *self,
 
       while (pos < endptr)
         {
+          SysprofAddress addr;
           Jitmap map;
 
-          if (pos + sizeof map.address >= endptr)
+          if (pos + sizeof addr >= endptr)
             break;
 
-          memcpy (&map.address, pos, sizeof map.address);
-          pos += sizeof map.address;
+          memcpy (&addr, pos, sizeof addr);
+          pos += sizeof addr;
+
+          map.address = SYSPROF_DOCUMENT_FRAME_UINT64 (self, addr);
 
           if (!(map.name = SYSPROF_DOCUMENT_FRAME_CSTRING (self, (const char *)pos)))
             break;

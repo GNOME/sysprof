@@ -29,6 +29,7 @@ struct _SysprofDocumentCounter
   GRefString *description;
   GRefString *name;
   guint id;
+  guint type;
 };
 
 enum {
@@ -95,6 +96,26 @@ sysprof_document_counter_class_init (SysprofDocumentCounterClass *klass)
   object_class->finalize = sysprof_document_counter_finalize;
   object_class->get_property = sysprof_document_counter_get_property;
 
+  properties [PROP_ID] =
+    g_param_spec_uint ("id", NULL, NULL,
+                       0, G_MAXUINT, 0,
+                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_CATEGORY] =
+    g_param_spec_string ("category", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_DESCRIPTION] =
+    g_param_spec_string ("description", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_NAME] =
+    g_param_spec_string ("name", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -105,6 +126,7 @@ sysprof_document_counter_init (SysprofDocumentCounter *self)
 
 SysprofDocumentCounter *
 _sysprof_document_counter_new (guint       id,
+                               guint       type,
                                GRefString *category,
                                GRefString *name,
                                GRefString *description)
@@ -113,6 +135,7 @@ _sysprof_document_counter_new (guint       id,
 
   self = g_object_new (SYSPROF_TYPE_DOCUMENT_COUNTER, NULL);
   self->id = id;
+  self->type = type;
   self->category = category;
   self->name = name;
   self->description = description;
@@ -150,4 +173,18 @@ sysprof_document_counter_get_id (SysprofDocumentCounter *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self), 0);
 
   return self->id;
+}
+
+GType
+sysprof_document_counter_get_value_type (SysprofDocumentCounter *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self), G_TYPE_INVALID);
+
+  if (self->type == SYSPROF_CAPTURE_COUNTER_INT64)
+    return G_TYPE_INT64;
+
+  if (self->type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
+    return G_TYPE_DOUBLE;
+
+  return G_TYPE_INVALID;
 }

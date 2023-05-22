@@ -39,5 +39,7 @@ SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_counter_get_name        (SysprofDocumentCounter *self);
 SYSPROF_AVAILABLE_IN_ALL
 guint       sysprof_document_counter_get_id          (SysprofDocumentCounter *self);
+SYSPROF_AVAILABLE_IN_ALL
+GType       sysprof_document_counter_get_value_type  (SysprofDocumentCounter *self);
 
 G_END_DECLS

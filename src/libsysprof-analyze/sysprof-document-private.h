@@ -27,7 +27,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct _SysprofDocumentCounterValue
+typedef struct _SysprofDocumentTimedValue
 {
   gint64 time;
   union {
@@ -35,7 +35,7 @@ typedef struct _SysprofDocumentCounterValue
     double v_double;
     guint8 v_raw[8];
   };
-} SysprofDocumentCounterValue;
+} SysprofDocumentTimedValue;
 
 void             _sysprof_document_new_async        (GMappedFile          *mapped_file,
                                                      GCancellable         *cancellable,

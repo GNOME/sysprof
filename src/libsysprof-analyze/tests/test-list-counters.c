@@ -22,15 +22,30 @@
 
 #include "sysprof-document-private.h"
 
+static gboolean show_values;
+static const GOptionEntry entries[] = {
+  { "values", 'v', 0, G_OPTION_ARG_NONE, &show_values, "Show values along with counter information" },
+  { 0 }
+};
+
 int
 main (int   argc,
       char *argv[])
 {
+  g_autoptr(GOptionContext) context = g_option_context_new ("- list counter information from capture");
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(GListModel) model = NULL;
   g_autoptr(GError) error = NULL;
   guint n_items;
+
+  g_option_context_add_main_entries (context, entries, NULL);
+
+  if (!g_option_context_parse (context, &argc, &argv, &error))
+    {
+      g_printerr ("%s\n", error->message);
+      return 1;
+    }
 
   if (argc < 2)
     {
@@ -60,6 +75,32 @@ main (int   argc,
                sysprof_document_counter_get_category (counter),
                sysprof_document_counter_get_name (counter),
                sysprof_document_counter_get_description (counter));
+
+      if (show_values)
+        {
+          guint n_values = sysprof_document_counter_get_n_values (counter);
+
+          if (sysprof_document_counter_get_value_type (counter) == G_TYPE_INT64)
+            {
+              for (guint j = 0; j < n_values; j++)
+                {
+                  gint64 t;
+                  gint64 v = sysprof_document_counter_get_value_int64 (counter, j, &t);
+
+                  g_print ("  %03u: %"G_GINT64_FORMAT": %"G_GINT64_FORMAT"\n", j, t, v);
+                }
+            }
+          else if (sysprof_document_counter_get_value_type (counter) == G_TYPE_DOUBLE)
+            {
+              for (guint j = 0; j < n_values; j++)
+                {
+                  gint64 t;
+                  double v = sysprof_document_counter_get_value_int64 (counter, j, &t);
+
+                  g_print ("  %03u: %"G_GINT64_FORMAT": %lf\n", j, t, v);
+                }
+            }
+        }
     }
 
   return 0;

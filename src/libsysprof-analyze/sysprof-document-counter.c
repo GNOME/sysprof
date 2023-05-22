@@ -21,6 +21,8 @@
 #include "config.h"
 
 #include "sysprof-document-counter.h"
+#include "sysprof-document-counter-value-private.h"
+#include "sysprof-document-private.h"
 
 struct _SysprofDocumentCounter
 {
@@ -42,7 +44,43 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_FINAL_TYPE (SysprofDocumentCounter, sysprof_document_counter, G_TYPE_OBJECT)
+static guint
+sysprof_document_counter_get_n_items (GListModel *model)
+{
+  return sysprof_document_counter_get_n_values (SYSPROF_DOCUMENT_COUNTER (model));
+}
+
+static GType
+sysprof_document_counter_get_item_type (GListModel *model)
+{
+  return SYSPROF_TYPE_DOCUMENT_COUNTER_VALUE;
+}
+
+static gpointer
+sysprof_document_counter_get_item (GListModel *model,
+                                   guint       position)
+{
+  SysprofDocumentCounter *self = SYSPROF_DOCUMENT_COUNTER (model);
+  const SysprofDocumentTimedValue *value;
+
+  if (position >= self->values->len)
+    return NULL;
+
+  value = &g_array_index (self->values, SysprofDocumentTimedValue, position);
+
+  return _sysprof_document_counter_value_new (value);
+}
+
+static void
+list_model_iface_init (GListModelInterface *iface)
+{
+  iface->get_n_items = sysprof_document_counter_get_n_items;
+  iface->get_item_type = sysprof_document_counter_get_item_type;
+  iface->get_item = sysprof_document_counter_get_item;
+}
+
+G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocumentCounter, sysprof_document_counter, G_TYPE_OBJECT,
+                               G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
 static GParamSpec *properties [N_PROPS];
 
@@ -191,4 +229,62 @@ sysprof_document_counter_get_value_type (SysprofDocumentCounter *self)
     return G_TYPE_DOUBLE;
 
   return G_TYPE_INVALID;
+}
+
+guint
+sysprof_document_counter_get_n_values (SysprofDocumentCounter *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self), 0);
+
+  return self->values->len;
+}
+
+void
+sysprof_document_counter_get_value (SysprofDocumentCounter *self,
+                                    guint                   nth,
+                                    gint64                 *time,
+                                    GValue                 *value)
+{
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self));
+  g_return_if_fail (nth < self->values->len);
+  g_return_if_fail (value == NULL || G_IS_VALUE (value));
+
+  if (time != NULL)
+    *time = g_array_index (self->values, SysprofDocumentTimedValue, nth).time;
+
+  if (value == NULL)
+    return;
+
+  if (G_VALUE_HOLDS_INT64 (value))
+    g_value_set_int64 (value, g_array_index (self->values, SysprofDocumentTimedValue, nth).v_int64);
+  else if (G_VALUE_HOLDS_DOUBLE (value))
+    g_value_set_double (value, g_array_index (self->values, SysprofDocumentTimedValue, nth).v_double);
+}
+
+gint64
+sysprof_document_counter_get_value_int64 (SysprofDocumentCounter *self,
+                                          guint                   nth,
+                                          gint64                 *time)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self), 0);
+  g_return_val_if_fail (nth < self->values->len, 0);
+
+  if (time != NULL)
+    *time = g_array_index (self->values, SysprofDocumentTimedValue, nth).time;
+
+  return g_array_index (self->values, SysprofDocumentTimedValue, nth).v_int64;
+}
+
+double
+sysprof_document_counter_get_value_double (SysprofDocumentCounter *self,
+                                           guint                   nth,
+                                           gint64                 *time)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self), 0);
+  g_return_val_if_fail (nth < self->values->len, 0);
+
+  if (time != NULL)
+    *time = g_array_index (self->values, SysprofDocumentTimedValue, nth).time;
+
+  return g_array_index (self->values, SysprofDocumentTimedValue, nth).v_double;
 }

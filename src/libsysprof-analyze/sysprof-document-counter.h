@@ -32,14 +32,29 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDocumentCounter, sysprof_document_counter, SYSPROF, DOCUMENT_COUNTER, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_document_counter_get_category    (SysprofDocumentCounter *self);
+const char *sysprof_document_counter_get_category     (SysprofDocumentCounter *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_document_counter_get_description (SysprofDocumentCounter *self);
+const char *sysprof_document_counter_get_description  (SysprofDocumentCounter *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_document_counter_get_name        (SysprofDocumentCounter *self);
+const char *sysprof_document_counter_get_name         (SysprofDocumentCounter *self);
 SYSPROF_AVAILABLE_IN_ALL
-guint       sysprof_document_counter_get_id          (SysprofDocumentCounter *self);
+guint       sysprof_document_counter_get_id           (SysprofDocumentCounter *self);
 SYSPROF_AVAILABLE_IN_ALL
-GType       sysprof_document_counter_get_value_type  (SysprofDocumentCounter *self);
+GType       sysprof_document_counter_get_value_type   (SysprofDocumentCounter *self);
+SYSPROF_AVAILABLE_IN_ALL
+guint       sysprof_document_counter_get_n_values     (SysprofDocumentCounter *self);
+SYSPROF_AVAILABLE_IN_ALL
+void        sysprof_document_counter_get_value        (SysprofDocumentCounter *self,
+                                                       guint                   nth,
+                                                       gint64                 *time,
+                                                       GValue                 *value);
+SYSPROF_AVAILABLE_IN_ALL
+gint64      sysprof_document_counter_get_value_int64  (SysprofDocumentCounter *self,
+                                                       guint                   nth,
+                                                       gint64                 *time);
+SYSPROF_AVAILABLE_IN_ALL
+double      sysprof_document_counter_get_value_double (SysprofDocumentCounter *self,
+                                                       guint                   nth,
+                                                       gint64                 *time);
 
 G_END_DECLS

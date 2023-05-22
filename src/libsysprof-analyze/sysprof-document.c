@@ -479,7 +479,7 @@ sysprof_document_load_counters (SysprofDocument *self)
 
           for (guint j = 0; j < n_counters; j++)
             {
-              g_autoptr(GArray) values = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentCounterValue));
+              g_autoptr(GArray) values = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentTimedValue));
               const char *category;
               const char *name;
               const char *description;
@@ -520,7 +520,7 @@ sysprof_document_load_counters (SysprofDocument *self)
         {
           g_autoptr(SysprofDocumentCtrset) ctrset = g_list_model_get_item (model, i);
           guint n_values = sysprof_document_ctrset_get_n_values (ctrset);
-          SysprofDocumentCounterValue ctrval;
+          SysprofDocumentTimedValue ctrval;
 
           ctrval.time = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (ctrset));
 

@@ -30,6 +30,7 @@
 #include "sysprof-document-file-chunk.h"
 #include "sysprof-document-file-private.h"
 #include "sysprof-document-frame-private.h"
+#include "sysprof-document-jitmap.h"
 #include "sysprof-document-mmap.h"
 #include "sysprof-document-process-private.h"
 #include "sysprof-document-symbols-private.h"
@@ -58,6 +59,7 @@ struct _SysprofDocument
   GtkBitset                *mmaps;
   GtkBitset                *overlays;
   GtkBitset                *pids;
+  GtkBitset                *jitmaps;
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_process_info;
@@ -197,6 +199,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->frames, g_array_unref);
 
   g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
+  g_clear_pointer (&self->jitmaps, gtk_bitset_unref);
   g_clear_pointer (&self->mmaps, gtk_bitset_unref);
   g_clear_pointer (&self->overlays, gtk_bitset_unref);
   g_clear_pointer (&self->pids, gtk_bitset_unref);
@@ -226,6 +229,7 @@ sysprof_document_init (SysprofDocument *self)
   self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
 
   self->file_chunks = gtk_bitset_new_empty ();
+  self->jitmaps = gtk_bitset_new_empty ();
   self->mmaps = gtk_bitset_new_empty ();
   self->overlays = gtk_bitset_new_empty ();
   self->pids = gtk_bitset_new_empty ();
@@ -500,6 +504,10 @@ sysprof_document_load_worker (GTask        *task,
 
         case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
           gtk_bitset_add (self->file_chunks, self->frames->len);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_JITMAP:
+          gtk_bitset_add (self->jitmaps, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_MAP:
@@ -824,6 +832,23 @@ sysprof_document_list_processes (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->processes);
+}
+
+/**
+ * sysprof_document_list_jitmaps:
+ * @self: a #SysprofDocument
+ *
+ * Gets a #GListModel containing #SysprofDocumentJitmap found within
+ * the #SysprofDocument.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentJitmap
+ */
+GListModel *
+sysprof_document_list_jitmaps (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->jitmaps);
 }
 
 /**

@@ -28,6 +28,7 @@ main (int   argc,
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofDocument) document = NULL;
+  g_autoptr(GListModel) model = NULL;
   g_autoptr(GError) error = NULL;
   guint n_items;
 
@@ -46,11 +47,12 @@ main (int   argc,
       return 1;
     }
 
-  n_items = g_list_model_get_n_items (G_LIST_MODEL (document));
+  model = sysprof_document_list_jitmaps (document);
+  n_items = g_list_model_get_n_items (model);
 
   for (guint i = 0; i < n_items; i++)
     {
-      g_autoptr(SysprofDocumentFrame) frame = g_list_model_get_item ((GListModel *)document, i);
+      g_autoptr(SysprofDocumentFrame) frame = g_list_model_get_item (model, i);
 
       if (SYSPROF_IS_DOCUMENT_JITMAP (frame))
         {

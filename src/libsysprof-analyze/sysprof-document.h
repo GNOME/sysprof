@@ -45,6 +45,8 @@ GListModel             *sysprof_document_list_traceables     (SysprofDocument   
 SYSPROF_AVAILABLE_IN_ALL
 GListModel             *sysprof_document_list_processes      (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
+GListModel             *sysprof_document_list_jitmaps        (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
 guint                   sysprof_document_symbolize_traceable (SysprofDocument           *self,
                                                               SysprofDocumentTraceable  *traceable,
                                                               SysprofSymbol            **symbols,

@@ -24,7 +24,6 @@
 
 #include "sysprof-mount-private.h"
 #include "sysprof-mount-device-private.h"
-#include "sysprof-document-overlay.h"
 
 G_BEGIN_DECLS
 
@@ -38,8 +37,6 @@ void                    sysprof_mount_namespace_add_device  (SysprofMountNamespa
                                                              SysprofMountDevice     *mount);
 void                    sysprof_mount_namespace_add_mount   (SysprofMountNamespace  *self,
                                                              SysprofMount           *mount);
-void                    sysprof_mount_namespace_add_overlay (SysprofMountNamespace  *self,
-                                                             SysprofDocumentOverlay *overlay);
 char                  **sysprof_mount_namespace_translate   (SysprofMountNamespace  *self,
                                                              const char             *path);
 

@@ -25,8 +25,28 @@
 
 G_BEGIN_DECLS
 
+struct _SysprofMount
+{
+  GObject parent_instance;
+  int mount_id;
+  int parent_mount_id;
+  int device_major;
+  int device_minor;
+  GRefString *root;
+  GRefString *mount_point;
+  GRefString *mount_source;
+  GRefString *filesystem_type;
+  GRefString *superblock_options;
+  guint is_overlay : 1;
+  guint layer : 15;
+};
+
 SysprofMount *_sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
                                                 const char     *mountinfo);
+SysprofMount *_sysprof_mount_new_for_overlay   (SysprofStrings *strings,
+                                                const char     *mount_point,
+                                                const char     *host_path,
+                                                int             layer);
 const char   *_sysprof_mount_get_relative_path (SysprofMount   *self,
                                                 const char     *path);
 

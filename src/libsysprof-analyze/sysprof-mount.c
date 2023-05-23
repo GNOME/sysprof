@@ -24,20 +24,6 @@
 
 #include "sysprof-mount-private.h"
 
-struct _SysprofMount
-{
-  GObject parent_instance;
-  int mount_id;
-  int parent_mount_id;
-  int device_major;
-  int device_minor;
-  GRefString *root;
-  GRefString *mount_point;
-  GRefString *mount_source;
-  GRefString *filesystem_type;
-  GRefString *superblock_options;
-};
-
 enum {
   PROP_0,
   PROP_DEVICE_MAJOR,
@@ -237,6 +223,27 @@ _sysprof_mount_new_for_mountinfo (SysprofStrings *strings,
 
 finish:
   return g_steal_pointer (&self);
+}
+
+SysprofMount *
+_sysprof_mount_new_for_overlay (SysprofStrings *strings,
+                                const char     *mount_point,
+                                const char     *host_path,
+                                int             layer)
+{
+  SysprofMount *self;
+
+  g_return_val_if_fail (strings != NULL, NULL);
+  g_return_val_if_fail (mount_point != NULL, NULL);
+  g_return_val_if_fail (host_path != NULL, NULL);
+
+  self = g_object_new (SYSPROF_TYPE_MOUNT, NULL);
+  self->mount_point = sysprof_strings_get (strings, mount_point);
+  self->root = sysprof_strings_get (strings, "/");
+  self->mount_source = sysprof_strings_get (strings, host_path);
+  self->is_overlay = TRUE;
+
+  return self;
 }
 
 int

@@ -35,6 +35,7 @@
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-jitmap.h"
 #include "sysprof-document-mmap.h"
+#include "sysprof-document-overlay.h"
 #include "sysprof-document-process-private.h"
 #include "sysprof-document-symbols-private.h"
 #include "sysprof-mount-private.h"
@@ -437,7 +438,15 @@ sysprof_document_load_overlays (SysprofDocument *self)
           SysprofProcessInfo *process_info = _sysprof_document_process_info (self, pid, TRUE);
 
           if (process_info != NULL)
-            sysprof_mount_namespace_add_overlay (process_info->mount_namespace, overlay);
+            {
+              const char *mount_point = sysprof_document_overlay_get_destination (overlay);
+              const char *host_path = sysprof_document_overlay_get_source (overlay);
+              int layer = sysprof_document_overlay_get_layer (overlay);
+              g_autoptr(SysprofMount) mount = _sysprof_mount_new_for_overlay (self->strings, mount_point, host_path, layer);
+
+              sysprof_mount_namespace_add_mount (process_info->mount_namespace,
+                                                 g_steal_pointer (&mount));
+            }
         }
       while (gtk_bitset_iter_next (&iter, &i));
     }

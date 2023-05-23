@@ -150,16 +150,6 @@ sysprof_mount_namespace_add_mount (SysprofMountNamespace *self,
   self->mounts_dirty = TRUE;
 }
 
-void
-sysprof_mount_namespace_add_overlay (SysprofMountNamespace  *self,
-                                     SysprofDocumentOverlay *overlay)
-{
-  g_return_if_fail (SYSPROF_IS_MOUNT_NAMESPACE (self));
-  g_return_if_fail (SYSPROF_IS_DOCUMENT_OVERLAY (overlay));
-
-  /* TODO */
-}
-
 static SysprofMountDevice *
 sysprof_mount_namespace_find_device (SysprofMountNamespace *self,
                                      SysprofMount          *mount,
@@ -196,9 +186,9 @@ sysprof_mount_namespace_find_device (SysprofMountNamespace *self,
   return NULL;
 }
 
-static gint
-sort_by_length (gconstpointer a,
-                gconstpointer b)
+static int
+compare_mount (gconstpointer a,
+               gconstpointer b)
 {
   SysprofMount *mount_a = *(SysprofMount * const *)a;
   SysprofMount *mount_b = *(SysprofMount * const *)b;
@@ -209,8 +199,13 @@ sort_by_length (gconstpointer a,
     return -1;
   else if (blen > alen)
     return 1;
-  else
-    return 0;
+
+  if (mount_a->layer < mount_b->layer)
+    return -1;
+  else if (mount_a->layer > mount_b->layer)
+    return 1;
+
+  return 0;
 }
 
 /**
@@ -237,9 +232,9 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
   g_return_val_if_fail (SYSPROF_IS_MOUNT_NAMESPACE (self), NULL);
   g_return_val_if_fail (file != NULL, NULL);
 
-  if (self->mounts_dirty)
+  if G_UNLIKELY (self->mounts_dirty)
     {
-      g_ptr_array_sort (self->mounts, sort_by_length);
+      g_ptr_array_sort (self->mounts, compare_mount);
       self->mounts_dirty = FALSE;
     }
 
@@ -253,25 +248,21 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
       const char *relative;
       char *translated;
 
-      if (!(relative = _sysprof_mount_get_relative_path (mount, file)) ||
-          !(device = sysprof_mount_namespace_find_device (self, mount, relative)))
+      if (!(relative = _sysprof_mount_get_relative_path (mount, file)))
         continue;
 
-      device_mount_point = sysprof_mount_device_get_mount_point (device);
-      translated = g_build_filename (device_mount_point, relative, NULL);
+      if (!mount->is_overlay)
+        {
+          if (!(device = sysprof_mount_namespace_find_device (self, mount, relative)))
+            continue;
 
-      /* TODO: Still a bit to do here, because we need to handle overlays
-       * still as a SysprofMount. Additionally, we may need to adjust the
-       * paths a bit more based on subvolume, but I need a system such
-       * as Silverblue or GNOME OS to test that again to match or improve
-       * on existing behavior in libsysprof.
-       */
-
-      /* TODO: After we've translated to what we'd expect to see on the
-       * host system, we'll need to translate once again to what we can
-       * actually access if we're inside a container ourselves, such as
-       * Toolbox or Flatpak and use /var/run/host or similar.
-       */
+          device_mount_point = sysprof_mount_device_get_mount_point (device);
+          translated = g_build_filename (device_mount_point, relative, NULL);
+        }
+      else
+        {
+          translated = g_build_filename (mount->mount_source, relative, NULL);
+        }
 
       g_array_append_val (strv, translated);
     }

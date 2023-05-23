@@ -73,9 +73,10 @@ main (int   argc,
           g_autoptr(SysprofElf) elf = sysprof_elf_loader_load (elf_loader, info->mount_namespace, file, build_id, file_inode, &error);
 
           if (elf == NULL)
-            g_print ("%u: %s [unresolved]\n", info->pid, file);
+            g_print ("%u: %s (build-id %s) (inode %"G_GINT64_FORMAT") => [unresolved]\n",
+                     info->pid, file, build_id ? build_id : "none", file_inode);
           else
-            g_print ("%u: %s [%s]\n", info->pid, file, sysprof_elf_get_file (elf));
+            g_print ("%u: %s => %s\n", info->pid, file, sysprof_elf_get_file (elf));
 
           g_clear_error (&error);
         }

@@ -41,6 +41,15 @@ struct _SysprofElfSymbolizerClass
 
 G_DEFINE_FINAL_TYPE (SysprofElfSymbolizer, sysprof_elf_symbolizer, SYSPROF_TYPE_SYMBOLIZER)
 
+enum {
+  PROP_0,
+  PROP_DEBUG_DIRS,
+  PROP_EXTERNAL_DEBUG_DIRS,
+  N_PROPS
+};
+
+static GParamSpec *properties [N_PROPS];
+
 static SysprofSymbol *
 sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                   SysprofStrings           *strings,
@@ -140,6 +149,22 @@ fallback:
 }
 
 static void
+sysprof_elf_symbolizer_loader_notify_cb (SysprofElfSymbolizer *self,
+                                         GParamSpec           *pspec,
+                                         SysprofElfLoader     *loader)
+{
+  g_assert (SYSPROF_IS_ELF_SYMBOLIZER (self));
+  g_assert (pspec != NULL);
+  g_assert (SYSPROF_IS_ELF_LOADER (loader));
+
+  if (0) {}
+  else if (g_strcmp0 (pspec->name, "debug-dirs") == 0)
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DEBUG_DIRS]);
+  else if (g_strcmp0 (pspec->name, "external-debug-dirs") == 0)
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_EXTERNAL_DEBUG_DIRS]);
+}
+
+static void
 sysprof_elf_symbolizer_finalize (GObject *object)
 {
   SysprofElfSymbolizer *self = (SysprofElfSymbolizer *)object;
@@ -150,24 +175,124 @@ sysprof_elf_symbolizer_finalize (GObject *object)
 }
 
 static void
+sysprof_elf_symbolizer_get_property (GObject    *object,
+                                     guint       prop_id,
+                                     GValue     *value,
+                                     GParamSpec *pspec)
+{
+  SysprofElfSymbolizer *self = SYSPROF_ELF_SYMBOLIZER (object);
+
+  switch (prop_id)
+    {
+    case PROP_DEBUG_DIRS:
+      g_value_set_boxed (value, sysprof_elf_symbolizer_get_debug_dirs (self));
+      break;
+
+    case PROP_EXTERNAL_DEBUG_DIRS:
+      g_value_set_boxed (value, sysprof_elf_symbolizer_get_external_debug_dirs (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
+sysprof_elf_symbolizer_set_property (GObject      *object,
+                                     guint         prop_id,
+                                     const GValue *value,
+                                     GParamSpec   *pspec)
+{
+  SysprofElfSymbolizer *self = SYSPROF_ELF_SYMBOLIZER (object);
+
+  switch (prop_id)
+    {
+    case PROP_DEBUG_DIRS:
+      sysprof_elf_symbolizer_set_debug_dirs (self, g_value_get_boxed (value));
+      break;
+
+    case PROP_EXTERNAL_DEBUG_DIRS:
+      sysprof_elf_symbolizer_set_external_debug_dirs (self, g_value_get_boxed (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
 sysprof_elf_symbolizer_class_init (SysprofElfSymbolizerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   SysprofSymbolizerClass *symbolizer_class = SYSPROF_SYMBOLIZER_CLASS (klass);
 
   object_class->finalize = sysprof_elf_symbolizer_finalize;
+  object_class->get_property = sysprof_elf_symbolizer_get_property;
+  object_class->set_property = sysprof_elf_symbolizer_set_property;
 
   symbolizer_class->symbolize = sysprof_elf_symbolizer_symbolize;
+
+  properties[PROP_DEBUG_DIRS] =
+    g_param_spec_boxed ("debug-dirs", NULL, NULL,
+                         G_TYPE_STRV,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_EXTERNAL_DEBUG_DIRS] =
+    g_param_spec_boxed ("external-debug-dirs", NULL, NULL,
+                         G_TYPE_STRV,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
 sysprof_elf_symbolizer_init (SysprofElfSymbolizer *self)
 {
   self->loader = sysprof_elf_loader_new ();
+
+  g_signal_connect_object (self->loader,
+                           "notify",
+                           G_CALLBACK (sysprof_elf_symbolizer_loader_notify_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
 }
 
 SysprofSymbolizer *
 sysprof_elf_symbolizer_new (void)
 {
   return g_object_new (SYSPROF_TYPE_ELF_SYMBOLIZER, NULL);
+}
+
+const char * const *
+sysprof_elf_symbolizer_get_debug_dirs (SysprofElfSymbolizer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_ELF_SYMBOLIZER (self), NULL);
+
+  return sysprof_elf_loader_get_debug_dirs (self->loader);
+}
+
+void
+sysprof_elf_symbolizer_set_debug_dirs (SysprofElfSymbolizer *self,
+                                       const char * const   *debug_dirs)
+{
+  g_return_if_fail (SYSPROF_IS_ELF_SYMBOLIZER (self));
+
+  sysprof_elf_loader_set_debug_dirs (self->loader, debug_dirs);
+}
+
+const char * const *
+sysprof_elf_symbolizer_get_external_debug_dirs (SysprofElfSymbolizer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_ELF_SYMBOLIZER (self), NULL);
+
+  return sysprof_elf_loader_get_external_debug_dirs (self->loader);
+}
+
+void
+sysprof_elf_symbolizer_set_external_debug_dirs (SysprofElfSymbolizer *self,
+                                                const char * const   *external_debug_dirs)
+{
+  g_return_if_fail (SYSPROF_IS_ELF_SYMBOLIZER (self));
+
+  sysprof_elf_loader_set_external_debug_dirs (self->loader, external_debug_dirs);
 }

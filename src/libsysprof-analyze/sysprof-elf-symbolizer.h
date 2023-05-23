@@ -33,9 +33,19 @@ typedef struct _SysprofElfSymbolizer      SysprofElfSymbolizer;
 typedef struct _SysprofElfSymbolizerClass SysprofElfSymbolizerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_elf_symbolizer_get_type (void) G_GNUC_CONST;
+GType              sysprof_elf_symbolizer_get_type                 (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
-SysprofSymbolizer *sysprof_elf_symbolizer_new      (void);
+SysprofSymbolizer *sysprof_elf_symbolizer_new                      (void);
+SYSPROF_AVAILABLE_IN_ALL
+const char * const *sysprof_elf_symbolizer_get_debug_dirs          (SysprofElfSymbolizer *self);
+SYSPROF_AVAILABLE_IN_ALL
+void                sysprof_elf_symbolizer_set_debug_dirs          (SysprofElfSymbolizer *self,
+                                                                    const char * const   *debug_dirs);
+SYSPROF_AVAILABLE_IN_ALL
+const char * const *sysprof_elf_symbolizer_get_external_debug_dirs (SysprofElfSymbolizer *self);
+SYSPROF_AVAILABLE_IN_ALL
+void                sysprof_elf_symbolizer_set_external_debug_dirs (SysprofElfSymbolizer *self,
+                                                                    const char * const   *external_debug_dirs);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofElfSymbolizer, g_object_unref)
 

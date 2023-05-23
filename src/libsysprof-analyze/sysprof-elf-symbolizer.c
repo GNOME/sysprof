@@ -54,7 +54,8 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   g_autofree char *name = NULL;
   const char *path;
   const char *build_id;
-  guint64 start_address;
+  guint64 map_begin;
+  guint64 map_end;
   guint64 relative_address;
   guint64 begin_address;
   guint64 end_address;
@@ -76,12 +77,18 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   if (!(map = sysprof_address_layout_lookup (process_info->address_layout, address)))
     return NULL;
 
+  map_begin = sysprof_document_mmap_get_start_address (map);
+  map_end = sysprof_document_mmap_get_end_address (map);
+
+  g_assert (address >= map_begin);
+  g_assert (address < map_end);
+
+  file_offset = sysprof_document_mmap_get_file_offset (map);
+  relative_address = file_offset + (address - map_begin);
+
   path = sysprof_document_mmap_get_file (map);
   build_id = sysprof_document_mmap_get_build_id (map);
   file_inode = sysprof_document_mmap_get_file_inode (map);
-  file_offset = sysprof_document_mmap_get_file_offset (map);
-  start_address = sysprof_document_mmap_get_start_address (map);
-  relative_address = file_offset + (address - start_address);
 
   /* See if we can load an ELF at the path . It will be translated from the
    * mount namespace into something hopefully we can access.
@@ -103,11 +110,19 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                                   &end_address)))
     goto fallback;
 
+  /* Sanitize address ranges if we have to. Sometimes that can happen
+   * for us, but it seems to be limited to glibc.
+   */
+  begin_address = CLAMP (begin_address, file_offset, file_offset + (map_end - map_begin));
+  end_address = CLAMP (end_address, file_offset, file_offset + (map_end - map_begin));
+  if (end_address == begin_address)
+    end_address++;
+
   return _sysprof_symbol_new (sysprof_strings_get (strings, name),
                               sysprof_strings_get (strings, sysprof_elf_get_nick (elf)),
                               sysprof_strings_get (strings, path),
-                              start_address + (begin_address - file_offset),
-                              start_address + (end_address - file_offset));
+                              map_begin + (begin_address - file_offset),
+                              map_begin + (end_address - file_offset));
 
 fallback:
   /* Fallback, we failed to locate the symbol within a file we can
@@ -119,6 +134,7 @@ fallback:
                           relative_address);
   begin_address = address;
   end_address = address + 1;
+
   return _sysprof_symbol_new (sysprof_strings_get (strings, name),
                               NULL, NULL, begin_address, end_address);
 }

@@ -195,6 +195,11 @@ compare_mount (gconstpointer a,
   gsize alen = strlen (sysprof_mount_get_mount_point (mount_a));
   gsize blen = strlen (sysprof_mount_get_mount_point (mount_b));
 
+  if (mount_a->is_overlay && !mount_b->is_overlay)
+    return -1;
+  else if (!mount_a->is_overlay && mount_b->is_overlay)
+    return 1;
+
   if (alen > blen)
     return -1;
   else if (blen > alen)

@@ -168,7 +168,6 @@ sysprof_elf_finalize (GObject *object)
 {
   SysprofElf *self = (SysprofElf *)object;
 
-  g_clear_pointer (&self->build_id, g_free);
   g_clear_pointer (&self->file, g_free);
   g_clear_pointer (&self->parser, elf_parser_free);
   g_clear_object (&self->debug_link_elf);
@@ -340,7 +339,7 @@ sysprof_elf_get_build_id (SysprofElf *self)
 {
   g_return_val_if_fail (SYSPROF_IS_ELF (self), NULL);
 
-  return self->build_id;
+  return elf_parser_get_build_id (self->parser);
 }
 
 const char *

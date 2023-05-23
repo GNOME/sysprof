@@ -17,6 +17,7 @@ libsysprof_analyze_testsuite = {
   'test-list-counters'       : {'skip': true},
   'test-list-files'          : {'skip': true},
   'test-list-jitmap'         : {'skip': true},
+  'test-list-overlays'       : {'skip': true},
   'test-print-file'          : {'skip': true},
   'test-list-processes'      : {'skip': true},
   'test-list-address-layout' : {'skip': true},

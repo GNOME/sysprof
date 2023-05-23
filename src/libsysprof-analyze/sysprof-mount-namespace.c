@@ -266,17 +266,31 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
       if (!(relative = _sysprof_mount_get_relative_path (mount, file)))
         continue;
 
-      if (!mount->is_overlay)
+      if (mount->is_overlay)
         {
+          translated = g_build_filename (mount->mount_source, relative, NULL);
+        }
+      else
+        {
+          const char *root;
+          const char *subvolume;
+
           if (!(device = sysprof_mount_namespace_find_device (self, mount, relative)))
             continue;
 
           device_mount_point = sysprof_mount_device_get_mount_point (device);
-          translated = g_build_filename (device_mount_point, relative, NULL);
-        }
-      else
-        {
-          translated = g_build_filename (mount->mount_source, relative, NULL);
+          root = sysprof_mount_get_root (mount);
+          subvolume = sysprof_mount_device_get_subvolume (device);
+
+          if (root != NULL && subvolume != NULL)
+            {
+              if (g_strcmp0 (root, subvolume) == 0)
+                root = "/";
+              else if (g_str_has_prefix (root, subvolume) && root[strlen (subvolume)] == '/')
+                root += strlen (subvolume);
+            }
+
+          translated = g_build_filename (device_mount_point, root, relative, NULL);
         }
 
       g_array_append_val (strv, translated);

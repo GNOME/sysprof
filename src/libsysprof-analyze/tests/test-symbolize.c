@@ -5,6 +5,14 @@
 #include "sysprof-document-private.h"
 
 static GMainLoop *main_loop;
+static gboolean silent;
+static gboolean no_bundled;
+static const GOptionEntry entries[] = {
+  { "no-bundled", 'b', 0, G_OPTION_ARG_NONE, &no_bundled, "Ignore symbols bundled in capture file" },
+  { "silent", 's', 0, G_OPTION_ARG_NONE, &silent, "Do not print symbol information" },
+  { 0 }
+};
+
 
 static void
 load_cb (GObject      *object,
@@ -28,6 +36,12 @@ load_cb (GObject      *object,
 
   traceables = sysprof_document_list_traceables (document);
   n_items = g_list_model_get_n_items (traceables);
+
+  if (silent)
+    {
+      g_main_loop_quit (main_loop);
+      return;
+    }
 
   str = g_string_new ("");
 
@@ -95,12 +109,6 @@ load_cb (GObject      *object,
 
   g_main_loop_quit (main_loop);
 }
-
-static gboolean no_bundled;
-static const GOptionEntry entries[] = {
-  { "no-bundled", 'b', 0, G_OPTION_ARG_NONE, &no_bundled, "Ignore symbols bundled in capture file" },
-  { 0 }
-};
 
 int
 main (int argc,

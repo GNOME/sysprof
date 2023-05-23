@@ -405,8 +405,8 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
             g_clear_object (&elf);
         }
 
-
-      return g_steal_pointer (&elf);
+      if (elf != NULL)
+        return g_steal_pointer (&elf);
     }
 
 failure:

@@ -68,6 +68,10 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
        context != SYSPROF_ADDRESS_CONTEXT_USER))
     return NULL;
 
+  /* Always ignore jitmap functions, no matter the ordering */
+  if ((address & 0xFFFFFFFF00000000) == 0xE000000000000000)
+    return NULL;
+
   /* First find out what was mapped at that address */
   if (!(map = sysprof_address_layout_lookup (process_info->address_layout, address)))
     return NULL;

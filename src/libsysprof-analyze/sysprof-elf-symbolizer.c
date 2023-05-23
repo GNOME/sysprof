@@ -110,7 +110,7 @@ fallback:
    * access, so tell the user about what file contained the symbol
    * and where (relative to that file) the IP was.
    */
-  name = g_strdup_printf ("In file %s+0x%"G_GINT64_MODIFIER"x",
+  name = g_strdup_printf ("In File %s+0x%"G_GINT64_MODIFIER"x",
                           sysprof_document_mmap_get_file (map),
                           relative_address);
   begin_address = address;

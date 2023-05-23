@@ -76,13 +76,19 @@ sysprof_document_ctrset_get_raw_value (SysprofDocumentCtrset *self,
                                        guint8 value[restrict 8])
 {
   const SysprofCaptureCounterSet *ctrset;
+  guint group;
+  guint pos;
 
   g_return_if_fail (SYSPROF_IS_DOCUMENT_CTRSET (self));
   g_return_if_fail (nth < sysprof_document_ctrset_get_n_values (self));
   g_return_if_fail (value != NULL);
 
+  group = nth / 8;
+  pos = nth % 8;
+
   ctrset = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureCounterSet);
 
-  *id = ctrset->values[nth / 8].ids[nth % 8];
-  memcpy (value, &ctrset->values[nth / 8].values[nth % 8], 8);
+  *id = SYSPROF_DOCUMENT_FRAME_UINT32 (self, ctrset->values[group].ids[pos]);
+
+  memcpy (value, &ctrset->values[group].values[pos], 8);
 }

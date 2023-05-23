@@ -178,8 +178,15 @@ sysprof_mount_namespace_find_device (SysprofMountNamespace *self,
       if (subvolume != NULL)
         {
           const char *device_subvolume = sysprof_mount_device_get_subvolume (device);
+          const char *mount_point = sysprof_mount_device_get_mount_point (device);
 
           if (g_strcmp0 (subvolume, device_subvolume) != 0)
+            continue;
+
+          /* Just ignore /sysroot, as it seems to be a convention on systems like
+           * Silverblue or GNOME OS.
+           */
+          if (g_strcmp0 (mount_point, "/sysroot") == 0)
             continue;
         }
 

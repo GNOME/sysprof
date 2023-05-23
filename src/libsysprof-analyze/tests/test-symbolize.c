@@ -7,9 +7,11 @@
 static GMainLoop *main_loop;
 static gboolean silent;
 static gboolean no_bundled;
+static char **debug_dirs;
 static const GOptionEntry entries[] = {
   { "no-bundled", 'b', 0, G_OPTION_ARG_NONE, &no_bundled, "Ignore symbols bundled in capture file" },
   { "silent", 's', 0, G_OPTION_ARG_NONE, &silent, "Do not print symbol information" },
+  { "debug-dir", 'd', 0, G_OPTION_ARG_STRING_ARRAY, &debug_dirs, "Specify external debug directory, may be repeated" },
   { 0 }
 };
 
@@ -136,12 +138,17 @@ main (int argc,
 
   loader = sysprof_document_loader_new (argv[1]);
 
-  if (no_bundled)
+  if (no_bundled || (debug_dirs && g_strv_length (debug_dirs) > 0))
     {
       g_autoptr(SysprofMultiSymbolizer) multi = sysprof_multi_symbolizer_new ();
+      SysprofSymbolizer *elf = sysprof_elf_symbolizer_new ();
+
+      if (debug_dirs)
+        sysprof_elf_symbolizer_set_external_debug_dirs (SYSPROF_ELF_SYMBOLIZER (elf),
+                                                        (const char * const *)debug_dirs);
 
       sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
-      sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
+      sysprof_multi_symbolizer_take (multi, elf);
       sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
 
       sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));

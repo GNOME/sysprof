@@ -318,11 +318,12 @@ sysprof_perf_source_handle_event (SysprofPerfCounterEvent *event,
       offset += sizeof (GPid) + sizeof (GPid);
       memcpy (&time, event->comm.comm + offset, sizeof time);
 
-      sysprof_capture_writer_add_process (self->writer,
-                                          time,
-                                          cpu,
-                                          event->comm.pid,
-                                          event->comm.comm);
+      if (event->comm.pid == event->comm.tid)
+        sysprof_capture_writer_add_process (self->writer,
+                                            time,
+                                            cpu,
+                                            event->comm.pid,
+                                            event->comm.comm);
 
       break;
 

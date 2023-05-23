@@ -375,7 +375,11 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
       if (g_hash_table_lookup_extended (self->cache, path, NULL, (gpointer *)&cached_elf))
         {
           if (cached_elf != NULL)
-            return g_object_ref (cached_elf);
+            {
+              if (sysprof_elf_matches (cached_elf, file_inode, build_id))
+                return g_object_ref (cached_elf);
+            }
+
           continue;
         }
 

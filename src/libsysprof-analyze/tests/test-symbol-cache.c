@@ -160,6 +160,38 @@ test_interval_tree (void)
     g_assert_finalize_object (symbols[i].symbol);
 }
 
+static void
+test_jitmap (void)
+{
+  SysprofSymbolCache *symbol_cache = sysprof_symbol_cache_new ();
+
+  for (guint i = 1; i <= 10000; i++)
+    {
+      SysprofAddress begin = 0xE000000000000000 + i;
+      g_autofree char *name = g_strdup_printf ("%u", i);
+      SysprofSymbol *symbol = create_symbol (name, begin, begin+1);
+
+      sysprof_symbol_cache_take (symbol_cache, symbol);
+    }
+
+  g_assert_null (sysprof_symbol_cache_lookup (symbol_cache, 0));
+  g_assert_null (sysprof_symbol_cache_lookup (symbol_cache, 10001));
+
+  for (guint i = 1; i <= 10000; i++)
+    {
+      SysprofAddress begin = 0xE000000000000000 + i;
+      SysprofSymbol *symbol = sysprof_symbol_cache_lookup (symbol_cache, begin);
+      g_autofree char *name = g_strdup_printf ("%u", i);
+
+      g_assert_nonnull (symbol);
+      g_assert_cmpint (begin, ==, symbol->begin_address);
+      g_assert_cmpint (begin+1, ==, symbol->end_address);
+      g_assert_cmpstr (name, ==, symbol->name);
+    }
+
+  g_assert_finalize_object (symbol_cache);
+}
+
 int
 main (int argc,
       char *argv[])
@@ -167,5 +199,7 @@ main (int argc,
   g_test_init (&argc, &argv, NULL);
   g_test_add_func ("/libsysprof-analyze/SysprofSymbolCache/interval-tree",
                    test_interval_tree);
+  g_test_add_func ("/libsysprof-analyze/SysprofSymbolCache/jitmap",
+                   test_jitmap);
   return g_test_run ();
 }

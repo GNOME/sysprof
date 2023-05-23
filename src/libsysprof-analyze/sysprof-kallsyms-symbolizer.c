@@ -39,6 +39,7 @@ typedef struct _KernelSymbol
 struct _SysprofKallsymsSymbolizer
 {
   SysprofSymbolizer  parent_instance;
+  GInputStream      *stream;
   GArray            *kallsyms;
   guint64            low;
   guint64            high;
@@ -202,22 +203,32 @@ sysprof_kallsyms_symbolizer_prepare_async (SysprofSymbolizer   *symbolizer,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_kallsyms_symbolizer_prepare_async);
 
-  if (!(file = sysprof_document_lookup_file (document, "/proc/kallsyms.gz")))
+  if (self->stream == NULL)
     {
-      g_task_return_new_error (task,
-                               G_IO_ERROR,
-                               G_IO_ERROR_NOT_SUPPORTED,
-                               "No kallsyms found to decode");
-      return;
+      if (!(file = sysprof_document_lookup_file (document, "/proc/kallsyms.gz")))
+        {
+          g_task_return_new_error (task,
+                                   G_IO_ERROR,
+                                   G_IO_ERROR_NOT_SUPPORTED,
+                                   "No kallsyms found to decode");
+          return;
+        }
+
+      decompressor = g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP);
+      input_gz = sysprof_document_file_read (file);
+      input = g_converter_input_stream_new (input_gz, G_CONVERTER (decompressor));
+
+      g_task_set_task_data (task,
+                            g_data_input_stream_new (input),
+                            g_object_unref);
+    }
+  else
+    {
+      g_task_set_task_data (task,
+                            g_steal_pointer (&self->stream),
+                            g_object_unref);
     }
 
-  decompressor = g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP);
-  input_gz = sysprof_document_file_read (file);
-  input = g_converter_input_stream_new (input_gz, G_CONVERTER (decompressor));
-
-  g_task_set_task_data (task,
-                        g_data_input_stream_new (input),
-                        g_object_unref);
   g_task_run_in_thread (task, sysprof_kallsyms_symbolizer_prepare_worker);
 }
 
@@ -331,4 +342,29 @@ SysprofSymbolizer *
 sysprof_kallsyms_symbolizer_new (void)
 {
   return g_object_new (SYSPROF_TYPE_KALLSYMS_SYMBOLIZER, NULL);
+}
+
+/**
+ * sysprof_kallsyms_symbolizer_new_for_symbols:
+ * @symbols: (transfer full): a #GInputStream
+ *
+ * Creates a symbolizer using the contents of @symbols as the contents
+ * of `/proc/kallsyms` for decoding. This is useful if you need to unwind
+ * symbols from a machine that is different than where the capture was
+ * recorded and have not embedded `/proc/kallsyms.gz` within the capture
+ * file for use by #SysprofKallsymsSymbolizer.
+ *
+ * Returns: (transfer full): a #SysprofKallsymsSymbolizer
+ */
+SysprofSymbolizer *
+sysprof_kallsyms_symbolizer_new_for_symbols (GInputStream *symbols)
+{
+  SysprofKallsymsSymbolizer *self;
+
+  g_return_val_if_fail (G_IS_INPUT_STREAM (symbols), NULL);
+
+  self = g_object_new (SYSPROF_TYPE_KALLSYMS_SYMBOLIZER, NULL);
+  self->stream = symbols;
+
+  return SYSPROF_SYMBOLIZER (self);
 }

@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <gio/gio.h>
+
 #include "sysprof-symbolizer.h"
 
 G_BEGIN_DECLS
@@ -33,9 +35,11 @@ typedef struct _SysprofKallsymsSymbolizer      SysprofKallsymsSymbolizer;
 typedef struct _SysprofKallsymsSymbolizerClass SysprofKallsymsSymbolizerClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType              sysprof_kallsyms_symbolizer_get_type (void) G_GNUC_CONST;
+GType              sysprof_kallsyms_symbolizer_get_type        (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
-SysprofSymbolizer *sysprof_kallsyms_symbolizer_new      (void);
+SysprofSymbolizer *sysprof_kallsyms_symbolizer_new             (void);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofSymbolizer *sysprof_kallsyms_symbolizer_new_for_symbols (GInputStream *symbols);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofKallsymsSymbolizer, g_object_unref)
 

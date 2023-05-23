@@ -21,19 +21,21 @@
 #include "config.h"
 
 #include <gio/gio.h>
+#include <gtk/gtk.h>
 
 #include "sysprof-address-layout-private.h"
 
 struct _SysprofAddressLayout
 {
   GObject    parent_instance;
-  GSequence *mmaps;
+  GPtrArray *mmaps;
+  guint      mmaps_dirty : 1;
 };
 
 static guint
 sysprof_address_layout_get_n_items (GListModel *model)
 {
-  return g_sequence_get_length (SYSPROF_ADDRESS_LAYOUT (model)->mmaps);
+  return SYSPROF_ADDRESS_LAYOUT (model)->mmaps->len;
 }
 
 static GType
@@ -47,12 +49,11 @@ sysprof_address_layout_get_item (GListModel *model,
                                  guint       position)
 {
   SysprofAddressLayout *self = SYSPROF_ADDRESS_LAYOUT (model);
-  GSequenceIter *iter = g_sequence_get_iter_at_pos (self->mmaps, position);
 
-  if (g_sequence_iter_is_end (iter))
+  if (position >= self->mmaps->len)
     return NULL;
 
-  return g_object_ref (g_sequence_get (iter));
+  return g_object_ref (g_ptr_array_index (self->mmaps, position));
 }
 
 static void
@@ -71,7 +72,7 @@ sysprof_address_layout_finalize (GObject *object)
 {
   SysprofAddressLayout *self = (SysprofAddressLayout *)object;
 
-  g_clear_pointer (&self->mmaps, g_sequence_free);
+  g_clear_pointer (&self->mmaps, g_ptr_array_unref);
 
   G_OBJECT_CLASS (sysprof_address_layout_parent_class)->finalize (object);
 }
@@ -87,32 +88,13 @@ sysprof_address_layout_class_init (SysprofAddressLayoutClass *klass)
 static void
 sysprof_address_layout_init (SysprofAddressLayout *self)
 {
-  self->mmaps = g_sequence_new (g_object_unref);
+  self->mmaps = g_ptr_array_new_with_free_func (g_object_unref);
 }
 
 SysprofAddressLayout *
 sysprof_address_layout_new (void)
 {
   return g_object_new (SYSPROF_TYPE_ADDRESS_LAYOUT, NULL);
-}
-
-static int
-sysprof_address_layout_compare (gconstpointer a,
-                                gconstpointer b,
-                                gpointer      user_data)
-{
-  SysprofDocumentMmap *mmap_a = (SysprofDocumentMmap *)a;
-  SysprofDocumentMmap *mmap_b = (SysprofDocumentMmap *)b;
-  guint64 begin_a = sysprof_document_mmap_get_start_address (mmap_a);
-  guint64 begin_b = sysprof_document_mmap_get_start_address (mmap_b);
-
-  if (begin_a < begin_b)
-    return -1;
-
-  if (begin_a > begin_b)
-    return 1;
-
-  return 0;
 }
 
 void
@@ -122,25 +104,85 @@ sysprof_address_layout_take (SysprofAddressLayout *self,
   g_return_if_fail (SYSPROF_IS_ADDRESS_LAYOUT (self));
   g_return_if_fail (SYSPROF_IS_DOCUMENT_MMAP (map));
 
-  g_sequence_insert_sorted (self->mmaps,
-                            map,
-                            sysprof_address_layout_compare,
-                            NULL);
+  g_ptr_array_add (self->mmaps, map);
+
+  self->mmaps_dirty = TRUE;
 }
 
 static int
-sysprof_address_layout_lookup_func (gconstpointer a,
-                                    gconstpointer b,
-                                    gpointer      user_data)
+compare_mmaps (gconstpointer a,
+               gconstpointer b)
 {
-  SysprofDocumentMmap *mmap_a = (SysprofDocumentMmap *)a;
-  const gint64 *addr = b;
+  SysprofDocumentMmap *mmap_a = *(SysprofDocumentMmap * const *)a;
+  SysprofDocumentMmap *mmap_b = *(SysprofDocumentMmap * const *)b;
+  guint64 begin_a = sysprof_document_mmap_get_start_address (mmap_a);
+  guint64 begin_b = sysprof_document_mmap_get_start_address (mmap_b);
+  guint64 end_a = sysprof_document_mmap_get_end_address (mmap_a);
+  guint64 end_b = sysprof_document_mmap_get_end_address (mmap_b);
 
-  if (*addr < sysprof_document_mmap_get_start_address (mmap_a))
+  if (begin_a < begin_b)
+    return -1;
+
+  if (begin_a > begin_b)
     return 1;
 
-  if (*addr >= sysprof_document_mmap_get_end_address (mmap_a))
+  if (end_a < end_b)
     return -1;
+
+  if (end_a > end_b)
+    return 1;
+
+  return 0;
+}
+
+static gboolean
+mmaps_overlap (SysprofDocumentMmap *a,
+               SysprofDocumentMmap *b)
+{
+  if ((sysprof_document_mmap_get_start_address (a) <= sysprof_document_mmap_get_start_address (b)) &&
+      (sysprof_document_mmap_get_end_address (a) > sysprof_document_mmap_get_start_address (b)))
+    return TRUE;
+
+  return FALSE;
+}
+
+static GtkBitset *
+find_duplicates (GPtrArray *sorted)
+{
+  GtkBitset *bitset = gtk_bitset_new_empty ();
+
+  if (sorted->len == 0)
+    return bitset;
+
+  for (guint i = 0; i < sorted->len-1; i++)
+    {
+      SysprofDocumentMmap *map = g_ptr_array_index (sorted, i);
+      SysprofDocumentMmap *next = g_ptr_array_index (sorted, i+1);
+
+      /* Take the second one if they overlap, which is generally the large of
+       * the mmaps. That can happen when something like [stack] is resized into
+       * a larger mmap. It's useful to remove duplicates so we get more
+       * predictable bsearch results.
+       */
+      if (mmaps_overlap (map, next))
+        gtk_bitset_add (bitset, i);
+    }
+
+  return bitset;
+}
+
+static int
+find_by_address (gconstpointer a,
+                 gconstpointer b)
+{
+  const SysprofAddress *key = a;
+  SysprofDocumentMmap *map = *(SysprofDocumentMmap * const *)b;
+
+  if (*key < sysprof_document_mmap_get_start_address (map))
+    return -1;
+
+  if (*key >= sysprof_document_mmap_get_end_address (map))
+    return 1;
 
   return 0;
 }
@@ -149,14 +191,37 @@ SysprofDocumentMmap *
 sysprof_address_layout_lookup (SysprofAddressLayout *self,
                                SysprofAddress        address)
 {
-  GSequenceIter *iter;
+  SysprofDocumentMmap **ret;
 
   g_return_val_if_fail (SYSPROF_IS_ADDRESS_LAYOUT (self), NULL);
 
-  iter = g_sequence_lookup (self->mmaps,
-                            &address,
-                            sysprof_address_layout_lookup_func,
-                            NULL);
+  if (self->mmaps_dirty)
+    {
+      g_autoptr(GtkBitset) dups = NULL;
+      GtkBitsetIter iter;
+      guint old_len = self->mmaps->len;
+      guint i;
 
-  return iter ? g_sequence_get (iter) : NULL;
+      self->mmaps_dirty = FALSE;
+
+      g_ptr_array_sort (self->mmaps, compare_mmaps);
+      dups = find_duplicates (self->mmaps);
+
+      if (gtk_bitset_iter_init_last (&iter, dups, &i))
+        {
+          do
+            g_ptr_array_remove_index (self->mmaps, i);
+          while (gtk_bitset_iter_previous (&iter, &i));
+        }
+
+      g_list_model_items_changed (G_LIST_MODEL (self), 0, old_len, self->mmaps->len);
+    }
+
+  ret = bsearch (&address,
+                 self->mmaps->pdata,
+                 self->mmaps->len,
+                 sizeof (gpointer),
+                 find_by_address);
+
+  return ret ? *ret : NULL;
 }

@@ -251,7 +251,7 @@ sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
     return NULL;
 
   if (address < self->low || address >= self->high)
-    return NULL;
+    goto failure;
 
   symbols = &g_array_index (self->kallsyms, KernelSymbol, 0);
   n_symbols = self->kallsyms->len;
@@ -260,7 +260,7 @@ sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   right = n_symbols;
   mid = n_symbols / 2;
 
-  for (;;)
+  while (left <= right)
     {
       const KernelSymbol *ksym = &symbols[mid];
       const KernelSymbol *next = &symbols[mid+1];
@@ -281,7 +281,17 @@ sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
       mid = left + ((right-left) / 2);
     }
 
-  g_assert_not_reached ();
+failure:
+  {
+    char name[64];
+
+    g_snprintf (name, sizeof name, "In Kernel+0x%"G_GINT64_MODIFIER"x", address);
+    return _sysprof_symbol_new (sysprof_strings_get (strings, name),
+                                g_ref_string_acquire (linux_string),
+                                NULL,
+                                address,
+                                address + 1);
+  }
 }
 
 static void

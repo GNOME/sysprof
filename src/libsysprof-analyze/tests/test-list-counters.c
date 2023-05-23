@@ -69,12 +69,13 @@ main (int   argc,
     {
       g_autoptr(SysprofDocumentCounter) counter = g_list_model_get_item (model, i);
 
-      g_print ("%d<%s> %s.%s: %s\n",
+      g_print ("%d<%s> %s.%s: %s (%u values)\n",
                sysprof_document_counter_get_id (counter),
                sysprof_document_counter_get_value_type (counter) == G_TYPE_INT64 ? "i64" : "f64",
                sysprof_document_counter_get_category (counter),
                sysprof_document_counter_get_name (counter),
-               sysprof_document_counter_get_description (counter));
+               sysprof_document_counter_get_description (counter),
+               sysprof_document_counter_get_n_values (counter));
 
       if (show_values)
         {

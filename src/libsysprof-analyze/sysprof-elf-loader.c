@@ -296,6 +296,29 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
             }
         }
     }
+
+  if (self->external_debug_dirs != NULL)
+    {
+      for (guint i = 0; self->external_debug_dirs[i]; i++)
+        {
+          g_autoptr(SysprofElf) debug_link_elf = NULL;
+          g_autofree char *directory_name = NULL;
+          g_autofree char *debug_path = NULL;
+          g_autofree char *container_path = NULL;
+          const char *debug_dir = self->external_debug_dirs[i];
+          const char *build_id;
+
+          directory_name = g_path_get_dirname (orig_file);
+          debug_path = g_build_filename (debug_dir, directory_name, debug_link, NULL);
+          build_id = sysprof_elf_get_build_id (elf);
+
+          if ((debug_link_elf = sysprof_elf_loader_load (self, NULL, debug_path, build_id, 0, NULL)))
+            {
+              sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
+              return;
+            }
+        }
+    }
 }
 
 static gboolean
@@ -352,16 +375,26 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
                          guint64                 file_inode,
                          GError                **error)
 {
+  const char * const fallback_paths[2] = { file, NULL };
   g_auto(GStrv) paths = NULL;
 
   g_return_val_if_fail (SYSPROF_IS_ELF_LOADER (self), NULL);
-  g_return_val_if_fail (SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace), NULL);
+  g_return_val_if_fail (!mount_namespace || SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace), NULL);
 
   /* We must translate the file into a number of paths that may possibly
    * locate the file in the case that there are overlays in the mount
    * namespace. Each of the paths could be in a lower overlay layer.
+   *
+   * To allow for zero-translation, we allow a NULL mount namespace.
+   * sysprof_elf_loader_annotate() will use that to load from external
+   * directories for which on additional translation is necessary.
    */
-  if (!(paths = sysprof_mount_namespace_translate (mount_namespace, file)))
+  if (mount_namespace == NULL)
+    paths = g_strdupv ((char **)fallback_paths);
+  else
+    paths = sysprof_mount_namespace_translate (mount_namespace, file);
+
+  if (paths == NULL)
     goto failure;
 
   for (guint i = 0; paths[i]; i++)
@@ -407,7 +440,7 @@ sysprof_elf_loader_load (SysprofElfLoader       *self,
 
       if (elf != NULL)
         {
-          if ((debug_link = sysprof_elf_get_debug_link (elf)))
+          if (mount_namespace && (debug_link = sysprof_elf_get_debug_link (elf)))
             sysprof_elf_loader_annotate (self, mount_namespace, file, elf, debug_link);
 
           /* If we loaded the ELF, but it doesn't match what this request is looking

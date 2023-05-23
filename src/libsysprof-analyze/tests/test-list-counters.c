@@ -96,7 +96,7 @@ main (int   argc,
               for (guint j = 0; j < n_values; j++)
                 {
                   gint64 t;
-                  double v = sysprof_document_counter_get_value_int64 (counter, j, &t);
+                  double v = sysprof_document_counter_get_value_double (counter, j, &t);
 
                   g_print ("  %03u: %"G_GINT64_FORMAT": %lf\n", j, t, v);
                 }

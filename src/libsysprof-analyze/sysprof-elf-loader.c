@@ -269,23 +269,33 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
                              SysprofElf            *elf,
                              const char            *debug_link)
 {
-  g_autoptr(SysprofElf) debug_link_elf = NULL;
-  g_autofree char *directory_name = NULL;
-  g_autofree char *debug_path = NULL;
-  g_autofree char *container_path = NULL;
-  const char *build_id;
-
   g_assert (SYSPROF_IS_ELF_LOADER (self));
   g_assert (SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace));
   g_assert (SYSPROF_IS_ELF (elf));
   g_assert (debug_link != NULL);
 
-  directory_name = g_path_get_dirname (orig_file);
-  debug_path = g_build_filename ("/usr/lib/debug", directory_name, debug_link, NULL);
-  build_id = sysprof_elf_get_build_id (elf);
+  if (self->debug_dirs != NULL)
+    {
+      for (guint i = 0; self->debug_dirs[i]; i++)
+        {
+          g_autoptr(SysprofElf) debug_link_elf = NULL;
+          g_autofree char *directory_name = NULL;
+          g_autofree char *debug_path = NULL;
+          g_autofree char *container_path = NULL;
+          const char *debug_dir = self->debug_dirs[i];
+          const char *build_id;
 
-  if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, debug_path, build_id, 0, NULL)))
-    sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
+          directory_name = g_path_get_dirname (orig_file);
+          debug_path = g_build_filename (debug_dir, directory_name, debug_link, NULL);
+          build_id = sysprof_elf_get_build_id (elf);
+
+          if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, debug_path, build_id, 0, NULL)))
+            {
+              sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
+              return;
+            }
+        }
+    }
 }
 
 static gboolean

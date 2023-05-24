@@ -260,15 +260,45 @@ sysprof_mount_namespace_translate (SysprofMountNamespace *self,
       SysprofMount *mount = g_ptr_array_index (self->mounts, i);
       SysprofMountDevice *device;
       const char *device_mount_point;
+      const char *fs_type;
       const char *relative;
       char *translated;
 
       if (!(relative = _sysprof_mount_get_relative_path (mount, file)))
         continue;
 
+      fs_type = sysprof_mount_get_filesystem_type (mount);
+
       if (mount->is_overlay)
         {
           translated = g_build_filename (mount->mount_source, relative, NULL);
+        }
+      else if (g_strcmp0 (fs_type, "overlay") == 0)
+        {
+          g_autofree char *lowerdir_str = sysprof_mount_get_superblock_option (mount, "lowerdir");
+          g_autofree char *upperdir_str = sysprof_mount_get_superblock_option (mount, "upperdir");
+          g_auto(GStrv) lowerdirs = lowerdir_str ? g_strsplit (lowerdir_str, ":", 0) : NULL;
+          g_auto(GStrv) upperdirs = upperdir_str ? g_strsplit (upperdir_str, ":", 0) : NULL;
+
+          if (upperdirs != NULL)
+            {
+              for (guint j = 0; upperdirs[j]; j++)
+                {
+                  translated = g_build_filename (upperdirs[j], relative, NULL);
+                  g_array_append_val (strv, translated);
+                }
+            }
+
+          if (lowerdirs != NULL)
+            {
+              for (guint j = 0; lowerdirs[j]; j++)
+                {
+                  translated = g_build_filename (lowerdirs[j], relative, NULL);
+                  g_array_append_val (strv, translated);
+                }
+            }
+
+          continue;
         }
       else
         {

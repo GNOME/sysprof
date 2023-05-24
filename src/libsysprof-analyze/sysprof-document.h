@@ -24,6 +24,7 @@
 
 #include <sysprof-capture.h>
 
+#include "sysprof-callgraph.h"
 #include "sysprof-document-file.h"
 #include "sysprof-document-traceable.h"
 #include "sysprof-symbol.h"
@@ -53,5 +54,15 @@ guint                   sysprof_document_symbolize_traceable (SysprofDocument   
                                                               SysprofDocumentTraceable  *traceable,
                                                               SysprofSymbol            **symbols,
                                                               guint                      n_symbols);
+SYSPROF_AVAILABLE_IN_ALL
+void                    sysprof_document_callgraph_async     (SysprofDocument           *self,
+                                                              GListModel                *traceables,
+                                                              GCancellable              *cancellable,
+                                                              GAsyncReadyCallback        callback,
+                                                              gpointer                   user_data);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofCallgraph       *sysprof_document_callgraph_finish    (SysprofDocument           *self,
+                                                              GAsyncResult              *result,
+                                                              GError                   **error);
 
 G_END_DECLS

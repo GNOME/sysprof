@@ -26,6 +26,7 @@
 
 #include "sysprof-document-private.h"
 
+#include "sysprof-callgraph-private.h"
 #include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-counter-private.h"
 #include "sysprof-document-ctrdef.h"
@@ -1055,4 +1056,78 @@ sysprof_document_list_counters (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return g_object_ref (G_LIST_MODEL (self->counters));
+}
+
+static void
+sysprof_document_callgraph_cb (GObject      *object,
+                               GAsyncResult *result,
+                               gpointer      user_data)
+{
+  g_autoptr(SysprofCallgraph) callgraph = NULL;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GTask) task = user_data;
+
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (G_IS_TASK (task));
+
+  if (!(callgraph = _sysprof_callgraph_new_finish (result, &error)))
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    g_task_return_pointer (task, g_steal_pointer (&callgraph), g_object_unref);
+}
+
+/**
+ * sysprof_document_callgraph_async:
+ * @self: a #SysprofDocument
+ * @traceables: a list model of traceables for the callgraph
+ * @cancellable: (nullable): a #GCancellable or %NULL
+ * @callback: a callback to execute upon completion
+ * @user_data: closure data for @callback
+ *
+ * Asynchronously generates a callgraph using the @traceables to get
+ * the call stacks.
+ */
+void
+sysprof_document_callgraph_async (SysprofDocument     *self,
+                                  GListModel          *traceables,
+                                  GCancellable        *cancellable,
+                                  GAsyncReadyCallback  callback,
+                                  gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
+  g_return_if_fail (G_IS_LIST_MODEL (traceables));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_document_callgraph_async);
+
+  _sysprof_callgraph_new_async (self,
+                                traceables,
+                                cancellable,
+                                sysprof_document_callgraph_cb,
+                                g_steal_pointer (&task));
+}
+
+/**
+ * sysprof_document_callgraph_finish:
+ * @self: a #SysprofDocument
+ * @result: the #GAsyncResult provided to callback
+ * @error: a location for a #GError
+ *
+ * Completes a request to generate a callgraph.
+ *
+ * Returns: (transfer full): a #SysprofCallgraph if successful; otherwise %NULL
+ *   and @error is set.
+ */
+SysprofCallgraph *
+sysprof_document_callgraph_finish (SysprofDocument  *self,
+                                   GAsyncResult     *result,
+                                   GError          **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
 }

@@ -1,5 +1,7 @@
 libsysprof_analyze_public_sources = [
   'sysprof-bundled-symbolizer.c',
+  'sysprof-callgraph.c',
+  'sysprof-callgraph-frame.c',
   'sysprof-document.c',
   'sysprof-document-allocation.c',
   'sysprof-document-counter.c',
@@ -49,6 +51,8 @@ libsysprof_analyze_private_sources = [
 
 libsysprof_analyze_public_headers = [
   'sysprof-analyze.h',
+  'sysprof-callgraph.h',
+  'sysprof-callgraph-frame.h',
   'sysprof-bundled-symbolizer.h',
   'sysprof-document.h',
   'sysprof-document-allocation.h',

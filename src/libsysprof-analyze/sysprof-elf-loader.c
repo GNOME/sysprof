@@ -262,6 +262,33 @@ get_deepest_debuglink (SysprofElf *elf)
   return debug_link ? get_deepest_debuglink (debug_link) : elf;
 }
 
+static gboolean
+try_load_build_id (SysprofElfLoader      *self,
+                   SysprofMountNamespace *mount_namespace,
+                   SysprofElf            *elf,
+                   const char            *build_id,
+                   const char            *debug_dir)
+{
+  g_assert (SYSPROF_IS_ELF_LOADER (self));
+  g_assert (!mount_namespace || SYSPROF_IS_MOUNT_NAMESPACE (mount_namespace));
+  g_assert (SYSPROF_IS_ELF (elf));
+
+  if (build_id && build_id[0] && build_id[1])
+    {
+      char prefix[3] = {build_id[0], build_id[1], 0};
+      g_autofree char *build_id_path = g_build_filename (debug_dir, ".build-id", prefix, build_id, NULL);
+      g_autoptr(SysprofElf) debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, build_id_path, build_id, 0, NULL);
+
+      if (debug_link_elf != NULL)
+        {
+          sysprof_elf_set_debug_link_elf (elf, debug_link_elf);
+          return TRUE;
+        }
+    }
+
+  return FALSE;
+}
+
 static void
 sysprof_elf_loader_annotate (SysprofElfLoader      *self,
                              SysprofMountNamespace *mount_namespace,
@@ -289,6 +316,9 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
           debug_path = g_build_filename (debug_dir, directory_name, debug_link, NULL);
           build_id = sysprof_elf_get_build_id (elf);
 
+          if (try_load_build_id (self, mount_namespace, elf, build_id, debug_dir))
+            return;
+
           if ((debug_link_elf = sysprof_elf_loader_load (self, mount_namespace, debug_path, build_id, 0, NULL)))
             {
               sysprof_elf_set_debug_link_elf (elf, get_deepest_debuglink (debug_link_elf));
@@ -311,6 +341,9 @@ sysprof_elf_loader_annotate (SysprofElfLoader      *self,
           directory_name = g_path_get_dirname (orig_file);
           debug_path = g_build_filename (debug_dir, directory_name, debug_link, NULL);
           build_id = sysprof_elf_get_build_id (elf);
+
+          if (try_load_build_id (self, NULL, elf, build_id, debug_dir))
+            return;
 
           if ((debug_link_elf = sysprof_elf_loader_load (self, NULL, debug_path, build_id, 0, NULL)))
             {

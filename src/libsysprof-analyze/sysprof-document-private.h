@@ -24,6 +24,7 @@
 
 #include "sysprof-document.h"
 #include "sysprof-symbolizer.h"
+#include "sysprof-symbol.h"
 
 G_BEGIN_DECLS
 
@@ -55,5 +56,7 @@ gboolean         _sysprof_document_is_native        (SysprofDocument      *self)
 GRefString      *_sysprof_document_ref_string       (SysprofDocument      *self,
                                                      const char           *name);
 GtkBitset       *_sysprof_document_traceables       (SysprofDocument      *self);
+SysprofSymbol   *_sysprof_document_process_symbol   (SysprofDocument      *self,
+                                                     int                   pid);
 
 G_END_DECLS

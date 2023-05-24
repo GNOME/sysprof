@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-process-info-private.h"
+#include "sysprof-symbol-private.h"
 
 G_DEFINE_BOXED_TYPE (SysprofProcessInfo,
                      sysprof_process_info,
@@ -32,12 +33,16 @@ sysprof_process_info_new (SysprofMountNamespace *mount_namespace,
                           int                    pid)
 {
   SysprofProcessInfo *self;
+  char symname[32];
+
+  g_snprintf (symname, sizeof symname, "[Process %d]", pid);
 
   self = g_atomic_rc_box_new0 (SysprofProcessInfo);
   self->pid = pid;
   self->address_layout = sysprof_address_layout_new ();
   self->symbol_cache = sysprof_symbol_cache_new ();
   self->mount_namespace = mount_namespace;
+  self->fallback_symbol = _sysprof_symbol_new (g_ref_string_new (symname), NULL, NULL, 0, 0);
 
   return self;
 }
@@ -56,6 +61,8 @@ sysprof_process_info_finalize (gpointer data)
   g_clear_object (&self->address_layout);
   g_clear_object (&self->symbol_cache);
   g_clear_object (&self->mount_namespace);
+  g_clear_object (&self->fallback_symbol);
+  g_clear_object (&self->symbol);
 
   self->pid = 0;
 }

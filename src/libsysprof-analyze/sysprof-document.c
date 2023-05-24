@@ -44,6 +44,7 @@
 #include "sysprof-mount-namespace-private.h"
 #include "sysprof-process-info-private.h"
 #include "sysprof-strings-private.h"
+#include "sysprof-symbol-private.h"
 #include "sysprof-symbolizer-private.h"
 
 #include "line-reader-private.h"
@@ -457,6 +458,40 @@ sysprof_document_load_overlays (SysprofDocument *self)
 }
 
 static void
+sysprof_document_load_processes (SysprofDocument *self)
+{
+  GtkBitsetIter iter;
+  guint i;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  if (gtk_bitset_iter_init_first (&iter, self->processes, &i))
+    {
+      do
+        {
+          g_autoptr(SysprofDocumentProcess) process = g_list_model_get_item (G_LIST_MODEL (self), i);
+          int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process));
+          SysprofProcessInfo *process_info = _sysprof_document_process_info (self, pid, TRUE);
+          const char *cmdline = sysprof_document_process_get_command_line (process);
+
+          if (cmdline != NULL)
+            {
+              g_auto(GStrv) parts = NULL;
+
+              if ((parts = g_strsplit (cmdline , " ", 2)))
+                {
+                  g_clear_object (&process_info->symbol);
+                  process_info->symbol =
+                    _sysprof_symbol_new (sysprof_strings_get (self->strings, parts[0]),
+                                         NULL, NULL, 0, 0);
+                }
+            }
+        }
+      while (gtk_bitset_iter_next (&iter, &i));
+    }
+}
+
+static void
 sysprof_document_load_counters (SysprofDocument *self)
 {
   g_autoptr(GPtrArray) counters = NULL;
@@ -690,6 +725,7 @@ sysprof_document_load_worker (GTask        *task,
   sysprof_document_load_mounts (self);
   sysprof_document_load_mountinfos (self);
   sysprof_document_load_memory_maps (self);
+  sysprof_document_load_processes (self);
   sysprof_document_load_overlays (self);
   sysprof_document_load_counters (self);
 
@@ -1154,4 +1190,20 @@ sysprof_document_callgraph_finish (SysprofDocument  *self,
   g_return_val_if_fail (G_IS_TASK (result), NULL);
 
   return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+SysprofSymbol *
+_sysprof_document_process_symbol (SysprofDocument *self,
+                                  int              pid)
+{
+  SysprofProcessInfo *info;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  info = _sysprof_document_process_info (self, pid, TRUE);
+
+  if (info->symbol)
+    return info->symbol;
+
+  return info->fallback_symbol;
 }

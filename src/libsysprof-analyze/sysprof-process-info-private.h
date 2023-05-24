@@ -31,6 +31,8 @@ typedef struct _SysprofProcessInfo
   SysprofAddressLayout  *address_layout;
   SysprofMountNamespace *mount_namespace;
   SysprofSymbolCache    *symbol_cache;
+  SysprofSymbol         *fallback_symbol;
+  SysprofSymbol         *symbol;
   int                    pid;
 } SysprofProcessInfo;
 

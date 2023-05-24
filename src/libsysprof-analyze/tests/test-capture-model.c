@@ -103,6 +103,24 @@ main (int argc,
                        category, name);
             }
         }
+      else if (SYSPROF_IS_DOCUMENT_CTRSET (frame))
+        {
+          guint n_values = sysprof_document_ctrset_get_n_values (SYSPROF_DOCUMENT_CTRSET (frame));
+
+          g_print (" counters=[");
+          for (guint j = 0; j < n_values; j++)
+            {
+              guint id;
+              guint8 raw[8];
+
+              sysprof_document_ctrset_get_raw_value (SYSPROF_DOCUMENT_CTRSET (frame), j, &id, raw);
+
+              g_print ("%u", id);
+              if (j+1 != n_values)
+                g_print (", ");
+            }
+          g_print ("]");
+        }
       else if (SYSPROF_IS_DOCUMENT_ALLOCATION (frame))
         {
           if (sysprof_document_allocation_is_free (SYSPROF_DOCUMENT_ALLOCATION (frame)))

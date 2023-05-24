@@ -62,6 +62,7 @@ struct _SysprofDocument
   SysprofStrings           *strings;
 
   GtkBitset                *file_chunks;
+  GtkBitset                *samples;
   GtkBitset                *traceables;
   GtkBitset                *processes;
   GtkBitset                *mmaps;
@@ -216,6 +217,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->overlays, gtk_bitset_unref);
   g_clear_pointer (&self->pids, gtk_bitset_unref);
   g_clear_pointer (&self->processes, gtk_bitset_unref);
+  g_clear_pointer (&self->samples, gtk_bitset_unref);
   g_clear_pointer (&self->traceables, gtk_bitset_unref);
 
   g_clear_object (&self->counters);
@@ -255,6 +257,7 @@ sysprof_document_init (SysprofDocument *self)
   self->overlays = gtk_bitset_new_empty ();
   self->pids = gtk_bitset_new_empty ();
   self->processes = gtk_bitset_new_empty ();
+  self->samples = gtk_bitset_new_empty ();
   self->traceables = gtk_bitset_new_empty ();
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
@@ -628,7 +631,11 @@ sysprof_document_load_worker (GTask        *task,
       switch ((int)tainted->type)
         {
         case SYSPROF_CAPTURE_FRAME_ALLOCATION:
+          gtk_bitset_add (self->traceables, self->frames->len);
+          break;
+
         case SYSPROF_CAPTURE_FRAME_SAMPLE:
+          gtk_bitset_add (self->samples, self->frames->len);
           gtk_bitset_add (self->traceables, self->frames->len);
           break;
 
@@ -950,7 +957,7 @@ sysprof_document_list_files (SysprofDocument *self)
  * Gets a #GListModel containing #SysprofDocumentTraceable found within
  * the #SysprofDocument.
  *
- * Returns: (transfer full): a #GListModel of #SysprofTraceable
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentTraceable
  */
 GListModel *
 sysprof_document_list_traceables (SysprofDocument *self)
@@ -958,6 +965,23 @@ sysprof_document_list_traceables (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->traceables);
+}
+
+/**
+ * sysprof_document_list_samples:
+ * @self: a #SysprofDocument
+ *
+ * Gets a #GListModel containing #SysprofDocumentSample found within
+ * the #SysprofDocument.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentSample
+ */
+GListModel *
+sysprof_document_list_samples (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->samples);
 }
 
 /**

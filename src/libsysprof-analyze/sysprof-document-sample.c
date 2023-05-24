@@ -52,11 +52,25 @@ sysprof_document_sample_get_stack_depth (SysprofDocumentTraceable *traceable)
 
 static guint64
 sysprof_document_sample_get_stack_address (SysprofDocumentTraceable *traceable,
-                                               guint                     position)
+                                           guint                     position)
 {
   const SysprofCaptureSample *sample = SYSPROF_DOCUMENT_FRAME_GET (traceable, SysprofCaptureSample);
 
-  return SYSPROF_DOCUMENT_FRAME_UINT64 (traceable, sample->addrs[position]);
+  return SYSPROF_DOCUMENT_FRAME_UINT16 (traceable, sample->addrs[position]);
+}
+
+static guint
+sysprof_document_sample_get_stack_addresses (SysprofDocumentTraceable *traceable,
+                                             guint64                  *addresses,
+                                             guint                     n_addresses)
+{
+  const SysprofCaptureSample *sample = SYSPROF_DOCUMENT_FRAME_GET (traceable, SysprofCaptureSample);
+  guint depth = MIN (n_addresses, SYSPROF_DOCUMENT_FRAME_UINT16 (traceable, sample->n_addrs));
+
+  for (guint i = 0; i < depth; i++)
+    addresses[i] = SYSPROF_DOCUMENT_FRAME_UINT64 (traceable, sample->addrs[i]);
+
+  return depth;
 }
 
 static void
@@ -64,6 +78,7 @@ traceable_iface_init (SysprofDocumentTraceableInterface *iface)
 {
   iface->get_stack_depth = sysprof_document_sample_get_stack_depth;
   iface->get_stack_address = sysprof_document_sample_get_stack_address;
+  iface->get_stack_addresses = sysprof_document_sample_get_stack_addresses;
 }
 
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocumentSample, sysprof_document_sample, SYSPROF_TYPE_DOCUMENT_FRAME,

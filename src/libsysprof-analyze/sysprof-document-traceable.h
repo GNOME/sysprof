@@ -34,9 +34,12 @@ struct _SysprofDocumentTraceableInterface
 {
   GTypeInterface parent;
 
-  guint   (*get_stack_depth)   (SysprofDocumentTraceable *self);
-  guint64 (*get_stack_address) (SysprofDocumentTraceable *self,
-                                guint                     position);
+  guint   (*get_stack_depth)     (SysprofDocumentTraceable *self);
+  guint64 (*get_stack_address)   (SysprofDocumentTraceable *self,
+                                  guint                     position);
+  guint   (*get_stack_addresses) (SysprofDocumentTraceable *self,
+                                  guint64                  *addresses,
+                                  guint                     n_addresses);
 };
 
 SYSPROF_AVAILABLE_IN_ALL

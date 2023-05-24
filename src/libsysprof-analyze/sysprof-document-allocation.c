@@ -59,7 +59,21 @@ sysprof_document_allocation_get_stack_address (SysprofDocumentTraceable *traceab
 {
   const SysprofCaptureAllocation *allocation = SYSPROF_DOCUMENT_FRAME_GET (traceable, SysprofCaptureAllocation);
 
-  return SYSPROF_DOCUMENT_FRAME_UINT64 (traceable, allocation->addrs[position]);
+  return SYSPROF_DOCUMENT_FRAME_UINT16 (traceable, allocation->addrs[position]);
+}
+
+static guint
+sysprof_document_allocation_get_stack_addresses (SysprofDocumentTraceable *traceable,
+                                                 guint64                  *addresses,
+                                                 guint                     n_addresses)
+{
+  const SysprofCaptureAllocation *allocation = SYSPROF_DOCUMENT_FRAME_GET (traceable, SysprofCaptureAllocation);
+  guint depth = MIN (n_addresses, SYSPROF_DOCUMENT_FRAME_UINT16 (traceable, allocation->n_addrs));
+
+  for (guint i = 0; i < depth; i++)
+    addresses[i] = SYSPROF_DOCUMENT_FRAME_UINT64 (traceable, allocation->addrs[i]);
+
+  return depth;
 }
 
 static void
@@ -67,6 +81,7 @@ traceable_iface_init (SysprofDocumentTraceableInterface *iface)
 {
   iface->get_stack_depth = sysprof_document_allocation_get_stack_depth;
   iface->get_stack_address = sysprof_document_allocation_get_stack_address;
+  iface->get_stack_addresses = sysprof_document_allocation_get_stack_addresses;
 }
 
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocumentAllocation, sysprof_document_allocation, SYSPROF_TYPE_DOCUMENT_FRAME,
@@ -119,7 +134,7 @@ sysprof_document_allocation_class_init (SysprofDocumentAllocationClass *klass)
   /**
    * SysprofDocumentAllocation:tid:
    *
-   * The task-id or thread-id of the thread which was sampled.
+   * The task-id or thread-id of the thread which was traced.
    *
    * On Linux, this is generally set to the value of the gettid() syscall.
    *

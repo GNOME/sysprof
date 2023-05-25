@@ -182,17 +182,62 @@ create_model_func (gpointer item,
   return NULL;
 }
 
+static int
+sort_by_self (gconstpointer a,
+              gconstpointer b,
+              gpointer      user_data)
+{
+  SysprofCallgraphFrame *frame_a = (SysprofCallgraphFrame *)a;
+  SysprofCallgraphFrame *frame_b = (SysprofCallgraphFrame *)b;
+  Augment *aug_a = sysprof_callgraph_frame_get_augment (frame_a);
+  Augment *aug_b = sysprof_callgraph_frame_get_augment (frame_b);
+  double self_a = aug_a->size / total;
+  double self_b = aug_b->size / total;
+
+  if (self_a < self_b)
+    return -1;
+  else if (self_a > self_b)
+    return 1;
+  else
+    return 0;
+}
+
+static int
+sort_by_total (gconstpointer a,
+               gconstpointer b,
+               gpointer      user_data)
+{
+  SysprofCallgraphFrame *frame_a = (SysprofCallgraphFrame *)a;
+  SysprofCallgraphFrame *frame_b = (SysprofCallgraphFrame *)b;
+  Augment *aug_a = sysprof_callgraph_frame_get_augment (frame_a);
+  Augment *aug_b = sysprof_callgraph_frame_get_augment (frame_b);
+  double total_a = aug_a->total / total;
+  double total_b = aug_b->total / total;
+
+  if (total_a < total_b)
+    return -1;
+  else if (total_a > total_b)
+    return 1;
+  else
+    return 0;
+}
+
 static void
 show_callgraph (SysprofCallgraph *callgraph)
 {
   g_autofree char *name = g_path_get_basename (filename);
   g_autoptr(GtkTreeListModel) tree = NULL;
-  g_autoptr(GtkNoSelection) model = NULL;
+  g_autoptr(GtkMultiSelection) model = NULL;
   g_autoptr(SysprofCallgraphFrame) root = NULL;
   GtkColumnViewColumn *column;
   GtkScrolledWindow *scroller;
   GtkColumnView *column_view;
   GtkListItemFactory *factory;
+  g_autoptr(GtkTreeListRowSorter) sorter = NULL;
+  g_autoptr(GtkSortListModel) sort_model = NULL;
+  g_autoptr(GtkCustomSorter) self_sorter = NULL;
+  g_autoptr(GtkCustomSorter) total_sorter = NULL;
+  GtkSorter *column_sorter = NULL;
   GtkWindow *window;
   Augment *aug;
 
@@ -200,11 +245,8 @@ show_callgraph (SysprofCallgraph *callgraph)
   aug = sysprof_callgraph_frame_get_augment (root);
   total = aug->total;
 
-  tree = gtk_tree_list_model_new (g_object_ref (G_LIST_MODEL (callgraph)),
-                                  FALSE,
-                                  FALSE,
-                                  create_model_func, NULL, NULL);
-  model = gtk_no_selection_new (g_object_ref (G_LIST_MODEL (tree)));
+  self_sorter = gtk_custom_sorter_new (sort_by_self, NULL, NULL);
+  total_sorter = gtk_custom_sorter_new (sort_by_total, NULL, NULL);
 
   window = g_object_new (GTK_TYPE_WINDOW,
                          "default-width", 1024,
@@ -213,10 +255,16 @@ show_callgraph (SysprofCallgraph *callgraph)
                          NULL);
   scroller = g_object_new (GTK_TYPE_SCROLLED_WINDOW, NULL);
   gtk_window_set_child (GTK_WINDOW (window), GTK_WIDGET (scroller));
-  column_view = g_object_new (GTK_TYPE_COLUMN_VIEW,
-                              "model", model,
-                              NULL);
+  column_view = g_object_new (GTK_TYPE_COLUMN_VIEW, NULL);
   gtk_scrolled_window_set_child (scroller, GTK_WIDGET (column_view));
+
+  tree = gtk_tree_list_model_new (g_object_ref (G_LIST_MODEL (callgraph)),
+                                  FALSE, FALSE, create_model_func, NULL, NULL);
+  column_sorter = gtk_column_view_get_sorter (column_view);
+  sorter = gtk_tree_list_row_sorter_new (g_object_ref (column_sorter));
+  sort_model = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (tree)), g_object_ref (GTK_SORTER (sorter)));
+  model = gtk_multi_selection_new (g_object_ref (G_LIST_MODEL (sort_model)));
+  gtk_column_view_set_model (column_view, GTK_SELECTION_MODEL (model));
 
   factory = gtk_signal_list_item_factory_new ();
   g_signal_connect_object (factory, "setup", G_CALLBACK (function_setup), callgraph, 0);
@@ -230,6 +278,7 @@ show_callgraph (SysprofCallgraph *callgraph)
   g_signal_connect (factory, "bind", G_CALLBACK (self_bind), NULL);
   column = gtk_column_view_column_new ("Self", factory);
   gtk_column_view_column_set_expand (column, FALSE);
+  gtk_column_view_column_set_sorter (column, GTK_SORTER (self_sorter));
   gtk_column_view_append_column (column_view, column);
 
   factory = gtk_signal_list_item_factory_new ();
@@ -237,7 +286,9 @@ show_callgraph (SysprofCallgraph *callgraph)
   g_signal_connect (factory, "bind", G_CALLBACK (total_bind), NULL);
   column = gtk_column_view_column_new ("Total", factory);
   gtk_column_view_column_set_expand (column, FALSE);
+  gtk_column_view_column_set_sorter (column, GTK_SORTER (total_sorter));
   gtk_column_view_append_column (column_view, column);
+  gtk_column_view_sort_by_column (column_view, column, GTK_SORT_DESCENDING);
 
   g_signal_connect_swapped (window,
                             "close-request",

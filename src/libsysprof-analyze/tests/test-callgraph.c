@@ -27,8 +27,9 @@
 
 typedef struct _Augment
 {
-  guint32 size;
-  guint32 total;
+  guint64 toplevel : 1;
+  guint64 size : 31;
+  guint32 total : 32;
 } Augment;
 
 static char *kallsyms_path;
@@ -98,6 +99,9 @@ augment_cb (SysprofCallgraph     *callgraph,
   g_assert (node != NULL);
   g_assert (SYSPROF_IS_DOCUMENT_SAMPLE (frame));
   g_assert (user_data == NULL);
+
+  aug = sysprof_callgraph_get_augment (callgraph, node);
+  aug->toplevel = TRUE;
 
   for (; node ; node = sysprof_callgraph_node_parent (node))
     {

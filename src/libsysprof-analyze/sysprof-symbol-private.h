@@ -37,6 +37,8 @@ struct _SysprofSymbol
 
   SysprofAddress begin_address;
   SysprofAddress end_address;
+
+  guint is_context_switch : 1;
 };
 
 SysprofSymbol *_sysprof_symbol_new (GRefString     *name,
@@ -56,6 +58,12 @@ _sysprof_symbol_equal (const SysprofSymbol *a,
     return FALSE;
 
   return strcmp (a->name, b->name) == 0;
+}
+
+static inline gboolean
+_sysprof_symbol_is_context_switch (SysprofSymbol *symbol)
+{
+  return symbol->is_context_switch;
 }
 
 G_END_DECLS

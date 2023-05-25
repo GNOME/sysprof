@@ -178,6 +178,8 @@ sysprof_document_symbols_worker (GTask        *task,
     {
       g_autoptr(SysprofSymbol) symbol = _sysprof_symbol_new (g_ref_string_new_intern (context_switches[cs].name), NULL, NULL, 0, 0);
 
+      symbol->is_context_switch = TRUE;
+
       /* TODO: It would be nice if we had enough insight from the capture header
        * as to the host system, so we can show "vmlinuz" and "Linux" respectively
        * for binary-path and binary-nick when the capture came from Linux.

@@ -273,8 +273,11 @@ _sysprof_document_symbols_lookup (SysprofDocumentSymbols   *self,
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_SYMBOLS (self), NULL);
   g_return_val_if_fail (context <= SYSPROF_ADDRESS_CONTEXT_GUEST_USER, NULL);
 
+  if (context == SYSPROF_ADDRESS_CONTEXT_NONE)
+    context = SYSPROF_ADDRESS_CONTEXT_USER;
+
   if (sysprof_address_is_context_switch (address, &new_context))
-    return self->context_switches[new_context];
+    return self->context_switches[context];
 
   if (context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
     return sysprof_symbol_cache_lookup (self->kernel_symbols, address);

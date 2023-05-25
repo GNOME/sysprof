@@ -31,7 +31,9 @@ typedef struct _Augment
   guint32 total;
 } Augment;
 
+static char *kallsyms_path;
 static const GOptionEntry entries[] = {
+  { "kallsyms", 'k', 0, G_OPTION_ARG_FILENAME, &kallsyms_path, "The path to kallsyms to use for decoding", "PATH" },
   { 0 }
 };
 
@@ -129,7 +131,19 @@ main (int   argc,
     g_error ("usage: %s CAPTURE_FILE", argv[0]);
 
   multi = sysprof_multi_symbolizer_new ();
-  sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+
+  if (kallsyms_path)
+    {
+      g_autoptr(GFile) kallsyms_file = g_file_new_for_path (kallsyms_path);
+      GFileInputStream *kallsyms_stream = g_file_read (kallsyms_file, NULL, NULL);
+
+      sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new_for_symbols (G_INPUT_STREAM (kallsyms_stream)));
+    }
+  else
+    {
+      sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+    }
+
   sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
   sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
 

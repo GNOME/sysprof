@@ -177,13 +177,6 @@ test_c_args = [
   '-Werror=undef',
 ]
 
-# Until GLib is fixed with regards to volatile type registration
-if cc.get_id() == 'clang'
-  test_c_args += ['-Wno-incompatible-pointer-types']
-else
-  test_c_args += ['-Werror=incompatible-pointer-types']
-endif
-
 foreach arg: test_c_args
   if cc.has_multi_arguments(arg)
     global_c_args += arg

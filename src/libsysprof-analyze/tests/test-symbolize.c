@@ -62,7 +62,8 @@ load_cb (GObject      *object,
       n_symbols = sysprof_document_symbolize_traceable (document,
                                                         traceable,
                                                         symbols,
-                                                        G_N_ELEMENTS (symbols));
+                                                        G_N_ELEMENTS (symbols),
+                                                        NULL);
 
       g_print ("%s depth=%u pid=%u\n",
                G_OBJECT_TYPE_NAME (traceable),

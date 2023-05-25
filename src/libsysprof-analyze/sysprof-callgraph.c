@@ -209,6 +209,7 @@ static void
 sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                                  SysprofDocumentTraceable *traceable)
 {
+  SysprofAddressContext final_context;
   SysprofCallgraphNode *node;
   SysprofSymbol **symbols;
   guint stack_depth;
@@ -225,7 +226,11 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
     return;
 
   symbols = g_newa (SysprofSymbol *, stack_depth + 2);
-  n_symbols = sysprof_document_symbolize_traceable (self->document, traceable, symbols, stack_depth);
+  n_symbols = sysprof_document_symbolize_traceable (self->document,
+                                                    traceable,
+                                                    symbols,
+                                                    stack_depth,
+                                                    &final_context);
 
   g_assert (n_symbols > 0);
   g_assert (n_symbols <= stack_depth);

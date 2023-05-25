@@ -1062,6 +1062,8 @@ sysprof_document_list_jitmaps (SysprofDocument *self)
  * @traceable: the traceable to extract symbols for
  * @symbols: an array to store #SysprofSymbols
  * @n_symbols: the number of elements in @symbols
+ * @final_context: (out) (nullable): a location to store the last address
+ *   context of the stack trace.
  *
  * Batch symbolizing of a traceable.
  *
@@ -1074,7 +1076,8 @@ guint
 sysprof_document_symbolize_traceable (SysprofDocument           *self,
                                       SysprofDocumentTraceable  *traceable,
                                       SysprofSymbol            **symbols,
-                                      guint                      n_symbols)
+                                      guint                      n_symbols,
+                                      SysprofAddressContext     *final_context)
 {
   SysprofAddressContext last_context = SYSPROF_ADDRESS_CONTEXT_NONE;
   const SysprofProcessInfo *process_info;
@@ -1087,7 +1090,7 @@ sysprof_document_symbolize_traceable (SysprofDocument           *self,
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable), 0);
 
   if (n_symbols == 0 || symbols == NULL)
-    return 0;
+    goto finish;
 
   pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
   process_info = g_hash_table_lookup (self->pid_to_process_info, GINT_TO_POINTER (pid));
@@ -1106,6 +1109,10 @@ sysprof_document_symbolize_traceable (SysprofDocument           *self,
       if (sysprof_address_is_context_switch (addresses[i], &context))
         last_context = context;
     }
+
+finish:
+  if (final_context)
+    *final_context = last_context;
 
   return n_symbolized;
 }

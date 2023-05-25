@@ -55,7 +55,8 @@ SYSPROF_AVAILABLE_IN_ALL
 guint                   sysprof_document_symbolize_traceable (SysprofDocument           *self,
                                                               SysprofDocumentTraceable  *traceable,
                                                               SysprofSymbol            **symbols,
-                                                              guint                      n_symbols);
+                                                              guint                      n_symbols,
+                                                              SysprofAddressContext     *final_context);
 SYSPROF_AVAILABLE_IN_ALL
 void                    sysprof_document_callgraph_async     (SysprofDocument             *self,
                                                               GListModel                  *traceables,

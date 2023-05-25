@@ -1080,6 +1080,7 @@ sysprof_document_symbolize_traceable (SysprofDocument           *self,
   const SysprofProcessInfo *process_info;
   SysprofAddress *addresses;
   guint n_addresses;
+  guint n_symbolized = 0;
   int pid;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), 0);
@@ -1097,13 +1098,16 @@ sysprof_document_symbolize_traceable (SysprofDocument           *self,
     {
       SysprofAddressContext context;
 
-      symbols[i] = _sysprof_document_symbols_lookup (self->symbols, process_info, last_context, addresses[i]);
+      symbols[n_symbolized] = _sysprof_document_symbols_lookup (self->symbols, process_info, last_context, addresses[i]);
+
+      if (symbols[n_symbolized] != NULL)
+        n_symbolized++;
 
       if (sysprof_address_is_context_switch (addresses[i], &context))
         last_context = context;
     }
 
-  return n_addresses;
+  return n_symbolized;
 }
 
 /**

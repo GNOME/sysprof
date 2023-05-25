@@ -1233,3 +1233,11 @@ _sysprof_document_process_symbol (SysprofDocument *self,
 
   return info->fallback_symbol;
 }
+
+SysprofSymbol *
+_sysprof_document_kernel_symbol (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return self->symbols->context_switches[SYSPROF_ADDRESS_CONTEXT_KERNEL];
+}

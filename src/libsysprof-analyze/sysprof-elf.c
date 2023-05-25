@@ -33,6 +33,7 @@ struct _SysprofElf
   SysprofElf *debug_link_elf;
   ElfParser *parser;
   guint64 file_inode;
+  gulong text_offset;
 };
 
 enum {
@@ -308,6 +309,7 @@ sysprof_elf_new (const char   *filename,
   self->file = g_strdup (filename);
   self->parser = g_steal_pointer (&parser);
   self->file_inode = file_inode;
+  self->text_offset = elf_parser_get_text_offset (self->parser);
 
   if (filename != NULL)
     {
@@ -357,7 +359,8 @@ sysprof_elf_get_symbol_at_address_internal (SysprofElf *self,
                                             const char *filename,
                                             guint64     address,
                                             guint64    *begin_address,
-                                            guint64    *end_address)
+                                            guint64    *end_address,
+                                            guint64     text_offset)
 {
   const ElfSym *symbol;
   char *ret = NULL;
@@ -368,18 +371,22 @@ sysprof_elf_get_symbol_at_address_internal (SysprofElf *self,
 
   if (self->debug_link_elf != NULL)
     {
-      ret = sysprof_elf_get_symbol_at_address_internal (self->debug_link_elf, filename, address, begin_address, end_address);
+      ret = sysprof_elf_get_symbol_at_address_internal (self->debug_link_elf, filename, address, begin_address, end_address, text_offset);
 
       if (ret != NULL)
         return ret;
     }
 
-  if ((symbol = elf_parser_lookup_symbol (self->parser, address)))
+  if ((symbol = elf_parser_lookup_symbol (self->parser, address - text_offset)))
     {
       const char *name;
 
       if (begin_address || end_address)
-        elf_parser_get_sym_address_range (self->parser, symbol, &begin, &end);
+        {
+          elf_parser_get_sym_address_range (self->parser, symbol, &begin, &end);
+          begin += text_offset;
+          end += text_offset;
+        }
 
       name = elf_parser_get_sym_name (self->parser, symbol);
 
@@ -414,7 +421,8 @@ sysprof_elf_get_symbol_at_address (SysprofElf *self,
                                                      self->file,
                                                      address,
                                                      begin_address,
-                                                     end_address);
+                                                     end_address,
+                                                     self->text_offset);
 }
 
 /**

@@ -256,6 +256,7 @@ show_callgraph (SysprofCallgraph *callgraph)
   scroller = g_object_new (GTK_TYPE_SCROLLED_WINDOW, NULL);
   gtk_window_set_child (GTK_WINDOW (window), GTK_WIDGET (scroller));
   column_view = g_object_new (GTK_TYPE_COLUMN_VIEW, NULL);
+  gtk_widget_add_css_class (GTK_WIDGET (column_view), "data-table");
   gtk_scrolled_window_set_child (scroller, GTK_WIDGET (column_view));
 
   tree = gtk_tree_list_model_new (g_object_ref (G_LIST_MODEL (callgraph)),

@@ -24,6 +24,7 @@
 
 G_BEGIN_DECLS
 
-SysprofRecording *_sysprof_recording_new (void);
+SysprofRecording     *_sysprof_recording_new    (SysprofCaptureWriter *writer);
+SysprofCaptureWriter *_sysprof_recording_writer (SysprofRecording     *self);
 
 G_END_DECLS

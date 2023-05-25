@@ -36,9 +36,20 @@ struct _SysprofRecording
 {
   GObject parent_instance;
 
-  SysprofRecordingState state : 3;
+  /* This is where all of the instruments will write to. They are
+   * expected to do this from the main-thread only. To work from
+   * additional threads they need to proxy that state to the
+   * main thread for writing.
+   */
+  SysprofCaptureWriter *writer;
 
+  /* Waiters contains a list of GTask to complete calls to the
+   * sysprof_recording_wait_async() flow.
+   */
   GQueue waiters;
+
+  /* Our current state of operation */
+  SysprofRecordingState state : 3;
 };
 
 enum {
@@ -135,9 +146,16 @@ sysprof_recording_init (SysprofRecording *self)
 }
 
 SysprofRecording *
-_sysprof_recording_new (void)
+_sysprof_recording_new (SysprofCaptureWriter *writer)
 {
-  return g_object_new (SYSPROF_TYPE_RECORDING, NULL);
+  SysprofRecording *self;
+
+  g_return_val_if_fail (writer != NULL, NULL);
+
+  self = g_object_new (SYSPROF_TYPE_RECORDING, NULL);
+  self->writer = sysprof_capture_writer_ref (writer);
+
+  return self;
 }
 
 void

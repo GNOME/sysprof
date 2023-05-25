@@ -27,15 +27,7 @@
 #include "sysprof-mount-namespace-private.h"
 #include "sysprof-no-symbolizer.h"
 #include "sysprof-symbol-private.h"
-#include "sysprof-symbol-cache-private.h"
 #include "sysprof-symbolizer-private.h"
-
-struct _SysprofDocumentSymbols
-{
-  GObject             parent_instance;
-  SysprofSymbol      *context_switches[SYSPROF_ADDRESS_CONTEXT_GUEST_USER+1];
-  SysprofSymbolCache *kernel_symbols;
-};
 
 G_DEFINE_FINAL_TYPE (SysprofDocumentSymbols, sysprof_document_symbols, G_TYPE_OBJECT)
 

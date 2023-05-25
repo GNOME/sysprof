@@ -22,14 +22,22 @@
 
 #include "sysprof-document.h"
 #include "sysprof-process-info-private.h"
-#include "sysprof-symbolizer.h"
+#include "sysprof-symbol-cache-private.h"
 #include "sysprof-symbol.h"
+#include "sysprof-symbolizer.h"
 
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_DOCUMENT_SYMBOLS (sysprof_document_symbols_get_type())
 
 G_DECLARE_FINAL_TYPE (SysprofDocumentSymbols, sysprof_document_symbols, SYSPROF, DOCUMENT_SYMBOLS, GObject)
+
+struct _SysprofDocumentSymbols
+{
+  GObject             parent_instance;
+  SysprofSymbol      *context_switches[SYSPROF_ADDRESS_CONTEXT_GUEST_USER+1];
+  SysprofSymbolCache *kernel_symbols;
+};
 
 void                    _sysprof_document_symbols_new        (SysprofDocument           *document,
                                                               SysprofStrings            *strings,

@@ -480,9 +480,11 @@ sysprof_document_load_processes (SysprofDocument *self)
 
               if ((parts = g_strsplit (cmdline , " ", 2)))
                 {
+                  g_autofree char *wrapped = g_strdup_printf ("[%s]", parts[0]);
+
                   g_clear_object (&process_info->symbol);
                   process_info->symbol =
-                    _sysprof_symbol_new (sysprof_strings_get (self->strings, parts[0]),
+                    _sysprof_symbol_new (sysprof_strings_get (self->strings, wrapped),
                                          NULL, NULL, 0, 0);
                 }
             }

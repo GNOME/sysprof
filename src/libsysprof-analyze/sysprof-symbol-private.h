@@ -29,6 +29,8 @@ struct _SysprofSymbol
 {
   GObject parent_instance;
 
+  guint hash;
+
   GRefString *name;
   GRefString *binary_path;
   GRefString *binary_nick;
@@ -42,5 +44,18 @@ SysprofSymbol *_sysprof_symbol_new (GRefString     *name,
                                     GRefString     *binary_path,
                                     SysprofAddress  begin_address,
                                     SysprofAddress  end_address);
+
+static inline gboolean
+_sysprof_symbol_equal (const SysprofSymbol *a,
+                       const SysprofSymbol *b)
+{
+  if (a == b)
+    return TRUE;
+
+  if (a->hash != b->hash)
+    return FALSE;
+
+  return strcmp (a->name, b->name) == 0;
+}
 
 G_END_DECLS

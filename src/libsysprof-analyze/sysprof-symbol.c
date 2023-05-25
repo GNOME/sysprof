@@ -144,6 +144,14 @@ _sysprof_symbol_new (GRefString     *name,
   self->binary_nick = binary_nick;
   self->begin_address = begin_address;
   self->end_address = end_address;
+  self->hash = g_str_hash (name);
 
   return self;
+}
+
+gboolean
+sysprof_symbol_equal (const SysprofSymbol *a,
+                      const SysprofSymbol *b)
+{
+  return _sysprof_symbol_equal (a, b);
 }

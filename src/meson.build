@@ -54,8 +54,17 @@ stackstash_sources = files('stackstash.c')
 
 helpers_sources = files('helpers.c')
 
-subdir('libsysprof-capture')
-subdir('libsysprof-analyze')
+if need_libsysprof_capture
+  subdir('libsysprof-capture')
+endif
+
+if need_libsysprof_analyze
+  subdir('libsysprof-analyze')
+endif
+
+if need_libsysprof_profile
+  subdir('libsysprof-profile')
+endif
 
 if get_option('sysprofd') == 'bundled'
   subdir('sysprofd')

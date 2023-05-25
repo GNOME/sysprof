@@ -41,6 +41,11 @@ need_glib = (need_gtk or
              get_option('sysprofd') != 'none' or
              get_option('agent'))
 
+# Determine what libraries to build
+need_libsysprof_capture = true
+need_libsysprof_profile = get_option('libsysprof') or get_option('agent')
+need_libsysprof_analyze = get_option('libsysprof') or get_option('agent')
+
 glib_req = '2.76.0'
 gtk_req = '4.10'
 polkit_req = '0.105'

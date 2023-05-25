@@ -81,6 +81,23 @@ G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofCallgraph, sysprof_callgraph, G_TYPE_OBJEC
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
 static void
+sysprof_callgraph_node_free (SysprofCallgraphNode *node,
+                             gboolean              free_self)
+{
+  SysprofCallgraphNode *iter = node->children;
+
+  while (iter)
+    {
+      SysprofCallgraphNode *to_free = iter;
+      iter = iter->next;
+      sysprof_callgraph_node_free (to_free, TRUE);
+    }
+
+  if (free_self)
+    g_free (node);
+}
+
+static void
 sysprof_callgraph_dispose (GObject *object)
 {
   SysprofCallgraph *self = (SysprofCallgraph *)object;
@@ -106,6 +123,8 @@ sysprof_callgraph_finalize (GObject *object)
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
   g_clear_object (&self->everything);
+
+  sysprof_callgraph_node_free (&self->root, FALSE);
 
   G_OBJECT_CLASS (sysprof_callgraph_parent_class)->finalize (object);
 }

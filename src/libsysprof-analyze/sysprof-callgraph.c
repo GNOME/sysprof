@@ -225,7 +225,7 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
   if (stack_depth == 0 || stack_depth > MAX_STACK_DEPTH)
     return;
 
-  symbols = g_newa (SysprofSymbol *, stack_depth + 2);
+  symbols = g_newa (SysprofSymbol *, stack_depth + 3);
   n_symbols = sysprof_document_symbolize_traceable (self->document,
                                                     traceable,
                                                     symbols,
@@ -235,9 +235,14 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
   g_assert (n_symbols > 0);
   g_assert (n_symbols <= stack_depth);
 
-  /* We saved 2 extra spaces for these above so that we can
+  /* We saved 3 extra spaces for these above so that we can
    * tack on the "Process" symbol and the "Everything" symbol.
+   * If the final address context places us in Kernel, we want
+   * to add a "- - Kernel - -" symbol to ensure that we are
+   * accounting cost to the kernel for the process.
    */
+  if (final_context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
+    symbols[n_symbols++] = _sysprof_document_kernel_symbol (self->document);
   symbols[n_symbols++] = _sysprof_document_process_symbol (self->document, pid);
   symbols[n_symbols++] = self->everything;
 

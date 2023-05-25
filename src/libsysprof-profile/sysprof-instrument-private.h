@@ -34,6 +34,10 @@ struct _SysprofInstrument
 struct _SysprofInstrumentClass
 {
   GObjectClass parent_class;
+
+  char **(*list_required_policy) (SysprofInstrument *self);
 };
+
+char **_sysprof_instrument_list_required_policy (SysprofInstrument *self);
 
 G_END_DECLS

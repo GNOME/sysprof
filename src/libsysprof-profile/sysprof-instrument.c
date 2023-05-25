@@ -24,12 +24,27 @@
 
 G_DEFINE_ABSTRACT_TYPE (SysprofInstrument, sysprof_instrument, G_TYPE_OBJECT)
 
+static char **
+sysprof_instrument_real_list_required_policy (SysprofInstrument *self)
+{
+  return NULL;
+}
+
 static void
 sysprof_instrument_class_init (SysprofInstrumentClass *klass)
 {
+  klass->list_required_policy = sysprof_instrument_real_list_required_policy;
 }
 
 static void
 sysprof_instrument_init (SysprofInstrument *self)
 {
+}
+
+char **
+_sysprof_instrument_list_required_policy (SysprofInstrument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_INSTRUMENT (self), NULL);
+
+  return SYSPROF_INSTRUMENT_GET_CLASS (self)->list_required_policy (self);
 }

@@ -1,1 +1,2 @@
+subdir('eggbitset')
 subdir('elfparser')

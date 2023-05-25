@@ -56,3 +56,12 @@ if get_option('agent')
          install: true,
   )
 endif
+
+if get_option('gtk')
+  callgraph = executable('callgraph', ['callgraph.c'],
+    dependencies: [libsysprof_analyze_static_dep,
+                   dependency('gtk4', version: gtk_req_version)],
+          c_args: tools_cflags,
+         install: false,
+  )
+endif

@@ -27,12 +27,26 @@
 
 G_BEGIN_DECLS
 
-void              _sysprof_callgraph_new_async  (SysprofDocument      *document,
-                                                 GListModel           *traceables,
-                                                 GCancellable         *cancellable,
-                                                 GAsyncReadyCallback   callback,
-                                                 gpointer              user_data);
-SysprofCallgraph *_sysprof_callgraph_new_finish (GAsyncResult         *result,
-                                                 GError              **error);
+struct _SysprofCallgraphNode
+{
+  SysprofCallgraphNode *parent;
+  SysprofCallgraphNode *prev;
+  SysprofCallgraphNode *next;
+  SysprofCallgraphNode *children;
+  SysprofSymbol        *symbol;
+  gpointer              augment;
+};
+
+void              _sysprof_callgraph_new_async  (SysprofDocument          *document,
+                                                 GListModel               *traceables,
+                                                 gsize                     augment_size,
+                                                 SysprofAugmentationFunc   augment_func,
+                                                 gpointer                  augment_func_data,
+                                                 GDestroyNotify            augment_func_data_destroy,
+                                                 GCancellable             *cancellable,
+                                                 GAsyncReadyCallback       callback,
+                                                 gpointer                  user_data);
+SysprofCallgraph *_sysprof_callgraph_new_finish (GAsyncResult             *result,
+                                                 GError                  **error);
 
 G_END_DECLS

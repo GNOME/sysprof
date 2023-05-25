@@ -1146,19 +1146,35 @@ sysprof_document_callgraph_cb (GObject      *object,
  * sysprof_document_callgraph_async:
  * @self: a #SysprofDocument
  * @traceables: a list model of traceables for the callgraph
+ * @augment_size: the size of data to reserve for augmentation in
+ *   the callgraph.
+ * @augment_func: (nullable) (scope notified): an optional callback
+ *   to be executed for each node in the callgraph traces to augment
+ *   as the callgraph is generated.
+ * @augment_func_data: (closure augment_func) (nullable): the closure
+ *   data for @augment_func
+ * @augment_func_data_destroy: (destroy augment_func) (nullable): the
+ *   destroy callback for @augment_func_data.
  * @cancellable: (nullable): a #GCancellable or %NULL
  * @callback: a callback to execute upon completion
  * @user_data: closure data for @callback
  *
  * Asynchronously generates a callgraph using the @traceables to get
  * the call stacks.
+ *
+ * Ideally you want @augment_size to be <= the size of a pointer to
+ * avoid extra allocations per callgraph node.
  */
 void
-sysprof_document_callgraph_async (SysprofDocument     *self,
-                                  GListModel          *traceables,
-                                  GCancellable        *cancellable,
-                                  GAsyncReadyCallback  callback,
-                                  gpointer             user_data)
+sysprof_document_callgraph_async (SysprofDocument         *self,
+                                  GListModel              *traceables,
+                                  gsize                    augment_size,
+                                  SysprofAugmentationFunc  augment_func,
+                                  gpointer                 augment_func_data,
+                                  GDestroyNotify           augment_func_data_destroy,
+                                  GCancellable            *cancellable,
+                                  GAsyncReadyCallback      callback,
+                                  gpointer                 user_data)
 {
   g_autoptr(GTask) task = NULL;
 
@@ -1171,6 +1187,10 @@ sysprof_document_callgraph_async (SysprofDocument     *self,
 
   _sysprof_callgraph_new_async (self,
                                 traceables,
+                                augment_size,
+                                augment_func,
+                                augment_func_data,
+                                augment_func_data_destroy,
                                 cancellable,
                                 sysprof_document_callgraph_cb,
                                 g_steal_pointer (&task));

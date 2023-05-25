@@ -20,25 +20,82 @@
 
 #include "config.h"
 
-#include "sysprof-callgraph-frame.h"
+#include <gio/gio.h>
+
+#include "sysprof-callgraph-private.h"
+#include "sysprof-callgraph-frame-private.h"
 
 struct _SysprofCallgraphFrame
 {
-  GObject parent_instance;
+  GObject               parent_instance;
+  SysprofCallgraph     *callgraph;
+  SysprofCallgraphNode *node;
+  guint                 n_children;
 };
 
 enum {
   PROP_0,
+  PROP_SYMBOL,
   N_PROPS
 };
 
-G_DEFINE_FINAL_TYPE (SysprofCallgraphFrame, sysprof_callgraph_frame, G_TYPE_OBJECT)
+static GType
+sysprof_callgraph_frame_get_item_type (GListModel *model)
+{
+  return SYSPROF_TYPE_CALLGRAPH_FRAME;
+}
+
+static guint
+sysprof_callgraph_frame_get_n_items (GListModel *model)
+{
+  return SYSPROF_CALLGRAPH_FRAME (model)->n_children;
+}
+
+static gpointer
+sysprof_callgraph_frame_get_item (GListModel *model,
+                                  guint       position)
+{
+  SysprofCallgraphFrame *self = SYSPROF_CALLGRAPH_FRAME (model);
+  SysprofCallgraphNode *iter;
+
+  if (self->callgraph == NULL)
+    return NULL;
+
+  iter = self->node->children;
+
+  while (iter != NULL && position > 0)
+    {
+      iter = iter->next;
+      position--;
+    }
+
+  if (iter == NULL)
+    return NULL;
+
+  return _sysprof_callgraph_frame_new (self->callgraph, iter);
+}
+
+static void
+list_model_iface_init (GListModelInterface *iface)
+{
+  iface->get_item_type = sysprof_callgraph_frame_get_item_type;
+  iface->get_n_items = sysprof_callgraph_frame_get_n_items;
+  iface->get_item = sysprof_callgraph_frame_get_item;
+}
+
+G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofCallgraphFrame, sysprof_callgraph_frame, G_TYPE_OBJECT,
+                               G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
 static GParamSpec *properties [N_PROPS];
 
 static void
 sysprof_callgraph_frame_finalize (GObject *object)
 {
+  SysprofCallgraphFrame *self = (SysprofCallgraphFrame *)object;
+
+  g_clear_weak_pointer (&self->callgraph);
+  self->node = NULL;
+
   G_OBJECT_CLASS (sysprof_callgraph_frame_parent_class)->finalize (object);
 }
 
@@ -48,21 +105,14 @@ sysprof_callgraph_frame_get_property (GObject    *object,
                                       GValue     *value,
                                       GParamSpec *pspec)
 {
-  switch (prop_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
+  SysprofCallgraphFrame *self = SYSPROF_CALLGRAPH_FRAME (object);
 
-static void
-sysprof_callgraph_frame_set_property (GObject      *object,
-                                      guint         prop_id,
-                                      const GValue *value,
-                                      GParamSpec   *pspec)
-{
   switch (prop_id)
     {
+    case PROP_SYMBOL:
+      g_value_set_object (value, sysprof_callgraph_frame_get_symbol (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -75,10 +125,75 @@ sysprof_callgraph_frame_class_init (SysprofCallgraphFrameClass *klass)
 
   object_class->finalize = sysprof_callgraph_frame_finalize;
   object_class->get_property = sysprof_callgraph_frame_get_property;
-  object_class->set_property = sysprof_callgraph_frame_set_property;
+
+  properties [PROP_SYMBOL] =
+    g_param_spec_object ("symbol", NULL, NULL,
+                         SYSPROF_TYPE_SYMBOL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
 sysprof_callgraph_frame_init (SysprofCallgraphFrame *self)
 {
+}
+
+SysprofCallgraphFrame *
+_sysprof_callgraph_frame_new (SysprofCallgraph     *callgraph,
+                              SysprofCallgraphNode *node)
+{
+  SysprofCallgraphFrame *self;
+
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (callgraph), NULL);
+  g_return_val_if_fail (node != NULL, NULL);
+
+  self = g_object_new (SYSPROF_TYPE_CALLGRAPH_FRAME, NULL);
+  g_set_weak_pointer (&self->callgraph, callgraph);
+  self->node = node;
+
+  for (const SysprofCallgraphNode *iter = node->children;
+       iter != NULL;
+       iter = iter->next)
+    self->n_children++;
+
+  return self;
+}
+
+/**
+ * sysprof_callgraph_frame_get_symbol:
+ * @self: a #SysprofCallgraphFrame
+ *
+ * Gets the symbol for the frame.
+ *
+ * Returns: (nullable) (transfer none): a #SysprofSymbol
+ */
+SysprofSymbol *
+sysprof_callgraph_frame_get_symbol (SysprofCallgraphFrame *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), NULL);
+
+  if (self->callgraph == NULL)
+    return NULL;
+
+  return self->node->symbol;
+}
+
+/**
+ * sysprof_callgraph_frame_get_augment: (skip)
+ * @self: a #SysprofCallgraphFrame
+ *
+ * Gets the augmentation that was attached to the callgrpah node.
+ *
+ * Returns: (nullable) (transfer none): the augmentation data
+ */
+gpointer
+sysprof_callgraph_frame_get_augment (SysprofCallgraphFrame *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), NULL);
+
+  if (self->callgraph == NULL)
+    return NULL;
+
+  return sysprof_callgraph_get_augment (self->callgraph, self->node);
 }

@@ -1,0 +1,154 @@
+/* test-callgraph.c
+ *
+ * Copyright 2023 Christian Hergert <chergert@redhat.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+#include "config.h"
+
+#include <glib/gi18n.h>
+#include <locale.h>
+
+#include <sysprof-analyze.h>
+
+typedef struct _Augment
+{
+  guint32 size;
+  guint32 total;
+} Augment;
+
+static const GOptionEntry entries[] = {
+  { 0 }
+};
+
+static void
+print_callgraph (GListModel *model,
+                 guint       depth,
+                 guint       total)
+{
+  guint n_items = g_list_model_get_n_items (model);
+
+  for (guint i = 0; i < n_items; i++)
+    {
+      g_autoptr(SysprofCallgraphFrame) frame = g_list_model_get_item (model, i);
+      SysprofSymbol *symbol = sysprof_callgraph_frame_get_symbol (frame);
+      Augment *aug = sysprof_callgraph_frame_get_augment (frame);
+      char tstr[16];
+
+      g_snprintf (tstr, sizeof tstr, "%.2lf%%", 100. * (aug->total / (double)total));
+
+      g_print (" [%6u]  [%8s] ", aug->total, tstr);
+      for (guint j = 0; j < depth; j++)
+        g_print ("  ");
+      g_print ("%s\n", sysprof_symbol_get_name (symbol));
+
+      print_callgraph (G_LIST_MODEL (frame), depth+1, total);
+    }
+}
+
+static void
+callgraph_cb (GObject      *object,
+              GAsyncResult *result,
+              gpointer      user_data)
+{
+  SysprofDocument *document = SYSPROF_DOCUMENT (object);
+  GMainLoop *main_loop = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(SysprofCallgraph) callgraph = sysprof_document_callgraph_finish (document, result, &error);
+  g_autoptr(SysprofCallgraphFrame) root = NULL;
+  Augment *aug;
+
+  g_assert_no_error (error);
+  g_assert_true (SYSPROF_IS_CALLGRAPH (callgraph));
+
+  root = g_list_model_get_item (G_LIST_MODEL (callgraph), 0);
+  aug = sysprof_callgraph_frame_get_augment (root);
+
+  g_print ("   Hits   Percent\n");
+  print_callgraph (G_LIST_MODEL (callgraph), 0, aug->total);
+
+  g_main_loop_quit (main_loop);
+}
+
+static void
+augment_cb (SysprofCallgraph     *callgraph,
+            SysprofCallgraphNode *node,
+            SysprofDocumentFrame *frame,
+            gpointer              user_data)
+{
+  Augment *aug;
+
+  g_assert (SYSPROF_IS_CALLGRAPH (callgraph));
+  g_assert (node != NULL);
+  g_assert (SYSPROF_IS_DOCUMENT_SAMPLE (frame));
+  g_assert (user_data == NULL);
+
+  for (; node ; node = sysprof_callgraph_node_parent (node))
+    {
+      aug = sysprof_callgraph_get_augment (callgraph, node);
+      aug->total += 1;
+    }
+}
+
+int
+main (int   argc,
+      char *argv[])
+{
+  g_autoptr(GOptionContext) context = g_option_context_new ("- test callgraph generation");
+  g_autoptr(GMainLoop) main_loop = g_main_loop_new (NULL, FALSE);
+  g_autoptr(SysprofDocumentLoader) loader = NULL;
+  g_autoptr(SysprofDocument) document = NULL;
+  g_autoptr(SysprofMultiSymbolizer) multi = NULL;
+  g_autoptr(GListModel) samples = NULL;
+  g_autoptr(GError) error = NULL;
+
+  setlocale (LC_ALL, "");
+  bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+  textdomain (GETTEXT_PACKAGE);
+
+  g_option_context_add_main_entries (context, entries, NULL);
+  if (!g_option_context_parse (context, &argc, &argv, &error))
+    g_error ("%s", error->message);
+
+  if (argc < 2)
+    g_error ("usage: %s CAPTURE_FILE", argv[0]);
+
+  multi = sysprof_multi_symbolizer_new ();
+  sysprof_multi_symbolizer_take (multi, sysprof_kallsyms_symbolizer_new ());
+  sysprof_multi_symbolizer_take (multi, sysprof_elf_symbolizer_new ());
+  sysprof_multi_symbolizer_take (multi, sysprof_jitmap_symbolizer_new ());
+
+  loader = sysprof_document_loader_new (argv[1]);
+  sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));
+  if (!(document = sysprof_document_loader_load (loader, NULL, &error)))
+    g_error ("Failed to load document: %s", error->message);
+
+  samples = sysprof_document_list_samples (document);
+
+  sysprof_document_callgraph_async (document,
+                                    samples,
+                                    sizeof (Augment),
+                                    augment_cb, NULL, NULL,
+                                    NULL,
+                                    callgraph_cb,
+                                    main_loop);
+
+  g_main_loop_run (main_loop);
+
+  return 0;
+}

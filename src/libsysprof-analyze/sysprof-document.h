@@ -57,11 +57,15 @@ guint                   sysprof_document_symbolize_traceable (SysprofDocument   
                                                               SysprofSymbol            **symbols,
                                                               guint                      n_symbols);
 SYSPROF_AVAILABLE_IN_ALL
-void                    sysprof_document_callgraph_async     (SysprofDocument           *self,
-                                                              GListModel                *traceables,
-                                                              GCancellable              *cancellable,
-                                                              GAsyncReadyCallback        callback,
-                                                              gpointer                   user_data);
+void                    sysprof_document_callgraph_async     (SysprofDocument             *self,
+                                                              GListModel                  *traceables,
+                                                              gsize                        augment_size,
+                                                              SysprofAugmentationFunc      augment_func,
+                                                              gpointer                     augment_func_data,
+                                                              GDestroyNotify               augment_func_data_destroy,
+                                                              GCancellable                *cancellable,
+                                                              GAsyncReadyCallback          callback,
+                                                              gpointer                     user_data);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCallgraph       *sysprof_document_callgraph_finish    (SysprofDocument           *self,
                                                               GAsyncResult              *result,

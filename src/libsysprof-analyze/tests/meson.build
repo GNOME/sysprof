@@ -12,6 +12,7 @@ libsysprof_analyze_testsuite_c_args = [
 ]
 
 libsysprof_analyze_testsuite = {
+  'test-callgraph'           : {'skip': true},
   'test-capture-model'       : {'skip': true},
   'test-elf-loader'          : {'skip': true},
   'test-list-counters'       : {'skip': true},

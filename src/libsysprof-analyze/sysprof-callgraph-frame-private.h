@@ -1,4 +1,4 @@
-/* sysprof-callgraph-frame.h
+/* sysprof-callgraph-frame-private.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,22 +20,12 @@
 
 #pragma once
 
-#include <glib-object.h>
-
-#include <sysprof-capture.h>
-
-#include "sysprof-symbol.h"
+#include "sysprof-callgraph.h"
+#include "sysprof-callgraph-frame.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_CALLGRAPH_FRAME (sysprof_callgraph_frame_get_type())
-
-SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofCallgraphFrame, sysprof_callgraph_frame, SYSPROF, CALLGRAPH_FRAME, GObject)
-
-SYSPROF_AVAILABLE_IN_ALL
-SysprofSymbol *sysprof_callgraph_frame_get_symbol  (SysprofCallgraphFrame *self);
-SYSPROF_AVAILABLE_IN_ALL
-gpointer       sysprof_callgraph_frame_get_augment (SysprofCallgraphFrame *self);
+SysprofCallgraphFrame *_sysprof_callgraph_frame_new (SysprofCallgraph     *callgraph,
+                                                     SysprofCallgraphNode *node);
 
 G_END_DECLS

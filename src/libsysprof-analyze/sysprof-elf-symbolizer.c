@@ -93,7 +93,10 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   g_assert (address < map_end);
 
   file_offset = sysprof_document_mmap_get_file_offset (map);
-  relative_address = file_offset + (address - map_begin);
+
+  relative_address = address;
+  relative_address -= map_begin;
+  relative_address += file_offset;
 
   path = sysprof_document_mmap_get_file (map);
   build_id = sysprof_document_mmap_get_build_id (map);

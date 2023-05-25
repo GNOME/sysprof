@@ -158,6 +158,16 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
 
   parent = &self->root;
 
+  /* If the first thing we see is a context switch, then there is
+   * nothing after it to account for. Just skip the symbol as it
+   * provides nothing to us in the callgraph.
+   */
+  if (_sysprof_symbol_is_context_switch (symbols[0]))
+    {
+      symbols++;
+      n_symbols--;
+    }
+
   for (guint i = n_symbols - 1; i > 0; i--)
     {
       SysprofSymbol *symbol = symbols[i-1];

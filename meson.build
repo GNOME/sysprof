@@ -238,6 +238,7 @@ endif
 needs_service_access = get_option('libsysprof') or get_option('agent')
 install_service_files = needs_service_access or get_option('sysprofd') == 'bundled'
 
+subdir('contrib')
 subdir('src')
 subdir('data')
 subdir('po')

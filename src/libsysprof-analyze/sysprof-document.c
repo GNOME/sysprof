@@ -62,16 +62,16 @@ struct _SysprofDocument
 
   SysprofStrings           *strings;
 
-  GtkBitset                *file_chunks;
-  GtkBitset                *samples;
-  GtkBitset                *traceables;
-  GtkBitset                *processes;
-  GtkBitset                *mmaps;
-  GtkBitset                *overlays;
-  GtkBitset                *pids;
-  GtkBitset                *jitmaps;
-  GtkBitset                *ctrdefs;
-  GtkBitset                *ctrsets;
+  EggBitset                *file_chunks;
+  EggBitset                *samples;
+  EggBitset                *traceables;
+  EggBitset                *processes;
+  EggBitset                *mmaps;
+  EggBitset                *overlays;
+  EggBitset                *pids;
+  EggBitset                *jitmaps;
+  EggBitset                *ctrdefs;
+  EggBitset                *ctrsets;
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_process_info;
@@ -143,7 +143,7 @@ list_model_iface_init (GListModelInterface *iface)
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocument, sysprof_document, G_TYPE_OBJECT,
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
-GtkBitset *
+EggBitset *
 _sysprof_document_traceables (SysprofDocument *self)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
@@ -210,16 +210,16 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
 
-  g_clear_pointer (&self->ctrdefs, gtk_bitset_unref);
-  g_clear_pointer (&self->ctrsets, gtk_bitset_unref);
-  g_clear_pointer (&self->file_chunks, gtk_bitset_unref);
-  g_clear_pointer (&self->jitmaps, gtk_bitset_unref);
-  g_clear_pointer (&self->mmaps, gtk_bitset_unref);
-  g_clear_pointer (&self->overlays, gtk_bitset_unref);
-  g_clear_pointer (&self->pids, gtk_bitset_unref);
-  g_clear_pointer (&self->processes, gtk_bitset_unref);
-  g_clear_pointer (&self->samples, gtk_bitset_unref);
-  g_clear_pointer (&self->traceables, gtk_bitset_unref);
+  g_clear_pointer (&self->ctrdefs, egg_bitset_unref);
+  g_clear_pointer (&self->ctrsets, egg_bitset_unref);
+  g_clear_pointer (&self->file_chunks, egg_bitset_unref);
+  g_clear_pointer (&self->jitmaps, egg_bitset_unref);
+  g_clear_pointer (&self->mmaps, egg_bitset_unref);
+  g_clear_pointer (&self->overlays, egg_bitset_unref);
+  g_clear_pointer (&self->pids, egg_bitset_unref);
+  g_clear_pointer (&self->processes, egg_bitset_unref);
+  g_clear_pointer (&self->samples, egg_bitset_unref);
+  g_clear_pointer (&self->traceables, egg_bitset_unref);
 
   g_clear_object (&self->counters);
   g_clear_pointer (&self->counter_id_to_values, g_hash_table_unref);
@@ -250,16 +250,16 @@ sysprof_document_init (SysprofDocument *self)
   self->counter_id_to_values = g_hash_table_new_full (NULL, NULL, NULL,
                                                       (GDestroyNotify)g_array_unref);
 
-  self->ctrdefs = gtk_bitset_new_empty ();
-  self->ctrsets = gtk_bitset_new_empty ();
-  self->file_chunks = gtk_bitset_new_empty ();
-  self->jitmaps = gtk_bitset_new_empty ();
-  self->mmaps = gtk_bitset_new_empty ();
-  self->overlays = gtk_bitset_new_empty ();
-  self->pids = gtk_bitset_new_empty ();
-  self->processes = gtk_bitset_new_empty ();
-  self->samples = gtk_bitset_new_empty ();
-  self->traceables = gtk_bitset_new_empty ();
+  self->ctrdefs = egg_bitset_new_empty ();
+  self->ctrsets = egg_bitset_new_empty ();
+  self->file_chunks = egg_bitset_new_empty ();
+  self->jitmaps = egg_bitset_new_empty ();
+  self->mmaps = egg_bitset_new_empty ();
+  self->overlays = egg_bitset_new_empty ();
+  self->pids = egg_bitset_new_empty ();
+  self->processes = egg_bitset_new_empty ();
+  self->samples = egg_bitset_new_empty ();
+  self->traceables = egg_bitset_new_empty ();
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   self->pid_to_process_info = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)sysprof_process_info_unref);
@@ -270,12 +270,12 @@ sysprof_document_init (SysprofDocument *self)
 static void
 sysprof_document_load_memory_maps (SysprofDocument *self)
 {
-  GtkBitsetIter iter;
+  EggBitsetIter iter;
   guint i;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
 
-  if (gtk_bitset_iter_init_first (&iter, self->mmaps, &i))
+  if (egg_bitset_iter_init_first (&iter, self->mmaps, &i))
     {
       do
         {
@@ -285,7 +285,7 @@ sysprof_document_load_memory_maps (SysprofDocument *self)
 
           sysprof_address_layout_take (process_info->address_layout, g_steal_pointer (&map));
         }
-      while (gtk_bitset_iter_next (&iter, &i));
+      while (egg_bitset_iter_next (&iter, &i));
     }
 }
 
@@ -403,12 +403,12 @@ sysprof_document_load_mountinfo (SysprofDocument *self,
 static void
 sysprof_document_load_mountinfos (SysprofDocument *self)
 {
-  GtkBitsetIter iter;
+  EggBitsetIter iter;
   guint pid;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
 
-  if (gtk_bitset_iter_init_first (&iter, self->pids, &pid))
+  if (egg_bitset_iter_init_first (&iter, self->pids, &pid))
     {
       do
         {
@@ -422,19 +422,19 @@ sysprof_document_load_mountinfos (SysprofDocument *self)
               sysprof_document_load_mountinfo (self, pid, bytes);
             }
         }
-      while (gtk_bitset_iter_next (&iter, &pid));
+      while (egg_bitset_iter_next (&iter, &pid));
     }
 }
 
 static void
 sysprof_document_load_overlays (SysprofDocument *self)
 {
-  GtkBitsetIter iter;
+  EggBitsetIter iter;
   guint i;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
 
-  if (gtk_bitset_iter_init_first (&iter, self->overlays, &i))
+  if (egg_bitset_iter_init_first (&iter, self->overlays, &i))
     {
       do
         {
@@ -453,19 +453,19 @@ sysprof_document_load_overlays (SysprofDocument *self)
                                                  g_steal_pointer (&mount));
             }
         }
-      while (gtk_bitset_iter_next (&iter, &i));
+      while (egg_bitset_iter_next (&iter, &i));
     }
 }
 
 static void
 sysprof_document_load_processes (SysprofDocument *self)
 {
-  GtkBitsetIter iter;
+  EggBitsetIter iter;
   guint i;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
 
-  if (gtk_bitset_iter_init_first (&iter, self->processes, &i))
+  if (egg_bitset_iter_init_first (&iter, self->processes, &i))
     {
       do
         {
@@ -489,7 +489,7 @@ sysprof_document_load_processes (SysprofDocument *self)
                 }
             }
         }
-      while (gtk_bitset_iter_next (&iter, &i));
+      while (egg_bitset_iter_next (&iter, &i));
     }
 }
 
@@ -497,9 +497,9 @@ static void
 sysprof_document_load_counters (SysprofDocument *self)
 {
   g_autoptr(GPtrArray) counters = NULL;
-  g_autoptr(GtkBitset) swap_ids = NULL;
+  g_autoptr(EggBitset) swap_ids = NULL;
   GListModel *model;
-  GtkBitsetIter iter;
+  EggBitsetIter iter;
   guint i;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
@@ -512,7 +512,7 @@ sysprof_document_load_counters (SysprofDocument *self)
    * lookup below we can use when reading in counter values.
    */
   if (self->needs_swap)
-    swap_ids = gtk_bitset_new_empty ();
+    swap_ids = egg_bitset_new_empty ();
 
   /* First create our counter objects which we will use to hold values that
    * were extracted from the capture file. We create the array first so that
@@ -520,7 +520,7 @@ sysprof_document_load_counters (SysprofDocument *self)
    * each and every added counter.
    */
   counters = g_ptr_array_new_with_free_func (g_object_unref);
-  if (gtk_bitset_iter_init_first (&iter, self->ctrdefs, &i))
+  if (egg_bitset_iter_init_first (&iter, self->ctrdefs, &i))
     {
       do
         {
@@ -540,7 +540,7 @@ sysprof_document_load_counters (SysprofDocument *self)
 
               /* Keep track if this counter will need int64 endian swaps */
               if (swap_ids != NULL && type == SYSPROF_CAPTURE_COUNTER_INT64)
-                gtk_bitset_add (swap_ids, id);
+                egg_bitset_add (swap_ids, id);
 
               g_hash_table_insert (self->counter_id_to_values,
                                    GUINT_TO_POINTER (id),
@@ -555,7 +555,7 @@ sysprof_document_load_counters (SysprofDocument *self)
                                                               g_steal_pointer (&values)));
             }
         }
-      while (gtk_bitset_iter_next (&iter, &i));
+      while (egg_bitset_iter_next (&iter, &i));
 
       if (counters->len > 0)
         g_list_store_splice (self->counters, 0, 0, counters->pdata, counters->len);
@@ -564,7 +564,7 @@ sysprof_document_load_counters (SysprofDocument *self)
   /* Now find all the counter values and associate them with the counters
    * that were previously defined.
    */
-  if (gtk_bitset_iter_init_first (&iter, self->ctrsets, &i))
+  if (egg_bitset_iter_init_first (&iter, self->ctrsets, &i))
     {
       do
         {
@@ -581,7 +581,7 @@ sysprof_document_load_counters (SysprofDocument *self)
 
               sysprof_document_ctrset_get_raw_value (ctrset, j, &id, ctrval.v_raw);
 
-              if (swap_ids != NULL && gtk_bitset_contains (swap_ids, id))
+              if (swap_ids != NULL && egg_bitset_contains (swap_ids, id))
                 {
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
                   ctrval.v_int64 = GINT64_FROM_BE (ctrval.v_int64);
@@ -594,7 +594,7 @@ sysprof_document_load_counters (SysprofDocument *self)
                 g_array_append_val (values, ctrval);
             }
         }
-      while (gtk_bitset_iter_next (&iter, &i));
+      while (egg_bitset_iter_next (&iter, &i));
     }
 }
 
@@ -663,45 +663,45 @@ sysprof_document_load_worker (GTask        *task,
 
       pid = self->needs_swap ? GUINT32_SWAP_LE_BE (tainted->pid) : tainted->pid;
 
-      gtk_bitset_add (self->pids, pid);
+      egg_bitset_add (self->pids, pid);
 
       switch ((int)tainted->type)
         {
         case SYSPROF_CAPTURE_FRAME_ALLOCATION:
-          gtk_bitset_add (self->traceables, self->frames->len);
+          egg_bitset_add (self->traceables, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_SAMPLE:
-          gtk_bitset_add (self->samples, self->frames->len);
-          gtk_bitset_add (self->traceables, self->frames->len);
+          egg_bitset_add (self->samples, self->frames->len);
+          egg_bitset_add (self->traceables, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_PROCESS:
-          gtk_bitset_add (self->processes, self->frames->len);
+          egg_bitset_add (self->processes, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
-          gtk_bitset_add (self->file_chunks, self->frames->len);
+          egg_bitset_add (self->file_chunks, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_CTRDEF:
-          gtk_bitset_add (self->ctrdefs, self->frames->len);
+          egg_bitset_add (self->ctrdefs, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_CTRSET:
-          gtk_bitset_add (self->ctrsets, self->frames->len);
+          egg_bitset_add (self->ctrsets, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_JITMAP:
-          gtk_bitset_add (self->jitmaps, self->frames->len);
+          egg_bitset_add (self->jitmaps, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_MAP:
-          gtk_bitset_add (self->mmaps, self->frames->len);
+          egg_bitset_add (self->mmaps, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_OVERLAY:
-          gtk_bitset_add (self->overlays, self->frames->len);
+          egg_bitset_add (self->overlays, self->frames->len);
           break;
 
         default:
@@ -903,11 +903,11 @@ sysprof_document_lookup_file (SysprofDocument *self,
   if (g_hash_table_lookup_extended (self->files_first_position, path, &key, &value))
     {
       g_autoptr(GPtrArray) file_chunks = g_ptr_array_new_with_free_func (g_object_unref);
-      GtkBitsetIter iter;
+      EggBitsetIter iter;
       guint target = GPOINTER_TO_SIZE (value);
       guint i;
 
-      if (gtk_bitset_iter_init_at (&iter, self->file_chunks, target, &i))
+      if (egg_bitset_iter_init_at (&iter, self->file_chunks, target, &i))
         {
           do
             {
@@ -923,7 +923,7 @@ sysprof_document_lookup_file (SysprofDocument *self,
                     break;
                 }
             }
-          while (gtk_bitset_iter_next (&iter, &i));
+          while (egg_bitset_iter_next (&iter, &i));
         }
 
       return _sysprof_document_file_new (path, g_steal_pointer (&file_chunks));
@@ -944,7 +944,7 @@ GListModel *
 sysprof_document_list_files (SysprofDocument *self)
 {
   GHashTableIter hiter;
-  GtkBitsetIter iter;
+  EggBitsetIter iter;
   GListStore *model;
   gpointer key, value;
 
@@ -961,7 +961,7 @@ sysprof_document_list_files (SysprofDocument *self)
       guint target = GPOINTER_TO_SIZE (value);
       guint i;
 
-      if (gtk_bitset_iter_init_at (&iter, self->file_chunks, target, &i))
+      if (egg_bitset_iter_init_at (&iter, self->file_chunks, target, &i))
         {
           do
             {
@@ -977,7 +977,7 @@ sysprof_document_list_files (SysprofDocument *self)
                     break;
                 }
             }
-          while (gtk_bitset_iter_next (&iter, &i));
+          while (egg_bitset_iter_next (&iter, &i));
         }
 
       file = _sysprof_document_file_new (path, g_steal_pointer (&file_chunks));

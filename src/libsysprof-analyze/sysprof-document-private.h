@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <eggbitset.h>
 
 #include "sysprof-document.h"
 #include "sysprof-symbolizer.h"
@@ -55,7 +55,7 @@ gboolean         _sysprof_document_symbolize_finish (SysprofDocument      *self,
 gboolean         _sysprof_document_is_native        (SysprofDocument      *self);
 GRefString      *_sysprof_document_ref_string       (SysprofDocument      *self,
                                                      const char           *name);
-GtkBitset       *_sysprof_document_traceables       (SysprofDocument      *self);
+EggBitset       *_sysprof_document_traceables       (SysprofDocument      *self);
 SysprofSymbol   *_sysprof_document_process_symbol   (SysprofDocument      *self,
                                                      int                   pid);
 SysprofSymbol   *_sysprof_document_kernel_symbol    (SysprofDocument      *self);

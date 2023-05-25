@@ -149,8 +149,8 @@ sysprof_document_symbols_worker (GTask        *task,
     { "- - Guest User - -", SYSPROF_ADDRESS_CONTEXT_GUEST_USER },
   };
   Symbolize *state = task_data;
-  GtkBitsetIter iter;
-  GtkBitset *bitset;
+  EggBitsetIter iter;
+  EggBitset *bitset;
   GListModel *model;
   guint i;
 
@@ -182,7 +182,7 @@ sysprof_document_symbols_worker (GTask        *task,
 
   /* Walk through the available traceables which need symbols extracted */
   if (!SYSPROF_IS_NO_SYMBOLIZER (state->symbolizer) &&
-      gtk_bitset_iter_init_first (&iter, bitset, &i))
+      egg_bitset_iter_init_first (&iter, bitset, &i))
     {
       do
         {
@@ -196,7 +196,7 @@ sysprof_document_symbols_worker (GTask        *task,
                          traceable,
                          state->symbolizer);
         }
-      while (gtk_bitset_iter_next (&iter, &i));
+      while (egg_bitset_iter_next (&iter, &i));
     }
 
   g_task_return_pointer (task,

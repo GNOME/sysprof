@@ -21,7 +21,7 @@
 #pragma once
 
 #include <gio/gio.h>
-#include <gtk/gtk.h>
+#include <eggbitset.h>
 
 G_BEGIN_DECLS
 
@@ -30,6 +30,6 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (SysprofDocumentBitsetIndex, sysprof_document_bitset_index, SYSPROF, DOCUMENT_BITSET_INDEX, GObject)
 
 GListModel *_sysprof_document_bitset_index_new (GListModel *model,
-                                                GtkBitset  *bitset);
+                                                EggBitset  *bitset);
 
 G_END_DECLS

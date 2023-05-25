@@ -26,7 +26,7 @@ struct _SysprofDocumentBitsetIndex
 {
   GObject parent_instance;
   GListModel *model;
-  GtkBitset *bitset;
+  EggBitset *bitset;
 };
 
 static GType
@@ -46,7 +46,7 @@ sysprof_document_bitset_index_get_n_items (GListModel *model)
   SysprofDocumentBitsetIndex *self = SYSPROF_DOCUMENT_BITSET_INDEX (model);
 
   if (self->bitset != NULL)
-    return gtk_bitset_get_size (self->bitset);
+    return egg_bitset_get_size (self->bitset);
 
   return 0;
 }
@@ -60,11 +60,11 @@ sysprof_document_bitset_index_get_item (GListModel *model,
   if (self->model == NULL || self->bitset == NULL)
     return NULL;
 
-  if (position >= gtk_bitset_get_size (self->bitset))
+  if (position >= egg_bitset_get_size (self->bitset))
     return NULL;
 
   return g_list_model_get_item (self->model,
-                                gtk_bitset_get_nth (self->bitset, position));
+                                egg_bitset_get_nth (self->bitset, position));
 }
 
 static void
@@ -83,7 +83,7 @@ sysprof_document_bitset_index_dispose (GObject *object)
 {
   SysprofDocumentBitsetIndex *self = (SysprofDocumentBitsetIndex *)object;
 
-  g_clear_pointer (&self->bitset, gtk_bitset_unref);
+  g_clear_pointer (&self->bitset, egg_bitset_unref);
   g_clear_object (&self->model);
 
   G_OBJECT_CLASS (sysprof_document_bitset_index_parent_class)->dispose (object);
@@ -104,7 +104,7 @@ sysprof_document_bitset_index_init (SysprofDocumentBitsetIndex *self)
 
 GListModel *
 _sysprof_document_bitset_index_new (GListModel *model,
-                                    GtkBitset  *bitset)
+                                    EggBitset  *bitset)
 {
   SysprofDocumentBitsetIndex *self;
 
@@ -113,7 +113,7 @@ _sysprof_document_bitset_index_new (GListModel *model,
 
   self = g_object_new (SYSPROF_TYPE_DOCUMENT_BITSET_INDEX, NULL);
   self->model = g_object_ref (model);
-  self->bitset = gtk_bitset_ref (bitset);
+  self->bitset = egg_bitset_ref (bitset);
 
   return G_LIST_MODEL (self);
 }

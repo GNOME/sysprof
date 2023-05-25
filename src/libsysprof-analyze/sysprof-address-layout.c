@@ -21,7 +21,7 @@
 #include "config.h"
 
 #include <gio/gio.h>
-#include <gtk/gtk.h>
+#include <eggbitset.h>
 
 #include "sysprof-address-layout-private.h"
 
@@ -146,10 +146,10 @@ mmaps_overlap (SysprofDocumentMmap *a,
   return FALSE;
 }
 
-static GtkBitset *
+static EggBitset *
 find_duplicates (GPtrArray *sorted)
 {
-  GtkBitset *bitset = gtk_bitset_new_empty ();
+  EggBitset *bitset = egg_bitset_new_empty ();
 
   if (sorted->len == 0)
     return bitset;
@@ -165,7 +165,7 @@ find_duplicates (GPtrArray *sorted)
        * predictable bsearch results.
        */
       if (mmaps_overlap (map, next))
-        gtk_bitset_add (bitset, i);
+        egg_bitset_add (bitset, i);
     }
 
   return bitset;
@@ -197,8 +197,8 @@ sysprof_address_layout_lookup (SysprofAddressLayout *self,
 
   if (self->mmaps_dirty)
     {
-      g_autoptr(GtkBitset) dups = NULL;
-      GtkBitsetIter iter;
+      g_autoptr(EggBitset) dups = NULL;
+      EggBitsetIter iter;
       guint old_len = self->mmaps->len;
       guint i;
 
@@ -207,11 +207,11 @@ sysprof_address_layout_lookup (SysprofAddressLayout *self,
       g_ptr_array_sort (self->mmaps, compare_mmaps);
       dups = find_duplicates (self->mmaps);
 
-      if (gtk_bitset_iter_init_last (&iter, dups, &i))
+      if (egg_bitset_iter_init_last (&iter, dups, &i))
         {
           do
             g_ptr_array_remove_index (self->mmaps, i);
-          while (gtk_bitset_iter_previous (&iter, &i));
+          while (egg_bitset_iter_previous (&iter, &i));
         }
 
       g_list_model_items_changed (G_LIST_MODEL (self), 0, old_len, self->mmaps->len);

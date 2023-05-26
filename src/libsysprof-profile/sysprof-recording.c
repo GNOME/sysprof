@@ -35,6 +35,11 @@ struct _SysprofRecording
 {
   GObject parent_instance;
 
+  /* If we are spawning a process as part of this recording, this
+   * is the SysprofSpawnable used to spawn the process.
+   */
+  SysprofSpawnable *spawnable;
+
   /* This is where all of the instruments will write to. They are
    * expected to do this from the main-thread only. To work from
    * additional threads they need to proxy that state to the
@@ -246,4 +251,12 @@ sysprof_recording_wait_finish (SysprofRecording  *self,
   g_return_val_if_fail (DEX_IS_ASYNC_RESULT (result), FALSE);
 
   return dex_async_result_propagate_boolean (DEX_ASYNC_RESULT (result), error);
+}
+
+SysprofSpawnable *
+_sysprof_recording_get_spawnable (SysprofRecording *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);
+
+  return self->spawnable;
 }

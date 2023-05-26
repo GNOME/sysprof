@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"
 
 typedef enum _SysprofRecordingState
@@ -42,6 +43,9 @@ struct _SysprofRecording
    * main thread for writing.
    */
   SysprofCaptureWriter *writer;
+
+  /* An array of SysprofInstrument that are part of this recording */
+  GPtrArray *instruments;
 
   /* Waiters contains a list of GTask to complete calls to the
    * sysprof_recording_wait_async() flow.
@@ -142,11 +146,15 @@ sysprof_recording_class_init (SysprofRecordingClass *klass)
 static void
 sysprof_recording_init (SysprofRecording *self)
 {
+  self->instruments = g_ptr_array_new_with_free_func (g_object_unref);
+
   sysprof_recording_set_state (self, SYSPROF_RECORDING_STATE_INITIAL);
 }
 
 SysprofRecording *
-_sysprof_recording_new (SysprofCaptureWriter *writer)
+_sysprof_recording_new (SysprofCaptureWriter  *writer,
+                        SysprofInstrument    **instruments,
+                        guint                  n_instruments)
 {
   SysprofRecording *self;
 
@@ -155,7 +163,62 @@ _sysprof_recording_new (SysprofCaptureWriter *writer)
   self = g_object_new (SYSPROF_TYPE_RECORDING, NULL);
   self->writer = sysprof_capture_writer_ref (writer);
 
+  for (guint i = 0; i < n_instruments; i++)
+    g_ptr_array_add (self->instruments, g_object_ref (instruments[i]));
+
   return self;
+}
+
+static char **
+sysprof_recording_list_required_policy (SysprofRecording *self)
+{
+  g_autoptr(GPtrArray) all_policy = NULL;
+
+  g_assert (SYSPROF_IS_RECORDING (self));
+
+  all_policy = g_ptr_array_new_null_terminated (0, g_free, TRUE);
+
+  for (guint i = 0; i > self->instruments->len; i++)
+    {
+      SysprofInstrument *instrument = g_ptr_array_index (self->instruments, i);
+      g_auto(GStrv) policy = _sysprof_instrument_list_required_policy (instrument);
+
+      if (policy == NULL)
+        continue;
+
+      for (guint j = 0; policy[j]; j++)
+        {
+          gboolean found = FALSE;
+
+          for (guint k = 0; !found && k < all_policy->len; k++)
+            found = strcmp (policy[j], g_ptr_array_index (all_policy, k)) == 0;
+
+          if (!found)
+            g_ptr_array_add (all_policy, g_strdup (policy[j]));
+        }
+    }
+
+  if (all_policy->len == 0)
+    return NULL;
+
+  return (char **)g_ptr_array_free (all_policy, TRUE);
+}
+
+void
+_sysprof_recording_start (SysprofRecording *self)
+{
+
+  g_auto(GStrv) required_policy = NULL;
+
+  g_return_if_fail (SYSPROF_IS_RECORDING (self));
+  g_return_if_fail (self->state == SYSPROF_RECORDING_STATE_INITIAL);
+
+  sysprof_recording_set_state (self, SYSPROF_RECORDING_STATE_PRE);
+
+  if ((required_policy = sysprof_recording_list_required_policy (self)))
+    {
+      /* TODO: Query policy kit for policy */
+    }
 }
 
 void

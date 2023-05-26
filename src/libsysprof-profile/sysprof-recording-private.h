@@ -20,11 +20,15 @@
 
 #pragma once
 
+#include "sysprof-instrument.h"
 #include "sysprof-recording.h"
 
 G_BEGIN_DECLS
 
-SysprofRecording     *_sysprof_recording_new    (SysprofCaptureWriter *writer);
-SysprofCaptureWriter *_sysprof_recording_writer (SysprofRecording     *self);
+SysprofRecording     *_sysprof_recording_new    (SysprofCaptureWriter  *writer,
+                                                 SysprofInstrument    **instruments,
+                                                 guint                  n_instruments);
+void                  _sysprof_recording_start  (SysprofRecording      *self);
+SysprofCaptureWriter *_sysprof_recording_writer (SysprofRecording      *self);
 
 G_END_DECLS

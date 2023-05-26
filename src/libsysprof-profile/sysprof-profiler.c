@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-controlfd-instrument-private.h"
 #include "sysprof-profiler.h"
 #include "sysprof-recording-private.h"
 
@@ -82,6 +83,8 @@ static void
 sysprof_profiler_init (SysprofProfiler *self)
 {
   self->instruments = g_ptr_array_new_with_free_func (g_object_unref);
+
+  sysprof_profiler_add_instrument (self, _sysprof_controlfd_instrument_new ());
 }
 
 SysprofProfiler *

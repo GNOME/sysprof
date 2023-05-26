@@ -5,6 +5,7 @@ libsysprof_profile_public_sources = [
 ]
 
 libsysprof_profile_private_sources = [
+  'sysprof-controlfd-instrument.c',
 ]
 
 libsysprof_profile_public_headers = [

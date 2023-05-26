@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 # include "sysprof-instrument.h"
 # include "sysprof-profiler.h"
 # include "sysprof-recording.h"
+# include "sysprof-spawnable.h"
 #undef SYSPROF_PROFILE_INSIDE
 
 G_END_DECLS

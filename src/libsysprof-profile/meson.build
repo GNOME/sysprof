@@ -2,6 +2,7 @@ libsysprof_profile_public_sources = [
   'sysprof-instrument.c',
   'sysprof-profiler.c',
   'sysprof-recording.c',
+  'sysprof-spawnable.c',
 ]
 
 libsysprof_profile_private_sources = [
@@ -15,6 +16,7 @@ libsysprof_profile_public_headers = [
   'sysprof-instrument.h',
   'sysprof-profiler.h',
   'sysprof-recording.h',
+  'sysprof-spawnable.h',
 ]
 
 libsysprof_profile_deps = [

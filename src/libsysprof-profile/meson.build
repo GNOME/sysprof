@@ -18,6 +18,7 @@ libsysprof_profile_public_headers = [
 
 libsysprof_profile_deps = [
   dependency('gio-2.0', version: glib_req_version),
+  dependency('libdex-1', version: dex_req_version),
 
   libsysprof_capture_dep,
 ]

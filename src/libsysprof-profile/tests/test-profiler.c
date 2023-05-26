@@ -18,14 +18,33 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include <glib-unix.h>
+
 #include <sysprof-profile.h>
 
 static GMainLoop *main_loop;
 static char *capture_file;
+static SysprofRecording *active_recording;
 static const GOptionEntry entries[] = {
   { "capture", 'c', 0, G_OPTION_ARG_FILENAME, &capture_file, "The file to capture into", "CAPTURE" },
   { 0 }
 };
+
+static void
+wait_cb (GObject      *object,
+         GAsyncResult *result,
+         gpointer      user_data)
+{
+  SysprofRecording *recording = (SysprofRecording *)object;
+  g_autoptr(GError) error = NULL;
+  gboolean r;
+
+  r = sysprof_recording_wait_finish (recording, result, &error);
+  g_assert_no_error (error);
+  g_assert_true (r);
+
+  g_main_loop_quit (main_loop);
+}
 
 static void
 record_cb (GObject      *object,
@@ -38,6 +57,34 @@ record_cb (GObject      *object,
   g_assert_no_error (error);
   g_assert_nonnull (recording);
   g_assert_true (SYSPROF_IS_RECORDING (recording));
+
+  sysprof_recording_wait_async (recording, NULL, wait_cb, NULL);
+
+  active_recording = recording;
+}
+
+static gboolean
+sigint_handler (gpointer user_data)
+{
+  static int count;
+
+  if (count >= 2)
+    {
+      g_main_loop_quit (main_loop);
+      return G_SOURCE_REMOVE;
+    }
+
+  g_printerr ("\n");
+
+  if (count == 0)
+    {
+      g_printerr ("%s\n", "Stopping profiler. Press twice more ^C to force exit.");
+      sysprof_recording_stop (active_recording);
+    }
+
+  count++;
+
+  return G_SOURCE_CONTINUE;
 }
 
 int
@@ -67,6 +114,9 @@ main (int       argc,
   profiler = sysprof_profiler_new ();
 
   sysprof_profiler_record_async (profiler, writer, NULL, record_cb, NULL);
+
+  g_unix_signal_add (SIGINT, sigint_handler, main_loop);
+  g_unix_signal_add (SIGTERM, sigint_handler, main_loop);
 
   g_main_loop_run (main_loop);
 

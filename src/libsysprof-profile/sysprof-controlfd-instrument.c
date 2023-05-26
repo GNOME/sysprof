@@ -41,7 +41,6 @@ struct _SysprofControlfdInstrument
   SysprofInstrument  parent_instance;
 #ifdef G_OS_UNIX
   GUnixConnection   *connection;
-  GArray            *source_ids;
   char               read_buf[10];
 #endif
 };
@@ -83,7 +82,7 @@ sysprof_controlfd_instrument_prepare (SysprofInstrument *instrument,
   g_unix_set_fd_nonblocking (fds[1], TRUE, NULL);
 
   /* @child_no is assigned the FD the child will receive. We can
-   * use that to set the environment vaiable of the control FD.
+   * use that to set the environment variable of the control FD.
    */
   child_no = sysprof_spawnable_take_fd (spawnable, fds[1], -1);
   child_no_str = g_strdup_printf ("%d", child_no);
@@ -103,11 +102,95 @@ finish:
   return dex_future_new_for_boolean (TRUE);
 }
 
+typedef struct _SysprofControlfdRecording
+{
+  GInputStream     *stream;
+  SysprofRecording *recording;
+  DexFuture        *cancellable;
+  GArray           *source_ids;
+} SysprofControlfdRecording;
+
 static void
-remove_source_id (gpointer data)
+sysprof_controlfd_recording_free (gpointer data)
+{
+  SysprofControlfdRecording *state = data;
+
+  dex_clear (&state->cancellable);
+  g_clear_pointer (&state->source_ids, g_array_unref);
+  g_clear_object (&state->recording);
+  g_clear_object (&state->stream);
+  g_free (state);
+}
+
+static DexFuture *
+sysprof_controlfd_instrument_record_fiber (gpointer user_data)
+{
+  SysprofControlfdRecording *state = user_data;
+
+  g_assert (state != NULL);
+  g_assert (SYSPROF_IS_RECORDING (state->recording));
+  g_assert (DEX_IS_CANCELLABLE (state->cancellable));
+  g_assert (state->source_ids != NULL);
+
+  for (;;)
+    {
+      g_autoptr(DexFuture) future = dex_input_stream_read_bytes (state->stream, 10, 0);
+      //g_autoptr(MappedRinBuffer) ring_buffer = NULL;
+      g_autoptr(GBytes) bytes = NULL;
+      g_autoptr(GError) error = NULL;
+      const guint8 *data;
+      gsize len;
+
+      dex_await (dex_future_any (dex_ref (future),
+                                 dex_ref (state->cancellable),
+                                 NULL),
+                 &error);
+
+      if (error != NULL)
+        return dex_future_new_for_error (g_steal_pointer (&error));
+
+      if (!(bytes = dex_await_boxed (dex_ref (future), &error)))
+        return dex_future_new_for_error (g_steal_pointer (&error));
+
+      data = g_bytes_get_data (bytes, &len);
+      if (len != 10 || memcmp (data, "CreatRing\0", 10) != 0)
+        break;
+
+    }
+
+  return NULL;
+}
+
+static void
+_g_clear_source (gpointer data)
 {
   guint *id = data;
-  g_source_remove (*id);
+
+  if (*id != 0)
+    g_source_remove (*id);
+}
+
+static DexFuture *
+sysprof_controlfd_instrument_record (SysprofInstrument *instrument,
+                                     SysprofRecording  *recording,
+                                     GCancellable      *cancellable)
+{
+  SysprofControlfdInstrument *self = (SysprofControlfdInstrument *)instrument;
+  SysprofControlfdRecording *state;
+
+  g_assert (SYSPROF_IS_CONTROLFD_INSTRUMENT (self));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+
+  state = g_new0 (SysprofControlfdRecording, 1);
+  state->recording = g_object_ref (recording);
+  state->cancellable = dex_cancellable_new_from_cancellable (cancellable);
+  state->source_ids = g_array_new (FALSE, FALSE, sizeof (guint));
+  g_array_set_clear_func (state->source_ids, _g_clear_source);
+
+  return dex_scheduler_spawn (NULL, 0,
+                              sysprof_controlfd_instrument_record_fiber,
+                              state,
+                              sysprof_controlfd_recording_free);
 }
 
 static void
@@ -115,7 +198,6 @@ sysprof_controlfd_instrument_finalize (GObject *object)
 {
   SysprofControlfdInstrument *self = (SysprofControlfdInstrument *)object;
 
-  g_clear_pointer (&self->source_ids, g_array_unref);
   g_clear_object (&self->connection);
 
   G_OBJECT_CLASS (sysprof_controlfd_instrument_parent_class)->finalize (object);
@@ -132,16 +214,13 @@ sysprof_controlfd_instrument_class_init (SysprofControlfdInstrumentClass *klass)
   object_class->finalize = sysprof_controlfd_instrument_finalize;
 
   instrument_class->prepare = sysprof_controlfd_instrument_prepare;
+  instrument_class->record = sysprof_controlfd_instrument_record;
 #endif
 }
 
 static void
 sysprof_controlfd_instrument_init (SysprofControlfdInstrument *self)
 {
-#ifdef G_OS_UNIX
-  self->source_ids = g_array_new (FALSE, FALSE, sizeof (guint));
-  g_array_set_clear_func (self->source_ids, remove_source_id);
-#endif
 }
 
 SysprofInstrument *

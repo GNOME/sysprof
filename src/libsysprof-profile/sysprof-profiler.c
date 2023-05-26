@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-profiler.h"
+#include "sysprof-recording-private.h"
 
 struct _SysprofProfiler
 {
@@ -106,6 +107,7 @@ sysprof_profiler_record_async (SysprofProfiler      *self,
                                GAsyncReadyCallback   callback,
                                gpointer              user_data)
 {
+  g_autoptr(SysprofRecording) recording = NULL;
   g_autoptr(GTask) task = NULL;
 
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
@@ -115,7 +117,13 @@ sysprof_profiler_record_async (SysprofProfiler      *self,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_profiler_record_async);
 
+  recording = _sysprof_recording_new (writer,
+                                      (SysprofInstrument **)self->instruments->pdata,
+                                      self->instruments->len);
 
+  g_task_return_pointer (task, g_object_ref (recording), g_object_unref);
+
+  _sysprof_recording_start (recording);
 }
 
 /**

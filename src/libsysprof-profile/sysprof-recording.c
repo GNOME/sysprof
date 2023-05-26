@@ -226,6 +226,7 @@ sysprof_recording_stop (SysprofRecording *self)
 {
   g_return_if_fail (SYSPROF_IS_RECORDING (self));
 
+  sysprof_recording_set_state (self, SYSPROF_RECORDING_STATE_FINISHED);
 }
 
 void

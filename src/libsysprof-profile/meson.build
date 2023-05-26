@@ -32,8 +32,9 @@ libsysprof_profile_deps = [
 
 libsysprof_profile_static = static_library(
   'sysprof-profile-@0@'.format(soname_major_version),
-  libsysprof_profile_public_sources +
-  libsysprof_profile_private_sources,
+  (libsysprof_profile_public_sources +
+   libsysprof_profile_private_sources +
+   mapped_ring_buffer_sources),
 
     include_directories: [include_directories('.'),
                           ipc_include_dirs,

@@ -19,8 +19,11 @@ if not meson.is_subproject()
   install_headers(libsysprof_capture_headers, subdir: sysprof_header_subdir)
 endif
 
-libsysprof_capture_sources = files([
+mapped_ring_buffer_sources = files([
   'mapped-ring-buffer.c',
+])
+
+libsysprof_capture_sources = files([
   'sysprof-address.c',
   'sysprof-capture-condition.c',
   'sysprof-capture-cursor.c',
@@ -47,7 +50,8 @@ libsysprof_capture_deps = [
 
 libsysprof_capture = static_library(
   'sysprof-capture-@0@'.format(libsysprof_api_version),
-  libsysprof_capture_sources,
+  (libsysprof_capture_sources +
+   mapped_ring_buffer_sources),
 
            dependencies: libsysprof_capture_deps,
                  c_args: [ '-DSYSPROF_CAPTURE_COMPILATION' ],

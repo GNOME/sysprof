@@ -150,7 +150,9 @@ endif
 
 libsysprof_static = static_library(
   'sysprof',
-  libsysprof_public_sources + libsysprof_private_sources,
+  (libsysprof_public_sources +
+   libsysprof_private_sources +
+   mapped_ring_buffer_sources),
 
     include_directories: [include_directories('.'),
                           ipc_include_dirs,

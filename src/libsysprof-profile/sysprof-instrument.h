@@ -26,7 +26,7 @@
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_INSTRUMENT         (sysprof_instrumentr_get_type())
+#define SYSPROF_TYPE_INSTRUMENT         (sysprof_instrument_get_type())
 #define SYSPROF_IS_INSTRUMENT(obj)      G_TYPE_CHECK_INSTANCE_TYPE(obj, SYSPROF_TYPE_INSTRUMENT)
 #define SYSPROF_INSTRUMENT(obj)         G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_INSTRUMENT, SysprofInstrument)
 #define SYSPROF_INSTRUMENT_CLASS(klass) G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_INSTRUMENT, SysprofInstrumentClass)
@@ -35,7 +35,7 @@ typedef struct _SysprofInstrument      SysprofInstrument;
 typedef struct _SysprofInstrumentClass SysprofInstrumentClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType sysprof_instrumentr_get_type (void) G_GNUC_CONST;
+GType sysprof_instrument_get_type (void) G_GNUC_CONST;
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofInstrument, g_object_unref)
 

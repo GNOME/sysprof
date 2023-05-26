@@ -20,18 +20,36 @@
 
 #include <sysprof-profile.h>
 
+static GMainLoop *main_loop;
 static char *capture_file;
 static const GOptionEntry entries[] = {
   { "capture", 'c', 0, G_OPTION_ARG_FILENAME, &capture_file, "The file to capture into", "CAPTURE" },
   { 0 }
 };
 
+static void
+record_cb (GObject      *object,
+           GAsyncResult *result,
+           gpointer      user_data)
+{
+  g_autoptr(GError) error = NULL;
+  g_autoptr(SysprofRecording) recording = sysprof_profiler_record_finish (SYSPROF_PROFILER (object), result, &error);
+
+  g_assert_no_error (error);
+  g_assert_nonnull (recording);
+  g_assert_true (SYSPROF_IS_RECORDING (recording));
+}
+
 int
-main (int   argc,
+main (int       argc,
       char *argv[])
 {
   g_autoptr(GOptionContext) context = g_option_context_new ("- Tests the SysprofProfiler");
+  g_autoptr(SysprofProfiler) profiler = NULL;
   g_autoptr(GError) error = NULL;
+  SysprofCaptureWriter *writer = NULL;
+
+  main_loop = g_main_loop_new (NULL, FALSE);
 
   g_option_context_add_main_entries (context, entries, NULL);
 
@@ -40,6 +58,19 @@ main (int   argc,
       g_printerr ("%s\n", error->message);
       return 1;
     }
+
+  if (capture_file == NULL)
+    writer = sysprof_capture_writer_new ("capture.syscap", 0);
+  else
+    writer = sysprof_capture_writer_new (capture_file, 0);
+
+  profiler = sysprof_profiler_new ();
+
+  sysprof_profiler_record_async (profiler, writer, NULL, record_cb, NULL);
+
+  g_main_loop_run (main_loop);
+
+  g_clear_pointer (&writer, sysprof_capture_writer_unref);
 
   return 0;
 }

@@ -20,7 +20,10 @@
 
 #pragma once
 
+#include <libdex.h>
+
 #include "sysprof-instrument.h"
+#include "sysprof-recording.h"
 
 G_BEGIN_DECLS
 
@@ -35,9 +38,14 @@ struct _SysprofInstrumentClass
 {
   GObjectClass parent_class;
 
-  char **(*list_required_policy) (SysprofInstrument *self);
+  char      **(*list_required_policy) (SysprofInstrument *self);
+  DexFuture  *(*prepare)              (SysprofInstrument *self,
+                                       SysprofRecording  *recording);
 };
 
-char **_sysprof_instrument_list_required_policy (SysprofInstrument *self);
+DexFuture * _sysprof_instruments_acquire_policy (GPtrArray        *instruments,
+                                                 SysprofRecording *recording);
+DexFuture  *_sysprof_instruments_prepare        (GPtrArray        *instruments,
+                                                 SysprofRecording *recording);
 
 G_END_DECLS

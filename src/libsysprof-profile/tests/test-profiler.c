@@ -79,7 +79,7 @@ sigint_handler (gpointer user_data)
   if (count == 0)
     {
       g_printerr ("%s\n", "Stopping profiler. Press twice more ^C to force exit.");
-      sysprof_recording_stop (active_recording);
+      sysprof_recording_stop_async (active_recording, NULL, NULL, NULL);
     }
 
   count++;

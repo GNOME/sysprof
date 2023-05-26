@@ -41,6 +41,13 @@ gboolean sysprof_recording_wait_finish (SysprofRecording     *self,
                                         GAsyncResult         *result,
                                         GError              **error);
 SYSPROF_AVAILABLE_IN_ALL
-void     sysprof_recording_stop        (SysprofRecording     *self);
+void     sysprof_recording_stop_async  (SysprofRecording     *self,
+                                        GCancellable         *cancellable,
+                                        GAsyncReadyCallback   callback,
+                                        gpointer              user_data);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean sysprof_recording_stop_finish (SysprofRecording     *self,
+                                        GAsyncResult         *result,
+                                        GError              **error);
 
 G_END_DECLS

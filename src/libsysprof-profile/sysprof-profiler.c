@@ -90,6 +90,16 @@ sysprof_profiler_new (void)
   return g_object_new (SYSPROF_TYPE_PROFILER, NULL);
 }
 
+/**
+ * sysprof_profiler_add_instrument:
+ * @self: a #SysprofProfiler
+ * @instrument: (transfer full): a #SysprofInstrument
+ *
+ * Adds @instrument to @profiler.
+ *
+ * When the recording session is started, @instrument will be directed to
+ * capture data into the destination capture file.
+ */
 void
 sysprof_profiler_add_instrument (SysprofProfiler   *self,
                                  SysprofInstrument *instrument)
@@ -97,7 +107,7 @@ sysprof_profiler_add_instrument (SysprofProfiler   *self,
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
   g_return_if_fail (SYSPROF_IS_INSTRUMENT (instrument));
 
-  g_ptr_array_add (self->instruments, g_object_ref (instrument));
+  g_ptr_array_add (self->instruments, instrument);
 }
 
 void

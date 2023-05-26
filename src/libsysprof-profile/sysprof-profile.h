@@ -20,9 +20,14 @@
 
 #pragma once
 
+#include <gio/gio.h>
+
 G_BEGIN_DECLS
 
 #define SYSPROF_PROFILE_INSIDE
+# include "sysprof-instrument.h"
+# include "sysprof-profiler.h"
+# include "sysprof-recording.h"
 #undef SYSPROF_PROFILE_INSIDE
 
 G_END_DECLS

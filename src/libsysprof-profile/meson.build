@@ -21,6 +21,9 @@ libsysprof_profile_public_headers = [
 
 libsysprof_profile_deps = [
   dependency('gio-2.0', version: glib_req_version),
+  dependency('gio-unix-2.0',
+     version: glib_req_version,
+    required: host_machine.system() != 'windows'),
   dependency('libdex-1', version: dex_req_version),
   dependency('polkit-gobject-1', version: polkit_req_version),
 

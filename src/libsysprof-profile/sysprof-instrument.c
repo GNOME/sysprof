@@ -26,8 +26,10 @@
 G_DEFINE_ABSTRACT_TYPE (SysprofInstrument, sysprof_instrument, G_TYPE_OBJECT)
 
 static char **
-sysprof_instrument_real_list_required_policy (SysprofInstrument *self)
+sysprof_instrument_real_list_required_policy (SysprofInstrument *instrument)
 {
+  g_assert (SYSPROF_IS_INSTRUMENT (instrument));
+
   return NULL;
 }
 
@@ -35,6 +37,21 @@ static DexFuture *
 sysprof_instrument_real_prepare (SysprofInstrument *instrument,
                                  SysprofRecording  *recording)
 {
+  g_assert (SYSPROF_IS_INSTRUMENT (instrument));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+
+  return dex_future_new_for_boolean (TRUE);
+}
+
+static DexFuture *
+sysprof_instrument_real_record (SysprofInstrument *instrument,
+                                SysprofRecording  *recording,
+                                GCancellable      *cancellable)
+{
+  g_assert (SYSPROF_IS_INSTRUMENT (instrument));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
   return dex_future_new_for_boolean (TRUE);
 }
 
@@ -43,6 +60,7 @@ sysprof_instrument_class_init (SysprofInstrumentClass *klass)
 {
   klass->list_required_policy = sysprof_instrument_real_list_required_policy;
   klass->prepare = sysprof_instrument_real_prepare;
+  klass->record = sysprof_instrument_real_record;
 }
 
 static void
@@ -139,6 +157,32 @@ _sysprof_instruments_prepare (GPtrArray        *instruments,
 
       g_ptr_array_add (futures,
                        SYSPROF_INSTRUMENT_GET_CLASS (instrument)->prepare (instrument, recording));
+    }
+
+  if (futures->len == 0)
+    return dex_future_new_for_boolean (TRUE);
+
+  return dex_future_allv ((DexFuture **)futures->pdata, futures->len);
+}
+
+DexFuture *
+_sysprof_instruments_record (GPtrArray        *instruments,
+                             SysprofRecording *recording,
+                             GCancellable     *cancellable)
+{
+  g_autoptr(GPtrArray) futures = NULL;
+
+  g_return_val_if_fail (instruments != NULL, NULL);
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (recording), NULL);
+
+  futures = g_ptr_array_new_with_free_func (dex_unref);
+
+  for (guint i = 0; i < instruments->len; i++)
+    {
+      SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
+
+      g_ptr_array_add (futures,
+                       SYSPROF_INSTRUMENT_GET_CLASS (instrument)->record (instrument, recording, cancellable));
     }
 
   if (futures->len == 0)

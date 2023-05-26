@@ -100,14 +100,16 @@ sysprof_profiler_add_instrument (SysprofProfiler   *self,
 }
 
 void
-sysprof_profiler_record_async (SysprofProfiler     *self,
-                               GCancellable        *cancellable,
-                               GAsyncReadyCallback  callback,
-                               gpointer             user_data)
+sysprof_profiler_record_async (SysprofProfiler      *self,
+                               SysprofCaptureWriter *writer,
+                               GCancellable         *cancellable,
+                               GAsyncReadyCallback   callback,
+                               gpointer              user_data)
 {
   g_autoptr(GTask) task = NULL;
 
   g_return_if_fail (SYSPROF_IS_PROFILER (self));
+  g_return_if_fail (writer != NULL);
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
   task = g_task_new (self, cancellable, callback, user_data);

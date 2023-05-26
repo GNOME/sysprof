@@ -41,6 +41,7 @@ void              sysprof_profiler_add_instrument  (SysprofProfiler      *self,
                                                     SysprofInstrument    *instrument);
 SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_profiler_record_async    (SysprofProfiler      *self,
+                                                    SysprofCaptureWriter *writer,
                                                     GCancellable         *cancellable,
                                                     GAsyncReadyCallback   callback,
                                                     gpointer              user_data);

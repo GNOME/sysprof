@@ -6,6 +6,7 @@ libsysprof_profile_public_sources = [
 
 libsysprof_profile_private_sources = [
   'sysprof-controlfd-instrument.c',
+  'sysprof-polkit.c',
 ]
 
 libsysprof_profile_public_headers = [
@@ -19,6 +20,7 @@ libsysprof_profile_public_headers = [
 libsysprof_profile_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('libdex-1', version: dex_req_version),
+  dependency('polkit-gobject-1', version: polkit_req_version),
 
   libsysprof_capture_dep,
 ]

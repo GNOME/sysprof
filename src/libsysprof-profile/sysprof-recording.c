@@ -72,9 +72,13 @@ static DexFuture *
 sysprof_recording_fiber (gpointer user_data)
 {
   SysprofRecording *self = user_data;
+  g_autoptr(GCancellable) cancellable = NULL;
+  g_autoptr(DexFuture) record = NULL;
   g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_RECORDING (self));
+
+  cancellable = g_cancellable_new ();
 
   /* First ensure that all our required policy have been acquired on
    * the bus so that we don't need to individually acquire them from
@@ -87,22 +91,46 @@ sysprof_recording_fiber (gpointer user_data)
   if (!dex_await (_sysprof_instruments_prepare (self->instruments, self), &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
-  /* Wait for messages on our channel until closed. */
+  /* Ask instruments to start recording and stop if cancelled. */
+  record = _sysprof_instruments_record (self->instruments, self, cancellable);
+
+  /* Wait for messages on our channel or the recording to complete */
   for (;;)
     {
-      SysprofRecordingCommand command;
+      g_autoptr(DexFuture) message = dex_channel_receive (self->channel);
 
-      command = dex_await_uint (dex_channel_receive (self->channel), &error);
+      /* Wait for either recording of all instruments to complete or a
+       * message from our channel with what to do next.
+       */
+      if (!dex_await (dex_future_any (dex_ref (record), dex_ref (message), NULL), &error))
+        goto stop_recording;
 
-      switch (command)
+      /* If record is not pending, then everything resolved/rejected */
+      if (dex_future_get_status (record) != DEX_FUTURE_STATUS_PENDING)
+        goto stop_recording;
+
+      /* If message resolved, then we got a command to process */
+      if (dex_future_get_status (message) == DEX_FUTURE_STATUS_RESOLVED)
         {
-        default:
-        case SYSPROF_RECORDING_COMMAND_STOP:
-          goto stop_recording;
+          SysprofRecordingCommand command = dex_await_uint (dex_ref (message), NULL);
+
+          switch (command)
+            {
+            default:
+            case SYSPROF_RECORDING_COMMAND_STOP:
+              goto stop_recording;
+            }
         }
     }
 
 stop_recording:
+  /* Signal cancellable so that anything lingering has a chance to be
+   * cleaned up, cascading into other subsystems.
+   */
+  g_cancellable_cancel (cancellable);
+
+  if (error != NULL)
+    return dex_future_new_for_error (g_steal_pointer (&error));
 
   return dex_future_new_for_boolean (TRUE);
 }

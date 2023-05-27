@@ -46,12 +46,12 @@ struct _SysprofInstrumentClass
                                        GCancellable      *cancellable);
 };
 
-DexFuture * _sysprof_instruments_acquire_policy (GPtrArray        *instruments,
-                                                 SysprofRecording *recording);
-DexFuture  *_sysprof_instruments_prepare        (GPtrArray        *instruments,
-                                                 SysprofRecording *recording);
-DexFuture  *_sysprof_instruments_record         (GPtrArray        *instruments,
-                                                 SysprofRecording *recording,
-                                                 GCancellable     *cancellable);
+DexFuture *_sysprof_instruments_acquire_policy (GPtrArray        *instruments,
+                                                SysprofRecording *recording);
+DexFuture *_sysprof_instruments_prepare        (GPtrArray        *instruments,
+                                                SysprofRecording *recording);
+DexFuture *_sysprof_instruments_record         (GPtrArray        *instruments,
+                                                SysprofRecording *recording,
+                                                GCancellable     *cancellable);
 
 G_END_DECLS

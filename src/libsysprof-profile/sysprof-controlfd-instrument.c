@@ -36,9 +36,15 @@
 #include "sysprof-controlfd-instrument-private.h"
 #include "sysprof-recording-private.h"
 
+#ifdef G_OS_UNIX
+# include "mapped-ring-buffer.h"
+# include "mapped-ring-buffer-source-private.h"
+#endif
+
 struct _SysprofControlfdInstrument
 {
   SysprofInstrument  parent_instance;
+
 #ifdef G_OS_UNIX
   GUnixConnection   *connection;
   char               read_buf[10];
@@ -48,6 +54,37 @@ struct _SysprofControlfdInstrument
 G_DEFINE_FINAL_TYPE (SysprofControlfdInstrument, sysprof_controlfd_instrument, SYSPROF_TYPE_INSTRUMENT)
 
 #ifdef G_OS_UNIX
+typedef struct _RingData
+{
+  SysprofCaptureWriter *writer;
+  GArray *source_ids;
+  guint id;
+} RingData;
+
+static void
+ring_data_free (gpointer data)
+{
+  RingData *ring_data = data;
+
+  for (guint i = 0; i < ring_data->source_ids->len; i++)
+    {
+      guint *id = &g_array_index (ring_data->source_ids, guint, i);
+
+      if (*id == ring_data->id)
+        {
+          *id = 0;
+          g_array_remove_index_fast (ring_data->source_ids, i);
+          break;
+        }
+    }
+
+  ring_data->id = 0;
+
+  g_clear_pointer (&ring_data->writer, sysprof_capture_writer_unref);
+  g_array_unref (ring_data->source_ids);
+  g_free (ring_data);
+}
+
 static DexFuture *
 sysprof_controlfd_instrument_prepare (SysprofInstrument *instrument,
                                       SysprofRecording  *recording)
@@ -122,10 +159,36 @@ sysprof_controlfd_recording_free (gpointer data)
   g_free (state);
 }
 
+static bool
+sysprof_controlfd_instrument_frame_cb (gconstpointer  data,
+                                       gsize         *length,
+                                       gpointer       user_data)
+{
+  const SysprofCaptureFrame *fr = data;
+  RingData *ring_data = user_data;
+
+  g_assert (ring_data != NULL);
+  g_assert (ring_data->source_ids != NULL);
+  g_assert (ring_data->writer != NULL);
+  g_assert (ring_data->id > 0);
+
+  if G_UNLIKELY (*length < sizeof *fr ||
+                 *length < fr->len ||
+                 fr->type >= SYSPROF_CAPTURE_FRAME_LAST)
+    return G_SOURCE_REMOVE;
+
+  _sysprof_capture_writer_add_raw (ring_data->writer, fr);
+
+  *length = fr->len;
+
+  return G_SOURCE_CONTINUE;
+}
+
 static DexFuture *
 sysprof_controlfd_instrument_record_fiber (gpointer user_data)
 {
   SysprofControlfdRecording *state = user_data;
+  g_autoptr(GError) error = NULL;
 
   g_assert (state != NULL);
   g_assert (SYSPROF_IS_RECORDING (state->recording));
@@ -135,9 +198,8 @@ sysprof_controlfd_instrument_record_fiber (gpointer user_data)
   for (;;)
     {
       g_autoptr(DexFuture) future = dex_input_stream_read_bytes (state->stream, 10, 0);
-      //g_autoptr(MappedRinBuffer) ring_buffer = NULL;
+      g_autoptr(MappedRingBuffer) ring_buffer = NULL;
       g_autoptr(GBytes) bytes = NULL;
-      g_autoptr(GError) error = NULL;
       const guint8 *data;
       gsize len;
 
@@ -147,18 +209,47 @@ sysprof_controlfd_instrument_record_fiber (gpointer user_data)
                  &error);
 
       if (error != NULL)
-        return dex_future_new_for_error (g_steal_pointer (&error));
+        goto handle_error;
 
       if (!(bytes = dex_await_boxed (dex_ref (future), &error)))
-        return dex_future_new_for_error (g_steal_pointer (&error));
+        goto handle_error;
 
       data = g_bytes_get_data (bytes, &len);
       if (len != 10 || memcmp (data, "CreatRing\0", 10) != 0)
         break;
 
+      if ((ring_buffer = mapped_ring_buffer_new_reader (0)))
+        {
+          int fd = mapped_ring_buffer_get_fd (ring_buffer);
+          SysprofCaptureWriter *writer = _sysprof_recording_writer (state->recording);
+          RingData *ring_data;
+
+          ring_data = g_new0 (RingData, 1);
+          ring_data->writer = sysprof_capture_writer_ref (writer);
+          ring_data->source_ids = g_array_ref (state->source_ids);
+          ring_data->id = mapped_ring_buffer_create_source_full (ring_buffer,
+                                                                 sysprof_controlfd_instrument_frame_cb,
+                                                                 ring_data,
+                                                                 (GDestroyNotify)ring_data_free);
+
+          g_array_append_val (state->source_ids, ring_data->id);
+
+          g_unix_connection_send_fd (G_UNIX_CONNECTION (state->stream), fd, NULL, NULL);
+        }
     }
 
-  return NULL;
+handle_error:
+  while (state->source_ids->len > 0)
+    {
+      guint id = g_array_index (state->source_ids, guint, state->source_ids->len-1);
+      state->source_ids->len--;
+      g_source_remove (id);
+    }
+
+  if (error != NULL)
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  return dex_future_new_for_boolean (TRUE);
 }
 
 static void
@@ -177,9 +268,13 @@ sysprof_controlfd_instrument_record (SysprofInstrument *instrument,
 {
   SysprofControlfdInstrument *self = (SysprofControlfdInstrument *)instrument;
   SysprofControlfdRecording *state;
+  SysprofSpawnable *spawnable;
 
   g_assert (SYSPROF_IS_CONTROLFD_INSTRUMENT (self));
   g_assert (SYSPROF_IS_RECORDING (recording));
+
+  if (!(spawnable = _sysprof_recording_get_spawnable (recording)))
+    return dex_future_new_for_boolean (TRUE);
 
   state = g_new0 (SysprofControlfdRecording, 1);
   state->recording = g_object_ref (recording);

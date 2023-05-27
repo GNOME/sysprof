@@ -20,6 +20,12 @@ libsysprof_profile_public_headers = [
   'sysprof-spawnable.h',
 ]
 
+if host_machine.system() == 'linux'
+  libsysprof_profile_private_sources += [
+    'sysprof-linux-instrument.c',
+  ]
+endif
+
 libsysprof_profile_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('gio-unix-2.0',

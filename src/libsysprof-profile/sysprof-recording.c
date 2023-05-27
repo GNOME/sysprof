@@ -288,3 +288,11 @@ _sysprof_recording_get_spawnable (SysprofRecording *self)
 
   return self->spawnable;
 }
+
+SysprofCaptureWriter *
+_sysprof_recording_writer (SysprofRecording *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);
+
+  return self->writer;
+}

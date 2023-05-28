@@ -24,6 +24,10 @@
 #include "sysprof-profiler.h"
 #include "sysprof-recording-private.h"
 
+#ifdef __linux__
+# include "sysprof-linux-instrument-private.h"
+#endif
+
 struct _SysprofProfiler
 {
   GObject parent_instance;
@@ -83,6 +87,10 @@ static void
 sysprof_profiler_init (SysprofProfiler *self)
 {
   self->instruments = g_ptr_array_new_with_free_func (g_object_unref);
+
+#ifdef __linux__
+  sysprof_profiler_add_instrument (self, _sysprof_linux_instrument_new ());
+#endif
 
   sysprof_profiler_add_instrument (self, _sysprof_controlfd_instrument_new ());
 }

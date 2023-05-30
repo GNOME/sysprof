@@ -35,6 +35,14 @@ enum {
 
 G_DEFINE_FINAL_TYPE (SysprofLinuxInstrument, sysprof_linux_instrument, SYSPROF_TYPE_INSTRUMENT)
 
+static char **
+sysprof_linux_instrument_list_required_policy (SysprofInstrument *instrument)
+{
+  static const char *policy[] = {"org.gnome.sysprof3.profile", NULL};
+
+  return g_strdupv ((char **)policy);
+}
+
 static DexFuture *
 sysprof_linux_instrument_prepare_fiber (gpointer user_data)
 {
@@ -75,6 +83,7 @@ sysprof_linux_instrument_class_init (SysprofLinuxInstrumentClass *klass)
 
   object_class->finalize = sysprof_linux_instrument_finalize;
 
+  instrument_class->list_required_policy = sysprof_linux_instrument_list_required_policy;
   instrument_class->prepare = sysprof_linux_instrument_prepare;
 }
 

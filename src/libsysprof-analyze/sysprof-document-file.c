@@ -26,9 +26,10 @@
 
 struct _SysprofDocumentFile
 {
-  GObject parent_instance;
-  char *path;
+  GObject    parent_instance;
+  char      *path;
   GPtrArray *file_chunks;
+  guint      compressed : 1;
 };
 
 enum {
@@ -104,7 +105,8 @@ sysprof_document_file_init (SysprofDocumentFile *self)
 
 SysprofDocumentFile *
 _sysprof_document_file_new (const char *path,
-                            GPtrArray  *file_chunks)
+                            GPtrArray  *file_chunks,
+                            gboolean    compressed)
 {
   SysprofDocumentFile *self;
 
@@ -114,6 +116,7 @@ _sysprof_document_file_new (const char *path,
   self = g_object_new (SYSPROF_TYPE_DOCUMENT_FILE, NULL);
   self->path = g_strdup (path);
   self->file_chunks = file_chunks;
+  self->compressed = !!compressed;
 
   return self;
 }
@@ -169,7 +172,7 @@ sysprof_document_file_dup_bytes (SysprofDocumentFile *self)
 GInputStream *
 sysprof_document_file_read (SysprofDocumentFile *self)
 {
-  GInputStream *input;
+  g_autoptr(GInputStream) input = NULL;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FILE (self), NULL);
 
@@ -191,6 +194,13 @@ sysprof_document_file_read (SysprofDocumentFile *self)
                                           g_mapped_file_ref (SYSPROF_DOCUMENT_FRAME (file_chunk)->mapped_file));
 
       g_memory_input_stream_add_bytes (G_MEMORY_INPUT_STREAM (input), bytes);
+    }
+
+  if (self->compressed)
+    {
+      g_autoptr(GZlibDecompressor) zlib = g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP);
+
+      return g_converter_input_stream_new (input, G_CONVERTER (zlib));
     }
 
   return g_steal_pointer (&input);

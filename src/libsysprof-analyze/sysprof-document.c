@@ -895,14 +895,19 @@ SysprofDocumentFile *
 sysprof_document_lookup_file (SysprofDocument *self,
                               const char      *path)
 {
+  g_autofree char *gz_path = NULL;
   gpointer key, value;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
   g_return_val_if_fail (path != NULL, NULL);
 
-  if (g_hash_table_lookup_extended (self->files_first_position, path, &key, &value))
+  gz_path = g_strdup_printf ("%s.gz", path);
+
+  if (g_hash_table_lookup_extended (self->files_first_position, path, &key, &value) ||
+      g_hash_table_lookup_extended (self->files_first_position, gz_path, &key, &value))
     {
       g_autoptr(GPtrArray) file_chunks = g_ptr_array_new_with_free_func (g_object_unref);
+      const char *real_path = key;
       EggBitsetIter iter;
       guint target = GPOINTER_TO_SIZE (value);
       guint i;
@@ -913,7 +918,7 @@ sysprof_document_lookup_file (SysprofDocument *self,
             {
               g_autoptr(SysprofDocumentFileChunk) file_chunk = sysprof_document_get_item ((GListModel *)self, i);
 
-              if (g_strcmp0 (path, sysprof_document_file_chunk_get_path (file_chunk)) == 0)
+              if (g_strcmp0 (real_path, sysprof_document_file_chunk_get_path (file_chunk)) == 0)
                 {
                   gboolean is_last = sysprof_document_file_chunk_get_is_last (file_chunk);
 
@@ -926,7 +931,9 @@ sysprof_document_lookup_file (SysprofDocument *self,
           while (egg_bitset_iter_next (&iter, &i));
         }
 
-      return _sysprof_document_file_new (path, g_steal_pointer (&file_chunks));
+      return _sysprof_document_file_new (path,
+                                         g_steal_pointer (&file_chunks),
+                                         g_strcmp0 (real_path, gz_path) == 0);
     }
 
   return NULL;
@@ -957,6 +964,7 @@ sysprof_document_list_files (SysprofDocument *self)
     {
       g_autoptr(SysprofDocumentFile) file = NULL;
       g_autoptr(GPtrArray) file_chunks = g_ptr_array_new_with_free_func (g_object_unref);
+      g_autofree char *no_gz_path = NULL;
       const char *path = key;
       guint target = GPOINTER_TO_SIZE (value);
       guint i;
@@ -980,7 +988,12 @@ sysprof_document_list_files (SysprofDocument *self)
           while (egg_bitset_iter_next (&iter, &i));
         }
 
-      file = _sysprof_document_file_new (path, g_steal_pointer (&file_chunks));
+      if (g_str_has_suffix (path, ".gz"))
+        path = no_gz_path = g_strndup (path, strlen (path) - 3);
+
+      file = _sysprof_document_file_new (path,
+                                         g_steal_pointer (&file_chunks),
+                                         no_gz_path != NULL);
 
       g_list_store_append (model, file);
     }

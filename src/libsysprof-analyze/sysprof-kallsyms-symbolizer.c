@@ -191,10 +191,9 @@ sysprof_kallsyms_symbolizer_prepare_async (SysprofSymbolizer   *symbolizer,
 {
   SysprofKallsymsSymbolizer *self = (SysprofKallsymsSymbolizer *)symbolizer;
   g_autoptr(SysprofDocumentFile) file = NULL;
-  g_autoptr(GZlibDecompressor) decompressor = NULL;
-  g_autoptr(GInputStream) input_gz = NULL;
   g_autoptr(GInputStream) input = NULL;
   g_autoptr(GTask) task = NULL;
+  GInputStream *base_stream;
 
   g_assert (SYSPROF_IS_KALLSYMS_SYMBOLIZER (self));
   g_assert (SYSPROF_IS_DOCUMENT (document));
@@ -203,9 +202,12 @@ sysprof_kallsyms_symbolizer_prepare_async (SysprofSymbolizer   *symbolizer,
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, sysprof_kallsyms_symbolizer_prepare_async);
 
-  if (self->stream == NULL)
+  base_stream = self->stream;
+
+  if (base_stream == NULL)
     {
-      if (!(file = sysprof_document_lookup_file (document, "/proc/kallsyms.gz")))
+
+      if (!(file = sysprof_document_lookup_file (document, "/proc/kallsyms")))
         {
           g_task_return_new_error (task,
                                    G_IO_ERROR,
@@ -214,20 +216,15 @@ sysprof_kallsyms_symbolizer_prepare_async (SysprofSymbolizer   *symbolizer,
           return;
         }
 
-      decompressor = g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP);
-      input_gz = sysprof_document_file_read (file);
-      input = g_converter_input_stream_new (input_gz, G_CONVERTER (decompressor));
+      base_stream = input = sysprof_document_file_read (file);
+    }
 
-      g_task_set_task_data (task,
-                            g_data_input_stream_new (input),
-                            g_object_unref);
-    }
-  else
-    {
-      g_task_set_task_data (task,
-                            g_steal_pointer (&self->stream),
-                            g_object_unref);
-    }
+  g_assert (base_stream != NULL);
+  g_assert (G_IS_INPUT_STREAM (base_stream));
+
+  g_task_set_task_data (task,
+                        g_data_input_stream_new (base_stream),
+                        g_object_unref);
 
   g_task_run_in_thread (task, sysprof_kallsyms_symbolizer_prepare_worker);
 }
@@ -364,9 +361,7 @@ sysprof_kallsyms_symbolizer_new_for_symbols (GInputStream *symbols)
   g_return_val_if_fail (G_IS_INPUT_STREAM (symbols), NULL);
 
   self = g_object_new (SYSPROF_TYPE_KALLSYMS_SYMBOLIZER, NULL);
-  self->stream = G_INPUT_STREAM (g_data_input_stream_new (symbols));
-
-  g_object_unref (symbols);
+  self->stream = symbols;
 
   return SYSPROF_SYMBOLIZER (self);
 }

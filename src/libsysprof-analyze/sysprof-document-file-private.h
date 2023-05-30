@@ -25,6 +25,7 @@
 G_BEGIN_DECLS
 
 SysprofDocumentFile *_sysprof_document_file_new (const char *path,
-                                                 GPtrArray  *file_chunks);
+                                                 GPtrArray  *file_chunks,
+                                                 gboolean    compressed);
 
 G_END_DECLS

@@ -354,10 +354,31 @@ sysprof_recording_add_file_fiber (gpointer user_data)
    * We use g_file_has_prefix() for this as it will canonicalize the paths
    * of #GFile rather than us having to be careful here.
    */
-  //if (g_file_has_prefix (file, proc))
-    //{
-    //}
-  //else
+  if (g_file_has_prefix (file, proc))
+    {
+      g_autoptr(GDBusConnection) connection = NULL;
+      g_autoptr(GVariant) reply = NULL;
+      g_autoptr(GBytes) input_bytes = NULL;
+
+      if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
+        return dex_future_new_for_error (g_steal_pointer (&error));
+
+      if (!(reply = dex_await_variant (dex_dbus_connection_call (connection,
+                                                                 "org.gnome.Sysprof3",
+                                                                 "/org/gnome/Sysprof3",
+                                                                 "org.gnome.Sysprof3.Service",
+                                                                 "GetProcFile",
+                                                                 g_variant_new ("(^ay)", g_file_get_path (file)),
+                                                                 G_VARIANT_TYPE ("(ay)"),
+                                                                 G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
+                                                                 G_MAXINT),
+                                       &error)))
+        return dex_future_new_for_error (g_steal_pointer (&error));
+
+      input_bytes = g_variant_get_data_as_bytes (reply);
+      input = g_memory_input_stream_new_from_bytes (input_bytes);
+    }
+  else
     {
       if (!(input = dex_await_object (dex_file_read (file, 0), &error)))
         return dex_future_new_for_error (g_steal_pointer (&error));

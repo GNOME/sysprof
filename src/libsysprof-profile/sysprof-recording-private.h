@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <libdex.h>
+
 #include "sysprof-instrument.h"
 #include "sysprof-recording.h"
 #include "sysprof-spawnable.h"
@@ -32,5 +34,8 @@ SysprofRecording     *_sysprof_recording_new           (SysprofCaptureWriter  *w
 void                  _sysprof_recording_start         (SysprofRecording      *self);
 SysprofCaptureWriter *_sysprof_recording_writer        (SysprofRecording      *self);
 SysprofSpawnable     *_sysprof_recording_get_spawnable (SysprofRecording      *self);
+DexFuture            *_sysprof_recording_add_file      (SysprofRecording      *self,
+                                                        const char            *path,
+                                                        gboolean               compress);
 
 G_END_DECLS

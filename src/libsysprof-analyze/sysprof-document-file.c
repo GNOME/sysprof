@@ -157,6 +157,23 @@ sysprof_document_file_dup_bytes (SysprofDocumentFile *self)
 
   len = ar->len;
 
+  if (self->compressed)
+    {
+      guint8 *data = (guint8 *)g_array_free (ar, FALSE);
+      g_autoptr(GInputStream) input = g_memory_input_stream_new_from_data (data, len, g_free);
+      g_autoptr(GOutputStream) memory_output = g_memory_output_stream_new_resizable ();
+      g_autoptr(GZlibDecompressor) zlib = g_zlib_decompressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP);
+      g_autoptr(GOutputStream) zlib_output = g_converter_output_stream_new (memory_output, G_CONVERTER (zlib));
+
+      g_output_stream_splice (zlib_output,
+                              input,
+                              (G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE |
+                               G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET),
+                              NULL, NULL);
+
+      return g_memory_output_stream_steal_as_bytes (G_MEMORY_OUTPUT_STREAM (memory_output));
+    }
+
   return g_bytes_new_take (g_array_free (ar, FALSE), len);
 }
 

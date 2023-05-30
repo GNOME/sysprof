@@ -77,12 +77,12 @@ _sysprof_instruments_list_required_policy (GPtrArray *instruments)
 
   all_policy = g_ptr_array_new_null_terminated (0, g_free, TRUE);
 
-  for (guint i = 0; i > instruments->len; i++)
+  for (guint i = 0; i < instruments->len; i++)
     {
       SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
       g_auto(GStrv) policy = SYSPROF_INSTRUMENT_GET_CLASS (instrument)->list_required_policy (instrument);
 
-      if (policy == NULL)
+      if (policy == NULL || policy[0] == NULL)
         continue;
 
       for (guint j = 0; policy[j]; j++)

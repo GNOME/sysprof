@@ -35,72 +35,17 @@ enum {
 
 G_DEFINE_FINAL_TYPE (SysprofLinuxInstrument, sysprof_linux_instrument, SYSPROF_TYPE_INSTRUMENT)
 
-static gboolean
-sysprof_linux_instrument_capture_file (SysprofCaptureWriter  *writer,
-                                       const char            *path,
-                                       gboolean               compress,
-                                       GError               **error)
-{
-  g_autoptr(GBytes) bytes = NULL;
-  g_autoptr(GFile) file = NULL;
-  const guint8 *data;
-  gsize len;
-
-  g_assert (writer != NULL);
-  g_assert (path != NULL);
-
-  file = g_file_new_for_path (path);
-
-  /* TODO: This needs to go through sysprofd instead */
-
-  if (!(bytes = dex_await_boxed (dex_file_load_contents_bytes (file), error)))
-    return FALSE;
-
-  /* TODO: Handle compression of files */
-
-  data = g_bytes_get_data (bytes, &len);
-
-  while (len > 0)
-    {
-      gsize to_write = MIN (len, 4096*8);
-
-      if (!sysprof_capture_writer_add_file (writer,
-                                            SYSPROF_CAPTURE_CURRENT_TIME,
-                                            -1,
-                                            -1,
-                                            path,
-                                            to_write == len,
-                                            data,
-                                            to_write))
-        break;
-
-      len -= to_write;
-      data += to_write;
-    }
-
-  return TRUE;
-}
-
 static DexFuture *
 sysprof_linux_instrument_prepare_fiber (gpointer user_data)
 {
   SysprofRecording *recording = user_data;
-  SysprofCaptureWriter *writer;
 
   g_assert (SYSPROF_IS_RECORDING (recording));
 
-  writer = _sysprof_recording_writer (recording);
-
-  /* Capture information about the system as we see it from the host system.
-   * We must query this via sysprofd so that our current process (which may
-   * have a different mount namespace) does not fall into the capture file.
-   */
-
-  sysprof_linux_instrument_capture_file (writer, "/proc/cpuinfo", FALSE, NULL);
-  sysprof_linux_instrument_capture_file (writer, "/proc/mounts", FALSE, NULL);
-  sysprof_linux_instrument_capture_file (writer, "/proc/kallsyms", TRUE, NULL);
-
-  return dex_future_new_for_boolean (TRUE);
+  return dex_future_all (_sysprof_recording_add_file (recording, "/proc/kallsyms", TRUE),
+                         _sysprof_recording_add_file (recording, "/proc/cpuinfo", TRUE),
+                         _sysprof_recording_add_file (recording, "/proc/mounts", TRUE),
+                         NULL);
 }
 
 static DexFuture *

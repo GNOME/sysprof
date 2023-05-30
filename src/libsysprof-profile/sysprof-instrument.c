@@ -118,7 +118,7 @@ _sysprof_instruments_acquire_policy (GPtrArray        *instruments,
   /* Ensure we have access to the System D-Bus so that we can get
    * access to sysprofd for system information.
    */
-  if (!(connection = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, &error)))
+  if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
   /* First ensure that all our required policy have been acquired on

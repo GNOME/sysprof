@@ -1,4 +1,5 @@
 libsysprof_profile_public_sources = [
+  'sysprof-cpu-usage.c',
   'sysprof-instrument.c',
   'sysprof-profiler.c',
   'sysprof-recording.c',
@@ -16,6 +17,7 @@ libsysprof_profile_public_headers = [
   'sysprof-profile.h',
 
   'sysprof-instrument.h',
+  'sysprof-cpu-usage.h',
   'sysprof-profiler.h',
   'sysprof-recording.h',
   'sysprof-spawnable.h',

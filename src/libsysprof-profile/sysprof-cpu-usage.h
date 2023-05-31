@@ -1,4 +1,4 @@
-/* sysprof-profile.h
+/* sysprof-cpu-usage.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,16 +20,23 @@
 
 #pragma once
 
-#include <gio/gio.h>
+#include "sysprof-instrument.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_PROFILE_INSIDE
-# include "sysprof-cpu-usage.h"
-# include "sysprof-instrument.h"
-# include "sysprof-profiler.h"
-# include "sysprof-recording.h"
-# include "sysprof-spawnable.h"
-#undef SYSPROF_PROFILE_INSIDE
+#define SYSPROF_TYPE_CPU_USAGE         (sysprof_cpu_usage_get_type())
+#define SYSPROF_IS_CPU_USAGE(obj)      G_TYPE_CHECK_INSTANCE_TYPE(obj, SYSPROF_TYPE_CPU_USAGE)
+#define SYSPROF_CPU_USAGE(obj)         G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_CPU_USAGE, SysprofCpuUsage)
+#define SYSPROF_CPU_USAGE_CLASS(klass) G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_CPU_USAGE, SysprofCpuUsageClass)
+
+typedef struct _SysprofCpuUsage      SysprofCpuUsage;
+typedef struct _SysprofCpuUsageClass SysprofCpuUsageClass;
+
+SYSPROF_AVAILABLE_IN_ALL
+GType              sysprof_cpu_usage_get_type (void) G_GNUC_CONST;
+SYSPROF_AVAILABLE_IN_ALL
+SysprofInstrument *sysprof_cpu_usage_new      (void);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCpuUsage, g_object_unref)
 
 G_END_DECLS

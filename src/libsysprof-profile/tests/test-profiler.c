@@ -113,6 +113,8 @@ main (int       argc,
 
   profiler = sysprof_profiler_new ();
 
+  sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());
+
   sysprof_profiler_record_async (profiler, writer, NULL, record_cb, NULL);
 
   g_unix_signal_add (SIGINT, sigint_handler, main_loop);

@@ -223,8 +223,6 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
       gsize line_len;
       char *line;
 
-      g_print ("parsing\n");
-
       /* First collect all our reads and then wait for them to finish before
        * parsing in a pass. With io_uring, this lets us coalesce all the lseek
        * and reads into a single set of iops.
@@ -242,8 +240,6 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
                                         NULL),
                       NULL))
         break;
-
-      g_print ("Waiting for completions\n");
 
       /* Now parse all the contents of the stat files which should be
        * populated in the various files.
@@ -350,8 +346,6 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
                                            ids,
                                            values,
                                            n_cpu * 2 + 1);
-
-      g_print ("adding counters\n");
 
       /* Wait for cancellation or ½ second */
       dex_await (dex_future_first (dex_ref (record->cancellable),

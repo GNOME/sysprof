@@ -44,14 +44,20 @@ struct _SysprofInstrumentClass
   DexFuture  *(*record)               (SysprofInstrument *self,
                                        SysprofRecording  *recording,
                                        GCancellable      *cancellable);
+  DexFuture  *(*process_started)      (SysprofInstrument *self,
+                                       SysprofRecording  *recording,
+                                       int                pid);
 };
 
-DexFuture *_sysprof_instruments_acquire_policy (GPtrArray        *instruments,
-                                                SysprofRecording *recording);
-DexFuture *_sysprof_instruments_prepare        (GPtrArray        *instruments,
-                                                SysprofRecording *recording);
-DexFuture *_sysprof_instruments_record         (GPtrArray        *instruments,
-                                                SysprofRecording *recording,
-                                                GCancellable     *cancellable);
+DexFuture *_sysprof_instruments_acquire_policy  (GPtrArray        *instruments,
+                                                 SysprofRecording *recording);
+DexFuture *_sysprof_instruments_prepare         (GPtrArray        *instruments,
+                                                 SysprofRecording *recording);
+DexFuture *_sysprof_instruments_record          (GPtrArray        *instruments,
+                                                 SysprofRecording *recording,
+                                                 GCancellable     *cancellable);
+DexFuture *_sysprof_instruments_process_started (GPtrArray        *instruments,
+                                                 SysprofRecording *recording,
+                                                 int               pid);
 
 G_END_DECLS

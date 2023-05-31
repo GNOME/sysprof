@@ -174,6 +174,7 @@ _sysprof_instruments_record (GPtrArray        *instruments,
 
   g_return_val_if_fail (instruments != NULL, NULL);
   g_return_val_if_fail (SYSPROF_IS_RECORDING (recording), NULL);
+  g_return_val_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable), NULL);
 
   futures = g_ptr_array_new_with_free_func (dex_unref);
 
@@ -183,6 +184,35 @@ _sysprof_instruments_record (GPtrArray        *instruments,
 
       g_ptr_array_add (futures,
                        SYSPROF_INSTRUMENT_GET_CLASS (instrument)->record (instrument, recording, cancellable));
+    }
+
+  if (futures->len == 0)
+    return dex_future_new_for_boolean (TRUE);
+
+  return dex_future_allv ((DexFuture **)futures->pdata, futures->len);
+}
+
+DexFuture *
+_sysprof_instruments_process_started (GPtrArray        *instruments,
+                                      SysprofRecording *recording,
+                                      int               pid)
+{
+  g_autoptr(GPtrArray) futures = NULL;
+
+  g_return_val_if_fail (instruments != NULL, NULL);
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (recording), NULL);
+
+  futures = g_ptr_array_new_with_free_func (dex_unref);
+
+  for (guint i = 0; i < instruments->len; i++)
+    {
+      SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
+
+      if (SYSPROF_INSTRUMENT_GET_CLASS (instruments)->process_started == NULL)
+        continue;
+
+      g_ptr_array_add (futures,
+                       SYSPROF_INSTRUMENT_GET_CLASS (instrument)->process_started (instrument, recording, pid));
     }
 
   if (futures->len == 0)

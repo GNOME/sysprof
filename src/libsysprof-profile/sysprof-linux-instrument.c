@@ -45,21 +45,19 @@ sysprof_linux_instrument_list_required_policy (SysprofInstrument *instrument)
 
 static void
 add_process_info (SysprofRecording *recording,
-                  GVariant         *process_info_reply)
+                  GVariant         *process_info)
 {
   g_autoptr(GPtrArray) futures = NULL;
-  g_autoptr(GVariant) process_info = NULL;
   SysprofCaptureWriter *writer;
   GVariantIter iter;
   GVariant *pidinfo;
 
-  g_assert (process_info_reply != NULL);
-  g_assert (g_variant_is_of_type (process_info_reply, G_VARIANT_TYPE ("(aa{sv})")));
+  g_assert (process_info != NULL);
+  g_assert (g_variant_is_of_type (process_info, G_VARIANT_TYPE ("aa{sv}")));
 
   writer = _sysprof_recording_writer (recording);
 
   /* Loop through all the PIDs the server notified us about */
-  process_info = g_variant_get_child_value (process_info_reply, 0);
   g_variant_iter_init (&iter, process_info);
   while (g_variant_iter_loop (&iter, "@a{sv}", &pidinfo))
     {
@@ -118,9 +116,6 @@ static DexFuture *
 sysprof_linux_instrument_prepare_fiber (gpointer user_data)
 {
   SysprofRecording *recording = user_data;
-  g_autoptr(GDBusConnection) bus = NULL;
-  g_autoptr(GVariant) process_info_reply = NULL;
-  g_autoptr(GVariant) process_info = NULL;
   g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_RECORDING (recording));
@@ -134,6 +129,33 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
                                   NULL),
                   &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
+
+  return dex_future_new_for_boolean (TRUE);
+}
+
+static DexFuture *
+sysprof_linux_instrument_prepare (SysprofInstrument *instrument,
+                                  SysprofRecording  *recording)
+{
+  g_assert (SYSPROF_IS_INSTRUMENT (instrument));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+
+  return dex_scheduler_spawn (NULL, 0,
+                              sysprof_linux_instrument_prepare_fiber,
+                              g_object_ref (recording),
+                              g_object_unref);
+}
+
+static DexFuture *
+sysprof_linux_instrument_record_fiber (gpointer user_data)
+{
+  SysprofRecording *recording = user_data;
+  g_autoptr(GDBusConnection) bus = NULL;
+  g_autoptr(GVariant) process_info_reply = NULL;
+  g_autoptr(GVariant) process_info = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_RECORDING (recording));
 
   /* We need access to the bus to call various sysprofd API directly */
   if (!(bus = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
@@ -155,20 +177,22 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
     return dex_future_new_for_error (g_steal_pointer (&error));
 
   /* Add process records for each of the processes discovered */
-  add_process_info (recording, process_info_reply);
+  process_info = g_variant_get_child_value (process_info_reply, 0);
+  add_process_info (recording, process_info);
 
   return dex_future_new_for_boolean (TRUE);
 }
 
 static DexFuture *
-sysprof_linux_instrument_prepare (SysprofInstrument *instrument,
-                                  SysprofRecording  *recording)
+sysprof_linux_instrument_record (SysprofInstrument *instrument,
+                                 SysprofRecording  *recording,
+                                 GCancellable      *cancellable)
 {
   g_assert (SYSPROF_IS_INSTRUMENT (instrument));
   g_assert (SYSPROF_IS_RECORDING (recording));
 
   return dex_scheduler_spawn (NULL, 0,
-                              sysprof_linux_instrument_prepare_fiber,
+                              sysprof_linux_instrument_record_fiber,
                               g_object_ref (recording),
                               g_object_unref);
 }
@@ -189,6 +213,7 @@ sysprof_linux_instrument_class_init (SysprofLinuxInstrumentClass *klass)
 
   instrument_class->list_required_policy = sysprof_linux_instrument_list_required_policy;
   instrument_class->prepare = sysprof_linux_instrument_prepare;
+  instrument_class->record = sysprof_linux_instrument_record;
 }
 
 static void

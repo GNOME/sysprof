@@ -38,6 +38,7 @@ libsysprof_profile_deps = [
   dependency('libdex-1', version: dex_req_version),
   dependency('polkit-gobject-1', version: polkit_req_version),
 
+  liblinereader_static_dep,
   libsysprof_capture_dep,
 ]
 

@@ -75,6 +75,7 @@ sysprof_recording_fiber (gpointer user_data)
   g_autoptr(GCancellable) cancellable = NULL;
   g_autoptr(DexFuture) record = NULL;
   g_autoptr(GError) error = NULL;
+  gint64 begin_time;
 
   g_assert (SYSPROF_IS_RECORDING (self));
 
@@ -93,6 +94,9 @@ sysprof_recording_fiber (gpointer user_data)
 
   /* Ask instruments to start recording and stop if cancelled. */
   record = _sysprof_instruments_record (self->instruments, self, cancellable);
+
+  /* Now take our begin time now that all instruments are notified */
+  begin_time = SYSPROF_CAPTURE_CURRENT_TIME;
 
   /* Wait for messages on our channel or the recording to complete */
   for (;;)
@@ -128,6 +132,9 @@ stop_recording:
    * cleaned up, cascading into other subsystems.
    */
   g_cancellable_cancel (cancellable);
+
+  /* Update start/end times to be the "running time" */
+  _sysprof_capture_writer_set_time_range (self->writer, begin_time, SYSPROF_CAPTURE_CURRENT_TIME);
 
   if (error != NULL)
     return dex_future_new_for_error (g_steal_pointer (&error));

@@ -8,6 +8,7 @@ libsysprof_profile_public_sources = [
 libsysprof_profile_private_sources = [
   'mapped-ring-buffer-source.c',
   'sysprof-controlfd-instrument.c',
+  'sysprof-podman.c',
   'sysprof-polkit.c',
 ]
 
@@ -31,6 +32,7 @@ libsysprof_profile_deps = [
   dependency('gio-unix-2.0',
      version: glib_req_version,
     required: host_machine.system() != 'windows'),
+  dependency('json-glib-1.0'),
   dependency('libdex-1', version: dex_req_version),
   dependency('polkit-gobject-1', version: polkit_req_version),
 

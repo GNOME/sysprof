@@ -23,6 +23,7 @@
 #include <stdio.h>
 
 #include "sysprof-linux-instrument-private.h"
+#include "sysprof-podman-private.h"
 #include "sysprof-recording-private.h"
 
 struct _SysprofLinuxInstrument
@@ -103,10 +104,82 @@ add_mmaps (SysprofRecording *recording,
     }
 }
 
-static void
+static DexFuture *
+populate_overlays (SysprofRecording *recording,
+                   SysprofPodman    *podman,
+                   int               pid,
+                   const char       *cgroup)
+{
+  static GRegex *flatpak_regex;
+  static GRegex *podman_regex;
+
+  g_autoptr(GMatchInfo) flatpak_match = NULL;
+  g_autoptr(GMatchInfo) podman_match = NULL;
+  SysprofCaptureWriter *writer;
+
+  g_assert (SYSPROF_IS_RECORDING (recording));
+  g_assert (cgroup != NULL);
+
+  if (strcmp (cgroup, "") == 0)
+    return dex_future_new_for_boolean (TRUE);
+
+  writer = _sysprof_recording_writer (recording);
+
+  /* This function tries to discover the podman container that contains the
+   * process identified on the host as @pid. We can only do anything with this
+   * if the pids are in containers that the running user controls (so that we
+   * can actually access the overlays).
+   *
+   * This stuff, and I want to emphasize, is a giant hack. Just like containers
+   * are on Linux. But if we are really careful, we can make this work for the
+   * one particular use case I care about, which is podman/toolbox on Fedora
+   * Workstation/Silverblue.
+   *
+   * -- Christian
+   */
+  if G_UNLIKELY (podman_regex == NULL)
+    {
+      podman_regex = g_regex_new ("libpod-([a-z0-9]{64})\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
+      g_assert (podman_regex != NULL);
+    }
+
+  if (flatpak_regex == NULL)
+    {
+      flatpak_regex = g_regex_new ("app-flatpak-([a-zA-Z_\\-\\.]+)-[0-9]+\\.scope", G_REGEX_OPTIMIZE, 0, NULL);
+      g_assert (flatpak_regex != NULL);
+    }
+
+  if (g_regex_match (podman_regex, cgroup, 0, &podman_match))
+    {
+      g_autofree char *word = g_match_info_fetch (podman_match, 1);
+      g_autofree char *path = g_strdup_printf ("/proc/%d/root/run/.containerenv", pid);
+      g_auto(GStrv) layers = NULL;
+
+      if ((layers = sysprof_podman_get_layers (podman, word)))
+        {
+          for (guint i = 0; layers[i]; i++)
+            sysprof_capture_writer_add_overlay (writer,
+                                                SYSPROF_CAPTURE_CURRENT_TIME,
+                                                -1, pid, i, layers[i], "/");
+        }
+
+      return _sysprof_recording_add_file (recording, path, FALSE);
+    }
+  else if (g_regex_match (flatpak_regex, cgroup, 0, &flatpak_match))
+    {
+      g_autofree char *path = g_strdup_printf ("/proc/%d/root/.flatpak-info", pid);
+
+      return _sysprof_recording_add_file (recording, path, FALSE);
+    }
+
+  return dex_future_new_for_boolean (TRUE);
+}
+
+static DexFuture *
 add_process_info (SysprofRecording *recording,
                   GVariant         *process_info)
 {
+  g_autoptr(SysprofPodman) podman = NULL;
   g_autoptr(GPtrArray) futures = NULL;
   SysprofCaptureWriter *writer;
   GVariantIter iter;
@@ -116,6 +189,8 @@ add_process_info (SysprofRecording *recording,
   g_assert (g_variant_is_of_type (process_info, G_VARIANT_TYPE ("aa{sv}")));
 
   writer = _sysprof_recording_writer (recording);
+  podman = sysprof_podman_snapshot_current_user ();
+  futures = g_ptr_array_new_with_free_func (dex_unref);
 
   /* Loop through all the PIDs the server notified us about */
   g_variant_iter_init (&iter, process_info);
@@ -170,12 +245,20 @@ add_process_info (SysprofRecording *recording,
       ignore_inode = strstr (cgroup, "/libpod-") != NULL;
       add_mmaps (recording, pid, maps, ignore_inode);
 
-      // TODO
-      //sysprof_proc_source_populate_overlays (self, pid, cgroup);
+      /* We might have overlays that need to be applied to the process
+       * which can be rather combursome for old-style Podman using
+       * FUSE overlayfs.
+       */
+      g_ptr_array_add (futures, populate_overlays (recording, podman, pid, cgroup));
 
       skip:
         g_variant_dict_clear (&dict);
     }
+
+  if (futures->len > 0)
+    return dex_future_allv ((DexFuture **)futures->pdata, futures->len);
+
+  return dex_future_new_for_boolean (TRUE);
 }
 
 static DexFuture *
@@ -244,7 +327,7 @@ sysprof_linux_instrument_record_fiber (gpointer user_data)
 
   /* Add process records for each of the processes discovered */
   process_info = g_variant_get_child_value (process_info_reply, 0);
-  add_process_info (recording, process_info);
+  dex_await (add_process_info (recording, process_info), NULL);
 
   return dex_future_new_for_boolean (TRUE);
 }
@@ -274,6 +357,10 @@ sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
   g_assert (SYSPROF_IS_RECORDING (recording));
 
   mountinfo_path = g_strdup_printf ("/proc/%u/mountinfo", pid);
+
+  /* TODO: If we get the process cgroup and keep our saved podman
+   *       state around, we could poopulate overlays for new processes.
+   */
 
   return _sysprof_recording_add_file (recording, mountinfo_path, TRUE);
 }

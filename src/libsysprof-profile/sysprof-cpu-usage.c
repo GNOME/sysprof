@@ -165,8 +165,8 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
       g_autofree char *max_value = NULL;
       CpuFreq cf;
 
-      ids[n_cpu*2] = counter_base;
-      ids[n_cpu*2+1] = counter_base + 1;
+      ids[i*2] = counter_base;
+      ids[i*2+1] = counter_base + 1;
 
       counter = &counters[i*2];
       counter->id = counter_base;

@@ -414,7 +414,7 @@ sysprof_recording_add_file_fiber (gpointer user_data)
 
   while (len > 0)
     {
-      gsize to_write = MIN (len, 4096*8);
+      gsize to_write = MIN (len, ((4096*8)-sizeof (SysprofCaptureFileChunk)));
 
       if (!sysprof_capture_writer_add_file (add_file->writer,
                                             SYSPROF_CAPTURE_CURRENT_TIME,

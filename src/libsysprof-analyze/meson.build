@@ -87,6 +87,7 @@ libsysprof_analyze_deps = [
 
   libeggbitset_static_dep,
   libelfparser_static_dep,
+  liblinereader_static_dep,
   libsysprof_capture_dep,
 ]
 

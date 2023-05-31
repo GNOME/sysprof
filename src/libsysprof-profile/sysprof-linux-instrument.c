@@ -197,6 +197,21 @@ sysprof_linux_instrument_record (SysprofInstrument *instrument,
                               g_object_unref);
 }
 
+static DexFuture *
+sysprof_linux_instrument_process_started (SysprofInstrument *instrument,
+                                          SysprofRecording  *recording,
+                                          int                pid)
+{
+  g_autofree char *mountinfo_path = NULL;
+
+  g_assert (SYSPROF_IS_INSTRUMENT (instrument));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+
+  mountinfo_path = g_strdup_printf ("/proc/%u/mountinfo", pid);
+
+  return _sysprof_recording_add_file (recording, mountinfo_path, TRUE);
+}
+
 static void
 sysprof_linux_instrument_finalize (GObject *object)
 {
@@ -214,6 +229,7 @@ sysprof_linux_instrument_class_init (SysprofLinuxInstrumentClass *klass)
   instrument_class->list_required_policy = sysprof_linux_instrument_list_required_policy;
   instrument_class->prepare = sysprof_linux_instrument_prepare;
   instrument_class->record = sysprof_linux_instrument_record;
+  instrument_class->process_started = sysprof_linux_instrument_process_started;
 }
 
 static void

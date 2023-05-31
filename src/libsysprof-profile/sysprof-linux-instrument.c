@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <stdio.h>
+
 #include "sysprof-linux-instrument-private.h"
 #include "sysprof-recording-private.h"
 
@@ -41,6 +43,64 @@ sysprof_linux_instrument_list_required_policy (SysprofInstrument *instrument)
   static const char *policy[] = {"org.gnome.sysprof3.profile", NULL};
 
   return g_strdupv ((char **)policy);
+}
+
+static void
+add_mmaps (SysprofRecording *recording,
+           GPid              pid,
+           const char       *mapsstr,
+           gboolean          ignore_inode)
+{
+  SysprofCaptureWriter *writer;
+  g_auto(GStrv) lines = NULL;
+
+  g_assert (SYSPROF_IS_RECORDING (recording));
+  g_assert (mapsstr != NULL);
+  g_assert (pid > 0);
+
+  writer = _sysprof_recording_writer (recording);
+  lines = g_strsplit (mapsstr, "\n", 0);
+
+  for (guint i = 0; lines[i] != NULL; i++)
+    {
+      char file[512];
+      gulong start;
+      gulong end;
+      gulong offset;
+      gulong inode;
+      int r;
+      gboolean is_vdso;
+
+      r = sscanf (lines[i],
+                  "%lx-%lx %*15s %lx %*x:%*x %lu %511[^\n]",
+                  &start, &end, &offset, &inode, file);
+      file [sizeof file - 1] = '\0';
+
+      /* file has a " (deleted)" suffix if it was deleted from disk */
+      if (g_str_has_suffix (file, " (deleted)"))
+          file [strlen (file) - strlen (" (deleted)")] = '\0';
+
+      if (r != 5)
+        continue;
+
+      is_vdso = strcmp ("[vdso]", file) == 0;
+
+      if (ignore_inode || is_vdso)
+        inode = 0;
+
+      if (is_vdso)
+        offset = 0;
+
+      sysprof_capture_writer_add_map (writer,
+                                      SYSPROF_CAPTURE_CURRENT_TIME,
+                                      -1,
+                                      pid,
+                                      start,
+                                      end,
+                                      offset,
+                                      inode,
+                                      file);
+    }
 }
 
 static void
@@ -68,6 +128,7 @@ add_process_info (SysprofRecording *recording,
       const char *mountinfo;
       const char *maps;
       const char *cgroup;
+      gboolean ignore_inode;
       gint32 pid;
 
       g_variant_dict_init (&dict, pidinfo);
@@ -103,8 +164,13 @@ add_process_info (SysprofRecording *recording,
       mount_path = g_strdup_printf ("/proc/%u/mountinfo", pid);
       _sysprof_recording_add_file_data (recording, mount_path, mountinfo, -1);
 
+      /* Ignore inodes from podman/toolbox because they appear to always be
+       * wrong. We'll have to rely on CRC/build-id instead.
+       */
+      ignore_inode = strstr (cgroup, "/libpod-") != NULL;
+      add_mmaps (recording, pid, maps, ignore_inode);
+
       // TODO
-      //sysprof_proc_source_populate_maps (self, pid, maps, ignore_inode);
       //sysprof_proc_source_populate_overlays (self, pid, cgroup);
 
       skip:

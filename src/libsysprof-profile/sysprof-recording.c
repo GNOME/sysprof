@@ -454,3 +454,35 @@ _sysprof_recording_add_file (SysprofRecording *self,
                               g_steal_pointer (&add_file),
                               (GDestroyNotify)add_file_free);
 }
+
+void
+_sysprof_recording_add_file_data (SysprofRecording *self,
+                                  const char       *path,
+                                  const char       *contents,
+                                  gssize            length)
+{
+  g_return_if_fail (SYSPROF_IS_RECORDING (self));
+  g_return_if_fail (path != NULL);
+  g_return_if_fail (contents != NULL);
+
+  if (length < 0)
+    length = strlen (contents);
+
+  while (length > 0)
+    {
+      gsize to_write = MIN (length, ((4096*8)-sizeof (SysprofCaptureFileChunk)));
+
+      if (!sysprof_capture_writer_add_file (self->writer,
+                                            SYSPROF_CAPTURE_CURRENT_TIME,
+                                            -1,
+                                            -1,
+                                            path,
+                                            to_write == length,
+                                            (const guint8 *)contents,
+                                            to_write))
+        break;
+
+      length -= to_write;
+      contents += to_write;
+    }
+}

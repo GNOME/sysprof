@@ -37,5 +37,9 @@ SysprofSpawnable     *_sysprof_recording_get_spawnable (SysprofRecording      *s
 DexFuture            *_sysprof_recording_add_file      (SysprofRecording      *self,
                                                         const char            *path,
                                                         gboolean               compress);
+void                  _sysprof_recording_add_file_data (SysprofRecording      *self,
+                                                        const char            *path,
+                                                        const char            *contents,
+                                                        gssize                 length);
 
 G_END_DECLS

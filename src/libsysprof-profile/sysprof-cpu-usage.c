@@ -149,6 +149,8 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
   values = g_alloca (sizeof *values * ((n_cpu * 2) + 1));
 
   cpu_info = g_array_new (FALSE, TRUE, sizeof (CpuInfo));
+  g_array_set_size (cpu_info, n_cpu);
+
   freq_info = g_array_new (FALSE, TRUE, sizeof (CpuFreq));
   g_array_set_clear_func (freq_info, freq_info_clear);
 
@@ -235,8 +237,10 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
         }
       cpu_future = dex_aio_read (NULL, stat_fd, read_buffer, PROC_STAT_BUF_SIZE, 0);
       g_ptr_array_add (futures, dex_ref (cpu_future));
-      g_ptr_array_add (futures, dex_ref (record->cancellable));
-      if (!dex_await (dex_future_allv ((DexFuture **)futures->pdata, futures->len), NULL))
+      if (!dex_await (dex_future_any (dex_ref (record->cancellable),
+                                      dex_future_allv ((DexFuture **)futures->pdata, futures->len),
+                                      NULL),
+                      NULL))
         break;
 
       g_print ("Waiting for completions\n");
@@ -350,9 +354,9 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
       g_print ("adding counters\n");
 
       /* Wait for cancellation or ½ second */
-      dex_await (dex_future_any (dex_ref (record->cancellable),
-                                 dex_timeout_new_usec (G_USEC_PER_SEC / 2),
-                                 NULL),
+      dex_await (dex_future_first (dex_ref (record->cancellable),
+                                   dex_timeout_new_usec (G_USEC_PER_SEC / 2),
+                                   NULL),
                  NULL);
       if (dex_future_get_status (record->cancellable) != DEX_FUTURE_STATUS_PENDING)
         break;

@@ -237,9 +237,9 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
         }
       cpu_future = dex_aio_read (NULL, stat_fd, read_buffer, PROC_STAT_BUF_SIZE, 0);
       g_ptr_array_add (futures, dex_ref (cpu_future));
-      if (!dex_await (dex_future_any (dex_ref (record->cancellable),
-                                      dex_future_allv ((DexFuture **)futures->pdata, futures->len),
-                                      NULL),
+      if (!dex_await (dex_future_first (dex_ref (record->cancellable),
+                                        dex_future_allv ((DexFuture **)futures->pdata, futures->len),
+                                        NULL),
                       NULL))
         break;
 
@@ -248,7 +248,7 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
       /* Now parse all the contents of the stat files which should be
        * populated in the various files.
        */
-      line_reader_init (&reader, read_buffer, dex_await_int64 (cpu_future, NULL));
+      line_reader_init (&reader, read_buffer, dex_await_int64 (dex_ref (cpu_future), NULL));
       while ((line = line_reader_next (&reader, &line_len)))
         {
           CpuInfo *ci;

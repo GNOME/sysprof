@@ -43,17 +43,121 @@ sysprof_linux_instrument_list_required_policy (SysprofInstrument *instrument)
   return g_strdupv ((char **)policy);
 }
 
+static void
+add_process_info (SysprofRecording *recording,
+                  GVariant         *process_info_reply)
+{
+  g_autoptr(GPtrArray) futures = NULL;
+  g_autoptr(GVariant) process_info = NULL;
+  SysprofCaptureWriter *writer;
+  GVariantIter iter;
+  GVariant *pidinfo;
+
+  g_assert (process_info_reply != NULL);
+  g_assert (g_variant_is_of_type (process_info_reply, G_VARIANT_TYPE ("(aa{sv})")));
+
+  writer = _sysprof_recording_writer (recording);
+
+  /* Loop through all the PIDs the server notified us about */
+  process_info = g_variant_get_child_value (process_info_reply, 0);
+  g_variant_iter_init (&iter, process_info);
+  while (g_variant_iter_loop (&iter, "@a{sv}", &pidinfo))
+    {
+      g_autofree char *mount_path = NULL;
+      GVariantDict dict;
+      const char *cmdline;
+      const char *comm;
+      const char *mountinfo;
+      const char *maps;
+      const char *cgroup;
+      gint32 pid;
+
+      g_variant_dict_init (&dict, pidinfo);
+
+      if (!g_variant_dict_lookup (&dict, "pid", "i", &pid))
+        goto skip;
+
+      if (!g_variant_dict_lookup (&dict, "cmdline", "&s", &cmdline))
+        cmdline = "";
+
+      if (!g_variant_dict_lookup (&dict, "comm", "&s", &comm))
+        comm = "";
+
+      if (!g_variant_dict_lookup (&dict, "mountinfo", "&s", &mountinfo))
+        mountinfo = "";
+
+      if (!g_variant_dict_lookup (&dict, "maps", "&s", &maps))
+        maps = "";
+
+      if (!g_variant_dict_lookup (&dict, "cgroup", "&s", &cgroup))
+        cgroup = "";
+
+      /* Notify the capture that a process was spawned */
+      sysprof_capture_writer_add_process (writer,
+                                          SYSPROF_CAPTURE_CURRENT_TIME,
+                                          -1,
+                                          pid,
+                                          *cmdline ? cmdline : comm);
+
+      /* Give the capture access to the mountinfo of that process to aid
+       * in resolving symbols later on.
+       */
+      mount_path = g_strdup_printf ("/proc/%u/mountinfo", pid);
+      _sysprof_recording_add_file_data (recording, mount_path, mountinfo, -1);
+
+      // TODO
+      //sysprof_proc_source_populate_maps (self, pid, maps, ignore_inode);
+      //sysprof_proc_source_populate_overlays (self, pid, cgroup);
+
+      skip:
+        g_variant_dict_clear (&dict);
+    }
+}
+
 static DexFuture *
 sysprof_linux_instrument_prepare_fiber (gpointer user_data)
 {
   SysprofRecording *recording = user_data;
+  g_autoptr(GDBusConnection) bus = NULL;
+  g_autoptr(GVariant) process_info_reply = NULL;
+  g_autoptr(GVariant) process_info = NULL;
+  g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_RECORDING (recording));
 
-  return dex_future_all (_sysprof_recording_add_file (recording, "/proc/kallsyms", TRUE),
-                         _sysprof_recording_add_file (recording, "/proc/cpuinfo", TRUE),
-                         _sysprof_recording_add_file (recording, "/proc/mounts", TRUE),
-                         NULL);
+  /* First get some basic information about the system into the capture. We can
+   * get the contents for all of these concurrently.
+   */
+  if (!dex_await (dex_future_all (_sysprof_recording_add_file (recording, "/proc/kallsyms", TRUE),
+                                  _sysprof_recording_add_file (recording, "/proc/cpuinfo", TRUE),
+                                  _sysprof_recording_add_file (recording, "/proc/mounts", TRUE),
+                                  NULL),
+                  &error))
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  /* We need access to the bus to call various sysprofd API directly */
+  if (!(bus = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  /* We also want to get a bunch of info on user processes so that we can add
+   * records about them to the recording.
+   */
+  if (!(process_info_reply = dex_await_variant (dex_dbus_connection_call (bus,
+                                                                          "org.gnome.Sysprof3",
+                                                                          "/org/gnome/Sysprof3",
+                                                                          "org.gnome.Sysprof3.Service",
+                                                                          "GetProcessInfo",
+                                                                          g_variant_new ("(s)", "pid,maps,mountinfo,cmdline,comm,cgroup"),
+                                                                          G_VARIANT_TYPE ("(aa{sv})"),
+                                                                          G_DBUS_CALL_FLAGS_ALLOW_INTERACTIVE_AUTHORIZATION,
+                                                                          G_MAXINT),
+                                                &error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  /* Add process records for each of the processes discovered */
+  add_process_info (recording, process_info_reply);
+
+  return dex_future_new_for_boolean (TRUE);
 }
 
 static DexFuture *

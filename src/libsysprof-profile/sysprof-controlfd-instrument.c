@@ -141,7 +141,7 @@ finish:
 
 typedef struct _SysprofControlfdRecording
 {
-  GInputStream     *stream;
+  GIOStream        *stream;
   SysprofRecording *recording;
   DexFuture        *cancellable;
   GArray           *source_ids;
@@ -189,15 +189,18 @@ sysprof_controlfd_instrument_record_fiber (gpointer user_data)
 {
   SysprofControlfdRecording *state = user_data;
   g_autoptr(GError) error = NULL;
+  GInputStream *input;
 
   g_assert (state != NULL);
   g_assert (SYSPROF_IS_RECORDING (state->recording));
   g_assert (DEX_IS_CANCELLABLE (state->cancellable));
   g_assert (state->source_ids != NULL);
 
+  input = g_io_stream_get_input_stream (G_IO_STREAM (state->stream));
+
   for (;;)
     {
-      g_autoptr(DexFuture) future = dex_input_stream_read_bytes (state->stream, 10, 0);
+      g_autoptr(DexFuture) future = dex_input_stream_read_bytes (input, 10, 0);
       g_autoptr(MappedRingBuffer) ring_buffer = NULL;
       g_autoptr(GBytes) bytes = NULL;
       const guint8 *data;
@@ -278,6 +281,7 @@ sysprof_controlfd_instrument_record (SysprofInstrument *instrument,
 
   state = g_new0 (SysprofControlfdRecording, 1);
   state->recording = g_object_ref (recording);
+  state->stream = g_object_ref (G_IO_STREAM (self->connection));
   state->cancellable = dex_cancellable_new_from_cancellable (cancellable);
   state->source_ids = g_array_new (FALSE, FALSE, sizeof (guint));
   g_array_set_clear_func (state->source_ids, _g_clear_source);

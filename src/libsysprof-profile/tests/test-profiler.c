@@ -19,6 +19,7 @@
  */
 
 #include <glib-unix.h>
+#include <glib/gstdio.h>
 
 #include <sysprof-profile.h>
 
@@ -95,6 +96,8 @@ main (int       argc,
   g_autoptr(SysprofProfiler) profiler = NULL;
   g_autoptr(GError) error = NULL;
   SysprofCaptureWriter *writer = NULL;
+  SysprofCaptureReader *reader = NULL;
+  g_autofd int trace_fd = -1;
 
   main_loop = g_main_loop_new (NULL, FALSE);
 
@@ -117,6 +120,19 @@ main (int       argc,
   sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
 
+  for (int i = 1; i < argc; i++)
+    {
+      if (strcmp (argv[i], "--") == 0 && i+1 < argc)
+        {
+          g_autoptr(SysprofSpawnable) spawnable = sysprof_spawnable_new ();
+
+          sysprof_spawnable_append_args (spawnable, (const char * const *)&argv[i+1]);
+          sysprof_profiler_set_spawnable (profiler, spawnable);
+
+          trace_fd = sysprof_spawnable_add_trace_fd (spawnable, NULL);
+        }
+    }
+
   sysprof_profiler_record_async (profiler, writer, NULL, record_cb, NULL);
 
   g_unix_signal_add (SIGINT, sigint_handler, main_loop);
@@ -124,6 +140,13 @@ main (int       argc,
 
   g_main_loop_run (main_loop);
 
+  if (trace_fd != -1)
+    {
+      if ((reader = sysprof_capture_reader_new_from_fd (g_steal_fd (&trace_fd))))
+        sysprof_capture_writer_cat (writer, reader);
+    }
+
+  g_clear_pointer (&reader, sysprof_capture_reader_unref);
   g_clear_pointer (&writer, sysprof_capture_writer_unref);
 
   return 0;

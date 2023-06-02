@@ -257,6 +257,30 @@ _sysprof_instruments_record (GPtrArray        *instruments,
 }
 
 DexFuture *
+_sysprof_instruments_augment (GPtrArray        *instruments,
+                              SysprofRecording *recording)
+{
+  g_autoptr(GPtrArray) futures = NULL;
+
+  g_return_val_if_fail (instruments != NULL, NULL);
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (recording), NULL);
+
+  futures = g_ptr_array_new_with_free_func (dex_unref);
+
+  for (guint i = 0; i < instruments->len; i++)
+    {
+      SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
+
+      g_ptr_array_add (futures, _sysprof_instrument_augment (instrument, recording));
+    }
+
+  if (futures->len == 0)
+    return dex_future_new_for_boolean (TRUE);
+
+  return dex_future_allv ((DexFuture **)futures->pdata, futures->len);
+}
+
+DexFuture *
 _sysprof_instruments_process_started (GPtrArray        *instruments,
                                       SysprofRecording *recording,
                                       int               pid)

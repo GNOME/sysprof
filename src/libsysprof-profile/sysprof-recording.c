@@ -76,6 +76,7 @@ sysprof_recording_fiber (gpointer user_data)
   g_autoptr(DexFuture) record = NULL;
   g_autoptr(GError) error = NULL;
   gint64 begin_time;
+  gint64 end_time;
 
   g_assert (SYSPROF_IS_RECORDING (self));
 
@@ -128,13 +129,21 @@ sysprof_recording_fiber (gpointer user_data)
     }
 
 stop_recording:
+  end_time = SYSPROF_CAPTURE_CURRENT_TIME;
+
   /* Signal cancellable so that anything lingering has a chance to be
    * cleaned up, cascading into other subsystems.
    */
   g_cancellable_cancel (cancellable);
 
+  /* Let instruments augment the capture. Some instruments may include
+   * extra information about the capture such as symbol names and their
+   * address ranges per-process.
+   */
+  dex_await (_sysprof_instruments_augment (self->instruments, self), NULL);
+
   /* Update start/end times to be the "running time" */
-  _sysprof_capture_writer_set_time_range (self->writer, begin_time, SYSPROF_CAPTURE_CURRENT_TIME);
+  _sysprof_capture_writer_set_time_range (self->writer, begin_time, end_time);
 
   if (error != NULL)
     return dex_future_new_for_error (g_steal_pointer (&error));

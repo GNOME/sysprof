@@ -69,11 +69,26 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofRecording, sysprof_recording, G_TYPE_OBJECT)
 
 static DexFuture *
+_sysprof_recording_spawn (SysprofSpawnable *spawnable)
+{
+  g_autoptr(GSubprocess) subprocess = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
+
+  if (!(subprocess = sysprof_spawnable_spawn (spawnable, &error)))
+    return dex_future_new_for_error (g_steal_pointer (&error));
+
+  return dex_subprocess_wait_check (subprocess);
+}
+
+static DexFuture *
 sysprof_recording_fiber (gpointer user_data)
 {
   SysprofRecording *self = user_data;
   g_autoptr(GCancellable) cancellable = NULL;
   g_autoptr(DexFuture) record = NULL;
+  g_autoptr(DexFuture) monitor = NULL;
   g_autoptr(GError) error = NULL;
   gint64 begin_time;
   gint64 end_time;
@@ -99,6 +114,12 @@ sysprof_recording_fiber (gpointer user_data)
   /* Now take our begin time now that all instruments are notified */
   begin_time = SYSPROF_CAPTURE_CURRENT_TIME;
 
+  /* If we need to spawn a subprocess, do it now */
+  if (self->spawnable != NULL)
+    monitor = _sysprof_recording_spawn (self->spawnable);
+  else
+    monitor = dex_future_new_infinite ();
+
   /* Wait for messages on our channel or the recording to complete */
   for (;;)
     {
@@ -107,11 +128,16 @@ sysprof_recording_fiber (gpointer user_data)
       /* Wait for either recording of all instruments to complete or a
        * message from our channel with what to do next.
        */
-      if (!dex_await (dex_future_any (dex_ref (record), dex_ref (message), NULL), &error))
+      if (!dex_await (dex_future_first (dex_ref (record),
+                                        dex_ref (message),
+                                        dex_ref (monitor),
+                                        NULL),
+                      &error))
         goto stop_recording;
 
       /* If record is not pending, then everything resolved/rejected */
-      if (dex_future_get_status (record) != DEX_FUTURE_STATUS_PENDING)
+      if (dex_future_get_status (record) != DEX_FUTURE_STATUS_PENDING ||
+          dex_future_get_status (monitor) != DEX_FUTURE_STATUS_PENDING)
         goto stop_recording;
 
       /* If message resolved, then we got a command to process */

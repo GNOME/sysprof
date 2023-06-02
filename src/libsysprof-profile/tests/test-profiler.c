@@ -114,6 +114,7 @@ main (int       argc,
   profiler = sysprof_profiler_new ();
 
   sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());
+  sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
 
   sysprof_profiler_record_async (profiler, writer, NULL, record_cb, NULL);

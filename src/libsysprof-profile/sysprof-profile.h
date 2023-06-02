@@ -26,6 +26,7 @@ G_BEGIN_DECLS
 
 #define SYSPROF_PROFILE_INSIDE
 # include "sysprof-cpu-usage.h"
+# include "sysprof-disk-usage.h"
 # include "sysprof-instrument.h"
 # include "sysprof-network-usage.h"
 # include "sysprof-profiler.h"

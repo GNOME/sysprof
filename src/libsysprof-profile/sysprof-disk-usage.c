@@ -35,16 +35,53 @@ struct _SysprofDiskUsageClass
 
 G_DEFINE_FINAL_TYPE (SysprofDiskUsage, sysprof_disk_usage, SYSPROF_TYPE_INSTRUMENT)
 
+typedef struct _Record
+{
+  SysprofRecording *recording;
+  DexFuture        *cancellable;
+} Record;
+
+static void
+record_free (gpointer data)
+{
+  Record *record = data;
+
+  g_clear_object (&record->recording);
+  dex_clear (&record->cancellable);
+  g_free (record);
+}
+
+static DexFuture *
+sysprof_disk_usage_record_fiber (gpointer user_data)
+{
+  Record *record = user_data;
+
+  g_assert (record != NULL);
+  g_assert (SYSPROF_IS_RECORDING (record->recording));
+  g_assert (DEX_IS_CANCELLABLE (record->cancellable));
+
+  return dex_future_new_for_boolean (TRUE);
+}
+
 static DexFuture *
 sysprof_disk_usage_record (SysprofInstrument *instrument,
                            SysprofRecording  *recording,
                            GCancellable      *cancellable)
 {
+  Record *record;
+
   g_assert (SYSPROF_IS_INSTRUMENT (instrument));
   g_assert (SYSPROF_IS_RECORDING (recording));
   g_assert (G_IS_CANCELLABLE (cancellable));
 
-  return dex_future_new_for_boolean (TRUE);
+  record = g_new0 (Record, 1);
+  record->recording = g_object_ref (recording);
+  record->cancellable = dex_cancellable_new_from_cancellable (cancellable);
+
+  return dex_scheduler_spawn (NULL, 0,
+                              sysprof_disk_usage_record_fiber,
+                              record,
+                              record_free);
 }
 
 static void

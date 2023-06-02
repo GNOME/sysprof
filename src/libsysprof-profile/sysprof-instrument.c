@@ -69,6 +69,72 @@ sysprof_instrument_init (SysprofInstrument *self)
 }
 
 static char **
+_sysprof_instrument_list_required_policy (SysprofInstrument *self)
+{
+  g_assert (SYSPROF_IS_INSTRUMENT (self));
+
+  if (SYSPROF_INSTRUMENT_GET_CLASS (self)->list_required_policy)
+    return SYSPROF_INSTRUMENT_GET_CLASS (self)->list_required_policy (self);
+
+  return NULL;
+}
+
+static DexFuture *
+_sysprof_instrument_prepare (SysprofInstrument *self,
+                             SysprofRecording  *recording)
+{
+  g_assert (SYSPROF_IS_INSTRUMENT (self));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+
+  if (SYSPROF_INSTRUMENT_GET_CLASS (self)->prepare)
+    return SYSPROF_INSTRUMENT_GET_CLASS (self)->prepare (self, recording);
+
+  return dex_future_new_for_boolean (TRUE);
+}
+
+static DexFuture *
+_sysprof_instrument_record (SysprofInstrument *self,
+                            SysprofRecording  *recording,
+                            GCancellable      *cancellable)
+{
+  g_assert (SYSPROF_IS_INSTRUMENT (self));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+  g_assert (G_IS_CANCELLABLE (cancellable));
+
+  if (SYSPROF_INSTRUMENT_GET_CLASS (self)->record)
+    return SYSPROF_INSTRUMENT_GET_CLASS (self)->record (self, recording, cancellable);
+
+  return dex_future_new_for_boolean (TRUE);
+}
+
+static DexFuture *
+_sysprof_instrument_augment (SysprofInstrument *self,
+                             SysprofRecording  *recording)
+{
+  g_assert (SYSPROF_IS_INSTRUMENT (self));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+
+  if (SYSPROF_INSTRUMENT_GET_CLASS (self)->augment)
+    return SYSPROF_INSTRUMENT_GET_CLASS (self)->augment (self, recording);
+
+  return dex_future_new_for_boolean (TRUE);
+}
+
+static DexFuture *
+_sysprof_instrument_process_started (SysprofInstrument *self,
+                                     SysprofRecording  *recording,
+                                     int                pid)
+{
+  g_assert (SYSPROF_IS_INSTRUMENT (self));
+  g_assert (SYSPROF_IS_RECORDING (recording));
+
+  if (SYSPROF_INSTRUMENT_GET_CLASS (self)->process_started)
+    return SYSPROF_INSTRUMENT_GET_CLASS (self)->process_started (self, recording, pid);
+
+  return dex_future_new_for_boolean (TRUE);
+}
+
+static char **
 _sysprof_instruments_list_required_policy (GPtrArray *instruments)
 {
   g_autoptr(GPtrArray) all_policy = NULL;
@@ -80,7 +146,7 @@ _sysprof_instruments_list_required_policy (GPtrArray *instruments)
   for (guint i = 0; i < instruments->len; i++)
     {
       SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
-      g_auto(GStrv) policy = SYSPROF_INSTRUMENT_GET_CLASS (instrument)->list_required_policy (instrument);
+      g_auto(GStrv) policy = _sysprof_instrument_list_required_policy (instrument);
 
       if (policy == NULL || policy[0] == NULL)
         continue;
@@ -155,8 +221,7 @@ _sysprof_instruments_prepare (GPtrArray        *instruments,
     {
       SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
 
-      g_ptr_array_add (futures,
-                       SYSPROF_INSTRUMENT_GET_CLASS (instrument)->prepare (instrument, recording));
+      g_ptr_array_add (futures, _sysprof_instrument_prepare (instrument, recording));
     }
 
   if (futures->len == 0)
@@ -182,8 +247,7 @@ _sysprof_instruments_record (GPtrArray        *instruments,
     {
       SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
 
-      g_ptr_array_add (futures,
-                       SYSPROF_INSTRUMENT_GET_CLASS (instrument)->record (instrument, recording, cancellable));
+      g_ptr_array_add (futures, _sysprof_instrument_record (instrument, recording, cancellable));
     }
 
   if (futures->len == 0)
@@ -208,11 +272,7 @@ _sysprof_instruments_process_started (GPtrArray        *instruments,
     {
       SysprofInstrument *instrument = g_ptr_array_index (instruments, i);
 
-      if (SYSPROF_INSTRUMENT_GET_CLASS (instruments)->process_started == NULL)
-        continue;
-
-      g_ptr_array_add (futures,
-                       SYSPROF_INSTRUMENT_GET_CLASS (instrument)->process_started (instrument, recording, pid));
+      g_ptr_array_add (futures, _sysprof_instrument_process_started (instrument, recording, pid));
     }
 
   if (futures->len == 0)

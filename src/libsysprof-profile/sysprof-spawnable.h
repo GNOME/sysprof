@@ -39,30 +39,30 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofSpawnable    *sysprof_spawnable_new             (void);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_prepend_argv    (SysprofSpawnable          *self,
-                                                        const gchar               *argv);
+                                                        const char                *argv);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_append_argv     (SysprofSpawnable          *self,
-                                                        const gchar               *argv);
+                                                        const char                *argv);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_append_args     (SysprofSpawnable          *self,
-                                                        const gchar * const       *argv);
+                                                        const char  * const       *argv);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_set_cwd         (SysprofSpawnable          *self,
-                                                        const gchar               *cwd);
+                                                        const char                *cwd);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar * const *sysprof_spawnable_get_argv        (SysprofSpawnable          *self);
+const char * const  *sysprof_spawnable_get_argv        (SysprofSpawnable          *self);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar * const *sysprof_spawnable_get_environ     (SysprofSpawnable          *self);
+const char * const  *sysprof_spawnable_get_environ     (SysprofSpawnable          *self);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_set_environ     (SysprofSpawnable          *self,
-                                                        const gchar * const       *environ);
+                                                        const char  * const       *environ);
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_setenv          (SysprofSpawnable          *self,
-                                                        const gchar               *key,
-                                                        const gchar               *value);
+                                                        const char                *key,
+                                                        const char                *value);
 SYSPROF_AVAILABLE_IN_ALL
-const gchar         *sysprof_spawnable_getenv          (SysprofSpawnable          *self,
-                                                        const gchar               *key);
+const char          *sysprof_spawnable_getenv          (SysprofSpawnable          *self,
+                                                        const char                *key);
 SYSPROF_AVAILABLE_IN_ALL
 gint                 sysprof_spawnable_take_fd         (SysprofSpawnable          *self,
                                                         gint                       fd,

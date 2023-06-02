@@ -131,9 +131,7 @@ sysprof_network_usage_record_fiber (gpointer user_data)
   writer = _sysprof_recording_writer (record->recording);
 
   if (-1 == (stat_fd = open ("/proc/net/dev", O_RDONLY|O_CLOEXEC)))
-    return dex_future_new_reject (G_IO_ERROR,
-                                  g_io_error_from_errno (errno),
-                                  "%s", g_strerror (errno));
+    return dex_future_new_for_errno (errno);
 
   devices = g_array_new (FALSE, FALSE, sizeof (DeviceUsage));
 
@@ -162,9 +160,7 @@ sysprof_network_usage_record_fiber (gpointer user_data)
 
   n_read = dex_await_int64 (dex_aio_read (NULL, stat_fd, buf, sizeof buf, 0), &error);
   if (n_read <= 0)
-    return dex_future_new_reject (G_IO_ERROR,
-                                  g_io_error_from_errno (errno),
-                                  "%s", g_strerror (errno));
+    return dex_future_new_for_errno (errno);
 
   lineno = 0;
   line_reader_init (&reader, buf, n_read);

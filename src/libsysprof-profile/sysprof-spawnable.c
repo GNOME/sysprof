@@ -22,6 +22,8 @@
 
 #include <unistd.h>
 
+#include <glib/gstdio.h>
+
 #include "sysprof-spawnable.h"
 
 typedef struct
@@ -327,4 +329,52 @@ sysprof_spawnable_set_cwd (SysprofSpawnable *self,
       g_free (self->cwd);
       self->cwd = g_strdup (cwd);
     }
+}
+
+/**
+ * sysprof_spawnable_add_trace_fd:
+ * @self: a #SysprofSpawnable
+ * @envvar: (nullable): the environment variable
+ *
+ * Adds an environment variable to the spawnable that will contain a
+ * "tracing file-descriptor". The spawned process can use
+ * `sysprof_capture_writer_new_from_env()` if @envvar is %NULL
+ * or with `getenv()` and `sysprof_capture_writer_new_from_fd()`.
+ *
+ * If @envvar is %NULL, "SYSPROF_TRACE_FD" will be used.
+ *
+ * The caller is responsible for closin the resulting FD.
+ *
+ * Returns: A file-descriptor which can be used to read the trace or
+ *   -1 upon failure and `errno` is set. Caller must `close()` the
+ *   FD if >= 0.
+ */
+int
+sysprof_spawnable_add_trace_fd (SysprofSpawnable *self,
+                                const char       *envvar)
+{
+  g_autofd int fd = -1;
+  g_autofd int dest = -1;
+  g_autofree char *name = NULL;
+  g_autofree char *fdstr = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_SPAWNABLE (self), -1);
+
+  if (envvar == NULL)
+    envvar = "SYSPROF_TRACE_FD";
+
+  name = g_strdup_printf ("[sysprof-tracefd:%s]", envvar);
+
+  if (-1 == (fd = sysprof_memfd_create (name)))
+    return -1;
+
+  if (-1 == (dest = dup (fd)))
+    return -1;
+
+  fdstr = g_strdup_printf ("%d", dest);
+
+  sysprof_spawnable_setenv (self, envvar, fdstr);
+  sysprof_spawnable_take_fd (self, g_steal_fd (&dest), -1);
+
+  return g_steal_fd (&fd);
 }

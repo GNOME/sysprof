@@ -22,7 +22,7 @@
 
 #include <gio/gio.h>
 
-#include "sysprof-version-macros.h"
+#include <sysprof-capture.h>
 
 G_BEGIN_DECLS
 
@@ -74,6 +74,9 @@ void                 sysprof_spawnable_foreach_fd      (SysprofSpawnable        
 SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_set_starting_fd (SysprofSpawnable          *self,
                                                         gint                       starting_fd);
+SYSPROF_AVAILABLE_IN_ALL
+int                  sysprof_spawnable_add_trace_fd    (SysprofSpawnable          *self,
+                                                        const char                *envvar);
 SYSPROF_AVAILABLE_IN_ALL
 GSubprocess         *sysprof_spawnable_spawn           (SysprofSpawnable          *self,
                                                         GError                   **error);

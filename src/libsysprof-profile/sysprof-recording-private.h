@@ -29,6 +29,7 @@
 G_BEGIN_DECLS
 
 SysprofRecording     *_sysprof_recording_new           (SysprofCaptureWriter  *writer,
+                                                        SysprofSpawnable      *spawnable,
                                                         SysprofInstrument    **instruments,
                                                         guint                  n_instruments);
 void                  _sysprof_recording_start         (SysprofRecording      *self);

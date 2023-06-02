@@ -164,35 +164,10 @@ sysprof_recording_finalize (GObject *object)
 
   g_clear_pointer (&self->writer, sysprof_capture_writer_unref);
   g_clear_pointer (&self->instruments, g_ptr_array_unref);
+  g_clear_object (&self->spawnable);
   dex_clear (&self->fiber);
 
   G_OBJECT_CLASS (sysprof_recording_parent_class)->finalize (object);
-}
-
-static void
-sysprof_recording_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
-                                GParamSpec *pspec)
-{
-  switch (prop_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
-}
-
-static void
-sysprof_recording_set_property (GObject      *object,
-                                guint         prop_id,
-                                const GValue *value,
-                                GParamSpec   *pspec)
-{
-  switch (prop_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-    }
 }
 
 static void
@@ -201,8 +176,6 @@ sysprof_recording_class_init (SysprofRecordingClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = sysprof_recording_finalize;
-  object_class->get_property = sysprof_recording_get_property;
-  object_class->set_property = sysprof_recording_set_property;
 }
 
 static void
@@ -214,6 +187,7 @@ sysprof_recording_init (SysprofRecording *self)
 
 SysprofRecording *
 _sysprof_recording_new (SysprofCaptureWriter  *writer,
+                        SysprofSpawnable      *spawnable,
                         SysprofInstrument    **instruments,
                         guint                  n_instruments)
 {
@@ -223,6 +197,8 @@ _sysprof_recording_new (SysprofCaptureWriter  *writer,
 
   self = g_object_new (SYSPROF_TYPE_RECORDING, NULL);
   self->writer = sysprof_capture_writer_ref (writer);
+
+  g_set_object (&self->spawnable, spawnable);
 
   for (guint i = 0; i < n_instruments; i++)
     g_ptr_array_add (self->instruments, g_object_ref (instruments[i]));

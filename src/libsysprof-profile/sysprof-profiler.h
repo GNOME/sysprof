@@ -26,6 +26,7 @@
 
 #include "sysprof-instrument.h"
 #include "sysprof-recording.h"
+#include "sysprof-spawnable.h"
 
 G_BEGIN_DECLS
 
@@ -36,6 +37,11 @@ G_DECLARE_FINAL_TYPE (SysprofProfiler, sysprof_profiler, SYSPROF, PROFILER, GObj
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofProfiler  *sysprof_profiler_new             (void);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofSpawnable *sysprof_profiler_get_spawnable   (SysprofProfiler      *self);
+SYSPROF_AVAILABLE_IN_ALL
+void              sysprof_profiler_set_spawnable   (SysprofProfiler      *self,
+                                                    SysprofSpawnable     *spawnable);
 SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_profiler_add_instrument  (SysprofProfiler      *self,
                                                     SysprofInstrument    *instrument);

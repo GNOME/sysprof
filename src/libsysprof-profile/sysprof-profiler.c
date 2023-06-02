@@ -30,20 +30,29 @@
 
 struct _SysprofProfiler
 {
-  GObject parent_instance;
-  GPtrArray *instruments;
+  GObject           parent_instance;
+  GPtrArray        *instruments;
+  SysprofSpawnable *spawnable;
 };
 
 enum {
   PROP_0,
+  PROP_SPAWNABLE,
   N_PROPS
 };
+
+static GParamSpec *properties [N_PROPS];
 
 G_DEFINE_FINAL_TYPE (SysprofProfiler, sysprof_profiler, G_TYPE_OBJECT)
 
 static void
 sysprof_profiler_finalize (GObject *object)
 {
+  SysprofProfiler *self = (SysprofProfiler *)object;
+
+  g_clear_pointer (&self->instruments, g_ptr_array_unref);
+  g_clear_object (&self->spawnable);
+
   G_OBJECT_CLASS (sysprof_profiler_parent_class)->finalize (object);
 }
 
@@ -53,8 +62,14 @@ sysprof_profiler_get_property (GObject    *object,
                                GValue     *value,
                                GParamSpec *pspec)
 {
+  SysprofProfiler *self = SYSPROF_PROFILER (object);
+
   switch (prop_id)
     {
+    case PROP_SPAWNABLE:
+      g_value_set_object (value, sysprof_profiler_get_spawnable (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -66,8 +81,14 @@ sysprof_profiler_set_property (GObject      *object,
                                const GValue *value,
                                GParamSpec   *pspec)
 {
+  SysprofProfiler *self = SYSPROF_PROFILER (object);
+
   switch (prop_id)
     {
+    case PROP_SPAWNABLE:
+      sysprof_profiler_set_spawnable (self, g_value_get_object (value));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -81,6 +102,13 @@ sysprof_profiler_class_init (SysprofProfilerClass *klass)
   object_class->finalize = sysprof_profiler_finalize;
   object_class->get_property = sysprof_profiler_get_property;
   object_class->set_property = sysprof_profiler_set_property;
+
+  properties [PROP_SPAWNABLE] =
+    g_param_spec_object ("spawnable", NULL, NULL,
+                         SYSPROF_TYPE_SPAWNABLE,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
@@ -139,6 +167,7 @@ sysprof_profiler_record_async (SysprofProfiler      *self,
   g_task_set_source_tag (task, sysprof_profiler_record_async);
 
   recording = _sysprof_recording_new (writer,
+                                      self->spawnable,
                                       (SysprofInstrument **)self->instruments->pdata,
                                       self->instruments->len);
 
@@ -168,4 +197,31 @@ sysprof_profiler_record_finish (SysprofProfiler  *self,
   g_return_val_if_fail (g_task_is_valid (result, self), NULL);
 
   return g_task_propagate_pointer (G_TASK (result), error);
+}
+
+/**
+ * sysprof_profiler_get_spawnable:
+ * @self: a #SysprofProfiler
+ *
+ * Gets the #SysprofProfiler:spawnable property.
+ *
+ * Returns: (nullable) (transfer none): a #SysprofSpawnable or %NULL
+ */
+SysprofSpawnable *
+sysprof_profiler_get_spawnable (SysprofProfiler *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_PROFILER (self), NULL);
+
+  return self->spawnable;
+}
+
+void
+sysprof_profiler_set_spawnable (SysprofProfiler  *self,
+                                SysprofSpawnable *spawnable)
+{
+  g_return_if_fail (SYSPROF_IS_PROFILER (self));
+  g_return_if_fail (!spawnable || SYSPROF_IS_SPAWNABLE (spawnable));
+
+  if (g_set_object (&self->spawnable, spawnable))
+    g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_SPAWNABLE]);
 }

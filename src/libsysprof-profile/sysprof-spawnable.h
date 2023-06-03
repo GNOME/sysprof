@@ -78,6 +78,9 @@ SYSPROF_AVAILABLE_IN_ALL
 int                  sysprof_spawnable_add_trace_fd    (SysprofSpawnable          *self,
                                                         const char                *envvar);
 SYSPROF_AVAILABLE_IN_ALL
+void                 sysprof_spawnable_add_ld_preload  (SysprofSpawnable          *self,
+                                                        const char                *library_path);
+SYSPROF_AVAILABLE_IN_ALL
 GSubprocess         *sysprof_spawnable_spawn           (SysprofSpawnable          *self,
                                                         GError                   **error);
 SYSPROF_AVAILABLE_IN_ALL

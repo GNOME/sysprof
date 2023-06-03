@@ -378,3 +378,19 @@ sysprof_spawnable_add_trace_fd (SysprofSpawnable *self,
 
   return g_steal_fd (&fd);
 }
+
+void
+sysprof_spawnable_add_ld_preload (SysprofSpawnable *self,
+                                  const char       *library_path)
+{
+  g_autofree char *amended = NULL;
+  const char *val;
+
+  g_return_if_fail (SYSPROF_IS_SPAWNABLE (self));
+  g_return_if_fail (library_path != NULL);
+
+  if ((val = sysprof_spawnable_getenv (self, "LD_PRELOAD")))
+    library_path = amended = g_strdup_printf ("%s:%s", val, library_path);
+
+  sysprof_spawnable_setenv (self, "LD_PRELOAD", library_path);
+}

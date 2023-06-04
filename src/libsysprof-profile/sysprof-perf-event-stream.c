@@ -106,6 +106,44 @@ G_DEFINE_FINAL_TYPE (SysprofPerfEventStream, sysprof_perf_event_stream, G_TYPE_O
 
 static GParamSpec *properties [N_PROPS];
 
+static GVariant *
+build_options_dict (const struct perf_event_attr *attr)
+{
+  return g_variant_take_ref (
+    g_variant_new_parsed ("["
+                            "{'comm', <%b>},"
+#ifdef HAVE_PERF_CLOCKID
+                            "{'clockid', <%i>},"
+                            "{'use_clockid', <%b>},"
+#endif
+                            "{'config', <%t>},"
+                            "{'disabled', <%b>},"
+                            "{'exclude_idle', <%b>},"
+                            "{'mmap', <%b>},"
+                            "{'wakeup_events', <%u>},"
+                            "{'sample_id_all', <%b>},"
+                            "{'sample_period', <%t>},"
+                            "{'sample_type', <%t>},"
+                            "{'task', <%b>},"
+                            "{'type', <%u>}"
+                          "]",
+                          (gboolean)!!attr->comm,
+#ifdef HAVE_PERF_CLOCKID
+                          (gint32)attr->clockid,
+                          (gboolean)!!attr->use_clockid,
+#endif
+                          (guint64)attr->config,
+                          (gboolean)!!attr->disabled,
+                          (gboolean)!!attr->exclude_idle,
+                          (gboolean)!!attr->mmap,
+                          (guint32)attr->wakeup_events,
+                          (gboolean)!!attr->sample_id_all,
+                          (guint64)attr->sample_period,
+                          (guint64)attr->sample_type,
+                          (gboolean)!!attr->task,
+                          (guint32)attr->type));
+}
+
 static void
 sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
 {
@@ -333,7 +371,7 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
   g_autoptr(SysprofPerfEventStream) self = NULL;
   g_autoptr(GUnixFDList) fd_list = NULL;
   g_autoptr(DexPromise) promise = NULL;
-  GVariantDict options = G_VARIANT_DICT_INIT (NULL);
+  g_autoptr(GVariant) options = NULL;
   int group_fd_handle = -1;
 
   g_return_val_if_fail (G_IS_DBUS_CONNECTION (connection), NULL);
@@ -364,13 +402,15 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
   if (group_fd > -1)
     group_fd_handle = g_unix_fd_list_append (fd_list, group_fd, NULL);
 
+  options = build_options_dict (attr);
+
   g_dbus_connection_call_with_unix_fd_list (connection,
                                             "org.gnome.Sysprof3",
                                             "/org/gnome/Sysprof3",
                                             "org.gnome.Sysprof3.Service",
                                             "PerfEventOpen",
                                             g_variant_new ("(@a{sv}iiht)",
-                                                           g_variant_dict_end (&options),
+                                                           options,
                                                            -1,
                                                            cpu,
                                                            group_fd_handle,

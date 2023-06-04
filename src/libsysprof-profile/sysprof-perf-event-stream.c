@@ -250,7 +250,7 @@ sysprof_perf_event_stream_dispatch (gpointer user_data)
 
   sysprof_perf_event_stream_flush (self);
 
-  return G_SOURCE_REMOVE;
+  return G_SOURCE_CONTINUE;
 }
 
 static void

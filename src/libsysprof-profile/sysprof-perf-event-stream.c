@@ -347,7 +347,31 @@ sysprof_perf_event_stream_new_cb (GObject      *object,
       g_variant_get (ret, "(h)", &handle);
 
       if (-1 != (fd = g_unix_fd_list_get (fd_list, handle, &error)))
-        self->perf_fd = fd;
+        {
+          gsize map_size;
+          guint8 *map;
+
+          self->perf_fd = fd;
+          self->perf_fd_tag = g_source_add_unix_fd (self->source, fd, G_IO_ERR);
+
+          map_size = N_PAGES * sysprof_getpagesize () + sysprof_getpagesize ();
+          map = mmap (NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+
+          if ((gpointer)map == MAP_FAILED)
+            {
+              int errsv = errno;
+              g_set_error_literal (&error,
+                                   G_IO_ERROR,
+                                   g_io_error_from_errno (errsv),
+                                   g_strerror (errsv));
+            }
+          else
+            {
+              self->map = (gpointer)map;
+              self->map_data = map + sysprof_getpagesize ();
+              self->tail = 0;
+            }
+        }
     }
 
   if (error != NULL)
@@ -447,6 +471,8 @@ sysprof_perf_event_stream_enable (SysprofPerfEventStream  *self,
 
   self->active = TRUE;
 
+  g_source_modify_unix_fd (self->source, self->perf_fd_tag, G_IO_IN);
+
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ACTIVE]);
 
   return TRUE;
@@ -472,6 +498,8 @@ sysprof_perf_event_stream_disable (SysprofPerfEventStream  *self,
     }
 
   self->active = FALSE;
+
+  g_source_modify_unix_fd (self->source, self->perf_fd_tag, G_IO_ERR);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ACTIVE]);
 

@@ -70,6 +70,7 @@ struct _SysprofPerfEventStream
 
   struct perf_event_attr attr;
 
+  int self_pid;
   int cpu;
   int group_fd;
   gulong flags;
@@ -81,7 +82,6 @@ struct _SysprofPerfEventStream
   DexPromise *promise;
 
   int perf_fd;
-  gpointer perf_fd_tag;
 
   struct perf_event_mmap_page *map;
   guint8 *map_data;
@@ -94,6 +94,7 @@ typedef struct _SysprofPerfEventSource
 {
   GSource source;
   SysprofPerfEventStream *stream;
+  gint64 next_ready_time;
   int timeout_msec;
 } SysprofPerfEventSource;
 
@@ -148,10 +149,14 @@ build_options_dict (const struct perf_event_attr *attr)
 static void
 sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
 {
+  SysprofPerfEventSource *source = (SysprofPerfEventSource *)self->source;
   guint64 n_bytes = N_PAGES * sysprof_getpagesize ();
   guint64 mask = n_bytes - 1;
   guint64 head;
   guint64 tail;
+  gboolean lost_records = FALSE;
+  guint us = 0;
+  guint them = 0;
 
   g_assert (SYSPROF_IS_PERF_EVENT_STREAM (self));
 
@@ -170,8 +175,10 @@ sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
   while ((head - tail) >= sizeof (struct perf_event_header))
     {
       g_autofree guint8 *free_me = NULL;
+      const SysprofPerfEvent *event;
       struct perf_event_header *header;
       guint8 buffer[4096];
+      gboolean is_self = FALSE;
 
       /* Note that:
        *
@@ -213,9 +220,38 @@ sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
           header = (struct perf_event_header *)(gpointer)b;
         }
 
-      if (self->callback != NULL)
-        self->callback ((SysprofPerfEvent *)header, self->cpu, self->callback_data);
+      event = (SysprofPerfEvent *)header;
 
+      switch (event->header.type)
+        {
+        default:
+        case PERF_RECORD_COMM:
+        case PERF_RECORD_EXIT:
+        case PERF_RECORD_FORK:
+          break;
+
+        case PERF_RECORD_SAMPLE:
+          is_self = event->callchain.pid == self->self_pid;
+          break;
+
+        case PERF_RECORD_READ:
+        case PERF_RECORD_THROTTLE:
+        case PERF_RECORD_UNTHROTTLE:
+          goto skip_callback;
+
+        case PERF_RECORD_LOST:
+          lost_records = TRUE;
+          g_debug ("Lost records from perf");
+          break;
+        }
+
+      if (self->callback != NULL)
+        self->callback (event, self->cpu, self->callback_data);
+
+      us += is_self;
+      them += !is_self;
+
+    skip_callback:
       tail += header->size;
     }
 
@@ -228,61 +264,55 @@ sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
 #endif
 
   self->map->data_tail = tail;
+
+  /* If we lost records them we took too long to process events and
+   * need to speed up how often we process incoming records. However,
+   * if we are the cause of that (due to running to frequently), then
+   * we need to back-off.
+   */
+  if (lost_records && us < them/3)
+    {
+      if (source->timeout_msec > 1)
+        source->timeout_msec -= 5;
+    }
+  else
+    {
+      if (source->timeout_msec < 500)
+        {
+          if (us < 5 && them < 5)
+            source->timeout_msec += 100;
+          else
+            source->timeout_msec += 10;
+        }
+    }
 }
 
 static gboolean
-sysprof_perf_event_source_prepare (GSource *gsource,
-                                   int     *timeout)
-{
-  SysprofPerfEventSource *source = (SysprofPerfEventSource *)gsource;
-  SysprofPerfEventStream *self = source->stream;
-
-  if (timeout != NULL)
-    *timeout = source->timeout_msec;
-
-  return self != NULL &&
-         self->active &&
-         self->map != NULL &&
-         self->tail != self->map->data_head;
-}
-
-static gboolean
-sysprof_perf_event_source_check (GSource *gsource)
-{
-  SysprofPerfEventSource *source = (SysprofPerfEventSource *)gsource;
-  SysprofPerfEventStream *self = source->stream;
-
-  return self != NULL &&
-         self->active &&
-         self->map != NULL &&
-         self->tail != self->map->data_head;
-}
-
-static gboolean
-sysprof_perf_event_source_dispatch (GSource     *source,
+sysprof_perf_event_source_dispatch (GSource     *gsource,
                                     GSourceFunc  callback,
                                     gpointer     user_data)
 {
-  return callback ? callback (user_data) : G_SOURCE_CONTINUE;
-}
+  SysprofPerfEventSource *source = (SysprofPerfEventSource *)gsource;
+  SysprofPerfEventStream *self = source->stream;
 
-static GSourceFuncs source_funcs = {
-  .prepare = sysprof_perf_event_source_prepare,
-  .check = sysprof_perf_event_source_check,
-  .dispatch = sysprof_perf_event_source_dispatch,
-};
+  if (source->next_ready_time <= g_source_get_time (gsource) &&
+      self != NULL &&
+      self->active &&
+      self->map != NULL &&
+      self->tail != self->map->data_head)
+    sysprof_perf_event_stream_flush (self);
+  else
+    source->timeout_msec = MIN (500, source->timeout_msec + 50);
 
-static gboolean
-sysprof_perf_event_stream_dispatch (gpointer user_data)
-{
-  SysprofPerfEventStream *self = user_data;
-
-  g_assert (SYSPROF_IS_PERF_EVENT_STREAM (self));
-
-  sysprof_perf_event_stream_flush (self);
+  source->next_ready_time = g_get_monotonic_time () + (source->timeout_msec * 1000);
+  g_source_set_ready_time (self->source, source->next_ready_time);
 
   return G_SOURCE_CONTINUE;
 }
+
+static GSourceFuncs source_funcs = {
+  .dispatch = sysprof_perf_event_source_dispatch,
+};
 
 static void
 sysprof_perf_event_stream_finalize (GObject *object)
@@ -353,6 +383,7 @@ static void
 sysprof_perf_event_stream_init (SysprofPerfEventStream *self)
 {
   self->perf_fd = -1;
+  self->self_pid = getpid ();
 }
 
 static void
@@ -383,7 +414,6 @@ sysprof_perf_event_stream_new_cb (GObject      *object,
           guint8 *map;
 
           self->perf_fd = fd;
-          self->perf_fd_tag = g_source_add_unix_fd (self->source, fd, G_IO_ERR);
 
           map_size = N_PAGES * sysprof_getpagesize () + sysprof_getpagesize ();
           map = mmap (NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
@@ -428,6 +458,7 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
   g_autoptr(GUnixFDList) fd_list = NULL;
   g_autoptr(DexPromise) promise = NULL;
   g_autoptr(GVariant) options = NULL;
+  g_autofree char *name = NULL;
   int group_fd_handle = -1;
 
   g_return_val_if_fail (G_IS_DBUS_CONNECTION (connection), NULL);
@@ -452,10 +483,13 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
     g_source_new (&source_funcs, sizeof (SysprofPerfEventSource));
   source->stream = self;
   source->timeout_msec = 5;
+  source->next_ready_time = g_get_monotonic_time () + (source->timeout_msec * 1000);
   self->source = (GSource *)source;
 
-  g_source_set_callback (self->source, sysprof_perf_event_stream_dispatch, self, NULL);
-  g_source_set_name (self->source, "[perf]");
+  name = g_strdup_printf ("[perf cpu%d]", cpu);
+
+  g_source_set_ready_time (self->source, source->next_ready_time);
+  g_source_set_name (self->source, name);
   g_source_attach (self->source, NULL);
 
   fd_list = g_unix_fd_list_new ();
@@ -508,8 +542,6 @@ sysprof_perf_event_stream_enable (SysprofPerfEventStream  *self,
 
   self->active = TRUE;
 
-  g_source_modify_unix_fd (self->source, self->perf_fd_tag, G_IO_IN);
-
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ACTIVE]);
 
   return TRUE;
@@ -535,8 +567,6 @@ sysprof_perf_event_stream_disable (SysprofPerfEventStream  *self,
     }
 
   self->active = FALSE;
-
-  g_source_modify_unix_fd (self->source, self->perf_fd_tag, G_IO_ERR);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ACTIVE]);
 

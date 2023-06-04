@@ -230,6 +230,34 @@ sysprof_perf_event_stream_flush (SysprofPerfEventStream *self)
 }
 
 static gboolean
+sysprof_perf_event_source_prepare (GSource *gsource,
+                                   int     *timeout)
+{
+  SysprofPerfEventSource *source = (SysprofPerfEventSource *)gsource;
+  SysprofPerfEventStream *self = source->stream;
+
+  if (timeout != NULL)
+    *timeout = 5;
+
+  return self != NULL &&
+         self->active &&
+         self->map != NULL &&
+         self->tail != self->map->data_head;
+}
+
+static gboolean
+sysprof_perf_event_source_check (GSource *gsource)
+{
+  SysprofPerfEventSource *source = (SysprofPerfEventSource *)gsource;
+  SysprofPerfEventStream *self = source->stream;
+
+  return self != NULL &&
+         self->active &&
+         self->map != NULL &&
+         self->tail != self->map->data_head;
+}
+
+static gboolean
 sysprof_perf_event_source_dispatch (GSource     *source,
                                     GSourceFunc  callback,
                                     gpointer     user_data)
@@ -238,6 +266,8 @@ sysprof_perf_event_source_dispatch (GSource     *source,
 }
 
 static GSourceFuncs source_funcs = {
+  .prepare = sysprof_perf_event_source_prepare,
+  .check = sysprof_perf_event_source_check,
   .dispatch = sysprof_perf_event_source_dispatch,
 };
 
@@ -392,6 +422,7 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
                                gpointer                  callback_data,
                                GDestroyNotify            callback_data_destroy)
 {
+  SysprofPerfEventSource *source;
   g_autoptr(SysprofPerfEventStream) self = NULL;
   g_autoptr(GUnixFDList) fd_list = NULL;
   g_autoptr(DexPromise) promise = NULL;
@@ -415,7 +446,11 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
   self->callback_data = callback_data;
   self->callback_data_destroy = callback_data_destroy;
   self->promise = dex_ref (promise);
-  self->source = g_source_new (&source_funcs, sizeof (SysprofPerfEventSource));
+
+  source = (SysprofPerfEventSource *)
+    g_source_new (&source_funcs, sizeof (SysprofPerfEventSource));
+  source->stream = self;
+  self->source = (GSource *)source;
 
   g_source_set_callback (self->source, sysprof_perf_event_stream_dispatch, self, NULL);
   g_source_set_name (self->source, "[perf]");

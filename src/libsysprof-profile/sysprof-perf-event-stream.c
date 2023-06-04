@@ -94,6 +94,7 @@ typedef struct _SysprofPerfEventSource
 {
   GSource source;
   SysprofPerfEventStream *stream;
+  int timeout_msec;
 } SysprofPerfEventSource;
 
 enum {
@@ -237,7 +238,7 @@ sysprof_perf_event_source_prepare (GSource *gsource,
   SysprofPerfEventStream *self = source->stream;
 
   if (timeout != NULL)
-    *timeout = 5;
+    *timeout = source->timeout_msec;
 
   return self != NULL &&
          self->active &&
@@ -450,6 +451,7 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
   source = (SysprofPerfEventSource *)
     g_source_new (&source_funcs, sizeof (SysprofPerfEventSource));
   source->stream = self;
+  source->timeout_msec = 5;
   self->source = (GSource *)source;
 
   g_source_set_callback (self->source, sysprof_perf_event_stream_dispatch, self, NULL);

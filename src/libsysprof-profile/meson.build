@@ -6,6 +6,7 @@ libsysprof_profile_public_sources = [
   'sysprof-network-usage.c',
   'sysprof-profiler.c',
   'sysprof-recording.c',
+  'sysprof-sampler.c',
   'sysprof-spawnable.c',
 ]
 
@@ -27,6 +28,7 @@ libsysprof_profile_public_headers = [
   'sysprof-network-usage.h',
   'sysprof-profiler.h',
   'sysprof-recording.h',
+  'sysprof-sampler.h',
   'sysprof-spawnable.h',
 ]
 

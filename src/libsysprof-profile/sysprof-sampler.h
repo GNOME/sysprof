@@ -1,4 +1,4 @@
-/* sysprof-profile.h
+/* sysprof-sampler.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,20 +20,23 @@
 
 #pragma once
 
-#include <gio/gio.h>
+#include "sysprof-instrument.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_PROFILE_INSIDE
-# include "sysprof-cpu-usage.h"
-# include "sysprof-disk-usage.h"
-# include "sysprof-instrument.h"
-# include "sysprof-memory-usage.h"
-# include "sysprof-network-usage.h"
-# include "sysprof-profiler.h"
-# include "sysprof-recording.h"
-# include "sysprof-sampler.h"
-# include "sysprof-spawnable.h"
-#undef SYSPROF_PROFILE_INSIDE
+#define SYSPROF_TYPE_SAMPLER         (sysprof_sampler_get_type())
+#define SYSPROF_IS_SAMPLER(obj)      G_TYPE_CHECK_INSTANCE_TYPE(obj, SYSPROF_TYPE_SAMPLER)
+#define SYSPROF_SAMPLER(obj)         G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_SAMPLER, SysprofSampler)
+#define SYSPROF_SAMPLER_CLASS(klass) G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_SAMPLER, SysprofSamplerClass)
+
+typedef struct _SysprofSampler      SysprofSampler;
+typedef struct _SysprofSamplerClass SysprofSamplerClass;
+
+SYSPROF_AVAILABLE_IN_ALL
+GType              sysprof_sampler_get_type (void) G_GNUC_CONST;
+SYSPROF_AVAILABLE_IN_ALL
+SysprofInstrument *sysprof_sampler_new      (void);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofSampler, g_object_unref)
 
 G_END_DECLS

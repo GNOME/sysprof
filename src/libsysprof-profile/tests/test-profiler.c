@@ -120,6 +120,7 @@ main (int       argc,
   sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_memory_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
+  sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
 
   for (int i = 1; i < argc; i++)
     {

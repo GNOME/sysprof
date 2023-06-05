@@ -1246,6 +1246,9 @@ _sysprof_document_process_symbol (SysprofDocument *self,
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
+  if (pid < 0)
+    pid = 0;
+
   info = _sysprof_document_process_info (self, pid, TRUE);
 
   if (info->symbol)

@@ -47,19 +47,16 @@ on_key_pressed_cb (GtkEventControllerKey *key,
 {
   GtkTreeListRow *row = gtk_tree_expander_get_list_row (expander);
 
-  if (keyval == GDK_KEY_Right)
-    {
-      gtk_tree_list_row_set_expanded (row, TRUE);
-      return TRUE;
-    }
+  if (keyval ==  GDK_KEY_space)
+    gtk_tree_list_row_set_expanded (row, !gtk_tree_list_row_get_expanded (row));
+  else if (keyval == GDK_KEY_Right)
+    gtk_tree_list_row_set_expanded (row, TRUE);
+  else if (keyval == GDK_KEY_Left)
+    gtk_tree_list_row_set_expanded (row, FALSE);
+  else
+    return FALSE;
 
-  if (keyval == GDK_KEY_Left)
-    {
-      gtk_tree_list_row_set_expanded (row, FALSE);
-      return TRUE;
-    }
-
-  return FALSE;
+  return TRUE;
 }
 
 static void

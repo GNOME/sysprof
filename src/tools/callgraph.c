@@ -38,11 +38,36 @@ typedef struct _Augment
   guint32 total;
 } Augment;
 
+static gboolean
+on_key_pressed_cb (GtkEventControllerKey *key,
+                   guint                  keyval,
+                   guint                  keycode,
+                   GdkModifierType        state,
+                   GtkTreeExpander       *expander)
+{
+  GtkTreeListRow *row = gtk_tree_expander_get_list_row (expander);
+
+  if (keyval == GDK_KEY_Right)
+    {
+      gtk_tree_list_row_set_expanded (row, TRUE);
+      return TRUE;
+    }
+
+  if (keyval == GDK_KEY_Left)
+    {
+      gtk_tree_list_row_set_expanded (row, FALSE);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
 static void
 function_setup (GtkSignalListItemFactory *factory,
                 GtkListItem              *list_item,
                 SysprofCallgraph         *callgraph)
 {
+  GtkEventController *controller;
   GtkWidget *expander;
   GtkWidget *text;
 
@@ -56,6 +81,13 @@ function_setup (GtkSignalListItemFactory *factory,
                        NULL);
   gtk_tree_expander_set_child (GTK_TREE_EXPANDER (expander), text);
   gtk_list_item_set_child (list_item, expander);
+
+  controller = gtk_event_controller_key_new ();
+  g_signal_connect (controller,
+                    "key-pressed",
+                    G_CALLBACK (on_key_pressed_cb),
+                    expander);
+  gtk_widget_add_controller (GTK_WIDGET (expander), controller);
 }
 
 static void

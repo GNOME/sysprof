@@ -219,6 +219,24 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
   g_assert (SYSPROF_IS_RECORDING (prepare->recording));
   g_assert (SYSPROF_IS_SAMPLER (prepare->sampler));
 
+  /* First thing we need to do is to ensure the consumer has
+   * access to kallsyms, which may be from a machine, or boot
+   * different than this boot (and therefore symbols exist in
+   * different locations). Embed the kallsyms, but gzip it as
+   * those files can be quite large.
+   */
+  dex_await (_sysprof_recording_add_file (recording, "/proc/kallsyms", TRUE), NULL);
+
+  /* Now create a SysprofPerfEventStream for every CPU on the
+   * system. Linux Perf will only let us create a stream for
+   * a single PID on all CPU, or all PID on a single CPU. So
+   * we create one per-CPU and stream those results into the
+   * capture file during recording.
+   *
+   * Previously, we supported recording a single process but
+   * that is more effort than it is worth, since virtually
+   * nobody uses Sysprof that way.
+   */
   n_cpu = g_get_num_processors ();
   futures = g_ptr_array_new_with_free_func (dex_unref);
   writer = _sysprof_recording_writer (prepare->recording);
@@ -250,6 +268,9 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
   if (!(connection = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
+  /* Pipeline our request for n_cpu perf_event_open calls and then
+   * await them all to complete.
+   */
   for (guint i = 0; i < n_cpu; i++)
     g_ptr_array_add (futures,
                      sysprof_perf_event_stream_new (connection,
@@ -264,6 +285,11 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
   if (!dex_await (dex_future_allv ((DexFuture **)futures->pdata, futures->len), &error))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
+  /* Save each of the streams (currently corked), so that we can
+   * uncork them while recording. We already checked that all the
+   * futures have succeeded above, so dex_await_object() must
+   * always return an object for each sub-future.
+   */
   for (guint i = 0; i < futures->len; i++)
     {
       DexFuture *future = g_ptr_array_index (futures, i);

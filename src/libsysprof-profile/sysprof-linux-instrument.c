@@ -272,8 +272,7 @@ sysprof_linux_instrument_prepare_fiber (gpointer user_data)
   /* First get some basic information about the system into the capture. We can
    * get the contents for all of these concurrently.
    */
-  if (!dex_await (dex_future_all (_sysprof_recording_add_file (recording, "/proc/kallsyms", TRUE),
-                                  _sysprof_recording_add_file (recording, "/proc/cpuinfo", TRUE),
+  if (!dex_await (dex_future_all (_sysprof_recording_add_file (recording, "/proc/cpuinfo", TRUE),
                                   _sysprof_recording_add_file (recording, "/proc/mounts", TRUE),
                                   NULL),
                   &error))

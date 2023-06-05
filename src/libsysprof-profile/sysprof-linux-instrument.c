@@ -26,6 +26,8 @@
 #include "sysprof-podman-private.h"
 #include "sysprof-recording-private.h"
 
+#include "line-reader-private.h"
+
 struct _SysprofLinuxInstrument
 {
   SysprofInstrument parent_instance;
@@ -53,26 +55,28 @@ add_mmaps (SysprofRecording *recording,
            gboolean          ignore_inode)
 {
   SysprofCaptureWriter *writer;
-  g_auto(GStrv) lines = NULL;
+  LineReader reader;
+  const char *line;
+  gsize line_len;
 
   g_assert (SYSPROF_IS_RECORDING (recording));
   g_assert (mapsstr != NULL);
   g_assert (pid > 0);
 
   writer = _sysprof_recording_writer (recording);
-  lines = g_strsplit (mapsstr, "\n", 0);
 
-  for (guint i = 0; lines[i] != NULL; i++)
+  line_reader_init (&reader, (char *)mapsstr, -1);
+  while ((line = line_reader_next (&reader, &line_len)))
     {
       char file[512];
       gulong start;
       gulong end;
       gulong offset;
       gulong inode;
-      int r;
       gboolean is_vdso;
+      int r;
 
-      r = sscanf (lines[i],
+      r = sscanf (line,
                   "%lx-%lx %*15s %lx %*x:%*x %lu %511[^\n]",
                   &start, &end, &offset, &inode, file);
       file [sizeof file - 1] = '\0';

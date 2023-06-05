@@ -40,6 +40,8 @@ enum {
 
 G_DEFINE_FINAL_TYPE (SysprofLinuxInstrument, sysprof_linux_instrument, SYSPROF_TYPE_INSTRUMENT)
 
+static GRegex *address_range_regex;
+
 static char **
 sysprof_linux_instrument_list_required_policy (SysprofInstrument *instrument)
 {
@@ -68,43 +70,64 @@ add_mmaps (SysprofRecording *recording,
   line_reader_init (&reader, (char *)mapsstr, -1);
   while ((line = line_reader_next (&reader, &line_len)))
     {
-      char file[512];
-      gulong start;
-      gulong end;
-      gulong offset;
-      gulong inode;
-      gboolean is_vdso;
-      int r;
+      g_autoptr(GMatchInfo) match_info = NULL;
 
-      r = sscanf (line,
-                  "%lx-%lx %*15s %lx %*x:%*x %lu %511[^\n]",
-                  &start, &end, &offset, &inode, file);
-      file [sizeof file - 1] = '\0';
+      if (g_regex_match_full (address_range_regex, line, line_len, 0, 0, &match_info, NULL))
+        {
+          g_autofree char *file = NULL;
+          guint64 begin_addr;
+          guint64 end_addr;
+          guint64 inode;
+          guint64 offset;
+          gboolean is_vdso;
+          int begin_addr_begin;
+          int begin_addr_end;
+          int end_addr_begin;
+          int end_addr_end;
+          int offset_begin;
+          int offset_end;
+          int inode_begin;
+          int inode_end;
+          int path_begin;
+          int path_end;
 
-      /* file has a " (deleted)" suffix if it was deleted from disk */
-      if (g_str_has_suffix (file, " (deleted)"))
-          file [strlen (file) - strlen (" (deleted)")] = '\0';
+          if (!g_match_info_fetch_pos (match_info, 1, &begin_addr_begin, &begin_addr_end) ||
+              !g_match_info_fetch_pos (match_info, 2, &end_addr_begin, &end_addr_end) ||
+              !g_match_info_fetch_pos (match_info, 3, &offset_begin, &offset_end) ||
+              !g_match_info_fetch_pos (match_info, 4, &inode_begin, &inode_end) ||
+              !g_match_info_fetch_pos (match_info, 5, &path_begin, &path_end))
+            continue;
 
-      if (r != 5)
-        continue;
+          begin_addr = g_ascii_strtoull (&line[begin_addr_begin], NULL, 16);
+          end_addr = g_ascii_strtoull (&line[end_addr_begin], NULL, 16);
+          offset = g_ascii_strtoull (&line[offset_begin], NULL, 16);
+          inode = g_ascii_strtoull (&line[inode_begin], NULL, 10);
 
-      is_vdso = strcmp ("[vdso]", file) == 0;
+          if (memcmp (" (deleted",
+                      &line[path_end] - strlen (" (deleted"),
+                      strlen (" (deleted")) == 0)
+            path_end -= strlen (" (deleted)");
 
-      if (ignore_inode || is_vdso)
-        inode = 0;
+          file = g_strndup (&line[path_begin], path_end-path_begin);
 
-      if (is_vdso)
-        offset = 0;
+          is_vdso = strcmp ("[vdso]", file) == 0;
 
-      sysprof_capture_writer_add_map (writer,
-                                      SYSPROF_CAPTURE_CURRENT_TIME,
-                                      -1,
-                                      pid,
-                                      start,
-                                      end,
-                                      offset,
-                                      inode,
-                                      file);
+          if (ignore_inode || is_vdso)
+            inode = 0;
+
+          if (is_vdso)
+            offset = 0;
+
+          sysprof_capture_writer_add_map (writer,
+                                          SYSPROF_CAPTURE_CURRENT_TIME,
+                                          -1,
+                                          pid,
+                                          begin_addr,
+                                          end_addr,
+                                          offset,
+                                          inode,
+                                          file);
+        }
     }
 }
 
@@ -379,6 +402,7 @@ sysprof_linux_instrument_class_init (SysprofLinuxInstrumentClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   SysprofInstrumentClass *instrument_class = SYSPROF_INSTRUMENT_CLASS (klass);
+  g_autoptr(GError) error = NULL;
 
   object_class->finalize = sysprof_linux_instrument_finalize;
 
@@ -386,6 +410,12 @@ sysprof_linux_instrument_class_init (SysprofLinuxInstrumentClass *klass)
   instrument_class->prepare = sysprof_linux_instrument_prepare;
   instrument_class->record = sysprof_linux_instrument_record;
   instrument_class->process_started = sysprof_linux_instrument_process_started;
+
+  address_range_regex = g_regex_new ("^([0-9a-f]+)-([0-9a-f]+) [r\\-][w\\-][x\\-][ps\\-] [0-9a-f]+ [0-9]{2}:[0-9]{2} ([0-9]+) +(.*)$",
+                                     G_REGEX_OPTIMIZE,
+                                     G_REGEX_MATCH_DEFAULT,
+                                     &error);
+  g_assert_no_error (error);
 }
 
 static void

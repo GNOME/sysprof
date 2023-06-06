@@ -153,7 +153,7 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
   SysprofCallgraphNode *parent;
 
   g_assert (SYSPROF_IS_CALLGRAPH (self));
-  g_assert (n_symbols > 2);
+  g_assert (n_symbols >= 2);
   g_assert (symbols[n_symbols-1] == self->everything);
 
   parent = &self->root;
@@ -232,7 +232,6 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                                                     stack_depth,
                                                     &final_context);
 
-  g_assert (n_symbols > 0);
   g_assert (n_symbols <= stack_depth);
 
   /* We saved 3 extra spaces for these above so that we can

@@ -30,6 +30,7 @@ G_BEGIN_DECLS
 # include "sysprof-disk-usage.h"
 # include "sysprof-energy-usage.h"
 # include "sysprof-instrument.h"
+# include "sysprof-malloc-tracing.h"
 # include "sysprof-memory-usage.h"
 # include "sysprof-network-usage.h"
 # include "sysprof-profiler.h"

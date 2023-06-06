@@ -143,6 +143,9 @@ main (int   argc,
   sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
 
+  if (memprof)
+    sysprof_profiler_add_instrument (profiler, sysprof_malloc_tracing_new ());
+
   for (int i = 1; i < argc; i++)
     {
       if (strcmp (argv[i], "--") == 0 && i+1 < argc)
@@ -152,11 +155,9 @@ main (int   argc,
           sysprof_spawnable_append_args (spawnable, (const char * const *)&argv[i+1]);
           sysprof_profiler_set_spawnable (profiler, spawnable);
 
-          if (memprof)
-            sysprof_spawnable_add_ld_preload (spawnable,
-                                              PACKAGE_LIBDIR "/libsysprof-memory-" API_VERSION_S ".so");
-
           trace_fd = sysprof_spawnable_add_trace_fd (spawnable, NULL);
+
+          break;
         }
     }
 

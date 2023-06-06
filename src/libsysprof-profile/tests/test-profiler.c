@@ -18,6 +18,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+#include "config.h"
+
 #include <glib-unix.h>
 #include <glib/gstdio.h>
 
@@ -26,8 +28,10 @@
 static GMainLoop *main_loop;
 static char *capture_file;
 static SysprofRecording *active_recording;
+static gboolean memprof;
 static const GOptionEntry entries[] = {
   { "capture", 'c', 0, G_OPTION_ARG_FILENAME, &capture_file, "The file to capture into", "CAPTURE" },
+  { "memprof", 'm', 0, G_OPTION_ARG_NONE, &memprof, "Do memory allocation tracking on subprocess" },
   { 0 }
 };
 
@@ -147,6 +151,10 @@ main (int   argc,
 
           sysprof_spawnable_append_args (spawnable, (const char * const *)&argv[i+1]);
           sysprof_profiler_set_spawnable (profiler, spawnable);
+
+          if (memprof)
+            sysprof_spawnable_add_ld_preload (spawnable,
+                                              PACKAGE_LIBDIR "/libsysprof-memory-" API_VERSION_S ".so");
 
           trace_fd = sysprof_spawnable_add_trace_fd (spawnable, NULL);
         }

@@ -454,7 +454,8 @@ main (int   argc,
   if (!(document = sysprof_document_loader_load (loader, NULL, &error)))
     g_error ("Failed to load document: %s", error->message);
 
-  g_print ("Loaded and symbolized. Generating callgraph...\n");
+  g_print ("Loaded and symbolized. Generating callgraph of %s ...\n",
+           memprof ? "allocations" : "samples");
   if (memprof)
     model = sysprof_document_list_allocations (document);
   else

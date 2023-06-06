@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 # include "sysprof-battery-charge.h"
 # include "sysprof-cpu-usage.h"
 # include "sysprof-disk-usage.h"
+# include "sysprof-energy-usage.h"
 # include "sysprof-instrument.h"
 # include "sysprof-memory-usage.h"
 # include "sysprof-network-usage.h"

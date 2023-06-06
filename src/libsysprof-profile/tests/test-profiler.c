@@ -119,6 +119,7 @@ main (int       argc,
   sysprof_profiler_add_instrument (profiler, sysprof_battery_charge_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
+  sysprof_profiler_add_instrument (profiler, sysprof_energy_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_memory_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());

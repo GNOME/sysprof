@@ -27,8 +27,10 @@ static GMainLoop *main_loop;
 static char *kallsyms_path;
 static char *filename;
 static double total;
+static gboolean memprof;
 static const GOptionEntry entries[] = {
   { "kallsyms", 'k', 0, G_OPTION_ARG_FILENAME, &kallsyms_path, "The path to kallsyms to use for decoding", "PATH" },
+  { "memprof", 'm', 0, G_OPTION_ARG_NONE, &memprof, "Read memory callgraph instead of samples" },
   { 0 }
 };
 
@@ -345,10 +347,10 @@ callgraph_cb (GObject      *object,
 }
 
 static void
-augment_cb (SysprofCallgraph     *callgraph,
-            SysprofCallgraphNode *node,
-            SysprofDocumentFrame *frame,
-            gpointer              user_data)
+augment_sample_cb (SysprofCallgraph     *callgraph,
+                   SysprofCallgraphNode *node,
+                   SysprofDocumentFrame *frame,
+                   gpointer              user_data)
 {
   Augment *aug;
 
@@ -367,6 +369,36 @@ augment_cb (SysprofCallgraph     *callgraph,
     }
 }
 
+static void
+augment_memprof_cb (SysprofCallgraph     *callgraph,
+                    SysprofCallgraphNode *node,
+                    SysprofDocumentFrame *frame,
+                    gpointer              user_data)
+{
+  SysprofDocumentAllocation *alloc = (SysprofDocumentAllocation *)frame;
+  Augment *aug;
+  gint64 size;
+
+  g_assert (SYSPROF_IS_CALLGRAPH (callgraph));
+  g_assert (node != NULL);
+  g_assert (SYSPROF_IS_DOCUMENT_ALLOCATION (alloc));
+  g_assert (user_data == NULL);
+
+  size = sysprof_document_allocation_get_size (alloc);
+
+  if (sysprof_document_allocation_is_free (alloc))
+    return;
+
+  aug = sysprof_callgraph_get_augment (callgraph, node);
+  aug->size += size;
+
+  for (; node; node = sysprof_callgraph_node_parent (node))
+    {
+      aug = sysprof_callgraph_get_augment (callgraph, node);
+      aug->total += size;
+    }
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -375,7 +407,7 @@ main (int   argc,
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(SysprofMultiSymbolizer) multi = NULL;
-  g_autoptr(GListModel) samples = NULL;
+  g_autoptr(GListModel) model = NULL;
   g_autoptr(GError) error = NULL;
 
   gtk_init ();
@@ -423,11 +455,16 @@ main (int   argc,
     g_error ("Failed to load document: %s", error->message);
 
   g_print ("Loaded and symbolized. Generating callgraph...\n");
-  samples = sysprof_document_list_samples (document);
+  if (memprof)
+    model = sysprof_document_list_allocations (document);
+  else
+    model = sysprof_document_list_samples (document);
   sysprof_document_callgraph_async (document,
-                                    samples,
+                                    model,
                                     sizeof (Augment),
-                                    augment_cb, NULL, NULL,
+                                    memprof ? augment_memprof_cb : augment_sample_cb,
+                                    NULL,
+                                    NULL,
                                     NULL,
                                     callgraph_cb,
                                     main_loop);

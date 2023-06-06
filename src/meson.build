@@ -64,6 +64,7 @@ endif
 
 if need_libsysprof_profile
   subdir('libsysprof-profile')
+  subdir('preload')
 endif
 
 if get_option('sysprofd') == 'bundled'

@@ -196,5 +196,3 @@ pkgconfig.generate(
 
 install_headers(libsysprof_public_headers, subdir: sysprof_header_subdir)
 endif
-
-subdir('preload')

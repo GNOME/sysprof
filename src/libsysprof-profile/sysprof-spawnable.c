@@ -123,6 +123,8 @@ sysprof_spawnable_init (SysprofSpawnable *self)
 {
   self->next_fd = 3;
 
+  self->environ = g_get_environ ();
+
   self->argv = g_ptr_array_new_with_free_func (g_free);
   g_ptr_array_add (self->argv, NULL);
 

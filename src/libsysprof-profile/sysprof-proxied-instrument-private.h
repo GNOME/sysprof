@@ -1,4 +1,4 @@
-/* sysprof-profile.h
+/* sysprof-proxied-instrument-private.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,22 +20,23 @@
 
 #pragma once
 
-#include <gio/gio.h>
+#include "sysprof-instrument-private.h"
+#include "sysprof-proxied-instrument.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_PROFILE_INSIDE
-# include "sysprof-battery-charge.h"
-# include "sysprof-cpu-usage.h"
-# include "sysprof-disk-usage.h"
-# include "sysprof-instrument.h"
-# include "sysprof-memory-usage.h"
-# include "sysprof-network-usage.h"
-# include "sysprof-profiler.h"
-# include "sysprof-proxied-instrument.h"
-# include "sysprof-recording.h"
-# include "sysprof-sampler.h"
-# include "sysprof-spawnable.h"
-#undef SYSPROF_PROFILE_INSIDE
+struct _SysprofProxiedInstrument
+{
+  SysprofInstrument parent_instance;
+  GBusType bus_type;
+  char *bus_name;
+  char *object_path;
+  guint call_stop_first : 1;
+};
+
+struct _SysprofProxiedInstrumentClass
+{
+  SysprofInstrumentClass parent_class;
+};
 
 G_END_DECLS

@@ -162,6 +162,12 @@ stop_recording:
    */
   g_cancellable_cancel (cancellable);
 
+  /* But we must still wait for instruments to respond to
+   * the cancellation and clean up before we can move onto
+   * the augmentation phase.
+   */
+  dex_await (dex_ref (record), NULL);
+
   /* Let instruments augment the capture. Some instruments may include
    * extra information about the capture such as symbol names and their
    * address ranges per-process.

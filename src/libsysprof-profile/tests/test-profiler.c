@@ -89,21 +89,36 @@ sigint_handler (gpointer user_data)
 }
 
 int
-main (int       argc,
+main (int   argc,
       char *argv[])
 {
-  g_autoptr(GOptionContext) context = g_option_context_new ("- Tests the SysprofProfiler");
+  g_autoptr(GOptionContext) context = g_option_context_new ("[-- [COMMAND...]]");
   g_autoptr(SysprofProfiler) profiler = NULL;
   g_autoptr(GError) error = NULL;
+  g_auto(GStrv) argv_copy = NULL;
   SysprofCaptureWriter *writer = NULL;
   SysprofCaptureReader *reader = NULL;
   g_autofd int trace_fd = -1;
+  int argv_copy_len = 0;
 
   main_loop = g_main_loop_new (NULL, FALSE);
 
+  argv_copy = g_new0 (char *, argc+1);
+  for (guint i = 0; i < argc; i++)
+    {
+      if (strcmp ("--", argv[i]) == 0)
+        {
+          argv_copy[i] = NULL;
+          break;
+        }
+
+      argv_copy[i] = g_strdup (argv[i]);
+      argv_copy_len++;
+    }
+
   g_option_context_add_main_entries (context, entries, NULL);
 
-  if (!g_option_context_parse (context, &argc, &argv, &error))
+  if (!g_option_context_parse (context, &argv_copy_len, &argv_copy, &error))
     {
       g_printerr ("%s\n", error->message);
       return 1;

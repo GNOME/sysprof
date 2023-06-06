@@ -62,6 +62,7 @@ struct _SysprofDocument
 
   SysprofStrings           *strings;
 
+  EggBitset                *allocations;
   EggBitset                *file_chunks;
   EggBitset                *samples;
   EggBitset                *traceables;
@@ -210,6 +211,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
 
+  g_clear_pointer (&self->allocations, egg_bitset_unref);
   g_clear_pointer (&self->ctrdefs, egg_bitset_unref);
   g_clear_pointer (&self->ctrsets, egg_bitset_unref);
   g_clear_pointer (&self->file_chunks, egg_bitset_unref);
@@ -250,6 +252,7 @@ sysprof_document_init (SysprofDocument *self)
   self->counter_id_to_values = g_hash_table_new_full (NULL, NULL, NULL,
                                                       (GDestroyNotify)g_array_unref);
 
+  self->allocations = egg_bitset_new_empty ();
   self->ctrdefs = egg_bitset_new_empty ();
   self->ctrsets = egg_bitset_new_empty ();
   self->file_chunks = egg_bitset_new_empty ();
@@ -668,6 +671,7 @@ sysprof_document_load_worker (GTask        *task,
       switch ((int)tainted->type)
         {
         case SYSPROF_CAPTURE_FRAME_ALLOCATION:
+          egg_bitset_add (self->allocations, self->frames->len);
           egg_bitset_add (self->traceables, self->frames->len);
           break;
 
@@ -1016,6 +1020,23 @@ sysprof_document_list_traceables (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->traceables);
+}
+
+/**
+ * sysprof_document_list_allocations:
+ * @self: a #SysprofDocument
+ *
+ * Gets a #GListModel containing #SysprofDocumentAllocation found within
+ * the #SysprofDocument.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentAllocation
+ */
+GListModel *
+sysprof_document_list_allocations (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->allocations);
 }
 
 /**

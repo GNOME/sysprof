@@ -1,4 +1,5 @@
 libsysprof_profile_public_sources = [
+  'sysprof-battery-charge.c',
   'sysprof-cpu-usage.c',
   'sysprof-disk-usage.c',
   'sysprof-instrument.c',
@@ -21,6 +22,7 @@ libsysprof_profile_private_sources = [
 libsysprof_profile_public_headers = [
   'sysprof-profile.h',
 
+  'sysprof-battery-charge.h',
   'sysprof-cpu-usage.h',
   'sysprof-disk-usage.h',
   'sysprof-instrument.h',

@@ -25,6 +25,7 @@
 G_BEGIN_DECLS
 
 #define SYSPROF_PROFILE_INSIDE
+# include "sysprof-battery-charge.h"
 # include "sysprof-cpu-usage.h"
 # include "sysprof-disk-usage.h"
 # include "sysprof-instrument.h"

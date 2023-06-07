@@ -37,6 +37,8 @@ struct _SysprofCallgraph
 
   SysprofSymbol           *everything;
 
+  GHashTable              *callers;
+
   gsize                    augment_size;
   SysprofAugmentationFunc  augment_func;
   gpointer                 augment_func_data;
@@ -120,6 +122,8 @@ sysprof_callgraph_finalize (GObject *object)
 {
   SysprofCallgraph *self = (SysprofCallgraph *)object;
 
+  g_clear_pointer (&self->callers, g_hash_table_unref);
+
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
   g_clear_object (&self->everything);
@@ -142,7 +146,37 @@ static void
 sysprof_callgraph_init (SysprofCallgraph *self)
 {
   self->everything = _sysprof_symbol_new (g_ref_string_new_intern ("[Everything]"), NULL, NULL, 0, 0);
+  self->callers = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_ptr_array_unref);
   self->root.symbol = self->everything;
+}
+
+static void
+sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
+                                    SysprofCallgraphNode *node)
+{
+  GHashTable *hash;
+
+  g_assert (SYSPROF_IS_CALLGRAPH (self));
+  g_assert (node != NULL);
+
+  hash = self->callers;
+
+  for (const SysprofCallgraphNode *iter = node;
+       iter != NULL && iter->parent != NULL;
+       iter = iter->parent)
+    {
+      GPtrArray *callers;
+
+      if (!(callers = g_hash_table_lookup (hash, iter->symbol)))
+        {
+          callers = g_ptr_array_new ();
+          g_hash_table_insert (hash, iter->symbol, callers);
+        }
+
+      g_assert (iter->parent->symbol != NULL);
+
+      g_ptr_array_add (callers, iter->parent->symbol);
+    }
 }
 
 static SysprofCallgraphNode *
@@ -150,7 +184,7 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
                              SysprofSymbol    **symbols,
                              guint              n_symbols)
 {
-  SysprofCallgraphNode *parent;
+  SysprofCallgraphNode *parent = NULL;
 
   g_assert (SYSPROF_IS_CALLGRAPH (self));
   g_assert (n_symbols >= 2);
@@ -201,6 +235,8 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
     next_symbol:
       parent = node;
     }
+
+  sysprof_callgraph_populate_callers (self, parent);
 
   return parent;
 }
@@ -340,4 +376,33 @@ SysprofCallgraphNode *
 sysprof_callgraph_node_parent (SysprofCallgraphNode *node)
 {
   return node->parent;
+}
+
+/**
+ * sysprof_callgraph_list_callers:
+ * @self: a #SysprofCallgraph
+ * @node: a #SysprofCallgraphFrame
+ *
+ * Gets a list of #SysprofSymbol that call @node.
+ *
+ * Returns: (trasfer full): a #GListModel of #SysprofSymbol
+ */
+GListModel *
+sysprof_callgraph_list_callers (SysprofCallgraph      *self,
+                                SysprofCallgraphFrame *frame)
+{
+  SysprofSymbol *symbol;
+  GListStore *store;
+  GPtrArray *callers;
+
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (frame), NULL);
+
+  store = g_list_store_new (SYSPROF_TYPE_SYMBOL);
+  symbol = sysprof_callgraph_frame_get_symbol (frame);
+
+  if ((callers = g_hash_table_lookup (self->callers, symbol)))
+    g_list_store_splice (store, 0, 0, callers->pdata, callers->len);
+
+  return G_LIST_MODEL (store);
 }

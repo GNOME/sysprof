@@ -20,10 +20,11 @@
 
 #pragma once
 
-#include <glib-object.h>
+#include <gio/gio.h>
 
 #include <sysprof-capture.h>
 
+#include "sysprof-callgraph-frame.h"
 #include "sysprof-document-frame.h"
 
 G_BEGIN_DECLS
@@ -56,9 +57,12 @@ typedef void (*SysprofAugmentationFunc) (SysprofCallgraph     *callgraph,
                                          gpointer              user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
-gpointer              sysprof_callgraph_get_augment (SysprofCallgraph     *callgraph,
-                                                     SysprofCallgraphNode *node);
+GListModel           *sysprof_callgraph_list_callers (SysprofCallgraph      *self,
+                                                      SysprofCallgraphFrame *frame);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCallgraphNode *sysprof_callgraph_node_parent (SysprofCallgraphNode *node);
+gpointer              sysprof_callgraph_get_augment  (SysprofCallgraph      *self,
+                                                      SysprofCallgraphNode  *node);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofCallgraphNode *sysprof_callgraph_node_parent  (SysprofCallgraphNode  *node);
 
 G_END_DECLS

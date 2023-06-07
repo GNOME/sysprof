@@ -166,6 +166,7 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
        iter = iter->parent)
     {
       GPtrArray *callers;
+      guint pos;
 
       if (!(callers = g_hash_table_lookup (hash, iter->symbol)))
         {
@@ -175,7 +176,8 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
 
       g_assert (iter->parent->symbol != NULL);
 
-      g_ptr_array_add (callers, iter->parent->symbol);
+      if (!g_ptr_array_find (callers, iter->parent->symbol, &pos))
+        g_ptr_array_add (callers, iter->parent->symbol);
     }
 }
 

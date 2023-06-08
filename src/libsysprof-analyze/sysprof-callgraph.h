@@ -57,12 +57,15 @@ typedef void (*SysprofAugmentationFunc) (SysprofCallgraph     *callgraph,
                                          gpointer              user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
-GListModel           *sysprof_callgraph_list_callers (SysprofCallgraph      *self,
-                                                      SysprofCallgraphFrame *frame);
+GListModel           *sysprof_callgraph_list_callers               (SysprofCallgraph      *self,
+                                                                    SysprofCallgraphFrame *frame);
 SYSPROF_AVAILABLE_IN_ALL
-gpointer              sysprof_callgraph_get_augment  (SysprofCallgraph      *self,
-                                                      SysprofCallgraphNode  *node);
+GListModel           *sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph      *self,
+                                                                    SysprofSymbol         *symbol);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCallgraphNode *sysprof_callgraph_node_parent  (SysprofCallgraphNode  *node);
+gpointer              sysprof_callgraph_get_augment                (SysprofCallgraph      *self,
+                                                                    SysprofCallgraphNode  *node);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofCallgraphNode *sysprof_callgraph_node_parent                (SysprofCallgraphNode  *node);
 
 G_END_DECLS

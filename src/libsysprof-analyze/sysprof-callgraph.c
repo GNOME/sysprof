@@ -22,9 +22,12 @@
 
 #include "sysprof-callgraph-private.h"
 #include "sysprof-callgraph-frame-private.h"
+#include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-private.h"
 #include "sysprof-document-traceable.h"
 #include "sysprof-symbol-private.h"
+
+#include "eggbitset.h"
 
 #define MAX_STACK_DEPTH 1024
 
@@ -36,6 +39,8 @@ struct _SysprofCallgraph
   GListModel              *traceables;
 
   SysprofSymbol           *everything;
+
+  GHashTable              *symbol_to_bitset;
 
   GHashTable              *callers;
 
@@ -123,6 +128,7 @@ sysprof_callgraph_finalize (GObject *object)
   SysprofCallgraph *self = (SysprofCallgraph *)object;
 
   g_clear_pointer (&self->callers, g_hash_table_unref);
+  g_clear_pointer (&self->symbol_to_bitset, g_hash_table_unref);
 
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
@@ -147,12 +153,14 @@ sysprof_callgraph_init (SysprofCallgraph *self)
 {
   self->everything = _sysprof_symbol_new (g_ref_string_new_intern ("[Everything]"), NULL, NULL, 0, 0);
   self->callers = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_ptr_array_unref);
+  self->symbol_to_bitset = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)egg_bitset_unref);
   self->root.symbol = self->everything;
 }
 
 static void
 sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
-                                    SysprofCallgraphNode *node)
+                                    SysprofCallgraphNode *node,
+                                    guint                 list_model_index)
 {
   GHashTable *hash;
 
@@ -166,6 +174,7 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
        iter = iter->parent)
     {
       GPtrArray *callers;
+      EggBitset *bitset;
       guint pos;
 
       if (!(callers = g_hash_table_lookup (hash, iter->symbol)))
@@ -173,6 +182,14 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
           callers = g_ptr_array_new ();
           g_hash_table_insert (hash, iter->symbol, callers);
         }
+
+      if (!(bitset = g_hash_table_lookup (self->symbol_to_bitset, iter->symbol)))
+        {
+          bitset = egg_bitset_new_empty ();
+          g_hash_table_insert (self->symbol_to_bitset, iter->symbol, bitset);
+        }
+
+      egg_bitset_add (bitset, list_model_index);
 
       g_assert (iter->parent->symbol != NULL);
 
@@ -184,7 +201,8 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
 static SysprofCallgraphNode *
 sysprof_callgraph_add_trace (SysprofCallgraph  *self,
                              SysprofSymbol    **symbols,
-                             guint              n_symbols)
+                             guint              n_symbols,
+                             guint              list_model_index)
 {
   SysprofCallgraphNode *parent = NULL;
 
@@ -238,14 +256,15 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
       parent = node;
     }
 
-  sysprof_callgraph_populate_callers (self, parent);
+  sysprof_callgraph_populate_callers (self, parent, list_model_index);
 
   return parent;
 }
 
 static void
 sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
-                                 SysprofDocumentTraceable *traceable)
+                                 SysprofDocumentTraceable *traceable,
+                                 guint                     list_model_index)
 {
   SysprofAddressContext final_context;
   SysprofCallgraphNode *node;
@@ -283,7 +302,7 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
   symbols[n_symbols++] = _sysprof_document_process_symbol (self->document, pid);
   symbols[n_symbols++] = self->everything;
 
-  node = sysprof_callgraph_add_trace (self, symbols, n_symbols);
+  node = sysprof_callgraph_add_trace (self, symbols, n_symbols, list_model_index);
 
   if (node && self->augment_func)
     self->augment_func (self,
@@ -312,7 +331,7 @@ sysprof_callgraph_new_worker (GTask        *task,
     {
       g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (self->traceables, i);
 
-      sysprof_callgraph_add_traceable (self, traceable);
+      sysprof_callgraph_add_traceable (self, traceable, i);
     }
 
   g_task_return_pointer (task, g_object_ref (self), g_object_unref);
@@ -407,4 +426,29 @@ sysprof_callgraph_list_callers (SysprofCallgraph      *self,
     g_list_store_splice (store, 0, 0, callers->pdata, callers->len);
 
   return G_LIST_MODEL (store);
+}
+
+/**
+ * sysprof_callgraph_list_traceables_for_symbol:
+ * @self: a #SysprofCallgraph
+ * @symbol: a #SysprofSymbol
+ *
+ * Gets a list of all the #SysprofTraceable within the callgraph
+ * that contain @symbol.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofTraceable
+ */
+GListModel *
+sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph *self,
+                                              SysprofSymbol    *symbol)
+{
+  EggBitset *bitset;
+
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
+  g_return_val_if_fail (SYSPROF_IS_SYMBOL (symbol), NULL);
+
+  if ((bitset = g_hash_table_lookup (self->symbol_to_bitset, symbol)))
+    return _sysprof_document_bitset_index_new (self->traceables, bitset);
+
+  return G_LIST_MODEL (g_list_store_new (SYSPROF_TYPE_DOCUMENT_TRACEABLE));
 }

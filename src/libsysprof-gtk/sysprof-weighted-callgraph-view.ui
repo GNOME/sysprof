@@ -6,6 +6,27 @@
         <child>
           <object class="GtkColumnViewColumn" id="self_column">
             <property name="title" translatable="yes">Self</property>
+            <property name="factory">
+              <object class="GtkBuilderListItemFactory">
+                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofProgressCell" id="progress">
+        <binding name="fraction">
+          <closure type="gdouble" function="get_self_fraction">
+            <lookup name="item">GtkListItem</lookup>
+          </closure>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                </property>
+              </object>
+            </property>
           </object>
         </child>
         <child>
@@ -19,7 +40,11 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="SysprofProgressCell" id="progress">
-        <property name="fraction">.50</property>
+        <binding name="fraction">
+          <closure type="gdouble" function="get_total_fraction">
+            <lookup name="item">GtkListItem</lookup>
+          </closure>
+        </binding>
       </object>
     </property>
   </template>

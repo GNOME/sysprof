@@ -61,18 +61,64 @@ augment_weight (SysprofCallgraph     *callgraph,
 
   cur = sysprof_callgraph_get_augment (callgraph, node);
   cur->size += 1;
+  cur->total += 1;
 
   sum = sysprof_callgraph_get_summary_augment (callgraph, node);
   sum->size += 1;
+  sum->total += 1;
 
-  for (; node; node = sysprof_callgraph_node_parent (node))
+  for (node = sysprof_callgraph_node_parent (node);
+       node != NULL;
+       node = sysprof_callgraph_node_parent (node))
     {
       cur = sysprof_callgraph_get_augment (callgraph, node);
       cur->total += 1;
 
       sum = sysprof_callgraph_get_summary_augment (callgraph, node);
-      sum->size += 1;
+      sum->total += 1;
     }
+}
+
+static double
+get_total_fraction (GObject *item)
+{
+  g_autoptr(GObject) row = NULL;
+
+  g_object_get (item, "item", &row, NULL);
+
+  if (GTK_IS_TREE_LIST_ROW (row))
+    {
+      GtkTreeListRow *tree_row = GTK_TREE_LIST_ROW (row);
+      SysprofCallgraphFrame *frame = SYSPROF_CALLGRAPH_FRAME (gtk_tree_list_row_get_item (tree_row));
+      SysprofCallgraph *callgraph = sysprof_callgraph_frame_get_callgraph (frame);
+      AugmentWeight *sum = sysprof_callgraph_frame_get_augment (frame);
+      AugmentWeight *root = sysprof_callgraph_get_augment (callgraph, NULL);
+
+      return (double)sum->total / (double)root->total;
+    }
+
+  return 0;
+}
+
+static double
+get_self_fraction (GObject *item)
+{
+  g_autoptr(GObject) row = NULL;
+
+  g_object_get (item, "item", &row, NULL);
+
+  if (GTK_IS_TREE_LIST_ROW (row))
+    {
+      GtkTreeListRow *tree_row = GTK_TREE_LIST_ROW (row);
+      SysprofCallgraphFrame *frame = SYSPROF_CALLGRAPH_FRAME (gtk_tree_list_row_get_item (tree_row));
+      SysprofCallgraph *callgraph = sysprof_callgraph_frame_get_callgraph (frame);
+      AugmentWeight *sum = sysprof_callgraph_frame_get_augment (frame);
+      AugmentWeight *root = sysprof_callgraph_get_augment (callgraph, NULL);
+
+      return sum->size / (double)root->total;
+    }
+
+  return .0;
 }
 
 static void
@@ -87,6 +133,8 @@ sysprof_weighted_callgraph_view_class_init (SysprofWeightedCallgraphViewClass *k
   gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-weighted-callgraph-view.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, self_column);
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, total_column);
+  gtk_widget_class_bind_template_callback (widget_class, get_self_fraction);
+  gtk_widget_class_bind_template_callback (widget_class, get_total_fraction);
 
   g_type_ensure (SYSPROF_TYPE_PROGRESS_CELL);
 }

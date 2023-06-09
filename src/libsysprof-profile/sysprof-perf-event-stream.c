@@ -492,10 +492,11 @@ sysprof_perf_event_stream_new (GDBusConnection          *connection,
   g_source_set_name (self->source, name);
   g_source_attach (self->source, NULL);
 
-  fd_list = g_unix_fd_list_new ();
-
   if (group_fd > -1)
-    group_fd_handle = g_unix_fd_list_append (fd_list, group_fd, NULL);
+    {
+      fd_list = g_unix_fd_list_new ();
+      group_fd_handle = g_unix_fd_list_append (fd_list, group_fd, NULL);
+    }
 
   options = build_options_dict (attr);
 

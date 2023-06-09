@@ -40,9 +40,7 @@ struct _SysprofCallgraph
 
   SysprofSymbol           *everything;
 
-  GHashTable              *symbol_to_bitset;
-
-  GHashTable              *callers;
+  GHashTable              *symbol_to_summary;
 
   gsize                    augment_size;
   SysprofAugmentationFunc  augment_func;
@@ -51,6 +49,13 @@ struct _SysprofCallgraph
 
   SysprofCallgraphNode     root;
 };
+
+typedef struct _SysprofCallgraphSummary
+{
+  gpointer   augment;
+  EggBitset *traceables;
+  GPtrArray *callers;
+} SysprofCallgraphSummary;
 
 static GType
 sysprof_callgraph_get_item_type (GListModel *model)
@@ -86,6 +91,43 @@ list_model_iface_init (GListModelInterface *iface)
 
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofCallgraph, sysprof_callgraph, G_TYPE_OBJECT,
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
+
+static void
+sysprof_callgraph_summary_free_all (SysprofCallgraphSummary *summary)
+{
+  g_clear_pointer (&summary->augment, g_free);
+  g_clear_pointer (&summary->callers, g_ptr_array_unref);
+  g_clear_pointer (&summary->traceables, egg_bitset_unref);
+  g_free (summary);
+}
+
+static void
+sysprof_callgraph_summary_free_self (SysprofCallgraphSummary *summary)
+{
+  summary->augment = NULL;
+  g_clear_pointer (&summary->callers, g_ptr_array_unref);
+  g_clear_pointer (&summary->traceables, egg_bitset_unref);
+  g_free (summary);
+}
+
+static inline SysprofCallgraphSummary *
+sysprof_callgraph_get_summary (SysprofCallgraph *self,
+                               SysprofSymbol    *symbol)
+{
+  SysprofCallgraphSummary *summary;
+
+  if G_UNLIKELY (!(summary = g_hash_table_lookup (self->symbol_to_summary, symbol)))
+    {
+      summary = g_new0 (SysprofCallgraphSummary, 1);
+      summary->augment = NULL;
+      summary->traceables = egg_bitset_new_empty ();
+      summary->callers = g_ptr_array_new ();
+
+      g_hash_table_insert (self->symbol_to_summary, symbol, summary);
+    }
+
+  return summary;
+}
 
 static void
 sysprof_callgraph_node_free (SysprofCallgraphNode *node,
@@ -127,8 +169,7 @@ sysprof_callgraph_finalize (GObject *object)
 {
   SysprofCallgraph *self = (SysprofCallgraph *)object;
 
-  g_clear_pointer (&self->callers, g_hash_table_unref);
-  g_clear_pointer (&self->symbol_to_bitset, g_hash_table_unref);
+  g_clear_pointer (&self->symbol_to_summary, g_hash_table_unref);
 
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
@@ -152,8 +193,6 @@ static void
 sysprof_callgraph_init (SysprofCallgraph *self)
 {
   self->everything = _sysprof_symbol_new (g_ref_string_new_intern ("[Everything]"), NULL, NULL, 0, 0);
-  self->callers = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_ptr_array_unref);
-  self->symbol_to_bitset = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)egg_bitset_unref);
   self->root.symbol = self->everything;
 }
 
@@ -162,39 +201,22 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
                                     SysprofCallgraphNode *node,
                                     guint                 list_model_index)
 {
-  GHashTable *hash;
-
   g_assert (SYSPROF_IS_CALLGRAPH (self));
   g_assert (node != NULL);
-
-  hash = self->callers;
 
   for (const SysprofCallgraphNode *iter = node;
        iter != NULL && iter->parent != NULL;
        iter = iter->parent)
     {
-      GPtrArray *callers;
-      EggBitset *bitset;
+      SysprofCallgraphSummary *summary;
       guint pos;
 
-      if (!(callers = g_hash_table_lookup (hash, iter->symbol)))
-        {
-          callers = g_ptr_array_new ();
-          g_hash_table_insert (hash, iter->symbol, callers);
-        }
+      summary = g_hash_table_lookup (self->symbol_to_summary, iter->symbol);
 
-      if (!(bitset = g_hash_table_lookup (self->symbol_to_bitset, iter->symbol)))
-        {
-          bitset = egg_bitset_new_empty ();
-          g_hash_table_insert (self->symbol_to_bitset, iter->symbol, bitset);
-        }
+      egg_bitset_add (summary->traceables, list_model_index);
 
-      egg_bitset_add (bitset, list_model_index);
-
-      g_assert (iter->parent->symbol != NULL);
-
-      if (!g_ptr_array_find (callers, iter->parent->symbol, &pos))
-        g_ptr_array_add (callers, iter->parent->symbol);
+      if (!g_ptr_array_find (summary->callers, iter->parent->symbol, &pos))
+        g_ptr_array_add (summary->callers, iter->parent->symbol);
     }
 }
 
@@ -350,10 +372,16 @@ _sysprof_callgraph_new_async (SysprofDocument         *document,
 {
   g_autoptr(SysprofCallgraph) self = NULL;
   g_autoptr(GTask) task = NULL;
+  GDestroyNotify summary_free;
 
   g_return_if_fail (SYSPROF_IS_DOCUMENT (document));
   g_return_if_fail (G_IS_LIST_MODEL (traceables));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  if (augment_size > GLIB_SIZEOF_VOID_P)
+    summary_free = (GDestroyNotify)sysprof_callgraph_summary_free_all;
+  else
+    summary_free = (GDestroyNotify)sysprof_callgraph_summary_free_self;
 
   self = g_object_new (SYSPROF_TYPE_CALLGRAPH, NULL);
   self->document = g_object_ref (document);
@@ -362,6 +390,7 @@ _sysprof_callgraph_new_async (SysprofDocument         *document,
   self->augment_func = augment_func;
   self->augment_func_data = augment_func_data;
   self->augment_func_data_destroy = augment_func_data_destroy;
+  self->symbol_to_summary = g_hash_table_new_full (NULL, NULL, NULL, summary_free);
 
   task = g_task_new (NULL, cancellable, callback, user_data);
   g_task_set_source_tag (task, _sysprof_callgraph_new_async);
@@ -384,7 +413,8 @@ sysprof_callgraph_get_augment (SysprofCallgraph     *callgraph,
 {
   if (callgraph->augment_size == 0)
     return NULL;
-  else if (callgraph->augment_size <= GLIB_SIZEOF_VOID_P)
+
+  if (callgraph->augment_size <= GLIB_SIZEOF_VOID_P)
     return &node->augment;
 
   if (node->augment == NULL)
@@ -412,9 +442,9 @@ GListModel *
 sysprof_callgraph_list_callers (SysprofCallgraph      *self,
                                 SysprofCallgraphFrame *frame)
 {
+  SysprofCallgraphSummary *summary;
   SysprofSymbol *symbol;
   GListStore *store;
-  GPtrArray *callers;
 
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (frame), NULL);
@@ -422,8 +452,8 @@ sysprof_callgraph_list_callers (SysprofCallgraph      *self,
   store = g_list_store_new (SYSPROF_TYPE_SYMBOL);
   symbol = sysprof_callgraph_frame_get_symbol (frame);
 
-  if ((callers = g_hash_table_lookup (self->callers, symbol)))
-    g_list_store_splice (store, 0, 0, callers->pdata, callers->len);
+  if ((summary = g_hash_table_lookup (self->symbol_to_summary, symbol)))
+    g_list_store_splice (store, 0, 0, summary->callers->pdata, summary->callers->len);
 
   return G_LIST_MODEL (store);
 }
@@ -442,13 +472,13 @@ GListModel *
 sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph *self,
                                               SysprofSymbol    *symbol)
 {
-  EggBitset *bitset;
+  SysprofCallgraphSummary *summary;
 
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
   g_return_val_if_fail (SYSPROF_IS_SYMBOL (symbol), NULL);
 
-  if ((bitset = g_hash_table_lookup (self->symbol_to_bitset, symbol)))
-    return _sysprof_document_bitset_index_new (self->traceables, bitset);
+  if ((summary = g_hash_table_lookup (self->symbol_to_summary, symbol)))
+    return _sysprof_document_bitset_index_new (self->traceables, summary->traceables);
 
   return G_LIST_MODEL (g_list_store_new (SYSPROF_TYPE_DOCUMENT_TRACEABLE));
 }

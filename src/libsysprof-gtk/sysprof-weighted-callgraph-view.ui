@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofWeightedCallgraphView" parent="SysprofCallgraphView">
+    <child internal-child="column_view">
+      <object class="GtkColumnView">
+        <child>
+          <object class="GtkColumnViewColumn" id="self_column">
+            <property name="title" translatable="yes">Self</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkColumnViewColumn" id="total_column">
+            <property name="title" translatable="yes">Total</property>
+            <property name="factory">
+              <object class="GtkBuilderListItemFactory">
+                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofProgressCell" id="progress">
+        <property name="fraction">.50</property>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                </property>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

@@ -22,10 +22,14 @@
 
 #include "sysprof-callgraph-view-private.h"
 #include "sysprof-weighted-callgraph-view.h"
+#include "sysprof-progress-cell-private.h"
 
 struct _SysprofWeightedCallgraphView
 {
   SysprofCallgraphView parent_instance;
+
+  GtkColumnViewColumn *self_column;
+  GtkColumnViewColumn *total_column;
 };
 
 struct _SysprofWeightedCallgraphViewClass
@@ -75,14 +79,22 @@ static void
 sysprof_weighted_callgraph_view_class_init (SysprofWeightedCallgraphViewClass *klass)
 {
   SysprofCallgraphViewClass *callgraph_view_class = SYSPROF_CALLGRAPH_VIEW_CLASS (klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   callgraph_view_class->augment_size = sizeof (AugmentWeight);
   callgraph_view_class->augment_func = augment_weight;
+
+  gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-weighted-callgraph-view.ui");
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, self_column);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, total_column);
+
+  g_type_ensure (SYSPROF_TYPE_PROGRESS_CELL);
 }
 
 static void
 sysprof_weighted_callgraph_view_init (SysprofWeightedCallgraphView *self)
 {
+  gtk_widget_init_template (GTK_WIDGET (self));
 }
 
 GtkWidget *

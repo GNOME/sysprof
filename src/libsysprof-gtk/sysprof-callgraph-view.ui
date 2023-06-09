@@ -32,6 +32,14 @@
           <object class="GtkBox">
             <property name="hexpand">true</property>
             <property name="spacing">6</property>
+            <property name="has-tooltip">true</property>
+            <binding name="tooltip-text">
+              <lookup name="binary-path" type="SysprofSymbol">
+                <lookup name="symbol" type="SysprofCallgraphFrame">
+                  <lookup name="item">expander</lookup>
+                </lookup>
+              </lookup>
+            </binding>
             <child>
               <object class="GtkLabel">
                 <property name="halign">start</property>

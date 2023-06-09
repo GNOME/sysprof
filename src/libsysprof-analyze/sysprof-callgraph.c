@@ -420,6 +420,9 @@ gpointer
 sysprof_callgraph_get_augment (SysprofCallgraph     *self,
                                SysprofCallgraphNode *node)
 {
+  if (node == NULL)
+    node = &self->root;
+
   return get_augmentation (self, &node->augment);
 }
 
@@ -427,6 +430,9 @@ gpointer
 sysprof_callgraph_get_summary_augment (SysprofCallgraph     *self,
                                        SysprofCallgraphNode *node)
 {
+  if (node == NULL)
+    node = &self->root;
+
   return get_augmentation (self, &node->summary->augment);
 }
 

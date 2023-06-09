@@ -42,8 +42,8 @@ struct _SysprofSymbol
 };
 
 SysprofSymbol *_sysprof_symbol_new (GRefString     *name,
-                                    GRefString     *binary_nick,
                                     GRefString     *binary_path,
+                                    GRefString     *binary_nick,
                                     SysprofAddress  begin_address,
                                     SysprofAddress  end_address);
 

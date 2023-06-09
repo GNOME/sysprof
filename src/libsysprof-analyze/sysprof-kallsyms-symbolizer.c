@@ -276,8 +276,8 @@ sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
       if (address >= ksym->address &&
           (address < next->address || next->address == 0))
         return _sysprof_symbol_new (g_ref_string_acquire (ksym->name),
-                                    g_ref_string_acquire (linux_string),
                                     NULL,
+                                    g_ref_string_acquire (linux_string),
                                     ksym->address,
                                     next->address ? next->address : ksym->address + LAST_SYMBOL_LEN);
 
@@ -295,8 +295,8 @@ failure:
 
     g_snprintf (name, sizeof name, "In Kernel+0x%"G_GINT64_MODIFIER"x", address);
     return _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                                g_ref_string_acquire (linux_string),
                                 NULL,
+                                g_ref_string_acquire (linux_string),
                                 address,
                                 address + 1);
   }

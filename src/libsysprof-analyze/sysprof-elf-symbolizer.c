@@ -131,8 +131,8 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
     end_address++;
 
   return _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                              sysprof_strings_get (strings, sysprof_elf_get_nick (elf)),
                               sysprof_strings_get (strings, path),
+                              sysprof_strings_get (strings, sysprof_elf_get_nick (elf)),
                               map_begin + (begin_address - file_offset),
                               map_begin + (end_address - file_offset));
 

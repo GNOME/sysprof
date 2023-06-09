@@ -31,7 +31,10 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_ABSTRACT_TYPE (SysprofCallgraphView, sysprof_callgraph_view, GTK_TYPE_WIDGET)
+static void buildable_iface_init (GtkBuildableIface *iface);
+
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (SysprofCallgraphView, sysprof_callgraph_view, GTK_TYPE_WIDGET,
+                                  G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
 
 static GParamSpec *properties [N_PROPS];
 
@@ -312,64 +315,19 @@ sysprof_callgraph_view_set_traceables (SysprofCallgraphView *self,
     }
 }
 
-#if 0
-/**
- * sysprof_callgraph_view_get_callgraph:
- * @self: a #SysprofCallgraphView
- *
- * Gets the #SysprofCallgraph for the view.
- *
- * Returns: (transfer none) (nullable): a #SysprofCallgraph or %NULL
- */
-SysprofCallgraph *
-sysprof_callgraph_view_get_callgraph (SysprofCallgraphView *self)
+static GObject *
+sysprof_callgraph_view_get_internal_child (GtkBuildable *buildable,
+                                           GtkBuilder   *builder,
+                                           const char   *name)
 {
-  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), NULL);
+  if (g_strcmp0 (name, "column_view") == 0)
+    return G_OBJECT (SYSPROF_CALLGRAPH_VIEW (buildable)->column_view);
 
-  return self->callgraph;
+  return NULL;
 }
 
-/**
- * sysprof_callgraph_view_set_callgraph:
- * @self: a #SysprofCallgraphView
- * @callgraph: the #SysprofCallgraph
- *
- * Sets the callgraph for the view.
- */
-void
-sysprof_callgraph_view_set_callgraph (SysprofCallgraphView *self,
-                                      SysprofCallgraph     *callgraph)
+static void
+buildable_iface_init (GtkBuildableIface *iface)
 {
-  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
-  g_return_if_fail (SYSPROF_IS_CALLGRAPH (callgraph));
-
-  if (g_set_object (&self->callgraph, callgraph))
-    {
-      g_autoptr(GtkMultiSelection) model = NULL;
-
-      if (callgraph != NULL)
-        {
-          g_autoptr(GtkTreeListRowSorter) sorter = NULL;
-          g_autoptr(GtkSortListModel) sort_model = NULL;
-          g_autoptr(GtkTreeListModel) tree = NULL;
-          GtkSorter *column_sorter;
-
-          tree = gtk_tree_list_model_new (g_object_ref (G_LIST_MODEL (callgraph)),
-                                          FALSE,
-                                          FALSE,
-                                          sysprof_callgraph_view_create_model_func,
-                                          NULL,
-                                          NULL);
-
-          column_sorter = gtk_column_view_get_sorter (self->column_view);
-          sorter = gtk_tree_list_row_sorter_new (g_object_ref (column_sorter));
-          sort_model = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (tree)), g_object_ref (GTK_SORTER (sorter)));
-          model = gtk_multi_selection_new (g_object_ref (G_LIST_MODEL (sort_model)));
-        }
-
-      gtk_column_view_set_model (self->column_view, GTK_SELECTION_MODEL (model));
-
-      g_object_notify_by_pspec (G_OBJECT (callgraph), properties[PROP_CALLGRAPH]);
-    }
+  iface->get_internal_child = sysprof_callgraph_view_get_internal_child;
 }
-#endif

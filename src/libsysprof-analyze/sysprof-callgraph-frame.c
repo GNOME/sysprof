@@ -35,6 +35,7 @@ struct _SysprofCallgraphFrame
 
 enum {
   PROP_0,
+  PROP_CALLGRAPH,
   PROP_SYMBOL,
   N_PROPS
 };
@@ -109,6 +110,10 @@ sysprof_callgraph_frame_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_CALLGRAPH:
+      g_value_set_object (value, self->callgraph);
+      break;
+
     case PROP_SYMBOL:
       g_value_set_object (value, sysprof_callgraph_frame_get_symbol (self));
       break;
@@ -125,6 +130,11 @@ sysprof_callgraph_frame_class_init (SysprofCallgraphFrameClass *klass)
 
   object_class->finalize = sysprof_callgraph_frame_finalize;
   object_class->get_property = sysprof_callgraph_frame_get_property;
+
+  properties [PROP_CALLGRAPH] =
+    g_param_spec_object ("callgraph", NULL, NULL,
+                         SYSPROF_TYPE_CALLGRAPH,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_SYMBOL] =
     g_param_spec_object ("symbol", NULL, NULL,

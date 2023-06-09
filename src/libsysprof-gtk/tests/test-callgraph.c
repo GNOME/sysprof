@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <adwaita.h>
 #include <gtk/gtk.h>
 #include <sysprof-analyze.h>
 #include <sysprof-gtk.h>
@@ -45,8 +46,10 @@ main (int   argc,
   SysprofCallgraphView *view;
   GtkWindow *window;
 
-  gtk_init ();
   sysprof_clock_init ();
+
+  gtk_init ();
+  adw_init ();
 
   g_option_context_add_main_entries (context, entries, NULL);
   if (!g_option_context_parse (context, &argc, &argv, &error))

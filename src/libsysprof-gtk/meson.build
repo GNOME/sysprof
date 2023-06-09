@@ -5,6 +5,7 @@ libsysprof_gtk_public_sources = [
 
 libsysprof_gtk_private_sources = [
   'sysprof-css.c',
+  'sysprof-progress-cell.c',
 ]
 
 libsysprof_gtk_public_headers = [
@@ -15,6 +16,7 @@ libsysprof_gtk_public_headers = [
 ]
 
 libsysprof_gtk_deps = [
+  dependency('libadwaita-1'),
   dependency('gtk4', version: gtk_req_version),
 
   libsysprof_analyze_dep,

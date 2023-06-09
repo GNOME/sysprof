@@ -47,20 +47,27 @@ augment_weight (SysprofCallgraph     *callgraph,
                 SysprofDocumentFrame *frame,
                 gpointer              user_data)
 {
-  AugmentWeight *aug;
+  AugmentWeight *cur;
+  AugmentWeight *sum;
 
   g_assert (SYSPROF_IS_CALLGRAPH (callgraph));
   g_assert (node != NULL);
   g_assert (SYSPROF_IS_DOCUMENT_SAMPLE (frame));
   g_assert (user_data == NULL);
 
-  aug = sysprof_callgraph_get_augment (callgraph, node);
-  aug->size += 1;
+  cur = sysprof_callgraph_get_augment (callgraph, node);
+  cur->size += 1;
+
+  sum = sysprof_callgraph_get_summary_augment (callgraph, node);
+  sum->size += 1;
 
   for (; node; node = sysprof_callgraph_node_parent (node))
     {
-      aug = sysprof_callgraph_get_augment (callgraph, node);
-      aug->total += 1;
+      cur = sysprof_callgraph_get_augment (callgraph, node);
+      cur->total += 1;
+
+      sum = sysprof_callgraph_get_summary_augment (callgraph, node);
+      sum->size += 1;
     }
 }
 

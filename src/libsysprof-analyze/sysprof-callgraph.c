@@ -198,16 +198,19 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
   g_assert (node != NULL);
 
   for (const SysprofCallgraphNode *iter = node;
-       iter != NULL && iter->parent != NULL;
+       iter != NULL;
        iter = iter->parent)
     {
-      SysprofSymbol *parent_symbol = iter->parent->summary->symbol;
-      guint pos;
-
       egg_bitset_add (iter->summary->traceables, list_model_index);
 
-      if (!g_ptr_array_find (iter->summary->callers, parent_symbol, &pos))
-        g_ptr_array_add (iter->summary->callers, parent_symbol);
+      if (iter->parent != NULL)
+        {
+          SysprofSymbol *parent_symbol = iter->parent->summary->symbol;
+          guint pos;
+
+          if (!g_ptr_array_find (iter->summary->callers, parent_symbol, &pos))
+            g_ptr_array_add (iter->summary->callers, parent_symbol);
+        }
     }
 }
 

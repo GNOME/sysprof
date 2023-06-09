@@ -227,3 +227,19 @@ sysprof_callgraph_frame_get_summary_augment (SysprofCallgraphFrame *self)
 
   return sysprof_callgraph_get_summary_augment (self->callgraph, self->node);
 }
+
+/**
+ * sysprof_callgraph_frame_get_callgraph:
+ * @self: a #SysprofCallgraphFrame
+ *
+ * Gets the callgraph the frame belongs to.
+ *
+ * Returns: (transfer none) (nullable): a #SysprofCallgraph, or %NULL
+ */
+SysprofCallgraph *
+sysprof_callgraph_frame_get_callgraph (SysprofCallgraphFrame *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), NULL);
+
+  return self->callgraph;
+}

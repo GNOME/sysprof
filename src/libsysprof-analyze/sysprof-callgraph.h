@@ -70,5 +70,7 @@ gpointer              sysprof_callgraph_get_summary_augment        (SysprofCallg
                                                                     SysprofCallgraphNode  *node);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofCallgraphNode *sysprof_callgraph_node_parent                (SysprofCallgraphNode  *node);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofCallgraph     *sysprof_callgraph_frame_get_callgraph        (SysprofCallgraphFrame *self);
 
 G_END_DECLS

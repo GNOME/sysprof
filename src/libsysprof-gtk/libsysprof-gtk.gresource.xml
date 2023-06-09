@@ -2,5 +2,6 @@
 <gresources>
   <gresource prefix="/libsysprof-gtk">
     <file preprocess="xml-stripblanks">sysprof-callgraph-view.ui</file>
+    <file>style.css</file>
   </gresource>
 </gresources>

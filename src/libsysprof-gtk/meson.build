@@ -4,6 +4,7 @@ libsysprof_gtk_public_sources = [
 ]
 
 libsysprof_gtk_private_sources = [
+  'sysprof-css.c',
 ]
 
 libsysprof_gtk_public_headers = [

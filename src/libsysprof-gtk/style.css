@@ -1,0 +1,26 @@
+progresscell progress {
+ background: @accent_bg_color;
+ border-radius: 3px;
+ border: 1px solid shade(@accent_bg_color, .75);
+ border-right: none;
+}
+
+progresscell progress:backdrop {
+ background: @borders;
+ border-color: shade(@borders, .9);
+}
+
+progresscell trough {
+ background: alpha(@borders, .5);
+ border: 1px solid @borders;
+ border-radius: 3px;
+}
+
+progresscell label {
+ font-size: 0.9em;
+ padding: 1px 3px;
+}
+
+progresscell label.in-progress {
+ color: @accent_fg_color;
+}

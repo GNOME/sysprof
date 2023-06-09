@@ -61,9 +61,11 @@ sysprof_progress_cell_size_allocate (GtkWidget *widget,
   gtk_widget_size_allocate (GTK_WIDGET (self->label), &all, baseline);
   gtk_widget_size_allocate (GTK_WIDGET (self->alt_label), &all, baseline);
   gtk_widget_size_allocate (GTK_WIDGET (self->trough), &all, baseline);
-  gtk_widget_size_allocate (GTK_WIDGET (self->progress),
-                            &(const GtkAllocation) {0, 0, width*self->fraction, height},
-                            baseline);
+
+  if (gtk_widget_get_visible (GTK_WIDGET (self->progress)))
+    gtk_widget_size_allocate (GTK_WIDGET (self->progress),
+                              &(const GtkAllocation) {0, 0, MAX (1, width*self->fraction), height},
+                              baseline);
 }
 
 static void
@@ -207,15 +209,21 @@ sysprof_progress_cell_class_init (SysprofProgressCellClass *klass)
 static void
 sysprof_progress_cell_init (SysprofProgressCell *self)
 {
+  char percent[32];
+
   _sysprof_css_init ();
 
+  g_snprintf (percent, sizeof percent, "%6.2lf%%", .0);
+
   self->label = g_object_new (GTK_TYPE_LABEL,
-                              "halign", GTK_ALIGN_CENTER,
+                              "halign", GTK_ALIGN_END,
                               "valign", GTK_ALIGN_CENTER,
+                              "label", percent,
                               NULL);
   self->alt_label = g_object_new (GTK_TYPE_LABEL,
-                                  "halign", GTK_ALIGN_CENTER,
+                                  "halign", GTK_ALIGN_END,
                                   "valign", GTK_ALIGN_CENTER,
+                                  "label", percent,
                                   NULL);
   gtk_widget_add_css_class (GTK_WIDGET (self->alt_label), "in-progress");
   self->trough = g_object_new (ADW_TYPE_BIN,
@@ -223,6 +231,7 @@ sysprof_progress_cell_init (SysprofProgressCell *self)
                                NULL);
   self->progress = g_object_new (ADW_TYPE_BIN,
                                  "css-name", "progress",
+                                 "visible", FALSE,
                                  NULL);
 
   gtk_widget_set_parent (GTK_WIDGET (self->trough), GTK_WIDGET (self));
@@ -259,10 +268,11 @@ sysprof_progress_cell_set_fraction (SysprofProgressCell *self,
 
       self->fraction = fraction;
 
-      g_snprintf (text, sizeof text, "%.2lf%%", fraction*100.);
+      g_snprintf (text, sizeof text, "%6.2lf%%", fraction*100.);
       gtk_label_set_text (self->label, text);
       gtk_label_set_text (self->alt_label, text);
 
+      gtk_widget_set_visible (GTK_WIDGET (self->progress), fraction > .0);
       gtk_widget_queue_allocate (GTK_WIDGET (self));
 
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FRACTION]);

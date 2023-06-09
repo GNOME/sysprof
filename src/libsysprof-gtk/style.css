@@ -5,6 +5,10 @@ progresscell progress {
  border-right: none;
 }
 
+progresscell {
+  min-height: 18px;
+}
+
 progresscell progress:backdrop {
  background: @borders;
  border-color: shade(@borders, .9);
@@ -19,6 +23,7 @@ progresscell trough {
 progresscell label {
  font-size: 0.9em;
  padding: 1px 3px;
+ font-feature-settings: 'tnum';
 }
 
 progresscell label.in-progress {

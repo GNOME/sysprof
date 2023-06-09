@@ -105,6 +105,8 @@ main (int   argc,
   g_autofd int trace_fd = -1;
   int argv_copy_len = 0;
 
+  sysprof_clock_init ();
+
   main_loop = g_main_loop_new (NULL, FALSE);
 
   argv_copy = g_new0 (char *, argc+1);

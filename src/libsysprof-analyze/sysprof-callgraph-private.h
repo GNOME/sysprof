@@ -25,16 +25,26 @@
 #include "sysprof-callgraph.h"
 #include "sysprof-document.h"
 
+#include "eggbitset.h"
+
 G_BEGIN_DECLS
+
+typedef struct _SysprofCallgraphSummary
+{
+  SysprofSymbol *symbol;
+  EggBitset     *traceables;
+  GPtrArray     *callers;
+  gpointer       augment;
+} SysprofCallgraphSummary;
 
 struct _SysprofCallgraphNode
 {
-  SysprofCallgraphNode *parent;
-  SysprofCallgraphNode *prev;
-  SysprofCallgraphNode *next;
-  SysprofCallgraphNode *children;
-  SysprofSymbol        *symbol;
-  gpointer              augment;
+  SysprofCallgraphNode    *parent;
+  SysprofCallgraphNode    *prev;
+  SysprofCallgraphNode    *next;
+  SysprofCallgraphNode    *children;
+  SysprofCallgraphSummary *summary;
+  gpointer                 augment;
 };
 
 void              _sysprof_callgraph_new_async  (SysprofDocument          *document,

@@ -38,8 +38,6 @@ struct _SysprofCallgraph
   SysprofDocument         *document;
   GListModel              *traceables;
 
-  SysprofSymbol           *everything;
-
   GHashTable              *symbol_to_summary;
 
   gsize                    augment_size;
@@ -49,13 +47,6 @@ struct _SysprofCallgraph
 
   SysprofCallgraphNode     root;
 };
-
-typedef struct _SysprofCallgraphSummary
-{
-  gpointer   augment;
-  EggBitset *traceables;
-  GPtrArray *callers;
-} SysprofCallgraphSummary;
 
 static GType
 sysprof_callgraph_get_item_type (GListModel *model)
@@ -92,6 +83,8 @@ list_model_iface_init (GListModelInterface *iface)
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofCallgraph, sysprof_callgraph, G_TYPE_OBJECT,
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
+static SysprofSymbol *everything;
+
 static void
 sysprof_callgraph_summary_free_all (SysprofCallgraphSummary *summary)
 {
@@ -122,6 +115,7 @@ sysprof_callgraph_get_summary (SysprofCallgraph *self,
       summary->augment = NULL;
       summary->traceables = egg_bitset_new_empty ();
       summary->callers = g_ptr_array_new ();
+      summary->symbol = symbol;
 
       g_hash_table_insert (self->symbol_to_summary, symbol, summary);
     }
@@ -173,7 +167,6 @@ sysprof_callgraph_finalize (GObject *object)
 
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
-  g_clear_object (&self->everything);
 
   sysprof_callgraph_node_free (&self->root, FALSE);
 
@@ -187,13 +180,13 @@ sysprof_callgraph_class_init (SysprofCallgraphClass *klass)
 
   object_class->dispose = sysprof_callgraph_dispose;
   object_class->finalize = sysprof_callgraph_finalize;
+
+  everything = _sysprof_symbol_new (g_ref_string_new_intern ("[Everything]"), NULL, NULL, 0, 0);
 }
 
 static void
 sysprof_callgraph_init (SysprofCallgraph *self)
 {
-  self->everything = _sysprof_symbol_new (g_ref_string_new_intern ("[Everything]"), NULL, NULL, 0, 0);
-  self->root.symbol = self->everything;
 }
 
 static void
@@ -208,15 +201,13 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
        iter != NULL && iter->parent != NULL;
        iter = iter->parent)
     {
-      SysprofCallgraphSummary *summary;
+      SysprofSymbol *parent_symbol = iter->parent->summary->symbol;
       guint pos;
 
-      summary = g_hash_table_lookup (self->symbol_to_summary, iter->symbol);
+      egg_bitset_add (iter->summary->traceables, list_model_index);
 
-      egg_bitset_add (summary->traceables, list_model_index);
-
-      if (!g_ptr_array_find (summary->callers, iter->parent->symbol, &pos))
-        g_ptr_array_add (summary->callers, iter->parent->symbol);
+      if (!g_ptr_array_find (iter->summary->callers, parent_symbol, &pos))
+        g_ptr_array_add (iter->summary->callers, parent_symbol);
     }
 }
 
@@ -230,7 +221,7 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
 
   g_assert (SYSPROF_IS_CALLGRAPH (self));
   g_assert (n_symbols >= 2);
-  g_assert (symbols[n_symbols-1] == self->everything);
+  g_assert (symbols[n_symbols-1] == everything);
 
   parent = &self->root;
 
@@ -255,10 +246,11 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
            iter = iter->next)
         {
           g_assert (iter != NULL);
-          g_assert (iter->symbol != NULL);
+          g_assert (iter->summary != NULL);
+          g_assert (iter->summary->symbol != NULL);
           g_assert (symbol != NULL);
 
-          if (_sysprof_symbol_equal (iter->symbol, symbol))
+          if (_sysprof_symbol_equal (iter->summary->symbol, symbol))
             {
               node = iter;
               goto next_symbol;
@@ -267,7 +259,7 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
 
       /* Otherwise create a new node */
       node = g_new0 (SysprofCallgraphNode, 1);
-      node->symbol = symbol;
+      node->summary = sysprof_callgraph_get_summary (self, symbol);
       node->parent = parent;
       node->next = parent->children;
       if (parent->children)
@@ -322,7 +314,7 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
   if (final_context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
     symbols[n_symbols++] = _sysprof_document_kernel_symbol (self->document);
   symbols[n_symbols++] = _sysprof_document_process_symbol (self->document, pid);
-  symbols[n_symbols++] = self->everything;
+  symbols[n_symbols++] = everything;
 
   node = sysprof_callgraph_add_trace (self, symbols, n_symbols, list_model_index);
 
@@ -391,6 +383,7 @@ _sysprof_callgraph_new_async (SysprofDocument         *document,
   self->augment_func_data = augment_func_data;
   self->augment_func_data_destroy = augment_func_data_destroy;
   self->symbol_to_summary = g_hash_table_new_full (NULL, NULL, NULL, summary_free);
+  self->root.summary = sysprof_callgraph_get_summary (self, everything);
 
   task = g_task_new (NULL, cancellable, callback, user_data);
   g_task_set_source_tag (task, _sysprof_callgraph_new_async);
@@ -407,20 +400,34 @@ _sysprof_callgraph_new_finish (GAsyncResult  *result,
   return g_task_propagate_pointer (G_TASK (result), error);
 }
 
-gpointer
-sysprof_callgraph_get_augment (SysprofCallgraph     *callgraph,
-                               SysprofCallgraphNode *node)
+static inline gpointer
+get_augmentation (SysprofCallgraph *self,
+                  gpointer         *augment_location)
 {
-  if (callgraph->augment_size == 0)
+  if (self->augment_size == 0)
     return NULL;
 
-  if (callgraph->augment_size <= GLIB_SIZEOF_VOID_P)
-    return &node->augment;
+  if (self->augment_size <= GLIB_SIZEOF_VOID_P)
+    return augment_location;
 
-  if (node->augment == NULL)
-    node->augment = g_malloc0 (callgraph->augment_size);
+  if (*augment_location == NULL)
+    *augment_location = g_malloc0 (self->augment_size);
 
-  return node->augment;
+  return *augment_location;
+}
+
+gpointer
+sysprof_callgraph_get_augment (SysprofCallgraph     *self,
+                               SysprofCallgraphNode *node)
+{
+  return get_augmentation (self, &node->augment);
+}
+
+gpointer
+sysprof_callgraph_get_summary_augment (SysprofCallgraph     *self,
+                                       SysprofCallgraphNode *node)
+{
+  return get_augmentation (self, &node->summary->augment);
 }
 
 SysprofCallgraphNode *

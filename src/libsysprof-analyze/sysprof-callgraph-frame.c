@@ -176,7 +176,7 @@ sysprof_callgraph_frame_get_symbol (SysprofCallgraphFrame *self)
   if (self->callgraph == NULL)
     return NULL;
 
-  return self->node->symbol;
+  return self->node->summary->symbol;
 }
 
 /**
@@ -196,4 +196,24 @@ sysprof_callgraph_frame_get_augment (SysprofCallgraphFrame *self)
     return NULL;
 
   return sysprof_callgraph_get_augment (self->callgraph, self->node);
+}
+
+/**
+ * sysprof_callgraph_frame_get_summary_augment: (skip)
+ * @self: a #SysprofCallgraphFrame
+ *
+ * Gets the augmentation that was attached to the summary for
+ * the callgraph node's symbol.
+ *
+ * Returns: (nullable) (transfer none): the augmentation data
+ */
+gpointer
+sysprof_callgraph_frame_get_summary_augment (SysprofCallgraphFrame *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), NULL);
+
+  if (self->callgraph == NULL)
+    return NULL;
+
+  return sysprof_callgraph_get_summary_augment (self->callgraph, self->node);
 }

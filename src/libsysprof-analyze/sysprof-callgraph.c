@@ -84,6 +84,7 @@ G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofCallgraph, sysprof_callgraph, G_TYPE_OBJEC
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
 static SysprofSymbol *everything;
+static SysprofSymbol *untraceable;
 
 static void
 sysprof_callgraph_summary_free_all (SysprofCallgraphSummary *summary)
@@ -182,6 +183,7 @@ sysprof_callgraph_class_init (SysprofCallgraphClass *klass)
   object_class->finalize = sysprof_callgraph_finalize;
 
   everything = _sysprof_symbol_new (g_ref_string_new_intern ("[Everything]"), NULL, NULL, 0, 0);
+  untraceable = _sysprof_symbol_new (g_ref_string_new_intern ("[Unwindable]"), NULL, NULL, 0, 0);
 }
 
 static void
@@ -307,6 +309,18 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                                                     &final_context);
 
   g_assert (n_symbols <= stack_depth);
+
+  /* Sometimes we get a very unhelpful unwind from the capture
+   * which is basically a single frame of "user space context".
+   * That means we got no amount of the stack, but we should
+   * really account costs to something in the application other
+   * than the [Application] entry itself so that it's more clear
+   * that it was a corrupted unwind when recording.
+   */
+  if (n_symbols == 1 &&
+      symbols[0]->is_context_switch &&
+      final_context == SYSPROF_ADDRESS_CONTEXT_USER)
+    symbols[0] = untraceable;
 
   /* We saved 3 extra spaces for these above so that we can
    * tack on the "Process" symbol and the "Everything" symbol.

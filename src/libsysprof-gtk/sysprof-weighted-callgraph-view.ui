@@ -27,6 +27,10 @@
                 </property>
               </object>
             </property>
+            <property name="sorter">
+              <object class="GtkCustomSorter" id="self_sorter">
+              </object>
+            </property>
           </object>
         </child>
         <child>
@@ -51,6 +55,10 @@
 </interface>
 ]]>
                 </property>
+              </object>
+            </property>
+            <property name="sorter">
+              <object class="GtkCustomSorter" id="total_sorter">
               </object>
             </property>
           </object>

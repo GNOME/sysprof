@@ -50,6 +50,9 @@ struct _SysprofCallgraphViewClass
                         SysprofCallgraphNode *node,
                         SysprofDocumentFrame *frame,
                         gpointer              user_data);
+
+  void (*load) (SysprofCallgraphView *self,
+                SysprofCallgraph     *callgraph);
 };
 
 G_END_DECLS

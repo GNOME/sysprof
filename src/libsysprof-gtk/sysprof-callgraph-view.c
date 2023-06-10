@@ -214,6 +214,9 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
                                         g_object_ref (GTK_SORTER (sorter)));
   model = gtk_multi_selection_new (g_object_ref (G_LIST_MODEL (sort_model)));
   gtk_column_view_set_model (self->column_view, GTK_SELECTION_MODEL (model));
+
+  if (SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load)
+   SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load (self, callgraph);
 }
 
 static gboolean

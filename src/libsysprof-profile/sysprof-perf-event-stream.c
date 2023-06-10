@@ -569,6 +569,8 @@ sysprof_perf_event_stream_disable (SysprofPerfEventStream  *self,
 
   self->active = FALSE;
 
+  sysprof_perf_event_stream_flush (self);
+
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_ACTIVE]);
 
   return TRUE;

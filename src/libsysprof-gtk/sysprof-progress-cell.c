@@ -204,6 +204,7 @@ sysprof_progress_cell_class_init (SysprofProgressCellClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_css_name (widget_class, "progresscell");
+  gtk_widget_class_set_accessible_role (widget_class, GTK_ACCESSIBLE_ROLE_PROGRESS_BAR);
 }
 
 static void
@@ -238,6 +239,12 @@ sysprof_progress_cell_init (SysprofProgressCell *self)
   gtk_widget_set_parent (GTK_WIDGET (self->label), GTK_WIDGET (self));
   gtk_widget_set_parent (GTK_WIDGET (self->progress), GTK_WIDGET (self));
   gtk_widget_set_parent (GTK_WIDGET (self->alt_label), GTK_WIDGET (self));
+
+  gtk_accessible_update_property (GTK_ACCESSIBLE (self),
+                                  GTK_ACCESSIBLE_PROPERTY_VALUE_MAX, 1.0,
+                                  GTK_ACCESSIBLE_PROPERTY_VALUE_MIN, 0.0,
+                                  GTK_ACCESSIBLE_PROPERTY_VALUE_NOW, 0.0,
+                                  -1);
 }
 
 GtkWidget *
@@ -273,8 +280,15 @@ sysprof_progress_cell_set_fraction (SysprofProgressCell *self,
       gtk_label_set_text (self->alt_label, text);
 
       gtk_widget_set_visible (GTK_WIDGET (self->progress), fraction > .0);
-      gtk_widget_queue_allocate (GTK_WIDGET (self));
+
+      gtk_accessible_update_property (GTK_ACCESSIBLE (self),
+                                      GTK_ACCESSIBLE_PROPERTY_VALUE_MAX, 1.0,
+                                      GTK_ACCESSIBLE_PROPERTY_VALUE_MIN, 0.0,
+                                      GTK_ACCESSIBLE_PROPERTY_VALUE_NOW, fraction,
+                                      GTK_ACCESSIBLE_PROPERTY_VALUE_TEXT, text,
+                                      -1);
 
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FRACTION]);
+      gtk_widget_queue_allocate (GTK_WIDGET (self));
     }
 }

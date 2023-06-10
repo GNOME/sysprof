@@ -217,14 +217,16 @@ sysprof_progress_cell_init (SysprofProgressCell *self)
   g_snprintf (percent, sizeof percent, "%6.2lf%%", .0);
 
   self->label = g_object_new (GTK_TYPE_LABEL,
-                              "halign", GTK_ALIGN_END,
+                              "xalign", 1.f,
                               "valign", GTK_ALIGN_CENTER,
                               "label", percent,
+                              "width-chars", 7,
                               NULL);
   self->alt_label = g_object_new (GTK_TYPE_LABEL,
-                                  "halign", GTK_ALIGN_END,
+                                  "xalign", 1.f,
                                   "valign", GTK_ALIGN_CENTER,
                                   "label", percent,
+                                  "width-chars", 7,
                                   NULL);
   gtk_widget_add_css_class (GTK_WIDGET (self->alt_label), "in-progress");
   self->trough = g_object_new (ADW_TYPE_BIN,

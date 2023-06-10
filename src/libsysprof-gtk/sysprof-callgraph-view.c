@@ -189,6 +189,7 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
   g_autoptr(GtkMultiSelection) model = NULL;
   g_autoptr(GtkSortListModel) sort_model = NULL;
   g_autoptr(GtkTreeListModel) tree = NULL;
+  g_autoptr(GtkTreeListRow) first = NULL;
   g_autoptr(GError) error = NULL;
   GtkSorter *column_sorter;
 
@@ -217,6 +218,9 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
 
   if (SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load)
    SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load (self, callgraph);
+
+  if ((first = gtk_tree_list_model_get_row (tree, 0)))
+    gtk_tree_list_row_set_expanded (first, TRUE);
 }
 
 static gboolean

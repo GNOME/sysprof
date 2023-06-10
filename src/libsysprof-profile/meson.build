@@ -17,6 +17,7 @@ libsysprof_profile_public_sources = [
 libsysprof_profile_private_sources = [
   'mapped-ring-buffer-source.c',
   'sysprof-controlfd-instrument.c',
+  'sysprof-maps-parser.c',
   'sysprof-perf-event-stream.c',
   'sysprof-podman.c',
   'sysprof-polkit.c',

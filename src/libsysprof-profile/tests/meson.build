@@ -12,6 +12,7 @@ libsysprof_profile_testsuite_c_args = [
 ]
 
 libsysprof_profile_testsuite = {
+  'test-maps-parser' : {'skip': true},
   'test-profiler' : {'skip': true},
 }
 

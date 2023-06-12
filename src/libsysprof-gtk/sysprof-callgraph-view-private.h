@@ -31,8 +31,10 @@ struct _SysprofCallgraphView
   GtkWidget parent_instance;
 
   SysprofDocument *document;
+  SysprofCallgraph *callgraph;
   GListModel *traceables;
 
+  GtkColumnView *callers_column_view;
   GtkColumnView *descendants_column_view;
   GtkColumnView *functions_column_view;
   GtkScrolledWindow *scrolled_window;

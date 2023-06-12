@@ -10,10 +10,11 @@
             <property name="start-child">
               <object class="GtkScrolledWindow" id="functions_scrolled_window">
                 <property name="hscrollbar-policy">never</property>
+                <property name="vexpand">true</property>
                 <child>
                   <object class="GtkColumnView" id="functions_column_view">
                     <child>
-                      <object class="GtkColumnViewColumn" id="function_column">
+                      <object class="GtkColumnViewColumn" id="functions_name_column">
                         <property name="title" translatable="yes">Functions</property>
                         <property name="expand">true</property>
                         <property name="factory">
@@ -24,7 +25,51 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="GtkInscription">
-        <property name="text-overflow">ellipsize-end</property>
+        <property name="text-overflow">ellipsize-start</property>
+        <property name="xalign">.0</property>
+        <binding name="text">
+          <lookup  name="name">
+            <lookup name="symbol" type="SysprofCallgraphSymbol">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                            </property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+            <property name="end-child">
+              <object class="GtkScrolledWindow" id="callers_scrolled_window">
+                <property name="hscrollbar-policy">never</property>
+                <property name="vexpand">true</property>
+                <child>
+                  <object class="GtkColumnView" id="callers_column_view">
+                    <style>
+                      <class name="data-table"/>
+                    </style>
+                    <child>
+                      <object class="GtkColumnViewColumn" id="callers_name_column">
+                        <property name="title" translatable="yes">Callers</property>
+                        <property name="expand">true</property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="text-overflow">ellipsize-start</property>
         <property name="xalign">.0</property>
         <binding name="text">
           <lookup  name="name">

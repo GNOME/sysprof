@@ -38,6 +38,39 @@ G_DEFINE_ABSTRACT_TYPE_WITH_CODE (SysprofCallgraphView, sysprof_callgraph_view, 
 
 static GParamSpec *properties [N_PROPS];
 
+static void
+functions_selection_changed_cb (SysprofCallgraphView *self,
+                                guint                 position,
+                                guint                 n_items,
+                                GtkSingleSelection   *single)
+{
+  GObject *object;
+
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+  g_assert (GTK_IS_SINGLE_SELECTION (single));
+
+  if ((object = gtk_single_selection_get_selected_item (single)))
+    {
+      SysprofCallgraphSymbol *sym = SYSPROF_CALLGRAPH_SYMBOL (object);
+      SysprofSymbol *symbol = sysprof_callgraph_symbol_get_symbol (sym);
+      g_autoptr(GtkSortListModel) callers_sort_model = NULL;
+      g_autoptr(GtkNoSelection) callers_selection = NULL;
+      g_autoptr(GListModel) callers = sysprof_callgraph_list_callers (self->callgraph, symbol);
+      GtkSorter *column_sorter;
+
+      column_sorter = gtk_column_view_get_sorter (self->callers_column_view);
+      callers_sort_model = gtk_sort_list_model_new (g_object_ref (callers),
+                                                    g_object_ref (column_sorter));
+      callers_selection = gtk_no_selection_new (g_object_ref (G_LIST_MODEL (callers_sort_model)));
+      gtk_column_view_set_model (self->callers_column_view,
+                                 GTK_SELECTION_MODEL (callers_selection));
+    }
+  else
+    {
+      gtk_column_view_set_model (self->callers_column_view, NULL);
+    }
+}
+
 static gboolean
 sysprof_callgraph_view_key_pressed_cb (GtkTreeExpander       *expander,
                                        guint                  keyval,
@@ -76,6 +109,7 @@ sysprof_callgraph_view_dispose (GObject *object)
   g_cancellable_cancel (self->cancellable);
   g_clear_object (&self->cancellable);
 
+  g_clear_object (&self->callgraph);
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
 
@@ -152,6 +186,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-callgraph-view.ui");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
+  gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, callers_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, descendants_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, paned);
@@ -210,6 +245,8 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
       return;
     }
 
+  g_set_object (&self->callgraph, callgraph);
+
   column_sorter = gtk_column_view_get_sorter (self->descendants_column_view);
   descendants_tree = gtk_tree_list_model_new (g_object_ref (G_LIST_MODEL (callgraph)),
                                               FALSE, FALSE,
@@ -226,6 +263,11 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
   functions_sort_model = gtk_sort_list_model_new (g_object_ref (functions_model),
                                                   g_object_ref (column_sorter));
   functions_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (functions_sort_model)));
+  g_signal_connect_object (functions_selection,
+                           "selection-changed",
+                           G_CALLBACK (functions_selection_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
   gtk_column_view_set_model (self->functions_column_view,
                              GTK_SELECTION_MODEL (functions_selection));
 

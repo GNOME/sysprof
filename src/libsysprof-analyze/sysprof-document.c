@@ -118,7 +118,8 @@ sysprof_document_get_item (GListModel *model,
   ret = _sysprof_document_frame_new (self->mapped_file,
                                      (gconstpointer)&self->base[ptr->offset],
                                      ptr->length,
-                                     self->needs_swap);
+                                     self->needs_swap,
+                                     self->header.time);
 
   /* Annotate processes with pre-calculated info */
   if (SYSPROF_IS_DOCUMENT_PROCESS (ret))

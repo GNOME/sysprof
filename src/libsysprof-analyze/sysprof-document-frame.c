@@ -43,6 +43,7 @@ enum {
   PROP_CPU,
   PROP_PID,
   PROP_TIME,
+  PROP_TIME_OFFSET,
   N_PROPS
 };
 
@@ -83,6 +84,10 @@ sysprof_document_frame_get_property (GObject    *object,
       g_value_set_int64 (value, sysprof_document_frame_get_time (self));
       break;
 
+    case PROP_TIME_OFFSET:
+      g_value_set_int64 (value, sysprof_document_frame_get_time_offset (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -117,6 +122,13 @@ sysprof_document_frame_class_init (SysprofDocumentFrameClass *klass)
                         0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_TIME_OFFSET] =
+    g_param_spec_int64 ("time-offset", NULL, NULL,
+                        G_MININT64,
+                        G_MAXINT64,
+                        0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -129,7 +141,8 @@ SysprofDocumentFrame *
 _sysprof_document_frame_new (GMappedFile               *mapped_file,
                              const SysprofCaptureFrame *frame,
                              guint16                    frame_len,
-                             gboolean                   needs_swap)
+                             gboolean                   needs_swap,
+                             gint64                     begin_time)
 {
   SysprofDocumentFrame *self;
   GType gtype;
@@ -198,6 +211,7 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
   self->frame = frame;
   self->frame_len = frame_len;
   self->needs_swap = !!needs_swap;
+  self->time_offset = CLAMP (sysprof_document_frame_get_time (self) - begin_time, 0, G_MAXINT64);
 
   return self;
 }
@@ -224,4 +238,12 @@ sysprof_document_frame_get_time (SysprofDocumentFrame *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
 
   return SYSPROF_DOCUMENT_FRAME_INT64 (self, self->frame->time);
+}
+
+gint64
+sysprof_document_frame_get_time_offset (SysprofDocumentFrame *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), 0);
+
+  return self->time_offset;
 }

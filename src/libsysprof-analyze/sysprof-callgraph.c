@@ -150,6 +150,7 @@ sysprof_callgraph_finalize (GObject *object)
   SysprofCallgraph *self = (SysprofCallgraph *)object;
 
   g_clear_pointer (&self->symbol_to_summary, g_hash_table_unref);
+  g_clear_pointer (&self->symbols, g_ptr_array_unref);
 
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);

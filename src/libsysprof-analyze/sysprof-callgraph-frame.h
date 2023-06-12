@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <glib-object.h>
+#include <gio/gio.h>
 
 #include <sysprof-capture.h>
 
@@ -34,10 +34,19 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofCallgraphFrame, sysprof_callgraph_frame, SYSPROF, CALLGRAPH_FRAME, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofSymbol *sysprof_callgraph_frame_get_symbol          (SysprofCallgraphFrame *self);
+SysprofSymbol *sysprof_callgraph_frame_get_symbol             (SysprofCallgraphFrame  *self);
 SYSPROF_AVAILABLE_IN_ALL
-gpointer       sysprof_callgraph_frame_get_augment         (SysprofCallgraphFrame *self);
+gpointer       sysprof_callgraph_frame_get_augment            (SysprofCallgraphFrame  *self);
 SYSPROF_AVAILABLE_IN_ALL
-gpointer       sysprof_callgraph_frame_get_summary_augment (SysprofCallgraphFrame *self);
+gpointer       sysprof_callgraph_frame_get_summary_augment    (SysprofCallgraphFrame  *self);
+SYSPROF_AVAILABLE_IN_ALL
+void           sysprof_callgraph_frame_list_traceables_async  (SysprofCallgraphFrame  *self,
+                                                               GCancellable           *cancellable,
+                                                               GAsyncReadyCallback     callback,
+                                                               gpointer                user_data);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel    *sysprof_callgraph_frame_list_traceables_finish (SysprofCallgraphFrame  *self,
+                                                               GAsyncResult           *result,
+                                                               GError                **error);
 
 G_END_DECLS

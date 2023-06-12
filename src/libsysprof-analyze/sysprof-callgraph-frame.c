@@ -24,6 +24,12 @@
 
 #include "sysprof-callgraph-private.h"
 #include "sysprof-callgraph-frame-private.h"
+#include "sysprof-symbol-private.h"
+#include "sysprof-document-bitset-index-private.h"
+
+#include "eggbitset.h"
+
+#define MAX_STACK_DEPTH 128
 
 struct _SysprofCallgraphFrame
 {
@@ -242,4 +248,210 @@ sysprof_callgraph_frame_get_callgraph (SysprofCallgraphFrame *self)
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), NULL);
 
   return self->callgraph;
+}
+
+static gboolean
+traceable_has_prefix (SysprofDocument          *document,
+                      SysprofDocumentTraceable *traceable,
+                      GPtrArray                *prefix)
+{
+  SysprofAddressContext final_context;
+  SysprofSymbol **symbols;
+  SysprofAddress *addresses;
+  guint s = 0;
+  guint stack_depth;
+  guint n_symbols;
+
+  stack_depth = sysprof_document_traceable_get_stack_depth (traceable);
+  if (stack_depth > MAX_STACK_DEPTH)
+    return FALSE;
+
+  addresses = g_alloca (sizeof (SysprofAddress) * stack_depth);
+  sysprof_document_traceable_get_stack_addresses (traceable, addresses, stack_depth);
+
+  symbols = g_alloca (sizeof (SysprofSymbol *) * stack_depth);
+  n_symbols = sysprof_document_symbolize_traceable (document, traceable, symbols, stack_depth, &final_context);
+
+  if (n_symbols < prefix->len)
+    return FALSE;
+
+  for (guint p = 0; p < prefix->len; p++)
+    {
+      SysprofSymbol *prefix_symbol = g_ptr_array_index (prefix, p);
+      gboolean found = FALSE;
+
+      for (; !found && s < n_symbols; s++)
+        found = sysprof_symbol_equal (prefix_symbol, symbols[s]);
+
+      if (!found)
+        return FALSE;
+    }
+
+  return TRUE;
+}
+
+typedef struct _FilterByPrefix
+{
+  SysprofDocument *document;
+  GListModel *traceables;
+  GPtrArray *prefix;
+  EggBitset *bitset;
+} FilterByPrefix;
+
+static void
+filter_by_prefix_free (FilterByPrefix *state)
+{
+  g_clear_object (&state->document);
+  g_clear_object (&state->traceables);
+  g_clear_pointer (&state->prefix, g_ptr_array_unref);
+  g_clear_pointer (&state->bitset, egg_bitset_unref);
+  g_free (state);
+}
+
+static void
+filter_by_prefix_worker (GTask        *task,
+                         gpointer      source_object,
+                         gpointer      task_data,
+                         GCancellable *cancellable)
+{
+  FilterByPrefix *state = task_data;
+  g_autoptr(EggBitset) bitset = NULL;
+  SysprofDocument *document;
+  GListModel *model;
+  GPtrArray *prefix;
+  EggBitsetIter iter;
+  guint i;
+
+  g_assert (G_IS_TASK (task));
+  g_assert (SYSPROF_IS_CALLGRAPH_FRAME (source_object));
+  g_assert (state != NULL);
+  g_assert (G_IS_LIST_MODEL (state->traceables));
+  g_assert (state->prefix != NULL);
+  g_assert (state->prefix->len > 0);
+  g_assert (state->bitset != NULL);
+  g_assert (!egg_bitset_is_empty (state->bitset));
+
+  bitset = egg_bitset_new_empty ();
+
+  model = state->traceables;
+  document = state->document;
+  prefix = state->prefix;
+
+  if (egg_bitset_iter_init_first (&iter, state->bitset, &i))
+    {
+      do
+        {
+          g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
+
+          if (traceable_has_prefix (document, traceable, prefix))
+            egg_bitset_add (bitset, i);
+        }
+      while (egg_bitset_iter_next (&iter, &i));
+    }
+
+  g_task_return_pointer (task,
+                         _sysprof_document_bitset_index_new (model, bitset),
+                         g_object_unref);
+}
+
+/**
+ * sysprof_callgraph_frame_list_traceables:
+ * @self: a #SysprofCallgraphFrame
+ * @cancellable: (nullable): a #GCancellable or %NULL
+ * @callback: a #GAsyncReadyCallback
+ * @user_data: closure data for @callback
+ *
+ * Asynchronously lists the traceables that contain @self.
+ */
+void
+sysprof_callgraph_frame_list_traceables_async (SysprofCallgraphFrame *self,
+                                               GCancellable          *cancellable,
+                                               GAsyncReadyCallback    callback,
+                                               gpointer               user_data)
+{
+  g_autoptr(GTask) task = NULL;
+  g_autoptr(GPtrArray) prefix = NULL;
+  g_autoptr(EggBitset) bitset = NULL;
+  FilterByPrefix *state;
+
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_callgraph_frame_list_traceables_async);
+
+  if (self->callgraph == NULL)
+    {
+      g_task_return_new_error (task,
+                               G_IO_ERROR,
+                               G_IO_ERROR_FAILED,
+                               "Callgraph already disposed");
+      return;
+    }
+
+  prefix = g_ptr_array_new ();
+
+  for (SysprofCallgraphNode *node = self->node;
+       node != NULL;
+       node = node->parent)
+      {
+        SysprofCallgraphSummary *summary = node->summary;
+        SysprofSymbol *symbol = summary->symbol;
+
+        if (symbol->is_context_switch ||
+            symbol->is_everything ||
+            symbol->is_untraceable ||
+            symbol->is_process)
+          continue;
+
+        if (bitset == NULL)
+          bitset = egg_bitset_copy (summary->traceables);
+        else
+          egg_bitset_intersect (bitset, summary->traceables);
+
+        g_ptr_array_add (prefix, symbol);
+      }
+
+  if (prefix->len == 0 || egg_bitset_is_empty (bitset))
+    {
+      g_task_return_pointer (task,
+                             g_list_store_new (SYSPROF_TYPE_DOCUMENT_TRACEABLE),
+                             g_object_unref);
+      return;
+    }
+
+  state = g_new0 (FilterByPrefix, 1);
+  state->document = g_object_ref (self->callgraph->document);
+  state->traceables = g_object_ref (self->callgraph->traceables);
+  state->prefix = g_steal_pointer (&prefix);
+  state->bitset = egg_bitset_ref (bitset);
+
+  g_task_set_task_data (task, state, (GDestroyNotify)filter_by_prefix_free);
+  g_task_run_in_thread (task, filter_by_prefix_worker);
+}
+
+/**
+ * sysprof_callgraph_frame_list_traceables_finish:
+ * @self: a #SysprofCallgraphFrame
+ *
+ * Completes an asynchronous request to list traceables.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentTraceable if
+ *   successful; otherwise %NULL and @error is set.
+ */
+GListModel *
+sysprof_callgraph_frame_list_traceables_finish (SysprofCallgraphFrame  *self,
+                                                GAsyncResult           *result,
+                                                GError                **error)
+{
+  GListModel *ret;
+
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+
+  ret = g_task_propagate_pointer (G_TASK (result), error);
+
+  g_return_val_if_fail (!ret || G_IS_LIST_MODEL (ret), NULL);
+
+  return ret;
 }

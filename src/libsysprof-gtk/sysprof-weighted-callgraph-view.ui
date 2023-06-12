@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="SysprofWeightedCallgraphView" parent="SysprofCallgraphView">
-    <child internal-child="column_view">
+    <child internal-child="descendants_column_view">
       <object class="GtkColumnView">
         <child>
-          <object class="GtkColumnViewColumn" id="self_column">
+          <object class="GtkColumnViewColumn" id="descendants_self_column">
             <property name="title" translatable="yes">Self</property>
             <property name="factory">
               <object class="GtkBuilderListItemFactory">
@@ -28,13 +28,13 @@
               </object>
             </property>
             <property name="sorter">
-              <object class="GtkCustomSorter" id="self_sorter">
+              <object class="GtkCustomSorter" id="descendants_self_sorter">
               </object>
             </property>
           </object>
         </child>
         <child>
-          <object class="GtkColumnViewColumn" id="total_column">
+          <object class="GtkColumnViewColumn" id="descendants_total_column">
             <property name="title" translatable="yes">Total</property>
             <property name="factory">
               <object class="GtkBuilderListItemFactory">
@@ -58,7 +58,7 @@
               </object>
             </property>
             <property name="sorter">
-              <object class="GtkCustomSorter" id="total_sorter">
+              <object class="GtkCustomSorter" id="descendants_total_sorter">
               </object>
             </property>
           </object>

@@ -52,7 +52,7 @@
         <property name="end-child">
           <object class="GtkScrolledWindow" id="scrolled_window">
             <child>
-              <object class="GtkColumnView" id="column_view">
+              <object class="GtkColumnView" id="descendants_column_view">
                 <style>
                   <class name="data-table"/>
                 </style>

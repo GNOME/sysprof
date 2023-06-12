@@ -28,10 +28,10 @@ struct _SysprofWeightedCallgraphView
 {
   SysprofCallgraphView parent_instance;
 
-  GtkColumnViewColumn *self_column;
-  GtkColumnViewColumn *total_column;
-  GtkCustomSorter *self_sorter;
-  GtkCustomSorter *total_sorter;
+  GtkColumnViewColumn *descendants_self_column;
+  GtkColumnViewColumn *descendants_total_column;
+  GtkCustomSorter *descendants_self_sorter;
+  GtkCustomSorter *descendants_total_sorter;
 
   GtkColumnViewColumn *functions_self_column;
   GtkColumnViewColumn *functions_total_column;
@@ -262,14 +262,18 @@ sysprof_weighted_callgraph_view_load (SysprofCallgraphView *view,
 
   root = sysprof_callgraph_get_augment (callgraph, NULL);
 
-  gtk_custom_sorter_set_sort_func (self->self_sorter, descendants_sort_by_self, root, NULL);
-  gtk_custom_sorter_set_sort_func (self->total_sorter, descendants_sort_by_total, root, NULL);
+  gtk_custom_sorter_set_sort_func (self->descendants_self_sorter,
+                                   descendants_sort_by_self, root, NULL);
+  gtk_custom_sorter_set_sort_func (self->descendants_total_sorter,
+                                   descendants_sort_by_total, root, NULL);
 
-  gtk_custom_sorter_set_sort_func (self->functions_self_sorter, functions_sort_by_self, root, NULL);
-  gtk_custom_sorter_set_sort_func (self->functions_total_sorter, functions_sort_by_total, root, NULL);
+  gtk_custom_sorter_set_sort_func (self->functions_self_sorter,
+                                   functions_sort_by_self, root, NULL);
+  gtk_custom_sorter_set_sort_func (self->functions_total_sorter,
+                                   functions_sort_by_total, root, NULL);
 
-  gtk_column_view_sort_by_column (SYSPROF_CALLGRAPH_VIEW (self)->column_view,
-                                  self->total_column,
+  gtk_column_view_sort_by_column (SYSPROF_CALLGRAPH_VIEW (self)->descendants_column_view,
+                                  self->descendants_total_column,
                                   GTK_SORT_DESCENDING);
   gtk_column_view_sort_by_column (SYSPROF_CALLGRAPH_VIEW (self)->functions_column_view,
                                   self->functions_total_column,
@@ -288,10 +292,10 @@ sysprof_weighted_callgraph_view_class_init (SysprofWeightedCallgraphViewClass *k
 
   gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-weighted-callgraph-view.ui");
 
-  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, self_column);
-  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, total_column);
-  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, self_sorter);
-  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, total_sorter);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, descendants_self_column);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, descendants_total_column);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, descendants_self_sorter);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, descendants_total_sorter);
 
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, functions_self_column);
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, functions_total_column);

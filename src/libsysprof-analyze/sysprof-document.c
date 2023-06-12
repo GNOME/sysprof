@@ -1286,3 +1286,19 @@ _sysprof_document_kernel_symbol (SysprofDocument *self)
 
   return self->symbols->context_switches[SYSPROF_ADDRESS_CONTEXT_KERNEL];
 }
+
+/**
+ * sysprof_document_get_clock_at_start:
+ * @self: a #SysprofDocument
+ *
+ * Gets the clock time when the recording started.
+ *
+ * Returns: the clock time, generally of `CLOCK_MONOTONIC`
+ */
+gint64
+sysprof_document_get_clock_at_start (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), 0);
+
+  return self->header.time;
+}

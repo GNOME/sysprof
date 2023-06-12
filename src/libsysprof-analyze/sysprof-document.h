@@ -37,6 +37,8 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDocument, sysprof_document, SYSPROF, DOCUMENT, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
+gint64                  sysprof_document_get_clock_at_start  (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
 SysprofDocumentFile    *sysprof_document_lookup_file         (SysprofDocument           *self,
                                                               const char                *path);
 SYSPROF_AVAILABLE_IN_ALL

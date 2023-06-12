@@ -61,6 +61,51 @@ callers_selection_changed_cb (SysprofCallgraphView *self,
 }
 
 static void
+sysprof_callgraph_view_list_traceables_cb (GObject      *object,
+                                           GAsyncResult *result,
+                                           gpointer      user_data)
+{
+  SysprofCallgraphFrame *frame = (SysprofCallgraphFrame *)object;
+  g_autoptr(SysprofCallgraphView) self = user_data;
+  g_autoptr(GListModel) model = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_CALLGRAPH_FRAME (frame));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  if ((model = sysprof_callgraph_frame_list_traceables_finish (frame, result, &error)))
+    {
+      g_autoptr(GtkSingleSelection) single = gtk_single_selection_new (g_object_ref (model));
+      gtk_column_view_set_model (self->traceables_column_view, GTK_SELECTION_MODEL (single));
+    }
+}
+
+static void
+descendants_selection_changed_cb (SysprofCallgraphView *self,
+                                  guint                 position,
+                                  guint                 n_items,
+                                  GtkSingleSelection   *single)
+{
+  g_autoptr(GObject) item = NULL;
+  GObject *object;
+
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+  g_assert (GTK_IS_SINGLE_SELECTION (single));
+
+  gtk_column_view_set_model (self->traceables_column_view, NULL);
+
+  if ((object = gtk_single_selection_get_selected_item (single)) &&
+      GTK_IS_TREE_LIST_ROW (object) &&
+      (item = gtk_tree_list_row_get_item (GTK_TREE_LIST_ROW (object))) &&
+      SYSPROF_IS_CALLGRAPH_FRAME (item))
+    sysprof_callgraph_frame_list_traceables_async (SYSPROF_CALLGRAPH_FRAME (item),
+                                                   NULL,
+                                                   sysprof_callgraph_view_list_traceables_cb,
+                                                   g_object_ref (self));
+}
+
+static void
 functions_selection_changed_cb (SysprofCallgraphView *self,
                                 guint                 position,
                                 guint                 n_items,
@@ -124,6 +169,31 @@ sysprof_callgraph_view_key_pressed_cb (GtkTreeExpander       *expander,
     return FALSE;
 
   return TRUE;
+}
+
+static char *
+format_time_offset (gpointer cell)
+{
+  g_autoptr(SysprofDocumentFrame) frame = NULL;
+  int hours;
+  int minutes;
+  double time;
+
+  g_object_get (cell, "item", &frame, NULL);
+  g_assert (!frame || SYSPROF_IS_DOCUMENT_FRAME (frame));
+
+  if (!frame)
+    return NULL;
+
+  time = sysprof_document_frame_get_time_offset (frame) / (double)SYSPROF_NSEC_PER_SEC;
+
+  hours = time / (60 * 60);
+  time -= hours * (60 * 60);
+
+  minutes = time / 60;
+  time -= minutes * 60;
+
+  return g_strdup_printf ("%02d:%02d:%02.4lf", hours, minutes, time);
 }
 
 static void
@@ -231,7 +301,9 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_name_sorter);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, paned);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, scrolled_window);
+  gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, traceables_column_view);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_callgraph_view_key_pressed_cb);
+  gtk_widget_class_bind_template_callback (widget_class, format_time_offset);
 
   klass->augment_size = GLIB_SIZEOF_VOID_P;
 
@@ -290,7 +362,7 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
   GtkSorter *column_sorter;
 
   g_autoptr(GtkTreeListRowSorter) descendants_sorter = NULL;
-  g_autoptr(GtkMultiSelection) descendants_selection = NULL;
+  g_autoptr(GtkSingleSelection) descendants_selection = NULL;
   g_autoptr(GtkSortListModel) descendants_sort_model = NULL;
   g_autoptr(GtkTreeListModel) descendants_tree = NULL;
   g_autoptr(GtkTreeListRow) descendants_first = NULL;
@@ -319,7 +391,12 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
   descendants_sorter = gtk_tree_list_row_sorter_new (g_object_ref (column_sorter));
   descendants_sort_model = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (descendants_tree)),
                                         g_object_ref (GTK_SORTER (descendants_sorter)));
-  descendants_selection = gtk_multi_selection_new (g_object_ref (G_LIST_MODEL (descendants_sort_model)));
+  descendants_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (descendants_sort_model)));
+  g_signal_connect_object (descendants_selection,
+                           "selection-changed",
+                           G_CALLBACK (descendants_selection_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
   gtk_column_view_set_model (self->descendants_column_view, GTK_SELECTION_MODEL (descendants_selection));
 
   column_sorter = gtk_column_view_get_sorter (self->functions_column_view);

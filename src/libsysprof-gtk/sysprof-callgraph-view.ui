@@ -32,7 +32,7 @@
         <property name="text-overflow">ellipsize-start</property>
         <property name="xalign">.0</property>
         <binding name="text">
-          <lookup  name="name">
+          <lookup name="name">
             <lookup name="symbol" type="SysprofCallgraphSymbol">
               <lookup name="item">GtkListItem</lookup>
             </lookup>
@@ -76,7 +76,7 @@
         <property name="text-overflow">ellipsize-start</property>
         <property name="xalign">.0</property>
         <binding name="text">
-          <lookup  name="name">
+          <lookup name="name">
             <lookup name="symbol" type="SysprofCallgraphSymbol">
               <lookup name="item">GtkListItem</lookup>
             </lookup>
@@ -99,23 +99,26 @@
           </object>
         </property>
         <property name="end-child">
-          <object class="GtkScrolledWindow" id="scrolled_window">
-            <child>
-              <object class="GtkColumnView" id="descendants_column_view">
-                <style>
-                  <class name="data-table"/>
-                </style>
+          <object class="GtkPaned">
+            <property name="start-child">
+              <object class="GtkScrolledWindow" id="scrolled_window">
+                <property name="hexpand">true</property>
                 <child>
-                  <object class="GtkColumnViewColumn" id="descendants_column">
-                    <property name="title" translatable="yes">Descendants</property>
-                    <property name="expand">true</property>
-                    <property name="sorter">
-                      <object class="GtkCustomSorter" id="descendants_name_sorter">
-                      </object>
-                    </property>
-                    <property name="factory">
-                      <object class="GtkBuilderListItemFactory">
-                        <property name="bytes"><![CDATA[
+                  <object class="GtkColumnView" id="descendants_column_view">
+                    <style>
+                      <class name="data-table"/>
+                    </style>
+                    <child>
+                      <object class="GtkColumnViewColumn" id="descendants_column">
+                        <property name="title" translatable="yes">Descendants</property>
+                        <property name="expand">true</property>
+                        <property name="sorter">
+                          <object class="GtkCustomSorter" id="descendants_name_sorter">
+                          </object>
+                        </property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -182,13 +185,89 @@
   </template>
 </interface>
 ]]>
+                            </property>
+                          </object>
                         </property>
                       </object>
-                    </property>
+                    </child>
                   </object>
                 </child>
               </object>
-            </child>
+            </property>
+            <property name="end-child">
+              <object class="GtkPaned">
+                <property name="orientation">vertical</property>
+                <property name="start-child">
+                  <object class="GtkScrolledWindow">
+                    <child>
+                      <object class="GtkColumnView" id="traceables_column_view">
+                        <property name="width-request">200</property>
+                        <style>
+                          <class name="data-table"/>
+                        </style>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="traceables_pid_column">
+                            <property name="title" translatable="yes">PID</property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="xalign">1.</property>
+        <binding name="text">
+          <lookup name="pid" type="SysprofDocumentFrame">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="traceables_time_column">
+                            <property name="title" translatable="yes">Time</property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <attributes>
+          <attribute name="font-features" value="'tnum'"/>
+        </attributes>
+        <binding name="label">
+          <closure type="gchararray" function="format_time_offset">
+            <lookup name="item">GtkListItem</lookup>
+          </closure>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </property>
           </object>
         </property>
       </object>

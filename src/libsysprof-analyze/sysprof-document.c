@@ -489,6 +489,7 @@ sysprof_document_load_processes (SysprofDocument *self)
                   process_info->symbol =
                     _sysprof_symbol_new (sysprof_strings_get (self->strings, wrapped),
                                          NULL, NULL, 0, 0);
+                  process_info->symbol->is_process = TRUE;
                 }
             }
         }

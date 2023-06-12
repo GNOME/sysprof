@@ -169,7 +169,10 @@ sysprof_callgraph_class_init (SysprofCallgraphClass *klass)
   object_class->finalize = sysprof_callgraph_finalize;
 
   everything = _sysprof_symbol_new (g_ref_string_new_intern ("[Everything]"), NULL, NULL, 0, 0);
+  everything->is_everything = TRUE;
+
   untraceable = _sysprof_symbol_new (g_ref_string_new_intern ("[Unwindable]"), NULL, NULL, 0, 0);
+  everything->is_untraceable = TRUE;
 }
 
 static void

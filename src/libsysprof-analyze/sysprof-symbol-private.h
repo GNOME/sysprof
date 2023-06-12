@@ -39,6 +39,9 @@ struct _SysprofSymbol
   SysprofAddress end_address;
 
   guint is_context_switch : 1;
+  guint is_everything : 1;
+  guint is_untraceable : 1;
+  guint is_process : 1;
 };
 
 SysprofSymbol *_sysprof_symbol_new (GRefString     *name,

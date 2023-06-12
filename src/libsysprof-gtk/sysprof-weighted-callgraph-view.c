@@ -30,9 +30,13 @@ struct _SysprofWeightedCallgraphView
 
   GtkColumnViewColumn *self_column;
   GtkColumnViewColumn *total_column;
-
   GtkCustomSorter *self_sorter;
   GtkCustomSorter *total_sorter;
+
+  GtkColumnViewColumn *functions_self_column;
+  GtkColumnViewColumn *functions_total_column;
+  GtkCustomSorter *functions_self_sorter;
+  GtkCustomSorter *functions_total_sorter;
 };
 
 struct _SysprofWeightedCallgraphViewClass
@@ -97,7 +101,7 @@ get_total_fraction (GObject *item)
       AugmentWeight *sum = sysprof_callgraph_frame_get_augment (frame);
       AugmentWeight *root = sysprof_callgraph_get_augment (callgraph, NULL);
 
-      return (double)sum->total / (double)root->total;
+      return sum->total / (double)root->total;
     }
 
   return 0;
@@ -124,10 +128,48 @@ get_self_fraction (GObject *item)
   return .0;
 }
 
+static double
+functions_get_total_fraction (GObject *item)
+{
+  g_autoptr(SysprofCallgraphSymbol) sym = NULL;
+
+  g_object_get (item, "item", &sym, NULL);
+
+  if (SYSPROF_IS_CALLGRAPH_SYMBOL (sym))
+    {
+      SysprofCallgraph *callgraph = sysprof_callgraph_symbol_get_callgraph (sym);
+      AugmentWeight *sum = sysprof_callgraph_symbol_get_summary_augment (sym);
+      AugmentWeight *root = sysprof_callgraph_get_augment (callgraph, NULL);
+
+      return sum->total / (double)root->total;
+    }
+
+  return 0;
+}
+
+static double
+functions_get_self_fraction (GObject *item)
+{
+  g_autoptr(SysprofCallgraphSymbol) sym = NULL;
+
+  g_object_get (item, "item", &sym, NULL);
+
+  if (SYSPROF_IS_CALLGRAPH_SYMBOL (sym))
+    {
+      SysprofCallgraph *callgraph = sysprof_callgraph_symbol_get_callgraph (sym);
+      AugmentWeight *sum = sysprof_callgraph_symbol_get_summary_augment (sym);
+      AugmentWeight *root = sysprof_callgraph_get_augment (callgraph, NULL);
+
+      return sum->size / (double)root->total;
+    }
+
+  return 0;
+}
+
 static int
-sort_by_self (gconstpointer a,
-              gconstpointer b,
-              gpointer      user_data)
+descendants_sort_by_self (gconstpointer a,
+                          gconstpointer b,
+                          gpointer      user_data)
 {
   SysprofCallgraphFrame *frame_a = (SysprofCallgraphFrame *)a;
   SysprofCallgraphFrame *frame_b = (SysprofCallgraphFrame *)b;
@@ -146,14 +188,56 @@ sort_by_self (gconstpointer a,
 }
 
 static int
-sort_by_total (gconstpointer a,
-               gconstpointer b,
-               gpointer      user_data)
+descendants_sort_by_total (gconstpointer a,
+                           gconstpointer b,
+                           gpointer      user_data)
 {
   SysprofCallgraphFrame *frame_a = (SysprofCallgraphFrame *)a;
   SysprofCallgraphFrame *frame_b = (SysprofCallgraphFrame *)b;
   AugmentWeight *aug_a = sysprof_callgraph_frame_get_augment (frame_a);
   AugmentWeight *aug_b = sysprof_callgraph_frame_get_augment (frame_b);
+  AugmentWeight *root = user_data;
+  double total_a = aug_a->total / (double)root->total;
+  double total_b = aug_b->total / (double)root->total;
+
+  if (total_a < total_b)
+    return -1;
+  else if (total_a > total_b)
+    return 1;
+  else
+    return 0;
+}
+
+static int
+functions_sort_by_self (gconstpointer a,
+                        gconstpointer b,
+                        gpointer      user_data)
+{
+  SysprofCallgraphSymbol *sym_a = (SysprofCallgraphSymbol *)a;
+  SysprofCallgraphSymbol *sym_b = (SysprofCallgraphSymbol *)b;
+  AugmentWeight *aug_a = sysprof_callgraph_symbol_get_summary_augment (sym_a);
+  AugmentWeight *aug_b = sysprof_callgraph_symbol_get_summary_augment (sym_b);
+  AugmentWeight *root = user_data;
+  double self_a = aug_a->size / (double)root->total;
+  double self_b = aug_b->size / (double)root->total;
+
+  if (self_a < self_b)
+    return -1;
+  else if (self_a > self_b)
+    return 1;
+  else
+    return 0;
+}
+
+static int
+functions_sort_by_total (gconstpointer a,
+                         gconstpointer b,
+                         gpointer      user_data)
+{
+  SysprofCallgraphSymbol *sym_a = (SysprofCallgraphSymbol *)a;
+  SysprofCallgraphSymbol *sym_b = (SysprofCallgraphSymbol *)b;
+  AugmentWeight *aug_a = sysprof_callgraph_symbol_get_summary_augment (sym_a);
+  AugmentWeight *aug_b = sysprof_callgraph_symbol_get_summary_augment (sym_b);
   AugmentWeight *root = user_data;
   double total_a = aug_a->total / (double)root->total;
   double total_b = aug_b->total / (double)root->total;
@@ -178,11 +262,17 @@ sysprof_weighted_callgraph_view_load (SysprofCallgraphView *view,
 
   root = sysprof_callgraph_get_augment (callgraph, NULL);
 
-  gtk_custom_sorter_set_sort_func (self->self_sorter, sort_by_self, root, NULL);
-  gtk_custom_sorter_set_sort_func (self->total_sorter, sort_by_total, root, NULL);
+  gtk_custom_sorter_set_sort_func (self->self_sorter, descendants_sort_by_self, root, NULL);
+  gtk_custom_sorter_set_sort_func (self->total_sorter, descendants_sort_by_total, root, NULL);
+
+  gtk_custom_sorter_set_sort_func (self->functions_self_sorter, functions_sort_by_self, root, NULL);
+  gtk_custom_sorter_set_sort_func (self->functions_total_sorter, functions_sort_by_total, root, NULL);
 
   gtk_column_view_sort_by_column (SYSPROF_CALLGRAPH_VIEW (self)->column_view,
                                   self->total_column,
+                                  GTK_SORT_DESCENDING);
+  gtk_column_view_sort_by_column (SYSPROF_CALLGRAPH_VIEW (self)->functions_column_view,
+                                  self->functions_total_column,
                                   GTK_SORT_DESCENDING);
 }
 
@@ -197,12 +287,21 @@ sysprof_weighted_callgraph_view_class_init (SysprofWeightedCallgraphViewClass *k
   callgraph_view_class->load = sysprof_weighted_callgraph_view_load;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-weighted-callgraph-view.ui");
+
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, self_column);
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, total_column);
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, self_sorter);
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, total_sorter);
+
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, functions_self_column);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, functions_total_column);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, functions_self_sorter);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, functions_total_sorter);
+
   gtk_widget_class_bind_template_callback (widget_class, get_self_fraction);
   gtk_widget_class_bind_template_callback (widget_class, get_total_fraction);
+  gtk_widget_class_bind_template_callback (widget_class, functions_get_self_fraction);
+  gtk_widget_class_bind_template_callback (widget_class, functions_get_total_fraction);
 
   g_type_ensure (SYSPROF_TYPE_PROGRESS_CELL);
 }

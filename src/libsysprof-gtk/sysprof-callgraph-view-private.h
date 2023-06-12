@@ -34,7 +34,9 @@ struct _SysprofCallgraphView
   GListModel *traceables;
 
   GtkColumnView *column_view;
-  GtkWidget *scrolled_window;
+  GtkColumnView *functions_column_view;
+  GtkScrolledWindow *scrolled_window;
+  GtkWidget *paned;
 
   GCancellable *cancellable;
 

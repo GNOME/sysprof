@@ -36,17 +36,19 @@ typedef struct _SysprofCallgraphView      SysprofCallgraphView;
 typedef struct _SysprofCallgraphViewClass SysprofCallgraphViewClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType       sysprof_callgraph_view_get_type          (void) G_GNUC_CONST;
+GType             sysprof_callgraph_view_get_type       (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
-SysprofDocument *sysprof_callgraph_view_get_document (SysprofCallgraphView *self);
+SysprofCallgraph *sysprof_callgraph_view_get_callgraph  (SysprofCallgraphView *self);
 SYSPROF_AVAILABLE_IN_ALL
-void             sysprof_callgraph_view_set_document (SysprofCallgraphView *self,
-                                                      SysprofDocument      *document);
+SysprofDocument  *sysprof_callgraph_view_get_document   (SysprofCallgraphView *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel *sysprof_callgraph_view_get_traceables    (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_document   (SysprofCallgraphView *self,
+                                                         SysprofDocument      *document);
 SYSPROF_AVAILABLE_IN_ALL
-void        sysprof_callgraph_view_set_traceables    (SysprofCallgraphView *self,
-                                                      GListModel           *model);
+GListModel       *sysprof_callgraph_view_get_traceables (SysprofCallgraphView *self);
+SYSPROF_AVAILABLE_IN_ALL
+void              sysprof_callgraph_view_set_traceables (SysprofCallgraphView *self,
+                                                         GListModel           *model);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCallgraphView, g_object_unref)
 

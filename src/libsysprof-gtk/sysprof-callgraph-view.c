@@ -26,6 +26,7 @@
 
 enum {
   PROP_0,
+  PROP_CALLGRAPH,
   PROP_DOCUMENT,
   PROP_TRACEABLES,
   N_PROPS
@@ -154,6 +155,10 @@ sysprof_callgraph_view_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_CALLGRAPH:
+      g_value_set_object (value, sysprof_callgraph_view_get_callgraph (self));
+      break;
+
     case PROP_DOCUMENT:
       g_value_set_object (value, sysprof_callgraph_view_get_document (self));
       break;
@@ -199,6 +204,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   object_class->dispose = sysprof_callgraph_view_dispose;
   object_class->get_property = sysprof_callgraph_view_get_property;
   object_class->set_property = sysprof_callgraph_view_set_property;
+
+  properties[PROP_CALLGRAPH] =
+    g_param_spec_object ("callgraph", NULL, NULL,
+                         SYSPROF_TYPE_CALLGRAPH,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_DOCUMENT] =
     g_param_spec_object ("document", NULL, NULL,
@@ -338,6 +348,8 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
 
   if ((descendants_first = gtk_tree_list_model_get_row (descendants_tree, 0)))
     gtk_tree_list_row_set_expanded (descendants_first, TRUE);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CALLGRAPH]);
 }
 
 static gboolean
@@ -459,4 +471,20 @@ static void
 buildable_iface_init (GtkBuildableIface *iface)
 {
   iface->get_internal_child = sysprof_callgraph_view_get_internal_child;
+}
+
+/**
+ * sysprof_callgraph_view_get_callgraph:
+ * @self: a #SysprofCallgraphView
+ *
+ * Gets the callgraph being displayed.
+ *
+ * Returns: (transfer none) (nullable): a #SysprofCallgraph or %NULL
+ */
+SysprofCallgraph *
+sysprof_callgraph_view_get_callgraph (SysprofCallgraphView *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), NULL);
+
+  return self->callgraph;
 }

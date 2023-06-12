@@ -50,6 +50,24 @@ SysprofSymbol *_sysprof_symbol_new (GRefString     *name,
                                     SysprofAddress  begin_address,
                                     SysprofAddress  end_address);
 
+static inline SysprofSymbol *
+_sysprof_symbol_copy (SysprofSymbol *self)
+{
+  SysprofSymbol *copy;
+
+  copy = _sysprof_symbol_new (self->name ? g_ref_string_acquire (self->name) : NULL,
+                              self->binary_path ? g_ref_string_acquire (self->binary_path) : NULL,
+                              self->binary_nick ? g_ref_string_acquire (self->binary_nick) : NULL,
+                              self->begin_address,
+                              self->end_address);
+  copy->is_context_switch = self->is_context_switch;
+  copy->is_everything = self->is_everything;
+  copy->is_untraceable = self->is_untraceable;
+  copy->is_process = self->is_process;
+
+  return copy;
+}
+
 static inline gboolean
 _sysprof_symbol_equal (const SysprofSymbol *a,
                        const SysprofSymbol *b)

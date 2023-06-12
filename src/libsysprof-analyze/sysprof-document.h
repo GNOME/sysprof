@@ -37,43 +37,46 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDocument, sysprof_document, SYSPROF, DOCUMENT, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-gint64                  sysprof_document_get_clock_at_start  (SysprofDocument           *self);
+gint64               sysprof_document_get_clock_at_start        (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofDocumentFile    *sysprof_document_lookup_file         (SysprofDocument           *self,
-                                                              const char                *path);
+SysprofDocumentFile *sysprof_document_lookup_file               (SysprofDocument           *self,
+                                                                 const char                *path);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_files          (SysprofDocument           *self);
+GListModel          *sysprof_document_list_files                (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_traceables     (SysprofDocument           *self);
+GListModel          *sysprof_document_list_traceables           (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_allocations    (SysprofDocument           *self);
+GListModel          *sysprof_document_list_allocations          (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_samples        (SysprofDocument           *self);
+GListModel          *sysprof_document_list_samples              (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_processes      (SysprofDocument           *self);
+GListModel          *sysprof_document_list_processes            (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_jitmaps        (SysprofDocument           *self);
+GListModel          *sysprof_document_list_jitmaps              (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel             *sysprof_document_list_counters       (SysprofDocument           *self);
+GListModel          *sysprof_document_list_counters             (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-guint                   sysprof_document_symbolize_traceable (SysprofDocument           *self,
-                                                              SysprofDocumentTraceable  *traceable,
-                                                              SysprofSymbol            **symbols,
-                                                              guint                      n_symbols,
-                                                              SysprofAddressContext     *final_context);
+GListModel          *sysprof_document_list_symbols_in_traceable (SysprofDocument           *self,
+                                                                 SysprofDocumentTraceable  *traceable);
 SYSPROF_AVAILABLE_IN_ALL
-void                    sysprof_document_callgraph_async     (SysprofDocument             *self,
-                                                              GListModel                  *traceables,
-                                                              gsize                        augment_size,
-                                                              SysprofAugmentationFunc      augment_func,
-                                                              gpointer                     augment_func_data,
-                                                              GDestroyNotify               augment_func_data_destroy,
-                                                              GCancellable                *cancellable,
-                                                              GAsyncReadyCallback          callback,
-                                                              gpointer                     user_data);
+guint                sysprof_document_symbolize_traceable       (SysprofDocument           *self,
+                                                                 SysprofDocumentTraceable  *traceable,
+                                                                 SysprofSymbol            **symbols,
+                                                                 guint                      n_symbols,
+                                                                 SysprofAddressContext     *final_context);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCallgraph       *sysprof_document_callgraph_finish    (SysprofDocument           *self,
-                                                              GAsyncResult              *result,
-                                                              GError                   **error);
+void                 sysprof_document_callgraph_async           (SysprofDocument           *self,
+                                                                 GListModel                *traceables,
+                                                                 gsize                      augment_size,
+                                                                 SysprofAugmentationFunc    augment_func,
+                                                                 gpointer                   augment_func_data,
+                                                                 GDestroyNotify             augment_func_data_destroy,
+                                                                 GCancellable              *cancellable,
+                                                                 GAsyncReadyCallback        callback,
+                                                                 gpointer                   user_data);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofCallgraph    *sysprof_document_callgraph_finish          (SysprofDocument           *self,
+                                                                 GAsyncResult              *result,
+                                                                 GError                   **error);
 
 G_END_DECLS

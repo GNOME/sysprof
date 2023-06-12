@@ -49,6 +49,8 @@
 
 #include "line-reader-private.h"
 
+#define MAX_STACK_DEPTH 128
+
 struct _SysprofDocument
 {
   GObject                   parent_instance;
@@ -1302,4 +1304,52 @@ sysprof_document_get_clock_at_start (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), 0);
 
   return self->header.time;
+}
+
+/**
+ * sysprof_document_list_symbols_in_traceable:
+ * @self: a #SysprofDocument
+ * @traceable: a #SysprofDocumentTraceable
+ *
+ * Gets the symbols in @traceable as a list model.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofSymbol
+ */
+GListModel *
+sysprof_document_list_symbols_in_traceable (SysprofDocument          *self,
+                                            SysprofDocumentTraceable *traceable)
+{
+  SysprofAddressContext final_context;
+  GListStore *ret = NULL;
+  SysprofSymbol **symbols;
+  guint stack_depth;
+  guint n_symbols;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable), NULL);
+
+  ret = g_list_store_new (SYSPROF_TYPE_SYMBOL);
+
+  stack_depth = MIN (MAX_STACK_DEPTH, sysprof_document_traceable_get_stack_depth (traceable));
+  symbols = g_alloca (sizeof (SysprofSymbol *) * stack_depth);
+  n_symbols = sysprof_document_symbolize_traceable (self, traceable, symbols, stack_depth, &final_context);
+
+  if (n_symbols > 0 && symbols[0]->is_context_switch)
+    {
+      symbols++;
+      n_symbols--;
+    }
+
+  /* We must make a copy of the symbols because GtkListViewBase does not
+   * deal with the same object being in a list gracefully. Realistically
+   * we should deal with this there, but this gets things moving forward
+   * for the time being.
+   */
+  for (guint i = 0; i < n_symbols; i++)
+    {
+      g_autoptr(SysprofSymbol) copy = _sysprof_symbol_copy (symbols[i]);
+      g_list_store_append (ret, copy);
+    }
+
+  return G_LIST_MODEL (ret);
 }

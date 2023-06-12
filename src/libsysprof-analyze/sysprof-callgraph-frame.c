@@ -73,7 +73,7 @@ sysprof_callgraph_frame_get_item (GListModel *model,
   if (iter == NULL)
     return NULL;
 
-  return _sysprof_callgraph_frame_new (self->callgraph, iter);
+  return _sysprof_callgraph_frame_new_for_node (self->callgraph, iter);
 }
 
 static void
@@ -150,8 +150,8 @@ sysprof_callgraph_frame_init (SysprofCallgraphFrame *self)
 }
 
 SysprofCallgraphFrame *
-_sysprof_callgraph_frame_new (SysprofCallgraph     *callgraph,
-                              SysprofCallgraphNode *node)
+_sysprof_callgraph_frame_new_for_node (SysprofCallgraph     *callgraph,
+                                       SysprofCallgraphNode *node)
 {
   SysprofCallgraphFrame *self;
 

@@ -25,7 +25,7 @@
 
 G_BEGIN_DECLS
 
-SysprofCallgraphFrame *_sysprof_callgraph_frame_new (SysprofCallgraph     *callgraph,
-                                                     SysprofCallgraphNode *node);
+SysprofCallgraphFrame *_sysprof_callgraph_frame_new_for_node (SysprofCallgraph     *callgraph,
+                                                              SysprofCallgraphNode *node);
 
 G_END_DECLS

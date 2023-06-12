@@ -53,7 +53,7 @@ sysprof_callgraph_get_item (GListModel *model,
   if (position > 0)
     return NULL;
 
-  return _sysprof_callgraph_frame_new (self, &self->root);
+  return _sysprof_callgraph_frame_new_for_node (self, &self->root);
 }
 
 static void

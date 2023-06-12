@@ -38,6 +38,7 @@ struct _SysprofCallgraphView
   GtkColumnView *descendants_column_view;
   GtkColumnView *functions_column_view;
   GtkColumnView *traceables_column_view;
+  GtkColumnView *traceable_column_view;
   GtkCustomSorter *descendants_name_sorter;
   GtkCustomSorter *functions_name_sorter;
   GtkScrolledWindow *scrolled_window;

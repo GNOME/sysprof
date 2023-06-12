@@ -197,44 +197,14 @@
             <property name="end-child">
               <object class="GtkPaned">
                 <property name="orientation">vertical</property>
-                <property name="start-child">
+                <property name="end-child">
                   <object class="GtkScrolledWindow">
+                    <property name="vexpand">false</property>
                     <child>
                       <object class="GtkColumnView" id="traceables_column_view">
-                        <property name="width-request">200</property>
                         <style>
                           <class name="data-table"/>
                         </style>
-                        <child>
-                          <object class="GtkColumnViewColumn" id="traceables_pid_column">
-                            <property name="title" translatable="yes">PID</property>
-                            <property name="factory">
-                              <object class="GtkBuilderListItemFactory">
-                                <property name="bytes"><![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
-<interface>
-  <template class="GtkListItem">
-    <property name="child">
-      <object class="GtkLabel">
-        <property name="xalign">1.</property>
-        <attributes>
-          <attribute name="font-features" value="'tnum'"/>
-        </attributes>
-        <binding name="label">
-          <lookup name="pid" type="SysprofDocumentFrame">
-            <lookup name="item">GtkListItem</lookup>
-          </lookup>
-        </binding>
-      </object>
-    </property>
-  </template>
-</interface>
-]]>
-                                </property>
-                              </object>
-                            </property>
-                          </object>
-                        </child>
                         <child>
                           <object class="GtkColumnViewColumn" id="traceables_time_column">
                             <property name="title" translatable="yes">Time</property>
@@ -254,6 +224,105 @@
           <closure type="gchararray" function="format_time_offset">
             <lookup name="item">GtkListItem</lookup>
           </closure>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="traceables_pid_column">
+                            <property name="title" translatable="yes">PID</property>
+                            <property name="expand">true</property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <attributes>
+          <attribute name="font-features" value="'tnum'"/>
+        </attributes>
+        <binding name="label">
+          <lookup name="pid" type="SysprofDocumentFrame">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+                <property name="start-child">
+                  <object class="GtkScrolledWindow">
+                    <property name="vexpand">true</property>
+                    <child>
+                      <object class="GtkColumnView" id="traceable_column_view">
+                        <style>
+                          <class name="data-table"/>
+                        </style>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="traceable_symbol_column">
+                            <property name="title" translatable="yes">Stack Trace</property>
+                            <property name="expand">true</property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="text-overflow">ellipsize-middle</property>
+        <binding name="text">
+          <lookup name="name" type="SysprofSymbol">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="traceable_depth_column">
+                            <property name="title" translatable="yes">Frame</property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">1</property>
+        <attributes>
+          <attribute name="font-features" value="'tnum'"/>
+        </attributes>
+        <binding name="label">
+          <lookup name="position">GtkListItem</lookup>
         </binding>
       </object>
     </property>

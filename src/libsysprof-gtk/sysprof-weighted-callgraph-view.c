@@ -28,6 +28,11 @@ struct _SysprofWeightedCallgraphView
 {
   SysprofCallgraphView parent_instance;
 
+  GtkColumnViewColumn *callers_self_column;
+  GtkColumnViewColumn *callers_total_column;
+  GtkCustomSorter *callers_self_sorter;
+  GtkCustomSorter *callers_total_sorter;
+
   GtkColumnViewColumn *descendants_self_column;
   GtkColumnViewColumn *descendants_total_column;
   GtkCustomSorter *descendants_self_sorter;
@@ -272,6 +277,14 @@ sysprof_weighted_callgraph_view_load (SysprofCallgraphView *view,
   gtk_custom_sorter_set_sort_func (self->functions_total_sorter,
                                    functions_sort_by_total, root, NULL);
 
+  gtk_custom_sorter_set_sort_func (self->callers_self_sorter,
+                                   functions_sort_by_self, root, NULL);
+  gtk_custom_sorter_set_sort_func (self->callers_total_sorter,
+                                   functions_sort_by_total, root, NULL);
+
+  gtk_column_view_sort_by_column (SYSPROF_CALLGRAPH_VIEW (self)->callers_column_view,
+                                  self->callers_total_column,
+                                  GTK_SORT_DESCENDING);
   gtk_column_view_sort_by_column (SYSPROF_CALLGRAPH_VIEW (self)->descendants_column_view,
                                   self->descendants_total_column,
                                   GTK_SORT_DESCENDING);
@@ -291,6 +304,11 @@ sysprof_weighted_callgraph_view_class_init (SysprofWeightedCallgraphViewClass *k
   callgraph_view_class->load = sysprof_weighted_callgraph_view_load;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-weighted-callgraph-view.ui");
+
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, callers_self_column);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, callers_total_column);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, callers_self_sorter);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, callers_total_sorter);
 
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, descendants_self_column);
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, descendants_total_column);

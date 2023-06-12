@@ -383,7 +383,9 @@ sysprof_callgraph_view_get_internal_child (GtkBuildable *buildable,
                                            GtkBuilder   *builder,
                                            const char   *name)
 {
-  if (g_strcmp0 (name, "descendants_column_view") == 0)
+  if (g_strcmp0 (name, "callers_column_view") == 0)
+    return G_OBJECT (SYSPROF_CALLGRAPH_VIEW (buildable)->callers_column_view);
+  else if (g_strcmp0 (name, "descendants_column_view") == 0)
     return G_OBJECT (SYSPROF_CALLGRAPH_VIEW (buildable)->descendants_column_view);
   else if (g_strcmp0 (name, "functions_column_view") == 0)
     return G_OBJECT (SYSPROF_CALLGRAPH_VIEW (buildable)->functions_column_view);

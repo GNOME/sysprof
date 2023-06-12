@@ -132,5 +132,72 @@
         </child>
       </object>
     </child>
+    <child internal-child="callers_column_view">
+      <object class="GtkColumnView">
+        <style>
+          <class name="data-table"/>
+        </style>
+        <child>
+          <object class="GtkColumnViewColumn" id="callers_self_column">
+            <property name="title" translatable="yes">Self</property>
+            <property name="factory">
+              <object class="GtkBuilderListItemFactory">
+                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofProgressCell" id="progress">
+        <binding name="fraction">
+          <closure type="gdouble" function="functions_get_self_fraction">
+            <lookup name="item">GtkListItem</lookup>
+          </closure>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                </property>
+              </object>
+            </property>
+            <property name="sorter">
+              <object class="GtkCustomSorter" id="callers_self_sorter">
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkColumnViewColumn" id="callers_total_column">
+            <property name="title" translatable="yes">Total</property>
+            <property name="factory">
+              <object class="GtkBuilderListItemFactory">
+                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofProgressCell" id="progress">
+        <binding name="fraction">
+          <closure type="gdouble" function="functions_get_total_fraction">
+            <lookup name="item">GtkListItem</lookup>
+          </closure>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                </property>
+              </object>
+            </property>
+            <property name="sorter">
+              <object class="GtkCustomSorter" id="callers_total_sorter">
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
   </template>
 </interface>

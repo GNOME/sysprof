@@ -215,6 +215,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, callers_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, descendants_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_column_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_name_sorter);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, paned);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, scrolled_window);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_callgraph_view_key_pressed_cb);
@@ -228,6 +229,18 @@ static void
 sysprof_callgraph_view_init (SysprofCallgraphView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+}
+
+static int
+functions_name_compare (gconstpointer a,
+                        gconstpointer b,
+                        gpointer      user_data)
+{
+  SysprofCallgraphSymbol *sym_a = (SysprofCallgraphSymbol *)a;
+  SysprofCallgraphSymbol *sym_b = (SysprofCallgraphSymbol *)b;
+
+  return g_strcmp0 (sysprof_symbol_get_name (sysprof_callgraph_symbol_get_symbol (sym_a)),
+                    sysprof_symbol_get_name (sysprof_callgraph_symbol_get_symbol (sym_b)));
 }
 
 static GListModel *
@@ -296,6 +309,9 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
                            G_CONNECT_SWAPPED);
   gtk_column_view_set_model (self->functions_column_view,
                              GTK_SELECTION_MODEL (functions_selection));
+
+  gtk_custom_sorter_set_sort_func (self->functions_name_sorter,
+                                   functions_name_compare, NULL, NULL);
 
   if (SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load)
    SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load (self, callgraph);

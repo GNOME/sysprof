@@ -17,6 +17,10 @@
                       <object class="GtkColumnViewColumn" id="functions_name_column">
                         <property name="title" translatable="yes">Functions</property>
                         <property name="expand">true</property>
+                        <property name="sorter">
+                          <object class="GtkCustomSorter" id="functions_name_sorter">
+                          </object>
+                        </property>
                         <property name="factory">
                           <object class="GtkBuilderListItemFactory">
                             <property name="bytes"><![CDATA[

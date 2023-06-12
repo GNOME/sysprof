@@ -83,6 +83,8 @@ functions_selection_changed_cb (SysprofCallgraphView *self,
       callers_sort_model = gtk_sort_list_model_new (g_object_ref (callers),
                                                     g_object_ref (column_sorter));
       callers_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (callers_sort_model)));
+      gtk_single_selection_set_autoselect (callers_selection, FALSE);
+      gtk_single_selection_set_selected (callers_selection, GTK_INVALID_LIST_POSITION);
       g_signal_connect_object (callers_selection,
                                "selection-changed",
                                G_CALLBACK (callers_selection_changed_cb),
@@ -302,6 +304,9 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
   functions_sort_model = gtk_sort_list_model_new (g_object_ref (functions_model),
                                                   g_object_ref (column_sorter));
   functions_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (functions_sort_model)));
+  gtk_single_selection_set_autoselect (functions_selection, FALSE);
+  gtk_single_selection_set_can_unselect (functions_selection, TRUE);
+  gtk_single_selection_set_selected (functions_selection, GTK_INVALID_LIST_POSITION);
   g_signal_connect_object (functions_selection,
                            "selection-changed",
                            G_CALLBACK (functions_selection_changed_cb),

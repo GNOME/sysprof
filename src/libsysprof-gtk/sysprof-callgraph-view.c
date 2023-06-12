@@ -39,6 +39,27 @@ G_DEFINE_ABSTRACT_TYPE_WITH_CODE (SysprofCallgraphView, sysprof_callgraph_view, 
 static GParamSpec *properties [N_PROPS];
 
 static void
+callers_selection_changed_cb (SysprofCallgraphView *self,
+                              guint                 position,
+                              guint                 n_items,
+                              GtkSingleSelection   *single)
+{
+  GObject *object;
+
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+  g_assert (GTK_IS_SINGLE_SELECTION (single));
+
+  if ((object = gtk_single_selection_get_selected_item (single)))
+    {
+      SysprofCallgraphSymbol *sym = SYSPROF_CALLGRAPH_SYMBOL (object);
+      SysprofSymbol *symbol = sysprof_callgraph_symbol_get_symbol (sym);
+
+      g_print ("Caller %s selected.\n",
+               sysprof_symbol_get_name (symbol));
+    }
+}
+
+static void
 functions_selection_changed_cb (SysprofCallgraphView *self,
                                 guint                 position,
                                 guint                 n_items,
@@ -54,14 +75,19 @@ functions_selection_changed_cb (SysprofCallgraphView *self,
       SysprofCallgraphSymbol *sym = SYSPROF_CALLGRAPH_SYMBOL (object);
       SysprofSymbol *symbol = sysprof_callgraph_symbol_get_symbol (sym);
       g_autoptr(GtkSortListModel) callers_sort_model = NULL;
-      g_autoptr(GtkNoSelection) callers_selection = NULL;
+      g_autoptr(GtkSingleSelection) callers_selection = NULL;
       g_autoptr(GListModel) callers = sysprof_callgraph_list_callers (self->callgraph, symbol);
       GtkSorter *column_sorter;
 
       column_sorter = gtk_column_view_get_sorter (self->callers_column_view);
       callers_sort_model = gtk_sort_list_model_new (g_object_ref (callers),
                                                     g_object_ref (column_sorter));
-      callers_selection = gtk_no_selection_new (g_object_ref (G_LIST_MODEL (callers_sort_model)));
+      callers_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (callers_sort_model)));
+      g_signal_connect_object (callers_selection,
+                               "selection-changed",
+                               G_CALLBACK (callers_selection_changed_cb),
+                               self,
+                               G_CONNECT_SWAPPED);
       gtk_column_view_set_model (self->callers_column_view,
                                  GTK_SELECTION_MODEL (callers_selection));
     }

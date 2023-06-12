@@ -61,7 +61,7 @@ SYSPROF_AVAILABLE_IN_ALL
 GListModel           *sysprof_callgraph_list_symbols               (SysprofCallgraph       *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel           *sysprof_callgraph_list_callers               (SysprofCallgraph       *self,
-                                                                    SysprofCallgraphFrame  *frame);
+                                                                    SysprofSymbol          *symbol);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel           *sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph       *self,
                                                                     SysprofSymbol          *symbol);

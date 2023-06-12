@@ -464,30 +464,25 @@ sysprof_callgraph_node_parent (SysprofCallgraphNode *node)
 /**
  * sysprof_callgraph_list_callers:
  * @self: a #SysprofCallgraph
- * @node: a #SysprofCallgraphFrame
+ * @symbol: a #SysprofSymbol
  *
- * Gets a list of #SysprofSymbol that call @node.
+ * Gets a list of #SysprofSymbol that call @symbol.
  *
- * Returns: (trasfer full): a #GListModel of #SysprofSymbol
+ * Returns: (trasfer full): a #GListModel of #SysprofCallgraphSymbol
  */
 GListModel *
-sysprof_callgraph_list_callers (SysprofCallgraph      *self,
-                                SysprofCallgraphFrame *frame)
+sysprof_callgraph_list_callers (SysprofCallgraph *self,
+                                SysprofSymbol    *symbol)
 {
   SysprofCallgraphSummary *summary;
-  SysprofSymbol *symbol;
-  GListStore *store;
 
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
-  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (frame), NULL);
-
-  store = g_list_store_new (SYSPROF_TYPE_SYMBOL);
-  symbol = sysprof_callgraph_frame_get_symbol (frame);
+  g_return_val_if_fail (SYSPROF_IS_SYMBOL (symbol), NULL);
 
   if ((summary = g_hash_table_lookup (self->symbol_to_summary, symbol)))
-    g_list_store_splice (store, 0, 0, summary->callers->pdata, summary->callers->len);
+    return _sysprof_callgraph_symbol_list_model_new (self, summary->callers);
 
-  return G_LIST_MODEL (store);
+  return G_LIST_MODEL (g_list_store_new (SYSPROF_TYPE_CALLGRAPH_SYMBOL));
 }
 
 /**

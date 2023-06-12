@@ -37,6 +37,7 @@ struct _SysprofCallgraphView
   GtkColumnView *callers_column_view;
   GtkColumnView *descendants_column_view;
   GtkColumnView *functions_column_view;
+  GtkCustomSorter *descendants_name_sorter;
   GtkCustomSorter *functions_name_sorter;
   GtkScrolledWindow *scrolled_window;
   GtkWidget *paned;

@@ -47,16 +47,36 @@ struct _SysprofCallgraphNode
   gpointer                 augment;
 };
 
-void              _sysprof_callgraph_new_async  (SysprofDocument          *document,
-                                                 GListModel               *traceables,
-                                                 gsize                     augment_size,
-                                                 SysprofAugmentationFunc   augment_func,
-                                                 gpointer                  augment_func_data,
-                                                 GDestroyNotify            augment_func_data_destroy,
-                                                 GCancellable             *cancellable,
-                                                 GAsyncReadyCallback       callback,
-                                                 gpointer                  user_data);
-SysprofCallgraph *_sysprof_callgraph_new_finish (GAsyncResult             *result,
-                                                 GError                  **error);
+struct _SysprofCallgraph
+{
+  GObject                  parent_instance;
+
+  SysprofDocument         *document;
+  GListModel              *traceables;
+
+  GHashTable              *symbol_to_summary;
+  GPtrArray               *symbols;
+
+  gsize                    augment_size;
+  SysprofAugmentationFunc  augment_func;
+  gpointer                 augment_func_data;
+  GDestroyNotify           augment_func_data_destroy;
+
+  SysprofCallgraphNode     root;
+};
+
+void              _sysprof_callgraph_new_async          (SysprofDocument          *document,
+                                                         GListModel               *traceables,
+                                                         gsize                     augment_size,
+                                                         SysprofAugmentationFunc   augment_func,
+                                                         gpointer                  augment_func_data,
+                                                         GDestroyNotify            augment_func_data_destroy,
+                                                         GCancellable             *cancellable,
+                                                         GAsyncReadyCallback       callback,
+                                                         gpointer                  user_data);
+SysprofCallgraph *_sysprof_callgraph_new_finish         (GAsyncResult             *result,
+                                                         GError                  **error);
+gpointer          _sysprof_callgraph_get_symbol_augment (SysprofCallgraph         *self,
+                                                         SysprofSymbol            *symbol);
 
 G_END_DECLS

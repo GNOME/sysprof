@@ -22,6 +22,7 @@
 
 #include "sysprof-callgraph-private.h"
 #include "sysprof-callgraph-frame-private.h"
+#include "sysprof-callgraph-symbol-private.h"
 #include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-private.h"
 #include "sysprof-document-traceable.h"
@@ -30,23 +31,6 @@
 #include "eggbitset.h"
 
 #define MAX_STACK_DEPTH 1024
-
-struct _SysprofCallgraph
-{
-  GObject                  parent_instance;
-
-  SysprofDocument         *document;
-  GListModel              *traceables;
-
-  GHashTable              *symbol_to_summary;
-
-  gsize                    augment_size;
-  SysprofAugmentationFunc  augment_func;
-  gpointer                 augment_func_data;
-  GDestroyNotify           augment_func_data_destroy;
-
-  SysprofCallgraphNode     root;
-};
 
 static GType
 sysprof_callgraph_get_item_type (GListModel *model)
@@ -119,6 +103,7 @@ sysprof_callgraph_get_summary (SysprofCallgraph *self,
       summary->symbol = symbol;
 
       g_hash_table_insert (self->symbol_to_summary, symbol, summary);
+      g_ptr_array_add (self->symbols, symbol);
     }
 
   return summary;
@@ -400,6 +385,7 @@ _sysprof_callgraph_new_async (SysprofDocument         *document,
   self->augment_func_data = augment_func_data;
   self->augment_func_data_destroy = augment_func_data_destroy;
   self->symbol_to_summary = g_hash_table_new_full (NULL, NULL, NULL, summary_free);
+  self->symbols = g_ptr_array_new ();
   self->root.summary = sysprof_callgraph_get_summary (self, everything);
 
   task = g_task_new (NULL, cancellable, callback, user_data);
@@ -451,6 +437,21 @@ sysprof_callgraph_get_summary_augment (SysprofCallgraph     *self,
     node = &self->root;
 
   return get_augmentation (self, &node->summary->augment);
+}
+
+gpointer
+_sysprof_callgraph_get_symbol_augment (SysprofCallgraph *self,
+                                       SysprofSymbol    *symbol)
+{
+  SysprofCallgraphSummary *summary;
+
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
+  g_return_val_if_fail (SYSPROF_IS_SYMBOL (symbol), NULL);
+
+  if ((summary = g_hash_table_lookup (self->symbol_to_summary, symbol)))
+    return get_augmentation (self, &summary->augment);
+
+  return NULL;
 }
 
 SysprofCallgraphNode *
@@ -511,4 +512,21 @@ sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph *self,
     return _sysprof_document_bitset_index_new (self->traceables, summary->traceables);
 
   return G_LIST_MODEL (g_list_store_new (SYSPROF_TYPE_DOCUMENT_TRACEABLE));
+}
+
+/**
+ * sysprof_callgraph_list_symbols:
+ * @self: a #SysprofCallgraph
+ *
+ * Gets a #GListModel of #SysprofCallgraphSymbol that an be used to
+ * display a function list and associated augmentation data.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofCallgraphSymbol
+ */
+GListModel *
+sysprof_callgraph_list_symbols (SysprofCallgraph *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
+
+  return _sysprof_callgraph_symbol_list_model_new (self);
 }

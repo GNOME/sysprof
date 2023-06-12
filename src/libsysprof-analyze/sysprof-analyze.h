@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 # include "sysprof-bundled-symbolizer.h"
 # include "sysprof-callgraph.h"
 # include "sysprof-callgraph-frame.h"
+# include "sysprof-callgraph-symbol.h"
 # include "sysprof-document.h"
 # include "sysprof-document-allocation.h"
 # include "sysprof-document-counter.h"

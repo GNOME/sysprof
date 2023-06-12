@@ -25,6 +25,7 @@
 #include <sysprof-capture.h>
 
 #include "sysprof-callgraph-frame.h"
+#include "sysprof-callgraph-symbol.h"
 #include "sysprof-document-frame.h"
 
 G_BEGIN_DECLS
@@ -57,20 +58,24 @@ typedef void (*SysprofAugmentationFunc) (SysprofCallgraph     *callgraph,
                                          gpointer              user_data);
 
 SYSPROF_AVAILABLE_IN_ALL
-GListModel           *sysprof_callgraph_list_callers               (SysprofCallgraph      *self,
-                                                                    SysprofCallgraphFrame *frame);
+GListModel           *sysprof_callgraph_list_symbols               (SysprofCallgraph       *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel           *sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph      *self,
-                                                                    SysprofSymbol         *symbol);
+GListModel           *sysprof_callgraph_list_callers               (SysprofCallgraph       *self,
+                                                                    SysprofCallgraphFrame  *frame);
 SYSPROF_AVAILABLE_IN_ALL
-gpointer              sysprof_callgraph_get_augment                (SysprofCallgraph      *self,
-                                                                    SysprofCallgraphNode  *node);
+GListModel           *sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph       *self,
+                                                                    SysprofSymbol          *symbol);
 SYSPROF_AVAILABLE_IN_ALL
-gpointer              sysprof_callgraph_get_summary_augment        (SysprofCallgraph      *self,
-                                                                    SysprofCallgraphNode  *node);
+gpointer              sysprof_callgraph_get_augment                (SysprofCallgraph       *self,
+                                                                    SysprofCallgraphNode   *node);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCallgraphNode *sysprof_callgraph_node_parent                (SysprofCallgraphNode  *node);
+gpointer              sysprof_callgraph_get_summary_augment        (SysprofCallgraph       *self,
+                                                                    SysprofCallgraphNode   *node);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCallgraph     *sysprof_callgraph_frame_get_callgraph        (SysprofCallgraphFrame *self);
+SysprofCallgraphNode *sysprof_callgraph_node_parent                (SysprofCallgraphNode   *node);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofCallgraph     *sysprof_callgraph_frame_get_callgraph        (SysprofCallgraphFrame  *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofCallgraph     *sysprof_callgraph_symbol_get_callgraph       (SysprofCallgraphSymbol *self);
 
 G_END_DECLS

@@ -238,7 +238,6 @@
                         <child>
                           <object class="GtkColumnViewColumn" id="traceables_pid_column">
                             <property name="title" translatable="yes">PID</property>
-                            <property name="expand">true</property>
                             <property name="factory">
                               <object class="GtkBuilderListItemFactory">
                                 <property name="bytes"><![CDATA[
@@ -253,6 +252,37 @@
         </attributes>
         <binding name="label">
           <lookup name="pid" type="SysprofDocumentFrame">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="traceables_depth_column">
+                            <property name="title" translatable="yes">Depth</property>
+                            <property name="expand">true</property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <attributes>
+          <attribute name="font-features" value="'tnum'"/>
+        </attributes>
+        <binding name="label">
+          <lookup name="stack-depth" type="SysprofDocumentTraceable">
             <lookup name="item">GtkListItem</lookup>
           </lookup>
         </binding>

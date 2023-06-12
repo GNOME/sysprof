@@ -215,9 +215,12 @@
 <interface>
   <template class="GtkListItem">
     <property name="child">
-      <object class="GtkInscription">
+      <object class="GtkLabel">
         <property name="xalign">1.</property>
-        <binding name="text">
+        <attributes>
+          <attribute name="font-features" value="'tnum'"/>
+        </attributes>
+        <binding name="label">
           <lookup name="pid" type="SysprofDocumentFrame">
             <lookup name="item">GtkListItem</lookup>
           </lookup>

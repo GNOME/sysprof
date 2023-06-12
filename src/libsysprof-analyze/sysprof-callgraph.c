@@ -528,5 +528,5 @@ sysprof_callgraph_list_symbols (SysprofCallgraph *self)
 {
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
 
-  return _sysprof_callgraph_symbol_list_model_new (self);
+  return _sysprof_callgraph_symbol_list_model_new (self, self->symbols);
 }

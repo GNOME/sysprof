@@ -171,16 +171,22 @@ sysprof_callgraph_symbol_get_callgraph (SysprofCallgraphSymbol *self)
   return self->callgraph;
 }
 
-struct _SysprofCallgraphSymbolListModel
+typedef struct _SysprofCallgraphSymbolListModel
 {
   GObject parent_instance;
   SysprofCallgraph *callgraph;
-};
+  GPtrArray *symbols;
+} SysprofCallgraphSymbolListModel;
 
 static guint
 sysprof_callgraph_symbol_list_model_get_n_items (GListModel *model)
 {
-  return SYSPROF_CALLGRAPH_SYMBOL (model)->callgraph->symbols->len;
+  SysprofCallgraphSymbolListModel *self = (SysprofCallgraphSymbolListModel *)model;
+
+  if (self->symbols != NULL)
+    return self->symbols->len;
+
+  return 0;
 }
 
 static GType
@@ -193,13 +199,13 @@ static gpointer
 sysprof_callgraph_symbol_list_model_get_item (GListModel *model,
                                               guint       position)
 {
-  SysprofCallgraphSymbol *self = SYSPROF_CALLGRAPH_SYMBOL (model);
+  SysprofCallgraphSymbolListModel *self = (SysprofCallgraphSymbolListModel *)model;
 
-  if (position >= self->callgraph->symbols->len)
+  if (self->symbols == NULL || position >= self->symbols->len)
     return NULL;
 
   return _sysprof_callgraph_symbol_new (self->callgraph,
-                                        g_ptr_array_index (self->callgraph->symbols, position));
+                                        g_ptr_array_index (self->symbols, position));
 }
 
 static void
@@ -216,8 +222,22 @@ G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofCallgraphSymbolListModel, sysprof_callgrap
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
 static void
+sysprof_callgraph_symbol_list_model_dispose (GObject *object)
+{
+  SysprofCallgraphSymbolListModel *self = (SysprofCallgraphSymbolListModel *)object;
+
+  g_clear_pointer (&self->symbols, g_ptr_array_unref);
+  g_clear_object (&self->callgraph);
+
+  G_OBJECT_CLASS (sysprof_callgraph_symbol_parent_class)->dispose (object);
+}
+
+static void
 sysprof_callgraph_symbol_list_model_class_init (SysprofCallgraphSymbolListModelClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+  object_class->dispose = sysprof_callgraph_symbol_list_model_dispose;
 }
 
 static void
@@ -226,7 +246,8 @@ sysprof_callgraph_symbol_list_model_init (SysprofCallgraphSymbolListModel *self)
 }
 
 GListModel *
-_sysprof_callgraph_symbol_list_model_new (SysprofCallgraph *callgraph)
+_sysprof_callgraph_symbol_list_model_new (SysprofCallgraph *callgraph,
+                                          GPtrArray        *symbols)
 {
   SysprofCallgraphSymbolListModel *self;
 
@@ -234,6 +255,9 @@ _sysprof_callgraph_symbol_list_model_new (SysprofCallgraph *callgraph)
 
   self = g_object_new (SYSPROF_TYPE_CALLGRAPH_SYMBOL_LIST_MODEL, NULL);
   self->callgraph = g_object_ref (callgraph);
+
+  if (symbols != NULL)
+    self->symbols = g_ptr_array_ref (symbols);
 
   return G_LIST_MODEL (self);
 }

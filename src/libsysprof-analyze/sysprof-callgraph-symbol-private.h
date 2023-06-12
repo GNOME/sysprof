@@ -24,6 +24,7 @@
 
 G_BEGIN_DECLS
 
-GListModel *_sysprof_callgraph_symbol_list_model_new (SysprofCallgraph *callgraph);
+GListModel *_sysprof_callgraph_symbol_list_model_new (SysprofCallgraph *callgraph,
+                                                      GPtrArray        *symbols);
 
 G_END_DECLS

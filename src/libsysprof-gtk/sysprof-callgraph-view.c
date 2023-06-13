@@ -33,11 +33,57 @@ enum {
 };
 
 static void buildable_iface_init (GtkBuildableIface *iface);
+static GListModel *sysprof_callgraph_view_create_model_func (gpointer item,
+                                                             gpointer user_data);
+static void descendants_selection_changed_cb (SysprofCallgraphView *self,
+                                              guint                 position,
+                                              guint                 n_items,
+                                              GtkSingleSelection   *single);
 
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (SysprofCallgraphView, sysprof_callgraph_view, GTK_TYPE_WIDGET,
                                   G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+sysprof_callgraph_view_descendants_cb (GObject      *object,
+                                       GAsyncResult *result,
+                                       gpointer      user_data)
+{
+  SysprofCallgraph *callgraph = (SysprofCallgraph *)object;
+  g_autoptr(SysprofCallgraphView) self = user_data;
+  g_autoptr(GListModel) model = NULL;
+  g_autoptr(GtkTreeListRowSorter) descendants_sorter = NULL;
+  g_autoptr(GtkSingleSelection) descendants_selection = NULL;
+  g_autoptr(GtkSortListModel) descendants_sort_model = NULL;
+  g_autoptr(GtkTreeListModel) descendants_tree = NULL;
+  g_autoptr(GtkTreeListRow) descendants_first = NULL;
+  g_autoptr(GError) error = NULL;
+  GtkSorter *column_sorter;
+
+  g_assert (SYSPROF_IS_CALLGRAPH (callgraph));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  if (!(model = sysprof_callgraph_descendants_finish (callgraph, result, &error)))
+    return;
+
+  column_sorter = gtk_column_view_get_sorter (self->descendants_column_view);
+  descendants_tree = gtk_tree_list_model_new (g_object_ref (model),
+                                              FALSE, FALSE,
+                                              sysprof_callgraph_view_create_model_func,
+                                              NULL, NULL);
+  descendants_sorter = gtk_tree_list_row_sorter_new (g_object_ref (column_sorter));
+  descendants_sort_model = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (descendants_tree)),
+                                                    g_object_ref (GTK_SORTER (descendants_sorter)));
+  descendants_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (descendants_sort_model)));
+  g_signal_connect_object (descendants_selection,
+                           "selection-changed",
+                           G_CALLBACK (descendants_selection_changed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  gtk_column_view_set_model (self->descendants_column_view, GTK_SELECTION_MODEL (descendants_selection));
+}
 
 static void
 callers_selection_changed_cb (SysprofCallgraphView *self,
@@ -55,8 +101,14 @@ callers_selection_changed_cb (SysprofCallgraphView *self,
       SysprofCallgraphSymbol *sym = SYSPROF_CALLGRAPH_SYMBOL (object);
       SysprofSymbol *symbol = sysprof_callgraph_symbol_get_symbol (sym);
 
-      g_print ("Caller %s selected.\n",
+      g_debug ("Select %s as root callgraph node",
                sysprof_symbol_get_name (symbol));
+
+      sysprof_callgraph_descendants_async (self->callgraph,
+                                           symbol,
+                                           NULL,
+                                           sysprof_callgraph_view_descendants_cb,
+                                           g_object_ref (self));
     }
 }
 
@@ -421,7 +473,7 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
                                               NULL, NULL);
   descendants_sorter = gtk_tree_list_row_sorter_new (g_object_ref (column_sorter));
   descendants_sort_model = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (descendants_tree)),
-                                        g_object_ref (GTK_SORTER (descendants_sorter)));
+                                                    g_object_ref (GTK_SORTER (descendants_sorter)));
   descendants_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (descendants_sort_model)));
   g_signal_connect_object (descendants_selection,
                            "selection-changed",

@@ -13,6 +13,7 @@ libsysprof_profile_public_sources = [
   'sysprof-recording.c',
   'sysprof-sampler.c',
   'sysprof-spawnable.c',
+  'sysprof-tracer.c',
 ]
 
 libsysprof_profile_private_sources = [
@@ -41,6 +42,7 @@ libsysprof_profile_public_headers = [
   'sysprof-recording.h',
   'sysprof-sampler.h',
   'sysprof-spawnable.h',
+  'sysprof-tracer.h',
 ]
 
 if host_machine.system() == 'linux'

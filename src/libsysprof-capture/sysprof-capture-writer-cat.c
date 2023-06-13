@@ -416,6 +416,32 @@ sysprof_capture_writer_cat (SysprofCaptureWriter *self,
             break;
           }
 
+        case SYSPROF_CAPTURE_FRAME_TRACE:
+          {
+            const SysprofCaptureTrace *frame;
+
+            if (!(frame = sysprof_capture_reader_read_trace (reader)))
+              goto panic;
+
+            {
+              SysprofCaptureAddress addrs[frame->n_addrs];
+
+              for (unsigned int z = 0; z < frame->n_addrs; z++)
+                addrs[z] = translate_table_translate (tables, TRANSLATE_ADDR, frame->addrs[z]);
+
+              sysprof_capture_writer_add_trace (self,
+                                                frame->frame.time,
+                                                frame->frame.cpu,
+                                                frame->frame.pid,
+                                                frame->tid,
+                                                addrs,
+                                                frame->n_addrs,
+                                                frame->entering);
+            }
+
+            break;
+          }
+
         case SYSPROF_CAPTURE_FRAME_CTRDEF:
           {
             const SysprofCaptureCounterDefine *frame;

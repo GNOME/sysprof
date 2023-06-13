@@ -28,6 +28,15 @@
 
 #include "gconstructor.h"
 
+#ifdef __GNUC__
+# define GNUC_CHECK_VERSION(major, minor) \
+    ((__GNUC__ > (major)) || \
+     ((__GNUC__ == (major)) && \
+      (__GNUC_MINOR__ >= (minor))))
+#else
+# define GNUC_CHECK_VERSION(major, minor) 0
+#endif
+
 #if defined (G_HAS_CONSTRUCTORS)
 # ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
 #  pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(collector_init_ctor)
@@ -49,24 +58,30 @@ collector_init_ctor (void)
   sysprof_collector_init ();
 }
 
-/* TODO:
- *
- * This is just an example.
- *
+/*
  * What we would really want to do is to have a new frame type for enter/exit
  * tracing so that we can only push/pop the new address to the sample. Then
- * when decoding it can recreate stack traces if necessary.
+ * when decoding it can recreate stack traces if necessary. But for now, we
+ * can emulate that by just adding a sample when we enter a function and
+ * leave a function. The rest could be done in post-processing.
  */
 
+#if GNUC_CHECK_VERSION(3,0)
+__attribute__((no_instrument_function))
+#endif
 void
 profile_func_enter (void *func,
                     void *call_site)
 {
-  sysprof_collector_sample (backtrace_func, NULL);
+  sysprof_collector_trace (backtrace_func, NULL, TRUE);
 }
 
+#if GNUC_CHECK_VERSION(3,0)
+__attribute__((no_instrument_function))
+#endif
 void
 profile_func_exit (void *func,
                    void *call_site)
 {
+  sysprof_collector_trace (backtrace_func, NULL, FALSE);
 }

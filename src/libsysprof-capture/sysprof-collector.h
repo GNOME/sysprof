@@ -75,6 +75,10 @@ void         sysprof_collector_allocate         (SysprofCaptureAddress          
 SYSPROF_AVAILABLE_IN_3_36
 void         sysprof_collector_sample           (SysprofBacktraceFunc              backtrace_func,
                                                  void                             *backtrace_data);
+SYSPROF_AVAILABLE_IN_ALL
+void         sysprof_collector_trace            (SysprofBacktraceFunc              backtrace_func,
+                                                 void                             *backtrace_data,
+                                                 bool                              entering);
 SYSPROF_AVAILABLE_IN_3_36
 void         sysprof_collector_mark             (int64_t                           time,
                                                  int64_t                           duration,

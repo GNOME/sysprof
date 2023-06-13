@@ -111,6 +111,8 @@ const SysprofCaptureProcess        *sysprof_capture_reader_read_process        (
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureSample         *sysprof_capture_reader_read_sample         (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
+const SysprofCaptureTrace          *sysprof_capture_reader_read_trace          (SysprofCaptureReader      *self);
+SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureJitmap         *sysprof_capture_reader_read_jitmap         (SysprofCaptureReader      *self);
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofCaptureCounterDefine  *sysprof_capture_reader_read_counter_define (SysprofCaptureReader      *self);

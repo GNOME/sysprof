@@ -301,6 +301,26 @@ main (gint argc,
             break;
           }
 
+        case SYSPROF_CAPTURE_FRAME_TRACE:
+          {
+            const SysprofCaptureTrace *s =  sysprof_capture_reader_read_trace (reader);
+            gdouble ptime = (s->frame.time - begin_time) / (gdouble)SYSPROF_NSEC_PER_SEC;
+            SysprofAddressContext context = SYSPROF_ADDRESS_CONTEXT_NONE;
+
+            g_print ("TRACE: pid=%d tid=%d time=%" G_GINT64_FORMAT " (%lf) %s\n",
+                     s->frame.pid, s->tid, s->frame.time, ptime,
+                     s->entering ? "ENTER" : "EXIT");
+
+            for (guint i = 0; i < s->n_addrs; i++)
+              {
+                g_autofree char *name = symbolize (resolvers, &s->frame, &context, s->addrs[i]);
+
+                g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " (%s)\n", s->addrs[i], name);
+              }
+
+            break;
+          }
+
         case SYSPROF_CAPTURE_FRAME_TIMESTAMP:
           {
             const SysprofCaptureTimestamp *ts =  sysprof_capture_reader_read_timestamp (reader);

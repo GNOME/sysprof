@@ -577,6 +577,43 @@ sysprof_collector_sample (SysprofBacktraceFunc  backtrace_func,
 }
 
 void
+sysprof_collector_trace (SysprofBacktraceFunc  backtrace_func,
+                         void                 *backtrace_data,
+                         bool                  entering)
+{
+  COLLECTOR_BEGIN {
+    SysprofCaptureTrace *ev;
+    size_t len;
+
+    len = sizeof *ev + (sizeof (SysprofCaptureTrace) * MAX_UNWIND_DEPTH);
+
+    if ((ev = mapped_ring_buffer_allocate (collector->buffer, len)))
+      {
+        int n_addrs;
+
+        /* See comment from sysprof_collector_allocate(). */
+        if (backtrace_func)
+          n_addrs = backtrace_func (ev->addrs, MAX_UNWIND_DEPTH, backtrace_data);
+        else
+          n_addrs = 0;
+
+        ev->n_addrs = ((n_addrs < 0) ? 0 : (n_addrs > MAX_UNWIND_DEPTH) ? MAX_UNWIND_DEPTH : n_addrs);
+        ev->frame.len = sizeof *ev + sizeof (SysprofCaptureAddress) * ev->n_addrs;
+        ev->frame.type = SYSPROF_CAPTURE_FRAME_TRACE;
+        ev->frame.cpu = _do_getcpu ();
+        ev->frame.pid = collector->pid;
+        ev->frame.time = SYSPROF_CAPTURE_CURRENT_TIME;
+        ev->tid = collector->tid;
+        ev->entering = !!entering;
+        ev->padding1 = 0;
+
+        mapped_ring_buffer_advance (collector->buffer, ev->frame.len);
+      }
+
+  } COLLECTOR_END;
+}
+
+void
 sysprof_collector_mark (int64_t     time,
                         int64_t     duration,
                         const char *group,

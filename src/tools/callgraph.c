@@ -350,6 +350,7 @@ static void
 augment_sample_cb (SysprofCallgraph     *callgraph,
                    SysprofCallgraphNode *node,
                    SysprofDocumentFrame *frame,
+                   gboolean              summarize,
                    gpointer              user_data)
 {
   Augment *aug;
@@ -373,6 +374,7 @@ static void
 augment_memprof_cb (SysprofCallgraph     *callgraph,
                     SysprofCallgraphNode *node,
                     SysprofDocumentFrame *frame,
+                    gboolean              summarize,
                     gpointer              user_data)
 {
   SysprofDocumentAllocation *alloc = (SysprofDocumentAllocation *)frame;

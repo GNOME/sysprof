@@ -146,6 +146,21 @@ _sysprof_symbol_new (GRefString     *name,
   self->end_address = end_address;
   self->hash = g_str_hash (name);
 
+  /* If we got a path for the symbol, add that to the hash so that we
+   * can be sure that we're working with a symbol in the same file when
+   * there are collisions.
+   *
+   * That way, we have a chance of joining symbols from different runtimes
+   * and/or containers, but only if they are reasonably the same ABI.
+   */
+  if (binary_path != NULL)
+    {
+      const char *base = strrchr (binary_path, '/');
+
+      if (base != NULL)
+        self->hash ^= g_str_hash (base);
+    }
+
   return self;
 }
 

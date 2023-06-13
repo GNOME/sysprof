@@ -170,3 +170,9 @@ sysprof_symbol_equal (const SysprofSymbol *a,
 {
   return _sysprof_symbol_equal (a, b);
 }
+
+guint
+sysprof_symbol_hash (const SysprofSymbol *self)
+{
+  return self->hash;
+}

@@ -39,6 +39,8 @@ const char *sysprof_symbol_get_binary_nick (SysprofSymbol       *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_symbol_get_binary_path (SysprofSymbol       *self);
 SYSPROF_AVAILABLE_IN_ALL
+guint       sysprof_symbol_hash            (const SysprofSymbol *self);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean    sysprof_symbol_equal           (const SysprofSymbol *a,
                                             const SysprofSymbol *b);
 

@@ -293,7 +293,28 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
                                                     (GDestroyNotify)sysprof_capture_writer_unref));
 
   if (!dex_await (dex_future_allv ((DexFuture **)futures->pdata, futures->len), &error))
-    return dex_future_new_for_error (g_steal_pointer (&error));
+    {
+      guint failed = 0;
+
+      for (guint i = 0; i < futures->len; i++)
+        {
+          DexFuture *future = g_ptr_array_index (futures, i);
+
+          if (dex_future_get_status (future) == DEX_FUTURE_STATUS_REJECTED)
+            {
+              g_autoptr(GError) future_error = NULL;
+              dex_future_get_value (future, &future_error);
+              _sysprof_recording_diagnostic (prepare->recording,
+                                             "Sampler",
+                                             "Failed to load Perf event stream for CPU %d: %s",
+                                             i, future_error->message);
+              failed++;
+            }
+        }
+
+      if (failed == futures->len)
+        return dex_future_new_for_error (g_steal_pointer (&error));
+    }
 
   /* Save each of the streams (currently corked), so that we can
    * uncork them while recording. We already checked that all the

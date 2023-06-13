@@ -78,5 +78,7 @@ SysprofCallgraph *_sysprof_callgraph_new_finish         (GAsyncResult           
                                                          GError                  **error);
 gpointer          _sysprof_callgraph_get_symbol_augment (SysprofCallgraph         *self,
                                                          SysprofSymbol            *symbol);
+void              _sysprof_callgraph_node_free          (SysprofCallgraphNode     *self,
+                                                         gboolean                  free_self);
 
 G_END_DECLS

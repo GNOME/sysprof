@@ -56,8 +56,6 @@ sysprof_descendants_model_get_item (GListModel *model,
   if (position != 0)
     return NULL;
 
-  g_warning ("TODO: Need to get proper ownership for node and proper summary");
-
   return _sysprof_callgraph_frame_new_for_node (self->callgraph, G_OBJECT (self), &self->root);
 }
 
@@ -76,6 +74,8 @@ static void
 sysprof_descendants_model_finalize (GObject *object)
 {
   SysprofDescendantsModel *self = (SysprofDescendantsModel *)object;
+
+  _sysprof_callgraph_node_free (&self->root, FALSE);
 
   g_clear_object (&self->callgraph);
   g_clear_object (&self->symbol);

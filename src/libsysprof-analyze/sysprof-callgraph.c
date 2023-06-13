@@ -109,10 +109,9 @@ sysprof_callgraph_get_summary (SysprofCallgraph *self,
 
   return summary;
 }
-
-static void
-sysprof_callgraph_node_free (SysprofCallgraphNode *node,
-                             gboolean              free_self)
+void
+_sysprof_callgraph_node_free (SysprofCallgraphNode *node,
+                              gboolean              free_self)
 {
   SysprofCallgraphNode *iter = node->children;
 
@@ -120,7 +119,7 @@ sysprof_callgraph_node_free (SysprofCallgraphNode *node,
     {
       SysprofCallgraphNode *to_free = iter;
       iter = iter->next;
-      sysprof_callgraph_node_free (to_free, TRUE);
+      _sysprof_callgraph_node_free (to_free, TRUE);
     }
 
   if (free_self)
@@ -156,7 +155,7 @@ sysprof_callgraph_finalize (GObject *object)
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
 
-  sysprof_callgraph_node_free (&self->root, FALSE);
+  _sysprof_callgraph_node_free (&self->root, FALSE);
 
   G_OBJECT_CLASS (sysprof_callgraph_parent_class)->finalize (object);
 }

@@ -225,7 +225,17 @@ sysprof_sampler_prepare_fiber (gpointer user_data)
    * different locations). Embed the kallsyms, but gzip it as
    * those files can be quite large.
    */
-  dex_await (_sysprof_recording_add_file (prepare->recording, "/proc/kallsyms", TRUE), NULL);
+  if (!dex_await (_sysprof_recording_add_file (prepare->recording,
+                                               "/proc/kallsyms",
+                                               TRUE),
+                  &error))
+    {
+      _sysprof_recording_diagnostic (prepare->recording,
+                                     "Sampler",
+                                     "Failed to record copy of “kallsyms” to capture: %s",
+                                     error->message);
+      g_clear_error (&error);
+    }
 
   /* Now create a SysprofPerfEventStream for every CPU on the
    * system. Linux Perf will only let us create a stream for

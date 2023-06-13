@@ -17,6 +17,7 @@ libsysprof_gtk_public_headers = [
 
 libsysprof_gtk_deps = [
   dependency('libadwaita-1'),
+  dependency('libpanel-1'),
   dependency('gtk4', version: gtk_req_version),
 
   libsysprof_analyze_dep,

@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <libpanel.h>
+
 #include "sysprof-callgraph-view.h"
 
 G_BEGIN_DECLS
@@ -42,6 +44,7 @@ struct _SysprofCallgraphView
   GtkCustomSorter *descendants_name_sorter;
   GtkCustomSorter *functions_name_sorter;
   GtkScrolledWindow *scrolled_window;
+  PanelPaned *right_paned;
   GtkWidget *paned;
 
   GCancellable *cancellable;

@@ -2,15 +2,15 @@
 <interface>
   <template class="SysprofCallgraphView" parent="GtkWidget">
     <child>
-      <object class="GtkPaned" id="paned">
-        <property name="position">250</property>
-        <property name="start-child">
-          <object class="GtkPaned">
+      <object class="PanelPaned" id="paned">
+        <child>
+          <object class="PanelPaned">
             <property name="orientation">vertical</property>
-            <property name="start-child">
+            <child>
               <object class="GtkScrolledWindow" id="functions_scrolled_window">
-                <property name="hscrollbar-policy">never</property>
                 <property name="vexpand">true</property>
+                <property name="propagate-natural-width">true</property>
+                <property name="hscrollbar-policy">never</property>
                 <child>
                   <object class="GtkColumnView" id="functions_column_view">
                     <child>
@@ -24,25 +24,33 @@
                         <property name="factory">
                           <object class="GtkBuilderListItemFactory">
                             <property name="bytes"><![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
-<interface>
-  <template class="GtkListItem">
-    <property name="child">
-      <object class="GtkInscription">
-        <property name="text-overflow">ellipsize-start</property>
-        <property name="xalign">.0</property>
-        <binding name="text">
-          <lookup name="name">
-            <lookup name="symbol" type="SysprofCallgraphSymbol">
-              <lookup name="item">GtkListItem</lookup>
-            </lookup>
-          </lookup>
-        </binding>
-      </object>
-    </property>
-  </template>
-</interface>
-]]>
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <template class="GtkListItem">
+        <property name="child">
+          <object class="GtkInscription">
+            <property name="text-overflow">clip</property>
+            <property name="nat-chars">15</property>
+            <property name="xalign">.0</property>
+            <binding name="text">
+              <lookup name="name">
+                <lookup name="symbol" type="SysprofCallgraphSymbol">
+                  <lookup name="item">GtkListItem</lookup>
+                </lookup>
+              </lookup>
+            </binding>
+            <binding name="tooltip-text">
+              <lookup name="name">
+                <lookup name="symbol" type="SysprofCallgraphSymbol">
+                  <lookup name="item">GtkListItem</lookup>
+                </lookup>
+              </lookup>
+            </binding>
+          </object>
+        </property>
+      </template>
+    </interface>
+    ]]>
                             </property>
                           </object>
                         </property>
@@ -51,11 +59,11 @@
                   </object>
                 </child>
               </object>
-            </property>
-            <property name="end-child">
+            </child>
+            <child>
               <object class="GtkScrolledWindow" id="callers_scrolled_window">
                 <property name="hscrollbar-policy">never</property>
-                <property name="vexpand">true</property>
+                <property name="min-content-height">150</property>
                 <child>
                   <object class="GtkColumnView" id="callers_column_view">
                     <style>
@@ -73,9 +81,16 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="GtkInscription">
-        <property name="text-overflow">ellipsize-start</property>
+        <property name="text-overflow">ellipsize-middle</property>
         <property name="xalign">.0</property>
         <binding name="text">
+          <lookup name="name">
+            <lookup name="symbol" type="SysprofCallgraphSymbol">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
+          </lookup>
+        </binding>
+        <binding name="tooltip-text">
           <lookup name="name">
             <lookup name="symbol" type="SysprofCallgraphSymbol">
               <lookup name="item">GtkListItem</lookup>
@@ -95,30 +110,29 @@
                   </object>
                 </child>
               </object>
-            </property>
+            </child>
           </object>
-        </property>
-        <property name="end-child">
-          <object class="GtkPaned">
-            <property name="start-child">
-              <object class="GtkScrolledWindow" id="scrolled_window">
-                <property name="hexpand">true</property>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="descendants_scrolled_window">
+            <property name="hexpand">true</property>
+            <property name="propagate-natural-height">true</property>
+            <child>
+              <object class="GtkColumnView" id="descendants_column_view">
+                <style>
+                  <class name="data-table"/>
+                </style>
                 <child>
-                  <object class="GtkColumnView" id="descendants_column_view">
-                    <style>
-                      <class name="data-table"/>
-                    </style>
-                    <child>
-                      <object class="GtkColumnViewColumn" id="descendants_column">
-                        <property name="title" translatable="yes">Descendants</property>
-                        <property name="expand">true</property>
-                        <property name="sorter">
-                          <object class="GtkCustomSorter" id="descendants_name_sorter">
-                          </object>
-                        </property>
-                        <property name="factory">
-                          <object class="GtkBuilderListItemFactory">
-                            <property name="bytes"><![CDATA[
+                  <object class="GtkColumnViewColumn" id="descendants_column">
+                    <property name="title" translatable="yes">Descendants</property>
+                    <property name="expand">true</property>
+                    <property name="sorter">
+                      <object class="GtkCustomSorter" id="descendants_name_sorter">
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -203,32 +217,33 @@
   </template>
 </interface>
 ]]>
-                            </property>
-                          </object>
                         </property>
                       </object>
-                    </child>
+                    </property>
                   </object>
                 </child>
               </object>
-            </property>
-            <property name="end-child">
-              <object class="GtkPaned">
-                <property name="orientation">vertical</property>
-                <property name="end-child">
-                  <object class="GtkScrolledWindow">
-                    <property name="vexpand">false</property>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="PanelPaned" id="right_paned">
+            <property name="hexpand">false</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="vexpand">true</property>
+                <child>
+                  <object class="GtkColumnView" id="traceables_column_view">
+                    <style>
+                      <class name="data-table"/>
+                    </style>
                     <child>
-                      <object class="GtkColumnView" id="traceables_column_view">
-                        <style>
-                          <class name="data-table"/>
-                        </style>
-                        <child>
-                          <object class="GtkColumnViewColumn" id="traceables_time_column">
-                            <property name="title" translatable="yes">Time</property>
-                            <property name="factory">
-                              <object class="GtkBuilderListItemFactory">
-                                <property name="bytes"><![CDATA[
+                      <object class="GtkColumnViewColumn" id="traceables_time_column">
+                        <property name="title" translatable="yes">Time</property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -248,17 +263,17 @@
   </template>
 </interface>
 ]]>
-                                </property>
-                              </object>
                             </property>
                           </object>
-                        </child>
-                        <child>
-                          <object class="GtkColumnViewColumn" id="traceables_pid_column">
-                            <property name="title" translatable="yes">PID</property>
-                            <property name="factory">
-                              <object class="GtkBuilderListItemFactory">
-                                <property name="bytes"><![CDATA[
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkColumnViewColumn" id="traceables_pid_column">
+                        <property name="title" translatable="yes">PID</property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -278,18 +293,18 @@
   </template>
 </interface>
 ]]>
-                                </property>
-                              </object>
                             </property>
                           </object>
-                        </child>
-                        <child>
-                          <object class="GtkColumnViewColumn" id="traceables_depth_column">
-                            <property name="title" translatable="yes">Depth</property>
-                            <property name="expand">true</property>
-                            <property name="factory">
-                              <object class="GtkBuilderListItemFactory">
-                                <property name="bytes"><![CDATA[
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkColumnViewColumn" id="traceables_depth_column">
+                        <property name="title" translatable="yes">Depth</property>
+                        <property name="expand">true</property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -309,37 +324,44 @@
   </template>
 </interface>
 ]]>
-                                </property>
-                              </object>
-                            </property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                </property>
-                <property name="start-child">
-                  <object class="GtkScrolledWindow">
-                    <property name="vexpand">true</property>
-                    <child>
-                      <object class="GtkColumnView" id="traceable_column_view">
-                        <style>
-                          <class name="data-table"/>
-                        </style>
-                        <child>
-                          <object class="GtkColumnViewColumn" id="traceable_symbol_column">
-                            <property name="title" translatable="yes">Stack Trace</property>
-                            <property name="expand">true</property>
-                            <property name="factory">
-                              <object class="GtkBuilderListItemFactory">
-                                <property name="bytes"><![CDATA[
+                          </property>
+                        </object>
+                      </property>
+                    </object>
+                  </child>
+                </object>
+              </child>
+            </object>
+          </child>
+          <child>
+            <object class="GtkScrolledWindow">
+              <property name="propagate-natural-width">true</property>
+              <property name="vexpand">true</property>
+              <child>
+                <object class="GtkColumnView" id="traceable_column_view">
+                  <style>
+                    <class name="data-table"/>
+                  </style>
+                  <child>
+                    <object class="GtkColumnViewColumn" id="traceable_symbol_column">
+                      <property name="title" translatable="yes">Stack Trace</property>
+                      <property name="expand">true</property>
+                      <property name="factory">
+                        <object class="GtkBuilderListItemFactory">
+                          <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
     <property name="child">
       <object class="GtkInscription">
-        <property name="text-overflow">ellipsize-middle</property>
+        <property name="text-overflow">clip</property>
+        <property name="nat-chars">15</property>
         <binding name="text">
+          <lookup name="name" type="SysprofSymbol">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+        <binding name="tooltip-text">
           <lookup name="name" type="SysprofSymbol">
             <lookup name="item">GtkListItem</lookup>
           </lookup>
@@ -349,17 +371,17 @@
   </template>
 </interface>
 ]]>
-                                </property>
-                              </object>
                             </property>
                           </object>
-                        </child>
-                        <child>
-                          <object class="GtkColumnViewColumn" id="traceable_depth_column">
-                            <property name="title" translatable="yes">Frame</property>
-                            <property name="factory">
-                              <object class="GtkBuilderListItemFactory">
-                                <property name="bytes"><![CDATA[
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkColumnViewColumn" id="traceable_depth_column">
+                        <property name="title" translatable="yes">Frame</property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -377,19 +399,17 @@
   </template>
 </interface>
 ]]>
-                                </property>
-                              </object>
                             </property>
                           </object>
-                        </child>
+                        </property>
                       </object>
                     </child>
                   </object>
-                </property>
+                </child>
               </object>
-            </property>
+            </child>
           </object>
-        </property>
+        </child>
       </object>
     </child>
   </template>

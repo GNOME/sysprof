@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <libpanel.h>
+
 #include "libsysprof-gtk-resources.h"
 
 #include "sysprof-callgraph-view-private.h"
@@ -161,6 +163,9 @@ sysprof_callgraph_view_list_traceables_cb (GObject      *object,
       gtk_column_view_set_model (self->traceables_column_view, GTK_SELECTION_MODEL (single));
       traceables_selection_changed_cb (self, 0, 0, single);
     }
+
+  gtk_widget_set_visible (gtk_widget_get_parent (GTK_WIDGET (self->right_paned)),
+                          model && g_list_model_get_n_items (model));
 }
 
 static void
@@ -362,7 +367,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_name_sorter);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, paned);
-  gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, scrolled_window);
+  gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, right_paned);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, traceable_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, traceables_column_view);
   gtk_widget_class_bind_template_callback (widget_class, format_time_offset);
@@ -370,12 +375,16 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   klass->augment_size = GLIB_SIZEOF_VOID_P;
 
   g_resources_register (libsysprof_gtk_get_resource ());
+
+  g_type_ensure (PANEL_TYPE_PANED);
 }
 
 static void
 sysprof_callgraph_view_init (SysprofCallgraphView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_widget_set_visible (gtk_widget_get_parent (GTK_WIDGET (self->right_paned)), FALSE);
 }
 
 static int

@@ -35,6 +35,7 @@ struct _SysprofCallgraphFrame
 {
   GObject               parent_instance;
   SysprofCallgraph     *callgraph;
+  GObject              *owner;
   SysprofCallgraphNode *node;
   guint                 n_children;
 };
@@ -79,7 +80,7 @@ sysprof_callgraph_frame_get_item (GListModel *model,
   if (iter == NULL)
     return NULL;
 
-  return _sysprof_callgraph_frame_new_for_node (self->callgraph, iter);
+  return _sysprof_callgraph_frame_new_for_node (self->callgraph, self->owner, iter);
 }
 
 static void
@@ -101,6 +102,7 @@ sysprof_callgraph_frame_finalize (GObject *object)
   SysprofCallgraphFrame *self = (SysprofCallgraphFrame *)object;
 
   g_clear_weak_pointer (&self->callgraph);
+  g_clear_object (&self->owner);
   self->node = NULL;
 
   G_OBJECT_CLASS (sysprof_callgraph_frame_parent_class)->finalize (object);
@@ -157,6 +159,7 @@ sysprof_callgraph_frame_init (SysprofCallgraphFrame *self)
 
 SysprofCallgraphFrame *
 _sysprof_callgraph_frame_new_for_node (SysprofCallgraph     *callgraph,
+                                       GObject              *owner,
                                        SysprofCallgraphNode *node)
 {
   SysprofCallgraphFrame *self;
@@ -166,6 +169,7 @@ _sysprof_callgraph_frame_new_for_node (SysprofCallgraph     *callgraph,
 
   self = g_object_new (SYSPROF_TYPE_CALLGRAPH_FRAME, NULL);
   g_set_weak_pointer (&self->callgraph, callgraph);
+  g_set_object (&self->owner, owner);
   self->node = node;
 
   for (const SysprofCallgraphNode *iter = node->children;

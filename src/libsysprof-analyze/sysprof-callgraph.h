@@ -66,6 +66,16 @@ SYSPROF_AVAILABLE_IN_ALL
 GListModel           *sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph       *self,
                                                                     SysprofSymbol          *symbol);
 SYSPROF_AVAILABLE_IN_ALL
+void                  sysprof_callgraph_descendants_async          (SysprofCallgraph       *self,
+                                                                    SysprofSymbol          *symbol,
+                                                                    GCancellable           *cancellable,
+                                                                    GAsyncReadyCallback     callback,
+                                                                    gpointer                user_data);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel           *sysprof_callgraph_descendants_finish         (SysprofCallgraph        *self,
+                                                                    GAsyncResult            *result,
+                                                                    GError                 **error);
+SYSPROF_AVAILABLE_IN_ALL
 gpointer              sysprof_callgraph_get_augment                (SysprofCallgraph       *self,
                                                                     SysprofCallgraphNode   *node);
 SYSPROF_AVAILABLE_IN_ALL

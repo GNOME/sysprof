@@ -35,6 +35,7 @@ libsysprof_analyze_public_sources = [
 
 libsysprof_analyze_private_sources = [
   'sysprof-address-layout.c',
+  'sysprof-descendants-model.c',
   'sysprof-document-bitset-index.c',
   'sysprof-document-symbols.c',
   'sysprof-elf.c',

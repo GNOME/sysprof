@@ -1,4 +1,4 @@
-/* sysprof-callgraph-frame-private.h
+/* sysprof-descendants-model-private.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -21,12 +21,15 @@
 #pragma once
 
 #include "sysprof-callgraph.h"
-#include "sysprof-callgraph-frame.h"
+#include "sysprof-symbol.h"
 
 G_BEGIN_DECLS
 
-SysprofCallgraphFrame *_sysprof_callgraph_frame_new_for_node (SysprofCallgraph     *callgraph,
-                                                              GObject              *owner,
-                                                              SysprofCallgraphNode *node);
+#define SYSPROF_TYPE_DESCENDANTS_MODEL (sysprof_descendants_model_get_type())
+
+G_DECLARE_FINAL_TYPE (SysprofDescendantsModel, sysprof_descendants_model, SYSPROF, DESCENDANTS_MODEL, GObject)
+
+GListModel *_sysprof_descendants_model_new (SysprofCallgraph *callgraph,
+                                            SysprofSymbol    *symbol);
 
 G_END_DECLS

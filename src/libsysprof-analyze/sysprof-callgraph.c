@@ -23,6 +23,7 @@
 #include "sysprof-callgraph-private.h"
 #include "sysprof-callgraph-frame-private.h"
 #include "sysprof-callgraph-symbol-private.h"
+#include "sysprof-descendants-model-private.h"
 #include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-private.h"
 #include "sysprof-document-traceable.h"
@@ -53,7 +54,7 @@ sysprof_callgraph_get_item (GListModel *model,
   if (position > 0)
     return NULL;
 
-  return _sysprof_callgraph_frame_new_for_node (self, &self->root);
+  return _sysprof_callgraph_frame_new_for_node (self, NULL, &self->root);
 }
 
 static void
@@ -199,7 +200,8 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
           SysprofSymbol *parent_symbol = iter->parent->summary->symbol;
           guint pos;
 
-          if (!g_ptr_array_find (iter->summary->callers, parent_symbol, &pos))
+          if (!(parent_symbol->is_process || parent_symbol->is_everything) &&
+              !g_ptr_array_find (iter->summary->callers, parent_symbol, &pos))
             g_ptr_array_add (iter->summary->callers, parent_symbol);
         }
     }
@@ -531,4 +533,53 @@ sysprof_callgraph_list_symbols (SysprofCallgraph *self)
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
 
   return _sysprof_callgraph_symbol_list_model_new (self, self->symbols);
+}
+
+static void
+sysprof_callgraph_descendants_worker (GTask        *task,
+                                      gpointer      source_object,
+                                      gpointer      task_data,
+                                      GCancellable *cancellable)
+{
+  SysprofCallgraph *self = source_object;
+  SysprofSymbol *symbol = task_data;
+
+  g_assert (G_IS_TASK (task));
+  g_assert (SYSPROF_IS_CALLGRAPH (self));
+  g_assert (SYSPROF_IS_SYMBOL (symbol));
+  g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  g_task_return_pointer (task,
+                         _sysprof_descendants_model_new (self, symbol),
+                         g_object_unref);
+}
+
+void
+sysprof_callgraph_descendants_async (SysprofCallgraph    *self,
+                                     SysprofSymbol       *symbol,
+                                     GCancellable        *cancellable,
+                                     GAsyncReadyCallback  callback,
+                                     gpointer             user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH (self));
+  g_return_if_fail (SYSPROF_IS_SYMBOL (symbol));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_callgraph_descendants_async);
+  g_task_set_task_data (task, g_object_ref (symbol), g_object_unref);
+  g_task_run_in_thread (task, sysprof_callgraph_descendants_worker);
+}
+
+GListModel *
+sysprof_callgraph_descendants_finish (SysprofCallgraph  *self,
+                                      GAsyncResult      *result,
+                                      GError           **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
 }

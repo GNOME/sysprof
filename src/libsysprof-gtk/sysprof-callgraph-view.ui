@@ -124,14 +124,32 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="GtkTreeExpander" id="expander">
+        <child>
+          <object class="GtkShortcutController">
+            <property name="propagation-phase">capture</property>
+            <child>
+              <object class="GtkShortcut">
+                <property name="trigger">Right</property>
+                <property name="action">action(listitem.expand)</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcut">
+                <property name="trigger">space</property>
+                <property name="action">action(listitem.expand)</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcut">
+                <property name="trigger">Left</property>
+                <property name="action">action(listitem.collapse)</property>
+              </object>
+            </child>
+          </object>
+        </child>
         <binding name="list-row">
           <lookup name="item">GtkListItem</lookup>
         </binding>
-        <child>
-          <object class="GtkEventControllerKey" id="key_controller">
-            <signal name="key-pressed" handler="sysprof_callgraph_view_key_pressed_cb" object="expander" swapped="true"/>
-          </object>
-        </child>
         <property name="child">
           <object class="GtkBox">
             <property name="hexpand">true</property>

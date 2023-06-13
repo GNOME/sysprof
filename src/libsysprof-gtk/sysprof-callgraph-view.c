@@ -227,32 +227,6 @@ functions_selection_changed_cb (SysprofCallgraphView *self,
     }
 }
 
-static gboolean
-sysprof_callgraph_view_key_pressed_cb (GtkTreeExpander       *expander,
-                                       guint                  keyval,
-                                       guint                  keycode,
-                                       GdkModifierType        state,
-                                       GtkEventControllerKey *controller)
-{
-  GtkTreeListRow *row;
-
-  g_assert (GTK_IS_TREE_EXPANDER (expander));
-  g_assert (GTK_IS_EVENT_CONTROLLER_KEY (controller));
-
-  row = gtk_tree_expander_get_list_row (expander);
-
-  if (keyval ==  GDK_KEY_space)
-    gtk_tree_list_row_set_expanded (row, !gtk_tree_list_row_get_expanded (row));
-  else if (keyval == GDK_KEY_Right)
-    gtk_tree_list_row_set_expanded (row, TRUE);
-  else if (keyval == GDK_KEY_Left)
-    gtk_tree_list_row_set_expanded (row, FALSE);
-  else
-    return FALSE;
-
-  return TRUE;
-}
-
 static char *
 format_time_offset (gpointer cell)
 {
@@ -385,7 +359,6 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, scrolled_window);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, traceable_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, traceables_column_view);
-  gtk_widget_class_bind_template_callback (widget_class, sysprof_callgraph_view_key_pressed_cb);
   gtk_widget_class_bind_template_callback (widget_class, format_time_offset);
 
   klass->augment_size = GLIB_SIZEOF_VOID_P;

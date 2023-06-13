@@ -329,6 +329,7 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
     self->augment_func (self,
                         node,
                         SYSPROF_DOCUMENT_FRAME (traceable),
+                        TRUE,
                         self->augment_func_data);
 }
 

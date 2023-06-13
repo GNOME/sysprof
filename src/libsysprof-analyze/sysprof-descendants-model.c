@@ -192,12 +192,11 @@ sysprof_descendants_model_add_traceable (SysprofDescendantsModel  *self,
 
       node = sysprof_descendants_model_add_trace (self, symbols, n_symbols);
 
-      /* TODO: This will fuck up summaries */
-
       if (node && self->callgraph->augment_func)
         self->callgraph->augment_func (self->callgraph,
                                        node,
                                        SYSPROF_DOCUMENT_FRAME (traceable),
+                                       FALSE,
                                        self->callgraph->augment_func_data);
     }
 }

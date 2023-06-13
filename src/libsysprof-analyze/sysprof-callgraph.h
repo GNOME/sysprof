@@ -42,6 +42,7 @@ typedef struct _SysprofCallgraphNode SysprofCallgraphNode;
  * @callgraph: the callgraph being augmented
  * @node: the node within the callgraph
  * @frame: the frame used to generate this node
+ * @summarize: if summaries should be generated
  * @user_data: closure data for augmentation func
  *
  * This function is called for the bottom most node in a trace as it is added
@@ -50,11 +51,15 @@ typedef struct _SysprofCallgraphNode SysprofCallgraphNode;
  * The augmentation func should augment the node in whatever way it sees fit
  * and generally will want to walk up the node tree to the root to augment the
  * parents as it goes. Your augmentation function is not called for each node,
- * only the last node.
+ * only the deepest node.
+ *
+ * If @summarize is %TRUE, then you should also generate summary augmentation
+ * using sysprof_callgraph_get_summary_augment() or similar.
  */
 typedef void (*SysprofAugmentationFunc) (SysprofCallgraph     *callgraph,
                                          SysprofCallgraphNode *node,
                                          SysprofDocumentFrame *frame,
+                                         gboolean              summarize,
                                          gpointer              user_data);
 
 SYSPROF_AVAILABLE_IN_ALL

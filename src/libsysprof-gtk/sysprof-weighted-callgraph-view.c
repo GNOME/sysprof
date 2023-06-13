@@ -61,6 +61,7 @@ static void
 augment_weight (SysprofCallgraph     *callgraph,
                 SysprofCallgraphNode *node,
                 SysprofDocumentFrame *frame,
+                gboolean              summarize,
                 gpointer              user_data)
 {
   AugmentWeight *cur;
@@ -75,9 +76,12 @@ augment_weight (SysprofCallgraph     *callgraph,
   cur->size += 1;
   cur->total += 1;
 
-  sum = sysprof_callgraph_get_summary_augment (callgraph, node);
-  sum->size += 1;
-  sum->total += 1;
+  if (summarize)
+    {
+      sum = sysprof_callgraph_get_summary_augment (callgraph, node);
+      sum->size += 1;
+      sum->total += 1;
+    }
 
   for (node = sysprof_callgraph_node_parent (node);
        node != NULL;
@@ -86,8 +90,11 @@ augment_weight (SysprofCallgraph     *callgraph,
       cur = sysprof_callgraph_get_augment (callgraph, node);
       cur->total += 1;
 
-      sum = sysprof_callgraph_get_summary_augment (callgraph, node);
-      sum->total += 1;
+      if (summarize)
+        {
+          sum = sysprof_callgraph_get_summary_augment (callgraph, node);
+          sum->total += 1;
+        }
     }
 }
 

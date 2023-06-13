@@ -91,6 +91,7 @@ static void
 augment_cb (SysprofCallgraph     *callgraph,
             SysprofCallgraphNode *node,
             SysprofDocumentFrame *frame,
+            gboolean              summarize,
             gpointer              user_data)
 {
   Augment *aug;

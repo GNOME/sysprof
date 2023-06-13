@@ -54,10 +54,7 @@ struct _SysprofCallgraphViewClass
   GtkWidgetClass parent_class;
 
   gsize augment_size;
-  void (*augment_func) (SysprofCallgraph     *callgraph,
-                        SysprofCallgraphNode *node,
-                        SysprofDocumentFrame *frame,
-                        gpointer              user_data);
+  SysprofAugmentationFunc augment_func;
 
   void (*load) (SysprofCallgraphView *self,
                 SysprofCallgraph     *callgraph);

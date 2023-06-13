@@ -43,6 +43,7 @@ sysprof_process_info_new (SysprofMountNamespace *mount_namespace,
   self->symbol_cache = sysprof_symbol_cache_new ();
   self->mount_namespace = mount_namespace;
   self->fallback_symbol = _sysprof_symbol_new (g_ref_string_new (symname), NULL, NULL, 0, 0);
+  self->fallback_symbol->is_process = TRUE;
 
   return self;
 }

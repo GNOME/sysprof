@@ -249,6 +249,12 @@ format_time_offset (gpointer cell)
   minutes = time / 60;
   time -= minutes * 60;
 
+  if (hours == 0 && minutes == 0)
+    return g_strdup_printf ("%.4lf", time);
+
+  if (hours == 0)
+    return g_strdup_printf ("%02d:%02.4lf", minutes, time);
+
   return g_strdup_printf ("%02d:%02d:%02.4lf", hours, minutes, time);
 }
 

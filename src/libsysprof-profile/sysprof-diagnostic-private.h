@@ -1,4 +1,4 @@
-/* sysprof-profile.h
+/* sysprof-diagnostic-private.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,25 +20,12 @@
 
 #pragma once
 
-#include <gio/gio.h>
+#include "sysprof-diagnostic.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_PROFILE_INSIDE
-# include "sysprof-battery-charge.h"
-# include "sysprof-cpu-usage.h"
-# include "sysprof-diagnostic.h"
-# include "sysprof-disk-usage.h"
-# include "sysprof-energy-usage.h"
-# include "sysprof-instrument.h"
-# include "sysprof-malloc-tracing.h"
-# include "sysprof-memory-usage.h"
-# include "sysprof-network-usage.h"
-# include "sysprof-profiler.h"
-# include "sysprof-proxied-instrument.h"
-# include "sysprof-recording.h"
-# include "sysprof-sampler.h"
-# include "sysprof-spawnable.h"
-#undef SYSPROF_PROFILE_INSIDE
+SysprofDiagnostic *_sysprof_diagnostic_new (char     *domain,
+                                            char     *message,
+                                            gboolean  fatal);
 
 G_END_DECLS

@@ -22,6 +22,7 @@
 
 #include <libdex.h>
 
+#include "sysprof-diagnostic-private.h"
 #include "sysprof-instrument-private.h"
 #include "sysprof-polkit-private.h"
 #include "sysprof-recording-private.h"
@@ -34,6 +35,13 @@ typedef enum _SysprofRecordingCommand
 struct _SysprofRecording
 {
   GObject parent_instance;
+
+  /* Diagnostics that may be added by instruments during the recording.
+   * Some may be fatal, meaning that they stop the recording when the
+   * diagnostic is submitted. That can happen in situations like
+   * miss-configuration or failed authorization.
+   */
+  GListStore *diagnostics;
 
   /* If we are spawning a process as part of this recording, this
    * is the SysprofSpawnable used to spawn the process.
@@ -197,6 +205,7 @@ sysprof_recording_finalize (GObject *object)
   g_clear_pointer (&self->writer, sysprof_capture_writer_unref);
   g_clear_pointer (&self->instruments, g_ptr_array_unref);
   g_clear_object (&self->spawnable);
+  g_clear_object (&self->diagnostics);
   dex_clear (&self->fiber);
 
   G_OBJECT_CLASS (sysprof_recording_parent_class)->finalize (object);
@@ -215,6 +224,7 @@ sysprof_recording_init (SysprofRecording *self)
 {
   self->channel = dex_channel_new (0);
   self->instruments = g_ptr_array_new_with_free_func (g_object_unref);
+  self->diagnostics = g_list_store_new (SYSPROF_TYPE_DIAGNOSTIC);
 }
 
 SysprofRecording *
@@ -509,4 +519,71 @@ _sysprof_recording_add_file_data (SysprofRecording *self,
       length -= to_write;
       contents += to_write;
     }
+}
+
+static void
+_sysprof_recording_message_internal (SysprofRecording *self,
+                                     const char       *domain,
+                                     const char       *format,
+                                     va_list          *args,
+                                     gboolean          fatal)
+{
+  g_autoptr(SysprofDiagnostic) diagnostic = NULL;
+
+  g_assert (SYSPROF_IS_RECORDING (self));
+  g_assert (domain != NULL);
+  g_assert (format != NULL);
+  g_assert (args != NULL);
+
+  diagnostic = _sysprof_diagnostic_new (g_strdup (domain),
+                                        g_strdup_vprintf (format, *args),
+                                        fatal);
+
+  g_list_store_append (self->diagnostics, diagnostic);
+
+  if (fatal)
+    sysprof_recording_stop_async (self, NULL, NULL, NULL);
+}
+
+void
+_sysprof_recording_diagnostic (SysprofRecording *self,
+                               const char       *domain,
+                               const char       *format,
+                               ...)
+{
+  va_list args;
+
+  va_start (args, format);
+  _sysprof_recording_message_internal (self, domain, format, &args, FALSE);
+  va_end (args);
+}
+
+void
+_sysprof_recording_error (SysprofRecording *self,
+                          const char       *domain,
+                          const char       *format,
+                          ...)
+{
+  va_list args;
+
+  va_start (args, format);
+  _sysprof_recording_message_internal (self, domain, format, &args, TRUE);
+  va_end (args);
+}
+
+/**
+ * sysprof_recording_list_diagnostics:
+ * @self: a #SysprofRecording
+ *
+ * Gets the diagnostics for the recording which may be updated as
+ * instruments discover issues with the recording or configuration.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDiagnostic
+ */
+GListModel *
+sysprof_recording_list_diagnostics (SysprofRecording *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);
+
+  return g_object_ref (G_LIST_MODEL (self->diagnostics));
 }

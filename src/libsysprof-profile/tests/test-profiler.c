@@ -52,16 +52,45 @@ wait_cb (GObject      *object,
 }
 
 static void
+diagnostics_items_changed_cb (GListModel *model,
+                              guint       position,
+                              guint       removed,
+                              guint       added,
+                              gpointer    user_data)
+{
+  for (guint i = 0; i < added; i++)
+    {
+      g_autoptr(SysprofDiagnostic) diagnostic = g_list_model_get_item (model, position+i);
+
+      g_printerr ("%s: %s\n",
+                  sysprof_diagnostic_get_domain (diagnostic),
+                  sysprof_diagnostic_get_message (diagnostic));
+    }
+}
+
+static void
 record_cb (GObject      *object,
            GAsyncResult *result,
            gpointer      user_data)
 {
   g_autoptr(GError) error = NULL;
   g_autoptr(SysprofRecording) recording = sysprof_profiler_record_finish (SYSPROF_PROFILER (object), result, &error);
+  g_autoptr(GListModel) diagnostics = NULL;
 
   g_assert_no_error (error);
   g_assert_nonnull (recording);
   g_assert_true (SYSPROF_IS_RECORDING (recording));
+
+  diagnostics = sysprof_recording_list_diagnostics (recording);
+  g_signal_connect (diagnostics,
+                    "items-changed",
+                    G_CALLBACK (diagnostics_items_changed_cb),
+                    NULL);
+  diagnostics_items_changed_cb (diagnostics,
+                                0,
+                                0,
+                                g_list_model_get_n_items (diagnostics),
+                                NULL);
 
   sysprof_recording_wait_async (recording, NULL, wait_cb, NULL);
 

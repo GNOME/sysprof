@@ -42,5 +42,13 @@ void                  _sysprof_recording_add_file_data (SysprofRecording      *s
                                                         const char            *path,
                                                         const char            *contents,
                                                         gssize                 length);
+void                  _sysprof_recording_diagnostic    (SysprofRecording      *self,
+                                                        const char            *domain,
+                                                        const char            *format,
+                                                        ...) G_GNUC_PRINTF (3, 4);
+void                  _sysprof_recording_error         (SysprofRecording      *self,
+                                                        const char            *domain,
+                                                        const char            *format,
+                                                        ...) G_GNUC_PRINTF (3, 4);
 
 G_END_DECLS

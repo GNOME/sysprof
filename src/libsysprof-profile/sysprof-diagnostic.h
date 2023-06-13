@@ -1,4 +1,4 @@
-/* sysprof-profile.h
+/* sysprof-diagnostic.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,25 +20,22 @@
 
 #pragma once
 
-#include <gio/gio.h>
+#include <glib-object.h>
+
+#include <sysprof-capture.h>
 
 G_BEGIN_DECLS
 
-#define SYSPROF_PROFILE_INSIDE
-# include "sysprof-battery-charge.h"
-# include "sysprof-cpu-usage.h"
-# include "sysprof-diagnostic.h"
-# include "sysprof-disk-usage.h"
-# include "sysprof-energy-usage.h"
-# include "sysprof-instrument.h"
-# include "sysprof-malloc-tracing.h"
-# include "sysprof-memory-usage.h"
-# include "sysprof-network-usage.h"
-# include "sysprof-profiler.h"
-# include "sysprof-proxied-instrument.h"
-# include "sysprof-recording.h"
-# include "sysprof-sampler.h"
-# include "sysprof-spawnable.h"
-#undef SYSPROF_PROFILE_INSIDE
+#define SYSPROF_TYPE_DIAGNOSTIC (sysprof_diagnostic_get_type())
+
+SYSPROF_AVAILABLE_IN_ALL
+G_DECLARE_FINAL_TYPE (SysprofDiagnostic, sysprof_diagnostic, SYSPROF, DIAGNOSTIC, GObject)
+
+SYSPROF_AVAILABLE_IN_ALL
+const char *sysprof_diagnostic_get_domain  (SysprofDiagnostic *self);
+SYSPROF_AVAILABLE_IN_ALL
+const char *sysprof_diagnostic_get_message (SysprofDiagnostic *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean    sysprof_diagnostic_get_fatal   (SysprofDiagnostic *self);
 
 G_END_DECLS

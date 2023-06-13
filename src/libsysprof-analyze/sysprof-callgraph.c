@@ -388,7 +388,10 @@ _sysprof_callgraph_new_async (SysprofDocument         *document,
   self->augment_func = augment_func;
   self->augment_func_data = augment_func_data;
   self->augment_func_data_destroy = augment_func_data_destroy;
-  self->symbol_to_summary = g_hash_table_new_full (NULL, NULL, NULL, summary_free);
+  self->symbol_to_summary = g_hash_table_new_full ((GHashFunc)sysprof_symbol_hash,
+                                                   (GEqualFunc)sysprof_symbol_equal,
+                                                   NULL,
+                                                   summary_free);
   self->symbols = g_ptr_array_new ();
   self->root.summary = sysprof_callgraph_get_summary (self, everything);
 

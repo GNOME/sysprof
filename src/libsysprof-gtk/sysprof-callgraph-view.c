@@ -49,27 +49,18 @@ G_DEFINE_ABSTRACT_TYPE_WITH_CODE (SysprofCallgraphView, sysprof_callgraph_view, 
 static GParamSpec *properties [N_PROPS];
 
 static void
-sysprof_callgraph_view_descendants_cb (GObject      *object,
-                                       GAsyncResult *result,
-                                       gpointer      user_data)
+sysprof_callgraph_view_set_descendants (SysprofCallgraphView *self,
+                                        GListModel           *model)
 {
-  SysprofCallgraph *callgraph = (SysprofCallgraph *)object;
-  g_autoptr(SysprofCallgraphView) self = user_data;
-  g_autoptr(GListModel) model = NULL;
   g_autoptr(GtkTreeListRowSorter) descendants_sorter = NULL;
   g_autoptr(GtkSingleSelection) descendants_selection = NULL;
   g_autoptr(GtkSortListModel) descendants_sort_model = NULL;
   g_autoptr(GtkTreeListModel) descendants_tree = NULL;
   g_autoptr(GtkTreeListRow) descendants_first = NULL;
-  g_autoptr(GError) error = NULL;
   GtkSorter *column_sorter;
 
-  g_assert (SYSPROF_IS_CALLGRAPH (callgraph));
-  g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
-
-  if (!(model = sysprof_callgraph_descendants_finish (callgraph, result, &error)))
-    return;
+  g_assert (G_IS_LIST_MODEL (model));
 
   column_sorter = gtk_column_view_get_sorter (self->descendants_column_view);
   descendants_tree = gtk_tree_list_model_new (g_object_ref (model),
@@ -85,7 +76,30 @@ sysprof_callgraph_view_descendants_cb (GObject      *object,
                            G_CALLBACK (descendants_selection_changed_cb),
                            self,
                            G_CONNECT_SWAPPED);
-  gtk_column_view_set_model (self->descendants_column_view, GTK_SELECTION_MODEL (descendants_selection));
+  gtk_column_view_set_model (self->descendants_column_view,
+                             GTK_SELECTION_MODEL (descendants_selection));
+
+  if ((descendants_first = gtk_tree_list_model_get_row (descendants_tree, 0)))
+    gtk_tree_list_row_set_expanded (descendants_first, TRUE);
+
+}
+
+static void
+sysprof_callgraph_view_descendants_cb (GObject      *object,
+                                       GAsyncResult *result,
+                                       gpointer      user_data)
+{
+  SysprofCallgraph *callgraph = (SysprofCallgraph *)object;
+  g_autoptr(SysprofCallgraphView) self = user_data;
+  g_autoptr(GListModel) model = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_CALLGRAPH (callgraph));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  if ((model = sysprof_callgraph_descendants_finish (callgraph, result, &error)))
+    sysprof_callgraph_view_set_descendants (self, model);
 }
 
 static void
@@ -226,6 +240,26 @@ functions_selection_changed_cb (SysprofCallgraphView *self,
                                G_CONNECT_SWAPPED);
       gtk_column_view_set_model (self->callers_column_view,
                                  GTK_SELECTION_MODEL (callers_selection));
+
+      switch (sysprof_symbol_get_kind (symbol))
+        {
+        case SYSPROF_SYMBOL_KIND_ROOT:
+          sysprof_callgraph_view_set_descendants (self, G_LIST_MODEL (self->callgraph));
+          break;
+
+        default:
+        case SYSPROF_SYMBOL_KIND_PROCESS:
+        case SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH:
+        case SYSPROF_SYMBOL_KIND_UNWINDABLE:
+        case SYSPROF_SYMBOL_KIND_USER:
+        case SYSPROF_SYMBOL_KIND_KERNEL:
+          sysprof_callgraph_descendants_async (self->callgraph,
+                                               symbol,
+                                               NULL,
+                                               sysprof_callgraph_view_descendants_cb,
+                                               g_object_ref (self));
+          break;
+        }
     }
   else
     {
@@ -484,12 +518,6 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
   g_autoptr(GError) error = NULL;
   GtkSorter *column_sorter;
 
-  g_autoptr(GtkTreeListRowSorter) descendants_sorter = NULL;
-  g_autoptr(GtkSingleSelection) descendants_selection = NULL;
-  g_autoptr(GtkSortListModel) descendants_sort_model = NULL;
-  g_autoptr(GtkTreeListModel) descendants_tree = NULL;
-  g_autoptr(GtkTreeListRow) descendants_first = NULL;
-
   g_autoptr(GtkSingleSelection) functions_selection = NULL;
   g_autoptr(GtkSortListModel) functions_sort_model = NULL;
   g_autoptr(GListModel) functions_model = NULL;
@@ -506,21 +534,7 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
 
   g_set_object (&self->callgraph, callgraph);
 
-  column_sorter = gtk_column_view_get_sorter (self->descendants_column_view);
-  descendants_tree = gtk_tree_list_model_new (g_object_ref (G_LIST_MODEL (callgraph)),
-                                              FALSE, FALSE,
-                                              sysprof_callgraph_view_create_model_func,
-                                              NULL, NULL);
-  descendants_sorter = gtk_tree_list_row_sorter_new (g_object_ref (column_sorter));
-  descendants_sort_model = gtk_sort_list_model_new (g_object_ref (G_LIST_MODEL (descendants_tree)),
-                                                    g_object_ref (GTK_SORTER (descendants_sorter)));
-  descendants_selection = gtk_single_selection_new (g_object_ref (G_LIST_MODEL (descendants_sort_model)));
-  g_signal_connect_object (descendants_selection,
-                           "selection-changed",
-                           G_CALLBACK (descendants_selection_changed_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-  gtk_column_view_set_model (self->descendants_column_view, GTK_SELECTION_MODEL (descendants_selection));
+  sysprof_callgraph_view_set_descendants (self, G_LIST_MODEL (callgraph));
 
   column_sorter = gtk_column_view_get_sorter (self->functions_column_view);
   functions_model = sysprof_callgraph_list_symbols (callgraph);
@@ -545,9 +559,6 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
 
   if (SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load)
    SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->load (self, callgraph);
-
-  if ((descendants_first = gtk_tree_list_model_get_row (descendants_tree, 0)))
-    gtk_tree_list_row_set_expanded (descendants_first, TRUE);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CALLGRAPH]);
 }

@@ -342,6 +342,8 @@
                   <style>
                     <class name="data-table"/>
                   </style>
+                  <signal name="activate" handler="traceable_activate_cb" swapped="true"/>
+                  <property name="single-click-activate">true</property>
                   <child>
                     <object class="GtkColumnViewColumn" id="traceable_symbol_column">
                       <property name="title" translatable="yes">Stack Trace</property>

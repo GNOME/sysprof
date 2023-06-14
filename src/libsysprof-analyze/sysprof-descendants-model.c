@@ -23,6 +23,7 @@
 #include "sysprof-callgraph-private.h"
 #include "sysprof-callgraph-frame-private.h"
 #include "sysprof-descendants-model-private.h"
+#include "sysprof-document-private.h"
 #include "sysprof-symbol-private.h"
 
 #define MAX_STACK_DEPTH 128
@@ -160,10 +161,12 @@ static void
 sysprof_descendants_model_add_traceable (SysprofDescendantsModel  *self,
                                          SysprofDocument          *document,
                                          SysprofDocumentTraceable *traceable,
-                                         SysprofSymbol            *from_symbol)
+                                         SysprofSymbol            *from_symbol,
+                                         gboolean                  include_threads)
 {
   SysprofAddressContext final_context;
   SysprofSymbol **symbols;
+  SysprofSymbolKind kind;
   guint stack_depth;
   guint n_symbols;
 
@@ -173,11 +176,23 @@ sysprof_descendants_model_add_traceable (SysprofDescendantsModel  *self,
   g_assert (SYSPROF_IS_SYMBOL (from_symbol));
 
   stack_depth = MIN (MAX_STACK_DEPTH, sysprof_document_traceable_get_stack_depth (traceable));
-  symbols = g_alloca (sizeof (SysprofSymbol *) * (stack_depth + 1));
+  symbols = g_alloca (sizeof (SysprofSymbol *) * (stack_depth + 2));
   n_symbols = sysprof_document_symbolize_traceable (document, traceable, symbols, stack_depth, &final_context);
 
-  if (sysprof_symbol_get_kind (from_symbol) == SYSPROF_SYMBOL_KIND_PROCESS)
-    symbols[n_symbols++] = from_symbol;
+  kind = sysprof_symbol_get_kind (from_symbol);
+
+  if (kind == SYSPROF_SYMBOL_KIND_PROCESS || kind == SYSPROF_SYMBOL_KIND_THREAD)
+    {
+      int pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
+
+      if (include_threads)
+        {
+          int thread_id = sysprof_document_traceable_get_thread_id (traceable);
+          symbols[n_symbols++] = _sysprof_document_thread_symbol (document, pid, thread_id);
+        }
+
+      symbols[n_symbols++] = _sysprof_document_process_symbol (document, pid);
+    }
 
   for (guint i = n_symbols; i > 0; i--)
     {
@@ -211,6 +226,7 @@ _sysprof_descendants_model_new (SysprofCallgraph *callgraph,
   SysprofDescendantsModel *self;
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(GListModel) model = NULL;
+  gboolean include_threads;
   guint n_items;
 
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (callgraph), NULL);
@@ -227,13 +243,14 @@ _sysprof_descendants_model_new (SysprofCallgraph *callgraph,
   g_assert (self->root.summary != NULL);
   g_assert (_sysprof_symbol_equal (self->root.summary->symbol, symbol));
 
+  include_threads = (callgraph->flags & SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS) != 0;
   n_items = g_list_model_get_n_items (model);
 
   for (guint i = 0; i < n_items; i++)
     {
       g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
 
-      sysprof_descendants_model_add_traceable (self, document, traceable, symbol);
+      sysprof_descendants_model_add_traceable (self, document, traceable, symbol, include_threads);
     }
 
   return G_LIST_MODEL (self);

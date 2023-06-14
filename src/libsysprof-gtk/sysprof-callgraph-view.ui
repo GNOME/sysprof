@@ -368,33 +368,6 @@
                         </property>
                       </object>
                     </child>
-                    <child>
-                      <object class="GtkColumnViewColumn" id="traceable_depth_column">
-                        <property name="title" translatable="yes">Frame</property>
-                        <property name="factory">
-                          <object class="GtkBuilderListItemFactory">
-                            <property name="bytes"><![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
-<interface>
-  <template class="GtkListItem">
-    <property name="child">
-      <object class="GtkLabel">
-        <property name="xalign">1</property>
-        <attributes>
-          <attribute name="font-features" value="'tnum'"/>
-        </attributes>
-        <binding name="label">
-          <lookup name="position">GtkListItem</lookup>
-        </binding>
-      </object>
-    </property>
-  </template>
-</interface>
-]]></property>
-                          </object>
-                        </property>
-                      </object>
-                    </child>
                   </object>
                 </child>
               </object>

@@ -38,17 +38,15 @@ struct _SysprofSymbol
   SysprofAddress begin_address;
   SysprofAddress end_address;
 
-  guint is_context_switch : 1;
-  guint is_everything : 1;
-  guint is_untraceable : 1;
-  guint is_process : 1;
+  guint kind : 3;
 };
 
-SysprofSymbol *_sysprof_symbol_new (GRefString     *name,
-                                    GRefString     *binary_path,
-                                    GRefString     *binary_nick,
-                                    SysprofAddress  begin_address,
-                                    SysprofAddress  end_address);
+SysprofSymbol *_sysprof_symbol_new (GRefString       *name,
+                                    GRefString       *binary_path,
+                                    GRefString       *binary_nick,
+                                    SysprofAddress    begin_address,
+                                    SysprofAddress    end_address,
+                                    SysprofSymbolKind kind);
 
 static inline SysprofSymbol *
 _sysprof_symbol_copy (SysprofSymbol *self)
@@ -59,11 +57,8 @@ _sysprof_symbol_copy (SysprofSymbol *self)
                               self->binary_path ? g_ref_string_acquire (self->binary_path) : NULL,
                               self->binary_nick ? g_ref_string_acquire (self->binary_nick) : NULL,
                               self->begin_address,
-                              self->end_address);
-  copy->is_context_switch = self->is_context_switch;
-  copy->is_everything = self->is_everything;
-  copy->is_untraceable = self->is_untraceable;
-  copy->is_process = self->is_process;
+                              self->end_address,
+                              self->kind);
 
   return copy;
 }
@@ -78,13 +73,16 @@ _sysprof_symbol_equal (const SysprofSymbol *a,
   if (a->hash != b->hash)
     return FALSE;
 
+  if (a->kind != b->kind)
+    return FALSE;
+
   return strcmp (a->name, b->name) == 0;
 }
 
 static inline gboolean
 _sysprof_symbol_is_context_switch (SysprofSymbol *symbol)
 {
-  return symbol->is_context_switch;
+  return symbol->kind == SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH;
 }
 
 G_END_DECLS

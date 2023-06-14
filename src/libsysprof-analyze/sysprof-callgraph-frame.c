@@ -402,10 +402,8 @@ sysprof_callgraph_frame_list_traceables_async (SysprofCallgraphFrame *self,
         SysprofCallgraphSummary *summary = node->summary;
         SysprofSymbol *symbol = summary->symbol;
 
-        if (symbol->is_context_switch ||
-            symbol->is_everything ||
-            symbol->is_untraceable ||
-            symbol->is_process)
+        if (symbol->kind != SYSPROF_SYMBOL_KIND_USER &&
+            symbol->kind != SYSPROF_SYMBOL_KIND_KERNEL)
           continue;
 
         if (bitset == NULL)

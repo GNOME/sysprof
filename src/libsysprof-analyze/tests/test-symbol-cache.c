@@ -42,7 +42,7 @@ create_symbol (const char *name,
 {
   g_assert (begin < end);
 
-  return _sysprof_symbol_new (g_ref_string_new (name), NULL, NULL, begin, end);
+  return _sysprof_symbol_new (g_ref_string_new (name), NULL, NULL, begin, end, SYSPROF_SYMBOL_KIND_USER);
 }
 
 static int

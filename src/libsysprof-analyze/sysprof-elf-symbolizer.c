@@ -134,7 +134,8 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                               sysprof_strings_get (strings, path),
                               sysprof_strings_get (strings, sysprof_elf_get_nick (elf)),
                               map_begin + (begin_address - file_offset),
-                              map_begin + (end_address - file_offset));
+                              map_begin + (end_address - file_offset),
+                              SYSPROF_SYMBOL_KIND_USER);
 
 fallback:
   /* Fallback, we failed to locate the symbol within a file we can
@@ -148,7 +149,8 @@ fallback:
   end_address = address + 1;
 
   return _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                              NULL, NULL, begin_address, end_address);
+                              NULL, NULL, begin_address, end_address,
+                              SYSPROF_SYMBOL_KIND_USER);
 }
 
 static void

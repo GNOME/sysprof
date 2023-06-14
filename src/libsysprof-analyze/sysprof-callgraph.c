@@ -168,11 +168,12 @@ sysprof_callgraph_class_init (SysprofCallgraphClass *klass)
   object_class->dispose = sysprof_callgraph_dispose;
   object_class->finalize = sysprof_callgraph_finalize;
 
-  everything = _sysprof_symbol_new (g_ref_string_new_intern ("[Everything]"), NULL, NULL, 0, 0);
-  everything->is_everything = TRUE;
-
-  untraceable = _sysprof_symbol_new (g_ref_string_new_intern ("[Unwindable]"), NULL, NULL, 0, 0);
-  everything->is_untraceable = TRUE;
+  everything = _sysprof_symbol_new (g_ref_string_new_intern ("All Processes"),
+                                    NULL, NULL, 0, 0,
+                                    SYSPROF_SYMBOL_KIND_ROOT);
+  untraceable = _sysprof_symbol_new (g_ref_string_new_intern ("Unwindable"),
+                                     NULL, NULL, 0, 0,
+                                     SYSPROF_SYMBOL_KIND_UNWINDABLE);
 }
 
 static void
@@ -197,9 +198,11 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
       if (iter->parent != NULL)
         {
           SysprofSymbol *parent_symbol = iter->parent->summary->symbol;
+          SysprofSymbolKind parent_kind = sysprof_symbol_get_kind (parent_symbol);
           guint pos;
 
-          if (!(parent_symbol->is_process || parent_symbol->is_everything) &&
+          if (parent_kind != SYSPROF_SYMBOL_KIND_PROCESS &&
+              parent_kind != SYSPROF_SYMBOL_KIND_ROOT &&
               !g_ptr_array_find (iter->summary->callers, parent_symbol, &pos))
             g_ptr_array_add (iter->summary->callers, parent_symbol);
         }
@@ -308,12 +311,12 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
    * that it was a corrupted unwind when recording.
    */
   if (n_symbols == 1 &&
-      symbols[0]->is_context_switch &&
+      _sysprof_symbol_is_context_switch (symbols[0]) &&
       final_context == SYSPROF_ADDRESS_CONTEXT_USER)
     symbols[0] = untraceable;
 
   /* We saved 3 extra spaces for these above so that we can
-   * tack on the "Process" symbol and the "Everything" symbol.
+   * tack on the "Process" symbol and the "All Processes" symbol.
    * If the final address context places us in Kernel, we want
    * to add a "- - Kernel - -" symbol to ensure that we are
    * accounting cost to the kernel for the process.

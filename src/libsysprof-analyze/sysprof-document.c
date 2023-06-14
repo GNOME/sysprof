@@ -486,13 +486,13 @@ sysprof_document_load_processes (SysprofDocument *self)
 
               if ((parts = g_strsplit (cmdline , " ", 2)))
                 {
-                  g_autofree char *wrapped = g_strdup_printf ("[%s]", parts[0]);
+                  GRefString *nick = g_ref_string_acquire (process_info->fallback_symbol->binary_nick);
 
                   g_clear_object (&process_info->symbol);
                   process_info->symbol =
-                    _sysprof_symbol_new (sysprof_strings_get (self->strings, wrapped),
-                                         NULL, NULL, 0, 0);
-                  process_info->symbol->is_process = TRUE;
+                    _sysprof_symbol_new (sysprof_strings_get (self->strings, parts[0]),
+                                         NULL, g_steal_pointer (&nick), 0, 0,
+                                         SYSPROF_SYMBOL_KIND_PROCESS);
                 }
             }
         }
@@ -1334,7 +1334,7 @@ sysprof_document_list_symbols_in_traceable (SysprofDocument          *self,
   symbols = g_alloca (sizeof (SysprofSymbol *) * stack_depth);
   n_symbols = sysprof_document_symbolize_traceable (self, traceable, symbols, stack_depth, &final_context);
 
-  if (n_symbols > 0 && symbols[0]->is_context_switch)
+  if (n_symbols > 0 && _sysprof_symbol_is_context_switch (symbols[0]))
     {
       symbols++;
       n_symbols--;

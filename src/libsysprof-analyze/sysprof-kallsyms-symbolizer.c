@@ -279,7 +279,8 @@ sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
                                     NULL,
                                     g_ref_string_acquire (linux_string),
                                     ksym->address,
-                                    next->address ? next->address : ksym->address + LAST_SYMBOL_LEN);
+                                    next->address ? next->address : ksym->address + LAST_SYMBOL_LEN,
+                                    SYSPROF_SYMBOL_KIND_KERNEL);
 
       if (address < ksym->address)
         right = mid;
@@ -298,7 +299,8 @@ failure:
                                 NULL,
                                 g_ref_string_acquire (linux_string),
                                 address,
-                                address + 1);
+                                address + 1,
+                                SYSPROF_SYMBOL_KIND_KERNEL);
   }
 }
 

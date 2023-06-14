@@ -27,9 +27,10 @@ G_DEFINE_FINAL_TYPE (SysprofSymbol, sysprof_symbol, G_TYPE_OBJECT)
 
 enum {
   PROP_0,
-  PROP_NAME,
   PROP_BINARY_NICK,
   PROP_BINARY_PATH,
+  PROP_KIND,
+  PROP_NAME,
   N_PROPS
 };
 
@@ -69,6 +70,10 @@ sysprof_symbol_get_property (GObject    *object,
       g_value_set_string (value, sysprof_symbol_get_binary_path (self));
       break;
 
+    case PROP_KIND:
+      g_value_set_enum (value, sysprof_symbol_get_kind (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -97,12 +102,19 @@ sysprof_symbol_class_init (SysprofSymbolClass *klass)
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_KIND] =
+    g_param_spec_enum ("kind", NULL, NULL,
+                       SYSPROF_TYPE_SYMBOL_KIND,
+                       SYSPROF_SYMBOL_KIND_USER,
+                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
 sysprof_symbol_init (SysprofSymbol *self)
 {
+  self->kind = SYSPROF_SYMBOL_KIND_USER;
 }
 
 const char *
@@ -130,11 +142,12 @@ sysprof_symbol_get_binary_path (SysprofSymbol *self)
 }
 
 SysprofSymbol *
-_sysprof_symbol_new (GRefString     *name,
-                     GRefString     *binary_path,
-                     GRefString     *binary_nick,
-                     SysprofAddress  begin_address,
-                     SysprofAddress  end_address)
+_sysprof_symbol_new (GRefString        *name,
+                     GRefString        *binary_path,
+                     GRefString        *binary_nick,
+                     SysprofAddress     begin_address,
+                     SysprofAddress     end_address,
+                     SysprofSymbolKind  kind)
 {
   SysprofSymbol *self;
 
@@ -145,6 +158,7 @@ _sysprof_symbol_new (GRefString     *name,
   self->begin_address = begin_address;
   self->end_address = end_address;
   self->hash = g_str_hash (name);
+  self->kind = kind;
 
   /* If we got a path for the symbol, add that to the hash so that we
    * can be sure that we're working with a symbol in the same file when
@@ -161,6 +175,9 @@ _sysprof_symbol_new (GRefString     *name,
         self->hash ^= g_str_hash (base);
     }
 
+  if (binary_nick != NULL)
+    self->hash ^= g_str_hash (binary_nick);
+
   return self;
 }
 
@@ -176,3 +193,17 @@ sysprof_symbol_hash (const SysprofSymbol *self)
 {
   return self->hash;
 }
+
+SysprofSymbolKind
+sysprof_symbol_get_kind (SysprofSymbol *self)
+{
+  return self ? self->kind : 0;
+}
+
+G_DEFINE_ENUM_TYPE (SysprofSymbolKind, sysprof_symbol_kind,
+                    G_DEFINE_ENUM_VALUE (SYSPROF_SYMBOL_KIND_ROOT, "root"),
+                    G_DEFINE_ENUM_VALUE (SYSPROF_SYMBOL_KIND_PROCESS, "process"),
+                    G_DEFINE_ENUM_VALUE (SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH, "context-switch"),
+                    G_DEFINE_ENUM_VALUE (SYSPROF_SYMBOL_KIND_USER, "user"),
+                    G_DEFINE_ENUM_VALUE (SYSPROF_SYMBOL_KIND_KERNEL, "kernel"),
+                    G_DEFINE_ENUM_VALUE (SYSPROF_SYMBOL_KIND_UNWINDABLE, "unwindable"))

@@ -27,21 +27,36 @@
 
 G_BEGIN_DECLS
 
+typedef enum _SysprofSymbolKind
+{
+  SYSPROF_SYMBOL_KIND_ROOT = 1,
+  SYSPROF_SYMBOL_KIND_PROCESS,
+  SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH,
+  SYSPROF_SYMBOL_KIND_USER,
+  SYSPROF_SYMBOL_KIND_KERNEL,
+  SYSPROF_SYMBOL_KIND_UNWINDABLE,
+} SysprofSymbolKind;
+
 #define SYSPROF_TYPE_SYMBOL (sysprof_symbol_get_type())
+#define SYSPROF_TYPE_SYMBOL_KIND (sysprof_symbol_kind_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofSymbol, sysprof_symbol, SYSPROF, SYMBOL, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_symbol_get_name        (SysprofSymbol       *self);
+GType             sysprof_symbol_kind_get_type    (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_symbol_get_binary_nick (SysprofSymbol       *self);
+const char        *sysprof_symbol_get_name        (SysprofSymbol       *self);
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_symbol_get_binary_path (SysprofSymbol       *self);
+const char        *sysprof_symbol_get_binary_nick (SysprofSymbol       *self);
 SYSPROF_AVAILABLE_IN_ALL
-guint       sysprof_symbol_hash            (const SysprofSymbol *self);
+const char        *sysprof_symbol_get_binary_path (SysprofSymbol       *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean    sysprof_symbol_equal           (const SysprofSymbol *a,
-                                            const SysprofSymbol *b);
+SysprofSymbolKind  sysprof_symbol_get_kind        (SysprofSymbol       *self);
+SYSPROF_AVAILABLE_IN_ALL
+guint              sysprof_symbol_hash            (const SysprofSymbol *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean           sysprof_symbol_equal           (const SysprofSymbol *a,
+                                                   const SysprofSymbol *b);
 
 G_END_DECLS

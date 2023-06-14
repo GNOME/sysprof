@@ -148,6 +148,7 @@ sysprof_document_symbols_worker (GTask        *task,
     { "- - Guest Kernel - -", SYSPROF_ADDRESS_CONTEXT_GUEST_KERNEL },
     { "- - Guest User - -", SYSPROF_ADDRESS_CONTEXT_GUEST_USER },
   };
+  g_autoptr(GRefString) context_switch = g_ref_string_new_intern ("Context Switch");
   Symbolize *state = task_data;
   EggBitsetIter iter;
   EggBitset *bitset;
@@ -168,9 +169,11 @@ sysprof_document_symbols_worker (GTask        *task,
   /* Create static symbols for context switch use */
   for (guint cs = 0; cs < G_N_ELEMENTS (context_switches); cs++)
     {
-      g_autoptr(SysprofSymbol) symbol = _sysprof_symbol_new (g_ref_string_new_intern (context_switches[cs].name), NULL, NULL, 0, 0);
-
-      symbol->is_context_switch = TRUE;
+      g_autoptr(SysprofSymbol) symbol = _sysprof_symbol_new (g_ref_string_new_intern (context_switches[cs].name),
+                                                             NULL,
+                                                             g_ref_string_acquire (context_switch),
+                                                             0, 0,
+                                                             SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH);
 
       /* TODO: It would be nice if we had enough insight from the capture header
        * as to the host system, so we can show "vmlinuz" and "Linux" respectively

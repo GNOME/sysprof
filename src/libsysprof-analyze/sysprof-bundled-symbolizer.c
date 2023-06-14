@@ -208,11 +208,26 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
     }
 
   if (ret->offset < (self->endptr - self->beginptr))
-    return _sysprof_symbol_new (sysprof_strings_get (strings, &self->beginptr[ret->offset]),
-                                NULL,
-                                g_steal_pointer (&tag),
-                                ret->addr_begin,
-                                ret->addr_end);
+    {
+      const char *name = &self->beginptr[ret->offset];
+      SysprofSymbolKind kind;
+
+      if (g_str_has_prefix (name, "- -"))
+        kind = SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH;
+      else if (context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
+        kind = SYSPROF_SYMBOL_KIND_KERNEL;
+      else if (name[0] == '[')
+        kind = SYSPROF_SYMBOL_KIND_PROCESS;
+      else
+        kind = SYSPROF_SYMBOL_KIND_USER;
+
+      return _sysprof_symbol_new (sysprof_strings_get (strings, name),
+                                  NULL,
+                                  g_steal_pointer (&tag),
+                                  ret->addr_begin,
+                                  ret->addr_end,
+                                  kind);
+    }
 
   return NULL;
 }

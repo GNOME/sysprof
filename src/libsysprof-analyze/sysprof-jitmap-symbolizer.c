@@ -210,7 +210,8 @@ create_symbol:
                               NULL,
                               NULL,
                               match->address,
-                              match->address + 1);
+                              match->address + 1,
+                              SYSPROF_SYMBOL_KIND_USER);
 }
 
 static void

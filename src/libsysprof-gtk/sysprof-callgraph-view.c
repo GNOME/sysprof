@@ -31,6 +31,7 @@ enum {
   PROP_0,
   PROP_CALLGRAPH,
   PROP_DOCUMENT,
+  PROP_INCLUDE_THREADS,
   PROP_TRACEABLES,
   N_PROPS
 };
@@ -249,6 +250,7 @@ functions_selection_changed_cb (SysprofCallgraphView *self,
 
         default:
         case SYSPROF_SYMBOL_KIND_PROCESS:
+        case SYSPROF_SYMBOL_KIND_THREAD:
         case SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH:
         case SYSPROF_SYMBOL_KIND_UNWINDABLE:
         case SYSPROF_SYMBOL_KIND_USER:
@@ -383,6 +385,10 @@ sysprof_callgraph_view_get_property (GObject    *object,
       g_value_set_object (value, sysprof_callgraph_view_get_document (self));
       break;
 
+    case PROP_INCLUDE_THREADS:
+      g_value_set_boolean (value, sysprof_callgraph_view_get_include_threads (self));
+      break;
+
     case PROP_TRACEABLES:
       g_value_set_object (value, sysprof_callgraph_view_get_traceables (self));
       break;
@@ -404,6 +410,10 @@ sysprof_callgraph_view_set_property (GObject      *object,
     {
     case PROP_DOCUMENT:
       sysprof_callgraph_view_set_document (self, g_value_get_object (value));
+      break;
+
+    case PROP_INCLUDE_THREADS:
+      sysprof_callgraph_view_set_include_threads (self, g_value_get_boolean (value));
       break;
 
     case PROP_TRACEABLES:
@@ -434,6 +444,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
     g_param_spec_object ("document", NULL, NULL,
                          SYSPROF_TYPE_DOCUMENT,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_INCLUDE_THREADS] =
+    g_param_spec_boolean ("include-threads", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_TRACEABLES] =
     g_param_spec_object ("traceables", NULL, NULL,
@@ -566,11 +581,17 @@ sysprof_callgraph_view_reload_cb (GObject      *object,
 static gboolean
 sysprof_callgraph_view_reload (SysprofCallgraphView *self)
 {
+  SysprofCallgraphFlags flags = 0;
+
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
 
   g_clear_handle_id (&self->reload_source, g_source_remove);
 
+  if (self->include_threads)
+    flags |= SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS;
+
   sysprof_document_callgraph_async (self->document,
+                                    flags,
                                     self->traceables,
                                     SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->augment_size,
                                     SYSPROF_CALLGRAPH_VIEW_GET_CLASS (self)->augment_func,
@@ -701,4 +722,28 @@ sysprof_callgraph_view_get_callgraph (SysprofCallgraphView *self)
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), NULL);
 
   return self->callgraph;
+}
+
+gboolean
+sysprof_callgraph_view_get_include_threads (SysprofCallgraphView *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), FALSE);
+
+  return self->include_threads;
+}
+
+void
+sysprof_callgraph_view_set_include_threads (SysprofCallgraphView *self,
+                                            gboolean              include_threads)
+{
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  include_threads = !!include_threads;
+
+  if (self->include_threads != include_threads)
+    {
+      self->include_threads = include_threads;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_INCLUDE_THREADS]);
+      sysprof_callgraph_view_queue_reload (self);
+    }
 }

@@ -40,6 +40,7 @@ struct _SysprofDocumentTraceableInterface
   guint   (*get_stack_addresses) (SysprofDocumentTraceable *self,
                                   guint64                  *addresses,
                                   guint                     n_addresses);
+  int     (*get_thread_id)       (SysprofDocumentTraceable *self);
 };
 
 SYSPROF_AVAILABLE_IN_ALL
@@ -51,5 +52,7 @@ SYSPROF_AVAILABLE_IN_ALL
 guint   sysprof_document_traceable_get_stack_addresses (SysprofDocumentTraceable *self,
                                                         guint64                  *addresses,
                                                         guint                     n_addresses);
+SYSPROF_AVAILABLE_IN_ALL
+int     sysprof_document_traceable_get_thread_id       (SysprofDocumentTraceable *self);
 
 G_END_DECLS

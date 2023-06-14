@@ -48,6 +48,7 @@ static const char *kind_classes[] = {
   NULL,
   "root",
   "process",
+  "thread",
   "context-switch",
   "user",
   "kernel",

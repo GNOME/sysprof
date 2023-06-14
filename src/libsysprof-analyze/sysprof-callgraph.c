@@ -284,17 +284,19 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
   guint stack_depth;
   guint n_symbols;
   int pid;
+  int tid;
 
   g_assert (SYSPROF_IS_CALLGRAPH (self));
   g_assert (SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
 
   pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (traceable));
+  tid = sysprof_document_traceable_get_thread_id (traceable);
   stack_depth = sysprof_document_traceable_get_stack_depth (traceable);
 
   if (stack_depth == 0 || stack_depth > MAX_STACK_DEPTH)
     return;
 
-  symbols = g_newa (SysprofSymbol *, stack_depth + 3);
+  symbols = g_newa (SysprofSymbol *, stack_depth + 4);
   n_symbols = sysprof_document_symbolize_traceable (self->document,
                                                     traceable,
                                                     symbols,
@@ -323,6 +325,13 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
    */
   if (final_context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
     symbols[n_symbols++] = _sysprof_document_kernel_symbol (self->document);
+
+  /* If the user requested thread-ids within each process, then
+   * insert a symbol for that before the real stacks.
+   */
+  if ((self->flags & SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS) != 0)
+    symbols[n_symbols++] = _sysprof_document_thread_symbol (self->document, pid, tid);
+
   symbols[n_symbols++] = _sysprof_document_process_symbol (self->document, pid);
   symbols[n_symbols++] = everything;
 
@@ -364,6 +373,7 @@ sysprof_callgraph_new_worker (GTask        *task,
 
 void
 _sysprof_callgraph_new_async (SysprofDocument         *document,
+                              SysprofCallgraphFlags    flags,
                               GListModel              *traceables,
                               gsize                    augment_size,
                               SysprofAugmentationFunc  augment_func,
@@ -387,6 +397,7 @@ _sysprof_callgraph_new_async (SysprofDocument         *document,
     summary_free = (GDestroyNotify)sysprof_callgraph_summary_free_self;
 
   self = g_object_new (SYSPROF_TYPE_CALLGRAPH, NULL);
+  self->flags = flags;
   self->document = g_object_ref (document);
   self->traceables = g_object_ref (traceables);
   self->augment_size = augment_size;

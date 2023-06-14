@@ -33,8 +33,10 @@ typedef struct _Augment
 } Augment;
 
 static char *kallsyms_path;
+static gboolean include_threads;
 static const GOptionEntry entries[] = {
   { "kallsyms", 'k', 0, G_OPTION_ARG_FILENAME, &kallsyms_path, "The path to kallsyms to use for decoding", "PATH" },
+  { "threads", 't', 0, G_OPTION_ARG_NONE, &include_threads, "Include threads in the stack traces" },
   { 0 }
 };
 
@@ -122,6 +124,7 @@ main (int   argc,
   g_autoptr(SysprofMultiSymbolizer) multi = NULL;
   g_autoptr(GListModel) samples = NULL;
   g_autoptr(GError) error = NULL;
+  SysprofCallgraphFlags flags = 0;
 
   setlocale (LC_ALL, "");
   bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
@@ -159,7 +162,11 @@ main (int   argc,
 
   samples = sysprof_document_list_samples (document);
 
+  if (include_threads)
+    flags |= SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS;
+
   sysprof_document_callgraph_async (document,
+                                    flags,
                                     samples,
                                     sizeof (Augment),
                                     augment_cb, NULL, NULL,

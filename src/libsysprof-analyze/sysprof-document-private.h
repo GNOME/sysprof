@@ -58,6 +58,9 @@ GRefString      *_sysprof_document_ref_string       (SysprofDocument      *self,
 EggBitset       *_sysprof_document_traceables       (SysprofDocument      *self);
 SysprofSymbol   *_sysprof_document_process_symbol   (SysprofDocument      *self,
                                                      int                   pid);
+SysprofSymbol   *_sysprof_document_thread_symbol    (SysprofDocument      *self,
+                                                     int                   pid,
+                                                     int                   tid);
 SysprofSymbol   *_sysprof_document_kernel_symbol    (SysprofDocument      *self);
 
 G_END_DECLS

@@ -62,6 +62,14 @@ typedef void (*SysprofAugmentationFunc) (SysprofCallgraph     *callgraph,
                                          gboolean              summarize,
                                          gpointer              user_data);
 
+typedef enum _SysprofCallgraphFlags
+{
+  SYSPROF_CALLGRAPH_FLAGS_NONE = 0,
+  SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS = 1 << 1,
+} SysprofCallgraphFlags;
+
+SYSPROF_AVAILABLE_IN_ALL
+GType                 sysprof_callgraph_flags_get_type             (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
 GListModel           *sysprof_callgraph_list_symbols               (SysprofCallgraph       *self);
 SYSPROF_AVAILABLE_IN_ALL

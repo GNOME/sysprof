@@ -28,8 +28,10 @@
 static GMainLoop *main_loop;
 static char *kallsyms_path;
 static char *filename;
+static gboolean include_threads;
 static const GOptionEntry entries[] = {
   { "kallsyms", 'k', 0, G_OPTION_ARG_FILENAME, &kallsyms_path, "The path to kallsyms to use for decoding", "PATH" },
+  { "threads", 't', 0, G_OPTION_ARG_NONE, &include_threads, "Include threads in the callgraph" },
   { 0 }
 };
 
@@ -101,6 +103,7 @@ main (int   argc,
   view = g_object_new (SYSPROF_TYPE_WEIGHTED_CALLGRAPH_VIEW,
                        "traceables", model,
                        "document", document,
+                       "include-threads", include_threads,
                        NULL);
   g_signal_connect_swapped (window,
                             "close-request",

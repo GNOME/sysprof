@@ -57,6 +57,8 @@ struct _SysprofCallgraph
   GHashTable              *symbol_to_summary;
   GPtrArray               *symbols;
 
+  SysprofCallgraphFlags    flags;
+
   gsize                    augment_size;
   SysprofAugmentationFunc  augment_func;
   gpointer                 augment_func_data;
@@ -66,6 +68,7 @@ struct _SysprofCallgraph
 };
 
 void              _sysprof_callgraph_new_async          (SysprofDocument          *document,
+                                                         SysprofCallgraphFlags     flags,
                                                          GListModel               *traceables,
                                                          gsize                     augment_size,
                                                          SysprofAugmentationFunc   augment_func,

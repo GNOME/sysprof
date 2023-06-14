@@ -38,7 +38,7 @@ struct _SysprofDocumentSampleClass
 enum {
   PROP_0,
   PROP_STACK_DEPTH,
-  PROP_TID,
+  PROP_THREAD_ID,
   N_PROPS
 };
 
@@ -73,12 +73,26 @@ sysprof_document_sample_get_stack_addresses (SysprofDocumentTraceable *traceable
   return depth;
 }
 
+static int
+sysprof_document_sample_get_thread_id (SysprofDocumentTraceable *traceable)
+{
+  SysprofDocumentSample *self = (SysprofDocumentSample *)traceable;
+  const SysprofCaptureSample *sample;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_SAMPLE (self), -1);
+
+  sample = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureSample);
+
+  return SYSPROF_DOCUMENT_FRAME_INT32 (self, sample->tid);
+}
+
 static void
 traceable_iface_init (SysprofDocumentTraceableInterface *iface)
 {
   iface->get_stack_depth = sysprof_document_sample_get_stack_depth;
   iface->get_stack_address = sysprof_document_sample_get_stack_address;
   iface->get_stack_addresses = sysprof_document_sample_get_stack_addresses;
+  iface->get_thread_id = sysprof_document_sample_get_thread_id;
 }
 
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocumentSample, sysprof_document_sample, SYSPROF_TYPE_DOCUMENT_FRAME,
@@ -100,8 +114,8 @@ sysprof_document_sample_get_property (GObject    *object,
       g_value_set_uint (value, sysprof_document_traceable_get_stack_depth (SYSPROF_DOCUMENT_TRACEABLE (self)));
       break;
 
-    case PROP_TID:
-      g_value_set_int (value, sysprof_document_sample_get_tid (self));
+    case PROP_THREAD_ID:
+      g_value_set_int (value, sysprof_document_sample_get_thread_id (SYSPROF_DOCUMENT_TRACEABLE (self)));
       break;
 
     default:
@@ -117,17 +131,17 @@ sysprof_document_sample_class_init (SysprofDocumentSampleClass *klass)
   object_class->get_property = sysprof_document_sample_get_property;
 
   /**
-   * SysprofDocumentSample:tid:
+   * SysprofDocumentSample:thread-id:
    *
-   * The task-id or thread-id of the thread which was sampled.
+   * The thread-id where the sample occurred.
    *
-   * On Linux, this is generally set to the value of the gettid() syscall.
+   * On Linux, this is generally set to the value of gettid().
    *
    * Since: 45
    */
-  properties [PROP_TID] =
-    g_param_spec_int ("tid", NULL, NULL,
-                      G_MININT32, G_MAXINT32, 0,
+  properties [PROP_THREAD_ID] =
+    g_param_spec_int ("thread-id", NULL, NULL,
+                      -1, G_MAXINT32, 0,
                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   /**
@@ -148,16 +162,4 @@ sysprof_document_sample_class_init (SysprofDocumentSampleClass *klass)
 static void
 sysprof_document_sample_init (SysprofDocumentSample *self)
 {
-}
-
-int
-sysprof_document_sample_get_tid (SysprofDocumentSample *self)
-{
-  const SysprofCaptureSample *sample;
-
-  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_SAMPLE (self), 0);
-
-  sample = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureSample);
-
-  return SYSPROF_DOCUMENT_FRAME_INT32 (self, sample->tid);
 }

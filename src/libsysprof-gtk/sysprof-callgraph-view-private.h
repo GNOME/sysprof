@@ -50,6 +50,8 @@ struct _SysprofCallgraphView
   GCancellable *cancellable;
 
   guint reload_source;
+
+  guint include_threads : 1;
 };
 
 struct _SysprofCallgraphViewClass

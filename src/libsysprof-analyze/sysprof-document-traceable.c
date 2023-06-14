@@ -43,6 +43,18 @@ sysprof_document_traceable_default_init (SysprofDocumentTraceableInterface *ifac
                                        g_param_spec_uint ("stack-depth", NULL, NULL,
                                                           0, G_MAXUINT16, 0,
                                                           (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
+
+  /**
+   * SysprofDocumentTraceable:thread-id:
+   *
+   * The "thread-id" property contains the thread identifier for the traceable.
+   *
+   * Since: 45
+   */
+  g_object_interface_install_property (iface,
+                                       g_param_spec_int ("thread-id", NULL, NULL,
+                                                         -1, G_MAXINT, -1,
+                                                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 }
 
 guint
@@ -56,6 +68,12 @@ sysprof_document_traceable_get_stack_address (SysprofDocumentTraceable *self,
                                               guint                     position)
 {
   return SYSPROF_DOCUMENT_TRACEABLE_GET_IFACE (self)->get_stack_address (self, position);
+}
+
+int
+sysprof_document_traceable_get_thread_id (SysprofDocumentTraceable *self)
+{
+  return SYSPROF_DOCUMENT_TRACEABLE_GET_IFACE (self)->get_thread_id (self);
 }
 
 guint

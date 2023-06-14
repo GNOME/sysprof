@@ -78,6 +78,7 @@ struct _SysprofDocument
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_process_info;
+  GHashTable               *tid_to_symbol;
 
   SysprofMountNamespace    *mount_namespace;
 
@@ -269,6 +270,7 @@ sysprof_document_init (SysprofDocument *self)
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   self->pid_to_process_info = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)sysprof_process_info_unref);
+  self->tid_to_symbol = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_object_unref);
 
   self->mount_namespace = sysprof_mount_namespace_new ();
 }
@@ -1190,6 +1192,7 @@ sysprof_document_callgraph_cb (GObject      *object,
 /**
  * sysprof_document_callgraph_async:
  * @self: a #SysprofDocument
+ * @flags: flags for generating the callgraph
  * @traceables: a list model of traceables for the callgraph
  * @augment_size: the size of data to reserve for augmentation in
  *   the callgraph.
@@ -1212,6 +1215,7 @@ sysprof_document_callgraph_cb (GObject      *object,
  */
 void
 sysprof_document_callgraph_async (SysprofDocument         *self,
+                                  SysprofCallgraphFlags    flags,
                                   GListModel              *traceables,
                                   gsize                    augment_size,
                                   SysprofAugmentationFunc  augment_func,
@@ -1231,6 +1235,7 @@ sysprof_document_callgraph_async (SysprofDocument         *self,
   g_task_set_source_tag (task, sysprof_document_callgraph_async);
 
   _sysprof_callgraph_new_async (self,
+                                flags,
                                 traceables,
                                 augment_size,
                                 augment_func,
@@ -1280,6 +1285,39 @@ _sysprof_document_process_symbol (SysprofDocument *self,
     return info->symbol;
 
   return info->fallback_symbol;
+}
+
+SysprofSymbol *
+_sysprof_document_thread_symbol (SysprofDocument *self,
+                                 int              pid,
+                                 int              tid)
+{
+  SysprofSymbol *ret;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  if (!(ret = g_hash_table_lookup (self->tid_to_symbol, GINT_TO_POINTER (tid))))
+    {
+      char pidstr[32];
+      char tidstr[32];
+
+      g_snprintf (pidstr, sizeof pidstr, "(%d)", pid);
+
+      if (tid == pid)
+        g_snprintf (tidstr, sizeof tidstr, "Thread-%d (Main)", tid);
+      else
+        g_snprintf (tidstr, sizeof tidstr, "Thread-%d", tid);
+
+      ret = _sysprof_symbol_new (g_ref_string_new (tidstr),
+                                 NULL,
+                                 g_ref_string_new (pidstr),
+                                 0, 0,
+                                 SYSPROF_SYMBOL_KIND_THREAD);
+
+      g_hash_table_insert (self->tid_to_symbol, GINT_TO_POINTER (tid), ret);
+    }
+
+  return ret;
 }
 
 SysprofSymbol *

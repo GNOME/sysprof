@@ -226,7 +226,7 @@
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkScrolledWindow">
-                <property name="vexpand">true</property>
+                <property name="min-content-height">100</property>
                 <child>
                   <object class="GtkColumnView" id="traceables_column_view">
                     <style>

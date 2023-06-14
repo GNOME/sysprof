@@ -25,6 +25,7 @@
 #include "libsysprof-gtk-resources.h"
 
 #include "sysprof-callgraph-view-private.h"
+#include "sysprof-symbol-label-private.h"
 
 enum {
   PROP_0,
@@ -427,6 +428,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   g_resources_register (libsysprof_gtk_get_resource ());
 
   g_type_ensure (PANEL_TYPE_PANED);
+  g_type_ensure (SYSPROF_TYPE_SYMBOL_LABEL);
 }
 
 static void

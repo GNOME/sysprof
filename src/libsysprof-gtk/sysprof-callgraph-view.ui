@@ -177,15 +177,11 @@
               </lookup>
             </binding>
             <child>
-              <object class="GtkInscription">
-                <property name="xalign">0</property>
+              <object class="SysprofSymbolLabel">
                 <property name="hexpand">true</property>
-                <property name="min-chars">25</property>
-                <binding name="text">
-                  <lookup name="name" type="SysprofSymbol">
-                    <lookup name="symbol" type="SysprofCallgraphFrame">
-                      <lookup name="item">expander</lookup>
-                    </lookup>
+                <binding name="symbol">
+                  <lookup name="symbol" type="SysprofCallgraphFrame">
+                    <lookup name="item">expander</lookup>
                   </lookup>
                 </binding>
               </object>

@@ -7,6 +7,7 @@ libsysprof_gtk_private_sources = [
   'sysprof-css.c',
   'sysprof-progress-cell.c',
   'sysprof-symbol-label.c',
+  'sysprof-time-label.c',
 ]
 
 libsysprof_gtk_public_headers = [

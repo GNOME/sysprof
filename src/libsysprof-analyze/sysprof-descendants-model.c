@@ -173,8 +173,11 @@ sysprof_descendants_model_add_traceable (SysprofDescendantsModel  *self,
   g_assert (SYSPROF_IS_SYMBOL (from_symbol));
 
   stack_depth = MIN (MAX_STACK_DEPTH, sysprof_document_traceable_get_stack_depth (traceable));
-  symbols = g_alloca (sizeof (SysprofSymbol *) * stack_depth);
+  symbols = g_alloca (sizeof (SysprofSymbol *) * (stack_depth + 1));
   n_symbols = sysprof_document_symbolize_traceable (document, traceable, symbols, stack_depth, &final_context);
+
+  if (sysprof_symbol_get_kind (from_symbol) == SYSPROF_SYMBOL_KIND_PROCESS)
+    symbols[n_symbols++] = from_symbol;
 
   for (guint i = n_symbols; i > 0; i--)
     {

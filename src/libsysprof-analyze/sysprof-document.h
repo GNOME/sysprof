@@ -56,6 +56,8 @@ GListModel          *sysprof_document_list_jitmaps              (SysprofDocument
 SYSPROF_AVAILABLE_IN_ALL
 GListModel          *sysprof_document_list_counters             (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
+GListModel          *sysprof_document_list_marks                (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
 GListModel          *sysprof_document_list_symbols_in_traceable (SysprofDocument           *self,
                                                                  SysprofDocumentTraceable  *traceable);
 SYSPROF_AVAILABLE_IN_ALL

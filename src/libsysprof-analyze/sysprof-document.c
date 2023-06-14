@@ -75,6 +75,7 @@ struct _SysprofDocument
   EggBitset                *jitmaps;
   EggBitset                *ctrdefs;
   EggBitset                *ctrsets;
+  EggBitset                *marks;
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_process_info;
@@ -218,6 +219,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->allocations, egg_bitset_unref);
   g_clear_pointer (&self->ctrdefs, egg_bitset_unref);
   g_clear_pointer (&self->ctrsets, egg_bitset_unref);
+  g_clear_pointer (&self->marks, egg_bitset_unref);
   g_clear_pointer (&self->file_chunks, egg_bitset_unref);
   g_clear_pointer (&self->jitmaps, egg_bitset_unref);
   g_clear_pointer (&self->mmaps, egg_bitset_unref);
@@ -259,6 +261,7 @@ sysprof_document_init (SysprofDocument *self)
   self->allocations = egg_bitset_new_empty ();
   self->ctrdefs = egg_bitset_new_empty ();
   self->ctrsets = egg_bitset_new_empty ();
+  self->marks = egg_bitset_new_empty ();
   self->file_chunks = egg_bitset_new_empty ();
   self->jitmaps = egg_bitset_new_empty ();
   self->mmaps = egg_bitset_new_empty ();
@@ -486,7 +489,7 @@ sysprof_document_load_processes (SysprofDocument *self)
             {
               g_auto(GStrv) parts = NULL;
 
-              if ((parts = g_strsplit (cmdline , " ", 2)))
+              if ((parts = g_strsplit (cmdline , " ", 2)) && parts[0])
                 {
                   GRefString *nick = g_ref_string_acquire (process_info->fallback_symbol->binary_nick);
 
@@ -700,6 +703,10 @@ sysprof_document_load_worker (GTask        *task,
 
         case SYSPROF_CAPTURE_FRAME_CTRSET:
           egg_bitset_add (self->ctrsets, self->frames->len);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_MARK:
+          egg_bitset_add (self->marks, self->frames->len);
           break;
 
         case SYSPROF_CAPTURE_FRAME_JITMAP:
@@ -1026,6 +1033,23 @@ sysprof_document_list_traceables (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->traceables);
+}
+
+/**
+ * sysprof_document_list_marks:
+ * @self: a #SysprofDocument
+ *
+ * Gets a #GListModel containing #SysprofDocumentMark found within
+ * the #SysprofDocument.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentAllocation
+ */
+GListModel *
+sysprof_document_list_marks (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->marks);
 }
 
 /**

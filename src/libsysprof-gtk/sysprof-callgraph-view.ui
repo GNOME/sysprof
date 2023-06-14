@@ -50,8 +50,7 @@
         </property>
       </template>
     </interface>
-    ]]>
-                            </property>
+    ]]></property>
                           </object>
                         </property>
                       </object>
@@ -101,8 +100,7 @@
     </property>
   </template>
 </interface>
-]]>
-                            </property>
+]]></property>
                           </object>
                         </property>
                       </object>
@@ -213,8 +211,7 @@
     </property>
   </template>
 </interface>
-]]>
-                        </property>
+]]></property>
                       </object>
                     </property>
                   </object>
@@ -259,8 +256,7 @@
     </property>
   </template>
 </interface>
-]]>
-                            </property>
+]]></property>
                           </object>
                         </property>
                       </object>
@@ -289,8 +285,7 @@
     </property>
   </template>
 </interface>
-]]>
-                            </property>
+]]></property>
                           </object>
                         </property>
                       </object>
@@ -320,34 +315,33 @@
     </property>
   </template>
 </interface>
-]]>
-                          </property>
-                        </object>
-                      </property>
-                    </object>
-                  </child>
-                </object>
-              </child>
-            </object>
-          </child>
-          <child>
-            <object class="GtkScrolledWindow">
-              <property name="propagate-natural-width">true</property>
-              <property name="vexpand">true</property>
-              <child>
-                <object class="GtkColumnView" id="traceable_column_view">
-                  <style>
-                    <class name="data-table"/>
-                  </style>
-                  <signal name="activate" handler="traceable_activate_cb" swapped="true"/>
-                  <property name="single-click-activate">true</property>
-                  <child>
-                    <object class="GtkColumnViewColumn" id="traceable_symbol_column">
-                      <property name="title" translatable="yes">Stack Trace</property>
-                      <property name="expand">true</property>
-                      <property name="factory">
-                        <object class="GtkBuilderListItemFactory">
-                          <property name="bytes"><![CDATA[
+]]></property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="propagate-natural-width">true</property>
+                <property name="vexpand">true</property>
+                <child>
+                  <object class="GtkColumnView" id="traceable_column_view">
+                    <style>
+                      <class name="data-table"/>
+                    </style>
+                    <signal name="activate" handler="traceable_activate_cb" swapped="true"/>
+                    <property name="single-click-activate">true</property>
+                    <child>
+                      <object class="GtkColumnViewColumn" id="traceable_symbol_column">
+                        <property name="title" translatable="yes">Stack Trace</property>
+                        <property name="expand">true</property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -369,8 +363,7 @@
     </property>
   </template>
 </interface>
-]]>
-                            </property>
+]]></property>
                           </object>
                         </property>
                       </object>
@@ -397,8 +390,7 @@
     </property>
   </template>
 </interface>
-]]>
-                            </property>
+]]></property>
                           </object>
                         </property>
                       </object>

@@ -106,6 +106,8 @@ static const struct {
   { "libgdk-3.so", "GTK 3" },
   { "libgtk-4.so", "GTK 4" },
   { "libgraphene-1.0.so", "Graphene" },
+  { "libgdk_pixbuf-2.0.so", "GdkPixbuf" },
+  { "librsvg-2.so", "rsvg" },
 
   /* Xorg/X11 */
   { "libX11-xcb.so", "X11" },

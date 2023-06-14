@@ -29,3 +29,6 @@ progresscell label {
 progresscell label.in-progress {
  color: @accent_fg_color;
 }
+
+callgraphview treeexpander indent { -gtk-icon-size: 8px; }
+callgraphview treeexpander indent:nth-child(n+20) { -gtk-icon-size: 0px; }

@@ -59,7 +59,7 @@ GListModel          *sysprof_document_list_counters             (SysprofDocument
 SYSPROF_AVAILABLE_IN_ALL
 GListModel          *sysprof_document_list_marks                (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofMarkCatalog  *sysprof_document_catalog_marks             (SysprofDocument           *self);
+GListModel          *sysprof_document_catalog_marks             (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel          *sysprof_document_list_symbols_in_traceable (SysprofDocument           *self,
                                                                  SysprofDocumentTraceable  *traceable);

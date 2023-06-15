@@ -39,6 +39,7 @@
 #include "sysprof-document-overlay.h"
 #include "sysprof-document-process-private.h"
 #include "sysprof-document-symbols-private.h"
+#include "sysprof-mark-catalog-private.h"
 #include "sysprof-mount-private.h"
 #include "sysprof-mount-device-private.h"
 #include "sysprof-mount-namespace-private.h"
@@ -80,6 +81,7 @@ struct _SysprofDocument
   GHashTable               *files_first_position;
   GHashTable               *pid_to_process_info;
   GHashTable               *tid_to_symbol;
+  GHashTable               *mark_groups;
 
   SysprofMountNamespace    *mount_namespace;
 
@@ -229,6 +231,8 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->samples, egg_bitset_unref);
   g_clear_pointer (&self->traceables, egg_bitset_unref);
 
+  g_clear_pointer (&self->mark_groups, g_hash_table_unref);
+
   g_clear_object (&self->counters);
   g_clear_pointer (&self->counter_id_to_values, g_hash_table_unref);
 
@@ -274,6 +278,7 @@ sysprof_document_init (SysprofDocument *self)
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   self->pid_to_process_info = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)sysprof_process_info_unref);
   self->tid_to_symbol = g_hash_table_new_full (NULL, NULL, NULL, (GDestroyNotify)g_object_unref);
+  self->mark_groups = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify)g_hash_table_unref);
 
   self->mount_namespace = sysprof_mount_namespace_new ();
 }
@@ -1424,12 +1429,47 @@ sysprof_document_list_symbols_in_traceable (SysprofDocument          *self,
  * group, then another catalog by name, which is then itself a #GListModel
  * of #SysprofDocumentMark.
  *
- * Returns: (transfer full): a #SysprofMarkCatalog
+ * Returns: (transfer full): a #GListModel of #SysprofMarkCatalog
  */
-SysprofMarkCatalog *
+GListModel *
 sysprof_document_catalog_marks (SysprofDocument *self)
 {
+  GListStore *store;
+  GHashTableIter iter;
+  gpointer key, value;
+
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
-  return NULL;
+  store = g_list_store_new (SYSPROF_TYPE_MARK_CATALOG);
+
+  g_hash_table_iter_init (&iter, self->mark_groups);
+
+  while (g_hash_table_iter_next (&iter, &key, &value))
+    {
+      g_autoptr(SysprofMarkCatalog) group = NULL;
+      g_autoptr(GListStore) names_store = NULL;
+      const char *group_name = key;
+      GHashTable *names = value;
+      GHashTableIter name_iter;
+      const char *name;
+      EggBitset *marks;
+
+      names_store = g_list_store_new (SYSPROF_TYPE_MARK_CATALOG);
+
+      g_hash_table_iter_init (&name_iter, names);
+
+      while (g_hash_table_iter_next (&name_iter, (gpointer *)&name, (gpointer *)&marks))
+        {
+          g_autoptr(GListModel) model = _sysprof_document_bitset_index_new (G_LIST_MODEL (self), marks);
+          g_autoptr(SysprofMarkCatalog) names_catalog = _sysprof_mark_catalog_new (name, model);
+
+          g_list_store_append (names_store, names_catalog);
+        }
+
+      group = _sysprof_mark_catalog_new (group_name, G_LIST_MODEL (names_store));
+
+      g_list_store_append (store, group);
+    }
+
+  return G_LIST_MODEL (store);
 }

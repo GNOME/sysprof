@@ -42,11 +42,24 @@ struct _SysprofDocumentFrameClass
   GObjectClass parent_class;
 };
 
+struct _SysprofDocumentMark
+{
+  SysprofDocumentFrame parent_instance;
+  double begin_fraction;
+  double end_fraction;
+};
+
+struct _SysprofDocumentMarkClass
+{
+  SysprofDocumentFrameClass parent_class;
+};
+
 SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *mapped,
                                                    const SysprofCaptureFrame *frame,
                                                    guint16                    frame_len,
                                                    gboolean                   needs_swap,
-                                                   gint64                     clock_at_start);
+                                                   gint64                     begin_time,
+                                                   gint64                     end_time);
 
 #define SYSPROF_DOCUMENT_FRAME_ENDPTR(obj) \
   (&((const guint8 *)SYSPROF_DOCUMENT_FRAME(obj)->frame)[SYSPROF_DOCUMENT_FRAME(obj)->frame_len])

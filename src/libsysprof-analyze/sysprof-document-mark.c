@@ -23,16 +23,6 @@
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-mark.h"
 
-struct _SysprofDocumentMark
-{
-  SysprofDocumentFrame parent_instance;
-};
-
-struct _SysprofDocumentMarkClass
-{
-  SysprofDocumentFrameClass parent_class;
-};
-
 enum {
   PROP_0,
   PROP_DURATION,
@@ -48,9 +38,9 @@ static GParamSpec *properties [N_PROPS];
 
 static void
 sysprof_document_mark_get_property (GObject    *object,
-                                      guint       prop_id,
-                                      GValue     *value,
-                                      GParamSpec *pspec)
+                                    guint       prop_id,
+                                    GValue     *value,
+                                    GParamSpec *pspec)
 {
   SysprofDocumentMark *self = SYSPROF_DOCUMENT_MARK (object);
 
@@ -158,4 +148,30 @@ sysprof_document_mark_get_message (SysprofDocumentMark *self)
   mark = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureMark);
 
   return SYSPROF_DOCUMENT_FRAME_CSTRING (self, mark->message);
+}
+
+/**
+ * sysprof_document_mark_get_time_fraction:
+ * @self: a #SysprofDocumentMark
+ * @begin_fraction: (out) (nullable): a location for the begin
+ *   time as a fraction
+ * @end_fraction: (out) (nullable): a location for the end
+ *   time as a fraction
+ *
+ * Gets the begin/end time of the mark as a fraction between 0 and 1.
+ *
+ * 0 is the beginning of the capture, 1 is the end of the capture.
+ */
+void
+sysprof_document_mark_get_time_fraction (SysprofDocumentMark *self,
+                                         double              *begin_fraction,
+                                         double              *end_fraction)
+{
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_MARK (self));
+
+  if (begin_fraction)
+    *begin_fraction = self->begin_fraction;
+
+  if (end_fraction)
+    *end_fraction = self->end_fraction;
 }

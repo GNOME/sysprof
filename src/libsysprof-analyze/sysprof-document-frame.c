@@ -142,9 +142,11 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
                              const SysprofCaptureFrame *frame,
                              guint16                    frame_len,
                              gboolean                   needs_swap,
-                             gint64                     begin_time)
+                             gint64                     begin_time,
+                             gint64                     end_time)
 {
   SysprofDocumentFrame *self;
+  gint64 time_offset;
   GType gtype;
 
   switch (frame->type)
@@ -206,12 +208,27 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
       break;
     }
 
+
   self = g_object_new (gtype, NULL);
   self->mapped_file = g_mapped_file_ref (mapped_file);
   self->frame = frame;
   self->frame_len = frame_len;
   self->needs_swap = !!needs_swap;
-  self->time_offset = CLAMP (sysprof_document_frame_get_time (self) - begin_time, 0, G_MAXINT64);
+
+  time_offset = CLAMP (sysprof_document_frame_get_time (self) - begin_time, 0, G_MAXINT64);
+
+  /* loose precision here after about 71 minutes */
+  self->time_offset = (guint)time_offset;
+
+  if (frame->type == SYSPROF_CAPTURE_FRAME_MARK)
+    {
+      SysprofDocumentMark *mark = (SysprofDocumentMark *)self;
+      gint64 capture_duration = end_time - begin_time;
+      gint64 duration = sysprof_document_mark_get_duration (mark);
+
+      mark->begin_fraction = time_offset / (double)capture_duration;
+      mark->end_fraction = (time_offset + duration) / (double)capture_duration;
+    }
 
   return self;
 }

@@ -1,4 +1,4 @@
-/* sysprof-gtk.h
+/* sysprof-mark-table.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,13 +20,25 @@
 
 #pragma once
 
+#include <gtk/gtk.h>
+
+#include <sysprof-analyze.h>
+
+#include "sysprof-session.h"
+
 G_BEGIN_DECLS
 
-#define SYSPROF_GTK_INSIDE
-# include "sysprof-callgraph-view.h"
-# include "sysprof-mark-table.h"
-# include "sysprof-session.h"
-# include "sysprof-weighted-callgraph-view.h"
-#undef SYSPROF_GTK_INSIDE
+#define SYSPROF_TYPE_MARK_TABLE (sysprof_mark_table_get_type())
+
+SYSPROF_AVAILABLE_IN_ALL
+G_DECLARE_FINAL_TYPE (SysprofMarkTable, sysprof_mark_table, SYSPROF, MARK_TABLE, GtkWidget)
+
+SYSPROF_AVAILABLE_IN_ALL
+GtkWidget      *sysprof_mark_table_new         (void);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofSession *sysprof_mark_table_get_session (SysprofMarkTable *self);
+SYSPROF_AVAILABLE_IN_ALL
+void            sysprof_mark_table_set_session (SysprofMarkTable *self,
+                                                SysprofSession   *session);
 
 G_END_DECLS

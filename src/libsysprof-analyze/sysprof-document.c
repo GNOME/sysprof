@@ -1452,6 +1452,14 @@ sysprof_document_list_symbols_in_traceable (SysprofDocument          *self,
   return G_LIST_MODEL (ret);
 }
 
+static int
+str_compare (gconstpointer a,
+             gconstpointer b,
+             gpointer      user_data)
+{
+  return g_strcmp0 (*(const char * const *)a, *(const char * const *)b);
+}
+
 /**
  * sysprof_document_catalog_marks:
  * @self: a #SysprofDocument
@@ -1480,18 +1488,20 @@ sysprof_document_catalog_marks (SysprofDocument *self)
   while (g_hash_table_iter_next (&iter, &key, &value))
     {
       g_autoptr(GListStore) group = NULL;
+      g_autofree const char **keys = NULL;
       const char *group_name = key;
       GHashTable *names = value;
-      GHashTableIter name_iter;
-      const char *name;
-      EggBitset *marks;
+      guint len;
 
       group = g_list_store_new (SYSPROF_TYPE_MARK_CATALOG);
 
-      g_hash_table_iter_init (&name_iter, names);
+      keys = (const char **)g_hash_table_get_keys_as_array (names, &len);
+      g_qsort_with_data (keys, len, sizeof (char *), (GCompareDataFunc)str_compare, NULL);
 
-      while (g_hash_table_iter_next (&name_iter, (gpointer *)&name, (gpointer *)&marks))
+      for (guint i = 0; i < len; i++)
         {
+          const char *name = keys[i];
+          EggBitset *marks = g_hash_table_lookup (names, name);
           g_autoptr(GListModel) model = _sysprof_document_bitset_index_new (G_LIST_MODEL (self), marks);
           g_autoptr(SysprofMarkCatalog) names_catalog = _sysprof_mark_catalog_new (group_name, name, model);
 

@@ -137,7 +137,10 @@ sysprof_time_label_class_init (SysprofTimeLabelClass *klass)
 static void
 sysprof_time_label_init (SysprofTimeLabel *self)
 {
+  static const char *css_classes[] = {"numeric", NULL};
+
   self->label = g_object_new (GTK_TYPE_LABEL,
+                              "css-classes", css_classes,
                               "xalign", 1.f,
                               "single-line-mode", TRUE,
                               NULL);

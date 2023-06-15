@@ -67,6 +67,6 @@ marktable {
   font-size: .9em;
 }
 
-marktable row:nth-child(odd):not(:selected) {
-  background-color: alpha(currentColor, .05);
+marktable row:nth-child(odd):not(:selected):not(:hover) {
+  background-color: alpha(currentColor, .02);
 }

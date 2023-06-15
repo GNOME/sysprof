@@ -66,7 +66,3 @@ callgraphview row:not(:selected) treeexpander symbol.unwindable {
 marktable {
   font-size: .9em;
 }
-
-marktable row:nth-child(odd):not(:selected):not(:hover) {
-  background-color: alpha(currentColor, .02);
-}

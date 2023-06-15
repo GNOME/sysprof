@@ -77,13 +77,15 @@ main (int   argc,
           for (guint k = 0; k < n_marks; k++)
             {
               g_autoptr(SysprofDocumentMark) mark = g_list_model_get_item (G_LIST_MODEL (name_catalog), k);
+              const char *message = sysprof_document_mark_get_message (mark);
 
               g_assert (SYSPROF_IS_DOCUMENT_MARK (mark));
 
               g_assert_cmpstr (sysprof_document_mark_get_group (mark), ==, group);
               g_assert_cmpstr (sysprof_document_mark_get_name (mark), ==, name);
 
-              g_print ("    %s\n", sysprof_document_mark_get_message (mark));
+              if (message && message[0])
+                g_print ("    %s\n", message);
             }
         }
     }

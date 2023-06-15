@@ -53,6 +53,7 @@ G_BEGIN_DECLS
 # include "sysprof-elf-symbolizer.h"
 # include "sysprof-jitmap-symbolizer.h"
 # include "sysprof-kallsyms-symbolizer.h"
+# include "sysprof-mark-catalog.h"
 # include "sysprof-mount.h"
 # include "sysprof-multi-symbolizer.h"
 # include "sysprof-no-symbolizer.h"

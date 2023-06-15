@@ -1415,3 +1415,21 @@ sysprof_document_list_symbols_in_traceable (SysprofDocument          *self,
 
   return G_LIST_MODEL (ret);
 }
+
+/**
+ * sysprof_document_catalog_marks:
+ * @self: a #SysprofDocument
+ *
+ * Generates a catalog of marks which can be used to sort marks by
+ * group, then another catalog by name, which is then itself a #GListModel
+ * of #SysprofDocumentMark.
+ *
+ * Returns: (transfer full): a #SysprofMarkCatalog
+ */
+SysprofMarkCatalog *
+sysprof_document_catalog_marks (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return NULL;
+}

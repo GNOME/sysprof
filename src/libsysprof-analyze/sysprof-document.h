@@ -27,6 +27,7 @@
 #include "sysprof-callgraph.h"
 #include "sysprof-document-file.h"
 #include "sysprof-document-traceable.h"
+#include "sysprof-mark-catalog.h"
 #include "sysprof-symbol.h"
 
 G_BEGIN_DECLS
@@ -57,6 +58,8 @@ SYSPROF_AVAILABLE_IN_ALL
 GListModel          *sysprof_document_list_counters             (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel          *sysprof_document_list_marks                (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofMarkCatalog  *sysprof_document_catalog_marks             (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel          *sysprof_document_list_symbols_in_traceable (SysprofDocument           *self,
                                                                  SysprofDocumentTraceable  *traceable);

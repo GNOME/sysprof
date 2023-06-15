@@ -740,6 +740,37 @@ sysprof_document_load_worker (GTask        *task,
                                  g_strdup (file_chunk->path),
                                  GUINT_TO_POINTER (self->frames->len));
         }
+      else if (tainted->type == SYSPROF_CAPTURE_FRAME_MARK)
+        {
+          const SysprofCaptureMark *mark = (const SysprofCaptureMark *)tainted;
+          const char *endptr = (const char *)tainted + frame_len;
+
+          if (has_null_byte (mark->group, endptr) &&
+              has_null_byte (mark->name, endptr))
+            {
+              const char *group = mark->group;
+              const char *name = mark->name;
+              GHashTable *names;
+              EggBitset *bitset;
+
+              if (!(names = g_hash_table_lookup (self->mark_groups, group)))
+                {
+                  names = g_hash_table_new_full (g_str_hash,
+                                                 g_str_equal,
+                                                 g_free,
+                                                 (GDestroyNotify)egg_bitset_unref);
+                  g_hash_table_insert (self->mark_groups, g_strdup (group), names);
+                }
+
+              if (!(bitset = g_hash_table_lookup (names, name)))
+                {
+                  bitset = egg_bitset_new_empty ();
+                  g_hash_table_insert (names, g_strdup (name), bitset);
+                }
+
+              egg_bitset_add (bitset, self->frames->len);
+            }
+        }
 
       pos += frame_len;
 

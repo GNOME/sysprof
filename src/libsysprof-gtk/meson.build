@@ -1,5 +1,6 @@
 libsysprof_gtk_public_sources = [
   'sysprof-callgraph-view.c',
+  'sysprof-mark-chart.c',
   'sysprof-mark-table.c',
   'sysprof-session.c',
   'sysprof-weighted-callgraph-view.c',
@@ -16,6 +17,7 @@ libsysprof_gtk_public_headers = [
   'sysprof-gtk.h',
 
   'sysprof-callgraph-view.h',
+  'sysprof-mark-chart.h',
   'sysprof-mark-table.h',
   'sysprof-session.h',
   'sysprof-weighted-callgraph-view.h',

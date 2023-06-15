@@ -1,4 +1,4 @@
-/* sysprof-gtk.h
+/* sysprof-session.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,12 +20,22 @@
 
 #pragma once
 
+#include <gtk/gtk.h>
+
+#include <sysprof-analyze.h>
+
 G_BEGIN_DECLS
 
-#define SYSPROF_GTK_INSIDE
-# include "sysprof-callgraph-view.h"
-# include "sysprof-session.h"
-# include "sysprof-weighted-callgraph-view.h"
-#undef SYSPROF_GTK_INSIDE
+#define SYSPROF_TYPE_SESSION (sysprof_session_get_type())
+
+SYSPROF_AVAILABLE_IN_ALL
+G_DECLARE_FINAL_TYPE (SysprofSession, sysprof_session, SYSPROF, SESSION, GObject)
+
+SYSPROF_AVAILABLE_IN_ALL
+SysprofSession  *sysprof_session_new          (SysprofDocument *document);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDocument *sysprof_session_get_document (SysprofSession  *self);
+SYSPROF_AVAILABLE_IN_ALL
+GtkFilter       *sysprof_session_get_filter   (SysprofSession  *self);
 
 G_END_DECLS

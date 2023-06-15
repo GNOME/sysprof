@@ -654,6 +654,34 @@ sysprof_document_load_counters (SysprofDocument *self)
     }
 }
 
+static inline gboolean
+is_data_type (SysprofCaptureFrameType type)
+{
+  switch (type)
+    {
+    case SYSPROF_CAPTURE_FRAME_ALLOCATION:
+    case SYSPROF_CAPTURE_FRAME_CTRSET:
+    case SYSPROF_CAPTURE_FRAME_EXIT:
+    case SYSPROF_CAPTURE_FRAME_FORK:
+    case SYSPROF_CAPTURE_FRAME_LOG:
+    case SYSPROF_CAPTURE_FRAME_MAP:
+    case SYSPROF_CAPTURE_FRAME_MARK:
+    case SYSPROF_CAPTURE_FRAME_PROCESS:
+    case SYSPROF_CAPTURE_FRAME_SAMPLE:
+    case SYSPROF_CAPTURE_FRAME_TRACE:
+      return TRUE;
+
+    case SYSPROF_CAPTURE_FRAME_CTRDEF:
+    case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
+    case SYSPROF_CAPTURE_FRAME_JITMAP:
+    case SYSPROF_CAPTURE_FRAME_METADATA:
+    case SYSPROF_CAPTURE_FRAME_OVERLAY:
+    case SYSPROF_CAPTURE_FRAME_TIMESTAMP:
+    default:
+      return FALSE;
+    }
+}
+
 static void
 sysprof_document_load_worker (GTask        *task,
                               gpointer      source_object,
@@ -724,7 +752,7 @@ sysprof_document_load_worker (GTask        *task,
       pid = self->needs_swap ? GUINT32_SWAP_LE_BE (tainted->pid) : tainted->pid;
       t = self->needs_swap ? GUINT64_SWAP_LE_BE (tainted->time) : tainted->time;
 
-      if (t > self->time_span.end_nsec)
+      if (t > self->time_span.end_nsec && is_data_type (tainted->type))
         self->time_span.end_nsec = t;
 
       egg_bitset_add (self->pids, pid);

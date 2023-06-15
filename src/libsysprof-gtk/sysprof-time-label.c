@@ -139,6 +139,7 @@ sysprof_time_label_init (SysprofTimeLabel *self)
 {
   self->label = g_object_new (GTK_TYPE_LABEL,
                               "xalign", 1.f,
+                              "single-line-mode", TRUE,
                               NULL);
   gtk_widget_set_parent (GTK_WIDGET (self->label), GTK_WIDGET (self));
 }

@@ -19,13 +19,14 @@
 <interface>
   <template class="GtkListHeader">
     <property name="child">
-      <object class="GtkLabel">
+      <object class="GtkInscription">
         <property name="xalign">0</property>
-        <binding name="label">
-          <lookup name="name" type="SysprofMarkCatalog">
-            <lookup name="item" type="GtkTreeListRow">
-              <lookup name="item">GtkListHeader</lookup>
-            </lookup>
+        <property name="nat-chars">40</property>
+        <property name="min-chars">40</property>
+        <property name="text-overflow">clip</property>
+        <binding name="text">
+          <lookup name="group" type="SysprofMarkCatalog">
+            <lookup name="item">GtkListHeader</lookup>
           </lookup>
         </binding>
       </object>
@@ -38,6 +39,7 @@
                 </property>
                 <child>
                   <object class="GtkColumnViewColumn" id="name_column">
+                    <property name="title" translatable="yes">Marks</property>
                     <property name="factory">
                       <object class="GtkBuilderListItemFactory">
                         <property name="bytes"><![CDATA[
@@ -51,9 +53,7 @@
         <property name="max-width-chars">40</property>
         <binding name="label">
           <lookup name="name" type="SysprofMarkCatalog">
-            <lookup name="item" type="GtkTreeListRow">
-              <lookup name="item">GtkListItem</lookup>
-            </lookup>
+            <lookup name="item">GtkListItem</lookup>
           </lookup>
         </binding>
       </object>

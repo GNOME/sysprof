@@ -45,17 +45,6 @@ G_DEFINE_FINAL_TYPE (SysprofMarkChart, sysprof_mark_chart, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
 
-static GListModel *
-create_model_func (gpointer item,
-                   gpointer user_data)
-{
-  if (SYSPROF_IS_MARK_CATALOG (item) &&
-      sysprof_mark_catalog_get_kind (item) == SYSPROF_MARK_CATALOG_KIND_GROUP)
-    return g_object_ref (item);
-
-  return NULL;
-}
-
 static void
 sysprof_mark_chart_disconnect (SysprofMarkChart *self)
 {
@@ -70,7 +59,7 @@ sysprof_mark_chart_connect (SysprofMarkChart *self)
 {
   g_autoptr(GtkSingleSelection) single = NULL;
   GtkFilterListModel *filtered;
-  GtkTreeListModel *marks_tree;
+  GtkFlattenListModel *flatten;
   SysprofDocument *document;
   GtkSortListModel *sort_model;
   GtkSorter *column_sorter;
@@ -81,11 +70,8 @@ sysprof_mark_chart_connect (SysprofMarkChart *self)
   column_sorter = gtk_column_view_get_sorter (self->column_view);
 
   document = sysprof_session_get_document (self->session);
-  marks_tree = gtk_tree_list_model_new (sysprof_document_catalog_marks (document),
-                                        FALSE, TRUE,
-                                        create_model_func,
-                                        NULL, NULL);
-  filtered = gtk_filter_list_model_new (G_LIST_MODEL (marks_tree), NULL);
+  flatten = gtk_flatten_list_model_new (sysprof_document_catalog_marks (document));
+  filtered = gtk_filter_list_model_new (G_LIST_MODEL (flatten), NULL);
   g_object_bind_property (self->session, "filter", filtered, "filter", G_BINDING_SYNC_CREATE);
   sort_model = gtk_sort_list_model_new (G_LIST_MODEL (filtered), g_object_ref (column_sorter));
   single = gtk_single_selection_new (G_LIST_MODEL (sort_model));

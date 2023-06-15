@@ -28,7 +28,7 @@ main (int   argc,
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofDocument) document = NULL;
-  g_autoptr(GListModel) marks = NULL;
+  g_autoptr(GListModel) groups = NULL;
   g_autoptr(GError) error = NULL;
   guint n_groups;
 
@@ -47,46 +47,24 @@ main (int   argc,
       return 1;
     }
 
-  marks = sysprof_document_catalog_marks (document);
-  n_groups = g_list_model_get_n_items (marks);
+  groups = sysprof_document_catalog_marks (document);
+  n_groups = g_list_model_get_n_items (groups);
 
   for (guint i = 0; i < n_groups; i++)
     {
-      g_autoptr(SysprofMarkCatalog) catalog = g_list_model_get_item (marks, i);
-      const char *group = sysprof_mark_catalog_get_name (catalog);
-      guint n_names = g_list_model_get_n_items (G_LIST_MODEL (catalog));
+      g_autoptr(GListModel) catalogs = g_list_model_get_item (groups, i);
+      guint n_catalogs = g_list_model_get_n_items (catalogs);
 
-      g_assert (SYSPROF_IS_MARK_CATALOG (catalog));
-      g_assert (G_IS_LIST_MODEL (catalog));
-      g_assert (sysprof_mark_catalog_get_kind (catalog) == SYSPROF_MARK_CATALOG_KIND_GROUP);
-
-      g_print ("%s\n", group);
-
-      for (guint j = 0; j < n_names; j++)
+      for (guint j = 0; j < n_catalogs; j++)
         {
-          g_autoptr(SysprofMarkCatalog) name_catalog = g_list_model_get_item (G_LIST_MODEL (catalog), j);
-          const char *name = sysprof_mark_catalog_get_name (name_catalog);
-          guint n_marks = g_list_model_get_n_items (G_LIST_MODEL (name_catalog));
+          g_autoptr(SysprofMarkCatalog) catalog = g_list_model_get_item (catalogs, j);
+          const char *group = sysprof_mark_catalog_get_group (catalog);
+          const char *name = sysprof_mark_catalog_get_name (catalog);
 
-          g_assert (SYSPROF_IS_MARK_CATALOG (name_catalog));
-          g_assert (G_IS_LIST_MODEL (name_catalog));
-          g_assert (sysprof_mark_catalog_get_kind (name_catalog) == SYSPROF_MARK_CATALOG_KIND_NAME);
+          if (j == 0)
+            g_print ("%s\n", group);
 
           g_print ("  %s\n", name);
-
-          for (guint k = 0; k < n_marks; k++)
-            {
-              g_autoptr(SysprofDocumentMark) mark = g_list_model_get_item (G_LIST_MODEL (name_catalog), k);
-              const char *message = sysprof_document_mark_get_message (mark);
-
-              g_assert (SYSPROF_IS_DOCUMENT_MARK (mark));
-
-              g_assert_cmpstr (sysprof_document_mark_get_group (mark), ==, group);
-              g_assert_cmpstr (sysprof_document_mark_get_name (mark), ==, name);
-
-              if (message && message[0])
-                g_print ("    %s\n", message);
-            }
         }
     }
 

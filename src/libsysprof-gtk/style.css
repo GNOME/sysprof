@@ -66,3 +66,7 @@ callgraphview row:not(:selected) treeexpander symbol.unwindable {
 marktable {
   font-size: .9em;
 }
+
+markchart {
+  font-size: .9em;
+}

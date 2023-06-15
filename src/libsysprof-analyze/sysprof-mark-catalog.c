@@ -26,14 +26,14 @@ struct _SysprofMarkCatalog
 {
   GObject parent_instance;
   GListModel *items;
+  char *group;
   char *name;
-  SysprofMarkCatalogKind kind : 1;
 } SysprofMarkCatalogPrivate;
 
 enum {
   PROP_0,
+  PROP_GROUP,
   PROP_NAME,
-  PROP_KIND,
   N_PROPS
 };
 
@@ -74,6 +74,7 @@ sysprof_mark_catalog_dispose (GObject *object)
 {
   SysprofMarkCatalog *self = (SysprofMarkCatalog *)object;
 
+  g_clear_pointer (&self->group, g_free);
   g_clear_pointer (&self->name, g_free);
   g_clear_object (&self->items);
 
@@ -90,8 +91,8 @@ sysprof_mark_catalog_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_KIND:
-      g_value_set_enum (value, sysprof_mark_catalog_get_kind (self));
+    case PROP_GROUP:
+      g_value_set_string (value, sysprof_mark_catalog_get_group (self));
       break;
 
     case PROP_NAME:
@@ -111,11 +112,10 @@ sysprof_mark_catalog_class_init (SysprofMarkCatalogClass *klass)
   object_class->dispose = sysprof_mark_catalog_dispose;
   object_class->get_property = sysprof_mark_catalog_get_property;
 
-  properties[PROP_KIND] =
-    g_param_spec_enum ("kind", NULL, NULL,
-                       SYSPROF_TYPE_MARK_CATALOG_KIND,
-                       SYSPROF_MARK_CATALOG_KIND_GROUP,
-                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+  properties[PROP_GROUP] =
+    g_param_spec_string ("group", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_NAME] =
     g_param_spec_string ("name", NULL, NULL,
@@ -131,6 +131,14 @@ sysprof_mark_catalog_init (SysprofMarkCatalog *self)
 }
 
 const char *
+sysprof_mark_catalog_get_group (SysprofMarkCatalog *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_MARK_CATALOG (self), NULL);
+
+  return self->group;
+}
+
+const char *
 sysprof_mark_catalog_get_name (SysprofMarkCatalog *self)
 {
   g_return_val_if_fail (SYSPROF_IS_MARK_CATALOG (self), NULL);
@@ -139,9 +147,9 @@ sysprof_mark_catalog_get_name (SysprofMarkCatalog *self)
 }
 
 SysprofMarkCatalog *
-_sysprof_mark_catalog_new (const char             *name,
-                           GListModel             *items,
-                           SysprofMarkCatalogKind  kind)
+_sysprof_mark_catalog_new (const char *group,
+                           const char *name,
+                           GListModel *items)
 {
   SysprofMarkCatalog *self;
 
@@ -149,21 +157,9 @@ _sysprof_mark_catalog_new (const char             *name,
   g_return_val_if_fail (G_IS_LIST_MODEL (items), NULL);
 
   self = g_object_new (SYSPROF_TYPE_MARK_CATALOG, NULL);
+  self->group = g_strdup (group);
   self->name = g_strdup (name);
   self->items = g_object_ref (items);
-  self->kind = kind;
 
   return self;
 }
-
-SysprofMarkCatalogKind
-sysprof_mark_catalog_get_kind (SysprofMarkCatalog *self)
-{
-  g_return_val_if_fail (SYSPROF_IS_MARK_CATALOG (self), 0);
-
-  return self->kind;
-}
-
-G_DEFINE_ENUM_TYPE (SysprofMarkCatalogKind, sysprof_mark_catalog_kind,
-                    G_DEFINE_ENUM_VALUE (SYSPROF_MARK_CATALOG_KIND_GROUP, "group"),
-                    G_DEFINE_ENUM_VALUE (SYSPROF_MARK_CATALOG_KIND_NAME, "name"))

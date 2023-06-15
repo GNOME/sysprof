@@ -1456,11 +1456,13 @@ sysprof_document_list_symbols_in_traceable (SysprofDocument          *self,
  * sysprof_document_catalog_marks:
  * @self: a #SysprofDocument
  *
- * Generates a catalog of marks which can be used to sort marks by
- * group, then another catalog by name, which is then itself a #GListModel
- * of #SysprofDocumentMark.
+ * Get's a #GListModel of #GListModel of #SysprofMarkCatalog.
  *
- * Returns: (transfer full): a #GListModel of #SysprofMarkCatalog
+ * You can use this to display sections in #GtkListView and similar
+ * using #GtkFlattenListModel.
+ *
+ * Returns: (transfer full): a #GListModel of #GListModel of
+ *   #SysprofMarkCatalog grouped by mark group.
  */
 GListModel *
 sysprof_document_catalog_marks (SysprofDocument *self)
@@ -1471,33 +1473,30 @@ sysprof_document_catalog_marks (SysprofDocument *self)
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
-  store = g_list_store_new (SYSPROF_TYPE_MARK_CATALOG);
+  store = g_list_store_new (G_TYPE_LIST_MODEL);
 
   g_hash_table_iter_init (&iter, self->mark_groups);
 
   while (g_hash_table_iter_next (&iter, &key, &value))
     {
-      g_autoptr(SysprofMarkCatalog) group = NULL;
-      g_autoptr(GListStore) names_store = NULL;
+      g_autoptr(GListStore) group = NULL;
       const char *group_name = key;
       GHashTable *names = value;
       GHashTableIter name_iter;
       const char *name;
       EggBitset *marks;
 
-      names_store = g_list_store_new (SYSPROF_TYPE_MARK_CATALOG);
+      group = g_list_store_new (SYSPROF_TYPE_MARK_CATALOG);
 
       g_hash_table_iter_init (&name_iter, names);
 
       while (g_hash_table_iter_next (&name_iter, (gpointer *)&name, (gpointer *)&marks))
         {
           g_autoptr(GListModel) model = _sysprof_document_bitset_index_new (G_LIST_MODEL (self), marks);
-          g_autoptr(SysprofMarkCatalog) names_catalog = _sysprof_mark_catalog_new (name, model, SYSPROF_MARK_CATALOG_KIND_NAME);
+          g_autoptr(SysprofMarkCatalog) names_catalog = _sysprof_mark_catalog_new (group_name, name, model);
 
-          g_list_store_append (names_store, names_catalog);
+          g_list_store_append (group, names_catalog);
         }
-
-      group = _sysprof_mark_catalog_new (group_name, G_LIST_MODEL (names_store), SYSPROF_MARK_CATALOG_KIND_GROUP);
 
       g_list_store_append (store, group);
     }

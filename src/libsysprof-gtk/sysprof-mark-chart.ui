@@ -41,16 +41,28 @@
 <interface>
   <template class="GtkListItem">
     <property name="child">
-      <object class="GtkInscription">
-        <property name="xalign">0</property>
-        <property name="nat-chars">40</property>
-        <property name="min-chars">40</property>
-        <property name="text-overflow">clip</property>
-        <binding name="text">
-          <lookup name="name" type="SysprofMarkCatalog">
-            <lookup name="item">GtkListItem</lookup>
-          </lookup>
-        </binding>
+      <object class="GtkBox">
+        <child>
+          <object class="GtkInscription">
+            <property name="xalign">0</property>
+            <property name="nat-chars">40</property>
+            <property name="min-chars">40</property>
+            <property name="text-overflow">clip</property>
+            <binding name="text">
+              <lookup name="name" type="SysprofMarkCatalog">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
+        <child>
+          <object class="SysprofMarkChartRow">
+            <property name="hexpand">true</property>
+            <binding name="catalog">
+              <lookup name="item">GtkListItem</lookup>
+            </binding>
+          </object>
+        </child>
       </object>
     </property>
   </template>

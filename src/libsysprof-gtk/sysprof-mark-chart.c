@@ -22,6 +22,7 @@
 
 #include "sysprof-css-private.h"
 #include "sysprof-mark-chart.h"
+#include "sysprof-mark-chart-row-private.h"
 
 #include "libsysprof-gtk-resources.h"
 
@@ -153,6 +154,7 @@ sysprof_mark_chart_class_init (SysprofMarkChartClass *klass)
 
   g_resources_register (libsysprof_gtk_get_resource ());
 
+  g_type_ensure (SYSPROF_TYPE_MARK_CHART_ROW);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);
 }
 

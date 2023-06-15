@@ -50,6 +50,14 @@
                 <child>
                   <object class="GtkColumnViewColumn" id="duration_column">
                     <property name="title" translatable="yes">Duration</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter" id="duration_sorter">
+                        <property name="sort-order">descending</property>
+                        <property name="expression">
+                          <lookup name="duration" type="SysprofDocumentMark"/>
+                        </property>
+                      </object>
+                    </property>
                     <property name="factory">
                       <object class="GtkBuilderListItemFactory">
                         <property name="bytes"><![CDATA[
@@ -76,6 +84,13 @@
                 <child>
                   <object class="GtkColumnViewColumn" id="group_column">
                     <property name="title" translatable="yes">Group</property>
+                    <property name="sorter">
+                      <object class="GtkStringSorter">
+                        <property name="expression">
+                          <lookup name="group" type="SysprofDocumentMark"/>
+                        </property>
+                      </object>
+                    </property>
                     <property name="factory">
                       <object class="GtkBuilderListItemFactory">
                         <property name="bytes"><![CDATA[
@@ -104,6 +119,13 @@
                 <child>
                   <object class="GtkColumnViewColumn" id="name_column">
                     <property name="title" translatable="yes">Type</property>
+                    <property name="sorter">
+                      <object class="GtkStringSorter">
+                        <property name="expression">
+                          <lookup name="name" type="SysprofDocumentMark"/>
+                        </property>
+                      </object>
+                    </property>
                     <property name="factory">
                       <object class="GtkBuilderListItemFactory">
                         <property name="bytes"><![CDATA[
@@ -133,6 +155,13 @@
                   <object class="GtkColumnViewColumn" id="description_column">
                     <property name="title" translatable="yes">Description</property>
                     <property name="expand">true</property>
+                    <property name="sorter">
+                      <object class="GtkStringSorter">
+                        <property name="expression">
+                          <lookup name="message" type="SysprofDocumentMark"/>
+                        </property>
+                      </object>
+                    </property>
                     <property name="factory">
                       <object class="GtkBuilderListItemFactory">
                         <property name="bytes"><![CDATA[

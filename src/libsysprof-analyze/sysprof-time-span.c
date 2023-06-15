@@ -27,6 +27,9 @@ G_DEFINE_BOXED_TYPE (SysprofTimeSpan, sysprof_time_span, sysprof_time_span_copy,
 SysprofTimeSpan *
 sysprof_time_span_copy (const SysprofTimeSpan *self)
 {
+  if (self == NULL)
+    return NULL;
+
   return g_memdup2 (self, sizeof *self);
 }
 

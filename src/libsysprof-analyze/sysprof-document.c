@@ -56,6 +56,8 @@ struct _SysprofDocument
 {
   GObject                   parent_instance;
 
+  SysprofTimeSpan           time_span;
+
   GArray                   *frames;
   GMappedFile              *mapped_file;
   const guint8             *base;
@@ -96,6 +98,14 @@ typedef struct _SysprofDocumentFramePointer
   guint64 offset : 48;
   guint64 length : 16;
 } SysprofDocumentFramePointer;
+
+enum {
+  PROP_0,
+  PROP_TIME_SPAN,
+  N_PROPS
+};
+
+static GParamSpec *properties[N_PROPS];
 
 static GType
 sysprof_document_get_item_type (GListModel *model)
@@ -244,12 +254,40 @@ sysprof_document_finalize (GObject *object)
 
   G_OBJECT_CLASS (sysprof_document_parent_class)->finalize (object);
 }
+
+static void
+sysprof_document_get_property (GObject    *object,
+                               guint       prop_id,
+                               GValue     *value,
+                               GParamSpec *pspec)
+{
+  SysprofDocument *self = SYSPROF_DOCUMENT (object);
+
+  switch (prop_id)
+    {
+    case PROP_TIME_SPAN:
+      g_value_set_boxed (value, sysprof_document_get_time_span (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
 static void
 sysprof_document_class_init (SysprofDocumentClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = sysprof_document_finalize;
+  object_class->get_property = sysprof_document_get_property;
+
+  properties [PROP_TIME_SPAN] =
+    g_param_spec_boxed ("time-span", NULL, NULL,
+                        SYSPROF_TYPE_TIME_SPAN,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
@@ -659,11 +697,15 @@ sysprof_document_load_worker (GTask        *task,
       self->header.end_time = GUINT64_SWAP_LE_BE (self->header.end_time);
     }
 
+  self->time_span.begin_nsec = self->header.time;
+  self->time_span.end_nsec = self->header.end_time;
+
   pos = sizeof self->header;
   while (pos < (len - sizeof(guint16)))
     {
       const SysprofCaptureFrame *tainted;
       SysprofDocumentFramePointer ptr;
+      gint64 t;
       guint16 frame_len;
       int pid;
 
@@ -680,6 +722,10 @@ sysprof_document_load_worker (GTask        *task,
       tainted = (const SysprofCaptureFrame *)(gpointer)&self->base[pos];
 
       pid = self->needs_swap ? GUINT32_SWAP_LE_BE (tainted->pid) : tainted->pid;
+      t = self->needs_swap ? GUINT64_SWAP_LE_BE (tainted->time) : tainted->time;
+
+      if (t > self->time_span.end_nsec)
+        self->time_span.end_nsec = t;
 
       egg_bitset_add (self->pids, pid);
 
@@ -1513,4 +1559,12 @@ sysprof_document_catalog_marks (SysprofDocument *self)
     }
 
   return G_LIST_MODEL (store);
+}
+
+const SysprofTimeSpan *
+sysprof_document_get_time_span (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return &self->time_span;
 }

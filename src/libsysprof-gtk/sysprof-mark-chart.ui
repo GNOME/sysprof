@@ -36,7 +36,6 @@
                     </property>
                   </object>
                 </property>
-                <property name="show-column-separators">true</property>
                 <child>
                   <object class="GtkColumnViewColumn" id="name_column">
                     <property name="factory">
@@ -47,6 +46,9 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <property name="ellipsize">end</property>
+        <property name="max-width-chars">40</property>
         <binding name="label">
           <lookup name="name" type="SysprofMarkCatalog">
             <lookup name="item" type="GtkTreeListRow">
@@ -65,7 +67,8 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkColumnViewColumn" id="message_column">
+                  <object class="GtkColumnViewColumn" id="visuals_column">
+                    <property name="expand">true</property>
                     <property name="factory">
                       <object class="GtkBuilderListItemFactory">
                         <property name="bytes"><![CDATA[
@@ -73,12 +76,7 @@
 <interface>
   <template class="GtkListItem">
     <property name="child">
-      <object class="GtkLabel">
-        <binding name="label">
-          <lookup name="message" type="SysprofDocumentMark">
-            <lookup name="item">GtkListItem</lookup>
-          </lookup>
-        </binding>
+      <object class="GtkInscription">
       </object>
     </property>
   </template>

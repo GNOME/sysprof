@@ -32,8 +32,9 @@ struct _SysprofMarkTable
 
   SysprofSession *session;
 
-  GtkWidget      *box;
-  GtkColumnView  *column_view;
+  GtkWidget           *box;
+  GtkColumnView       *column_view;
+  GtkColumnViewColumn *start_column;
 };
 
 enum {
@@ -61,18 +62,26 @@ sysprof_mark_table_connect (SysprofMarkTable *self)
   g_autoptr(GtkSingleSelection) single = NULL;
   GtkFilterListModel *model;
   SysprofDocument *document;
+  GtkSorter *column_sorter;
+  GtkSortListModel *sort_model;
 
   g_assert (SYSPROF_IS_MARK_TABLE (self));
   g_assert (SYSPROF_IS_SESSION (self->session));
+
+  column_sorter = gtk_column_view_get_sorter (self->column_view);
 
   document = sysprof_session_get_document (self->session);
   model = gtk_filter_list_model_new (sysprof_document_list_marks (document), NULL);
   g_object_bind_property (self->session, "filter", model, "filter",
                           G_BINDING_SYNC_CREATE);
-
-  single = gtk_single_selection_new (G_LIST_MODEL (g_steal_pointer (&model)));
+  sort_model = gtk_sort_list_model_new (G_LIST_MODEL (model), g_object_ref (column_sorter));
+  single = gtk_single_selection_new (G_LIST_MODEL (sort_model));
 
   gtk_column_view_set_model (self->column_view, GTK_SELECTION_MODEL (single));
+
+  gtk_column_view_sort_by_column (self->column_view,
+                                  self->start_column,
+                                  GTK_SORT_ASCENDING);
 }
 
 static void
@@ -151,6 +160,7 @@ sysprof_mark_table_class_init (SysprofMarkTableClass *klass)
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkTable, box);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkTable, column_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofMarkTable, start_column);
 
   g_resources_register (libsysprof_gtk_get_resource ());
 

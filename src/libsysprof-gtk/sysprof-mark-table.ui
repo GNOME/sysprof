@@ -16,6 +16,14 @@
                 <child>
                   <object class="GtkColumnViewColumn" id="start_column">
                     <property name="title" translatable="yes">Start</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter" id="start_sorter">
+                        <property name="sort-order">ascending</property>
+                        <property name="expression">
+                          <lookup name="time-offset" type="SysprofDocumentFrame"/>
+                        </property>
+                      </object>
+                    </property>
                     <property name="factory">
                       <object class="GtkBuilderListItemFactory">
                         <property name="bytes"><![CDATA[

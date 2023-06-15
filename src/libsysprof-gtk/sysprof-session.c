@@ -47,6 +47,19 @@ G_DEFINE_FINAL_TYPE (SysprofSession, sysprof_session, G_TYPE_OBJECT)
 static GParamSpec *properties [N_PROPS];
 
 static void
+sysprof_session_set_document (SysprofSession  *self,
+                              SysprofDocument *document)
+{
+  g_assert (SYSPROF_IS_SESSION (self));
+  g_assert (SYSPROF_IS_DOCUMENT (document));
+
+  g_set_object (&self->document, document);
+
+  self->visible_time = *sysprof_document_get_time_span (document);
+  self->selected_time = self->visible_time;
+}
+
+static void
 sysprof_session_dispose (GObject *object)
 {
   SysprofSession *self = (SysprofSession *)object;
@@ -99,7 +112,7 @@ sysprof_session_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_DOCUMENT:
-      self->document = g_value_dup_object (value);
+      sysprof_session_set_document (self, g_value_get_object (value));
       break;
 
     default:

@@ -32,7 +32,7 @@ struct _SysprofMarkChart
   SysprofSession      *session;
 
   GtkWidget           *box;
-  GtkColumnView       *column_view;
+  GtkListView         *list_view;
 };
 
 enum {
@@ -51,7 +51,7 @@ sysprof_mark_chart_disconnect (SysprofMarkChart *self)
   g_assert (SYSPROF_IS_MARK_CHART (self));
   g_assert (SYSPROF_IS_SESSION (self->session));
 
-  gtk_column_view_set_model (self->column_view, NULL);
+  gtk_list_view_set_model (self->list_view, NULL);
 }
 
 static void
@@ -61,22 +61,17 @@ sysprof_mark_chart_connect (SysprofMarkChart *self)
   GtkFilterListModel *filtered;
   GtkFlattenListModel *flatten;
   SysprofDocument *document;
-  GtkSortListModel *sort_model;
-  GtkSorter *column_sorter;
 
   g_assert (SYSPROF_IS_MARK_CHART (self));
   g_assert (SYSPROF_IS_SESSION (self->session));
-
-  column_sorter = gtk_column_view_get_sorter (self->column_view);
 
   document = sysprof_session_get_document (self->session);
   flatten = gtk_flatten_list_model_new (sysprof_document_catalog_marks (document));
   filtered = gtk_filter_list_model_new (G_LIST_MODEL (flatten), NULL);
   g_object_bind_property (self->session, "filter", filtered, "filter", G_BINDING_SYNC_CREATE);
-  sort_model = gtk_sort_list_model_new (G_LIST_MODEL (filtered), g_object_ref (column_sorter));
-  single = gtk_single_selection_new (G_LIST_MODEL (sort_model));
+  single = gtk_single_selection_new (G_LIST_MODEL (filtered));
 
-  gtk_column_view_set_model (self->column_view, GTK_SELECTION_MODEL (single));
+  gtk_list_view_set_model (self->list_view, GTK_SELECTION_MODEL (single));
 }
 
 static void
@@ -154,7 +149,7 @@ sysprof_mark_chart_class_init (SysprofMarkChartClass *klass)
   gtk_widget_class_set_css_name (widget_class, "markchart");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChart, box);
-  gtk_widget_class_bind_template_child (widget_class, SysprofMarkChart, column_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofMarkChart, list_view);
 
   g_resources_register (libsysprof_gtk_get_resource ());
 

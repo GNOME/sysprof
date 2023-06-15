@@ -8,7 +8,7 @@
           <object class="GtkScrolledWindow">
             <property name="vexpand">true</property>
             <child>
-              <object class="GtkColumnView" id="column_view">
+              <object class="GtkListView" id="list_view">
                 <style>
                   <class name="data-table"/>
                 </style>
@@ -21,9 +21,6 @@
     <property name="child">
       <object class="GtkInscription">
         <property name="xalign">0</property>
-        <property name="nat-chars">40</property>
-        <property name="min-chars">40</property>
-        <property name="text-overflow">clip</property>
         <binding name="text">
           <lookup name="group" type="SysprofMarkCatalog">
             <lookup name="item">GtkListHeader</lookup>
@@ -37,21 +34,19 @@
                     </property>
                   </object>
                 </property>
-                <child>
-                  <object class="GtkColumnViewColumn" id="name_column">
-                    <property name="title" translatable="yes">Marks</property>
-                    <property name="factory">
-                      <object class="GtkBuilderListItemFactory">
-                        <property name="bytes"><![CDATA[
+                <property name="factory">
+                  <object class="GtkBuilderListItemFactory">
+                    <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
     <property name="child">
-      <object class="GtkLabel">
+      <object class="GtkInscription">
         <property name="xalign">0</property>
-        <property name="ellipsize">end</property>
-        <property name="max-width-chars">40</property>
-        <binding name="label">
+        <property name="nat-chars">40</property>
+        <property name="min-chars">40</property>
+        <property name="text-overflow">clip</property>
+        <binding name="text">
           <lookup name="name" type="SysprofMarkCatalog">
             <lookup name="item">GtkListItem</lookup>
           </lookup>
@@ -61,32 +56,9 @@
   </template>
 </interface>
 ]]>
-                        </property>
-                      </object>
                     </property>
                   </object>
-                </child>
-                <child>
-                  <object class="GtkColumnViewColumn" id="visuals_column">
-                    <property name="expand">true</property>
-                    <property name="factory">
-                      <object class="GtkBuilderListItemFactory">
-                        <property name="bytes"><![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
-<interface>
-  <template class="GtkListItem">
-    <property name="child">
-      <object class="GtkInscription">
-      </object>
-    </property>
-  </template>
-</interface>
-]]>
-                        </property>
-                      </object>
-                    </property>
-                  </object>
-                </child>
+                </property>
               </object>
             </child>
           </object>

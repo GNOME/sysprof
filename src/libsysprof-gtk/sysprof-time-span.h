@@ -1,4 +1,4 @@
-/* sysprof-session.h
+/* sysprof-time-span.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,28 +20,25 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 
-#include <sysprof-analyze.h>
-
-#include "sysprof-time-span.h"
+#include <sysprof-capture.h>
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_SESSION (sysprof_session_get_type())
+#define SYSPROF_TYPE_TIME_SPAN (sysprof_time_span_get_type())
+
+typedef struct _SysprofTimeSpan
+{
+  gint64 begin_nsec;
+  gint64 end_nsec;
+} SysprofTimeSpan;
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofSession, sysprof_session, SYSPROF, SESSION, GObject)
-
+GType            sysprof_time_span_get_type (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
-SysprofSession        *sysprof_session_new               (SysprofDocument *document);
+SysprofTimeSpan *sysprof_time_span_copy     (const SysprofTimeSpan *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofDocument       *sysprof_session_get_document      (SysprofSession  *self);
-SYSPROF_AVAILABLE_IN_ALL
-GtkFilter             *sysprof_session_get_filter        (SysprofSession  *self);
-SYSPROF_AVAILABLE_IN_ALL
-const SysprofTimeSpan *sysprof_session_get_selected_time (SysprofSession  *self);
-SYSPROF_AVAILABLE_IN_ALL
-const SysprofTimeSpan *sysprof_session_get_visible_time  (SysprofSession  *self);
+void             sysprof_time_span_free     (SysprofTimeSpan       *self);
 
 G_END_DECLS

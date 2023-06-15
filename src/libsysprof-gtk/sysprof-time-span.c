@@ -1,4 +1,4 @@
-/* sysprof-gtk.h
+/* sysprof-time-span.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,17 +18,20 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#pragma once
+#include "config.h"
 
-G_BEGIN_DECLS
+#include "sysprof-time-span.h"
 
-#define SYSPROF_GTK_INSIDE
-# include "sysprof-callgraph-view.h"
-# include "sysprof-mark-chart.h"
-# include "sysprof-mark-table.h"
-# include "sysprof-session.h"
-# include "sysprof-time-span.h"
-# include "sysprof-weighted-callgraph-view.h"
-#undef SYSPROF_GTK_INSIDE
+G_DEFINE_BOXED_TYPE (SysprofTimeSpan, sysprof_time_span, sysprof_time_span_copy, sysprof_time_span_free)
 
-G_END_DECLS
+SysprofTimeSpan *
+sysprof_time_span_copy (const SysprofTimeSpan *self)
+{
+  return g_memdup2 (self, sizeof *self);
+}
+
+void
+sysprof_time_span_free (SysprofTimeSpan *self)
+{
+  g_free (self);
+}

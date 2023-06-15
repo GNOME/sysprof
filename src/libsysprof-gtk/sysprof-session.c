@@ -25,14 +25,20 @@
 struct _SysprofSession
 {
   GObject          parent_instance;
+
   SysprofDocument *document;
   GtkCustomFilter *filter;
+
+  SysprofTimeSpan  selected_time;
+  SysprofTimeSpan  visible_time;
 };
 
 enum {
   PROP_0,
   PROP_DOCUMENT,
   PROP_FILTER,
+  PROP_SELECTED_TIME,
+  PROP_VISIBLE_TIME,
   N_PROPS
 };
 
@@ -67,6 +73,14 @@ sysprof_session_get_property (GObject    *object,
 
     case PROP_FILTER:
       g_value_set_object (value, sysprof_session_get_filter (self));
+      break;
+
+    case PROP_SELECTED_TIME:
+      g_value_set_boxed (value, sysprof_session_get_selected_time (self));
+      break;
+
+    case PROP_VISIBLE_TIME:
+      g_value_set_boxed (value, sysprof_session_get_visible_time (self));
       break;
 
     default:
@@ -111,6 +125,16 @@ sysprof_session_class_init (SysprofSessionClass *klass)
     g_param_spec_object ("filter", NULL, NULL,
                          GTK_TYPE_FILTER,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_SELECTED_TIME] =
+    g_param_spec_boxed ("selected-time", NULL, NULL,
+                        SYSPROF_TYPE_TIME_SPAN,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_VISIBLE_TIME] =
+    g_param_spec_boxed ("visible-time", NULL, NULL,
+                        SYSPROF_TYPE_TIME_SPAN,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -159,4 +183,20 @@ sysprof_session_get_filter (SysprofSession *self)
   g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
 
   return GTK_FILTER (self->filter);
+}
+
+const SysprofTimeSpan *
+sysprof_session_get_selected_time (SysprofSession *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
+
+  return &self->selected_time;
+}
+
+const SysprofTimeSpan *
+sysprof_session_get_visible_time (SysprofSession *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
+
+  return &self->visible_time;
 }

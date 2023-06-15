@@ -12,6 +12,7 @@
                 <style>
                   <class name="data-table"/>
                 </style>
+                <property name="show-column-separators">true</property>
                 <child>
                   <object class="GtkColumnViewColumn" id="start_column">
                     <property name="title" translatable="yes">Start</property>

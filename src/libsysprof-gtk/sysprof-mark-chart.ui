@@ -12,6 +12,30 @@
                 <style>
                   <class name="data-table"/>
                 </style>
+                <property name="header-factory">
+                  <object class="GtkBuilderListItemFactory">
+                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListHeader">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="name" type="SysprofMarkCatalog">
+            <lookup name="item" type="GtkTreeListRow">
+              <lookup name="item">GtkListHeader</lookup>
+            </lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                    </property>
+                  </object>
+                </property>
                 <property name="show-column-separators">true</property>
                 <child>
                   <object class="GtkColumnViewColumn" id="name_column">
@@ -24,8 +48,10 @@
     <property name="child">
       <object class="GtkLabel">
         <binding name="label">
-          <lookup name="name" type="SysprofDocumentMark">
-            <lookup name="item">GtkListItem</lookup>
+          <lookup name="name" type="SysprofMarkCatalog">
+            <lookup name="item" type="GtkTreeListRow">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
           </lookup>
         </binding>
       </object>

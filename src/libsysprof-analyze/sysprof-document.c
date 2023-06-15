@@ -1492,12 +1492,12 @@ sysprof_document_catalog_marks (SysprofDocument *self)
       while (g_hash_table_iter_next (&name_iter, (gpointer *)&name, (gpointer *)&marks))
         {
           g_autoptr(GListModel) model = _sysprof_document_bitset_index_new (G_LIST_MODEL (self), marks);
-          g_autoptr(SysprofMarkCatalog) names_catalog = _sysprof_mark_catalog_new (name, model);
+          g_autoptr(SysprofMarkCatalog) names_catalog = _sysprof_mark_catalog_new (name, model, SYSPROF_MARK_CATALOG_KIND_NAME);
 
           g_list_store_append (names_store, names_catalog);
         }
 
-      group = _sysprof_mark_catalog_new (group_name, G_LIST_MODEL (names_store));
+      group = _sysprof_mark_catalog_new (group_name, G_LIST_MODEL (names_store), SYSPROF_MARK_CATALOG_KIND_GROUP);
 
       g_list_store_append (store, group);
     }

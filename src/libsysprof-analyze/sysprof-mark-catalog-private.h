@@ -26,7 +26,8 @@
 
 G_BEGIN_DECLS
 
-SysprofMarkCatalog *_sysprof_mark_catalog_new (const char *name,
-                                               GListModel *items);
+SysprofMarkCatalog *_sysprof_mark_catalog_new (const char             *name,
+                                               GListModel             *items,
+                                               SysprofMarkCatalogKind  kind);
 
 G_END_DECLS

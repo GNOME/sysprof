@@ -27,11 +27,22 @@
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_MARK_CATALOG (sysprof_mark_catalog_get_type())
+#define SYSPROF_TYPE_MARK_CATALOG_KIND (sysprof_mark_catalog_kind_get_type())
+
+typedef enum _SysprofMarkCatalogKind
+{
+  SYSPROF_MARK_CATALOG_KIND_GROUP,
+  SYSPROF_MARK_CATALOG_KIND_NAME,
+} SysprofMarkCatalogKind;
 
 SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofMarkCatalog, sysprof_mark_catalog, SYSPROF, MARK_CATALOG, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_mark_catalog_get_name (SysprofMarkCatalog *self);
+GType                   sysprof_mark_catalog_kind_get_type (void) G_GNUC_CONST;
+SYSPROF_AVAILABLE_IN_ALL
+const char             *sysprof_mark_catalog_get_name      (SysprofMarkCatalog *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofMarkCatalogKind  sysprof_mark_catalog_get_kind      (SysprofMarkCatalog *self);
 
 G_END_DECLS

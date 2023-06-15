@@ -58,6 +58,7 @@ main (int   argc,
 
       g_assert (SYSPROF_IS_MARK_CATALOG (catalog));
       g_assert (G_IS_LIST_MODEL (catalog));
+      g_assert (sysprof_mark_catalog_get_kind (catalog) == SYSPROF_MARK_CATALOG_KIND_GROUP);
 
       g_print ("%s\n", group);
 
@@ -67,8 +68,9 @@ main (int   argc,
           const char *name = sysprof_mark_catalog_get_name (name_catalog);
           guint n_marks = g_list_model_get_n_items (G_LIST_MODEL (name_catalog));
 
-          g_assert (SYSPROF_IS_MARK_CATALOG (catalog));
-          g_assert (G_IS_LIST_MODEL (catalog));
+          g_assert (SYSPROF_IS_MARK_CATALOG (name_catalog));
+          g_assert (G_IS_LIST_MODEL (name_catalog));
+          g_assert (sysprof_mark_catalog_get_kind (name_catalog) == SYSPROF_MARK_CATALOG_KIND_NAME);
 
           g_print ("  %s\n", name);
 

@@ -27,11 +27,13 @@ struct _SysprofMarkCatalog
   GObject parent_instance;
   GListModel *items;
   char *name;
+  SysprofMarkCatalogKind kind : 1;
 } SysprofMarkCatalogPrivate;
 
 enum {
   PROP_0,
   PROP_NAME,
+  PROP_KIND,
   N_PROPS
 };
 
@@ -88,6 +90,10 @@ sysprof_mark_catalog_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_KIND:
+      g_value_set_enum (value, sysprof_mark_catalog_get_kind (self));
+      break;
+
     case PROP_NAME:
       g_value_set_string (value, sysprof_mark_catalog_get_name (self));
       break;
@@ -104,6 +110,12 @@ sysprof_mark_catalog_class_init (SysprofMarkCatalogClass *klass)
 
   object_class->dispose = sysprof_mark_catalog_dispose;
   object_class->get_property = sysprof_mark_catalog_get_property;
+
+  properties[PROP_KIND] =
+    g_param_spec_enum ("kind", NULL, NULL,
+                       SYSPROF_TYPE_MARK_CATALOG_KIND,
+                       SYSPROF_MARK_CATALOG_KIND_GROUP,
+                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_NAME] =
     g_param_spec_string ("name", NULL, NULL,
@@ -127,8 +139,9 @@ sysprof_mark_catalog_get_name (SysprofMarkCatalog *self)
 }
 
 SysprofMarkCatalog *
-_sysprof_mark_catalog_new (const char *name,
-                           GListModel *items)
+_sysprof_mark_catalog_new (const char             *name,
+                           GListModel             *items,
+                           SysprofMarkCatalogKind  kind)
 {
   SysprofMarkCatalog *self;
 
@@ -138,6 +151,19 @@ _sysprof_mark_catalog_new (const char *name,
   self = g_object_new (SYSPROF_TYPE_MARK_CATALOG, NULL);
   self->name = g_strdup (name);
   self->items = g_object_ref (items);
+  self->kind = kind;
 
   return self;
 }
+
+SysprofMarkCatalogKind
+sysprof_mark_catalog_get_kind (SysprofMarkCatalog *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_MARK_CATALOG (self), 0);
+
+  return self->kind;
+}
+
+G_DEFINE_ENUM_TYPE (SysprofMarkCatalogKind, sysprof_mark_catalog_kind,
+                    G_DEFINE_ENUM_VALUE (SYSPROF_MARK_CATALOG_KIND_GROUP, "group"),
+                    G_DEFINE_ENUM_VALUE (SYSPROF_MARK_CATALOG_KIND_NAME, "name"))

@@ -47,9 +47,9 @@ static GParamSpec *properties[N_PROPS];
 static guint signals[N_SIGNALS];
 
 static void
-sysprof_mark_chart_item_session_notify_selection_cb (SysprofMarkChartItem *self,
-                                                     GParamSpec           *pspec,
-                                                     SysprofSession       *session)
+sysprof_mark_chart_item_session_notify_selected_time_cb (SysprofMarkChartItem *self,
+                                                         GParamSpec           *pspec,
+                                                         SysprofSession       *session)
 {
   g_assert (SYSPROF_IS_MARK_CHART_ITEM (self));
   g_assert (SYSPROF_IS_SESSION (session));
@@ -108,8 +108,8 @@ sysprof_mark_chart_item_set_property (GObject      *object,
     case PROP_SESSION:
       self->session = g_value_dup_object (value);
       g_signal_connect_object (self->session,
-                               "notify::selection",
-                               G_CALLBACK (sysprof_mark_chart_item_session_notify_selection_cb),
+                               "notify::selected-time",
+                               G_CALLBACK (sysprof_mark_chart_item_session_notify_selected_time_cb),
                                self,
                                G_CONNECT_SWAPPED);
       break;

@@ -94,22 +94,15 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
   pango_layout_set_height (layout, height * PANGO_SCALE);
   pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
 
+  /* First pass, draw our rectangles for duration which we
+   * always want in the background compared to "points" which
+   * are marks w/o a duration.
+   */
   for (guint i = 0; i < n_values; i++)
     {
       const SysprofTimeSeriesValue *v = &values[i];
 
-      if (v->begin == v->end)
-        {
-          gtk_snapshot_save (snapshot);
-          gtk_snapshot_translate (snapshot,
-                                  &GRAPHENE_POINT_INIT (v->begin * width, height / 2));
-          gtk_snapshot_rotate (snapshot, 45.f);
-          gtk_snapshot_append_color (snapshot,
-                                     &red,
-                                     &GRAPHENE_RECT_INIT (-5, -5, 10, 10));
-          gtk_snapshot_restore (snapshot);
-        }
-      else
+      if (v->begin != v->end)
         {
           graphene_rect_t rect = GRAPHENE_RECT_INIT (floorf (v->begin * width),
                                                      0,
@@ -150,6 +143,23 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
                   gtk_snapshot_restore (snapshot);
                 }
             }
+        }
+    }
+
+  for (guint i = 0; i < n_values; i++)
+    {
+      const SysprofTimeSeriesValue *v = &values[i];
+
+      if (v->begin == v->end)
+        {
+          gtk_snapshot_save (snapshot);
+          gtk_snapshot_translate (snapshot,
+                                  &GRAPHENE_POINT_INIT (v->begin * width, height / 2));
+          gtk_snapshot_rotate (snapshot, 45.f);
+          gtk_snapshot_append_color (snapshot,
+                                     &red,
+                                     &GRAPHENE_RECT_INIT (-4, -4, 8, 8));
+          gtk_snapshot_restore (snapshot);
         }
     }
 

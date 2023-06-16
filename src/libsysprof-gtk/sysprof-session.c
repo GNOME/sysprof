@@ -224,8 +224,6 @@ sysprof_session_select_time (SysprofSession        *self,
 
   g_return_if_fail (SYSPROF_IS_SESSION (self));
 
-  g_print ("Select range!\n");
-
   document_time_span = *sysprof_document_get_time_span (self->document);
 
   if (time_span == NULL)

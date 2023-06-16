@@ -22,6 +22,7 @@
 
 #include "sysprof-css-private.h"
 #include "sysprof-mark-chart.h"
+#include "sysprof-mark-chart-item-private.h"
 #include "sysprof-mark-chart-row-private.h"
 
 #include "libsysprof-gtk-resources.h"
@@ -46,6 +47,15 @@ G_DEFINE_FINAL_TYPE (SysprofMarkChart, sysprof_mark_chart, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
 
+static gpointer
+map_func (gpointer item,
+          gpointer user_data)
+{
+  gpointer ret = sysprof_mark_chart_item_new (SYSPROF_SESSION (user_data), SYSPROF_MARK_CATALOG (item));
+  g_object_unref (item);
+  return ret;
+}
+
 static void
 sysprof_mark_chart_disconnect (SysprofMarkChart *self)
 {
@@ -59,18 +69,20 @@ static void
 sysprof_mark_chart_connect (SysprofMarkChart *self)
 {
   g_autoptr(GtkSingleSelection) single = NULL;
-  GtkFilterListModel *filtered;
   GtkFlattenListModel *flatten;
   SysprofDocument *document;
+  GtkMapListModel *map;
 
   g_assert (SYSPROF_IS_MARK_CHART (self));
   g_assert (SYSPROF_IS_SESSION (self->session));
 
   document = sysprof_session_get_document (self->session);
   flatten = gtk_flatten_list_model_new (sysprof_document_catalog_marks (document));
-  filtered = gtk_filter_list_model_new (G_LIST_MODEL (flatten), NULL);
-  g_object_bind_property (self->session, "filter", filtered, "filter", G_BINDING_SYNC_CREATE);
-  single = gtk_single_selection_new (G_LIST_MODEL (filtered));
+  map = gtk_map_list_model_new (G_LIST_MODEL (flatten),
+                                map_func,
+                                g_object_ref (self->session),
+                                g_object_unref);
+  single = gtk_single_selection_new (G_LIST_MODEL (map));
 
   gtk_list_view_set_model (self->list_view, GTK_SELECTION_MODEL (single));
 }

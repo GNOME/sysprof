@@ -34,6 +34,7 @@ enum {
   PROP_0,
   PROP_SESSION,
   PROP_CATALOG,
+  PROP_MARKS,
   N_PROPS
 };
 
@@ -75,6 +76,10 @@ sysprof_mark_chart_item_get_property (GObject    *object,
     {
     case PROP_CATALOG:
       g_value_set_object (value, sysprof_mark_chart_item_get_catalog (self));
+      break;
+
+    case PROP_MARKS:
+      g_value_set_object (value, sysprof_mark_chart_item_get_marks (self));
       break;
 
     case PROP_SESSION:
@@ -124,6 +129,11 @@ sysprof_mark_chart_item_class_init (SysprofMarkChartItemClass *klass)
                          SYSPROF_TYPE_MARK_CATALOG,
                          (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_MARKS] =
+    g_param_spec_object ("marks", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_SESSION] =
     g_param_spec_object ("session", NULL, NULL,
                          SYSPROF_TYPE_SESSION,
@@ -138,8 +148,8 @@ sysprof_mark_chart_item_init (SysprofMarkChartItem *self)
 }
 
 SysprofMarkChartItem *
-_sysprof_mark_chart_item_new (SysprofSession     *session,
-                              SysprofMarkCatalog *catalog)
+sysprof_mark_chart_item_new (SysprofSession     *session,
+                             SysprofMarkCatalog *catalog)
 {
   g_return_val_if_fail (SYSPROF_IS_SESSION (session), NULL);
   g_return_val_if_fail (SYSPROF_IS_MARK_CATALOG (catalog), NULL);
@@ -156,4 +166,16 @@ sysprof_mark_chart_item_get_marks (SysprofMarkChartItem *self)
   g_return_val_if_fail (SYSPROF_IS_MARK_CHART_ITEM (self), NULL);
 
   return G_LIST_MODEL (self->filtered);
+}
+
+SysprofMarkCatalog *
+sysprof_mark_chart_item_get_catalog (SysprofMarkChartItem *self)
+{
+  return self->catalog;
+}
+
+SysprofSession *
+sysprof_mark_chart_item_get_session (SysprofMarkChartItem *self)
+{
+  return self->session;
 }

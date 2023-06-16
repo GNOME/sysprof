@@ -23,7 +23,9 @@
         <property name="xalign">0</property>
         <binding name="text">
           <lookup name="group" type="SysprofMarkCatalog">
-            <lookup name="item">GtkListHeader</lookup>
+            <lookup name="catalog" type="SysprofMarkChartItem">
+              <lookup name="item">GtkListHeader</lookup>
+            </lookup>
           </lookup>
         </binding>
       </object>
@@ -50,7 +52,9 @@
             <property name="text-overflow">clip</property>
             <binding name="text">
               <lookup name="name" type="SysprofMarkCatalog">
-                <lookup name="item">GtkListItem</lookup>
+                <lookup name="catalog" type="SysprofMarkChartItem">
+                  <lookup name="item">GtkListItem</lookup>
+                </lookup>
               </lookup>
             </binding>
           </object>
@@ -59,7 +63,9 @@
           <object class="SysprofMarkChartRow">
             <property name="hexpand">true</property>
             <binding name="model">
-              <lookup name="item">GtkListItem</lookup>
+              <lookup name="marks" type="SysprofMarkChartItem">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
             </binding>
           </object>
         </child>

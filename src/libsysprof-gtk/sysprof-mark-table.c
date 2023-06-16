@@ -28,9 +28,9 @@
 
 struct _SysprofMarkTable
 {
-  GtkWidget       parent_instance;
+  GtkWidget            parent_instance;
 
-  SysprofSession *session;
+  SysprofSession      *session;
 
   GtkWidget           *box;
   GtkColumnView       *column_view;

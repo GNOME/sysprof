@@ -369,6 +369,65 @@ sysprof_mark_chart_row_motion_leave_cb (SysprofMarkChartRow      *self,
 }
 
 static void
+sysprof_mark_chart_row_click_pressed_cb (SysprofMarkChartRow *self,
+                                         guint                n_press,
+                                         double               x,
+                                         double               y,
+                                         GtkGestureClick     *click)
+{
+  const SysprofTimeSeriesValue *best_match = NULL;
+  const SysprofTimeSeriesValue *values;
+  g_autoptr(SysprofDocumentMark) mark = NULL;
+  SysprofSession *session;
+  GListModel *model;
+  double normalized_x;
+  gint64 t;
+  guint n_values;
+  int width;
+
+  g_assert (SYSPROF_IS_MARK_CHART_ROW (self));
+  g_assert (GTK_IS_GESTURE_CLICK (click));
+
+  if (n_press != 2 || self->series == NULL || self->item == NULL)
+    return;
+
+  if (!(session = sysprof_mark_chart_item_get_session (self->item)) ||
+      !(model = sysprof_time_series_get_model (self->series)))
+    return;
+
+  values = sysprof_time_series_get_values (self->series, &n_values);
+  if (values == NULL || n_values == 0)
+    return;
+
+  width = gtk_widget_get_width (GTK_WIDGET (self));
+  normalized_x = x / width;
+
+  for (guint i = 0; i < n_values; i++)
+    {
+      const SysprofTimeSeriesValue *v = &values[i];
+
+      if (v->begin > normalized_x)
+        break;
+
+      if (v->end >= normalized_x)
+        best_match = v;
+    }
+
+  if (best_match == NULL)
+    return;
+
+  mark = g_list_model_get_item (model, best_match->index);
+  t = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (mark));
+
+  sysprof_session_select_time (session,
+                               &(SysprofTimeSpan) {
+                                 t,
+                                 t + sysprof_document_mark_get_duration (mark)
+                               });
+
+}
+
+static void
 sysprof_mark_chart_row_dispose (GObject *object)
 {
   SysprofMarkChartRow *self = (SysprofMarkChartRow *)object;
@@ -460,6 +519,14 @@ sysprof_mark_chart_row_init (SysprofMarkChartRow *self)
   g_signal_connect_object (controller,
                            "motion",
                            G_CALLBACK (sysprof_mark_chart_row_motion_motion_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  gtk_widget_add_controller (GTK_WIDGET (self), controller);
+
+  controller = GTK_EVENT_CONTROLLER (gtk_gesture_click_new ());
+  g_signal_connect_object (controller,
+                           "pressed",
+                           G_CALLBACK (sysprof_mark_chart_row_click_pressed_cb),
                            self,
                            G_CONNECT_SWAPPED);
   gtk_widget_add_controller (GTK_WIDGET (self), controller);

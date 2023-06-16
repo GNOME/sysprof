@@ -90,6 +90,9 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
   values = sysprof_time_series_get_values (self->series, &n_values);
 
   layout = gtk_widget_create_pango_layout (widget, NULL);
+  pango_layout_set_single_paragraph_mode (layout, TRUE);
+  pango_layout_set_height (layout, height * PANGO_SCALE);
+  pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
 
   for (guint i = 0; i < n_values; i++)
     {
@@ -108,20 +111,30 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
         }
       else
         {
-          gtk_snapshot_append_color (snapshot,
-                                     &blue,
-                                     &GRAPHENE_RECT_INIT (v->begin * width,
-                                                          0,
-                                                          v->end * width,
-                                                          height));
+          graphene_rect_t rect = GRAPHENE_RECT_INIT (floorf (v->begin * width),
+                                                     0,
+                                                     ceilf ((v->end - v->begin) * width),
+                                                     height);
 
-          if (i + 1 < n_values && values[i+1].begin > v->end)
+          if (rect.size.width == 0)
+            continue;
+
+          gtk_snapshot_append_color (snapshot, &blue, &rect);
+
+          /* Only show the message text if the next item does
+           * not overlap and there are at least 20 pixels
+           * available to render into.
+           */
+          if (i + 1 < n_values &&
+              values[i+1].begin > v->end &&
+              rect.size.width > 20)
             {
               g_autoptr(SysprofDocumentMark) mark = g_list_model_get_item (model, v->index);
               const char *message = sysprof_document_mark_get_message (mark);
 
               if (message && message[0])
                 {
+                  pango_layout_set_width (layout, rect.size.width * PANGO_SCALE);
                   pango_layout_set_text (layout, message, -1);
 
                   gtk_snapshot_save (snapshot);

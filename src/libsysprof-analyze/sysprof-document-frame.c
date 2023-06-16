@@ -220,16 +220,6 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
   /* loose precision here after about 71 minutes */
   self->time_offset = (guint)time_offset;
 
-  if (frame->type == SYSPROF_CAPTURE_FRAME_MARK)
-    {
-      SysprofDocumentMark *mark = (SysprofDocumentMark *)self;
-      gint64 capture_duration = end_time - begin_time;
-      gint64 duration = sysprof_document_mark_get_duration (mark);
-
-      mark->begin_fraction = time_offset / (double)capture_duration;
-      mark->end_fraction = (time_offset + duration) / (double)capture_duration;
-    }
-
   return self;
 }
 

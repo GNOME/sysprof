@@ -42,18 +42,6 @@ struct _SysprofDocumentFrameClass
   GObjectClass parent_class;
 };
 
-struct _SysprofDocumentMark
-{
-  SysprofDocumentFrame parent_instance;
-  double begin_fraction;
-  double end_fraction;
-};
-
-struct _SysprofDocumentMarkClass
-{
-  SysprofDocumentFrameClass parent_class;
-};
-
 SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *mapped,
                                                    const SysprofCaptureFrame *frame,
                                                    guint16                    frame_len,

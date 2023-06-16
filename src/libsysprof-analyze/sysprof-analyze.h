@@ -59,6 +59,8 @@ G_BEGIN_DECLS
 # include "sysprof-no-symbolizer.h"
 # include "sysprof-symbol.h"
 # include "sysprof-symbolizer.h"
+# include "sysprof-time-series.h"
+# include "sysprof-time-span.h"
 #undef SYSPROF_ANALYZE_INSIDE
 
 G_END_DECLS

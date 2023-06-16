@@ -32,6 +32,7 @@ libsysprof_analyze_public_sources = [
   'sysprof-no-symbolizer.c',
   'sysprof-symbol.c',
   'sysprof-symbolizer.c',
+  'sysprof-time-series.c',
   'sysprof-time-span.c',
 ]
 
@@ -48,6 +49,7 @@ libsysprof_analyze_private_sources = [
   'sysprof-process-info.c',
   'sysprof-strings.c',
   'sysprof-symbol-cache.c',
+  'sysprof-time-series.h',
   'sysprof-time-span.h',
 ]
 

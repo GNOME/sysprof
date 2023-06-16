@@ -41,4 +41,56 @@ SysprofTimeSpan *sysprof_time_span_copy     (const SysprofTimeSpan *self);
 SYSPROF_AVAILABLE_IN_ALL
 void             sysprof_time_span_free     (SysprofTimeSpan       *self);
 
+static inline SysprofTimeSpan
+sysprof_time_span_relative_to (SysprofTimeSpan time_span,
+                               gint64          point)
+{
+  return (SysprofTimeSpan) {
+    time_span.begin_nsec - point,
+    time_span.end_nsec - point
+  };
+}
+
+static inline void
+sysprof_time_span_normalize (SysprofTimeSpan        time_span,
+                             SysprofTimeSpan        allowed,
+                             float                  values[restrict 2])
+{
+  double duration = allowed.end_nsec - allowed.begin_nsec;
+
+  time_span = sysprof_time_span_relative_to (time_span, allowed.begin_nsec);
+
+  values[0] = time_span.begin_nsec / duration;
+  values[1] = time_span.end_nsec / duration;
+}
+
+static inline SysprofTimeSpan
+sysprof_time_span_order (SysprofTimeSpan time_span)
+{
+  if (time_span.begin_nsec > time_span.end_nsec)
+    return (SysprofTimeSpan) { time_span.end_nsec, time_span.begin_nsec };
+
+  return time_span;
+}
+
+static inline gboolean
+sysprof_time_span_clamp (SysprofTimeSpan *time_span,
+                         SysprofTimeSpan  allowed)
+{
+  if (time_span->end_nsec <= allowed.begin_nsec ||
+      time_span->begin_nsec >= allowed.end_nsec)
+    {
+      time_span->begin_nsec = time_span->end_nsec = 0;
+      return FALSE;
+    }
+
+  if (time_span->begin_nsec < allowed.begin_nsec)
+    time_span->begin_nsec = allowed.begin_nsec;
+
+  if (time_span->end_nsec > allowed.end_nsec)
+    time_span->end_nsec = allowed.end_nsec;
+
+  return TRUE;
+}
+
 G_END_DECLS

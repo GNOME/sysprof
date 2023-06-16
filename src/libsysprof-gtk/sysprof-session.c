@@ -27,7 +27,7 @@ struct _SysprofSession
   GObject          parent_instance;
 
   SysprofDocument *document;
-  GtkCustomFilter *filter;
+  GtkEveryFilter  *filter;
 
   SysprofTimeSpan  selected_time;
   SysprofTimeSpan  visible_time;
@@ -155,6 +155,7 @@ sysprof_session_class_init (SysprofSessionClass *klass)
 static void
 sysprof_session_init (SysprofSession *self)
 {
+  self->filter = gtk_every_filter_new ();
 }
 
 SysprofSession *
@@ -212,4 +213,40 @@ sysprof_session_get_visible_time (SysprofSession *self)
   g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
 
   return &self->visible_time;
+}
+
+void
+sysprof_session_select_time (SysprofSession        *self,
+                             const SysprofTimeSpan *time_span)
+{
+  SysprofTimeSpan document_time_span;
+  gboolean emit_for_visible = FALSE;
+
+  g_return_if_fail (SYSPROF_IS_SESSION (self));
+
+  g_print ("Select range!\n");
+
+  document_time_span = *sysprof_document_get_time_span (self->document);
+
+  if (time_span == NULL)
+    time_span = &document_time_span;
+
+  self->selected_time = *time_span;
+
+  if (self->visible_time.begin_nsec > time_span->begin_nsec)
+    {
+      self->visible_time.begin_nsec = time_span->begin_nsec;
+      emit_for_visible = TRUE;
+    }
+
+  if (self->visible_time.end_nsec < time_span->end_nsec)
+    {
+      self->visible_time.end_nsec = time_span->end_nsec;
+      emit_for_visible = TRUE;
+    }
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED_TIME]);
+
+  if (emit_for_visible)
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_VISIBLE_TIME]);
 }

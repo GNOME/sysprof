@@ -61,7 +61,13 @@ SYSPROF_AVAILABLE_IN_ALL
 GListModel                 *sysprof_xy_series_get_model  (SysprofXYSeries       *self);
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofXYSeriesValue *sysprof_xy_series_get_values (const SysprofXYSeries *self,
-                                                          guint                   *n_values);
+                                                          guint                 *n_values);
+SYSPROF_AVAILABLE_IN_ALL
+void                        sysprof_xy_series_get_range  (SysprofXYSeries       *self,
+                                                          float                 *min_x,
+                                                          float                 *min_y,
+                                                          float                 *max_x,
+                                                          float                 *max_y);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofXYSeries, sysprof_xy_series_unref)
 

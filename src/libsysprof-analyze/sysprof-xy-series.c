@@ -192,3 +192,25 @@ sysprof_xy_series_sort (SysprofXYSeries *self)
          sizeof (SysprofXYSeriesValue),
          compare_by_xy);
 }
+
+void
+sysprof_xy_series_get_range (SysprofXYSeries *self,
+                             float           *min_x,
+                             float           *min_y,
+                             float           *max_x,
+                             float           *max_y)
+{
+  g_return_if_fail (self != NULL);
+
+  if (min_x)
+    *min_x = self->min_x;
+
+  if (max_x)
+    *max_x = self->max_x;
+
+  if (min_y)
+    *min_y = self->min_y;
+
+  if (max_y)
+    *max_y = self->max_y;
+}

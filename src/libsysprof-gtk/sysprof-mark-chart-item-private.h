@@ -30,10 +30,16 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofMarkChartItem, sysprof_mark_chart_item, SYSPROF, MARK_CHART_ITEM, GObject)
 
-SysprofMarkChartItem *sysprof_mark_chart_item_new         (SysprofSession       *session,
-                                                           SysprofMarkCatalog   *catalog);
-SysprofMarkCatalog   *sysprof_mark_chart_item_get_catalog (SysprofMarkChartItem *self);
-SysprofSession       *sysprof_mark_chart_item_get_session (SysprofMarkChartItem *self);
-GListModel           *sysprof_mark_chart_item_get_marks   (SysprofMarkChartItem *self);
+SysprofMarkChartItem *sysprof_mark_chart_item_new                     (SysprofSession        *session,
+                                                                       SysprofMarkCatalog    *catalog);
+SysprofMarkCatalog   *sysprof_mark_chart_item_get_catalog             (SysprofMarkChartItem  *self);
+SysprofSession       *sysprof_mark_chart_item_get_session             (SysprofMarkChartItem  *self);
+void                  sysprof_mark_chart_item_load_time_series        (SysprofMarkChartItem  *self,
+                                                                       GCancellable          *cancellable,
+                                                                       GAsyncReadyCallback    callback,
+                                                                       gpointer               user_data);
+SysprofTimeSeries    *sysprof_mark_chart_item_load_time_series_finish (SysprofMarkChartItem  *self,
+                                                                       GAsyncResult          *result,
+                                                                       GError               **error);
 
 G_END_DECLS

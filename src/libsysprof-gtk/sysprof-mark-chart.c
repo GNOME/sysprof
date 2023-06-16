@@ -68,7 +68,7 @@ sysprof_mark_chart_disconnect (SysprofMarkChart *self)
 static void
 sysprof_mark_chart_connect (SysprofMarkChart *self)
 {
-  g_autoptr(GtkSingleSelection) single = NULL;
+  g_autoptr(GtkNoSelection) no = NULL;
   GtkFlattenListModel *flatten;
   SysprofDocument *document;
   GtkMapListModel *map;
@@ -82,9 +82,9 @@ sysprof_mark_chart_connect (SysprofMarkChart *self)
                                 map_func,
                                 g_object_ref (self->session),
                                 g_object_unref);
-  single = gtk_single_selection_new (G_LIST_MODEL (map));
+  no = gtk_no_selection_new (G_LIST_MODEL (map));
 
-  gtk_list_view_set_model (self->list_view, GTK_SELECTION_MODEL (single));
+  gtk_list_view_set_model (self->list_view, GTK_SELECTION_MODEL (no));
 }
 
 static void

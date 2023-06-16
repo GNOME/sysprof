@@ -36,7 +36,12 @@ struct _SysprofMarkChartRow
   GdkRGBA               accent_bg_color;
   GdkRGBA               success_bg_color;
 
+  double                pointer_x;
+  double                pointer_y;
+
   guint                 update_source;
+
+  guint                 pointer_in_row : 1;
 };
 
 enum {
@@ -95,7 +100,9 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
                                  GtkSnapshot *snapshot)
 {
   SysprofMarkChartRow *self = (SysprofMarkChartRow *)widget;
+  const SysprofTimeSeriesValue *best_match = NULL;
   const SysprofTimeSeriesValue *values;
+  graphene_point_t pointer;
   PangoLayout *layout;
   GListModel *model;
   guint n_values;
@@ -116,6 +123,8 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
 
   width = gtk_widget_get_width (widget);
   height = gtk_widget_get_height (widget);
+
+  pointer = GRAPHENE_POINT_INIT (self->pointer_x, self->pointer_y);
 
   layout = gtk_widget_create_pango_layout (widget, NULL);
   pango_layout_set_single_paragraph_mode (layout, TRUE);
@@ -141,6 +150,9 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
                                      0,
                                      ceilf ((v->end - v->begin) * width),
                                      height);
+
+          if (graphene_rect_contains_point (&rect, &pointer))
+            best_match = v;
 
           /* Ignore empty sized draws */
           if (rect.size.width == 0)
@@ -200,6 +212,51 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
           gtk_snapshot_append_color (snapshot,
                                      &self->success_bg_color,
                                      &GRAPHENE_RECT_INIT (-4, -4, 8, 8));
+          gtk_snapshot_restore (snapshot);
+        }
+    }
+
+  /* Draw the best hover match fully, drawing over any other items. */
+  if (self->pointer_in_row && best_match != NULL)
+    {
+      const SysprofTimeSeriesValue *v = best_match;
+      g_autoptr(SysprofDocumentMark) mark = g_list_model_get_item (model, v->index);
+      const char *message = sysprof_document_mark_get_message (mark);
+      graphene_rect_t rect;
+
+      rect = GRAPHENE_RECT_INIT (floorf (v->begin * width),
+                                 0,
+                                 ceilf ((v->end - v->begin) * width),
+                                 height);
+
+      gtk_snapshot_append_color (snapshot, &self->accent_bg_color, &rect);
+
+      if (message && message[0])
+        {
+          int w, h;
+
+          pango_layout_set_width (layout, -1);
+          pango_layout_set_text (layout, message, -1);
+
+          pango_layout_get_pixel_size (layout, &w, &h);
+
+          if (w > rect.size.width)
+            {
+              GdkRGBA color = self->accent_bg_color;
+              color.alpha *= .9;
+
+              gtk_snapshot_append_color (snapshot,
+                                         &color,
+                                         &GRAPHENE_RECT_INIT (rect.origin.x + rect.size.width,
+                                                              0,
+                                                              w - rect.size.width,
+                                                              rect.origin.y + rect.size.height));
+            }
+
+          gtk_snapshot_save (snapshot);
+          gtk_snapshot_translate (snapshot,
+                                  &GRAPHENE_POINT_INIT (v->begin * width, 0));
+          gtk_snapshot_append_layout (snapshot, layout, &self->accent_fg_color);
           gtk_snapshot_restore (snapshot);
         }
     }
@@ -265,6 +322,51 @@ sysprof_mark_chart_row_item_changed_cb (SysprofMarkChartRow  *self,
   g_assert (SYSPROF_IS_MARK_CHART_ITEM (item));
 
   sysprof_mark_chart_row_queue_update (self);
+}
+
+static void
+sysprof_mark_chart_row_motion_enter_cb (SysprofMarkChartRow      *self,
+                                        double                    x,
+                                        double                    y,
+                                        GtkEventControllerMotion *motion)
+{
+  g_assert (SYSPROF_IS_MARK_CHART_ROW (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  self->pointer_in_row = TRUE;
+  self->pointer_x = x;
+  self->pointer_y = y;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sysprof_mark_chart_row_motion_motion_cb (SysprofMarkChartRow      *self,
+                                         double                    x,
+                                         double                    y,
+                                         GtkEventControllerMotion *motion)
+{
+  g_assert (SYSPROF_IS_MARK_CHART_ROW (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  self->pointer_x = x;
+  self->pointer_y = y;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sysprof_mark_chart_row_motion_leave_cb (SysprofMarkChartRow      *self,
+                                        GtkEventControllerMotion *motion)
+{
+  g_assert (SYSPROF_IS_MARK_CHART_ROW (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  self->pointer_in_row = FALSE;
+  self->pointer_x = 0;
+  self->pointer_y = 0;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
 static void
@@ -343,6 +445,25 @@ sysprof_mark_chart_row_class_init (SysprofMarkChartRowClass *klass)
 static void
 sysprof_mark_chart_row_init (SysprofMarkChartRow *self)
 {
+  GtkEventController *controller;
+
+  controller = gtk_event_controller_motion_new ();
+  g_signal_connect_object (controller,
+                           "enter",
+                           G_CALLBACK (sysprof_mark_chart_row_motion_enter_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (controller,
+                           "leave",
+                           G_CALLBACK (sysprof_mark_chart_row_motion_leave_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (controller,
+                           "motion",
+                           G_CALLBACK (sysprof_mark_chart_row_motion_motion_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  gtk_widget_add_controller (GTK_WIDGET (self), controller);
 }
 
 SysprofMarkChartItem *

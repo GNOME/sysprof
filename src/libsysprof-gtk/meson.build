@@ -8,6 +8,7 @@ libsysprof_gtk_public_sources = [
 
 libsysprof_gtk_private_sources = [
   'sysprof-css.c',
+  'sysprof-mark-chart-item.c',
   'sysprof-mark-chart-row.c',
   'sysprof-progress-cell.c',
   'sysprof-symbol-label.c',

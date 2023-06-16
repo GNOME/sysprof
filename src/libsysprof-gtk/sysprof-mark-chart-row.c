@@ -171,8 +171,7 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
            * not overlap and there are at least 20 pixels
            * available to render into.
            */
-          if (i + 1 < n_values &&
-              values[i+1].begin > v->end &&
+          if ((i + 1 == n_values || values[i+1].begin > v->end) &&
               rect.size.width > 20)
             {
               g_autoptr(SysprofDocumentMark) mark = g_list_model_get_item (model, v->index);

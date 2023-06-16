@@ -20,17 +20,19 @@
 
 #include "config.h"
 
+#include <sysprof-analyze.h>
+
 #include "sysprof-mark-chart-row-private.h"
 
 struct _SysprofMarkChartRow
 {
   GtkWidget parent_instance;
-  SysprofMarkCatalog *catalog;
+  GListModel *model;
 };
 
 enum {
   PROP_0,
-  PROP_CATALOG,
+  PROP_MODEL,
   N_PROPS
 };
 
@@ -55,13 +57,13 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
   g_assert (SYSPROF_IS_MARK_CHART_ROW (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
 
-  if (self->catalog == NULL)
+  if (self->model == NULL)
     return;
 
   width = gtk_widget_get_width (widget);
   height = gtk_widget_get_height (widget);
 
-  model = G_LIST_MODEL (self->catalog);
+  model = G_LIST_MODEL (self->model);
   n_items = g_list_model_get_n_items (model);
 
   layout = gtk_widget_create_pango_layout (widget, NULL);
@@ -113,7 +115,7 @@ sysprof_mark_chart_row_dispose (GObject *object)
 {
   SysprofMarkChartRow *self = (SysprofMarkChartRow *)object;
 
-  g_clear_object (&self->catalog);
+  g_clear_object (&self->model);
 
   G_OBJECT_CLASS (sysprof_mark_chart_row_parent_class)->dispose (object);
 }
@@ -128,8 +130,8 @@ sysprof_mark_chart_row_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_CATALOG:
-      g_value_set_object (value, sysprof_mark_chart_row_get_catalog (self));
+    case PROP_MODEL:
+      g_value_set_object (value, sysprof_mark_chart_row_get_model (self));
       break;
 
     default:
@@ -147,8 +149,8 @@ sysprof_mark_chart_row_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_CATALOG:
-      sysprof_mark_chart_row_set_catalog (self, g_value_get_object (value));
+    case PROP_MODEL:
+      sysprof_mark_chart_row_set_model (self, g_value_get_object (value));
       break;
 
     default:
@@ -168,9 +170,9 @@ sysprof_mark_chart_row_class_init (SysprofMarkChartRowClass *klass)
 
   widget_class->snapshot = sysprof_mark_chart_row_snapshot;
 
-  properties [PROP_CATALOG] =
-    g_param_spec_object ("catalog", NULL, NULL,
-                         SYSPROF_TYPE_MARK_CATALOG,
+  properties [PROP_MODEL] =
+    g_param_spec_object ("model", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
@@ -181,24 +183,39 @@ sysprof_mark_chart_row_init (SysprofMarkChartRow *self)
 {
 }
 
-SysprofMarkCatalog *
-sysprof_mark_chart_row_get_catalog (SysprofMarkChartRow *self)
+GListModel *
+sysprof_mark_chart_row_get_model (SysprofMarkChartRow *self)
 {
   g_return_val_if_fail (SYSPROF_IS_MARK_CHART_ROW (self), NULL);
 
-  return self->catalog;
+  return self->model;
 }
 
 void
-sysprof_mark_chart_row_set_catalog (SysprofMarkChartRow *self,
-                                    SysprofMarkCatalog  *catalog)
+sysprof_mark_chart_row_set_model (SysprofMarkChartRow *self,
+                                  GListModel          *model)
 {
   g_return_if_fail (SYSPROF_IS_MARK_CHART_ROW (self));
-  g_return_if_fail (!catalog || SYSPROF_IS_MARK_CATALOG (catalog));
+  g_return_if_fail (!model || G_IS_LIST_MODEL (model));
 
-  if (g_set_object (&self->catalog, catalog))
-    {
-      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CATALOG]);
-      gtk_widget_queue_draw (GTK_WIDGET (self));
-    }
+  if (self->model == model)
+    return;
+
+  if (self->model)
+    g_signal_handlers_disconnect_by_func (self->model,
+                                          G_CALLBACK (gtk_widget_queue_allocate),
+                                          self);
+
+  g_set_object (&self->model, model);
+
+  if (model)
+    g_signal_connect_object (model,
+                             "items-changed",
+                             G_CALLBACK (gtk_widget_queue_allocate),
+                             self,
+                             G_CONNECT_SWAPPED);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODEL]);
+
+  gtk_widget_queue_allocate (GTK_WIDGET (self));
 }

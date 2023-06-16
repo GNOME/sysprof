@@ -58,7 +58,7 @@
         <child>
           <object class="SysprofMarkChartRow">
             <property name="hexpand">true</property>
-            <binding name="catalog">
+            <binding name="model">
               <lookup name="item">GtkListItem</lookup>
             </binding>
           </object>

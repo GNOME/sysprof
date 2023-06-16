@@ -22,16 +22,14 @@
 
 #include <gtk/gtk.h>
 
-#include <sysprof-analyze.h>
-
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_MARK_CHART_ROW (sysprof_mark_chart_row_get_type())
 
 G_DECLARE_FINAL_TYPE (SysprofMarkChartRow, sysprof_mark_chart_row, SYSPROF, MARK_CHART_ROW, GtkWidget)
 
-SysprofMarkCatalog *sysprof_mark_chart_row_get_catalog (SysprofMarkChartRow *self);
-void                sysprof_mark_chart_row_set_catalog (SysprofMarkChartRow *self,
-                                                        SysprofMarkCatalog  *catalog);
+GListModel *sysprof_mark_chart_row_get_model (SysprofMarkChartRow *self);
+void        sysprof_mark_chart_row_set_model (SysprofMarkChartRow *self,
+                                              GListModel          *model);
 
 G_END_DECLS

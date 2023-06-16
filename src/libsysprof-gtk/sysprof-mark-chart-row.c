@@ -27,9 +27,15 @@
 struct _SysprofMarkChartRow
 {
   GtkWidget             parent_instance;
+
   GCancellable         *cancellable;
   SysprofTimeSeries    *series;
   SysprofMarkChartItem *item;
+
+  GdkRGBA               accent_fg_color;
+  GdkRGBA               accent_bg_color;
+  GdkRGBA               success_bg_color;
+
   guint                 update_source;
 };
 
@@ -63,17 +69,37 @@ sysprof_mark_chart_row_set_series (SysprofMarkChartRow *self,
 }
 
 static void
+sysprof_mark_chart_row_css_changed (GtkWidget         *widget,
+                                    GtkCssStyleChange *change)
+{
+  SysprofMarkChartRow *self = (SysprofMarkChartRow *)widget;
+
+  g_assert (SYSPROF_MARK_CHART_ROW (self));
+
+  GTK_WIDGET_CLASS (sysprof_mark_chart_row_parent_class)->css_changed (widget, change);
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  {
+    GtkStyleContext *style_context;
+
+    style_context = gtk_widget_get_style_context (widget);
+    gtk_style_context_lookup_color (style_context, "accent_bg_color", &self->accent_bg_color);
+    gtk_style_context_lookup_color (style_context, "accent_fg_color", &self->accent_fg_color);
+    gtk_style_context_lookup_color (style_context, "success_bg_color", &self->success_bg_color);
+  }
+G_GNUC_END_IGNORE_DEPRECATIONS
+}
+
+static void
 sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
                                  GtkSnapshot *snapshot)
 {
   SysprofMarkChartRow *self = (SysprofMarkChartRow *)widget;
-  static const GdkRGBA blue = {0,0,1,1};
-  static const GdkRGBA red = {1,0,0,1};
-  static const GdkRGBA white = {1,1,1,1};
   const SysprofTimeSeriesValue *values;
-  GListModel *model;
   PangoLayout *layout;
+  GListModel *model;
   guint n_values;
+  float last_end_x;
   int width;
   int height;
 
@@ -83,16 +109,20 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
   if (self->series == NULL)
     return;
 
-  width = gtk_widget_get_width (widget);
-  height = gtk_widget_get_height (widget);
-
   model = sysprof_time_series_get_model (self->series);
   values = sysprof_time_series_get_values (self->series, &n_values);
+  if (model == NULL || n_values == 0)
+    return;
+
+  width = gtk_widget_get_width (widget);
+  height = gtk_widget_get_height (widget);
 
   layout = gtk_widget_create_pango_layout (widget, NULL);
   pango_layout_set_single_paragraph_mode (layout, TRUE);
   pango_layout_set_height (layout, height * PANGO_SCALE);
   pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
+
+  last_end_x = 0;
 
   /* First pass, draw our rectangles for duration which we
    * always want in the background compared to "points" which
@@ -104,15 +134,26 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
 
       if (v->begin != v->end)
         {
-          graphene_rect_t rect = GRAPHENE_RECT_INIT (floorf (v->begin * width),
-                                                     0,
-                                                     ceilf ((v->end - v->begin) * width),
-                                                     height);
+          graphene_rect_t rect;
+          float end_x;
 
+          rect = GRAPHENE_RECT_INIT (floorf (v->begin * width),
+                                     0,
+                                     ceilf ((v->end - v->begin) * width),
+                                     height);
+
+          /* Ignore empty sized draws */
           if (rect.size.width == 0)
             continue;
 
-          gtk_snapshot_append_color (snapshot, &blue, &rect);
+          /* Cull draw unless it will extend past last rect */
+          end_x = rect.origin.x + rect.size.width;
+          if (end_x <= last_end_x)
+            continue;
+          else
+            last_end_x = end_x;
+
+          gtk_snapshot_append_color (snapshot, &self->accent_bg_color, &rect);
 
           /* Only show the message text if the next item does
            * not overlap and there are at least 20 pixels
@@ -138,7 +179,7 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
                                                                height));
                   gtk_snapshot_translate (snapshot,
                                           &GRAPHENE_POINT_INIT (v->begin * width, 0));
-                  gtk_snapshot_append_layout (snapshot, layout, &white);
+                  gtk_snapshot_append_layout (snapshot, layout, &self->accent_fg_color);
                   gtk_snapshot_pop (snapshot);
                   gtk_snapshot_restore (snapshot);
                 }
@@ -157,13 +198,13 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
                                   &GRAPHENE_POINT_INIT (v->begin * width, height / 2));
           gtk_snapshot_rotate (snapshot, 45.f);
           gtk_snapshot_append_color (snapshot,
-                                     &red,
+                                     &self->success_bg_color,
                                      &GRAPHENE_RECT_INIT (-4, -4, 8, 8));
           gtk_snapshot_restore (snapshot);
         }
     }
 
-  g_object_unref (layout);
+  g_clear_object (&layout);
 }
 
 static void
@@ -286,6 +327,7 @@ sysprof_mark_chart_row_class_init (SysprofMarkChartRowClass *klass)
   object_class->get_property = sysprof_mark_chart_row_get_property;
   object_class->set_property = sysprof_mark_chart_row_set_property;
 
+  widget_class->css_changed = sysprof_mark_chart_row_css_changed;
   widget_class->snapshot = sysprof_mark_chart_row_snapshot;
 
   properties [PROP_ITEM] =
@@ -294,6 +336,8 @@ sysprof_mark_chart_row_class_init (SysprofMarkChartRowClass *klass)
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  gtk_widget_class_set_css_name (widget_class, "markchartrow");
 }
 
 static void

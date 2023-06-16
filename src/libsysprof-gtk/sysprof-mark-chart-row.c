@@ -27,12 +27,12 @@
 struct _SysprofMarkChartRow
 {
   GtkWidget parent_instance;
-  GListModel *model;
+  SysprofMarkChartItem *item;
 };
 
 enum {
   PROP_0,
-  PROP_MODEL,
+  PROP_ITEM,
   N_PROPS
 };
 
@@ -57,13 +57,13 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
   g_assert (SYSPROF_IS_MARK_CHART_ROW (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
 
-  if (self->model == NULL)
+  if (self->item == NULL)
     return;
 
   width = gtk_widget_get_width (widget);
   height = gtk_widget_get_height (widget);
 
-  model = G_LIST_MODEL (self->model);
+  model = sysprof_mark_chart_item_get_marks (self->item);
   n_items = g_list_model_get_n_items (model);
 
   layout = gtk_widget_create_pango_layout (widget, NULL);
@@ -111,11 +111,18 @@ sysprof_mark_chart_row_snapshot (GtkWidget   *widget,
 }
 
 static void
+sysprof_mark_chart_row_queue_update (SysprofMarkChartRow *self)
+{
+  g_assert (SYSPROF_IS_MARK_CHART_ROW (self));
+
+}
+
+static void
 sysprof_mark_chart_row_dispose (GObject *object)
 {
   SysprofMarkChartRow *self = (SysprofMarkChartRow *)object;
 
-  g_clear_object (&self->model);
+  sysprof_mark_chart_row_set_item (self, NULL);
 
   G_OBJECT_CLASS (sysprof_mark_chart_row_parent_class)->dispose (object);
 }
@@ -130,8 +137,8 @@ sysprof_mark_chart_row_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_MODEL:
-      g_value_set_object (value, sysprof_mark_chart_row_get_model (self));
+    case PROP_ITEM:
+      g_value_set_object (value, sysprof_mark_chart_row_get_item (self));
       break;
 
     default:
@@ -149,8 +156,8 @@ sysprof_mark_chart_row_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_MODEL:
-      sysprof_mark_chart_row_set_model (self, g_value_get_object (value));
+    case PROP_ITEM:
+      sysprof_mark_chart_row_set_item (self, g_value_get_object (value));
       break;
 
     default:
@@ -170,9 +177,9 @@ sysprof_mark_chart_row_class_init (SysprofMarkChartRowClass *klass)
 
   widget_class->snapshot = sysprof_mark_chart_row_snapshot;
 
-  properties [PROP_MODEL] =
-    g_param_spec_object ("model", NULL, NULL,
-                         G_TYPE_LIST_MODEL,
+  properties [PROP_ITEM] =
+    g_param_spec_object ("item", NULL, NULL,
+                         SYSPROF_TYPE_MARK_CHART_ITEM,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
@@ -183,39 +190,39 @@ sysprof_mark_chart_row_init (SysprofMarkChartRow *self)
 {
 }
 
-GListModel *
-sysprof_mark_chart_row_get_model (SysprofMarkChartRow *self)
+SysprofMarkChartItem *
+sysprof_mark_chart_row_get_item (SysprofMarkChartRow *self)
 {
   g_return_val_if_fail (SYSPROF_IS_MARK_CHART_ROW (self), NULL);
 
-  return self->model;
+  return self->item;
 }
 
 void
-sysprof_mark_chart_row_set_model (SysprofMarkChartRow *self,
-                                  GListModel          *model)
+sysprof_mark_chart_row_set_item (SysprofMarkChartRow  *self,
+                                 SysprofMarkChartItem *item)
 {
   g_return_if_fail (SYSPROF_IS_MARK_CHART_ROW (self));
-  g_return_if_fail (!model || G_IS_LIST_MODEL (model));
+  g_return_if_fail (!item || SYSPROF_IS_MARK_CHART_ITEM (item));
 
-  if (self->model == model)
+  if (self->item == item)
     return;
 
-  if (self->model)
-    g_signal_handlers_disconnect_by_func (self->model,
-                                          G_CALLBACK (gtk_widget_queue_allocate),
+  if (self->item)
+    g_signal_handlers_disconnect_by_func (sysprof_mark_chart_item_get_marks (self->item),
+                                          G_CALLBACK (sysprof_mark_chart_row_queue_update),
                                           self);
 
-  g_set_object (&self->model, model);
+  g_set_object (&self->item, item);
 
-  if (model)
-    g_signal_connect_object (model,
+  if (item)
+    g_signal_connect_object (sysprof_mark_chart_item_get_marks (item),
                              "items-changed",
-                             G_CALLBACK (gtk_widget_queue_allocate),
+                             G_CALLBACK (sysprof_mark_chart_row_queue_update),
                              self,
                              G_CONNECT_SWAPPED);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODEL]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ITEM]);
 
-  gtk_widget_queue_allocate (GTK_WIDGET (self));
+  sysprof_mark_chart_row_queue_update (self);
 }

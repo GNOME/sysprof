@@ -62,10 +62,8 @@
         <child>
           <object class="SysprofMarkChartRow">
             <property name="hexpand">true</property>
-            <binding name="model">
-              <lookup name="marks" type="SysprofMarkChartItem">
-                <lookup name="item">GtkListItem</lookup>
-              </lookup>
+            <binding name="item">
+              <lookup name="item">GtkListItem</lookup>
             </binding>
           </object>
         </child>

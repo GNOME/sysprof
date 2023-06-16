@@ -34,23 +34,7 @@ libsysprof_analyze_public_sources = [
   'sysprof-symbolizer.c',
   'sysprof-time-series.c',
   'sysprof-time-span.c',
-]
-
-libsysprof_analyze_private_sources = [
-  'sysprof-address-layout.c',
-  'sysprof-descendants-model.c',
-  'sysprof-document-bitset-index.c',
-  'sysprof-document-symbols.c',
-  'sysprof-elf.c',
-  'sysprof-elf-loader.c',
-  'sysprof-mount.c',
-  'sysprof-mount-device.c',
-  'sysprof-mount-namespace.c',
-  'sysprof-process-info.c',
-  'sysprof-strings.c',
-  'sysprof-symbol-cache.c',
-  'sysprof-time-series.h',
-  'sysprof-time-span.h',
+  'sysprof-xy-series.c',
 ]
 
 libsysprof_analyze_public_headers = [
@@ -89,6 +73,24 @@ libsysprof_analyze_public_headers = [
   'sysprof-no-symbolizer.h',
   'sysprof-symbol.h',
   'sysprof-symbolizer.h',
+  'sysprof-time-series.h',
+  'sysprof-time-span.h',
+  'sysprof-xy-series.h',
+]
+
+libsysprof_analyze_private_sources = [
+  'sysprof-address-layout.c',
+  'sysprof-descendants-model.c',
+  'sysprof-document-bitset-index.c',
+  'sysprof-document-symbols.c',
+  'sysprof-elf.c',
+  'sysprof-elf-loader.c',
+  'sysprof-mount.c',
+  'sysprof-mount-device.c',
+  'sysprof-mount-namespace.c',
+  'sysprof-process-info.c',
+  'sysprof-strings.c',
+  'sysprof-symbol-cache.c',
 ]
 
 libsysprof_analyze_deps = [

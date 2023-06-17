@@ -66,6 +66,7 @@
   <template class="GtkListItem">
     <property name="child">
       <object class="SysprofTimeLabel">
+        <property name="show-zero">false</property>
         <binding name="duration">
           <lookup name="duration" type="SysprofDocumentMark">
             <lookup name="item">GtkListItem</lookup>

@@ -29,6 +29,9 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (SysprofTimeLabel, sysprof_time_label, SYSPROF, TIME_LABEL, GtkWidget)
 
 GtkWidget *sysprof_time_label_new             (void);
+gboolean   sysprof_time_label_get_show_zero   (SysprofTimeLabel *self);
+void       sysprof_time_label_set_show_zero   (SysprofTimeLabel *self,
+                                               gboolean          show_zero);
 gint64     sysprof_time_label_get_duration    (SysprofTimeLabel *self);
 void       sysprof_time_label_set_duration    (SysprofTimeLabel *self,
                                                gint64            duration);

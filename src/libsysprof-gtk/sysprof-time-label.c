@@ -30,12 +30,14 @@ struct _SysprofTimeLabel
   GtkLabel  *label;
   gint64     t;
   guint      mode : 1;
+  guint      show_zero : 1;
 };
 
 enum {
   PROP_0,
-  PROP_TIME_OFFSET,
   PROP_DURATION,
+  PROP_TIME_OFFSET,
+  PROP_SHOW_ZERO,
   N_PROPS
 };
 
@@ -76,6 +78,10 @@ sysprof_time_label_get_property (GObject    *object,
       g_value_set_int64 (value, sysprof_time_label_get_duration (self));
       break;
 
+    case PROP_SHOW_ZERO:
+      g_value_set_boolean (value, sysprof_time_label_get_show_zero (self));
+      break;
+
     case PROP_TIME_OFFSET:
       g_value_set_int64 (value, sysprof_time_label_get_time_offset (self));
       break;
@@ -97,6 +103,10 @@ sysprof_time_label_set_property (GObject      *object,
     {
     case PROP_DURATION:
       sysprof_time_label_set_duration (self, g_value_get_int64 (value));
+      break;
+
+    case PROP_SHOW_ZERO:
+      sysprof_time_label_set_show_zero (self, g_value_get_boolean (value));
       break;
 
     case PROP_TIME_OFFSET:
@@ -123,6 +133,11 @@ sysprof_time_label_class_init (SysprofTimeLabelClass *klass)
                         G_MININT64, G_MAXINT64, 0,
                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_SHOW_ZERO] =
+    g_param_spec_boolean ("show-zero", NULL, NULL,
+                          TRUE,
+                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_TIME_OFFSET] =
     g_param_spec_int64 ("time-offset", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
@@ -138,11 +153,17 @@ static void
 sysprof_time_label_init (SysprofTimeLabel *self)
 {
   static const char *css_classes[] = {"numeric", NULL};
+  char str[32];
+
+  self->show_zero = TRUE;
+
+  g_snprintf (str, sizeof str, "%.3lfs", .0);
 
   self->label = g_object_new (GTK_TYPE_LABEL,
                               "css-classes", css_classes,
                               "xalign", 1.f,
                               "single-line-mode", TRUE,
+                              "label", str,
                               NULL);
   gtk_widget_set_parent (GTK_WIDGET (self->label), GTK_WIDGET (self));
 }
@@ -164,8 +185,10 @@ sysprof_time_label_set_internal (SysprofTimeLabel *self,
     {
       char str[32];
 
-      if (t == 0)
+      if (t == 0 && !self->show_zero)
         str[0] = 0;
+      else if (t == 0)
+        g_snprintf (str, sizeof str, "%.3lfs", .0);
       else if (t < 1000000)
         g_snprintf (str, sizeof str, "%.3lfμs", t/1000.);
       else if (t < SYSPROF_NSEC_PER_SEC)
@@ -214,4 +237,40 @@ sysprof_time_label_set_time_offset (SysprofTimeLabel *self,
                                     gint64            time_offset)
 {
   sysprof_time_label_set_internal (self, time_offset, MODE_TIME_OFFSET);
+}
+
+gboolean
+sysprof_time_label_get_show_zero (SysprofTimeLabel *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_TIME_LABEL (self), FALSE);
+
+  return self->show_zero;
+}
+
+void
+sysprof_time_label_set_show_zero (SysprofTimeLabel *self,
+                                  gboolean          show_zero)
+{
+  g_return_if_fail (SYSPROF_IS_TIME_LABEL (self));
+
+  show_zero = !!show_zero;
+
+  if (self->show_zero != show_zero)
+    {
+      self->show_zero = show_zero;
+
+      if (self->t == 0)
+        {
+          char str[32];
+
+          g_snprintf (str, sizeof str, "%0.3lfs", .0);
+
+          if (show_zero)
+            gtk_label_set_label (self->label, str);
+          else
+            gtk_label_set_label (self->label, NULL);
+        }
+
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SHOW_ZERO]);
+    }
 }

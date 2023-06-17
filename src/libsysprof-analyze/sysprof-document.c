@@ -691,6 +691,7 @@ sysprof_document_load_worker (GTask        *task,
   g_autoptr(SysprofDocument) self = NULL;
   g_autoptr(GHashTable) files = NULL;
   GMappedFile *mapped_file = task_data;
+  gint64 guessed_end_nsec = 0;
   goffset pos;
   gsize len;
 
@@ -752,8 +753,8 @@ sysprof_document_load_worker (GTask        *task,
       pid = self->needs_swap ? GUINT32_SWAP_LE_BE (tainted->pid) : tainted->pid;
       t = self->needs_swap ? GUINT64_SWAP_LE_BE (tainted->time) : tainted->time;
 
-      if (t > self->time_span.end_nsec && is_data_type (tainted->type))
-        self->time_span.end_nsec = t;
+      if (t > guessed_end_nsec && is_data_type (tainted->type))
+        guessed_end_nsec = t;
 
       egg_bitset_add (self->pids, pid);
 
@@ -819,6 +820,10 @@ sysprof_document_load_worker (GTask        *task,
         {
           const SysprofCaptureMark *mark = (const SysprofCaptureMark *)tainted;
           const char *endptr = (const char *)tainted + frame_len;
+          gint64 duration = self->needs_swap ? GUINT64_SWAP_LE_BE (mark->duration) : mark->duration;
+
+          if (t + duration > guessed_end_nsec)
+            guessed_end_nsec = t + duration;
 
           if (has_null_byte (mark->group, endptr) &&
               has_null_byte (mark->name, endptr))
@@ -851,6 +856,9 @@ sysprof_document_load_worker (GTask        *task,
 
       g_array_append_val (self->frames, ptr);
     }
+
+  if (guessed_end_nsec != 0)
+    self->time_span.end_nsec = guessed_end_nsec;
 
   sysprof_document_load_mounts (self);
   sysprof_document_load_mountinfos (self);

@@ -85,6 +85,31 @@ sysprof_mark_table_connect (SysprofMarkTable *self)
 }
 
 static void
+sysprof_mark_table_activate_cb (SysprofMarkTable *self,
+                                guint             position,
+                                GtkColumnView    *column_view)
+{
+  g_autoptr(SysprofDocumentMark) mark = NULL;
+  SysprofTimeSpan time_span;
+  GListModel *model;
+
+  g_assert (SYSPROF_IS_MARK_TABLE (self));
+  g_assert (GTK_IS_COLUMN_VIEW (column_view));
+
+  if (self->session == NULL)
+    return;
+
+  model = G_LIST_MODEL (gtk_column_view_get_model (column_view));
+  mark = g_list_model_get_item (model, position);
+
+  time_span.begin_nsec = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (mark));
+  time_span.end_nsec = time_span.begin_nsec + sysprof_document_mark_get_duration (mark);
+
+  if (time_span.end_nsec != time_span.begin_nsec)
+    sysprof_session_select_time (self->session, &time_span);
+}
+
+static void
 sysprof_mark_table_dispose (GObject *object)
 {
   SysprofMarkTable *self = (SysprofMarkTable *)object;
@@ -161,6 +186,7 @@ sysprof_mark_table_class_init (SysprofMarkTableClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkTable, box);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkTable, column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkTable, start_column);
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_mark_table_activate_cb);
 
   g_resources_register (libsysprof_gtk_get_resource ());
 

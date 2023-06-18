@@ -46,6 +46,9 @@ main (int   argc,
   g_autoptr(GListModel) model = NULL;
   g_autoptr(GError) error = NULL;
   SysprofCallgraphView *view;
+  GtkWidget *box;
+  GtkWidget *hbox;
+  GtkWidget *threads;
   GtkWindow *window;
 
   sysprof_clock_init ();
@@ -100,17 +103,33 @@ main (int   argc,
                          "default-width", 800,
                          "default-height", 600,
                          NULL);
+  box = g_object_new (GTK_TYPE_BOX,
+                      "orientation", GTK_ORIENTATION_VERTICAL,
+                      "spacing", 12,
+                      NULL);
+  hbox = g_object_new (GTK_TYPE_BOX,
+                       "spacing", 6,
+                       NULL);
+  gtk_box_append (GTK_BOX (box), hbox);
+  gtk_box_append (GTK_BOX (hbox), gtk_label_new ("Show Threads"));
+  threads = g_object_new (GTK_TYPE_SWITCH,
+                          "active", include_threads,
+                          NULL);
+  gtk_box_append (GTK_BOX (hbox), threads);
   view = g_object_new (SYSPROF_TYPE_WEIGHTED_CALLGRAPH_VIEW,
                        "traceables", model,
                        "document", document,
                        "include-threads", include_threads,
                        NULL);
+  gtk_box_append (GTK_BOX (box), GTK_WIDGET (view));
   g_signal_connect_swapped (window,
                             "close-request",
                             G_CALLBACK (g_main_loop_quit),
                             main_loop);
-  gtk_window_set_child (window, GTK_WIDGET (view));
+  gtk_window_set_child (window, box);
   gtk_window_present (window);
+
+  g_object_bind_property (threads, "active", view, "include-threads", 0);
 
   g_main_loop_run (main_loop);
 

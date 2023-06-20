@@ -1,4 +1,4 @@
-/* test-callgraph.c
+/* test-mark-chart.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -35,7 +35,7 @@ int
 main (int   argc,
       char *argv[])
 {
-  g_autoptr(GOptionContext) context = g_option_context_new ("- show a callgraph");
+  g_autoptr(GOptionContext) context = g_option_context_new ("- test the mark chart");
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(SysprofSession) session = NULL;

@@ -156,7 +156,7 @@ sysprof_mount_namespace_find_device (SysprofMountNamespace *self,
                                      const char            *relative_path)
 {
   const char *mount_source;
-  const char *subvolume;
+  g_autofree char *subvolume = NULL;
 
   g_assert (SYSPROF_IS_MOUNT_NAMESPACE (self));
   g_assert (SYSPROF_IS_MOUNT (mount));

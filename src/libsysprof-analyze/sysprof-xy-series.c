@@ -138,9 +138,12 @@ sysprof_xy_series_add (SysprofXYSeries *self,
   if (y < self->min_y || y > self->max_y)
     return;
 
+  value.index = index;
   value.x = (x - self->min_x) / self->x_distance;
   value.y = (y - self->min_y) / self->y_distance;
-  value.index = index;
+
+  if (isinf (value.x) || isinf (value.y))
+    return;
 
   g_array_append_val (self->values, value);
 }

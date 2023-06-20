@@ -26,6 +26,11 @@ typedef struct
 {
   SysprofSession *session;
   char *title;
+
+  double motion_x;
+  double motion_y;
+
+  guint pointer_in_chart : 1;
 } SysprofChartPrivate;
 
 enum {
@@ -38,6 +43,58 @@ enum {
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofChart, sysprof_chart, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
+
+
+static void
+sysprof_chart_motion_enter_cb (SysprofChart             *self,
+                               double                    x,
+                               double                    y,
+                               GtkEventControllerMotion *motion)
+{
+  SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_CHART (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  priv->motion_x = x;
+  priv->motion_y = y;
+  priv->pointer_in_chart = TRUE;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sysprof_chart_motion_cb (SysprofChart             *self,
+                         double                    x,
+                         double                    y,
+                         GtkEventControllerMotion *motion)
+{
+  SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_CHART (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  priv->motion_x = x;
+  priv->motion_y = y;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sysprof_chart_motion_leave_cb (SysprofChart             *self,
+                               GtkEventControllerMotion *motion)
+{
+  SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_CHART (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  priv->motion_x = -1;
+  priv->motion_y = -1;
+  priv->pointer_in_chart = FALSE;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
 
 static void
 sysprof_chart_size_allocate (GtkWidget *widget,
@@ -55,6 +112,29 @@ sysprof_chart_size_allocate (GtkWidget *widget,
     gtk_widget_size_allocate (child,
                               &(GtkAllocation) {0, 0, width, height},
                               baseline);
+}
+
+static void
+sysprof_chart_snapshot (GtkWidget   *widget,
+                        GtkSnapshot *snapshot)
+{
+  SysprofChart *self = (SysprofChart *)widget;
+  SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_CHART (self));
+
+  GTK_WIDGET_CLASS (sysprof_chart_parent_class)->snapshot (widget, snapshot);
+
+  if (priv->pointer_in_chart)
+    {
+      GtkWidget *pick = gtk_widget_pick (widget, priv->motion_x, priv->motion_y, GTK_PICK_DEFAULT);
+
+      if (SYSPROF_IS_CHART_LAYER (pick))
+        sysprof_chart_layer_snapshot_motion (SYSPROF_CHART_LAYER (pick),
+                                             snapshot,
+                                             priv->motion_x,
+                                             priv->motion_y);
+    }
 }
 
 static void
@@ -130,6 +210,7 @@ sysprof_chart_class_init (SysprofChartClass *klass)
   object_class->set_property = sysprof_chart_set_property;
 
   widget_class->size_allocate = sysprof_chart_size_allocate;
+  widget_class->snapshot = sysprof_chart_snapshot;
 
   properties [PROP_SESSION] =
     g_param_spec_object ("session", NULL, NULL,
@@ -147,6 +228,29 @@ sysprof_chart_class_init (SysprofChartClass *klass)
 static void
 sysprof_chart_init (SysprofChart *self)
 {
+  SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
+  GtkEventController *motion;
+
+  priv->motion_x = -1;
+  priv->motion_y = -1;
+
+  motion = gtk_event_controller_motion_new ();
+  g_signal_connect_object (motion,
+                           "enter",
+                           G_CALLBACK (sysprof_chart_motion_enter_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (motion,
+                           "leave",
+                           G_CALLBACK (sysprof_chart_motion_leave_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (motion,
+                           "motion",
+                           G_CALLBACK (sysprof_chart_motion_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  gtk_widget_add_controller (GTK_WIDGET (self), g_steal_pointer (&motion));
 }
 
 const char *

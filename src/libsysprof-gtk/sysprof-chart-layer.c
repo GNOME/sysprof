@@ -129,3 +129,16 @@ sysprof_chart_layer_set_title (SysprofChartLayer *self,
   if (g_set_str (&priv->title, title))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
 }
+
+void
+sysprof_chart_layer_snapshot_motion (SysprofChartLayer *self,
+                                     GtkSnapshot       *snapshot,
+                                     double             x,
+                                     double             y)
+{
+  g_return_if_fail (SYSPROF_IS_CHART_LAYER (self));
+  g_return_if_fail (GTK_IS_SNAPSHOT (snapshot));
+
+  if (SYSPROF_CHART_LAYER_GET_CLASS (self)->snapshot_motion)
+    SYSPROF_CHART_LAYER_GET_CLASS (self)->snapshot_motion (self, snapshot, x, y);
+}

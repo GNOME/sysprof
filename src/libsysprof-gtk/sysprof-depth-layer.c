@@ -91,13 +91,12 @@ sysprof_depth_layer_snapshot (GtkWidget   *widget,
     }
 }
 
-static void
-sysprof_depth_layer_snapshot_motion (SysprofChartLayer *layer,
-                                     GtkSnapshot       *snapshot,
-                                     double             x,
-                                     double             y)
+static const SysprofXYSeriesValue *
+sysprof_depth_layer_get_value_at_coord (SysprofDepthLayer *self,
+                                        double             x,
+                                        double             y,
+                                        graphene_rect_t   *area)
 {
-  SysprofDepthLayer *self = (SysprofDepthLayer *)layer;
   const SysprofXYSeriesValue *values;
   graphene_point_t point;
   double min_x, max_x;
@@ -108,17 +107,16 @@ sysprof_depth_layer_snapshot_motion (SysprofChartLayer *layer,
   int height;
 
   g_assert (SYSPROF_IS_DEPTH_LAYER (self));
-  g_assert (GTK_IS_SNAPSHOT (snapshot));
 
   width = gtk_widget_get_width (GTK_WIDGET (self));
   height = gtk_widget_get_height (GTK_WIDGET (self));
 
   if (width == 0 || height == 0)
-    return;
+    return NULL;
 
   if (self->series == NULL ||
       !(values = sysprof_xy_series_get_values (self->series, &n_values)))
-    return;
+    return NULL;
 
   point = GRAPHENE_POINT_INIT (x, y);
 
@@ -137,10 +135,30 @@ sysprof_depth_layer_snapshot_motion (SysprofChartLayer *layer,
 
       if (graphene_rect_contains_point (&rect, &point))
         {
-          gtk_snapshot_append_color (snapshot, &self->hover_color, &rect);
-          break;
+          if (area != NULL)
+            *area = rect;
+          return v;
         }
     }
+
+  return NULL;
+}
+
+static void
+sysprof_depth_layer_snapshot_motion (SysprofChartLayer *layer,
+                                     GtkSnapshot       *snapshot,
+                                     double             x,
+                                     double             y)
+{
+  SysprofDepthLayer *self = (SysprofDepthLayer *)layer;
+  const SysprofXYSeriesValue *v;
+  graphene_rect_t rect;
+
+  g_assert (SYSPROF_IS_DEPTH_LAYER (self));
+  g_assert (GTK_IS_SNAPSHOT (snapshot));
+
+  if ((v = sysprof_depth_layer_get_value_at_coord (self, x, y, &rect)))
+    gtk_snapshot_append_color (snapshot, &self->hover_color, &rect);
 }
 
 static void

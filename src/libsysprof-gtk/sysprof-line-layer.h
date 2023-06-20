@@ -29,6 +29,7 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_LINE_LAYER (sysprof_line_layer_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF, LINE_LAYER, SysprofChartLayer)
 
 SYSPROF_AVAILABLE_IN_ALL

@@ -40,9 +40,15 @@ enum {
   N_PROPS
 };
 
+enum {
+  ACTIVATE_LAYER_ITEM,
+  N_SIGNALS
+};
+
 G_DEFINE_TYPE_WITH_PRIVATE (SysprofChart, sysprof_chart, GTK_TYPE_WIDGET)
 
-static GParamSpec *properties [N_PROPS];
+static GParamSpec *properties[N_PROPS];
+static guint signals[N_SIGNALS];
 
 
 static void
@@ -137,6 +143,31 @@ sysprof_chart_snapshot (GtkWidget   *widget,
     }
 }
 
+static gboolean
+sysprof_chart_click_pressed_cb (SysprofChart    *self,
+                                int              n_presses,
+                                double           x,
+                                double           y,
+                                GtkGestureClick *click)
+{
+  g_autoptr(GObject) item = NULL;
+  GtkWidget *pick;
+  gboolean ret = GDK_EVENT_PROPAGATE;
+
+  g_assert (SYSPROF_IS_CHART (self));
+  g_assert (GTK_IS_GESTURE_CLICK (click));
+
+  if (n_presses != 1)
+    return GDK_EVENT_PROPAGATE;
+
+  if ((pick = gtk_widget_pick (GTK_WIDGET (self), x, y, GTK_PICK_DEFAULT)) &&
+      SYSPROF_IS_CHART_LAYER (pick) &&
+      (item = sysprof_chart_layer_lookup_item (SYSPROF_CHART_LAYER (pick), x, y)))
+    g_signal_emit (self, signals[ACTIVATE_LAYER_ITEM], 0, pick, item, &ret);
+
+  return ret;
+}
+
 static void
 sysprof_chart_dispose (GObject *object)
 {
@@ -223,6 +254,18 @@ sysprof_chart_class_init (SysprofChartClass *klass)
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  signals[ACTIVATE_LAYER_ITEM] =
+    g_signal_new ("activate-layer-item",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (SysprofChartClass, activate_layer_item),
+                  g_signal_accumulator_true_handled, NULL,
+                  NULL,
+                  G_TYPE_BOOLEAN,
+                  2,
+                  SYSPROF_TYPE_CHART_LAYER,
+                  G_TYPE_OBJECT);
 }
 
 static void
@@ -230,6 +273,7 @@ sysprof_chart_init (SysprofChart *self)
 {
   SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
   GtkEventController *motion;
+  GtkEventController *click;
 
   priv->motion_x = -1;
   priv->motion_y = -1;
@@ -251,6 +295,14 @@ sysprof_chart_init (SysprofChart *self)
                            self,
                            G_CONNECT_SWAPPED);
   gtk_widget_add_controller (GTK_WIDGET (self), g_steal_pointer (&motion));
+
+  click = GTK_EVENT_CONTROLLER (gtk_gesture_click_new ());
+  g_signal_connect_object (click,
+                           "pressed",
+                           G_CALLBACK (sysprof_chart_click_pressed_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  gtk_widget_add_controller (GTK_WIDGET (self), g_steal_pointer (&click));
 }
 
 const char *

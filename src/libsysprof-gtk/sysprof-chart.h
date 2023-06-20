@@ -37,6 +37,10 @@ struct _SysprofChartClass
 {
   GtkWidgetClass parent_class;
 
+  gboolean (*activate_layer_item) (SysprofChart      *self,
+                                   SysprofChartLayer *layer,
+                                   gpointer           item);
+
   /*< private >*/
   gpointer _reserved[16];
 };

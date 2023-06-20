@@ -31,8 +31,6 @@ SysprofStrings *sysprof_strings_ref    (SysprofStrings *self);
 void            sysprof_strings_unref  (SysprofStrings *self);
 GRefString     *sysprof_strings_get    (SysprofStrings *self,
                                         const char     *string);
-GRefString     *sysprof_strings_lookup (SysprofStrings *self,
-                                        const char     *string);
 
 #define SYSPROF_STRV_INIT(...) ((const char * const[]){__VA_ARGS__,NULL})
 

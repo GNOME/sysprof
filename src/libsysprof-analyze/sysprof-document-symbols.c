@@ -39,6 +39,8 @@ sysprof_document_symbols_finalize (GObject *object)
   for (guint i = 0; i < G_N_ELEMENTS (self->context_switches); i++)
     g_clear_object (&self->context_switches[i]);
 
+  g_clear_object (&self->kernel_symbols);
+
   G_OBJECT_CLASS (sysprof_document_symbols_parent_class)->finalize (object);
 }
 

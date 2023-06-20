@@ -206,7 +206,6 @@ sysprof_kallsyms_symbolizer_prepare_async (SysprofSymbolizer   *symbolizer,
 
   if (base_stream == NULL)
     {
-
       if (!(file = sysprof_document_lookup_file (document, "/proc/kallsyms")))
         {
           g_task_return_new_error (task,
@@ -309,6 +308,7 @@ sysprof_kallsyms_symbolizer_finalize (GObject *object)
 {
   SysprofKallsymsSymbolizer *self = (SysprofKallsymsSymbolizer *)object;
 
+  g_clear_object (&self->stream);
   g_clear_pointer (&self->kallsyms, g_array_unref);
 
   G_OBJECT_CLASS (sysprof_kallsyms_symbolizer_parent_class)->finalize (object);

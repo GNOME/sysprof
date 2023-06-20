@@ -192,6 +192,43 @@ test_jitmap (void)
   g_assert_finalize_object (symbol_cache);
 }
 
+static void
+test_collision (void)
+{
+  SysprofSymbolCache *symbol_cache = sysprof_symbol_cache_new ();
+  SysprofSymbol *first = NULL;
+
+  for (guint i = 1; i <= 10000; i++)
+    {
+      SysprofAddress begin = 0xe000000000000000 + i;
+      g_autofree char *name = g_strdup_printf ("%u", i);
+      SysprofSymbol *symbol = create_symbol (name, begin, begin+1);
+
+      if (first == NULL)
+        first = g_object_ref (symbol);
+
+      sysprof_symbol_cache_take (symbol_cache, symbol);
+    }
+
+  g_assert_true (SYSPROF_IS_SYMBOL (first));
+
+  for (guint i = 1; i <= 10000; i++)
+    {
+      SysprofAddress begin = 0xE000000000000000 + i;
+      g_autofree char *name = g_strdup_printf ("%u", i);
+      SysprofSymbol *symbol = create_symbol (name, begin, begin+1);
+
+      sysprof_symbol_cache_take (symbol_cache, symbol);
+    }
+
+  g_assert_finalize_object (symbol_cache);
+  g_assert_finalize_object (first);
+
+  /* To test this fully, you need `-Db_sanitize=address` so that
+   * you can detect any leaks from RB_INSERT().
+   */
+}
+
 int
 main (int argc,
       char *argv[])
@@ -201,5 +238,7 @@ main (int argc,
                    test_interval_tree);
   g_test_add_func ("/libsysprof-analyze/SysprofSymbolCache/jitmap",
                    test_jitmap);
+  g_test_add_func ("/libsysprof-analyze/SysprofSymbolCache/collision",
+                   test_collision);
   return g_test_run ();
 }

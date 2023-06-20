@@ -44,6 +44,11 @@ SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_series     (SysprofLineLayer *self,
                                                       SysprofXYSeries  *series);
 SYSPROF_AVAILABLE_IN_ALL
+gboolean           sysprof_line_layer_get_flip_y     (SysprofLineLayer *self);
+SYSPROF_AVAILABLE_IN_ALL
+void               sysprof_line_layer_set_flip_y     (SysprofLineLayer *self,
+                                                      gboolean          flip_y);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean           sysprof_line_layer_get_use_curves (SysprofLineLayer *self);
 SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_use_curves (SysprofLineLayer *self,

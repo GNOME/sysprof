@@ -29,6 +29,7 @@ struct _SysprofLineLayer
   SysprofXYSeries *series;
   GdkRGBA color;
   guint use_curves : 1;
+  guint flip_y : 1;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF_TYPE_CHART_LAYER)
@@ -36,6 +37,7 @@ G_DEFINE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF_TYPE_CHART_LA
 enum {
   PROP_0,
   PROP_COLOR,
+  PROP_FLIP_Y,
   PROP_SERIES,
   PROP_USE_CURVES,
   N_PROPS
@@ -78,7 +80,10 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
 
   gdk_cairo_set_source_rgba (cr, &self->color);
   cairo_set_line_width (cr, 1./width);
-  cairo_set_matrix (cr, &(cairo_matrix_t) {1, 0, 0, -1, 0, height});
+
+  if (!self->flip_y)
+    cairo_set_matrix (cr, &(cairo_matrix_t) {1, 0, 0, -1, 0, height});
+
   cairo_scale (cr, width, height);
 
   last_x = values->x;
@@ -144,6 +149,10 @@ sysprof_line_layer_get_property (GObject    *object,
       g_value_set_boxed (value, sysprof_line_layer_get_color (self));
       break;
 
+    case PROP_FLIP_Y:
+      g_value_set_boolean (value, sysprof_line_layer_get_flip_y (self));
+      break;
+
     case PROP_SERIES:
       g_value_set_boxed (value, sysprof_line_layer_get_series (self));
       break;
@@ -169,6 +178,10 @@ sysprof_line_layer_set_property (GObject      *object,
     {
     case PROP_COLOR:
       sysprof_line_layer_set_color (self, g_value_get_boxed (value));
+      break;
+
+    case PROP_FLIP_Y:
+      sysprof_line_layer_set_flip_y (self, g_value_get_boolean (value));
       break;
 
     case PROP_SERIES:
@@ -200,6 +213,11 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
     g_param_spec_boxed ("color", NULL, NULL,
                         GDK_TYPE_RGBA,
                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_FLIP_Y] =
+    g_param_spec_boolean ("flip-y", NULL, NULL,
+                         FALSE,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_SERIES] =
     g_param_spec_boxed ("series", NULL, NULL,
@@ -277,6 +295,30 @@ sysprof_line_layer_set_series (SysprofLineLayer *self,
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SERIES]);
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+gboolean
+sysprof_line_layer_get_flip_y (SysprofLineLayer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_LINE_LAYER (self), FALSE);
+
+  return self->flip_y;
+}
+
+void
+sysprof_line_layer_set_flip_y (SysprofLineLayer *self,
+                               gboolean          flip_y)
+{
+  g_return_if_fail (SYSPROF_IS_LINE_LAYER (self));
+
+  flip_y = !!flip_y;
+
+  if (flip_y != self->flip_y)
+    {
+      self->flip_y = flip_y;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FLIP_Y]);
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
 }
 
 gboolean

@@ -55,7 +55,7 @@ warn_on_items_changed_cb (GListModel *model,
                           guint       added,
                           gpointer    user_data)
 {
-  g_critical ("%s @ %p emitted items changed while a xyseries is active! Expect errors.",
+  g_critical ("%s @ %p emitted items changed while an XYSeries is active! Expect errors.",
               G_OBJECT_TYPE_NAME (model), model);
 }
 

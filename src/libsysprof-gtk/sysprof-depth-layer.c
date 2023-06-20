@@ -55,29 +55,37 @@ sysprof_depth_layer_snapshot (GtkWidget   *widget,
   g_assert (SYSPROF_IS_DEPTH_LAYER (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
 
-  if (self->series == NULL || self->color.alpha == 0)
+  width = gtk_widget_get_width (widget);
+  height = gtk_widget_get_height (widget);
+
+  if (width == 0 || height == 0 || self->color.alpha == 0)
     return;
 
-  if (!(values = sysprof_xy_series_get_values (self->series, &n_values)))
+  if (self->series == NULL ||
+      !(values = sysprof_xy_series_get_values (self->series, &n_values)))
     return;
 
   sysprof_xy_series_get_range (self->series, &min_x, NULL, &max_x, NULL);
 
-  width = gtk_widget_get_width (widget);
-  height = gtk_widget_get_width (widget);
-
-  line_width = MAX (1, (max_x - min_x) / width);
+  /* NOTE: We might want to allow setting a "bucket size" for the
+   * line width here so that units get joined together. For example,
+   * with stack traces, we would get nano-second precision due to time
+   * being the X access, but that's not super helpful when you probably
+   * want some small quanta to be the width.
+   */
+  line_width = MAX (1, width / (max_x - min_x));
 
   for (guint i = 0; i < n_values; i++)
     {
       const SysprofXYSeriesValue *v = &values[i];
+      int line_height = ceilf (v->y * height);
 
       gtk_snapshot_append_color (snapshot,
                                  &self->color,
                                  &GRAPHENE_RECT_INIT (v->x * width,
-                                                      height,
+                                                      height - line_height,
                                                       line_width,
-                                                      height - (v->y * height)));
+                                                      line_height));
     }
 }
 

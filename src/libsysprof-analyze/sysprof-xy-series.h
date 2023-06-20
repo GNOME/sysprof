@@ -42,18 +42,18 @@ SYSPROF_AVAILABLE_IN_ALL
 GType                       sysprof_xy_series_get_type   (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
 SysprofXYSeries            *sysprof_xy_series_new        (GListModel            *model,
-                                                          float                  min_x,
-                                                          float                  min_y,
-                                                          float                  max_x,
-                                                          float                  max_y);
+                                                          double                 min_x,
+                                                          double                 min_y,
+                                                          double                 max_x,
+                                                          double                 max_y);
 SYSPROF_AVAILABLE_IN_ALL
 SysprofXYSeries            *sysprof_xy_series_ref        (SysprofXYSeries       *self);
 SYSPROF_AVAILABLE_IN_ALL
 void                        sysprof_xy_series_unref      (SysprofXYSeries       *self);
 SYSPROF_AVAILABLE_IN_ALL
 void                        sysprof_xy_series_add        (SysprofXYSeries       *self,
-                                                          float                  x,
-                                                          float                  y,
+                                                          double                 x,
+                                                          double                 y,
                                                           guint                  index);
 SYSPROF_AVAILABLE_IN_ALL
 void                        sysprof_xy_series_sort       (SysprofXYSeries       *self);
@@ -64,10 +64,10 @@ const SysprofXYSeriesValue *sysprof_xy_series_get_values (const SysprofXYSeries 
                                                           guint                 *n_values);
 SYSPROF_AVAILABLE_IN_ALL
 void                        sysprof_xy_series_get_range  (SysprofXYSeries       *self,
-                                                          float                 *min_x,
-                                                          float                 *min_y,
-                                                          float                 *max_x,
-                                                          float                 *max_y);
+                                                          double                *min_x,
+                                                          double                *min_y,
+                                                          double                *max_x,
+                                                          double                *max_y);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofXYSeries, sysprof_xy_series_unref)
 

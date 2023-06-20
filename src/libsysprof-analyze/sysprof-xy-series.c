@@ -17,7 +17,10 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+
 #include "config.h"
+
+#include <math.h>
 
 #include "sysprof-xy-series.h"
 
@@ -30,14 +33,14 @@ struct _SysprofXYSeries
   GArray          *values;
 
   /* Our bounds for non-normalized values */
-  float            min_x;
-  float            min_y;
-  float            max_x;
-  float            max_y;
+  double           min_x;
+  double           min_y;
+  double           max_x;
+  double           max_y;
 
   /* Pre-calculated distance between min/max */
-  float            x_distance;
-  float            y_distance;
+  double           x_distance;
+  double           y_distance;
 
   /* Used for warning on items-changed */
   gulong           items_changed_handler;
@@ -73,10 +76,10 @@ warn_on_items_changed_cb (GListModel *model,
  */
 SysprofXYSeries *
 sysprof_xy_series_new (GListModel *model,
-                       float       min_x,
-                       float       min_y,
-                       float       max_x,
-                       float       max_y)
+                       double      min_x,
+                       double      min_y,
+                       double      max_x,
+                       double      max_y)
 {
   SysprofXYSeries *self;
 
@@ -89,6 +92,8 @@ sysprof_xy_series_new (GListModel *model,
   self->min_y = min_y;
   self->max_x = max_x;
   self->max_y = max_y;
+  self->x_distance = max_x - min_x;
+  self->y_distance = max_y - min_y;
   self->items_changed_handler =
     g_signal_connect (self->model,
                       "items-changed",
@@ -121,8 +126,8 @@ sysprof_xy_series_unref (SysprofXYSeries *self)
 
 void
 sysprof_xy_series_add (SysprofXYSeries *self,
-                       float            x,
-                       float            y,
+                       double           x,
+                       double           y,
                        guint            index)
 {
   SysprofXYSeriesValue value;
@@ -158,7 +163,7 @@ sysprof_xy_series_get_model (SysprofXYSeries *self)
 
 const SysprofXYSeriesValue *
 sysprof_xy_series_get_values (const SysprofXYSeries *self,
-                                guint                   *n_values)
+                              guint                 *n_values)
 {
   *n_values = self->values->len;
   return &g_array_index (self->values, SysprofXYSeriesValue, 0);
@@ -195,10 +200,10 @@ sysprof_xy_series_sort (SysprofXYSeries *self)
 
 void
 sysprof_xy_series_get_range (SysprofXYSeries *self,
-                             float           *min_x,
-                             float           *min_y,
-                             float           *max_x,
-                             float           *max_y)
+                             double          *min_x,
+                             double          *min_y,
+                             double          *max_x,
+                             double          *max_y)
 {
   g_return_if_fail (self != NULL);
 

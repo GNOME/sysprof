@@ -47,7 +47,7 @@ sysprof_depth_layer_snapshot (GtkWidget   *widget,
   SysprofDepthLayer *self = (SysprofDepthLayer *)widget;
   const SysprofXYSeriesValue *values;
   guint n_values;
-  float min_x, max_x;
+  double min_x, max_x;
   int line_width;
   int width;
   int height;

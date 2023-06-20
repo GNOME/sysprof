@@ -35,10 +35,13 @@ struct _SysprofChartLayerClass
 {
   GtkWidgetClass parent_class;
 
-  void (*snapshot_motion) (SysprofChartLayer *self,
-                           GtkSnapshot       *snapshot,
-                           double             x,
-                           double             y);
+  gpointer (*lookup_item)     (SysprofChartLayer *self,
+                               double             x,
+                               double             y);
+  void     (*snapshot_motion) (SysprofChartLayer *self,
+                               GtkSnapshot       *snapshot,
+                               double             x,
+                               double             y);
 
   /*< private >*/
   gpointer _reserved[16];
@@ -49,6 +52,10 @@ const char *sysprof_chart_layer_get_title       (SysprofChartLayer *self);
 SYSPROF_AVAILABLE_IN_ALL
 void        sysprof_chart_layer_set_title       (SysprofChartLayer *self,
                                                  const char        *title);
+SYSPROF_AVAILABLE_IN_ALL
+gpointer    sysprof_chart_layer_lookup_item     (SysprofChartLayer *self,
+                                                 double             x,
+                                                 double             y);
 SYSPROF_AVAILABLE_IN_ALL
 void        sysprof_chart_layer_snapshot_motion (SysprofChartLayer *self,
                                                  GtkSnapshot       *snapshot,

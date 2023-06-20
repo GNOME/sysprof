@@ -142,3 +142,29 @@ sysprof_chart_layer_snapshot_motion (SysprofChartLayer *self,
   if (SYSPROF_CHART_LAYER_GET_CLASS (self)->snapshot_motion)
     SYSPROF_CHART_LAYER_GET_CLASS (self)->snapshot_motion (self, snapshot, x, y);
 }
+
+/**
+ * sysprof_chart_layer_lookup_item:
+ * @self: a #SysprofChartLayer
+ * @x: the coordinate on the X axis
+ * @y: the coordinate on the Y axis
+ *
+ * Locates an item at `(x,y)`.
+ *
+ * If no item is found at `(x,y)`, then %NULL is returned.
+ *
+ * Returns: (transfer full) (nullable) (type GObject): A #GObject
+ *   if successful; otherwise %NULL.
+ */
+gpointer
+sysprof_chart_layer_lookup_item (SysprofChartLayer *self,
+                                 double             x,
+                                 double             y)
+{
+  g_return_val_if_fail (SYSPROF_IS_CHART_LAYER (self), NULL);
+
+  if (SYSPROF_CHART_LAYER_GET_CLASS (self)->lookup_item)
+    return SYSPROF_CHART_LAYER_GET_CLASS (self)->lookup_item (self, x, y);
+
+  return NULL;
+}

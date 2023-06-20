@@ -161,6 +161,22 @@ sysprof_depth_layer_snapshot_motion (SysprofChartLayer *layer,
     gtk_snapshot_append_color (snapshot, &self->hover_color, &rect);
 }
 
+static gpointer
+sysprof_depth_layer_lookup_item (SysprofChartLayer *layer,
+                                 double             x,
+                                 double             y)
+{
+  SysprofDepthLayer *self = (SysprofDepthLayer *)layer;
+  const SysprofXYSeriesValue *v;
+
+  g_assert (SYSPROF_IS_DEPTH_LAYER (self));
+
+  if ((v = sysprof_depth_layer_get_value_at_coord (self, x, y, NULL)))
+    return g_list_model_get_item (sysprof_xy_series_get_model (self->series), v->index);
+
+  return NULL;
+}
+
 static void
 sysprof_depth_layer_dispose (GObject *object)
 {
@@ -238,6 +254,7 @@ sysprof_depth_layer_class_init (SysprofDepthLayerClass *klass)
 
   widget_class->snapshot = sysprof_depth_layer_snapshot;
 
+  chart_layer_class->lookup_item = sysprof_depth_layer_lookup_item;
   chart_layer_class->snapshot_motion = sysprof_depth_layer_snapshot_motion;
 
   properties[PROP_COLOR] =

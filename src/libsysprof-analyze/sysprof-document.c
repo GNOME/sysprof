@@ -227,6 +227,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->strings, sysprof_strings_unref);
 
   g_clear_pointer (&self->pid_to_process_info, g_hash_table_unref);
+  g_clear_pointer (&self->tid_to_symbol, g_hash_table_unref);
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
   g_clear_pointer (&self->frames, g_array_unref);
 

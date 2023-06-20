@@ -25,6 +25,7 @@
 #include <sysprof-capture.h>
 
 #include "sysprof-chart-layer.h"
+#include "sysprof-session.h"
 
 G_BEGIN_DECLS
 
@@ -41,17 +42,22 @@ struct _SysprofChartClass
 };
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget  *sysprof_chart_new          (void);
+GtkWidget      *sysprof_chart_new          (void);
 SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_chart_get_title    (SysprofChart *self);
+SysprofSession *sysprof_chart_get_session  (SysprofChart      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void        sysprof_chart_set_title    (SysprofChart *self,
-                                        const char   *title);
+void            sysprof_chart_set_session  (SysprofChart      *self,
+                                            SysprofSession    *session);
 SYSPROF_AVAILABLE_IN_ALL
-void        sysprof_chart_add_layer    (SysprofChart      *self,
-                                        SysprofChartLayer *layer);
+const char     *sysprof_chart_get_title    (SysprofChart      *self);
 SYSPROF_AVAILABLE_IN_ALL
-void        sysprof_chart_remove_layer (SysprofChart      *self,
-                                        SysprofChartLayer *layer);
+void            sysprof_chart_set_title    (SysprofChart      *self,
+                                            const char        *title);
+SYSPROF_AVAILABLE_IN_ALL
+void            sysprof_chart_add_layer    (SysprofChart      *self,
+                                            SysprofChartLayer *layer);
+SYSPROF_AVAILABLE_IN_ALL
+void            sysprof_chart_remove_layer (SysprofChart      *self,
+                                            SysprofChartLayer *layer);
 
 G_END_DECLS

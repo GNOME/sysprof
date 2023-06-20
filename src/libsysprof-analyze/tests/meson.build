@@ -24,6 +24,7 @@ libsysprof_analyze_testsuite = {
   'test-list-processes'      : {'skip': true},
   'test-list-address-layout' : {'skip': true},
   'test-symbolize'           : {'skip': true},
+  'test-strings'             : {},
   'test-symbol-cache'        : {},
 }
 

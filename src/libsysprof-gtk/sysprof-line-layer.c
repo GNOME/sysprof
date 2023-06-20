@@ -30,6 +30,7 @@ struct _SysprofLineLayer
   GdkRGBA color;
   guint use_curves : 1;
   guint flip_y : 1;
+  guint fill : 1;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF_TYPE_CHART_LAYER)
@@ -37,6 +38,7 @@ G_DEFINE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF_TYPE_CHART_LA
 enum {
   PROP_0,
   PROP_COLOR,
+  PROP_FILL,
   PROP_FLIP_Y,
   PROP_SERIES,
   PROP_USE_CURVES,
@@ -78,7 +80,6 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
 
   cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, width, height));
 
-  gdk_cairo_set_source_rgba (cr, &self->color);
   cairo_set_line_width (cr, 1./width);
 
   if (!self->flip_y)
@@ -89,7 +90,16 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
   last_x = values->x;
   last_y = values->y;
 
-  cairo_move_to (cr, last_x, last_y);
+
+  if (self->fill)
+    {
+      cairo_move_to (cr, last_x, 0);
+      cairo_line_to (cr, last_x, last_y);
+    }
+  else
+    {
+      cairo_move_to (cr, last_x, last_y);
+    }
 
   if (self->use_curves)
     {
@@ -118,10 +128,25 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
           const SysprofXYSeriesValue *v = &values[i];
 
           cairo_line_to (cr, v->x, v->y);
+
+          last_x = v->x;
+          last_y = v->y;
         }
     }
 
+  if (self->fill)
+    {
+      GdkRGBA fill_color = self->color;
+
+      cairo_line_to (cr, last_x, 0);
+
+      fill_color.alpha *= .5;
+      cairo_fill_preserve (cr);
+    }
+
+  gdk_cairo_set_source_rgba (cr, &self->color);
   cairo_stroke (cr);
+
   cairo_destroy (cr);
 }
 
@@ -147,6 +172,10 @@ sysprof_line_layer_get_property (GObject    *object,
     {
     case PROP_COLOR:
       g_value_set_boxed (value, sysprof_line_layer_get_color (self));
+      break;
+
+    case PROP_FILL:
+      g_value_set_boolean (value, sysprof_line_layer_get_fill (self));
       break;
 
     case PROP_FLIP_Y:
@@ -178,6 +207,10 @@ sysprof_line_layer_set_property (GObject      *object,
     {
     case PROP_COLOR:
       sysprof_line_layer_set_color (self, g_value_get_boxed (value));
+      break;
+
+    case PROP_FILL:
+      sysprof_line_layer_set_fill (self, g_value_get_boolean (value));
       break;
 
     case PROP_FLIP_Y:
@@ -213,6 +246,11 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
     g_param_spec_boxed ("color", NULL, NULL,
                         GDK_TYPE_RGBA,
                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_FILL] =
+    g_param_spec_boolean ("fill", NULL, NULL,
+                         FALSE,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_FLIP_Y] =
     g_param_spec_boolean ("flip-y", NULL, NULL,
@@ -295,6 +333,30 @@ sysprof_line_layer_set_series (SysprofLineLayer *self,
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SERIES]);
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+gboolean
+sysprof_line_layer_get_fill (SysprofLineLayer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_LINE_LAYER (self), FALSE);
+
+  return self->fill;
+}
+
+void
+sysprof_line_layer_set_fill (SysprofLineLayer *self,
+                             gboolean          fill)
+{
+  g_return_if_fail (SYSPROF_IS_LINE_LAYER (self));
+
+  fill = !!fill;
+
+  if (fill != self->fill)
+    {
+      self->fill = fill;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FILL]);
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
 }
 
 gboolean

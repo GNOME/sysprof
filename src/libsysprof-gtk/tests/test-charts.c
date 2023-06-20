@@ -32,6 +32,57 @@ static const GOptionEntry entries[] = {
   { 0 }
 };
 
+static gboolean
+activate_layer_item_cb (SysprofChart      *chart,
+                        SysprofChartLayer *layer,
+                        gpointer           item,
+                        SysprofDocument   *document)
+{
+  g_assert (SYSPROF_IS_CHART (chart));
+  g_assert (SYSPROF_IS_CHART_LAYER (layer));
+  g_assert (G_IS_OBJECT (item));
+  g_assert (SYSPROF_IS_DOCUMENT (document));
+
+  g_print ("Activated %s in layer '%s' [%s]\n",
+           G_OBJECT_TYPE_NAME (item),
+           sysprof_chart_layer_get_title (layer),
+           G_OBJECT_TYPE_NAME (layer));
+
+  if (SYSPROF_IS_DOCUMENT_FRAME (item))
+    {
+      g_print ("time_offset=%"G_GINT64_FORMAT" pid=%d\n",
+               sysprof_document_frame_get_time_offset (item),
+               sysprof_document_frame_get_pid (item));
+    }
+
+  if (SYSPROF_IS_DOCUMENT_TRACEABLE (item))
+    {
+      guint depth = sysprof_document_traceable_get_stack_depth (item);
+
+      g_print ("Thread-Id: %u\n",
+               sysprof_document_traceable_get_thread_id (item));
+      g_print ("Stack Depth: %u\n", depth);
+
+      if (depth <= 128)
+        {
+          SysprofSymbol *symbols[128];
+          SysprofAddressContext final_context;
+          guint n_symbols = G_N_ELEMENTS (symbols);
+
+          n_symbols = sysprof_document_symbolize_traceable (document,
+                                                            item,
+                                                            symbols,
+                                                            n_symbols,
+                                                            &final_context);
+
+          for (guint i = 0; i < n_symbols; i++)
+            g_print ("  %s\n", sysprof_symbol_get_name (symbols[i]));
+        }
+    }
+
+  return GDK_EVENT_STOP;
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -73,7 +124,6 @@ main (int   argc,
   main_loop = g_main_loop_new (NULL, FALSE);
 
   loader = sysprof_document_loader_new (filename);
-  sysprof_document_loader_set_symbolizer (loader, sysprof_no_symbolizer_get ());
 
   if (!(document = sysprof_document_loader_load (loader, NULL, &error)))
     g_error ("Failed to load document: %s", error->message);
@@ -110,11 +160,16 @@ main (int   argc,
 
   chart = g_object_new (SYSPROF_TYPE_CHART,
                         "session", session,
-                        "title", "Stack Traces",
+                        "title", "Samples",
                         "height-request", 128,
                         NULL);
+  g_signal_connect (chart,
+                    "activate-layer-item",
+                    G_CALLBACK (activate_layer_item_cb),
+                    document);
   layer = g_object_new (SYSPROF_TYPE_DEPTH_LAYER,
                         "series", samples_series,
+                        "title", "Stack Depth",
                         NULL);
   sysprof_chart_add_layer (SYSPROF_CHART (chart),
                            SYSPROF_CHART_LAYER (layer));

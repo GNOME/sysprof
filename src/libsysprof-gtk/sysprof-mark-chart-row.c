@@ -42,6 +42,7 @@ struct _SysprofMarkChartRow
   guint                 update_source;
 
   guint                 pointer_in_row : 1;
+  guint                 in_dispose : 1;
 };
 
 enum {
@@ -70,7 +71,8 @@ sysprof_mark_chart_row_set_series (SysprofMarkChartRow *self,
   g_clear_pointer (&self->series, sysprof_time_series_unref);
   self->series = series ? sysprof_time_series_ref (series) : NULL;
 
-  gtk_widget_queue_draw (GTK_WIDGET (self));
+  if (!self->in_dispose)
+    gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
 static void
@@ -310,7 +312,9 @@ sysprof_mark_chart_row_queue_update (SysprofMarkChartRow *self)
 
   cancel_and_clear (&self->cancellable);
   g_clear_handle_id (&self->update_source, g_source_remove);
-  self->update_source = g_idle_add (sysprof_mark_chart_row_dispatch_update, self);
+
+  if (!self->in_dispose)
+    self->update_source = g_idle_add (sysprof_mark_chart_row_dispatch_update, self);
 }
 
 static void
@@ -432,9 +436,13 @@ sysprof_mark_chart_row_dispose (GObject *object)
 {
   SysprofMarkChartRow *self = (SysprofMarkChartRow *)object;
 
+  self->in_dispose = TRUE;
+
+  cancel_and_clear (&self->cancellable);
   g_clear_handle_id (&self->update_source, g_source_remove);
 
   sysprof_mark_chart_row_set_item (self, NULL);
+  sysprof_mark_chart_row_set_series (self, NULL);
 
   G_OBJECT_CLASS (sysprof_mark_chart_row_parent_class)->dispose (object);
 }

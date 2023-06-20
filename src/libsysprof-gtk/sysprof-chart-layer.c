@@ -78,7 +78,7 @@ sysprof_chart_layer_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_TITLE:
-      sysprof_chart_layer_set_title (self, g_value_get_object (value));
+      sysprof_chart_layer_set_title (self, g_value_get_string (value));
       break;
 
     default:

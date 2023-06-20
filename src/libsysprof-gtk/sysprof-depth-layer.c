@@ -27,11 +27,13 @@ struct _SysprofDepthLayer
   SysprofChartLayer parent_instance;
   SysprofXYSeries *series;
   GdkRGBA color;
+  GdkRGBA hover_color;
 };
 
 enum {
   PROP_0,
   PROP_COLOR,
+  PROP_HOVER_COLOR,
   PROP_SERIES,
   N_PROPS
 };
@@ -90,6 +92,58 @@ sysprof_depth_layer_snapshot (GtkWidget   *widget,
 }
 
 static void
+sysprof_depth_layer_snapshot_motion (SysprofChartLayer *layer,
+                                     GtkSnapshot       *snapshot,
+                                     double             x,
+                                     double             y)
+{
+  SysprofDepthLayer *self = (SysprofDepthLayer *)layer;
+  const SysprofXYSeriesValue *values;
+  graphene_point_t point;
+  double min_x, max_x;
+  double min_y, max_y;
+  guint line_width;
+  guint n_values;
+  int width;
+  int height;
+
+  g_assert (SYSPROF_IS_DEPTH_LAYER (self));
+  g_assert (GTK_IS_SNAPSHOT (snapshot));
+
+  width = gtk_widget_get_width (GTK_WIDGET (self));
+  height = gtk_widget_get_height (GTK_WIDGET (self));
+
+  if (width == 0 || height == 0)
+    return;
+
+  if (self->series == NULL ||
+      !(values = sysprof_xy_series_get_values (self->series, &n_values)))
+    return;
+
+  point = GRAPHENE_POINT_INIT (x, y);
+
+  sysprof_xy_series_get_range (self->series, &min_x, &min_y, &max_x, &max_y);
+
+  line_width = MAX (1, width / (max_x - min_x));
+
+  for (guint i = 0; i < n_values; i++)
+    {
+      const SysprofXYSeriesValue *v = &values[i];
+      int line_height = ceilf (v->y * height);
+      graphene_rect_t rect = GRAPHENE_RECT_INIT (v->x * width,
+                                                 height - line_height,
+                                                 line_width,
+                                                 line_height);
+
+      if (graphene_rect_contains_point (&rect, &point))
+        {
+          gtk_snapshot_append_color (snapshot, &self->hover_color, &rect);
+          break;
+        }
+    }
+}
+
+static void
 sysprof_depth_layer_dispose (GObject *object)
 {
   SysprofDepthLayer *self = (SysprofDepthLayer *)object;
@@ -111,6 +165,10 @@ sysprof_depth_layer_get_property (GObject    *object,
     {
     case PROP_COLOR:
       g_value_set_boxed (value, &self->color);
+      break;
+
+    case PROP_HOVER_COLOR:
+      g_value_set_boxed (value, &self->hover_color);
       break;
 
     case PROP_SERIES:
@@ -136,6 +194,10 @@ sysprof_depth_layer_set_property (GObject      *object,
       sysprof_depth_layer_set_color (self, g_value_get_boxed (value));
       break;
 
+    case PROP_HOVER_COLOR:
+      sysprof_depth_layer_set_hover_color (self, g_value_get_boxed (value));
+      break;
+
     case PROP_SERIES:
       sysprof_depth_layer_set_series (self, g_value_get_boxed (value));
       break;
@@ -150,6 +212,7 @@ sysprof_depth_layer_class_init (SysprofDepthLayerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  SysprofChartLayerClass *chart_layer_class = SYSPROF_CHART_LAYER_CLASS (klass);
 
   object_class->dispose = sysprof_depth_layer_dispose;
   object_class->get_property = sysprof_depth_layer_get_property;
@@ -157,8 +220,15 @@ sysprof_depth_layer_class_init (SysprofDepthLayerClass *klass)
 
   widget_class->snapshot = sysprof_depth_layer_snapshot;
 
+  chart_layer_class->snapshot_motion = sysprof_depth_layer_snapshot_motion;
+
   properties[PROP_COLOR] =
     g_param_spec_boxed ("color", NULL, NULL,
+                         GDK_TYPE_RGBA,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_HOVER_COLOR] =
+    g_param_spec_boxed ("hover-color", NULL, NULL,
                          GDK_TYPE_RGBA,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
@@ -173,7 +243,8 @@ sysprof_depth_layer_class_init (SysprofDepthLayerClass *klass)
 static void
 sysprof_depth_layer_init (SysprofDepthLayer *self)
 {
-  self->color.alpha = 1;
+  gdk_rgba_parse (&self->color, "#000");
+  gdk_rgba_parse (&self->hover_color, "#F00");
 }
 
 SysprofChartLayer *
@@ -185,6 +256,8 @@ sysprof_depth_layer_new (void)
 const GdkRGBA *
 sysprof_depth_layer_get_color (SysprofDepthLayer *self)
 {
+  g_return_val_if_fail (SYSPROF_IS_DEPTH_LAYER (self), NULL);
+
   return &self->color;
 }
 
@@ -203,6 +276,32 @@ sysprof_depth_layer_set_color (SysprofDepthLayer *self,
     {
       self->color = *color;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
+    }
+}
+
+const GdkRGBA *
+sysprof_depth_layer_get_hover_color (SysprofDepthLayer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DEPTH_LAYER (self), NULL);
+
+  return &self->hover_color;
+}
+
+void
+sysprof_depth_layer_set_hover_color (SysprofDepthLayer *self,
+                                     const GdkRGBA     *hover_color)
+{
+  static const GdkRGBA red = {1,0,0,1};
+
+  g_return_if_fail (SYSPROF_IS_DEPTH_LAYER (self));
+
+  if (hover_color == NULL)
+    hover_color = &red;
+
+  if (!gdk_rgba_equal (&self->hover_color, hover_color))
+    {
+      self->hover_color = *hover_color;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_HOVER_COLOR]);
     }
 }
 

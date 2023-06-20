@@ -48,6 +48,7 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
 {
   SysprofColumnLayer *self = (SysprofColumnLayer *)widget;
   const SysprofXYSeriesValue *values;
+  graphene_matrix_t flip_y;
   guint n_values;
   double min_x, max_x;
   int line_width;
@@ -67,6 +68,11 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
       !(values = sysprof_xy_series_get_values (self->series, &n_values)))
     return;
 
+  gtk_snapshot_save (snapshot);
+
+  graphene_matrix_init_from_2d (&flip_y, 1, 0, 0, -1, 0, height);
+  gtk_snapshot_transform_matrix (snapshot, &flip_y);
+
   sysprof_xy_series_get_range (self->series, &min_x, NULL, &max_x, NULL);
 
   /* NOTE: We might want to allow setting a "bucket size" for the
@@ -85,10 +91,12 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
       gtk_snapshot_append_color (snapshot,
                                  &self->color,
                                  &GRAPHENE_RECT_INIT (v->x * width,
-                                                      height - line_height,
+                                                      0,
                                                       line_width,
                                                       line_height));
     }
+
+  gtk_snapshot_restore (snapshot);
 }
 
 static const SysprofXYSeriesValue *

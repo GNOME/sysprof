@@ -311,6 +311,7 @@ sysprof_column_layer_set_color (SysprofColumnLayer *self,
     {
       self->color = *color;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
+      gtk_widget_queue_draw (GTK_WIDGET (self));
     }
 }
 
@@ -337,6 +338,7 @@ sysprof_column_layer_set_hover_color (SysprofColumnLayer *self,
     {
       self->hover_color = *hover_color;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_HOVER_COLOR]);
+      gtk_widget_queue_draw (GTK_WIDGET (self));
     }
 }
 

@@ -23,6 +23,9 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include <glib/gi18n.h>
+#include <glib/gstdio.h>
+
 #include "sysprof-bundled-symbolizer.h"
 #include "sysprof-document-loader.h"
 #include "sysprof-document-private.h"
@@ -34,11 +37,13 @@
 struct _SysprofDocumentLoader
 {
   GObject            parent_instance;
+  GMutex             mutex;
   SysprofSymbolizer *symbolizer;
   char              *filename;
   char              *message;
   double             fraction;
   int                fd;
+  guint              notify_source;
 };
 
 enum {
@@ -52,6 +57,43 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofDocumentLoader, sysprof_document_loader, G_TYPE_OBJECT)
 
 static GParamSpec *properties [N_PROPS];
+
+static gboolean
+progress_notify_in_idle (gpointer data)
+{
+  SysprofDocumentLoader *self = data;
+
+  g_assert (SYSPROF_IS_DOCUMENT_LOADER (self));
+
+  g_mutex_lock (&self->mutex);
+  self->notify_source = 0;
+  g_mutex_unlock (&self->mutex);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FRACTION]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MESSAGE]);
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+set_progress (double      fraction,
+              const char *message,
+              gpointer    user_data)
+{
+  SysprofDocumentLoader *self = user_data;
+
+  g_assert (SYSPROF_IS_DOCUMENT_LOADER (self));
+
+  g_mutex_lock (&self->mutex);
+  self->fraction = fraction;
+  g_set_str (&self->message, message);
+  if (!self->notify_source)
+    self->notify_source = g_idle_add_full (G_PRIORITY_LOW,
+                                           progress_notify_in_idle,
+                                           g_object_ref (self),
+                                           g_object_unref);
+  g_mutex_unlock (&self->mutex);
+}
 
 static void
 mapped_file_by_filename (GTask        *task,
@@ -160,15 +202,12 @@ sysprof_document_loader_finalize (GObject *object)
 {
   SysprofDocumentLoader *self = (SysprofDocumentLoader *)object;
 
+  g_clear_handle_id (&self->notify_source, g_source_remove);
   g_clear_object (&self->symbolizer);
   g_clear_pointer (&self->filename, g_free);
   g_clear_pointer (&self->message, g_free);
-
-  if (self->fd != -1)
-    {
-      close (self->fd);
-      self->fd = -1;
-    }
+  g_clear_fd (&self->fd, NULL);
+  g_mutex_clear (&self->mutex);
 
   G_OBJECT_CLASS (sysprof_document_loader_parent_class)->finalize (object);
 }
@@ -249,6 +288,8 @@ sysprof_document_loader_class_init (SysprofDocumentLoaderClass *klass)
 static void
 sysprof_document_loader_init (SysprofDocumentLoader *self)
 {
+  g_mutex_init (&self->mutex);
+
   self->fd = -1;
 
   set_default_symbolizer (self);
@@ -372,10 +413,15 @@ sysprof_document_loader_load_symbols_cb (GObject      *object,
   SysprofDocument *document = (SysprofDocument *)object;
   g_autoptr(GError) error = NULL;
   g_autoptr(GTask) task = user_data;
+  SysprofDocumentLoader *self;
 
   g_assert (SYSPROF_IS_DOCUMENT (document));
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
+
+  set_progress (1., _("Document loaded"), self);
 
   if (!_sysprof_document_symbolize_finish (document, result, &error))
     g_task_return_error (task, g_steal_pointer (&error));
@@ -391,15 +437,19 @@ sysprof_document_loader_load_document_cb (GObject      *object,
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(GError) error = NULL;
   g_autoptr(GTask) task = user_data;
+  SysprofDocumentLoader *self;
   SysprofSymbolizer *symbolizer;
 
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
 
+  self = g_task_get_source_object (task);
   symbolizer = g_task_get_task_data (task);
 
   g_assert (symbolizer != NULL);
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
+
+  set_progress (.9, _("Symbolizing stack traces"), self);
 
   if (!(document = _sysprof_document_new_finish (result, &error)))
     g_task_return_error (task, g_steal_pointer (&error));
@@ -419,14 +469,20 @@ sysprof_document_loader_load_mapped_file_cb (GObject      *object,
   g_autoptr(GMappedFile) mapped_file = NULL;
   g_autoptr(GError) error = NULL;
   g_autoptr(GTask) task = user_data;
+  SysprofDocumentLoader *self;
 
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (G_IS_TASK (task));
+
+  self = g_task_get_source_object (task);
 
   if (!(mapped_file = mapped_file_new_finish (result, &error)))
     g_task_return_error (task, g_steal_pointer (&error));
   else
     _sysprof_document_new_async (mapped_file,
+                                 set_progress,
+                                 g_object_ref (self),
+                                 g_object_unref,
                                  g_task_get_cancellable (task),
                                  sysprof_document_loader_load_document_cb,
                                  g_object_ref (task));
@@ -462,6 +518,8 @@ sysprof_document_loader_load_async (SysprofDocumentLoader *self,
   g_task_set_task_data (task, g_object_ref (self->symbolizer), g_object_unref);
   g_task_set_source_tag (task, sysprof_document_loader_load_async);
 
+  set_progress (0., _("Loading document"), self);
+
   if (self->fd != -1)
     mapped_file_new_from_fd_async (self->fd,
                                    cancellable,
@@ -495,6 +553,8 @@ sysprof_document_loader_load_finish (SysprofDocumentLoader  *self,
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_LOADER (self), NULL);
   g_return_val_if_fail (G_IS_TASK (result), NULL);
   g_return_val_if_fail (g_task_is_valid (result, self), NULL);
+
+  set_progress (1., NULL, self);
 
   ret = g_task_propagate_pointer (G_TASK (result), error);
 

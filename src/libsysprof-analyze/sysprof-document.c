@@ -23,6 +23,7 @@
 #include <fcntl.h>
 
 #include <glib/gstdio.h>
+#include <glib/gi18n.h>
 
 #include "sysprof-document-private.h"
 
@@ -682,6 +683,38 @@ is_data_type (SysprofCaptureFrameType type)
     }
 }
 
+typedef struct _Load
+{
+  GMappedFile *mapped_file;
+  ProgressFunc progress;
+  gpointer progress_data;
+  GDestroyNotify progress_data_destroy;
+} Load;
+
+static void
+load_free (Load *load)
+{
+  g_clear_pointer (&load->mapped_file, g_mapped_file_unref);
+
+  if (load->progress_data_destroy)
+    load->progress_data_destroy (load->progress_data);
+
+  load->progress = NULL;
+  load->progress_data = NULL;
+  load->progress_data_destroy = NULL;
+
+  g_free (load);
+}
+
+static inline void
+load_progress (Load       *load,
+               double      fraction,
+               const char *message)
+{
+  if (load->progress)
+    load->progress (fraction, message, load->progress_data);
+}
+
 static void
 sysprof_document_load_worker (GTask        *task,
                               gpointer      source_object,
@@ -690,18 +723,19 @@ sysprof_document_load_worker (GTask        *task,
 {
   g_autoptr(SysprofDocument) self = NULL;
   g_autoptr(GHashTable) files = NULL;
-  GMappedFile *mapped_file = task_data;
+  Load *load = task_data;
   gint64 guessed_end_nsec = 0;
   goffset pos;
   gsize len;
+  guint count;
 
   g_assert (source_object == NULL);
-  g_assert (mapped_file != NULL);
+  g_assert (load != NULL);
 
   self = g_object_new (SYSPROF_TYPE_DOCUMENT, NULL);
-  self->mapped_file = g_mapped_file_ref (mapped_file);
-  self->base = (const guint8 *)g_mapped_file_get_contents (mapped_file);
-  len = g_mapped_file_get_length (mapped_file);
+  self->mapped_file = g_mapped_file_ref (load->mapped_file);
+  self->base = (const guint8 *)g_mapped_file_get_contents (load->mapped_file);
+  len = g_mapped_file_get_length (load->mapped_file);
 
   if (len < sizeof self->header)
     {
@@ -729,6 +763,9 @@ sysprof_document_load_worker (GTask        *task,
   self->time_span.begin_nsec = self->header.time;
   self->time_span.end_nsec = self->header.end_time;
 
+  load_progress (load, .1, _("Indexing capture data frames"));
+
+  count = 0;
   pos = sizeof self->header;
   while (pos < (len - sizeof(guint16)))
     {
@@ -853,18 +890,35 @@ sysprof_document_load_worker (GTask        *task,
         }
 
       pos += frame_len;
+      count++;
 
       g_array_append_val (self->frames, ptr);
+
+      if (count % 100 == 0)
+        load_progress (load,
+                       (pos / (double)len) * .4,
+                       _("Indexing capture data frames"));
     }
 
   if (guessed_end_nsec != 0)
     self->time_span.end_nsec = guessed_end_nsec;
 
+  load_progress (load, .6, _("Discovering file system mounts"));
   sysprof_document_load_mounts (self);
+
+  load_progress (load, .65, _("Discovering process mount namespaces"));
   sysprof_document_load_mountinfos (self);
+
+  load_progress (load, .7, _("Analyzing process address layouts"));
   sysprof_document_load_memory_maps (self);
+
+  load_progress (load, .75, _("Analyzing process command line"));
   sysprof_document_load_processes (self);
+
+  load_progress (load, .8, _("Analyzing file system overlays"));
   sysprof_document_load_overlays (self);
+
+  load_progress (load, .85, _("Processing counters"));
   sysprof_document_load_counters (self);
 
   g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);
@@ -872,20 +926,28 @@ sysprof_document_load_worker (GTask        *task,
 
 void
 _sysprof_document_new_async (GMappedFile         *mapped_file,
+                             ProgressFunc         progress,
+                             gpointer             progress_data,
+                             GDestroyNotify       progress_data_destroy,
                              GCancellable        *cancellable,
                              GAsyncReadyCallback  callback,
                              gpointer             user_data)
 {
   g_autoptr(GTask) task = NULL;
+  Load *load;
 
   g_return_if_fail (mapped_file != NULL);
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
+  load = g_new0 (Load, 1);
+  load->mapped_file = g_mapped_file_ref (mapped_file);
+  load->progress = progress;
+  load->progress_data = progress_data;
+  load->progress_data_destroy = progress_data_destroy;
+
   task = g_task_new (NULL, cancellable, callback, user_data);
   g_task_set_source_tag (task, _sysprof_document_new_async);
-  g_task_set_task_data (task,
-                        g_mapped_file_ref (mapped_file),
-                        (GDestroyNotify)g_mapped_file_unref);
+  g_task_set_task_data (task, load, (GDestroyNotify)load_free);
   g_task_run_in_thread (task, sysprof_document_load_worker);
 }
 

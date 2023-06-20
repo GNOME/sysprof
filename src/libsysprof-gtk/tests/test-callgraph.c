@@ -35,6 +35,28 @@ static const GOptionEntry entries[] = {
   { 0 }
 };
 
+static void
+load_cb (GObject      *object,
+         GAsyncResult *result,
+         gpointer      user_data)
+{
+  g_autoptr(GtkWidget) view = user_data;
+  g_autoptr(SysprofDocument) document = NULL;
+  g_autoptr(GListModel) model = NULL;
+  g_autoptr(GError) error = NULL;
+
+  document = sysprof_document_loader_load_finish (SYSPROF_DOCUMENT_LOADER (object), result, &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (document);
+
+  model = sysprof_document_list_samples (document);
+
+  g_object_set (view,
+                "document", document,
+                "traceables", model,
+                NULL);
+}
+
 int
 main (int   argc,
       char *argv[])
@@ -43,11 +65,13 @@ main (int   argc,
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(SysprofMultiSymbolizer) multi = NULL;
-  g_autoptr(GListModel) model = NULL;
   g_autoptr(GError) error = NULL;
   SysprofCallgraphView *view;
   GtkWidget *box;
   GtkWidget *hbox;
+  GtkWidget *status;
+  GtkWidget *progress;
+  GtkWidget *message;
   GtkWidget *threads;
   GtkWindow *window;
 
@@ -93,12 +117,6 @@ main (int   argc,
   loader = sysprof_document_loader_new (filename);
   sysprof_document_loader_set_symbolizer (loader, SYSPROF_SYMBOLIZER (multi));
 
-  g_print ("Loading %s, ignoring embedded symbols...\n", filename);
-  if (!(document = sysprof_document_loader_load (loader, NULL, &error)))
-    g_error ("Failed to load document: %s", error->message);
-
-  model = sysprof_document_list_samples (document);
-
   window = g_object_new (GTK_TYPE_WINDOW,
                          "default-width", 800,
                          "default-height", 600,
@@ -117,19 +135,34 @@ main (int   argc,
                           NULL);
   gtk_box_append (GTK_BOX (hbox), threads);
   view = g_object_new (SYSPROF_TYPE_WEIGHTED_CALLGRAPH_VIEW,
-                       "traceables", model,
-                       "document", document,
                        "include-threads", include_threads,
+                       "vexpand", TRUE,
                        NULL);
   gtk_box_append (GTK_BOX (box), GTK_WIDGET (view));
   g_signal_connect_swapped (window,
                             "close-request",
                             G_CALLBACK (g_main_loop_quit),
                             main_loop);
+  status = g_object_new (GTK_TYPE_BOX,
+                         "spacing", 6,
+                         NULL);
+  message = g_object_new (GTK_TYPE_LABEL,
+                          "xalign", .0f,
+                          "hexpand", TRUE,
+                          NULL);
+  progress = g_object_new (GTK_TYPE_PROGRESS_BAR,
+                           NULL);
+  gtk_box_append (GTK_BOX (status), message);
+  gtk_box_append (GTK_BOX (status), progress);
+  gtk_box_append (GTK_BOX (box), status);
   gtk_window_set_child (window, box);
   gtk_window_present (window);
 
   g_object_bind_property (threads, "active", view, "include-threads", 0);
+  g_object_bind_property (loader, "message", message, "label", 0);
+  g_object_bind_property (loader, "fraction", progress, "fraction", 0);
+
+  sysprof_document_loader_load_async (loader, NULL, load_cb, g_object_ref (view));
 
   g_main_loop_run (main_loop);
 

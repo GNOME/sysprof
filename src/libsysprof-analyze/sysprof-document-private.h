@@ -38,7 +38,14 @@ typedef struct _SysprofDocumentTimedValue
   };
 } SysprofDocumentTimedValue;
 
+typedef void (*ProgressFunc) (double      fraction,
+                              const char *message,
+                              gpointer    user_data);
+
 void             _sysprof_document_new_async        (GMappedFile          *mapped_file,
+                                                     ProgressFunc          progress,
+                                                     gpointer              progress_data,
+                                                     GDestroyNotify        progress_data_destroy,
                                                      GCancellable         *cancellable,
                                                      GAsyncReadyCallback   callback,
                                                      gpointer              user_data);

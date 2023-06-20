@@ -132,6 +132,7 @@ sysprof_symbol_cache_take (SysprofSymbolCache *self,
 {
   SysprofSymbolCacheNode *node;
   SysprofSymbolCacheNode *parent;
+  SysprofSymbolCacheNode *ret;
 
   g_return_if_fail (SYSPROF_IS_SYMBOL_CACHE (self));
   g_return_if_fail (SYSPROF_IS_SYMBOL (symbol));
@@ -152,7 +153,14 @@ sysprof_symbol_cache_take (SysprofSymbolCache *self,
   node->high = symbol->end_address-1;
   node->max = node->high;
 
-  RB_INSERT(sysprof_symbol_cache, &self->head, node);
+  /* If there is a collision, then the node is returned. Otherwise
+   * if the node was inserted, NULL is returned.
+   */
+  if ((ret = RB_INSERT(sysprof_symbol_cache, &self->head, node)))
+    {
+      sysprof_symbol_cache_node_free (node);
+      return;
+    }
 
   parent = RB_PARENT(node, link);
 
@@ -203,3 +211,4 @@ sysprof_symbol_cache_lookup (SysprofSymbolCache *self,
 
   return NULL;
 }
+

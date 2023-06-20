@@ -31,6 +31,7 @@ G_BEGIN_DECLS
 # include "sysprof-mark-chart.h"
 # include "sysprof-mark-table.h"
 # include "sysprof-session.h"
+# include "sysprof-split-layer.h"
 # include "sysprof-weighted-callgraph-view.h"
 #undef SYSPROF_GTK_INSIDE
 

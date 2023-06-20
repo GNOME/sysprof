@@ -97,6 +97,7 @@ main (int   argc,
   const SysprofTimeSpan *time_span;
   GtkWidget *chart;
   GtkWidget *layer;
+  GtkWidget *split;
   GtkWindow *window;
   GtkWidget *box;
   guint n_samples;
@@ -180,12 +181,19 @@ main (int   argc,
                         "session", session,
                         "height-request", 128,
                         NULL);
-  layer = g_object_new (SYSPROF_TYPE_LINE_LAYER,
-                        "series", samples_series,
-                        "title", "Stack Depth as Line",
+  split = g_object_new (SYSPROF_TYPE_SPLIT_LAYER,
+                        "top", g_object_new (SYSPROF_TYPE_LINE_LAYER,
+                                             "series", samples_series,
+                                             "title", "Stack Depth as Line",
+                                             NULL),
+                        "bottom", g_object_new (SYSPROF_TYPE_LINE_LAYER,
+                                                "series", samples_series,
+                                                "title", "Stack Depth as Line",
+                                                "flip-y", TRUE,
+                                                NULL),
                         NULL);
   sysprof_chart_add_layer (SYSPROF_CHART (chart),
-                           SYSPROF_CHART_LAYER (layer));
+                           SYSPROF_CHART_LAYER (split));
   gtk_box_append (GTK_BOX (box), chart);
 
   gtk_window_present (window);

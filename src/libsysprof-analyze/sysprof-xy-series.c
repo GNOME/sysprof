@@ -169,7 +169,11 @@ sysprof_xy_series_get_values (const SysprofXYSeries *self,
                               guint                 *n_values)
 {
   *n_values = self->values->len;
-  return &g_array_index (self->values, SysprofXYSeriesValue, 0);
+
+  if (self->values->len > 0)
+    return &g_array_index (self->values, SysprofXYSeriesValue, 0);
+
+  return NULL;
 }
 
 static int

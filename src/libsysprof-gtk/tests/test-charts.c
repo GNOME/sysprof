@@ -143,6 +143,7 @@ main (int   argc,
 
       sysprof_xy_series_add (samples_series, time, depth, i);
     }
+  sysprof_xy_series_sort (samples_series);
 
   window = g_object_new (GTK_TYPE_WINDOW,
                          "default-width", 800,
@@ -170,6 +171,18 @@ main (int   argc,
   layer = g_object_new (SYSPROF_TYPE_COLUMN_LAYER,
                         "series", samples_series,
                         "title", "Stack Depth",
+                        NULL);
+  sysprof_chart_add_layer (SYSPROF_CHART (chart),
+                           SYSPROF_CHART_LAYER (layer));
+  gtk_box_append (GTK_BOX (box), chart);
+
+  chart = g_object_new (SYSPROF_TYPE_CHART,
+                        "session", session,
+                        "height-request", 128,
+                        NULL);
+  layer = g_object_new (SYSPROF_TYPE_LINE_LAYER,
+                        "series", samples_series,
+                        "title", "Stack Depth as Line",
                         NULL);
   sysprof_chart_add_layer (SYSPROF_CHART (chart),
                            SYSPROF_CHART_LAYER (layer));

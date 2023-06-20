@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 # include "sysprof-chart.h"
 # include "sysprof-chart-layer.h"
 # include "sysprof-column-layer.h"
+# include "sysprof-line-layer.h"
 # include "sysprof-mark-chart.h"
 # include "sysprof-mark-table.h"
 # include "sysprof-session.h"
@@ -34,3 +35,4 @@ G_BEGIN_DECLS
 #undef SYSPROF_GTK_INSIDE
 
 G_END_DECLS
+

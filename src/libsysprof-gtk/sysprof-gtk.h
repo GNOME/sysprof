@@ -24,6 +24,9 @@ G_BEGIN_DECLS
 
 #define SYSPROF_GTK_INSIDE
 # include "sysprof-callgraph-view.h"
+# include "sysprof-chart.h"
+# include "sysprof-chart-layer.h"
+# include "sysprof-depth-layer.h"
 # include "sysprof-mark-chart.h"
 # include "sysprof-mark-table.h"
 # include "sysprof-session.h"

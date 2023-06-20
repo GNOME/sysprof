@@ -26,7 +26,7 @@ G_BEGIN_DECLS
 # include "sysprof-callgraph-view.h"
 # include "sysprof-chart.h"
 # include "sysprof-chart-layer.h"
-# include "sysprof-depth-layer.h"
+# include "sysprof-column-layer.h"
 # include "sysprof-mark-chart.h"
 # include "sysprof-mark-table.h"
 # include "sysprof-session.h"

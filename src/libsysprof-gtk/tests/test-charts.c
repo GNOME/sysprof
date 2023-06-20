@@ -167,7 +167,7 @@ main (int   argc,
                     "activate-layer-item",
                     G_CALLBACK (activate_layer_item_cb),
                     document);
-  layer = g_object_new (SYSPROF_TYPE_DEPTH_LAYER,
+  layer = g_object_new (SYSPROF_TYPE_COLUMN_LAYER,
                         "series", samples_series,
                         "title", "Stack Depth",
                         NULL);

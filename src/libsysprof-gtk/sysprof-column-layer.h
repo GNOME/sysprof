@@ -1,4 +1,4 @@
-/* sysprof-depth-layer.h
+/* sysprof-column-layer.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -28,27 +28,28 @@
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_DEPTH_LAYER (sysprof_depth_layer_get_type())
+#define SYSPROF_TYPE_COLUMN_LAYER (sysprof_column_layer_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofDepthLayer, sysprof_depth_layer, SYSPROF, DEPTH_LAYER, SysprofChartLayer)
+G_DECLARE_FINAL_TYPE (SysprofColumnLayer, sysprof_column_layer, SYSPROF, COLUMN_LAYER, SysprofChartLayer)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofChartLayer *sysprof_depth_layer_new             (void);
+SysprofChartLayer *sysprof_column_layer_new             (void);
 SYSPROF_AVAILABLE_IN_ALL
-const GdkRGBA     *sysprof_depth_layer_get_color       (SysprofDepthLayer *self);
+const GdkRGBA     *sysprof_column_layer_get_color       (SysprofColumnLayer *self);
 SYSPROF_AVAILABLE_IN_ALL
-void               sysprof_depth_layer_set_color       (SysprofDepthLayer *self,
-                                                        const GdkRGBA     *color);
+void               sysprof_column_layer_set_color       (SysprofColumnLayer *self,
+                                                         const GdkRGBA      *color);
 SYSPROF_AVAILABLE_IN_ALL
-const GdkRGBA     *sysprof_depth_layer_get_hover_color (SysprofDepthLayer *self);
+const GdkRGBA     *sysprof_column_layer_get_hover_color (SysprofColumnLayer *self);
 SYSPROF_AVAILABLE_IN_ALL
-void               sysprof_depth_layer_set_hover_color (SysprofDepthLayer *self,
-                                                        const GdkRGBA     *hover_color);
+void               sysprof_column_layer_set_hover_color (SysprofColumnLayer *self,
+                                                         const GdkRGBA      *hover_color);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofXYSeries   *sysprof_depth_layer_get_series      (SysprofDepthLayer *self);
+SysprofXYSeries   *sysprof_column_layer_get_series      (SysprofColumnLayer *self);
 SYSPROF_AVAILABLE_IN_ALL
-void               sysprof_depth_layer_set_series      (SysprofDepthLayer *self,
-                                                        SysprofXYSeries   *series);
+void               sysprof_column_layer_set_series      (SysprofColumnLayer *self,
+                                                         SysprofXYSeries    *series);
 
 G_END_DECLS
+

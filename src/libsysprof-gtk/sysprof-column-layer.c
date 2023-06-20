@@ -1,4 +1,4 @@
-/* sysprof-depth-layer.c
+/* sysprof-column-layer.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,9 +20,9 @@
 
 #include "config.h"
 
-#include "sysprof-depth-layer.h"
+#include "sysprof-column-layer.h"
 
-struct _SysprofDepthLayer
+struct _SysprofColumnLayer
 {
   SysprofChartLayer parent_instance;
   SysprofXYSeries *series;
@@ -38,15 +38,15 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_FINAL_TYPE (SysprofDepthLayer, sysprof_depth_layer, SYSPROF_TYPE_CHART_LAYER)
+G_DEFINE_FINAL_TYPE (SysprofColumnLayer, sysprof_column_layer, SYSPROF_TYPE_CHART_LAYER)
 
 static GParamSpec *properties [N_PROPS];
 
 static void
-sysprof_depth_layer_snapshot (GtkWidget   *widget,
-                              GtkSnapshot *snapshot)
+sysprof_column_layer_snapshot (GtkWidget   *widget,
+                               GtkSnapshot *snapshot)
 {
-  SysprofDepthLayer *self = (SysprofDepthLayer *)widget;
+  SysprofColumnLayer *self = (SysprofColumnLayer *)widget;
   const SysprofXYSeriesValue *values;
   guint n_values;
   double min_x, max_x;
@@ -54,7 +54,7 @@ sysprof_depth_layer_snapshot (GtkWidget   *widget,
   int width;
   int height;
 
-  g_assert (SYSPROF_IS_DEPTH_LAYER (self));
+  g_assert (SYSPROF_IS_COLUMN_LAYER (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
 
   width = gtk_widget_get_width (widget);
@@ -92,10 +92,10 @@ sysprof_depth_layer_snapshot (GtkWidget   *widget,
 }
 
 static const SysprofXYSeriesValue *
-sysprof_depth_layer_get_value_at_coord (SysprofDepthLayer *self,
-                                        double             x,
-                                        double             y,
-                                        graphene_rect_t   *area)
+sysprof_column_layer_get_value_at_coord (SysprofColumnLayer *self,
+                                         double              x,
+                                         double              y,
+                                         graphene_rect_t    *area)
 {
   const SysprofXYSeriesValue *values;
   graphene_point_t point;
@@ -106,7 +106,7 @@ sysprof_depth_layer_get_value_at_coord (SysprofDepthLayer *self,
   int width;
   int height;
 
-  g_assert (SYSPROF_IS_DEPTH_LAYER (self));
+  g_assert (SYSPROF_IS_COLUMN_LAYER (self));
 
   width = gtk_widget_get_width (GTK_WIDGET (self));
   height = gtk_widget_get_height (GTK_WIDGET (self));
@@ -145,55 +145,55 @@ sysprof_depth_layer_get_value_at_coord (SysprofDepthLayer *self,
 }
 
 static void
-sysprof_depth_layer_snapshot_motion (SysprofChartLayer *layer,
-                                     GtkSnapshot       *snapshot,
-                                     double             x,
-                                     double             y)
+sysprof_column_layer_snapshot_motion (SysprofChartLayer *layer,
+                                      GtkSnapshot       *snapshot,
+                                      double             x,
+                                      double             y)
 {
-  SysprofDepthLayer *self = (SysprofDepthLayer *)layer;
+  SysprofColumnLayer *self = (SysprofColumnLayer *)layer;
   const SysprofXYSeriesValue *v;
   graphene_rect_t rect;
 
-  g_assert (SYSPROF_IS_DEPTH_LAYER (self));
+  g_assert (SYSPROF_IS_COLUMN_LAYER (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
 
-  if ((v = sysprof_depth_layer_get_value_at_coord (self, x, y, &rect)))
+  if ((v = sysprof_column_layer_get_value_at_coord (self, x, y, &rect)))
     gtk_snapshot_append_color (snapshot, &self->hover_color, &rect);
 }
 
 static gpointer
-sysprof_depth_layer_lookup_item (SysprofChartLayer *layer,
-                                 double             x,
-                                 double             y)
+sysprof_column_layer_lookup_item (SysprofChartLayer *layer,
+                                  double             x,
+                                  double             y)
 {
-  SysprofDepthLayer *self = (SysprofDepthLayer *)layer;
+  SysprofColumnLayer *self = (SysprofColumnLayer *)layer;
   const SysprofXYSeriesValue *v;
 
-  g_assert (SYSPROF_IS_DEPTH_LAYER (self));
+  g_assert (SYSPROF_IS_COLUMN_LAYER (self));
 
-  if ((v = sysprof_depth_layer_get_value_at_coord (self, x, y, NULL)))
+  if ((v = sysprof_column_layer_get_value_at_coord (self, x, y, NULL)))
     return g_list_model_get_item (sysprof_xy_series_get_model (self->series), v->index);
 
   return NULL;
 }
 
 static void
-sysprof_depth_layer_dispose (GObject *object)
+sysprof_column_layer_dispose (GObject *object)
 {
-  SysprofDepthLayer *self = (SysprofDepthLayer *)object;
+  SysprofColumnLayer *self = (SysprofColumnLayer *)object;
 
   g_clear_pointer (&self->series, sysprof_xy_series_unref);
 
-  G_OBJECT_CLASS (sysprof_depth_layer_parent_class)->dispose (object);
+  G_OBJECT_CLASS (sysprof_column_layer_parent_class)->dispose (object);
 }
 
 static void
-sysprof_depth_layer_get_property (GObject    *object,
-                                  guint       prop_id,
-                                  GValue     *value,
-                                  GParamSpec *pspec)
+sysprof_column_layer_get_property (GObject    *object,
+                                   guint       prop_id,
+                                   GValue     *value,
+                                   GParamSpec *pspec)
 {
-  SysprofDepthLayer *self = SYSPROF_DEPTH_LAYER (object);
+  SysprofColumnLayer *self = SYSPROF_COLUMN_LAYER (object);
 
   switch (prop_id)
     {
@@ -215,25 +215,25 @@ sysprof_depth_layer_get_property (GObject    *object,
 }
 
 static void
-sysprof_depth_layer_set_property (GObject      *object,
-                                  guint         prop_id,
-                                  const GValue *value,
-                                  GParamSpec   *pspec)
+sysprof_column_layer_set_property (GObject      *object,
+                                   guint         prop_id,
+                                   const GValue *value,
+                                   GParamSpec   *pspec)
 {
-  SysprofDepthLayer *self = SYSPROF_DEPTH_LAYER (object);
+  SysprofColumnLayer *self = SYSPROF_COLUMN_LAYER (object);
 
   switch (prop_id)
     {
     case PROP_COLOR:
-      sysprof_depth_layer_set_color (self, g_value_get_boxed (value));
+      sysprof_column_layer_set_color (self, g_value_get_boxed (value));
       break;
 
     case PROP_HOVER_COLOR:
-      sysprof_depth_layer_set_hover_color (self, g_value_get_boxed (value));
+      sysprof_column_layer_set_hover_color (self, g_value_get_boxed (value));
       break;
 
     case PROP_SERIES:
-      sysprof_depth_layer_set_series (self, g_value_get_boxed (value));
+      sysprof_column_layer_set_series (self, g_value_get_boxed (value));
       break;
 
     default:
@@ -242,20 +242,20 @@ sysprof_depth_layer_set_property (GObject      *object,
 }
 
 static void
-sysprof_depth_layer_class_init (SysprofDepthLayerClass *klass)
+sysprof_column_layer_class_init (SysprofColumnLayerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   SysprofChartLayerClass *chart_layer_class = SYSPROF_CHART_LAYER_CLASS (klass);
 
-  object_class->dispose = sysprof_depth_layer_dispose;
-  object_class->get_property = sysprof_depth_layer_get_property;
-  object_class->set_property = sysprof_depth_layer_set_property;
+  object_class->dispose = sysprof_column_layer_dispose;
+  object_class->get_property = sysprof_column_layer_get_property;
+  object_class->set_property = sysprof_column_layer_set_property;
 
-  widget_class->snapshot = sysprof_depth_layer_snapshot;
+  widget_class->snapshot = sysprof_column_layer_snapshot;
 
-  chart_layer_class->lookup_item = sysprof_depth_layer_lookup_item;
-  chart_layer_class->snapshot_motion = sysprof_depth_layer_snapshot_motion;
+  chart_layer_class->lookup_item = sysprof_column_layer_lookup_item;
+  chart_layer_class->snapshot_motion = sysprof_column_layer_snapshot_motion;
 
   properties[PROP_COLOR] =
     g_param_spec_boxed ("color", NULL, NULL,
@@ -276,33 +276,33 @@ sysprof_depth_layer_class_init (SysprofDepthLayerClass *klass)
 }
 
 static void
-sysprof_depth_layer_init (SysprofDepthLayer *self)
+sysprof_column_layer_init (SysprofColumnLayer *self)
 {
   gdk_rgba_parse (&self->color, "#000");
   gdk_rgba_parse (&self->hover_color, "#F00");
 }
 
 SysprofChartLayer *
-sysprof_depth_layer_new (void)
+sysprof_column_layer_new (void)
 {
-  return g_object_new (SYSPROF_TYPE_DEPTH_LAYER, NULL);
+  return g_object_new (SYSPROF_TYPE_COLUMN_LAYER, NULL);
 }
 
 const GdkRGBA *
-sysprof_depth_layer_get_color (SysprofDepthLayer *self)
+sysprof_column_layer_get_color (SysprofColumnLayer *self)
 {
-  g_return_val_if_fail (SYSPROF_IS_DEPTH_LAYER (self), NULL);
+  g_return_val_if_fail (SYSPROF_IS_COLUMN_LAYER (self), NULL);
 
   return &self->color;
 }
 
 void
-sysprof_depth_layer_set_color (SysprofDepthLayer *self,
-                               const GdkRGBA     *color)
+sysprof_column_layer_set_color (SysprofColumnLayer *self,
+                                const GdkRGBA      *color)
 {
   static const GdkRGBA black = {0,0,0,1};
 
-  g_return_if_fail (SYSPROF_IS_DEPTH_LAYER (self));
+  g_return_if_fail (SYSPROF_IS_COLUMN_LAYER (self));
 
   if (color == NULL)
     color = &black;
@@ -315,20 +315,20 @@ sysprof_depth_layer_set_color (SysprofDepthLayer *self,
 }
 
 const GdkRGBA *
-sysprof_depth_layer_get_hover_color (SysprofDepthLayer *self)
+sysprof_column_layer_get_hover_color (SysprofColumnLayer *self)
 {
-  g_return_val_if_fail (SYSPROF_IS_DEPTH_LAYER (self), NULL);
+  g_return_val_if_fail (SYSPROF_IS_COLUMN_LAYER (self), NULL);
 
   return &self->hover_color;
 }
 
 void
-sysprof_depth_layer_set_hover_color (SysprofDepthLayer *self,
-                                     const GdkRGBA     *hover_color)
+sysprof_column_layer_set_hover_color (SysprofColumnLayer *self,
+                                      const GdkRGBA      *hover_color)
 {
   static const GdkRGBA red = {1,0,0,1};
 
-  g_return_if_fail (SYSPROF_IS_DEPTH_LAYER (self));
+  g_return_if_fail (SYSPROF_IS_COLUMN_LAYER (self));
 
   if (hover_color == NULL)
     hover_color = &red;
@@ -341,26 +341,26 @@ sysprof_depth_layer_set_hover_color (SysprofDepthLayer *self,
 }
 
 /**
- * sysprof_depth_layer_get_series:
- * @self: a #SysprofDepthLayer
+ * sysprof_column_layer_get_series:
+ * @self: a #SysprofColumnLayer
  *
  * Gets the data series to be drawn.
  *
  * Returns: (transfer none) (nullable): a #SysprofXYSeries or %NULL
  */
 SysprofXYSeries *
-sysprof_depth_layer_get_series (SysprofDepthLayer *self)
+sysprof_column_layer_get_series (SysprofColumnLayer *self)
 {
-  g_return_val_if_fail (SYSPROF_IS_DEPTH_LAYER (self), NULL);
+  g_return_val_if_fail (SYSPROF_IS_COLUMN_LAYER (self), NULL);
 
   return self->series;
 }
 
 void
-sysprof_depth_layer_set_series (SysprofDepthLayer *self,
-                                SysprofXYSeries   *series)
+sysprof_column_layer_set_series (SysprofColumnLayer *self,
+                                 SysprofXYSeries    *series)
 {
-  g_return_if_fail (SYSPROF_IS_DEPTH_LAYER (self));
+  g_return_if_fail (SYSPROF_IS_COLUMN_LAYER (self));
 
   if (series == self->series)
     return;
@@ -374,3 +374,4 @@ sysprof_depth_layer_set_series (SysprofDepthLayer *self,
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }
+

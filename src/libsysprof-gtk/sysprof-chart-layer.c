@@ -33,7 +33,7 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_ABSTRACT_TYPE (SysprofChartLayer, sysprof_chart_layer, GTK_TYPE_WIDGET)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (SysprofChartLayer, sysprof_chart_layer, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
 

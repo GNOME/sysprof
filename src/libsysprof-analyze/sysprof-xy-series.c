@@ -83,10 +83,10 @@ sysprof_xy_series_new (GListModel *model,
 {
   SysprofXYSeries *self;
 
-  g_return_val_if_fail (G_IS_LIST_MODEL (model), NULL);
+  g_return_val_if_fail (!model || G_IS_LIST_MODEL (model), NULL);
 
   self = g_atomic_rc_box_new0 (SysprofXYSeries);
-  self->model = g_object_ref (model);
+  self->model = model ? g_object_ref (model) : NULL;
   self->values = g_array_new (FALSE, FALSE, sizeof (SysprofXYSeriesValue));
   self->min_x = min_x;
   self->min_y = min_y;
@@ -94,11 +94,13 @@ sysprof_xy_series_new (GListModel *model,
   self->max_y = max_y;
   self->x_distance = max_x - min_x;
   self->y_distance = max_y - min_y;
-  self->items_changed_handler =
-    g_signal_connect (self->model,
-                      "items-changed",
-                      G_CALLBACK (warn_on_items_changed_cb),
-                      NULL);
+
+  if (model != NULL)
+    self->items_changed_handler =
+      g_signal_connect (self->model,
+                        "items-changed",
+                        G_CALLBACK (warn_on_items_changed_cb),
+                        NULL);
 
   return self;
 }
@@ -154,7 +156,7 @@ sysprof_xy_series_add (SysprofXYSeries *self,
  *
  * Gets the underlying model for the xy series.
  *
- * Returns: (transfer none): a #GListModel
+ * Returns: (transfer none) (nullable): a #GListModel
  */
 GListModel *
 sysprof_xy_series_get_model (SysprofXYSeries *self)

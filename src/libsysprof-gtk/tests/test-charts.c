@@ -92,6 +92,7 @@ main (int   argc,
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(SysprofSession) session = NULL;
   g_autoptr(SysprofXYSeries) samples_series = NULL;
+  g_autoptr(SysprofXYSeries) num_series = NULL;
   g_autoptr(GListModel) samples = NULL;
   g_autoptr(GError) error = NULL;
   const SysprofTimeSpan *time_span;
@@ -146,6 +147,10 @@ main (int   argc,
     }
   sysprof_xy_series_sort (samples_series);
 
+  num_series = sysprof_xy_series_new (NULL, 0, 0, 100, 100);
+  for (guint i = 0; i < 100; i++)
+    sysprof_xy_series_add (num_series, i, g_random_int_range (0, 100), 0);
+
   window = g_object_new (GTK_TYPE_WINDOW,
                          "default-width", 800,
                          "default-height", 600,
@@ -195,6 +200,20 @@ main (int   argc,
                         NULL);
   sysprof_chart_add_layer (SYSPROF_CHART (chart),
                            SYSPROF_CHART_LAYER (split));
+  gtk_box_append (GTK_BOX (box), chart);
+
+  chart = g_object_new (SYSPROF_TYPE_CHART,
+                        "session", session,
+                        "height-request", 128,
+                        NULL);
+  layer = g_object_new (SYSPROF_TYPE_LINE_LAYER,
+                        "series", num_series,
+                        "use-curves", TRUE,
+                        "fill", TRUE,
+                        "dashed", TRUE,
+                        NULL),
+  sysprof_chart_add_layer (SYSPROF_CHART (chart),
+                           SYSPROF_CHART_LAYER (layer));
   gtk_box_append (GTK_BOX (box), chart);
 
   gtk_window_present (window);

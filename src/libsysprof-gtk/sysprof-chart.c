@@ -266,6 +266,8 @@ sysprof_chart_class_init (SysprofChartClass *klass)
                   2,
                   SYSPROF_TYPE_CHART_LAYER,
                   G_TYPE_OBJECT);
+
+  gtk_widget_class_set_css_name (widget_class, "chart");
 }
 
 static void

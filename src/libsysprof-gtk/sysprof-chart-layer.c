@@ -90,6 +90,7 @@ static void
 sysprof_chart_layer_class_init (SysprofChartLayerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   object_class->dispose = sysprof_chart_layer_dispose;
   object_class->get_property = sysprof_chart_layer_get_property;
@@ -101,6 +102,8 @@ sysprof_chart_layer_class_init (SysprofChartLayerClass *klass)
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  gtk_widget_class_set_css_name (widget_class, "layer");
 }
 
 static void

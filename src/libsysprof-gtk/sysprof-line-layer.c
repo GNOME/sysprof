@@ -138,9 +138,10 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
     {
       GdkRGBA fill_color = self->color;
 
-      cairo_line_to (cr, last_x, 0);
+      fill_color.alpha *= .25;
+      gdk_cairo_set_source_rgba (cr, &fill_color);
 
-      fill_color.alpha *= .5;
+      cairo_line_to (cr, last_x, 0);
       cairo_fill_preserve (cr);
     }
 

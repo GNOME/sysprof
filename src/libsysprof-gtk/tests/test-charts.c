@@ -130,6 +130,8 @@ main (int   argc,
   if (!(document = sysprof_document_loader_load (loader, NULL, &error)))
     g_error ("Failed to load document: %s", error->message);
 
+  g_print ("loaded\n");
+
   session = sysprof_session_new (document);
   time_span = sysprof_document_get_time_span (document);
 
@@ -150,6 +152,8 @@ main (int   argc,
   num_series = sysprof_xy_series_new (NULL, 0, 0, 100, 100);
   for (guint i = 0; i < 100; i++)
     sysprof_xy_series_add (num_series, i, g_random_int_range (0, 100), 0);
+
+  g_print ("series built\n");
 
   window = g_object_new (GTK_TYPE_WINDOW,
                          "default-width", 800,
@@ -188,12 +192,12 @@ main (int   argc,
                         NULL);
   split = g_object_new (SYSPROF_TYPE_SPLIT_LAYER,
                         "top", g_object_new (SYSPROF_TYPE_LINE_LAYER,
-                                             "series", samples_series,
+                                             "series", num_series,
                                              "title", "Stack Depth as Line",
                                              "fill", TRUE,
                                              NULL),
                         "bottom", g_object_new (SYSPROF_TYPE_LINE_LAYER,
-                                                "series", samples_series,
+                                                "series", num_series,
                                                 "title", "Stack Depth as Line",
                                                 "flip-y", TRUE,
                                                 NULL),

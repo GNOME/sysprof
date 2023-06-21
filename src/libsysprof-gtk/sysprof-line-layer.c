@@ -26,11 +26,15 @@
 struct _SysprofLineLayer
 {
   SysprofChartLayer parent_instance;
+
   SysprofXYSeries *series;
+
   GdkRGBA color;
-  guint use_curves : 1;
-  guint flip_y : 1;
+
+  guint dashed : 1;
   guint fill : 1;
+  guint flip_y : 1;
+  guint use_curves : 1;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF_TYPE_CHART_LAYER)
@@ -38,6 +42,7 @@ G_DEFINE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF_TYPE_CHART_LA
 enum {
   PROP_0,
   PROP_COLOR,
+  PROP_DASHED,
   PROP_FILL,
   PROP_FLIP_Y,
   PROP_SERIES,
@@ -145,6 +150,9 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
       cairo_fill_preserve (cr);
     }
 
+  if (self->dashed)
+    cairo_set_dash (cr, (double[]){(1./height*2)}, 1, 0);
+
   gdk_cairo_set_source_rgba (cr, &self->color);
   cairo_stroke (cr);
 
@@ -173,6 +181,10 @@ sysprof_line_layer_get_property (GObject    *object,
     {
     case PROP_COLOR:
       g_value_set_boxed (value, sysprof_line_layer_get_color (self));
+      break;
+
+    case PROP_DASHED:
+      g_value_set_boolean (value, sysprof_line_layer_get_dashed (self));
       break;
 
     case PROP_FILL:
@@ -208,6 +220,10 @@ sysprof_line_layer_set_property (GObject      *object,
     {
     case PROP_COLOR:
       sysprof_line_layer_set_color (self, g_value_get_boxed (value));
+      break;
+
+    case PROP_DASHED:
+      sysprof_line_layer_set_dashed (self, g_value_get_boolean (value));
       break;
 
     case PROP_FILL:
@@ -247,6 +263,11 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
     g_param_spec_boxed ("color", NULL, NULL,
                         GDK_TYPE_RGBA,
                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_DASHED] =
+    g_param_spec_boolean ("dashed", NULL, NULL,
+                         FALSE,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_FILL] =
     g_param_spec_boolean ("fill", NULL, NULL,
@@ -334,6 +355,30 @@ sysprof_line_layer_set_series (SysprofLineLayer *self,
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SERIES]);
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+gboolean
+sysprof_line_layer_get_dashed (SysprofLineLayer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_LINE_LAYER (self), FALSE);
+
+  return self->dashed;
+}
+
+void
+sysprof_line_layer_set_dashed (SysprofLineLayer *self,
+                             gboolean          dashed)
+{
+  g_return_if_fail (SYSPROF_IS_LINE_LAYER (self));
+
+  dashed = !!dashed;
+
+  if (dashed != self->dashed)
+    {
+      self->dashed = dashed;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DASHED]);
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
 }
 
 gboolean

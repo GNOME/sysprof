@@ -45,6 +45,11 @@ SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_series     (SysprofLineLayer *self,
                                                       SysprofXYSeries  *series);
 SYSPROF_AVAILABLE_IN_ALL
+gboolean           sysprof_line_layer_get_dashed     (SysprofLineLayer *self);
+SYSPROF_AVAILABLE_IN_ALL
+void               sysprof_line_layer_set_dashed     (SysprofLineLayer *self,
+                                                      gboolean          dashed);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean           sysprof_line_layer_get_fill       (SysprofLineLayer *self);
 SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_fill       (SysprofLineLayer *self,

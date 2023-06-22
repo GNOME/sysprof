@@ -9,6 +9,7 @@
             <property name="vexpand">true</property>
             <child>
               <object class="GtkListView" id="list_view">
+                <property name="show-separators">true</property>
                 <style>
                   <class name="data-table"/>
                 </style>

@@ -147,7 +147,7 @@ main (int   argc,
                          "spacing", 6,
                          NULL);
   message = g_object_new (GTK_TYPE_LABEL,
-                          "xalign", .0f,
+                          "xalign", 1.f,
                           "hexpand", TRUE,
                           NULL);
   progress = g_object_new (GTK_TYPE_PROGRESS_BAR,

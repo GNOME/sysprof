@@ -1003,6 +1003,21 @@ sysprof_document_symbolize_symbols_cb (GObject      *object,
   g_task_return_boolean (task, TRUE);
 }
 
+typedef struct _Symbolize
+{
+  ProgressFunc progress_func;
+  gpointer progress_data;
+  GDestroyNotify progress_data_destroy;
+} Symbolize;
+
+static void
+symbolize_free (Symbolize *state)
+{
+  if (state->progress_data_destroy)
+    state->progress_data_destroy (state->progress_data);
+  g_free (state);
+}
+
 static void
 sysprof_document_symbolize_prepare_cb (GObject      *object,
                                        GAsyncResult *result,
@@ -1012,6 +1027,7 @@ sysprof_document_symbolize_prepare_cb (GObject      *object,
   g_autoptr(GTask) task = user_data;
   g_autoptr(GError) error = NULL;
   SysprofDocument *self;
+  Symbolize *state;
 
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
   g_assert (G_IS_ASYNC_RESULT (result));
@@ -1023,6 +1039,8 @@ sysprof_document_symbolize_prepare_cb (GObject      *object,
   g_assert (SYSPROF_IS_DOCUMENT (self));
   g_assert (self->pid_to_process_info != NULL);
 
+  state = g_task_get_task_data (task);
+
   if (!_sysprof_symbolizer_prepare_finish (symbolizer, result, &error))
     g_task_return_error (task, g_steal_pointer (&error));
   else
@@ -1030,6 +1048,9 @@ sysprof_document_symbolize_prepare_cb (GObject      *object,
                                    self->strings,
                                    symbolizer,
                                    self->pid_to_process_info,
+                                   state->progress_func,
+                                   state->progress_data,
+                                   NULL,
                                    g_task_get_cancellable (task),
                                    sysprof_document_symbolize_symbols_cb,
                                    g_object_ref (task));
@@ -1038,12 +1059,15 @@ sysprof_document_symbolize_prepare_cb (GObject      *object,
 void
 _sysprof_document_symbolize_async (SysprofDocument     *self,
                                    SysprofSymbolizer   *symbolizer,
+                                   ProgressFunc         progress_func,
+                                   gpointer             progress_data,
+                                   GDestroyNotify       progress_data_destroy,
                                    GCancellable        *cancellable,
                                    GAsyncReadyCallback  callback,
                                    gpointer             user_data)
 {
-  g_autoptr(SysprofDocumentSymbols) symbols = NULL;
   g_autoptr(GTask) task = NULL;
+  Symbolize *state;
 
   g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
   g_return_if_fail (SYSPROF_IS_SYMBOLIZER (symbolizer));
@@ -1051,6 +1075,12 @@ _sysprof_document_symbolize_async (SysprofDocument     *self,
 
   task = g_task_new (self, cancellable, callback, user_data);
   g_task_set_source_tag (task, _sysprof_document_symbolize_async);
+
+  state = g_new0 (Symbolize, 1);
+  state->progress_func = progress_func;
+  state->progress_data = progress_data;
+  state->progress_data_destroy = progress_data_destroy;
+  g_task_set_task_data(task, state, (GDestroyNotify)symbolize_free);
 
   _sysprof_symbolizer_prepare_async (symbolizer,
                                      self,

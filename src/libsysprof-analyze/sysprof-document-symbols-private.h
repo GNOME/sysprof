@@ -43,6 +43,9 @@ void                    _sysprof_document_symbols_new        (SysprofDocument   
                                                               SysprofStrings            *strings,
                                                               SysprofSymbolizer         *symbolizer,
                                                               GHashTable                *pid_to_process_info,
+                                                              ProgressFunc               progress_func,
+                                                              gpointer                   progress_data,
+                                                              GDestroyNotify             progress_data_destroy,
                                                               GCancellable              *cancellable,
                                                               GAsyncReadyCallback        callback,
                                                               gpointer                   user_data);

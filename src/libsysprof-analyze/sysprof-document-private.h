@@ -53,6 +53,9 @@ SysprofDocument *_sysprof_document_new_finish       (GAsyncResult         *resul
                                                      GError              **error);
 void             _sysprof_document_symbolize_async  (SysprofDocument      *self,
                                                      SysprofSymbolizer    *symbolizer,
+                                                     ProgressFunc          progress_func,
+                                                     gpointer              progress_data,
+                                                     GDestroyNotify        progress_data_destroy,
                                                      GCancellable         *cancellable,
                                                      GAsyncReadyCallback   callback,
                                                      gpointer              user_data);

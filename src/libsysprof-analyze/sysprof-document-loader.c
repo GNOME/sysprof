@@ -44,6 +44,7 @@ struct _SysprofDocumentLoader
   double             fraction;
   int                fd;
   guint              notify_source;
+  guint              symbolizing : 1;
 };
 
 enum {
@@ -85,8 +86,14 @@ set_progress (double      fraction,
   g_assert (SYSPROF_IS_DOCUMENT_LOADER (self));
 
   g_mutex_lock (&self->mutex);
-  self->fraction = fraction;
+
+  self->fraction = fraction * .5;
+
+  if (self->symbolizing)
+    self->fraction += .5;
+
   g_set_str (&self->message, message);
+
   if (!self->notify_source)
     self->notify_source = g_idle_add_full (G_PRIORITY_LOW,
                                            progress_notify_in_idle,
@@ -421,7 +428,7 @@ sysprof_document_loader_load_symbols_cb (GObject      *object,
 
   self = g_task_get_source_object (task);
 
-  set_progress (1., _("Document loaded"), self);
+  set_progress (0., _("Document loaded"), self);
 
   if (!_sysprof_document_symbolize_finish (document, result, &error))
     g_task_return_error (task, g_steal_pointer (&error));
@@ -449,16 +456,24 @@ sysprof_document_loader_load_document_cb (GObject      *object,
   g_assert (symbolizer != NULL);
   g_assert (SYSPROF_IS_SYMBOLIZER (symbolizer));
 
-  set_progress (.9, _("Symbolizing stack traces"), self);
-
   if (!(document = _sysprof_document_new_finish (result, &error)))
-    g_task_return_error (task, g_steal_pointer (&error));
-  else
-    _sysprof_document_symbolize_async (document,
-                                       symbolizer,
-                                       g_task_get_cancellable (task),
-                                       sysprof_document_loader_load_symbols_cb,
-                                       g_object_ref (task));
+    {
+      g_task_return_error (task, g_steal_pointer (&error));
+      set_progress (1., _("Loading failed"), self);
+    }
+
+  self->symbolizing = TRUE;
+
+  set_progress (.0, _("Symbolizing stack traces"), self);
+
+  _sysprof_document_symbolize_async (document,
+                                     symbolizer,
+                                     set_progress,
+                                     g_object_ref (self),
+                                     g_object_unref,
+                                     g_task_get_cancellable (task),
+                                     sysprof_document_loader_load_symbols_cb,
+                                     g_object_ref (task));
 }
 
 static void

@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #include "sysprof-address-layout-private.h"
 #include "sysprof-document-private.h"
 #include "sysprof-document-symbols-private.h"
@@ -65,11 +67,16 @@ typedef struct _Symbolize
   SysprofDocumentSymbols *symbols;
   SysprofStrings         *strings;
   GHashTable             *pid_to_process_info;
+  ProgressFunc            progress_func;
+  gpointer                progress_data;
+  GDestroyNotify          progress_data_destroy;
 } Symbolize;
 
 static void
 symbolize_free (Symbolize *state)
 {
+  if (state->progress_data_destroy)
+    state->progress_data_destroy (state->progress_data);
   g_clear_object (&state->document);
   g_clear_object (&state->symbolizer);
   g_clear_object (&state->symbols);
@@ -155,6 +162,7 @@ sysprof_document_symbols_worker (GTask        *task,
   EggBitsetIter iter;
   EggBitset *bitset;
   GListModel *model;
+  guint count = 0;
   guint i;
 
   g_assert (source_object == NULL);
@@ -189,6 +197,8 @@ sysprof_document_symbols_worker (GTask        *task,
   if (!SYSPROF_IS_NO_SYMBOLIZER (state->symbolizer) &&
       egg_bitset_iter_init_first (&iter, bitset, &i))
     {
+      guint n_items = egg_bitset_get_size (bitset);
+
       do
         {
           g_autoptr(SysprofDocumentTraceable) traceable = g_list_model_get_item (model, i);
@@ -200,6 +210,11 @@ sysprof_document_symbols_worker (GTask        *task,
                          process_info,
                          traceable,
                          state->symbolizer);
+
+          count++;
+
+          if (state->progress_func != NULL && count % 100 == 0)
+            state->progress_func (count / (double)n_items, _("Symbolizing stack traces"), state->progress_data);
         }
       while (egg_bitset_iter_next (&iter, &i));
     }
@@ -214,6 +229,9 @@ _sysprof_document_symbols_new (SysprofDocument     *document,
                                SysprofStrings      *strings,
                                SysprofSymbolizer   *symbolizer,
                                GHashTable          *pid_to_process_info,
+                               ProgressFunc         progress_func,
+                               gpointer             progress_data,
+                               GDestroyNotify       progress_data_destroy,
                                GCancellable        *cancellable,
                                GAsyncReadyCallback  callback,
                                gpointer             user_data)
@@ -230,6 +248,9 @@ _sysprof_document_symbols_new (SysprofDocument     *document,
   state->symbols = g_object_new (SYSPROF_TYPE_DOCUMENT_SYMBOLS, NULL);
   state->strings = sysprof_strings_ref (strings);
   state->pid_to_process_info = g_hash_table_ref (pid_to_process_info);
+  state->progress_func = progress_func;
+  state->progress_data = progress_data;
+  state->progress_data_destroy = progress_data_destroy;
 
   task = g_task_new (NULL, cancellable, callback, user_data);
   g_task_set_source_tag (task, _sysprof_document_symbols_new);

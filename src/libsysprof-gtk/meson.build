@@ -8,6 +8,7 @@ libsysprof_gtk_public_sources = [
   'sysprof-mark-table.c',
   'sysprof-session.c',
   'sysprof-split-layer.c',
+  'sysprof-time-span-layer.c',
   'sysprof-weighted-callgraph-view.c',
 ]
 
@@ -23,6 +24,7 @@ libsysprof_gtk_public_headers = [
   'sysprof-mark-table.h',
   'sysprof-session.h',
   'sysprof-split-layer.h',
+  'sysprof-time-span-layer.h',
   'sysprof-weighted-callgraph-view.h',
 ]
 

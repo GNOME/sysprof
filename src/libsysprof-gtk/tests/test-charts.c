@@ -93,7 +93,9 @@ main (int   argc,
   g_autoptr(SysprofSession) session = NULL;
   g_autoptr(SysprofXYSeries) samples_series = NULL;
   g_autoptr(SysprofXYSeries) num_series = NULL;
+  g_autoptr(SysprofTimeSeries) marks_series = NULL;
   g_autoptr(GListModel) samples = NULL;
+  g_autoptr(GListModel) marks = NULL;
   g_autoptr(GError) error = NULL;
   const SysprofTimeSpan *time_span;
   GtkWidget *chart;
@@ -101,7 +103,10 @@ main (int   argc,
   GtkWidget *split;
   GtkWindow *window;
   GtkWidget *box;
+  GdkRGBA blue = {0,0,1,1};
+  GdkRGBA red = {1,0,0,1};
   guint n_samples;
+  guint n_marks;
 
   sysprof_clock_init ();
 
@@ -134,6 +139,7 @@ main (int   argc,
 
   session = sysprof_session_new (document);
   time_span = sysprof_document_get_time_span (document);
+  marks = sysprof_document_list_marks (document);
 
   /* Generate an XY Series using the stacktraces depth for Y */
   samples = sysprof_document_list_samples (document);
@@ -154,6 +160,20 @@ main (int   argc,
     sysprof_xy_series_add (num_series, i, g_random_int_range (0, 100), 0);
 
   g_print ("series built\n");
+
+  marks_series = sysprof_time_series_new (marks, *sysprof_document_get_time_span (document));
+  n_marks = g_list_model_get_n_items (marks);
+  for (guint i = 0; i < n_marks; i++)
+    {
+      g_autoptr(SysprofDocumentMark) mark = g_list_model_get_item (marks, i);
+      gint64 time = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (mark));
+      gint64 duration = sysprof_document_mark_get_duration (mark);
+
+      sysprof_time_series_add (marks_series,
+                               (SysprofTimeSpan) {time, time+duration},
+                               i);
+    }
+  sysprof_time_series_sort (marks_series);
 
   window = g_object_new (GTK_TYPE_WINDOW,
                          "default-width", 800,
@@ -215,6 +235,19 @@ main (int   argc,
                         "use-curves", TRUE,
                         "fill", TRUE,
                         "dashed", TRUE,
+                        NULL),
+  sysprof_chart_add_layer (SYSPROF_CHART (chart),
+                           SYSPROF_CHART_LAYER (layer));
+  gtk_box_append (GTK_BOX (box), chart);
+
+  chart = g_object_new (SYSPROF_TYPE_CHART,
+                        "session", session,
+                        "height-request", 24,
+                        NULL);
+  layer = g_object_new (SYSPROF_TYPE_TIME_SPAN_LAYER,
+                        "color", &blue,
+                        "event-color", &red,
+                        "series", marks_series,
                         NULL),
   sysprof_chart_add_layer (SYSPROF_CHART (chart),
                            SYSPROF_CHART_LAYER (layer));

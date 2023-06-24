@@ -237,19 +237,19 @@ sysprof_xy_series_get_y_expression (SysprofXYSeries *self)
 
 void
 sysprof_xy_series_set_y_expression (SysprofXYSeries *self,
-                                    GtkExpression   *x_expression)
+                                    GtkExpression   *y_expression)
 {
   g_return_if_fail (SYSPROF_IS_XY_SERIES (self));
 
-  if (self->x_expression == x_expression)
+  if (self->y_expression == y_expression)
     return;
 
-  if (x_expression)
-    gtk_expression_ref (x_expression);
+  if (y_expression)
+    gtk_expression_ref (y_expression);
 
-  g_clear_pointer (&self->x_expression, gtk_expression_unref);
+  g_clear_pointer (&self->y_expression, gtk_expression_unref);
 
-  self->x_expression = x_expression;
+  self->y_expression = y_expression;
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_X_EXPRESSION]);
 }

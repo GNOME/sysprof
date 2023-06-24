@@ -13,8 +13,11 @@ libsysprof_gtk_public_sources = [
   'sysprof-session.c',
   'sysprof-split-layer.c',
   'sysprof-time-span-layer.c',
+  'sysprof-time-series.c',
+  'sysprof-time-series-item.c',
   'sysprof-weighted-callgraph-view.c',
   'sysprof-xy-series.c',
+  'sysprof-xy-series-item.c',
 ]
 
 libsysprof_gtk_public_headers = [
@@ -33,9 +36,12 @@ libsysprof_gtk_public_headers = [
   'sysprof-series.h',
   'sysprof-session.h',
   'sysprof-split-layer.h',
+  'sysprof-time-series.h',
+  'sysprof-time-series-item.h',
   'sysprof-time-span-layer.h',
   'sysprof-weighted-callgraph-view.h',
   'sysprof-xy-series.h',
+  'sysprof-xy-series-item.h',
 ]
 
 libsysprof_gtk_private_sources = [

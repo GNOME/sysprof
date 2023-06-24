@@ -1,0 +1,255 @@
+/* sysprof-time-series.c
+ *
+ * Copyright 2023 Christian Hergert <chergert@redhat.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+#include "config.h"
+
+#include "sysprof-series-private.h"
+#include "sysprof-time-series.h"
+#include "sysprof-time-series-item-private.h"
+
+struct _SysprofTimeSeries
+{
+  SysprofSeries  parent_instance;
+  GtkExpression *time_expression;
+  GtkExpression *duration_expression;
+};
+
+struct _SysprofTimeSeriesClass
+{
+  SysprofSeriesClass parent_instance;
+};
+
+enum {
+  PROP_0,
+  PROP_TIME_EXPRESSION,
+  PROP_DURATION_EXPRESSION,
+  N_PROPS
+};
+
+G_DEFINE_FINAL_TYPE (SysprofTimeSeries, sysprof_time_series, SYSPROF_TYPE_SERIES)
+
+static GParamSpec *properties [N_PROPS];
+
+static gpointer
+sysprof_time_series_get_series_item (SysprofSeries *series,
+                                     guint          position,
+                                     gpointer       item)
+{
+  SysprofTimeSeries *self = SYSPROF_TIME_SERIES (series);
+
+  return _sysprof_time_series_item_new (item,
+                                        gtk_expression_ref (self->time_expression),
+                                        gtk_expression_ref (self->duration_expression));
+}
+
+static void
+sysprof_time_series_finalize (GObject *object)
+{
+  SysprofTimeSeries *self = (SysprofTimeSeries *)object;
+
+  g_clear_pointer (&self->time_expression, gtk_expression_unref);
+  g_clear_pointer (&self->duration_expression, gtk_expression_unref);
+
+  G_OBJECT_CLASS (sysprof_time_series_parent_class)->finalize (object);
+}
+
+static void
+sysprof_time_series_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec)
+{
+  SysprofTimeSeries *self = SYSPROF_TIME_SERIES (object);
+
+  switch (prop_id)
+    {
+    case PROP_TIME_EXPRESSION:
+      gtk_value_set_expression (value, self->time_expression);
+      break;
+
+    case PROP_DURATION_EXPRESSION:
+      gtk_value_set_expression (value, self->duration_expression);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
+sysprof_time_series_set_property (GObject      *object,
+                                  guint         prop_id,
+                                  const GValue *value,
+                                  GParamSpec   *pspec)
+{
+  SysprofTimeSeries *self = SYSPROF_TIME_SERIES (object);
+
+  switch (prop_id)
+    {
+    case PROP_TIME_EXPRESSION:
+      sysprof_time_series_set_time_expression (self, gtk_value_get_expression (value));
+      break;
+
+    case PROP_DURATION_EXPRESSION:
+      sysprof_time_series_set_duration_expression (self, gtk_value_get_expression (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
+sysprof_time_series_class_init (SysprofTimeSeriesClass *klass)
+{
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  SysprofSeriesClass *series_class = SYSPROF_SERIES_CLASS (klass);
+
+  object_class->finalize = sysprof_time_series_finalize;
+  object_class->get_property = sysprof_time_series_get_property;
+  object_class->set_property = sysprof_time_series_set_property;
+
+  series_class->series_item_type = SYSPROF_TYPE_TIME_SERIES_ITEM;
+  series_class->get_series_item = sysprof_time_series_get_series_item;
+
+  properties [PROP_TIME_EXPRESSION] =
+    gtk_param_spec_expression ("x-expression", NULL, NULL,
+                               (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_DURATION_EXPRESSION] =
+    gtk_param_spec_expression ("y-expression", NULL, NULL,
+                               (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
+}
+
+static void
+sysprof_time_series_init (SysprofTimeSeries *self)
+{
+}
+
+/**
+ * sysprof_time_series_new:
+ * @title: (nullable): a title for the series
+ * @model: (transfer full) (nullable): a #GListModel for the series
+ * @time_expression: (transfer full) (nullable): a #GtkExpression for
+ *   extracting the time value from @model items.
+ * @duration_expression: (transfer full) (nullable): a #GtkExpression for
+ *   extracting the duration value from @model items.
+ *
+ * A #SysprofSeries which contains Time,Duration pairs.
+ *
+ * Returns: (transfer full): a #SysprofSeries
+ */
+SysprofSeries *
+sysprof_time_series_new (const char    *title,
+                         GListModel    *model,
+                         GtkExpression *time_expression,
+                         GtkExpression *duration_expression)
+{
+  SysprofTimeSeries *xy;
+
+  xy = g_object_new (SYSPROF_TYPE_TIME_SERIES,
+                     "title", title,
+                     "model", model,
+                     "x-expression", time_expression,
+                     "y-expression", duration_expression,
+                     NULL);
+
+  g_clear_pointer (&time_expression, gtk_expression_unref);
+  g_clear_pointer (&duration_expression, gtk_expression_unref);
+  g_clear_object (&model);
+
+  return SYSPROF_SERIES (xy);
+}
+
+/**
+ * sysprof_time_series_get_time_expression:
+ * @self: a #SysprofTimeSeries
+ *
+ * Gets the #SysprofTimeSeries:x-expression property.
+ *
+ * This is used to extract the X coordinate from items in the #GListModel.
+ *
+ * Returns: (transfer none) (nullable): a #GtkExpression or %NULL
+ */
+GtkExpression *
+sysprof_time_series_get_time_expression (SysprofTimeSeries *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_TIME_SERIES (self), NULL);
+
+  return self->time_expression;
+}
+
+void
+sysprof_time_series_set_time_expression (SysprofTimeSeries *self,
+                                         GtkExpression     *time_expression)
+{
+  g_return_if_fail (SYSPROF_IS_TIME_SERIES (self));
+
+  if (self->time_expression == time_expression)
+    return;
+
+  if (time_expression)
+    gtk_expression_ref (time_expression);
+
+  g_clear_pointer (&self->time_expression, gtk_expression_unref);
+
+  self->time_expression = time_expression;
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TIME_EXPRESSION]);
+}
+
+/**
+ * sysprof_time_series_get_duration_expression:
+ * @self: a #SysprofTimeSeries
+ *
+ * Gets the #SysprofTimeSeries:y-expression property.
+ *
+ * This is used to extract the Y coordinate from items in the #GListModel.
+ *
+ * Returns: (transfer none) (nullable): a #GtkExpression or %NULL
+ */
+GtkExpression *
+sysprof_time_series_get_duration_expression (SysprofTimeSeries *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_TIME_SERIES (self), NULL);
+
+  return self->duration_expression;
+}
+
+void
+sysprof_time_series_set_duration_expression (SysprofTimeSeries *self,
+                                             GtkExpression     *duration_expression)
+{
+  g_return_if_fail (SYSPROF_IS_TIME_SERIES (self));
+
+  if (self->duration_expression == duration_expression)
+    return;
+
+  if (duration_expression)
+    gtk_expression_ref (duration_expression);
+
+  g_clear_pointer (&self->duration_expression, gtk_expression_unref);
+
+  self->duration_expression = duration_expression;
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DURATION_EXPRESSION]);
+}

@@ -26,11 +26,16 @@
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_XY_SERIES (sysprof_xy_series_get_type())
+#define SYSPROF_TYPE_XY_SERIES         (sysprof_xy_series_get_type())
+#define SYSPROF_IS_XY_SERIES(obj)      (G_TYPE_CHECK_INSTANCE_TYPE(obj, SYSPROF_TYPE_XY_SERIES))
+#define SYSPROF_XY_SERIES(obj)         (G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_XY_SERIES, SysprofXYSeries))
+#define SYSPROF_XY_SERIES_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_XY_SERIES, SysprofXYSeriesClass))
+
+typedef struct _SysprofXYSeries SysprofXYSeries;
+typedef struct _SysprofXYSeriesClass SysprofXYSeriesClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofXYSeries, sysprof_xy_series, SYSPROF, XY_SERIES, SysprofSeries)
-
+GType          sysprof_xy_series_get_type         (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
 SysprofSeries *sysprof_xy_series_new              (const char      *title,
                                                    GListModel      *model,

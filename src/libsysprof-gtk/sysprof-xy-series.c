@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-series-private.h"
 #include "sysprof-xy-series.h"
 #include "sysprof-xy-series-item-private.h"
 
@@ -28,6 +29,11 @@ struct _SysprofXYSeries
   SysprofSeries  parent_instance;
   GtkExpression *x_expression;
   GtkExpression *y_expression;
+};
+
+struct _SysprofXYSeriesClass
+{
+  SysprofSeriesClass parent_instance;
 };
 
 enum {
@@ -42,9 +48,12 @@ G_DEFINE_FINAL_TYPE (SysprofXYSeries, sysprof_xy_series, SYSPROF_TYPE_SERIES)
 static GParamSpec *properties [N_PROPS];
 
 static gpointer
-sysprof_xy_series_get_series_item (SysprofXYSeries *self,
-                                   gpointer         item)
+sysprof_xy_series_get_series_item (SysprofSeries *series,
+                                   guint          position,
+                                   gpointer       item)
 {
+  SysprofXYSeries *self = SYSPROF_XY_SERIES (series);
+
   return _sysprof_xy_series_item_new (item,
                                       gtk_expression_ref (self->x_expression),
                                       gtk_expression_ref (self->y_expression));

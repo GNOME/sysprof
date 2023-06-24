@@ -1,4 +1,5 @@
 libsysprof_gtk_public_sources = [
+  'sysprof-axis.c',
   'sysprof-callgraph-view.c',
   'sysprof-chart.c',
   'sysprof-chart-layer.c',
@@ -6,6 +7,9 @@ libsysprof_gtk_public_sources = [
   'sysprof-line-layer.c',
   'sysprof-mark-chart.c',
   'sysprof-mark-table.c',
+  'sysprof-normalized-series.c',
+  'sysprof-normalized-series-item.c',
+  'sysprof-series.c',
   'sysprof-session.c',
   'sysprof-split-layer.c',
   'sysprof-time-span-layer.c',
@@ -15,6 +19,7 @@ libsysprof_gtk_public_sources = [
 libsysprof_gtk_public_headers = [
   'sysprof-gtk.h',
 
+  'sysprof-axis.h',
   'sysprof-callgraph-view.h',
   'sysprof-chart.h',
   'sysprof-chart-layer.h',
@@ -22,6 +27,9 @@ libsysprof_gtk_public_headers = [
   'sysprof-line-layer.h',
   'sysprof-mark-chart.h',
   'sysprof-mark-table.h',
+  'sysprof-normalized-series.h',
+  'sysprof-normalized-series-item.h',
+  'sysprof-series.h',
   'sysprof-session.h',
   'sysprof-split-layer.h',
   'sysprof-time-span-layer.h',

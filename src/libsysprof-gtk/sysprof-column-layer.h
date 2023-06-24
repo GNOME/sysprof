@@ -24,7 +24,9 @@
 
 #include <sysprof-analyze.h>
 
+#include "sysprof-axis.h"
 #include "sysprof-chart-layer.h"
+#include "sysprof-xy-series.h"
 
 G_BEGIN_DECLS
 
@@ -50,6 +52,16 @@ SysprofXYSeries   *sysprof_column_layer_get_series      (SysprofColumnLayer *sel
 SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_column_layer_set_series      (SysprofColumnLayer *self,
                                                          SysprofXYSeries    *series);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofAxis       *sysprof_column_layer_get_x_axis      (SysprofColumnLayer *self);
+SYSPROF_AVAILABLE_IN_ALL
+void               sysprof_column_layer_set_x_axis      (SysprofColumnLayer *self,
+                                                         SysprofAxis        *x_axis);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofAxis       *sysprof_column_layer_get_y_axis      (SysprofColumnLayer *self);
+SYSPROF_AVAILABLE_IN_ALL
+void               sysprof_column_layer_set_y_axis      (SysprofColumnLayer *self,
+                                                         SysprofAxis        *y_axis);
 
 G_END_DECLS
 

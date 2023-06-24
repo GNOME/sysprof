@@ -20,14 +20,23 @@
 
 #include "config.h"
 
+#include "sysprof-axis.h"
 #include "sysprof-column-layer.h"
+#include "sysprof-normalized-series.h"
 
 struct _SysprofColumnLayer
 {
-  SysprofChartLayer parent_instance;
-  SysprofXYSeries *series;
-  GdkRGBA color;
-  GdkRGBA hover_color;
+  SysprofChartLayer        parent_instance;
+
+  SysprofAxis             *x_axis;
+  SysprofAxis             *y_axis;
+
+  SysprofXYSeries         *series;
+  SysprofNormalizedSeries *normal_x;
+  SysprofNormalizedSeries *normal_y;
+
+  GdkRGBA                  color;
+  GdkRGBA                  hover_color;
 };
 
 enum {
@@ -35,6 +44,8 @@ enum {
   PROP_COLOR,
   PROP_HOVER_COLOR,
   PROP_SERIES,
+  PROP_X_AXIS,
+  PROP_Y_AXIS,
   N_PROPS
 };
 
@@ -47,11 +58,12 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
                                GtkSnapshot *snapshot)
 {
   SysprofColumnLayer *self = (SysprofColumnLayer *)widget;
-  const SysprofXYSeriesValue *values;
   graphene_matrix_t flip_y;
+  const float *x_values;
+  const float *y_values;
+  guint n_x_values;
+  guint n_y_values;
   guint n_values;
-  double min_x, max_x;
-  int line_width;
   int width;
   int height;
 
@@ -64,8 +76,11 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
   if (width == 0 || height == 0 || self->color.alpha == 0)
     return;
 
-  if (self->series == NULL ||
-      !(values = sysprof_xy_series_get_values (self->series, &n_values)))
+  x_values = sysprof_normalized_series_get_values (self->normal_x, &n_x_values);
+  y_values = sysprof_normalized_series_get_values (self->normal_y, &n_y_values);
+  n_values = MIN (n_x_values, n_y_values);
+
+  if (x_values == NULL || y_values == NULL)
     return;
 
   gtk_snapshot_save (snapshot);
@@ -73,32 +88,22 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
   graphene_matrix_init_from_2d (&flip_y, 1, 0, 0, -1, 0, height);
   gtk_snapshot_transform_matrix (snapshot, &flip_y);
 
-  sysprof_xy_series_get_range (self->series, &min_x, NULL, &max_x, NULL);
-
-  /* NOTE: We might want to allow setting a "bucket size" for the
-   * line width here so that units get joined together. For example,
-   * with stack traces, we would get nano-second precision due to time
-   * being the X access, but that's not super helpful when you probably
-   * want some small quanta to be the width.
-   */
-  line_width = MAX (1, width / (max_x - min_x));
-
   for (guint i = 0; i < n_values; i++)
     {
-      const SysprofXYSeriesValue *v = &values[i];
-      int line_height = ceilf (v->y * height);
+      int line_height = ceilf (y_values[i] * height);
 
       gtk_snapshot_append_color (snapshot,
                                  &self->color,
-                                 &GRAPHENE_RECT_INIT (v->x * width,
+                                 &GRAPHENE_RECT_INIT (x_values[i] * width,
                                                       0,
-                                                      line_width,
+                                                      1,
                                                       line_height));
     }
 
   gtk_snapshot_restore (snapshot);
 }
 
+#if 0
 static const SysprofXYSeriesValue *
 sysprof_column_layer_get_value_at_coord (SysprofColumnLayer *self,
                                          double              x,
@@ -151,6 +156,7 @@ sysprof_column_layer_get_value_at_coord (SysprofColumnLayer *self,
 
   return NULL;
 }
+#endif
 
 static void
 sysprof_column_layer_snapshot_motion (SysprofChartLayer *layer,
@@ -158,6 +164,7 @@ sysprof_column_layer_snapshot_motion (SysprofChartLayer *layer,
                                       double             x,
                                       double             y)
 {
+#if 0
   SysprofColumnLayer *self = (SysprofColumnLayer *)layer;
   const SysprofXYSeriesValue *v;
   graphene_rect_t rect;
@@ -167,6 +174,7 @@ sysprof_column_layer_snapshot_motion (SysprofChartLayer *layer,
 
   if ((v = sysprof_column_layer_get_value_at_coord (self, x, y, &rect)))
     gtk_snapshot_append_color (snapshot, &self->hover_color, &rect);
+#endif
 }
 
 static gpointer
@@ -174,6 +182,7 @@ sysprof_column_layer_lookup_item (SysprofChartLayer *layer,
                                   double             x,
                                   double             y)
 {
+#if 0
   SysprofColumnLayer *self = (SysprofColumnLayer *)layer;
   const SysprofXYSeriesValue *v;
 
@@ -181,6 +190,7 @@ sysprof_column_layer_lookup_item (SysprofChartLayer *layer,
 
   if ((v = sysprof_column_layer_get_value_at_coord (self, x, y, NULL)))
     return g_list_model_get_item (sysprof_xy_series_get_model (self->series), v->index);
+#endif
 
   return NULL;
 }
@@ -190,7 +200,7 @@ sysprof_column_layer_dispose (GObject *object)
 {
   SysprofColumnLayer *self = (SysprofColumnLayer *)object;
 
-  g_clear_pointer (&self->series, sysprof_xy_series_unref);
+  g_clear_object (&self->series);
 
   G_OBJECT_CLASS (sysprof_column_layer_parent_class)->dispose (object);
 }
@@ -214,7 +224,15 @@ sysprof_column_layer_get_property (GObject    *object,
       break;
 
     case PROP_SERIES:
-      g_value_set_boxed (value, self->series);
+      g_value_set_object (value, self->series);
+      break;
+
+    case PROP_X_AXIS:
+      g_value_set_object (value, self->x_axis);
+      break;
+
+    case PROP_Y_AXIS:
+      g_value_set_object (value, self->y_axis);
       break;
 
     default:
@@ -241,7 +259,15 @@ sysprof_column_layer_set_property (GObject      *object,
       break;
 
     case PROP_SERIES:
-      sysprof_column_layer_set_series (self, g_value_get_boxed (value));
+      sysprof_column_layer_set_series (self, g_value_get_object (value));
+      break;
+
+    case PROP_X_AXIS:
+      sysprof_column_layer_set_x_axis (self, g_value_get_object (value));
+      break;
+
+    case PROP_Y_AXIS:
+      sysprof_column_layer_set_y_axis (self, g_value_get_object (value));
       break;
 
     default:
@@ -267,17 +293,27 @@ sysprof_column_layer_class_init (SysprofColumnLayerClass *klass)
 
   properties[PROP_COLOR] =
     g_param_spec_boxed ("color", NULL, NULL,
-                         GDK_TYPE_RGBA,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                        GDK_TYPE_RGBA,
+                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_HOVER_COLOR] =
     g_param_spec_boxed ("hover-color", NULL, NULL,
-                         GDK_TYPE_RGBA,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                        GDK_TYPE_RGBA,
+                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_SERIES] =
-    g_param_spec_boxed ("series", NULL, NULL,
+    g_param_spec_object ("series", NULL, NULL,
                          SYSPROF_TYPE_XY_SERIES,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_X_AXIS] =
+    g_param_spec_object ("x-axis", NULL, NULL,
+                         SYSPROF_TYPE_AXIS,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_Y_AXIS] =
+    g_param_spec_object ("y-axis", NULL, NULL,
+                         SYSPROF_TYPE_AXIS,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
@@ -288,6 +324,9 @@ sysprof_column_layer_init (SysprofColumnLayer *self)
 {
   gdk_rgba_parse (&self->color, "#000");
   gdk_rgba_parse (&self->hover_color, "#F00");
+
+  self->normal_x = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES, NULL);
+  self->normal_y = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES, NULL);
 }
 
 SysprofChartLayer *
@@ -318,7 +357,9 @@ sysprof_column_layer_set_color (SysprofColumnLayer *self,
   if (!gdk_rgba_equal (&self->color, color))
     {
       self->color = *color;
+
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
+
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }
 }
@@ -345,7 +386,9 @@ sysprof_column_layer_set_hover_color (SysprofColumnLayer *self,
   if (!gdk_rgba_equal (&self->hover_color, hover_color))
     {
       self->hover_color = *hover_color;
+
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_HOVER_COLOR]);
+
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }
 }
@@ -372,16 +415,90 @@ sysprof_column_layer_set_series (SysprofColumnLayer *self,
 {
   g_return_if_fail (SYSPROF_IS_COLUMN_LAYER (self));
 
-  if (series == self->series)
-    return;
+  if (g_set_object (&self->series, series))
+    {
+      sysprof_normalized_series_set_series (self->normal_x, SYSPROF_SERIES (series));
+      sysprof_normalized_series_set_series (self->normal_y, SYSPROF_SERIES (series));
 
-  g_clear_pointer (&self->series, sysprof_xy_series_unref);
+      if (series)
+        {
+          g_object_bind_property (series, "x-expression",
+                                  self->normal_x, "expression",
+                                  G_BINDING_SYNC_CREATE);
+          g_object_bind_property (series, "y-expression",
+                                  self->normal_y, "expression",
+                                  G_BINDING_SYNC_CREATE);
+        }
 
-  if (series)
-    self->series = sysprof_xy_series_ref (series);
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SERIES]);
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SERIES]);
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
+}
 
-  gtk_widget_queue_draw (GTK_WIDGET (self));
+/**
+ * sysprof_column_layer_get_x_axis:
+ * @self: a #SysprofColumnLayer
+ *
+ * Gets the axis represeting X.
+ *
+ * Returns: (transfer none) (nullable): the X axis
+ */
+SysprofAxis *
+sysprof_column_layer_get_x_axis (SysprofColumnLayer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_COLUMN_LAYER (self), NULL);
+
+  return self->x_axis;
+}
+
+void
+sysprof_column_layer_set_x_axis (SysprofColumnLayer *self,
+                                 SysprofAxis        *x_axis)
+{
+  g_return_if_fail (SYSPROF_IS_COLUMN_LAYER (self));
+  g_return_if_fail (!x_axis || SYSPROF_IS_AXIS (x_axis));
+
+  if (g_set_object (&self->x_axis, x_axis))
+    {
+      sysprof_normalized_series_set_axis (self->normal_x, x_axis);
+
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_X_AXIS]);
+
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
+}
+
+/**
+ * sysprof_column_layer_get_y_axis:
+ * @self: a #SysprofColumnLayer
+ *
+ * Gets the axis represeting Y.
+ *
+ * Returns: (transfer none) (nullable): the Y axis
+ */
+SysprofAxis *
+sysprof_column_layer_get_y_axis (SysprofColumnLayer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_COLUMN_LAYER (self), NULL);
+
+  return self->y_axis;
+}
+
+void
+sysprof_column_layer_set_y_axis (SysprofColumnLayer *self,
+                                 SysprofAxis        *y_axis)
+{
+  g_return_if_fail (SYSPROF_IS_COLUMN_LAYER (self));
+  g_return_if_fail (!y_axis || SYSPROF_IS_AXIS (y_axis));
+
+  if (g_set_object (&self->y_axis, y_axis))
+    {
+      sysprof_normalized_series_set_axis (self->normal_y, y_axis);
+
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_Y_AXIS]);
+
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
 }
 

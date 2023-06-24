@@ -475,3 +475,17 @@ sysprof_normalized_series_set_series (SysprofNormalizedSeries *self,
       sysprof_series_set_model (SYSPROF_SERIES (self), G_LIST_MODEL (series));
     }
 }
+
+const float *
+sysprof_normalized_series_get_values (SysprofNormalizedSeries *self,
+                                      guint                   *n_values)
+{
+  g_return_val_if_fail (SYSPROF_IS_NORMALIZED_SERIES (self), NULL);
+
+  if (self->values == NULL || self->values->len == 0)
+    return NULL;
+
+  *n_values = self->values->len;
+
+  return &g_array_index (self->values, float, 0);
+}

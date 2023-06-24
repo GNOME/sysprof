@@ -59,5 +59,8 @@ void           sysprof_normalized_series_set_series     (SysprofNormalizedSeries
 SYSPROF_AVAILABLE_IN_ALL
 float          sysprof_normalized_series_value_at       (SysprofNormalizedSeries *self,
                                                          guint                    position);
+SYSPROF_AVAILABLE_IN_ALL
+const float   *sysprof_normalized_series_get_values     (SysprofNormalizedSeries *self,
+                                                         guint                   *n_values);
 
 G_END_DECLS

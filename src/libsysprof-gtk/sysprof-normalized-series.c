@@ -71,6 +71,12 @@ sysprof_normalized_series_update_missing (gpointer user_data)
 
   g_assert (SYSPROF_IS_NORMALIZED_SERIES (self));
 
+  if (self->missing == NULL)
+    {
+      self->update_source = 0;
+      return G_SOURCE_REMOVE;
+    }
+
   model = g_object_ref (sysprof_series_get_model (self->series));
   bitset = egg_bitset_ref (self->missing);
 

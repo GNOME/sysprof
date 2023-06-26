@@ -169,6 +169,32 @@ sysprof_chart_click_pressed_cb (SysprofChart    *self,
 }
 
 static void
+sysprof_chart_measure (GtkWidget      *widget,
+                       GtkOrientation  orientation,
+                       int             for_size,
+                       int            *minimum,
+                       int            *natural,
+                       int            *minium_baseline,
+                       int            *natural_baseline)
+{
+  *minium_baseline = -1;
+  *natural_baseline = -1;
+
+  for (GtkWidget *child = gtk_widget_get_first_child (widget);
+       child != NULL;
+       child = gtk_widget_get_next_sibling (child))
+    {
+      int child_min;
+      int child_nat;
+
+      gtk_widget_measure (child, orientation, for_size, &child_min, &child_nat, NULL, NULL);
+
+      *minimum = MAX (*minimum, child_min);
+      *natural = MAX (*natural, child_nat);
+    }
+}
+
+static void
 sysprof_chart_dispose (GObject *object)
 {
   SysprofChart *self = (SysprofChart *)object;
@@ -240,6 +266,7 @@ sysprof_chart_class_init (SysprofChartClass *klass)
   object_class->get_property = sysprof_chart_get_property;
   object_class->set_property = sysprof_chart_set_property;
 
+  widget_class->measure = sysprof_chart_measure;
   widget_class->size_allocate = sysprof_chart_size_allocate;
   widget_class->snapshot = sysprof_chart_snapshot;
 

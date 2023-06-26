@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gresources>
+  <gresource prefix="/">
+    <file preprocess="xml-stripblanks">test-charts.ui</file>
+  </gresource>
+</gresources>

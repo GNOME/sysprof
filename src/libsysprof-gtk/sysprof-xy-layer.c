@@ -30,7 +30,7 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_FINAL_TYPE (SysprofXYLayer, sysprof_xy_layer, SYSPROF_TYPE_CHART_LAYER)
+G_DEFINE_TYPE (SysprofXYLayer, sysprof_xy_layer, SYSPROF_TYPE_CHART_LAYER)
 
 static GParamSpec *properties [N_PROPS];
 
@@ -200,6 +200,9 @@ sysprof_xy_layer_set_series (SysprofXYLayer  *self,
     return;
 
   g_binding_group_set_source (self->series_bindings, series);
+
+  sysprof_normalized_series_set_series (self->normal_x, SYSPROF_SERIES (series));
+  sysprof_normalized_series_set_series (self->normal_y, SYSPROF_SERIES (series));
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SERIES]);
 }

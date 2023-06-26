@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="TestCharts" parent="GtkWindow">
+    <child>
+      <object class="GtkScrolledWindow">
+        <property name="hscrollbar-policy">never</property>
+        <child>
+          <object class="GtkListBox">
+            <child>
+              <object class="SysprofChart">
+                <property name="height-request">128</property>
+                <child>
+                  <object class="SysprofColumnLayer">
+                    <binding name="x-axis">
+                      <lookup name="selected-time-axis" type="SysprofSession">
+                        <lookup name="session">TestCharts</lookup>
+                      </lookup>
+                    </binding>
+                    <property name="y-axis">
+                      <object class="SysprofValueAxis">
+                        <property name="min-value">0</property>
+                        <property name="max-value">128</property>
+                      </object>
+                    </property>
+                    <property name="series">
+                      <object class="SysprofXYSeries">
+                        <property name="model">
+                          <object class="GtkFilterListModel">
+                            <binding name="filter">
+                              <lookup name="filter" type="SysprofSession">
+                                <lookup name="session">TestCharts</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="samples" type="SysprofDocument">
+                                <lookup name="document">TestCharts</lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                        <property name="x-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                        <property name="y-expression">
+                          <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

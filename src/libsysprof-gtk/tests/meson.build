@@ -23,8 +23,15 @@ libsysprof_gtk_testsuite_deps = [
   libsysprof_gtk_static_dep,
 ]
 
+tests_resources = gnome.compile_resources(
+  'tests-resources',
+  'tests.gresource.xml',
+  c_name: 'tests',
+)
+
 foreach test, params: libsysprof_gtk_testsuite
-  test_exe = executable(test, '@0@.c'.format(test),
+  test_exe = executable(test,
+    ['@0@.c'.format(test), tests_resources[0]],
           c_args: libsysprof_gtk_testsuite_c_args,
     dependencies: libsysprof_gtk_testsuite_deps,
   )

@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-session.h"
+#include "sysprof-value-axis.h"
 
 struct _SysprofSession
 {
@@ -28,6 +29,9 @@ struct _SysprofSession
 
   SysprofDocument *document;
   GtkEveryFilter  *filter;
+
+  SysprofAxis     *visible_time_axis;
+  SysprofAxis     *selected_time_axis;
 
   SysprofTimeSpan  selected_time;
   SysprofTimeSpan  visible_time;
@@ -39,12 +43,30 @@ enum {
   PROP_FILTER,
   PROP_SELECTED_TIME,
   PROP_VISIBLE_TIME,
+  PROP_SELECTED_TIME_AXIS,
+  PROP_VISIBLE_TIME_AXIS,
   N_PROPS
 };
 
 G_DEFINE_FINAL_TYPE (SysprofSession, sysprof_session, G_TYPE_OBJECT)
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+sysprof_session_update_axis (SysprofSession *self)
+{
+  g_assert (SYSPROF_IS_SESSION (self));
+
+  sysprof_value_axis_set_min_value (SYSPROF_VALUE_AXIS (self->visible_time_axis),
+                                    self->visible_time.begin_nsec);
+  sysprof_value_axis_set_max_value (SYSPROF_VALUE_AXIS (self->visible_time_axis),
+                                    self->visible_time.end_nsec);
+
+  sysprof_value_axis_set_min_value (SYSPROF_VALUE_AXIS (self->selected_time_axis),
+                                    self->selected_time.begin_nsec);
+  sysprof_value_axis_set_max_value (SYSPROF_VALUE_AXIS (self->selected_time_axis),
+                                    self->selected_time.end_nsec);
+}
 
 static void
 sysprof_session_set_document (SysprofSession  *self,
@@ -57,6 +79,8 @@ sysprof_session_set_document (SysprofSession  *self,
 
   self->visible_time = *sysprof_document_get_time_span (document);
   self->selected_time = self->visible_time;
+
+  sysprof_session_update_axis (self);
 }
 
 static void
@@ -64,6 +88,8 @@ sysprof_session_dispose (GObject *object)
 {
   SysprofSession *self = (SysprofSession *)object;
 
+  g_clear_object (&self->visible_time_axis);
+  g_clear_object (&self->selected_time_axis);
   g_clear_object (&self->document);
   g_clear_object (&self->filter);
 
@@ -94,6 +120,14 @@ sysprof_session_get_property (GObject    *object,
 
     case PROP_VISIBLE_TIME:
       g_value_set_boxed (value, sysprof_session_get_visible_time (self));
+      break;
+
+    case PROP_SELECTED_TIME_AXIS:
+      g_value_set_object (value, sysprof_session_get_selected_time_axis (self));
+      break;
+
+    case PROP_VISIBLE_TIME_AXIS:
+      g_value_set_object (value, sysprof_session_get_visible_time_axis (self));
       break;
 
     default:
@@ -149,6 +183,16 @@ sysprof_session_class_init (SysprofSessionClass *klass)
                         SYSPROF_TYPE_TIME_SPAN,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_SELECTED_TIME_AXIS] =
+    g_param_spec_object ("selected-time-axis", NULL, NULL,
+                         SYSPROF_TYPE_AXIS,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_VISIBLE_TIME_AXIS] =
+    g_param_spec_object ("visible-time-axis", NULL, NULL,
+                         SYSPROF_TYPE_AXIS,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -156,6 +200,8 @@ static void
 sysprof_session_init (SysprofSession *self)
 {
   self->filter = gtk_every_filter_new ();
+  self->selected_time_axis = sysprof_value_axis_new (0, 0);
+  self->visible_time_axis = sysprof_value_axis_new (0, 0);
 }
 
 SysprofSession *
@@ -243,8 +289,38 @@ sysprof_session_select_time (SysprofSession        *self,
       emit_for_visible = TRUE;
     }
 
+  sysprof_session_update_axis (self);
+
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SELECTED_TIME]);
 
   if (emit_for_visible)
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_VISIBLE_TIME]);
+}
+
+/**
+ * sysprof_session_get_selected_time_axis:
+ * @self: a #SysprofSession
+ *
+ * Returns: (transfer none) (nullable): a #SysprofAxis
+ */
+SysprofAxis *
+sysprof_session_get_selected_time_axis (SysprofSession *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
+
+  return self->selected_time_axis;
+}
+
+/**
+ * sysprof_session_get_visible_time_axis:
+ * @self: a #SysprofSession
+ *
+ * Returns: (transfer none) (nullable): a #SysprofAxis
+ */
+SysprofAxis *
+sysprof_session_get_visible_time_axis (SysprofSession *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
+
+  return self->visible_time_axis;
 }

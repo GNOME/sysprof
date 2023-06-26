@@ -24,6 +24,7 @@
 
 #include <sysprof-analyze.h>
 
+#include "sysprof-axis.h"
 #include "sysprof-time-span.h"
 
 G_BEGIN_DECLS
@@ -34,17 +35,21 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofSession, sysprof_session, SYSPROF, SESSION, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofSession        *sysprof_session_new               (SysprofDocument       *document);
+SysprofSession        *sysprof_session_new                    (SysprofDocument       *document);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofDocument       *sysprof_session_get_document      (SysprofSession        *self);
+SysprofDocument       *sysprof_session_get_document           (SysprofSession        *self);
 SYSPROF_AVAILABLE_IN_ALL
-GtkFilter             *sysprof_session_get_filter        (SysprofSession        *self);
+GtkFilter             *sysprof_session_get_filter             (SysprofSession        *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofTimeSpan *sysprof_session_get_selected_time (SysprofSession        *self);
+const SysprofTimeSpan *sysprof_session_get_selected_time      (SysprofSession        *self);
 SYSPROF_AVAILABLE_IN_ALL
-const SysprofTimeSpan *sysprof_session_get_visible_time  (SysprofSession        *self);
+const SysprofTimeSpan *sysprof_session_get_visible_time       (SysprofSession        *self);
 SYSPROF_AVAILABLE_IN_ALL
-void                   sysprof_session_select_time       (SysprofSession        *self,
-                                                          const SysprofTimeSpan *time_span);
+SysprofAxis           *sysprof_session_get_visible_time_axis  (SysprofSession        *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofAxis           *sysprof_session_get_selected_time_axis (SysprofSession        *self);
+SYSPROF_AVAILABLE_IN_ALL
+void                   sysprof_session_select_time            (SysprofSession        *self,
+                                                               const SysprofTimeSpan *time_span);
 
 G_END_DECLS

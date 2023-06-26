@@ -23,6 +23,7 @@
 G_BEGIN_DECLS
 
 #define SYSPROF_GTK_INSIDE
+# include "sysprof-axis.h"
 # include "sysprof-callgraph-view.h"
 # include "sysprof-chart.h"
 # include "sysprof-chart-layer.h"
@@ -30,10 +31,19 @@ G_BEGIN_DECLS
 # include "sysprof-line-layer.h"
 # include "sysprof-mark-chart.h"
 # include "sysprof-mark-table.h"
+# include "sysprof-normalized-series.h"
+# include "sysprof-normalized-series-item.h"
+# include "sysprof-series.h"
 # include "sysprof-session.h"
 # include "sysprof-split-layer.h"
+# include "sysprof-time-series.h"
+# include "sysprof-time-series-item.h"
 # include "sysprof-time-span-layer.h"
+# include "sysprof-value-axis.h"
 # include "sysprof-weighted-callgraph-view.h"
+# include "sysprof-xy-layer.h"
+# include "sysprof-xy-series.h"
+# include "sysprof-xy-series-item.h"
 #undef SYSPROF_GTK_INSIDE
 
 G_END_DECLS

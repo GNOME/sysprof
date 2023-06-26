@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofMarkChartRow" parent="GtkWidget">
+    <child>
+      <object class="SysprofChart" id="chart">
+        <property name="hexpand">true</property>
+        <property name="vexpand">false</property>
+        <child>
+          <object class="SysprofTimeSpanLayer" id="layer">
+            <binding name="axis">
+              <lookup name="selected-time-axis" type="SysprofSession">
+                <lookup name="session" type="SysprofMarkChartItem">
+                  <lookup name="item">SysprofMarkChartRow</lookup>
+                </lookup>
+              </lookup>
+            </binding>
+            <binding name="series">
+              <lookup name="series" type="SysprofMarkChartItem">
+                <lookup name="item">SysprofMarkChartRow</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

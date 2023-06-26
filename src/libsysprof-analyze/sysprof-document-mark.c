@@ -37,6 +37,7 @@ struct _SysprofDocumentMarkClass
 enum {
   PROP_0,
   PROP_DURATION,
+  PROP_END_TIME,
   PROP_GROUP,
   PROP_MESSAGE,
   PROP_NAME,
@@ -59,6 +60,10 @@ sysprof_document_mark_get_property (GObject    *object,
     {
     case PROP_DURATION:
       g_value_set_int64 (value, sysprof_document_mark_get_duration (self));
+      break;
+
+    case PROP_END_TIME:
+      g_value_set_int64 (value, sysprof_document_mark_get_end_time (self));
       break;
 
     case PROP_NAME:
@@ -87,6 +92,11 @@ sysprof_document_mark_class_init (SysprofDocumentMarkClass *klass)
 
   properties [PROP_DURATION] =
     g_param_spec_int64 ("duration", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_END_TIME] =
+    g_param_spec_int64 ("end-time", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -159,4 +169,13 @@ sysprof_document_mark_get_message (SysprofDocumentMark *self)
   mark = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureMark);
 
   return SYSPROF_DOCUMENT_FRAME_CSTRING (self, mark->message);
+}
+
+gint64
+sysprof_document_mark_get_end_time (SysprofDocumentMark *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_MARK (self), 0);
+
+  return sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (self))
+       + sysprof_document_mark_get_duration (self);
 }

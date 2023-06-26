@@ -23,14 +23,14 @@
 
 #include <sysprof-analyze.h>
 
-#include "sysprof-chart-layer.h"
+#include "sysprof-xy-layer.h"
 
 G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_LINE_LAYER (sysprof_line_layer_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF, LINE_LAYER, SysprofChartLayer)
+G_DECLARE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF, LINE_LAYER, SysprofXYLayer)
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer *sysprof_line_layer_new            (void);
@@ -39,11 +39,6 @@ const GdkRGBA     *sysprof_line_layer_get_color      (SysprofLineLayer *self);
 SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_color      (SysprofLineLayer *self,
                                                       const GdkRGBA    *color);
-SYSPROF_AVAILABLE_IN_ALL
-SysprofXYSeries   *sysprof_line_layer_get_series     (SysprofLineLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
-void               sysprof_line_layer_set_series     (SysprofLineLayer *self,
-                                                      SysprofXYSeries  *series);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean           sysprof_line_layer_get_dashed     (SysprofLineLayer *self);
 SYSPROF_AVAILABLE_IN_ALL

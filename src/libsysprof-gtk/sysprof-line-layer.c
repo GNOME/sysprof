@@ -22,12 +22,11 @@
 #include "config.h"
 
 #include "sysprof-line-layer.h"
+#include "sysprof-xy-layer-private.h"
 
 struct _SysprofLineLayer
 {
-  SysprofChartLayer parent_instance;
-
-  SysprofXYSeries *series;
+  SysprofXYLayer parent_instance;
 
   GdkRGBA color;
 
@@ -37,7 +36,12 @@ struct _SysprofLineLayer
   guint use_curves : 1;
 };
 
-G_DEFINE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF_TYPE_CHART_LAYER)
+struct _SysprofLineLayerClass
+{
+  SysprofXYLayerClass parent_class;
+};
+
+G_DEFINE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF_TYPE_XY_LAYER)
 
 enum {
   PROP_0,
@@ -45,7 +49,6 @@ enum {
   PROP_DASHED,
   PROP_FILL,
   PROP_FLIP_Y,
-  PROP_SERIES,
   PROP_USE_CURVES,
   N_PROPS
 };
@@ -63,10 +66,11 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
                              GtkSnapshot *snapshot)
 {
   SysprofLineLayer *self = (SysprofLineLayer *)widget;
-  const SysprofXYSeriesValue *values;
+  const float *x_values;
+  const float *y_values;
   cairo_t *cr;
-  double last_x;
-  double last_y;
+  float last_x;
+  float last_y;
   guint n_values;
   int width;
   int height;
@@ -77,10 +81,9 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
   width = gtk_widget_get_width (widget);
   height = gtk_widget_get_height (widget);
 
-  if (width == 0 || height == 0 || self->series == NULL || self->color.alpha == 0)
-    return;
+  _sysprof_xy_layer_get_xy (SYSPROF_XY_LAYER (self), &x_values, &y_values, &n_values);
 
-  if (!(values = sysprof_xy_series_get_values (self->series, &n_values)))
+  if (width == 0 || height == 0 || n_values == 0 || self->color.alpha == 0)
     return;
 
   cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, width, height));
@@ -92,9 +95,8 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
 
   cairo_scale (cr, width, height);
 
-  last_x = values->x;
-  last_y = values->y;
-
+  last_x = x_values[0];
+  last_y = y_values[0];
 
   if (self->fill)
     {
@@ -110,9 +112,8 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
     {
       for (guint i = 1; i < n_values; i++)
         {
-          const SysprofXYSeriesValue *v = &values[i];
-          double x = v->x;
-          double y = v->y;
+          float x = x_values[i];
+          float y = y_values[i];
 
           cairo_curve_to (cr,
                           last_x + ((x - last_x)/2),
@@ -130,12 +131,13 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
     {
       for (guint i = 1; i < n_values; i++)
         {
-          const SysprofXYSeriesValue *v = &values[i];
+          float x = x_values[i];
+          float y = y_values[i];
 
-          cairo_line_to (cr, v->x, v->y);
+          cairo_line_to (cr, x, y);
 
-          last_x = v->x;
-          last_y = v->y;
+          last_x = x;
+          last_y = y;
         }
     }
 
@@ -157,16 +159,6 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
   cairo_stroke (cr);
 
   cairo_destroy (cr);
-}
-
-static void
-sysprof_line_layer_finalize (GObject *object)
-{
-  SysprofLineLayer *self = (SysprofLineLayer *)object;
-
-  g_clear_pointer (&self->series, sysprof_xy_series_unref);
-
-  G_OBJECT_CLASS (sysprof_line_layer_parent_class)->finalize (object);
 }
 
 static void
@@ -193,10 +185,6 @@ sysprof_line_layer_get_property (GObject    *object,
 
     case PROP_FLIP_Y:
       g_value_set_boolean (value, sysprof_line_layer_get_flip_y (self));
-      break;
-
-    case PROP_SERIES:
-      g_value_set_boxed (value, sysprof_line_layer_get_series (self));
       break;
 
     case PROP_USE_CURVES:
@@ -234,10 +222,6 @@ sysprof_line_layer_set_property (GObject      *object,
       sysprof_line_layer_set_flip_y (self, g_value_get_boolean (value));
       break;
 
-    case PROP_SERIES:
-      sysprof_line_layer_set_series (self, g_value_get_boxed (value));
-      break;
-
     case PROP_USE_CURVES:
       sysprof_line_layer_set_use_curves (self, g_value_get_boolean (value));
       break;
@@ -253,7 +237,6 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_line_layer_finalize;
   object_class->get_property = sysprof_line_layer_get_property;
   object_class->set_property = sysprof_line_layer_set_property;
 
@@ -278,11 +261,6 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
     g_param_spec_boolean ("flip-y", NULL, NULL,
                          FALSE,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
-
-  properties[PROP_SERIES] =
-    g_param_spec_boxed ("series", NULL, NULL,
-                        SYSPROF_TYPE_XY_SERIES,
-                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_USE_CURVES] =
     g_param_spec_boolean ("use-curves", NULL, NULL,
@@ -323,38 +301,6 @@ sysprof_line_layer_set_color (SysprofLineLayer *self,
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }
-}
-
-/**
- * sysprof_line_layer_get_series:
- * @self: a #SysprofLineLayer
- *
- *
- * Returns: (transfer none) (nullable): a #SysprofXYSeries or %NULL
- */
-SysprofXYSeries *
-sysprof_line_layer_get_series (SysprofLineLayer *self)
-{
-  g_return_val_if_fail (SYSPROF_IS_LINE_LAYER (self), NULL);
-
-  return self->series;
-}
-
-void
-sysprof_line_layer_set_series (SysprofLineLayer *self,
-                               SysprofXYSeries  *series)
-{
-  g_return_if_fail (SYSPROF_IS_LINE_LAYER (self));
-
-  if (series == self->series)
-    return;
-
-  g_clear_pointer (&self->series, sysprof_xy_series_unref);
-  self->series = series ? sysprof_xy_series_ref (series) : NULL;
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SERIES]);
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
 gboolean

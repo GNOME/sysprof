@@ -45,11 +45,11 @@ SYSPROF_AVAILABLE_IN_ALL
 GtkExpression *sysprof_time_series_get_time_expression     (SysprofTimeSeries *self);
 SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_time_series_set_time_expression     (SysprofTimeSeries *self,
-                                                            GtkExpression   *x_expression);
+                                                            GtkExpression     *time_expression);
 SYSPROF_AVAILABLE_IN_ALL
 GtkExpression *sysprof_time_series_get_duration_expression (SysprofTimeSeries *self);
 SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_time_series_set_duration_expression (SysprofTimeSeries *self,
-                                                            GtkExpression   *y_expression);
+                                                            GtkExpression     *duration_expression);
 
 G_END_DECLS

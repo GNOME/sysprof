@@ -21,13 +21,19 @@
 
 #include "config.h"
 
+#include "sysprof-normalized-series.h"
+#include "sysprof-time-series-item.h"
 #include "sysprof-time-span-layer.h"
 
 struct _SysprofTimeSpanLayer
 {
   SysprofChartLayer parent_instance;
 
+  SysprofAxis *axis;
   SysprofTimeSeries *series;
+
+  SysprofNormalizedSeries *normal_x;
+  SysprofNormalizedSeries *normal_x2;
 
   GdkRGBA color;
   GdkRGBA event_color;
@@ -37,6 +43,7 @@ G_DEFINE_FINAL_TYPE (SysprofTimeSpanLayer, sysprof_time_span_layer, SYSPROF_TYPE
 
 enum {
   PROP_0,
+  PROP_AXIS,
   PROP_COLOR,
   PROP_EVENT_COLOR,
   PROP_SERIES,
@@ -56,9 +63,12 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                                   GtkSnapshot *snapshot)
 {
   SysprofTimeSpanLayer *self = (SysprofTimeSpanLayer *)widget;
-  const SysprofTimeSeriesValue *values;
+  const float *x_values;
+  const float *x2_values;
   graphene_rect_t box_rect;
   float last_end_x = 0;
+  guint n_x_values = 0;
+  guint n_x2_values = 0;
   guint n_values;
   int width;
   int height;
@@ -69,10 +79,12 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
   width = gtk_widget_get_width (widget);
   height = gtk_widget_get_height (widget);
 
-  if (width == 0 || height == 0 || self->series == NULL || self->color.alpha == 0)
+  if (width == 0 || height == 0 || self->color.alpha == 0)
     return;
 
-  if (!(values = sysprof_time_series_get_values (self->series, &n_values)))
+  if (!(x_values = sysprof_normalized_series_get_values (self->normal_x, &n_x_values)) ||
+      !(x2_values = sysprof_normalized_series_get_values (self->normal_x2, &n_x2_values)) ||
+      !(n_values = MIN (n_x_values, n_x2_values)))
     return;
 
   /* First pass, draw our rectangles for duration which we
@@ -81,16 +93,17 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
    */
   for (guint i = 0; i < n_values; i++)
     {
-      const SysprofTimeSeriesValue *v = &values[i];
+      float begin = x_values[i];
+      float end = x2_values[i];
 
-      if (v->begin != v->end)
+      if (begin != end)
         {
           graphene_rect_t rect;
           float end_x;
 
-          rect = GRAPHENE_RECT_INIT (floorf (v->begin * width),
+          rect = GRAPHENE_RECT_INIT (floorf (begin * width),
                                      0,
-                                     ceilf ((v->end - v->begin) * width),
+                                     ceilf ((end - begin) * width),
                                      height);
 
           /* Ignore empty sized draws */
@@ -115,13 +128,14 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
 
   for (guint i = 0; i < n_values; i++)
     {
-      const SysprofTimeSeriesValue *v = &values[i];
+      float begin = x_values[i];
+      float end = x2_values[i];
 
-      if (v->begin == v->end)
+      if (begin == end)
         {
           gtk_snapshot_save (snapshot);
           gtk_snapshot_translate (snapshot,
-                                  &GRAPHENE_POINT_INIT (v->begin * width, height / 2));
+                                  &GRAPHENE_POINT_INIT (begin * width, height / 2));
           gtk_snapshot_rotate (snapshot, 45.f);
           gtk_snapshot_append_color (snapshot, &self->event_color, &box_rect);
           gtk_snapshot_restore (snapshot);
@@ -134,7 +148,10 @@ sysprof_time_span_layer_finalize (GObject *object)
 {
   SysprofTimeSpanLayer *self = (SysprofTimeSpanLayer *)object;
 
-  g_clear_pointer (&self->series, sysprof_time_series_unref);
+  g_clear_object (&self->axis);
+  g_clear_object (&self->series);
+  g_clear_object (&self->normal_x);
+  g_clear_object (&self->normal_x2);
 
   G_OBJECT_CLASS (sysprof_time_span_layer_parent_class)->finalize (object);
 }
@@ -149,6 +166,10 @@ sysprof_time_span_layer_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_AXIS:
+      g_value_set_object (value, sysprof_time_span_layer_get_axis (self));
+      break;
+
     case PROP_COLOR:
       g_value_set_boxed (value, sysprof_time_span_layer_get_color (self));
       break;
@@ -176,6 +197,10 @@ sysprof_time_span_layer_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_AXIS:
+      sysprof_time_span_layer_set_axis (self, g_value_get_object (value));
+      break;
+
     case PROP_COLOR:
       sysprof_time_span_layer_set_color (self, g_value_get_boxed (value));
       break;
@@ -205,6 +230,11 @@ sysprof_time_span_layer_class_init (SysprofTimeSpanLayerClass *klass)
 
   widget_class->snapshot = sysprof_time_span_layer_snapshot;
 
+  properties[PROP_AXIS] =
+    g_param_spec_object ("axis", NULL, NULL,
+                         SYSPROF_TYPE_AXIS,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_COLOR] =
     g_param_spec_boxed ("color", NULL, NULL,
                         GDK_TYPE_RGBA,
@@ -226,8 +256,32 @@ sysprof_time_span_layer_class_init (SysprofTimeSpanLayerClass *klass)
 static void
 sysprof_time_span_layer_init (SysprofTimeSpanLayer *self)
 {
+  g_autoptr(GtkExpression) begin_expression = NULL;
+  g_autoptr(GtkExpression) end_expression = NULL;
+
   self->color.alpha = 1;
   self->event_color.alpha = 1;
+
+  begin_expression = gtk_property_expression_new (SYSPROF_TYPE_TIME_SERIES_ITEM, NULL, "time");
+  end_expression = gtk_property_expression_new (SYSPROF_TYPE_TIME_SERIES_ITEM, NULL, "end-time");
+
+  self->normal_x = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES,
+                                 "expression", begin_expression,
+                                 NULL);
+  self->normal_x2 = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES,
+                                  "expression", end_expression,
+                                  NULL);
+
+  g_signal_connect_object (self->normal_x,
+                           "items-changed",
+                           G_CALLBACK (gtk_widget_queue_draw),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (self->normal_x2,
+                           "items-changed",
+                           G_CALLBACK (gtk_widget_queue_draw),
+                           self,
+                           G_CONNECT_SWAPPED);
 }
 
 const GdkRGBA *
@@ -304,13 +358,41 @@ sysprof_time_span_layer_set_series (SysprofTimeSpanLayer *self,
 {
   g_return_if_fail (SYSPROF_IS_TIME_SPAN_LAYER (self));
 
-  if (series == self->series)
+  if (!g_set_object (&self->series, series))
     return;
 
-  g_clear_pointer (&self->series, sysprof_time_series_unref);
-  self->series = series ? sysprof_time_series_ref (series) : NULL;
+  sysprof_normalized_series_set_series (self->normal_x, SYSPROF_SERIES (series));
+  sysprof_normalized_series_set_series (self->normal_x2, SYSPROF_SERIES (series));
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SERIES]);
+}
 
-  gtk_widget_queue_draw (GTK_WIDGET (self));
+/**
+ * sysprof_time_span_layer_get_axis:
+ * @self: a #SysprofTimeSpanLayer
+ *
+ * Returns: (transfer none) (nullable): a #SysprofAxis or %NULL
+ */
+SysprofAxis *
+sysprof_time_span_layer_get_axis (SysprofTimeSpanLayer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_TIME_SPAN_LAYER (self), NULL);
+
+  return self->axis;
+}
+
+void
+sysprof_time_span_layer_set_axis (SysprofTimeSpanLayer *self,
+                                  SysprofAxis          *axis)
+{
+  g_return_if_fail (SYSPROF_IS_TIME_SPAN_LAYER (self));
+  g_return_if_fail (!axis || SYSPROF_IS_AXIS (axis));
+
+  if (!g_set_object (&self->axis, axis))
+    return;
+
+  sysprof_normalized_series_set_axis (self->normal_x, axis);
+  sysprof_normalized_series_set_axis (self->normal_x2, axis);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AXIS]);
 }

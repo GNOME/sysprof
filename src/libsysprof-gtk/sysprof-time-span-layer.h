@@ -21,9 +21,9 @@
 
 #pragma once
 
-#include <sysprof-analyze.h>
-
+#include "sysprof-axis.h"
 #include "sysprof-chart-layer.h"
+#include "sysprof-time-series.h"
 
 G_BEGIN_DECLS
 
@@ -49,6 +49,11 @@ SysprofTimeSeries *sysprof_time_span_layer_get_series      (SysprofTimeSpanLayer
 SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_time_span_layer_set_series      (SysprofTimeSpanLayer *self,
                                                             SysprofTimeSeries    *series);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofAxis       *sysprof_time_span_layer_get_axis        (SysprofTimeSpanLayer *self);
+SYSPROF_AVAILABLE_IN_ALL
+void               sysprof_time_span_layer_set_axis        (SysprofTimeSpanLayer *self,
+                                                            SysprofAxis          *axis);
 
 G_END_DECLS
 

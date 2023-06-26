@@ -259,8 +259,8 @@ sysprof_time_span_layer_init (SysprofTimeSpanLayer *self)
   g_autoptr(GtkExpression) begin_expression = NULL;
   g_autoptr(GtkExpression) end_expression = NULL;
 
-  self->color.alpha = 1;
-  self->event_color.alpha = 1;
+  gdk_rgba_parse (&self->color, "#000");
+  gdk_rgba_parse (&self->event_color, "#F00");
 
   begin_expression = gtk_property_expression_new (SYSPROF_TYPE_TIME_SERIES_ITEM, NULL, "time");
   end_expression = gtk_property_expression_new (SYSPROF_TYPE_TIME_SERIES_ITEM, NULL, "end-time");

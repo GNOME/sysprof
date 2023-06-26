@@ -25,7 +25,7 @@
 #include <sysprof-analyze.h>
 
 #include "sysprof-axis.h"
-#include "sysprof-chart-layer.h"
+#include "sysprof-xy-layer.h"
 #include "sysprof-xy-series.h"
 
 G_BEGIN_DECLS
@@ -33,7 +33,7 @@ G_BEGIN_DECLS
 #define SYSPROF_TYPE_COLUMN_LAYER (sysprof_column_layer_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofColumnLayer, sysprof_column_layer, SYSPROF, COLUMN_LAYER, SysprofChartLayer)
+G_DECLARE_FINAL_TYPE (SysprofColumnLayer, sysprof_column_layer, SYSPROF, COLUMN_LAYER, SysprofXYLayer)
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer *sysprof_column_layer_new             (void);
@@ -47,21 +47,6 @@ const GdkRGBA     *sysprof_column_layer_get_hover_color (SysprofColumnLayer *sel
 SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_column_layer_set_hover_color (SysprofColumnLayer *self,
                                                          const GdkRGBA      *hover_color);
-SYSPROF_AVAILABLE_IN_ALL
-SysprofXYSeries   *sysprof_column_layer_get_series      (SysprofColumnLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
-void               sysprof_column_layer_set_series      (SysprofColumnLayer *self,
-                                                         SysprofXYSeries    *series);
-SYSPROF_AVAILABLE_IN_ALL
-SysprofAxis       *sysprof_column_layer_get_x_axis      (SysprofColumnLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
-void               sysprof_column_layer_set_x_axis      (SysprofColumnLayer *self,
-                                                         SysprofAxis        *x_axis);
-SYSPROF_AVAILABLE_IN_ALL
-SysprofAxis       *sysprof_column_layer_get_y_axis      (SysprofColumnLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
-void               sysprof_column_layer_set_y_axis      (SysprofColumnLayer *self,
-                                                         SysprofAxis        *y_axis);
 
 G_END_DECLS
 

@@ -39,7 +39,7 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_FINAL_TYPE (SysprofColumnLayer, sysprof_column_layer, SYSPROF_TYPE_CHART_LAYER)
+G_DEFINE_FINAL_TYPE (SysprofColumnLayer, sysprof_column_layer, SYSPROF_TYPE_XY_LAYER)
 
 static GParamSpec *properties [N_PROPS];
 

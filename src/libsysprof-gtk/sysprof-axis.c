@@ -152,7 +152,7 @@ sysprof_axis_set_title (SysprofAxis *self,
 }
 
 void
-_charts_axis_emit_range_changed (SysprofAxis *self)
+_sysprof_axis_emit_range_changed (SysprofAxis *self)
 {
   g_return_if_fail (SYSPROF_IS_AXIS (self));
 

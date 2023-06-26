@@ -20,7 +20,23 @@
 
 #include "config.h"
 
+#include <math.h>
+
+#include "sysprof-axis-private.h"
 #include "sysprof-value-axis.h"
+
+struct _SysprofValueAxis
+{
+  SysprofAxis parent_instance;
+  double min_value;
+  double max_value;
+  double distance;
+};
+
+struct _SysprofValueAxisClass
+{
+  SysprofAxisClass parent_class;
+};
 
 enum {
   PROP_0,
@@ -79,8 +95,8 @@ sysprof_value_axis_real_get_min_value (SysprofAxis *axis,
 }
 
 static double
-sysprof_value_axis_normalize (SysprofAxis   *axis,
-                             const GValue *value)
+sysprof_value_axis_normalize (SysprofAxis  *axis,
+                              const GValue *value)
 {
   SysprofValueAxis *self = (SysprofValueAxis *)axis;
   double v = get_as_double (value);
@@ -91,9 +107,9 @@ sysprof_value_axis_normalize (SysprofAxis   *axis,
 
 static void
 sysprof_value_axis_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
-                                GParamSpec *pspec)
+                                 guint       prop_id,
+                                 GValue     *value,
+                                 GParamSpec *pspec)
 {
   SysprofValueAxis *self = SYSPROF_VALUE_AXIS (object);
 
@@ -114,9 +130,9 @@ sysprof_value_axis_get_property (GObject    *object,
 
 static void
 sysprof_value_axis_set_property (GObject      *object,
-                                guint         prop_id,
-                                const GValue *value,
-                                GParamSpec   *pspec)
+                                 guint         prop_id,
+                                 const GValue *value,
+                                 GParamSpec   *pspec)
 {
   SysprofValueAxis *self = SYSPROF_VALUE_AXIS (object);
 
@@ -175,7 +191,7 @@ sysprof_value_axis_get_min_value (SysprofValueAxis *self)
 
 void
 sysprof_value_axis_set_min_value (SysprofValueAxis *self,
-                                 double           min_value)
+                                  double            min_value)
 {
   g_return_if_fail (SYSPROF_IS_VALUE_AXIS (self));
 
@@ -198,7 +214,7 @@ sysprof_value_axis_get_max_value (SysprofValueAxis *self)
 
 void
 sysprof_value_axis_set_max_value (SysprofValueAxis *self,
-                                 double           max_value)
+                                  double            max_value)
 {
   g_return_if_fail (SYSPROF_IS_VALUE_AXIS (self));
 
@@ -209,4 +225,14 @@ sysprof_value_axis_set_max_value (SysprofValueAxis *self,
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MAX_VALUE]);
       _sysprof_axis_emit_range_changed (SYSPROF_AXIS (self));
     }
+}
+
+SysprofAxis *
+sysprof_value_axis_new (double min_value,
+                        double max_value)
+{
+  return g_object_new (SYSPROF_TYPE_VALUE_AXIS,
+                       "min-value", min_value,
+                       "max-value", max_value,
+                       NULL);
 }

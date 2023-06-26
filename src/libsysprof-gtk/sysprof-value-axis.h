@@ -24,10 +24,10 @@
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_VALUE_AXIS   (sysprof_value_axis_get_type())
-#define SYSPROF_IS_AXIS(obj)      (G_TYPE_CHECK_INSTANCE_TYPE(obj, SYSPROF_TYPE_AXIS))
-#define SYSPROF_AXIS(obj)         (G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_AXIS, SysprofValueAxis))
-#define SYSPROF_AXIS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_AXIS, SysprofValueAxisClass))
+#define SYSPROF_TYPE_VALUE_AXIS         (sysprof_value_axis_get_type())
+#define SYSPROF_IS_VALUE_AXIS(obj)      (G_TYPE_CHECK_INSTANCE_TYPE(obj, SYSPROF_TYPE_VALUE_AXIS))
+#define SYSPROF_VALUE_AXIS(obj)         (G_TYPE_CHECK_INSTANCE_CAST(obj, SYSPROF_TYPE_VALUE_AXIS, SysprofValueAxis))
+#define SYSPROF_VALUE_AXIS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST(klass, SYSPROF_TYPE_VALUE_AXIS, SysprofValueAxisClass))
 
 typedef struct _SysprofValueAxis SysprofValueAxis;
 typedef struct _SysprofValueAxisClass SysprofValueAxisClass;

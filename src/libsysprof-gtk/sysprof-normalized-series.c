@@ -64,15 +64,17 @@ static gboolean
 sysprof_normalized_series_update_missing (gpointer user_data)
 {
   SysprofNormalizedSeries *self = user_data;
-  GListModel *model;
+  g_autoptr(GListModel) model = NULL;
+  g_autoptr(EggBitset) bitset = NULL;
   EggBitsetIter iter;
   guint position;
 
   g_assert (SYSPROF_IS_NORMALIZED_SERIES (self));
 
-  model = G_LIST_MODEL (self);
+  model = g_object_ref (G_LIST_MODEL (self->series));
+  bitset = egg_bitset_ref (self->missing);
 
-  if (egg_bitset_iter_init_first (&iter, self->missing, &position))
+  if (egg_bitset_iter_init_first (&iter, bitset, &position))
     {
       gint64 deadline = g_get_monotonic_time () + SYSPROF_NORMALIZED_SERIES_STEP_TIME_USEC;
       guint first = position;
@@ -87,7 +89,7 @@ sysprof_normalized_series_update_missing (gpointer user_data)
 
           g_array_index (self->values, float, position) = _sysprof_axis_normalize (self->axis, &value);
 
-          egg_bitset_remove (self->missing, position);
+          egg_bitset_remove (bitset, position);
 
           g_value_unset (&value);
           g_clear_object (&item);
@@ -108,7 +110,7 @@ sysprof_normalized_series_update_missing (gpointer user_data)
         }
     }
 
-  if (egg_bitset_is_empty (self->missing))
+  if (egg_bitset_is_empty (bitset))
     {
       self->update_source = 0;
       return G_SOURCE_REMOVE;
@@ -127,7 +129,7 @@ sysprof_normalized_series_maybe_update (SysprofNormalizedSeries *self)
   if (self->update_source)
     return;
 
-  if (egg_bitset_is_empty (self->missing))
+  if (!self->missing || egg_bitset_is_empty (self->missing))
     return;
 
   source = g_idle_source_new ();
@@ -224,17 +226,27 @@ sysprof_normalized_series_dispose (GObject *object)
   SysprofNormalizedSeries *self = (SysprofNormalizedSeries *)object;
 
   g_clear_handle_id (&self->update_source, g_source_remove);
-
   g_clear_signal_handler (&self->range_changed_handler, self->axis);
-  g_clear_object (&self->axis);
 
+  g_clear_object (&self->axis);
   g_clear_object (&self->series);
 
   g_clear_pointer (&self->expression, gtk_expression_unref);
+
+  egg_bitset_remove_all (self->missing);
+
+  G_OBJECT_CLASS (sysprof_normalized_series_parent_class)->dispose (object);
+}
+
+static void
+sysprof_normalized_series_finalize (GObject *object)
+{
+  SysprofNormalizedSeries *self = (SysprofNormalizedSeries *)object;
+
   g_clear_pointer (&self->missing, egg_bitset_unref);
   g_clear_pointer (&self->values, g_array_unref);
 
-  G_OBJECT_CLASS (sysprof_normalized_series_parent_class)->dispose (object);
+  G_OBJECT_CLASS (sysprof_normalized_series_parent_class)->finalize (object);
 }
 
 static void
@@ -298,6 +310,7 @@ sysprof_normalized_series_class_init (SysprofNormalizedSeriesClass *klass)
   SysprofSeriesClass *series_class = SYSPROF_SERIES_CLASS (klass);
 
   object_class->dispose = sysprof_normalized_series_dispose;
+  object_class->finalize = sysprof_normalized_series_finalize;
   object_class->get_property = sysprof_normalized_series_get_property;
   object_class->set_property = sysprof_normalized_series_set_property;
 

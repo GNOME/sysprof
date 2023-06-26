@@ -32,7 +32,10 @@ struct _SysprofTimeSeriesItem
 
 enum {
   PROP_0,
+  PROP_DURATION,
   PROP_ITEM,
+  PROP_TIME,
+  PROP_END_TIME,
   N_PROPS
 };
 
@@ -66,6 +69,18 @@ sysprof_time_series_item_get_property (GObject    *object,
       g_value_set_object (value, self->item);
       break;
 
+    case PROP_DURATION:
+      g_value_set_int64 (value, sysprof_time_series_item_get_duration (self));
+      break;
+
+    case PROP_TIME:
+      g_value_set_int64 (value, sysprof_time_series_item_get_time (self));
+      break;
+
+    case PROP_END_TIME:
+      g_value_set_int64 (value, sysprof_time_series_item_get_end_time (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -83,6 +98,21 @@ sysprof_time_series_item_class_init (SysprofTimeSeriesItemClass *klass)
     g_param_spec_object ("item", NULL, NULL,
                          G_TYPE_OBJECT,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_TIME] =
+    g_param_spec_int64 ("time", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_END_TIME] =
+    g_param_spec_int64 ("end-time", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_DURATION] =
+    g_param_spec_int64 ("duration", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -123,20 +153,41 @@ sysprof_time_series_item_get_item (SysprofTimeSeriesItem *self)
   return self->item;
 }
 
-void
-sysprof_time_series_item_get_time_value (SysprofTimeSeriesItem *self,
-                                         GValue                *time_value)
+gint64
+sysprof_time_series_item_get_time (SysprofTimeSeriesItem *self)
 {
-  g_return_if_fail (SYSPROF_IS_TIME_SERIES_ITEM (self));
+  GValue value = G_VALUE_INIT;
+  gint64 ret;
 
-  gtk_expression_evaluate (self->time_expression, self->item, time_value);
+  g_return_val_if_fail (SYSPROF_IS_TIME_SERIES_ITEM (self), 0);
+
+  g_value_init (&value, G_TYPE_INT64);
+  gtk_expression_evaluate (self->time_expression, self->item, &value);
+  ret = g_value_get_int64 (&value);
+  g_value_unset (&value);
+
+  return ret;
 }
 
-void
-sysprof_time_series_item_get_duration_value (SysprofTimeSeriesItem *self,
-                                             GValue                *duration_value)
+gint64
+sysprof_time_series_item_get_duration (SysprofTimeSeriesItem *self)
 {
-  g_return_if_fail (SYSPROF_IS_TIME_SERIES_ITEM (self));
+  GValue value = G_VALUE_INIT;
+  gint64 ret;
 
-  gtk_expression_evaluate (self->duration_expression, self->item, duration_value);
+  g_return_val_if_fail (SYSPROF_IS_TIME_SERIES_ITEM (self), 0);
+
+  g_value_init (&value, G_TYPE_INT64);
+  gtk_expression_evaluate (self->duration_expression, self->item, &value);
+  ret = g_value_get_int64 (&value);
+  g_value_unset (&value);
+
+  return ret;
+}
+
+gint64
+sysprof_time_series_item_get_end_time (SysprofTimeSeriesItem *self)
+{
+  return sysprof_time_series_item_get_time (self) +
+         sysprof_time_series_item_get_duration (self);
 }

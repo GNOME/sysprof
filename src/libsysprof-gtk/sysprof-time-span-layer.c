@@ -179,7 +179,7 @@ sysprof_time_span_layer_get_property (GObject    *object,
       break;
 
     case PROP_SERIES:
-      g_value_set_boxed (value, sysprof_time_span_layer_get_series (self));
+      g_value_set_object (value, sysprof_time_span_layer_get_series (self));
       break;
 
     default:
@@ -210,7 +210,7 @@ sysprof_time_span_layer_set_property (GObject      *object,
       break;
 
     case PROP_SERIES:
-      sysprof_time_span_layer_set_series (self, g_value_get_boxed (value));
+      sysprof_time_span_layer_set_series (self, g_value_get_object (value));
       break;
 
     default:
@@ -246,9 +246,9 @@ sysprof_time_span_layer_class_init (SysprofTimeSpanLayerClass *klass)
                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_SERIES] =
-    g_param_spec_boxed ("series", NULL, NULL,
-                        SYSPROF_TYPE_TIME_SERIES,
-                        (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+    g_param_spec_object ("series", NULL, NULL,
+                         SYSPROF_TYPE_TIME_SERIES,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

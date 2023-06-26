@@ -87,10 +87,18 @@ sysprof_series_items_changed_cb (SysprofSeries *self,
   g_assert (SYSPROF_IS_SERIES (self));
   g_assert (G_IS_LIST_MODEL (model));
 
-  if (SYSPROF_SERIES_GET_CLASS (self)->items_changed)
-    SYSPROF_SERIES_GET_CLASS (self)->items_changed (self, model, position, removed, added);
+  SYSPROF_SERIES_GET_CLASS (self)->items_changed (self, model, position, removed, added);
 
   g_list_model_items_changed (G_LIST_MODEL (self), position, removed, added);
+}
+
+static void
+sysprof_series_real_items_changed (SysprofSeries *series,
+                                   GListModel    *model,
+                                   guint          position,
+                                   guint          removed,
+                                   guint          added)
+{
 }
 
 static void
@@ -161,6 +169,7 @@ sysprof_series_class_init (SysprofSeriesClass *klass)
   object_class->set_property = sysprof_series_set_property;
 
   klass->series_item_type = G_TYPE_OBJECT;
+  klass->items_changed = sysprof_series_real_items_changed;
 
   properties[PROP_MODEL] =
     g_param_spec_object ("model", NULL, NULL,

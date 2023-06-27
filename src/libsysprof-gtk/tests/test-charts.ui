@@ -108,10 +108,10 @@
                       <lookup name="item">GtkListItem</lookup>
                     </binding>
                     <property name="x-expression">
-                      <lookup name="time" type="SysprofDocumentFrame"/>
+                      <lookup name="time" type="SysprofDocumentCounterValue"/>
                     </property>
                     <property name="y-expression">
-                      <lookup name="time" type="SysprofDocumentFrame"/>
+                      <lookup name="value-double" type="SysprofDocumentCounterValue"/>
                     </property>
                   </object>
                 </property>

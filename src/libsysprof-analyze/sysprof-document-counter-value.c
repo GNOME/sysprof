@@ -31,6 +31,7 @@ struct _SysprofDocumentCounterValue
 enum {
   PROP_0,
   PROP_TIME,
+  PROP_VALUE_DOUBLE,
   N_PROPS
 };
 
@@ -52,6 +53,10 @@ sysprof_document_counter_value_get_property (GObject    *object,
       g_value_set_int64 (value, sysprof_document_counter_value_get_time (self));
       break;
 
+    case PROP_VALUE_DOUBLE:
+      g_value_set_double (value, sysprof_document_counter_value_get_value_double (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -66,7 +71,12 @@ sysprof_document_counter_value_class_init (SysprofDocumentCounterValueClass *kla
 
   properties [PROP_TIME] =
     g_param_spec_int64 ("time", NULL, NULL,
-                        G_MININT64, 0, G_MAXINT64,
+                        G_MININT64, G_MAXINT64, 0,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_VALUE_DOUBLE] =
+    g_param_spec_double ("value-double", NULL, NULL,
+                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);

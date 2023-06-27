@@ -21,6 +21,7 @@
 
 #include "config.h"
 
+#include "sysprof-chart-layer-private.h"
 #include "sysprof-line-layer.h"
 #include "sysprof-xy-layer-private.h"
 
@@ -55,8 +56,6 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
-static GdkRGBA accent_bg_color;
-static GdkRGBA accent_fg_color;
 
 SysprofChartLayer *
 sysprof_line_layer_new (void)
@@ -71,7 +70,7 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
   SysprofLineLayer *self = (SysprofLineLayer *)widget;
   const float *x_values;
   const float *y_values;
-  GdkRGBA *color;
+  const GdkRGBA *color;
   cairo_t *cr;
   float first_x;
   float first_y;
@@ -95,7 +94,7 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
   if (self->color_set)
     color = &self->color;
   else
-    color = &accent_bg_color;
+    color = _sysprof_chart_layer_get_accent_bg_color ();
 
   cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, width, height));
 
@@ -161,22 +160,6 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
     }
 
   cairo_destroy (cr);
-}
-
-static void
-sysprof_line_layer_css_changed (GtkWidget         *widget,
-                                GtkCssStyleChange *css_change)
-{
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  GtkStyleContext *style_context;
-
-  GTK_WIDGET_CLASS (sysprof_line_layer_parent_class)->css_changed (widget, css_change);
-
-  style_context = gtk_widget_get_style_context (widget);
-
-  gtk_style_context_lookup_color (style_context, "accent_fg_color", &accent_fg_color);
-  gtk_style_context_lookup_color (style_context, "accent_bg_color", &accent_bg_color);
-G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 static void
@@ -259,7 +242,6 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
   object_class->set_property = sysprof_line_layer_set_property;
 
   widget_class->snapshot = sysprof_line_layer_snapshot;
-  widget_class->css_changed = sysprof_line_layer_css_changed;
 
   properties[PROP_COLOR] =
     g_param_spec_boxed ("color", NULL, NULL,

@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-axis.h"
+#include "sysprof-chart-layer-private.h"
 #include "sysprof-column-layer.h"
 #include "sysprof-normalized-series.h"
 #include "sysprof-xy-layer-private.h"
@@ -28,8 +29,12 @@
 struct _SysprofColumnLayer
 {
   SysprofXYLayer parent_instance;
+
   GdkRGBA        color;
   GdkRGBA        hover_color;
+
+  guint          color_set : 1;
+  guint          hover_color_set : 1;
 };
 
 enum {
@@ -51,6 +56,7 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
   graphene_matrix_t flip_y;
   const float *x_values;
   const float *y_values;
+  const GdkRGBA *color;
   guint n_values;
   int width;
   int height;
@@ -66,6 +72,11 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
   if (width == 0 || height == 0 || n_values == 0 || self->color.alpha == 0)
     return;
 
+  if (self->color_set)
+    color = &self->color;
+  else
+    color = _sysprof_chart_layer_get_accent_bg_color ();
+
   gtk_snapshot_save (snapshot);
 
   graphene_matrix_init_from_2d (&flip_y, 1, 0, 0, -1, 0, height);
@@ -76,7 +87,7 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
       int line_height = ceilf (y_values[i] * height);
 
       gtk_snapshot_append_color (snapshot,
-                                 &self->color,
+                                 color,
                                  &GRAPHENE_RECT_INIT (x_values[i] * width,
                                                       0,
                                                       1,
@@ -255,8 +266,8 @@ sysprof_column_layer_class_init (SysprofColumnLayerClass *klass)
 static void
 sysprof_column_layer_init (SysprofColumnLayer *self)
 {
-  gdk_rgba_parse (&self->color, "#000");
-  gdk_rgba_parse (&self->hover_color, "#F00");
+  self->color = (GdkRGBA) {0,0,0,1};
+  self->hover_color = (GdkRGBA) {1,0,0,1};
 }
 
 SysprofChartLayer *
@@ -287,6 +298,7 @@ sysprof_column_layer_set_color (SysprofColumnLayer *self,
   if (!gdk_rgba_equal (&self->color, color))
     {
       self->color = *color;
+      self->color_set = color != &black;
 
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
 
@@ -316,6 +328,7 @@ sysprof_column_layer_set_hover_color (SysprofColumnLayer *self,
   if (!gdk_rgba_equal (&self->hover_color, hover_color))
     {
       self->hover_color = *hover_color;
+      self->hover_color_set = hover_color != &red;
 
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_HOVER_COLOR]);
 

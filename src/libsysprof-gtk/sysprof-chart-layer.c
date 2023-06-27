@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include "sysprof-chart-layer.h"
+#include "sysprof-chart-layer-private.h"
 
 typedef struct
 {
@@ -36,6 +36,24 @@ enum {
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (SysprofChartLayer, sysprof_chart_layer, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
+static GdkRGBA accent_fg_color;
+static GdkRGBA accent_bg_color;
+
+static void
+sysprof_chart_layer_css_changed (GtkWidget         *widget,
+                                 GtkCssStyleChange *change)
+{
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  GtkStyleContext *style_context;
+
+  GTK_WIDGET_CLASS (sysprof_chart_layer_parent_class)->css_changed (widget, change);
+
+  style_context = gtk_widget_get_style_context (widget);
+
+  gtk_style_context_lookup_color (style_context, "accent_fg_color", &accent_fg_color);
+  gtk_style_context_lookup_color (style_context, "accent_bg_color", &accent_bg_color);
+G_GNUC_END_IGNORE_DEPRECATIONS
+}
 
 static void
 sysprof_chart_layer_dispose (GObject *object)
@@ -95,6 +113,8 @@ sysprof_chart_layer_class_init (SysprofChartLayerClass *klass)
   object_class->dispose = sysprof_chart_layer_dispose;
   object_class->get_property = sysprof_chart_layer_get_property;
   object_class->set_property = sysprof_chart_layer_set_property;
+
+  widget_class->css_changed = sysprof_chart_layer_css_changed;
 
   properties[PROP_TITLE] =
     g_param_spec_string ("title", NULL, NULL,
@@ -170,4 +190,16 @@ sysprof_chart_layer_lookup_item (SysprofChartLayer *self,
     return SYSPROF_CHART_LAYER_GET_CLASS (self)->lookup_item (self, x, y);
 
   return NULL;
+}
+
+const GdkRGBA *
+_sysprof_chart_layer_get_accent_bg_color (void)
+{
+  return &accent_bg_color;
+}
+
+const GdkRGBA *
+_sysprof_chart_layer_get_accent_fg_color (void)
+{
+  return &accent_fg_color;
 }

@@ -201,6 +201,7 @@ test_charts_class_init (TestChartsClass *klass)
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_CHART_LAYER);
   g_type_ensure (SYSPROF_TYPE_COLUMN_LAYER);
+  g_type_ensure (SYSPROF_TYPE_LINE_LAYER);
   g_type_ensure (SYSPROF_TYPE_VALUE_AXIS);
 }
 

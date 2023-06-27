@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <math.h>
+
 #include "sysprof-document-counter.h"
 #include "sysprof-document-counter-value-private.h"
 #include "sysprof-document-private.h"
@@ -31,6 +33,8 @@ struct _SysprofDocumentCounter
   GRefString *description;
   GRefString *name;
   GArray *values;
+  double min_value;
+  double max_value;
   guint id;
   guint type;
 };
@@ -40,6 +44,8 @@ enum {
   PROP_CATEGORY,
   PROP_DESCRIPTION,
   PROP_ID,
+  PROP_MAX_VALUE,
+  PROP_MIN_VALUE,
   PROP_NAME,
   N_PROPS
 };
@@ -115,6 +121,14 @@ sysprof_document_counter_get_property (GObject    *object,
       g_value_set_string (value, sysprof_document_counter_get_description (self));
       break;
 
+    case PROP_MIN_VALUE:
+      g_value_set_double (value, self->min_value);
+      break;
+
+    case PROP_MAX_VALUE:
+      g_value_set_double (value, self->max_value);
+      break;
+
     case PROP_NAME:
       g_value_set_string (value, sysprof_document_counter_get_name (self));
       break;
@@ -156,6 +170,16 @@ sysprof_document_counter_class_init (SysprofDocumentCounterClass *klass)
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_MIN_VALUE] =
+    g_param_spec_double ("min-value", NULL, NULL,
+                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_MAX_VALUE] =
+    g_param_spec_double ("max-value", NULL, NULL,
+                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -181,6 +205,45 @@ _sysprof_document_counter_new (guint       id,
   self->name = name;
   self->description = description;
   self->values = values;
+
+  if (type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
+    {
+      double min_value = INFINITY;
+      double max_value = -INFINITY;
+
+      for (guint i = 0; i < values->len; i++)
+        {
+          double v = g_array_index (self->values, double, i);
+
+          if (v < min_value)
+            min_value = v;
+
+          if (v > max_value)
+            max_value = v;
+        }
+
+      self->min_value = min_value;
+      self->max_value = max_value;
+    }
+  else if (type == SYSPROF_CAPTURE_COUNTER_INT64)
+    {
+      gint64 min_value = G_MAXINT64;
+      gint64 max_value = G_MININT64;
+
+      for (guint i = 0; i < values->len; i++)
+        {
+          gint64 v = g_array_index (self->values, gint64, i);
+
+          if (v < min_value)
+            min_value = v;
+
+          if (v > max_value)
+            max_value = v;
+        }
+
+      self->min_value = min_value;
+      self->max_value = max_value;
+    }
 
   return self;
 }

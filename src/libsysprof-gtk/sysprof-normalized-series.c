@@ -398,10 +398,10 @@ sysprof_normalized_series_get_value_at (SysprofNormalizedSeries *self,
   g_return_val_if_fail (SYSPROF_IS_NORMALIZED_SERIES (self), .0f);
 
   if (egg_bitset_contains (self->missing, position))
-    return -INFINITY;
+    return .0;
 
   if (position >= self->values->len)
-    return -INFINITY;
+    return .0;
 
   return g_array_index (self->values, float, position);
 }

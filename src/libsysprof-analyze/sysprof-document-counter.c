@@ -208,8 +208,8 @@ _sysprof_document_counter_new (guint       id,
 
   if (type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
     {
-      double min_value = INFINITY;
-      double max_value = -INFINITY;
+      double min_value = 0;
+      double max_value = 0;
 
       for (guint i = 0; i < values->len; i++)
         {
@@ -228,8 +228,8 @@ _sysprof_document_counter_new (guint       id,
     }
   else if (type == SYSPROF_CAPTURE_COUNTER_INT64)
     {
-      gint64 min_value = G_MAXINT64;
-      gint64 max_value = G_MININT64;
+      gint64 min_value = 0;
+      gint64 max_value = 0;
 
       for (guint i = 0; i < values->len; i++)
         {

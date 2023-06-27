@@ -44,7 +44,7 @@ static double
 sysprof_axis_real_normalize (SysprofAxis  *axis,
                              const GValue *value)
 {
-  return -INFINITY;
+  return .0;
 }
 
 static void

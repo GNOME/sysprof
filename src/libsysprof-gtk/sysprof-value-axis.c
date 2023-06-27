@@ -81,7 +81,7 @@ get_as_double (const GValue *value)
       return g_value_get_double (&dst);
     }
 
-  return -INFINITY;
+  return .0;
 }
 
 static void

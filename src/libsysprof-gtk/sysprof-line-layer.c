@@ -30,6 +30,7 @@ struct _SysprofLineLayer
 
   GdkRGBA color;
 
+  guint color_set : 1;
   guint dashed : 1;
   guint fill : 1;
   guint flip_y : 1;
@@ -54,6 +55,8 @@ enum {
 };
 
 static GParamSpec *properties [N_PROPS];
+static GdkRGBA accent_bg_color;
+static GdkRGBA accent_fg_color;
 
 SysprofChartLayer *
 sysprof_line_layer_new (void)
@@ -68,6 +71,7 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
   SysprofLineLayer *self = (SysprofLineLayer *)widget;
   const float *x_values;
   const float *y_values;
+  GdkRGBA *color;
   cairo_t *cr;
   float first_x;
   float first_y;
@@ -87,6 +91,11 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
 
   if (width == 0 || height == 0 || n_values == 0 || self->color.alpha == 0)
     return;
+
+  if (self->color_set)
+    color = &self->color;
+  else
+    color = &accent_bg_color;
 
   cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, width, height));
 
@@ -135,12 +144,12 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
 
   if (self->dashed)
     cairo_set_dash (cr, (double[]){2}, 1, 0);
-  gdk_cairo_set_source_rgba (cr, &self->color);
+  gdk_cairo_set_source_rgba (cr, color);
   cairo_stroke_preserve (cr);
 
   if (self->fill)
     {
-      GdkRGBA fill_color = self->color;
+      GdkRGBA fill_color = *color;
 
       fill_color.alpha *= .25;
       gdk_cairo_set_source_rgba (cr, &fill_color);
@@ -152,6 +161,22 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
     }
 
   cairo_destroy (cr);
+}
+
+static void
+sysprof_line_layer_css_changed (GtkWidget         *widget,
+                                GtkCssStyleChange *css_change)
+{
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  GtkStyleContext *style_context;
+
+  GTK_WIDGET_CLASS (sysprof_line_layer_parent_class)->css_changed (widget, css_change);
+
+  style_context = gtk_widget_get_style_context (widget);
+
+  gtk_style_context_lookup_color (style_context, "accent_fg_color", &accent_fg_color);
+  gtk_style_context_lookup_color (style_context, "accent_bg_color", &accent_bg_color);
+G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 static void
@@ -234,6 +259,7 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
   object_class->set_property = sysprof_line_layer_set_property;
 
   widget_class->snapshot = sysprof_line_layer_snapshot;
+  widget_class->css_changed = sysprof_line_layer_css_changed;
 
   properties[PROP_COLOR] =
     g_param_spec_boxed ("color", NULL, NULL,
@@ -291,6 +317,7 @@ sysprof_line_layer_set_color (SysprofLineLayer *self,
   if (!gdk_rgba_equal (&self->color, color))
     {
       self->color = *color;
+      self->color_set = color != &black;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }

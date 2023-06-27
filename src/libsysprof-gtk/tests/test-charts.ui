@@ -68,11 +68,16 @@
                 </style>
                 <property name="model">
                   <object class="GtkNoSelection">
-                    <binding name="model">
-                      <lookup name="counters" type="SysprofDocument">
-                        <lookup name="document">TestCharts</lookup>
-                      </lookup>
-                    </binding>
+                    <property name="model">
+                      <object class="SysprofSessionModel">
+                        <property name="session" bind-source="TestCharts" bind-property="session" bind-flags="sync-create"/>
+                        <binding name="model">
+                          <lookup name="counters" type="SysprofDocument">
+                            <lookup name="document">TestCharts</lookup>
+                          </lookup>
+                        </binding>
+                      </object>
+                    </property>
                   </object>
                 </property>
                 <property name="factory">
@@ -92,7 +97,9 @@
             <property name="text-overflow">clip</property>
             <binding name="text">
               <lookup name="name" type="SysprofDocumentCounter">
-                <lookup name="item">GtkListItem</lookup>
+                <lookup name="item" type="SysprofSessionModelItem">
+                  <lookup name="item">GtkListItem</lookup>
+                </lookup>
               </lookup>
             </binding>
           </object>
@@ -102,10 +109,37 @@
             <property name="hexpand">true</property>
             <child>
               <object class="SysprofLineLayer">
+                <binding name="x-axis">
+                  <lookup name="selected-time-axis" type="SysprofSession">
+                    <lookup name="session" type="SysprofSessionModelItem">
+                      <lookup name="item">GtkListItem</lookup>
+                    </lookup>
+                  </lookup>
+                </binding>
+                <property name="y-axis">
+                  <object class="SysprofValueAxis">
+                    <binding name="min-value">
+                      <lookup name="min-value" type="SysprofDocumentCounter">
+                        <lookup name="item" type="SysprofSessionModelItem">
+                          <lookup name="item">GtkListItem</lookup>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="max-value">
+                      <lookup name="max-value" type="SysprofDocumentCounter">
+                        <lookup name="item" type="SysprofSessionModelItem">
+                          <lookup name="item">GtkListItem</lookup>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </property>
                 <property name="series">
                   <object class="SysprofXYSeries">
                     <binding name="model">
-                      <lookup name="item">GtkListItem</lookup>
+                      <lookup name="item" type="SysprofSessionModelItem">
+                        <lookup name="item">GtkListItem</lookup>
+                      </lookup>
                     </binding>
                     <property name="x-expression">
                       <lookup name="time" type="SysprofDocumentCounterValue"/>

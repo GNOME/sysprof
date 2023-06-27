@@ -204,6 +204,8 @@ test_charts_class_init (TestChartsClass *klass)
   g_type_ensure (SYSPROF_TYPE_LINE_LAYER);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_COUNTER_VALUE);
   g_type_ensure (SYSPROF_TYPE_VALUE_AXIS);
+  g_type_ensure (SYSPROF_TYPE_SESSION_MODEL);
+  g_type_ensure (SYSPROF_TYPE_SESSION_MODEL_ITEM);
 }
 
 static void

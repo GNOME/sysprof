@@ -127,11 +127,11 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
   g_autoptr(GArray) freq_info = NULL;
   g_autofd int stat_fd = -1;
   g_autofree char *read_buffer = NULL;
-  SysprofCaptureCounterValue *values;
-  SysprofCaptureCounter *counters;
+  g_autofree SysprofCaptureCounterValue *values = NULL;
+  g_autofree SysprofCaptureCounter *counters = NULL;
+  g_autofree guint *ids = NULL;
   SysprofCaptureCounter *counter;
   SysprofCaptureWriter *writer;
-  guint *ids;
   guint n_cpu;
 
   g_assert (record != NULL);
@@ -144,9 +144,9 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
   g_unix_set_fd_nonblocking (stat_fd, TRUE, NULL);
   read_buffer = g_malloc (PROC_STAT_BUF_SIZE);
 
-  counters = g_alloca (sizeof *counters * ((n_cpu * 2) + 1));
-  ids = g_alloca (sizeof *ids * ((n_cpu * 2) + 1));
-  values = g_alloca (sizeof *values * ((n_cpu * 2) + 1));
+  counters = g_new0 (SysprofCaptureCounter, (n_cpu * 2) + 1);
+  ids = g_new0 (guint, (n_cpu * 2) + 1);
+  values = g_new0 (SysprofCaptureCounterValue, (n_cpu * 2) + 1);
 
   cpu_info = g_array_new (FALSE, TRUE, sizeof (CpuInfo));
   g_array_set_size (cpu_info, n_cpu);

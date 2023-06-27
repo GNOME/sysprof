@@ -107,14 +107,14 @@ static DexFuture *
 sysprof_battery_charge_record_fiber (gpointer user_data)
 {
   const int invalid_fd = -1;
-  SysprofCaptureCounterValue *values;
-  SysprofCaptureCounter *counters;
+  g_autofree guint *ids = NULL;
+  g_autofree SysprofCaptureCounterValue *values = NULL;
+  g_autofree SysprofCaptureCounter *counters = NULL;
+  g_autofree ReadBuffer *bufs = NULL;
   SysprofCaptureWriter *writer;
   Record *record = user_data;
   g_autoptr(GArray) charge_fds = NULL;
   g_auto(GStrv) names = NULL;
-  ReadBuffer *bufs;
-  guint *ids;
   guint n_names;
   guint n_counters = 1;
 
@@ -127,10 +127,10 @@ sysprof_battery_charge_record_fiber (gpointer user_data)
   n_names = g_strv_length (names);
 
   /* Use some stack space for our counters and values. */
-  ids = g_alloca0 (sizeof *ids * (n_names + 1));
-  counters = g_alloca0 (sizeof *counters * (n_names + 1));
-  values = g_alloca0 (sizeof *values * (n_names + 1));
-  bufs = g_alloca0 (sizeof (ReadBuffer) * (n_names + 1));
+  ids = g_new0 (guint, n_names + 1);
+  counters = g_new0 (SysprofCaptureCounter, n_names + 1);
+  values = g_new0 (SysprofCaptureCounterValue, n_names + 1);
+  bufs = g_new0 (ReadBuffer, n_names + 1);
 
   /* Setup the combined counter which is the total charge of all of
    * the batteries we discover on the system.

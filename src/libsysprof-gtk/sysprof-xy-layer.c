@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-axis-private.h"
 #include "sysprof-xy-layer-private.h"
 
 enum {
@@ -191,6 +192,16 @@ _sysprof_xy_layer_get_xy (SysprofXYLayer  *self,
   g_return_if_fail (x_values != NULL);
   g_return_if_fail (y_values != NULL);
   g_return_if_fail (n_values != NULL);
+
+  if (self->x_axis == NULL || _sysprof_axis_is_pathological (self->x_axis) ||
+      self->y_axis == NULL || _sysprof_axis_is_pathological (self->y_axis))
+    {
+      *n_values = 0;
+      *x_values = NULL;
+      *y_values = NULL;
+
+      return;
+    }
 
   *x_values = sysprof_normalized_series_get_values (self->normal_x, &n_x_values);
   *y_values = sysprof_normalized_series_get_values (self->normal_y, &n_y_values);

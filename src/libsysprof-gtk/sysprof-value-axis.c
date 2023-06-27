@@ -105,6 +105,14 @@ sysprof_value_axis_normalize (SysprofAxis  *axis,
   return r;
 }
 
+static gboolean
+sysprof_value_axis_is_pathological (SysprofAxis *axis)
+{
+  SysprofValueAxis *self = SYSPROF_VALUE_AXIS (axis);
+
+  return self->min_value == self->max_value;
+}
+
 static void
 sysprof_value_axis_get_property (GObject    *object,
                                  guint       prop_id,
@@ -162,6 +170,7 @@ sysprof_value_axis_class_init (SysprofValueAxisClass *klass)
 
   axis_class->get_min_value = sysprof_value_axis_real_get_min_value;
   axis_class->normalize = sysprof_value_axis_normalize;
+  axis_class->is_pathological = sysprof_value_axis_is_pathological;
 
   properties[PROP_MIN_VALUE] =
     g_param_spec_double ("min-value", NULL, NULL,

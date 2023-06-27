@@ -34,10 +34,11 @@ struct _SysprofAxisClass
 {
   GObjectClass parent_class;
 
-  void   (*get_min_value) (SysprofAxis  *axis,
-                           GValue       *min_value);
-  double (*normalize)     (SysprofAxis  *axis,
-                           const GValue *value);
+  void     (*get_min_value)   (SysprofAxis  *axis,
+                               GValue       *min_value);
+  double   (*normalize)       (SysprofAxis  *axis,
+                               const GValue *value);
+  gboolean (*is_pathological) (SysprofAxis  *axis);
 };
 
 #define SYSPROF_AXIS_GET_CLASS(obj) G_TYPE_INSTANCE_GET_CLASS(obj, SYSPROF_TYPE_AXIS, SysprofAxisClass)
@@ -54,6 +55,15 @@ _sysprof_axis_normalize (SysprofAxis  *axis,
                          const GValue *value)
 {
   return SYSPROF_AXIS_GET_CLASS (axis)->normalize (axis, value);
+}
+
+static inline double
+_sysprof_axis_is_pathological (SysprofAxis *axis)
+{
+  if (SYSPROF_AXIS_GET_CLASS (axis)->is_pathological)
+    return SYSPROF_AXIS_GET_CLASS (axis)->is_pathological (axis);
+
+  return FALSE;
 }
 
 void _sysprof_axis_emit_range_changed (SysprofAxis *self);

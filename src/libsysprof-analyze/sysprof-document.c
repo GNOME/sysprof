@@ -103,6 +103,7 @@ typedef struct _SysprofDocumentFramePointer
 enum {
   PROP_0,
   PROP_ALLOCATIONS,
+  PROP_COUNTERS,
   PROP_SAMPLES,
   PROP_TIME_SPAN,
   N_PROPS
@@ -273,6 +274,10 @@ sysprof_document_get_property (GObject    *object,
       g_value_take_object (value, sysprof_document_list_allocations (self));
       break;
 
+    case PROP_COUNTERS:
+      g_value_take_object (value, sysprof_document_list_counters (self));
+      break;
+
     case PROP_SAMPLES:
       g_value_take_object (value, sysprof_document_list_samples (self));
       break;
@@ -296,6 +301,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
 
   properties [PROP_ALLOCATIONS] =
     g_param_spec_object ("allocations", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_COUNTERS] =
+    g_param_spec_object ("counters", NULL, NULL,
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 

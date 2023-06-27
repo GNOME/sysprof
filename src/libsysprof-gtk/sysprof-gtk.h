@@ -35,6 +35,8 @@ G_BEGIN_DECLS
 # include "sysprof-normalized-series-item.h"
 # include "sysprof-series.h"
 # include "sysprof-session.h"
+# include "sysprof-session-model.h"
+# include "sysprof-session-model-item.h"
 # include "sysprof-split-layer.h"
 # include "sysprof-time-series.h"
 # include "sysprof-time-series-item.h"

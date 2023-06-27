@@ -109,6 +109,7 @@
             <property name="hexpand">true</property>
             <child>
               <object class="SysprofLineLayer">
+                <property name="spline">true</property>
                 <binding name="x-axis">
                   <lookup name="selected-time-axis" type="SysprofSession">
                     <lookup name="session" type="SysprofSessionModelItem">

@@ -225,9 +225,6 @@ void
 sysprof_series_set_model (SysprofSeries *self,
                           GListModel    *model)
 {
-  guint old_len = 0;
-  guint new_len = 0;
-
   g_return_if_fail (SYSPROF_IS_SERIES (self));
   g_return_if_fail (!model || G_IS_LIST_MODEL (model));
 
@@ -235,29 +232,41 @@ sysprof_series_set_model (SysprofSeries *self,
     return;
 
   if (model != NULL)
-    {
-      new_len = g_list_model_get_n_items (model);
-      g_object_ref (model);
-    }
+    g_object_ref (model);
 
   if (self->model != NULL)
     {
-      old_len = g_list_model_get_n_items (self->model);
+      guint old_len = g_list_model_get_n_items (self->model);
+
       g_clear_signal_handler (&self->items_changed_handler, self->model);
-      SYSPROF_SERIES_GET_CLASS (self)->items_changed (self, self->model, 0, old_len, 0);
+
+      if (old_len > 0)
+        {
+          SYSPROF_SERIES_GET_CLASS (self)->items_changed (self, self->model, 0, old_len, 0);
+          g_list_model_items_changed (G_LIST_MODEL (self), 0, old_len, 0);
+        }
+
+      g_clear_object (&self->model);
     }
 
-  g_set_object (&self->model, model);
+  self->model = model;
 
   if (model != NULL)
     {
+      guint new_len = g_list_model_get_n_items (model);
+
       self->items_changed_handler =
         g_signal_connect_object (model,
                                  "items-changed",
                                  G_CALLBACK (sysprof_series_items_changed_cb),
                                  self,
                                  G_CONNECT_SWAPPED);
-      SYSPROF_SERIES_GET_CLASS (self)->items_changed (self, self->model, 0, 0, new_len);
+
+      if (new_len > 0)
+        {
+          SYSPROF_SERIES_GET_CLASS (self)->items_changed (self, self->model, 0, 0, new_len);
+          g_list_model_items_changed (G_LIST_MODEL (self), 0, 0, new_len);
+        }
     }
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODEL]);

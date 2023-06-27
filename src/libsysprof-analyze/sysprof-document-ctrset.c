@@ -49,12 +49,34 @@ guint
 sysprof_document_ctrset_get_n_values (SysprofDocumentCtrset *self)
 {
   const SysprofCaptureCounterSet *ctrset;
+  gconstpointer endptr;
+  guint n_groups;
+  guint n_values = 0;
 
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_CTRSET (self), 0);
 
+  endptr = SYSPROF_DOCUMENT_FRAME_ENDPTR (self);
   ctrset = SYSPROF_DOCUMENT_FRAME_GET (self, SysprofCaptureCounterSet);
 
-  return SYSPROF_DOCUMENT_FRAME_UINT16 (self, ctrset->n_values);
+  n_groups = SYSPROF_DOCUMENT_FRAME_UINT16 (self, ctrset->n_values);
+
+  for (guint i = 0; i < n_groups; i++)
+    {
+      const SysprofCaptureCounterValues *values = &ctrset->values[i];
+
+      /* Don't allow overflowing the frame zone */
+      if ((gconstpointer)&values[1] > endptr)
+        break;
+
+      for (guint j = 0; j < G_N_ELEMENTS (values->ids); j++)
+        {
+          if (values->ids[j] == 0)
+            break;
+          n_values++;
+        }
+    }
+
+  return n_values;
 }
 
 /**

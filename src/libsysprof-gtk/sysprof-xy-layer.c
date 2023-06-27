@@ -27,6 +27,8 @@ enum {
   PROP_SERIES,
   PROP_X_AXIS,
   PROP_Y_AXIS,
+  PROP_NORMALIZED_X,
+  PROP_NORMALIZED_Y,
   N_PROPS
 };
 
@@ -69,6 +71,16 @@ sysprof_xy_layer_get_property (GObject    *object,
 
     case PROP_Y_AXIS:
       g_value_set_object (value, sysprof_xy_layer_get_y_axis (self));
+      break;
+
+    case PROP_NORMALIZED_X:
+      /* For inspector debugging */
+      g_value_set_object (value, self->normal_x);
+      break;
+
+    case PROP_NORMALIZED_Y:
+      /* For inspector debugging */
+      g_value_set_object (value, self->normal_y);
       break;
 
     default:
@@ -126,6 +138,16 @@ sysprof_xy_layer_class_init (SysprofXYLayerClass *klass)
     g_param_spec_object ("y-axis", NULL, NULL,
                          SYSPROF_TYPE_AXIS,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_NORMALIZED_X] =
+    g_param_spec_object ("normalized-x", NULL, NULL,
+                         SYSPROF_TYPE_NORMALIZED_SERIES,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_NORMALIZED_Y] =
+    g_param_spec_object ("normalized-y", NULL, NULL,
+                         SYSPROF_TYPE_NORMALIZED_SERIES,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

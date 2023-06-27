@@ -24,11 +24,12 @@
 
 G_BEGIN_DECLS
 
-SysprofDocumentCounter *_sysprof_document_counter_new (guint       id,
-                                                       guint       type,
-                                                       GRefString *category,
-                                                       GRefString *name,
-                                                       GRefString *description,
-                                                       GArray     *values);
+SysprofDocumentCounter *_sysprof_document_counter_new             (guint                   id,
+                                                                   guint                   type,
+                                                                   GRefString             *category,
+                                                                   GRefString             *name,
+                                                                   GRefString             *description,
+                                                                   GArray                 *values);
+void                    _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self);
 
 G_END_DECLS

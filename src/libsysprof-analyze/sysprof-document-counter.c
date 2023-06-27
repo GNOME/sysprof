@@ -206,47 +206,6 @@ _sysprof_document_counter_new (guint       id,
   self->description = description;
   self->values = values;
 
-  if (type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
-    {
-      double min_value = 0;
-      double max_value = 0;
-
-      for (guint i = 0; i < values->len; i++)
-        {
-          const SysprofDocumentTimedValue *value = &g_array_index (self->values, SysprofDocumentTimedValue, i);
-          double v = value->v_double;
-
-          if (v < min_value)
-            min_value = v;
-
-          if (v > max_value)
-            max_value = v;
-        }
-
-      self->min_value = min_value;
-      self->max_value = max_value;
-    }
-  else if (type == SYSPROF_CAPTURE_COUNTER_INT64)
-    {
-      gint64 min_value = 0;
-      gint64 max_value = 0;
-
-      for (guint i = 0; i < values->len; i++)
-        {
-          const SysprofDocumentTimedValue *value = &g_array_index (self->values, SysprofDocumentTimedValue, i);
-          gint64 v = value->v_int64;
-
-          if (v < min_value)
-            min_value = v;
-
-          if (v > max_value)
-            max_value = v;
-        }
-
-      self->min_value = min_value;
-      self->max_value = max_value;
-    }
-
   return self;
 }
 
@@ -352,4 +311,60 @@ sysprof_document_counter_get_value_double (SysprofDocumentCounter *self,
     *time = g_array_index (self->values, SysprofDocumentTimedValue, nth).time;
 
   return g_array_index (self->values, SysprofDocumentTimedValue, nth).v_double;
+}
+
+static inline double
+value_as_double (guint                            type,
+                 const SysprofDocumentTimedValue *value)
+{
+  if (type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
+    return value->v_double;
+  else if (type == SYSPROF_CAPTURE_COUNTER_INT64)
+    return value->v_int64;
+  else
+    return .0;
+}
+
+void
+_sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
+{
+  const SysprofDocumentTimedValue *values;
+  gboolean min_value_changed = FALSE;
+  gboolean max_value_changed = FALSE;
+  double min_value;
+  double max_value;
+  guint n_values;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self));
+
+  if (self->values->len == 0)
+    return;
+
+  values = &g_array_index (self->values, SysprofDocumentTimedValue, 0);
+  n_values = self->values->len;
+
+  min_value = value_as_double (self->type, &values[0]);
+  max_value = min_value;
+
+  for (guint i = 1; i < n_values; i++)
+    {
+      double value = value_as_double (self->type, &values[i]);
+
+      min_value = MIN (min_value, value);
+      max_value = MAX (max_value, value);
+    }
+
+  min_value_changed = self->min_value != min_value;
+  max_value_changed = self->max_value != max_value;
+
+  self->min_value = min_value;
+  self->max_value = max_value;
+
+  if (min_value_changed)
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MIN_VALUE]);
+
+  if (max_value_changed)
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MAX_VALUE]);
+
+  g_print ("%s %lf..%lf\n", self->name, self->min_value, self->max_value);
 }

@@ -588,6 +588,7 @@ sysprof_document_load_counters (SysprofDocument *self)
   g_autoptr(EggBitset) swap_ids = NULL;
   GListModel *model;
   EggBitsetIter iter;
+  guint n_counters;
   guint i;
 
   g_assert (SYSPROF_IS_DOCUMENT (self));
@@ -613,7 +614,8 @@ sysprof_document_load_counters (SysprofDocument *self)
       do
         {
           g_autoptr(SysprofDocumentCtrdef) ctrdef = g_list_model_get_item (model, i);
-          guint n_counters = sysprof_document_ctrdef_get_n_counters (ctrdef);
+
+          n_counters = sysprof_document_ctrdef_get_n_counters (ctrdef);
 
           for (guint j = 0; j < n_counters; j++)
             {
@@ -679,10 +681,22 @@ sysprof_document_load_counters (SysprofDocument *self)
                 }
 
               if ((values = g_hash_table_lookup (self->counter_id_to_values, GUINT_TO_POINTER (id))))
+              {
+                g_print ("Adding counter to %d\n", id);
                 g_array_append_val (values, ctrval);
+              }
             }
         }
       while (egg_bitset_iter_next (&iter, &i));
+    }
+
+  n_counters = g_list_model_get_n_items (G_LIST_MODEL (self->counters));
+
+  for (i = 0; i < n_counters; i++)
+    {
+      g_autoptr(SysprofDocumentCounter) counter = g_list_model_get_item (G_LIST_MODEL (self->counters), i);
+
+      _sysprof_document_counter_calculate_range (counter);
     }
 }
 

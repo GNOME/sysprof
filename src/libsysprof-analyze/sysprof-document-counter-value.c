@@ -26,12 +26,14 @@ struct _SysprofDocumentCounterValue
 {
   GObject parent_instance;
   SysprofDocumentTimedValue value;
+  guint type;
 };
 
 enum {
   PROP_0,
   PROP_TIME,
   PROP_VALUE_DOUBLE,
+  PROP_VALUE_INT64,
   N_PROPS
 };
 
@@ -57,6 +59,10 @@ sysprof_document_counter_value_get_property (GObject    *object,
       g_value_set_double (value, sysprof_document_counter_value_get_value_double (self));
       break;
 
+    case PROP_VALUE_INT64:
+      g_value_set_int64 (value, sysprof_document_counter_value_get_value_int64 (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -79,6 +85,11 @@ sysprof_document_counter_value_class_init (SysprofDocumentCounterValueClass *kla
                          -G_MAXDOUBLE, G_MAXDOUBLE, 0,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_VALUE_INT64] =
+    g_param_spec_int64 ("value-int64", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -88,11 +99,13 @@ sysprof_document_counter_value_init (SysprofDocumentCounterValue *self)
 }
 
 SysprofDocumentCounterValue *
-_sysprof_document_counter_value_new (const SysprofDocumentTimedValue *value)
+_sysprof_document_counter_value_new (guint                            type,
+                                     const SysprofDocumentTimedValue *value)
 {
   SysprofDocumentCounterValue *self;
 
   self = g_object_new (SYSPROF_TYPE_DOCUMENT_COUNTER_VALUE, NULL);
+  self->type = type;
   self->value = *value;
 
   return self;
@@ -124,11 +137,17 @@ sysprof_document_counter_value_get_value (SysprofDocumentCounterValue *self,
 gint64
 sysprof_document_counter_value_get_value_int64 (SysprofDocumentCounterValue *self)
 {
-  return self->value.v_int64;
+  if (self->type == SYSPROF_CAPTURE_COUNTER_INT64)
+    return self->value.v_int64;
+  else
+    return (gint64)self->value.v_double;
 }
 
 double
 sysprof_document_counter_value_get_value_double (SysprofDocumentCounterValue *self)
 {
-  return self->value.v_double;
+  if (self->type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
+    return self->value.v_double;
+  else
+    return (double)self->value.v_int64;
 }

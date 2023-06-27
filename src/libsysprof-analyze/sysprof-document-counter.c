@@ -74,7 +74,7 @@ sysprof_document_counter_get_item (GListModel *model,
 
   value = &g_array_index (self->values, SysprofDocumentTimedValue, position);
 
-  return _sysprof_document_counter_value_new (value);
+  return _sysprof_document_counter_value_new (self->type, value);
 }
 
 static void

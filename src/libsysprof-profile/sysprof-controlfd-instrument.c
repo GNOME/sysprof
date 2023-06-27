@@ -41,6 +41,9 @@
 # include "mapped-ring-buffer-source-private.h"
 #endif
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
+
 struct _SysprofControlfdInstrument
 {
   SysprofInstrument  parent_instance;
@@ -188,7 +191,10 @@ static DexFuture *
 sysprof_controlfd_instrument_record_fiber (gpointer user_data)
 {
   SysprofControlfdRecording *state = user_data;
+  g_autoptr(SysprofCaptureWriter) temp_writer = NULL;
+  SysprofCaptureWriter *writer;
   g_autoptr(GError) error = NULL;
+  g_autofd int mem_fd = -1;
   GInputStream *input;
 
   g_assert (state != NULL);
@@ -197,6 +203,12 @@ sysprof_controlfd_instrument_record_fiber (gpointer user_data)
   g_assert (state->source_ids != NULL);
 
   input = g_io_stream_get_input_stream (G_IO_STREAM (state->stream));
+
+  if (!(mem_fd = sysprof_memfd_create ("[controlfd-memfd]")))
+    return dex_future_new_for_errno (errno);
+
+  temp_writer = sysprof_capture_writer_new_from_fd (g_steal_fd (&mem_fd), 0);
+  writer = _sysprof_recording_writer (state->recording);
 
   for (;;)
     {
@@ -224,11 +236,10 @@ sysprof_controlfd_instrument_record_fiber (gpointer user_data)
       if ((ring_buffer = mapped_ring_buffer_new_reader (0)))
         {
           int fd = mapped_ring_buffer_get_fd (ring_buffer);
-          SysprofCaptureWriter *writer = _sysprof_recording_writer (state->recording);
           RingData *ring_data;
 
           ring_data = g_new0 (RingData, 1);
-          ring_data->writer = sysprof_capture_writer_ref (writer);
+          ring_data->writer = sysprof_capture_writer_ref (temp_writer);
           ring_data->source_ids = g_array_ref (state->source_ids);
           ring_data->id = mapped_ring_buffer_create_source_full (ring_buffer,
                                                                  sysprof_controlfd_instrument_frame_cb,
@@ -247,6 +258,14 @@ handle_error:
       guint id = g_array_index (state->source_ids, guint, state->source_ids->len-1);
       state->source_ids->len--;
       g_source_remove (id);
+    }
+
+  if (temp_writer != NULL)
+    {
+      g_autoptr(SysprofCaptureReader) reader = sysprof_capture_writer_create_reader (temp_writer);
+
+      if (reader != NULL)
+        sysprof_capture_writer_cat (writer, reader);
     }
 
   if (error != NULL)

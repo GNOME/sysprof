@@ -365,6 +365,4 @@ _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
 
   if (max_value_changed)
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MAX_VALUE]);
-
-  g_print ("%s %lf..%lf\n", self->name, self->min_value, self->max_value);
 }

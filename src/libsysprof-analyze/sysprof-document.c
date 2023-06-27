@@ -681,10 +681,7 @@ sysprof_document_load_counters (SysprofDocument *self)
                 }
 
               if ((values = g_hash_table_lookup (self->counter_id_to_values, GUINT_TO_POINTER (id))))
-              {
-                g_print ("Adding counter to %d\n", id);
                 g_array_append_val (values, ctrval);
-              }
             }
         }
       while (egg_bitset_iter_next (&iter, &i));

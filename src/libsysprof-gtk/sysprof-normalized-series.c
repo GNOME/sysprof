@@ -41,6 +41,8 @@ struct _SysprofNormalizedSeries
 
   gulong         range_changed_handler;
   guint          update_source;
+
+  guint          disposed : 1;
 };
 
 struct _SysprofNormalizedSeriesClass
@@ -64,6 +66,7 @@ static gboolean
 sysprof_normalized_series_update_missing (gpointer user_data)
 {
   SysprofNormalizedSeries *self = user_data;
+  g_autoptr(GtkExpression) expression = NULL;
   g_autoptr(GListModel) model = NULL;
   g_autoptr(EggBitset) bitset = NULL;
   EggBitsetIter iter;
@@ -71,14 +74,15 @@ sysprof_normalized_series_update_missing (gpointer user_data)
 
   g_assert (SYSPROF_IS_NORMALIZED_SERIES (self));
 
-  if (self->missing == NULL)
+  if (self->missing == NULL || self->disposed)
     {
       self->update_source = 0;
       return G_SOURCE_REMOVE;
     }
 
-  model = g_object_ref (sysprof_series_get_model (self->series));
   bitset = egg_bitset_ref (self->missing);
+  model = g_object_ref (sysprof_series_get_model (self->series));
+  expression = gtk_expression_ref (self->expression);
 
   if (egg_bitset_iter_init_first (&iter, bitset, &position))
     {
@@ -87,20 +91,23 @@ sysprof_normalized_series_update_missing (gpointer user_data)
 
       for (;;)
         {
-          GObject *item = g_list_model_get_item (model, position);
-          GValue value = G_VALUE_INIT;
-          guint next;
+          g_autoptr(GObject) item = g_list_model_get_item (model, position);
+          g_auto(GValue) value = G_VALUE_INIT;
+          guint next = GTK_INVALID_LIST_POSITION;
 
-          gtk_expression_evaluate (self->expression, item, &value);
+          gtk_expression_evaluate (expression, item, &value);
+
+          g_assert (self->values->len > position);
 
           g_array_index (self->values, float, position) = _sysprof_axis_normalize (self->axis, &value);
 
           egg_bitset_remove (bitset, position);
 
-          g_value_unset (&value);
-          g_clear_object (&item);
+          if (self->disposed)
+            break;
 
-          if (!egg_bitset_iter_next (&iter, &next) || next != position + 1)
+          if (!egg_bitset_iter_init_first (&iter, bitset, &next) ||
+              next != position + 1)
             {
               g_list_model_items_changed (G_LIST_MODEL (self),
                                           first,
@@ -109,7 +116,8 @@ sysprof_normalized_series_update_missing (gpointer user_data)
               first = next;
             }
 
-          if (g_get_monotonic_time () >= deadline)
+          if (next == GTK_INVALID_LIST_POSITION ||
+              g_get_monotonic_time () >= deadline)
             break;
 
           position = next;
@@ -132,7 +140,7 @@ sysprof_normalized_series_maybe_update (SysprofNormalizedSeries *self)
 
   g_assert (SYSPROF_IS_NORMALIZED_SERIES (self));
 
-  if (self->update_source)
+  if (self->update_source || self->disposed)
     return;
 
   if (!self->missing || egg_bitset_is_empty (self->missing))
@@ -231,6 +239,8 @@ sysprof_normalized_series_dispose (GObject *object)
 {
   SysprofNormalizedSeries *self = (SysprofNormalizedSeries *)object;
 
+  self->disposed = TRUE;
+
   g_clear_handle_id (&self->update_source, g_source_remove);
   g_clear_signal_handler (&self->range_changed_handler, self->axis);
 
@@ -238,8 +248,6 @@ sysprof_normalized_series_dispose (GObject *object)
   g_clear_object (&self->series);
 
   g_clear_pointer (&self->expression, gtk_expression_unref);
-
-  egg_bitset_remove_all (self->missing);
 
   G_OBJECT_CLASS (sysprof_normalized_series_parent_class)->dispose (object);
 }

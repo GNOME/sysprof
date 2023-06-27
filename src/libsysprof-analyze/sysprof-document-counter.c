@@ -325,6 +325,22 @@ value_as_double (guint                            type,
     return .0;
 }
 
+static int
+sort_by_time (gconstpointer aptr,
+              gconstpointer bptr)
+{
+  const SysprofDocumentTimedValue *a = aptr;
+  const SysprofDocumentTimedValue *b = bptr;
+
+  if (a->time < b->time)
+    return -1;
+
+  if (a->time > b->time)
+    return 1;
+
+  return 0;
+}
+
 void
 _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
 {
@@ -339,6 +355,8 @@ _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
 
   if (self->values->len == 0)
     return;
+
+  g_array_sort (self->values, sort_by_time);
 
   values = &g_array_index (self->values, SysprofDocumentTimedValue, 0);
   n_values = self->values->len;

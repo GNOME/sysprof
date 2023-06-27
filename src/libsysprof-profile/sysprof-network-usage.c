@@ -109,14 +109,14 @@ sysprof_network_usage_record_fiber (gpointer user_data)
 {
   char buf[4096*2];
   Record *record = user_data;
-  SysprofCaptureCounterValue *values;
+  g_autofree SysprofCaptureCounterValue *values = NULL;
+  g_autofree guint *ids = NULL;
   g_autoptr(GArray) devices = NULL;
   g_autoptr(GError) error = NULL;
   SysprofCaptureWriter *writer;
   SysprofCaptureCounter ctr[2] = {0};
   g_autofd int stat_fd = -1;
   LineReader reader;
-  guint *ids;
   guint combined_rx_id;
   guint combined_tx_id;
   gssize n_read;
@@ -212,8 +212,8 @@ sysprof_network_usage_record_fiber (gpointer user_data)
       g_array_append_val (devices, dev);
     }
 
-  values = g_alloca (sizeof (SysprofCaptureCounterValue) * (devices->len + 2));
-  ids = g_alloca (sizeof (guint) * (devices->len + 2));
+  values = g_new0 (SysprofCaptureCounterValue, (devices->len*2) + 2);
+  ids = g_new0 (guint, (devices->len*2) + 2);
   ids[0] = combined_rx_id;
   ids[1] = combined_tx_id;
   for (guint i = 0; i < devices->len; i++)

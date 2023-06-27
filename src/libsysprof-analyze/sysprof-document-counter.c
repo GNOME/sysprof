@@ -213,7 +213,8 @@ _sysprof_document_counter_new (guint       id,
 
       for (guint i = 0; i < values->len; i++)
         {
-          double v = g_array_index (self->values, double, i);
+          const SysprofDocumentTimedValue *value = &g_array_index (self->values, SysprofDocumentTimedValue, i);
+          double v = value->v_double;
 
           if (v < min_value)
             min_value = v;
@@ -232,7 +233,8 @@ _sysprof_document_counter_new (guint       id,
 
       for (guint i = 0; i < values->len; i++)
         {
-          gint64 v = g_array_index (self->values, gint64, i);
+          const SysprofDocumentTimedValue *value = &g_array_index (self->values, SysprofDocumentTimedValue, i);
+          gint64 v = value->v_int64;
 
           if (v < min_value)
             min_value = v;

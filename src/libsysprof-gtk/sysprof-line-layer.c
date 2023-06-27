@@ -115,6 +115,12 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
           float x = floor (x_values[i] * width);
           float y = floor (y_values[i] * height);
 
+          /* Skip if we are getting data incorrectly on the X axis.
+           * It should have been sorted by this point.
+           */
+          if (x < last_x)
+            continue;
+
           cairo_curve_to (cr,
                           last_x + ((x - last_x)/2),
                           last_y,
@@ -133,6 +139,12 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
         {
           float x = floor (x_values[i] * width);
           float y = floor (y_values[i] * height);
+
+          /* Skip if we are getting data incorrectly on the X axis.
+           * It should have been sorted by this point.
+           */
+          if (x < last_x)
+            continue;
 
           cairo_line_to (cr, x, y);
 

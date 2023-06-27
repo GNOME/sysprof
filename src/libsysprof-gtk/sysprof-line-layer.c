@@ -33,7 +33,7 @@ struct _SysprofLineLayer
   guint dashed : 1;
   guint fill : 1;
   guint flip_y : 1;
-  guint use_curves : 1;
+  guint spline : 1;
 };
 
 struct _SysprofLineLayerClass
@@ -49,7 +49,7 @@ enum {
   PROP_DASHED,
   PROP_FILL,
   PROP_FLIP_Y,
-  PROP_USE_CURVES,
+  PROP_SPLINE,
   N_PROPS
 };
 
@@ -108,7 +108,7 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
       cairo_move_to (cr, last_x, last_y);
     }
 
-  if (self->use_curves)
+  if (self->spline)
     {
       for (guint i = 1; i < n_values; i++)
         {
@@ -187,8 +187,8 @@ sysprof_line_layer_get_property (GObject    *object,
       g_value_set_boolean (value, sysprof_line_layer_get_flip_y (self));
       break;
 
-    case PROP_USE_CURVES:
-      g_value_set_boolean (value, sysprof_line_layer_get_use_curves (self));
+    case PROP_SPLINE:
+      g_value_set_boolean (value, sysprof_line_layer_get_spline (self));
       break;
 
     default:
@@ -222,8 +222,8 @@ sysprof_line_layer_set_property (GObject      *object,
       sysprof_line_layer_set_flip_y (self, g_value_get_boolean (value));
       break;
 
-    case PROP_USE_CURVES:
-      sysprof_line_layer_set_use_curves (self, g_value_get_boolean (value));
+    case PROP_SPLINE:
+      sysprof_line_layer_set_spline (self, g_value_get_boolean (value));
       break;
 
     default:
@@ -262,8 +262,8 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
                          FALSE,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_USE_CURVES] =
-    g_param_spec_boolean ("use-curves", NULL, NULL,
+  properties [PROP_SPLINE] =
+    g_param_spec_boolean ("spline", NULL, NULL,
                          FALSE,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
@@ -376,25 +376,25 @@ sysprof_line_layer_set_flip_y (SysprofLineLayer *self,
 }
 
 gboolean
-sysprof_line_layer_get_use_curves (SysprofLineLayer *self)
+sysprof_line_layer_get_spline (SysprofLineLayer *self)
 {
   g_return_val_if_fail (SYSPROF_IS_LINE_LAYER (self), FALSE);
 
-  return self->use_curves;
+  return self->spline;
 }
 
 void
-sysprof_line_layer_set_use_curves (SysprofLineLayer *self,
-                                   gboolean          use_curves)
+sysprof_line_layer_set_spline (SysprofLineLayer *self,
+                               gboolean          spline)
 {
   g_return_if_fail (SYSPROF_IS_LINE_LAYER (self));
 
-  use_curves = !!use_curves;
+  spline = !!spline;
 
-  if (use_curves != self->use_curves)
+  if (spline != self->spline)
     {
-      self->use_curves = use_curves;
-      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_USE_CURVES]);
+      self->spline = spline;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SPLINE]);
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }
 }

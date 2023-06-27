@@ -159,17 +159,16 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
    */
   for (guint i = 0; i < n_cpu; i++)
     {
-      guint counter_base = sysprof_capture_writer_request_counter (writer, 2);
       g_autofree char *max_path = g_strdup_printf ("/sys/devices/system/cpu/cpu%u/cpufreq/scaling_max_freq", i);
       g_autofree char *cur_path = g_strdup_printf ("/sys/devices/system/cpu/cpu%u/cpufreq/scaling_cur_freq", i);
       g_autofree char *max_value = NULL;
       CpuFreq cf;
 
-      ids[i*2] = counter_base;
-      ids[i*2+1] = counter_base + 1;
+      ids[i*2] = sysprof_capture_writer_request_counter (writer, 1);
+      ids[i*2+1] = sysprof_capture_writer_request_counter (writer, 1);
 
       counter = &counters[i*2];
-      counter->id = counter_base;
+      counter->id = ids[i*2];
       counter->type = SYSPROF_CAPTURE_COUNTER_DOUBLE;
       counter->value.vdbl = 0;
       g_strlcpy (counter->category, "CPU Percent", sizeof counter->category);
@@ -178,7 +177,7 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
                   "Total CPU usage %d", i);
 
       counter = &counters[i*2+1];
-      counter->id = counter_base + 1;
+      counter->id = ids[i*2+1];
       counter->type = SYSPROF_CAPTURE_COUNTER_DOUBLE;
       counter->value.vdbl = 0;
       g_strlcpy (counter->category, "CPU Frequency", sizeof counter->category);
@@ -285,7 +284,7 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
 
           /* Parse the various counters in order */
           user = nice = sys = idle = id = 0;
-          ret = sscanf (line, "%s %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld",
+          ret = sscanf (line, "%63s %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld",
                         cpu, &user, &nice, &sys, &idle,
                         &iowait, &irq, &softirq, &steal, &guest, &guest_nice);
           if (ret != 11)
@@ -332,8 +331,8 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
           DexFuture *freq_future = g_ptr_array_index (futures, i);
           gssize len = dex_await_int64 (dex_ref (freq_future), NULL);
 
-          values[n_cpu*i].vdbl = ci->total;
-          values[n_cpu*i+1].vdbl = get_cpu_freq (cf->stat_fd, i, cf->max, cf->buf, len);
+          values[i*2].vdbl = ci->total;
+          values[i*2+1].vdbl = get_cpu_freq (cf->stat_fd, i, cf->max, cf->buf, len);
 
           total_usage += ci->total;
         }

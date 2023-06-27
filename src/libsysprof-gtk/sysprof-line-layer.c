@@ -69,6 +69,8 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
   const float *x_values;
   const float *y_values;
   cairo_t *cr;
+  float first_x;
+  float first_y;
   float last_x;
   float last_y;
   guint n_values;
@@ -88,32 +90,22 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
 
   cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, width, height));
 
-  cairo_set_line_width (cr, 1./width);
+  cairo_set_line_width (cr, 1);
 
   if (!self->flip_y)
     cairo_set_matrix (cr, &(cairo_matrix_t) {1, 0, 0, -1, 0, height});
 
-  cairo_scale (cr, width, height);
+  first_x = last_x = floor (x_values[0] * width);
+  first_y = last_y = floor (y_values[0] * height);
 
-  last_x = x_values[0];
-  last_y = y_values[0];
-
-  if (self->fill)
-    {
-      cairo_move_to (cr, last_x, 0);
-      cairo_line_to (cr, last_x, last_y);
-    }
-  else
-    {
-      cairo_move_to (cr, last_x, last_y);
-    }
+  cairo_move_to (cr, first_x, first_y);
 
   if (self->spline)
     {
       for (guint i = 1; i < n_values; i++)
         {
-          float x = x_values[i];
-          float y = y_values[i];
+          float x = floor (x_values[i] * width);
+          float y = floor (y_values[i] * height);
 
           cairo_curve_to (cr,
                           last_x + ((x - last_x)/2),
@@ -131,8 +123,8 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
     {
       for (guint i = 1; i < n_values; i++)
         {
-          float x = x_values[i];
-          float y = y_values[i];
+          float x = floor (x_values[i] * width);
+          float y = floor (y_values[i] * height);
 
           cairo_line_to (cr, x, y);
 
@@ -140,6 +132,11 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
           last_y = y;
         }
     }
+
+  if (self->dashed)
+    cairo_set_dash (cr, (double[]){2}, 1, 0);
+  gdk_cairo_set_source_rgba (cr, &self->color);
+  cairo_stroke_preserve (cr);
 
   if (self->fill)
     {
@@ -149,14 +146,10 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
       gdk_cairo_set_source_rgba (cr, &fill_color);
 
       cairo_line_to (cr, last_x, 0);
-      cairo_fill_preserve (cr);
+      cairo_line_to (cr, first_x, 0);
+      cairo_line_to (cr, first_x, first_y);
+      cairo_fill (cr);
     }
-
-  if (self->dashed)
-    cairo_set_dash (cr, (double[]){(1./height*2)}, 1, 0);
-
-  gdk_cairo_set_source_rgba (cr, &self->color);
-  cairo_stroke (cr);
 
   cairo_destroy (cr);
 }

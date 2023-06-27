@@ -30,10 +30,12 @@ static char *capture_file;
 static SysprofRecording *active_recording;
 static gboolean memprof;
 static gboolean tracer;
+static gboolean gnome_shell;
 static const GOptionEntry entries[] = {
   { "capture", 'c', 0, G_OPTION_ARG_FILENAME, &capture_file, "The file to capture into", "CAPTURE" },
   { "memprof", 'm', 0, G_OPTION_ARG_NONE, &memprof, "Do memory allocation tracking on subprocess" },
   { "tracer", 't', 0, G_OPTION_ARG_NONE, &tracer, "Enable tracing with __cyg_profile_enter" },
+  { "gnome-shell", 's', 0, G_OPTION_ARG_NONE, &gnome_shell, "Request GNOME Shell to provide profiler data" },
   { 0 }
 };
 
@@ -175,6 +177,11 @@ main (int   argc,
   sysprof_profiler_add_instrument (profiler, sysprof_memory_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
 
+  if (gnome_shell)
+    sysprof_profiler_add_instrument (profiler,
+                                     sysprof_proxied_instrument_new (G_BUS_TYPE_SESSION,
+                                                                     "org.gnome.Shell",
+                                                                     "/org/gnome/Sysprof3/Profiler"));
   if (memprof)
     sysprof_profiler_add_instrument (profiler, sysprof_malloc_tracing_new ());
 

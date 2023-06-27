@@ -251,7 +251,10 @@ main (int   argc,
                          "default-height", 600,
                          "document", document,
                          NULL);
-
+  g_signal_connect_swapped (window,
+                            "close-request",
+                            G_CALLBACK (g_main_loop_quit),
+                            main_loop);
   gtk_window_present (window);
   g_main_loop_run (main_loop);
 

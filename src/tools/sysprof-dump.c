@@ -30,8 +30,10 @@
 #include <sysprof.h>
 
 static gboolean list_files = FALSE;
+static gboolean resolve = FALSE;
 static const GOptionEntry main_entries[] = {
   { "list-files", 'l', 0, G_OPTION_ARG_NONE, &list_files, "List files within the capture" },
+  { "resolve", 'r', 0, G_OPTION_ARG_NONE, &resolve, "Resolve symbols" },
   { 0 }
 };
 
@@ -108,17 +110,19 @@ main (gint argc,
     }
 
   resolvers = g_ptr_array_new_with_free_func (g_object_unref);
-  g_ptr_array_add (resolvers, sysprof_capture_symbol_resolver_new ());
-  g_ptr_array_add (resolvers, sysprof_kernel_symbol_resolver_new ());
-  g_ptr_array_add (resolvers, sysprof_elf_symbol_resolver_new ());
 
-  for (guint i = 0; i < resolvers->len; i++)
+  if (resolve)
     {
-      sysprof_capture_reader_reset (reader);
-      sysprof_symbol_resolver_load (g_ptr_array_index (resolvers, i), reader);
-    }
+      g_ptr_array_add (resolvers, sysprof_capture_symbol_resolver_new ());
+      g_ptr_array_add (resolvers, sysprof_kernel_symbol_resolver_new ());
+      g_ptr_array_add (resolvers, sysprof_elf_symbol_resolver_new ());
 
-  sysprof_capture_reader_reset (reader);
+      for (guint i = 0; i < resolvers->len; i++)
+        {
+          sysprof_symbol_resolver_load (g_ptr_array_index (resolvers, i), reader);
+          sysprof_capture_reader_reset (reader);
+        }
+    }
 
   ctrtypes = g_hash_table_new (NULL, NULL);
 
@@ -293,9 +297,15 @@ main (gint argc,
 
             for (guint i = 0; i < s->n_addrs; i++)
               {
-                g_autofree char *name = symbolize (resolvers, &s->frame, &context, s->addrs[i]);
-
-                g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " (%s)\n", s->addrs[i], name);
+                if (resolve)
+                  {
+                    g_autofree char *name = symbolize (resolvers, &s->frame, &context, s->addrs[i]);
+                    g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " (%s)\n", s->addrs[i], name);
+                  }
+                else
+                  {
+                    g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT "\n", s->addrs[i]);
+                  }
               }
 
             break;
@@ -313,9 +323,15 @@ main (gint argc,
 
             for (guint i = 0; i < s->n_addrs; i++)
               {
-                g_autofree char *name = symbolize (resolvers, &s->frame, &context, s->addrs[i]);
-
-                g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " (%s)\n", s->addrs[i], name);
+                if (resolve)
+                  {
+                    g_autofree char *name = symbolize (resolvers, &s->frame, &context, s->addrs[i]);
+                    g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " (%s)\n", s->addrs[i], name);
+                  }
+                else
+                  {
+                    g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT "\n", s->addrs[i]);
+                  }
               }
 
             break;
@@ -400,9 +416,15 @@ main (gint argc,
 
             for (guint i = 0; i < ev->n_addrs; i++)
               {
-                g_autofree char *name = symbolize (resolvers, &ev->frame, &context, ev->addrs[i]);
-
-                g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " (%s)\n", ev->addrs[i], name);
+                if (resolve)
+                  {
+                    g_autofree char *name = symbolize (resolvers, &ev->frame, &context, ev->addrs[i]);
+                    g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT " (%s)\n", ev->addrs[i], name);
+                  }
+                else
+                  {
+                    g_print ("  " SYSPROF_CAPTURE_ADDRESS_FORMAT "\n", ev->addrs[i]);
+                  }
               }
           }
           break;

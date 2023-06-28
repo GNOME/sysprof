@@ -21,9 +21,13 @@
 
 #include "config.h"
 
+#include <math.h>
+
 #include "sysprof-chart-layer-private.h"
 #include "sysprof-line-layer.h"
 #include "sysprof-xy-layer-private.h"
+
+#define NEAR_DISTANCE 50
 
 struct _SysprofLineLayer
 {
@@ -175,6 +179,91 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
 }
 
 static void
+sysprof_line_layer_snapshot_motion (SysprofChartLayer *layer,
+                                    GtkSnapshot       *snapshot,
+                                    double             x,
+                                    double             y)
+{
+  SysprofLineLayer *self = (SysprofLineLayer *)layer;
+  const GdkRGBA *color;
+  const float *x_values;
+  const float *y_values;
+  float best_distance = G_MAXFLOAT;
+  guint best_index = GTK_INVALID_LIST_POSITION;
+  float best_x = 0;
+  float best_y = 0;
+  guint n_values;
+  int width;
+  int height;
+
+  g_assert (SYSPROF_IS_LINE_LAYER (self));
+  g_assert (GTK_IS_SNAPSHOT (snapshot));
+
+  width = gtk_widget_get_width (GTK_WIDGET (self));
+  height = gtk_widget_get_height (GTK_WIDGET (self));
+
+  _sysprof_xy_layer_get_xy (SYSPROF_XY_LAYER (self), &x_values, &y_values, &n_values);
+
+  if (width == 0 || height == 0 || n_values == 0)
+    return;
+
+  if (self->color_set)
+    color = &self->color;
+  else
+    color = _sysprof_chart_layer_get_accent_bg_color ();
+
+  if (color->alpha == .0)
+    return;
+
+  for (guint i = 0; i < n_values; i++)
+    {
+      float x2 = floor (x_values[i] * width);
+      float y2 = height - floor (y_values[i] * height);
+      float distance;
+
+      if (x2 + NEAR_DISTANCE < x)
+        continue;
+
+      if (x2 > x + NEAR_DISTANCE)
+        break;
+
+      distance = sqrtf (powf (x2 - x, 2) + powf (y2 - y, 2));
+
+      if (distance < best_distance)
+        {
+          best_distance = distance;
+          best_index = i;
+          best_x = x2;
+          best_y = y2;
+        }
+    }
+
+  if (best_index != GTK_INVALID_LIST_POSITION)
+    {
+      GdkRGBA fill_color;
+      const int size = 6;
+      const int half_size = size / 2;
+      graphene_rect_t area = GRAPHENE_RECT_INIT (best_x - half_size,
+                                                 best_y - half_size,
+                                                 size, size);
+      cairo_t *cr = gtk_snapshot_append_cairo (snapshot, &area);
+
+      cairo_rectangle (cr, area.origin.x, area.origin.y, area.size.width, area.size.height);
+
+      fill_color = *color;
+      fill_color.alpha *= .75;
+      gdk_cairo_set_source_rgba (cr, &fill_color);
+      cairo_fill_preserve (cr);
+
+      gdk_cairo_set_source_rgba (cr, color);
+      cairo_set_line_width (cr, 1);
+      cairo_stroke (cr);
+
+      cairo_destroy (cr);
+    }
+}
+
+static void
 sysprof_line_layer_get_property (GObject    *object,
                                  guint       prop_id,
                                  GValue     *value,
@@ -249,11 +338,14 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  SysprofChartLayerClass *chart_layer_class = SYSPROF_CHART_LAYER_CLASS (klass);
 
   object_class->get_property = sysprof_line_layer_get_property;
   object_class->set_property = sysprof_line_layer_set_property;
 
   widget_class->snapshot = sysprof_line_layer_snapshot;
+
+  chart_layer_class->snapshot_motion = sysprof_line_layer_snapshot_motion;
 
   properties[PROP_COLOR] =
     g_param_spec_boxed ("color", NULL, NULL,

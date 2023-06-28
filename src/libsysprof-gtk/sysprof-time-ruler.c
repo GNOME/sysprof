@@ -27,9 +27,12 @@
 struct _SysprofTimeRuler
 {
   GtkWidget       parent_instance;
+
   SysprofSession *session;
   GSignalGroup   *session_signals;
-  gint64          tick_interval;
+
+  double          motion_x;
+  double          motion_y;
 };
 
 enum {
@@ -41,55 +44,6 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofTimeRuler, sysprof_time_ruler, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
-
-static void
-sysprof_time_ruler_update (SysprofTimeRuler *self)
-{
-
-
-  g_assert (SYSPROF_IS_TIME_RULER (self));
-  g_assert (!self->session || SYSPROF_IS_SESSION (self->session));
-
-  if (self->session == NULL)
-    {
-      self->tick_interval = 0;
-      return;
-    }
-}
-
-static void
-sysprof_time_ruler_notify_selected_time_cb (SysprofTimeRuler *self,
-                                            GParamSpec       *pspec,
-                                            SysprofSession   *session)
-{
-  g_assert (SYSPROF_IS_TIME_RULER (self));
-  g_assert (SYSPROF_IS_SESSION (session));
-
-  sysprof_time_ruler_update (self);
-}
-
-static void
-sysprof_time_ruler_notify_visible_time_cb (SysprofTimeRuler *self,
-                                           GParamSpec       *pspec,
-                                           SysprofSession   *session)
-{
-  g_assert (SYSPROF_IS_TIME_RULER (self));
-  g_assert (SYSPROF_IS_SESSION (session));
-
-  sysprof_time_ruler_update (self);
-}
-
-static void
-sysprof_time_ruler_bind_session_cb (SysprofTimeRuler *self,
-                                    SysprofSession   *session,
-                                    GSignalGroup     *signals)
-{
-  g_assert (SYSPROF_IS_TIME_RULER (self));
-  g_assert (SYSPROF_IS_SESSION (session));
-  g_assert (G_IS_SIGNAL_GROUP (signals));
-
-  sysprof_time_ruler_update (self);
-}
 
 static void
 sysprof_time_ruler_snapshot (GtkWidget   *widget,
@@ -163,6 +117,13 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
                                  &GRAPHENE_RECT_INIT (x, 0, 1, height));
     }
 
+  if (self->motion_x >= 0 && self->motion_y >= 0)
+    {
+      gtk_snapshot_append_color (snapshot,
+                                 &color,
+                                 &GRAPHENE_RECT_INIT (self->motion_x, 0, 1, height));
+    }
+
   g_object_unref (layout);
 }
 
@@ -188,6 +149,47 @@ sysprof_time_ruler_measure (GtkWidget      *widget,
       *minimum = MAX (*minimum, GROUP_SIZE);
       *natural = MAX (*natural, *minimum);
     }
+}
+
+static void
+sysprof_time_ruler_motion_enter_cb (SysprofTimeRuler         *self,
+                                    double                    x,
+                                    double                    y,
+                                    GtkEventControllerMotion *motion)
+{
+  g_assert (SYSPROF_IS_TIME_RULER (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  self->motion_x = x;
+  self->motion_y = y;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sysprof_time_ruler_motion_cb (SysprofTimeRuler         *self,
+                              double                    x,
+                              double                    y,
+                              GtkEventControllerMotion *motion)
+{
+  g_assert (SYSPROF_IS_TIME_RULER (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  self->motion_x = x;
+  self->motion_y = y;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sysprof_time_ruler_motion_leave_cb (SysprofTimeRuler         *self,
+                                    GtkEventControllerMotion *motion)
+{
+  g_assert (SYSPROF_IS_TIME_RULER (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  self->motion_x = -1;
+  self->motion_y = -1;
 }
 
 static void
@@ -276,22 +278,42 @@ sysprof_time_ruler_class_init (SysprofTimeRulerClass *klass)
 static void
 sysprof_time_ruler_init (SysprofTimeRuler *self)
 {
+  GtkEventController *motion;
+
   self->session_signals = g_signal_group_new (SYSPROF_TYPE_SESSION);
   g_signal_group_connect_object (self->session_signals,
                                  "notify::selected-time",
-                                 G_CALLBACK (sysprof_time_ruler_notify_selected_time_cb),
+                                 G_CALLBACK (gtk_widget_queue_draw),
                                  self,
                                  G_CONNECT_SWAPPED);
   g_signal_group_connect_object (self->session_signals,
                                  "notify::visible-time",
-                                 G_CALLBACK (sysprof_time_ruler_notify_visible_time_cb),
+                                 G_CALLBACK (gtk_widget_queue_draw),
                                  self,
                                  G_CONNECT_SWAPPED);
   g_signal_connect_object (self->session_signals,
                            "bind",
-                           G_CALLBACK (sysprof_time_ruler_bind_session_cb),
+                           G_CALLBACK (gtk_widget_queue_draw),
                            self,
                            G_CONNECT_SWAPPED);
+
+  motion = gtk_event_controller_motion_new ();
+  g_signal_connect_object (motion,
+                           "enter",
+                           G_CALLBACK (sysprof_time_ruler_motion_enter_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (motion,
+                           "leave",
+                           G_CALLBACK (sysprof_time_ruler_motion_leave_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (motion,
+                           "motion",
+                           G_CALLBACK (sysprof_time_ruler_motion_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  gtk_widget_add_controller (GTK_WIDGET (self), motion);
 }
 
 GtkWidget *

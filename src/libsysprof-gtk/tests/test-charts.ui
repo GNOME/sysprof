@@ -12,15 +12,63 @@
           <object class="GtkPaned">
             <property name="position">200</property>
             <child type="start">
-              <object class="GtkScrolledWindow">
-                <property name="hscrollbar-policy">never</property>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkListBox">
+                  <object class="SysprofChart">
+                    <property name="height-request">128</property>
+                    <signal name="activate-layer-item" handler="activate_layer_item_cb"/>
                     <child>
-                      <object class="SysprofChart">
-                        <property name="height-request">128</property>
-                        <child>
-                          <object class="SysprofColumnLayer">
+                      <object class="SysprofColumnLayer">
+                        <property name="title">Stack Traces</property>
+                        <binding name="x-axis">
+                          <lookup name="selected-time-axis" type="SysprofSession">
+                            <lookup name="session">TestCharts</lookup>
+                          </lookup>
+                        </binding>
+                        <property name="y-axis">
+                          <object class="SysprofValueAxis">
+                            <property name="min-value">0</property>
+                            <property name="max-value">128</property>
+                          </object>
+                        </property>
+                        <property name="series">
+                          <object class="SysprofXYSeries">
+                            <property name="model">
+                              <object class="GtkFilterListModel">
+                                <binding name="filter">
+                                  <lookup name="filter" type="SysprofSession">
+                                    <lookup name="session">TestCharts</lookup>
+                                  </lookup>
+                                </binding>
+                                <binding name="model">
+                                  <lookup name="samples" type="SysprofDocument">
+                                    <lookup name="document">TestCharts</lookup>
+                                  </lookup>
+                                </binding>
+                              </object>
+                            </property>
+                            <property name="x-expression">
+                              <lookup name="time" type="SysprofDocumentFrame"/>
+                            </property>
+                            <property name="y-expression">
+                              <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
+                            </property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="SysprofChart">
+                    <property name="height-request">128</property>
+                    <signal name="activate-layer-item" handler="activate_layer_item_cb"/>
+                    <child>
+                      <object class="SysprofDuplexLayer">
+                        <property name="upper-layer">
+                          <object class="SysprofLineLayer">
+                            <property name="vexpand">true</property>
                             <binding name="x-axis">
                               <lookup name="selected-time-axis" type="SysprofSession">
                                 <lookup name="session">TestCharts</lookup>
@@ -57,97 +105,48 @@
                               </object>
                             </property>
                           </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="SysprofChart">
-                        <property name="height-request">128</property>
-                        <child>
-                          <object class="SysprofDuplexLayer">
-                            <property name="upper-layer">
-                              <object class="SysprofLineLayer">
-                                <property name="vexpand">true</property>
-                                <binding name="x-axis">
-                                  <lookup name="selected-time-axis" type="SysprofSession">
-                                    <lookup name="session">TestCharts</lookup>
-                                  </lookup>
-                                </binding>
-                                <property name="y-axis">
-                                  <object class="SysprofValueAxis">
-                                    <property name="min-value">0</property>
-                                    <property name="max-value">128</property>
-                                  </object>
-                                </property>
-                                <property name="series">
-                                  <object class="SysprofXYSeries">
-                                    <property name="model">
-                                      <object class="GtkFilterListModel">
-                                        <binding name="filter">
-                                          <lookup name="filter" type="SysprofSession">
-                                            <lookup name="session">TestCharts</lookup>
-                                          </lookup>
-                                        </binding>
-                                        <binding name="model">
-                                          <lookup name="samples" type="SysprofDocument">
-                                            <lookup name="document">TestCharts</lookup>
-                                          </lookup>
-                                        </binding>
-                                      </object>
-                                    </property>
-                                    <property name="x-expression">
-                                      <lookup name="time" type="SysprofDocumentFrame"/>
-                                    </property>
-                                    <property name="y-expression">
-                                      <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
-                                    </property>
-                                  </object>
-                                </property>
+                        </property>
+                        <property name="lower-layer">
+                          <object class="SysprofLineLayer">
+                            <property name="vexpand">true</property>
+                            <property name="flip-y">true</property>
+                            <binding name="x-axis">
+                              <lookup name="selected-time-axis" type="SysprofSession">
+                                <lookup name="session">TestCharts</lookup>
+                              </lookup>
+                            </binding>
+                            <property name="y-axis">
+                              <object class="SysprofValueAxis">
+                                <property name="min-value">0</property>
+                                <property name="max-value">128</property>
                               </object>
                             </property>
-                            <property name="lower-layer">
-                              <object class="SysprofLineLayer">
-                                <property name="vexpand">true</property>
-                                <property name="flip-y">true</property>
-                                <binding name="x-axis">
-                                  <lookup name="selected-time-axis" type="SysprofSession">
-                                    <lookup name="session">TestCharts</lookup>
-                                  </lookup>
-                                </binding>
-                                <property name="y-axis">
-                                  <object class="SysprofValueAxis">
-                                    <property name="min-value">0</property>
-                                    <property name="max-value">128</property>
+                            <property name="series">
+                              <object class="SysprofXYSeries">
+                                <property name="model">
+                                  <object class="GtkFilterListModel">
+                                    <binding name="filter">
+                                      <lookup name="filter" type="SysprofSession">
+                                        <lookup name="session">TestCharts</lookup>
+                                      </lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="samples" type="SysprofDocument">
+                                        <lookup name="document">TestCharts</lookup>
+                                      </lookup>
+                                    </binding>
                                   </object>
                                 </property>
-                                <property name="series">
-                                  <object class="SysprofXYSeries">
-                                    <property name="model">
-                                      <object class="GtkFilterListModel">
-                                        <binding name="filter">
-                                          <lookup name="filter" type="SysprofSession">
-                                            <lookup name="session">TestCharts</lookup>
-                                          </lookup>
-                                        </binding>
-                                        <binding name="model">
-                                          <lookup name="samples" type="SysprofDocument">
-                                            <lookup name="document">TestCharts</lookup>
-                                          </lookup>
-                                        </binding>
-                                      </object>
-                                    </property>
-                                    <property name="x-expression">
-                                      <lookup name="time" type="SysprofDocumentFrame"/>
-                                    </property>
-                                    <property name="y-expression">
-                                      <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
-                                    </property>
-                                  </object>
+                                <property name="x-expression">
+                                  <lookup name="time" type="SysprofDocumentFrame"/>
+                                </property>
+                                <property name="y-expression">
+                                  <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
                                 </property>
                               </object>
                             </property>
                           </object>
-                        </child>
+                        </property>
                       </object>
                     </child>
                   </object>
@@ -228,6 +227,7 @@
         <child>
           <object class="SysprofChart">
             <property name="hexpand">true</property>
+            <signal name="activate-layer-item" handler="activate_layer_item_cb"/>
             <child>
               <object class="SysprofLineLayer">
                 <property name="spline">true</property>

@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-css-private.h"
 #include "sysprof-chart.h"
 
 typedef struct
@@ -306,6 +307,8 @@ sysprof_chart_init (SysprofChart *self)
 
   priv->motion_x = -1;
   priv->motion_y = -1;
+
+  _sysprof_css_init ();
 
   motion = gtk_event_controller_motion_new ();
   g_signal_connect_object (motion,

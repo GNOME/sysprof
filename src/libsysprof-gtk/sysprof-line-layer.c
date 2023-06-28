@@ -38,7 +38,6 @@ struct _SysprofLineLayer
   guint color_set : 1;
   guint dashed : 1;
   guint fill : 1;
-  guint flip_y : 1;
   guint spline : 1;
 };
 
@@ -54,7 +53,6 @@ enum {
   PROP_COLOR,
   PROP_DASHED,
   PROP_FILL,
-  PROP_FLIP_Y,
   PROP_SPLINE,
   N_PROPS
 };
@@ -104,8 +102,7 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
 
   cairo_set_line_width (cr, 1);
 
-  if (!self->flip_y)
-    cairo_set_matrix (cr, &(cairo_matrix_t) {1, 0, 0, -1, 0, height});
+  cairo_set_matrix (cr, &(cairo_matrix_t) {1, 0, 0, -1, 0, height});
 
   first_x = last_x = floor (x_values[0] * width);
   first_y = last_y = floor (y_values[0] * height);
@@ -246,9 +243,6 @@ sysprof_line_layer_snapshot_motion (SysprofChartLayer *layer,
       graphene_rect_t area;
       cairo_t *cr;
 
-      if (self->flip_y)
-        best_y = height - best_y;
-
       area = GRAPHENE_RECT_INIT (best_x - half_size, best_y - half_size, size, size);
       cr = gtk_snapshot_append_cairo (snapshot, &area);
 
@@ -289,10 +283,6 @@ sysprof_line_layer_get_property (GObject    *object,
       g_value_set_boolean (value, sysprof_line_layer_get_fill (self));
       break;
 
-    case PROP_FLIP_Y:
-      g_value_set_boolean (value, sysprof_line_layer_get_flip_y (self));
-      break;
-
     case PROP_SPLINE:
       g_value_set_boolean (value, sysprof_line_layer_get_spline (self));
       break;
@@ -322,10 +312,6 @@ sysprof_line_layer_set_property (GObject      *object,
 
     case PROP_FILL:
       sysprof_line_layer_set_fill (self, g_value_get_boolean (value));
-      break;
-
-    case PROP_FLIP_Y:
-      sysprof_line_layer_set_flip_y (self, g_value_get_boolean (value));
       break;
 
     case PROP_SPLINE:
@@ -363,11 +349,6 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
 
   properties [PROP_FILL] =
     g_param_spec_boolean ("fill", NULL, NULL,
-                         FALSE,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
-
-  properties [PROP_FLIP_Y] =
-    g_param_spec_boolean ("flip-y", NULL, NULL,
                          FALSE,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
@@ -457,30 +438,6 @@ sysprof_line_layer_set_fill (SysprofLineLayer *self,
     {
       self->fill = fill;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FILL]);
-      gtk_widget_queue_draw (GTK_WIDGET (self));
-    }
-}
-
-gboolean
-sysprof_line_layer_get_flip_y (SysprofLineLayer *self)
-{
-  g_return_val_if_fail (SYSPROF_IS_LINE_LAYER (self), FALSE);
-
-  return self->flip_y;
-}
-
-void
-sysprof_line_layer_set_flip_y (SysprofLineLayer *self,
-                               gboolean          flip_y)
-{
-  g_return_if_fail (SYSPROF_IS_LINE_LAYER (self));
-
-  flip_y = !!flip_y;
-
-  if (flip_y != self->flip_y)
-    {
-      self->flip_y = flip_y;
-      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FLIP_Y]);
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }
 }

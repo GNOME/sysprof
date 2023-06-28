@@ -25,11 +25,12 @@
 
 enum {
   PROP_0,
+  PROP_FLIP_Y,
+  PROP_NORMALIZED_X,
+  PROP_NORMALIZED_Y,
   PROP_SERIES,
   PROP_X_AXIS,
   PROP_Y_AXIS,
-  PROP_NORMALIZED_X,
-  PROP_NORMALIZED_Y,
   N_PROPS
 };
 
@@ -84,6 +85,10 @@ sysprof_xy_layer_get_property (GObject    *object,
       g_value_set_object (value, self->normal_y);
       break;
 
+    case PROP_FLIP_Y:
+      g_value_set_boolean (value, sysprof_xy_layer_get_flip_y (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -109,6 +114,10 @@ sysprof_xy_layer_set_property (GObject      *object,
 
     case PROP_Y_AXIS:
       sysprof_xy_layer_set_y_axis (self, g_value_get_object (value));
+      break;
+
+    case PROP_FLIP_Y:
+      sysprof_xy_layer_set_flip_y (self, g_value_get_boolean (value));
       break;
 
     default:
@@ -149,6 +158,11 @@ sysprof_xy_layer_class_init (SysprofXYLayerClass *klass)
     g_param_spec_object ("normalized-y", NULL, NULL,
                          SYSPROF_TYPE_NORMALIZED_SERIES,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_FLIP_Y] =
+    g_param_spec_boolean ("flip-y", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -294,4 +308,29 @@ sysprof_xy_layer_set_y_axis (SysprofXYLayer *self,
 
   sysprof_normalized_series_set_axis (self->normal_y, y_axis);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_Y_AXIS]);
+}
+
+gboolean
+sysprof_xy_layer_get_flip_y (SysprofXYLayer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_XY_LAYER (self), FALSE);
+
+  return self->flip_y;
+}
+
+void
+sysprof_xy_layer_set_flip_y (SysprofXYLayer *self,
+                             gboolean        flip_y)
+{
+  g_return_if_fail (SYSPROF_IS_XY_LAYER (self));
+
+  flip_y = !!flip_y;
+
+  if (flip_y != self->flip_y)
+    {
+      self->flip_y = flip_y;
+      sysprof_normalized_series_set_inverted (self->normal_y, flip_y);
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FLIP_Y]);
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
 }

@@ -37,6 +37,8 @@ struct _SysprofXYLayer
 
   SysprofNormalizedSeries *normal_x;
   SysprofNormalizedSeries *normal_y;
+
+  guint                    flip_y : 1;
 };
 
 struct _SysprofXYLayerClass

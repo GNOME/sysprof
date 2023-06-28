@@ -36,6 +36,11 @@ G_DECLARE_FINAL_TYPE (SysprofXYLayer, sysprof_xy_layer, SYSPROF, XY_LAYER, Syspr
 SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer *sysprof_xy_layer_new        (void);
 SYSPROF_AVAILABLE_IN_ALL
+gboolean           sysprof_xy_layer_get_flip_y (SysprofXYLayer  *self);
+SYSPROF_AVAILABLE_IN_ALL
+void               sysprof_xy_layer_set_flip_y (SysprofXYLayer  *self,
+                                                gboolean         flip_y);
+SYSPROF_AVAILABLE_IN_ALL
 SysprofXYSeries   *sysprof_xy_layer_get_series (SysprofXYLayer  *self);
 SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_xy_layer_set_series (SysprofXYLayer  *self,

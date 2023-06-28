@@ -53,7 +53,6 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
                                GtkSnapshot *snapshot)
 {
   SysprofColumnLayer *self = (SysprofColumnLayer *)widget;
-  graphene_matrix_t flip_y;
   const float *x_values;
   const float *y_values;
   const GdkRGBA *color;
@@ -79,8 +78,13 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
 
   gtk_snapshot_save (snapshot);
 
-  graphene_matrix_init_from_2d (&flip_y, 1, 0, 0, -1, 0, height);
-  gtk_snapshot_transform_matrix (snapshot, &flip_y);
+  if (!sysprof_xy_layer_get_flip_y (SYSPROF_XY_LAYER (self)))
+    {
+      graphene_matrix_t flip_y;
+
+      graphene_matrix_init_from_2d (&flip_y, 1, 0, 0, -1, 0, height);
+      gtk_snapshot_transform_matrix (snapshot, &flip_y);
+    }
 
   for (guint i = 0; i < n_values; i++)
     {
@@ -106,6 +110,8 @@ sysprof_column_layer_get_index_at_coord (SysprofColumnLayer *self,
   graphene_point_t point;
   const float *x_values;
   const float *y_values;
+  gboolean flip_y;
+  guint best = GTK_INVALID_LIST_POSITION;
   guint n_values;
   int width;
   int height;
@@ -114,6 +120,7 @@ sysprof_column_layer_get_index_at_coord (SysprofColumnLayer *self,
 
   width = gtk_widget_get_width (GTK_WIDGET (self));
   height = gtk_widget_get_height (GTK_WIDGET (self));
+  flip_y = sysprof_xy_layer_get_flip_y (SYSPROF_XY_LAYER (self));
 
   _sysprof_xy_layer_get_xy (SYSPROF_XY_LAYER (self), &x_values, &y_values, &n_values);
 
@@ -124,7 +131,18 @@ sysprof_column_layer_get_index_at_coord (SysprofColumnLayer *self,
 
   for (guint i = 0; i < n_values; i++)
     {
-      graphene_rect_t rect = GRAPHENE_RECT_INIT (x_values[i]*width, height, 1, -(y_values[i]*height));
+      graphene_rect_t rect;
+
+      if (flip_y)
+        rect = GRAPHENE_RECT_INIT (x_values[i]*width,
+                                   0,
+                                   1,
+                                   y_values[i]*height);
+      else
+        rect = GRAPHENE_RECT_INIT (x_values[i]*width,
+                                   height - y_values[i]*height,
+                                   1,
+                                   y_values[i]*height);
 
       if (graphene_rect_contains_point (&rect, &point))
         {
@@ -133,9 +151,18 @@ sysprof_column_layer_get_index_at_coord (SysprofColumnLayer *self,
 
           return i;
         }
+
+      if (rect.origin.x <= x &&
+          rect.origin.x + rect.size.width >= x)
+        {
+          if (area != NULL)
+            *area = rect;
+
+          best = i;
+        }
     }
 
-  return GTK_INVALID_LIST_POSITION;
+  return best;
 }
 
 static void

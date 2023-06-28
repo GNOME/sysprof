@@ -243,10 +243,14 @@ sysprof_line_layer_snapshot_motion (SysprofChartLayer *layer,
       GdkRGBA fill_color;
       const int size = 6;
       const int half_size = size / 2;
-      graphene_rect_t area = GRAPHENE_RECT_INIT (best_x - half_size,
-                                                 best_y - half_size,
-                                                 size, size);
-      cairo_t *cr = gtk_snapshot_append_cairo (snapshot, &area);
+      graphene_rect_t area;
+      cairo_t *cr;
+
+      if (self->flip_y)
+        best_y = height - best_y;
+
+      area = GRAPHENE_RECT_INIT (best_x - half_size, best_y - half_size, size, size);
+      cr = gtk_snapshot_append_cairo (snapshot, &area);
 
       cairo_rectangle (cr, area.origin.x, area.origin.y, area.size.width, area.size.height);
 

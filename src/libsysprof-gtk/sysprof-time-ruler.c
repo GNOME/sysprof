@@ -103,6 +103,7 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
   guint n_groups;
   int width;
   int height;
+  GdkRGBA color;
 
   g_assert (SYSPROF_IS_TIME_RULER (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
@@ -113,6 +114,13 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
 
   if (self->session == NULL || width == 0 || height == 0)
     return;
+
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  {
+    GtkStyleContext *style_context = gtk_widget_get_style_context (widget);
+    gtk_style_context_get_color (style_context, &color);
+  }
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 
   visible_time = sysprof_session_get_visible_time (self->session);
   n_groups = MAX (width / GROUP_SIZE, 1);
@@ -125,7 +133,6 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
        t < visible_time->end_nsec;
        t += tick_interval)
     {
-      static const GdkRGBA black = {0,0,0,1};
       gint64 o = t - visible_time->begin_nsec;
       double x = (o / (double)time_range) * width;
       int pw, ph;
@@ -148,11 +155,11 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
 
       gtk_snapshot_save (snapshot);
       gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (x-pw-6, (height-ph)/2));
-      gtk_snapshot_append_layout (snapshot, layout, &black);
+      gtk_snapshot_append_layout (snapshot, layout, &color);
       gtk_snapshot_restore (snapshot);
 
       gtk_snapshot_append_color (snapshot,
-                                 &black,
+                                 &color,
                                  &GRAPHENE_RECT_INIT (x, 0, 1, height));
     }
 

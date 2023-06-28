@@ -207,6 +207,7 @@ test_charts_class_init (TestChartsClass *klass)
   g_type_ensure (SYSPROF_TYPE_SESSION_MODEL);
   g_type_ensure (SYSPROF_TYPE_SESSION_MODEL_ITEM);
   g_type_ensure (SYSPROF_TYPE_DUPLEX_LAYER);
+  g_type_ensure (SYSPROF_TYPE_TIME_RULER);
 }
 
 static void

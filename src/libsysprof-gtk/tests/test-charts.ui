@@ -148,31 +148,42 @@
           </object>
         </child>
         <child type="end">
-          <object class="GtkScrolledWindow">
-            <property name="hscrollbar-policy">never</property>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkListView">
-                <property name="show-separators">true</property>
-                <style>
-                  <class name="data-table"/>
-                </style>
-                <property name="model">
-                  <object class="GtkNoSelection">
+              <object class="SysprofTimeRuler" id="ruler">
+                <binding name="session">
+                  <lookup name="session">TestCharts</lookup>
+                </binding>
+              </object>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="hscrollbar-policy">never</property>
+                <property name="vexpand">true</property>
+                <child>
+                  <object class="GtkListView">
+                    <property name="show-separators">true</property>
+                    <style>
+                      <class name="data-table"/>
+                    </style>
                     <property name="model">
-                      <object class="SysprofSessionModel">
-                        <property name="session" bind-source="TestCharts" bind-property="session" bind-flags="sync-create"/>
-                        <binding name="model">
-                          <lookup name="counters" type="SysprofDocument">
-                            <lookup name="document">TestCharts</lookup>
-                          </lookup>
-                        </binding>
+                      <object class="GtkNoSelection">
+                        <property name="model">
+                          <object class="SysprofSessionModel">
+                            <property name="session" bind-source="TestCharts" bind-property="session" bind-flags="sync-create"/>
+                            <binding name="model">
+                              <lookup name="counters" type="SysprofDocument">
+                                <lookup name="document">TestCharts</lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
                       </object>
                     </property>
-                  </object>
-                </property>
-                <property name="factory">
-                  <object class="GtkBuilderListItemFactory">
-                    <property name="bytes"><![CDATA[
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -251,9 +262,11 @@
   </template>
 </interface>
 ]]>
+                        </property>
+                      </object>
                     </property>
                   </object>
-                </property>
+                </child>
               </object>
             </child>
           </object>

@@ -1,189 +1,209 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="TestCharts" parent="GtkWindow">
+  <template class="TestCharts" parent="AdwWindow">
     <child>
-      <object class="GtkPaned">
-        <property name="position">200</property>
-        <child type="start">
-          <object class="GtkScrolledWindow">
-            <property name="hscrollbar-policy">never</property>
-            <child>
-              <object class="GtkListBox">
+      <object class="AdwToolbarView">
+        <property name="top-bar-style">raised</property>
+        <child type="top">
+          <object class="AdwHeaderBar">
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkPaned">
+            <property name="position">200</property>
+            <child type="start">
+              <object class="GtkScrolledWindow">
+                <property name="hscrollbar-policy">never</property>
                 <child>
-                  <object class="SysprofChart">
-                    <property name="height-request">128</property>
+                  <object class="GtkListBox">
                     <child>
-                      <object class="SysprofColumnLayer">
-                        <binding name="x-axis">
-                          <lookup name="selected-time-axis" type="SysprofSession">
-                            <lookup name="session">TestCharts</lookup>
-                          </lookup>
-                        </binding>
-                        <property name="y-axis">
-                          <object class="SysprofValueAxis">
-                            <property name="min-value">0</property>
-                            <property name="max-value">128</property>
+                      <object class="SysprofChart">
+                        <property name="height-request">128</property>
+                        <child>
+                          <object class="SysprofColumnLayer">
+                            <binding name="x-axis">
+                              <lookup name="selected-time-axis" type="SysprofSession">
+                                <lookup name="session">TestCharts</lookup>
+                              </lookup>
+                            </binding>
+                            <property name="y-axis">
+                              <object class="SysprofValueAxis">
+                                <property name="min-value">0</property>
+                                <property name="max-value">128</property>
+                              </object>
+                            </property>
+                            <property name="series">
+                              <object class="SysprofXYSeries">
+                                <property name="model">
+                                  <object class="GtkFilterListModel">
+                                    <binding name="filter">
+                                      <lookup name="filter" type="SysprofSession">
+                                        <lookup name="session">TestCharts</lookup>
+                                      </lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="samples" type="SysprofDocument">
+                                        <lookup name="document">TestCharts</lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
+                                <property name="x-expression">
+                                  <lookup name="time" type="SysprofDocumentFrame"/>
+                                </property>
+                                <property name="y-expression">
+                                  <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
+                                </property>
+                              </object>
+                            </property>
                           </object>
-                        </property>
-                        <property name="series">
-                          <object class="SysprofXYSeries">
-                            <property name="model">
-                              <object class="GtkFilterListModel">
-                                <binding name="filter">
-                                  <lookup name="filter" type="SysprofSession">
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="SysprofChart">
+                        <property name="height-request">128</property>
+                        <child>
+                          <object class="SysprofDuplexLayer">
+                            <property name="upper-layer">
+                              <object class="SysprofLineLayer">
+                                <property name="vexpand">true</property>
+                                <binding name="x-axis">
+                                  <lookup name="selected-time-axis" type="SysprofSession">
                                     <lookup name="session">TestCharts</lookup>
                                   </lookup>
                                 </binding>
+                                <property name="y-axis">
+                                  <object class="SysprofValueAxis">
+                                    <property name="min-value">0</property>
+                                    <property name="max-value">128</property>
+                                  </object>
+                                </property>
+                                <property name="series">
+                                  <object class="SysprofXYSeries">
+                                    <property name="model">
+                                      <object class="GtkFilterListModel">
+                                        <binding name="filter">
+                                          <lookup name="filter" type="SysprofSession">
+                                            <lookup name="session">TestCharts</lookup>
+                                          </lookup>
+                                        </binding>
+                                        <binding name="model">
+                                          <lookup name="samples" type="SysprofDocument">
+                                            <lookup name="document">TestCharts</lookup>
+                                          </lookup>
+                                        </binding>
+                                      </object>
+                                    </property>
+                                    <property name="x-expression">
+                                      <lookup name="time" type="SysprofDocumentFrame"/>
+                                    </property>
+                                    <property name="y-expression">
+                                      <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="lower-layer">
+                              <object class="SysprofLineLayer">
+                                <property name="vexpand">true</property>
+                                <property name="flip-y">true</property>
+                                <binding name="x-axis">
+                                  <lookup name="selected-time-axis" type="SysprofSession">
+                                    <lookup name="session">TestCharts</lookup>
+                                  </lookup>
+                                </binding>
+                                <property name="y-axis">
+                                  <object class="SysprofValueAxis">
+                                    <property name="min-value">0</property>
+                                    <property name="max-value">128</property>
+                                  </object>
+                                </property>
+                                <property name="series">
+                                  <object class="SysprofXYSeries">
+                                    <property name="model">
+                                      <object class="GtkFilterListModel">
+                                        <binding name="filter">
+                                          <lookup name="filter" type="SysprofSession">
+                                            <lookup name="session">TestCharts</lookup>
+                                          </lookup>
+                                        </binding>
+                                        <binding name="model">
+                                          <lookup name="samples" type="SysprofDocument">
+                                            <lookup name="document">TestCharts</lookup>
+                                          </lookup>
+                                        </binding>
+                                      </object>
+                                    </property>
+                                    <property name="x-expression">
+                                      <lookup name="time" type="SysprofDocumentFrame"/>
+                                    </property>
+                                    <property name="y-expression">
+                                      <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox">
+                    <child>
+                      <object class="GtkInscription">
+                        <property name="nat-chars">35</property>
+                        <property name="min-chars">35</property>
+                        <property name="margin-end">8</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="SysprofTimeRuler" id="ruler">
+                        <property name="height-request">24</property>
+                        <property name="hexpand">true</property>
+                        <binding name="session">
+                          <lookup name="session">TestCharts</lookup>
+                        </binding>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="hscrollbar-policy">never</property>
+                    <property name="vexpand">true</property>
+                    <child>
+                      <object class="GtkListView">
+                        <property name="show-separators">true</property>
+                        <style>
+                          <class name="data-table"/>
+                        </style>
+                        <property name="model">
+                          <object class="GtkNoSelection">
+                            <property name="model">
+                              <object class="SysprofSessionModel">
+                                <property name="session" bind-source="TestCharts" bind-property="session" bind-flags="sync-create"/>
                                 <binding name="model">
-                                  <lookup name="samples" type="SysprofDocument">
+                                  <lookup name="counters" type="SysprofDocument">
                                     <lookup name="document">TestCharts</lookup>
                                   </lookup>
                                 </binding>
                               </object>
                             </property>
-                            <property name="x-expression">
-                              <lookup name="time" type="SysprofDocumentFrame"/>
-                            </property>
-                            <property name="y-expression">
-                              <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
-                            </property>
                           </object>
                         </property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="SysprofChart">
-                    <property name="height-request">128</property>
-                    <child>
-                      <object class="SysprofDuplexLayer">
-                        <property name="upper-layer">
-                          <object class="SysprofLineLayer">
-                            <property name="vexpand">true</property>
-                            <binding name="x-axis">
-                              <lookup name="selected-time-axis" type="SysprofSession">
-                                <lookup name="session">TestCharts</lookup>
-                              </lookup>
-                            </binding>
-                            <property name="y-axis">
-                              <object class="SysprofValueAxis">
-                                <property name="min-value">0</property>
-                                <property name="max-value">128</property>
-                              </object>
-                            </property>
-                            <property name="series">
-                              <object class="SysprofXYSeries">
-                                <property name="model">
-                                  <object class="GtkFilterListModel">
-                                    <binding name="filter">
-                                      <lookup name="filter" type="SysprofSession">
-                                        <lookup name="session">TestCharts</lookup>
-                                      </lookup>
-                                    </binding>
-                                    <binding name="model">
-                                      <lookup name="samples" type="SysprofDocument">
-                                        <lookup name="document">TestCharts</lookup>
-                                      </lookup>
-                                    </binding>
-                                  </object>
-                                </property>
-                                <property name="x-expression">
-                                  <lookup name="time" type="SysprofDocumentFrame"/>
-                                </property>
-                                <property name="y-expression">
-                                  <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
-                                </property>
-                              </object>
-                            </property>
-                          </object>
-                        </property>
-                        <property name="lower-layer">
-                          <object class="SysprofLineLayer">
-                            <property name="vexpand">true</property>
-                            <property name="flip-y">true</property>
-                            <binding name="x-axis">
-                              <lookup name="selected-time-axis" type="SysprofSession">
-                                <lookup name="session">TestCharts</lookup>
-                              </lookup>
-                            </binding>
-                            <property name="y-axis">
-                              <object class="SysprofValueAxis">
-                                <property name="min-value">0</property>
-                                <property name="max-value">128</property>
-                              </object>
-                            </property>
-                            <property name="series">
-                              <object class="SysprofXYSeries">
-                                <property name="model">
-                                  <object class="GtkFilterListModel">
-                                    <binding name="filter">
-                                      <lookup name="filter" type="SysprofSession">
-                                        <lookup name="session">TestCharts</lookup>
-                                      </lookup>
-                                    </binding>
-                                    <binding name="model">
-                                      <lookup name="samples" type="SysprofDocument">
-                                        <lookup name="document">TestCharts</lookup>
-                                      </lookup>
-                                    </binding>
-                                  </object>
-                                </property>
-                                <property name="x-expression">
-                                  <lookup name="time" type="SysprofDocumentFrame"/>
-                                </property>
-                                <property name="y-expression">
-                                  <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
-                                </property>
-                              </object>
-                            </property>
-                          </object>
-                        </property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child type="end">
-          <object class="GtkBox">
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="SysprofTimeRuler" id="ruler">
-                <binding name="session">
-                  <lookup name="session">TestCharts</lookup>
-                </binding>
-              </object>
-            </child>
-            <child>
-              <object class="GtkScrolledWindow">
-                <property name="hscrollbar-policy">never</property>
-                <property name="vexpand">true</property>
-                <child>
-                  <object class="GtkListView">
-                    <property name="show-separators">true</property>
-                    <style>
-                      <class name="data-table"/>
-                    </style>
-                    <property name="model">
-                      <object class="GtkNoSelection">
-                        <property name="model">
-                          <object class="SysprofSessionModel">
-                            <property name="session" bind-source="TestCharts" bind-property="session" bind-flags="sync-create"/>
-                            <binding name="model">
-                              <lookup name="counters" type="SysprofDocument">
-                                <lookup name="document">TestCharts</lookup>
-                              </lookup>
-                            </binding>
-                          </object>
-                        </property>
-                      </object>
-                    </property>
-                    <property name="factory">
-                      <object class="GtkBuilderListItemFactory">
-                        <property name="bytes"><![CDATA[
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -262,15 +282,17 @@
   </template>
 </interface>
 ]]>
+                            </property>
+                          </object>
                         </property>
                       </object>
-                    </property>
+                    </child>
                   </object>
                 </child>
               </object>
             </child>
           </object>
-        </child>
+        </property>
       </object>
     </child>
   </template>

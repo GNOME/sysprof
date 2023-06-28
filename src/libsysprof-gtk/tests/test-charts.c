@@ -33,17 +33,17 @@ static const GOptionEntry entries[] = {
 };
 
 #define TEST_TYPE_CHARTS (test_charts_get_type())
-G_DECLARE_FINAL_TYPE (TestCharts, test_charts, TEST, CHARTS, GtkWindow)
+G_DECLARE_FINAL_TYPE (TestCharts, test_charts, TEST, CHARTS, AdwWindow)
 
 struct _TestCharts
 {
-  GtkWindow        parent_instance;
+  AdwWindow        parent_instance;
 
   SysprofDocument *document;
   SysprofSession  *session;
 };
 
-G_DEFINE_FINAL_TYPE (TestCharts, test_charts, GTK_TYPE_WINDOW)
+G_DEFINE_FINAL_TYPE (TestCharts, test_charts, ADW_TYPE_WINDOW)
 
 enum {
   PROP_0,

@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-session.h"
+#include "sysprof-track.h"
 #include "sysprof-value-axis.h"
 
 struct _SysprofSession
@@ -29,6 +30,8 @@ struct _SysprofSession
 
   SysprofDocument *document;
   GtkEveryFilter  *filter;
+
+  GListStore      *tracks;
 
   SysprofAxis     *visible_time_axis;
   SysprofAxis     *selected_time_axis;
@@ -42,8 +45,9 @@ enum {
   PROP_DOCUMENT,
   PROP_FILTER,
   PROP_SELECTED_TIME,
-  PROP_VISIBLE_TIME,
   PROP_SELECTED_TIME_AXIS,
+  PROP_TRACKS,
+  PROP_VISIBLE_TIME,
   PROP_VISIBLE_TIME_AXIS,
   N_PROPS
 };
@@ -88,6 +92,7 @@ sysprof_session_dispose (GObject *object)
 {
   SysprofSession *self = (SysprofSession *)object;
 
+  g_clear_object (&self->tracks);
   g_clear_object (&self->visible_time_axis);
   g_clear_object (&self->selected_time_axis);
   g_clear_object (&self->document);
@@ -128,6 +133,10 @@ sysprof_session_get_property (GObject    *object,
 
     case PROP_VISIBLE_TIME_AXIS:
       g_value_set_object (value, sysprof_session_get_visible_time_axis (self));
+      break;
+
+    case PROP_TRACKS:
+      g_value_take_object (value, sysprof_session_list_tracks (self));
       break;
 
     default:
@@ -193,6 +202,11 @@ sysprof_session_class_init (SysprofSessionClass *klass)
                          SYSPROF_TYPE_AXIS,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_TRACKS] =
+    g_param_spec_object ("tracks", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -202,6 +216,7 @@ sysprof_session_init (SysprofSession *self)
   self->filter = gtk_every_filter_new ();
   self->selected_time_axis = sysprof_value_axis_new (0, 0);
   self->visible_time_axis = sysprof_value_axis_new (0, 0);
+  self->tracks = g_list_store_new (SYSPROF_TYPE_TRACK);
 }
 
 SysprofSession *
@@ -323,4 +338,20 @@ sysprof_session_get_visible_time_axis (SysprofSession *self)
   g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
 
   return self->visible_time_axis;
+}
+
+/**
+ * sysprof_session_list_tracks:
+ * @self: a #SysprofSession
+ *
+ * Gets a list of #SysprofTrack to be displayed in the session.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofTrack
+ */
+GListModel *
+sysprof_session_list_tracks (SysprofSession *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
+
+  return g_object_ref (G_LIST_MODEL (self->tracks));
 }

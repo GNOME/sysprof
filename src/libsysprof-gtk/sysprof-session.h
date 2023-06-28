@@ -51,5 +51,7 @@ SysprofAxis           *sysprof_session_get_selected_time_axis (SysprofSession   
 SYSPROF_AVAILABLE_IN_ALL
 void                   sysprof_session_select_time            (SysprofSession        *self,
                                                                const SysprofTimeSpan *time_span);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel            *sysprof_session_list_tracks            (SysprofSession        *self);
 
 G_END_DECLS

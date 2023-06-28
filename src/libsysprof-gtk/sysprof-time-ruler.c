@@ -58,6 +58,7 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
   int width;
   int height;
   GdkRGBA color;
+  GdkRGBA line_color;
 
   g_assert (SYSPROF_IS_TIME_RULER (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
@@ -73,6 +74,8 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
   {
     GtkStyleContext *style_context = gtk_widget_get_style_context (widget);
     gtk_style_context_get_color (style_context, &color);
+    line_color = color;
+    line_color.alpha *= .3;
   }
   G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 
@@ -113,16 +116,14 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
       gtk_snapshot_restore (snapshot);
 
       gtk_snapshot_append_color (snapshot,
-                                 &color,
+                                 &line_color,
                                  &GRAPHENE_RECT_INIT (x, 0, 1, height));
     }
 
   if (self->motion_x >= 0 && self->motion_y >= 0)
-    {
-      gtk_snapshot_append_color (snapshot,
-                                 &color,
-                                 &GRAPHENE_RECT_INIT (self->motion_x, 0, 1, height));
-    }
+    gtk_snapshot_append_color (snapshot,
+                               &color,
+                               &GRAPHENE_RECT_INIT (self->motion_x, 0, 1, height));
 
   g_object_unref (layout);
 }

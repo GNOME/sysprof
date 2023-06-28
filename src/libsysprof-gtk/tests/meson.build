@@ -14,6 +14,7 @@ libsysprof_gtk_testsuite_c_args = [
 libsysprof_gtk_testsuite = {
   'test-callgraph'  : {'skip': true},
   'test-charts'     : {'skip': true},
+  'test-tracks'     : {'skip': true},
   'test-mark-chart' : {'skip': true},
   'test-mark-table' : {'skip': true},
 }

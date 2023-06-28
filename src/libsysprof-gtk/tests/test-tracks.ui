@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="TestTracks" parent="AdwWindow">
+    <child>
+      <object class="AdwToolbarView">
+        <property name="top-bar-style">raised</property>
+        <child type="top">
+          <object class="AdwHeaderBar">
+          </object>
+        </child>
+        <property name="content">
+          <object class="SysprofTracksView">
+            <binding name="session">
+              <lookup name="session">TestTracks</lookup>
+            </binding>
+          </object>
+        </property>
+      </object>
+    </child>
+  </template>
+</interface>

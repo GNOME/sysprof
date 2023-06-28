@@ -5,6 +5,8 @@
     <file preprocess="xml-stripblanks">sysprof-mark-chart.ui</file>
     <file preprocess="xml-stripblanks">sysprof-mark-chart-row.ui</file>
     <file preprocess="xml-stripblanks">sysprof-mark-table.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-track-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-tracks-view.ui</file>
     <file preprocess="xml-stripblanks">sysprof-weighted-callgraph-view.ui</file>
     <file>style.css</file>
   </gresource>

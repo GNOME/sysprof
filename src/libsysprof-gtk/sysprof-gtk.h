@@ -43,6 +43,7 @@ G_BEGIN_DECLS
 # include "sysprof-time-series.h"
 # include "sysprof-time-series-item.h"
 # include "sysprof-time-span-layer.h"
+# include "sysprof-tracks-view.h"
 # include "sysprof-value-axis.h"
 # include "sysprof-weighted-callgraph-view.h"
 # include "sysprof-xy-layer.h"

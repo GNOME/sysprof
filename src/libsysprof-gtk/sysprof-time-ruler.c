@@ -190,6 +190,8 @@ sysprof_time_ruler_motion_leave_cb (SysprofTimeRuler         *self,
 
   self->motion_x = -1;
   self->motion_y = -1;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
 static void
@@ -279,6 +281,9 @@ static void
 sysprof_time_ruler_init (SysprofTimeRuler *self)
 {
   GtkEventController *motion;
+
+  self->motion_x = -1;
+  self->motion_y = -1;
 
   self->session_signals = g_signal_group_new (SYSPROF_TYPE_SESSION);
   g_signal_group_connect_object (self->session_signals,

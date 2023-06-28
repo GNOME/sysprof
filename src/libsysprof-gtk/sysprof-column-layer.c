@@ -97,18 +97,15 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
   gtk_snapshot_restore (snapshot);
 }
 
-#if 0
-static const SysprofXYSeriesValue *
-sysprof_column_layer_get_value_at_coord (SysprofColumnLayer *self,
+static guint
+sysprof_column_layer_get_index_at_coord (SysprofColumnLayer *self,
                                          double              x,
                                          double              y,
                                          graphene_rect_t    *area)
 {
-  const SysprofXYSeriesValue *values;
   graphene_point_t point;
-  double min_x, max_x;
-  double min_y, max_y;
-  guint line_width;
+  const float *x_values;
+  const float *y_values;
   guint n_values;
   int width;
   int height;
@@ -118,39 +115,28 @@ sysprof_column_layer_get_value_at_coord (SysprofColumnLayer *self,
   width = gtk_widget_get_width (GTK_WIDGET (self));
   height = gtk_widget_get_height (GTK_WIDGET (self));
 
-  if (width == 0 || height == 0)
-    return NULL;
+  _sysprof_xy_layer_get_xy (SYSPROF_XY_LAYER (self), &x_values, &y_values, &n_values);
 
-  if (self->series == NULL ||
-      !(values = sysprof_xy_series_get_values (self->series, &n_values)))
-    return NULL;
+  if (width == 0 || height == 0 || n_values == 0)
+    return GTK_INVALID_LIST_POSITION;
 
   point = GRAPHENE_POINT_INIT (x, y);
 
-  sysprof_xy_series_get_range (self->series, &min_x, &min_y, &max_x, &max_y);
-
-  line_width = MAX (1, width / (max_x - min_x));
-
   for (guint i = 0; i < n_values; i++)
     {
-      const SysprofXYSeriesValue *v = &values[i];
-      int line_height = ceilf (v->y * height);
-      graphene_rect_t rect = GRAPHENE_RECT_INIT (v->x * width,
-                                                 height - line_height,
-                                                 line_width,
-                                                 line_height);
+      graphene_rect_t rect = GRAPHENE_RECT_INIT (x_values[i]*width, height, 1, -(y_values[i]*height));
 
       if (graphene_rect_contains_point (&rect, &point))
         {
           if (area != NULL)
             *area = rect;
-          return v;
+
+          return i;
         }
     }
 
-  return NULL;
+  return GTK_INVALID_LIST_POSITION;
 }
-#endif
 
 static void
 sysprof_column_layer_snapshot_motion (SysprofChartLayer *layer,
@@ -158,17 +144,17 @@ sysprof_column_layer_snapshot_motion (SysprofChartLayer *layer,
                                       double             x,
                                       double             y)
 {
-#if 0
   SysprofColumnLayer *self = (SysprofColumnLayer *)layer;
-  const SysprofXYSeriesValue *v;
   graphene_rect_t rect;
+  guint position;
 
   g_assert (SYSPROF_IS_COLUMN_LAYER (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
 
-  if ((v = sysprof_column_layer_get_value_at_coord (self, x, y, &rect)))
+  position = sysprof_column_layer_get_index_at_coord (self, x, y, &rect);
+
+  if (position != GTK_INVALID_LIST_POSITION)
     gtk_snapshot_append_color (snapshot, &self->hover_color, &rect);
-#endif
 }
 
 static gpointer
@@ -176,15 +162,20 @@ sysprof_column_layer_lookup_item (SysprofChartLayer *layer,
                                   double             x,
                                   double             y)
 {
-#if 0
   SysprofColumnLayer *self = (SysprofColumnLayer *)layer;
-  const SysprofXYSeriesValue *v;
+  SysprofXYSeries *series;
+  GListModel *model;
 
   g_assert (SYSPROF_IS_COLUMN_LAYER (self));
 
-  if ((v = sysprof_column_layer_get_value_at_coord (self, x, y, NULL)))
-    return g_list_model_get_item (sysprof_xy_series_get_model (self->series), v->index);
-#endif
+  if ((series = sysprof_xy_layer_get_series (SYSPROF_XY_LAYER (layer))) &&
+      (model = sysprof_series_get_model (SYSPROF_SERIES (series))))
+    {
+      guint position = sysprof_column_layer_get_index_at_coord (self, x, y, NULL);
+
+      if (position != GTK_INVALID_LIST_POSITION)
+        return g_list_model_get_item (model, position);
+    }
 
   return NULL;
 }

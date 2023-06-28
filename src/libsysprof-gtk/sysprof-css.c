@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include "libsysprof-gtk-resources.h"
+
 #include "sysprof-css-private.h"
 
 void
@@ -29,6 +31,8 @@ _sysprof_css_init (void)
 
   if (css == NULL)
     {
+      g_resources_register (libsysprof_gtk_get_resource ());
+
       css = gtk_css_provider_new ();
       gtk_css_provider_load_from_resource (css, "/libsysprof-gtk/style.css");
       gtk_style_context_add_provider_for_display (gdk_display_get_default (),

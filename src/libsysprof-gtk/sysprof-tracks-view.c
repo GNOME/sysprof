@@ -27,7 +27,10 @@
 struct _SysprofTracksView
 {
   GtkWidget       parent_instance;
+
   SysprofSession *session;
+
+  GtkListView    *list_view;
 };
 
 enum {
@@ -113,6 +116,7 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-tracks-view.ui");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
+  gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, list_view);
 
   g_type_ensure (SYSPROF_TYPE_TRACK_VIEW);
 }
@@ -147,6 +151,15 @@ sysprof_tracks_view_get_session (SysprofTracksView *self)
   return self->session;
 }
 
+static GListModel *
+sysprof_tracks_view_create_model_func (gpointer item,
+                                       gpointer user_data)
+{
+  /* TODO: allow tracks to have sub-tracks */
+
+  return NULL;
+}
+
 void
 sysprof_tracks_view_set_session (SysprofTracksView *self,
                                  SysprofSession    *session)
@@ -154,6 +167,33 @@ sysprof_tracks_view_set_session (SysprofTracksView *self,
   g_return_if_fail (SYSPROF_IS_TRACKS_VIEW (self));
   g_return_if_fail (!session || SYSPROF_IS_SESSION (session));
 
-  if (g_set_object (&self->session, session))
-    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
+  if (self->session == session)
+    return;
+
+  if (self->session)
+    {
+      gtk_list_view_set_model (self->list_view, NULL);
+      g_clear_object (&self->session);
+    }
+
+  if (session)
+    {
+      g_autoptr(GtkTreeListModel) tree_list_model = NULL;
+      g_autoptr(GtkNoSelection) no = NULL;
+      g_autoptr(GListModel) tracks = NULL;
+
+      self->session = g_object_ref (session);
+
+      tracks = sysprof_session_list_tracks (session);
+      tree_list_model = gtk_tree_list_model_new (g_object_ref (tracks),
+                                                 FALSE,
+                                                 FALSE,
+                                                 sysprof_tracks_view_create_model_func,
+                                                 self, NULL);
+      no = gtk_no_selection_new (g_object_ref (G_LIST_MODEL (tree_list_model)));
+
+      gtk_list_view_set_model (self->list_view, GTK_SELECTION_MODEL (no));
+    }
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
 }

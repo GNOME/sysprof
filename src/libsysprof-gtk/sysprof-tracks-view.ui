@@ -18,7 +18,9 @@
     <property name="child">
       <object class="SysprofTrackView">
         <binding name="track">
-          <lookup name="item">GtkListItem</lookup>
+          <lookup name="item" type="GtkTreeListRow">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
         </binding>
       </object>
     </property>

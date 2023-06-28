@@ -42,10 +42,14 @@ static void
 sysprof_track_view_dispose (GObject *object)
 {
   SysprofTrackView *self = (SysprofTrackView *)object;
+  GtkWidget *child;
 
   gtk_widget_dispose_template (GTK_WIDGET (self), SYSPROF_TYPE_TRACK_VIEW);
 
   g_clear_object (&self->track);
+
+  while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+    gtk_widget_unparent (child);
 
   G_OBJECT_CLASS (sysprof_track_view_parent_class)->dispose (object);
 }
@@ -106,6 +110,7 @@ sysprof_track_view_class_init (SysprofTrackViewClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-track-view.ui");
+  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
 
   g_type_ensure (SYSPROF_TYPE_TRACK);
 }

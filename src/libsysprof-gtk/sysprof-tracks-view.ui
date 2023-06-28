@@ -5,8 +5,27 @@
       <object class="GtkBox">
         <property name="orientation">vertical</property>
         <child>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkInscription">
+                <property name="min-chars">30</property>
+                <property name="nat-chars">30</property>
+              </object>
+            </child>
+            <child>
+              <object class="SysprofTimeRuler">
+                <property name="hexpand">true</property>
+                <binding name="session">
+                  <lookup name="session">SysprofTracksView</lookup>
+                </binding>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
           <object class="GtkScrolledWindow">
             <property name="hscrollbar-policy">never</property>
+            <property name="vexpand">true</property>
             <child>
               <object class="GtkListView" id="list_view">
                 <property name="factory">

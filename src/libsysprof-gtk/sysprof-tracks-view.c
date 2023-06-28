@@ -23,6 +23,7 @@
 #include "sysprof-css-private.h"
 #include "sysprof-track-view.h"
 #include "sysprof-tracks-view.h"
+#include "sysprof-time-ruler.h"
 
 struct _SysprofTracksView
 {
@@ -118,6 +119,7 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, list_view);
 
+  g_type_ensure (SYSPROF_TYPE_TIME_RULER);
   g_type_ensure (SYSPROF_TYPE_TRACK_VIEW);
 }
 

@@ -35,6 +35,7 @@ struct _SysprofLineLayer
 
   GdkRGBA color;
 
+  guint antialias : 1;
   guint color_set : 1;
   guint dashed : 1;
   guint fill : 1;
@@ -50,6 +51,7 @@ G_DEFINE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF_TYPE_XY_LAYER
 
 enum {
   PROP_0,
+  PROP_ANTIALIAS,
   PROP_COLOR,
   PROP_DASHED,
   PROP_FILL,
@@ -99,6 +101,11 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
     color = _sysprof_chart_layer_get_accent_bg_color ();
 
   cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, width, height));
+
+  if (self->antialias)
+    cairo_set_antialias (cr, CAIRO_ANTIALIAS_GRAY);
+  else
+    cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
 
   cairo_set_line_width (cr, 1);
 
@@ -271,6 +278,10 @@ sysprof_line_layer_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_ANTIALIAS:
+      g_value_set_boolean (value, sysprof_line_layer_get_antialias (self));
+      break;
+
     case PROP_COLOR:
       g_value_set_boxed (value, sysprof_line_layer_get_color (self));
       break;
@@ -302,6 +313,10 @@ sysprof_line_layer_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_ANTIALIAS:
+      sysprof_line_layer_set_antialias (self, g_value_get_boolean (value));
+      break;
+
     case PROP_COLOR:
       sysprof_line_layer_set_color (self, g_value_get_boxed (value));
       break;
@@ -337,6 +352,11 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
 
   chart_layer_class->snapshot_motion = sysprof_line_layer_snapshot_motion;
 
+  properties [PROP_ANTIALIAS] =
+    g_param_spec_boolean ("antialias", NULL, NULL,
+                          TRUE,
+                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_COLOR] =
     g_param_spec_boxed ("color", NULL, NULL,
                         GDK_TYPE_RGBA,
@@ -364,6 +384,7 @@ static void
 sysprof_line_layer_init (SysprofLineLayer *self)
 {
   self->color.alpha = 1;
+  self->antialias = TRUE;
 }
 
 const GdkRGBA *
@@ -462,6 +483,30 @@ sysprof_line_layer_set_spline (SysprofLineLayer *self,
     {
       self->spline = spline;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SPLINE]);
+      gtk_widget_queue_draw (GTK_WIDGET (self));
+    }
+}
+
+gboolean
+sysprof_line_layer_get_antialias (SysprofLineLayer *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_LINE_LAYER (self), FALSE);
+
+  return self->antialias;
+}
+
+void
+sysprof_line_layer_set_antialias (SysprofLineLayer *self,
+                                  gboolean          antialias)
+{
+  g_return_if_fail (SYSPROF_IS_LINE_LAYER (self));
+
+  antialias = !!antialias;
+
+  if (antialias != self->antialias)
+    {
+      self->antialias = antialias;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ANTIALIAS]);
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }
 }

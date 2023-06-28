@@ -108,6 +108,7 @@
                         </property>
                         <property name="lower-layer">
                           <object class="SysprofLineLayer">
+                            <property name="antialias">false</property>
                             <property name="vexpand">true</property>
                             <property name="flip-y">true</property>
                             <binding name="x-axis">

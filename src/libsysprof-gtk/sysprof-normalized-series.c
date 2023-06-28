@@ -43,6 +43,7 @@ struct _SysprofNormalizedSeries
   guint          update_source;
 
   guint          disposed : 1;
+  guint          inverted : 1;
 };
 
 struct _SysprofNormalizedSeriesClass
@@ -54,6 +55,7 @@ enum {
   PROP_0,
   PROP_AXIS,
   PROP_EXPRESSION,
+  PROP_INVERTED,
   PROP_SERIES,
   N_PROPS
 };
@@ -94,12 +96,16 @@ sysprof_normalized_series_update_missing (gpointer user_data)
           g_autoptr(GObject) item = g_list_model_get_item (model, position);
           g_auto(GValue) value = G_VALUE_INIT;
           guint next = GTK_INVALID_LIST_POSITION;
+          float *fval = &g_array_index (self->values, float, position);
 
           gtk_expression_evaluate (expression, item, &value);
 
           g_assert (self->values->len > position);
 
-          g_array_index (self->values, float, position) = _sysprof_axis_normalize (self->axis, &value);
+          if (!self->inverted)
+            *fval = _sysprof_axis_normalize (self->axis, &value);
+          else
+            *fval = 1. - _sysprof_axis_normalize (self->axis, &value);
 
           egg_bitset_remove (bitset, position);
 
@@ -341,6 +347,11 @@ sysprof_normalized_series_class_init (SysprofNormalizedSeriesClass *klass)
     gtk_param_spec_expression ("expression", NULL, NULL,
                                (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_INVERTED] =
+    g_param_spec_boolean ("inverted", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_SERIES] =
     g_param_spec_object ("series", NULL, NULL,
                          SYSPROF_TYPE_SERIES,
@@ -515,4 +526,20 @@ sysprof_normalized_series_get_values (SysprofNormalizedSeries *self,
   *n_values = self->values->len;
 
   return &g_array_index (self->values, float, 0);
+}
+
+void
+sysprof_normalized_series_set_inverted (SysprofNormalizedSeries *self,
+                                        gboolean                 inverted)
+{
+  g_return_if_fail (SYSPROF_IS_NORMALIZED_SERIES (self));
+
+  inverted = !!inverted;
+
+  if (inverted != self->inverted)
+    {
+      self->inverted = inverted;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_INVERTED]);
+      sysprof_normalized_series_invalidate (self);
+    }
 }

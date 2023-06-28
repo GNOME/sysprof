@@ -42,6 +42,11 @@ SysprofSeries *sysprof_normalized_series_new            (SysprofSeries          
                                                          SysprofAxis             *axis,
                                                          GtkExpression           *expression);
 SYSPROF_AVAILABLE_IN_ALL
+gboolean       sysprof_normalized_series_get_inverted   (SysprofNormalizedSeries *self);
+SYSPROF_AVAILABLE_IN_ALL
+void           sysprof_normalized_series_set_inverted   (SysprofNormalizedSeries *self,
+                                                         gboolean                 inverted);
+SYSPROF_AVAILABLE_IN_ALL
 GtkExpression *sysprof_normalized_series_get_expression (SysprofNormalizedSeries *self);
 SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_normalized_series_set_expression (SysprofNormalizedSeries *self,

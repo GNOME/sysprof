@@ -74,6 +74,5 @@ markchart {
 timeruler {
   font-size: 0.833em;
   color: alpha(currentColor, .8);
-  border-bottom: 1px solid @borders;
   background: alpha(@borders, .25);
 }

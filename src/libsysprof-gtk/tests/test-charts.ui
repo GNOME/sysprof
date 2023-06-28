@@ -181,6 +181,9 @@
                   <object class="GtkScrolledWindow">
                     <property name="hscrollbar-policy">never</property>
                     <property name="vexpand">true</property>
+                    <style>
+                      <class name="undershoot-top"/>
+                    </style>
                     <child>
                       <object class="GtkListView">
                         <property name="show-separators">true</property>

@@ -100,7 +100,7 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
   else
     color = _sysprof_chart_layer_get_accent_bg_color ();
 
-  cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, 0, width, height));
+  cr = gtk_snapshot_append_cairo (snapshot, &GRAPHENE_RECT_INIT (0, -1, width, height+2));
 
   if (self->antialias)
     cairo_set_antialias (cr, CAIRO_ANTIALIAS_GRAY);

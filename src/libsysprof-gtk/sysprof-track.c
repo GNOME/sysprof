@@ -192,6 +192,9 @@ sysprof_track_list_subtracks (SysprofTrack *self)
 
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
+  if (g_list_model_get_n_items (G_LIST_MODEL (priv->subtracks)) == 0)
+    return NULL;
+
   return g_object_ref (G_LIST_MODEL (priv->subtracks));
 }
 

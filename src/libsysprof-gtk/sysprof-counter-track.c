@@ -60,6 +60,7 @@ sysprof_counter_track_create_chart (SysprofTrack *track)
 
   chart = g_object_new (SYSPROF_TYPE_CHART, NULL);
   layer = g_object_new (SYSPROF_TYPE_LINE_LAYER,
+                        "fill", TRUE,
                         "spline", TRUE,
                         "series", xy_series,
                         "x-axis", x_axis,

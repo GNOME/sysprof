@@ -52,4 +52,6 @@ SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_xy_series_set_y_expression (SysprofXYSeries *self,
                                                    GtkExpression   *y_expression);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofXYSeries, g_object_unref)
+
 G_END_DECLS

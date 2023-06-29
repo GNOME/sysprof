@@ -68,4 +68,6 @@ SYSPROF_AVAILABLE_IN_ALL
 const float   *sysprof_normalized_series_get_values     (SysprofNormalizedSeries *self,
                                                          guint                   *n_values);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofNormalizedSeries, g_object_unref)
+
 G_END_DECLS

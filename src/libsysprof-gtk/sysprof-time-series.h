@@ -52,4 +52,6 @@ SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_time_series_set_duration_expression (SysprofTimeSeries *self,
                                                             GtkExpression     *duration_expression);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofTimeSeries, g_object_unref)
+
 G_END_DECLS

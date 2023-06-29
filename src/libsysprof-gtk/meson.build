@@ -67,6 +67,7 @@ libsysprof_gtk_private_sources = [
   'sysprof-mark-chart-item.c',
   'sysprof-mark-chart-row.c',
   'sysprof-progress-cell.c',
+  'sysprof-session-discover.c',
   'sysprof-symbol-label.c',
   'sysprof-time-label.c',
 ]

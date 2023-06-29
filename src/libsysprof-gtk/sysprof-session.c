@@ -22,7 +22,7 @@
 
 #include <glib/gi18n.h>
 
-#include "sysprof-session.h"
+#include "sysprof-session-private.h"
 #include "sysprof-track.h"
 #include "sysprof-value-axis.h"
 
@@ -74,54 +74,6 @@ sysprof_session_update_axis (SysprofSession *self)
                                     self->selected_time.end_nsec);
 }
 
-static SysprofDocumentCounter *
-sysprof_session_find_counter (SysprofSession *self,
-                              const char     *category,
-                              const char     *name)
-{
-  g_autoptr(GListModel) counters = NULL;
-  guint n_items;
-
-  g_assert (SYSPROF_IS_SESSION (self));
-  g_assert (category != NULL);
-  g_assert (name != NULL);
-
-  if (self->document == NULL)
-    return NULL;
-
-  counters = sysprof_document_list_counters (self->document);
-  n_items = g_list_model_get_n_items (counters);
-
-  for (guint i = 0; i < n_items; i++)
-    {
-      g_autoptr(SysprofDocumentCounter) counter = g_list_model_get_item (counters, i);
-
-      if (g_strcmp0 (category, sysprof_document_counter_get_category (counter)) == 0 &&
-          g_strcmp0 (name, sysprof_document_counter_get_name (counter)) == 0)
-        return g_steal_pointer (&counter);
-    }
-
-  return NULL;
-}
-
-static void
-sysprof_session_discover_tracks (SysprofSession *self)
-{
-  g_autoptr(SysprofDocumentCounter) cpu = NULL;
-
-  g_assert (SYSPROF_IS_SESSION (self));
-
-  if ((cpu = sysprof_session_find_counter (self, "CPU Percent", "Combined")))
-    {
-      g_autoptr(SysprofTrack) cpu_track = NULL;
-
-      cpu_track = g_object_new (SYSPROF_TYPE_TRACK,
-                                "title", _("CPU Usage"),
-                                NULL);
-      g_list_store_append (self->tracks, cpu_track);
-    }
-}
-
 static void
 sysprof_session_set_document (SysprofSession  *self,
                               SysprofDocument *document)
@@ -141,7 +93,7 @@ sysprof_session_set_document (SysprofSession  *self,
   sysprof_session_update_axis (self);
 
   /* Discover tracks to show from the document */
-  sysprof_session_discover_tracks (self);
+  _sysprof_session_discover_tracks (self, self->document, self->tracks);
 }
 
 static void

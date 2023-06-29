@@ -40,10 +40,10 @@ sysprof_counter_track_create_chart (SysprofTrack *track)
   SysprofCounterTrack *self = (SysprofCounterTrack *)track;
   SysprofSession *session = NULL;
   g_autoptr(SysprofSeries) xy_series = NULL;
-  g_autoptr(SysprofAxis) x_axis = NULL;
   g_autoptr(SysprofAxis) y_axis = NULL;
   SysprofChartLayer *layer;
   SysprofChart *chart;
+  SysprofAxis *x_axis;
 
   g_assert (SYSPROF_IS_COUNTER_TRACK (self));
 

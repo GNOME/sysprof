@@ -157,9 +157,9 @@ static GListModel *
 sysprof_tracks_view_create_model_func (gpointer item,
                                        gpointer user_data)
 {
-  /* TODO: allow tracks to have sub-tracks */
+  g_assert (SYSPROF_IS_TRACK (item));
 
-  return NULL;
+  return sysprof_track_list_subtracks (item);
 }
 
 void

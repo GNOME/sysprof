@@ -54,7 +54,7 @@ sysprof_counter_track_create_chart (SysprofTrack *track)
   y_axis = sysprof_value_axis_new (sysprof_document_counter_get_min_value (self->counter),
                                    sysprof_document_counter_get_max_value (self->counter));
   xy_series = sysprof_xy_series_new (sysprof_track_get_title (track),
-                                     G_LIST_MODEL (self->counter),
+                                     g_object_ref (G_LIST_MODEL (self->counter)),
                                      gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_COUNTER_VALUE, NULL, "time"),
                                      gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_COUNTER_VALUE, NULL, "value-double"));
 

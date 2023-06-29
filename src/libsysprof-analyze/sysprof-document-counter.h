@@ -56,5 +56,9 @@ SYSPROF_AVAILABLE_IN_ALL
 double      sysprof_document_counter_get_value_double (SysprofDocumentCounter *self,
                                                        guint                   nth,
                                                        gint64                 *time);
+SYSPROF_AVAILABLE_IN_ALL
+double      sysprof_document_counter_get_max_value    (SysprofDocumentCounter *self);
+SYSPROF_AVAILABLE_IN_ALL
+double      sysprof_document_counter_get_min_value    (SysprofDocumentCounter *self);
 
 G_END_DECLS

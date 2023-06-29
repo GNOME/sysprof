@@ -384,3 +384,19 @@ _sysprof_document_counter_calculate_range (SysprofDocumentCounter *self)
   if (max_value_changed)
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MAX_VALUE]);
 }
+
+double
+sysprof_document_counter_get_max_value (SysprofDocumentCounter *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self), .0);
+
+  return self->max_value;
+}
+
+double
+sysprof_document_counter_get_min_value (SysprofDocumentCounter *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self), .0);
+
+  return self->min_value;
+}

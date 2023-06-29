@@ -63,6 +63,7 @@ libsysprof_gtk_public_headers = [
 ]
 
 libsysprof_gtk_private_sources = [
+  'sysprof-counter-track.c',
   'sysprof-css.c',
   'sysprof-mark-chart-item.c',
   'sysprof-mark-chart-row.c',

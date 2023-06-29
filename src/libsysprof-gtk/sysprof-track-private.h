@@ -24,7 +24,8 @@
 
 G_BEGIN_DECLS
 
-void _sysprof_track_add_subtrack (SysprofTrack *self,
-                                  SysprofTrack *subtrack);
+GtkWidget *_sysprof_track_create_chart (SysprofTrack *track);
+void       _sysprof_track_add_subtrack (SysprofTrack *self,
+                                        SysprofTrack *subtrack);
 
 G_END_DECLS

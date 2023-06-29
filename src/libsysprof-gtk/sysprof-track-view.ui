@@ -1,21 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="SysprofTrackView" parent="GtkWidget">
-    <child>
-      <object class="GtkBox">
-        <child>
-          <object class="GtkInscription" id="title">
-            <property name="nat-chars">30</property>
-            <property name="min-chars">30</property>
-            <property name="text-overflow">ellipsize-end</property>
-            <binding name="text">
-              <lookup name="title" type="SysprofTrack">
-                <lookup name="track">SysprofTrackView</lookup>
-              </lookup>
-            </binding>
-          </object>
-        </child>
-      </object>
-    </child>
   </template>
 </interface>

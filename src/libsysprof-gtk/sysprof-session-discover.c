@@ -22,6 +22,7 @@
 
 #include <glib/gi18n.h>
 
+#include "sysprof-counter-track-private.h"
 #include "sysprof-session-private.h"
 #include "sysprof-track.h"
 
@@ -94,9 +95,9 @@ _sysprof_session_discover_tracks (SysprofSession  *self,
           g_autoptr(SysprofTrack) track = NULL;
           g_autoptr(GListModel) subcounters = NULL;
 
-          track = g_object_new (SYSPROF_TYPE_TRACK,
-                                "title", g_dgettext (GETTEXT_PACKAGE, info->track_name),
-                                NULL);
+          track = sysprof_counter_track_new (self,
+                                             g_dgettext (GETTEXT_PACKAGE, info->track_name),
+                                             counter);
 
           if ((subcounters = filter_counters (counters, info->category, info->subtracks_name_glob)))
             {

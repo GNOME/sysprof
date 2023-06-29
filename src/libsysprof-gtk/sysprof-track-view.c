@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-track-private.h"
 #include "sysprof-track-view.h"
 
 struct _SysprofTrackView
@@ -149,5 +150,15 @@ sysprof_track_view_set_track (SysprofTrackView *self,
   g_return_if_fail (!track || SYSPROF_IS_TRACK (track));
 
   if (g_set_object (&self->track, track))
-    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TRACK]);
+    {
+      GtkWidget *child;
+
+      while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+        gtk_widget_unparent (child);
+
+      if ((child = _sysprof_track_create_chart (track)))
+        gtk_widget_set_parent (child, GTK_WIDGET (self));
+
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TRACK]);
+    }
 }

@@ -24,12 +24,16 @@
 
 typedef struct _SysprofTrackPrivate
 {
-  GListStore *subtracks;
-  char *title;
+  SysprofSession *session;
+  char           *title;
+  GListStore     *subtracks;
+  GMenuModel     *menu_model;
 } SysprofTrackPrivate;
 
 enum {
   PROP_0,
+  PROP_MENU_MODEL,
+  PROP_SESSION,
   PROP_SUBTRACKS,
   PROP_TITLE,
   N_PROPS
@@ -45,8 +49,10 @@ sysprof_track_dispose (GObject *object)
   SysprofTrack *self = (SysprofTrack *)object;
   SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
 
+  g_clear_object (&priv->menu_model);
   g_clear_object (&priv->subtracks);
   g_clear_pointer (&priv->title, g_free);
+  g_clear_weak_pointer (&priv->session);
 
   G_OBJECT_CLASS (sysprof_track_parent_class)->dispose (object);
 }
@@ -61,6 +67,14 @@ sysprof_track_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_MENU_MODEL:
+      g_value_set_object (value, sysprof_track_get_menu_model (self));
+      break;
+
+    case PROP_SESSION:
+      g_value_set_object (value, sysprof_track_get_session (self));
+      break;
+
     case PROP_SUBTRACKS:
       g_value_take_object (value, sysprof_track_list_subtracks (self));
       break;
@@ -85,6 +99,14 @@ sysprof_track_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_MENU_MODEL:
+      priv->menu_model = g_value_dup_object (value);
+      break;
+
+    case PROP_SESSION:
+      g_set_weak_pointer (&priv->session, g_value_get_object (value));
+      break;
+
     case PROP_TITLE:
       priv->title = g_value_dup_string (value);
       break;
@@ -102,6 +124,16 @@ sysprof_track_class_init (SysprofTrackClass *klass)
   object_class->dispose = sysprof_track_dispose;
   object_class->get_property = sysprof_track_get_property;
   object_class->set_property = sysprof_track_set_property;
+
+  properties [PROP_MENU_MODEL] =
+    g_param_spec_object ("menu-model", NULL, NULL,
+                         G_TYPE_MENU_MODEL,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_SESSION] =
+    g_param_spec_object ("session", NULL, NULL,
+                         SYSPROF_TYPE_SESSION,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_SUBTRACKS] =
     g_param_spec_object ("subtracks", NULL, NULL,
@@ -161,4 +193,46 @@ sysprof_track_list_subtracks (SysprofTrack *self)
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
   return g_object_ref (G_LIST_MODEL (priv->subtracks));
+}
+
+/**
+ * sysprof_track_get_session:
+ * @self: a #SysprofTrack
+ *
+ * Returns: (transfer none) (nullable): a #SysprofSession or %NULL
+ */
+SysprofSession *
+sysprof_track_get_session (SysprofTrack *self)
+{
+  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
+
+  return priv->session;
+}
+
+/**
+ * sysprof_track_get_menu_model:
+ * @self: a #SysprofTrack
+ *
+ * Gets the optional menu model for a track.
+ *
+ * Returns: (transfer none) (nullable): a #GMenuModel or %NULL
+ */
+GMenuModel *
+sysprof_track_get_menu_model (SysprofTrack *self)
+{
+  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
+
+  return priv->menu_model;
+}
+
+GtkWidget *
+_sysprof_track_create_chart (SysprofTrack *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
+
+  return SYSPROF_TRACK_GET_CLASS (self)->create_chart (self);
 }

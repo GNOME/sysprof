@@ -20,16 +20,18 @@
 
 #include "config.h"
 
-#include "sysprof-track.h"
+#include "sysprof-track-private.h"
 
 struct _SysprofTrack
 {
   GObject parent_instance;
+  GListStore *subtracks;
   char *title;
 };
 
 enum {
   PROP_0,
+  PROP_SUBTRACKS,
   PROP_TITLE,
   N_PROPS
 };
@@ -43,6 +45,7 @@ sysprof_track_dispose (GObject *object)
 {
   SysprofTrack *self = (SysprofTrack *)object;
 
+  g_clear_object (&self->subtracks);
   g_clear_pointer (&self->title, g_free);
 
   G_OBJECT_CLASS (sysprof_track_parent_class)->dispose (object);
@@ -58,6 +61,10 @@ sysprof_track_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_SUBTRACKS:
+      g_value_set_object (value, self->subtracks);
+      break;
+
     case PROP_TITLE:
       g_value_set_string (value, sysprof_track_get_title (self));
       break;
@@ -95,6 +102,11 @@ sysprof_track_class_init (SysprofTrackClass *klass)
   object_class->get_property = sysprof_track_get_property;
   object_class->set_property = sysprof_track_set_property;
 
+  properties[PROP_SUBTRACKS] =
+    g_param_spec_object ("subtracks", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_TITLE] =
     g_param_spec_string ("title", NULL, NULL,
                          NULL,
@@ -106,6 +118,7 @@ sysprof_track_class_init (SysprofTrackClass *klass)
 static void
 sysprof_track_init (SysprofTrack *self)
 {
+  self->subtracks = g_list_store_new (SYSPROF_TYPE_TRACK);
 }
 
 const char *
@@ -114,4 +127,29 @@ sysprof_track_get_title (SysprofTrack *self)
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
   return self->title;
+}
+
+void
+_sysprof_track_add_subtrack (SysprofTrack *self,
+                             SysprofTrack *subtrack)
+{
+  g_return_if_fail (SYSPROF_IS_TRACK (self));
+  g_return_if_fail (SYSPROF_IS_TRACK (subtrack));
+  g_return_if_fail (subtrack != self);
+
+  g_list_store_append (self->subtracks, subtrack);
+}
+
+/**
+ * sysprof_track_list_subtracks:
+ * @self: a #SysprofTrack
+ *
+ * Returns: (transfer full) (nullable): a #GListModel of #SysprofTrack
+ */
+GListModel *
+sysprof_track_list_subtracks (SysprofTrack *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
+
+  return g_object_ref (G_LIST_MODEL (self->subtracks));
 }

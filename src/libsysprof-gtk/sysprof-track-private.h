@@ -1,4 +1,4 @@
-/* sysprof-track.h
+/* sysprof-track-private.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,18 +20,11 @@
 
 #pragma once
 
-#include <sysprof-analyze.h>
+#include "sysprof-track.h"
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_TRACK (sysprof_track_get_type())
-
-SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofTrack, sysprof_track, SYSPROF, TRACK, GObject)
-
-SYSPROF_AVAILABLE_IN_ALL
-const char *sysprof_track_get_title      (SysprofTrack *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel *sysprof_track_list_subtracks (SysprofTrack *self);
+void _sysprof_track_add_subtrack (SysprofTrack *self,
+                                  SysprofTrack *subtrack);
 
 G_END_DECLS

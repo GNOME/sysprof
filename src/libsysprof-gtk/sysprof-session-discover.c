@@ -24,7 +24,7 @@
 
 #include "sysprof-counter-track-private.h"
 #include "sysprof-session-private.h"
-#include "sysprof-track.h"
+#include "sysprof-track-private.h"
 
 typedef struct _SysprofTrackCounter
 {
@@ -101,6 +101,18 @@ _sysprof_session_discover_tracks (SysprofSession  *self,
 
           if ((subcounters = filter_counters (counters, info->category, info->subtracks_name_glob)))
             {
+              guint n_items = g_list_model_get_n_items (subcounters);
+
+              for (guint j = 0; j < n_items; j++)
+                {
+                  g_autoptr(SysprofDocumentCounter) subcounter = g_list_model_get_item (subcounters, j);
+                  g_autoptr(SysprofTrack) subtrack = NULL;
+
+                  subtrack = sysprof_counter_track_new (self,
+                                                        sysprof_document_counter_get_name (subcounter),
+                                                        subcounter);
+                  _sysprof_track_add_subtrack (track, subtrack);
+                }
             }
 
           g_list_store_append (tracks, track);

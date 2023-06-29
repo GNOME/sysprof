@@ -39,6 +39,7 @@
         <property name="css-name">track</property>
         <child>
           <object class="GtkStack">
+            <property name="css-name">info</property>
             <property name="hhomogeneous">true</property>
             <property name="vhomogeneous">true</property>
             <property name="hexpand">false</property>
@@ -51,10 +52,14 @@
                     </binding>
                     <property name="child">
                       <object class="GtkBox">
+                        <property name="spacing">6</property>
                         <child>
                           <object class="GtkInscription" id="title">
                             <property name="hexpand">true</property>
                             <property name="text-overflow">ellipsize-end</property>
+                            <style>
+                              <class name="heading"/>
+                            </style>
                             <binding name="text">
                               <lookup name="title" type="SysprofTrack">
                                 <lookup name="item" type="GtkTreeListRow">

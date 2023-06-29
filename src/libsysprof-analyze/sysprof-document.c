@@ -1738,3 +1738,40 @@ sysprof_document_get_time_span (SysprofDocument *self)
 
   return &self->time_span;
 }
+
+/**
+ * sysprof_document_find_counter:
+ * @self: a #SysprofDocument
+ * @category: the category of the counter
+ * @name: the name of the counter
+ *
+ * Finds the first counter matching @category and @name.
+ *
+ * Returns: (transfer full) (nullable): a #SysprofDocumentCounter or %NULL
+ */
+SysprofDocumentCounter *
+sysprof_document_find_counter (SysprofDocument *self,
+                               const char      *category,
+                               const char      *name)
+{
+  g_autoptr(GListModel) counters = NULL;
+  guint n_items;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (category != NULL, NULL);
+  g_return_val_if_fail (name != NULL, NULL);
+
+  counters = sysprof_document_list_counters (self);
+  n_items = g_list_model_get_n_items (counters);
+
+  for (guint i = 0; i < n_items; i++)
+    {
+      g_autoptr(SysprofDocumentCounter) counter = g_list_model_get_item (counters, i);
+
+      if (g_strcmp0 (category, sysprof_document_counter_get_category (counter)) == 0 &&
+          g_strcmp0 (name, sysprof_document_counter_get_name (counter)) == 0)
+        return g_steal_pointer (&counter);
+    }
+
+  return NULL;
+}

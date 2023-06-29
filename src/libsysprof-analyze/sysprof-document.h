@@ -25,6 +25,7 @@
 #include <sysprof-capture.h>
 
 #include "sysprof-callgraph.h"
+#include "sysprof-document-counter.h"
 #include "sysprof-document-file.h"
 #include "sysprof-document-traceable.h"
 #include "sysprof-mark-catalog.h"
@@ -61,6 +62,11 @@ SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_list_marks                (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_catalog_marks             (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofDocumentCounter
+                      *sysprof_document_find_counter              (SysprofDocument           *self,
+                                                                   const char                *category,
+                                                                   const char                *name);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_list_symbols_in_traceable (SysprofDocument           *self,
                                                                    SysprofDocumentTraceable  *traceable);

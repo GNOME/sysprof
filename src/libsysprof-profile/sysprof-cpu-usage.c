@@ -346,9 +346,9 @@ sysprof_cpu_usage_record_fiber (gpointer user_data)
                                            values,
                                            n_cpu * 2 + 1);
 
-      /* Wait for cancellation or ½ second */
+      /* Wait for cancellation or ⅕ second */
       dex_await (dex_future_first (dex_ref (record->cancellable),
-                                   dex_timeout_new_usec (G_USEC_PER_SEC / 2),
+                                   dex_timeout_new_usec (G_USEC_PER_SEC / 5),
                                    NULL),
                  NULL);
       if (dex_future_get_status (record->cancellable) != DEX_FUTURE_STATUS_PENDING)

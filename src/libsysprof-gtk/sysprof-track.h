@@ -31,17 +31,7 @@ G_BEGIN_DECLS
 #define SYSPROF_TYPE_TRACK (sysprof_track_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_DERIVABLE_TYPE (SysprofTrack, sysprof_track, SYSPROF, TRACK, GObject)
-
-struct _SysprofTrackClass
-{
-  GObjectClass parent_class;
-
-  GtkWidget *(*create_chart) (SysprofTrack *self);
-
-  /*< private >*/
-  gpointer _reserved[16];
-};
+G_DECLARE_FINAL_TYPE (SysprofTrack, sysprof_track, SYSPROF, TRACK, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
 SysprofSession *sysprof_track_get_session    (SysprofTrack *self);

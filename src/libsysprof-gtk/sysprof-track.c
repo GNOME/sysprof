@@ -22,13 +22,14 @@
 
 #include "sysprof-track-private.h"
 
-typedef struct _SysprofTrackPrivate
+struct _SysprofTrack
 {
+  GObject         parent_instance;
   SysprofSession *session;
   char           *title;
   GListStore     *subtracks;
   GMenuModel     *menu_model;
-} SysprofTrackPrivate;
+};
 
 enum {
   PROP_0,
@@ -39,20 +40,25 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (SysprofTrack, sysprof_track, G_TYPE_OBJECT)
+enum {
+  CREATE_CHART,
+  N_SIGNALS
+};
+
+G_DEFINE_FINAL_TYPE (SysprofTrack, sysprof_track, G_TYPE_OBJECT)
 
 static GParamSpec *properties [N_PROPS];
+static guint signals[N_SIGNALS];
 
 static void
 sysprof_track_dispose (GObject *object)
 {
   SysprofTrack *self = (SysprofTrack *)object;
-  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
 
-  g_clear_object (&priv->menu_model);
-  g_clear_object (&priv->subtracks);
-  g_clear_pointer (&priv->title, g_free);
-  g_clear_weak_pointer (&priv->session);
+  g_clear_object (&self->menu_model);
+  g_clear_object (&self->subtracks);
+  g_clear_pointer (&self->title, g_free);
+  g_clear_weak_pointer (&self->session);
 
   G_OBJECT_CLASS (sysprof_track_parent_class)->dispose (object);
 }
@@ -95,20 +101,19 @@ sysprof_track_set_property (GObject      *object,
                             GParamSpec   *pspec)
 {
   SysprofTrack *self = SYSPROF_TRACK (object);
-  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
 
   switch (prop_id)
     {
     case PROP_MENU_MODEL:
-      priv->menu_model = g_value_dup_object (value);
+      self->menu_model = g_value_dup_object (value);
       break;
 
     case PROP_SESSION:
-      g_set_weak_pointer (&priv->session, g_value_get_object (value));
+      g_set_weak_pointer (&self->session, g_value_get_object (value));
       break;
 
     case PROP_TITLE:
-      priv->title = g_value_dup_string (value);
+      self->title = g_value_dup_string (value);
       break;
 
     default:
@@ -146,37 +151,40 @@ sysprof_track_class_init (SysprofTrackClass *klass)
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  signals[CREATE_CHART] =
+    g_signal_new ("create-chart",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0,
+                  g_signal_accumulator_first_wins, NULL,
+                  NULL,
+                  GTK_TYPE_WIDGET, 0);
 }
 
 static void
 sysprof_track_init (SysprofTrack *self)
 {
-  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
-
-  priv->subtracks = g_list_store_new (SYSPROF_TYPE_TRACK);
+  self->subtracks = g_list_store_new (SYSPROF_TYPE_TRACK);
 }
 
 const char *
 sysprof_track_get_title (SysprofTrack *self)
 {
-  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
-
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
-  return priv->title;
+  return self->title;
 }
 
 void
 _sysprof_track_add_subtrack (SysprofTrack *self,
                              SysprofTrack *subtrack)
 {
-  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
-
   g_return_if_fail (SYSPROF_IS_TRACK (self));
   g_return_if_fail (SYSPROF_IS_TRACK (subtrack));
   g_return_if_fail (subtrack != self);
 
-  g_list_store_append (priv->subtracks, subtrack);
+  g_list_store_append (self->subtracks, subtrack);
 }
 
 /**
@@ -188,14 +196,12 @@ _sysprof_track_add_subtrack (SysprofTrack *self,
 GListModel *
 sysprof_track_list_subtracks (SysprofTrack *self)
 {
-  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
-
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
-  if (g_list_model_get_n_items (G_LIST_MODEL (priv->subtracks)) == 0)
+  if (g_list_model_get_n_items (G_LIST_MODEL (self->subtracks)) == 0)
     return NULL;
 
-  return g_object_ref (G_LIST_MODEL (priv->subtracks));
+  return g_object_ref (G_LIST_MODEL (self->subtracks));
 }
 
 /**
@@ -207,11 +213,9 @@ sysprof_track_list_subtracks (SysprofTrack *self)
 SysprofSession *
 sysprof_track_get_session (SysprofTrack *self)
 {
-  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
-
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
-  return priv->session;
+  return self->session;
 }
 
 /**
@@ -225,17 +229,19 @@ sysprof_track_get_session (SysprofTrack *self)
 GMenuModel *
 sysprof_track_get_menu_model (SysprofTrack *self)
 {
-  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
-
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
-  return priv->menu_model;
+  return self->menu_model;
 }
 
 GtkWidget *
 _sysprof_track_create_chart (SysprofTrack *self)
 {
+  GtkWidget *ret = NULL;
+
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
-  return SYSPROF_TRACK_GET_CLASS (self)->create_chart (self);
+  g_signal_emit (self, signals[CREATE_CHART], 0, &ret);
+
+  return ret;
 }

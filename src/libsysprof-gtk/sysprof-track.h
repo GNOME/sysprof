@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <gtk/gtk.h>
+
 #include <sysprof-analyze.h>
 
 G_BEGIN_DECLS
@@ -27,11 +29,25 @@ G_BEGIN_DECLS
 #define SYSPROF_TYPE_TRACK (sysprof_track_get_type())
 
 SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofTrack, sysprof_track, SYSPROF, TRACK, GObject)
+G_DECLARE_DERIVABLE_TYPE (SysprofTrack, sysprof_track, SYSPROF, TRACK, GObject)
+
+struct _SysprofTrackClass
+{
+  GObjectClass parent_class;
+
+  GtkWidget *(*create_chart) (SysprofTrack *self);
+
+  /*< private >*/
+  gpointer _reserved[16];
+};
 
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_track_get_title      (SysprofTrack *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel *sysprof_track_list_subtracks (SysprofTrack *self);
+SYSPROF_AVAILABLE_IN_ALL
+GMenuModel *sysprof_track_get_menu_model (SysprofTrack *self);
+SYSPROF_AVAILABLE_IN_ALL
+GtkWidget  *sysprof_track_create_chart   (SysprofTrack *self);
 
 G_END_DECLS

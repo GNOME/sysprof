@@ -22,12 +22,11 @@
 
 #include "sysprof-track-private.h"
 
-struct _SysprofTrack
+typedef struct _SysprofTrackPrivate
 {
-  GObject parent_instance;
   GListStore *subtracks;
   char *title;
-};
+} SysprofTrackPrivate;
 
 enum {
   PROP_0,
@@ -36,7 +35,7 @@ enum {
   N_PROPS
 };
 
-G_DEFINE_FINAL_TYPE (SysprofTrack, sysprof_track, G_TYPE_OBJECT)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (SysprofTrack, sysprof_track, G_TYPE_OBJECT)
 
 static GParamSpec *properties [N_PROPS];
 
@@ -44,9 +43,10 @@ static void
 sysprof_track_dispose (GObject *object)
 {
   SysprofTrack *self = (SysprofTrack *)object;
+  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
 
-  g_clear_object (&self->subtracks);
-  g_clear_pointer (&self->title, g_free);
+  g_clear_object (&priv->subtracks);
+  g_clear_pointer (&priv->title, g_free);
 
   G_OBJECT_CLASS (sysprof_track_parent_class)->dispose (object);
 }
@@ -62,7 +62,7 @@ sysprof_track_get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_SUBTRACKS:
-      g_value_set_object (value, self->subtracks);
+      g_value_take_object (value, sysprof_track_list_subtracks (self));
       break;
 
     case PROP_TITLE:
@@ -81,11 +81,12 @@ sysprof_track_set_property (GObject      *object,
                             GParamSpec   *pspec)
 {
   SysprofTrack *self = SYSPROF_TRACK (object);
+  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
 
   switch (prop_id)
     {
     case PROP_TITLE:
-      self->title = g_value_dup_string (value);
+      priv->title = g_value_dup_string (value);
       break;
 
     default:
@@ -118,26 +119,32 @@ sysprof_track_class_init (SysprofTrackClass *klass)
 static void
 sysprof_track_init (SysprofTrack *self)
 {
-  self->subtracks = g_list_store_new (SYSPROF_TYPE_TRACK);
+  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
+
+  priv->subtracks = g_list_store_new (SYSPROF_TYPE_TRACK);
 }
 
 const char *
 sysprof_track_get_title (SysprofTrack *self)
 {
+  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
+
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
-  return self->title;
+  return priv->title;
 }
 
 void
 _sysprof_track_add_subtrack (SysprofTrack *self,
                              SysprofTrack *subtrack)
 {
+  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
+
   g_return_if_fail (SYSPROF_IS_TRACK (self));
   g_return_if_fail (SYSPROF_IS_TRACK (subtrack));
   g_return_if_fail (subtrack != self);
 
-  g_list_store_append (self->subtracks, subtrack);
+  g_list_store_append (priv->subtracks, subtrack);
 }
 
 /**
@@ -149,7 +156,9 @@ _sysprof_track_add_subtrack (SysprofTrack *self,
 GListModel *
 sysprof_track_list_subtracks (SysprofTrack *self)
 {
+  SysprofTrackPrivate *priv = sysprof_track_get_instance_private (self);
+
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
-  return g_object_ref (G_LIST_MODEL (self->subtracks));
+  return g_object_ref (G_LIST_MODEL (priv->subtracks));
 }

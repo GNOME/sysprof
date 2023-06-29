@@ -107,12 +107,12 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
   else
     cairo_set_antialias (cr, CAIRO_ANTIALIAS_NONE);
 
-  cairo_set_line_width (cr, 1);
+  cairo_set_line_width (cr, .5);
 
   cairo_set_matrix (cr, &(cairo_matrix_t) {1, 0, 0, -1, 0, height});
 
   first_x = last_x = floor (x_values[0] * width);
-  first_y = last_y = floor (y_values[0] * height);
+  first_y = last_y = floor (y_values[0] * height) + .5;
 
   cairo_move_to (cr, first_x, first_y);
 
@@ -121,7 +121,7 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
       for (guint i = 1; i < n_values; i++)
         {
           float x = floor (x_values[i] * width);
-          float y = floor (y_values[i] * height);
+          float y = floor (y_values[i] * height) + .5;
 
           /* Skip if we are getting data incorrectly on the X axis.
            * It should have been sorted by this point.
@@ -146,7 +146,7 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
       for (guint i = 1; i < n_values; i++)
         {
           float x = floor (x_values[i] * width);
-          float y = floor (y_values[i] * height);
+          float y = floor (y_values[i] * height) + .5;
 
           /* Skip if we are getting data incorrectly on the X axis.
            * It should have been sorted by this point.
@@ -173,8 +173,8 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
       fill_color.alpha *= .25;
       gdk_cairo_set_source_rgba (cr, &fill_color);
 
-      cairo_line_to (cr, last_x, 0);
-      cairo_line_to (cr, first_x, 0);
+      cairo_line_to (cr, last_x, .5);
+      cairo_line_to (cr, first_x, .5);
       cairo_line_to (cr, first_x, first_y);
       cairo_fill (cr);
     }

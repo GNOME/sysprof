@@ -7,7 +7,7 @@
         <child>
           <object class="GtkBox">
             <child>
-              <object class="GtkInscription">
+              <object class="GtkInscription" id="top_left">
                 <property name="min-chars">30</property>
                 <property name="nat-chars">30</property>
               </object>

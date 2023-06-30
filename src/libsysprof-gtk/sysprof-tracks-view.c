@@ -31,6 +31,7 @@ struct _SysprofTracksView
 
   SysprofSession *session;
 
+  GtkWidget      *top_left;
   GtkListView    *list_view;
 
   double          motion_x;
@@ -111,6 +112,9 @@ sysprof_tracks_view_snapshot (GtkWidget   *widget,
                                     GTK_WIDGET (self),
                                     self->motion_x, 0,
                                     &x, &y);
+
+  if (x < gtk_widget_get_width (self->top_left))
+    return;
 
   gtk_snapshot_append_color (snapshot,
                              &(GdkRGBA) {0,0,0,.3},
@@ -196,6 +200,7 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
   gtk_widget_class_set_css_name (widget_class, "tracks");
 
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, list_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, top_left);
 
   gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_motion_enter_cb);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_motion_leave_cb);

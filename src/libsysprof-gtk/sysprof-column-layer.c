@@ -68,13 +68,16 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
 
   _sysprof_xy_layer_get_xy (SYSPROF_XY_LAYER (self), &x_values, &y_values, &n_values);
 
-  if (width == 0 || height == 0 || n_values == 0 || self->color.alpha == 0)
+  if (width == 0 || height == 0 || n_values == 0)
     return;
 
   if (self->color_set)
     color = &self->color;
   else
     color = _sysprof_chart_layer_get_accent_bg_color ();
+
+  if (color->alpha == .0)
+    return;
 
   gtk_snapshot_save (snapshot);
 

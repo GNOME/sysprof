@@ -130,21 +130,23 @@ sysprof_tracks_view_drag_end_cb (SysprofTracksView *self,
                                  double             offset_y,
                                  GtkGestureDrag    *drag)
 {
+  int base_x;
+
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
   g_assert (GTK_IS_GESTURE_DRAG (drag));
 
   if (self->session == NULL)
     goto cleanup;
 
+  base_x = gtk_widget_get_width (self->top_left);
+
   if (self->drag_offset_x != .0)
     {
       graphene_rect_t selection;
       graphene_rect_t area;
-      int base_x;
       int width;
       int height;
 
-      base_x = gtk_widget_get_width (self->top_left);
       width = gtk_widget_get_width (GTK_WIDGET (self)) - base_x;
       height = gtk_widget_get_height (GTK_WIDGET (self));
 
@@ -169,7 +171,7 @@ sysprof_tracks_view_drag_end_cb (SysprofTracksView *self,
           sysprof_session_select_time (self->session, &to_select);
         }
     }
-  else
+  else if (self->drag_start_x >= base_x)
     {
       sysprof_session_select_time (self->session, NULL);
     }

@@ -41,6 +41,12 @@ SysprofTimeSpan *sysprof_time_span_copy     (const SysprofTimeSpan *self);
 SYSPROF_AVAILABLE_IN_ALL
 void             sysprof_time_span_free     (SysprofTimeSpan       *self);
 
+static inline gint64
+sysprof_time_span_duration (SysprofTimeSpan time_span)
+{
+  return time_span.end_nsec - time_span.begin_nsec;
+}
+
 static inline SysprofTimeSpan
 sysprof_time_span_relative_to (SysprofTimeSpan time_span,
                                gint64          point)

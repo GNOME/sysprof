@@ -40,7 +40,8 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofSeries *sysprof_time_series_new                     (const char      *title,
                                                             GListModel      *model,
                                                             GtkExpression   *time_expression,
-                                                            GtkExpression   *duration_expression);
+                                                            GtkExpression   *duration_expression,
+                                                            GtkExpression   *label_expression);
 SYSPROF_AVAILABLE_IN_ALL
 GtkExpression *sysprof_time_series_get_time_expression     (SysprofTimeSeries *self);
 SYSPROF_AVAILABLE_IN_ALL
@@ -51,6 +52,14 @@ GtkExpression *sysprof_time_series_get_duration_expression (SysprofTimeSeries *s
 SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_time_series_set_duration_expression (SysprofTimeSeries *self,
                                                             GtkExpression     *duration_expression);
+SYSPROF_AVAILABLE_IN_ALL
+GtkExpression *sysprof_time_series_get_label_expression    (SysprofTimeSeries *self);
+SYSPROF_AVAILABLE_IN_ALL
+void           sysprof_time_series_set_label_expression    (SysprofTimeSeries *self,
+                                                            GtkExpression     *label_expression);
+SYSPROF_AVAILABLE_IN_ALL
+char          *sysprof_time_series_dup_label               (SysprofTimeSeries *self,
+                                                            guint              position);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofTimeSeries, g_object_unref)
 

@@ -387,7 +387,8 @@ create_chart_for_marks (SysprofTrack           *track,
   time_series = sysprof_time_series_new (sysprof_track_get_title (track),
                                          g_object_ref (G_LIST_MODEL (info->model)),
                                          gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "time"),
-                                         gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "duration"));
+                                         gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "duration"),
+                                         gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "message"));
 
   chart = g_object_new (SYSPROF_TYPE_CHART, NULL);
   layer = g_object_new (SYSPROF_TYPE_TIME_SPAN_LAYER,

@@ -29,6 +29,7 @@ struct _SysprofTimeSeries
   SysprofSeries  parent_instance;
   GtkExpression *time_expression;
   GtkExpression *duration_expression;
+  GtkExpression *label_expression;
 };
 
 struct _SysprofTimeSeriesClass
@@ -38,8 +39,9 @@ struct _SysprofTimeSeriesClass
 
 enum {
   PROP_0,
-  PROP_TIME_EXPRESSION,
   PROP_DURATION_EXPRESSION,
+  PROP_LABEL_EXPRESSION,
+  PROP_TIME_EXPRESSION,
   N_PROPS
 };
 
@@ -64,8 +66,9 @@ sysprof_time_series_finalize (GObject *object)
 {
   SysprofTimeSeries *self = (SysprofTimeSeries *)object;
 
-  g_clear_pointer (&self->time_expression, gtk_expression_unref);
   g_clear_pointer (&self->duration_expression, gtk_expression_unref);
+  g_clear_pointer (&self->label_expression, gtk_expression_unref);
+  g_clear_pointer (&self->time_expression, gtk_expression_unref);
 
   G_OBJECT_CLASS (sysprof_time_series_parent_class)->finalize (object);
 }
@@ -86,6 +89,10 @@ sysprof_time_series_get_property (GObject    *object,
 
     case PROP_DURATION_EXPRESSION:
       gtk_value_set_expression (value, self->duration_expression);
+      break;
+
+    case PROP_LABEL_EXPRESSION:
+      gtk_value_set_expression (value, self->label_expression);
       break;
 
     default:
@@ -109,6 +116,10 @@ sysprof_time_series_set_property (GObject      *object,
 
     case PROP_DURATION_EXPRESSION:
       sysprof_time_series_set_duration_expression (self, gtk_value_get_expression (value));
+      break;
+
+    case PROP_LABEL_EXPRESSION:
+      sysprof_time_series_set_label_expression (self, gtk_value_get_expression (value));
       break;
 
     default:
@@ -137,6 +148,10 @@ sysprof_time_series_class_init (SysprofTimeSeriesClass *klass)
     gtk_param_spec_expression ("y-expression", NULL, NULL,
                                (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_LABEL_EXPRESSION] =
+    gtk_param_spec_expression ("label-expression", NULL, NULL,
+                               (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -153,6 +168,8 @@ sysprof_time_series_init (SysprofTimeSeries *self)
  *   extracting the time value from @model items.
  * @duration_expression: (transfer full) (nullable): a #GtkExpression for
  *   extracting the duration value from @model items.
+ * @label_expression: (transfer full) (nullable): a #GtkExpression for
+ *   extracting the label from @model items.
  *
  * A #SysprofSeries which contains Time,Duration pairs.
  *
@@ -162,7 +179,8 @@ SysprofSeries *
 sysprof_time_series_new (const char    *title,
                          GListModel    *model,
                          GtkExpression *time_expression,
-                         GtkExpression *duration_expression)
+                         GtkExpression *duration_expression,
+                         GtkExpression *label_expression)
 {
   SysprofTimeSeries *xy;
 
@@ -171,10 +189,12 @@ sysprof_time_series_new (const char    *title,
                      "model", model,
                      "x-expression", time_expression,
                      "y-expression", duration_expression,
+                     "label-expression", label_expression,
                      NULL);
 
   g_clear_pointer (&time_expression, gtk_expression_unref);
   g_clear_pointer (&duration_expression, gtk_expression_unref);
+  g_clear_pointer (&label_expression, gtk_expression_unref);
   g_clear_object (&model);
 
   return SYSPROF_SERIES (xy);
@@ -252,4 +272,65 @@ sysprof_time_series_set_duration_expression (SysprofTimeSeries *self,
   self->duration_expression = duration_expression;
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DURATION_EXPRESSION]);
+}
+
+/**
+ * sysprof_time_series_get_label_expression:
+ * @self: a #SysprofTimeSeries
+ *
+ * Gets the #SysprofTimeSeries:y-expression property.
+ *
+ * This is used to extract the Y coordinate from items in the #GListModel.
+ *
+ * Returns: (transfer none) (nullable): a #GtkExpression or %NULL
+ */
+GtkExpression *
+sysprof_time_series_get_label_expression (SysprofTimeSeries *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_TIME_SERIES (self), NULL);
+
+  return self->label_expression;
+}
+
+void
+sysprof_time_series_set_label_expression (SysprofTimeSeries *self,
+                                          GtkExpression     *label_expression)
+{
+  g_return_if_fail (SYSPROF_IS_TIME_SERIES (self));
+
+  if (self->label_expression == label_expression)
+    return;
+
+  if (label_expression)
+    gtk_expression_ref (label_expression);
+
+  g_clear_pointer (&self->label_expression, gtk_expression_unref);
+
+  self->label_expression = label_expression;
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_LABEL_EXPRESSION]);
+}
+
+char *
+sysprof_time_series_dup_label (SysprofTimeSeries *self,
+                               guint              position)
+{
+  g_autoptr(GObject) item = NULL;
+  g_auto(GValue) value = G_VALUE_INIT;
+  GListModel *model;
+
+  g_return_val_if_fail (SYSPROF_IS_TIME_SERIES (self), NULL);
+
+  if (self->label_expression == NULL)
+    return NULL;
+
+  if (!(model = sysprof_series_get_model (SYSPROF_SERIES (self))))
+    return NULL;
+
+  if (!(item = g_list_model_get_item (model, position)))
+    return NULL;
+
+  g_value_init (&value, G_TYPE_STRING);
+  gtk_expression_evaluate (self->label_expression, item, &value);
+  return g_value_dup_string (&value);
 }

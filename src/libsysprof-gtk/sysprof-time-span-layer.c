@@ -138,6 +138,18 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
 
   if (color->alpha > 0)
     {
+      const GdkRGBA *label_color = _sysprof_chart_layer_get_accent_fg_color ();
+      PangoLayout *layout = gtk_widget_create_pango_layout (GTK_WIDGET (self), NULL);
+      int layout_y;
+      int layout_h;
+
+      pango_layout_set_single_paragraph_mode (layout, TRUE);
+      pango_layout_set_ellipsize (layout, PANGO_ELLIPSIZE_END);
+      pango_layout_set_text (layout, "XM0", -1);
+      pango_layout_get_pixel_size (layout, NULL, &layout_h);
+
+      layout_y = (height - layout_h) / 2;
+
       /* First pass, draw our rectangles for duration which we
        * always want in the background compared to "points" which
        * are marks w/o a duration.
@@ -146,6 +158,12 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
         {
           float begin = x_values[i];
           float end = x2_values[i];
+
+          if (end < .0)
+            continue;
+
+          if (begin > 1.)
+            break;
 
           if (begin != end)
             {
@@ -157,7 +175,7 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                                          ceilf ((end - begin) * width),
                                          height);
 
-              /* Ignore empty sized draws */
+              /* Ignore empty draws */
               if (rect.size.width == 0)
                 continue;
 
@@ -169,8 +187,26 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                 last_end_x = end_x;
 
               gtk_snapshot_append_color (snapshot, color, &rect);
+
+              if (rect.size.width > 20)
+                {
+                  g_autofree char *label = sysprof_time_series_dup_label (self->series, i);
+
+                  if (label != NULL)
+                    {
+                      pango_layout_set_text (layout, label, -1);
+                      pango_layout_set_width (layout, (rect.size.width - 6) * PANGO_SCALE);
+
+                      gtk_snapshot_save (snapshot);
+                      gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (rect.origin.x + 3, layout_y));
+                      gtk_snapshot_append_layout (snapshot, layout, label_color);
+                      gtk_snapshot_restore (snapshot);
+                    }
+                }
             }
         }
+
+      g_object_unref (layout);
     }
 
   if (event_color->alpha > 0)

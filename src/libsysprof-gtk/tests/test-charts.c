@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include <adwaita.h>
+#include <libpanel.h>
 #include <gtk/gtk.h>
 
 #include <sysprof-analyze.h>

@@ -22,6 +22,7 @@
 
 #include <adwaita.h>
 #include <gtk/gtk.h>
+#include <libpanel.h>
 
 #include <sysprof-analyze.h>
 #include <sysprof-gtk.h>
@@ -169,6 +170,7 @@ main (int   argc,
 
   gtk_init ();
   adw_init ();
+  panel_init ();
 
   g_option_context_add_main_entries (context, entries, NULL);
   if (!g_option_context_parse (context, &argc, &argv, &error))

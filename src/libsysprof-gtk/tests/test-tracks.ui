@@ -4,15 +4,53 @@
     <child>
       <object class="AdwToolbarView">
         <property name="top-bar-style">raised</property>
+        <property name="bottom-bar-style">raised</property>
         <child type="top">
           <object class="AdwHeaderBar">
+            <child type="title">
+              <object class="PanelOmniBar">
+                <child type="prefix">
+                  <object class="GtkInscription">
+                    <property name="min-chars">25</property>
+                    <property name="nat-chars">25</property>
+                    <property name="valign">center</property>
+                    <property name="text-overflow">ellipsize-end</property>
+                    <binding name="text">
+                      <lookup name="title" type="AdwTabPage">
+                        <lookup name="selected-page">tab_view</lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child type="top">
+          <object class="AdwTabBar">
+            <property name="view">tab_view</property>
           </object>
         </child>
         <property name="content">
-          <object class="SysprofTracksView">
-            <binding name="session">
-              <lookup name="session">TestTracks</lookup>
-            </binding>
+          <object class="AdwTabView" id="tab_view">
+            <child>
+              <object class="AdwTabPage">
+                <binding name="title">
+                  <lookup name="title" type="SysprofDocument">
+                    <lookup name="document" type="SysprofSession">
+                      <lookup name="session">TestTracks</lookup>
+                    </lookup>
+                  </lookup>
+                </binding>
+                <property name="child">
+                  <object class="SysprofTracksView">
+                    <binding name="session">
+                      <lookup name="session">TestTracks</lookup>
+                    </binding>
+                  </object>
+                </property>
+              </object>
+            </child>
           </object>
         </property>
       </object>

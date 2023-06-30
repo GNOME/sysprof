@@ -74,14 +74,13 @@ markchart {
 timeruler {
   font-size: 0.833em;
   color: alpha(currentColor, .8);
-  background: alpha(@borders, .25);
 }
 
 tracks track chart {
   margin-top: 1px;
 }
 tracks track info {
-  background: alpha(@borders, .5);
+  background: alpha(@borders, .25);
 }
 tracks track info button {
   min-height: 0px;

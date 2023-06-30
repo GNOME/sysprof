@@ -27,12 +27,8 @@
 struct _SysprofTimeRuler
 {
   GtkWidget       parent_instance;
-
   SysprofSession *session;
   GSignalGroup   *session_signals;
-
-  double          motion_x;
-  double          motion_y;
 };
 
 enum {
@@ -120,11 +116,6 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
                                  &GRAPHENE_RECT_INIT (x, 0, 1, height));
     }
 
-  if (self->motion_x >= 0 && self->motion_y >= 0)
-    gtk_snapshot_append_color (snapshot,
-                               &color,
-                               &GRAPHENE_RECT_INIT (self->motion_x, 0, 1, height));
-
   g_object_unref (layout);
 }
 
@@ -150,49 +141,6 @@ sysprof_time_ruler_measure (GtkWidget      *widget,
       *minimum = MAX (*minimum, GROUP_SIZE);
       *natural = MAX (*natural, *minimum);
     }
-}
-
-static void
-sysprof_time_ruler_motion_enter_cb (SysprofTimeRuler         *self,
-                                    double                    x,
-                                    double                    y,
-                                    GtkEventControllerMotion *motion)
-{
-  g_assert (SYSPROF_IS_TIME_RULER (self));
-  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
-
-  self->motion_x = x;
-  self->motion_y = y;
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
-}
-
-static void
-sysprof_time_ruler_motion_cb (SysprofTimeRuler         *self,
-                              double                    x,
-                              double                    y,
-                              GtkEventControllerMotion *motion)
-{
-  g_assert (SYSPROF_IS_TIME_RULER (self));
-  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
-
-  self->motion_x = x;
-  self->motion_y = y;
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
-}
-
-static void
-sysprof_time_ruler_motion_leave_cb (SysprofTimeRuler         *self,
-                                    GtkEventControllerMotion *motion)
-{
-  g_assert (SYSPROF_IS_TIME_RULER (self));
-  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
-
-  self->motion_x = -1;
-  self->motion_y = -1;
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
 static void
@@ -281,11 +229,6 @@ sysprof_time_ruler_class_init (SysprofTimeRulerClass *klass)
 static void
 sysprof_time_ruler_init (SysprofTimeRuler *self)
 {
-  GtkEventController *motion;
-
-  self->motion_x = -1;
-  self->motion_y = -1;
-
   self->session_signals = g_signal_group_new (SYSPROF_TYPE_SESSION);
   g_signal_group_connect_object (self->session_signals,
                                  "notify::selected-time",
@@ -302,24 +245,6 @@ sysprof_time_ruler_init (SysprofTimeRuler *self)
                            G_CALLBACK (gtk_widget_queue_draw),
                            self,
                            G_CONNECT_SWAPPED);
-
-  motion = gtk_event_controller_motion_new ();
-  g_signal_connect_object (motion,
-                           "enter",
-                           G_CALLBACK (sysprof_time_ruler_motion_enter_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-  g_signal_connect_object (motion,
-                           "leave",
-                           G_CALLBACK (sysprof_time_ruler_motion_leave_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-  g_signal_connect_object (motion,
-                           "motion",
-                           G_CALLBACK (sysprof_time_ruler_motion_cb),
-                           self,
-                           G_CONNECT_SWAPPED);
-  gtk_widget_add_controller (GTK_WIDGET (self), motion);
 }
 
 GtkWidget *

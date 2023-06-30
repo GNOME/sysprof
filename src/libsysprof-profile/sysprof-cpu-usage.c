@@ -116,6 +116,8 @@ get_cpu_freq (int     stat_fd,
   g_strchug (buf);
   val = g_ascii_strtoll (buf, NULL, 10);
 
+  val = CLAMP (val, .0, max);
+
   return (double)val / max * 100.;
 }
 

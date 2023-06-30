@@ -27,6 +27,7 @@
 #include "sysprof-column-layer.h"
 #include "sysprof-line-layer.h"
 #include "sysprof-session-private.h"
+#include "sysprof-time-span-layer.h"
 #include "sysprof-track-private.h"
 #include "sysprof-value-axis.h"
 
@@ -55,6 +56,13 @@ typedef struct _SysprofTrackCounterChart
   const SysprofTrackCounter *info;
 } SysprofTrackCounterChart;
 
+typedef struct _SysprofTrackMarksChart
+{
+  GListModel      *model;
+  SysprofDocument *document;
+  SysprofSession  *session;
+} SysprofTrackMarksChart;
+
 static const SysprofTrackCounter discovery_counters[] = {
   {
     N_("CPU"),
@@ -80,6 +88,15 @@ sysprof_track_counter_chart_free (SysprofTrackCounterChart *info)
   g_clear_object (&info->document);
   g_clear_weak_pointer (&info->session);
   info->info = NULL;
+  g_free (info);
+}
+
+static void
+sysprof_track_marks_chart_free (SysprofTrackMarksChart *info)
+{
+  g_clear_object (&info->model);
+  g_clear_object (&info->document);
+  g_clear_weak_pointer (&info->session);
   g_free (info);
 }
 
@@ -128,7 +145,6 @@ create_chart_for_samples (SysprofSession *session,
 {
   g_autoptr(SysprofSeries) xy_series = NULL;
   g_autoptr(SysprofAxis) y_axis = NULL;
-  g_autoptr(GListModel) samples = NULL;
   SysprofChartLayer *layer;
   SysprofDocument *document;
   SysprofChart *chart;
@@ -338,6 +354,83 @@ sysprof_session_discover_counters (SysprofSession  *self,
     }
 }
 
+static GtkWidget *
+create_chart_for_marks (SysprofTrack           *track,
+                        SysprofTrackMarksChart *info)
+{
+  g_autoptr(SysprofSeries) time_series = NULL;
+  SysprofChartLayer *layer;
+  SysprofChart *chart;
+  SysprofAxis *x_axis = NULL;
+
+  g_assert (SYSPROF_IS_TRACK (track));
+  g_assert (info != NULL);
+  g_assert (SYSPROF_IS_SESSION (info->session));
+  g_assert (SYSPROF_IS_DOCUMENT (info->document));
+  g_assert (G_IS_LIST_MODEL (info->model));
+
+  x_axis = sysprof_session_get_visible_time_axis (info->session);
+  time_series = sysprof_time_series_new (sysprof_track_get_title (track),
+                                         g_object_ref (G_LIST_MODEL (info->model)),
+                                         gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "time"),
+                                         gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "duration"));
+
+  chart = g_object_new (SYSPROF_TYPE_CHART, NULL);
+  layer = g_object_new (SYSPROF_TYPE_TIME_SPAN_LAYER,
+                        "series", time_series,
+                        "axis", x_axis,
+                        NULL);
+  sysprof_chart_add_layer (chart, layer);
+
+  return GTK_WIDGET (chart);
+}
+
+static void
+sysprof_session_discover_marks (SysprofSession  *self,
+                                SysprofDocument *document,
+                                GListStore      *tracks)
+{
+  g_autoptr(GListModel) catalogs = NULL;
+  guint n_catalogs;
+
+  g_assert (SYSPROF_IS_SESSION (self));
+  g_assert (SYSPROF_IS_DOCUMENT (document));
+  g_assert (G_IS_LIST_STORE (tracks));
+
+  catalogs = sysprof_document_catalog_marks (document);
+  n_catalogs = g_list_model_get_n_items (catalogs);
+
+  if (n_catalogs == 0)
+    return;
+
+  for (guint i = 0; i < n_catalogs; i++)
+    {
+      g_autoptr(GListModel) by_group = g_list_model_get_item (catalogs, i);
+      g_autoptr(SysprofMarkCatalog) first = g_list_model_get_item (by_group, 0);
+      g_autoptr(SysprofTrack) track = NULL;
+      SysprofTrackMarksChart *chart;
+
+      if (first == NULL)
+        continue;
+
+      chart = g_new0 (SysprofTrackMarksChart, 1);
+      g_set_weak_pointer (&chart->session, self);
+      chart->document = g_object_ref (document);
+      chart->model = G_LIST_MODEL (gtk_flatten_list_model_new (G_LIST_MODEL (by_group)));
+
+      track = g_object_new (SYSPROF_TYPE_TRACK,
+                            "title", sysprof_mark_catalog_get_group (first),
+                            NULL);
+      g_signal_connect_data (track,
+                             "create-chart",
+                             G_CALLBACK (create_chart_for_marks),
+                             chart,
+                             (GClosureNotify)sysprof_track_marks_chart_free,
+                             0);
+      g_list_store_append (tracks, track);
+    }
+}
+
 void
 _sysprof_session_discover_tracks (SysprofSession  *self,
                                   SysprofDocument *document,
@@ -349,4 +442,5 @@ _sysprof_session_discover_tracks (SysprofSession  *self,
 
   sysprof_session_discover_sampler (self, document, tracks);
   sysprof_session_discover_counters (self, document, tracks);
+  sysprof_session_discover_marks (self, document, tracks);
 }

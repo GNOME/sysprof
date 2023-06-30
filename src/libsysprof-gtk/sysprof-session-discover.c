@@ -65,9 +65,16 @@ typedef struct _SysprofTrackMarksChart
 
 static const SysprofTrackCounter discovery_counters[] = {
   {
-    N_("CPU"),
+    N_("CPU Usage"),
     "CPU Percent", "Combined",
     "CPU Percent", "Total *",
+    .0, 100.,
+  },
+
+  {
+    N_("CPU Frequency"),
+    "CPU Frequency", "*",
+    "CPU Frequency", "*",
     .0, 100.,
   },
 

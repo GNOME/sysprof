@@ -150,15 +150,56 @@ sysprof_tracks_view_drag_update_cb (SysprofTracksView *self,
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }
 
+static gboolean
+get_selected_area (SysprofTracksView *self,
+                   graphene_rect_t   *area,
+                   graphene_rect_t   *selection)
+{
+  const SysprofTimeSpan *selected;
+  const SysprofTimeSpan *visible;
+
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+  g_assert (area != NULL);
+  g_assert (selection != NULL);
+
+  if (self->session == NULL)
+    return FALSE;
+
+  if (self->in_drag_selection && self->drag_offset_x != .0)
+    {
+      *area = GRAPHENE_RECT_INIT (gtk_widget_get_width (self->top_left),
+                                  0,
+                                  gtk_widget_get_width (GTK_WIDGET (self)) - gtk_widget_get_width (self->top_left),
+                                  gtk_widget_get_height (GTK_WIDGET (self)));
+      *selection = GRAPHENE_RECT_INIT (self->drag_start_x,
+                                       0,
+                                       self->drag_offset_x,
+                                       gtk_widget_get_height (GTK_WIDGET (self)));
+      graphene_rect_normalize (selection);
+      graphene_rect_intersection (area, selection, selection);
+
+      return TRUE;
+    }
+
+  /* If selected range == visible range, then there is no selection */
+  selected = sysprof_session_get_selected_time (self->session);
+  visible = sysprof_session_get_visible_time (self->session);
+  if (memcmp (selected, visible, sizeof *selected) == 0)
+    return FALSE;
+
+  return FALSE;
+}
+
 static void
 sysprof_tracks_view_snapshot (GtkWidget   *widget,
                               GtkSnapshot *snapshot)
 {
   SysprofTracksView *self = (SysprofTracksView *)widget;
+  graphene_rect_t area;
+  graphene_rect_t selection;
   GdkRGBA shadow_color;
   GdkRGBA line_color;
   GdkRGBA color;
-
 
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
@@ -184,23 +225,8 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   }
 G_GNUC_END_IGNORE_DEPRECATIONS
 
-  if (self->in_drag_selection && self->drag_offset_x != .0)
+  if (get_selected_area (self, &area, &selection))
     {
-      graphene_rect_t area;
-      graphene_rect_t selection;
-
-      area = GRAPHENE_RECT_INIT (gtk_widget_get_width (self->top_left),
-                                 0,
-                                 gtk_widget_get_width (GTK_WIDGET (self)) - gtk_widget_get_width (self->top_left),
-                                 gtk_widget_get_height (GTK_WIDGET (self)));
-
-      selection = GRAPHENE_RECT_INIT (self->drag_start_x,
-                                      0,
-                                      self->drag_offset_x,
-                                      gtk_widget_get_height (GTK_WIDGET (self)));
-      graphene_rect_normalize (&selection);
-      graphene_rect_intersection (&area, &selection, &selection);
-
       gtk_snapshot_append_color (snapshot,
                                  &shadow_color,
                                  &GRAPHENE_RECT_INIT (area.origin.x,

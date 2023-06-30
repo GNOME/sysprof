@@ -25,6 +25,7 @@
 #include "sysprof-chart.h"
 #include "sysprof-chart-layer.h"
 #include "sysprof-column-layer.h"
+#include "sysprof-line-layer.h"
 #include "sysprof-session-private.h"
 #include "sysprof-track-private.h"
 #include "sysprof-value-axis.h"
@@ -40,13 +41,26 @@ typedef struct _SysprofTrackCounter
   /* Used to split out sub views */
   const char *subtracks_category;
   const char *subtracks_name;
+
+  double      min_value;
+  double      max_value;
 } SysprofTrackCounter;
+
+typedef struct _SysprofTrackCounterChart
+{
+  GListModel                *counters;
+  GListModel                *subcounters;
+  SysprofDocument           *document;
+  SysprofSession            *session;
+  const SysprofTrackCounter *info;
+} SysprofTrackCounterChart;
 
 static const SysprofTrackCounter discovery_counters[] = {
   {
     N_("CPU"),
     "CPU Percent", "Combined",
-    "CPU Percent", "*",
+    "CPU Percent", "Total *",
+    .0, 100.,
   },
 
   { N_("Memory"), "Memory", "Used", NULL, NULL },
@@ -54,10 +68,20 @@ static const SysprofTrackCounter discovery_counters[] = {
   {
     N_("Energy"),
     "RAPL", "*",
-    "RAPL *", "*",
+    "RAPL*", "*",
   },
 
 };
+
+static void
+sysprof_track_counter_chart_free (SysprofTrackCounterChart *info)
+{
+  g_clear_object (&info->counters);
+  g_clear_object (&info->document);
+  g_clear_weak_pointer (&info->session);
+  info->info = NULL;
+  g_free (info);
+}
 
 static GListModel *
 filter_counters (GListModel *model,
@@ -87,7 +111,7 @@ filter_counters (GListModel *model,
       const char *ctrcat = sysprof_document_counter_get_category (counter);
       const char *ctrname = sysprof_document_counter_get_name (counter);
 
-      if (g_pattern_spec_match (cat_spec, strlen (ctrcat), ctrcat, NULL) ||
+      if (g_pattern_spec_match (cat_spec, strlen (ctrcat), ctrcat, NULL) &&
           g_pattern_spec_match (name_spec, strlen (ctrname), ctrname, NULL))
         g_list_store_append (store, counter);
     }
@@ -116,14 +140,12 @@ create_chart_for_samples (SysprofSession *session,
   document = sysprof_session_get_document (session);
   x_axis = sysprof_session_get_visible_time_axis (session);
   y_axis = sysprof_value_axis_new (0, 128);
-  xy_series = sysprof_xy_series_new (_("Stack Depth"),
+  xy_series = sysprof_xy_series_new (sysprof_track_get_title (track),
                                      sysprof_document_list_samples (document),
                                      gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_SAMPLE, NULL, "time"),
                                      gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_SAMPLE, NULL, "stack-depth"));
 
-  chart = g_object_new (SYSPROF_TYPE_CHART,
-                        "height-request", 48,
-                        NULL);
+  chart = g_object_new (SYSPROF_TYPE_CHART, NULL);
   layer = g_object_new (SYSPROF_TYPE_COLUMN_LAYER,
                         "series", xy_series,
                         "x-axis", x_axis,
@@ -163,6 +185,79 @@ sysprof_session_discover_sampler (SysprofSession  *self,
     }
 }
 
+static GtkWidget *
+create_chart_for_counters (SysprofTrack             *track,
+                           SysprofTrackCounterChart *info)
+{
+  g_autoptr(SysprofDocumentCounter) first = NULL;
+  g_autoptr(SysprofSeries) xy_series = NULL;
+  g_autoptr(SysprofAxis) y_axis = NULL;
+  SysprofChartLayer *layer;
+  SysprofChart *chart;
+  SysprofAxis *x_axis = NULL;
+  double min_value = 0;
+  double max_value = 0;
+  guint n_items;
+
+  g_assert (SYSPROF_IS_TRACK (track));
+  g_assert (info != NULL);
+  g_assert (SYSPROF_IS_DOCUMENT (info->document));
+  g_assert (SYSPROF_IS_SESSION (info->session));
+  g_assert (G_IS_LIST_MODEL (info->counters));
+
+  if (!(n_items = g_list_model_get_n_items (info->counters)))
+    return NULL;
+
+  x_axis = sysprof_session_get_visible_time_axis (info->session);
+
+  chart = g_object_new (SYSPROF_TYPE_CHART, NULL);
+
+  /* Setup Y axis usin first item. We'll expand the range
+   * after we've processed all the counters.
+   */
+  first = g_list_model_get_item (info->counters, 0);
+  min_value = sysprof_document_counter_get_min_value (first);
+  max_value = sysprof_document_counter_get_max_value (first);
+  y_axis = sysprof_value_axis_new (min_value, max_value);
+
+  if (info->info->min_value != .0 || info->info->max_value != .0)
+    {
+      min_value = info->info->min_value;
+      max_value = info->info->max_value;
+    }
+
+  for (guint i = 0; i < n_items; i++)
+    {
+      g_autoptr(SysprofDocumentCounter) counter = g_list_model_get_item (info->counters, i);
+      double item_min_value = sysprof_document_counter_get_min_value (counter);
+      double item_max_value = sysprof_document_counter_get_max_value (counter);
+
+      if (item_min_value < min_value)
+        min_value = item_min_value;
+
+      if (item_max_value > max_value)
+        max_value = item_max_value;
+
+      xy_series = sysprof_xy_series_new (sysprof_track_get_title (track),
+                                         g_object_ref (G_LIST_MODEL (counter)),
+                                         gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_COUNTER_VALUE, NULL, "time"),
+                                         gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_COUNTER_VALUE, NULL, "value-double"));
+
+      layer = g_object_new (SYSPROF_TYPE_LINE_LAYER,
+                            "spline", TRUE,
+                            "series", xy_series,
+                            "x-axis", x_axis,
+                            "y-axis", y_axis,
+                            NULL);
+      sysprof_chart_add_layer (chart, layer);
+    }
+
+  sysprof_value_axis_set_min_value (SYSPROF_VALUE_AXIS (y_axis), min_value);
+  sysprof_value_axis_set_max_value (SYSPROF_VALUE_AXIS (y_axis), max_value);
+
+  return GTK_WIDGET (chart);
+}
+
 static void
 sysprof_session_discover_counters (SysprofSession  *self,
                                    SysprofDocument *document,
@@ -183,8 +278,62 @@ sysprof_session_discover_counters (SysprofSession  *self,
 
       if (track_counters != NULL)
         {
-          g_autoptr(GListModel) subtrack_counters = filter_counters (counters, info->subtracks_category, info->subtracks_name);
+          g_autoptr(SysprofTrack) track = NULL;
+          g_autoptr(GListModel) subtrack_counters = NULL;
+          SysprofTrackCounterChart *chart;
 
+          chart = g_new0 (SysprofTrackCounterChart, 1);
+          g_set_weak_pointer (&chart->session, self);
+          chart->document = g_object_ref (document);
+          chart->counters = g_object_ref (track_counters);
+          chart->info = info;
+
+          track = g_object_new (SYSPROF_TYPE_TRACK,
+                                "title", info->track_name,
+                                NULL);
+
+          g_signal_connect_data (track,
+                                 "create-chart",
+                                 G_CALLBACK (create_chart_for_counters),
+                                 chart,
+                                 (GClosureNotify)sysprof_track_counter_chart_free,
+                                 0);
+
+          if ((subtrack_counters = filter_counters (counters, info->subtracks_category, info->subtracks_name)))
+            {
+              guint n_items = g_list_model_get_n_items (subtrack_counters);
+
+              for (guint j = 0; j < n_items; j++)
+                {
+                  g_autoptr(SysprofDocumentCounter) subtrack_counter = g_list_model_get_item (subtrack_counters, j);
+                  g_autoptr(SysprofTrack) subtrack = NULL;
+                  g_autoptr(GListStore) store = g_list_store_new (SYSPROF_TYPE_DOCUMENT_COUNTER);
+                  SysprofTrackCounterChart *subchart;
+
+                  g_list_store_append (store, subtrack_counter);
+
+                  subchart = g_new0 (SysprofTrackCounterChart, 1);
+                  g_set_weak_pointer (&subchart->session, self);
+                  subchart->document = g_object_ref (document);
+                  subchart->counters = g_object_ref (G_LIST_MODEL (store));
+                  subchart->info = info;
+
+                  subtrack = g_object_new (SYSPROF_TYPE_TRACK,
+                                           "title", sysprof_document_counter_get_name (subtrack_counter),
+                                           NULL);
+
+                  g_signal_connect_data (subtrack,
+                                         "create-chart",
+                                         G_CALLBACK (create_chart_for_counters),
+                                         subchart,
+                                         (GClosureNotify)sysprof_track_counter_chart_free,
+                                         0);
+
+                  _sysprof_track_add_subtrack (track, subtrack);
+                }
+            }
+
+          g_list_store_append (tracks, track);
         }
     }
 }

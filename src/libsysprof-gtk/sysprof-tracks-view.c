@@ -108,6 +108,12 @@ sysprof_tracks_view_drag_begin_cb (SysprofTracksView *self,
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
   g_assert (GTK_IS_GESTURE_DRAG (drag));
 
+  if (start_x < gtk_widget_get_width (self->top_left))
+    {
+      gtk_gesture_set_state (GTK_GESTURE (drag), GTK_EVENT_SEQUENCE_DENIED);
+      return;
+    }
+
   self->drag_start_x = start_x;
   self->drag_start_y = start_y;
   self->drag_offset_x = 0;
@@ -167,18 +173,18 @@ get_selected_area (SysprofTracksView *self,
 
   if (self->in_drag_selection && self->drag_offset_x != .0)
     {
+      graphene_rect_t sel;
+
       *area = GRAPHENE_RECT_INIT (gtk_widget_get_width (self->top_left),
                                   0,
                                   gtk_widget_get_width (GTK_WIDGET (self)) - gtk_widget_get_width (self->top_left),
                                   gtk_widget_get_height (GTK_WIDGET (self)));
-      *selection = GRAPHENE_RECT_INIT (self->drag_start_x,
-                                       0,
-                                       self->drag_offset_x,
-                                       gtk_widget_get_height (GTK_WIDGET (self)));
-      graphene_rect_normalize (selection);
-      graphene_rect_intersection (area, selection, selection);
+      sel = GRAPHENE_RECT_INIT (self->drag_offset_x >= 0 ? self->drag_start_x : self->drag_start_x + self->drag_offset_x,
+                                0,
+                                ABS (self->drag_offset_x),
+                                gtk_widget_get_height (GTK_WIDGET (self)));
 
-      return TRUE;
+      return graphene_rect_intersection (area, &sel, selection);
     }
 
   /* If selected range == visible range, then there is no selection */
@@ -205,12 +211,6 @@ sysprof_tracks_view_snapshot (GtkWidget   *widget,
   g_assert (GTK_IS_SNAPSHOT (snapshot));
 
   GTK_WIDGET_CLASS (sysprof_tracks_view_parent_class)->snapshot (widget, snapshot);
-
-  if (self->motion_x == -1 && self->motion_y == -1)
-    return;
-
-  if (self->motion_x < gtk_widget_get_width (self->top_left))
-    return;
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   {
@@ -242,10 +242,13 @@ G_GNUC_END_IGNORE_DEPRECATIONS
                                                       area.size.height));
     }
 
-  gtk_snapshot_append_color (snapshot,
-                             &line_color,
-                             &GRAPHENE_RECT_INIT (self->motion_x, 0, 1,
-                                                  gtk_widget_get_height (GTK_WIDGET (self))));
+  if (self->motion_x != -1 &&
+      self->motion_y != -1 &&
+      self->motion_x > gtk_widget_get_width (self->top_left))
+    gtk_snapshot_append_color (snapshot,
+                               &line_color,
+                               &GRAPHENE_RECT_INIT (self->motion_x, 0, 1,
+                                                    gtk_widget_get_height (GTK_WIDGET (self))));
 }
 
 static void

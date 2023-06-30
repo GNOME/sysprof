@@ -91,14 +91,18 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
 
   for (guint i = 0; i < n_values; i++)
     {
-      int line_height = ceilf (y_values[i] * height);
+      if (x_values[i] < .0)
+        continue;
+
+      if (x_values[i] > 1.)
+        break;
 
       gtk_snapshot_append_color (snapshot,
                                  color,
                                  &GRAPHENE_RECT_INIT (x_values[i] * width,
                                                       0,
                                                       1,
-                                                      line_height));
+                                                      ceilf (y_values[i] * height)));
     }
 
   gtk_snapshot_restore (snapshot);

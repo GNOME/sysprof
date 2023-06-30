@@ -2,21 +2,23 @@
 <interface>
   <template class="SysprofTracksView" parent="GtkWidget">
     <child>
-      <object class="GtkEventControllerMotion" id="motion">
-        <signal name="enter" handler="sysprof_tracks_view_motion_enter_cb" swapped="true"/>
-        <signal name="leave" handler="sysprof_tracks_view_motion_leave_cb" swapped="true"/>
-        <signal name="motion" handler="sysprof_tracks_view_motion_cb" swapped="true"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkGestureDrag" id="drag">
-        <signal name="drag-begin" handler="sysprof_tracks_view_drag_begin_cb" swapped="true"/>
-        <signal name="drag-end" handler="sysprof_tracks_view_drag_end_cb" swapped="true"/>
-        <signal name="drag-update" handler="sysprof_tracks_view_drag_update_cb" swapped="true"/>
-      </object>
-    </child>
-    <child>
       <object class="GtkBox" id="box">
+        <child>
+          <object class="GtkEventControllerMotion" id="motion">
+            <property name="propagation-phase">bubble</property>
+            <signal name="enter" handler="sysprof_tracks_view_motion_enter_cb" swapped="true"/>
+            <signal name="leave" handler="sysprof_tracks_view_motion_leave_cb" swapped="true"/>
+            <signal name="motion" handler="sysprof_tracks_view_motion_cb" swapped="true"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkGestureDrag" id="drag">
+            <property name="propagation-phase">bubble</property>
+            <signal name="drag-begin" handler="sysprof_tracks_view_drag_begin_cb" swapped="true"/>
+            <signal name="drag-end" handler="sysprof_tracks_view_drag_end_cb" swapped="true"/>
+            <signal name="drag-update" handler="sysprof_tracks_view_drag_update_cb" swapped="true"/>
+          </object>
+        </child>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox">

@@ -107,10 +107,22 @@ sysprof_tracks_view_drag_begin_cb (SysprofTracksView *self,
                                    double             start_y,
                                    GtkGestureDrag    *drag)
 {
+  graphene_rect_t zoom_area;
+  double x, y;
+
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
   g_assert (GTK_IS_GESTURE_DRAG (drag));
 
-  if (start_x < gtk_widget_get_width (self->top_left))
+  gtk_widget_translate_coordinates (GTK_WIDGET (self->zoom),
+                                    GTK_WIDGET (self),
+                                    0, 0, &x, &y);
+  zoom_area = GRAPHENE_RECT_INIT (x, y,
+                                  gtk_widget_get_width (GTK_WIDGET (self->zoom)),
+                                  gtk_widget_get_height (GTK_WIDGET (self->zoom)));
+
+  if (start_x < gtk_widget_get_width (self->top_left) ||
+      (gtk_widget_get_visible (GTK_WIDGET (self->zoom)) &&
+       graphene_rect_contains_point (&zoom_area, &GRAPHENE_POINT_INIT (start_x, start_y))))
     {
       gtk_gesture_set_state (GTK_GESTURE (drag), GTK_EVENT_SEQUENCE_DENIED);
       return;
@@ -278,7 +290,7 @@ sysprof_tracks_view_snapshot (GtkWidget   *widget,
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
 
-  GTK_WIDGET_CLASS (sysprof_tracks_view_parent_class)->snapshot (widget, snapshot);
+  gtk_widget_snapshot_child (GTK_WIDGET (self), GTK_WIDGET (self->box), snapshot);
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   {
@@ -317,6 +329,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
                                &line_color,
                                &GRAPHENE_RECT_INIT (self->motion_x, 0, 1,
                                                     gtk_widget_get_height (GTK_WIDGET (self))));
+
+  if (gtk_widget_get_visible (GTK_WIDGET (self->zoom)))
+    gtk_widget_snapshot_child (GTK_WIDGET (self), GTK_WIDGET (self->zoom), snapshot);
 }
 
 static void
@@ -526,9 +541,9 @@ sysprof_tracks_view_create_model_func (gpointer item,
 }
 
 static void
-sysprof_tracks_view_notify_selected_time_cb (SysprofTracksView *self,
-                                             GParamSpec        *pspec,
-                                             SysprofSession    *session)
+sysprof_tracks_view_notify_time_cb (SysprofTracksView *self,
+                                    GParamSpec        *pspec,
+                                    SysprofSession    *session)
 {
   const SysprofTimeSpan *visible;
   const SysprofTimeSpan *selected;
@@ -558,7 +573,7 @@ sysprof_tracks_view_set_session (SysprofTracksView *self,
   if (self->session)
     {
        g_signal_handlers_disconnect_by_func (self->session,
-                                             G_CALLBACK (sysprof_tracks_view_notify_selected_time_cb),
+                                             G_CALLBACK (sysprof_tracks_view_notify_time_cb),
                                              self);
       gtk_list_view_set_model (self->list_view, NULL);
       g_clear_object (&self->session);
@@ -584,7 +599,12 @@ sysprof_tracks_view_set_session (SysprofTracksView *self,
 
       g_signal_connect_object (session,
                                "notify::selected-time",
-                               G_CALLBACK (sysprof_tracks_view_notify_selected_time_cb),
+                               G_CALLBACK (sysprof_tracks_view_notify_time_cb),
+                               self,
+                               G_CONNECT_SWAPPED);
+      g_signal_connect_object (session,
+                               "notify::visible-time",
+                               G_CALLBACK (sysprof_tracks_view_notify_time_cb),
                                self,
                                G_CONNECT_SWAPPED);
     }

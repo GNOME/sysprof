@@ -171,20 +171,18 @@ get_selected_area (SysprofTracksView *self,
   if (self->session == NULL)
     return FALSE;
 
+  *area = GRAPHENE_RECT_INIT (gtk_widget_get_width (self->top_left),
+                              0,
+                              gtk_widget_get_width (GTK_WIDGET (self)) - gtk_widget_get_width (self->top_left),
+                              gtk_widget_get_height (GTK_WIDGET (self)));
+
   if (self->in_drag_selection && self->drag_offset_x != .0)
     {
-      graphene_rect_t sel;
-
-      *area = GRAPHENE_RECT_INIT (gtk_widget_get_width (self->top_left),
-                                  0,
-                                  gtk_widget_get_width (GTK_WIDGET (self)) - gtk_widget_get_width (self->top_left),
-                                  gtk_widget_get_height (GTK_WIDGET (self)));
-      sel = GRAPHENE_RECT_INIT (self->drag_offset_x >= 0 ? self->drag_start_x : self->drag_start_x + self->drag_offset_x,
-                                0,
-                                ABS (self->drag_offset_x),
-                                gtk_widget_get_height (GTK_WIDGET (self)));
-
-      return graphene_rect_intersection (area, &sel, selection);
+      *selection = GRAPHENE_RECT_INIT (self->drag_offset_x >= 0 ? self->drag_start_x : self->drag_start_x + self->drag_offset_x,
+                                       0,
+                                       ABS (self->drag_offset_x),
+                                       gtk_widget_get_height (GTK_WIDGET (self)));
+      return graphene_rect_intersection (area, selection, selection);
     }
 
   /* If selected range == visible range, then there is no selection */

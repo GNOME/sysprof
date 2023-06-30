@@ -189,7 +189,7 @@ sysprof_tracks_view_drag_end_cb (SysprofTracksView *self,
     }
   else if (self->drag_start_x >= base_x)
     {
-      sysprof_session_select_time (self->session, NULL);
+      sysprof_session_select_time (self->session, sysprof_session_get_visible_time (self->session));
     }
 
 cleanup:

@@ -36,6 +36,13 @@ struct _SysprofTracksView
 
   double          motion_x;
   double          motion_y;
+
+  double          drag_start_x;
+  double          drag_start_y;
+  double          drag_offset_x;
+  double          drag_offset_y;
+
+  guint           in_drag_selection : 1;
 };
 
 enum {
@@ -93,12 +100,64 @@ sysprof_tracks_view_motion_cb (SysprofTracksView        *self,
 }
 
 static void
+sysprof_tracks_view_drag_begin_cb (SysprofTracksView *self,
+                                   double             start_x,
+                                   double             start_y,
+                                   GtkGestureDrag    *drag)
+{
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+  g_assert (GTK_IS_GESTURE_DRAG (drag));
+
+  self->drag_start_x = start_x;
+  self->drag_start_y = start_y;
+  self->drag_offset_x = 0;
+  self->drag_offset_y = 0;
+
+  self->in_drag_selection = TRUE;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sysprof_tracks_view_drag_end_cb (SysprofTracksView *self,
+                                 double             offset_x,
+                                 double             offset_y,
+                                 GtkGestureDrag    *drag)
+{
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+  g_assert (GTK_IS_GESTURE_DRAG (drag));
+
+  self->drag_offset_x = offset_x,
+  self->drag_offset_y = offset_y;
+
+  self->in_drag_selection = FALSE;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sysprof_tracks_view_drag_update_cb (SysprofTracksView *self,
+                                    double             offset_x,
+                                    double             offset_y,
+                                    GtkGestureDrag    *drag)
+{
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+  g_assert (GTK_IS_GESTURE_DRAG (drag));
+
+  self->drag_offset_x = offset_x,
+  self->drag_offset_y = offset_y;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
 sysprof_tracks_view_snapshot (GtkWidget   *widget,
                               GtkSnapshot *snapshot)
 {
   SysprofTracksView *self = (SysprofTracksView *)widget;
+  GdkRGBA shadow_color;
+  GdkRGBA line_color;
   GdkRGBA color;
-  double x, y;
 
 
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
@@ -109,25 +168,57 @@ sysprof_tracks_view_snapshot (GtkWidget   *widget,
   if (self->motion_x == -1 && self->motion_y == -1)
     return;
 
-  gtk_widget_translate_coordinates (GTK_WIDGET (self->list_view),
-                                    GTK_WIDGET (self),
-                                    self->motion_x, 0,
-                                    &x, &y);
-
-  if (x < gtk_widget_get_width (self->top_left))
+  if (self->motion_x < gtk_widget_get_width (self->top_left))
     return;
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   {
     GtkStyleContext *style_context = gtk_widget_get_style_context (GTK_WIDGET (self));
     gtk_style_context_get_color (style_context, &color);
-    color.alpha *= .5;
+
+    shadow_color = color;
+    shadow_color.alpha *= .1;
+
+    line_color = color;
+    line_color.alpha *= .5;
   }
 G_GNUC_END_IGNORE_DEPRECATIONS
 
+  if (self->in_drag_selection && self->drag_offset_x != .0)
+    {
+      graphene_rect_t area;
+      graphene_rect_t selection;
+
+      area = GRAPHENE_RECT_INIT (gtk_widget_get_width (self->top_left),
+                                 0,
+                                 gtk_widget_get_width (GTK_WIDGET (self)) - gtk_widget_get_width (self->top_left),
+                                 gtk_widget_get_height (GTK_WIDGET (self)));
+
+      selection = GRAPHENE_RECT_INIT (self->drag_start_x,
+                                      0,
+                                      self->drag_offset_x,
+                                      gtk_widget_get_height (GTK_WIDGET (self)));
+      graphene_rect_normalize (&selection);
+      graphene_rect_intersection (&area, &selection, &selection);
+
+      gtk_snapshot_append_color (snapshot,
+                                 &shadow_color,
+                                 &GRAPHENE_RECT_INIT (area.origin.x,
+                                                      area.origin.y,
+                                                      selection.origin.x - area.origin.x,
+                                                      area.size.height));
+
+      gtk_snapshot_append_color (snapshot,
+                                 &shadow_color,
+                                 &GRAPHENE_RECT_INIT (selection.origin.x + selection.size.width,
+                                                      area.origin.y,
+                                                      (area.origin.x + area.size.width) - (selection.origin.x + selection.size.width),
+                                                      area.size.height));
+    }
+
   gtk_snapshot_append_color (snapshot,
-                             &color,
-                             &GRAPHENE_RECT_INIT (x, 0, 1,
+                             &line_color,
+                             &GRAPHENE_RECT_INIT (self->motion_x, 0, 1,
                                                   gtk_widget_get_height (GTK_WIDGET (self))));
 }
 
@@ -214,6 +305,10 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_motion_enter_cb);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_motion_leave_cb);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_motion_cb);
+
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_drag_begin_cb);
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_drag_end_cb);
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_drag_update_cb);
 
   g_type_ensure (SYSPROF_TYPE_TIME_RULER);
   g_type_ensure (SYSPROF_TYPE_TRACK_VIEW);

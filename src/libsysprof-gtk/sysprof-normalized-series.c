@@ -219,6 +219,8 @@ sysprof_normalized_series_invalidate (SysprofNormalizedSeries *self)
       egg_bitset_add_range (self->missing, 0, n_items);
 
       g_list_model_items_changed (G_LIST_MODEL (self), 0, n_items, n_items);
+
+      sysprof_normalized_series_maybe_update (self);
     }
 }
 
@@ -440,11 +442,29 @@ sysprof_normalized_series_set_axis (SysprofNormalizedSeries *self,
   g_return_if_fail (SYSPROF_IS_NORMALIZED_SERIES (self));
   g_return_if_fail (!axis || SYSPROF_IS_AXIS (axis));
 
-  if (g_set_object (&self->axis, axis))
+  if (self->axis == axis)
+    return;
+
+  if (self->axis)
     {
-      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AXIS]);
-      sysprof_normalized_series_invalidate (self);
+      g_clear_signal_handler (&self->range_changed_handler, self->axis);
+      g_clear_object (&self->axis);
     }
+
+  if (axis)
+    {
+      self->axis = g_object_ref (axis);
+      self->range_changed_handler =
+        g_signal_connect_object (axis,
+                                 "range-changed",
+                                 G_CALLBACK (sysprof_normalized_series_invalidate),
+                                 self,
+                                 G_CONNECT_SWAPPED);
+    }
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_AXIS]);
+
+  sysprof_normalized_series_invalidate (self);
 }
 
 /**

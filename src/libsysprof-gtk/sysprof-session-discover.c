@@ -409,6 +409,7 @@ sysprof_session_discover_marks (SysprofSession  *self,
       g_autoptr(SysprofMarkCatalog) first = g_list_model_get_item (by_group, 0);
       g_autoptr(SysprofTrack) track = NULL;
       SysprofTrackMarksChart *chart;
+      guint n_names = g_list_model_get_n_items (G_LIST_MODEL (by_group));
 
       if (first == NULL)
         continue;
@@ -428,6 +429,31 @@ sysprof_session_discover_marks (SysprofSession  *self,
                              (GClosureNotify)sysprof_track_marks_chart_free,
                              0);
       g_list_store_append (tracks, track);
+
+      for (guint j = 0; j < n_names; j++)
+        {
+          g_autoptr(SysprofMarkCatalog) catalog = g_list_model_get_item (by_group, j);
+          g_autoptr(SysprofTrack) subtrack = NULL;
+          SysprofTrackMarksChart *subchart;
+
+          subchart = g_new0 (SysprofTrackMarksChart, 1);
+          g_set_weak_pointer (&subchart->session, self);
+          subchart->document = g_object_ref (document);
+          subchart->model = g_object_ref (G_LIST_MODEL (catalog));
+
+          subtrack = g_object_new (SYSPROF_TYPE_TRACK,
+                                   "title", sysprof_mark_catalog_get_name (catalog),
+                                   NULL);
+
+          g_signal_connect_data (subtrack,
+                                 "create-chart",
+                                 G_CALLBACK (create_chart_for_marks),
+                                 subchart,
+                                 (GClosureNotify)sysprof_track_marks_chart_free,
+                                 0);
+
+          _sysprof_track_add_subtrack (track, subtrack);
+        }
     }
 }
 

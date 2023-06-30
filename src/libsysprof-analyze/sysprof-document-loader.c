@@ -460,6 +460,13 @@ sysprof_document_loader_load_document_cb (GObject      *object,
     {
       g_task_return_error (task, g_steal_pointer (&error));
       set_progress (1., _("Loading failed"), self);
+      return;
+    }
+
+  if (self->filename != NULL)
+    {
+      g_autofree char *title = g_path_get_basename (self->filename);
+      _sysprof_document_set_title (document, title);
     }
 
   self->symbolizing = TRUE;

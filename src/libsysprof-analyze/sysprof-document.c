@@ -59,6 +59,8 @@ struct _SysprofDocument
 
   SysprofTimeSpan           time_span;
 
+  char                     *title;
+
   GArray                   *frames;
   GMappedFile              *mapped_file;
   const guint8             *base;
@@ -106,6 +108,7 @@ enum {
   PROP_COUNTERS,
   PROP_SAMPLES,
   PROP_TIME_SPAN,
+  PROP_TITLE,
   N_PROPS
 };
 
@@ -229,6 +232,8 @@ sysprof_document_finalize (GObject *object)
 
   g_clear_pointer (&self->strings, sysprof_strings_unref);
 
+  g_clear_pointer (&self->title, g_free);
+
   g_clear_pointer (&self->pid_to_process_info, g_hash_table_unref);
   g_clear_pointer (&self->tid_to_symbol, g_hash_table_unref);
   g_clear_pointer (&self->mapped_file, g_mapped_file_unref);
@@ -286,6 +291,10 @@ sysprof_document_get_property (GObject    *object,
       g_value_set_boxed (value, sysprof_document_get_time_span (self));
       break;
 
+    case PROP_TITLE:
+      g_value_take_string (value, sysprof_document_dup_title (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -318,6 +327,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
     g_param_spec_boxed ("time-span", NULL, NULL,
                         SYSPROF_TYPE_TIME_SPAN,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_TITLE] =
+    g_param_spec_string ("title", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -801,6 +815,8 @@ sysprof_document_load_worker (GTask        *task,
       self->header.time = GUINT64_SWAP_LE_BE (self->header.time);
       self->header.end_time = GUINT64_SWAP_LE_BE (self->header.end_time);
     }
+
+  self->header.capture_time[sizeof self->header.capture_time-1] = 0;
 
   self->time_span.begin_nsec = self->header.time;
   self->time_span.end_nsec = self->header.end_time;
@@ -1774,4 +1790,30 @@ sysprof_document_find_counter (SysprofDocument *self,
     }
 
   return NULL;
+}
+
+char *
+sysprof_document_dup_title (SysprofDocument *self)
+{
+  g_autoptr(GDateTime) date_time = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  if (self->title != NULL)
+    return g_strdup (self->title);
+
+  if ((date_time = g_date_time_new_from_iso8601 (self->header.capture_time, NULL)))
+    return g_date_time_format (date_time, _("Recording at %X %x"));
+
+  return g_strdup_printf (_("Recording at %s"), self->header.capture_time);
+}
+
+void
+_sysprof_document_set_title (SysprofDocument *self,
+                             const char *title)
+{
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
+
+  if (g_set_str (&self->title, title))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
 }

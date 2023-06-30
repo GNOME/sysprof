@@ -51,6 +51,8 @@ void             _sysprof_document_new_async        (GMappedFile          *mappe
                                                      gpointer              user_data);
 SysprofDocument *_sysprof_document_new_finish       (GAsyncResult         *result,
                                                      GError              **error);
+void             _sysprof_document_set_title        (SysprofDocument      *self,
+                                                     const char           *title);
 void             _sysprof_document_symbolize_async  (SysprofDocument      *self,
                                                      SysprofSymbolizer    *symbolizer,
                                                      ProgressFunc          progress_func,

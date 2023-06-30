@@ -215,6 +215,7 @@ create_chart_for_counters (SysprofTrack             *track,
   SysprofAxis *x_axis = NULL;
   double min_value = 0;
   double max_value = 0;
+  gboolean ignore_range = FALSE;
   guint n_items;
 
   g_assert (SYSPROF_IS_TRACK (track));
@@ -242,6 +243,7 @@ create_chart_for_counters (SysprofTrack             *track,
     {
       min_value = info->info->min_value;
       max_value = info->info->max_value;
+      ignore_range = TRUE;
     }
 
   for (guint i = 0; i < n_items; i++)
@@ -250,11 +252,14 @@ create_chart_for_counters (SysprofTrack             *track,
       double item_min_value = sysprof_document_counter_get_min_value (counter);
       double item_max_value = sysprof_document_counter_get_max_value (counter);
 
-      if (item_min_value < min_value)
-        min_value = item_min_value;
+      if (!ignore_range)
+        {
+          if (item_min_value < min_value)
+            min_value = item_min_value;
 
-      if (item_max_value > max_value)
-        max_value = item_max_value;
+          if (item_max_value > max_value)
+            max_value = item_max_value;
+        }
 
       xy_series = sysprof_xy_series_new (sysprof_track_get_title (track),
                                          g_object_ref (G_LIST_MODEL (counter)),

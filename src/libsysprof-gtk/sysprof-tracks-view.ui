@@ -28,6 +28,13 @@
             <property name="vexpand">true</property>
             <child>
               <object class="GtkListView" id="list_view">
+                <child>
+                  <object class="GtkEventControllerMotion" id="motion">
+                    <signal name="enter" handler="sysprof_tracks_view_motion_enter_cb" swapped="true"/>
+                    <signal name="leave" handler="sysprof_tracks_view_motion_leave_cb" swapped="true"/>
+                    <signal name="motion" handler="sysprof_tracks_view_motion_cb" swapped="true"/>
+                  </object>
+                </child>
                 <property name="factory">
                   <object class="GtkBuilderListItemFactory">
                     <property name="bytes"><![CDATA[

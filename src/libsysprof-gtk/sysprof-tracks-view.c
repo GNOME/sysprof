@@ -32,6 +32,9 @@ struct _SysprofTracksView
   SysprofSession *session;
 
   GtkListView    *list_view;
+
+  double          motion_x;
+  double          motion_y;
 };
 
 enum {
@@ -43,6 +46,77 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofTracksView, sysprof_tracks_view, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+sysprof_tracks_view_motion_enter_cb (SysprofTracksView        *self,
+                                     double                    x,
+                                     double                    y,
+                                     GtkEventControllerMotion *motion)
+{
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  self->motion_x = x;
+  self->motion_y = y;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sysprof_tracks_view_motion_leave_cb (SysprofTracksView        *self,
+                                     GtkEventControllerMotion *motion)
+{
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  self->motion_x = -1;
+  self->motion_y = -1;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+
+}
+
+static void
+sysprof_tracks_view_motion_cb (SysprofTracksView        *self,
+                               double                    x,
+                               double                    y,
+                               GtkEventControllerMotion *motion)
+{
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+  g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
+
+  self->motion_x = x;
+  self->motion_y = y;
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
+sysprof_tracks_view_snapshot (GtkWidget   *widget,
+                              GtkSnapshot *snapshot)
+{
+  SysprofTracksView *self = (SysprofTracksView *)widget;
+  double x, y;
+
+
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+  g_assert (GTK_IS_SNAPSHOT (snapshot));
+
+  GTK_WIDGET_CLASS (sysprof_tracks_view_parent_class)->snapshot (widget, snapshot);
+
+  if (self->motion_x == -1 && self->motion_y == -1)
+    return;
+
+  gtk_widget_translate_coordinates (GTK_WIDGET (self->list_view),
+                                    GTK_WIDGET (self),
+                                    self->motion_x, 0,
+                                    &x, &y);
+
+  gtk_snapshot_append_color (snapshot,
+                             &(GdkRGBA) {0,0,0,.3},
+                             &GRAPHENE_RECT_INIT (x, y, 1,
+                                                  gtk_widget_get_height (GTK_WIDGET (self->list_view))));
+}
 
 static void
 sysprof_tracks_view_dispose (GObject *object)
@@ -108,6 +182,8 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
   object_class->get_property = sysprof_tracks_view_get_property;
   object_class->set_property = sysprof_tracks_view_set_property;
 
+  widget_class->snapshot = sysprof_tracks_view_snapshot;
+
   properties[PROP_SESSION] =
     g_param_spec_object ("session", NULL, NULL,
                          SYSPROF_TYPE_SESSION,
@@ -118,7 +194,12 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-tracks-view.ui");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_set_css_name (widget_class, "tracks");
+
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, list_view);
+
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_motion_enter_cb);
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_motion_leave_cb);
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_motion_cb);
 
   g_type_ensure (SYSPROF_TYPE_TIME_RULER);
   g_type_ensure (SYSPROF_TYPE_TRACK_VIEW);

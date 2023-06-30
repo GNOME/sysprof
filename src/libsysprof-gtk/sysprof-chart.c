@@ -130,6 +130,11 @@ sysprof_chart_snapshot (GtkWidget   *widget,
 
   g_assert (SYSPROF_IS_CHART (self));
 
+  gtk_snapshot_push_clip (snapshot,
+                          &GRAPHENE_RECT_INIT (0, 0,
+                                               gtk_widget_get_width (widget),
+                                               gtk_widget_get_height (widget)));
+
   GTK_WIDGET_CLASS (sysprof_chart_parent_class)->snapshot (widget, snapshot);
 
   if (priv->pointer_in_chart)
@@ -142,6 +147,8 @@ sysprof_chart_snapshot (GtkWidget   *widget,
                                              priv->motion_x,
                                              priv->motion_y);
     }
+
+  gtk_snapshot_pop (snapshot);
 }
 
 static gboolean

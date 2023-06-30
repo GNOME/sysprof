@@ -31,8 +31,10 @@ struct _SysprofTracksView
 
   SysprofSession *session;
 
+  GtkBox         *box;
   GtkWidget      *top_left;
   GtkListView    *list_view;
+  GtkButton      *zoom;
 
   double          motion_x;
   double          motion_y;
@@ -118,6 +120,8 @@ sysprof_tracks_view_drag_begin_cb (SysprofTracksView *self,
   self->drag_start_y = start_y;
   self->drag_offset_x = 0;
   self->drag_offset_y = 0;
+
+  gtk_widget_set_visible (GTK_WIDGET (self->zoom), FALSE);
 
   self->in_drag_selection = TRUE;
 
@@ -316,12 +320,69 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 static void
+sysprof_tracks_view_measure (GtkWidget      *widget,
+                             GtkOrientation  orientation,
+                             int             for_size,
+                             int            *minimum,
+                             int            *natural,
+                             int            *minimum_baseline,
+                             int            *natural_baseline)
+{
+  SysprofTracksView *self = (SysprofTracksView *)widget;
+
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+
+  gtk_widget_measure (GTK_WIDGET (self->box),
+                      orientation,
+                      for_size,
+                      minimum,
+                      natural,
+                      minimum_baseline,
+                      natural_baseline);
+}
+
+static void
+sysprof_tracks_view_size_allocate (GtkWidget *widget,
+                                   int        width,
+                                   int        height,
+                                   int        baseline)
+{
+  SysprofTracksView *self = (SysprofTracksView *)widget;
+  graphene_rect_t area;
+  graphene_rect_t selection;
+
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+
+  gtk_widget_size_allocate (GTK_WIDGET (self->box),
+                            &(GtkAllocation) {0, 0, width, height},
+                            baseline);
+
+  if (get_selected_area (self, &area, &selection))
+    {
+      graphene_point_t middle;
+      GtkRequisition min_req;
+      GtkRequisition nat_req;
+
+      gtk_widget_get_preferred_size (GTK_WIDGET (self->zoom), &min_req, &nat_req);
+      graphene_rect_get_center (&selection, &middle);
+
+      gtk_widget_size_allocate (GTK_WIDGET (self->zoom),
+                                &(GtkAllocation) {
+                                  middle.x - (min_req.width/2),
+                                  middle.y - (min_req.height/2),
+                                  min_req.width,
+                                  min_req.height
+                                }, -1);
+    }
+}
+
+static void
 sysprof_tracks_view_dispose (GObject *object)
 {
   SysprofTracksView *self = (SysprofTracksView *)object;
   GtkWidget *child;
 
-  g_clear_object (&self->session);
+  sysprof_tracks_view_set_session (self, NULL);
 
   gtk_widget_dispose_template (GTK_WIDGET (self), SYSPROF_TYPE_TRACKS_VIEW);
 
@@ -380,6 +441,8 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
   object_class->set_property = sysprof_tracks_view_set_property;
 
   widget_class->snapshot = sysprof_tracks_view_snapshot;
+  widget_class->measure = sysprof_tracks_view_measure;
+  widget_class->size_allocate = sysprof_tracks_view_size_allocate;
 
   properties[PROP_SESSION] =
     g_param_spec_object ("session", NULL, NULL,
@@ -389,11 +452,12 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-tracks-view.ui");
-  gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_set_css_name (widget_class, "tracks");
 
+  gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, box);
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, list_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, top_left);
+  gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, zoom);
 
   gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_motion_enter_cb);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_motion_leave_cb);
@@ -446,6 +510,26 @@ sysprof_tracks_view_create_model_func (gpointer item,
   return sysprof_track_list_subtracks (item);
 }
 
+static void
+sysprof_tracks_view_notify_selected_time_cb (SysprofTracksView *self,
+                                             GParamSpec        *pspec,
+                                             SysprofSession    *session)
+{
+  const SysprofTimeSpan *visible;
+  const SysprofTimeSpan *selected;
+  gboolean button_visible;
+
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+  g_assert (SYSPROF_IS_SESSION (session));
+
+  visible = sysprof_session_get_visible_time (session);
+  selected = sysprof_session_get_selected_time (session);
+
+  button_visible = memcmp (visible, selected, sizeof *visible) != 0;
+
+  gtk_widget_set_visible (GTK_WIDGET (self->zoom), button_visible);
+}
+
 void
 sysprof_tracks_view_set_session (SysprofTracksView *self,
                                  SysprofSession    *session)
@@ -458,6 +542,9 @@ sysprof_tracks_view_set_session (SysprofTracksView *self,
 
   if (self->session)
     {
+       g_signal_handlers_disconnect_by_func (self->session,
+                                             G_CALLBACK (sysprof_tracks_view_notify_selected_time_cb),
+                                             self);
       gtk_list_view_set_model (self->list_view, NULL);
       g_clear_object (&self->session);
     }
@@ -479,6 +566,12 @@ sysprof_tracks_view_set_session (SysprofTracksView *self,
       no = gtk_no_selection_new (g_object_ref (G_LIST_MODEL (tree_list_model)));
 
       gtk_list_view_set_model (self->list_view, GTK_SELECTION_MODEL (no));
+
+      g_signal_connect_object (session,
+                               "notify::selected-time",
+                               G_CALLBACK (sysprof_tracks_view_notify_selected_time_cb),
+                               self,
+                               G_CONNECT_SWAPPED);
     }
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);

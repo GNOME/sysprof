@@ -16,7 +16,7 @@
       </object>
     </child>
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="box">
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox">
@@ -138,6 +138,18 @@
             </child>
           </object>
         </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="zoom">
+        <property name="action-name">zoom-to-selection</property>
+        <property name="icon-name">zoom-in-symbolic</property>
+        <property name="valign">center</property>
+        <property name="halign">center</property>
+        <property name="visible">false</property>
+        <style>
+          <class name="circular"/>
+        </style>
       </object>
     </child>
   </template>

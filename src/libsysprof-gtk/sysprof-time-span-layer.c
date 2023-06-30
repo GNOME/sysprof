@@ -21,6 +21,7 @@
 
 #include "config.h"
 
+#include "sysprof-chart-layer-private.h"
 #include "sysprof-normalized-series.h"
 #include "sysprof-time-series-item.h"
 #include "sysprof-time-span-layer.h"
@@ -37,6 +38,9 @@ struct _SysprofTimeSpanLayer
 
   GdkRGBA color;
   GdkRGBA event_color;
+
+  guint color_set : 1;
+  guint event_color_set : 1;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofTimeSpanLayer, sysprof_time_span_layer, SYSPROF_TYPE_CHART_LAYER)
@@ -58,6 +62,32 @@ sysprof_time_span_layer_new (void)
   return g_object_new (SYSPROF_TYPE_TIME_SPAN_LAYER, NULL);
 }
 
+static inline void
+premix_colors (GdkRGBA       *dest,
+               const GdkRGBA *fg,
+               const GdkRGBA *bg,
+               gboolean       bg_set,
+               double         alpha)
+{
+	g_assert (dest != NULL);
+	g_assert (fg != NULL);
+	g_assert (bg != NULL || bg_set == FALSE);
+	g_assert (alpha >= 0.0 && alpha <= 1.0);
+
+  if (bg_set)
+    {
+      dest->red = ((1 - alpha) * bg->red) + (alpha * fg->red);
+      dest->green = ((1 - alpha) * bg->green) + (alpha * fg->green);
+      dest->blue = ((1 - alpha) * bg->blue) + (alpha * fg->blue);
+      dest->alpha = 1.0;
+    }
+  else
+    {
+      *dest = *fg;
+      dest->alpha = alpha;
+    }
+}
+
 static void
 sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                                   GtkSnapshot *snapshot)
@@ -65,6 +95,9 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
   SysprofTimeSpanLayer *self = (SysprofTimeSpanLayer *)widget;
   const float *x_values;
   const float *x2_values;
+  const GdkRGBA *color;
+  const GdkRGBA *event_color;
+  GdkRGBA mixed;
   graphene_rect_t box_rect;
   float last_end_x = 0;
   guint n_x_values = 0;
@@ -79,7 +112,24 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
   width = gtk_widget_get_width (widget);
   height = gtk_widget_get_height (widget);
 
-  if (width == 0 || height == 0 || self->color.alpha == 0)
+  if (self->color_set)
+    color = &self->color;
+  else
+    color = _sysprof_chart_layer_get_accent_bg_color ();
+
+  if (self->event_color_set)
+    event_color = &self->event_color;
+  else
+    {
+      premix_colors (&mixed,
+                     _sysprof_chart_layer_get_accent_bg_color (),
+                     _sysprof_chart_layer_get_accent_fg_color (),
+                     TRUE, .5);
+      mixed.alpha = .8;
+      event_color = &mixed;
+    }
+
+  if (width == 0 || height == 0)
     return;
 
   if (!(x_values = sysprof_normalized_series_get_values (self->normal_x, &n_x_values)) ||
@@ -87,58 +137,71 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
       !(n_values = MIN (n_x_values, n_x2_values)))
     return;
 
-  /* First pass, draw our rectangles for duration which we
-   * always want in the background compared to "points" which
-   * are marks w/o a duration.
-   */
-  for (guint i = 0; i < n_values; i++)
+  if (color->alpha > 0)
     {
-      float begin = x_values[i];
-      float end = x2_values[i];
-
-      if (begin != end)
+      /* First pass, draw our rectangles for duration which we
+       * always want in the background compared to "points" which
+       * are marks w/o a duration.
+       */
+      for (guint i = 0; i < n_values; i++)
         {
-          graphene_rect_t rect;
-          float end_x;
+          float begin = x_values[i];
+          float end = x2_values[i];
 
-          rect = GRAPHENE_RECT_INIT (floorf (begin * width),
-                                     0,
-                                     ceilf ((end - begin) * width),
-                                     height);
+          if (begin != end)
+            {
+              graphene_rect_t rect;
+              float end_x;
 
-          /* Ignore empty sized draws */
-          if (rect.size.width == 0)
-            continue;
+              rect = GRAPHENE_RECT_INIT (floorf (begin * width),
+                                         0,
+                                         ceilf ((end - begin) * width),
+                                         height);
 
-          /* Cull draw unless it will extend past last rect */
-          end_x = rect.origin.x + rect.size.width;
-          if (end_x <= last_end_x)
-            continue;
-          else
-            last_end_x = end_x;
+              /* Ignore empty sized draws */
+              if (rect.size.width == 0)
+                continue;
 
-          gtk_snapshot_append_color (snapshot, &self->color, &rect);
+              /* Cull draw unless it will extend past last rect */
+              end_x = rect.origin.x + rect.size.width;
+              if (end_x <= last_end_x)
+                continue;
+              else
+                last_end_x = end_x;
+
+              gtk_snapshot_append_color (snapshot, color, &rect);
+            }
         }
     }
 
-  box_rect = GRAPHENE_RECT_INIT (-ceil (height / 4.),
-                                 -ceil (height / 4.),
-                                 ceil (height/2.),
-                                 ceil (height/2.));
-
-  for (guint i = 0; i < n_values; i++)
+  if (event_color->alpha > 0)
     {
-      float begin = x_values[i];
-      float end = x2_values[i];
+      float last_x = -1;
 
-      if (begin == end)
+      box_rect = GRAPHENE_RECT_INIT (-ceil (height / 6.),
+                                     -ceil (height / 6.),
+                                     ceil (height / 3.),
+                                     ceil (height / 3.));
+
+      for (guint i = 0; i < n_values; i++)
         {
-          gtk_snapshot_save (snapshot);
-          gtk_snapshot_translate (snapshot,
-                                  &GRAPHENE_POINT_INIT (begin * width, height / 2));
-          gtk_snapshot_rotate (snapshot, 45.f);
-          gtk_snapshot_append_color (snapshot, &self->event_color, &box_rect);
-          gtk_snapshot_restore (snapshot);
+          float begin = x_values[i];
+          float end = x2_values[i];
+
+          if (begin != end)
+            continue;
+
+          if (last_x != begin)
+            {
+              gtk_snapshot_save (snapshot);
+              gtk_snapshot_translate (snapshot,
+                                      &GRAPHENE_POINT_INIT (begin * width, height / 2));
+              gtk_snapshot_rotate (snapshot, 45.f);
+              gtk_snapshot_append_color (snapshot, event_color, &box_rect);
+              gtk_snapshot_restore (snapshot);
+
+              last_x = begin;
+            }
         }
     }
 }
@@ -259,9 +322,6 @@ sysprof_time_span_layer_init (SysprofTimeSpanLayer *self)
   g_autoptr(GtkExpression) begin_expression = NULL;
   g_autoptr(GtkExpression) end_expression = NULL;
 
-  gdk_rgba_parse (&self->color, "#000");
-  gdk_rgba_parse (&self->event_color, "#F00");
-
   begin_expression = gtk_property_expression_new (SYSPROF_TYPE_TIME_SERIES_ITEM, NULL, "time");
   end_expression = gtk_property_expression_new (SYSPROF_TYPE_TIME_SERIES_ITEM, NULL, "end-time");
 
@@ -306,6 +366,7 @@ sysprof_time_span_layer_set_color (SysprofTimeSpanLayer *self,
   if (!gdk_rgba_equal (&self->color, color))
     {
       self->color = *color;
+      self->color_set = color != &black;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_COLOR]);
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }
@@ -333,6 +394,7 @@ sysprof_time_span_layer_set_event_color (SysprofTimeSpanLayer *self,
   if (!gdk_rgba_equal (&self->event_color, event_color))
     {
       self->event_color = *event_color;
+      self->color_set = event_color != &black;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_EVENT_COLOR]);
       gtk_widget_queue_draw (GTK_WIDGET (self));
     }

@@ -73,6 +73,8 @@ static const SysprofTrackCounter discovery_counters[] = {
 
   { N_("Memory"), "Memory", "Used", NULL, NULL },
 
+  { N_("FPS"), "gtk", "fps", "gtk", "*" },
+
   {
     N_("Energy"),
     "RAPL", "*",

@@ -97,6 +97,7 @@ sysprof_tracks_view_snapshot (GtkWidget   *widget,
                               GtkSnapshot *snapshot)
 {
   SysprofTracksView *self = (SysprofTracksView *)widget;
+  GdkRGBA color;
   double x, y;
 
 
@@ -116,8 +117,15 @@ sysprof_tracks_view_snapshot (GtkWidget   *widget,
   if (x < gtk_widget_get_width (self->top_left))
     return;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  {
+    GtkStyleContext *style_context = gtk_widget_get_style_context (GTK_WIDGET (self));
+    gtk_style_context_get_color (style_context, &color);
+  }
+G_GNUC_END_IGNORE_DEPRECATIONS
+
   gtk_snapshot_append_color (snapshot,
-                             &(GdkRGBA) {0,0,0,.3},
+                             &color,
                              &GRAPHENE_RECT_INIT (x, y, 1,
                                                   gtk_widget_get_height (GTK_WIDGET (self->list_view))));
 }

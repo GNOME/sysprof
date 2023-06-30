@@ -125,7 +125,6 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                      _sysprof_chart_layer_get_accent_bg_color (),
                      _sysprof_chart_layer_get_accent_fg_color (),
                      TRUE, .5);
-      mixed.alpha = .8;
       event_color = &mixed;
     }
 

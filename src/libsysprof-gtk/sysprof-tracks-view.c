@@ -133,8 +133,52 @@ sysprof_tracks_view_drag_end_cb (SysprofTracksView *self,
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
   g_assert (GTK_IS_GESTURE_DRAG (drag));
 
-  self->drag_offset_x = offset_x,
-  self->drag_offset_y = offset_y;
+  if (self->session == NULL)
+    goto cleanup;
+
+  if (self->drag_offset_x != .0)
+    {
+      graphene_rect_t selection;
+      graphene_rect_t area;
+      int base_x;
+      int width;
+      int height;
+
+      base_x = gtk_widget_get_width (self->top_left);
+      width = gtk_widget_get_width (GTK_WIDGET (self)) - base_x;
+      height = gtk_widget_get_height (GTK_WIDGET (self));
+
+      area = GRAPHENE_RECT_INIT (base_x, 0, width, height);
+      selection = GRAPHENE_RECT_INIT (self->drag_start_x,
+                                      0,
+                                      self->drag_offset_x,
+                                      height);
+      graphene_rect_normalize (&selection);
+
+      if (graphene_rect_intersection (&area, &selection, &selection))
+        {
+          double begin = (selection.origin.x - area.origin.x) / area.size.width;
+          double end = (selection.origin.x + selection.size.width - area.origin.x) / area.size.width;
+          const SysprofTimeSpan *visible = sysprof_session_get_visible_time (self->session);
+          gint64 visible_duration = visible->end_nsec - visible->begin_nsec;
+          SysprofTimeSpan to_select;
+
+          to_select.begin_nsec = visible->begin_nsec + (begin * visible_duration);
+          to_select.end_nsec = visible->begin_nsec + (end * visible_duration);
+
+          sysprof_session_select_time (self->session, &to_select);
+        }
+    }
+  else
+    {
+      sysprof_session_select_time (self->session, NULL);
+    }
+
+cleanup:
+  self->drag_start_x = -1;
+  self->drag_start_y = -1;
+  self->drag_offset_x = 0;
+  self->drag_offset_y = 0;
 
   self->in_drag_selection = FALSE;
 
@@ -163,6 +207,13 @@ get_selected_area (SysprofTracksView *self,
 {
   const SysprofTimeSpan *selected;
   const SysprofTimeSpan *visible;
+  SysprofTimeSpan relative;
+  gint64 time_duration;
+  double begin;
+  double end;
+  int base_x;
+  int width;
+  int height;
 
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
   g_assert (area != NULL);
@@ -171,17 +222,19 @@ get_selected_area (SysprofTracksView *self,
   if (self->session == NULL)
     return FALSE;
 
-  *area = GRAPHENE_RECT_INIT (gtk_widget_get_width (self->top_left),
-                              0,
-                              gtk_widget_get_width (GTK_WIDGET (self)) - gtk_widget_get_width (self->top_left),
-                              gtk_widget_get_height (GTK_WIDGET (self)));
+  base_x = gtk_widget_get_width (self->top_left);
+  width = gtk_widget_get_width (GTK_WIDGET (self)) - base_x;
+  height = gtk_widget_get_height (GTK_WIDGET (self));
+
+  *area = GRAPHENE_RECT_INIT (base_x, 0, width, height);
 
   if (self->in_drag_selection && self->drag_offset_x != .0)
     {
-      *selection = GRAPHENE_RECT_INIT (self->drag_offset_x >= 0 ? self->drag_start_x : self->drag_start_x + self->drag_offset_x,
+      *selection = GRAPHENE_RECT_INIT (self->drag_start_x,
                                        0,
-                                       ABS (self->drag_offset_x),
-                                       gtk_widget_get_height (GTK_WIDGET (self)));
+                                       self->drag_offset_x,
+                                       height);
+      graphene_rect_normalize (selection);
       return graphene_rect_intersection (area, selection, selection);
     }
 
@@ -191,7 +244,18 @@ get_selected_area (SysprofTracksView *self,
   if (memcmp (selected, visible, sizeof *selected) == 0)
     return FALSE;
 
-  return FALSE;
+  time_duration = sysprof_time_span_duration (*visible);
+  relative = sysprof_time_span_relative_to (*selected, visible->begin_nsec);
+
+  begin = relative.begin_nsec / (double)time_duration;
+  end = relative.end_nsec / (double)time_duration;
+
+  *selection = GRAPHENE_RECT_INIT (area->origin.x + (begin * width),
+                                   0,
+                                   (end * width) - (begin * width),
+                                   area->size.height);
+
+  return TRUE;
 }
 
 static void

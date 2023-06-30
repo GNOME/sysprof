@@ -364,3 +364,18 @@ sysprof_session_list_tracks (SysprofSession *self)
 
   return g_object_ref (G_LIST_MODEL (self->tracks));
 }
+
+void
+sysprof_session_zoom_to_selection (SysprofSession *self)
+{
+  g_return_if_fail (SYSPROF_IS_SESSION (self));
+
+  if (memcmp (&self->visible_time, &self->selected_time, sizeof self->visible_time) == 0)
+    return;
+
+  self->visible_time = self->selected_time;
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_VISIBLE_TIME]);
+
+  sysprof_session_update_axis (self);
+}

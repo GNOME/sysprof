@@ -320,6 +320,19 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 static void
+sysprof_tracks_view_zoom_to_selection (GtkWidget  *widget,
+                                       const char *action_name,
+                                       GVariant   *params)
+{
+  SysprofTracksView *self = (SysprofTracksView *)widget;
+
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+
+  if (self->session != NULL)
+    sysprof_session_zoom_to_selection (self->session);
+}
+
+static void
 sysprof_tracks_view_measure (GtkWidget      *widget,
                              GtkOrientation  orientation,
                              int             for_size,
@@ -466,6 +479,8 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_drag_begin_cb);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_drag_end_cb);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_tracks_view_drag_update_cb);
+
+  gtk_widget_class_install_action (widget_class, "zoom-to-selection", NULL, sysprof_tracks_view_zoom_to_selection);
 
   g_type_ensure (SYSPROF_TYPE_TIME_RULER);
   g_type_ensure (SYSPROF_TYPE_TRACK_VIEW);

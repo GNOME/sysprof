@@ -148,6 +148,8 @@ test_tracks_class_init (TestTracksClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/test-tracks.ui");
 
   g_type_ensure (SYSPROF_TYPE_TRACKS_VIEW);
+  g_type_ensure (SYSPROF_TYPE_MARK_CHART);
+  g_type_ensure (SYSPROF_TYPE_MARK_TABLE);
 }
 
 static void

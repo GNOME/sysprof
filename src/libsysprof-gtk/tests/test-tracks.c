@@ -150,6 +150,7 @@ test_tracks_class_init (TestTracksClass *klass)
   g_type_ensure (SYSPROF_TYPE_TRACKS_VIEW);
   g_type_ensure (SYSPROF_TYPE_MARK_CHART);
   g_type_ensure (SYSPROF_TYPE_MARK_TABLE);
+  g_type_ensure (SYSPROF_TYPE_WEIGHTED_CALLGRAPH_VIEW);
 }
 
 static void

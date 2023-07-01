@@ -73,11 +73,20 @@
                     <property name="vexpand">true</property>
                     <child>
                       <object class="GtkStackPage">
-                        <property name="title">Mark Table</property>
+                        <property name="title">Callgraph</property>
                         <property name="child">
-                          <object class="SysprofMarkTable">
-                            <binding name="session">
-                              <lookup name="session">TestTracks</lookup>
+                          <object class="SysprofWeightedCallgraphView">
+                            <binding name="document">
+                              <lookup name="document" type="SysprofSession">
+                                <lookup name="session">TestTracks</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="traceables">
+                              <lookup name="samples" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">TestTracks</lookup>
+                                </lookup>
+                              </lookup>
                             </binding>
                           </object>
                         </property>
@@ -88,6 +97,18 @@
                         <property name="title">Mark Chart</property>
                         <property name="child">
                           <object class="SysprofMarkChart">
+                            <binding name="session">
+                              <lookup name="session">TestTracks</lookup>
+                            </binding>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="title">Mark Table</property>
+                        <property name="child">
+                          <object class="SysprofMarkTable">
                             <binding name="session">
                               <lookup name="session">TestTracks</lookup>
                             </binding>

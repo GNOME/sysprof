@@ -24,6 +24,12 @@
                 </child>
               </object>
             </child>
+            <child type="end">
+              <object class="GtkMenuButton">
+                <property name="icon-name">document-properties-symbolic</property>
+                <property name="menu-model">view_menu</property>
+              </object>
+            </child>
           </object>
         </child>
         <child type="top">
@@ -125,4 +131,12 @@
       </object>
     </child>
   </template>
+  <menu id="view_menu">
+    <section>
+      <attribute name="label">Callgraph</attribute>
+      <item>
+        <attribute name="label">Show Threads</attribute>
+      </item>
+    </section>
+  </menu>
 </interface>

@@ -450,15 +450,19 @@ sysprof_session_discover_marks (SysprofSession  *self,
       g_autoptr(SysprofMarkCatalog) first = g_list_model_get_item (by_group, 0);
       g_autoptr(SysprofTrack) track = NULL;
       SysprofTrackMarksChart *chart;
-      guint n_names = g_list_model_get_n_items (G_LIST_MODEL (by_group));
+      const char *group;
+      guint n_names;
 
       if (first == NULL)
         continue;
 
+      n_names = g_list_model_get_n_items (G_LIST_MODEL (by_group));
+      group = sysprof_mark_catalog_get_group (first);
+
       chart = g_new0 (SysprofTrackMarksChart, 1);
       g_set_weak_pointer (&chart->session, self);
       chart->document = g_object_ref (document);
-      chart->model = G_LIST_MODEL (gtk_flatten_list_model_new (g_object_ref (G_LIST_MODEL (by_group))));
+      chart->model = sysprof_document_list_marks_by_group (document, group);
 
       track = g_object_new (SYSPROF_TYPE_TRACK,
                             "title", sysprof_mark_catalog_get_group (first),

@@ -5,7 +5,7 @@
       <object class="GtkBox" id="box">
         <child>
           <object class="GtkEventControllerMotion" id="motion">
-            <property name="propagation-phase">bubble</property>
+            <property name="propagation-phase">capture</property>
             <signal name="enter" handler="sysprof_tracks_view_motion_enter_cb" swapped="true"/>
             <signal name="leave" handler="sysprof_tracks_view_motion_leave_cb" swapped="true"/>
             <signal name="motion" handler="sysprof_tracks_view_motion_cb" swapped="true"/>

@@ -416,6 +416,8 @@ sysprof_session_discover_marks (SysprofSession  *self,
                                 GListStore      *tracks)
 {
   g_autoptr(GListModel) catalogs = NULL;
+  g_autoptr(SysprofTrack) toplevel = NULL;
+  SysprofTrackMarksChart *topchart;
   guint n_catalogs;
 
   g_assert (SYSPROF_IS_SESSION (self));
@@ -427,6 +429,20 @@ sysprof_session_discover_marks (SysprofSession  *self,
 
   if (n_catalogs == 0)
     return;
+
+  toplevel = g_object_new (SYSPROF_TYPE_TRACK,
+                           "title", _("Points of Interest"),
+                           NULL);
+  topchart = g_new0 (SysprofTrackMarksChart, 1);
+  g_set_weak_pointer (&topchart->session, self);
+  topchart->document = g_object_ref (document);
+  topchart->model = sysprof_document_list_marks (document);
+  g_signal_connect_data (toplevel,
+                         "create-chart",
+                         G_CALLBACK (create_chart_for_marks),
+                         topchart,
+                         (GClosureNotify)sysprof_track_marks_chart_free,
+                         0);
 
   for (guint i = 0; i < n_catalogs; i++)
     {
@@ -453,7 +469,7 @@ sysprof_session_discover_marks (SysprofSession  *self,
                              chart,
                              (GClosureNotify)sysprof_track_marks_chart_free,
                              0);
-      g_list_store_append (tracks, track);
+      _sysprof_track_add_subtrack (toplevel, track);
 
       for (guint j = 0; j < n_names; j++)
         {
@@ -480,6 +496,8 @@ sysprof_session_discover_marks (SysprofSession  *self,
           _sysprof_track_add_subtrack (track, subtrack);
         }
     }
+
+  g_list_store_append (tracks, toplevel);
 }
 
 void

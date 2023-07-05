@@ -1311,7 +1311,7 @@ sysprof_document_list_traceables (SysprofDocument *self)
  * Gets a #GListModel containing #SysprofDocumentMark found within
  * the #SysprofDocument.
  *
- * Returns: (transfer full): a #GListModel of #SysprofDocumentAllocation
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentMark
  */
 GListModel *
 sysprof_document_list_marks (SysprofDocument *self)
@@ -1319,6 +1319,43 @@ sysprof_document_list_marks (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->marks);
+}
+
+/**
+ * sysprof_document_list_marks_by_group:
+ * @self: a #SysprofDocument
+ * @group: the name of the group
+ *
+ * Gets a #GListModel containing #SysprofDocumentMark found within
+ * the #SysprofDocument which are part of @group.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentMark
+ */
+GListModel *
+sysprof_document_list_marks_by_group (SysprofDocument *self,
+                                      const char      *group)
+{
+  g_autoptr(EggBitset) bitset = NULL;
+  GHashTable *names;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (group != NULL, NULL);
+
+  bitset = egg_bitset_new_empty ();
+
+  if ((names = g_hash_table_lookup (self->mark_groups, group)))
+    {
+      GHashTableIter iter;
+      const char *name;
+      EggBitset *indices;
+
+      g_hash_table_iter_init (&iter, names);
+
+      while (g_hash_table_iter_next (&iter, (gpointer *)&name, (gpointer *)&indices))
+        egg_bitset_union (bitset, indices);
+    }
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), bitset);
 }
 
 /**

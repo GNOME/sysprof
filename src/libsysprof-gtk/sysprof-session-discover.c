@@ -31,6 +31,12 @@
 #include "sysprof-track-private.h"
 #include "sysprof-value-axis.h"
 
+typedef enum _LineFlags
+{
+  LINE_FLAGS_DASHED = 1 << 0,
+  LINE_FLAGS_NO_SPLINE = 1 << 1,
+} LineFlags;
+
 typedef struct _SysprofTrackCounter
 {
   const char *track_name;
@@ -45,6 +51,8 @@ typedef struct _SysprofTrackCounter
 
   double      min_value;
   double      max_value;
+
+  LineFlags   flags;
 } SysprofTrackCounter;
 
 typedef struct _SysprofTrackCounterChart
@@ -76,6 +84,7 @@ static const SysprofTrackCounter discovery_counters[] = {
     "CPU Frequency", "*",
     "CPU Frequency", "*",
     .0, 100.,
+    LINE_FLAGS_DASHED,
   },
 
   { N_("Memory"), "Memory", "Used", NULL, NULL },
@@ -274,7 +283,8 @@ create_chart_for_counters (SysprofTrack             *track,
                                          gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_COUNTER_VALUE, NULL, "value-double"));
 
       layer = g_object_new (SYSPROF_TYPE_LINE_LAYER,
-                            "spline", TRUE,
+                            "spline", !(info->info->flags & LINE_FLAGS_NO_SPLINE),
+                            "dashed", !!(info->info->flags & LINE_FLAGS_DASHED),
                             "series", xy_series,
                             "x-axis", x_axis,
                             "y-axis", y_axis,

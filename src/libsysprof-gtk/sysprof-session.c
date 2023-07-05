@@ -379,3 +379,77 @@ sysprof_session_zoom_to_selection (SysprofSession *self)
 
   sysprof_session_update_axis (self);
 }
+
+static char *
+get_time_str (gint64 o)
+{
+  char str[32];
+
+  if (o == 0)
+    g_snprintf (str, sizeof str, "%.3lfs", .0);
+  else if (o < 1000000)
+    g_snprintf (str, sizeof str, "%.3lfμs", o/1000.);
+  else if (o < SYSPROF_NSEC_PER_SEC)
+    g_snprintf (str, sizeof str, "%.3lfms", o/1000000.);
+  else
+    g_snprintf (str, sizeof str, "%.3lfs", o/(double)SYSPROF_NSEC_PER_SEC);
+
+  return g_strdup (str);
+}
+
+static void
+append_time_string (GString               *str,
+                    const SysprofTimeSpan *span)
+{
+  g_autofree char *begin_str = NULL;
+
+  g_assert (str != NULL);
+  g_assert (span != NULL);
+
+  begin_str = get_time_str (span->begin_nsec);
+
+  g_string_append (str, begin_str);
+
+  if (span->begin_nsec != span->end_nsec)
+    {
+      g_autofree char *end_str = get_time_str (span->end_nsec - span->begin_nsec);
+
+      g_string_append_printf (str, " (%s)", end_str);
+    }
+}
+
+char *
+_sysprof_session_describe (SysprofSession *self,
+                           gpointer        item)
+{
+  g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
+
+  if (self->document == NULL)
+    return NULL;
+
+  if (SYSPROF_IS_DOCUMENT_MARK (item))
+    {
+      SysprofDocumentMark *mark = item;
+      const SysprofTimeSpan *begin = sysprof_document_get_time_span (self->document);
+      GString *str = g_string_new (NULL);
+      const char *group = sysprof_document_mark_get_group (mark);
+      const char *name = sysprof_document_mark_get_name (mark);
+      const char *message = sysprof_document_mark_get_message (mark);
+      SysprofTimeSpan span = {
+        .begin_nsec = sysprof_document_frame_get_time (item),
+        .end_nsec = sysprof_document_frame_get_time (item) + sysprof_document_mark_get_duration (mark),
+      };
+
+      span = sysprof_time_span_relative_to (span, begin->begin_nsec);
+
+      append_time_string (str, &span);
+      g_string_append_printf (str, ": %s / %s", group, name);
+
+      if (message && message[0])
+        g_string_append_printf (str, ": %s", message);
+
+      return g_string_free (str, FALSE);
+    }
+
+  return NULL;
+}

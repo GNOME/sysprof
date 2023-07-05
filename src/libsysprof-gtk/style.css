@@ -69,6 +69,7 @@ timeruler {
   color: alpha(currentColor, .8);
 }
 
+tracks informative,
 tracks timecode {
   border-radius: 7px;
   background: @accent_bg_color;

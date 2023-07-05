@@ -241,6 +241,66 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
     }
 }
 
+static gpointer
+sysprof_time_span_layer_lookup_item (SysprofChartLayer *layer,
+                                     double             x,
+                                     double             y)
+{
+  SysprofTimeSpanLayer *self = (SysprofTimeSpanLayer *)layer;
+  const float *x_values;
+  const float *x2_values;
+  GListModel *model;
+  guint n_x_values = 0;
+  guint n_x2_values = 0;
+  guint n_values;
+  int width;
+  int height;
+
+  g_assert (SYSPROF_IS_TIME_SPAN_LAYER (self));
+
+  width = gtk_widget_get_width (GTK_WIDGET (self));
+  height = gtk_widget_get_height (GTK_WIDGET (self));
+
+  if (width == 0 || height == 0 || self->series == NULL)
+    return NULL;
+
+  if (!(model = sysprof_series_get_model (SYSPROF_SERIES (self->series))))
+    return NULL;
+
+  if (!(x_values = sysprof_normalized_series_get_values (self->normal_x, &n_x_values)) ||
+      !(x2_values = sysprof_normalized_series_get_values (self->normal_x2, &n_x2_values)) ||
+      !(n_values = MIN (n_x_values, n_x2_values)))
+    return NULL;
+
+  /* First match our non-duration marks (diamonds) */
+  for (guint i = 0; i < n_values; i++)
+    {
+      int begin = x_values[i] * width - 3;
+      int end = x2_values[i] * width + 3;
+
+      if (x_values[i] != x2_values[i])
+        continue;
+
+      if (x >= begin && x < end)
+        return g_list_model_get_item (model, i);
+    }
+
+  /* Then match regular duration events */
+  for (guint i = 0; i < n_values; i++)
+    {
+      float begin = x_values[i] * width;
+      float end = x2_values[i] * width;
+
+      if (x_values[i] == x2_values[i])
+        continue;
+
+      if (x >= begin && x < end)
+        return g_list_model_get_item (model, i);
+    }
+
+  return NULL;
+}
+
 static void
 sysprof_time_span_layer_finalize (GObject *object)
 {
@@ -321,12 +381,15 @@ sysprof_time_span_layer_class_init (SysprofTimeSpanLayerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  SysprofChartLayerClass *chart_layer_class = SYSPROF_CHART_LAYER_CLASS (klass);
 
   object_class->finalize = sysprof_time_span_layer_finalize;
   object_class->get_property = sysprof_time_span_layer_get_property;
   object_class->set_property = sysprof_time_span_layer_set_property;
 
   widget_class->snapshot = sysprof_time_span_layer_snapshot;
+
+  chart_layer_class->lookup_item = sysprof_time_span_layer_lookup_item;
 
   properties[PROP_AXIS] =
     g_param_spec_object ("axis", NULL, NULL,

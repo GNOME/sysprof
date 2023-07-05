@@ -24,8 +24,10 @@
 
 G_BEGIN_DECLS
 
-void _sysprof_session_discover_tracks (SysprofSession  *session,
-                                       SysprofDocument *document,
-                                       GListStore      *tracks);
+void  _sysprof_session_discover_tracks (SysprofSession  *session,
+                                        SysprofDocument *document,
+                                        GListStore      *tracks);
+char *_sysprof_session_describe        (SysprofSession  *self,
+                                        gpointer         item);
 
 G_END_DECLS

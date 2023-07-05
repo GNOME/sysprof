@@ -20,7 +20,9 @@
 
 #include "config.h"
 
+#include "sysprof-chart-layer.h"
 #include "sysprof-css-private.h"
+#include "sysprof-session-private.h"
 #include "sysprof-track-view.h"
 #include "sysprof-tracks-view.h"
 #include "sysprof-time-ruler.h"
@@ -32,6 +34,7 @@ struct _SysprofTracksView
   SysprofSession   *session;
 
   GtkBox           *box;
+  GtkLabel         *informative;
   GtkWidget        *top_left;
   GtkListView      *list_view;
   SysprofTimeRuler *ruler;
@@ -65,6 +68,8 @@ set_motion (SysprofTracksView *self,
             double             y)
 {
   gboolean timecode_visible = FALSE;
+  gboolean informative_visible = FALSE;
+  GtkWidget *pick;
   int ruler_start;
 
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
@@ -76,15 +81,42 @@ set_motion (SysprofTracksView *self,
   self->motion_y = y;
 
   ruler_start = gtk_widget_get_width (self->top_left);
+  timecode_visible = x >= ruler_start;
 
-  if (x >= ruler_start)
+  if (timecode_visible)
     {
       g_autofree char *str = sysprof_time_ruler_get_label_at_point (self->ruler, x - ruler_start);
       gtk_label_set_label (self->timecode, str);
-      timecode_visible = TRUE;
+    }
+
+  pick = gtk_widget_pick (GTK_WIDGET (self), x, y, 0);
+
+  if (pick != NULL)
+    {
+      SysprofChartLayer *layer = SYSPROF_CHART_LAYER (gtk_widget_get_ancestor (pick, SYSPROF_TYPE_CHART_LAYER));
+
+      if (layer != NULL)
+        {
+          g_autoptr(GObject) item = NULL;
+          g_autofree char *text = NULL;
+          double layer_x;
+          double layer_y;
+
+          gtk_widget_translate_coordinates (GTK_WIDGET (self),
+                                            GTK_WIDGET (layer),
+                                            x, y, &layer_x, &layer_y);
+
+          if ((item = sysprof_chart_layer_lookup_item (layer, layer_x, layer_y)))
+            text = _sysprof_session_describe (self->session, item);
+
+          gtk_label_set_label (self->informative, text);
+
+          informative_visible = text != NULL;
+        }
     }
 
   gtk_widget_set_visible (GTK_WIDGET (self->timecode), timecode_visible);
+  gtk_widget_set_visible (GTK_WIDGET (self->informative), informative_visible);
 
   gtk_widget_queue_draw (GTK_WIDGET (self));
 }
@@ -357,6 +389,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   if (gtk_widget_get_visible (GTK_WIDGET (self->timecode)))
     gtk_widget_snapshot_child (GTK_WIDGET (self), GTK_WIDGET (self->timecode), snapshot);
+
+  if (gtk_widget_get_visible (GTK_WIDGET (self->informative)))
+    gtk_widget_snapshot_child (GTK_WIDGET (self), GTK_WIDGET (self->informative), snapshot);
 }
 
 static void
@@ -448,6 +483,27 @@ sysprof_tracks_view_size_allocate (GtkWidget *widget,
                                     min_req.width, min_req.height
                                   }, -1);
     }
+
+  if (gtk_widget_get_visible (GTK_WIDGET (self->informative)))
+    {
+      GtkRequisition min_req;
+      GtkRequisition nat_req;
+
+      gtk_widget_get_preferred_size (GTK_WIDGET (self->informative), &min_req, &nat_req);
+
+      if (self->motion_x + min_req.width < gtk_widget_get_width (GTK_WIDGET (self)))
+        gtk_widget_size_allocate (GTK_WIDGET (self->informative),
+                                  &(GtkAllocation) {
+                                    self->motion_x, self->motion_y,
+                                    min_req.width, min_req.height
+                                  }, -1);
+      else
+        gtk_widget_size_allocate (GTK_WIDGET (self->informative),
+                                  &(GtkAllocation) {
+                                    self->motion_x - min_req.width, self->motion_y,
+                                    min_req.width, min_req.height
+                                  }, -1);
+    }
 }
 
 static void
@@ -529,6 +585,7 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
   gtk_widget_class_set_css_name (widget_class, "tracks");
 
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, box);
+  gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, informative);
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, list_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, ruler);
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, timecode);

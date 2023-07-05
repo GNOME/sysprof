@@ -7,6 +7,25 @@
         <property name="bottom-bar-style">raised</property>
         <child type="top">
           <object class="AdwHeaderBar">
+            <child type="start">
+              <object class="GtkMenuButton">
+                <child>
+                  <object class="GtkBox">
+                    <property name="spacing">3</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Open</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">pan-down-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
             <child type="title">
               <object class="PanelOmniBar">
                 <child type="prefix">
@@ -22,6 +41,13 @@
                     </binding>
                   </object>
                 </child>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkMenuButton">
+                <property name="icon-name">open-menu-symbolic</property>
+                <property name="menu-model">primary_menu</property>
+                <property name="primary">true</property>
               </object>
             </child>
             <child type="end">
@@ -128,9 +154,35 @@
             </child>
           </object>
         </property>
+        <child type="bottom">
+          <object class="PanelStatusbar">
+            <child type="suffix">
+              <object class="PanelToggleButton">
+                <property name="area">bottom</property>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
   </template>
+  <menu id="primary_menu">
+    <section>
+      <item>
+        <attribute name="label">Preferences</attribute>
+      </item>
+      <item>
+        <attribute name="label">Keyboard Shortcuts</attribute>
+        <attribute name="accel">&lt;ctrl&gt;question</attribute>
+      </item>
+      <item>
+        <attribute name="label">Help</attribute>
+      </item>
+      <item>
+        <attribute name="label">About Sysprof</attribute>
+      </item>
+    </section>
+  </menu>
   <menu id="view_menu">
     <section>
       <attribute name="label">Callgraph</attribute>

@@ -62,10 +62,10 @@ SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_normalized_series_set_series     (SysprofNormalizedSeries *self,
                                                          SysprofSeries           *series);
 SYSPROF_AVAILABLE_IN_ALL
-float          sysprof_normalized_series_value_at       (SysprofNormalizedSeries *self,
+double         sysprof_normalized_series_value_at       (SysprofNormalizedSeries *self,
                                                          guint                    position);
 SYSPROF_AVAILABLE_IN_ALL
-const float   *sysprof_normalized_series_get_values     (SysprofNormalizedSeries *self,
+const double  *sysprof_normalized_series_get_values     (SysprofNormalizedSeries *self,
                                                          guint                   *n_values);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofNormalizedSeries, g_object_unref)

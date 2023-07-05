@@ -96,7 +96,7 @@ sysprof_normalized_series_update_missing (gpointer user_data)
           g_autoptr(GObject) item = g_list_model_get_item (model, position);
           g_auto(GValue) value = G_VALUE_INIT;
           guint next = GTK_INVALID_LIST_POSITION;
-          float *fval = &g_array_index (self->values, float, position);
+          double *fval = &g_array_index (self->values, double, position);
 
           gtk_expression_evaluate (expression, item, &value);
 
@@ -186,12 +186,12 @@ sysprof_normalized_series_items_changed (SysprofSeries *series,
         }
       else
         {
-          static const float empty[32] = {0};
-          const float *vals = empty;
-          float *alloc = NULL;
+          static const double empty[32] = {0};
+          const double *vals = empty;
+          double *alloc = NULL;
 
           if (added > G_N_ELEMENTS (empty))
-            vals = alloc = g_new0 (float, added);
+            vals = alloc = g_new0 (double, added);
 
           g_array_insert_vals (self->values, position, vals, added);
 
@@ -234,7 +234,7 @@ sysprof_normalized_series_get_series_item (SysprofSeries *series,
 
   ret = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES_ITEM,
                       "item", item,
-                      "value", g_array_index (self->values, float, position),
+                      "value", g_array_index (self->values, double, position),
                       NULL);
 
   g_object_unref (item);
@@ -365,7 +365,7 @@ sysprof_normalized_series_class_init (SysprofNormalizedSeriesClass *klass)
 static void
 sysprof_normalized_series_init (SysprofNormalizedSeries *self)
 {
-  self->values = g_array_new (FALSE, TRUE, sizeof (float));
+  self->values = g_array_new (FALSE, TRUE, sizeof (double));
   self->missing = egg_bitset_new_empty ();
 }
 
@@ -404,7 +404,7 @@ sysprof_normalized_series_new (SysprofSeries *series,
   return SYSPROF_SERIES (normalized);
 }
 
-float
+double
 sysprof_normalized_series_get_value_at (SysprofNormalizedSeries *self,
                                         guint                    position)
 {
@@ -416,7 +416,7 @@ sysprof_normalized_series_get_value_at (SysprofNormalizedSeries *self,
   if (position >= self->values->len)
     return .0;
 
-  return g_array_index (self->values, float, position);
+  return g_array_index (self->values, double, position);
 }
 
 /**
@@ -534,7 +534,7 @@ sysprof_normalized_series_set_series (SysprofNormalizedSeries *self,
     }
 }
 
-const float *
+const double *
 sysprof_normalized_series_get_values (SysprofNormalizedSeries *self,
                                       guint                   *n_values)
 {
@@ -545,7 +545,7 @@ sysprof_normalized_series_get_values (SysprofNormalizedSeries *self,
 
   *n_values = self->values->len;
 
-  return &g_array_index (self->values, float, 0);
+  return &g_array_index (self->values, double, 0);
 }
 
 void

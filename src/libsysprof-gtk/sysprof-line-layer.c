@@ -72,14 +72,14 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
                              GtkSnapshot *snapshot)
 {
   SysprofLineLayer *self = (SysprofLineLayer *)widget;
-  const float *x_values;
-  const float *y_values;
+  const double *x_values;
+  const double *y_values;
   const GdkRGBA *color;
   cairo_t *cr;
-  float first_x;
-  float first_y;
-  float last_x;
-  float last_y;
+  double first_x;
+  double first_y;
+  double last_x;
+  double last_y;
   guint n_values;
   int width;
   int height;
@@ -120,8 +120,8 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
     {
       for (guint i = 1; i < n_values; i++)
         {
-          float x = floor (x_values[i] * width);
-          float y = floor (y_values[i] * height) + .5;
+          double x = floor (x_values[i] * width);
+          double y = floor (y_values[i] * height) + .5;
 
           /* Skip if we are getting data incorrectly on the X axis.
            * It should have been sorted by this point.
@@ -145,8 +145,8 @@ sysprof_line_layer_snapshot (GtkWidget   *widget,
     {
       for (guint i = 1; i < n_values; i++)
         {
-          float x = floor (x_values[i] * width);
-          float y = floor (y_values[i] * height) + .5;
+          double x = floor (x_values[i] * width);
+          double y = floor (y_values[i] * height) + .5;
 
           /* Skip if we are getting data incorrectly on the X axis.
            * It should have been sorted by this point.
@@ -190,12 +190,12 @@ sysprof_line_layer_snapshot_motion (SysprofChartLayer *layer,
 {
   SysprofLineLayer *self = (SysprofLineLayer *)layer;
   const GdkRGBA *color;
-  const float *x_values;
-  const float *y_values;
-  float best_distance = G_MAXFLOAT;
+  const double *x_values;
+  const double *y_values;
+  double best_distance = G_MAXFLOAT;
   guint best_index = GTK_INVALID_LIST_POSITION;
-  float best_x = 0;
-  float best_y = 0;
+  double best_x = 0;
+  double best_y = 0;
   guint n_values;
   int width;
   int height;
@@ -221,9 +221,9 @@ sysprof_line_layer_snapshot_motion (SysprofChartLayer *layer,
 
   for (guint i = 0; i < n_values; i++)
     {
-      float x2 = floor (x_values[i] * width);
-      float y2 = height - floor (y_values[i] * height);
-      float distance;
+      double x2 = floor (x_values[i] * width);
+      double y2 = height - floor (y_values[i] * height);
+      double distance;
 
       if (x2 + NEAR_DISTANCE < x)
         continue;

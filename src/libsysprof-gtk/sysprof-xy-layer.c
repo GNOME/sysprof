@@ -195,8 +195,8 @@ sysprof_xy_layer_init (SysprofXYLayer *self)
 
 void
 _sysprof_xy_layer_get_xy (SysprofXYLayer  *self,
-                          const float    **x_values,
-                          const float    **y_values,
+                          const double   **x_values,
+                          const double   **y_values,
                           guint           *n_values)
 {
   guint n_x_values = 0;

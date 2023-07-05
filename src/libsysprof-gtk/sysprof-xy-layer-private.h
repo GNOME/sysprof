@@ -47,8 +47,8 @@ struct _SysprofXYLayerClass
 };
 
 void _sysprof_xy_layer_get_xy (SysprofXYLayer  *self,
-                               const float    **x_values,
-                               const float    **y_values,
+                               const double   **x_values,
+                               const double   **y_values,
                                guint           *n_values);
 
 G_END_DECLS

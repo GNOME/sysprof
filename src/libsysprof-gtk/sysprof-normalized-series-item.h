@@ -34,6 +34,6 @@ G_DECLARE_FINAL_TYPE (SysprofNormalizedSeriesItem, sysprof_normalized_series_ite
 SYSPROF_AVAILABLE_IN_ALL
 gpointer sysprof_normalized_series_item_get_item  (SysprofNormalizedSeriesItem *self);
 SYSPROF_AVAILABLE_IN_ALL
-float    sysprof_normalized_series_item_get_value (SysprofNormalizedSeriesItem *self);
+double   sysprof_normalized_series_item_get_value (SysprofNormalizedSeriesItem *self);
 
 G_END_DECLS

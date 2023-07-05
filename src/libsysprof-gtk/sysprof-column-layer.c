@@ -53,8 +53,8 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
                                GtkSnapshot *snapshot)
 {
   SysprofColumnLayer *self = (SysprofColumnLayer *)widget;
-  const float *x_values;
-  const float *y_values;
+  const double *x_values;
+  const double *y_values;
   const GdkRGBA *color;
   guint n_values;
   int width;
@@ -102,7 +102,7 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
                                  &GRAPHENE_RECT_INIT (x_values[i] * width,
                                                       0,
                                                       1,
-                                                      ceilf (y_values[i] * height)));
+                                                      ceil (y_values[i] * height)));
     }
 
   gtk_snapshot_restore (snapshot);
@@ -115,8 +115,8 @@ sysprof_column_layer_get_index_at_coord (SysprofColumnLayer *self,
                                          graphene_rect_t    *area)
 {
   graphene_point_t point;
-  const float *x_values;
-  const float *y_values;
+  const double *x_values;
+  const double *y_values;
   gboolean flip_y;
   guint best = GTK_INVALID_LIST_POSITION;
   guint n_values;

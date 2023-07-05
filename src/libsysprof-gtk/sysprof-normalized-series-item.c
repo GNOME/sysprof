@@ -26,7 +26,7 @@ struct _SysprofNormalizedSeriesItem
 {
   GObject parent_instance;
   GObject *item;
-  float value;
+  double value;
 };
 
 enum {
@@ -65,7 +65,7 @@ sysprof_normalized_series_item_get_property (GObject    *object,
       break;
 
     case PROP_VALUE:
-      g_value_set_float (value, self->value);
+      g_value_set_double (value, self->value);
       break;
 
     default:
@@ -88,7 +88,7 @@ sysprof_normalized_series_item_set_property (GObject      *object,
       break;
 
     case PROP_VALUE:
-      self->value = g_value_get_float (value);
+      self->value = g_value_get_double (value);
       break;
 
     default:
@@ -111,9 +111,9 @@ sysprof_normalized_series_item_class_init (SysprofNormalizedSeriesItemClass *kla
                          (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_VALUE] =
-    g_param_spec_float ("value", NULL, NULL,
-                        0, 1, 0,
-                        (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+    g_param_spec_double ("value", NULL, NULL,
+                         0, 1, 0,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -123,7 +123,7 @@ sysprof_normalized_series_item_init (SysprofNormalizedSeriesItem *self)
 {
 }
 
-float
+double
 sysprof_normalized_series_item_get_value (SysprofNormalizedSeriesItem *self)
 {
   g_return_val_if_fail (SYSPROF_IS_NORMALIZED_SERIES_ITEM (self), 0);

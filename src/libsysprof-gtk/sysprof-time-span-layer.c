@@ -93,13 +93,12 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
                                   GtkSnapshot *snapshot)
 {
   SysprofTimeSpanLayer *self = (SysprofTimeSpanLayer *)widget;
-  const float *x_values;
-  const float *x2_values;
+  const double *x_values;
+  const double *x2_values;
   const GdkRGBA *color;
   const GdkRGBA *event_color;
   GdkRGBA mixed;
   graphene_rect_t box_rect;
-  float last_end_x = 0;
   guint n_x_values = 0;
   guint n_x2_values = 0;
   guint n_values;
@@ -156,8 +155,8 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
        */
       for (guint i = 0; i < n_values; i++)
         {
-          float begin = x_values[i];
-          float end = x2_values[i];
+          double begin = x_values[i];
+          double end = x2_values[i];
 
           if (end < .0)
             continue;
@@ -168,23 +167,15 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
           if (begin != end)
             {
               graphene_rect_t rect;
-              float end_x;
 
-              rect = GRAPHENE_RECT_INIT (floorf (begin * width),
+              rect = GRAPHENE_RECT_INIT (floor (begin * width),
                                          0,
-                                         ceilf ((end - begin) * width),
+                                         ceil ((end - begin) * width),
                                          height);
 
               /* Ignore empty draws */
               if (rect.size.width == 0)
                 continue;
-
-              /* Cull draw unless it will extend past last rect */
-              end_x = rect.origin.x + rect.size.width;
-              if (end_x <= last_end_x)
-                continue;
-              else
-                last_end_x = end_x;
 
               gtk_snapshot_append_color (snapshot, color, &rect);
 
@@ -211,7 +202,7 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
 
   if (event_color->alpha > 0)
     {
-      float last_x = -1;
+      double last_x = -1;
 
       box_rect = GRAPHENE_RECT_INIT (-ceil (height / 6.),
                                      -ceil (height / 6.),
@@ -220,8 +211,8 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
 
       for (guint i = 0; i < n_values; i++)
         {
-          float begin = x_values[i];
-          float end = x2_values[i];
+          double begin = x_values[i];
+          double end = x2_values[i];
 
           if (begin != end)
             continue;
@@ -247,8 +238,8 @@ sysprof_time_span_layer_lookup_item (SysprofChartLayer *layer,
                                      double             y)
 {
   SysprofTimeSpanLayer *self = (SysprofTimeSpanLayer *)layer;
-  const float *x_values;
-  const float *x2_values;
+  const double *x_values;
+  const double *x2_values;
   GListModel *model;
   guint n_x_values = 0;
   guint n_x2_values = 0;
@@ -288,8 +279,8 @@ sysprof_time_span_layer_lookup_item (SysprofChartLayer *layer,
   /* Then match regular duration events */
   for (guint i = 0; i < n_values; i++)
     {
-      float begin = x_values[i] * width;
-      float end = x2_values[i] * width;
+      double begin = x_values[i] * width;
+      double end = x2_values[i] * width;
 
       if (x_values[i] == x2_values[i])
         continue;

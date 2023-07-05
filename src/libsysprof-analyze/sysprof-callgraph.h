@@ -79,6 +79,9 @@ SYSPROF_AVAILABLE_IN_ALL
 GListModel           *sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph       *self,
                                                                     SysprofSymbol          *symbol);
 SYSPROF_AVAILABLE_IN_ALL
+GListModel           *sysprof_callgraph_list_traceables_for_symbols_matching (SysprofCallgraph *self,
+                                                                              const char       *pattern);
+SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_callgraph_descendants_async          (SysprofCallgraph       *self,
                                                                     SysprofSymbol          *symbol,
                                                                     GCancellable           *cancellable,

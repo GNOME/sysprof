@@ -532,6 +532,38 @@ sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph *self,
   return G_LIST_MODEL (g_list_store_new (SYSPROF_TYPE_DOCUMENT_TRACEABLE));
 }
 
+GListModel *
+sysprof_callgraph_list_traceables_for_symbols_matching (SysprofCallgraph *self,
+                                                        const char       *pattern)
+{
+  g_autoptr(GPatternSpec) pspec = NULL;
+  g_autoptr(EggBitset) bitset = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH (self), NULL);
+
+  if (pattern == NULL || pattern[0] == 0)
+    return g_object_ref (self->traceables);
+
+  pspec = g_pattern_spec_new (pattern);
+  bitset = egg_bitset_new_empty ();
+
+  for (guint i = 0; i < self->symbols->len; i++)
+    {
+      SysprofSymbol *symbol = g_ptr_array_index (self->symbols, i);
+      const char *name = sysprof_symbol_get_name (symbol);
+
+      if (g_pattern_spec_match (pspec, strlen (name), name, NULL))
+        {
+          SysprofCallgraphSummary *summary = g_hash_table_lookup (self->symbol_to_summary, symbol);
+
+          if (summary != NULL)
+            egg_bitset_union (bitset, summary->traceables);
+        }
+    }
+
+  return _sysprof_document_bitset_index_new (self->traceables, bitset);
+}
+
 /**
  * sysprof_callgraph_list_symbols:
  * @self: a #SysprofCallgraph

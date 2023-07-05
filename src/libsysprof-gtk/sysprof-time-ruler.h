@@ -30,11 +30,14 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofTimeRuler, sysprof_time_ruler, SYSPROF, TIME_RULER, GtkWidget)
 
 SYSPROF_AVAILABLE_IN_ALL
-GtkWidget      *sysprof_time_ruler_new         (void);
+GtkWidget      *sysprof_time_ruler_new                (void);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofSession *sysprof_time_ruler_get_session (SysprofTimeRuler *self);
+SysprofSession *sysprof_time_ruler_get_session        (SysprofTimeRuler *self);
 SYSPROF_AVAILABLE_IN_ALL
-void            sysprof_time_ruler_set_session (SysprofTimeRuler *self,
-                                                SysprofSession   *session);
+void            sysprof_time_ruler_set_session        (SysprofTimeRuler *self,
+                                                       SysprofSession   *session);
+SYSPROF_AVAILABLE_IN_ALL
+char           *sysprof_time_ruler_get_label_at_point (SysprofTimeRuler *self,
+                                                       double            x);
 
 G_END_DECLS

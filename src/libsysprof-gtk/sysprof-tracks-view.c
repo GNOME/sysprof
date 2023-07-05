@@ -27,24 +27,26 @@
 
 struct _SysprofTracksView
 {
-  GtkWidget       parent_instance;
+  GtkWidget         parent_instance;
 
-  SysprofSession *session;
+  SysprofSession   *session;
 
-  GtkBox         *box;
-  GtkWidget      *top_left;
-  GtkListView    *list_view;
-  GtkButton      *zoom;
+  GtkBox           *box;
+  GtkWidget        *top_left;
+  GtkListView      *list_view;
+  SysprofTimeRuler *ruler;
+  GtkLabel         *timecode;
+  GtkButton        *zoom;
 
-  double          motion_x;
-  double          motion_y;
+  double            motion_x;
+  double            motion_y;
 
-  double          drag_start_x;
-  double          drag_start_y;
-  double          drag_offset_x;
-  double          drag_offset_y;
+  double            drag_start_x;
+  double            drag_start_y;
+  double            drag_offset_x;
+  double            drag_offset_y;
 
-  guint           in_drag_selection : 1;
+  guint             in_drag_selection : 1;
 };
 
 enum {
@@ -58,6 +60,36 @@ G_DEFINE_FINAL_TYPE (SysprofTracksView, sysprof_tracks_view, GTK_TYPE_WIDGET)
 static GParamSpec *properties [N_PROPS];
 
 static void
+set_motion (SysprofTracksView *self,
+            double             x,
+            double             y)
+{
+  gboolean timecode_visible = FALSE;
+  int ruler_start;
+
+  g_assert (SYSPROF_IS_TRACKS_VIEW (self));
+
+  if (self->motion_x == x && self->motion_y == y)
+    return;
+
+  self->motion_x = x;
+  self->motion_y = y;
+
+  ruler_start = gtk_widget_get_width (self->top_left);
+
+  if (x >= ruler_start)
+    {
+      g_autofree char *str = sysprof_time_ruler_get_label_at_point (self->ruler, x - ruler_start);
+      gtk_label_set_label (self->timecode, str);
+      timecode_visible = TRUE;
+    }
+
+  gtk_widget_set_visible (GTK_WIDGET (self->timecode), timecode_visible);
+
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+}
+
+static void
 sysprof_tracks_view_motion_enter_cb (SysprofTracksView        *self,
                                      double                    x,
                                      double                    y,
@@ -66,10 +98,7 @@ sysprof_tracks_view_motion_enter_cb (SysprofTracksView        *self,
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
   g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
 
-  self->motion_x = x;
-  self->motion_y = y;
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
+  set_motion (self, x, y);
 }
 
 static void
@@ -79,11 +108,7 @@ sysprof_tracks_view_motion_leave_cb (SysprofTracksView        *self,
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
   g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
 
-  self->motion_x = -1;
-  self->motion_y = -1;
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
-
+  set_motion (self, -1, -1);
 }
 
 static void
@@ -95,10 +120,7 @@ sysprof_tracks_view_motion_cb (SysprofTracksView        *self,
   g_assert (SYSPROF_IS_TRACKS_VIEW (self));
   g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
 
-  self->motion_x = x;
-  self->motion_y = y;
-
-  gtk_widget_queue_draw (GTK_WIDGET (self));
+  set_motion (self, x, y);
 }
 
 static void
@@ -332,6 +354,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   if (gtk_widget_get_visible (GTK_WIDGET (self->zoom)))
     gtk_widget_snapshot_child (GTK_WIDGET (self), GTK_WIDGET (self->zoom), snapshot);
+
+  if (gtk_widget_get_visible (GTK_WIDGET (self->timecode)))
+    gtk_widget_snapshot_child (GTK_WIDGET (self), GTK_WIDGET (self->timecode), snapshot);
 }
 
 static void
@@ -391,9 +416,9 @@ sysprof_tracks_view_size_allocate (GtkWidget *widget,
       GtkRequisition min_req;
       GtkRequisition nat_req;
 
+      /* Position the zoom button in the center of the selected area */
       gtk_widget_get_preferred_size (GTK_WIDGET (self->zoom), &min_req, &nat_req);
       graphene_rect_get_center (&selection, &middle);
-
       gtk_widget_size_allocate (GTK_WIDGET (self->zoom),
                                 &(GtkAllocation) {
                                   middle.x - (min_req.width/2),
@@ -401,6 +426,27 @@ sysprof_tracks_view_size_allocate (GtkWidget *widget,
                                   min_req.width,
                                   min_req.height
                                 }, -1);
+    }
+
+  if (gtk_widget_get_visible (GTK_WIDGET (self->timecode)))
+    {
+      GtkRequisition min_req;
+      GtkRequisition nat_req;
+
+      gtk_widget_get_preferred_size (GTK_WIDGET (self->timecode), &min_req, &nat_req);
+
+      if (self->motion_x + min_req.width < gtk_widget_get_width (GTK_WIDGET (self)))
+        gtk_widget_size_allocate (GTK_WIDGET (self->timecode),
+                                  &(GtkAllocation) {
+                                    self->motion_x, 0,
+                                    min_req.width, min_req.height
+                                  }, -1);
+      else
+        gtk_widget_size_allocate (GTK_WIDGET (self->timecode),
+                                  &(GtkAllocation) {
+                                    self->motion_x - min_req.width, 0,
+                                    min_req.width, min_req.height
+                                  }, -1);
     }
 }
 
@@ -484,6 +530,8 @@ sysprof_tracks_view_class_init (SysprofTracksViewClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, box);
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, list_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, ruler);
+  gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, timecode);
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, top_left);
   gtk_widget_class_bind_template_child (widget_class, SysprofTracksView, zoom);
 

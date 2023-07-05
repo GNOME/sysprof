@@ -69,6 +69,18 @@ timeruler {
   color: alpha(currentColor, .8);
 }
 
+tracks timecode {
+  border-radius: 7px;
+  background: @accent_bg_color;
+  color: @accent_fg_color;
+  padding: 1px 3px;
+  margin: 2px 6px;
+  box-shadow: 0 2px 8px 2px alpha(black, .27);
+  border: 1px solid shade(@accent_bg_color, .9);
+  font-feature-settings: "tnum";
+  font-size: .9em;
+}
+
 tracks track chart {
   margin-top: 1px;
 }

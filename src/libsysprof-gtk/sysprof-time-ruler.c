@@ -279,3 +279,41 @@ sysprof_time_ruler_set_session (SysprofTimeRuler *self,
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
     }
 }
+
+char *
+sysprof_time_ruler_get_label_at_point (SysprofTimeRuler *self,
+                                       double            x)
+{
+  char str[32];
+  const SysprofTimeSpan *visible;
+  gint64 duration;
+  gint64 o;
+
+  g_return_val_if_fail (SYSPROF_IS_TIME_RULER (self), NULL);
+
+  if (x < 0)
+    return NULL;
+
+  if (x > gtk_widget_get_width (GTK_WIDGET (self)))
+    return NULL;
+
+  if (self->session == NULL)
+    return NULL;
+
+  if (!(visible = sysprof_session_get_visible_time (self->session)) ||
+      !(duration = sysprof_time_span_duration (*visible)))
+    return NULL;
+
+  o = (x / (double)gtk_widget_get_width (GTK_WIDGET (self))) * duration;
+
+  if (o == 0)
+    g_snprintf (str, sizeof str, "%.3lfs", .0);
+  else if (o < 1000000)
+    g_snprintf (str, sizeof str, "%.3lfμs", o/1000.);
+  else if (o < SYSPROF_NSEC_PER_SEC)
+    g_snprintf (str, sizeof str, "%.3lfms", o/1000000.);
+  else
+    g_snprintf (str, sizeof str, "%.3lfs", o/(double)SYSPROF_NSEC_PER_SEC);
+
+  return g_strdup (str);
+}

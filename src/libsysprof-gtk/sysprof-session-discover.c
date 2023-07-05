@@ -37,6 +37,12 @@ typedef enum _LineFlags
   LINE_FLAGS_NO_SPLINE = 1 << 1,
 } LineFlags;
 
+typedef struct _SysprofTrackSamples
+{
+  SysprofSession *session;
+  GListModel *samples;
+} SysprofTrackSamples;
+
 typedef struct _SysprofTrackCounter
 {
   const char *track_name;
@@ -100,6 +106,26 @@ static const SysprofTrackCounter discovery_counters[] = {
 };
 
 static void
+sysprof_track_samples_free (SysprofTrackSamples *samples)
+{
+  g_clear_object (&samples->samples);
+  g_clear_weak_pointer (&samples->session);
+  g_free (samples);
+}
+
+static SysprofTrackSamples *
+sysprof_track_samples_new (SysprofSession *session,
+                           GListModel     *samples)
+{
+  SysprofTrackSamples *state;
+
+  state = g_new0 (SysprofTrackSamples, 1);
+  state->samples = g_object_ref (samples);
+  g_set_weak_pointer (&state->session, session);
+  return state;
+}
+
+static void
 sysprof_track_counter_chart_free (SysprofTrackCounterChart *info)
 {
   g_clear_object (&info->counters);
@@ -158,24 +184,23 @@ filter_counters (GListModel *model,
 }
 
 static GtkWidget *
-create_chart_for_samples (SysprofSession *session,
-                          SysprofTrack   *track)
+create_chart_for_samples (SysprofTrack        *track,
+                          SysprofTrackSamples *state)
 {
   g_autoptr(SysprofSeries) xy_series = NULL;
   g_autoptr(SysprofAxis) y_axis = NULL;
   SysprofChartLayer *layer;
-  SysprofDocument *document;
   SysprofChart *chart;
   SysprofAxis *x_axis = NULL;
 
-  g_assert (SYSPROF_IS_SESSION (session));
+  g_assert (state != NULL);
+  g_assert (SYSPROF_IS_SESSION (state->session));
   g_assert (SYSPROF_IS_TRACK (track));
 
-  document = sysprof_session_get_document (session);
-  x_axis = sysprof_session_get_visible_time_axis (session);
+  x_axis = sysprof_session_get_visible_time_axis (state->session);
   y_axis = sysprof_value_axis_new (0, 128);
   xy_series = sysprof_xy_series_new (sysprof_track_get_title (track),
-                                     sysprof_document_list_samples (document),
+                                     g_object_ref (state->samples),
                                      gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_SAMPLE, NULL, "time"),
                                      gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_SAMPLE, NULL, "stack-depth"));
 
@@ -196,12 +221,14 @@ sysprof_session_discover_sampler (SysprofSession  *self,
                                   GListStore      *tracks)
 {
   g_autoptr(GListModel) samples = NULL;
+  g_autoptr(GListModel) samples_with_context_switch = NULL;
 
   g_assert (SYSPROF_IS_SESSION (self));
   g_assert (SYSPROF_IS_DOCUMENT (document));
   g_assert (G_IS_LIST_STORE (tracks));
 
   samples = sysprof_document_list_samples (document);
+  samples_with_context_switch = sysprof_document_list_samples_with_context_switch (document);
 
   if (g_list_model_get_n_items (samples) > 0)
     {
@@ -210,12 +237,29 @@ sysprof_session_discover_sampler (SysprofSession  *self,
       track = g_object_new (SYSPROF_TYPE_TRACK,
                             "title", _("Profiler"),
                             NULL);
-      g_signal_connect_object (track,
-                               "create-chart",
-                               G_CALLBACK (create_chart_for_samples),
-                               self,
-                               G_CONNECT_SWAPPED);
+      g_signal_connect_data (track,
+                             "create-chart",
+                             G_CALLBACK (create_chart_for_samples),
+                             sysprof_track_samples_new (self, samples),
+                             (GClosureNotify)sysprof_track_samples_free,
+                             0);
       g_list_store_append (tracks, track);
+
+      if (g_list_model_get_n_items (samples_with_context_switch))
+        {
+          g_autoptr(SysprofTrack) subtrack = NULL;
+
+          subtrack = g_object_new (SYSPROF_TYPE_TRACK,
+                                   "title", _("Context Switches"),
+                                   NULL);
+          g_signal_connect_data (subtrack,
+                                 "create-chart",
+                                 G_CALLBACK (create_chart_for_samples),
+                                 sysprof_track_samples_new (self, samples_with_context_switch),
+                                 (GClosureNotify)sysprof_track_samples_free,
+                                 0);
+          _sysprof_track_add_subtrack (track, subtrack);
+        }
     }
 }
 

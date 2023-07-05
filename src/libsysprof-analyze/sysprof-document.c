@@ -73,6 +73,7 @@ struct _SysprofDocument
   EggBitset                *allocations;
   EggBitset                *file_chunks;
   EggBitset                *samples;
+  EggBitset                *samples_with_context_switch;
   EggBitset                *traceables;
   EggBitset                *processes;
   EggBitset                *mmaps;
@@ -250,6 +251,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->pids, egg_bitset_unref);
   g_clear_pointer (&self->processes, egg_bitset_unref);
   g_clear_pointer (&self->samples, egg_bitset_unref);
+  g_clear_pointer (&self->samples_with_context_switch, egg_bitset_unref);
   g_clear_pointer (&self->traceables, egg_bitset_unref);
 
   g_clear_pointer (&self->mark_groups, g_hash_table_unref);
@@ -358,6 +360,7 @@ sysprof_document_init (SysprofDocument *self)
   self->pids = egg_bitset_new_empty ();
   self->processes = egg_bitset_new_empty ();
   self->samples = egg_bitset_new_empty ();
+  self->samples_with_context_switch = egg_bitset_new_empty ();
   self->traceables = egg_bitset_new_empty ();
 
   self->files_first_position = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
@@ -911,6 +914,30 @@ sysprof_document_load_worker (GTask        *task,
                                  g_strdup (file_chunk->path),
                                  GUINT_TO_POINTER (self->frames->len));
         }
+      else if (tainted->type == SYSPROF_CAPTURE_FRAME_SAMPLE)
+        {
+          const SysprofCaptureSample *sample = (const SysprofCaptureSample *)tainted;
+          guint n_addrs = self->needs_swap ? GUINT16_SWAP_LE_BE (sample->n_addrs) : sample->n_addrs;
+          const guint8 *endptr = (const guint8 *)tainted + frame_len;
+
+          /* If the sample contains a context-switch, record it */
+          if ((const guint8 *)sample + (n_addrs * sizeof (SysprofAddress)) <= endptr)
+            {
+              SysprofAddressContext last_context = SYSPROF_ADDRESS_CONTEXT_USER;
+
+              for (guint i = 0; i < n_addrs; i++)
+                {
+                  SysprofAddress addr = self->needs_swap ? GUINT64_SWAP_LE_BE (sample->addrs[i]) : sample->addrs[i];
+
+                  if (sysprof_address_is_context_switch (addr, &last_context) &&
+                      last_context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
+                    {
+                      egg_bitset_add (self->samples_with_context_switch, self->frames->len);
+                      break;
+                    }
+                }
+            }
+        }
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_MARK)
         {
           const SysprofCaptureMark *mark = (const SysprofCaptureMark *)tainted;
@@ -1390,6 +1417,23 @@ sysprof_document_list_samples (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->samples);
+}
+
+/**
+ * sysprof_document_list_samples_with_context_switch:
+ * @self: a #SysprofDocument
+ *
+ * Gets a #GListModel containing #SysprofDocumentSample found within
+ * the #SysprofDocument which contain a context switch.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentSample
+ */
+GListModel *
+sysprof_document_list_samples_with_context_switch (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->samples_with_context_switch);
 }
 
 /**

@@ -458,7 +458,7 @@ sysprof_session_discover_marks (SysprofSession  *self,
       chart = g_new0 (SysprofTrackMarksChart, 1);
       g_set_weak_pointer (&chart->session, self);
       chart->document = g_object_ref (document);
-      chart->model = G_LIST_MODEL (gtk_flatten_list_model_new (G_LIST_MODEL (by_group)));
+      chart->model = G_LIST_MODEL (gtk_flatten_list_model_new (g_object_ref (G_LIST_MODEL (by_group))));
 
       track = g_object_new (SYSPROF_TYPE_TRACK,
                             "title", sysprof_mark_catalog_get_group (first),

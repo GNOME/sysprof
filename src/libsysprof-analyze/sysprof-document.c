@@ -1437,6 +1437,28 @@ sysprof_document_list_samples_with_context_switch (SysprofDocument *self)
 }
 
 /**
+ * sysprof_document_list_samples_without_context_switch:
+ * @self: a #SysprofDocument
+ *
+ * Gets a #GListModel containing #SysprofDocumentSample found within
+ * the #SysprofDocument which contain a context switch.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentSample
+ */
+GListModel *
+sysprof_document_list_samples_without_context_switch (SysprofDocument *self)
+{
+  g_autoptr(EggBitset) bitset = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  bitset = egg_bitset_copy (self->samples);
+  egg_bitset_subtract (bitset, self->samples_with_context_switch);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), bitset);
+}
+
+/**
  * sysprof_document_list_processes:
  * @self: a #SysprofDocument
  *

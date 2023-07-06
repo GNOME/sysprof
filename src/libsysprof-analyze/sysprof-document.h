@@ -58,6 +58,9 @@ SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_list_samples_with_context_switch
                                                                   (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
+GListModel            *sysprof_document_list_samples_without_context_switch
+                                                                  (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_list_processes            (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_list_jitmaps              (SysprofDocument           *self);

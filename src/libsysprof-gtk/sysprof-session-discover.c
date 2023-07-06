@@ -233,6 +233,7 @@ sysprof_session_discover_sampler (SysprofSession  *self,
 {
   g_autoptr(GListModel) samples = NULL;
   g_autoptr(GListModel) samples_with_context_switch = NULL;
+  g_autoptr(GListModel) samples_without_context_switch = NULL;
 
   g_assert (SYSPROF_IS_SESSION (self));
   g_assert (SYSPROF_IS_DOCUMENT (document));
@@ -240,6 +241,7 @@ sysprof_session_discover_sampler (SysprofSession  *self,
 
   samples = sysprof_document_list_samples (document);
   samples_with_context_switch = sysprof_document_list_samples_with_context_switch (document);
+  samples_without_context_switch = sysprof_document_list_samples_without_context_switch (document);
 
   if (g_list_model_get_n_items (samples) > 0)
     {
@@ -261,12 +263,28 @@ sysprof_session_discover_sampler (SysprofSession  *self,
           g_autoptr(SysprofTrack) subtrack = NULL;
 
           subtrack = g_object_new (SYSPROF_TYPE_TRACK,
-                                   "title", _("Context Switches"),
+                                   "title", _("Stack Traces (In Kernel)"),
                                    NULL);
           g_signal_connect_data (subtrack,
                                  "create-chart",
                                  G_CALLBACK (create_chart_for_samples),
                                  sysprof_track_samples_new (self, samples_with_context_switch),
+                                 (GClosureNotify)sysprof_track_samples_free,
+                                 0);
+          _sysprof_track_add_subtrack (track, subtrack);
+        }
+
+      if (g_list_model_get_n_items (samples_without_context_switch))
+        {
+          g_autoptr(SysprofTrack) subtrack = NULL;
+
+          subtrack = g_object_new (SYSPROF_TYPE_TRACK,
+                                   "title", _("Stack Traces (In User)"),
+                                   NULL);
+          g_signal_connect_data (subtrack,
+                                 "create-chart",
+                                 G_CALLBACK (create_chart_for_samples),
+                                 sysprof_track_samples_new (self, samples_without_context_switch),
                                  (GClosureNotify)sysprof_track_samples_free,
                                  0);
           _sysprof_track_add_subtrack (track, subtrack);

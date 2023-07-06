@@ -192,7 +192,7 @@ sysprof_line_layer_snapshot_motion (SysprofChartLayer *layer,
   const GdkRGBA *color;
   const double *x_values;
   const double *y_values;
-  double best_distance = G_MAXFLOAT;
+  double best_distance = G_MAXDOUBLE;
   guint best_index = GTK_INVALID_LIST_POSITION;
   double best_x = 0;
   double best_y = 0;
@@ -231,7 +231,7 @@ sysprof_line_layer_snapshot_motion (SysprofChartLayer *layer,
       if (x2 > x + NEAR_DISTANCE)
         break;
 
-      distance = sqrtf (powf (x2 - x, 2) + powf (y2 - y, 2));
+      distance = sqrt (powf (x2 - x, 2) + powf (y2 - y, 2));
 
       if (distance < best_distance)
         {

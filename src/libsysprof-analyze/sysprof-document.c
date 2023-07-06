@@ -115,6 +115,34 @@ enum {
 
 static GParamSpec *properties[N_PROPS];
 
+static inline int
+swap_int32 (gboolean needs_swap,
+            int      value)
+{
+  if (!needs_swap)
+    return value;
+
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+  return GINT32_FROM_BE (value);
+#else
+  return GINT32_FROM_LE (value);
+#endif
+}
+
+static inline int
+swap_int64 (gboolean needs_swap,
+            gint64   value)
+{
+  if (!needs_swap)
+    return value;
+
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+  return GINT64_FROM_BE (value);
+#else
+  return GINT64_FROM_LE (value);
+#endif
+}
+
 static GType
 sysprof_document_get_item_type (GListModel *model)
 {
@@ -951,8 +979,8 @@ sysprof_document_load_worker (GTask        *task,
     {
       SysprofDocumentFramePointer *ptr = &g_array_index (self->frames, SysprofDocumentFramePointer, f);
       const SysprofCaptureFrame *tainted = (const SysprofCaptureFrame *)(gpointer)&self->base[ptr->offset];
-      gint64 t = self->needs_swap ? GUINT64_SWAP_LE_BE (tainted->time) : tainted->time;
-      int pid = self->needs_swap ? GUINT32_SWAP_LE_BE (tainted->pid) : tainted->pid;
+      gint64 t = swap_int64 (self->needs_swap, tainted->time);
+      int pid = swap_int32 (self->needs_swap, tainted->pid);
 
       if (t > guessed_end_nsec && is_data_type (tainted->type))
         guessed_end_nsec = t;

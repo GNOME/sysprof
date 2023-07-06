@@ -877,6 +877,22 @@ sort_by_time_swapped (gconstpointer a,
 }
 
 static void
+sysprof_document_update_process_exit_times (SysprofDocument *self)
+{
+  GHashTableIter iter;
+  SysprofProcessInfo *info;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  g_hash_table_iter_init (&iter, self->pid_to_process_info);
+  while (g_hash_table_iter_next (&iter, NULL, (gpointer *)&info))
+    {
+      if (info->exit_time == 0)
+        info->exit_time = self->time_span.end_nsec;
+    }
+}
+
+static void
 sysprof_document_load_worker (GTask        *task,
                               gpointer      source_object,
                               gpointer      task_data,
@@ -1115,6 +1131,9 @@ sysprof_document_load_worker (GTask        *task,
 
   if (guessed_end_nsec != 0)
     self->time_span.end_nsec = guessed_end_nsec;
+
+  /* Ensure all our process have an exit_time set */
+  sysprof_document_update_process_exit_times (self);
 
   load_progress (load, .6, _("Discovering file system mounts"));
   sysprof_document_load_mounts (self);

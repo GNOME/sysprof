@@ -99,4 +99,35 @@ sysprof_time_span_clamp (SysprofTimeSpan *time_span,
   return TRUE;
 }
 
+static inline char *
+sysprof_time_offset_to_string (gint64 o)
+{
+  char str[32];
+
+  if (o == 0)
+    g_snprintf (str, sizeof str, "%.3lfs", .0);
+  else if (o < 1000000)
+    g_snprintf (str, sizeof str, "%.3lfμs", o/1000.);
+  else if (o < SYSPROF_NSEC_PER_SEC)
+    g_snprintf (str, sizeof str, "%.3lfms", o/1000000.);
+  else
+    g_snprintf (str, sizeof str, "%.3lfs", o/(double)SYSPROF_NSEC_PER_SEC);
+
+  return g_strdup (str);
+}
+
+static inline char *
+sysprof_time_span_to_string (const SysprofTimeSpan *span)
+{
+  g_autofree char *begin = sysprof_time_offset_to_string (span->begin_nsec);
+  g_autofree char *end = NULL;
+
+  if (span->end_nsec == span->begin_nsec)
+    return g_steal_pointer (&begin);
+
+  end = sysprof_time_offset_to_string (span->end_nsec - span->begin_nsec);
+
+  return g_strdup_printf ("%s (%s)", begin, end);
+}
+
 G_END_DECLS

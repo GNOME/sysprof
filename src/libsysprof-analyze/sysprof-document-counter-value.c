@@ -151,3 +151,14 @@ sysprof_document_counter_value_get_value_double (SysprofDocumentCounterValue *se
   else
     return (double)self->value.v_int64;
 }
+
+char *
+sysprof_document_counter_value_format (SysprofDocumentCounterValue *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER_VALUE (self), NULL);
+
+  if (self->type == SYSPROF_CAPTURE_COUNTER_DOUBLE)
+    return g_strdup_printf ("%lf", self->value.v_double);
+  else
+    return g_strdup_printf ("%ld", self->value.v_int64);
+}

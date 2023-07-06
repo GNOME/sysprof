@@ -32,14 +32,16 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDocumentCounterValue, sysprof_document_counter_value, SYSPROF, DOCUMENT_COUNTER_VALUE, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-gint64 sysprof_document_counter_value_get_time         (SysprofDocumentCounterValue *self);
+gint64  sysprof_document_counter_value_get_time         (SysprofDocumentCounterValue *self);
 SYSPROF_AVAILABLE_IN_ALL
-void   sysprof_document_counter_value_get_value        (SysprofDocumentCounterValue *self,
-                                                        GValue                      *value);
+void    sysprof_document_counter_value_get_value        (SysprofDocumentCounterValue *self,
+                                                         GValue                      *value);
 SYSPROF_AVAILABLE_IN_ALL
-gint64 sysprof_document_counter_value_get_value_int64  (SysprofDocumentCounterValue *self);
+gint64  sysprof_document_counter_value_get_value_int64  (SysprofDocumentCounterValue *self);
 SYSPROF_AVAILABLE_IN_ALL
-double sysprof_document_counter_value_get_value_double (SysprofDocumentCounterValue *self);
+double  sysprof_document_counter_value_get_value_double (SysprofDocumentCounterValue *self);
+SYSPROF_AVAILABLE_IN_ALL
+char   *sysprof_document_counter_value_format           (SysprofDocumentCounterValue *self);
 
 
 G_END_DECLS

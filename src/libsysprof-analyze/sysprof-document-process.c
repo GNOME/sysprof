@@ -38,6 +38,7 @@ struct _SysprofDocumentProcessClass
 enum {
   PROP_0,
   PROP_COMMAND_LINE,
+  PROP_EXIT_TIME,
   N_PROPS
 };
 
@@ -69,6 +70,10 @@ sysprof_document_process_get_property (GObject    *object,
       g_value_set_string (value, sysprof_document_process_get_command_line (self));
       break;
 
+    case PROP_EXIT_TIME:
+      g_value_set_int64 (value, sysprof_document_process_get_exit_time (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -86,6 +91,11 @@ sysprof_document_process_class_init (SysprofDocumentProcessClass *klass)
     g_param_spec_string ("command-line", NULL, NULL,
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_EXIT_TIME] =
+    g_param_spec_int64 ("exit-time", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -162,4 +172,15 @@ _sysprof_document_process_set_info (SysprofDocumentProcess *self,
   g_return_if_fail (self->process_info == NULL);
 
   self->process_info = sysprof_process_info_ref (process_info);
+}
+
+gint64
+sysprof_document_process_get_exit_time (SysprofDocumentProcess *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_PROCESS (self), 0);
+
+  if (self->process_info != NULL)
+    return self->process_info->exit_time;
+
+  return 0;
 }

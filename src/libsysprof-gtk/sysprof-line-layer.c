@@ -268,6 +268,62 @@ sysprof_line_layer_snapshot_motion (SysprofChartLayer *layer,
     }
 }
 
+static gpointer
+sysprof_line_layer_lookup_item (SysprofChartLayer *layer,
+                                double             x,
+                                double             y)
+{
+  SysprofLineLayer *self = (SysprofLineLayer *)layer;
+  SysprofXYSeries *series;
+  const double *x_values;
+  const double *y_values;
+  GListModel *model;
+  double best_distance = G_MAXDOUBLE;
+  guint best_index = GTK_INVALID_LIST_POSITION;
+  guint n_values;
+  int width;
+  int height;
+
+  g_assert (SYSPROF_IS_LINE_LAYER (self));
+
+  width = gtk_widget_get_width (GTK_WIDGET (self));
+  height = gtk_widget_get_height (GTK_WIDGET (self));
+
+  _sysprof_xy_layer_get_xy (SYSPROF_XY_LAYER (self), &x_values, &y_values, &n_values);
+
+  if (width == 0 || height == 0 || n_values == 0)
+    return NULL;
+
+  series = sysprof_xy_layer_get_series (SYSPROF_XY_LAYER (self));
+  model = sysprof_series_get_model (SYSPROF_SERIES (series));
+
+  for (guint i = 0; i < n_values; i++)
+    {
+      double x2 = floor (x_values[i] * width);
+      double y2 = height - floor (y_values[i] * height);
+      double distance;
+
+      if (x2 + NEAR_DISTANCE < x)
+        continue;
+
+      if (x2 > x + NEAR_DISTANCE)
+        break;
+
+      distance = sqrt (pow (x2 - x, 2) + pow (y2 - y, 2));
+
+      if (distance < best_distance)
+        {
+          best_distance = distance;
+          best_index = i;
+        }
+    }
+
+  if (best_index != GTK_INVALID_LIST_POSITION)
+    return g_list_model_get_item (model, best_index);
+
+  return NULL;
+}
+
 static void
 sysprof_line_layer_get_property (GObject    *object,
                                  guint       prop_id,
@@ -351,6 +407,7 @@ sysprof_line_layer_class_init (SysprofLineLayerClass *klass)
   widget_class->snapshot = sysprof_line_layer_snapshot;
 
   chart_layer_class->snapshot_motion = sysprof_line_layer_snapshot_motion;
+  chart_layer_class->lookup_item = sysprof_line_layer_lookup_item;
 
   properties [PROP_ANTIALIAS] =
     g_param_spec_boolean ("antialias", NULL, NULL,

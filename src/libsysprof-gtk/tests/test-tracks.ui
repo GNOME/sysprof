@@ -28,6 +28,7 @@
             </child>
             <child type="title">
               <object class="PanelOmniBar">
+                <property name="menu-model">omni_menu</property>
                 <child type="prefix">
                   <object class="GtkInscription">
                     <property name="min-chars">25</property>
@@ -189,6 +190,34 @@
       <item>
         <attribute name="label">Show Threads</attribute>
       </item>
+    </section>
+  </menu>
+  <menu id="omni_menu">
+    <section>
+      <attribute name="label">Profiling</attribute>
+      <item><attribute name="label">Sample Native Stacks</attribute></item>
+      <item><attribute name="label">Sample JavaScript Stacks</attribute></item>
+      <item><attribute name="label">Trace Memory Allocations</attribute></item>
+    </section>
+    <section>
+      <attribute name="label">Graphics</attribute>
+      <item><attribute name="label">Display Timings</attribute></item>
+    </section>
+    <section>
+      <attribute name="label">Counters</attribute>
+      <item><attribute name="label">CPU Usage</attribute></item>
+      <item><attribute name="label">Memory Usage</attribute></item>
+      <item><attribute name="label">Storage I/O</attribute></item>
+      <item><attribute name="label">Network I/O</attribute></item>
+    </section>
+    <section>
+      <attribute name="label">Energy</attribute>
+      <item><attribute name="label">Consumption</attribute></item>
+      <item><attribute name="label">Battery Charge</attribute></item>
+    </section>
+    <section>
+      <item><attribute name="label">Allow Application Integration</attribute></item>
+      <item><attribute name="label">Allow CPU Throttling</attribute></item>
     </section>
   </menu>
 </interface>

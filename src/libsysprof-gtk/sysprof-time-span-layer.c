@@ -36,6 +36,8 @@ struct _SysprofTimeSpanLayer
   SysprofNormalizedSeries *normal_x;
   SysprofNormalizedSeries *normal_x2;
 
+  GBindingGroup *series_bindings;
+
   GdkRGBA color;
   GdkRGBA event_color;
 
@@ -297,6 +299,7 @@ sysprof_time_span_layer_finalize (GObject *object)
 {
   SysprofTimeSpanLayer *self = (SysprofTimeSpanLayer *)object;
 
+  g_clear_object (&self->series_bindings);
   g_clear_object (&self->axis);
   g_clear_object (&self->series);
   g_clear_object (&self->normal_x);
@@ -408,18 +411,8 @@ sysprof_time_span_layer_class_init (SysprofTimeSpanLayerClass *klass)
 static void
 sysprof_time_span_layer_init (SysprofTimeSpanLayer *self)
 {
-  g_autoptr(GtkExpression) begin_expression = NULL;
-  g_autoptr(GtkExpression) end_expression = NULL;
-
-  begin_expression = gtk_property_expression_new (SYSPROF_TYPE_TIME_SERIES_ITEM, NULL, "time");
-  end_expression = gtk_property_expression_new (SYSPROF_TYPE_TIME_SERIES_ITEM, NULL, "end-time");
-
-  self->normal_x = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES,
-                                 "expression", begin_expression,
-                                 NULL);
-  self->normal_x2 = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES,
-                                  "expression", end_expression,
-                                  NULL);
+  self->normal_x = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES, NULL);
+  self->normal_x2 = g_object_new (SYSPROF_TYPE_NORMALIZED_SERIES, NULL);
 
   g_signal_connect_object (self->normal_x,
                            "items-changed",
@@ -431,6 +424,14 @@ sysprof_time_span_layer_init (SysprofTimeSpanLayer *self)
                            G_CALLBACK (gtk_widget_queue_draw),
                            self,
                            G_CONNECT_SWAPPED);
+
+  self->series_bindings = g_binding_group_new ();
+  g_binding_group_bind (self->series_bindings, "time-expression",
+                        self->normal_x, "expression",
+                        G_BINDING_SYNC_CREATE);
+  g_binding_group_bind (self->series_bindings, "duration-expression",
+                        self->normal_x2, "expression",
+                        G_BINDING_SYNC_CREATE);
 }
 
 const GdkRGBA *
@@ -511,6 +512,8 @@ sysprof_time_span_layer_set_series (SysprofTimeSpanLayer *self,
 
   if (!g_set_object (&self->series, series))
     return;
+
+  g_binding_group_set_source (self->series_bindings, series);
 
   sysprof_normalized_series_set_series (self->normal_x, SYSPROF_SERIES (series));
   sysprof_normalized_series_set_series (self->normal_x2, SYSPROF_SERIES (series));

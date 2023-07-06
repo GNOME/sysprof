@@ -841,7 +841,17 @@ sysprof_document_load_worker (GTask        *task,
         frame_len = GUINT16_SWAP_LE_BE (frame_len);
 
       if (frame_len < sizeof (SysprofCaptureFrame))
-        break;
+        {
+          g_warning ("Capture contained implausibly short frame");
+          break;
+        }
+
+      if (frame_len % SYSPROF_CAPTURE_ALIGN != 0)
+        {
+          g_warning ("Capture contained frame not aligned to %u",
+                     (guint)SYSPROF_CAPTURE_ALIGN);
+          break;
+        }
 
       ptr.offset = pos;
       ptr.length = frame_len;

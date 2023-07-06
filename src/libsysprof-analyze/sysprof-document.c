@@ -107,6 +107,7 @@ enum {
   PROP_0,
   PROP_ALLOCATIONS,
   PROP_COUNTERS,
+  PROP_FILES,
   PROP_PROCESSES,
   PROP_SAMPLES,
   PROP_TIME_SPAN,
@@ -314,6 +315,10 @@ sysprof_document_get_property (GObject    *object,
       g_value_take_object (value, sysprof_document_list_counters (self));
       break;
 
+    case PROP_FILES:
+      g_value_take_object (value, sysprof_document_list_files (self));
+      break;
+
     case PROP_PROCESSES:
       g_value_take_object (value, sysprof_document_list_processes (self));
       break;
@@ -350,6 +355,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
 
   properties [PROP_COUNTERS] =
     g_param_spec_object ("counters", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_FILES] =
+    g_param_spec_object ("files", NULL, NULL,
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 

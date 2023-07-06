@@ -24,6 +24,7 @@
 
 #include "sysprof-chart.h"
 #include "sysprof-chart-layer.h"
+#include "sysprof-color-iter-private.h"
 #include "sysprof-column-layer.h"
 #include "sysprof-line-layer.h"
 #include "sysprof-session-private.h"
@@ -68,6 +69,7 @@ typedef struct _SysprofTrackCounterChart
   SysprofDocument           *document;
   SysprofSession            *session;
   const SysprofTrackCounter *info;
+  GdkRGBA                    color;
 } SysprofTrackCounterChart;
 
 typedef struct _SysprofTrackMarksChart
@@ -271,6 +273,7 @@ create_chart_for_counters (SysprofTrack             *track,
   g_autoptr(SysprofSeries) xy_series = NULL;
   g_autoptr(SysprofAxis) y_axis = NULL;
   SysprofChartLayer *layer;
+  SysprofColorIter colors;
   SysprofChart *chart;
   SysprofAxis *x_axis = NULL;
   double min_value = 0;
@@ -286,6 +289,8 @@ create_chart_for_counters (SysprofTrack             *track,
 
   if (!(n_items = g_list_model_get_n_items (info->counters)))
     return NULL;
+
+  sysprof_color_iter_init (&colors);
 
   x_axis = sysprof_session_get_visible_time_axis (info->session);
 
@@ -311,6 +316,7 @@ create_chart_for_counters (SysprofTrack             *track,
       g_autoptr(SysprofDocumentCounter) counter = g_list_model_get_item (info->counters, i);
       double item_min_value = sysprof_document_counter_get_min_value (counter);
       double item_max_value = sysprof_document_counter_get_max_value (counter);
+      const GdkRGBA *color;
 
       if (!ignore_range)
         {
@@ -321,6 +327,11 @@ create_chart_for_counters (SysprofTrack             *track,
             max_value = item_max_value;
         }
 
+      if (info->color.alpha > 0)
+        color = &info->color;
+      else
+        color = sysprof_color_iter_next (&colors);
+
       xy_series = sysprof_xy_series_new (sysprof_track_get_title (track),
                                          g_object_ref (G_LIST_MODEL (counter)),
                                          gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_COUNTER_VALUE, NULL, "time"),
@@ -329,6 +340,7 @@ create_chart_for_counters (SysprofTrack             *track,
       layer = g_object_new (SYSPROF_TYPE_LINE_LAYER,
                             "spline", !(info->info->flags & LINE_FLAGS_NO_SPLINE),
                             "dashed", !!(info->info->flags & LINE_FLAGS_DASHED),
+                            "color", color,
                             "series", xy_series,
                             "x-axis", x_axis,
                             "y-axis", y_axis,
@@ -365,6 +377,9 @@ sysprof_session_discover_counters (SysprofSession  *self,
           g_autoptr(SysprofTrack) track = NULL;
           g_autoptr(GListModel) subtrack_counters = NULL;
           SysprofTrackCounterChart *chart;
+          SysprofColorIter iter;
+
+          sysprof_color_iter_init (&iter);
 
           chart = g_new0 (SysprofTrackCounterChart, 1);
           g_set_weak_pointer (&chart->session, self);
@@ -401,6 +416,7 @@ sysprof_session_discover_counters (SysprofSession  *self,
                   subchart->document = g_object_ref (document);
                   subchart->counters = g_object_ref (G_LIST_MODEL (store));
                   subchart->info = info;
+                  subchart->color = *sysprof_color_iter_next (&iter);
 
                   subtrack = g_object_new (SYSPROF_TYPE_TRACK,
                                            "title", sysprof_document_counter_get_name (subtrack_counter),

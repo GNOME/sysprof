@@ -37,6 +37,14 @@ sysprof_color_iter_init (SysprofColorIter *iter)
         "#9141ac",
         "#e5a50a",
         "#63452c",
+        "#ffbe6f"
+        "#613583",
+        "#9a9996",
+        "#ed333b",
+        "#1a5fb4",
+        "#26a269",
+        "#c061cb",
+        "#c64600",
       };
       GdkRGBA *_colors;
 

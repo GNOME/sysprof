@@ -41,6 +41,8 @@ const char *sysprof_document_process_get_command_line (SysprofDocumentProcess *s
 SYSPROF_AVAILABLE_IN_ALL
 gint64      sysprof_document_process_get_exit_time    (SysprofDocumentProcess *self);
 SYSPROF_AVAILABLE_IN_ALL
+gint64      sysprof_document_process_get_duration     (SysprofDocumentProcess *self);
+SYSPROF_AVAILABLE_IN_ALL
 GListModel *sysprof_document_process_list_memory_maps (SysprofDocumentProcess *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel *sysprof_document_process_list_mounts      (SysprofDocumentProcess *self);

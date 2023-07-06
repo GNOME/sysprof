@@ -38,6 +38,7 @@ struct _SysprofDocumentProcessClass
 enum {
   PROP_0,
   PROP_COMMAND_LINE,
+  PROP_DURATION,
   PROP_EXIT_TIME,
   N_PROPS
 };
@@ -70,6 +71,10 @@ sysprof_document_process_get_property (GObject    *object,
       g_value_set_string (value, sysprof_document_process_get_command_line (self));
       break;
 
+    case PROP_DURATION:
+      g_value_set_int64 (value, sysprof_document_process_get_duration (self));
+      break;
+
     case PROP_EXIT_TIME:
       g_value_set_int64 (value, sysprof_document_process_get_exit_time (self));
       break;
@@ -91,6 +96,11 @@ sysprof_document_process_class_init (SysprofDocumentProcessClass *klass)
     g_param_spec_string ("command-line", NULL, NULL,
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_DURATION] =
+    g_param_spec_int64 ("duration", NULL, NULL,
+                        G_MININT64, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_EXIT_TIME] =
     g_param_spec_int64 ("exit-time", NULL, NULL,
@@ -188,4 +198,16 @@ sysprof_document_process_get_exit_time (SysprofDocumentProcess *self)
   t = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (self));
 
   return MAX (t, exit_time);
+}
+
+gint64
+sysprof_document_process_get_duration (SysprofDocumentProcess *self)
+{
+  gint64 t;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_PROCESS (self), 0);
+
+  t = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (self));
+
+  return sysprof_document_process_get_exit_time (self) - t;
 }

@@ -34,8 +34,9 @@
 
 typedef enum _LineFlags
 {
-  LINE_FLAGS_DASHED = 1 << 0,
+  LINE_FLAGS_DASHED    = 1 << 0,
   LINE_FLAGS_NO_SPLINE = 1 << 1,
+  LINE_FLAGS_FILL      = 1 << 2,
 } LineFlags;
 
 typedef struct _SysprofTrackSamples
@@ -85,6 +86,7 @@ static const SysprofTrackCounter discovery_counters[] = {
     "CPU Percent", "Combined",
     "CPU Percent", "Total *",
     .0, 100.,
+    LINE_FLAGS_FILL,
   },
 
   {
@@ -95,7 +97,11 @@ static const SysprofTrackCounter discovery_counters[] = {
     LINE_FLAGS_DASHED,
   },
 
-  { N_("Memory"), "Memory", "Used", NULL, NULL },
+  { N_("Memory"),
+    "Memory", "Used",
+    NULL, NULL,
+    LINE_FLAGS_FILL,
+  },
 
   { N_("FPS"), "gtk", "fps", "gtk", "*" },
 
@@ -340,6 +346,7 @@ create_chart_for_counters (SysprofTrack             *track,
       layer = g_object_new (SYSPROF_TYPE_LINE_LAYER,
                             "spline", !(info->info->flags & LINE_FLAGS_NO_SPLINE),
                             "dashed", !!(info->info->flags & LINE_FLAGS_DASHED),
+                            "fill", !!(info->info->flags & LINE_FLAGS_FILL),
                             "color", color,
                             "series", xy_series,
                             "x-axis", x_axis,

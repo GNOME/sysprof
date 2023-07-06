@@ -34,6 +34,7 @@ typedef struct _SysprofProcessInfo
   SysprofSymbol         *fallback_symbol;
   SysprofSymbol         *symbol;
   int                    pid;
+  gint64                 exit_time;
 } SysprofProcessInfo;
 
 SysprofProcessInfo *sysprof_process_info_new   (SysprofMountNamespace *mount_namespace,

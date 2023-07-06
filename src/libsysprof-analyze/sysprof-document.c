@@ -1069,6 +1069,13 @@ sysprof_document_load_worker (GTask        *task,
                 }
             }
         }
+      else if (tainted->type == SYSPROF_CAPTURE_FRAME_EXIT)
+        {
+          SysprofProcessInfo *info = g_hash_table_lookup (self->pid_to_process_info, GINT_TO_POINTER (pid));
+
+          if (info != NULL)
+            info->exit_time = t;
+        }
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_MARK)
         {
           const SysprofCaptureMark *mark = (const SysprofCaptureMark *)tainted;

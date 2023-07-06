@@ -774,6 +774,80 @@ load_progress (Load       *load,
     load->progress (fraction, message, load->progress_data);
 }
 
+static int
+sort_by_time (gconstpointer a,
+              gconstpointer b,
+              gpointer      base)
+{
+  const SysprofDocumentFramePointer *aptr = a;
+  const SysprofDocumentFramePointer *bptr = b;
+  const SysprofCaptureFrame *aframe = (const SysprofCaptureFrame *)((const guint8 *)base + aptr->offset);
+  const SysprofCaptureFrame *bframe = (const SysprofCaptureFrame *)((const guint8 *)base + bptr->offset);
+
+  if (aframe->time < bframe->time)
+    return -1;
+
+  if (aframe->time > bframe->time)
+    return 1;
+
+  if (aframe->type == SYSPROF_CAPTURE_FRAME_MARK && bframe->type == SYSPROF_CAPTURE_FRAME_MARK)
+    {
+      const SysprofCaptureMark *amark = (const SysprofCaptureMark *)aframe;
+      const SysprofCaptureMark *bmark = (const SysprofCaptureMark *)bframe;
+
+      if (amark->duration > bmark->duration)
+        return -1;
+      else if (amark->duration < bmark->duration)
+        return 1;
+    }
+
+  return 0;
+}
+
+static int
+sort_by_time_swapped (gconstpointer a,
+                      gconstpointer b,
+                      gpointer      base)
+{
+  const SysprofDocumentFramePointer *aptr = a;
+  const SysprofDocumentFramePointer *bptr = b;
+  const SysprofCaptureFrame *aframe = (const SysprofCaptureFrame *)((const guint8 *)base + aptr->offset);
+  const SysprofCaptureFrame *bframe = (const SysprofCaptureFrame *)((const guint8 *)base + bptr->offset);
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+  gint64 atime = GINT64_FROM_BE (aframe->time);
+  gint64 btime = GINT64_FROM_BE (bframe->time);
+#else
+  gint64 atime = GINT64_FROM_LE (aframe->time);
+  gint64 btime = GINT64_FROM_LE (bframe->time);
+#endif
+
+  if (atime < btime)
+    return -1;
+
+  if (atime > btime)
+    return 1;
+
+  if (aframe->type == SYSPROF_CAPTURE_FRAME_MARK && bframe->type == SYSPROF_CAPTURE_FRAME_MARK)
+    {
+      const SysprofCaptureMark *amark = (const SysprofCaptureMark *)aframe;
+      const SysprofCaptureMark *bmark = (const SysprofCaptureMark *)bframe;
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+      gint64 aduration = GINT64_FROM_BE (amark->duration);
+      gint64 bduration = GINT64_FROM_BE (bmark->duration);
+#else
+      gint64 aduration = GINT64_FROM_LE (amark->duration);
+      gint64 bduration = GINT64_FROM_LE (bmark->duration);
+#endif
+
+      if (aduration > bduration)
+        return -1;
+      else if (aduration < bduration)
+        return 1;
+    }
+
+  return 0;
+}
+
 static void
 sysprof_document_load_worker (GTask        *task,
                               gpointer      source_object,
@@ -830,11 +904,8 @@ sysprof_document_load_worker (GTask        *task,
   pos = sizeof self->header;
   while (pos < (len - sizeof(guint16)))
     {
-      const SysprofCaptureFrame *tainted;
       SysprofDocumentFramePointer ptr;
-      gint64 t;
       guint16 frame_len;
-      int pid;
 
       memcpy (&frame_len, &self->base[pos], sizeof frame_len);
       if (self->needs_swap)
@@ -856,10 +927,32 @@ sysprof_document_load_worker (GTask        *task,
       ptr.offset = pos;
       ptr.length = frame_len;
 
-      tainted = (const SysprofCaptureFrame *)(gpointer)&self->base[pos];
+      pos += frame_len;
+      count++;
 
-      pid = self->needs_swap ? GUINT32_SWAP_LE_BE (tainted->pid) : tainted->pid;
-      t = self->needs_swap ? GUINT64_SWAP_LE_BE (tainted->time) : tainted->time;
+      g_array_append_val (self->frames, ptr);
+
+      if (count % 100 == 0)
+        load_progress (load,
+                       (pos / (double)len) * .4,
+                       _("Indexing capture data frames"));
+    }
+
+  /* Now sort all the items by their respective frame times as frames
+   * cat into the writer may be tacked on at the end even though they
+   * have state which belongs earlier in the capture.
+   */
+  if G_UNLIKELY (self->needs_swap)
+    g_array_sort_with_data (self->frames, sort_by_time_swapped, (gpointer)self->base);
+  else
+    g_array_sort_with_data (self->frames, sort_by_time, (gpointer)self->base);
+
+  for (guint f = 0; f < self->frames->len; f++)
+    {
+      SysprofDocumentFramePointer *ptr = &g_array_index (self->frames, SysprofDocumentFramePointer, f);
+      const SysprofCaptureFrame *tainted = (const SysprofCaptureFrame *)(gpointer)&self->base[ptr->offset];
+      gint64 t = self->needs_swap ? GUINT64_SWAP_LE_BE (tainted->time) : tainted->time;
+      int pid = self->needs_swap ? GUINT32_SWAP_LE_BE (tainted->pid) : tainted->pid;
 
       if (t > guessed_end_nsec && is_data_type (tainted->type))
         guessed_end_nsec = t;
@@ -869,45 +962,45 @@ sysprof_document_load_worker (GTask        *task,
       switch ((int)tainted->type)
         {
         case SYSPROF_CAPTURE_FRAME_ALLOCATION:
-          egg_bitset_add (self->allocations, self->frames->len);
-          egg_bitset_add (self->traceables, self->frames->len);
+          egg_bitset_add (self->allocations, f);
+          egg_bitset_add (self->traceables, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_SAMPLE:
-          egg_bitset_add (self->samples, self->frames->len);
-          egg_bitset_add (self->traceables, self->frames->len);
+          egg_bitset_add (self->samples, f);
+          egg_bitset_add (self->traceables, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_PROCESS:
-          egg_bitset_add (self->processes, self->frames->len);
+          egg_bitset_add (self->processes, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_FILE_CHUNK:
-          egg_bitset_add (self->file_chunks, self->frames->len);
+          egg_bitset_add (self->file_chunks, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_CTRDEF:
-          egg_bitset_add (self->ctrdefs, self->frames->len);
+          egg_bitset_add (self->ctrdefs, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_CTRSET:
-          egg_bitset_add (self->ctrsets, self->frames->len);
+          egg_bitset_add (self->ctrsets, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_MARK:
-          egg_bitset_add (self->marks, self->frames->len);
+          egg_bitset_add (self->marks, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_JITMAP:
-          egg_bitset_add (self->jitmaps, self->frames->len);
+          egg_bitset_add (self->jitmaps, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_MAP:
-          egg_bitset_add (self->mmaps, self->frames->len);
+          egg_bitset_add (self->mmaps, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_OVERLAY:
-          egg_bitset_add (self->overlays, self->frames->len);
+          egg_bitset_add (self->overlays, f);
           break;
 
         default:
@@ -922,13 +1015,13 @@ sysprof_document_load_worker (GTask        *task,
               !g_hash_table_contains (self->files_first_position, file_chunk->path))
             g_hash_table_insert (self->files_first_position,
                                  g_strdup (file_chunk->path),
-                                 GUINT_TO_POINTER (self->frames->len));
+                                 GUINT_TO_POINTER (f));
         }
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_SAMPLE)
         {
           const SysprofCaptureSample *sample = (const SysprofCaptureSample *)tainted;
           guint n_addrs = self->needs_swap ? GUINT16_SWAP_LE_BE (sample->n_addrs) : sample->n_addrs;
-          const guint8 *endptr = (const guint8 *)tainted + frame_len;
+          const guint8 *endptr = (const guint8 *)tainted + ptr->length;
 
           /* If the sample contains a context-switch, record it */
           if ((const guint8 *)sample + (n_addrs * sizeof (SysprofAddress)) <= endptr)
@@ -942,7 +1035,7 @@ sysprof_document_load_worker (GTask        *task,
                   if (sysprof_address_is_context_switch (addr, &last_context) &&
                       last_context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
                     {
-                      egg_bitset_add (self->samples_with_context_switch, self->frames->len);
+                      egg_bitset_add (self->samples_with_context_switch, f);
                       break;
                     }
                 }
@@ -951,7 +1044,7 @@ sysprof_document_load_worker (GTask        *task,
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_MARK)
         {
           const SysprofCaptureMark *mark = (const SysprofCaptureMark *)tainted;
-          const char *endptr = (const char *)tainted + frame_len;
+          const char *endptr = (const char *)tainted + ptr->length;
           gint64 duration = self->needs_swap ? GUINT64_SWAP_LE_BE (mark->duration) : mark->duration;
 
           if (t + duration > guessed_end_nsec)
@@ -980,19 +1073,9 @@ sysprof_document_load_worker (GTask        *task,
                   g_hash_table_insert (names, g_strdup (name), bitset);
                 }
 
-              egg_bitset_add (bitset, self->frames->len);
+              egg_bitset_add (bitset, f);
             }
         }
-
-      pos += frame_len;
-      count++;
-
-      g_array_append_val (self->frames, ptr);
-
-      if (count % 100 == 0)
-        load_progress (load,
-                       (pos / (double)len) * .4,
-                       _("Indexing capture data frames"));
     }
 
   if (guessed_end_nsec != 0)

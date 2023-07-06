@@ -451,5 +451,22 @@ _sysprof_session_describe (SysprofSession *self,
       return g_string_free (str, FALSE);
     }
 
+  if (SYSPROF_IS_DOCUMENT_COUNTER_VALUE (item))
+    {
+      SysprofDocumentCounterValue *value = item;
+      g_autofree char *value_str = sysprof_document_counter_value_format (value);
+      const SysprofTimeSpan *begin = sysprof_document_get_time_span (self->document);
+      gint64 t = sysprof_document_counter_value_get_time (value);
+      GString *str = g_string_new (NULL);
+      SysprofTimeSpan span = { t, t };
+
+      span = sysprof_time_span_relative_to (span, begin->begin_nsec);
+
+      append_time_string (str, &span);
+      g_string_append_printf (str, ": %s", value_str);
+
+      return g_string_free (str, FALSE);
+    }
+
   return NULL;
 }

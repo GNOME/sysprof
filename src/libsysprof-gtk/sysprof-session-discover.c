@@ -34,9 +34,10 @@
 
 typedef enum _LineFlags
 {
-  LINE_FLAGS_DASHED    = 1 << 0,
-  LINE_FLAGS_NO_SPLINE = 1 << 1,
-  LINE_FLAGS_FILL      = 1 << 2,
+  LINE_FLAGS_DASHED                   = 1 << 0,
+  LINE_FLAGS_NO_SPLINE                = 1 << 1,
+  LINE_FLAGS_FILL                     = 1 << 2,
+  LINE_FLAGS_IGNORE_RANGE_ON_SUBCHART = 1 << 3,
 } LineFlags;
 
 typedef struct _SysprofTrackSamples
@@ -71,6 +72,7 @@ typedef struct _SysprofTrackCounterChart
   SysprofSession            *session;
   const SysprofTrackCounter *info;
   GdkRGBA                    color;
+  guint                      apply_range : 1;
 } SysprofTrackCounterChart;
 
 typedef struct _SysprofTrackMarksChart
@@ -103,7 +105,8 @@ static const SysprofTrackCounter discovery_counters[] = {
     LINE_FLAGS_FILL,
   },
 
-  { N_("FPS"), "gtk", "fps", "gtk", "*" },
+  { N_("FPS"), "gtk", "fps", "gtk", "*",
+    0, 144, LINE_FLAGS_IGNORE_RANGE_ON_SUBCHART },
 
   {
     N_("Energy"),
@@ -310,7 +313,8 @@ create_chart_for_counters (SysprofTrack             *track,
   max_value = sysprof_document_counter_get_max_value (first);
   y_axis = sysprof_value_axis_new (min_value, max_value);
 
-  if (info->info->min_value != .0 || info->info->max_value != .0)
+  if (info->apply_range &&
+      (info->info->min_value != .0 || info->info->max_value != .0))
     {
       min_value = info->info->min_value;
       max_value = info->info->max_value;
@@ -393,6 +397,7 @@ sysprof_session_discover_counters (SysprofSession  *self,
           chart->document = g_object_ref (document);
           chart->counters = g_object_ref (track_counters);
           chart->info = info;
+          chart->apply_range = TRUE;
 
           track = g_object_new (SYSPROF_TYPE_TRACK,
                                 "title", info->track_name,
@@ -423,6 +428,7 @@ sysprof_session_discover_counters (SysprofSession  *self,
                   subchart->document = g_object_ref (document);
                   subchart->counters = g_object_ref (G_LIST_MODEL (store));
                   subchart->info = info;
+                  subchart->apply_range = !(info->flags & LINE_FLAGS_IGNORE_RANGE_ON_SUBCHART);
                   subchart->color = *sysprof_color_iter_next (&iter);
 
                   subtrack = g_object_new (SYSPROF_TYPE_TRACK,

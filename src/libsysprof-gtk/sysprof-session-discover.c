@@ -38,6 +38,7 @@ typedef enum _LineFlags
   LINE_FLAGS_NO_SPLINE                = 1 << 1,
   LINE_FLAGS_FILL                     = 1 << 2,
   LINE_FLAGS_IGNORE_RANGE_ON_SUBCHART = 1 << 3,
+  LINE_FLAGS_FORMAT_MEMORY            = 1 << 4,
 } LineFlags;
 
 typedef struct _SysprofTrackSamples
@@ -102,7 +103,8 @@ static const SysprofTrackCounter discovery_counters[] = {
   { N_("Memory"),
     "Memory", "Used",
     NULL, NULL,
-    LINE_FLAGS_FILL,
+    .0, .0,
+    LINE_FLAGS_FILL | LINE_FLAGS_FORMAT_MEMORY,
   },
 
   { N_("FPS"), "gtk", "fps", "gtk", "*",
@@ -383,6 +385,15 @@ create_chart_for_counters (SysprofTrack             *track,
   return GTK_WIDGET (chart);
 }
 
+static char *
+format_value_as_memory (SysprofTrack                *track,
+                        SysprofDocumentCounterValue *value,
+                        gpointer                     user_data)
+{
+  gint64 v = sysprof_document_counter_value_get_value_int64 (value);
+  return g_format_size (v);
+}
+
 static void
 sysprof_session_discover_counters (SysprofSession  *self,
                                    SysprofDocument *document,
@@ -421,6 +432,12 @@ sysprof_session_discover_counters (SysprofSession  *self,
                                 "title", info->track_name,
                                 NULL);
 
+          if ((info->flags & LINE_FLAGS_FORMAT_MEMORY) != 0)
+            g_signal_connect (track,
+                              "format-item-for-display",
+                              G_CALLBACK (format_value_as_memory),
+                              NULL);
+
           g_signal_connect_data (track,
                                  "create-chart",
                                  G_CALLBACK (create_chart_for_counters),
@@ -452,6 +469,12 @@ sysprof_session_discover_counters (SysprofSession  *self,
                   subtrack = g_object_new (SYSPROF_TYPE_TRACK,
                                            "title", sysprof_document_counter_get_name (subtrack_counter),
                                            NULL);
+
+                  if ((info->flags & LINE_FLAGS_FORMAT_MEMORY) != 0)
+                    g_signal_connect (subtrack,
+                                      "format-item-for-display",
+                                      G_CALLBACK (format_value_as_memory),
+                                      NULL);
 
                   g_signal_connect_data (subtrack,
                                          "create-chart",

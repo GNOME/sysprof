@@ -21,6 +21,7 @@
 #pragma once
 
 #include "sysprof-session.h"
+#include "sysprof-track.h"
 
 G_BEGIN_DECLS
 
@@ -28,6 +29,7 @@ void  _sysprof_session_discover_tracks (SysprofSession  *session,
                                         SysprofDocument *document,
                                         GListStore      *tracks);
 char *_sysprof_session_describe        (SysprofSession  *self,
+                                        SysprofTrack    *track,
                                         gpointer         item);
 
 G_END_DECLS

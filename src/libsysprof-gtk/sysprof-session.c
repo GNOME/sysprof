@@ -23,7 +23,7 @@
 #include <glib/gi18n.h>
 
 #include "sysprof-session-private.h"
-#include "sysprof-track.h"
+#include "sysprof-track-private.h"
 #include "sysprof-value-axis.h"
 
 struct _SysprofSession
@@ -420,12 +420,18 @@ append_time_string (GString               *str,
 
 char *
 _sysprof_session_describe (SysprofSession *self,
+                           SysprofTrack   *track,
                            gpointer        item)
 {
+  g_autofree char *text = NULL;
+
   g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
 
   if (self->document == NULL)
     return NULL;
+
+  if ((text = _sysprof_track_format_item_for_display (track, item)))
+    return g_steal_pointer (&text);
 
   if (SYSPROF_IS_DOCUMENT_MARK (item))
     {

@@ -42,6 +42,7 @@ enum {
 
 enum {
   CREATE_CHART,
+  FORMAT_ITEM_FOR_DISPLAY,
   N_SIGNALS
 };
 
@@ -160,6 +161,15 @@ sysprof_track_class_init (SysprofTrackClass *klass)
                   g_signal_accumulator_first_wins, NULL,
                   NULL,
                   GTK_TYPE_WIDGET, 0);
+
+  signals[FORMAT_ITEM_FOR_DISPLAY] =
+    g_signal_new ("format-item-for-display",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0,
+                  g_signal_accumulator_first_wins, NULL,
+                  NULL,
+                  G_TYPE_STRING, 1, G_TYPE_OBJECT);
 }
 
 static void
@@ -242,6 +252,20 @@ _sysprof_track_create_chart (SysprofTrack *self)
   g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
 
   g_signal_emit (self, signals[CREATE_CHART], 0, &ret);
+
+  return ret;
+}
+
+char *
+_sysprof_track_format_item_for_display (SysprofTrack *self,
+                                        gpointer      item)
+{
+  char *ret = NULL;
+
+  g_return_val_if_fail (SYSPROF_IS_TRACK (self), NULL);
+  g_return_val_if_fail (G_IS_OBJECT (item), NULL);
+
+  g_signal_emit (self, signals[FORMAT_ITEM_FOR_DISPLAY], 0, item, &ret);
 
   return ret;
 }

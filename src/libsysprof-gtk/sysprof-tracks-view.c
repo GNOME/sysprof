@@ -94,9 +94,11 @@ set_motion (SysprofTracksView *self,
   if (pick != NULL)
     {
       SysprofChartLayer *layer = SYSPROF_CHART_LAYER (gtk_widget_get_ancestor (pick, SYSPROF_TYPE_CHART_LAYER));
+      SysprofTrackView *track_view = SYSPROF_TRACK_VIEW (gtk_widget_get_ancestor (pick, SYSPROF_TYPE_TRACK_VIEW));
 
-      if (layer != NULL)
+      if (layer != NULL && track_view != NULL)
         {
+          SysprofTrack *track = sysprof_track_view_get_track (track_view);
           g_autoptr(GObject) item = NULL;
           g_autofree char *text = NULL;
           double layer_x;
@@ -107,7 +109,7 @@ set_motion (SysprofTracksView *self,
                                             x, y, &layer_x, &layer_y);
 
           if ((item = sysprof_chart_layer_lookup_item (layer, layer_x, layer_y)))
-            text = _sysprof_session_describe (self->session, item);
+            text = _sysprof_session_describe (self->session, track, item);
 
           gtk_label_set_label (self->informative, text);
 

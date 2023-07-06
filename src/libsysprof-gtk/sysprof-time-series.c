@@ -141,11 +141,11 @@ sysprof_time_series_class_init (SysprofTimeSeriesClass *klass)
   series_class->get_series_item = sysprof_time_series_get_series_item;
 
   properties [PROP_TIME_EXPRESSION] =
-    gtk_param_spec_expression ("x-expression", NULL, NULL,
+    gtk_param_spec_expression ("time-expression", NULL, NULL,
                                (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_DURATION_EXPRESSION] =
-    gtk_param_spec_expression ("y-expression", NULL, NULL,
+    gtk_param_spec_expression ("duration-expression", NULL, NULL,
                                (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_LABEL_EXPRESSION] =

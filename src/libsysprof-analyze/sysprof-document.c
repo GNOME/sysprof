@@ -76,6 +76,7 @@ struct _SysprofDocument
   EggBitset                *samples_with_context_switch;
   EggBitset                *traceables;
   EggBitset                *processes;
+  EggBitset                *logs;
   EggBitset                *mmaps;
   EggBitset                *overlays;
   EggBitset                *pids;
@@ -108,6 +109,7 @@ enum {
   PROP_ALLOCATIONS,
   PROP_COUNTERS,
   PROP_FILES,
+  PROP_LOGS,
   PROP_PROCESSES,
   PROP_SAMPLES,
   PROP_TIME_SPAN,
@@ -276,6 +278,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->marks, egg_bitset_unref);
   g_clear_pointer (&self->file_chunks, egg_bitset_unref);
   g_clear_pointer (&self->jitmaps, egg_bitset_unref);
+  g_clear_pointer (&self->logs, egg_bitset_unref);
   g_clear_pointer (&self->mmaps, egg_bitset_unref);
   g_clear_pointer (&self->overlays, egg_bitset_unref);
   g_clear_pointer (&self->pids, egg_bitset_unref);
@@ -317,6 +320,10 @@ sysprof_document_get_property (GObject    *object,
 
     case PROP_FILES:
       g_value_take_object (value, sysprof_document_list_files (self));
+      break;
+
+    case PROP_LOGS:
+      g_value_take_object (value, sysprof_document_list_logs (self));
       break;
 
     case PROP_PROCESSES:
@@ -363,6 +370,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_LOGS] =
+    g_param_spec_object ("logs", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_PROCESSES] =
     g_param_spec_object ("processes", NULL, NULL,
                          G_TYPE_LIST_MODEL,
@@ -403,6 +415,7 @@ sysprof_document_init (SysprofDocument *self)
   self->marks = egg_bitset_new_empty ();
   self->file_chunks = egg_bitset_new_empty ();
   self->jitmaps = egg_bitset_new_empty ();
+  self->logs = egg_bitset_new_empty ();
   self->mmaps = egg_bitset_new_empty ();
   self->overlays = egg_bitset_new_empty ();
   self->pids = egg_bitset_new_empty ();
@@ -1057,6 +1070,10 @@ sysprof_document_load_worker (GTask        *task,
 
         case SYSPROF_CAPTURE_FRAME_JITMAP:
           egg_bitset_add (self->jitmaps, f);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_LOG:
+          egg_bitset_add (self->logs, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_MAP:
@@ -1718,6 +1735,20 @@ finish:
     *final_context = last_context;
 
   return n_symbolized;
+}
+
+/**
+ * sysprof_document_list_logs:
+ * @self: a #SysprofDocument
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentLog
+ */
+GListModel *
+sysprof_document_list_logs (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->logs);
 }
 
 /**

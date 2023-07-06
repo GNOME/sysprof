@@ -53,6 +53,8 @@ GListModel            *sysprof_document_list_traceables           (SysprofDocume
 SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_list_allocations          (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
+GListModel            *sysprof_document_list_logs                 (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_list_samples              (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_list_samples_with_context_switch

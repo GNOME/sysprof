@@ -422,6 +422,33 @@ sysprof_session_discover_counters (SysprofSession  *self,
     }
 }
 
+static gboolean
+activate_mark_cb (SysprofSession       *session,
+                  SysprofTimeSpanLayer *layer,
+                  SysprofDocumentMark  *mark,
+                  SysprofChart         *chart)
+{
+  gint64 duration;
+
+  g_assert (SYSPROF_IS_SESSION (session));
+  g_assert (SYSPROF_IS_TIME_SPAN_LAYER (layer));
+  g_assert (SYSPROF_IS_DOCUMENT_MARK (mark));
+  g_assert (SYSPROF_IS_CHART (chart));
+
+  if ((duration = sysprof_document_mark_get_duration (mark)))
+    {
+      gint64 t = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (mark));
+      SysprofTimeSpan span = { t, t + duration };
+
+      sysprof_session_select_time (session, &span);
+      sysprof_session_zoom_to_selection (session);
+
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
 static GtkWidget *
 create_chart_for_marks (SysprofTrack           *track,
                         SysprofTrackMarksChart *info)
@@ -445,6 +472,11 @@ create_chart_for_marks (SysprofTrack           *track,
                                          gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "message"));
 
   chart = g_object_new (SYSPROF_TYPE_CHART, NULL);
+  g_signal_connect_object (chart,
+                           "activate-layer-item",
+                           G_CALLBACK (activate_mark_cb),
+                           info->session,
+                           G_CONNECT_SWAPPED);
   layer = g_object_new (SYSPROF_TYPE_TIME_SPAN_LAYER,
                         "series", time_series,
                         "axis", x_axis,

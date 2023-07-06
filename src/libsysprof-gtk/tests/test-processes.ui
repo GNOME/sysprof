@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="TestProcesses" parent="AdwWindow">
+    <child>
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkScrolledWindow">
+            <child>
+              <object class="GtkListView">
+                <property name="model">
+                  <object class="GtkNoSelection">
+                    <property name="model">
+                      <object class="SysprofSessionModel">
+                        <property name="session" bind-source="TestProcesses" bind-property="session" bind-flags="sync-create"/>
+                        <binding name="model">
+                          <lookup name="processes" type="SysprofDocument">
+                            <lookup name="document">TestProcesses</lookup>
+                          </lookup>
+                        </binding>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+                <property name="factory">
+                  <object class="GtkBuilderListItemFactory">
+                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkBox">
+        <property name="height-request">16</property>
+        <child>
+          <object class="SysprofChart">
+            <property name="hexpand">true</property>
+            <child>
+              <object class="SysprofTimeSpanLayer">
+                <binding name="axis">
+                  <lookup name="selected-time-axis" type="SysprofSession">
+                    <lookup name="session" type="SysprofSessionModelItem">
+                      <lookup name="item">GtkListItem</lookup>
+                    </lookup>
+                  </lookup>
+                </binding>
+                <property name="series">
+                  <object class="SysprofTimeSeries">
+                    <property name="model">
+                      <object class="TestSingleModel">
+                        <binding name="item">
+                          <lookup name="item" type="SysprofSessionModelItem">
+                            <lookup name="item">GtkListItem</lookup>
+                          </lookup>
+                        </binding>
+                      </object>
+                    </property>
+                    <property name="time-expression">
+                      <lookup name="time" type="SysprofDocumentFrame"/>
+                    </property>
+                    <property name="duration-expression">
+                      <lookup name="duration" type="SysprofDocumentProcess"/>
+                    </property>
+                    <property name="label-expression">
+                      <lookup name="command-line" type="SysprofDocumentProcess"/>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </child>
+  </template>
+</interface>

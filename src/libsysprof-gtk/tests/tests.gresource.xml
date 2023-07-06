@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/">
     <file preprocess="xml-stripblanks">test-charts.ui</file>
+    <file preprocess="xml-stripblanks">test-processes.ui</file>
     <file preprocess="xml-stripblanks">test-tracks.ui</file>
   </gresource>
 </gresources>

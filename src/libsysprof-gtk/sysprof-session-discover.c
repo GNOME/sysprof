@@ -388,10 +388,15 @@ create_chart_for_counters (SysprofTrack             *track,
 static char *
 format_value_as_memory (SysprofTrack                *track,
                         SysprofDocumentCounterValue *value,
-                        gpointer                     user_data)
+                        SysprofDocument             *document)
 {
+  const SysprofTimeSpan *span = sysprof_document_get_time_span (document);
   gint64 v = sysprof_document_counter_value_get_value_int64 (value);
-  return g_format_size (v);
+  gint64 t = sysprof_document_counter_value_get_time (value) - span->begin_nsec;
+  g_autofree char *vstr = g_format_size (v);
+  g_autofree char *tstr = sysprof_time_offset_to_string (t);
+
+  return g_strdup_printf ("%s: %s", tstr, vstr);
 }
 
 static void
@@ -433,10 +438,11 @@ sysprof_session_discover_counters (SysprofSession  *self,
                                 NULL);
 
           if ((info->flags & LINE_FLAGS_FORMAT_MEMORY) != 0)
-            g_signal_connect (track,
-                              "format-item-for-display",
-                              G_CALLBACK (format_value_as_memory),
-                              NULL);
+            g_signal_connect_object (track,
+                                     "format-item-for-display",
+                                     G_CALLBACK (format_value_as_memory),
+                                     document,
+                                     0);
 
           g_signal_connect_data (track,
                                  "create-chart",
@@ -471,10 +477,11 @@ sysprof_session_discover_counters (SysprofSession  *self,
                                            NULL);
 
                   if ((info->flags & LINE_FLAGS_FORMAT_MEMORY) != 0)
-                    g_signal_connect (subtrack,
-                                      "format-item-for-display",
-                                      G_CALLBACK (format_value_as_memory),
-                                      NULL);
+                    g_signal_connect_object (subtrack,
+                                             "format-item-for-display",
+                                             G_CALLBACK (format_value_as_memory),
+                                             document,
+                                             0);
 
                   g_signal_connect_data (subtrack,
                                          "create-chart",

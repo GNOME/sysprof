@@ -85,4 +85,31 @@ _sysprof_symbol_is_context_switch (SysprofSymbol *symbol)
   return symbol->kind == SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH;
 }
 
+static inline gboolean
+_sysprof_symbol_is_system_library (SysprofSymbol *symbol)
+{
+  switch (symbol->kind)
+    {
+    case SYSPROF_SYMBOL_KIND_ROOT:
+    case SYSPROF_SYMBOL_KIND_PROCESS:
+    case SYSPROF_SYMBOL_KIND_THREAD:
+    case SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH:
+    case SYSPROF_SYMBOL_KIND_UNWINDABLE:
+    default:
+      return FALSE;
+
+    case SYSPROF_SYMBOL_KIND_KERNEL:
+      return TRUE;
+
+    case SYSPROF_SYMBOL_KIND_USER:
+      if (symbol->binary_nick != NULL)
+        return TRUE;
+
+      if (symbol->binary_path != NULL)
+        return !!strstr (symbol->binary_path, "/usr/");
+
+      return FALSE;
+    }
+}
+
 G_END_DECLS

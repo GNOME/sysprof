@@ -54,32 +54,18 @@ static const struct {
   const char *nick;
 } nick_table[] = {
   { "libc.so", "libc" },
-  { "libcairo-gobject.so", "Cairo" },
-  { "libcairo.so", "Cairo" },
-  { "libclutter-1.0.so", "Clutter" },
-  { "libclutter-glx-1.0.so", "Clutter" },
   { "libffi.so", "libffi" },
-  { "libgjs.so", "GJS" },
-  { "libgstreamer-1-0.so", "GStreamer" },
-  { "libgudev-1.0.so", "udev" },
-  { "libibus-1.0.so", "IBus" },
-  { "libinput.so", "Mutter" },
   { "ld-linux-x86-64.so", "glibc" },
   { "libnss_sss.so", "NSS" },
   { "libsss_debug.so", "SSSD" },
   { "libsss_util.so", "SSSD" },
   { "libnss_systemd.so", "NSS" },
   { "libpcre2-8.so", "PCRE" },
-  { "libpixman-1.so", "Pixman" },
-  { "libpolkit-agent-1.so", "PolicyKit" },
-  { "libpolkit-gobject-1.so", "PolicyKit" },
   { "libselinux.so", "SELinux" },
   { "libssl3.so", "NSS" },
   { "libstdc++.so", "libc" },
   { "libsystemd.so", "systemd" },
   { "libudev.so", "udev" },
-  { "libvte-2.91.so", "VTE" },
-  { "libvte-2.91-gtk4.so", "VTE" },
   { "libxul.so", "XUL" },
   { "libz.so", "Zlib" },
   { "libzstd.so", "Zstd" },
@@ -89,6 +75,24 @@ static const struct {
   { "libgobject-2.0.so", "GObject" },
   { "libgio-2.0.so", "Gio" },
   { "libgirepository-1.0.so", "Introspection" },
+
+  /* Cairo/Pixman */
+  { "libcairo-gobject.so", "Cairo" },
+  { "libcairo.so", "Cairo" },
+  { "libpixman-1.so", "Pixman" },
+
+  /* Various GNOME Platform Libraries */
+  { "libdex-1.so", "Dex" },
+  { "libgjs.so", "GJS" },
+  { "libgstreamer-1-0.so", "GStreamer" },
+  { "libgudev-1.0.so", "udev" },
+  { "libibus-1.0.so", "IBus" },
+  { "libjson-glib-1.0.so", "JSON-GLib" },
+  { "libjsonrpc-glib-1.0.so", "JSONRPC-GLib" },
+  { "libpolkit-agent-1.so", "PolicyKit" },
+  { "libpolkit-gobject-1.so", "PolicyKit" },
+  { "libvte-2.91-gtk4.so", "VTE" },
+  { "libvte-2.91.so", "VTE" },
 
   /* Pango and Harfbuzz */
   { "libfribidi.so", "Fribidi" },
@@ -122,6 +126,9 @@ static const struct {
   { "libwayland-server.so", "Wayland Server" },
 
   /* Mutter/Clutter/Shell */
+  { "libclutter-1.0.so", "Clutter" },
+  { "libclutter-glx-1.0.so", "Clutter" },
+  { "libinput.so", "libinput" },
   { "libmutter-12.so", "Mutter" },
   { "libmutter-cogl-12.so", "Mutter" },
   { "libmutter-clutter-12.so", "Mutter" },

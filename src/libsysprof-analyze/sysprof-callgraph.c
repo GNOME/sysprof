@@ -213,7 +213,8 @@ static SysprofCallgraphNode *
 sysprof_callgraph_add_trace (SysprofCallgraph  *self,
                              SysprofSymbol    **symbols,
                              guint              n_symbols,
-                             guint              list_model_index)
+                             guint              list_model_index,
+                             gboolean           hide_system_libraries)
 {
   SysprofCallgraphNode *parent = NULL;
 
@@ -237,6 +238,9 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
     {
       SysprofSymbol *symbol = symbols[i-1];
       SysprofCallgraphNode *node = NULL;
+
+      if (hide_system_libraries && _sysprof_symbol_is_system_library (symbol))
+        continue;
 
       /* Try to find @symbol within the children of @parent */
       for (SysprofCallgraphNode *iter = parent->children;
@@ -335,7 +339,11 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
   symbols[n_symbols++] = _sysprof_document_process_symbol (self->document, pid);
   symbols[n_symbols++] = everything;
 
-  node = sysprof_callgraph_add_trace (self, symbols, n_symbols, list_model_index);
+  node = sysprof_callgraph_add_trace (self,
+                                      symbols,
+                                      n_symbols,
+                                      list_model_index,
+                                      !!(self->flags & SYSPROF_CALLGRAPH_FLAGS_HIDE_SYSTEM_LIBRARIES));
 
   if (node && self->augment_func)
     self->augment_func (self,

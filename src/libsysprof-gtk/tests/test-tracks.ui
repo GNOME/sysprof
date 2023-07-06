@@ -187,9 +187,8 @@
   <menu id="view_menu">
     <section>
       <attribute name="label">Callgraph</attribute>
-      <item>
-        <attribute name="label">Show Threads</attribute>
-      </item>
+      <item><attribute name="label">Show Threads</attribute></item>
+      <item><attribute name="label">Show System Libraries</attribute></item>
     </section>
   </menu>
   <menu id="omni_menu">

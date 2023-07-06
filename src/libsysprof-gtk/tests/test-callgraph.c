@@ -29,9 +29,11 @@ static GMainLoop *main_loop;
 static char *kallsyms_path;
 static char *filename;
 static gboolean include_threads;
+static gboolean hide_system_libraries;
 static const GOptionEntry entries[] = {
   { "kallsyms", 'k', 0, G_OPTION_ARG_FILENAME, &kallsyms_path, "The path to kallsyms to use for decoding", "PATH" },
   { "threads", 't', 0, G_OPTION_ARG_NONE, &include_threads, "Include threads in the callgraph" },
+  { "hide-system-libraries", 's', 0, G_OPTION_ARG_NONE, &hide_system_libraries, "Hide system libraries in the callgraph" },
   { 0 }
 };
 
@@ -73,6 +75,7 @@ main (int   argc,
   GtkWidget *progress;
   GtkWidget *message;
   GtkWidget *threads;
+  GtkWidget *system_libs;
   GtkWindow *window;
 
   sysprof_clock_init ();
@@ -134,8 +137,14 @@ main (int   argc,
                           "active", include_threads,
                           NULL);
   gtk_box_append (GTK_BOX (hbox), threads);
+  gtk_box_append (GTK_BOX (hbox), gtk_label_new ("Hide System Libraries"));
+  system_libs = g_object_new (GTK_TYPE_SWITCH,
+                              "active", hide_system_libraries,
+                              NULL);
+  gtk_box_append (GTK_BOX (hbox), system_libs);
   view = g_object_new (SYSPROF_TYPE_WEIGHTED_CALLGRAPH_VIEW,
                        "include-threads", include_threads,
+                       "hide-system-libraries", hide_system_libraries,
                        "vexpand", TRUE,
                        NULL);
   gtk_box_append (GTK_BOX (box), GTK_WIDGET (view));
@@ -159,6 +168,7 @@ main (int   argc,
   gtk_window_present (window);
 
   g_object_bind_property (threads, "active", view, "include-threads", 0);
+  g_object_bind_property (system_libs, "active", view, "hide-system-libraries", 0);
   g_object_bind_property (loader, "message", message, "label", 0);
   g_object_bind_property (loader, "fraction", progress, "fraction", 0);
 

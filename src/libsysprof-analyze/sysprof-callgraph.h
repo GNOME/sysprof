@@ -64,8 +64,9 @@ typedef void (*SysprofAugmentationFunc) (SysprofCallgraph     *callgraph,
 
 typedef enum _SysprofCallgraphFlags
 {
-  SYSPROF_CALLGRAPH_FLAGS_NONE = 0,
-  SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS = 1 << 1,
+  SYSPROF_CALLGRAPH_FLAGS_NONE                  = 0,
+  SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS       = 1 << 1,
+  SYSPROF_CALLGRAPH_FLAGS_HIDE_SYSTEM_LIBRARIES = 1 << 2,
 } SysprofCallgraphFlags;
 
 SYSPROF_AVAILABLE_IN_ALL

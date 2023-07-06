@@ -31,6 +31,7 @@ enum {
   PROP_0,
   PROP_CALLGRAPH,
   PROP_DOCUMENT,
+  PROP_HIDE_SYSTEM_LIBRARIES,
   PROP_INCLUDE_THREADS,
   PROP_TRACEABLES,
   N_PROPS
@@ -385,6 +386,10 @@ sysprof_callgraph_view_get_property (GObject    *object,
       g_value_set_object (value, sysprof_callgraph_view_get_document (self));
       break;
 
+    case PROP_HIDE_SYSTEM_LIBRARIES:
+      g_value_set_boolean (value, sysprof_callgraph_view_get_hide_system_libraries (self));
+      break;
+
     case PROP_INCLUDE_THREADS:
       g_value_set_boolean (value, sysprof_callgraph_view_get_include_threads (self));
       break;
@@ -410,6 +415,10 @@ sysprof_callgraph_view_set_property (GObject      *object,
     {
     case PROP_DOCUMENT:
       sysprof_callgraph_view_set_document (self, g_value_get_object (value));
+      break;
+
+    case PROP_HIDE_SYSTEM_LIBRARIES:
+      sysprof_callgraph_view_set_hide_system_libraries (self, g_value_get_boolean (value));
       break;
 
     case PROP_INCLUDE_THREADS:
@@ -444,6 +453,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
     g_param_spec_object ("document", NULL, NULL,
                          SYSPROF_TYPE_DOCUMENT,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_HIDE_SYSTEM_LIBRARIES] =
+    g_param_spec_boolean ("hide-system-libraries", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_INCLUDE_THREADS] =
     g_param_spec_boolean ("include-threads", NULL, NULL,
@@ -590,6 +604,9 @@ sysprof_callgraph_view_reload (SysprofCallgraphView *self)
   if (self->include_threads)
     flags |= SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS;
 
+  if (self->hide_system_libraries)
+    flags |= SYSPROF_CALLGRAPH_FLAGS_HIDE_SYSTEM_LIBRARIES;
+
   sysprof_document_callgraph_async (self->document,
                                     flags,
                                     self->traceables,
@@ -722,6 +739,30 @@ sysprof_callgraph_view_get_callgraph (SysprofCallgraphView *self)
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), NULL);
 
   return self->callgraph;
+}
+
+gboolean
+sysprof_callgraph_view_get_hide_system_libraries (SysprofCallgraphView *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), FALSE);
+
+  return self->hide_system_libraries;
+}
+
+void
+sysprof_callgraph_view_set_hide_system_libraries (SysprofCallgraphView *self,
+                                                  gboolean              hide_system_libraries)
+{
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  hide_system_libraries = !!hide_system_libraries;
+
+  if (self->hide_system_libraries != hide_system_libraries)
+    {
+      self->hide_system_libraries = hide_system_libraries;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_HIDE_SYSTEM_LIBRARIES]);
+      sysprof_callgraph_view_queue_reload (self);
+    }
 }
 
 gboolean

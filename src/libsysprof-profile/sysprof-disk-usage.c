@@ -180,10 +180,10 @@ find_device_by_name (Record     *record,
 static DexFuture *
 sysprof_disk_usage_record_fiber (gpointer user_data)
 {
+  g_autoptr(GByteArray) buf = NULL;
   Record *record = user_data;
   SysprofCaptureWriter *writer;
   g_autofd int stat_fd = -1;
-  char buf[4096*4];
   LineReader reader;
   DiskUsage *combined;
   gint64 combined_reads_total = 0;
@@ -193,6 +193,9 @@ sysprof_disk_usage_record_fiber (gpointer user_data)
   g_assert (record != NULL);
   g_assert (SYSPROF_IS_RECORDING (record->recording));
   g_assert (DEX_IS_CANCELLABLE (record->cancellable));
+
+  buf = g_byte_array_new ();
+  g_byte_array_set_size (buf, 4096*4);
 
   if (-1 == (stat_fd = open ("/proc/diskstats", O_RDONLY|O_CLOEXEC)))
     return dex_future_new_for_errno (errno);
@@ -212,7 +215,7 @@ sysprof_disk_usage_record_fiber (gpointer user_data)
        * recording loop. If cancellation future rejects, then
        * we also break out of our recording loop.
        */
-      read_future = dex_aio_read (NULL, stat_fd, buf, sizeof buf-1, 0);
+      read_future = dex_aio_read (NULL, stat_fd, buf->data, buf->len-1, 0);
       if (!dex_await (dex_future_first (dex_ref (record->cancellable),
                                         dex_ref (read_future),
                                         NULL),
@@ -223,7 +226,7 @@ sysprof_disk_usage_record_fiber (gpointer user_data)
       if (n_read < 0)
         break;
 
-      line_reader_init (&reader, buf, n_read);
+      line_reader_init (&reader, (char *)buf->data, n_read);
       while ((line = line_reader_next (&reader, &line_len)))
         {
           DiskUsage ds = {0};

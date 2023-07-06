@@ -107,7 +107,7 @@ find_device_by_name (GArray     *ar,
 static DexFuture *
 sysprof_network_usage_record_fiber (gpointer user_data)
 {
-  char buf[4096*2];
+  g_autoptr(GByteArray) buf = g_byte_array_new ();
   Record *record = user_data;
   g_autofree SysprofCaptureCounterValue *values = NULL;
   g_autofree guint *ids = NULL;
@@ -127,6 +127,8 @@ sysprof_network_usage_record_fiber (gpointer user_data)
   g_assert (record != NULL);
   g_assert (SYSPROF_IS_RECORDING (record->recording));
   g_assert (DEX_IS_FUTURE (record->cancellable));
+
+  g_byte_array_set_size (buf, 4096*2);
 
   writer = _sysprof_recording_writer (record->recording);
 
@@ -158,12 +160,12 @@ sysprof_network_usage_record_fiber (gpointer user_data)
                                           -1,
                                           ctr, G_N_ELEMENTS (ctr));
 
-  n_read = dex_await_int64 (dex_aio_read (NULL, stat_fd, buf, sizeof buf, 0), &error);
+  n_read = dex_await_int64 (dex_aio_read (NULL, stat_fd, buf->data, buf->len, 0), &error);
   if (n_read <= 0)
     return dex_future_new_for_errno (errno);
 
   lineno = 0;
-  line_reader_init (&reader, buf, n_read);
+  line_reader_init (&reader, (char *)buf->data, n_read);
   while ((line = line_reader_next (&reader, &line_len)))
     {
       DeviceUsage dev = {0};
@@ -229,12 +231,12 @@ sysprof_network_usage_record_fiber (gpointer user_data)
       gint64 combined_rx = 0;
       gint64 combined_tx = 0;
 
-      n_read = dex_await_int64 (dex_aio_read (NULL, stat_fd, buf, sizeof buf, 0), &error);
+      n_read = dex_await_int64 (dex_aio_read (NULL, stat_fd, buf->data, buf->len, 0), &error);
       if (n_read <= 0)
         break;
 
       lineno = 0;
-      line_reader_init (&reader, buf, n_read);
+      line_reader_init (&reader, (char *)buf->data, n_read);
       while ((line = line_reader_next (&reader, &line_len)))
         {
           DeviceUsage *dev;

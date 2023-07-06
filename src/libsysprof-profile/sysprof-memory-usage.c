@@ -171,17 +171,20 @@ record_free (gpointer data)
 static DexFuture *
 sysprof_memory_usage_record_fiber (gpointer user_data)
 {
+  g_autoptr(GByteArray) buf = NULL;
   Record *record = user_data;
   SysprofCaptureWriter *writer;
   g_autoptr(GError) error = NULL;
   SysprofCaptureCounter counters[1];
   MemStat st;
-  char buf[4096];
   guint counter_id;
 
   g_assert (record != NULL);
   g_assert (SYSPROF_IS_RECORDING (record->recording));
   g_assert (DEX_IS_FUTURE (record->cancellable));
+
+  buf = g_byte_array_new ();
+  g_byte_array_set_size (buf, 4096);
 
   writer = _sysprof_recording_writer (record->recording);
 
@@ -207,7 +210,7 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
 
   for (;;)
     {
-      g_autoptr(DexFuture) read_future = dex_aio_read (NULL, st.stat_fd, buf, sizeof buf-1, 0);
+      g_autoptr(DexFuture) read_future = dex_aio_read (NULL, st.stat_fd, buf->data, buf->len-1, 0);
       gssize n_read;
 
       dex_await (dex_future_first (dex_ref (read_future),
@@ -224,9 +227,9 @@ sysprof_memory_usage_record_fiber (gpointer user_data)
 
       if (n_read > 0)
         {
-          buf[n_read] = 0;
+          buf->data[n_read] = 0;
 
-          mem_stat_parse (&st, buf);
+          mem_stat_parse (&st, (char *)buf->data);
 
           sysprof_capture_writer_set_counters (writer,
                                                SYSPROF_CAPTURE_CURRENT_TIME,

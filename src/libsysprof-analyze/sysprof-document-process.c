@@ -177,10 +177,15 @@ _sysprof_document_process_set_info (SysprofDocumentProcess *self,
 gint64
 sysprof_document_process_get_exit_time (SysprofDocumentProcess *self)
 {
+  gint64 exit_time = 0;
+  gint64 t;
+
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_PROCESS (self), 0);
 
   if (self->process_info != NULL)
-    return self->process_info->exit_time;
+    exit_time = self->process_info->exit_time;
 
-  return 0;
+  t = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (self));
+
+  return MAX (t, exit_time);
 }

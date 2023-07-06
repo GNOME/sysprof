@@ -197,6 +197,8 @@ main (int   argc,
           g_autoptr(SysprofSpawnable) spawnable = sysprof_spawnable_new ();
 
           sysprof_spawnable_append_args (spawnable, (const char * const *)&argv[i+1]);
+          sysprof_spawnable_set_cwd (spawnable, g_get_current_dir ());
+
           sysprof_profiler_set_spawnable (profiler, spawnable);
 
           trace_fd = sysprof_spawnable_add_trace_fd (spawnable, NULL);

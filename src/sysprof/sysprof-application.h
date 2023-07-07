@@ -22,7 +22,8 @@
 
 G_BEGIN_DECLS
 
-#define SYSPROF_TYPE_APPLICATION (sysprof_application_get_type())
+#define SYSPROF_TYPE_APPLICATION    (sysprof_application_get_type())
+#define SYSPROF_APPLICATION_DEFAULT (SYSPROF_APPLICATION(g_application_get_default()))
 
 G_DECLARE_FINAL_TYPE (SysprofApplication, sysprof_application, SYSPROF, APPLICATION, AdwApplication)
 

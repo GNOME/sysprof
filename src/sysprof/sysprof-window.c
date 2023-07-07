@@ -45,6 +45,55 @@ G_DEFINE_FINAL_TYPE (SysprofWindow, sysprof_window, ADW_TYPE_APPLICATION_WINDOW)
 static GParamSpec *properties [N_PROPS];
 
 static void
+sysprof_window_open_capture_cb (GObject      *object,
+                                GAsyncResult *result,
+                                gpointer      user_data)
+{
+  GtkFileDialog *dialog = (GtkFileDialog *)object;
+  g_autoptr(SysprofWindow) self = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) file = NULL;
+
+  g_assert (GTK_IS_FILE_DIALOG (dialog));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if ((file = gtk_file_dialog_open_finish (dialog, result, &error)))
+    sysprof_window_open (SYSPROF_APPLICATION_DEFAULT, file);
+}
+
+static void
+sysprof_window_open_capture_action (GtkWidget  *widget,
+                                    const char *action_name,
+                                    GVariant   *param)
+{
+  g_autoptr(GtkFileDialog) dialog = NULL;
+  g_autoptr(GtkFileFilter) filter = NULL;
+  g_autoptr(GListStore) filters = NULL;
+
+  g_assert (SYSPROF_IS_WINDOW (widget));
+
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_add_pattern (filter, "*.syscap");
+  gtk_file_filter_add_mime_type (filter, "application/x-sysprof-capture");
+  gtk_file_filter_set_name (filter, _("Sysprof Capture (*.syscap)"));
+
+  filters = g_list_store_new (GTK_TYPE_FILE_FILTER);
+  g_list_store_append (filters, filter);
+
+  dialog = gtk_file_dialog_new ();
+  gtk_file_dialog_set_title (dialog, _("Open Recording"));
+  gtk_file_dialog_set_filters (dialog, G_LIST_MODEL (filters));
+  gtk_file_dialog_set_default_filter (dialog, filter);
+
+  gtk_file_dialog_open (dialog,
+                        GTK_WINDOW (widget),
+                        NULL,
+                        sysprof_window_open_capture_cb,
+                        g_object_ref (widget));
+}
+
+static void
 sysprof_window_set_document (SysprofWindow   *self,
                              SysprofDocument *document)
 {
@@ -136,6 +185,8 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-window.ui");
+
+  gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
   g_type_ensure (SYSPROF_TYPE_SESSION);

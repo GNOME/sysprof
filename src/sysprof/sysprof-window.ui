@@ -6,6 +6,16 @@
   <template class="SysprofWindow" parent="AdwApplicationWindow">
     <property name="default-width">1200</property>
     <property name="default-height">750</property>
+    <child>
+      <object class="GtkShortcutController">
+        <child>
+          <object class="GtkShortcut">
+            <property name="trigger">&lt;ctrl&gt;o</property>
+            <property name="action">action(win.open-capture)</property>
+          </object>
+        </child>
+      </object>
+    </child>
     <property name="content">
       <object class="AdwOverlaySplitView">
         <property name="show-sidebar" bind-source="show_left_sidebar" bind-property="active" bind-flags="bidirectional|sync-create"/>
@@ -114,6 +124,7 @@
     <section>
       <item>
         <attribute name="label" translatable="yes">Open Recording…</attribute>
+        <attribute name="action" translatable="yes">win.open-capture</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Save As…</attribute>

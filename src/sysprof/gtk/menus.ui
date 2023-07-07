@@ -1,50 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <menu id="win-menu">
-    <section id="win-menu-new">
-      <item>
-        <attribute name="label" translatable="yes">New Tab</attribute>
-        <attribute name="action">win.new-tab</attribute>
-      </item>
-      <item>
-        <attribute name="label" translatable="yes">New Window</attribute>
-        <attribute name="action">app.new-window</attribute>
-      </item>
-    </section>
-    <section id="win-menu-file">
-      <item>
-        <attribute name="label" translatable="yes">Open Recording…</attribute>
-        <attribute name="action">app.open-capture</attribute>
-      </item>
-      <item>
-        <attribute name="label" translatable="yes">Save Recording…</attribute>
-        <attribute name="action">win.save-capture</attribute>
-      </item>
-    </section>
-    <section id="win-menu-replay">
-      <item>
-        <attribute name="label" translatable="yes">Record Again</attribute>
-        <attribute name="action">win.replay-capture</attribute>
-      </item>
-    </section>
-    <section id="win-menu-close">
-      <item>
-        <attribute name="label" translatable="yes">Close</attribute>
-        <attribute name="action">win.close-tab</attribute>
-      </item>
-    </section>
     <section id="win-menu-misc">
       <item>
-        <attribute name="label" translatable="yes">Keyboard Shortcuts</attribute>
+        <attribute name="label" translatable="yes">_Preferences</attribute>
+        <attribute name="action">win.preferences</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
         <attribute name="action">win.show-help-overlay</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">Help</attribute>
-        <attribute name="action">app.help</attribute>
+        <attribute name="label" translatable="yes">_Help</attribute>
+        <attribute name="action">win.help</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">About Sysprof</attribute>
-        <attribute name="action">app.about</attribute>
+        <attribute name="label" translatable="yes">_About Sysprof</attribute>
+        <attribute name="action">win.about</attribute>
       </item>
     </section>
   </menu>

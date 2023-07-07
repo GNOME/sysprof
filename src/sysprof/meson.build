@@ -1,5 +1,5 @@
 sysprof_sources = [
-  'sysprof.c',
+  'main.c',
   'sysprof-application.c',
   'sysprof-window.c',
 ]
@@ -11,11 +11,11 @@ sysprof_resources = gnome.compile_resources('sysprof-resources', 'sysprof.gresou
 
 sysprof_deps = [
   cc.find_library('m', required: false),
-  libsysprof_capture_dep,
-  libsysprof_dep,
-  libsysprof_ui_dep,
-  dependency('pangoft2', required: false),
-  dependency('libadwaita-1', version: '>=  1.2.alpha'),
+  dependency('libadwaita-1', version: '>= 1.4.alpha'),
+  dependency('libpanel-1', version: '>= 1.3.0'),
+  libsysprof_analyze_static_dep,
+  libsysprof_profile_static_dep,
+  libsysprof_gtk_static_dep,
 ]
 
 sysprof = executable('sysprof', sysprof_resources + sysprof_sources,

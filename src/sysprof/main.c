@@ -1,6 +1,6 @@
 /* main.c
  *
- * Copyright 2016 Christian Hergert <christian@hergert.me>
+ * Copyright 2016-2023 Christian Hergert <chergert@redhat.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,20 +14,24 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 #include "config.h"
 
 #include <locale.h>
+
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
-#include <sysprof.h>
+
+#include <sysprof-capture.h>
 
 #include "sysprof-application.h"
 
-gint
-main (gint argc,
-      gchar *argv[])
+int
+main (int argc,
+      char *argv[])
 {
   g_autoptr(SysprofApplication) app = NULL;
   gint ret;

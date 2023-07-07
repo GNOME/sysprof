@@ -7,97 +7,11 @@
         <property name="max-height">12</property>
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="title" translatable="yes" context="shortcut window">Files</property>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Save Recording</property>
-                <property name="subtitle" translatable="yes" context="shortcut window">Saves the current recording</property>
-                <property name="action-name">win.save-capture</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Open recording</property>
-                <property name="subtitle" translatable="yes" context="shortcut window">Opens a previously saved recording</property>
-                <property name="action-name">app.open-capture</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkShortcutsGroup">
-            <property name="title" translatable="yes" context="shortcut window">Recording</property>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Record again</property>
-                <property name="subtitle" translatable="yes" context="shortcut window">Starts a new recording</property>
-                <property name="action-name">win.replay-capture</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Stop recording</property>
-                <property name="accelerator">Escape</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkShortcutsGroup">
-            <property name="title" translatable="yes" context="shortcut window">Callgraph</property>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Expand function</property>
-                <property name="subtitle" translatable="yes" context="shortcut window">Shows the direct descendants of the callgraph function</property>
-                <property name="accelerator">Right</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Collapse function</property>
-                <property name="subtitle" translatable="yes" context="shortcut window">Hides all callgraph descendants below the selected function</property>
-                <property name="accelerator">Left</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Jump into function</property>
-                <property name="subtitle" translatable="yes" context="shortcut window">Selects the function or file as the top of the callgraph</property>
-                <property name="accelerator">Return</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkShortcutsGroup">
-            <property name="title" translatable="yes" context="shortcut window">Visualizers</property>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Zoom in</property>
-                <property name="accelerator">&lt;primary&gt;plus</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Zoom out</property>
-                <property name="accelerator">&lt;primary&gt;minus</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Reset zoom</property>
-                <property name="accelerator">&lt;primary&gt;0</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="GtkShortcutsGroup">
             <property name="title" translatable="yes" context="shortcut window">General</property>
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="title" translatable="yes" context="shortcut window">Show Help</property>
-                <property name="action-name">app.help</property>
+                <property name="action-name">win.help</property>
               </object>
             </child>
             <child>
@@ -108,26 +22,8 @@
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">New Tab</property>
-                <property name="action-name">win.new-tab</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">Switch Tab</property>
-                <property name="accelerator">&lt;alt&gt;1...9</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkShortcutsShortcut">
-                <property name="title" translatable="yes" context="shortcut window">New Window</property>
-                <property name="action-name">app.new-window</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkShortcutsShortcut">
                 <property name="title" translatable="yes" context="shortcut window">Close Window</property>
-                <property name="action-name">win.close-tab</property>
+                <property name="action-name">window.close</property>
               </object>
             </child>
             <child>

@@ -1,59 +1,152 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="Adw" version="1.0"/>
+  <requires lib="Panel" version="1.0"/>
   <template class="SysprofWindow" parent="AdwApplicationWindow">
-    <style>
-      <class name="org-gnome-Sysprof"/>
-    </style>
+    <property name="default-width">1200</property>
     <property name="default-height">750</property>
-    <property name="default-width">700</property>
-    <property name="icon-name">org.gnome.Sysprof-symbolic</property>
-    <property name="title" translatable="yes">Sysprof</property>
-    <child>
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkHeaderBar">
-            <property name="show-title-buttons">true</property>
-            <child type="end">
-              <object class="GtkMenuButton" id="menu_button">
-                <property name="tooltip-text" translatable="yes">Main Menu</property>
-                <property name="primary">true</property>
-                <property name="icon-name">open-menu-symbolic</property>
-                <style>
-                  <class name="image-button"/>
-                </style>
+    <property name="content">
+      <object class="AdwOverlaySplitView">
+        <property name="show-sidebar" bind-source="show_left_sidebar" bind-property="active" bind-flags="bidirectional|sync-create"/>
+        <property name="sidebar">
+          <object class="AdwNavigationPage">
+            <property name="child">
+              <object class="AdwToolbarView">
+                <child type="top">
+                  <object class="AdwHeaderBar">
+                    <property name="show-end-title-buttons">false</property>
+                    <property name="title-widget">
+                      <object class="AdwWindowTitle">
+                        <property name="title">Sysprof</property>
+                      </object>
+                    </property>
+                    <child type="end">
+                      <object class="GtkMenuButton">
+                        <property name="icon-name">open-menu-symbolic</property>
+                        <property name="menu-model">primary_menu</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <property name="content">
+                  <object class="GtkScrolledWindow">
+                    <property name="hscrollbar-policy">never</property>
+                    <property name="vexpand">true</property>
+                    <child>
+                      <object class="GtkListBox" id="list_box">
+                        <style>
+                          <class name="navigation-sidebar"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </property>
               </object>
-            </child>
-            <child type="start">
-              <object class="GtkButton" id="open_button">
-                <property name="label" translatable="yes">_Open</property>
-                <property name="action-name">app.open-capture</property>
-                <property name="use-underline">true</property>
-                <property name="tooltip-text" translatable="yes">Open Recording… (Ctrl+O)</property>
-              </object>
-            </child>
-            <child type="end">
-              <object class="GtkLabel" id="stat_label">
-                <property name="margin-end">12</property>
-                <property name="xalign">1</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-              </object>
-            </child>
+            </property>
           </object>
-        </child>
-        <child>
-          <object class="SysprofNotebook" id="notebook">
-            <property name="vexpand">true</property>
-            <child>
-              <object class="SysprofDisplay">
-                <property name="visible">true</property>
+        </property>
+        <property name="content">
+          <object class="AdwNavigationPage">
+            <property name="child">
+              <object class="AdwOverlaySplitView">
+                <property name="sidebar-position">end</property>
+                <property name="show-sidebar" bind-source="show_right_sidebar" bind-property="active" bind-flags="bidirectional|sync-create"/>
+                <property name="content">
+                  <object class="AdwToolbarView">
+                    <child type="top">
+                      <object class="AdwHeaderBar">
+                        <property name="title-widget">
+                          <object class="AdwWindowTitle">
+                            <binding name="title">
+                              <lookup name="title" type="SysprofDocument">
+                                <lookup name="document">SysprofWindow</lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                        <child type="start">
+                          <object class="GtkToggleButton" id="show_left_sidebar">
+                            <property name="icon-name">dock-left-symbolic</property>
+                            <property name="active">true</property>
+                          </object>
+                        </child>
+                        <child type="end">
+                          <object class="GtkToggleButton" id="show_right_sidebar">
+                            <property name="icon-name">dock-right-symbolic</property>
+                          </object>
+                        </child>
+                        <child type="end">
+                          <object class="GtkMenuButton">
+                            <property name="icon-name">document-properties-symbolic</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <property name="content">
+                      <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <property name="vexpand">true</property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+                <property name="sidebar">
+                  <object class="AdwToolbarView">
+                    <child type="top">
+                      <object class="AdwHeaderBar">
+                        <property name="title-widget">
+                          <object class="AdwWindowTitle">
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
               </object>
-            </child>
+            </property>
           </object>
-        </child>
+        </property>
       </object>
-    </child>
+    </property>
   </template>
+  <menu id="primary_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Open Recording…</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Save As…</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Record Again…</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Show Embedded Files…</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Show Embedded Metadata…</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Preferences</attribute>
+        <attribute name="action-name">app.preferences</attribute>
+        <attribute name="accel">&lt;ctrl&gt;comma</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Help</attribute>
+        <attribute name="accel">F1</attribute>
+        <attribute name="action">app.help</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">About Sysprof</attribute>
+        <attribute name="action">app.about</attribute>
+      </item>
+    </section>
+  </menu>
 </interface>

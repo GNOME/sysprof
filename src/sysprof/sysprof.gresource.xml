@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <gresources>
   <gresource prefix="/org/gnome/sysprof">
-    <!-- Automatic GTK resources -->
     <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
     <file preprocess="xml-stripblanks">gtk/menus.ui</file>
-
-    <!-- Theme overrides -->
-    <file compressed="true">theme/shared.css</file>
   </gresource>
 
-  <gresource prefix="/org/gnome/sysprof/ui">
+  <gresource prefix="/org/gnome/sysprof">
     <file preprocess="xml-stripblanks">sysprof-window.ui</file>
   </gresource>
 </gresources>

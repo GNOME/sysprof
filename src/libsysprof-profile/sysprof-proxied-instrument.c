@@ -158,9 +158,12 @@ sysprof_proxied_instrument_record_fiber (gpointer user_data)
 
   /* Now cat the recording into our writer */
   writer = _sysprof_recording_writer (record->recording);
-  reader = sysprof_capture_reader_new_from_fd (g_steal_fd (&proxy_fd));
-  sysprof_capture_writer_cat (writer, reader);
-  sysprof_capture_reader_unref (reader);
+
+  if ((reader = sysprof_capture_reader_new_from_fd (g_steal_fd (&proxy_fd))))
+    {
+      sysprof_capture_writer_cat (writer, reader);
+      sysprof_capture_reader_unref (reader);
+    }
 
   return dex_future_new_for_boolean (TRUE);
 }

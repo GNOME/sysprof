@@ -4,6 +4,7 @@
     <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
     <file preprocess="xml-stripblanks">gtk/menus.ui</file>
     <file preprocess="xml-stripblanks">sysprof-greeter.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-recording-pad.ui</file>
     <file preprocess="xml-stripblanks">sysprof-window.ui</file>
   </gresource>
 </gresources>

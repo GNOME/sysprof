@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofRecordingPad" parent="AdwWindow">
+    <property name="content">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="show-start-title-buttons">false</property>
+            <property name="show-end-title-buttons">false</property>
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Sysprof</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkCenterBox">
+            <property name="orientation">vertical</property>
+            <child type="center">
+              <object class="GtkLabel">
+                <property name="label">00:00</property>
+                <property name="margin-top">18</property>
+                <property name="margin-start">18</property>
+                <property name="margin-end">18</property>
+                <property name="margin-bottom">18</property>
+                <attributes>
+                  <attribute name="scale" value="4"/>
+                  <attribute name="font-features" value="'tnum'"/>
+                </attributes>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="vexpand">true</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">1234 events</property>
+                    <property name="margin-top">12</property>
+                    <property name="margin-bottom">18</property>
+                    <property name="valign">start</property>
+                    <property name="vexpand">true</property>
+                    <style>
+                      <class name="caption"/>
+                    </style>
+                    <attributes>
+                      <attribute name="font-features" value="'tnum'"/>
+                    </attributes>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="stop_button">
+                    <property name="label" translatable="yes">Stop Recording</property>
+                    <property name="action-name">window.close</property>
+                    <property name="valign">end</property>
+                    <style>
+                      <class name="destructive-action"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>

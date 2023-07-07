@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include <locale.h>
+#include <signal.h>
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
@@ -38,11 +39,16 @@ main (int argc,
 
   sysprof_clock_init ();
 
+  /* Ignore SIGPIPE */
+  signal (SIGPIPE, SIG_IGN);
+
   /* Set up gettext translations */
   setlocale (LC_ALL, "");
   bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
   textdomain (GETTEXT_PACKAGE);
+
+  g_set_prgname ("sysprof");
 
   app = sysprof_application_new ();
   ret = g_application_run (G_APPLICATION (app), argc, argv);

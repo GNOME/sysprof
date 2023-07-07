@@ -20,7 +20,15 @@
 
 #include "config.h"
 
+#include <glib/gstdio.h>
+
+#include <sysprof-capture.h>
+#include <sysprof-profiler.h>
+
 #include "sysprof-greeter.h"
+#include "sysprof-recording-pad.h"
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
 
 struct _SysprofGreeter
 {
@@ -28,6 +36,9 @@ struct _SysprofGreeter
 
   GtkBox             *toolbar;
   AdwPreferencesPage *record_page;
+  GtkSwitch          *sample_native_stacks;
+  GtkSwitch          *record_disk_usage;
+  GtkSwitch          *record_network_usage;
 };
 
 enum {
@@ -49,6 +60,81 @@ sysprof_greeter_view_stack_notify_visible_child (SysprofGreeter *self,
 
   gtk_widget_set_visible (GTK_WIDGET (self->toolbar),
                           GTK_WIDGET (self->record_page) == adw_view_stack_get_visible_child (stack));
+}
+
+static SysprofProfiler *
+sysprof_greeter_create_profiler (SysprofGreeter *self)
+{
+  g_autoptr(SysprofProfiler) profiler = NULL;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+
+  profiler = sysprof_profiler_new ();
+
+  if (gtk_switch_get_active (self->sample_native_stacks))
+    sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
+
+  if (gtk_switch_get_active (self->record_disk_usage))
+    sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
+
+  if (gtk_switch_get_active (self->record_network_usage))
+    sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
+
+  return g_steal_pointer (&profiler);
+}
+
+static void
+sysprof_greeter_record_cb (GObject      *object,
+                           GAsyncResult *result,
+                           gpointer      user_data)
+{
+  SysprofProfiler *profiler = (SysprofProfiler *)object;
+  g_autoptr(SysprofRecording) recording = NULL;
+  g_autoptr(SysprofGreeter) self = user_data;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_PROFILER (profiler));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_GREETER (self));
+
+  if (!(recording = sysprof_profiler_record_finish (profiler, result, &error)))
+    {
+      /* TODO: error message */
+    }
+  else
+    {
+      GtkWidget *pad = sysprof_recording_pad_new (recording);
+
+      gtk_window_present (GTK_WINDOW (pad));
+    }
+
+  gtk_window_destroy (GTK_WINDOW (self));
+}
+
+static void
+sysprof_greeter_record_to_memory_action (GtkWidget  *widget,
+                                         const char *action_name,
+                                         GVariant   *param)
+{
+  SysprofGreeter *self = (SysprofGreeter *)widget;
+  g_autoptr(SysprofCaptureWriter) writer = NULL;
+  g_autoptr(SysprofProfiler) profiler = NULL;
+  g_autofd int fd = -1;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+
+  fd = sysprof_memfd_create ("[sysprof-profile]");
+
+  profiler = sysprof_greeter_create_profiler (self);
+  writer = sysprof_capture_writer_new_from_fd (g_steal_fd (&fd), 0);
+
+  gtk_widget_set_sensitive (GTK_WIDGET (self), FALSE);
+
+  sysprof_profiler_record_async (profiler,
+                                 writer,
+                                 NULL,
+                                 sysprof_greeter_record_cb,
+                                 g_object_ref (self));
 }
 
 static void
@@ -104,7 +190,12 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-greeter.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, toolbar);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_page);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_disk_usage);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_network_usage);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_greeter_view_stack_notify_visible_child);
+
+  gtk_widget_class_install_action (widget_class, "win.record-to-memory", NULL, sysprof_greeter_record_to_memory_action);
 }
 
 static void

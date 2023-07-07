@@ -267,6 +267,7 @@
                 <child>
                   <object class="GtkButton">
                     <property name="label" translatable="yes">_Record to Memory</property>
+                    <property name="action-name">win.record-to-memory</property>
                     <property name="use-underline">true</property>
                     <property name="hexpand">true</property>
                     <style>

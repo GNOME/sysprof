@@ -31,11 +31,13 @@ static SysprofRecording *active_recording;
 static gboolean memprof;
 static gboolean tracer;
 static gboolean gnome_shell;
+static char *power_profile;
 static const GOptionEntry entries[] = {
   { "capture", 'c', 0, G_OPTION_ARG_FILENAME, &capture_file, "The file to capture into", "CAPTURE" },
   { "memprof", 'm', 0, G_OPTION_ARG_NONE, &memprof, "Do memory allocation tracking on subprocess" },
   { "tracer", 't', 0, G_OPTION_ARG_NONE, &tracer, "Enable tracing with __cyg_profile_enter" },
   { "gnome-shell", 's', 0, G_OPTION_ARG_NONE, &gnome_shell, "Request GNOME Shell to provide profiler data" },
+  { "power-profile", 'p', 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
   { 0 }
 };
 
@@ -176,6 +178,9 @@ main (int   argc,
   sysprof_profiler_add_instrument (profiler, sysprof_energy_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_memory_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
+
+  if (power_profile)
+    sysprof_profiler_add_instrument (profiler, sysprof_power_profile_new (power_profile));
 
   if (gnome_shell)
     sysprof_profiler_add_instrument (profiler,

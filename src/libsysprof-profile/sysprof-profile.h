@@ -34,6 +34,7 @@ G_BEGIN_DECLS
 # include "sysprof-malloc-tracing.h"
 # include "sysprof-memory-usage.h"
 # include "sysprof-network-usage.h"
+# include "sysprof-power-profile.h"
 # include "sysprof-profiler.h"
 # include "sysprof-proxied-instrument.h"
 # include "sysprof-recording.h"

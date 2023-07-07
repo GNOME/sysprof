@@ -23,6 +23,7 @@
 
 #include "sysprof-application.h"
 #include "sysprof-credits.h"
+#include "sysprof-greeter.h"
 #include "sysprof-window.h"
 
 struct _SysprofApplication
@@ -35,6 +36,8 @@ G_DEFINE_TYPE (SysprofApplication, sysprof_application, ADW_TYPE_APPLICATION)
 static void
 sysprof_application_activate (GApplication *app)
 {
+  GtkWidget *greeter;
+
   g_assert (GTK_IS_APPLICATION (app));
 
   for (const GList *iter = gtk_application_get_windows (GTK_APPLICATION (app));
@@ -48,7 +51,9 @@ sysprof_application_activate (GApplication *app)
         }
     }
 
-  g_warning ("TODO: show greeter window");
+  greeter = sysprof_greeter_new ();
+  gtk_application_add_window (GTK_APPLICATION (app), GTK_WINDOW (greeter));
+  gtk_window_present (GTK_WINDOW (greeter));
 }
 
 static void

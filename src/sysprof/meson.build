@@ -1,6 +1,7 @@
 sysprof_sources = [
   'main.c',
   'sysprof-application.c',
+  'sysprof-greeter.c',
   'sysprof-window.c',
 ]
 

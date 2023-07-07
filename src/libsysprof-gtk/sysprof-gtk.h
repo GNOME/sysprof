@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include <sysprof-analyze.h>
+
 G_BEGIN_DECLS
 
 #define SYSPROF_GTK_INSIDE
@@ -52,4 +54,3 @@ G_BEGIN_DECLS
 #undef SYSPROF_GTK_INSIDE
 
 G_END_DECLS
-

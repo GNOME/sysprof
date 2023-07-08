@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
 #include <glib/gstdio.h>
 
 #include <sysprof-capture.h>
@@ -141,6 +142,72 @@ sysprof_greeter_record_to_memory_action (GtkWidget  *widget,
 }
 
 static void
+sysprof_greeter_choose_file_for_record_cb (GObject      *object,
+                                           GAsyncResult *result,
+                                           gpointer      user_data)
+{
+  GtkFileDialog *dialog = (GtkFileDialog *)object;
+  g_autoptr(SysprofGreeter) self = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) file = NULL;
+
+  g_assert (GTK_IS_FILE_DIALOG (dialog));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_GREETER (self));
+
+  if ((file = gtk_file_dialog_save_finish (dialog, result, &error)))
+    {
+      if (g_file_is_native (file))
+        {
+          g_autoptr(SysprofCaptureWriter) writer = NULL;
+          g_autoptr(SysprofProfiler) profiler = NULL;
+
+          profiler = sysprof_greeter_create_profiler (self);
+          writer = sysprof_capture_writer_new (g_file_peek_path (file), 0);
+
+          gtk_widget_set_sensitive (GTK_WIDGET (self), FALSE);
+
+          sysprof_profiler_record_async (profiler,
+                                         writer,
+                                         NULL,
+                                         sysprof_greeter_record_cb,
+                                         g_object_ref (self));
+        }
+    }
+}
+
+static void
+sysprof_greeter_record_to_file_action (GtkWidget  *widget,
+                                       const char *action_name,
+                                       GVariant   *param)
+{
+  SysprofGreeter *self = (SysprofGreeter *)widget;
+  g_autoptr(GtkFileDialog) dialog = NULL;
+  g_autoptr(GDateTime) now = NULL;
+  g_autofree char *now_str = NULL;
+  g_autofree char *initial_name = NULL;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+
+  now = g_date_time_new_now_local ();
+  now_str = g_date_time_format (now, "%Y-%m-%d %H:%M:%S");
+  initial_name = g_strdup_printf (_("System Capture from %s.syscap"), now_str);
+  g_strdelimit (initial_name, G_DIR_SEPARATOR_S, '-');
+
+  dialog = gtk_file_dialog_new ();
+  gtk_file_dialog_set_title (dialog, _("Record to File"));
+  gtk_file_dialog_set_accept_label (dialog, _("Record"));
+  gtk_file_dialog_set_modal (dialog, TRUE);
+  gtk_file_dialog_set_initial_name (dialog, initial_name);
+
+  gtk_file_dialog_save (dialog,
+                        GTK_WINDOW (self),
+                        NULL,
+                        sysprof_greeter_choose_file_for_record_cb,
+                        g_object_ref (self));
+}
+
+static void
 sysprof_greeter_dispose (GObject *object)
 {
   SysprofGreeter *self = (SysprofGreeter *)object;
@@ -204,6 +271,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, sysprof_greeter_view_stack_notify_visible_child);
 
   gtk_widget_class_install_action (widget_class, "win.record-to-memory", NULL, sysprof_greeter_record_to_memory_action);
+  gtk_widget_class_install_action (widget_class, "win.record-to-file", NULL, sysprof_greeter_record_to_file_action);
 }
 
 static void

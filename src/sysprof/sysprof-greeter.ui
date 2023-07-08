@@ -341,6 +341,7 @@
                 <child>
                   <object class="GtkButton">
                     <property name="label" translatable="yes">Record to _File…</property>
+                    <property name="action-name">win.record-to-file</property>
                     <property name="use-underline">true</property>
                     <property name="hexpand">true</property>
                   </object>

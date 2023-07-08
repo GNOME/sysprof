@@ -106,6 +106,9 @@ add_metadata (SysprofRecording *self,
               const char       *id,
               const char       *value)
 {
+  if (value == NULL)
+    return;
+
   sysprof_capture_writer_add_metadata (self->writer,
                                        SYSPROF_CAPTURE_CURRENT_TIME,
                                        -1, -1, id, value, -1);
@@ -153,6 +156,13 @@ sysprof_recording_fiber (gpointer user_data)
   /* Track various metadata */
   add_metadata (self, "org.gnome.sysprof.app-id", APP_ID_S);
   add_metadata (self, "org.gnome.sysprof.version", PACKAGE_VERSION);
+  add_metadata (self, "USER", g_get_user_name ());
+  add_metadata (self, "DISPLAY", g_getenv ("DISPLAY"));
+  add_metadata (self, "WAYLAND_DISPLAY", g_getenv ("WAYLAND_DISPLAY"));
+  add_metadata (self, "DESKTOP_SESSION", g_getenv ("DESKTOP_SESSION"));
+  add_metadata (self, "HOSTTYPE", g_getenv ("HOSTTYPE"));
+  add_metadata (self, "OSTYPE", g_getenv ("OSTYPE"));
+  dex_await (_sysprof_recording_add_file (self, "/etc/os-release", FALSE), NULL);
 
   self->start_time = g_get_monotonic_time ();
 

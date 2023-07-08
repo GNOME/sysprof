@@ -84,6 +84,7 @@ struct _SysprofDocument
   EggBitset                *ctrdefs;
   EggBitset                *ctrsets;
   EggBitset                *marks;
+  EggBitset                *metadata;
 
   GHashTable               *files_first_position;
   GHashTable               *pid_to_process_info;
@@ -110,6 +111,7 @@ enum {
   PROP_COUNTERS,
   PROP_FILES,
   PROP_LOGS,
+  PROP_METADATA,
   PROP_PROCESSES,
   PROP_SAMPLES,
   PROP_TIME_SPAN,
@@ -276,6 +278,7 @@ sysprof_document_finalize (GObject *object)
   g_clear_pointer (&self->ctrdefs, egg_bitset_unref);
   g_clear_pointer (&self->ctrsets, egg_bitset_unref);
   g_clear_pointer (&self->marks, egg_bitset_unref);
+  g_clear_pointer (&self->metadata, egg_bitset_unref);
   g_clear_pointer (&self->file_chunks, egg_bitset_unref);
   g_clear_pointer (&self->jitmaps, egg_bitset_unref);
   g_clear_pointer (&self->logs, egg_bitset_unref);
@@ -324,6 +327,10 @@ sysprof_document_get_property (GObject    *object,
 
     case PROP_LOGS:
       g_value_take_object (value, sysprof_document_list_logs (self));
+      break;
+
+    case PROP_METADATA:
+      g_value_take_object (value, sysprof_document_list_metadata (self));
       break;
 
     case PROP_PROCESSES:
@@ -375,6 +382,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_METADATA] =
+    g_param_spec_object ("metadata", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_PROCESSES] =
     g_param_spec_object ("processes", NULL, NULL,
                          G_TYPE_LIST_MODEL,
@@ -413,6 +425,7 @@ sysprof_document_init (SysprofDocument *self)
   self->ctrdefs = egg_bitset_new_empty ();
   self->ctrsets = egg_bitset_new_empty ();
   self->marks = egg_bitset_new_empty ();
+  self->metadata = egg_bitset_new_empty ();
   self->file_chunks = egg_bitset_new_empty ();
   self->jitmaps = egg_bitset_new_empty ();
   self->logs = egg_bitset_new_empty ();
@@ -1066,6 +1079,10 @@ sysprof_document_load_worker (GTask        *task,
 
         case SYSPROF_CAPTURE_FRAME_MARK:
           egg_bitset_add (self->marks, f);
+          break;
+
+        case SYSPROF_CAPTURE_FRAME_METADATA:
+          egg_bitset_add (self->metadata, f);
           break;
 
         case SYSPROF_CAPTURE_FRAME_JITMAP:
@@ -1749,6 +1766,20 @@ sysprof_document_list_logs (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->logs);
+}
+
+/**
+ * sysprof_document_list_metadata:
+ * @self: a #SysprofDocument
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofDocumentMetadata
+ */
+GListModel *
+sysprof_document_list_metadata (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return _sysprof_document_bitset_index_new (G_LIST_MODEL (self), self->metadata);
 }
 
 /**

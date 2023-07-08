@@ -19,6 +19,7 @@
           <object class="GtkScrolledWindow">
             <child>
               <object class="GtkListView">
+                <signal name="activate" handler="sysprof_files_dialog_activate_cb" swapped="true"/>
                 <property name="show-separators">true</property>
                 <property name="model">
                   <object class="GtkNoSelection">

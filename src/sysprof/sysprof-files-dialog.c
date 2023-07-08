@@ -40,6 +40,67 @@ G_DEFINE_FINAL_TYPE (SysprofFilesDialog, sysprof_files_dialog, ADW_TYPE_WINDOW)
 static GParamSpec *properties [N_PROPS];
 
 static void
+sysprof_files_dialog_activate_cb (SysprofFilesDialog *self,
+                                  guint               position,
+                                  GtkListView        *list_view)
+{
+  g_autoptr(SysprofDocumentFile) file = NULL;
+  g_autoptr(GtkTextBuffer) buffer = NULL;
+  g_autoptr(GBytes) bytes = NULL;
+  GtkSelectionModel *model;
+  GtkWidget *toolbar;
+  GtkWidget *header_bar;
+  GtkWidget *scroller;
+  GtkWidget *text_view;
+  const char *str;
+  const char *endptr;
+  GtkWindow *window;
+  gsize len;
+
+  g_assert (SYSPROF_IS_FILES_DIALOG (self));
+
+  model = gtk_list_view_get_model (list_view);
+  file = g_list_model_get_item (G_LIST_MODEL (model), position);
+  bytes = sysprof_document_file_dup_bytes (file);
+  str = (const char *)g_bytes_get_data (bytes, &len);
+  endptr = str;
+
+  if (!g_utf8_validate_len (str, len, &endptr) && endptr == str)
+    return;
+
+  buffer = gtk_text_buffer_new (NULL);
+  gtk_text_buffer_set_text (buffer, str, endptr - str);
+
+  window = g_object_new (ADW_TYPE_WINDOW,
+                         "transient-for", self,
+                         "default-width", 800,
+                         "default-height", 600,
+                         "title", sysprof_document_file_get_path (file),
+                         NULL);
+  header_bar = g_object_new (ADW_TYPE_HEADER_BAR, NULL);
+  toolbar = g_object_new (ADW_TYPE_TOOLBAR_VIEW,
+                          "top-bar-style", ADW_TOOLBAR_RAISED,
+                          NULL);
+  scroller = g_object_new (GTK_TYPE_SCROLLED_WINDOW, NULL);
+  text_view = g_object_new (GTK_TYPE_TEXT_VIEW,
+                            "editable", FALSE,
+                            "left-margin", 6,
+                            "right-margin", 6,
+                            "top-margin", 6,
+                            "bottom-margin", 6,
+                            "monospace", TRUE,
+                            "buffer", buffer,
+                            NULL);
+
+  adw_window_set_content (ADW_WINDOW (window), toolbar);
+  adw_toolbar_view_add_top_bar (ADW_TOOLBAR_VIEW (toolbar), header_bar);
+  adw_toolbar_view_set_content (ADW_TOOLBAR_VIEW (toolbar), scroller);
+  gtk_scrolled_window_set_child (GTK_SCROLLED_WINDOW (scroller), text_view);
+
+  gtk_window_present (window);
+}
+
+static void
 sysprof_files_dialog_dispose (GObject *object)
 {
   SysprofFilesDialog *self = (SysprofFilesDialog *)object;
@@ -107,6 +168,7 @@ sysprof_files_dialog_class_init (SysprofFilesDialogClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-files-dialog.ui");
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_files_dialog_activate_cb);
 }
 
 static void

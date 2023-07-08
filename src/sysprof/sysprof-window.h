@@ -37,6 +37,8 @@ GtkWidget       *sysprof_window_new          (SysprofApplication *app,
                                               SysprofDocument    *document);
 void             sysprof_window_open         (SysprofApplication *app,
                                               GFile              *file);
+void             sysprof_window_open_fd      (SysprofApplication *app,
+                                              int                 fd);
 SysprofDocument *sysprof_window_get_document (SysprofWindow      *self);
 SysprofSession  *sysprof_window_get_session  (SysprofWindow      *self);
 

@@ -298,6 +298,12 @@ sysprof_window_load_cb (GObject      *object,
     }
 }
 
+static void
+sysprof_window_apply_loader_settings (SysprofDocumentLoader *loader)
+{
+  /* TODO: apply loader settings from gsettings/etc */
+}
+
 void
 sysprof_window_open (SysprofApplication *app,
                      GFile              *file)
@@ -307,7 +313,8 @@ sysprof_window_open (SysprofApplication *app,
   g_return_if_fail (SYSPROF_IS_APPLICATION (app));
   g_return_if_fail (G_IS_FILE (file));
 
-  if (!g_file_is_native (file))
+  if (!g_file_is_native (file) ||
+      !(loader = sysprof_document_loader_new (g_file_peek_path (file))))
     {
       g_autofree char *uri = g_file_get_uri (file);
       g_warning ("Cannot open non-native file \"%s\"", uri);
@@ -315,8 +322,33 @@ sysprof_window_open (SysprofApplication *app,
     }
 
   g_application_hold (G_APPLICATION (app));
+  sysprof_window_apply_loader_settings (loader);
+  sysprof_document_loader_load_async (loader,
+                                      NULL,
+                                      sysprof_window_load_cb,
+                                      g_object_ref (app));
 
-  loader = sysprof_document_loader_new (g_file_peek_path (file));
+}
+
+void
+sysprof_window_open_fd (SysprofApplication *app,
+                        int                 fd)
+{
+  g_autoptr(SysprofDocumentLoader) loader = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_return_if_fail (SYSPROF_IS_APPLICATION (app));
+
+  if (!(loader = sysprof_document_loader_new_for_fd (fd, &error)))
+    {
+      g_critical ("Failed to dup FD: %s", error->message);
+      return;
+    }
+
+  g_debug ("Opening recording by FD");
+
+  g_application_hold (G_APPLICATION (app));
+  sysprof_window_apply_loader_settings (loader);
   sysprof_document_loader_load_async (loader,
                                       NULL,
                                       sysprof_window_load_cb,

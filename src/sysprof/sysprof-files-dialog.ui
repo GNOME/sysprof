@@ -20,7 +20,6 @@
             <child>
               <object class="GtkColumnView" id="column_view">
                 <signal name="activate" handler="sysprof_files_dialog_activate_cb" swapped="true"/>
-                <property name="show-column-separators">true</property>
                 <property name="show-row-separators">true</property>
                 <property name="model">
                   <object class="GtkNoSelection">
@@ -58,14 +57,46 @@
     <property name="child">
       <object class="GtkLabel">
         <property name="xalign">0</property>
-        <property name="margin-top">3</property>
-        <property name="margin-bottom">3</property>
-        <property name="margin-start">6</property>
-        <property name="margin-end">6</property>
         <binding name="label">
           <lookup name="path" type="SysprofDocumentFile">
             <lookup name="item">GtkListItem</lookup>
           </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn" id="size_column">
+                    <property name="title" translatable="yes">Size</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="size" type="SysprofDocumentFile"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <closure type="gchararray" function="format_size">
+            <lookup name="size" type="SysprofDocumentFile">
+              <lookup name="item">GtkListItem</lookup>
+            </lookup>
+          </closure>
         </binding>
       </object>
     </property>

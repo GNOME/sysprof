@@ -104,6 +104,13 @@ sysprof_files_dialog_activate_cb (SysprofFilesDialog *self,
   gtk_window_present (window);
 }
 
+static char *
+format_size (gpointer unused,
+             guint64  size)
+{
+  return g_format_size (size);
+}
+
 static void
 sysprof_files_dialog_dispose (GObject *object)
 {
@@ -173,6 +180,7 @@ sysprof_files_dialog_class_init (SysprofFilesDialogClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-files-dialog.ui");
   gtk_widget_class_bind_template_callback (widget_class, sysprof_files_dialog_activate_cb);
+  gtk_widget_class_bind_template_callback (widget_class, format_size);
   gtk_widget_class_bind_template_child (widget_class, SysprofFilesDialog, column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofFilesDialog, path_column);
 }

@@ -138,6 +138,7 @@
     <section>
       <item>
         <attribute name="label" translatable="yes">Show Embedded Files…</attribute>
+        <attribute name="action">capture.show-embedded-files</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Show Embedded Metadata…</attribute>

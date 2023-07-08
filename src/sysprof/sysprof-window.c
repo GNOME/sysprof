@@ -24,6 +24,7 @@
 
 #include <sysprof-gtk.h>
 
+#include "sysprof-files-dialog.h"
 #include "sysprof-window.h"
 
 struct _SysprofWindow
@@ -91,6 +92,22 @@ sysprof_window_open_capture_action (GtkWidget  *widget,
                         NULL,
                         sysprof_window_open_capture_cb,
                         g_object_ref (widget));
+}
+
+static void
+sysprof_window_show_embedded_files_action (GtkWidget  *widget,
+                                           const char *action_name,
+                                           GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+  GtkWidget *dialog;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+  g_assert (SYSPROF_IS_DOCUMENT (self->document));
+
+  dialog = sysprof_files_dialog_new (self->document);
+  gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (self));
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 static void
@@ -187,6 +204,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-window.ui");
 
   gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
+  gtk_widget_class_install_action (widget_class, "capture.show-embedded-files", NULL, sysprof_window_show_embedded_files_action);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
   g_type_ensure (SYSPROF_TYPE_SESSION);

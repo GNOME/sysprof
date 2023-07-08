@@ -108,6 +108,7 @@ sysprof_recording_fiber (gpointer user_data)
   g_autoptr(GCancellable) cancellable = NULL;
   g_autoptr(DexFuture) record = NULL;
   g_autoptr(DexFuture) monitor = NULL;
+  g_autoptr(DexFuture) message = NULL;
   g_autoptr(GError) error = NULL;
   gint64 begin_time;
   gint64 end_time;
@@ -141,10 +142,12 @@ sysprof_recording_fiber (gpointer user_data)
 
   self->start_time = g_get_monotonic_time ();
 
+  /* Queue receive of first message */
+  message = dex_channel_receive (self->channel);
+
   /* Wait for messages on our channel or the recording to complete */
   for (;;)
     {
-      g_autoptr(DexFuture) message = dex_channel_receive (self->channel);
       g_autoptr(DexFuture) duration = dex_timeout_new_seconds (1);
 
       g_debug ("Recording loop iteration");
@@ -161,6 +164,9 @@ sysprof_recording_fiber (gpointer user_data)
           !g_error_matches (error, DEX_ERROR, DEX_ERROR_TIMED_OUT))
         goto stop_recording;
 
+      /* Clear any ignored error */
+      g_clear_error (&error);
+
       /* If record is not pending, then everything resolved/rejected */
       if (dex_future_get_status (record) != DEX_FUTURE_STATUS_PENDING ||
           dex_future_get_status (monitor) != DEX_FUTURE_STATUS_PENDING)
@@ -173,10 +179,16 @@ sysprof_recording_fiber (gpointer user_data)
 
           switch (command)
             {
-            default:
             case SYSPROF_RECORDING_COMMAND_STOP:
               goto stop_recording;
+
+            default:
+              break;
             }
+
+          /* Queue receive of next message */
+          dex_clear (&message);
+          message = dex_channel_receive (self->channel);
         }
 
       /* Update duration each pass through the loop */

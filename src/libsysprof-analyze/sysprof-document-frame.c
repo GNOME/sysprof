@@ -31,6 +31,7 @@
 #include "sysprof-document-log.h"
 #include "sysprof-document-jitmap.h"
 #include "sysprof-document-mark.h"
+#include "sysprof-document-metadata.h"
 #include "sysprof-document-mmap.h"
 #include "sysprof-document-overlay.h"
 #include "sysprof-document-process.h"
@@ -165,6 +166,10 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
 
     case SYSPROF_CAPTURE_FRAME_MARK:
       gtype = SYSPROF_TYPE_DOCUMENT_MARK;
+      break;
+
+    case SYSPROF_CAPTURE_FRAME_METADATA:
+      gtype = SYSPROF_TYPE_DOCUMENT_METADATA;
       break;
 
     case SYSPROF_CAPTURE_FRAME_PROCESS:

@@ -21,9 +21,11 @@
 #include "config.h"
 
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 
 #include "sysprof-application.h"
 #include "sysprof-recording-pad.h"
+#include "sysprof-window.h"
 
 struct _SysprofRecordingPad
 {
@@ -32,6 +34,8 @@ struct _SysprofRecordingPad
   SysprofRecording *recording;
 
   GtkButton        *stop_button;
+
+  guint             closed : 1;
 };
 
 enum {
@@ -71,11 +75,73 @@ sysprof_recording_pad_close_request (GtkWindow *window)
   g_assert (SYSPROF_IS_RECORDING_PAD (self));
   g_assert (self->recording != NULL);
 
-  sysprof_recording_stop_async (self->recording, NULL, NULL, NULL);
+  if (!self->closed)
+    {
+      g_debug ("User requested to stop recording");
 
-  /* TODO: Open SysprofWindow with finalized recording */
+      self->closed = TRUE;
+      sysprof_recording_stop_async (self->recording, NULL, NULL, NULL);
+    }
 
   return GDK_EVENT_PROPAGATE;
+}
+
+static void
+sysprof_recording_pad_wait_cb (GObject      *object,
+                               GAsyncResult *result,
+                               gpointer      user_data)
+{
+  SysprofRecording *recording = (SysprofRecording *)object;
+  g_autoptr(SysprofRecordingPad) self = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autofd int fd = -1;
+
+  g_assert (SYSPROF_IS_RECORDING (recording));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_RECORDING_PAD (self));
+
+  g_debug ("Recording has indicated completion");
+
+  g_application_release (G_APPLICATION (SYSPROF_APPLICATION_DEFAULT));
+
+  if (!sysprof_recording_wait_finish (recording, result, &error))
+    {
+      GtkWidget *dialog;
+
+      dialog = adw_message_dialog_new (NULL, _("Recording Failed"), NULL);
+      adw_message_dialog_format_body (ADW_MESSAGE_DIALOG (dialog),
+                                      _("Sysprof failed to record.\n\n%s"),
+                                      error->message);
+      adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (dialog), "close", _("Close"));
+      gtk_application_add_window (GTK_APPLICATION (SYSPROF_APPLICATION_DEFAULT),
+                                  GTK_WINDOW (dialog));
+      gtk_window_present (GTK_WINDOW (dialog));
+    }
+  else if (-1 != (fd = sysprof_recording_dup_fd (self->recording)))
+    {
+      lseek (fd, 0, SEEK_SET);
+      sysprof_window_open_fd (SYSPROF_APPLICATION_DEFAULT, fd);
+    }
+
+  if (!self->closed)
+    gtk_window_destroy (GTK_WINDOW (self));
+}
+
+static void
+sysprof_recording_pad_constructed (GObject *object)
+{
+  SysprofRecordingPad *self = (SysprofRecordingPad *)object;
+
+  G_OBJECT_CLASS (sysprof_recording_pad_parent_class)->constructed (object);
+
+  g_application_hold (G_APPLICATION (SYSPROF_APPLICATION_DEFAULT));
+
+  g_debug ("Waiting for completion of recording");
+
+  sysprof_recording_wait_async (self->recording,
+                                NULL,
+                                sysprof_recording_pad_wait_cb,
+                                g_object_ref (self));
 }
 
 static void
@@ -133,6 +199,7 @@ sysprof_recording_pad_class_init (SysprofRecordingPadClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   GtkWindowClass *window_class = GTK_WINDOW_CLASS (klass);
 
+  object_class->constructed = sysprof_recording_pad_constructed;
   object_class->dispose = sysprof_recording_pad_dispose;
   object_class->get_property = sysprof_recording_pad_get_property;
   object_class->set_property = sysprof_recording_pad_set_property;

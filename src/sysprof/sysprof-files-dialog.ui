@@ -18,21 +18,40 @@
         <property name="content">
           <object class="GtkScrolledWindow">
             <child>
-              <object class="GtkListView">
+              <object class="GtkColumnView" id="column_view">
                 <signal name="activate" handler="sysprof_files_dialog_activate_cb" swapped="true"/>
-                <property name="show-separators">true</property>
+                <property name="show-column-separators">true</property>
+                <property name="show-row-separators">true</property>
                 <property name="model">
                   <object class="GtkNoSelection">
-                    <binding name="model">
-                      <lookup name="files" type="SysprofDocument">
-                        <lookup name="document">SysprofFilesDialog</lookup>
-                      </lookup>
-                    </binding>
+                    <property name="model">
+                      <object class="GtkSortListModel">
+                        <binding name="sorter">
+                          <lookup name="sorter">column_view</lookup>
+                        </binding>
+                        <binding name="model">
+                          <lookup name="files" type="SysprofDocument">
+                            <lookup name="document">SysprofFilesDialog</lookup>
+                          </lookup>
+                        </binding>
+                      </object>
+                    </property>
                   </object>
                 </property>
-                <property name="factory">
-                  <object class="GtkBuilderListItemFactory">
-                    <property name="bytes"><![CDATA[
+                <child>
+                  <object class="GtkColumnViewColumn" id="path_column">
+                    <property name="title" translatable="yes">Path</property>
+                    <property name="expand">true</property>
+                    <property name="sorter">
+                      <object class="GtkStringSorter">
+                        <property name="expression">
+                          <lookup name="path" type="SysprofDocumentFile"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -53,9 +72,11 @@
   </template>
 </interface>
 ]]>
+                        </property>
+                      </object>
                     </property>
                   </object>
-                </property>
+                </child>
               </object>
             </child>
           </object>

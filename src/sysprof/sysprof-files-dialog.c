@@ -24,9 +24,12 @@
 
 struct _SysprofFilesDialog
 {
-  AdwWindow        parent_instance;
+  AdwWindow            parent_instance;
 
-  SysprofDocument *document;
+  SysprofDocument     *document;
+
+  GtkColumnView       *column_view;
+  GtkColumnViewColumn *path_column;
 };
 
 enum {
@@ -42,7 +45,7 @@ static GParamSpec *properties [N_PROPS];
 static void
 sysprof_files_dialog_activate_cb (SysprofFilesDialog *self,
                                   guint               position,
-                                  GtkListView        *list_view)
+                                  GtkColumnView      *view)
 {
   g_autoptr(SysprofDocumentFile) file = NULL;
   g_autoptr(GtkTextBuffer) buffer = NULL;
@@ -58,8 +61,9 @@ sysprof_files_dialog_activate_cb (SysprofFilesDialog *self,
   gsize len;
 
   g_assert (SYSPROF_IS_FILES_DIALOG (self));
+  g_assert (GTK_IS_COLUMN_VIEW (view));
 
-  model = gtk_list_view_get_model (list_view);
+  model = gtk_column_view_get_model (view);
   file = g_list_model_get_item (G_LIST_MODEL (model), position);
   bytes = sysprof_document_file_dup_bytes (file);
   str = (const char *)g_bytes_get_data (bytes, &len);
@@ -169,12 +173,16 @@ sysprof_files_dialog_class_init (SysprofFilesDialogClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-files-dialog.ui");
   gtk_widget_class_bind_template_callback (widget_class, sysprof_files_dialog_activate_cb);
+  gtk_widget_class_bind_template_child (widget_class, SysprofFilesDialog, column_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofFilesDialog, path_column);
 }
 
 static void
 sysprof_files_dialog_init (SysprofFilesDialog *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_column_view_sort_by_column (self->column_view, self->path_column, GTK_SORT_ASCENDING);
 }
 
 GtkWidget *

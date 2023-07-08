@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #include "sysprof-application.h"
 #include "sysprof-recording-pad.h"
 
@@ -41,6 +43,14 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofRecordingPad, sysprof_recording_pad, ADW_TYPE_WINDOW)
 
 static GParamSpec *properties[N_PROPS];
+
+static char *
+format_event_count (GObject *unused,
+                    gint64   event_count)
+{
+  /* translators: this expands to the number of events recorded by the profiler as an indicator of progress */
+  return g_strdup_printf (_("%"G_GINT64_FORMAT" events"), event_count);
+}
 
 static char *
 format_time (GObject *unused,
@@ -139,6 +149,7 @@ sysprof_recording_pad_class_init (SysprofRecordingPadClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-recording-pad.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofRecordingPad, stop_button);
   gtk_widget_class_bind_template_callback (widget_class, format_time);
+  gtk_widget_class_bind_template_callback (widget_class, format_event_count);
 }
 
 static void

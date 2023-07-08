@@ -110,10 +110,13 @@ sysprof_recording_pad_class_init (SysprofRecordingPadClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  GtkWindowClass *window_class = GTK_WINDOW_CLASS (klass);
 
   object_class->dispose = sysprof_recording_pad_dispose;
   object_class->get_property = sysprof_recording_pad_get_property;
   object_class->set_property = sysprof_recording_pad_set_property;
+
+  window_class->close_request = sysprof_recording_pad_close_request;
 
   properties [PROP_RECORDING] =
     g_param_spec_object ("recording", NULL, NULL,

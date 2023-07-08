@@ -36,6 +36,7 @@ enum {
   PROP_0,
   PROP_BYTES,
   PROP_PATH,
+  PROP_SIZE,
   N_PROPS
 };
 
@@ -72,6 +73,10 @@ sysprof_document_file_get_property (GObject    *object,
       g_value_take_boxed (value, sysprof_document_file_dup_bytes (self));
       break;
 
+    case PROP_SIZE:
+      g_value_set_uint64 (value, sysprof_document_file_get_size (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -94,6 +99,11 @@ sysprof_document_file_class_init (SysprofDocumentFileClass *klass)
     g_param_spec_boxed ("bytes", NULL, NULL,
                         G_TYPE_BYTES,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_SIZE] =
+    g_param_spec_uint64 ("size", NULL, NULL,
+                         0, G_MAXUINT64, 0,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

@@ -4,6 +4,7 @@ sysprof_sources = [
   'sysprof-files-dialog.c',
   'sysprof-greeter.c',
   'sysprof-recording-pad.c',
+  'sysprof-metadata-dialog.c',
   'sysprof-window.c',
 ]
 

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofMetadataDialog" parent="AdwWindow">
+    <property name="default-width">600</property>
+    <property name="default-height">400</property>
+    <child>
+      <object class="AdwToolbarView">
+        <property name="top-bar-style">raised</property>
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Metadata</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkScrolledWindow">
+            <child>
+              <object class="GtkColumnView">
+                <property name="model">
+                  <object class="GtkNoSelection">
+                    <binding name="model">
+                      <lookup name="metadata" type="SysprofDocument">
+                        <lookup name="document">SysprofMetadataDialog</lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </property>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="title" translatable="yes">Key</property>
+                    <property name="sorter">
+                      <object class="GtkStringSorter">
+                        <property name="expression">
+                          <lookup name="id" type="SysprofDocumentMetadata"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="id" type="SysprofDocumentMetadata">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn">
+                    <property name="title" translatable="yes">Value</property>
+                    <property name="expand">true</property>
+                    <property name="sorter">
+                      <object class="GtkStringSorter">
+                        <property name="expression">
+                          <lookup name="value" type="SysprofDocumentMetadata"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="value" type="SysprofDocumentMetadata">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </child>
+  </template>
+</interface>
+

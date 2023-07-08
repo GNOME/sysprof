@@ -242,7 +242,86 @@
                 <property name="icon-name">document-open-symbolic</property>
                 <property name="title" translatable="yes">Open</property>
                 <property name="child">
-                  <object class="GtkLabel" id="open_page">
+                  <object class="AdwPreferencesPage" id="open_page">
+                    <child>
+                      <object class="AdwPreferencesGroup">
+                        <property name="title" translatable="yes">Open Recording</property>
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="activatable-widget">capture_file_button</property>
+                            <property name="title" translatable="yes">Capture File</property>
+                            <child type="suffix">
+                              <object class="GtkButton" id="capture_file_button">
+                                <property name="icon-name">document-open-symbolic</property>
+                                <property name="valign">center</property>
+                                <style>
+                                  <class name="flat"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwPreferencesGroup">
+                        <property name="title" translatable="yes">Symbols</property>
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="activatable-widget">ignore_bundled_symbols</property>
+                            <property name="title" translatable="yes">Ignore Bundled Symbols</property>
+                            <property name="subtitle" translatable="yes">Do not use embedded symbols that were resolved on the capture system</property>
+                            <child type="suffix">
+                              <object class="GtkSwitch" id="ignore_bundled_symbols">
+                                <property name="valign">center</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwPreferencesGroup">
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="activatable-widget">kallsyms_button</property>
+                            <property name="title" translatable="yes">Override Kernel Symbols</property>
+                            <property name="subtitle" translatable="yes">Specify a “kallsyms” file overriding what is bundled with a recording</property>
+                            <child type="suffix">
+                              <object class="GtkButton" id="kallsyms_button">
+                                <property name="icon-name">document-open-symbolic</property>
+                                <property name="valign">center</property>
+                                <style>
+                                  <class name="flat"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwPreferencesGroup">
+                        <property name="title" translatable="yes">Symbol Directories</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Additional symbol directories to use when symbolizing stack traces.</property>
+                            <property name="xalign">0</property>
+                            <style>
+                              <class name="capture"/>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="margin-top">12</property>
+                            <property name="label" translatable="yes">Add Symbol Directory</property>
+                            <property name="halign">end</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </property>
               </object>

@@ -25,6 +25,7 @@
 #include <sysprof-gtk.h>
 
 #include "sysprof-files-dialog.h"
+#include "sysprof-greeter.h"
 #include "sysprof-metadata-dialog.h"
 #include "sysprof-window.h"
 
@@ -47,52 +48,20 @@ G_DEFINE_FINAL_TYPE (SysprofWindow, sysprof_window, ADW_TYPE_APPLICATION_WINDOW)
 static GParamSpec *properties [N_PROPS];
 
 static void
-sysprof_window_open_capture_cb (GObject      *object,
-                                GAsyncResult *result,
-                                gpointer      user_data)
-{
-  GtkFileDialog *dialog = (GtkFileDialog *)object;
-  g_autoptr(SysprofWindow) self = user_data;
-  g_autoptr(GError) error = NULL;
-  g_autoptr(GFile) file = NULL;
-
-  g_assert (GTK_IS_FILE_DIALOG (dialog));
-  g_assert (G_IS_ASYNC_RESULT (result));
-  g_assert (SYSPROF_IS_WINDOW (self));
-
-  if ((file = gtk_file_dialog_open_finish (dialog, result, &error)))
-    sysprof_window_open (SYSPROF_APPLICATION_DEFAULT, file);
-}
-
-static void
 sysprof_window_open_capture_action (GtkWidget  *widget,
                                     const char *action_name,
                                     GVariant   *param)
 {
-  g_autoptr(GtkFileDialog) dialog = NULL;
-  g_autoptr(GtkFileFilter) filter = NULL;
-  g_autoptr(GListStore) filters = NULL;
+  SysprofWindow *self = (SysprofWindow *)widget;
+  SysprofGreeter *greeter;
 
-  g_assert (SYSPROF_IS_WINDOW (widget));
+  g_assert (SYSPROF_IS_WINDOW (self));
 
-  filter = gtk_file_filter_new ();
-  gtk_file_filter_add_pattern (filter, "*.syscap");
-  gtk_file_filter_add_mime_type (filter, "application/x-sysprof-capture");
-  gtk_file_filter_set_name (filter, _("Sysprof Capture (*.syscap)"));
-
-  filters = g_list_store_new (GTK_TYPE_FILE_FILTER);
-  g_list_store_append (filters, filter);
-
-  dialog = gtk_file_dialog_new ();
-  gtk_file_dialog_set_title (dialog, _("Open Recording"));
-  gtk_file_dialog_set_filters (dialog, G_LIST_MODEL (filters));
-  gtk_file_dialog_set_default_filter (dialog, filter);
-
-  gtk_file_dialog_open (dialog,
-                        GTK_WINDOW (widget),
-                        NULL,
-                        sysprof_window_open_capture_cb,
-                        g_object_ref (widget));
+  greeter = g_object_new (SYSPROF_TYPE_GREETER,
+                          "transient-for", self,
+                          NULL);
+  sysprof_greeter_set_page (greeter, SYSPROF_GREETER_PAGE_OPEN);
+  gtk_window_present (GTK_WINDOW (greeter));
 }
 
 static void

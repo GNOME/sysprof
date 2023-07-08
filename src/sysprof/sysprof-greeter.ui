@@ -232,7 +232,8 @@
                 <property name="icon-name">document-open-recent-symbolic</property>
                 <property name="title" translatable="yes">Recent</property>
                 <property name="child">
-                  <object class="GtkLabel"/>
+                  <object class="GtkLabel" id="recent_page">
+                  </object>
                 </property>
               </object>
             </child>
@@ -241,7 +242,8 @@
                 <property name="icon-name">document-open-symbolic</property>
                 <property name="title" translatable="yes">Open</property>
                 <property name="child">
-                  <object class="GtkLabel"/>
+                  <object class="GtkLabel" id="open_page">
+                  </object>
                 </property>
               </object>
             </child>

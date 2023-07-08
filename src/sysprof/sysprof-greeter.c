@@ -34,8 +34,11 @@ struct _SysprofGreeter
 {
   AdwWindow  parent_instance;
 
+  AdwViewStack       *view_stack;
   GtkBox             *toolbar;
   AdwPreferencesPage *record_page;
+  GtkWidget          *open_page;
+  GtkWidget          *recent_page;
   GtkSwitch          *sample_native_stacks;
   GtkSwitch          *record_disk_usage;
   GtkSwitch          *record_network_usage;
@@ -188,11 +191,16 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   object_class->set_property = sysprof_greeter_set_property;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-greeter.ui");
-  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, toolbar);
-  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_page);
+
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, open_page);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, recent_page);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_disk_usage);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_network_usage);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_page);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, sample_native_stacks);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, toolbar);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, view_stack);
+
   gtk_widget_class_bind_template_callback (widget_class, sysprof_greeter_view_stack_notify_visible_child);
 
   gtk_widget_class_install_action (widget_class, "win.record-to-memory", NULL, sysprof_greeter_record_to_memory_action);
@@ -208,4 +216,27 @@ GtkWidget *
 sysprof_greeter_new (void)
 {
   return g_object_new (SYSPROF_TYPE_GREETER, NULL);
+}
+
+void
+sysprof_greeter_set_page (SysprofGreeter     *self,
+                          SysprofGreeterPage  page)
+{
+  g_return_if_fail (SYSPROF_IS_GREETER (self));
+
+  switch (page)
+    {
+    case SYSPROF_GREETER_PAGE_OPEN:
+      adw_view_stack_set_visible_child (self->view_stack, GTK_WIDGET (self->open_page));
+      break;
+
+    case SYSPROF_GREETER_PAGE_RECENT:
+      adw_view_stack_set_visible_child (self->view_stack, GTK_WIDGET (self->recent_page));
+      break;
+
+    default:
+    case SYSPROF_GREETER_PAGE_RECORD:
+      adw_view_stack_set_visible_child (self->view_stack, GTK_WIDGET (self->record_page));
+      break;
+    }
 }

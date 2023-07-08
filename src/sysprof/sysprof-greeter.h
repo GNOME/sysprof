@@ -28,6 +28,15 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofGreeter, sysprof_greeter, SYSPROF, GREETER, AdwWindow)
 
-GtkWidget *sysprof_greeter_new (void);
+typedef enum _SysprofGreeterPage
+{
+  SYSPROF_GREETER_PAGE_RECORD,
+  SYSPROF_GREETER_PAGE_RECENT,
+  SYSPROF_GREETER_PAGE_OPEN,
+} SysprofGreeterPage;
+
+GtkWidget *sysprof_greeter_new      (void);
+void       sysprof_greeter_set_page (SysprofGreeter     *self,
+                                     SysprofGreeterPage  page);
 
 G_END_DECLS

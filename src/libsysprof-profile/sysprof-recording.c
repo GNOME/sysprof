@@ -101,6 +101,16 @@ _sysprof_recording_spawn (SysprofSpawnable *spawnable)
   return dex_subprocess_wait_check (subprocess);
 }
 
+static inline void
+add_metadata (SysprofRecording *self,
+              const char       *id,
+              const char       *value)
+{
+  sysprof_capture_writer_add_metadata (self->writer,
+                                       SYSPROF_CAPTURE_CURRENT_TIME,
+                                       -1, -1, id, value, -1);
+}
+
 static DexFuture *
 sysprof_recording_fiber (gpointer user_data)
 {
@@ -139,6 +149,10 @@ sysprof_recording_fiber (gpointer user_data)
     monitor = _sysprof_recording_spawn (self->spawnable);
   else
     monitor = dex_future_new_infinite ();
+
+  /* Track various metadata */
+  add_metadata (self, "org.gnome.sysprof.app-id", APP_ID_S);
+  add_metadata (self, "org.gnome.sysprof.version", PACKAGE_VERSION);
 
   self->start_time = g_get_monotonic_time ();
 

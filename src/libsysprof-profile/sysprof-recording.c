@@ -147,6 +147,8 @@ sysprof_recording_fiber (gpointer user_data)
       g_autoptr(DexFuture) message = dex_channel_receive (self->channel);
       g_autoptr(DexFuture) duration = dex_timeout_new_seconds (1);
 
+      g_debug ("Recording loop iteration");
+
       /* Wait for either recording of all instruments to complete or a
        * message from our channel with what to do next.
        */
@@ -186,6 +188,8 @@ sysprof_recording_fiber (gpointer user_data)
     }
 
 stop_recording:
+  g_debug ("Stopping recording");
+
   end_time = SYSPROF_CAPTURE_CURRENT_TIME;
 
   self->end_time = g_get_monotonic_time ();
@@ -526,7 +530,7 @@ sysprof_recording_add_file_fiber (gpointer user_data)
       data += to_write;
     }
 
-  return  dex_future_new_for_boolean (TRUE);
+  return dex_future_new_for_boolean (TRUE);
 }
 
 DexFuture *

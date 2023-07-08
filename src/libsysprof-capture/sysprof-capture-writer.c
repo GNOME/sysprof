@@ -1704,3 +1704,14 @@ _sysprof_capture_writer_add_raw (SysprofCaptureWriter      *self,
 
   return true;
 }
+
+int
+_sysprof_capture_writer_dup_fd (SysprofCaptureWriter *self)
+{
+  assert (self != NULL);
+
+  if (self->fd == -1)
+    return -1;
+
+  return dup (self->fd);
+}

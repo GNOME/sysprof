@@ -244,5 +244,7 @@ SYSPROF_INTERNAL
 bool                  _sysprof_capture_writer_set_time_range                 (SysprofCaptureWriter              *self,
                                                                               int64_t                            start_time,
                                                                               int64_t                            end_time) SYSPROF_INTERNAL;
+SYSPROF_INTERNAL
+int                   _sysprof_capture_writer_dup_fd                         (SysprofCaptureWriter              *self);
 
 SYSPROF_END_DECLS

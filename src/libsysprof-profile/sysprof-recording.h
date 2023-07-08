@@ -32,28 +32,32 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofRecording, sysprof_recording, SYSPROF, RECORDING, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-GListModel *sysprof_recording_list_diagnostics (SysprofRecording     *self);
+GListModel           *sysprof_recording_list_diagnostics (SysprofRecording     *self);
 SYSPROF_AVAILABLE_IN_ALL
-gint64      sysprof_recording_get_duration     (SysprofRecording     *self);
+gint64                sysprof_recording_get_duration     (SysprofRecording     *self);
 SYSPROF_AVAILABLE_IN_ALL
-gint64      sysprof_recording_get_event_count  (SysprofRecording     *self);
+gint64                sysprof_recording_get_event_count  (SysprofRecording     *self);
 SYSPROF_AVAILABLE_IN_ALL
-void        sysprof_recording_wait_async       (SysprofRecording     *self,
-                                                GCancellable         *cancellable,
-                                                GAsyncReadyCallback   callback,
-                                                gpointer              user_data);
+void                  sysprof_recording_wait_async       (SysprofRecording     *self,
+                                                          GCancellable         *cancellable,
+                                                          GAsyncReadyCallback   callback,
+                                                          gpointer              user_data);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean    sysprof_recording_wait_finish      (SysprofRecording     *self,
-                                                GAsyncResult         *result,
-                                                GError              **error);
+gboolean              sysprof_recording_wait_finish      (SysprofRecording     *self,
+                                                          GAsyncResult         *result,
+                                                          GError              **error);
 SYSPROF_AVAILABLE_IN_ALL
-void        sysprof_recording_stop_async       (SysprofRecording     *self,
-                                                GCancellable         *cancellable,
-                                                GAsyncReadyCallback   callback,
-                                                gpointer              user_data);
+SysprofCaptureReader *sysprof_recording_create_reader    (SysprofRecording     *self);
 SYSPROF_AVAILABLE_IN_ALL
-gboolean    sysprof_recording_stop_finish      (SysprofRecording     *self,
-                                                GAsyncResult         *result,
-                                                GError              **error);
+int                   sysprof_recording_dup_fd           (SysprofRecording     *self) G_GNUC_WARN_UNUSED_RESULT;
+SYSPROF_AVAILABLE_IN_ALL
+void                  sysprof_recording_stop_async       (SysprofRecording     *self,
+                                                          GCancellable         *cancellable,
+                                                          GAsyncReadyCallback   callback,
+                                                          gpointer              user_data);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean              sysprof_recording_stop_finish      (SysprofRecording     *self,
+                                                          GAsyncResult         *result,
+                                                          GError              **error);
 
 G_END_DECLS

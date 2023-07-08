@@ -690,3 +690,37 @@ sysprof_recording_get_event_count (SysprofRecording *self)
        + self->stat.frame_count[SYSPROF_CAPTURE_FRAME_MARK]
        + self->stat.frame_count[SYSPROF_CAPTURE_FRAME_LOG];
 }
+
+/**
+ * sysprof_recording_create_reader:
+ * @self: a #SysprofRecording
+ *
+ * Creates a new reader for the recording's writer.
+ *
+ * Returns: (transfer full): a #SysprofCaptureReader
+ */
+SysprofCaptureReader *
+sysprof_recording_create_reader (SysprofRecording *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);
+
+  return sysprof_capture_writer_create_reader (self->writer);
+}
+
+/**
+ * sysprof_recording_dup_fd:
+ * @self: a #SysprofRecording
+ *
+ * Duplicates the FD that is being used for writing the recording. This can
+ * be useful if you want to open the recording using a
+ * #SysprofDocumentLoader.
+ *
+ * Returns: a FD that the caller should `close()` when no longer in use.
+ */
+int
+sysprof_recording_dup_fd (SysprofRecording *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (self), -1);
+
+  return _sysprof_capture_writer_dup_fd (self->writer);
+}

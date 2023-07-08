@@ -321,7 +321,7 @@ sysprof_document_loader_new_for_fd (int      fd,
 {
   g_autoptr(SysprofDocumentLoader) self = NULL;
 
-  self = g_object_new (SYSPROF_TYPE_SYMBOLIZER, NULL);
+  self = g_object_new (SYSPROF_TYPE_DOCUMENT_LOADER, NULL);
 
   if (-1 == (self->fd = dup (fd)))
     {

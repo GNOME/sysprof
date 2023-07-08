@@ -36,6 +36,10 @@ struct _SysprofRecording
 {
   GObject parent_instance;
 
+  /* Used to calculate the duration of the recording */
+  gint64 start_time;
+  gint64 end_time;
+
   /* Diagnostics that may be added by instruments during the recording.
    * Some may be fatal, meaning that they stop the recording when the
    * diagnostic is submitted. That can happen in situations like
@@ -71,10 +75,13 @@ struct _SysprofRecording
 
 enum {
   PROP_0,
+  PROP_DURATION,
   N_PROPS
 };
 
 G_DEFINE_FINAL_TYPE (SysprofRecording, sysprof_recording, G_TYPE_OBJECT)
+
+static GParamSpec *properties[N_PROPS];
 
 static DexFuture *
 _sysprof_recording_spawn (SysprofSpawnable *spawnable)
@@ -128,10 +135,13 @@ sysprof_recording_fiber (gpointer user_data)
   else
     monitor = dex_future_new_infinite ();
 
+  self->start_time = g_get_monotonic_time ();
+
   /* Wait for messages on our channel or the recording to complete */
   for (;;)
     {
       g_autoptr(DexFuture) message = dex_channel_receive (self->channel);
+      g_autoptr(DexFuture) duration = dex_timeout_new_seconds (1);
 
       /* Wait for either recording of all instruments to complete or a
        * message from our channel with what to do next.
@@ -139,8 +149,10 @@ sysprof_recording_fiber (gpointer user_data)
       if (!dex_await (dex_future_first (dex_ref (record),
                                         dex_ref (message),
                                         dex_ref (monitor),
+                                        dex_ref (duration),
                                         NULL),
-                      &error))
+                      &error) &&
+          !g_error_matches (error, DEX_ERROR, DEX_ERROR_TIMED_OUT))
         goto stop_recording;
 
       /* If record is not pending, then everything resolved/rejected */
@@ -160,10 +172,16 @@ sysprof_recording_fiber (gpointer user_data)
               goto stop_recording;
             }
         }
+
+      /* Update duration each pass through the loop */
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DURATION]);
     }
 
 stop_recording:
   end_time = SYSPROF_CAPTURE_CURRENT_TIME;
+
+  self->end_time = g_get_monotonic_time ();
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DURATION]);
 
   /* Signal cancellable so that anything lingering has a chance to be
    * cleaned up, cascading into other subsystems.
@@ -212,11 +230,38 @@ sysprof_recording_finalize (GObject *object)
 }
 
 static void
+sysprof_recording_get_property (GObject    *object,
+                                guint       prop_id,
+                                GValue     *value,
+                                GParamSpec *pspec)
+{
+  SysprofRecording *self = SYSPROF_RECORDING (object);
+
+  switch (prop_id)
+    {
+    case PROP_DURATION:
+      g_value_set_int64 (value, sysprof_recording_get_duration (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
+static void
 sysprof_recording_class_init (SysprofRecordingClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize = sysprof_recording_finalize;
+  object_class->get_property = sysprof_recording_get_property;
+
+  properties [PROP_DURATION] =
+    g_param_spec_int64 ("duration", NULL, NULL,
+                        0, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void
@@ -586,4 +631,31 @@ sysprof_recording_list_diagnostics (SysprofRecording *self)
   g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);
 
   return g_object_ref (G_LIST_MODEL (self->diagnostics));
+}
+
+/**
+ * sysprof_recording_get_duration:
+ * @self: a #SysprofRecording
+ *
+ * Gets the recording duration in microseconds, which is the same
+ * precision used by g_get_monotonic_time(). Use %G_USEC_PER_SEC to
+ * get the time in seconds.
+ *
+ * Returns: the duration of the recording, or 0
+ */
+gint64
+sysprof_recording_get_duration (SysprofRecording *self)
+{
+  gint64 start_time;
+  gint64 end_time;
+
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (self), 0);
+
+  if (!(start_time = self->start_time))
+    return 0;
+
+  if (!(end_time = self->end_time))
+    end_time = g_get_monotonic_time ();
+
+  return end_time - start_time;
 }

@@ -34,6 +34,8 @@ G_DECLARE_FINAL_TYPE (SysprofRecording, sysprof_recording, SYSPROF, RECORDING, G
 SYSPROF_AVAILABLE_IN_ALL
 GListModel *sysprof_recording_list_diagnostics (SysprofRecording     *self);
 SYSPROF_AVAILABLE_IN_ALL
+gint64      sysprof_recording_get_duration     (SysprofRecording     *self);
+SYSPROF_AVAILABLE_IN_ALL
 void        sysprof_recording_wait_async       (SysprofRecording     *self,
                                                 GCancellable         *cancellable,
                                                 GAsyncReadyCallback   callback,

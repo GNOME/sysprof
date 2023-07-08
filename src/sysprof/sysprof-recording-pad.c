@@ -42,6 +42,17 @@ G_DEFINE_FINAL_TYPE (SysprofRecordingPad, sysprof_recording_pad, ADW_TYPE_WINDOW
 
 static GParamSpec *properties[N_PROPS];
 
+static char *
+format_time (GObject *unused,
+             gint64   duration)
+{
+  double elapsed = duration / (double)G_USEC_PER_SEC;
+  int minutes = floor (elapsed / 60);
+  int seconds = floor (elapsed - (minutes * 60));
+
+  return g_strdup_printf ("%02u:%02u", minutes, seconds);
+}
+
 static gboolean
 sysprof_recording_pad_close_request (GtkWindow *window)
 {
@@ -127,6 +138,7 @@ sysprof_recording_pad_class_init (SysprofRecordingPadClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-recording-pad.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofRecordingPad, stop_button);
+  gtk_widget_class_bind_template_callback (widget_class, format_time);
 }
 
 static void

@@ -215,6 +215,9 @@ stop_recording:
   /* Update start/end times to be the "running time" */
   _sysprof_capture_writer_set_time_range (self->writer, begin_time, end_time);
 
+  /* Clear buffers and ensure the disk layer has access to them */
+  sysprof_capture_writer_flush (self->writer);
+
   if (error != NULL)
     return dex_future_new_for_error (g_steal_pointer (&error));
 

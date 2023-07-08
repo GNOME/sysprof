@@ -40,6 +40,9 @@ struct _SysprofRecording
   gint64 start_time;
   gint64 end_time;
 
+  /* Used to calculate event count */
+  SysprofCaptureStat stat;
+
   /* Diagnostics that may be added by instruments during the recording.
    * Some may be fatal, meaning that they stop the recording when the
    * diagnostic is submitted. That can happen in situations like
@@ -76,6 +79,7 @@ struct _SysprofRecording
 enum {
   PROP_0,
   PROP_DURATION,
+  PROP_EVENT_COUNT,
   N_PROPS
 };
 
@@ -175,6 +179,10 @@ sysprof_recording_fiber (gpointer user_data)
 
       /* Update duration each pass through the loop */
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DURATION]);
+
+      /* Update event count each pass through the loop */
+      sysprof_capture_writer_stat (self->writer, &self->stat);
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_EVENT_COUNT]);
     }
 
 stop_recording:
@@ -243,6 +251,10 @@ sysprof_recording_get_property (GObject    *object,
       g_value_set_int64 (value, sysprof_recording_get_duration (self));
       break;
 
+    case PROP_EVENT_COUNT:
+      g_value_set_int64 (value, sysprof_recording_get_event_count (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -258,6 +270,11 @@ sysprof_recording_class_init (SysprofRecordingClass *klass)
 
   properties [PROP_DURATION] =
     g_param_spec_int64 ("duration", NULL, NULL,
+                        0, G_MAXINT64, 0,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_EVENT_COUNT] =
+    g_param_spec_int64 ("event-count", NULL, NULL,
                         0, G_MAXINT64, 0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -658,4 +675,18 @@ sysprof_recording_get_duration (SysprofRecording *self)
     end_time = g_get_monotonic_time ();
 
   return end_time - start_time;
+}
+
+gint64
+sysprof_recording_get_event_count (SysprofRecording *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (self), 0);
+
+  return self->stat.frame_count[SYSPROF_CAPTURE_FRAME_SAMPLE]
+       + self->stat.frame_count[SYSPROF_CAPTURE_FRAME_ALLOCATION]
+       + self->stat.frame_count[SYSPROF_CAPTURE_FRAME_FORK]
+       + self->stat.frame_count[SYSPROF_CAPTURE_FRAME_EXIT]
+       + self->stat.frame_count[SYSPROF_CAPTURE_FRAME_CTRSET]
+       + self->stat.frame_count[SYSPROF_CAPTURE_FRAME_MARK]
+       + self->stat.frame_count[SYSPROF_CAPTURE_FRAME_LOG];
 }

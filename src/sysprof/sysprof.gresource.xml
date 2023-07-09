@@ -3,7 +3,6 @@
   <gresource prefix="/org/gnome/sysprof">
     <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
     <file preprocess="xml-stripblanks">gtk/menus.ui</file>
-    <file preprocess="xml-stripblanks">sysprof-files-dialog.ui</file>
     <file preprocess="xml-stripblanks">sysprof-files-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-greeter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-logs-section.ui</file>

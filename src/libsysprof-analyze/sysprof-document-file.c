@@ -35,6 +35,7 @@ struct _SysprofDocumentFile
 enum {
   PROP_0,
   PROP_BYTES,
+  PROP_IS_COMPRESSED,
   PROP_PATH,
   PROP_SIZE,
   N_PROPS
@@ -73,6 +74,10 @@ sysprof_document_file_get_property (GObject    *object,
       g_value_take_boxed (value, sysprof_document_file_dup_bytes (self));
       break;
 
+    case PROP_IS_COMPRESSED:
+      g_value_set_boolean (value, sysprof_document_file_is_compressed (self));
+      break;
+
     case PROP_SIZE:
       g_value_set_uint64 (value, sysprof_document_file_get_size (self));
       break;
@@ -99,6 +104,11 @@ sysprof_document_file_class_init (SysprofDocumentFileClass *klass)
     g_param_spec_boxed ("bytes", NULL, NULL,
                         G_TYPE_BYTES,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_IS_COMPRESSED] =
+    g_param_spec_boolean ("is-compressed", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_SIZE] =
     g_param_spec_uint64 ("size", NULL, NULL,
@@ -248,4 +258,22 @@ sysprof_document_file_get_size (SysprofDocumentFile *self)
     }
 
   return size;
+}
+
+/**
+ * sysprof_document_file_is_compressed:
+ * @self: a #SysprofDocumentFile
+ *
+ * Checks if the embedded file is compressed. If so, %TRUE is returned.
+ *
+ * Note that files are transparently decompressed when opening streams.
+ *
+ * Returns: %TRUE if the embedded file was compressed
+ */
+gboolean
+sysprof_document_file_is_compressed (SysprofDocumentFile *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FILE (self), FALSE);
+
+  return self->compressed;
 }

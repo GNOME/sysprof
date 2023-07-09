@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofMarksSection" parent="SysprofSection">
+    <property name="title" translatable="yes">Marks</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="AdwViewStack" id="stack">
+            <property name="vexpand">true</property>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Mark Chart</property>
+                <property name="icon-name">table-symbolic</property>
+                <property name="child">
+                  <object class="SysprofMarkChart" id="mark_chart">
+                    <binding name="session">
+                      <lookup name="session">SysprofMarksSection</lookup>
+                    </binding>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Mark Table</property>
+                <property name="icon-name">table-symbolic</property>
+                <property name="child">
+                  <object class="SysprofMarkTable" id="mark_table">
+                    <binding name="session">
+                      <lookup name="session">SysprofMarksSection</lookup>
+                    </binding>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="AdwViewSwitcherBar" id="switcher">
+            <property name="reveal">true</property>
+            <property name="stack">stack</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
+

@@ -8,6 +8,19 @@
         <child>
           <object class="SysprofWeightedCallgraphView" id="callgraph_view">
             <property name="vexpand">true</property>
+            <binding name="document">
+              <lookup name="document" type="SysprofSession">
+                <lookup name="session">SysprofSamplesSection</lookup>
+              </lookup>
+            </binding>
+            <binding name="traceables">
+              <!-- TODO: This should be filtered by Session selected time span -->
+              <lookup name="samples" type="SysprofDocument">
+                <lookup name="document" type="SysprofSession">
+                  <lookup name="session">SysprofSamplesSection</lookup>
+                </lookup>
+              </lookup>
+            </binding>
           </object>
         </child>
       </object>

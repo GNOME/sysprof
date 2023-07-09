@@ -90,6 +90,9 @@
                         <property name="vexpand">true</property>
                         <child>
                           <object class="SysprofSamplesSection">
+                            <binding name="session">
+                              <lookup name="session">SysprofWindow</lookup>
+                            </binding>
                           </object>
                         </child>
                       </object>

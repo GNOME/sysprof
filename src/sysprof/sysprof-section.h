@@ -36,6 +36,8 @@ struct _SysprofSectionClass
 };
 
 SysprofSession *sysprof_section_get_session (SysprofSection *self);
+void            sysprof_section_set_session (SysprofSection *self,
+                                             SysprofSession *session);
 const char     *sysprof_section_get_title   (SysprofSection *self);
 void            sysprof_section_set_title   (SysprofSection *self,
                                              const char     *title);

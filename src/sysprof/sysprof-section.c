@@ -26,6 +26,7 @@
 typedef struct
 {
   char *title;
+  SysprofSession *session;
 } SysprofSectionPrivate;
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (SysprofSection, sysprof_section, GTK_TYPE_WIDGET)
@@ -40,32 +41,17 @@ enum {
 static GParamSpec *properties [N_PROPS];
 
 static void
-sysprof_section_root (GtkWidget *widget)
-{
-  GTK_WIDGET_CLASS (sysprof_section_parent_class)->root (widget);
-
-  g_object_notify_by_pspec (G_OBJECT (widget), properties[PROP_SESSION]);
-}
-
-static void
-sysprof_section_unroot (GtkWidget *widget)
-{
-  GTK_WIDGET_CLASS (sysprof_section_parent_class)->unroot (widget);
-
-  g_object_notify_by_pspec (G_OBJECT (widget), properties[PROP_SESSION]);
-}
-
-static void
 sysprof_section_dispose (GObject *object)
 {
   SysprofSection *self = (SysprofSection *)object;
   SysprofSectionPrivate *priv = sysprof_section_get_instance_private (self);
   GtkWidget *child;
 
-  g_clear_pointer (&priv->title, g_free);
-
   while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
     gtk_widget_unparent (child);
+
+  g_clear_object (&priv->session);
+  g_clear_pointer (&priv->title, g_free);
 
   G_OBJECT_CLASS (sysprof_section_parent_class)->dispose (object);
 }
@@ -103,6 +89,10 @@ sysprof_section_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_SESSION:
+      sysprof_section_set_session (self, g_value_get_object (value));
+      break;
+
     case PROP_TITLE:
       sysprof_section_set_title (self, g_value_get_string (value));
       break;
@@ -122,13 +112,10 @@ sysprof_section_class_init (SysprofSectionClass *klass)
   object_class->get_property = sysprof_section_get_property;
   object_class->set_property = sysprof_section_set_property;
 
-  widget_class->root = sysprof_section_root;
-  widget_class->unroot = sysprof_section_unroot;
-
   properties[PROP_SESSION] =
     g_param_spec_object ("session", NULL, NULL,
                          SYSPROF_TYPE_SESSION,
-                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_TITLE] =
     g_param_spec_string ("title", NULL, NULL,
@@ -148,15 +135,24 @@ sysprof_section_init (SysprofSection *self)
 SysprofSession *
 sysprof_section_get_session (SysprofSection *self)
 {
-  GtkRoot *root;
+  SysprofSectionPrivate *priv = sysprof_section_get_instance_private (self);
 
-  if ((root = gtk_widget_get_root (GTK_WIDGET (self))))
-    {
-      if (SYSPROF_IS_WINDOW (root))
-        return sysprof_window_get_session (SYSPROF_WINDOW (root));
-    }
+  g_return_val_if_fail (SYSPROF_IS_SECTION (self), NULL);
 
-  return NULL;
+  return priv->session;
+}
+
+void
+sysprof_section_set_session (SysprofSection *self,
+                             SysprofSession *session)
+{
+  SysprofSectionPrivate *priv = sysprof_section_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_SECTION (self));
+  g_return_if_fail (!session || SYSPROF_IS_SESSION (session));
+
+  if (g_set_object (&priv->session, session))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
 }
 
 const char *

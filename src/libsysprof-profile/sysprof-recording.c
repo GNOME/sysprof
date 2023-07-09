@@ -254,7 +254,9 @@ stop_recording:
   /* Clear buffers and ensure the disk layer has access to them */
   sysprof_capture_writer_flush (self->writer);
 
-  if (error != NULL)
+  /* Ignore error types we use to bail out of loops */
+  if (!g_error_matches (error, DEX_ERROR, DEX_ERROR_TIMED_OUT) &&
+      !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
   return dex_future_new_for_boolean (TRUE);

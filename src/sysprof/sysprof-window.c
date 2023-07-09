@@ -108,8 +108,10 @@ sysprof_window_set_document (SysprofWindow   *self,
   g_assert (self->session == NULL);
 
   g_set_object (&self->document, document);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DOCUMENT]);
 
   self->session = sysprof_session_new (document);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
 }
 
 static void

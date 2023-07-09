@@ -3,11 +3,12 @@ sysprof_sources = [
   'sysprof-application.c',
   'sysprof-files-dialog.c',
   'sysprof-greeter.c',
-  'sysprof-recording-pad.c',
+  'sysprof-logs-section.c',
   'sysprof-metadata-dialog.c',
+  'sysprof-recording-pad.c',
   'sysprof-samples-section.c',
-  'sysprof-sidebar.c',
   'sysprof-section.c',
+  'sysprof-sidebar.c',
   'sysprof-window.c',
 ]
 

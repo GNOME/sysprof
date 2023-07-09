@@ -95,6 +95,13 @@
                             </binding>
                           </object>
                         </child>
+                        <child>
+                          <object class="SysprofLogsSection">
+                            <binding name="session">
+                              <lookup name="session">SysprofWindow</lookup>
+                            </binding>
+                          </object>
+                        </child>
                       </object>
                     </property>
                   </object>

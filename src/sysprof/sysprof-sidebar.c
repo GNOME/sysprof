@@ -47,16 +47,21 @@ sysprof_sidebar_create_row (gpointer item,
   GtkStackPage *page = item;
   SysprofSidebar *sidebar = user_data;
   SysprofSection *section;
+  GtkListBoxRow *row;
 
   g_assert (GTK_IS_STACK_PAGE (page));
   g_assert (SYSPROF_IS_SIDEBAR (sidebar));
 
   section = SYSPROF_SECTION (gtk_stack_page_get_child (page));
+  row = g_object_new (GTK_TYPE_LIST_BOX_ROW,
+                      "child", g_object_new (GTK_TYPE_LABEL,
+                                             "xalign", .0f,
+                                             "label", sysprof_section_get_title (section),
+                                             NULL),
+                      NULL);
+  g_object_set_data_full (G_OBJECT (row), "SECTION", g_object_ref (section), g_object_unref);
 
-  return g_object_new (GTK_TYPE_LABEL,
-                       "xalign", .0f,
-                       "label", sysprof_section_get_title (section),
-                       NULL);
+  return GTK_WIDGET (row);
 }
 
 static void
@@ -87,6 +92,24 @@ sysprof_sidebar_unbind_cb (SysprofSidebar *self,
   g_assert (G_IS_SIGNAL_GROUP (group));
 
   gtk_list_box_bind_model (self->list_box, NULL, NULL, NULL, NULL);
+}
+
+static void
+list_box_row_activated_cb (SysprofSidebar *self,
+                           GtkListBoxRow  *row,
+                           GtkListBox     *list_box)
+{
+  SysprofSection *section;
+  g_autoptr(GtkStack) stack = NULL;
+
+  g_assert (SYSPROF_IS_SIDEBAR (self));
+  g_assert (GTK_IS_LIST_BOX_ROW (row));
+  g_assert (GTK_IS_LIST_BOX (list_box));
+
+  if ((section = g_object_get_data (G_OBJECT (row), "SECTION")) &&
+      SYSPROF_IS_SECTION (section) &&
+      (stack = g_signal_group_dup_target (self->stack_signals)))
+    gtk_stack_set_visible_child (stack, GTK_WIDGET (section));
 }
 
 static void
@@ -161,6 +184,7 @@ sysprof_sidebar_class_init (SysprofSidebarClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-sidebar.ui");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child (widget_class, SysprofSidebar, list_box);
+  gtk_widget_class_bind_template_callback (widget_class, list_box_row_activated_cb);
 }
 
 static void

@@ -25,6 +25,7 @@
 #include <sysprof-gtk.h>
 
 #include "sysprof-files-dialog.h"
+#include "sysprof-files-section.h"
 #include "sysprof-greeter.h"
 #include "sysprof-logs-section.h"
 #include "sysprof-marks-section.h"
@@ -200,6 +201,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_install_action (widget_class, "capture.show-metadata", NULL, sysprof_window_show_metadata_action);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
+  g_type_ensure (SYSPROF_TYPE_FILES_SECTION);
   g_type_ensure (SYSPROF_TYPE_LOGS_SECTION);
   g_type_ensure (SYSPROF_TYPE_MARKS_SECTION);
   g_type_ensure (SYSPROF_TYPE_SAMPLES_SECTION);

@@ -109,6 +109,13 @@
                             </binding>
                           </object>
                         </child>
+                        <child>
+                          <object class="SysprofFilesSection">
+                            <binding name="session">
+                              <lookup name="session">SysprofWindow</lookup>
+                            </binding>
+                          </object>
+                        </child>
                       </object>
                     </property>
                   </object>

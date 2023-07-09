@@ -15,6 +15,7 @@ libsysprof_gtk_public_sources = [
   'sysprof-session-model.c',
   'sysprof-session-model-item.c',
   'sysprof-split-layer.c',
+  'sysprof-time-label.c',
   'sysprof-time-ruler.c',
   'sysprof-time-span-layer.c',
   'sysprof-time-series.c',
@@ -48,6 +49,7 @@ libsysprof_gtk_public_headers = [
   'sysprof-session-model.h',
   'sysprof-session-model-item.h',
   'sysprof-split-layer.h',
+  'sysprof-time-label.h',
   'sysprof-time-ruler.h',
   'sysprof-time-series.h',
   'sysprof-time-series-item.h',
@@ -70,7 +72,6 @@ libsysprof_gtk_private_sources = [
   'sysprof-progress-cell.c',
   'sysprof-session-discover.c',
   'sysprof-symbol-label.c',
-  'sysprof-time-label.c',
 ]
 
 libsysprof_gtk_deps = [

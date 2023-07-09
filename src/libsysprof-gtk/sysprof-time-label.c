@@ -22,7 +22,7 @@
 
 #include <sysprof-capture.h>
 
-#include "sysprof-time-label-private.h"
+#include "sysprof-time-label.h"
 
 struct _SysprofTimeLabel
 {

@@ -22,7 +22,7 @@
 
 #include "sysprof-css-private.h"
 #include "sysprof-mark-table.h"
-#include "sysprof-time-label-private.h"
+#include "sysprof-time-label.h"
 
 #include "libsysprof-gtk-resources.h"
 

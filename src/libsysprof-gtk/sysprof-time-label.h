@@ -26,16 +26,24 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_TIME_LABEL (sysprof_time_label_get_type())
 
+SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofTimeLabel, sysprof_time_label, SYSPROF, TIME_LABEL, GtkWidget)
 
+SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sysprof_time_label_new             (void);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean   sysprof_time_label_get_show_zero   (SysprofTimeLabel *self);
+SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_time_label_set_show_zero   (SysprofTimeLabel *self,
                                                gboolean          show_zero);
+SYSPROF_AVAILABLE_IN_ALL
 gint64     sysprof_time_label_get_duration    (SysprofTimeLabel *self);
+SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_time_label_set_duration    (SysprofTimeLabel *self,
                                                gint64            duration);
+SYSPROF_AVAILABLE_IN_ALL
 gint64     sysprof_time_label_get_time_offset (SysprofTimeLabel *self);
+SYSPROF_AVAILABLE_IN_ALL
 void       sysprof_time_label_set_time_offset (SysprofTimeLabel *self,
                                                gint64            time_offset);
 

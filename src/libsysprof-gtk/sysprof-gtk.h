@@ -41,6 +41,7 @@ G_BEGIN_DECLS
 # include "sysprof-session-model.h"
 # include "sysprof-session-model-item.h"
 # include "sysprof-split-layer.h"
+# include "sysprof-time-label.h"
 # include "sysprof-time-ruler.h"
 # include "sysprof-time-series.h"
 # include "sysprof-time-series-item.h"

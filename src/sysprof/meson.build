@@ -6,6 +6,7 @@ sysprof_sources = [
   'sysprof-recording-pad.c',
   'sysprof-metadata-dialog.c',
   'sysprof-samples-section.c',
+  'sysprof-sidebar.c',
   'sysprof-section.c',
   'sysprof-window.c',
 ]

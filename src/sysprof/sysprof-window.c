@@ -28,6 +28,7 @@
 #include "sysprof-greeter.h"
 #include "sysprof-metadata-dialog.h"
 #include "sysprof-samples-section.h"
+#include "sysprof-sidebar.h"
 #include "sysprof-window.h"
 
 struct _SysprofWindow
@@ -195,8 +196,9 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_install_action (widget_class, "capture.show-metadata", NULL, sysprof_window_show_metadata_action);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
-  g_type_ensure (SYSPROF_TYPE_SESSION);
   g_type_ensure (SYSPROF_TYPE_SAMPLES_SECTION);
+  g_type_ensure (SYSPROF_TYPE_SESSION);
+  g_type_ensure (SYSPROF_TYPE_SIDEBAR);
 }
 
 static void

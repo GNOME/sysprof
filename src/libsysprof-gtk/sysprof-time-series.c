@@ -187,8 +187,8 @@ sysprof_time_series_new (const char    *title,
   xy = g_object_new (SYSPROF_TYPE_TIME_SERIES,
                      "title", title,
                      "model", model,
-                     "x-expression", time_expression,
-                     "y-expression", duration_expression,
+                     "time-expression", time_expression,
+                     "duration-expression", duration_expression,
                      "label-expression", label_expression,
                      NULL);
 

@@ -94,9 +94,12 @@
                       </object>
                     </child>
                     <property name="content">
-                      <object class="GtkBox">
-                        <property name="orientation">vertical</property>
+                      <object class="GtkStack">
                         <property name="vexpand">true</property>
+                        <child>
+                          <object class="SysprofSamplesSection">
+                          </object>
+                        </child>
                       </object>
                     </property>
                   </object>

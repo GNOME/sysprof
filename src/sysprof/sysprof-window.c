@@ -27,6 +27,7 @@
 #include "sysprof-files-dialog.h"
 #include "sysprof-greeter.h"
 #include "sysprof-metadata-dialog.h"
+#include "sysprof-samples-section.h"
 #include "sysprof-window.h"
 
 struct _SysprofWindow
@@ -195,6 +196,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
   g_type_ensure (SYSPROF_TYPE_SESSION);
+  g_type_ensure (SYSPROF_TYPE_SAMPLES_SECTION);
 }
 
 static void

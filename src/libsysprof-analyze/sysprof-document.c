@@ -121,6 +121,34 @@ enum {
 
 static GParamSpec *properties[N_PROPS];
 
+static inline guint16
+swap_uint16 (gboolean needs_swap,
+             guint16  value)
+{
+  if (!needs_swap)
+    return value;
+
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+  return GUINT16_FROM_BE (value);
+#else
+  return GUINT16_FROM_LE (value);
+#endif
+}
+
+static inline guint32
+swap_uint32 (gboolean needs_swap,
+             guint32  value)
+{
+  if (!needs_swap)
+    return value;
+
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+  return GUINT32_FROM_BE (value);
+#else
+  return GUINT32_FROM_LE (value);
+#endif
+}
+
 static inline int
 swap_int32 (gboolean needs_swap,
             int      value)
@@ -146,6 +174,20 @@ swap_int64 (gboolean needs_swap,
   return GINT64_FROM_BE (value);
 #else
   return GINT64_FROM_LE (value);
+#endif
+}
+
+static inline guint64
+swap_uint64 (gboolean needs_swap,
+             guint64  value)
+{
+  if G_LIKELY (!needs_swap)
+    return value;
+
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+  return GUINT64_FROM_BE (value);
+#else
+  return GUINT64_FROM_LE (value);
 #endif
 }
 
@@ -977,12 +1019,8 @@ sysprof_document_load_worker (GTask        *task,
   self->needs_swap = !!self->header.little_endian;
 #endif
 
-  if (self->needs_swap)
-    {
-      self->header.time = GUINT64_SWAP_LE_BE (self->header.time);
-      self->header.end_time = GUINT64_SWAP_LE_BE (self->header.end_time);
-    }
-
+  self->header.time = swap_uint64 (self->needs_swap, self->header.time);
+  self->header.end_time = swap_uint64 (self->needs_swap, self->header.end_time);
   self->header.capture_time[sizeof self->header.capture_time-1] = 0;
 
   self->time_span.begin_nsec = self->header.time;
@@ -998,8 +1036,7 @@ sysprof_document_load_worker (GTask        *task,
       guint16 frame_len;
 
       memcpy (&frame_len, &self->base[pos], sizeof frame_len);
-      if (self->needs_swap)
-        frame_len = GUINT16_SWAP_LE_BE (frame_len);
+      frame_len = swap_uint16 (self->needs_swap, frame_len);
 
       if (frame_len < sizeof (SysprofCaptureFrame))
         {
@@ -1118,7 +1155,7 @@ sysprof_document_load_worker (GTask        *task,
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_SAMPLE)
         {
           const SysprofCaptureSample *sample = (const SysprofCaptureSample *)tainted;
-          guint n_addrs = self->needs_swap ? GUINT16_SWAP_LE_BE (sample->n_addrs) : sample->n_addrs;
+          guint n_addrs = swap_uint16 (self->needs_swap, sample->n_addrs);
           const guint8 *endptr = (const guint8 *)tainted + ptr->length;
 
           /* If the sample contains a context-switch, record it */
@@ -1128,7 +1165,7 @@ sysprof_document_load_worker (GTask        *task,
 
               for (guint i = 0; i < n_addrs; i++)
                 {
-                  SysprofAddress addr = self->needs_swap ? GUINT64_SWAP_LE_BE (sample->addrs[i]) : sample->addrs[i];
+                  SysprofAddress addr = swap_uint64 (self->needs_swap, sample->addrs[i]);
 
                   if (sysprof_address_is_context_switch (addr, &last_context) &&
                       last_context == SYSPROF_ADDRESS_CONTEXT_KERNEL)

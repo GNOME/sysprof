@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include <sys/sysinfo.h>
 #include <sys/utsname.h>
 
 #include <libdex.h>
@@ -128,6 +129,18 @@ add_metadata_int (SysprofRecording *self,
                                        -1, -1, id, str, -1);
 }
 
+static inline void
+add_metadata_int64 (SysprofRecording *self,
+                    const char       *id,
+                    gint64            value)
+{
+  char str[32];
+  g_snprintf (str, sizeof str, "%"G_GINT64_FORMAT, value);
+  sysprof_capture_writer_add_metadata (self->writer,
+                                       SYSPROF_CAPTURE_CURRENT_TIME,
+                                       -1, -1, id, str, -1);
+}
+
 static DexFuture *
 sysprof_recording_fiber (gpointer user_data)
 {
@@ -138,6 +151,7 @@ sysprof_recording_fiber (gpointer user_data)
   g_autoptr(DexFuture) message = NULL;
   g_autoptr(GError) error = NULL;
   struct utsname uts;
+  struct sysinfo si;
   gint64 begin_time;
   gint64 end_time;
 
@@ -182,6 +196,22 @@ sysprof_recording_fiber (gpointer user_data)
       add_metadata (self, "uname.release", uts.release);
       add_metadata (self, "uname.version", uts.version);
       add_metadata (self, "uname.machine", uts.machine);
+    }
+
+  /* More system information via sysinfo */
+  if (sysinfo (&si) == 0)
+    {
+      add_metadata_int64 (self, "sysinfo.uptime", si.uptime);
+      add_metadata_int64 (self, "sysinfo.totalram", si.totalram);
+      add_metadata_int64 (self, "sysinfo.freeram", si.freeram);
+      add_metadata_int64 (self, "sysinfo.sharedram", si.sharedram);
+      add_metadata_int64 (self, "sysinfo.bufferram", si.bufferram);
+      add_metadata_int64 (self, "sysinfo.totalswap", si.totalswap);
+      add_metadata_int64 (self, "sysinfo.freeswap", si.freeswap);
+      add_metadata_int64 (self, "sysinfo.procs", si.procs);
+      add_metadata_int64 (self, "sysinfo.totalhigh", si.totalhigh);
+      add_metadata_int64 (self, "sysinfo.freehigh", si.freehigh);
+      add_metadata_int64 (self, "sysinfo.mem_unit", si.mem_unit);
     }
 
   /* Some environment variables/info for correlating */

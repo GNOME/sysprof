@@ -135,11 +135,11 @@ swap_int32 (gboolean needs_swap,
 #endif
 }
 
-static inline int
+static inline gint64
 swap_int64 (gboolean needs_swap,
             gint64   value)
 {
-  if (!needs_swap)
+  if G_LIKELY (!needs_swap)
     return value;
 
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
@@ -1150,7 +1150,7 @@ sysprof_document_load_worker (GTask        *task,
         {
           const SysprofCaptureMark *mark = (const SysprofCaptureMark *)tainted;
           const char *endptr = (const char *)tainted + ptr->length;
-          gint64 duration = self->needs_swap ? GUINT64_SWAP_LE_BE (mark->duration) : mark->duration;
+          gint64 duration = swap_int64 (self->needs_swap, mark->duration);
 
           if (t + duration > guessed_end_nsec)
             guessed_end_nsec = t + duration;

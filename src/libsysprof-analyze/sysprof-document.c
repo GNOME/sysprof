@@ -1223,9 +1223,6 @@ sysprof_document_load_worker (GTask        *task,
   if (guessed_end_nsec > self->time_span.begin_nsec)
     self->time_span.end_nsec = guessed_end_nsec;
 
-  /* Ensure all our process have an exit_time set */
-  sysprof_document_update_process_exit_times (self);
-
   load_progress (load, .6, _("Discovering file system mounts"));
   sysprof_document_load_mounts (self);
 
@@ -1243,6 +1240,9 @@ sysprof_document_load_worker (GTask        *task,
 
   load_progress (load, .85, _("Processing counters"));
   sysprof_document_load_counters (self);
+
+  /* Ensure all our process have an exit_time set */
+  sysprof_document_update_process_exit_times (self);
 
   g_task_return_pointer (task, g_steal_pointer (&self), g_object_unref);
 }

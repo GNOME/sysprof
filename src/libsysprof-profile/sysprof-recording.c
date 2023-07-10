@@ -226,6 +226,47 @@ sysprof_recording_fiber (gpointer user_data)
   add_metadata (self, "HOSTTYPE", g_getenv ("HOSTTYPE"));
   add_metadata (self, "OSTYPE", g_getenv ("OSTYPE"));
 
+  /* Log information about the spawning process */
+  if (self->spawnable != NULL)
+    {
+      const char * const *argv = sysprof_spawnable_get_argv (self->spawnable);
+      const char * const *env = sysprof_spawnable_get_environ (self->spawnable);
+      const char *cwd = sysprof_spawnable_get_cwd (self->spawnable);
+
+      if (cwd)
+        add_metadata (self, "spawnable.cwd", cwd);
+
+      if (env != NULL)
+        {
+          g_autoptr(GString) str = g_string_new (NULL);
+
+          for (guint e = 0; env[e]; e++)
+            {
+              g_autofree char *quoted = g_shell_quote (env[e]);
+
+              g_string_append (str, quoted);
+              g_string_append_c (str, ' ');
+            }
+
+          add_metadata (self, "spawnable.environ", str->str);
+        }
+
+      if (argv != NULL)
+        {
+          g_autoptr(GString) str = g_string_new (NULL);
+
+          for (guint a = 0; argv[a]; a++)
+            {
+              g_autofree char *quoted = g_shell_quote (argv[a]);
+
+              g_string_append (str, quoted);
+              g_string_append_c (str, ' ');
+            }
+
+          add_metadata (self, "spawnable.argv", str->str);
+        }
+    }
+
   /* Save a copy of os-release for troubleshooting */
   dex_await (_sysprof_recording_add_file (self, "/etc/os-release", FALSE), NULL);
 

@@ -47,6 +47,8 @@ SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_append_args     (SysprofSpawnable          *self,
                                                         const char  * const       *argv);
 SYSPROF_AVAILABLE_IN_ALL
+const char          *sysprof_spawnable_get_cwd         (SysprofSpawnable          *self);
+SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_spawnable_set_cwd         (SysprofSpawnable          *self,
                                                         const char                *cwd);
 SYSPROF_AVAILABLE_IN_ALL

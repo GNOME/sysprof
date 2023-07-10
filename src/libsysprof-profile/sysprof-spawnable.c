@@ -320,17 +320,21 @@ sysprof_spawnable_spawn (SysprofSpawnable  *self,
   return g_subprocess_launcher_spawnv (launcher, argv, error);
 }
 
+const char *
+sysprof_spawnable_get_cwd (SysprofSpawnable *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SPAWNABLE (self), NULL);
+
+  return self->cwd;
+}
+
 void
 sysprof_spawnable_set_cwd (SysprofSpawnable *self,
                            const gchar      *cwd)
 {
   g_return_if_fail (SYSPROF_IS_SPAWNABLE (self));
 
-  if (g_strcmp0 (cwd, self->cwd) != 0)
-    {
-      g_free (self->cwd);
-      self->cwd = g_strdup (cwd);
-    }
+  g_set_str (&self->cwd, cwd);
 }
 
 /**

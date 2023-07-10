@@ -7,7 +7,6 @@
     <file preprocess="xml-stripblanks">sysprof-greeter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-logs-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-marks-section.ui</file>
-    <file preprocess="xml-stripblanks">sysprof-metadata-dialog.ui</file>
     <file preprocess="xml-stripblanks">sysprof-metadata-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-recording-pad.ui</file>
     <file preprocess="xml-stripblanks">sysprof-samples-section.ui</file>

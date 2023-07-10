@@ -163,12 +163,6 @@
     </section>
     <section>
       <item>
-        <attribute name="label" translatable="yes">Show Embedded Metadata…</attribute>
-        <attribute name="action">capture.show-metadata</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
         <attribute name="label" translatable="yes">Preferences</attribute>
         <attribute name="action-name">app.preferences</attribute>
         <attribute name="accel">&lt;ctrl&gt;comma</attribute>

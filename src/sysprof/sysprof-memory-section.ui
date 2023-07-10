@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofMemorySection" parent="SysprofSection">
+    <property name="title" translatable="yes">Memory Allocations</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="SysprofMemoryCallgraphView" id="callgraph_view">
+            <property name="vexpand">true</property>
+            <binding name="include-threads">
+              <lookup name="include-threads" type="SysprofSession">
+                <lookup name="session">SysprofMemorySection</lookup>
+              </lookup>
+            </binding>
+            <binding name="hide-system-libraries">
+              <lookup name="hide-system-libraries" type="SysprofSession">
+                <lookup name="session">SysprofMemorySection</lookup>
+              </lookup>
+            </binding>
+            <binding name="document">
+              <lookup name="document" type="SysprofSession">
+                <lookup name="session">SysprofMemorySection</lookup>
+              </lookup>
+            </binding>
+            <binding name="traceables">
+              <!-- TODO: This should be filtered by Session selected time span -->
+              <lookup name="allocations" type="SysprofDocument">
+                <lookup name="document" type="SysprofSession">
+                  <lookup name="session">SysprofMemorySection</lookup>
+                </lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
+

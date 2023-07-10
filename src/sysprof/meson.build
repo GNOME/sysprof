@@ -5,6 +5,7 @@ sysprof_sources = [
   'sysprof-greeter.c',
   'sysprof-logs-section.c',
   'sysprof-marks-section.c',
+  'sysprof-memory-section.c',
   'sysprof-metadata-section.c',
   'sysprof-processes-section.c',
   'sysprof-recording-pad.c',

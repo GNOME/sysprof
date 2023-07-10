@@ -106,6 +106,14 @@
                           </object>
                         </child>
                         <child>
+                          <object class="SysprofMemorySection">
+                            <property name="category">callgraph</property>
+                            <binding name="session">
+                              <lookup name="session">SysprofWindow</lookup>
+                            </binding>
+                          </object>
+                        </child>
+                        <child>
                           <object class="SysprofLogsSection">
                             <property name="category">processes</property>
                             <binding name="session">

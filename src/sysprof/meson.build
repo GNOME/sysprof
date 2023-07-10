@@ -10,6 +10,7 @@ sysprof_sources = [
   'sysprof-samples-section.c',
   'sysprof-section.c',
   'sysprof-sidebar.c',
+  'sysprof-single-model.c',
   'sysprof-window.c',
 ]
 

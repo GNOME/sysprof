@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-process-private.h"
 #include "sysprof-mount.h"
@@ -40,6 +42,7 @@ enum {
   PROP_COMMAND_LINE,
   PROP_DURATION,
   PROP_EXIT_TIME,
+  PROP_TITLE,
   N_PROPS
 };
 
@@ -79,6 +82,10 @@ sysprof_document_process_get_property (GObject    *object,
       g_value_set_int64 (value, sysprof_document_process_get_exit_time (self));
       break;
 
+    case PROP_TITLE:
+      g_value_take_string (value, sysprof_document_process_dup_title (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -106,6 +113,11 @@ sysprof_document_process_class_init (SysprofDocumentProcessClass *klass)
     g_param_spec_int64 ("exit-time", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_TITLE] =
+    g_param_spec_string ("title", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
@@ -210,4 +222,28 @@ sysprof_document_process_get_duration (SysprofDocumentProcess *self)
   t = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (self));
 
   return sysprof_document_process_get_exit_time (self) - t;
+}
+
+/**
+ * sysprof_document_process_dup_title:
+ * @self: a #SysprofDocumentProcess
+ *
+ * Gets a suitable title for the process.
+ *
+ * Returns: (transfer full): a string containing a process title
+ */
+char *
+sysprof_document_process_dup_title (SysprofDocumentProcess *self)
+{
+  const char *command_line;
+  int pid;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_PROCESS (self), NULL);
+
+  pid = sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (self));
+
+  if ((command_line = sysprof_document_process_get_command_line (self)))
+    return g_strdup_printf (_("%s [Process %d]"), command_line, pid);
+
+  return g_strdup_printf (_("Process %d"), pid);
 }

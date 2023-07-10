@@ -70,7 +70,7 @@
                       <lookup name="exit-time" type="SysprofDocumentProcess"/>
                     </property>
                     <property name="label-expression">
-                      <lookup name="command-line" type="SysprofDocumentProcess"/>
+                      <lookup name="title" type="SysprofDocumentProcess"/>
                     </property>
                   </object>
                 </property>

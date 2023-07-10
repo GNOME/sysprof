@@ -16,6 +16,8 @@
     <file preprocess="xml-stripblanks">sysprof-window.ui</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-chart-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-table-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/memory-allocations-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/metadata-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/system-log-symbolic.svg</file>
   </gresource>
 </gresources>

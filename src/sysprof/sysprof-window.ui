@@ -109,6 +109,7 @@
                         <child>
                           <object class="SysprofMemorySection">
                             <property name="category">callgraph</property>
+                            <property name="icon-name">memory-allocations-symbolic</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>
@@ -153,6 +154,7 @@
                         <child>
                           <object class="SysprofMetadataSection">
                             <property name="category">auxiliary</property>
+                            <property name="icon-name">metadata-symbolic</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>

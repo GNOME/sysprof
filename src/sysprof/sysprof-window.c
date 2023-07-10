@@ -54,11 +54,9 @@ G_DEFINE_FINAL_TYPE (SysprofWindow, sysprof_window, ADW_TYPE_APPLICATION_WINDOW)
 static GParamSpec *properties [N_PROPS];
 
 static void
-sysprof_window_open_capture_action (GtkWidget  *widget,
-                                    const char *action_name,
-                                    GVariant   *param)
+show_greeter (SysprofWindow      *self,
+              SysprofGreeterPage  page)
 {
-  SysprofWindow *self = (SysprofWindow *)widget;
   SysprofGreeter *greeter;
 
   g_assert (SYSPROF_IS_WINDOW (self));
@@ -66,8 +64,24 @@ sysprof_window_open_capture_action (GtkWidget  *widget,
   greeter = g_object_new (SYSPROF_TYPE_GREETER,
                           "transient-for", self,
                           NULL);
-  sysprof_greeter_set_page (greeter, SYSPROF_GREETER_PAGE_OPEN);
+  sysprof_greeter_set_page (greeter, page);
   gtk_window_present (GTK_WINDOW (greeter));
+}
+
+static void
+sysprof_window_open_capture_action (GtkWidget  *widget,
+                                    const char *action_name,
+                                    GVariant   *param)
+{
+  show_greeter (SYSPROF_WINDOW (widget), SYSPROF_GREETER_PAGE_OPEN);
+}
+
+static void
+sysprof_window_record_capture_action (GtkWidget  *widget,
+                                      const char *action_name,
+                                      GVariant   *param)
+{
+  show_greeter (SYSPROF_WINDOW (widget), SYSPROF_GREETER_PAGE_RECORD);
 }
 
 static void
@@ -179,6 +193,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-window.ui");
 
   gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
+  gtk_widget_class_install_action (widget_class, "win.record-capture", NULL, sysprof_window_record_capture_action);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
   g_type_ensure (SYSPROF_TYPE_FILES_SECTION);

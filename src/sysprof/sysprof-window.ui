@@ -10,6 +10,12 @@
       <object class="GtkShortcutController">
         <child>
           <object class="GtkShortcut">
+            <property name="trigger">&lt;ctrl&gt;n</property>
+            <property name="action">action(win.record-capture)</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcut">
             <property name="trigger">&lt;ctrl&gt;o</property>
             <property name="action">action(win.open-capture)</property>
           </object>
@@ -159,16 +165,15 @@
   <menu id="primary_menu">
     <section>
       <item>
+        <attribute name="label" translatable="yes">_Record Again…</attribute>
+        <attribute name="action">win.record-capture</attribute>
+      </item>
+      <item>
         <attribute name="label" translatable="yes">Open Recording…</attribute>
-        <attribute name="action" translatable="yes">win.open-capture</attribute>
+        <attribute name="action">win.open-capture</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Save As…</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">Record Again…</attribute>
       </item>
     </section>
     <section>
@@ -193,11 +198,11 @@
       <attribute name="label" translatable="yes">Callgraph</attribute>
       <item>
         <attribute name="label" translatable="yes">Hide System Libraries</attribute>
-        <attribute name="action" translatable="yes">win.callgraph.hide-system-libraries</attribute>
+        <attribute name="action">win.callgraph.hide-system-libraries</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Include Threads</attribute>
-        <attribute name="action" translatable="yes">win.callgraph.include-threads</attribute>
+        <attribute name="action">win.callgraph.include-threads</attribute>
       </item>
     </section>
   </menu>

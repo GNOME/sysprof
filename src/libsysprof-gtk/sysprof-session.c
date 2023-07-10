@@ -40,12 +40,17 @@ struct _SysprofSession
 
   SysprofTimeSpan  selected_time;
   SysprofTimeSpan  visible_time;
+
+  guint            include_threads : 1;
+  guint            hide_system_libraries : 1;
 };
 
 enum {
   PROP_0,
   PROP_DOCUMENT,
   PROP_FILTER,
+  PROP_HIDE_SYSTEM_LIBRARIES,
+  PROP_INCLUDE_THREADS,
   PROP_SELECTED_TIME,
   PROP_SELECTED_TIME_AXIS,
   PROP_TRACKS,
@@ -128,6 +133,14 @@ sysprof_session_get_property (GObject    *object,
       g_value_set_object (value, sysprof_session_get_filter (self));
       break;
 
+    case PROP_HIDE_SYSTEM_LIBRARIES:
+      g_value_set_boolean (value, self->hide_system_libraries);
+      break;
+
+    case PROP_INCLUDE_THREADS:
+      g_value_set_boolean (value, self->include_threads);
+      break;
+
     case PROP_SELECTED_TIME:
       g_value_set_boxed (value, sysprof_session_get_selected_time (self));
       break;
@@ -167,6 +180,14 @@ sysprof_session_set_property (GObject      *object,
       sysprof_session_set_document (self, g_value_get_object (value));
       break;
 
+    case PROP_HIDE_SYSTEM_LIBRARIES:
+      self->hide_system_libraries = g_value_get_boolean (value);
+      break;
+
+    case PROP_INCLUDE_THREADS:
+      self->include_threads = g_value_get_boolean (value);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -191,6 +212,16 @@ sysprof_session_class_init (SysprofSessionClass *klass)
                          GTK_TYPE_FILTER,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_HIDE_SYSTEM_LIBRARIES] =
+    g_param_spec_boolean ("hide-system-libraries", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_INCLUDE_THREADS] =
+    g_param_spec_boolean ("include-threads", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_SELECTED_TIME] =
     g_param_spec_boxed ("selected-time", NULL, NULL,
                         SYSPROF_TYPE_TIME_SPAN,
@@ -211,7 +242,7 @@ sysprof_session_class_init (SysprofSessionClass *klass)
                          SYSPROF_TYPE_AXIS,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
-  properties[PROP_TRACKS] =
+  properties [PROP_TRACKS] =
     g_param_spec_object ("tracks", NULL, NULL,
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));

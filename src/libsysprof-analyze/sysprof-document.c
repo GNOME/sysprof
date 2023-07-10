@@ -1183,7 +1183,7 @@ sysprof_document_load_worker (GTask        *task,
         }
     }
 
-  if (guessed_end_nsec != 0)
+  if (guessed_end_nsec > self->time_span.begin_nsec)
     self->time_span.end_nsec = guessed_end_nsec;
 
   /* Ensure all our process have an exit_time set */

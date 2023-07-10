@@ -76,6 +76,9 @@ _sysprof_symbol_equal (const SysprofSymbol *a,
   if (a->kind != b->kind)
     return FALSE;
 
+  if (a->name == NULL || b->name == NULL)
+    return FALSE;
+
   return strcmp (a->name, b->name) == 0;
 }
 

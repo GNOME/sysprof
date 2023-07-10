@@ -53,7 +53,8 @@ static void
 add_mmaps (SysprofRecording *recording,
            GPid              pid,
            const char       *mapsstr,
-           gboolean          ignore_inode)
+           gboolean          ignore_inode,
+           gint64            at_time)
 {
   SysprofCaptureWriter *writer;
   SysprofMapsParser parser;
@@ -72,14 +73,8 @@ add_mmaps (SysprofRecording *recording,
       if (ignore_inode)
         inode = 0;
 
-      sysprof_capture_writer_add_map (writer,
-                                      SYSPROF_CAPTURE_CURRENT_TIME,
-                                      -1,
-                                      pid,
-                                      begin,
-                                      end,
-                                      offset,
-                                      inode,
+      sysprof_capture_writer_add_map (writer, at_time, -1, pid,
+                                      begin, end, offset, inode,
                                       file);
       g_free (file);
     }
@@ -89,7 +84,8 @@ static DexFuture *
 populate_overlays (SysprofRecording *recording,
                    SysprofPodman    *podman,
                    int               pid,
-                   const char       *cgroup)
+                   const char       *cgroup,
+                   gint64            at_time)
 {
   static GRegex *flatpak_regex;
   static GRegex *podman_regex;
@@ -139,9 +135,8 @@ populate_overlays (SysprofRecording *recording,
       if ((layers = sysprof_podman_get_layers (podman, word)))
         {
           for (guint i = 0; layers[i]; i++)
-            sysprof_capture_writer_add_overlay (writer,
-                                                SYSPROF_CAPTURE_CURRENT_TIME,
-                                                -1, pid, i, layers[i], "/");
+            sysprof_capture_writer_add_overlay (writer, at_time, -1, pid,
+                                                i, layers[i], "/");
         }
 
       return _sysprof_recording_add_file (recording, path, FALSE);
@@ -158,7 +153,8 @@ populate_overlays (SysprofRecording *recording,
 
 static DexFuture *
 add_process_info (SysprofRecording *recording,
-                  GVariant         *process_info)
+                  GVariant         *process_info,
+                  gint64            at_time)
 {
   g_autoptr(SysprofPodman) podman = NULL;
   g_autoptr(GPtrArray) futures = NULL;
@@ -208,10 +204,7 @@ add_process_info (SysprofRecording *recording,
         cgroup = "";
 
       /* Notify the capture that a process was spawned */
-      sysprof_capture_writer_add_process (writer,
-                                          SYSPROF_CAPTURE_CURRENT_TIME,
-                                          -1,
-                                          pid,
+      sysprof_capture_writer_add_process (writer, at_time, -1, pid,
                                           *cmdline ? cmdline : comm);
 
       /* Give the capture access to the mountinfo of that process to aid
@@ -224,13 +217,13 @@ add_process_info (SysprofRecording *recording,
        * wrong. We'll have to rely on CRC/build-id instead.
        */
       ignore_inode = strstr (cgroup, "/libpod-") != NULL;
-      add_mmaps (recording, pid, maps, ignore_inode);
+      add_mmaps (recording, pid, maps, ignore_inode, at_time);
 
       /* We might have overlays that need to be applied to the process
        * which can be rather combursome for old-style Podman using
        * FUSE overlayfs.
        */
-      g_ptr_array_add (futures, populate_overlays (recording, podman, pid, cgroup));
+      g_ptr_array_add (futures, populate_overlays (recording, podman, pid, cgroup, at_time));
 
       skip:
         g_variant_dict_clear (&dict);
@@ -283,6 +276,7 @@ sysprof_linux_instrument_record_fiber (gpointer user_data)
   g_autoptr(GVariant) process_info_reply = NULL;
   g_autoptr(GVariant) process_info = NULL;
   g_autoptr(GError) error = NULL;
+  gint64 at_time;
 
   g_assert (SYSPROF_IS_RECORDING (recording));
 
@@ -293,6 +287,7 @@ sysprof_linux_instrument_record_fiber (gpointer user_data)
   /* We also want to get a bunch of info on user processes so that we can add
    * records about them to the recording.
    */
+  at_time = SYSPROF_CAPTURE_CURRENT_TIME;
   if (!(process_info_reply = dex_await_variant (dex_dbus_connection_call (bus,
                                                                           "org.gnome.Sysprof3",
                                                                           "/org/gnome/Sysprof3",
@@ -307,7 +302,7 @@ sysprof_linux_instrument_record_fiber (gpointer user_data)
 
   /* Add process records for each of the processes discovered */
   process_info = g_variant_get_child_value (process_info_reply, 0);
-  dex_await (add_process_info (recording, process_info), NULL);
+  dex_await (add_process_info (recording, process_info, at_time), NULL);
 
   return dex_future_new_for_boolean (TRUE);
 }

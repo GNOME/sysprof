@@ -34,6 +34,7 @@ G_BEGIN_DECLS
 # include "sysprof-line-layer.h"
 # include "sysprof-mark-chart.h"
 # include "sysprof-mark-table.h"
+# include "sysprof-memory-callgraph-view.h"
 # include "sysprof-normalized-series.h"
 # include "sysprof-normalized-series-item.h"
 # include "sysprof-series.h"

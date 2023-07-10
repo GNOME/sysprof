@@ -41,6 +41,8 @@ enum {
   PROP_0,
   PROP_COMMAND_LINE,
   PROP_DURATION,
+  PROP_MEMORY_MAPS,
+  PROP_MOUNTS,
   PROP_EXIT_TIME,
   PROP_TITLE,
   N_PROPS
@@ -82,6 +84,14 @@ sysprof_document_process_get_property (GObject    *object,
       g_value_set_int64 (value, sysprof_document_process_get_exit_time (self));
       break;
 
+    case PROP_MEMORY_MAPS:
+      g_value_take_object (value, sysprof_document_process_list_memory_maps (self));
+      break;
+
+    case PROP_MOUNTS:
+      g_value_take_object (value, sysprof_document_process_list_mounts (self));
+      break;
+
     case PROP_TITLE:
       g_value_take_string (value, sysprof_document_process_dup_title (self));
       break;
@@ -113,6 +123,16 @@ sysprof_document_process_class_init (SysprofDocumentProcessClass *klass)
     g_param_spec_int64 ("exit-time", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_MEMORY_MAPS] =
+    g_param_spec_object ("memory-maps", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_MOUNTS] =
+    g_param_spec_object ("mounts", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_TITLE] =
     g_param_spec_string ("title", NULL, NULL,

@@ -31,7 +31,8 @@
 
 #include "eggbitset.h"
 
-#define MAX_STACK_DEPTH 1024
+#define MAX_STACK_DEPTH     1024
+#define INLINE_AUGMENT_SIZE (GLIB_SIZEOF_VOID_P*2)
 
 static GType
 sysprof_callgraph_get_item_type (GListModel *model)
@@ -74,7 +75,8 @@ static SysprofSymbol *untraceable;
 static void
 sysprof_callgraph_summary_free_all (SysprofCallgraphSummary *summary)
 {
-  g_clear_pointer (&summary->augment, g_free);
+  g_clear_pointer (&summary->augment[0], g_free);
+  summary->augment[1] = NULL;
   g_clear_pointer (&summary->callers, g_ptr_array_unref);
   g_clear_pointer (&summary->traceables, egg_bitset_unref);
   g_free (summary);
@@ -83,7 +85,8 @@ sysprof_callgraph_summary_free_all (SysprofCallgraphSummary *summary)
 static void
 sysprof_callgraph_summary_free_self (SysprofCallgraphSummary *summary)
 {
-  summary->augment = NULL;
+  summary->augment[0] = NULL;
+  summary->augment[1] = NULL;
   g_clear_pointer (&summary->callers, g_ptr_array_unref);
   g_clear_pointer (&summary->traceables, egg_bitset_unref);
   g_free (summary);
@@ -98,7 +101,6 @@ sysprof_callgraph_get_summary (SysprofCallgraph *self,
   if G_UNLIKELY (!(summary = g_hash_table_lookup (self->symbol_to_summary, symbol)))
     {
       summary = g_new0 (SysprofCallgraphSummary, 1);
-      summary->augment = NULL;
       summary->traceables = egg_bitset_new_empty ();
       summary->callers = g_ptr_array_new ();
       summary->symbol = symbol;
@@ -399,7 +401,7 @@ _sysprof_callgraph_new_async (SysprofDocument         *document,
   g_return_if_fail (G_IS_LIST_MODEL (traceables));
   g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
 
-  if (augment_size > GLIB_SIZEOF_VOID_P)
+  if (augment_size > INLINE_AUGMENT_SIZE)
     summary_free = (GDestroyNotify)sysprof_callgraph_summary_free_all;
   else
     summary_free = (GDestroyNotify)sysprof_callgraph_summary_free_self;
@@ -441,7 +443,7 @@ get_augmentation (SysprofCallgraph *self,
   if (self->augment_size == 0)
     return NULL;
 
-  if (self->augment_size <= GLIB_SIZEOF_VOID_P)
+  if (self->augment_size <= INLINE_AUGMENT_SIZE)
     return augment_location;
 
   if (*augment_location == NULL)
@@ -457,7 +459,7 @@ sysprof_callgraph_get_augment (SysprofCallgraph     *self,
   if (node == NULL)
     node = &self->root;
 
-  return get_augmentation (self, &node->augment);
+  return get_augmentation (self, &node->augment[0]);
 }
 
 gpointer
@@ -467,7 +469,7 @@ sysprof_callgraph_get_summary_augment (SysprofCallgraph     *self,
   if (node == NULL)
     node = &self->root;
 
-  return get_augmentation (self, &node->summary->augment);
+  return get_augmentation (self, &node->summary->augment[0]);
 }
 
 gpointer
@@ -480,7 +482,7 @@ _sysprof_callgraph_get_symbol_augment (SysprofCallgraph *self,
   g_return_val_if_fail (SYSPROF_IS_SYMBOL (symbol), NULL);
 
   if ((summary = g_hash_table_lookup (self->symbol_to_summary, symbol)))
-    return get_augmentation (self, &summary->augment);
+    return get_augmentation (self, &summary->augment[0]);
 
   return NULL;
 }

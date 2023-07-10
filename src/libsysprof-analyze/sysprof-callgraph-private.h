@@ -34,7 +34,7 @@ typedef struct _SysprofCallgraphSummary
   SysprofSymbol *symbol;
   EggBitset     *traceables;
   GPtrArray     *callers;
-  gpointer       augment;
+  gpointer       augment[2];
 } SysprofCallgraphSummary;
 
 struct _SysprofCallgraphNode
@@ -44,7 +44,7 @@ struct _SysprofCallgraphNode
   SysprofCallgraphNode    *next;
   SysprofCallgraphNode    *children;
   SysprofCallgraphSummary *summary;
-  gpointer                 augment;
+  gpointer                 augment[2];
 };
 
 struct _SysprofCallgraph

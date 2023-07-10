@@ -54,6 +54,10 @@ sysprof_samples_section_class_init (SysprofSamplesSectionClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-samples-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofSamplesSection, callgraph_view);
 
+  g_type_ensure (SYSPROF_TYPE_CHART);
+  g_type_ensure (SYSPROF_TYPE_XY_SERIES);
+  g_type_ensure (SYSPROF_TYPE_COLUMN_LAYER);
+  g_type_ensure (SYSPROF_TYPE_VALUE_AXIS);
   g_type_ensure (SYSPROF_TYPE_WEIGHTED_CALLGRAPH_VIEW);
 }
 

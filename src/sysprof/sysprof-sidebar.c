@@ -82,6 +82,8 @@ sysprof_sidebar_bind_cb (SysprofSidebar *self,
                            sysprof_sidebar_create_row,
                            self,
                            NULL);
+
+  gtk_list_box_select_row (self->list_box, gtk_list_box_get_row_at_index (self->list_box, 0));
 }
 
 static void

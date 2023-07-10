@@ -72,6 +72,11 @@ static void
 sysprof_window_set_document (SysprofWindow   *self,
                              SysprofDocument *document)
 {
+  static const char *callgraph_actions[] = {
+    "include-threads",
+    "hide-system-libraries",
+  };
+
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (SYSPROF_IS_DOCUMENT (document));
   g_assert (self->document == NULL);
@@ -82,6 +87,14 @@ sysprof_window_set_document (SysprofWindow   *self,
 
   self->session = sysprof_session_new (document);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
+
+  for (guint i = 0; i < G_N_ELEMENTS (callgraph_actions); i++)
+    {
+      g_autofree char *action_name = g_strdup_printf ("callgraph.%s", callgraph_actions[i]);
+      g_autoptr(GPropertyAction) action = g_property_action_new (action_name, self->session, callgraph_actions[i]);
+
+      g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
+    }
 }
 
 static void

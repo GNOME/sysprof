@@ -8,6 +8,16 @@
         <child>
           <object class="SysprofWeightedCallgraphView" id="callgraph_view">
             <property name="vexpand">true</property>
+            <binding name="include-threads">
+              <lookup name="include-threads" type="SysprofSession">
+                <lookup name="session">SysprofSamplesSection</lookup>
+              </lookup>
+            </binding>
+            <binding name="hide-system-libraries">
+              <lookup name="hide-system-libraries" type="SysprofSession">
+                <lookup name="session">SysprofSamplesSection</lookup>
+              </lookup>
+            </binding>
             <binding name="document">
               <lookup name="document" type="SysprofSession">
                 <lookup name="session">SysprofSamplesSection</lookup>

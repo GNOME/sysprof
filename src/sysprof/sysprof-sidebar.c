@@ -113,6 +113,24 @@ list_box_row_activated_cb (SysprofSidebar *self,
 }
 
 static void
+sysprof_sidebar_header_func (GtkListBoxRow *row,
+                             GtkListBoxRow *before_row,
+                             gpointer       user_data)
+{
+  SysprofSection *section;
+  SysprofSection *before_section;
+
+  if (before_row == NULL)
+    return;
+
+  if ((section = g_object_get_data (G_OBJECT (row), "SECTION")) &&
+      (before_section = g_object_get_data (G_OBJECT (before_row), "SECTION")) &&
+      g_strcmp0 (sysprof_section_get_category (section),
+                 sysprof_section_get_category (before_section)) != 0)
+    gtk_list_box_row_set_header (row, gtk_separator_new (GTK_ORIENTATION_HORIZONTAL));
+}
+
+static void
 sysprof_sidebar_dispose (GObject *object)
 {
   SysprofSidebar *self = (SysprofSidebar *)object;
@@ -203,4 +221,8 @@ sysprof_sidebar_init (SysprofSidebar *self)
                            G_CONNECT_SWAPPED);
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_list_box_set_header_func (self->list_box,
+                                sysprof_sidebar_header_func,
+                                NULL, NULL);
 }

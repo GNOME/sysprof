@@ -99,6 +99,7 @@
                         <property name="vexpand">true</property>
                         <child>
                           <object class="SysprofSamplesSection">
+                            <property name="category">callgraph</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>
@@ -106,6 +107,7 @@
                         </child>
                         <child>
                           <object class="SysprofLogsSection">
+                            <property name="category">processes</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>
@@ -113,6 +115,7 @@
                         </child>
                         <child>
                           <object class="SysprofMarksSection">
+                            <property name="category">processes</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>
@@ -120,6 +123,7 @@
                         </child>
                         <child>
                           <object class="SysprofProcessesSection">
+                            <property name="category">processes</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>
@@ -127,6 +131,7 @@
                         </child>
                         <child>
                           <object class="SysprofFilesSection">
+                            <property name="category">auxiliary</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>
@@ -134,6 +139,7 @@
                         </child>
                         <child>
                           <object class="SysprofMetadataSection">
+                            <property name="category">auxiliary</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>

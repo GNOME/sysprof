@@ -6,6 +6,44 @@
       <object class="GtkBox">
         <property name="orientation">vertical</property>
         <child>
+          <object class="SysprofChart">
+            <property name="height-request">32</property>
+            <child>
+              <object class="SysprofColumnLayer">
+                <property name="title">Stack Traces</property>
+                <binding name="x-axis">
+                  <lookup name="selected-time-axis" type="SysprofSession">
+                    <lookup name="session">SysprofMemorySection</lookup>
+                  </lookup>
+                </binding>
+                <property name="y-axis">
+                  <object class="SysprofValueAxis">
+                    <property name="min-value">0</property>
+                    <property name="max-value">128</property>
+                  </object>
+                </property>
+                <property name="series">
+                  <object class="SysprofXYSeries">
+                    <binding name="model">
+                      <lookup name="allocations" type="SysprofDocument">
+                        <lookup name="document" type="SysprofSession">
+                          <lookup name="session">SysprofMemorySection</lookup>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                    <property name="x-expression">
+                      <lookup name="time" type="SysprofDocumentFrame"/>
+                    </property>
+                    <property name="y-expression">
+                      <lookup name="stack-depth" type="SysprofDocumentTraceable"/>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
           <object class="SysprofMemoryCallgraphView" id="callgraph_view">
             <property name="vexpand">true</property>
             <binding name="include-threads">

@@ -6,6 +6,7 @@ sysprof_sources = [
   'sysprof-logs-section.c',
   'sysprof-marks-section.c',
   'sysprof-metadata-dialog.c',
+  'sysprof-metadata-section.c',
   'sysprof-recording-pad.c',
   'sysprof-samples-section.c',
   'sysprof-section.c',

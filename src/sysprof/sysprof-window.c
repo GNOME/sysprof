@@ -29,6 +29,7 @@
 #include "sysprof-logs-section.h"
 #include "sysprof-marks-section.h"
 #include "sysprof-metadata-dialog.h"
+#include "sysprof-metadata-section.h"
 #include "sysprof-samples-section.h"
 #include "sysprof-sidebar.h"
 #include "sysprof-window.h"
@@ -186,6 +187,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   g_type_ensure (SYSPROF_TYPE_FILES_SECTION);
   g_type_ensure (SYSPROF_TYPE_LOGS_SECTION);
   g_type_ensure (SYSPROF_TYPE_MARKS_SECTION);
+  g_type_ensure (SYSPROF_TYPE_METADATA_SECTION);
   g_type_ensure (SYSPROF_TYPE_SAMPLES_SECTION);
   g_type_ensure (SYSPROF_TYPE_SESSION);
   g_type_ensure (SYSPROF_TYPE_SIDEBAR);

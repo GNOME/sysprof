@@ -116,6 +116,13 @@
                             </binding>
                           </object>
                         </child>
+                        <child>
+                          <object class="SysprofMetadataSection">
+                            <binding name="session">
+                              <lookup name="session">SysprofWindow</lookup>
+                            </binding>
+                          </object>
+                        </child>
                       </object>
                     </property>
                   </object>

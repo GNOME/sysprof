@@ -52,6 +52,8 @@ enum {
   PROP_AXIS,
   PROP_COLOR,
   PROP_EVENT_COLOR,
+  PROP_NORMALIZED_X,
+  PROP_NORMALIZED_X2,
   PROP_SERIES,
   N_PROPS
 };
@@ -330,6 +332,14 @@ sysprof_time_span_layer_get_property (GObject    *object,
       g_value_set_boxed (value, sysprof_time_span_layer_get_event_color (self));
       break;
 
+    case PROP_NORMALIZED_X:
+      g_value_set_object (value, self->normal_x);
+      break;
+
+    case PROP_NORMALIZED_X2:
+      g_value_set_object (value, self->normal_x2);
+      break;
+
     case PROP_SERIES:
       g_value_set_object (value, sysprof_time_span_layer_get_series (self));
       break;
@@ -399,6 +409,16 @@ sysprof_time_span_layer_class_init (SysprofTimeSpanLayerClass *klass)
     g_param_spec_boxed ("event-color", NULL, NULL,
                         GDK_TYPE_RGBA,
                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_NORMALIZED_X] =
+    g_param_spec_object ("normalized-x", NULL, NULL,
+                         SYSPROF_TYPE_NORMALIZED_SERIES,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_NORMALIZED_X2] =
+    g_param_spec_object ("normalized-x2", NULL, NULL,
+                         SYSPROF_TYPE_NORMALIZED_SERIES,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_SERIES] =
     g_param_spec_object ("series", NULL, NULL,

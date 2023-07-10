@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <sys/utsname.h>
+
 #include <libdex.h>
 
 #include "sysprof-diagnostic-private.h"
@@ -114,6 +116,18 @@ add_metadata (SysprofRecording *self,
                                        -1, -1, id, value, -1);
 }
 
+static inline void
+add_metadata_int (SysprofRecording *self,
+                  const char       *id,
+                  int               value)
+{
+  char str[16];
+  g_snprintf (str, sizeof str, "%d", value);
+  sysprof_capture_writer_add_metadata (self->writer,
+                                       SYSPROF_CAPTURE_CURRENT_TIME,
+                                       -1, -1, id, str, -1);
+}
+
 static DexFuture *
 sysprof_recording_fiber (gpointer user_data)
 {
@@ -123,6 +137,7 @@ sysprof_recording_fiber (gpointer user_data)
   g_autoptr(DexFuture) monitor = NULL;
   g_autoptr(DexFuture) message = NULL;
   g_autoptr(GError) error = NULL;
+  struct utsname uts;
   gint64 begin_time;
   gint64 end_time;
 
@@ -153,15 +168,31 @@ sysprof_recording_fiber (gpointer user_data)
   else
     monitor = dex_future_new_infinite ();
 
-  /* Track various metadata */
+  /* Track various app metadata */
   add_metadata (self, "org.gnome.sysprof.app-id", APP_ID_S);
   add_metadata (self, "org.gnome.sysprof.version", PACKAGE_VERSION);
+
+  /* Include some host/kernel/arch information */
+  add_metadata_int (self, "n-cpu", g_get_num_processors ());
+  add_metadata_int (self, "page-size", sysprof_getpagesize ());
+  add_metadata_int (self, "buffer-size", sysprof_capture_writer_get_buffer_size (self->writer));
+  if (uname (&uts) == 0)
+    {
+      add_metadata (self, "uname.sysname", uts.sysname);
+      add_metadata (self, "uname.release", uts.release);
+      add_metadata (self, "uname.version", uts.version);
+      add_metadata (self, "uname.machine", uts.machine);
+    }
+
+  /* Some environment variables/info for correlating */
   add_metadata (self, "USER", g_get_user_name ());
   add_metadata (self, "DISPLAY", g_getenv ("DISPLAY"));
   add_metadata (self, "WAYLAND_DISPLAY", g_getenv ("WAYLAND_DISPLAY"));
   add_metadata (self, "DESKTOP_SESSION", g_getenv ("DESKTOP_SESSION"));
   add_metadata (self, "HOSTTYPE", g_getenv ("HOSTTYPE"));
   add_metadata (self, "OSTYPE", g_getenv ("OSTYPE"));
+
+  /* Save a copy of os-release for troubleshooting */
   dex_await (_sysprof_recording_add_file (self, "/etc/os-release", FALSE), NULL);
 
   self->start_time = g_get_monotonic_time ();

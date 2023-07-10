@@ -76,7 +76,7 @@ sysprof_normalized_series_update_missing (gpointer user_data)
 
   g_assert (SYSPROF_IS_NORMALIZED_SERIES (self));
 
-  if (self->missing == NULL || self->disposed)
+  if (self->missing == NULL || self->disposed || self->axis == NULL || self->series == NULL || self->expression == NULL)
     {
       self->update_source = 0;
       return G_SOURCE_REMOVE;

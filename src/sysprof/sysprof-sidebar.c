@@ -48,16 +48,31 @@ sysprof_sidebar_create_row (gpointer item,
   SysprofSidebar *sidebar = user_data;
   SysprofSection *section;
   GtkListBoxRow *row;
+  GtkImage *image;
+  GtkLabel *label;
+  GtkBox *box;
 
   g_assert (GTK_IS_STACK_PAGE (page));
   g_assert (SYSPROF_IS_SIDEBAR (sidebar));
 
   section = SYSPROF_SECTION (gtk_stack_page_get_child (page));
+
+  box = g_object_new (GTK_TYPE_BOX,
+                      "orientation", GTK_ORIENTATION_HORIZONTAL,
+                      "spacing", 6,
+                      NULL);
+  label = g_object_new (GTK_TYPE_LABEL,
+                        "xalign", .0f,
+                        "label", sysprof_section_get_title (section),
+                        NULL);
+  image = g_object_new (GTK_TYPE_IMAGE,
+                        "icon-name", sysprof_section_get_icon_name (section),
+                        NULL);
+  gtk_box_append (box, GTK_WIDGET (image));
+  gtk_box_append (box, GTK_WIDGET (label));
+
   row = g_object_new (GTK_TYPE_LIST_BOX_ROW,
-                      "child", g_object_new (GTK_TYPE_LABEL,
-                                             "xalign", .0f,
-                                             "label", sysprof_section_get_title (section),
-                                             NULL),
+                      "child", box,
                       NULL);
   g_object_set_data_full (G_OBJECT (row), "SECTION", g_object_ref (section), g_object_unref);
 

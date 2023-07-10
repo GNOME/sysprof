@@ -26,6 +26,7 @@
 typedef struct
 {
   char *category;
+  char *icon_name;
   char *title;
   SysprofSession *session;
 } SysprofSectionPrivate;
@@ -36,6 +37,7 @@ enum {
   PROP_0,
   PROP_SESSION,
   PROP_CATEGORY,
+  PROP_ICON_NAME,
   PROP_TITLE,
   N_PROPS
 };
@@ -55,6 +57,7 @@ sysprof_section_dispose (GObject *object)
   g_clear_object (&priv->session);
   g_clear_pointer (&priv->title, g_free);
   g_clear_pointer (&priv->category, g_free);
+  g_clear_pointer (&priv->icon_name, g_free);
 
   G_OBJECT_CLASS (sysprof_section_parent_class)->dispose (object);
 }
@@ -75,6 +78,10 @@ sysprof_section_get_property (GObject    *object,
 
     case PROP_CATEGORY:
       g_value_set_string (value, sysprof_section_get_category (self));
+      break;
+
+    case PROP_ICON_NAME:
+      g_value_set_string (value, sysprof_section_get_icon_name (self));
       break;
 
     case PROP_TITLE:
@@ -102,6 +109,10 @@ sysprof_section_set_property (GObject      *object,
 
     case PROP_CATEGORY:
       sysprof_section_set_category (self, g_value_get_string (value));
+      break;
+
+    case PROP_ICON_NAME:
+      sysprof_section_set_icon_name (self, g_value_get_string (value));
       break;
 
     case PROP_TITLE:
@@ -135,6 +146,11 @@ sysprof_section_class_init (SysprofSectionClass *klass)
 
   properties[PROP_CATEGORY] =
     g_param_spec_string ("category", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_ICON_NAME] =
+    g_param_spec_string ("icon-name", NULL, NULL,
                          NULL,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
@@ -213,4 +229,26 @@ sysprof_section_set_category (SysprofSection *self,
 
   if (g_set_str (&priv->category, category))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CATEGORY]);
+}
+
+const char *
+sysprof_section_get_icon_name (SysprofSection *self)
+{
+  SysprofSectionPrivate *priv = sysprof_section_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_SECTION (self), NULL);
+
+  return priv->icon_name;
+}
+
+void
+sysprof_section_set_icon_name (SysprofSection *self,
+                               const char     *icon_name)
+{
+  SysprofSectionPrivate *priv = sysprof_section_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_SECTION (self));
+
+  if (g_set_str (&priv->icon_name, icon_name))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON_NAME]);
 }

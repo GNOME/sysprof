@@ -35,14 +35,17 @@ struct _SysprofSectionClass
   GtkWidgetClass parent_class;
 };
 
-SysprofSession *sysprof_section_get_session  (SysprofSection *self);
-void            sysprof_section_set_session  (SysprofSection *self,
-                                              SysprofSession *session);
-const char     *sysprof_section_get_category (SysprofSection *self);
-void            sysprof_section_set_category (SysprofSection *self,
-                                              const char     *category);
-const char     *sysprof_section_get_title    (SysprofSection *self);
-void            sysprof_section_set_title    (SysprofSection *self,
-                                              const char     *title);
+SysprofSession *sysprof_section_get_session   (SysprofSection *self);
+void            sysprof_section_set_session   (SysprofSection *self,
+                                               SysprofSession *session);
+const char     *sysprof_section_get_category  (SysprofSection *self);
+void            sysprof_section_set_category  (SysprofSection *self,
+                                               const char     *category);
+const char     *sysprof_section_get_icon_name (SysprofSection *self);
+void            sysprof_section_set_icon_name (SysprofSection *self,
+                                               const char     *icon_name);
+const char     *sysprof_section_get_title     (SysprofSection *self);
+void            sysprof_section_set_title     (SysprofSection *self,
+                                               const char     *title);
 
 G_END_DECLS

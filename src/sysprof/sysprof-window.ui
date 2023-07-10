@@ -100,6 +100,7 @@
                         <child>
                           <object class="SysprofSamplesSection">
                             <property name="category">callgraph</property>
+                            <property name="icon-name">org.gnome.Sysprof-symbolic</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>
@@ -116,6 +117,7 @@
                         <child>
                           <object class="SysprofLogsSection">
                             <property name="category">processes</property>
+                            <property name="icon-name">system-log-symbolic</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>
@@ -124,6 +126,7 @@
                         <child>
                           <object class="SysprofMarksSection">
                             <property name="category">processes</property>
+                            <property name="icon-name">mark-chart-symbolic</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>
@@ -132,6 +135,7 @@
                         <child>
                           <object class="SysprofProcessesSection">
                             <property name="category">processes</property>
+                            <property name="icon-name">application-x-executable-symbolic</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>
@@ -140,6 +144,7 @@
                         <child>
                           <object class="SysprofFilesSection">
                             <property name="category">auxiliary</property>
+                            <property name="icon-name">folder-symbolic</property>
                             <binding name="session">
                               <lookup name="session">SysprofWindow</lookup>
                             </binding>

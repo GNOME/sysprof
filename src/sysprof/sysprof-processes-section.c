@@ -25,6 +25,7 @@
 #include <adwaita.h>
 #include <sysprof-gtk.h>
 
+#include "sysprof-process-dialog.h"
 #include "sysprof-processes-section.h"
 #include "sysprof-single-model.h"
 
@@ -36,6 +37,31 @@ struct _SysprofProcessesSection
 };
 
 G_DEFINE_FINAL_TYPE (SysprofProcessesSection, sysprof_processes_section, SYSPROF_TYPE_SECTION)
+
+static void
+activate_layer_item_cb (GtkListItem            *list_item,
+                        SysprofChartLayer      *layer,
+                        SysprofDocumentProcess *process,
+                        SysprofChart           *chart)
+{
+  SysprofProcessDialog *dialog;
+  g_autofree char *title = NULL;
+
+  g_assert (GTK_IS_LIST_ITEM (list_item));
+  g_assert (SYSPROF_IS_CHART_LAYER (layer));
+  g_assert (SYSPROF_IS_DOCUMENT_PROCESS (process));
+  g_assert (SYSPROF_IS_CHART (chart));
+
+  title = sysprof_document_process_dup_title (process);
+
+  dialog = g_object_new (SYSPROF_TYPE_PROCESS_DIALOG,
+                         "process", process,
+                         "transient-for", gtk_widget_get_root (GTK_WIDGET (chart)),
+                         "title", title,
+                         NULL);
+
+  gtk_window_present (GTK_WINDOW (dialog));
+}
 
 static void
 sysprof_processes_section_dispose (GObject *object)
@@ -57,6 +83,7 @@ sysprof_processes_section_class_init (SysprofProcessesSectionClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-processes-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofProcessesSection, list_view);
+  gtk_widget_class_bind_template_callback (widget_class, activate_layer_item_cb);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_CHART_LAYER);

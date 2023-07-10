@@ -42,6 +42,7 @@
         <property name="height-request">16</property>
         <child>
           <object class="SysprofChart">
+            <signal name="activate-layer-item" handler="activate_layer_item_cb" swapped="true"/>
             <property name="hexpand">true</property>
             <child>
               <object class="SysprofTimeSpanLayer">

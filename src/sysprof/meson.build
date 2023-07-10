@@ -7,6 +7,7 @@ sysprof_sources = [
   'sysprof-marks-section.c',
   'sysprof-memory-section.c',
   'sysprof-metadata-section.c',
+  'sysprof-process-dialog.c',
   'sysprof-processes-section.c',
   'sysprof-recording-pad.c',
   'sysprof-samples-section.c',

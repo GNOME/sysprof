@@ -154,6 +154,7 @@ sysprof_recording_fiber (gpointer user_data)
   struct sysinfo si;
   gint64 begin_time;
   gint64 end_time;
+  char hostname[64] = {0};
 
   g_assert (SYSPROF_IS_RECORDING (self));
 
@@ -197,6 +198,9 @@ sysprof_recording_fiber (gpointer user_data)
       add_metadata (self, "uname.version", uts.version);
       add_metadata (self, "uname.machine", uts.machine);
     }
+
+  if (gethostname (hostname, sizeof hostname-1) == 0)
+    add_metadata (self, "hostname", hostname);
 
   /* More system information via sysinfo */
   if (sysinfo (&si) == 0)

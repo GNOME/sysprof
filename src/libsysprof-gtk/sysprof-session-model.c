@@ -250,5 +250,12 @@ sysprof_session_model_set_session (SysprofSessionModel *self,
   g_return_if_fail (!session || SYSPROF_IS_SESSION (session));
 
   if (g_set_object (&self->session, session))
-    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
+    {
+      guint n_items = g_list_model_get_n_items (G_LIST_MODEL (self));
+
+      if (n_items > 0)
+        g_list_model_items_changed (G_LIST_MODEL (self), 0, n_items, n_items);
+
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
+    }
 }

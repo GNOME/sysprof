@@ -361,7 +361,8 @@ stop_recording:
   sysprof_capture_writer_flush (self->writer);
 
   /* Ignore error types we use to bail out of loops */
-  if (!g_error_matches (error, DEX_ERROR, DEX_ERROR_TIMED_OUT) &&
+  if (error != NULL &&
+      !g_error_matches (error, DEX_ERROR, DEX_ERROR_TIMED_OUT) &&
       !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
     return dex_future_new_for_error (g_steal_pointer (&error));
 

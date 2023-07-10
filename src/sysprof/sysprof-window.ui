@@ -19,6 +19,7 @@
     <property name="content">
       <object class="AdwOverlaySplitView">
         <property name="show-sidebar" bind-source="show_left_sidebar" bind-property="active" bind-flags="bidirectional|sync-create"/>
+        <property name="max-sidebar-width">200</property>
         <property name="sidebar">
           <object class="AdwNavigationPage">
             <property name="child">
@@ -54,6 +55,7 @@
               <object class="AdwOverlaySplitView">
                 <property name="sidebar-position">end</property>
                 <property name="show-sidebar" bind-source="show_right_sidebar" bind-property="active" bind-flags="bidirectional|sync-create"/>
+                <property name="max-sidebar-width">200</property>
                 <property name="content">
                   <object class="AdwToolbarView">
                     <child type="top">

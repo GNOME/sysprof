@@ -159,7 +159,7 @@ sysprof_mark_chart_item_init (SysprofMarkChartItem *self)
   self->series = sysprof_time_series_new (NULL,
                                           g_object_ref (G_LIST_MODEL (self->filtered)),
                                           gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "time"),
-                                          gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "duration"),
+                                          gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "end-time"),
                                           gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_MARK, NULL, "message"));
 }
 

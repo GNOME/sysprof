@@ -57,11 +57,11 @@
                         </binding>
                       </object>
                     </property>
-                    <property name="time-expression">
+                    <property name="begin-time-expression">
                       <lookup name="time" type="SysprofDocumentFrame"/>
                     </property>
-                    <property name="duration-expression">
-                      <lookup name="duration" type="SysprofDocumentProcess"/>
+                    <property name="end-time-expression">
+                      <lookup name="exit-time" type="SysprofDocumentProcess"/>
                     </property>
                     <property name="label-expression">
                       <lookup name="command-line" type="SysprofDocumentProcess"/>

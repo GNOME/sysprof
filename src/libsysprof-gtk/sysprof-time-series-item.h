@@ -32,7 +32,7 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofTimeSeriesItem, sysprof_time_series_item, SYSPROF, TIME_SERIES_ITEM, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-gint64   sysprof_time_series_item_get_time           (SysprofTimeSeriesItem *self);
+gint64   sysprof_time_series_item_get_begin_time     (SysprofTimeSeriesItem *self);
 SYSPROF_AVAILABLE_IN_ALL
 gint64   sysprof_time_series_item_get_duration       (SysprofTimeSeriesItem *self);
 SYSPROF_AVAILABLE_IN_ALL

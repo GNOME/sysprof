@@ -25,8 +25,8 @@
 struct _SysprofTimeSeriesItem
 {
   GObject parent_instance;
-  GtkExpression *time_expression;
-  GtkExpression *duration_expression;
+  GtkExpression *begin_time_expression;
+  GtkExpression *end_time_expression;
   GObject *item;
 };
 
@@ -34,7 +34,7 @@ enum {
   PROP_0,
   PROP_DURATION,
   PROP_ITEM,
-  PROP_TIME,
+  PROP_BEGIN_TIME,
   PROP_END_TIME,
   N_PROPS
 };
@@ -49,8 +49,8 @@ sysprof_time_series_item_finalize (GObject *object)
   SysprofTimeSeriesItem *self = (SysprofTimeSeriesItem *)object;
 
   g_clear_object (&self->item);
-  g_clear_pointer (&self->time_expression, gtk_expression_unref);
-  g_clear_pointer (&self->duration_expression, gtk_expression_unref);
+  g_clear_pointer (&self->begin_time_expression, gtk_expression_unref);
+  g_clear_pointer (&self->end_time_expression, gtk_expression_unref);
 
   G_OBJECT_CLASS (sysprof_time_series_item_parent_class)->finalize (object);
 }
@@ -73,8 +73,8 @@ sysprof_time_series_item_get_property (GObject    *object,
       g_value_set_int64 (value, sysprof_time_series_item_get_duration (self));
       break;
 
-    case PROP_TIME:
-      g_value_set_int64 (value, sysprof_time_series_item_get_time (self));
+    case PROP_BEGIN_TIME:
+      g_value_set_int64 (value, sysprof_time_series_item_get_begin_time (self));
       break;
 
     case PROP_END_TIME:
@@ -99,8 +99,8 @@ sysprof_time_series_item_class_init (SysprofTimeSeriesItemClass *klass)
                          G_TYPE_OBJECT,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_TIME] =
-    g_param_spec_int64 ("time", NULL, NULL,
+  properties [PROP_BEGIN_TIME] =
+    g_param_spec_int64 ("begin-time", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -124,15 +124,15 @@ sysprof_time_series_item_init (SysprofTimeSeriesItem *self)
 
 SysprofTimeSeriesItem *
 _sysprof_time_series_item_new (GObject       *item,
-                               GtkExpression *time_expression,
-                               GtkExpression *duration_expression)
+                               GtkExpression *begin_time_expression,
+                               GtkExpression *end_time_expression)
 {
   SysprofTimeSeriesItem *self;
 
   self = g_object_new (SYSPROF_TYPE_TIME_SERIES_ITEM, NULL);
   self->item = item;
-  self->time_expression = time_expression;
-  self->duration_expression = duration_expression;
+  self->begin_time_expression = begin_time_expression;
+  self->end_time_expression = end_time_expression;
 
   return self;
 }
@@ -154,7 +154,7 @@ sysprof_time_series_item_get_item (SysprofTimeSeriesItem *self)
 }
 
 gint64
-sysprof_time_series_item_get_time (SysprofTimeSeriesItem *self)
+sysprof_time_series_item_get_begin_time (SysprofTimeSeriesItem *self)
 {
   GValue value = G_VALUE_INIT;
   gint64 ret;
@@ -162,7 +162,7 @@ sysprof_time_series_item_get_time (SysprofTimeSeriesItem *self)
   g_return_val_if_fail (SYSPROF_IS_TIME_SERIES_ITEM (self), 0);
 
   g_value_init (&value, G_TYPE_INT64);
-  gtk_expression_evaluate (self->time_expression, self->item, &value);
+  gtk_expression_evaluate (self->begin_time_expression, self->item, &value);
   ret = g_value_get_int64 (&value);
   g_value_unset (&value);
 
@@ -172,22 +172,21 @@ sysprof_time_series_item_get_time (SysprofTimeSeriesItem *self)
 gint64
 sysprof_time_series_item_get_duration (SysprofTimeSeriesItem *self)
 {
+  return sysprof_time_series_item_get_end_time (self) - sysprof_time_series_item_get_begin_time (self);
+}
+
+gint64
+sysprof_time_series_item_get_end_time (SysprofTimeSeriesItem *self)
+{
   GValue value = G_VALUE_INIT;
   gint64 ret;
 
   g_return_val_if_fail (SYSPROF_IS_TIME_SERIES_ITEM (self), 0);
 
   g_value_init (&value, G_TYPE_INT64);
-  gtk_expression_evaluate (self->duration_expression, self->item, &value);
+  gtk_expression_evaluate (self->end_time_expression, self->item, &value);
   ret = g_value_get_int64 (&value);
   g_value_unset (&value);
 
   return ret;
-}
-
-gint64
-sysprof_time_series_item_get_end_time (SysprofTimeSeriesItem *self)
-{
-  return sysprof_time_series_item_get_time (self) +
-         sysprof_time_series_item_get_duration (self);
 }

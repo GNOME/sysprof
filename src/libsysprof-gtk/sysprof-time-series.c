@@ -27,8 +27,8 @@
 struct _SysprofTimeSeries
 {
   SysprofSeries  parent_instance;
-  GtkExpression *time_expression;
-  GtkExpression *duration_expression;
+  GtkExpression *begin_time_expression;
+  GtkExpression *end_time_expression;
   GtkExpression *label_expression;
 };
 
@@ -39,9 +39,9 @@ struct _SysprofTimeSeriesClass
 
 enum {
   PROP_0,
-  PROP_DURATION_EXPRESSION,
+  PROP_BEGIN_TIME_EXPRESSION,
+  PROP_END_TIME_EXPRESSION,
   PROP_LABEL_EXPRESSION,
-  PROP_TIME_EXPRESSION,
   N_PROPS
 };
 
@@ -57,8 +57,8 @@ sysprof_time_series_get_series_item (SysprofSeries *series,
   SysprofTimeSeries *self = SYSPROF_TIME_SERIES (series);
 
   return _sysprof_time_series_item_new (item,
-                                        gtk_expression_ref (self->time_expression),
-                                        gtk_expression_ref (self->duration_expression));
+                                        gtk_expression_ref (self->begin_time_expression),
+                                        gtk_expression_ref (self->end_time_expression));
 }
 
 static void
@@ -66,9 +66,9 @@ sysprof_time_series_finalize (GObject *object)
 {
   SysprofTimeSeries *self = (SysprofTimeSeries *)object;
 
-  g_clear_pointer (&self->duration_expression, gtk_expression_unref);
+  g_clear_pointer (&self->end_time_expression, gtk_expression_unref);
   g_clear_pointer (&self->label_expression, gtk_expression_unref);
-  g_clear_pointer (&self->time_expression, gtk_expression_unref);
+  g_clear_pointer (&self->begin_time_expression, gtk_expression_unref);
 
   G_OBJECT_CLASS (sysprof_time_series_parent_class)->finalize (object);
 }
@@ -83,12 +83,12 @@ sysprof_time_series_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_TIME_EXPRESSION:
-      gtk_value_set_expression (value, self->time_expression);
+      case PROP_BEGIN_TIME_EXPRESSION:
+      gtk_value_set_expression (value, self->begin_time_expression);
       break;
 
-    case PROP_DURATION_EXPRESSION:
-      gtk_value_set_expression (value, self->duration_expression);
+    case PROP_END_TIME_EXPRESSION:
+      gtk_value_set_expression (value, self->end_time_expression);
       break;
 
     case PROP_LABEL_EXPRESSION:
@@ -110,12 +110,12 @@ sysprof_time_series_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_TIME_EXPRESSION:
-      sysprof_time_series_set_time_expression (self, gtk_value_get_expression (value));
+    case PROP_BEGIN_TIME_EXPRESSION:
+      sysprof_time_series_set_begin_time_expression (self, gtk_value_get_expression (value));
       break;
 
-    case PROP_DURATION_EXPRESSION:
-      sysprof_time_series_set_duration_expression (self, gtk_value_get_expression (value));
+    case PROP_END_TIME_EXPRESSION:
+      sysprof_time_series_set_end_time_expression (self, gtk_value_get_expression (value));
       break;
 
     case PROP_LABEL_EXPRESSION:
@@ -140,12 +140,12 @@ sysprof_time_series_class_init (SysprofTimeSeriesClass *klass)
   series_class->series_item_type = SYSPROF_TYPE_TIME_SERIES_ITEM;
   series_class->get_series_item = sysprof_time_series_get_series_item;
 
-  properties [PROP_TIME_EXPRESSION] =
-    gtk_param_spec_expression ("time-expression", NULL, NULL,
+  properties [PROP_BEGIN_TIME_EXPRESSION] =
+    gtk_param_spec_expression ("begin-time-expression", NULL, NULL,
                                (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_DURATION_EXPRESSION] =
-    gtk_param_spec_expression ("duration-expression", NULL, NULL,
+  properties [PROP_END_TIME_EXPRESSION] =
+    gtk_param_spec_expression ("end-time-expression", NULL, NULL,
                                (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_LABEL_EXPRESSION] =
@@ -164,10 +164,10 @@ sysprof_time_series_init (SysprofTimeSeries *self)
  * sysprof_time_series_new:
  * @title: (nullable): a title for the series
  * @model: (transfer full) (nullable): a #GListModel for the series
- * @time_expression: (transfer full) (nullable): a #GtkExpression for
- *   extracting the time value from @model items.
- * @duration_expression: (transfer full) (nullable): a #GtkExpression for
- *   extracting the duration value from @model items.
+ * @begin_time_expression: (transfer full) (nullable): a #GtkExpression for
+ *   extracting the begin time value from @model items.
+ * @end_time_expression: (transfer full) (nullable): a #GtkExpression for
+ *   extracting the end time value from @model items.
  * @label_expression: (transfer full) (nullable): a #GtkExpression for
  *   extracting the label from @model items.
  *
@@ -178,8 +178,8 @@ sysprof_time_series_init (SysprofTimeSeries *self)
 SysprofSeries *
 sysprof_time_series_new (const char    *title,
                          GListModel    *model,
-                         GtkExpression *time_expression,
-                         GtkExpression *duration_expression,
+                         GtkExpression *begin_time_expression,
+                         GtkExpression *end_time_expression,
                          GtkExpression *label_expression)
 {
   SysprofTimeSeries *xy;
@@ -187,13 +187,13 @@ sysprof_time_series_new (const char    *title,
   xy = g_object_new (SYSPROF_TYPE_TIME_SERIES,
                      "title", title,
                      "model", model,
-                     "time-expression", time_expression,
-                     "duration-expression", duration_expression,
+                     "begin-time-expression", begin_time_expression,
+                     "end-time-expression", end_time_expression,
                      "label-expression", label_expression,
                      NULL);
 
-  g_clear_pointer (&time_expression, gtk_expression_unref);
-  g_clear_pointer (&duration_expression, gtk_expression_unref);
+  g_clear_pointer (&begin_time_expression, gtk_expression_unref);
+  g_clear_pointer (&end_time_expression, gtk_expression_unref);
   g_clear_pointer (&label_expression, gtk_expression_unref);
   g_clear_object (&model);
 
@@ -201,7 +201,7 @@ sysprof_time_series_new (const char    *title,
 }
 
 /**
- * sysprof_time_series_get_time_expression:
+ * sysprof_time_series_get_begin_time_expression:
  * @self: a #SysprofTimeSeries
  *
  * Gets the #SysprofTimeSeries:x-expression property.
@@ -211,34 +211,34 @@ sysprof_time_series_new (const char    *title,
  * Returns: (transfer none) (nullable): a #GtkExpression or %NULL
  */
 GtkExpression *
-sysprof_time_series_get_time_expression (SysprofTimeSeries *self)
+sysprof_time_series_get_begin_time_expression (SysprofTimeSeries *self)
 {
   g_return_val_if_fail (SYSPROF_IS_TIME_SERIES (self), NULL);
 
-  return self->time_expression;
+  return self->begin_time_expression;
 }
 
 void
-sysprof_time_series_set_time_expression (SysprofTimeSeries *self,
-                                         GtkExpression     *time_expression)
+sysprof_time_series_set_begin_time_expression (SysprofTimeSeries *self,
+                                               GtkExpression     *begin_time_expression)
 {
   g_return_if_fail (SYSPROF_IS_TIME_SERIES (self));
 
-  if (self->time_expression == time_expression)
+  if (self->begin_time_expression == begin_time_expression)
     return;
 
-  if (time_expression)
-    gtk_expression_ref (time_expression);
+  if (begin_time_expression)
+    gtk_expression_ref (begin_time_expression);
 
-  g_clear_pointer (&self->time_expression, gtk_expression_unref);
+  g_clear_pointer (&self->begin_time_expression, gtk_expression_unref);
 
-  self->time_expression = time_expression;
+  self->begin_time_expression = begin_time_expression;
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TIME_EXPRESSION]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_BEGIN_TIME_EXPRESSION]);
 }
 
 /**
- * sysprof_time_series_get_duration_expression:
+ * sysprof_time_series_get_end_time_expression:
  * @self: a #SysprofTimeSeries
  *
  * Gets the #SysprofTimeSeries:y-expression property.
@@ -248,30 +248,30 @@ sysprof_time_series_set_time_expression (SysprofTimeSeries *self,
  * Returns: (transfer none) (nullable): a #GtkExpression or %NULL
  */
 GtkExpression *
-sysprof_time_series_get_duration_expression (SysprofTimeSeries *self)
+sysprof_time_series_get_end_time_expression (SysprofTimeSeries *self)
 {
   g_return_val_if_fail (SYSPROF_IS_TIME_SERIES (self), NULL);
 
-  return self->duration_expression;
+  return self->end_time_expression;
 }
 
 void
-sysprof_time_series_set_duration_expression (SysprofTimeSeries *self,
-                                             GtkExpression     *duration_expression)
+sysprof_time_series_set_end_time_expression (SysprofTimeSeries *self,
+                                             GtkExpression     *end_time_expression)
 {
   g_return_if_fail (SYSPROF_IS_TIME_SERIES (self));
 
-  if (self->duration_expression == duration_expression)
+  if (self->end_time_expression == end_time_expression)
     return;
 
-  if (duration_expression)
-    gtk_expression_ref (duration_expression);
+  if (end_time_expression)
+    gtk_expression_ref (end_time_expression);
 
-  g_clear_pointer (&self->duration_expression, gtk_expression_unref);
+  g_clear_pointer (&self->end_time_expression, gtk_expression_unref);
 
-  self->duration_expression = duration_expression;
+  self->end_time_expression = end_time_expression;
 
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DURATION_EXPRESSION]);
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_END_TIME_EXPRESSION]);
 }
 
 /**

@@ -426,10 +426,10 @@ sysprof_time_span_layer_init (SysprofTimeSpanLayer *self)
                            G_CONNECT_SWAPPED);
 
   self->series_bindings = g_binding_group_new ();
-  g_binding_group_bind (self->series_bindings, "time-expression",
+  g_binding_group_bind (self->series_bindings, "begin-time-expression",
                         self->normal_x, "expression",
                         G_BINDING_SYNC_CREATE);
-  g_binding_group_bind (self->series_bindings, "duration-expression",
+  g_binding_group_bind (self->series_bindings, "end-time-expression",
                         self->normal_x2, "expression",
                         G_BINDING_SYNC_CREATE);
 }

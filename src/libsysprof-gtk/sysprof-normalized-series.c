@@ -25,6 +25,7 @@
 #include "sysprof-axis-private.h"
 #include "sysprof-normalized-series.h"
 #include "sysprof-normalized-series-item.h"
+#include "sysprof-scheduler-private.h"
 #include "sysprof-series-private.h"
 
 #define SYSPROF_NORMALIZED_SERIES_STEP_TIME_USEC (1000) /* 1 msec */
@@ -40,7 +41,7 @@ struct _SysprofNormalizedSeries
   EggBitset     *missing;
 
   gulong         range_changed_handler;
-  guint          update_source;
+  gsize          scheduled_update;
 
   guint          disposed : 1;
   guint          inverted : 1;
@@ -65,7 +66,8 @@ G_DEFINE_FINAL_TYPE (SysprofNormalizedSeries, sysprof_normalized_series, SYSPROF
 static GParamSpec *properties [N_PROPS];
 
 static gboolean
-sysprof_normalized_series_update_missing (gpointer user_data)
+sysprof_normalized_series_update_missing (gint64   deadline,
+                                          gpointer user_data)
 {
   SysprofNormalizedSeries *self = user_data;
   g_autoptr(GtkExpression) expression = NULL;
@@ -78,7 +80,7 @@ sysprof_normalized_series_update_missing (gpointer user_data)
 
   if (self->missing == NULL || self->disposed || self->axis == NULL || self->series == NULL || self->expression == NULL)
     {
-      self->update_source = 0;
+      self->scheduled_update = 0;
       return G_SOURCE_REMOVE;
     }
 
@@ -88,7 +90,6 @@ sysprof_normalized_series_update_missing (gpointer user_data)
 
   if (egg_bitset_iter_init_first (&iter, bitset, &position))
     {
-      gint64 deadline = g_get_monotonic_time () + SYSPROF_NORMALIZED_SERIES_STEP_TIME_USEC;
       guint first = position;
 
       for (;;)
@@ -132,7 +133,7 @@ sysprof_normalized_series_update_missing (gpointer user_data)
 
   if (egg_bitset_is_empty (bitset))
     {
-      self->update_source = 0;
+      self->scheduled_update = 0;
       return G_SOURCE_REMOVE;
     }
 
@@ -142,22 +143,15 @@ sysprof_normalized_series_update_missing (gpointer user_data)
 static void
 sysprof_normalized_series_maybe_update (SysprofNormalizedSeries *self)
 {
-  GSource *source;
-
   g_assert (SYSPROF_IS_NORMALIZED_SERIES (self));
 
-  if (self->update_source || self->disposed)
+  if (self->scheduled_update || self->disposed)
     return;
 
   if (!self->missing || egg_bitset_is_empty (self->missing))
     return;
 
-  source = g_idle_source_new ();
-  g_source_set_callback (source, sysprof_normalized_series_update_missing, self, NULL);
-  g_source_set_static_name (source, "[SysprofNormalizedSeries]");
-  g_source_set_priority (source, G_PRIORITY_LOW);
-  self->update_source = g_source_attach (source, NULL);
-  g_source_unref (source);
+  self->scheduled_update = sysprof_scheduler_add (sysprof_normalized_series_update_missing, self);
 }
 
 static void
@@ -249,7 +243,7 @@ sysprof_normalized_series_dispose (GObject *object)
 
   self->disposed = TRUE;
 
-  g_clear_handle_id (&self->update_source, g_source_remove);
+  sysprof_scheduler_clear (&self->scheduled_update);
   g_clear_signal_handler (&self->range_changed_handler, self->axis);
 
   g_clear_object (&self->axis);

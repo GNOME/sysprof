@@ -43,6 +43,7 @@ struct _SysprofGreeter
   GtkSwitch          *sample_native_stacks;
   GtkSwitch          *record_disk_usage;
   GtkSwitch          *record_network_usage;
+  GtkSwitch          *record_compositor;
 };
 
 enum {
@@ -83,6 +84,12 @@ sysprof_greeter_create_profiler (SysprofGreeter *self)
 
   if (gtk_switch_get_active (self->record_network_usage))
     sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
+
+  if (gtk_switch_get_active (self->record_compositor))
+    sysprof_profiler_add_instrument (profiler,
+                                     sysprof_proxied_instrument_new (G_BUS_TYPE_SESSION,
+                                                                     "org.gnome.Shell",
+                                                                     "/org/gnome/Sysprof3/Profiler"));
 
   return g_steal_pointer (&profiler);
 }
@@ -271,6 +278,7 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, open_page);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, recent_page);
+  gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_compositor);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_disk_usage);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_network_usage);
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, record_page);

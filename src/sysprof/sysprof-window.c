@@ -29,6 +29,7 @@
 #include "sysprof-logs-section.h"
 #include "sysprof-marks-section.h"
 #include "sysprof-metadata-section.h"
+#include "sysprof-processes-section.h"
 #include "sysprof-samples-section.h"
 #include "sysprof-sidebar.h"
 #include "sysprof-window.h"
@@ -36,6 +37,7 @@
 struct _SysprofWindow
 {
   AdwApplicationWindow  parent_instance;
+
   SysprofDocument      *document;
   SysprofSession       *session;
 };
@@ -183,6 +185,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   g_type_ensure (SYSPROF_TYPE_LOGS_SECTION);
   g_type_ensure (SYSPROF_TYPE_MARKS_SECTION);
   g_type_ensure (SYSPROF_TYPE_METADATA_SECTION);
+  g_type_ensure (SYSPROF_TYPE_PROCESSES_SECTION);
   g_type_ensure (SYSPROF_TYPE_SAMPLES_SECTION);
   g_type_ensure (SYSPROF_TYPE_SESSION);
   g_type_ensure (SYSPROF_TYPE_SIDEBAR);

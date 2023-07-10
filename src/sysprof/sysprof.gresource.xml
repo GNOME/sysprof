@@ -8,6 +8,7 @@
     <file preprocess="xml-stripblanks">sysprof-logs-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-marks-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-metadata-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-processes-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-recording-pad.ui</file>
     <file preprocess="xml-stripblanks">sysprof-samples-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-sidebar.ui</file>

@@ -5,7 +5,7 @@ libsysprof_analyze_test_env = [
 ]
 
 libsysprof_analyze_testsuite_c_args = [
-  '-DG_LOG_DOMAIN="libdex"',
+  '-DG_LOG_DOMAIN="libsysprof-analyze"',
   '-DG_ENABLE_DEBUG',
   '-UG_DISABLE_ASSERT',
   '-UG_DISABLE_CAST_CHECKS',

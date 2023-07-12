@@ -22,6 +22,7 @@
     <property name="child">
       <object class="GtkInscription">
         <property name="xalign">0</property>
+        <property name="margin-start">6</property>
         <binding name="text">
           <lookup name="group" type="SysprofMarkCatalog">
             <lookup name="catalog" type="SysprofMarkChartItem">

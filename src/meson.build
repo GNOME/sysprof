@@ -1,5 +1,4 @@
 sysprof_header_subdir = 'sysprof-@0@'.format(libsysprof_api_version)
-sysprof_ui_header_subdir = 'sysprof-ui-@0@'.format(libsysprof_ui_api_version)
 
 sysprof_version_conf = configuration_data()
 sysprof_version = meson.project_version().split('.')

@@ -21,12 +21,12 @@ else
 endif
 
 # All libraries share an ABI revision as they are expected
-# to be updated as a set.
+# to be updated as a set. However, we keep libsysprof-capture
+# at an older version since it's used as a static library
+# from various platform tooling
 soname_major_version = 6
-
-# Temporary until we update meson.build
+libsysprof_capture_api_version = 4
 libsysprof_api_version = soname_major_version
-libsysprof_ui_api_version = soname_major_version
 
 version_split = meson.project_version().split('.')
 datadir = get_option('datadir')

@@ -33,6 +33,7 @@
 #include "sysprof-processes-section.h"
 #include "sysprof-samples-section.h"
 #include "sysprof-sidebar.h"
+#include "sysprof-traceables-utility.h"
 #include "sysprof-window.h"
 
 struct _SysprofWindow
@@ -41,6 +42,9 @@ struct _SysprofWindow
 
   SysprofDocument      *document;
   SysprofSession       *session;
+
+  AdwViewStack         *utility_stack;
+  AdwWindowTitle       *utility_title;
 };
 
 enum {
@@ -193,6 +197,9 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-window.ui");
 
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, utility_stack);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, utility_title);
+
   gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
   gtk_widget_class_install_action (widget_class, "win.record-capture", NULL, sysprof_window_record_capture_action);
 
@@ -206,12 +213,39 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   g_type_ensure (SYSPROF_TYPE_SAMPLES_SECTION);
   g_type_ensure (SYSPROF_TYPE_SESSION);
   g_type_ensure (SYSPROF_TYPE_SIDEBAR);
+  g_type_ensure (SYSPROF_TYPE_TRACEABLES_UTILITY);
+}
+
+static void
+utility_stack_notify_visible_child_cb (SysprofWindow *self,
+                                       GParamSpec    *pspec,
+                                       AdwViewStack  *utility_stack)
+{
+  AdwViewStackPage *page;
+  const char *title = NULL;
+  GtkWidget *child;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+  g_assert (ADW_IS_VIEW_STACK (utility_stack));
+
+  if ((child = adw_view_stack_get_visible_child (utility_stack)) &&
+      (page = adw_view_stack_get_page (utility_stack, child)))
+    title = adw_view_stack_page_get_title (page);
+
+  adw_window_title_set_title (self->utility_title, title);
 }
 
 static void
 sysprof_window_init (SysprofWindow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  g_signal_connect_object (self->utility_stack,
+                           "notify::visible-child",
+                           G_CALLBACK (utility_stack_notify_visible_child_cb),
+                           self,
+                           G_CONNECT_SWAPPED);
+  utility_stack_notify_visible_child_cb (self, NULL, self->utility_stack);
 }
 
 GtkWidget *

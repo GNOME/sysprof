@@ -14,6 +14,7 @@ sysprof_sources = [
   'sysprof-section.c',
   'sysprof-sidebar.c',
   'sysprof-single-model.c',
+  'sysprof-traceables-utility.c',
   'sysprof-window.c',
 ]
 

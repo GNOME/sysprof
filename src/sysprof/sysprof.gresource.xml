@@ -14,6 +14,7 @@
     <file preprocess="xml-stripblanks">sysprof-recording-pad.ui</file>
     <file preprocess="xml-stripblanks">sysprof-samples-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-sidebar.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-traceables-utility.ui</file>
     <file preprocess="xml-stripblanks">sysprof-window.ui</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/address-layout-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/mark-chart-symbolic.svg</file>

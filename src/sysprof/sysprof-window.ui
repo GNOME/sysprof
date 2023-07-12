@@ -169,11 +169,27 @@
                     <child type="top">
                       <object class="AdwHeaderBar">
                         <property name="title-widget">
-                          <object class="AdwWindowTitle">
-                          </object>
+                          <object class="AdwWindowTitle" id="utility_title"/>
                         </property>
                       </object>
                     </child>
+                    <property name="content">
+                      <object class="AdwViewStack" id="utility_stack">
+                        <property name="vexpand">true</property>
+                        <child>
+                          <object class="AdwViewStackPage">
+                            <property name="title" translatable="yes">Stack Traces</property>
+                            <property name="child">
+                              <object class="SysprofTraceablesUtility">
+                                <binding name="session">
+                                  <lookup name="session">SysprofWindow</lookup>
+                                </binding>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
                   </object>
                 </property>
               </object>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofTraceablesUtility" parent="GtkWidget">
+    <child>
+      <object class="GtkPaned">
+        <property name="orientation">vertical</property>
+      </object>
+    </child>
+  </template>
+</interface>

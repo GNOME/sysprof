@@ -313,6 +313,7 @@ sysprof_recording_fiber (gpointer user_data)
           switch (command)
             {
             case SYSPROF_RECORDING_COMMAND_STOP:
+              g_debug ("Recording received stop command");
               goto stop_recording;
 
             default:

@@ -62,6 +62,7 @@
                 <property name="sidebar-position">end</property>
                 <property name="show-sidebar" bind-source="show_right_sidebar" bind-property="active" bind-flags="bidirectional|sync-create"/>
                 <property name="max-sidebar-width">200</property>
+                <signal name="notify::sidebar" handler="main_view_notify_sidebar" swapped="true"/>
                 <property name="content">
                   <object class="AdwToolbarView">
                     <child type="top">

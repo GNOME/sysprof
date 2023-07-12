@@ -115,6 +115,18 @@ sysprof_window_set_document (SysprofWindow   *self,
 }
 
 static void
+main_view_notify_sidebar (SysprofWindow       *self,
+                          GParamSpec          *pspec,
+                          AdwOverlaySplitView *main_view)
+{
+  g_assert (SYSPROF_IS_WINDOW (self));
+  g_assert (ADW_IS_OVERLAY_SPLIT_VIEW (main_view));
+
+  if (adw_overlay_split_view_get_sidebar (main_view) == NULL)
+    adw_overlay_split_view_set_show_sidebar (main_view, FALSE);
+}
+
+static void
 sysprof_window_dispose (GObject *object)
 {
   SysprofWindow *self = (SysprofWindow *)object;
@@ -192,6 +204,8 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-window.ui");
+
+  gtk_widget_class_bind_template_callback (widget_class, main_view_notify_sidebar);
 
   gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
   gtk_widget_class_install_action (widget_class, "win.record-capture", NULL, sysprof_window_record_capture_action);

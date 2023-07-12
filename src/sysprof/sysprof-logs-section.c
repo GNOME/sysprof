@@ -28,9 +28,10 @@
 
 struct _SysprofLogsSection
 {
-  SysprofSection  parent_instance;
+  SysprofSection       parent_instance;
 
-  GtkColumnView  *column_view;
+  GtkColumnView       *column_view;
+  GtkColumnViewColumn *time_column;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofLogsSection, sysprof_logs_section, SYSPROF_TYPE_SECTION)
@@ -80,6 +81,7 @@ sysprof_logs_section_class_init (SysprofLogsSectionClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-logs-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofLogsSection, column_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofLogsSection, time_column);
   gtk_widget_class_bind_template_callback (widget_class, format_severity);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_LOG);
@@ -90,4 +92,8 @@ static void
 sysprof_logs_section_init (SysprofLogsSection *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_column_view_sort_by_column (self->column_view,
+                                  self->time_column,
+                                  GTK_SORT_ASCENDING);
 }

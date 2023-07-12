@@ -38,7 +38,7 @@
                     <property name="sorter">
                       <object class="GtkNumericSorter">
                         <property name="expression">
-                          <lookup name="time" type="SysprofDocumentLog"/>
+                          <lookup name="time-offset" type="SysprofDocumentLog"/>
                         </property>
                       </object>
                     </property>

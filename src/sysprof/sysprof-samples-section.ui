@@ -73,5 +73,28 @@
         </child>
       </object>
     </child>
+    <property name="utility">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Stack Trace</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <property name="content">
+          <object class="SysprofTraceablesUtility">
+            <binding name="session">
+              <lookup name="session">SysprofSamplesSection</lookup>
+            </binding>
+            <binding name="traceables">
+              <lookup name="utility-traceables">callgraph_view</lookup>
+            </binding>
+          </object>
+        </property>
+      </object>
+    </property>
   </template>
 </interface>

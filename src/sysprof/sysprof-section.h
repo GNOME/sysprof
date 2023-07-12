@@ -47,5 +47,8 @@ void            sysprof_section_set_icon_name (SysprofSection *self,
 const char     *sysprof_section_get_title     (SysprofSection *self);
 void            sysprof_section_set_title     (SysprofSection *self,
                                                const char     *title);
+GtkWidget      *sysprof_section_get_utility   (SysprofSection *self);
+void            sysprof_section_set_utility   (SysprofSection *self,
+                                               GtkWidget      *utility);
 
 G_END_DECLS

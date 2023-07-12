@@ -25,10 +25,11 @@
 
 typedef struct
 {
-  char *category;
-  char *icon_name;
-  char *title;
+  char           *category;
+  char           *icon_name;
+  char           *title;
   SysprofSession *session;
+  GtkWidget      *utility;
 } SysprofSectionPrivate;
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (SysprofSection, sysprof_section, GTK_TYPE_WIDGET)
@@ -39,6 +40,7 @@ enum {
   PROP_CATEGORY,
   PROP_ICON_NAME,
   PROP_TITLE,
+  PROP_UTILITY,
   N_PROPS
 };
 
@@ -54,6 +56,7 @@ sysprof_section_dispose (GObject *object)
   while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
     gtk_widget_unparent (child);
 
+  g_clear_object (&priv->utility);
   g_clear_object (&priv->session);
   g_clear_pointer (&priv->title, g_free);
   g_clear_pointer (&priv->category, g_free);
@@ -88,6 +91,10 @@ sysprof_section_get_property (GObject    *object,
       g_value_set_string (value, sysprof_section_get_title (self));
       break;
 
+    case PROP_UTILITY:
+      g_value_set_object (value, sysprof_section_get_utility (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -117,6 +124,10 @@ sysprof_section_set_property (GObject      *object,
 
     case PROP_TITLE:
       sysprof_section_set_title (self, g_value_get_string (value));
+      break;
+
+    case PROP_UTILITY:
+      sysprof_section_set_utility (self, g_value_get_object (value));
       break;
 
     default:
@@ -152,6 +163,11 @@ sysprof_section_class_init (SysprofSectionClass *klass)
   properties[PROP_ICON_NAME] =
     g_param_spec_string ("icon-name", NULL, NULL,
                          NULL,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_UTILITY] =
+    g_param_spec_object ("utility", NULL, NULL,
+                         GTK_TYPE_WIDGET,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
@@ -251,4 +267,30 @@ sysprof_section_set_icon_name (SysprofSection *self,
 
   if (g_set_str (&priv->icon_name, icon_name))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON_NAME]);
+}
+
+GtkWidget *
+sysprof_section_get_utility (SysprofSection *self)
+{
+  SysprofSectionPrivate *priv = sysprof_section_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_SECTION (self), NULL);
+
+  return priv->utility;
+}
+
+void
+sysprof_section_set_utility (SysprofSection *self,
+                             GtkWidget      *utility)
+{
+  SysprofSectionPrivate *priv = sysprof_section_get_instance_private (self);
+  g_autoptr(GtkWidget) hold = NULL;
+
+  g_return_if_fail (SYSPROF_IS_SECTION (self));
+  g_return_if_fail (!utility || GTK_IS_WIDGET (utility));
+
+  g_set_object (&hold, priv->utility);
+
+  if (g_set_object (&priv->utility, utility))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_UTILITY]);
 }

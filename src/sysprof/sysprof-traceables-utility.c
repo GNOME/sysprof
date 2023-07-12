@@ -42,6 +42,53 @@ G_DEFINE_FINAL_TYPE (SysprofTraceablesUtility, sysprof_traceables_utility, GTK_T
 
 static GParamSpec *properties[N_PROPS];
 
+static char *
+format_time_offset (gpointer cell)
+{
+  g_autoptr(SysprofDocumentFrame) frame = NULL;
+  int hours;
+  int minutes;
+  double time;
+
+  g_object_get (cell, "item", &frame, NULL);
+  g_assert (!frame || SYSPROF_IS_DOCUMENT_FRAME (frame));
+
+  if (!frame)
+    return NULL;
+
+  time = sysprof_document_frame_get_time_offset (frame) / (double)SYSPROF_NSEC_PER_SEC;
+
+  hours = time / (60 * 60);
+  time -= hours * (60 * 60);
+
+  minutes = time / 60;
+  time -= minutes * 60;
+
+  if (hours == 0 && minutes == 0)
+    return g_strdup_printf ("%.4lf", time);
+
+  if (hours == 0)
+    return g_strdup_printf ("%02d:%02.4lf", minutes, time);
+
+  return g_strdup_printf ("%02d:%02d:%02.4lf", hours, minutes, time);
+}
+
+static GListModel *
+symbolize_traceable (SysprofTraceablesUtility *self,
+                     SysprofDocumentTraceable *traceable)
+{
+  SysprofDocument *document;
+
+  g_assert (SYSPROF_IS_TRACEABLES_UTILITY (self));
+  g_assert (!traceable || SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
+
+  if (traceable == NULL || self->session == NULL ||
+      !(document = sysprof_session_get_document (self->session)))
+    return NULL;
+
+  return sysprof_document_list_symbols_in_traceable (document, traceable);
+}
+
 static void
 sysprof_traceables_utility_finalize (GObject *object)
 {
@@ -117,17 +164,19 @@ sysprof_traceables_utility_class_init (SysprofTraceablesUtilityClass *klass)
   properties[PROP_SESSION] =
     g_param_spec_object ("session", NULL, NULL,
                          SYSPROF_TYPE_SESSION,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_TRACEABLES] =
     g_param_spec_object ("traceables", NULL, NULL,
                          G_TYPE_LIST_MODEL,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-traceables-utility.ui");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
+  gtk_widget_class_bind_template_callback (widget_class, format_time_offset);
+  gtk_widget_class_bind_template_callback (widget_class, symbolize_traceable);
 }
 
 static void

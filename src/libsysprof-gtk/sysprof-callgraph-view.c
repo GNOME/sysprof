@@ -160,9 +160,6 @@ sysprof_callgraph_view_list_traceables_cb (GObject      *object,
   model = sysprof_callgraph_frame_list_traceables_finish (frame, result, &error);
 
   sysprof_callgraph_view_set_utility_traceables (self, model);
-
-  gtk_widget_set_visible (gtk_widget_get_parent (GTK_WIDGET (self->right_paned)),
-                          model && g_list_model_get_n_items (model));
 }
 
 static void
@@ -250,6 +247,7 @@ functions_selection_changed_cb (SysprofCallgraphView *self,
     }
 }
 
+#if 0
 static void
 traceable_activate_cb (SysprofCallgraphView *self,
                        guint                 position,
@@ -297,52 +295,7 @@ traceable_activate_cb (SysprofCallgraphView *self,
         }
     }
 }
-
-static char *
-format_time_offset (gpointer cell)
-{
-  g_autoptr(SysprofDocumentFrame) frame = NULL;
-  int hours;
-  int minutes;
-  double time;
-
-  g_object_get (cell, "item", &frame, NULL);
-  g_assert (!frame || SYSPROF_IS_DOCUMENT_FRAME (frame));
-
-  if (!frame)
-    return NULL;
-
-  time = sysprof_document_frame_get_time_offset (frame) / (double)SYSPROF_NSEC_PER_SEC;
-
-  hours = time / (60 * 60);
-  time -= hours * (60 * 60);
-
-  minutes = time / 60;
-  time -= minutes * 60;
-
-  if (hours == 0 && minutes == 0)
-    return g_strdup_printf ("%.4lf", time);
-
-  if (hours == 0)
-    return g_strdup_printf ("%02d:%02.4lf", minutes, time);
-
-  return g_strdup_printf ("%02d:%02d:%02.4lf", hours, minutes, time);
-}
-
-static GListModel *
-symbolize_traceable_cb (SysprofCallgraphView     *self,
-                        SysprofDocumentTraceable *traceable)
-{
-  SysprofDocument *document;
-
-  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
-  g_assert (!traceable || SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
-
-  if (traceable == NULL || !(document = sysprof_callgraph_view_get_document (self)))
-    return NULL;
-
-  return sysprof_document_list_symbols_in_traceable (document, traceable);
-}
+#endif
 
 static void
 sysprof_callgraph_view_dispose (GObject *object)
@@ -485,12 +438,6 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_name_sorter);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, paned);
-  gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, right_paned);
-  gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, traceable_column_view);
-  gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, traceables_column_view);
-  gtk_widget_class_bind_template_callback (widget_class, format_time_offset);
-  gtk_widget_class_bind_template_callback (widget_class, traceable_activate_cb);
-  gtk_widget_class_bind_template_callback (widget_class, symbolize_traceable_cb);
 
   klass->augment_size = GLIB_SIZEOF_VOID_P;
 
@@ -504,8 +451,6 @@ static void
 sysprof_callgraph_view_init (SysprofCallgraphView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-
-  gtk_widget_set_visible (gtk_widget_get_parent (GTK_WIDGET (self->right_paned)), FALSE);
 }
 
 static int

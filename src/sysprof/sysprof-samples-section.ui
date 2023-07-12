@@ -75,6 +75,9 @@
     </child>
     <property name="utility">
       <object class="AdwToolbarView">
+        <style>
+          <class name="utility"/>
+        </style>
         <child type="top">
           <object class="AdwHeaderBar">
             <property name="title-widget">

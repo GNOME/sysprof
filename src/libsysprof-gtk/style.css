@@ -99,3 +99,7 @@ tracks row {
 tracks row track info {
   padding: 1px 0 0 0;
 }
+
+.utility .view {
+  background: transparent;
+}

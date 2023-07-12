@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofCpuInfoDialog" parent="AdwWindow">
+    <property name="default-width">800</property>
+    <property name="default-height">600</property>
+    <property name="content">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">CPU Information</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <child>
+              <object class="GtkColumnView" id="column_view">
+                <property name="show-column-separators">true</property>
+                <property name="show-row-separators">true</property>
+                <style>
+                  <class name="data-table"/>
+                </style>
+                <property name="model">
+                  <object class="GtkMultiSelection">
+                    <property name="model">
+                      <object class="GtkSortListModel">
+                        <binding name="sorter">
+                          <lookup name="sorter">column_view</lookup>
+                        </binding>
+                        <binding name="model">
+                          <lookup name="cpu-info" type="SysprofDocument">
+                            <lookup name="document">SysprofCpuInfoDialog</lookup>
+                          </lookup>
+                        </binding>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+                <child>
+                  <object class="GtkColumnViewColumn" id="id_column">
+                    <property name="title" translatable="yes">ID</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="id" type="SysprofCpuInfo"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="min-chars">2</property>
+        <property name="xalign">1</property>
+        <binding name="text">
+          <lookup name="id" type="SysprofCpuInfo">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn" id="model_name_column">
+                    <property name="title" translatable="yes">Model Name</property>
+                    <property name="expand">true</property>
+                    <property name="sorter">
+                      <object class="GtkStringSorter">
+                        <property name="expression">
+                          <lookup name="model-name" type="SysprofCpuInfo"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="model-name" type="SysprofCpuInfo">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>
+

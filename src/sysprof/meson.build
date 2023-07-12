@@ -1,6 +1,7 @@
 sysprof_sources = [
   'main.c',
   'sysprof-application.c',
+  'sysprof-cpu-info-dialog.c',
   'sysprof-files-section.c',
   'sysprof-greeter.c',
   'sysprof-logs-section.c',

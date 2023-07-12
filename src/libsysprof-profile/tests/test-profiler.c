@@ -226,6 +226,8 @@ main (int   argc,
         sysprof_capture_writer_cat (writer, reader);
     }
 
+  sysprof_capture_writer_flush (writer);
+
   g_clear_pointer (&reader, sysprof_capture_reader_unref);
   g_clear_pointer (&writer, sysprof_capture_writer_unref);
 

@@ -374,6 +374,7 @@ static DexFuture *
 sysprof_sampler_record_fiber (gpointer user_data)
 {
   Record *record = user_data;
+  g_autoptr(GError) error = NULL;
 
   g_assert (record != NULL);
   g_assert (SYSPROF_IS_SAMPLER (record->sampler));
@@ -383,24 +384,28 @@ sysprof_sampler_record_fiber (gpointer user_data)
   for (guint i = 0; i < record->sampler->perf_event_streams->len; i++)
     {
       SysprofPerfEventStream *stream = g_ptr_array_index (record->sampler->perf_event_streams, i);
-      g_autoptr(GError) error = NULL;
 
       if (!sysprof_perf_event_stream_enable (stream, &error))
         g_debug ("%s", error->message);
-      g_debug ("Sampler %d enabled", i);
+      else
+        g_debug ("Sampler %d enabled", i);
+
+      g_clear_error (&error);
     }
 
-  dex_await (dex_ref (record->cancellable), NULL);
+  if (!dex_await (dex_ref (record->cancellable), &error))
+    g_debug ("Sampler shutting down for reason: %s", error->message);
 
   for (guint i = 0; i < record->sampler->perf_event_streams->len; i++)
     {
       SysprofPerfEventStream *stream = g_ptr_array_index (record->sampler->perf_event_streams, i);
-      g_autoptr(GError) error = NULL;
 
       if (!sysprof_perf_event_stream_disable (stream, &error))
         g_debug ("%s", error->message);
       else
         g_debug ("Sampler %d disabled", i);
+
+      g_clear_error (&error);
     }
 
   return dex_future_new_for_boolean (TRUE);

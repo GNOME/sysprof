@@ -74,7 +74,6 @@ if get_option('libsysprof') or get_option('agent')
   subdir('libsysprof')
 endif
 if get_option('gtk') and get_option('libsysprof')
-  subdir('libsysprof-ui')
   subdir('libsysprof-gtk')
 endif
 if get_option('gtk') and get_option('libsysprof')

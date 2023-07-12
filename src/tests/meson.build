@@ -112,37 +112,4 @@ if get_option('libsysprof')
     dependencies: [libsysprof_static_dep],
     include_directories: include_directories('..'),
   )
-
-  if get_option('gtk')
-    test_ui_deps = [
-      libsysprof_dep,
-      libsysprof_ui_dep,
-      dependency('gtk4', version: gtk_req_version),
-      dependency('pangoft2', required: false),
-    ]
-
-    test_model_filter = executable('test-model-filter', 'test-model-filter.c',
-            c_args: test_cflags,
-      dependencies: test_ui_deps,
-    )
-
-    test_process_model = executable('test-process-model', 'test-process-model.c',
-            c_args: test_cflags,
-      dependencies: test_ui_deps,
-    )
-
-    test_zoom = executable('test-zoom',
-      ['test-zoom.c', '../libsysprof-ui/sysprof-zoom-manager.c'],
-            c_args: test_cflags,
-      dependencies: test_ui_deps,
-    )
-
-    test_capture_view = executable('test-capture-view', 'test-capture-view.c',
-            c_args: test_cflags,
-      dependencies: test_ui_deps,
-    )
-
-    test('test-model-filter', test_model_filter, env: test_env)
-    test('test-zoom', test_zoom, env: test_env)
-  endif
 endif

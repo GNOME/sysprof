@@ -144,29 +144,6 @@ callers_selection_changed_cb (SysprofCallgraphView *self,
 }
 
 static void
-traceables_selection_changed_cb (SysprofCallgraphView *self,
-                                 guint                 position,
-                                 guint                 n_items,
-                                 GtkSingleSelection   *single)
-{
-  GObject *object;
-
-  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
-  g_assert (GTK_IS_SINGLE_SELECTION (single));
-
-  gtk_column_view_set_model (self->traceable_column_view, NULL);
-
-  if ((object = gtk_single_selection_get_selected_item (single)))
-    {
-      SysprofDocumentTraceable *traceable = SYSPROF_DOCUMENT_TRACEABLE (object);
-      g_autoptr(GListModel) model = sysprof_document_list_symbols_in_traceable (self->document, traceable);
-      g_autoptr(GtkNoSelection) no = gtk_no_selection_new (g_object_ref (model));
-
-      gtk_column_view_set_model (self->traceable_column_view, GTK_SELECTION_MODEL (no));
-    }
-}
-
-static void
 sysprof_callgraph_view_list_traceables_cb (GObject      *object,
                                            GAsyncResult *result,
                                            gpointer      user_data)
@@ -180,18 +157,7 @@ sysprof_callgraph_view_list_traceables_cb (GObject      *object,
   g_assert (G_IS_ASYNC_RESULT (result));
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
 
-  if ((model = sysprof_callgraph_frame_list_traceables_finish (frame, result, &error)))
-    {
-      g_autoptr(GtkSingleSelection) single = gtk_single_selection_new (g_object_ref (model));
-
-      g_signal_connect_object (single,
-                               "selection-changed",
-                               G_CALLBACK (traceables_selection_changed_cb),
-                               self,
-                               G_CONNECT_SWAPPED);
-      gtk_column_view_set_model (self->traceables_column_view, GTK_SELECTION_MODEL (single));
-      traceables_selection_changed_cb (self, 0, 0, single);
-    }
+  model = sysprof_callgraph_frame_list_traceables_finish (frame, result, &error);
 
   sysprof_callgraph_view_set_utility_traceables (self, model);
 
@@ -363,6 +329,21 @@ format_time_offset (gpointer cell)
   return g_strdup_printf ("%02d:%02d:%02.4lf", hours, minutes, time);
 }
 
+static GListModel *
+symbolize_traceable_cb (SysprofCallgraphView     *self,
+                        SysprofDocumentTraceable *traceable)
+{
+  SysprofDocument *document;
+
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+  g_assert (!traceable || SYSPROF_IS_DOCUMENT_TRACEABLE (traceable));
+
+  if (traceable == NULL || !(document = sysprof_callgraph_view_get_document (self)))
+    return NULL;
+
+  return sysprof_document_list_symbols_in_traceable (document, traceable);
+}
+
 static void
 sysprof_callgraph_view_dispose (GObject *object)
 {
@@ -509,6 +490,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, traceables_column_view);
   gtk_widget_class_bind_template_callback (widget_class, format_time_offset);
   gtk_widget_class_bind_template_callback (widget_class, traceable_activate_cb);
+  gtk_widget_class_bind_template_callback (widget_class, symbolize_traceable_cb);
 
   klass->augment_size = GLIB_SIZEOF_VOID_P;
 
@@ -650,11 +632,11 @@ sysprof_callgraph_view_queue_reload (SysprofCallgraphView *self)
 {
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
 
+  sysprof_callgraph_view_set_utility_traceables (self, NULL);
+
   gtk_column_view_set_model (self->descendants_column_view, NULL);
   gtk_column_view_set_model (self->functions_column_view, NULL);
   gtk_column_view_set_model (self->callers_column_view, NULL);
-  gtk_column_view_set_model (self->traceables_column_view, NULL);
-  gtk_column_view_set_model (self->traceable_column_view, NULL);
 
   g_clear_handle_id (&self->reload_source, g_source_remove);
   g_cancellable_cancel (self->cancellable);

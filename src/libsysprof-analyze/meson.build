@@ -3,6 +3,7 @@ libsysprof_analyze_public_sources = [
   'sysprof-callgraph.c',
   'sysprof-callgraph-frame.c',
   'sysprof-callgraph-symbol.c',
+  'sysprof-cpu-info.c',
   'sysprof-document.c',
   'sysprof-document-allocation.c',
   'sysprof-document-counter.c',
@@ -37,10 +38,11 @@ libsysprof_analyze_public_sources = [
 
 libsysprof_analyze_public_headers = [
   'sysprof-analyze.h',
+  'sysprof-bundled-symbolizer.h',
   'sysprof-callgraph.h',
   'sysprof-callgraph-frame.h',
   'sysprof-callgraph-symbol.h',
-  'sysprof-bundled-symbolizer.h',
+  'sysprof-cpu-info.h',
   'sysprof-document.h',
   'sysprof-document-allocation.h',
   'sysprof-document-counter.h',

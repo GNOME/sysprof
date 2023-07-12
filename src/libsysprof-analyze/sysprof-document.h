@@ -47,6 +47,8 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofDocumentFile   *sysprof_document_lookup_file               (SysprofDocument           *self,
                                                                    const char                *path);
 SYSPROF_AVAILABLE_IN_ALL
+GListModel            *sysprof_document_list_cpu_info             (SysprofDocument           *self);
+SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_list_files                (SysprofDocument           *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel            *sysprof_document_list_traceables           (SysprofDocument           *self);

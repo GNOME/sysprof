@@ -28,6 +28,7 @@
 #include "sysprof-document-private.h"
 
 #include "sysprof-callgraph-private.h"
+#include "sysprof-cpu-info-private.h"
 #include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-counter-private.h"
 #include "sysprof-document-ctrdef.h"
@@ -64,6 +65,8 @@ struct _SysprofDocument
   GArray                   *frames;
   GMappedFile              *mapped_file;
   const guint8             *base;
+
+  GListStore               *cpu_info;
 
   GListStore               *counters;
   GHashTable               *counter_id_to_values;
@@ -109,6 +112,7 @@ enum {
   PROP_0,
   PROP_ALLOCATIONS,
   PROP_COUNTERS,
+  PROP_CPU_INFO,
   PROP_FILES,
   PROP_LOGS,
   PROP_METADATA,
@@ -337,6 +341,8 @@ sysprof_document_finalize (GObject *object)
   g_clear_object (&self->counters);
   g_clear_pointer (&self->counter_id_to_values, g_hash_table_unref);
 
+  g_clear_object (&self->cpu_info);
+
   g_clear_object (&self->mount_namespace);
   g_clear_object (&self->symbols);
 
@@ -361,6 +367,10 @@ sysprof_document_get_property (GObject    *object,
 
     case PROP_COUNTERS:
       g_value_take_object (value, sysprof_document_list_counters (self));
+      break;
+
+    case PROP_CPU_INFO:
+      g_value_take_object (value, sysprof_document_list_cpu_info (self));
       break;
 
     case PROP_FILES:
@@ -414,6 +424,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties [PROP_CPU_INFO] =
+    g_param_spec_object ("cpu-info", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_FILES] =
     g_param_spec_object ("files", NULL, NULL,
                          G_TYPE_LIST_MODEL,
@@ -458,6 +473,8 @@ sysprof_document_init (SysprofDocument *self)
   self->strings = sysprof_strings_new ();
 
   self->frames = g_array_new (FALSE, FALSE, sizeof (SysprofDocumentFramePointer));
+
+  self->cpu_info = g_list_store_new (SYSPROF_TYPE_CPU_INFO);
 
   self->counters = g_list_store_new (SYSPROF_TYPE_DOCUMENT_COUNTER);
   self->counter_id_to_values = g_hash_table_new_full (NULL, NULL, NULL,
@@ -981,6 +998,74 @@ sysprof_document_update_process_exit_times (SysprofDocument *self)
 }
 
 static void
+sysprof_document_load_cpu (SysprofDocument *self)
+{
+  const gsize model_len = strlen ("Model\t\t: ");
+  g_autoptr(SysprofDocumentFile) file = NULL;
+  g_autoptr(GBytes) bytes = NULL;
+  g_autoptr(SysprofCpuInfo) cpu_info = NULL;
+  g_autofree char *model = NULL;
+  const char *str;
+  const char *line;
+  LineReader reader;
+  gsize line_len;
+  gsize len;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  if (!(file = sysprof_document_lookup_file (self, "/proc/cpuinfo")) ||
+      !(bytes = sysprof_document_file_dup_bytes (file)))
+    return;
+
+  str = (const char *)g_bytes_get_data (bytes, &len);
+
+  line_reader_init (&reader, (char *)str, len);
+  while ((line = line_reader_next (&reader, &line_len)))
+    {
+      if (g_str_has_prefix (line, "processor\t: "))
+        {
+          gint64 id = g_ascii_strtoll (line+strlen("processor\t: "), NULL, 10);
+
+          if (cpu_info != NULL)
+            g_list_store_append (self->cpu_info, cpu_info);
+
+          g_clear_object (&cpu_info);
+
+          cpu_info = g_object_new (SYSPROF_TYPE_CPU_INFO,
+                                   "id", id,
+                                   NULL);
+        }
+
+      if (g_str_has_prefix (line, "model name\t: "))
+        {
+          const gsize model_name_len = strlen ("model name\t: ");
+          g_autofree char *model_name = g_strndup (line+model_name_len, line_len-model_name_len);
+
+          if (cpu_info != NULL)
+            _sysprof_cpu_info_set_model_name (cpu_info, model_name);
+        }
+
+      if (!model && g_str_has_prefix (line, "Model\t\t: "))
+        model = g_strndup (line+model_len, line_len-model_len);
+    }
+
+  if (cpu_info != NULL)
+    g_list_store_append (self->cpu_info, cpu_info);
+
+  if (model != NULL)
+    {
+      guint n_items = g_list_model_get_n_items (G_LIST_MODEL (self->cpu_info));
+
+      for (guint i = 0; i < n_items; i++)
+        {
+          g_autoptr(SysprofCpuInfo) item = g_list_model_get_item (G_LIST_MODEL (self->cpu_info), i);
+
+          _sysprof_cpu_info_set_model_name (item, model);
+        }
+    }
+}
+
+static void
 sysprof_document_load_worker (GTask        *task,
                               gpointer      source_object,
                               gpointer      task_data,
@@ -1222,6 +1307,8 @@ sysprof_document_load_worker (GTask        *task,
 
   if (guessed_end_nsec > self->time_span.begin_nsec)
     self->time_span.end_nsec = guessed_end_nsec;
+
+  sysprof_document_load_cpu (self);
 
   load_progress (load, .6, _("Discovering file system mounts"));
   sysprof_document_load_mounts (self);
@@ -2185,4 +2272,20 @@ _sysprof_document_set_title (SysprofDocument *self,
 
   if (g_set_str (&self->title, title))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TITLE]);
+}
+
+/**
+ * sysprof_document_list_cpu_info:
+ * @self: a #SysprofDocument
+ *
+ * Gets the CPU that were discovered from the capture.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofCpuInfo
+ */
+GListModel *
+sysprof_document_list_cpu_info (SysprofDocument *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+
+  return g_object_ref (G_LIST_MODEL (self->cpu_info));
 }

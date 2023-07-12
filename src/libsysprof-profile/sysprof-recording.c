@@ -95,13 +95,16 @@ _sysprof_recording_spawn (SysprofSpawnable *spawnable)
 {
   g_autoptr(GSubprocess) subprocess = NULL;
   g_autoptr(GError) error = NULL;
+  DexFuture *ret;
 
   g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
 
   if (!(subprocess = sysprof_spawnable_spawn (spawnable, &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
-  return dex_subprocess_wait_check (subprocess);
+  ret = dex_subprocess_wait_check (subprocess);
+  dex_async_pair_set_cancel_on_discard (DEX_ASYNC_PAIR (ret), FALSE);
+  return ret;
 }
 
 static inline void

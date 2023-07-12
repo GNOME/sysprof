@@ -61,6 +61,7 @@ cxx = meson.get_compiler('cpp')
 
 glib_dep = dependency('glib-2.0', version: glib_req_version, required: need_glib)
 gtk_dep = dependency('gtk4', version: gtk_req_version, required: need_gtk)
+libsystemd_dep = dependency('libsystemd', required: false)
 
 config_h = configuration_data()
 config_h.set_quoted('SYMBOLIC_VERSION', symbolic_version)
@@ -104,6 +105,7 @@ config_h.set('LOCALEDIR', 'PACKAGE_LOCALE_DIR')
 config_h.set10('ENABLE_NLS', true)
 config_h.set_quoted('GETTEXT_PACKAGE', 'sysprof')
 config_h.set_quoted('PACKAGE_LOCALE_DIR', join_paths(get_option('prefix'), get_option('datadir'), 'locale'))
+config_h.set10('HAVE_LIBSYSTEMD', libsystemd_dep.found())
 
 polkit_agent_dep = dependency('polkit-agent-1', required: false)
 config_h.set10('HAVE_POLKIT_AGENT', polkit_agent_dep.found())

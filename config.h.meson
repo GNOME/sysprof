@@ -16,6 +16,8 @@
 
 #mesondefine HAVE_EXECINFO_H
 
+#mesondefine HAVE_LIBSYSTEMD
+
 #mesondefine HAVE_PERF_CLOCKID
 
 #mesondefine HAVE_POLKIT

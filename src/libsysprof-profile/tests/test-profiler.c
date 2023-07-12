@@ -178,6 +178,7 @@ main (int   argc,
   sysprof_profiler_add_instrument (profiler, sysprof_energy_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_memory_usage_new ());
   sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
+  sysprof_profiler_add_instrument (profiler, sysprof_system_logs_new ());
 
   if (power_profile)
     sysprof_profiler_add_instrument (profiler, sysprof_power_profile_new (power_profile));

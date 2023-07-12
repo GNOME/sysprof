@@ -1,4 +1,4 @@
-/* sysprof-profile.h
+/* sysprof-journald-source.h
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -20,28 +20,17 @@
 
 #pragma once
 
-#include <gio/gio.h>
+#include <glib-object.h>
+
+#include <systemd/sd-journal.h>
 
 G_BEGIN_DECLS
 
-#define SYSPROF_PROFILE_INSIDE
-# include "sysprof-battery-charge.h"
-# include "sysprof-cpu-usage.h"
-# include "sysprof-diagnostic.h"
-# include "sysprof-disk-usage.h"
-# include "sysprof-energy-usage.h"
-# include "sysprof-instrument.h"
-# include "sysprof-malloc-tracing.h"
-# include "sysprof-memory-usage.h"
-# include "sysprof-network-usage.h"
-# include "sysprof-power-profile.h"
-# include "sysprof-profiler.h"
-# include "sysprof-proxied-instrument.h"
-# include "sysprof-recording.h"
-# include "sysprof-sampler.h"
-# include "sysprof-spawnable.h"
-# include "sysprof-system-logs.h"
-# include "sysprof-tracer.h"
-#undef SYSPROF_PROFILE_INSIDE
+typedef gboolean (*SysprofJournaldSourceFunc) (gpointer    user_data,
+                                               sd_journal *journal);
+
+GSource *sysprof_journald_source_new (SysprofJournaldSourceFunc func,
+                                      gpointer                  func_data,
+                                      GDestroyNotify            func_data_destroy);
 
 G_END_DECLS

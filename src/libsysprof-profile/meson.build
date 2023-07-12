@@ -14,6 +14,7 @@ libsysprof_profile_public_sources = [
   'sysprof-recording.c',
   'sysprof-sampler.c',
   'sysprof-spawnable.c',
+  'sysprof-system-logs.c',
   'sysprof-tracer.c',
 ]
 
@@ -22,6 +23,7 @@ libsysprof_profile_private_sources = [
   'sysprof-controlfd-instrument.c',
   'sysprof-maps-parser.c',
   'sysprof-perf-event-stream.c',
+  'sysprof-journald-source.c',
   'sysprof-podman.c',
   'sysprof-polkit.c',
 ]
@@ -44,6 +46,7 @@ libsysprof_profile_public_headers = [
   'sysprof-recording.h',
   'sysprof-sampler.h',
   'sysprof-spawnable.h',
+  'sysprof-system-logs.h',
   'sysprof-tracer.h',
 ]
 
@@ -61,6 +64,7 @@ libsysprof_profile_deps = [
   dependency('json-glib-1.0'),
   dependency('libdex-1', version: dex_req_version),
   dependency('polkit-gobject-1', version: polkit_req_version),
+  libsystemd_dep,
 
   liblinereader_static_dep,
   libsysprof_capture_dep,

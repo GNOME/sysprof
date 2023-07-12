@@ -223,6 +223,24 @@
                         </child>
                       </object>
                     </child>
+                    <child>
+                      <object class="AdwPreferencesGroup">
+                        <property name="title" translatable="yes">System</property>
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="activatable-widget">record_system_logs</property>
+                            <property name="title" translatable="yes">System Logs</property>
+                            <property name="subtitle" translatable="yes">Watch the system log for new messages and record them</property>
+                            <child type="suffix">
+                              <object class="GtkSwitch" id="record_system_logs">
+                                <property name="active">true</property>
+                                <property name="valign">center</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </property>
               </object>

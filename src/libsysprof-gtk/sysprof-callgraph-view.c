@@ -34,6 +34,7 @@ enum {
   PROP_HIDE_SYSTEM_LIBRARIES,
   PROP_INCLUDE_THREADS,
   PROP_TRACEABLES,
+  PROP_UTILITY_TRACEABLES,
   N_PROPS
 };
 
@@ -49,6 +50,17 @@ G_DEFINE_ABSTRACT_TYPE_WITH_CODE (SysprofCallgraphView, sysprof_callgraph_view, 
                                   G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
 
 static GParamSpec *properties [N_PROPS];
+
+static void
+sysprof_callgraph_view_set_utility_traceables (SysprofCallgraphView *self,
+                                               GListModel           *model)
+{
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+  g_assert (!model || G_IS_LIST_MODEL (model));
+
+  if (g_set_object (&self->utility_traceables, model))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_UTILITY_TRACEABLES]);
+}
 
 static void
 sysprof_callgraph_view_set_descendants (SysprofCallgraphView *self,
@@ -181,6 +193,8 @@ sysprof_callgraph_view_list_traceables_cb (GObject      *object,
       traceables_selection_changed_cb (self, 0, 0, single);
     }
 
+  sysprof_callgraph_view_set_utility_traceables (self, model);
+
   gtk_widget_set_visible (gtk_widget_get_parent (GTK_WIDGET (self->right_paned)),
                           model && g_list_model_get_n_items (model));
 }
@@ -197,7 +211,7 @@ descendants_selection_changed_cb (SysprofCallgraphView *self,
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
   g_assert (GTK_IS_SINGLE_SELECTION (single));
 
-  gtk_column_view_set_model (self->traceables_column_view, NULL);
+  sysprof_callgraph_view_set_utility_traceables (self, NULL);
 
   if ((object = gtk_single_selection_get_selected_item (single)) &&
       GTK_IS_TREE_LIST_ROW (object) &&
@@ -364,6 +378,7 @@ sysprof_callgraph_view_dispose (GObject *object)
   g_clear_object (&self->callgraph);
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
+  g_clear_object (&self->utility_traceables);
 
   G_OBJECT_CLASS (sysprof_callgraph_view_parent_class)->dispose (object);
 }
@@ -396,6 +411,10 @@ sysprof_callgraph_view_get_property (GObject    *object,
 
     case PROP_TRACEABLES:
       g_value_set_object (value, sysprof_callgraph_view_get_traceables (self));
+      break;
+
+    case PROP_UTILITY_TRACEABLES:
+      g_value_set_object (value, self->utility_traceables);
       break;
 
     default:
@@ -466,6 +485,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   properties[PROP_TRACEABLES] =
     g_param_spec_object ("traceables", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_UTILITY_TRACEABLES] =
+    g_param_spec_object ("utility-traceables", NULL, NULL,
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 

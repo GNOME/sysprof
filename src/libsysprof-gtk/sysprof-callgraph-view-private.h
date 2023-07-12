@@ -35,6 +35,7 @@ struct _SysprofCallgraphView
   SysprofDocument *document;
   SysprofCallgraph *callgraph;
   GListModel *traceables;
+  GListModel *utility_traceables;
 
   GtkColumnView *callers_column_view;
   GtkColumnView *descendants_column_view;

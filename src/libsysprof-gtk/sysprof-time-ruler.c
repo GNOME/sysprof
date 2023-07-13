@@ -47,10 +47,12 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
 {
   SysprofTimeRuler *self = (SysprofTimeRuler *)widget;
   const SysprofTimeSpan *visible_time;
+  const SysprofTimeSpan *document_time;
   PangoLayout *layout;
   gint64 tick_interval;
   gint64 time_range;
-  guint n_groups;
+  gint64 rem;
+  int last_x = G_MININT;
   int width;
   int height;
   GdkRGBA color;
@@ -75,45 +77,72 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
   }
   G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 
+  document_time = sysprof_session_get_document_time (self->session);
   visible_time = sysprof_session_get_visible_time (self->session);
-  n_groups = MAX (width / GROUP_SIZE, 1);
-  time_range = visible_time->end_nsec - visible_time->begin_nsec;
-  tick_interval = time_range / n_groups;
+  time_range = sysprof_time_span_duration (*visible_time);
 
   layout = gtk_widget_create_pango_layout (widget, NULL);
 
-  for (gint64 t = visible_time->begin_nsec - (visible_time->begin_nsec % tick_interval);
+  if (time_range > SYSPROF_NSEC_PER_SEC*60)
+    tick_interval = SYSPROF_NSEC_PER_SEC*10;
+  else if (time_range > SYSPROF_NSEC_PER_SEC*30)
+    tick_interval = SYSPROF_NSEC_PER_SEC*5;
+  else if (time_range > SYSPROF_NSEC_PER_SEC*15)
+    tick_interval = SYSPROF_NSEC_PER_SEC*2.5;
+  else if (time_range > SYSPROF_NSEC_PER_SEC*5)
+    tick_interval = SYSPROF_NSEC_PER_SEC;
+  else if (time_range > SYSPROF_NSEC_PER_SEC*2.5)
+    tick_interval = SYSPROF_NSEC_PER_SEC*.5;
+  else if (time_range > SYSPROF_NSEC_PER_SEC)
+    tick_interval = SYSPROF_NSEC_PER_SEC*.25;
+  else if (time_range > SYSPROF_NSEC_PER_SEC*.5)
+    tick_interval = SYSPROF_NSEC_PER_SEC*.1;
+  else if (time_range > SYSPROF_NSEC_PER_SEC*.25)
+    tick_interval = SYSPROF_NSEC_PER_SEC*.05;
+  else if (time_range > SYSPROF_NSEC_PER_SEC*.1)
+    tick_interval = SYSPROF_NSEC_PER_SEC*.02;
+  else if (time_range > SYSPROF_NSEC_PER_SEC*.05)
+    tick_interval = SYSPROF_NSEC_PER_SEC*.01;
+  else
+    tick_interval = SYSPROF_NSEC_PER_SEC / 10000;
+
+  rem = (visible_time->begin_nsec - document_time->begin_nsec) % tick_interval;
+
+  for (gint64 t = visible_time->begin_nsec + rem;
        t < visible_time->end_nsec;
        t += tick_interval)
     {
       gint64 o = t - visible_time->begin_nsec;
+      gint64 r = t - document_time->begin_nsec;
       double x = (o / (double)time_range) * width;
       int pw, ph;
       char str[32];
 
-      if (x < 0)
-        continue;
+      if (x >= 0 && x >= last_x)
+        {
+          if (r == 0)
+            g_snprintf (str, sizeof str, "%.3lfs", .0);
+          else if (r < 1000000)
+            g_snprintf (str, sizeof str, "%.3lfμs", r/1000.);
+          else if (r < SYSPROF_NSEC_PER_SEC)
+            g_snprintf (str, sizeof str, "%.3lfms", r/1000000.);
+          else
+            g_snprintf (str, sizeof str, "%.3lfs", r/(double)SYSPROF_NSEC_PER_SEC);
 
-      if (o == 0)
-        g_snprintf (str, sizeof str, "%.3lfs", .0);
-      else if (o < 1000000)
-        g_snprintf (str, sizeof str, "%.3lfμs", o/1000.);
-      else if (o < SYSPROF_NSEC_PER_SEC)
-        g_snprintf (str, sizeof str, "%.3lfms", o/1000000.);
-      else
-        g_snprintf (str, sizeof str, "%.3lfs", o/(double)SYSPROF_NSEC_PER_SEC);
+          pango_layout_set_text (layout, str, -1);
+          pango_layout_get_pixel_size (layout, &pw, &ph);
 
-      pango_layout_set_text (layout, str, -1);
-      pango_layout_get_pixel_size (layout, &pw, &ph);
-
-      gtk_snapshot_save (snapshot);
-      gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (x-pw-6, (height-ph)/2));
-      gtk_snapshot_append_layout (snapshot, layout, &color);
-      gtk_snapshot_restore (snapshot);
+          gtk_snapshot_save (snapshot);
+          gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (x-pw-6, (height-ph)/2));
+          gtk_snapshot_append_layout (snapshot, layout, &color);
+          gtk_snapshot_restore (snapshot);
+        }
 
       gtk_snapshot_append_color (snapshot,
                                  &line_color,
                                  &GRAPHENE_RECT_INIT (x, 0, 1, height));
+
+      last_x = x + pw;
     }
 
   g_object_unref (layout);
@@ -285,9 +314,11 @@ sysprof_time_ruler_get_label_at_point (SysprofTimeRuler *self,
                                        double            x)
 {
   char str[32];
+  const SysprofTimeSpan *document_time;
   const SysprofTimeSpan *visible;
   gint64 duration;
   gint64 o;
+  int width;
 
   g_return_val_if_fail (SYSPROF_IS_TIME_RULER (self), NULL);
 
@@ -300,11 +331,13 @@ sysprof_time_ruler_get_label_at_point (SysprofTimeRuler *self,
   if (self->session == NULL)
     return NULL;
 
-  if (!(visible = sysprof_session_get_visible_time (self->session)) ||
+  if (!(document_time = sysprof_session_get_document_time (self->session)) ||
+      !(visible = sysprof_session_get_visible_time (self->session)) ||
       !(duration = sysprof_time_span_duration (*visible)))
     return NULL;
 
-  o = (x / (double)gtk_widget_get_width (GTK_WIDGET (self))) * duration;
+  width = gtk_widget_get_width (GTK_WIDGET (self));
+  o = visible->begin_nsec + (x / (double)width * duration) - document_time->begin_nsec;
 
   if (o == 0)
     g_snprintf (str, sizeof str, "%.3lfs", .0);

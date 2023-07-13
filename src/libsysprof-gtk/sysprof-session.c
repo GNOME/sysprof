@@ -506,5 +506,23 @@ _sysprof_session_describe (SysprofSession *self,
       return g_string_free (str, FALSE);
     }
 
+  if (SYSPROF_IS_DOCUMENT_LOG (item))
+    {
+      SysprofDocumentLog *log = item;
+      const SysprofTimeSpan *begin = sysprof_document_get_time_span (self->document);
+      GString *str = g_string_new (NULL);
+      const char *domain = sysprof_document_log_get_domain (log);
+      const char *message = sysprof_document_log_get_message (log);
+      gint64 t = sysprof_document_frame_get_time (item);
+      SysprofTimeSpan span = { t, t };
+
+      span = sysprof_time_span_relative_to (span, begin->begin_nsec);
+
+      append_time_string (str, &span);
+      g_string_append_printf (str, ": %s: %s", domain, message);
+
+      return g_string_free (str, FALSE);
+    }
+
   return NULL;
 }

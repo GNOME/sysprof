@@ -357,9 +357,9 @@ sysprof_time_scrubber_measure (GtkWidget      *widget,
 
 static void
 sysprof_time_scrubber_size_allocate (GtkWidget *widget,
-                                   int        width,
-                                   int        height,
-                                   int        baseline)
+                                     int        width,
+                                     int        height,
+                                     int        baseline)
 {
   SysprofTimeScrubber *self = (SysprofTimeScrubber *)widget;
   graphene_rect_t area;
@@ -420,13 +420,13 @@ sysprof_time_scrubber_size_allocate (GtkWidget *widget,
       if (self->motion_x + min_req.width < gtk_widget_get_width (GTK_WIDGET (self)))
         gtk_widget_size_allocate (GTK_WIDGET (self->informative),
                                   &(GtkAllocation) {
-                                    self->motion_x, self->motion_y,
+                                    self->motion_x, height - min_req.height,
                                     min_req.width, min_req.height
                                   }, -1);
       else
         gtk_widget_size_allocate (GTK_WIDGET (self->informative),
                                   &(GtkAllocation) {
-                                    self->motion_x - min_req.width, self->motion_y,
+                                    self->motion_x - min_req.width, height - min_req.height,
                                     min_req.width, min_req.height
                                   }, -1);
     }

@@ -6,6 +6,58 @@
       <object class="GtkBox">
         <property name="orientation">vertical</property>
         <child>
+          <object class="SysprofTimeScrubber" id="scrubber">
+            <binding name="session">
+              <lookup name="session">SysprofLogsSection</lookup>
+            </binding>
+            <child type="chart">
+              <object class="SysprofChart">
+                <property name="height-request">32</property>
+                <child>
+                  <object class="SysprofTimeSpanLayer">
+                    <property name="title">Logs</property>
+                    <binding name="axis">
+                      <lookup name="visible-time-axis" type="SysprofSession">
+                        <lookup name="session">SysprofLogsSection</lookup>
+                      </lookup>
+                    </binding>
+                    <property name="series">
+                      <object class="SysprofTimeSeries">
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="visible-time" type="SysprofSession">
+                                <lookup name="session">SysprofLogsSection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="logs" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofLogsSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                        <property name="begin-time-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                        <property name="end-time-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+          </object>
+        </child>
+        <child>
           <object class="GtkScrolledWindow">
             <property name="vexpand">true</property>
             <child>

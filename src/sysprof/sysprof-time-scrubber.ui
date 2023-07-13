@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofTimeScrubber" parent="GtkWidget">
+    <child>
+      <object class="GtkBox" id="main">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="SysprofTimeRuler" id="ruler">
+            <binding name="session">
+              <lookup name="session">SysprofTimeScrubber</lookup>
+            </binding>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="vbox">
+            <property name="orientation">vertical</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

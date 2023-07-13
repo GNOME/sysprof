@@ -24,6 +24,7 @@
 
 #include "sysprof-samples-section.h"
 #include "sysprof-traceables-utility.h"
+#include "sysprof-time-scrubber.h"
 
 struct _SysprofSamplesSection
 {
@@ -58,6 +59,7 @@ sysprof_samples_section_class_init (SysprofSamplesSectionClass *klass)
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_XY_SERIES);
   g_type_ensure (SYSPROF_TYPE_COLUMN_LAYER);
+  g_type_ensure (SYSPROF_TYPE_TIME_SCRUBBER);
   g_type_ensure (SYSPROF_TYPE_TRACEABLES_UTILITY);
   g_type_ensure (SYSPROF_TYPE_VALUE_AXIS);
   g_type_ensure (SYSPROF_TYPE_WEIGHTED_CALLGRAPH_VIEW);

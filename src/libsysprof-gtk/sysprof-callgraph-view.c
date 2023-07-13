@@ -38,13 +38,14 @@ enum {
   N_PROPS
 };
 
-static void buildable_iface_init (GtkBuildableIface *iface);
-static GListModel *sysprof_callgraph_view_create_model_func (gpointer item,
-                                                             gpointer user_data);
-static void descendants_selection_changed_cb (SysprofCallgraphView *self,
-                                              guint                 position,
-                                              guint                 n_items,
-                                              GtkSingleSelection   *single);
+static void        buildable_iface_init                     (GtkBuildableIface    *iface);
+static GListModel *sysprof_callgraph_view_create_model_func (gpointer              item,
+                                                             gpointer              user_data);
+static void        descendants_selection_changed_cb         (SysprofCallgraphView *self,
+                                                             guint                 position,
+                                                             guint                 n_items,
+                                                             GtkSingleSelection   *single);
+static void        sysprof_callgraph_view_queue_reload      (SysprofCallgraphView *self);
 
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (SysprofCallgraphView, sysprof_callgraph_view, GTK_TYPE_WIDGET,
                                   G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE, buildable_iface_init))
@@ -302,6 +303,14 @@ sysprof_callgraph_view_dispose (GObject *object)
 {
   SysprofCallgraphView *self = (SysprofCallgraphView *)object;
 
+  if (self->traceables_signals)
+    {
+      g_signal_group_set_target (self->traceables_signals, NULL);
+      g_clear_object (&self->traceables_signals);
+    }
+
+  gtk_widget_dispose_template (GTK_WIDGET (self), SYSPROF_TYPE_CALLGRAPH_VIEW);
+
   g_clear_handle_id (&self->reload_source, g_source_remove);
 
   g_clear_pointer (&self->paned, gtk_widget_unparent);
@@ -450,6 +459,18 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 static void
 sysprof_callgraph_view_init (SysprofCallgraphView *self)
 {
+  self->traceables_signals = g_signal_group_new (G_TYPE_LIST_MODEL);
+  g_signal_connect_object (self->traceables_signals,
+                           "bind",
+                           G_CALLBACK (sysprof_callgraph_view_queue_reload),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_group_connect_object (self->traceables_signals,
+                                 "items-changed",
+                                 G_CALLBACK (sysprof_callgraph_view_queue_reload),
+                                 self,
+                                 G_CONNECT_SWAPPED);
+
   gtk_widget_init_template (GTK_WIDGET (self));
 }
 
@@ -650,7 +671,7 @@ sysprof_callgraph_view_set_traceables (SysprofCallgraphView *self,
 
   if (g_set_object (&self->traceables, traceables))
     {
-      sysprof_callgraph_view_queue_reload (self);
+      g_signal_group_set_target (self->traceables_signals, traceables);
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TRACEABLES]);
     }
 }

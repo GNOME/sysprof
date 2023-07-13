@@ -34,6 +34,7 @@ struct _SysprofCallgraphView
 
   SysprofDocument *document;
   SysprofCallgraph *callgraph;
+  GSignalGroup *traceables_signals;
   GListModel *traceables;
   GListModel *utility_traceables;
 

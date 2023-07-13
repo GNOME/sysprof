@@ -281,9 +281,8 @@ binary_search_gte (GListModel *model,
   last = g_list_model_get_item (model, hi);
 
   if (value > sysprof_document_frame_get_time (first))
-    return lo;
-
-  if (value < sysprof_document_frame_get_time (last))
+    return lo + 1;
+  else if (value < sysprof_document_frame_get_time (last))
     return hi - 1;
 
   return GTK_INVALID_LIST_POSITION;

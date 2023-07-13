@@ -69,6 +69,8 @@ timeruler {
   color: alpha(currentColor, .8);
 }
 
+timescrubber informative,
+timescrubber timecode,
 tracks informative,
 tracks timecode {
   border-radius: 7px;

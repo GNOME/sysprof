@@ -130,4 +130,17 @@ sysprof_time_span_to_string (const SysprofTimeSpan *span)
   return g_strdup_printf ("%s (%s)", begin, end);
 }
 
+static inline gboolean
+sysprof_time_span_equal (const SysprofTimeSpan *a,
+                         const SysprofTimeSpan *b)
+{
+  if (a == b)
+    return TRUE;
+
+  if (a == NULL || b == NULL)
+    return FALSE;
+
+  return memcmp (a, b, sizeof *a) == 0;
+}
+
 G_END_DECLS

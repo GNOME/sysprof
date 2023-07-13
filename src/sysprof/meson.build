@@ -16,6 +16,7 @@ sysprof_sources = [
   'sysprof-sidebar.c',
   'sysprof-single-model.c',
   'sysprof-time-scrubber.c',
+  'sysprof-time-filter-model.c',
   'sysprof-traceables-utility.c',
   'sysprof-window.c',
 ]

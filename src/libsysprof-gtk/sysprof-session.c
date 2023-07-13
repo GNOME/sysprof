@@ -457,11 +457,12 @@ _sysprof_session_describe (SysprofSession *self,
   g_autofree char *text = NULL;
 
   g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
+  g_return_val_if_fail (!track || SYSPROF_IS_TRACK (track), NULL);
 
   if (self->document == NULL)
     return NULL;
 
-  if ((text = _sysprof_track_format_item_for_display (track, item)))
+  if (track && (text = _sysprof_track_format_item_for_display (track, item)))
     return g_steal_pointer (&text);
 
   if (SYSPROF_IS_DOCUMENT_MARK (item))

@@ -115,6 +115,7 @@ enum {
   PROP_CPU_INFO,
   PROP_FILES,
   PROP_LOGS,
+  PROP_MARKS,
   PROP_METADATA,
   PROP_PROCESSES,
   PROP_SAMPLES,
@@ -381,6 +382,10 @@ sysprof_document_get_property (GObject    *object,
       g_value_take_object (value, sysprof_document_list_logs (self));
       break;
 
+    case PROP_MARKS:
+      g_value_take_object (value, sysprof_document_list_marks (self));
+      break;
+
     case PROP_METADATA:
       g_value_take_object (value, sysprof_document_list_metadata (self));
       break;
@@ -436,6 +441,11 @@ sysprof_document_class_init (SysprofDocumentClass *klass)
 
   properties [PROP_LOGS] =
     g_param_spec_object ("logs", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_MARKS] =
+    g_param_spec_object ("marks", NULL, NULL,
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 

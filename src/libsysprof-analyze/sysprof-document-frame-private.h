@@ -31,10 +31,10 @@ struct _SysprofDocumentFrame
   GObject                    parent;
   GMappedFile               *mapped_file;
   const SysprofCaptureFrame *frame;
+  gint64                     time_offset;
   guint32                    frame_len : 16;
   guint32                    needs_swap : 1;
   guint32                    padding : 15;
-  guint32                    time_offset;
 };
 
 struct _SysprofDocumentFrameClass

@@ -147,7 +147,6 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
                              gint64                     end_time)
 {
   SysprofDocumentFrame *self;
-  gint64 time_offset;
   GType gtype;
 
   switch (frame->type)
@@ -220,10 +219,7 @@ _sysprof_document_frame_new (GMappedFile               *mapped_file,
   self->frame_len = frame_len;
   self->needs_swap = !!needs_swap;
 
-  time_offset = CLAMP (sysprof_document_frame_get_time (self) - begin_time, 0, G_MAXINT64);
-
-  /* loose precision here after about 71 minutes */
-  self->time_offset = (guint)time_offset;
+  self->time_offset = CLAMP (sysprof_document_frame_get_time (self) - begin_time, 0, G_MAXINT64);
 
   return self;
 }

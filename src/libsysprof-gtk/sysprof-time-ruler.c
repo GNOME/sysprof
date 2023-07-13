@@ -108,7 +108,7 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
 
   rem = (visible_time->begin_nsec - document_time->begin_nsec) % tick_interval;
 
-  for (gint64 t = visible_time->begin_nsec + rem;
+  for (gint64 t = visible_time->begin_nsec - rem + tick_interval;
        t < visible_time->end_nsec;
        t += tick_interval)
     {

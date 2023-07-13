@@ -86,6 +86,8 @@ sysprof_logs_section_class_init (SysprofLogsSectionClass *klass)
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_LOG);
   g_type_ensure (SYSPROF_TYPE_TIME_LABEL);
+  g_type_ensure (SYSPROF_TYPE_TIME_SERIES);
+  g_type_ensure (SYSPROF_TYPE_TIME_SPAN_LAYER);
 }
 
 static void

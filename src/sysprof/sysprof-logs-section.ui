@@ -73,13 +73,22 @@
                         <binding name="sorter">
                           <lookup name="sorter">column_view</lookup>
                         </binding>
-                        <binding name="model">
-                          <lookup name="logs" type="SysprofDocument">
-                            <lookup name="document" type="SysprofSession">
-                              <lookup name="session">SysprofLogsSection</lookup>
-                            </lookup>
-                          </lookup>
-                        </binding>
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="selected-time" type="SysprofSession">
+                                <lookup name="session">SysprofLogsSection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="logs" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofLogsSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
                       </object>
                     </property>
                   </object>

@@ -29,7 +29,7 @@ struct _SysprofMarksSection
   SysprofSection parent_instance;
 
   SysprofMarkChart *mark_chart;
-  //SysprofMarkTable *mark_table;
+  SysprofMarkTable *mark_table;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofMarksSection, sysprof_marks_section, SYSPROF_TYPE_SECTION)
@@ -54,11 +54,14 @@ sysprof_marks_section_class_init (SysprofMarksSectionClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-marks-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, mark_chart);
-  //gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, mark_table);
+  gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, mark_table);
 
+  g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);
   g_type_ensure (SYSPROF_TYPE_MARK_CHART);
   g_type_ensure (SYSPROF_TYPE_MARK_TABLE);
+  g_type_ensure (SYSPROF_TYPE_TIME_SERIES);
+  g_type_ensure (SYSPROF_TYPE_TIME_SPAN_LAYER);
 }
 
 static void
@@ -66,4 +69,3 @@ sysprof_marks_section_init (SysprofMarksSection *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 }
-

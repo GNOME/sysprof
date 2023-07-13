@@ -6,6 +6,51 @@
       <object class="GtkBox">
         <property name="orientation">vertical</property>
         <child>
+          <object class="SysprofTimeScrubber" id="scrubber">
+            <binding name="session">
+              <lookup name="session">SysprofMarksSection</lookup>
+            </binding>
+            <child type="chart">
+              <object class="SysprofChart">
+                <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
+                <property name="height-request">20</property>
+                <child>
+                  <object class="SysprofTimeSpanLayer">
+                    <property name="title">Marks</property>
+                    <binding name="axis">
+                      <lookup name="visible-time-axis" type="SysprofSession">
+                        <lookup name="session">SysprofMarksSection</lookup>
+                      </lookup>
+                    </binding>
+                    <property name="series">
+                      <object class="SysprofTimeSeries">
+                        <binding name="model">
+                          <lookup name="marks" type="SysprofDocument">
+                            <lookup name="document" type="SysprofSession">
+                              <lookup name="session">SysprofMarksSection</lookup>
+                            </lookup>
+                          </lookup>
+                        </binding>
+                        <property name="begin-time-expression">
+                          <lookup name="time" type="SysprofDocumentFrame"/>
+                        </property>
+                        <property name="end-time-expression">
+                          <lookup name="end-time" type="SysprofDocumentMark"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+          </object>
+        </child>
+        <child>
           <object class="AdwViewStack" id="stack">
             <property name="vexpand">true</property>
             <child>

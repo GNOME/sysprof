@@ -17,7 +17,7 @@
                   <object class="SysprofColumnLayer">
                     <property name="title">Stack Traces</property>
                     <binding name="x-axis">
-                      <lookup name="selected-time-axis" type="SysprofSession">
+                      <lookup name="visible-time-axis" type="SysprofSession">
                         <lookup name="session">SysprofSamplesSection</lookup>
                       </lookup>
                     </binding>

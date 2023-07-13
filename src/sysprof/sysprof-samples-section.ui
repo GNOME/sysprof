@@ -88,13 +88,22 @@
                     <lookup name="session">SysprofSamplesSection</lookup>
                   </lookup>
                 </binding>
-                <binding name="model">
-                  <lookup name="samples" type="SysprofDocument">
-                    <lookup name="document" type="SysprofSession">
-                      <lookup name="session">SysprofSamplesSection</lookup>
-                    </lookup>
-                  </lookup>
-                </binding>
+                <property name="model">
+                  <object class="SysprofTimeFilterModel">
+                    <binding name="time-span">
+                      <lookup name="selected-time" type="SysprofSession">
+                        <lookup name="session">SysprofSamplesSection</lookup>
+                      </lookup>
+                    </binding>
+                    <binding name="model">
+                      <lookup name="samples" type="SysprofDocument">
+                        <lookup name="document" type="SysprofSession">
+                          <lookup name="session">SysprofSamplesSection</lookup>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                  </object>
+                </property>
               </object>
             </property>
           </object>

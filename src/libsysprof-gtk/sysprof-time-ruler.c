@@ -50,7 +50,7 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
   const SysprofTimeSpan *document_time;
   PangoLayout *layout;
   gint64 tick_interval;
-  gint64 time_range;
+  gint64 duration;
   gint64 rem;
   int last_x = G_MININT;
   int width;
@@ -79,32 +79,40 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
 
   document_time = sysprof_session_get_document_time (self->session);
   visible_time = sysprof_session_get_visible_time (self->session);
-  time_range = sysprof_time_span_duration (*visible_time);
+  duration = sysprof_time_span_duration (*visible_time);
 
   layout = gtk_widget_create_pango_layout (widget, NULL);
 
-  if (time_range > SYSPROF_NSEC_PER_SEC*60)
+  if (duration > SYSPROF_NSEC_PER_SEC*60)
     tick_interval = SYSPROF_NSEC_PER_SEC*10;
-  else if (time_range > SYSPROF_NSEC_PER_SEC*30)
+  else if (duration > SYSPROF_NSEC_PER_SEC*30)
     tick_interval = SYSPROF_NSEC_PER_SEC*5;
-  else if (time_range > SYSPROF_NSEC_PER_SEC*15)
+  else if (duration > SYSPROF_NSEC_PER_SEC*15)
     tick_interval = SYSPROF_NSEC_PER_SEC*2.5;
-  else if (time_range > SYSPROF_NSEC_PER_SEC*5)
+  else if (duration > SYSPROF_NSEC_PER_SEC*5)
     tick_interval = SYSPROF_NSEC_PER_SEC;
-  else if (time_range > SYSPROF_NSEC_PER_SEC*2.5)
+  else if (duration > SYSPROF_NSEC_PER_SEC*2.5)
     tick_interval = SYSPROF_NSEC_PER_SEC*.5;
-  else if (time_range > SYSPROF_NSEC_PER_SEC)
+  else if (duration > SYSPROF_NSEC_PER_SEC)
     tick_interval = SYSPROF_NSEC_PER_SEC*.25;
-  else if (time_range > SYSPROF_NSEC_PER_SEC*.5)
+  else if (duration > SYSPROF_NSEC_PER_SEC*.5)
     tick_interval = SYSPROF_NSEC_PER_SEC*.1;
-  else if (time_range > SYSPROF_NSEC_PER_SEC*.25)
+  else if (duration > SYSPROF_NSEC_PER_SEC*.25)
     tick_interval = SYSPROF_NSEC_PER_SEC*.05;
-  else if (time_range > SYSPROF_NSEC_PER_SEC*.1)
+  else if (duration > SYSPROF_NSEC_PER_SEC*.1)
     tick_interval = SYSPROF_NSEC_PER_SEC*.02;
-  else if (time_range > SYSPROF_NSEC_PER_SEC*.05)
+  else if (duration > SYSPROF_NSEC_PER_SEC*.05)
     tick_interval = SYSPROF_NSEC_PER_SEC*.01;
+  else if (duration > SYSPROF_NSEC_PER_SEC*.01)
+    tick_interval = SYSPROF_NSEC_PER_SEC*.005;
+  else if (duration > SYSPROF_NSEC_PER_SEC*.005)
+    tick_interval = SYSPROF_NSEC_PER_SEC*.001;
+  else if (duration > SYSPROF_NSEC_PER_SEC*.001)
+    tick_interval = SYSPROF_NSEC_PER_SEC*.0005;
+  else if (duration > SYSPROF_NSEC_PER_SEC*.0005)
+    tick_interval = SYSPROF_NSEC_PER_SEC*.00001;
   else
-    tick_interval = SYSPROF_NSEC_PER_SEC / 10000;
+    tick_interval = SYSPROF_NSEC_PER_SEC / 1000000;
 
   rem = (visible_time->begin_nsec - document_time->begin_nsec) % tick_interval;
 
@@ -114,11 +122,11 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
     {
       gint64 o = t - visible_time->begin_nsec;
       gint64 r = t - document_time->begin_nsec;
-      double x = (o / (double)time_range) * width;
+      double x = (o / (double)duration) * width;
       int pw, ph;
       char str[32];
 
-      if (x >= 0 && x >= last_x)
+      if (x >= 0 && (x - 6) >= last_x)
         {
           if (r == 0)
             g_snprintf (str, sizeof str, "%.3lfs", .0);
@@ -126,6 +134,12 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
             g_snprintf (str, sizeof str, "%.3lfμs", r/1000.);
           else if (r < SYSPROF_NSEC_PER_SEC)
             g_snprintf (str, sizeof str, "%.3lfms", r/1000000.);
+          else if (duration < SYSPROF_NSEC_PER_SEC/1000)
+            g_snprintf (str, sizeof str, "%.6lfs", r/(double)SYSPROF_NSEC_PER_SEC);
+          else if (duration < SYSPROF_NSEC_PER_SEC/100)
+            g_snprintf (str, sizeof str, "%.5lfs", r/(double)SYSPROF_NSEC_PER_SEC);
+          else if (duration < SYSPROF_NSEC_PER_SEC/10)
+            g_snprintf (str, sizeof str, "%.4lfs", r/(double)SYSPROF_NSEC_PER_SEC);
           else
             g_snprintf (str, sizeof str, "%.3lfs", r/(double)SYSPROF_NSEC_PER_SEC);
 
@@ -136,13 +150,13 @@ sysprof_time_ruler_snapshot (GtkWidget   *widget,
           gtk_snapshot_translate (snapshot, &GRAPHENE_POINT_INIT (x-pw-6, (height-ph)/2));
           gtk_snapshot_append_layout (snapshot, layout, &color);
           gtk_snapshot_restore (snapshot);
+
+          gtk_snapshot_append_color (snapshot,
+                                     &line_color,
+                                     &GRAPHENE_RECT_INIT (x, 0, 1, height));
+
+          last_x = x + pw + 6;
         }
-
-      gtk_snapshot_append_color (snapshot,
-                                 &line_color,
-                                 &GRAPHENE_RECT_INIT (x, 0, 1, height));
-
-      last_x = x + pw;
     }
 
   g_object_unref (layout);
@@ -345,6 +359,12 @@ sysprof_time_ruler_get_label_at_point (SysprofTimeRuler *self,
     g_snprintf (str, sizeof str, "%.3lfμs", o/1000.);
   else if (o < SYSPROF_NSEC_PER_SEC)
     g_snprintf (str, sizeof str, "%.3lfms", o/1000000.);
+  else if (duration < SYSPROF_NSEC_PER_SEC/1000)
+    g_snprintf (str, sizeof str, "%.6lfs", o/(double)SYSPROF_NSEC_PER_SEC);
+  else if (duration < SYSPROF_NSEC_PER_SEC/100)
+    g_snprintf (str, sizeof str, "%.5lfs", o/(double)SYSPROF_NSEC_PER_SEC);
+  else if (duration < SYSPROF_NSEC_PER_SEC/10)
+    g_snprintf (str, sizeof str, "%.4lfs", o/(double)SYSPROF_NSEC_PER_SEC);
   else
     g_snprintf (str, sizeof str, "%.3lfs", o/(double)SYSPROF_NSEC_PER_SEC);
 

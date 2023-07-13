@@ -39,6 +39,8 @@ SysprofSession        *sysprof_session_new                    (SysprofDocument  
 SYSPROF_AVAILABLE_IN_ALL
 SysprofDocument       *sysprof_session_get_document           (SysprofSession        *self);
 SYSPROF_AVAILABLE_IN_ALL
+const SysprofTimeSpan *sysprof_session_get_document_time      (SysprofSession        *self);
+SYSPROF_AVAILABLE_IN_ALL
 GtkFilter             *sysprof_session_get_filter             (SysprofSession        *self);
 SYSPROF_AVAILABLE_IN_ALL
 const SysprofTimeSpan *sysprof_session_get_selected_time      (SysprofSession        *self);

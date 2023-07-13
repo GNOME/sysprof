@@ -38,6 +38,7 @@ struct _SysprofSession
   SysprofAxis     *visible_time_axis;
   SysprofAxis     *selected_time_axis;
 
+  SysprofTimeSpan  document_time;
   SysprofTimeSpan  selected_time;
   SysprofTimeSpan  visible_time;
 
@@ -48,6 +49,7 @@ struct _SysprofSession
 enum {
   PROP_0,
   PROP_DOCUMENT,
+  PROP_DOCUMENT_TIME,
   PROP_FILTER,
   PROP_HIDE_SYSTEM_LIBRARIES,
   PROP_INCLUDE_THREADS,
@@ -93,8 +95,7 @@ sysprof_session_set_document (SysprofSession  *self,
 
   /* Select/show the entire document time span */
   time_span = sysprof_document_get_time_span (document);
-  memcpy (&self->visible_time, time_span, sizeof *time_span);
-  memcpy (&self->selected_time, time_span, sizeof *time_span);
+  self->selected_time = self->visible_time = self->document_time = *time_span;
   sysprof_session_update_axis (self);
 
   /* Discover tracks to show from the document */
@@ -127,6 +128,10 @@ sysprof_session_get_property (GObject    *object,
     {
     case PROP_DOCUMENT:
       g_value_set_object (value, sysprof_session_get_document (self));
+      break;
+
+    case PROP_DOCUMENT_TIME:
+      g_value_set_boxed (value, sysprof_session_get_document_time (self));
       break;
 
     case PROP_FILTER:
@@ -206,6 +211,11 @@ sysprof_session_class_init (SysprofSessionClass *klass)
     g_param_spec_object ("document", NULL, NULL,
                          SYSPROF_TYPE_DOCUMENT,
                          (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_DOCUMENT_TIME] =
+    g_param_spec_boxed ("document-time", NULL, NULL,
+                        SYSPROF_TYPE_TIME_SPAN,
+                        (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_FILTER] =
     g_param_spec_object ("filter", NULL, NULL,
@@ -314,6 +324,14 @@ sysprof_session_get_visible_time (SysprofSession *self)
   g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
 
   return &self->visible_time;
+}
+
+const SysprofTimeSpan *
+sysprof_session_get_document_time (SysprofSession *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
+
+  return &self->document_time;
 }
 
 void

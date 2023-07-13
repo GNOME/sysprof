@@ -1046,6 +1046,14 @@ sysprof_document_load_cpu (SysprofDocument *self)
                                    NULL);
         }
 
+      if (g_str_has_prefix (line, "core id\t\t: "))
+        {
+          gint64 core_id = g_ascii_strtoll (line+strlen("core id\t\t: "), NULL, 10);
+
+          if (core_id > 0)
+            _sysprof_cpu_info_set_core_id (cpu_info, core_id);
+        }
+
       if (g_str_has_prefix (line, "model name\t: "))
         {
           const gsize model_name_len = strlen ("model name\t: ");

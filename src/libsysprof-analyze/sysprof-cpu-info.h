@@ -34,6 +34,8 @@ G_DECLARE_FINAL_TYPE (SysprofCpuInfo, sysprof_cpu_info, SYSPROF, CPU_INFO, GObje
 SYSPROF_AVAILABLE_IN_ALL
 guint       sysprof_cpu_info_get_id         (SysprofCpuInfo *self);
 SYSPROF_AVAILABLE_IN_ALL
+guint       sysprof_cpu_info_get_core_id    (SysprofCpuInfo *self);
+SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_cpu_info_get_model_name (SysprofCpuInfo *self);
 
 G_END_DECLS

@@ -24,6 +24,8 @@
 
 G_BEGIN_DECLS
 
+void _sysprof_cpu_info_set_core_id    (SysprofCpuInfo *self,
+                                       guint           core_id);
 void _sysprof_cpu_info_set_model_name (SysprofCpuInfo *self,
                                        const char     *model_name);
 

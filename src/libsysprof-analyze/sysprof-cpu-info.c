@@ -27,11 +27,13 @@ struct _SysprofCpuInfo
   GObject parent_instance;
   char *model_name;
   guint id;
+  guint core_id;
 };
 
 enum {
   PROP_0,
   PROP_ID,
+  PROP_CORE_ID,
   PROP_MODEL_NAME,
   N_PROPS
 };
@@ -64,6 +66,10 @@ sysprof_cpu_info_get_property (GObject    *object,
       g_value_set_uint (value, self->id);
       break;
 
+    case PROP_CORE_ID:
+      g_value_set_uint (value, self->core_id);
+      break;
+
     case PROP_MODEL_NAME:
       g_value_set_string (value, self->model_name);
       break;
@@ -87,6 +93,10 @@ sysprof_cpu_info_set_property (GObject      *object,
       self->id = g_value_get_uint (value);
       break;
 
+    case PROP_CORE_ID:
+      self->core_id = g_value_get_uint (value);
+      break;
+
     case PROP_MODEL_NAME:
       self->model_name = g_value_dup_string (value);
       break;
@@ -107,6 +117,11 @@ sysprof_cpu_info_class_init (SysprofCpuInfoClass *klass)
 
   properties[PROP_ID] =
     g_param_spec_uint ("id", NULL, NULL,
+                       0, G_MAXUINT, 0,
+                       (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_CORE_ID] =
+    g_param_spec_uint ("core-id", NULL, NULL,
                        0, G_MAXUINT, 0,
                        (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
@@ -147,4 +162,25 @@ _sysprof_cpu_info_set_model_name (SysprofCpuInfo *self,
 
   if (g_set_str (&self->model_name, model_name))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODEL_NAME]);
+}
+
+guint
+sysprof_cpu_info_get_core_id (SysprofCpuInfo *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CPU_INFO (self), 0);
+
+  return self->core_id;
+}
+
+void
+_sysprof_cpu_info_set_core_id (SysprofCpuInfo *self,
+                               guint           core_id)
+{
+  g_return_if_fail (SYSPROF_IS_CPU_INFO (self));
+
+  if (self->core_id != core_id)
+    {
+      self->core_id = core_id;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CORE_ID]);
+    }
 }

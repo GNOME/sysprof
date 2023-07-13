@@ -76,6 +76,41 @@
                   </object>
                 </child>
                 <child>
+                  <object class="GtkColumnViewColumn" id="core_id_column">
+                    <property name="title" translatable="yes">Core</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="core-id" type="SysprofCpuInfo"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="min-chars">2</property>
+        <property name="xalign">1</property>
+        <binding name="text">
+          <lookup name="core-id" type="SysprofCpuInfo">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
                   <object class="GtkColumnViewColumn" id="model_name_column">
                     <property name="title" translatable="yes">Model Name</property>
                     <property name="expand">true</property>

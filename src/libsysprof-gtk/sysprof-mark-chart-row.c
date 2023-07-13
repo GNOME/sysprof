@@ -47,6 +47,33 @@ G_DEFINE_FINAL_TYPE (SysprofMarkChartRow, sysprof_mark_chart_row, GTK_TYPE_WIDGE
 
 static GParamSpec *properties [N_PROPS];
 
+static gboolean
+sysprof_mark_chart_row_activate_layer_item_cb (SysprofMarkChartRow *self,
+                                               SysprofChartLayer   *layer,
+                                               SysprofDocumentMark *mark,
+                                               SysprofChart        *chart)
+{
+  SysprofSession *session;
+  SysprofTimeSpan time_span;
+
+  g_assert (SYSPROF_IS_MARK_CHART_ROW (self));
+  g_assert (SYSPROF_IS_CHART_LAYER (layer));
+  g_assert (SYSPROF_IS_DOCUMENT_MARK (mark));
+  g_assert (SYSPROF_IS_CHART (chart));
+
+  if (self->item == NULL ||
+      !(session = sysprof_mark_chart_item_get_session (self->item)))
+    return FALSE;
+
+  time_span.begin_nsec = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (mark));
+  time_span.end_nsec = sysprof_document_mark_get_end_time (mark);
+
+  sysprof_session_select_time (session, &time_span);
+  sysprof_session_zoom_to_selection (session);
+
+  return TRUE;
+}
+
 static void
 sysprof_mark_chart_row_dispose (GObject *object)
 {
@@ -123,6 +150,7 @@ sysprof_mark_chart_row_class_init (SysprofMarkChartRowClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-mark-chart-row.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChartRow, chart);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChartRow, layer);
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_mark_chart_row_activate_layer_item_cb);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_TIME_SERIES_ITEM);

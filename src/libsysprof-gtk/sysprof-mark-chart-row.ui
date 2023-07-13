@@ -3,6 +3,7 @@
   <template class="SysprofMarkChartRow" parent="GtkWidget">
     <child>
       <object class="SysprofChart" id="chart">
+        <signal name="activate-layer-item" handler="sysprof_mark_chart_row_activate_layer_item_cb" swapped="true"/>
         <property name="hexpand">true</property>
         <property name="vexpand">false</property>
         <child>

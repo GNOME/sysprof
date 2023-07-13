@@ -29,13 +29,22 @@
                     </property>
                     <property name="series">
                       <object class="SysprofXYSeries">
-                        <binding name="model">
-                          <lookup name="samples" type="SysprofDocument">
-                            <lookup name="document" type="SysprofSession">
-                              <lookup name="session">SysprofSamplesSection</lookup>
-                            </lookup>
-                          </lookup>
-                        </binding>
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="visible-time" type="SysprofSession">
+                                <lookup name="session">SysprofSamplesSection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="samples" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofSamplesSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
                         <property name="x-expression">
                           <lookup name="time" type="SysprofDocumentFrame"/>
                         </property>

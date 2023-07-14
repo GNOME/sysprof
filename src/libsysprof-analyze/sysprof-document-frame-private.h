@@ -41,6 +41,7 @@ struct _SysprofDocumentFrameClass
 {
   GObjectClass parent_class;
   const char *type_name;
+  char *(*dup_tooltip) (SysprofDocumentFrame *self);
 };
 
 SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *mapped,

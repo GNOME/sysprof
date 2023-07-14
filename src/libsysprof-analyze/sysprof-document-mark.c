@@ -50,6 +50,23 @@ G_DEFINE_FINAL_TYPE (SysprofDocumentMark, sysprof_document_mark, SYSPROF_TYPE_DO
 
 static GParamSpec *properties [N_PROPS];
 
+static char *
+sysprof_document_mark_dup_tooltip (SysprofDocumentFrame *frame)
+{
+  SysprofDocumentMark *self = (SysprofDocumentMark *)frame;
+  g_autofree char *time_string = NULL;
+
+  g_assert (SYSPROF_IS_DOCUMENT_MARK (self));
+
+  time_string = sysprof_document_frame_dup_time_string (SYSPROF_DOCUMENT_FRAME (self));
+
+  return g_strdup_printf ("%s: %s: %s: %s",
+                          time_string,
+                          sysprof_document_mark_get_group (self),
+                          sysprof_document_mark_get_name (self),
+                          sysprof_document_mark_get_message (self));
+}
+
 static void
 sysprof_document_mark_get_property (GObject    *object,
                                     guint       prop_id,
@@ -94,6 +111,7 @@ sysprof_document_mark_class_init (SysprofDocumentMarkClass *klass)
   object_class->get_property = sysprof_document_mark_get_property;
 
   document_frame_class->type_name = N_("Mark");
+  document_frame_class->dup_tooltip = sysprof_document_mark_dup_tooltip;
 
   properties [PROP_DURATION] =
     g_param_spec_int64 ("duration", NULL, NULL,

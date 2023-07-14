@@ -47,11 +47,23 @@ enum {
   PROP_PID,
   PROP_TIME,
   PROP_TIME_OFFSET,
+  PROP_TIME_STRING,
+  PROP_TOOLTIP,
   PROP_TYPE_NAME,
   N_PROPS
 };
 
 static GParamSpec *properties[N_PROPS];
+
+static char *
+sysprof_document_frame_real_dup_tooltip (SysprofDocumentFrame *self)
+{
+  g_autofree char *time_string = sysprof_document_frame_dup_time_string (self);
+
+  return g_strdup_printf ("%s: %s",
+                          time_string,
+                          SYSPROF_DOCUMENT_FRAME_GET_CLASS (self)->type_name);
+}
 
 static const char *
 sysprof_document_frame_get_type_name (SysprofDocumentFrame *self)
@@ -98,6 +110,14 @@ sysprof_document_frame_get_property (GObject    *object,
       g_value_set_int64 (value, sysprof_document_frame_get_time_offset (self));
       break;
 
+    case PROP_TIME_STRING:
+      g_value_take_string (value, sysprof_document_frame_dup_time_string (self));
+      break;
+
+    case PROP_TOOLTIP:
+      g_value_take_string (value, sysprof_document_frame_dup_tooltip (self));
+      break;
+
     case PROP_TYPE_NAME:
       g_value_set_static_string (value, sysprof_document_frame_get_type_name (self));
       break;
@@ -116,6 +136,7 @@ sysprof_document_frame_class_init (SysprofDocumentFrameClass *klass)
   object_class->get_property = sysprof_document_frame_get_property;
 
   klass->type_name = N_("Frame");
+  klass->dup_tooltip = sysprof_document_frame_real_dup_tooltip;
 
   properties[PROP_CPU] =
     g_param_spec_int ("cpu", NULL, NULL,
@@ -145,8 +166,18 @@ sysprof_document_frame_class_init (SysprofDocumentFrameClass *klass)
                         0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_TIME_STRING] =
+    g_param_spec_string ("time-string", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_TYPE_NAME] =
     g_param_spec_string ("type-name", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_TOOLTIP] =
+    g_param_spec_string ("tooltip", NULL, NULL,
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -281,4 +312,52 @@ sysprof_document_frame_equal (const SysprofDocumentFrame *a,
                               const SysprofDocumentFrame *b)
 {
   return a->frame == b->frame;
+}
+
+/**
+ * sysprof_document_frame_dup_time_string:
+ * @self: a #SysprofDocumentFrame
+ *
+ * Gets the time formatted as a string such as `00:00:00.1234`.
+ *
+ * Returns: (transfer full): a new string
+ */
+char *
+sysprof_document_frame_dup_time_string (SysprofDocumentFrame *self)
+{
+  int hours;
+  int minutes;
+  int seconds;
+  double time;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), NULL);
+
+  time = self->time_offset / (double)SYSPROF_NSEC_PER_SEC;
+
+  hours = time / (60 * 60);
+  time -= hours * (60 * 60);
+
+  minutes = time / 60;
+  time -= minutes * 60;
+
+  seconds = time / SYSPROF_NSEC_PER_SEC;
+  time -= seconds * SYSPROF_NSEC_PER_SEC;
+
+  return g_strdup_printf ("%02d:%02d:%02d.%04d", hours, minutes, seconds, (int)(time * 10000));
+}
+
+/**
+ * sysprof_document_frame_dup_tooltip:
+ * @self: a #SysprofDocumentFrame
+ *
+ * Returns a new string containing suggested tooltip text.
+ *
+ * Returns: (transfer full): a string
+ */
+char *
+sysprof_document_frame_dup_tooltip (SysprofDocumentFrame *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_FRAME (self), NULL);
+
+  return SYSPROF_DOCUMENT_FRAME_GET_CLASS (self)->dup_tooltip (self);
 }

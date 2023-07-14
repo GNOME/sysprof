@@ -32,6 +32,8 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDocumentCounter, sysprof_document_counter, SYSPROF, DOCUMENT_COUNTER, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
+char       *sysprof_document_counter_dup_key          (SysprofDocumentCounter *self);
+SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_counter_get_category     (SysprofDocumentCounter *self);
 SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_document_counter_get_description  (SysprofDocumentCounter *self);

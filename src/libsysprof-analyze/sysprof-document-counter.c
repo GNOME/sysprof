@@ -44,6 +44,7 @@ enum {
   PROP_CATEGORY,
   PROP_DESCRIPTION,
   PROP_ID,
+  PROP_KEY,
   PROP_MAX_VALUE,
   PROP_MIN_VALUE,
   PROP_NAME,
@@ -133,6 +134,10 @@ sysprof_document_counter_get_property (GObject    *object,
       g_value_set_string (value, sysprof_document_counter_get_name (self));
       break;
 
+    case PROP_KEY:
+      g_value_take_string (value, sysprof_document_counter_dup_key (self));
+      break;
+
     case PROP_ID:
       g_value_set_uint (value, sysprof_document_counter_get_id (self));
       break;
@@ -162,6 +167,11 @@ sysprof_document_counter_class_init (SysprofDocumentCounterClass *klass)
 
   properties [PROP_DESCRIPTION] =
     g_param_spec_string ("description", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_KEY] =
+    g_param_spec_string ("key", NULL, NULL,
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -399,4 +409,12 @@ sysprof_document_counter_get_min_value (SysprofDocumentCounter *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self), .0);
 
   return self->min_value;
+}
+
+char *
+sysprof_document_counter_dup_key (SysprofDocumentCounter *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self), NULL);
+
+  return g_strdup_printf ("%s/%s", self->category, self->name);
 }

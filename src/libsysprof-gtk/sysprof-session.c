@@ -42,12 +42,14 @@ struct _SysprofSession
   SysprofTimeSpan  selected_time;
   SysprofTimeSpan  visible_time;
 
+  guint            bottom_up : 1;
   guint            include_threads : 1;
   guint            hide_system_libraries : 1;
 };
 
 enum {
   PROP_0,
+  PROP_BOTTOM_UP,
   PROP_DOCUMENT,
   PROP_DOCUMENT_TIME,
   PROP_FILTER,
@@ -126,6 +128,10 @@ sysprof_session_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_BOTTOM_UP:
+      g_value_set_boolean (value, self->bottom_up);
+      break;
+
     case PROP_DOCUMENT:
       g_value_set_object (value, sysprof_session_get_document (self));
       break;
@@ -181,6 +187,10 @@ sysprof_session_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_BOTTOM_UP:
+      self->bottom_up = g_value_get_boolean (value);
+      break;
+
     case PROP_DOCUMENT:
       sysprof_session_set_document (self, g_value_get_object (value));
       break;
@@ -206,6 +216,11 @@ sysprof_session_class_init (SysprofSessionClass *klass)
   object_class->dispose = sysprof_session_dispose;
   object_class->get_property = sysprof_session_get_property;
   object_class->set_property = sysprof_session_set_property;
+
+  properties [PROP_BOTTOM_UP] =
+    g_param_spec_boolean ("bottom-up", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_DOCUMENT] =
     g_param_spec_object ("document", NULL, NULL,

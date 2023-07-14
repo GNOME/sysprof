@@ -226,16 +226,6 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
 
   parent = &self->root;
 
-  /* If the first thing we see is a context switch, then there is
-   * nothing after it to account for. Just skip the symbol as it
-   * provides nothing to us in the callgraph.
-   */
-  if (_sysprof_symbol_is_context_switch (symbols[0]))
-    {
-      symbols++;
-      n_symbols--;
-    }
-
   for (guint i = n_symbols - 1; i > 0; i--)
     {
       SysprofSymbol *symbol = symbols[i-1];
@@ -277,6 +267,20 @@ sysprof_callgraph_add_trace (SysprofCallgraph  *self,
   sysprof_callgraph_populate_callers (self, parent, list_model_index);
 
   return parent;
+}
+
+static void
+reverse_symbols (SysprofSymbol **symbols,
+                 guint           n_symbols)
+{
+  guint half = n_symbols / 2;
+
+  for (guint i = 0; i < half; i++)
+    {
+      SysprofSymbol *tmp = symbols[i];
+      symbols[i] = symbols[n_symbols-1-i];
+      symbols[n_symbols-1-i] = tmp;
+    }
 }
 
 static void
@@ -331,6 +335,19 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
    */
   if (final_context == SYSPROF_ADDRESS_CONTEXT_KERNEL)
     symbols[n_symbols++] = _sysprof_document_kernel_symbol (self->document);
+
+  /* If the first thing we see is a context switch, then there is
+   * nothing after it to account for. Just skip the symbol as it
+   * provides nothing to us in the callgraph.
+   */
+  if (_sysprof_symbol_is_context_switch (symbols[0]))
+    {
+      symbols++;
+      n_symbols--;
+    }
+
+  if ((self->flags & SYSPROF_CALLGRAPH_FLAGS_BOTTOM_UP) != 0)
+    reverse_symbols (symbols, n_symbols);
 
   /* If the user requested thread-ids within each process, then
    * insert a symbol for that before the real stacks.

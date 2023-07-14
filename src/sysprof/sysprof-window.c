@@ -139,8 +139,9 @@ sysprof_window_set_document (SysprofWindow   *self,
                              SysprofDocument *document)
 {
   static const char *callgraph_actions[] = {
-    "include-threads",
+    "bottom-up",
     "hide-system-libraries",
+    "include-threads",
   };
 
   g_assert (SYSPROF_IS_WINDOW (self));

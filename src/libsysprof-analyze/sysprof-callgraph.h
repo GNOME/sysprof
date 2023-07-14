@@ -67,6 +67,7 @@ typedef enum _SysprofCallgraphFlags
   SYSPROF_CALLGRAPH_FLAGS_NONE                  = 0,
   SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS       = 1 << 1,
   SYSPROF_CALLGRAPH_FLAGS_HIDE_SYSTEM_LIBRARIES = 1 << 2,
+  SYSPROF_CALLGRAPH_FLAGS_BOTTOM_UP             = 1 << 3,
 } SysprofCallgraphFlags;
 
 SYSPROF_AVAILABLE_IN_ALL

@@ -29,6 +29,7 @@
 
 enum {
   PROP_0,
+  PROP_BOTTOM_UP,
   PROP_CALLGRAPH,
   PROP_DOCUMENT,
   PROP_HIDE_SYSTEM_LIBRARIES,
@@ -336,6 +337,10 @@ sysprof_callgraph_view_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_BOTTOM_UP:
+      g_value_set_boolean (value, sysprof_callgraph_view_get_bottom_up (self));
+      break;
+
     case PROP_CALLGRAPH:
       g_value_set_object (value, sysprof_callgraph_view_get_callgraph (self));
       break;
@@ -375,6 +380,10 @@ sysprof_callgraph_view_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_BOTTOM_UP:
+      sysprof_callgraph_view_set_bottom_up (self, g_value_get_boolean (value));
+      break;
+
     case PROP_DOCUMENT:
       sysprof_callgraph_view_set_document (self, g_value_get_object (value));
       break;
@@ -405,6 +414,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   object_class->dispose = sysprof_callgraph_view_dispose;
   object_class->get_property = sysprof_callgraph_view_get_property;
   object_class->set_property = sysprof_callgraph_view_set_property;
+
+  properties[PROP_BOTTOM_UP] =
+    g_param_spec_boolean ("bottom-up", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_CALLGRAPH] =
     g_param_spec_object ("callgraph", NULL, NULL,
@@ -579,6 +593,9 @@ sysprof_callgraph_view_reload (SysprofCallgraphView *self)
   if (self->hide_system_libraries)
     flags |= SYSPROF_CALLGRAPH_FLAGS_HIDE_SYSTEM_LIBRARIES;
 
+  if (self->bottom_up)
+    flags |= SYSPROF_CALLGRAPH_FLAGS_BOTTOM_UP;
+
   sysprof_document_callgraph_async (self->document,
                                     flags,
                                     self->traceables,
@@ -711,6 +728,30 @@ sysprof_callgraph_view_get_callgraph (SysprofCallgraphView *self)
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), NULL);
 
   return self->callgraph;
+}
+
+gboolean
+sysprof_callgraph_view_get_bottom_up (SysprofCallgraphView *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), FALSE);
+
+  return self->bottom_up;
+}
+
+void
+sysprof_callgraph_view_set_bottom_up (SysprofCallgraphView *self,
+                                      gboolean              bottom_up)
+{
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  bottom_up = !!bottom_up;
+
+  if (self->bottom_up != bottom_up)
+    {
+      self->bottom_up = bottom_up;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_BOTTOM_UP]);
+      sysprof_callgraph_view_queue_reload (self);
+    }
 }
 
 gboolean

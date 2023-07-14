@@ -76,6 +76,11 @@
                 <lookup name="session">SysprofSamplesSection</lookup>
               </lookup>
             </binding>
+            <binding name="bottom-up">
+              <lookup name="bottom-up" type="SysprofSession">
+                <lookup name="session">SysprofSamplesSection</lookup>
+              </lookup>
+            </binding>
             <binding name="document">
               <lookup name="document" type="SysprofSession">
                 <lookup name="session">SysprofSamplesSection</lookup>

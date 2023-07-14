@@ -50,6 +50,11 @@ SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_callgraph_view_set_traceables            (SysprofCallgraphView *self,
                                                                     GListModel           *model);
 SYSPROF_AVAILABLE_IN_ALL
+gboolean          sysprof_callgraph_view_get_bottom_up             (SysprofCallgraphView *self);
+SYSPROF_AVAILABLE_IN_ALL
+void              sysprof_callgraph_view_set_bottom_up             (SysprofCallgraphView *self,
+                                                                    gboolean              bottom_up);
+SYSPROF_AVAILABLE_IN_ALL
 gboolean          sysprof_callgraph_view_get_include_threads       (SysprofCallgraphView *self);
 SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_callgraph_view_set_include_threads       (SysprofCallgraphView *self,

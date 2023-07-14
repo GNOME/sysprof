@@ -225,6 +225,10 @@
         <attribute name="label" translatable="yes">Include Threads</attribute>
         <attribute name="action">win.callgraph.include-threads</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">Bottom Up</attribute>
+        <attribute name="action">win.callgraph.bottom-up</attribute>
+      </item>
     </section>
   </menu>
 </interface>

@@ -80,6 +80,8 @@ static char *
 format_number (gpointer unused,
                guint    number)
 {
+  if (number == 0)
+    return NULL;
   return g_strdup_printf ("%'u", number);
 }
 

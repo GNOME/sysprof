@@ -341,6 +341,11 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_install_action (widget_class, "session.zoom-out", NULL, sysprof_window_session_zoom_out);
   gtk_widget_class_install_action (widget_class, "session.zoom-in", NULL, sysprof_window_session_zoom_in);
 
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_plus, GDK_CONTROL_MASK, "session.zoom-in", NULL);
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_equal, GDK_CONTROL_MASK, "session.zoom-in", NULL);
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_minus, GDK_CONTROL_MASK, "session.zoom-out", NULL);
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_0, GDK_CONTROL_MASK, "session.zoom-one", NULL);
+
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
   g_type_ensure (SYSPROF_TYPE_FILES_SECTION);
   g_type_ensure (SYSPROF_TYPE_LOGS_SECTION);

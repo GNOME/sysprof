@@ -275,3 +275,10 @@ sysprof_document_frame_get_time_offset (SysprofDocumentFrame *self)
 
   return self->time_offset;
 }
+
+gboolean
+sysprof_document_frame_equal (const SysprofDocumentFrame *a,
+                              const SysprofDocumentFrame *b)
+{
+  return a->frame == b->frame;
+}

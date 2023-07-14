@@ -35,15 +35,18 @@ typedef struct _SysprofDocumentFrame      SysprofDocumentFrame;
 typedef struct _SysprofDocumentFrameClass SysprofDocumentFrameClass;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType  sysprof_document_frame_get_type        (void) G_GNUC_CONST;
+GType    sysprof_document_frame_get_type        (void) G_GNUC_CONST;
 SYSPROF_AVAILABLE_IN_ALL
-int    sysprof_document_frame_get_cpu         (SysprofDocumentFrame *self);
+int      sysprof_document_frame_get_cpu         (SysprofDocumentFrame       *self);
 SYSPROF_AVAILABLE_IN_ALL
-int    sysprof_document_frame_get_pid         (SysprofDocumentFrame *self);
+int      sysprof_document_frame_get_pid         (SysprofDocumentFrame       *self);
 SYSPROF_AVAILABLE_IN_ALL
-gint64 sysprof_document_frame_get_time        (SysprofDocumentFrame *self);
+gint64   sysprof_document_frame_get_time        (SysprofDocumentFrame       *self);
 SYSPROF_AVAILABLE_IN_ALL
-gint64 sysprof_document_frame_get_time_offset (SysprofDocumentFrame *self);
+gint64   sysprof_document_frame_get_time_offset (SysprofDocumentFrame       *self);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean sysprof_document_frame_equal           (const SysprofDocumentFrame *a,
+                                                 const SysprofDocumentFrame *b);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentFrame, g_object_unref)
 

@@ -5,6 +5,7 @@
     <file preprocess="xml-stripblanks">gtk/menus.ui</file>
     <file preprocess="xml-stripblanks">sysprof-cpu-info-dialog.ui</file>
     <file preprocess="xml-stripblanks">sysprof-files-section.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-frame-utility.ui</file>
     <file preprocess="xml-stripblanks">sysprof-greeter.ui</file>
     <file preprocess="xml-stripblanks">sysprof-logs-section.ui</file>
     <file preprocess="xml-stripblanks">sysprof-marks-section.ui</file>

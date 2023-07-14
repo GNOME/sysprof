@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofFrameUtility" parent="GtkWidget">
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkGrid">
+            <property name="margin-start">12</property>
+            <property name="margin-end">12</property>
+            <property name="column-spacing">12</property>
+            <property name="row-spacing">6</property>
+
+            <child>
+              <object class="GtkLabel">
+                <property name="xalign">1</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+                <property name="label" translatable="yes">Type</property>
+                <layout>
+                  <property name="row">0</property>
+                  <property name="column">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="xalign">0</property>
+                <property name="hexpand">true</property>
+                <binding name="label">
+                  <lookup name="type-name" type="SysprofDocumentFrame">
+                    <lookup name="frame">SysprofFrameUtility</lookup>
+                  </lookup>
+                </binding>
+                <layout>
+                  <property name="row">0</property>
+                  <property name="column">1</property>
+                </layout>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkLabel">
+                <property name="xalign">1</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+                <property name="label" translatable="yes">Time</property>
+                <layout>
+                  <property name="row">1</property>
+                  <property name="column">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="xalign">0</property>
+                <property name="hexpand">true</property>
+                <binding name="label">
+                  <closure type="gchararray" function="format_time_offset" swapped="true">
+                    <lookup name="time-offset" type="SysprofDocumentFrame">
+                      <lookup name="frame">SysprofFrameUtility</lookup>
+                    </lookup>
+                  </closure>
+                </binding>
+                <layout>
+                  <property name="row">1</property>
+                  <property name="column">1</property>
+                </layout>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkLabel">
+                <property name="xalign">1</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+                <property name="label" translatable="yes">CPU</property>
+                <layout>
+                  <property name="row">2</property>
+                  <property name="column">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="xalign">0</property>
+                <property name="hexpand">true</property>
+                <binding name="label">
+                  <lookup name="cpu" type="SysprofDocumentFrame">
+                    <lookup name="frame">SysprofFrameUtility</lookup>
+                  </lookup>
+                </binding>
+                <layout>
+                  <property name="row">2</property>
+                  <property name="column">1</property>
+                </layout>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkLabel">
+                <property name="xalign">1</property>
+                <style>
+                  <class name="dim-label"/>
+                </style>
+                <property name="label" translatable="yes">PID</property>
+                <layout>
+                  <property name="row">3</property>
+                  <property name="column">0</property>
+                </layout>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="xalign">0</property>
+                <property name="hexpand">true</property>
+                <binding name="label">
+                  <lookup name="pid" type="SysprofDocumentFrame">
+                    <lookup name="frame">SysprofFrameUtility</lookup>
+                  </lookup>
+                </binding>
+                <layout>
+                  <property name="row">3</property>
+                  <property name="column">1</property>
+                </layout>
+              </object>
+            </child>
+
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

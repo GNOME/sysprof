@@ -33,6 +33,15 @@ struct _SysprofMemorySection
 
 G_DEFINE_FINAL_TYPE (SysprofMemorySection, sysprof_memory_section, SYSPROF_TYPE_SECTION)
 
+static char *
+format_number (gpointer unused,
+               guint    number)
+{
+  if (number == 0)
+    return NULL;
+  return g_strdup_printf ("%'u", number);
+}
+
 static void
 sysprof_memory_section_dispose (GObject *object)
 {
@@ -53,6 +62,7 @@ sysprof_memory_section_class_init (SysprofMemorySectionClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-memory-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofMemorySection, callgraph_view);
+  gtk_widget_class_bind_template_callback (widget_class, format_number);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_XY_SERIES);

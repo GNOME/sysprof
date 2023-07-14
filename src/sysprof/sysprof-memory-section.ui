@@ -2,6 +2,17 @@
 <interface>
   <template class="SysprofMemorySection" parent="SysprofSection">
     <property name="title" translatable="yes">Memory Allocations</property>
+    <binding name="indicator">
+      <closure type="gchararray" function="format_number">
+        <lookup name="n-items" type="SysprofDocumentBitsetIndex">
+          <lookup name="allocations" type="SysprofDocument">
+            <lookup name="document" type="SysprofSession">
+              <lookup name="session">SysprofMemorySection</lookup>
+            </lookup>
+          </lookup>
+        </lookup>
+      </closure>
+    </binding>
     <child>
       <object class="GtkBox">
         <property name="orientation">vertical</property>

@@ -5,7 +5,7 @@
    width="16px"
    version="1.1"
    id="svg5033"
-   sodipodi:docname="mark-table-symbolic.svg"
+   sodipodi:docname="mark-waterfall-symbolic.svg"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -23,11 +23,11 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
-     inkscape:zoom="5.6734271"
-     inkscape:cx="-88.218284"
-     inkscape:cy="69.446561"
-     inkscape:window-width="2560"
-     inkscape:window-height="1371"
+     inkscape:zoom="2.2542364"
+     inkscape:cx="39.924828"
+     inkscape:cy="6.2105288"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -37,13 +37,13 @@
      id="path5029"
      style="stroke-width:1.4676" />
   <path
-     d="m 6,5 h 9 V 7 H 6 Z m 0,0"
+     d="M 3,5 H 8 V 7 H 3 Z m 0,0"
      id="path5029-3"
-     style="stroke-width:1.17671" />
+     style="stroke-width:0.877068" />
   <path
-     d="m 8,9 h 7 v 2 H 8 Z m 0,0"
+     d="m 5,9 h 8 v 2 H 5 Z m 0,0"
      id="path5029-3-6"
-     style="stroke-width:1.03775" />
+     style="stroke-width:1.1094" />
   <path
      d="m 11,13 h 4 v 2 h -4 z m 0,0"
      id="path5029-3-6-7"

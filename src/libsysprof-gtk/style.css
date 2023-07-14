@@ -13,6 +13,9 @@ progresscell progress:backdrop {
  background: @borders;
  border-color: shade(@borders, .9);
 }
+progresscell label:backdrop.in-progress {
+ color: inherit;
+}
 
 progresscell trough {
  background: alpha(@borders, .5);

@@ -2,6 +2,17 @@
 <interface>
   <template class="SysprofSamplesSection" parent="SysprofSection">
     <property name="title" translatable="yes">Time Profiler</property>
+    <binding name="indicator">
+      <closure type="gchararray" function="format_number">
+        <lookup name="n-items" type="SysprofDocumentBitsetIndex">
+          <lookup name="samples" type="SysprofDocument">
+            <lookup name="document" type="SysprofSession">
+              <lookup name="session">SysprofSamplesSection</lookup>
+            </lookup>
+          </lookup>
+        </lookup>
+      </closure>
+    </binding>
     <child>
       <object class="GtkBox">
         <property name="orientation">vertical</property>

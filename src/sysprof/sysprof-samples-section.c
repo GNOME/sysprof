@@ -36,6 +36,13 @@ struct _SysprofSamplesSection
 
 G_DEFINE_FINAL_TYPE (SysprofSamplesSection, sysprof_samples_section, SYSPROF_TYPE_SECTION)
 
+static char *
+format_number (gpointer unused,
+               guint    number)
+{
+  return g_strdup_printf ("%'u", number);
+}
+
 static void
 sysprof_samples_section_dispose (GObject *object)
 {
@@ -56,6 +63,7 @@ sysprof_samples_section_class_init (SysprofSamplesSectionClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-samples-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofSamplesSection, callgraph_view);
+  gtk_widget_class_bind_template_callback (widget_class, format_number);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_XY_SERIES);

@@ -27,6 +27,7 @@
             <property name="margin-top">6</property>
             <child>
               <object class="GtkButton">
+                <property name="tooltip-text" translatable="yes">Zoom Out</property>
                 <property name="action-name">session.zoom-out</property>
                 <property name="icon-name">zoom-out-symbolic</property>
                 <style>
@@ -36,6 +37,7 @@
             </child>
             <child>
               <object class="GtkButton">
+                <property name="tooltip-text" translatable="yes">Reset Zoom</property>
                 <property name="action-name">session.zoom-one</property>
                 <property name="icon-name">zoom-original-symbolic</property>
                 <property name="width-request">48</property>
@@ -46,6 +48,7 @@
             </child>
             <child>
               <object class="GtkButton">
+                <property name="tooltip-text" translatable="yes">Zoom In</property>
                 <property name="action-name">session.zoom-in</property>
                 <property name="icon-name">zoom-in-symbolic</property>
                 <style>

@@ -128,6 +128,78 @@
                   </object>
                 </child>
                 <child>
+                  <object class="GtkColumnViewColumn" id="cpu_column">
+                    <property name="title" translatable="yes">CPU</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="cpu" type="SysprofDocumentLog"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="xalign">0</property>
+        <property name="min-chars">2</property>
+        <property name="nat-chars">2</property>
+        <binding name="text">
+          <lookup name="cpu" type="SysprofDocumentLog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkColumnViewColumn" id="pid_column">
+                    <property name="title" translatable="yes">PID</property>
+                    <property name="sorter">
+                      <object class="GtkNumericSorter">
+                        <property name="expression">
+                          <lookup name="pid" type="SysprofDocumentLog"/>
+                        </property>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="xalign">0</property>
+        <property name="min-chars">2</property>
+        <property name="nat-chars">2</property>
+        <binding name="text">
+          <lookup name="pid" type="SysprofDocumentLog">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
                   <object class="GtkColumnViewColumn" id="severity_column">
                     <property name="title" translatable="yes">Severity</property>
                     <property name="sorter">
@@ -239,32 +311,5 @@
         </child>
       </object>
     </child>
-    <property name="utility">
-      <object class="AdwToolbarView">
-        <style>
-          <class name="utility"/>
-        </style>
-        <child type="top">
-          <object class="AdwHeaderBar">
-            <property name="title-widget">
-              <object class="AdwWindowTitle">
-                <property name="title" translatable="yes">Details</property>
-              </object>
-            </property>
-          </object>
-        </child>
-        <property name="content">
-          <object class="SysprofFrameUtility">
-            <binding name="session">
-              <lookup name="session">SysprofLogsSection</lookup>
-            </binding>
-            <binding name="frame">
-              <lookup name="selected-item">selection</lookup>
-            </binding>
-          </object>
-        </property>
-      </object>
-    </property>
   </template>
 </interface>
-

@@ -28,5 +28,6 @@
     <file preprocess="xml-stripblanks">icons/scalable/actions/process-mounts-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/storage-symbolic.svg</file>
     <file preprocess="xml-stripblanks">icons/scalable/actions/system-log-symbolic.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/mark-waterfall-symbolic.svg</file>
   </gresource>
 </gresources>

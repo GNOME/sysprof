@@ -60,6 +60,8 @@ sysprof_marks_section_class_init (SysprofMarksSectionClass *klass)
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);
   g_type_ensure (SYSPROF_TYPE_MARK_CHART);
   g_type_ensure (SYSPROF_TYPE_MARK_TABLE);
+  g_type_ensure (SYSPROF_TYPE_SESSION_MODEL);
+  g_type_ensure (SYSPROF_TYPE_SESSION_MODEL_ITEM);
   g_type_ensure (SYSPROF_TYPE_TIME_SERIES);
   g_type_ensure (SYSPROF_TYPE_TIME_SPAN_LAYER);
 }

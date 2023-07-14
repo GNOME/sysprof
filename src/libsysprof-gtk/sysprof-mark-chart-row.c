@@ -68,10 +68,15 @@ sysprof_mark_chart_row_activate_layer_item_cb (SysprofMarkChartRow *self,
   time_span.begin_nsec = sysprof_document_frame_get_time (SYSPROF_DOCUMENT_FRAME (mark));
   time_span.end_nsec = sysprof_document_mark_get_end_time (mark);
 
-  sysprof_session_select_time (session, &time_span);
-  sysprof_session_zoom_to_selection (session);
+  if (sysprof_time_span_duration (time_span) > 0)
+    {
+      sysprof_session_select_time (session, &time_span);
+      sysprof_session_zoom_to_selection (session);
 
-  return TRUE;
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 static void

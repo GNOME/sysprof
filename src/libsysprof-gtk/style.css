@@ -108,3 +108,13 @@ tracks row track info {
 .utility .view {
   background: transparent;
 }
+
+.navigation-sidebar label.indicator {
+  background: alpha(@accent_bg_color, .5);
+  color: @accent_fg_color;
+  border-radius: 50px;
+  padding: 1px 5px;
+  font-feature-settings: 'tnum';
+  font-size: .8em;
+  border: 1px solid alpha(@accent_bg_color,.6);
+}

@@ -24,6 +24,7 @@
 
 #include <sysprof-gtk.h>
 
+#include "sysprof-document-bitset-index-private.h"
 #include "sysprof-frame-utility.h"
 #include "sysprof-logs-section.h"
 
@@ -76,6 +77,13 @@ sysprof_logs_section_activate_layer_item_cb (SysprofLogsSection *self,
 }
 
 static char *
+format_number (gpointer unused,
+               guint    number)
+{
+  return g_strdup_printf ("%'u", number);
+}
+
+static char *
 format_severity (gpointer       unused,
                  GLogLevelFlags severity)
 {
@@ -121,9 +129,11 @@ sysprof_logs_section_class_init (SysprofLogsSectionClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-logs-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofLogsSection, column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofLogsSection, time_column);
+  gtk_widget_class_bind_template_callback (widget_class, format_number);
   gtk_widget_class_bind_template_callback (widget_class, format_severity);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_logs_section_activate_layer_item_cb);
 
+  g_type_ensure (SYSPROF_TYPE_DOCUMENT_BITSET_INDEX);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_LOG);
   g_type_ensure (SYSPROF_TYPE_FRAME_UTILITY);
   g_type_ensure (SYSPROF_TYPE_TIME_LABEL);

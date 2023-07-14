@@ -27,6 +27,7 @@ typedef struct
 {
   char           *category;
   char           *icon_name;
+  char           *indicator;
   char           *title;
   SysprofSession *session;
   GtkWidget      *utility;
@@ -39,6 +40,7 @@ enum {
   PROP_SESSION,
   PROP_CATEGORY,
   PROP_ICON_NAME,
+  PROP_INDICATOR,
   PROP_TITLE,
   PROP_UTILITY,
   N_PROPS
@@ -61,6 +63,7 @@ sysprof_section_dispose (GObject *object)
   g_clear_pointer (&priv->title, g_free);
   g_clear_pointer (&priv->category, g_free);
   g_clear_pointer (&priv->icon_name, g_free);
+  g_clear_pointer (&priv->indicator, g_free);
 
   G_OBJECT_CLASS (sysprof_section_parent_class)->dispose (object);
 }
@@ -81,6 +84,10 @@ sysprof_section_get_property (GObject    *object,
 
     case PROP_CATEGORY:
       g_value_set_string (value, sysprof_section_get_category (self));
+      break;
+
+    case PROP_INDICATOR:
+      g_value_set_string (value, sysprof_section_get_indicator (self));
       break;
 
     case PROP_ICON_NAME:
@@ -120,6 +127,10 @@ sysprof_section_set_property (GObject      *object,
 
     case PROP_ICON_NAME:
       sysprof_section_set_icon_name (self, g_value_get_string (value));
+      break;
+
+    case PROP_INDICATOR:
+      sysprof_section_set_indicator (self, g_value_get_string (value));
       break;
 
     case PROP_TITLE:
@@ -162,6 +173,11 @@ sysprof_section_class_init (SysprofSectionClass *klass)
 
   properties[PROP_ICON_NAME] =
     g_param_spec_string ("icon-name", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_INDICATOR] =
+    g_param_spec_string ("indicator", NULL, NULL,
                          NULL,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
@@ -267,6 +283,28 @@ sysprof_section_set_icon_name (SysprofSection *self,
 
   if (g_set_str (&priv->icon_name, icon_name))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_ICON_NAME]);
+}
+
+const char *
+sysprof_section_get_indicator (SysprofSection *self)
+{
+  SysprofSectionPrivate *priv = sysprof_section_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_SECTION (self), NULL);
+
+  return priv->indicator;
+}
+
+void
+sysprof_section_set_indicator (SysprofSection *self,
+                               const char     *indicator)
+{
+  SysprofSectionPrivate *priv = sysprof_section_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_SECTION (self));
+
+  if (g_set_str (&priv->indicator, indicator))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_INDICATOR]);
 }
 
 GtkWidget *

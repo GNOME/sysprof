@@ -34,6 +34,13 @@ struct _SysprofMarksSection
 
 G_DEFINE_FINAL_TYPE (SysprofMarksSection, sysprof_marks_section, SYSPROF_TYPE_SECTION)
 
+static char *
+format_number (gpointer unused,
+               guint    number)
+{
+  return g_strdup_printf ("%'u", number);
+}
+
 static void
 sysprof_marks_section_dispose (GObject *object)
 {
@@ -55,6 +62,7 @@ sysprof_marks_section_class_init (SysprofMarksSectionClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-marks-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, mark_chart);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarksSection, mark_table);
+  gtk_widget_class_bind_template_callback (widget_class, format_number);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);

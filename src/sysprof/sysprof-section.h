@@ -44,6 +44,9 @@ void            sysprof_section_set_category  (SysprofSection *self,
 const char     *sysprof_section_get_icon_name (SysprofSection *self);
 void            sysprof_section_set_icon_name (SysprofSection *self,
                                                const char     *icon_name);
+const char     *sysprof_section_get_indicator (SysprofSection *self);
+void            sysprof_section_set_indicator (SysprofSection *self,
+                                               const char     *indicator);
 const char     *sysprof_section_get_title     (SysprofSection *self);
 void            sysprof_section_set_title     (SysprofSection *self,
                                                const char     *title);

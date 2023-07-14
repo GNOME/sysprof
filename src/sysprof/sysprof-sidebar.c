@@ -40,6 +40,16 @@ G_DEFINE_FINAL_TYPE (SysprofSidebar, sysprof_sidebar, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
 
+static gboolean
+string_to_boolean (GBinding     *binding,
+                   const GValue *from_value,
+                   GValue       *to_value,
+                   gpointer      user_data)
+{
+  g_value_set_boolean (to_value, !!g_value_get_string (from_value));
+  return TRUE;
+}
+
 static GtkWidget *
 sysprof_sidebar_create_row (gpointer item,
                             gpointer user_data)
@@ -48,6 +58,7 @@ sysprof_sidebar_create_row (gpointer item,
   SysprofSidebar *sidebar = user_data;
   SysprofSection *section;
   GtkListBoxRow *row;
+  GtkLabel *indicator;
   GtkImage *image;
   GtkLabel *label;
   GtkBox *box;
@@ -64,12 +75,26 @@ sysprof_sidebar_create_row (gpointer item,
   label = g_object_new (GTK_TYPE_LABEL,
                         "xalign", .0f,
                         "label", sysprof_section_get_title (section),
+                        "hexpand", TRUE,
                         NULL);
   image = g_object_new (GTK_TYPE_IMAGE,
                         "icon-name", sysprof_section_get_icon_name (section),
                         NULL);
+  indicator = g_object_new (GTK_TYPE_LABEL,
+                            "css-classes", (const char * const[]) {"indicator", NULL},
+                            "valign", GTK_ALIGN_CENTER,
+                            NULL);
   gtk_box_append (box, GTK_WIDGET (image));
   gtk_box_append (box, GTK_WIDGET (label));
+  gtk_box_append (box, GTK_WIDGET (indicator));
+
+  g_object_bind_property (section, "indicator",
+                          indicator, "label",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property_full (section, "indicator",
+                               indicator, "visible",
+                               G_BINDING_SYNC_CREATE,
+                               string_to_boolean, NULL, NULL, NULL);
 
   row = g_object_new (GTK_TYPE_LIST_BOX_ROW,
                       "child", box,

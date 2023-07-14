@@ -249,55 +249,31 @@ functions_selection_changed_cb (SysprofCallgraphView *self,
     }
 }
 
-#if 0
 static void
-traceable_activate_cb (SysprofCallgraphView *self,
-                       guint                 position,
-                       GtkColumnView        *column_view)
+descendant_activated_cb (SysprofCallgraphView *self,
+                         guint                 position,
+                         GtkColumnView        *column_view)
 {
-  g_autoptr(SysprofSymbol) symbol = NULL;
+  g_autoptr(SysprofCallgraphFrame) frame = NULL;
+  g_autoptr(GtkTreeListRow) row = NULL;
   GtkSelectionModel *model;
 
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
   g_assert (GTK_IS_COLUMN_VIEW (column_view));
 
   if ((model = gtk_column_view_get_model (column_view)) &&
-      (symbol = g_list_model_get_item (G_LIST_MODEL (model), position)))
+      (row = g_list_model_get_item (G_LIST_MODEL (model), position)) &&
+      (frame = gtk_tree_list_row_get_item (row)))
     {
-      GListModel *functions = G_LIST_MODEL (gtk_column_view_get_model (self->functions_column_view));
-      guint n_items = g_list_model_get_n_items (functions);
+      SysprofSymbol *symbol = sysprof_callgraph_frame_get_symbol (frame);
 
-      for (guint i = 0; i < n_items; i++)
-        {
-          g_autoptr(SysprofCallgraphSymbol) callsym = g_list_model_get_item (functions, i);
-          SysprofSymbol *cur = sysprof_callgraph_symbol_get_symbol (callsym);
-
-          if (sysprof_symbol_equal (cur, symbol))
-            {
-              GtkListView *list_view = NULL;
-
-              for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (self->functions_column_view));
-                   child != NULL;
-                   child = gtk_widget_get_next_sibling (child))
-                {
-                  if (GTK_IS_LIST_VIEW (child))
-                    {
-                      list_view = GTK_LIST_VIEW (child);
-                      break;
-                    }
-                }
-
-              gtk_selection_model_select_item (GTK_SELECTION_MODEL (functions), i, TRUE);
-
-              if (list_view != NULL)
-                gtk_widget_activate_action (GTK_WIDGET (list_view), "list.scroll-to-item", "u", i);
-
-              break;
-            }
-        }
+      sysprof_callgraph_descendants_async (self->callgraph,
+                                           symbol,
+                                           NULL,
+                                           sysprof_callgraph_view_descendants_cb,
+                                           g_object_ref (self));
     }
 }
-#endif
 
 static void
 sysprof_callgraph_view_dispose (GObject *object)
@@ -461,6 +437,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_name_sorter);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, paned);
+  gtk_widget_class_bind_template_callback (widget_class, descendant_activated_cb);
 
   klass->augment_size = GLIB_SIZEOF_VOID_P;
 

@@ -117,6 +117,7 @@
             <property name="propagate-natural-height">true</property>
             <child>
               <object class="GtkColumnView" id="descendants_column_view">
+                <signal name="activate" handler="descendant_activated_cb" swapped="true"/>
                 <style>
                   <class name="data-table"/>
                 </style>

@@ -67,8 +67,8 @@ static GParamSpec *properties[N_PROPS];
 
 static void
 set_motion (SysprofTimeScrubber *self,
-            double             x,
-            double             y)
+            double               x,
+            double               y)
 {
   gboolean timecode_visible = FALSE;
   gboolean informative_visible = FALSE;
@@ -125,10 +125,10 @@ set_motion (SysprofTimeScrubber *self,
 }
 
 static void
-sysprof_time_scrubber_motion_enter_cb (SysprofTimeScrubber        *self,
-                                     double                    x,
-                                     double                    y,
-                                     GtkEventControllerMotion *motion)
+sysprof_time_scrubber_motion_enter_cb (SysprofTimeScrubber      *self,
+                                       double                    x,
+                                       double                    y,
+                                       GtkEventControllerMotion *motion)
 {
   g_assert (SYSPROF_IS_TIME_SCRUBBER (self));
   g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
@@ -137,8 +137,8 @@ sysprof_time_scrubber_motion_enter_cb (SysprofTimeScrubber        *self,
 }
 
 static void
-sysprof_time_scrubber_motion_leave_cb (SysprofTimeScrubber        *self,
-                                     GtkEventControllerMotion *motion)
+sysprof_time_scrubber_motion_leave_cb (SysprofTimeScrubber      *self,
+                                       GtkEventControllerMotion *motion)
 {
   g_assert (SYSPROF_IS_TIME_SCRUBBER (self));
   g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
@@ -147,10 +147,10 @@ sysprof_time_scrubber_motion_leave_cb (SysprofTimeScrubber        *self,
 }
 
 static void
-sysprof_time_scrubber_motion_cb (SysprofTimeScrubber        *self,
-                               double                    x,
-                               double                    y,
-                               GtkEventControllerMotion *motion)
+sysprof_time_scrubber_motion_cb (SysprofTimeScrubber      *self,
+                                 double                    x,
+                                 double                    y,
+                                 GtkEventControllerMotion *motion)
 {
   g_assert (SYSPROF_IS_TIME_SCRUBBER (self));
   g_assert (GTK_IS_EVENT_CONTROLLER_MOTION (motion));
@@ -160,9 +160,9 @@ sysprof_time_scrubber_motion_cb (SysprofTimeScrubber        *self,
 
 static void
 sysprof_time_scrubber_drag_begin_cb (SysprofTimeScrubber *self,
-                                   double             start_x,
-                                   double             start_y,
-                                   GtkGestureDrag    *drag)
+                                     double               start_x,
+                                     double               start_y,
+                                     GtkGestureDrag      *drag)
 {
   graphene_rect_t zoom_area;
   double x, y;
@@ -199,9 +199,9 @@ sysprof_time_scrubber_drag_begin_cb (SysprofTimeScrubber *self,
 
 static void
 sysprof_time_scrubber_drag_end_cb (SysprofTimeScrubber *self,
-                                 double             offset_x,
-                                 double             offset_y,
-                                 GtkGestureDrag    *drag)
+                                   double               offset_x,
+                                   double               offset_y,
+                                   GtkGestureDrag      *drag)
 {
   int base_x;
 
@@ -242,6 +242,8 @@ sysprof_time_scrubber_drag_end_cb (SysprofTimeScrubber *self,
           to_select.end_nsec = visible->begin_nsec + (end * visible_duration);
 
           sysprof_session_select_time (self->session, &to_select);
+
+          gtk_widget_grab_focus (GTK_WIDGET (self->zoom));
         }
     }
   else if (self->drag_start_x >= base_x)
@@ -262,9 +264,9 @@ cleanup:
 
 static void
 sysprof_time_scrubber_drag_update_cb (SysprofTimeScrubber *self,
-                                    double             offset_x,
-                                    double             offset_y,
-                                    GtkGestureDrag    *drag)
+                                      double               offset_x,
+                                      double               offset_y,
+                                      GtkGestureDrag      *drag)
 {
   g_assert (SYSPROF_IS_TIME_SCRUBBER (self));
   g_assert (GTK_IS_GESTURE_DRAG (drag));
@@ -335,12 +337,12 @@ get_selected_area (SysprofTimeScrubber *self,
 
 static void
 sysprof_time_scrubber_measure (GtkWidget      *widget,
-                             GtkOrientation  orientation,
-                             int             for_size,
-                             int            *minimum,
-                             int            *natural,
-                             int            *minimum_baseline,
-                             int            *natural_baseline)
+                               GtkOrientation  orientation,
+                               int             for_size,
+                               int            *minimum,
+                               int            *natural,
+                               int            *minimum_baseline,
+                               int            *natural_baseline)
 {
   SysprofTimeScrubber *self = (SysprofTimeScrubber *)widget;
 

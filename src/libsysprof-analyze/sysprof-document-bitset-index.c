@@ -78,6 +78,33 @@ list_model_iface_init (GListModelInterface *iface)
 G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofDocumentBitsetIndex, sysprof_document_bitset_index, G_TYPE_OBJECT,
                                G_IMPLEMENT_INTERFACE (G_TYPE_LIST_MODEL, list_model_iface_init))
 
+enum {
+  PROP_0,
+  PROP_N_ITEMS,
+  N_PROPS
+};
+
+static GParamSpec *properties[N_PROPS];
+
+static void
+sysprof_document_bitset_index_get_property (GObject    *object,
+                                            guint       prop_id,
+                                            GValue     *value,
+                                            GParamSpec *pspec)
+{
+  SysprofDocumentBitsetIndex *self = SYSPROF_DOCUMENT_BITSET_INDEX (object);
+
+  switch (prop_id)
+    {
+    case PROP_N_ITEMS:
+      g_value_set_uint (value, g_list_model_get_n_items (G_LIST_MODEL (self)));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    }
+}
+
 static void
 sysprof_document_bitset_index_dispose (GObject *object)
 {
@@ -95,6 +122,14 @@ sysprof_document_bitset_index_class_init (SysprofDocumentBitsetIndexClass *klass
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->dispose = sysprof_document_bitset_index_dispose;
+  object_class->get_property = sysprof_document_bitset_index_get_property;
+
+  properties[PROP_N_ITEMS] =
+    g_param_spec_uint ("n-items", NULL, NULL,
+                       0, G_MAXUINT, 0,
+                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
 static void

@@ -2,14 +2,57 @@
 <interface>
   <template class="SysprofSidebar" parent="GtkWidget">
     <child>
-      <object class="GtkScrolledWindow">
-        <property name="hscrollbar-policy">never</property>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
         <child>
-          <object class="GtkListBox" id="list_box">
-            <signal name="row-activated" handler="list_box_row_activated_cb" swapped="true"/>
-            <style>
-              <class name="navigation-sidebar"/>
-            </style>
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <property name="hscrollbar-policy">never</property>
+            <child>
+              <object class="GtkListBox" id="list_box">
+                <signal name="row-activated" handler="list_box_row_activated_cb" swapped="true"/>
+                <style>
+                  <class name="navigation-sidebar"/>
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="halign">center</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="margin-top">6</property>
+            <child>
+              <object class="GtkButton">
+                <property name="action-name">session.zoom-out</property>
+                <property name="icon-name">zoom-out-symbolic</property>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="action-name">session.zoom-one</property>
+                <property name="icon-name">zoom-original-symbolic</property>
+                <property name="width-request">48</property>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="action-name">session.zoom-in</property>
+                <property name="icon-name">zoom-in-symbolic</property>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
           </object>
         </child>
       </object>

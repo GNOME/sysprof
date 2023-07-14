@@ -58,6 +58,28 @@ G_DEFINE_FINAL_TYPE (SysprofWindow, sysprof_window, ADW_TYPE_APPLICATION_WINDOW)
 static GParamSpec *properties [N_PROPS];
 
 static void
+sysprof_window_update_zoom_actions (SysprofWindow *self)
+{
+  const SysprofTimeSpan *visible_time;
+  const SysprofTimeSpan *document_time;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    return;
+
+  visible_time = sysprof_session_get_visible_time (self->session);
+  document_time = sysprof_session_get_document_time (self->session);
+
+  gtk_widget_action_set_enabled (GTK_WIDGET (self),
+                                 "session.zoom-one",
+                                 !sysprof_time_span_equal (visible_time, document_time));
+  gtk_widget_action_set_enabled (GTK_WIDGET (self),
+                                 "session.zoom-out",
+                                 !sysprof_time_span_equal (visible_time, document_time));
+}
+
+static void
 show_greeter (SysprofWindow      *self,
               SysprofGreeterPage  page)
 {
@@ -124,6 +146,16 @@ sysprof_window_set_document (SysprofWindow   *self,
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_DOCUMENT]);
 
   self->session = sysprof_session_new (document);
+  g_signal_connect_object (self->session,
+                           "notify::selected-time",
+                           G_CALLBACK (sysprof_window_update_zoom_actions),
+                           self,
+                           G_CONNECT_SWAPPED);
+  g_signal_connect_object (self->session,
+                           "notify::visible-time",
+                           G_CALLBACK (sysprof_window_update_zoom_actions),
+                           self,
+                           G_CONNECT_SWAPPED);
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
 
   for (guint i = 0; i < G_N_ELEMENTS (callgraph_actions); i++)
@@ -133,6 +165,8 @@ sysprof_window_set_document (SysprofWindow   *self,
 
       g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
     }
+
+  sysprof_window_update_zoom_actions (self);
 }
 
 static void
@@ -151,6 +185,71 @@ main_view_notify_sidebar (SysprofWindow       *self,
     adw_overlay_split_view_set_show_sidebar (main_view, FALSE);
 
   gtk_widget_set_sensitive (GTK_WIDGET (self->show_right_sidebar), sidebar != NULL);
+}
+
+static void
+sysprof_window_session_zoom_one (GtkWidget  *widget,
+                                 const char *action_name,
+                                 GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    return;
+
+  sysprof_session_select_time (self->session,
+                               sysprof_session_get_document_time (self->session));
+}
+
+static void
+sysprof_window_session_zoom_in (GtkWidget  *widget,
+                                const char *action_name,
+                                GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+  const SysprofTimeSpan *visible_time;
+  SysprofTimeSpan select;
+  gint64 duration;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    return;
+
+  visible_time = sysprof_session_get_visible_time (self->session);
+  duration = sysprof_time_span_duration (*visible_time);
+
+  select.begin_nsec = visible_time->begin_nsec + (duration / 4);
+  select.end_nsec = select.begin_nsec + (duration / 2);
+
+  sysprof_session_select_time (self->session, &select);
+  sysprof_session_zoom_to_selection (self->session);
+}
+
+static void
+sysprof_window_session_zoom_out (GtkWidget  *widget,
+                                 const char *action_name,
+                                 GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+  SysprofTimeSpan select;
+  gint64 duration;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    return;
+
+  select = *sysprof_session_get_visible_time (self->session);
+  duration = sysprof_time_span_duration (select);
+
+  select.begin_nsec -= floor (duration / 2.);
+  select.end_nsec += ceil (duration / 2.);
+
+  sysprof_session_select_time (self->session, &select);
+  sysprof_session_zoom_to_selection (self->session);
 }
 
 static void
@@ -238,6 +337,9 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
   gtk_widget_class_install_action (widget_class, "win.record-capture", NULL, sysprof_window_record_capture_action);
   gtk_widget_class_install_action (widget_class, "win.show-cpu-info", NULL, sysprof_window_show_cpu_info_action);
+  gtk_widget_class_install_action (widget_class, "session.zoom-one", NULL, sysprof_window_session_zoom_one);
+  gtk_widget_class_install_action (widget_class, "session.zoom-out", NULL, sysprof_window_session_zoom_out);
+  gtk_widget_class_install_action (widget_class, "session.zoom-in", NULL, sysprof_window_session_zoom_in);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
   g_type_ensure (SYSPROF_TYPE_FILES_SECTION);

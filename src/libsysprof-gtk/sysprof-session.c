@@ -348,7 +348,8 @@ sysprof_session_select_time (SysprofSession        *self,
   if (time_span == NULL)
     time_span = &document_time_span;
 
-  self->selected_time = *time_span;
+  self->selected_time = sysprof_time_span_order (*time_span);
+  sysprof_time_span_clamp (&self->selected_time, document_time_span);
 
   if (self->visible_time.begin_nsec > time_span->begin_nsec)
     {

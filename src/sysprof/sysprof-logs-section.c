@@ -37,6 +37,44 @@ struct _SysprofLogsSection
 
 G_DEFINE_FINAL_TYPE (SysprofLogsSection, sysprof_logs_section, SYSPROF_TYPE_SECTION)
 
+static void
+sysprof_logs_section_activate_layer_item_cb (SysprofLogsSection *self,
+                                             SysprofChartLayer  *layer,
+                                             SysprofDocumentLog *item,
+                                             SysprofChart       *chart)
+{
+  GtkSelectionModel *model;
+  guint n_items;
+
+  g_assert (SYSPROF_IS_LOGS_SECTION (self));
+  g_assert (SYSPROF_IS_CHART_LAYER (layer));
+  g_assert (SYSPROF_IS_DOCUMENT_LOG (item));
+  g_assert (SYSPROF_IS_CHART (chart));
+
+  model = gtk_column_view_get_model (self->column_view);
+  n_items = g_list_model_get_n_items (G_LIST_MODEL (model));
+
+  for (guint i = 0; i < n_items; i++)
+    {
+      g_autoptr(SysprofDocumentLog) log = g_list_model_get_item (G_LIST_MODEL (model), i);
+
+      if (sysprof_document_frame_equal (SYSPROF_DOCUMENT_FRAME (item), SYSPROF_DOCUMENT_FRAME (log)))
+        {
+          gtk_single_selection_set_selected (GTK_SINGLE_SELECTION (model), i);
+
+          for (GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (self->column_view));
+               child != NULL;
+               child = gtk_widget_get_next_sibling (child))
+            {
+              if (gtk_widget_activate_action (child, "list.scroll-to-item", "u", i))
+                break;
+            }
+
+          break;
+        }
+    }
+}
+
 static char *
 format_severity (gpointer       unused,
                  GLogLevelFlags severity)
@@ -84,6 +122,7 @@ sysprof_logs_section_class_init (SysprofLogsSectionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofLogsSection, column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofLogsSection, time_column);
   gtk_widget_class_bind_template_callback (widget_class, format_severity);
+  gtk_widget_class_bind_template_callback (widget_class, sysprof_logs_section_activate_layer_item_cb);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_LOG);
   g_type_ensure (SYSPROF_TYPE_FRAME_UTILITY);

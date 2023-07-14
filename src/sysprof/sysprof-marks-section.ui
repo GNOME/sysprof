@@ -56,10 +56,6 @@
           </object>
         </child>
         <child>
-          <object class="GtkSeparator">
-          </object>
-        </child>
-        <child>
           <object class="AdwViewStack" id="stack">
             <property name="vexpand">true</property>
             <child>

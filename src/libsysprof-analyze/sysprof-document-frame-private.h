@@ -40,6 +40,7 @@ struct _SysprofDocumentFrame
 struct _SysprofDocumentFrameClass
 {
   GObjectClass parent_class;
+  const char *type_name;
 };
 
 SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *mapped,
@@ -48,6 +49,9 @@ SysprofDocumentFrame *_sysprof_document_frame_new (GMappedFile               *ma
                                                    gboolean                   needs_swap,
                                                    gint64                     begin_time,
                                                    gint64                     end_time);
+
+#define SYSPROF_DOCUMENT_FRAME_GET_CLASS(obj) \
+  G_TYPE_INSTANCE_GET_CLASS(obj, SYSPROF_TYPE_DOCUMENT_FRAME, SysprofDocumentFrameClass)
 
 #define SYSPROF_DOCUMENT_FRAME_ENDPTR(obj) \
   (&((const guint8 *)SYSPROF_DOCUMENT_FRAME(obj)->frame)[SYSPROF_DOCUMENT_FRAME(obj)->frame_len])

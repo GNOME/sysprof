@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #include "sysprof-document-frame-private.h"
 
 #include "sysprof-document-allocation.h"
@@ -45,10 +47,17 @@ enum {
   PROP_PID,
   PROP_TIME,
   PROP_TIME_OFFSET,
+  PROP_TYPE_NAME,
   N_PROPS
 };
 
 static GParamSpec *properties[N_PROPS];
+
+static const char *
+sysprof_document_frame_get_type_name (SysprofDocumentFrame *self)
+{
+  return g_dgettext (GETTEXT_PACKAGE, SYSPROF_DOCUMENT_FRAME_GET_CLASS (self)->type_name);
+}
 
 static void
 sysprof_document_frame_finalize (GObject *object)
@@ -89,6 +98,10 @@ sysprof_document_frame_get_property (GObject    *object,
       g_value_set_int64 (value, sysprof_document_frame_get_time_offset (self));
       break;
 
+    case PROP_TYPE_NAME:
+      g_value_set_static_string (value, sysprof_document_frame_get_type_name (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -101,6 +114,8 @@ sysprof_document_frame_class_init (SysprofDocumentFrameClass *klass)
 
   object_class->finalize = sysprof_document_frame_finalize;
   object_class->get_property = sysprof_document_frame_get_property;
+
+  klass->type_name = N_("Frame");
 
   properties[PROP_CPU] =
     g_param_spec_int ("cpu", NULL, NULL,
@@ -129,6 +144,11 @@ sysprof_document_frame_class_init (SysprofDocumentFrameClass *klass)
                         G_MAXINT64,
                         0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_TYPE_NAME] =
+    g_param_spec_string ("type-name", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

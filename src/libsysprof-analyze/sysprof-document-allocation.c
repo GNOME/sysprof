@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #include "sysprof-document-frame-private.h"
 
 #include "sysprof-document-allocation.h"
@@ -142,8 +144,11 @@ static void
 sysprof_document_allocation_class_init (SysprofDocumentAllocationClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  SysprofDocumentFrameClass *document_frame_class = SYSPROF_DOCUMENT_FRAME_CLASS (klass);
 
   object_class->get_property = sysprof_document_allocation_get_property;
+
+  document_frame_class->type_name = N_("Allocation");
 
   /**
    * SysprofDocumentAllocation:thread-id:

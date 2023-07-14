@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-log.h"
 
@@ -76,8 +78,11 @@ static void
 sysprof_document_log_class_init (SysprofDocumentLogClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  SysprofDocumentFrameClass *document_frame_class = SYSPROF_DOCUMENT_FRAME_CLASS (klass);
 
   object_class->get_property = sysprof_document_log_get_property;
+
+  document_frame_class->type_name = N_("Log");
 
   properties [PROP_SEVERITY] =
     g_param_spec_uint ("severity", NULL, NULL,

@@ -20,6 +20,8 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-mark.h"
 
@@ -87,8 +89,11 @@ static void
 sysprof_document_mark_class_init (SysprofDocumentMarkClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  SysprofDocumentFrameClass *document_frame_class = SYSPROF_DOCUMENT_FRAME_CLASS (klass);
 
   object_class->get_property = sysprof_document_mark_get_property;
+
+  document_frame_class->type_name = N_("Mark");
 
   properties [PROP_DURATION] =
     g_param_spec_int64 ("duration", NULL, NULL,

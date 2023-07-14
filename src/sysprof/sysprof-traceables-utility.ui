@@ -77,6 +77,34 @@
                   </object>
                 </child>
                 <child>
+                  <object class="GtkColumnViewColumn" id="traceables_cpu_column">
+                    <property name="title" translatable="yes">CPU</property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkInscription">
+        <property name="nat-chars">2</property>
+        <property name="min-chars">2</property>
+        <property name="xalign">0</property>
+        <binding name="text">
+          <lookup name="cpu" type="SysprofDocumentFrame">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]></property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+                <child>
                   <object class="GtkColumnViewColumn" id="traceables_depth_column">
                     <property name="title" translatable="yes">Depth</property>
                     <property name="expand">true</property>

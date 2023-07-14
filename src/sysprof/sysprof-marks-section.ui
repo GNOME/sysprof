@@ -25,13 +25,22 @@
                     </binding>
                     <property name="series">
                       <object class="SysprofTimeSeries">
-                        <binding name="model">
-                          <lookup name="marks" type="SysprofDocument">
-                            <lookup name="document" type="SysprofSession">
-                              <lookup name="session">SysprofMarksSection</lookup>
-                            </lookup>
-                          </lookup>
-                        </binding>
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="visible-time" type="SysprofSession">
+                                <lookup name="session">SysprofMarksSection</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="marks" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofMarksSection</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
                         <property name="begin-time-expression">
                           <lookup name="time" type="SysprofDocumentFrame"/>
                         </property>

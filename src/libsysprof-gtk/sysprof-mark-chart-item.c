@@ -21,14 +21,15 @@
 #include "config.h"
 
 #include "sysprof-mark-chart-item-private.h"
+#include "sysprof-time-filter-model.h"
 
 struct _SysprofMarkChartItem
 {
-  GObject             parent_instance;
-  SysprofSession     *session;
-  SysprofMarkCatalog *catalog;
-  GtkFilterListModel *filtered;
-  SysprofSeries      *series;
+  GObject                 parent_instance;
+  SysprofSession         *session;
+  SysprofMarkCatalog     *catalog;
+  SysprofTimeFilterModel *filtered;
+  SysprofSeries          *series;
 };
 
 enum {
@@ -53,10 +54,11 @@ sysprof_mark_chart_item_constructed (GObject *object)
   if (self->catalog == NULL || self->session == NULL)
     g_return_if_reached ();
 
-  g_object_set (self->filtered,
-                "model", G_LIST_MODEL (self->catalog),
-                "filter", sysprof_session_get_filter (self->session),
-                NULL);
+  sysprof_time_filter_model_set_model (self->filtered, G_LIST_MODEL (self->catalog));
+
+  g_object_bind_property (self->session, "selected-time",
+                          self->filtered, "time-span",
+                          G_BINDING_SYNC_CREATE);
 }
 
 static void
@@ -153,8 +155,7 @@ sysprof_mark_chart_item_class_init (SysprofMarkChartItemClass *klass)
 static void
 sysprof_mark_chart_item_init (SysprofMarkChartItem *self)
 {
-  self->filtered = gtk_filter_list_model_new (NULL, NULL);
-  gtk_filter_list_model_set_incremental (self->filtered, TRUE);
+  self->filtered = sysprof_time_filter_model_new (NULL, NULL);
 
   self->series = sysprof_time_series_new (NULL,
                                           g_object_ref (G_LIST_MODEL (self->filtered)),

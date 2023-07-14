@@ -77,6 +77,12 @@ sysprof_window_update_zoom_actions (SysprofWindow *self)
   gtk_widget_action_set_enabled (GTK_WIDGET (self),
                                  "session.zoom-out",
                                  !sysprof_time_span_equal (visible_time, document_time));
+  gtk_widget_action_set_enabled (GTK_WIDGET (self),
+                                 "session.seek-backward",
+                                 visible_time->begin_nsec > document_time->begin_nsec);
+  gtk_widget_action_set_enabled (GTK_WIDGET (self),
+                                 "session.seek-forward",
+                                 visible_time->end_nsec < document_time->end_nsec);
 }
 
 static void
@@ -185,6 +191,60 @@ main_view_notify_sidebar (SysprofWindow       *self,
     adw_overlay_split_view_set_show_sidebar (main_view, FALSE);
 
   gtk_widget_set_sensitive (GTK_WIDGET (self->show_right_sidebar), sidebar != NULL);
+}
+
+static void
+sysprof_window_session_seek_backward (GtkWidget  *widget,
+                                      const char *action_name,
+                                      GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+  const SysprofTimeSpan *document_time;
+  const SysprofTimeSpan *visible_time;
+  SysprofTimeSpan select;
+  gint64 duration;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    return;
+
+  visible_time = sysprof_session_get_visible_time (self->session);
+  document_time = sysprof_session_get_document_time (self->session);
+  duration = sysprof_time_span_duration (*visible_time);
+
+  select.begin_nsec = MAX (document_time->begin_nsec, visible_time->begin_nsec - duration);
+  select.end_nsec = select.begin_nsec + duration;
+
+  sysprof_session_select_time (self->session, &select);
+  sysprof_session_zoom_to_selection (self->session);
+}
+
+static void
+sysprof_window_session_seek_forward (GtkWidget  *widget,
+                                     const char *action_name,
+                                     GVariant   *param)
+{
+  SysprofWindow *self = (SysprofWindow *)widget;
+  const SysprofTimeSpan *document_time;
+  const SysprofTimeSpan *visible_time;
+  SysprofTimeSpan select;
+  gint64 duration;
+
+  g_assert (SYSPROF_IS_WINDOW (self));
+
+  if (self->session == NULL)
+    return;
+
+  visible_time = sysprof_session_get_visible_time (self->session);
+  document_time = sysprof_session_get_document_time (self->session);
+  duration = sysprof_time_span_duration (*visible_time);
+
+  select.begin_nsec = MIN (document_time->end_nsec - duration, visible_time->begin_nsec + duration);
+  select.end_nsec = select.begin_nsec + duration;
+
+  sysprof_session_select_time (self->session, &select);
+  sysprof_session_zoom_to_selection (self->session);
 }
 
 static void
@@ -340,11 +400,16 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_install_action (widget_class, "session.zoom-one", NULL, sysprof_window_session_zoom_one);
   gtk_widget_class_install_action (widget_class, "session.zoom-out", NULL, sysprof_window_session_zoom_out);
   gtk_widget_class_install_action (widget_class, "session.zoom-in", NULL, sysprof_window_session_zoom_in);
+  gtk_widget_class_install_action (widget_class, "session.seek-forward", NULL, sysprof_window_session_seek_forward);
+  gtk_widget_class_install_action (widget_class, "session.seek-backward", NULL, sysprof_window_session_seek_backward);
 
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_plus, GDK_CONTROL_MASK, "session.zoom-in", NULL);
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_equal, GDK_CONTROL_MASK, "session.zoom-in", NULL);
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_minus, GDK_CONTROL_MASK, "session.zoom-out", NULL);
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_0, GDK_CONTROL_MASK, "session.zoom-one", NULL);
+
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_bracketleft, GDK_CONTROL_MASK, "session.seek-backward", NULL);
+  gtk_widget_class_add_binding_action (widget_class, GDK_KEY_bracketright, GDK_CONTROL_MASK, "session.seek-forward", NULL);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
   g_type_ensure (SYSPROF_TYPE_FILES_SECTION);

@@ -27,6 +27,16 @@
             <property name="margin-top">6</property>
             <child>
               <object class="GtkButton">
+                <property name="tooltip-text" translatable="yes">Seek Backward</property>
+                <property name="action-name">session.seek-backward</property>
+                <property name="icon-name">media-seek-backward-symbolic</property>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
                 <property name="tooltip-text" translatable="yes">Zoom Out</property>
                 <property name="action-name">session.zoom-out</property>
                 <property name="icon-name">zoom-out-symbolic</property>
@@ -51,6 +61,16 @@
                 <property name="tooltip-text" translatable="yes">Zoom In</property>
                 <property name="action-name">session.zoom-in</property>
                 <property name="icon-name">zoom-in-symbolic</property>
+                <style>
+                  <class name="flat"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="tooltip-text" translatable="yes">Seek Forward</property>
+                <property name="action-name">session.seek-forward</property>
+                <property name="icon-name">media-seek-forward-symbolic</property>
                 <style>
                   <class name="flat"/>
                 </style>

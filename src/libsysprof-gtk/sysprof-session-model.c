@@ -27,6 +27,7 @@ struct _SysprofSessionModel
 {
   GObject         parent_instance;
   GListModel     *model;
+  GSignalGroup   *model_signals;
   SysprofSession *session;
 };
 
@@ -67,7 +68,7 @@ sysprof_session_model_get_n_items (GListModel *model)
 {
   SysprofSessionModel *self = SYSPROF_SESSION_MODEL (model);
 
-  if (self->model == NULL)
+  if (self->model == NULL || self->session == 0)
     return 0;
 
   return g_list_model_get_n_items (self->model);
@@ -87,10 +88,26 @@ G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofSessionModel, sysprof_session_model, G_TYP
 static GParamSpec *properties [N_PROPS];
 
 static void
+sysprof_session_model_items_changed_cb (SysprofSessionModel *self,
+                                        guint                position,
+                                        guint                removed,
+                                        guint                added,
+                                        GListModel          *model)
+{
+  g_assert (SYSPROF_IS_SESSION_MODEL (self));
+
+  if (self->session == NULL || self->model != model)
+    return;
+
+  g_list_model_items_changed (G_LIST_MODEL (self), position, removed, added);
+}
+
+static void
 sysprof_session_model_dispose (GObject *object)
 {
   SysprofSessionModel *self = (SysprofSessionModel *)object;
 
+  g_clear_object (&self->model_signals);
   g_clear_object (&self->session);
   g_clear_object (&self->model);
 
@@ -168,6 +185,12 @@ sysprof_session_model_class_init (SysprofSessionModelClass *klass)
 static void
 sysprof_session_model_init (SysprofSessionModel *self)
 {
+  self->model_signals = g_signal_group_new (G_TYPE_LIST_MODEL);
+  g_signal_group_connect_object (self->model_signals,
+                                 "items-changed",
+                                 G_CALLBACK (sysprof_session_model_items_changed_cb),
+                                 self,
+                                 G_CONNECT_SWAPPED);
 }
 
 SysprofSessionModel *
@@ -201,8 +224,8 @@ void
 sysprof_session_model_set_model (SysprofSessionModel *self,
                                  GListModel          *model)
 {
-  guint old_len = 0;
-  guint new_len = 0;
+  guint old_n_items = 0;
+  guint new_n_items = 0;
 
   g_return_if_fail (SYSPROF_IS_SESSION_MODEL (self));
   g_return_if_fail (!model || G_IS_LIST_MODEL (model));
@@ -210,22 +233,18 @@ sysprof_session_model_set_model (SysprofSessionModel *self,
   if (self->model == model)
     return;
 
-  if (self->model)
-    {
-      old_len = g_list_model_get_n_items (G_LIST_MODEL (self->model));
-      g_clear_object (&self->model);
-    }
-
   if (model)
-    {
-      self->model = g_object_ref (model);
-      new_len = g_list_model_get_n_items (model);
-    }
+    g_object_ref (model);
+
+  old_n_items = g_list_model_get_n_items (G_LIST_MODEL (self));
+  g_set_object (&self->model, model);
+  g_signal_group_set_target (self->model_signals, model);
+  new_n_items = g_list_model_get_n_items (G_LIST_MODEL (self));
+
+  if (old_n_items || new_n_items)
+    g_list_model_items_changed (G_LIST_MODEL (self), 0, old_n_items, new_n_items);
 
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_MODEL]);
-
-  if (old_len || new_len)
-    g_list_model_items_changed (G_LIST_MODEL (self), 0, old_len, new_len);
 }
 
 /**
@@ -246,16 +265,21 @@ void
 sysprof_session_model_set_session (SysprofSessionModel *self,
                                    SysprofSession      *session)
 {
+  guint old_n_items = 0;
+  guint new_n_items = 0;
+
   g_return_if_fail (SYSPROF_IS_SESSION_MODEL (self));
   g_return_if_fail (!session || SYSPROF_IS_SESSION (session));
 
-  if (g_set_object (&self->session, session))
-    {
-      guint n_items = g_list_model_get_n_items (G_LIST_MODEL (self));
+  if (self->session == session)
+    return;
 
-      if (n_items > 0)
-        g_list_model_items_changed (G_LIST_MODEL (self), 0, n_items, n_items);
+  old_n_items = g_list_model_get_n_items (G_LIST_MODEL (self));
+  g_set_object (&self->session, session);
+  new_n_items = g_list_model_get_n_items (G_LIST_MODEL (self));
 
-      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
-    }
+  if (old_n_items || new_n_items)
+    g_list_model_items_changed (G_LIST_MODEL (self), 0, old_n_items, new_n_items);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
 }

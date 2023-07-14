@@ -24,6 +24,7 @@
 
 #include <sysprof-gtk.h>
 
+#include "sysprof-frame-utility.h"
 #include "sysprof-logs-section.h"
 
 struct _SysprofLogsSection
@@ -85,6 +86,7 @@ sysprof_logs_section_class_init (SysprofLogsSectionClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, format_severity);
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_LOG);
+  g_type_ensure (SYSPROF_TYPE_FRAME_UTILITY);
   g_type_ensure (SYSPROF_TYPE_TIME_LABEL);
   g_type_ensure (SYSPROF_TYPE_TIME_SERIES);
   g_type_ensure (SYSPROF_TYPE_TIME_SPAN_LAYER);

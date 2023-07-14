@@ -144,6 +144,36 @@
                           </object>
                         </child>
                         <child>
+                          <object class="SysprofCountersSection">
+                            <property name="title" translatable="yes">CPU Usage</property>
+                            <property name="category">counters</property>
+                            <property name="icon-name">system-run-symbolic</property>
+                            <binding name="session">
+                              <lookup name="session">SysprofWindow</lookup>
+                            </binding>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="SysprofCountersSection">
+                            <property name="title" translatable="yes">Network</property>
+                            <property name="category">counters</property>
+                            <property name="icon-name">network-transmit-receive-symbolic</property>
+                            <binding name="session">
+                              <lookup name="session">SysprofWindow</lookup>
+                            </binding>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="SysprofCountersSection">
+                            <property name="title" translatable="yes">Storage</property>
+                            <property name="category">counters</property>
+                            <property name="icon-name">storage-symbolic</property>
+                            <binding name="session">
+                              <lookup name="session">SysprofWindow</lookup>
+                            </binding>
+                          </object>
+                        </child>
+                        <child>
                           <object class="SysprofFilesSection">
                             <property name="category">auxiliary</property>
                             <property name="icon-name">folder-symbolic</property>

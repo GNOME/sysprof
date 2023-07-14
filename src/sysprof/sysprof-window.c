@@ -24,6 +24,7 @@
 
 #include <sysprof-gtk.h>
 
+#include "sysprof-counters-section.h"
 #include "sysprof-cpu-info-dialog.h"
 #include "sysprof-files-section.h"
 #include "sysprof-greeter.h"
@@ -412,6 +413,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_bracketleft, GDK_CONTROL_MASK, "session.seek-backward", NULL);
   gtk_widget_class_add_binding_action (widget_class, GDK_KEY_bracketright, GDK_CONTROL_MASK, "session.seek-forward", NULL);
 
+  g_type_ensure (SYSPROF_TYPE_COUNTERS_SECTION);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT);
   g_type_ensure (SYSPROF_TYPE_FILES_SECTION);
   g_type_ensure (SYSPROF_TYPE_LOGS_SECTION);

@@ -29,8 +29,11 @@
 
 struct _SysprofCpuSection
 {
-  SysprofSection parent_instance;
+  SysprofSection       parent_instance;
+
   SysprofTimeScrubber *scrubber;
+  GtkColumnView       *column_view;
+  GtkColumnViewColumn *time_column;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofCpuSection, sysprof_cpu_section, SYSPROF_TYPE_SECTION)
@@ -122,7 +125,9 @@ sysprof_cpu_section_class_init (SysprofCpuSectionClass *klass)
   section_class->session_set = sysprof_cpu_section_session_set;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-cpu-section.ui");
+  gtk_widget_class_bind_template_child (widget_class, SysprofCpuSection, column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCpuSection, scrubber);
+  gtk_widget_class_bind_template_child (widget_class, SysprofCpuSection, time_column);
 
   g_type_ensure (SYSPROF_TYPE_CHART);
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);
@@ -138,4 +143,6 @@ static void
 sysprof_cpu_section_init (SysprofCpuSection *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_column_view_sort_by_column (self->column_view, self->time_column, GTK_SORT_ASCENDING);
 }

@@ -27,12 +27,14 @@
 struct _SysprofTimeFilterModel
 {
   GObject            parent_instance;
+  GtkExpression     *expression;
   GtkSliceListModel *slice;
   SysprofTimeSpan    time_span;
 };
 
 enum {
   PROP_0,
+  PROP_EXPRESSION,
   PROP_MODEL,
   PROP_TIME_SPAN,
   N_PROPS
@@ -70,12 +72,24 @@ G_DEFINE_FINAL_TYPE_WITH_CODE (SysprofTimeFilterModel, sysprof_time_filter_model
 
 static GParamSpec *properties [N_PROPS];
 
+static inline gint64
+get_item_time (SysprofTimeFilterModel *self,
+               GObject                *item)
+{
+  g_auto(GValue) value = G_VALUE_INIT;
+
+  g_value_init (&value, G_TYPE_INT64);
+  gtk_expression_evaluate (self->expression, item, &value);
+  return g_value_get_int64 (&value);
+}
+
 static void
 sysprof_time_filter_model_finalize (GObject *object)
 {
   SysprofTimeFilterModel *self = (SysprofTimeFilterModel *)object;
 
   g_clear_object (&self->slice);
+  g_clear_pointer (&self->expression, gtk_expression_unref);
 
   G_OBJECT_CLASS (sysprof_time_filter_model_parent_class)->finalize (object);
 }
@@ -90,6 +104,10 @@ sysprof_time_filter_model_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_EXPRESSION:
+      gtk_value_set_expression (value, sysprof_time_filter_model_get_expression (self));
+      break;
+
     case PROP_MODEL:
       g_value_set_object (value, sysprof_time_filter_model_get_model (self));
       break;
@@ -113,6 +131,10 @@ sysprof_time_filter_model_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_EXPRESSION:
+      sysprof_time_filter_model_set_expression (self, gtk_value_get_expression (value));
+      break;
+
     case PROP_MODEL:
       sysprof_time_filter_model_set_model (self, g_value_get_object (value));
       break;
@@ -135,6 +157,10 @@ sysprof_time_filter_model_class_init (SysprofTimeFilterModelClass *klass)
   object_class->get_property = sysprof_time_filter_model_get_property;
   object_class->set_property = sysprof_time_filter_model_set_property;
 
+  properties[PROP_EXPRESSION] =
+    gtk_param_spec_expression ("expression", NULL, NULL,
+                               (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_MODEL] =
     g_param_spec_object ("model", NULL, NULL,
                          G_TYPE_LIST_MODEL,
@@ -151,6 +177,8 @@ sysprof_time_filter_model_class_init (SysprofTimeFilterModelClass *klass)
 static void
 sysprof_time_filter_model_init (SysprofTimeFilterModel *self)
 {
+  self->expression = gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_FRAME, NULL, "time");
+
   self->time_span.begin_nsec = G_MININT64;
   self->time_span.end_nsec = G_MAXINT64;
 
@@ -175,11 +203,12 @@ uint_order (guint *a,
 }
 
 static guint
-binary_search_lte (GListModel *model,
-                   gint64      value)
+binary_search_lte (SysprofTimeFilterModel *self,
+                   GListModel             *model,
+                   gint64                  value)
 {
-  g_autoptr(SysprofDocumentFrame) first = NULL;
-  g_autoptr(SysprofDocumentFrame) last = NULL;
+  g_autoptr(GObject) first = NULL;
+  g_autoptr(GObject) last = NULL;
   guint lo;
   guint hi;
   guint n_items;
@@ -191,11 +220,11 @@ binary_search_lte (GListModel *model,
   first = g_list_model_get_item (model, 0);
   last = g_list_model_get_item (model, n_items - 1);
 
-  if (value < sysprof_document_frame_get_time (first))
+  if (value < get_item_time (self, first))
     return GTK_INVALID_LIST_POSITION;
-  else if (value == sysprof_document_frame_get_time (first))
+  else if (value == get_item_time (self, first))
     return 0;
-  else if (value >= sysprof_document_frame_get_time (last))
+  else if (value >= get_item_time (self, last))
     return n_items - 1;
 
   g_clear_object (&first);
@@ -207,11 +236,11 @@ binary_search_lte (GListModel *model,
   while (lo <= hi)
     {
       guint mid = lo + (hi - lo) / 2;
-      g_autoptr(SysprofDocumentFrame) frame = g_list_model_get_item (model, mid);
+      g_autoptr(GObject) item = g_list_model_get_item (model, mid);
 
-      if (value < sysprof_document_frame_get_time (frame))
+      if (value < get_item_time (self, item))
         hi = mid - 1;
-      else if (value > sysprof_document_frame_get_time (frame))
+      else if (value > get_item_time (self, item))
         lo = mid + 1;
       else
         return mid;
@@ -222,22 +251,23 @@ binary_search_lte (GListModel *model,
   first = g_list_model_get_item (model, lo);
   last = g_list_model_get_item (model, hi);
 
-  if (value < sysprof_document_frame_get_time (first))
+  if (value < get_item_time (self, first))
     return lo - 1;
-  else if (value > sysprof_document_frame_get_time (first))
+  else if (value > get_item_time (self, first))
     return lo;
-  else if (value < sysprof_document_frame_get_time (last))
+  else if (value < get_item_time (self, last))
     return hi;
 
   return GTK_INVALID_LIST_POSITION;
 }
 
 static guint
-binary_search_gte (GListModel *model,
-                   gint64      value)
+binary_search_gte (SysprofTimeFilterModel *self,
+                   GListModel             *model,
+                   gint64                  value)
 {
-  g_autoptr(SysprofDocumentFrame) first = NULL;
-  g_autoptr(SysprofDocumentFrame) last = NULL;
+  g_autoptr(GObject) first = NULL;
+  g_autoptr(GObject) last = NULL;
   guint lo;
   guint hi;
   guint n_items;
@@ -249,11 +279,11 @@ binary_search_gte (GListModel *model,
   first = g_list_model_get_item (model, 0);
   last = g_list_model_get_item (model, n_items - 1);
 
-  if (value <= sysprof_document_frame_get_time (first))
+  if (value <= get_item_time (self, first))
     return 0;
-  else if (value == sysprof_document_frame_get_time (last))
+  else if (value == get_item_time (self, last))
     return n_items - 1;
-  else if (value > sysprof_document_frame_get_time (last))
+  else if (value > get_item_time (self, last))
     return GTK_INVALID_LIST_POSITION;
 
   g_clear_object (&first);
@@ -265,11 +295,11 @@ binary_search_gte (GListModel *model,
   while (lo <= hi)
     {
       guint mid = lo + (hi - lo) / 2;
-      g_autoptr(SysprofDocumentFrame) frame = g_list_model_get_item (model, mid);
+      g_autoptr(GObject) item = g_list_model_get_item (model, mid);
 
-      if (value < sysprof_document_frame_get_time (frame))
+      if (value < get_item_time (self, item))
         hi = mid - 1;
-      else if (value > sysprof_document_frame_get_time (frame))
+      else if (value > get_item_time (self, item))
         lo = mid + 1;
       else
         return mid;
@@ -280,23 +310,25 @@ binary_search_gte (GListModel *model,
   first = g_list_model_get_item (model, lo);
   last = g_list_model_get_item (model, hi);
 
-  if (value > sysprof_document_frame_get_time (first))
+  if (value > get_item_time (self, first))
     return lo + 1;
-  else if (value < sysprof_document_frame_get_time (last))
+  else if (value < get_item_time (self, last))
     return hi - 1;
 
   return GTK_INVALID_LIST_POSITION;
 }
 
 static void
-calculate_bounds (GListModel            *model,
-                  const SysprofTimeSpan *time_span,
-                  guint                 *offset,
-                  guint                 *size)
+calculate_bounds (SysprofTimeFilterModel *self,
+                  GListModel             *model,
+                  const SysprofTimeSpan  *time_span,
+                  guint                  *offset,
+                  guint                  *size)
 {
   guint begin;
   guint end;
 
+  g_assert (SYSPROF_IS_TIME_FILTER_MODEL (self));
   g_assert (!model || G_IS_LIST_MODEL (model));
   g_assert (time_span != NULL);
   g_assert (offset != NULL);
@@ -311,8 +343,8 @@ calculate_bounds (GListModel            *model,
   if (time_span->begin_nsec == G_MININT64 && time_span->end_nsec == G_MAXINT64)
     return;
 
-  begin = binary_search_gte (model, time_span->begin_nsec);
-  end = binary_search_lte (model, time_span->end_nsec);
+  begin = binary_search_gte (self, model, time_span->begin_nsec);
+  end = binary_search_lte (self, model, time_span->end_nsec);
 
   if (begin > end || begin == GTK_INVALID_LIST_POSITION)
     return;
@@ -334,7 +366,7 @@ sysprof_time_filter_model_update (SysprofTimeFilterModel *self)
 
   model = sysprof_time_filter_model_get_model (self);
 
-  calculate_bounds (model, &self->time_span, &offset, &size);
+  calculate_bounds (self, model, &self->time_span, &offset, &size);
 
   gtk_slice_list_model_set_offset (self->slice, offset);
   gtk_slice_list_model_set_size (self->slice, size);
@@ -372,8 +404,6 @@ sysprof_time_filter_model_set_model (SysprofTimeFilterModel *self,
 {
   g_return_if_fail (SYSPROF_IS_TIME_FILTER_MODEL (self));
   g_return_if_fail (!model || G_IS_LIST_MODEL (model));
-  g_return_if_fail (!model || g_type_is_a (g_list_model_get_item_type (model),
-                                           SYSPROF_TYPE_DOCUMENT_FRAME));
 
   if (model == sysprof_time_filter_model_get_model (self))
     return;
@@ -408,4 +438,35 @@ sysprof_time_filter_model_set_time_span (SysprofTimeFilterModel *self,
       sysprof_time_filter_model_update (self);
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TIME_SPAN]);
     }
+}
+
+GtkExpression *
+sysprof_time_filter_model_get_expression (SysprofTimeFilterModel *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_TIME_FILTER_MODEL (self), NULL);
+
+  return self->expression;
+}
+
+void
+sysprof_time_filter_model_set_expression (SysprofTimeFilterModel *self,
+                                          GtkExpression          *expression)
+{
+  g_return_if_fail (SYSPROF_IS_TIME_FILTER_MODEL (self));
+  g_return_if_fail (!expression || GTK_IS_EXPRESSION (expression));
+
+  if (expression == self->expression)
+    return;
+
+  if (expression)
+    gtk_expression_ref (expression);
+
+  g_clear_pointer (&self->expression, gtk_expression_unref);
+
+  if (expression == NULL)
+    self->expression = gtk_property_expression_new (SYSPROF_TYPE_DOCUMENT_FRAME, NULL, "time");
+  else
+    self->expression = expression;
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_EXPRESSION]);
 }

@@ -30,13 +30,16 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofTimeFilterModel, sysprof_time_filter_model, SYSPROF, TIME_FILTER_MODEL, GObject)
 
-SysprofTimeFilterModel *sysprof_time_filter_model_new           (GListModel             *model,
-                                                                 const SysprofTimeSpan  *time_span);
-GListModel             *sysprof_time_filter_model_get_model     (SysprofTimeFilterModel *self);
-void                    sysprof_time_filter_model_set_model     (SysprofTimeFilterModel *self,
-                                                                 GListModel             *model);
-const SysprofTimeSpan  *sysprof_time_filter_model_get_time_span (SysprofTimeFilterModel *self);
-void                    sysprof_time_filter_model_set_time_span (SysprofTimeFilterModel *self,
-                                                                 const SysprofTimeSpan  *time_span);
+SysprofTimeFilterModel *sysprof_time_filter_model_new            (GListModel             *model,
+                                                                  const SysprofTimeSpan  *time_span);
+GListModel             *sysprof_time_filter_model_get_model      (SysprofTimeFilterModel *self);
+void                    sysprof_time_filter_model_set_model      (SysprofTimeFilterModel *self,
+                                                                  GListModel             *model);
+GtkExpression          *sysprof_time_filter_model_get_expression (SysprofTimeFilterModel *self);
+void                    sysprof_time_filter_model_set_expression (SysprofTimeFilterModel *self,
+                                                                  GtkExpression          *expression);
+const SysprofTimeSpan  *sysprof_time_filter_model_get_time_span  (SysprofTimeFilterModel *self);
+void                    sysprof_time_filter_model_set_time_span  (SysprofTimeFilterModel *self,
+                                                                  const SysprofTimeSpan  *time_span);
 
 G_END_DECLS

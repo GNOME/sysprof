@@ -669,7 +669,7 @@ sysprof_time_scrubber_set_session (SysprofTimeScrubber *self,
     }
 }
 
-static void
+void
 sysprof_time_scrubber_add_chart (SysprofTimeScrubber *self,
                                  GtkWidget           *chart)
 {

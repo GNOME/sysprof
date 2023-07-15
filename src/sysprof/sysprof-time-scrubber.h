@@ -34,5 +34,7 @@ GtkWidget      *sysprof_time_scrubber_new         (void);
 SysprofSession *sysprof_time_scrubber_get_session (SysprofTimeScrubber *self);
 void            sysprof_time_scrubber_set_session (SysprofTimeScrubber *self,
                                                    SysprofSession      *session);
+void            sysprof_time_scrubber_add_chart   (SysprofTimeScrubber *self,
+                                                   GtkWidget           *chart);
 
 G_END_DECLS

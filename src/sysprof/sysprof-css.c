@@ -34,7 +34,7 @@ _sysprof_css_init (void)
       g_resources_register (sysprof_get_resource ());
 
       css = gtk_css_provider_new ();
-      gtk_css_provider_load_from_resource (css, "/libsysprof-gtk/style.css");
+      gtk_css_provider_load_from_resource (css, "/org/gnome/sysprof/style.css");
       gtk_style_context_add_provider_for_display (gdk_display_get_default (),
                                                   GTK_STYLE_PROVIDER (css),
                                                   G_MAXUINT);

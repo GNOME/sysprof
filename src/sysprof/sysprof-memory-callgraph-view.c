@@ -325,7 +325,7 @@ sysprof_memory_callgraph_view_class_init (SysprofMemoryCallgraphViewClass *klass
   callgraph_view_class->augment_func = augment_memory;
   callgraph_view_class->load = sysprof_memory_callgraph_view_load;
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-memory-callgraph-view.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-memory-callgraph-view.ui");
 
   gtk_widget_class_bind_template_child (widget_class, SysprofMemoryCallgraphView, callers_self_column);
   gtk_widget_class_bind_template_child (widget_class, SysprofMemoryCallgraphView, callers_total_column);

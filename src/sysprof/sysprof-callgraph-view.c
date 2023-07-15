@@ -428,7 +428,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-callgraph-view.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-callgraph-view.ui");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_set_css_name (widget_class, "callgraphview");
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, callers_column_view);

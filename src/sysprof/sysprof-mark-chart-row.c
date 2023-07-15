@@ -152,7 +152,7 @@ sysprof_mark_chart_row_class_init (SysprofMarkChartRowClass *klass)
 
   gtk_widget_class_set_css_name (widget_class, "markchartrow");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
-  gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-mark-chart-row.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-mark-chart-row.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChartRow, chart);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChartRow, layer);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_mark_chart_row_activate_layer_item_cb);

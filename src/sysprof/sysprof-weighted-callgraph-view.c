@@ -310,7 +310,7 @@ sysprof_weighted_callgraph_view_class_init (SysprofWeightedCallgraphViewClass *k
   callgraph_view_class->augment_func = augment_weight;
   callgraph_view_class->load = sysprof_weighted_callgraph_view_load;
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-weighted-callgraph-view.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-weighted-callgraph-view.ui");
 
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, callers_self_column);
   gtk_widget_class_bind_template_child (widget_class, SysprofWeightedCallgraphView, callers_total_column);

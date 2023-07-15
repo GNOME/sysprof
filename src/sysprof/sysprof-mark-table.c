@@ -141,7 +141,7 @@ sysprof_mark_table_class_init (SysprofMarkTableClass *klass)
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/libsysprof-gtk/sysprof-mark-table.ui");
+  gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-mark-table.ui");
   gtk_widget_class_set_css_name (widget_class, "marktable");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkTable, box);

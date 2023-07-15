@@ -33,6 +33,9 @@ G_DECLARE_DERIVABLE_TYPE (SysprofSection, sysprof_section, SYSPROF, SECTION, Gtk
 struct _SysprofSectionClass
 {
   GtkWidgetClass parent_class;
+
+  void (*session_set) (SysprofSection *self,
+                       SysprofSession *session);
 };
 
 SysprofSession *sysprof_section_get_session   (SysprofSection *self);

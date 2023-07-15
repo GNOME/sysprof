@@ -216,7 +216,11 @@ sysprof_section_set_session (SysprofSection *self,
   g_return_if_fail (!session || SYSPROF_IS_SESSION (session));
 
   if (g_set_object (&priv->session, session))
-    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
+    {
+      if (SYSPROF_SECTION_GET_CLASS (self)->session_set)
+        SYSPROF_SECTION_GET_CLASS (self)->session_set (self, session);
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
+    }
 }
 
 const char *

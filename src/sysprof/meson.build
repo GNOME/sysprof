@@ -3,6 +3,7 @@ sysprof_sources = [
   'sysprof-application.c',
   'sysprof-counters-section.c',
   'sysprof-cpu-info-dialog.c',
+  'sysprof-cpu-section.c',
   'sysprof-files-section.c',
   'sysprof-frame-utility.c',
   'sysprof-greeter.c',

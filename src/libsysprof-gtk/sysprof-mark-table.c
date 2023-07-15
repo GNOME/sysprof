@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "sysprof-css-private.h"
+#include "sysprof-time-filter-model.h"
 #include "sysprof-mark-table.h"
 #include "sysprof-time-label.h"
 
@@ -46,43 +47,6 @@ enum {
 G_DEFINE_FINAL_TYPE (SysprofMarkTable, sysprof_mark_table, GTK_TYPE_WIDGET)
 
 static GParamSpec *properties [N_PROPS];
-
-static void
-sysprof_mark_table_disconnect (SysprofMarkTable *self)
-{
-  g_assert (SYSPROF_IS_MARK_TABLE (self));
-  g_assert (SYSPROF_IS_SESSION (self->session));
-
-  gtk_column_view_set_model (self->column_view, NULL);
-}
-
-static void
-sysprof_mark_table_connect (SysprofMarkTable *self)
-{
-  g_autoptr(GtkSingleSelection) single = NULL;
-  GtkFilterListModel *model;
-  SysprofDocument *document;
-  GtkSorter *column_sorter;
-  GtkSortListModel *sort_model;
-
-  g_assert (SYSPROF_IS_MARK_TABLE (self));
-  g_assert (SYSPROF_IS_SESSION (self->session));
-
-  column_sorter = gtk_column_view_get_sorter (self->column_view);
-
-  document = sysprof_session_get_document (self->session);
-  model = gtk_filter_list_model_new (sysprof_document_list_marks (document), NULL);
-  g_object_bind_property (self->session, "filter", model, "filter",
-                          G_BINDING_SYNC_CREATE);
-  sort_model = gtk_sort_list_model_new (G_LIST_MODEL (model), g_object_ref (column_sorter));
-  single = gtk_single_selection_new (G_LIST_MODEL (sort_model));
-
-  gtk_column_view_set_model (self->column_view, GTK_SELECTION_MODEL (single));
-
-  gtk_column_view_sort_by_column (self->column_view,
-                                  self->start_column,
-                                  GTK_SORT_ASCENDING);
-}
 
 static void
 sysprof_mark_table_activate_cb (SysprofMarkTable *self,
@@ -115,10 +79,7 @@ sysprof_mark_table_dispose (GObject *object)
   SysprofMarkTable *self = (SysprofMarkTable *)object;
 
   if (self->session)
-    {
-      sysprof_mark_table_disconnect (self);
-      g_clear_object (&self->session);
-    }
+    g_clear_object (&self->session);
 
   g_clear_pointer (&self->box, gtk_widget_unparent);
 
@@ -191,6 +152,7 @@ sysprof_mark_table_class_init (SysprofMarkTableClass *klass)
   g_resources_register (libsysprof_gtk_get_resource ());
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);
+  g_type_ensure (SYSPROF_TYPE_TIME_FILTER_MODEL);
   g_type_ensure (SYSPROF_TYPE_TIME_LABEL);
 }
 
@@ -200,6 +162,10 @@ sysprof_mark_table_init (SysprofMarkTable *self)
   _sysprof_css_init ();
 
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_column_view_sort_by_column (self->column_view,
+                                  self->start_column,
+                                  GTK_SORT_ASCENDING);
 }
 
 GtkWidget *
@@ -229,16 +195,6 @@ sysprof_mark_table_set_session (SysprofMarkTable *self,
   g_return_if_fail (SYSPROF_IS_MARK_TABLE (self));
   g_return_if_fail (!session || SYSPROF_IS_SESSION (session));
 
-  if (self->session == session)
-    return;
-
-  if (self->session)
-    sysprof_mark_table_disconnect (self);
-
-  g_set_object (&self->session, session);
-
-  if (session)
-    sysprof_mark_table_connect (self);
-
-  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
+  if (g_set_object (&self->session, session))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SESSION]);
 }

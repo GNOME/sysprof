@@ -14,6 +14,33 @@
                 </style>
                 <signal name="activate" handler="sysprof_mark_table_activate_cb" swapped="true"/>
                 <property name="show-column-separators">true</property>
+                <property name="model">
+                  <object class="GtkSingleSelection">
+                    <property name="model">
+                      <object class="GtkSortListModel">
+                        <binding name="sorter">
+                          <lookup name="sorter">column_view</lookup>
+                        </binding>
+                        <property name="model">
+                          <object class="SysprofTimeFilterModel">
+                            <binding name="time-span">
+                              <lookup name="selected-time" type="SysprofSession">
+                                <lookup name="session">SysprofMarkTable</lookup>
+                              </lookup>
+                            </binding>
+                            <binding name="model">
+                              <lookup name="marks" type="SysprofDocument">
+                                <lookup name="document" type="SysprofSession">
+                                  <lookup name="session">SysprofMarkTable</lookup>
+                                </lookup>
+                              </lookup>
+                            </binding>
+                          </object>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
                 <child>
                   <object class="GtkColumnViewColumn" id="start_column">
                     <property name="title" translatable="yes">Start</property>

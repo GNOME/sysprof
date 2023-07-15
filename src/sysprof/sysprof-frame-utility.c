@@ -20,9 +20,8 @@
 
 #include "config.h"
 
-#include <sysprof-gtk.h>
-
 #include "sysprof-frame-utility.h"
+#include "sysprof-session.h"
 
 struct _SysprofFrameUtility
 {

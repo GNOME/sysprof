@@ -1,4 +1,4 @@
-/* sysprof-track.h
+/* sysprof-css.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,28 +18,25 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#pragma once
+#include "config.h"
 
-#include <gtk/gtk.h>
+#include "sysprof-resources.h"
 
-#include <sysprof-analyze.h>
+#include "sysprof-css-private.h"
 
-#include "sysprof-session.h"
+void
+_sysprof_css_init (void)
+{
+  static GtkCssProvider *css;
 
-G_BEGIN_DECLS
+  if (css == NULL)
+    {
+      g_resources_register (sysprof_get_resource ());
 
-#define SYSPROF_TYPE_TRACK (sysprof_track_get_type())
-
-SYSPROF_AVAILABLE_IN_ALL
-G_DECLARE_FINAL_TYPE (SysprofTrack, sysprof_track, SYSPROF, TRACK, GObject)
-
-SYSPROF_AVAILABLE_IN_ALL
-SysprofSession *sysprof_track_get_session    (SysprofTrack *self);
-SYSPROF_AVAILABLE_IN_ALL
-const char     *sysprof_track_get_title      (SysprofTrack *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel     *sysprof_track_list_subtracks (SysprofTrack *self);
-SYSPROF_AVAILABLE_IN_ALL
-GMenuModel     *sysprof_track_get_menu_model (SysprofTrack *self);
-
-G_END_DECLS
+      css = gtk_css_provider_new ();
+      gtk_css_provider_load_from_resource (css, "/libsysprof-gtk/style.css");
+      gtk_style_context_add_provider_for_display (gdk_display_get_default (),
+                                                  GTK_STYLE_PROVIDER (css),
+                                                  G_MAXUINT);
+    }
+}

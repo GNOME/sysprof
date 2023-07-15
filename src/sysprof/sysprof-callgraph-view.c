@@ -22,7 +22,7 @@
 
 #include <libpanel.h>
 
-#include "libsysprof-gtk-resources.h"
+#include "sysprof-resources.h"
 
 #include "sysprof-callgraph-view-private.h"
 #include "sysprof-symbol-label-private.h"
@@ -441,7 +441,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   klass->augment_size = GLIB_SIZEOF_VOID_P;
 
-  g_resources_register (libsysprof_gtk_get_resource ());
+  g_resources_register (sysprof_get_resource ());
 
   g_type_ensure (PANEL_TYPE_PANED);
   g_type_ensure (SYSPROF_TYPE_SYMBOL_LABEL);

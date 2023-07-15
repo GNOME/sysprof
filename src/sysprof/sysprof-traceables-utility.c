@@ -20,8 +20,7 @@
 
 #include "config.h"
 
-#include <sysprof-gtk.h>
-
+#include "sysprof-session.h"
 #include "sysprof-traceables-utility.h"
 
 struct _SysprofTraceablesUtility

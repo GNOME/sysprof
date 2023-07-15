@@ -25,7 +25,7 @@
 #include "sysprof-mark-table.h"
 #include "sysprof-time-label.h"
 
-#include "libsysprof-gtk-resources.h"
+#include "sysprof-resources.h"
 
 struct _SysprofMarkTable
 {
@@ -149,7 +149,7 @@ sysprof_mark_table_class_init (SysprofMarkTableClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkTable, start_column);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_mark_table_activate_cb);
 
-  g_resources_register (libsysprof_gtk_get_resource ());
+  g_resources_register (sysprof_get_resource ());
 
   g_type_ensure (SYSPROF_TYPE_DOCUMENT_MARK);
   g_type_ensure (SYSPROF_TYPE_TIME_FILTER_MODEL);

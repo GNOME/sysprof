@@ -55,7 +55,5 @@ void                   sysprof_session_select_time            (SysprofSession   
                                                                const SysprofTimeSpan *time_span);
 SYSPROF_AVAILABLE_IN_ALL
 void                   sysprof_session_zoom_to_selection      (SysprofSession        *self);
-SYSPROF_AVAILABLE_IN_ALL
-GListModel            *sysprof_session_list_tracks            (SysprofSession        *self);
 
 G_END_DECLS

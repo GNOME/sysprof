@@ -23,9 +23,9 @@
 #include <glib/gi18n.h>
 
 #include <adwaita.h>
-#include <sysprof-gtk.h>
 
 #include "sysprof-metadata-section.h"
+#include "sysprof-time-label.h"
 
 struct _SysprofMetadataSection
 {

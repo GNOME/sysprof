@@ -20,12 +20,15 @@
 
 #include "config.h"
 
-#include <sysprof-gtk.h>
-
+#include "sysprof-chart.h"
 #include "sysprof-cpu-section.h"
+#include "sysprof-line-layer.h"
 #include "sysprof-time-filter-model.h"
 #include "sysprof-time-scrubber.h"
+#include "sysprof-time-series.h"
+#include "sysprof-time-span-layer.h"
 #include "sysprof-value-axis.h"
+#include "sysprof-xy-series.h"
 
 struct _SysprofCpuSection
 {

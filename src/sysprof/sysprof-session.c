@@ -23,7 +23,6 @@
 #include <glib/gi18n.h>
 
 #include "sysprof-session-private.h"
-#include "sysprof-track-private.h"
 #include "sysprof-value-axis.h"
 
 struct _SysprofSession
@@ -32,8 +31,6 @@ struct _SysprofSession
 
   SysprofDocument *document;
   GtkEveryFilter  *filter;
-
-  GListStore      *tracks;
 
   SysprofAxis     *visible_time_axis;
   SysprofAxis     *selected_time_axis;
@@ -57,7 +54,6 @@ enum {
   PROP_INCLUDE_THREADS,
   PROP_SELECTED_TIME,
   PROP_SELECTED_TIME_AXIS,
-  PROP_TRACKS,
   PROP_VISIBLE_TIME,
   PROP_VISIBLE_TIME_AXIS,
   N_PROPS
@@ -99,9 +95,6 @@ sysprof_session_set_document (SysprofSession  *self,
   time_span = sysprof_document_get_time_span (document);
   self->selected_time = self->visible_time = self->document_time = *time_span;
   sysprof_session_update_axis (self);
-
-  /* Discover tracks to show from the document */
-  _sysprof_session_discover_tracks (self, self->document, self->tracks);
 }
 
 static void
@@ -109,7 +102,6 @@ sysprof_session_dispose (GObject *object)
 {
   SysprofSession *self = (SysprofSession *)object;
 
-  g_clear_object (&self->tracks);
   g_clear_object (&self->visible_time_axis);
   g_clear_object (&self->selected_time_axis);
   g_clear_object (&self->document);
@@ -166,10 +158,6 @@ sysprof_session_get_property (GObject    *object,
 
     case PROP_VISIBLE_TIME_AXIS:
       g_value_set_object (value, sysprof_session_get_visible_time_axis (self));
-      break;
-
-    case PROP_TRACKS:
-      g_value_take_object (value, sysprof_session_list_tracks (self));
       break;
 
     default:
@@ -267,11 +255,6 @@ sysprof_session_class_init (SysprofSessionClass *klass)
                          SYSPROF_TYPE_AXIS,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_TRACKS] =
-    g_param_spec_object ("tracks", NULL, NULL,
-                         G_TYPE_LIST_MODEL,
-                         (G_PARAM_READABLE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
-
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }
 
@@ -281,7 +264,6 @@ sysprof_session_init (SysprofSession *self)
   self->filter = gtk_every_filter_new ();
   self->selected_time_axis = sysprof_value_axis_new (0, 0);
   self->visible_time_axis = sysprof_value_axis_new (0, 0);
-  self->tracks = g_list_store_new (SYSPROF_TYPE_TRACK);
 }
 
 SysprofSession *
@@ -414,22 +396,6 @@ sysprof_session_get_visible_time_axis (SysprofSession *self)
   return self->visible_time_axis;
 }
 
-/**
- * sysprof_session_list_tracks:
- * @self: a #SysprofSession
- *
- * Gets a list of #SysprofTrack to be displayed in the session.
- *
- * Returns: (transfer full): a #GListModel of #SysprofTrack
- */
-GListModel *
-sysprof_session_list_tracks (SysprofSession *self)
-{
-  g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
-
-  return g_object_ref (G_LIST_MODEL (self->tracks));
-}
-
 void
 sysprof_session_zoom_to_selection (SysprofSession *self)
 {
@@ -485,19 +451,14 @@ append_time_string (GString               *str,
 
 char *
 _sysprof_session_describe (SysprofSession *self,
-                           SysprofTrack   *track,
                            gpointer        item)
 {
   g_autofree char *text = NULL;
 
   g_return_val_if_fail (SYSPROF_IS_SESSION (self), NULL);
-  g_return_val_if_fail (!track || SYSPROF_IS_TRACK (track), NULL);
 
   if (self->document == NULL)
     return NULL;
-
-  if (track && (text = _sysprof_track_format_item_for_display (track, item)))
-    return g_steal_pointer (&text);
 
   if (SYSPROF_IS_DOCUMENT_MARK (item))
     {

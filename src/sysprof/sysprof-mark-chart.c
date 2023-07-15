@@ -25,7 +25,7 @@
 #include "sysprof-mark-chart-item-private.h"
 #include "sysprof-mark-chart-row-private.h"
 
-#include "libsysprof-gtk-resources.h"
+#include "sysprof-resources.h"
 
 struct _SysprofMarkChart
 {
@@ -164,7 +164,7 @@ sysprof_mark_chart_class_init (SysprofMarkChartClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChart, box);
   gtk_widget_class_bind_template_child (widget_class, SysprofMarkChart, list_view);
 
-  g_resources_register (libsysprof_gtk_get_resource ());
+  g_resources_register (sysprof_get_resource ());
 
   g_type_ensure (SYSPROF_TYPE_MARK_CHART_ITEM);
   g_type_ensure (SYSPROF_TYPE_MARK_CHART_ROW);

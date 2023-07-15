@@ -20,15 +20,22 @@
 
 #include "config.h"
 
-#include <sysprof-gtk.h>
-
+#include "sysprof-chart.h"
+#include "sysprof-column-layer.h"
+#include "sysprof-memory-callgraph-view.h"
 #include "sysprof-memory-section.h"
+#include "sysprof-session-model-item.h"
+#include "sysprof-session-model.h"
+#include "sysprof-time-series.h"
+#include "sysprof-time-span-layer.h"
+#include "sysprof-value-axis.h"
+#include "sysprof-xy-series.h"
 
 struct _SysprofMemorySection
 {
   SysprofSection parent_instance;
 
-  SysprofWeightedCallgraphView *callgraph_view;
+  SysprofMemoryCallgraphView *callgraph_view;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofMemorySection, sysprof_memory_section, SYSPROF_TYPE_SECTION)

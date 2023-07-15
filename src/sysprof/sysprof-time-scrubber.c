@@ -20,10 +20,9 @@
 
 #include "config.h"
 
-#include <sysprof-gtk.h>
-
+#include "sysprof-chart-layer.h"
 #include "sysprof-session-private.h"
-
+#include "sysprof-time-ruler.h"
 #include "sysprof-time-scrubber.h"
 
 struct _SysprofTimeScrubber
@@ -110,7 +109,7 @@ set_motion (SysprofTimeScrubber *self,
                                             x, y, &layer_x, &layer_y);
 
           if ((item = sysprof_chart_layer_lookup_item (layer, layer_x, layer_y)))
-            text = _sysprof_session_describe (self->session, NULL, item);
+            text = _sysprof_session_describe (self->session, item);
 
           gtk_label_set_label (self->informative, text);
 

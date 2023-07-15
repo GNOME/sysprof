@@ -73,9 +73,7 @@ timeruler {
 }
 
 timescrubber informative,
-timescrubber timecode,
-tracks informative,
-tracks timecode {
+timescrubber timecode {
   border-radius: 7px;
   background: @accent_bg_color;
   color: @accent_fg_color;
@@ -85,24 +83,6 @@ tracks timecode {
   border: 1px solid shade(@accent_bg_color, .9);
   font-feature-settings: "tnum";
   font-size: .9em;
-}
-
-tracks track chart {
-  margin-top: 1px;
-}
-tracks track info {
-  background: alpha(@borders, .25);
-}
-tracks track info button {
-  min-height: 0px;
-  min-width: 0px;
-}
-tracks row {
-  padding: 0;
-  margin: 0;
-}
-tracks row track info {
-  padding: 1px 0 0 0;
 }
 
 .utility .view {

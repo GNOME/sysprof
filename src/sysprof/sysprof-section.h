@@ -22,7 +22,7 @@
 
 #include <gtk/gtk.h>
 
-#include <sysprof-gtk.h>
+#include "sysprof-session.h"
 
 G_BEGIN_DECLS
 

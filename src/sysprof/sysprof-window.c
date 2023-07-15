@@ -22,8 +22,6 @@
 
 #include <glib/gi18n.h>
 
-#include <sysprof-gtk.h>
-
 #include "sysprof-counters-section.h"
 #include "sysprof-cpu-info-dialog.h"
 #include "sysprof-cpu-section.h"

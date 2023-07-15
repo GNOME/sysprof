@@ -20,9 +20,14 @@
 
 #include "config.h"
 
-#include <sysprof-gtk.h>
-
+#include "sysprof-chart.h"
+#include "sysprof-mark-chart.h"
+#include "sysprof-mark-table.h"
 #include "sysprof-marks-section.h"
+#include "sysprof-session-model.h"
+#include "sysprof-session-model-item.h"
+#include "sysprof-time-series.h"
+#include "sysprof-time-span-layer.h"
 
 struct _SysprofMarksSection
 {

@@ -23,9 +23,9 @@
 #include <adwaita.h>
 
 #include <sysprof-analyze.h>
-#include <sysprof-gtk.h>
 
 #include "sysprof-application.h"
+#include "sysprof-session.h"
 
 G_BEGIN_DECLS
 

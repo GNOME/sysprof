@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <gresources>
+  <gresource prefix="/libsysprof-gtk">
+    <file preprocess="xml-stripblanks">sysprof-callgraph-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-mark-chart.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-mark-chart-row.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-mark-table.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-memory-callgraph-view.ui</file>
+    <file preprocess="xml-stripblanks">sysprof-weighted-callgraph-view.ui</file>
+    <file>style.css</file>
+  </gresource>
   <gresource prefix="/org/gnome/sysprof">
     <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
     <file preprocess="xml-stripblanks">gtk/menus.ui</file>

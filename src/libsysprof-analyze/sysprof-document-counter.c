@@ -22,22 +22,9 @@
 
 #include <math.h>
 
-#include "sysprof-document-counter.h"
+#include "sysprof-document-counter-private.h"
 #include "sysprof-document-counter-value-private.h"
 #include "sysprof-document-private.h"
-
-struct _SysprofDocumentCounter
-{
-  GObject parent_instance;
-  GRefString *category;
-  GRefString *description;
-  GRefString *name;
-  GArray *values;
-  double min_value;
-  double max_value;
-  guint id;
-  guint type;
-};
 
 enum {
   PROP_0,
@@ -75,7 +62,7 @@ sysprof_document_counter_get_item (GListModel *model,
 
   value = &g_array_index (self->values, SysprofDocumentTimedValue, position);
 
-  return _sysprof_document_counter_value_new (self->type, value);
+  return _sysprof_document_counter_value_new (self->type, value, self);
 }
 
 static void
@@ -204,7 +191,8 @@ _sysprof_document_counter_new (guint       id,
                                GRefString *category,
                                GRefString *name,
                                GRefString *description,
-                               GArray     *values)
+                               GArray     *values,
+                               gint64      begin_time)
 {
   SysprofDocumentCounter *self;
 
@@ -215,6 +203,7 @@ _sysprof_document_counter_new (guint       id,
   self->name = name;
   self->description = description;
   self->values = values;
+  self->begin_time = begin_time;
 
   return self;
 }

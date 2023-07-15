@@ -802,7 +802,8 @@ sysprof_document_load_counters (SysprofDocument *self)
                                                               sysprof_strings_get (self->strings, category),
                                                               sysprof_strings_get (self->strings, name),
                                                               sysprof_strings_get (self->strings, description),
-                                                              g_steal_pointer (&values)));
+                                                              g_steal_pointer (&values),
+                                                              self->time_span.begin_nsec));
             }
         }
       while (egg_bitset_iter_next (&iter, &i));

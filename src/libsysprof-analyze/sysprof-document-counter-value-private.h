@@ -26,6 +26,7 @@
 G_BEGIN_DECLS
 
 SysprofDocumentCounterValue *_sysprof_document_counter_value_new (guint                            type,
-                                                                  const SysprofDocumentTimedValue *value);
+                                                                  const SysprofDocumentTimedValue *value,
+                                                                  SysprofDocumentCounter          *counter);
 
 G_END_DECLS

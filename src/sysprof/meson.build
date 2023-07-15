@@ -8,7 +8,6 @@ sysprof_sources = [
   'sysprof-color-iter.c',
   'sysprof-column-layer.c',
   'sysprof-counters-section.c',
-  'sysprof-cpu-info-dialog.c',
   'sysprof-cpu-section.c',
   'sysprof-css.c',
   'sysprof-duplex-layer.c',

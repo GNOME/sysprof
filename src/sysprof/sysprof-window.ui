@@ -223,12 +223,6 @@
     </section>
     <section>
       <item>
-        <attribute name="label" translatable="yes">Show CPU Information…</attribute>
-        <attribute name="action">win.show-cpu-info</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
         <attribute name="label" translatable="yes">Preferences</attribute>
         <attribute name="action-name">app.preferences</attribute>
         <attribute name="accel">&lt;ctrl&gt;comma</attribute>

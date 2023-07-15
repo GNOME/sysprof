@@ -23,7 +23,6 @@
 #include <glib/gi18n.h>
 
 #include "sysprof-counters-section.h"
-#include "sysprof-cpu-info-dialog.h"
 #include "sysprof-cpu-section.h"
 #include "sysprof-files-section.h"
 #include "sysprof-greeter.h"
@@ -114,24 +113,6 @@ sysprof_window_record_capture_action (GtkWidget  *widget,
                                       GVariant   *param)
 {
   show_greeter (SYSPROF_WINDOW (widget), SYSPROF_GREETER_PAGE_RECORD);
-}
-
-static void
-sysprof_window_show_cpu_info_action (GtkWidget  *widget,
-                                     const char *action_name,
-                                     GVariant   *param)
-{
-  SysprofWindow *self = (SysprofWindow *)widget;
-  GtkWindow *window;
-
-  g_assert (SYSPROF_IS_WINDOW (self));
-
-  window = g_object_new (SYSPROF_TYPE_CPU_INFO_DIALOG,
-                         "document", self->document,
-                         "transient-for", self,
-                         NULL);
-
-  gtk_window_present (window);
 }
 
 static void
@@ -397,7 +378,6 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 
   gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
   gtk_widget_class_install_action (widget_class, "win.record-capture", NULL, sysprof_window_record_capture_action);
-  gtk_widget_class_install_action (widget_class, "win.show-cpu-info", NULL, sysprof_window_show_cpu_info_action);
   gtk_widget_class_install_action (widget_class, "session.zoom-one", NULL, sysprof_window_session_zoom_one);
   gtk_widget_class_install_action (widget_class, "session.zoom-out", NULL, sysprof_window_session_zoom_out);
   gtk_widget_class_install_action (widget_class, "session.zoom-in", NULL, sysprof_window_session_zoom_in);

@@ -48,4 +48,6 @@ SYSPROF_AVAILABLE_IN_ALL
 void         sysprof_value_axis_set_max_value (SysprofValueAxis *self,
                                                double            max_value);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofValueAxis, g_object_unref)
+
 G_END_DECLS

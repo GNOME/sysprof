@@ -214,7 +214,7 @@
       <object class="GtkLabel">
         <property name="xalign">0</property>
         <binding name="label">
-          <lookup name="value-double" type="SysprofDocumentCounterValue">
+          <lookup name="value-string" type="SysprofDocumentCounterValue">
             <lookup name="item">GtkListItem</lookup>
           </lookup>
         </binding>

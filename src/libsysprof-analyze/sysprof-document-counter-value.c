@@ -38,6 +38,7 @@ enum {
   PROP_TIME_OFFSET,
   PROP_VALUE_DOUBLE,
   PROP_VALUE_INT64,
+  PROP_VALUE_STRING,
   N_PROPS
 };
 
@@ -73,6 +74,10 @@ sysprof_document_counter_value_get_property (GObject    *object,
 
     case PROP_VALUE_INT64:
       g_value_set_int64 (value, sysprof_document_counter_value_get_value_int64 (self));
+      break;
+
+    case PROP_VALUE_STRING:
+      g_value_take_string (value, sysprof_document_counter_value_format (self));
       break;
 
     default:
@@ -111,6 +116,11 @@ sysprof_document_counter_value_class_init (SysprofDocumentCounterValueClass *kla
     g_param_spec_int64 ("value-int64", NULL, NULL,
                         G_MININT64, G_MAXINT64, 0,
                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_VALUE_STRING] =
+    g_param_spec_string ("value-string", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 }

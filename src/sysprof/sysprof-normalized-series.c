@@ -98,6 +98,7 @@ sysprof_normalized_series_update_missing (gint64   deadline,
           g_auto(GValue) value = G_VALUE_INIT;
           guint next = GTK_INVALID_LIST_POSITION;
           double *fval = &g_array_index (self->values, double, position);
+          gboolean expired;
 
           gtk_expression_evaluate (expression, item, &value);
 
@@ -113,8 +114,11 @@ sysprof_normalized_series_update_missing (gint64   deadline,
           if (self->disposed)
             break;
 
+          expired = g_get_monotonic_time () >= deadline;
+
           if (!egg_bitset_iter_init_first (&iter, bitset, &next) ||
-              next != position + 1)
+              next != position + 1 ||
+              expired)
             {
               g_list_model_items_changed (G_LIST_MODEL (self),
                                           first,
@@ -123,8 +127,7 @@ sysprof_normalized_series_update_missing (gint64   deadline,
               first = next;
             }
 
-          if (next == GTK_INVALID_LIST_POSITION ||
-              g_get_monotonic_time () >= deadline)
+          if (expired || next == GTK_INVALID_LIST_POSITION)
             break;
 
           position = next;

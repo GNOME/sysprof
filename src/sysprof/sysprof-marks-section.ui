@@ -28,7 +28,6 @@
                 <property name="height-request">20</property>
                 <child>
                   <object class="SysprofTimeSpanLayer">
-                    <property name="title">Marks</property>
                     <binding name="axis">
                       <lookup name="visible-time-axis" type="SysprofSession">
                         <lookup name="session">SysprofMarksSection</lookup>

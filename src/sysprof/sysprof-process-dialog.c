@@ -114,6 +114,8 @@ sysprof_process_dialog_class_init (SysprofProcessDialogClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-process-dialog.ui");
   gtk_widget_class_bind_template_callback (widget_class, format_address);
+
+  g_type_ensure (SYSPROF_TYPE_THREAD_INFO);
 }
 
 static void

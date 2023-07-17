@@ -556,6 +556,112 @@
                     </property>
                   </object>
                 </child>
+                <child>
+                  <object class="AdwViewStackPage">
+                    <property name="icon-name">threads-symbolic</property>
+                    <property name="title" translatable="yes">Threads</property>
+                    <property name="child">
+                      <object class="GtkScrolledWindow">
+                        <property name="vexpand">true</property>
+                        <child>
+                          <object class="GtkColumnView" id="threads_column_view">
+                            <property name="show-column-separators">true</property>
+                            <property name="show-row-separators">true</property>
+                            <style>
+                              <class name="data-table"/>
+                            </style>
+                            <property name="model">
+                              <object class="GtkMultiSelection">
+                                <property name="model">
+                                  <object class="GtkSortListModel">
+                                    <binding name="sorter">
+                                      <lookup name="sorter">threads_column_view</lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="threads" type="SysprofDocumentProcess">
+                                        <lookup name="process">SysprofProcessDialog</lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
+                              </object>
+                            </property>
+                            <child>
+                              <object class="GtkColumnViewColumn" id="pid">
+                                <property name="title" translatable="yes">Thread ID</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="thread-id" type="SysprofThreadInfo"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">1</property>
+        <binding name="label">
+          <lookup name="thread-id" type="SysprofThreadInfo">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkColumnViewColumn" id="main_thread_column">
+                                <property name="title" translatable="yes">Main Thread</property>
+                                <property name="expand">true</property>
+                                <property name="sorter">
+                                  <object class="GtkNumericSorter">
+                                    <property name="expression">
+                                      <lookup name="is-main-thread" type="SysprofThreadInfo"/>
+                                    </property>
+                                  </object>
+                                </property>
+                                <property name="factory">
+                                  <object class="GtkBuilderListItemFactory">
+                                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkImage">
+        <property name="halign">start</property>
+        <property name="icon-name">object-select-symbolic</property>
+        <binding name="visible">
+          <lookup name="is-main-thread" type="SysprofThreadInfo">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                    </property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>

@@ -39,9 +39,11 @@
 
 struct _SysprofProcessesSection
 {
-  SysprofSection  parent_instance;
+  SysprofSection       parent_instance;
 
-  GtkListView    *list_view;
+  GtkListView         *list_view;
+  GtkColumnView       *column_view;
+  GtkColumnViewColumn *time_column;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofProcessesSection, sysprof_processes_section, SYSPROF_TYPE_SECTION)
@@ -99,7 +101,9 @@ sysprof_processes_section_class_init (SysprofProcessesSectionClass *klass)
   object_class->dispose = sysprof_processes_section_dispose;
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-processes-section.ui");
+  gtk_widget_class_bind_template_child (widget_class, SysprofProcessesSection, column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofProcessesSection, list_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofProcessesSection, time_column);
   gtk_widget_class_bind_template_callback (widget_class, activate_layer_item_cb);
   gtk_widget_class_bind_template_callback (widget_class, format_number);
 
@@ -119,4 +123,8 @@ static void
 sysprof_processes_section_init (SysprofProcessesSection *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  gtk_column_view_sort_by_column (self->column_view,
+                                  self->time_column,
+                                  GTK_SORT_ASCENDING);
 }

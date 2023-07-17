@@ -17,34 +17,40 @@
       <object class="GtkBox">
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkScrolledWindow">
+          <object class="AdwViewStack" id="stack">
             <property name="vexpand">true</property>
             <child>
-              <object class="GtkListView" id="list_view">
-                <style>
-                  <class name="data-table"/>
-                </style>
-                <property name="model">
-                  <object class="GtkSingleSelection">
-                    <property name="model">
-                      <object class="SysprofSessionModel">
-                        <binding name="session">
-                          <lookup name="session">SysprofProcessesSection</lookup>
-                        </binding>
-                        <binding name="model">
-                          <lookup name="processes" type="SysprofDocument">
-                            <lookup name="document" type="SysprofSession">
-                              <lookup name="session">SysprofProcessesSection</lookup>
-                            </lookup>
-                          </lookup>
-                        </binding>
-                      </object>
-                    </property>
-                  </object>
-                </property>
-                <property name="factory">
-                  <object class="GtkBuilderListItemFactory">
-                    <property name="bytes"><![CDATA[
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Process Chart</property>
+                <property name="icon-name">mark-chart-symbolic</property>
+                <property name="child">
+                  <object class="GtkScrolledWindow">
+                    <child>
+                      <object class="GtkListView" id="list_view">
+                        <style>
+                          <class name="data-table"/>
+                        </style>
+                        <property name="model">
+                          <object class="GtkSingleSelection">
+                            <property name="model">
+                              <object class="SysprofSessionModel">
+                                <binding name="session">
+                                  <lookup name="session">SysprofProcessesSection</lookup>
+                                </binding>
+                                <binding name="model">
+                                  <lookup name="processes" type="SysprofDocument">
+                                    <lookup name="document" type="SysprofSession">
+                                      <lookup name="session">SysprofProcessesSection</lookup>
+                                    </lookup>
+                                  </lookup>
+                                </binding>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
+                        <property name="factory">
+                          <object class="GtkBuilderListItemFactory">
+                            <property name="bytes"><![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="GtkListItem">
@@ -95,15 +101,195 @@
   </template>
 </interface>
 ]]>
-                    </property>
+                            </property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="title" translatable="yes">Process Table</property>
+                <property name="icon-name">mark-table-symbolic</property>
+                <property name="child">
+                  <object class="GtkScrolledWindow">
+                    <child>
+                      <object class="GtkColumnView" id="column_view">
+                        <style>
+                          <class name="data-table"/>
+                        </style>
+                        <property name="model">
+                          <object class="GtkNoSelection">
+                            <property name="model">
+                              <object class="GtkSortListModel">
+                                <binding name="sorter">
+                                  <lookup name="sorter">column_view</lookup>
+                                </binding>
+                                <binding name="model">
+                                  <lookup name="processes" type="SysprofDocument">
+                                    <lookup name="document" type="SysprofSession">
+                                      <lookup name="session">SysprofProcessesSection</lookup>
+                                    </lookup>
+                                  </lookup>
+                                </binding>
+                              </object>
+                            </property>
+                          </object>
+                        </property>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="time_column">
+                            <property name="title" translatable="yes">Time</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="sort-order">ascending</property>
+                                <property name="expression">
+                                  <lookup name="time-offset" type="SysprofDocumentFrame"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTimeLabel">
+        <binding name="time-offset">
+          <lookup name="time-offset" type="SysprofDocumentFrame">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="duration_column">
+                            <property name="title" translatable="yes">Duration</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="sort-order">ascending</property>
+                                <property name="expression">
+                                  <lookup name="duration" type="SysprofDocumentProcess"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="SysprofTimeLabel">
+        <binding name="duration">
+          <lookup name="duration" type="SysprofDocumentProcess">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="pid_column">
+                            <property name="title" translatable="yes">PID</property>
+                            <property name="sorter">
+                              <object class="GtkNumericSorter">
+                                <property name="expression">
+                                  <lookup name="pid" type="SysprofDocumentProcess"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="pid" type="SysprofDocumentProcess">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkColumnViewColumn" id="cmdline_column">
+                            <property name="title" translatable="yes">Command Line</property>
+                            <property name="sorter">
+                              <object class="GtkStringSorter">
+                                <property name="expression">
+                                  <lookup name="command-line" type="SysprofDocumentProcess"/>
+                                </property>
+                              </object>
+                            </property>
+                            <property name="factory">
+                              <object class="GtkBuilderListItemFactory">
+                                <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="xalign">0</property>
+        <binding name="label">
+          <lookup name="command-line" type="SysprofDocumentProcess">
+            <lookup name="item">GtkListItem</lookup>
+          </lookup>
+        </binding>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                                </property>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </property>
               </object>
             </child>
           </object>
         </child>
+        <child>
+          <object class="AdwViewSwitcherBar" id="switcher">
+            <property name="reveal">true</property>
+            <property name="stack">stack</property>
+          </object>
+        </child>
       </object>
     </child>
   </template>
 </interface>
-

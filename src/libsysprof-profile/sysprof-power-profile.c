@@ -49,6 +49,14 @@ enum {
 
 static GParamSpec *properties[N_PROPS];
 
+static char **
+sysprof_power_profile_list_required_policy (SysprofInstrument *instrument)
+{
+  static const char *required_policy[] = {"net.hadess.PowerProfiles.switch-profile", NULL};
+
+  return g_strdupv ((char **)required_policy);
+}
+
 static void
 restore_power_profile (char *power_profile)
 {
@@ -271,6 +279,7 @@ sysprof_power_profile_class_init (SysprofPowerProfileClass *klass)
   object_class->get_property = sysprof_power_profile_get_property;
   object_class->set_property = sysprof_power_profile_set_property;
 
+  instrument_class->list_required_policy = sysprof_power_profile_list_required_policy;
   instrument_class->prepare = sysprof_power_profile_prepare;
   instrument_class->record = sysprof_power_profile_record;
 

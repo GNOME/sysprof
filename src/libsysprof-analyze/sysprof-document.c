@@ -1294,10 +1294,9 @@ sysprof_document_load_worker (GTask        *task,
         }
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_EXIT)
         {
-          SysprofProcessInfo *info = g_hash_table_lookup (self->pid_to_process_info, GINT_TO_POINTER (pid));
+          SysprofProcessInfo *info = _sysprof_document_process_info (self, pid, TRUE);
 
-          if (info != NULL)
-            info->exit_time = t;
+          info->exit_time = t;
         }
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_MARK)
         {

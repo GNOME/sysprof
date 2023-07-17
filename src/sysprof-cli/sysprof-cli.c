@@ -30,20 +30,40 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 
-#include <sysprof.h>
+#include <sysprof-analyze.h>
+#include <sysprof-profile.h>
 
-#if HAVE_POLKIT && HAVE_POLKIT_AGENT
-# define POLKIT_AGENT_I_KNOW_API_IS_SUBJECT_TO_CHANGE
-# include <polkit/polkit.h>
-# include <polkitagent/polkitagent.h>
-# define USE_POLKIT
-#endif
+#define POLKIT_AGENT_I_KNOW_API_IS_SUBJECT_TO_CHANGE
+#include <polkit/polkit.h>
+#include <polkitagent/polkitagent.h>
 
 #include "sysprof-capture-util-private.h"
 
-static GMainLoop  *main_loop;
-static SysprofProfiler *profiler;
-static int exit_code = EXIT_SUCCESS;
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureReader, sysprof_capture_reader_unref)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unref)
+
+static GMainLoop *main_loop;
+static SysprofRecording *active_recording;
+
+static void
+diagnostics_items_changed_cb (GListModel *model,
+                              guint       position,
+                              guint       removed,
+                              guint       added,
+                              gpointer    user_data)
+{
+  g_assert (G_IS_LIST_MODEL (model));
+  g_assert (user_data == NULL);
+
+  for (guint i = 0; i < added; i++)
+    {
+      g_autoptr(SysprofDiagnostic) diagnostic = g_list_model_get_item (model, position+i);
+
+      g_printerr ("%s: %s\n",
+                  sysprof_diagnostic_get_domain (diagnostic),
+                  sysprof_diagnostic_get_message (diagnostic));
+    }
+}
 
 static gboolean
 sigint_handler (gpointer user_data)
@@ -60,8 +80,8 @@ sigint_handler (gpointer user_data)
 
   if (count == 0)
     {
-      g_printerr ("%s\n", _("Stopping profiler. Press twice more ^C to force exit."));
-      sysprof_profiler_stop (profiler);
+      g_printerr ("%s\n", "Stopping profiler. Press twice more ^C to force exit.");
+      sysprof_recording_stop_async (active_recording, NULL, NULL, NULL);
     }
 
   count++;
@@ -69,41 +89,20 @@ sigint_handler (gpointer user_data)
   return G_SOURCE_CONTINUE;
 }
 
-static void
-profiler_stopped (SysprofProfiler *profiler_,
-                  GMainLoop       *main_loop_)
-{
-  g_printerr ("%s\n", _("Profiler stopped."));
-  g_main_loop_quit (main_loop);
-}
-
-static void
-profiler_failed (SysprofProfiler *profiler_,
-                 const GError    *reason,
-                 GMainLoop       *main_loop_)
-{
-  g_assert (SYSPROF_IS_PROFILER (profiler_));
-  g_assert (reason != NULL);
-
-  g_printerr ("Failure: %s\n", reason->message);
-  exit_code = EXIT_FAILURE;
-  g_main_loop_quit (main_loop_);
-}
-
-static gint
-merge_files (gint             argc,
-             gchar          **argv,
+static int
+merge_files (int              argc,
+             char           **argv,
              GOptionContext  *context)
 {
   g_autoptr(SysprofCaptureWriter) writer = NULL;
-  g_autofree gchar *contents = NULL;
-  g_autofree gchar *tmpname = NULL;
+  g_autofree char *contents = NULL;
+  g_autofree char *tmpname = NULL;
   gsize len;
-  gint fd;
+  int fd;
 
   if (argc < 3)
     {
-      g_autofree gchar *help = NULL;
+      g_autofree char *help = NULL;
 
       help = g_option_context_get_help (context, FALSE, NULL);
       g_printerr (_("--merge requires at least 2 filename arguments"));
@@ -133,7 +132,7 @@ merge_files (gint             argc,
       return EXIT_FAILURE;
     }
 
-  writer = sysprof_capture_writer_new_from_fd (fd, 4096*4);
+  writer = sysprof_capture_writer_new_from_fd (fd, 0);
 
   for (guint i = 1; i < argc; i++)
     {
@@ -158,7 +157,7 @@ merge_files (gint             argc,
 
   if (g_file_get_contents (tmpname, &contents, &len, NULL))
     {
-      const gchar *buf = contents;
+      const char *buf = contents;
       gsize to_write = len;
 
       while (to_write > 0)
@@ -184,24 +183,76 @@ merge_files (gint             argc,
   return EXIT_SUCCESS;
 }
 
-gint
-main (gint   argc,
-      gchar *argv[])
+static void
+sysprof_cli_wait_cb (GObject      *object,
+                     GAsyncResult *result,
+                     gpointer      user_data)
 {
-#ifdef USE_POLKIT
+  SysprofRecording *recording = (SysprofRecording *)object;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_RECORDING (recording));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (user_data == NULL);
+
+  if (!sysprof_recording_wait_finish (recording, result, &error))
+    g_error ("Failed to complete recording: %s", error->message);
+
+  g_main_loop_quit (main_loop);
+}
+
+static void
+sysprof_cli_record_cb (GObject      *object,
+                       GAsyncResult *result,
+                       gpointer      user_data)
+{
+  SysprofProfiler *profiler = (SysprofProfiler *)object;
+  g_autoptr(SysprofRecording) recording = NULL;
+  g_autoptr(GListModel) diagnostics = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_PROFILER (profiler));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (user_data == NULL);
+
+  if (!(recording = sysprof_profiler_record_finish (SYSPROF_PROFILER (object), result, &error)))
+    g_error ("Failed to start profiling session: %s", error->message);
+
+  diagnostics = sysprof_recording_list_diagnostics (recording);
+  g_signal_connect (diagnostics,
+                    "items-changed",
+                    G_CALLBACK (diagnostics_items_changed_cb),
+                    NULL);
+  diagnostics_items_changed_cb (diagnostics,
+                                0,
+                                0,
+                                g_list_model_get_n_items (diagnostics),
+                                NULL);
+
+  sysprof_recording_wait_async (recording,
+                                NULL,
+                                sysprof_cli_wait_cb,
+                                NULL);
+
+  g_set_object (&active_recording, recording);
+}
+
+int
+main (int   argc,
+      char *argv[])
+{
   PolkitAgentListener *polkit = NULL;
   PolkitSubject *subject = NULL;
-#endif
-
+  g_autoptr(SysprofCaptureWriter) writer = NULL;
+  g_autoptr(SysprofProfiler) profiler = NULL;
+  g_autofree char *power_profile = NULL;
   g_auto(GStrv) child_argv = NULL;
   g_auto(GStrv) envs = NULL;
-  SysprofCaptureWriter *writer;
-  SysprofSource *source;
   GMainContext *main_context;
   GOptionContext *context;
-  const gchar *filename = "capture.syscap";
+  const char *filename = "capture.syscap";
   GError *error = NULL;
-  gchar *command = NULL;
+  char *command = NULL;
   gboolean gjs = FALSE;
   gboolean gtk = FALSE;
   gboolean no_battery = FALSE;
@@ -220,12 +271,14 @@ main (gint   argc,
   gboolean memprof = FALSE;
   gboolean merge = FALSE;
   gboolean speedtrack = FALSE;
+  g_autofd int gjs_trace_fd = -1;
+  g_autofd int trace_fd = -1;
   int pid = -1;
   int fd;
   int flags;
   GOptionEntry entries[] = {
-    { "no-throttle", 0, 0, G_OPTION_ARG_NONE, &no_throttle, N_("Disable CPU throttling while profiling") },
-    { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task"), N_("PID") },
+    { "no-throttle", 0, 0, G_OPTION_ARG_NONE, &no_throttle, N_("Disable CPU throttling while profiling [Deprecated for --power-profile]") },
+    { "pid", 'p', 0, G_OPTION_ARG_INT, &pid, N_("Make sysprof specific to a task [Deprecated]"), N_("PID") },
     { "command", 'c', 0, G_OPTION_ARG_STRING, &command, N_("Run a command and profile the process"), N_("COMMAND") },
     { "env", 'e', 0, G_OPTION_ARG_STRING_ARRAY, &envs, N_("Set environment variable for spawned process. Can be used multiple times."), N_("VAR=VALUE") },
     { "force", 'f', 0, G_OPTION_ARG_NONE, &force, N_("Force overwrite the capture file") },
@@ -243,6 +296,7 @@ main (gint   argc,
     { "memprof", 0, 0, G_OPTION_ARG_NONE, &memprof, N_("Profile memory allocations and frees") },
     { "gnome-shell", 0, 0, G_OPTION_ARG_NONE, &gnome_shell, N_("Connect to org.gnome.Shell for profiler statistics") },
     { "speedtrack", 0, 0, G_OPTION_ARG_NONE, &speedtrack, N_("Track performance of the applications main loop") },
+    { "power-profile", 0, 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
     { "merge", 0, 0, G_OPTION_ARG_NONE, &merge, N_("Merge all provided *.syscap files and write to stdout") },
     { "version", 0, 0, G_OPTION_ARG_NONE, &version, N_("Print the sysprof-cli version and exit") },
     { NULL }
@@ -270,7 +324,7 @@ main (gint   argc,
           for (guint j = i + 1; j < argc; j++)
             g_ptr_array_add (ar, g_strdup (argv[j]));
           g_ptr_array_add (ar, NULL);
-          child_argv = (gchar **)g_ptr_array_free (ar, FALSE);
+          child_argv = (char **)g_ptr_array_free (ar, FALSE);
           /* Skip everything from -- beyond */
           argc = i;
           break;
@@ -303,6 +357,9 @@ Examples:\n\
       return EXIT_SUCCESS;
     }
 
+  if (pid != -1)
+    g_printerr ("--pid is no longer supported and will be ignored\n");
+
   /* If merge is set, we aren't recording, but instead merging a bunch of
    * files together into a single syscap.
    */
@@ -311,7 +368,7 @@ Examples:\n\
 
   if (argc > 2)
     {
-      gint i;
+      int i;
 
       g_printerr (_("Too many arguments were passed to sysprof-cli:"));
 
@@ -324,7 +381,6 @@ Examples:\n\
 
   main_loop = g_main_loop_new (NULL, FALSE);
 
-#ifdef USE_POLKIT
   /* Start polkit agent so that we can elevate privileges from a TTY */
   if (g_getenv ("DESKTOP_SESSION") == NULL &&
       (subject = polkit_unix_process_new_for_owner (getpid (), 0, -1)))
@@ -346,21 +402,8 @@ Examples:\n\
                       pkerror->message);
         }
     }
-#endif
 
-  profiler = sysprof_local_profiler_new ();
-
-  sysprof_local_profiler_set_inherit_stdin (SYSPROF_LOCAL_PROFILER (profiler), TRUE);
-
-  g_signal_connect (profiler,
-                    "failed",
-                    G_CALLBACK (profiler_failed),
-                    main_loop);
-
-  g_signal_connect (profiler,
-                    "stopped",
-                    G_CALLBACK (profiler_stopped),
-                    main_loop);
+  profiler = sysprof_profiler_new ();
 
   if (argc == 2)
     filename = argv[1];
@@ -384,11 +427,13 @@ Examples:\n\
       return EXIT_FAILURE;
     }
 
+  writer = sysprof_capture_writer_new_from_fd (fd, 0);
+
   if (command != NULL || child_argv != NULL)
     {
-      g_auto(GStrv) env = g_get_environ ();
-      g_autofree gchar *cwd = NULL;
-      gint child_argc;
+      g_autoptr(SysprofSpawnable) spawnable = sysprof_spawnable_new ();
+      g_auto(GStrv) current_env = g_get_environ ();
+      int child_argc;
 
       if (child_argv != NULL)
         {
@@ -400,185 +445,101 @@ Examples:\n\
           return EXIT_FAILURE;
         }
 
-      cwd = g_get_current_dir ();
+      sysprof_spawnable_set_cwd (spawnable, g_get_current_dir ());
+      sysprof_spawnable_append_args (spawnable, (const char * const *)child_argv);
+      sysprof_spawnable_set_environ (spawnable, (const char * const *)current_env);
 
       if (envs != NULL)
         {
-          for (guint e = 0; envs[e]; e++)
+          for (guint i = 0; envs[i]; i++)
             {
-              const gchar *eq = strchr (envs[e], '=');
+              g_autofree char *key = NULL;
+              const char *eq;
 
-              if (eq == NULL)
+              if (!(eq = strchr (envs[i], '=')))
                 {
-                  env = g_environ_setenv (env, envs[e], "", TRUE);
+                  sysprof_spawnable_setenv (spawnable, envs[i], "");
+                  continue;
                 }
-              else
-                {
-                  g_autofree gchar *key = g_strndup (envs[e], eq - envs[e]);
-                  env = g_environ_setenv (env, key, eq+1, TRUE);
-                }
+
+              key = g_strndup (envs[i], eq - envs[i]);
+              sysprof_spawnable_setenv (spawnable, key, eq+1);
             }
         }
 
-      sysprof_profiler_set_spawn (profiler, TRUE);
-      sysprof_profiler_set_spawn_cwd (profiler, cwd);
-      sysprof_profiler_set_spawn_argv (profiler, (const gchar * const *)child_argv);
-      sysprof_profiler_set_spawn_env (profiler, (const gchar * const *)env);
+      sysprof_profiler_set_spawnable (profiler, spawnable);
+
+      if (gjs)
+        gjs_trace_fd = sysprof_spawnable_add_trace_fd (spawnable, "GJS_TRACE_FD");
+
+      if (use_trace_fd)
+        trace_fd = sysprof_spawnable_add_trace_fd (spawnable, NULL);
+
+      if (memprof)
+        sysprof_spawnable_add_ld_preload (spawnable, PACKAGE_LIBDIR"/libsysprof-memory-"API_VERSION_S".so");
+
+      if (speedtrack)
+        sysprof_spawnable_add_ld_preload (spawnable, PACKAGE_LIBDIR"/libsysprof-speedtrack-"API_VERSION_S".so");
     }
 
-  writer = sysprof_capture_writer_new_from_fd (fd, 0);
-  sysprof_profiler_set_writer (profiler, writer);
+  sysprof_profiler_add_instrument (profiler, sysprof_system_logs_new ());
 
-  if (use_trace_fd)
-    {
-      source = sysprof_tracefd_source_new ();
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
-
-  if (gjs)
-    {
-      source = sysprof_gjs_source_new ();
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
-
-  if (gtk)
-    {
-      source = sysprof_tracefd_source_new ();
-      sysprof_tracefd_source_set_envvar (SYSPROF_TRACEFD_SOURCE (source), "GTK_TRACE_FD");
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
-
-#ifdef __linux__
-  source = sysprof_proc_source_new ();
-  sysprof_profiler_add_source (profiler, source);
-  g_object_unref (source);
-#endif
-
-#ifdef __linux__
   if (!no_perf)
-    {
-      source = sysprof_perf_source_new ();
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
-#endif
+    sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
 
   if (!no_disk)
-    {
-      source = sysprof_diskstat_source_new ();
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
+    sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
 
   if (!no_decode)
-    {
-      /* Add __symbols__ rollup after recording to avoid loading
-       * symbols from the maching viewing the capture.
-       */
-      source = sysprof_symbols_source_new ();
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
+    g_warning ("Implement symbol augmentation");
+    //sysprof_profiler_add_instrument (profiler, sysprof_symbol_augmentation_new ());
 
-#ifdef __linux__
   if (!no_cpu)
-    {
-      source = sysprof_hostinfo_source_new ();
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
-#endif
+    sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());
 
-#ifdef __linux__
   if (!no_memory)
-    {
-      source = sysprof_memory_source_new ();
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
-#endif
+    sysprof_profiler_add_instrument (profiler, sysprof_memory_usage_new ());
 
   if (!no_battery)
-    {
-      source = sysprof_battery_source_new ();
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
+    sysprof_profiler_add_instrument (profiler, sysprof_battery_charge_new ());
 
   if (rapl)
-    {
-      source = sysprof_proxy_source_new (G_BUS_TYPE_SYSTEM,
-                                         "org.gnome.Sysprof3",
-                                         "/org/gnome/Sysprof3/RAPL");
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
+    sysprof_profiler_add_instrument (profiler, sysprof_energy_usage_new ());
 
   if (!no_network)
-    {
-      source = sysprof_netdev_source_new ();
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
+    sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
 
-#ifdef __linux__
-  source = sysprof_governor_source_new ();
-  if (no_throttle)
-    sysprof_governor_source_set_disable_governor (SYSPROF_GOVERNOR_SOURCE (source), TRUE);
-  sysprof_profiler_add_source (profiler, source);
-  g_object_unref (source);
-#endif
+  if (power_profile)
+    sysprof_profiler_add_instrument (profiler, sysprof_power_profile_new (power_profile));
+  else if (no_throttle)
+    sysprof_profiler_add_instrument (profiler, sysprof_power_profile_new ("performance"));
 
   if (gnome_shell)
-    {
-      source = sysprof_proxy_source_new (G_BUS_TYPE_SESSION,
-                                         "org.gnome.Shell",
-                                         "/org/gnome/Sysprof3/Profiler");
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
+    sysprof_profiler_add_instrument (profiler,
+                                     sysprof_proxied_instrument_new (G_BUS_TYPE_SESSION,
+                                                                     "org.gnome.Shell",
+                                                                     "/org/gnome/Sysprof3/Profiler"));
 
-  if (memprof)
-    {
-      source = sysprof_memprof_source_new ();
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
+  sysprof_profiler_record_async (profiler,
+                                 writer,
+                                 NULL,
+                                 sysprof_cli_record_cb,
+                                 NULL);
 
-  if (speedtrack)
-    {
-      source = g_object_new (SYSPROF_TYPE_PRELOAD_SOURCE,
-                             "preload", "libsysprof-speedtrack-4.so",
-                             NULL);
-      sysprof_profiler_add_source (profiler, source);
-      g_object_unref (source);
-    }
-
-  if (pid != -1)
-    {
-      sysprof_profiler_set_whole_system (profiler, FALSE);
-      sysprof_profiler_add_pid (profiler, pid);
-    }
-
-  sysprof_profiler_start (profiler);
+  g_unix_signal_add (SIGINT, sigint_handler, main_loop);
+  g_unix_signal_add (SIGTERM, sigint_handler, main_loop);
 
   g_printerr ("Recording, press ^C to exit\n");
 
   g_main_loop_run (main_loop);
+
+  sysprof_capture_writer_flush (writer);
 
   main_context = g_main_loop_get_context (main_loop);
   while (g_main_context_pending (main_context))
     g_main_context_iteration (main_context, FALSE);
 
   sysprof_capture_writer_flush (writer);
-
-  g_clear_pointer (&writer, sysprof_capture_writer_unref);
-  g_clear_object (&profiler);
-  g_clear_pointer (&main_loop, g_main_loop_unref);
-  g_clear_pointer (&context, g_option_context_free);
 
   return EXIT_SUCCESS;
 }

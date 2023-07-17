@@ -25,10 +25,12 @@
 #include <unistd.h>
 
 #include <glib-unix.h>
+#include <glib/gstdio.h>
+
 #include <gio/gunixinputstream.h>
 #include <gio/gunixoutputstream.h>
 
-#include <sysprof.h>
+#include <sysprof-profile.h>
 
 #include "ipc-agent.h"
 
@@ -40,18 +42,16 @@ static gboolean forward_fd_func (const char  *option_name,
                                  GError     **error);
 
 static GMainLoop *main_loop;
-static GSubprocess *subprocess;
-static char *subprocess_ident;
-static gboolean subprocess_finished;
 static IpcAgent *service;
-static int exit_code = EXIT_SUCCESS;
 static int read_fd = -1;
 static int write_fd = -1;
 static int pty_fd = -1;
 static char *directory;
 static char *capture_filename;
+static char *power_profile;
 static GArray *forward_fds;
 static char **env;
+static SysprofRecording *active_recording;
 static gboolean clear_env;
 static gboolean aid_battery;
 static gboolean aid_compositor;
@@ -85,8 +85,9 @@ static const GOptionEntry options[] = {
   { "energy", 0, 0, G_OPTION_ARG_NONE, &aid_energy, "Record energy usage using RAPL" },
   { "battery", 0, 0, G_OPTION_ARG_NONE, &aid_battery, "Record battery charge and discharge rates" },
   { "compositor", 0, 0, G_OPTION_ARG_NONE, &aid_compositor, "Record GNOME Shell compositor information" },
-  { "no-throttle", 0, 0, G_OPTION_ARG_NONE, &no_throttle, "Disable CPU throttling" },
+  { "no-throttle", 0, 0, G_OPTION_ARG_NONE, &no_throttle, "Disable CPU throttling [Deprecated for --power-profile]" },
   { "tracefd", 0, 0, G_OPTION_ARG_NONE, &aid_tracefd, "Provide TRACEFD to subprocess" },
+  { "power-profile", 0, 0, G_OPTION_ARG_STRING, &power_profile, "Use POWER_PROFILE for duration of recording", "power-saver|balanced|performance" },
   { NULL }
 };
 
@@ -108,71 +109,6 @@ message (const char *format,
   ipc_agent_emit_log (service, formatted);
 }
 
-#define GBP_TYPE_SPAWN_SOURCE (gbp_spawn_source_get_type())
-G_DECLARE_FINAL_TYPE (GbpSpawnSource, gbp_spawn_source, GBP, SPAWN_SOURCE, GObject)
-
-struct _GbpSpawnSource
-{
-  GObject parent_instance;
-};
-
-static void
-gbp_spawn_source_modify_spawn (SysprofSource    *source,
-                               SysprofSpawnable *spawnable)
-{
-  g_assert (GBP_IS_SPAWN_SOURCE (source));
-  g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
-
-  if (forward_fds == NULL)
-    return;
-
-  for (guint i = 0; i < forward_fds->len; i++)
-    {
-      int fd = g_array_index (forward_fds, int, i);
-      sysprof_spawnable_take_fd (spawnable, dup (fd), fd);
-    }
-
-  if (pty_fd != -1)
-    {
-      sysprof_spawnable_take_fd (spawnable, dup (pty_fd), STDIN_FILENO);
-      sysprof_spawnable_take_fd (spawnable, dup (pty_fd), STDOUT_FILENO);
-      sysprof_spawnable_take_fd (spawnable, dup (pty_fd), STDERR_FILENO);
-    }
-}
-
-static void
-gbp_spawn_source_start (SysprofSource *source)
-{
-  sysprof_source_emit_ready (source);
-}
-
-static void
-gbp_spawn_source_stop (SysprofSource *source)
-{
-  sysprof_source_emit_finished (source);
-}
-
-static void
-spawn_source_init (SysprofSourceInterface *iface)
-{
-  iface->modify_spawn = gbp_spawn_source_modify_spawn;
-  iface->start = gbp_spawn_source_start;
-  iface->stop = gbp_spawn_source_stop;
-}
-
-G_DEFINE_FINAL_TYPE_WITH_CODE (GbpSpawnSource, gbp_spawn_source, G_TYPE_OBJECT,
-                               G_IMPLEMENT_INTERFACE (SYSPROF_TYPE_SOURCE, spawn_source_init))
-
-static void
-gbp_spawn_source_class_init (GbpSpawnSourceClass *klass)
-{
-}
-
-static void
-gbp_spawn_source_init (GbpSpawnSource *self)
-{
-}
-
 #define IPC_TYPE_AGENT_IMPL (ipc_agent_impl_get_type())
 G_DECLARE_FINAL_TYPE (IpcAgentImpl, ipc_agent_impl, IPC, SYPSROF_IMPL, IpcAgentSkeleton)
 
@@ -185,7 +121,10 @@ static gboolean
 handle_force_exit (IpcAgent            *sysprof,
                    GDBusMethodInvocation *invocation)
 {
-  if (subprocess && !subprocess_finished)
+  GSubprocess *subprocess;
+
+  if (active_recording &&
+      (subprocess = sysprof_recording_get_subprocess (active_recording)))
     g_subprocess_force_exit (subprocess);
 
   ipc_agent_complete_force_exit (sysprof, invocation);
@@ -198,7 +137,10 @@ handle_send_signal (IpcAgent            *sysprof,
                     GDBusMethodInvocation *invocation,
                     int                    signum)
 {
-  if (subprocess && !subprocess_finished)
+  GSubprocess *subprocess;
+
+  if (active_recording &&
+      (subprocess = sysprof_recording_get_subprocess (active_recording)))
     g_subprocess_send_signal (subprocess, signum);
 
   ipc_agent_complete_send_signal (sysprof, invocation);
@@ -262,89 +204,6 @@ forward_fd_func (const char  *option_name,
   g_array_append_val (forward_fds, fd);
 
   return TRUE;
-}
-
-G_GNUC_NULL_TERMINATED
-static void
-add_source (SysprofProfiler *profiler,
-            gboolean         enabled,
-            GType            source_type,
-            ...)
-{
-  g_autoptr(SysprofSource) source = NULL;
-  const char *first_property;
-  va_list args;
-
-  g_assert (SYSPROF_IS_PROFILER (profiler));
-  g_assert (g_type_is_a (source_type, SYSPROF_TYPE_SOURCE));
-
-  if (!enabled)
-    return;
-
-  va_start (args, source_type);
-  first_property = va_arg (args, const char *);
-  if (first_property != NULL)
-    source = (SysprofSource *)g_object_new_valist (source_type, first_property, args);
-  else
-    source = g_object_new (source_type, NULL);
-  va_end (args);
-
-  g_assert (!source || SYSPROF_IS_SOURCE (source));
-
-  if (source != NULL)
-    sysprof_profiler_add_source (profiler, source);
-  else
-    g_printerr ("Failed to create source of type \"%s\"\n",
-                g_type_name (source_type));
-}
-
-static void
-profiler_failed_cb (SysprofProfiler *profiler,
-                    const GError    *error)
-{
-  g_assert (SYSPROF_IS_LOCAL_PROFILER (profiler));
-  g_assert (error != NULL);
-
-  g_printerr ("Profiling failed: %s", error->message);
-  exit_code = EXIT_FAILURE;
-  g_main_loop_quit (main_loop);
-}
-
-static void
-profiler_stopped_cb (SysprofProfiler *profiler)
-{
-  g_assert (SYSPROF_IS_LOCAL_PROFILER (profiler));
-
-  g_main_loop_quit (main_loop);
-}
-
-static void
-subprocess_spawned_cb (SysprofLocalProfiler *profiler,
-                       GSubprocess          *new_subprocess)
-{
-  g_assert (SYSPROF_IS_LOCAL_PROFILER (profiler));
-  g_assert (G_IS_SUBPROCESS (new_subprocess));
-
-  g_set_object (&subprocess, new_subprocess);
-
-  subprocess_ident = g_strdup (g_subprocess_get_identifier (subprocess));
-
-  message ("Created process %s", subprocess_ident);
-}
-
-static void
-subprocess_finished_cb (SysprofLocalProfiler *profiler,
-                        GSubprocess          *new_subprocess)
-{
-  g_assert (SYSPROF_IS_LOCAL_PROFILER (profiler));
-  g_assert (G_IS_SUBPROCESS (new_subprocess));
-
-  subprocess_finished = TRUE;
-
-  message ("Process %s exited", subprocess_ident);
-
-  if (decode)
-    message ("Extracting symbols and attaching to capture");
 }
 
 static void
@@ -417,25 +276,109 @@ create_connection (GIOStream  *stream,
   return ret;
 }
 
+static void
+sysprof_agent_recording_diagnostics_items_changed_cb (GListModel *model,
+                                                      guint       position,
+                                                      guint       removed,
+                                                      guint       added,
+                                                      gpointer    user_data)
+{
+  g_assert (G_IS_LIST_MODEL (model));
+  g_assert (user_data == NULL);
+
+  for (guint i = 0; i < added; i++)
+    {
+      g_autoptr(SysprofDiagnostic) diagnostic = g_list_model_get_item (model, position+i);
+
+      message ("%s: %s",
+               sysprof_diagnostic_get_domain (diagnostic),
+               sysprof_diagnostic_get_message (diagnostic));
+    }
+}
+
 static gboolean
 sigint_handler (gpointer user_data)
 {
-  SysprofProfiler *profiler = user_data;
+  static int count;
+
+  if (count >= 2)
+    {
+      g_main_loop_quit (main_loop);
+      return G_SOURCE_REMOVE;
+    }
+
+  g_printerr ("\n");
+
+  if (count == 0)
+    {
+      g_printerr ("%s\n", "Stopping profiler. Press twice more ^C to force exit.");
+      sysprof_recording_stop_async (active_recording, NULL, NULL, NULL);
+    }
+
+  count++;
+
+  return G_SOURCE_CONTINUE;
+}
+
+static void
+sysprof_agent_wait_cb (GObject      *object,
+                       GAsyncResult *result,
+                       gpointer      user_data)
+{
+  SysprofRecording *recording = (SysprofRecording *)object;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_RECORDING (recording));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (user_data == NULL);
+
+  if (!sysprof_recording_wait_finish (recording, result, &error))
+    g_error ("Failed to complete recording: %s", error->message);
+
+  g_main_loop_quit (main_loop);
+}
+
+static void
+sysprof_agent_record_cb (GObject      *object,
+                         GAsyncResult *result,
+                         gpointer      user_data)
+{
+  SysprofProfiler *profiler = (SysprofProfiler *)object;
+  g_autoptr(SysprofRecording) recording = NULL;
+  g_autoptr(GListModel) diagnostics = NULL;
+  g_autoptr(GError) error = NULL;
 
   g_assert (SYSPROF_IS_PROFILER (profiler));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (user_data == NULL);
 
-  g_printerr ("\n"
-              "Profiler stopped, extracting symbols and appending to capture.\n"
-              "Press ^C again to force exit.\n");
-  sysprof_profiler_stop (profiler);
-  return G_SOURCE_REMOVE;
+  if (!(recording = sysprof_profiler_record_finish (SYSPROF_PROFILER (object), result, &error)))
+    g_error ("Failed to start profiling session: %s", error->message);
+
+  diagnostics = sysprof_recording_list_diagnostics (recording);
+  g_signal_connect (diagnostics,
+                    "items-changed",
+                    G_CALLBACK (sysprof_agent_recording_diagnostics_items_changed_cb),
+                    NULL);
+  sysprof_agent_recording_diagnostics_items_changed_cb (diagnostics,
+                                                        0,
+                                                        0,
+                                                        g_list_model_get_n_items (diagnostics),
+                                                        NULL);
+
+  sysprof_recording_wait_async (recording,
+                                NULL,
+                                sysprof_agent_wait_cb,
+                                NULL);
+
+  g_set_object (&active_recording, recording);
 }
 
 int
 main (int   argc,
       char *argv[])
 {
-  g_autoptr(SysprofCaptureWriter) writer = NULL;
+  SysprofCaptureWriter *writer = NULL;
   g_autoptr(SysprofProfiler) profiler = NULL;
   g_autoptr(GDBusConnection) connection = NULL;
   g_autoptr(GDBusConnection) session_bus = NULL;
@@ -444,7 +387,9 @@ main (int   argc,
   g_autoptr(GError) error = NULL;
   g_auto(GStrv) our_argv = NULL;
   g_auto(GStrv) sub_argv = NULL;
-  GMainContext *main_context;
+  g_autofd int gjs_trace_fd = -1;
+  g_autofd int trace_fd = -1;
+  GSubprocess *subprocess;
   int our_argc = -1;
   int sub_argc = -1;
 
@@ -538,14 +483,42 @@ main (int   argc,
     }
 
   /* Now start setting up our profiler */
-  profiler = sysprof_local_profiler_new ();
+  profiler = sysprof_profiler_new ();
 
-  /* We might not even know our real subprocess in the case we are going
-   * through another indirection layer like flatpak-spawn, so just assume
-   * we're profiling the entire system as that will be necessary to include
-   * the PID we really care about.
-   */
-  sysprof_profiler_set_whole_system (profiler, TRUE);
+  if (aid_battery)
+    sysprof_profiler_add_instrument (profiler, sysprof_battery_charge_new ());
+
+  if (aid_cpu)
+    sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());
+
+  if (aid_disk)
+    sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
+
+  if (aid_energy)
+    sysprof_profiler_add_instrument (profiler, sysprof_energy_usage_new ());
+
+  if (aid_memory)
+    sysprof_profiler_add_instrument (profiler, sysprof_memory_usage_new ());
+
+  if (aid_net)
+    sysprof_profiler_add_instrument (profiler, sysprof_network_usage_new ());
+
+  if (aid_perf)
+    sysprof_profiler_add_instrument (profiler, sysprof_sampler_new ());
+
+  sysprof_profiler_add_instrument (profiler, sysprof_system_logs_new ());
+
+  if (power_profile)
+    sysprof_profiler_add_instrument (profiler, sysprof_power_profile_new (power_profile));
+  else if (no_throttle)
+    sysprof_profiler_add_instrument (profiler, sysprof_power_profile_new ("performance"));
+
+  if (aid_compositor)
+    sysprof_profiler_add_instrument (profiler,
+                                     sysprof_proxied_instrument_new (G_BUS_TYPE_SESSION,
+                                                                     "org.gnome.Shell",
+                                                                     "/org/gnome/Sysprof3/Profiler"));
+
 
   /* If -- was ommitted or there are no commands, just profile the entire
    * system without spawning anything. Really only useful when testing the
@@ -553,15 +526,65 @@ main (int   argc,
    */
   if (sub_argc >= 0)
     {
-      sysprof_profiler_set_spawn (profiler, TRUE);
-      sysprof_profiler_set_spawn_inherit_environ (profiler, !clear_env);
-      sysprof_profiler_set_spawn_argv (profiler, (const char * const *)sub_argv);
-      sysprof_profiler_set_spawn_env (profiler, (const char * const *)env);
+      g_autoptr(SysprofSpawnable) spawnable = sysprof_spawnable_new ();
+      g_auto(GStrv) current_env = g_get_environ ();
 
       if (directory != NULL)
-        sysprof_profiler_set_spawn_cwd (profiler, directory);
+        sysprof_spawnable_set_cwd (spawnable, directory);
       else
-        sysprof_profiler_set_spawn_cwd (profiler, ".");
+        sysprof_spawnable_set_cwd (spawnable, g_get_current_dir ());
+
+      sysprof_spawnable_append_args (spawnable, (const char * const *)sub_argv);
+
+      if (clear_env)
+        sysprof_spawnable_set_environ (spawnable, NULL);
+      else
+        sysprof_spawnable_set_environ (spawnable, (const char * const *)current_env);
+
+      if (env != NULL)
+        {
+          for (guint i = 0; env[i]; i++)
+            {
+              g_autofree char *key = NULL;
+              const char *eq;
+
+              if (!(eq = strchr (env[i], '=')))
+                {
+                  sysprof_spawnable_setenv (spawnable, env[i], "");
+                  continue;
+                }
+
+              key = g_strndup (env[i], eq - env[i]);
+              sysprof_spawnable_setenv (spawnable, key, eq+1);
+            }
+        }
+
+      sysprof_profiler_set_spawnable (profiler, spawnable);
+
+      if (aid_gjs)
+        gjs_trace_fd = sysprof_spawnable_add_trace_fd (spawnable, "GJS_TRACE_FD");
+
+      if (aid_tracefd)
+        trace_fd = sysprof_spawnable_add_trace_fd (spawnable, NULL);
+
+      if (aid_memprof)
+        sysprof_spawnable_add_ld_preload (spawnable, PACKAGE_LIBDIR"/libsysprof-memory-"API_VERSION_S".so");
+
+      if (forward_fds != NULL)
+        {
+          for (guint f = 0; f < forward_fds->len; f++)
+            {
+              int fd = g_array_index (forward_fds, int, f);
+              sysprof_spawnable_take_fd (spawnable, dup (fd), fd);
+            }
+        }
+
+      if (pty_fd != -1)
+        {
+          sysprof_spawnable_take_fd (spawnable, dup (pty_fd), STDIN_FILENO);
+          sysprof_spawnable_take_fd (spawnable, dup (pty_fd), STDOUT_FILENO);
+          sysprof_spawnable_take_fd (spawnable, dup (pty_fd), STDERR_FILENO);
+        }
     }
 
   /* Now open the writer for our session */
@@ -573,66 +596,14 @@ main (int   argc,
       return EXIT_FAILURE;
     }
 
-  /* Attach writer to the profiler */
-  sysprof_profiler_set_writer (profiler, writer);
+  sysprof_profiler_record_async (profiler,
+                                 writer,
+                                 NULL,
+                                 sysprof_agent_record_cb,
+                                 NULL);
 
-  /* Add all request sources */
-  add_source (profiler, TRUE, GBP_TYPE_SPAWN_SOURCE, NULL);
-  add_source (profiler, TRUE, SYSPROF_TYPE_PROC_SOURCE, NULL);
-  add_source (profiler, TRUE, SYSPROF_TYPE_SYMBOLS_SOURCE, NULL);
-  add_source (profiler, aid_battery, SYSPROF_TYPE_BATTERY_SOURCE, NULL);
-  add_source (profiler, aid_compositor, SYSPROF_TYPE_PROXY_SOURCE,
-              "bus-type", G_BUS_TYPE_SESSION,
-              "bus-name", "org.gnome.Shell",
-              "object-path", "/org/gnome/Sysprof3/Profiler",
-              NULL);
-  add_source (profiler, aid_cpu, SYSPROF_TYPE_HOSTINFO_SOURCE, NULL);
-  add_source (profiler, aid_disk, SYSPROF_TYPE_DISKSTAT_SOURCE, NULL);
-  add_source (profiler, aid_energy, SYSPROF_TYPE_PROXY_SOURCE,
-              "bus-type", G_BUS_TYPE_SYSTEM,
-              "bus-name", "org.gnome.Sysprof3",
-              "object-path", "/org/gnome/Sysprof3/RAPL",
-              NULL);
-  add_source (profiler, aid_gjs, SYSPROF_TYPE_GJS_SOURCE, NULL);
-  add_source (profiler, aid_memory, SYSPROF_TYPE_MEMORY_SOURCE, NULL);
-  add_source (profiler, aid_memprof, SYSPROF_TYPE_MEMPROF_SOURCE, NULL);
-  add_source (profiler, aid_net, SYSPROF_TYPE_NETDEV_SOURCE, NULL);
-  add_source (profiler, aid_perf, SYSPROF_TYPE_PERF_SOURCE, NULL);
-  add_source (profiler, aid_tracefd, SYSPROF_TYPE_TRACEFD_SOURCE,
-              "envvar", "SYSPROF_TRACE_FD",
-              NULL);
-  add_source (profiler, no_throttle, SYSPROF_TYPE_GOVERNOR_SOURCE,
-              "disable-governor", TRUE,
-              NULL);
-  add_source (profiler, decode, SYSPROF_TYPE_SYMBOLS_SOURCE, NULL);
-
-  /* Bail when we've failed or finished and track the subprocess
-   * so that we can deliver signals to it.
-   */
-  g_signal_connect (profiler,
-                    "failed",
-                    G_CALLBACK (profiler_failed_cb),
-                    NULL);
-  g_signal_connect (profiler,
-                    "stopped",
-                    G_CALLBACK (profiler_stopped_cb),
-                    NULL);
-  g_signal_connect (profiler,
-                    "subprocess-spawned",
-                    G_CALLBACK (subprocess_spawned_cb),
-                    NULL);
-  g_signal_connect (profiler,
-                    "subprocess-finished",
-                    G_CALLBACK (subprocess_finished_cb),
-                    NULL);
-
-  /* SIGINT (keyboard ^C) should stop the profiler and append symbols
-   * to the SysprofCaptureWriter.
-   */
-  g_unix_signal_add (SIGINT, sigint_handler, profiler);
-
-  /* Start the profiler */
-  sysprof_profiler_start (profiler);
+  g_unix_signal_add (SIGINT, sigint_handler, main_loop);
+  g_unix_signal_add (SIGTERM, sigint_handler, main_loop);
 
   /* Now tell the connection to start processing messages that are
    * delivered from the controller, or signals destined back.
@@ -640,29 +611,40 @@ main (int   argc,
   if (connection != NULL)
     g_dbus_connection_start_message_processing (connection);
 
-  /* Wait for profiler to finish */
   g_main_loop_run (main_loop);
 
-  /* Notify that some more work needs to proceed */
-  message ("Completing symbol extraction");
+  if (gjs_trace_fd != -1)
+    {
+      SysprofCaptureReader *reader = NULL;
 
-  /* Let anything in-flight finish */
-  main_context = g_main_loop_get_context (main_loop);
-  while (g_main_context_pending (main_context))
-    g_main_context_iteration (main_context, FALSE);
+      if ((reader = sysprof_capture_reader_new_from_fd (g_steal_fd (&gjs_trace_fd))))
+        {
+          sysprof_capture_writer_cat (writer, reader);
+          sysprof_capture_reader_unref (reader);
+        }
+    }
 
-  /* Now make sure our bits are on disk */
+  if (trace_fd != -1)
+    {
+      SysprofCaptureReader *reader = NULL;
+
+      if ((reader = sysprof_capture_reader_new_from_fd (g_steal_fd (&trace_fd))))
+        {
+          sysprof_capture_writer_cat (writer, reader);
+          sysprof_capture_reader_unref (reader);
+        }
+    }
+
   sysprof_capture_writer_flush (writer);
+  sysprof_capture_writer_unref (writer);
+
+  subprocess = sysprof_recording_get_subprocess (active_recording);
 
   /* Try to exit the same way as the subprocess did to propagate that
    * back into Builder who is watching *this* process.
    */
-  if (subprocess_finished)
+  if (subprocess != NULL)
     {
-      g_assert (G_IS_SUBPROCESS (subprocess));
-      g_assert (g_subprocess_get_if_exited (subprocess) ||
-                g_subprocess_get_if_signaled (subprocess));
-
       if (g_subprocess_get_if_signaled (subprocess))
         {
           int signum = g_subprocess_get_term_sig (subprocess);
@@ -674,8 +656,9 @@ main (int   argc,
           return EXIT_FAILURE;
         }
 
-      exit_code = g_subprocess_get_exit_status (subprocess);
+      if (g_subprocess_get_if_exited (subprocess))
+        return g_subprocess_get_exit_status (subprocess);
     }
 
-  return exit_code;
+  return EXIT_SUCCESS;
 }

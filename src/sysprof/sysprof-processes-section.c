@@ -58,28 +58,62 @@ format_number (gpointer unused,
 }
 
 static void
+show_dialog (GtkNative              *transient_for,
+             SysprofDocumentProcess *process)
+{
+  SysprofProcessDialog *dialog;
+  g_autofree char *title = NULL;
+
+  g_assert (!transient_for || GTK_IS_NATIVE (transient_for));
+  g_assert (SYSPROF_IS_DOCUMENT_PROCESS (process));
+
+  title = sysprof_document_process_dup_title (process);
+
+  dialog = g_object_new (SYSPROF_TYPE_PROCESS_DIALOG,
+                         "process", process,
+                         "transient-for", transient_for,
+                         "title", title,
+                         NULL);
+
+  gtk_window_present (GTK_WINDOW (dialog));
+}
+
+static void
 activate_layer_item_cb (GtkListItem            *list_item,
                         SysprofChartLayer      *layer,
                         SysprofDocumentProcess *process,
                         SysprofChart           *chart)
 {
-  SysprofProcessDialog *dialog;
-  g_autofree char *title = NULL;
+
+  GtkNative *transient_for;
 
   g_assert (GTK_IS_LIST_ITEM (list_item));
   g_assert (SYSPROF_IS_CHART_LAYER (layer));
   g_assert (SYSPROF_IS_DOCUMENT_PROCESS (process));
   g_assert (SYSPROF_IS_CHART (chart));
 
-  title = sysprof_document_process_dup_title (process);
+  transient_for = gtk_widget_get_native (GTK_WIDGET (chart));
 
-  dialog = g_object_new (SYSPROF_TYPE_PROCESS_DIALOG,
-                         "process", process,
-                         "transient-for", gtk_widget_get_root (GTK_WIDGET (chart)),
-                         "title", title,
-                         NULL);
+  show_dialog (transient_for, process);
+}
 
-  gtk_window_present (GTK_WINDOW (dialog));
+static void
+process_table_activate_cb (SysprofProcessesSection *self,
+                           guint                    position,
+                           GtkColumnView           *column_view)
+{
+  g_autoptr(SysprofDocumentProcess) process = NULL;
+  GtkSelectionModel *model;
+  GtkNative *transient_for;
+
+  g_assert (SYSPROF_IS_PROCESSES_SECTION (self));
+  g_assert (GTK_IS_COLUMN_VIEW (column_view));
+
+  model = gtk_column_view_get_model (column_view);
+  process = g_list_model_get_item (G_LIST_MODEL (model), position);
+  transient_for = gtk_widget_get_native (GTK_WIDGET (self));
+
+  show_dialog (transient_for, process);
 }
 
 static void
@@ -105,6 +139,7 @@ sysprof_processes_section_class_init (SysprofProcessesSectionClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofProcessesSection, list_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofProcessesSection, time_column);
   gtk_widget_class_bind_template_callback (widget_class, activate_layer_item_cb);
+  gtk_widget_class_bind_template_callback (widget_class, process_table_activate_cb);
   gtk_widget_class_bind_template_callback (widget_class, format_number);
 
   g_type_ensure (SYSPROF_TYPE_CHART);

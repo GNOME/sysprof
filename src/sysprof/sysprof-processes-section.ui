@@ -179,6 +179,7 @@
                         <style>
                           <class name="data-table"/>
                         </style>
+                        <signal name="activate" handler="process_table_activate_cb" swapped="true"/>
                         <property name="model">
                           <object class="GtkNoSelection">
                             <property name="model">
@@ -311,6 +312,7 @@
                         <child>
                           <object class="GtkColumnViewColumn" id="cmdline_column">
                             <property name="title" translatable="yes">Command Line</property>
+                            <property name="expand">true</property>
                             <property name="sorter">
                               <object class="GtkStringSorter">
                                 <property name="expression">

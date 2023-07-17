@@ -80,3 +80,7 @@ if install_static
     libraries_private: libsysprof_capture_deps,
   )
 endif
+
+if get_option('tests')
+  subdir('tests')
+endif

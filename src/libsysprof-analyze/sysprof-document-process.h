@@ -48,6 +48,8 @@ SYSPROF_AVAILABLE_IN_ALL
 GListModel *sysprof_document_process_list_memory_maps (SysprofDocumentProcess *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel *sysprof_document_process_list_mounts      (SysprofDocumentProcess *self);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel *sysprof_document_process_list_threads     (SysprofDocumentProcess *self);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofDocumentProcess, g_object_unref)
 

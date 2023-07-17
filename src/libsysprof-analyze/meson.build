@@ -33,6 +33,7 @@ libsysprof_analyze_public_sources = [
   'sysprof-no-symbolizer.c',
   'sysprof-symbol.c',
   'sysprof-symbolizer.c',
+  'sysprof-thread-info.c',
   'sysprof-time-span.c',
 ]
 
@@ -73,6 +74,7 @@ libsysprof_analyze_public_headers = [
   'sysprof-no-symbolizer.h',
   'sysprof-symbol.h',
   'sysprof-symbolizer.h',
+  'sysprof-thread-info.h',
   'sysprof-time-span.h',
 ]
 

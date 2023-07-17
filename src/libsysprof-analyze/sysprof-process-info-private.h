@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "eggbitset.h"
+
 #include "sysprof-address-layout-private.h"
 #include "sysprof-mount-namespace-private.h"
 #include "sysprof-symbol-cache-private.h"
@@ -33,6 +35,7 @@ typedef struct _SysprofProcessInfo
   SysprofSymbolCache    *symbol_cache;
   SysprofSymbol         *fallback_symbol;
   SysprofSymbol         *symbol;
+  EggBitset             *thread_ids;
   int                    pid;
   gint64                 exit_time;
 } SysprofProcessInfo;
@@ -41,5 +44,13 @@ SysprofProcessInfo *sysprof_process_info_new   (SysprofMountNamespace *mount_nam
                                                 int                    pid);
 SysprofProcessInfo *sysprof_process_info_ref   (SysprofProcessInfo    *self);
 void                sysprof_process_info_unref (SysprofProcessInfo    *self);
+
+static inline void
+sysprof_process_info_seen_thread (SysprofProcessInfo *self,
+                                  int                 thread_id)
+{
+  if (thread_id > 0)
+    egg_bitset_add (self->thread_ids, thread_id);
+}
 
 G_END_DECLS

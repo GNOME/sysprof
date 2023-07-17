@@ -25,6 +25,7 @@
 #include "sysprof-document-frame-private.h"
 #include "sysprof-document-process-private.h"
 #include "sysprof-mount.h"
+#include "sysprof-thread-info.h"
 
 struct _SysprofDocumentProcess
 {
@@ -44,6 +45,7 @@ enum {
   PROP_MEMORY_MAPS,
   PROP_MOUNTS,
   PROP_EXIT_TIME,
+  PROP_THREADS,
   PROP_TITLE,
   N_PROPS
 };
@@ -92,6 +94,10 @@ sysprof_document_process_get_property (GObject    *object,
       g_value_take_object (value, sysprof_document_process_list_mounts (self));
       break;
 
+    case PROP_THREADS:
+      g_value_take_object (value, sysprof_document_process_list_threads (self));
+      break;
+
     case PROP_TITLE:
       g_value_take_string (value, sysprof_document_process_dup_title (self));
       break;
@@ -131,6 +137,11 @@ sysprof_document_process_class_init (SysprofDocumentProcessClass *klass)
 
   properties [PROP_MOUNTS] =
     g_param_spec_object ("mounts", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_THREADS] =
+    g_param_spec_object ("threads", NULL, NULL,
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -266,4 +277,47 @@ sysprof_document_process_dup_title (SysprofDocumentProcess *self)
     return g_strdup_printf (_("%s [Process %d]"), command_line, pid);
 
   return g_strdup_printf (_("Process %d"), pid);
+}
+
+/**
+ * sysprof_document_process_list_threads:
+ * @self: a #SysprofDocumentProcess
+ *
+ * Gets the list of threads for the process.
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofThreadInfo.
+ */
+GListModel *
+sysprof_document_process_list_threads (SysprofDocumentProcess *self)
+{
+  GListStore *store;
+
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT_PROCESS (self), NULL);
+
+  store = g_list_store_new (SYSPROF_TYPE_THREAD_INFO);
+
+  if (self->process_info != NULL)
+    {
+      g_autoptr(GPtrArray) threads = g_ptr_array_new_with_free_func (g_object_unref);
+      EggBitsetIter iter;
+      guint i;
+
+      if (egg_bitset_iter_init_first (&iter, self->process_info->thread_ids, &i))
+        {
+          do
+            {
+              g_ptr_array_add (threads,
+                               g_object_new (SYSPROF_TYPE_THREAD_INFO,
+                                             "process", self,
+                                             "thread-id", i,
+                                             NULL));
+            }
+          while (egg_bitset_iter_next (&iter, &i));
+        }
+
+      if (threads->len > 0)
+        g_list_store_splice (store, 0, 0, threads->pdata, threads->len);
+    }
+
+  return G_LIST_MODEL (store);
 }

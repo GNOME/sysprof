@@ -44,11 +44,15 @@ sysprof_process_info_new (SysprofMountNamespace *mount_namespace,
   self->address_layout = sysprof_address_layout_new ();
   self->symbol_cache = sysprof_symbol_cache_new ();
   self->mount_namespace = mount_namespace;
+  self->thread_ids = egg_bitset_new_empty ();
   self->fallback_symbol = _sysprof_symbol_new (g_ref_string_new (symname),
                                                NULL,
                                                g_ref_string_new (pidstr),
                                                0, 0,
                                                SYSPROF_SYMBOL_KIND_PROCESS);
+
+  if (pid > 0)
+    egg_bitset_add (self->thread_ids, pid);
 
   return self;
 }
@@ -69,6 +73,7 @@ sysprof_process_info_finalize (gpointer data)
   g_clear_object (&self->mount_namespace);
   g_clear_object (&self->fallback_symbol);
   g_clear_object (&self->symbol);
+  g_clear_pointer (&self->thread_ids, egg_bitset_unref);
 
   self->pid = 0;
 }

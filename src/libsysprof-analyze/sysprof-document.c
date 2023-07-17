@@ -1279,6 +1279,18 @@ sysprof_document_load_worker (GTask        *task,
                     }
                 }
             }
+
+          if (sample->tid != tainted->pid)
+            {
+              SysprofProcessInfo *info = _sysprof_document_process_info (self, pid, TRUE);
+              sysprof_process_info_seen_thread (info, swap_int32 (self->needs_swap, sample->tid));
+            }
+        }
+      else if (tainted->type == SYSPROF_CAPTURE_FRAME_ALLOCATION)
+        {
+          const SysprofCaptureAllocation *alloc = (const SysprofCaptureAllocation *)tainted;
+          SysprofProcessInfo *info = _sysprof_document_process_info (self, pid, TRUE);
+          sysprof_process_info_seen_thread (info, swap_int32 (self->needs_swap, alloc->tid));
         }
       else if (tainted->type == SYSPROF_CAPTURE_FRAME_EXIT)
         {

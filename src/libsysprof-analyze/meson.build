@@ -108,7 +108,6 @@ libsysprof_analyze_static = static_library(
   libsysprof_analyze_private_sources,
 
     include_directories: [include_directories('.'),
-                          ipc_include_dirs,
                           libsysprof_capture_include_dirs],
            dependencies: libsysprof_analyze_deps,
   gnu_symbol_visibility: 'hidden',

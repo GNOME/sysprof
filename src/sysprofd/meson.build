@@ -1,12 +1,21 @@
+ipc_profiler_src = gnome.gdbus_codegen('ipc-profiler',
+           sources: '../org.gnome.Sysprof3.Profiler.xml',
+  interface_prefix: 'org.gnome.Sysprof3.',
+         namespace: 'Ipc',
+)
+
+ipc_service_src = gnome.gdbus_codegen('ipc-service',
+           sources: '../org.gnome.Sysprof3.Service.xml',
+  interface_prefix: 'org.gnome.Sysprof3.',
+         namespace: 'Ipc',
+)
+
 sysprofd_sources = [
-  '../libsysprof/sysprof-kallsyms.c',
   'sysprofd.c',
-  'ipc-legacy-impl.c',
   'ipc-rapl-profiler.c',
   'ipc-service-impl.c',
   'sysprof-turbostat.c',
-  helpers_sources,
-  ipc_legacy_src,
+  'helpers.c',
   ipc_profiler_src,
   ipc_service_src,
 ]
@@ -26,7 +35,7 @@ sysprofd = executable('sysprofd', sysprofd_sources,
               install: true,
           install_dir: pkglibexecdir,
                   pie: true,
-  include_directories: [include_directories('.'), ipc_include_dirs],
+  include_directories: [include_directories('.')],
 )
 
 sysprofdconf = configuration_data()
@@ -68,29 +77,4 @@ i18n.merge_file(
        po_dir: podir,
       install: true,
   install_dir: join_paths(datadir, 'polkit-1/actions'),
-)
-
-#
-# For org.gnome.Sysprof2 Compatibility
-#
-
-configure_file(
-          input: 'org.gnome.Sysprof2.service.in',
-         output: 'org.gnome.Sysprof2.service',
-  configuration: sysprofdconf,
-    install_dir: join_paths(datadir, 'dbus-1/system-services'),
-)
-
-configure_file(
-          input: 'org.gnome.Sysprof2.conf.in',
-         output: 'org.gnome.Sysprof2.conf',
-  configuration: sysprofdconf,
-    install_dir: join_paths(datadir, 'dbus-1/system.d'),
-)
-
-configure_file(
-          input: 'sysprof2.service.in',
-         output: 'sysprof2.service',
-  configuration: sysprofdconf,
-    install_dir: systemdunitdir,
 )

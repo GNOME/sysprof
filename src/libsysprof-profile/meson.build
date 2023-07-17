@@ -77,7 +77,6 @@ libsysprof_profile_static = static_library(
    mapped_ring_buffer_sources),
 
     include_directories: [include_directories('.'),
-                          ipc_include_dirs,
                           libsysprof_capture_include_dirs],
            dependencies: libsysprof_profile_deps,
   gnu_symbol_visibility: 'hidden',

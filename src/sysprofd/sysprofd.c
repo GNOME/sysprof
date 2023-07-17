@@ -26,10 +26,8 @@
 #include <stdlib.h>
 #include <sysprof-capture.h>
 
-#include "ipc-legacy.h"
 #include "ipc-service.h"
 
-#include "ipc-legacy-impl.h"
 #include "ipc-rapl-profiler.h"
 #include "ipc-service-impl.h"
 
@@ -127,18 +125,15 @@ main (gint   argc,
 
   if ((bus = g_bus_get_sync (bus_type, NULL, &error)))
     {
-      g_autoptr(IpcLegacySysprof2) v2_service = ipc_legacy_impl_new ();
       g_autoptr(IpcProfiler) rapl = ipc_rapl_profiler_new ();
       g_autoptr(IpcService) v3_service = ipc_service_impl_new ();
 
       g_signal_connect (v3_service, "activity", G_CALLBACK (activity_cb), NULL);
-      g_signal_connect (v2_service, "activity", G_CALLBACK (activity_cb), NULL);
       g_signal_connect (rapl, "activity", G_CALLBACK (activity_cb), NULL);
 
       activity_cb (NULL, NULL);
 
       if (g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (v3_service), bus, V3_PATH, &error) &&
-          g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (v2_service), bus, V2_PATH, &error) &&
           g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (rapl), bus, RAPL_PATH, &error))
         {
           for (guint i = 0; i < G_N_ELEMENTS (bus_names); i++)

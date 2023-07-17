@@ -15,17 +15,10 @@ if install_service_files
       'org.gnome.Sysprof2.xml',
       'org.gnome.Sysprof3.Profiler.xml',
       'org.gnome.Sysprof3.Service.xml',
-      'org.gnome.Sysprof.Agent.xml'
     ],
     install_dir: join_paths(datadir, 'dbus-1/interfaces'),
   )
 endif
-
-ipc_include_dirs = include_directories('.')
-
-stackstash_sources = files('stackstash.c')
-
-helpers_sources = files('helpers.c')
 
 if need_libsysprof_capture
   subdir('libsysprof-capture')
@@ -43,9 +36,12 @@ endif
 if get_option('sysprofd') == 'bundled'
   subdir('sysprofd')
 endif
+
 if get_option('gtk')
   subdir('sysprof')
 endif
-if get_option('agent')
+
+if get_option('tools')
   subdir('sysprof-agent')
+  subdir('sysprof-cli')
 endif

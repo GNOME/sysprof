@@ -8,9 +8,6 @@ option('development', type: 'boolean', value: 'false')
 # server scenarios.
 option('gtk', type: 'boolean')
 
-# Disable libsysprof/ui (in situations you only want sysprof-capture)
-option('libsysprof', type: 'boolean')
-
 # Allow disabling the installation of libsysprof-capture*.a
 option('install-static', type: 'boolean')
 
@@ -27,12 +24,6 @@ option('sysprofd', type: 'combo',
 # sysprofd as necessary (for the daemon privilege helper).
 option('systemdunitdir', type: 'string',
   description: 'Directory for systemd service files'
-)
-
-# An optional location to specify where to locate debug information. This
-# is useful for distributions to set based on their debuginfo setup.
-option('debugdir', type: 'string',
-  description: 'Look for global separate debug info in this path'
 )
 
 # If Yelp documentation should be installed

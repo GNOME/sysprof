@@ -259,8 +259,7 @@ int main(void) {
   config_h.set10('HAVE_STDATOMIC_H', true)
 endif
 
-needs_service_access = get_option('libsysprof') or get_option('agent')
-install_service_files = needs_service_access or get_option('sysprofd') == 'bundled'
+install_service_files = get_option('sysprofd') == 'bundled'
 
 if need_glib
   subdir('contrib')

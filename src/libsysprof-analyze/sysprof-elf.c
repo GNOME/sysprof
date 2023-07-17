@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include "../libsysprof/elfparser.h"
+#include "elfparser.h"
 
 #include "sysprof-elf-private.h"
 

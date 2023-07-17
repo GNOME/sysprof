@@ -59,15 +59,18 @@ main (int   argc,
       g_autoptr(SysprofDocumentProcess) process = g_list_model_get_item (processes, i);
       g_autoptr(GListModel) memory_maps = sysprof_document_process_list_memory_maps (process);
       g_autoptr(GListModel) mounts = sysprof_document_process_list_mounts (process);
+      g_autoptr(GListModel) threads = sysprof_document_process_list_threads (process);
       guint n_maps;
       guint n_mounts;
+      guint n_threads;
 
       if (pid != -1 && pid != sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process)))
         continue;
 
-      g_print ("%d: %s\n",
+      g_print ("%d: %s (Duration %lf seconds)\n",
                sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process)),
-               sysprof_document_process_get_command_line (process));
+               sysprof_document_process_get_command_line (process),
+               sysprof_document_process_get_duration (process) / (double)SYSPROF_NSEC_PER_SEC);
 
       g_print ("  Address Layout:\n");
       n_maps = g_list_model_get_n_items (memory_maps);
@@ -101,6 +104,17 @@ main (int   argc,
 
           if (subvol != NULL)
             g_print ("      Had subvol superblock option: %s\n", subvol);
+        }
+
+      g_print ("  Threads:\n");
+      n_threads = g_list_model_get_n_items (threads);
+      for (guint j = 0; j < n_threads; j++)
+        {
+          g_autoptr(SysprofThreadInfo) thread = g_list_model_get_item (threads, j);
+
+          g_print ("    Thread-Id: %i%s\n",
+                   sysprof_thread_info_get_thread_id (thread),
+                   sysprof_thread_info_is_main_thread (thread) ? " [Main Thread]" : "");
         }
     }
 

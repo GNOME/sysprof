@@ -77,6 +77,9 @@ struct _SysprofRecording
    * from outside of the fiber.
    */
   DexChannel *channel;
+
+  /* The process we have spawned, if any */
+  GSubprocess *subprocess;
 };
 
 enum {
@@ -91,18 +94,18 @@ G_DEFINE_FINAL_TYPE (SysprofRecording, sysprof_recording, G_TYPE_OBJECT)
 static GParamSpec *properties[N_PROPS];
 
 static DexFuture *
-_sysprof_recording_spawn (SysprofSpawnable *spawnable)
+_sysprof_recording_spawn (SysprofSpawnable  *spawnable,
+                          GSubprocess      **subprocess)
 {
-  g_autoptr(GSubprocess) subprocess = NULL;
   g_autoptr(GError) error = NULL;
   DexFuture *ret;
 
   g_assert (SYSPROF_IS_SPAWNABLE (spawnable));
 
-  if (!(subprocess = sysprof_spawnable_spawn (spawnable, &error)))
+  if (!(*subprocess = sysprof_spawnable_spawn (spawnable, &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
 
-  ret = dex_subprocess_wait_check (subprocess);
+  ret = dex_subprocess_wait_check (*subprocess);
   dex_async_pair_set_cancel_on_discard (DEX_ASYNC_PAIR (ret), FALSE);
   return ret;
 }
@@ -180,9 +183,11 @@ sysprof_recording_fiber (gpointer user_data)
   /* Now take our begin time now that all instruments are notified */
   begin_time = SYSPROF_CAPTURE_CURRENT_TIME;
 
+  g_assert (self->subprocess == NULL);
+
   /* If we need to spawn a subprocess, do it now */
   if (self->spawnable != NULL)
-    monitor = _sysprof_recording_spawn (self->spawnable);
+    monitor = _sysprof_recording_spawn (self->spawnable, &self->subprocess);
   else
     monitor = dex_future_new_infinite ();
 
@@ -388,6 +393,7 @@ sysprof_recording_finalize (GObject *object)
   g_clear_pointer (&self->instruments, g_ptr_array_unref);
   g_clear_object (&self->spawnable);
   g_clear_object (&self->diagnostics);
+  g_clear_object (&self->subprocess);
   dex_clear (&self->fiber);
 
   G_OBJECT_CLASS (sysprof_recording_parent_class)->finalize (object);
@@ -879,4 +885,20 @@ sysprof_recording_dup_fd (SysprofRecording *self)
   g_return_val_if_fail (SYSPROF_IS_RECORDING (self), -1);
 
   return _sysprof_capture_writer_dup_fd (self->writer);
+}
+
+/**
+ * sysprof_recording_get_subprocess:
+ * @self: a #SysprofRecording
+ *
+ * Gets the #GSubprocess if one was spawned.
+ *
+ * Returns: (transfer none) (nullable): a #GSubprocess or %NULL
+ */
+GSubprocess *
+sysprof_recording_get_subprocess (SysprofRecording *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_RECORDING (self), NULL);
+
+  return self->subprocess;
 }

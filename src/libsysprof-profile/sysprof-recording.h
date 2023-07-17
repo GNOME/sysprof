@@ -38,6 +38,8 @@ gint64                sysprof_recording_get_duration     (SysprofRecording     *
 SYSPROF_AVAILABLE_IN_ALL
 gint64                sysprof_recording_get_event_count  (SysprofRecording     *self);
 SYSPROF_AVAILABLE_IN_ALL
+GSubprocess          *sysprof_recording_get_subprocess   (SysprofRecording     *self);
+SYSPROF_AVAILABLE_IN_ALL
 void                  sysprof_recording_wait_async       (SysprofRecording     *self,
                                                           GCancellable         *cancellable,
                                                           GAsyncReadyCallback   callback,

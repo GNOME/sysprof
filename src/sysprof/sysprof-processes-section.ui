@@ -186,13 +186,22 @@
                                 <binding name="sorter">
                                   <lookup name="sorter">column_view</lookup>
                                 </binding>
-                                <binding name="model">
-                                  <lookup name="processes" type="SysprofDocument">
-                                    <lookup name="document" type="SysprofSession">
-                                      <lookup name="session">SysprofProcessesSection</lookup>
-                                    </lookup>
-                                  </lookup>
-                                </binding>
+                                <property name="model">
+                                  <object class="SysprofTimeFilterModel">
+                                    <binding name="time-span">
+                                      <lookup name="selected-time" type="SysprofSession">
+                                        <lookup name="session">SysprofProcessesSection</lookup>
+                                      </lookup>
+                                    </binding>
+                                    <binding name="model">
+                                      <lookup name="processes" type="SysprofDocument">
+                                        <lookup name="document" type="SysprofSession">
+                                          <lookup name="session">SysprofProcessesSection</lookup>
+                                        </lookup>
+                                      </lookup>
+                                    </binding>
+                                  </object>
+                                </property>
                               </object>
                             </property>
                           </object>

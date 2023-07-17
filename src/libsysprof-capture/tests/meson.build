@@ -16,10 +16,11 @@ libsysprof_capture_testsuite_c_args = [
 
 libsysprof_capture_testsuite = {
   'test-mapped-ring-buffer' : {},
+  'rewrite-pid'             : {'skip': true},
 }
 
 libsysprof_capture_testsuite_deps = [
-  dependency('glib-2.0'),
+  dependency('gio-2.0'),
   libsysprof_capture_dep,
 ]
 

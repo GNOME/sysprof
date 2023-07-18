@@ -181,6 +181,15 @@ sysprof_time_span_layer_snapshot (GtkWidget   *widget,
               if (rect.size.width == 0)
                 continue;
 
+              if (rect.origin.x < 0)
+                {
+                  rect.size.width -= ABS (rect.origin.x);
+                  rect.origin.x = 0;
+                }
+
+              if (rect.origin.x + rect.size.width > width)
+                rect.size.width = width - rect.origin.x;
+
               gtk_snapshot_append_color (snapshot, color, &rect);
 
               if (rect.size.width > 20)

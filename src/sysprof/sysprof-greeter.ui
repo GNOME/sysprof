@@ -239,6 +239,19 @@
                             </child>
                           </object>
                         </child>
+                        <child>
+                          <object class="AdwActionRow">
+                            <property name="activatable-widget">bundle_symbols</property>
+                            <property name="title" translatable="yes">Bundle Symbols</property>
+                            <property name="subtitle" translatable="yes">Make recording shareable by bundling decoded symbols</property>
+                            <child type="suffix">
+                              <object class="GtkSwitch" id="bundle_symbols">
+                                <property name="active">true</property>
+                                <property name="valign">center</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>

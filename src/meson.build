@@ -12,7 +12,6 @@ sysprof_version_conf.set('VERSION', meson.project_version())
 
 if install_service_files
   install_data([
-      'org.gnome.Sysprof2.xml',
       'org.gnome.Sysprof3.Profiler.xml',
       'org.gnome.Sysprof3.Service.xml',
     ],

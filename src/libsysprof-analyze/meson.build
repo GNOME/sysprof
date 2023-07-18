@@ -95,6 +95,7 @@ libsysprof_analyze_private_sources = [
 
 libsysprof_analyze_deps = [
   dependency('gio-2.0', version: glib_req_version),
+  dependency('libdex-1', version: dex_req_version),
 
   libeggbitset_static_dep,
   libelfparser_static_dep,

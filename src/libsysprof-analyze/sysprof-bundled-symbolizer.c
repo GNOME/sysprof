@@ -20,33 +20,21 @@
 
 #include "config.h"
 
-#include "sysprof-bundled-symbolizer.h"
+#include "sysprof-bundled-symbolizer-private.h"
 #include "sysprof-document-private.h"
 #include "sysprof-symbolizer-private.h"
 #include "sysprof-symbol-private.h"
 
-SYSPROF_ALIGNED_BEGIN(1)
-typedef struct
-{
-  SysprofCaptureAddress addr_begin;
-  SysprofCaptureAddress addr_end;
-  guint32               pid;
-  guint32               offset;
-  guint32               tag_offset;
-  guint32               padding;
-} Decoded
-SYSPROF_ALIGNED_END(1);
-
 struct _SysprofBundledSymbolizer
 {
-  SysprofSymbolizer  parent_instance;
+  SysprofSymbolizer          parent_instance;
 
-  const Decoded     *symbols;
-  guint              n_symbols;
+  const SysprofPackedSymbol *symbols;
+  guint                      n_symbols;
 
-  GBytes            *bytes;
-  const gchar       *beginptr;
-  const gchar       *endptr;
+  GBytes                    *bytes;
+  const gchar               *beginptr;
+  const gchar               *endptr;
 };
 
 struct _SysprofBundledSymbolizerClass
@@ -74,17 +62,17 @@ sysprof_bundled_symbolizer_decode (SysprofBundledSymbolizer *self,
   endptr = beginptr + g_bytes_get_size (bytes);
 
   for (char *ptr = beginptr;
-       ptr < endptr && (ptr + sizeof (Decoded)) < endptr;
-       ptr += sizeof (Decoded))
+       ptr < endptr && (ptr + sizeof (SysprofPackedSymbol)) < endptr;
+       ptr += sizeof (SysprofPackedSymbol))
     {
-      Decoded *sym = (Decoded *)ptr;
+      SysprofPackedSymbol *sym = (SysprofPackedSymbol *)ptr;
 
       if (sym->addr_begin == 0 &&
           sym->addr_end == 0 &&
           sym->pid == 0 &&
           sym->offset == 0)
         {
-          self->symbols = (const Decoded *)beginptr;
+          self->symbols = (const SysprofPackedSymbol *)beginptr;
           self->n_symbols = sym - self->symbols;
           break;
         }
@@ -145,8 +133,8 @@ static gint
 search_for_symbol_cb (gconstpointer a,
                       gconstpointer b)
 {
-  const Decoded *key = a;
-  const Decoded *ele = b;
+  const SysprofPackedSymbol *key = a;
+  const SysprofPackedSymbol *ele = b;
 
   if (key->pid < ele->pid)
     return -1;
@@ -177,8 +165,8 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
 {
   SysprofBundledSymbolizer *self = SYSPROF_BUNDLED_SYMBOLIZER (symbolizer);
   g_autoptr(GRefString) tag = NULL;
-  const Decoded *ret;
-  const Decoded key = {
+  const SysprofPackedSymbol *ret;
+  const SysprofPackedSymbol key = {
     .addr_begin = address,
     .addr_end = address,
     .pid = process_info ? process_info->pid : 0,
@@ -195,7 +183,7 @@ sysprof_bundled_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   ret = bsearch (&key,
                  self->symbols,
                  self->n_symbols,
-                 sizeof (Decoded),
+                 sizeof (SysprofPackedSymbol),
                  search_for_symbol_cb);
 
   if (ret == NULL || ret->offset == 0)

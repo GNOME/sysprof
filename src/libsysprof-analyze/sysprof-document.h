@@ -105,5 +105,14 @@ SYSPROF_AVAILABLE_IN_ALL
 SysprofCallgraph       *sysprof_document_callgraph_finish                    (SysprofDocument           *self,
                                                                               GAsyncResult              *result,
                                                                               GError                   **error);
+SYSPROF_AVAILABLE_IN_ALL
+void                    sysprof_document_serialize_symbols_async             (SysprofDocument           *self,
+                                                                              GCancellable              *cancellable,
+                                                                              GAsyncReadyCallback        callback,
+                                                                              gpointer                   user_data);
+SYSPROF_AVAILABLE_IN_ALL
+GBytes                 *sysprof_document_serialize_symbols_finish            (SysprofDocument           *self,
+                                                                              GAsyncResult              *result,
+                                                                              GError                   **error);
 
 G_END_DECLS

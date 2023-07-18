@@ -25,8 +25,11 @@
 #include <glib/gstdio.h>
 #include <glib/gi18n.h>
 
+#include <libdex.h>
+
 #include "sysprof-document-private.h"
 
+#include "sysprof-bundled-symbolizer-private.h"
 #include "sysprof-callgraph-private.h"
 #include "sysprof-cpu-info-private.h"
 #include "sysprof-document-bitset-index-private.h"
@@ -2318,4 +2321,136 @@ sysprof_document_list_cpu_info (SysprofDocument *self)
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
 
   return g_object_ref (G_LIST_MODEL (self->cpu_info));
+}
+
+static int
+sort_symbols_for_bsearch (gconstpointer a,
+                          gconstpointer b)
+{
+  const SysprofPackedSymbol *packed_a = a;
+  const SysprofPackedSymbol *packed_b = b;
+
+  if (packed_a->pid < packed_b->pid)
+    return -1;
+
+  if (packed_a->pid > packed_b->pid)
+    return 1;
+
+  if (packed_a->addr_begin < packed_b->addr_begin)
+    return -1;
+
+  if (packed_a->addr_begin > packed_b->addr_begin)
+    return 1;
+
+  return 0;
+}
+
+static DexFuture *
+sysprof_document_serialize_symbols_fiber (gpointer user_data)
+{
+  static const guint8 empty_string[1] = {0};
+  static const SysprofPackedSymbol empty_symbol = {0};
+  SysprofDocument *self = user_data;
+  g_autoptr(GByteArray) strings = NULL;
+  g_autoptr(GHashTable) strings_offset = NULL;
+  g_autoptr(GBytes) bytes = NULL;
+  g_autoptr(GArray) packed_symbols = NULL;
+  GHashTableIter iter;
+  gpointer value;
+  char *data;
+  gsize packed_len;
+
+  g_assert (SYSPROF_IS_DOCUMENT (self));
+
+  packed_symbols = g_array_new (FALSE, FALSE, sizeof (SysprofPackedSymbol));
+  strings = g_byte_array_new ();
+  strings_offset = g_hash_table_new (g_str_hash, g_str_equal);
+
+  /* Always put empty string at head so 0 is never a valid
+   * offset for the document entries except for "".
+   */
+  g_byte_array_append (strings, empty_string, sizeof empty_string);
+  g_hash_table_insert (strings_offset, "", 0);
+
+  g_hash_table_iter_init (&iter, self->pid_to_process_info);
+  while (g_hash_table_iter_next (&iter, NULL, &value))
+    {
+      const SysprofProcessInfo *process_info = value;
+
+      if (process_info->symbol_cache != NULL)
+        sysprof_symbol_cache_populate_packed (process_info->symbol_cache,
+                                              packed_symbols,
+                                              strings,
+                                              strings_offset,
+                                              process_info->pid);
+    }
+
+  g_array_sort (packed_symbols, sort_symbols_for_bsearch);
+  g_array_append_val (packed_symbols, empty_symbol);
+
+  packed_len = sizeof (SysprofPackedSymbol) * packed_symbols->len;
+
+  /* Update the offsets to be relative to the beginning of the
+   * section containing our packed symbols. Ignore the last symbol
+   * so that it stays all zero.
+   */
+  for (guint i = 0; i < packed_symbols->len-1; i++)
+    {
+      g_array_index (packed_symbols, SysprofPackedSymbol, i).offset += packed_len;
+      g_array_index (packed_symbols, SysprofPackedSymbol, i).tag_offset += packed_len;
+    }
+
+  if (G_MAXSSIZE - packed_len < strings->len)
+    return dex_future_new_for_errno (ENOMEM);
+
+  data = g_malloc (packed_len + strings->len);
+  memcpy (data, packed_symbols->data, packed_len);
+  memcpy (data+packed_len, strings->data, strings->len);
+
+  bytes = g_bytes_new_take (data, packed_len + strings->len);
+
+  return dex_future_new_take_boxed (G_TYPE_BYTES, g_steal_pointer (&bytes));
+}
+
+void
+sysprof_document_serialize_symbols_async (SysprofDocument     *self,
+                                          GCancellable        *cancellable,
+                                          GAsyncReadyCallback  callback,
+                                          gpointer             user_data)
+{
+  g_autoptr(DexAsyncResult) result = NULL;
+
+  g_return_if_fail (SYSPROF_IS_DOCUMENT (self));
+  g_return_if_fail (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+  result = dex_async_result_new (self, cancellable, callback, user_data);
+
+  dex_async_result_await (result,
+                          dex_scheduler_spawn (dex_thread_pool_scheduler_get_default (), 0,
+                                               sysprof_document_serialize_symbols_fiber,
+                                               g_object_ref (self),
+                                               g_object_unref));
+}
+
+/**
+ * sysprof_document_serialize_symbols_finish:
+ * @self: a #SysprofDocument
+ * @result: a #GAsyncResult
+ * @error: a location for a #GError
+ *
+ * Completes a request to serialize the symbols of the document
+ * encoded in a format that Sysprof understands.
+ *
+ * Returns: (transfer full): a #GBytes if successful; otherwise %NULL
+ *   and @error is set.
+ */
+GBytes *
+sysprof_document_serialize_symbols_finish (SysprofDocument  *self,
+                                           GAsyncResult     *result,
+                                           GError          **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_DOCUMENT (self), NULL);
+  g_return_val_if_fail (DEX_IS_ASYNC_RESULT (result), NULL);
+
+  return dex_async_result_propagate_pointer (DEX_ASYNC_RESULT (result), error);
 }

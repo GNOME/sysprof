@@ -26,6 +26,7 @@ static void sysprof_symbol_cache_node_augment (SysprofSymbolCacheNode *node);
 
 #include "tree.h"
 
+#include "sysprof-bundled-symbolizer-private.h"
 #include "sysprof-symbol-private.h"
 #include "sysprof-symbol-cache-private.h"
 
@@ -212,3 +213,50 @@ sysprof_symbol_cache_lookup (SysprofSymbolCache *self,
   return NULL;
 }
 
+static guint
+get_string (GByteArray *strings,
+            GHashTable *strings_offset,
+            const char *string)
+{
+  guint pos;
+
+  if (string == NULL || string[0] == 0)
+    return 0;
+
+  pos = GPOINTER_TO_UINT (g_hash_table_lookup (strings_offset, string));
+
+  if (pos == 0)
+    {
+      pos = strings->len;
+      g_byte_array_append (strings, (const guint8 *)string, strlen (string) + 1);
+      g_hash_table_insert (strings_offset, (char *)string, GUINT_TO_POINTER (pos));
+    }
+
+  return pos;
+}
+
+void
+sysprof_symbol_cache_populate_packed (SysprofSymbolCache *self,
+                                      GArray             *array,
+                                      GByteArray         *strings,
+                                      GHashTable         *strings_offset,
+                                      int                 pid)
+{
+  SysprofSymbolCacheNode *node;
+
+  g_return_if_fail (SYSPROF_IS_SYMBOL_CACHE (self));
+  g_return_if_fail (array != NULL);
+
+  RB_FOREACH(node, sysprof_symbol_cache, &self->head) {
+    SysprofPackedSymbol packed;
+    SysprofSymbol *symbol = node->symbol;
+
+    packed.addr_begin = symbol->begin_address;
+    packed.addr_end = symbol->end_address;
+    packed.pid = pid;
+    packed.offset = get_string (strings, strings_offset, symbol->name);
+    packed.tag_offset = get_string (strings, strings_offset, symbol->binary_nick);
+
+    g_array_append_val (array, packed);
+  }
+}

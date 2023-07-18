@@ -30,10 +30,15 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofSymbolCache, sysprof_symbol_cache, SYSPROF, SYMBOL_CACHE, GObject)
 
-SysprofSymbolCache *sysprof_symbol_cache_new    (void);
-SysprofSymbol      *sysprof_symbol_cache_lookup (SysprofSymbolCache *self,
-                                                 SysprofAddress      address);
-void                sysprof_symbol_cache_take   (SysprofSymbolCache *self,
-                                                 SysprofSymbol      *symbol);
+SysprofSymbolCache *sysprof_symbol_cache_new             (void);
+SysprofSymbol      *sysprof_symbol_cache_lookup          (SysprofSymbolCache *self,
+                                                          SysprofAddress      address);
+void                sysprof_symbol_cache_take            (SysprofSymbolCache *self,
+                                                          SysprofSymbol      *symbol);
+void                sysprof_symbol_cache_populate_packed (SysprofSymbolCache *self,
+                                                          GArray             *array,
+                                                          GByteArray         *strings,
+                                                          GHashTable         *strings_offset,
+                                                          int                 pid);
 
 G_END_DECLS

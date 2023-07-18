@@ -27,6 +27,7 @@
 #include <glib/gstdio.h>
 
 #include "sysprof-bundled-symbolizer.h"
+#include "sysprof-document-bitset-index-private.h"
 #include "sysprof-document-loader.h"
 #include "sysprof-document-private.h"
 #include "sysprof-elf-symbolizer.h"
@@ -290,6 +291,9 @@ sysprof_document_loader_class_init (SysprofDocumentLoaderClass *klass)
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
+
+  g_type_ensure (SYSPROF_TYPE_DOCUMENT);
+  g_type_ensure (SYSPROF_TYPE_DOCUMENT_BITSET_INDEX);
 }
 
 static void

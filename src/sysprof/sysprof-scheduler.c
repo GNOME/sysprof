@@ -40,7 +40,7 @@
 
 #define _1_MSEC (G_USEC_PER_SEC / 1000L)
 
-typedef struct
+typedef struct _SysprofScheduler
 {
   GSource source;
   GQueue queue;
@@ -48,7 +48,7 @@ typedef struct
   gsize last_handler_id;
 } SysprofScheduler;
 
-typedef struct
+typedef struct _SysprofTask
 {
   GList link;
   SysprofSchedulerCallback callback;
@@ -77,8 +77,8 @@ sysprof_task_free (SysprofTask *task)
 
 static SysprofTask *
 sysprof_task_new (SysprofSchedulerCallback callback,
-                     gpointer                   user_data,
-                     GDestroyNotify             notify)
+                  gpointer                 user_data,
+                  GDestroyNotify           notify)
 {
   SysprofTask *task;
 
@@ -163,7 +163,7 @@ sysprof_scheduler_dispatch (GSource     *source,
         {
           task->ready_time = current + interval;
           g_queue_push_tail_link (&self->queue, &task->link);
-          break;
+          continue;
         }
 
       sysprof_task_free (task);

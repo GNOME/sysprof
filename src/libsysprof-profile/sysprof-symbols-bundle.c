@@ -58,6 +58,7 @@ sysprof_symbols_bundle_augment_fiber (gpointer user_data)
     G_TYPE_BYTES);
 
   g_autoptr(SysprofDocumentLoader) loader = NULL;
+  g_autoptr(SysprofSymbolizer) elf = NULL;
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(GBytes) bytes = NULL;
   SysprofRecording *recording = user_data;
@@ -73,6 +74,12 @@ sysprof_symbols_bundle_augment_fiber (gpointer user_data)
   if (!(loader = sysprof_document_loader_new_for_fd (fd, &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));
   g_assert (SYSPROF_IS_DOCUMENT_LOADER (loader));
+
+  /* Only symbolize ELF symbols as the rest can be symbolized
+   * by the application without having to resort to decoding.
+   */
+  elf = sysprof_elf_symbolizer_new ();
+  sysprof_document_loader_set_symbolizer (loader, elf);
 
   if (!(document = dex_await_object (dex_async_pair_new (loader, &load_info), &error)))
     return dex_future_new_for_error (g_steal_pointer (&error));

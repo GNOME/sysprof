@@ -491,8 +491,7 @@ Examples:\n\
     sysprof_profiler_add_instrument (profiler, sysprof_disk_usage_new ());
 
   if (!no_decode)
-    g_warning ("Implement symbol augmentation");
-    //sysprof_profiler_add_instrument (profiler, sysprof_symbol_augmentation_new ());
+    sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
 
   if (!no_cpu)
     sysprof_profiler_add_instrument (profiler, sysprof_cpu_usage_new ());

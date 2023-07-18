@@ -519,6 +519,8 @@ main (int   argc,
                                                                      "org.gnome.Shell",
                                                                      "/org/gnome/Sysprof3/Profiler"));
 
+  if (decode)
+    sysprof_profiler_add_instrument (profiler, sysprof_symbols_bundle_new ());
 
   /* If -- was ommitted or there are no commands, just profile the entire
    * system without spawning anything. Really only useful when testing the

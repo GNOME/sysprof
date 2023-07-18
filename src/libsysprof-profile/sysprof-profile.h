@@ -40,6 +40,7 @@ G_BEGIN_DECLS
 # include "sysprof-recording.h"
 # include "sysprof-sampler.h"
 # include "sysprof-spawnable.h"
+# include "sysprof-symbols-bundle.h"
 # include "sysprof-system-logs.h"
 # include "sysprof-tracer.h"
 #undef SYSPROF_PROFILE_INSIDE

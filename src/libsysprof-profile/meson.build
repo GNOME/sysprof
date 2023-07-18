@@ -14,6 +14,7 @@ libsysprof_profile_public_sources = [
   'sysprof-recording.c',
   'sysprof-sampler.c',
   'sysprof-spawnable.c',
+  'sysprof-symbols-bundle.c',
   'sysprof-system-logs.c',
   'sysprof-tracer.c',
 ]
@@ -46,6 +47,7 @@ libsysprof_profile_public_headers = [
   'sysprof-recording.h',
   'sysprof-sampler.h',
   'sysprof-spawnable.h',
+  'sysprof-symbols-bundle.h',
   'sysprof-system-logs.h',
   'sysprof-tracer.h',
 ]
@@ -67,7 +69,7 @@ libsysprof_profile_deps = [
   libsystemd_dep,
 
   liblinereader_static_dep,
-  libsysprof_capture_dep,
+  libsysprof_analyze_dep,
 ]
 
 libsysprof_profile_static = static_library(

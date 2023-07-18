@@ -10,15 +10,6 @@ sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
 sysprof_version_conf.set('MICRO_VERSION', sysprof_version[2])
 sysprof_version_conf.set('VERSION', meson.project_version())
 
-if install_service_files
-  install_data([
-      'org.gnome.Sysprof3.Profiler.xml',
-      'org.gnome.Sysprof3.Service.xml',
-    ],
-    install_dir: join_paths(datadir, 'dbus-1/interfaces'),
-  )
-endif
-
 if need_libsysprof_capture
   subdir('libsysprof-capture')
 endif

@@ -78,3 +78,10 @@ i18n.merge_file(
       install: true,
   install_dir: join_paths(datadir, 'polkit-1/actions'),
 )
+
+install_data([
+    'org.gnome.Sysprof3.Profiler.xml',
+    'org.gnome.Sysprof3.Service.xml',
+  ],
+  install_dir: join_paths(datadir, 'dbus-1/interfaces'),
+)

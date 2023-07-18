@@ -259,8 +259,6 @@ int main(void) {
   config_h.set10('HAVE_STDATOMIC_H', true)
 endif
 
-install_service_files = get_option('sysprofd') == 'bundled'
-
 if need_glib
   subdir('contrib')
 endif

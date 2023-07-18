@@ -251,6 +251,9 @@ sysprof_symbol_cache_populate_packed (SysprofSymbolCache *self,
     SysprofPackedSymbol packed;
     SysprofSymbol *symbol = node->symbol;
 
+    if (symbol->is_fallback)
+      continue;
+
     packed.addr_begin = symbol->begin_address;
     packed.addr_end = symbol->end_address;
     packed.pid = pid;

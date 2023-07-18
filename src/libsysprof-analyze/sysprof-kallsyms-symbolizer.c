@@ -291,15 +291,19 @@ sysprof_kallsyms_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
 
 failure:
   {
+    SysprofSymbol *ret;
     char name[64];
 
     g_snprintf (name, sizeof name, "In Kernel+0x%"G_GINT64_MODIFIER"x", address);
-    return _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                                NULL,
-                                g_ref_string_acquire (linux_string),
-                                address,
-                                address + 1,
-                                SYSPROF_SYMBOL_KIND_KERNEL);
+    ret = _sysprof_symbol_new (sysprof_strings_get (strings, name),
+                               NULL,
+                               g_ref_string_acquire (linux_string),
+                               address,
+                               address + 1,
+                               SYSPROF_SYMBOL_KIND_KERNEL);
+    ret->is_fallback = TRUE;
+
+    return ret;
   }
 }
 

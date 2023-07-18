@@ -39,6 +39,7 @@ struct _SysprofSymbol
   SysprofAddress end_address;
 
   guint kind : 3;
+  guint is_fallback : 1;
 };
 
 SysprofSymbol *_sysprof_symbol_new (GRefString       *name,

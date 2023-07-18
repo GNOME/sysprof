@@ -63,6 +63,7 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   g_autofree char *name = NULL;
   const char *path;
   const char *build_id;
+  gboolean is_fallback = FALSE;
   guint64 map_begin;
   guint64 map_end;
   guint64 relative_address;
@@ -70,6 +71,7 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   guint64 end_address;
   guint64 file_inode;
   guint64 file_offset;
+  SysprofSymbol *ret;
 
   if (process_info == NULL ||
       process_info->address_layout == NULL ||
@@ -119,7 +121,8 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   if (!(name = sysprof_elf_get_symbol_at_address (elf,
                                                   relative_address,
                                                   &begin_address,
-                                                  &end_address)))
+                                                  &end_address,
+                                                  &is_fallback)))
     goto fallback;
 
   /* Sanitize address ranges if we have to. Sometimes that can happen
@@ -130,12 +133,15 @@ sysprof_elf_symbolizer_symbolize (SysprofSymbolizer        *symbolizer,
   if (end_address == begin_address)
     end_address++;
 
-  return _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                              sysprof_strings_get (strings, path),
-                              sysprof_strings_get (strings, sysprof_elf_get_nick (elf)),
-                              map_begin + (begin_address - file_offset),
-                              map_begin + (end_address - file_offset),
-                              SYSPROF_SYMBOL_KIND_USER);
+  ret = _sysprof_symbol_new (sysprof_strings_get (strings, name),
+                             sysprof_strings_get (strings, path),
+                             sysprof_strings_get (strings, sysprof_elf_get_nick (elf)),
+                             map_begin + (begin_address - file_offset),
+                             map_begin + (end_address - file_offset),
+                             SYSPROF_SYMBOL_KIND_USER);
+  ret->is_fallback = is_fallback;
+
+  return ret;
 
 fallback:
   /* Fallback, we failed to locate the symbol within a file we can
@@ -148,9 +154,12 @@ fallback:
   begin_address = address;
   end_address = address + 1;
 
-  return _sysprof_symbol_new (sysprof_strings_get (strings, name),
-                              NULL, NULL, begin_address, end_address,
-                              SYSPROF_SYMBOL_KIND_USER);
+  ret = _sysprof_symbol_new (sysprof_strings_get (strings, name),
+                             NULL, NULL, begin_address, end_address,
+                             SYSPROF_SYMBOL_KIND_USER);
+  ret->is_fallback = TRUE;
+
+  return ret;
 }
 
 static void

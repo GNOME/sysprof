@@ -369,7 +369,8 @@ sysprof_elf_get_symbol_at_address_internal (SysprofElf *self,
                                             guint64     address,
                                             guint64    *begin_address,
                                             guint64    *end_address,
-                                            guint64     text_offset)
+                                            guint64     text_offset,
+                                            gboolean   *is_fallback)
 {
   const ElfSym *symbol;
   char *ret = NULL;
@@ -380,7 +381,7 @@ sysprof_elf_get_symbol_at_address_internal (SysprofElf *self,
 
   if (self->debug_link_elf != NULL)
     {
-      ret = sysprof_elf_get_symbol_at_address_internal (self->debug_link_elf, filename, address, begin_address, end_address, text_offset);
+      ret = sysprof_elf_get_symbol_at_address_internal (self->debug_link_elf, filename, address, begin_address, end_address, text_offset, is_fallback);
 
       if (ret != NULL)
         return ret;
@@ -409,6 +410,8 @@ sysprof_elf_get_symbol_at_address_internal (SysprofElf *self,
       begin = address;
       end = address + 1;
       ret = g_strdup_printf ("In File %s+0x%"G_GINT64_MODIFIER"x", filename, address);
+      if (is_fallback)
+        *is_fallback = TRUE;
     }
 
   if (begin_address)
@@ -424,14 +427,16 @@ char *
 sysprof_elf_get_symbol_at_address (SysprofElf *self,
                                    guint64     address,
                                    guint64    *begin_address,
-                                   guint64    *end_address)
+                                   guint64    *end_address,
+                                   gboolean   *is_fallback)
 {
   return sysprof_elf_get_symbol_at_address_internal (self,
                                                      self->file,
                                                      address,
                                                      begin_address,
                                                      end_address,
-                                                     self->text_offset);
+                                                     self->text_offset,
+                                                     is_fallback);
 }
 
 /**

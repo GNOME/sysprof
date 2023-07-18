@@ -134,6 +134,7 @@
                             <property name="subtitle" translatable="yes">Record frame-timing information from the GNOME Shell compositor</property>
                             <child type="suffix">
                               <object class="GtkSwitch" id="record_compositor">
+                                <property name="active">true</property>
                                 <property name="valign">center</property>
                               </object>
                             </child>
@@ -204,6 +205,7 @@
                             <property name="subtitle" translatable="yes">Record coarse-grained counters about energy usage in Watts</property>
                             <child type="suffix">
                               <object class="GtkSwitch" id="record_energy_usage">
+                                <property name="active">true</property>
                                 <property name="valign">center</property>
                               </object>
                             </child>
@@ -216,6 +218,7 @@
                             <property name="subtitle" translatable="yes">Record coarse-grained counters about battery charge or discharge rates</property>
                             <child type="suffix">
                               <object class="GtkSwitch" id="record_battery_charge">
+                                <property name="active">true</property>
                                 <property name="valign">center</property>
                               </object>
                             </child>

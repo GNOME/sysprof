@@ -46,7 +46,7 @@ need_libsysprof_capture = true
 need_libsysprof_profile = get_option('libsysprof') or get_option('agent')
 need_libsysprof_analyze = get_option('libsysprof') or get_option('agent')
 
-dex_req = '0.2'
+dex_req = '0.3'
 glib_req = '2.76.0'
 gtk_req = '4.10'
 polkit_req = '0.105'

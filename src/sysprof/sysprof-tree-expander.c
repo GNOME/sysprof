@@ -158,8 +158,18 @@ sysprof_tree_expander_click_released_cb (SysprofTreeExpander *self,
                                          double               y,
                                          GtkGestureClick     *click)
 {
+  static GType column_view_row_gtype;
+  static GType list_item_widget_gtype;
+  GtkWidget *row;
+
   g_assert (SYSPROF_IS_TREE_EXPANDER (self));
   g_assert (GTK_IS_GESTURE_CLICK (click));
+
+  if G_UNLIKELY (!column_view_row_gtype)
+    column_view_row_gtype = g_type_from_name ("GtkColumnViewRowWidget");
+
+  if G_UNLIKELY (!list_item_widget_gtype)
+    list_item_widget_gtype = g_type_from_name ("GtkListItemWidget");
 
   gtk_widget_unset_state_flags (GTK_WIDGET (self), GTK_STATE_FLAG_ACTIVE);
 
@@ -168,10 +178,14 @@ sysprof_tree_expander_click_released_cb (SysprofTreeExpander *self,
       !gtk_tree_list_row_is_expandable (self->list_row))
     return;
 
+  if (!(row = gtk_widget_get_ancestor (GTK_WIDGET (self), column_view_row_gtype)) &&
+      !(row = gtk_widget_get_ancestor (GTK_WIDGET (self), list_item_widget_gtype)))
+    return;
 
-  gtk_widget_activate_action (GTK_WIDGET (self), "listitem.select", "(bb)", FALSE, FALSE);
-  gtk_widget_activate_action (GTK_WIDGET (self), "listitem.toggle-expand", NULL);
   gtk_gesture_set_state (GTK_GESTURE (click), GTK_EVENT_SEQUENCE_CLAIMED);
+
+  gtk_widget_activate_action (row, "listitem.select", "(bb)", FALSE, FALSE);
+  gtk_widget_activate_action (GTK_WIDGET (self), "listitem.toggle-expand", NULL);
 }
 
 static void

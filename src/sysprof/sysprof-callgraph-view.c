@@ -251,28 +251,32 @@ functions_selection_changed_cb (SysprofCallgraphView *self,
 }
 
 static void
-descendant_activated_cb (SysprofCallgraphView *self,
-                         guint                 position,
-                         GtkColumnView        *column_view)
+make_descendant_root_action (GtkWidget  *widget,
+                             const char *action_name,
+                             GVariant   *param)
 {
+  SysprofCallgraphView *self = (SysprofCallgraphView *)widget;
   g_autoptr(SysprofCallgraphFrame) frame = NULL;
   g_autoptr(GtkTreeListRow) row = NULL;
   GtkSelectionModel *model;
 
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
-  g_assert (GTK_IS_COLUMN_VIEW (column_view));
 
-  if ((model = gtk_column_view_get_model (column_view)) &&
-      (row = g_list_model_get_item (G_LIST_MODEL (model), position)) &&
-      (frame = gtk_tree_list_row_get_item (row)))
+  if ((model = gtk_column_view_get_model (self->descendants_column_view)) &&
+      GTK_IS_SINGLE_SELECTION (model) &&
+      (row = gtk_single_selection_get_selected_item (GTK_SINGLE_SELECTION (model))) &&
+      GTK_IS_TREE_LIST_ROW (row) &&
+      (frame = gtk_tree_list_row_get_item (row)) &&
+      SYSPROF_IS_CALLGRAPH_FRAME (frame))
     {
       SysprofSymbol *symbol = sysprof_callgraph_frame_get_symbol (frame);
 
-      sysprof_callgraph_descendants_async (self->callgraph,
-                                           symbol,
-                                           NULL,
-                                           sysprof_callgraph_view_descendants_cb,
-                                           g_object_ref (self));
+      if (sysprof_symbol_get_kind (symbol) != SYSPROF_SYMBOL_KIND_ROOT)
+        sysprof_callgraph_descendants_async (self->callgraph,
+                                             symbol,
+                                             NULL,
+                                             sysprof_callgraph_view_descendants_cb,
+                                             g_object_ref (self));
     }
 }
 
@@ -432,13 +436,15 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-callgraph-view.ui");
   gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BIN_LAYOUT);
   gtk_widget_class_set_css_name (widget_class, "callgraphview");
+
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, callers_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, descendants_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, descendants_name_sorter);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_column_view);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, functions_name_sorter);
   gtk_widget_class_bind_template_child (widget_class, SysprofCallgraphView, paned);
-  gtk_widget_class_bind_template_callback (widget_class, descendant_activated_cb);
+
+  gtk_widget_class_install_action (widget_class, "callgraph.make-descendant-root", NULL, make_descendant_root_action);
 
   klass->augment_size = GLIB_SIZEOF_VOID_P;
 

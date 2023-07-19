@@ -151,6 +151,20 @@ sysprof_tree_expander_click_pressed_cb (SysprofTreeExpander *self,
   gtk_widget_set_state_flags (GTK_WIDGET (self), GTK_STATE_FLAG_ACTIVE, FALSE);
 }
 
+static gboolean
+expander_contains_point (SysprofTreeExpander *self,
+                         double               x,
+                         double               y)
+{
+  gtk_widget_translate_coordinates (GTK_WIDGET (self), GTK_WIDGET (self->image),
+                                    x, y, &x, &y);
+
+  if (x < 0 || y < 0 || x > gtk_widget_get_width (self->image) || y > gtk_widget_get_height (self->image))
+    return FALSE;
+
+  return TRUE;
+}
+
 static void
 sysprof_tree_expander_click_released_cb (SysprofTreeExpander *self,
                                          int                  n_press,
@@ -173,19 +187,17 @@ sysprof_tree_expander_click_released_cb (SysprofTreeExpander *self,
 
   gtk_widget_unset_state_flags (GTK_WIDGET (self), GTK_STATE_FLAG_ACTIVE);
 
-  if (n_press != 1 ||
-      self->list_row == NULL ||
-      !gtk_tree_list_row_is_expandable (self->list_row))
-    return;
-
   if (!(row = gtk_widget_get_ancestor (GTK_WIDGET (self), column_view_row_gtype)) &&
       !(row = gtk_widget_get_ancestor (GTK_WIDGET (self), list_item_widget_gtype)))
     return;
 
-  gtk_gesture_set_state (GTK_GESTURE (click), GTK_EVENT_SEQUENCE_CLAIMED);
-
   gtk_widget_activate_action (row, "listitem.select", "(bb)", FALSE, FALSE);
-  gtk_widget_activate_action (GTK_WIDGET (self), "listitem.toggle-expand", NULL);
+
+  if (n_press == 2 ||
+      (n_press == 1 && expander_contains_point (self, x, y)))
+    gtk_widget_activate_action (GTK_WIDGET (self), "listitem.toggle-expand", NULL);
+
+  gtk_gesture_set_state (GTK_GESTURE (click), GTK_EVENT_SEQUENCE_CLAIMED);
 }
 
 static void

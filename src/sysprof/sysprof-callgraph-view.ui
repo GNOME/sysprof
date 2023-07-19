@@ -117,7 +117,6 @@
             <property name="propagate-natural-height">true</property>
             <child>
               <object class="GtkColumnView" id="descendants_column_view">
-                <signal name="activate" handler="descendant_activated_cb" swapped="true"/>
                 <style>
                   <class name="data-table"/>
                 </style>
@@ -136,7 +135,9 @@
 <interface>
   <template class="GtkListItem">
     <property name="child">
-      <object class="GtkTreeExpander" id="expander">
+      <object class="SysprofTreeExpander" id="expander">
+        <property name="focusable">true</property>
+        <property name="menu-model">menu_model</property>
         <child>
           <object class="GtkShortcutController">
             <property name="propagation-phase">capture</property>
@@ -211,6 +212,15 @@
       </object>
     </property>
   </template>
+  <menu id="menu_model">
+    <section>
+      <attribute name="label" translatable="yes">Callgraph</attribute>
+      <item>
+        <attribute name="label" translatable="yes">Set Function as Root</attribute>
+        <attribute name="action">callgraph.make-descendant-root</attribute>
+      </item>
+    </section>
+  </menu>
 </interface>
 ]]></property>
                       </object>

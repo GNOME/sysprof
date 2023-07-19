@@ -49,6 +49,7 @@ sysprof_sources = [
   'sysprof-time-series.c',
   'sysprof-time-span-layer.c',
   'sysprof-traceables-utility.c',
+  'sysprof-tree-expander.c',
   'sysprof-value-axis.c',
   'sysprof-weighted-callgraph-view.c',
   'sysprof-window.c',

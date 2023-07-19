@@ -26,6 +26,7 @@
 
 #include "sysprof-callgraph-view-private.h"
 #include "sysprof-symbol-label-private.h"
+#include "sysprof-tree-expander.h"
 
 enum {
   PROP_0,
@@ -445,6 +446,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   g_type_ensure (PANEL_TYPE_PANED);
   g_type_ensure (SYSPROF_TYPE_SYMBOL_LABEL);
+  g_type_ensure (SYSPROF_TYPE_TREE_EXPANDER);
 }
 
 static void

@@ -146,12 +146,6 @@
                           </object>
                         </child>
                         <child type="end">
-                          <object class="GtkMenuButton">
-                            <property name="icon-name">document-properties-symbolic</property>
-                            <property name="menu-model">view_menu</property>
-                          </object>
-                        </child>
-                        <child type="end">
                           <object class="GtkToggleButton" id="show_right_sidebar">
                             <property name="icon-name">dock-right-symbolic</property>
                           </object>
@@ -298,30 +292,6 @@
       <item>
         <attribute name="label" translatable="yes">About Sysprof</attribute>
         <attribute name="action">app.about</attribute>
-      </item>
-    </section>
-  </menu>
-  <menu id="view_menu">
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">Show Sidebar</attribute>
-        <attribute name="action">win.show-left-sidebar</attribute>
-        <attribute name="accel">F9</attribute>
-      </item>
-    </section>
-    <section>
-      <attribute name="label" translatable="yes">Callgraph</attribute>
-      <item>
-        <attribute name="label" translatable="yes">Hide System Libraries</attribute>
-        <attribute name="action">win.callgraph.hide-system-libraries</attribute>
-      </item>
-      <item>
-        <attribute name="label" translatable="yes">Include Threads</attribute>
-        <attribute name="action">win.callgraph.include-threads</attribute>
-      </item>
-      <item>
-        <attribute name="label" translatable="yes">Bottom Up</attribute>
-        <attribute name="action">win.callgraph.bottom-up</attribute>
       </item>
     </section>
   </menu>

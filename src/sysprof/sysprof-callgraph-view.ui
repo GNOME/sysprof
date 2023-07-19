@@ -214,10 +214,24 @@
   </template>
   <menu id="menu_model">
     <section>
-      <attribute name="label" translatable="yes">Callgraph</attribute>
       <item>
-        <attribute name="label" translatable="yes">Set Function as Root</attribute>
+        <attribute name="label" translatable="yes">Make Function Root</attribute>
         <attribute name="action">callgraph.make-descendant-root</attribute>
+      </item>
+    </section>
+    <section>
+      <attribute name="label" translatable="yes">Options</attribute>
+      <item>
+        <attribute name="label" translatable="yes">Hide System Libraries</attribute>
+        <attribute name="action">win.callgraph.hide-system-libraries</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Include Threads</attribute>
+        <attribute name="action">win.callgraph.include-threads</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Bottom Up</attribute>
+        <attribute name="action">win.callgraph.bottom-up</attribute>
       </item>
     </section>
   </menu>

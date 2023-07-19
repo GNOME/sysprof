@@ -54,7 +54,6 @@ enum {
   PROP_LIST_ROW,
   PROP_MENU_MODEL,
   PROP_SUFFIX,
-  PROP_USE_MARKUP,
   N_PROPS
 };
 
@@ -276,10 +275,6 @@ sysprof_tree_expander_get_property (GObject    *object,
       g_value_set_object (value, sysprof_tree_expander_get_child (self));
       break;
 
-    case PROP_USE_MARKUP:
-      g_value_set_boolean (value, sysprof_tree_expander_get_use_markup (self));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -325,10 +320,6 @@ sysprof_tree_expander_set_property (GObject      *object,
 
     case PROP_CHILD:
       sysprof_tree_expander_set_child (self, g_value_get_object (value));
-      break;
-
-    case PROP_USE_MARKUP:
-      sysprof_tree_expander_set_use_markup (self, g_value_get_boolean (value));
       break;
 
     default:
@@ -399,11 +390,6 @@ sysprof_tree_expander_class_init (SysprofTreeExpanderClass *klass)
     g_param_spec_object ("child", NULL, NULL,
                          GTK_TYPE_WIDGET,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
-
-  properties [PROP_USE_MARKUP] =
-    g_param_spec_boolean ("use-markup", NULL, NULL,
-                          FALSE,
-                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
@@ -677,7 +663,6 @@ sysprof_tree_expander_clear_list_row (SysprofTreeExpander *self)
 
   g_clear_object (&self->list_row);
 
-  gtk_label_set_label (GTK_LABEL (self->child), NULL);
   gtk_image_set_from_icon_name (GTK_IMAGE (self->image), NULL);
 
   child = gtk_widget_get_prev_sibling (self->image);
@@ -722,29 +707,6 @@ sysprof_tree_expander_set_list_row (SysprofTreeExpander *self,
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_EXPANDED]);
 
   g_object_thaw_notify (G_OBJECT (self));
-}
-
-gboolean
-sysprof_tree_expander_get_use_markup (SysprofTreeExpander *self)
-{
-  g_return_val_if_fail (SYSPROF_IS_TREE_EXPANDER (self), FALSE);
-
-  return gtk_label_get_use_markup (GTK_LABEL (self->child));
-}
-
-void
-sysprof_tree_expander_set_use_markup (SysprofTreeExpander *self,
-                                      gboolean             use_markup)
-{
-  g_return_if_fail (SYSPROF_IS_TREE_EXPANDER (self));
-
-  use_markup = !!use_markup;
-
-  if (use_markup != sysprof_tree_expander_get_use_markup (self))
-    {
-      gtk_label_set_use_markup (GTK_LABEL (self->child), use_markup);
-      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_USE_MARKUP]);
-    }
 }
 
 static gboolean

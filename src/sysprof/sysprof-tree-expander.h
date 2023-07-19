@@ -52,9 +52,6 @@ GtkTreeListRow *sysprof_tree_expander_get_list_row           (SysprofTreeExpande
 void            sysprof_tree_expander_set_list_row           (SysprofTreeExpander *self,
                                                               GtkTreeListRow      *list_row);
 gpointer        sysprof_tree_expander_get_item               (SysprofTreeExpander *self);
-gboolean        sysprof_tree_expander_get_use_markup         (SysprofTreeExpander *self);
-void            sysprof_tree_expander_set_use_markup         (SysprofTreeExpander *self,
-                                                              gboolean             use_markup);
 void            sysprof_tree_expander_show_popover           (SysprofTreeExpander *self,
                                                               GtkPopover          *popover);
 

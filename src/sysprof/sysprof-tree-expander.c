@@ -27,7 +27,7 @@ struct _SysprofTreeExpander
   GtkWidget        parent_instance;
 
   GtkWidget       *image;
-  GtkWidget       *title;
+  GtkWidget       *child;
   GtkWidget       *suffix;
 
   GMenuModel      *menu_model;
@@ -44,6 +44,7 @@ struct _SysprofTreeExpander
 
 enum {
   PROP_0,
+  PROP_CHILD,
   PROP_EXPANDED,
   PROP_EXPANDED_ICON,
   PROP_EXPANDED_ICON_NAME,
@@ -53,7 +54,6 @@ enum {
   PROP_LIST_ROW,
   PROP_MENU_MODEL,
   PROP_SUFFIX,
-  PROP_TITLE,
   PROP_USE_MARKUP,
   N_PROPS
 };
@@ -212,7 +212,7 @@ sysprof_tree_expander_dispose (GObject *object)
   sysprof_tree_expander_set_list_row (self, NULL);
 
   g_clear_pointer (&self->image, gtk_widget_unparent);
-  g_clear_pointer (&self->title, gtk_widget_unparent);
+  g_clear_pointer (&self->child, gtk_widget_unparent);
   g_clear_pointer (&self->suffix, gtk_widget_unparent);
 
   g_clear_object (&self->list_row);
@@ -272,8 +272,8 @@ sysprof_tree_expander_get_property (GObject    *object,
       g_value_set_object (value, sysprof_tree_expander_get_suffix (self));
       break;
 
-    case PROP_TITLE:
-      g_value_set_string (value, sysprof_tree_expander_get_title (self));
+    case PROP_CHILD:
+      g_value_set_object (value, sysprof_tree_expander_get_child (self));
       break;
 
     case PROP_USE_MARKUP:
@@ -323,8 +323,8 @@ sysprof_tree_expander_set_property (GObject      *object,
       sysprof_tree_expander_set_suffix (self, g_value_get_object (value));
       break;
 
-    case PROP_TITLE:
-      sysprof_tree_expander_set_title (self, g_value_get_string (value));
+    case PROP_CHILD:
+      sysprof_tree_expander_set_child (self, g_value_get_object (value));
       break;
 
     case PROP_USE_MARKUP:
@@ -395,9 +395,9 @@ sysprof_tree_expander_class_init (SysprofTreeExpanderClass *klass)
                          GTK_TYPE_WIDGET,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
-  properties [PROP_TITLE] =
-    g_param_spec_string ("title", NULL, NULL,
-                         NULL,
+  properties [PROP_CHILD] =
+    g_param_spec_object ("child", NULL, NULL,
+                         GTK_TYPE_WIDGET,
                          (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_USE_MARKUP] =
@@ -421,15 +421,6 @@ sysprof_tree_expander_init (SysprofTreeExpander *self)
 
   self->image = g_object_new (GTK_TYPE_IMAGE, NULL);
   gtk_widget_insert_after (self->image, GTK_WIDGET (self), NULL);
-
-  self->title = g_object_new (GTK_TYPE_LABEL,
-                              "halign", GTK_ALIGN_START,
-                              "hexpand", TRUE,
-                              "ellipsize", PANGO_ELLIPSIZE_END,
-                              "margin-start", 3,
-                              "margin-end", 3,
-                              NULL);
-  gtk_widget_insert_after (self->title, GTK_WIDGET (self), self->image);
 
   controller = GTK_EVENT_CONTROLLER (gtk_gesture_click_new ());
   g_signal_connect_object (controller,
@@ -626,25 +617,34 @@ sysprof_tree_expander_set_suffix (SysprofTreeExpander *self,
   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SUFFIX]);
 }
 
-const char *
-sysprof_tree_expander_get_title (SysprofTreeExpander *self)
+GtkWidget *
+sysprof_tree_expander_get_child (SysprofTreeExpander *self)
 {
   g_return_val_if_fail (SYSPROF_IS_TREE_EXPANDER (self), NULL);
 
-  return gtk_label_get_label (GTK_LABEL (self->title));
+  return self->child;
 }
 
 void
-sysprof_tree_expander_set_title (SysprofTreeExpander *self,
-                                 const char          *title)
+sysprof_tree_expander_set_child (SysprofTreeExpander *self,
+                                 GtkWidget           *child)
 {
   g_return_if_fail (SYSPROF_IS_TREE_EXPANDER (self));
 
-  if (g_strcmp0 (title, sysprof_tree_expander_get_title (self)) != 0)
-    {
-      gtk_label_set_label (GTK_LABEL (self->title), title);
-      g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_TITLE]);
-    }
+  if (child == self->child)
+    return;
+
+  if (child)
+    g_object_ref (child);
+
+  g_clear_pointer (&self->child, gtk_widget_unparent);
+
+  self->child = child;
+
+  if (child)
+    gtk_widget_insert_after (child, GTK_WIDGET (self), self->image);
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_CHILD]);
 }
 
 /**
@@ -677,7 +677,7 @@ sysprof_tree_expander_clear_list_row (SysprofTreeExpander *self)
 
   g_clear_object (&self->list_row);
 
-  gtk_label_set_label (GTK_LABEL (self->title), NULL);
+  gtk_label_set_label (GTK_LABEL (self->child), NULL);
   gtk_image_set_from_icon_name (GTK_IMAGE (self->image), NULL);
 
   child = gtk_widget_get_prev_sibling (self->image);
@@ -729,7 +729,7 @@ sysprof_tree_expander_get_use_markup (SysprofTreeExpander *self)
 {
   g_return_val_if_fail (SYSPROF_IS_TREE_EXPANDER (self), FALSE);
 
-  return gtk_label_get_use_markup (GTK_LABEL (self->title));
+  return gtk_label_get_use_markup (GTK_LABEL (self->child));
 }
 
 void
@@ -742,7 +742,7 @@ sysprof_tree_expander_set_use_markup (SysprofTreeExpander *self,
 
   if (use_markup != sysprof_tree_expander_get_use_markup (self))
     {
-      gtk_label_set_use_markup (GTK_LABEL (self->title), use_markup);
+      gtk_label_set_use_markup (GTK_LABEL (self->child), use_markup);
       g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_USE_MARKUP]);
     }
 }

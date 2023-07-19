@@ -42,9 +42,9 @@ void            sysprof_tree_expander_set_expanded_icon      (SysprofTreeExpande
                                                               GIcon               *icon);
 void            sysprof_tree_expander_set_expanded_icon_name (SysprofTreeExpander *self,
                                                               const char          *expanded_icon_name);
-const char     *sysprof_tree_expander_get_title              (SysprofTreeExpander *self);
-void            sysprof_tree_expander_set_title              (SysprofTreeExpander *self,
-                                                              const char          *title);
+GtkWidget      *sysprof_tree_expander_get_child              (SysprofTreeExpander *self);
+void            sysprof_tree_expander_set_child              (SysprofTreeExpander *self,
+                                                              GtkWidget           *child);
 GtkWidget      *sysprof_tree_expander_get_suffix             (SysprofTreeExpander *self);
 void            sysprof_tree_expander_set_suffix             (SysprofTreeExpander *self,
                                                               GtkWidget           *suffix);

@@ -43,6 +43,7 @@ struct _SysprofWindow
   SysprofSession       *session;
 
   GtkToggleButton      *show_right_sidebar;
+  GtkWidget            *left_split_overlay;
 };
 
 enum {
@@ -374,6 +375,8 @@ sysprof_window_class_init (SysprofWindowClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-window.ui");
 
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, show_right_sidebar);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, left_split_overlay);
+
   gtk_widget_class_bind_template_callback (widget_class, main_view_notify_sidebar);
 
   gtk_widget_class_install_action (widget_class, "win.open-capture", NULL, sysprof_window_open_capture_action);
@@ -409,7 +412,14 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 static void
 sysprof_window_init (SysprofWindow *self)
 {
+  g_autoptr(GPropertyAction) show_left_sidebar = NULL;
+
   gtk_widget_init_template (GTK_WIDGET (self));
+
+  show_left_sidebar = g_property_action_new ("show-left-sidebar",
+                                             self->left_split_overlay,
+                                             "show-sidebar");
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (show_left_sidebar));
 }
 
 GtkWidget *

@@ -10,6 +10,12 @@
       <object class="GtkShortcutController">
         <child>
           <object class="GtkShortcut">
+            <property name="trigger">F9</property>
+            <property name="action">action(win.show-left-sidebar)</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcut">
             <property name="trigger">&lt;ctrl&gt;n</property>
             <property name="action">action(win.record-capture)</property>
           </object>
@@ -296,6 +302,13 @@
     </section>
   </menu>
   <menu id="view_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Show Sidebar</attribute>
+        <attribute name="action">win.show-left-sidebar</attribute>
+        <attribute name="accel">F9</attribute>
+      </item>
+    </section>
     <section>
       <attribute name="label" translatable="yes">Callgraph</attribute>
       <item>

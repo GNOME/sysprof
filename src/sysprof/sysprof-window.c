@@ -44,6 +44,9 @@ struct _SysprofWindow
 
   GtkToggleButton      *show_right_sidebar;
   GtkWidget            *left_split_overlay;
+  GtkWidget            *right_split_overlay;
+
+  guint                 disposed : 1;
 };
 
 enum {
@@ -167,6 +170,9 @@ main_view_notify_sidebar (SysprofWindow       *self,
 
   g_assert (SYSPROF_IS_WINDOW (self));
   g_assert (ADW_IS_OVERLAY_SPLIT_VIEW (main_view));
+
+  if (self->disposed)
+      return;
 
   sidebar = adw_overlay_split_view_get_sidebar (main_view);
 
@@ -300,6 +306,11 @@ sysprof_window_dispose (GObject *object)
 {
   SysprofWindow *self = (SysprofWindow *)object;
 
+  self->disposed = TRUE;
+
+  if (self->right_split_overlay)
+    adw_overlay_split_view_set_sidebar (ADW_OVERLAY_SPLIT_VIEW (self->right_split_overlay), NULL);
+
   gtk_widget_dispose_template (GTK_WIDGET (self), SYSPROF_TYPE_WINDOW);
 
   g_clear_object (&self->document);
@@ -376,6 +387,7 @@ sysprof_window_class_init (SysprofWindowClass *klass)
 
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, show_right_sidebar);
   gtk_widget_class_bind_template_child (widget_class, SysprofWindow, left_split_overlay);
+  gtk_widget_class_bind_template_child (widget_class, SysprofWindow, right_split_overlay);
 
   gtk_widget_class_bind_template_callback (widget_class, main_view_notify_sidebar);
 

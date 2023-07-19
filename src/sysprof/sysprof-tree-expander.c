@@ -213,9 +213,35 @@ sysprof_tree_expander_click_cancel_cb (SysprofTreeExpander  *self,
 }
 
 static void
+sysprof_tree_expander_expand (GtkWidget  *widget,
+                              const char *action_name,
+                              GVariant   *parameter)
+{
+  SysprofTreeExpander *self = (SysprofTreeExpander *)widget;
+
+  g_assert (SYSPROF_IS_TREE_EXPANDER (self));
+
+  if (self->list_row != NULL)
+    gtk_tree_list_row_set_expanded (self->list_row, TRUE);
+}
+
+static void
+sysprof_tree_expander_collapse (GtkWidget  *widget,
+                                const char *action_name,
+                                GVariant   *parameter)
+{
+  SysprofTreeExpander *self = (SysprofTreeExpander *)widget;
+
+  g_assert (SYSPROF_IS_TREE_EXPANDER (self));
+
+  if (self->list_row != NULL)
+    gtk_tree_list_row_set_expanded (self->list_row, FALSE);
+}
+
+static void
 sysprof_tree_expander_toggle_expand (GtkWidget  *widget,
-                                 const char *action_name,
-                                 GVariant   *parameter)
+                                     const char *action_name,
+                                     GVariant   *parameter)
 {
   SysprofTreeExpander *self = (SysprofTreeExpander *)widget;
 
@@ -424,6 +450,8 @@ sysprof_tree_expander_class_init (SysprofTreeExpanderClass *klass)
   gtk_widget_class_set_accessible_role (widget_class, GTK_ACCESSIBLE_ROLE_GROUP);
 
   gtk_widget_class_install_action (widget_class, "listitem.toggle-expand", NULL, sysprof_tree_expander_toggle_expand);
+  gtk_widget_class_install_action (widget_class, "listitem.collapse", NULL, sysprof_tree_expander_collapse);
+  gtk_widget_class_install_action (widget_class, "listitem.expand", NULL, sysprof_tree_expander_expand);
 }
 
 static void

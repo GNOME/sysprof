@@ -38,12 +38,6 @@
                         <property name="title">Sysprof</property>
                       </object>
                     </property>
-                    <child type="end">
-                      <object class="GtkMenuButton">
-                        <property name="icon-name">open-menu-symbolic</property>
-                        <property name="menu-model">primary_menu</property>
-                      </object>
-                    </child>
                   </object>
                 </child>
                 <property name="content">
@@ -83,14 +77,20 @@
                           </object>
                         </child>
                         <child type="end">
-                          <object class="GtkToggleButton" id="show_right_sidebar">
-                            <property name="icon-name">dock-right-symbolic</property>
+                          <object class="GtkMenuButton">
+                            <property name="icon-name">open-menu-symbolic</property>
+                            <property name="menu-model">primary_menu</property>
                           </object>
                         </child>
                         <child type="end">
                           <object class="GtkMenuButton">
                             <property name="icon-name">document-properties-symbolic</property>
                             <property name="menu-model">view_menu</property>
+                          </object>
+                        </child>
+                        <child type="end">
+                          <object class="GtkToggleButton" id="show_right_sidebar">
+                            <property name="icon-name">dock-right-symbolic</property>
                           </object>
                         </child>
                       </object>

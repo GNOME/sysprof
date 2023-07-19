@@ -44,6 +44,7 @@ enum {
   PROP_0,
   PROP_CALLGRAPH,
   PROP_SYMBOL,
+  PROP_N_ITEMS,
   N_PROPS
 };
 
@@ -122,6 +123,10 @@ sysprof_callgraph_frame_get_property (GObject    *object,
       g_value_set_object (value, self->callgraph);
       break;
 
+    case PROP_N_ITEMS:
+      g_value_set_uint (value, g_list_model_get_n_items (G_LIST_MODEL (self)));
+      break;
+
     case PROP_SYMBOL:
       g_value_set_object (value, sysprof_callgraph_frame_get_symbol (self));
       break;
@@ -143,6 +148,11 @@ sysprof_callgraph_frame_class_init (SysprofCallgraphFrameClass *klass)
     g_param_spec_object ("callgraph", NULL, NULL,
                          SYSPROF_TYPE_CALLGRAPH,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_N_ITEMS] =
+    g_param_spec_uint ("n-items", NULL, NULL,
+                       0, G_MAXUINT, 0,
+                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_SYMBOL] =
     g_param_spec_object ("symbol", NULL, NULL,
@@ -456,4 +466,12 @@ sysprof_callgraph_frame_list_traceables_finish (SysprofCallgraphFrame  *self,
   g_return_val_if_fail (!ret || G_IS_LIST_MODEL (ret), NULL);
 
   return ret;
+}
+
+gboolean
+sysprof_callgraph_frame_is_leaf (SysprofCallgraphFrame *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), 0);
+
+  return self->n_children == 0;
 }

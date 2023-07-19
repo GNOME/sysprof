@@ -48,5 +48,7 @@ SYSPROF_AVAILABLE_IN_ALL
 GListModel    *sysprof_callgraph_frame_list_traceables_finish (SysprofCallgraphFrame  *self,
                                                                GAsyncResult           *result,
                                                                GError                **error);
+SYSPROF_AVAILABLE_IN_ALL
+gboolean       sysprof_callgraph_frame_is_leaf                (SysprofCallgraphFrame  *self);
 
 G_END_DECLS

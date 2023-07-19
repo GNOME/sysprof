@@ -30,14 +30,10 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_MARK_TABLE (sysprof_mark_table_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofMarkTable, sysprof_mark_table, SYSPROF, MARK_TABLE, GtkWidget)
 
-SYSPROF_AVAILABLE_IN_ALL
 GtkWidget      *sysprof_mark_table_new         (void);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofSession *sysprof_mark_table_get_session (SysprofMarkTable *self);
-SYSPROF_AVAILABLE_IN_ALL
 void            sysprof_mark_table_set_session (SysprofMarkTable *self,
                                                 SysprofSession   *session);
 

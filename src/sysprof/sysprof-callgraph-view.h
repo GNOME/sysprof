@@ -35,33 +35,21 @@ G_BEGIN_DECLS
 typedef struct _SysprofCallgraphView      SysprofCallgraphView;
 typedef struct _SysprofCallgraphViewClass SysprofCallgraphViewClass;
 
-SYSPROF_AVAILABLE_IN_ALL
 GType             sysprof_callgraph_view_get_type                  (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 SysprofCallgraph *sysprof_callgraph_view_get_callgraph             (SysprofCallgraphView *self);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofDocument  *sysprof_callgraph_view_get_document              (SysprofCallgraphView *self);
-SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_callgraph_view_set_document              (SysprofCallgraphView *self,
                                                                     SysprofDocument      *document);
-SYSPROF_AVAILABLE_IN_ALL
 GListModel       *sysprof_callgraph_view_get_traceables            (SysprofCallgraphView *self);
-SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_callgraph_view_set_traceables            (SysprofCallgraphView *self,
                                                                     GListModel           *model);
-SYSPROF_AVAILABLE_IN_ALL
 gboolean          sysprof_callgraph_view_get_bottom_up             (SysprofCallgraphView *self);
-SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_callgraph_view_set_bottom_up             (SysprofCallgraphView *self,
                                                                     gboolean              bottom_up);
-SYSPROF_AVAILABLE_IN_ALL
 gboolean          sysprof_callgraph_view_get_include_threads       (SysprofCallgraphView *self);
-SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_callgraph_view_set_include_threads       (SysprofCallgraphView *self,
                                                                     gboolean              include_threads);
-SYSPROF_AVAILABLE_IN_ALL
 gboolean          sysprof_callgraph_view_get_hide_system_libraries (SysprofCallgraphView *self);
-SYSPROF_AVAILABLE_IN_ALL
 void              sysprof_callgraph_view_set_hide_system_libraries (SysprofCallgraphView *self,
                                                                     gboolean              hide_system_libraries);
 

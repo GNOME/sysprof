@@ -30,29 +30,19 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_XY_LAYER (sysprof_xy_layer_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofXYLayer, sysprof_xy_layer, SYSPROF, XY_LAYER, SysprofChartLayer)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer *sysprof_xy_layer_new        (void);
-SYSPROF_AVAILABLE_IN_ALL
 gboolean           sysprof_xy_layer_get_flip_y (SysprofXYLayer  *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_xy_layer_set_flip_y (SysprofXYLayer  *self,
                                                 gboolean         flip_y);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofXYSeries   *sysprof_xy_layer_get_series (SysprofXYLayer  *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_xy_layer_set_series (SysprofXYLayer  *self,
                                                 SysprofXYSeries *series);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofAxis       *sysprof_xy_layer_get_x_axis (SysprofXYLayer  *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_xy_layer_set_x_axis (SysprofXYLayer  *self,
                                                 SysprofAxis     *x_axis);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofAxis       *sysprof_xy_layer_get_y_axis (SysprofXYLayer  *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_xy_layer_set_y_axis (SysprofXYLayer  *self,
                                                 SysprofAxis     *y_axis);
 

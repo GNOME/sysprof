@@ -28,16 +28,12 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_XY_SERIES_ITEM (sysprof_xy_series_item_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofXYSeriesItem, sysprof_xy_series_item, SYSPROF, XY_SERIES_ITEM, GObject)
 
-SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_xy_series_item_get_x_value (SysprofXYSeriesItem *self,
                                              GValue              *x_value);
-SYSPROF_AVAILABLE_IN_ALL
 void     sysprof_xy_series_item_get_y_value (SysprofXYSeriesItem *self,
                                              GValue              *y_value);
-SYSPROF_AVAILABLE_IN_ALL
 gpointer sysprof_xy_series_item_get_item    (SysprofXYSeriesItem *self);
 
 G_END_DECLS

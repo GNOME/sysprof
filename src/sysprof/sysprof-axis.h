@@ -34,11 +34,8 @@ G_BEGIN_DECLS
 typedef struct _SysprofAxis SysprofAxis;
 typedef struct _SysprofAxisClass SysprofAxisClass;
 
-SYSPROF_AVAILABLE_IN_ALL
 GType       sysprof_axis_get_type  (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_axis_get_title (SysprofAxis *self);
-SYSPROF_AVAILABLE_IN_ALL
 void        sysprof_axis_set_title (SysprofAxis *self,
                                     const char *title);
 

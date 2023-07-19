@@ -32,19 +32,13 @@ G_BEGIN_DECLS
 typedef struct _SysprofValueAxis SysprofValueAxis;
 typedef struct _SysprofValueAxisClass SysprofValueAxisClass;
 
-SYSPROF_AVAILABLE_IN_ALL
 GType        sysprof_value_axis_get_type      (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 SysprofAxis *sysprof_value_axis_new           (double            min_value,
                                                double            max_value);
-SYSPROF_AVAILABLE_IN_ALL
 double       sysprof_value_axis_get_min_value (SysprofValueAxis *self);
-SYSPROF_AVAILABLE_IN_ALL
 void         sysprof_value_axis_set_min_value (SysprofValueAxis *self,
                                                double            min_value);
-SYSPROF_AVAILABLE_IN_ALL
 double       sysprof_value_axis_get_max_value (SysprofValueAxis *self);
-SYSPROF_AVAILABLE_IN_ALL
 void         sysprof_value_axis_set_max_value (SysprofValueAxis *self,
                                                double            max_value);
 

@@ -35,36 +35,24 @@ G_BEGIN_DECLS
 typedef struct _SysprofNormalizedSeries SysprofNormalizedSeries;
 typedef struct _SysprofNormalizedSeriesClass SysprofNormalizedSeriesClass;
 
-SYSPROF_AVAILABLE_IN_ALL
 GType          sysprof_normalized_series_get_type       (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 SysprofSeries *sysprof_normalized_series_new            (SysprofSeries           *series,
                                                          SysprofAxis             *axis,
                                                          GtkExpression           *expression);
-SYSPROF_AVAILABLE_IN_ALL
 gboolean       sysprof_normalized_series_get_inverted   (SysprofNormalizedSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_normalized_series_set_inverted   (SysprofNormalizedSeries *self,
                                                          gboolean                 inverted);
-SYSPROF_AVAILABLE_IN_ALL
 GtkExpression *sysprof_normalized_series_get_expression (SysprofNormalizedSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_normalized_series_set_expression (SysprofNormalizedSeries *self,
                                                          GtkExpression           *expression);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofAxis   *sysprof_normalized_series_get_axis       (SysprofNormalizedSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_normalized_series_set_axis       (SysprofNormalizedSeries *self,
                                                          SysprofAxis             *axis);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofSeries *sysprof_normalized_series_get_series     (SysprofNormalizedSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_normalized_series_set_series     (SysprofNormalizedSeries *self,
                                                          SysprofSeries           *series);
-SYSPROF_AVAILABLE_IN_ALL
 double         sysprof_normalized_series_value_at       (SysprofNormalizedSeries *self,
                                                          guint                    position);
-SYSPROF_AVAILABLE_IN_ALL
 const double  *sysprof_normalized_series_get_values     (SysprofNormalizedSeries *self,
                                                          guint                   *n_values);
 

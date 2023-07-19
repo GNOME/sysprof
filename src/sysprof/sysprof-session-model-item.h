@@ -28,12 +28,9 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_SESSION_MODEL_ITEM (sysprof_session_model_item_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofSessionModelItem, sysprof_session_model_item, SYSPROF, SESSION_MODEL_ITEM, GObject)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofSession *sysprof_session_model_item_get_session (SysprofSessionModelItem *self);
-SYSPROF_AVAILABLE_IN_ALL
 gpointer        sysprof_session_model_item_get_item    (SysprofSessionModelItem *self);
 
 G_END_DECLS

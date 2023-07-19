@@ -34,16 +34,11 @@ G_BEGIN_DECLS
 typedef struct _SysprofSeries SysprofSeries;
 typedef struct _SysprofSeriesClass SysprofSeriesClass;
 
-SYSPROF_AVAILABLE_IN_ALL
 GType       sysprof_series_get_type  (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 GListModel *sysprof_series_get_model (SysprofSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void        sysprof_series_set_model (SysprofSeries *self,
                                       GListModel    *model);
-SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_series_get_title (SysprofSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void        sysprof_series_set_title (SysprofSeries *self,
                                       const char    *title);
 

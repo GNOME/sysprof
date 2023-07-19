@@ -34,30 +34,21 @@ G_BEGIN_DECLS
 typedef struct _SysprofTimeSeries SysprofTimeSeries;
 typedef struct _SysprofTimeSeriesClass SysprofTimeSeriesClass;
 
-SYSPROF_AVAILABLE_IN_ALL
 GType          sysprof_time_series_get_type                  (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 SysprofSeries *sysprof_time_series_new                       (const char        *title,
                                                               GListModel        *model,
                                                               GtkExpression     *begin_time_expression,
                                                               GtkExpression     *end_time_expression,
                                                               GtkExpression     *label_expression);
-SYSPROF_AVAILABLE_IN_ALL
 GtkExpression *sysprof_time_series_get_begin_time_expression (SysprofTimeSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_time_series_set_begin_time_expression (SysprofTimeSeries *self,
                                                               GtkExpression     *time_expression);
-SYSPROF_AVAILABLE_IN_ALL
 GtkExpression *sysprof_time_series_get_end_time_expression   (SysprofTimeSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_time_series_set_end_time_expression   (SysprofTimeSeries *self,
                                                               GtkExpression     *end_time_expression);
-SYSPROF_AVAILABLE_IN_ALL
 GtkExpression *sysprof_time_series_get_label_expression      (SysprofTimeSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_time_series_set_label_expression      (SysprofTimeSeries *self,
                                                               GtkExpression     *label_expression);
-SYSPROF_AVAILABLE_IN_ALL
 char          *sysprof_time_series_dup_label                 (SysprofTimeSeries *self,
                                                               guint              position);
 

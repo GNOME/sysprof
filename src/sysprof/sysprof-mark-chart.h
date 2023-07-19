@@ -28,14 +28,10 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_MARK_CHART (sysprof_mark_chart_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofMarkChart, sysprof_mark_chart, SYSPROF, MARK_CHART, GtkWidget)
 
-SYSPROF_AVAILABLE_IN_ALL
 GtkWidget      *sysprof_mark_chart_new         (void);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofSession *sysprof_mark_chart_get_session (SysprofMarkChart *self);
-SYSPROF_AVAILABLE_IN_ALL
 void            sysprof_mark_chart_set_session (SysprofMarkChart *self,
                                                 SysprofSession   *session);
 

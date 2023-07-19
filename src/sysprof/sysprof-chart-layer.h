@@ -28,7 +28,6 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_CHART_LAYER (sysprof_chart_layer_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_DERIVABLE_TYPE (SysprofChartLayer, sysprof_chart_layer, SYSPROF, CHART_LAYER, GtkWidget)
 
 struct _SysprofChartLayerClass
@@ -47,16 +46,12 @@ struct _SysprofChartLayerClass
   gpointer _reserved[16];
 };
 
-SYSPROF_AVAILABLE_IN_ALL
 const char *sysprof_chart_layer_get_title       (SysprofChartLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void        sysprof_chart_layer_set_title       (SysprofChartLayer *self,
                                                  const char        *title);
-SYSPROF_AVAILABLE_IN_ALL
 gpointer    sysprof_chart_layer_lookup_item     (SysprofChartLayer *self,
                                                  double             x,
                                                  double             y);
-SYSPROF_AVAILABLE_IN_ALL
 void        sysprof_chart_layer_snapshot_motion (SysprofChartLayer *self,
                                                  GtkSnapshot       *snapshot,
                                                  double             x,

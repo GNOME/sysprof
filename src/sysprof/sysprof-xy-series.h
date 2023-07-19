@@ -34,21 +34,15 @@ G_BEGIN_DECLS
 typedef struct _SysprofXYSeries SysprofXYSeries;
 typedef struct _SysprofXYSeriesClass SysprofXYSeriesClass;
 
-SYSPROF_AVAILABLE_IN_ALL
 GType          sysprof_xy_series_get_type         (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 SysprofSeries *sysprof_xy_series_new              (const char      *title,
                                                    GListModel      *model,
                                                    GtkExpression   *x_expression,
                                                    GtkExpression   *y_expression);
-SYSPROF_AVAILABLE_IN_ALL
 GtkExpression *sysprof_xy_series_get_x_expression (SysprofXYSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_xy_series_set_x_expression (SysprofXYSeries *self,
                                                    GtkExpression   *x_expression);
-SYSPROF_AVAILABLE_IN_ALL
 GtkExpression *sysprof_xy_series_get_y_expression (SysprofXYSeries *self);
-SYSPROF_AVAILABLE_IN_ALL
 void           sysprof_xy_series_set_y_expression (SysprofXYSeries *self,
                                                    GtkExpression   *y_expression);
 

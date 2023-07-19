@@ -29,29 +29,19 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_TIME_SPAN_LAYER (sysprof_time_span_layer_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofTimeSpanLayer, sysprof_time_span_layer, SYSPROF, TIME_SPAN_LAYER, SysprofChartLayer)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer *sysprof_time_span_layer_new             (void);
-SYSPROF_AVAILABLE_IN_ALL
 const GdkRGBA     *sysprof_time_span_layer_get_color       (SysprofTimeSpanLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_time_span_layer_set_color       (SysprofTimeSpanLayer *self,
                                                             const GdkRGBA        *color);
-SYSPROF_AVAILABLE_IN_ALL
 const GdkRGBA     *sysprof_time_span_layer_get_event_color (SysprofTimeSpanLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_time_span_layer_set_event_color (SysprofTimeSpanLayer *self,
                                                             const GdkRGBA        *event_color);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofTimeSeries *sysprof_time_span_layer_get_series      (SysprofTimeSpanLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_time_span_layer_set_series      (SysprofTimeSpanLayer *self,
                                                             SysprofTimeSeries    *series);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofAxis       *sysprof_time_span_layer_get_axis        (SysprofTimeSpanLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_time_span_layer_set_axis        (SysprofTimeSpanLayer *self,
                                                             SysprofAxis          *axis);
 

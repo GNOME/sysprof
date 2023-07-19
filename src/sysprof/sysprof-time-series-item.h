@@ -28,16 +28,11 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_TIME_SERIES_ITEM (sysprof_time_series_item_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofTimeSeriesItem, sysprof_time_series_item, SYSPROF, TIME_SERIES_ITEM, GObject)
 
-SYSPROF_AVAILABLE_IN_ALL
 gint64   sysprof_time_series_item_get_begin_time     (SysprofTimeSeriesItem *self);
-SYSPROF_AVAILABLE_IN_ALL
 gint64   sysprof_time_series_item_get_duration       (SysprofTimeSeriesItem *self);
-SYSPROF_AVAILABLE_IN_ALL
 gint64   sysprof_time_series_item_get_end_time       (SysprofTimeSeriesItem *self);
-SYSPROF_AVAILABLE_IN_ALL
 gpointer sysprof_time_series_item_get_item           (SysprofTimeSeriesItem *self);
 
 G_END_DECLS

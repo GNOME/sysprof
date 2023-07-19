@@ -28,20 +28,14 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_SESSION_MODEL (sysprof_session_model_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofSessionModel, sysprof_session_model, SYSPROF, SESSION_MODEL, GObject)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofSessionModel *sysprof_session_model_new         (SysprofSession      *session,
                                                         GListModel          *model);
-SYSPROF_AVAILABLE_IN_ALL
 GListModel          *sysprof_session_model_get_model   (SysprofSessionModel *self);
-SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_session_model_set_model   (SysprofSessionModel *self,
                                                         GListModel          *model);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofSession      *sysprof_session_model_get_session (SysprofSessionModel *self);
-SYSPROF_AVAILABLE_IN_ALL
 void                 sysprof_session_model_set_session (SysprofSessionModel *self,
                                                         SysprofSession      *session);
 

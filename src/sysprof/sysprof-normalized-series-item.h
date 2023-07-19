@@ -28,12 +28,9 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_NORMALIZED_SERIES_ITEM (sysprof_normalized_series_item_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofNormalizedSeriesItem, sysprof_normalized_series_item, SYSPROF, NORMALIZED_SERIES_ITEM, GObject)
 
-SYSPROF_AVAILABLE_IN_ALL
 gpointer sysprof_normalized_series_item_get_item  (SysprofNormalizedSeriesItem *self);
-SYSPROF_AVAILABLE_IN_ALL
 double   sysprof_normalized_series_item_get_value (SysprofNormalizedSeriesItem *self);
 
 G_END_DECLS

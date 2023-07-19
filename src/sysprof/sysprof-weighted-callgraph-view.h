@@ -32,9 +32,7 @@ G_BEGIN_DECLS
 typedef struct _SysprofWeightedCallgraphView      SysprofWeightedCallgraphView;
 typedef struct _SysprofWeightedCallgraphViewClass SysprofWeightedCallgraphViewClass;
 
-SYSPROF_AVAILABLE_IN_ALL
 GType      sysprof_weighted_callgraph_view_get_type     (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 GtkWidget *sysprof_weighted_weighted_callgraph_view_new (void);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofWeightedCallgraphView, g_object_unref)

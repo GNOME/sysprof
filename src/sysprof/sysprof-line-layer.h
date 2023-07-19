@@ -29,39 +29,25 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_LINE_LAYER (sysprof_line_layer_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofLineLayer, sysprof_line_layer, SYSPROF, LINE_LAYER, SysprofXYLayer)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer *sysprof_line_layer_new           (void);
-SYSPROF_AVAILABLE_IN_ALL
 gboolean           sysprof_line_layer_get_antialias (SysprofLineLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_antialias (SysprofLineLayer *self,
                                                      gboolean          antialias);
-SYSPROF_AVAILABLE_IN_ALL
 const GdkRGBA     *sysprof_line_layer_get_color     (SysprofLineLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_color     (SysprofLineLayer *self,
                                                      const GdkRGBA    *color);
-SYSPROF_AVAILABLE_IN_ALL
 gboolean           sysprof_line_layer_get_dashed    (SysprofLineLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_dashed    (SysprofLineLayer *self,
                                                      gboolean          dashed);
-SYSPROF_AVAILABLE_IN_ALL
 gboolean           sysprof_line_layer_get_fill      (SysprofLineLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_fill      (SysprofLineLayer *self,
                                                      gboolean          fill);
-SYSPROF_AVAILABLE_IN_ALL
 gboolean           sysprof_line_layer_get_flip_y    (SysprofLineLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_flip_y    (SysprofLineLayer *self,
                                                      gboolean          flip_y);
-SYSPROF_AVAILABLE_IN_ALL
 gboolean           sysprof_line_layer_get_spline    (SysprofLineLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_line_layer_set_spline    (SysprofLineLayer *self,
                                                      gboolean          spline);
 

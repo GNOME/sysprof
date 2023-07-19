@@ -32,19 +32,13 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_COLUMN_LAYER (sysprof_column_layer_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofColumnLayer, sysprof_column_layer, SYSPROF, COLUMN_LAYER, SysprofXYLayer)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer *sysprof_column_layer_new             (void);
-SYSPROF_AVAILABLE_IN_ALL
 const GdkRGBA     *sysprof_column_layer_get_color       (SysprofColumnLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_column_layer_set_color       (SysprofColumnLayer *self,
                                                          const GdkRGBA      *color);
-SYSPROF_AVAILABLE_IN_ALL
 const GdkRGBA     *sysprof_column_layer_get_hover_color (SysprofColumnLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_column_layer_set_hover_color (SysprofColumnLayer *self,
                                                          const GdkRGBA      *hover_color);
 

@@ -45,22 +45,15 @@ struct _SysprofChartClass
   gpointer _reserved[16];
 };
 
-SYSPROF_AVAILABLE_IN_ALL
 GtkWidget      *sysprof_chart_new          (void);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofSession *sysprof_chart_get_session  (SysprofChart      *self);
-SYSPROF_AVAILABLE_IN_ALL
 void            sysprof_chart_set_session  (SysprofChart      *self,
                                             SysprofSession    *session);
-SYSPROF_AVAILABLE_IN_ALL
 const char     *sysprof_chart_get_title    (SysprofChart      *self);
-SYSPROF_AVAILABLE_IN_ALL
 void            sysprof_chart_set_title    (SysprofChart      *self,
                                             const char        *title);
-SYSPROF_AVAILABLE_IN_ALL
 void            sysprof_chart_add_layer    (SysprofChart      *self,
                                             SysprofChartLayer *layer);
-SYSPROF_AVAILABLE_IN_ALL
 void            sysprof_chart_remove_layer (SysprofChart      *self,
                                             SysprofChartLayer *layer);
 

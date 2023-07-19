@@ -29,19 +29,13 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_SPLIT_LAYER (sysprof_split_layer_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofSplitLayer, sysprof_split_layer, SYSPROF, SPLIT_LAYER, SysprofChartLayer)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer *sysprof_split_layer_new        (void);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer *sysprof_split_layer_get_bottom (SysprofSplitLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_split_layer_set_bottom (SysprofSplitLayer *self,
                                                    SysprofChartLayer *top);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer *sysprof_split_layer_get_top    (SysprofSplitLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void               sysprof_split_layer_set_top    (SysprofSplitLayer *self,
                                                    SysprofChartLayer *bottom);
 

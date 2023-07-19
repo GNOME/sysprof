@@ -26,19 +26,13 @@ G_BEGIN_DECLS
 
 #define SYSPROF_TYPE_DUPLEX_LAYER (sysprof_duplex_layer_get_type())
 
-SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofDuplexLayer, sysprof_duplex_layer, SYSPROF, DUPLEX_LAYER, SysprofChartLayer)
 
-SYSPROF_AVAILABLE_IN_ALL
 SysprofDuplexLayer *sysprof_duplex_layer_new             (void);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer  *sysprof_duplex_layer_get_upper_layer (SysprofDuplexLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void                sysprof_duplex_layer_set_upper_layer (SysprofDuplexLayer *self,
                                                           SysprofChartLayer  *layer);
-SYSPROF_AVAILABLE_IN_ALL
 SysprofChartLayer  *sysprof_duplex_layer_get_lower_layer (SysprofDuplexLayer *self);
-SYSPROF_AVAILABLE_IN_ALL
 void                sysprof_duplex_layer_set_lower_layer (SysprofDuplexLayer *self,
                                                           SysprofChartLayer  *layer);
 

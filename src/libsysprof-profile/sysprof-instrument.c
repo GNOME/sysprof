@@ -21,7 +21,10 @@
 #include "config.h"
 
 #include "sysprof-instrument-private.h"
-#include "sysprof-polkit-private.h"
+
+#if HAVE_POLKIT
+# include "sysprof-polkit-private.h"
+#endif
 
 G_DEFINE_ABSTRACT_TYPE (SysprofInstrument, sysprof_instrument, G_TYPE_OBJECT)
 
@@ -193,6 +196,7 @@ _sysprof_instruments_acquire_policy (GPtrArray        *instruments,
    */
   if ((required_policy = _sysprof_instruments_list_required_policy (instruments)))
     {
+#if HAVE_POLKIT
       for (guint i = 0; required_policy[i]; i++)
         {
           if (!dex_await_boolean (_sysprof_polkit_authorize (connection,
@@ -201,6 +205,7 @@ _sysprof_instruments_acquire_policy (GPtrArray        *instruments,
                                                              TRUE), &error))
             return dex_future_new_for_error (g_steal_pointer (&error));
         }
+#endif
     }
 
   return dex_future_new_for_boolean (TRUE);

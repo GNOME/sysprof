@@ -26,8 +26,11 @@ libsysprof_profile_private_sources = [
   'sysprof-perf-event-stream.c',
   'sysprof-journald-source.c',
   'sysprof-podman.c',
-  'sysprof-polkit.c',
 ]
+
+if polkit_dep.found()
+  libsysprof_profile_private_sources += ['sysprof-polkit.c']
+endif
 
 libsysprof_profile_public_headers = [
   'sysprof-profile.h',
@@ -65,8 +68,8 @@ libsysprof_profile_deps = [
     required: host_machine.system() != 'windows'),
   dependency('json-glib-1.0'),
   dependency('libdex-1', version: dex_req_version),
-  dependency('polkit-gobject-1', version: polkit_req_version),
   libsystemd_dep,
+  polkit_dep,
 
   liblinereader_static_dep,
   libsysprof_analyze_dep,

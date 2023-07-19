@@ -27,7 +27,6 @@
 
 #include "sysprof-diagnostic-private.h"
 #include "sysprof-instrument-private.h"
-#include "sysprof-polkit-private.h"
 #include "sysprof-recording-private.h"
 
 typedef enum _SysprofRecordingCommand

@@ -37,14 +37,14 @@ podir = join_paths(meson.current_source_dir(), 'po')
 need_gtk = get_option('gtk')
 need_glib = (need_gtk or
              get_option('examples') or
-             get_option('libsysprof') or
              get_option('sysprofd') != 'none' or
-             get_option('agent'))
+             get_option('agent') or
+	     get_option('tests'))
 
 # Determine what libraries to build
 need_libsysprof_capture = true
-need_libsysprof_profile = get_option('libsysprof') or get_option('agent')
-need_libsysprof_analyze = get_option('libsysprof') or get_option('agent')
+need_libsysprof_profile = get_option('gtk') or get_option('agent')
+need_libsysprof_analyze = get_option('gtk') or get_option('agent')
 
 dex_req = '0.3'
 glib_req = '2.76.0'
@@ -91,12 +91,6 @@ if get_option('default_library') != 'static'
     config_h.set('_SYSPROF_EXTERN', '__attribute__((visibility("default"))) extern')
   endif
 endif
-
-debugdir = get_option('debugdir')
-if debugdir == ''
-  debugdir = join_paths(get_option('prefix'), get_option('libdir'), 'debug')
-endif
-config_h.set_quoted('DEBUGDIR', debugdir)
 
 config_h.set('HAVE_EXECINFO_H', cc.has_header('execinfo.h'))
 config_h.set('HAVE_REALLOCARRAY', cc.has_function('reallocarray'))

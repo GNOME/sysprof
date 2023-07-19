@@ -56,6 +56,8 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
   const double *x_values;
   const double *y_values;
   const GdkRGBA *color;
+  double last_x = 0;
+  double last_y = 0;
   guint n_values;
   int width;
   int height;
@@ -91,18 +93,27 @@ sysprof_column_layer_snapshot (GtkWidget   *widget,
 
   for (guint i = 0; i < n_values; i++)
     {
+      double x;
+      double y;
+
       if (x_values[i] < .0)
         continue;
 
       if (x_values[i] > 1.)
         break;
 
+      x = round (x_values[i] * width);
+      y = ceil (y_values[i] * height);
+
+      if (x == last_x && y < last_y)
+        continue;
+
       gtk_snapshot_append_color (snapshot,
                                  color,
-                                 &GRAPHENE_RECT_INIT (x_values[i] * width,
-                                                      0,
-                                                      1,
-                                                      ceil (y_values[i] * height)));
+                                 &GRAPHENE_RECT_INIT (x, 0, 1, y));
+
+      last_x = x;
+      last_y = y;
     }
 
   gtk_snapshot_restore (snapshot);

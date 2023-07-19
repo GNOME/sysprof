@@ -26,6 +26,7 @@ struct _SysprofTreeExpander
 {
   GtkWidget        parent_instance;
 
+  GtkWidget       *expander;
   GtkWidget       *image;
   GtkWidget       *child;
   GtkWidget       *suffix;
@@ -78,7 +79,9 @@ sysprof_tree_expander_update_depth (SysprofTreeExpander *self)
   if G_UNLIKELY (builtin_icon_type == G_TYPE_INVALID)
     builtin_icon_type = g_type_from_name ("GtkBuiltinIcon");
 
-  child = gtk_widget_get_prev_sibling (self->image);
+  g_assert (builtin_icon_type != G_TYPE_INVALID);
+
+  child = gtk_widget_get_prev_sibling (self->expander);
 
   while (child)
     {
@@ -114,12 +117,20 @@ sysprof_tree_expander_update_icon (SysprofTreeExpander *self)
   if (self->list_row != NULL)
     {
       if (gtk_tree_list_row_get_expanded (self->list_row))
-        icon = self->expanded_icon ? self->expanded_icon : self->icon;
+        {
+          icon = self->expanded_icon ? self->expanded_icon : self->icon;
+          gtk_widget_set_state_flags (self->expander, GTK_STATE_FLAG_CHECKED, FALSE);
+        }
       else
-        icon = self->icon;
+        {
+          icon = self->icon;
+          gtk_widget_unset_state_flags (self->expander, GTK_STATE_FLAG_CHECKED);
+        }
     }
 
   gtk_image_set_from_gicon (GTK_IMAGE (self->image), icon);
+
+  gtk_widget_set_visible (self->image, icon != NULL);
 }
 
 static void
@@ -156,10 +167,10 @@ expander_contains_point (SysprofTreeExpander *self,
                          double               x,
                          double               y)
 {
-  gtk_widget_translate_coordinates (GTK_WIDGET (self), GTK_WIDGET (self->image),
+  gtk_widget_translate_coordinates (GTK_WIDGET (self), GTK_WIDGET (self->expander),
                                     x, y, &x, &y);
 
-  if (x < 0 || y < 0 || x > gtk_widget_get_width (self->image) || y > gtk_widget_get_height (self->image))
+  if (x < 0 || y < 0 || x > gtk_widget_get_width (self->expander) || y > gtk_widget_get_height (self->expander))
     return FALSE;
 
   return TRUE;
@@ -193,9 +204,30 @@ sysprof_tree_expander_click_released_cb (SysprofTreeExpander *self,
 
   gtk_widget_activate_action (row, "listitem.select", "(bb)", FALSE, FALSE);
 
-  if (n_press == 2 ||
-      (n_press == 1 && expander_contains_point (self, x, y)))
-    gtk_widget_activate_action (GTK_WIDGET (self), "listitem.toggle-expand", NULL);
+  if (n_press == 1 &&
+      gtk_gesture_single_get_current_button (GTK_GESTURE_SINGLE (click)) == 3 &&
+      self->menu_model != NULL)
+    {
+      GtkPopover *popover;
+      GdkRectangle rect;
+
+      rect.x = x;
+      rect.width = 1;
+      rect.height = gtk_widget_get_height (GTK_WIDGET (self));
+      rect.y = 0;
+
+      popover = g_object_new (GTK_TYPE_POPOVER_MENU,
+                              "menu-model", self->menu_model,
+                              "position", GTK_POS_RIGHT,
+                              "pointing-to", &rect,
+                              NULL);
+      sysprof_tree_expander_show_popover (self, popover);
+    }
+  else if (n_press == 2 ||
+           (n_press == 1 && expander_contains_point (self, x, y)))
+    {
+      gtk_widget_activate_action (GTK_WIDGET (self), "listitem.toggle-expand", NULL);
+    }
 
   gtk_gesture_set_state (GTK_GESTURE (click), GTK_EVENT_SEQUENCE_CLAIMED);
 }
@@ -262,6 +294,7 @@ sysprof_tree_expander_dispose (GObject *object)
 
   sysprof_tree_expander_set_list_row (self, NULL);
 
+  g_clear_pointer (&self->expander, gtk_widget_unparent);
   g_clear_pointer (&self->image, gtk_widget_unparent);
   g_clear_pointer (&self->child, gtk_widget_unparent);
   g_clear_pointer (&self->suffix, gtk_widget_unparent);
@@ -459,10 +492,18 @@ sysprof_tree_expander_init (SysprofTreeExpander *self)
 {
   GtkEventController *controller;
 
-  self->image = g_object_new (GTK_TYPE_IMAGE, NULL);
-  gtk_widget_insert_after (self->image, GTK_WIDGET (self), NULL);
+  self->expander = g_object_new (g_type_from_name ("GtkBuiltinIcon"),
+                                 "css-name", "expander",
+                                 NULL);
+  gtk_widget_insert_after (self->expander, GTK_WIDGET (self), NULL);
+
+  self->image = g_object_new (GTK_TYPE_IMAGE,
+                              "visible", FALSE,
+                              NULL);
+  gtk_widget_insert_after (self->image, GTK_WIDGET (self), self->expander);
 
   controller = GTK_EVENT_CONTROLLER (gtk_gesture_click_new ());
+  gtk_gesture_single_set_button (GTK_GESTURE_SINGLE (controller), 0);
   g_signal_connect_object (controller,
                            "pressed",
                            G_CALLBACK (sysprof_tree_expander_click_pressed_cb),
@@ -719,7 +760,7 @@ sysprof_tree_expander_clear_list_row (SysprofTreeExpander *self)
 
   gtk_image_set_from_icon_name (GTK_IMAGE (self->image), NULL);
 
-  child = gtk_widget_get_prev_sibling (self->image);
+  child = gtk_widget_get_prev_sibling (self->expander);
 
   while (child)
     {

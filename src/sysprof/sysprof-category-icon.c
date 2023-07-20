@@ -294,6 +294,7 @@ sysprof_category_icon_class_init (SysprofCategoryIconClass *klass)
   gdk_rgba_parse (&category_colors[CATEGORY_PAINT], "#2ec27e");
   gdk_rgba_parse (&category_colors[CATEGORY_SIGNALS], "#e5a50a");
   gdk_rgba_parse (&category_colors[CATEGORY_TEMPLATES], "#77767b");
+  gdk_rgba_parse (&category_colors[CATEGORY_WINDOWING], "#c64600");
 }
 
 static void

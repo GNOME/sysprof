@@ -32,6 +32,9 @@ option('help', type: 'boolean')
 # Disable use of libunwind
 option('libunwind', type: 'boolean')
 
+# Build libsysprof (required by tools, tests, sysprof, etc)
+option('libsysprof', type: 'boolean')
+
 # Optionally disable the tools (this is mostly only useful for building only
 # libsysprof-capture as a subproject)
 option('tools', type: 'boolean')

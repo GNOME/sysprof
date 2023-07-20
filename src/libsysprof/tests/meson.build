@@ -1,17 +1,16 @@
-libsysprof_analyze_test_env = [
+libsysprof_test_env = [
   'G_DEBUG=gc-friendly',
   'GSETTINGS_BACKEND=memory',
   'MALLOC_CHECK_=2',
 ]
 
-libsysprof_analyze_testsuite_c_args = [
-  '-DG_LOG_DOMAIN="libsysprof-analyze"',
+libsysprof_testsuite_c_args = [
   '-DG_ENABLE_DEBUG',
   '-UG_DISABLE_ASSERT',
   '-UG_DISABLE_CAST_CHECKS',
 ]
 
-libsysprof_analyze_testsuite = {
+libsysprof_testsuite = {
   'test-callgraph'           : {'skip': true},
   'test-capture-model'       : {'skip': true},
   'test-elf-loader'          : {'skip': true},
@@ -20,8 +19,10 @@ libsysprof_analyze_testsuite = {
   'test-list-files'          : {'skip': true},
   'test-list-jitmap'         : {'skip': true},
   'test-list-overlays'       : {'skip': true},
+  'test-maps-parser'         : {'skip': true},
   'test-mark-catalog'        : {'skip': true},
   'test-print-file'          : {'skip': true},
+  'test-profiler'            : {'skip': true},
   'test-list-processes'      : {'skip': true},
   'test-list-address-layout' : {'skip': true},
   'test-symbolize'           : {'skip': true},
@@ -29,16 +30,16 @@ libsysprof_analyze_testsuite = {
   'test-symbol-cache'        : {},
 }
 
-libsysprof_analyze_testsuite_deps = [
-  libsysprof_analyze_static_dep,
+libsysprof_testsuite_deps = [
+  libsysprof_static_dep,
 ]
 
-foreach test, params: libsysprof_analyze_testsuite
+foreach test, params: libsysprof_testsuite
   test_exe = executable(test, '@0@.c'.format(test),
-          c_args: libsysprof_analyze_testsuite_c_args,
-    dependencies: libsysprof_analyze_testsuite_deps,
+          c_args: libsysprof_testsuite_c_args,
+    dependencies: libsysprof_testsuite_deps,
   )
   if not params.get('skip', false)
-    test(test, test_exe, env: libsysprof_analyze_test_env)
+    test(test, test_exe, env: libsysprof_test_env)
   endif
 endforeach

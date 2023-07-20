@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-session.h"
 #include "sysprof-time-series.h"

@@ -1,18 +1,21 @@
-libsysprof_analyze_public_sources = [
+libsysprof_public_sources = [
+  'sysprof-battery-charge.c',
   'sysprof-bundled-symbolizer.c',
-  'sysprof-callgraph.c',
   'sysprof-callgraph-frame.c',
   'sysprof-callgraph-symbol.c',
+  'sysprof-callgraph.c',
   'sysprof-cpu-info.c',
-  'sysprof-document.c',
+  'sysprof-cpu-usage.c',
+  'sysprof-diagnostic.c',
+  'sysprof-disk-usage.c',
   'sysprof-document-allocation.c',
-  'sysprof-document-counter.c',
   'sysprof-document-counter-value.c',
+  'sysprof-document-counter.c',
   'sysprof-document-ctrdef.c',
   'sysprof-document-ctrset.c',
   'sysprof-document-exit.c',
-  'sysprof-document-file.c',
   'sysprof-document-file-chunk.c',
+  'sysprof-document-file.c',
   'sysprof-document-fork.c',
   'sysprof-document-frame.c',
   'sysprof-document-jitmap.c',
@@ -25,34 +28,52 @@ libsysprof_analyze_public_sources = [
   'sysprof-document-process.c',
   'sysprof-document-sample.c',
   'sysprof-document-traceable.c',
+  'sysprof-document.c',
   'sysprof-elf-symbolizer.c',
+  'sysprof-energy-usage.c',
+  'sysprof-instrument.c',
   'sysprof-jitmap-symbolizer.c',
   'sysprof-kallsyms-symbolizer.c',
+  'sysprof-malloc-tracing.c',
   'sysprof-mark-catalog.c',
+  'sysprof-memory-usage.c',
   'sysprof-multi-symbolizer.c',
+  'sysprof-network-usage.c',
   'sysprof-no-symbolizer.c',
+  'sysprof-power-profile.c',
+  'sysprof-profiler.c',
+  'sysprof-proxied-instrument.c',
+  'sysprof-recording.c',
+  'sysprof-sampler.c',
+  'sysprof-spawnable.c',
   'sysprof-symbol.c',
   'sysprof-symbolizer.c',
+  'sysprof-symbols-bundle.c',
+  'sysprof-system-logs.c',
   'sysprof-thread-info.c',
   'sysprof-time-span.c',
+  'sysprof-tracer.c',
 ]
 
-libsysprof_analyze_public_headers = [
-  'sysprof-analyze.h',
+libsysprof_public_headers = [
+  'sysprof.h',
+  'sysprof-battery-charge.h',
   'sysprof-bundled-symbolizer.h',
-  'sysprof-callgraph.h',
   'sysprof-callgraph-frame.h',
   'sysprof-callgraph-symbol.h',
+  'sysprof-callgraph.h',
   'sysprof-cpu-info.h',
-  'sysprof-document.h',
+  'sysprof-cpu-usage.h',
+  'sysprof-diagnostic.h',
+  'sysprof-disk-usage.h',
   'sysprof-document-allocation.h',
-  'sysprof-document-counter.h',
   'sysprof-document-counter-value.h',
+  'sysprof-document-counter.h',
   'sysprof-document-ctrdef.h',
   'sysprof-document-ctrset.h',
   'sysprof-document-exit.h',
-  'sysprof-document-file.h',
   'sysprof-document-file-chunk.h',
+  'sysprof-document-file.h',
   'sysprof-document-fork.h',
   'sysprof-document-frame.h',
   'sysprof-document-jitmap.h',
@@ -65,37 +86,73 @@ libsysprof_analyze_public_headers = [
   'sysprof-document-process.h',
   'sysprof-document-sample.h',
   'sysprof-document-traceable.h',
+  'sysprof-document.h',
   'sysprof-elf-symbolizer.h',
+  'sysprof-energy-usage.h',
+  'sysprof-instrument.h',
   'sysprof-jitmap-symbolizer.h',
   'sysprof-kallsyms-symbolizer.h',
+  'sysprof-malloc-tracing.h',
   'sysprof-mark-catalog.h',
+  'sysprof-memory-usage.h',
   'sysprof-mount.h',
   'sysprof-multi-symbolizer.h',
+  'sysprof-network-usage.h',
   'sysprof-no-symbolizer.h',
+  'sysprof-power-profile.h',
+  'sysprof-profiler.h',
+  'sysprof-proxied-instrument.h',
+  'sysprof-recording.h',
+  'sysprof-sampler.h',
+  'sysprof-spawnable.h',
   'sysprof-symbol.h',
   'sysprof-symbolizer.h',
+  'sysprof-symbols-bundle.h',
+  'sysprof-system-logs.h',
   'sysprof-thread-info.h',
   'sysprof-time-span.h',
+  'sysprof-tracer.h',
 ]
 
-libsysprof_analyze_private_sources = [
+libsysprof_private_sources = [
+  'mapped-ring-buffer-source.c',
   'sysprof-address-layout.c',
+  'sysprof-controlfd-instrument.c',
   'sysprof-descendants-model.c',
   'sysprof-document-bitset-index.c',
   'sysprof-document-symbols.c',
-  'sysprof-elf.c',
   'sysprof-elf-loader.c',
-  'sysprof-mount.c',
+  'sysprof-elf.c',
+  'sysprof-journald-source.c',
+  'sysprof-maps-parser.c',
   'sysprof-mount-device.c',
   'sysprof-mount-namespace.c',
+  'sysprof-mount.c',
+  'sysprof-perf-event-stream.c',
+  'sysprof-podman.c',
   'sysprof-process-info.c',
   'sysprof-strings.c',
   'sysprof-symbol-cache.c',
 ]
 
-libsysprof_analyze_deps = [
+if polkit_dep.found()
+  libsysprof_private_sources += ['sysprof-polkit.c']
+endif
+
+if host_machine.system() == 'linux'
+  libsysprof_private_sources += ['sysprof-linux-instrument.c']
+endif
+
+libsysprof_deps = [
   dependency('gio-2.0', version: glib_req_version),
+  dependency('gio-unix-2.0',
+     version: glib_req_version,
+    required: host_machine.system() != 'windows'),
   dependency('libdex-1', version: dex_req_version),
+  dependency('json-glib-1.0'),
+
+  libsystemd_dep,
+  polkit_dep,
 
   libeggbitset_static_dep,
   libelfparser_static_dep,
@@ -103,47 +160,49 @@ libsysprof_analyze_deps = [
   libsysprof_capture_dep,
 ]
 
-libsysprof_analyze_static = static_library(
+libsysprof_static = static_library(
   'sysprof-analyze-@0@'.format(soname_major_version),
-  libsysprof_analyze_public_sources +
-  libsysprof_analyze_private_sources,
+  libsysprof_public_sources +
+  libsysprof_private_sources,
 
     include_directories: [include_directories('.'),
                           libsysprof_capture_include_dirs],
-           dependencies: libsysprof_analyze_deps,
+           dependencies: libsysprof_deps,
   gnu_symbol_visibility: 'hidden',
 )
 
-libsysprof_analyze_static_dep = declare_dependency(
-            link_with: libsysprof_analyze_static,
-         dependencies: libsysprof_analyze_deps,
+libsysprof_static_dep = declare_dependency(
+            link_with: libsysprof_static,
+         dependencies: libsysprof_deps,
   include_directories: [include_directories('.'),
                         libsysprof_capture_include_dirs],
 )
 
-libsysprof_analyze = library('sysprof-analyze-@0@'.format(soname_major_version),
-           dependencies: [libsysprof_analyze_static_dep],
+libsysprof = library('sysprof-analyze-@0@'.format(soname_major_version),
+           dependencies: [libsysprof_static_dep],
   gnu_symbol_visibility: 'hidden',
                 version: '@0@.0.0'.format(soname_major_version),
         darwin_versions: '@0@.0'.format(soname_major_version),
-                install: true,
+                install: get_option('libsysprof'),
 )
 
-libsysprof_analyze_dep = declare_dependency(
-            link_with: libsysprof_analyze,
-         dependencies: libsysprof_analyze_deps,
+libsysprof_dep = declare_dependency(
+            link_with: libsysprof,
+         dependencies: libsysprof_deps,
   include_directories: [include_directories('.'), libsysprof_capture_include_dirs],
 )
-meson.override_dependency('sysprof-analyze-@0@'.format(soname_major_version), libsysprof_analyze_dep)
+meson.override_dependency('sysprof-analyze-@0@'.format(soname_major_version), libsysprof_dep)
 
-pkgconfig.generate(libsysprof_analyze,
+pkgconfig.generate(libsysprof,
             subdirs: [sysprof_header_subdir],
-        description: 'A library for processing and analyzing Sysprof captures',
+        description: 'A library for recording and analyzing system performance',
         install_dir: join_paths(get_option('libdir'), 'pkgconfig'),
            requires: ['gio-2.0'],
           variables: ['datadir=' + datadir_for_pc_file],
 )
 
-install_headers(libsysprof_analyze_public_headers, subdir: sysprof_header_subdir)
+install_headers(libsysprof_public_headers, subdir: sysprof_header_subdir)
 
-subdir('tests')
+if get_option('tests')
+  subdir('tests')
+endif

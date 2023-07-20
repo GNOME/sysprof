@@ -1,4 +1,4 @@
-/* test-print-file.c
+/* test-list-files.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-document-private.h"
 
@@ -27,15 +27,14 @@ main (int   argc,
       char *argv[])
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
-  g_autoptr(SysprofDocumentFile) file = NULL;
   g_autoptr(SysprofDocument) document = NULL;
   g_autoptr(GListModel) files = NULL;
   g_autoptr(GError) error = NULL;
-  g_autoptr(GBytes) bytes = NULL;
+  guint n_items;
 
-  if (argc < 3)
+  if (argc < 2)
     {
-      g_printerr ("usage: %s CAPTURE_FILE EMBEDDED_FILE_PATH\n", argv[0]);
+      g_printerr ("usage: %s CAPTURE_FILE\n", argv[0]);
       return 1;
     }
 
@@ -48,19 +47,15 @@ main (int   argc,
       return 1;
     }
 
-  file = sysprof_document_lookup_file (document, argv[2]);
+  files = sysprof_document_list_files (document);
+  n_items = g_list_model_get_n_items (files);
 
-  if (file == NULL)
+  for (guint i = 0; i < n_items; i++)
     {
-      g_printerr ("File \"%s\" not found.\n", argv[2]);
-      return 1;
+      g_autoptr(SysprofDocumentFile) file = g_list_model_get_item (files, i);
+
+      g_print ("%s\n", sysprof_document_file_get_path (file));
     }
-
-  bytes = sysprof_document_file_dup_bytes (file);
-
-  write (STDOUT_FILENO,
-         g_bytes_get_data (bytes, NULL),
-         g_bytes_get_size (bytes));
 
   return 0;
 }

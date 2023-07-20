@@ -1,4 +1,4 @@
-/* test-list-files.c
+/* test-list-counters.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,19 +18,32 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-document-private.h"
+
+static const GOptionEntry entries[] = {
+  { 0 }
+};
 
 int
 main (int   argc,
       char *argv[])
 {
+  g_autoptr(GOptionContext) context = g_option_context_new ("- list cpu information from capture");
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofDocument) document = NULL;
-  g_autoptr(GListModel) files = NULL;
+  g_autoptr(GListModel) model = NULL;
   g_autoptr(GError) error = NULL;
   guint n_items;
+
+  g_option_context_add_main_entries (context, entries, NULL);
+
+  if (!g_option_context_parse (context, &argc, &argv, &error))
+    {
+      g_printerr ("%s\n", error->message);
+      return 1;
+    }
 
   if (argc < 2)
     {
@@ -47,14 +60,16 @@ main (int   argc,
       return 1;
     }
 
-  files = sysprof_document_list_files (document);
-  n_items = g_list_model_get_n_items (files);
+  model = sysprof_document_list_cpu_info (document);
+  n_items = g_list_model_get_n_items (model);
 
   for (guint i = 0; i < n_items; i++)
     {
-      g_autoptr(SysprofDocumentFile) file = g_list_model_get_item (files, i);
+      g_autoptr(SysprofCpuInfo) cpu_info = g_list_model_get_item (model, i);
 
-      g_print ("%s\n", sysprof_document_file_get_path (file));
+      g_print ("processor %u: %s\n",
+               sysprof_cpu_info_get_id (cpu_info),
+               sysprof_cpu_info_get_model_name (cpu_info));
     }
 
   return 0;

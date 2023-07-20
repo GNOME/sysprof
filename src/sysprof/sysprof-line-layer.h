@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-xy-layer.h"
 

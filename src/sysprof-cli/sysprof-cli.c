@@ -30,8 +30,7 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 
-#include <sysprof-analyze.h>
-#include <sysprof-profile.h>
+#include <sysprof.h>
 
 #define POLKIT_AGENT_I_KNOW_API_IS_SUBJECT_TO_CHANGE
 #include <polkit/polkit.h>

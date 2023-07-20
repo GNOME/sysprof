@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-strings-private.h"
 
@@ -43,6 +43,6 @@ main (int argc,
       char *argv[])
 {
   g_test_init (&argc, &argv, NULL);
-  g_test_add_func ("/libsysprof-analyze/Strings/basic", test_basic);
+  g_test_add_func ("/libsysprof/Strings/basic", test_basic);
   return g_test_run ();
 }

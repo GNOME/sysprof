@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-symbol-private.h"
 #include "sysprof-symbol-cache-private.h"
@@ -234,11 +234,11 @@ main (int argc,
       char *argv[])
 {
   g_test_init (&argc, &argv, NULL);
-  g_test_add_func ("/libsysprof-analyze/SysprofSymbolCache/interval-tree",
+  g_test_add_func ("/libsysprof/SysprofSymbolCache/interval-tree",
                    test_interval_tree);
-  g_test_add_func ("/libsysprof-analyze/SysprofSymbolCache/jitmap",
+  g_test_add_func ("/libsysprof/SysprofSymbolCache/jitmap",
                    test_jitmap);
-  g_test_add_func ("/libsysprof-analyze/SysprofSymbolCache/collision",
+  g_test_add_func ("/libsysprof/SysprofSymbolCache/collision",
                    test_collision);
   return g_test_run ();
 }

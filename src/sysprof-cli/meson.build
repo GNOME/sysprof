@@ -8,8 +8,7 @@ sysprof_cli_c_args = [
 sysprof_cli_deps = [
   dependency('polkit-agent-1'),
 
-  libsysprof_analyze_static_dep,
-  libsysprof_profile_static_dep,
+  libsysprof_static_dep,
 ]
 
 sysprof_cli = executable('sysprof-cli', sysprof_cli_sources,

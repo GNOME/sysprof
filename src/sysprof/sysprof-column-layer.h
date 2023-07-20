@@ -22,7 +22,7 @@
 
 #include <gtk/gtk.h>
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-axis.h"
 #include "sysprof-xy-layer.h"

@@ -68,8 +68,8 @@ sysprof_deps = [
   dependency('gtk4', version: gtk_req_version),
   dependency('libadwaita-1', version: '>= 1.4.alpha'),
   dependency('libpanel-1', version: '>= 1.3.0'),
-  libsysprof_analyze_static_dep,
-  libsysprof_profile_static_dep,
+
+  libsysprof_static_dep,
 ]
 
 sysprof = executable('sysprof', sysprof_resources + sysprof_sources,

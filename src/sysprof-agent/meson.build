@@ -13,8 +13,7 @@ sysprof_agent_c_args = [
 ]
 
 sysprof_agent_deps = [
-  libsysprof_analyze_static_dep,
-  libsysprof_profile_static_dep,
+  libsysprof_static_dep,
 ]
 
 sysprof_agent = executable('sysprof-agent', sysprof_agent_sources,

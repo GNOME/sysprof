@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-mark-chart-row-private.h"
 #include "sysprof-chart.h"

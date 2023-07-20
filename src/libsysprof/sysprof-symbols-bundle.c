@@ -25,7 +25,7 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-instrument-private.h"
 #include "sysprof-recording-private.h"

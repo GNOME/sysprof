@@ -10,16 +10,10 @@ sysprof_version_conf.set('MINOR_VERSION', sysprof_version[1])
 sysprof_version_conf.set('MICRO_VERSION', sysprof_version[2])
 sysprof_version_conf.set('VERSION', meson.project_version())
 
-if need_libsysprof_capture
-  subdir('libsysprof-capture')
-endif
+subdir('libsysprof-capture')
 
-if need_libsysprof_analyze
-  subdir('libsysprof-analyze')
-endif
-
-if need_libsysprof_profile
-  subdir('libsysprof-profile')
+if need_libsysprof
+  subdir('libsysprof')
   subdir('preload')
 endif
 

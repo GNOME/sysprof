@@ -30,7 +30,7 @@
 #include <gio/gunixinputstream.h>
 #include <gio/gunixoutputstream.h>
 
-#include <sysprof-profile.h>
+#include <sysprof.h>
 
 #include "ipc-agent.h"
 

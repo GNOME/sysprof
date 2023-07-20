@@ -1,4 +1,4 @@
-/* test-list-counters.c
+/* test-list-address-layout.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,39 +18,28 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-document-private.h"
-
-static const GOptionEntry entries[] = {
-  { 0 }
-};
 
 int
 main (int   argc,
       char *argv[])
 {
-  g_autoptr(GOptionContext) context = g_option_context_new ("- list cpu information from capture");
-  g_autoptr(SysprofDocumentLoader) loader = NULL;
+  g_autoptr(SysprofDocumentLoader) loader  = NULL;
   g_autoptr(SysprofDocument) document = NULL;
-  g_autoptr(GListModel) model = NULL;
+  g_autoptr(GListModel) processes = NULL;
   g_autoptr(GError) error = NULL;
   guint n_items;
+  int pid;
 
-  g_option_context_add_main_entries (context, entries, NULL);
-
-  if (!g_option_context_parse (context, &argc, &argv, &error))
+  if (argc < 3)
     {
-      g_printerr ("%s\n", error->message);
+      g_printerr ("usage: %s CAPTURE_FILE PID\n", argv[0]);
       return 1;
     }
 
-  if (argc < 2)
-    {
-      g_printerr ("usage: %s CAPTURE_FILE\n", argv[0]);
-      return 1;
-    }
-
+  pid = atoi (argv[2]);
   loader = sysprof_document_loader_new (argv[1]);
   sysprof_document_loader_set_symbolizer (loader, sysprof_no_symbolizer_get ());
 
@@ -60,16 +49,31 @@ main (int   argc,
       return 1;
     }
 
-  model = sysprof_document_list_cpu_info (document);
-  n_items = g_list_model_get_n_items (model);
+  processes = sysprof_document_list_processes (document);
+  n_items = g_list_model_get_n_items (processes);
 
   for (guint i = 0; i < n_items; i++)
     {
-      g_autoptr(SysprofCpuInfo) cpu_info = g_list_model_get_item (model, i);
+      g_autoptr(SysprofDocumentProcess) process = g_list_model_get_item (processes, i);
 
-      g_print ("processor %u: %s\n",
-               sysprof_cpu_info_get_id (cpu_info),
-               sysprof_cpu_info_get_model_name (cpu_info));
+      if (sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process)) == pid)
+        {
+          g_autoptr(GListModel) memory_maps = sysprof_document_process_list_memory_maps (process);
+          guint n_maps = g_list_model_get_n_items (memory_maps);
+
+          for (guint j = 0; j < n_maps; j++)
+            {
+              g_autoptr(SysprofDocumentMmap) map = g_list_model_get_item (memory_maps, j);
+
+              g_print ("    [0x%"G_GINT64_MODIFIER"x:0x%"G_GINT64_MODIFIER"x] %s <+0x%"G_GINT64_MODIFIER"x>\n",
+                       sysprof_document_mmap_get_start_address (map),
+                       sysprof_document_mmap_get_end_address (map),
+                       sysprof_document_mmap_get_file (map),
+                       sysprof_document_mmap_get_file_offset (map));
+            }
+
+          break;
+        }
     }
 
   return 0;

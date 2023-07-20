@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-axis.h"
 #include "sysprof-chart-layer.h"

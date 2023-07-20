@@ -1,11 +1,11 @@
 ipc_profiler_src = gnome.gdbus_codegen('ipc-profiler',
-           sources: '../org.gnome.Sysprof3.Profiler.xml',
+           sources: 'org.gnome.Sysprof3.Profiler.xml',
   interface_prefix: 'org.gnome.Sysprof3.',
          namespace: 'Ipc',
 )
 
 ipc_service_src = gnome.gdbus_codegen('ipc-service',
-           sources: '../org.gnome.Sysprof3.Service.xml',
+           sources: 'org.gnome.Sysprof3.Service.xml',
   interface_prefix: 'org.gnome.Sysprof3.',
          namespace: 'Ipc',
 )

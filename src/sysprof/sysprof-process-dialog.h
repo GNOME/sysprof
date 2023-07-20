@@ -22,7 +22,7 @@
 
 #include <adwaita.h>
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 G_BEGIN_DECLS
 

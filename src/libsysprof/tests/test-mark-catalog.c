@@ -1,4 +1,4 @@
-/* test-list-jitmap.c
+/* test-mark-catalog.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-document-private.h"
 
@@ -28,9 +28,9 @@ main (int   argc,
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofDocument) document = NULL;
-  g_autoptr(GListModel) model = NULL;
+  g_autoptr(GListModel) groups = NULL;
   g_autoptr(GError) error = NULL;
-  guint n_items;
+  guint n_groups;
 
   if (argc < 2)
     {
@@ -47,28 +47,24 @@ main (int   argc,
       return 1;
     }
 
-  model = sysprof_document_list_jitmaps (document);
-  n_items = g_list_model_get_n_items (model);
+  groups = sysprof_document_catalog_marks (document);
+  n_groups = g_list_model_get_n_items (groups);
 
-  for (guint i = 0; i < n_items; i++)
+  for (guint i = 0; i < n_groups; i++)
     {
-      g_autoptr(SysprofDocumentFrame) frame = g_list_model_get_item (model, i);
+      g_autoptr(GListModel) catalogs = g_list_model_get_item (groups, i);
+      guint n_catalogs = g_list_model_get_n_items (catalogs);
 
-      if (SYSPROF_IS_DOCUMENT_JITMAP (frame))
+      for (guint j = 0; j < n_catalogs; j++)
         {
-          SysprofDocumentJitmap *jitmap = SYSPROF_DOCUMENT_JITMAP (frame);
-          guint size = sysprof_document_jitmap_get_size (jitmap);
+          g_autoptr(SysprofMarkCatalog) catalog = g_list_model_get_item (catalogs, j);
+          const char *group = sysprof_mark_catalog_get_group (catalog);
+          const char *name = sysprof_mark_catalog_get_name (catalog);
 
-          for (guint j = 0; j < size; j++)
-            {
-              SysprofAddress address;
-              const char *name;
+          if (j == 0)
+            g_print ("%s\n", group);
 
-              if (!(name = sysprof_document_jitmap_get_mapping (jitmap, j, &address)))
-                break;
-
-              g_print ("0x%"G_GINT64_MODIFIER"x: %s\n", address, name);
-            }
+          g_print ("  %s\n", name);
         }
     }
 

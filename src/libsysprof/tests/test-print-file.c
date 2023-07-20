@@ -1,4 +1,4 @@
-/* test-mark-catalog.c
+/* test-print-file.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-document-private.h"
 
@@ -27,14 +27,15 @@ main (int   argc,
       char *argv[])
 {
   g_autoptr(SysprofDocumentLoader) loader = NULL;
+  g_autoptr(SysprofDocumentFile) file = NULL;
   g_autoptr(SysprofDocument) document = NULL;
-  g_autoptr(GListModel) groups = NULL;
+  g_autoptr(GListModel) files = NULL;
   g_autoptr(GError) error = NULL;
-  guint n_groups;
+  g_autoptr(GBytes) bytes = NULL;
 
-  if (argc < 2)
+  if (argc < 3)
     {
-      g_printerr ("usage: %s CAPTURE_FILE\n", argv[0]);
+      g_printerr ("usage: %s CAPTURE_FILE EMBEDDED_FILE_PATH\n", argv[0]);
       return 1;
     }
 
@@ -47,26 +48,19 @@ main (int   argc,
       return 1;
     }
 
-  groups = sysprof_document_catalog_marks (document);
-  n_groups = g_list_model_get_n_items (groups);
+  file = sysprof_document_lookup_file (document, argv[2]);
 
-  for (guint i = 0; i < n_groups; i++)
+  if (file == NULL)
     {
-      g_autoptr(GListModel) catalogs = g_list_model_get_item (groups, i);
-      guint n_catalogs = g_list_model_get_n_items (catalogs);
-
-      for (guint j = 0; j < n_catalogs; j++)
-        {
-          g_autoptr(SysprofMarkCatalog) catalog = g_list_model_get_item (catalogs, j);
-          const char *group = sysprof_mark_catalog_get_group (catalog);
-          const char *name = sysprof_mark_catalog_get_name (catalog);
-
-          if (j == 0)
-            g_print ("%s\n", group);
-
-          g_print ("  %s\n", name);
-        }
+      g_printerr ("File \"%s\" not found.\n", argv[2]);
+      return 1;
     }
+
+  bytes = sysprof_document_file_dup_bytes (file);
+
+  write (STDOUT_FILENO,
+         g_bytes_get_data (bytes, NULL),
+         g_bytes_get_size (bytes));
 
   return 0;
 }

@@ -1,7 +1,7 @@
 #include <errno.h>
 #include <fcntl.h>
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-document-private.h"
 

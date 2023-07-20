@@ -23,7 +23,7 @@
 #include <glib-unix.h>
 #include <glib/gstdio.h>
 
-#include <sysprof-profile.h>
+#include <sysprof.h>
 
 static GMainLoop *main_loop;
 static char *capture_file;

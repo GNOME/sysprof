@@ -23,7 +23,7 @@
 #include <glib/gi18n.h>
 #include <locale.h>
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 typedef struct _Augment
 {

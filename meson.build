@@ -38,13 +38,13 @@ need_gtk = get_option('gtk')
 need_glib = (need_gtk or
              get_option('examples') or
              get_option('sysprofd') != 'none' or
-             get_option('agent') or
+             get_option('tools') or
 	     get_option('tests'))
-
-# Determine what libraries to build
-need_libsysprof_capture = true
-need_libsysprof_profile = get_option('gtk') or get_option('agent')
-need_libsysprof_analyze = get_option('gtk') or get_option('agent')
+need_libsysprof = (need_gtk or
+                   get_option('libsysprof') or
+                   get_option('examples') or
+                   get_option('tools') or
+                   get_option('tests'))
 
 dex_req = '0.3'
 glib_req = '2.76.0'

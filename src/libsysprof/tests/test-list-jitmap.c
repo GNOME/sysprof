@@ -1,4 +1,4 @@
-/* test-list-address-layout.c
+/* test-list-jitmap.c
  *
  * Copyright 2023 Christian Hergert <chergert@redhat.com>
  *
@@ -18,7 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <sysprof-analyze.h>
+#include <sysprof.h>
 
 #include "sysprof-document-private.h"
 
@@ -26,20 +26,18 @@ int
 main (int   argc,
       char *argv[])
 {
-  g_autoptr(SysprofDocumentLoader) loader  = NULL;
+  g_autoptr(SysprofDocumentLoader) loader = NULL;
   g_autoptr(SysprofDocument) document = NULL;
-  g_autoptr(GListModel) processes = NULL;
+  g_autoptr(GListModel) model = NULL;
   g_autoptr(GError) error = NULL;
   guint n_items;
-  int pid;
 
-  if (argc < 3)
+  if (argc < 2)
     {
-      g_printerr ("usage: %s CAPTURE_FILE PID\n", argv[0]);
+      g_printerr ("usage: %s CAPTURE_FILE\n", argv[0]);
       return 1;
     }
 
-  pid = atoi (argv[2]);
   loader = sysprof_document_loader_new (argv[1]);
   sysprof_document_loader_set_symbolizer (loader, sysprof_no_symbolizer_get ());
 
@@ -49,30 +47,28 @@ main (int   argc,
       return 1;
     }
 
-  processes = sysprof_document_list_processes (document);
-  n_items = g_list_model_get_n_items (processes);
+  model = sysprof_document_list_jitmaps (document);
+  n_items = g_list_model_get_n_items (model);
 
   for (guint i = 0; i < n_items; i++)
     {
-      g_autoptr(SysprofDocumentProcess) process = g_list_model_get_item (processes, i);
+      g_autoptr(SysprofDocumentFrame) frame = g_list_model_get_item (model, i);
 
-      if (sysprof_document_frame_get_pid (SYSPROF_DOCUMENT_FRAME (process)) == pid)
+      if (SYSPROF_IS_DOCUMENT_JITMAP (frame))
         {
-          g_autoptr(GListModel) memory_maps = sysprof_document_process_list_memory_maps (process);
-          guint n_maps = g_list_model_get_n_items (memory_maps);
+          SysprofDocumentJitmap *jitmap = SYSPROF_DOCUMENT_JITMAP (frame);
+          guint size = sysprof_document_jitmap_get_size (jitmap);
 
-          for (guint j = 0; j < n_maps; j++)
+          for (guint j = 0; j < size; j++)
             {
-              g_autoptr(SysprofDocumentMmap) map = g_list_model_get_item (memory_maps, j);
+              SysprofAddress address;
+              const char *name;
 
-              g_print ("    [0x%"G_GINT64_MODIFIER"x:0x%"G_GINT64_MODIFIER"x] %s <+0x%"G_GINT64_MODIFIER"x>\n",
-                       sysprof_document_mmap_get_start_address (map),
-                       sysprof_document_mmap_get_end_address (map),
-                       sysprof_document_mmap_get_file (map),
-                       sysprof_document_mmap_get_file_offset (map));
+              if (!(name = sysprof_document_jitmap_get_mapping (jitmap, j, &address)))
+                break;
+
+              g_print ("0x%"G_GINT64_MODIFIER"x: %s\n", address, name);
             }
-
-          break;
         }
     }
 

@@ -138,6 +138,14 @@
       <object class="SysprofTreeExpander" id="expander">
         <property name="focusable">true</property>
         <property name="menu-model">menu_model</property>
+        <property name="has-tooltip">true</property>
+        <binding name="tooltip-text">
+          <lookup name="tooltip-text" type="SysprofSymbol">
+            <lookup name="symbol" type="SysprofCallgraphFrame">
+              <lookup name="item">expander</lookup>
+            </lookup>
+          </lookup>
+        </binding>
         <child>
           <object class="GtkShortcutController">
             <property name="propagation-phase">capture</property>
@@ -168,14 +176,6 @@
           <object class="GtkBox">
             <property name="hexpand">true</property>
             <property name="spacing">6</property>
-            <property name="has-tooltip">true</property>
-            <binding name="tooltip-text">
-              <lookup name="binary-path" type="SysprofSymbol">
-                <lookup name="symbol" type="SysprofCallgraphFrame">
-                  <lookup name="item">expander</lookup>
-                </lookup>
-              </lookup>
-            </binding>
             <child>
               <object class="SysprofSymbolLabel">
                 <property name="hexpand">true</property>

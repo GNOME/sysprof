@@ -126,6 +126,11 @@ static RuleGroup rule_groups[] = {
       { RULE_PREFIX, TRUE, CATEGORY_TEMPLATES, "gtk_builder_" },
       { RULE_PREFIX, TRUE, CATEGORY_TEMPLATES, "gtk_buildable_" },
       { RULE_PREFIX, TRUE, CATEGORY_LAYOUT, "gtk_widget_root" },
+      { RULE_PREFIX, TRUE, CATEGORY_PAINT, "gdk_frame_clock_paint" },
+      { RULE_PREFIX, TRUE, CATEGORY_LAYOUT, "_gdk_frame_clock_emit_layout" },
+      { RULE_PREFIX, TRUE, CATEGORY_PAINT, "_gdk_frame_clock_emit_paint" },
+      { RULE_PREFIX, TRUE, CATEGORY_PAINT, "_gdk_frame_clock_emit_after_paint" },
+      { RULE_PREFIX, TRUE, CATEGORY_INPUT, "gdk_surface_handle_event" },
       { 0 }
     }
   },

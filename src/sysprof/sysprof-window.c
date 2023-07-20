@@ -125,6 +125,7 @@ sysprof_window_set_document (SysprofWindow   *self,
 {
   static const char *callgraph_actions[] = {
     "bottom-up",
+    "categorize-frames",
     "hide-system-libraries",
     "include-threads",
   };

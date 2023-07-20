@@ -92,6 +92,11 @@
                 <lookup name="session">SysprofSamplesSection</lookup>
               </lookup>
             </binding>
+            <binding name="categorize-frames">
+              <lookup name="categorize-frames" type="SysprofSession">
+                <lookup name="session">SysprofSamplesSection</lookup>
+              </lookup>
+            </binding>
             <binding name="document">
               <lookup name="document" type="SysprofSession">
                 <lookup name="session">SysprofSamplesSection</lookup>

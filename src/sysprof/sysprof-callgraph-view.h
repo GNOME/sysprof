@@ -46,6 +46,9 @@ void              sysprof_callgraph_view_set_traceables            (SysprofCallg
 gboolean          sysprof_callgraph_view_get_bottom_up             (SysprofCallgraphView *self);
 void              sysprof_callgraph_view_set_bottom_up             (SysprofCallgraphView *self,
                                                                     gboolean              bottom_up);
+gboolean          sysprof_callgraph_view_get_categorize_frames     (SysprofCallgraphView *self);
+void              sysprof_callgraph_view_set_categorize_frames     (SysprofCallgraphView *self,
+                                                                    gboolean              categorize_frames);
 gboolean          sysprof_callgraph_view_get_include_threads       (SysprofCallgraphView *self);
 void              sysprof_callgraph_view_set_include_threads       (SysprofCallgraphView *self,
                                                                     gboolean              include_threads);

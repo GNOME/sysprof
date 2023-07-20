@@ -32,6 +32,7 @@
 enum {
   PROP_0,
   PROP_BOTTOM_UP,
+  PROP_CATEGORIZE_FRAMES,
   PROP_CALLGRAPH,
   PROP_DOCUMENT,
   PROP_HIDE_SYSTEM_LIBRARIES,
@@ -323,6 +324,10 @@ sysprof_callgraph_view_get_property (GObject    *object,
       g_value_set_boolean (value, sysprof_callgraph_view_get_bottom_up (self));
       break;
 
+    case PROP_CATEGORIZE_FRAMES:
+      g_value_set_boolean (value, sysprof_callgraph_view_get_categorize_frames (self));
+      break;
+
     case PROP_CALLGRAPH:
       g_value_set_object (value, sysprof_callgraph_view_get_callgraph (self));
       break;
@@ -366,6 +371,10 @@ sysprof_callgraph_view_set_property (GObject      *object,
       sysprof_callgraph_view_set_bottom_up (self, g_value_get_boolean (value));
       break;
 
+    case PROP_CATEGORIZE_FRAMES:
+      sysprof_callgraph_view_set_categorize_frames (self, g_value_get_boolean (value));
+      break;
+
     case PROP_DOCUMENT:
       sysprof_callgraph_view_set_document (self, g_value_get_object (value));
       break;
@@ -400,6 +409,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   properties[PROP_BOTTOM_UP] =
     g_param_spec_boolean ("bottom-up", NULL, NULL,
                           FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_CATEGORIZE_FRAMES] =
+    g_param_spec_boolean ("categorize-frames", NULL, NULL,
+                          TRUE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_CALLGRAPH] =
@@ -460,6 +474,8 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 static void
 sysprof_callgraph_view_init (SysprofCallgraphView *self)
 {
+  self->categorize_frames = TRUE;
+
   self->traceables_signals = g_signal_group_new (G_TYPE_LIST_MODEL);
   g_signal_connect_object (self->traceables_signals,
                            "bind",
@@ -582,6 +598,9 @@ sysprof_callgraph_view_reload (SysprofCallgraphView *self)
 
   if (self->bottom_up)
     flags |= SYSPROF_CALLGRAPH_FLAGS_BOTTOM_UP;
+
+  if (self->categorize_frames)
+    flags |= SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES;
 
   sysprof_document_callgraph_async (self->document,
                                     flags,
@@ -737,6 +756,30 @@ sysprof_callgraph_view_set_bottom_up (SysprofCallgraphView *self,
     {
       self->bottom_up = bottom_up;
       g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_BOTTOM_UP]);
+      sysprof_callgraph_view_queue_reload (self);
+    }
+}
+
+gboolean
+sysprof_callgraph_view_get_categorize_frames (SysprofCallgraphView *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self), FALSE);
+
+  return self->categorize_frames;
+}
+
+void
+sysprof_callgraph_view_set_categorize_frames (SysprofCallgraphView *self,
+                                              gboolean              categorize_frames)
+{
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  categorize_frames = !!categorize_frames;
+
+  if (self->categorize_frames != categorize_frames)
+    {
+      self->categorize_frames = categorize_frames;
+      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CATEGORIZE_FRAMES]);
       sysprof_callgraph_view_queue_reload (self);
     }
 }

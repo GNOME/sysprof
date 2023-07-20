@@ -51,6 +51,7 @@ struct _SysprofCallgraphView
   guint reload_source;
 
   guint bottom_up : 1;
+  guint categorize_frames : 1;
   guint include_threads : 1;
   guint hide_system_libraries : 1;
 };

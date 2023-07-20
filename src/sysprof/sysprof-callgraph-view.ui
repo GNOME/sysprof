@@ -235,6 +235,10 @@
     <section>
       <attribute name="label" translatable="yes">Options</attribute>
       <item>
+        <attribute name="label" translatable="yes">Categorize Frames</attribute>
+        <attribute name="action">win.callgraph.categorize-frames</attribute>
+      </item>
+      <item>
         <attribute name="label" translatable="yes">Hide System Libraries</attribute>
         <attribute name="action">win.callgraph.hide-system-libraries</attribute>
       </item>

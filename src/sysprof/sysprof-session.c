@@ -40,6 +40,7 @@ struct _SysprofSession
   SysprofTimeSpan  visible_time;
 
   guint            bottom_up : 1;
+  guint            categorize_frames : 1;
   guint            include_threads : 1;
   guint            hide_system_libraries : 1;
 };
@@ -52,6 +53,7 @@ enum {
   PROP_FILTER,
   PROP_HIDE_SYSTEM_LIBRARIES,
   PROP_INCLUDE_THREADS,
+  PROP_CATEGORIZE_FRAMES,
   PROP_SELECTED_TIME,
   PROP_SELECTED_TIME_AXIS,
   PROP_VISIBLE_TIME,
@@ -124,6 +126,10 @@ sysprof_session_get_property (GObject    *object,
       g_value_set_boolean (value, self->bottom_up);
       break;
 
+    case PROP_CATEGORIZE_FRAMES:
+      g_value_set_boolean (value, self->categorize_frames);
+      break;
+
     case PROP_DOCUMENT:
       g_value_set_object (value, sysprof_session_get_document (self));
       break;
@@ -179,6 +185,10 @@ sysprof_session_set_property (GObject      *object,
       self->bottom_up = g_value_get_boolean (value);
       break;
 
+    case PROP_CATEGORIZE_FRAMES:
+      self->categorize_frames = g_value_get_boolean (value);
+      break;
+
     case PROP_DOCUMENT:
       sysprof_session_set_document (self, g_value_get_object (value));
       break;
@@ -207,6 +217,11 @@ sysprof_session_class_init (SysprofSessionClass *klass)
 
   properties [PROP_BOTTOM_UP] =
     g_param_spec_boolean ("bottom-up", NULL, NULL,
+                          FALSE,
+                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_CATEGORIZE_FRAMES] =
+    g_param_spec_boolean ("categorize-frames", NULL, NULL,
                           FALSE,
                           (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
@@ -264,6 +279,7 @@ sysprof_session_init (SysprofSession *self)
   self->filter = gtk_every_filter_new ();
   self->selected_time_axis = sysprof_value_axis_new (0, 0);
   self->visible_time_axis = sysprof_value_axis_new (0, 0);
+  self->categorize_frames = TRUE;
 }
 
 SysprofSession *

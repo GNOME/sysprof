@@ -33,7 +33,9 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (SysprofCaptureWriter, sysprof_capture_writer_unre
 
 struct _SysprofGreeter
 {
-  AdwWindow  parent_instance;
+  AdwWindow           parent_instance;
+
+  GFile              *file;
 
   AdwViewStack       *view_stack;
   GtkBox             *toolbar;
@@ -50,6 +52,7 @@ struct _SysprofGreeter
 
 enum {
   PROP_0,
+  PROP_FILE,
   N_PROPS
 };
 
@@ -233,6 +236,86 @@ sysprof_greeter_record_to_file_action (GtkWidget  *widget,
 }
 
 static void
+sysprof_greeter_choose_file_for_open_cb (GObject      *object,
+                                         GAsyncResult *result,
+                                         gpointer      user_data)
+{
+  GtkFileDialog *dialog = (GtkFileDialog *)object;
+  g_autoptr(SysprofGreeter) self = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GFile) file = NULL;
+
+  g_assert (GTK_IS_FILE_DIALOG (dialog));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_GREETER (self));
+
+  if ((file = gtk_file_dialog_open_finish (dialog, result, &error)))
+    {
+      if (g_file_is_native (file))
+        {
+          if (g_set_object (&self->file, file))
+            g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_FILE]);
+        }
+      else
+        {
+          GtkWidget *message;
+
+          message = adw_message_dialog_new (NULL,
+                                            _("Must Capture to Local File"),
+                                            _("You must choose a local file to capture using Sysprof"));
+          adw_message_dialog_add_response (ADW_MESSAGE_DIALOG (message), "close", _("Close"));
+          gtk_window_present (GTK_WINDOW (message));
+        }
+    }
+}
+
+static void
+sysprof_greeter_select_file_action (GtkWidget  *widget,
+                                    const char *action_name,
+                                    GVariant   *param)
+{
+  SysprofGreeter *self = (SysprofGreeter *)widget;
+  g_autoptr(GtkFileDialog) dialog = NULL;
+  g_autoptr(GtkFileFilter) filter = NULL;
+  g_autoptr(GListStore) filters = NULL;
+
+  g_assert (SYSPROF_IS_GREETER (self));
+
+  dialog = gtk_file_dialog_new ();
+  gtk_file_dialog_set_title (dialog, _("Open Recording"));
+  gtk_file_dialog_set_accept_label (dialog, _("Open"));
+  gtk_file_dialog_set_modal (dialog, TRUE);
+
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name (filter, _("Sysprof Capture (*.syscap)"));
+  gtk_file_filter_add_mime_type (filter, "application/x-sysprof-capture");
+  gtk_file_filter_add_suffix (filter, "syscap");
+
+  filters = g_list_store_new (GTK_TYPE_FILE_FILTER);
+  g_list_store_append (filters, filter);
+  gtk_file_dialog_set_filters (dialog, G_LIST_MODEL (filters));
+
+  if (self->file)
+    gtk_file_dialog_set_initial_file (dialog, self->file);
+
+  gtk_file_dialog_open (dialog,
+                        GTK_WINDOW (self),
+                        NULL,
+                        sysprof_greeter_choose_file_for_open_cb,
+                        g_object_ref (self));
+}
+
+static char *
+get_file_path (gpointer  unused,
+               GFile    *file)
+{
+  if (file)
+    return g_file_get_path (file);
+
+  return NULL;
+}
+
+static void
 sysprof_greeter_dispose (GObject *object)
 {
   SysprofGreeter *self = (SysprofGreeter *)object;
@@ -252,6 +335,10 @@ sysprof_greeter_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_FILE:
+      g_value_set_object (value, self->file);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -267,6 +354,10 @@ sysprof_greeter_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_FILE:
+      g_set_object (&self->file, g_value_get_object (value));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -281,6 +372,13 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   object_class->dispose = sysprof_greeter_dispose;
   object_class->get_property = sysprof_greeter_get_property;
   object_class->set_property = sysprof_greeter_set_property;
+
+  properties [PROP_FILE] =
+    g_param_spec_object ("file", NULL, NULL,
+                         G_TYPE_FILE,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_properties (object_class, N_PROPS, properties);
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-greeter.ui");
 
@@ -297,9 +395,11 @@ sysprof_greeter_class_init (SysprofGreeterClass *klass)
   gtk_widget_class_bind_template_child (widget_class, SysprofGreeter, view_stack);
 
   gtk_widget_class_bind_template_callback (widget_class, sysprof_greeter_view_stack_notify_visible_child);
+  gtk_widget_class_bind_template_callback (widget_class, get_file_path);
 
   gtk_widget_class_install_action (widget_class, "win.record-to-memory", NULL, sysprof_greeter_record_to_memory_action);
   gtk_widget_class_install_action (widget_class, "win.record-to-file", NULL, sysprof_greeter_record_to_file_action);
+  gtk_widget_class_install_action (widget_class, "win.select-file", NULL, sysprof_greeter_select_file_action);
 }
 
 static void

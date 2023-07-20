@@ -306,7 +306,7 @@ add_process_output_as_file (SysprofRecording *recording,
   if (!g_shell_parse_argv (command_line, &argc, &argv, &error))
     goto error;
 
-  launcher = g_subprocess_launcher_new (G_SUBPROCESS_FLAGS_STDOUT_PIPE);
+  launcher = g_subprocess_launcher_new (G_SUBPROCESS_FLAGS_STDOUT_PIPE | G_SUBPROCESS_FLAGS_STDERR_SILENCE);
   if (!(subprocess = g_subprocess_launcher_spawnv (launcher, (const char * const *)argv, &error)))
     goto error;
 

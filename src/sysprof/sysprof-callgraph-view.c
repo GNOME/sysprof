@@ -25,6 +25,7 @@
 #include "sysprof-resources.h"
 
 #include "sysprof-callgraph-view-private.h"
+#include "sysprof-category-icon.h"
 #include "sysprof-symbol-label-private.h"
 #include "sysprof-tree-expander.h"
 
@@ -451,6 +452,7 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
   g_resources_register (sysprof_get_resource ());
 
   g_type_ensure (PANEL_TYPE_PANED);
+  g_type_ensure (SYSPROF_TYPE_CATEGORY_ICON);
   g_type_ensure (SYSPROF_TYPE_SYMBOL_LABEL);
   g_type_ensure (SYSPROF_TYPE_TREE_EXPANDER);
 }

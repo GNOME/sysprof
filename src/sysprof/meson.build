@@ -3,6 +3,7 @@ sysprof_sources = [
   'sysprof-application.c',
   'sysprof-axis.c',
   'sysprof-callgraph-view.c',
+  'sysprof-category-icon.c',
   'sysprof-chart-layer.c',
   'sysprof-chart.c',
   'sysprof-color-iter.c',

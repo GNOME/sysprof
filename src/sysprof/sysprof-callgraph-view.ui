@@ -207,6 +207,19 @@
                 </binding>
               </object>
             </child>
+            <child>
+              <object class="SysprofCategoryIcon">
+                <property name="width-request">9</property>
+                <property name="height-request">9</property>
+                <property name="valign">center</property>
+                <property name="halign">center</property>
+                <binding name="symbol">
+                  <lookup name="symbol" type="SysprofCallgraphFrame">
+                    <lookup name="item">expander</lookup>
+                  </lookup>
+                </binding>
+              </object>
+            </child>
           </object>
         </property>
       </object>

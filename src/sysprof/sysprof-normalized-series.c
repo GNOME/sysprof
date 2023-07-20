@@ -90,6 +90,7 @@ sysprof_normalized_series_update_missing (gint64   deadline,
 
   if (egg_bitset_iter_init_first (&iter, bitset, &position))
     {
+      guint count = 0;
       guint first = position;
 
       for (;;)
@@ -104,6 +105,8 @@ sysprof_normalized_series_update_missing (gint64   deadline,
 
           g_assert (self->values->len > position);
 
+          count++;
+
           if (!self->inverted)
             *fval = _sysprof_axis_normalize (self->axis, &value);
           else
@@ -114,7 +117,8 @@ sysprof_normalized_series_update_missing (gint64   deadline,
           if (self->disposed)
             break;
 
-          expired = g_get_monotonic_time () >= deadline;
+          /* Only do expiry check every 10 items */
+          expired = count % 10 == 0 && g_get_monotonic_time () >= deadline;
 
           if (!egg_bitset_iter_init_first (&iter, bitset, &next) ||
               next != position + 1 ||

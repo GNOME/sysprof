@@ -50,5 +50,14 @@ GListModel    *sysprof_callgraph_frame_list_traceables_finish (SysprofCallgraphF
                                                                GError                **error);
 SYSPROF_AVAILABLE_IN_ALL
 gboolean       sysprof_callgraph_frame_is_leaf                (SysprofCallgraphFrame  *self);
+SYSPROF_AVAILABLE_IN_ALL
+void           sysprof_callgraph_frame_summarize_async        (SysprofCallgraphFrame  *self,
+                                                               GCancellable           *cancellable,
+                                                               GAsyncReadyCallback     callback,
+                                                               gpointer                user_data);
+SYSPROF_AVAILABLE_IN_ALL
+GListModel    *sysprof_callgraph_frame_summarize_finish       (SysprofCallgraphFrame  *self,
+                                                               GAsyncResult           *result,
+                                                               GError                **error);
 
 G_END_DECLS

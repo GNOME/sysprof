@@ -24,6 +24,7 @@
 
 #include "sysprof-callgraph-private.h"
 #include "sysprof-callgraph-frame-private.h"
+#include "sysprof-category-summary.h"
 #include "sysprof-enums.h"
 #include "sysprof-symbol-private.h"
 #include "sysprof-document-bitset-index-private.h"
@@ -507,4 +508,77 @@ sysprof_callgraph_frame_get_category (SysprofCallgraphFrame *self)
     return self->node->category & ~SYSPROF_CALLGRAPH_CATEGORY_INHERIT;
 
   return SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;
+}
+
+static void
+summarize_node (const SysprofCallgraphNode *node,
+                GListStore                 *store,
+                GHashTable                 *category_to_summary)
+{
+  for (const SysprofCallgraphNode *iter = node->children; iter; iter = iter->next)
+    summarize_node (iter, store, category_to_summary);
+}
+
+static void
+sysprof_callgraph_frame_summarize (GTask        *task,
+                                   gpointer      source_object,
+                                   gpointer      task_data,
+                                   GCancellable *cancellable)
+{
+  SysprofCallgraphFrame *self = source_object;
+  g_autoptr(GHashTable) category_to_summary = NULL;
+  g_autoptr(GListStore) store = NULL;
+
+  g_assert (G_IS_TASK (task));
+  g_assert (SYSPROF_IS_CALLGRAPH_FRAME (self));
+  g_assert (SYSPROF_IS_CALLGRAPH (task_data));
+
+  store = g_list_store_new (G_TYPE_OBJECT);
+  category_to_summary = g_hash_table_new (NULL, NULL);
+
+  summarize_node (self->node, store, category_to_summary);
+
+  g_task_return_pointer (task, g_steal_pointer (&store), g_object_unref);
+}
+
+void
+sysprof_callgraph_frame_summarize_async (SysprofCallgraphFrame *self,
+                                         GCancellable          *cancellable,
+                                         GAsyncReadyCallback    callback,
+                                         gpointer               user_data)
+{
+  g_autoptr(GTask) task = NULL;
+
+  g_return_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self));
+
+  task = g_task_new (self, cancellable, callback, user_data);
+  g_task_set_source_tag (task, sysprof_callgraph_frame_summarize_async);
+
+  if (self->callgraph == NULL)
+    {
+      g_task_return_new_error (task,
+                               G_IO_ERROR,
+                               G_IO_ERROR_FAILED,
+                               "Callgraph disposed");
+      return;
+    }
+
+  g_task_set_task_data (task, g_object_ref (self->callgraph), g_object_unref);
+  g_task_run_in_thread (task, sysprof_callgraph_frame_summarize);
+}
+
+/**
+ * sysprof_callgraph_frame_summarize_finish:
+ *
+ * Returns: (transfer full): a #GListModel of #SysprofCategorySummary
+ */
+GListModel *
+sysprof_callgraph_frame_summarize_finish (SysprofCallgraphFrame  *self,
+                                          GAsyncResult           *result,
+                                          GError                **error)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
 }

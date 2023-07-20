@@ -30,6 +30,7 @@ G_BEGIN_DECLS
 # include "sysprof-callgraph-frame.h"
 # include "sysprof-callgraph-symbol.h"
 # include "sysprof-callgraph.h"
+# include "sysprof-category-summary.h"
 # include "sysprof-cpu-info.h"
 # include "sysprof-cpu-usage.h"
 # include "sysprof-diagnostic.h"

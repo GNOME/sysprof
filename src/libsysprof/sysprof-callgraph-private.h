@@ -39,12 +39,13 @@ typedef struct _SysprofCallgraphSummary
 
 struct _SysprofCallgraphNode
 {
-  SysprofCallgraphNode    *parent;
-  SysprofCallgraphNode    *prev;
-  SysprofCallgraphNode    *next;
-  SysprofCallgraphNode    *children;
-  SysprofCallgraphSummary *summary;
-  gpointer                 augment[2];
+  SysprofCallgraphNode     *parent;
+  SysprofCallgraphNode     *prev;
+  SysprofCallgraphNode     *next;
+  SysprofCallgraphNode     *children;
+  SysprofCallgraphSummary  *summary;
+  gpointer                  augment[2];
+  SysprofCallgraphCategory  category;
 };
 
 struct _SysprofCallgraph

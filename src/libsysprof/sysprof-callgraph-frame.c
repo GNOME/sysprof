@@ -24,6 +24,7 @@
 
 #include "sysprof-callgraph-private.h"
 #include "sysprof-callgraph-frame-private.h"
+#include "sysprof-enums.h"
 #include "sysprof-symbol-private.h"
 #include "sysprof-document-bitset-index-private.h"
 
@@ -43,6 +44,7 @@ struct _SysprofCallgraphFrame
 enum {
   PROP_0,
   PROP_CALLGRAPH,
+  PROP_CATEGORY,
   PROP_SYMBOL,
   PROP_N_ITEMS,
   N_PROPS
@@ -123,6 +125,10 @@ sysprof_callgraph_frame_get_property (GObject    *object,
       g_value_set_object (value, self->callgraph);
       break;
 
+    case PROP_CATEGORY:
+      g_value_set_enum (value, sysprof_callgraph_frame_get_category (self));
+      break;
+
     case PROP_N_ITEMS:
       g_value_set_uint (value, g_list_model_get_n_items (G_LIST_MODEL (self)));
       break;
@@ -148,6 +154,12 @@ sysprof_callgraph_frame_class_init (SysprofCallgraphFrameClass *klass)
     g_param_spec_object ("callgraph", NULL, NULL,
                          SYSPROF_TYPE_CALLGRAPH,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_CATEGORY] =
+    g_param_spec_enum ("category", NULL, NULL,
+                       SYSPROF_TYPE_CALLGRAPH_CATEGORY,
+                       SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED,
+                       (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties [PROP_N_ITEMS] =
     g_param_spec_uint ("n-items", NULL, NULL,
@@ -474,4 +486,24 @@ sysprof_callgraph_frame_is_leaf (SysprofCallgraphFrame *self)
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), 0);
 
   return self->n_children == 0;
+}
+
+/**
+ * sysprof_callgraph_frame_get_category:
+ * @self: a #SysprofCallgraphFrame
+ *
+ * Gets the category of the node if %SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES
+ * was set when generating the callgraph. Otherwise 0.
+ *
+ * Returns: 0 or a callgraph category
+ */
+SysprofCallgraphCategory
+sysprof_callgraph_frame_get_category (SysprofCallgraphFrame *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), 0);
+
+  if (self->callgraph == NULL || self->node == NULL)
+    return 0;
+
+  return self->node->category;
 }

@@ -284,6 +284,52 @@ reverse_symbols (SysprofSymbol **symbols,
 }
 
 static void
+sysprof_callgraph_categorize (SysprofCallgraph     *self,
+                              SysprofCallgraphNode *node)
+{
+  SysprofSymbol *symbol = node->summary->symbol;
+
+  if (node->category)
+    return;
+
+  if (node->parent && node->parent->category == 0)
+    sysprof_callgraph_categorize (self, node->parent);
+
+  switch (symbol->kind)
+    {
+    case SYSPROF_SYMBOL_KIND_ROOT:
+    case SYSPROF_SYMBOL_KIND_THREAD:
+    case SYSPROF_SYMBOL_KIND_PROCESS:
+      node->category = SYSPROF_CALLGRAPH_CATEGORY_PRESENTATION;
+      break;
+
+    case SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH:
+      node->category = SYSPROF_CALLGRAPH_CATEGORY_CONTEXT_SWITCH;
+      break;
+
+    case SYSPROF_SYMBOL_KIND_KERNEL:
+      node->category = SYSPROF_CALLGRAPH_CATEGORY_KERNEL;
+      break;
+
+    case SYSPROF_SYMBOL_KIND_UNWINDABLE:
+      node->category = SYSPROF_CALLGRAPH_CATEGORY_UNWINDABLE;
+      break;
+
+    case SYSPROF_SYMBOL_KIND_USER:
+
+      G_GNUC_FALLTHROUGH;
+
+    default:
+      if (node->parent)
+        node->category = node->parent->category;
+      else
+        node->category = SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;
+      break;
+    }
+
+}
+
+static void
 sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                                  SysprofDocumentTraceable *traceable,
                                  guint                     list_model_index)
@@ -370,6 +416,9 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                         SYSPROF_DOCUMENT_FRAME (traceable),
                         TRUE,
                         self->augment_func_data);
+
+  if ((self->flags & SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES) != 0)
+    sysprof_callgraph_categorize (self, node);
 }
 
 static void

@@ -62,46 +62,68 @@ typedef void (*SysprofAugmentationFunc) (SysprofCallgraph     *callgraph,
                                          gboolean              summarize,
                                          gpointer              user_data);
 
+typedef enum _SysprofCallgraphCategory
+{
+  SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED = 1,
+  SYSPROF_CALLGRAPH_CATEGORY_A11Y,
+  SYSPROF_CALLGRAPH_CATEGORY_ACTIONS,
+  SYSPROF_CALLGRAPH_CATEGORY_CONSTRUCTORS,
+  SYSPROF_CALLGRAPH_CATEGORY_CONTEXT_SWITCH,
+  SYSPROF_CALLGRAPH_CATEGORY_INPUT,
+  SYSPROF_CALLGRAPH_CATEGORY_KERNEL,
+  SYSPROF_CALLGRAPH_CATEGORY_LAYOUT,
+  SYSPROF_CALLGRAPH_CATEGORY_MAIN_LOOP,
+  SYSPROF_CALLGRAPH_CATEGORY_PAINT,
+  SYSPROF_CALLGRAPH_CATEGORY_PRESENTATION,
+  SYSPROF_CALLGRAPH_CATEGORY_SIGNALS,
+  SYSPROF_CALLGRAPH_CATEGORY_TEMPLATES,
+  SYSPROF_CALLGRAPH_CATEGORY_UNWINDABLE,
+  SYSPROF_CALLGRAPH_CATEGORY_WINDOWING,
+} SysprofCallgraphCategory;
+
 typedef enum _SysprofCallgraphFlags
 {
   SYSPROF_CALLGRAPH_FLAGS_NONE                  = 0,
   SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS       = 1 << 1,
   SYSPROF_CALLGRAPH_FLAGS_HIDE_SYSTEM_LIBRARIES = 1 << 2,
   SYSPROF_CALLGRAPH_FLAGS_BOTTOM_UP             = 1 << 3,
+  SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES     = 1 << 4,
 } SysprofCallgraphFlags;
 
 SYSPROF_AVAILABLE_IN_ALL
-GListModel           *sysprof_callgraph_list_symbols               (SysprofCallgraph       *self);
+GListModel               *sysprof_callgraph_list_symbols                         (SysprofCallgraph        *self);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel           *sysprof_callgraph_list_callers               (SysprofCallgraph       *self,
-                                                                    SysprofSymbol          *symbol);
+GListModel               *sysprof_callgraph_list_callers                         (SysprofCallgraph        *self,
+                                                                                  SysprofSymbol           *symbol);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel           *sysprof_callgraph_list_traceables_for_symbol (SysprofCallgraph       *self,
-                                                                    SysprofSymbol          *symbol);
+GListModel               *sysprof_callgraph_list_traceables_for_symbol           (SysprofCallgraph        *self,
+                                                                                  SysprofSymbol           *symbol);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel           *sysprof_callgraph_list_traceables_for_symbols_matching (SysprofCallgraph *self,
-                                                                              const char       *pattern);
+GListModel               *sysprof_callgraph_list_traceables_for_symbols_matching (SysprofCallgraph        *self,
+                                                                                  const char              *pattern);
 SYSPROF_AVAILABLE_IN_ALL
-void                  sysprof_callgraph_descendants_async          (SysprofCallgraph       *self,
-                                                                    SysprofSymbol          *symbol,
-                                                                    GCancellable           *cancellable,
-                                                                    GAsyncReadyCallback     callback,
-                                                                    gpointer                user_data);
+void                      sysprof_callgraph_descendants_async                    (SysprofCallgraph        *self,
+                                                                                  SysprofSymbol           *symbol,
+                                                                                  GCancellable            *cancellable,
+                                                                                  GAsyncReadyCallback      callback,
+                                                                                  gpointer                 user_data);
 SYSPROF_AVAILABLE_IN_ALL
-GListModel           *sysprof_callgraph_descendants_finish         (SysprofCallgraph        *self,
-                                                                    GAsyncResult            *result,
-                                                                    GError                 **error);
+GListModel               *sysprof_callgraph_descendants_finish                   (SysprofCallgraph        *self,
+                                                                                  GAsyncResult            *result,
+                                                                                  GError                 **error);
 SYSPROF_AVAILABLE_IN_ALL
-gpointer              sysprof_callgraph_get_augment                (SysprofCallgraph       *self,
-                                                                    SysprofCallgraphNode   *node);
+gpointer                  sysprof_callgraph_get_augment                          (SysprofCallgraph        *self,
+                                                                                  SysprofCallgraphNode    *node);
 SYSPROF_AVAILABLE_IN_ALL
-gpointer              sysprof_callgraph_get_summary_augment        (SysprofCallgraph       *self,
-                                                                    SysprofCallgraphNode   *node);
+gpointer                  sysprof_callgraph_get_summary_augment                  (SysprofCallgraph        *self,
+                                                                                  SysprofCallgraphNode    *node);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCallgraphNode *sysprof_callgraph_node_parent                (SysprofCallgraphNode   *node);
+SysprofCallgraphNode     *sysprof_callgraph_node_parent                          (SysprofCallgraphNode    *node);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCallgraph     *sysprof_callgraph_frame_get_callgraph        (SysprofCallgraphFrame  *self);
+SysprofCallgraph         *sysprof_callgraph_frame_get_callgraph                  (SysprofCallgraphFrame   *self);
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCallgraph     *sysprof_callgraph_symbol_get_callgraph       (SysprofCallgraphSymbol *self);
+SysprofCallgraphCategory  sysprof_callgraph_frame_get_category                   (SysprofCallgraphFrame   *self);
+SYSPROF_AVAILABLE_IN_ALL
+SysprofCallgraph         *sysprof_callgraph_symbol_get_callgraph                 (SysprofCallgraphSymbol  *self);
 
 G_END_DECLS

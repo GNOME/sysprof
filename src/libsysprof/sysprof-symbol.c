@@ -31,6 +31,7 @@ enum {
   PROP_BINARY_PATH,
   PROP_KIND,
   PROP_NAME,
+  PROP_TOOLTIP_TEXT,
   N_PROPS
 };
 
@@ -74,6 +75,10 @@ sysprof_symbol_get_property (GObject    *object,
       g_value_set_enum (value, sysprof_symbol_get_kind (self));
       break;
 
+    case PROP_TOOLTIP_TEXT:
+      g_value_take_string (value, sysprof_symbol_dup_tooltip_text (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
     }
@@ -99,6 +104,11 @@ sysprof_symbol_class_init (SysprofSymbolClass *klass)
 
   properties [PROP_BINARY_PATH] =
     g_param_spec_string ("binary-path", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  properties [PROP_TOOLTIP_TEXT] =
+    g_param_spec_string ("tooltip-text", NULL, NULL,
                          NULL,
                          (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
@@ -198,6 +208,27 @@ SysprofSymbolKind
 sysprof_symbol_get_kind (SysprofSymbol *self)
 {
   return self ? self->kind : 0;
+}
+
+/**
+ * sysprof_symbol_dup_tooltip_text:
+ * @self: a #SysprofSymbol
+ *
+ * Returns: (transfer full): the tooltip text
+ */
+char *
+sysprof_symbol_dup_tooltip_text (SysprofSymbol *self)
+{
+  GString *str;
+
+  g_return_val_if_fail (SYSPROF_IS_SYMBOL (self), NULL);
+
+  str = g_string_new (self->name);
+
+  if (!g_str_has_prefix (str->str, "In File") && self->binary_path)
+    g_string_append_printf (str, " [%s+0x%"G_GINT64_MODIFIER"x]", self->binary_path, self->begin_address);
+
+  return g_string_free (str, FALSE);
 }
 
 G_DEFINE_ENUM_TYPE (SysprofSymbolKind, sysprof_symbol_kind,

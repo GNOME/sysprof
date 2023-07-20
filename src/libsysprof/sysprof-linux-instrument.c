@@ -346,6 +346,7 @@ sysprof_linux_instrument_record_fiber (gpointer user_data)
   /* Try to get some info into our capture for decoding */
   add_process_output_as_file (recording, "eglinfo", "eglinfo", TRUE);
   add_process_output_as_file (recording, "glxinfo", "glxinfo", TRUE);
+  add_process_output_as_file (recording, "lsusb -v", "lsusb", TRUE);
 
   /* We need access to the bus to call various sysprofd API directly */
   if (!(bus = dex_await_object (dex_bus_get (G_BUS_TYPE_SYSTEM), &error)))

@@ -11,8 +11,12 @@ gl*                                 paint        inherit
 
 
 GLib:
-gtk_main_*                          main-loop
-gtk_wakeup_*                        main-loop    inherit
+g_main_*                            main-loop
+g_wakeup_*                          main-loop    inherit
+
+
+GdkPixbuf:
+*                                   icons        inherit
 
 
 GTK 4:
@@ -26,8 +30,10 @@ gdk_frame_clock_paint               paint        inherit
 _gdk_frame_clock_emit_paint         paint        inherit
 _gdk_frame_clock_emit_after_paint   paint        inherit
 
+_gtk_css_*                          css          inherit
+gtk_css_*                           css          inherit
+
 gtk_widget_measure                  layout       inherit
-gtk_css_*                           layout       inherit
 _gdk_frame_clock_emit_layout        layout       inherit
 gtk_builder_*                       layout       inherit
 gtk_buildable_*                     layout       inherit
@@ -40,6 +46,8 @@ gtk_window_present*                 windowing    inherit
 
 gtk_accessible_*                    a11y         inherit
 gtk_at_*                            a11y         inherit
+
+gtk_icon_*                          icons        inherit
 
 
 Harfbuzz:
@@ -54,6 +62,10 @@ epoll                               main-loop    inherit
 
 Pango:
 *                                   layout       inherit
+
+
+rsvg:
+*                                   icons        inherit
 
 
 Wayland Client:

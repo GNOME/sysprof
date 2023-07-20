@@ -24,7 +24,7 @@
 
 #include "sysprof-callgraph-private.h"
 #include "sysprof-callgraph-frame-private.h"
-#include "sysprof-category-summary.h"
+#include "sysprof-category-summary-private.h"
 #include "sysprof-enums.h"
 #include "sysprof-symbol-private.h"
 #include "sysprof-document-bitset-index-private.h"
@@ -510,13 +510,17 @@ sysprof_callgraph_frame_get_category (SysprofCallgraphFrame *self)
   return SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;
 }
 
+typedef struct _Summary
+{
+  guint64 count;
+} Summary;
+
 static void
 summarize_node (const SysprofCallgraphNode *node,
-                GListStore                 *store,
-                GHashTable                 *category_to_summary)
+                Summary                    *summaries)
 {
   for (const SysprofCallgraphNode *iter = node->children; iter; iter = iter->next)
-    summarize_node (iter, store, category_to_summary);
+    summarize_node (iter, summaries);
 }
 
 static void
@@ -526,17 +530,36 @@ sysprof_callgraph_frame_summarize (GTask        *task,
                                    GCancellable *cancellable)
 {
   SysprofCallgraphFrame *self = source_object;
-  g_autoptr(GHashTable) category_to_summary = NULL;
+  g_autofree Summary *summaries = NULL;
   g_autoptr(GListStore) store = NULL;
+  guint64 total = 0;
 
   g_assert (G_IS_TASK (task));
   g_assert (SYSPROF_IS_CALLGRAPH_FRAME (self));
   g_assert (SYSPROF_IS_CALLGRAPH (task_data));
 
-  store = g_list_store_new (G_TYPE_OBJECT);
-  category_to_summary = g_hash_table_new (NULL, NULL);
+  summaries = g_new0 (Summary, SYSPROF_CALLGRAPH_CATEGORY_LAST);
+  summarize_node (self->node, summaries);
 
-  summarize_node (self->node, store, category_to_summary);
+  store = g_list_store_new (G_TYPE_OBJECT);
+
+  for (guint i = 0; i < SYSPROF_CALLGRAPH_CATEGORY_LAST; i++)
+    total += summaries[i].count;
+
+  for (guint i = 0; i < SYSPROF_CALLGRAPH_CATEGORY_LAST; i++)
+    {
+      g_autoptr(SysprofCategorySummary) summary = NULL;
+
+      if (summaries[i].count == 0)
+        continue;
+
+      summary = g_object_new (SYSPROF_TYPE_CATEGORY_SUMMARY, NULL);
+      summary->category = i;
+      summary->total = total;
+      summary->count = summaries[i].count;
+
+      g_list_store_append (store, summary);
+    }
 
   g_task_return_pointer (task, g_steal_pointer (&store), g_object_unref);
 }

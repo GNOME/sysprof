@@ -20,16 +20,8 @@
 
 #include "config.h"
 
-#include "sysprof-category-summary.h"
+#include "sysprof-category-summary-private.h"
 #include "sysprof-enums.h"
-
-struct _SysprofCategorySummary
-{
-  GObject parent_instance;
-  SysprofCallgraphCategory category;
-  guint64 count;
-  guint64 total;
-};
 
 enum {
   PROP_0,

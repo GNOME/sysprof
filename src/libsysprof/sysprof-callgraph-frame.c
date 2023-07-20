@@ -493,17 +493,18 @@ sysprof_callgraph_frame_is_leaf (SysprofCallgraphFrame *self)
  * @self: a #SysprofCallgraphFrame
  *
  * Gets the category of the node if %SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES
- * was set when generating the callgraph. Otherwise 0.
+ * was set when generating the callgraph. Otherwise
+ * %SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED.
  *
- * Returns: 0 or a callgraph category
+ * Returns: callgraph category
  */
 SysprofCallgraphCategory
 sysprof_callgraph_frame_get_category (SysprofCallgraphFrame *self)
 {
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), 0);
 
-  if (self->callgraph == NULL || self->node == NULL)
-    return 0;
+  if (self->callgraph != NULL && self->node != NULL && self->node->category)
+    return self->node->category;
 
-  return self->node->category;
+  return SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;
 }

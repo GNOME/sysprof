@@ -213,8 +213,8 @@
                 <property name="height-request">9</property>
                 <property name="valign">center</property>
                 <property name="halign">center</property>
-                <binding name="symbol">
-                  <lookup name="symbol" type="SysprofCallgraphFrame">
+                <binding name="category">
+                  <lookup name="category" type="SysprofCallgraphFrame">
                     <lookup name="item">expander</lookup>
                   </lookup>
                 </binding>

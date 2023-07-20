@@ -30,8 +30,8 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (SysprofCategoryIcon, sysprof_category_icon, SYSPROF, CATEGORY_ICON, GtkWidget)
 
-SysprofSymbol *sysprof_category_icon_get_symbol (SysprofCategoryIcon *self);
-void           sysprof_category_icon_set_symbol (SysprofCategoryIcon *self,
-                                                 SysprofSymbol       *symbol);
+SysprofCallgraphCategory sysprof_category_icon_get_category (SysprofCategoryIcon      *self);
+void                     sysprof_category_icon_set_category (SysprofCategoryIcon      *self,
+                                                             SysprofCallgraphCategory  category);
 
 G_END_DECLS

@@ -21,215 +21,44 @@
 #include "config.h"
 
 #include "sysprof-category-icon.h"
-#include "sysprof-symbol-private.h"
 
 struct _SysprofCategoryIcon
 {
   GtkWidget parent_instance;
-  SysprofSymbol *symbol;
   guint category;
 };
 
 enum {
   PROP_0,
-  PROP_SYMBOL,
+  PROP_CATEGORY,
   N_PROPS
 };
 
 G_DEFINE_FINAL_TYPE (SysprofCategoryIcon, sysprof_category_icon, GTK_TYPE_WIDGET)
 
-enum {
-  CATEGORY_0,
-  CATEGORY_A11Y,
-  CATEGORY_ACTIONS,
-  CATEGORY_CONSTRUCTORS,
-  CATEGORY_CONTEXT_SWITCH,
-  CATEGORY_INPUT,
-  CATEGORY_KERNEL,
-  CATEGORY_LAYOUT,
-  CATEGORY_MAIN_LOOP,
-  CATEGORY_PAINT,
-  CATEGORY_SIGNALS,
-  CATEGORY_TEMPLATES,
-  CATEGORY_WINDOWING,
-  N_CATEGORIES
-};
-
-enum {
-  RULE_PREFIX = 1,
-  RULE_EXACT,
-};
-
-typedef struct _Rule
-{
-  guint8 kind : 2;
-  guint8 inherit : 1;
-  guint category;
-  const char *match;
-} Rule;
-
-typedef struct _RuleGroup
-{
-  const char *nick;
-  const Rule *rules;
-} RuleGroup;
-
 static GParamSpec *properties [N_PROPS];
-static GdkRGBA category_colors[N_CATEGORIES];
-static RuleGroup rule_groups[] = {
-  { "EGL",
-    (const Rule[]) {
-      { RULE_PREFIX, TRUE, CATEGORY_PAINT, "egl" },
-      { 0 }
-    }
-  },
-
-  { "FontConfig",
-    (const Rule[]) {
-      { RULE_PREFIX, FALSE, CATEGORY_LAYOUT, "" },
-      { 0 }
-    }
-  },
-
-  { "GLib",
-    (const Rule[]) {
-      { RULE_PREFIX, FALSE,  CATEGORY_MAIN_LOOP, "g_main_loop_" },
-      { RULE_PREFIX, FALSE,  CATEGORY_MAIN_LOOP, "g_main_context_" },
-      { RULE_PREFIX, FALSE, CATEGORY_MAIN_LOOP, "g_wakeup_" },
-      { RULE_EXACT, FALSE,  CATEGORY_MAIN_LOOP, "g_main_dispatch" },
-      { 0 }
-    }
-  },
-
-  { "GObject",
-    (const Rule[]) {
-      { RULE_PREFIX, FALSE, CATEGORY_SIGNALS, "g_signal_emit" },
-      { RULE_PREFIX, FALSE, CATEGORY_SIGNALS, "g_signal_emit" },
-      { RULE_PREFIX, FALSE, CATEGORY_SIGNALS, "g_object_notify" },
-      { RULE_PREFIX, FALSE, CATEGORY_CONSTRUCTORS, "g_object_new" },
-      { RULE_PREFIX, FALSE, CATEGORY_CONSTRUCTORS, "g_type_create_instance" },
-      { 0 }
-    }
-  },
-
-  { "GTK 4",
-    (const Rule[]) {
-      { RULE_PREFIX, TRUE, CATEGORY_LAYOUT, "gtk_css_" },
-      { RULE_PREFIX, TRUE, CATEGORY_LAYOUT, "gtk_widget_measure" },
-      { RULE_PREFIX, TRUE, CATEGORY_PAINT, "gdk_snapshot" },
-      { RULE_PREFIX, TRUE, CATEGORY_PAINT, "gtk_snapshot" },
-      { RULE_PREFIX, TRUE, CATEGORY_LAYOUT, "gtk_widget_reposition" },
-      { RULE_PREFIX, TRUE, CATEGORY_WINDOWING, "gtk_window_present" },
-      { RULE_PREFIX, TRUE, CATEGORY_ACTIONS, "gtk_action_muxer_" },
-      { RULE_PREFIX, TRUE, CATEGORY_A11Y, "gtk_accessible_" },
-      { RULE_PREFIX, TRUE, CATEGORY_A11Y, "gtk_at_" },
-      { RULE_PREFIX, TRUE, CATEGORY_TEMPLATES, "gtk_builder_" },
-      { RULE_PREFIX, TRUE, CATEGORY_TEMPLATES, "gtk_buildable_" },
-      { RULE_PREFIX, TRUE, CATEGORY_LAYOUT, "gtk_widget_root" },
-      { RULE_PREFIX, TRUE, CATEGORY_PAINT, "gdk_frame_clock_paint" },
-      { RULE_PREFIX, TRUE, CATEGORY_LAYOUT, "_gdk_frame_clock_emit_layout" },
-      { RULE_PREFIX, TRUE, CATEGORY_PAINT, "_gdk_frame_clock_emit_paint" },
-      { RULE_PREFIX, TRUE, CATEGORY_PAINT, "_gdk_frame_clock_emit_after_paint" },
-      { RULE_PREFIX, TRUE, CATEGORY_INPUT, "gdk_surface_handle_event" },
-      { 0 }
-    }
-  },
-
-  { "libc",
-    (const Rule[]) {
-      { RULE_EXACT, TRUE, CATEGORY_MAIN_LOOP, "poll" },
-      { 0 }
-    }
-  },
-
-  { "Pango",
-    (const Rule[]) {
-      { RULE_PREFIX, FALSE, CATEGORY_LAYOUT, "" },
-      { 0 }
-    }
-  },
-
-  { "Wayland Client",
-    (const Rule[]) {
-      { RULE_PREFIX, TRUE, CATEGORY_WINDOWING, "wl_" },
-      { 0 }
-    }
-  },
-
-  { "Wayland Server",
-    (const Rule[]) {
-      { RULE_PREFIX, TRUE, CATEGORY_WINDOWING, "wl_" },
-      { 0 }
-    }
-  },
-};
-
-static guint
-categorize_symbol (SysprofSymbol *symbol)
-{
-  if (symbol->kind == SYSPROF_SYMBOL_KIND_KERNEL)
-    return CATEGORY_KERNEL;
-  else if (symbol->kind == SYSPROF_SYMBOL_KIND_CONTEXT_SWITCH)
-    return CATEGORY_CONTEXT_SWITCH;
-  else if (symbol->kind != SYSPROF_SYMBOL_KIND_USER ||
-           symbol->binary_nick == NULL)
-    return CATEGORY_0;
-
-  for (guint i = 0; i < G_N_ELEMENTS (rule_groups); i++)
-    {
-      if (strcmp (rule_groups[i].nick, symbol->binary_nick) != 0)
-        continue;
-
-      for (guint j = 0; rule_groups[i].rules[j].kind; j++)
-        {
-          if (rule_groups[i].rules[j].kind == RULE_PREFIX)
-            {
-              if (g_str_has_prefix (symbol->name, rule_groups[i].rules[j].match))
-                return rule_groups[i].rules[j].category;
-            }
-          else if (rule_groups[i].rules[j].kind == RULE_EXACT)
-            {
-              if (strcmp (symbol->name, rule_groups[i].rules[j].match) == 0)
-                return rule_groups[i].rules[j].category;
-            }
-        }
-
-      break;
-    }
-
-  return CATEGORY_0;
-}
+static GdkRGBA category_colors[SYSPROF_CALLGRAPH_CATEGORY_LAST];
 
 static void
 sysprof_category_icon_snapshot (GtkWidget   *widget,
                                 GtkSnapshot *snapshot)
 {
   SysprofCategoryIcon *self = (SysprofCategoryIcon *)widget;
-  const GdkRGBA *color = NULL;
 
   g_assert (SYSPROF_IS_CATEGORY_ICON (self));
   g_assert (GTK_IS_SNAPSHOT (snapshot));
 
-  color = &category_colors[self->category];
+  if (self->category >= G_N_ELEMENTS (category_colors))
+    return;
 
-  if (color->alpha == 0)
+  if (category_colors[self->category].alpha == 0)
     return;
 
   gtk_snapshot_append_color (snapshot,
-                             color,
+                             &category_colors[self->category],
                              &GRAPHENE_RECT_INIT (0, 0,
                                                   gtk_widget_get_width (widget),
                                                   gtk_widget_get_height (widget)));
-}
-
-static void
-sysprof_category_icon_finalize (GObject *object)
-{
-  SysprofCategoryIcon *self = (SysprofCategoryIcon *)object;
-
-  g_clear_object (&self->symbol);
-
-  G_OBJECT_CLASS (sysprof_category_icon_parent_class)->finalize (object);
 }
 
 static void
@@ -242,8 +71,8 @@ sysprof_category_icon_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_SYMBOL:
-      g_value_set_object (value, sysprof_category_icon_get_symbol (self));
+    case PROP_CATEGORY:
+      g_value_set_enum (value, sysprof_category_icon_get_category (self));
       break;
 
     default:
@@ -261,8 +90,8 @@ sysprof_category_icon_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_SYMBOL:
-      sysprof_category_icon_set_symbol (self, g_value_get_object (value));
+      case PROP_CATEGORY:
+      sysprof_category_icon_set_category (self, g_value_get_enum (value));
       break;
 
     default:
@@ -276,57 +105,60 @@ sysprof_category_icon_class_init (SysprofCategoryIconClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  object_class->finalize = sysprof_category_icon_finalize;
   object_class->get_property = sysprof_category_icon_get_property;
   object_class->set_property = sysprof_category_icon_set_property;
 
   widget_class->snapshot = sysprof_category_icon_snapshot;
 
-  properties[PROP_SYMBOL] =
-    g_param_spec_object ("symbol", NULL, NULL,
-                         SYSPROF_TYPE_SYMBOL,
-                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+  properties[PROP_CATEGORY] =
+    g_param_spec_enum ("category", NULL, NULL,
+                       SYSPROF_TYPE_CALLGRAPH_CATEGORY,
+                       SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED,
+                       (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_properties (object_class, N_PROPS, properties);
 
-  gdk_rgba_parse (&category_colors[CATEGORY_A11Y], "#000");
-  gdk_rgba_parse (&category_colors[CATEGORY_ACTIONS], "#f66151");
-  gdk_rgba_parse (&category_colors[CATEGORY_CONSTRUCTORS], "#613583");
-  gdk_rgba_parse (&category_colors[CATEGORY_CONSTRUCTORS], "#62a0ea");
-  gdk_rgba_parse (&category_colors[CATEGORY_CONTEXT_SWITCH], "#ffbe6f");
-  gdk_rgba_parse (&category_colors[CATEGORY_INPUT], "#1a5fb4");
-  gdk_rgba_parse (&category_colors[CATEGORY_KERNEL], "#a51d2d");
-  gdk_rgba_parse (&category_colors[CATEGORY_LAYOUT], "#9141ac");
-  gdk_rgba_parse (&category_colors[CATEGORY_MAIN_LOOP], "#5e5c64");
-  gdk_rgba_parse (&category_colors[CATEGORY_PAINT], "#2ec27e");
-  gdk_rgba_parse (&category_colors[CATEGORY_SIGNALS], "#e5a50a");
-  gdk_rgba_parse (&category_colors[CATEGORY_TEMPLATES], "#77767b");
-  gdk_rgba_parse (&category_colors[CATEGORY_WINDOWING], "#c64600");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_A11Y], "#000");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_ACTIONS], "#f66151");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_CONSTRUCTORS], "#613583");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_CONSTRUCTORS], "#62a0ea");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_CONTEXT_SWITCH], "#ffbe6f");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_INPUT], "#1a5fb4");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_KERNEL], "#a51d2d");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_LAYOUT], "#9141ac");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_MAIN_LOOP], "#5e5c64");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_PAINT], "#2ec27e");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_SIGNALS], "#e5a50a");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_TEMPLATES], "#77767b");
+  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_WINDOWING], "#c64600");
 }
 
 static void
 sysprof_category_icon_init (SysprofCategoryIcon *self)
 {
+  self->category = SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;
 }
 
-SysprofSymbol *
-sysprof_category_icon_get_symbol (SysprofCategoryIcon *self)
+SysprofCallgraphCategory
+sysprof_category_icon_get_category (SysprofCategoryIcon *self)
 {
-  g_return_val_if_fail (SYSPROF_IS_CATEGORY_ICON (self), NULL);
+  g_return_val_if_fail (SYSPROF_IS_CATEGORY_ICON (self), 0);
 
-  return self->symbol;
+  return self->category;
 }
 
 void
-sysprof_category_icon_set_symbol (SysprofCategoryIcon *self,
-                                  SysprofSymbol       *symbol)
+sysprof_category_icon_set_category (SysprofCategoryIcon      *self,
+                                    SysprofCallgraphCategory  category)
 {
   g_return_if_fail (SYSPROF_IS_CATEGORY_ICON (self));
+  g_return_if_fail (category > 0);
+  g_return_if_fail (category < SYSPROF_CALLGRAPH_CATEGORY_LAST);
 
-  if (g_set_object (&self->symbol, symbol))
-    {
-      self->category = symbol ? categorize_symbol (symbol) : 0;
-      g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_SYMBOL]);
-      gtk_widget_queue_draw (GTK_WIDGET (self));
-    }
+  if (self->category == category)
+    return;
+
+  self->category = category;
+  g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_CATEGORY]);
+  gtk_widget_queue_draw (GTK_WIDGET (self));
 }

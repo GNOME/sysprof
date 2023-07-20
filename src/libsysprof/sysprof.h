@@ -57,6 +57,7 @@ G_BEGIN_DECLS
 # include "sysprof-document.h"
 # include "sysprof-elf-symbolizer.h"
 # include "sysprof-energy-usage.h"
+# include "sysprof-enums.h"
 # include "sysprof-instrument.h"
 # include "sysprof-jitmap-symbolizer.h"
 # include "sysprof-kallsyms-symbolizer.h"

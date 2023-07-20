@@ -4,6 +4,7 @@ libsysprof_public_sources = [
   'sysprof-callgraph-frame.c',
   'sysprof-callgraph-symbol.c',
   'sysprof-callgraph.c',
+  'sysprof-callgraph-categorize.c',
   'sysprof-cpu-info.c',
   'sysprof-cpu-usage.c',
   'sysprof-diagnostic.c',

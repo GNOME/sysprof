@@ -287,15 +287,13 @@ static void
 sysprof_callgraph_categorize (SysprofCallgraph     *self,
                               SysprofCallgraphNode *node)
 {
-  SysprofSymbol *symbol = node->summary->symbol;
-
   if (node->category)
     return;
 
   if (node->parent && node->parent->category == 0)
     sysprof_callgraph_categorize (self, node->parent);
 
-  switch (symbol->kind)
+  switch (node->summary->symbol->kind)
     {
     case SYSPROF_SYMBOL_KIND_ROOT:
     case SYSPROF_SYMBOL_KIND_THREAD:
@@ -316,6 +314,7 @@ sysprof_callgraph_categorize (SysprofCallgraph     *self,
       break;
 
     case SYSPROF_SYMBOL_KIND_USER:
+      node->category = _sysprof_callgraph_node_categorize (node);
 
       G_GNUC_FALLTHROUGH;
 

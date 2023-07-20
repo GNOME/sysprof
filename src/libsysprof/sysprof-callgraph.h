@@ -79,6 +79,9 @@ typedef enum _SysprofCallgraphCategory
   SYSPROF_CALLGRAPH_CATEGORY_TEMPLATES,
   SYSPROF_CALLGRAPH_CATEGORY_UNWINDABLE,
   SYSPROF_CALLGRAPH_CATEGORY_WINDOWING,
+
+  /* Not part of ABI */
+  SYSPROF_CALLGRAPH_CATEGORY_LAST,
 } SysprofCallgraphCategory;
 
 typedef enum _SysprofCallgraphFlags

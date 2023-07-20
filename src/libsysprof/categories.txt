@@ -1,0 +1,64 @@
+EGL:
+egl*                                paint        inherit
+
+
+FontConfig:
+*                                   layout       inherit
+
+
+GL:
+gl*                                 paint        inherit
+
+
+GLib:
+gtk_main_*                          main-loop
+gtk_wakeup_*                        main-loop    inherit
+
+
+GTK 4:
+gtk_widget_snapshot                 paint        inherit
+gtk_widget_real_snapshot            paint        inherit
+gtk_widget_render                   paint        inherit
+gdk_snapshot_*                      paint        inherit
+gtk_snapshot_*                      paint        inherit
+gsk_*                               paint        inherit
+gdk_frame_clock_paint               paint        inherit
+_gdk_frame_clock_emit_paint         paint        inherit
+_gdk_frame_clock_emit_after_paint   paint        inherit
+
+gtk_widget_measure                  layout       inherit
+gtk_css_*                           layout       inherit
+_gdk_frame_clock_emit_layout        layout       inherit
+gtk_builder_*                       layout       inherit
+gtk_buildable_*                     layout       inherit
+
+gdk_surface_handle_event            input        inherit
+gtk_im_*                            input        inherit
+do_update_im_spot_location          input        inherit
+
+gtk_window_present*                 windowing    inherit
+
+gtk_accessible_*                    a11y         inherit
+gtk_at_*                            a11y         inherit
+
+
+Harfbuzz:
+*                                   layout       inherit
+
+
+libc:
+poll                                main-loop    inherit
+select                              main-loop    inherit
+epoll                               main-loop    inherit
+
+
+Pango:
+*                                   layout       inherit
+
+
+Wayland Client:
+wl_*                                windowing    inherit
+
+
+Wayland Server:
+wl_*                                windowing    inherit

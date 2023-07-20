@@ -5,6 +5,7 @@ libsysprof_public_sources = [
   'sysprof-callgraph-symbol.c',
   'sysprof-callgraph.c',
   'sysprof-callgraph-categorize.c',
+  'sysprof-categories.c',
   'sysprof-cpu-info.c',
   'sysprof-cpu-usage.c',
   'sysprof-diagnostic.c',
@@ -157,6 +158,11 @@ libsysprof_enums = gnome.mkenums_simple('sysprof-enums',
      install_dir: sysprof_header_dir,
 )
 
+libsysprof_resources = gnome.compile_resources('libsysprof-resources', 'libsysprof.gresource.xml',
+  source_dir: 'resources',
+      c_name: 'libsysprof',
+)
+
 libsysprof_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('gio-unix-2.0',
@@ -179,6 +185,7 @@ libsysprof_static = static_library(
   libsysprof_public_sources +
   libsysprof_private_sources +
   libsysprof_enums,
+  libsysprof_resources,
 
     include_directories: [include_directories('.'),
                           libsysprof_capture_include_dirs],

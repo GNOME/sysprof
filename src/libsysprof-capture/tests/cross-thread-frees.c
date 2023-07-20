@@ -23,8 +23,8 @@
 #include <errno.h>
 #include <glib.h>
 #include <stddef.h>
-#include <rax.h>
-#include <sysprof.h>
+
+#include <sysprof-capture.h>
 
 typedef struct
 {

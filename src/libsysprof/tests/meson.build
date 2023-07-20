@@ -11,6 +11,7 @@ libsysprof_testsuite_c_args = [
 ]
 
 libsysprof_testsuite = {
+  'read-build-id'            : {'skip': true},
   'test-callgraph'           : {'skip': true},
   'test-capture-model'       : {'skip': true},
   'test-elf-loader'          : {'skip': true},

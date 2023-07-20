@@ -15,8 +15,13 @@ libsysprof_capture_testsuite_c_args = [
 ]
 
 libsysprof_capture_testsuite = {
-  'test-mapped-ring-buffer' : {},
+  'allocs-by-size'          : {'skip': true},
+  'cross-thread-frees'      : {'skip': true},
+  'find-temp-allocs'        : {'skip': true},
   'rewrite-pid'             : {'skip': true},
+  'test-capture'            : {},
+  'test-capture-cursor'     : {},
+  'test-mapped-ring-buffer' : {},
 }
 
 libsysprof_capture_testsuite_deps = [

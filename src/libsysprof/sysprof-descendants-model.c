@@ -216,6 +216,9 @@ sysprof_descendants_model_add_traceable (SysprofDescendantsModel  *self,
                                        SYSPROF_DOCUMENT_FRAME (traceable),
                                        FALSE,
                                        self->callgraph->augment_func_data);
+
+      if ((self->callgraph->flags & SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES) != 0)
+        _sysprof_callgraph_categorize (self->callgraph, node);
     }
 }
 

@@ -283,15 +283,15 @@ reverse_symbols (SysprofSymbol **symbols,
     }
 }
 
-static void
-sysprof_callgraph_categorize (SysprofCallgraph     *self,
-                              SysprofCallgraphNode *node)
+void
+_sysprof_callgraph_categorize (SysprofCallgraph     *self,
+                               SysprofCallgraphNode *node)
 {
   if (node->category)
     return;
 
   if (node->parent && node->parent->category == 0)
-    sysprof_callgraph_categorize (self, node->parent);
+    _sysprof_callgraph_categorize (self, node->parent);
 
   switch (node->summary->symbol->kind)
     {
@@ -437,7 +437,7 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                         self->augment_func_data);
 
   if ((self->flags & SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES) != 0)
-    sysprof_callgraph_categorize (self, node);
+    _sysprof_callgraph_categorize (self, node);
 }
 
 static void

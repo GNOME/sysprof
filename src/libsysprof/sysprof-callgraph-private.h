@@ -87,5 +87,7 @@ gpointer                  _sysprof_callgraph_get_symbol_augment (SysprofCallgrap
 void                      _sysprof_callgraph_node_free          (SysprofCallgraphNode     *self,
                                                                  gboolean                  free_self);
 SysprofCallgraphCategory  _sysprof_callgraph_node_categorize    (SysprofCallgraphNode     *node);
+void                      _sysprof_callgraph_categorize         (SysprofCallgraph         *self,
+                                                                 SysprofCallgraphNode     *node);
 
 G_END_DECLS

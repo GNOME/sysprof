@@ -24,8 +24,6 @@
 #include "sysprof-categories-private.h"
 #include "sysprof-symbol-private.h"
 
-static SysprofCategories *categories;
-
 SysprofCallgraphCategory
 _sysprof_callgraph_node_categorize (SysprofCallgraphNode *node)
 {
@@ -47,10 +45,7 @@ _sysprof_callgraph_node_categorize (SysprofCallgraphNode *node)
       symbol->binary_nick == NULL)
     return SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;
 
-  if G_UNLIKELY (categories == NULL)
-    categories = sysprof_categories_new ();
-
-  category = sysprof_categories_lookup (categories, symbol->binary_nick, symbol->name);
+  category = sysprof_categories_lookup (NULL, symbol->binary_nick, symbol->name);
 
   if (category == 0)
     return SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;

@@ -26,10 +26,11 @@ G_BEGIN_DECLS
 
 typedef struct _SysprofCategories SysprofCategories;
 
-SysprofCategories        *sysprof_categories_new    (void);
-void                      sysprof_categories_free   (SysprofCategories *categories);
-SysprofCallgraphCategory  sysprof_categories_lookup (SysprofCategories *categories,
-                                                     const char        *binary_nick,
-                                                     const char        *symbol);
+SysprofCategories        *sysprof_categories_get_default (void) G_GNUC_CONST;
+SysprofCategories        *sysprof_categories_new         (void);
+void                      sysprof_categories_free        (SysprofCategories *categories);
+SysprofCallgraphCategory  sysprof_categories_lookup      (SysprofCategories *categories,
+                                                          const char        *binary_nick,
+                                                          const char        *symbol);
 
 G_END_DECLS

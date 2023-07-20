@@ -248,6 +248,9 @@ sysprof_categories_lookup (SysprofCategories *categories,
 {
   GArray *rules;
 
+  if (categories == NULL)
+    categories = sysprof_categories_get_default ();
+
   if (binary_nick == NULL || symbol == NULL)
     return 0;
 
@@ -276,4 +279,15 @@ sysprof_categories_lookup (SysprofCategories *categories,
     }
 
   return 0;
+}
+
+SysprofCategories *
+sysprof_categories_get_default (void)
+{
+  static SysprofCategories *instance;
+
+  if (instance == NULL)
+    instance = sysprof_categories_new ();
+
+  return instance;
 }

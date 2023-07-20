@@ -32,6 +32,7 @@ struct _SysprofFilesSection
   SysprofSection  parent_instance;
 
   GtkColumnView  *column_view;
+  GtkColumnViewColumn *path_column;
 };
 
 G_DEFINE_FINAL_TYPE (SysprofFilesSection, sysprof_files_section, SYSPROF_TYPE_SECTION)
@@ -128,6 +129,7 @@ sysprof_files_section_class_init (SysprofFilesSectionClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/sysprof/sysprof-files-section.ui");
   gtk_widget_class_bind_template_child (widget_class, SysprofFilesSection, column_view);
+  gtk_widget_class_bind_template_child (widget_class, SysprofFilesSection, path_column);
   gtk_widget_class_bind_template_callback (widget_class, sysprof_files_section_activate_cb);
   gtk_widget_class_bind_template_callback (widget_class, format_size);
 
@@ -139,5 +141,6 @@ static void
 sysprof_files_section_init (SysprofFilesSection *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-}
 
+  gtk_column_view_sort_by_column (self->column_view, self->path_column, GTK_SORT_ASCENDING);
+}

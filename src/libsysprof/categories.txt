@@ -1,3 +1,9 @@
+Cairo:
+cairo*                              paint        inherit
+
+Pixman:
+pixman*                             paint        inherit
+
 EGL:
 egl*                                paint        inherit
 
@@ -13,18 +19,30 @@ gl*                                 paint        inherit
 GLib:
 g_main_*                            main-loop
 g_wakeup_*                          main-loop    inherit
-
+g_io_channel_*                      io           inherit
 
 GdkPixbuf:
 *                                   icons        inherit
 
 
+Gio:
+gdbus*                              ipc          inherit
+g_dbus_*                            ipc          inherit
+g_bus_*                             ipc          inherit
+g_file_*                            io           inherit
+g_input_*                           io           inherit
+g_output_*                          io           inherit
+g_io_                               io           inherit
+g_zlib_*                            io           inherit
+
 GTK 4:
+gdk_cairo*                          paint        inherit
 gtk_widget_snapshot                 paint        inherit
 gtk_widget_real_snapshot            paint        inherit
 gtk_widget_render                   paint        inherit
 gdk_snapshot_*                      paint        inherit
 gtk_snapshot_*                      paint        inherit
+_gsk_*                              paint        inherit
 gsk_*                               paint        inherit
 gdk_frame_clock_paint               paint        inherit
 _gdk_frame_clock_emit_paint         paint        inherit
@@ -41,6 +59,13 @@ gtk_buildable_*                     layout       inherit
 gdk_surface_handle_event            input        inherit
 gtk_im_*                            input        inherit
 do_update_im_spot_location          input        inherit
+_gtk_gesture_*                      input        inherit
+gtk_gesture_*                       input        inherit
+_gtk_event_controller_*             input        inherit
+gtk_event_controller_*              input        inherit
+gtk_drop_*                          input        inherit
+gtk_pad_controller_*                input        inherit
+gtk_shortcut_controller_*           input        inherit
 
 gtk_window_present*                 windowing    inherit
 
@@ -48,7 +73,8 @@ gtk_accessible_*                    a11y         inherit
 gtk_at_*                            a11y         inherit
 
 gtk_icon_*                          icons        inherit
-
+load_theme_thread                   icons        inherit
+load_icon_thread                    icons        inherit
 
 Harfbuzz:
 *                                   layout       inherit
@@ -57,7 +83,20 @@ Harfbuzz:
 libc:
 poll                                main-loop    inherit
 select                              main-loop    inherit
-epoll                               main-loop    inherit
+epoll_wait                          main-loop    inherit
+read                                io           inherit
+write                               io           inherit
+close                               io           inherit
+pread                               io           inherit
+pwrite                              io           inherit
+preadv                              io           inherit
+pwritev                             io           inherit
+open                                io           inherit
+openat                              io           inherit
+recvmsg                             io           inherit
+recv                                io           inherit
+send                                io           inherit
+sendmsg                             io           inherit
 
 
 Pango:
@@ -74,3 +113,7 @@ wl_*                                windowing    inherit
 
 Wayland Server:
 wl_*                                windowing    inherit
+
+
+Zstd:
+*                                   io           inherit

@@ -178,7 +178,7 @@ libsysprof_static = static_library(
   'sysprof-analyze-@0@'.format(soname_major_version),
   libsysprof_public_sources +
   libsysprof_private_sources +
-  libsysprof_enums[0],
+  libsysprof_enums,
 
     include_directories: [include_directories('.'),
                           libsysprof_capture_include_dirs],

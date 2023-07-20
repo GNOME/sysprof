@@ -104,11 +104,13 @@ static const struct {
   { "libharfbuzz-icu.so", "Harfbuzz" },
   { "libharfbuzz-subset.so", "Harfbuzz" },
   { "libharfbuzz.so", "Harfbuzz" },
+  { "libfontconfig.so", "FontConfig" },
 
   /* GTK */
   { "libgtk-3.so", "GTK 3" },
   { "libgdk-3.so", "GTK 3" },
   { "libgtk-4.so", "GTK 4" },
+  { "libadwaita-1.so", "Adwaita" },
   { "libgraphene-1.0.so", "Graphene" },
   { "libgdk_pixbuf-2.0.so", "GdkPixbuf" },
   { "librsvg-2.so", "rsvg" },

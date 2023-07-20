@@ -183,7 +183,7 @@ libsysprof_deps = [
 ]
 
 libsysprof_static = static_library(
-  'sysprof-analyze-@0@'.format(soname_major_version),
+  'sysprof-@0@'.format(soname_major_version),
   libsysprof_public_sources +
   libsysprof_private_sources +
   libsysprof_enums,
@@ -202,7 +202,7 @@ libsysprof_static_dep = declare_dependency(
                         libsysprof_capture_include_dirs],
 )
 
-libsysprof = library('sysprof-analyze-@0@'.format(soname_major_version),
+libsysprof = library('sysprof-@0@'.format(soname_major_version),
            dependencies: [libsysprof_static_dep],
   gnu_symbol_visibility: 'hidden',
                 version: '@0@.0.0'.format(soname_major_version),
@@ -215,7 +215,7 @@ libsysprof_dep = declare_dependency(
          dependencies: libsysprof_deps,
   include_directories: [include_directories('.'), libsysprof_capture_include_dirs],
 )
-meson.override_dependency('sysprof-analyze-@0@'.format(soname_major_version), libsysprof_dep)
+meson.override_dependency('sysprof-@0@'.format(soname_major_version), libsysprof_dep)
 
 pkgconfig.generate(libsysprof,
             subdirs: [sysprof_header_subdir],

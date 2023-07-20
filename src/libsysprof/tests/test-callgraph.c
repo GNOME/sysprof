@@ -34,6 +34,7 @@ typedef struct _Augment
 
 static char *kallsyms_path;
 static gboolean include_threads;
+static GEnumClass *category_class;
 static const GOptionEntry entries[] = {
   { "kallsyms", 'k', 0, G_OPTION_ARG_FILENAME, &kallsyms_path, "The path to kallsyms to use for decoding", "PATH" },
   { "threads", 't', 0, G_OPTION_ARG_NONE, &include_threads, "Include threads in the stack traces" },
@@ -52,6 +53,8 @@ print_callgraph (GListModel *model,
       g_autoptr(SysprofCallgraphFrame) frame = g_list_model_get_item (model, i);
       SysprofSymbol *symbol = sysprof_callgraph_frame_get_symbol (frame);
       Augment *aug = sysprof_callgraph_frame_get_augment (frame);
+      SysprofCallgraphCategory category = sysprof_callgraph_frame_get_category (frame);
+      const char*category_name = g_enum_get_value (category_class, category)->value_nick;
       char tstr[16];
 
       g_snprintf (tstr, sizeof tstr, "%.2lf%%", 100. * (aug->total / (double)total));
@@ -59,7 +62,7 @@ print_callgraph (GListModel *model,
       g_print (" [%6u]  [%8s] ", aug->total, tstr);
       for (guint j = 0; j < depth; j++)
         g_print ("  ");
-      g_print ("%s\n", sysprof_symbol_get_name (symbol));
+      g_print ("%s [%s]\n", sysprof_symbol_get_name (symbol), category_name);
 
       print_callgraph (G_LIST_MODEL (frame), depth+1, total);
     }
@@ -138,6 +141,8 @@ main (int   argc,
   if (argc < 2)
     g_error ("usage: %s CAPTURE_FILE", argv[0]);
 
+  category_class = g_type_class_ref (SYSPROF_TYPE_CALLGRAPH_CATEGORY);
+
   multi = sysprof_multi_symbolizer_new ();
 
   if (kallsyms_path)
@@ -164,6 +169,8 @@ main (int   argc,
 
   if (include_threads)
     flags |= SYSPROF_CALLGRAPH_FLAGS_INCLUDE_THREADS;
+
+  flags |= SYSPROF_CALLGRAPH_FLAGS_CATEGORIZE_FRAMES;
 
   sysprof_document_callgraph_async (document,
                                     flags,

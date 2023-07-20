@@ -425,6 +425,7 @@ static void
 sysprof_window_init (SysprofWindow *self)
 {
   g_autoptr(GPropertyAction) show_left_sidebar = NULL;
+  g_autoptr(GPropertyAction) show_right_sidebar = NULL;
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
@@ -432,6 +433,11 @@ sysprof_window_init (SysprofWindow *self)
                                              self->left_split_overlay,
                                              "show-sidebar");
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (show_left_sidebar));
+
+  show_right_sidebar = g_property_action_new ("show-right-sidebar",
+                                              self->right_split_overlay,
+                                              "show-sidebar");
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (show_right_sidebar));
 }
 
 GtkWidget *

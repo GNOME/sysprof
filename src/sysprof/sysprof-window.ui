@@ -10,6 +10,12 @@
       <object class="GtkShortcutController">
         <child>
           <object class="GtkShortcut">
+            <property name="trigger">&lt;control&gt;F9</property>
+            <property name="action">action(win.show-right-sidebar)</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcut">
             <property name="trigger">F9</property>
             <property name="action">action(win.show-left-sidebar)</property>
           </object>

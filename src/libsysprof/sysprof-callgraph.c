@@ -316,16 +316,36 @@ sysprof_callgraph_categorize (SysprofCallgraph     *self,
     case SYSPROF_SYMBOL_KIND_USER:
       node->category = _sysprof_callgraph_node_categorize (node);
 
+      if (node->category > SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED)
+        break;
+
       G_GNUC_FALLTHROUGH;
 
     default:
-      if (node->parent)
-        node->category = node->parent->category;
-      else
-        node->category = SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;
-      break;
-    }
+      {
+        SysprofCallgraphNode *parent = node->parent;
 
+        while (parent != NULL)
+          {
+            /* If we reach an uncategorized, then nothing above
+             * is doing inheritance.
+             */
+            if (parent->category == SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED)
+              break;
+
+            if (parent->category & SYSPROF_CALLGRAPH_CATEGORY_INHERIT)
+              {
+                node->category = parent->category;
+                return;
+              }
+
+            parent = parent->parent;
+          }
+
+        node->category = SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;
+        break;
+      }
+    }
 }
 
 static void

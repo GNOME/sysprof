@@ -29,6 +29,8 @@
 
 G_BEGIN_DECLS
 
+#define SYSPROF_CALLGRAPH_CATEGORY_INHERIT (1<<30)
+
 typedef struct _SysprofCallgraphSummary
 {
   SysprofSymbol *symbol;

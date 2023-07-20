@@ -504,7 +504,7 @@ sysprof_callgraph_frame_get_category (SysprofCallgraphFrame *self)
   g_return_val_if_fail (SYSPROF_IS_CALLGRAPH_FRAME (self), 0);
 
   if (self->callgraph != NULL && self->node != NULL && self->node->category)
-    return self->node->category;
+    return self->node->category & ~SYSPROF_CALLGRAPH_CATEGORY_INHERIT;
 
   return SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED;
 }

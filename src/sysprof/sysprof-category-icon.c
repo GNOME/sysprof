@@ -25,7 +25,7 @@
 struct _SysprofCategoryIcon
 {
   GtkWidget parent_instance;
-  guint category;
+  SysprofCallgraphCategory category;
 };
 
 enum {
@@ -129,7 +129,6 @@ sysprof_category_icon_class_init (SysprofCategoryIconClass *klass)
   gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_MAIN_LOOP], "#5e5c64");
   gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_PAINT], "#2ec27e");
   gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_SIGNALS], "#e5a50a");
-  gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_TEMPLATES], "#77767b");
   gdk_rgba_parse (&category_colors[SYSPROF_CALLGRAPH_CATEGORY_WINDOWING], "#c64600");
 }
 

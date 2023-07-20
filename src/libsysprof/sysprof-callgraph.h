@@ -71,8 +71,6 @@ typedef enum _SysprofCallgraphFlags
 } SysprofCallgraphFlags;
 
 SYSPROF_AVAILABLE_IN_ALL
-GType                 sysprof_callgraph_flags_get_type             (void) G_GNUC_CONST;
-SYSPROF_AVAILABLE_IN_ALL
 GListModel           *sysprof_callgraph_list_symbols               (SysprofCallgraph       *self);
 SYSPROF_AVAILABLE_IN_ALL
 GListModel           *sysprof_callgraph_list_callers               (SysprofCallgraph       *self,

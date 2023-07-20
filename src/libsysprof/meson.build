@@ -143,6 +143,19 @@ if host_machine.system() == 'linux'
   libsysprof_private_sources += ['sysprof-linux-instrument.c']
 endif
 
+libsysprof_enum_headers = [
+  'sysprof-callgraph.h',
+]
+
+libsysprof_enums = gnome.mkenums_simple('sysprof-enums',
+     body_prefix: '#include "config.h"',
+   header_prefix: '#include "sysprof-version-macros.h"',
+       decorator: '_SYSPROF_EXTERN',
+         sources: libsysprof_enum_headers,
+  install_header: true,
+     install_dir: sysprof_header_dir,
+)
+
 libsysprof_deps = [
   dependency('gio-2.0', version: glib_req_version),
   dependency('gio-unix-2.0',
@@ -163,7 +176,8 @@ libsysprof_deps = [
 libsysprof_static = static_library(
   'sysprof-analyze-@0@'.format(soname_major_version),
   libsysprof_public_sources +
-  libsysprof_private_sources,
+  libsysprof_private_sources +
+  libsysprof_enums[0],
 
     include_directories: [include_directories('.'),
                           libsysprof_capture_include_dirs],

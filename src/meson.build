@@ -1,4 +1,5 @@
 sysprof_header_subdir = 'sysprof-@0@'.format(libsysprof_api_version)
+sysprof_header_dir = join_paths(get_option('includedir'), sysprof_header_subdir)
 
 sysprof_version_conf = configuration_data()
 sysprof_version = meson.project_version().split('.')

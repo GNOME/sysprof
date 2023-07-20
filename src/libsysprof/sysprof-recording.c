@@ -712,18 +712,62 @@ _sysprof_recording_add_file (SysprofRecording *self,
                               (GDestroyNotify)add_file_free);
 }
 
+static char *
+do_compress (const char *data,
+             gsize       length,
+             gsize      *out_length)
+{
+  g_autoptr(GZlibCompressor) compressor = g_zlib_compressor_new (G_ZLIB_COMPRESSOR_FORMAT_GZIP, 6);
+  g_autofree char *compressed = g_malloc (length);
+  GConverterResult res;
+  gsize n_read;
+  gsize n_written;
+
+  *out_length = 0;
+
+  res = g_converter_convert (G_CONVERTER (compressor), data, length, compressed, length,
+                             G_CONVERTER_INPUT_AT_END | G_CONVERTER_FLUSH,
+                             &n_read, &n_written, NULL);
+
+  if (res == G_CONVERTER_FINISHED)
+    {
+      *out_length = n_written;
+      return g_steal_pointer (&compressed);
+    }
+
+  return NULL;
+}
+
 void
 _sysprof_recording_add_file_data (SysprofRecording *self,
                                   const char       *path,
                                   const char       *contents,
-                                  gssize            length)
+                                  gssize            length,
+                                  gboolean          compress)
 {
+  g_autofree char *compress_filename = NULL;
+  g_autofree char *compress_bytes = NULL;
+  gsize compress_len = 0;
+
   g_return_if_fail (SYSPROF_IS_RECORDING (self));
   g_return_if_fail (path != NULL);
   g_return_if_fail (contents != NULL);
 
   if (length < 0)
     length = strlen (contents);
+
+  if (compress)
+    {
+      compress_bytes = do_compress (contents, length, &compress_len);
+
+      if (compress_bytes)
+        {
+          compress_filename = g_strdup_printf ("%s.gz", path);
+          path = compress_filename;
+          contents = compress_bytes;
+          length = compress_len;
+        }
+    }
 
   while (length > 0)
     {

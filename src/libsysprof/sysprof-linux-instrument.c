@@ -211,7 +211,7 @@ add_process_info (SysprofRecording *recording,
        * in resolving symbols later on.
        */
       mount_path = g_strdup_printf ("/proc/%u/mountinfo", pid);
-      _sysprof_recording_add_file_data (recording, mount_path, mountinfo, -1);
+      _sysprof_recording_add_file_data (recording, mount_path, mountinfo, -1, FALSE);
 
       /* Ignore inodes from podman/toolbox because they appear to always be
        * wrong. We'll have to rely on CRC/build-id instead.

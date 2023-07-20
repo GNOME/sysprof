@@ -41,7 +41,8 @@ DexFuture            *_sysprof_recording_add_file      (SysprofRecording      *s
 void                  _sysprof_recording_add_file_data (SysprofRecording      *self,
                                                         const char            *path,
                                                         const char            *contents,
-                                                        gssize                 length);
+                                                        gssize                 length,
+                                                        gboolean               compress);
 void                  _sysprof_recording_diagnostic    (SysprofRecording      *self,
                                                         const char            *domain,
                                                         const char            *format,

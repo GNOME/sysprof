@@ -91,7 +91,8 @@ sysprof_symbols_bundle_augment_fiber (gpointer user_data)
   _sysprof_recording_add_file_data (recording,
                                     "__symbols__",
                                     g_bytes_get_data (bytes, NULL),
-                                    g_bytes_get_size (bytes));
+                                    g_bytes_get_size (bytes),
+                                    TRUE);
 
   return dex_future_new_for_boolean (TRUE);
 }

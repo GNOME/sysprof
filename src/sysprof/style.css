@@ -34,7 +34,6 @@ progresscell label.in-progress {
 }
 
 callgraphview {
-  font-size: .9em;
 }
 
 callgraphview treeexpander indent { -gtk-icon-size: 8px; }
@@ -43,13 +42,6 @@ callgraphview treeexpander indent:nth-child(n+20) { -gtk-icon-size: 0px; }
 callgraphview symbol {
   margin: -1px -3px;
   padding: 1px 6px;
-}
-callgraphview symbol.context-switch,
-callgraphview symbol.process,
-callgraphview symbol.thread,
-callgraphview symbol.root,
-callgraphview symbol.unwindable {
-  font-weight: 600;
 }
 callgraphview row:not(:selected) treeexpander expander:checked+box symbol.process,
 callgraphview row:not(:selected) treeexpander expander:checked+box symbol.thread,

@@ -44,6 +44,7 @@ enum {
   CATEGORY_ACTIONS,
   CATEGORY_CONSTRUCTORS,
   CATEGORY_CONTEXT_SWITCH,
+  CATEGORY_INPUT,
   CATEGORY_KERNEL,
   CATEGORY_LAYOUT,
   CATEGORY_MAIN_LOOP,
@@ -288,6 +289,7 @@ sysprof_category_icon_class_init (SysprofCategoryIconClass *klass)
   gdk_rgba_parse (&category_colors[CATEGORY_CONSTRUCTORS], "#613583");
   gdk_rgba_parse (&category_colors[CATEGORY_CONSTRUCTORS], "#62a0ea");
   gdk_rgba_parse (&category_colors[CATEGORY_CONTEXT_SWITCH], "#ffbe6f");
+  gdk_rgba_parse (&category_colors[CATEGORY_INPUT], "#1a5fb4");
   gdk_rgba_parse (&category_colors[CATEGORY_KERNEL], "#a51d2d");
   gdk_rgba_parse (&category_colors[CATEGORY_LAYOUT], "#9141ac");
   gdk_rgba_parse (&category_colors[CATEGORY_MAIN_LOOP], "#5e5c64");

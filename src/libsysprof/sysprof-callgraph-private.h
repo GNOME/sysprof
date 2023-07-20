@@ -47,7 +47,8 @@ struct _SysprofCallgraphNode
   SysprofCallgraphNode     *children;
   SysprofCallgraphSummary  *summary;
   gpointer                  augment[2];
-  SysprofCallgraphCategory  category;
+  SysprofCallgraphCategory  category : 7;
+  SysprofCallgraphCategory  is_toplevel : 7;
 };
 
 struct _SysprofCallgraph

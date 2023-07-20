@@ -191,6 +191,8 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
   g_assert (SYSPROF_IS_CALLGRAPH (self));
   g_assert (node != NULL);
 
+  node->is_toplevel = TRUE;
+
   for (const SysprofCallgraphNode *iter = node;
        iter != NULL;
        iter = iter->parent)

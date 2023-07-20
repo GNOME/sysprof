@@ -43,6 +43,9 @@ callgraphview symbol {
   margin: -1px -3px;
   padding: 1px 6px;
 }
+callgraphview treeexpander expander:not(.expandable) {
+  -gtk-icon-source: -gtk-icontheme("empty-symbolic");
+}
 callgraphview row:not(:selected) treeexpander expander:checked+box symbol.process,
 callgraphview row:not(:selected) treeexpander expander:checked+box symbol.thread,
 callgraphview row:not(:selected) treeexpander expander:checked+box symbol.root {

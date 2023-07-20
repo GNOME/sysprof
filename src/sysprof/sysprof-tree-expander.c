@@ -126,6 +126,11 @@ sysprof_tree_expander_update_icon (SysprofTreeExpander *self)
           icon = self->icon;
           gtk_widget_unset_state_flags (self->expander, GTK_STATE_FLAG_CHECKED);
         }
+
+      if (gtk_tree_list_row_is_expandable (self->list_row))
+        gtk_widget_add_css_class (GTK_WIDGET (self->expander), "expandable");
+      else
+        gtk_widget_remove_css_class (GTK_WIDGET (self->expander), "expandable");
     }
 
   gtk_image_set_from_gicon (GTK_IMAGE (self->image), icon);

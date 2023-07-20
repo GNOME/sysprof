@@ -756,6 +756,9 @@ _sysprof_recording_add_file_data (SysprofRecording *self,
   if (length < 0)
     length = strlen (contents);
 
+  if (length == 0)
+    compress = FALSE;
+
   if (compress)
     {
       compress_bytes = do_compress (contents, length, &compress_len);

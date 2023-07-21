@@ -38,6 +38,7 @@ enum {
   PROP_HIDE_SYSTEM_LIBRARIES,
   PROP_INCLUDE_THREADS,
   PROP_TRACEABLES,
+  PROP_UTILITY_SUMMARY,
   PROP_UTILITY_TRACEABLES,
   N_PROPS
 };
@@ -65,6 +66,17 @@ sysprof_callgraph_view_set_utility_traceables (SysprofCallgraphView *self,
 
   if (g_set_object (&self->utility_traceables, model))
     g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_UTILITY_TRACEABLES]);
+}
+
+static void
+sysprof_callgraph_view_set_utility_summary (SysprofCallgraphView *self,
+                                            GListModel           *model)
+{
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+  g_assert (!model || G_IS_LIST_MODEL (model));
+
+  if (g_set_object (&self->utility_summary, model))
+    g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_UTILITY_SUMMARY]);
 }
 
 static void
@@ -168,6 +180,25 @@ sysprof_callgraph_view_list_traceables_cb (GObject      *object,
 }
 
 static void
+sysprof_callgraph_view_summarize_cb (GObject      *object,
+                                     GAsyncResult *result,
+                                     gpointer      user_data)
+{
+  SysprofCallgraphFrame *frame = (SysprofCallgraphFrame *)object;
+  g_autoptr(SysprofCallgraphView) self = user_data;
+  g_autoptr(GListModel) model = NULL;
+  g_autoptr(GError) error = NULL;
+
+  g_assert (SYSPROF_IS_CALLGRAPH_FRAME (frame));
+  g_assert (G_IS_ASYNC_RESULT (result));
+  g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
+
+  model = sysprof_callgraph_frame_summarize_finish (frame, result, &error);
+
+  sysprof_callgraph_view_set_utility_summary (self, model);
+}
+
+static void
 descendants_selection_changed_cb (SysprofCallgraphView *self,
                                   guint                 position,
                                   guint                 n_items,
@@ -179,16 +210,23 @@ descendants_selection_changed_cb (SysprofCallgraphView *self,
   g_assert (SYSPROF_IS_CALLGRAPH_VIEW (self));
   g_assert (GTK_IS_SINGLE_SELECTION (single));
 
+  sysprof_callgraph_view_set_utility_summary (self, NULL);
   sysprof_callgraph_view_set_utility_traceables (self, NULL);
 
   if ((object = gtk_single_selection_get_selected_item (single)) &&
       GTK_IS_TREE_LIST_ROW (object) &&
       (item = gtk_tree_list_row_get_item (GTK_TREE_LIST_ROW (object))) &&
       SYSPROF_IS_CALLGRAPH_FRAME (item))
-    sysprof_callgraph_frame_list_traceables_async (SYSPROF_CALLGRAPH_FRAME (item),
-                                                   NULL,
-                                                   sysprof_callgraph_view_list_traceables_cb,
-                                                   g_object_ref (self));
+    {
+      sysprof_callgraph_frame_summarize_async (SYSPROF_CALLGRAPH_FRAME (item),
+                                               NULL,
+                                               sysprof_callgraph_view_summarize_cb,
+                                               g_object_ref (self));
+      sysprof_callgraph_frame_list_traceables_async (SYSPROF_CALLGRAPH_FRAME (item),
+                                                     NULL,
+                                                     sysprof_callgraph_view_list_traceables_cb,
+                                                     g_object_ref (self));
+    }
 }
 
 static void
@@ -305,6 +343,7 @@ sysprof_callgraph_view_dispose (GObject *object)
   g_clear_object (&self->callgraph);
   g_clear_object (&self->document);
   g_clear_object (&self->traceables);
+  g_clear_object (&self->utility_summary);
   g_clear_object (&self->utility_traceables);
 
   G_OBJECT_CLASS (sysprof_callgraph_view_parent_class)->dispose (object);
@@ -346,6 +385,10 @@ sysprof_callgraph_view_get_property (GObject    *object,
 
     case PROP_TRACEABLES:
       g_value_set_object (value, sysprof_callgraph_view_get_traceables (self));
+      break;
+
+    case PROP_UTILITY_SUMMARY:
+      g_value_set_object (value, self->utility_summary);
       break;
 
     case PROP_UTILITY_TRACEABLES:
@@ -438,6 +481,11 @@ sysprof_callgraph_view_class_init (SysprofCallgraphViewClass *klass)
 
   properties[PROP_TRACEABLES] =
     g_param_spec_object ("traceables", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_UTILITY_SUMMARY] =
+    g_param_spec_object ("utility-summary", NULL, NULL,
                          G_TYPE_LIST_MODEL,
                          (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 

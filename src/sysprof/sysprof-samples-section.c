@@ -82,6 +82,7 @@ sysprof_samples_section_class_init (SysprofSamplesSectionClass *klass)
   g_type_ensure (SYSPROF_TYPE_TRACEABLES_UTILITY);
   g_type_ensure (SYSPROF_TYPE_VALUE_AXIS);
   g_type_ensure (SYSPROF_TYPE_WEIGHTED_CALLGRAPH_VIEW);
+  g_type_ensure (SYSPROF_TYPE_CATEGORY_SUMMARY);
 }
 
 static void

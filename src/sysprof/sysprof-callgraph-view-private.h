@@ -37,6 +37,7 @@ struct _SysprofCallgraphView
   GSignalGroup *traceables_signals;
   GListModel *traceables;
   GListModel *utility_traceables;
+  GListModel *utility_summary;
 
   GtkColumnView *callers_column_view;
   GtkColumnView *descendants_column_view;

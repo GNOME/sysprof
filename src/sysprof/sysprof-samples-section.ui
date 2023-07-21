@@ -146,13 +146,90 @@
           </object>
         </child>
         <property name="content">
-          <object class="SysprofTraceablesUtility">
-            <binding name="session">
-              <lookup name="session">SysprofSamplesSection</lookup>
+          <object class="GtkBox">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="SysprofTraceablesUtility">
+                <property name="vexpand">true</property>
+                <binding name="session">
+                  <lookup name="session">SysprofSamplesSection</lookup>
+                </binding>
+                <binding name="traceables">
+                  <lookup name="utility-traceables">callgraph_view</lookup>
+                </binding>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator"/>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="propagate-natural-width">true</property>
+                <property name="propagate-natural-height">true</property>
+                <child>
+                  <object class="GtkListView">
+                    <property name="model">
+                      <object class="GtkNoSelection">
+                        <binding name="model">
+                          <lookup name="utility-summary">callgraph_view</lookup>
+                        </binding>
+                      </object>
+                    </property>
+                    <property name="factory">
+                      <object class="GtkBuilderListItemFactory">
+                        <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="GtkListItem">
+    <property name="child">
+      <object class="GtkBox">
+        <property name="margin-top">1</property>
+        <property name="margin-bottom">1</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="SysprofCategoryIcon">
+            <property name="width-request">16</property>
+            <property name="height-request">16</property>
+            <binding name="category">
+              <lookup name="category" type="SysprofCategorySummary">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
             </binding>
-            <binding name="traceables">
-              <lookup name="utility-traceables">callgraph_view</lookup>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="xalign">0</property>
+            <property name="hexpand">true</property>
+            <binding name="label">
+              <lookup name="category-name" type="SysprofCategorySummary">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
             </binding>
+          </object>
+        </child>
+        <child>
+          <object class="SysprofProgressCell">
+            <binding name="fraction">
+              <lookup name="fraction" type="SysprofCategorySummary">
+                <lookup name="item">GtkListItem</lookup>
+              </lookup>
+            </binding>
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>
+    ]]></property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
         </property>
       </object>

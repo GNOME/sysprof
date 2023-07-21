@@ -186,6 +186,14 @@ static const struct {
   { "virtio_gpu_dri.so", "Mesa" },
   { "vmwgfx_dri.so", "Mesa" },
   { "zink_dri.so", "Mesa" },
+
+  /* Various cryptography libraries */
+  { "libcrypto.so", "Cryptography" },
+  { "libssl.so", "Cryptography" },
+  { "libssl3.so", "Cryptography" },
+  { "libgnutls.so", "Cryptography" },
+  { "libgnutlsxx.so", "Cryptography" },
+  { "libgnutls-dane.so", "Cryptography" },
 };
 
 static void

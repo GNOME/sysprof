@@ -519,6 +519,25 @@ static void
 summarize_node (const SysprofCallgraphNode *node,
                 Summary                    *summaries)
 {
+  if (node->is_toplevel &&
+      node->category != 0 &&
+      node->category != SYSPROF_CALLGRAPH_CATEGORY_PRESENTATION)
+    {
+      gboolean seen[SYSPROF_CALLGRAPH_CATEGORY_LAST] = {0};
+
+      seen[node->category & 0xFF] = TRUE;
+      summaries[node->category & 0xFF].count += node->count;
+
+      for (const SysprofCallgraphNode *parent = node->parent; parent; parent = parent->parent)
+        {
+          if (!seen[parent->category & 0xFF] && (parent->category & SYSPROF_CALLGRAPH_CATEGORY_INHERIT) != 0)
+            {
+              seen[parent->category & 0xFF] = TRUE;
+              summaries[parent->category & 0xFF].count += node->count;
+            }
+        }
+    }
+
   for (const SysprofCallgraphNode *iter = node->children; iter; iter = iter->next)
     summarize_node (iter, summaries);
 }

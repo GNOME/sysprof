@@ -35,9 +35,11 @@ typedef struct _Augment
 static char *kallsyms_path;
 static gboolean include_threads;
 static GEnumClass *category_class;
+static gboolean summary_only;
 static const GOptionEntry entries[] = {
   { "kallsyms", 'k', 0, G_OPTION_ARG_FILENAME, &kallsyms_path, "The path to kallsyms to use for decoding", "PATH" },
   { "threads", 't', 0, G_OPTION_ARG_NONE, &include_threads, "Include threads in the stack traces" },
+  { "summary", 's', 0, G_OPTION_ARG_NONE, &summary_only, "Only show summary" },
   { 0 }
 };
 
@@ -69,6 +71,42 @@ print_callgraph (GListModel *model,
 }
 
 static void
+summarize_cb (GObject      *object,
+              GAsyncResult *result,
+              gpointer      user_data)
+{
+  SysprofCallgraphFrame *frame = SYSPROF_CALLGRAPH_FRAME (object);
+  GMainLoop *main_loop = user_data;
+  g_autoptr(GError) error = NULL;
+  g_autoptr(GListModel) model = NULL;
+  guint n_items;
+
+  model = sysprof_callgraph_frame_summarize_finish (frame, result, &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (model);
+  g_assert_true (G_IS_LIST_MODEL (model));
+
+  g_print ("\n\nSummary\n");
+
+  n_items = g_list_model_get_n_items (model);
+
+  for (guint i = 0; i < n_items; i++)
+    {
+      g_autoptr(SysprofCategorySummary) summary = g_list_model_get_item (model, i);
+
+      g_assert_nonnull (summary);
+      g_assert_true (SYSPROF_IS_CATEGORY_SUMMARY (summary));
+
+      g_print ("%s: %lf\n",
+               g_enum_to_string (SYSPROF_TYPE_CALLGRAPH_CATEGORY,
+                                 sysprof_category_summary_get_category (summary)),
+               sysprof_category_summary_get_fraction (summary));
+    }
+
+  g_main_loop_quit (main_loop);
+}
+
+static void
 callgraph_cb (GObject      *object,
               GAsyncResult *result,
               gpointer      user_data)
@@ -86,10 +124,13 @@ callgraph_cb (GObject      *object,
   root = g_list_model_get_item (G_LIST_MODEL (callgraph), 0);
   aug = sysprof_callgraph_frame_get_augment (root);
 
-  g_print ("   Hits   Percent\n");
-  print_callgraph (G_LIST_MODEL (callgraph), 0, aug->total);
+  if (!summary_only)
+    {
+      g_print ("   Hits   Percent\n");
+      print_callgraph (G_LIST_MODEL (callgraph), 0, aug->total);
+    }
 
-  g_main_loop_quit (main_loop);
+  sysprof_callgraph_frame_summarize_async (root, NULL, summarize_cb, main_loop);
 }
 
 static void

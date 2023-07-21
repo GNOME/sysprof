@@ -19,7 +19,22 @@ gl*                                 paint        inherit
 GLib:
 g_main_*                            main-loop
 g_wakeup_*                          main-loop    inherit
+
 g_io_channel_*                      io           inherit
+
+g_mutex*                            locking      inherit
+g_rec_mutex*                        locking      inherit
+g_bit_lock                          locking      inherit
+g_bit_trylock                       locking      inherit
+g_bit_unlock                        locking      inherit
+g_rw_lock*                          locking      inherit
+g_cond_wait                         locking      inherit
+g_cond_signal                       locking      inherit
+g_cond_broadcast                    locking      inherit
+g_pointer_bit*                      locking      inherit
+g_static_rw_lock*                   locking      inherit
+g_static_rec_mutex*                 locking      inherit
+
 
 GdkPixbuf:
 *                                   icons        inherit
@@ -55,6 +70,7 @@ gtk_widget_measure                  layout       inherit
 _gdk_frame_clock_emit_layout        layout       inherit
 gtk_builder_*                       layout       inherit
 gtk_buildable_*                     layout       inherit
+gtk_text_view_validate_onscreen     layout       inherit
 
 gdk_surface_handle_event            input        inherit
 gtk_im_*                            input        inherit
@@ -76,6 +92,11 @@ gtk_icon_*                          icons        inherit
 load_theme_thread                   icons        inherit
 load_icon_thread                    icons        inherit
 
+
+GtkSourceView:
+update_syntax                       layout       inherit
+
+
 Harfbuzz:
 *                                   layout       inherit
 
@@ -84,6 +105,7 @@ libc:
 poll                                main-loop    inherit
 select                              main-loop    inherit
 epoll_wait                          main-loop    inherit
+
 read                                io           inherit
 write                               io           inherit
 close                               io           inherit
@@ -97,6 +119,12 @@ recvmsg                             io           inherit
 recv                                io           inherit
 send                                io           inherit
 sendmsg                             io           inherit
+
+pthread_mutex_lock                  locking      inherit
+pthread_mutex_unlock                locking      inherit
+pthread_mutex_trylock               locking      inherit
+pthread_cond_wait                   locking      inherit
+pthread_cond_signal                 locking      inherit
 
 
 Pango:

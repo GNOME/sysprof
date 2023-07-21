@@ -23,6 +23,7 @@ g_timeout_*                         main-loop
 g_idle_*                            main-loop
 block_source                        main-loop    inherit
 unblock_source                      main-loop    inherit
+g_source_remove                     main-loop    inherit
 g_source_unref_internal             main-loop    inherit
 g_source_iter_next                  main-loop    inherit
 g_source_ref                        main-loop    inherit
@@ -71,6 +72,8 @@ g_zlib_*                            io           inherit
 
 
 GTK 4:
+gsk_gl_command_queue*               graphics     inherit
+
 gdk_cairo*                          paint        inherit
 gtk_widget_snapshot                 paint        inherit
 gtk_widget_real_snapshot            paint        inherit
@@ -196,6 +199,10 @@ clock_gettime                       main-loop    inherit
 __clock_gettime                     main-loop    inherit
 
 
+libinput:
+*                                   input        inherit
+
+
 Mesa:
 *                                   graphics     inherit
 
@@ -203,6 +210,8 @@ Mesa:
 Mutter:
 clutter_actor_paint                 paint        inherit
 clutter_paint_node_paint            paint        inherit
+
+cogl*                               graphics     inherit
 
 clutter_events_pending              main-loop    inherit
 

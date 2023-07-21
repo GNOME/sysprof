@@ -41,9 +41,6 @@ struct _SysprofChartLayerClass
                                GtkSnapshot       *snapshot,
                                double             x,
                                double             y);
-
-  /*< private >*/
-  gpointer _reserved[16];
 };
 
 const char *sysprof_chart_layer_get_title       (SysprofChartLayer *self);

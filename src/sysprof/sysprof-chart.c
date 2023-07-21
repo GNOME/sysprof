@@ -22,11 +22,17 @@
 
 #include "sysprof-css-private.h"
 #include "sysprof-chart.h"
+#include "sysprof-chart-layer-factory-private.h"
+#include "sysprof-chart-layer-item.h"
+#include "sysprof-chart-layer-item-widget.h"
 
 typedef struct
 {
   SysprofSession *session;
   char *title;
+
+  SysprofChartLayerFactory *factory;
+  GListModel *model;
 
   double motion_x;
   double motion_y;
@@ -36,6 +42,8 @@ typedef struct
 
 enum {
   PROP_0,
+  PROP_FACTORY,
+  PROP_MODEL,
   PROP_SESSION,
   PROP_TITLE,
   N_PROPS
@@ -209,6 +217,8 @@ sysprof_chart_dispose (GObject *object)
   SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
   GtkWidget *child;
 
+  sysprof_chart_set_model (self, NULL);
+
   while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
     gtk_widget_unparent (child);
 
@@ -225,9 +235,18 @@ sysprof_chart_get_property (GObject    *object,
                             GParamSpec *pspec)
 {
   SysprofChart *self = SYSPROF_CHART (object);
+  SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
 
   switch (prop_id)
     {
+    case PROP_FACTORY:
+      g_value_set_object (value, priv->factory);
+      break;
+
+    case PROP_MODEL:
+      g_value_set_object (value, sysprof_chart_get_model (self));
+      break;
+
     case PROP_SESSION:
       g_value_set_object (value, sysprof_chart_get_session (self));
       break;
@@ -248,9 +267,18 @@ sysprof_chart_set_property (GObject      *object,
                             GParamSpec   *pspec)
 {
   SysprofChart *self = SYSPROF_CHART (object);
+  SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
 
   switch (prop_id)
     {
+    case PROP_FACTORY:
+      priv->factory = g_value_dup_object (value);
+      break;
+
+    case PROP_MODEL:
+      sysprof_chart_set_model (self, g_value_get_object (value));
+      break;
+
     case PROP_SESSION:
       sysprof_chart_set_session (self, g_value_get_object (value));
       break;
@@ -278,6 +306,16 @@ sysprof_chart_class_init (SysprofChartClass *klass)
   widget_class->size_allocate = sysprof_chart_size_allocate;
   widget_class->snapshot = sysprof_chart_snapshot;
 
+  properties [PROP_MODEL] =
+    g_param_spec_object ("model", NULL, NULL,
+                         G_TYPE_LIST_MODEL,
+                         (G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS));
+
+  properties[PROP_FACTORY] =
+    g_param_spec_object ("factory", NULL, NULL,
+                         SYSPROF_TYPE_CHART_LAYER_FACTORY,
+                         (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+
   properties [PROP_SESSION] =
     g_param_spec_object ("session", NULL, NULL,
                          G_TYPE_OBJECT,
@@ -303,6 +341,10 @@ sysprof_chart_class_init (SysprofChartClass *klass)
                   G_TYPE_OBJECT);
 
   gtk_widget_class_set_css_name (widget_class, "chart");
+
+  g_type_ensure (SYSPROF_TYPE_CHART_LAYER_FACTORY);
+  g_type_ensure (SYSPROF_TYPE_CHART_LAYER_ITEM);
+  g_type_ensure (SYSPROF_TYPE_CHART_LAYER_ITEM_WIDGET);
 }
 
 static void
@@ -424,4 +466,112 @@ sysprof_chart_remove_layer (SysprofChart      *self,
   g_return_if_fail (gtk_widget_get_parent (GTK_WIDGET (layer)) == GTK_WIDGET (self));
 
   gtk_widget_unparent (GTK_WIDGET (layer));
+}
+
+
+GListModel *
+sysprof_chart_get_model (SysprofChart *self)
+{
+  SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
+
+  g_return_val_if_fail (SYSPROF_IS_CHART (self), NULL);
+
+  return priv->model;
+}
+
+static void
+sysprof_chart_items_changed_cb (SysprofChart *self,
+                                guint         position,
+                                guint         removed,
+                                guint         added,
+                                GListModel   *model)
+{
+  SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
+
+  g_assert (SYSPROF_IS_CHART (self));
+  g_assert (G_IS_LIST_MODEL (model));
+
+  if (removed > 0)
+    {
+      GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (self));
+
+      for (guint i = 1; i <= position; i++)
+        child = gtk_widget_get_next_sibling (child);
+
+      for (guint i = 0; i < removed; i++)
+        {
+          GtkWidget *target = child;
+          child = gtk_widget_get_next_sibling (child);
+          gtk_widget_unparent (target);
+        }
+    }
+
+  if (added > 0)
+    {
+      GtkWidget *child = gtk_widget_get_first_child (GTK_WIDGET (self));
+
+      for (guint i = 1; i < position; i++)
+        child = gtk_widget_get_next_sibling (child);
+
+      for (guint i = 0; i < added; i++)
+        {
+          g_autoptr(GObject) item = g_list_model_get_item (model, position + i);
+          g_autoptr(SysprofChartLayerItem) layer_item = NULL;
+          SysprofChartLayerItemWidget *widget;
+
+          layer_item = g_object_new (SYSPROF_TYPE_CHART_LAYER_ITEM,
+                                     "item", item,
+                                     NULL);
+          if (priv->factory)
+            _sysprof_chart_layer_factory_setup (priv->factory, layer_item);
+          widget = sysprof_chart_layer_item_widget_new (layer_item);
+          gtk_widget_insert_after (GTK_WIDGET (widget), GTK_WIDGET (self), child);
+          child = GTK_WIDGET (widget);
+        }
+    }
+}
+
+void
+sysprof_chart_set_model (SysprofChart *self,
+                         GListModel   *model)
+{
+  SysprofChartPrivate *priv = sysprof_chart_get_instance_private (self);
+
+  g_return_if_fail (SYSPROF_IS_CHART (self));
+
+  if (priv->model == model)
+    return;
+
+  if (model)
+    g_object_ref (model);
+
+  if (priv->model)
+    {
+      GtkWidget *child;
+
+      g_signal_handlers_disconnect_by_func (priv->model,
+                                            G_CALLBACK (sysprof_chart_items_changed_cb),
+                                            self);
+
+      while ((child = gtk_widget_get_first_child (GTK_WIDGET (self))))
+        gtk_widget_unparent (child);
+
+      g_clear_object (&priv->model);
+    }
+
+  priv->model = model;
+
+  if (model)
+    {
+      guint n_items = g_list_model_get_n_items (model);
+      g_signal_connect_object (priv->model,
+                               "items-changed",
+                               G_CALLBACK (sysprof_chart_items_changed_cb),
+                               self,
+                               G_CONNECT_SWAPPED);
+      if (n_items)
+        sysprof_chart_items_changed_cb (self, 0, 0, n_items, model);
+    }
+
+  g_object_notify_by_pspec (G_OBJECT (self), properties [PROP_MODEL]);
 }

@@ -40,9 +40,6 @@ struct _SysprofChartClass
   gboolean (*activate_layer_item) (SysprofChart      *self,
                                    SysprofChartLayer *layer,
                                    gpointer           item);
-
-  /*< private >*/
-  gpointer _reserved[16];
 };
 
 GtkWidget      *sysprof_chart_new          (void);
@@ -56,5 +53,8 @@ void            sysprof_chart_add_layer    (SysprofChart      *self,
                                             SysprofChartLayer *layer);
 void            sysprof_chart_remove_layer (SysprofChart      *self,
                                             SysprofChartLayer *layer);
+GListModel      *sysprof_chart_get_model   (SysprofChart      *self);
+void             sysprof_chart_set_model   (SysprofChart      *self,
+                                            GListModel        *model);
 
 G_END_DECLS

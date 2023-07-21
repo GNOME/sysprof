@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "sysprof-chart.h"
 #include "sysprof-chart-layer-private.h"
 
 typedef struct
@@ -29,6 +30,7 @@ typedef struct
 
 enum {
   PROP_0,
+  PROP_CHART,
   PROP_TITLE,
   N_PROPS
 };
@@ -76,6 +78,10 @@ sysprof_chart_layer_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_CHART:
+      g_value_set_object (value, gtk_widget_get_ancestor (GTK_WIDGET (self), SYSPROF_TYPE_CHART));
+      break;
+
     case PROP_TITLE:
       g_value_set_string (value, sysprof_chart_layer_get_title (self));
       break;
@@ -105,6 +111,14 @@ sysprof_chart_layer_set_property (GObject      *object,
 }
 
 static void
+sysprof_chart_layer_root (GtkWidget *widget)
+{
+  GTK_WIDGET_CLASS (sysprof_chart_layer_parent_class)->root (widget);
+
+  g_object_notify_by_pspec (G_OBJECT (widget), properties[PROP_CHART]);
+}
+
+static void
 sysprof_chart_layer_class_init (SysprofChartLayerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
@@ -115,6 +129,12 @@ sysprof_chart_layer_class_init (SysprofChartLayerClass *klass)
   object_class->set_property = sysprof_chart_layer_set_property;
 
   widget_class->css_changed = sysprof_chart_layer_css_changed;
+  widget_class->root = sysprof_chart_layer_root;
+
+  properties[PROP_CHART] =
+    g_param_spec_object ("chart", NULL, NULL,
+                         SYSPROF_TYPE_CHART,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
   properties[PROP_TITLE] =
     g_param_spec_string ("title", NULL, NULL,

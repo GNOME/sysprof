@@ -166,7 +166,8 @@ sysprof_categories_new (void)
       lineno++;
       g_strstrip (line);
 
-      if (line[0] == 0)
+      /* # starts comment line */
+      if (line[0] == 0 || line[0] == '#')
         continue;
 
       /* Group lines look like "binary nick:\n" */

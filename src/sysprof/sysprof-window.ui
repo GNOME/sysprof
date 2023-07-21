@@ -84,7 +84,7 @@
                         </property>
                         <child type="start">
                           <object class="GtkToggleButton" id="show_left_sidebar">
-                            <property name="icon-name">dock-left-symbolic</property>
+                            <property name="icon-name">sidebar-show-symbolic</property>
                             <property name="active">true</property>
                           </object>
                         </child>
@@ -153,7 +153,7 @@
                         </child>
                         <child type="end">
                           <object class="GtkToggleButton" id="show_right_sidebar">
-                            <property name="icon-name">dock-right-symbolic</property>
+                            <property name="icon-name">sidebar-show-right-symbolic</property>
                           </object>
                         </child>
                       </object>

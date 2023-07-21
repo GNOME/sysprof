@@ -9,6 +9,150 @@
             <binding name="session">
               <lookup name="session">SysprofCpuSection</lookup>
             </binding>
+            <child type="chart">
+              <object class="SysprofChart">
+                <binding name="session">
+                  <lookup name="session">SysprofCpuSection</lookup>
+                </binding>
+                <property name="height-request">32</property>
+                <property name="model">
+                  <object class="GtkFilterListModel">
+                    <binding name="model">
+                      <lookup name="counters" type="SysprofDocument">
+                        <lookup name="document" type="SysprofSession">
+                          <lookup name="session">SysprofCpuSection</lookup>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                    <property name="filter">
+                      <object class="GtkStringFilter">
+                        <property name="match-mode">exact</property>
+                        <property name="search">CPU Percent/Combined</property>
+                        <property name="expression">
+                          <lookup name="key" type="SysprofDocumentCounter"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+                <property name="factory">
+                  <object class="SysprofChartLayerFactory">
+                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofChartLayerItem">
+    <property name="layer">
+      <object class="SysprofLineLayer" id="layer">
+        <property name="spline">true</property>
+        <property name="fill">true</property>
+        <binding name="x-axis">
+          <lookup name="visible-time-axis" type="SysprofSession">
+            <lookup name="session" type="SysprofChart">
+              <lookup name="chart">layer</lookup>
+            </lookup>
+          </lookup>
+        </binding>
+        <property name="y-axis">
+          <object class="SysprofValueAxis">
+            <property name="min-value">0</property>
+            <property name="max-value">100</property>
+          </object>
+        </property>
+        <property name="series">
+          <object class="SysprofXYSeries">
+            <binding name="model">
+              <lookup name="item">SysprofChartLayerItem</lookup>
+            </binding>
+            <property name="x-expression">
+              <lookup name="time" type="SysprofDocumentCounterValue"/>
+            </property>
+            <property name="y-expression">
+              <lookup name="value-double" type="SysprofDocumentCounterValue"/>
+            </property>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child type="chart">
+              <object class="SysprofChart">
+                <binding name="session">
+                  <lookup name="session">SysprofCpuSection</lookup>
+                </binding>
+                <property name="height-request">32</property>
+                <property name="model">
+                  <object class="GtkFilterListModel">
+                    <binding name="model">
+                      <lookup name="counters" type="SysprofDocument">
+                        <lookup name="document" type="SysprofSession">
+                          <lookup name="session">SysprofCpuSection</lookup>
+                        </lookup>
+                      </lookup>
+                    </binding>
+                    <property name="filter">
+                      <object class="GtkStringFilter">
+                        <property name="match-mode">exact</property>
+                        <property name="search">CPU Frequency</property>
+                        <property name="expression">
+                          <lookup name="category" type="SysprofDocumentCounter"/>
+                        </property>
+                      </object>
+                    </property>
+                  </object>
+                </property>
+                <property name="factory">
+                  <object class="SysprofChartLayerFactory">
+                    <property name="bytes"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofChartLayerItem">
+    <property name="layer">
+      <object class="SysprofLineLayer" id="layer">
+        <property name="dashed">true</property>
+        <property name="spline">true</property>
+        <binding name="x-axis">
+          <lookup name="visible-time-axis" type="SysprofSession">
+            <lookup name="session" type="SysprofChart">
+              <lookup name="chart">layer</lookup>
+            </lookup>
+          </lookup>
+        </binding>
+        <property name="y-axis">
+          <object class="SysprofValueAxis">
+            <property name="min-value">0</property>
+            <property name="max-value">100</property>
+          </object>
+        </property>
+        <property name="series">
+          <object class="SysprofXYSeries">
+            <binding name="model">
+              <lookup name="item">SysprofChartLayerItem</lookup>
+            </binding>
+            <property name="x-expression">
+              <lookup name="time" type="SysprofDocumentCounterValue"/>
+            </property>
+            <property name="y-expression">
+              <lookup name="value-double" type="SysprofDocumentCounterValue"/>
+            </property>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>
+]]>
+                    </property>
+                  </object>
+                </property>
+              </object>
+            </child>
           </object>
         </child>
         <child>

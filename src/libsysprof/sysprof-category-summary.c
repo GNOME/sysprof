@@ -167,6 +167,9 @@ sysprof_category_summary_get_category_name (SysprofCategorySummary *self)
     case SYSPROF_CALLGRAPH_CATEGORY_LAYOUT:
       return _("Layout");
 
+    case SYSPROF_CALLGRAPH_CATEGORY_LOCKING:
+      return _("Locking");
+
     case SYSPROF_CALLGRAPH_CATEGORY_MAIN_LOOP:
       return _("Main Loop");
 

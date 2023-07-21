@@ -208,7 +208,7 @@ sysprof_network_usage_record_fiber (gpointer user_data)
                                               ctr, G_N_ELEMENTS (ctr));
 
       dev.rx_bytes_id = ctr[0].id;
-      dev.tx_bytes_id = ctr[0].id;
+      dev.tx_bytes_id = ctr[1].id;
       g_strlcpy (dev.iface, name, sizeof dev.iface);
 
       g_array_append_val (devices, dev);

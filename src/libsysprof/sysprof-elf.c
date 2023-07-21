@@ -81,9 +81,21 @@ static const struct {
   { "libcairo.so", "Cairo" },
   { "libpixman-1.so", "Pixman" },
 
+  /* Javascript */
+  { "libgjs.so", "JS" },
+  { "libmozjs-102.so", "JS" },
+  { "libmozjs-115.so", "JS" },
+  { "libjavascriptcoregtk-4.0.so", "JS" },
+  { "libjavascriptcoregtk-4.1.so", "JS" },
+  { "libjavascriptcoregtk-6.0.so", "JS" },
+
+  /* WebKit */
+  { "libwebkit2gtk-4.0.so", "WebKit" },
+  { "libwebkit2gtk-4.1.so", "WebKit" },
+  { "libwebkitgtk-6.0.so", "WebKit" },
+
   /* Various GNOME Platform Libraries */
   { "libdex-1.so", "Dex" },
-  { "libgjs.so", "GJS" },
   { "libgstreamer-1-0.so", "GStreamer" },
   { "libgudev-1.0.so", "udev" },
   { "libibus-1.0.so", "IBus" },
@@ -164,6 +176,7 @@ static const struct {
   { "iris_dri.so", "Mesa" },
   { "kms_swrast_dri.so", "Mesa" },
   { "libEGL_mesa.so", "Mesa" },
+  { "libGLX_mesa.so", "Mesa" },
   { "libdrm.so", "Mesa" },
   { "nouveau_dri.so", "Mesa" },
   { "r300_dri.so", "Mesa" },

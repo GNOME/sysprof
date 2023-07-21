@@ -1,5 +1,5 @@
 Cairo:
-cairo*                              paint        inherit
+*                                   paint        inherit
 
 Pixman:
 pixman*                             paint        inherit

@@ -19,6 +19,8 @@ gl*                                 paint        inherit
 GLib:
 g_main_*                            main-loop
 g_wakeup_*                          main-loop    inherit
+g_timeout_*                         main-loop
+g_idle_*                            main-loop
 
 g_io_channel_*                      io           inherit
 
@@ -50,6 +52,7 @@ g_output_*                          io           inherit
 g_io_                               io           inherit
 g_zlib_*                            io           inherit
 
+
 GTK 4:
 gdk_cairo*                          paint        inherit
 gtk_widget_snapshot                 paint        inherit
@@ -66,12 +69,16 @@ _gdk_frame_clock_emit_after_paint   paint        inherit
 _gtk_css_*                          css          inherit
 gtk_css_*                           css          inherit
 
+gtk_widget_compute_*                layout       inherit
 gtk_widget_measure                  layout       inherit
 _gdk_frame_clock_emit_layout        layout       inherit
 gtk_builder_*                       layout       inherit
 gtk_buildable_*                     layout       inherit
 gtk_text_view_validate_onscreen     layout       inherit
+find_by_log_attrs                   layout       inherit
 
+gtk_widget_do_pick                  input        inherit
+gdk_event_source_*                  input
 gdk_surface_handle_event            input        inherit
 gtk_im_*                            input        inherit
 do_update_im_spot_location          input        inherit
@@ -84,9 +91,16 @@ gtk_pad_controller_*                input        inherit
 gtk_shortcut_controller_*           input        inherit
 
 gtk_window_present*                 windowing    inherit
+gtk_widget_realize                  windowing    inherit
 
 gtk_accessible_*                    a11y         inherit
 gtk_at_*                            a11y         inherit
+
+gtk_action_observer_*               actions      inherit
+gtk_action_helper_*                 actions      inherit
+gtk_action_muxer_*                  actions      inherit
+gtk_actionable_*                    actions      inherit
+gtk_menu_tracker_*                  actions      inherit
 
 gtk_icon_*                          icons        inherit
 load_theme_thread                   icons        inherit
@@ -95,6 +109,7 @@ load_icon_thread                    icons        inherit
 
 GtkSourceView:
 update_syntax                       layout       inherit
+gtk_source_scheduler_dispatch       layout       inherit
 
 
 Harfbuzz:

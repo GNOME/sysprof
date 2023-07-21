@@ -30,8 +30,10 @@ SYSPROF_AVAILABLE_IN_ALL
 G_DECLARE_FINAL_TYPE (SysprofCategorySummary, sysprof_category_summary, SYSPROF, CATEGORY_SUMMARY, GObject)
 
 SYSPROF_AVAILABLE_IN_ALL
-SysprofCallgraphCategory sysprof_category_summary_get_category (SysprofCategorySummary *self);
+SysprofCallgraphCategory  sysprof_category_summary_get_category      (SysprofCategorySummary *self);
 SYSPROF_AVAILABLE_IN_ALL
-double                   sysprof_category_summary_get_fraction (SysprofCategorySummary *self);
+const char               *sysprof_category_summary_get_category_name (SysprofCategorySummary *self);
+SYSPROF_AVAILABLE_IN_ALL
+double                    sysprof_category_summary_get_fraction      (SysprofCategorySummary *self);
 
 G_END_DECLS

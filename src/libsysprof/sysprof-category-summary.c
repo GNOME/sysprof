@@ -20,12 +20,15 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
+
 #include "sysprof-category-summary-private.h"
 #include "sysprof-enums.h"
 
 enum {
   PROP_0,
   PROP_CATEGORY,
+  PROP_CATEGORY_NAME,
   PROP_FRACTION,
   N_PROPS
 };
@@ -46,6 +49,10 @@ sysprof_category_summary_get_property (GObject    *object,
     {
     case PROP_CATEGORY:
       g_value_set_enum (value, sysprof_category_summary_get_category (self));
+      break;
+
+    case PROP_CATEGORY_NAME:
+      g_value_set_string (value, sysprof_category_summary_get_category_name (self));
       break;
 
     case PROP_FRACTION:
@@ -90,6 +97,11 @@ sysprof_category_summary_class_init (SysprofCategorySummaryClass *klass)
                       SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED,
                       (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
+  properties[PROP_CATEGORY_NAME] =
+    g_param_spec_string ("category-name", NULL, NULL,
+                         NULL,
+                         (G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
   properties[PROP_FRACTION] =
     g_param_spec_double ("fraction", NULL, NULL,
                          0, 1, 0,
@@ -113,4 +125,63 @@ double
 sysprof_category_summary_get_fraction (SysprofCategorySummary *self)
 {
   return CLAMP (self->count / (double)self->total, .0, 1.);
+}
+
+const char *
+sysprof_category_summary_get_category_name (SysprofCategorySummary *self)
+{
+  g_return_val_if_fail (SYSPROF_IS_CATEGORY_SUMMARY (self), NULL);
+
+  switch (self->category)
+    {
+    case SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED:
+      return _("Uncategorized");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_A11Y:
+      return _("Accessibility");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_ACTIONS:
+      return _("Actions");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_CONTEXT_SWITCH:
+      return _("Context Switches");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_CSS:
+      return _("CSS");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_ICONS:
+      return _("Icons");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_INPUT:
+      return _("Input");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_IO:
+      return _("IO");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_IPC:
+      return _("IPC");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_KERNEL:
+      return _("Kernel");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_LAYOUT:
+      return _("Layout");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_MAIN_LOOP:
+      return _("Main Loop");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_PAINT:
+      return _("Paint");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_UNWINDABLE:
+      return _("Unwindable");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_WINDOWING:
+      return _("Windowing");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_PRESENTATION:
+    case SYSPROF_CALLGRAPH_CATEGORY_LAST:
+    default:
+      return NULL;
+    }
 }

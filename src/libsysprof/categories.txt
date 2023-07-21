@@ -21,8 +21,24 @@ g_main_*                            main-loop
 g_wakeup_*                          main-loop    inherit
 g_timeout_*                         main-loop
 g_idle_*                            main-loop
+block_source                        main-loop    inherit
+unblock_source                      main-loop    inherit
+g_source_unref_internal             main-loop    inherit
+g_source_iter_next                  main-loop    inherit
+g_source_ref                        main-loop    inherit
+g_source_unref                      main-loop    inherit
+g_source_destroy*                   main-loop    inherit
+
+g_malloc*                           memory       inherit
+g_realloc*                          memory       inherit
+g_new*                              memory       inherit
+g_aligned_*                         memory       inherit
+g_free                              memory       inherit
+g_free_sized                        memory       inherit
 
 g_io_channel_*                      io           inherit
+_g_socket_*                         io           inherit
+g_socket_*                          io           inherit
 
 g_mutex*                            locking      inherit
 g_rec_mutex*                        locking      inherit
@@ -46,10 +62,11 @@ Gio:
 gdbus*                              ipc          inherit
 g_dbus_*                            ipc          inherit
 g_bus_*                             ipc          inherit
-g_file_*                            io           inherit
+g_file_*                            io
+g_local_file_*                      io
 g_input_*                           io           inherit
 g_output_*                          io           inherit
-g_io_                               io           inherit
+g_io_*                              io           inherit
 g_zlib_*                            io           inherit
 
 
@@ -65,6 +82,7 @@ gsk_*                               paint        inherit
 gdk_frame_clock_paint               paint        inherit
 _gdk_frame_clock_emit_paint         paint        inherit
 _gdk_frame_clock_emit_after_paint   paint        inherit
+surface_render                      paint        inherit
 
 _gtk_css_*                          css          inherit
 gtk_css_*                           css          inherit
@@ -76,6 +94,9 @@ gtk_builder_*                       layout       inherit
 gtk_buildable_*                     layout       inherit
 gtk_text_view_validate_onscreen     layout       inherit
 find_by_log_attrs                   layout       inherit
+blink_cb                            layout       inherit
+gtk_layout_manager_*                layout       inherit
+gtk_widget_query_size*              layout       inherit
 
 gtk_widget_do_pick                  input        inherit
 gdk_event_source_*                  input
@@ -116,6 +137,10 @@ Harfbuzz:
 *                                   layout       inherit
 
 
+JS:
+*                                   javascript   inherit
+
+
 libc:
 poll                                main-loop    inherit
 select                              main-loop    inherit
@@ -134,12 +159,52 @@ recvmsg                             io           inherit
 recv                                io           inherit
 send                                io           inherit
 sendmsg                             io           inherit
+access                              io           inherit
+readlink                            io           inherit
+getdents64                          io           inherit
+__read                              io           inherit
+__write                             io           inherit
 
-pthread_mutex_lock                  locking      inherit
-pthread_mutex_unlock                locking      inherit
-pthread_mutex_trylock               locking      inherit
-pthread_cond_wait                   locking      inherit
-pthread_cond_signal                 locking      inherit
+pthread_mutex_lock*                 locking      inherit
+pthread_mutex_unlock*               locking      inherit
+pthread_mutex_trylock*              locking      inherit
+pthread_cond_wait*                  locking      inherit
+pthread_cond_signal*                locking      inherit
+
+__libc_calloc                       memory       inherit
+__libc_realloc                      memory       inherit
+__madvise                           memory       inherit
+aligned_alloc                       memory       inherit
+calloc                              memory       inherit
+cfree@*                             memory       inherit
+free                                memory       inherit
+madvise                             memory       inherit
+malloc                              memory       inherit
+memalign                            memory       inherit
+mmap                                memory       inherit
+mmap64                              memory       inherit
+mprotect                            memory       inherit
+munmap                              memory       inherit
+posix_memalign                      memory       inherit
+realloc                             memory       inherit
+reallocarray                        memory       inherit
+
+syscall                             kernel       inherit
+__syscall                           kernel       inherit
+
+clock_gettime                       main-loop    inherit
+__clock_gettime                     main-loop    inherit
+
+
+Mesa:
+*                                   graphics     inherit
+
+
+Mutter:
+clutter_actor_paint                 paint        inherit
+clutter_paint_node_paint            paint        inherit
+
+clutter_events_pending              main-loop    inherit
 
 
 Pango:
@@ -156,6 +221,10 @@ wl_*                                windowing    inherit
 
 Wayland Server:
 wl_*                                windowing    inherit
+
+
+X11:
+XPending                            main-loop    inherit
 
 
 Zstd:

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SysprofChartLayerItem">
+    <property name="layer">
+      <object class="SysprofLineLayer" id="layer">
+        <property name="spline">true</property>
+        <property name="fill">true</property>
+        <binding name="x-axis">
+          <lookup name="selected-time-axis" type="SysprofSession">
+            <lookup name="session" type="SysprofChart">
+              <lookup name="chart">layer</lookup>
+            </lookup>
+          </lookup>
+        </binding>
+        <property name="y-axis">
+          <object class="SysprofValueAxis">
+            <property name="min-value">0</property>
+            <property name="max-value">100</property>
+          </object>
+        </property>
+        <property name="series">
+          <object class="SysprofXYSeries">
+            <property name="model">
+              <object class="SysprofTimeFilterModel">
+                <binding name="time-span">
+                  <lookup name="selected-time" type="SysprofSession">
+                    <lookup name="session" type="SysprofSessionModelItem">
+                      <lookup name="item">SysprofChartLayerItem</lookup>
+                    </lookup>
+                  </lookup>
+                </binding>
+                <binding name="model">
+                  <lookup name="item" type="SysprofSessionModelItem">
+                    <lookup name="item">SysprofChartLayerItem</lookup>
+                  </lookup>
+                </binding>
+              </object>
+            </property>
+            <property name="x-expression">
+              <lookup name="time" type="SysprofDocumentCounterValue"/>
+            </property>
+            <property name="y-expression">
+              <lookup name="value-double" type="SysprofDocumentCounterValue"/>
+            </property>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>

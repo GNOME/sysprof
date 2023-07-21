@@ -327,12 +327,6 @@ _sysprof_callgraph_categorize (SysprofCallgraph     *self,
 
         while (parent != NULL)
           {
-            /* If we reach an uncategorized, then nothing above
-             * is doing inheritance.
-             */
-            if (parent->category == SYSPROF_CALLGRAPH_CATEGORY_UNCATEGORIZED)
-              break;
-
             if (parent->category & SYSPROF_CALLGRAPH_CATEGORY_INHERIT)
               {
                 node->category = parent->category;

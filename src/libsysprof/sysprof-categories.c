@@ -260,7 +260,7 @@ sysprof_categories_lookup (SysprofCategories *categories,
   for (guint i = 0; i < rules->len; i++)
     {
       const Rule *rule = &g_array_index (rules, Rule, i);
-      gboolean ret = FALSE;
+      gboolean ret;
 
       if (rule->kind == MATCH_EXACT)
         ret = strcmp (rule->match, symbol) == 0;
@@ -268,6 +268,8 @@ sysprof_categories_lookup (SysprofCategories *categories,
         ret = g_str_has_prefix (symbol, rule->match);
       else if (rule->kind == MATCH_SUFFIX)
         ret = g_str_has_suffix (symbol, rule->match);
+      else
+        ret = FALSE;
 
       if (ret)
         {

@@ -149,6 +149,9 @@ sysprof_category_summary_get_category_name (SysprofCategorySummary *self)
     case SYSPROF_CALLGRAPH_CATEGORY_CSS:
       return _("CSS");
 
+    case SYSPROF_CALLGRAPH_CATEGORY_GRAPHICS:
+      return _("Graphics");
+
     case SYSPROF_CALLGRAPH_CATEGORY_ICONS:
       return _("Icons");
 
@@ -161,6 +164,9 @@ sysprof_category_summary_get_category_name (SysprofCategorySummary *self)
     case SYSPROF_CALLGRAPH_CATEGORY_IPC:
       return _("IPC");
 
+    case SYSPROF_CALLGRAPH_CATEGORY_JAVASCRIPT:
+      return _("JavaScript");
+
     case SYSPROF_CALLGRAPH_CATEGORY_KERNEL:
       return _("Kernel");
 
@@ -172,6 +178,9 @@ sysprof_category_summary_get_category_name (SysprofCategorySummary *self)
 
     case SYSPROF_CALLGRAPH_CATEGORY_MAIN_LOOP:
       return _("Main Loop");
+
+    case SYSPROF_CALLGRAPH_CATEGORY_MEMORY:
+      return _("Memory");
 
     case SYSPROF_CALLGRAPH_CATEGORY_PAINT:
       return _("Paint");

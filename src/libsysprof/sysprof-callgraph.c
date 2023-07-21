@@ -191,8 +191,6 @@ sysprof_callgraph_populate_callers (SysprofCallgraph     *self,
   g_assert (SYSPROF_IS_CALLGRAPH (self));
   g_assert (node != NULL);
 
-  node->is_toplevel = TRUE;
-
   for (const SysprofCallgraphNode *iter = node;
        iter != NULL;
        iter = iter->parent)
@@ -430,6 +428,9 @@ sysprof_callgraph_add_traceable (SysprofCallgraph         *self,
                                       n_symbols,
                                       list_model_index,
                                       !!(self->flags & SYSPROF_CALLGRAPH_FLAGS_HIDE_SYSTEM_LIBRARIES));
+
+  node->is_toplevel = TRUE;
+  node->count++;
 
   if (node && self->augment_func)
     self->augment_func (self,

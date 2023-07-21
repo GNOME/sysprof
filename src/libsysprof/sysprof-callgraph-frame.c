@@ -525,6 +525,9 @@ summarize_node (const SysprofCallgraphNode *node,
     {
       gboolean seen[SYSPROF_CALLGRAPH_CATEGORY_LAST] = {0};
 
+      /* Track total count in 0 */
+      summaries[0].count += node->count;
+
       seen[node->category & 0xFF] = TRUE;
       summaries[node->category & 0xFF].count += node->count;
 
@@ -561,11 +564,9 @@ sysprof_callgraph_frame_summarize (GTask        *task,
   summarize_node (self->node, summaries);
 
   store = g_list_store_new (G_TYPE_OBJECT);
+  total = summaries[0].count;
 
-  for (guint i = 0; i < SYSPROF_CALLGRAPH_CATEGORY_LAST; i++)
-    total += summaries[i].count;
-
-  for (guint i = 0; i < SYSPROF_CALLGRAPH_CATEGORY_LAST; i++)
+  for (guint i = 1; i < SYSPROF_CALLGRAPH_CATEGORY_LAST; i++)
     {
       g_autoptr(SysprofCategorySummary) summary = NULL;
 

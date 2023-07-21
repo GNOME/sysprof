@@ -221,6 +221,9 @@ sysprof_document_counter_get_description (SysprofDocumentCounter *self)
 {
   g_return_val_if_fail (SYSPROF_IS_DOCUMENT_COUNTER (self), NULL);
 
+  if (self->description == NULL || self->description[0] == 0)
+    return NULL;
+
   return self->description;
 }
 

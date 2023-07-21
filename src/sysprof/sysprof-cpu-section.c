@@ -80,7 +80,7 @@ sysprof_cpu_section_session_set (SysprofSection *section,
                                  SysprofSession *session)
 {
   SysprofCpuSection *self = (SysprofCpuSection *)section;
-  g_autoptr(SysprofDocumentCounter) combined_counter = NULL;
+  g_autoptr(SysprofDocumentCounter) combined_cpu_usage = NULL;
   SysprofDocument *document;
   SysprofAxis *x_axis;
 
@@ -93,17 +93,16 @@ sysprof_cpu_section_session_set (SysprofSection *section,
   document = sysprof_session_get_document (session);
   x_axis = sysprof_session_get_visible_time_axis (session);
 
-  if ((combined_counter = sysprof_document_find_counter (document, "CPU Percent", "Combined")))
+  if ((combined_cpu_usage = sysprof_document_find_counter (document, "CPU Percent", "Combined")))
     {
       g_autoptr(SysprofTimeFilterModel) filter = sysprof_time_filter_model_new (NULL, NULL);
 
-      sysprof_time_filter_model_set_model (filter, G_LIST_MODEL (combined_counter));
+      sysprof_time_filter_model_set_model (filter, G_LIST_MODEL (combined_cpu_usage));
       g_object_bind_property (session, "visible-time", filter, "time-span", G_BINDING_SYNC_CREATE);
 
       sysprof_time_scrubber_add_chart (self->scrubber,
-                                       create_counter_chart (combined_counter, x_axis));
+                                       create_counter_chart (combined_cpu_usage, x_axis));
     }
-
 }
 
 static void

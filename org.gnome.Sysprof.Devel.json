@@ -122,9 +122,9 @@
             "config-opts" : [
                 "--libdir=/app/lib",
                 "--buildtype=debugoptimized",
-                "-Dagent=true",
                 "-Ddevelopment=true",
                 "-Dlibsysprof=true",
+                "-Dtools=true",
                 "-Dgtk=true",
                 "-Dsysprofd=host"
             ],
